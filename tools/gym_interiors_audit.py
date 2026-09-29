@@ -59,9 +59,12 @@ FILL = re.compile(r"^fill %s %s %s %s %s %s (\S+)(?:\s+replace\s+(\S+))?" % ((N,
 
 # what a player can walk through, and what carries them
 PASSABLE = {"minecraft:air", "minecraft:cave_air", "minecraft:ladder", "minecraft:scaffolding", "minecraft:lantern",
-            "minecraft:chain", "minecraft:torch", "minecraft:wall_torch"}
+            "minecraft:chain", "minecraft:torch", "minecraft:wall_torch", "minecraft:water"}
 CLIMBABLE = {"minecraft:ladder", "minecraft:scaffolding"}
-# a lantern or a chain carries nothing, but it is also not somewhere you stand: treat it as passable and unsupporting
+WATER = {"minecraft:water"}
+# a lantern or a chain carries nothing, but it is also not somewhere you stand: treat it as passable and unsupporting.
+# water carries: a player in water neither falls nor needs a floor, and can swim up and down it, so a water cell is
+# standable in this model and a drop that ends in water ends there.
 
 
 def load(p):
@@ -108,6 +111,15 @@ def inside(inner, outer):
     return all(outer[i] <= inner[i] and inner[i + 3] <= outer[i + 3] for i in (0, 1, 2))
 
 
+def intersect(a, b):
+    """The cells two inclusive boxes share, or None. Used to ask what part of a write lands in the standing shell."""
+    lo = [max(a[i], b[i]) for i in (0, 1, 2)]
+    hi = [min(a[i + 3], b[i + 3]) for i in (0, 1, 2)]
+    if any(lo[i] > hi[i] for i in (0, 1, 2)):
+        return None
+    return tuple(lo) + tuple(hi)
+
+
 def inside_xz(inner, box_xz):
     x0, z0, x1, z1 = box_xz
     return x0 <= inner[0] and inner[3] <= x1 and z0 <= inner[2] and inner[5] <= z1
@@ -137,12 +149,20 @@ def walk(model, start, bounds, blocked=frozenset(), limit=64):
 
 def _steps(model, x, y, z, limit):
     out = []
-    if model.name(x, y, z) in CLIMBABLE:                       # up and down the column
+    here_water = model.name(x, y, z) in WATER
+    if model.name(x, y, z) in CLIMBABLE or here_water:          # up and down the column, or swim up and down it
         for ny in (y + 1, y - 1):
-            if model.standable(x, ny, z):
-                out.append((x, ny, z))
+            if not model.standable(x, ny, z):
+                continue
+            if ny < y and model.bubble_up(x, ny, z):
+                continue        # an upward bubble column cannot be swum down: that is what makes it a one-way door
+            out.append((x, ny, z))
     for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)):
         nx, nz = x + dx, z + dz
+        # a flooded gap one block high: the swimming pose fits where the walking one does not, so a water cell is
+        # entered from water (or from a cell whose own head is clear) without needing headroom of its own
+        if model.name(nx, y, nz) in WATER and (here_water or model.passable(x, y + 1, z)):
+            out.append((nx, y, nz))
         if model.standable(nx, y, nz) and model.passable(x, y + 1, z):
             out.append((nx, y, nz))
         if (model.standable(nx, y + 1, nz) and model.passable(x, y + 1, z)
@@ -197,10 +217,28 @@ class Model:
         return self.name(x, y, z) in PASSABLE
 
     def carries(self, x, y, z):
-        """Can a player stand at (x, y, z)? Either the block under it is solid, or this cell is climbable."""
-        return self.name(x, y, z) in CLIMBABLE or not self.passable(x, y - 1, z)
+        """Can a player hold this cell? The block under it is solid, or the cell is climbable, or it is water."""
+        return self.name(x, y, z) in CLIMBABLE or self.name(x, y, z) in WATER or not self.passable(x, y - 1, z)
+
+    def bubble_up(self, x, y, z, limit=48):
+        """Is this cell inside an upward bubble column? Vanilla: soul sand under a column of water makes one, and a
+        player in it is carried up and cannot swim down through it. Scanning down through contiguous water is how the
+        column is found, so nothing here is authored: it follows from the blocks the function writes."""
+        if self.name(x, y, z) not in WATER:
+            return False
+        ly = y
+        while ly > y - limit:
+            below = self.name(x, ly - 1, z)
+            if below == "minecraft:soul_sand":
+                return True
+            if below not in WATER:
+                return False
+            ly -= 1
+        return False
 
     def standable(self, x, y, z):
+        if self.name(x, y, z) in WATER:
+            return True                                        # swimming needs no headroom of its own
         return self.passable(x, y, z) and self.passable(x, y + 1, z) and self.carries(x, y, z)
 
 
@@ -302,6 +340,43 @@ def audit(pack, source_root=None):
         gym_allowed = set(gym["blocks"])
         rooms = {r["id"]: tuple(r["box"]) for r in gym["rooms"]}
         belongs = {r["id"]: r.get("belongs_to", r["id"]) for r in gym["rooms"]}
+        roles = {r["id"]: r.get("role") for r in gym["rooms"]}
+        shafts = {rid for rid, role in roles.items() if role == "shaft"}
+        # a block that is a spawn condition may be written only where it is declared and only inside this gym's
+        # spawn-free box: contract G1 is what makes it safe, and the box is the whole of the reason
+        exempt = {e["id"]: e for e in gym.get("spawn_condition_blocks") or []}
+        supp = suppression.get(gym["spawn_suppression"]["record"])
+
+        # ---- the interior against the placement, not against itself -------------------------------------------
+        # The entrance is the measured healer cell mapped through this placement's own rotation. Nothing in the
+        # generator's output is consulted: this comes from data/placements.json and the Q1 measurements.
+        rel = doc["measured"]["misty_relative" if gid == "gym2" else "small_gym_relative"]
+        dx, dz = place_town.rotate(rel["healing_machine"][0], rel["healing_machine"][2], rec.get("rotation", "none"))
+        pos = rec["position"]
+        want_entrance = [pos["x"] + dx, pos["y"] + rel["healing_machine"][1], pos["z"] + dz]
+        if list(gym["entrance"]) != want_entrance:
+            problems.append("%s: its entrance is %s but the measured healer cell, mapped through this placement's "
+                            "rotation, is %s; the entrance is the only interior cell of the shell we know"
+                            % (gid, list(gym["entrance"]), want_entrance))
+        if [gym["shell"]["expect_floor_course_y"], gym["shell"]["expect_stand_y"]] != \
+                [sy0 + rel["floor_course_y"], sy0 + rel["interior_floor_y"]]:
+            problems.append("%s: its recorded floor course and standing level are %s but the placement and the "
+                            "measured template give %s" % (gid, [gym["shell"]["expect_floor_course_y"],
+                            gym["shell"]["expect_stand_y"]], [sy0 + rel["floor_course_y"], sy0 + rel["interior_floor_y"]]))
+        # The dig is under the lot and below the building: a carve that reaches the shell's own courses would be
+        # cutting the placed template, which only the declared penetration may do.
+        if dig[4] >= sy0:
+            problems.append("%s: its dig reaches y%d, at or above the shell's lowest course y%d; the carve must be "
+                            "wholly below the standing building" % (gid, dig[4], sy0))
+        if supp is not None and not inside_xz(dig, supp):
+            problems.append("%s: its dig %s leaves the spawn-free box %s in x/z (contract G1)" % (gid, list(dig), supp))
+        # The penetration is one column, at the entrance, and no higher than the shell.
+        if (pen[0], pen[2]) != (pen[3], pen[5]) or (pen[0], pen[2]) != (want_entrance[0], want_entrance[2]):
+            problems.append("%s: its shell penetration %s is not a single column at the entrance %s"
+                            % (gid, list(pen), want_entrance))
+        if pen[1] < sy0 or pen[4] > want_entrance[1]:
+            problems.append("%s: its shell penetration runs y%d..%d, outside the shell's base course y%d and the "
+                            "entrance cell y%d" % (gid, pen[1], pen[4], sy0, want_entrance[1]))
 
         ops = parse(lines_of(gid))
         model = Model(dig, shell)
@@ -310,7 +385,13 @@ def audit(pack, source_root=None):
             if kind == "other":
                 problems.append("%s: a command this audit cannot read: %r" % (gid, filt))
                 continue
-            if not (inside(box, dig) or inside(box, pen) or inside(box, rooms.get("shaft", pen))):
+            # anything that reaches the standing building may only be the declared penetration
+            hit = intersect(box, shell)
+            if hit and not inside(hit, pen):
+                problems.append("%s: a write at %s puts %s inside the placed template's own box %s, outside the "
+                                "declared shell penetration %s" % (gid, list(box), list(hit), list(shell), list(pen)))
+            if not (inside(box, dig) or inside(box, pen)
+                    or any(inside(box, rooms[s]) for s in shafts)):
                 problems.append("%s: a write at %s is outside the dig %s, the shaft and the declared shell "
                                 "penetration %s" % (gid, list(box), list(dig), list(pen)))
             nm = block_name(state)
@@ -319,7 +400,13 @@ def audit(pack, source_root=None):
             if nm not in gym_allowed:
                 problems.append("%s: writes %s, which the gym's own `blocks` list does not allow" % (gid, nm))
             if nm in spawn_blocks:
-                problems.append("%s: writes %s, a spawn condition (data/spawn_blocks.json)" % (gid, nm))
+                if nm not in exempt:
+                    problems.append("%s: writes %s, a spawn condition (data/spawn_blocks.json), and the gym's "
+                                    "`spawn_condition_blocks` does not declare it" % (gid, nm))
+                elif supp is None or not inside_xz(box, supp):
+                    problems.append("%s: writes the spawn condition %s at %s, which is not inside the gym's "
+                                    "spawn-free box %s (contract G1 is the only thing that makes it safe)"
+                                    % (gid, nm, list(box), supp))
             model.apply(kind, box, state, filt)
             writes += 1
             total += 1
@@ -328,10 +415,10 @@ def audit(pack, source_root=None):
 
         # rooms in the dig, and the cover over them
         for rid, box in rooms.items():
-            if not (inside(box, dig) or inside(box, pen) or rid == "shaft"):
+            if not (inside(box, dig) or inside(box, pen) or rid in shafts):
                 problems.append("%s: room %s at %s is not inside the dig %s" % (gid, rid, list(box), list(dig)))
-            if rid == "shaft":
-                continue                                  # the shaft reaches the shell by design
+            if rid in shafts:
+                continue                                  # a shaft reaches the shell by design
             ceiling = box[4] + 1
             for x in range(box[0], box[3] + 1):
                 for z in range(box[2], box[5] + 1):
@@ -370,6 +457,10 @@ def audit(pack, source_root=None):
             if not model.standable(x, y, z):
                 problems.append("%s: route step %d %s is not standable: %s at the feet, %s at the head, %s under"
                                 % (gid, i, wp["at"], model.name(x, y, z), model.name(x, y + 1, z), model.name(x, y - 1, z)))
+            wet = model.name(x, y, z) in WATER
+            if (wp.get("posture") == "swim") != wet:
+                problems.append("%s: route step %d %s says posture %r but the cell is %s"
+                                % (gid, i, wp["at"], wp.get("posture"), model.name(x, y, z)))
             here = rooms_of(x, y, z)
             if not here:
                 problems.append("%s: route step %d %s is in no room" % (gid, i, wp["at"]))
@@ -377,10 +468,29 @@ def audit(pack, source_root=None):
                 problems.append("%s: route step %d %s says room %s but lies in %s"
                                 % (gid, i, wp["at"], wp["room"], sorted(here)))
 
+        # contract G2: no gym route asks for more than a few seconds under water. A run is the distance walked
+        # between consecutive waypoints that are both in water; `rules.max_submerged_run` is its ceiling in blocks
+        def under(at):
+            """Head under water: the cell and the cell over it are both water. A swimmer at the surface is not."""
+            x, y, z = at
+            return model.name(x, y, z) in WATER and model.name(x, y + 1, z) in WATER
+
+        run = 0.0
+        for a, b in zip(gym["route"], gym["route"][1:]):
+            run = run + math.dist(a["at"], b["at"]) if (under(a["at"]) and under(b["at"])) else 0.0
+            if run > rules.get("max_submerged_run", 1e9):
+                problems.append("%s: the route swims %.0f blocks under water without a surface by step %s "
+                                "(contract G2, max_submerged_run %s)"
+                                % (gid, run, b["at"], rules.get("max_submerged_run")))
+                break
+
         for t in gym["trainers"]:
             x, y, z = t["seat"]
             if not model.standable(x, y, z):
                 problems.append("%s: trainer %s's seat %s is not standable" % (gid, t["id"], t["seat"]))
+            if model.name(x, y, z) in WATER:
+                problems.append("%s: trainer %s's seat %s is in water; a placed trainer stands on the floor"
+                                % (gid, t["id"], t["seat"]))
             if belongs.get(t["room"], t["room"]) not in rooms_of(x, y, z):
                 problems.append("%s: trainer %s says room %s but its seat lies in %s"
                                 % (gid, t["id"], t["room"], sorted(rooms_of(x, y, z))))
@@ -452,7 +562,9 @@ def audit(pack, source_root=None):
                 while ly > dig[1] and model.passable(nx, ly, nz) and not model.carries(nx, ly, nz):
                     ly -= 1
                 fall = cy - ly
-                if fall > rules["max_fall"] and model.name(nx, ly - 1, nz) != "minecraft:hay_block":
+                soft = (model.name(nx, ly - 1, nz) == "minecraft:hay_block"
+                        or model.name(nx, ly, nz) in WATER or model.name(nx, ly - 1, nz) in WATER)
+                if fall > rules["max_fall"] and not soft:
                     bad_falls += 1
                     if bad_falls <= 3:
                         problems.append("%s: stepping off %s drops %d onto %s at %s (over max_fall %d and not straw)"
@@ -462,7 +574,6 @@ def audit(pack, source_root=None):
             problems.append("%s: %d more falls over max_fall not landing on straw" % (gid, bad_falls - 3))
 
         # zones: the suppression box and the no_build boxes
-        supp = suppression.get(gym["spawn_suppression"]["record"])
         if supp is None:
             problems.append("%s: data/spawn_suppression.json has no zone %s" % (gid, gym["spawn_suppression"]["record"]))
         else:
@@ -475,7 +586,7 @@ def audit(pack, source_root=None):
                                     % (gid, rid, list(box), supp))
         nb = [tuple(b["box"]) for b in gym["no_build"]]
         for rid, box in rooms.items():
-            if rid == "shaft":
+            if rid in shafts:
                 continue
             if not any(inside(box, b) for b in nb):
                 problems.append("%s: room %s is in no no_build box (contract G4)" % (gid, rid))
