@@ -19,7 +19,7 @@ durable facts; this holds where work stopped.
 - **The gym-interiors design landed and is committed**: `docs/mechanics/GYM_INTERIORS.md` (391 lines), by a
   `content-architect` agent off `2f987ab`, copied out of its worktree into this branch. **It is a proposal, not
   accepted**: its own step 4 is "ADR proposed, owner accepts", and it says no gym content should be authored before
-  that. Its agent worktree (`worktree-agent-a5c7b45c78e489c10`) is spent and removable. Summary in section 2b.
+  that. Its agent worktree (`worktree-agent-a5c7b45c78e489c10`) is spent and removable. Read the doc itself; it is self-contained and ends with nine open questions and a ten-step plan. **Q1 blocks everything**: no interior floor plan of any gym template exists in the repo, so the NBTs must be extracted locally (gitignored, never committed) and a y-slice dumped before any room is designed against real geometry.
 
 ## 2. THE NEXT JOB: dive and sky portals. Run it in this order
 
