@@ -300,8 +300,15 @@ def static_problems(doc, progression, planned_flags):
         if d["id"] in docks:
             out.append("dock %s: declared twice" % d["id"])
         docks[d["id"]] = d
-        if d.get("status") not in ("built", "planned"):
-            out.append("dock %s: status must be built or planned" % d["id"])
+        if d.get("status") not in ("built", "planned", "retired"):
+            out.append("dock %s: status must be built, planned or retired" % d["id"])
+        # `retired` exists because the design already anticipated it: STATE records that "the Sound ferry retires
+        # when [the Pacifidlog re-site] is applied". Applying the water shape drowned the old Sound docks, and the
+        # tool had no word for a dock that was built and is now gone, which forced a choice between lying ("planned")
+        # and failing the audit for ever. A retired dock is never built and never ground-checked; its `retired_why`
+        # says what replaced it.
+        if d.get("status") == "retired" and not d.get("retired_why"):
+            out.append("dock %s: a retired dock needs retired_why" % d["id"])
         if d.get("status") == "built":
             for part in ("ferryman", "landing"):
                 p = d.get(part)
@@ -656,6 +663,12 @@ def swim_problems(doc, g, sea, surf, contracts=None, structure=True):
     for ln in doc["lines"]:
         sw = ln["swim"]
         kind = sw["declared"]
+        # a retired line is not walked: its water no longer exists as declared (the Pacifidlog re-site drowned the
+        # Sound crossing, and the water shape removed the Jungle Isle entirely). `retired_why` says what replaced it,
+        # and the line is kept rather than deleted so the history of the crossing survives.
+        if ln.get("status") == "retired":
+            report.append("%-24s RETIRED: %s" % (ln["id"], str(ln.get("retired_why"))[:100]))
+            continue
         if kind in ("kindness", "unsited"):
             report.append("%-24s %s: %s" % (ln["id"], kind, sw["why"][:90]))
             continue
