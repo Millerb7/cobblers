@@ -2,7 +2,7 @@
  "schema": "cobblers.towns/1",
  "schema_status": "proposed",
  "status": "proposed",
- "computed_from_sha256": "0d9b5f1e8a013f267d34001dc908dec298287679bf16b30a5b3253298075bb84",
+ "computed_from_sha256": "d1bc68d33705a4bb87784630d3107847f9a061436789d3b84fd1a7b1ae5dfe56",
  "coordinates": "Block x, z. A1 origin at 0,0; x east, z south.",
  "decisions": [
   {
@@ -1627,7 +1627,7 @@
    "centre": {
     "x": 7210,
     "z": 6960,
-    "ground_y": 53.8,
+    "ground_y": 55.0,
     "ground_note": "SEABED: the town's ground is its log decks at the sea level (y62, players walk at y63), laid by tools/sea_town.py and named \"ground\": \"sea_deck\" in data/placements.json. The heights recorded here are the heightmap's seabed, as for Relic Island's heightmap_seabed_y, because data/towns.json measures the heightmap"
    },
    "footprint": {
@@ -1638,12 +1638,12 @@
     "max_x": 7280,
     "max_z": 7238,
     "ground_y": [
-     23.7,
+     41.0,
      107.0
     ],
     "slope_degrees": {
-     "mean": 12.3,
-     "max": 44.4
+     "mean": 8.6,
+     "max": 68.2
     },
     "basis": "every district of data/sea_town.json: the jetty's landing in the north, the rafts, the yard and the Stilt Quarter, Fishers' Row to the west and the Current Gate at the bay's mouth in the south-west; mostly water on purpose (tools/sea_town.py footprint)"
    },
@@ -2361,7 +2361,7 @@
    "centre": {
     "x": 5160,
     "z": 7463,
-    "ground_y": 128.5
+    "ground_y": 61.0
    },
    "footprint": {
     "shape": "square",
@@ -2372,12 +2372,12 @@
     "max_x": 5310,
     "max_z": 7613,
     "ground_y": [
-     119.9,
-     134.0
+     55.0,
+     61.0
     ],
     "slope_degrees": {
-     "mean": 2.8,
-     "max": 8.2
+     "mean": 2.3,
+     "max": 64.8
     },
     "basis": "largest square near the chosen point with slope under 10 degrees, clear of water by 24 blocks"
    },

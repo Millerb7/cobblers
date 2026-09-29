@@ -521,7 +521,7 @@
     {
       "id": "sea_town_mart",
       "settlement": "sea_town",
-      "cell": "G8",
+      "cell": "H6",
       "template": "bca:stores/store_workers/shopkeeper_ds_general",
       "source": {
         "pack": "COBBLEVERSE-DP-v31.zip",
@@ -529,9 +529,9 @@
         "licence": "Cobbleverse, no redistribution: placed by resource id from the installed pack"
       },
       "position": {
-        "x": 7239,
+        "x": 5189,
         "y": 63,
-        "z": 6958
+        "z": 7378
       },
       "building": "sea_town_pokemart",
       "facing": "west",
