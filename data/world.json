@@ -6,12 +6,12 @@
   "source_root": null,
 
   "heightmap": {
-  "path": "land_8k_16_rescaled_b145_pads_rift.png",
+  "path": "land_8k_16_rescaled_b145_pads_rift_water.png",
   "width": 8192,
   "height": 8192,
   "channel": "gray",
   "bit_depth": 16,
-  "sha256": "0d9b5f1e8a013f267d34001dc908dec298287679bf16b30a5b3253298075bb84",
+  "sha256": "d1bc68d33705a4bb87784630d3107847f9a061436789d3b84fd1a7b1ae5dfe56",
   "pressed_from": {
     "path": "land_8k_16_rescaled_b145.png",
     "sha256": "3eb0edee25486f372fba5c409ef668e69a8f196769cc0d9992b979f0ece66216",
@@ -105,6 +105,7 @@
     "note": "The authored heightmap. Rivers are planned on it (data/rivers.json computed_from_sha256) and cut into the imported file, which is regenerated, never edited. Terrain edits go into this file, then plan and cut again."
   },
   "previous_sha256": [
+    "0d9b5f1e8a013f267d34001dc908dec298287679bf16b30a5b3253298075bb84",
     "8098ce618cb3e866a0f91d3cfe55980012f16f166473dc7508945f2d4067d80d",
     "604de74e470569f8f0ac7bb7b42edc174c9f1fbee3bb92da318371a54e860ae7",
     "5b9635676bb0d9bf3d5189d647e6dc154b974fb73ffe354c2070d6d24140d6fb",
@@ -128,15 +129,61 @@
     "blocks_moved": 12811417,
     "columns_changed": 512952,
     "footprints": [
-      ["gym5_town", 4532, 4761, 2332, 2561],
-      ["league", 3486, 3666, 2585, 2765],
-      ["rift_rim_stop", 3673, 3795, 3890, 4012],
-      ["rift_dig_camp", 3046, 3166, 3254, 3374],
-      ["patriarch_wedge", 4242, 4302, 3570, 3630],
-      ["cherry_elder_shrew", 3380, 3436, 3812, 3868]
+      [
+        "gym5_town",
+        4532,
+        4761,
+        2332,
+        2561
+      ],
+      [
+        "league",
+        3486,
+        3666,
+        2585,
+        2765
+      ],
+      [
+        "rift_rim_stop",
+        3673,
+        3795,
+        3890,
+        4012
+      ],
+      [
+        "rift_dig_camp",
+        3046,
+        3166,
+        3254,
+        3374
+      ],
+      [
+        "patriarch_wedge",
+        4242,
+        4302,
+        3570,
+        3630
+      ],
+      [
+        "cherry_elder_shrew",
+        3380,
+        3436,
+        3812,
+        3868
+      ]
     ],
     "footprints_note": "[id, min_x, max_x, min_z, max_z] of the town footprints this sculpt left untouched, as data/towns.json had them at the apply (5c82e98); rift_heightmap.py --plan sculpts with these, not today's towns, so it reproduces this heightmap after a town moves (the League and the rim post did).",
     "note": "The Rift's shape: the lip of the low-ground basin, a cut band inside it, and the upthrust rim outside. Columns outside the Rift's box are bit-identical."
+  },
+  "water_shaped_from": {
+    "path": "land_8k_16_rescaled_b145_pads_rift.png",
+    "sha256": "0d9b5f1e8a013f267d34001dc908dec298287679bf16b30a5b3253298075bb84",
+    "generator": "python tools/water_shape.py --apply",
+    "spec": "data/water_shape.json",
+    "spec_sha256": "9de28f0c15ba85962ffbc8fad2257fe1e0771279f4f5a468764f7550f54fbd20",
+    "columns_changed": 19027615,
+    "blocks_moved": 364619171,
+    "note": "Rivers, the Viltri Ravine stream, lake beds, coasts and the seabed (docs/world-building/WATER_SHAPE.md). Columns outside the declared features are bit-identical."
   }
 },
 
@@ -158,6 +205,7 @@
   "vertical": { "min_y": 10, "max_y": 310, "sea_level": 62 },
 
   "export": {
+  "margin_relief": {"path": "margin_relief.png", "sha256": "048143f9de40571ed112f0b0ec97eed597c53afc20ef5a6a9f7a8d3a527f66bb", "side": 10752, "generator": "python tools/water_shape.py --apply", "note": "owner question 1, option A: read by tools/worldpainter/export_world.js in place of the blank margin"},
     "tool": "WorldPainter 2.27.1 via tools/reexport.py and tools/worldpainter/export_world.js",
     "map_format": "org.pepsoft.anvil.1.20.5",
     "name": "cobblers-10240",
