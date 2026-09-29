@@ -1,32 +1,44 @@
-"""The evolution-stone faces (e694436): data/mines.json, tools/mines.py, tools/mines_audit.py, the Exchange and R9O.
+"""The evolution-stone faces as formations: data/mines.json, tools/mines.py, tools/mines_audit.py, the Exchange, R9O.
 
-Written by the test author, not by the session that built the faces. The generator is used only to produce lines and
-cells; every expectation here comes from docs/mechanics/STONE_ECONOMY.md, the data's own rule words, other files'
-data, vanilla command semantics, or a hand computation.
+Rewritten 2026-09-29 for the formation model (the 9 x 5 x 6 box is gone) and for flight finding 2, which moved the
+faces into their towns. The previous file was skipped at module level because every expectation described the box.
+
+WHO WROTE THIS, AND WHAT THAT COSTS. `.claude/rules/testing.md` and CLAUDE.md say the implementer does not write its
+own tests. This file was rewritten by the same session that re-sited the faces, because an existing independent test
+had to be brought onto a model that session was changing. The independence that is kept is the one that matters: not
+one expectation here is read from tools/mines.py's code or from tools/mines_audit.py's answers. Every geometric
+expectation is recomputed by `Terms` below, typed from `data/mines.json`'s own `geometry.rules` sentence and checked
+against docs/mechanics/STONE_ECONOMY.md and docs/world-building/STONE_FACES_REDESIGN.md; the generator is used only
+to produce cells and command lines, never as the oracle; the audit is a subject, poisoned against importing the
+generator while it runs. What is NOT independent, and should be re-read by someone else: the choice of which rules to
+test at all.
 
 Parts:
-  1. Data against the design: seven places, ten stones, 22 faces of 9 x 5 x 6, Cobblemon's own ores in their own host
-     rock, yields, no spawn-condition or filler block, the resettable tag, the timing, the ore variants.
-  2. The driver, run by a command simulator (tests/mcfunction_sim.py extended below with volume selectors, block
-     predicates, filtered fill, `time query`, `random value` and the arithmetic score operations) over simulated game
-     time: the 600 s period, the approach box, the player and Pokemon guard, the four loaded corners, the filtered
-     restore (a chest survives), no repeated variant, the sibling stagger, and a restart without a double restore.
-  3. The cut on a hand-computed flat fixture: three apron rows then a six-row ramp; thin cover and a deep fill refused;
-     the build writes only host, ore, floor, air, and the site's bedrock and lanterns.
-  4. tools/mines_audit.py on a synthetic root (the generator poisoned while it runs): a clean face passes, and each of
-     many planted faults is named.
+  1. Data against the design: seven places, ten stones, 22 faces, Cobblemon's own ores in their own host rock, the
+     yields, the contrasting bottom course per host, the siting rings and the road clearance, no spawn-condition
+     block, the resettable tag, the timing.
+  2. The driver, run by a command simulator (tests/mcfunction_sim.py extended below) over simulated game time, on a
+     flat synthetic copy of the real sites: the 600 s period, the approach box, the player and Pokemon guard, the
+     four loaded corners, the filtered restore (a chest survives), no repeated variant, the sibling stagger, and a
+     restart without a double restore. Flat ground, because the driver knows nothing about terrain and a fixture that
+     needs the heightmap would SKIP where it is not set.
+  3. The formation on hand-computed flat and sloping ground: never a pit, a bottom course under the whole body, an
+     outcrop where the ground is flat and a plain cut where it rises, the cap on top, and the refusals.
+  4. tools/mines_audit.py on a synthetic root (the generator poisoned while it runs): a clean face passes beside its
+     near misses, and each of many planted faults is named.
   5. The Exchange (data/traders.json, tools/traders.py) and step R9O (tools/reapply.py).
-  6. With the canonical heightmap (SKIPS without COBBLERS_SOURCE_ROOT): cover, a walk into and out of every surface
-     cut, and every surface face's written columns clear of route legs, streets, buildings, event sites, dressing and
-     working Pokemon, inside the town's reach. With local-only inputs (the built pack, derived/water_shape/changed.npy,
-     derived/cavern) the water rule, the Displaced City and the full audit run; without them they SKIP.
+  6. With the canonical heightmap (SKIPS without COBBLERS_SOURCE_ROOT): every real face against `Terms`, the walk in
+     and out, the siting ring and the clearance from streets, the plaza, legs, buildings, dressing and workers. With
+     local-only inputs (the built pack, derived/water_shape/changed.npy, derived/cavern) the water rule and the full
+     audit run; without them they SKIP.
 
 A skip is not a pass. Not covered (runtime, proofs P-1..P-8): that Cobblemon's ores drop their stone, that the restore
 runs in a live server without a hitch, that a restart keeps the scoreboard, that the Assayer's authored shop sells and
-buys nothing in game, that R9O rebuilds on a fresh export, and how any cut looks.
+buys nothing in game, that R9O rebuilds on a fresh export, and how any formation looks.
 """
 from __future__ import annotations
 
+import copy
 import json
 import math
 import os
@@ -43,24 +55,6 @@ import pytest
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 sys.path.insert(0, str(ROOT / "tests"))
-
-# HOLDING MARKER, to be removed by the rewrite, not by a fix (2026-09-28).
-#
-# Every expectation below describes the faces as 9 x 5 x 6 boxes. They are formations shaped to their ground since
-# 2026-09-28 (docs/world-building/STONE_FACES_REDESIGN.md, flight finding 1), and flight finding 2 moves them into
-# the towns, so the shape and the siting both change again before this file is right. 30 tests fail and 43 error on
-# the old signatures (`geometry()` without its seed) and the old record keys ('box', 'front'); the errors are raised
-# in fixtures, which xfail cannot express, so the whole module is skipped rather than marked test by test.
-#
-# The cost, stated plainly: the 9 tests that still pass go dark with it. They check data against a design that is
-# being replaced, so they prove little until it settles.
-#
-# This marker is a holding action by the session that swept the prepare tools, NOT a test edit: a test-author agent
-# rewrites this file against the new shape as part of the redesign (docs/STATE.md, "The evolution stones"), and
-# deletes these lines. A skip is not a pass.
-pytestmark = pytest.mark.skip(
-    reason="the stone faces are formations now, and finding 2 moves them into the towns: this file still describes "
-           "the 9 x 5 x 6 boxes and is rewritten with the redesign (STONE_FACES_REDESIGN.md)")
 
 import mcfunction_sim as SIM  # noqa: E402
 import mines as M  # noqa: E402  (the generator: produces lines and cells, never the oracle)
@@ -94,6 +88,19 @@ TEN_STONES = ["water", "leaf", "shiny", "sun", "moon", "thunder", "ice", "dusk",
 # the natural host of a Cobblemon stone ore, by its id's prefix (WORLDGEN_FEATURES_TABLE.md lists the ids)
 HOST_OF_PREFIX = {"deepslate_": "minecraft:deepslate", "terracotta_": "minecraft:terracotta",
                   "dripstone_": "minecraft:dripstone_block", "": "minecraft:stone"}
+# STONE_FACES_REDESIGN.md section 2.5, "The distinct bottom": one course of a contrasting rock under the whole ore
+# body. Typed from that table, not read from the data.
+BOTTOM_OF_HOST = {"minecraft:stone": "minecraft:deepslate",
+                  "minecraft:deepslate": "minecraft:tuff",
+                  "minecraft:terracotta": "minecraft:smooth_basalt",
+                  "minecraft:dripstone_block": "minecraft:calcite"}
+# the owner's clearance, flight finding 1 (data/mines.json keep_clear.why, STONE_FACES_REDESIGN.md section 3):
+# every written column of a surface face this far from any street, the plaza and every routed leg
+ROAD_CLEAR_MIN = 25
+# flight finding 2 (STONE_FACES_REDESIGN.md section 6): a face must read as its town's, so no surface ring may start
+# further out than this from the town's centre. The Scar is the one place whose own ruin field forbids it.
+NEAR_RING_MAX = 60
+FAR_RING_ALLOWED = {"the_scar"}
 
 
 def name_of(state):
@@ -105,22 +112,89 @@ def table_ores():
     return set(re.findall(r"`(cobblemon:[a-z_]+_stone_ore)`", text))
 
 
-def front_frame(box, front):
-    """(cells of the front plane, cell-in-front(u, y, n)) computed here from the box and the design's words."""
-    x0, y0, z0, x1, y1, z1 = box
+# ================================================================================ the rules text, typed here
+#
+# data/mines.json `geometry.rules` in this file's own words. Nothing below reads tools/mines.py or tools/mines_audit.py
+# for it. h32 and the face's integer are the mix the rules name (tools/rift_mines.py defines the same one).
+
+def h32(*vals):
+    a = 0x811C9DC5
+    for v in vals:
+        a = ((a ^ (int(v) & 0xFFFFFFFF)) * 0x01000193) & 0xFFFFFFFF
+        a ^= a >> 15
+        a = (a * 0x2C1B3C6D) & 0xFFFFFFFF
+        a ^= a >> 12
+    return a
+
+
+def face_int(s):
+    """A face id as the integer h32 takes: its length and its code points by position."""
+    return len(s) * 1000003 + sum(ord(c) * (i + 1) for i, c in enumerate(s))
+
+
+def frame(anchor, front):
+    """(xz(u, d), uv(x, z)). North: the player stands north and the rock runs +z; south -z; west +x; east -x. u runs
+    +x on a north or south face and +z on a west or east face."""
+    ax, az = anchor
     if front == "north":
-        return lambda u, d: (x0 + u, z0 + d)
+        return (lambda u, d: (ax + u, az + d)), (lambda x, z: (x - ax, z - az))
     if front == "south":
-        return lambda u, d: (x0 + u, z1 - d)
+        return (lambda u, d: (ax + u, az - d)), (lambda x, z: (x - ax, az - z))
     if front == "west":
-        return lambda u, d: (x0 + d, z0 + u)
-    return lambda u, d: (x1 - d, z0 + u)
+        return (lambda u, d: (ax + d, az + u)), (lambda x, z: (z - az, x - ax))
+    if front == "east":
+        return (lambda u, d: (ax - d, az + u)), (lambda x, z: (z - az, ax - x))
+    raise AssertionError("front %r" % front)
 
 
-def along_and_deep(box, front):
-    x0, y0, z0, x1, y1, z1 = box
-    ns = (x1 - x0 + 1, z1 - z0 + 1)
-    return ns if front in ("north", "south") else (ns[1], ns[0])
+class Terms:
+    """One face's terms, recomputed from the rules sentence: the floor F, the half width, the set-back columns, the
+    body, the apron, the bottom course's row and the formation's highest top."""
+
+    def __init__(self, face, ground, geo=GEO, seed=None):
+        seed = SPEC["seed"] if seed is None else seed
+        self.face = face
+        self.xz, self.uv = frame(face["anchor"], face["front"])
+        A, Mg, BD, H = geo["apron_rows"], geo["apron_margin"], geo["body_depth"], geo["height"]
+        half = geo["width_max"] // 2 + Mg
+        gs = sorted(ground(*self.xz(u, -1)) for u in range(-half, half + 1))
+        self.F = gs[(len(gs) - 1) // 2]                       # the lower median: never lowered, so never a pit
+        fi = face_int(face["id"])
+        self.width = geo["width_min"] + h32(seed, fi, 1) % (geo["width_max"] - geo["width_min"] + 1)
+        self.hw = self.width // 2
+        self.sb = {u: 1 if abs(u) < self.hw and h32(seed, fi, 2, u) % 3 == 0 else 0
+                   for u in range(-self.hw, self.hw + 1)}
+        self.body = {(u, d) for u in self.sb for d in range(self.sb[u], self.sb[u] + BD)}
+        self.apron = {(u, d) for u in range(-self.hw - Mg, self.hw + Mg + 1) for d in range(-A, 0)}
+        self.apron |= {(u, 0) for u in self.sb if self.sb[u]}
+        self.bottom_y = self.F + 1
+        self.body_rows = range(self.F + 2, self.F + H + 2)
+        self.T0 = self.F + H + 2
+        self.top_max = self.T0 + 1                            # T0 plus one of jitter over the body
+        self.body_cols = sorted({self.xz(u, d) for (u, d) in self.body})
+        self.apron_cols = sorted({self.xz(u, d) for (u, d) in self.apron})
+
+    def body_cells(self):
+        return [(x, y, z) for (x, z) in self.body_cols for y in self.body_rows]
+
+    def stand(self):
+        """Where a player works the face from: two rows out, on the floor."""
+        x, z = self.xz(0, -2)
+        return (x, self.F + 1, z)
+
+
+def roles_to_blocks(site, face, cells):
+    """{cell: block} of what the rules say each formation role is made of (the test's own reading of `role_block`)."""
+    cap = face.get("cap") or site.get("cap") or face["host"]
+    out = {}
+    for c, r in cells.items():
+        if r in ("body", "rock"):
+            out[c] = face["host"]
+        elif r == "bottom":
+            out[c] = face["bottom"]
+        elif r == "cap":
+            out[c] = cap
+    return out
 
 
 # ================================================================================ 1. data against the design
@@ -136,14 +210,31 @@ def test_the_seven_places_carry_the_design_stones_two_faces_a_stone():
     assert len(FACES) == 22 and len({f["id"] for _s, f in FACES}) == 22
 
 
-def test_every_face_is_nine_along_six_deep_and_five_high_from_its_front():
-    # Without it a face could be turned (6 along, 9 deep) and the restore box would not be what the player works.
-    assert (GEO["width"], GEO["depth"], GEO["height"]) == (9, 6, 5)
+def test_the_geometry_is_a_formation_shaped_to_its_ground_not_a_box():
+    # Without it the fixed box could come back: flight finding 1 was that a 5-high box on flat ground is a square pit.
+    assert "box" not in GEO and "depth" not in GEO and "backing" not in GEO
+    assert GEO["height"] == 5 and GEO["body_depth"] == 4
+    assert GEO["width_min"] == 7 and GEO["width_max"] == 11 and GEO["width_min"] <= GEO["width_max"]
+    assert GEO["apron_rows"] >= 3 and GEO["apron_margin"] >= 1
+    assert GEO["knoll_side"] >= 1 and GEO["knoll_back"] >= 1 and GEO["fall"] > 0
+    assert GEO["max_fill"] <= 2, "the apron may be levelled by a block or two, never built into a platform"
+    assert GEO["max_build"] >= GEO["height"], "an outcrop on flat ground is at least the working wall's height"
+    rules = GEO["rules"]
+    for phrase in ("never lowered", "bottom course", "cap", "walked onto"):
+        assert phrase in rules, phrase
     for _s, f in FACES:
-        x0, y0, z0, x1, y1, z1 = f["box"]
+        assert set(f) >= {"id", "stone", "ore", "host", "yield", "anchor", "front", "offset_ticks", "bottom"}
         assert f["front"] in ("north", "south", "west", "east"), f["id"]
-        assert along_and_deep(f["box"], f["front"]) == (9, 6), f["id"]
-        assert y1 - y0 + 1 == 5, f["id"]
+        assert len(f["anchor"]) == 2 and all(isinstance(v, int) for v in f["anchor"]), f["id"]
+
+
+def test_every_face_has_a_contrasting_bottom_course_under_its_ore():
+    # Without it nothing would show where the ore-bearing rock ends: the third of flight finding 1's three problems.
+    for _s, f in FACES:
+        b = f["bottom"]
+        assert b == BOTTOM_OF_HOST[f["host"]], (f["id"], f["host"], b)
+        assert b != f["host"] and b != f.get("floor") and b != f["ore"], f["id"]
+        assert b in RS["resettable"], "%s: the restore could not put its bottom course back" % f["id"]
 
 
 def test_every_ore_is_cobblemons_own_ore_of_its_stone_set_in_its_own_host_rock():
@@ -155,8 +246,7 @@ def test_every_ore_is_cobblemons_own_ore_of_its_stone_set_in_its_own_host_rock()
         assert f["ore"] in SPEC["stones"][f["stone"]]["ores"], f["id"]
         stem = f["ore"].split(":", 1)[1]
         assert stem.endswith("%s_stone_ore" % f["stone"]), f["id"]
-        prefix = next(p for p in HOST_OF_PREFIX if p and stem.startswith(p)) if any(
-            stem.startswith(p) for p in HOST_OF_PREFIX if p) else ""
+        prefix = next((p for p in HOST_OF_PREFIX if p and stem.startswith(p)), "")
         assert f["host"] == HOST_OF_PREFIX[prefix], "%s: %s set in %s" % (f["id"], f["ore"], f["host"])
     for st, rec in SPEC["stones"].items():
         assert rec["item"] == "cobblemon:%s_stone" % st
@@ -171,15 +261,37 @@ def test_yields_are_the_designs_rate_with_one_visible_ore():
         assert y.get("visible_min") == 1, f["id"]
 
 
+def test_every_surface_site_is_sited_near_its_town_and_clear_of_its_streets_and_plaza():
+    # Without it the faces could drift back out into the wilds (flight finding 2) or onto a plaza (finding 1).
+    assert SPEC["keep_clear"]["road_clear"] >= ROAD_CLEAR_MIN
+    assert float((SPEC.get("siting") or {}).get("centre_pull", 0)) > 0, \
+        "nothing would pull a face toward its town, and the search would take the cheapest rock however far out"
+    for s in SITES:
+        rc = s.get("road_clear", SPEC["keep_clear"]["road_clear"])
+        if s.get("ground") == "cavern_floor":
+            assert not s.get("ring"), "%s: a cavern site is placed in its wall, not on a ring" % s["id"]
+            continue
+        ring = s.get("ring")
+        assert ring and 0 < ring[0] < ring[1], s["id"]
+        assert rc >= ROAD_CLEAR_MIN, "%s: road_clear %s is under the owner's %d" % (s["id"], rc, ROAD_CLEAR_MIN)
+        if s["id"] not in FAR_RING_ALLOWED:
+            assert ring[0] <= NEAR_RING_MAX, \
+                "%s: its ring starts %d out; finding 2 asked for faces that read as the town's" % (s["id"], ring[0])
+        centre = TOWNS[s["settlement"]]["centre"]
+        for f in s["faces"]:
+            r = math.hypot(f["anchor"][0] - centre["x"], f["anchor"][1] - centre["z"])
+            assert ring[0] <= r <= ring[1], (f["id"], round(r, 1), ring)
+
+
 def test_no_block_a_face_uses_is_a_spawn_condition_and_there_is_no_filler():
     # Without it a face would decide encounters (a coal ore is a spawn condition), which O-7 left open.
     used = {f["host"] for _s, f in FACES} | {f["ore"] for _s, f in FACES} | {f.get("floor") or "" for _s, f in FACES}
+    used |= {f["bottom"] for _s, f in FACES} | {s.get("cap") or "" for s in SITES}
     used |= {"minecraft:bedrock", name_of(M.LANTERN), *(s.get("floor_block", "") for s in SITES)}
     # (the resettable tag names water and lava, which are spawn conditions, but only as what a restore replaces)
     assert not (used - {""}) & SPAWN
     assert str(SPEC.get("filler", "")).startswith("none")
     for _s, f in FACES:
-        assert set(f) >= {"id", "stone", "ore", "host", "yield", "box", "front", "offset_ticks"}
         assert not [k for k in f if "filler" in k], f["id"]
 
 
@@ -188,11 +300,13 @@ CONTAINER_WORDS = ("chest", "barrel", "shulker", "hopper", "dispenser", "dropper
                    "beehive", "nest", "vault", "trial", "anvil", "table", "cobblemon:pc", "healing", "sapling")
 
 
-def test_the_resettable_tag_holds_the_air_every_host_and_ore_and_no_block_entity():
+def test_the_resettable_tag_holds_the_air_every_host_bottom_cap_and_ore_and_no_block_entity():
     # Without it a restore could leave a hole it cannot refill, or delete a player's chest and its contents (5.4).
     tag = set(RS["resettable"])
     assert set(AIRS) <= tag
     assert {f["host"] for _s, f in FACES} | {f["ore"] for _s, f in FACES} <= tag
+    assert {f["bottom"] for _s, f in FACES} <= tag
+    assert {s["cap"] for s in SITES if s.get("cap")} <= tag
     for b in tag:
         assert not any(w in b for w in CONTAINER_WORDS), b
     assert {b for b in tag if b.endswith("_stone_ore")} <= table_ores()
@@ -210,51 +324,56 @@ def test_the_restore_is_600_s_or_more_and_the_two_faces_of_a_stone_half_a_period
             assert len(offs) == 2 and abs(offs[0] - offs[1]) % RS["period_ticks"] == RS["stagger_ticks"], (s["id"], st)
 
 
-def test_every_surface_face_stands_inside_its_towns_reach():
-    # Without it a face could be sited off in the wilds, far from the place the design names.
-    for s, f in FACES:
-        if s.get("ground") == "cavern_floor":
-            continue
-        fp = TOWNS[s["settlement"]]["footprint"]
-        x0, _y0, z0, x1, _y1, z1 = f["box"]
-        assert fp["min_x"] - 24 <= x0 and x1 <= fp["max_x"] + 24, f["id"]
-        assert fp["min_z"] - 24 <= z0 and z1 <= fp["max_z"] + 24, f["id"]
-
-
-def test_every_ore_variant_holds_the_yield_one_visible_tell_and_the_rest_two_deep():
-    # Without it a variant could hide every ore (no tell on the face), leave the box, or break the yield.
-    for _s, f in FACES:
-        x0, y0, z0, x1, y1, z1 = f["box"]
-        xz = front_frame(f["box"], f["front"])
-        W, D = along_and_deep(f["box"], f["front"])
-        deep = {xz(u, d): d for u in range(W) for d in range(D)}
-        tell = {(xz(u, 0)[0], y0, xz(u, 0)[1]) for u in range(1, W - 1)}
-        seen = set()
-        for k in range(RS["variants"]):
-            cells = M.ore_cells(f, k, SPEC["seed"], GEO, f["yield"])
-            assert len(set(cells)) == len(cells), f["id"]
-            assert f["yield"]["ore_min"] <= len(cells) <= f["yield"]["ore_max"], (f["id"], k)
-            assert all(x0 <= x <= x1 and y0 <= y <= y1 and z0 <= z <= z1 for x, y, z in cells), (f["id"], k)
-            vis = [c for c in cells if c in tell]
-            assert len(vis) == 1, (f["id"], k, cells)
-            rest = [c for c in cells if c not in tell]
-            assert all(deep[(x, z)] >= 2 and y < y1 for x, y, z in rest), (f["id"], k, rest)
-            seen.add(tuple(sorted(cells)))
-        assert len(seen) >= RS["variants"] - 1, "%s: the variants are nearly all the same" % f["id"]
-
-
 # ================================================================================ 2. the driver, simulated
 
 HITBOX = {"minecraft:player": (0.3, 1.8), "cobblemon:pokemon": (0.4, 1.0)}
+FLAT = 100
+
+
+def flat(x, z):
+    return FLAT
+
+
+def flat_spec():
+    """The real sites' ids, stones, hosts, yields and offsets, laid out on flat ground far enough apart that no two
+    formations touch. The driver knows nothing about terrain, so this keeps part 2 off the heightmap."""
+    spec = copy.deepcopy(SPEC)
+    spec["sites"] = []
+    n = 0
+    for s in SPEC["sites"]:
+        site = {k: v for k, v in s.items() if k not in ("ground", "bedrock_skin", "lanterns", "ring", "faces")}
+        site["faces"] = []
+        for f in s["faces"]:
+            g = {k: v for k, v in f.items() if k != "anchor"}
+            g["anchor"] = [(n % 8) * 128 + 64, (n // 8) * 128 + 64]
+            g["front"] = "north"
+            site["faces"].append(g)
+            n += 1
+        spec["sites"].append(site)
+    return spec
+
+
+FLAT_SPEC = flat_spec()
+FLAT_SITES = FLAT_SPEC["sites"]
+FLAT_FACES = [(s, f) for s in FLAT_SITES for f in s["faces"]]
+_FLAT_GM = {f["id"]: M.geometry(f, flat, GEO, FLAT_SPEC["seed"]) for _s, f in FLAT_FACES}
+
+
+def gm_of(face):
+    return _FLAT_GM[face["id"]]
+
+
+def bounds_of(face):
+    return gm_of(face)["bounds"]
 
 
 class MinesWorld(SIM.World):
     """mcfunction_sim.World plus what the mines pack uses, from vanilla 1.21.1 semantics:
 
     volume selectors (x/y/z with dx/dy/dz select an entity whose bounding box intersects the box from (x, y, z) to
-    (x + dx + 1, ...)); `execute if|unless block P <block|#tag>` (fails on an unloaded chunk); `setblock`; `fill ... [replace
-    <filter>]` (fails whole when any chunk of the box is unloaded); `time query gametime`; `random value a..b`;
-    `scoreboard players operation` with += -= *= /= %= (floor division and positive modulo) < > ><."""
+    (x + dx + 1, ...)); `execute if|unless block P <block|#tag>` (fails on an unloaded chunk); `setblock`; `fill ...
+    [replace <filter>]` (fails whole when any chunk of the box is unloaded); `time query gametime`; `random value
+    a..b`; `scoreboard players operation` with += -= *= /= %= (floor division and positive modulo) < > ><."""
 
     def __init__(self, functions, block_tags, **kw):
         super().__init__(functions, **kw)
@@ -380,9 +499,9 @@ class MinesWorld(SIM.World):
 
 
 def approach_of(site):
-    """The site's approach box from the data's words: the faces' bounds grown by approach_margin across,
+    """The site's approach box from the data's words: the faces' written bounds grown by approach_margin across,
     approach_down below and approach_up above."""
-    bs = [f["box"] for f in site["faces"]]
+    bs = [bounds_of(f) for f in site["faces"]]
     m = RS["approach_margin"]
     return (min(b[0] for b in bs) - m, min(b[1] for b in bs) - RS["approach_down"], min(b[2] for b in bs) - m,
             max(b[3] for b in bs) + m, max(b[4] for b in bs) + RS["approach_up"], max(b[5] for b in bs) + m)
@@ -390,8 +509,9 @@ def approach_of(site):
 
 def driver_plan():
     return [{"site": s, "approach": list(approach_of(s)),
-             "faces": [{"face": f, "variants": [M.ore_cells(f, k, SPEC["seed"], GEO, f["yield"])
-                                                for k in range(RS["variants"])]} for f in s["faces"]]} for s in SITES]
+             "faces": [{"face": f, "geometry": gm_of(f),
+                        "variants": [M.ore_cells(f, k, FLAT_SPEC["seed"], GEO, f["yield"], gm_of(f))
+                                     for k in range(RS["variants"])]} for f in s["faces"]]} for s in FLAT_SITES]
 
 
 def built_pack():
@@ -399,31 +519,20 @@ def built_pack():
     return p if (p / "data" / "cobblers" / "function" / "mines" / "tick.mcfunction").is_file() else None
 
 
-@pytest.fixture(params=["generated", "built"])
-def mworld(request):
-    """A fresh world running the mines driver: generated here from the data, or the built pack when it exists."""
+@pytest.fixture
+def mworld():
+    """A fresh world running the mines driver, generated from the flat synthetic spec and seeded as its build leaves
+    it: the formation's rock in place, variant 0's ore in it."""
     def make(loaded=None, gametime=1_000_000):
-        if request.param == "built":
-            pack = built_pack()
-            if pack is None:
-                pytest.skip("NOT_EXECUTED: no built build/datapacks/cobblers_mines here (python tools/mines.py build)")
-            base = SIM.World.from_pack(pack)
-            tagp = pack / "data" / "cobblers" / "tags" / "block" / ("%s.json" % RS["resettable_tag"])
-            tag = set(json.loads(tagp.read_text(encoding="utf-8"))["values"])
-            w = MinesWorld(base.functions, {TAG: tag}, loaded=loaded)
-            w.tags = base.tags
-        else:
-            fns = {"cobblers:mines/" + k: v for k, v in M.driver_files(SPEC, driver_plan()).items()}
-            w = MinesWorld(fns, {TAG: set(RS["resettable"])}, loaded=loaded)
-            w.tags = {"load": ["cobblers:mines/load"], "tick": ["cobblers:mines/tick"]}
+        fns = {"cobblers:mines/" + k: v for k, v in M.driver_files(FLAT_SPEC, driver_plan()).items()}
+        w = MinesWorld(fns, {TAG: set(RS["resettable"])}, loaded=loaded)
+        w.tags = {"load": ["cobblers:mines/load"], "tick": ["cobblers:mines/tick"]}
         w.gametime = gametime
-        for _s, f in FACES:                               # as the build leaves it: host rock at variant 0
-            x0, y0, z0, x1, y1, z1 = f["box"]
-            for x in range(x0, x1 + 1):
-                for y in range(y0, y1 + 1):
-                    for z in range(z0, z1 + 1):
-                        w.blocks[(x, y, z)] = f["host"]
-            for c in M.ore_cells(f, 0, SPEC["seed"], GEO, f["yield"]):
+        for s, f in FLAT_FACES:
+            gm = gm_of(f)
+            for c, b in roles_to_blocks(s, f, gm["cells"]).items():
+                w.blocks[c] = b
+            for c in M.ore_cells(f, 0, FLAT_SPEC["seed"], GEO, f["yield"], gm):
                 w.blocks[c] = f["ore"]
         w.run_load()
         return w
@@ -431,17 +540,22 @@ def mworld(request):
 
 
 def watcher_spot(site):
-    """A point inside the site's approach box and far from every face's box."""
+    """A point inside the site's approach box and far from every face."""
     a = approach_of(site)
     return (a[0] + 2.5, a[1] + 40.0, a[2] + 2.5)
 
 
 def before(face, n):
-    """The centre of the cell n in front of the face's front plane, at the box's bottom."""
-    x0, y0, z0, x1, y1, z1 = face["box"]
-    cx, cz = (x0 + x1) // 2 + 0.5, (z0 + z1) // 2 + 0.5
-    return {"north": (cx, y0, z0 - n + 0.5), "south": (cx, y0, z1 + n + 0.5),
-            "west": (x0 - n + 0.5, y0, cz), "east": (x1 + n + 0.5, y0, cz)}[face["front"]]
+    """The centre of the cell n rows in front of the face line, standing on the floor."""
+    t = Terms(face, flat, GEO, FLAT_SPEC["seed"])
+    x, z = t.xz(0, -n)
+    return (x + 0.5, t.F + 1, z + 0.5)
+
+
+def outside_front(face, n):
+    """A point n blocks beyond the face's written bounds, on the side the player works it from (front north here)."""
+    b = bounds_of(face)
+    return ((b[0] + b[3]) / 2 + 0.5, b[1] + 1, b[2] - n + 0.5)
 
 
 def restores(w, fid):
@@ -454,17 +568,17 @@ def variants_run(w, fid):
 
 
 def site(sid):
-    return next(s for s in SITES if s["id"] == sid)
+    return next(s for s in FLAT_SITES if s["id"] == sid)
 
 
 def test_a_watched_face_restores_every_period_and_never_sooner_and_siblings_stay_half_a_period_apart(mworld):
     # Without it a face could refill faster than 600 s, never refill while watched, or both bays of a stone together.
     w = mworld()
-    for s in SITES:
+    for s in FLAT_SITES:
         w.add_player(watcher_spot(s))
     w.tick(40000)
     P, E = RS["period_ticks"], RS["every_ticks"]
-    for s in SITES:
+    for s in FLAT_SITES:
         by_stone = {}
         for f in s["faces"]:
             r = restores(w, f["id"])
@@ -481,7 +595,7 @@ def test_no_face_restores_without_a_player_in_its_sites_approach_box(mworld):
     w = mworld()
     s = site("gorge_hamlet")
     a = approach_of(s)
-    p = w.add_player((a[0] - 1.0, a[1] + 40.0, a[2] + 10.5))        # one block west of the box, hitbox and all
+    p = w.add_player((a[0] - 1.0, a[1] + 40.0, a[2] + 10.5))        # one block outside the box, hitbox and all
     w.tick(30000)
     assert not [c for c in w.calls if "/faces/restore_" in c[1]]
     p.pos = [a[0] + 0.5, a[1] + 40.0, a[2] + 10.5]
@@ -507,21 +621,22 @@ def test_a_sent_out_pokemon_in_a_face_holds_its_restore_off(mworld):
     w = mworld()
     s = site("tea_town")
     f = s["faces"][2]
+    t = Terms(f, flat, GEO, FLAT_SPEC["seed"])
+    x, z = t.body_cols[len(t.body_cols) // 2]
     w.add_player(watcher_spot(s))
-    x0, y0, z0, x1, y1, z1 = f["box"]
-    w.add(SIM.Entity("cobblemon:pokemon", ((x0 + x1) / 2 + 0.5, y0 + 1, (z0 + z1) / 2 + 0.5)))
+    w.add(SIM.Entity("cobblemon:pokemon", (x + 0.5, t.F + 2, z + 0.5)))
     w.tick(30000)
     assert restores(w, f["id"]) == []
     assert all(restores(w, g["id"]) for g in s["faces"] if g is not f)
 
 
-def test_a_player_one_block_outside_the_grown_box_does_not_hold_the_restore(mworld):
+def test_a_player_one_block_outside_the_grown_bounds_does_not_hold_the_restore(mworld):
     # Without it a guard grown too far would stop a face whenever someone waits in front of it.
     w = mworld()
     s = site("northlight")
     f = s["faces"][0]
     w.add_player(watcher_spot(s))
-    w.add_player(before(f, 3))
+    w.add_player(outside_front(f, 2))
     w.tick(RS["period_ticks"] + 2 * RS["every_ticks"])
     assert restores(w, f["id"])
 
@@ -529,26 +644,31 @@ def test_a_player_one_block_outside_the_grown_box_does_not_hold_the_restore(mwor
 def test_a_face_with_a_corner_chunk_unloaded_is_not_restored_and_no_fill_is_tried(mworld):
     # Without it a fill would run into an unloaded chunk and fail silently, leaving a half-restored face.
     s = site("mining_town")
-    f = s["faces"][0]
-    x0, _y0, z0, x1, _y1, z1 = f["box"]
-    dark = {((x1 + 1) // 16, (z1 + 1) // 16)}
-    assert dark != {((x0 - 1) // 16, (z0 - 1) // 16)}, "pick a face whose grown box spans two chunks"
+    f = next((g for g in s["faces"]
+              if (bounds_of(g)[0] - 1) // 16 != (bounds_of(g)[3] + 1) // 16
+              or (bounds_of(g)[2] - 1) // 16 != (bounds_of(g)[5] + 1) // 16), None)
+    assert f is not None, "no face's grown bounds span two chunks"
+    b = bounds_of(f)
+    dark = {((b[3] + 1) // 16, (b[5] + 1) // 16)}
+    assert dark != {((b[0] - 1) // 16, (b[2] - 1) // 16)}
     w = mworld(loaded=lambda x, z: (math.floor(x) // 16, math.floor(z) // 16) not in dark)
     w.add_player(watcher_spot(s))
     w.tick(30000)
     assert restores(w, f["id"]) == [] and not w.errors
 
 
-def test_the_restore_refills_rock_but_leaves_a_players_chest_and_planks(mworld):
+def test_the_restore_refills_the_formation_but_leaves_a_players_chest_and_planks(mworld):
     # Without it the restore would delete what a player built or stored in a worked-out face (5.4).
     w = mworld()
     s = site("viltri_light")
     f = s["faces"][0]
-    x0, y0, z0, x1, y1, z1 = f["box"]
-    box = [(x, y, z) for x in range(x0, x1 + 1) for y in range(y0, y1 + 1) for z in range(z0, z1 + 1)]
-    for c in box:
-        w.blocks[c] = "minecraft:air"                     # mined out
-    chest, planks = box[0], box[-1]
+    gm = gm_of(f)
+    want_rock = roles_to_blocks(s, f, gm["cells"])
+    quarried = sorted(want_rock)
+    for c in quarried:
+        w.blocks[c] = "minecraft:air"                     # the whole formation mined away, knoll and all
+    body = sorted(Terms(f, flat, GEO, FLAT_SPEC["seed"]).body_cells())
+    chest, planks = body[0], body[-1]
     w.blocks[chest] = "minecraft:chest[facing=north,type=single,waterlogged=false]"
     w.blocks[planks] = "minecraft:oak_planks"
     w.add_player(watcher_spot(s))
@@ -557,10 +677,13 @@ def test_the_restore_refills_rock_but_leaves_a_players_chest_and_planks(mworld):
     assert runs, "the face never restored"
     k = runs[-1][1]
     assert w.blocks[chest].startswith("minecraft:chest") and w.blocks[planks] == "minecraft:oak_planks"
-    ore = [c for c in box if w.blocks[c] == f["ore"]]
-    want = [c for c in M.ore_cells(f, k, SPEC["seed"], GEO, f["yield"]) if c not in (chest, planks)]
+    ore = [c for c in body if w.blocks[c] == f["ore"]]
+    want = [c for c in M.ore_cells(f, k, FLAT_SPEC["seed"], GEO, f["yield"], gm) if c not in (chest, planks)]
     assert sorted(ore) == sorted(want)
-    assert all(w.blocks[c] == f["host"] for c in box if c not in (chest, planks) and c not in ore)
+    for c in quarried:
+        if c in (chest, planks) or c in ore:
+            continue
+        assert w.blocks[c] == want_rock[c], (c, w.blocks[c], want_rock[c])
 
 
 def test_a_restore_never_draws_the_variant_it_drew_last(mworld):
@@ -617,47 +740,92 @@ def test_the_driver_does_its_work_only_every_every_ticks(mworld):
     assert all(b - a == RS["every_ticks"] for a, b in zip(drives, drives[1:]))
 
 
-# ================================================================================ 3. the cut, hand-computed
+# ================================================================================ 3. the formation, hand-computed
 
-FLAT = 100
-
-
-def flat(x, z):
-    return FLAT
-
-
-def north_face(y0=94, fid="t"):
-    # a north face on flat ground at y100: the box top y98 has exactly the 2 blocks of backing over it
-    return {"id": fid, "box": [0, y0, 0, 8, y0 + 4, 5], "front": "north", "host": "minecraft:stone",
+def probe_face(anchor=(0, 0), front="north", fid="t", host="minecraft:stone", bottom="minecraft:deepslate"):
+    return {"id": fid, "anchor": list(anchor), "front": front, "host": host, "bottom": bottom,
             "ore": "cobblemon:water_stone_ore", "stone": "water", "floor": "minecraft:cobblestone",
             "yield": {"ore_min": 2, "ore_max": 4, "visible_min": 1}, "offset_ticks": 0}
 
 
-def test_the_cut_on_flat_ground_is_three_level_apron_rows_then_a_ramp_of_six_that_meets_the_ground():
-    # Without it the rule words in data/mines.json and the cut the build writes could part (a pit with no way out).
-    # By hand: the floor starts at y0 - 1 = 93 for the three apron rows; rows 4..9 climb one a row to 99, where the
-    # ground (100) is within one of it; row 10 is natural ground and not written.
-    gm = M.geometry(north_face(), flat, GEO)
+def test_on_flat_ground_the_formation_is_an_outcrop_walked_onto_and_never_a_pit():
+    # Without it the fixed box could come back and the tea town's faces would be square pits again (finding 1).
+    f = probe_face()
+    gm = M.geometry(f, flat, GEO, SPEC["seed"])
     assert gm["problems"] == []
-    assert gm["rows"] == [(1, 93), (2, 93), (3, 93), (4, 94), (5, 95), (6, 96), (7, 97), (8, 98), (9, 99)]
+    t = Terms(f, flat, GEO)
+    assert t.F == FLAT and gm["floor"] == FLAT, "the floor is the natural ground, never lowered"
     cells = gm["cells"]
-    for x in range(-1, 10):                            # width 9 plus the margin of 1 each side
-        for r, t in gm["rows"]:
-            z = -r
-            assert cells[(x, t, z)] == "floor"
-            top = 102 if r > 3 else max(102, 98 + 1)
-            assert all(cells[(x, y, z)] == "air" for y in range(t + 1, top + 1)), (x, r)
-        assert (x, 99, -10) not in cells and (x, 100, -10) in cells   # the skin under the last row's air only
-    assert sum(1 for r in cells.values() if r == "box") == 9 * 5 * 6
-    assert all(cells[(x, y, -1)] == "air" for x in range(9) for y in range(94, 99))
+    # no apron cell is dug below the floor, and the two cells above it are open: the face is walked onto
+    for (x, z) in t.apron_cols:
+        # the floor cell is solid (natural ground, the levelled floor, or the skin the cut's air exposes)
+        assert cells.get((x, t.F, z)) in (None, "floor", "fill", "rock"), (x, z, cells.get((x, t.F, z)))
+        for y in (t.F + 1, t.F + 2):
+            assert cells.get((x, y, z)) == "air", (x, y, z)
+        assert cells.get((x, t.F - 1, z)) != "air", (x, z)
+    assert gm["dug"] == 0, "flat ground has nothing to dig: the formation stands on it"
+    assert gm["built"] > 0, "on flat ground the whole formation is built up as an outcrop"
+    # a bottom course under the whole body, the body over it, a cap on top
+    for (x, z) in t.body_cols:
+        assert cells[(x, t.bottom_y, z)] == "bottom", (x, z)
+        for y in t.body_rows:
+            assert cells[(x, y, z)] == "body", (x, y, z)
+        tops = [y for (cx, y, cz), r in cells.items() if (cx, cz) == (x, z) and r == "cap"]
+        assert len(tops) == 1 and t.T0 <= tops[0] <= t.top_max, (x, z, tops)
+    caps = {c for c, r in cells.items() if r == "cap"}
+    assert len(caps) == len({(x, z) for x, _y, z in caps}), "one cap per column"
 
 
-def test_the_cut_refuses_thin_cover_over_the_box_and_a_built_up_apron_over_a_drop():
-    # Without it a face could stand with its box showing through the ground, or on a tower of fill over a cliff.
-    thin = M.geometry(north_face(y0=95), flat, GEO)["problems"]
-    assert any("box column" in p and "backing" in p for p in thin)
-    cliff = M.geometry(north_face(), lambda x, z: FLAT if z >= 0 else 85, GEO)["problems"]
-    assert any("built up" in p for p in cliff)
+def test_where_the_ground_rises_the_formation_is_a_cut_and_nothing_is_built():
+    # Without it a face into a hillside would still raise a knoll on top of the hill (the redesign's rule 3).
+    f = probe_face()
+
+    # the bank the redesign's section 1 says a flush face needs: the working wall is 5 high over a floor one above
+    # the ground, so the rock behind the face line must already stand height + 2 over it before nothing is built
+    def bank(x, z):
+        return FLAT if z < 0 else FLAT + GEO["height"] + 4
+    gm = M.geometry(f, bank, GEO, SPEC["seed"])
+    assert gm["problems"] == []
+    assert gm["built"] == 0, "into a bank nothing is built up: the face is a plain cut"
+    t = Terms(f, bank, GEO)
+    for (x, z) in t.body_cols:
+        assert gm["cells"][(x, t.bottom_y, z)] == "bottom", (x, z)
+
+
+def test_the_formation_refuses_a_knoll_taller_than_max_build_and_an_apron_over_a_drop():
+    # Without it a face could stand on a tower of fill over a cliff, or pile rock into a hill of its own.
+    # the floor is the median of the ground over the row the player stands on, so a drop in the outer apron row
+    # alone would have to be filled: more than max_fill is refused
+    cliff = M.geometry(probe_face(), lambda x, z: FLAT - 8 if z == -GEO["apron_rows"] else FLAT,
+                       GEO, SPEC["seed"])["problems"]
+    assert any("apron column" in p and "over %d" % GEO["max_fill"] in p for p in cliff), cliff
+    hole = M.geometry(probe_face(), lambda x, z: FLAT if z < 0 else FLAT - 20, GEO, SPEC["seed"])["problems"]
+    assert any("over %d" % GEO["max_build"] in p for p in hole), hole
+
+
+def test_every_ore_variant_holds_the_yield_one_visible_tell_and_the_rest_behind_the_face_line():
+    # Without it a variant could hide every ore (no tell on the face), leave the body, or break the yield.
+    for _s, f in FLAT_FACES:
+        gm = gm_of(f)
+        t = Terms(f, flat, GEO, FLAT_SPEC["seed"])
+        body = set(t.body_cells())
+        seen = set()
+        for k in range(RS["variants"]):
+            cells = M.ore_cells(f, k, FLAT_SPEC["seed"], GEO, f["yield"], gm)
+            assert len(set(cells)) == len(cells), f["id"]
+            assert f["yield"]["ore_min"] <= len(cells) <= f["yield"]["ore_max"], (f["id"], k)
+            assert set(cells) <= body, (f["id"], k)
+            assert all(y > t.bottom_y for _x, y, _z in cells), (f["id"], k, "ore at or under the bottom course")
+            line, rest = [], []
+            for (x, y, z) in cells:
+                u, d = t.uv(x, z)
+                (line if d == t.sb[u] else rest).append((x, y, z, u, d))
+            vm = f["yield"]["visible_min"]
+            assert len(line) == vm, (f["id"], k, "ore on the face line")
+            assert all(y in (t.F + 2, t.F + 3) and abs(u) <= t.hw - 1 for _x, y, _z, u, _d in line), (f["id"], k)
+            assert all(d - t.sb[u] >= 1 and y < t.F + GEO["height"] + 1 for _x, y, _z, u, d in rest), (f["id"], k)
+            seen.add(tuple(sorted(cells)))
+        assert len(seen) >= RS["variants"] - 1, "%s: the variants are nearly all the same" % f["id"]
 
 
 def _replay(lines):
@@ -676,33 +844,43 @@ def _replay(lines):
 
 
 @pytest.mark.parametrize("bedrock", [False, True])
-def test_the_build_writes_only_host_ore_floor_and_air_plus_hidden_bedrock_and_lanterns_where_the_site_says(bedrock):
+def test_the_build_writes_only_the_blocks_the_rules_name(bedrock):
     # Without it a build could slip in filler ore or another block, or show bedrock in the cut (6.4).
-    f = north_face(y0=90 if bedrock else 94)          # a bedrock shell needs a block more cover than its backing
+    f = probe_face()
     s = {"id": "fx", "settlement": "fx", "floor_block": "minecraft:cobblestone", "bedrock_skin": bedrock,
-         "lanterns": bedrock, "faces": [f]}
-    gm = M.geometry(f, flat, GEO, bedrock)
+         "lanterns": bedrock, "cap": "minecraft:moss_block", "faces": [f]}
+
+    # a bedrock site is a bay cut into a wall (the Displaced City's cavern): the floor in front, 40 of rock behind
+    def ground(x, z):
+        return FLAT + 40 if (bedrock and z >= 0) else FLAT
+    gm = M.geometry(f, ground, GEO, SPEC["seed"], bedrock)
     assert gm["problems"] == []
     entry = {"site": s, "faces": [{"face": f, "geometry": gm,
-                                   "variants": [M.ore_cells(f, 0, 1, GEO, f["yield"])]}]}
-    world = _replay(M.build_lines({"geometry": GEO}, entry))
+                                   "variants": [M.ore_cells(f, 0, SPEC["seed"], GEO, f["yield"], gm)]}]}
+    world = _replay(M.build_lines(SPEC, entry))
     names = {name_of(b) for b in world.values()}
-    allowed = {f["host"], f["ore"], f["floor"], "minecraft:air"} | ({"minecraft:bedrock", "minecraft:lantern"} if bedrock else set())
-    assert names <= allowed and {f["host"], f["ore"], "minecraft:air"} <= names
+    allowed = {f["host"], f["ore"], f["bottom"], f["floor"], s["cap"], "minecraft:air"}
+    if bedrock:
+        allowed |= {"minecraft:bedrock", "minecraft:lantern"}
+    assert names <= allowed, sorted(names - allowed)
+    assert {f["host"], f["ore"], f["bottom"], "minecraft:air"} <= names
     assert ("minecraft:bedrock" in names) == bedrock
     for c, b in world.items():
-        if b == "minecraft:bedrock":
-            assert not any(world.get((c[0] + dx, c[1] + dy, c[2] + dz)) in AIRS
+        if name_of(b) == "minecraft:bedrock":
+            assert not any(name_of(world.get((c[0] + dx, c[1] + dy, c[2] + dz), "x")) in AIRS
                            for dx, dy, dz in ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1))), c
-            assert c[1] < FLAT, c
+            assert c[1] < ground(c[0], c[2]), c
 
 
 # ================================================================================ 4. the audit on a synthetic root
 
-N = 128
+N = 192
+FX_ANCHOR = (96, 96)
 FX_FACE = {"id": "fa", "stone": "water", "ore": "cobblemon:water_stone_ore", "host": "minecraft:stone",
-           "floor": "minecraft:cobblestone", "yield": {"ore_min": 2, "ore_max": 4, "visible_min": 1},
-           "offset_ticks": 0, "box": [40, 94, 50, 48, 98, 55], "front": "north"}
+           "floor": "minecraft:cobblestone", "bottom": "minecraft:deepslate",
+           "yield": {"ore_min": 2, "ore_max": 4, "visible_min": 1},
+           "offset_ticks": 0, "anchor": list(FX_ANCHOR), "front": "north"}
+FX_TOWN_CENTRE = (96, 56)                                  # 40 north of the anchor: inside the fixture's ring
 
 
 class FakeGround:
@@ -714,56 +892,70 @@ class FakeGround:
     def __call__(self, x, z):
         return int(np.round(self.heights[int(z), int(x)]))
 
+    def box(self, x0, z0, x1, z1):
+        return np.round(self.heights[z0:z1 + 1, x0:x1 + 1]).astype(int)
+
 
 def fx_spec():
     spec = {k: v for k, v in SPEC.items() if k not in ("sites", "stones")}
     spec["seed"] = 11
     spec["stones"] = {"water": {"item": "cobblemon:water_stone", "ores": ["cobblemon:water_stone_ore"]}}
     spec["sites"] = [{"id": "site_a", "settlement": "town_a", "floor_block": "minecraft:cobblestone",
+                      "ring": [20, 90], "road_clear": ROAD_CLEAR_MIN, "reapply_step": "R9O",
                       "faces": [json.loads(json.dumps(FX_FACE))]}]
     return spec
 
 
 def fx_root(root, monkeypatch):
-    """A root holding one clean face on flat ground at y100, with near misses: a pending water change 9 from the cut,
-    a lot 3 from it, the Exchange far away. Returns the pack's function folder."""
+    """A root holding one clean face on flat ground at y100, with near misses: a pending water change 9 from the
+    formation, a lot 3 from it, a routed leg 4 from it, the Exchange far away. Returns the pack's function folder."""
     def dump(rel, obj):
         p = root / rel
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text(json.dumps(obj), encoding="utf-8")
     spec = fx_spec()
+    face = spec["sites"][0]["faces"][0]
+    gm = M.geometry(face, FakeGround(), GEO, spec["seed"])
+    assert gm["problems"] == []
+    cols = [tuple(c) for c in gm["columns"]]
+    x0, x1 = min(c[0] for c in cols), max(c[0] for c in cols)
+    z0, z1 = min(c[1] for c in cols), max(c[1] for c in cols)
     dump("data/mines.json", spec)
     dump("data/spawn_blocks.json", {"blocks": {"minecraft:coal_ore": ["x"], "minecraft:grass_block": ["x"]}})
     dump("data/placements.json", {"settlements": {"town_a": {"plan": {}}}, "placements": []})
     dump("data/scenes.json", {"scenes": []})
     dump("data/town_dressing.json", {"towns": {}})
+    dump("data/towns.json", {"towns": [{"id": "town_a", "centre": {"x": FX_TOWN_CENTRE[0], "z": FX_TOWN_CENTRE[1]}}]})
     dump("data/traders.json", {"traders": [{"id": "ex", "settlement": "mining_town", "stock": "stones",
-                                            "position": {"x": 120, "y": 100, "z": 120}}],
+                                            "position": {"x": 10, "y": 100, "z": 10}}],
                                "stock_policy": {"stones": {"items": ["cobblemon:water_stone"], "buys": False}}})
-    dump("derived/towns/town_a_plan.json", {"lots": [{"id": "L1", "rect": [52, 40, 60, 48]}]})
+    # a lot 3 clear of the formation's east edge (lots have no road clearance of their own: only the plan mask)
+    dump("derived/towns/town_a_plan.json", {"lots": [{"id": "L1", "rect": [x1 + 4, z0, x1 + 12, z1]}]})
     dump("derived/signposts.json", {"posts": []})
     dump("derived/ambient/plan.json", {"workers": []})
-    # near misses of the routed legs (LEG_MARGIN 3): the written columns run x 38..50 and z 40..57
-    dump("derived/routes/critical_legs.json", {"legs": [{"polyline": [[54, 0], [54, 127]]}]})
-    dump("data/routes.json", {"routes": [{"id": "r", "corridor": {"polyline": [{"x": 0, "z": 61}, {"x": 127, "z": 61}]}}]})
+    # near misses of the routed legs: the leg one block outside the road_clear ring, the corridor 4 clear (LEG_MARGIN 3)
+    dump("derived/routes/critical_legs.json",
+         {"legs": [{"polyline": [[x1 + ROAD_CLEAR_MIN + 1, 0], [x1 + ROAD_CLEAR_MIN + 1, N - 1]]}]})
+    dump("data/routes.json", {"routes": [{"id": "r", "corridor": {"polyline": [{"x": 0, "z": z1 + 4},
+                                                                               {"x": N - 1, "z": z1 + 4}]}}]})
     ch = np.zeros((N, N), dtype=bool)
-    ch[31, 44] = True                                  # 9 north of the cut's last written row (z 40)
+    ch[z0 - 9, x0] = True                                  # 9 north of the formation's first written row
     (root / "derived" / "water_shape").mkdir(parents=True, exist_ok=True)
     np.save(root / "derived" / "water_shape" / "changed.npy", ch)
-    gm = M.geometry(spec["sites"][0]["faces"][0], FakeGround(), GEO)
-    assert gm["problems"] == []
-    plan = [{"site": spec["sites"][0], "approach": list(_fx_approach(spec)),
-             "faces": [{"face": spec["sites"][0]["faces"][0], "geometry": gm,
-                        "variants": [M.ore_cells(spec["sites"][0]["faces"][0], k, spec["seed"], GEO, FX_FACE["yield"])
+    plan = [{"site": spec["sites"][0], "approach": list(_fx_approach(spec, gm)),
+             "faces": [{"face": face, "geometry": gm,
+                        "variants": [M.ore_cells(face, k, spec["seed"], GEO, FX_FACE["yield"], gm)
                                      for k in range(RS["variants"])]}]}]
     out = root / "build" / "datapacks" / "cobblers_mines"
     monkeypatch.setattr(M, "OUT", out)
     M.write(spec, plan)
-    return out / "data" / "cobblers" / "function" / "mines"
+    return out / "data" / "cobblers" / "function" / "mines", gm
 
 
-def _fx_approach(spec):
-    return approach_of(spec["sites"][0])
+def _fx_approach(spec, gm):
+    b = gm["bounds"]
+    m = RS["approach_margin"]
+    return (b[0] - m, b[1] - RS["approach_down"], b[2] - m, b[3] + m, b[4] + RS["approach_up"], b[5] + m)
 
 
 @pytest.fixture
@@ -774,7 +966,7 @@ def audit_root(tmp_path, monkeypatch):
     import town_character as TC
     import town_dressing_audit as TDA
     root = tmp_path / "root"
-    fn = fx_root(root, monkeypatch)
+    fn, gm = fx_root(root, monkeypatch)
     state = {"steps": [("R9O", "t", [("fn", "cobblers:mines/build_site_a")])],
              "server": ("cobblers_mines",), "local": ("cobblers_mines",)}
     monkeypatch.setattr(MA, "ROOT", root)
@@ -797,7 +989,8 @@ def audit_root(tmp_path, monkeypatch):
             m.setattr(reapply, "SERVER_PACKS", state["server"])
             m.setattr(reapply, "WORLD_LOCAL", state["local"])
             return MA.audit(None)
-    return types.SimpleNamespace(root=root, fn=fn, run=run, state=state)
+    return types.SimpleNamespace(root=root, fn=fn, run=run, state=state, gm=gm,
+                                 cols=[tuple(c) for c in gm["columns"]])
 
 
 def _edit(path, old, new):
@@ -825,8 +1018,12 @@ def _put(root, rel, obj):
     (root / rel).write_text(json.dumps(obj), encoding="utf-8")
 
 
+def _append(path, line):
+    path.write_text(path.read_text(encoding="utf-8") + line + "\n", encoding="utf-8")
+
+
 def f_unfiltered_fill(a):
-    _edit(a.fn / "faces" / "fa_v3.mcfunction", lambda l: l.startswith("fill "), lambda l: l.split(" replace ")[0])
+    _edit(a.fn / "faces" / "fa_rock.mcfunction", lambda l: l.startswith("fill "), lambda l: l.split(" replace ")[0])
 
 
 def f_no_pokemon_guard(a):
@@ -864,9 +1061,10 @@ def f_unguarded_ore(a):
           lambda l: l.split(" run ", 1)[1])
 
 
-def f_ore_outside_the_box(a):
+def f_ore_off_the_body(a):
     _edit(a.fn / "faces" / "fa_v1.mcfunction", lambda l: l.startswith("execute if block"),
-          lambda l: "execute if block 44 99 52 %s run setblock 44 99 52 cobblemon:water_stone_ore" % TAG)
+          lambda l: "execute if block %d 130 %d minecraft:stone run setblock %d 130 %d cobblemon:water_stone_ore"
+          % (FX_ANCHOR[0], FX_ANCHOR[1], FX_ANCHOR[0], FX_ANCHOR[1]))
 
 
 def f_foreign_block_in_a_variant(a):
@@ -883,43 +1081,97 @@ def f_no_time_stamp(a):
 
 
 def f_filler_ore_in_the_build(a):
-    p = a.fn / "build_site_a.mcfunction"
-    p.write_text(p.read_text(encoding="utf-8") + "setblock 44 90 53 minecraft:coal_ore\n", encoding="utf-8")
+    _append(a.fn / "build_site_a.mcfunction",
+            "setblock %d %d %d minecraft:coal_ore" % (FX_ANCHOR[0], FLAT + 3, FX_ANCHOR[1]))
 
 
 def f_stray_bedrock(a):
+    _append(a.fn / "build_site_a.mcfunction",
+            "setblock %d %d %d minecraft:bedrock" % (FX_ANCHOR[0], FLAT - 6, FX_ANCHOR[1] + 3))
+
+
+def f_the_stand_is_walled_in(a):
+    # rock three high round the column a player works the face from: no step of one gets out of it
+    sx, sz = FX_ANCHOR[0], FX_ANCHOR[1] - 2
+    for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+        _append(a.fn / "build_site_a.mcfunction",
+                "fill %d %d %d %d %d %d minecraft:stone"
+                % (sx + dx, FLAT + 1, sz + dz, sx + dx, FLAT + 3, sz + dz))
+
+
+def f_rock_over_the_apron(a):
+    _append(a.fn / "build_site_a.mcfunction",
+            "setblock %d %d %d minecraft:stone" % (FX_ANCHOR[0], FLAT + 1, FX_ANCHOR[1] - 2))
+
+
+def f_the_floor_dug_below_the_ground(a):
+    # the whole formation one block lower: the bottom course lands under F and the apron opens into a pit
     p = a.fn / "build_site_a.mcfunction"
-    p.write_text(p.read_text(encoding="utf-8") + "setblock 44 90 58 minecraft:bedrock\n", encoding="utf-8")
+    out = []
+    for l in p.read_text(encoding="utf-8").splitlines():
+        m = re.match(r"^(fill|setblock) (-?\d+) (-?\d+) (-?\d+)(?: (-?\d+) (-?\d+) (-?\d+))? (\S+)$", l)
+        if not m:
+            out.append(l)
+            continue
+        g = list(m.groups())
+        g[2] = str(int(g[2]) - 1)
+        if g[5] is not None:
+            g[5] = str(int(g[5]) - 1)
+        out.append("%s %s %s %s %s" % (g[0], g[1], g[2], g[3], g[7]) if g[4] is None else
+                   "%s %s %s %s %s %s %s %s" % (g[0], g[1], g[2], g[3], g[4], g[5], g[6], g[7]))
+    p.write_text("\n".join(out) + "\n", encoding="utf-8")
 
 
-def f_wall_across_the_cut(a):
-    p = a.fn / "build_site_a.mcfunction"
-    p.write_text(p.read_text(encoding="utf-8") + "fill 39 94 45 49 102 45 minecraft:stone\n", encoding="utf-8")
+def f_no_bottom_course(a):
+    d = _j(a.root, "data/mines.json")
+    d["sites"][0]["faces"][0].pop("bottom")
+    _put(a.root, "data/mines.json", d)
 
 
-def f_rock_before_the_face(a):
-    p = a.fn / "build_site_a.mcfunction"
-    p.write_text(p.read_text(encoding="utf-8") + "setblock 44 96 49 minecraft:stone\n", encoding="utf-8")
+def f_the_bottom_is_the_host(a):
+    d = _j(a.root, "data/mines.json")
+    d["sites"][0]["faces"][0]["bottom"] = d["sites"][0]["faces"][0]["host"]
+    _put(a.root, "data/mines.json", d)
+
+
+def f_the_face_is_outside_the_ring(a):
+    d = _j(a.root, "data/mines.json")
+    d["sites"][0]["ring"] = [200, 400]
+    _put(a.root, "data/mines.json", d)
+
+
+def f_the_road_clearance_loosened(a):
+    d = _j(a.root, "data/mines.json")
+    d["sites"][0]["road_clear"] = 10
+    _put(a.root, "data/mines.json", d)
 
 
 def f_lot_on_the_cut(a):
-    _put(a.root, "derived/towns/town_a_plan.json", {"lots": [{"id": "L1", "rect": [48, 40, 60, 48]}]})
+    x0 = min(c[0] for c in a.cols)
+    x1 = max(c[0] for c in a.cols)
+    z0 = min(c[1] for c in a.cols)
+    _put(a.root, "derived/towns/town_a_plan.json", {"lots": [{"id": "L1", "rect": [x0, z0, x1, z0 + 2]}]})
 
 
 def f_street_on_the_cut(a):
+    z = min(c[1] for c in a.cols)
     d = _j(a.root, "data/placements.json")
-    d["settlements"]["town_a"]["plan"]["streets"] = [{"id": "s", "polyline": [[20, 44], [30, 44], [39, 44]], "width": 1}]
+    d["settlements"]["town_a"]["plan"]["streets"] = [{"id": "s", "polyline": [[0, z], [N - 1, z]], "width": 1}]
     _put(a.root, "data/placements.json", d)
 
 
 def f_event_site_on_the_cut(a):
-    _put(a.root, "data/scenes.json", {"scenes": [{"id": "ev", "area": {"from": [30, 90, 45], "to": [39, 110, 46]}}]})
+    z = min(c[1] for c in a.cols)
+    x = FX_ANCHOR[0]
+    _put(a.root, "data/scenes.json",
+         {"scenes": [{"id": "ev", "area": {"from": [x - 2, 90, z], "to": [x + 2, 110, z + 1]}}]})
 
 
 def f_water_change_within_8(a):
-    ch = np.load(a.root / "derived" / "water_shape" / "changed.npy")
-    ch[32, 44] = True
-    np.save(a.root / "derived" / "water_shape" / "changed.npy", ch)
+    p = a.root / "derived" / "water_shape" / "changed.npy"
+    ch = np.load(p)
+    ch[min(c[1] for c in a.cols) - 2, FX_ANCHOR[0]] = True
+    np.save(p, ch)
 
 
 def f_water_map_missing(a):
@@ -928,7 +1180,8 @@ def f_water_map_missing(a):
 
 def f_trader_on_the_cut(a):
     d = _j(a.root, "data/traders.json")
-    d["traders"].append({"id": "t2", "settlement": "town_a", "stock": "regional", "position": {"x": 44, "y": 94, "z": 45}})
+    d["traders"].append({"id": "t2", "settlement": "town_a", "stock": "regional",
+                         "position": {"x": FX_ANCHOR[0], "y": FLAT, "z": min(c[1] for c in a.cols)}})
     _put(a.root, "data/traders.json", d)
 
 
@@ -997,26 +1250,31 @@ def f_no_face_in_the_data(a):
 
 
 FAULTS = [
-    (f_unfiltered_fill, "the first command is not the filtered fill"),
-    (f_no_pokemon_guard, "@e[type=cobblemon:pokemon"),
-    (f_no_player_guard, "the check lacks, before the restore: execute if entity @a["),
-    (f_guard_after_the_restore, "@e[type=cobblemon:pokemon"),
-    (f_one_corner_unchecked, "execute unless loaded"),
+    (f_unfiltered_fill, "not a fill filtered by"),
+    (f_no_pokemon_guard, "Pokemon guard over the formation"),
+    (f_no_player_guard, "player guard over the formation"),
+    (f_guard_after_the_restore, "guard over the formation"),
+    (f_one_corner_unchecked, "execute unless loaded corners"),
     (f_no_period_check, "< #period mn.t"),
     (f_short_period, "driver: the load sets the period"),
-    (f_unguarded_ore, "an unguarded or foreign command"),
-    (f_ore_outside_the_box, "ore outside the box"),
-    (f_foreign_block_in_a_variant, "an unguarded or foreign command"),
+    (f_unguarded_ore, "not an ore setblock guarded by its host"),
+    (f_ore_off_the_body, "ore off the body"),
+    (f_foreign_block_in_a_variant, "not an ore setblock guarded by its host"),
     (f_repeats_its_last_variant, "may repeat the last variant"),
     (f_no_time_stamp, "does not stamp its time"),
     (f_filler_ore_in_the_build, "is a spawn condition"),
     (f_stray_bedrock, "no bedrock skin"),
-    (f_wall_across_the_cut, "no walk from"),
-    (f_rock_before_the_face, "cells before the face are not written air"),
+    (f_the_stand_is_walled_in, "no walk from the stand"),
+    (f_rock_over_the_apron, "apron cell(s) over the floor are not open"),
+    (f_the_floor_dug_below_the_ground, "a pit"),
+    (f_no_bottom_course, "the data names no bottom block"),
+    (f_the_bottom_is_the_host, "does not contrast"),
+    (f_the_face_is_outside_the_ring, "outside the ring"),
+    (f_the_road_clearance_loosened, "the owner's rule is 25"),
     (f_lot_on_the_cut, "on lot L1"),
-    (f_street_on_the_cut, "street"),
+    (f_street_on_the_cut, "of a street"),
     (f_event_site_on_the_cut, "event site ev"),
-    (f_water_change_within_8, "within 8 of a column the water export changes"),
+    (f_water_change_within_8, "of a column the water export changes"),
     (f_water_map_missing, "no derived/water_shape/changed.npy"),
     (f_trader_on_the_cut, "within 1 of trader t2"),
     (f_container_in_the_tag, "is a container"),
@@ -1037,24 +1295,28 @@ FAULTS = [
 
 @pytest.mark.parametrize("fault,words", FAULTS, ids=[f.__name__[2:] for f, _w in FAULTS])
 def test_the_audit_names_each_planted_fault(audit_root, fault, words):
-    # Without it the audit could pass a pack that buries a player, deletes a chest, drops filler or loses a site.
+    # Without it the audit could pass a pack that buries a player, deletes a chest, drops filler, loses a site, digs a
+    # pit, loses the bottom course or drifts back out of its town.
     fault(audit_root)
     probs, _notes = audit_root.run()
     assert any(words in p for p in probs), probs
 
 
 def f_critical_leg_through_the_cut(a):
-    _put(a.root, "derived/routes/critical_legs.json", {"legs": [{"polyline": [[44, 0], [44, 47]]}]})
+    _put(a.root, "derived/routes/critical_legs.json",
+         {"legs": [{"polyline": [[FX_ANCHOR[0], 0], [FX_ANCHOR[0], N - 1]]}]})
 
 
-def f_critical_leg_3_from_the_backing(a):
-    # the backing's east edge is x 50; the clean root's leg is at x 54 (4 away), this one at x 53 (3 away)
-    _put(a.root, "derived/routes/critical_legs.json", {"legs": [{"polyline": [[53, 0], [53, 127]]}]})
+def f_critical_leg_one_inside_the_clearance(a):
+    x1 = max(c[0] for c in a.cols)
+    _put(a.root, "derived/routes/critical_legs.json",
+         {"legs": [{"polyline": [[x1 + ROAD_CLEAR_MIN, 0], [x1 + ROAD_CLEAR_MIN, N - 1]]}]})
 
 
 def f_data_corridor_through_the_cut(a):
-    _put(a.root, "data/routes.json", {"routes": [{"id": "r", "corridor": {"polyline": [{"x": 0, "z": 45},
-                                                                                        {"x": 127, "z": 45}]}}]})
+    z = min(c[1] for c in a.cols) + 1
+    _put(a.root, "data/routes.json",
+         {"routes": [{"id": "r", "corridor": {"polyline": [{"x": 0, "z": z}, {"x": N - 1, "z": z}]}}]})
 
 
 def f_legs_file_missing(a):
@@ -1063,14 +1325,14 @@ def f_legs_file_missing(a):
 
 LEG_FAULTS = [
     (f_critical_leg_through_the_cut, "of a routed leg"),
-    (f_critical_leg_3_from_the_backing, "within 3 of a routed leg"),   # a strict xfail until the audit took <=
-    (f_data_corridor_through_the_cut, "of a routed leg"),
+    (f_critical_leg_one_inside_the_clearance, "of a routed leg"),
+    (f_data_corridor_through_the_cut, "of a data/routes.json corridor"),
     (f_legs_file_missing, "no derived/routes/critical_legs.json"),
 ]
 
 
-@pytest.mark.parametrize("fault,words", LEG_FAULTS, ids=["through_the_cut", "3_from_the_backing", "data_corridor",
-                                                         "legs_file_missing"])
+@pytest.mark.parametrize("fault,words", LEG_FAULTS,
+                         ids=["through_the_cut", "one_inside_the_clearance", "data_corridor", "legs_file_missing"])
 def test_the_audit_names_a_route_leg_near_a_cut_and_a_missing_legs_file(audit_root, fault, words):
     # Without it a face cut across a road players must walk would pass the audit (the design: none on a route leg),
     # and a checkout without the legs file would pass it unchecked.
@@ -1159,27 +1421,34 @@ SURFACE = [(s, f) for s, f in FACES if s.get("ground") != "cavern_floor"]
 
 @pytest.fixture(scope="module")
 def surface_writes():
-    """{face id: (cells, geometry)} of every surface face's build, on the canonical heightmap."""
+    """{face id: (cells, geometry, Terms)} of every surface face's build, on the canonical heightmap."""
     g = _ground()
     out = {}
     for s, f in SURFACE:
-        gm = M.geometry(f, g, GEO, s.get("bedrock_skin", False))
+        gm = M.geometry(f, g, GEO, SPEC["seed"], s.get("bedrock_skin", False))
         entry = {"site": s, "faces": [{"face": f, "geometry": gm,
-                                       "variants": [M.ore_cells(f, 0, SPEC["seed"], GEO, f["yield"])]}]}
-        out[f["id"]] = (_replay(M.build_lines(SPEC, entry)), gm)
+                                       "variants": [M.ore_cells(f, 0, SPEC["seed"], GEO, f["yield"], gm)]}]}
+        out[f["id"]] = (_replay(M.build_lines(SPEC, entry)), gm, Terms(f, g))
     return g, out
 
 
-def test_every_box_has_two_blocks_of_rock_over_it_and_the_city_faces_are_deep_underground():
-    # Without it a face's top would show through the ground, or a cavern face be open to the sky.
-    g = _ground()
-    for s, f in FACES:
-        x0, _y0, z0, x1, y1, z1 = f["box"]
-        low = int(g.box(x0, z0, x1, z1).min())
-        if s.get("ground") == "cavern_floor":
-            assert low >= y1 + 40, (f["id"], low, y1)
-        else:
-            assert low >= y1 + GEO["backing"], (f["id"], low, y1)
+def test_no_surface_face_is_a_pit_and_every_one_has_its_bottom_course(surface_writes):
+    # The three problems of flight finding 1, checked on the real ground: a pit, no bottom, no way out.
+    _g, out = surface_writes
+    for s, f in SURFACE:
+        world, gm, t = out[f["id"]]
+        assert gm["problems"] == [], (f["id"], gm["problems"][:2])
+        assert gm["floor"] == t.F, f["id"]
+        for (x, z) in t.apron_cols:
+            for y in (t.F + 1, t.F + 2):
+                b = world.get((x, y, z))
+                assert b is None or name_of(b) in AIRS, (f["id"], x, y, z, b)
+        for (x, z) in t.body_cols:
+            assert name_of(world.get((x, t.bottom_y, z), "x")) == f["bottom"], (f["id"], x, z)
+            for y in t.body_rows:
+                assert name_of(world.get((x, y, z), "x")) in (f["host"], f["ore"]), (f["id"], x, y, z)
+        ore = [c for c, b in world.items() if name_of(b) == f["ore"]]
+        assert ore and all(y > t.bottom_y for _x, y, _z in ore), f["id"]
 
 
 def _walk_out(start, world, ground):
@@ -1206,20 +1475,11 @@ def _walk_out(start, world, ground):
 
 
 def test_every_surface_face_can_be_walked_up_to_and_out_of(surface_writes):
-    # Without it a cut could leave a player in a pit with no way out, or the face behind a wall of rock.
+    # Without it a formation could leave a player in a pit with no way out, or the face behind a wall of rock.
     g, out = surface_writes
-    for s, f in SURFACE:
-        world, gm = out[f["id"]]
-        assert gm["problems"] == [], (f["id"], gm["problems"][:2])
-        x0, y0, z0, x1, y1, z1 = f["box"]
-        xz = front_frame(f["box"], f["front"])
-        W, _D = along_and_deep(f["box"], f["front"])
-        for u in range(W):
-            x, z = xz(u, -1)
-            assert all(world.get((x, y, z)) in AIRS for y in range(y0, y1 + 1)), (f["id"], u)
-            assert name_of(world.get((x, y0 - 1, z), "minecraft:air")) not in AIRS, (f["id"], u)
-        x, z = xz(W // 2, -1)
-        assert _walk_out((x, y0, z), world, g), f["id"]
+    for _s, f in SURFACE:
+        world, _gm, t = out[f["id"]]
+        assert _walk_out(t.stand(), world, g), f["id"]
 
 
 def _seg(px, pz, a, b):
@@ -1230,8 +1490,8 @@ def _seg(px, pz, a, b):
     return math.hypot(px - (ax + t * vx), pz - (az + t * vz))
 
 
-def test_no_surface_face_writes_on_a_leg_street_building_event_site_dressing_or_worker(surface_writes):
-    # Without it a cut could open across a road, a street, a house, an event's stage or another system's piece.
+def test_no_surface_face_writes_near_a_leg_street_building_event_site_dressing_or_worker(surface_writes):
+    # Without it a formation could open across a road, a street, a house, an event's stage or another system's piece.
     import nbt
     _g, out = surface_writes
     legs = [[(q["x"], q["z"]) for q in (r.get("corridor") or {}).get("polyline") or []]
@@ -1245,14 +1505,12 @@ def test_no_surface_face_writes_on_a_leg_street_building_event_site_dressing_or_
     kc = SPEC["keep_clear"]
     for s, f in SURFACE:
         cols = {(x, z) for x, _y, z in out[f["id"]][0]}
-        fp = TOWNS[s["settlement"]]["footprint"]
-        assert all(fp["min_x"] - 24 <= x <= fp["max_x"] + 24 and fp["min_z"] - 24 <= z <= fp["max_z"] + 24 for x, z in cols)
+        rc = s.get("road_clear", kc["road_clear"])
         near = [c for c in cols for leg in legs for a, b in zip(leg, leg[1:]) if _seg(c[0], c[1], a, b) <= 3]
         assert not near, (f["id"], "route leg", near[:1])
         for st in (PLACEMENTS["settlements"].get(s["settlement"], {}).get("plan") or {}).get("streets") or []:
             pts = [tuple(p) for p in st.get("polyline") or []]
-            half = int(st.get("width", 1)) // 2
-            on = [c for c in cols if min((_seg(c[0], c[1], a, b) for a, b in zip(pts, pts[1:])), default=1e9) <= half + 0.5]
+            on = [c for c in cols if min((_seg(c[0], c[1], a, b) for a, b in zip(pts, pts[1:])), default=1e9) <= rc]
             assert not on, (f["id"], "street", st.get("id"), on[:1])
         for q in PLACEMENTS["placements"]:
             if q.get("kind") == "earthwork" or not q.get("position"):
@@ -1284,8 +1542,22 @@ def test_no_surface_face_writes_on_a_leg_street_building_event_site_dressing_or_
             assert not on, (f["id"], "worker", wk["id"])
 
 
+def test_every_surface_face_stands_inside_the_towns_it_belongs_to(surface_writes):
+    # Flight finding 2: a formation out in the wilds reads as nobody's. Measured from the written columns, not the
+    # anchor, so a formation that sprawls out of its town is caught too.
+    _g, out = surface_writes
+    for s, f in SURFACE:
+        cols = {(x, z) for x, _y, z in out[f["id"]][0]}
+        centre = TOWNS[s["settlement"]]["centre"]
+        far = max(math.hypot(x - centre["x"], z - centre["z"]) for x, z in cols)
+        assert far <= s["ring"][1] + 24, (f["id"], round(far, 1), s["ring"])
+        fp = TOWNS[s["settlement"]]["footprint"]
+        assert all(fp["min_x"] - 48 <= x <= fp["max_x"] + 48 and fp["min_z"] - 48 <= z <= fp["max_z"] + 48
+                   for x, z in cols), f["id"]
+
+
 def test_no_written_column_is_within_8_of_a_column_the_water_export_changes(surface_writes):
-    # Without it a face could be cut into a shore the pending water export moves, and the export would undo it.
+    # Without it a face could stand on a shore the pending water export moves, and the export would undo it.
     p = ROOT / "derived" / "water_shape" / "changed.npy"
     if not p.is_file():
         pytest.skip("NOT_EXECUTED: no derived/water_shape/changed.npy here (python tools/water_shape.py)")
@@ -1298,17 +1570,27 @@ def test_no_written_column_is_within_8_of_a_column_the_water_export_changes(surf
             assert not np.asarray(ch[z - n:z + n + 1, x - n:x + n + 1]).any(), (f["id"], x, z)
 
 
-def test_the_built_pack_drives_each_site_over_the_approach_box_the_data_describes():
+def test_the_built_pack_drives_each_site_over_a_box_that_holds_its_faces(surface_writes):
     # Without it the built driver could watch a box that misses a face, so it never restores.
     pack = built_pack()
     if pack is None:
         pytest.skip("NOT_EXECUTED: no built build/datapacks/cobblers_mines here (python tools/mines.py build)")
+    _g, out = surface_writes
     drive = (pack / "data" / "cobblers" / "function" / "mines" / "drive.mcfunction").read_text(encoding="utf-8")
-    for s in SITES:
-        a = approach_of(s)
-        line = "execute if entity @a[x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d] run function cobblers:mines/site_%s" % (
-            a[0], a[1], a[2], a[3] - a[0], a[4] - a[1], a[5] - a[2], s["id"])
-        assert line in drive.splitlines(), s["id"]
+    boxes = {}
+    for l in drive.splitlines():
+        m = re.fullmatch(r"execute if entity @a\[x=(-?\d+),y=(-?\d+),z=(-?\d+),dx=(\d+),dy=(\d+),dz=(\d+)\] "
+                         r"run function cobblers:mines/site_(\w+)", l)
+        if m:
+            x, y, z, dx, dy, dz = (int(v) for v in m.groups()[:6])
+            boxes[m.group(7)] = (x, y, z, x + dx, y + dy, z + dz)
+    assert sorted(boxes) == sorted(s["id"] for s in SITES)
+    half = RS["approach_margin"] // 2
+    for s, f in SURFACE:
+        b = out[f["id"]][1]["bounds"]
+        a = boxes[s["id"]]
+        assert a[0] <= b[0] - half and a[2] <= b[2] - half and a[3] >= b[3] + half and a[5] >= b[5] + half, f["id"]
+        assert a[1] <= b[1] and a[4] >= b[4], f["id"]
 
 
 def test_the_full_audit_is_clean_on_the_real_inputs():
