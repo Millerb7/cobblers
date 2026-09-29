@@ -112,3 +112,31 @@ The one thing this does NOT prove is that the world received the shape everywher
 the shape computed, before the export. The owner's eyes on the east floor remain the cheap confirmation.
 **F5 is unaffected** — the bed was re-shaped, so wrong bed material is a material question, not a coverage
 one, and the hypothesis above stands.
+
+## From the build (2026-09-29 morning), not from the flight
+
+### F7 — `water_check` can pass a dive portal standing in a dry column
+
+Found while re-siting `dive_watering_hole_floor`, not looked for. **`water_check` tests a landmark's
+`extent.polygons`, but water is only painted inside its `basin_polygons`** (`tools/paint_maps.py` ~line 536
+rasterises the basin polygons, marks every column where the canonical heightmap is below `level_y`, and
+`tools/worldpainter/paint.js` raises water to that level on export). The two polygon sets are not the same.
+
+So a dive portal sited in the gap — inside `extent` but outside `basin` — passes the audit and is dry in
+the world. Nothing is wrong today: the re-sited portal at (2958, 5235) is inside both, checked. **Not
+fixed, not investigated further.** It is a fail-open gap in a check, which is the kind that stays quiet
+until it does not.
+
+### F8 — agent worktree isolation made two audits lie, in opposite directions
+
+Recorded because it will recur, not because it broke anything permanently.
+
+- **Falsely CLEAN:** the portals agent reported its audit clean. Its worktree had no Rift skin pack, so it
+  could not see that `dive_watering_hole_floor` sat inside the Rift's distortion tile. In the full checkout
+  the same audit reported **85 problems**.
+- **Falsely BROKEN:** the dig camp agent reported two `test_reapply_*` failures on a missing
+  `derived/ambient/plan.json`. They pass in the full checkout; its worktree simply lacked `derived/`.
+
+**The rule this establishes: an agent's audit result is provisional until integration re-runs it against a
+full checkout.** Both directions cost real work today. `.worktreeinclude` carries no derived inputs and
+`local_inputs.py hydrate` brings kits only (338 files).
