@@ -1416,6 +1416,105 @@
       "type": "boolean",
       "scope": "player",
       "initial": false
+    },
+    {
+      "id": "quest.ambient_stone_tips.viltri_light_cursor",
+      "quest_id": "ambient_stone_tips",
+      "field": "viltri_light_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "greeting",
+      "allowed_values": [
+        "greeting",
+        "pointer",
+        "practical",
+        "repeat"
+      ]
+    },
+    {
+      "id": "quest.ambient_stone_tips.tea_town_cursor",
+      "quest_id": "ambient_stone_tips",
+      "field": "tea_town_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "greeting",
+      "allowed_values": [
+        "greeting",
+        "pointer",
+        "practical",
+        "repeat"
+      ]
+    },
+    {
+      "id": "quest.ambient_stone_tips.the_scar_cursor",
+      "quest_id": "ambient_stone_tips",
+      "field": "the_scar_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "greeting",
+      "allowed_values": [
+        "greeting",
+        "pointer",
+        "practical",
+        "repeat"
+      ]
+    },
+    {
+      "id": "quest.ambient_stone_tips.displaced_city_cursor",
+      "quest_id": "ambient_stone_tips",
+      "field": "displaced_city_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "greeting",
+      "allowed_values": [
+        "greeting",
+        "pointer",
+        "practical",
+        "repeat"
+      ]
+    },
+    {
+      "id": "quest.ambient_stone_tips.northlight_cursor",
+      "quest_id": "ambient_stone_tips",
+      "field": "northlight_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "greeting",
+      "allowed_values": [
+        "greeting",
+        "pointer",
+        "practical",
+        "repeat"
+      ]
+    },
+    {
+      "id": "quest.ambient_stone_tips.gorge_hamlet_cursor",
+      "quest_id": "ambient_stone_tips",
+      "field": "gorge_hamlet_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "greeting",
+      "allowed_values": [
+        "greeting",
+        "pointer",
+        "practical",
+        "repeat"
+      ]
+    },
+    {
+      "id": "quest.ambient_stone_tips.mining_town_cursor",
+      "quest_id": "ambient_stone_tips",
+      "field": "mining_town_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "greeting",
+      "allowed_values": [
+        "greeting",
+        "pointer",
+        "practical",
+        "assayer",
+        "repeat"
+      ]
     }
   ],
   "gym_markers": {

@@ -397,3 +397,13 @@ For Codex to pick up. Claude has not edited any of the files named here.
 - Everything in `docs/story/` and the world-building documents above, now.
 - `data/spawns.json` rosters, `route_species_selection` and `spawn_suppression.json` (datapack-content-dev), now.
 - The rest of `data/` once PR #17 merges.
+
+## Ore-tip NPC placement (Codex, 2026-09-28)
+
+- npc_stone_tip_viltri_light_keeper — Lighthouse Keeper; stand at the lighthouse's inland door, facing the path to the near-town Water Stone outcrop.
+- npc_stone_tip_tea_town_picker — Tea Picker; stand on the upper tea-row path beside the drying racks, facing the chosen house-lot or meadow-edge Leaf/Shiny formation.
+- npc_stone_tip_the_scar_scavenger — Ruin Scavenger; stand at the old square's edge beside a surviving wall, facing the chosen ruined-house Sun Stone lot.
+- npc_stone_tip_displaced_city_mason — Cavern Mason; stand at the south ring street's last lantern before the Moon/Thunder gallery.
+- npc_stone_tip_northlight_field_hand — Field Station Hand; stand beside the weather mast, facing the square-side Ice Stone cut.
+- npc_stone_tip_gorge_hamlet_elder — Hamlet Elder; stand at the bridgeward edge of the central square, facing the paired Dusk/Dawn outcrop.
+- npc_stone_tip_mining_town_foreman — Mine Foreman; stand on the minehead side of the pithead yard between the adit path and plaza, with the Assayer nearby.

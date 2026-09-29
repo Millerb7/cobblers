@@ -9015,6 +9015,384 @@
       "speakers": {
         "narration": null
       }
+    },
+    {
+      "id": "dlg_stone_tip_viltri_light",
+      "quest_id": "ambient_stone_tips",
+      "npc_id": "npc_stone_tip_viltri_light_keeper",
+      "source": "docs/mechanics/STONE_ECONOMY.md#7-where-each-stone-belongs-and-where-the-rest-go; docs/world-building/STONE_FACES_REDESIGN.md#5-flight-finding-2-the-owner-2026-09-28-in-the-town-not-out-past-it",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.ambient_stone_tips.viltri_light_cursor",
+        "initial_node": "greeting",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "greeting",
+          "kind": "line",
+          "speaker": "keeper",
+          "text": "Keep to the lee of the tower. The mouth wind comes sideways today.",
+          "next": "pointer"
+        },
+        {
+          "id": "pointer",
+          "kind": "line",
+          "speaker": "keeper",
+          "text": "Take the inland path past the light. The low outcrop where dark rock bands its foot carries Water Stone.",
+          "next": "practical"
+        },
+        {
+          "id": "practical",
+          "kind": "line",
+          "speaker": "keeper",
+          "text": "Use an iron pick. Dig down to the band and stop; the ore ends there. Leave the face ten minutes and the rock mends, but any chest you leave stays put.",
+          "next": "repeat"
+        },
+        {
+          "id": "repeat",
+          "kind": "line",
+          "speaker": "keeper",
+          "text": "Past the light, on the inland rise. Dark band at the foot; iron pick; stop at the band.",
+          "next": "repeat"
+        }
+      ]
+    },
+    {
+      "id": "dlg_stone_tip_tea_town",
+      "quest_id": "ambient_stone_tips",
+      "npc_id": "npc_stone_tip_tea_town_picker",
+      "source": "docs/mechanics/STONE_ECONOMY.md#7-where-each-stone-belongs-and-where-the-rest-go; docs/world-building/STONE_FACES_REDESIGN.md#5-flight-finding-2-the-owner-2026-09-28-in-the-town-not-out-past-it",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.ambient_stone_tips.tea_town_cursor",
+        "initial_node": "greeting",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "greeting",
+          "kind": "line",
+          "speaker": "picker",
+          "text": "Mind the young rows. They bruise before they bend.",
+          "next": "pointer"
+        },
+        {
+          "id": "pointer",
+          "kind": "line",
+          "speaker": "picker",
+          "text": "Past the upper tea rows, where old stone breaks the meadow, one face gives Leaf Stone and the brighter face gives Shiny Stone. A band of different rock runs along the foot of each.",
+          "next": "practical"
+        },
+        {
+          "id": "practical",
+          "kind": "line",
+          "speaker": "picker",
+          "text": "Use an iron pick. Dig down to the band and stop; the ore ends there. Give it ten quiet minutes and the rock mends, but any chest you leave stays put.",
+          "next": "repeat"
+        },
+        {
+          "id": "repeat",
+          "kind": "line",
+          "speaker": "picker",
+          "text": "Upper rows, old stone in the meadow: Leaf in the green face, Shiny in the bright one.",
+          "next": "repeat"
+        }
+      ]
+    },
+    {
+      "id": "dlg_stone_tip_the_scar",
+      "quest_id": "ambient_stone_tips",
+      "npc_id": "npc_stone_tip_the_scar_scavenger",
+      "source": "docs/mechanics/STONE_ECONOMY.md#7-where-each-stone-belongs-and-where-the-rest-go; docs/world-building/STONE_FACES_REDESIGN.md#5-flight-finding-2-the-owner-2026-09-28-in-the-town-not-out-past-it",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.ambient_stone_tips.the_scar_cursor",
+        "initial_node": "greeting",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "greeting",
+          "kind": "line",
+          "speaker": "scavenger",
+          "text": "Watch your step. Half these walls are ankle-high for a reason.",
+          "next": "pointer"
+        },
+        {
+          "id": "pointer",
+          "kind": "line",
+          "speaker": "scavenger",
+          "text": "Past the old square, look for the ruined house lot where terracotta rises in a low outcrop. The odd band along its foot carries Sun Stone.",
+          "next": "practical"
+        },
+        {
+          "id": "practical",
+          "kind": "line",
+          "speaker": "scavenger",
+          "text": "Use an iron pick. Dig down to the band and stop; the ore ends there. Leave it ten minutes and the rock mends, but any chest you leave stays put.",
+          "next": "repeat"
+        },
+        {
+          "id": "repeat",
+          "kind": "line",
+          "speaker": "scavenger",
+          "text": "Old square, ruined house lot, terracotta face. The Sun Stone ends at the band.",
+          "next": "repeat"
+        }
+      ]
+    },
+    {
+      "id": "dlg_stone_tip_displaced_city",
+      "quest_id": "ambient_stone_tips",
+      "npc_id": "npc_stone_tip_displaced_city_mason",
+      "source": "docs/mechanics/STONE_ECONOMY.md#7-where-each-stone-belongs-and-where-the-rest-go; docs/world-building/STONE_FACES_REDESIGN.md#5-flight-finding-2-the-owner-2026-09-28-in-the-town-not-out-past-it",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.ambient_stone_tips.displaced_city_cursor",
+        "initial_node": "greeting",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "greeting",
+          "kind": "line",
+          "speaker": "mason",
+          "text": "Lanterns mark the streets. Past the last one, the wall is working ground.",
+          "next": "pointer"
+        },
+        {
+          "id": "pointer",
+          "kind": "line",
+          "speaker": "mason",
+          "text": "Along the south gallery, the pale dripstone face gives Moon Stone. The dark face near the Magnemite gives Thunder Stone. Each starts at a different band along the wall's foot.",
+          "next": "practical"
+        },
+        {
+          "id": "practical",
+          "kind": "line",
+          "speaker": "mason",
+          "text": "Use an iron pick. Dig down to the band and stop; the ore ends there. Leave it ten minutes and the rock mends, but any chest you leave stays put.",
+          "next": "repeat"
+        },
+        {
+          "id": "repeat",
+          "kind": "line",
+          "speaker": "mason",
+          "text": "South gallery: pale for Moon, dark by the Magnemite for Thunder. Stop at the foot band.",
+          "next": "repeat"
+        }
+      ]
+    },
+    {
+      "id": "dlg_stone_tip_northlight",
+      "quest_id": "ambient_stone_tips",
+      "npc_id": "npc_stone_tip_northlight_field_hand",
+      "source": "docs/mechanics/STONE_ECONOMY.md#7-where-each-stone-belongs-and-where-the-rest-go; docs/world-building/STONE_FACES_REDESIGN.md#5-flight-finding-2-the-owner-2026-09-28-in-the-town-not-out-past-it",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.ambient_stone_tips.northlight_cursor",
+        "initial_node": "greeting",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "greeting",
+          "kind": "line",
+          "speaker": "field_hand",
+          "text": "If the mast starts humming, get indoors. If it only whistles, you are fine.",
+          "next": "pointer"
+        },
+        {
+          "id": "pointer",
+          "kind": "line",
+          "speaker": "field_hand",
+          "text": "Beside the weather mast, where the station cut breaks the square, a darker band runs along the outcrop's foot. That is the Ice Stone face.",
+          "next": "practical"
+        },
+        {
+          "id": "practical",
+          "kind": "line",
+          "speaker": "field_hand",
+          "text": "Use an iron pick. Dig down to the band and stop; the ore ends there. Leave it ten minutes and the rock mends, but any chest you leave stays put.",
+          "next": "repeat"
+        },
+        {
+          "id": "repeat",
+          "kind": "line",
+          "speaker": "field_hand",
+          "text": "Weather mast, square-side cut. Dark band at the foot; stop when you reach it.",
+          "next": "repeat"
+        }
+      ]
+    },
+    {
+      "id": "dlg_stone_tip_gorge_hamlet",
+      "quest_id": "ambient_stone_tips",
+      "npc_id": "npc_stone_tip_gorge_hamlet_elder",
+      "source": "docs/mechanics/STONE_ECONOMY.md#7-where-each-stone-belongs-and-where-the-rest-go; docs/world-building/STONE_FACES_REDESIGN.md#5-flight-finding-2-the-owner-2026-09-28-in-the-town-not-out-past-it",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.ambient_stone_tips.gorge_hamlet_cursor",
+        "initial_node": "greeting",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "greeting",
+          "kind": "line",
+          "speaker": "elder",
+          "text": "The gorge carries every loose word downstream, so keep yours useful.",
+          "next": "pointer"
+        },
+        {
+          "id": "pointer",
+          "kind": "line",
+          "speaker": "elder",
+          "text": "At the bridgeward edge of the square, the outcrop splits two ways: Dusk Stone in the dark west face, Dawn Stone in the pale east face. Both begin at the band along the foot.",
+          "next": "practical"
+        },
+        {
+          "id": "practical",
+          "kind": "line",
+          "speaker": "elder",
+          "text": "Use an iron pick. Dig down to the band and stop; the ore ends there. Leave it ten minutes and the rock mends, but any chest you leave stays put.",
+          "next": "repeat"
+        },
+        {
+          "id": "repeat",
+          "kind": "line",
+          "speaker": "elder",
+          "text": "Bridgeward edge: dark west for Dusk, pale east for Dawn. No deeper than the band.",
+          "next": "repeat"
+        }
+      ]
+    },
+    {
+      "id": "dlg_stone_tip_mining_town",
+      "quest_id": "ambient_stone_tips",
+      "npc_id": "npc_stone_tip_mining_town_foreman",
+      "source": "docs/mechanics/STONE_ECONOMY.md#7-where-each-stone-belongs-and-where-the-rest-go; docs/world-building/STONE_FACES_REDESIGN.md#5-flight-finding-2-the-owner-2026-09-28-in-the-town-not-out-past-it",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.ambient_stone_tips.mining_town_cursor",
+        "initial_node": "greeting",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "greeting",
+          "kind": "line",
+          "speaker": "foreman",
+          "text": "Helmet if you go past the yard. Pride will not stop falling stone.",
+          "next": "pointer"
+        },
+        {
+          "id": "pointer",
+          "kind": "line",
+          "speaker": "foreman",
+          "text": "Fire Stone shows in the plaza cut beside the Assayer, where hot rock bands the foot. The Thunder Stone is deeper, past the main workings where the dark seam starts to spark.",
+          "next": "practical"
+        },
+        {
+          "id": "practical",
+          "kind": "line",
+          "speaker": "foreman",
+          "text": "Use an iron pick. Dig down to the band and stop; the ore ends there. Leave it ten minutes and the rock mends, but any chest you leave stays put.",
+          "next": "assayer"
+        },
+        {
+          "id": "assayer",
+          "kind": "line",
+          "speaker": "foreman",
+          "text": "The Assayer on the plaza sells all ten kinds at a price. She buys none back.",
+          "next": "repeat"
+        },
+        {
+          "id": "repeat",
+          "kind": "line",
+          "speaker": "foreman",
+          "text": "Fire by the plaza, Thunder deep in the workings. Iron pick, and stop at the band.",
+          "next": "repeat"
+        }
+      ]
     }
   ]
 }
