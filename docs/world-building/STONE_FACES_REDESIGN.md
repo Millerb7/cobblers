@@ -7,6 +7,8 @@ slopes, irregular and natural where there are not), dropping the fixed box; give
 
 **Built on staging 2026-09-28** (the owner: "do it"; `tools/mines.py`, `data/mines.json`): the old boxes cleared and all 22 formations built on `cobblers-dryrun11`, 501 of 505 sampled cells matching the model over RCON (the 4 others are the Displaced City's lanterns, which the build places in cells the check sampled as air), every face's variant-0 ore in place, 0 of 440 old ore cells left. The audit `tools/mines_audit.py` is rewritten for formations and clean; it catches a planted missing bottom, a planted pit and a missing restore line. `tests/test_mines_independent.py` still describes the box and fails until it is rewritten. Not yet seen in game.
 
+**Re-sited 2026-09-29 (section 6 below).** The formations' shape and bottom course stand; the 18 surface faces moved from 121-205 blocks out to 30-64 (the Scar 110-119), still 26+ from every plaza and 28+ from every street. The audit is clean and `tests/test_mines_independent.py` is rewritten for the formation, its skip marker deleted (80 tests, 0 skipped). **Nothing has been rebuilt on staging since**, so the 2026-09-28 formations still stand there at the old coordinates.
+
 ## 1. The survey (all 22 faces, all seven places)
 
 Measured on the canonical heightmap and the town plans by `tools/mines.py`'s own model (0 model problems), never a
@@ -133,3 +135,107 @@ Seen on the rebuilt tea town faces: "i like these better, but some of them arent
 A formation is 13-19 by 9-19 today, so a lot takes a smaller one (width 7-9, knoll 1-2 round it) and a square takes one outcrop per place with its faces on different sides (the tea town's leaf north, shiny south), which needs the builder to merge a site's faces into one formation (one cap per column, one restore footprint). Viltri Light fits neither and needs a site by the lighthouse. Decisions for the owner before building: square or lot per place, and which house gives way where it is a lot.
 
 **The owner's answer (2026-09-28):** "doesnt have to be same for all, should be a mix, maybe some can be just near town and a person talks to players about it." So each place gets one of three: on the square, in a house slot, or near town with a townsperson who tells players where it is. A starting mix for the next session to put to the owner (nothing decided): the Mining Town on its square beside the Assayer (the finding's own example: it must read as the town's); the gorge hamlet on its square (no lots); Northlight on its big square; the tea town in a house slot among the tea houses; the Scar in a ruined house's lot (32 ruins, one gives way); Viltri Light near town with the lighthouse keeper pointing to it; the Displaced City unchanged (its bays are already in the city). The townsperson's words are story, so Codex writes them (`docs/HANDOVER_CODEX.md`); the NPC is a dialogue in `data/dialogue.json` compiled by `tools/compile_dialogue.py`, placed like the Digger.
+
+---
+
+## 6. Built 2026-09-29: re-sited into the towns, off the plazas
+
+The owner's order for this session: **away from plazas, shaped to their ground, distinct bottoms**; where the mix of
+section 5 conflicts with "away from plazas", prefer away from the plaza and record the alternative.
+
+### 6.1 The survey, re-measured on the formations as they stood
+
+Measured on the canonical heightmap and the town plans (`tools/ground.py`, `derived/towns/*_plan.json`), never a world.
+"Pit" is how far the natural ground round the working apron stands over the floor a player walks on; "plaza",
+"street" and "building" are the least distance from any written column of the face.
+
+| Place | Centre | Plaza | Street | Building | Pit | Verdict |
+|---|---|---|---|---|---|---|
+| Viltri Light | 130-140 | 118-124 | 123-129 | - | 1 | too far out |
+| Tea town | 121-148 | 131-159 | 30-49 | 33-53 | 1 | too far out |
+| The Scar | 149 | 120-121 | 35-55 | 33-44 | 0 | too far out |
+| Displaced City | 328-446 (the surface centre) | 82-97 | 28-49 | 17-35 | 1 | **already in the city: keep** |
+| Northlight | 126-137 | 97-105 | 34-54 | 26-45 | 1 | too far out |
+| Gorge hamlet | 55-77 | 35-59 | 48-72 | 21-44 | 1 | the one that already read right |
+| Mining Town | 176-205 | 140-170 | 69-100 | 77-108 | 2 | worst: the owner's own example |
+
+So **problems 1 and 3 of flight finding 1 are gone at all seven places**: no face is a pit (0-2, was 4-6), and every
+face has a distinct bottom course that is neither its host nor its floor nor its ore. **Problem 2 has inverted**: the
+50-150 ring of section 3, plus a search that scored the rock it would have to build, put five of the six surface
+places 121-205 blocks out, which is flight finding 2 exactly.
+
+### 6.2 What was changed
+
+- Each surface site's **`ring` is now the nearest band round its town's centre in which a whole formation still
+  clears every street, the plaza and every routed leg by `keep_clear.road_clear` (25)**. The inner edge was measured
+  per place by probing every anchor and front on a 2-block grid in order of distance from the centre:
+
+  | Place | Nearest legal anchor | Ring set | Why |
+  |---|---|---|---|
+  | Viltri Light | 36 | 36-90 | the nearest the rule allows |
+  | Tea town | 17 | **30**-85 | held back from 17 on purpose: at 17 a formation stands behind the Centre, which is what finding 1 complained of |
+  | The Scar | 109 | 105-150 | its own 301-block ruin field, 32 lots and their streets allow no nearer |
+  | Northlight | 50 | 50-95 | the nearest the rule allows |
+  | Gorge hamlet | 44 | 44-100 | the nearest the rule allows |
+  | Mining Town | 36 | 36-95 | the nearest the rule allows |
+
+- **`siting.centre_pull` (6 per block)** is added to the search's score, so of two legal sites the nearer to the town
+  wins even when it costs more rock to build. Without it the search takes the cheapest rock, which is always the
+  outside of the ring.
+- The **readings** were rewritten: they described the old far-out sites.
+- The **shape and the bottom course are untouched** (section 2 stands), and the **Displaced City's four are
+  untouched**: they are already bays in the cavern wall, 17-35 from the city's buildings.
+
+### 6.3 Where they stand now
+
+| Place | Centre | Plaza | Street | Building | Pit | The reading it now has |
+|---|---|---|---|---|---|---|
+| Viltri Light | 44-49 | 28-34 | 33-35 | - | 1 | near town, the keeper points the way |
+| Tea town | 30-42 | 35-59 | 35-80 | 5-24 | 1 | tors among the tea rows at the town's edge |
+| The Scar | 110-119 | 86-92 | 28 | 20-26 | 0 | humps among the ruins, off their streets |
+| Displaced City | (unchanged) | 82-97 | 28-49 | 17-35 | 1 | bays in the cavern wall |
+| Northlight | 51-64 | 28-35 | 39-40 | 23-26 | 0 | outcrops past the station's last hut |
+| Gorge hamlet | 46-59 | 26-34 | 47-65 | 12-29 | 1 | tors over the hamlet's fields |
+| Mining Town | 39-55 | 37-56 | 30-48 | 20-38 | 1 | the town's own working behind the pithead |
+
+### 6.4 The deviation from section 5's mix, and the alternative
+
+**The square and the house slot were not built, at any place.** A square *is* the plaza, and every lot touches a
+street: either would put written columns inside the 25 blocks the owner set in finding 1. Tonight's order settles it
+in favour of the clearance, and this is the record of what was given up.
+
+The alternative, if the owner would rather have a piece on the square than the clearance: drop `road_clear` for
+streets alone (keeping 25 for the plaza), which means splitting `keep_clear.road_clear` into a plaza clearance and a
+street clearance, and lowering `ROAD_CLEAR_MIN` in `tools/mines_audit.py` — that floor is the audit's, and the audit
+is not the builder's to loosen, so it is the owner's call and a separate change.
+
+The mix that *does* survive the clearance, and is what stands:
+
+| Place | Siting built | Section 5 wanted |
+|---|---|---|
+| Mining Town | its own ground behind the pithead, 39-55 out, in sight of the Assayer | the square |
+| Gorge hamlet | over the hamlet's fields, 46-59 out | the square |
+| Northlight | inland past the last hut, 51-64 out | the square |
+| Tea town | among the tea rows at the town's edge, 30-42 out, 5 from the nearest tea house | a house slot |
+| The Scar | among the ruins, off their streets, 110-119 out | a ruined lot |
+| Viltri Light | 44-49 out, with a townsperson to point the way | near town, a townsperson |
+| Displaced City | unchanged | unchanged |
+
+**Still owed, and not written here:** the townsperson at Viltri Light. The words are story, so Codex writes them
+(`docs/HANDOVER_CODEX.md`); the NPC is a dialogue in `data/dialogue.json` compiled by `tools/compile_dialogue.py`,
+placed like the Digger.
+
+### 6.5 What was verified, and what was not
+
+- `python tools/mines.py build`: 0 model problems, 7 sites, 22 faces.
+- `python tools/mines_audit.py`: **CLEAN**, 7 sites, 22 faces, 13,966 cells written by the build functions, 10 stones
+  on sale. Proved to be checking rather than passing: with three faults planted in `data/mines.json` (a bottom course
+  equal to its host, `road_clear` 10, a ring of 400-500) it reported 7 problems naming each; the data was restored and
+  it went clean again.
+- `python -m pytest tests/test_mines_independent.py`: **80 passed, 0 skipped**, module skip marker deleted.
+- **Not verified:** anything in a running game. Nothing here has been seen in Minecraft. The formations have not been
+  built on staging since the re-siting, so the old ones still stand there at the old coordinates and must be cleared
+  from the heightmap before the new ones go in, as on 2026-09-28.
+- **A disagreement to settle, not papered over:** `docs/mechanics/STONE_ECONOMY.md` section 14 ("What was built,
+  2026-09-28") still describes the 9 x 5 x 6 box, the 3-row apron and ramp, and the pre-redesign coordinates. It was
+  already stale after the formation rebuild and is staler now. It is not this session's file to rewrite.
