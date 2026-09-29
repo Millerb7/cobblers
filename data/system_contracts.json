@@ -126,6 +126,8 @@
         "town_dressing_audit.py": "checker: the built town_dressing functions",
         "shrines.py": "not covered: a block source (data/shrines.json blocks) that names the spawn conditions file only in its docstring and does not read it; not yet one of this contract's sources (the test author's to add), and its built functions are checked by shrines_audit.py and by the built-packs test here",
         "shrines_audit.py": "checker: the built shrines functions, against data/shrines.json blocks and the spawn conditions",
+        "gym_interiors.py": "not covered: a block source (data/gym_interiors.json blocks) that names the spawn conditions file only in its docstring and does not read it; not yet one of this contract's sources (the test author's to add), and its built functions are checked by gym_interiors_audit.py",
+        "gym_interiors_audit.py": "checker: the built gym_interiors functions, against data/gym_interiors.json blocks and the spawn conditions",
         "rift_mines_audit.py": "checker: the built rift_mines pack (source rift_mines)",
         "gulch_mine_audit.py": "checker: the built gulch_mine pack (source gulch_mine)",
         "mines_audit.py": "checker: the built mines pack (the evolution-stone faces; data/mines.json names no spawn condition)",
