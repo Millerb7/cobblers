@@ -116,3 +116,18 @@ box geometry independently and must be rewritten for the formation by someone ot
 content and its review by different agents). Then `reapply.py prepare --only mines:build`, the old faces cleared on
 staging, R9O re-run, and a spot check over RCON. The old faces' pits are refilled from the heightmap on staging before
 the new ones go in.
+
+## 5. Flight finding 2 (the owner, 2026-09-28): in the town, not out past it
+
+Seen on the rebuilt tea town faces: "i like these better, but some of them arent near towns enough, like mining town someone wouldnt know its connected. make them a piece in town square or in like a house slot." The shape stays; the siting ring of section 3 is replaced. What the plans hold (measured, `tools/town_dressing.py` town_plan):
+
+| Place | Square | Lots (all taken) |
+|---|---|---|
+| Tea town | 29 x 27 | 15, 13 x 12-13 |
+| The Scar | 33 x 33 | 32, 12 x 11 |
+| Northlight | 41 x 31 | 14, 13 x 13 |
+| Gorge hamlet | 31 x 29 | none |
+| Mining Town | 41 x 24 | 14, 13 x 13 |
+| Viltri Light | 6 x 13 | none |
+
+A formation is 13-19 by 9-19 today, so a lot takes a smaller one (width 7-9, knoll 1-2 round it) and a square takes one outcrop per place with its faces on different sides (the tea town's leaf north, shiny south), which needs the builder to merge a site's faces into one formation (one cap per column, one restore footprint). Viltri Light fits neither and needs a site by the lighthouse. Decisions for the owner before building: square or lot per place, and which house gives way where it is a lot.
