@@ -1,21 +1,24 @@
 {
  "schema": "cobblers.mines/1",
- "status": "built offline 2026-09-28 (the owner: build the stone economy into the towns that have it); not run in a game",
+ "status": "rebuilt as formations 2026-09-28 (flight finding 1: the tea town's boxes were square pits by the Centre with no bottom; docs/world-building/STONE_FACES_REDESIGN.md); not run in a game",
  "builder": "tools/mines.py (site, author, report, build); audit tools/mines_audit.py; re-applied by tools/reapply.py step R9O",
  "design": "docs/mechanics/STONE_ECONOMY.md (sections 3, 5, 6, 11), docs/mechanics/EVOLUTION_STONES.md, docs/decisions/ADR-003-evolution-stone-supply.md as amended",
  "seed": 20260928,
  "geometry": {
-  "width": 9,
   "height": 5,
-  "depth": 6,
+  "body_depth": 4,
+  "width_min": 7,
+  "width_max": 11,
+  "knoll_side": 4,
+  "knoll_back": 5,
+  "fall": 1.2,
   "apron_rows": 3,
   "apron_margin": 1,
-  "ramp_max": 14,
-  "backing": 2,
   "clear_above": 2,
-  "max_fill": 3,
   "max_cut": 14,
-  "rules": "A face is a box `width` along the face, `depth` into the rock and `height` high, worked from its `front` (north: the front plane is the box's z0 and the rock runs +z; south z1, -z; west x0, +x; east x1, -x; along the face u runs +x on a north or south face, +z on a west or east face). The cut: row r in front of the front plane (r = 1, 2, ...) spans u = -apron_margin .. width - 1 + apron_margin. Its floor t starts at the box's y0 - 1; rows 1..apron_rows keep it; from row apron_rows + 1 on, a row whose every column's ground is within 1 of t ends the cut (it is not written), else t moves one toward the row's median ground (the lower median of the sorted columns) and the row is written; a cut longer than apron_rows + ramp_max rows is refused. A written column: host rock from ground + 1 to t - 1 (a built-up column), the floor block at t, and air from t + 1 to max(ground, t) + clear_above (and at least to the box top + 1 in the apron rows); no column dug more than max_cut or built up more than max_fill. The skin: every cell next to the cut's air (four sides and below), not otherwise written and at or under its column's ground, becomes host rock. The backing: host rock in every cell of u = -backing .. width - 1 + backing, d = 0 .. depth - 1 + backing, y = y0 - backing .. y1 + backing outside the box. The bedrock (only where the site says): the shell one further out, d from 1, never on the front plane. The ore of variant k: n = ore_min + h32(seed, face, k) mod (ore_max - ore_min + 1) cells, in the order h32(seed, face, k, x, y, z) sorts them: first visible_min on the front plane's bottom row with 1 <= u <= width - 2, then the rest at depth 2 or more under the top row (tools/mines.py ore_cells)."
+  "max_fill": 2,
+  "max_build": 9,
+  "rules": "A face is a formation, shaped to its ground (the owner, 2026-09-28: no fixed box, no pit, a distinct bottom). Its anchor is the middle column of its face line; `front` is the side a player works it from (north: the player stands north and the rock runs +z; south -z; west +x; east -x); u runs along the face (+x on a north or south face, +z on a west or east face), d into the rock, d < 0 in front. The floor F is the lower median of the natural ground over the first apron row, u = -(width_max/2 + apron_margin) .. +: never lowered, so a face is walked onto, never climbed down into. The width is width_min + h32(seed, face, 1) mod (width_max - width_min + 1), half-width hw = width // 2. Column u of the face line (|u| < hw) stands back one block when h32(seed, face, 2, u) mod 3 == 0. The body: the `body_depth` cells behind the face line in each column u = -hw..hw, rows F+2 .. F+height+1, over the bottom course at F+1 (the face's `bottom` block: a contrasting rock that shows where the ore ends), and host rock from the ground up to F where the ground dips under F. The formation's top over the body is T0 = F+height+2, plus 1 where h32(seed, face, 3, u, d) mod 3 == 2; round the body, out to knoll_side beside and knoll_back behind, it is T0 + (h32(seed, face, 3, u, d) mod 3 - 1) - round(fall x (max(0, |u| - hw) + max(0, d - body_depth + 1))). A column whose natural ground is under that top is built up in host rock to it, its top cell the `cap` (the site's ground: moss, grass, snow; host rock where none); a column whose ground is at or over it is left natural, so on a slope the face is a cut and on flat ground an outcrop. No column is built up more than max_build. In front: the apron_rows rows over u = -hw - apron_margin .. hw + apron_margin, and the set-back cells, are made level with F (host rock filled under a floor block where the ground was lower, by at most max_fill; dug where it was higher, by at most max_cut), with air from F+1 to the higher of the ground and F, plus clear_above. The skin: every natural cell next to that air and at or under its column's ground becomes host rock. The bedrock (only where the site says): one cell beside, behind and under the body and its bottom course, below the ground, never in front. The ore of variant k: n = ore_min + h32(seed, face, k) mod (ore_max - ore_min + 1) body cells in the order h32(seed, face, k, x, y, z) sorts them: first visible_min on the face line at rows F+2 or F+3 with |u| <= hw - 1, then the rest at least one behind the face line and under the body's top row (tools/mines.py ore_cells). The restore puts back the whole formation (body, bottom course, rock, cap) over the resettable tag, then one variant's ore where host rock stands."
  },
  "keep_clear": {
   "water_changed_reach": 8,
@@ -26,7 +29,8 @@
   "light_reach": 2,
   "face_gap": 2,
   "cavern_reach": 14,
-  "why": "No written column on a town's plan or outside its reach (tools/town_dressing.py Mask), on painted water or within 4 of a painted tree, within water_changed_reach of a column the pending water export changes (the owner, 2026-09-28: nothing built that the export would invalidate), or near another system's pieces (dressing, working Pokemon); in the Displaced City's cavern, clear of its trees, lights and tunnel (derived/cavern/plan.json, the cavern's 40_light function); faces face_gap apart"
+  "why": "No written column on a town's plan or outside its reach (tools/town_dressing.py Mask), on painted water or within 4 of a painted tree, within water_changed_reach of a column the pending water export changes (the owner, 2026-09-28: nothing built that the export would invalidate), or near another system's pieces (dressing, working Pokemon); in the Displaced City's cavern, clear of its trees, lights and tunnel (derived/cavern/plan.json, the cavern's 40_light function); faces face_gap apart; and (2026-09-28, the owner: found, not walked past) every written column road_clear from any street, the plaza and every routed leg, and each surface face's anchor inside its site's ring round the town's centre",
+  "road_clear": 25
  },
  "restore": {
   "period_ticks": 12000,
@@ -77,7 +81,13 @@
    "cobblemon:sun_stone_ore",
    "cobblemon:terracotta_sun_stone_ore",
    "cobblemon:thunder_stone_ore",
-   "cobblemon:water_stone_ore"
+   "cobblemon:water_stone_ore",
+   "minecraft:tuff",
+   "minecraft:smooth_basalt",
+   "minecraft:calcite",
+   "minecraft:grass_block",
+   "minecraft:moss_block",
+   "minecraft:snow_block"
   ],
   "resettable_why": "STONE_ECONOMY.md 5.4: the restore fills host rock only over this tag and guards every ore setblock with it, so a chest a player left in a box survives with its contents (it blocks one ore cell until it is moved); the hosts, what a player digs them into, torches, fluids, snow and every stone ore are reset. That `fill ... replace #tag` takes a block tag in 1.21.1 is proof P-3, not run"
  },
@@ -191,13 +201,10 @@
       "visible_min": 1
      },
      "offset_ticks": 0,
-     "box": [
-      568,
-      68,
-      4496,
-      573,
-      72,
-      4504
+     "bottom": "minecraft:deepslate",
+     "anchor": [
+      567,
+      4379
      ],
      "front": "west"
     },
@@ -213,18 +220,20 @@
       "visible_min": 1
      },
      "offset_ticks": 6000,
-     "box": [
-      568,
-      67,
-      4530,
-      573,
-      71,
-      4538
+     "bottom": "minecraft:deepslate",
+     "anchor": [
+      546,
+      4388
      ],
      "front": "west"
     }
    ],
-   "reapply_step": "R9O"
+   "reapply_step": "R9O",
+   "ring": [
+    50,
+    150
+   ],
+   "cap": "minecraft:grass_block"
   },
   {
    "id": "tea_town",
@@ -245,15 +254,12 @@
       "visible_min": 1
      },
      "offset_ticks": 0,
-     "box": [
-      2634,
-      108,
-      3612,
-      2639,
-      112,
-      3620
+     "bottom": "minecraft:deepslate",
+     "anchor": [
+      2701,
+      3745
      ],
-     "front": "east"
+     "front": "south"
     },
     {
      "id": "tea_leaf_b",
@@ -267,15 +273,12 @@
       "visible_min": 1
      },
      "offset_ticks": 6000,
-     "box": [
-      2649,
-      108,
-      3634,
-      2657,
-      112,
-      3639
+     "bottom": "minecraft:deepslate",
+     "anchor": [
+      2701,
+      3730
      ],
-     "front": "north"
+     "front": "south"
     },
     {
      "id": "tea_shiny_a",
@@ -289,15 +292,12 @@
       "visible_min": 1
      },
      "offset_ticks": 0,
-     "box": [
-      2665,
-      107,
-      3624,
-      2673,
-      111,
-      3629
+     "bottom": "minecraft:deepslate",
+     "anchor": [
+      2704,
+      3715
      ],
-     "front": "north"
+     "front": "south"
     },
     {
      "id": "tea_shiny_b",
@@ -311,18 +311,20 @@
       "visible_min": 1
      },
      "offset_ticks": 6000,
-     "box": [
-      2628,
-      108,
-      3628,
-      2633,
-      112,
-      3636
+     "bottom": "minecraft:deepslate",
+     "anchor": [
+      2716,
+      3739
      ],
-     "front": "east"
+     "front": "west"
     }
    ],
-   "reapply_step": "R9O"
+   "reapply_step": "R9O",
+   "ring": [
+    50,
+    150
+   ],
+   "cap": "minecraft:moss_block"
   },
   {
    "id": "the_scar",
@@ -343,13 +345,10 @@
       "visible_min": 1
      },
      "offset_ticks": 0,
-     "box": [
-      2080,
-      274,
-      964,
-      2088,
-      278,
-      969
+     "bottom": "minecraft:smooth_basalt",
+     "anchor": [
+      2064,
+      808
      ],
      "front": "north"
     },
@@ -365,18 +364,19 @@
       "visible_min": 1
      },
      "offset_ticks": 6000,
-     "box": [
-      2079,
-      274,
-      980,
-      2084,
-      278,
-      988
+     "bottom": "minecraft:smooth_basalt",
+     "anchor": [
+      2049,
+      814
      ],
      "front": "east"
     }
    ],
-   "reapply_step": "R9O"
+   "reapply_step": "R9O",
+   "ring": [
+    50,
+    150
+   ]
   },
   {
    "id": "displaced_city",
@@ -400,15 +400,12 @@
       "visible_min": 1
      },
      "offset_ticks": 0,
-     "box": [
-      3330,
-      28,
-      1850,
-      3338,
-      32,
-      1855
-     ],
-     "front": "north"
+     "front": "north",
+     "bottom": "minecraft:calcite",
+     "anchor": [
+      3334,
+      1850
+     ]
     },
     {
      "id": "dc_moon_b",
@@ -422,15 +419,12 @@
       "visible_min": 1
      },
      "offset_ticks": 6000,
-     "box": [
-      3284,
-      23,
-      1850,
-      3292,
-      27,
-      1855
-     ],
-     "front": "north"
+     "front": "north",
+     "bottom": "minecraft:calcite",
+     "anchor": [
+      3288,
+      1850
+     ]
     },
     {
      "id": "dc_thunder_a",
@@ -444,15 +438,12 @@
       "visible_min": 1
      },
      "offset_ticks": 0,
-     "box": [
-      3390,
-      24,
-      1850,
-      3398,
-      28,
-      1855
-     ],
-     "front": "north"
+     "front": "north",
+     "bottom": "minecraft:tuff",
+     "anchor": [
+      3392,
+      1850
+     ]
     },
     {
      "id": "dc_thunder_b",
@@ -466,18 +457,17 @@
       "visible_min": 1
      },
      "offset_ticks": 6000,
-     "box": [
-      3262,
-      28,
-      1850,
-      3270,
-      32,
-      1855
-     ],
-     "front": "north"
+     "front": "north",
+     "bottom": "minecraft:tuff",
+     "anchor": [
+      3266,
+      1850
+     ]
     }
    ],
-   "reapply_step": "R9O"
+   "reapply_step": "R9O",
+   "road_clear": 12,
+   "road_clear_why": "The owner kept the city's four sites (2026-09-28): in the cavern the wall is the view, and each face was set back 28-49 from the ring streets as a box. The formation is wider than the box, so the clearance here is 12, not the surface's 25."
   },
   {
    "id": "northlight",
@@ -498,13 +488,10 @@
       "visible_min": 1
      },
      "offset_ticks": 0,
-     "box": [
-      7318,
-      110,
-      1591,
-      7326,
-      114,
-      1596
+     "bottom": "minecraft:deepslate",
+     "anchor": [
+      7222,
+      1438
      ],
      "front": "north"
     },
@@ -520,18 +507,20 @@
       "visible_min": 1
      },
      "offset_ticks": 6000,
-     "box": [
-      7302,
-      110,
-      1589,
-      7310,
-      114,
-      1594
+     "bottom": "minecraft:deepslate",
+     "anchor": [
+      7201,
+      1435
      ],
      "front": "north"
     }
    ],
-   "reapply_step": "R9O"
+   "reapply_step": "R9O",
+   "ring": [
+    50,
+    150
+   ],
+   "cap": "minecraft:snow_block"
   },
   {
    "id": "gorge_hamlet",
@@ -552,12 +541,9 @@
       "visible_min": 1
      },
      "offset_ticks": 0,
-     "box": [
-      6802,
-      107,
-      4310,
-      6810,
-      111,
+     "bottom": "minecraft:tuff",
+     "anchor": [
+      6795,
       4315
      ],
      "front": "south"
@@ -574,13 +560,10 @@
       "visible_min": 1
      },
      "offset_ticks": 6000,
-     "box": [
-      6786,
-      107,
-      4308,
-      6794,
-      111,
-      4313
+     "bottom": "minecraft:tuff",
+     "anchor": [
+      6801,
+      4291
      ],
      "front": "south"
     },
@@ -596,15 +579,12 @@
       "visible_min": 1
      },
      "offset_ticks": 0,
-     "box": [
-      6812,
-      108,
-      4288,
-      6820,
-      112,
-      4293
+     "bottom": "minecraft:deepslate",
+     "anchor": [
+      6771,
+      4306
      ],
-     "front": "south"
+     "front": "west"
     },
     {
      "id": "gh_dawn_b",
@@ -618,18 +598,20 @@
       "visible_min": 1
      },
      "offset_ticks": 6000,
-     "box": [
-      6820,
-      107,
-      4312,
-      6828,
-      111,
-      4317
+     "bottom": "minecraft:deepslate",
+     "anchor": [
+      6810,
+      4309
      ],
-     "front": "south"
+     "front": "west"
     }
    ],
-   "reapply_step": "R9O"
+   "reapply_step": "R9O",
+   "ring": [
+    50,
+    150
+   ],
+   "cap": "minecraft:grass_block"
   },
   {
    "id": "mining_town",
@@ -650,15 +632,12 @@
       "visible_min": 1
      },
      "offset_ticks": 0,
-     "box": [
-      6758,
-      138,
-      5783,
-      6763,
-      142,
-      5791
+     "bottom": "minecraft:tuff",
+     "anchor": [
+      6698,
+      5538
      ],
-     "front": "west"
+     "front": "north"
     },
     {
      "id": "mt_fire_b",
@@ -672,15 +651,12 @@
       "visible_min": 1
      },
      "offset_ticks": 6000,
-     "box": [
-      6760,
-      139,
-      5805,
-      6765,
-      143,
-      5813
+     "bottom": "minecraft:tuff",
+     "anchor": [
+      6692,
+      5520
      ],
-     "front": "west"
+     "front": "north"
     },
     {
      "id": "mt_thunder_a",
@@ -694,15 +670,12 @@
       "visible_min": 1
      },
      "offset_ticks": 0,
-     "box": [
-      6762,
-      137,
-      5767,
-      6767,
-      141,
-      5775
+     "bottom": "minecraft:tuff",
+     "anchor": [
+      6671,
+      5544
      ],
-     "front": "west"
+     "front": "north"
     },
     {
      "id": "mt_thunder_b",
@@ -716,26 +689,19 @@
       "visible_min": 1
      },
      "offset_ticks": 6000,
-     "box": [
-      6734,
-      135,
-      5765,
-      6742,
-      139,
-      5770
+     "bottom": "minecraft:tuff",
+     "anchor": [
+      6692,
+      5550
      ],
      "front": "north"
     }
    ],
-   "prefer_near": {
-    "at": [
-     6740,
-     5800
-    ],
-    "window": 60,
-    "why": "the mine head: the faces stand on the rising flank round the adit portal (placements mining_portal, rect 6728-6742 x 5802-5816) and the assay office, at the top of the mine spur, not at the town's west edge"
-   },
-   "reapply_step": "R9O"
+   "reapply_step": "R9O",
+   "ring": [
+    150,
+    210
+   ]
   }
  ]
 }

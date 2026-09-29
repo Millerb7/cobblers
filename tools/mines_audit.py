@@ -2,40 +2,62 @@
 """Offline audit of the evolution-stone faces (build/datapacks/cobblers_mines against data/mines.json).
 
 Independent of tools/mines.py's model: it never imports it. The pack is replayed, and what it wrote is checked against
-data/mines.json's own words and against other systems' data and output:
+data/mines.json's own rule words (`geometry.rules`), the canonical heightmap (tools/ground.py, rounded) and other
+systems' data and output. From the rules text alone, per face: the frame (anchor, front; u along the face, d into the
+rock), the floor F (the lower median of the natural ground over the first apron row), the half-width and the set-back
+columns (the rule's h32, typed here from its definition), the body, the apron and the envelope a face may write in.
 
-  pack        one build function per site in the data, and for every face a check, a restore and one function per
-              variant; the load and tick tags; nothing passes on an empty pack or an empty build
-  boxes       every face's box written whole at variant 0: host rock and its ore only, the ore count within the data's
-              yield, at least visible_min of it on the front plane's bottom row
-  variants    each variant function: first a fill of exactly the box with the host over #cobblers:face_resettable, then
-              only guarded setblocks (`execute if block P #tag run setblock P <ore>`, P inside the box) of the face's
-              ore, as many as the yield allows and at least visible_min on the front's bottom row
-  guard       each check: the period against the face's last restore, the box's four corners (grown by one) loaded, no
-              player and no Pokemon in the box grown by one, all before the restore is called; the restore draws
-              `random value 0..7`, never repeats the last variant, and stamps the time
+  pack        one build function per site in the data, and for every face a check, a restore, a rock function and one
+              function per variant; the load and tick tags; nothing passes on an empty pack or an empty build
+  owner       every written column lies in exactly one face's envelope (u within the knoll's reach, d from one before
+              the apron to the knoll's back): nothing is written where no face may write
+  floor       no pit: the bottom course stands at F+1 over every body column (a bottom course under F+1 is a floor dug
+              below the natural ground's median in front of the face); every apron and set-back cell at F is solid
+              and F+1, F+2 are open (a lantern excepted); the apron is levelled by at most max_fill and max_cut
+  bottom      the face's `bottom` block (a contrasting rock, not its host) directly under every body column; no ore of
+              the face at or under it, in the build or in any variant
+  body        every body cell (F+2 .. F+height+1) is host rock or the face's ore; the ground under F in a body column is
+              host rock up to F (the formation does not float); every body column has a solid cell over its top row
+              (cover)
+  top         no solid cell built over the ground higher than T0+1 = F+height+3; no column built up more than max_build over its ground; the
+              top cell of every built-up column outside the apron is the cap (the site's cap, else host rock)
+  rock        faces/<id>_rock is only `fill ... <block> replace #cobblers:face_resettable` lines, and the cells it fills
+              are exactly the build's formation rock of that face (body, bottom course, rock and cap: every host,
+              bottom, cap or ore cell except the apron's floor and fill), each with the block the build wrote (host
+              where the build left ore); the restore runs it before any variant
+  variants    each faces/<id>_v<k> is only `execute if block P <host> run setblock P <ore>` lines, P a body cell above
+              the bottom course, as many as the yield allows; exactly visible_min of them on the face line at F+2 or
+              F+3 away from its ends and open to the air in front; the rest one or more behind the face line and under
+              the body's top row; the build's ore is variant 0; the variants are not all the same
+  guard       each check: the period against the face's last restore, four loaded corners spanning the face's written
+              bounds, no player and no Pokemon in a volume covering those bounds grown by one, all before the restore;
+              the restore runs the rock, draws `random value 0..7`, never repeats the last variant, and stamps the time
   driver      the tick runs the drive every `every_ticks`; the drive runs each site only while a player is inside an
-              approach box that holds every face of the site with at least half the approach margin to spare; the
-              load sets the period to the data's (at least 600 s)
-  tag         the resettable tag holds air, cave air, every host and every ore the faces use, and no container
-  cover       every box column's ground (the heightmap, rounded; the Displaced City cavern's floor from
-              derived/cavern/plan.npz inside the cavern) at least 2 over the box top
-  front       the cell in front of every box's front plane is written air from the box's bottom to its top, over a
-              written solid floor
-  walk        from the stand in front of each face, over the replayed writes on the ground, a walker stepping at most
+              approach box that holds every face's written bounds with at least half the approach margin to spare;
+              the load sets the period to the data's (at least 600 s)
+  tag         the resettable tag holds air, cave air, every host, bottom, cap and ore the faces use, and no container
+  walk        from the stand (u 0, two rows out, F+1), over the replayed writes on the ground, a walker stepping at most
               one block up or down reaches a column the build did not write
-  plan        no written column on a lot, an anchor lot, a street (the plan's cells and the data polyline), the plaza,
-              a building's footprint or a route event site (tools/town_dressing_audit.py's plan recomputation), an
-              earthwork's command columns, a lamp, a trader's spot, a signpost, painted water, a town dressing write or
-              a working Pokemon's point; none within 8 of a column the pending water export changes (the file missing is
-              a failure); in the cavern, none within 3 of a tree's trunk, on a light write, or within 4 of the tunnel's
-              line
-  blocks      no written block that data/spawn_blocks.json names as a spawn condition; bedrock only at a site whose data
-              says so, and never next to a written air cell (no bedrock shows in a cut)
+  ring        each surface face's anchor within its site's ring round the town's centre (data/towns.json)
+  roads       no written column within the site's road_clear (at least 25 at a surface site) of a street or the plaza
+              (the town plan's cells and the data polylines, tools/town_dressing_audit.py's plan recomputation) or of a
+              routed leg (derived/routes/critical_legs.json, measured to its segments here); none within 3 of a
+              data/routes.json corridor
+  plan        no written column on a lot, an anchor lot, a building's footprint or a route event site, an earthwork's
+              command columns, a lamp, a trader's spot, a signpost, painted water, a town dressing write or a working
+              Pokemon's point; none within water_changed_reach (at least 8) of a column the pending water export
+              changes (the file missing is a failure); in the cavern, none within tree_reach of a tree's trunk, on a
+              light write, or within tunnel_reach of the tunnel's line
+  blocks      only the blocks the rules name (host, ore, bottom, cap, floor, air; bedrock and lanterns where the site
+              says); no block data/spawn_blocks.json names as a spawn condition; bedrock only at a bedrock_skin site,
+              under the ground, never in front of the face and never next to a written air cell
   exchange    data/traders.json has the Exchange in the Mining Town: stock "stones", buys false, every stone the faces
               carry on sale, nothing else; no evolution stone in CobbleDollars' bank.json (so nothing buys one back)
   step        tools/reapply.py has R9O running every site's build function, and the pack in SERVER_PACKS and WORLD_LOCAL
   limits      tools/function_limits.py finds nothing the server would refuse
+
+Validity, not behaviour: nothing here shows a face in a running world (how it looks, that the ore drops, that the
+restore's filtered fill runs).
 
   python tools/mines_audit.py [--source-root DIR]      writes derived/mines/audit.json; exit 1 on any problem
 """
@@ -61,12 +83,19 @@ PACK = ROOT / "build" / "datapacks" / "cobblers_mines"
 FN = PACK / "data" / "cobblers" / "function" / "mines"
 OUT = ROOT / "derived" / "mines" / "audit.json"
 CMD = re.compile(r"^(fill|setblock) (-?\d+) (-?\d+) (-?\d+)(?: (-?\d+) (-?\d+) (-?\d+))? (\S+)")
-GUARDED = re.compile(r"^execute if block (-?\d+) (-?\d+) (-?\d+) (#\S+) run setblock (-?\d+) (-?\d+) (-?\d+) (\S+)$")
+ROCK_FILL = re.compile(r"^fill (-?\d+) (-?\d+) (-?\d+) (-?\d+) (-?\d+) (-?\d+) (\S+) replace (\S+)$")
+GUARDED = re.compile(r"^execute if block (-?\d+) (-?\d+) (-?\d+) (\S+) run setblock (-?\d+) (-?\d+) (-?\d+) (\S+)$")
+VOLUME = re.compile(r"x=(-?\d+),y=(-?\d+),z=(-?\d+),dx=(\d+),dy=(\d+),dz=(\d+)")
 AIRS = ("minecraft:air", "minecraft:cave_air")
+LANTERN = "minecraft:lantern"
+BEDROCK = "minecraft:bedrock"
 CONTAINERS = ("chest", "barrel", "shulker", "hopper", "dispenser", "dropper", "furnace", "smoker", "crafter")
-WATER_REACH = 8
-TREE_REACH = 3
-TUNNEL_REACH = 4
+# floors under the data's own reaches: the design's minimums, so an edit of data/mines.json cannot loosen the audit
+WATER_REACH_MIN = 8
+TREE_REACH_MIN = 3
+TUNNEL_REACH_MIN = 4
+ROAD_CLEAR_MIN = 25          # the owner, 2026-09-28: every surface face 25 from any street, the plaza, a routed leg
+LEG_MARGIN = 3               # tools/town_dressing.py LEG_MARGIN: the clearance from a data/routes.json corridor
 
 
 def name_of(state):
@@ -91,46 +120,62 @@ def replay(lines, into):
                     into[(x, y, z)] = m.group(8)
 
 
-def front_cells(box, front):
-    """The box's front plane, and the cells just in front of it, as {(x, y, z)} sets."""
-    x0, y0, z0, x1, y1, z1 = box
-    plane, before = set(), set()
-    for y in range(y0, y1 + 1):
-        if front in ("north", "south"):
-            zf, zb = (z0, z0 - 1) if front == "north" else (z1, z1 + 1)
-            for x in range(x0, x1 + 1):
-                plane.add((x, y, zf))
-                before.add((x, y, zb))
-        else:
-            xf, xb = (x0, x0 - 1) if front == "west" else (x1, x1 + 1)
-            for z in range(z0, z1 + 1):
-                plane.add((xf, y, z))
-                before.add((xb, y, z))
-    return plane, before
+# ------------------------------------------------------------------ the rules text's own terms
+
+def h32(*vals):
+    """The rules text's h32: a 32-bit FNV-style mix of integers (tools/rift_mines.py defines the same mix)."""
+    a = 0x811C9DC5
+    for v in vals:
+        a = ((a ^ (int(v) & 0xFFFFFFFF)) * 0x01000193) & 0xFFFFFFFF
+        a ^= a >> 15
+        a = (a * 0x2C1B3C6D) & 0xFFFFFFFF
+        a ^= a >> 12
+    return a
 
 
-def bottom_front(box, front):
-    """The front plane's bottom row without its two end cells (where the visible ore goes)."""
-    x0, y0, z0, x1, _y1, z1 = box
-    plane, _b = front_cells(box, front)
-    out = set()
-    for (x, y, z) in plane:
-        if y != y0:
-            continue
-        if front in ("north", "south") and x in (x0, x1):
-            continue
-        if front in ("west", "east") and z in (z0, z1):
-            continue
-        out.add((x, y, z))
-    return out
+def face_int(s):
+    """A face id as the integer the rule's h32 takes: its length and its code points by position."""
+    return len(s) * 1000003 + sum(ord(c) * (i + 1) for i, c in enumerate(s))
 
 
-def in_box(c, box):
-    x0, y0, z0, x1, y1, z1 = box
-    return x0 <= c[0] <= x1 and y0 <= c[1] <= y1 and z0 <= c[2] <= z1
+def frame(anchor, front):
+    """(xz(u, d), uv(x, z)) from the rules: north, the player stands north and the rock runs +z; south -z; west +x;
+    east -x; u runs +x on a north or south face and +z on a west or east face."""
+    ax, az = anchor
+    if front == "north":
+        return (lambda u, d: (ax + u, az + d)), (lambda x, z: (x - ax, z - az))
+    if front == "south":
+        return (lambda u, d: (ax + u, az - d)), (lambda x, z: (x - ax, az - z))
+    if front == "west":
+        return (lambda u, d: (ax + d, az + u)), (lambda x, z: (z - az, x - ax))
+    if front == "east":
+        return (lambda u, d: (ax - d, az + u)), (lambda x, z: (z - az, ax - x))
+    return None, None
 
 
-LEG_MARGIN = 3        # tools/town_dressing.py LEG_MARGIN: the generator's own clearance from a routed leg
+def terms(face, geo, seed, ground):
+    """The face's terms from the rules text: F, hw, the set-back, the body, the apron and the envelope."""
+    xz, uv = frame(face["anchor"], face["front"])
+    A, Mg, BD = geo["apron_rows"], geo["apron_margin"], geo["body_depth"]
+    half = geo["width_max"] // 2 + Mg
+    gs = sorted(ground(*xz(u, -1)) for u in range(-half, half + 1))
+    F = gs[(len(gs) - 1) // 2]
+    fi = face_int(face["id"])
+    width = geo["width_min"] + h32(seed, fi, 1) % (geo["width_max"] - geo["width_min"] + 1)
+    hw = width // 2
+    sb = {u: 1 if abs(u) < hw and h32(seed, fi, 2, u) % 3 == 0 else 0 for u in range(-hw, hw + 1)}
+    body = {(u, d) for u in sb for d in range(sb[u], sb[u] + BD)}
+    apron = {(u, d) for u in range(-hw - Mg, hw + Mg + 1) for d in range(-A, 0)} | {(u, 0) for u in sb if sb[u]}
+    reach = hw + max(geo["knoll_side"], Mg + 1)
+    env = (-reach, -A - 1, reach, BD + 1 + geo["knoll_back"])
+    return {"xz": xz, "uv": uv, "F": F, "hw": hw, "sb": sb, "body": body, "apron": apron, "env": env,
+            "top": F + geo["height"] + 3}
+
+
+def in_env(t, x, z):
+    u, d = t["uv"](x, z)
+    u0, d0, u1, d1 = t["env"]
+    return u0 <= u <= u1 and d0 <= d <= d1
 
 
 def seg_distance(px, pz, ax, az, bx, bz):
@@ -140,18 +185,62 @@ def seg_distance(px, pz, ax, az, bx, bz):
     return math.hypot(px - (ax + t * vx), pz - (az + t * vz))
 
 
+def seg_distances(C, a, b):
+    """Distances of the (n, 2) points C to the segment a-b."""
+    a = np.asarray(a, float)
+    v = np.asarray(b, float) - a
+    L = float(v @ v)
+    t = np.zeros(len(C)) if L == 0 else np.clip(((C - a) @ v) / L, 0.0, 1.0)
+    return np.hypot(*(C - (a + t[:, None] * v)).T)
+
+
+def polylines_near(lines, cols, reach):
+    """{(x, z): distance} of the written columns within `reach` of any segment of the polylines."""
+    if not cols or not lines:
+        return {}
+    C = np.array(sorted(cols), float)
+    lo, hi = C.min(0) - reach - 1, C.max(0) + reach + 1
+    best = np.full(len(C), np.inf)
+    for pts in lines:
+        for a, b in zip(pts, pts[1:]):
+            if max(a[0], b[0]) < lo[0] or min(a[0], b[0]) > hi[0] or max(a[1], b[1]) < lo[1] or min(a[1], b[1]) > hi[1]:
+                continue
+            best = np.minimum(best, seg_distances(C, a, b))
+    return {(int(C[i][0]), int(C[i][1])): float(best[i]) for i in np.nonzero(best <= reach)[0]}
+
+
+def cells_near(cells, cols, reach):
+    """{(x, z): distance} of the written columns within `reach` (Euclidean) of any of the cells."""
+    if not cols or not cells:
+        return {}
+    C = np.array(sorted(cols), float)
+    lo, hi = C.min(0) - reach - 1, C.max(0) + reach + 1
+    R = np.array([c for c in cells if lo[0] <= c[0] <= hi[0] and lo[1] <= c[1] <= hi[1]], float)
+    if not len(R):
+        return {}
+    out = {}
+    for i in range(0, len(C), 256):
+        blk = C[i:i + 256]
+        d = np.sqrt(((blk[:, None, :] - R[None, :, :]) ** 2).sum(-1).min(1))
+        for j in np.nonzero(d <= reach)[0]:
+            out[(int(blk[j][0]), int(blk[j][1]))] = float(d[j])
+    return out
+
+
 def route_legs():
-    """([polyline], critical legs present): derived/routes/critical_legs.json's legs and data/routes.json's corridors."""
-    out = []
+    """([critical leg polylines], [data corridor polylines], critical legs file present)."""
+    crit, corr = [], []
     p = ROOT / "derived" / "routes" / "critical_legs.json"
     if p.is_file():
-        out += [[tuple(q) for q in leg.get("polyline") or []] for leg in json.loads(p.read_text(encoding="utf-8"))["legs"]]
+        crit = [[tuple(q) for q in leg.get("polyline") or []] for leg in json.loads(p.read_text(encoding="utf-8"))["legs"]]
     rp = ROOT / "data" / "routes.json"
     if rp.is_file():
         for r in json.loads(rp.read_text(encoding="utf-8")).get("routes") or []:
-            out.append([(q["x"], q["z"]) for q in (r.get("corridor") or {}).get("polyline") or []])
-    return [l for l in out if len(l) > 1], p.is_file()
+            corr.append([(q["x"], q["z"]) for q in (r.get("corridor") or {}).get("polyline") or []])
+    return [l for l in crit if len(l) > 1], [l for l in corr if len(l) > 1], p.is_file()
 
+
+# ------------------------------------------------------------------ the audit
 
 def audit(source_root=None):
     probs, notes = [], {}
@@ -162,6 +251,10 @@ def audit(source_root=None):
     if not FN.is_dir():
         return ["no pack %s: run `python tools/mines.py build` first" % FN.relative_to(ROOT)], notes
     rs = spec["restore"]
+    geo = spec["geometry"]
+    keep = spec.get("keep_clear") or {}
+    seed = spec["seed"]
+    H = geo["height"]
     tagname = "#cobblers:%s" % rs["resettable_tag"]
     spawn = set(json.loads((ROOT / "data" / "spawn_blocks.json").read_text(encoding="utf-8"))["blocks"])
 
@@ -208,18 +301,23 @@ def audit(source_root=None):
         cj = json.loads(cplan.read_text(encoding="utf-8"))
         cav = (tuple(cj["cavern"]), np.load(ROOT / "derived" / "cavern" / "plan.npz")["floor"].astype(int), cj)
 
-    def ground(x, z, site):
-        if site.get("ground") == "cavern_floor":
-            (cx0, cz0, cx1, cz1), floor, _cj = cav
+    def ground_of(site):
+        if site.get("ground") != "cavern_floor":
+            return g
+        (cx0, cz0, cx1, cz1), floor, _cj = cav
+
+        def gc(x, z):
             if cx0 <= x <= cx1 and cz0 <= z <= cz1:
                 return int(floor[z - cz0, x - cx0])
-        return g(x, z)
+            return g(x, z)
+        return gc
 
     # ---- other systems' data
     import town_dressing_audit as TDA
     import town_character as TC
     import elder_trees
     doc = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
+    towns = {t["id"]: t for t in json.loads((ROOT / "data" / "towns.json").read_text(encoding="utf-8")).get("towns") or []}
     templates = TC.Templates(TC.default_pack_dir(), TC.default_vanilla_jar())
     wet = elder_trees.painted_water(g.heights, g.world)
     wpath = ROOT / "derived" / "water_shape" / "changed.npy"
@@ -251,35 +349,96 @@ def audit(source_root=None):
     else:
         probs.append("plan: no derived/ambient/plan.json (tools/ambient.py build)")
 
-    legs, have_critical = route_legs()
+    crit, corridors, have_critical = route_legs()
     if not have_critical:
-        probs.append("legs: no derived/routes/critical_legs.json: the critical legs cannot be checked (fail closed)")
+        probs.append("legs: no derived/routes/critical_legs.json: the routed legs cannot be checked (fail closed)")
+    water_reach = max(WATER_REACH_MIN, int(keep.get("water_changed_reach", 0)))
+    tree_reach = max(TREE_REACH_MIN, int(keep.get("tree_reach", 0)))
+    tunnel_reach = max(TUNNEL_REACH_MIN, int(keep.get("tunnel_reach", 0)))
+
     total_writes, total_faces = 0, 0
     for site in sites:
         sid = site["id"]
         s = site["settlement"]
-        body = lines_of("build_%s" % sid)
-        if body is None:
+        ground = ground_of(site)
+        faces = site.get("faces") or []
+        if not faces:
+            probs.append("%s: no face" % sid)
+        body_lines = lines_of("build_%s" % sid)
+        if body_lines is None:
             probs.append("%s: no build function build_%s" % (sid, sid))
             continue
         world = {}
-        replay([l for l in body if not l.startswith("forceload")], world)
+        replay([l for l in body_lines if not l.startswith("forceload")], world)
         if not world:
             probs.append("%s: the build function writes nothing" % sid)
             continue
         total_writes += len(world)
         cols = {(x, z) for x, _y, z in world}
 
-        # plan
+        # the rules' terms of every face, and which face each written column belongs to
+        T = []
+        for face in faces:
+            if not face.get("anchor") or face.get("front") not in ("north", "south", "west", "east"):
+                probs.append("%s: no anchor or no front in the data" % face["id"])
+                T.append(None)
+                continue
+            T.append(terms(face, geo, seed, ground))
+        owner = {}
+        for c in cols:
+            hit = [i for i, t in enumerate(T) if t and in_env(t, *c)]
+            if len(hit) > 1:
+                hit.sort(key=lambda i: math.hypot(c[0] - faces[i]["anchor"][0], c[1] - faces[i]["anchor"][1]))
+            if hit:
+                owner[c] = hit[0]
+        stray = sorted(cols - set(owner))
+        if stray:
+            probs.append("%s: owner: %d written column(s) in no face's envelope, e.g. %s" % (sid, len(stray), stray[0]))
+
+        def is_air(c):
+            b = world.get(c)
+            if b is not None:
+                return name_of(b) in AIRS
+            return c[1] > ground(c[0], c[2])
+
+        # ring: the anchor round the town's centre
+        if site.get("ground") != "cavern_floor":
+            ring = site.get("ring")
+            t = towns.get(s)
+            if not ring:
+                probs.append("%s: ring: a surface site with no ring round its town's centre" % sid)
+            elif not t or not t.get("centre"):
+                probs.append("%s: ring: data/towns.json has no centre for %s" % (sid, s))
+            else:
+                for face in faces:
+                    if not face.get("anchor"):
+                        continue
+                    r = math.hypot(face["anchor"][0] - t["centre"]["x"], face["anchor"][1] - t["centre"]["z"])
+                    if not ring[0] <= r <= ring[1]:
+                        probs.append("%s: ring: the anchor %s is %.1f from %s's centre, outside the ring %s"
+                                     % (face["id"], face["anchor"], r, s, ring))
+
+        # roads: streets, the plaza and the routed legs
+        rc = site.get("road_clear", keep.get("road_clear", 0))
+        if site.get("ground") != "cavern_floor" and rc < ROAD_CLEAR_MIN:
+            probs.append("%s: roads: road_clear %s at a surface site; the owner's rule is %d" % (sid, rc, ROAD_CLEAR_MIN))
         planp = ROOT / "derived" / "towns" / ("%s_plan.json" % s)
         if not planp.is_file():
             probs.append("%s: no town plan %s" % (sid, planp.relative_to(ROOT)))
         else:
             plan = json.loads(planp.read_text(encoding="utf-8"))
+            pdata = (doc.get("settlements", {}).get(s) or {}).get("plan") or {}
             rects, unknown = TDA.footprints(s, doc, templates)
             if unknown:
                 probs.append("%s: buildings with templates this audit cannot read: %s" % (sid, unknown))
-            why = TDA.forbidden(plan, doc["settlements"][s].get("plan") or {}, rects, TDA.event_sites())
+            why = TDA.forbidden(plan, pdata, rects, TDA.event_sites())
+            roads = {c: w for c, w in TDA.forbidden(plan, pdata, {}, ()).items() if w.startswith("street") or w == "plaza"}
+            for kind in ("street", "plaza"):
+                near = cells_near({c for c, w in roads.items() if w.startswith(kind)}, cols, rc)
+                if near:
+                    c = min(near, key=near.get)
+                    probs.append("%s: roads: %d written column(s) within %d of a %s, e.g. %s at %.1f"
+                                 % (sid, len(near), rc, kind, c, near[c]))
             for q in doc["placements"]:
                 if q.get("settlement") == s and q.get("kind") == "earthwork":
                     ew = {}
@@ -293,177 +452,355 @@ def audit(source_root=None):
                 if c in why:
                     hit.setdefault(why[c], []).append(c)
             for w, cs in sorted(hit.items()):
-                probs.append("%s: %d written column(s) on %s, e.g. %s" % (sid, len(cs), w, sorted(cs)[0]))
-        # the routed legs: no face on a road players must walk (the generator's Mask keeps LEG_MARGIN off them; this
-        # measures every written column against every leg's segments itself: the independent tests, 2026-09-28)
-        near = [(x, z) for x, z in cols for leg in legs for a, b in zip(leg, leg[1:])
-                if seg_distance(x, z, a[0], a[1], b[0], b[1]) <= LEG_MARGIN]
+                probs.append("%s: plan: %d written column(s) on %s, e.g. %s" % (sid, len(cs), w, sorted(cs)[0]))
+        near = polylines_near(crit, cols, rc)
         if near:
-            probs.append("%s: %d written column(s) within %d of a routed leg, e.g. %s" % (sid, len(set(near)), LEG_MARGIN,
-                                                                                          sorted(set(near))[0]))
-        for t in traders.get("traders") or []:
-            p = t.get("position") or {}
+            c = min(near, key=near.get)
+            probs.append("%s: roads: %d written column(s) within %d of a routed leg, e.g. %s at %.1f"
+                         % (sid, len(near), rc, c, near[c]))
+        near = polylines_near(corridors, cols, LEG_MARGIN)
+        if near:
+            probs.append("%s: roads: %d written column(s) within %d of a data/routes.json corridor, e.g. %s"
+                         % (sid, len(near), LEG_MARGIN, min(near, key=near.get)))
+        for t_ in traders.get("traders") or []:
+            p = t_.get("position") or {}
             if any(abs(x - p.get("x", 10 ** 9)) <= 1 and abs(z - p.get("z", 10 ** 9)) <= 1 for x, z in cols):
-                probs.append("%s: a write within 1 of trader %s" % (sid, t["id"]))
+                probs.append("%s: plan: a write within 1 of trader %s" % (sid, t_["id"]))
         for px, pz in posts or []:
             if any(abs(x - px) <= 1 and abs(z - pz) <= 1 for x, z in cols):
-                probs.append("%s: a write within 1 of the signpost at %d,%d" % (sid, px, pz))
+                probs.append("%s: plan: a write within 1 of the signpost at %d,%d" % (sid, px, pz))
         on_dress = cols & dress_cols
         if on_dress:
-            probs.append("%s: %d written column(s) under a town dressing write, e.g. %s" % (sid, len(on_dress), sorted(on_dress)[0]))
+            probs.append("%s: plan: %d written column(s) under a town dressing write, e.g. %s" % (sid, len(on_dress), sorted(on_dress)[0]))
         near_amb = {c for c in cols if any((c[0] + dx, c[1] + dz) in amb_pts for dx in (-1, 0, 1) for dz in (-1, 0, 1))}
         if near_amb:
-            probs.append("%s: %d written column(s) within 1 of a working Pokemon's point" % (sid, len(near_amb)))
+            probs.append("%s: plan: %d written column(s) within 1 of a working Pokemon's point" % (sid, len(near_amb)))
         if site.get("ground") != "cavern_floor":
-            wetc = [c for c in cols if wet[c[1] - g.oz, c[0] - g.ox]]
+            wetc = [c for c in cols if 0 <= c[1] - g.oz < wet.shape[0] and 0 <= c[0] - g.ox < wet.shape[1]
+                    and wet[c[1] - g.oz, c[0] - g.ox]]
             if wetc:
-                probs.append("%s: %d written column(s) on painted water, e.g. %s" % (sid, len(wetc), sorted(wetc)[0]))
+                probs.append("%s: plan: %d written column(s) on painted water, e.g. %s" % (sid, len(wetc), sorted(wetc)[0]))
             if changed is not None:
-                xs, zs = [c[0] for c in cols], [c[1] for c in cols]
-                sub = np.array(changed[min(zs) - WATER_REACH:max(zs) + WATER_REACH + 1, min(xs) - WATER_REACH:max(xs) + WATER_REACH + 1])
+                n = water_reach
                 bad = []
                 for x, z in cols:
-                    i, j = z - (min(zs) - WATER_REACH), x - (min(xs) - WATER_REACH)
-                    if sub[i - WATER_REACH:i + WATER_REACH + 1, j - WATER_REACH:j + WATER_REACH + 1].any():
+                    sub = changed[max(0, z - n):z + n + 1, max(0, x - n):x + n + 1]
+                    if np.asarray(sub).any():
                         bad.append((x, z))
                 if bad:
-                    probs.append("%s: %d written column(s) within %d of a column the water export changes, e.g. %s"
-                                 % (sid, len(bad), WATER_REACH, sorted(bad)[0]))
+                    probs.append("%s: plan: %d written column(s) within %d of a column the water export changes, e.g. %s"
+                                 % (sid, len(bad), n, sorted(bad)[0]))
         else:
             (_b, _f, cj) = cav
             for tr in cj.get("tree_positions") or []:
                 tx, _ty, tz = tr["at"]
-                if any(abs(x - tx) <= TREE_REACH and abs(z - tz) <= TREE_REACH for x, z in cols):
-                    probs.append("%s: a write within %d of the cavern tree at %d,%d" % (sid, TREE_REACH, tx, tz))
+                if any(abs(x - tx) <= tree_reach and abs(z - tz) <= tree_reach for x, z in cols):
+                    probs.append("%s: plan: a write within %d of the cavern tree at %d,%d" % (sid, tree_reach, tx, tz))
             lf = ROOT / "build" / "datapacks" / "cobblers_cavern" / "data" / "cobblers" / "function" / "cavern" / "40_light.mcfunction"
             if not lf.is_file():
-                probs.append("%s: no cavern light function to check against" % sid)
+                probs.append("%s: plan: no cavern light function to check against" % sid)
             else:
                 lw = {}
                 replay([l for l in lf.read_text(encoding="utf-8").splitlines() if not l.startswith("forceload")], lw)
                 on = cols & {(x, z) for x, _y, z in lw}
                 if on:
-                    probs.append("%s: %d written column(s) on a cavern light write, e.g. %s" % (sid, len(on), sorted(on)[0]))
-            wps = cj["tunnel"]["waypoints"]
-            for (ax, az), (bx, bz) in zip(wps, wps[1:]):
-                n = max(abs(bx - ax), abs(bz - az)) + 1
-                for i in range(n + 1):
-                    tx, tz = ax + (bx - ax) * i / n, az + (bz - az) * i / n
-                    if any(abs(x - tx) <= TUNNEL_REACH and abs(z - tz) <= TUNNEL_REACH for x, z in cols):
-                        probs.append("%s: a write within %d of the cavern tunnel's line near %d,%d" % (sid, TUNNEL_REACH, tx, tz))
-                        break
+                    probs.append("%s: plan: %d written column(s) on a cavern light write, e.g. %s" % (sid, len(on), sorted(on)[0]))
+            near = polylines_near([[tuple(p) for p in cj["tunnel"]["waypoints"]]], cols, tunnel_reach)
+            if near:
+                probs.append("%s: plan: %d written column(s) within %d of the cavern tunnel's line, e.g. %s"
+                             % (sid, len(near), tunnel_reach, min(near, key=near.get)))
 
-        # blocks
+        # blocks: the whole site
         for c, b in world.items():
             if name_of(b) in spawn:
-                probs.append("%s: %s at %s is a spawn condition" % (sid, b, c))
+                probs.append("%s: blocks: %s at %s is a spawn condition" % (sid, b, c))
                 break
-        bed = [c for c, b in world.items() if name_of(b) == "minecraft:bedrock"]
+        bed = [c for c, b in world.items() if name_of(b) == BEDROCK]
         if bed and not site.get("bedrock_skin"):
-            probs.append("%s: %d bedrock cells at a site whose data gives it no bedrock skin" % (sid, len(bed)))
+            probs.append("%s: blocks: %d bedrock cells at a site whose data gives it no bedrock skin" % (sid, len(bed)))
         for c in bed:
-            if any(world.get((c[0] + dx, c[1] + dy, c[2] + dz)) in AIRS
+            if any(name_of(world.get((c[0] + dx, c[1] + dy, c[2] + dz), "x")) in AIRS
                    for dx, dy, dz in ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1))):
-                probs.append("%s: bedrock at %s shows in the cut" % (sid, c))
+                probs.append("%s: blocks: bedrock at %s shows in the cut" % (sid, c))
+                break
+        for c in bed:
+            if c[1] >= ground(c[0], c[2]):
+                probs.append("%s: blocks: bedrock at %s is not under the ground (y%d)" % (sid, c, ground(c[0], c[2])))
                 break
 
-        # faces
+        # ---- faces
         if sid not in approach:
             probs.append("%s: the drive never runs this site" % sid)
-        faces = site.get("faces") or []
-        if not faces:
-            probs.append("%s: no face" % sid)
-        for face in faces:
+        for i, face in enumerate(faces):
             total_faces += 1
-            fid, box, front = face["id"], face.get("box"), face.get("front")
-            if not box or front not in ("north", "south", "west", "east"):
-                probs.append("%s: no box or front" % fid)
+            t = T[i]
+            if t is None:
                 continue
-            x0, y0, z0, x1, y1, z1 = box
-            host, ore, y = face["host"], face["ore"], face["yield"]
-            vis_row = bottom_front(box, front)
-            dims = sorted((x1 - x0 + 1, z1 - z0 + 1))
-            geo = spec["geometry"]
-            if dims != sorted((geo["width"], geo["depth"])) or y1 - y0 + 1 != geo["height"]:
-                probs.append("%s: box %s is not %d x %d x %d" % (fid, box, geo["width"], geo["depth"], geo["height"]))
+            fid = face["id"]
+            host, ore, yld = face["host"], face["ore"], face["yield"]
+            bottom = face.get("bottom")
+            cap = face.get("cap") or site.get("cap") or host
+            floor_block = face.get("floor") or site.get("floor_block")
+            xz, uv, F, hw, sb = t["xz"], t["uv"], t["F"], t["hw"], t["sb"]
             if ore not in spec["stones"][face["stone"]]["ores"]:
                 probs.append("%s: %s is not a %s stone ore" % (fid, ore, face["stone"]))
-            if host not in tag or ore not in tag:
-                probs.append("%s: its host or ore is not in the resettable tag" % fid)
-            a = approach.get(sid)
-            half = rs["approach_margin"] // 2
-            if a and not (a[0] <= x0 - half and a[2] <= z0 - half and a[3] >= x1 + half and a[5] >= z1 + half
-                          and a[1] <= y0 and a[4] >= y1):
-                probs.append("%s: the approach box %s does not hold the box with %d to spare" % (fid, a, half))
-            # the build writes the box whole at variant 0
-            cells = [(x, yy, z) for x in range(x0, x1 + 1) for yy in range(y0, y1 + 1) for z in range(z0, z1 + 1)]
-            other = [c for c in cells if world.get(c) not in (host, ore)]
+            if not bottom:
+                probs.append("%s: bottom: the data names no bottom block" % fid)
+                bottom = "<none>"
+            elif bottom in (host, floor_block, ore):
+                probs.append("%s: bottom: the bottom block %s does not contrast with the host, floor or ore" % (fid, bottom))
+            for what, b in (("host", host), ("ore", ore), ("bottom", bottom), ("cap", cap)):
+                if b not in tag:
+                    probs.append("%s: tag: its %s %s is not in the resettable tag, so the restore cannot put it back" % (fid, what, b))
+            mine = {c: b for c, b in world.items() if owner.get((c[0], c[2])) == i}
+            if not mine:
+                probs.append("%s: the build writes nothing for this face" % fid)
+                continue
+            bcols = sorted({xz(u, d) for (u, d) in t["body"]})
+            bcolset = set(bcols)
+            acols = {xz(u, d) for (u, d) in t["apron"]}
+
+            # floor: no pit
+            miss = [c for c in bcols if name_of(world.get((c[0], F + 1, c[1]), "x")) != bottom]
+            if miss:
+                ys = sorted({y for (x, y, z), b in mine.items() if name_of(b) == bottom and (x, z) in bcolset})
+                if ys and max(ys) < F + 1:
+                    probs.append("%s: floor: a pit: the bottom course is at y%d, so the floor is y%d, under y%d, the natural "
+                                 "ground's median over the first apron row" % (fid, max(ys), max(ys) - 1, F))
+                elif not ys:
+                    probs.append("%s: bottom: no bottom course: no %s under the body at y%d (F+1)" % (fid, bottom, F + 1))
+                else:
+                    probs.append("%s: bottom: %d body column(s) with no %s at y%d (F+1), e.g. %s"
+                                 % (fid, len(miss), bottom, F + 1, miss[0]))
+            dug, shut = [], []
+            for (x, z) in sorted(acols):
+                if is_air((x, F, z)):
+                    dug.append((x, F, z))
+                for y in (F + 1, F + 2):
+                    b = world.get((x, y, z))
+                    if not is_air((x, y, z)) and not (b and name_of(b) == LANTERN):
+                        shut.append((x, y, z))
+                gy = ground(x, z)
+                if F - gy > geo["max_fill"]:
+                    probs.append("%s: floor: the apron at %s is built up %d over its ground, over max_fill %d"
+                                 % (fid, (x, z), F - gy, geo["max_fill"]))
+                if gy - F > geo["max_cut"] and not site.get("bedrock_skin"):
+                    probs.append("%s: floor: the apron at %s is dug %d under its ground, over max_cut %d"
+                                 % (fid, (x, z), gy - F, geo["max_cut"]))
+            if dug:
+                probs.append("%s: floor: a pit: %d apron cell(s) at the floor y%d are open, e.g. %s (dug below the natural "
+                             "ground's median in front of the face)" % (fid, len(dug), F, dug[0]))
+            if shut:
+                probs.append("%s: floor: %d apron cell(s) over the floor are not open, e.g. %s" % (fid, len(shut), shut[0]))
+
+            # body, its foot, its cover
+            other = [(x, y, z) for (x, z) in bcols for y in range(F + 2, F + H + 2)
+                     if name_of(world.get((x, y, z), "x")) not in (host, ore)]
             if other:
-                probs.append("%s: %d box cells not written as its host or ore, e.g. %s = %s" % (fid, len(other), other[0], world.get(other[0])))
-            n0 = sum(1 for c in cells if world.get(c) == ore)
-            if not (y["ore_min"] <= n0 <= y["ore_max"]) or sum(1 for c in vis_row if world.get(c) == ore) < y.get("visible_min", 1):
-                probs.append("%s: variant 0 as built holds %d ore (%d on the front's bottom row)" % (fid, n0, sum(1 for c in vis_row if world.get(c) == ore)))
-            # cover
-            thin = [(x, z) for x in range(x0, x1 + 1) for z in range(z0, z1 + 1) if ground(x, z, site) < y1 + 2]
-            if thin:
-                probs.append("%s: %d box columns with ground under the box top + 2, e.g. %s" % (fid, len(thin), thin[0]))
-            # front: air before the face over a solid floor
-            _plane, before = front_cells(box, front)
-            open_ = [c for c in before if world.get(c) not in AIRS]
-            if open_:
-                probs.append("%s: %d cells before the face are not written air, e.g. %s" % (fid, len(open_), sorted(open_)[0]))
-            floor = [(c[0], c[1] - 1, c[2]) for c in before if c[1] == y0]
-            if any(world.get(c) in (None,) + AIRS for c in floor):
-                probs.append("%s: the floor before the face is not written solid" % fid)
-            # walk: from the middle cell before the face to a column the build did not write
-            start = sorted((c for c in before if c[1] == y0), key=lambda c: (c[0], c[2]))[geo["width"] // 2]
-            if not walk_out(start, world, cols, lambda x, z: ground(x, z, site)):
-                probs.append("%s: no walk from %s out of the cut onto unwritten ground" % (fid, start))
+                c = other[0]
+                probs.append("%s: body: %d body cell(s) not its host or ore, e.g. %s = %s" % (fid, len(other), c, world.get(c)))
+            floating = [(x, y, z) for (x, z) in bcols for y in range(ground(x, z) + 1, F + 1)
+                        if name_of(world.get((x, y, z), "x")) != host]
+            if floating:
+                probs.append("%s: body: %d cell(s) between the ground and the floor under the body not host rock (the "
+                             "formation floats), e.g. %s" % (fid, len(floating), floating[0]))
+            bare = [(x, z) for (x, z) in bcols if is_air((x, F + H + 2, z))]
+            if bare:
+                probs.append("%s: cover: %d body column(s) with no cover over the top row, e.g. %s" % (fid, len(bare), bare[0]))
+
+            # ore at or under the bottom course, ore off the body
+            low = sorted(c for c, b in mine.items() if name_of(b) == ore and c[1] <= F + 1)
+            if low:
+                probs.append("%s: bottom: ore at or below the bottom course (y%d) at %s" % (fid, F + 1, low[0]))
+            bodycells = {(x, y, z) for (x, z) in bcols for y in range(F + 2, F + H + 2)}
+            built_ore = {c for c, b in mine.items() if name_of(b) == ore}
+            off = sorted(built_ore - bodycells)
+            if off:
+                probs.append("%s: variants: the build sets ore off the body at %s" % (fid, off[0]))
+
+            # the top, the build-up, the cap
+            bycol = {}
+            for (x, y, z), b in mine.items():
+                bycol.setdefault((x, z), []).append((y, b))
+            high = sorted(c for c, b in mine.items() if c[1] > t["top"] and c[1] > ground(c[0], c[2])
+                          and name_of(b) not in AIRS)
+            if high:
+                probs.append("%s: top: %d solid cell(s) over the formation's top y%d, e.g. %s" % (fid, len(high), t["top"], high[0]))
+            for (x, z), ys in sorted(bycol.items()):
+                gy = ground(x, z)
+                up = [(y, b) for y, b in ys if y > gy and name_of(b) not in AIRS and name_of(b) != LANTERN]
+                if not up:
+                    continue
+                ytop, btop = max(up)
+                if ytop - gy > geo["max_build"]:
+                    probs.append("%s: top: column %s built up %d over its ground, over max_build %d"
+                                 % (fid, (x, z), ytop - gy, geo["max_build"]))
+                if (x, z) not in acols and name_of(btop) != cap:
+                    probs.append("%s: top: the top of built-up column %s is %s, not the cap %s" % (fid, (x, z), btop, cap))
+
+            # blocks the rules name, and the bedrock's side
+            allowed = {host, ore, bottom, cap, floor_block, *AIRS}
+            if site.get("bedrock_skin"):
+                allowed.add(BEDROCK)
+            if site.get("lanterns"):
+                allowed.add(LANTERN)
+            foreign = sorted(c for c, b in mine.items() if name_of(b) not in allowed)
+            if foreign:
+                probs.append("%s: blocks: %d cell(s) of a block the rules do not name, e.g. %s = %s"
+                             % (fid, len(foreign), foreign[0], mine[foreign[0]]))
+            front_bed = sorted(c for c, b in mine.items() if name_of(b) == BEDROCK and uv(c[0], c[2])[1] < 0)
+            if front_bed:
+                probs.append("%s: blocks: bedrock in front of the face at %s" % (fid, front_bed[0]))
+
+            # rock: the formation, restored exactly
+            want = {}
+            for c, b in mine.items():
+                n = name_of(b)
+                if n not in (host, ore, bottom, cap):
+                    continue
+                x, y, z = c
+                if (x, z) in acols and y <= F and not (y == F == ground(x, z)):
+                    continue                        # the apron's floor and fill: levelling, not formation
+                want[c] = host if n == ore else n
+            rock_lines = lines_of("faces/%s_rock" % fid)
+            rock = {}
+            if rock_lines is None:
+                probs.append("%s: rock: no faces/%s_rock" % (fid, fid))
+            else:
+                for l in rock_lines:
+                    if not l.strip() or l.startswith("#"):
+                        continue
+                    m = ROCK_FILL.match(l)
+                    if not m or m.group(8) != tagname:
+                        probs.append("%s: rock: not a fill filtered by %s: %s" % (fid, tagname, l))
+                        continue
+                    a = [int(v) for v in m.group(1, 2, 3)]
+                    bb = [int(v) for v in m.group(4, 5, 6)]
+                    for x in range(min(a[0], bb[0]), max(a[0], bb[0]) + 1):
+                        for y in range(min(a[1], bb[1]), max(a[1], bb[1]) + 1):
+                            for z in range(min(a[2], bb[2]), max(a[2], bb[2]) + 1):
+                                rock[(x, y, z)] = name_of(m.group(7))
+                lost = sorted(set(want) - set(rock))
+                if lost:
+                    probs.append("%s: rock: %d formation cell(s) the restore never puts back, e.g. %s = %s"
+                                 % (fid, len(lost), lost[0], want[lost[0]]))
+                extra = sorted(set(rock) - set(want))
+                if extra:
+                    probs.append("%s: rock: the restore fills %d cell(s) that are not the formation's rock, e.g. %s = %s (build: %s)"
+                                 % (fid, len(extra), extra[0], rock[extra[0]], world.get(extra[0])))
+                wrong = sorted(c for c in set(rock) & set(want) if rock[c] != want[c])
+                if wrong:
+                    probs.append("%s: rock: %d cell(s) restored as another block than the build's, e.g. %s = %s, built %s"
+                                 % (fid, len(wrong), wrong[0], rock[wrong[0]], want[wrong[0]]))
+
             # variants
             nvar = rs["variants"]
+            seen = set()
+            v0 = None
             for k in range(nvar):
                 v = lines_of("faces/%s_v%d" % (fid, k))
                 if v is None:
-                    probs.append("%s: no variant %d" % (fid, k))
-                    continue
-                cmds = [l for l in v if l.strip() and not l.startswith("#")]
-                want_fill = "fill %d %d %d %d %d %d %s replace %s" % (x0, y0, z0, x1, y1, z1, host, tagname)
-                if not cmds or cmds[0] != want_fill:
-                    probs.append("%s v%d: the first command is not the filtered fill of exactly the box (%s)" % (fid, k, cmds[:1]))
+                    probs.append("%s: variants: no variant %d" % (fid, k))
                     continue
                 ores = []
-                for l in cmds[1:]:
-                    m = GUARDED.match(l)
-                    if not m or m.group(1, 2, 3) != m.group(5, 6, 7) or m.group(4) != tagname or m.group(8) != ore:
-                        probs.append("%s v%d: an unguarded or foreign command: %s" % (fid, k, l))
+                for l in v:
+                    if not l.strip() or l.startswith("#"):
                         continue
-                    c = tuple(int(q) for q in m.group(1, 2, 3))
-                    if not in_box(c, box):
-                        probs.append("%s v%d: ore outside the box at %s" % (fid, k, c))
-                    ores.append(c)
-                if not (y["ore_min"] <= len(set(ores)) <= y["ore_max"]):
-                    probs.append("%s v%d: %d ore, the yield is %d-%d" % (fid, k, len(set(ores)), y["ore_min"], y["ore_max"]))
-                if len([c for c in ores if c in vis_row]) < y.get("visible_min", 1):
-                    probs.append("%s v%d: no ore on the front's bottom row" % (fid, k))
-            # check and restore
+                    m = GUARDED.match(l)
+                    if (not m or m.group(1, 2, 3) != m.group(5, 6, 7) or name_of(m.group(4)) != host
+                            or m.group(8) != ore):
+                        probs.append("%s v%d: variants: not an ore setblock guarded by its host: %s" % (fid, k, l))
+                        continue
+                    ores.append(tuple(int(q) for q in m.group(1, 2, 3)))
+                ores = sorted(set(ores))
+                if k == 0:
+                    v0 = set(ores)
+                seen.add(tuple(ores))
+                if not (yld["ore_min"] <= len(ores) <= yld["ore_max"]):
+                    probs.append("%s v%d: variants: %d ore, the yield is %d-%d" % (fid, k, len(ores), yld["ore_min"], yld["ore_max"]))
+                for c in ores:
+                    if c[1] <= F + 1:
+                        probs.append("%s v%d: bottom: ore at or below the bottom course (y%d) at %s" % (fid, k, F + 1, c))
+                    elif c not in bodycells:
+                        probs.append("%s v%d: variants: ore off the body at %s" % (fid, k, c))
+                line, rest = [], []
+                for c in ores:
+                    if c not in bodycells:
+                        continue
+                    u, d = uv(c[0], c[2])
+                    (line if d == sb.get(u) else rest).append((c, u, d))
+                shown = [c for c, u, d in line if c[1] in (F + 2, F + 3) and abs(u) <= hw - 1
+                         and is_air((xz(u, d - 1)[0], c[1], xz(u, d - 1)[1]))]
+                vm = yld.get("visible_min", 1)
+                if len(shown) < vm:
+                    probs.append("%s v%d: variants: %d ore showing on the face line at eye height (F+2, F+3) open to the "
+                                 "air, the data asks %d" % (fid, k, len(shown), vm))
+                if len(line) > vm:
+                    probs.append("%s v%d: variants: %d ore on the face line, the rule puts visible_min %d there and the "
+                                 "rest behind it" % (fid, k, len(line), vm))
+                for c, u, d in rest:
+                    if d - sb.get(u, 0) < 1 or c[1] >= F + H + 1:
+                        probs.append("%s v%d: variants: a hidden ore at %s is not one or more behind the face line and "
+                                     "under the body's top row" % (fid, k, c))
+            if v0 is not None and v0 != built_ore:
+                probs.append("%s: variants: the build's ore %s is not variant 0 %s" % (fid, sorted(built_ore)[:3], sorted(v0)[:3]))
+            if len(seen) < nvar - 1:
+                probs.append("%s: variants: only %d different layouts in %d variants" % (fid, len(seen), nvar))
+
+            # the written bounds, the guard, the approach
+            allc = list(mine) + list(rock)
+            xs, ys_, zs = [c[0] for c in allc], [c[1] for c in allc], [c[2] for c in allc]
+            bnd = (min(xs), min(ys_), min(zs), max(xs), max(ys_), max(zs))
             chk = [l for l in (lines_of("faces/check_%s" % fid) or []) if l and not l.startswith("#")]
             call = "function cobblers:mines/faces/restore_%s" % fid
             if call not in chk:
-                probs.append("%s: its check never calls the restore" % fid)
+                probs.append("%s: guard: its check never calls the restore" % fid)
             else:
                 pre = chk[:chk.index(call)]
-                gx0, gy0, gz0, gx1, gy1, gz1 = x0 - 1, y0 - 1, z0 - 1, x1 + 1, y1 + 1, z1 + 1
-                vol = "x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d" % (gx0, gy0, gz0, gx1 - gx0, gy1 - gy0, gz1 - gz0)
-                need = ["execute if score #d mn.t < #period mn.t run return 0",
-                        "execute if entity @a[%s] run return 0" % vol,
-                        "execute if entity @e[type=cobblemon:pokemon,%s] run return 0" % vol]
-                need += ["execute unless loaded %d %d %d run return 0" % (cx, gy0, cz) for cx in (gx0, gx1) for cz in (gz0, gz1)]
-                for n in need:
-                    if n not in pre:
-                        probs.append("%s: the check lacks, before the restore: %s" % (fid, n))
+                if "execute if score #d mn.t < #period mn.t run return 0" not in pre:
+                    probs.append("%s: guard: the check lacks, before the restore: execute if score #d mn.t < #period mn.t" % fid)
                 if "scoreboard players operation #d mn.t -= #%s mn.last" % fid not in pre:
-                    probs.append("%s: the check does not measure from this face's last restore" % fid)
+                    probs.append("%s: guard: the check does not measure from this face's last restore" % fid)
+                vols = {}
+                for who, pat in (("player", r"^execute if entity @a\[(.*)\] run return 0$"),
+                                 ("Pokemon", r"^execute if entity @e\[type=cobblemon:pokemon,(.*)\] run return 0$")):
+                    ms = [re.match(pat, l) for l in pre]
+                    ms = [VOLUME.fullmatch(m.group(1)) for m in ms if m]
+                    if not ms or not ms[0]:
+                        probs.append("%s: guard: the check lacks, before the restore, a %s guard over the formation "
+                                     "(execute if entity %s[...] run return 0)" % (fid, who, "@a" if who == "player" else "@e[type=cobblemon:pokemon"))
+                        continue
+                    x, y, z, dx, dy, dz = (int(q) for q in ms[0].groups())
+                    vols[who] = (x, y, z, x + dx, y + dy, z + dz)
+                for who, vol in vols.items():
+                    if not (vol[0] <= bnd[0] - 1 and vol[1] <= bnd[1] - 1 and vol[2] <= bnd[2] - 1
+                            and vol[3] >= bnd[3] + 1 and vol[4] >= bnd[4] + 1 and vol[5] >= bnd[5] + 1):
+                        probs.append("%s: guard: the %s guard %s does not cover the written bounds %s grown by one"
+                                     % (fid, who, vol, bnd))
+                corners = set()
+                for l in pre:
+                    m = re.fullmatch(r"execute unless loaded (-?\d+) (-?\d+) (-?\d+) run return 0", l)
+                    if m:
+                        corners.add((int(m.group(1)), int(m.group(3))))
+                cx = {c[0] for c in corners}
+                cz = {c[1] for c in corners}
+                if (len(corners) < 4 or not cx or min(cx) > bnd[0] or max(cx) < bnd[3] or min(cz) > bnd[2]
+                        or max(cz) < bnd[5] or corners != {(a, b) for a in (min(cx), max(cx)) for b in (min(cz), max(cz))}):
+                    probs.append("%s: guard: the check's execute unless loaded corners %s do not span the written bounds %s"
+                                 % (fid, sorted(corners), bnd))
+            a = approach.get(sid)
+            half = rs["approach_margin"] // 2
+            if a and not (a[0] <= bnd[0] - half and a[2] <= bnd[2] - half and a[3] >= bnd[3] + half and a[5] >= bnd[5] + half
+                          and a[1] <= bnd[1] and a[4] >= bnd[4]):
+                probs.append("%s: the approach box %s does not hold the written bounds %s with %d to spare" % (fid, a, bnd, half))
+
+            # the restore
             rst = lines_of("faces/restore_%s" % fid) or []
+            rcall = "function cobblers:mines/faces/%s_rock" % fid
+            vcalls = [n for n, l in enumerate(rst) if re.fullmatch(r"execute if score #v mn\.t matches \d+ run function "
+                                                                    r"cobblers:mines/faces/%s_v\d+" % re.escape(fid), l)]
+            if rcall not in rst or (vcalls and rst.index(rcall) > min(vcalls)):
+                probs.append("%s: rock: the restore does not put the formation back before the ore" % fid)
             if "execute store result score #v mn.t run random value 0..%d" % (nvar - 1) not in rst:
                 probs.append("%s: the restore draws no random variant" % fid)
             if "execute if score #v mn.t = #%s mn.var run scoreboard players add #v mn.t 1" % fid not in rst:
@@ -475,6 +812,13 @@ def audit(source_root=None):
                     probs.append("%s: the restore never runs variant %d" % (fid, k))
             if "function cobblers:mines/faces/check_%s" % fid not in (lines_of("site_%s" % sid) or []):
                 probs.append("%s: its site never checks it" % fid)
+
+            # walk: from the stand out onto unwritten ground
+            sx, sz = xz(0, -2)
+            start = (sx, F + 1, sz)
+            if not walk_out(start, world, cols, ground):
+                probs.append("%s: walk: no walk from the stand %s out onto unwritten ground stepping at most one block"
+                             % (fid, start))
     notes["sites"] = len(sites)
     notes["faces"] = total_faces
     notes["cells written by the build functions"] = total_writes
@@ -525,15 +869,16 @@ def audit(source_root=None):
 
 
 def walk_out(start, world, cols, ground):
-    """True when a walker from `start` (feet cell) reaches a column the build did not write. A column's standing height
-    is over its highest solid cell at or under the walker's reach; solid is a written non-air block, or the ground
-    where nothing is written."""
+    """True when a walker from `start` (feet cell) reaches a column the build did not write, stepping one block up or
+    down at most. Solid is a written block that is not air, or the ground where nothing is written."""
     def solid(x, y, z):
         b = world.get((x, y, z))
         if b is not None:
-            return b not in AIRS
+            return name_of(b) not in AIRS
         return y <= ground(x, z)
 
+    if solid(*start) or solid(start[0], start[1] + 1, start[2]) or not solid(start[0], start[1] - 1, start[2]):
+        return False
     seen = {start}
     dq = deque([start])
     while dq:

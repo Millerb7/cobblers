@@ -101,147 +101,168 @@ def sid(s):
 
 # ------------------------------------------------------------------ the face's frame
 
-def frame(box, front):
-    """(xz(u, d), W, D) for a box and the side a player works it from.
+def frame(anchor, front):
+    """xz(u, d) for a face's anchor (the middle column of its face line) and the side a player works it from.
 
-    u runs along the face (0 .. W-1), d into the rock (0 is the front plane, D-1 the back); d < 0 is in front of the
-    face, row r being d = -r. North: the front plane is z0 and the rock runs +z; south: z1, -z; west: x0, +x;
-    east: x1, -x. u runs +x on a north or south face and +z on a west or east face."""
-    x0, _y0, z0, x1, _y1, z1 = box
+    u runs along the face (0 at the anchor), d into the rock (0 is the face line); d < 0 is in front of the face, row
+    r being d = -r. North: the player stands north and the rock runs +z; south: -z; west: +x; east: -x. u runs +x on a
+    north or south face and +z on a west or east face."""
+    ax, az = anchor
     if front == "north":
-        return (lambda u, d: (x0 + u, z0 + d)), x1 - x0 + 1, z1 - z0 + 1
+        return lambda u, d: (ax + u, az + d)
     if front == "south":
-        return (lambda u, d: (x0 + u, z1 - d)), x1 - x0 + 1, z1 - z0 + 1
+        return lambda u, d: (ax + u, az - d)
     if front == "west":
-        return (lambda u, d: (x0 + d, z0 + u)), z1 - z0 + 1, x1 - x0 + 1
+        return lambda u, d: (ax + d, az + u)
     if front == "east":
-        return (lambda u, d: (x1 - d, z0 + u)), z1 - z0 + 1, x1 - x0 + 1
+        return lambda u, d: (ax - d, az + u)
     raise MineError("front %r is not one of %s" % (front, ", ".join(FRONTS)))
 
 
-def box_for(front, cx, cz, y0, geo):
-    """The box whose front plane's middle column is (cx, cz): W along the face, D deep, H high."""
-    W, D, H = geo["width"], geo["depth"], geo["height"]
-    h = W // 2
-    if front == "north":
-        return [cx - h, y0, cz, cx - h + W - 1, y0 + H - 1, cz + D - 1]
-    if front == "south":
-        return [cx - h, y0, cz - D + 1, cx - h + W - 1, y0 + H - 1, cz]
-    if front == "west":
-        return [cx, y0, cz - h, cx + D - 1, y0 + H - 1, cz - h + W - 1]
-    return [cx - D + 1, y0, cz - h, cx, y0 + H - 1, cz - h + W - 1]
+def half_width(face, seed, geo):
+    """Half the face's width: the width is width_min .. width_max by h32(seed, face), rounded down to odd."""
+    w = geo["width_min"] + h32(seed, sid(face["id"]), 1) % (geo["width_max"] - geo["width_min"] + 1)
+    return w // 2
+
+
+def setback(face, seed, u):
+    """0 or 1: how far column u of the face line stands back into the rock (the line is broken, not ruled)."""
+    return h32(seed, sid(face["id"]), 2, u) % 3 == 0
+
+
+def jitter(face, seed, u, d):
+    """-1, 0 or +1 on the formation's top at (u, d)."""
+    return h32(seed, sid(face["id"]), 3, u, d) % 3 - 1
 
 
 # ------------------------------------------------------------------ one face's geometry
 
-def geometry(face, ground, geo, bedrock=False):
-    """Everything a face writes, from its box, its front and the ground: a dict of cell -> role, plus the cut's rows.
+def floor_y(face, ground, geo):
+    """The floor: the natural ground in front of the face, the lower median of the first apron row (never lowered
+    further: a player walks onto a face, never down into one)."""
+    xz = frame(face["anchor"], face["front"])
+    hw = geo["width_max"] // 2 + geo["apron_margin"]
+    gs = sorted(ground(*xz(u, -1)) for u in range(-hw, hw + 1))
+    return gs[(len(gs) - 1) // 2]
 
-    Roles: box, backing, bedrock, floor, fill, air, skin. Raises MineError when a rule of the cut or the cover fails."""
-    box = face["box"]
-    x0, y0, z0, x1, y1, z1 = box
-    xz, W, D = frame(box, face["front"])
-    H = y1 - y0 + 1
-    if (W, D, H) != (geo["width"], geo["depth"], geo["height"]):
-        raise MineError("%s: the box is %d wide, %d deep and %d high along its %s front; the geometry says %d x %d x %d"
-                        % (face["id"], W, D, H, face["front"], geo["width"], geo["depth"], geo["height"]))
-    B, A, M = geo["backing"], geo["apron_rows"], geo["apron_margin"]
-    cells = {}
-    problems = []
-    for u in range(W):
-        for d in range(D):
+
+def geometry(face, ground, geo, seed, bedrock=False):
+    """Everything a face writes, from its anchor, its front and the ground: a dict of cell -> role.
+
+    The formation (data/mines.json geometry.rules). F is the floor (floor_y). The body is `body_depth` deep behind a
+    face line that stands back 0 or 1 per column (setback), `height` rows high (F+2 .. F+height+1) over a bottom course
+    of the contrasting rock at F+1. The formation's top over the body is T0 = F+height+2 (one row of cover) plus 0 or 1
+    of jitter; round the body it falls `fall` per block of distance, out to `knoll_side` beside and `knoll_back` behind,
+    plus -1..+1 of jitter. A column is built up (rock, then its cap) only where the natural ground is under that top: on
+    a slope the face is a cut and nothing is built; on flat ground the formation is an outcrop. In front, `apron_rows`
+    rows (and the set-back cells) are made level with F, dug or filled, with air `clear_above` over the higher of the
+    ground and F. Every natural cell the air exposes becomes formation rock (the skin).
+
+    Roles: body, bottom, rock, cap, floor, fill, air, bedrock. Every broken rule is a problem in the result."""
+    xz = frame(face["anchor"], face["front"])
+    H, BD = geo["height"], geo["body_depth"]
+    A, M = geo["apron_rows"], geo["apron_margin"]
+    KS, KB, fall = geo["knoll_side"], geo["knoll_back"], geo["fall"]
+    hw = half_width(face, seed, geo)
+    F = floor_y(face, ground, geo)
+    T0 = F + H + 2
+    cells, problems = {}, []
+    sb = {u: (1 if abs(u) < hw and setback(face, seed, u) else 0) for u in range(-hw, hw + 1)}
+    body = {(u, d) for u in sb for d in range(sb[u], sb[u] + BD)}
+    front_cells = {(u, d) for u in sb for d in range(0, sb[u])}      # the set-back: part of the cut
+    for u in range(-hw - KS, hw + KS + 1):
+        for d in range(0, BD + 1 + KB):
+            if (u, d) in front_cells:
+                continue
             x, z = xz(u, d)
-            if ground(x, z) < y1 + B:
-                problems.append("box column (%d, %d): ground y%d, under the box top y%d + %d of backing"
-                                % (x, z, ground(x, z), y1, B))
-            for y in range(y0, y1 + 1):
-                cells[(x, y, z)] = "box"
-    for u in range(-B, W + B):
-        for d in range(0, D + B):
+            g = ground(x, z)
+            if (u, d) in body:
+                top = T0 + (jitter(face, seed, u, d) > 0)
+                cells[(x, F + 1, z)] = "bottom"
+                for y in range(F + 2, F + H + 2):
+                    cells[(x, y, z)] = "body"
+                for y in range(g + 1, F + 1):
+                    cells[(x, y, z)] = "rock"                    # the formation's foot, where the ground dips under F
+            else:
+                out = max(0, abs(u) - hw) + max(0, d - (BD - 1))
+                top = T0 + jitter(face, seed, u, d) - int(out * fall + 0.5)
+            if top > g:
+                if top - g > geo["max_build"]:
+                    problems.append("formation column (%d, %d): built up %d, over %d" % (x, z, top - g, geo["max_build"]))
+                for y in range(max(g + 1, F + H + 2 if (u, d) in body else g + 1), top):
+                    cells[(x, y, z)] = "rock"
+                cells[(x, top, z)] = "cap"
+    # the apron and the set-back: level with F, air over it
+    for u in range(-hw - M, hw + M + 1):
+        for d in list(range(-A, 0)) + [dd for (uu, dd) in front_cells if uu == u]:
             x, z = xz(u, d)
-            inside = 0 <= u < W and d < D
-            if not inside and ground(x, z) < y1 + 1:
-                problems.append("backing column (%d, %d): ground y%d, under the box top y%d + 1" % (x, z, ground(x, z), y1))
-            for y in range(y0 - B, y1 + B + 1):
-                if (x, y, z) not in cells:
-                    cells[(x, y, z)] = "backing"
-    if bedrock:
-        for u in range(-B - 1, W + B + 1):
-            for d in range(1, D + B + 1):
-                x, z = xz(u, d)
-                for y in range(y0 - B - 1, y1 + B + 2):
-                    edge = u in (-B - 1, W + B) or d == D + B or y in (y0 - B - 1, y1 + B + 1)
-                    if edge and (x, y, z) not in cells:
-                        if y > ground(x, z) - 1:
-                            problems.append("bedrock at (%d, %d, %d) would stand at or over the ground y%d"
-                                            % (x, y, z, ground(x, z)))
-                        cells[(x, y, z)] = "bedrock"
-    # the cut: the apron, then the ramp
-    rows = []
-    t = y0 - 1
-    r = 1
-    while True:
-        cols = [xz(u, -r) for u in range(-M, W + M)]
-        gs = [ground(x, z) for x, z in cols]
-        if r > A:
-            if all(abs(g - t) <= 1 for g in gs):
-                break                                     # this row is natural ground a player steps onto
-            if r > A + geo["ramp_max"]:
-                problems.append("the ramp does not meet the ground within %d rows (row %d: ground %s, floor y%d)"
-                                % (geo["ramp_max"], r, sorted(set(gs)), t))
-                break
-            med = sorted(gs)[len(gs) // 2]
-            t += (med > t) - (med < t)
-        rows.append((r, t))
-        for (x, z), g in zip(cols, gs):
-            if g - t > geo["max_cut"]:
-                problems.append("cut column (%d, %d): dug %d, over %d" % (x, z, g - t, geo["max_cut"]))
-            if t - g > geo["max_fill"]:
-                problems.append("cut column (%d, %d): built up %d, over %d" % (x, z, t - g, geo["max_fill"]))
-            for y in range(g + 1, t):
+            g = ground(x, z)
+            if g - F > geo["max_cut"] and not bedrock:
+                problems.append("apron column (%d, %d): dug %d, over %d" % (x, z, g - F, geo["max_cut"]))
+            if F - g > geo["max_fill"]:
+                problems.append("apron column (%d, %d): built up %d, over %d" % (x, z, F - g, geo["max_fill"]))
+            for y in range(g + 1, F):
                 cells[(x, y, z)] = "fill"
-            cells[(x, t, z)] = "floor"
-            top = max(g, t) + geo["clear_above"]
-            if r <= A:
-                top = max(top, y1 + 1)
-            for y in range(t + 1, top + 1):
+            if g != F:
+                cells[(x, F, z)] = "floor"
+            # in a cavern's wall (a bedrock site) the cut is a bay under a rock ceiling at the formation's height, not an
+            # open slot to the mountain's surface
+            air_top = min(max(g, F) + geo["clear_above"], T0 + 1) if bedrock else max(g, F) + geo["clear_above"]
+            for y in range(F + 1, air_top + 1):
                 cells[(x, y, z)] = "air"
-        r += 1
     # the skin: every natural cell next to the cut's air, at or under its column's ground
     skin = {}
     for (x, y, z), role in cells.items():
         if role != "air":
             continue
-        for dx, dy, dz in ((1, 0, 0), (-1, 0, 0), (0, 0, 1), (0, 0, -1), (0, -1, 0)):
+        for dx, dy, dz in ((1, 0, 0), (-1, 0, 0), (0, 0, 1), (0, 0, -1), (0, -1, 0), (0, 1, 0)):
             c = (x + dx, y + dy, z + dz)
             if c not in cells and c not in skin and c[1] <= ground(c[0], c[2]):
-                skin[c] = "skin"
+                skin[c] = "rock"
     cells.update(skin)
-    stand = xz(W // 2, -1)
-    return {"cells": cells, "rows": rows, "problems": problems, "stand": [stand[0], y0, stand[1]],
-            "columns": sorted({(x, z) for x, _y, z in cells})}
+    if bedrock:
+        # one shell round the body and its bottom course, beside, behind and below, never in front, never at or over
+        # the ground: the seam ends near an authored void (STONE_ECONOMY.md 6.4)
+        for (u, d) in body:
+            for n in ((u + 1, d), (u - 1, d), (u, d + 1)):
+                if n in body or n in front_cells or n[1] < 0:
+                    continue
+                x, z = xz(*n)
+                for y in range(F, F + H + 3):
+                    if (x, y, z) not in cells and y < ground(x, z):
+                        cells[(x, y, z)] = "bedrock"
+            x, z = xz(u, d)
+            if (x, F, z) not in cells and F < ground(x, z):
+                cells[(x, F, z)] = "bedrock"
+    for (u, d) in body:
+        x, z = xz(u, d)
+        if cells.get((x, F + H + 2, z)) not in ("rock", "cap") and ground(x, z) < F + H + 2:
+            problems.append("body column (%d, %d): no cover over the body" % (x, z))
+    stand = xz(0, -2)
+    xs, ys, zs = zip(*cells)
+    return {"cells": cells, "problems": problems, "floor": F, "stand": [stand[0], F + 1, stand[1]],
+            "bounds": [min(xs), min(ys), min(zs), max(xs), max(ys), max(zs)],
+            "body": sorted((xz(u, d)[0], xz(u, d)[1], d - sb[u], u) for (u, d) in body),
+            "columns": sorted({(x, z) for x, _y, z in cells}),
+            "built": sum(1 for (x, y, z), r in cells.items() if r in ("rock", "cap", "body", "bottom") and y > ground(x, z)),
+            "dug": sum(1 for (x, y, z), r in cells.items() if r == "air" and y <= ground(x, z))}
 
 
-def ore_cells(face, k, seed, geo, yld):
-    """[(x, y, z)] of variant k's ore: one on the front plane's bottom row away from the corners (the visible tell,
-    STONE_ECONOMY.md 5.2), the rest at least 2 deep and under the top row. How many: ore_min + h32(seed, face,
-    k) mod (ore_max - ore_min + 1); which cells: the cells ordered by h32(seed, face, k, x, y, z)."""
-    box = face["box"]
-    x0, y0, z0, x1, y1, z1 = box
-    xz, W, D = frame(box, face["front"])
+def ore_cells(face, k, seed, geo, yld, gm):
+    """[(x, y, z)] of variant k's ore: `visible_min` on the face line at eye height (rows F+2 and F+3, the visible tell,
+    STONE_ECONOMY.md 5.2) away from the ends, the rest at least 1 deep and under the body's top row. How many:
+    ore_min + h32(seed, face, k) mod (ore_max - ore_min + 1); which cells: ordered by h32(seed, face, k, x, y, z)."""
     fid = sid(face["id"])
+    F, H = gm["floor"], geo["height"]
+    hw = half_width(face, seed, geo)
     n = yld["ore_min"] + h32(seed, fid, k) % (yld["ore_max"] - yld["ore_min"] + 1)
-    cells = [(u, d, y) for u in range(W) for d in range(D) for y in range(y0, y1 + 1)]
-
-    def key(c):
-        x, z = xz(c[0], c[1])
-        return h32(seed, fid, k, x, c[2], z)
-    order = sorted(cells, key=key)
-    visible = [c for c in order if c[1] == 0 and c[2] == y0 and 1 <= c[0] <= W - 2]
-    hidden = [c for c in order if c[1] >= 2 and c[2] < y1]
+    cells = [(x, y, z, dd, u) for x, z, dd, u in gm["body"] for y in range(F + 2, F + H + 2)]
+    order = sorted(cells, key=lambda c: h32(seed, fid, k, c[0], c[1], c[2]))
+    visible = [c for c in order if c[3] == 0 and c[1] in (F + 2, F + 3) and abs(c[4]) <= hw - 1]
+    hidden = [c for c in order if c[3] >= 1 and c[1] < F + H + 1]
     vis = visible[:yld.get("visible_min", 1)]
     picked = vis + hidden[:n - len(vis)]
-    return [(xz(u, d)[0], y, xz(u, d)[1]) for u, d, y in picked]
+    return [(x, y, z) for x, y, z, _d, _u in picked]
 
 
 # ------------------------------------------------------------------ where a face may stand
@@ -307,7 +328,27 @@ class Occupancy:
             for c in _segment_cells(cav["tunnel"]["waypoints"], keep["tunnel_reach"]):
                 self.why.setdefault(c, "the cavern's tunnel")
         else:
-            self.box = self.mask.box
+            # the siting ring round the town's centre (found, not walked past: the owner, 2026-09-28), not the town's
+            # own reach
+            t = {t["id"]: t for t in json.loads((ROOT / "data" / "towns.json").read_text(encoding="utf-8"))["towns"]}[s]
+            r = site["ring"][1] + 16
+            self.box = (t["centre"]["x"] - r, t["centre"]["z"] - r, t["centre"]["x"] + r, t["centre"]["z"] + r)
+        # clearance from every street, the plaza and every routed leg: `road_clear` blocks (Chebyshev)
+        x0, z0, x1, z1 = self.box
+        rc = site.get("road_clear", keep["road_clear"])
+        tp = TD.town_plan(s)
+        roads = set()
+        for st in (tp.get("streets") or {}).values():
+            for zz, _y, xa, xb in st.get("cells") or []:
+                roads |= {(xx, zz) for xx in range(xa, xb + 1)}
+        if tp.get("plaza"):
+            roads |= TD.rect_cells(tp["plaza"]["rect"])
+        roads |= TD.leg_cells((x0 - rc, z0 - rc, x1 + rc, z1 + rc))
+        near = np.zeros((z1 - z0 + 1 + 2 * rc, x1 - x0 + 1 + 2 * rc), bool)
+        for xx, zz in roads:
+            if x0 - rc <= xx <= x1 + rc and z0 - rc <= zz <= z1 + rc:
+                near[zz - z0 + rc, xx - x0 + rc] = True
+        self.roads = _dilate2(near, rc)[rc:-rc, rc:-rc]
         if not WATER_CHANGED.is_file():
             raise MineError("no %s: the pending water export's changed columns are a keep-clear rule, and a missing map "
                             "is a failure, not a pass" % WATER_CHANGED.relative_to(ROOT))
@@ -331,18 +372,20 @@ class Occupancy:
             for c in _segment_cells(pts, keep["ambient_reach"]):
                 self.why.setdefault(c, "working Pokemon %s" % w["id"])
         self.cavern = site.get("ground") == "cavern_floor"
+        self.road_clear = rc
 
     def blocked(self, x, z):
         if not (self.box[0] <= x <= self.box[2] and self.box[1] <= z <= self.box[3]):
             return "outside the site's reach"
         if (x, z) in self.why:
             return self.why[(x, z)]
-        if self.cavern:
-            w = self.mask.why.get((x, z))
-            if w:
-                return w
-        else:
-            w = self.mask.blocked(x, z)
+        w = self.mask.why.get((x, z))
+        if w:
+            return w
+        if self.roads[z - self.box[1], x - self.box[0]]:
+            return "within %d of a street, the plaza or a routed leg" % self.road_clear
+        if not self.cavern:
+            w = self.mask.wet(x, z) if self.mask.wet is not None else None
             if w:
                 return w
             if self.water[z - self.woz, x - self.wox]:
@@ -358,13 +401,23 @@ def site_ground(site, g0=None, source_root=None):
     return g0 or G.Ground(source_root)
 
 
+def town_centre(site, occ):
+    if site.get("ground") == "cavern_floor":
+        x0, z0, x1, z1 = occ.box
+        return ((x0 + x1) / 2, (z0 + z1) / 2)
+    t = {t["id"]: t for t in json.loads((ROOT / "data" / "towns.json").read_text(encoding="utf-8"))["towns"]}[site["settlement"]]
+    return (t["centre"]["x"], t["centre"]["z"])
+
+
 def face_problems(spec, site, face, ground, occ, taken=()):
     geo = spec["geometry"]
-    try:
-        gm = geometry(face, ground, geo, site.get("bedrock_skin", False))
-    except MineError as e:
-        return [str(e)], None
+    gm = geometry(face, ground, geo, spec["seed"], site.get("bedrock_skin", False))
     probs = list(gm["problems"])
+    if site.get("ring"):
+        cx, cz = town_centre(site, occ)
+        r = math.hypot(face["anchor"][0] - cx, face["anchor"][1] - cz)
+        if not site["ring"][0] <= r <= site["ring"][1]:
+            probs.append("the anchor is %.0f from the town's centre, outside the ring %s" % (r, site["ring"]))
     bad = {}
     for c in gm["columns"]:
         w = occ.blocked(*c)
@@ -388,7 +441,8 @@ class BoxGround:
 
     def __init__(self, g, x0, z0, x1, z1):
         self.g, self.x0, self.z0, self.x1, self.z1 = g, x0, z0, x1, z1
-        self.a = g.box(x0, z0, x1, z1).tolist()
+        self.arr = np.asarray(g.box(x0, z0, x1, z1)).astype(int)
+        self.a = self.arr.tolist()
 
     def __call__(self, x, z):
         if self.x0 <= x <= self.x1 and self.z0 <= z <= self.z1:
@@ -412,25 +466,27 @@ def search_context(spec, site, source_root=None):
     return {"ground": BoxGround(ground, x0 - 48, z0 - 48, x1 + 48, z1 + 48), "occ": occ, "free": free}
 
 
-def search(spec, site, stone=None, top=8, source_root=None, taken_faces=(), near=None, ctx=None):
+def footprint(front, cx, cz, geo):
+    """The rectangle (xa, za, xb, zb) every write of a face anchored at (cx, cz) stays inside, at the widest width."""
+    xz = frame((cx, cz), front)
+    hw = geo["width_max"] // 2 + max(geo["knoll_side"], geo["apron_margin"]) + 1
+    (xa, za), (xb, zb) = xz(-hw, -geo["apron_rows"] - 1), xz(hw, geo["body_depth"] + geo["knoll_back"] + 2)
+    return min(xa, xb), min(za, zb), max(xa, xb), max(za, zb)
+
+
+def search(spec, site, top=8, source_root=None, taken_faces=(), near=None, ctx=None):
+    """Candidate faces for a site, best first: [(score, anchor, front, built, dug)]. Anchors on a grid inside the
+    site's ring whose whole footprint is free; ranked first by an estimate of the rock the formation would build
+    (natural rise needs less), then checked in full by face_problems until `top` pass. The score is the rock built plus
+    half the ground dug, plus three per block from `near` (a place's later faces stand as bays of one working)."""
     geo = spec["geometry"]
     ctx = ctx or search_context(spec, site, source_root)
     ground, occ, free = ctx["ground"], ctx["occ"], ctx["free"].copy()
     x0, z0, x1, z1 = occ.box
+    bedrock = site.get("bedrock_skin", False)
     taken = set()
     for f in taken_faces:
-        taken |= set(tuple(c) for c in geometry(f, ground, geo, site.get("bedrock_skin", False))["columns"])
-    towns = {t["id"]: t for t in json.loads((ROOT / "data" / "towns.json").read_text(encoding="utf-8"))["towns"]}
-    centre = ((x0 + x1) / 2, (z0 + z1) / 2) if site.get("ground") == "cavern_floor" else \
-        (towns[site["settlement"]]["centre"]["x"], towns[site["settlement"]]["centre"]["z"])
-    out = []
-    W, D, B, A = geo["width"], geo["depth"], geo["backing"], geo["apron_rows"]
-    step = site.get("search_step", 2)
-    # a siting hint from the data: where the place's working is (the Mining Town's faces at its mine head), searched
-    # within prefer_window of it and scored by the distance to it
-    pn = site.get("prefer_near")
-    prefer = tuple(pn["at"]) if pn else None
-    prefer_window = pn["window"] if pn else 0
+        taken |= set(tuple(c) for c in geometry(f, ground, geo, spec["seed"], bedrock)["columns"])
     gap = spec["keep_clear"]["face_gap"]
     for c in taken:
         for dx in range(-gap, gap + 1):
@@ -441,52 +497,48 @@ def search(spec, site, stone=None, top=8, source_root=None, taken_faces=(), near
     sat[1:, 1:] = np.cumsum(np.cumsum(~free, 0), 1)
 
     def clear(xa, za, xb, zb):
-        xa, xb, za, zb = min(xa, xb), max(xa, xb), min(za, zb), max(za, zb)
         if xa < x0 or za < z0 or xb > x1 or zb > z1:
             return False
         i0, j0, i1, j1 = za - z0, xa - x0, zb - z0 + 1, xb - x0 + 1
         return sat[i1, j1] - sat[i0, j1] - sat[i1, j0] + sat[i0, j0] == 0
+    centre = town_centre(site, occ)
+    ring = site.get("ring")
+    step = site.get("search_step", 3)
+    garr, gx0, gz0 = ground.arr, ground.x0, ground.z0
+    H, BD, hwm = geo["height"], geo["body_depth"], geo["width_max"] // 2
+    cands = []
     for front in FRONTS:
         for cz in range(z0, z1 + 1, step):
             for cx in range(x0, x1 + 1, step):
+                if ring and not ring[0] <= math.hypot(cx - centre[0], cz - centre[1]) <= ring[1]:
+                    continue
                 if near is not None and max(abs(cx - near[0]), abs(cz - near[1])) > NEAR_WINDOW:
                     continue
-                if prefer is not None and max(abs(cx - prefer[0]), abs(cz - prefer[1])) > prefer_window:
+                if not clear(*footprint(front, cx, cz, geo)):
                     continue
-                b = box_for(front, cx, cz, 0, geo)
-                xz, _W, _D = frame(b, front)
-                # the whole of the box, its backing, the apron and a block of skin, free before anything is computed
-                (xa, za), (xb, zb) = xz(-B - 1, D + B), xz(W + B, -A - 1)
-                if not clear(xa, za, xb, zb):
-                    continue
-                # F: the higher of "the box sits backing under the lowest box column" and "the apron is the ground"
-                boxg = min(ground(*xz(u, d)) for u in range(W) for d in range(D))
-                apron = sorted(ground(*xz(u, -1)) for u in range(-1, W + 1))
-                f_top = boxg - B - (geo["height"] - 1)
-                y0 = min(f_top, apron[len(apron) // 2] + 1)
-                face = {"id": "probe", "box": box_for(front, cx, cz, y0, geo), "front": front}
-                try:
-                    gm = geometry(face, ground, geo, site.get("bedrock_skin", False))
-                except MineError:
-                    continue
-                # the free grid is the occupancy (plus the faces already sited, grown by the gap), computed once;
-                # model() checks the chosen boxes column by column again
-                if gm["problems"] or any(not (x0 <= x <= x1 and z0 <= z <= z1) or not free[z - z0, x - x0]
-                                         for x, z in gm["columns"]):
-                    continue
-                cells = gm["cells"]
-                dug = sum(1 for (x, y, z), r in cells.items() if r == "air" and y <= ground(x, z))
-                built = sum(1 for r in cells.values() if r == "fill")
-                fx, fz = xz(W // 2, -1)
-                dx, dz = centre[0] - fx, centre[1] - fz
-                ox, oz = {"north": (0, -1), "south": (0, 1), "west": (-1, 0), "east": (1, 0)}[front]
-                away = (dx * ox + dz * oz) < 0
-                score = dug + 3 * built + 5 * len(gm["rows"]) + (400 if away else 0) + 0.2 * math.hypot(dx, dz)
+                xz = frame((cx, cz), front)
+                (ax, az), (bx, bz) = xz(-hwm, -1), xz(hwm, -1)
+                ap = garr[min(az, bz) - gz0:max(az, bz) + 1 - gz0, min(ax, bx) - gx0:max(ax, bx) + 1 - gx0]
+                F = int(np.sort(ap, axis=None)[(ap.size - 1) // 2])
+                (ax, az), (bx, bz) = xz(-hwm, 0), xz(hwm, BD - 1)
+                bd = garr[min(az, bz) - gz0:max(az, bz) + 1 - gz0, min(ax, bx) - gx0:max(ax, bx) + 1 - gx0]
+                est = int(np.clip(F + H + 2 - bd, 0, None).sum())
                 if near is not None:
-                    score += 3 * math.hypot(fx - near[0], fz - near[1])
-                if prefer is not None:
-                    score += 3 * math.hypot(fx - prefer[0], fz - prefer[1])
-                out.append((round(score, 1), face["box"], front, len(gm["rows"]), dug, built, away))
+                    est += 3 * math.hypot(cx - near[0], cz - near[1])
+                cands.append((est, (cx, cz), front))
+    cands.sort(key=lambda c: c[0])
+    out = []
+    for est, anchor, front in cands[:1500]:
+        face = {"id": "probe", "anchor": list(anchor), "front": front}
+        probs, gm = face_problems(spec, site, face, ground, occ, taken)
+        if probs:
+            continue
+        score = gm["built"] + 0.5 * gm["dug"]
+        if near is not None:
+            score += 3 * math.hypot(anchor[0] - near[0], anchor[1] - near[1])
+        out.append((round(score, 1), list(anchor), front, gm["built"], gm["dug"]))
+        if top and len(out) >= top * 4:
+            break
     out.sort(key=lambda o: o[0])
     return out[:top] if top else out
 
@@ -519,30 +571,31 @@ def model(spec=None, source_root=None):
                 continue
             if face["ore"] not in st["ores"]:
                 probs.append("face %s: %s is not one of the %s stone's ores %s" % (face["id"], face["ore"], face["stone"], st["ores"]))
+            if not face.get("anchor"):
+                probs.append("face %s: no anchor (python tools/mines.py author)" % face["id"])
+                continue
             p, gm = face_problems(spec, site, face, ground, occ, taken)
             probs += ["%s/%s: %s" % (site["id"], face["id"], x) for x in p]
-            if gm is None:
-                continue
             taken |= set(gm["columns"])
             yld = face["yield"]
-            variants = [ore_cells(face, k, spec["seed"], geo, yld) for k in range(spec["restore"]["variants"])]
+            variants = [ore_cells(face, k, spec["seed"], geo, yld, gm) for k in range(spec["restore"]["variants"])]
             faces.append({"face": face, "geometry": gm, "variants": variants})
-        xs = [c for f in faces for c in (f["face"]["box"][0], f["face"]["box"][3])]
-        zs = [c for f in faces for c in (f["face"]["box"][2], f["face"]["box"][5])]
-        ys = [c for f in faces for c in (f["face"]["box"][1], f["face"]["box"][4])]
         if not faces:
             probs.append("%s: no face" % site["id"])
             continue
+        bs = [f["geometry"]["bounds"] for f in faces]
         m, up, down = spec["restore"]["approach_margin"], spec["restore"]["approach_up"], spec["restore"]["approach_down"]
-        approach = [min(xs) - m, min(ys) - down, min(zs) - m, max(xs) + m, max(ys) + up, max(zs) + m]
+        approach = [min(b[0] for b in bs) - m, min(b[1] for b in bs) - down, min(b[2] for b in bs) - m,
+                    max(b[3] for b in bs) + m, max(b[4] for b in bs) + up, max(b[5] for b in bs) + m]
         plan.append({"site": site, "faces": faces, "approach": approach})
     return plan, probs
 
 
 # ------------------------------------------------------------------ the pack
 
-def column_runs(cells):
-    """fill/setblock lines for {cell: block}, in vertical runs of one block per column."""
+def column_runs(cells, replace=None):
+    """fill/setblock lines for {cell: block}, in vertical runs of one block per column; with `replace`, filtered fills
+    (`fill ... replace <tag>`) even for one cell, so a player's own block in the way survives."""
     cols = {}
     for (x, y, z), b in cells.items():
         cols.setdefault((x, z), []).append((y, b))
@@ -556,41 +609,64 @@ def column_runs(cells):
             while k + 1 < len(ys) and ys[k + 1][0] == ys[k][0] + 1 and ys[k + 1][1] == b:
                 k += 1
             y1 = ys[k][0]
-            out.append("fill %d %d %d %d %d %d %s" % (x, y0, z, x, y1, z, b) if y1 > y0 else "setblock %d %d %d %s" % (x, y0, z, b))
+            if replace:
+                out.append("fill %d %d %d %d %d %d %s replace %s" % (x, y0, z, x, y1, z, b, replace))
+            elif y1 > y0:
+                out.append("fill %d %d %d %d %d %d %s" % (x, y0, z, x, y1, z, b))
+            else:
+                out.append("setblock %d %d %d %s" % (x, y0, z, b))
             n = k + 1
     return out
 
 
+ROCK_ROLES = ("body", "bottom", "rock", "cap")
+
+
+def role_block(site, face, role):
+    if role in ("body", "rock", "fill"):
+        return face["host"]
+    if role == "bottom":
+        return face["bottom"]
+    if role == "cap":
+        return face.get("cap") or site.get("cap") or face["host"]
+    if role == "floor":
+        return face.get("floor") or site["floor_block"]
+    if role == "bedrock":
+        return "minecraft:bedrock"
+    return AIR
+
+
+def formation(site, face, gm):
+    """{cell: block} of the face's formation rock (what the restore puts back): body, bottom course, rock, cap."""
+    return {c: role_block(site, face, r) for c, r in gm["cells"].items() if r in ROCK_ROLES}
+
+
 def build_lines(spec, entry):
-    """The site's build function body: every face's cut, skin, backing, bedrock and box at variant 0, then lanterns."""
+    """The site's build function body: every face's air, then its rock, floor and fill, the ore at variant 0,
+    then lanterns."""
     site = entry["site"]
+    geo = spec["geometry"]
     solid, air = {}, {}
     lanterns = []
     for f in entry["faces"]:
-        face = f["face"]
-        host = face["host"]
-        for c, role in f["geometry"]["cells"].items():
-            if role in ("box", "backing", "fill", "skin"):
-                solid[c] = host
-            elif role == "bedrock":
-                solid[c] = "minecraft:bedrock"
-            elif role == "floor":
-                solid[c] = face.get("floor") or site["floor_block"]
-            elif role == "air":
+        face, gm = f["face"], f["geometry"]
+        for c, role in gm["cells"].items():
+            if role == "air":
                 air[c] = AIR
+            else:
+                solid[c] = role_block(site, face, role)
         for c in f["variants"][0]:
             solid[c] = face["ore"]
         if site.get("lanterns"):
-            xz, W, _D = frame(face["box"], face["front"])
-            A = spec["geometry"]["apron_rows"]
-            y0 = face["box"][1]
-            for u in (-1, W):
-                x, z = xz(u, -A)
-                lanterns.append("setblock %d %d %d %s" % (x, y0, z, LANTERN))
+            xz = frame(face["anchor"], face["front"])
+            hw = half_width(face, spec["seed"], geo)
+            for u in (-hw - 1, hw + 1):
+                x, z = xz(u, -geo["apron_rows"])
+                lanterns.append("setblock %d %d %d %s" % (x, gm["floor"] + 1, z, LANTERN))
     head = ["# Generated by tools/mines.py from data/mines.json: the stone faces of %s (%s)" % (site["settlement"], site["id"]),
-            "# the cut and its air first, then the rock (skin, backing, bedrock, fill, floor), the faces at variant 0, lanterns"]
-    body = column_runs(air) + column_runs(solid) + lanterns
-    return head + body
+            "# the cut's air first, then the formation (body, bottom course, rock, cap), the apron's floor and fill, the",
+            "# faces at variant 0, lanterns"]
+    return head + column_runs(air) + column_runs(solid) + lanterns
 
 
 def text(s, **style):
@@ -630,12 +706,12 @@ def driver_files(spec, plan):
         for f in e["faces"]:
             face = f["face"]
             fid = face["id"]
-            x0, y0, z0, x1, y1, z1 = face["box"]
-            gx0, gy0, gz0, gx1, gy1, gz1 = x0 - 1, y0 - 1, z0 - 1, x1 + 1, y1 + 1, z1 + 1
+            gx0, gy0, gz0, gx1, gy1, gz1 = f["geometry"]["bounds"]
+            gx0, gy0, gz0, gx1, gy1, gz1 = gx0 - 1, gy0 - 1, gz0 - 1, gx1 + 1, gy1 + 1, gz1 + 1
             vol = "x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d" % (gx0, gy0, gz0, gx1 - gx0, gy1 - gy0, gz1 - gz0)
             fn["faces/check_%s" % fid] = [
-                "# restore on approach (STONE_ECONOMY.md 5.3): the period has passed, the box's four corners are loaded, and",
-                "# nobody and no Pokemon stands in the box or one block round it (the mandatory guard)",
+                "# restore on approach (STONE_ECONOMY.md 5.3): the period has passed, the formation's four corners are",
+                "# loaded, and nobody and no Pokemon stands in it or one block round it (the mandatory guard)",
                 "scoreboard players operation #d mn.t = #now mn.t",
                 "scoreboard players operation #d mn.t -= #%s mn.last" % fid,
                 "execute if score #d mn.t < #period mn.t run return 0",
@@ -646,7 +722,10 @@ def driver_files(spec, plan):
                 "execute if entity @a[%s] run return 0" % vol,
                 "execute if entity @e[type=cobblemon:pokemon,%s] run return 0" % vol,
                 "function %s/faces/restore_%s" % (F, fid)]
-            restore = ["# a variant other than the last one: random value 0..7, moved on by one if it repeats",
+            restore = ["# the whole formation back first (its rock, the bottom course and the cap, over the resettable tag",
+                       "# only: a player's chest survives), then a variant other than the last one: random value 0..7,",
+                       "# moved on by one if it repeats",
+                       "function %s/faces/%s_rock" % (F, fid),
                        "execute store result score #v mn.t run random value 0..7",
                        "execute if score #v mn.t = #%s mn.var run scoreboard players add #v mn.t 1" % fid,
                        "scoreboard players operation #v mn.t %= #eight mn.t",
@@ -665,11 +744,12 @@ def driver_files(spec, plan):
                             "scoreboard players remove #sib mn.t %d" % (period - delta),
                             "scoreboard players operation #%s mn.last > #sib mn.t" % o["id"]]
             fn["faces/restore_%s" % fid] = restore
+            fn["faces/%s_rock" % fid] = ["# chunks-loaded-by: %s/faces/check_%s (execute if loaded, the formation's four corners)"
+                                         % (F, fid)] + column_runs(formation(site, face, f["geometry"]), tag)
             for k, ores in enumerate(f["variants"]):
-                body = ["# chunks-loaded-by: %s/faces/check_%s (execute if loaded, the box's four corners)" % (F, fid),
-                        "fill %d %d %d %d %d %d %s replace %s" % (x0, y0, z0, x1, y1, z1, face["host"], tag)]
+                body = ["# chunks-loaded-by: %s/faces/check_%s (execute if loaded, the formation's four corners)" % (F, fid)]
                 for (x, y, z) in sorted(ores):
-                    body.append("execute if block %d %d %d %s run setblock %d %d %d %s" % (x, y, z, tag, x, y, z, face["ore"]))
+                    body.append("execute if block %d %d %d %s run setblock %d %d %d %s" % (x, y, z, face["host"], x, y, z, face["ore"]))
                 fn["faces/%s_v%d" % (fid, k)] = body
     return fn
 
@@ -728,6 +808,12 @@ def pack_problems(spec):
         for f in s["faces"]:
             if f["host"] not in rs["resettable"]:
                 out.append("%s: host %s is not resettable, so the restore could not refill its own rock" % (f["id"], f["host"]))
+            for key in ("bottom", "cap"):
+                b = f.get(key) or (s.get(key) if key == "cap" else None)
+                if key == "bottom" and not b:
+                    out.append("%s: no bottom block (the course that shows where the ore ends)" % f["id"])
+                elif b and b not in rs["resettable"]:
+                    out.append("%s: %s %s is not resettable, so the restore could not put it back" % (f["id"], key, b))
             if f["ore"] not in rs["resettable"]:
                 out.append("%s: ore %s is not resettable, so an ore left standing would stay through a restore" % (f["id"], f["ore"]))
             y = f["yield"]
@@ -741,29 +827,25 @@ def pack_problems(spec):
 
 
 def author(spec, only=None, source_root=None):
-    """Site every face that has no box yet, best first by search(): each later face of a site keeps clear of the ones
-    already sited there and is drawn toward the site's first face, so a place's faces stand as bays of one working.
-    Writes data/mines.json; a face that cannot be sited stops the run and nothing is written."""
-    geo = spec["geometry"]
+    """Site every face that has no anchor yet, best first by search(): each later face of a site keeps clear of the
+    ones already sited there and is drawn toward the site's first face, so a place's faces stand as bays of one
+    working. Writes data/mines.json; a face that cannot be sited stops the run and nothing is written."""
     for site in spec["sites"]:
         if only and site["id"] != only:
             continue
-        todo = [f for f in site["faces"] if not f.get("box")]
+        todo = [f for f in site["faces"] if not f.get("anchor")]
         if not todo:
             continue
         ctx = search_context(spec, site, source_root)
         for f in todo:
-            done = [g for g in site["faces"] if g.get("box")]
-            near = None
-            if done:
-                xz, W, _D = frame(done[0]["box"], done[0]["front"])
-                near = xz(W // 2, -1)
-            best = search(spec, site, f["stone"], 1, source_root, done, near, ctx)
+            done = [g for g in site["faces"] if g.get("anchor")]
+            near = tuple(done[0]["anchor"]) if done else None
+            best = search(spec, site, 1, source_root, done, near, ctx)
             if not best:
                 raise SystemExit("%s/%s: no place for the face passes every rule; nothing written" % (site["id"], f["id"]))
-            f["box"], f["front"] = best[0][1], best[0][2]
-            print("%s/%s: %s front %s (score %s, %d cut rows, %d dug, %d built)"
-                  % (site["id"], f["id"], f["box"], f["front"], best[0][0], best[0][3], best[0][4], best[0][5]))
+            f["anchor"], f["front"] = best[0][1], best[0][2]
+            print("%s/%s: anchor %s front %s (score %s, %d built, %d dug)"
+                  % (site["id"], f["id"], f["anchor"], f["front"], best[0][0], best[0][3], best[0][4]))
     SPEC.write_text(json.dumps(spec, indent=1, ensure_ascii=False) + "\n", encoding="utf-8", newline="\n")
     print("wrote", SPEC.relative_to(ROOT))
     return 0
@@ -773,9 +855,7 @@ def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("mode", choices=("site", "author", "report", "build"))
     p.add_argument("site", nargs="?")
-    p.add_argument("--stone")
     p.add_argument("--top", type=int, default=12)
-    p.add_argument("--prefer", help="site: x,z,window, a trial of a prefer_near hint")
     p.add_argument("--source-root")
     p.add_argument("--server-dir", help="accepted for tools/reapply.py prepare's sake; not read")
     a = p.parse_args(argv)
@@ -783,14 +863,10 @@ def main(argv=None):
     if a.mode == "author":
         return author(spec, a.site, a.source_root)
     if a.mode == "site":
-        site = next((s for s in spec["sites"] + spec.get("search_only", []) if s["id"] == a.site), None)
+        site = next((s for s in spec["sites"] if s["id"] == a.site), None)
         if site is None:
             raise SystemExit("no site %r" % a.site)
-        others = [f for f in site.get("faces") or [] if f.get("stone") != a.stone and f.get("box")] if a.stone else []
-        if a.prefer:
-            px, pz, pw = (int(v) for v in a.prefer.split(","))
-            site = dict(site, prefer_near={"at": [px, pz], "window": pw})
-        for o in search(spec, site, a.stone, a.top, a.source_root, others):
+        for o in search(spec, site, a.top, a.source_root):
             print(json.dumps(o))
         return 0
     probs = pack_problems(spec)
@@ -802,8 +878,10 @@ def main(argv=None):
             roles = {}
             for r in gm["cells"].values():
                 roles[r] = roles.get(r, 0) + 1
-            print("  %-22s %-8s %-5s y%-3d rows %2d  %s  ore/variant %s" % (
-                f["face"]["id"], f["face"]["stone"], f["face"]["front"], f["face"]["box"][1], len(gm["rows"]),
+            b = gm["bounds"]
+            print("  %-14s %-8s %-5s floor y%-3d built %4d dug %4d  %dx%dx%d  %s  ore/variant %s" % (
+                f["face"]["id"], f["face"]["stone"], f["face"]["front"], gm["floor"], gm["built"], gm["dug"],
+                b[3] - b[0] + 1, b[4] - b[1] + 1, b[5] - b[2] + 1,
                 " ".join("%s %d" % kv for kv in sorted(roles.items())), [len(v) for v in f["variants"]]))
     if probs:
         for pr in probs:
@@ -813,10 +891,13 @@ def main(argv=None):
         return 0
     counts = write(spec, plan)
     PLAN.parent.mkdir(parents=True, exist_ok=True)
-    out = {"schema": "cobblers.derived.mines/1", "build_functions": build_functions(spec), "commands": counts,
+    out = {"schema": "cobblers.derived.mines/2", "build_functions": build_functions(spec), "commands": counts,
            "sites": {e["site"]["id"]: {"approach": e["approach"],
-                                       "faces": {f["face"]["id"]: {"box": f["face"]["box"], "stand": f["geometry"]["stand"],
-                                                                   "cut_rows": len(f["geometry"]["rows"]),
+                                       "faces": {f["face"]["id"]: {"anchor": f["face"]["anchor"], "front": f["face"]["front"],
+                                                                   "floor": f["geometry"]["floor"],
+                                                                   "bounds": f["geometry"]["bounds"],
+                                                                   "stand": f["geometry"]["stand"],
+                                                                   "built": f["geometry"]["built"],
                                                                    "ore_per_variant": [len(v) for v in f["variants"]]}
                                                  for f in e["faces"]}} for e in plan}}
     PLAN.write_text(json.dumps(out, indent=1) + "\n", encoding="utf-8")
