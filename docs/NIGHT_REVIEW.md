@@ -147,3 +147,20 @@ Then: `python tools/reapply.py carry --rehearsal --old-world <dryrun11> --world-
 
 **Housekeeping:** I left `advancements/<your-uuid>.json.pre-revoke-backup` in `cobblers-dryrun11`. It is an
 untouched copy made before the refused edit; delete it whenever.
+
+## The world audit: two findings, one expected and one new
+
+`reapply.py audit` on a stopped copy of `cobblers-dryrun12`. Every settlement clean except two.
+
+**1. `jungle_ruins` — expected, and it is review item 1 in another guise.** "469 cells have a block standing on the
+road (water 426…)" and "ruin_great_hall: only 286 of 478 template blocks are in place (59.8%)". That is the sea. The
+ruins stood on the Jungle Isle, the water shape removed it, and they now measure y55-61 against a sea level of 62, so
+the causeway is under water and the hall is half drowned. **Not a build fault — the consequence of a design decision
+you made on 2026-09-27**, surfacing exactly where it should. It stays until the ruins are re-sited or removed.
+
+**2. The Displaced City cavern shell has 12 voids, where it had 0.** `shell_columns: 60992, shell_voids: {"in the
+walls, air": 12}`. The shell exists to make every void within 24 blocks of the chamber into rock, because a
+surface-open cave and water pockets down the west wall were once back doors into the sealed city. The last export
+measured **0**. Twelve is small and they are described as "in the walls" rather than reaching the surface, so this
+may be isolated pockets rather than a way in — **but the audit cannot tell the difference, and neither can I from
+the outside.** Recorded rather than waved through. Worth a look before the city is played.
