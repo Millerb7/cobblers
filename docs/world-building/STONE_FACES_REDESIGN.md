@@ -5,7 +5,7 @@ and nothing shows where the ore ends. The owner's brief: check the other six pla
 plazas and main streets ("found, not walked past"); shape them to their ground (into real slopes where there are
 slopes, irregular and natural where there are not), dropping the fixed box; give each a distinct bottom.
 
-Nothing here is built. The faces on staging are still the 9 x 5 x 6 boxes of `data/mines.json`.
+**Built on staging 2026-09-28** (the owner: "do it"; `tools/mines.py`, `data/mines.json`): the old boxes cleared and all 22 formations built on `cobblers-dryrun11`, 501 of 505 sampled cells matching the model over RCON (the 4 others are the Displaced City's lanterns, which the build places in cells the check sampled as air), every face's variant-0 ore in place, 0 of 440 old ore cells left. The audit `tools/mines_audit.py` is rewritten for formations and clean; it catches a planted missing bottom, a planted pit and a missing restore line. `tests/test_mines_independent.py` still describes the box and fails until it is rewritten. Not yet seen in game.
 
 ## 1. The survey (all 22 faces, all seven places)
 
