@@ -21,6 +21,20 @@ durable facts; this holds where work stopped.
   accepted**: its own step 4 is "ADR proposed, owner accepts", and it says no gym content should be authored before
   that. Its agent worktree (`worktree-agent-a5c7b45c78e489c10`) is spent and removable. Read the doc itself; it is self-contained and ends with nine open questions and a ten-step plan. **Q1 blocks everything**: no interior floor plan of any gym template exists in the repo, so the NBTs must be extracted locally (gitignored, never committed) and a y-slice dumped before any room is designed against real geometry.
 
+## 1b. FIRST, AND IT IS NOT ABOUT GYMS: the mixed-progress rematch fault
+
+The owner, 2026-09-28: the most important thing to come out of the gym design, and it is a trainer-system fault.
+
+`tools/route_trainers.py:151-152` writes a trainer's hold-off `Cooldown` **only when every player near it has beaten
+it**. Two players at different progress never satisfy that, so no cooldown is written and **the player who already
+won is pulled into a rematch while their partner is still fighting**. It affects **every placed trainer in the game
+the moment two people play** -- the 13 Route 1-3 trainers, the 5 mansion Channelers, and every gym trainer that gets
+built later. Read from the generated line; **never observed in game**.
+
+The fix is a per-player hold-off rather than a shared `Cooldown`, following the mansion's shape (gate on the
+trainer's per-player win field, `STATE.md` "Gastly mansion details"). Confirm it in game with two players first --
+EXP-034 has never run, and it is also what gates Sabrina's gym below. Recorded in `docs/STATE.md`, World facts.
+
 ## 2. THE NEXT JOB: dive and sky portals. Run it in this order
 
 The owner's instruction, explicit: **the experiment first, then the researcher only if the experiment leaves gaps,
