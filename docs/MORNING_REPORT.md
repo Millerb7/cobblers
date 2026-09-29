@@ -82,3 +82,40 @@ and everything player-gated in EXP-047.
 | Failing test for the rematch fault | 21 | 0.23M |
 
 The main session is the expensive one, as always.
+
+## Where to fly, most important first
+
+The world is `cobblers-dryrun12` (universe `cobblers-runtime-proof/dryrun12`). **Read the carry note in
+`NIGHT_REVIEW.md` before you log in** — your character did not come across, so you will arrive fresh.
+
+**1. The water, everywhere. This is what the night was for.** Every coast, lake bed and river was re-cut:
+19,027,615 columns. Fly the shore anywhere and it should read as a shore rather than a cliff into flat blue. The
+lakes have wadeable margins now (Viltri 19%, Shrew 11%, Arrow 13%, Marshy Marsh 25%, Tilpey 13%).
+
+**2. The map edge and the seamounts — these have never existed.** The margin relief ran for the first time
+(7,056 tiles), so beyond the landmass there are now seamounts and a carried-off edge instead of a blank wall.
+Five summits to look for: `(-600, 2200)`, `(-500, 6000)`, `(4200, -700)`, `(9000, 1800)`, `(1500, 8900)`.
+
+**3. The Jungle Isle is gone and Pacifidlog has moved.** The isle is a bank 4-9 deep; the town is at its new
+square **(5160, 7380)** with a mainland jetty on the plateau's south beach. **The jungle ruins are drowned** at
+y55-61 and need re-siting — review item 1.
+
+**4. The six legendary chambers.** Mesprit under Arrow Lake, mouth **(2790, 4606)**; Azelf under Marshy Marsh,
+mouth **(5158, 2166)**; Regirock **(4800, 5200)**; Regice **(3900, 2050)**; Regigigas **(3560, 1760)**; Groudon
+**(6672, 5508)**. Each is sealed until its gate opens, so you are looking at the portal and the ground, not the
+chamber.
+
+**5. Gym 1's interior — the first gym that is a place rather than a room.** Brock's gym at Pallet's plateau town;
+the works are carved beneath, shell `(1812, 140, 3667)`-`(1838, 156, 3690)`, and the way down is a scaffolding
+column at **(1817, 3685)** standing where the healing machine used to be. Three fights and one climb.
+
+**6. The stone faces, now in their towns** (they were 121-205 blocks out; they are 30-64 now, the Scar 110-119):
+tea town **(2667, 3633)**, Mining Town **(6627, 5755)**, gorge hamlet **(6860, 4347)**, Northlight
+**(7289, 1601)**, Viltri Light **(558, 4565)**, the Scar **(2007, 988)**, Displaced City **(3334, 1850)**.
+
+**7. No gym has a healing machine any more.** All eight, replaced with cut stone of the town's palette. Check one
+reads as furniture rather than a gap.
+
+**8. The six wayside shrines**, one moved tonight: Brock's cairn (1609, 3767), **Misty's lantern stone now at
+(1699, 2873)**, the fork below Surge's (1699, 1501), Koga's niche (4509, 2303), the Tableland altar (4765, 5622),
+the Merian cairn (2820, 1212).
