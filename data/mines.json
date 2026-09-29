@@ -1,6 +1,6 @@
 {
  "schema": "cobblers.mines/1",
- "status": "rebuilt as formations 2026-09-28 (flight finding 1: the tea town's boxes were square pits by the Centre with no bottom; docs/world-building/STONE_FACES_REDESIGN.md); not run in a game",
+ "status": "re-sited into the towns 2026-09-29 (flight finding 2: the formations were 121-205 blocks out and read as nobody's; docs/world-building/STONE_FACES_REDESIGN.md section 6). The formation shape and the bottom course of the 2026-09-28 rebuild are unchanged; only the ring and the search's pull moved. Not run in a game",
  "builder": "tools/mines.py (site, author, report, build); audit tools/mines_audit.py; re-applied by tools/reapply.py step R9O",
  "design": "docs/mechanics/STONE_ECONOMY.md (sections 3, 5, 6, 11), docs/mechanics/EVOLUTION_STONES.md, docs/decisions/ADR-003-evolution-stone-supply.md as amended",
  "seed": 20260928,
@@ -19,6 +19,10 @@
   "max_fill": 2,
   "max_build": 9,
   "rules": "A face is a formation, shaped to its ground (the owner, 2026-09-28: no fixed box, no pit, a distinct bottom). Its anchor is the middle column of its face line; `front` is the side a player works it from (north: the player stands north and the rock runs +z; south -z; west +x; east -x); u runs along the face (+x on a north or south face, +z on a west or east face), d into the rock, d < 0 in front. The floor F is the lower median of the natural ground over the first apron row, u = -(width_max/2 + apron_margin) .. +: never lowered, so a face is walked onto, never climbed down into. The width is width_min + h32(seed, face, 1) mod (width_max - width_min + 1), half-width hw = width // 2. Column u of the face line (|u| < hw) stands back one block when h32(seed, face, 2, u) mod 3 == 0. The body: the `body_depth` cells behind the face line in each column u = -hw..hw, rows F+2 .. F+height+1, over the bottom course at F+1 (the face's `bottom` block: a contrasting rock that shows where the ore ends), and host rock from the ground up to F where the ground dips under F. The formation's top over the body is T0 = F+height+2, plus 1 where h32(seed, face, 3, u, d) mod 3 == 2; round the body, out to knoll_side beside and knoll_back behind, it is T0 + (h32(seed, face, 3, u, d) mod 3 - 1) - round(fall x (max(0, |u| - hw) + max(0, d - body_depth + 1))). A column whose natural ground is under that top is built up in host rock to it, its top cell the `cap` (the site's ground: moss, grass, snow; host rock where none); a column whose ground is at or over it is left natural, so on a slope the face is a cut and on flat ground an outcrop. No column is built up more than max_build. In front: the apron_rows rows over u = -hw - apron_margin .. hw + apron_margin, and the set-back cells, are made level with F (host rock filled under a floor block where the ground was lower, by at most max_fill; dug where it was higher, by at most max_cut), with air from F+1 to the higher of the ground and F, plus clear_above. The skin: every natural cell next to that air and at or under its column's ground becomes host rock. The bedrock (only where the site says): one cell beside, behind and under the body and its bottom course, below the ground, never in front. The ore of variant k: n = ore_min + h32(seed, face, k) mod (ore_max - ore_min + 1) body cells in the order h32(seed, face, k, x, y, z) sorts them: first visible_min on the face line at rows F+2 or F+3 with |u| <= hw - 1, then the rest at least one behind the face line and under the body's top row (tools/mines.py ore_cells). The restore puts back the whole formation (body, bottom course, rock, cap) over the resettable tag, then one variant's ore where host rock stands."
+ },
+ "siting": {
+  "centre_pull": 6.0,
+  "why": "Flight finding 2 (the owner, 2026-09-28): 'some of them arent near towns enough, like mining town someone wouldnt know its connected.' Each site's `ring` is now the nearest band round the town's centre in which a whole formation still clears every street, the plaza and every routed leg by keep_clear.road_clear, and the search adds centre_pull per block from that centre to its score, so of two legal sites the nearer to the town wins even when it costs more rock to build. The owner's recorded mix (a piece on the square, or in a house slot) is not built: a square IS the plaza and every lot touches a street, so either would put written columns inside the road_clear the owner set in finding 1. Away from the plaza wins (the owner, 2026-09-29); the square and the lot are recorded as the alternative in STONE_FACES_REDESIGN.md section 6."
  },
  "keep_clear": {
   "water_changed_reach": 8,
@@ -187,7 +191,7 @@
    "settlement": "viltri_light",
    "kind": "exposure",
    "stage_leg": 1,
-   "reading": "A sea-cliff cut under the lighthouse, over an estuary no river uses any more: water stones where the water left. The seam repairs the rock, not your things.",
+   "reading": "A shoulder of sea rock a minute's walk up from the light, where an estuary no river uses any more undercut the bank: water stones where the water left. The keeper will point you at it. The seam repairs the rock, not your things.",
    "faces": [
     {
      "id": "vl_water_a",
@@ -203,8 +207,8 @@
      "offset_ticks": 0,
      "bottom": "minecraft:deepslate",
      "anchor": [
-      567,
-      4379
+      558,
+      4475
      ],
      "front": "west"
     },
@@ -222,16 +226,16 @@
      "offset_ticks": 6000,
      "bottom": "minecraft:deepslate",
      "anchor": [
-      546,
-      4388
+      573,
+      4475
      ],
      "front": "west"
     }
    ],
    "reapply_step": "R9O",
    "ring": [
-    50,
-    150
+    36,
+    90
    ],
    "cap": "minecraft:grass_block"
   },
@@ -240,7 +244,7 @@
    "settlement": "tea_town",
    "kind": "worked",
    "stage_leg": 2,
-   "reading": "Terrace cuttings among the tea rows: the tea houses face their walls with the polished stone, leaf on one bay and the shine on the next.",
+   "reading": "Grey tors standing among the tea rows at the edge of the town, a lane or two off the square: the tea houses face their walls with the polished stone, leaf out of one and the shine out of the next.",
    "faces": [
     {
      "id": "tea_leaf_a",
@@ -256,10 +260,10 @@
      "offset_ticks": 0,
      "bottom": "minecraft:deepslate",
      "anchor": [
-      2701,
-      3745
+      2667,
+      3633
      ],
-     "front": "south"
+     "front": "north"
     },
     {
      "id": "tea_leaf_b",
@@ -275,10 +279,10 @@
      "offset_ticks": 6000,
      "bottom": "minecraft:deepslate",
      "anchor": [
-      2701,
-      3730
+      2685,
+      3615
      ],
-     "front": "south"
+     "front": "north"
     },
     {
      "id": "tea_shiny_a",
@@ -294,10 +298,10 @@
      "offset_ticks": 0,
      "bottom": "minecraft:deepslate",
      "anchor": [
-      2704,
-      3715
+      2643,
+      3633
      ],
-     "front": "south"
+     "front": "north"
     },
     {
      "id": "tea_shiny_b",
@@ -313,16 +317,16 @@
      "offset_ticks": 6000,
      "bottom": "minecraft:deepslate",
      "anchor": [
-      2716,
-      3739
+      2688,
+      3630
      ],
-     "front": "west"
+     "front": "north"
     }
    ],
    "reapply_step": "R9O",
    "ring": [
-    50,
-    150
+    30,
+    85
    ],
    "cap": "minecraft:moss_block"
   },
@@ -331,7 +335,7 @@
    "settlement": "the_scar",
    "kind": "exposure",
    "stage_leg": 4,
-   "reading": "A scraped summit open to the sky, among the ruins: the rock under the city's footprint is terracotta, Cobblemon's own host for the sun stone, and you chip what is exposed. The near end of the exchange.",
+   "reading": "Terracotta humps the scraping left, out among the ruins but off their streets: the rock under the city's footprint is terracotta, Cobblemon's own host for the sun stone, and you chip what is exposed. The near end of the exchange.",
    "faces": [
     {
      "id": "scar_sun_a",
@@ -347,10 +351,10 @@
      "offset_ticks": 0,
      "bottom": "minecraft:smooth_basalt",
      "anchor": [
-      2064,
-      808
+      2007,
+      988
      ],
-     "front": "north"
+     "front": "east"
     },
     {
      "id": "scar_sun_b",
@@ -366,15 +370,15 @@
      "offset_ticks": 6000,
      "bottom": "minecraft:smooth_basalt",
      "anchor": [
-      2049,
-      814
+      2007,
+      1009
      ],
      "front": "east"
     }
    ],
    "reapply_step": "R9O",
    "ring": [
-    50,
+    105,
     150
    ]
   },
@@ -474,7 +478,7 @@
    "settlement": "northlight",
    "kind": "worked",
    "stage_leg": 6,
-   "reading": "The field station's cutting on the only snowy islands: ice stones worked out of the isle's rock.",
+   "reading": "Snow-capped outcrops on the islet just past the field station's last hut: ice stones worked out of the isle's own rock.",
    "faces": [
     {
      "id": "nl_ice_a",
@@ -490,8 +494,8 @@
      "offset_ticks": 0,
      "bottom": "minecraft:deepslate",
      "anchor": [
-      7222,
-      1438
+      7289,
+      1601
      ],
      "front": "north"
     },
@@ -509,16 +513,16 @@
      "offset_ticks": 6000,
      "bottom": "minecraft:deepslate",
      "anchor": [
-      7201,
-      1435
+      7304,
+      1607
      ],
-     "front": "north"
+     "front": "west"
     }
    ],
    "reapply_step": "R9O",
    "ring": [
     50,
-    150
+    95
    ],
    "cap": "minecraft:snow_block"
   },
@@ -527,7 +531,7 @@
    "settlement": "gorge_hamlet",
    "kind": "exposure",
    "stage_leg": 7,
-   "reading": "The Tilpey outflow cut the seam open: dusk in the dark deepslate, dawn in the pale stone beside it. Late on purpose (O-3).",
+   "reading": "Dark tors and pale ones standing over the hamlet's fields, where the Tilpey outflow left the seam near the surface: dusk in the deepslate, dawn in the pale stone beside it. Late on purpose (O-3).",
    "faces": [
     {
      "id": "gh_dusk_a",
@@ -543,10 +547,10 @@
      "offset_ticks": 0,
      "bottom": "minecraft:tuff",
      "anchor": [
-      6795,
-      4315
+      6860,
+      4347
      ],
-     "front": "south"
+     "front": "west"
     },
     {
      "id": "gh_dusk_b",
@@ -562,10 +566,10 @@
      "offset_ticks": 6000,
      "bottom": "minecraft:tuff",
      "anchor": [
-      6801,
-      4291
+      6860,
+      4368
      ],
-     "front": "south"
+     "front": "west"
     },
     {
      "id": "gh_dawn_a",
@@ -581,10 +585,10 @@
      "offset_ticks": 0,
      "bottom": "minecraft:deepslate",
      "anchor": [
-      6771,
-      4306
+      6827,
+      4323
      ],
-     "front": "west"
+     "front": "south"
     },
     {
      "id": "gh_dawn_b",
@@ -600,16 +604,16 @@
      "offset_ticks": 6000,
      "bottom": "minecraft:deepslate",
      "anchor": [
-      6810,
-      4309
+      6854,
+      4323
      ],
-     "front": "west"
+     "front": "south"
     }
    ],
    "reapply_step": "R9O",
    "ring": [
-    50,
-    150
+    44,
+    100
    ],
    "cap": "minecraft:grass_block"
   },
@@ -618,7 +622,7 @@
    "settlement": "mining_town",
    "kind": "thermal",
    "stage_leg": 8,
-   "reading": "The only industrial mine: the thermal working on the cone's flank for fire, and the deep seam for thunder, the second source of the most-needed stone. The Exchange stands on the pithead yard (data/traders.json mining_assayer).",
+   "reading": "The town's own working, on the ground behind the pithead rather than out on the cone: the thermal face for fire and the deep seam for thunder, the second source of the most-needed stone. The Exchange stands on the pithead yard (data/traders.json mining_assayer).",
    "faces": [
     {
      "id": "mt_fire_a",
@@ -634,8 +638,8 @@
      "offset_ticks": 0,
      "bottom": "minecraft:tuff",
      "anchor": [
-      6698,
-      5538
+      6627,
+      5755
      ],
      "front": "north"
     },
@@ -653,8 +657,8 @@
      "offset_ticks": 6000,
      "bottom": "minecraft:tuff",
      "anchor": [
-      6692,
-      5520
+      6603,
+      5752
      ],
      "front": "north"
     },
@@ -672,10 +676,10 @@
      "offset_ticks": 0,
      "bottom": "minecraft:tuff",
      "anchor": [
-      6671,
-      5544
+      6645,
+      5761
      ],
-     "front": "north"
+     "front": "west"
     },
     {
      "id": "mt_thunder_b",
@@ -691,16 +695,16 @@
      "offset_ticks": 6000,
      "bottom": "minecraft:tuff",
      "anchor": [
-      6692,
-      5550
+      6621,
+      5770
      ],
      "front": "north"
     }
    ],
    "reapply_step": "R9O",
    "ring": [
-    150,
-    210
+    36,
+    95
    ]
   }
  ]

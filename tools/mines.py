@@ -478,8 +478,11 @@ def search(spec, site, top=8, source_root=None, taken_faces=(), near=None, ctx=N
     """Candidate faces for a site, best first: [(score, anchor, front, built, dug)]. Anchors on a grid inside the
     site's ring whose whole footprint is free; ranked first by an estimate of the rock the formation would build
     (natural rise needs less), then checked in full by face_problems until `top` pass. The score is the rock built plus
-    half the ground dug, plus three per block from `near` (a place's later faces stand as bays of one working)."""
+    half the ground dug, plus three per block from `near` (a place's later faces stand as bays of one working), plus
+    `siting.centre_pull` per block from the town's centre (flight finding 2, the owner 2026-09-28: a face must read as
+    that town's, so of two legal sites the nearer to the town wins even when it costs more rock to build)."""
     geo = spec["geometry"]
+    pull = float((spec.get("siting") or {}).get("centre_pull", 0) or 0)
     ctx = ctx or search_context(spec, site, source_root)
     ground, occ, free = ctx["ground"], ctx["occ"], ctx["free"].copy()
     x0, z0, x1, z1 = occ.box
@@ -525,6 +528,8 @@ def search(spec, site, top=8, source_root=None, taken_faces=(), near=None, ctx=N
                 est = int(np.clip(F + H + 2 - bd, 0, None).sum())
                 if near is not None:
                     est += 3 * math.hypot(cx - near[0], cz - near[1])
+                if pull:
+                    est += pull * math.hypot(cx - centre[0], cz - centre[1])
                 cands.append((est, (cx, cz), front))
     cands.sort(key=lambda c: c[0])
     out = []
@@ -536,6 +541,8 @@ def search(spec, site, top=8, source_root=None, taken_faces=(), near=None, ctx=N
         score = gm["built"] + 0.5 * gm["dug"]
         if near is not None:
             score += 3 * math.hypot(anchor[0] - near[0], anchor[1] - near[1])
+        if pull:
+            score += pull * math.hypot(anchor[0] - centre[0], anchor[1] - centre[1])
         out.append((round(score, 1), list(anchor), front, gm["built"], gm["dug"]))
         if top and len(out) >= top * 4:
             break
