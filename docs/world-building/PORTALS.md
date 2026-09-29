@@ -76,8 +76,15 @@ filled up to it.
 | `dive_shrew_pit` | 2856, 3960 | 56 | 106 | 50 | cell | Shrew Lake |
 | `dive_tarn_bottom` | 3388, 916 | 105 | 127 | 22 | cache | Ravine Head Tarn |
 | `dive_peak_pond_floor` | 4068, 1480 | 87 | 105 | 18 | cell | Peak Pond |
-| `dive_watering_hole_floor` | 2964, 5268 | 84 | 95 | 11 | cache | Watering Hole |
+| `dive_watering_hole_floor` | 2958, 5235 | 82 | 95 | 13 | cache | Watering Hole |
 | **`dive_tilpey_gate`** | 6076, 4296 | 50 | 77 | 27 | **vault** | Lake Tilpey |
+
+The Watering Hole lies under the Rift's block pass. `cobblers_rift` skins every column the sculpt
+moved, and that covers almost the whole basin; the one patch it never touches is the original lake bed
+(x2938-2979, z5229-5243), which was already at y82, below the cut, so the sculpt left it alone. The arch
+stands in the middle of that patch. A first siting at (2964, 5268) sat inside distortion tile 46 82, and
+because R16P runs after R1 the portal would have silently overwritten 85 of the skin's fills;
+`tools/portals_audit.py` caught it. Any future move inside this body must stay in that patch.
 
 Lake Tilpey is the meaningful one because the **Dive school stands on its north shore**
 (`docs/mechanics/WATER_MAP.md` allocation 12): it is the first water a newly trained diver goes into, so

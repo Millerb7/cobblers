@@ -164,10 +164,10 @@
       "gate": "dive",
       "room": "cache",
       "meaningful": false,
-      "at": [2964, 5268],
+      "at": [2958, 5235],
       "facing": "north",
       "water_body": "watering_hole",
-      "why": "The shallowest body that still drowns the arch (13 blocks), off Route 8. Fishing water with a rod find (allocation 17); a chest is the right size of extra.",
+      "why": "The shallowest body that still drowns the arch (13 blocks: bed y82 under the painted level y95), off Route 8. Fishing water with a rod find (allocation 17); a chest is the right size of extra. Sited on the one patch of original lake bed the Rift's sculpt never moved, so the Rift skin writes no block in it: (2964, 5268) was inside cobblers_rift's distortion tile 46 82 and the portal would have overwritten 85 of its fills (R16P runs after R1). The clear patch is x2938-2979, z5229-5243, 5 blocks off the lake's own anchor (2962, 5238); this centre has 7 blocks of clearance to the nearest skin write on every side.",
       "loot": "dive_cache",
       "story": "for Codex"
     },
