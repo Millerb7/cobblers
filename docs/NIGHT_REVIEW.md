@@ -59,3 +59,34 @@ should have measured before deleting rather than after being refused.
    gated on EXP-034.
 
 (Filled in as they happen.)
+
+## The legendaries: six built, four blocked, and six things that need you
+
+`data/legendaries.json`, `tools/legendaries.py`, `tools/legendaries_audit.py`, `docs/mechanics/LEGENDARIES.md`.
+Audit **376 checks, 0 failures**, and proved fail-closed against six tampered inputs (gate stripped from a line, a
+write moved outside the shell, an empty pack, no pack, every record blocked, a level above the catch cap). I re-ran
+it here myself rather than take the agent's word: same result.
+
+**Emitted:** Mesprit (Arrow, 3 badges), Azelf (Marshy Marsh, 5), Regirock, Regice, Regigigas, Groudon.
+**Blocked, each with a named reason rather than a guess:** Uxie, Registeel, Lugia, Celebi's wake.
+
+1. **Five gates are the agent's proposal, not your decision.** Only the lake trio's badges and Lugia's Dive +
+   `champion_cleared` are yours on record. Regirock gym 4, Regice gym 6, Registeel gym 7, Regigigas gym 8 (plus all
+   three golems met), Groudon gym 8 and Celebi gym 8 are **guesses** and marked as such. They want your call.
+2. **Uxie needs one line from you.** Lake Tilpey is the only trio lake with no keep zone in `data/water_shape.json`;
+   Arrow and Marshy Marsh both have one protecting exactly these mouths. Adding
+   `{"id": "uxie_grotto_floor", "radius": 12, "around": <mouth>}` to Tilpey's `keep` unblocks it with nothing else
+   changed. I did not edit that file: the water shape was mid-apply.
+3. **A new Celebi fault, found while building.** `cobblers_celebi`'s keeper re-merges the dormant NBT **every 40
+   ticks** while a player is within 48 blocks, so any wake that only flips flags is undone within two seconds. The
+   keeper has to learn the woken state before a wake can work at all. That is independent of which trigger you pick.
+4. **The advancement trigger for the wake burns.** An advancement fires once per player for ever and its criteria
+   cannot test another advancement, so a player who tries the right item *before* the gate opens can never wake it.
+   EXP-023's candidate mechanism is therefore unsound as stated. The gate is built and correct; nothing calls it.
+5. **Celebi is level 70 and above every provisional cap**, and `cobblers_levelcap` blocks an over-cap catch outright,
+   Master Ball included. As it stands Celebi cannot be caught. The per-badge caps have not been read out of the
+   Cobbleverse RCT data; the numbers in the file are a placeholder for a balance pass.
+6. **The chambers are shared, not per player.** Entity NBT is world state: one qualified player opens a grotto for
+   everyone in it, and the first catch takes the legendary for the server. Per player would need the scene runtime
+   and EXP-034. Also, once open, a woken legendary can be killed with a sword (EXP-023) and the keeper cannot
+   re-summon it.
