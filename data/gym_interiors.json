@@ -170,11 +170,11 @@
       ],
 
       "trainers": [
-        {"id": "gym1_mason_01", "working_name": "Apprentice Mason", "seat": [1822, 131, 3687], "yaw": 0,
+        {"id": "gym1_mason_01", "working_name": "Apprentice Mason", "seat": [1822, 131, 3687], "yaw": 90,
          "sight_distance": 4.5, "room": "r1_cutting", "passed_at": 2,
          "why_unavoidable": "he stands between the shaft foot and the only door out of the cutting floor; the straight line from one to the other passes within 2.2 of him",
          "sight_check": "his radius reaches no standable cell outside r1_cutting and its own doorway: the nearest cell of r2_wall (the low ledge at 1822,131,3692) is 5.0 away"},
-        {"id": "gym1_mason_02", "working_name": "Wall Mason", "seat": [1830, 135, 3693], "yaw": 180,
+        {"id": "gym1_mason_02", "working_name": "Wall Mason", "seat": [1830, 135, 3693], "yaw": 0,
          "sight_distance": 4.0, "room": "r2_wall", "passed_at": 14,
          "why_unavoidable": "the jib beam lands at his feet; the high ledge is the only way off it and he stands on it",
          "sight_check": "the nearest cell of c2_door is 5.4 away and the nearest of r3_tally is 5.0"},
