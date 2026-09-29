@@ -16,10 +16,10 @@ durable facts; this holds where work stopped.
   ```
   (re-read the PR's head before merging; the second commit landed after the PR was opened.)
 - `.codex/config.toml` is modified in the worktree and **never committed** (Codex's): stage files by name.
-- **A `content-architect` agent was still running when this session stopped**, designing gym interiors (the owner's
-  brief: eight puzzles, one per gym, design only). It writes `docs/mechanics/GYM_INTERIORS.md` **in its own worktree**
-  under `.claude/worktrees/agent-*`, off `2f987ab`. Its report never reached this session. **Look there before
-  re-running it**; if the file is there, it is the product and only needs reviewing and committing.
+- **The gym-interiors design landed and is committed**: `docs/mechanics/GYM_INTERIORS.md` (391 lines), by a
+  `content-architect` agent off `2f987ab`, copied out of its worktree into this branch. **It is a proposal, not
+  accepted**: its own step 4 is "ADR proposed, owner accepts", and it says no gym content should be authored before
+  that. Its agent worktree (`worktree-agent-a5c7b45c78e489c10`) is spent and removable. Summary in section 2b.
 
 ## 2. THE NEXT JOB: dive and sky portals. Run it in this order
 
