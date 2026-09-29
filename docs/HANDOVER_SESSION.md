@@ -5,6 +5,8 @@ durable facts; this holds where work stopped.
 
 ## 1. Branches and PRs
 
+- The owner's answer to finding 2 is on `design/stone-faces-in-town`, stacked on #89, with its own draft PR.
+
 - #88 (flight finding 1) is **merged**, head `9571af1` verified on main.
 - This session's work is on `design/stone-faces` (branched from main `d1366e4`), pushed with a draft PR against
   `main`; the head sha and PR number are in the PR list (`gh pr list --head design/stone-faces`). Treat that PR as
@@ -31,7 +33,8 @@ durable facts; this holds where work stopped.
   bottom, pit and restore gap.
 - **Next job: flight finding 2, the faces into the towns** (STATE, "Flight finding 2"; the redesign doc section 5).
   The owner liked the formations but not the distance: "make them a piece in town square or in like a house slot".
-  Ask the owner first: square or lot per place, and which house gives way (every lot is taken). Then: a smaller
+  The owner answered (2026-09-28): a mix per place, square, house slot, or near town with a townsperson who tells
+  players about it. Put the starting mix in the redesign doc section 5 to the owner, and which houses give way. Then: a smaller
   formation for a lot (width 7-9, knoll 1-2), or one merged outcrop per place on the square with its faces on
   different sides (the builder merges a site's faces: one cap per column, one restore footprint); Viltri Light needs a
   site by the lighthouse (6x13 square, no lots). Replace the `ring` siting with the chosen spot per site
@@ -44,7 +47,7 @@ durable facts; this holds where work stopped.
 
 ## 3. What waits on the owner
 
-- Finding 2's two decisions (square or lot per place; which houses).
+- Finding 2: confirm the per-place mix (redesign doc section 5) and which houses give way; the townspeople's words are Codex's.
 - The rest of the flight list (the previous handover's items 1-7, unchanged: working Pokemon, the level cap in
   battle, the gulch and cove town, re-materialed houses, shrines, guardians). Faces to fly now:
   tea town (2701, 109, 3747), Mining Town (6698, 119, 5536), Northlight (7222, 111, 1436), gorge hamlet
