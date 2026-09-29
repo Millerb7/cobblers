@@ -1,0 +1,260 @@
+{
+  "schema": "cobblers.portals/1",
+  "status": "authored 2026-09-29; the pack builds and its offline audit is clean. NOTHING here has been seen in a running game: the dimension registers only at boot (EXP-047) and every click is unrun.",
+  "why": "Dive and sky portals into the pocket dimension ADR-004 chose and EXP-047 proved. A portal is a small arch on a lake floor (dive) or a summit (sky); clicking it crosses into a room built in cobblers:pocket. The owner's content rule, verbatim: \"1 in 6 meaningful, the rest a chest or nothing\". So each gate has six portals, one vault and five small rooms.",
+  "rung": "datapack (dimension, dimension_type, advancements, loot tables) plus functions/commands. No mod, no scripting layer. Cobblemon has no portal or pocket-space feature to configure, no addon in the pack ships one, and vanilla has no datapack-definable portal block: a custom dimension can only be entered by a command. CLAUDE.md principle 6, ADR-004, EXP-047.",
+  "rules": {
+    "meaningful_per": 6,
+    "meaningful_note": "exactly one portal in each gate's six is `vault`; the other five are `cache` (a chest) or `cell` (nothing).",
+    "sky_min_x": 4000,
+    "sky_min_x_why": "the owner, 2026-09-29: gyms 1-3 are one western strip and gym 4 is the jump east, so a sky portal west of about x4000 would sit unusable while the player walks past it for three gyms. Every sky site here is east of it; the western candidates that were rejected for this are listed in docs/world-building/PORTALS.md.",
+    "min_between_portals": 400,
+    "min_from_town_footprint": {"sky": 200, "dive": 60},
+    "min_from_placement": {"sky": 200, "dive": 60},
+    "min_from_placement_why": "a sky portal stands on open ground and must not crowd a built place; a dive portal is on a lake floor under water, where the only neighbours are the lake's own content, so its margin is smaller.",
+    "min_from_legendary_mouth": 120,
+    "min_from_legendary_mouth_why": "data/legendaries.json sites Mesprit's grotto at Arrow Lake (2790, 4606) and Azelf's at Marshy Marsh (5158, 2166). Neither lake carries a portal, and this margin fails the build if one is ever moved onto them.",
+    "max_relief": 2,
+    "max_relief_why": "the arch stands on a 5 by 5 apron; more than 2 blocks of variation under it and the apron reads as a plinth stuck on a slope. A lower column is filled up to the apron with the apron block.",
+    "min_water_above": 3,
+    "min_water_above_why": "a dive portal is under water, not poking out of it: the lintel's top course must be at least this far below the body's level_y.",
+    "min_submersion": 6,
+    "min_submersion_why": "every column of the apron must be at least this far below the body's level_y, so the apron is on the floor of the deep part and not on a shelf."
+  },
+  "gates": {
+    "dive": {
+      "tag": "cobblers.dive",
+      "granted_by": "cobblers:water/grant_dive",
+      "granted_by_note": "EXISTING. tools/blackout_pack.py writes it (\"the survey diver's training; Dive includes Surf\"); this pack neither grants nor revokes it and must not.",
+      "locked_message": "The arch is cold and closed. Nothing here answers a swimmer who has not been taught to dive."
+    },
+    "sky": {
+      "tag": "cobblers.sky",
+      "granted_by": "cobblers:portals/grant_sky",
+      "granted_by_note": "NEW, on the same tag+function pattern as grant_dive. Granted to any player who holds the advancement cobblers:flag/gym4_cleared and does not yet have the tag, swept every 40 ticks by cobblers:portals/tick, so it is retroactive (a player who cleared gym 4 before this pack existed gets it on the next sweep) and reaches a late joiner the moment they clear gym 4.",
+      "flag": "gym4_cleared",
+      "advancement": "cobblers:flag/gym4_cleared",
+      "locked_message": "The arch hums and holds. Whatever opens it is not yours yet.",
+      "granted_message": "The high arches answer you now."
+    }
+  },
+  "pocket": {
+    "dimension": "cobblers:pocket",
+    "dimension_type": "cobblers:pocket",
+    "origin_x": 0,
+    "spacing": 128,
+    "spacing_why": "the widest room is 15 across, so 128 leaves every room its own chunks and leaves room to grow one later without moving its neighbours.",
+    "bands": {"dive": 0, "sky": 256},
+    "floor_y": 96,
+    "floor_y_why": "the first air layer a player stands on. The generated bedrock plane is at y0, so a player who somehow leaves a room falls onto bedrock rather than into the void, and the rescue in cobblers:portals/tick puts them back.",
+    "rescue_margin": 512,
+    "generator": {
+      "biome": "minecraft:the_void",
+      "biome_why": "the void biome has an empty mob spawn list, so nothing spawns anywhere in the dimension without our asking. NOT VERIFIED for Cobblemon: whether an upstream or authored spawn pool can match this biome has never been tested (EXP-047 left spawning in the pocket untested; it needs a player).",
+      "layers": [{"block": "minecraft:bedrock", "height": 1}],
+      "fixed_time": 6000,
+      "has_skylight": true,
+      "min_y": 0,
+      "height": 256
+    }
+  },
+  "blocks": {
+    "dive": {
+      "apron": "minecraft:prismarine_bricks",
+      "frame": "minecraft:dark_prismarine",
+      "sheet": "minecraft:tinted_glass",
+      "lamp": "minecraft:sea_lantern",
+      "shell": "minecraft:prismarine_bricks",
+      "floor": "minecraft:dark_prismarine",
+      "light": "minecraft:sea_lantern",
+      "pedestal": "minecraft:chiseled_stone_bricks"
+    },
+    "sky": {
+      "apron": "minecraft:smooth_stone",
+      "frame": "minecraft:polished_deepslate",
+      "sheet": "minecraft:tinted_glass",
+      "lamp": "minecraft:glowstone",
+      "shell": "minecraft:stone_bricks",
+      "floor": "minecraft:stone_bricks",
+      "light": "minecraft:glowstone",
+      "pedestal": "minecraft:chiseled_stone_bricks"
+    },
+    "ids": [
+      "minecraft:prismarine_bricks", "minecraft:dark_prismarine", "minecraft:tinted_glass",
+      "minecraft:sea_lantern", "minecraft:smooth_stone", "minecraft:polished_deepslate",
+      "minecraft:glowstone", "minecraft:stone_bricks", "minecraft:chiseled_stone_bricks",
+      "minecraft:chest", "minecraft:lantern", "minecraft:air"
+    ],
+    "ids_note": "vanilla 1.21.1 only. tools/portals_audit.py checks that no block written on the WORLD side is a spawn condition in data/spawn_blocks.json (this generator never reads that file). minecraft:chest IS one -- Gimmighoul -- so a chest is only ever written inside the pocket dimension, whose biome is minecraft:the_void."
+  },
+  "rooms": {
+    "cell": {"half": 3, "height": 5, "chest": false, "pedestal": false,
+             "what": "nothing: a room, a light, and the way back."},
+    "cache": {"half": 3, "height": 5, "chest": true, "pedestal": false,
+              "what": "a chest. SHARED, first-come: the first player to open it takes it (see PORTALS.md, multiplayer)."},
+    "vault": {"half": 6, "height": 9, "chest": false, "pedestal": true,
+              "what": "the meaningful one: a larger room and a pedestal that grants its reward ONCE PER PLAYER, so a party all get it."}
+  },
+  "loot": {
+    "source_note": "every item id here is drawn from the set already used in data/rewards.json, which was checked against the server. Nothing new is invented (CLAUDE.md principle 7). WHAT each portal gives is the trainer-balance-designer's to set; these are placements of a kind, not a balance decision, and are marked so.",
+    "balance_owner": "trainer-balance-designer",
+    "tables": {
+      "dive_cache": [{"item": "cobblemon:great_ball", "count": 3}, {"item": "cobblemon:water_stone", "count": 1}, {"item": "cobblemon:revive", "count": 1}],
+      "dive_vault": [{"item": "cobblemon:shiny_stone", "count": 1}, {"item": "cobblemon:heavy_ball", "count": 5}, {"item": "cobblemon:sitrus_berry", "count": 3}],
+      "sky_cache": [{"item": "cobblemon:net_ball", "count": 3}, {"item": "cobblemon:sun_stone", "count": 1}, {"item": "cobblemon:super_potion", "count": 2}],
+      "sky_vault": [{"item": "cobblemon:leaf_stone", "count": 1}, {"item": "cobblemon:net_ball", "count": 5}, {"item": "cobblemon:pecha_berry", "count": 3}]
+    }
+  },
+  "portals": [
+    {
+      "id": "dive_viltri_floor",
+      "name": "The Viltri arch",
+      "gate": "dive",
+      "room": "cache",
+      "meaningful": false,
+      "at": [1652, 2996],
+      "facing": "west",
+      "water_body": "lake_viltri",
+      "why": "Lake Viltri is the Surf school and the first deep water a player meets (docs/mechanics/WATER_MAP.md, allocation 4). The arch is visible from the floor survey long before Dive exists: a lure, on the same principle as the lake trio's grottos, which WATER_BUILD_PLAN 4.2 shows to everyone and answers only to a badge.",
+      "loot": "dive_cache",
+      "story": "for Codex"
+    },
+    {
+      "id": "dive_shrew_pit",
+      "name": "The dragon's pit arch",
+      "gate": "dive",
+      "room": "cell",
+      "meaningful": false,
+      "at": [2856, 3960],
+      "facing": "west",
+      "water_body": "shrew_lake",
+      "why": "The deepest lake on the map (51 blocks here). Nothing in the room: the trip down is the content.",
+      "loot": null,
+      "story": "for Codex"
+    },
+    {
+      "id": "dive_tarn_bottom",
+      "name": "The tarn arch",
+      "gate": "dive",
+      "room": "cache",
+      "meaningful": false,
+      "at": [3388, 916],
+      "facing": "west",
+      "water_body": "ravine_head_tarn",
+      "why": "The tarn at the head of the dry ravine carries story evidence and nothing else (WATER_MAP allocation 9); a chest under it adds a reason to come back with Dive.",
+      "loot": "dive_cache",
+      "story": "for Codex"
+    },
+    {
+      "id": "dive_peak_pond_floor",
+      "name": "The Peak Pond arch",
+      "gate": "dive",
+      "room": "cell",
+      "meaningful": false,
+      "at": [4068, 1480],
+      "facing": "west",
+      "water_body": "peak_pond",
+      "why": "Erika's pond carries no legendary and no set piece (WATER_MAP allocation 10). Nothing in the room.",
+      "loot": null,
+      "story": "for Codex"
+    },
+    {
+      "id": "dive_watering_hole_floor",
+      "name": "The Watering Hole arch",
+      "gate": "dive",
+      "room": "cache",
+      "meaningful": false,
+      "at": [2964, 5268],
+      "facing": "north",
+      "water_body": "watering_hole",
+      "why": "The shallowest body that still drowns the arch (13 blocks), off Route 8. Fishing water with a rod find (allocation 17); a chest is the right size of extra.",
+      "loot": "dive_cache",
+      "story": "for Codex"
+    },
+    {
+      "id": "dive_tilpey_gate",
+      "name": "The Tilpey gate",
+      "gate": "dive",
+      "room": "vault",
+      "meaningful": true,
+      "at": [6076, 4296],
+      "facing": "north",
+      "water_body": "lake_tilpey",
+      "why": "THE MEANINGFUL ONE of the six. Lake Tilpey is where the Dive school stands (WATER_MAP allocation 12), so it is the first water a newly trained diver goes into: the payoff is where the training is. Sited 620 blocks from Uxie's reserved grotto at the lake anchor.",
+      "loot": "dive_vault",
+      "story": "for Codex"
+    },
+    {
+      "id": "sky_downs_crag",
+      "name": "The downs crag arch",
+      "gate": "sky",
+      "room": "cache",
+      "meaningful": false,
+      "at": [4530, 1951],
+      "facing": "north",
+      "why": "The first sky portal a player can open: a crag between Erika's town (gym 4, where the gate is granted) and gym 5. x4530, east of the x4000 line.",
+      "loot": "sky_cache",
+      "story": "for Codex"
+    },
+    {
+      "id": "sky_marsh_horn",
+      "name": "The marsh horn",
+      "gate": "sky",
+      "room": "cell",
+      "meaningful": false,
+      "at": [5450, 2661],
+      "facing": "west",
+      "why": "A y140 horn east of gym 5 on the way to gym 6, 696 blocks off the town. Nothing in the room: the climb and the view are it.",
+      "loot": null,
+      "story": "for Codex"
+    },
+    {
+      "id": "sky_gorge_shoulder",
+      "name": "The gorge shoulder arch",
+      "gate": "sky",
+      "room": "cache",
+      "meaningful": false,
+      "at": [6630, 4667],
+      "facing": "north",
+      "why": "The shoulder above the gorge hamlet, between gym 6 and gym 7.",
+      "loot": "sky_cache",
+      "story": "for Codex"
+    },
+    {
+      "id": "sky_tableland_head",
+      "name": "The tableland head",
+      "gate": "sky",
+      "room": "vault",
+      "meaningful": true,
+      "at": [5601, 5632],
+      "facing": "west",
+      "why": "THE MEANINGFUL ONE of the six. y194, the highest summit east of x4000 that is neither inside the Rift lip nor on the Craters, where Groudon's chamber is. Reached after gym 7, so the reward lands late.",
+      "loot": "sky_vault",
+      "story": "for Codex"
+    },
+    {
+      "id": "sky_assay_tor",
+      "name": "The assay tor arch",
+      "gate": "sky",
+      "room": "cache",
+      "meaningful": false,
+      "at": [7007, 5834],
+      "facing": "west",
+      "why": "A y157 tor above the Mining Town.",
+      "loot": "sky_cache",
+      "story": "for Codex"
+    },
+    {
+      "id": "sky_far_reach",
+      "name": "The far reach arch",
+      "gate": "sky",
+      "room": "cell",
+      "meaningful": false,
+      "at": [7613, 7498],
+      "facing": "north",
+      "why": "The far south-eastern corner, past the sea town. The last one anybody finds; nothing in the room.",
+      "loot": null,
+      "story": "for Codex"
+    }
+  ]
+}

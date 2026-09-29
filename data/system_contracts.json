@@ -131,6 +131,7 @@
         "rift_mines_audit.py": "checker: the built rift_mines pack (source rift_mines)",
         "gulch_mine_audit.py": "checker: the built gulch_mine pack (source gulch_mine)",
         "mines_audit.py": "checker: the built mines pack (the evolution-stone faces; data/mines.json names no spawn condition)",
+        "portals_audit.py": "checker: the built portals pack, against data/portals.json blocks and the spawn conditions. It checks the WORLD side only: the pocket dimension's rooms carry a chest, which is a spawn condition (Gimmighoul), and the dimension's biome is minecraft:the_void, whose mob spawn list is empty. Whether a Cobblemon pool can match that biome is UNTESTED (EXP-047 left spawning in the pocket unrun)",
         "vr_caves.py": "source: vr_caves",
         "route1_old_mine.py": "source: earthworks (its record is the route1_old_mine earthwork in data/placements.json)",
         "town_audit.py": "checker: the built towns, templates and earthworks, against the policy",
