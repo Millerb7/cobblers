@@ -1401,8 +1401,8 @@ def build(source_root, server_dir=None):
         taken.setdefault(gk, []).append((x, z, y))
         _feature(cv, P, kind, x, y, z)
         feats.append(kind)
-    for k_ in set(feats):
-        count("front row: %s" % k_, feats.count(k_))
+    for k_ in sorted(set(feats)):       # sorted: a set of strings iterates in PYTHONHASHSEED order, and this is the
+        count("front row: %s" % k_, feats.count(k_))     # only thing that made derived/deep_city/plan.json vary
 
     # ---- the relic area
     relic = build_relic(cv, P, spec, source_root, count, checks)
