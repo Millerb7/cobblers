@@ -80,6 +80,10 @@ durable facts; this holds where work stopped. Rewrite it at the end of every ses
    retired spur section (chamber_1 at 3166, 52, 3094): a sword kill of a guardian, a kill by your Pokemon outside
    battle, a real loss (the blackout), and the Mining Fatigue at the mine door.
 
+### Flight findings so far
+1. **Flight finding 1 (the owner, 2026-09-28): the tea town's stone faces read as square pits beside the Centre, and have no bottom.** Seen at (2649, 114, 3614) and (2653, 114, 3625). (1) Too easy to find: all four faces sit 10-35 blocks from the town centre (2654, 3605), next to the Centre and Mart. (2) Not natural: a face is a fixed box (`data/mines.json` geometry: 9 wide, 5 high, 6 deep, vertical cut walls) meant to cut into a slope; the tea town is nearly flat (mean slope 2.4 degrees), so each becomes a square pit sunk into the meadow. (3) No bottom: the floor is cobblestone over the host stone, so a player cannot tell where the ore stops. Wanted: faces sited away from the plaza, in real rise (or shaped irregularly where there is none), and a distinct bottom layer under each face. Check the other six places for the same before redesigning (`tools/mines.py site`, `tools/mines_audit.py`).
+   Next session: redesign the faces for this (the owner's three points), after the flight's other findings.
+
 ### Decisions waiting
 - The Mega farms' zone: both sites are inside Victory Road's Z2 (8 badges); the design says after gym 6.
 - The West Spur Dig reshape: not started, about 300k.
