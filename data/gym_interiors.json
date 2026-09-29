@@ -1,0 +1,229 @@
+{
+  "schema": "cobblers.gym-interiors/1",
+  "status": "gym 1 authored and generated offline; nothing here has been seen in a running game",
+  "design": "docs/mechanics/GYM_INTERIORS.md (accepted in principle, docs/STATE.md); its Q1 section holds the measured template geometry this file rests on",
+  "note": "Shell geometry is NEVER authored here. Every gym's shell box, and therefore every world coordinate below, is derived from that gym's donor record in data/placements.json (position, size, rotation, anchor_mode) through the same transform tools/place_donor.py box() and tools/place_town.py rotate() use. The only measured numbers copied into this file are the template-relative cells recorded by the Q1 read (the healing machine and the trainer spawner); they are recorded as expectations and the healer removal does not depend on them.",
+
+  "measured": {
+    "source": "docs/mechanics/GYM_INTERIORS.md, section 'Q1 ANSWERED (2026-09-29)', read from COBBLEVERSE-DP-v31.zip in memory. The block maps are not committed (no-redistribution); only these measurements are.",
+    "shape": "every gym is one oval chamber: entrance one end, healing machine and chest the other, one rctmod:trainer_spawner in the middle, 160-248 standable roofed cells of undivided floor, and no second storey",
+    "small_gym_relative": {
+      "healing_machine": [21, 2, 5],
+      "trainer_spawner": [6, 1, 12],
+      "interior_floor_y": 2,
+      "floor_course_y": 1,
+      "why": "template-relative, before rotation. The same fitout is stamped in the same relative place in all seven small gyms."
+    },
+    "misty_relative": {
+      "healing_machine": [26, 26, 8],
+      "trainer_spawner": [11, 25, 15],
+      "interior_floor_y": 26,
+      "floor_course_y": 25
+    },
+    "checked_offline": "all eight healer cells and all eight spawner cells, mapped through their own placement's rotation, land inside their own shell's box (tools/gym_interiors_audit.py)"
+  },
+
+  "healers": {
+    "decision": "the owner, 2026-09-29: no healing machine in any gym. Towns have Centres; a gym with no healer makes its trainers attrition, which is how mainline works.",
+    "how": "post-placement overwrite, never a template override. One `fill <shell box> <replacement> replace cobblemon:healing_machine` per gym, run after the donor step (tools/reapply.py R16E). Overriding the Cobbleverse template NBT is refused on licence (docs/STATE.md), and the templates are placed by resource id, so the only lawful removal is to write over the placed building - the same thing tools/town_dressing.py does to the towns.",
+    "why_a_fill_and_not_a_setblock": "the fill is driven by the shell box alone, which is derived from data/placements.json. It removes every healing machine in the shell wherever it stands, so a one-block error in the Q1 measurement cannot leave one behind. The measured cell is recorded per gym as `expect_at` and the audit asserts it lies inside the fill box; it drives nothing.",
+    "why_not_air": "the healer stands against the chamber's back wall beside the chest. Air leaves a hole in the furniture line; a cut stone of the gym town's own palette reads as the plinth the machine was taken off.",
+    "known_consequence": "cobblers_blackout's blackout/healer_use advancement fires on any cobblemon:healing_machine, so a gym healer could have been a respawn checkpoint. Measured here, it was one in exactly one gym: blackout/checkpoint/healer_used only sets a checkpoint when the player stands inside a Pokemon Centre's 48-block box (tools/blackout_pack.py checkpoints()), and only Surge's gym healer is inside its town Centre's box (dx 46, dz 35). The other seven fired the advancement and set nothing. Removing all eight removes that one checkpoint, which is what the owner wants: you should not be able to return into a gym you were knocked out of. The trigger is block-type-generic, so nothing dangles.",
+    "gyms": [
+      {"gym": "gym1", "donor": "gym1_brock_gym", "leader": "brock", "replacement": "minecraft:chiseled_stone_bricks", "expect_at": [21, 2, 5], "why": "Brock's town is stone brick and calcite (data/rematerial.json house_sets): the masons' own cut stone"},
+      {"gym": "gym2", "donor": "gym2_misty_gym", "leader": "misty", "replacement": "minecraft:prismarine_bricks", "expect_at": [26, 26, 8], "why": "the lake town's water-worked stone"},
+      {"gym": "gym3", "donor": "gym3_gym_building", "leader": "ltsurge", "replacement": "minecraft:waxed_cut_copper", "expect_at": [21, 2, 5], "why": "the signal town's copper; waxed so it never oxidises out of the palette"},
+      {"gym": "gym4", "donor": "gym4_gym_building", "leader": "erika", "replacement": "minecraft:mossy_stone_bricks", "expect_at": [21, 2, 5], "why": "the glasshouse's overgrown stone"},
+      {"gym": "gym5", "donor": "gym5_gym_building", "leader": "koga", "replacement": "minecraft:mud_bricks", "expect_at": [21, 2, 5], "why": "the fen town's mud brick"},
+      {"gym": "gym6", "donor": "gym6_gym_building", "leader": "sabrina", "replacement": "minecraft:polished_diorite", "expect_at": [21, 2, 5], "why": "the study town's diorite and calcite"},
+      {"gym": "gym7", "donor": "gym7_gym_building", "leader": "blaine", "replacement": "minecraft:polished_blackstone_bricks", "expect_at": [21, 2, 5], "why": "the crater town's basalt and blackstone"},
+      {"gym": "gym8", "donor": "gym8_gym_building", "leader": "giovanni", "replacement": "minecraft:polished_granite", "expect_at": [21, 2, 5], "why": "the garrison town's granite and terracotta"}
+    ]
+  },
+
+  "rules": {
+    "min_cover": 3,
+    "min_cover_why": "a carved room's ceiling block must be at least this many blocks under the heightmap's ground (tools/ground.py, rounded), so no room breaks the surface",
+    "min_rock_between_rooms": 2,
+    "min_rock_between_rooms_why": "two rooms that are not joined by a declared opening keep at least this much rock between them",
+    "max_fall": 12,
+    "max_fall_why": "contract G3: no gym route may kill. A fall longer than this must land on minecraft:hay_block, which takes 80% off the damage",
+    "sight_margin": 0.75,
+    "sight_margin_why": "docs/mechanics/GYM_INTERIORS.md section 3, from data/mansion_guardians.json: a trainer's forceBattleMaxDistance must reach no standable cell outside its own room, less this margin"
+  },
+
+  "blocks": {
+    "why": "every block any gym generator may write. Vanilla 1.21.1 only; none is a spawn condition in data/spawn_blocks.json (the audit checks that, reading spawn_blocks.json itself). minecraft:water and minecraft:sand are deliberately absent: both are spawn conditions.",
+    "ids": [
+      "minecraft:air",
+      "minecraft:stone_bricks",
+      "minecraft:cracked_stone_bricks",
+      "minecraft:chiseled_stone_bricks",
+      "minecraft:stone_brick_stairs",
+      "minecraft:stone_brick_slab",
+      "minecraft:smooth_stone_slab",
+      "minecraft:cobblestone",
+      "minecraft:cobblestone_stairs",
+      "minecraft:calcite",
+      "minecraft:tuff",
+      "minecraft:polished_andesite",
+      "minecraft:oak_planks",
+      "minecraft:oak_slab",
+      "minecraft:oak_fence",
+      "minecraft:ladder",
+      "minecraft:scaffolding",
+      "minecraft:hay_block",
+      "minecraft:lantern",
+      "minecraft:chain",
+      "minecraft:stonecutter",
+      "minecraft:chest",
+      "minecraft:prismarine_bricks",
+      "minecraft:waxed_cut_copper",
+      "minecraft:mossy_stone_bricks",
+      "minecraft:mud_bricks",
+      "minecraft:polished_diorite",
+      "minecraft:polished_blackstone_bricks",
+      "minecraft:polished_granite"
+    ]
+  },
+
+  "gyms": [
+    {
+      "id": "gym1",
+      "settlement": "gym1_town",
+      "donor": "gym1_brock_gym",
+      "leader_name": "Brock",
+      "built": true,
+      "title": "the works under the wall",
+      "why": "docs/world-building/TOWN_CHARACTER.md: Brock's town is the plateau's builders. The gym stands on the knoll; under it the masons cut and stack the stone, and the wall they are building is the only way up.",
+
+      "shell": {
+        "derived_from": "data/placements.json gym1_brock_gym",
+        "expect_box": [1812, 140, 3667, 1838, 156, 3690],
+        "expect_floor_course_y": 141,
+        "expect_stand_y": 142,
+        "expect_door_face": "north",
+        "expect_door_why": "two independent sources agree: data/placements.json gym4_gym_building records the Cobbleverse gym shell 'opens south' at rotation none, and Brock's is rotated 180; and derived/towns/gym1_town_plan.json's gym1_gym anchor is `facing: north`. The door's exact cell is NOT measured and nothing here depends on it.",
+        "not_touched": "everything in the shell except the healing machine's cell and the one-column shaft below it. The trainer spawner at [1832, 141, 3678] is left standing: Brock still battles in his hall."
+      },
+
+      "entrance": [1817, 142, 3685],
+      "entrance_why": "the cell the healing machine stood in. It is the one interior cell of the shell whose position is measured, so it is the only place a hole can be cut without a floor plan. The shaft replacing the healer is also the fiction: the machine is gone, and what is left is the way down into the works.",
+
+      "dig": [1812, 114, 3667, 1838, 139, 3703],
+      "dig_why": "under the gym lot (derived/towns/gym1_town_plan.json anchor gym1_gym, rect 1806,3656..1845,3703), entirely below the shell's lowest course at y140. ADR-004: carve in place anything the fiction says is right there.",
+      "shell_penetration": [1817, 140, 3685, 1817, 142, 3685],
+      "shell_penetration_why": "the only cells of the standing building this gym's build writes: the healer's cell, the floor course under it and the base course under that, cut to air so the shaft is open. One block of the base course beside it (1817,140,3684) is set to stone brick to carry the top ladder rung; it is under the floor and invisible.",
+
+      "rooms": [
+        {"id": "shaft", "role": "hall", "box": [1817, 131, 3685, 1817, 142, 3685], "why": "the works shaft: a one-block scaffolding well from the gym floor down to the cutting floor. Its top three cells are the shell penetration; its lower half stands inside the cutting floor's own air"},
+        {"id": "r1_cutting", "role": "hall", "box": [1814, 131, 3679, 1824, 135, 3689], "why": "the cutting floor: where the stone is squared before it goes up the wall. The first room, and the one the way out returns to"},
+        {"id": "c1_door", "role": "door", "box": [1822, 131, 3690, 1823, 133, 3691], "belongs_to": "r1_cutting", "why": "the only opening out of the cutting floor. A doorway counts as part of the room it opens from, for the sight rule"},
+        {"id": "r2_wall", "role": "puzzle", "box": [1814, 119, 3692, 1836, 136, 3701], "why": "the unfinished wall: a pit 18 deep with the half-built wall along its south side. The puzzle is the climb"},
+        {"id": "c2_door", "role": "door", "box": [1835, 135, 3689, 1836, 137, 3691], "belongs_to": "r3_tally", "why": "off the high ledge into the foreman's room, past the second mason"},
+        {"id": "r3_tally", "role": "guard", "box": [1828, 135, 3680, 1836, 137, 3688], "why": "the foreman's tally: the works' record and store, reached only by the climb"},
+        {"id": "c3_return", "role": "door", "box": [1825, 135, 3681, 1827, 137, 3682], "belongs_to": "r3_tally", "why": "the way out: a chute back into the cutting floor, 4 blocks above its paving onto a straw bale, so it cannot be climbed back up and no trainer is re-passed"}
+      ],
+
+      "route": [
+        {"at": [1817, 142, 3685], "room": "shaft", "what": "the hole where the healing machine stood"},
+        {"at": [1817, 131, 3685], "room": "r1_cutting", "what": "down the ladder onto the cutting floor"},
+        {"at": [1822, 131, 3687], "room": "r1_cutting", "what": "the apprentice mason, in front of the only door"},
+        {"at": [1822, 131, 3691], "room": "c1_door", "what": "through the door"},
+        {"at": [1820, 131, 3692], "room": "r2_wall", "what": "out onto the low ledge; the pit drops 12 and the high ledge is across a gap you cannot jump"},
+        {"at": [1814, 131, 3692], "room": "r2_wall", "what": "the masons' ladder down the west wall"},
+        {"at": [1815, 119, 3692], "room": "r2_wall", "what": "the pit floor, bedded with straw"},
+        {"at": [1826, 119, 3696], "room": "r2_wall", "what": "the yard hand: the pit narrows against the wall's end here, so there is no way past him"},
+        {"at": [1836, 120, 3697], "room": "r2_wall", "what": "the first step of the rubble ramp at the wall's finished end"},
+        {"at": [1833, 124, 3699], "room": "r2_wall", "what": "the wall crest"},
+        {"at": [1836, 130, 3697], "room": "r2_wall", "what": "the east-wall ladders up to the scaffold deck"},
+        {"at": [1830, 130, 3700], "room": "r2_wall", "what": "the walkway to the last ladders; the dead-end walkway runs the other way, west, and stops"},
+        {"at": [1830, 135, 3700], "room": "r2_wall", "what": "the top of the unfinished wall"},
+        {"at": [1830, 135, 3696], "room": "r2_wall", "what": "the jib beam, one plank wide, across the pit"},
+        {"at": [1830, 135, 3693], "room": "r2_wall", "what": "the high ledge, where the second mason stands at the beam's end"},
+        {"at": [1835, 135, 3690], "room": "c2_door", "what": "into the foreman's tally"},
+        {"at": [1832, 135, 3684], "room": "r3_tally", "what": "the works store"},
+        {"at": [1826, 135, 3681], "room": "c3_return", "what": "the chute back"},
+        {"at": [1823, 131, 3681], "room": "r1_cutting", "what": "a four-block drop onto straw, at the far end of the cutting floor from the mason"},
+        {"at": [1817, 131, 3685], "room": "r1_cutting", "what": "back to the shaft"},
+        {"at": [1817, 142, 3685], "room": "shaft", "what": "up into the hall, and Brock"}
+      ],
+
+      "mechanism": {
+        "tier": "free",
+        "kind": "climb",
+        "what_the_player_sees": "a pit with a half-built wall in it. Rubble ramp, wall crest, ladders, a scaffold deck, one plank walkway that goes nowhere, more ladders, and a jib beam across the gap to the high ledge. There is no switch and no circuit: the only continuous way up is found by looking.",
+        "why_this_one": "docs/mechanics/GYM_INTERIORS.md section 4: Brock's first draft was three levers raising a piston stair, which is Surge's breaker board again, so it was replaced with a pure climb that has no mechanism at all. That also suits gym 1."
+      },
+
+      "state_scope": "shared_permanent",
+      "state_scope_why": "a climb has no state. Nothing is switched, so there is nothing for a second player to solve for the first and nothing to reset. This is the one contract of the three in the design that costs no wiring, which is why gym 1 takes it.",
+      "reset": null,
+
+      "doors": [
+        {"id": "c1_door", "at": [1822, 131, 3691], "opens_on": null, "guarded_by": "gym1_mason_01", "vestibule_depth": null,
+         "why": "an open doorway, not a gate. Its guard is the apprentice mason standing in front of it, and forceBattleOnSight makes him unavoidable. No field, no flag, nothing to desynchronise between two players."},
+        {"id": "c2_door", "at": [1835, 135, 3690], "opens_on": null, "guarded_by": "gym1_mason_02", "vestibule_depth": null,
+         "why": "as c1: the second mason stands where the jib beam lands, and the ledge past him is the only way to it."},
+        {"id": "c3_return", "at": [1826, 135, 3681], "opens_on": null, "guarded_by": null, "vestibule_depth": null,
+         "why": "one way only, by a four-block step down that cannot be climbed back."}
+      ],
+
+      "trainers": [
+        {"id": "gym1_mason_01", "working_name": "Apprentice Mason", "seat": [1822, 131, 3687], "yaw": 90,
+         "sight_distance": 4.5, "room": "r1_cutting", "passed_at": 2,
+         "why_unavoidable": "he stands between the shaft foot and the only door out of the cutting floor; the straight line from one to the other passes within 2.2 of him",
+         "sight_check": "his radius reaches no standable cell outside r1_cutting and its own doorway: the nearest cell of r2_wall (the low ledge at 1822,131,3692) is 5.0 away"},
+        {"id": "gym1_mason_02", "working_name": "Wall Mason", "seat": [1830, 135, 3693], "yaw": 0,
+         "sight_distance": 4.0, "room": "r2_wall", "passed_at": 14,
+         "why_unavoidable": "the jib beam lands at his feet; the high ledge is the only way off it and he stands on it",
+         "sight_check": "the nearest cell of c2_door is 5.4 away and the nearest of r3_tally is 5.0"},
+        {"id": "gym1_yard_01", "working_name": "Yard Hand", "seat": [1826, 119, 3696], "yaw": 90,
+         "sight_distance": 5.5, "room": "r2_wall", "passed_at": 7,
+         "why_unavoidable": "he stands where the built wall's end narrows the pit floor, past the low ledge's last cell, so his reach spans the whole open floor there. The ladder down is west of him and the only ramp up is east",
+         "sight_check": "the nearest cell outside r2_wall is c1_door, 14.4 away through rock. Two earlier seats were refused by tools/gym_interiors_audit.py's unavoidability check, and each refusal is the reason for the next: at [1818,119,3696] sight 4.5 a player squeezes past along the pit's north edge (4.53 away), and at sight 5.0 a player who drops twelve blocks off the low ledge's east end lands behind him. Moved east of that ledge, the wall's own mass closes z3698-3701 and a 5.5 reach closes the rest"}
+      ],
+      "trainers_handoff": "seats, yaw and sight distance only. The rosters, levels, skins and dialogue are trainer-balance-designer's (docs/mechanics/GYM_INTERIORS.md plan step 8); until data/trainers.json and data/route_trainers.json carry these three ids nothing is placed. tools/gym_interiors.py writes derived/gym_interiors/trainer_seats.json in the shape data/route_trainers.json trainers[] takes.",
+
+      "leader": {
+        "id": "kanto_brock",
+        "room": "shell",
+        "seat_from": "template spawner",
+        "expect_spawner_at": [1832, 141, 3678],
+        "gate": null,
+        "gate_why": "not gated in this unit, and deliberately. A gate on Brock needs either a door in the shell or a turn-back zone with a safe push destination, and both need the shell's door cell, which the Q1 read did not measure. The two ways to make the works compulsory are named in the report: measure the door and add a zone, or remove the template's spawner with the same post-placement fill and place a persistent kanto_brock at the head of the works (verified on staging 2026-09-24 that a persistent kanto_brock anywhere awards the badge, docs/STATE.md). Neither is done here."
+      },
+
+      "no_build": [
+        {"box": [1812, 114, 3667, 1838, 139, 3703], "why": "contract G4: the whole dig. Authored, not yet wired - the scene runtime's adventure-mode box needs a scene record in data/scenes.json and that is not written in this unit."}
+      ],
+
+      "spawn_suppression": {
+        "record": "gym_brock",
+        "box": [1808, 3664, 1847, 3711],
+        "was": [1808, 3664, 1847, 3695],
+        "why": "contract G1. The boxes are x/z only, four numbers, all y, so the dig is covered as long as its x/z stays inside. The pit and the foreman's room run south of the shell to z3703, past the old box's 3695, so it is widened to the next 8-block step."
+      },
+
+      "blocks": [
+        "minecraft:air", "minecraft:stone_bricks", "minecraft:cracked_stone_bricks", "minecraft:chiseled_stone_bricks",
+        "minecraft:stone_brick_stairs", "minecraft:stone_brick_slab", "minecraft:smooth_stone_slab",
+        "minecraft:cobblestone", "minecraft:cobblestone_stairs", "minecraft:calcite", "minecraft:tuff",
+        "minecraft:oak_planks", "minecraft:oak_slab", "minecraft:oak_fence", "minecraft:ladder",
+        "minecraft:scaffolding", "minecraft:hay_block", "minecraft:lantern", "minecraft:chain",
+        "minecraft:stonecutter", "minecraft:chest"
+      ]
+    },
+
+    {"id": "gym2", "settlement": "gym2_town", "donor": "gym2_misty_gym", "leader_name": "Misty", "built": false,
+     "why_not": "docs/STATE.md: gym 1 only, built and playtested (EXP-005), before the other seven. Only its healing machine is removed."},
+    {"id": "gym3", "settlement": "gym3_town", "donor": "gym3_gym_building", "leader_name": "Lt Surge", "built": false,
+     "why_not": "as gym2. Note: this is the one gym whose healing machine was a working blackout checkpoint (see healers.known_consequence)."},
+    {"id": "gym4", "settlement": "gym4_town", "donor": "gym4_gym_building", "leader_name": "Erika", "built": false, "why_not": "as gym2"},
+    {"id": "gym5", "settlement": "gym5_town", "donor": "gym5_gym_building", "leader_name": "Koga", "built": false, "why_not": "as gym2"},
+    {"id": "gym6", "settlement": "gym6_town", "donor": "gym6_gym_building", "leader_name": "Sabrina", "built": false,
+     "why_not": "docs/STATE.md: Sabrina's gym is not built until EXP-034 has actually run, being the only per-player puzzle and standing on machinery two players have never tested."},
+    {"id": "gym7", "settlement": "gym7_town", "donor": "gym7_gym_building", "leader_name": "Blaine", "built": false, "why_not": "as gym2"},
+    {"id": "gym8", "settlement": "gym8_town", "donor": "gym8_gym_building", "leader_name": "Giovanni", "built": false, "why_not": "as gym2"}
+  ]
+}

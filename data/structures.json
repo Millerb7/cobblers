@@ -5081,6 +5081,12 @@
      "rctmod:trainer_spawner",
      "cobblemon:healing_machine"
     ]
+   },
+   "as_placed": {
+    "gym": "gym7",
+    "healing_machine_removed": true,
+    "by": "tools/gym_interiors.py, data/gym_interiors.json healers",
+    "note": "the template still carries a cobblemon:healing_machine and this record describes the template. As placed it does not: the owner's call of 2026-09-29 is no healer in any gym, and tools/gym_interiors.py writes one `fill <shell box> <palette block> replace cobblemon:healing_machine` per gym over the placed building (pack cobblers_gym_interiors, tools/reapply.py R16E). The template is never edited: a derivative of the Cobbleverse NBT is no-redistribution. So the `healing` signal below is the template's, not the world's, and no gym heals a party. data/gym_interiors.json healers holds the per-gym replacement and the reason."
    }
   },
   {
@@ -5133,6 +5139,12 @@
      "summon"
     ],
     "notable_blocks": []
+   },
+   "as_placed": {
+    "gym": "gym1",
+    "healing_machine_removed": true,
+    "by": "tools/gym_interiors.py, data/gym_interiors.json healers",
+    "note": "the template still carries a cobblemon:healing_machine and this record describes the template. As placed it does not: the owner's call of 2026-09-29 is no healer in any gym, and tools/gym_interiors.py writes one `fill <shell box> <palette block> replace cobblemon:healing_machine` per gym over the placed building (pack cobblers_gym_interiors, tools/reapply.py R16E). The template is never edited: a derivative of the Cobbleverse NBT is no-redistribution. So the `healing` signal below is the template's, not the world's, and no gym heals a party. data/gym_interiors.json healers holds the per-gym replacement and the reason."
    }
   },
   {
@@ -5402,6 +5414,12 @@
      "rctmod:trainer_spawner",
      "cobblemon:healing_machine"
     ]
+   },
+   "as_placed": {
+    "gym": "gym4",
+    "healing_machine_removed": true,
+    "by": "tools/gym_interiors.py, data/gym_interiors.json healers",
+    "note": "the template still carries a cobblemon:healing_machine and this record describes the template. As placed it does not: the owner's call of 2026-09-29 is no healer in any gym, and tools/gym_interiors.py writes one `fill <shell box> <palette block> replace cobblemon:healing_machine` per gym over the placed building (pack cobblers_gym_interiors, tools/reapply.py R16E). The template is never edited: a derivative of the Cobbleverse NBT is no-redistribution. So the `healing` signal below is the template's, not the world's, and no gym heals a party. data/gym_interiors.json healers holds the per-gym replacement and the reason."
    }
   },
   {
@@ -5455,6 +5473,12 @@
      "cobblefurnies:statue_ancient",
      "cobblemon:restoration_tank"
     ]
+   },
+   "as_placed": {
+    "gym": "gym8",
+    "healing_machine_removed": true,
+    "by": "tools/gym_interiors.py, data/gym_interiors.json healers",
+    "note": "the template still carries a cobblemon:healing_machine and this record describes the template. As placed it does not: the owner's call of 2026-09-29 is no healer in any gym, and tools/gym_interiors.py writes one `fill <shell box> <palette block> replace cobblemon:healing_machine` per gym over the placed building (pack cobblers_gym_interiors, tools/reapply.py R16E). The template is never edited: a derivative of the Cobbleverse NBT is no-redistribution. So the `healing` signal below is the template's, not the world's, and no gym heals a party. data/gym_interiors.json healers holds the per-gym replacement and the reason."
    }
   },
   {
@@ -5560,6 +5584,12 @@
      "rctmod:trainer_spawner",
      "cobblemon:healing_machine"
     ]
+   },
+   "as_placed": {
+    "gym": "gym5",
+    "healing_machine_removed": true,
+    "by": "tools/gym_interiors.py, data/gym_interiors.json healers",
+    "note": "the template still carries a cobblemon:healing_machine and this record describes the template. As placed it does not: the owner's call of 2026-09-29 is no healer in any gym, and tools/gym_interiors.py writes one `fill <shell box> <palette block> replace cobblemon:healing_machine` per gym over the placed building (pack cobblers_gym_interiors, tools/reapply.py R16E). The template is never edited: a derivative of the Cobbleverse NBT is no-redistribution. So the `healing` signal below is the template's, not the world's, and no gym heals a party. data/gym_interiors.json healers holds the per-gym replacement and the reason."
    }
   },
   {
@@ -5739,6 +5769,12 @@
      "cobblefurnies:statue_ancient",
      "rctmod:trainer_spawner"
     ]
+   },
+   "as_placed": {
+    "gym": "gym3",
+    "healing_machine_removed": true,
+    "by": "tools/gym_interiors.py, data/gym_interiors.json healers",
+    "note": "the template still carries a cobblemon:healing_machine and this record describes the template. As placed it does not: the owner's call of 2026-09-29 is no healer in any gym, and tools/gym_interiors.py writes one `fill <shell box> <palette block> replace cobblemon:healing_machine` per gym over the placed building (pack cobblers_gym_interiors, tools/reapply.py R16E). The template is never edited: a derivative of the Cobbleverse NBT is no-redistribution. So the `healing` signal below is the template's, not the world's, and no gym heals a party. data/gym_interiors.json healers holds the per-gym replacement and the reason."
    }
   },
   {
@@ -5790,6 +5826,12 @@
      "cobblefurnies:statue_ancient",
      "cobblemon:blue_gilded_chest"
     ]
+   },
+   "as_placed": {
+    "gym": "gym2",
+    "healing_machine_removed": true,
+    "by": "tools/gym_interiors.py, data/gym_interiors.json healers",
+    "note": "the template still carries a cobblemon:healing_machine and this record describes the template. As placed it does not: the owner's call of 2026-09-29 is no healer in any gym, and tools/gym_interiors.py writes one `fill <shell box> <palette block> replace cobblemon:healing_machine` per gym over the placed building (pack cobblers_gym_interiors, tools/reapply.py R16E). The template is never edited: a derivative of the Cobbleverse NBT is no-redistribution. So the `healing` signal below is the template's, not the world's, and no gym heals a party. data/gym_interiors.json healers holds the per-gym replacement and the reason."
    }
   },
   {
@@ -5891,6 +5933,12 @@
     "notable_blocks": [
      "cobblefurnies:statue_ancient"
     ]
+   },
+   "as_placed": {
+    "gym": "gym6",
+    "healing_machine_removed": true,
+    "by": "tools/gym_interiors.py, data/gym_interiors.json healers",
+    "note": "the template still carries a cobblemon:healing_machine and this record describes the template. As placed it does not: the owner's call of 2026-09-29 is no healer in any gym, and tools/gym_interiors.py writes one `fill <shell box> <palette block> replace cobblemon:healing_machine` per gym over the placed building (pack cobblers_gym_interiors, tools/reapply.py R16E). The template is never edited: a derivative of the Cobbleverse NBT is no-redistribution. So the `healing` signal below is the template's, not the world's, and no gym heals a party. data/gym_interiors.json healers holds the per-gym replacement and the reason."
    }
   },
   {

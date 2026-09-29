@@ -95,6 +95,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-09-28: the wayside shrines on the approaches of towns people pass through (tools/shrines.py,
                 # data/shrines.json): block functions run by R16D after the dressing and the working Pokemon
                 "cobblers_shrines",
+                # 2026-09-29: the gym interiors (tools/gym_interiors.py, data/gym_interiors.json): the healing
+                # machines out of all eight placed gyms, and gym 1's works carved under its lot. Block functions run
+                # by R16E, after the donors (R9) that stamp the gyms whole and would erase anything written first
+                "cobblers_gym_interiors",
                 # 2026-09-28: no catching over the level cap (tools/levelcap_pack.py, data/level_cap.json): a Cobblemon
                 # callback acts on its own, so world-local below
                 "cobblers_levelcap",
@@ -403,6 +407,12 @@ def prepare_jobs(a):
     # faces included): the generator keeps clear of what they write
     add("shrines:build", "shrines.py", "build", *src)
     add("shrines_audit", "shrines_audit.py", *src)
+    # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
+    # then the offline audit, which re-derives every shell box from data/placements.json, replays the written
+    # functions into a voxel model and fails the prepare on a broken route, a trainer that can be walked round, a
+    # room that breaks its cover or a fall that would hurt
+    add("gym_interiors:build", "gym_interiors.py", "build", *src)
+    add("gym_interiors_audit", "gym_interiors_audit.py", *src)
     # no catching over the level cap: a callback and its check
     add("levelcap_pack", "levelcap_pack.py")
     add("location_titles", "location_titles.py")
@@ -902,6 +912,15 @@ def steps(with_spawns=False):
     shrine_ids = [q["id"] for q in json.loads((ROOT / "data" / "shrines.json").read_text(encoding="utf-8")).get("shrines") or []]
     out.append(("R16D", "wayside shrines on the town approaches (%d, data/shrines.json)" % len(shrine_ids),
                 [("fn", "cobblers:shrines/%s" % s) for s in shrine_ids]))
+    # the gym interiors (tools/gym_interiors.py): the healers out of all eight placed gyms, then each built gym's
+    # carved works. After the donors (R9), which are placed whole: a healer removed before the donor runs would be
+    # stamped back, and a shaft cut before it would be filled in. Listed from the committed data, not the built pack,
+    # so the step exists whether or not the pack is built here; the prepare's audit fails on a missing function
+    gym_doc = json.loads((ROOT / "data" / "gym_interiors.json").read_text(encoding="utf-8"))
+    gym_built = [g["id"] for g in gym_doc.get("gyms") or [] if g.get("built")]
+    out.append(("R16E", "gym interiors: no healer in any of the 8 gyms, and %d carved interior(s)" % len(gym_built),
+                [("fn", "cobblers:gym_interiors/healers")]
+                + [("fn", "cobblers:gym_interiors/%s" % g) for g in gym_built]))
     # the signposts after the donors too: a donor is placed whole, and Sabrina's department store's air margin erased
     # the post where Route 7 leaves her town when the signs went in first (the staging run of 2026-09-21)
     out.append(("R15", "route signposts, after the donors", [("fn", "cobblers:signs/place")]))
