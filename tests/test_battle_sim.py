@@ -20,9 +20,9 @@ The switching bound is opt-in and the tool documents it as untrustworthy -- it c
 switching at two of seven gyms -- so nothing here asserts that it is good. What is asserted is that it is
 sound: it swaps only a losing matchup for a winning one, and it stays inside its own switch budget.
 
-The real data is checked only for the shape the tool depends on: eight gym leaders, one of them (gym 8,
-`status: held`) with no roster; every gym pool exactly the rows derived/availability.json records; and Blaine's
-Drought lead actually reaching the field. A row that resolves to nothing has to be counted in `assess`'s
+The real data is checked only for the shape the tool depends on: eight authored gym leaders with ordered,
+playable rosters; every gym pool exactly the rows derived/availability.json records; and Blaine's Drought lead
+actually reaching the field. A row that resolves to nothing has to be counted in `assess`'s
 `unresolved` list rather than dropped, because a pool that shrank silently reads exactly like a pool that was
 always narrow, and that is the one reading the tool exists to give.
 
@@ -1117,21 +1117,22 @@ def test_the_gauntlet_reports_its_own_turns_and_switches(pack):
 
 # ------------------------------------------------------------------ the real data the report is built from
 
-# removing this lets the eight gyms become seven, or lets gym 8 gain a roster without anyone noticing that
-# the report's "NO ROSTER IN data/trainers.json" line has quietly stopped being true.
-def test_the_authored_gyms_are_eight_leaders_with_exactly_one_empty_roster():
+# removing this lets a gym lose its authored roster or lets Giovanni drift away from the intended level-55,
+# singles finale without anyone noticing.
+def test_all_eight_authored_gyms_have_ordered_rosters_and_giovanni_is_a_level_55_singles_finale_without_mewtwo():
     leaders, contract = B.gym_leaders()
     assert sorted(leaders) == [1, 2, 3, 4, 5, 6, 7, 8]
-    empty = sorted(o for o, t in leaders.items() if not t["team"])
-    assert empty == [8], "the empty gym roster is no longer gym 8 alone: %s" % empty
-    assert leaders[8]["status"] == "held"
-    for o in range(1, 8):
-        assert leaders[o]["status"] == "authored", o
-        assert 3 <= len(leaders[o]["team"]) <= 6, (o, len(leaders[o]["team"]))
-        levels = [m["level"] for m in leaders[o]["team"]]
+    for o, leader in sorted(leaders.items()):
+        assert leader["status"] == "authored", o
+        assert 3 <= len(leader["team"]) <= 6, (o, len(leader["team"]))
+        levels = [m["level"] for m in leader["team"]]
         assert levels == sorted(levels), "gym %d's ace is not its last slot: %s" % (o, levels)
-        for m in leaders[o]["team"]:
+        for m in leader["team"]:
             assert m["species"] and isinstance(m["level"], int)
+    giovanni = leaders[8]
+    assert giovanni["format"] == "GEN_9_SINGLES"
+    assert giovanni["team"][-1]["level"] == 55
+    assert all(m["species"].lower() != "mewtwo" for m in giovanni["team"])
     assert contract["gym_ace_levels"], "the generation contract no longer records the ace levels"
 
 
