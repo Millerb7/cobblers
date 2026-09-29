@@ -53,7 +53,23 @@ sys.path.insert(0, str(ROOT / "tools"))
 WORLD_READS = set()
 
 DEFAULT_FUNCS = ROOT / "build" / "datapacks" / "cobblers_gym_interiors" / "data" / "cobblers" / "function" / "gym_interiors"
-GYM_NUMBERS = (1, 2, 3, 4, 5, 7)
+
+
+def built_gyms(root=ROOT):
+    """The gyms data/gym_interiors.json still marks `built`, which is what tools/gym_interiors.py emits.
+
+    The owner's 2026-09-29 redesign (docs/world-building/GYM_BUILDINGS_BRIEF.md) replaced the works under gyms 1, 3, 4,
+    5 and 7 with authored buildings and set those records `built: false`; only Misty's gym 2 is still carved. Auditing a
+    fixed list would report five missing functions and hide the one interior that is left. The buildings that superseded
+    them are audited by tools/gym_buildings_independent.py, which carries every check in this file across."""
+    try:
+        doc = json.loads((Path(root) / "data" / "gym_interiors.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return (2,)
+    return tuple(sorted(int(g["id"][3:]) for g in doc["gyms"] if g.get("built")))
+
+
+GYM_NUMBERS = built_gyms()
 
 # ---- numbers this audit holds itself (NOT read from data/gym_interiors.json) -----------------------------------------
 INTERIOR_FLOOR = {"misty": 26}      # docs/mechanics/GYM_INTERIORS.md Q1: standable floor above the shell's base
