@@ -4,3 +4,9 @@ max_concurrent_threads_per_session = 6
 default_subagent_model = "gpt-5.6-terra"
 default_subagent_reasoning_effort = "medium"
 interrupt_message = true
+
+[shell_environment_policy]
+inherit = "core"
+
+[shell_environment_policy.set]
+COBBLERS_SOURCE_ROOT = 'C:\Users\wnd\Documents'
