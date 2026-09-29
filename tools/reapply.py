@@ -119,7 +119,13 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 "cobblers_ferries",
                 # 2026-09-28: the evolution-stone faces (tools/mines.py, data/mines.json, STONE_ECONOMY.md): blocks run by
                 # R9O; the faces' restore on approach acts on its own (a tick driver), so world-local below
-                "cobblers_mines")
+                "cobblers_mines",
+                # 2026-09-29: the dive and sky portals and the pocket dimension (tools/portals.py, data/portals.json,
+                # ADR-004, EXP-047). It ships a `dimension` and a `dimension_type`, which register only at a server
+                # BOOT, not at a /reload: installing this pack needs a restart before R16P will run. The arches are
+                # blocks in the overworld (R16P); the rooms live inside the world folder, which a re-export replaces,
+                # so R16P rebuilds them every time. The gate sweep and the rescue act on their own (tick drivers)
+                "cobblers_portals")
 
 # Packs that ship functions and deliberately have NO step, each with the reason. Anything not here and not run
 # by a step makes `prepare` fail: that is the fail-closed check.
@@ -413,6 +419,12 @@ def prepare_jobs(a):
     # room that breaks its cover or a fall that would hurt
     add("gym_interiors:build", "gym_interiors.py", "build", *src)
     add("gym_interiors_audit", "gym_interiors_audit.py", *src)
+    # the dive and sky portals and the pocket dimension they lead into (data/portals.json, EXP-047, ADR-004);
+    # then the offline audit, which replays the written functions into a voxel model and holds it against its own
+    # reading of the heightmap, the lake levels, the towns, the placements, the legendary mouths and the other
+    # packs. LAST of the block builds, because its cross-pack check reads what every other pack has written
+    add("portals:build", "portals.py", "build", *src)
+    add("portals_audit", "portals_audit.py", *src)
     # no catching over the level cap: a callback and its check
     add("levelcap_pack", "levelcap_pack.py")
     add("location_titles", "location_titles.py")
@@ -921,6 +933,15 @@ def steps(with_spawns=False):
     out.append(("R16E", "gym interiors: no healer in any of the 8 gyms, and %d carved interior(s)" % len(gym_built),
                 [("fn", "cobblers:gym_interiors/healers")]
                 + [("fn", "cobblers:gym_interiors/%s" % g) for g in gym_built]))
+    # the dive and sky portals (tools/portals.py, data/portals.json): the world-side arches, then `place`, which
+    # builds every room inside cobblers:pocket. The rooms live in the world folder and a re-export makes a new one
+    # (EXP-047 result 6), so they are rebuilt here every run; they are flat and deterministic, so that is exact.
+    # The DIMENSION itself registers only at a server boot, so a first install must restart before this step runs.
+    # Listed from the committed data, not the built pack, so the step exists whether or not the pack is built here
+    portal_ids = [q["id"] for q in json.loads((ROOT / "data" / "portals.json").read_text(encoding="utf-8"))["portals"]]
+    out.append(("R16P", "the dive and sky portals (%d) and their rooms in cobblers:pocket" % len(portal_ids),
+                [("fn", "cobblers:portals/world/%s" % p) for p in portal_ids]
+                + [("fn", "cobblers:portals/place")]))
     # the signposts after the donors too: a donor is placed whole, and Sabrina's department store's air margin erased
     # the post where Route 7 leaves her town when the signs went in first (the staging run of 2026-09-21)
     out.append(("R15", "route signposts, after the donors", [("fn", "cobblers:signs/place")]))
