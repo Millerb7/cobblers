@@ -148,8 +148,16 @@ def cycle_lines(tid, seat, field):
     return ["# %s" % tid,
             "execute as %s positioned %d.5 %d %d.5 unless entity @s[distance=..0.75] run tp @s %d.5 %d %d.5" % (home, x, y, z, x, y, z),
             'execute positioned %d.5 %d %d.5 as @a[distance=..%s] run runmolang "%s" @s' % (x, y, z, near, mol),
-            "execute as %s at @s if entity @a[distance=..%s,tag=%s] unless entity @a[distance=..%s,tag=!%s] run data merge entity @s {Cooldown:40}"
-            % (me, near, tag, near, tag)]
+            # INTERIM (the owner, 2026-09-29). The hold-off fires whenever ANY player near has beaten this trainer.
+            # It used to require that EVERY player near had beaten it (`unless entity @a[...,tag=!<tag>]`), so a pair
+            # at mixed progress got no cooldown at all and the one who had already won was dragged back into a forced
+            # rematch while their partner fought. `Cooldown` is entity NBT on a shared trainer, so it cannot be held
+            # per player: one of the two has to give. The owner's call is that being dragged into a fight you already
+            # won is worse than having to right-click one you have not, so the beaten player is protected and the
+            # unbeaten partner may have to start the fight by interacting while their friend stands there.
+            # The real fix is per-player trainers through the scene runtime (docs/STATE.md), gated on EXP-034.
+            "execute as %s at @s if entity @a[distance=..%s,tag=%s] run data merge entity @s {Cooldown:40}"
+            % (me, near, tag)]
 
 
 def placements():

@@ -150,13 +150,10 @@ def _player(w, tid, name, offset, beaten):
 
 # Without it two players at different progress silence nothing: the trainer stays live and force-battles the player
 # who already beat it every time the party walks past together. This is the cooperative case Cobblers is played in.
-# STRICT XFAIL, and the marker is the record of the fault (.claude/rules/testing.md: a failure that stands
-# today is marked through, never deleted or loosened, and the fix removes the entry). The fault is real and
-# reproduced below; the fix the owner chose (2026-09-29) is per-player trainers through the scene runtime,
-# which is gated on EXP-034 and a second Minecraft account. Strict, so that the day the fix lands this test
-# passes, the strict marker fails, and whoever fixed it must come back and delete these two lines.
-@pytest.mark.xfail(strict=True, reason="mixed-progress hold-off: a shared trainer entity cannot hold off per "
-                                       "player; fix is per-player trainers via scenes_pack, gated on EXP-034")
+# This passed the moment the interim fix landed (2026-09-29): the hold-off now fires whenever ANY nearby
+# player has beaten the trainer, so the one who already won is never dragged back in. It was strict-xfail
+# while the fault stood, and the strict marker is what forced this line to be written rather than left.
+# The property still holds under the eventual per-player-trainer fix, so this test outlives the interim.
 @pytest.mark.parametrize("tid", EYE_IDS)
 def test_a_beaten_player_is_not_force_battled_while_an_unbeaten_party_member_stands_with_them(pack, tid):
     w, trainer = _world(pack, tid)

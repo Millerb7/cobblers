@@ -610,3 +610,51 @@ per-player datapack cost in the game today.
 
 *Written offline from the repository at `1572fb0`. No command in this document was run. Nothing here
 touched the running server, RCON, the coordination lock or any world.*
+
+---
+
+## The water ladder on dry land, traced line by line (2026-09-29)
+
+The offline inventory flagged this as the largest per-player datapack cost in the game. Traced through the generated
+functions, for a player **standing on grass in the middle of a town**:
+
+| function | lines run | why it runs on dry land |
+|---|---|---|
+| `water/tick` | 17 | the driver; its water tests fail but the lines are still evaluated |
+| `water/qualify` | 10 | **called unconditionally**, line 10 of `water/tick` |
+| `water/surfaced` | 3 | called *because* `bo.sub == 0`, i.e. precisely because the player is dry |
+| `water/strip_vanilla` | 5 | **called unconditionally**, the last line of `water/tick` |
+| **total** | **35** | plus the tick-tag and driver overhead the inventory counted, giving its ~39 |
+
+**Where the waste actually is** (`tools/blackout_pack.py`, generated into `cobblers_blackout`):
+
+1. **`water/qualify` runs every tick for every player whether or not any water is involved.** It computes the Surf and
+   Dive qualification from the party and the training tags. On dry land its only consumer is the swim-speed test at
+   `water/tick:13-14`, and both of those are themselves gated on being in water. Its grace counter is a debounce
+   against qualification flapping, and a player who walks out of water keeps their last `bo.qual` until they re-enter,
+   so skipping it while dry costs nothing observable. Its one message (`water/qualify:8`) is gated on `bo.deep`, which
+   is 0 on land.
+2. **`water/strip_vanilla` issues two `effect clear` commands per player per tick, forever** (`:3-4`, via
+   `execute store success`). It clears Water Breathing and Conduit Power unconditionally, so it pays the cost of both
+   clears on every tick of every player who has never held either effect. An `effect clear` is very unlikely to cost
+   the same as a scoreboard line, so this term is probably worth more than its line count suggests. **Unmeasured.**
+3. `water/surfaced` is 3 lines and is the one part that legitimately belongs on the dry path.
+
+**What it could cost.** An early exit after the two block tests: if the player is not in water, has no Surf bonus left
+to decay and carries no air modifier, return. That is about **6 lines instead of 35** on the dry path, which is where
+every player spends nearly all of their time.
+
+| | lines/player/tick | at 1.0-3.8 us a line (CALIBRATED, and the per-line constant is step 0 of the plan) |
+|---|---|---|
+| today, dry | 35 | 35-133 us |
+| with an early exit | ~6 | 6-23 us |
+| saved | ~29 | **29-110 us per player per tick** |
+
+At `max-players` 8 that is up to about **0.9 ms a tick, roughly 1.8% of the budget**, paid constantly by players doing
+nothing near water. The `effect clear` pair may make it larger.
+
+**Not changed here, deliberately.** `cobblers_blackout` owns contracts C1 and C2 (`data/system_contracts.json`), and a
+swim-rule change has broken the Dive ladder once before (2026-09-27, players knocked out after 33 s). Any early exit
+must keep `tests/test_system_contracts.py` green and wants its own test from a test-author, not from whoever writes
+the exit. The measurement in section 4 should include a before/after of this path, since it is the cheapest large win
+on the board.
