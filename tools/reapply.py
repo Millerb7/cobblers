@@ -99,6 +99,14 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # machines out of all eight placed gyms, and gym 1's works carved under its lot. Block functions run
                 # by R16E, after the donors (R9) that stamp the gyms whole and would erase anything written first
                 "cobblers_gym_interiors",
+                # 2026-09-29: the five rejected sets of gym works filled in and their COBBLEVERSE shells taken down
+                # (tools/gym_demolish.py, data/gym_interiors.json `superseded_by`). Gyms 1, 3, 4, 5 and 7 only:
+                # Misty's (gym 2) is kept exactly as built. Block functions run by R16F, after R16E
+                "cobblers_gym_demolish",
+                # 2026-09-29: the authored gym buildings (tools/gym_buildings.py, data/gym_buildings/*.json): one
+                # hall per gym with its puzzle inside it, on the lot the shell stood on. Block functions run by
+                # R16G, after the demolition (R16F) that clears the lot for them
+                "cobblers_gym_buildings",
                 # 2026-09-28: no catching over the level cap (tools/levelcap_pack.py, data/level_cap.json): a Cobblemon
                 # callback acts on its own, so world-local below
                 "cobblers_levelcap",
@@ -419,6 +427,13 @@ def prepare_jobs(a):
     # room that breaks its cover or a fall that would hurt
     add("gym_interiors:build", "gym_interiors.py", "build", *src)
     add("gym_interiors_audit", "gym_interiors_audit.py", *src)
+    # the demolition of the five rejected interiors and their donor shells, then the authored halls that replace
+    # them. In this order: the building is written onto a lot the shell has just been cleared off. Neither reads a
+    # world; both take their ground from tools/ground.py and the town plan's levelled lot
+    add("gym_demolish:build", "gym_demolish.py", "build", *src)
+    add("gym_buildings:build", "gym_buildings.py", "build", *src)
+    # (no audit job for the gym buildings yet: the audit and the tests are another agent's, CLAUDE.md principle 16.
+    # Add it here, after gym_buildings:build, so a broken hall stops the prepare before anything is installed.)
     # the dive and sky portals and the pocket dimension they lead into (data/portals.json, EXP-047, ADR-004);
     # then the offline audit, which replays the written functions into a voxel model and holds it against its own
     # reading of the heightmap, the lake levels, the towns, the placements, the legendary mouths and the other
@@ -933,6 +948,19 @@ def steps(with_spawns=False):
     out.append(("R16E", "gym interiors: no healer in any of the 8 gyms, and %d carved interior(s)" % len(gym_built),
                 [("fn", "cobblers:gym_interiors/healers")]
                 + [("fn", "cobblers:gym_interiors/%s" % g) for g in gym_built]))
+    # the demolition (tools/gym_demolish.py): the five rejected sets of works filled back in and their COBBLEVERSE
+    # shells taken down, at every gym data/gym_interiors.json marks `superseded_by`. Gym 2 is never in this list -
+    # Misty's is kept exactly as built (the owner, 2026-09-29). After R16E, whose healer sweep still runs over all
+    # eight shells, and before the buildings that stand where the shells were
+    gym_gone = [g["id"] for g in gym_doc.get("gyms") or [] if g.get("superseded_by")]
+    out.append(("R16F", "the rejected gym works filled in and %d donor shell(s) taken down" % len(gym_gone),
+                [("fn", "cobblers:gym_demolish/%s" % g) for g in gym_gone]))
+    # the authored gym buildings (tools/gym_buildings.py): one hall per record in data/gym_buildings/, each with
+    # its puzzle inside it and the leader's spawner at the end of it. Listed from the committed data, not the built
+    # pack, so the step exists whether or not the pack is built here; the prepare's audit fails on a missing one
+    gym_halls = sorted(p.stem for p in (ROOT / "data" / "gym_buildings").glob("*.json"))
+    out.append(("R16G", "the authored gym buildings (%d)" % len(gym_halls),
+                [("fn", "cobblers:gym_buildings/%s" % g) for g in gym_halls]))
     # the dive and sky portals (tools/portals.py, data/portals.json): the world-side arches, then `place`, which
     # builds every room inside cobblers:pocket. The rooms live in the world folder and a re-export makes a new one
     # (EXP-047 result 6), so they are rebuilt here every run; they are flat and deterministic, so that is exact.
