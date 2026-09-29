@@ -42,7 +42,26 @@ Written through the night as things landed. `docs/NIGHT_REVIEW.md` holds every d
 
 ### Phase 3 — the export
 
-(Filled in when it completes.)
+- **`cobblers-dryrun12` is built**, `seed_match: true`, and the **margin relief ran for the first time** (7,056
+  tiles) — the seamounts and the carried-off map edge have never existed in a world before tonight.
+- **The water shape is applied**: 19,027,615 columns changed, the new heightmap is canonical, and the old sha is
+  kept in `previous_sha256`, so it is reversible.
+- Its dependents were re-measured until `validate_data` read **0 errors**: Pacifidlog folded onto its new site,
+  regions, cells and town grounds re-measured, the paint regenerated, the visibility claims re-measured.
+- **Prepare's whole-build gate passed**: 4,468 function files, 0 problems, 26 places, 32 pack donors, 35 steps,
+  every function pack covered.
+- **Install is clean**: every pack and config the repo builds is installed and current.
+- The re-application over RCON, the audit and the Distant Horizons pregen follow.
+
+**Region count, explained rather than waved through.** 454 files where the old world has 491 and the runbook names
+484. Inside the border 390 of 400 are present; the 10 absent are the far-north sea strip beyond the authored
+landmass, empty ocean WorldPainter had nothing to write for, and the pregen is the step that fills them. The 37 the
+old world has extra are spill from having been played.
+
+**Three things the export broke, all caught by fail-closed audits and fixed rather than bypassed:** the drowned
+Pacifidlog docks and the Sound ferry (retired per the plan STATE already recorded), a stone face under the new
+canopy (re-anchored), and the Route 2 shrine (moved clear of both the new shore and the new trees). A fourth, the
+now-orphaned ferry charge macro, was caught by prepare's own orphan gate.
 
 ## What was cut, and why
 
