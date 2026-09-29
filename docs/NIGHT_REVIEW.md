@@ -29,6 +29,17 @@ refusal ends the attempt. Ground never read from a built world. Commit per unit.
 | **Both two-player measurements** | Blocked on the second account, as recorded before the night began. Not faked | Waiting on the owner |
 | **Everything player-gated in EXP-047** | Spawning, habitat-pool resolution and the Cobblemon callbacks are player-driven; with nobody online they are structurally unobservable | Recorded as untested, not assumed |
 
+## A near-miss worth recording
+
+The export writes no log until it finishes, and `tasklist | grep java` found nothing, so I read an
+in-progress export as a dead one and ran `rm -rf` on its output directory. **The operating system refused
+it** -- "Device or resource busy" on the files WorldPainter still held open -- and a region count taken 45
+seconds apart then showed it advancing 12 -> 39. Nothing was lost.
+
+Two lessons, both cheap: **absence of a log is not evidence of death** for a tool that buffers, and a
+progress check (does the output grow?) costs 45 seconds and would have prevented the attempt entirely. I
+should have measured before deleting rather than after being refused.
+
 ## Review list for the owner
 
 1. **`jungle_ruins` is now at or below sea level.** It measured y119-134 and now measures **y55-61**: it stood on the
