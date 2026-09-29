@@ -389,3 +389,51 @@ Each step is one task, small enough to be a single experiment or content unit.
 | 10 | Only then, gyms 2-8, one at a time, each its own unit. | as steps 5-9 | |
 
 Steps 1-3 are cheap and settle everything. **No gym content should be authored before step 4.**
+
+---
+
+## Q1 ANSWERED (2026-09-29): the real interiors, measured from the templates
+
+Read from `COBBLEVERSE-DP-v31.zip`'s `data/cobbleverse/structure/<leader>.nbt` in memory, never extracted into the
+repo and never scanned from a world (CLAUDE.md's ground rule). **The block maps are not committed**: the templates are
+no-redistribution, so only measurements live here. The maps were produced locally and handed to the owner.
+
+Method: the interior floor is the y with the most *roofed standable* cells (passable at y and y+1, solid at y-1, and
+some solid above). A naive "densest floor" heuristic is wrong for Misty, whose gym is built into a rock mass and whose
+densest level is the stone itself.
+
+| leader | envelope (x,y,z) | interior floor y | standable roofed cells |
+|---|---|---|---|
+| brock | 27x17x24 | 2 | 222 |
+| misty | 36x40x32 | 26 | 158 |
+| ltsurge | 27x17x23 | 2 | 226 |
+| erika | 27x17x23 | 2 | 160 |
+| koga | 27x17x24 | 2 | 199 |
+| sabrina | 27x17x24 | 2 | 248 |
+| blaine | 27x17x23 | 2 | 238 |
+| giovanni | 27x17x24 | 2 | 226 |
+
+**Correction to this document's opening claim.** It says seven of the eight gyms are "the same building recoloured",
+citing the inventory and the footprints. At the level of geometry that is **not true**: every one of the eight has a
+distinct solid shape (eight different sha256 of the solid-cell set; 1,772 to 1,899 solid cells). They share an
+envelope and a family resemblance, not a shell.
+
+**What is true, and is the real finding:** every gym, Misty's included, is **one oval chamber** — an entrance at one
+end, the healing machine and a chest at the other, the `rctmod:trainer_spawner` in the middle, and 160 to 248
+standable cells of undivided floor. Misty's is the same room, only larger and set higher inside a rock body. So the
+owner's complaint holds exactly, and each gym has its own outline to design against rather than one generic room.
+
+Consequences for the design above:
+- **There is no second storey to reuse.** Every interior is a single level; upper volume is roof.
+- **The puzzle rooms must be carved below**, as this document already proposes, because the shells have no spare
+  interior to subdivide without touching the template.
+- **Per-gym outlines differ**, so a single generic room plan will not drop into all seven. Each needs its own fit.
+- Brock's template really does carry the 9 command blocks and a pressure plate (7 chain + 2 command, 1 light weighted
+  plate), confirming Q3.
+- Notable per gym: Surge 9 dark-oak trapdoors and a yellow gilded chest; Koga 8 crimson trapdoors and a green gilded
+  chest; Blaine 2 lava cauldrons; Giovanni 2 iron doors and **no barrel**; Misty 147 water blocks, 3 water-stone ores
+  and a blue gilded chest; Brock a deepslate water-stone ore and 6 apricorn trapdoors.
+
+Still open from the original list: Q2 (where the leader stands / whether the spawner places him) is partly answered —
+there is exactly one `rctmod:trainer_spawner` per template — but its position relative to the door is not yet
+measured against each room's route. Q4 to Q9 are unchanged.

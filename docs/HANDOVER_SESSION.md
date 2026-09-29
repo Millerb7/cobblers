@@ -21,6 +21,45 @@ durable facts; this holds where work stopped.
   accepted**: its own step 4 is "ADR proposed, owner accepts", and it says no gym content should be authored before
   that. Its agent worktree (`worktree-agent-a5c7b45c78e489c10`) is spent and removable. Read the doc itself; it is self-contained and ends with nine open questions and a ten-step plan. **Q1 blocks everything**: no interior floor plan of any gym template exists in the repo, so the NBTs must be extracted locally (gitignored, never committed) and a y-slice dumped before any room is designed against real geometry.
 
+## 1a. THE ORDER THE OWNER WANTS (2026-09-29). Work it in this order
+
+1. **The mixed-progress rematch fault, with EXP-034 alongside it** — they need the same two-player setup, so do them
+   together. Section 1b has the fault.
+2. **The pocket-dimension experiment** (section 2).
+3. **The stone-face survey** — flight finding 2, plus surveying the other six places for the same three problems,
+   reported before building.
+4. **Gym 1 only**, now that Q1 has given real geometry (below).
+
+### What the owner must supply for step 1, and what he need not
+
+- **The cooldown fault needs NOTHING from the owner. Prove it offline first.** It is pure datapack logic over
+  `@a[distance=...]` scores and tags, and `tests/mcfunction_sim.py` already has `add_player(pos, name)` and holds
+  several players at once. Two synthetic players at different progress reproduce it exactly: one who has beaten the
+  trainer, one who has not, and the assertion is that no `Cooldown` is written. Write the failing test first, then
+  fix, then keep the test. **A test-author agent, not the implementer** (testing.md). This is the fastest route and
+  it does not wait on anybody.
+- **EXP-034 does need a second real account.** Per-player barriers, per-player actors and per-player particles are
+  client-side; a simulator cannot show whether player B sees player A's barrier, which is the whole question. The
+  staging server is `online-mode=true`, `white-list=true`, `enforce-whitelist=true`, `max-players=8`, so it must be a
+  **genuine second Minecraft account, added to the whitelist**. There is no simulation substitute for this half.
+- So: the fix can be built and proved offline while the second account is arranged; only the in-game confirmation and
+  EXP-034 wait on the owner.
+
+## 1c. GYM Q1 IS ANSWERED (2026-09-29) — gyms are unblocked for step 4
+
+`docs/mechanics/GYM_INTERIORS.md` now ends with the measured interiors. Read from the template NBTs in memory; **the
+block maps are deliberately not committed** (no-redistribution), and were handed to the owner directly.
+
+- Every gym is **one oval chamber**: entrance one end, healing machine and chest the other, the single
+  `rctmod:trainer_spawner` in the middle, 160-248 standable cells of undivided floor. Misty's is the same room,
+  larger and higher inside a rock body.
+- **A correction the design doc now carries:** its claim that seven gyms are "the same building recoloured" is false
+  at the geometry level. All eight solid shapes differ (eight distinct hashes, 1,772-1,899 solid cells). They share
+  an envelope, not a shell, so each needs its own fit rather than one generic room plan.
+- There is **no second storey to reuse** — upper volume is roof. That confirms carving below is the right route.
+- Brock's template really does carry 9 command blocks and a pressure plate (Q3 confirmed).
+- Watch the floor-finding method: a naive "densest level" picks solid rock for Misty. Use roofed-standable cells.
+
 ## 1b. FIRST, AND IT IS NOT ABOUT GYMS: the mixed-progress rematch fault
 
 The owner, 2026-09-28: the most important thing to come out of the gym design, and it is a trainer-system fault.
