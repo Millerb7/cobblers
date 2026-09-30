@@ -1,0 +1,1533 @@
+{
+ "schema": "gym_building/1",
+ "id": "gym6",
+ "status": "authored 2026-09-30; file-valid only. Nothing here has been seen in a running game.",
+ "settlement": "gym6_town",
+ "supersedes_donor": "gym6_gym_building",
+ "supersedes_why": "the COBBLEVERSE donor shell (cobbleverse:sabrina, 27x17x24 at 6183,96,3306..6209,112,3329, one oval room, no second storey, its own rctmod:trainer_spawner) stands on this lot and is taken down by this function's own two clearing parts. Gyms 6 and 8 have NO record in data/gym_interiors.json with `superseded_by`, so tools/gym_demolish.py does not act on them and there is no dig under them to fill in - nothing was ever carved here. The clearing fills cover the donor's box on every axis: air from y98 to y128 and stone from y92 to y97, over x6182-6210 z3306-3332.",
+ "name": "The Hall of Lenses",
+ "reading": "Sabrina's town is the region's place of study: it records what the Rift does to memory and perception, and its signature dressing is memory stones on plinths (docs/world-building/TOWN_CHARACTER.md gym6_town: calcite, smooth quartz, polished diorite, birch; purpur and end rods as accents). The gym stands at the head of the white axis on the highest ground, looking straight back down it, so its south gable and its door are what the whole town sees. Inside it is one tall hall with a reading gallery running right round it and a closed chamber over the gallery's north third, and the work of the place - shelving, reading stalls, lecterns, a lens let into the floor - is what a player climbs. THE PER-PLAYER DESIGN IS RETIRED. The owner, 2026-09-30: 'Sabrina's was blocked on a per-player design - redesign it shared like the other six.' Nothing here is instanced, nothing is lit for one player and nothing is held in one player's state. What replaces it is THE EYE: one purpur panel with a pearlescent-froglight pupil, set in the fabric of the building three times, once over each way on. It is a thing in the world that tells you which way, the same for everyone, in the family of Brock's lit slot and Misty's three mouths.",
+ "site": {
+  "lot_rect": [
+   6180,
+   3302,
+   6212,
+   3334
+  ],
+  "lot_level": 97,
+  "lot_source": "data/placements.json settlements.gym6_town.plan.anchors gym6_gym (rect [6180,3302,6212,3334], level 97, facing south). The plan's prep_note: 'The gym lot at the top needs a small cut into the rise.' tools/place_town.py cuts and fills a levelled lot to its level, so the pad is y97.",
+  "ground": {
+   "kind": "lot_level",
+   "why": "the pad is the ground. The raw heightmap over the lot rect runs y95 to y97 (tools/ground.py, rounded, measured for this record: min 95, max 97) and the prep levels it to 97, which is the top of that range - a small cut and a two-course fill, exactly what the prep_note says. Neither number was read from a world save (the ground rule, tests/test_ground_rule.py)."
+  },
+  "footprint": [
+   6183,
+   3307,
+   6209,
+   3331
+  ],
+  "footprint_size_why": "27 by 25 inside a 33x33 lot: margins 3 west, 3 east, 5 north, 3 south. The eaves overhang one course all round (x6182-6210, z3306-3332) and still stand two clear of the lot edge on every side, so the gym lot's own perimeter - where a player arrives from the town - is untouched pad at y97 the whole way round.",
+  "floor_y": 97,
+  "stand_y": 98
+ },
+ "bounds": [
+  6182,
+  92,
+  3306,
+  6210,
+  128,
+  3332
+ ],
+ "bounds_why": "the hall (6183..6209 x 3307..3331), its one-course eaves (x6182 and x6210, z3306 and z3332), the ridge at y124, and downward to y92 for the six courses of rock this function re-makes under the pad. Inside the lot rect [6180,3302,6212,3334] with a margin of two on every side, AND inside the gym_sabrina spawn-free box on every side - which is the binding constraint here, not the lot.",
+ "leader": {
+  "id": "kanto_sabrina",
+  "name": "Sabrina",
+  "spawner": [
+   6196,
+   112,
+   3312
+  ],
+  "powered_by": [
+   6196,
+   111,
+   3312
+  ],
+  "why": "kanto_sabrina is the upstream Radical Cobblemon Trainers id and it is load-bearing: a persistent leader trainer anywhere awards the badge (verified on staging 2026-09-24, docs/STATE.md). EXP-013 E2 (VERIFIED, on staging): a bare rctmod:trainer_spawner set by command with TrainerIds on a redstone block spawned the leader and he battled. The donor shell's own spawner goes with the shell in this function's clearing fill, so this is the only kanto_sabrina in the town and the badge cannot be won without reaching the lens chamber.",
+  "chest": [
+   6200,
+   112,
+   3312
+  ]
+ },
+ "rooms": [
+  {
+   "id": "hall",
+   "box": [
+    6184,
+    98,
+    3308,
+    6208,
+    103,
+    3330
+   ],
+   "why": "the reading hall: the whole ground floor, twenty-five by twenty-three, floor course y97 and walked at y98, six courses of headroom under the gallery's soffit. Four stacks of record shelving rise out of it and three of them stop short."
+  },
+  {
+   "id": "gallery",
+   "box": [
+    6184,
+    104,
+    3308,
+    6208,
+    110,
+    3330
+   ],
+   "why": "the reading gallery: a ring four wide on all four sides at floor course y104, walked at y105, round a well seventeen by fifteen that is open from the hall floor to the roof. No rail stands on it anywhere (GYM_BUILDINGS_REVIEW D7). Its ceiling is the chamber's floor over the north third and the open roof elsewhere."
+  },
+  {
+   "id": "turret",
+   "box": [
+    6194,
+    105,
+    3308,
+    6198,
+    111,
+    3311
+   ],
+   "why": "the ladder turret, three by three of quartz walls standing on the gallery's north strip, entered by one door in its west wall which is reached only through the arcade's true arch. The ladder is the only thing in it."
+  },
+  {
+   "id": "chamber",
+   "box": [
+    6184,
+    111,
+    3308,
+    6208,
+    117,
+    3319
+   ],
+   "why": "the lens chamber over the gallery's north third: floor course y111, walked at y112, six courses to its ceiling at y118, closed on six sides with exactly two openings - the ladder's hole and the drop shaft. Sabrina sits at the centre of the lens let into its floor."
+  }
+ ],
+ "route": [
+  {
+   "step": 1,
+   "id": "the_reading_stacks",
+   "from": [
+    6196,
+    98,
+    3320
+   ],
+   "to": [
+    6205,
+    105,
+    3325
+   ],
+   "how": "climb",
+   "why": "four stacks of record shelving rise out of the hall floor. The finished one runs east along the well's south edge at z3325-3326 with tops y98,99,100,101,102,103,103, so a player steps up one course at a time to feet y104 at x6203-6204 and then one more course east onto the gallery's east arm (floor course y104, walked at y105) or south onto its south strip. The waypoints are standing cells: (6196,98,3320) is hall floor with the floor course at y97 under it, and (6205,105,3325) is the east arm with its floor course at y104 under it.",
+   "not_skippable": "the gallery's floor occupies y104 the whole way round, so its walking level is y105 and the hall floor is y98: seven courses. The three decoy stacks top at y102, which puts a player's feet at y103 - a two-block rise to the gallery, which vanilla does not allow and which no jump covers (the audit's own reach table gives three blocks for a jump up one and nothing at all for a jump up two). Every decoy stands three or more cells clear of the gallery's edge. The quartz posts under the gallery stop at y102 and are capped by its soffit at y103, so none of them can be stood on. Nothing else in the hall rises above y103."
+  },
+  {
+   "step": 2,
+   "id": "the_eye_arch",
+   "from": [
+    6205,
+    105,
+    3325
+   ],
+   "to": [
+    6193,
+    105,
+    3309
+   ],
+   "how": "walk",
+   "why": "the gallery is a closed ring, so from the east arm a player walks it round - south strip, west arm, north strip - to the arcade. The arcade is a calcite screen two courses thick across the north strip at x6191-6192, from the strip's floor to the chamber's floor at y111, with three recesses at y105-106. Two are one course deep and blind; the third, at z3309, goes through to the pocket at x6193. The eye is set in the screen directly over it. Both waypoints are standing cells on the gallery's floor course y104.",
+   "not_skippable": "the screen closes the north strip over its full height, from the floor a player walks on to the chamber's floor above it, and the turret's door is behind it. The blind recesses are backed by the screen's second course at x6192, which is never cut. There is no other opening: the turret's west, east and south walls are solid quartz from y105 to y110 and its north side is the building's own north wall."
+  },
+  {
+   "step": 3,
+   "id": "the_turret_ladder",
+   "from": [
+    6196,
+    105,
+    3309
+   ],
+   "to": [
+    6196,
+    112,
+    3309
+   ],
+   "how": "climb",
+   "why": "inside the turret a ladder[facing=west] runs from y105 to y111 on the east wall at (6197,y,3309), carried by the solid quartz at x6198 for y105-110 and by the chamber's own floor course at y111. A player climbs to feet y111 and steps up and across onto the chamber floor at feet y112. The fill that writes it is the LAST block part in the record, after the chamber's floor, and it re-cuts the floor's cell as LADDER rather than air: GYM_BUILDINGS_REVIEW D2, where exactly this cut was made to air and Brock's gym could not be finished. Both waypoints are standing cells - (6196,105,3309) on the turret floor (gallery floor course y104 under it) and (6196,112,3309) on the chamber floor (course y111 under it).",
+   "not_skippable": "the chamber's floor at y111 is unbroken over the whole of x6184-6208 z3308-3318 but for this ladder cell and the drop shaft at (6206,111,3314). The chamber's walking level is y112 and the gallery's is y105 - seven courses - so the shaft cannot be climbed and nothing under the chamber can be jumped to it."
+  },
+  {
+   "step": 4,
+   "id": "the_lens",
+   "from": [
+    6196,
+    112,
+    3309
+   ],
+   "to": [
+    6195,
+    112,
+    3312
+   ],
+   "how": "walk",
+   "why": "the chamber is one room and Sabrina stands at the centre of the quartz lens let into its floor, on a redstone block at (6196,111,3312) with two air cells over her. Her chest is four cells east at (6200,112,3312). The eye is set in the north wall behind her. (6195,112,3312) is the standing cell beside the spawner, on the chamber's floor course."
+  },
+  {
+   "step": 5,
+   "id": "the_drop_shaft",
+   "from": [
+    6205,
+    112,
+    3314
+   ],
+   "to": [
+    6206,
+    105,
+    3314
+   ],
+   "how": "fall",
+   "why": "the way back down, and the reason this chamber is not a trap (GYM_BUILDINGS_REVIEW D8: Blaine's vault had no exit at all and 192 positions could not regain the lot). One cell is cut in the chamber's floor over the gallery's east arm. Stepping into it is a seven-block fall from y112 onto the arm's floor course at y104, landing with the feet at y105 for four damage - inside data/gym_interiors.json rules.max_fall of 12 and inside the ten damage a route may cost, so it needs no hay and none is used. The ladder is the other way out. Both waypoints are standing cells: (6205,112,3314) on the chamber floor beside the hole, (6206,105,3314) on the east arm."
+  }
+ ],
+ "trainers": [],
+ "trainers_why": "none authored, exactly as gyms 1, 3, 4, 5 and 7. A gym trainer has to be unavoidable, and unavoidability is a claim about where a player can physically stand and how far a trainer can see - the independent movement model settles that, and it is not this unit's to write (CLAUDE.md principle 16). The `trainers` array is supported by the generator and lands in derived/gym_buildings/trainer_seats.json for trainer-balance-designer. The three places that would hold one are the hall floor by the door, the gallery's south strip, and the chamber's threshold at the head of the ladder.",
+ "no_build": [
+  {
+   "box": [
+    6183,
+    92,
+    3307,
+    6209,
+    124,
+    3331
+   ],
+   "why": "the whole hall. Authored, not wired: the scene runtime's adventure-mode box (tools/scenes_pack.py no_build) needs a scene record in data/scenes.json and that is not written in this unit. Until it is, a player with blocks can pillar out of the well onto the gallery and skip both the stacks and the arcade."
+  }
+ ],
+ "spawn_suppression": {
+  "record": "gym_sabrina",
+  "box": [
+   6176,
+   3304,
+   6215,
+   3335
+  ],
+  "note": "data/spawn_suppression.json gym_sabrina, UNCHANGED, and this building lies wholly inside it. That is by construction and it was the binding constraint on the footprint: the box's north edge is z3304 while the gym lot runs north to z3302, so the lot's two northernmost rows are NOT covered and nothing is built on them. Every written cell of this record lies in x6182-6210 (inside 6176-6215) and z3306-3332 (inside 3304-3335). The box is already whole 8-blocks - 6176/8=772, 3304/8=413, 6216/8=777, 3336/8=417 - so tools/suppress_inherited_spawns.py does not fail closed on it and no change to data/spawn_suppression.json is needed for this gym. Growing it would have had to be an outward snap to the 8-block grid, which cost a cycle on 2026-09-30 at four other gyms; building inside it costs nothing."
+ },
+ "blocks": [
+  "minecraft:air",
+  "minecraft:stone",
+  "minecraft:calcite",
+  "minecraft:smooth_quartz",
+  "minecraft:quartz_block",
+  "minecraft:quartz_pillar",
+  "minecraft:chiseled_quartz_block",
+  "minecraft:polished_diorite",
+  "minecraft:birch_planks",
+  "minecraft:birch_log",
+  "minecraft:purpur_block",
+  "minecraft:purpur_pillar",
+  "minecraft:end_rod",
+  "minecraft:pearlescent_froglight",
+  "minecraft:tinted_glass",
+  "minecraft:bookshelf",
+  "minecraft:lectern",
+  "minecraft:ladder",
+  "minecraft:chest",
+  "minecraft:redstone_block",
+  "rctmod:trainer_spawner"
+ ],
+ "blocks_why": "the town's own palette (docs/world-building/TOWN_CHARACTER.md gym6_town: calcite, smooth quartz, polished diorite, birch; purpur and end rods as accents) plus the lamp the town plan already names for this settlement (minecraft:pearlescent_froglight, 'a pale violet light for the psychic town ... not a spawn condition'). There is NO water and NO lava in this gym, so no source can leak and nothing can drown; no leaves, so nothing decays; no soul sand, so there is no bubble column to prove; and no lanterns or chains anywhere - every light in the building is a froglight let flush into a floor or a wall, which is a full block and cannot pop. Thirty-one lanterns stood in mid air across the five interiors this work replaces, and four of Misty's still do.",
+ "parts": [
+  {
+   "op": "comment",
+   "why": "gym 6, Sabrina: the Hall of Lenses (data/gym_buildings/gym6.json). Runs at R16G, after the pack donors (R16E). Gyms 6 and 8 have no tools/gym_demolish.py record, so this function takes the COBBLEVERSE donor shell down itself: the donor gym6_gym_building (cobbleverse:sabrina) occupies 6183,96,3306..6209,112,3329 and the two clearing parts below cover every cell of it."
+  },
+  {
+   "op": "fill",
+   "box": [
+    6182,
+    98,
+    3306,
+    6210,
+    128,
+    3332
+   ],
+   "block": "minecraft:air",
+   "why": "-- clear everything over the pad inside the building's bounds, so the build is the same on a fresh export, on a re-apply, and over the donor shell (whose upper 16 courses, y98-112, are inside this box)"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6182,
+    92,
+    3306,
+    6210,
+    97,
+    3332
+   ],
+   "block": "minecraft:stone",
+   "why": "and re-make the six courses under the pad back to rock. The donor shell's own base course stands at y96, one under the levelled lot, and this is what removes it. The pad's y is the lot's declared level 97 from data/placements.json gym6_town plan.anchors gym6_gym - never read from a world"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6183,
+    97,
+    3307,
+    6209,
+    97,
+    3331
+   ],
+   "block": "minecraft:polished_diorite",
+   "why": "the hall's floor course at y97: polished diorite, the town's own paving. A player walks at y98"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6183,
+    98,
+    3307,
+    6183,
+    117,
+    3331
+   ],
+   "block": "minecraft:calcite",
+   "why": "the west wall, calcite, twenty courses to the eaves"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6209,
+    98,
+    3307,
+    6209,
+    117,
+    3331
+   ],
+   "block": "minecraft:calcite",
+   "why": "the east wall, calcite, twenty courses to the eaves"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6184,
+    98,
+    3307,
+    6208,
+    117,
+    3307
+   ],
+   "block": "minecraft:calcite",
+   "why": "the north wall, calcite, twenty courses to the eaves"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6184,
+    98,
+    3331,
+    6208,
+    117,
+    3331
+   ],
+   "block": "minecraft:calcite",
+   "why": "the south wall, calcite, twenty courses to the eaves"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6183,
+    98,
+    3307,
+    6183,
+    99,
+    3331
+   ],
+   "block": "minecraft:polished_diorite",
+   "why": "the west wall's plinth band, two courses of polished diorite"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6209,
+    98,
+    3307,
+    6209,
+    99,
+    3331
+   ],
+   "block": "minecraft:polished_diorite",
+   "why": "the east wall's plinth band, two courses of polished diorite"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6184,
+    98,
+    3307,
+    6208,
+    99,
+    3307
+   ],
+   "block": "minecraft:polished_diorite",
+   "why": "the north wall's plinth band, two courses of polished diorite"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6184,
+    98,
+    3331,
+    6208,
+    99,
+    3331
+   ],
+   "block": "minecraft:polished_diorite",
+   "why": "the south wall's plinth band, two courses of polished diorite"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6195,
+    98,
+    3331,
+    6197,
+    99,
+    3331
+   ],
+   "block": "minecraft:air",
+   "why": "the door, cut in the south wall on the town's own axis (x6196, street grand_axis): the gym stands at the head of the axis looking back down it, and this is the only opening in the shell"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6194,
+    100,
+    3331,
+    6198,
+    100,
+    3331
+   ],
+   "block": "minecraft:chiseled_quartz_block",
+   "why": "the lintel over the door, chiselled quartz"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     6194,
+     98,
+     3331
+    ],
+    [
+     6194,
+     99,
+     3331
+    ],
+    [
+     6198,
+     98,
+     3331
+    ],
+    [
+     6198,
+     99,
+     3331
+    ]
+   ],
+   "block": "minecraft:quartz_pillar",
+   "why": "the door's jambs"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     6183,
+     112,
+     3313
+    ],
+    [
+     6209,
+     112,
+     3313
+    ],
+    [
+     6183,
+     113,
+     3313
+    ],
+    [
+     6209,
+     113,
+     3313
+    ],
+    [
+     6183,
+     114,
+     3313
+    ],
+    [
+     6209,
+     114,
+     3313
+    ],
+    [
+     6183,
+     112,
+     3319
+    ],
+    [
+     6209,
+     112,
+     3319
+    ],
+    [
+     6183,
+     113,
+     3319
+    ],
+    [
+     6209,
+     113,
+     3319
+    ],
+    [
+     6183,
+     114,
+     3319
+    ],
+    [
+     6209,
+     114,
+     3319
+    ],
+    [
+     6183,
+     112,
+     3325
+    ],
+    [
+     6209,
+     112,
+     3325
+    ],
+    [
+     6183,
+     113,
+     3325
+    ],
+    [
+     6209,
+     113,
+     3325
+    ],
+    [
+     6183,
+     114,
+     3325
+    ],
+    [
+     6209,
+     114,
+     3325
+    ]
+   ],
+   "block": "minecraft:tinted_glass",
+   "why": "the clerestory slits, three a side at y112-114 in tinted glass: the chamber's own light, and the reason the hall reads as a lantern from the square"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6184,
+    104,
+    3308,
+    6187,
+    104,
+    3330
+   ],
+   "block": "minecraft:smooth_quartz",
+   "why": "the gallery's west arm, floor course y104"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6205,
+    104,
+    3308,
+    6208,
+    104,
+    3330
+   ],
+   "block": "minecraft:smooth_quartz",
+   "why": "the gallery's east arm"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6188,
+    104,
+    3308,
+    6204,
+    104,
+    3311
+   ],
+   "block": "minecraft:smooth_quartz",
+   "why": "the gallery's north strip"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6188,
+    104,
+    3327,
+    6204,
+    104,
+    3330
+   ],
+   "block": "minecraft:smooth_quartz",
+   "why": "the gallery's south strip, closing the ring. The well it encloses is x6188-6204 z3312-3326, seventeen by fifteen, open from the hall floor to the roof"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6184,
+    103,
+    3308,
+    6187,
+    103,
+    3330
+   ],
+   "block": "minecraft:birch_planks",
+   "why": "the west arm's birch soffit"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6205,
+    103,
+    3308,
+    6208,
+    103,
+    3330
+   ],
+   "block": "minecraft:birch_planks",
+   "why": "the east arm's birch soffit"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6188,
+    103,
+    3308,
+    6204,
+    103,
+    3311
+   ],
+   "block": "minecraft:birch_planks",
+   "why": "the north strip's soffit"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6188,
+    103,
+    3327,
+    6204,
+    103,
+    3330
+   ],
+   "block": "minecraft:birch_planks",
+   "why": "the south strip's soffit"
+  },
+  {
+   "op": "columns",
+   "cells": [
+    [
+     6187,
+     3311,
+     102
+    ],
+    [
+     6205,
+     3311,
+     102
+    ],
+    [
+     6187,
+     3316,
+     102
+    ],
+    [
+     6205,
+     3316,
+     102
+    ],
+    [
+     6187,
+     3321,
+     102
+    ],
+    [
+     6205,
+     3321,
+     102
+    ],
+    [
+     6187,
+     3326,
+     102
+    ],
+    [
+     6205,
+     3326,
+     102
+    ],
+    [
+     6187,
+     3330,
+     102
+    ],
+    [
+     6205,
+     3330,
+     102
+    ],
+    [
+     6192,
+     3311,
+     102
+    ],
+    [
+     6192,
+     3327,
+     102
+    ],
+    [
+     6196,
+     3311,
+     102
+    ],
+    [
+     6196,
+     3327,
+     102
+    ],
+    [
+     6200,
+     3311,
+     102
+    ],
+    [
+     6200,
+     3327,
+     102
+    ]
+   ],
+   "from_y": 98,
+   "block": "minecraft:quartz_pillar",
+   "why": "the quartz posts under the gallery's inner edge. Each stops at y102 with the gallery's own soffit at y103 over it, so no post can be climbed or stood on: a post's top cell is solid"
+  },
+  {
+   "op": "columns",
+   "cells": [
+    [
+     6198,
+     3325,
+     98
+    ],
+    [
+     6198,
+     3326,
+     98
+    ],
+    [
+     6199,
+     3325,
+     99
+    ],
+    [
+     6199,
+     3326,
+     99
+    ],
+    [
+     6200,
+     3325,
+     100
+    ],
+    [
+     6200,
+     3326,
+     100
+    ],
+    [
+     6201,
+     3325,
+     101
+    ],
+    [
+     6201,
+     3326,
+     101
+    ],
+    [
+     6202,
+     3325,
+     102
+    ],
+    [
+     6202,
+     3326,
+     102
+    ],
+    [
+     6203,
+     3325,
+     103
+    ],
+    [
+     6203,
+     3326,
+     103
+    ],
+    [
+     6204,
+     3325,
+     103
+    ],
+    [
+     6204,
+     3326,
+     103
+    ]
+   ],
+   "from_y": 98,
+   "block": "minecraft:bookshelf",
+   "why": "STAGE 1, the finished stack: seven courses of record shelving rising east along the well's south edge, tops y98,99,100,101,102,103,103. A player steps up one course at a time to feet y104 at x6203-6204, and from there one more course east onto the gallery's east arm (floor y104, walked at y105) or south onto its south strip. It is the only stack in the hall that reaches the gallery"
+  },
+  {
+   "op": "columns",
+   "cells": [
+    [
+     6190,
+     3320,
+     98
+    ],
+    [
+     6190,
+     3319,
+     99
+    ],
+    [
+     6190,
+     3318,
+     100
+    ],
+    [
+     6190,
+     3317,
+     101
+    ],
+    [
+     6190,
+     3316,
+     102
+    ],
+    [
+     6191,
+     3320,
+     98
+    ],
+    [
+     6191,
+     3319,
+     99
+    ],
+    [
+     6191,
+     3318,
+     100
+    ],
+    [
+     6191,
+     3317,
+     101
+    ],
+    [
+     6191,
+     3316,
+     102
+    ]
+   ],
+   "from_y": 98,
+   "block": "minecraft:bookshelf",
+   "why": "decoy stack D1: the same shelving, five courses, topping at y102. A player who climbs it stands with their feet at y103 and the gallery's floor occupies y104, so its walking level is y105 - a two-block rise, which vanilla does not allow and no sprint jump covers (a jump up one clears three blocks; a jump up two clears none). Every decoy stands at least three cells clear of the gallery's edge"
+  },
+  {
+   "op": "columns",
+   "cells": [
+    [
+     6194,
+     3316,
+     98
+    ],
+    [
+     6194,
+     3315,
+     99
+    ],
+    [
+     6194,
+     3314,
+     100
+    ],
+    [
+     6194,
+     3313,
+     101
+    ],
+    [
+     6194,
+     3312,
+     102
+    ],
+    [
+     6195,
+     3316,
+     98
+    ],
+    [
+     6195,
+     3315,
+     99
+    ],
+    [
+     6195,
+     3314,
+     100
+    ],
+    [
+     6195,
+     3313,
+     101
+    ],
+    [
+     6195,
+     3312,
+     102
+    ]
+   ],
+   "from_y": 98,
+   "block": "minecraft:bookshelf",
+   "why": "decoy stack D2: the same shelving, five courses, topping at y102. A player who climbs it stands with their feet at y103 and the gallery's floor occupies y104, so its walking level is y105 - a two-block rise, which vanilla does not allow and no sprint jump covers (a jump up one clears three blocks; a jump up two clears none). Every decoy stands at least three cells clear of the gallery's edge"
+  },
+  {
+   "op": "columns",
+   "cells": [
+    [
+     6199,
+     3322,
+     98
+    ],
+    [
+     6199,
+     3321,
+     99
+    ],
+    [
+     6199,
+     3320,
+     100
+    ],
+    [
+     6199,
+     3319,
+     101
+    ],
+    [
+     6199,
+     3318,
+     102
+    ],
+    [
+     6200,
+     3322,
+     98
+    ],
+    [
+     6200,
+     3321,
+     99
+    ],
+    [
+     6200,
+     3320,
+     100
+    ],
+    [
+     6200,
+     3319,
+     101
+    ],
+    [
+     6200,
+     3318,
+     102
+    ]
+   ],
+   "from_y": 98,
+   "block": "minecraft:bookshelf",
+   "why": "decoy stack D3: the same shelving, five courses, topping at y102. A player who climbs it stands with their feet at y103 and the gallery's floor occupies y104, so its walking level is y105 - a two-block rise, which vanilla does not allow and no sprint jump covers (a jump up one clears three blocks; a jump up two clears none). Every decoy stands at least three cells clear of the gallery's edge"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6209,
+    100,
+    3324,
+    6209,
+    102,
+    3326
+   ],
+   "block": "minecraft:purpur_block",
+   "why": "THE EYE, first of three. A purpur panel set in the east wall directly in line with the finished stack's rise and under the gallery's soffit, so it is read from the hall floor as you come in the door. The eye is the building's one sign, the same for every player, and it marks the way on three times: over the stack that reaches, over the arch that goes through, and over Sabrina's seat. This replaces the per-player design the owner retired: nothing here is instanced, lit for one player or held in one player's state"
+  },
+  {
+   "op": "setblock",
+   "pos": [
+    6209,
+    101,
+    3325
+   ],
+   "block": "minecraft:pearlescent_froglight",
+   "why": "the eye's pupil: pearlescent froglight, the town's own lamp (data/placements.json gym6_town paving lamp). A full block set into the wall, so nothing hangs in air"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     6209,
+     101,
+     3324
+    ],
+    [
+     6209,
+     101,
+     3326
+    ]
+   ],
+   "block": "minecraft:purpur_pillar",
+   "why": "the eye's iris"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6191,
+    105,
+    3308,
+    6192,
+    110,
+    3311
+   ],
+   "block": "minecraft:calcite",
+   "why": "STAGE 2, the arcade: a calcite screen two courses thick across the gallery's north strip, from the strip's floor at y104 up to the chamber's floor at y111. It closes the strip completely"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6191,
+    105,
+    3309,
+    6192,
+    106,
+    3309
+   ],
+   "block": "minecraft:air",
+   "why": "the true arch, at z3309: cut through both courses of the screen, so it gives onto the pocket at x6193 and the turret's door beyond it"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6191,
+    105,
+    3308,
+    6191,
+    106,
+    3308
+   ],
+   "block": "minecraft:air",
+   "why": "a blind recess at z3308: one course deep, with the screen's second course at x6192 solid behind it"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6191,
+    105,
+    3310,
+    6191,
+    106,
+    3310
+   ],
+   "block": "minecraft:air",
+   "why": "a blind recess at z3310: one course deep, solid behind. Two of the three are blind and the third goes through; the arcade is the same for every player and the eye over it says which"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6191,
+    107,
+    3308,
+    6191,
+    108,
+    3310
+   ],
+   "block": "minecraft:purpur_block",
+   "why": "THE EYE, second of three: the purpur panel over the arcade"
+  },
+  {
+   "op": "setblock",
+   "pos": [
+    6191,
+    107,
+    3309
+   ],
+   "block": "minecraft:pearlescent_froglight",
+   "why": "the eye's pupil, over the true arch"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     6191,
+     108,
+     3309
+    ]
+   ],
+   "block": "minecraft:purpur_pillar",
+   "why": "the eye's iris"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6194,
+    105,
+    3308,
+    6194,
+    110,
+    3310
+   ],
+   "block": "minecraft:quartz_block",
+   "why": "the turret's west wall"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6198,
+    105,
+    3308,
+    6198,
+    110,
+    3310
+   ],
+   "block": "minecraft:quartz_block",
+   "why": "the turret's east wall - the wall the ladder hangs on. A ladder[facing=west] is carried by the block to its EAST, so every cell of x6198 at z3309 must stay solid from y105 to y110, and at y111 the chamber's own floor carries the ladder's last rung"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6194,
+    105,
+    3311,
+    6198,
+    110,
+    3311
+   ],
+   "block": "minecraft:quartz_block",
+   "why": "the turret's south wall"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6194,
+    105,
+    3309,
+    6194,
+    106,
+    3309
+   ],
+   "block": "minecraft:air",
+   "why": "the turret's door, in its west wall, reached only through the true arch"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6184,
+    111,
+    3308,
+    6208,
+    111,
+    3318
+   ],
+   "block": "minecraft:polished_diorite",
+   "why": "the lens chamber's floor at y111, over the gallery's north third: polished diorite on a solid slab, walked at y112"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6184,
+    112,
+    3319,
+    6208,
+    117,
+    3319
+   ],
+   "block": "minecraft:calcite",
+   "why": "the chamber's south wall, y112 to y117. Without it the chamber's south edge is a cliff over the well and a fourteen-block drop onto stone - over the twelve data/gym_interiors.json rules.max_fall allows"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6184,
+    118,
+    3308,
+    6208,
+    118,
+    3318
+   ],
+   "block": "minecraft:smooth_quartz",
+   "why": "the chamber's ceiling at y118, at the eaves. The chamber is now closed on six sides and has exactly two openings: the ladder's hole and the drop shaft"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6206,
+    111,
+    3314,
+    6206,
+    111,
+    3314
+   ],
+   "block": "minecraft:air",
+   "why": "the drop shaft: one cell cut in the chamber's floor over the gallery's east arm. Stepping into it is a seven-block fall from y112 onto the arm's floor (feet y105) for four damage - the way back down, and the answer to the review's D8, where Blaine's vault had no exit at all. It cannot be climbed: there is no ladder in it and the chamber's floor is six above the arm's walking level"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6184,
+    117,
+    3308,
+    6208,
+    117,
+    3318
+   ],
+   "block": "minecraft:calcite",
+   "why": "a calcite course under the ceiling, so the chamber reads as vaulted rather than lidded"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6185,
+    117,
+    3309,
+    6207,
+    117,
+    3317
+   ],
+   "block": "minecraft:air",
+   "why": "and cut back to leave only a cornice"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6194,
+    112,
+    3316,
+    6198,
+    112,
+    3316
+   ],
+   "block": "minecraft:polished_diorite",
+   "why": "the dais' front edge"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6192,
+    111,
+    3310,
+    6200,
+    111,
+    3316
+   ],
+   "block": "minecraft:smooth_quartz",
+   "why": "the lens floor: a quartz panel let into the chamber's floor, the shape the observatory's own lens makes on the ground at noon. Sabrina sits at its centre"
+  },
+  {
+   "op": "setblock",
+   "pos": [
+    6196,
+    111,
+    3312
+   ],
+   "block": "minecraft:redstone_block",
+   "why": "the redstone block set into the lens floor. EXP-013 E2 (VERIFIED, on staging): an unpowered rctmod:trainer_spawner spawns nobody; on a redstone block the leader spawned and battled"
+  },
+  {
+   "op": "setblock",
+   "pos": [
+    6196,
+    112,
+    3312
+   ],
+   "block": "rctmod:trainer_spawner{TrainerIds:[\"kanto_sabrina\"]}",
+   "why": "Sabrina. kanto_sabrina is the upstream id (Radical Cobblemon Trainers); the donor shell's own spawner at the gym's old centre goes with the shell in the clearing fill above, so this is the only kanto_sabrina in the town. Two air cells stand over it (y113, y114) and nothing is written there"
+  },
+  {
+   "op": "setblock",
+   "pos": [
+    6200,
+    112,
+    3312
+   ],
+   "block": "minecraft:chest",
+   "why": "Sabrina's chest, four cells east of her on the lens floor, reachable from the chamber's own walking level. No healing machine stands in this gym or anywhere near it (the brief)"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     6193,
+     111,
+     3310
+    ],
+    [
+     6199,
+     111,
+     3310
+    ],
+    [
+     6193,
+     111,
+     3316
+    ],
+    [
+     6199,
+     111,
+     3316
+    ]
+   ],
+   "block": "minecraft:pearlescent_froglight",
+   "why": "four froglights let into the lens floor's corners, flush, carrying no player anywhere"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6196,
+    114,
+    3308,
+    6196,
+    116,
+    3308
+   ],
+   "block": "minecraft:purpur_block",
+   "why": "THE EYE, third of three, set in the chamber's north wall behind Sabrina's seat: the same sign that marked the stack and the arch, and the reason the building is legible without a word of dialogue"
+  },
+  {
+   "op": "setblock",
+   "pos": [
+    6196,
+    115,
+    3308
+   ],
+   "block": "minecraft:pearlescent_froglight",
+   "why": "its pupil"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     6195,
+     115,
+     3308
+    ],
+    [
+     6197,
+     115,
+     3308
+    ]
+   ],
+   "block": "minecraft:purpur_pillar",
+   "why": "its iris"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     6188,
+     112,
+     3310
+    ],
+    [
+     6204,
+     112,
+     3310
+    ],
+    [
+     6188,
+     112,
+     3316
+    ],
+    [
+     6204,
+     112,
+     3316
+    ]
+   ],
+   "block": "minecraft:lectern",
+   "why": "four lecterns on the chamber's floor - the readers' places. Each stands on the floor course at y111, so none of them is over air (the review's F6 class: 31 lanterns stood in mid air across the five interiors this work replaces)"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     6186,
+     98,
+     3312
+    ],
+    [
+     6186,
+     98,
+     3320
+    ],
+    [
+     6186,
+     98,
+     3328
+    ],
+    [
+     6206,
+     98,
+     3312
+    ],
+    [
+     6206,
+     98,
+     3320
+    ],
+    [
+     6206,
+     98,
+     3328
+    ]
+   ],
+   "block": "minecraft:lectern",
+   "why": "the reading stalls under the gallery, each on the hall's own floor course"
+  },
+  {
+   "op": "scatter",
+   "positions": [
+    [
+     6184,
+     97,
+     3314
+    ],
+    [
+     6184,
+     97,
+     3324
+    ],
+    [
+     6208,
+     97,
+     3314
+    ],
+    [
+     6208,
+     97,
+     3324
+    ],
+    [
+     6190,
+     97,
+     3309
+    ],
+    [
+     6202,
+     97,
+     3309
+    ],
+    [
+     6190,
+     97,
+     3329
+    ],
+    [
+     6202,
+     97,
+     3329
+    ]
+   ],
+   "block": "minecraft:pearlescent_froglight",
+   "why": "froglights let flush into the hall's floor course, the town's flush lamp. Full blocks in a floor: nothing can pop"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6195,
+    97,
+    3320,
+    6197,
+    97,
+    3322
+   ],
+   "block": "minecraft:purpur_block",
+   "why": "the reading circle inlaid in the hall floor"
+  },
+  {
+   "op": "setblock",
+   "pos": [
+    6196,
+    97,
+    3321
+   ],
+   "block": "minecraft:pearlescent_froglight",
+   "why": "its centre"
+  },
+  {
+   "op": "fill",
+   "box": [
+    6197,
+    105,
+    3309,
+    6197,
+    111,
+    3309
+   ],
+   "block": "minecraft:ladder[facing=west]",
+   "why": "STAGE 3, the turret ladder, WRITTEN LAST ON PURPOSE. GYM_BUILDINGS_REVIEW D2: Brock's hoist ladder was cut through by the gallery floor written after it and re-cut to AIR, and his gym could not be finished. Here the chamber's floor at y111 is written first and this fill then re-cuts the cell (6197,111,3309) as LADDER, not air. The run is y105 to y111: a player climbs to feet y111 and steps up and across onto the chamber's floor at feet y112. Coming back, stepping into the ladder's cell from the chamber is caught by the ladder and costs nothing"
+  },
+  {
+   "op": "gable_roof",
+   "box": [
+    6183,
+    3307,
+    6209,
+    3331
+   ],
+   "eaves_y": 118,
+   "run": "x",
+   "material": "minecraft:smooth_quartz",
+   "edge": "minecraft:chiseled_quartz_block",
+   "gable": "minecraft:calcite",
+   "gable_from_y": 118,
+   "overhang": 1,
+   "why": "the roof: smooth quartz stepped one course every two columns with the ridge running north-south down x6196 at y124, calcite gables at z3307 and z3331, and a chiselled-quartz eaves course one cell outside the walls all round. Twenty-seven above the floor"
+  }
+ ]
+}
