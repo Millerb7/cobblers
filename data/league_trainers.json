@@ -1,147 +1,153 @@
 {
- "schema": "cobblers.league-trainers/1",
- "status": "authored 2026-09-30; overrides only, no coordinates, nothing placed in a world",
- "consumed_by": "tools/route_trainers.py, which emits the five overrides into build/datapacks/cobblers_trainers",
- "why_overrides_and_not_seats": "The League is not ours to furnish. data/structures.json (cobbleverse:kanto_league, read from COBBLEVERSE-DP-v31.zip) records that the 111x159x120 template already carries five rctmod:trainer_spawner blocks locked to kanto_league_lorelei, kanto_league_bruno, kanto_league_agatha, kanto_league_lance and kanto_champion_blue, and docs/world-building/STRUCTURE_INVENTORY.md says the same. Our campaign is already bound to those upstream ids rather than to ours: data/progression.json's champion_cleared flag is set by defeating kanto_champion_blue, exactly as gym1_cleared is set by kanto_brock. So the way our five authored teams reach a player is to override the upstream ids' team data at the upstream path (.claude/rules/datapacks.md), which is what data/progression.json's upstream_neutralised already does for the same trainers' loot tables. Seating five new trainers at hand-chosen coordinates would need the template's interior geometry, which is not in this repo at all -- the template is placed by resource id from the installed pack and never copied in -- and would leave the template's own five spawners in the rooms beside them.",
- "measured_from": "data/placements.json league_building: pack_template cobbleverse:kanto_league at (3754, 88, 2375), rotation clockwise_90, anchor corner, size [111, 159, 120], so the building occupies x3635-3754 z2375-2485 with its floor at y88 and its entrance facing south down Victory Road's arrival. data/placements.json settlements.league puts that arrival at (3656, 2486), three blocks from the door. Every seat lies inside that box; none is measured from a world save.",
- "order_enforced_by": "The template, not by us. docs/world-building/STRUCTURE_INVENTORY.md: 'The league is one 111x159x120 template with five trainer spawners (Lorelei, Bruno, Agatha, Lance, Blue). A LumyMon elevator in it requires the advancement cobbleverse:trainer/kanto/defeat_elite_lance' -- so the Champion's floor cannot be reached until Lance is beaten, and data/structures.json carries that same advancement as the structure's one required_advancement. The four rooms run in order ahead of it. Overriding only the team and the dialogue leaves every gate, door and spawner upstream's, so the order we inherit is the order Cobbleverse built.",
- "order_not_verified": "What gates rooms 1 to 4 from one another inside the template has not been read out of the template here, only the elevator's advancement has. The repo does not hold the template's blocks. An in-game walk of the League (and a look at whether a beaten room's door stays open for a second player at a different point in the order) is the only thing that settles it.",
- "not_emitted": "Deliberately not written for these five: the rctmod mob file (upstream's spawner owns how each is spawned, and a spawnWeightFactor 0 override could break it), a loot table (the Champion's is already emptied by data/progression.json upstream_neutralised; the four elites' upstream tables are left alone, which is that unit's call and not this one's), an advancement (champion_cleared already fires from kanto_champion_blue through tools/progression_pack.py), and any entry in tools/route_trainers.py placements(), because there is no seat for tools/reapply.py to summon at.",
- "trainers": [
-  {
-   "id": "elite_01_lorelei",
-   "upstream_trainer_id": "kanto_league_lorelei",
-   "order": 1,
-   "display_name": "Lorelei",
-   "theme": "Ice",
-   "members": 6,
-   "levels": [
-    57,
-    60
-   ],
-   "ace": {
-    "species": "lapras",
-    "level": 60
-   },
-   "seat": null,
-   "seat_is": "the rctmod:trainer_spawner that Cobbleverse's kanto_league template already carries for kanto_league_lorelei. tools/place_donor.py stamps the template whole from data/placements.json league_building, so the spawner arrives with the room around it and no coordinate is authored here.",
-   "emit": [
-    "data/rctmod/trainers/kanto_league_lorelei.json",
-    "data/rctmod/dialogs/trainers/single/kanto_league_lorelei.json"
-   ],
-   "dialogue_text": {
-    "pre": "The first room is cold on purpose. Most applicants arrive out of breath and lose to the snow.",
-    "player_win": "You kept something in reserve. Bruno will take it off you.",
-    "player_loss": "You spent everything on the climb. The climb was the easy part."
-   }
-  },
-  {
-   "id": "elite_02_bruno",
-   "upstream_trainer_id": "kanto_league_bruno",
-   "order": 2,
-   "display_name": "Bruno",
-   "theme": "Fighting",
-   "members": 6,
-   "levels": [
-    57,
-    60
-   ],
-   "ace": {
-    "species": "hitmonlee",
-    "level": 60
-   },
-   "seat": null,
-   "seat_is": "the rctmod:trainer_spawner that Cobbleverse's kanto_league template already carries for kanto_league_bruno. tools/place_donor.py stamps the template whole from data/placements.json league_building, so the spawner arrives with the room around it and no coordinate is authored here.",
-   "emit": [
-    "data/rctmod/trainers/kanto_league_bruno.json",
-    "data/rctmod/dialogs/trainers/single/kanto_league_bruno.json"
-   ],
-   "dialogue_text": {
-    "pre": "Lorelei slows people down. I find out what is left when they cannot stall.",
-    "player_win": "Nothing clever, and you still beat it. Agatha is next, and she is clever.",
-    "player_loss": "No hazards, no tricks. You were simply outlasted."
-   }
-  },
-  {
-   "id": "elite_03_agatha",
-   "upstream_trainer_id": "kanto_league_agatha",
-   "order": 3,
-   "display_name": "Agatha",
-   "theme": "Ghost",
-   "members": 6,
-   "levels": [
-    57,
-    60
-   ],
-   "ace": {
-    "species": "gengar",
-    "level": 60
-   },
-   "seat": null,
-   "seat_is": "the rctmod:trainer_spawner that Cobbleverse's kanto_league template already carries for kanto_league_agatha. tools/place_donor.py stamps the template whole from data/placements.json league_building, so the spawner arrives with the room around it and no coordinate is authored here.",
-   "emit": [
-    "data/rctmod/trainers/kanto_league_agatha.json",
-    "data/rctmod/dialogs/trainers/single/kanto_league_agatha.json"
-   ],
-   "dialogue_text": {
-    "pre": "Two rooms behind you and no potions left. Good. Now let us see you in the dark.",
-    "player_win": "You did not panic. Lance will not care, but I do.",
-    "player_loss": "You fought what you could see. That was never the problem."
-   }
-  },
-  {
-   "id": "elite_04_lance",
-   "upstream_trainer_id": "kanto_league_lance",
-   "order": 4,
-   "display_name": "Lance",
-   "theme": "Dragon",
-   "members": 6,
-   "levels": [
-    57,
-    60
-   ],
-   "ace": {
-    "species": "dragonite",
-    "level": 60
-   },
-   "seat": null,
-   "seat_is": "the rctmod:trainer_spawner that Cobbleverse's kanto_league template already carries for kanto_league_lance. tools/place_donor.py stamps the template whole from data/placements.json league_building, so the spawner arrives with the room around it and no coordinate is authored here.",
-   "emit": [
-    "data/rctmod/trainers/kanto_league_lance.json",
-    "data/rctmod/dialogs/trainers/single/kanto_league_lance.json"
-   ],
-   "dialogue_text": {
-    "pre": "The lift behind me does not open for anyone who has not beaten me. That is the whole rule.",
-    "player_win": "The lift is yours. Whatever is up there, you earned the ride.",
-    "player_loss": "Down you go. The lift stays shut."
-   }
-  },
-  {
-   "id": "champion_blue",
-   "upstream_trainer_id": "kanto_champion_blue",
-   "order": 5,
-   "display_name": "Blue",
-   "theme": "Mixed",
-   "members": 6,
-   "levels": [
-    58,
-    62
-   ],
-   "ace": {
-    "species": "blastoise",
-    "level": 62
-   },
-   "seat": null,
-   "seat_is": "the rctmod:trainer_spawner that Cobbleverse's kanto_league template already carries for kanto_champion_blue. tools/place_donor.py stamps the template whole from data/placements.json league_building, so the spawner arrives with the room around it and no coordinate is authored here.",
-   "emit": [
-    "data/rctmod/trainers/kanto_champion_blue.json",
-    "data/rctmod/dialogs/trainers/single/kanto_champion_blue.json"
-   ],
-   "dialogue_text": {
-    "pre": "So you came up the Rift the long way. Four rooms and a lift, and here you are anyway.",
-    "player_win": "Champion, then. Somebody had to be, and I am glad it took this much.",
-    "player_loss": "Four rooms and a lift, and you still had nothing left at the top. Come back."
-   }
-  }
- ]
+  "schema": "cobblers.league-trainers/1",
+  "status": "authored 2026-09-30; overrides only, no coordinates, nothing placed in a world",
+  "consumed_by": "tools/route_trainers.py, which emits the five overrides into build/datapacks/cobblers_trainers",
+  "why_overrides_and_not_seats": "The League is not ours to furnish. data/structures.json (cobbleverse:kanto_league, read from COBBLEVERSE-DP-v31.zip) records that the 111x159x120 template already carries five rctmod:trainer_spawner blocks locked to kanto_league_lorelei, kanto_league_bruno, kanto_league_agatha, kanto_league_lance and kanto_champion_blue, and docs/world-building/STRUCTURE_INVENTORY.md says the same. Our campaign is already bound to those upstream ids rather than to ours: data/progression.json's champion_cleared flag is set by defeating kanto_champion_blue, exactly as gym1_cleared is set by kanto_brock. So the way our five authored teams reach a player is to override the upstream ids' team data at the upstream path (.claude/rules/datapacks.md), which is what data/progression.json's upstream_neutralised already does for the same trainers' loot tables. Seating five new trainers at hand-chosen coordinates would need the template's interior geometry, which is not in this repo at all -- the template is placed by resource id from the installed pack and never copied in -- and would leave the template's own five spawners in the rooms beside them.",
+  "measured_from": "data/placements.json league_building: pack_template cobbleverse:kanto_league at (3754, 88, 2375), rotation clockwise_90, anchor corner, size [111, 159, 120], so the building occupies x3635-3754 z2375-2485 with its floor at y88 and its entrance facing south down Victory Road's arrival. data/placements.json settlements.league puts that arrival at (3656, 2486), three blocks from the door. Every seat lies inside that box; none is measured from a world save.",
+  "order_enforced_by": "The template, not by us. docs/world-building/STRUCTURE_INVENTORY.md: 'The league is one 111x159x120 template with five trainer spawners (Lorelei, Bruno, Agatha, Lance, Blue). A LumyMon elevator in it requires the advancement cobbleverse:trainer/kanto/defeat_elite_lance' -- so the Champion's floor cannot be reached until Lance is beaten, and data/structures.json carries that same advancement as the structure's one required_advancement. The four rooms run in order ahead of it. Overriding only the team and the dialogue leaves every gate, door and spawner upstream's, so the order we inherit is the order Cobbleverse built.",
+  "order_not_verified": "What gates rooms 1 to 4 from one another inside the template has not been read out of the template here, only the elevator's advancement has. The repo does not hold the template's blocks. An in-game walk of the League (and a look at whether a beaten room's door stays open for a second player at a different point in the order) is the only thing that settles it.",
+  "not_emitted": "Deliberately not written for these five: the rctmod mob file (upstream's spawner owns how each is spawned, and a spawnWeightFactor 0 override could break it), a loot table (the Champion's is already emptied by data/progression.json upstream_neutralised; the four elites' upstream tables are left alone, which is that unit's call and not this one's), an advancement (champion_cleared already fires from kanto_champion_blue through tools/progression_pack.py), and any entry in tools/route_trainers.py placements(), because there is no seat for tools/reapply.py to summon at.",
+  "trainers": [
+    {
+      "id": "elite_01_lorelei",
+      "upstream_trainer_id": "kanto_league_lorelei",
+      "order": 1,
+      "display_name": "Lorelei",
+      "theme": "Ice",
+      "members": 6,
+      "levels": [
+        57,
+        60
+      ],
+      "ace": {
+        "species": "lapras",
+        "level": 60
+      },
+      "seat": null,
+      "seat_is": "the rctmod:trainer_spawner that Cobbleverse's kanto_league template already carries for kanto_league_lorelei. tools/place_donor.py stamps the template whole from data/placements.json league_building, so the spawner arrives with the room around it and no coordinate is authored here.",
+      "emit": [
+        "data/rctmod/trainers/kanto_league_lorelei.json",
+        "data/rctmod/dialogs/trainers/single/kanto_league_lorelei.json"
+      ],
+      "dialogue_text": {
+        "pre": "The first room is cold on purpose. Most applicants arrive out of breath and lose to the snow.",
+        "player_win": "You kept something in reserve. Bruno will take it off you.",
+        "player_loss": "You spent everything on the climb. The climb was the easy part."
+      },
+      "battle_format": "GEN_9_SINGLES"
+    },
+    {
+      "id": "elite_02_bruno",
+      "upstream_trainer_id": "kanto_league_bruno",
+      "order": 2,
+      "display_name": "Bruno",
+      "theme": "Fighting",
+      "members": 6,
+      "levels": [
+        57,
+        60
+      ],
+      "ace": {
+        "species": "hitmonlee",
+        "level": 60
+      },
+      "seat": null,
+      "seat_is": "the rctmod:trainer_spawner that Cobbleverse's kanto_league template already carries for kanto_league_bruno. tools/place_donor.py stamps the template whole from data/placements.json league_building, so the spawner arrives with the room around it and no coordinate is authored here.",
+      "emit": [
+        "data/rctmod/trainers/kanto_league_bruno.json",
+        "data/rctmod/dialogs/trainers/single/kanto_league_bruno.json"
+      ],
+      "dialogue_text": {
+        "pre": "Lorelei slows people down. I find out what is left when they cannot stall.",
+        "player_win": "Nothing clever, and you still beat it. Agatha is next, and she is clever.",
+        "player_loss": "No hazards, no tricks. You were simply outlasted."
+      },
+      "battle_format": "GEN_9_SINGLES"
+    },
+    {
+      "id": "elite_03_agatha",
+      "upstream_trainer_id": "kanto_league_agatha",
+      "order": 3,
+      "display_name": "Agatha",
+      "theme": "Ghost",
+      "members": 6,
+      "levels": [
+        57,
+        60
+      ],
+      "ace": {
+        "species": "gengar",
+        "level": 60
+      },
+      "seat": null,
+      "seat_is": "the rctmod:trainer_spawner that Cobbleverse's kanto_league template already carries for kanto_league_agatha. tools/place_donor.py stamps the template whole from data/placements.json league_building, so the spawner arrives with the room around it and no coordinate is authored here.",
+      "emit": [
+        "data/rctmod/trainers/kanto_league_agatha.json",
+        "data/rctmod/dialogs/trainers/single/kanto_league_agatha.json"
+      ],
+      "dialogue_text": {
+        "pre": "Two rooms behind you and no potions left. Good. Now let us see you in the dark.",
+        "player_win": "You did not panic. Lance will not care, but I do.",
+        "player_loss": "You fought what you could see. That was never the problem."
+      },
+      "battle_format": "GEN_9_SINGLES"
+    },
+    {
+      "id": "elite_04_lance",
+      "upstream_trainer_id": "kanto_league_lance",
+      "order": 4,
+      "display_name": "Lance",
+      "theme": "Dragon",
+      "members": 6,
+      "levels": [
+        57,
+        60
+      ],
+      "ace": {
+        "species": "dragonite",
+        "level": 60
+      },
+      "seat": null,
+      "seat_is": "the rctmod:trainer_spawner that Cobbleverse's kanto_league template already carries for kanto_league_lance. tools/place_donor.py stamps the template whole from data/placements.json league_building, so the spawner arrives with the room around it and no coordinate is authored here.",
+      "emit": [
+        "data/rctmod/trainers/kanto_league_lance.json",
+        "data/rctmod/dialogs/trainers/single/kanto_league_lance.json"
+      ],
+      "dialogue_text": {
+        "pre": "The lift behind me does not open for anyone who has not beaten me. That is the whole rule.",
+        "player_win": "The lift is yours. Whatever is up there, you earned the ride.",
+        "player_loss": "Down you go. The lift stays shut."
+      },
+      "battle_format": "GEN_9_SINGLES"
+    },
+    {
+      "id": "champion_blue",
+      "upstream_trainer_id": "kanto_champion_blue",
+      "order": 5,
+      "display_name": "Blue",
+      "theme": "Mixed",
+      "members": 6,
+      "levels": [
+        58,
+        62
+      ],
+      "ace": {
+        "species": "blastoise",
+        "level": 62
+      },
+      "seat": null,
+      "seat_is": "the rctmod:trainer_spawner that Cobbleverse's kanto_league template already carries for kanto_champion_blue. tools/place_donor.py stamps the template whole from data/placements.json league_building, so the spawner arrives with the room around it and no coordinate is authored here.",
+      "emit": [
+        "data/rctmod/trainers/kanto_champion_blue.json",
+        "data/rctmod/dialogs/trainers/single/kanto_champion_blue.json"
+      ],
+      "dialogue_text": {
+        "pre": "So you came up the Rift the long way. Four rooms and a lift, and here you are anyway.",
+        "player_win": "Champion, then. Somebody had to be, and I am glad it took this much.",
+        "player_loss": "Four rooms and a lift, and you still had nothing left at the top. Come back."
+      },
+      "battle_format": "GEN_9_SINGLES"
+    }
+  ],
+  "battle_format_why": "Every one of the twelve trainers we override is GEN_9_SINGLES in COBBLEVERSE-RCT-DP-v20's own file, read from the installed zip on 2026-09-30. It is declared here rather than inherited because OUR FILE REPLACES UPSTREAM'S WHOLE FILE: anything upstream sets that we do not set is gone, and battleFormat was the one key all twelve were dropping. tools/route_trainers.py's docstring justified leaving it out with 'singles is the default' - which is probably true, and was still an assumption about a mod's behaviour standing between a player and every gym battle in the game. 9 of upstream's 155 trainers are GEN_9_DOUBLES, so the field does something. Stating it costs nothing and removes the assumption. The zip is gitignored and machine-local, so the value lives here and the generator stays self-contained."
 }

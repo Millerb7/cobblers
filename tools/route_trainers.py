@@ -29,8 +29,9 @@ A seated trainer gets:
 
   data/rctmod/trainers/<id>.json                    the team: name, ai, battleRules, bag, team from the record's rct
                                                     payload. rctapi 0.16's TrainerModel reads name, ai, bag, team and
-                                                    battleTheme (read from the jar, 2026-09-24); battleFormat is left
-                                                    out (singles is the default), battleRules is rctmod's own key
+                                                    battleTheme (read from the jar, 2026-09-24); battleRules is rctmod's own key.
+                                                    An OVERRIDE (below) also writes battleFormat, because it replaces
+                                                    upstream's whole file and would otherwise drop it
   data/rctmod/mobs/trainers/single/<id>.json        who it is to rctmod: type normal, no series, never spawns naturally
                                                     (spawnWeightFactor 0), beaten once per player (maxTrainerDefeats 1),
                                                     its skin (textureResource: one of rctmod's own trainer textures, which
@@ -228,8 +229,12 @@ def files():
     over, _held = overrides()
     for rec, upstream, entry, _src in over:
         rct = rec["rct"]
-        out["data/rctmod/trainers/%s.json" % upstream] = {k: rct[k] for k in
-                                                          ("name", "ai", "battleRules", "bag", "team") if k in rct}
+        over_file = {k: rct[k] for k in ("name", "ai", "battleRules", "bag", "team") if k in rct}
+        # battleFormat, from the record and not inherited: THIS FILE REPLACES UPSTREAM'S WHOLE FILE, so a key we
+        # do not write is a key the game loses. All twelve read GEN_9_SINGLES in COBBLEVERSE-RCT-DP-v20 (checked
+        # 2026-09-30) and all twelve were silently dropping it. See battle_format_why in the two data files.
+        over_file["battleFormat"] = entry.get("battle_format", "GEN_9_SINGLES")
+        out["data/rctmod/trainers/%s.json" % upstream] = over_file
         if not entry.get("dialogue_text"):
             continue
         d = lines_of(rec, entry)
