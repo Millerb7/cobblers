@@ -189,3 +189,37 @@ gym interiors and rift mines packs and read back out of the world
 the gym interiors audit compares the emitted functions with
 `data/gym_interiors.json`, and by that comparison the lantern is
 correct.
+
+## F11 — the eight gym leaders fight with COBBLEVERSE's teams, not ours
+
+Found 2026-09-30 by the agent that seated Victory Road's fights, while looking for how the League's
+five reach the game. Independently re-checked in the full checkout before being believed.
+
+`data/trainers.json` holds 63 authored trainers, among them `gym_01_brock` through
+`gym_08_giovanni`, with the whole designed curve behind them: `generation_contract.gym_ace_levels`
+is `[20, 25, 30, 35, 40, 45, 50, 55]`, and 12 authored boss rosters.
+
+**None of it is emitted.** `grep -rl "gym_01_brock" build/ modpack/ server/` returns nothing. The only
+files we write under an upstream leader's name are loot tables -
+`cobblers_progression/data/rctmod/loot_table/trainers/single/kanto_brock.json` and the `first_win`
+tables beside them. The trainer definitions themselves, `data/rctmod/trainers/kanto_*.json`, we never
+write. `cobblers_trainers` emits rctmod trainers for the League five, the five mansion guardians, the
+thirteen Routes 1-3 seats and Victory Road's ten - and not one gym leader.
+
+So every gym battle in the game today uses the COBBLEVERSE roster. The reward for winning is ours;
+the fight is not. The level caps, the ace levels, the type coverage and every balance decision
+recorded for the eight leaders are sitting in a file nothing reads.
+
+This is the fifth time (CLAUDE.md, "Work done in the repo that never reached the running game has
+happened four times"): the spawn tables, five config overlays, the re-apply steps, the structures
+pack - and now the leaders' teams.
+
+**The mechanism to fix it already exists and is proven for the League.** On 2026-09-30
+`tools/route_trainers.py` learned to write an override at the UPSTREAM path - our team and dialogue
+on top of `kanto_league_lorelei` and the rest - precisely because the `kanto_league` template's
+spawners are locked to the upstream ids and cannot be re-pointed. A gym leader is the same shape:
+`gym1_cleared` binds to `kanto_brock`, the gym's `rctmod:trainer_spawner` names the upstream id, and
+the override goes at `data/rctmod/trainers/kanto_brock.json`.
+
+Not fixed in the commit that records this. It changes the difficulty of all eight gym fights at once,
+which deserves to be a unit of its own with its own audit.

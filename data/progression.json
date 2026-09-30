@@ -72,7 +72,11 @@
       },
       "waystone": {
         "town": "gym1_town",
-        "position": [1756, 139, 3606]
+        "position": [
+          1756,
+          139,
+          3606
+        ]
       },
       "offers_marker": "gym2_town"
     },
@@ -97,7 +101,11 @@
       },
       "waystone": {
         "town": "gym2_town",
-        "position": [1620, 109, 2800]
+        "position": [
+          1620,
+          109,
+          2800
+        ]
       },
       "offers_marker": "gym3_town"
     },
@@ -122,7 +130,11 @@
       },
       "waystone": {
         "town": "gym3_town",
-        "position": [1662, 175, 1388]
+        "position": [
+          1662,
+          175,
+          1388
+        ]
       },
       "offers_marker": "gym4_town"
     },
@@ -147,7 +159,11 @@
       },
       "waystone": {
         "town": "gym4_town",
-        "position": [4276, 110, 1554]
+        "position": [
+          4276,
+          110,
+          1554
+        ]
       },
       "offers_marker": "gym5_town"
     },
@@ -172,7 +188,11 @@
       },
       "waystone": {
         "town": "gym5_town",
-        "position": [4668, 118, 2422]
+        "position": [
+          4668,
+          118,
+          2422
+        ]
       },
       "offers_marker": "gym6_town"
     },
@@ -197,7 +217,11 @@
       },
       "waystone": {
         "town": "gym6_town",
-        "position": [6186, 95, 3386]
+        "position": [
+          6186,
+          95,
+          3386
+        ]
       },
       "offers_marker": "gym7_town"
     },
@@ -222,7 +246,11 @@
       },
       "waystone": {
         "town": "gym7_town",
-        "position": [6064, 109, 4984]
+        "position": [
+          6064,
+          109,
+          4984
+        ]
       },
       "offers_marker": "gym8_town"
     },
@@ -247,7 +275,11 @@
       },
       "waystone": {
         "town": "gym8_town",
-        "position": [3594, 114, 6444]
+        "position": [
+          3594,
+          114,
+          6444
+        ]
       },
       "offers_marker": "league"
     },
@@ -1516,6 +1548,96 @@
       "type": "boolean",
       "scope": "player",
       "initial": false
+    },
+    {
+      "id": "quest.route_09_trainer_01.defeated",
+      "quest_id": "route_09_trainer_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Victory Road fight 1 of 10, seated 2026-09-30 by tools/route_trainers.py on the stand tools/vr_caves.py already carved (data/vr_trainers.json). Numbered route_09_* because Victory Road is the ninth leg in data/routes.json, after route_08_blaine_to_giovanni."
+    },
+    {
+      "id": "quest.route_09_trainer_02.defeated",
+      "quest_id": "route_09_trainer_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Victory Road fight 2 of 10, seated 2026-09-30 by tools/route_trainers.py on the stand tools/vr_caves.py already carved (data/vr_trainers.json). Numbered route_09_* because Victory Road is the ninth leg in data/routes.json, after route_08_blaine_to_giovanni."
+    },
+    {
+      "id": "quest.route_09_trainer_03.defeated",
+      "quest_id": "route_09_trainer_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Victory Road fight 3 of 10, seated 2026-09-30 by tools/route_trainers.py on the stand tools/vr_caves.py already carved (data/vr_trainers.json). Numbered route_09_* because Victory Road is the ninth leg in data/routes.json, after route_08_blaine_to_giovanni."
+    },
+    {
+      "id": "quest.route_09_trainer_04.defeated",
+      "quest_id": "route_09_trainer_04",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Victory Road fight 4 of 10, seated 2026-09-30 by tools/route_trainers.py on the stand tools/vr_caves.py already carved (data/vr_trainers.json). Numbered route_09_* because Victory Road is the ninth leg in data/routes.json, after route_08_blaine_to_giovanni."
+    },
+    {
+      "id": "quest.route_09_trainer_05.defeated",
+      "quest_id": "route_09_trainer_05",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Victory Road fight 5 of 10, seated 2026-09-30 by tools/route_trainers.py on the stand tools/vr_caves.py already carved (data/vr_trainers.json). Numbered route_09_* because Victory Road is the ninth leg in data/routes.json, after route_08_blaine_to_giovanni."
+    },
+    {
+      "id": "quest.route_09_trainer_06.defeated",
+      "quest_id": "route_09_trainer_06",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Victory Road fight 6 of 10, seated 2026-09-30 by tools/route_trainers.py on the stand tools/vr_caves.py already carved (data/vr_trainers.json). Numbered route_09_* because Victory Road is the ninth leg in data/routes.json, after route_08_blaine_to_giovanni."
+    },
+    {
+      "id": "quest.route_09_trainer_07.defeated",
+      "quest_id": "route_09_trainer_07",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Victory Road fight 7 of 10, seated 2026-09-30 by tools/route_trainers.py on the stand tools/vr_caves.py already carved (data/vr_trainers.json). Numbered route_09_* because Victory Road is the ninth leg in data/routes.json, after route_08_blaine_to_giovanni."
+    },
+    {
+      "id": "quest.route_09_trainer_08.defeated",
+      "quest_id": "route_09_trainer_08",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Victory Road fight 8 of 10, seated 2026-09-30 by tools/route_trainers.py on the stand tools/vr_caves.py already carved (data/vr_trainers.json). Numbered route_09_* because Victory Road is the ninth leg in data/routes.json, after route_08_blaine_to_giovanni."
+    },
+    {
+      "id": "quest.route_09_trainer_09.defeated",
+      "quest_id": "route_09_trainer_09",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Victory Road fight 9 of 10, seated 2026-09-30 by tools/route_trainers.py on the stand tools/vr_caves.py already carved (data/vr_trainers.json). Numbered route_09_* because Victory Road is the ninth leg in data/routes.json, after route_08_blaine_to_giovanni."
+    },
+    {
+      "id": "quest.route_09_trainer_10.defeated",
+      "quest_id": "route_09_trainer_10",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Victory Road fight 10 of 10, seated 2026-09-30 by tools/route_trainers.py on the stand tools/vr_caves.py already carved (data/vr_trainers.json). Numbered route_09_* because Victory Road is the ninth leg in data/routes.json, after route_08_blaine_to_giovanni."
     }
   ],
   "gym_markers": {
