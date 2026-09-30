@@ -71,6 +71,7 @@ FIELDS = {f["id"]: f for f in PROG}
 CONVS = {c["id"]: c for c in _load("dialogue.json")["conversations"] if c["id"] in QUEST["dialogue_ids"]}
 SCENE = next(s for s in _load("scenes.json")["scenes"] if s["id"] == "route1_gastly_family")
 ROUTE_SEATS = _load("route_trainers.json")["trainers"]
+VR_SEATS = _load("vr_trainers.json")["trainers"]   # Victory Road's ten, seated 2026-09-30
 ROUTE_TRAINER_IDS = {r["id"] for r in _load("trainers.json")["trainers"]}
 PLACEMENTS = _load("placements.json")
 
@@ -606,8 +607,11 @@ def test_with_every_guardian_beaten_the_escort_reaches_family_and_grants_the_spe
 # a guardian somewhere other than its record.
 def test_r17_placements_are_the_route_seats_then_the_guardians():
     want = [(s["id"], tuple(s["seat"]), s["yaw"]) for s in ROUTE_SEATS] + \
-           [(g["id"], tuple(g["seat"]), g["yaw"]) for g in GUARDS]
-    assert len(want) == 18
+           [(g["id"], tuple(g["seat"]), g["yaw"]) for g in GUARDS] + \
+           [(v["id"], tuple(v["seat"]), v["yaw"]) for v in VR_SEATS]
+    # 13 route + 5 guardians + 10 Victory Road. It was 18 until 2026-09-30; the number is asserted so the
+    # data cannot shrink silently, and it moves only when a record is deliberately added.
+    assert len(want) == 28
     assert RT.placements() == want
 
 

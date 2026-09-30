@@ -114,7 +114,9 @@ def test_the_cycle_runs_every_10_ticks(files):
 # Without it a trainer is not held home, not tagged for, or not cooled down (it rebattles its beaten players after a
 # restart), or is handled twice, or a line acts on some other trainer.
 def test_every_placed_trainer_has_exactly_one_line_of_each_kind(cycle):
-    assert len(IDS) == 18 and len(set(IDS)) == 18
+    # 13 route + 5 mansion guardians + 10 Victory Road, seated 2026-09-30. Was 18. Every one of them
+    # still needs exactly one line of each kind, which is what the rest of this test checks.
+    assert len(IDS) == 28 and len(set(IDS)) == 28
     home, tags, cool, other = _classify(cycle)
     assert not other, other
     for kind, got in (("home", home), ("tag", tags), ("cooldown", cool)):

@@ -32,6 +32,10 @@ SCENES = json.loads((ROOT / "data" / "scenes.json").read_text(encoding="utf-8"))
 CONVS = {c["id"]: c for c in json.loads((ROOT / "data" / "dialogue.json").read_text(encoding="utf-8"))["conversations"]}
 SEATS = json.loads((ROOT / "data" / "route_trainers.json").read_text(encoding="utf-8"))["trainers"]
 GUARDIANS = json.loads((ROOT / "data" / "mansion_guardians.json").read_text(encoding="utf-8"))["trainers"]
+# Victory Road's ten, seated 2026-09-30 on the stands tools/vr_caves.py carves. They join R17 like any other
+# placed trainer; the League's five deliberately do NOT, because they are overrides at the kanto_league
+# template's own spawners and nothing summons them.
+VR_SEATS = json.loads((ROOT / "data" / "vr_trainers.json").read_text(encoding="utf-8"))["trainers"]
 
 
 @pytest.fixture(scope="module")
@@ -95,8 +99,8 @@ def test_r17_places_every_scene_npc_at_its_position_with_its_class(steps):
 # Without it a route trainer or a mansion guardian is not placed after a re-export, or at a seat other than the
 # recorded one.
 def test_r17_places_every_trainer_at_its_seat(steps):
-    want = [(t["id"], tuple(t["seat"]), t["yaw"]) for t in SEATS + GUARDIANS]
-    assert (len(SEATS), len(GUARDIANS)) == (13, 5)
+    want = [(t["id"], tuple(t["seat"]), t["yaw"]) for t in SEATS + GUARDIANS + VR_SEATS]
+    assert (len(SEATS), len(GUARDIANS), len(VR_SEATS)) == (13, 5, 10)
     assert sorted(_acts(steps, "R17", "trainer")) == sorted(want)
 
 
