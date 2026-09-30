@@ -5,16 +5,27 @@
   "settlement": "gym1_town",
   "supersedes_donor": "gym1_brock_gym",
   "supersedes_why": "the COBBLEVERSE donor shell (27x24, one oval room, no second storey) is taken down by tools/gym_demolish.py and this hall is built on its lot. docs/world-building/GYM_BUILDINGS_BRIEF.md: the owner rejected a shaft into a cave under the shell and asked for a large building with the puzzle inside it.",
-
   "name": "The Stoneworks Hall",
   "reading": "Brock's town is the plateau's builders (docs/world-building/TOWN_CHARACTER.md: masons who build in the plateau's stone; palette stone, polished andesite, cobblestone, tuff, calcite, stripped birch and spruce). The gym is their works hall: the biggest roof in town, standing alone on the south-east knoll, with a wall being raised inside it. The climb is the building's own construction - the stone stair to the masons' loft, the gantry over the cutting floor, the unfinished wall's stepped end, the jib beams over the void and the hoist shaft behind the cross wall. Brock works on the gallery at the top of the hoist, and there is no other way to him.",
-
   "site": {
-    "lot_rect": [1806, 3656, 1845, 3703],
+    "lot_rect": [
+      1806,
+      3656,
+      1845,
+      3703
+    ],
     "lot_level": 141,
     "lot_source": "data/placements.json settlements.gym1_town.plan.anchors gym1_gym (rect, level 141, facing north). The prep cuts and fills the lot to that level (tools/place_town.py: 'a levelled lot is cut and filled to its level by the prep, so that is its ground'), and the plan's own status line records it built: 'gym lot flattened to y141'.",
-    "ground": {"kind": "lot_level", "why": "the pad is the ground here. The raw heightmap over the lot is y140-142 (tools/ground.py, rounded, measured over all 1,920 columns: 140 at 15, 141 at 237, 142 at 1,668); the prep cuts it flat to 141. Neither number was read from a world."},
-    "footprint": [1810, 3664, 1842, 3699],
+    "ground": {
+      "kind": "lot_level",
+      "why": "the pad is the ground here. The raw heightmap over the lot is y140-142 (tools/ground.py, rounded, measured over all 1,920 columns: 140 at 15, 141 at 237, 142 at 1,668); the prep cuts it flat to 141. Neither number was read from a world."
+    },
+    "footprint": [
+      1810,
+      3664,
+      1842,
+      3699
+    ],
     "footprint_size_why": "33 by 36. The brief's envelope for this site is 89x89, which is what the terrain and the neighbouring anchors allow and not a target - a building that size would dwarf the town. The lot the town plan reserved is 40x48, and this fills it with a 4/3/8/4 margin (west/east/north/south) for the forecourt and the eaves. The donor shell it replaces was 27x24.",
     "floor_y": 141,
     "stand_y": 142,
@@ -23,71 +34,325 @@
     "facing": "north",
     "facing_why": "the lot anchor is `facing: north` and the lane climbs to the knoll from the plaza, north-west of it."
   },
-
-  "bounds": [1809, 141, 3659, 1843, 166, 3700],
+  "bounds": [
+    1809,
+    141,
+    3659,
+    1843,
+    166,
+    3700
+  ],
   "bounds_why": "the hall (1810..1842 x 3664..3699), its one-block eaves and the timber buttress posts outside the walls (x1809 and x1843, z3663 and z3700), and the paved forecourt in front of the door (z3659..3663). Inside the lot rect on every side.",
-
   "leader": {
     "id": "kanto_brock",
     "name": "Brock",
-    "spawner": [1832, 156, 3696],
-    "powered_by": [1832, 155, 3696],
+    "spawner": [
+      1832,
+      156,
+      3696
+    ],
+    "powered_by": [
+      1832,
+      155,
+      3696
+    ],
     "why": "EXP-013 E2 (VERIFIED, on staging): a bare rctmod:trainer_spawner set by command with TrainerIds ['kanto_brock'] on a redstone block spawned Brock and he battled. The donor template does the same thing - its redstone_block at [6,0,12] sits under its spawner at [6,1,12]. Taking the shell down removes the template's spawner, so this one is the only kanto_brock in the town and the badge cannot be won without reaching the gallery (a persistent kanto_brock anywhere awards the badge: verified on staging 2026-09-24, docs/STATE.md).",
-    "chest": [1836, 156, 3696]
+    "chest": [
+      1836,
+      156,
+      3696
+    ]
   },
-
   "rooms": [
-    {"id": "door_bay", "box": [1811, 142, 3665, 1841, 157, 3670], "why": "the way in, under the north gable. From here the whole hall is legible: the loft on the left, the stacks, the two gantries, the unfinished wall ahead and the cross wall behind it with three slots high in it, one of them lit."},
-    {"id": "cutting_floor", "box": [1811, 142, 3671, 1841, 157, 3682], "why": "the working floor: stonecutters, a grindstone, cut stone stacked, and the straw the masons pack under a fall."},
-    {"id": "loft", "box": [1811, 147, 3666, 1815, 157, 3682], "why": "the masons' loft along the west wall, five above the floor. Stage 1 ends here."},
-    {"id": "gantries", "box": [1816, 147, 3672, 1838, 157, 3688], "why": "two plank walks east off the loft at the same level. The north one stops in mid air over the cutting floor; the south one reaches the scaffold deck at the wall."},
-    {"id": "wall", "box": [1813, 142, 3683, 1833, 153, 3686], "why": "the wall being raised: a mass of stone brick eleven courses high whose east end is still stepped, which is the only climb from the scaffold deck to the crest."},
-    {"id": "void", "box": [1811, 142, 3687, 1841, 157, 3692], "why": "six blocks of open air between the wall's crest and the cross wall, floored with straw. Nothing crosses it but the three jib beams."},
-    {"id": "screen", "box": [1811, 142, 3693, 1841, 159, 3694], "why": "the cross wall, two courses thick and eighteen high, pierced by three slots at the beams' level. Two are one course deep and blind; the third goes through into the hoist shaft and is the only way on."},
-    {"id": "shaft", "box": [1826, 142, 3695, 1829, 154, 3698], "why": "the hoist: a four by four shaft cut through the gallery's masonry, with the loading ledge at the slot's level, the ladder on its east wall and straw at the bottom where the chute lands."},
-    {"id": "gallery", "box": [1811, 156, 3695, 1841, 157, 3698], "why": "Brock's gallery, fifteen above the floor and sealed on all four sides: the cross wall to the north, the hall walls elsewhere, the roof above. The ladder out of the hoist and a chute back down are the only openings in its floor."}
+    {
+      "id": "door_bay",
+      "box": [
+        1811,
+        142,
+        3665,
+        1841,
+        157,
+        3670
+      ],
+      "why": "the way in, under the north gable. From here the whole hall is legible: the loft on the left, the stacks, the two gantries, the unfinished wall ahead and the cross wall behind it with three slots high in it, one of them lit."
+    },
+    {
+      "id": "cutting_floor",
+      "box": [
+        1811,
+        142,
+        3671,
+        1841,
+        157,
+        3682
+      ],
+      "why": "the working floor: stonecutters, a grindstone, cut stone stacked, and the straw the masons pack under a fall."
+    },
+    {
+      "id": "loft",
+      "box": [
+        1811,
+        147,
+        3666,
+        1815,
+        157,
+        3682
+      ],
+      "why": "the masons' loft along the west wall, five above the floor. Stage 1 ends here."
+    },
+    {
+      "id": "gantries",
+      "box": [
+        1816,
+        147,
+        3672,
+        1838,
+        157,
+        3688
+      ],
+      "why": "two plank walks east off the loft at the same level. The north one stops in mid air over the cutting floor; the south one reaches the scaffold deck at the wall."
+    },
+    {
+      "id": "wall",
+      "box": [
+        1813,
+        142,
+        3683,
+        1833,
+        153,
+        3686
+      ],
+      "why": "the wall being raised: a mass of stone brick eleven courses high whose east end is still stepped, which is the only climb from the scaffold deck to the crest."
+    },
+    {
+      "id": "void",
+      "box": [
+        1811,
+        142,
+        3687,
+        1841,
+        157,
+        3692
+      ],
+      "why": "six blocks of open air between the wall's crest and the cross wall, floored with straw. Nothing crosses it but the three jib beams."
+    },
+    {
+      "id": "screen",
+      "box": [
+        1811,
+        142,
+        3693,
+        1841,
+        159,
+        3694
+      ],
+      "why": "the cross wall, two courses thick and eighteen high, pierced by three slots at the beams' level. Two are one course deep and blind; the third goes through into the hoist shaft and is the only way on."
+    },
+    {
+      "id": "shaft",
+      "box": [
+        1826,
+        142,
+        3695,
+        1829,
+        154,
+        3698
+      ],
+      "why": "the hoist: a four by four shaft cut through the gallery's masonry, with the loading ledge at the slot's level, the ladder on its east wall and straw at the bottom where the chute lands."
+    },
+    {
+      "id": "gallery",
+      "box": [
+        1811,
+        156,
+        3695,
+        1841,
+        157,
+        3698
+      ],
+      "why": "Brock's gallery, fifteen above the floor and sealed on all four sides: the cross wall to the north, the hall walls elsewhere, the roof above. The ladder out of the hoist and a chute back down are the only openings in its floor."
+    }
   ],
-
   "route": [
-    {"step": 1, "id": "the_stair", "from": [1826, 142, 3667], "to": [1815, 147, 3676], "how": "climb",
-     "why": "four squared blocks stacked into a stair at x1816-1817, z3679 up to z3676, tops 142/143/144/145, then one step west onto the loft (top 146).",
-     "not_skippable": "the loft's deck stands at y146, five above the floor. Every other stack on the cutting floor tops at y143 or y144, which leaves a two-block rise to the deck, and no player can mount two blocks without a slab, a jump effect or a block to place. The three decoys are visible from the door, so the choice is made by looking, not by trying."},
-    {"step": 2, "id": "the_gantry", "from": [1815, 147, 3681], "to": [1834, 147, 3684], "how": "walk",
-     "why": "two plank walks leave the loft's east edge at y146. The north one (z3672-3673) ends at x1828 over the cutting floor; the south one (z3680-3681) runs eighteen blocks to the scaffold deck at the wall.",
-     "not_skippable": "the scaffold deck is also five above the floor and is reached from nowhere else: the dead end's tip is five blocks and six in z from anything, and both are two above the tallest stack under them. Walking off either drops five blocks onto straw."},
-    {"step": 3, "id": "the_wall", "from": [1834, 147, 3684], "to": [1827, 153, 3685], "how": "climb",
-     "why": "the wall's east end is still stepped - x1833 tops at 147, then 148, 149, 150, 151, 152 - so it is climbed one course at a time from the deck onto the crest.",
-     "not_skippable": "the wall is sheer on its other three faces, eleven above the floor. The steps are the only one-block rise anywhere on it."},
-    {"step": 4, "id": "the_beams", "from": [1827, 153, 3686], "to": [1827, 153, 3692], "how": "beam",
-     "why": "three squared timbers, one block wide and six long, cross the void from the crest to the cross wall at x1815, x1821 and x1827.",
-     "not_skippable": "the void is six blocks of open air. A vanilla sprint jump clears four; there is no run-up on a one-wide crest and nothing to land on between. Missing a beam is an eleven-block fall onto straw, which does no damage, and the climb starts again at the stair."},
-    {"step": 5, "id": "the_lit_slot", "from": [1827, 153, 3692], "to": [1827, 153, 3695], "how": "choose",
-     "why": "the three slots in the cross wall are at the beams' level. x1815 and x1821 are one course deep and blind; x1827 goes through both courses into the hoist. Two lanterns hang inside the shaft under the gallery floor and the light spills out of the true slot only - the same clue Misty's three mouths use.",
-     "not_skippable": "the cross wall is solid from the floor to y159 apart from the three slots and the archway at its foot, and the gallery above it stands three courses over the beams."},
-    {"step": 6, "id": "the_hoist", "from": [1827, 153, 3695], "to": [1829, 156, 3697], "how": "climb",
-     "why": "the loading ledge fills the shaft's north half at the slot's level; the ladder is on the shaft's east wall over the open half and climbs four to the gallery floor.",
-     "not_skippable": "the ladder's foot is at y153, eleven above the straw at the shaft's bottom, so nobody who falls down the shaft can climb back up it. The gallery is sealed on all four sides and its floor has exactly two holes: this ladder and the chute."},
-    {"step": 7, "id": "brock", "from": [1829, 156, 3697], "to": [1832, 157, 3696], "how": "walk",
-     "why": "the spawner stands on a redstone block in the gallery floor with two air cells over it; Brock spawns on it. His chest is four east.",
-     "not_skippable": "this is the only rctmod:trainer_spawner in the town once the donor shell is down."},
-    {"step": 8, "id": "the_chute", "from": [1827, 156, 3698], "to": [1827, 142, 3696], "how": "fall",
-     "why": "a one-block hole in the gallery floor drops fourteen into the shaft's straw, and an archway at the shaft's foot leads back into the hall. The ladder still goes both ways, so the chute is a shortcut and never a trap.",
-     "not_skippable": "not a route step: the way back."}
+    {
+      "step": 1,
+      "id": "the_stair",
+      "from": [
+        1826,
+        142,
+        3667
+      ],
+      "to": [
+        1815,
+        147,
+        3676
+      ],
+      "how": "climb",
+      "why": "four squared blocks stacked into a stair at x1816-1817, z3679 up to z3676, tops 142/143/144/145, then one step west onto the loft (top 146).",
+      "not_skippable": "the loft's deck stands at y146, five above the floor. Every other stack on the cutting floor tops at y143 or y144, which leaves a two-block rise to the deck, and no player can mount two blocks without a slab, a jump effect or a block to place. The three decoys are visible from the door, so the choice is made by looking, not by trying."
+    },
+    {
+      "step": 2,
+      "id": "the_gantry",
+      "from": [
+        1815,
+        147,
+        3681
+      ],
+      "to": [
+        1834,
+        147,
+        3684
+      ],
+      "how": "walk",
+      "why": "two plank walks leave the loft's east edge at y146. The north one (z3672-3673) ends at x1828 over the cutting floor; the south one (z3680-3681) runs eighteen blocks to the scaffold deck at the wall.",
+      "not_skippable": "the scaffold deck is also five above the floor and is reached from nowhere else: the dead end's tip is five blocks and six in z from anything, and both are two above the tallest stack under them. Walking off either drops five blocks onto straw."
+    },
+    {
+      "step": 3,
+      "id": "the_wall",
+      "from": [
+        1834,
+        147,
+        3684
+      ],
+      "to": [
+        1827,
+        153,
+        3685
+      ],
+      "how": "climb",
+      "why": "the wall's east end is still stepped - x1833 tops at 147, then 148, 149, 150, 151, 152 - so it is climbed one course at a time from the deck onto the crest.",
+      "not_skippable": "the wall is sheer on its other three faces, eleven above the floor. The steps are the only one-block rise anywhere on it."
+    },
+    {
+      "step": 4,
+      "id": "the_beams",
+      "from": [
+        1827,
+        153,
+        3686
+      ],
+      "to": [
+        1827,
+        153,
+        3692
+      ],
+      "how": "beam",
+      "why": "three squared timbers, one block wide and six long, cross the void from the crest to the cross wall at x1815, x1821 and x1827.",
+      "not_skippable": "the void is six blocks of open air. A vanilla sprint jump clears four; there is no run-up on a one-wide crest and nothing to land on between. Missing a beam is an eleven-block fall onto straw, which does no damage, and the climb starts again at the stair."
+    },
+    {
+      "step": 5,
+      "id": "the_lit_slot",
+      "from": [
+        1827,
+        153,
+        3692
+      ],
+      "to": [
+        1827,
+        153,
+        3695
+      ],
+      "how": "choose",
+      "why": "the three slots in the cross wall are at the beams' level. x1815 and x1821 are one course deep and blind; x1827 goes through both courses into the hoist. Two lanterns hang inside the shaft under the gallery floor and the light spills out of the true slot only - the same clue Misty's three mouths use.",
+      "not_skippable": "the cross wall is solid from the floor to y159 apart from the three slots and the archway at its foot, and the gallery above it stands three courses over the beams."
+    },
+    {
+      "step": 6,
+      "id": "the_hoist",
+      "from": [
+        1827,
+        153,
+        3695
+      ],
+      "to": [
+        1829,
+        156,
+        3697
+      ],
+      "how": "climb",
+      "why": "the loading ledge fills the shaft's north half at the slot's level; the ladder is on the shaft's east wall over the open half and climbs four to the gallery floor.",
+      "not_skippable": "the ladder's foot is at y153, eleven above the straw at the shaft's bottom, so nobody who falls down the shaft can climb back up it. The gallery is sealed on all four sides and its floor has exactly two holes: this ladder and the chute."
+    },
+    {
+      "step": 7,
+      "id": "brock",
+      "from": [
+        1829,
+        156,
+        3697
+      ],
+      "to": [
+        1832,
+        157,
+        3696
+      ],
+      "how": "walk",
+      "why": "the spawner stands on a redstone block in the gallery floor with two air cells over it; Brock spawns on it. His chest is four east.",
+      "not_skippable": "this is the only rctmod:trainer_spawner in the town once the donor shell is down."
+    },
+    {
+      "step": 8,
+      "id": "the_chute",
+      "from": [
+        1826,
+        156,
+        3698
+      ],
+      "to": [
+        1827,
+        142,
+        3696
+      ],
+      "how": "fall",
+      "why": "a one-block hole in the gallery floor at (1827,155,3698) drops fourteen into the shaft's straw, and an archway at the shaft's foot leads back into the hall. The player steps into it from the gallery floor beside it, which is why this step starts at (1826,156,3698) and not in the hole itself: the hole is not a cell anyone stands in (GYM_BUILDINGS_REVIEW.md D5's class of defect, found here 2026-09-29). The ladder still goes both ways, so the chute is a shortcut and never a trap.",
+      "not_skippable": "not a route step: the way back."
+    },
+    {
+      "step": 9,
+      "id": "the_decoy_hop",
+      "from": [
+        1817,
+        147,
+        3673
+      ],
+      "to": [
+        1817,
+        146,
+        3676
+      ],
+      "how": "jump",
+      "why": "the north gantry's dead end is two blocks in z and one down from the head of the stage 1 stair, so a player who walks the wrong gantry hops back onto the stair instead of dropping five onto the straw. Declared because it is real: the independent audit's jump model crosses it (GYM_BUILDINGS_REVIEW.md D3), and an undeclared crossing between two rooms is indistinguishable from a gate that leaks.",
+      "not_skippable": "not a route step: the way back off the decoy. It descends onto a cell the player has already stood on to begin stage 1, so it passes no gate and shortens nothing."
+    }
   ],
-
   "trainers": [],
   "trainers_why": "none authored here, and deliberately. A gym trainer has to be unavoidable, and unavoidability on this route is a claim about where a player can physically stand and how far a trainer can see - the independent movement model (tools/gym_interiors_independent.py) is what settles that, and it is not this unit's to write (CLAUDE.md principle 16). The record's `trainers` array is supported by the generator and is the place seats go once somebody who is not the builder has checked them.",
-
   "no_build": [
-    {"box": [1810, 141, 3664, 1842, 166, 3699], "why": "the whole hall. Authored, not wired: the scene runtime's adventure-mode box (tools/scenes_pack.py no_build) needs a scene record in data/scenes.json and that is not written in this unit. Until it is, a player with blocks can build past the void."}
+    {
+      "box": [
+        1810,
+        141,
+        3664,
+        1842,
+        166,
+        3699
+      ],
+      "why": "the whole hall. Authored, not wired: the scene runtime's adventure-mode box (tools/scenes_pack.py no_build) needs a scene record in data/scenes.json and that is not written in this unit. Until it is, a player with blocks can build past the void."
+    }
   ],
-
   "spawn_suppression": {
     "record": "gym_brock",
-    "box": [1808, 3664, 1847, 3711],
+    "box": [
+      1808,
+      3664,
+      1847,
+      3711
+    ],
     "note": "data/gym_interiors.json gyms[gym1].spawn_suppression, unchanged. The hall sits inside it (x1809..1843 is inside 1808..1847; z3659..3700 is NOT: the forecourt paving and the north eaves at z3659..3663 fall north of the box's edge). Nothing in this hall is a spawn-condition block, so the exposure is the apron's polished andesite in the open, which the town's own streets already are. Extending the box is a one-line edit in data/spawn_suppression.json and belongs to whoever owns that file."
   },
-
   "blocks": [
     "minecraft:air",
     "minecraft:stone_bricks",
@@ -110,191 +375,1566 @@
     "rctmod:trainer_spawner"
   ],
   "blocks_why": "the town's own palette (docs/world-building/TOWN_CHARACTER.md gym1_town) and nothing that is a spawn condition in data/spawn_blocks.json: no grass, no leaves, no water, no carpet.",
-
   "parts": [
-    {"op": "comment", "why": "gym 1, Brock: the Stoneworks Hall (data/gym_buildings/gym1.json). Run after the donor shell is taken down (tools/gym_demolish.py), which is after the pack donors are placed."},
-
-    {"op": "fill", "box": [1809, 142, 3659, 1843, 166, 3700], "block": "minecraft:air",
-     "why": "-- clear the lot above the pad, so the build is the same on a fresh export and on a re-apply"},
-
-    {"op": "fill", "box": [1810, 141, 3664, 1842, 141, 3699], "block": "minecraft:stone_bricks",
-     "why": "-- the floor: the hall's paving, laid over the prep's pad at y141"},
-    {"op": "fill", "box": [1811, 141, 3659, 1841, 141, 3663], "block": "minecraft:polished_andesite",
-     "why": "the forecourt apron in front of the door"},
-    {"op": "fill", "box": [1817, 141, 3671, 1835, 141, 3682], "block": "minecraft:polished_andesite",
-     "why": "the dressed floor the masons work on"},
-    {"op": "fill", "box": [1811, 141, 3687, 1841, 141, 3692], "block": "minecraft:hay_block",
-     "why": "the packing straw under the void: an eleven-block fall off a beam or the crest lands here and takes 80% less, so no route step can kill (contract G3)"},
-    {"op": "fill", "box": [1811, 141, 3683, 1812, 141, 3686], "block": "minecraft:hay_block",
-     "why": "and the strip west of the wall, the other side a player can step off the crest"},
-    {"op": "fill", "box": [1822, 141, 3671, 1830, 141, 3674], "block": "minecraft:hay_block",
-     "why": "and under the dead-end gantry"},
-
-    {"op": "fill", "box": [1810, 142, 3664, 1810, 157, 3699], "block": "minecraft:stone_bricks", "why": "-- the walls, sixteen courses to the eaves"},
-    {"op": "fill", "box": [1842, 142, 3664, 1842, 157, 3699], "block": "minecraft:stone_bricks"},
-    {"op": "fill", "box": [1811, 142, 3664, 1841, 157, 3664], "block": "minecraft:stone_bricks"},
-    {"op": "fill", "box": [1811, 142, 3699, 1841, 157, 3699], "block": "minecraft:stone_bricks"},
-
-    {"op": "fill", "box": [1810, 142, 3664, 1810, 143, 3699], "block": "minecraft:polished_andesite", "why": "the plinth course"},
-    {"op": "fill", "box": [1842, 142, 3664, 1842, 143, 3699], "block": "minecraft:polished_andesite"},
-    {"op": "fill", "box": [1811, 142, 3664, 1841, 143, 3664], "block": "minecraft:polished_andesite"},
-    {"op": "fill", "box": [1811, 142, 3699, 1841, 143, 3699], "block": "minecraft:polished_andesite"},
-
-    {"op": "fill", "box": [1810, 150, 3664, 1810, 150, 3699], "block": "minecraft:andesite", "why": "the string course"},
-    {"op": "fill", "box": [1842, 150, 3664, 1842, 150, 3699], "block": "minecraft:andesite"},
-    {"op": "fill", "box": [1811, 150, 3664, 1841, 150, 3664], "block": "minecraft:andesite"},
-    {"op": "fill", "box": [1811, 150, 3699, 1841, 150, 3699], "block": "minecraft:andesite"},
-
-    {"op": "fill", "box": [1824, 142, 3664, 1828, 146, 3664], "block": "minecraft:air", "why": "-- the door in the north gable, five wide and five tall"},
-    {"op": "fill", "box": [1823, 142, 3664, 1823, 146, 3664], "block": "minecraft:polished_andesite", "why": "its jambs"},
-    {"op": "fill", "box": [1829, 142, 3664, 1829, 146, 3664], "block": "minecraft:polished_andesite"},
-    {"op": "fill", "box": [1823, 147, 3664, 1829, 147, 3664], "block": "minecraft:chiseled_stone_bricks", "why": "and its lintel"},
-
-    {"op": "columns", "from_y": 148, "block": "minecraft:air",
-     "why": "-- the clerestory slits, one wide and five tall, too high to be climbed to and too high to climb out of",
-     "cells": [[1810, 3668, 152], [1810, 3674, 152], [1810, 3680, 152], [1810, 3686, 152], [1810, 3692, 152],
-               [1842, 3668, 152], [1842, 3674, 152], [1842, 3680, 152], [1842, 3686, 152], [1842, 3692, 152]]},
-
-    {"op": "gable_roof", "box": [1810, 3664, 1842, 3699], "run": "x", "eaves_y": 158, "overhang": 1,
-     "material": "minecraft:spruce_planks", "edge": "minecraft:stripped_spruce_log",
-     "gable": "minecraft:stone_bricks", "gable_from_y": 158,
-     "why": "-- the roof: timber, one course every two columns, ridge at y166 over x1826, a one-block eave all round, and the two gables filled in stone. Twenty-five above the pad, so it is the biggest roof in town; the derrick crane over the mason's yard still stands higher over its own ground."},
-    {"op": "fill", "box": [1825, 160, 3664, 1827, 161, 3664], "block": "minecraft:chiseled_stone_bricks",
-     "why": "the masons' mark set into the north gable"},
-
-    {"op": "fill", "box": [1811, 157, 3668, 1841, 157, 3668], "block": "minecraft:stripped_spruce_log", "why": "-- the tie beams, which the high lanterns hang from. None over the gallery: nothing there is to be climbed onto."},
-    {"op": "fill", "box": [1811, 157, 3674, 1841, 157, 3674], "block": "minecraft:stripped_spruce_log"},
-    {"op": "fill", "box": [1811, 157, 3680, 1841, 157, 3680], "block": "minecraft:stripped_spruce_log"},
-    {"op": "fill", "box": [1811, 157, 3686, 1841, 157, 3686], "block": "minecraft:stripped_spruce_log"},
-
-    {"op": "columns", "from_y": 142, "block": "minecraft:stripped_spruce_log",
-     "why": "-- the timber buttress posts outside the walls, under the eaves",
-     "cells": [[1809, 3668, 157], [1809, 3674, 157], [1809, 3680, 157], [1809, 3686, 157], [1809, 3692, 157],
-               [1843, 3668, 157], [1843, 3674, 157], [1843, 3680, 157], [1843, 3686, 157], [1843, 3692, 157]]},
-
-    {"op": "fill", "box": [1811, 146, 3666, 1815, 146, 3682], "block": "minecraft:spruce_planks",
-     "why": "-- STAGE 1. The masons' loft along the west wall, five above the floor"},
-    {"op": "columns", "from_y": 142, "block": "minecraft:stone_bricks", "why": "its piers, all under the deck",
-     "cells": [[1815, 3667, 145], [1815, 3671, 145], [1815, 3675, 145], [1815, 3679, 145], [1815, 3682, 145]]},
-    {"op": "fill", "box": [1815, 147, 3666, 1815, 147, 3671], "block": "minecraft:cobblestone_wall",
-     "why": "the loft rail, in four lengths: the gaps are the two gantry mouths and the stair's landing"},
-    {"op": "fill", "box": [1815, 147, 3674, 1815, 147, 3675], "block": "minecraft:cobblestone_wall"},
-    {"op": "fill", "box": [1815, 147, 3677, 1815, 147, 3679], "block": "minecraft:cobblestone_wall"},
-    {"op": "fill", "box": [1815, 147, 3682, 1815, 147, 3682], "block": "minecraft:cobblestone_wall"},
-    {"op": "columns", "from_y": 142, "block": "minecraft:stone_bricks",
-     "why": "the finished stack: four squared courses stepped up to the loft's edge, the one climb on the floor that reaches",
-     "cells": [[1816, 3679, 142], [1817, 3679, 142], [1816, 3678, 143], [1817, 3678, 143],
-               [1816, 3677, 144], [1817, 3677, 144], [1816, 3676, 145], [1817, 3676, 145]]},
-    {"op": "fill", "box": [1820, 142, 3673, 1822, 144, 3675], "block": "minecraft:cobblestone",
-     "why": "and three stacks that do not: rough blocks two short of the deck"},
-    {"op": "fill", "box": [1826, 142, 3677, 1828, 143, 3679], "block": "minecraft:cobblestone"},
-    {"op": "fill", "box": [1831, 142, 3672, 1833, 144, 3674], "block": "minecraft:stone_bricks"},
-
-    {"op": "fill", "box": [1816, 146, 3672, 1828, 146, 3673], "block": "minecraft:spruce_planks",
-     "why": "-- STAGE 2. The north gantry, which stops in mid air over the cutting floor. It is a dead end you can see is a dead end from the door."},
-    {"op": "columns", "from_y": 142, "block": "minecraft:stone_bricks", "why": "its posts",
-     "cells": [[1818, 3672, 145], [1824, 3672, 145]]},
-    {"op": "fill", "box": [1816, 146, 3680, 1833, 146, 3681], "block": "minecraft:spruce_planks",
-     "why": "the south gantry, eighteen blocks to the wall"},
-    {"op": "columns", "from_y": 142, "block": "minecraft:stone_bricks", "why": "its posts",
-     "cells": [[1820, 3680, 145], [1824, 3680, 145], [1828, 3680, 145], [1832, 3680, 145]]},
-    {"op": "fill", "box": [1834, 146, 3678, 1838, 146, 3688], "block": "minecraft:spruce_planks",
-     "why": "the scaffold deck along the wall's east end, where the gantry lands"},
-    {"op": "columns", "from_y": 142, "block": "minecraft:stone_bricks", "why": "and its posts",
-     "cells": [[1834, 3679, 145], [1838, 3679, 145], [1834, 3687, 145], [1838, 3687, 145], [1836, 3683, 145]]},
-
-    {"op": "fill", "box": [1813, 142, 3683, 1827, 152, 3686], "block": "minecraft:stone_bricks",
-     "why": "-- STAGE 3. The wall being raised: eleven courses, four thick, twenty-one long"},
-    {"op": "columns", "from_y": 142, "block": "minecraft:stone_bricks",
-     "why": "its east end, still stepped course by course - 147, 148, 149, 150, 151, 152 - which is the only climb onto the crest",
-     "cells": [[1833, 3683, 147], [1833, 3684, 147], [1833, 3685, 147], [1833, 3686, 147],
-               [1832, 3683, 148], [1832, 3684, 148], [1832, 3685, 148], [1832, 3686, 148],
-               [1831, 3683, 149], [1831, 3684, 149], [1831, 3685, 149], [1831, 3686, 149],
-               [1830, 3683, 150], [1830, 3684, 150], [1830, 3685, 150], [1830, 3686, 150],
-               [1829, 3683, 151], [1829, 3684, 151], [1829, 3685, 151], [1829, 3686, 151],
-               [1828, 3683, 152], [1828, 3684, 152], [1828, 3685, 152], [1828, 3686, 152]]},
-    {"op": "fill", "box": [1813, 152, 3683, 1827, 152, 3686], "block": "minecraft:cobblestone",
-     "why": "the crest, unmortared: the course they are on"},
-    {"op": "setblock", "pos": [1814, 153, 3684], "block": "minecraft:stonecutter",
-     "why": "the mason's cutter at the crest's west end, clear of all three beam heads"},
-    {"op": "scatter", "block": "minecraft:lantern", "why": "and light along the crest, again clear of the beam heads",
-     "positions": [[1813, 153, 3685], [1817, 153, 3683], [1824, 153, 3686]]},
-
-    {"op": "fill", "box": [1815, 152, 3687, 1815, 152, 3692], "block": "minecraft:stripped_spruce_log",
-     "why": "-- STAGE 4. Three jib beams, one block wide, six long, over eleven blocks of straw"},
-    {"op": "fill", "box": [1821, 152, 3687, 1821, 152, 3692], "block": "minecraft:stripped_spruce_log"},
-    {"op": "fill", "box": [1827, 152, 3687, 1827, 152, 3692], "block": "minecraft:stripped_spruce_log"},
-
-    {"op": "fill", "box": [1811, 142, 3693, 1841, 159, 3694], "block": "minecraft:stone_bricks",
-     "why": "-- STAGE 5. The cross wall: two courses thick, floor to y159, the gallery's north face"},
-    {"op": "fill", "box": [1811, 142, 3693, 1841, 143, 3694], "block": "minecraft:polished_andesite",
-     "why": "its plinth"},
-    {"op": "fill", "box": [1827, 153, 3693, 1827, 154, 3694], "block": "minecraft:air",
-     "why": "the true slot: through both courses, into the hoist"},
-    {"op": "fill", "box": [1815, 153, 3693, 1815, 154, 3693], "block": "minecraft:air",
-     "why": "and two blind ones, one course deep, that a player can stand in and find stone"},
-    {"op": "fill", "box": [1821, 153, 3693, 1821, 154, 3693], "block": "minecraft:air"},
-    {"op": "fill", "box": [1827, 142, 3693, 1828, 144, 3694], "block": "minecraft:air",
-     "why": "the archway at its foot: the way out of the hoist's bottom, back into the hall"},
-
-    {"op": "fill", "box": [1811, 142, 3695, 1841, 154, 3698], "block": "minecraft:stone_bricks",
-     "why": "-- STAGE 6. The masonry the gallery stands on, wall to wall"},
-    {"op": "fill", "box": [1826, 142, 3695, 1829, 154, 3698], "block": "minecraft:air",
-     "why": "the hoist shaft cut through it"},
-    {"op": "fill", "box": [1826, 141, 3695, 1829, 141, 3698], "block": "minecraft:hay_block",
-     "why": "straw at the bottom, where the chute lands: fourteen blocks, about one heart through hay"},
-    {"op": "fill", "box": [1826, 152, 3695, 1829, 152, 3696], "block": "minecraft:spruce_planks",
-     "why": "the loading ledge at the slot's level, filling the shaft's north half only"},
-    {"op": "fill", "box": [1829, 153, 3697, 1829, 156, 3697], "block": "minecraft:ladder[facing=west]",
-     "why": "the hoist ladder, carried by the shaft's east wall at x1830 and by the newel post above it. Its foot is eleven over the straw, so the shaft is not climbable from the bottom."},
-    {"op": "fill", "box": [1811, 155, 3695, 1841, 155, 3698], "block": "minecraft:polished_andesite",
-     "why": "the gallery floor"},
-    {"op": "fill", "box": [1829, 155, 3697, 1829, 155, 3697], "block": "minecraft:air",
-     "why": "the ladder's hole through it"},
-    {"op": "fill", "box": [1827, 155, 3698, 1827, 155, 3698], "block": "minecraft:air",
-     "why": "and the chute's"},
-    {"op": "setblock", "pos": [1830, 156, 3697], "block": "minecraft:stone_bricks",
-     "why": "the newel post the ladder's top course hangs on, so a player steps off at floor level"},
-    {"op": "scatter", "block": "minecraft:lantern[hanging=true]",
-     "why": "the clue: two lanterns under the gallery floor inside the shaft. Their light is what shows through the true slot and not through the two blind ones.",
-     "positions": [[1826, 154, 3698], [1828, 154, 3698]]},
-
-    {"op": "setblock", "pos": [1832, 155, 3696], "block": "minecraft:redstone_block",
-     "why": "-- Brock. The power under the spawner, set into the gallery floor as the donor template sets its own"},
-    {"op": "setblock", "pos": [1832, 156, 3696], "block": "rctmod:trainer_spawner{TrainerIds:[\"kanto_brock\"]}",
-     "why": "the only trainer spawner in the town once the shell is down, and two air cells over it"},
-    {"op": "setblock", "pos": [1836, 156, 3696], "block": "minecraft:chest[facing=north]",
-     "why": "his chest"},
-    {"op": "setblock", "pos": [1817, 156, 3696], "block": "minecraft:stonecutter",
-     "why": "his work on the gallery: the cutter"},
-    {"op": "setblock", "pos": [1839, 156, 3697], "block": "minecraft:grindstone[face=floor,facing=north]",
-     "why": "and the grindstone"},
-    {"op": "scatter", "block": "minecraft:lantern",
-     "why": "light on the gallery, clear of the ladder head and the chute",
-     "positions": [[1814, 156, 3696], [1820, 156, 3697], [1824, 156, 3696], [1838, 156, 3697], [1841, 156, 3696]]},
-
-    {"op": "setblock", "pos": [1818, 142, 3670], "block": "minecraft:stonecutter", "why": "-- the cutting floor's work"},
-    {"op": "setblock", "pos": [1822, 142, 3668], "block": "minecraft:stonecutter"},
-    {"op": "setblock", "pos": [1832, 142, 3669], "block": "minecraft:stonecutter"},
-    {"op": "setblock", "pos": [1836, 142, 3672], "block": "minecraft:grindstone[face=floor,facing=north]"},
-    {"op": "setblock", "pos": [1821, 142, 3666], "block": "minecraft:lectern[facing=south]", "why": "the foreman's desk by the door"},
-    {"op": "fill", "box": [1836, 142, 3665, 1838, 143, 3667], "block": "minecraft:stone_bricks", "why": "squared stone, stacked and counted"},
-    {"op": "fill", "box": [1811, 142, 3665, 1812, 143, 3667], "block": "minecraft:cobblestone", "why": "and rough stone waiting to be cut"},
-    {"op": "fill", "box": [1830, 142, 3676, 1832, 142, 3678], "block": "minecraft:chiseled_stone_bricks", "why": "the chiselled course, set aside"},
-    {"op": "scatter", "block": "minecraft:barrel", "positions": [[1813, 142, 3680], [1814, 142, 3680], [1839, 142, 3686]],
-     "why": "the works' stores"},
-
-    {"op": "scatter", "block": "minecraft:lantern", "why": "-- light: standing on the floor",
-     "positions": [[1816, 142, 3667], [1832, 142, 3666], [1816, 142, 3691], [1834, 142, 3691], [1840, 142, 3679], [1812, 142, 3687]]},
-    {"op": "scatter", "block": "minecraft:lantern[hanging=true]", "why": "hanging under the loft, the gantries and the deck",
-     "positions": [[1813, 145, 3670], [1813, 145, 3678], [1822, 145, 3680], [1821, 145, 3673], [1836, 145, 3682]]},
-    {"op": "scatter", "block": "minecraft:lantern[hanging=true]", "why": "and from the tie beams, high over the hall",
-     "positions": [[1816, 156, 3668], [1836, 156, 3668], [1816, 156, 3674], [1836, 156, 3674],
-                   [1820, 156, 3680], [1832, 156, 3680], [1824, 156, 3686], [1830, 156, 3686]]},
-
-    {"op": "setblock", "pos": [1822, 142, 3663], "block": "minecraft:cobblestone_wall", "why": "-- the door lamps on the forecourt"},
-    {"op": "setblock", "pos": [1822, 143, 3663], "block": "minecraft:lantern"},
-    {"op": "setblock", "pos": [1830, 142, 3663], "block": "minecraft:cobblestone_wall"},
-    {"op": "setblock", "pos": [1830, 143, 3663], "block": "minecraft:lantern"}
+    {
+      "op": "comment",
+      "why": "gym 1, Brock: the Stoneworks Hall (data/gym_buildings/gym1.json). Run after the donor shell is taken down (tools/gym_demolish.py), which is after the pack donors are placed."
+    },
+    {
+      "op": "fill",
+      "box": [
+        1809,
+        142,
+        3659,
+        1843,
+        166,
+        3700
+      ],
+      "block": "minecraft:air",
+      "why": "-- clear the lot above the pad, so the build is the same on a fresh export and on a re-apply"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1810,
+        141,
+        3664,
+        1842,
+        141,
+        3699
+      ],
+      "block": "minecraft:stone_bricks",
+      "why": "-- the floor: the hall's paving, laid over the prep's pad at y141"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1811,
+        141,
+        3659,
+        1841,
+        141,
+        3663
+      ],
+      "block": "minecraft:polished_andesite",
+      "why": "the forecourt apron in front of the door"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1817,
+        141,
+        3671,
+        1835,
+        141,
+        3682
+      ],
+      "block": "minecraft:polished_andesite",
+      "why": "the dressed floor the masons work on"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1811,
+        141,
+        3687,
+        1841,
+        141,
+        3692
+      ],
+      "block": "minecraft:hay_block",
+      "why": "the packing straw under the void: an eleven-block fall off a beam or the crest lands here and takes 80% less, so no route step can kill (contract G3)"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1811,
+        141,
+        3683,
+        1812,
+        141,
+        3686
+      ],
+      "block": "minecraft:hay_block",
+      "why": "and the strip west of the wall, the other side a player can step off the crest"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1822,
+        141,
+        3671,
+        1830,
+        141,
+        3674
+      ],
+      "block": "minecraft:hay_block",
+      "why": "and under the dead-end gantry"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1810,
+        142,
+        3664,
+        1810,
+        157,
+        3699
+      ],
+      "block": "minecraft:stone_bricks",
+      "why": "-- the walls, sixteen courses to the eaves"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1842,
+        142,
+        3664,
+        1842,
+        157,
+        3699
+      ],
+      "block": "minecraft:stone_bricks"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1811,
+        142,
+        3664,
+        1841,
+        157,
+        3664
+      ],
+      "block": "minecraft:stone_bricks"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1811,
+        142,
+        3699,
+        1841,
+        157,
+        3699
+      ],
+      "block": "minecraft:stone_bricks"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1810,
+        142,
+        3664,
+        1810,
+        143,
+        3699
+      ],
+      "block": "minecraft:polished_andesite",
+      "why": "the plinth course"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1842,
+        142,
+        3664,
+        1842,
+        143,
+        3699
+      ],
+      "block": "minecraft:polished_andesite"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1811,
+        142,
+        3664,
+        1841,
+        143,
+        3664
+      ],
+      "block": "minecraft:polished_andesite"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1811,
+        142,
+        3699,
+        1841,
+        143,
+        3699
+      ],
+      "block": "minecraft:polished_andesite"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1810,
+        150,
+        3664,
+        1810,
+        150,
+        3699
+      ],
+      "block": "minecraft:andesite",
+      "why": "the string course"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1842,
+        150,
+        3664,
+        1842,
+        150,
+        3699
+      ],
+      "block": "minecraft:andesite"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1811,
+        150,
+        3664,
+        1841,
+        150,
+        3664
+      ],
+      "block": "minecraft:andesite"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1811,
+        150,
+        3699,
+        1841,
+        150,
+        3699
+      ],
+      "block": "minecraft:andesite"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1824,
+        142,
+        3664,
+        1828,
+        146,
+        3664
+      ],
+      "block": "minecraft:air",
+      "why": "-- the door in the north gable, five wide and five tall"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1823,
+        142,
+        3664,
+        1823,
+        146,
+        3664
+      ],
+      "block": "minecraft:polished_andesite",
+      "why": "its jambs"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1829,
+        142,
+        3664,
+        1829,
+        146,
+        3664
+      ],
+      "block": "minecraft:polished_andesite"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1823,
+        147,
+        3664,
+        1829,
+        147,
+        3664
+      ],
+      "block": "minecraft:chiseled_stone_bricks",
+      "why": "and its lintel"
+    },
+    {
+      "op": "columns",
+      "from_y": 148,
+      "block": "minecraft:air",
+      "why": "-- the clerestory slits, one wide and five tall, too high to be climbed to and too high to climb out of",
+      "cells": [
+        [
+          1810,
+          3668,
+          152
+        ],
+        [
+          1810,
+          3674,
+          152
+        ],
+        [
+          1810,
+          3680,
+          152
+        ],
+        [
+          1810,
+          3686,
+          152
+        ],
+        [
+          1810,
+          3692,
+          152
+        ],
+        [
+          1842,
+          3668,
+          152
+        ],
+        [
+          1842,
+          3674,
+          152
+        ],
+        [
+          1842,
+          3680,
+          152
+        ],
+        [
+          1842,
+          3686,
+          152
+        ],
+        [
+          1842,
+          3692,
+          152
+        ]
+      ]
+    },
+    {
+      "op": "gable_roof",
+      "box": [
+        1810,
+        3664,
+        1842,
+        3699
+      ],
+      "run": "x",
+      "eaves_y": 158,
+      "overhang": 1,
+      "material": "minecraft:spruce_planks",
+      "edge": "minecraft:stripped_spruce_log",
+      "gable": "minecraft:stone_bricks",
+      "gable_from_y": 158,
+      "why": "-- the roof: timber, one course every two columns, ridge at y166 over x1826, a one-block eave all round, and the two gables filled in stone. Twenty-five above the pad, so it is the biggest roof in town; the derrick crane over the mason's yard still stands higher over its own ground."
+    },
+    {
+      "op": "fill",
+      "box": [
+        1825,
+        160,
+        3664,
+        1827,
+        161,
+        3664
+      ],
+      "block": "minecraft:chiseled_stone_bricks",
+      "why": "the masons' mark set into the north gable"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1811,
+        157,
+        3668,
+        1841,
+        157,
+        3668
+      ],
+      "block": "minecraft:stripped_spruce_log",
+      "why": "-- the tie beams, which the high lanterns hang from. None over the gallery: nothing there is to be climbed onto."
+    },
+    {
+      "op": "fill",
+      "box": [
+        1811,
+        157,
+        3674,
+        1841,
+        157,
+        3674
+      ],
+      "block": "minecraft:stripped_spruce_log"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1811,
+        157,
+        3680,
+        1841,
+        157,
+        3680
+      ],
+      "block": "minecraft:stripped_spruce_log"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1811,
+        157,
+        3686,
+        1841,
+        157,
+        3686
+      ],
+      "block": "minecraft:stripped_spruce_log"
+    },
+    {
+      "op": "columns",
+      "from_y": 142,
+      "block": "minecraft:stripped_spruce_log",
+      "why": "-- the timber buttress posts outside the walls, under the eaves",
+      "cells": [
+        [
+          1809,
+          3668,
+          157
+        ],
+        [
+          1809,
+          3674,
+          157
+        ],
+        [
+          1809,
+          3680,
+          157
+        ],
+        [
+          1809,
+          3686,
+          157
+        ],
+        [
+          1809,
+          3692,
+          157
+        ],
+        [
+          1843,
+          3668,
+          157
+        ],
+        [
+          1843,
+          3674,
+          157
+        ],
+        [
+          1843,
+          3680,
+          157
+        ],
+        [
+          1843,
+          3686,
+          157
+        ],
+        [
+          1843,
+          3692,
+          157
+        ]
+      ]
+    },
+    {
+      "op": "fill",
+      "box": [
+        1811,
+        146,
+        3666,
+        1815,
+        146,
+        3682
+      ],
+      "block": "minecraft:spruce_planks",
+      "why": "-- STAGE 1. The masons' loft along the west wall, five above the floor"
+    },
+    {
+      "op": "columns",
+      "from_y": 142,
+      "block": "minecraft:stone_bricks",
+      "why": "its piers, all under the deck",
+      "cells": [
+        [
+          1815,
+          3667,
+          145
+        ],
+        [
+          1815,
+          3671,
+          145
+        ],
+        [
+          1815,
+          3675,
+          145
+        ],
+        [
+          1815,
+          3679,
+          145
+        ],
+        [
+          1815,
+          3682,
+          145
+        ]
+      ]
+    },
+    {
+      "op": "fill",
+      "box": [
+        1815,
+        147,
+        3666,
+        1815,
+        147,
+        3671
+      ],
+      "block": "minecraft:cobblestone_wall",
+      "why": "the loft rail, in four lengths: the gaps are the two gantry mouths and the stair's landing"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1815,
+        147,
+        3674,
+        1815,
+        147,
+        3675
+      ],
+      "block": "minecraft:cobblestone_wall"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1815,
+        147,
+        3677,
+        1815,
+        147,
+        3679
+      ],
+      "block": "minecraft:cobblestone_wall"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1815,
+        147,
+        3682,
+        1815,
+        147,
+        3682
+      ],
+      "block": "minecraft:cobblestone_wall"
+    },
+    {
+      "op": "columns",
+      "from_y": 142,
+      "block": "minecraft:stone_bricks",
+      "why": "the finished stack: four squared courses stepped up to the loft's edge, the one climb on the floor that reaches",
+      "cells": [
+        [
+          1816,
+          3679,
+          142
+        ],
+        [
+          1817,
+          3679,
+          142
+        ],
+        [
+          1816,
+          3678,
+          143
+        ],
+        [
+          1817,
+          3678,
+          143
+        ],
+        [
+          1816,
+          3677,
+          144
+        ],
+        [
+          1817,
+          3677,
+          144
+        ],
+        [
+          1816,
+          3676,
+          145
+        ],
+        [
+          1817,
+          3676,
+          145
+        ]
+      ]
+    },
+    {
+      "op": "fill",
+      "box": [
+        1820,
+        142,
+        3673,
+        1822,
+        144,
+        3675
+      ],
+      "block": "minecraft:cobblestone",
+      "why": "and three stacks that do not: rough blocks two short of the deck"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1826,
+        142,
+        3677,
+        1828,
+        143,
+        3679
+      ],
+      "block": "minecraft:cobblestone"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1831,
+        142,
+        3672,
+        1833,
+        144,
+        3674
+      ],
+      "block": "minecraft:stone_bricks"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1816,
+        146,
+        3672,
+        1828,
+        146,
+        3673
+      ],
+      "block": "minecraft:spruce_planks",
+      "why": "-- STAGE 2. The north gantry, which stops in mid air over the cutting floor. It is a dead end you can see is a dead end from the door."
+    },
+    {
+      "op": "columns",
+      "from_y": 142,
+      "block": "minecraft:stone_bricks",
+      "why": "its posts",
+      "cells": [
+        [
+          1818,
+          3672,
+          145
+        ],
+        [
+          1824,
+          3672,
+          145
+        ]
+      ]
+    },
+    {
+      "op": "fill",
+      "box": [
+        1816,
+        146,
+        3680,
+        1833,
+        146,
+        3681
+      ],
+      "block": "minecraft:spruce_planks",
+      "why": "the south gantry, eighteen blocks to the wall"
+    },
+    {
+      "op": "columns",
+      "from_y": 142,
+      "block": "minecraft:stone_bricks",
+      "why": "its posts",
+      "cells": [
+        [
+          1820,
+          3680,
+          145
+        ],
+        [
+          1824,
+          3680,
+          145
+        ],
+        [
+          1828,
+          3680,
+          145
+        ],
+        [
+          1832,
+          3680,
+          145
+        ]
+      ]
+    },
+    {
+      "op": "fill",
+      "box": [
+        1834,
+        146,
+        3678,
+        1838,
+        146,
+        3688
+      ],
+      "block": "minecraft:spruce_planks",
+      "why": "the scaffold deck along the wall's east end, where the gantry lands"
+    },
+    {
+      "op": "columns",
+      "from_y": 142,
+      "block": "minecraft:stone_bricks",
+      "why": "and its posts",
+      "cells": [
+        [
+          1834,
+          3679,
+          145
+        ],
+        [
+          1838,
+          3679,
+          145
+        ],
+        [
+          1834,
+          3687,
+          145
+        ],
+        [
+          1838,
+          3687,
+          145
+        ],
+        [
+          1836,
+          3683,
+          145
+        ]
+      ]
+    },
+    {
+      "op": "fill",
+      "box": [
+        1813,
+        142,
+        3683,
+        1827,
+        152,
+        3686
+      ],
+      "block": "minecraft:stone_bricks",
+      "why": "-- STAGE 3. The wall being raised: eleven courses, four thick, twenty-one long"
+    },
+    {
+      "op": "columns",
+      "from_y": 142,
+      "block": "minecraft:stone_bricks",
+      "why": "its east end, still stepped course by course - 147, 148, 149, 150, 151, 152 - which is the only climb onto the crest",
+      "cells": [
+        [
+          1833,
+          3683,
+          147
+        ],
+        [
+          1833,
+          3684,
+          147
+        ],
+        [
+          1833,
+          3685,
+          147
+        ],
+        [
+          1833,
+          3686,
+          147
+        ],
+        [
+          1832,
+          3683,
+          148
+        ],
+        [
+          1832,
+          3684,
+          148
+        ],
+        [
+          1832,
+          3685,
+          148
+        ],
+        [
+          1832,
+          3686,
+          148
+        ],
+        [
+          1831,
+          3683,
+          149
+        ],
+        [
+          1831,
+          3684,
+          149
+        ],
+        [
+          1831,
+          3685,
+          149
+        ],
+        [
+          1831,
+          3686,
+          149
+        ],
+        [
+          1830,
+          3683,
+          150
+        ],
+        [
+          1830,
+          3684,
+          150
+        ],
+        [
+          1830,
+          3685,
+          150
+        ],
+        [
+          1830,
+          3686,
+          150
+        ],
+        [
+          1829,
+          3683,
+          151
+        ],
+        [
+          1829,
+          3684,
+          151
+        ],
+        [
+          1829,
+          3685,
+          151
+        ],
+        [
+          1829,
+          3686,
+          151
+        ],
+        [
+          1828,
+          3683,
+          152
+        ],
+        [
+          1828,
+          3684,
+          152
+        ],
+        [
+          1828,
+          3685,
+          152
+        ],
+        [
+          1828,
+          3686,
+          152
+        ]
+      ]
+    },
+    {
+      "op": "fill",
+      "box": [
+        1813,
+        152,
+        3683,
+        1827,
+        152,
+        3686
+      ],
+      "block": "minecraft:cobblestone",
+      "why": "the crest, unmortared: the course they are on"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1814,
+        153,
+        3684
+      ],
+      "block": "minecraft:stonecutter",
+      "why": "the mason's cutter at the crest's west end, clear of all three beam heads"
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:lantern",
+      "why": "and light along the crest, again clear of the beam heads",
+      "positions": [
+        [
+          1813,
+          153,
+          3685
+        ],
+        [
+          1817,
+          153,
+          3683
+        ],
+        [
+          1824,
+          153,
+          3686
+        ]
+      ]
+    },
+    {
+      "op": "fill",
+      "box": [
+        1815,
+        152,
+        3687,
+        1815,
+        152,
+        3692
+      ],
+      "block": "minecraft:stripped_spruce_log",
+      "why": "-- STAGE 4. Three jib beams, one block wide, six long, over eleven blocks of straw"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1821,
+        152,
+        3687,
+        1821,
+        152,
+        3692
+      ],
+      "block": "minecraft:stripped_spruce_log"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1827,
+        152,
+        3687,
+        1827,
+        152,
+        3692
+      ],
+      "block": "minecraft:stripped_spruce_log"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1811,
+        142,
+        3693,
+        1841,
+        159,
+        3694
+      ],
+      "block": "minecraft:stone_bricks",
+      "why": "-- STAGE 5. The cross wall: two courses thick, floor to y159, the gallery's north face"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1811,
+        142,
+        3693,
+        1841,
+        143,
+        3694
+      ],
+      "block": "minecraft:polished_andesite",
+      "why": "its plinth"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1827,
+        153,
+        3693,
+        1827,
+        154,
+        3694
+      ],
+      "block": "minecraft:air",
+      "why": "the true slot: through both courses, into the hoist"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1815,
+        153,
+        3693,
+        1815,
+        154,
+        3693
+      ],
+      "block": "minecraft:air",
+      "why": "and two blind ones, one course deep, that a player can stand in and find stone"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1821,
+        153,
+        3693,
+        1821,
+        154,
+        3693
+      ],
+      "block": "minecraft:air"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1827,
+        142,
+        3693,
+        1828,
+        144,
+        3694
+      ],
+      "block": "minecraft:air",
+      "why": "the archway at its foot: the way out of the hoist's bottom, back into the hall"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1811,
+        142,
+        3695,
+        1841,
+        154,
+        3698
+      ],
+      "block": "minecraft:stone_bricks",
+      "why": "-- STAGE 6. The masonry the gallery stands on, wall to wall"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1826,
+        142,
+        3695,
+        1829,
+        154,
+        3698
+      ],
+      "block": "minecraft:air",
+      "why": "the hoist shaft cut through it"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1826,
+        141,
+        3695,
+        1829,
+        141,
+        3698
+      ],
+      "block": "minecraft:hay_block",
+      "why": "straw at the bottom, where the chute lands: fourteen blocks, about one heart through hay"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1826,
+        152,
+        3695,
+        1829,
+        152,
+        3696
+      ],
+      "block": "minecraft:spruce_planks",
+      "why": "the loading ledge at the slot's level, filling the shaft's north half only"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1829,
+        153,
+        3697,
+        1829,
+        156,
+        3697
+      ],
+      "block": "minecraft:ladder[facing=west]",
+      "why": "the hoist ladder, carried by the shaft's east wall at x1830 and by the newel post above it. Its foot is eleven over the straw, so the shaft is not climbable from the bottom."
+    },
+    {
+      "op": "fill",
+      "box": [
+        1811,
+        155,
+        3695,
+        1841,
+        155,
+        3698
+      ],
+      "block": "minecraft:polished_andesite",
+      "why": "the gallery floor"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1829,
+        155,
+        3697,
+        1829,
+        155,
+        3697
+      ],
+      "block": "minecraft:ladder[facing=west]",
+      "why": "the ladder's course through the gallery floor, re-cut as ladder and not as air. The floor fill above overwrites part 66's y155 course; cutting it to air broke the climb at y155 and left the gallery, the leader and his chest unreachable (GYM_BUILDINGS_REVIEW.md D2, 2026-09-29). Its support is the floor block at (1830,155,3697)."
+    },
+    {
+      "op": "fill",
+      "box": [
+        1827,
+        155,
+        3698,
+        1827,
+        155,
+        3698
+      ],
+      "block": "minecraft:air",
+      "why": "and the chute's"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1830,
+        156,
+        3697
+      ],
+      "block": "minecraft:stone_bricks",
+      "why": "the newel post the ladder's top course hangs on, so a player steps off at floor level"
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:lantern[hanging=true]",
+      "why": "the clue: two lanterns under the gallery floor inside the shaft. Their light is what shows through the true slot and not through the two blind ones.",
+      "positions": [
+        [
+          1826,
+          154,
+          3698
+        ],
+        [
+          1828,
+          154,
+          3698
+        ]
+      ]
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1832,
+        155,
+        3696
+      ],
+      "block": "minecraft:redstone_block",
+      "why": "-- Brock. The power under the spawner, set into the gallery floor as the donor template sets its own"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1832,
+        156,
+        3696
+      ],
+      "block": "rctmod:trainer_spawner{TrainerIds:[\"kanto_brock\"]}",
+      "why": "the only trainer spawner in the town once the shell is down, and two air cells over it"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1836,
+        156,
+        3696
+      ],
+      "block": "minecraft:chest[facing=north]",
+      "why": "his chest"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1817,
+        156,
+        3696
+      ],
+      "block": "minecraft:stonecutter",
+      "why": "his work on the gallery: the cutter"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1839,
+        156,
+        3697
+      ],
+      "block": "minecraft:grindstone[face=floor,facing=north]",
+      "why": "and the grindstone"
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:lantern",
+      "why": "light on the gallery, clear of the ladder head and the chute",
+      "positions": [
+        [
+          1814,
+          156,
+          3696
+        ],
+        [
+          1820,
+          156,
+          3697
+        ],
+        [
+          1824,
+          156,
+          3696
+        ],
+        [
+          1838,
+          156,
+          3697
+        ],
+        [
+          1841,
+          156,
+          3696
+        ]
+      ]
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1818,
+        142,
+        3670
+      ],
+      "block": "minecraft:stonecutter",
+      "why": "-- the cutting floor's work"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1822,
+        142,
+        3668
+      ],
+      "block": "minecraft:stonecutter"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1832,
+        142,
+        3669
+      ],
+      "block": "minecraft:stonecutter"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1836,
+        142,
+        3672
+      ],
+      "block": "minecraft:grindstone[face=floor,facing=north]"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1821,
+        142,
+        3666
+      ],
+      "block": "minecraft:lectern[facing=south]",
+      "why": "the foreman's desk by the door"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1836,
+        142,
+        3665,
+        1838,
+        143,
+        3667
+      ],
+      "block": "minecraft:stone_bricks",
+      "why": "squared stone, stacked and counted"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1811,
+        142,
+        3665,
+        1812,
+        143,
+        3667
+      ],
+      "block": "minecraft:cobblestone",
+      "why": "and rough stone waiting to be cut"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1830,
+        142,
+        3676,
+        1832,
+        142,
+        3678
+      ],
+      "block": "minecraft:chiseled_stone_bricks",
+      "why": "the chiselled course, set aside"
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:barrel",
+      "positions": [
+        [
+          1813,
+          142,
+          3680
+        ],
+        [
+          1814,
+          142,
+          3680
+        ],
+        [
+          1839,
+          142,
+          3686
+        ]
+      ],
+      "why": "the works' stores"
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:lantern",
+      "why": "-- light: standing on the floor",
+      "positions": [
+        [
+          1816,
+          142,
+          3667
+        ],
+        [
+          1832,
+          142,
+          3666
+        ],
+        [
+          1816,
+          142,
+          3691
+        ],
+        [
+          1834,
+          142,
+          3691
+        ],
+        [
+          1840,
+          142,
+          3679
+        ],
+        [
+          1812,
+          142,
+          3687
+        ]
+      ]
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:lantern[hanging=true]",
+      "why": "hanging under the loft, the gantries and the deck",
+      "positions": [
+        [
+          1813,
+          145,
+          3670
+        ],
+        [
+          1813,
+          145,
+          3678
+        ],
+        [
+          1822,
+          145,
+          3680
+        ],
+        [
+          1821,
+          145,
+          3673
+        ],
+        [
+          1836,
+          145,
+          3682
+        ]
+      ]
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:lantern[hanging=true]",
+      "why": "and from the tie beams, high over the hall",
+      "positions": [
+        [
+          1816,
+          156,
+          3668
+        ],
+        [
+          1836,
+          156,
+          3668
+        ],
+        [
+          1816,
+          156,
+          3674
+        ],
+        [
+          1836,
+          156,
+          3674
+        ],
+        [
+          1820,
+          156,
+          3680
+        ],
+        [
+          1832,
+          156,
+          3680
+        ],
+        [
+          1824,
+          156,
+          3686
+        ],
+        [
+          1830,
+          156,
+          3686
+        ]
+      ]
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1822,
+        142,
+        3663
+      ],
+      "block": "minecraft:cobblestone_wall",
+      "why": "-- the door lamps on the forecourt"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1822,
+        143,
+        3663
+      ],
+      "block": "minecraft:lantern"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1830,
+        142,
+        3663
+      ],
+      "block": "minecraft:cobblestone_wall"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1830,
+        143,
+        3663
+      ],
+      "block": "minecraft:lantern"
+    }
   ]
 }

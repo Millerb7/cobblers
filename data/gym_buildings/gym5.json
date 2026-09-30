@@ -5,16 +5,27 @@
   "settlement": "gym5_town",
   "supersedes_donor": "gym5_gym_building",
   "supersedes_why": "the COBBLEVERSE donor shell (27x24, one oval room, no second storey, its own trainer spawner at [4597,116,2478]) is taken down by tools/gym_demolish.py and this house is built on its lot. docs/world-building/GYM_BUILDINGS_BRIEF.md: the owner rejected a shaft into a cave under the shell and asked for a large building with the puzzle inside it.",
-
   "name": "The Reed House",
   "reading": "Koga's town is a fen-edge watch town whose trackers read the marsh for anyone passing unseen, and whose signature dressing is a board of cast prints (docs/world-building/TOWN_CHARACTER.md: mangrove, mud brick, packed mud, bamboo, dark oak). The gym is their reed house, standing off the road in the fen at the boardwalk's end, its door turned away from the high street. Inside, the fen is still the floor: the whole south of the house is a shallow flood, and the work of the place - drying reed, steeping tanks, a smoke flue - is what a player climbs. The lot is the tightest of the five (33x33), so the building is not wide, it is tall and layered: the drying loft at five, the plank walks at five, the steeping tanks in the water, the flue that climbs fifteen, and the watch floor at fifteen where Koga sits. The reading that solves it is the town's own: you are asked to see which water is breathing.",
-
   "site": {
-    "lot_rect": [4574, 2463, 4606, 2495],
+    "lot_rect": [
+      4574,
+      2463,
+      4606,
+      2495
+    ],
     "lot_level": 116,
     "lot_source": "data/placements.json settlements.gym5_town.plan.anchors gym5_gym (rect, level 116, facing north). The plan's prep_note: 'The gym lot is the one real levelling, in the fen at about y114', and tools/place_town.py cuts and fills a levelled lot to its level, so the pad is y116.",
-    "ground": {"kind": "lot_level", "why": "the pad is the ground. The raw heightmap over the lot is y114-116 (docs/world-building/GYM_BUILDINGS_BRIEF.md, corrected envelope table) and the prep levels it to y116. Neither number was read from a world save."},
-    "footprint": [4577, 2468, 4603, 2492],
+    "ground": {
+      "kind": "lot_level",
+      "why": "the pad is the ground. The raw heightmap over the lot is y114-116 (docs/world-building/GYM_BUILDINGS_BRIEF.md, corrected envelope table) and the prep levels it to y116. Neither number was read from a world save."
+    },
+    "footprint": [
+      4577,
+      2468,
+      4603,
+      2492
+    ],
     "footprint_size_why": "27 by 25 inside a 33x33 lot: margins 3 west, 3 east, 5 north, 3 south, so the eaves (one course of overhang all round) and the stilt posts outside the walls still stand clear of the lot edge, and the jetty in front of the door has three rows of boards. The donor shell it replaces was 27x24 on the same ground.",
     "floor_y": 116,
     "stand_y": 117,
@@ -23,67 +34,279 @@
     "facing": "north",
     "facing_why": "the lot anchor is `facing: north`, and the fen_walk boardwalk in data/placements.json ends at [4590, 2459], due north of the door at x4589-4591. The placement's note: 'its door faces the boardwalk's end, away from the town'. The boardwalk's last four blocks (z2459-2463) are the town prep's, not this record's: the jetty here starts at z2465, inside the lot."
   },
-
-  "bounds": [4576, 112, 2465, 4604, 142, 2493],
+  "bounds": [
+    4576,
+    112,
+    2465,
+    4604,
+    142,
+    2493
+  ],
   "bounds_why": "the house (4577..4603 x 2468..2492), its one-block eaves and the mangrove stilt posts outside the walls (x4576 and x4604, z2467 and z2493), the jetty in front of the door (z2465..2467), and downward to y112 for the steeping tanks and the flue's sump, which are cut into the pad. Inside the lot rect on every side with a margin of two or more, and inside the gym_koga spawn-free box [4568, 2464, 4607, 2495] on every side.",
-
   "leader": {
     "id": "kanto_koga",
     "name": "Koga",
-    "spawner": [4594, 132, 2487],
-    "powered_by": [4594, 131, 2487],
+    "spawner": [
+      4594,
+      132,
+      2487
+    ],
+    "powered_by": [
+      4594,
+      131,
+      2487
+    ],
     "why": "EXP-013 E2 (VERIFIED, on staging): a bare rctmod:trainer_spawner set by command with TrainerIds on a redstone block spawned the leader and he battled. Taking the donor shell down removes the template's own spawner at [4597, 116, 2478] (data/gym_interiors.json gym5.shell), so this is the only kanto_koga in the town and the badge cannot be won without reaching the watch floor (a persistent leader trainer anywhere awards the badge: verified on staging 2026-09-24, docs/STATE.md).",
-    "chest": [4598, 132, 2487]
+    "chest": [
+      4598,
+      132,
+      2487
+    ]
   },
-
   "rooms": [
-    {"id": "jetty", "box": [4584, 116, 2465, 4596, 118, 2467], "why": "the boards in front of the door, at the boardwalk's end. The town faces away behind you."},
-    {"id": "under_loft", "box": [4578, 117, 2469, 4602, 120, 2473], "why": "the dry room you enter: packed mud, four blocks of headroom under the drying loft, the trackers' board of casts set into the wall east of the door, reed racks, eel traps and a smoke rack. Nothing here is climbable."},
-    {"id": "the_flood", "box": [4578, 115, 2474, 4602, 130, 2491], "why": "the fen itself, kept as the house's floor: one block of water over a bed of muddy mangrove roots, eighteen deep and twenty-five wide, open to the roof over its northern half. Everything a player falls off lands in it."},
-    {"id": "drying_loft", "box": [4578, 121, 2469, 4602, 130, 2473], "why": "the loft over the dry room, five above the water, railed on its south edge but for the stair landing and the three walk mouths. Stage 1 ends here."},
-    {"id": "plank_walks", "box": [4578, 121, 2474, 4602, 130, 2481], "why": "three one-wide bamboo walks leaving the loft southward at x4580, x4590 and x4600, nine blocks apart, each eight long. Stage 2."},
-    {"id": "tanks", "box": [4578, 112, 2482, 4602, 121, 2486], "why": "three steeping tanks standing in the flood, five by five outside and three by three inside, four deep in water, their rims level with the walks. Only the western one has a mouth at its bottom. Stage 3."},
-    {"id": "flue", "box": [4578, 112, 2486, 4582, 130, 2490], "why": "the smoke flue behind the west tank: a mud-brick shaft from the sump at y112 to the watch floor at y131, flooded to y118 and dry above it, with the ladder on its east wall. Stage 4."},
-    {"id": "watch_floor", "box": [4578, 131, 2482, 4602, 135, 2491], "why": "Koga's floor, fifteen above the water, sealed by the house's own walls on three sides, railed on the fourth, and holed in exactly two places: the flue's hatch and the marked chute. Slits at eye height look out over the marsh."}
+    {
+      "id": "jetty",
+      "box": [
+        4584,
+        116,
+        2465,
+        4596,
+        118,
+        2467
+      ],
+      "why": "the boards in front of the door, at the boardwalk's end. The town faces away behind you."
+    },
+    {
+      "id": "under_loft",
+      "box": [
+        4578,
+        117,
+        2469,
+        4602,
+        120,
+        2473
+      ],
+      "why": "the dry room you enter: packed mud, four blocks of headroom under the drying loft, the trackers' board of casts set into the wall east of the door, reed racks, eel traps and a smoke rack. Nothing here is climbable."
+    },
+    {
+      "id": "the_flood",
+      "box": [
+        4578,
+        115,
+        2474,
+        4602,
+        130,
+        2491
+      ],
+      "why": "the fen itself, kept as the house's floor: one block of water over a bed of muddy mangrove roots, eighteen deep and twenty-five wide, open to the roof over its northern half. Everything a player falls off lands in it."
+    },
+    {
+      "id": "drying_loft",
+      "box": [
+        4578,
+        121,
+        2469,
+        4602,
+        130,
+        2473
+      ],
+      "why": "the loft over the dry room, five above the water, railed on its south edge but for the stair landing and the three walk mouths. Stage 1 ends here."
+    },
+    {
+      "id": "plank_walks",
+      "box": [
+        4578,
+        121,
+        2474,
+        4602,
+        130,
+        2481
+      ],
+      "why": "three one-wide bamboo walks leaving the loft southward at x4580, x4590 and x4600, nine blocks apart, each eight long. Stage 2."
+    },
+    {
+      "id": "tanks",
+      "box": [
+        4578,
+        112,
+        2482,
+        4602,
+        121,
+        2486
+      ],
+      "why": "three steeping tanks standing in the flood, five by five outside and three by three inside, four deep in water, their rims level with the walks. Only the western one has a mouth at its bottom. Stage 3."
+    },
+    {
+      "id": "flue",
+      "box": [
+        4578,
+        112,
+        2486,
+        4582,
+        130,
+        2490
+      ],
+      "why": "the smoke flue behind the west tank: a mud-brick shaft from the sump at y112 to the watch floor at y131, flooded to y118 and dry above it, with the ladder on its east wall. Stage 4."
+    },
+    {
+      "id": "watch_floor",
+      "box": [
+        4578,
+        131,
+        2482,
+        4602,
+        135,
+        2491
+      ],
+      "why": "Koga's floor, fifteen above the water, sealed by the house's own walls on three sides, railed on the fourth, and holed in exactly two places: the flue's hatch and the marked chute. Slits at eye height look out over the marsh."
+    }
   ],
-
   "route": [
-    {"step": 1, "id": "the_reed_stair", "from": [4590, 117, 2470], "to": [4585, 122, 2473], "how": "climb",
-     "why": "four courses of reed bundles stacked in the shallow water at x4584-4586: z2477 tops at y117, z2476 at y118, z2475 at y119, z2474 at y120, then one step north onto the loft's deck (blocks at y121, walked at y122).",
-     "not_skippable": "the deck stands five above the water. The other three reed stacks in the flood (x4593-4595 z2474-2476, x4584-4586 z2479-2481, x4594-4596 z2484-2486) all top at y118, which leaves the deck three courses up: standing on a block occupying y118 a player may mount a block occupying y119 and no higher. The walk posts under the plank walks top at y120, two above those stacks, and stand at least four blocks clear of every stack. Nothing else inside the dry room rises above y118."},
-    {"step": 2, "id": "the_plank_walks", "from": [4585, 122, 2473], "to": [4580, 122, 2482], "how": "walk",
-     "why": "three bamboo walks leave the loft's south edge at x4580, x4590 and x4600 and run eight blocks south over the flood to the north rim of one tank each.",
-     "not_skippable": "the walks are nine blocks apart in x and there is nothing between them at their level, so no walk reaches another and no jump from the loft reaches a tank rim: the gap from the deck's edge at z2473 to the rims at z2482 is eight clear blocks, and a sprint jump clears four. Walking off a walk is a five-block drop into the flood and costs only the climb again."},
-    {"step": 3, "id": "the_breathing_tank", "from": [4580, 122, 2482], "to": [4580, 116, 2484], "how": "read, then drop",
-     "why": "the three tanks are identical from the rim but for one thing: soul sand in the floor of the west tank sends a column of bubbles up through four blocks of clear water and it breaks at the surface. That tank's bottom has a mouth; the other two are blind, and a player who drops into one climbs the ladder on its north wall back to the rim and walks back. This is the town's own reading - the trackers read the marsh for anyone passing unseen - and it is deliberately not Brock's lit slot.",
-     "not_skippable": "the tanks are sealed boxes of mud brick from y112 to y121 with only their tops open, standing free in the flood; their rims are five above the water, so nobody wades into one, and the five-block gaps between them are wider than a sprint jump. The drop from the rim into the tank is six blocks into four of water. The decoy tanks are ten blocks from the true one, not one: the rejected fen puzzle's decoy causeways sat one block apart and a player hopped across them (docs/world-building/GYM_BUILDINGS_BRIEF.md)."},
-    {"step": 4, "id": "the_flue", "from": [4580, 114, 2486], "to": [4581, 119, 2488], "how": "swim",
-     "why": "a two-block mouth at y113-114 in the wall the west tank shares with the flue. Down three, through one, up five, and a player surfaces inside the flue at y118, two above the tank's own surface: about nine blocks with the head under water, against the fourteen data/gym_interiors.json rules allow (max_submerged_run).",
-     "not_skippable": "the flue is solid mud brick from y112 to y130 on all four faces but for that mouth, and it is roofed at y131 by the watch floor. There is no opening into it from the flood, from a tank rim or from the walks, and its outside faces are sheer for fourteen blocks."},
-    {"step": 5, "id": "the_flue_ladder", "from": [4581, 119, 2488], "to": [4581, 132, 2488], "how": "climb",
-     "why": "the ladder is on the flue's east wall from y119 to y132, its foot one above the water a player surfaces in, its head hanging on a newel at [4582, 132, 2488] so the last rung is at floor level; the watch floor has a one-block hatch at [4581, 131, 2488] for it.",
-     "not_skippable": "the hatch is the only hole in the watch floor but for the chute, and the floor is sealed by the house's west, east and south walls and railed along its north edge. The walk decks and tank rims are at y122, ten below it."},
-    {"step": 6, "id": "koga", "from": [4581, 132, 2488], "to": [4594, 132, 2487], "how": "walk",
-     "why": "the spawner stands on a redstone block set into the watch floor with two air cells over it; Koga spawns on it. His chest is four east, his watch log west of him, and the slits at y133 are at eye height over the marsh.",
-     "not_skippable": "this is the only rctmod:trainer_spawner in the town once the donor shell is down."},
-    {"step": 7, "id": "the_chute", "from": [4585, 132, 2484], "to": [4585, 117, 2484], "how": "fall",
-     "why": "a one-block hole in the watch floor between the west and middle tanks drops fifteen onto the reed bales stacked in the water below (minecraft:hay_block, 80% off the fall: data/gym_interiors.json rules.max_fall is twelve and a longer fall must land on hay). The flue ladder still goes both ways, so the chute is a shortcut and never a trap.",
-     "not_skippable": "not a route step: the way back."}
+    {
+      "step": 1,
+      "id": "the_reed_stair",
+      "from": [
+        4590,
+        117,
+        2470
+      ],
+      "to": [
+        4585,
+        122,
+        2473
+      ],
+      "how": "climb",
+      "why": "a landing bale of reed set in the flood at z2478 tops at y117, one rise out of the water, and four bundles stacked on piles at x4584-4586 step north off it: feet y118 at z2477, y119 at z2476, y120 at z2475, y121 at z2474, then one step north onto the loft's deck (blocks at y121, walked at y122).",
+      "not_skippable": "the deck stands five above the water. The other three reed stacks in the flood (x4593-4595 z2474-2476, x4584-4586 z2479-2481, x4594-4596 z2484-2486) all top at y118, which leaves the deck three courses up: standing on a block occupying y118 a player may mount a block occupying y119 and no higher. The walk posts under the plank walks top at y120, two above those stacks, and stand at least four blocks clear of every stack. Nothing else inside the dry room rises above y118."
+    },
+    {
+      "step": 2,
+      "id": "the_plank_walks",
+      "from": [
+        4585,
+        122,
+        2473
+      ],
+      "to": [
+        4580,
+        122,
+        2482
+      ],
+      "how": "walk",
+      "why": "three bamboo walks leave the loft's south edge at x4580, x4590 and x4600 and run eight blocks south over the flood to the north rim of one tank each.",
+      "not_skippable": "the walks are nine blocks apart in x and there is nothing between them at their level, so no walk reaches another and no jump from the loft reaches a tank rim: the gap from the deck's edge at z2473 to the rims at z2482 is eight clear blocks, and a sprint jump clears four. Walking off a walk is a five-block drop into the flood and costs only the climb again."
+    },
+    {
+      "step": 3,
+      "id": "the_breathing_tank",
+      "from": [
+        4580,
+        122,
+        2482
+      ],
+      "to": [
+        4580,
+        116,
+        2484
+      ],
+      "how": "read, then drop",
+      "why": "the three tanks are identical from the rim but for one thing: soul sand in the floor of the west tank sends a column of bubbles up through four blocks of clear water and it breaks at the surface. That tank's bottom has a mouth; the other two are blind, and a player who drops into one climbs the ladder on its north wall back to the rim and walks back. This is the town's own reading - the trackers read the marsh for anyone passing unseen - and it is deliberately not Brock's lit slot.",
+      "not_skippable": "the tanks are sealed boxes of mud brick from y112 to y121 with only their tops open, standing free in the flood; their rims are five above the water, so nobody wades into one, and the five-block gaps between them are wider than a sprint jump. The drop from the rim into the tank is six blocks into four of water. The decoy tanks are ten blocks from the true one, not one: the rejected fen puzzle's decoy causeways sat one block apart and a player hopped across them (docs/world-building/GYM_BUILDINGS_BRIEF.md)."
+    },
+    {
+      "step": 4,
+      "id": "the_flue",
+      "from": [
+        4580,
+        114,
+        2486
+      ],
+      "to": [
+        4581,
+        119,
+        2488
+      ],
+      "how": "swim",
+      "why": "a two-block mouth at y113-114 in the wall the west tank shares with the flue. Down three, through one, up five, and a player surfaces inside the flue at y118, two above the tank's own surface: about nine blocks with the head under water, against the fourteen data/gym_interiors.json rules allow (max_submerged_run).",
+      "not_skippable": "the flue is solid mud brick from y112 to y130 on all four faces but for that mouth, and it is roofed at y131 by the watch floor. There is no opening into it from the flood, from a tank rim or from the walks, and its outside faces are sheer for fourteen blocks."
+    },
+    {
+      "step": 5,
+      "id": "the_flue_ladder",
+      "from": [
+        4581,
+        119,
+        2488
+      ],
+      "to": [
+        4581,
+        132,
+        2488
+      ],
+      "how": "climb",
+      "why": "the ladder is on the flue's east wall from y119 to y132, its foot one above the water a player surfaces in, its head hanging on a newel at [4582, 132, 2488] so the last rung is at floor level; the watch floor has a one-block hatch at [4581, 131, 2488] for it.",
+      "not_skippable": "the hatch is the only hole in the watch floor but for the chute, and the floor is sealed by the house's west, east and south walls and railed along its north edge. The walk decks and tank rims are at y122, ten below it."
+    },
+    {
+      "step": 6,
+      "id": "koga",
+      "from": [
+        4581,
+        132,
+        2488
+      ],
+      "to": [
+        4594,
+        132,
+        2487
+      ],
+      "how": "walk",
+      "why": "the spawner stands on a redstone block set into the watch floor with two air cells over it; Koga spawns on it. His chest is four east, his watch log west of him, and the slits at y133 are at eye height over the marsh.",
+      "not_skippable": "this is the only rctmod:trainer_spawner in the town once the donor shell is down."
+    },
+    {
+      "step": 7,
+      "id": "the_chute",
+      "from": [
+        4585,
+        132,
+        2485
+      ],
+      "to": [
+        4585,
+        117,
+        2484
+      ],
+      "how": "fall",
+      "why": "a one-block hole in the watch floor between the west and middle tanks drops fifteen onto the reed bales stacked in the water below (minecraft:hay_block, 80% off the fall: data/gym_interiors.json rules.max_fall is twelve and a longer fall must land on hay). The flue ladder still goes both ways, so the chute is a shortcut and never a trap. The step starts at (4585,132,2485) on the watch floor beside the hatch, not in the hatch cell itself, which is air over air and a cell nobody stands in.",
+      "not_skippable": "not a route step: the way back."
+    }
   ],
-
   "trainers": [],
   "trainers_why": "none authored here, and deliberately, exactly as gym 1. A gym trainer has to be unavoidable, and unavoidability on this route is a claim about where a player can physically stand and how far a trainer can see - the independent movement model (tools/gym_interiors_independent.py) settles that, and it is not this unit's to write (CLAUDE.md principle 16). The record's `trainers` array is supported by the generator and is where seats go once somebody who is not the builder has checked them. The loft, the tank rims and the watch floor are the three places that would hold one.",
-
   "no_build": [
-    {"box": [4577, 112, 2468, 4603, 142, 2492], "why": "the whole house. Authored, not wired: the scene runtime's adventure-mode box (tools/scenes_pack.py no_build) needs a scene record in data/scenes.json and that is not written in this unit. Until it is, a player with blocks can bridge the flood or pillar up to the watch floor."}
+    {
+      "box": [
+        4577,
+        112,
+        2468,
+        4603,
+        142,
+        2492
+      ],
+      "why": "the whole house. Authored, not wired: the scene runtime's adventure-mode box (tools/scenes_pack.py no_build) needs a scene record in data/scenes.json and that is not written in this unit. Until it is, a player with blocks can bridge the flood or pillar up to the watch floor."
+    }
   ],
-
   "spawn_suppression": {
     "record": "gym_koga",
-    "box": [4568, 2464, 4607, 2495],
+    "box": [
+      4568,
+      2464,
+      4607,
+      2495
+    ],
     "note": "data/gym_interiors.json gyms[gym5].spawn_suppression, unchanged, and this building lies wholly inside it (x4576..4604 inside 4568..4607; z2465..2493 inside 2464..2495). That matters more here than at any other gym: minecraft:water and minecraft:flowing_water are both spawn-condition blocks in data/spawn_blocks.json, and this house has about 450 cells of standing water in it. No other block used here is named by that file (mangrove_propagule is, and is not used)."
   },
-
   "blocks": [
     "minecraft:air",
     "minecraft:stone",
@@ -113,227 +336,1977 @@
     "rctmod:trainer_spawner"
   ],
   "blocks_why": "the town's own palette (docs/world-building/TOWN_CHARACTER.md gym5_town: mangrove, mud brick, packed mud, bamboo, dark oak) plus the lamp the town plan already uses for this settlement (minecraft:verdant_froglight, 'a sour green light for the poison town'). Water is here because the fen is the floor; it is the one spawn-condition block in the list and the gym_koga suppression box covers all of it. No leaves (nothing to decay), no carpet, no plate.",
-
   "parts": [
-    {"op": "comment", "why": "gym 5, Koga: the Reed House (data/gym_buildings/gym5.json). Run after the donor shell is taken down (tools/gym_demolish.py), which is after the pack donors are placed."},
-
-    {"op": "fill", "box": [4576, 117, 2465, 4604, 142, 2493], "block": "minecraft:air",
-     "why": "-- clear the lot over the pad, so the build is the same on a fresh export and on a re-apply"},
-    {"op": "fill", "box": [4577, 112, 2468, 4603, 116, 2492], "block": "minecraft:stone",
-     "why": "and fill the five courses under the pad back to rock. tools/gym_demolish.py's dig box stops at y111, so the tanks and the flue sump this record cuts at y112-116 are re-made here and nowhere else; without this a second run would build into its own water."},
-
-    {"op": "fill", "box": [4584, 116, 2465, 4596, 116, 2467], "block": "minecraft:mangrove_planks",
-     "why": "-- the jetty at the door, where the fen boardwalk arrives from the north"},
-    {"op": "fill", "box": [4578, 116, 2469, 4602, 116, 2473], "block": "minecraft:packed_mud",
-     "why": "the dry room's floor: the one part of the house that is out of the water"},
-    {"op": "fill", "box": [4578, 115, 2474, 4602, 115, 2491], "block": "minecraft:muddy_mangrove_roots",
-     "why": "the fen's bed, one course under the water so the bottom reads as marsh and not as the pad"},
-    {"op": "fill", "box": [4578, 116, 2474, 4602, 116, 2491], "block": "minecraft:water",
-     "why": "the flood: one block deep, wadeable, its surface a step below the dry room's floor. It is held by the house's own walls on three sides and by the dry floor on the fourth, so no source has anywhere to go."},
-
-    {"op": "fill", "box": [4577, 117, 2468, 4577, 135, 2492], "block": "minecraft:mud_bricks", "why": "-- the walls, nineteen courses to the eaves"},
-    {"op": "fill", "box": [4603, 117, 2468, 4603, 135, 2492], "block": "minecraft:mud_bricks"},
-    {"op": "fill", "box": [4578, 117, 2468, 4602, 135, 2468], "block": "minecraft:mud_bricks"},
-    {"op": "fill", "box": [4578, 117, 2492, 4602, 135, 2492], "block": "minecraft:mud_bricks"},
-
-    {"op": "fill", "box": [4577, 117, 2468, 4577, 118, 2492], "block": "minecraft:packed_mud", "why": "the plinth course, where the walls meet the water"},
-    {"op": "fill", "box": [4603, 117, 2468, 4603, 118, 2492], "block": "minecraft:packed_mud"},
-    {"op": "fill", "box": [4578, 117, 2468, 4602, 118, 2468], "block": "minecraft:packed_mud"},
-    {"op": "fill", "box": [4578, 117, 2492, 4602, 118, 2492], "block": "minecraft:packed_mud"},
-
-    {"op": "fill", "box": [4577, 127, 2468, 4577, 127, 2492], "block": "minecraft:stripped_mangrove_log", "why": "and a timber band at the loft's head height, set flush into the wall so it is no ledge"},
-    {"op": "fill", "box": [4603, 127, 2468, 4603, 127, 2492], "block": "minecraft:stripped_mangrove_log"},
-    {"op": "fill", "box": [4578, 127, 2468, 4602, 127, 2468], "block": "minecraft:stripped_mangrove_log"},
-    {"op": "fill", "box": [4578, 127, 2492, 4602, 127, 2492], "block": "minecraft:stripped_mangrove_log"},
-
-    {"op": "fill", "box": [4589, 117, 2468, 4591, 120, 2468], "block": "minecraft:air",
-     "why": "-- the door in the north gable, three wide and four tall, facing the boardwalk's end"},
-    {"op": "fill", "box": [4588, 117, 2468, 4588, 120, 2468], "block": "minecraft:mangrove_log", "why": "its jambs"},
-    {"op": "fill", "box": [4592, 117, 2468, 4592, 120, 2468], "block": "minecraft:mangrove_log"},
-    {"op": "fill", "box": [4588, 121, 2468, 4592, 121, 2468], "block": "minecraft:stripped_mangrove_log", "why": "and its lintel, which is the loft's edge"},
-
-    {"op": "columns", "from_y": 126, "block": "minecraft:air",
-     "why": "-- the high slits over the flood, one wide and four tall: nothing inside the house reaches within four blocks of them and outside they are ten above the pad",
-     "cells": [[4577, 2476, 129], [4577, 2482, 129], [4577, 2488, 129],
-               [4603, 2476, 129], [4603, 2482, 129], [4603, 2488, 129]]},
-    {"op": "columns", "from_y": 133, "block": "minecraft:air",
-     "why": "the watch slits at the top: one course only, at the eye height of somebody standing on the watch floor (feet y132), so a tracker sees the marsh and nobody steps out into a fifteen-block drop",
-     "cells": [[4582, 2492, 133], [4586, 2492, 133], [4590, 2492, 133], [4594, 2492, 133], [4598, 2492, 133],
-               [4577, 2484, 133], [4577, 2488, 133], [4603, 2484, 133], [4603, 2488, 133]]},
-
-    {"op": "gable_roof", "box": [4577, 2468, 4603, 2492], "run": "x", "eaves_y": 136, "overhang": 1,
-     "material": "minecraft:dark_oak_planks", "edge": "minecraft:stripped_mangrove_log",
-     "gable": "minecraft:mud_bricks", "gable_from_y": 136,
-     "why": "-- the roof: dark boards, one course every two columns, ridge at y142 over x4590, a one-block eave all round on the stilt posts, and the two gables filled in mud brick. Twenty-six above the water on a twenty-seven-wide house: this is the roof the town plan says you see over the reeds."},
-
-    {"op": "columns", "from_y": 116, "block": "minecraft:mangrove_log",
-     "why": "-- the stilt posts outside the walls, carrying the eaves. One block wide and twenty tall, so none of them is a way up.",
-     "cells": [[4576, 2472, 135], [4576, 2478, 135], [4576, 2484, 135], [4576, 2490, 135],
-               [4604, 2472, 135], [4604, 2478, 135], [4604, 2484, 135], [4604, 2490, 135],
-               [4580, 2467, 135], [4600, 2467, 135],
-               [4580, 2493, 135], [4590, 2493, 135], [4600, 2493, 135]]},
-
-    {"op": "fill", "box": [4578, 121, 2469, 4602, 121, 2473], "block": "minecraft:mangrove_planks",
-     "why": "-- STAGE 1. The drying loft over the dry room, five above the water"},
-    {"op": "fill", "box": [4578, 122, 2473, 4579, 122, 2473], "block": "minecraft:mud_brick_wall",
-     "why": "its rail, in five lengths: the gaps are the three walk mouths (x4580, x4590, x4600) and the stair landing (x4584-4586)"},
-    {"op": "fill", "box": [4581, 122, 2473, 4583, 122, 2473], "block": "minecraft:mud_brick_wall"},
-    {"op": "fill", "box": [4587, 122, 2473, 4589, 122, 2473], "block": "minecraft:mud_brick_wall"},
-    {"op": "fill", "box": [4591, 122, 2473, 4599, 122, 2473], "block": "minecraft:mud_brick_wall"},
-    {"op": "fill", "box": [4601, 122, 2473, 4602, 122, 2473], "block": "minecraft:mud_brick_wall"},
-
-    {"op": "columns", "from_y": 116, "block": "minecraft:packed_mud",
-     "why": "the piles the reed stacks stand on, one course, set into the water so no stack floats",
-     "cells": [[4584, 2474, 116], [4585, 2474, 116], [4586, 2474, 116],
-               [4584, 2475, 116], [4585, 2475, 116], [4586, 2475, 116],
-               [4584, 2476, 116], [4585, 2476, 116], [4586, 2476, 116],
-               [4584, 2477, 116], [4585, 2477, 116], [4586, 2477, 116],
-               [4593, 2474, 116], [4594, 2474, 116], [4595, 2474, 116],
-               [4593, 2475, 116], [4594, 2475, 116], [4595, 2475, 116],
-               [4593, 2476, 116], [4594, 2476, 116], [4595, 2476, 116],
-               [4584, 2479, 116], [4585, 2479, 116], [4586, 2479, 116],
-               [4584, 2480, 116], [4585, 2480, 116], [4586, 2480, 116],
-               [4584, 2481, 116], [4585, 2481, 116], [4586, 2481, 116],
-               [4594, 2484, 116], [4595, 2484, 116], [4596, 2484, 116],
-               [4594, 2485, 116], [4595, 2485, 116], [4596, 2485, 116],
-               [4594, 2486, 116], [4595, 2486, 116], [4596, 2486, 116]]},
-    {"op": "columns", "from_y": 117, "block": "minecraft:hay_block",
-     "why": "the stair of reed bundles: four courses stepped north out of the water, 117 at z2477, 118 at z2476, 119 at z2475, 120 at z2474, and then one step onto the loft. The only climb in the house that reaches.",
-     "cells": [[4584, 2477, 117], [4585, 2477, 117], [4586, 2477, 117],
-               [4584, 2476, 118], [4585, 2476, 118], [4586, 2476, 118],
-               [4584, 2475, 119], [4585, 2475, 119], [4586, 2475, 119],
-               [4584, 2474, 120], [4585, 2474, 120], [4586, 2474, 120]]},
-    {"op": "columns", "from_y": 117, "block": "minecraft:hay_block",
-     "why": "and three stacks that do not reach: two courses, tops at y118, three under the loft's deck. From a block occupying y118 a player may mount a block occupying y119 and no higher, and the nearest walk post tops at y120 four blocks away.",
-     "cells": [[4593, 2474, 118], [4594, 2474, 118], [4595, 2474, 118],
-               [4593, 2475, 118], [4594, 2475, 118], [4595, 2475, 118],
-               [4593, 2476, 118], [4594, 2476, 118], [4595, 2476, 118],
-               [4584, 2479, 118], [4585, 2479, 118], [4586, 2479, 118],
-               [4584, 2480, 118], [4585, 2480, 118], [4586, 2480, 118],
-               [4584, 2481, 118], [4585, 2481, 118], [4586, 2481, 118],
-               [4594, 2484, 118], [4595, 2484, 118], [4596, 2484, 118],
-               [4594, 2485, 118], [4595, 2485, 118], [4596, 2485, 118],
-               [4594, 2486, 118], [4595, 2486, 118], [4596, 2486, 118]]},
-
-    {"op": "fill", "box": [4580, 121, 2474, 4580, 121, 2481], "block": "minecraft:bamboo_planks",
-     "why": "-- STAGE 2. Three bamboo walks south over the flood, one wide, eight long, nine apart"},
-    {"op": "fill", "box": [4590, 121, 2474, 4590, 121, 2481], "block": "minecraft:bamboo_planks"},
-    {"op": "fill", "box": [4600, 121, 2474, 4600, 121, 2481], "block": "minecraft:bamboo_planks"},
-    {"op": "columns", "from_y": 116, "block": "minecraft:mangrove_log",
-     "why": "their posts, standing in the water and topping at y120 under the boards. One block wide, four above the water: nothing climbs them.",
-     "cells": [[4580, 2476, 120], [4580, 2480, 120], [4590, 2476, 120], [4590, 2480, 120],
-               [4600, 2476, 120], [4600, 2480, 120]]},
-
-    {"op": "fill", "box": [4578, 112, 2482, 4582, 121, 2486], "block": "minecraft:mud_bricks",
-     "why": "-- STAGE 3. The three steeping tanks, five by five, sunk into the pad and standing five above the water"},
-    {"op": "fill", "box": [4588, 112, 2482, 4592, 121, 2486], "block": "minecraft:mud_bricks"},
-    {"op": "fill", "box": [4598, 112, 2482, 4602, 121, 2486], "block": "minecraft:mud_bricks"},
-    {"op": "fill", "box": [4579, 113, 2483, 4581, 121, 2485], "block": "minecraft:air", "why": "hollowed, three by three"},
-    {"op": "fill", "box": [4589, 113, 2483, 4591, 121, 2485], "block": "minecraft:air"},
-    {"op": "fill", "box": [4599, 113, 2483, 4601, 121, 2485], "block": "minecraft:air"},
-    {"op": "fill", "box": [4579, 112, 2483, 4581, 112, 2485], "block": "minecraft:mud", "why": "a mud bottom, so the water reads as steeping and not as a bath"},
-    {"op": "fill", "box": [4589, 112, 2483, 4591, 112, 2485], "block": "minecraft:mud"},
-    {"op": "fill", "box": [4599, 112, 2483, 4601, 112, 2485], "block": "minecraft:mud"},
-    {"op": "setblock", "pos": [4579, 112, 2483], "block": "minecraft:soul_sand",
-     "why": "THE READING. Soul sand in the west tank's floor, in the corner furthest from the mouth: it sends a column of bubbles up four blocks of water and they break at the surface where a player standing on the rim can see them. The other two tanks are still. This is the only difference between them, and it is the town's own way of finding what passed unseen."},
-    {"op": "setblock", "pos": [4581, 112, 2485], "block": "minecraft:verdant_froglight", "why": "and a light in each tank's floor, so a rim reads its water to the bottom"},
-    {"op": "setblock", "pos": [4591, 112, 2485], "block": "minecraft:verdant_froglight"},
-    {"op": "setblock", "pos": [4601, 112, 2485], "block": "minecraft:verdant_froglight"},
-    {"op": "fill", "box": [4579, 113, 2483, 4581, 116, 2485], "block": "minecraft:water", "why": "four blocks of water in each, a six-block drop from the rim"},
-    {"op": "fill", "box": [4589, 113, 2483, 4591, 116, 2485], "block": "minecraft:water"},
-    {"op": "fill", "box": [4599, 113, 2483, 4601, 116, 2485], "block": "minecraft:water"},
-    {"op": "fill", "box": [4579, 117, 2483, 4579, 122, 2483], "block": "minecraft:ladder[facing=south]",
-     "why": "a ladder out of every tank, carried by its north wall at z2482, its foot one above the water a player surfaces in and its head on a newel. No tank is a trap."},
-    {"op": "fill", "box": [4589, 117, 2483, 4589, 122, 2483], "block": "minecraft:ladder[facing=south]"},
-    {"op": "fill", "box": [4599, 117, 2483, 4599, 122, 2483], "block": "minecraft:ladder[facing=south]"},
-    {"op": "setblock", "pos": [4579, 122, 2482], "block": "minecraft:mud_bricks",
-     "why": "the newels the top rung hangs on, clear of the walks' landings at x4580, x4590 and x4600"},
-    {"op": "setblock", "pos": [4589, 122, 2482], "block": "minecraft:mud_bricks"},
-    {"op": "setblock", "pos": [4599, 122, 2482], "block": "minecraft:mud_bricks"},
-
-    {"op": "fill", "box": [4578, 112, 2486, 4582, 130, 2490], "block": "minecraft:mud_bricks",
-     "why": "-- STAGE 4. The smoke flue behind the west tank: five by five, from the sump at y112 to under the watch floor, sharing its north wall with the tank"},
-    {"op": "fill", "box": [4579, 113, 2487, 4581, 130, 2489], "block": "minecraft:air", "why": "hollowed, three by three, eighteen tall"},
-    {"op": "fill", "box": [4579, 112, 2487, 4581, 112, 2489], "block": "minecraft:mud", "why": "the sump's bottom"},
-    {"op": "fill", "box": [4579, 113, 2487, 4581, 118, 2489], "block": "minecraft:water",
-     "why": "flooded to y118 and dry above it, so a player who swims the mouth surfaces inside the flue two above the tank's own level. Six blocks of water held on four sides by the flue's own walls."},
-    {"op": "fill", "box": [4580, 113, 2486, 4580, 114, 2486], "block": "minecraft:water",
-     "why": "THE MOUTH: two blocks through the wall the west tank shares with the flue, at the bottom of both. Down three, through one, up five - about nine blocks submerged, against the fourteen data/gym_interiors.json allows."},
-    {"op": "setblock", "pos": [4578, 124, 2488], "block": "minecraft:verdant_froglight",
-     "why": "a light set into the flue's wall, so the climb is not blind"},
-    {"op": "fill", "box": [4581, 119, 2488, 4581, 132, 2488], "block": "minecraft:ladder[facing=west]",
-     "why": "-- STAGE 5. The flue ladder, carried by the flue's east wall at x4582 up to y130, by the watch floor at y131 and by a newel at y132. Fourteen rungs from the water to the floor."},
-    {"op": "scatter", "block": "minecraft:lantern[hanging=true]",
-     "why": "two lanterns under the watch floor inside the flue, hung where the climb needs them",
-     "positions": [[4579, 130, 2487], [4580, 130, 2489]]},
-
-    {"op": "columns", "from_y": 116, "block": "minecraft:mud_bricks",
-     "why": "-- the two piers between the tanks that carry the watch floor's north edge. One block wide and fifteen tall out of the water: neither is a way up.",
-     "cells": [[4585, 2482, 130], [4595, 2482, 130]]},
-    {"op": "fill", "box": [4578, 131, 2482, 4602, 131, 2491], "block": "minecraft:mangrove_planks",
-     "why": "-- STAGE 6. Koga's watch floor, fifteen above the water, wall to wall and over the tanks and the flue"},
-    {"op": "setblock", "pos": [4581, 131, 2488], "block": "minecraft:air", "why": "the flue's hatch: the ladder's hole"},
-    {"op": "setblock", "pos": [4582, 132, 2488], "block": "minecraft:mud_bricks",
-     "why": "the newel the ladder's last rung hangs on, so a player steps off at floor level"},
-    {"op": "setblock", "pos": [4585, 131, 2484], "block": "minecraft:air", "why": "and the chute, the only other hole"},
-    {"op": "fill", "box": [4584, 116, 2483, 4586, 116, 2485], "block": "minecraft:hay_block",
-     "why": "the reed bales stacked in the water where the chute lands: a fifteen-block fall onto hay takes 80% off, and data/gym_interiors.json rules.max_fall is twelve"},
-    {"op": "fill", "box": [4578, 132, 2482, 4602, 132, 2482], "block": "minecraft:mud_brick_wall",
-     "why": "the watch floor's rail along its open north edge, so the chute is the way down and not the whole edge"},
-
-    {"op": "setblock", "pos": [4594, 131, 2487], "block": "minecraft:redstone_block",
-     "why": "-- Koga. The power under the spawner, set into the watch floor as the donor template sets its own"},
-    {"op": "setblock", "pos": [4594, 132, 2487], "block": "rctmod:trainer_spawner{TrainerIds:[\"kanto_koga\"]}",
-     "why": "the only trainer spawner in the town once the shell is down, with two air cells over it"},
-    {"op": "setblock", "pos": [4598, 132, 2487], "block": "minecraft:chest[facing=north]", "why": "his chest"},
-    {"op": "setblock", "pos": [4590, 132, 2490], "block": "minecraft:lectern[facing=north]", "why": "the watch log"},
-    {"op": "setblock", "pos": [4588, 132, 2484], "block": "minecraft:smoker[facing=north]", "why": "the smoke rack he keeps up here"},
-    {"op": "setblock", "pos": [4600, 132, 2490], "block": "minecraft:cauldron", "why": "and the steeping pot"},
-    {"op": "scatter", "block": "minecraft:barrel", "positions": [[4596, 132, 2490], [4592, 132, 2483]],
-     "why": "his stores"},
-    {"op": "scatter", "block": "minecraft:lantern",
-     "why": "light on the watch floor, standing on the boards and clear of the hatch, the chute and the spawner",
-     "positions": [[4583, 132, 2490], [4587, 132, 2489], [4591, 132, 2486], [4597, 132, 2483], [4601, 132, 2487]]},
-
-    {"op": "fill", "box": [4594, 117, 2468, 4600, 120, 2468], "block": "minecraft:stripped_mangrove_log",
-     "why": "-- THE TRACKERS' BOARD, set into the wall east of the door: the town's signature dressing (docs/world-building/TOWN_CHARACTER.md, 'a tracker's board of cast prints')"},
-    {"op": "fill", "box": [4595, 118, 2468, 4595, 119, 2468], "block": "minecraft:mud", "why": "three casts taken out of the fen, left to right"},
-    {"op": "fill", "box": [4597, 118, 2468, 4597, 119, 2468], "block": "minecraft:mud"},
-    {"op": "fill", "box": [4599, 118, 2468, 4599, 119, 2468], "block": "minecraft:mud"},
-    {"op": "setblock", "pos": [4595, 120, 2468], "block": "minecraft:verdant_froglight",
-     "why": "and a light over the left-hand one only. It is a hint and not the gate: what it says is that the trail goes west, which is where the breathing tank is."},
-
-    {"op": "fill", "box": [4580, 117, 2470, 4580, 118, 2470], "block": "minecraft:mangrove_log", "why": "-- the dry room's work: reed-drying racks"},
-    {"op": "fill", "box": [4584, 117, 2470, 4584, 118, 2470], "block": "minecraft:mangrove_log"},
-    {"op": "fill", "box": [4581, 118, 2470, 4583, 118, 2470], "block": "minecraft:hay_block"},
-    {"op": "fill", "box": [4580, 117, 2472, 4580, 118, 2472], "block": "minecraft:mangrove_log"},
-    {"op": "fill", "box": [4584, 117, 2472, 4584, 118, 2472], "block": "minecraft:mangrove_log"},
-    {"op": "fill", "box": [4581, 118, 2472, 4583, 118, 2472], "block": "minecraft:hay_block"},
-    {"op": "scatter", "block": "minecraft:barrel", "positions": [[4586, 117, 2472], [4588, 117, 2470], [4601, 117, 2472]],
-     "why": "eel traps and stores along the wall"},
-    {"op": "scatter", "block": "minecraft:composter", "positions": [[4598, 117, 2471], [4586, 117, 2470]],
-     "why": "the reed bins"},
-    {"op": "setblock", "pos": [4596, 117, 2472], "block": "minecraft:smoker[facing=north]", "why": "the smoke rack"},
-    {"op": "setblock", "pos": [4594, 117, 2472], "block": "minecraft:cauldron", "why": "and the dye pot beside it"},
-    {"op": "setblock", "pos": [4587, 117, 2472], "block": "minecraft:lectern[facing=east]", "why": "the keeper's book by the door"},
-
-    {"op": "columns", "from_y": 117, "block": "minecraft:mangrove_log",
-     "why": "-- light: four short posts in the dry room, with a lantern standing on each",
-     "cells": [[4579, 2469, 117], [4601, 2469, 117], [4579, 2473, 117], [4601, 2473, 117]]},
-    {"op": "scatter", "block": "minecraft:lantern",
-     "positions": [[4579, 118, 2469], [4601, 118, 2469], [4579, 118, 2473], [4601, 118, 2473]]},
-    {"op": "scatter", "block": "minecraft:lantern[hanging=true]",
-     "why": "hanging under the loft and under the three walks",
-     "positions": [[4582, 120, 2471], [4590, 120, 2471], [4598, 120, 2471],
-                   [4580, 120, 2478], [4590, 120, 2478], [4600, 120, 2478]]},
-    {"op": "scatter", "block": "minecraft:verdant_froglight",
-     "why": "and the fen's own light, set into the bed under the water and into the high walls: the sour green the town's roads already use",
-     "positions": [[4579, 116, 2478], [4601, 116, 2478], [4579, 116, 2488], [4601, 116, 2488],
-                   [4590, 116, 2484], [4577, 129, 2479], [4603, 129, 2479], [4577, 129, 2485], [4603, 129, 2485]]},
-
-    {"op": "setblock", "pos": [4586, 117, 2466], "block": "minecraft:mangrove_log", "why": "-- the two lamps on the jetty"},
-    {"op": "setblock", "pos": [4586, 118, 2466], "block": "minecraft:lantern"},
-    {"op": "setblock", "pos": [4594, 117, 2466], "block": "minecraft:mangrove_log"},
-    {"op": "setblock", "pos": [4594, 118, 2466], "block": "minecraft:lantern"}
+    {
+      "op": "comment",
+      "why": "gym 5, Koga: the Reed House (data/gym_buildings/gym5.json). Run after the donor shell is taken down (tools/gym_demolish.py), which is after the pack donors are placed."
+    },
+    {
+      "op": "fill",
+      "box": [
+        4576,
+        117,
+        2465,
+        4604,
+        142,
+        2493
+      ],
+      "block": "minecraft:air",
+      "why": "-- clear the lot over the pad, so the build is the same on a fresh export and on a re-apply"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4577,
+        112,
+        2468,
+        4603,
+        116,
+        2492
+      ],
+      "block": "minecraft:stone",
+      "why": "and fill the five courses under the pad back to rock. tools/gym_demolish.py's dig box stops at y111, so the tanks and the flue sump this record cuts at y112-116 are re-made here and nowhere else; without this a second run would build into its own water."
+    },
+    {
+      "op": "fill",
+      "box": [
+        4584,
+        116,
+        2465,
+        4596,
+        116,
+        2467
+      ],
+      "block": "minecraft:mangrove_planks",
+      "why": "-- the jetty at the door, where the fen boardwalk arrives from the north"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4578,
+        116,
+        2469,
+        4602,
+        116,
+        2473
+      ],
+      "block": "minecraft:packed_mud",
+      "why": "the dry room's floor: the one part of the house that is out of the water"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4578,
+        115,
+        2474,
+        4602,
+        115,
+        2491
+      ],
+      "block": "minecraft:muddy_mangrove_roots",
+      "why": "the fen's bed, one course under the water so the bottom reads as marsh and not as the pad"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4578,
+        116,
+        2474,
+        4602,
+        116,
+        2491
+      ],
+      "block": "minecraft:water",
+      "why": "the flood: one block deep, wadeable, its surface a step below the dry room's floor. It is held by the house's own walls on three sides and by the dry floor on the fourth, so no source has anywhere to go."
+    },
+    {
+      "op": "fill",
+      "box": [
+        4577,
+        117,
+        2468,
+        4577,
+        135,
+        2492
+      ],
+      "block": "minecraft:mud_bricks",
+      "why": "-- the walls, nineteen courses to the eaves"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4603,
+        117,
+        2468,
+        4603,
+        135,
+        2492
+      ],
+      "block": "minecraft:mud_bricks"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4578,
+        117,
+        2468,
+        4602,
+        135,
+        2468
+      ],
+      "block": "minecraft:mud_bricks"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4578,
+        117,
+        2492,
+        4602,
+        135,
+        2492
+      ],
+      "block": "minecraft:mud_bricks"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4577,
+        117,
+        2468,
+        4577,
+        118,
+        2492
+      ],
+      "block": "minecraft:packed_mud",
+      "why": "the plinth course, where the walls meet the water"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4603,
+        117,
+        2468,
+        4603,
+        118,
+        2492
+      ],
+      "block": "minecraft:packed_mud"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4578,
+        117,
+        2468,
+        4602,
+        118,
+        2468
+      ],
+      "block": "minecraft:packed_mud"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4578,
+        117,
+        2492,
+        4602,
+        118,
+        2492
+      ],
+      "block": "minecraft:packed_mud"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4577,
+        127,
+        2468,
+        4577,
+        127,
+        2492
+      ],
+      "block": "minecraft:stripped_mangrove_log",
+      "why": "and a timber band at the loft's head height, set flush into the wall so it is no ledge"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4603,
+        127,
+        2468,
+        4603,
+        127,
+        2492
+      ],
+      "block": "minecraft:stripped_mangrove_log"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4578,
+        127,
+        2468,
+        4602,
+        127,
+        2468
+      ],
+      "block": "minecraft:stripped_mangrove_log"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4578,
+        127,
+        2492,
+        4602,
+        127,
+        2492
+      ],
+      "block": "minecraft:stripped_mangrove_log"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4589,
+        117,
+        2468,
+        4591,
+        120,
+        2468
+      ],
+      "block": "minecraft:air",
+      "why": "-- the door in the north gable, three wide and four tall, facing the boardwalk's end"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4588,
+        117,
+        2468,
+        4588,
+        120,
+        2468
+      ],
+      "block": "minecraft:mangrove_log",
+      "why": "its jambs"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4592,
+        117,
+        2468,
+        4592,
+        120,
+        2468
+      ],
+      "block": "minecraft:mangrove_log"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4588,
+        121,
+        2468,
+        4592,
+        121,
+        2468
+      ],
+      "block": "minecraft:stripped_mangrove_log",
+      "why": "and its lintel, which is the loft's edge"
+    },
+    {
+      "op": "columns",
+      "from_y": 126,
+      "block": "minecraft:air",
+      "why": "-- the high slits over the flood, one wide and four tall: nothing inside the house reaches within four blocks of them and outside they are ten above the pad",
+      "cells": [
+        [
+          4577,
+          2476,
+          129
+        ],
+        [
+          4577,
+          2482,
+          129
+        ],
+        [
+          4577,
+          2488,
+          129
+        ],
+        [
+          4603,
+          2476,
+          129
+        ],
+        [
+          4603,
+          2482,
+          129
+        ],
+        [
+          4603,
+          2488,
+          129
+        ]
+      ]
+    },
+    {
+      "op": "columns",
+      "from_y": 133,
+      "block": "minecraft:air",
+      "why": "the watch slits at the top: one course only, at the eye height of somebody standing on the watch floor (feet y132), so a tracker sees the marsh and nobody steps out into a fifteen-block drop",
+      "cells": [
+        [
+          4582,
+          2492,
+          133
+        ],
+        [
+          4586,
+          2492,
+          133
+        ],
+        [
+          4590,
+          2492,
+          133
+        ],
+        [
+          4594,
+          2492,
+          133
+        ],
+        [
+          4598,
+          2492,
+          133
+        ],
+        [
+          4577,
+          2484,
+          133
+        ],
+        [
+          4577,
+          2488,
+          133
+        ],
+        [
+          4603,
+          2484,
+          133
+        ],
+        [
+          4603,
+          2488,
+          133
+        ]
+      ]
+    },
+    {
+      "op": "gable_roof",
+      "box": [
+        4577,
+        2468,
+        4603,
+        2492
+      ],
+      "run": "x",
+      "eaves_y": 136,
+      "overhang": 1,
+      "material": "minecraft:dark_oak_planks",
+      "edge": "minecraft:stripped_mangrove_log",
+      "gable": "minecraft:mud_bricks",
+      "gable_from_y": 136,
+      "why": "-- the roof: dark boards, one course every two columns, ridge at y142 over x4590, a one-block eave all round on the stilt posts, and the two gables filled in mud brick. Twenty-six above the water on a twenty-seven-wide house: this is the roof the town plan says you see over the reeds."
+    },
+    {
+      "op": "columns",
+      "from_y": 116,
+      "block": "minecraft:mangrove_log",
+      "why": "-- the stilt posts outside the walls, carrying the eaves. One block wide and twenty tall, so none of them is a way up.",
+      "cells": [
+        [
+          4576,
+          2472,
+          135
+        ],
+        [
+          4576,
+          2478,
+          135
+        ],
+        [
+          4576,
+          2484,
+          135
+        ],
+        [
+          4576,
+          2490,
+          135
+        ],
+        [
+          4604,
+          2472,
+          135
+        ],
+        [
+          4604,
+          2478,
+          135
+        ],
+        [
+          4604,
+          2484,
+          135
+        ],
+        [
+          4604,
+          2490,
+          135
+        ],
+        [
+          4580,
+          2467,
+          135
+        ],
+        [
+          4600,
+          2467,
+          135
+        ],
+        [
+          4580,
+          2493,
+          135
+        ],
+        [
+          4590,
+          2493,
+          135
+        ],
+        [
+          4600,
+          2493,
+          135
+        ]
+      ]
+    },
+    {
+      "op": "fill",
+      "box": [
+        4578,
+        121,
+        2469,
+        4602,
+        121,
+        2473
+      ],
+      "block": "minecraft:mangrove_planks",
+      "why": "-- STAGE 1. The drying loft over the dry room, five above the water"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4578,
+        122,
+        2473,
+        4579,
+        122,
+        2473
+      ],
+      "block": "minecraft:mud_brick_wall",
+      "why": "its rail, in five lengths: the gaps are the three walk mouths (x4580, x4590, x4600) and the stair landing (x4584-4586)"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4581,
+        122,
+        2473,
+        4583,
+        122,
+        2473
+      ],
+      "block": "minecraft:mud_brick_wall"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4587,
+        122,
+        2473,
+        4589,
+        122,
+        2473
+      ],
+      "block": "minecraft:mud_brick_wall"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4591,
+        122,
+        2473,
+        4599,
+        122,
+        2473
+      ],
+      "block": "minecraft:mud_brick_wall"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4601,
+        122,
+        2473,
+        4602,
+        122,
+        2473
+      ],
+      "block": "minecraft:mud_brick_wall"
+    },
+    {
+      "op": "columns",
+      "from_y": 116,
+      "block": "minecraft:packed_mud",
+      "why": "the piles the reed stacks stand on, one course, set into the water so no stack floats",
+      "cells": [
+        [
+          4584,
+          2474,
+          116
+        ],
+        [
+          4585,
+          2474,
+          116
+        ],
+        [
+          4586,
+          2474,
+          116
+        ],
+        [
+          4584,
+          2475,
+          116
+        ],
+        [
+          4585,
+          2475,
+          116
+        ],
+        [
+          4586,
+          2475,
+          116
+        ],
+        [
+          4584,
+          2476,
+          116
+        ],
+        [
+          4585,
+          2476,
+          116
+        ],
+        [
+          4586,
+          2476,
+          116
+        ],
+        [
+          4584,
+          2477,
+          116
+        ],
+        [
+          4585,
+          2477,
+          116
+        ],
+        [
+          4586,
+          2477,
+          116
+        ],
+        [
+          4593,
+          2474,
+          116
+        ],
+        [
+          4594,
+          2474,
+          116
+        ],
+        [
+          4595,
+          2474,
+          116
+        ],
+        [
+          4593,
+          2475,
+          116
+        ],
+        [
+          4594,
+          2475,
+          116
+        ],
+        [
+          4595,
+          2475,
+          116
+        ],
+        [
+          4593,
+          2476,
+          116
+        ],
+        [
+          4594,
+          2476,
+          116
+        ],
+        [
+          4595,
+          2476,
+          116
+        ],
+        [
+          4584,
+          2479,
+          116
+        ],
+        [
+          4585,
+          2479,
+          116
+        ],
+        [
+          4586,
+          2479,
+          116
+        ],
+        [
+          4584,
+          2480,
+          116
+        ],
+        [
+          4585,
+          2480,
+          116
+        ],
+        [
+          4586,
+          2480,
+          116
+        ],
+        [
+          4584,
+          2481,
+          116
+        ],
+        [
+          4585,
+          2481,
+          116
+        ],
+        [
+          4586,
+          2481,
+          116
+        ],
+        [
+          4594,
+          2484,
+          116
+        ],
+        [
+          4595,
+          2484,
+          116
+        ],
+        [
+          4596,
+          2484,
+          116
+        ],
+        [
+          4594,
+          2485,
+          116
+        ],
+        [
+          4595,
+          2485,
+          116
+        ],
+        [
+          4596,
+          2485,
+          116
+        ],
+        [
+          4594,
+          2486,
+          116
+        ],
+        [
+          4595,
+          2486,
+          116
+        ],
+        [
+          4596,
+          2486,
+          116
+        ]
+      ]
+    },
+    {
+      "op": "columns",
+      "from_y": 117,
+      "block": "minecraft:hay_block",
+      "why": "the stair of reed bundles: courses stepped north out of the water. Blocks and feet are not the same number and this record first conflated them: the bundle at z2477 occupies cell y117, so its top face carries a player's feet at y118, and likewise y119 at z2476, y120 at z2475, y121 at z2474, from which the loft's deck (blocks y121, walked y122) is one rise. The foot of the stair is the landing bale in the part below, not this course: from the flood (feet y116) this course alone was a two-block rise and nothing could mount it (GYM_BUILDINGS_REVIEW.md D6, fixed 2026-09-29). The top course at z2474 is one bundle wide, at x4585 alone: three wide it put the head of the stair four blocks from the head of the west plank walk at (4580,122,2474), which a sprint jump rising one clears, and a player could hop straight onto the correct walk without ever crossing the drying loft or reading the three tanks. From x4585 both walks are five away and out of reach, so the only way off the stair is north onto the loft's deck (GYM_BUILDINGS_REVIEW.md, the skip found on re-audit 2026-09-29). The only climb in the house that reaches.",
+      "cells": [
+        [
+          4584,
+          2477,
+          117
+        ],
+        [
+          4585,
+          2477,
+          117
+        ],
+        [
+          4586,
+          2477,
+          117
+        ],
+        [
+          4584,
+          2476,
+          118
+        ],
+        [
+          4585,
+          2476,
+          118
+        ],
+        [
+          4586,
+          2476,
+          118
+        ],
+        [
+          4584,
+          2475,
+          119
+        ],
+        [
+          4585,
+          2475,
+          119
+        ],
+        [
+          4586,
+          2475,
+          119
+        ],
+        [
+          4585,
+          2474,
+          120
+        ]
+      ]
+    },
+    {
+      "op": "columns",
+      "from_y": 116,
+      "block": "minecraft:hay_block",
+      "why": "the landing bale: one course of reed set in the flood itself at z2478, across the stair's full three-block width. Its top face is at y117, one rise from a player wading the flood at y116 and one rise below the first stepped bundle at z2477, which makes the stair mountable. Without it the climb began with a two-block rise approached from water on every side, and Koga was unreachable.",
+      "cells": [
+        [
+          4584,
+          2478,
+          116
+        ],
+        [
+          4585,
+          2478,
+          116
+        ],
+        [
+          4586,
+          2478,
+          116
+        ]
+      ]
+    },
+    {
+      "op": "columns",
+      "from_y": 117,
+      "block": "minecraft:hay_block",
+      "why": "and three stacks that do not reach: two courses, tops at y118, three under the loft's deck. From a block occupying y118 a player may mount a block occupying y119 and no higher, and the nearest walk post tops at y120 four blocks away.",
+      "cells": [
+        [
+          4593,
+          2474,
+          118
+        ],
+        [
+          4594,
+          2474,
+          118
+        ],
+        [
+          4595,
+          2474,
+          118
+        ],
+        [
+          4593,
+          2475,
+          118
+        ],
+        [
+          4594,
+          2475,
+          118
+        ],
+        [
+          4595,
+          2475,
+          118
+        ],
+        [
+          4593,
+          2476,
+          118
+        ],
+        [
+          4594,
+          2476,
+          118
+        ],
+        [
+          4595,
+          2476,
+          118
+        ],
+        [
+          4584,
+          2479,
+          118
+        ],
+        [
+          4585,
+          2479,
+          118
+        ],
+        [
+          4586,
+          2479,
+          118
+        ],
+        [
+          4584,
+          2480,
+          118
+        ],
+        [
+          4585,
+          2480,
+          118
+        ],
+        [
+          4586,
+          2480,
+          118
+        ],
+        [
+          4584,
+          2481,
+          118
+        ],
+        [
+          4585,
+          2481,
+          118
+        ],
+        [
+          4586,
+          2481,
+          118
+        ],
+        [
+          4594,
+          2484,
+          118
+        ],
+        [
+          4595,
+          2484,
+          118
+        ],
+        [
+          4596,
+          2484,
+          118
+        ],
+        [
+          4594,
+          2485,
+          118
+        ],
+        [
+          4595,
+          2485,
+          118
+        ],
+        [
+          4596,
+          2485,
+          118
+        ],
+        [
+          4594,
+          2486,
+          118
+        ],
+        [
+          4595,
+          2486,
+          118
+        ],
+        [
+          4596,
+          2486,
+          118
+        ]
+      ]
+    },
+    {
+      "op": "fill",
+      "box": [
+        4580,
+        121,
+        2474,
+        4580,
+        121,
+        2481
+      ],
+      "block": "minecraft:bamboo_planks",
+      "why": "-- STAGE 2. Three bamboo walks south over the flood, one wide, eight long, nine apart"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4590,
+        121,
+        2474,
+        4590,
+        121,
+        2481
+      ],
+      "block": "minecraft:bamboo_planks"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4600,
+        121,
+        2474,
+        4600,
+        121,
+        2481
+      ],
+      "block": "minecraft:bamboo_planks"
+    },
+    {
+      "op": "columns",
+      "from_y": 116,
+      "block": "minecraft:mangrove_log",
+      "why": "their posts, standing in the water and topping at y120 under the boards. One block wide, four above the water: nothing climbs them.",
+      "cells": [
+        [
+          4580,
+          2476,
+          120
+        ],
+        [
+          4580,
+          2480,
+          120
+        ],
+        [
+          4590,
+          2476,
+          120
+        ],
+        [
+          4590,
+          2480,
+          120
+        ],
+        [
+          4600,
+          2476,
+          120
+        ],
+        [
+          4600,
+          2480,
+          120
+        ]
+      ]
+    },
+    {
+      "op": "fill",
+      "box": [
+        4578,
+        112,
+        2482,
+        4582,
+        121,
+        2486
+      ],
+      "block": "minecraft:mud_bricks",
+      "why": "-- STAGE 3. The three steeping tanks, five by five, sunk into the pad and standing five above the water"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4588,
+        112,
+        2482,
+        4592,
+        121,
+        2486
+      ],
+      "block": "minecraft:mud_bricks"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4598,
+        112,
+        2482,
+        4602,
+        121,
+        2486
+      ],
+      "block": "minecraft:mud_bricks"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4579,
+        113,
+        2483,
+        4581,
+        121,
+        2485
+      ],
+      "block": "minecraft:air",
+      "why": "hollowed, three by three"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4589,
+        113,
+        2483,
+        4591,
+        121,
+        2485
+      ],
+      "block": "minecraft:air"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4599,
+        113,
+        2483,
+        4601,
+        121,
+        2485
+      ],
+      "block": "minecraft:air"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4579,
+        112,
+        2483,
+        4581,
+        112,
+        2485
+      ],
+      "block": "minecraft:mud",
+      "why": "a mud bottom, so the water reads as steeping and not as a bath"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4589,
+        112,
+        2483,
+        4591,
+        112,
+        2485
+      ],
+      "block": "minecraft:mud"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4599,
+        112,
+        2483,
+        4601,
+        112,
+        2485
+      ],
+      "block": "minecraft:mud"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4579,
+        112,
+        2483
+      ],
+      "block": "minecraft:soul_sand",
+      "why": "THE READING. Soul sand in the west tank's floor, in the corner furthest from the mouth: it sends a column of bubbles up four blocks of water and they break at the surface where a player standing on the rim can see them. The other two tanks are still. This is the only difference between them, and it is the town's own way of finding what passed unseen."
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4581,
+        112,
+        2485
+      ],
+      "block": "minecraft:verdant_froglight",
+      "why": "and a light in each tank's floor, so a rim reads its water to the bottom"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4591,
+        112,
+        2485
+      ],
+      "block": "minecraft:verdant_froglight"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4601,
+        112,
+        2485
+      ],
+      "block": "minecraft:verdant_froglight"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4579,
+        113,
+        2483,
+        4581,
+        116,
+        2485
+      ],
+      "block": "minecraft:water",
+      "why": "four blocks of water in each, a six-block drop from the rim"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4589,
+        113,
+        2483,
+        4591,
+        116,
+        2485
+      ],
+      "block": "minecraft:water"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4599,
+        113,
+        2483,
+        4601,
+        116,
+        2485
+      ],
+      "block": "minecraft:water"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4579,
+        117,
+        2483,
+        4579,
+        122,
+        2483
+      ],
+      "block": "minecraft:ladder[facing=south]",
+      "why": "a ladder out of every tank, carried by its north wall at z2482, its foot one above the water a player surfaces in and its head on a newel. No tank is a trap."
+    },
+    {
+      "op": "fill",
+      "box": [
+        4589,
+        117,
+        2483,
+        4589,
+        122,
+        2483
+      ],
+      "block": "minecraft:ladder[facing=south]"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4599,
+        117,
+        2483,
+        4599,
+        122,
+        2483
+      ],
+      "block": "minecraft:ladder[facing=south]"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4579,
+        122,
+        2482
+      ],
+      "block": "minecraft:mud_bricks",
+      "why": "the newels the top rung hangs on, clear of the walks' landings at x4580, x4590 and x4600"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4589,
+        122,
+        2482
+      ],
+      "block": "minecraft:mud_bricks"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4599,
+        122,
+        2482
+      ],
+      "block": "minecraft:mud_bricks"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4578,
+        112,
+        2486,
+        4582,
+        130,
+        2490
+      ],
+      "block": "minecraft:mud_bricks",
+      "why": "-- STAGE 4. The smoke flue behind the west tank: five by five, from the sump at y112 to under the watch floor, sharing its north wall with the tank"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4579,
+        113,
+        2487,
+        4581,
+        130,
+        2489
+      ],
+      "block": "minecraft:air",
+      "why": "hollowed, three by three, eighteen tall"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4579,
+        112,
+        2487,
+        4581,
+        112,
+        2489
+      ],
+      "block": "minecraft:mud",
+      "why": "the sump's bottom"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4579,
+        113,
+        2487,
+        4581,
+        118,
+        2489
+      ],
+      "block": "minecraft:water",
+      "why": "flooded to y118 and dry above it, so a player who swims the mouth surfaces inside the flue two above the tank's own level. Six blocks of water held on four sides by the flue's own walls."
+    },
+    {
+      "op": "fill",
+      "box": [
+        4580,
+        113,
+        2486,
+        4580,
+        114,
+        2486
+      ],
+      "block": "minecraft:water",
+      "why": "THE MOUTH: two blocks through the wall the west tank shares with the flue, at the bottom of both. Down three, through one, up five - about nine blocks submerged, against the fourteen data/gym_interiors.json allows."
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4578,
+        124,
+        2488
+      ],
+      "block": "minecraft:verdant_froglight",
+      "why": "a light set into the flue's wall, so the climb is not blind"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4581,
+        119,
+        2488,
+        4581,
+        132,
+        2488
+      ],
+      "block": "minecraft:ladder[facing=west]",
+      "why": "-- STAGE 5. The flue ladder, carried by the flue's east wall at x4582 up to y130, by the watch floor at y131 and by a newel at y132. Fourteen rungs from the water to the floor."
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:lantern[hanging=true]",
+      "why": "two lanterns under the watch floor inside the flue, hung where the climb needs them",
+      "positions": [
+        [
+          4579,
+          130,
+          2487
+        ],
+        [
+          4580,
+          130,
+          2489
+        ]
+      ]
+    },
+    {
+      "op": "columns",
+      "from_y": 116,
+      "block": "minecraft:mud_bricks",
+      "why": "-- the two piers between the tanks that carry the watch floor's north edge. One block wide and fifteen tall out of the water: neither is a way up.",
+      "cells": [
+        [
+          4585,
+          2482,
+          130
+        ],
+        [
+          4595,
+          2482,
+          130
+        ]
+      ]
+    },
+    {
+      "op": "fill",
+      "box": [
+        4578,
+        131,
+        2482,
+        4602,
+        131,
+        2491
+      ],
+      "block": "minecraft:mangrove_planks",
+      "why": "-- STAGE 6. Koga's watch floor, fifteen above the water, wall to wall and over the tanks and the flue"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4581,
+        131,
+        2488
+      ],
+      "block": "minecraft:ladder[facing=west]",
+      "why": "the flue's hatch: the ladder's course through the watch floor, re-cut as ladder and not as air. The floor fill above overwrites part 69's y131 rung; cutting it to air stopped the climb at y130 and left the watch floor, Koga and his chest unreachable - the same defect as Brock's hoist (GYM_BUILDINGS_REVIEW.md D2), written independently by a second builder. Its support is the floor block at (4582,131,2488)."
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4582,
+        132,
+        2488
+      ],
+      "block": "minecraft:mud_bricks",
+      "why": "the newel the ladder's last rung hangs on, so a player steps off at floor level"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4585,
+        131,
+        2484
+      ],
+      "block": "minecraft:air",
+      "why": "and the chute, the only other hole"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4584,
+        116,
+        2483,
+        4586,
+        116,
+        2485
+      ],
+      "block": "minecraft:hay_block",
+      "why": "the reed bales stacked in the water where the chute lands: a fifteen-block fall onto hay takes 80% off, and data/gym_interiors.json rules.max_fall is twelve"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4578,
+        132,
+        2482,
+        4602,
+        132,
+        2482
+      ],
+      "block": "minecraft:mud_brick_wall",
+      "why": "the watch floor's rail along its open north edge, so the chute is the way down and not the whole edge"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4594,
+        131,
+        2487
+      ],
+      "block": "minecraft:redstone_block",
+      "why": "-- Koga. The power under the spawner, set into the watch floor as the donor template sets its own"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4594,
+        132,
+        2487
+      ],
+      "block": "rctmod:trainer_spawner{TrainerIds:[\"kanto_koga\"]}",
+      "why": "the only trainer spawner in the town once the shell is down, with two air cells over it"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4598,
+        132,
+        2487
+      ],
+      "block": "minecraft:chest[facing=north]",
+      "why": "his chest"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4590,
+        132,
+        2490
+      ],
+      "block": "minecraft:lectern[facing=north]",
+      "why": "the watch log"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4588,
+        132,
+        2484
+      ],
+      "block": "minecraft:smoker[facing=north]",
+      "why": "the smoke rack he keeps up here"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4600,
+        132,
+        2490
+      ],
+      "block": "minecraft:cauldron",
+      "why": "and the steeping pot"
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:barrel",
+      "positions": [
+        [
+          4596,
+          132,
+          2490
+        ],
+        [
+          4592,
+          132,
+          2483
+        ]
+      ],
+      "why": "his stores"
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:lantern",
+      "why": "light on the watch floor, standing on the boards and clear of the hatch, the chute and the spawner",
+      "positions": [
+        [
+          4583,
+          132,
+          2490
+        ],
+        [
+          4587,
+          132,
+          2489
+        ],
+        [
+          4591,
+          132,
+          2486
+        ],
+        [
+          4597,
+          132,
+          2483
+        ],
+        [
+          4601,
+          132,
+          2487
+        ]
+      ]
+    },
+    {
+      "op": "fill",
+      "box": [
+        4594,
+        117,
+        2468,
+        4600,
+        120,
+        2468
+      ],
+      "block": "minecraft:stripped_mangrove_log",
+      "why": "-- THE TRACKERS' BOARD, set into the wall east of the door: the town's signature dressing (docs/world-building/TOWN_CHARACTER.md, 'a tracker's board of cast prints')"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4595,
+        118,
+        2468,
+        4595,
+        119,
+        2468
+      ],
+      "block": "minecraft:mud",
+      "why": "three casts taken out of the fen, left to right"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4597,
+        118,
+        2468,
+        4597,
+        119,
+        2468
+      ],
+      "block": "minecraft:mud"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4599,
+        118,
+        2468,
+        4599,
+        119,
+        2468
+      ],
+      "block": "minecraft:mud"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4595,
+        120,
+        2468
+      ],
+      "block": "minecraft:verdant_froglight",
+      "why": "and a light over the left-hand one only. It is a hint and not the gate: what it says is that the trail goes west, which is where the breathing tank is."
+    },
+    {
+      "op": "fill",
+      "box": [
+        4580,
+        117,
+        2470,
+        4580,
+        118,
+        2470
+      ],
+      "block": "minecraft:mangrove_log",
+      "why": "-- the dry room's work: reed-drying racks"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4584,
+        117,
+        2470,
+        4584,
+        118,
+        2470
+      ],
+      "block": "minecraft:mangrove_log"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4581,
+        118,
+        2470,
+        4583,
+        118,
+        2470
+      ],
+      "block": "minecraft:hay_block"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4580,
+        117,
+        2472,
+        4580,
+        118,
+        2472
+      ],
+      "block": "minecraft:mangrove_log"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4584,
+        117,
+        2472,
+        4584,
+        118,
+        2472
+      ],
+      "block": "minecraft:mangrove_log"
+    },
+    {
+      "op": "fill",
+      "box": [
+        4581,
+        118,
+        2472,
+        4583,
+        118,
+        2472
+      ],
+      "block": "minecraft:hay_block"
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:barrel",
+      "positions": [
+        [
+          4586,
+          117,
+          2472
+        ],
+        [
+          4588,
+          117,
+          2470
+        ],
+        [
+          4601,
+          117,
+          2472
+        ]
+      ],
+      "why": "eel traps and stores along the wall"
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:composter",
+      "positions": [
+        [
+          4598,
+          117,
+          2471
+        ],
+        [
+          4586,
+          117,
+          2470
+        ]
+      ],
+      "why": "the reed bins"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4596,
+        117,
+        2472
+      ],
+      "block": "minecraft:smoker[facing=north]",
+      "why": "the smoke rack"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4594,
+        117,
+        2472
+      ],
+      "block": "minecraft:cauldron",
+      "why": "and the dye pot beside it"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4587,
+        117,
+        2472
+      ],
+      "block": "minecraft:lectern[facing=east]",
+      "why": "the keeper's book by the door"
+    },
+    {
+      "op": "columns",
+      "from_y": 117,
+      "block": "minecraft:mangrove_log",
+      "why": "-- light: four short posts in the dry room, with a lantern standing on each",
+      "cells": [
+        [
+          4579,
+          2469,
+          117
+        ],
+        [
+          4601,
+          2469,
+          117
+        ],
+        [
+          4579,
+          2473,
+          117
+        ],
+        [
+          4601,
+          2473,
+          117
+        ]
+      ]
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:lantern",
+      "positions": [
+        [
+          4579,
+          118,
+          2469
+        ],
+        [
+          4601,
+          118,
+          2469
+        ],
+        [
+          4579,
+          118,
+          2473
+        ],
+        [
+          4601,
+          118,
+          2473
+        ]
+      ]
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:lantern[hanging=true]",
+      "why": "hanging under the loft and under the three walks",
+      "positions": [
+        [
+          4582,
+          120,
+          2471
+        ],
+        [
+          4590,
+          120,
+          2471
+        ],
+        [
+          4598,
+          120,
+          2471
+        ],
+        [
+          4580,
+          120,
+          2478
+        ],
+        [
+          4590,
+          120,
+          2478
+        ],
+        [
+          4600,
+          120,
+          2478
+        ]
+      ]
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:verdant_froglight",
+      "why": "and the fen's own light, set into the bed under the water and into the high walls: the sour green the town's roads already use",
+      "positions": [
+        [
+          4579,
+          116,
+          2478
+        ],
+        [
+          4601,
+          116,
+          2478
+        ],
+        [
+          4579,
+          116,
+          2488
+        ],
+        [
+          4601,
+          116,
+          2488
+        ],
+        [
+          4590,
+          116,
+          2484
+        ],
+        [
+          4577,
+          129,
+          2479
+        ],
+        [
+          4603,
+          129,
+          2479
+        ],
+        [
+          4577,
+          129,
+          2485
+        ],
+        [
+          4603,
+          129,
+          2485
+        ]
+      ]
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4586,
+        117,
+        2466
+      ],
+      "block": "minecraft:mangrove_log",
+      "why": "-- the two lamps on the jetty"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4586,
+        118,
+        2466
+      ],
+      "block": "minecraft:lantern"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4594,
+        117,
+        2466
+      ],
+      "block": "minecraft:mangrove_log"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        4594,
+        118,
+        2466
+      ],
+      "block": "minecraft:lantern"
+    }
   ]
 }

@@ -59,30 +59,21 @@ GYMS = ("gym1", "gym3", "gym4", "gym5", "gym7")
 # against the emitted text; see docs/world-building/GYM_BUILDINGS_REVIEW.md. Delete an entry when the content is
 # fixed - the test tells you to.
 KNOWN_DEFECTS = {
-    ("gym1", "spawn"): "D1 the forecourt paving and the north eaves, z3659..3663, lie north of the gym_brock "
-                       "spawn-free box, so 4,530 cells of the building can spawn wild Pokemon",
-    ("gym1", "unreachable"): "D2 the hoist ladder is broken at y155: the gallery-floor fill overwrites the ladder "
-                             "cell and the hole is re-cut to air, so the climb stops two short of the gallery and "
-                             "Brock cannot be reached",
-    ("gym1", "waypoint"): "D2 (same) route steps 6-7 are cut off above the break in the ladder",
-    ("gym1", "gap"): "D3 the north (decoy) gantry can be left by a two-block jump south onto the finished stack, "
-                     "which is a way back down and not a skip, but the route does not declare it",
-    ("gym3", "spawn"): "D4 the roof's north overhang course at z1391 lies one block north of the gym_surge "
-                       "spawn-free box",
-    ("gym4", "waypoint"): "D5 three route waypoints name a block cell instead of the cell a player stands in "
-                          "(the door at [4310,111,1506] is packed mud); the route itself is walkable",
-    ("gym5", "unreachable"): "D6 the reed stair's first course stands at y117 over a flood whose walking level is "
-                             "y116, so mounting it is a two-block rise and no stage of Koga's gym can be climbed",
-    ("gym5", "waypoint"): "D6 (same) route steps 1-6 are cut off at the foot of the reed stair",
-    ("gym7", "unreachable"): "D7 the assay deck's tuff-wall rail closes z4990 across x6160..6165, which is exactly "
-                             "where the spoil steps arrive, so stage 1 cannot be mounted and Blaine cannot be "
-                             "reached",
-    ("gym7", "waypoint"): "D7 (same) route steps 1 and 3-9 are cut off",
-    ("gym7", "trap_later"): "D8 the basin and the vault are a sealed dead end: the geyser casing "
-                            "(fill 6178 107 4996 6180 119 4998) boxes the bubble column on four sides for every "
-                            "course, so a player who beats Blaine can never leave",
-    ("gym7", "bubble"): "D8 (same) nothing can reach the foot of the bubble column",
+    # Empty on 2026-09-29: every entry D1-D8 was fixed by the integrating session and the tests said so,
+    # one failure per repair, which is what this table is for. What was fixed, in the records under
+    # data/gym_buildings/ and not in this audit: Brock's and Koga's ladder courses re-cut as ladder and
+    # not as air (the same defect twice, written by two builders independently); Brock's decoy hop
+    # declared; Erika's and Brock's and Koga's and Blaine's waypoints moved off block cells onto the
+    # cells a player stands in; a landing bale at the foot of Koga's reed stair and his top course
+    # narrowed to one bundle so the drying loft cannot be hopped past; the west gap opened in Blaine's
+    # deck rail; Blaine's crating floor widened one west; and a drowned adit under Blaine's casing, which
+    # is the only way a sealed bubble column can be entered at all. The two spawn-box breaches were fixed
+    # earlier the same day in data/spawn_suppression.json.
+    #
+    # Add an entry here when THIS audit sees a defect that is not going to be fixed at once; never to
+    # silence one that is.
 }
+
 
 MUTABLE = ("fill", "setblock")
 COORD = re.compile(r"^(fill|setblock) (-?\d+) (-?\d+) (-?\d+)( (-?\d+) (-?\d+) (-?\d+))?( .*)$")
@@ -337,14 +328,21 @@ def test_deleting_the_water_under_blaines_leap_is_caught(emitted, records, place
     assert new & {"declared_fall", "harsh", "fatal"}, sorted(after.codes("gym7"))
 
 
-def test_making_blaines_basin_one_block_deep_is_caught(emitted, records, placements, ground):
-    # breaks if: shallow water under a long fall is accepted (water two deep is the audit's own margin)
+def test_the_depth_of_blaines_basin_is_measured_not_assumed(emitted, records, placements, ground):
+    # breaks if: the audit stops measuring how deep the water under a declared fall actually is.
+    # This test used to assert that a ONE-deep basin was a finding, on MIN_LANDING_WATER = 2. That margin had no
+    # rule behind it - a single water block takes the whole of a fall in vanilla - and it failed every building
+    # whose floor is a one-deep flood, Koga's Reed House among them. The margin went on 2026-09-29; what has to
+    # stay is that the depth is read out of the blocks and reported, because a landing with NO water is still a
+    # finding (test_deleting_the_water_under_blaines_leap_is_caught) and that check needs the same measurement.
     texts, _ = emitted
     t = texts["gym7"]
     i = line_index(t, "fill 6167 104 4992 6173 106 4998 minecraft:water")
+    before = run_one("gym7", t, emitted, records, placements, ground)
+    assert any("the_leap" in n and "water 3 deep" in n for n in before.notes),         [n for n in before.notes if "the_leap" in n]
     shallow = t.splitlines()[i].replace("6167 104 4992", "6167 106 4992")
     after = run_one("gym7", replaced(t, i, shallow), emitted, records, placements, ground)
-    assert {"landing", "declared_fall", "harsh"} & after.codes("gym7"), sorted(after.codes("gym7"))
+    assert any("the_leap" in n and "water 1 deep" in n for n in after.notes),         [n for n in after.notes if "the_leap" in n]
 
 
 def test_opening_a_wall_into_erikas_court_lets_the_canopy_be_skipped_and_is_caught(emitted, records, placements, ground):
@@ -385,10 +383,11 @@ def test_the_geyser_is_a_one_way_lift_and_an_ordinary_water_column_would_not_be(
     texts, _ = emitted
     t = texts["gym7"]
     site = A.Site("gym7", records["gym7"]["settlement"], placements, ground)
-    # open the casing first, so the column has a foot a player could be at: with the casing sealed there is
-    # nothing to swim down and the mutation would prove nothing (the seal is D8, a finding of its own)
+    # the foot is reached by the drowned adit under the casing (D8's fix), so no mutation is needed to give the
+    # column a foot; `opened` below cuts the casing at the vault's own level instead, to prove the leak that is
+    # the whole reason the adit goes underneath it
     opened = appended(t, "fill 6178 107 4997 6178 108 4997 minecraft:air")
-    head, foot = (6179, 119, 4997), (6179, 107, 4997)
+    head, foot = (6179, 119, 4997), (6179, 104, 4997)
 
     column = [(6179, y, 4997) for y in range(foot[1], head[1] + 1)]
 
@@ -402,7 +401,7 @@ def test_the_geyser_is_a_one_way_lift_and_an_ordinary_water_column_would_not_be(
         return any((c[0], c[1] - 1, c[2]) in {d for d, _ in mv.edges(c)} for c in column[1:])
 
     assert not can_swim_down(opened), "the soul-sand column let a player descend into the vault"
-    i = line_index(opened, "setblock 6179 106 4997 minecraft:soul_sand")
+    i = line_index(opened, "setblock 6179 103 4997 minecraft:soul_sand")
     plain = replaced(opened, i, opened.splitlines()[i].replace("soul_sand", "polished_blackstone"))
     assert can_swim_down(plain), "with plain water under it the column is not a one-way lift, and the model missed it"
     # and the leak check sees what opening the casing costs: the column is watertight only while it is sealed
@@ -464,7 +463,7 @@ def world_of(*lines):
 
 
 def test_fall_damage_is_distance_less_three_hay_takes_eighty_percent_and_water_takes_all():
-    # breaks if: the damage model drifts from the game's (distance - 3, hay x0.2, water two deep or more 0)
+    # breaks if: the damage model drifts from the game's (distance - 3, hay x0.2, any depth of water 0)
     lanes = []
     for lane, floor in enumerate(("minecraft:stone", "minecraft:hay_block", "water2", "water1")):
         z = 4 * lane
@@ -479,7 +478,11 @@ def test_fall_damage_is_distance_less_three_hay_takes_eighty_percent_and_water_t
     land, dmg, kind, _d = mv.fall((0, 11, 4), (1, 11, 4))
     assert kind == "hay" and abs(dmg - 1.4) < 1e-9                              # the same ten onto hay
     assert mv.fall((0, 11, 8), (1, 11, 8))[1:] == (0, "water", 2)               # two of water negates it
-    assert mv.fall((0, 11, 12), (1, 11, 12))[1:] == (7.0, "water", 1)           # one does not: the audit keeps a margin
+    assert mv.fall((0, 11, 12), (1, 11, 12))[1:] == (0, "water", 1)             # and so does ONE: the game's rule,
+    # not a margin. This line read (7.0, "water", 1) until 2026-09-29, on MIN_LANDING_WATER = 2. In vanilla a
+    # single water block takes the whole of a fall of any height - the water-bucket save rests on it - and the
+    # margin failed every building whose floor is a one-deep flood. It is the audit's one unverified rule of the
+    # game: the in-game check is a seven-block fall into one block of water.
 
 
 def test_a_sprint_jump_clears_four_blocks_level_five_down_one_three_up_one_and_never_more():

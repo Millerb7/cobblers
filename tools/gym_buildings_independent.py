@@ -71,7 +71,15 @@ DEFAULT_FUNCS = ROOT / "build" / "datapacks" / "cobblers_gym_buildings" / "data"
 MAX_FALL = 12                # data/gym_interiors.json rules.max_fall: a longer fall must land on hay
 MAX_FALL_DAMAGE = 10         # health points a route may cost in one uncushioned fall
 LETHAL_DAMAGE = 20           # a full health bar
-MIN_LANDING_WATER = 2        # water this deep under a long fall (the game says one; two leaves a margin)
+MIN_LANDING_WATER = 1        # water this deep under a long fall cancels it. ONE, not two: in vanilla a
+                             # single water block takes the whole of a fall of any height (the water-bucket
+                             # save rests on it), so two was a margin with no rule behind it - the comment
+                             # here said so. It was raised as a finding, not papered over: at two it made
+                             # 429 problems against Koga's Reed House, whose floor IS a one-deep wadeable
+                             # flood and whose every walkway is five to seven above it, and no building of
+                             # that shape could ever pass. The integrating session changed it on 2026-09-29
+                             # and queued the in-game check: a seven-block fall into one block of water.
+                             # Until that check is done this line is the audit's weakest claim.
 MAX_SUBMERGED_ROUNDTRIP = 28 # blocks of head-under-water travel in and out (rules.max_submerged_run 14, both ways)
 SEED_MARGIN = 0              # the seed ring is the lot rect itself, at pad level
 
