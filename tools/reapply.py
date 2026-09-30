@@ -160,7 +160,8 @@ EXCLUDED = {
     #   120-species test exists only in G4's dialogue, which is not written. Both fail CLOSED, so those two
     #   zones would simply be shut. Lift the hold and restore the R9Z step IN THE SAME CHANGE - un-excluding
     #   without the step makes `uncovered()` fail, and the step without the pack installs nothing.
-    "cobblers_rift_zones": "held: z5's rift_crisis_resolved has no setter and z4's caught test has no dialogue, "
+    # (not excluded any more: R9Z installs the half that can be passed -- see the step)
+    "_cobblers_rift_zones_was": "held: z5's rift_crisis_resolved has no setter and z4's caught test has no dialogue, "
                            "so both would be shut walls (2026-09-30; qualify is wired, see the note above)",
     "cobblers_vr_backfill": "staging only: it buries schema 1's labyrinth, which a fresh export never has",
     "cobblers_restore": "disposable worlds only; install() deletes it if it is found",
@@ -843,7 +844,9 @@ def unreferenced(todo):
     """Functions that no step runs and no file of any pack names: not called, scheduled, tagged, rewarded by an
     advancement or run by a dialogue. A pack with a step can still hold a function nothing runs: the Rift's entities
     (`cobblers:rift/fx`) sat beside its 1,005 block functions, the pack counted as covered, and the 2026-09-24
-    rehearsal found 0 of 14 in the world. Packs in EXCLUDED are skipped with their reason."""
+    rehearsal found 0 of 14 in the world. Packs in EXCLUDED are skipped with their reason, and so are the
+    functions HELD_FUNCTIONS names -- a function a step deliberately does not run YET, with the reason and the
+    condition that releases it read from the data, not a list anyone has to remember to prune."""
     names, text = {}, []
     for pack in sorted(p.name for p in PACKS.iterdir() if p.is_dir()) if PACKS.is_dir() else []:
         root = PACKS / pack / "data"
@@ -863,7 +866,32 @@ def unreferenced(todo):
     referenced = set()
     for t in text:
         referenced.update(FUNCTION_REF.findall(t))
-    return sorted(n for n, pack in names.items() if pack not in EXCLUDED and n not in run and n not in referenced)
+    held = held_functions()
+    return sorted(n for n, pack in names.items()
+                  if pack not in EXCLUDED and n not in run and n not in referenced and n not in held)
+
+
+def held_functions():
+    """{function: why} for output a step deliberately withholds, derived from the data that withholds it.
+
+    Today: the Rift's zone walls and gatehouses for a zone that cannot GRANT its pass yet (z4 needs Codex's
+    dialogue to read caught_count, z5 needs the rift_crisis_resolved setter). Their blocks are correct and
+    built; installing them would wall off the apex and seal the League's precinct, which ends the game for
+    anyone who reaches it. When Codex lands either half the `needs_*` field goes from data/rift_zones.json and
+    the function stops being held here, with nothing to remember."""
+    out = {}
+    f = ROOT / "data" / "rift_zones.json"
+    if not f.is_file():
+        return out
+    z = json.loads(f.read_text(encoding="utf-8"))["zones"]
+    shut = {zid: [k for k in ("needs_progression", "needs_dialogue") if zz.get(k)]
+            for zid, zz in z.items() if zz.get("needs_progression") or zz.get("needs_dialogue")}
+    for zid, why in shut.items():
+        out["cobblers:rift_zones/gatehouse_%s" % zid] = "%s cannot grant its pass: %s" % (zid, ", ".join(why))
+        w = z[zid].get("wall")
+        if w:
+            out["cobblers:rift_zones/wall_%s" % w] = "%s cannot grant its pass: %s" % (zid, ", ".join(why))
+    return out
 
 
 def steps(with_spawns=False):
@@ -930,8 +958,28 @@ def steps(with_spawns=False):
     # then four gatehouse shells, in the pack's own index order. The zone checks, the exit boxes and the
     # cob_pass objectives act on their own (advancements and a load function) and need no step. The guards
     # themselves are armour-stand placeholders: Codex writes the NPCs (docs/HANDOVER_CODEX.md item 23)
-    # R9Z is NOT in the step list: cobblers_rift_zones is EXCLUDED above until its guards call qualify.
-    # Putting the step back is half the job; read the note beside the exclusion for the other half.
+    # ONLY THE HALF THAT CAN BE PASSED. Every guard calls its qualify now (2026-09-30), so the owner's condition
+    # for releasing this is met -- but z4 and z5 still cannot GRANT: z4's test needs Codex's dialogue to read
+    # caught_count, z5's flag has no setter. Installing their walls would wall off the apex and, worse, seal the
+    # LEAGUE'S PRECINCT, which ends the game for anyone who reaches it. A wall nobody can pass is not a gate.
+    # So a zone's wall and gatehouses go in only when that zone declares nothing owed, read from the DATA
+    # (zones.<id>.needs_progression / needs_dialogue) and not from a list here: when Codex lands either half, the
+    # field goes and the wall follows with no switch to remember.
+    zspec = json.loads((ROOT / "data" / "rift_zones.json").read_text(encoding="utf-8"))
+    shut = {zid for zid, zz in zspec["zones"].items() if zz.get("needs_progression") or zz.get("needs_dialogue")}
+    # a zone names the cross-wall that closes it in zones.<id>.wall ("throat", "behind_league", ...)
+    closes = {"wall_%s" % zz["wall"]: zid for zid, zz in zspec["zones"].items() if zz.get("wall")}
+    def zone_of(fn):
+        # "gatehouse_z2_rim_post_descent" -> z2; a wall names the zone it closes in the spec
+        for zid in zspec["zones"]:
+            if fn.startswith("gatehouse_%s" % zid):
+                return zid
+        return closes.get(fn)
+    live = [f for f in indexed("cobblers_rift_zones", "rift_zones") if zone_of(f) not in shut]
+    heldb = [f for f in indexed("cobblers_rift_zones", "rift_zones") if zone_of(f) in shut]
+    out.append(("R9Z", "the Rift's zone walls and gatehouse shells for the zones that can be passed (%d of %d; "
+                       "held: %s)" % (len(live), len(live) + len(heldb), ", ".join(sorted(shut)) or "none"),
+                [("fn", "cobblers:rift_zones/%s" % f) for f in live]))
     # the evolution-stone faces (tools/mines.py, data/mines.json; STONE_ECONOMY.md 5.5 names the step): after the towns
     # (R8) and the donors (R9), whose cells they keep clear, and the Displaced City cavern (R2), whose shell two of the
     # sites cut into; before the Habitat Blocks (R9E) and the lights (R16). One build function a site, named from the
