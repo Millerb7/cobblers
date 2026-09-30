@@ -355,7 +355,10 @@
         "status": "PROPOSED, NOT DECIDED",
         "why": "as Regirock's."
       },
-      "portal": null,
+      "portal": [
+        4195,
+        3896
+      ],
       "siting_rule": "A column in the Rift whose envelope (see tools/legendaries.py envelope()) clears every authored Rift void by at least 24 blocks, measured against the built plan rather than the data: run tools/legendaries_audit.py --rift-plan <derived/rift plan> in a session that has the Rift plan, or site it from the main session.",
       "candidates": {
         "measured": "2026-09-29 on the canonical heightmap, with tools/legendaries.py's own geometry at this record's approach (bearing 0, drop 30, passage 12) and plug. Each column passes every geometric check the audit makes of a sealed chamber, with at least 2 spare blocks of roof rock, and stands at least 200 blocks from every keep-out the Rift's data declares: the eight rift_regions bboxes that hold or plan a void (e4_tower, gate, entrance_to_e4, the_deep, relic_area_shrine, rift_excavation_site, mega_stone_mine_the_gulch, hidden_rift_cavern), data/rift_mines.json's grid x3060-3290 z3060-3400, data/vr_caves.json's guide polyline grown by its band of 95, data/rift_league_tunnel.json's lot box, and the Displaced City cavern.",
@@ -421,15 +424,17 @@
         "alcove": 0
       },
       "plug_depth": 6,
-      "spawn_free_zone": null,
+      "spawn_free_zone": [
+        4184,
+        3864,
+        4208,
+        3904
+      ],
       "why": "STRUCTURE_DECISIONS section 4: the steel golem in the anomalous chamber, the Rift's own region identity.",
       "level_why": "lowered from 59 to the upper bound of its own gate (7 badges) on the owner's decision, 2026-09-29: 'lower the legendaries to the cap band of whatever badge gates their chamber. A legendary you cannot catch is not an encounter.'",
-      "at": [
-        4195,
-        3896
-      ],
       "region": "upper_rift",
-      "sited_why": "The owner, 2026-09-30: 'REGISTEEL: upper_rift (4195, 3896). It unblocks Regigigas, which is otherwise permanently unreachable.' Registeel was `status: blocked` with no position, and Regigigas's gate lists registeel under `requires_met.unsatisfiable_until`: the met advancement is granted by exactly one command, in the met function of a SITED encounter, so an unsited Registeel made Regigigas unreachable forever. Siting Registeel is what clears it."
+      "sited_why": "The owner, 2026-09-30: 'REGISTEEL: upper_rift (4195, 3896). It unblocks Regigigas, which is otherwise permanently unreachable.' Registeel was `status: blocked` with no position, and Regigigas's gate lists registeel under `requires_met.unsatisfiable_until`: the met advancement is granted by exactly one command, in the met function of a SITED encounter, so an unsited Registeel made Regigigas unreachable forever. Siting Registeel is what clears it. The coordinate is the record's `portal` - the surface anchor a sealed_chamber is measured from, the same field regirock (4800, 5200) and regice (3900, 2050) use - and not a separate `at`, which tools/legendaries.py fail-closed on: 'a sited record needs a [x, z] mouth (lake_grotto) or portal'. Ground there is y88 and flat (y88-90 over 40 blocks), on the Rift's floor, so the approach's 30-block drop and 12-block passage fit as drawn.",
+      "spawn_free_zone_why": "Regirock's box rotated for this chamber's bearing, as the record's gate already says ('as Regirock's'). Regirock's approach bears 90 (east) and its box runs portal-8..portal+32 in x by portal-8..portal+8 in z; Registeel's bears 0, so the long side runs north in -z: x 4195-8..4195+8, z 3896-32..3896+8, snapped out to the 8-block grid the other two sit on. It covers the portal, the 12-block passage, the 17x17 chamber and a margin, so nothing wild stands in the approach or the fight."
     },
     {
       "id": "regigigas",
