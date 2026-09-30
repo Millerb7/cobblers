@@ -1608,7 +1608,7 @@
         },
         "block": [3100, 3270],
         "ground_y": 87,
-        "inward": [0.8855, -0.4647],
+        "inward": [0.8288, -0.5596],
         "block_why": "the guard stands on its surveyed site, unmoved. The outward direction and the distance to the nearest column outside the zone (141 blocks) are measured from the traced mask.",
         "outward": [-0.8288, 0.5596],
         "outside_at": [2983, 3349],
@@ -1696,7 +1696,8 @@
       ],
       "boxes_columns": 160362,
       "boxes_from": "union of the traced regions rift_excavation_site at grid 8, a cell kept when this zone covers at least half of it and more of it than any other zone, so the zones cannot overlap",
-      "places_why": "feet levels from tools/ground.py at each column: the arrival 3 blocks inside facing in; the turn-back 8 blocks PAST the nearest outside column (2983, 3349), facing away, so it is outside the zone however far inside the guard stands; the exit box 5 inside on the walkway. Guard feet at y88."
+      "places_why": "feet levels from tools/ground.py at each column: the arrival 3 blocks inside facing in; the turn-back 8 blocks PAST the nearest outside column (2983, 3349), facing away, so it is outside the zone however far inside the guard stands; the exit box 5 inside on the walkway; the knock box the 2 walkway blocks outside the guard, which is what calls the zone's qualify. Guard feet at y88.",
+      "knock": [3098, 88, 3271, 3099, 89, 3271]
     },
     "z2": {
       "name": "Victory Road and the Rift's floor",
@@ -1738,27 +1739,12 @@
         "why": "RIFT_ZONES.md section 2 and data/rift_sculpt.json entrances agree exactly: `victory_road_descent`, kind switchback, near (3738, 5082), snapped to the victory_road route, guard 'Victory Road warden'. The only guard site in the whole design that both documents place on the same block.",
         "block": [3738, 5082],
         "ground_y": 86,
-        "inward": [0.9778, 0.2093],
+        "inward": [0.9473, 0.3204],
         "block_why": "the guard stands on its surveyed site, unmoved. The outward direction and the distance to the nearest column outside the zone (144 blocks) are measured from the traced mask.",
         "outward": [-0.9473, -0.3204],
         "outside_at": [3602, 5036],
         "outside_distance": 144
       },
-      "other_entrances": [
-        {
-          "id": "rim_post_descent",
-          "at": [3877, 3824],
-          "guard": "Rim post guard",
-          "staffed": false
-        },
-        {
-          "id": "wilds_slip",
-          "at": [4200, 4300],
-          "guard": "Wilds ranger",
-          "staffed": false
-        }
-      ],
-      "other_entrances_why": "data/rift_sculpt.json cuts THREE ways down into Z2, not one. G2 is the only one that grants the pass, so a player who walks in at the rim post or the wilds slip with eight badges and no pass is turned back by the zone check with no guard there to earn it from. That is a design consequence, recorded not resolved: either those two trailheads get a guard who can also grant (they already have names in data/rift_sculpt.json), or their turn-back line must say where G2 stands. The owner or Codex chooses; RIFT_ZONES_BUILD.md 'Open for the owner' item 1.",
       "arrive": [3741.5, 88, 5083.5, -71.3],
       "turn_back": [3591.5, 90, 5032.5, 108.7],
       "exit": [3743, 88, 5084, 3743, 89, 5084],
@@ -2030,7 +2016,47 @@
       ],
       "boxes_columns": 1467095,
       "boxes_from": "union of the traced regions entrance_to_e4, the_deep, relic_area_shrine, the_sink, upper_rift, rift_wilds, hidden_rift_cavern at grid 8, a cell kept when this zone covers at least half of it and more of it than any other zone, so the zones cannot overlap",
-      "places_why": "feet levels from tools/ground.py at each column: the arrival 3 blocks inside facing in; the turn-back 8 blocks PAST the nearest outside column (3602, 5036), facing away, so it is outside the zone however far inside the guard stands; the exit box 5 inside on the walkway. Guard feet at y87."
+      "places_why": "feet levels from tools/ground.py at each column: the arrival 3 blocks inside facing in; the turn-back 8 blocks PAST the nearest outside column (3602, 5036), facing away, so it is outside the zone however far inside the guard stands; the exit box 5 inside on the walkway; the knock box the 2 walkway blocks outside the guard, which is what calls the zone's qualify. Guard feet at y87.",
+      "posts": [
+        {
+          "id": "rim_post_descent",
+          "guard_id": "Rim post guard",
+          "at": [3877, 3824],
+          "source": "data/rift_sculpt.json entrances[rim_post_descent], which already names this guard",
+          "block": [3877, 3824],
+          "ground_y": 145,
+          "inward": [0.4343, -0.9008],
+          "outward": [-0.4343, 0.9008],
+          "outside_at": [3850, 3880],
+          "outside_distance": 62,
+          "block_why": "the guard stands on its surveyed site, unmoved. The outward direction and the distance to the nearest column outside the zone (62 blocks) are measured from the traced mask.",
+          "arrive": [3878.5, 146, 3821.5, -154.3],
+          "turn_back": [3847.5, 146, 3887.5, 25.7],
+          "exit": [3879, 146, 3819, 3879, 147, 3819],
+          "knock": [3876, 146, 3825, 3877, 147, 3826],
+          "places_why": "feet levels from tools/ground.py at each column: the arrival 3 blocks inside facing in; the turn-back 8 blocks PAST the nearest outside column (3850, 3880), facing away, so it is outside the zone however far inside the guard stands; the exit box 5 inside on the walkway; the knock box the 2 walkway blocks outside the guard, which is what calls the zone's qualify. Guard feet at y146."
+        },
+        {
+          "id": "wilds_slip",
+          "guard_id": "Wilds ranger",
+          "at": [4200, 4300],
+          "source": "data/rift_sculpt.json entrances[wilds_slip], which already names this guard",
+          "block": [4200, 4300],
+          "ground_y": 94,
+          "inward": [0.972, 0.2349],
+          "outward": [-0.972, -0.2349],
+          "outside_at": [4051, 4264],
+          "outside_distance": 153,
+          "block_why": "the guard stands on its surveyed site, unmoved. The outward direction and the distance to the nearest column outside the zone (153 blocks) are measured from the traced mask.",
+          "arrive": [4203.5, 93, 4301.5, -76.4],
+          "turn_back": [4039.5, 147, 4261.5, 103.6],
+          "exit": [4205, 97, 4301, 4205, 98, 4301],
+          "knock": [4198, 95, 4300, 4199, 96, 4300],
+          "places_why": "feet levels from tools/ground.py at each column: the arrival 3 blocks inside facing in; the turn-back 8 blocks PAST the nearest outside column (4051, 4264), facing away, so it is outside the zone however far inside the guard stands; the exit box 5 inside on the walkway; the knock box the 2 walkway blocks outside the guard, which is what calls the zone's qualify. Guard feet at y95."
+        }
+      ],
+      "posts_why": "data/rift_sculpt.json cuts THREE ways down into Z2, not one, and each of the three already carries a guard's name in that file. RIFT_ZONES_BUILD.md 'Open for the owner' item 1 recorded the consequence: a player with eight badges who walks in at the rim post or the wilds slip was turned back by the zone check with no guard there to earn the pass from. Resolved the way the sculpt's own data points: every sculpted way into the zone is staffed. A post is a full gate -- gatehouse shell, barrier, armour-stand placeholder, knock box, its own arrival, exit and turn-back point -- and it grants the SAME pass on the SAME test as G2, because it is the same zone. The alternative, walling the two trailheads shut, would undo ground the sculpt deliberately opened.",
+      "knock": [3736, 87, 5081, 3737, 88, 5082]
     },
     "z3": {
       "name": "The south-east branch",
@@ -2078,7 +2104,7 @@
         "why": "in the behind_league wall on the trunk's floor centre line, 6 blocks NORTH of the cut at z2560, so it stands inside Z4 with its gatehouse in the wall and the player talks to it through the walkway from the League's side. docs/mechanics/RIFT_ZONES.md section 2 says only 'in the wall behind the League'. An earlier draft put it at z2566, south of the cut, which is inside Z5 and not inside the zone it gates; tools/rift_zones.py refused it, which is the check working.",
         "block": [3600, 2554],
         "ground_y": 86,
-        "inward": [0.0, -1.0],
+        "inward": [-0.0, -1.0],
         "block_why": "the guard stands on its surveyed site, unmoved. The outward direction and the distance to the nearest column outside the zone (6 blocks) are measured from the traced mask.",
         "outward": [0.0, 1.0],
         "outside_at": [3600, 2560],
@@ -2118,7 +2144,8 @@
       ],
       "boxes_columns": 52871,
       "boxes_from": "union of the traced regions e4_tower at grid 8, a cell kept when this zone covers at least half of it and more of it than any other zone, so the zones cannot overlap",
-      "places_why": "feet levels from tools/ground.py at each column: the arrival 3 blocks inside facing in; the turn-back 8 blocks PAST the nearest outside column (3600, 2560), facing away, so it is outside the zone however far inside the guard stands; the exit box 5 inside on the walkway. Guard feet at y87."
+      "places_why": "feet levels from tools/ground.py at each column: the arrival 3 blocks inside facing in; the turn-back 8 blocks PAST the nearest outside column (3600, 2560), facing away, so it is outside the zone however far inside the guard stands; the exit box 5 inside on the walkway; the knock box the 2 walkway blocks outside the guard, which is what calls the zone's qualify. Guard feet at y87.",
+      "knock": [3600, 87, 2555, 3600, 88, 2556]
     },
     "z5": {
       "name": "The League's precinct",
@@ -2161,7 +2188,7 @@
         "why": "on the League's approach inside the traced `gate` region (bbox 3511-3635 x 2612-2686), on its centre line at x3573, 6 blocks inside its south edge, so the player meets it walking up entrance_to_e4 from Victory Road's forecourt at (3576, 2762). An earlier draft put it at z2692, south of the region and so inside Z2 rather than the zone it gates; tools/rift_zones.py refused it.",
         "block": [3573, 2680],
         "ground_y": 84,
-        "inward": [0.2482, -0.9687],
+        "inward": [1.0, -0.0],
         "block_why": "the guard stands on its surveyed site, unmoved. The outward direction and the distance to the nearest column outside the zone (1 blocks) are measured from the traced mask.",
         "outward": [-1.0, 0.0],
         "outside_at": [3572, 2680],
@@ -2190,7 +2217,8 @@
       ],
       "boxes_columns": 41571,
       "boxes_from": "union of the traced regions gate at grid 8, a cell kept when this zone covers at least half of it and more of it than any other zone, so the zones cannot overlap",
-      "places_why": "feet levels from tools/ground.py at each column: the arrival 3 blocks inside facing in; the turn-back 8 blocks PAST the nearest outside column (3572, 2680), facing away, so it is outside the zone however far inside the guard stands; the exit box 5 inside on the walkway. Guard feet at y85."
+      "places_why": "feet levels from tools/ground.py at each column: the arrival 3 blocks inside facing in; the turn-back 8 blocks PAST the nearest outside column (3572, 2680), facing away, so it is outside the zone however far inside the guard stands; the exit box 5 inside on the walkway; the knock box the 2 walkway blocks outside the guard, which is what calls the zone's qualify. Guard feet at y85.",
+      "knock": [3571, 85, 2680, 3572, 86, 2680]
     }
   },
   "gatehouse": {
@@ -2200,6 +2228,8 @@
     "arrive_in": 3,
     "turn_back_out": 8,
     "exit_in": 5,
+    "knock_out": 2,
+    "knock_why": "the two walkway blocks directly OUTSIDE the guard, under the gatehouse's own roof, where a player stands face to face with it. This box is what calls the zone's qualify: a minecraft:location advancement over it, exactly as data/gulch_mine.json gate.knock does at the gulch's grille, whose reward function runs cobblers:rift_zones/<zone>/qualify. Before this existed nothing called qualify at all and the walls would have sealed the Rift (tools/reapply.py EXCLUDED, 2026-09-30).",
     "why": "docs/mechanics/RIFT_ZONES.md section 6, its drawn section, unchanged: a one-wide walkway between obsidian, roofed at y+2 so nothing jumps the guard, closed by a two-high barrier column directly behind the guard. The barrier is what physically stops a player; the guard reads as the thing that stops them. The passed player arrives 3 blocks inside facing in; an unqualified player is put 8 blocks outside facing away; the exit box sits 5 blocks inside on the walkway.",
     "blocks": {
       "shell": "minecraft:obsidian",
@@ -2272,7 +2302,9 @@
     "docs/mechanics/RIFT_ZONES.md section 2 gives Z2 one guard, G2. data/rift_sculpt.json cuts three ways into Z2. See zones.z2.other_entrances.",
     "docs/mechanics/RIFT_ZONES.md section 2 lists the branch-mouth wall as one of three cross-walls, at (4373, 4691)-(4196, 4927). data/gulch_mine.json zone.line_why records that line as already re-traced to (4350, 4600)-(4196, 4927) because the old one 'put the canyon's foot on Victory Road's side', and its wall is the gulch's own rockslide at the gulch_mouth. No branch-mouth wall is generated here.",
     "docs/mechanics/RIFT_ZONES.md section 5's rim wall and 257 spires (about 716,000 blocks) are superseded by docs/mechanics/RIFT_FRACTURE.md, 'the scarps are the barrier'. Not generated. See wall.superseded.",
-    "data/spawns.json rift_west_spur spawns at levels 56-58 while Z1 opens at two badges (data/rift_mines.json disagreements, and docs/world-building/DEEP_CITY.md section 6 says the same). NOT changed here: data/spawns.json is trainer-balance-designer's and was read only. The zone data makes the mismatch sharper, because Z1's two-badge pass is now authored rather than proposed."
+    "data/spawns.json rift_west_spur spawns at levels 56-58 while Z1 opens at two badges (data/rift_mines.json disagreements, and docs/world-building/DEEP_CITY.md section 6 says the same). NOT changed here: data/spawns.json is trainer-balance-designer's and was read only. The zone data makes the mismatch sharper, because Z1's two-badge pass is now authored rather than proposed.",
+    "docs/mechanics/RIFT_ZONES.md section 6 says 'Talking is passing': a Cobblemon NPC's dialogue grants the pass. The NPCs do not exist (Codex, HANDOVER_CODEX.md item 23) and the guards are armour-stand placeholders, so as emitted NOTHING called qualify and tools/reapply.py held the whole pack out of the install. Added here, not instead of dialogue but under it: STANDING in the walkway in front of the guard is asking, through a minecraft:location advancement over the gatehouse.knock_out blocks outside the guard whose reward runs <gate>/qualify. It is the shape data/gulch_mine.json gate.knock already runs at the gulch's grille. When Codex's dialogue lands it calls the same <gate>/grant and nothing here changes.",
+    "docs/mechanics/RIFT_ZONES.md section 2 gives Z2 one guard, at Victory Road's descent. data/rift_sculpt.json cuts three ways down into Z2 and names a guard for each. Two of them were unstaffed, so eight badges could not be spent at the door the player actually arrived at. Both are now posts of Z2 (zones.z2.posts), granting the same pass on the same test at their own gatehouses. tools/rift_zones.py report fails if any sculpted entrance inside a live zone has no guard within 8 blocks of it."
   ],
   "multiplayer": {
     "state": "per player. Each pass is a scoreboard score on the player's own name; each in_zone advancement is granted and revoked per player.",
@@ -2287,7 +2319,9 @@
     "every line of this file. Nothing has been installed, run on a server or seen by a player.",
     "the caught-count call form for G4 (RIFT_ZONES.md section 3: the key is VERIFIED in the 1.8.0 source, the call form is ASSUMED, and which acquisitions move it is untested).",
     "the guard experiment of RIFT_ZONES.md section 6: barrier behind the NPC, sprint-jump, piston, ender pearl, ridden flying Pokemon, exact teleport landing.",
-    "that a player on a ridden Pokemon is moved by `execute on vehicle run tp`."
+    "that a player on a ridden Pokemon is moved by `execute on vehicle run tp`.",
+    "the knock box itself: that a minecraft:location advancement over the two walkway blocks in front of the guard fires reliably on a standing player, that its reward's teleport lands where grant says, and that the `unless entity @s[x=..,dx=..]` exemption in the zone check covers exactly the same blocks. Nothing has been run.",
+    "that a player cannot reach a knock box from INSIDE its zone and use it as a free pass. The gatehouse is one wide, roofed, walled in obsidian and closed by a barrier behind the guard, so on paper the box is reachable only from outside; that is the guard experiment of RIFT_ZONES.md section 6, unrun."
   ],
   "interior": {
     "columns": 1964884,

@@ -145,14 +145,23 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
 EXCLUDED = {
     "cobblers_reapply": "the loose-function container; its functions are run by the steps that own them",
     # 2026-09-30: HELD BACK ON PURPOSE, and this is a safety hold, not tidiness. R9Z places obsidian walls
-    # across the Rift's throat, the League's gate and behind the League, plus four gatehouse barriers. The
-    # functions that let a player EARN a pass - cobblers:rift_zones/z{1,2,4,5}/qualify - are called by nothing
-    # at all: the guards that should call them are armour-stand placeholders waiting on Codex's NPCs. Installed
-    # as it stands, the walls go up and nobody can ever pass them. `unreferenced()` found it, which is exactly
-    # what it is for (see its docstring: the Rift's entities sat beside its block functions and 0 of 14 reached
-    # the world). Bring the pack and the R9Z step back together, when BOTH hold: every zone's guard calls its
-    # qualify, and data/progression.json declares rift_crisis_resolved with something that sets it.
-    "cobblers_rift_zones": "held: its walls would seal the Rift because nothing calls z*/qualify yet (2026-09-30)",
+    # across the Rift's throat, the League's gate and behind the League, plus gatehouse barriers. The hold was
+    # put on because the functions that let a player EARN a pass - cobblers:rift_zones/z{1,2,4,5}/qualify -
+    # were called by nothing at all, so the walls would have gone up with nobody able to pass them.
+    # `unreferenced()` found it, which is exactly what it is for (see its docstring).
+    #   HALF DONE, 2026-09-30 (later the same day): every qualify is now called. Each gate has a knock box --
+    #   the walkway blocks in front of the guard -- with a minecraft:location advancement whose reward runs
+    #   <zone>/qualify, the shape data/gulch_mine.json gate.knock already uses at the gulch's grille. Z2's two
+    #   unstaffed sculpted descents are staffed posts granting the same pass. With this pack un-excluded and
+    #   R9Z restored, `unreferenced()` is empty and `uncovered()` no longer names it (measured, not assumed).
+    #   STILL OWED, and why the hold stays: z5 gates on cobblers:flag/rift_crisis_resolved, which
+    #   data/progression.json does not declare and nothing sets (Codex has the contract on
+    #   origin/codex/trainer-modes data/quests.json and records that it has no authoritative setter), and z4's
+    #   120-species test exists only in G4's dialogue, which is not written. Both fail CLOSED, so those two
+    #   zones would simply be shut. Lift the hold and restore the R9Z step IN THE SAME CHANGE - un-excluding
+    #   without the step makes `uncovered()` fail, and the step without the pack installs nothing.
+    "cobblers_rift_zones": "held: z5's rift_crisis_resolved has no setter and z4's caught test has no dialogue, "
+                           "so both would be shut walls (2026-09-30; qualify is wired, see the note above)",
     "cobblers_vr_backfill": "staging only: it buries schema 1's labyrinth, which a fresh export never has",
     "cobblers_restore": "disposable worlds only; install() deletes it if it is found",
     "cobblers_rift_fracture": "retired, replaced by the sculpt in the heightmap",
