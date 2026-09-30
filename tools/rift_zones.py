@@ -1205,10 +1205,16 @@ def cmd_build(a):
         p = out / rel
         p.parent.mkdir(parents=True, exist_ok=True)
         jdump(obj, p)
+    # Every function that writes blocks holds the chunks it writes, for its whole run. Without this the walls
+    # and the gatehouses `fill` into chunks nobody has loaded, where a fill DOES NOTHING AND SAYS NOTHING - the
+    # exact fault that left 0 of the Rift's 14 entities in the world on 2026-09-24. prepare's
+    # tools/function_limits.py check found 9 such functions here on 2026-09-30, wall_throat among them writing
+    # 890 blocks into chunks it never loaded. ensure_loaded also splits fills over the block limit.
+    import function_limits as FL
     for name, lines in fn.items():
         p = out / "data" / NS / "function" / FOLDER / (name + ".mcfunction")
         p.parent.mkdir(parents=True, exist_ok=True)
-        p.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        p.write_text("\n".join(FL.ensure_loaded(lines)) + "\n", encoding="utf-8")
     jdump({"values": ["%s/load" % F]}, out / "data" / "minecraft" / "tags" / "function" / "load.json")
     (out / "data" / NS / "function" / FOLDER / "index.txt").write_text("\n".join(index) + "\n", encoding="utf-8")
     print("wrote %s: %d advancements, %d functions, %d build functions in index.txt"
