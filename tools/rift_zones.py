@@ -157,9 +157,22 @@ def yaw_towards(dx, dz):
 
 # ----------------------------------------------------------------- the traced regions
 
+def resolve_source_root(source_root):
+    """--source-root, else COBBLERS_SOURCE_ROOT, the way every other tool here resolves it.
+
+    Added 2026-09-30: `trace` with neither crashed inside pathlib with
+    "TypeError: expected str, bytes or os.PathLike object, not NoneType", which says nothing about what
+    is missing. tools/terrain.py raises TerrainUnavailable with the variable's name for exactly this."""
+    import os
+    r = source_root or os.environ.get("COBBLERS_SOURCE_ROOT")
+    if not r:
+        raise ZoneError("source_root is unset: pass --source-root or set COBBLERS_SOURCE_ROOT")
+    return r
+
+
 def annotated(spec, source_root):
     from PIL import Image
-    p = Path(source_root) / spec["source"]["file"]
+    p = Path(resolve_source_root(source_root)) / spec["source"]["file"]
     if not p.is_file():
         raise ZoneError("no annotated map at %s (it is a source input, gitignored; pass --source-root)" % p)
     got = hashlib.sha256(p.read_bytes()).hexdigest()
