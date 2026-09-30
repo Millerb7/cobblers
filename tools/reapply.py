@@ -123,6 +123,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # checks, the exit boxes and the passes act on their own (advancements and a load function that
                 # makes the cob_pass objectives), so world-local below. Z3 is superseded by the gulch's own zone
                 "cobblers_rift_zones",
+                # 2026-09-30: the nine built ferry docks (tools/ferry_docks.py, data/ferry_docks.json).
+                # Blocks in the overworld, so WORLD_LOCAL like the other block packs
+                "cobblers_ferry_docks",
                 # the 92 Mega Showdown stone recipes raised to 4 raw stones (decision 5A; tools/mega_recipes.py, generated
                 # from the server's own jar, never committed). Data only; world-local so no other world's recipes change
                 "cobblers_mega_recipes",
@@ -1054,6 +1057,16 @@ def steps(with_spawns=False):
     # The DIMENSION itself registers only at a server boot, so a first install must restart before this step runs.
     # Listed from the committed data, not the built pack, so the step exists whether or not the pack is built here
     portal_ids = [q["id"] for q in json.loads((ROOT / "data" / "portals.json").read_text(encoding="utf-8"))["portals"]]
+    # the ferry docks (tools/ferry_docks.py, data/ferry_docks.json): nine of the twelve planned, the other three
+    # unsited and saying why in their records. After R16G, because two of them stand on town ground the gym and
+    # town passes level, and BEFORE R17F, which stands a ferryman on each built dock: a ferryman with no dock
+    # under him is the fault this whole unit exists to fix. A dock whose `structure` is `host` is built by its
+    # host town's own pass (tools/sea_town.py) and is not run here.
+    import ferry_docks as FD
+    dock_ids = [d["id"] for d in FD.built_docks()] if hasattr(FD, "built_docks") else         [d["id"] for d in json.loads((ROOT / "data" / "ferry_docks.json").read_text(encoding="utf-8"))["docks"]
+         if d.get("structure") != "host"]
+    out.append(("R16H", "the ferry docks (%d) that make the charters reachable" % len(dock_ids),
+                [("fn", "cobblers:ferry_docks/%s" % d) for d in dock_ids]))
     out.append(("R16P", "the dive and sky portals (%d) and their rooms in cobblers:pocket" % len(portal_ids),
                 [("fn", "cobblers:portals/world/%s" % p) for p in portal_ids]
                 + [("fn", "cobblers:portals/place")]))
