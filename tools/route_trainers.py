@@ -1,9 +1,25 @@
 #!/usr/bin/env python
-"""The Route 1-3 trainers as Radical Cobblemon Trainers data: build/datapacks/cobblers_trainers.
+"""Every placed trainer as Radical Cobblemon Trainers data: build/datapacks/cobblers_trainers.
 
-From data/trainers.json (generated from docs/story/TRAINER_RULES.json) and data/route_trainers.json (where each one
-stands, tools/route_events.py), and the Gastly mansion's five Channeler guardians, whose record and seat are both in
-data/mansion_guardians.json:
+From data/trainers.json (generated from docs/story/TRAINER_RULES.json) and four seat sources:
+
+  data/route_trainers.json      Routes 1-3, where each one stands (tools/route_events.py)
+  data/mansion_guardians.json   the Gastly mansion's five Channeler guardians, record and seat together
+  data/vr_trainers.json         Victory Road's ten, on the stands tools/vr_caves.py carved along its walked
+                                route; the tenth (the Gate Warden) carries its own record beside its seat,
+                                because data/trainers.json is generated and holds only nine
+  data/league_trainers.json     the Elite Four and the Champion. These have no seat: Cobbleverse's
+                                kanto_league template already carries five rctmod:trainer_spawner blocks
+                                locked to kanto_league_lorelei/_bruno/_agatha/_lance and kanto_champion_blue
+                                (data/structures.json, docs/world-building/STRUCTURE_INVENTORY.md), so our
+                                five authored teams reach a player by overriding those upstream ids' team and
+                                dialogue at the upstream path (.claude/rules/datapacks.md), the way
+                                data/progression.json upstream_neutralised already overrides their loot
+                                tables. Nothing else of theirs is overridden: the mob file stays upstream's
+                                so its spawner keeps working, and they are absent from placements() because
+                                there is no seat for reapply to summon at.
+
+A seated trainer gets:
 
   data/rctmod/trainers/<id>.json                    the team: name, ai, battleRules, bag, team from the record's rct
                                                     payload. rctapi 0.16's TrainerModel reads name, ai, bag, team and
@@ -60,7 +76,8 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "build" / "datapacks" / "cobblers_trainers"
 NS = "cobblers"
 PERIOD = 10
-COOLDOWN_LINE = {"guardian": "Leave me be a moment.", "route": "Let me catch my breath."}
+COOLDOWN_LINE = {"guardian": "Leave me be a moment.", "route": "Let me catch my breath.",
+                 "league": "Take the room. I will be here."}
 EXTRA_FIELDS = {"route_02_shore_trainer_01": ["quest.evt_viltri_north_bank.trainer_defeated"]}
 AFTER_WIN = {"route_02_shore_trainer_01": "The angler nods at the tackle box on the bank."}
 
@@ -69,26 +86,68 @@ def key(field):
     return "cobblers__" + field.replace(".", "__")
 
 
+def doc(name):
+    return json.loads((ROOT / "data" / name).read_text(encoding="utf-8"))
+
+
 def load():
-    t = json.loads((ROOT / "data" / "trainers.json").read_text(encoding="utf-8"))
-    seats = json.loads((ROOT / "data" / "route_trainers.json").read_text(encoding="utf-8"))["trainers"]
-    guards = json.loads((ROOT / "data" / "mansion_guardians.json").read_text(encoding="utf-8"))["trainers"]
-    prog = json.loads((ROOT / "data" / "progression.json").read_text(encoding="utf-8"))
+    t = doc("trainers.json")
+    seats = doc("route_trainers.json")["trainers"]
+    guards = doc("mansion_guardians.json")["trainers"]
+    vr = doc("vr_trainers.json")["trainers"]
+    prog = doc("progression.json")
     fields = {f["id"] for f in prog["quest_fields"]}
     recs = {r["id"]: r for r in t["trainers"]}
     clash = sorted(g["id"] for g in guards if g["id"] in recs)
     if clash:
         raise SystemExit("data/mansion_guardians.json reuses trainer ids from data/trainers.json: %s" % clash)
     recs.update({g["id"]: g for g in guards})
-    return recs, seats + guards, fields
+    # Victory Road: nine of the ten are seats only and keep the record data/trainers.json generated for them;
+    # the tenth carries its own record beside its seat, as a mansion guardian does
+    for e in vr:
+        if "rct" not in e:
+            continue
+        if e["id"] in recs:
+            raise SystemExit("data/vr_trainers.json re-authors %s, which data/trainers.json already has" % e["id"])
+        recs[e["id"]] = e
+    return recs, seats + guards + vr, fields
+
+
+def league():
+    """[(our record, the upstream rctmod id it overrides, the seat entry)] for the Elite Four and the Champion."""
+    recs, _seats, _f = load()
+    out = []
+    for e in doc("league_trainers.json")["trainers"]:
+        r = recs.get(e["id"])
+        if r is None:
+            raise SystemExit("data/league_trainers.json names %s, which data/trainers.json does not have" % e["id"])
+        out.append((r, e["upstream_trainer_id"], e))
+    return out
+
+
+def lines_of(rec, seat):
+    """The three dialogue lines: the record's own text, or the seat file's when the record has only ids.
+
+    data/trainers.json carries dialogue_text for Routes 1-3 only; for Victory Road and the League it carries
+    dialogue ids (dlg_*) that resolve nowhere yet (data/dialogue.json has none of them, 2026-09-30, and the
+    generation_contract calls them 'campaign metadata; RCT sidecars require a future compiler'). The seat file
+    is where their text is authored until that compiler exists."""
+    d = rec.get("dialogue_text") or (seat or {}).get("dialogue_text")
+    if not d:
+        raise SystemExit("%s has no dialogue_text in data/trainers.json or in its seat file" % rec["id"])
+    return d
 
 
 def files():
     recs, seats, fields = load()
     out = {"pack.mcmeta": {"pack": {"pack_format": 48,
-                                    "description": "Cobblers Route 1-3 trainers and mansion guardians (tools/route_trainers.py)"}}}
+                                    "description": "Cobblers placed trainers: Routes 1-3, the mansion guardians, "
+                                                   "Victory Road's ten and the League's five "
+                                                   "(tools/route_trainers.py)"}}}
     cycle = ["scoreboard players set #clock cobblers_trainers 0",
              "# each placed trainer: home, its players' beaten tags (from their own fields), and no rematch for them"]
+    # every undeclared field, not just the first: one run should name the whole list to add to data/progression.json
+    undeclared = []
     for s in seats:
         r = recs.get(s["id"])
         if r is None:
@@ -103,7 +162,7 @@ def files():
                         "forceBattleLookTicks": 30,
                         "forceBattleMaxLevelDiff": 10})
         out["data/rctmod/mobs/trainers/single/%s.json" % tid] = mob
-        d = r["dialogue_text"]
+        d = lines_of(r, s)
         line = lambda text: [{"text": text}]
         out["data/rctmod/dialogs/trainers/single/%s.json" % tid] = {
             "on_battle_start": line(d["pre"]), "on_battle_lost": line(d["player_win"]), "trainer_lost": line(d["player_win"]),
@@ -112,9 +171,7 @@ def files():
             "on_cooldown": line(COOLDOWN_LINE["guardian" if "sets" in r else "route"])}
         out["data/rctmod/loot_table/trainers/single/%s.json" % tid] = {"pools": []}
         setf = r["sets"] if "sets" in r else ["quest.%s.defeated" % tid] + EXTRA_FIELDS.get(tid, [])
-        missing = [f for f in setf if f not in fields]
-        if missing:
-            raise SystemExit("%s would set undeclared fields %s (data/progression.json)" % (tid, missing))
+        undeclared += [(tid, f) for f in setf if f not in fields]
         mol = "t.d = q.player.data(); %s q.player.save_data();" % " ".join("t.d.%s = 1;" % key(f) for f in setf)
         fn = ["# %s: this player won (rctmod defeat_count, winning side only)" % tid, 'runmolang "%s" @s' % mol,
               "tag @s add cobblers_beat_%s" % tid]
@@ -126,6 +183,23 @@ def files():
             "criteria": {"won": {"trigger": "rctmod:defeat_count", "conditions": {"trainer_ids": [tid], "count": 1}}},
             "rewards": {"function": "%s:trainers/won/%s" % (NS, tid)}}
         cycle += cycle_lines(tid, s, setf[0])
+    if undeclared:
+        raise SystemExit("data/progression.json quest_fields does not declare %d field(s):\n%s"
+                         % (len(undeclared), "\n".join("  %s sets %s" % (t, f) for t, f in undeclared)))
+    # the League's five: the team and the lines only, at the upstream id the template's spawner is locked to.
+    # No mob file (upstream's spawner owns how each is spawned), no loot table, no advancement (champion_cleared
+    # already fires from kanto_champion_blue through tools/progression_pack.py), no cycle and no placement:
+    # these five are not summoned at a seat, they stand where Cobbleverse's template puts them.
+    for rec, upstream, entry in league():
+        rct = rec["rct"]
+        out["data/rctmod/trainers/%s.json" % upstream] = {k: rct[k] for k in
+                                                          ("name", "ai", "battleRules", "bag", "team") if k in rct}
+        d = lines_of(rec, entry)
+        ln = lambda text: [{"text": text}]
+        out["data/rctmod/dialogs/trainers/single/%s.json" % upstream] = {
+            "on_battle_start": ln(d["pre"]), "on_battle_lost": ln(d["player_win"]), "trainer_lost": ln(d["player_win"]),
+            "on_battle_won": ln(d["player_loss"]), "trainer_won": ln(d["player_loss"]),
+            "on_cooldown": ln(COOLDOWN_LINE["league"])}
     out["data/%s/function/trainers/cycle.mcfunction" % NS] = cycle
     out["data/%s/function/trainers/tick.mcfunction" % NS] = [
         "scoreboard players add #clock cobblers_trainers 1",
@@ -179,7 +253,8 @@ def main(argv=None):
         f.parent.mkdir(parents=True, exist_ok=True)
         text = "\n".join(content) + "\n" if isinstance(content, list) else json.dumps(content, indent=2, ensure_ascii=False) + "\n"
         f.write_text(text, encoding="utf-8", newline="\n")
-    print("wrote %d files for %d trainers to %s" % (len(fs), len(placements()), out))
+    print("wrote %d files for %d seated trainers and %d League overrides to %s"
+          % (len(fs), len(placements()), len(league()), out))
     return 0
 
 
