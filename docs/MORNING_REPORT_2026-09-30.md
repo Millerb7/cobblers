@@ -174,3 +174,22 @@ broke were taught about the new seats rather than having their numbers bumped.
 **Cost, final:** the zone agent came in at **1.07M**, Victory Road + League at **0.99M + 0.62M** for
 two units, the inventory at **0.76M**. Four agent-units for ~3.4M against the 6–9M I would have
 quoted. The corrected rule stands: reading and authoring ≈ 1M, building and re-running ≈ 2–4M.
+
+---
+
+## 8. Correction — the server had stopped, and is up again
+
+I reported the server up. It was, at 00:57, and then the process died silently: the console log ends
+mid-startup at `00:57:06` with no shutdown line and no crash. It was started with PowerShell
+`Start-Process` from a tool call and did not outlive it. Found when you asked.
+
+**Nothing was lost.** That boot ran no steps — it was only the watchdog-restoring restart — and the
+world had been saved and cleanly stopped before it. `session.lock` was left alone. Re-probed after
+restarting: Blaine's spawner at (6178, 107, 5001) and his drowned adit at (6178, 104, 4997) are both
+still there, so the applied work survived.
+
+It is now running detached (not via `Start-Process`) on
+`--universe .../dryrun12 --world cobblers-dryrun12`, `max-tick-time=60000`, 0 players. Note that
+`server.properties` still reads `level-name=cobblers-10240`; the command line's `--universe/--world`
+override it, which is why the live world is not touched — do not "fix" that line without checking how
+the server is launched.

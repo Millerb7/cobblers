@@ -42,7 +42,9 @@ Re-run every audit an agent reports, in the full checkout, before believing it (
 python tools/gym_buildings_independent.py   # must stay clean over 5 buildings
 ```
 
-The server is **running** on `cobblers-dryrun12` with `max-tick-time=60000` restored. The coordination
+The server is **running** on `cobblers-dryrun12` with `max-tick-time=60000` restored. **Start it with a
+detached launch, never PowerShell `Start-Process` from a tool call** - one started that way died silently
+at 00:57 on 2026-09-30, its console log ending mid-startup with no shutdown line and no crash. The coordination
 lock at `C:\Users\wnd\Documents\github\.cobblers-server-agent.lock` is **still held** by this session's
 owner line — take it over or release it.
 
