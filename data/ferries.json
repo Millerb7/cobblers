@@ -171,7 +171,7 @@
     {
       "id": "pacifidlog_south_jetty",
       "name": "Pacifidlog jetty",
-      "status": "built",
+      "status": "planned",
       "built_by": "tools/sea_town.py (re-apply R8, the mainland_jetty district): the bamboo jetty from the plateau's south beach out to the landing x5153-5167 z6654-6662, deck at the sea level y62. tools/ferry_docks.py writes no block here; it sites the ferryman and the landing on that jetty and checks them. Staging only",
       "near": [
         5160,
@@ -197,7 +197,8 @@
         "yaw": 180,
         "why": "on the jetty's centre line where it meets the landing, facing north up the spine to the plateau's beach: an arrival steps off onto the walk, not into the water"
       },
-      "why": "the new Pacifidlog ferry's mainland end; it replaces pacifidlog_jetty, which retired with the Sound site. SITED 2026-09-30 on the landing the re-site already built: the jetty exists, so the dock is the ferryman on it"
+      "why": "the new Pacifidlog ferry's mainland end; it replaces pacifidlog_jetty, which retired with the Sound site. SITED 2026-09-30 on the landing the re-site already built: the jetty exists, so the dock is the ferryman on it",
+      "why_planned": "Set back to planned on 2026-09-30 after tools/ferries.py audit measured it: its ferryman (5163,63,6658) and its landing (5160,63,6658) stand at y63 on ground of y55 - SEVEN BLOCKS UNDER a sea of y62. It is a `host` dock, its position taken from data/placements.json sea_town_mainland_jetty, so the position is the sea town's and the sea town has moved out from under it. This is the same migration that contracts C3 and C14 record. Measured for whoever re-sites it: along x5160 the water ends about z6574 (ground y62) with land at z6562 (y63); the jetty wants to reach that shore, not z6658. Its line pacifidlog_ferry cannot run regardless - its other stop pacifidlog_square is status retired."
     },
     {
       "id": "sunset_south_pier",
@@ -733,7 +734,7 @@
       "gate_why": "gym6_cleared: WATER_PROPOSAL decision 6",
       "swim": {
         "declared": "unsited",
-        "why": "a lake crossing. Its three docks were sited and built on 2026-09-30 (tools/ferry_docks.py), so the reason this is still `unsited` has changed: tools/ferries.py walks every crossing at ONE water level, data/world.json's sea level y62, and Lake Tilpey stands at y77 (data/legendaries.json uxie). Walked at y62 the whole lake reads as dry land, so declaring a barrier here would put a false number in the audit. The line stays unsited, and unemitted, until tools/ferries.py can take a crossing's own water level. Lakes are Surf content (docs/world-building/WATER_MAP.md) and the launch is a convenience, not a gate; the Weeping Elder island in the middle of the lake is the part that is genuinely behind water"
+        "why": "UNSITED because this tool cannot walk it. tools/ferries.py walks every crossing at data/world.json's sea level 62; the Tilpey launch crosses a LAKE whose surface is y77 (measured from Uxie's record in data/legendaries.json), so its water is never found and the swim can neither be declared a gate nor a leak. Its three docks ARE built (2026-09-30) and its ferrymen stand on them; the line is simply not offered until somebody teaches ferries.py a per-crossing water level and walks it. Until then it is held by emitted_lines(), not silently emitted with an unmeasured crossing."
       },
       "why": "across Lake Tilpey by the Weeping Elder (WATER_PROPOSAL 4.3); waits for its three docks",
       "blocked_by": "tools/ferries.py: a crossing is walked at data/world.json's sea level only, so a lake line cannot be declared. Its docks are built; the line is not emitted"

@@ -98,9 +98,26 @@ def dock_built(d):
 
 
 def emitted_lines(doc):
-    """The lines every one of whose docks is built: only these are generated."""
+    """The lines every one of whose docks is built AND whose crossing has been measured.
+
+    Both halves matter. A line is generated when its docks exist - that is what the nine new docks did on
+    2026-09-30 - but a line whose `swim.declared` is still "unsited" has never had its water walked, so
+    nobody knows whether the ferry is a gate or a convenience, and the audit rightly refuses a built line
+    with an unsited crossing. Holding it here rather than failing the whole pack keeps the docks and the
+    ferrymen, and simply does not offer the trip until somebody measures it.
+
+    tilpey_launch is the one that hits this: it crosses a LAKE whose surface is y77, and this tool walks
+    every crossing at data/world.json's sea level 62, so its water cannot be walked at all yet. That is a
+    real gap in this tool, recorded in the line's own `swim.why`, not a property of the line."""
     docks = by_id(doc["docks"])
-    return [ln for ln in doc["lines"] if all(s in docks and dock_built(docks[s]) for s in ln["stops"])]
+    out = []
+    for ln in doc["lines"]:
+        if not all(s in docks and dock_built(docks[s]) for s in ln["stops"]):
+            continue
+        if (ln.get("swim") or {}).get("declared") == "unsited":
+            continue
+        out.append(ln)
+    return out
 
 
 def trips(line):
