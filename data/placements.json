@@ -8872,7 +8872,7 @@
       "kind": "donor",
       "position": {
         "x": 7244,
-        "y": 117,
+        "y": 118,
         "z": 1621
       },
       "size": [
@@ -8886,7 +8886,7 @@
       "y_mode": "absolute",
       "status": "planned",
       "facing": "west",
-      "chosen_because": "the ice-type field station: a timber lodge on the station lane, its door to the lane. placed by id from the installed pack",
+      "chosen_because": "the ice-type field station: a timber lodge on the station lane, its door to the lane. placed by id from the installed pack. Re-seated 2026-09-30 from y117 to y118. Its lot is levelled to y119, and the repository's convention for a donor on a levelled lot - measured off eleven of the fifteen such placements, the gyms among them - is that the base sits at level-1, where the donor's own foundation course replaces the top ground block. At y117 it was 1 course(s) further down, buried in its own lot, with no reason recorded anywhere. Found by tools/placement_ground_audit.py.",
       "source": {
         "licence": "placed by resource id from the installed pack or the server jar; never copied"
       },
@@ -9291,7 +9291,7 @@
       "kind": "donor",
       "position": {
         "x": 6694,
-        "y": 136,
+        "y": 140,
         "z": 5778
       },
       "size": [
@@ -9305,7 +9305,7 @@
       "y_mode": "absolute",
       "status": "planned",
       "facing": "east",
-      "chosen_because": "the mine office and assay house at the head of the spur, facing it; the fossil lab's first stop. placed by id from the installed pack",
+      "chosen_because": "the mine office and assay house at the head of the spur, facing it; the fossil lab's first stop. placed by id from the installed pack. Re-seated 2026-09-30 from y136 to y140. Its lot is levelled to y141, and the repository's convention for a donor on a levelled lot - measured off eleven of the fifteen such placements, the gyms among them - is that the base sits at level-1, where the donor's own foundation course replaces the top ground block. At y136 it was 4 course(s) further down, buried in its own lot, with no reason recorded anywhere. Found by tools/placement_ground_audit.py.",
       "source": {
         "licence": "placed by resource id from the installed pack or the server jar; never copied"
       },
@@ -11113,7 +11113,7 @@
       "kind": "donor",
       "position": {
         "x": 5152,
-        "y": 126,
+        "y": 62,
         "z": 7503
       },
       "size": [
@@ -11127,7 +11127,7 @@
       "y_mode": "absolute",
       "status": "planned",
       "facing": "north",
-      "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground)",
+      "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground). Re-seated 2026-09-30: it stood at y126 with the seabed under it at y60..61 - 64 blocks of open air, a stone ruin hanging over the water. Now y62, the repository's convention of max(ground)+1 measured with tools/ground.py over its own footprint (CLAUDE.md, ground comes from the heightmap). The sea is y62, so the floor sits at the surface and the ruin is drowned, which is what an underwater_ruin template is for and what the plan's \"broken walls either side of the causeway, half sunk\" asks for.",
       "source": {
         "licence": "placed by resource id from the installed pack or the server jar; never copied"
       },
@@ -11167,7 +11167,7 @@
       "kind": "donor",
       "position": {
         "x": 5145,
-        "y": 123,
+        "y": 62,
         "z": 7412
       },
       "size": [
@@ -11181,7 +11181,7 @@
       "y_mode": "absolute",
       "status": "planned",
       "facing": "east",
-      "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground)",
+      "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground). Re-seated 2026-09-30: it stood at y123 with the seabed under it at y58..61 - 61 blocks of open air, a stone ruin hanging over the water. Now y62, the repository's convention of max(ground)+1 measured with tools/ground.py over its own footprint (CLAUDE.md, ground comes from the heightmap). The sea is y62, so the floor sits at the surface and the ruin is drowned, which is what an underwater_ruin template is for and what the plan's \"broken walls either side of the causeway, half sunk\" asks for.",
       "source": {
         "licence": "placed by resource id from the installed pack or the server jar; never copied"
       },
@@ -11221,7 +11221,7 @@
       "kind": "donor",
       "position": {
         "x": 5170,
-        "y": 123,
+        "y": 59,
         "z": 7387
       },
       "size": [
@@ -11235,7 +11235,7 @@
       "y_mode": "absolute",
       "status": "planned",
       "facing": "west",
-      "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground)",
+      "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground). Re-seated 2026-09-30: it stood at y123 with the seabed under it at y57..58 - 64 blocks of open air, a stone ruin hanging over the water. Now y59, the repository's convention of max(ground)+1 measured with tools/ground.py over its own footprint (CLAUDE.md, ground comes from the heightmap). The sea is y62, so the floor sits 3 below the surface and the ruin is drowned, which is what an underwater_ruin template is for and what the plan's \"broken walls either side of the causeway, half sunk\" asks for.",
       "source": {
         "licence": "placed by resource id from the installed pack or the server jar; never copied"
       },
@@ -11275,7 +11275,7 @@
       "kind": "donor",
       "position": {
         "x": 5147,
-        "y": 120,
+        "y": 60,
         "z": 7351
       },
       "size": [
@@ -11289,7 +11289,7 @@
       "y_mode": "absolute",
       "status": "planned",
       "facing": "south",
-      "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground)",
+      "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground). Re-seated 2026-09-30: it stood at y120 with the seabed under it at y58..59 - 60 blocks of open air, a stone ruin hanging over the water. Now y60, the repository's convention of max(ground)+1 measured with tools/ground.py over its own footprint (CLAUDE.md, ground comes from the heightmap). The sea is y62, so the floor sits 2 below the surface and the ruin is drowned, which is what an underwater_ruin template is for and what the plan's \"broken walls either side of the causeway, half sunk\" asks for.",
       "source": {
         "licence": "placed by resource id from the installed pack or the server jar; never copied"
       },
@@ -11329,7 +11329,7 @@
       "kind": "donor",
       "position": {
         "x": 5186,
-        "y": 127,
+        "y": 60,
         "z": 7482
       },
       "size": [
@@ -11343,7 +11343,7 @@
       "y_mode": "absolute",
       "status": "planned",
       "facing": "west",
-      "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground)",
+      "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground). Re-seated 2026-09-30: it stood at y127 with the seabed under it at y58..59 - 67 blocks of open air, a stone ruin hanging over the water. Now y60, the repository's convention of max(ground)+1 measured with tools/ground.py over its own footprint (CLAUDE.md, ground comes from the heightmap). The sea is y62, so the floor sits 2 below the surface and the ruin is drowned, which is what an underwater_ruin template is for and what the plan's \"broken walls either side of the causeway, half sunk\" asks for.",
       "source": {
         "licence": "placed by resource id from the installed pack or the server jar; never copied"
       },
@@ -11383,7 +11383,7 @@
       "kind": "donor",
       "position": {
         "x": 5133,
-        "y": 125,
+        "y": 60,
         "z": 7487
       },
       "size": [
@@ -11397,7 +11397,7 @@
       "y_mode": "absolute",
       "status": "planned",
       "facing": "east",
-      "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground)",
+      "chosen_because": "a ruin of the jungle's old stone city, half sunk (three blocks under its ground). Re-seated 2026-09-30: it stood at y125 with the seabed under it at y58..59 - 65 blocks of open air, a stone ruin hanging over the water. Now y60, the repository's convention of max(ground)+1 measured with tools/ground.py over its own footprint (CLAUDE.md, ground comes from the heightmap). The sea is y62, so the floor sits 2 below the surface and the ruin is drowned, which is what an underwater_ruin template is for and what the plan's \"broken walls either side of the causeway, half sunk\" asks for.",
       "source": {
         "licence": "placed by resource id from the installed pack or the server jar; never copied"
       },
