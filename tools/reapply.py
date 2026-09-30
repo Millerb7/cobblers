@@ -126,6 +126,12 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-09-30: the nine built ferry docks (tools/ferry_docks.py, data/ferry_docks.json).
                 # Blocks in the overworld, so WORLD_LOCAL like the other block packs
                 "cobblers_ferry_docks",
+                # 2026-09-30: the lake beds tools/rift_skin.py painted over before it was fixed the same day
+                # (F5). A REPAIR for worlds exported before the fix: the skin no longer writes those cells, so
+                # nothing puts back the gravel and clay tools/paint_maps.py paints, and re-running R1 leaves
+                # them purple (probed on cobblers-dryrun12, 2026-09-30). On a world exported after the fix it
+                # lays back exactly what is already there, so it is harmless rather than conditional
+                "cobblers_lakebed_repair",
                 # the 92 Mega Showdown stone recipes raised to 4 raw stones (decision 5A; tools/mega_recipes.py, generated
                 # from the server's own jar, never committed). Data only; world-local so no other world's recipes change
                 "cobblers_mega_recipes",
