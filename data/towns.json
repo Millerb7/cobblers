@@ -1170,7 +1170,7 @@
    ],
    "approach": {
     "from": "gym8_town",
-    "route_length_blocks": 4340,
+    "route_length_blocks": 4363,
     "straight_line_blocks": 3911,
     "water_crossings": [],
     "text": "North from Giovanni's town through Rift Foot and the south-east arm, then along the Rift's south-west arm, the fork and the trunk to the League's forecourt on the floor below the apex.",
@@ -2730,7 +2730,7 @@
  ],
  "critical_path_geometry": {
   "legs": "full-resolution terrain-weighted A* between consecutive critical towns; required bridge crossings are mandatory waypoints; Victory Road is A* between the Rift arm, fork, trunk and apex waypoints",
-  "victory_road_blocks": 4340,
+  "victory_road_blocks": 4363,
   "victory_road": "Giovanni's town to the Rift's south-west arm, up the arm to the fork, up the trunk to the apex, to the League"
  },
  "measurement_note": "Every town's centre.ground_y, footprint.ground_y and footprint.slope_degrees are measured on the canonical heightmap 5b963567 (the rescale plus the three tools/press_pads.py pads) with find_sites' own slope (terrain.slope_degrees), at the recorded footprints, by tools/measure_towns.py; a town with built_ground is measured with that tool's surface laid over the heightmap. Sites were NOT re-searched: siting is an authored decision. A site that no longer meets its footprint basis carries site_review (tableland_stop, max slope 5.8 against under 5)."

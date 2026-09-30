@@ -1,7 +1,7 @@
 {
   "schema": "cobblers.route-trainers/1",
   "generated_by": "tools/route_events.py --write-scenes",
-  "note": "Where each Route 1-3 trainer stands (docs/story/EARLY_ROUTE_BUILD_HANDOFF.md): the listed point, or the nearest shoulder off the walked line (build/routes/paths.json) when the point is on it. tools/route_trainers.py generates the RCT data and reapply places each with summon_persistent.",
+  "note": "Where each Route 1-3 trainer stands (docs/story/EARLY_ROUTE_BUILD_HANDOFF.md): the listed point, or the nearest shoulder off the walked line (data/route_paths.json) when the point is on it. tools/route_trainers.py generates the RCT data and reapply places each with summon_persistent.",
   "trainers": [
     {
       "id": "route_01_trainer_01",
