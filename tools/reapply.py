@@ -144,6 +144,15 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
 # by a step makes `prepare` fail: that is the fail-closed check.
 EXCLUDED = {
     "cobblers_reapply": "the loose-function container; its functions are run by the steps that own them",
+    # 2026-09-30: HELD BACK ON PURPOSE, and this is a safety hold, not tidiness. R9Z places obsidian walls
+    # across the Rift's throat, the League's gate and behind the League, plus four gatehouse barriers. The
+    # functions that let a player EARN a pass - cobblers:rift_zones/z{1,2,4,5}/qualify - are called by nothing
+    # at all: the guards that should call them are armour-stand placeholders waiting on Codex's NPCs. Installed
+    # as it stands, the walls go up and nobody can ever pass them. `unreferenced()` found it, which is exactly
+    # what it is for (see its docstring: the Rift's entities sat beside its block functions and 0 of 14 reached
+    # the world). Bring the pack and the R9Z step back together, when BOTH hold: every zone's guard calls its
+    # qualify, and data/progression.json declares rift_crisis_resolved with something that sets it.
+    "cobblers_rift_zones": "held: its walls would seal the Rift because nothing calls z*/qualify yet (2026-09-30)",
     "cobblers_vr_backfill": "staging only: it buries schema 1's labyrinth, which a fresh export never has",
     "cobblers_restore": "disposable worlds only; install() deletes it if it is found",
     "cobblers_rift_fracture": "retired, replaced by the sculpt in the heightmap",
@@ -912,9 +921,8 @@ def steps(with_spawns=False):
     # then four gatehouse shells, in the pack's own index order. The zone checks, the exit boxes and the
     # cob_pass objectives act on their own (advancements and a load function) and need no step. The guards
     # themselves are armour-stand placeholders: Codex writes the NPCs (docs/HANDOVER_CODEX.md item 23)
-    out.append(("R9Z", "the Rift's zone walls at the throat, the League's gate and behind the League, then the "
-                       "four gatehouse shells",
-                [("fn", "cobblers:rift_zones/%s" % f) for f in indexed("cobblers_rift_zones", "rift_zones")]))
+    # R9Z is NOT in the step list: cobblers_rift_zones is EXCLUDED above until its guards call qualify.
+    # Putting the step back is half the job; read the note beside the exclusion for the other half.
     # the evolution-stone faces (tools/mines.py, data/mines.json; STONE_ECONOMY.md 5.5 names the step): after the towns
     # (R8) and the donors (R9), whose cells they keep clear, and the Displaced City cavern (R2), whose shell two of the
     # sites cut into; before the Habitat Blocks (R9E) and the lights (R16). One build function a site, named from the
