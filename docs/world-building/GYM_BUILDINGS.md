@@ -2,7 +2,8 @@
 
 The owner's redesign of 2026-09-29. `GYM_BUILDINGS_BRIEF.md` is the decision and the measured envelope; this
 document is the **contract**: what a gym record may contain, what the generator does with each field, and what
-the other four buildings must follow. Gym 1 (Brock) is written; gyms 3, 4, 5 and 7 are not.
+the other buildings must follow. **All seven are now written** — gyms 1, 3, 4, 5 and 7 on 2026-09-29/30, and
+gyms 6 (Sabrina) and 8 (Giovanni) on 2026-09-30, §6 below. Gym 2 is Misty's and is not touched.
 
 | | |
 |---|---|
@@ -159,3 +160,140 @@ runs them. `R16E` still runs the healer sweep over all eight shells and still bu
    player can physically stand, and the model that settles it (`tools/gym_interiors_independent.py`) belongs to
    whoever audits, not to whoever builds. The `trainers` array is supported and lands in
    `derived/gym_buildings/trainer_seats.json` for `trainer-balance-designer`.
+
+---
+
+## 6. Gyms 6 and 8 — the last two (2026-09-30)
+
+The owner: *"GYMS 6 AND 8. Sabrina's and Giovanni's have no interior. **Sabrina's was blocked on a per-player
+design — redesign it shared like the other six.** Independent audit before either applies."*
+
+Both are one new record each, in the same `gym_building/1` schema, and **nothing in `tools/gym_buildings.py`
+was extended**: the tool reads every record in the directory and `R16G` lists the functions from it, so two new
+files needed no code change. The op vocabulary in §2 was enough for both.
+
+### The one thing both records do that the first five do not
+
+`tools/gym_demolish.py` acts only on gyms that `data/gym_interiors.json` marks `superseded_by`, and **gyms 6
+and 8 have no such record** — their entries are `built: false` with no `dig` and no `shell` box, because
+nothing was ever carved under them. So no demolition step runs on these two lots, and each record **takes its
+own donor shell down**: an air fill over the pad and a stone fill under it, both sized to cover the donor's
+whole box (`gym6_gym_building` at 6183,96,3306..6209,112,3329; `gym8_gym_building` at
+3560,111,6403..3583,127,6429, computed from `data/placements.json` through `tools/place_donor.py`). The shell's
+own `rctmod:trainer_spawner` goes with it, which is what makes each record's spawner the only one of its
+leader in its town.
+
+### The envelope, from the lot and not from the terrain
+
+| gym | leader | lot (the envelope) | pad y | raw ground under it | **binding constraint** |
+|---|---|---|---|---|---|
+| gym6 | Sabrina | **33 x 33** `[6180,3302,6212,3334]` | y97 | y95..97 | the spawn-free box, z3304 |
+| gym8 | Giovanni | **33 x 33** `[3556,6400,3588,6432]` | y112 | y110..112 | the spawn-free box, z6431 |
+
+Both pads are levelled to the **top** of their raw range, so the prep is a small cut and a two-course fill —
+which is what each town's own `prep_note` says. `"ground": {"kind": "lot_level"}` for both.
+
+**Neither record changes `data/spawn_suppression.json`, and that was a design constraint, not an afterthought.**
+`gym_sabrina` is `[6176,3304,6215,3335]` and `gym_giovanni` is `[3552,6400,3591,6431]`; both are already whole
+8-blocks, and in both cases the box does **not** cover the whole lot (Sabrina's misses the lot's two
+northernmost rows, Giovanni's its southernmost). So the buildings were fitted inside the boxes rather than the
+boxes grown to the buildings. Growing one has to be an outward snap to the 8-block grid or
+`tools/suppress_inherited_spawns.py` fails closed at install, which cost a cycle on 2026-09-30 at four other
+gyms. Building inside costs nothing.
+
+### Gym 6 — the Hall of Lenses (Sabrina)
+
+`data/gym_buildings/gym6.json`. **27 x 25, floor y97, ridge y124**, on the levelled lot with margins 3/3/5/3 and
+a one-course eaves overhang. One tall calcite hall; a reading gallery **four wide as a closed ring** at floor
+course y104; a ladder turret standing on the gallery's north strip; a sealed lens chamber at floor course y111
+with Sabrina at the centre of a quartz lens let into its floor.
+
+**The per-player design is retired and what replaces it is THE EYE.** Nothing in the record is instanced, lit
+for one player, or held in one player's state. The eye is one purpur panel with a pearlescent-froglight pupil,
+set in the fabric of the building three times — over the stack that reaches, over the arch that goes through,
+and over Sabrina's seat. It is a thing in the world that says which way, the same for everyone, in the family
+of Brock's lit slot and Misty's three mouths.
+
+Three gates, each a different mechanism:
+
+1. **The reading stacks.** Four stacks of record shelving rise out of the hall floor. One runs east along the
+   well's south edge with tops y98..y103 and reaches the gallery. The other three top at y102 — feet y103
+   against a gallery whose walking level is y105, a **two-block rise**, which vanilla does not allow and no
+   sprint jump covers (three blocks up one, nothing up two). The quartz posts under the gallery stop at y102
+   and are capped by its own soffit at y103, so none of them can be stood on.
+2. **The eye arch.** A calcite screen two courses thick closes the gallery's north strip over its full height.
+   Three recesses; two are one course deep with the screen's second course solid behind them; the third goes
+   through.
+3. **The turret ladder.** y105 to y111 on solid quartz, through a floor that is unbroken everywhere else.
+
+The way back is a **drop shaft**, one cell cut in the chamber floor over the gallery's east arm: a seven-block
+fall for four damage.
+
+### Gym 8 — the Gate of the South (Giovanni)
+
+`data/gym_buildings/gym8.json`. **25 x 25, floor y112, walls to y122**, no roof: a walled muster yard open to
+the sky. The gate mass is seven wide and the full depth of the yard, solid granite from the paving to y120,
+**sheer on the yard side with no opening at any height**, and its top is the gate walk at y121 where Giovanni
+stands. Eight courses over the yard, and nothing in the yard rises past y114.
+
+Giovanni's gym is the gate (`data/placements.json`: *"for the eighth it is the one you have to go through to
+leave"*), and he is a ground type, so the way past a shut gate is the way a garrison actually takes it: **you
+go under the gate to get on top of it.** Three gates:
+
+1. **The sap head.** The yard has one door and no stair. Three well heads are cut in its paving; two are
+   cisterns one course deep, and the sap goes six down to a counter-mine. *The tell:* the sap alone carries a
+   spruce headframe and a lamp.
+2. **The shored heading.** Three headings are driven south off the drift, all one wide and two high and alike
+   at the mouth. Two run two cells to a face. *The tell:* the west one alone is shored — a stripped-spruce
+   crown down its whole ceiling course with three glowstones in it.
+3. **The tower stair.** Fourteen courses cut up through the gate mass from the undercroft, each step closed
+   above by the rock of the step in front, so no drop inside the slot is longer than one block.
+
+The way back is the walk's open east edge: an **eight-block drop into the yard for five damage**, which is not
+a way up.
+
+### The twelve defects of `GYM_BUILDINGS_REVIEW.md`, answered rather than repeated
+
+| the review's lesson | what these two records do |
+|---|---|
+| D2 a ladder's course through a floor must be re-cut as LADDER | **both ladders are the last block part in their record**, written after every floor that crosses them |
+| D5 a waypoint must name the cell a player STANDS in | all twenty waypoints are standing cells; the audit reports every one "reached" |
+| D6 a rise out of water must be one block | there is **no water and no lava** in either gym |
+| D7 a rail must not stand where a stair arrives | gym 6 has **no rail anywhere**; gym 8's parapet starts at z6409 and the stair arrives at z6408 |
+| the sprint-jump rule | no gate in either building is made of a gap — every gate is a two-block rise, a blind recess, or solid rock |
+| every fall over 12 blocks lands on hay or water | **no fall in either gym is over 8**, so no hay is used and none is needed |
+| D8 a room must have a way OUT | both leaders' rooms have two: the climb back, and a one-way drop |
+| F6 31 lanterns stood in mid air | **no lanterns and no chains**; every light is a froglight or a glowstone let flush into a floor, a ceiling or a beam |
+| leaves without `persistent=true` decay | no leaves |
+| open-topped water flows out of its box | no water sources at all |
+
+Neither record uses a rail, fence, wall or slab, because the audit's movement model reads every one of them as
+solid and a passage furnished with them stops being a passage.
+
+### Verdicts
+
+```
+python tools/gym_buildings.py build
+  gym6 (Sabrina): 27x25, floor y97, 233 commands, 35,125 cells, 4 rooms, 5 route steps
+  gym8 (Giovanni): 25x25, floor y112,  87 commands, 22,089 cells, 5 rooms, 5 route steps
+python tools/gym_buildings_independent.py     # clean over 7 building(s)
+```
+
+**Not verified.** Everything above is geometry in a generated function and a model of vanilla movement.
+Nothing has been seen in a running game: not the climbs, not the drops, not the spawns, not the badges, not
+whether either building reads from the town as it is meant to.
+
+### What these two still need
+
+1. **The independent audit the owner asked for**, by an agent that built neither. `tools/gym_buildings_independent.py`
+   reports clean, but the builder ran it; a reviewer should also ask the questions the tool does not — whether
+   the eye and the headframe are legible in play, and whether either building's `rooms` boxes flatter its own
+   `skip` check.
+2. **The `no_build` boxes are authored and not wired.** Until a scene record exists in `data/scenes.json`, a
+   player with blocks can pillar eight courses out of Giovanni's yard straight onto the gate walk, and out of
+   Sabrina's well onto her gallery, and no test can say otherwise.
+3. **No trainer seats.** Both `trainers` arrays are empty, so nothing here says a guard cannot be walked round.
+4. **`data/gym_interiors.json` gyms 6 and 8 are untouched** and still carry no `superseded_by`. That is
+   deliberate — the demolition is done in-function — but if `tools/gym_demolish.py` is ever made to cover all
+   seven, those two records are where it would be said, and the in-function clearing fills would then be
+   redundant rather than wrong.
