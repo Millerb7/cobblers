@@ -118,6 +118,11 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # blocks and the Cutters run by R9S; the gate, the zone check, the faces' ward and the Megas' keeper act
                 # on their own (advancements, a tick driver), so world-local below
                 "cobblers_gulch_mine",
+                # 2026-09-30: the Rift's zones Z1, Z2, Z4 and Z5 (tools/rift_zones.py, data/rift_zones.json,
+                # docs/mechanics/RIFT_ZONES.md): the cross-walls and gatehouse shells run by R9Z; the four zone
+                # checks, the exit boxes and the passes act on their own (advancements and a load function that
+                # makes the cob_pass objectives), so world-local below. Z3 is superseded by the gulch's own zone
+                "cobblers_rift_zones",
                 # the 92 Mega Showdown stone recipes raised to 4 raw stones (decision 5A; tools/mega_recipes.py, generated
                 # from the server's own jar, never committed). Data only; world-local so no other world's recipes change
                 "cobblers_mega_recipes",
@@ -170,7 +175,8 @@ EXCLUDED = {
 # (the scene runtime's tick; the trainers and event sites travel with it), and the global folder is loaded by every
 # world the server runs, the live one included (qa review of EXP-034, 2026-09-24)
 WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", "cobblers_celebi", "cobblers_rift_storm",
-               "cobblers_sizes", "cobblers_blackout", "cobblers_rift_mines", "cobblers_gulch_mine", "cobblers_mega_recipes",
+               "cobblers_sizes", "cobblers_blackout", "cobblers_rift_mines", "cobblers_gulch_mine",
+               "cobblers_rift_zones", "cobblers_mega_recipes",
                "cobblers_ferries", "cobblers_ambient", "cobblers_levelcap", "cobblers_mines",
                "cobblers_legendaries")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
@@ -355,6 +361,11 @@ def prepare_jobs(a):
     # the plan and the zone, the zone sealed except through the gate, cover over the halls, the faces and the Cutters
     add("gulch_mine:build", "gulch_mine.py", "build", *src)
     add("gulch_mine_audit", "gulch_mine_audit.py", *src)
+    # the Rift's zones (data/rift_zones.json): AFTER gulch_mine, because z2 is cut round the gulch's built zone
+    # and reads data/gulch_mine.json's polygon. `build` runs its own fail-closed report first and refuses on a
+    # problem. The boxes and wall lines are committed data; `trace` is not run here, because it needs the
+    # owner's annotated source map, which prepare does not have
+    add("rift_zones:build", "rift_zones.py", "build", *src)
     # the Mega Showdown stone recipes raised to 4 raw stones, from the server's own jar (never committed)
     add("mega_recipes", "mega_recipes.py", "--server-dir", a.server_dir)
     # the Deep's city and the relic area's surface, stood on the pit's ring model; the audit checks what it wrote
@@ -893,6 +904,17 @@ def steps(with_spawns=False):
                        "Cutting Floor, then the Cutters",
                 [("fn", "cobblers:gulch_mine/%s" % f) for f in indexed("cobblers_gulch_mine", "gulch_mine")]
                 + [("fn", "cobblers:gulch_mine/cutters"), ("wait", 8)]))
+    # the Rift's zone walls and gatehouse shells (tools/rift_zones.py, data/rift_zones.json; docs/mechanics/
+    # RIFT_ZONES.md sections 5 and 6). After the Rift skin (R1), whose surface the walls stand on, after the
+    # Deep and Victory Road (R9B, R9C) and the gulch (R9S) whose zone z2 is cut around, and after the League's
+    # donor stamp, because the league_gate and behind_league walls run within 30 blocks of the lot and a donor
+    # stamped later would erase them. Before the Habitat Blocks (R9E) and the lights (R16). Three cross-walls
+    # then four gatehouse shells, in the pack's own index order. The zone checks, the exit boxes and the
+    # cob_pass objectives act on their own (advancements and a load function) and need no step. The guards
+    # themselves are armour-stand placeholders: Codex writes the NPCs (docs/HANDOVER_CODEX.md item 23)
+    out.append(("R9Z", "the Rift's zone walls at the throat, the League's gate and behind the League, then the "
+                       "four gatehouse shells",
+                [("fn", "cobblers:rift_zones/%s" % f) for f in indexed("cobblers_rift_zones", "rift_zones")]))
     # the evolution-stone faces (tools/mines.py, data/mines.json; STONE_ECONOMY.md 5.5 names the step): after the towns
     # (R8) and the donors (R9), whose cells they keep clear, and the Displaced City cavern (R2), whose shell two of the
     # sites cut into; before the Habitat Blocks (R9E) and the lights (R16). One build function a site, named from the
