@@ -89,3 +89,19 @@ owner line — take it over or release it.
 the main session; 25.5M across 19 agents; 42.2M together.** The verdict line said HAND OVER — 446k of
 context means every turn costs 44k to send. This session ran long because the owner asked for an
 overnight run and could not compact.
+
+---
+
+## 7. Added at the end of the run
+
+- **The zone system is merged but HELD**: `cobblers_rift_zones` is in `reapply.py`'s `EXCLUDED` and
+  R9Z is withdrawn, because its walls would seal the Rift — nothing calls `z*/qualify`. The note
+  beside the exclusion says what must hold before both come back. Do not "restore" the step without
+  reading it.
+- **F11 is fixed and unproven**: seven leaders' teams emit as overrides; whether a datapack override
+  at `data/rctmod/trainer/kanto_*.json` actually replaces rctmod's own roster has never been tested.
+  One staging fight with Brock settles it.
+- **The suite's honest baseline is 4,937 passed / 8 failed / 8 xfailed.** All 8 fail at 36eb267 too.
+  They are: heightmap provenance (`water_shaped_from` undocumented), mines_independent surface faces,
+  no_swallowed_crashes, two rift_heightmap sculpt tests, and three sea_town tests — the last three
+  being the same ferry/sea-town migration that C3 and C14 record.

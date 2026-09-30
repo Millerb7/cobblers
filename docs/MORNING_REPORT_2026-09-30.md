@@ -132,3 +132,45 @@ compact.
 6. **Lugia's level** — its gate is `champion_cleared` and that cap is `null`.
 7. **Registeel's location** — `upper_rift` (4195, 3896) recommended; it also fixes Regigigas, which is
    otherwise permanently unreachable.
+
+---
+
+## 7. Added after the report was first written — the two agents landed
+
+**F11 is fixed.** Seven leaders' teams now emit as overrides at their upstream ids, verified off disk
+against `data/trainers.json`: brock ace 20, misty 25, ltsurge 30, erika 35, koga 40, sabrina 45,
+blaine 50 — every one exactly `gym_ace_levels`, zero mismatches. Giovanni is `status: held` with an
+empty team and is deliberately not emitted. **It rests on one untested assumption**: that a datapack
+override at `data/rctmod/trainer/kanto_brock.json` replaces the roster rctmod loads from its jar. The
+same assumption is already proven for these trainers' *loot* tables; the team path never has been.
+**One staging fight with Brock settles it, and if it does not take, all of it is inert.**
+
+**The Rift Z1–Z5 zone system is built and deliberately NOT installed.** `data/rift_zones.json` (2,297
+lines), `tools/rift_zones.py`, four zones, three walls, four gatehouses. Re-run here rather than
+trusted, and the re-run found what the agent's worktree could not:
+
+> R9Z places **obsidian walls** across the Rift's throat, the League's gate and behind the League. The
+> functions that let a player *earn* a pass — `z{1,2,4,5}/qualify` — **are called by nothing at all.**
+> Installed as it stands, the walls go up and nobody can ever pass them.
+
+`reapply.py`'s own `unreferenced()` check caught it, which is exactly what that check is for. The pack
+is EXCLUDED and the step withdrawn until two things hold: every zone's guard calls its qualify, and
+`progression.json` declares `rift_crisis_resolved` with something that sets it. **The setter is the
+finale's quest stage — story data, and Codex's.** The agent was right to refuse to invent it.
+
+Its one argued mechanism change is the unit's real value: `RIFT_ZONES.md` §4 put
+`minecraft:entity_scores` in the `in_zone` advancement, which **fails open** — it does not match an
+unset score, and nobody has one until a guard sets it. Now the advancement tests location and the
+reward function tests the score.
+
+Three more of its findings: the cradle belongs at (3357, 3306), not FACTION.md's (3297, 2603), which
+is outside the Rift entirely; **Z3 is superseded** by the gulch's own zone; and Registeel's effective
+gate is **8 badges, not 7**, anywhere in the Rift.
+
+**The suite:** 4,937 passed, 8 failed, 8 xfailed. All 8 failures fail identically at 36eb267 — checked
+in a throwaway worktree — so nothing tonight regressed anything. Three tests that Victory Road's ten
+broke were taught about the new seats rather than having their numbers bumped.
+
+**Cost, final:** the zone agent came in at **1.07M**, Victory Road + League at **0.99M + 0.62M** for
+two units, the inventory at **0.76M**. Four agent-units for ~3.4M against the 6–9M I would have
+quoted. The corrected rule stands: reading and authoring ≈ 1M, building and re-running ≈ 2–4M.
