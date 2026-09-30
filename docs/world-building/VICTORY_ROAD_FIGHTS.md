@@ -166,7 +166,12 @@ any entry in `placements()` — there is no seat for `reapply` to summon at.
 
 ## What this unit could not do, and what has to happen next
 
-### 1. Ten quest fields must be declared (blocking)
+### 1. Ten quest fields must be declared — done 2026-09-30
+
+All ten were declared in `data/progression.json` shortly after this was written, and
+`python tools/route_trainers.py` exits 0. The list below is kept as the record of what was added.
+
+
 
 `tools/route_trainers.py` refuses to emit a trainer whose fields are not declared in
 `data/progression.json` `quest_fields`, and none of the ten are. `data/progression.json` belonged
@@ -198,16 +203,15 @@ Road's ten)"**, because its contents changed under it. That is the whole of the 
 
 ### 3. Unclaimed findings, for whoever owns them
 
-- **No generator writes any gym leader's team.** `data/progression.json` binds `gym1_cleared` to
-  `kanto_brock` and so on, and `tools/route_trainers.py` was until now the only tool writing
-  `data/rctmod/trainers/*`, and it wrote only Routes 1-3. So our eight authored gym leader teams
-  may not be in the game at all; upstream's are. The League five are fixed here by the same
-  mechanism, and the gyms are the identical job.
-- **The dialogue ids go nowhere.** `data/trainers.json` gives every Victory Road and League
-  trainer `dlg_*` ids, and `data/dialogue.json` contains none of them (checked 2026-09-30); the
-  `generation_contract` calls them "campaign metadata; RCT sidecars require a future compiler".
-  The text for these fifteen is authored in the seat files instead, and the generator now falls
-  back to it. When that compiler exists, the fallback is the thing to remove.
+- ~~**No generator writes any gym leader's team.**~~ Confirmed as **F11** in
+  `docs/FLIGHT_FINDINGS_2026-09-29.md` and fixed the same night by the same mechanism:
+  `data/gym_trainers.json` and `docs/world-building/GYM_LEADER_ROSTERS.md`. Seven of the eight
+  are emitted; `gym_08_giovanni` is held with an empty team.
+- **The dialogue ids go nowhere** — and it is not fifteen, it is all of them. 63 records carry
+  189 `dlg_*` ids and `data/dialogue.json` contains none of the 189 (swept 2026-09-30). Only the
+  13 Route 1-3 records also carry `dialogue_text`, so 50 records have no usable lines; the
+  Victory Road ten and the League five are authored beside their seats here, leaving 36. Counted
+  in `docs/world-building/GYM_LEADER_ROSTERS.md`.
 - **The trainer texture set is narrow.** Only 18 `rctmod:textures/trainers/single/*.png` names
   appear anywhere in this repo, and the ten seats reuse from that verified set rather than
   guessing at names in the jar. A wider audit of rctmod's textures would let Victory Road's ten

@@ -8,6 +8,12 @@ From data/trainers.json (generated from docs/story/TRAINER_RULES.json) and four 
   data/vr_trainers.json         Victory Road's ten, on the stands tools/vr_caves.py carved along its walked
                                 route; the tenth (the Gate Warden) carries its own record beside its seat,
                                 because data/trainers.json is generated and holds only nine
+  data/gym_trainers.json        the eight gym leaders. No seat either: our own gym build sets
+                                rctmod:trainer_spawner{TrainerIds:["kanto_brock"]} and the badge is awarded
+                                for beating that id, so the id cannot be re-pointed and our roster reaches a
+                                player only by overriding it. Emits the team and nothing else -- their
+                                dialogue is Codex's to write. gym_08_giovanni is held (empty team) and is
+                                skipped by name
   data/league_trainers.json     the Elite Four and the Champion. These have no seat: Cobbleverse's
                                 kanto_league template already carries five rctmod:trainer_spawner blocks
                                 locked to kanto_league_lorelei/_bruno/_agatha/_lance and kanto_champion_blue
@@ -113,16 +119,43 @@ def load():
     return recs, seats + guards + vr, fields
 
 
-def league():
-    """[(our record, the upstream rctmod id it overrides, the seat entry)] for the Elite Four and the Champion."""
+def overrides():
+    """[(our record, the upstream rctmod id it overrides, the entry, the file it came from)].
+
+    The trainers who stand in somebody else's template and whose spawner names an upstream id we cannot
+    re-point: the Elite Four and the Champion (data/league_trainers.json) and the eight gym leaders
+    (data/gym_trainers.json). One mechanism, two files, for the same reason -- the id is load-bearing.
+    Re-pointing a gym's spawner would break its badge: data/gym_buildings/gym1.json records that a
+    persistent kanto_brock anywhere awards the badge (verified on staging 2026-09-24), and
+    data/progression.json binds gym1_cleared and the first-win rewards to the same id.
+
+    An entry marked "held" is skipped with its reason: data/trainers.json's gym_08_giovanni has an empty
+    team, and an override with no Pokemon in it is worse than leaving upstream's roster alone.
+    """
     recs, _seats, _f = load()
-    out = []
-    for e in doc("league_trainers.json")["trainers"]:
-        r = recs.get(e["id"])
-        if r is None:
-            raise SystemExit("data/league_trainers.json names %s, which data/trainers.json does not have" % e["id"])
-        out.append((r, e["upstream_trainer_id"], e))
-    return out
+    out, held = [], []
+    for name in ("league_trainers.json", "gym_trainers.json"):
+        for e in doc(name)["trainers"]:
+            r = recs.get(e["id"])
+            if r is None:
+                raise SystemExit("data/%s names %s, which data/trainers.json does not have" % (name, e["id"]))
+            if e.get("held"):
+                held.append((e["id"], e.get("held_because", "held")))
+                continue
+            if not r.get("team"):
+                raise SystemExit("data/%s would override %s with %s, whose team in data/trainers.json is empty"
+                                 % (name, e["upstream_trainer_id"], e["id"]))
+            # the contract is checked, never applied: a leader whose roster disagrees with
+            # generation_contract.gym_ace_levels is a finding for docs/story/TRAINER_RULES.json, and this
+            # refuses to emit rather than quietly adjusting a level
+            if e.get("contract_ace_level") is not None:
+                top = max(m["level"] for m in r["team"])
+                if top != e["contract_ace_level"]:
+                    raise SystemExit("%s tops out at level %d, but generation_contract.gym_ace_levels says %d "
+                                     "for gym %s. Fix it in docs/story/TRAINER_RULES.json, not here."
+                                     % (e["id"], top, e["contract_ace_level"], e.get("order")))
+            out.append((r, e["upstream_trainer_id"], e, name))
+    return out, held
 
 
 def lines_of(rec, seat):
@@ -186,20 +219,25 @@ def files():
     if undeclared:
         raise SystemExit("data/progression.json quest_fields does not declare %d field(s):\n%s"
                          % (len(undeclared), "\n".join("  %s sets %s" % (t, f) for t, f in undeclared)))
-    # the League's five: the team and the lines only, at the upstream id the template's spawner is locked to.
-    # No mob file (upstream's spawner owns how each is spawned), no loot table, no advancement (champion_cleared
-    # already fires from kanto_champion_blue through tools/progression_pack.py), no cycle and no placement:
-    # these five are not summoned at a seat, they stand where Cobbleverse's template puts them.
-    for rec, upstream, entry in league():
+    # the League's five and the eight gym leaders: the team at the upstream id the spawner is locked to, and
+    # the lines only where the entry carries them (the League's are authored beside their entry; the leaders'
+    # are Codex's to write, so upstream's lines stand). No mob file (the spawner owns how each is spawned), no
+    # loot table (upstream_neutralised empties them and first_win_rewards pays instead), no advancement (every
+    # gymN_cleared and champion_cleared flag already fires from the upstream id through progression_pack), no
+    # cycle and no placement: none of these is summoned at a seat.
+    over, _held = overrides()
+    for rec, upstream, entry, _src in over:
         rct = rec["rct"]
         out["data/rctmod/trainers/%s.json" % upstream] = {k: rct[k] for k in
                                                           ("name", "ai", "battleRules", "bag", "team") if k in rct}
+        if not entry.get("dialogue_text"):
+            continue
         d = lines_of(rec, entry)
         ln = lambda text: [{"text": text}]
         out["data/rctmod/dialogs/trainers/single/%s.json" % upstream] = {
             "on_battle_start": ln(d["pre"]), "on_battle_lost": ln(d["player_win"]), "trainer_lost": ln(d["player_win"]),
             "on_battle_won": ln(d["player_loss"]), "trainer_won": ln(d["player_loss"]),
-            "on_cooldown": ln(COOLDOWN_LINE["league"])}
+            "on_cooldown": ln(COOLDOWN_LINE[entry.get("cooldown", "league")])}
     out["data/%s/function/trainers/cycle.mcfunction" % NS] = cycle
     out["data/%s/function/trainers/tick.mcfunction" % NS] = [
         "scoreboard players add #clock cobblers_trainers 1",
@@ -253,8 +291,11 @@ def main(argv=None):
         f.parent.mkdir(parents=True, exist_ok=True)
         text = "\n".join(content) + "\n" if isinstance(content, list) else json.dumps(content, indent=2, ensure_ascii=False) + "\n"
         f.write_text(text, encoding="utf-8", newline="\n")
-    print("wrote %d files for %d seated trainers and %d League overrides to %s"
-          % (len(fs), len(placements()), len(league()), out))
+    over, held = overrides()
+    print("wrote %d files for %d seated trainers and %d upstream-id overrides to %s"
+          % (len(fs), len(placements()), len(over), out))
+    for tid, why in held:
+        print("  held, nothing emitted: %s -- %s" % (tid, why.split(". ")[0] + "."))
     return 0
 
 
