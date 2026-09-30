@@ -142,11 +142,11 @@
    },
    "surface": "canopy",
    "measured": {
-    "seen": 11,
-    "of": 136,
+    "seen": 10,
+    "of": 137,
     "unit": "observer points"
    },
-   "fragile": false
+   "fragile": true
   },
   {
    "id": "cherry_elder_from_route_01",
@@ -566,8 +566,8 @@
    },
    "surface": "terrain",
    "measured": {
-    "seen": 50,
-    "of": 272,
+    "seen": 49,
+    "of": 273,
     "unit": "observer points"
    },
    "fragile": false
@@ -591,8 +591,8 @@
    },
    "surface": "canopy",
    "measured": {
-    "seen": 45,
-    "of": 272,
+    "seen": 43,
+    "of": 273,
     "unit": "observer points"
    },
    "fragile": false,

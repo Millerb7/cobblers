@@ -2623,7 +2623,7 @@
     "route_id": "victory_road",
     "from": "gym8_town",
     "to": "league",
-    "at_fraction": 0.719,
+    "at_fraction": 0.721,
     "nearest_point": {
      "x": 4076,
      "z": 3751
