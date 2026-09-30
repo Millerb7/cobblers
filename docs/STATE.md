@@ -119,6 +119,21 @@
 
 ## What is open
 
+- **The Rift Z1-Z5 zone system is built and deliberately NOT installed** (2026-09-30).
+  `data/rift_zones.json`, `tools/rift_zones.py` (trace/report/build) and the walls' geometry all exist and
+  build; `cobblers_rift_zones` is in `reapply.py`'s EXCLUDED and its R9Z step is withdrawn, because R9Z
+  places obsidian walls across the Rift's throat, the League's gate and behind the League, and the
+  `z{1,2,4,5}/qualify` functions that let a player earn a pass are called by nothing - the guards are
+  armour-stand placeholders. Installed as it stands the walls go up and nobody can pass them. Both come back
+  when every zone's guard calls its qualify AND `progression.json` declares `rift_crisis_resolved` with
+  something that sets it (the finale's quest stage: story, Codex's). Settled by the unit: the cradle goes to
+  (3357, 3306) and not FACTION.md's (3297, 2603), which is outside the Rift; Z3 is superseded by the gulch's
+  own zone; Registeel's effective gate is 8 badges, not 7, anywhere in the Rift.
+- **The test suite's honest baseline is 4,937 passed, 8 failed, 8 xfailed.** All 8 failures reproduce at
+  36eb267 and none is from the 2026-09-30 work: heightmap provenance (`water_shaped_from` undocumented),
+  `mines_independent` surface faces, `no_swallowed_crashes`, two `rift_heightmap` sculpt tests, and three
+  `sea_town` tests - the last three the same sea-town/ferry migration that contracts C3 and C14 record.
+
 - **Routes 1-8 were re-routed on the water-shaped heightmap (2026-09-30) and did not move one column**;
   only `victory_road` moved, 246 of 3,677, in the surface approach at x3567-3580 z5282-5527, nowhere near
   its caves. `tools/route_events.py`'s fail-closed guard is cleared and `prepare` runs again. Victory Road
