@@ -1043,9 +1043,19 @@ def run(a):
     todo = steps(a.with_spawns)
     ids = [s[0] for s in todo]
     if a.only:
-        todo = [s for s in todo if s[0] == a.only]
+        # comma separated, and FAIL-CLOSED on an id that matches nothing. Until 2026-09-30 this was a single
+        # exact match, so `--only R16E,R16F,R16G` selected zero steps, ran nothing, wrote {"steps": []} and
+        # exited 0 - an apply that reports success without applying anything is the worst shape a tool can have.
+        want = [t.strip() for t in a.only.split(",") if t.strip()]
+        unknown = [w for w in want if w not in ids]
+        if unknown:
+            raise SystemExit("reapply run --only: no step named %s (have: %s)" % (", ".join(unknown), " ".join(ids)))
+        todo = [s for s in todo if s[0] in want]
+        print("run --only: %d step(s) selected in plan order: %s" % (len(todo), " ".join(s[0] for s in todo)))
     elif getattr(a, "from_step", None):
         todo = todo[ids.index(a.from_step):]
+    if not todo:
+        raise SystemExit("reapply run: no steps selected; nothing would be applied")
     if getattr(a, "no_reload", False):
         print("no reload: the packs loaded at boot (a second /reload on this pack stack exhausted a 10 GB heap twice on staging, 2026-09-24)")
     else:
