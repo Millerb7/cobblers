@@ -1,226 +1,91 @@
-# Session handover (2026-09-28 night, session 88461346, ended at its threshold: 273k context per turn)
+# Handover — the 2026-09-30 overnight run
 
-For a cold start: read CLAUDE.md, `docs/STATE.md` and this file, and nothing else, before starting. STATE holds the
-durable facts; this holds where work stopped.
+A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else, before it starts.
 
-## 1. Branches and PRs
+## 1. Branch and PR
 
-- **#89 and #90 are merged and verified on main**, pinned to their reported heads (`c61487e`, `7b5496f`). #90 had been
-  opened against `design/stone-faces`, so it was retargeted to main first.
-- **PR #91**, `tooling/prepare-loop-sweep`, draft, **head `2f987ab`**, base main. Two commits: the prepare sweep, then
-  the determinism fix, the hash-seed pin, the mines-test hold and the STATE marine correction. **Frozen now it is
-  reported**: further work goes on a new branch stacked on it.
+- Branch `build/2026-09-29-phase2`, head **1692865** (plus whatever the two in-flight agents add, §2).
+- Stacked on `night/2026-09-29-water-export`, whose **PR #95 is OPEN and therefore FROZEN**. Nothing may
+  be pushed to that branch. No PR is open for this branch yet; opening one is the next session's job
+  (`open-pr` skill, draft only).
+- `.codex/config.toml` is modified and is **deliberately uncommitted** — it is Codex's, see
+  `docs/HANDOVER_CODEX.md` item 29. Leave it.
 
-  ```
-  gh pr merge 91 --match-head-commit 2f987ab
-  ```
-  (re-read the PR's head before merging; the second commit landed after the PR was opened.)
-- `.codex/config.toml` is modified in the worktree and **never committed** (Codex's): stage files by name.
-- **The gym-interiors design landed and is committed**: `docs/mechanics/GYM_INTERIORS.md` (391 lines), by a
-  `content-architect` agent off `2f987ab`, copied out of its worktree into this branch. **It is a proposal, not
-  accepted**: its own step 4 is "ADR proposed, owner accepts", and it says no gym content should be authored before
-  that. Its agent worktree (`worktree-agent-a5c7b45c78e489c10`) is spent and removable. Read the doc itself; it is self-contained and ends with nine open questions and a ten-step plan. **Q1 blocks everything**: no interior floor plan of any gym template exists in the repo, so the NBTs must be extracted locally (gitignored, never committed) and a y-slice dumped before any room is designed against real geometry.
+## 2. In flight when this was written
 
-## 1a. THE ORDER THE OWNER WANTS (2026-09-29). Work it in this order
+Two background agents were still running. Neither has been merged or reviewed; **check them first.**
 
-1. **The mixed-progress rematch fault, with EXP-034 alongside it** — they need the same two-player setup, so do them
-   together. Section 1b has the fault.
-2. **The pocket-dimension experiment** (section 2).
-3. **The stone-face survey** — flight finding 2, plus surveying the other six places for the same three problems,
-   reported before building.
-4. **Gym 1 only**, now that Q1 has given real geometry (below).
+| agent | unit | what to do |
+|---|---|---|
+| `a70a7cdda2e690938` | the Rift Z1–Z4 zone system | It was launched on a worktree based on MAIN (see §4, the launch fault) and was sent a correction authorising `git reset --hard c056a21`. Confirm it took the reset before trusting a line of its output. |
+| `a321228e6c761dfd3` | F11: emit the eight gym leaders' teams | Its first unit (Victory Road + League) is merged as a422cf5 and verified. This second unit was sent after 6570a92. |
 
-### What the owner must supply for step 1, and what he need not
+Re-run every audit an agent reports, in the full checkout, before believing it (F8).
 
-- **The cooldown fault needs NOTHING from the owner. Prove it offline first.** It is pure datapack logic over
-  `@a[distance=...]` scores and tags, and `tests/mcfunction_sim.py` already has `add_player(pos, name)` and holds
-  several players at once. Two synthetic players at different progress reproduce it exactly: one who has beaten the
-  trainer, one who has not, and the assertion is that no `Cooldown` is written. Write the failing test first, then
-  fix, then keep the test. **A test-author agent, not the implementer** (testing.md). This is the fastest route and
-  it does not wait on anybody.
-- **EXP-034 does need a second real account.** Per-player barriers, per-player actors and per-player particles are
-  client-side; a simulator cannot show whether player B sees player A's barrier, which is the whole question. The
-  staging server is `online-mode=true`, `white-list=true`, `enforce-whitelist=true`, `max-players=8`, so it must be a
-  **genuine second Minecraft account, added to the whitelist**. There is no simulation substitute for this half.
-- So: the fix can be built and proved offline while the second account is arranged; only the in-game confirmation and
-  EXP-034 wait on the owner.
+## 3. Where the work stopped
 
-## 1c. GYM Q1 IS ANSWERED (2026-09-29) — gyms are unblocked for step 4
+**Done and verified in the world** (`cobblers-dryrun12`, probed by block, not by exit code):
 
-`docs/mechanics/GYM_INTERIORS.md` now ends with the measured interiors. Read from the template NBTs in memory; **the
-block maps are deliberately not committed** (no-redistribution), and were handed to the owner directly.
+- Five authored gym buildings (R16F demolition, then R16G), all five leaders' spawners present.
+- The twelve portals re-skinned (R16P).
+- Routes 1–3 event sites re-applied (R12) after the re-route.
 
-- Every gym is **one oval chamber**: entrance one end, healing machine and chest the other, the single
-  `rctmod:trainer_spawner` in the middle, 160-248 standable cells of undivided floor. Misty's is the same room,
-  larger and higher inside a rock body.
-- **A correction the design doc now carries:** its claim that seven gyms are "the same building recoloured" is false
-  at the geometry level. All eight solid shapes differ (eight distinct hashes, 1,772-1,899 solid cells). They share
-  an envelope, not a shell, so each needs its own fit rather than one generic room plan.
-- There is **no second storey to reuse** — upper volume is roof. That confirms carving below is the right route.
-- Brock's template really does carry 9 command blocks and a pressure plate (Q3 confirmed).
-- Watch the floor-finding method: a naive "densest level" picks solid rock for Misty. Use roofed-standable cells.
+**Done in the repo, NOT in any world:**
 
-## 1b. FIRST, AND IT IS NOT ABOUT GYMS: the mixed-progress rematch fault
+- The lake-bed fix (F5) — lands at the next **R1**, a full re-skin, not a step to run casually.
+- Victory Road's ten fights and the League's five overrides — R17 places them; R17 was not run.
+- The dig camp's 2026-09-29 reshape — R9M still holds the previous shape.
 
-The owner, 2026-09-28: the most important thing to come out of the gym design, and it is a trainer-system fault.
+**The next command**, if picking up the applied work:
 
-`tools/route_trainers.py:151-152` writes a trainer's hold-off `Cooldown` **only when every player near it has beaten
-it**. Two players at different progress never satisfy that, so no cooldown is written and **the player who already
-won is pulled into a rematch while their partner is still fighting**. It affects **every placed trainer in the game
-the moment two people play** -- the 13 Route 1-3 trainers, the 5 mansion Channelers, and every gym trainer that gets
-built later. Read from the generated line; **never observed in game**.
+```bash
+python tools/gym_buildings_independent.py   # must stay clean over 5 buildings
+```
 
-The fix is a per-player hold-off rather than a shared `Cooldown`, following the mansion's shape (gate on the
-trainer's per-player win field, `STATE.md` "Gastly mansion details"). Confirm it in game with two players first --
-EXP-034 has never run, and it is also what gates Sabrina's gym below. Recorded in `docs/STATE.md`, World facts.
+The server is **running** on `cobblers-dryrun12` with `max-tick-time=60000` restored. The coordination
+lock at `C:\Users\wnd\Documents\github\.cobblers-server-agent.lock` is **still held** by this session's
+owner line — take it over or release it.
 
-## 2. THE NEXT JOB: dive and sky portals. Run it in this order
+## 4. What a cold start must not rediscover
 
-The owner's instruction, explicit: **the experiment first, then the researcher only if the experiment leaves gaps,
-then the design. Not the other way round.** Do not write the design first.
+- **A nested isolation worktree is based on the MAIN checkout's HEAD, not this session's**, even with
+  `worktree.baseRef: "head"`. Both agents launched with `isolation: "worktree"` came up on main, 87
+  commits behind. `git merge --ff-only` then fails outright. One agent stopped and reported (correct);
+  the fix is to authorise `git reset --hard <sha>` explicitly. **Verify an agent's base before trusting
+  its output.**
+- **`reapply.py run --only` was fail-open** and ran zero steps at exit 0 for a comma-separated list.
+  Fixed in c056a21; it now fails closed twice over. It was caught by the run log being six lines long,
+  never by the exit code.
+- **The eight gym leaders fight with COBBLEVERSE's teams** (F11, commit 6570a92). Not a guess:
+  `grep -rl "gym_01_brock" build/ modpack/ server/` returns nothing.
+- **F5's recorded hypothesis was wrong about the cause.** It blamed the water-shape pass; the culprit is
+  `tools/rift_skin.py`, and the skin reaches outside the Rift's own polygons in `data/regions.json`.
+- **The re-route was safe**: Routes 1–8 moved zero columns. Do not re-litigate it.
+- **C3 and C14 fail today and are recorded** in `data/system_contracts.json` `fails_today` as strict
+  xfail. A green contracts run is 80 passed, 2 xfailed. Do not "fix" them by deleting the entries.
+- `COBBLERS_SOURCE_ROOT` must be `C:\Users\wnd\Documents` in every shell that runs a heightmap tool;
+  `prepare` does not pass it down to `legendaries.py`.
+- `COBBLERS_LOCK_OWNER` must match the lock file's owner line **exactly**, and `COBBLERS_SERVER_LOCK`
+  must point at the lock path, or `runtime_guard` refuses.
 
-### 2.1 What ADR-004 already settles (do not re-derive)
+## 5. What waits on the owner
 
-`docs/decisions/ADR-004-pocket-spaces.md`, Accepted 2026-09-26, with an in-game Xaero cache test on staging. Dive
-caves and sky islands are both "elsewhere", so they are the **first real use of the pocket dimension, which has never
-been built**. On paper it answers:
+1. **F11 — the leaders' teams.** Confirm the eight authored rosters should replace COBBLEVERSE's before
+   the fix is applied: it changes the difficulty of all eight gym fights at once.
+2. **Fly the five new gyms** and say whether the buildings are right. Coordinates in the morning report.
+3. **`patriarch_from_victory_road` is fragile** (10 observer points of 137): taller wedge, or downgrade
+   the claim?
+4. **The ferry migration** (C3/C14): which line replaces the Sound ferry, and where is Pacifidlog's
+   square now? Both stops of the old line are retired and so is `pacifidlog_ferry`'s second stop.
+5. **Lugia's level** — its gate is `champion_cleared` and that cap is `null`. Still unanswered.
+6. **Registeel's location** — `upper_rift` (4195, 3896) recommended; it also fixes Regigigas, which is
+   otherwise permanently unreachable.
+7. **The carry** — needs the owner in dryrun11 to revoke `gym5_cleared`/`gym6_cleared`, then
+   `reapply.py carry --rehearsal`.
 
-- **What it takes:** a **vanilla** datapack `dimension` + `dimension_type`, added with one server restart. It needs
-  its own spawn rules, a re-application step (does not exist), and sky, light, time and weather chosen to match.
-- **What a player notices:** a short loading screen; the dimension name in F3 and a jump in coordinates; a separate
-  entry in the map's dimension list; no overworld horizon; **sent-out Pokemon recalled**; players outside no longer
-  visible.
-- **Re-export:** it survives, because WorldPainter never touches it — but its contents must still be reproducible
-  from data, and per-player instancing needs per-player coordinates inside it.
-- Also settled there: the western-ocean chamber grid is **dropped**; the Xaero status effects hide the map but do not
-  stop the cache; Distant Horizons is a second, independent leak that rules out far-overworld pockets.
+## 6. Cost
 
-### 2.2 The four unknowns ADR-004 does NOT cover
-
-1. Do **our compiled spawn pools** work in a custom dimension? (`compile_spawns.py` emits `spawn_pool_world/...`;
-   whether a dimension condition is needed, and whether the suppression follows, is unknown.)
-2. Do **Habitat Blocks** work there?
-3. Do **our systems' callbacks** fire there (blackout, the level-cap catch block, scenes)?
-4. Can a dive portal **put a player in water in another dimension without drowning them on arrival**?
-
-### 2.3 The collision found here, VERIFIED — it shapes the dive design
-
-- `build/datapacks/cobblers_blackout/.../surface/tick.mcfunction` and the ladder functions have **no dimension
-  filter**: grepped for `dimension`, `overworld`, `minecraft:the_` — nothing. The swim-fatigue clock therefore runs in
-  a pocket dimension exactly as in the overworld.
-- ADR-004 says **sent-out Pokemon are recalled on crossing**. The tick's first branch is
-  `execute if score #ride bo.tmp matches 1 run return run function cobblers:surface/recover`, so a recalled mount
-  means `#ride` is 0.
-- **Therefore: a player who rides a Dive mount through a portal arrives no longer riding, underwater, with the
-  fatigue clock already running.**
-- **Mitigating, also verified:** qualification is *party*-based (the `cobblers.dive` tag plus a party read, not the
-  sent-out entity), so the recall does **not** strip their training. They arrive as a trained swimmer with the air
-  ladder: half fatigue rate, not an instant drowning. But it is still an unmounted arrival under water.
-- **Design consequence:** a dive portal must arrive in air, arrive in wading-shallow water, or re-seat the rider.
-  Decide this before siting any portal.
-
-### 2.4 The contract entry to add (specified, not added — and why)
-
-Not added here on purpose. `.claude/rules/testing.md` requires a new contract to arrive **with its test in the same
-change**, and `data/system_contracts.json` entries name a consumer system. The portal system does not exist yet, so an
-entry now would have no consumer and no test and would break `tests/test_system_contracts.py`. Add it **with the
-design**, as C15, shaped like C1:
-
-- `id` C15, `title` "A portal arrival never drowns the arriving player"
-- `owner` `portals` (new system; add it to the `systems` list too)
-- `consumers` `["water_ladder"]`, `constrained_by` `["swim_fatigue"]`
-- `statement`: "A player crossing a dive portal arrives either in air, in wading-depth water, or re-seated on their
-  mount; in no case does the arrival leave them submerged and unmounted with the swim-fatigue clock running."
-- `stated_in`: cite the design doc's arrival rule once written, plus `ADR-004` on recall.
-- Its test belongs to a **test-author agent**, not the designer.
-
-### 2.5 The experiment that settles all four unknowns — run this first
-
-One throwaway pocket dimension on staging: a portal in, a Habitat Block, a compiled spawn pool, and an arrival in
-water. Record it as `experiments/EXP-NNN-pocket-dimension/` (the `experiment` skill). Take the coordination lock and
-follow the live-server gate. It should answer, in one sitting: 1-4 above, plus the arrival case in 2.3.
-
-**Prove this in the same experiment (the owner, explicitly):** Habitat Blocks currently "survive restarts but not a
-re-export" (STATE). In a dimension WorldPainter never touches, they may survive a re-export. **If they do, the pocket
-dimension is the _better_ home for legendary encounters rather than merely the necessary one** — which changes what
-belongs in it, not just where it can go. Worth proving deliberately, not incidentally.
-
-### 2.6 The design, only after the experiment
-
-Then: how many of each and where the portals are; what gates them (Dive for the underwater ones; **Soar was cut, so
-the sky gate is an open question**); the aura and how a player learns portals exist; the return; which legendaries and
-content belong in which.
-
-**The ratio — this session's recommendation: about 1 in 6 meaningful.** The owner's instinct is the load-bearing part
-of the design: if every portal holds a legendary, players check them all methodically and nothing feels found. Most
-should hold a chest or nothing. Design the useless ones deliberately, not as filler.
-
-## 3. What else waits on the owner
-
-- **Staging is up with the lock held, for the owner's flight.** `cobblers-dryrun11`, pid 24408 on port 25565, lock
-  owner line: "Claude Code session cobblers-session-start-531d15 (2026-09-28 stone-faces redesign; took over the
-  flight lock, server found down)". Used here only for read-only jar reads and RCON. When the flight is done:
-  `python cobblers-server/rcon.py save-all`, then `stop`, then remove the lock.
-- **The dive test is set up and waiting** (see 5, "Do not rediscover"): the owner was sent to (96, 64, 4721) to dive
-  to y35. Not yet reported back.
-- **Flight finding 2, the stone faces into the towns, is still the queued build job** (STATE, "Flight finding 2";
-  `STONE_FACES_REDESIGN.md` section 5). **The owner also asked for a survey of the other six places for the same
-  three problems, reported before building.** Not started: this session was at its threshold.
-- Carried: the Mega farms' zone, the West Spur Dig reshape, the spur's daily crystal, workers for Pallet,
-  ATM x MSD v4.0 (STATE, What is open).
-
-## 4. Where this session's own work stands
-
-- **The prepare sweep: done.** 497 s to 351 s over all 80 jobs (29%), every pack byte-identical. Causes and what was
-  deliberately not changed are in STATE ("A fresh checkout prepares", second bullet).
-- **The determinism sweep: done and clean.** `derived/deep_city/plan.json` varied run to run because
-  `deep_city.py:1404` iterated a **set of strings** into the counts. Fixed at source with `sorted()`; PYTHONHASHSEED
-  is also pinned in `reapply.py`'s `py()` funnel. Then every job was rebuilt under seeds 1 and 12345:
-  **7,556 files, 0 differ.** Nothing else in the build depends on the hash seed.
-- **The mines tests: held, not fixed.** `tests/test_mines_independent.py` is skipped at module level with the reason
-  in the file. It alone accounted for all 30 failures and 43 errors; the rest of the suite is green (4,583 passed,
-  420 s). 43 of its red results are raised in **fixtures**, which xfail cannot express, hence a skip. The 9 tests that
-  still pass go dark with it, and the file says so. **A test-author agent rewrites it with the redesign** and deletes
-  the marker.
-- **STATE corrected: the marine pools ARE installed.** The line said "not installed"; the three windward files stand
-  in staging's `cobblers_spawns`. Corrected with what the deep band holds.
-
-## 5. Do not rediscover
-
-- **`derived/deep_city/plan.json` used to vary between runs and no longer does.** If it ever varies again, look for a
-  set of strings being iterated into output, not for a regression in an unrelated tool. It cost this session a false
-  alarm.
-- **The dive test, already set up** (2026-09-28): the marine rosters are live on staging. Deep band = 23 boxes, 207
-  entries at 25-30. `chinchou`, `relicanth`, `dhelmise` carry `maxY 40` and exist **only below y40**; `wailmer`,
-  `carvanha`, `alomomola` are submerged at any depth; `wingull`, `pelipper`, `lapras` are surface. Magikarp's
-  inherited pool is suppressed there (all 46 entries). Stand at **(96, 64, 4721)**, seabed y10, every column of that
-  box below y40; dive to **y35** and **hold position 2-3 minutes** — moving shifts the spawn zone and reloads chunks.
-- **Why lakes looked empty:** `pokemonPerChunk` is 0.25 and the budget is shared across every loaded chunk, so a
-  lake's surrounding **land** chunks eat it. 256+ blocks out to sea every loaded chunk is sea, so the budget belongs
-  to sea species. Config: pass every 10 ticks, `maximumSpawnsPerPass` 1, zone 16-64 blocks from the player, 8 wide by
-  16 high, `minimumDistanceBetweenEntities` 8.
-- **The owner had the Dive mount but not the training.** Wailmer and Lapras were in the party; the `cobblers.dive` and
-  `cobblers.surf` tags were absent, so the ladder never qualified them. Granted here with
-  `execute as <player> run function cobblers:water/grant_dive` (it grants both). Undo: `tag <player> remove
-  cobblers.dive`. **This changed the owner's staging progression state** — it is not how Dive is meant to be earned.
-- **The owner's level cap is 25 and the deep roster is 25-30**, so a catch there is over cap and
-  `cobblers_levelcap` should block it outright — never yet run in game. The owner's party carries a Master Ball,
-  which is exactly what that proof needs. A failed Master Ball there is the block working, not a bug.
-- **There is no flying encounter.** Nothing designed: no sky spawns, no aerial encounter, no flying-mount content.
-  What exists is bird nests in trees (Habitat Blocks) and `wingull`/`pelipper` as surface sea spawns.
-- **Perching does not exist in Cobblemon 1.8.0** and was never claimed. The sapling nests **were** seen in game
-  (2026-09-26, the Fletchling tree "its good", the Ducklett/Swanna tree "way better", 42-65 birds measured round each
-  of four elders); the birds walk and fly off the limbs, and the `+58`/`+74` crown blocks put none up top.
-- **Measured to be real work, not repetition** (do not re-profile hoping): shrines (28 s) and its audit (16 s);
-  `ferries.nearest_other` — windowing its dilation was tried, gave identical answers, saved nothing, and was
-  reverted, because the cost is the O(hits x shore) nearest-pair loop; `vr_caves.walkout` and `smooth`; the paint and
-  heightmap decoding.
-- **scipy is not installed and was not added.** The flood fill is numpy alone; a fresh checkout is unaffected.
-- **Bash: `cat > "$TMP/x.py"` with no input hangs the tool call**, and `python - <<'EOF'` heredocs remain a trap.
-  Write scripts with Write and run them by path. `/usr/bin/time` does not exist in this Git Bash.
-- The harness's per-agent token figures are final context, not spend: `python tools/session_cost.py`.
-
-## 6. What this session cost
-
-`python tools/session_cost.py`: about 4M weighted over ~140 turns (average ~190k context per turn). One subagent, the
-gym-interiors `content-architect`, still running when the session stopped.
+`python tools/session_cost.py` at the time of writing: **573 turns, context 446k, 16.7M weighted for
+the main session; 25.5M across 19 agents; 42.2M together.** The verdict line said HAND OVER — 446k of
+context means every turn costs 44k to send. This session ran long because the owner asked for an
+overnight run and could not compact.
