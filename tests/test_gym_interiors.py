@@ -58,8 +58,17 @@ def test_the_six_built_gyms_are_the_ones_this_unit_claims():
     assert "gym8" not in BUILT_IDS
 
 
-def test_every_built_gym_has_a_builder_and_every_builder_a_built_gym():
-    assert set(GI.BUILDERS) == set(BUILT_IDS)
+def test_every_built_gym_has_a_builder_and_every_extra_builder_is_a_superseded_gym():
+    # Every built gym must have a builder, or the generator emits nothing for it. The converse stopped holding on
+    # 2026-09-29, when gyms 1, 3, 4, 5 and 7 were retired for the authored buildings: their builders are still in
+    # tools/gym_interiors.py and are simply never called, because BUILT_IDS is taken from the `built` flags. An
+    # extra builder is only allowed for a gym the record says is superseded - a builder for a gym that is neither
+    # built nor superseded is dead code nobody decided to leave.
+    missing = set(BUILT_IDS) - set(GI.BUILDERS)
+    assert not missing, "built with no builder: %s" % sorted(missing)
+    superseded = {g["id"] for g in DOC["gyms"] if g.get("superseded_by")}
+    extra = set(GI.BUILDERS) - set(BUILT_IDS)
+    assert extra <= superseded, "builders for gyms that are neither built nor superseded: %s" % sorted(extra - superseded)
 
 
 @pytest.mark.parametrize("gym", BUILT, ids=BUILT_IDS)

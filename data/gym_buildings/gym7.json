@@ -362,7 +362,7 @@
     "box": [
       6152,
       4976,
-      6183,
+      6191,
       5015
     ],
     "note": "data/spawn_suppression.json gym_blaine, unchanged and not touched here. The whole of this building's bounds lies inside it (x6156..6182 inside 6152..6183; z4983..5007 inside 4976..5015), forecourt and eaves included, which is why the water in the basin and the geyser is not an exposure: no wild spawn is rolled in the box at all."

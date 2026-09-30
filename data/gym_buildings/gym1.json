@@ -346,8 +346,8 @@
   "spawn_suppression": {
     "record": "gym_brock",
     "box": [
-      1808,
-      3664,
+      1800,
+      3656,
       1847,
       3711
     ],

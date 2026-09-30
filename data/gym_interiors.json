@@ -697,8 +697,8 @@
       "spawn_suppression": {
         "record": "gym_brock",
         "box": [
-          1807,
-          3657,
+          1800,
+          3656,
           1847,
           3711
         ],
@@ -1202,7 +1202,7 @@
       "donor": "gym3_gym_building",
       "leader_name": "Lt Surge",
       "built": false,
-      "superseded_by": "data/gym_buildings/gym3.json, not yet written. The works below are filled in and the donor shell taken down by tools/gym_demolish.py whether or not the building exists yet.",
+      "superseded_by": "data/gym_buildings/gym3.json (The Relay Works), written and audited clean 2026-09-30. The works below are filled in and the donor shell taken down by tools/gym_demolish.py (step R16F) before the building is written (R16G).",
       "title": "the adit into Vessu",
       "why": "docs/world-building/TOWN_CHARACTER.md: the signal town keeps the power and the relays running. The cable from the array on the Vessu shoulder comes down into the hill behind the gym, and the run that carries it is the gym.",
       "site": "this is the one gym cut into a hillside. The heightmap under its own footprint runs y174 at the west face and y197 at the east, and 30 blocks east of it the ridge is at y250. So the works do not go down, they go east into rock that is already 20 blocks thick over them, and the gallery can be 15 blocks tall where Erika's and Koga's cannot be six.",
@@ -1558,9 +1558,9 @@
         "record": "gym_surge",
         "box": [
           1720,
-          1389,
-          1752,
-          1432
+          1384,
+          1759,
+          1439
         ],
         "why": "contract G1, unchanged. Its east edge at x1751 is a real constraint on this gym and the reason the gallery stops at x1748 rather than running further into the ridge, where the cover is 60 blocks."
       },
@@ -1592,7 +1592,7 @@
       "donor": "gym4_gym_building",
       "leader_name": "Erika",
       "built": false,
-      "superseded_by": "data/gym_buildings/gym4.json, not yet written. The works below are filled in and the donor shell taken down by tools/gym_demolish.py whether or not the building exists yet.",
+      "superseded_by": "data/gym_buildings/gym4.json (The Great Glasshouse), written and audited clean 2026-09-30. The works below are filled in and the donor shell taken down by tools/gym_demolish.py (step R16F) before the building is written (R16G).",
       "title": "the beds below the glasshouse",
       "why": "docs/world-building/TOWN_CHARACTER.md: Peak Pond Hollow's garden town, where Erika keeps the peace between the residents and the arrivals. Under the glasshouse are the beds it grows in, the drains that water them and the cistern they drain to.",
       "site": "Erika's lot is the flattest of the six. The heightmap is y110 across the whole footprint and y109-111 for forty blocks around it, so the ceiling of anything carved here can be no higher than y107 and there is no relief at all to build against. What the site gives is area, not height: this is the widest and lowest of the six interiors, a cellar four blocks tall under a flat garden, and the way on is not ahead but underneath.",
@@ -1967,8 +1967,8 @@
         "box": [
           4288,
           1472,
-          4329,
-          1513
+          4335,
+          1519
         ],
         "why": "contract G1, unchanged: the dig sits inside it with three to nine blocks to spare on every side."
       },
@@ -2012,7 +2012,7 @@
       "donor": "gym5_gym_building",
       "leader_name": "Koga",
       "built": false,
-      "superseded_by": "data/gym_buildings/gym5.json, not yet written. The works below are filled in and the donor shell taken down by tools/gym_demolish.py whether or not the building exists yet.",
+      "superseded_by": "data/gym_buildings/gym5.json (The Reed House), written and audited clean 2026-09-30. The works below are filled in and the donor shell taken down by tools/gym_demolish.py (step R16F) before the building is written (R16G).",
       "title": "the sump under the watch",
       "why": "docs/world-building/TOWN_CHARACTER.md: a fen-edge watch town whose trackers read the marsh for anyone passing unseen, and whose signature set dressing is a board of cast prints. Under the gym is the fen itself, and the trackers' own way across it.",
       "site": "Koga's is the most confined lot of the six. Its spawn-free box leaves four blocks east of the shell and three north, and the heightmap is y115-117 across the whole of it, so the works can be neither deep-roofed like Surge's nor spread like Erika's: they are one room the size of the lot, with the pit dug into its floor. The fen is the reason - the water table is at the town's feet - and the mud is why a fall into it costs time and not a life.",
@@ -2400,7 +2400,7 @@
         "record": "gym_koga",
         "box": [
           4568,
-          2463,
+          2456,
           4607,
           2495
         ],
@@ -2443,7 +2443,7 @@
       "donor": "gym7_gym_building",
       "leader_name": "Blaine",
       "built": false,
-      "superseded_by": "data/gym_buildings/gym7.json, not yet written. The works below are filled in and the donor shell taken down by tools/gym_demolish.py whether or not the building exists yet.",
+      "superseded_by": "data/gym_buildings/gym7.json (The Assay House), written and audited clean 2026-09-30. The works below are filled in and the donor shell taken down by tools/gym_demolish.py (step R16F) before the building is written (R16G).",
       "title": "the throat",
       "why": "docs/world-building/TOWN_CHARACTER.md: a research town on the crater rim that studies the cone's energy and keeps the mound between itself and the fire. Under the gym is the vent it studies: four throats, one of them cooled and quenched, and the sample galleries at its foot.",
       "site": "Blaine's lot is as flat as Erika's - y106 across the footprint - so the site gives nothing horizontally and everything vertically: there is no cover to spend and no ridge to run into, but there are 35 blocks of rock under the hall before the world floor is anywhere near. This is the only one of the six that is mostly vertical, and the only route in the six that asks a player to jump off something on purpose.",
@@ -2891,7 +2891,7 @@
         "box": [
           6152,
           4976,
-          6184,
+          6191,
           5015
         ],
         "why": "contract G1, unchanged: the dig is inside it with one block to spare on the east, which is why the geyser stands at x6178 and not further out."

@@ -278,8 +278,8 @@
     "box": [
       4288,
       1472,
-      4327,
-      1511
+      4335,
+      1519
     ],
     "note": "data/gym_interiors.json gyms[gym4].spawn_suppression, unchanged, and this building was fitted to it rather than to the lot: bounds x4293..4327 and z1475..1511 lie inside it on every side, so no part of the glasshouse or its apron is outside the spawn-free box. Nothing in the palette below is named by any spawn condition either (checked against data/spawn_blocks.json, 2026-09-29): moss, packed mud, mud brick, rooted dirt, hay, glass, cherry, oak fence and plain azalea_leaves all return nothing. minecraft:flowering_azalea_leaves and minecraft:flowering_azalea are spawn conditions and are deliberately not used - every leaf here is the plain block."
   },
