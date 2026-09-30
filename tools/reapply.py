@@ -906,6 +906,13 @@ def steps(with_spawns=False):
     out = [("R1", "the Rift skin: the block pass over the sculpted shape, then its entities",
             [("fn", "cobblers:rift/%s" % f) for f in indexed("cobblers_rift", "rift")]
             + [("fn", "cobblers:rift/fx"), ("wait", 8), ("check", "rift_fx")]),
+           # the lake-bed repair (tools/lakebed_repair.py): AFTER R1, because R1 is the pass that did the damage
+           # in every world exported before 2026-09-30 and would undo this if it ran second. The skin itself no
+           # longer writes these cells, so on a world exported after the fix this lays back exactly what is
+           # already there. Its 113,841 columns are the same set the skin now caps one course short - the two
+           # counts are derived independently and agree, which is what says the scope is right.
+           ("R1L", "the lake beds the Rift skin painted over, laid back (F5)",
+            [("fn", "cobblers:lakebed_repair/%s" % f) for f in indexed("cobblers_lakebed_repair", "lakebed_repair")]),
            ("R1B", "the Rift biome, painted over the skin",
             [("fn", "cobblers:rift/%s" % f) for f in indexed("cobblers_rift_biome", "rift")]),
            ("R2", "Displaced City cavern", [("fn", "cobblers:cavern/%s" % f) for f in CAVERN]),
