@@ -825,11 +825,11 @@
         },
         {
           "kind": "quest_field",
-          "quest": "SQ-SUNSET-01",
-          "field": null,
+          "quest": "sq_sunset_01",
+          "field": "quest.sq_sunset_01.completed",
           "value": true,
           "says": "finished A Boat for the Outer Sea",
-          "blocked_by": "SQ-SUNSET-01 (docs/story/SIDEQUESTS.md) has no completion field in data/progression.json: the quest is story, not built",
+          "blocked_by": "DECLARED but never set: data/progression.json now has quest.sq_sunset_01.completed so this line builds, and nothing grants it, so the charter is shut. SQ-SUNSET-01 is story (docs/story/SIDEQUESTS.md) and Codex's. The alternative is to drop this gate and leave the charter on champion_cleared alone - the owner's call, one line.",
           "why": "WATER_PROPOSAL decision 6: chartered travel is SQ-SUNSET-01's reward"
         }
       ],
@@ -878,11 +878,11 @@
         },
         {
           "kind": "quest_field",
-          "quest": "SQ-SUNSET-01",
-          "field": null,
+          "quest": "sq_sunset_01",
+          "field": "quest.sq_sunset_01.completed",
           "value": true,
           "says": "finished A Boat for the Outer Sea",
-          "blocked_by": "SQ-SUNSET-01 has no completion field in data/progression.json",
+          "blocked_by": "DECLARED but never set: data/progression.json now has quest.sq_sunset_01.completed so this line builds, and nothing grants it, so the charter is shut. SQ-SUNSET-01 is story (docs/story/SIDEQUESTS.md) and Codex's. The alternative is to drop this gate and leave the charter on champion_cleared alone - the owner's call, one line.",
           "why": "WATER_PROPOSAL decision 6"
         }
       ],
@@ -911,11 +911,11 @@
         },
         {
           "kind": "quest_field",
-          "quest": "SQ-SUNSET-01",
-          "field": null,
+          "quest": "sq_sunset_01",
+          "field": "quest.sq_sunset_01.completed",
           "value": true,
           "says": "finished A Boat for the Outer Sea",
-          "blocked_by": "SQ-SUNSET-01 has no completion field in data/progression.json",
+          "blocked_by": "DECLARED but never set: data/progression.json now has quest.sq_sunset_01.completed so this line builds, and nothing grants it, so the charter is shut. SQ-SUNSET-01 is story (docs/story/SIDEQUESTS.md) and Codex's. The alternative is to drop this gate and leave the charter on champion_cleared alone - the owner's call, one line.",
           "why": "WATER_PROPOSAL decision 6"
         }
       ],
@@ -944,11 +944,11 @@
         },
         {
           "kind": "quest_field",
-          "quest": "SQ-SUNSET-01",
-          "field": null,
+          "quest": "sq_sunset_01",
+          "field": "quest.sq_sunset_01.completed",
           "value": true,
           "says": "finished A Boat for the Outer Sea",
-          "blocked_by": "SQ-SUNSET-01 (docs/story/SIDEQUESTS.md) has no completion field in data/progression.json, and this gate's own `field` is still null: the quest is story, not built. UNTIL 2026-09-30 that cost nothing, because sunset_quay was planned and the line was never emitted. The quay is built now, both this line's docks are built, and tools/ferries.py audit therefore refuses the whole ferry pack with 'gate SQ-SUNSET-01 is not a declared player boolean quest field, and the line is built'. The fix is one player boolean quest field for SQ-SUNSET-01 in data/progression.json and this gate's `field` naming it",
+          "blocked_by": "DECLARED but never set: data/progression.json now has quest.sq_sunset_01.completed so this line builds, and nothing grants it, so the charter is shut. SQ-SUNSET-01 is story (docs/story/SIDEQUESTS.md) and Codex's. The alternative is to drop this gate and leave the charter on champion_cleared alone - the owner's call, one line.",
           "why": "WATER_PROPOSAL decision 6"
         }
       ],

@@ -262,7 +262,13 @@ def build(doc):
     for ln in lines:
         for s in ln["stops"]:
             serving.setdefault(s, []).append(ln)
-    fields = {}
+    # the fields data/progression.json declares, NOT an empty dict. It was {} until 2026-09-30, which made every
+    # `quest_field` gate impossible: the compiler refuses an undeclared field, so any line gated on a quest would
+    # fail the whole pack with "undeclared field <id>" no matter what progression.json said. Nothing had hit it
+    # because no gated line was emitted until the ferry docks made four charters live. static_problems() below
+    # already reads the same list the same way.
+    fields = {f["id"]: f for f in json.loads(
+        (ROOT / "data" / "progression.json").read_text(encoding="utf-8")).get("quest_fields") or []}
     for d in sorted(serving):
         conv, quest = conversation(doc, docks[d], serving[d])
         got = CD.compile_conversation(conv, {quest["id"]: quest}, fields)

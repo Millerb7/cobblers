@@ -1638,6 +1638,15 @@
       "scope": "player",
       "initial": false,
       "why": "Victory Road fight 10 of 10, seated 2026-09-30 by tools/route_trainers.py on the stand tools/vr_caves.py already carved (data/vr_trainers.json). Numbered route_09_* because Victory Road is the ninth leg in data/routes.json, after route_08_blaine_to_giovanni."
+    },
+    {
+      "id": "quest.sq_sunset_01.completed",
+      "quest_id": "sq_sunset_01",
+      "field": "completed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "The completion of SQ-SUNSET-01 'A Boat for the Outer Sea' (docs/story/SIDEQUESTS.md). Declared 2026-09-30 because four charter ferry lines gate on it and tools/ferries.py fail-closed the whole pack on 'undeclared field None' the moment the docks made those lines live. DECLARED, NOT SET: nothing grants it, so the four charters are shut, which is the safe direction and honest - the quest is story and is Codex's to write. The owner can instead drop the quest_field gate from data/ferries.json and leave the charters on champion_cleared alone, which is a one-line change and their call."
     }
   ],
   "gym_markers": {
