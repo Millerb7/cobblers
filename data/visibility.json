@@ -1,602 +1,603 @@
 {
- "schema": "cobblers.visibility/1",
- "status": "measured",
- "note": "Every claim in the data that something can or cannot be seen from somewhere, as a measurement. tools/validate_data.py (check visibility) re-measures each one and fails on drift; tools/visibility_claims.py --write refreshes measured and fragile. A claim is fragile when it holds on 10 or fewer points or under 5% of them (or, for a sightline margin, under 2 blocks): a foliage or terrain change can break it, and the record that states it must say so. Every record that states a claim cites it as visibility:<id>.",
- "canopy": {
-  "path": "build/paint/canopy.npz",
-  "generated_by": "python tools/paint_maps.py --source-root <root> --out build/paint",
-  "sha256": "6056ecb312aa76acb249271de9dd41bacd6b1cddecdebd405304c25661c24623"
- },
- "heightmap_sha256": "d1bc68d33705a4bb87784630d3107847f9a061436789d3b84fd1a7b1ae5dfe56",
- "rules": {
-  "fragile_max_seen": 10,
-  "fragile_max_share": 0.05,
-  "fragile_min_margin_blocks": 2.0
- },
- "claims": [
-  {
-   "id": "great_oak_from_route_01",
-   "claim": "The Great Oak's crown is seen from the first leg.",
-   "recorded_in": {
-    "file": "data/foliage.json",
-    "record": "great_oak_pallet",
-    "field": "seen_from"
-   },
-   "expect": "visible",
-   "observers": {
-    "type": "leg",
-    "leg": "hometown->gym1_town",
-    "spacing": 48
-   },
-   "target": {
-    "type": "landmark_tree",
-    "id": "great_oak_pallet"
-   },
-   "surface": "canopy",
-   "measured": {
-    "seen": 28,
-    "of": 42,
-    "unit": "observer points"
-   },
-   "fragile": false
+  "schema": "cobblers.visibility/1",
+  "status": "measured",
+  "note": "Every claim in the data that something can or cannot be seen from somewhere, as a measurement. tools/validate_data.py (check visibility) re-measures each one and fails on drift; tools/visibility_claims.py --write refreshes measured and fragile. A claim is fragile when it holds on 10 or fewer points or under 5% of them (or, for a sightline margin, under 2 blocks): a foliage or terrain change can break it, and the record that states it must say so. Every record that states a claim cites it as visibility:<id>.",
+  "canopy": {
+    "path": "build/paint/canopy.npz",
+    "generated_by": "python tools/paint_maps.py --source-root <root> --out build/paint",
+    "sha256": "6056ecb312aa76acb249271de9dd41bacd6b1cddecdebd405304c25661c24623"
   },
-  {
-   "id": "great_oak_from_hometown_edges",
-   "claim": "The Great Oak is seen from the edge of the hometown.",
-   "recorded_in": {
-    "file": "data/towns.json",
-    "record": "great_oak_pallet",
-    "field": "why_here"
-   },
-   "expect": "visible",
-   "observers": {
-    "type": "footprint_edges",
-    "town": "hometown",
-    "sides": [
-     "east",
-     "north"
-    ],
-    "step": 8
-   },
-   "target": {
-    "type": "landmark_tree",
-    "id": "great_oak_pallet"
-   },
-   "surface": "canopy",
-   "measured": {
-    "seen": 31,
-    "of": 34,
-    "unit": "observer points"
-   },
-   "fragile": false
+  "heightmap_sha256": "d1bc68d33705a4bb87784630d3107847f9a061436789d3b84fd1a7b1ae5dfe56",
+  "rules": {
+    "fragile_max_seen": 10,
+    "fragile_max_share": 0.05,
+    "fragile_min_margin_blocks": 2.0
   },
-  {
-   "id": "sentinel_from_route_04",
-   "claim": "The Sentinel's spire shows over the old growth from the Surge-to-Erika leg.",
-   "recorded_in": {
-    "file": "data/foliage.json",
-    "record": "sentinel_spruce_tarn",
-    "field": "seen_from"
-   },
-   "expect": "visible",
-   "observers": {
-    "type": "leg",
-    "leg": "gym3_town->gym4_town",
-    "spacing": 48
-   },
-   "target": {
-    "type": "landmark_tree",
-    "id": "sentinel_spruce_tarn"
-   },
-   "surface": "canopy",
-   "measured": {
-    "seen": 36,
-    "of": 72,
-    "unit": "observer points"
-   },
-   "fragile": false
-  },
-  {
-   "id": "sentinel_from_clearing_ring",
-   "claim": "The Sentinel reads from the edge of its clearing.",
-   "recorded_in": {
-    "file": "data/foliage.json",
-    "record": "sentinel_spruce_tarn",
-    "field": "seen_from"
-   },
-   "expect": "visible",
-   "observers": {
-    "type": "ring",
-    "radius": 60,
-    "n": 24
-   },
-   "target": {
-    "type": "landmark_tree",
-    "id": "sentinel_spruce_tarn"
-   },
-   "surface": "canopy",
-   "measured": {
-    "seen": 21,
-    "of": 24,
-    "unit": "observer points"
-   },
-   "fragile": false
-  },
-  {
-   "id": "patriarch_from_victory_road",
-   "claim": "The Patriarch breaks the skyline above Victory Road.",
-   "recorded_in": {
-    "file": "data/foliage.json",
-    "record": "patriarch_wedge",
-    "field": "seen_from"
-   },
-   "expect": "visible",
-   "observers": {
-    "type": "leg",
-    "leg": "gym8_town->league",
-    "spacing": 32
-   },
-   "target": {
-    "type": "landmark_tree",
-    "id": "patriarch_wedge"
-   },
-   "surface": "canopy",
-   "measured": {
-    "seen": 10,
-    "of": 137,
-    "unit": "observer points"
-   },
-   "fragile": true
-  },
-  {
-   "id": "cherry_elder_from_route_01",
-   "claim": "The Cherry Elder is pink against the plateau from the first leg.",
-   "recorded_in": {
-    "file": "data/foliage.json",
-    "record": "cherry_elder_shrew",
-    "field": "seen_from"
-   },
-   "expect": "visible",
-   "observers": {
-    "type": "leg",
-    "leg": "hometown->gym1_town",
-    "spacing": 48
-   },
-   "target": {
-    "type": "landmark_tree",
-    "id": "cherry_elder_shrew"
-   },
-   "surface": "canopy",
-   "measured": {
-    "seen": 21,
-    "of": 42,
-    "unit": "observer points"
-   },
-   "fragile": false
-  },
-  {
-   "id": "cherry_elder_from_victory_road",
-   "claim": "The Cherry Elder is seen from Victory Road's climb.",
-   "recorded_in": {
-    "file": "data/foliage.json",
-    "record": "cherry_elder_shrew",
-    "field": "seen_from"
-   },
-   "expect": "visible",
-   "observers": {
-    "type": "leg",
-    "leg": "gym8_town->league",
-    "spacing": 48
-   },
-   "target": {
-    "type": "landmark_tree",
-    "id": "cherry_elder_shrew"
-   },
-   "surface": "canopy",
-   "measured": {
-    "seen": 3,
-    "of": 91,
-    "unit": "observer points"
-   },
-   "fragile": true
-  },
-  {
-   "id": "mt_vessu_summit_from_surge_town",
-   "claim": "Mt Vessu's summit is in view from Surge's town.",
-   "recorded_in": {
-    "file": "data/towns.json",
-    "record": "gym3_town",
-    "field": "route_role"
-   },
-   "expect": "visible",
-   "observers": {
-    "type": "footprint_grid",
-    "town": "gym3_town",
-    "step": 5
-   },
-   "target": {
-    "type": "point",
-    "at": [
-     1864,
-     760
-    ],
-    "height_above_ground": 0,
-    "end_margin": 15
-   },
-   "surface": "terrain",
-   "measured": {
-    "seen": 73,
-    "of": 144,
-    "unit": "observer points"
-   },
-   "fragile": false
-  },
-  {
-   "id": "glacial_tear_from_koga_town",
-   "claim": "Part of the Glacial Tear is visible from Koga's town.",
-   "recorded_in": {
-    "file": "data/towns.json",
-    "record": "gym5_town",
-    "field": "route_role"
-   },
-   "expect": "visible",
-   "observers": {
-    "type": "town_centre",
-    "town": "gym5_town"
-   },
-   "target": {
-    "type": "landmark_extent",
-    "landmark": "glacial_tear"
-   },
-   "surface": "terrain",
-   "measured": {
-    "seen": 33,
-    "of": 213,
-    "unit": "target samples"
-   },
-   "fragile": false
-  },
-  {
-   "id": "major_river_not_from_koga_town",
-   "claim": "The major river is not visible from Koga's town.",
-   "recorded_in": {
-    "file": "data/towns.json",
-    "record": "gym5_town",
-    "field": "route_role"
-   },
-   "expect": "not_visible",
-   "observers": {
-    "type": "town_centre",
-    "town": "gym5_town"
-   },
-   "target": {
-    "type": "course",
-    "course": "major_river_trunk",
-    "within_blocks": 1200,
-    "count": "targets"
-   },
-   "surface": "terrain",
-   "measured": {
-    "seen": 0,
-    "of": 16,
-    "unit": "target samples"
-   },
-   "fragile": false
-  },
-  {
-   "id": "major_river_not_from_route_05",
-   "claim": "Route 5 does not have the major river in view.",
-   "recorded_in": {
-    "file": "data/routes.json",
-    "record": "route_05_erika_to_koga",
-    "field": "landmarks.major_river.relation"
-   },
-   "expect": "not_visible",
-   "observers": {
-    "type": "route",
-    "route_id": "route_05_erika_to_koga",
-    "spacing": 16
-   },
-   "target": {
-    "type": "course",
-    "course": "major_river_trunk",
-    "within_blocks": 1500,
-    "count": "observers"
-   },
-   "surface": "terrain",
-   "measured": {
-    "seen": 0,
-    "of": 66,
-    "unit": "observer points"
-   },
-   "fragile": false
-  },
-  {
-   "id": "gorge_hamlet_not_from_crossing",
-   "claim": "The gorge hamlet is not visible from the Tilpey crossing.",
-   "recorded_in": {
-    "file": "data/towns.json",
-    "record": "gorge_hamlet",
-    "field": "why_here"
-   },
-   "expect": "not_visible",
-   "observers": {
-    "type": "route",
-    "route_id": "route_07_sabrina_to_blaine",
-    "spacing": 4,
-    "near_water_crossings_blocks": 60
-   },
-   "target": {
-    "type": "town",
-    "id": "gorge_hamlet",
-    "height_above_ground": 8
-   },
-   "surface": "terrain",
-   "measured": {
-    "seen": 0,
-    "of": 41,
-    "unit": "observer points"
-   },
-   "fragile": false
-  },
-  {
-   "id": "relic_island_from_hometown_coast",
-   "claim": "Relic Island's house is visible from the hometown's coast.",
-   "recorded_in": {
-    "file": "data/towns.json",
-    "record": "relic_island",
-    "field": "why_here"
-   },
-   "expect": "visible",
-   "observers": {
-    "type": "point",
-    "at": [
-     1190,
-     5468
-    ]
-   },
-   "target": {
-    "type": "absolute",
-    "at": [
-     1092,
-     5532
-    ],
-    "y": 78
-   },
-   "surface": "terrain",
-   "measured": {
-    "seen": 1,
-    "of": 1,
-    "unit": "observer points"
-   },
-   "fragile": true
-  },
-  {
-   "id": "array_mast_from_nosepass_signs",
-   "claim": "The array mast clears the modelled canopy from the Nosepass signs.",
-   "recorded_in": {
-    "file": "data/landmarks.json",
-    "record": "surge_signal_array",
-    "field": "site.nosepass_view.canopy_clear.sign_site"
-   },
-   "expect": "visible",
-   "observers": {
-    "type": "point",
-    "at": [
-     2186,
-     1606
-    ]
-   },
-   "target": {
-    "type": "array_mast"
-   },
-   "surface": "canopy_model",
-   "measured": {
-    "margin_blocks": 4.3
-   },
-   "fragile": false
-  },
-  {
-   "id": "merian_hut_from_its_leg_terrain",
-   "claim": "The merian hut is visible from its leg (8-block roofline, over bare terrain).",
-   "recorded_in": {
-    "file": "docs/world-building/SETTLEMENTS.md"
-   },
-   "expect": "visible",
-   "observers": {
-    "type": "route",
-    "route_id": "route_04_surge_to_erika",
-    "spacing": 16
-   },
-   "target": {
-    "type": "town",
-    "id": "merian_hut",
-    "height_above_ground": 8
-   },
-   "surface": "terrain",
-   "measured": {
-    "seen": 86,
-    "of": 216,
-    "unit": "observer points"
-   },
-   "fragile": false
-  },
-  {
-   "id": "merian_hut_from_its_leg_canopy",
-   "claim": "The merian hut is visible from its leg (8-block roofline, over the planned canopy).",
-   "recorded_in": {
-    "file": "docs/world-building/SETTLEMENTS.md"
-   },
-   "expect": "visible",
-   "observers": {
-    "type": "route",
-    "route_id": "route_04_surge_to_erika",
-    "spacing": 16
-   },
-   "target": {
-    "type": "town",
-    "id": "merian_hut",
-    "height_above_ground": 8
-   },
-   "surface": "canopy",
-   "measured": {
-    "seen": 34,
-    "of": 216,
-    "unit": "observer points"
-   },
-   "fragile": false
-  },
-  {
-   "id": "gorge_hamlet_from_its_leg_terrain",
-   "claim": "The gorge hamlet is visible from its leg (8-block roofline, over bare terrain).",
-   "recorded_in": {
-    "file": "docs/world-building/SETTLEMENTS.md"
-   },
-   "expect": "visible",
-   "observers": {
-    "type": "route",
-    "route_id": "route_07_sabrina_to_blaine",
-    "spacing": 16
-   },
-   "target": {
-    "type": "town",
-    "id": "gorge_hamlet",
-    "height_above_ground": 8
-   },
-   "surface": "terrain",
-   "measured": {
-    "seen": 55,
-    "of": 129,
-    "unit": "observer points"
-   },
-   "fragile": false
-  },
-  {
-   "id": "gorge_hamlet_from_its_leg_canopy",
-   "claim": "The gorge hamlet is not visible from its leg over the planned canopy (8-block roofline): found, not seen.",
-   "recorded_in": {
-    "file": "docs/world-building/SETTLEMENTS.md"
-   },
-   "expect": "visible",
-   "why_changed": "Recorded visible (fragile, 1 of 129) until 2026-09-28, then not_visible after a trial re-measure gave 0 of 129 and the owner accepted found-not-seen. The water export of 2026-09-29 repainted the canopy and the sighting came back at 1 of 129 (0.8%, fragile), which is what this record said would happen: 'the measured value is re-written with the whole file after the water export repaints the canopy'. Set to visible to match the measurement. At under 5% it is fragile and the hamlet is still effectively found rather than seen; the owner may prefer to clear or plant the one line rather than keep a claim that flips with the paint",
-   "observers": {
-    "type": "route",
-    "route_id": "route_07_sabrina_to_blaine",
-    "spacing": 16
-   },
-   "target": {
-    "type": "town",
-    "id": "gorge_hamlet",
-    "height_above_ground": 8
-   },
-   "surface": "canopy",
-   "measured": {
-    "seen": 1,
-    "of": 129,
-    "unit": "observer points"
-   },
-   "fragile": true
-  },
-  {
-   "id": "tableland_stop_from_its_leg_terrain",
-   "claim": "The tableland stop is visible from its leg (8-block roofline, over bare terrain).",
-   "recorded_in": {
-    "file": "docs/world-building/SETTLEMENTS.md"
-   },
-   "expect": "visible",
-   "observers": {
-    "type": "route",
-    "route_id": "route_08_blaine_to_giovanni",
-    "spacing": 16
-   },
-   "target": {
-    "type": "town",
-    "id": "tableland_stop",
-    "height_above_ground": 8
-   },
-   "surface": "terrain",
-   "measured": {
-    "seen": 88,
-    "of": 191,
-    "unit": "observer points"
-   },
-   "fragile": false
-  },
-  {
-   "id": "tableland_stop_from_its_leg_canopy",
-   "claim": "The tableland stop is visible from its leg (8-block roofline, over the planned canopy).",
-   "recorded_in": {
-    "file": "docs/world-building/SETTLEMENTS.md"
-   },
-   "expect": "visible",
-   "observers": {
-    "type": "route",
-    "route_id": "route_08_blaine_to_giovanni",
-    "spacing": 16
-   },
-   "target": {
-    "type": "town",
-    "id": "tableland_stop",
-    "height_above_ground": 8
-   },
-   "surface": "canopy",
-   "measured": {
-    "seen": 5,
-    "of": 191,
-    "unit": "observer points"
-   },
-   "fragile": true
-  },
-  {
-   "id": "rift_rim_stop_from_its_leg_terrain",
-   "claim": "The rift rim stop is visible from its leg (8-block roofline, over bare terrain).",
-   "recorded_in": {
-    "file": "docs/world-building/SETTLEMENTS.md"
-   },
-   "expect": "visible",
-   "observers": {
-    "type": "route",
-    "route_id": "victory_road",
-    "spacing": 16
-   },
-   "target": {
-    "type": "town",
-    "id": "rift_rim_stop",
-    "height_above_ground": 8
-   },
-   "surface": "terrain",
-   "measured": {
-    "seen": 49,
-    "of": 273,
-    "unit": "observer points"
-   },
-   "fragile": false
-  },
-  {
-   "id": "rift_rim_stop_from_its_leg_canopy",
-   "claim": "The rift rim stop is visible from its leg (8-block roofline, over the planned canopy).",
-   "recorded_in": {
-    "file": "docs/world-building/SETTLEMENTS.md"
-   },
-   "expect": "visible",
-   "observers": {
-    "type": "route",
-    "route_id": "victory_road",
-    "spacing": 16
-   },
-   "target": {
-    "type": "town",
-    "id": "rift_rim_stop",
-    "height_above_ground": 8
-   },
-   "surface": "canopy",
-   "measured": {
-    "seen": 43,
-    "of": 273,
-    "unit": "observer points"
-   },
-   "fragile": false,
-   "why_changed": "Recorded not_visible on 2026-09-21 when the post stood at (3734, 3951) and measured 0 of 272. The owner moved it to (3814, 3791) on 2026-09-23 to restore the terrain sightline, and the canopy one came back with it: 42 of 272. The expectation is updated because the world changed for the better, not to make a failing claim pass."
-  }
- ]
+  "claims": [
+    {
+      "id": "great_oak_from_route_01",
+      "claim": "The Great Oak's crown is seen from the first leg.",
+      "recorded_in": {
+        "file": "data/foliage.json",
+        "record": "great_oak_pallet",
+        "field": "seen_from"
+      },
+      "expect": "visible",
+      "observers": {
+        "type": "leg",
+        "leg": "hometown->gym1_town",
+        "spacing": 48
+      },
+      "target": {
+        "type": "landmark_tree",
+        "id": "great_oak_pallet"
+      },
+      "surface": "canopy",
+      "measured": {
+        "seen": 28,
+        "of": 42,
+        "unit": "observer points"
+      },
+      "fragile": false
+    },
+    {
+      "id": "great_oak_from_hometown_edges",
+      "claim": "The Great Oak is seen from the edge of the hometown.",
+      "recorded_in": {
+        "file": "data/towns.json",
+        "record": "great_oak_pallet",
+        "field": "why_here"
+      },
+      "expect": "visible",
+      "observers": {
+        "type": "footprint_edges",
+        "town": "hometown",
+        "sides": [
+          "east",
+          "north"
+        ],
+        "step": 8
+      },
+      "target": {
+        "type": "landmark_tree",
+        "id": "great_oak_pallet"
+      },
+      "surface": "canopy",
+      "measured": {
+        "seen": 31,
+        "of": 34,
+        "unit": "observer points"
+      },
+      "fragile": false
+    },
+    {
+      "id": "sentinel_from_route_04",
+      "claim": "The Sentinel's spire shows over the old growth from the Surge-to-Erika leg.",
+      "recorded_in": {
+        "file": "data/foliage.json",
+        "record": "sentinel_spruce_tarn",
+        "field": "seen_from"
+      },
+      "expect": "visible",
+      "observers": {
+        "type": "leg",
+        "leg": "gym3_town->gym4_town",
+        "spacing": 48
+      },
+      "target": {
+        "type": "landmark_tree",
+        "id": "sentinel_spruce_tarn"
+      },
+      "surface": "canopy",
+      "measured": {
+        "seen": 36,
+        "of": 72,
+        "unit": "observer points"
+      },
+      "fragile": false
+    },
+    {
+      "id": "sentinel_from_clearing_ring",
+      "claim": "The Sentinel reads from the edge of its clearing.",
+      "recorded_in": {
+        "file": "data/foliage.json",
+        "record": "sentinel_spruce_tarn",
+        "field": "seen_from"
+      },
+      "expect": "visible",
+      "observers": {
+        "type": "ring",
+        "radius": 60,
+        "n": 24
+      },
+      "target": {
+        "type": "landmark_tree",
+        "id": "sentinel_spruce_tarn"
+      },
+      "surface": "canopy",
+      "measured": {
+        "seen": 21,
+        "of": 24,
+        "unit": "observer points"
+      },
+      "fragile": false
+    },
+    {
+      "id": "patriarch_from_victory_road",
+      "claim": "The Patriarch is glimpsed from parts of Victory Road's approach, not a skyline the road is read against.",
+      "recorded_in": {
+        "file": "data/foliage.json",
+        "record": "patriarch_wedge",
+        "field": "seen_from"
+      },
+      "expect": "visible",
+      "observers": {
+        "type": "leg",
+        "leg": "gym8_town->league",
+        "spacing": 32
+      },
+      "target": {
+        "type": "landmark_tree",
+        "id": "patriarch_wedge"
+      },
+      "surface": "canopy",
+      "measured": {
+        "seen": 10,
+        "of": 137,
+        "unit": "observer points"
+      },
+      "fragile": true,
+      "downgraded": "The owner, 2026-09-30: 'patriarch_from_victory_road at 10 of 137: downgrade the claim.' It read 'The Patriarch breaks the skyline above Victory Road' and rested on ten observer points in a hundred and thirty-seven - already marginal at 11/136 before the 2026-09-30 re-route cost it one. A claim on ten points is one sculpt away from being false, and the honest reading of 7% of a leg is a glimpse, not a skyline. `fragile` stays true because it IS fragile; what changed is that the record no longer promises more than the measurement supports."
+    },
+    {
+      "id": "cherry_elder_from_route_01",
+      "claim": "The Cherry Elder is pink against the plateau from the first leg.",
+      "recorded_in": {
+        "file": "data/foliage.json",
+        "record": "cherry_elder_shrew",
+        "field": "seen_from"
+      },
+      "expect": "visible",
+      "observers": {
+        "type": "leg",
+        "leg": "hometown->gym1_town",
+        "spacing": 48
+      },
+      "target": {
+        "type": "landmark_tree",
+        "id": "cherry_elder_shrew"
+      },
+      "surface": "canopy",
+      "measured": {
+        "seen": 21,
+        "of": 42,
+        "unit": "observer points"
+      },
+      "fragile": false
+    },
+    {
+      "id": "cherry_elder_from_victory_road",
+      "claim": "The Cherry Elder is seen from Victory Road's climb.",
+      "recorded_in": {
+        "file": "data/foliage.json",
+        "record": "cherry_elder_shrew",
+        "field": "seen_from"
+      },
+      "expect": "visible",
+      "observers": {
+        "type": "leg",
+        "leg": "gym8_town->league",
+        "spacing": 48
+      },
+      "target": {
+        "type": "landmark_tree",
+        "id": "cherry_elder_shrew"
+      },
+      "surface": "canopy",
+      "measured": {
+        "seen": 3,
+        "of": 91,
+        "unit": "observer points"
+      },
+      "fragile": true
+    },
+    {
+      "id": "mt_vessu_summit_from_surge_town",
+      "claim": "Mt Vessu's summit is in view from Surge's town.",
+      "recorded_in": {
+        "file": "data/towns.json",
+        "record": "gym3_town",
+        "field": "route_role"
+      },
+      "expect": "visible",
+      "observers": {
+        "type": "footprint_grid",
+        "town": "gym3_town",
+        "step": 5
+      },
+      "target": {
+        "type": "point",
+        "at": [
+          1864,
+          760
+        ],
+        "height_above_ground": 0,
+        "end_margin": 15
+      },
+      "surface": "terrain",
+      "measured": {
+        "seen": 73,
+        "of": 144,
+        "unit": "observer points"
+      },
+      "fragile": false
+    },
+    {
+      "id": "glacial_tear_from_koga_town",
+      "claim": "Part of the Glacial Tear is visible from Koga's town.",
+      "recorded_in": {
+        "file": "data/towns.json",
+        "record": "gym5_town",
+        "field": "route_role"
+      },
+      "expect": "visible",
+      "observers": {
+        "type": "town_centre",
+        "town": "gym5_town"
+      },
+      "target": {
+        "type": "landmark_extent",
+        "landmark": "glacial_tear"
+      },
+      "surface": "terrain",
+      "measured": {
+        "seen": 33,
+        "of": 213,
+        "unit": "target samples"
+      },
+      "fragile": false
+    },
+    {
+      "id": "major_river_not_from_koga_town",
+      "claim": "The major river is not visible from Koga's town.",
+      "recorded_in": {
+        "file": "data/towns.json",
+        "record": "gym5_town",
+        "field": "route_role"
+      },
+      "expect": "not_visible",
+      "observers": {
+        "type": "town_centre",
+        "town": "gym5_town"
+      },
+      "target": {
+        "type": "course",
+        "course": "major_river_trunk",
+        "within_blocks": 1200,
+        "count": "targets"
+      },
+      "surface": "terrain",
+      "measured": {
+        "seen": 0,
+        "of": 16,
+        "unit": "target samples"
+      },
+      "fragile": false
+    },
+    {
+      "id": "major_river_not_from_route_05",
+      "claim": "Route 5 does not have the major river in view.",
+      "recorded_in": {
+        "file": "data/routes.json",
+        "record": "route_05_erika_to_koga",
+        "field": "landmarks.major_river.relation"
+      },
+      "expect": "not_visible",
+      "observers": {
+        "type": "route",
+        "route_id": "route_05_erika_to_koga",
+        "spacing": 16
+      },
+      "target": {
+        "type": "course",
+        "course": "major_river_trunk",
+        "within_blocks": 1500,
+        "count": "observers"
+      },
+      "surface": "terrain",
+      "measured": {
+        "seen": 0,
+        "of": 66,
+        "unit": "observer points"
+      },
+      "fragile": false
+    },
+    {
+      "id": "gorge_hamlet_not_from_crossing",
+      "claim": "The gorge hamlet is not visible from the Tilpey crossing.",
+      "recorded_in": {
+        "file": "data/towns.json",
+        "record": "gorge_hamlet",
+        "field": "why_here"
+      },
+      "expect": "not_visible",
+      "observers": {
+        "type": "route",
+        "route_id": "route_07_sabrina_to_blaine",
+        "spacing": 4,
+        "near_water_crossings_blocks": 60
+      },
+      "target": {
+        "type": "town",
+        "id": "gorge_hamlet",
+        "height_above_ground": 8
+      },
+      "surface": "terrain",
+      "measured": {
+        "seen": 0,
+        "of": 41,
+        "unit": "observer points"
+      },
+      "fragile": false
+    },
+    {
+      "id": "relic_island_from_hometown_coast",
+      "claim": "Relic Island's house is visible from the hometown's coast.",
+      "recorded_in": {
+        "file": "data/towns.json",
+        "record": "relic_island",
+        "field": "why_here"
+      },
+      "expect": "visible",
+      "observers": {
+        "type": "point",
+        "at": [
+          1190,
+          5468
+        ]
+      },
+      "target": {
+        "type": "absolute",
+        "at": [
+          1092,
+          5532
+        ],
+        "y": 78
+      },
+      "surface": "terrain",
+      "measured": {
+        "seen": 1,
+        "of": 1,
+        "unit": "observer points"
+      },
+      "fragile": true
+    },
+    {
+      "id": "array_mast_from_nosepass_signs",
+      "claim": "The array mast clears the modelled canopy from the Nosepass signs.",
+      "recorded_in": {
+        "file": "data/landmarks.json",
+        "record": "surge_signal_array",
+        "field": "site.nosepass_view.canopy_clear.sign_site"
+      },
+      "expect": "visible",
+      "observers": {
+        "type": "point",
+        "at": [
+          2186,
+          1606
+        ]
+      },
+      "target": {
+        "type": "array_mast"
+      },
+      "surface": "canopy_model",
+      "measured": {
+        "margin_blocks": 4.3
+      },
+      "fragile": false
+    },
+    {
+      "id": "merian_hut_from_its_leg_terrain",
+      "claim": "The merian hut is visible from its leg (8-block roofline, over bare terrain).",
+      "recorded_in": {
+        "file": "docs/world-building/SETTLEMENTS.md"
+      },
+      "expect": "visible",
+      "observers": {
+        "type": "route",
+        "route_id": "route_04_surge_to_erika",
+        "spacing": 16
+      },
+      "target": {
+        "type": "town",
+        "id": "merian_hut",
+        "height_above_ground": 8
+      },
+      "surface": "terrain",
+      "measured": {
+        "seen": 86,
+        "of": 216,
+        "unit": "observer points"
+      },
+      "fragile": false
+    },
+    {
+      "id": "merian_hut_from_its_leg_canopy",
+      "claim": "The merian hut is visible from its leg (8-block roofline, over the planned canopy).",
+      "recorded_in": {
+        "file": "docs/world-building/SETTLEMENTS.md"
+      },
+      "expect": "visible",
+      "observers": {
+        "type": "route",
+        "route_id": "route_04_surge_to_erika",
+        "spacing": 16
+      },
+      "target": {
+        "type": "town",
+        "id": "merian_hut",
+        "height_above_ground": 8
+      },
+      "surface": "canopy",
+      "measured": {
+        "seen": 34,
+        "of": 216,
+        "unit": "observer points"
+      },
+      "fragile": false
+    },
+    {
+      "id": "gorge_hamlet_from_its_leg_terrain",
+      "claim": "The gorge hamlet is visible from its leg (8-block roofline, over bare terrain).",
+      "recorded_in": {
+        "file": "docs/world-building/SETTLEMENTS.md"
+      },
+      "expect": "visible",
+      "observers": {
+        "type": "route",
+        "route_id": "route_07_sabrina_to_blaine",
+        "spacing": 16
+      },
+      "target": {
+        "type": "town",
+        "id": "gorge_hamlet",
+        "height_above_ground": 8
+      },
+      "surface": "terrain",
+      "measured": {
+        "seen": 55,
+        "of": 129,
+        "unit": "observer points"
+      },
+      "fragile": false
+    },
+    {
+      "id": "gorge_hamlet_from_its_leg_canopy",
+      "claim": "The gorge hamlet is not visible from its leg over the planned canopy (8-block roofline): found, not seen.",
+      "recorded_in": {
+        "file": "docs/world-building/SETTLEMENTS.md"
+      },
+      "expect": "visible",
+      "why_changed": "Recorded visible (fragile, 1 of 129) until 2026-09-28, then not_visible after a trial re-measure gave 0 of 129 and the owner accepted found-not-seen. The water export of 2026-09-29 repainted the canopy and the sighting came back at 1 of 129 (0.8%, fragile), which is what this record said would happen: 'the measured value is re-written with the whole file after the water export repaints the canopy'. Set to visible to match the measurement. At under 5% it is fragile and the hamlet is still effectively found rather than seen; the owner may prefer to clear or plant the one line rather than keep a claim that flips with the paint",
+      "observers": {
+        "type": "route",
+        "route_id": "route_07_sabrina_to_blaine",
+        "spacing": 16
+      },
+      "target": {
+        "type": "town",
+        "id": "gorge_hamlet",
+        "height_above_ground": 8
+      },
+      "surface": "canopy",
+      "measured": {
+        "seen": 1,
+        "of": 129,
+        "unit": "observer points"
+      },
+      "fragile": true
+    },
+    {
+      "id": "tableland_stop_from_its_leg_terrain",
+      "claim": "The tableland stop is visible from its leg (8-block roofline, over bare terrain).",
+      "recorded_in": {
+        "file": "docs/world-building/SETTLEMENTS.md"
+      },
+      "expect": "visible",
+      "observers": {
+        "type": "route",
+        "route_id": "route_08_blaine_to_giovanni",
+        "spacing": 16
+      },
+      "target": {
+        "type": "town",
+        "id": "tableland_stop",
+        "height_above_ground": 8
+      },
+      "surface": "terrain",
+      "measured": {
+        "seen": 88,
+        "of": 191,
+        "unit": "observer points"
+      },
+      "fragile": false
+    },
+    {
+      "id": "tableland_stop_from_its_leg_canopy",
+      "claim": "The tableland stop is visible from its leg (8-block roofline, over the planned canopy).",
+      "recorded_in": {
+        "file": "docs/world-building/SETTLEMENTS.md"
+      },
+      "expect": "visible",
+      "observers": {
+        "type": "route",
+        "route_id": "route_08_blaine_to_giovanni",
+        "spacing": 16
+      },
+      "target": {
+        "type": "town",
+        "id": "tableland_stop",
+        "height_above_ground": 8
+      },
+      "surface": "canopy",
+      "measured": {
+        "seen": 5,
+        "of": 191,
+        "unit": "observer points"
+      },
+      "fragile": true
+    },
+    {
+      "id": "rift_rim_stop_from_its_leg_terrain",
+      "claim": "The rift rim stop is visible from its leg (8-block roofline, over bare terrain).",
+      "recorded_in": {
+        "file": "docs/world-building/SETTLEMENTS.md"
+      },
+      "expect": "visible",
+      "observers": {
+        "type": "route",
+        "route_id": "victory_road",
+        "spacing": 16
+      },
+      "target": {
+        "type": "town",
+        "id": "rift_rim_stop",
+        "height_above_ground": 8
+      },
+      "surface": "terrain",
+      "measured": {
+        "seen": 49,
+        "of": 273,
+        "unit": "observer points"
+      },
+      "fragile": false
+    },
+    {
+      "id": "rift_rim_stop_from_its_leg_canopy",
+      "claim": "The rift rim stop is visible from its leg (8-block roofline, over the planned canopy).",
+      "recorded_in": {
+        "file": "docs/world-building/SETTLEMENTS.md"
+      },
+      "expect": "visible",
+      "observers": {
+        "type": "route",
+        "route_id": "victory_road",
+        "spacing": 16
+      },
+      "target": {
+        "type": "town",
+        "id": "rift_rim_stop",
+        "height_above_ground": 8
+      },
+      "surface": "canopy",
+      "measured": {
+        "seen": 43,
+        "of": 273,
+        "unit": "observer points"
+      },
+      "fragile": false,
+      "why_changed": "Recorded not_visible on 2026-09-21 when the post stood at (3734, 3951) and measured 0 of 272. The owner moved it to (3814, 3791) on 2026-09-23 to restore the terrain sightline, and the canopy one came back with it: 42 of 272. The expectation is updated because the world changed for the better, not to make a failing claim pass."
+    }
+  ]
 }

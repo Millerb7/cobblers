@@ -38,6 +38,14 @@ coordination lock is active, stop without enumerating the runtime. Do not
 assume an existing coordination lock is stale merely because the server is
 down; resolve ownership with the user or other agent first.
 
+**A server started with PowerShell `Start-Process` does not outlive the tool
+call.** On 2026-09-30 the staging server was booted that way, answered RCON,
+was reported up, and then died silently: its console log ends mid-startup with
+no shutdown line and no crash, and it had been down for three and a half hours
+before the owner asked. Nothing was lost only because that boot ran no steps.
+Start it detached (the Bash tool's `run_in_background`), and before reporting a
+server up, check the PROCESS, not just that RCON answered once.
+
 Claude Code and Codex must never enumerate, read, copy, hash, inspect, or back
 up the live world directory at
 `C:\Users\wnd\Documents\github\cobblers-server\cobblers-10240`. This includes

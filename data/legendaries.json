@@ -44,7 +44,7 @@
       "6": 50,
       "7": 55,
       "8": 60,
-      "champion": null
+      "champion": 65
     },
     "upper_bound_why": "an UPPER BOUND, not the cap. After n badges the next trainer set contains gym n+1, whose team's highest level is data/trainers.json generation_contract gym_ace_levels[n] (20 25 30 35 40 45 50 55); after 8 badges it contains the Elite Four at 60. The cap is the MINIMUM over that set, so it is at most this and is lower whenever a weaker required trainer of the tier is still undefeated. A legendary above this bound is therefore certainly uncatchable; one below it still has to be checked in game. The champion's own cap is unknown: nothing authored comes after champion_blue (62), and what LevelUtils returns for an empty next set has not been read.",
     "above_the_bound": [],
@@ -93,7 +93,8 @@
         "to": 60,
         "gate": "8 badges"
       }
-    ]
+    ],
+    "champion_band_why": "The owner, 2026-09-30: 'LUGIA: the League's cap. If champion_cleared has no cap band, give it one.' It had none - the band was null, which is why Lugia sat at 75 and could not be caught by anyone. 65 is the eighth badge's 60 plus one step of the five the whole ladder uses (20,25,30,35,40,45,50,55,60), so the champion's band is the ladder's next rung and not a new rule. It is an UPPER bound like every other entry (see upper_bound_why): the real cap is the minimum over the next trainer set, so anything sitting exactly on it still wants confirming in game."
   },
   "spawn_free_zones_note": "Every emitted encounter declares a `spawn_free_zone`: the chamber footprint snapped out to the 8-block grid the route boxes share. They are NOT written into data/spawn_suppression.json by this file's author, because that file was in flight in another session on 2026-09-29; whoever merges them must also accept that a spawn-free zone is a 2-D column, so a grotto's zone also silences the lake water directly above it (about 40 by 40 blocks of a lake that is 300+ across). tools/legendaries_audit.py checks the boxes are grid-snapped and cover their chamber.",
   "encounters": [
@@ -341,7 +342,7 @@
       "level_basis": "5 below the provisional 7-badge cap of 64. PROVISIONAL.",
       "cap_at_gate": 64,
       "kind": "sealed_chamber",
-      "status": "blocked",
+      "status": "sited",
       "site": "the_rift",
       "blocked_by": "owner_decision: which part of the Rift",
       "blocked_why": "A DECISION, not a computation. No document names where in the Rift the chamber is. docs/world-building/STRUCTURE_DECISIONS.md section 4 says only 'the Rift (the anomalous steel chamber)' -- a region identity, not a place -- and there is no such chamber in data/rift_regions.json's `sited` block, which holds the three places the Rift has actually sited (haven_compact_hq, hoopa_cradle, cradle_passage). The Rift has ELEVEN named regions and the choice between them is story, not arithmetic: the Rift's arc belongs to Codex (docs/story/ARC.md). The generator is fail-closed on a null portal and must stay that way until the owner picks. The candidates below are pre-cleared columns, offered so the answer can be one line rather than a design pass.",
@@ -422,7 +423,13 @@
       "plug_depth": 6,
       "spawn_free_zone": null,
       "why": "STRUCTURE_DECISIONS section 4: the steel golem in the anomalous chamber, the Rift's own region identity.",
-      "level_why": "lowered from 59 to the upper bound of its own gate (7 badges) on the owner's decision, 2026-09-29: 'lower the legendaries to the cap band of whatever badge gates their chamber. A legendary you cannot catch is not an encounter.'"
+      "level_why": "lowered from 59 to the upper bound of its own gate (7 badges) on the owner's decision, 2026-09-29: 'lower the legendaries to the cap band of whatever badge gates their chamber. A legendary you cannot catch is not an encounter.'",
+      "at": [
+        4195,
+        3896
+      ],
+      "region": "upper_rift",
+      "sited_why": "The owner, 2026-09-30: 'REGISTEEL: upper_rift (4195, 3896). It unblocks Regigigas, which is otherwise permanently unreachable.' Registeel was `status: blocked` with no position, and Regigigas's gate lists registeel under `requires_met.unsatisfiable_until`: the met advancement is granted by exactly one command, in the met function of a SITED encounter, so an unsited Registeel made Regigigas unreachable forever. Siting Registeel is what clears it."
     },
     {
       "id": "regigigas",
@@ -443,12 +450,9 @@
           "regice",
           "registeel"
         ],
-        "unsatisfiable_until": [
-          "registeel"
-        ],
         "status": "PROPOSED for the badge, DECIDED for the three golems",
         "why": "STRUCTURE_DECISIONS section 4: 'a sealed site signposted from afar, opened only by bringing the three golems'. The three met records are the key; the eighth badge is this file's proposal.",
-        "unsatisfiable_why": "LIVE IN BUILT CONTENT. `cobblers:legendary/registeel/met` is an impossible-trigger advancement granted by exactly one command, in the met function of a SITED encounter (tools/legendaries.py). Registeel is not sited, so that function is not emitted and nothing in the world can grant it. Regigigas's chamber IS built in cobblers-dryrun12 (reapply R14L) with its entity summoned behind a stone plug, and no player, at any badge count, with both other golems met, can open it: the gate line's selector matches nobody. It is not an error in game -- the advancement exists so the selector is valid, and the keeper simply keeps the plug -- it is unreachable content. It stops being unreachable the moment Registeel is sited and emitted, and nothing else has to change. tools/legendaries_audit.py fails any sited record that acquires a dependency like this without saying so here."
+        "unsatisfiable_why": "CLEARED 2026-09-30: Registeel is sited at (4195, 3896) in upper_rift, so its met advancement can now be granted and Regigigas is reachable. The note this replaces read: LIVE IN BUILT CONTENT - cobblers:legendary/registeel/met is an impossible-trigger advancement granted by exactly one command, in the met function of a SITED encounter."
       },
       "portal": [
         3560,
@@ -524,7 +528,7 @@
       "id": "lugia",
       "title": "Lugia in the Maelstrom Trench",
       "species": "lugia",
-      "level": 75,
+      "level": 65,
       "level_basis": "5 below the provisional champion cap of 80. PROVISIONAL.",
       "cap_at_gate": 80,
       "kind": "lake_grotto",
@@ -582,7 +586,8 @@
         "alcove": 6
       },
       "spawn_free_zone": null,
-      "why": "docs/world-building/STRUCTURE_DECISIONS.md: the ocean is 56% of the world and needs an apex reward; WATER_MAP row 20. An air chamber even here, because a legendary battle outlasts any air budget."
+      "why": "docs/world-building/STRUCTURE_DECISIONS.md: the ocean is 56% of the world and needs an apex reward; WATER_MAP row 20. An air chamber even here, because a legendary battle outlasts any air budget.",
+      "level_why": "The owner, 2026-09-30: Lugia sits at the League's cap. It was 75 against a champion band of null - a legendary nobody could catch, which is not an encounter. The champion band is now 65 (level_caps.champion_band_why) and Lugia is on it."
     },
     {
       "id": "celebi_wake",
