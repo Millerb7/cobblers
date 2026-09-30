@@ -602,29 +602,19 @@ def cmd_trace(a):
         print("wall %-14s closes %-3s against %-3s: %4d columns, bbox %s, %d across, floor y%d"
               % (c["id"], zid, other[0], len(line), c["bbox"], c["across"], c["floor_y"]))
 
-    # the guards, and the places round them
+    # the guards, their posts, and the places round them
     gh = spec["gatehouse"]
-    for zid in order:
-        z = spec["zones"][zid]
-        if not z.get("guard"):
-            continue
-        bx, bz = z["guard"]["at"]
-        (ox, oz), (dx, dz), dist = outward_from(masks[zid], X0, Z0, (bx, bz))
-        inx, inz = -dx, -dz
-        z["guard"]["block"] = [bx, bz]
-        z["guard"]["ground_y"] = int(g(bx, bz))
-        z["guard"]["outward"] = [round(dx, 4), round(dz, 4)]
-        z["guard"]["outside_at"] = [ox, oz]
-        z["guard"]["outside_distance"] = int(round(dist))
-        z["guard"]["block_why"] = ("the guard stands on its surveyed site, unmoved. The outward direction and the "
-                                   "distance to the nearest column outside the zone (%d blocks) are measured from "
-                                   "the traced mask." % round(dist))
-        fy = int(g(bx, bz)) + 1
 
-        # the places are measured against the RASTERISED BOXES, not the mask, because the boxes are what the
-        # advancement tests. A guard standing a few blocks from the edge can otherwise have its arrival land in
-        # an 8-block cell that did not make the majority cut, and the player would arrive already outside.
-        bxs = [tuple(b) for b in z["boxes"]]
+    def survey(zid, at, bxs, mask):
+        """Every measured field one gate needs: the guard's block, the walkway's places and its knock box.
+
+        Used for a zone's own guard and for each extra post (data/rift_zones.json zones.z2.posts). The places
+        are measured against the RASTERISED BOXES, not the mask, because the boxes are what the advancement
+        tests. A guard standing a few blocks from the edge can otherwise have its arrival land in an 8-block
+        cell that did not make the majority cut, and the player would arrive already outside."""
+        bx, bz = at
+        (ox, oz), (dx, dz), dist = outward_from(mask, X0, Z0, (bx, bz))
+        inx, inz = -dx, -dz
 
         def inb(x, zz):
             return any(q[0] <= x <= q[2] and q[1] <= zz <= q[3] for q in bxs)
@@ -638,7 +628,6 @@ def cmd_trace(a):
                             % (zid, "inside" if want else "outside", limit, ux, uz))
 
         sx, sz, _ = walk(bx, bz, inx, inz, True)
-        ax, az, _ = walk(sx, sz, inx, inz, True)
         ax, az = int(round(sx + inx * gh["arrive_in"])), int(round(sz + inz * gh["arrive_in"]))
         if not inb(ax, az):
             ax, az = sx, sz
@@ -652,15 +641,46 @@ def cmd_trace(a):
         tx, tz = int(round(qx + dx * gh["turn_back_out"])), int(round(qz + dz * gh["turn_back_out"]))
         if inb(tx, tz):
             tx, tz = qx, qz
-        z["arrive"] = [ax + 0.5, int(g(ax, az)) + 1, az + 0.5, yaw_towards(inx, inz)]
-        z["turn_back"] = [tx + 0.5, int(g(tx, tz)) + 1, tz + 0.5, yaw_towards(dx, dz)]
-        z["exit"] = [ex, int(g(ex, ez)) + 1, ez, ex, int(g(ex, ez)) + 2, ez]
-        z["places_why"] = ("feet levels from tools/ground.py at each column: the arrival %d blocks inside facing in; "
-                           "the turn-back %d blocks PAST the nearest outside column (%d, %d), facing away, so it is "
-                           "outside the zone however far inside the guard stands; the exit box %d inside on the "
-                           "walkway. Guard feet at y%d."
-                           % (gh["arrive_in"], gh["turn_back_out"], ox, oz, gh["exit_in"], fy))
-    spec["status"] = ("traced 2026-09-30 from %s at outline threshold %d; boxes and spans are measured, nothing is "
+        fy = int(g(bx, bz)) + 1
+        # the knock box: the walkway blocks OUTSIDE the guard, under the gatehouse's own roof, where a player
+        # stands face to face with it. Its y is the walkway's, which the shell lays flat at the guard's own feet
+        # level for every column of the gatehouse, so it does not follow the ground either side.
+        kc = [(int(round(bx + dx * t)), int(round(bz + dz * t))) for t in range(1, gh["knock_out"] + 1)]
+        knock = [min(p[0] for p in kc), fy, min(p[1] for p in kc),
+                 max(p[0] for p in kc), fy + 1, max(p[1] for p in kc)]
+        return {
+            "block": [bx, bz], "ground_y": int(g(bx, bz)),
+            "inward": [round(inx, 4), round(inz, 4)], "outward": [round(dx, 4), round(dz, 4)],
+            "outside_at": [ox, oz], "outside_distance": int(round(dist)),
+            "block_why": ("the guard stands on its surveyed site, unmoved. The outward direction and the "
+                          "distance to the nearest column outside the zone (%d blocks) are measured from the "
+                          "traced mask." % round(dist)),
+            "arrive": [ax + 0.5, int(g(ax, az)) + 1, az + 0.5, yaw_towards(inx, inz)],
+            "turn_back": [tx + 0.5, int(g(tx, tz)) + 1, tz + 0.5, yaw_towards(dx, dz)],
+            "exit": [ex, int(g(ex, ez)) + 1, ez, ex, int(g(ex, ez)) + 2, ez],
+            "knock": knock,
+            "places_why": ("feet levels from tools/ground.py at each column: the arrival %d blocks inside facing "
+                           "in; the turn-back %d blocks PAST the nearest outside column (%d, %d), facing away, so "
+                           "it is outside the zone however far inside the guard stands; the exit box %d inside on "
+                           "the walkway; the knock box the %d walkway blocks outside the guard, which is what "
+                           "calls the zone's qualify. Guard feet at y%d."
+                           % (gh["arrive_in"], gh["turn_back_out"], ox, oz, gh["exit_in"], gh["knock_out"], fy)),
+        }
+
+    for zid in order:
+        z = spec["zones"][zid]
+        if not z.get("guard"):
+            continue
+        bxs = [tuple(b) for b in z["boxes"]]
+        s = survey(zid, z["guard"]["at"], bxs, masks[zid])
+        for k in ("block", "ground_y", "inward", "outward", "outside_at", "outside_distance", "block_why"):
+            z["guard"][k] = s[k]
+        for k in ("arrive", "turn_back", "exit", "knock", "places_why"):
+            z[k] = s[k]
+        for post in z.get("posts", []):
+            ps = survey("%s/%s" % (zid, post["id"]), post["at"], bxs, masks[zid])
+            post.update(ps)
+    spec["status"] =("traced 2026-09-30 from %s at outline threshold %d; boxes and spans are measured, nothing is "
                       "built, nothing installed, not seen in game" % (spec["source"]["file"], thr))
     jdump(spec, SPEC)
     print("wrote %s" % SPEC)
@@ -706,13 +726,17 @@ def cmd_report(a, quiet=False):
             continue
         if not z.get("boxes"):
             bad("%s has no boxes: run `python tools/rift_zones.py trace --source-root <root>`" % zid)
-        for k in ("arrive", "turn_back", "exit"):
+        for k in ("arrive", "turn_back", "exit", "knock"):
             if z.get(k) is None:
-                bad("%s has no %s" % (zid, k))
+                bad("%s has no %s: run `python tools/rift_zones.py trace --source-root <root>`" % (zid, k))
         if not z.get("pass"):
             bad("%s has no pass" % zid)
         if not z.get("guard"):
             bad("%s has no guard" % zid)
+        for po in z.get("posts", []):
+            for k in ("block", "ground_y", "outward", "arrive", "turn_back", "exit", "knock"):
+                if po.get(k) is None:
+                    bad("%s post %s has no %s: run trace" % (zid, po["id"], k))
         for b in z.get("boxes") or []:
             if b[0] % grid or b[1] % grid or (b[2] + 1) % grid or (b[3] + 1) % grid:
                 bad("%s box %s is off the %d grid" % (zid, b, grid))
@@ -778,15 +802,33 @@ def cmd_report(a, quiet=False):
         return any(b[0] <= x < b[2] + 1 and b[1] <= zz < b[3] + 1 for b in boxes_of(z))
 
     for zid, z in live.items():
-        ax, _, az, _ = z["arrive"]
-        tx, _, tz, _ = z["turn_back"]
-        e = z["exit"]
-        if not inside(z, ax, az):
-            bad("%s: the arrival (%s, %s) is not inside the zone" % (zid, ax, az))
-        if inside(z, tx, tz):
-            bad("%s: the turn-back point (%s, %s) is INSIDE the zone, so it would loop" % (zid, tx, tz))
-        if not inside(z, e[0], e[2]):
-            bad("%s: the exit box is not inside the zone" % zid)
+        for gname, gid, gd, arr, tb, eb, knock in gates_of(zid, z):
+            ax, _, az, _ = arr
+            tx, _, tz, _ = tb
+            if not inside(z, ax, az):
+                bad("%s (%s): the arrival (%s, %s) is not inside the zone" % (gname, gid, ax, az))
+            if inside(z, tx, tz):
+                bad("%s (%s): the turn-back point (%s, %s) is INSIDE the zone, so it would loop"
+                    % (gname, gid, tx, tz))
+            if not inside(z, eb[0], eb[2]):
+                bad("%s (%s): the exit box is not inside the zone" % (gname, gid))
+            # 5b. the knock box: what calls qualify. It must be the walkway OUTSIDE the guard -- beside its
+            # block, never on it, and never holding the arrival, which would put a granted player back in the
+            # box that grants and loop. tools/reapply.py held the whole pack because nothing called qualify;
+            # these are the checks that keep that from coming back silently.
+            q = gd["block"]
+            far = max(abs(knock[0] - q[0]), abs(knock[2] - q[1]), abs(knock[3] - q[0]), abs(knock[5] - q[1]))
+            if far > spec["gatehouse"]["knock_out"]:
+                bad("%s (%s): the knock box %s is %d blocks from the guard's block %s, past knock_out %d"
+                    % (gname, gid, knock, far, q, spec["gatehouse"]["knock_out"]))
+            if knock[0] <= q[0] <= knock[3] and knock[2] <= q[1] <= knock[5]:
+                bad("%s (%s): the knock box %s covers the guard's own block %s" % (gname, gid, knock, q))
+            if knock[0] <= ax < knock[3] + 1 and knock[2] <= az < knock[5] + 1:
+                bad("%s (%s): the arrival (%s, %s) is inside the knock box, which would loop"
+                    % (gname, gid, ax, az))
+            if knock[4] - knock[1] != 1:
+                bad("%s (%s): the knock box is %d blocks high, not 2 (a player's own height)"
+                    % (gname, gid, knock[4] - knock[1] + 1))
 
     # 6. the cuts are measured and span real ground
     for c in spec["cuts"]:
@@ -826,6 +868,25 @@ def cmd_report(a, quiet=False):
     if z2 and not inside(z2, cradle[0], cradle[1]):
         bad("Hoopa's cradle %s is not in z2 (RIFT_ZONES.md 2a requires it)" % cradle)
 
+    # 8b. EVERY sculpted way into a live zone is staffed by a guard that can grant that zone's pass.
+    #     data/rift_sculpt.json cuts five descents through the Rift's rim and names a guard for each. Three of
+    #     them lead into z2 and only one was staffed, so a player with eight badges who walked in at the other
+    #     two was turned back by the zone check with no guard there to earn the pass from (RIFT_ZONES_BUILD.md
+    #     'Open for the owner' item 1). A way in that no guard can open is a wall with no door; either staff it
+    #     or do not cut it.
+    sculpt = ROOT / "data" / "rift_sculpt.json"
+    if sculpt.is_file():
+        for e in load(sculpt).get("entrances", []):
+            ex_, ez_ = e["near"]
+            for zid, z in live.items():
+                if not inside(z, ex_, ez_):
+                    continue
+                sited = [(g_, gd["block"]) for _n, g_, gd, _a, _t, _eb, _k in gates_of(zid, z)]
+                if not any(max(abs(b[0] - ex_), abs(b[1] - ez_)) <= 8 for _g, b in sited):
+                    bad("data/rift_sculpt.json cuts %s at (%d, %d) into %s and no guard stands within 8 blocks "
+                        "of it (%s has %s). An unstaffed way in is a way nobody can ever pass."
+                        % (e["id"], ex_, ez_, zid, zid, ", ".join("%s at %s" % (g_, b) for g_, b in sited)))
+
     # 9. the badge flags a pass names exist in data/progression.json
     have = json.dumps(prog)
     for zid, z in live.items():
@@ -857,6 +918,16 @@ def cmd_report(a, quiet=False):
     if "rift_crisis_resolved" not in have:
         owed("the setter for rift_crisis_resolved: it is the finale's quest stage, story data this tool must "
              "not invent. Until it exists z5 is shut to everyone, which is closed, not open.")
+    # 9b. a caught-count zone's knock box calls a qualify that can only refuse: no command or predicate reads
+    #     species owned (docs/research/CAUGHT_COUNT_AND_NPC_GUARDS.md; the VERIFIED custom stat counts BALL
+    #     CAPTURES, not species). Its guard's dialogue must call <zone>/grant itself. Owed, not a problem: the
+    #     zone is shut until it exists, which is closed, not open.
+    for zid, z in sorted(live.items()):
+        if (z.get("pass") or {}).get("kind") == "caught":
+            owed("%s's grant: %s's dialogue must read %s and call cobblers:rift_zones/%s/grant. No command "
+                 "reads species owned, so %s/qualify can only refuse and %s stays shut until Codex writes the "
+                 "dialogue (docs/HANDOVER_CODEX.md item 23)."
+                 % (zid, z["guard"]["id"], (z["pass"].get("molang") or "the Pokedex"), zid, zid, zid))
     if s["registeel_region"]["answer"].startswith("the zone system does NOT") and z2:
         leg = load(ROOT / "data" / "legendaries.json")
         txt = json.dumps(leg)
@@ -877,6 +948,10 @@ def cmd_report(a, quiet=False):
         v = p.get("threshold") or ", ".join(p.get("flags", []))
         print("  %-4s %-34s %-8s %-18s %5d boxes  guard %s at %s"
               % (zid, z["name"], k, v, len(z["boxes"]), z["guard"]["id"], z["guard"].get("block")))
+        for _n, gid, gd, _a, _t, _e, knock in gates_of(zid, z)[1:]:
+            print("       + post %-22s %s at %s" % (_n.split("_", 1)[1], gid, gd.get("block")))
+        for _n, gid, _gd, _a, _t, _e, knock in gates_of(zid, z):
+            print("       knock %-40s -> %s/qualify" % (knock, _n.replace("_", "/", 1) if _n != zid else zid))
     for c in spec["cuts"]:
         print("  wall %-14s closes %-3s: %4d columns on floor, %d on scarp (no wall), %d across"
               % (c["id"], c["closes"], c["columns"], c["on_scarp"], c["across"]))
@@ -915,6 +990,26 @@ def box_cond(lo, hi):
 def adv(conds, reward):
     return {"criteria": {"here": {"trigger": "minecraft:location", "conditions": {"player": conds}}},
             "rewards": {"function": reward}}
+
+
+def gates_of(zid, z):
+    """Every gate into one zone: its own guard first, then each staffed post.
+
+    A post is a second (or third) guarded way into the SAME zone, granting the SAME pass on the SAME test,
+    with its own walkway, knock box, arrival, exit and turn-back point. data/rift_zones.json zones.z2.posts
+    exists because data/rift_sculpt.json cuts three ways down into Z2 and only one of them was staffed.
+    Returns [(advancement name, the guard's name, the record, arrive, turn_back, exit, knock)]."""
+    out = [(zid, z["guard"]["id"], z["guard"], z["arrive"], z["turn_back"], z["exit"], z["knock"])]
+    for po in z.get("posts", []):
+        out.append(("%s_%s" % (zid, po["id"]), po["guard_id"], po,
+                    po["arrive"], po["turn_back"], po["exit"], po["knock"]))
+    return out
+
+
+def sel_box(b):
+    """The selector arguments for a [x0, y0, z0, x1, y1, z1] block box: dx/dy/dz are SPANS, so a one-block
+    column is dx=0, and the volume test covers whole blocks x0..x1."""
+    return "x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d" % (b[0], b[1], b[2], b[3] - b[0], b[4] - b[1], b[5] - b[2])
 
 
 def wall_columns(g, spec, cut):
@@ -957,21 +1052,28 @@ def cmd_build(a):
         boxes = [box_cond((b[0], ymin, b[1]), (b[2], ymax, b[3])) for b in z["boxes"]]
         files["data/%s/advancement/%s/%s_zone.json" % (NS, FOLDER, zid)] = adv(
             [{"condition": "minecraft:any_of", "terms": boxes}], "%s/%s/zone" % (F, zid))
-        e = z["exit"]
-        files["data/%s/advancement/%s/%s_exit.json" % (NS, FOLDER, zid)] = adv(
-            [box_cond(e[:3], e[3:])], "%s/%s/exit" % (F, zid))
 
         ax, ay, az, ayaw = z["arrive"]
         tx, ty, tz, tyaw = z["turn_back"]
         p = z["pass"]
         short = ("the %s badge" % ordinal(p["threshold"])) if p["kind"] == "badges" else (
             "%d species caught" % p["threshold"] if p["kind"] == "caught" else "the Rift's crisis resolved")
+        # every gate into this zone: its own guard, then each staffed post (data/rift_zones.json zones.*.posts).
+        # They share the zone's pass and its test; each has its own walkway, knock box, arrival and exit, so a
+        # player who comes in at a post is let through THERE and not teleported across the Rift.
+        gates = gates_of(zid, z)
+        # the knock boxes are the one place inside the zone where a passless player is NOT turned back: they are
+        # standing in front of a guard, behind its barrier, being asked. Without this the zone check and the
+        # knock advancement would both fire on the same tick and race.
+        skip = "".join(" unless entity @s[%s]" % sel_box(k) for (_n, _g, _d, _a, _t, _e, k) in gates)
         fn["%s/zone" % zid] = [
             "# %s's zone check (docs/mechanics/RIFT_ZONES.md section 4, data/rift_zones.json). The advancement tests" % zid,
             "# LOCATION ONLY; the pass is tested here, because minecraft:entity_scores does not match an unset score",
             "# and putting it in the advancement would fail open for every player who never met a guard.",
+            "# The %d knock box(es) in front of this zone's guards are excluded: there the guard answers instead." % len(gates),
             "advancement revoke @s only %s:%s/%s_zone" % (NS, FOLDER, zid),
-            "execute if entity %s unless score @s %s matches 1.. run function %s/%s/turn_back" % (ex, obj, F, zid)]
+            "execute if entity %s unless score @s %s matches 1..%s run function %s/%s/turn_back"
+            % (ex, obj, skip, F, zid)]
         fn["%s/turn_back" % zid] = [
             "# a bed or respawn anchor set inside the zone goes first, so a respawn cannot loop (RIFT_ZONES.md 4)",
             "execute if entity @s[gamemode=!creative] run spawnpoint @s %d %d %d" % (int(tx), int(ty), int(tz)),
@@ -979,49 +1081,69 @@ def cmd_build(a):
             "execute on vehicle run tp @s %s %d %s" % (tx, ty, tz),
             "tp @s %s %d %s %s 0" % (tx, ty, tz, tyaw),
             "title @s actionbar %s" % text("Turned back: %s opens with %s." % (z["name"], short), color="gold")]
-        fn["%s/exit" % zid] = [
-            "# the way out, for anyone, pass or not",
-            "advancement revoke @s only %s:%s/%s_exit" % (NS, FOLDER, zid),
-            "tp @s %s %d %s %s 0" % (tx, ty, tz, tyaw)]
-        fn["%s/grant" % zid] = [
-            "# called by %s's dialogue once it has decided the player qualifies (Codex writes the dialogue)." % z["guard"]["id"],
-            "scoreboard players set @s %s 1" % obj,
-            "execute on vehicle run tp @s %s %d %s" % (ax, ay, az),
-            "tp @s %s %d %s %s 0" % (ax, ay, az, ayaw),
-            "title @s actionbar %s" % text("%s lets you through." % z["guard"]["id"], color="gray")]
-        if p["kind"] == "badges":
-            need = "".join(",advancements={%s=true}" % adv_ for adv_ in p["advancements"])
-            fn["%s/qualify" % zid] = [
-                "# the server checks the badges itself, so dialogue may call this instead of grant",
-                "execute if entity @s[gamemode=!spectator%s] run function %s/%s/grant" % (need, F, zid),
-                "execute unless entity @s[%s] run title @s actionbar %s"
-                % (need[1:], text("%s is not satisfied: %s is needed." % (z["guard"]["id"], short), color="gold"))]
-        elif p["kind"] == "flag":
-            need = "".join(",advancements={%s=true}" % adv_ for adv_ in p["advancements"])
-            fn["%s/qualify" % zid] = [
-                "execute if entity @s[gamemode=!spectator%s] run function %s/%s/grant" % (need, F, zid),
-                "execute unless entity @s[%s] run title @s actionbar %s"
-                % (need[1:], text("%s is not satisfied: %s is needed." % (z["guard"]["id"], short), color="gold"))]
-        else:
-            fn["%s/qualify" % zid] = [
-                "# no server-side qualify for a caught-count zone: no command or predicate reads species owned",
-                "# (data/rift_zones.json zones.%s.qualify_why). Only %s's dialogue can test it." % (zid, z["guard"]["id"]),
-                "say [rift_zones] %s must be granted by %s's dialogue, not by a command" % (zid, z["guard"]["id"])]
+
+        # one gate's own four functions, for the zone's guard and for every post
+        for name, gid, _gd, arr, tb, eb, knock in gates:
+            gax, gay, gaz, gayaw = arr
+            gtx, gty, gtz, gtyaw = tb
+            pre = zid if name == zid else "%s/%s" % (zid, name[len(zid) + 1:])
+            files["data/%s/advancement/%s/%s_exit.json" % (NS, FOLDER, name)] = adv(
+                [box_cond(eb[:3], eb[3:])], "%s/%s/exit" % (F, pre))
+            files["data/%s/advancement/%s/%s_knock.json" % (NS, FOLDER, name)] = adv(
+                [box_cond(knock[:3], knock[3:])], "%s/%s/knock" % (F, pre))
+            fn["%s/knock" % pre] = [
+                "# THE THING THAT CALLS QUALIFY. A player standing in the walkway in front of %s is asking to be" % gid,
+                "# let through, so the guard answers. data/gulch_mine.json gate.knock is the same shape at the",
+                "# gulch's grille; this is that, per zone. Without it nothing called qualify and the walls would",
+                "# have sealed the Rift (tools/reapply.py EXCLUDED, 2026-09-30).",
+                "advancement revoke @s only %s:%s/%s_knock" % (NS, FOLDER, name),
+                "function %s/%s/qualify" % (F, pre)]
+            fn["%s/exit" % pre] = [
+                "# the way out past %s, for anyone, pass or not" % gid,
+                "advancement revoke @s only %s:%s/%s_exit" % (NS, FOLDER, name),
+                "tp @s %s %d %s %s 0" % (gtx, gty, gtz, gtyaw)]
+            fn["%s/grant" % pre] = [
+                "# the pass, and the way in past %s. Called by %s/qualify, and by %s's dialogue once Codex" % (gid, pre, gid),
+                "# writes it (docs/HANDOVER_CODEX.md item 23): the dialogue never has to know the objective's name.",
+                "scoreboard players set @s %s 1" % obj,
+                "execute on vehicle run tp @s %s %d %s" % (gax, gay, gaz),
+                "tp @s %s %d %s %s 0" % (gax, gay, gaz, gayaw),
+                "title @s actionbar %s" % text("%s lets you through." % gid, color="gray")]
+            if p["kind"] in ("badges", "flag") and p.get("advancements"):
+                # ONE advancements={...} argument: a selector may not carry the key twice, and the earlier form
+                # repeated it once per badge, which the parser rejects outright.
+                inner = ",".join("%s=true" % a for a in p["advancements"])
+                fn["%s/qualify" % pre] = [
+                    "# the server tests the %s itself: %s." % (p["kind"], short),
+                    "execute if entity @s[gamemode=!spectator,advancements={%s}] run function %s/%s/grant" % (inner, F, pre),
+                    "execute unless entity @s[advancements={%s}] run title @s actionbar %s"
+                    % (inner, text("%s is not satisfied: %s is needed." % (gid, short), color="gold"))]
+            else:
+                fn["%s/qualify" % pre] = [
+                    "# no server-side test for a caught-count zone: no command or predicate reads species owned",
+                    "# (data/rift_zones.json zones.%s.qualify_why). %s's dialogue reads" % (zid, gid),
+                    "# q.player.pokedex.caught_count and calls %s/%s/grant itself. Until it exists this zone is" % (F, pre),
+                    "# SHUT, which is closed, not open; `report` carries it as an OWED dependency.",
+                    "title @s actionbar %s"
+                    % text("%s counts your Pokedex: %s is needed." % (gid, short), color="gold")]
 
     # the walls and the gatehouse shells
     for zid, z in sorted(live.items(), key=lambda kv: kv[1]["order"]):
         w = z.get("wall")
+        zgates = gates_of(zid, z)
         gb = z["guard"]["block"]
         if w:
             c = cuts[w]
             cols = wall_columns(g, spec, c)
             body = spec["wall"]["palette"]["body"]
             crest = spec["wall"]["palette"]["crest"]
-            # the walkway through the wall is left out of the fill, so the gatehouse opens it
+            # every gate's walkway is left out of the fill, so its gatehouse opens it
             keep = set()
-            for d in range(-gh["walkway"] - 1, gh["walkway"] + 2):
-                keep.add((gb[0] + d, gb[1]))
-                keep.add((gb[0], gb[1] + d))
+            for (_n, _gid, gd, _a, _t, _e, _k) in zgates:
+                q = gd["block"]
+                for d in range(-gh["walkway"] - 1, gh["walkway"] + 2):
+                    keep.add((q[0] + d, q[1]))
+                    keep.add((q[0], q[1] + d))
             lines = ["# the %s cross-wall (data/rift_zones.json cuts[%s]): %d columns on walkable floor, core %d,"
                      % (w, w, c["columns"], spec["wall"]["core"]),
                      "# each column to its own ground + %d. %d further frontier columns stand on scarp and carry no"
@@ -1037,34 +1159,39 @@ def cmd_build(a):
             name = "wall_%s" % w
             fn[name] = lines
             index.append(name)
-        # the gatehouse shell at the guard's block: every guard has one, walled zone or not. G2's stands at the
-        # sculpted Victory Road descent, where the Rift's own rim is the barrier and no cross-wall is built.
-        dx, dz = [-v for v in z["guard"]["outward"]]
-        fy = z["guard"]["ground_y"] + 1
-        sh = gh["blocks"]
-        gl = ["# the %s gatehouse shell (RIFT_ZONES.md section 6): a one-wide roofed walkway, a two-high barrier"
-              % z["guard"]["id"],
-              "# behind the guard, and an armour stand where Codex's NPC will stand (data/rift_sculpt.json's policy)."]
-        px, pz = (0, 1) if abs(dx) > abs(dz) else (1, 0)
-        for t in range(-2, gh["exit_in"] + 2):
-            cx = int(round(gb[0] + dx * t))
-            cz = int(round(gb[1] + dz * t))
-            gl.append("fill %d %d %d %d %d %d %s" % (cx - px, fy - 1, cz - pz, cx + px, fy - 1, cz + pz, sh["shell"]))
-            gl.append("fill %d %d %d %d %d %d %s" % (cx - px, fy, cz - pz, cx - px, fy + 1, cz - pz, sh["shell"]))
-            gl.append("fill %d %d %d %d %d %d %s" % (cx + px, fy, cz + pz, cx + px, fy + 1, cz + pz, sh["shell"]))
-            gl.append("fill %d %d %d %d %d %d minecraft:air" % (cx, fy, cz, cx, fy + 1, cz))
-            gl.append("setblock %d %d %d %s" % (cx, fy + 2, cz, sh["shell"]))
-        bx = int(round(gb[0] + dx)), int(round(gb[1] + dz))
-        gl.append("# the barrier directly behind the guard: this is what actually stops a player")
-        gl.append("fill %d %d %d %d %d %d %s" % (bx[0], fy, bx[1], bx[0], fy + gh["barrier_height"] - 1, bx[1],
-                                                 sh["barrier"]))
-        gl.append("setblock %d %d %d %s" % (gb[0], fy + 2, gb[1], sh["lamp"]))
-        gl.append("summon minecraft:armor_stand %d %d %d {Invulnerable:1b,NoGravity:1b,CustomNameVisible:1b,"
-                  "CustomName:'%s',Tags:[\"cobblers_rift_guard\",\"%s\"]}"
-                  % (gb[0], fy, gb[1], text("%s (placeholder)" % z["guard"]["id"]), z["guard"]["id"]))
-        name = "gatehouse_%s" % zid
-        fn[name] = gl
-        index.append(name)
+        # the gatehouse shell at each gate's block: every guard and every post has one, walled zone or not.
+        # G2's stands at the sculpted Victory Road descent, where the Rift's own rim is the barrier and no
+        # cross-wall is built; Z2's two posts stand at the other two sculpted descents, for the same reason.
+        for (gname, gid, gd, _a, _t, _e, knock) in zgates:
+            gq = gd["block"]
+            dx, dz = [-v for v in gd["outward"]]
+            fy = gd["ground_y"] + 1
+            sh = gh["blocks"]
+            gl = ["# the %s gatehouse shell (RIFT_ZONES.md section 6): a one-wide roofed walkway, a two-high barrier"
+                  % gid,
+                  "# behind the guard, and an armour stand where Codex's NPC will stand (data/rift_sculpt.json's policy).",
+                  "# The walkway blocks OUTSIDE the guard are the knock box %s: standing there runs %s's qualify."
+                  % (knock, gid)]
+            px, pz = (0, 1) if abs(dx) > abs(dz) else (1, 0)
+            for t in range(-gh["knock_out"], gh["exit_in"] + 2):
+                cx = int(round(gq[0] + dx * t))
+                cz = int(round(gq[1] + dz * t))
+                gl.append("fill %d %d %d %d %d %d %s" % (cx - px, fy - 1, cz - pz, cx + px, fy - 1, cz + pz, sh["shell"]))
+                gl.append("fill %d %d %d %d %d %d %s" % (cx - px, fy, cz - pz, cx - px, fy + 1, cz - pz, sh["shell"]))
+                gl.append("fill %d %d %d %d %d %d %s" % (cx + px, fy, cz + pz, cx + px, fy + 1, cz + pz, sh["shell"]))
+                gl.append("fill %d %d %d %d %d %d minecraft:air" % (cx, fy, cz, cx, fy + 1, cz))
+                gl.append("setblock %d %d %d %s" % (cx, fy + 2, cz, sh["shell"]))
+            bx = int(round(gq[0] + dx)), int(round(gq[1] + dz))
+            gl.append("# the barrier directly behind the guard: this is what actually stops a player")
+            gl.append("fill %d %d %d %d %d %d %s" % (bx[0], fy, bx[1], bx[0], fy + gh["barrier_height"] - 1, bx[1],
+                                                     sh["barrier"]))
+            gl.append("setblock %d %d %d %s" % (gq[0], fy + 2, gq[1], sh["lamp"]))
+            gl.append("summon minecraft:armor_stand %d %d %d {Invulnerable:1b,NoGravity:1b,CustomNameVisible:1b,"
+                      "CustomName:'%s',Tags:[\"cobblers_rift_guard\",\"%s\"]}"
+                      % (gq[0], fy, gq[1], text("%s (placeholder)" % gid), gname))
+            name = "gatehouse_%s" % gname
+            fn[name] = gl
+            index.append(name)
 
     out = PACKS / PACK
     for p in sorted(out.rglob("*")) if out.is_dir() else []:
