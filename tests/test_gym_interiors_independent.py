@@ -84,9 +84,12 @@ def placements():
 @pytest.fixture(scope="module")
 def ground():
     import ground as G
+    from terrain import TerrainUnavailable
     try:
         return G.load()
-    except BaseException as e:      # no heightmap on this machine: the site checks cannot run, and saying so is honest
+    except TerrainUnavailable as e:
+        # See the same fixture in test_gym_buildings_independent.py: the one error that means "no heightmap
+        # on this machine". It was `except BaseException`, which hid every other fault behind a skip.
         pytest.skip("the canonical heightmap is not available here (%s)" % (str(e) or type(e).__name__)[:80])
 
 

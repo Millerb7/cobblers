@@ -2435,7 +2435,21 @@
       "donor": "gym6_gym_building",
       "leader_name": "Sabrina",
       "built": false,
-      "why_not": "docs/STATE.md: Sabrina's gym is not built until EXP-034 has actually run, being the only per-player puzzle and standing on machinery two players have never tested."
+      "superseded_by": "data/gym_buildings/gym6.json (The Hall of Lenses), written and audited clean 2026-09-30. The works below are filled in and the donor shell taken down by tools/gym_demolish.py (step R16F) before the building is written (R16G). The owner's gate of 2026-09-28 -- not built until EXP-034 has run, being the only per-player puzzle -- is answered by the building carrying NO per-player state: the Hall of Lenses is shared, so the untested two-player machinery the gate protected against is not in it. Confirmed by the owner 2026-10-01, with EXP-034 still unrun; the building passes all 117 properties of tests/test_gym_buildings_independent.py.",
+      "shell": {
+        "derived_from": "data/placements.json gym6_gym_building",
+        "expect_box": [
+          6183,
+          96,
+          3306,
+          6209,
+          112,
+          3329
+        ],
+        "expect_box_why": "position (6183,96,3306) + size [27,17,24] at rotation none, corner anchor, so the anchor is the min corner and the box runs positive in x and z. Derived from data/placements.json, the same source gym1's shell box is derived from - not from data/gym_buildings/gym6.json, which the building's own author wrote. tools/gym_demolish.py re-derives it from the placement and refuses if it disagrees."
+      },
+      "works_existed": false,
+      "works_existed_why": "nothing was ever cut under this gym: it was a COBBLEVERSE donor shell on an uncut lot, unlike gyms 1, 3, 4, 5 and 7, whose rejected underground works step R16F fills back to rock. The demolition here is the shell alone."
     },
     {
       "id": "gym7",
@@ -2935,7 +2949,21 @@
       "donor": "gym8_gym_building",
       "leader_name": "Giovanni",
       "built": false,
-      "why_not": "as gym2"
+      "superseded_by": "data/gym_buildings/gym8.json (The Gate of the South), written and audited clean 2026-09-30. The works below are filled in and the donor shell taken down by tools/gym_demolish.py (step R16F) before the building is written (R16G). This record previously read why_not: \"as gym2\", which was stale: gym2 is Misty's surviving CARVED interior that nothing may touch, while Giovanni's was a COBBLEVERSE donor shell (cobbleverse:giovanni, rotated counterclockwise_90) like the other six. Corrected by the owner 2026-10-01.",
+      "shell": {
+        "derived_from": "data/placements.json gym8_gym_building",
+        "expect_box": [
+          3560,
+          111,
+          6403,
+          3583,
+          127,
+          6429
+        ],
+        "expect_box_why": "position (3560,111,6429) + size [27,17,24] at rotation counterclockwise_90, corner anchor: the turn swaps the horizontal extents, so x spans 24 and z spans 27, and the anchor is the min-x max-z corner. Derived from data/placements.json, not from data/gym_buildings/gym8.json. tools/gym_demolish.py re-derives and refuses on disagreement."
+      },
+      "works_existed": false,
+      "works_existed_why": "nothing was ever cut under this gym: it was a COBBLEVERSE donor shell on an uncut lot, unlike gyms 1, 3, 4, 5 and 7, whose rejected underground works step R16F fills back to rock. The demolition here is the shell alone."
     }
   ]
 }

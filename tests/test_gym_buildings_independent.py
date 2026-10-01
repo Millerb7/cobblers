@@ -53,7 +53,10 @@ sys.path.insert(0, str(ROOT / "tools"))
 
 import gym_buildings_independent as A  # noqa: E402
 
-GYMS = ("gym1", "gym3", "gym4", "gym5", "gym7")
+# Every record that exists on disk, not a list written down here. A hardcoded five is how gyms 6 and 8 went
+# unaudited for a day: tools/gym_buildings_independent.py has always globbed the folder, so the audit covered
+# them while these tests did not look, and the one test that compares the two is what caught it.
+GYMS = tuple(sorted(A.load_records(ROOT)))
 
 # (gym, code) -> the finding. Each is a defect in the built content, seen by this audit and confirmed by hand
 # against the emitted text; see docs/world-building/GYM_BUILDINGS_REVIEW.md. Delete an entry when the content is
@@ -93,9 +96,15 @@ def placements():
 @pytest.fixture(scope="module")
 def ground():
     import ground as G
+    from terrain import TerrainUnavailable
     try:
         return G.load()
-    except BaseException as e:      # no heightmap here: the site checks cannot run, and saying so is honest
+    except TerrainUnavailable as e:
+        # The one error that means "this machine has no heightmap", raised by terrain.load for a missing
+        # COBBLERS_SOURCE_ROOT and for a root that does not hold the image. This was `except BaseException`,
+        # which also caught KeyboardInterrupt and SystemExit and would have turned any bug inside
+        # ground.load() into a silent skip of every site check. The heightmap IS present here, so the skip
+        # was never why these passed -- test_no_swallowed_crashes named this line and was right.
         pytest.skip("the canonical heightmap is not available here (%s)" % (str(e) or type(e).__name__)[:80])
 
 
@@ -268,8 +277,18 @@ def test_every_record_stands_on_a_lot_the_prep_really_levels(records, placements
         assert kind in ("lot_level", "heightmap"), (gid, kind)
 
 
-def test_the_five_buildings_are_exactly_the_five_interiors_that_were_superseded(records):
-    # breaks if: a building is written for a gym whose works are still standing, or Misty's gym 2 is touched
+def test_every_building_is_an_interior_that_was_superseded(records):
+    # breaks if: a building is written for a gym whose works are still standing, or Misty's gym 2 is touched.
+    # Renamed from test_the_five_buildings_...: the count belongs in the data, not in the name of the check,
+    # and the old name was the whole reason this went red when gyms 6 and 8 were added.
+    #
+    # It went red for a real reason and it was right to: data/gym_buildings/ held gym6 and gym8 while
+    # data/gym_interiors.json still recorded both as NOT superseded. gym6's why_not was an owner gate --
+    # Sabrina's gym not built until EXP-034 has run, being the only per-player puzzle -- and EXP-034 is
+    # still unrun. The owner confirmed both buildings on 2026-10-01: the Hall of Lenses carries no
+    # per-player state, so the machinery the gate protected against is not in it, and gym8's "as gym2" was
+    # stale (Giovanni's was a donor shell, not Misty's carved interior). gym_interiors.json records both
+    # decisions. The data was changed to match a decision, never to turn this check green.
     doc = json.loads((ROOT / "data" / "gym_interiors.json").read_text(encoding="utf-8"))
     superseded = {g["id"] for g in doc["gyms"] if g.get("superseded_by")}
     assert set(records) == superseded, (sorted(records), sorted(superseded))

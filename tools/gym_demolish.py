@@ -74,8 +74,19 @@ def superseded():
         if g["id"] == KEEP:
             raise SystemExit("data/gym_interiors.json marks %s superseded. Misty's gym is kept exactly as built "
                              "and this tool will not touch it (the owner, 2026-09-29)." % KEEP)
-        if not g.get("dig") or not (g.get("shell") or {}).get("expect_box"):
-            raise SystemExit("%s: a superseded gym needs both `dig` and `shell.expect_box`" % g["id"])
+        if not (g.get("shell") or {}).get("expect_box"):
+            raise SystemExit("%s: a superseded gym needs `shell.expect_box`" % g["id"])
+        # `dig` is the carved works under the gym, filled back to rock. Gyms 6 and 8 never had any: they
+        # were donor shells on open lots and nothing was ever cut below them, so there is nothing to fill
+        # and a demanded `dig` would have to be invented. Absence must still be DECLARED, not inferred from
+        # a missing key, or a record that simply forgot its works would demolish the shell and leave the
+        # works open. `works_existed: false` is that declaration.
+        if not g.get("dig") and g.get("works_existed") is not False:
+            raise SystemExit("%s: a superseded gym needs `dig`, or `works_existed: false` to say there were "
+                             "never any works under it" % g["id"])
+        if g.get("dig") and g.get("works_existed") is False:
+            raise SystemExit("%s: declares `works_existed: false` and still has a `dig` box; one of them is "
+                             "wrong" % g["id"])
         out.append(g)
     if not out:
         raise SystemExit("no gym in data/gym_interiors.json is `superseded_by` anything; there is nothing to "
@@ -159,11 +170,17 @@ def gym_commands(gym, placements, G):
              "# %s" % gym["superseded_by"],
              "# ground: %s" % ("the gym lot %s levelled to y%d, the heightmap outside it" % (lot[0], lot[1])
                                if lot else "the heightmap (tools/ground.py, rounded)")]
-    a, r1, v1 = box_commands(gym["dig"], gy, "the works, back to rock")
+    if gym.get("dig"):
+        a, r1, v1 = box_commands(gym["dig"], gy, "the works, back to rock")
+    else:
+        # `works_existed: false`, checked in superseded(): nothing was ever cut under this gym, so the
+        # demolition is the shell alone and the works pass writes no command rather than a vacuous one.
+        a, r1, v1 = [], 0, 0
+        lines.append("# no works under this gym: it was a donor shell on an uncut lot, so only the shell comes down")
     b, r2, v2 = box_commands(shell, gy, "the donor shell, and the ground it stood on")
     lines += a + b
     return lines, {"id": gym["id"], "donor": gym["donor"], "settlement": rec["settlement"],
-                   "dig": gym["dig"], "shell_box": shell, "lot": lot[0] if lot else None,
+                   "dig": gym.get("dig"), "shell_box": shell, "lot": lot[0] if lot else None,
                    "lot_level": lot[1] if lot else None,
                    "rock_cells": r1 + r2, "air_cells": v1 + v2,
                    "commands": len([l for l in lines if not l.startswith("#")])}
