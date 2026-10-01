@@ -217,6 +217,7 @@ def files():
             "criteria": {"won": {"trigger": "rctmod:defeat_count", "conditions": {"trainer_ids": [tid], "count": 1}}},
             "rewards": {"function": "%s:trainers/won/%s" % (NS, tid)}}
         cycle += cycle_lines(tid, s, setf[0])
+    cycle += leader_cycle_lines()
     if undeclared:
         raise SystemExit("data/progression.json quest_fields does not declare %d field(s):\n%s"
                          % (len(undeclared), "\n".join("  %s sets %s" % (t, f) for t, f in undeclared)))
@@ -250,6 +251,59 @@ def files():
     out["data/%s/function/trainers/load.mcfunction" % NS] = ["scoreboard objectives add cobblers_trainers dummy"]
     out["data/minecraft/tags/function/tick.json"] = {"values": ["%s:trainers/tick" % NS]}
     out["data/minecraft/tags/function/load.json"] = {"values": ["%s:trainers/load" % NS]}
+    return out
+
+
+def leader_cycle_lines():
+    """The eight gym leaders' hold-off, keyed on their badge flag instead of a quest field.
+
+    WHY THEY WERE MISSING. The cycle is built from placements(), and a gym leader is not placed by us:
+    its gym's own `rctmod:trainer_spawner` spawns it. So the cooldown covered the 28 trainers we seat -
+    13 route, 5 mansion, 10 Victory Road - and NONE of the eight leaders, and CLAUDE.md's standing
+    limitation ("rctmod never refuses a rematch with a placed trainer") applied to all of them with
+    nothing against it. The owner demonstrated it on 2026-09-30: beat Brock, then started him again by
+    sending a Pokemon at him.
+
+    WHAT A REMATCH COSTS, measured rather than feared: nothing in items. The per-win rctmod loot table
+    we write for each leader is {"pools": []}, deliberately emptied (data/progression.json
+    upstream_neutralised), and the badge and the TMs come from a cobblers:first_win table that fires
+    once. What it does give is battle XP, and data/level_cap.json caps CATCHING, not battling - so a
+    leader who can be refought at will is a level-cap bypass, and stops being a gate.
+
+    The test is the badge advancement, not a quest field: gymN_cleared already exists, is already bound
+    to the leader's upstream id, and is what the rest of progression reads. That also means neither a
+    molang callback nor a tag is needed here - the player selector tests the advancement directly.
+
+    The same INTERIM caveat as the seated trainers (see cycle_lines): Cooldown is entity NBT on a
+    shared trainer, so it cannot be held per player. A player holding the badge is protected; an
+    unbeaten partner beside them may have to start the fight by interacting.
+    """
+    seats = []
+    for f in sorted((ROOT / "data" / "gym_buildings").glob("gym*.json")):
+        doc = json.loads(f.read_text(encoding="utf-8"))
+        lead = doc.get("leader") or {}
+        seats.append((doc["id"], lead.get("id"), lead.get("spawner"), lead.get("flag")))
+    # Misty's gym 2 is the one surviving CARVED interior, so it has no data/gym_buildings record and was
+    # the one leader this loop still missed. Her spawner is the gym template's own, recorded in
+    # data/gym_interiors.json as `expect_spawner_at` - a measurement of where the donor puts it, which is
+    # exactly what this needs.
+    for g in json.loads((ROOT / "data" / "gym_interiors.json").read_text(encoding="utf-8"))["gyms"]:
+        if not g.get("built"):
+            continue
+        lead = g.get("leader") or {}
+        if lead.get("id") and lead.get("expect_spawner_at"):
+            seats.append((g["id"], lead["id"], lead["expect_spawner_at"], lead.get("flag")))
+    out = []
+    for gid, tid, seat, flag in sorted(seats):
+        if not tid or not seat:
+            continue
+        flag = flag or "gym%s_cleared" % gid.replace("gym", "")
+        doc = {"id": gid}
+        x, y, z = seat
+        me = '@e[type=rctmod:trainer,x=%d.5,y=%d,z=%d.5,distance=..24,nbt={TrainerId:"%s"}]' % (x, y, z, tid)
+        out += ["# %s (%s), the leader: no rematch once the badge is held" % (tid, doc["id"]),
+                "execute as %s at @s if entity @a[distance=..9.0,advancements={%s:flag/%s=true}] "
+                "run data merge entity @s {Cooldown:40}" % (me, NS, flag)]
     return out
 
 

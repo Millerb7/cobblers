@@ -223,3 +223,47 @@ the override goes at `data/rctmod/trainers/kanto_brock.json`.
 
 Not fixed in the commit that records this. It changes the difficulty of all eight gym fights at once,
 which deserves to be a unit of its own with its own audit.
+
+## F11 PROVEN IN GAME, 2026-09-30 — and the leaders had no rematch guard
+
+**The owner fought Brock on `cobblers-dryrun12` and his Geodude came out at level 18.**
+Cobbleverse's Geodude is level 16; ours is 18. So a datapack file at `data/rctmod/trainers/<id>.json`
+DOES replace the roster rctmod loads, the override mechanism works, and all eight gym leaders' authored
+teams are live. The assumption the whole fix rested on is now a measurement.
+
+What that settles beyond the leaders: the same mechanism carries the Elite Four and the Champion
+(`data/league_trainers.json`), and every balance number recorded for the gym ladder now describes the
+game being played rather than a game nobody was in.
+
+Before (upstream, read from `COBBLEVERSE-RCT-DP-v20.zip`): geodude 16, bonsly 16, onix 20, cranidos 18,
+two Full Restores, `maxItemUses: 2`. After (ours): geodude 18, bonsly 18, cranidos 19, onix 20, every
+one holding an item, no bag, `maxItemUses: 0`, `healPlayers: false`.
+
+### The second finding, from the same session
+
+The owner, immediately after: *"i can fight brock again if i send out my mon at him."*
+
+CLAUDE.md records the standing limitation - "rctmod never refuses a rematch with a placed trainer" -
+and our own cooldown in `tools/route_trainers.py` is the mitigation. **It covered the 28 trainers we
+seat and none of the eight leaders.** The cycle is built from `placements()`, and a leader is not
+placed by us: its gym's own `rctmod:trainer_spawner` spawns it, so it was never in the list the
+cooldown is generated from.
+
+What a rematch costs, measured rather than feared:
+
+- **Items: nothing.** The per-win rctmod loot table we write for each leader is `{"pools": []}`,
+  deliberately emptied (`data/progression.json` `upstream_neutralised`), and the badge and the TMs come
+  from a `cobblers:first_win` table that fires once.
+- **Battle XP: everything.** `data/level_cap.json` caps CATCHING, not battling. A leader who can be
+  refought at will is a level-cap bypass, and stops being a gate.
+
+Fixed the same day: `leader_cycle_lines()` adds a hold-off for all eight, keyed on the `gymN_cleared`
+ADVANCEMENT instead of a quest field - the flag already exists and is already bound to the leader's
+upstream id, so neither a molang callback nor a tag is needed. Misty's gym 2 is the one surviving
+carved interior and has no `data/gym_buildings` record, so her seat comes from `data/gym_interiors.json`
+`leader.expect_spawner_at`; she was the eighth and would otherwise have been missed.
+
+It carries the same interim caveat as the seated trainers: `Cooldown` is entity NBT on a shared
+trainer, so it cannot be held per player. A player holding the badge is protected; an unbeaten partner
+beside them may have to start the fight by interacting. **Not yet seen in game** - the owner's rematch
+is the evidence the guard was absent, not that the guard works.
