@@ -166,12 +166,44 @@ that must go down**, and the cordon must become a zone check. Re-write section 5
   **nothing stops player A buying for player B** — gating controls purchase, not possession.
   **Unknown:** whether two players can hold an open dialogue with the same NPC at once (EXP-022's
   two-player test is still unrun, blocked on a second account).
-- **3a was still running when this session stopped.** Agent `ae2a35f9846e9aade`,
-  worktree `.claude/worktrees/agent-ae2a35f9846e9aade`, target file
-  `docs/research/PROGRESSION_UNLOCKABLES.md` — **not yet written** at the stop. Collect it from that
-  worktree if it finished; otherwise re-run the audit. It was briefed to answer the backpack mod first
-  (which mod, its real tiers and recipes read out of the jar, and whether we can gate them).
-- **3b and 3c (the ladder, and the backpack as the spine) were NOT started.** They depend on 3a.
+- **3a is ANSWERED** — `docs/research/PROGRESSION_UNLOCKABLES.md`. The backpack is **Sophisticated
+  Backpacks** (`sophisticatedbackpacks` 1.21.1-3.23.4.3.106), in OUR overlay, on both sides. Six tiers
+  (27 / 45 / **81** / 96 / 108 / 120 slots) plus **56 upgrade items**, including a six-rung stack ladder
+  and portable crafting/anvil/smithing/stonecutter — the most on-brief items in the pack. Obtained by
+  **crafting and nothing else** (verified: chest loot off, mob drop 0.0, loot tables empty), so nothing
+  hands a tier out behind our back. Gateable **EASY** by datapack recipe suppression.
+  **Three findings that bear on the ladder's shape:**
+  1. **Cobbleverse has already flattened its own curve.** Iron is buffed from the mod's 54 slots / 2
+     upgrades to **81 / 7**, so gold, diamond and netherite add about 12 slots and one upgrade slot each.
+     Four of the six rungs have almost nothing left to give — a ladder built on tiers alone would feel
+     flat, and the 56 upgrades are the better currency.
+  2. **A suppressed recipe reads as a mystery, not a goal**: the tier stays registered and givable but
+     shows no recipe in REI with no explanation. The better lever is selling tiers in CobbleDollars'
+     `default_shop.json`, a plain per-item price list.
+  3. **No mod in the pack exposes a per-player gate. The only per-player mechanism is possession of an
+     item.** This is the same wall `MARKET_GATING.md` hit from the other side, and together they are the
+     answer to Part 3: per-player dialogue visibility decides *who may buy*, and the item in the pack
+     decides *what they then have*.
+  **THE HIGHEST-VALUE OPEN QUESTION, and 3b waits on it:** is CobbleDollars' `defaultShop` **global or
+  per-merchant**? It decides whether a mining town can sell what a mining town would, or whether every
+  town sells one list. Answer that before designing the ladder.
+  **Caveat that could collapse the ratings:** the jars are **not on this machine at all**
+  (`base-pack/cobbleverse/mods/` does not exist; `modpack/mods/` holds a README). No recipe file was read.
+  Every item id is verified from the pack's own REI index
+  (`config/roughlyenoughitems/collapsible.json5`) at Cobbleverse **1.7.42**, and **13 mods are
+  version-replaced for 1.8**, so ids need re-checking. Datapack recipe suppression itself is **ASSUMED
+  and untested in this pack — if it fails, every "EASY" rating drops to NONE.**
+  Other EASY levers: CobbleDollars (the market itself), TMCraft (six blank grades, no config at all),
+  Waystones (**world-critical**; `defaultVisibility="ACTIVATION"` already makes travel the unlock, plus a
+  `warpRequirements` cost language), CobbleverseBadges (40 plain badge items, the cheapest rung token),
+  Comforts (**world-critical**; sleeping bags are what make "no house" literal).
+  **Not available:** the raid dens' seven tiers — **our overlay removes the mod** (1.8 world-load crash).
+  **Already running a parallel progression, to be reconciled rather than layered on:** our own
+  `modpack/config/rctmod-server.toml` sets `initialLevelCap=20`, `initialSeries="kanto"`,
+  `freeroamRequiresCompletedSeries=true`, `spawningRequiresTrainerCard=true`; and Lumymon's
+  `remotePcEnabled=true` gives remote Pokemon storage from day one, which undercuts storage as a reward.
+- **3b and 3c (the ladder, and the backpack as the spine) were NOT started.** 3a is now in hand, so they
+  are the next session's first economy job — after the `defaultShop` question above.
 
 ## 4. What waits on the owner
 
@@ -193,7 +225,7 @@ that must go down**, and the cordon must become a zone check. Re-write section 5
   Read/Grep/WebFetch, so **every bytecode claim in `rct-arena-capabilities.md` is a quotation of an
   earlier read recorded in the repo, not fresh jar evidence** — the jars are absent from agent worktrees
   too. Brief that agent type without jar work.
-- **Two agents were refused a compound Bash heredoc** and then used the `Write` tool for the same
+- **THREE agents were refused a compound Bash command** (a heredoc twice, a `for` loop once) and then used the `Write` tool for the same
   in-worktree path. The refusal's own text says *"Split it into plain, separate commands"*, so both read it
   as a complaint about command shape rather than a denial. **Strictly, CLAUDE.md's rule is "a different
   tool reaching the same outcome" and that is what happened — twice.** The owner should decide whether the
@@ -228,10 +260,10 @@ per-agent figure, which is final context and about 20× low:
 | 1. Heaven's Arena, cost to the city | `content-architect` | 0.52M |
 | 1. RCT arena capability | `cobblemon-researcher` | 0.43M |
 | 3d. Market gating | `minecraft-systems-dev` | 0.30M |
-| 3a. Mod unlockables audit | `dependency-auditor` | 0.31M (unfinished) |
-| **Agents together** | | **1.6M** |
-| **This session's own thread** | | **3.9M** |
-| **Total** | | **5.5M** |
+| 3a. Mod unlockables audit | `dependency-auditor` | 0.46M |
+| **Agents together** | | **1.7M** |
+| **This session's own thread** | | **4.0M** |
+| **Total** | | **5.7M** |
 
 The ratio is the lesson, and it is the same one as 2026-09-28: **the four agents that answered four
 questions cost 1.6M between them; the single thread that briefed them and read the files cost 3.9M.** The
