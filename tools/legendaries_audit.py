@@ -288,6 +288,7 @@ def audit(doc, ground, pack, water=None, progression=None, landmarks=None, world
             continue
         allowed = L._hull([env, sleeve, g["shaft"]])
         writes = 0
+        air = []           # every cell the carve opens, for the independent dimension check below
         for line in carve.read_text(encoding="utf-8").splitlines():
             mm = FILL.match(line.strip())
             if mm:
@@ -299,12 +300,60 @@ def audit(doc, ground, pack, water=None, progression=None, landmarks=None, world
                 x, y, z = (int(v) for v in mm.groups()[:3])
                 b = (x, y, z, x, y, z)
             writes += 1
+            if "minecraft:air" in line:
+                air.append(b)
             rep.check(_inside(b, allowed),
                       "%s: carve writes %s, outside the envelope and sleeve %s" % (rid, b, allowed))
             rep.check(L.volume(b) <= FILL_LIMIT,
                       "%s: a write of %d blocks, over Minecraft's %d" % (rid, L.volume(b), FILL_LIMIT))
         rep.check(writes >= 6, "%s: only %d writes in the carve; that is not a chamber" % (rid, writes))
         checked_writes += writes
+
+        # ---- the chamber's SIZE, against the record's own declared numbers ---------------------------
+        # Added 2026-09-30 after the F7 sweep. Everything else in this loop measures the emitted text
+        # against `L.geometry(...)` - the BUILDER'S OWN FUNCTION. That catches an emission bug and cannot
+        # catch a bug in geometry() itself: the writer would place the chamber wrongly, the audit would
+        # expect it wrongly, and the two would agree. That is exactly the shape of F7, where portals.py
+        # and portals_audit.py both read a landmark's `extent` as "where water is" and so agreed with
+        # each other about a hole 219,737 columns wide.
+        #
+        # So this one check derives its expectation from the RECORD, in this file's own arithmetic, and
+        # never calls into L: the record says `chamber: {width, length, height}`, and the air the carve
+        # opens must measure that, give or take the alcove it also declares. A geometry() that scaled,
+        # transposed or offset the chamber now shows up here.
+        ch = rec.get("chamber") or {}
+        ap = rec.get("approach") or {}
+        if air and all(k in ch for k in ("width", "length", "height")):
+            x0 = min(b[0] for b in air); x1 = max(b[3] for b in air)
+            y0 = min(b[1] for b in air); y1 = max(b[4] for b in air)
+            z0 = min(b[2] for b in air); z1 = max(b[5] for b in air)
+            # per axis, not sorted together: the passage and the shaft extend ONE axis - whichever the
+            # approach bears along - and the alcove widens the other. Conflating them hides a transpose.
+            got = sorted(((x1 - x0 + 1), (z1 - z0 + 1)))
+            decl = sorted((int(ch["width"]), int(ch["length"])))
+            alc = int(ch.get("alcove") or 0)
+            # the long axis carries the chamber, the passage and the bore of the shaft at its head, each a
+            # number the DATA declares (approach.passage, defaults.bore). Measured once against regirock to
+            # be sure the accounting is complete, not tuned until it passed: bore 3 + passage 12 + chamber
+            # 17 = 32, which is exactly what the carve opens.
+            run = int(ap.get("passage") or 0) + int((doc.get("defaults") or {}).get("bore") or 0)
+            rep.check(got[0] >= decl[0] and got[1] >= decl[1],
+                      "%s: the carve's air measures %dx%d, smaller than the chamber the record declares "
+                      "(%dx%d)" % (rid, got[0], got[1], decl[0], decl[1]))
+            rep.check(got[0] <= decl[0] + alc,
+                      "%s: the carve's air is %d across its short axis; the record declares %d plus an "
+                      "alcove of %d" % (rid, got[0], decl[0], alc))
+            rep.check(got[1] <= decl[1] + run,
+                      "%s: the carve's air is %d along its long axis; the record declares a chamber of %d "
+                      "plus a passage of %d and a bore of %d" % (rid, got[1], decl[1],
+                                                                 int(ap.get("passage") or 0),
+                                                                 int((doc.get("defaults") or {}).get("bore") or 0)))
+            rep.check(y1 - y0 + 1 >= int(ch["height"]),
+                      "%s: the carve's air is %d tall, under the %d the record declares"
+                      % (rid, y1 - y0 + 1, int(ch["height"])))
+            rep.check(y1 - y0 + 1 <= int(ch["height"]) + int(ap.get("drop") or 0),
+                      "%s: the carve's air is %d tall, over the chamber's %d plus the approach's declared "
+                      "drop of %d" % (rid, y1 - y0 + 1, int(ch["height"]), int(ap.get("drop") or 0)))
 
         # ---- the gate, parsed out of the generated near ---------------------
         near = fn_dir / rid / "near.mcfunction"
