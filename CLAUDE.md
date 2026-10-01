@@ -391,6 +391,34 @@ columns and `floor(h)` at 52%. Reading a world to *check* a result (the verify p
 `tools/town_audit.py`) is different and still required. `tests/test_ground_rule.py` fails if a
 placement tool reads a world to decide.
 
+## How to prove an audit is independent
+
+An audit that shares the builder's derivation is not independent, however
+separate its file. On 2026-09-30 `portals.py` and `portals_audit.py` both read a
+landmark's `extent` as "where water is", so builder and auditor agreed with each
+other about a hole 219,737 columns wide; and `legendaries_audit.py` computed its
+expectation with `L.geometry()`, the builder's own function, under a header
+claiming "nothing is taken from the artifact being checked" — true, and a weaker
+guarantee than it sounds.
+
+Two standards came out of fixing them, and both are the standard now:
+
+**Mutate the GENERATOR, not the record.** A record-side mutation moves the
+expectation and the output together and proves nothing — it will pass a shared
+derivation happily. The only mutation that tests independence changes the code
+under test and leaves the authored data alone: `width + 4` inside
+`legendaries.geometry()`, with `data/legendaries.json` untouched, is what proved
+the new dimension check actually bites. If a mutation test only ever edits data,
+it is not testing independence.
+
+**Reject your own slack.** The first version of that check used a `+2` fudge and
+failed five chambers at 32 against a limit of 31. Widening the slack would have
+produced a check that passes and proves nothing. Reading the geometry showed the
+real accounting — along the long axis the air is `bore + passage + chamber`,
+3 + 12 + 17 = 32 exactly — so the formula names those two declared fields instead
+of a constant. **A threshold you tuned until the data passed is not a threshold.**
+If you cannot derive the number from the data, the check is not ready.
+
 ## Our list is not the world
 
 A generated list of what WE place is never a list of what is in the world. The
