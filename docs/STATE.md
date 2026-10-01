@@ -269,7 +269,7 @@
   `cobblers-10240.pre-rescale`; the `cobblers-dryrun*` worlds `docs/STATE.md` cites throughout are gone,
   and `C:/Users/wnd/Documents/cobblers-10240*.world` are WorldPainter PROJECT files, not Minecraft saves.
   **`server.properties` has `level-name=cobblers-10240`**, so booting the server as it stands loads the
-  live world. `eula=true` is already the owner's and is not to be touched. So a runtime check needs either
+  live world. The EULA is already accepted on the owner's side and no tool, script or agent may touch it (`.claude/rules/security.md`); `tests/test_no_eula.py` scans every tracked file for the literal acceptance line, so do not write it even in prose -- this sentence replaced a version that did, and the guard caught it. So a runtime check needs either
   a designated offline snapshot (CLAUDE.md: if none exists, stop and ask) or the owner's say-so to point
   `level-name` at a throwaway level. Repointing the live server's world while the owner sleeps was not
   done. **Two cheap, high-value checks are waiting on this**: `/pokespawn hoopa` (one command, below) and
