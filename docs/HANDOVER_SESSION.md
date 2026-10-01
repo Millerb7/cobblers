@@ -1,139 +1,116 @@
-# Handover — the phase-2 PR, four red tests, and the settlement NPCs counted
+# Handover — the baseline is 7, and a build step nobody tests
 
 A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else, before it starts.
 
-Two units in one session: the overdue phase-2 PR, then the settlement-NPC count. 80 turns, context 241k,
-**2.1M weighted** — against 42.9M for the run before it. `session_cost.py` says hand over, and the unit is
-done, so this stops here.
+Three units: the overdue phase-2 PR, the settlement-NPC count, and the four red tests. ~150 turns, context
+over 300k, **~4M weighted** — against 42.9M for the 2026-09-30 run. Handing over on the cost rule.
 
-## 1. The PR stack — three drafts, in order
+## 1. The PR stack — four drafts, merge bottom-up, each pinned
 
-Nothing is merged. **Merge bottom-up, each pinned to its reported head.**
+Nothing is merged. **#97 inherits 38 commits from #95 and must not merge before it.**
 
-| PR | Branch | Base | Head | What |
-|---|---|---|---|---|
-| [#95](https://github.com/Millerb7/cobblers/pull/95) | `night/2026-09-29-water-export` | `main` | `5230051ed2d2` | the water export (pre-existing, **frozen**) |
-| [#97](https://github.com/Millerb7/cobblers/pull/97) | `build/2026-09-29-phase2` | `main` | `27710fdb82085d06d5cb01229b4651d2ba75b70a` | the phase-2 build, 140 commits |
-| [#98](https://github.com/Millerb7/cobblers/pull/98) | `docs/2026-09-30-phase2-handover` | #97's branch | `3bf300b056c2b7037f261bb3fc9ebbd4a7e11ee2` | the suite-baseline correction |
-| [#99](https://github.com/Millerb7/cobblers/pull/99) | `docs/2026-09-30-settlement-npcs` | #98's branch | see below | the settlement-NPC count |
+| PR | Branch | Base | Head |
+|---|---|---|---|
+| [#95](https://github.com/Millerb7/cobblers/pull/95) | `night/2026-09-29-water-export` | `main` | `5230051ed2d24d1c3b7c13b0a171159b44653b5c` |
+| [#97](https://github.com/Millerb7/cobblers/pull/97) | `build/2026-09-29-phase2` | `main` | `27710fdb82085d06d5cb01229b4651d2ba75b70a` |
+| [#98](https://github.com/Millerb7/cobblers/pull/98) | `docs/2026-09-30-phase2-handover` | #97 | `3bf300b056c2b7037f261bb3fc9ebbd4a7e11ee2` |
+| [#99](https://github.com/Millerb7/cobblers/pull/99) | `docs/2026-09-30-settlement-npcs` | #98 | `3a1aff32f818a076adffc33dcba77caf8a194594` |
+| #100 | `fix/2026-09-30-phase2-red-tests` | #99 | see §5 |
 
-- **#97 inherits 38 commits from #95 and must not merge before it.**
-- Merge commands: `gh pr merge 97 --match-head-commit 27710fdb82085d06d5cb01229b4651d2ba75b70a`, then
-  `gh pr merge 98 --match-head-commit 3bf300b056c2b7037f261bb3fc9ebbd4a7e11ee2`, then #99 at its head.
-- All four are **drafts**; marking any ready is a human act and nobody has reviewed them.
-- Current branch is `docs/2026-09-30-settlement-npcs`. Tree clean apart from `.codex/config.toml`,
-  **deliberately uncommitted** — it is Codex's (`docs/HANDOVER_CODEX.md` item 29).
-- **A memory note disagrees with this shape:** "one big PR per batch, not a stack". The stack happened
-  because each PR was opened before the next unit started and a reported branch is frozen. If the owner
-  prefers one PR, the three doc branches should be squashed onto #97 before it is reported anywhere else.
+**The stack contradicts the owner's own rule** ("one big PR per batch, not a stack"). It grew because each
+PR opened before the next unit began, and a reported branch is frozen. **If one PR is wanted, the three doc
+and fix branches squash onto #97** — worth settling before any of it merges.
 
-## 2. The next unit: four red tests that are phase-2's own
+## 2. The suite baseline is 7, not 8 or 12
 
-Unchanged from the last handover and **still the next job** — a chip was spawned for it (`task_2a850b3d`),
-so it may already be running in another session; check before starting.
+**Measured 2026-10-01 at the fix branch: `7 failed, 5169 passed, 9 xfailed in 641 s`.** All four failures
+that were phase-2's own are fixed, and `no_swallowed_crashes` with them. The remaining seven are
+pre-existing and still not to be chased: heightmap provenance (`water_shaped_from` undocumented),
+`mines_independent` surface faces, two `rift_heightmap` sculpt tests, three `sea_town` tests (the
+sea-town/ferry migration that contracts C3 and C14 record).
 
-The suite at 27710fd is **5,138 passed, 12 failed, 9 xfailed** in 1,054 s. Eight are the real pre-existing
-baseline and must not be chased. **Four are phase-2's own**, in two test files that are new on that branch
-along with the data they check (`data/gym_buildings/` and `data/legendaries.json` exist on no other branch):
+How each was fixed, none by moving a number until it passed — the detail is in `docs/STATE.md`:
 
-| Test | Why it fails |
-|---|---|
-| `test_gym_buildings_independent.py::test_the_five_buildings_are_exactly_the_five_interiors_that_were_superseded` | written at **five** buildings; there are now **seven** (gyms 6 and 8 landed after) |
-| `…::test_the_audit_says_something_about_every_building_that_exists` | same cause |
-| `test_legendaries.py::test_an_unadmitted_unsatisfiable_gate_is_rejected` | Registeel was unsited when it was written |
-| `…::test_a_new_unsatisfiable_dependency_must_be_admitted` | *"registeel is sited now: this test no longer tests it"* |
+- **The gym pair** was one hardcoded `GYMS = (gym1, gym3, gym4, gym5, gym7)` in the test while
+  `tools/gym_buildings_independent.py` has always globbed the folder. The tool audited gyms 6 and 8; the
+  tests never looked. `GYMS` now reads the folder, and **gyms 6 and 8 pass all 117 content properties**.
+- **The legendaries pair** shared one cause: `registeel` was their "unsited" exemplar and #97 sited it. The
+  exemplar now comes from the data. The one whose live fault that siting **closed** was replaced by the
+  direction nothing covered — that a correct `gate.unsatisfiable_until` is honoured — proved by mutating
+  the generator (`admitted = []`), then reverted.
+- **`no_swallowed_crashes`** was right about two `except BaseException` fixtures; both now catch
+  `terrain.TerrainUnavailable`, and the skip path is verified with `COBBLERS_SOURCE_ROOT` unset.
 
-**Use a `test-author` agent.** Decide what each should now assert; do not widen a threshold until it passes
-(CLAUDE.md, "Reject your own slack"). Reproduce with:
+## 3. THE NEXT UNIT: `tools/gym_demolish.py` has no test at all
 
-```
-python -m pytest -q --tb=line tests/test_gym_buildings_independent.py tests/test_legendaries.py tests/test_no_swallowed_crashes.py
-```
+**A full suite run with the demolish step fail-closed on gym6 still reported `7 failed, 5169 passed` — the
+identical numbers to a healthy run.** Nothing exercises `superseded()` or the demolition's selection, so
+step R16F could refuse to build and the suite would stay green. It was found by reading the consumers of a
+changed field and running the tool by hand, not by any check.
 
-While there: `no_swallowed_crashes` names those same two files for catching `BaseException` with the comment
-*"no heightmap here"*. **The heightmap is present** — `tools/ground.py` read it fine this session — so that
-excuse should be re-examined, not inherited.
+A chip is spawned (`task_29e9ef92`) with the full brief and the seven properties worth protecting. **It must
+be a `test-author` agent**: this session changed that tool, so it must not write its first test. Check the
+chip before starting in case it is already running.
 
-## 3. The settlement NPCs: 15, not 32 (`docs/world-building/SETTLEMENT_NPCS.md`)
+## 4. Gyms 6 and 8: confirmed, with the gate answered by design not by experiment
 
-**The owner's figure of 32 has no file behind it** — `32` appears nowhere in the repository in connection
-with NPCs. Closest real number is **34**, the gate-guard positions.
+The owner confirmed both on 2026-10-01, so `data/gym_interiors.json` records them `superseded_by` and the
+strict xfail is gone. Two things a cold start should not have to re-derive:
 
-- **15 unplaced settlement NPCs**: the 13 `npc_main_*` actors of `main_worldshift_reveal`, plus Pallet's
-  Hank (105 nodes) and Lena (16, `scope: mixed` — she is the one `compile_dialogue.py` refuses, on
-  world-scoped fields). Nothing places any of them.
-- `data/dialogue.json`'s 74 conversations hold 24 `npc_id`s; **50 carry none** and are Routes 1–3 props and
-  Pokémon, already built. `data/scenes.json`'s 10 actors are all route Pokémon.
-- **The blocker is standing blocks, not coordinates.** 10 of 13 have a `recorded_position_xz`; **0 have a
-  `stand_marker`**. Nine of the ten check out — inside their own settlement's footprint and on heightmap
-  ground within ~2 blocks of its `ground_y` range. Missing a position entirely: `pallet_maren`,
-  `brock_witness`, `rift_surveyor`, all blocked upstream (Pallet relocation is open; `brock_witness`'s
-  anchor now means the authored Stoneworks Hall).
-- **The bulk of the work is the 12 physical-evidence objects, 10 unbuilt** — Misty's relief ledger, Surge's
-  signal array and comparison record, Erika's survey ledger, Koga's control plate, Sabrina's convergence
-  table, Blaine's destination model, Giovanni's dissenter carrier.
-- **34 gate guards: positions exist, characters do not.** "THE GATES ARE GUARDS." Counted from
-  `TOWN_CHARACTER.md` — 33 rows, 34 positions, Sunset West carrying two. Codex's.
+- **gym6's `why_not` was an owner gate** — Sabrina's gym not built until EXP-034 has run, being the only
+  per-player puzzle. **EXP-034 is still unrun.** The gate is answered because the Hall of Lenses carries no
+  per-player state, so the machinery it protected against is not in the building. If anyone later wants the
+  gate honoured literally, this is the decision to revisit.
+- **gym8's `why_not` was `"as gym2"`, and that was stale.** Giovanni's was a COBBLEVERSE donor shell, not
+  Misty's carved interior. Corrected.
+- Marking them superseded **fail-closed `gym_demolish.py`**, which demanded both `dig` and
+  `shell.expect_box`. Each now declares `works_existed: false` (absence declared, never inferred from a
+  missing key) and carries a `shell.expect_box` derived from `data/placements.json` — the source gym1 uses,
+  never the building's own record. The tool re-derives it and agrees.
 
-### Defect for Codex, deliberately not fixed here
+## 5. Also done this session
 
-**`npc_main_league_steward` is recorded at (3297, 2603): 433 blocks from the League, inside no settlement,
-at heightmap y118 against the League footprint's 86.3–98.9.** Three checks on independent data. It is **the
-retired `FACTION.md` cradle coordinate**, the one the Rift-zones unit rejected for (3357, 3306) because it
-falls outside the Rift — so one stale coordinate has propagated into a second file. `data/quests.json` is
-story data: **Codex corrects it upstream.** Moving it to the League lot from this side would hide the
-propagation.
+- **The settlement NPCs are 15, not 32** (`docs/world-building/SETTLEMENT_NPCS.md`, PR #99). The figure 32
+  appears nowhere in the repository. The blocker is **standing blocks, not coordinates**: 10 of 13 actors
+  have a position, **0 have a `stand_marker`**. The bulk of the work is 12 physical-evidence objects, 10
+  unbuilt. Separately, **34 gate-guard positions have no characters at all** (Codex's).
+- **Defect for Codex, deliberately not fixed:** `npc_main_league_steward` is recorded at (3297, 2603) —
+  433 blocks from the League, inside no settlement, heightmap y118 against the League's 86.3–98.9. It is the
+  retired `FACTION.md` cradle coordinate the Rift-zones unit already rejected for (3357, 3306). **Codex
+  corrects it upstream**; moving it from this side would hide the propagation.
+- **Worktrees cleaned once:** `.claude/worktrees/` 44 directories / 7.9 GB → 8 / 4.77 GB; registered
+  worktrees 61 → 25. Nothing lost (every agent HEAD was reachable; all dirty files redundant). Left alone:
+  the locked `agent-a935361eae89fb3d0`, the empty `canonical-data`, and `winui3-widget-board-60b59c`, which
+  belongs to the **`Job-Bored`** repo. **No teardown rule was added**, so it will rebuild.
 
-## 4. Blocked: the server lock, so no install check has run
+## 6. Blocked: the server lock, three sessions running
 
 Server **down** — no listener on 25565, no Java process. The lock at
 `C:\Users\wnd\Documents\github\.cobblers-server-agent.lock` still carries the 2026-09-29 owner line.
+**The write to take it over is refused** by the auto-mode classifier (`Modify Shared Resources`), and per
+CLAUDE.md a refusal ends the attempt, so it has not been routed around. That also rules out
+`tools/install_check.py`. **The session-start install check has not run for three sessions.** Either get
+that write permitted or stay repo-only.
 
-**The write to take it over was refused** by the auto-mode permission classifier (`Modify Shared
-Resources`). Per CLAUDE.md a refusal ends the attempt, so it was not routed around — and that also rules out
-`python tools/install_check.py`, which reads the server's `config/` and `datapacks/`. **The session-start
-install check has not run for two sessions now.** A cold session either gets that write permitted or stays
-repo-only. Both units this session were repo-only and unaffected.
+## 7. Still open, untouched
 
-## 5. Worktrees: cleaned once, no rule added
+- **F12** — two authored trainer points inside town boxes. Seats moved to legal shoulders, authored points
+  left alone. **Codex's `TRAINER_RULES.json`.**
+- **Four zone walls withheld by data:** z4 needs Codex dialogue reading `q.player.pokedex.caught_count`;
+  z5 needs `rift_crisis_resolved`, which has **no setter** on `origin/codex/trainer-modes`. Do not invent it.
+- **Giovanni's roster held and empty**, blocked on `docs/story/GIOVANNI_FORMAT.md`. The decision goes in
+  `data/gym_trainers.json` as his `battle_format`.
+- **Unproven, owner only: whether Brock refuses a rematch with the badge in hand.** Installed is not working.
 
-`.claude/worktrees/` was **44 directories, 7.9 GB**; 37 were `agent-*` isolation worktrees the harness never
-reclaimed (it auto-cleans only unchanged ones, and every one had been written to). The app's own
-`clean_up_worktrees` cannot see them — it reports 4 worktrees across 3 repos, session worktrees only.
+## 8. What a cold start must not rediscover
 
-Removed 36 and 59 stale `worktree-agent-*` branch refs → **8 directories, 4.77 GB**; registered worktrees
-61 → 25. Checked safe first: every agent HEAD was reachable elsewhere, and all six dirty worktrees held only
-redundant untracked copies.
-
-Left alone deliberately: the locked `agent-a935361eae89fb3d0`; `canonical-data` (empty, unregistered); and
-`winui3-widget-board-60b59c`, which is a worktree of the **`Job-Bored`** repo parked in cobblers' folder and
-which `git worktree prune` here will never touch.
-
-**No teardown rule was added** (the owner chose removal only). So this will rebuild; if it should not, the
-rule belongs in CLAUDE.md's Delegation section.
-
-## 6. Still open, untouched by this session
-
-- **F12** — `route_07_trainer_01` and `route_07_trainer_04` authored inside town boxes. Seats moved to legal
-  shoulders, authored points left alone. **Codex's `TRAINER_RULES.json`; do not correct from this side.**
-- **Four zone walls withheld by data:** z4 needs Codex dialogue reading `q.player.pokedex.caught_count`; z5
-  needs `rift_crisis_resolved`, which still has **no setter** on `origin/codex/trainer-modes`.
-  `rift_zones.py report` exiting 1 on 3 OWED is correct. Do not invent the setter.
-- **Giovanni's roster held and empty**, blocked on the singles-vs-doubles call in
-  `docs/story/GIOVANNI_FORMAT.md`. His building exists; the eighth badge is winnable against upstream's
-  roster. The decision goes in `data/gym_trainers.json` as his `battle_format`.
-- **Unproven, owner only: whether Brock now refuses a rematch with the badge in hand.** The guard is
-  installed; installed is not working.
-
-## 7. What a cold start must not rediscover
-
-- **A nested isolation worktree is based on the MAIN checkout's HEAD**, far behind, and `git merge --ff-only`
-  fails. Authorise `git reset --hard <sha>` explicitly in the brief.
-- **Verify against the world, not the plan.** Make the agent nominate, in advance and in coordinates, the
-  seats most likely to embarrass it, then probe those over RCON.
-- **"Our list is not the world"** and **"How to prove an audit is independent"** are both in CLAUDE.md. Read
-  them before writing an audit or anything that enumerates our own data.
-- `COBBLERS_SOURCE_ROOT` must be `C:\Users\wnd\Documents` in every shell. Both validators are clean at
-  4514dad: `validate_data.py` 0 errors 0 warnings; `validate.py` 1,237 files, 0 errors, 0 warnings.
-- The full suite takes **1,054 s** — over the 600 s tool timeout. Run it backgrounded.
-- `tools/ground.py`'s API is `ground.load()` returning a callable, plus `.box()`; there is no `ground.at()`.
+- **A nested isolation worktree is based on the MAIN checkout's HEAD**; `git merge --ff-only` fails.
+  Authorise `git reset --hard <sha>` in the brief.
+- **Mutate the generator, not the record**, and reject your own slack. Both proved their worth this session:
+  the legendaries admission path was only provable by mutating `legendaries_audit.py`.
+- **Read the consumers of any field you change.** One `superseded_by` edit fail-closed a build step and no
+  test noticed.
+- The full suite is **~640–1,050 s** — over the 600 s tool timeout. Run it backgrounded.
+- `tools/ground.py` is `ground.load()` returning a callable, plus `.box()`; there is no `ground.at()`.
+  It raises `terrain.TerrainUnavailable` when the heightmap is missing.
+- `COBBLERS_SOURCE_ROOT` must be `C:\Users\wnd\Documents` in every shell. Both validators clean at the tip.
