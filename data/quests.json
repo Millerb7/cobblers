@@ -850,7 +850,8 @@
             5309
           ],
           "stand_marker": null,
-          "status": "Oak's Lab is verified; an interior safe standing block is not recorded"
+          "status": "Oak's Lab is verified; an interior safe standing block is not recorded",
+          "stand_marker_blocked_by": "Indoors: data/placements.json gives the anchor 'hometown_oaks_lab' kind 'lab'. The heightmap under a building is the TERRAIN the build sat on, not the floor it laid, so ground+1 here would put this actor under its own floor. Heightmap ground at (1487, 5309) is y117. This one needs the world: probe the interior with `execute positioned 1487 ~ 5309 run ...` once the town is standing."
         },
         {
           "npc_id": "npc_main_pallet_mina",
@@ -860,7 +861,22 @@
             1456,
             5287
           ],
-          "stand_marker": null,
+          "stand_marker": {
+            "at": [
+              1456,
+              118,
+              5287
+            ],
+            "ground_y": 117,
+            "from_": "tools/ground.py, the canonical heightmap rounded (CLAUDE.md: ground comes from the heightmap, never from a world). ground+1 is the block a player stands ON.",
+            "inside_town_footprint": [
+              "hometown"
+            ],
+            "ground_in_footprint_range": true,
+            "verified_in_world": false,
+            "probe": "/execute positioned 1456 118 5287 run data get entity @e[type=item,limit=1] -- or simply fly to (1456, 118, 5287) and look down: the marker is right if the actor would stand on a solid, flat, unobstructed block of the town's own surface.",
+            "why_unverified": "The quest's own blocker asks for a marker 'verified against the world the town actually stands in, not against the plan', and no world is running. This is the authoring half the owner asked for; the probe half waits for a world."
+          },
           "status": "the sign is verified; exact surface Y and NPC standing block are not recorded"
         },
         {
@@ -878,7 +894,8 @@
             ]
           ],
           "stand_marker": null,
-          "status": "the lane exists in placement data; Maren has no accepted NPC marker or stable runtime actor yet"
+          "status": "the lane exists in placement data; Maren has no accepted NPC marker or stable runtime actor yet",
+          "stand_marker_blocked_by": "No recorded_position_xz to stand on. Pallet relocation is still open, so every Pallet anchor is a staging anchor."
         },
         {
           "npc_id": "npc_main_brock_witness",
@@ -890,7 +907,8 @@
             3690
           ],
           "stand_marker": null,
-          "status": "the prefab is built; its recorded coordinate is the structure anchor, not a verified safe NPC block"
+          "status": "the prefab is built; its recorded coordinate is the structure anchor, not a verified safe NPC block",
+          "stand_marker_blocked_by": "No recorded_position_xz to stand on. Its anchor is 'built Brock gym prefab', which now means the authored Stoneworks Hall rather than the donor shell."
         },
         {
           "npc_id": "npc_main_misty_relief_clerk",
@@ -900,7 +918,22 @@
             1605,
             2801
           ],
-          "stand_marker": null,
+          "stand_marker": {
+            "at": [
+              1605,
+              108,
+              2801
+            ],
+            "ground_y": 107,
+            "from_": "tools/ground.py, the canonical heightmap rounded (CLAUDE.md: ground comes from the heightmap, never from a world). ground+1 is the block a player stands ON.",
+            "inside_town_footprint": [
+              "gym2_town"
+            ],
+            "ground_in_footprint_range": true,
+            "verified_in_world": false,
+            "probe": "/execute positioned 1605 108 2801 run data get entity @e[type=item,limit=1] -- or simply fly to (1605, 108, 2801) and look down: the marker is right if the actor would stand on a solid, flat, unobstructed block of the town's own surface.",
+            "why_unverified": "The quest's own blocker asks for a marker 'verified against the world the town actually stands in, not against the plan', and no world is running. This is the authoring half the owner asked for; the probe half waits for a world."
+          },
           "status": "town site is proposed and unbuilt; no safe NPC marker exists"
         },
         {
@@ -916,7 +949,22 @@
             284,
             1248
           ],
-          "stand_marker": null,
+          "stand_marker": {
+            "at": [
+              1688,
+              175,
+              1410
+            ],
+            "ground_y": 174,
+            "from_": "tools/ground.py, the canonical heightmap rounded (CLAUDE.md: ground comes from the heightmap, never from a world). ground+1 is the block a player stands ON.",
+            "inside_town_footprint": [
+              "gym3_town"
+            ],
+            "ground_in_footprint_range": true,
+            "verified_in_world": false,
+            "probe": "/execute positioned 1688 175 1410 run data get entity @e[type=item,limit=1] -- or simply fly to (1688, 175, 1410) and look down: the marker is right if the actor would stand on a solid, flat, unobstructed block of the town's own surface.",
+            "why_unverified": "The quest's own blocker asks for a marker 'verified against the world the town actually stands in, not against the plan', and no world is running. This is the authoring half the owner asked for; the probe half waits for a world."
+          },
           "status": "town and signal array are planned, not built"
         },
         {
@@ -927,7 +975,22 @@
             4309,
             1555
           ],
-          "stand_marker": null,
+          "stand_marker": {
+            "at": [
+              4309,
+              112,
+              1555
+            ],
+            "ground_y": 111,
+            "from_": "tools/ground.py, the canonical heightmap rounded (CLAUDE.md: ground comes from the heightmap, never from a world). ground+1 is the block a player stands ON.",
+            "inside_town_footprint": [
+              "gym4_town"
+            ],
+            "ground_in_footprint_range": true,
+            "verified_in_world": false,
+            "probe": "/execute positioned 4309 112 1555 run data get entity @e[type=item,limit=1] -- or simply fly to (4309, 112, 1555) and look down: the marker is right if the actor would stand on a solid, flat, unobstructed block of the town's own surface.",
+            "why_unverified": "The quest's own blocker asks for a marker 'verified against the world the town actually stands in, not against the plan', and no world is running. This is the authoring half the owner asked for; the probe half waits for a world."
+          },
           "status": "town and survey object are unbuilt; the dry channel exists as terrain"
         },
         {
@@ -938,7 +1001,22 @@
             4646,
             2446
           ],
-          "stand_marker": null,
+          "stand_marker": {
+            "at": [
+              4646,
+              118,
+              2446
+            ],
+            "ground_y": 117,
+            "from_": "tools/ground.py, the canonical heightmap rounded (CLAUDE.md: ground comes from the heightmap, never from a world). ground+1 is the block a player stands ON.",
+            "inside_town_footprint": [
+              "gym5_town"
+            ],
+            "ground_in_footprint_range": true,
+            "verified_in_world": false,
+            "probe": "/execute positioned 4646 118 2446 run data get entity @e[type=item,limit=1] -- or simply fly to (4646, 118, 2446) and look down: the marker is right if the actor would stand on a solid, flat, unobstructed block of the town's own surface.",
+            "why_unverified": "The quest's own blocker asks for a marker 'verified against the world the town actually stands in, not against the plan', and no world is running. This is the authoring half the owner asked for; the probe half waits for a world."
+          },
           "status": "town and recovered anchor display are unbuilt"
         },
         {
@@ -949,7 +1027,22 @@
             6196,
             3398
           ],
-          "stand_marker": null,
+          "stand_marker": {
+            "at": [
+              6196,
+              95,
+              3398
+            ],
+            "ground_y": 94,
+            "from_": "tools/ground.py, the canonical heightmap rounded (CLAUDE.md: ground comes from the heightmap, never from a world). ground+1 is the block a player stands ON.",
+            "inside_town_footprint": [
+              "gym6_town"
+            ],
+            "ground_in_footprint_range": true,
+            "verified_in_world": false,
+            "probe": "/execute positioned 6196 95 3398 run data get entity @e[type=item,limit=1] -- or simply fly to (6196, 95, 3398) and look down: the marker is right if the actor would stand on a solid, flat, unobstructed block of the town's own surface.",
+            "why_unverified": "The quest's own blocker asks for a marker 'verified against the world the town actually stands in, not against the plan', and no world is running. This is the authoring half the owner asked for; the probe half waits for a world."
+          },
           "status": "town and convergence-record display are unbuilt"
         },
         {
@@ -960,7 +1053,22 @@
             6074,
             4995
           ],
-          "stand_marker": null,
+          "stand_marker": {
+            "at": [
+              6074,
+              108,
+              4995
+            ],
+            "ground_y": 107,
+            "from_": "tools/ground.py, the canonical heightmap rounded (CLAUDE.md: ground comes from the heightmap, never from a world). ground+1 is the block a player stands ON.",
+            "inside_town_footprint": [
+              "gym7_town"
+            ],
+            "ground_in_footprint_range": true,
+            "verified_in_world": false,
+            "probe": "/execute positioned 6074 108 4995 run data get entity @e[type=item,limit=1] -- or simply fly to (6074, 108, 4995) and look down: the marker is right if the actor would stand on a solid, flat, unobstructed block of the town's own surface.",
+            "why_unverified": "The quest's own blocker asks for a marker 'verified against the world the town actually stands in, not against the plan', and no world is running. This is the authoring half the owner asked for; the probe half waits for a world."
+          },
           "status": "town and destination-model display are unbuilt; Craters terrain is partial"
         },
         {
@@ -971,7 +1079,22 @@
             3647,
             6497
           ],
-          "stand_marker": null,
+          "stand_marker": {
+            "at": [
+              3647,
+              114,
+              6497
+            ],
+            "ground_y": 113,
+            "from_": "tools/ground.py, the canonical heightmap rounded (CLAUDE.md: ground comes from the heightmap, never from a world). ground+1 is the block a player stands ON.",
+            "inside_town_footprint": [
+              "gym8_town"
+            ],
+            "ground_in_footprint_range": true,
+            "verified_in_world": false,
+            "probe": "/execute positioned 3647 114 6497 run data get entity @e[type=item,limit=1] -- or simply fly to (3647, 114, 6497) and look down: the marker is right if the actor would stand on a solid, flat, unobstructed block of the town's own surface.",
+            "why_unverified": "The quest's own blocker asks for a marker 'verified against the world the town actually stands in, not against the plan', and no world is running. This is the authoring half the owner asked for; the probe half waits for a world."
+          },
           "status": "town and dissenter evidence carrier are unbuilt"
         },
         {
@@ -984,7 +1107,8 @@
             5082
           ],
           "stand_marker": null,
-          "status": "Rift terrain exists; a safe actor marker is not recorded"
+          "status": "Rift terrain exists; a safe actor marker is not recorded",
+          "stand_marker_blocked_by": "No recorded_position_xz to stand on. victory_road_entry has no recorded column yet."
         },
         {
           "npc_id": "npc_main_league_steward",
@@ -995,7 +1119,8 @@
             2603
           ],
           "stand_marker": null,
-          "status": "League and containment cradle are accepted but unbuilt"
+          "status": "League and containment cradle are accepted but unbuilt",
+          "stand_marker_blocked_by": "Left alone deliberately. Its recorded (3297, 2603) is 433 blocks from the League, inside no settlement, on heightmap ground y118 against the League's own 86.3-98.9: the retired FACTION.md cradle coordinate the Rift-zones unit already rejected. Authoring a marker here would seat the steward on the defect and hide the propagation. It is upstream and Codex's (docs/world-building/SETTLEMENT_NPCS.md section 3)."
         }
       ],
       "physical_evidence": [
