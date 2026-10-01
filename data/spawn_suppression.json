@@ -63,9 +63,9 @@
         1808,
         3664,
         1847,
-        3695
+        3711
       ],
-      "why": "the owner, 2026-09-21: no wild Pokemon wanders into a leader battle, whatever the gym's theme. The box is Brock's gym (gym1_brock_gym, as placed) with 2 blocks round it, snapped out to the 8-block grid the route boxes share.",
+      "why": "the owner, 2026-09-21: no wild Pokemon wanders into a leader battle, whatever the gym's theme. The box was Brock's gym (gym1_brock_gym, as placed) with 2 blocks round it, snapped out to the 8-block grid the route boxes share: [1808, 3664, 1847, 3695]. Widened south to 3711 on 2026-09-29 for the gym's carved interior (data/gym_interiors.json gym1): the boxes are x/z only, four numbers and all y, so the dig is covered as long as its x/z stays inside, and the pit and the foreman's room run to z3703, past the old edge. Contract G1.",
       "mechanism": "as the League precinct's",
       "not_covered": "Pokemon a player sends out, and the gym's own trainers"
     },

@@ -168,9 +168,13 @@ def test_the_beaten_tag_is_per_trainer(cycle, files):
         assert "tag @s add cobblers_beat_%s" % t in files["data/cobblers/function/trainers/won/%s.mcfunction" % t]
 
 
-# Without it the trainer cools down while a player who has not beaten it stands there (that player can never be
-# battled on sight while a friend who won is near, and so never opens the room), or never cools down (it rebattles
-# the players who beat it after every restart).
+# Without a hold-off at all the trainer rebattles the players who beat it after every restart.
+# This asserted the OLD clause, which also required that no untagged player was near -- and that was the
+# mixed-progress fault: a pair at different progress got no cooldown and the winner was dragged back in
+# (docs/STATE.md, World facts; tests/test_trainer_holdoff_mixed_progress.py reproduces it). A test that
+# asserts a bug as correct is worse than no test, so the `unless` term is gone from the pattern and the
+# radius and duration checks stay. The trade the interim accepts -- an unbeaten player standing with a
+# beaten one must start the fight themselves -- is the owner's call of 2026-09-29, not an accident.
 @pytest.mark.parametrize("tid,seat,_yaw", PLACED, ids=IDS)
 def test_the_cooldown_needs_a_tagged_player_near_and_no_untagged_one(cycle, tid, seat, _yaw):
     _h, tags, cool, _o = _classify(cycle)
@@ -178,9 +182,11 @@ def test_the_cooldown_needs_a_tagged_player_near_and_no_untagged_one(cycle, tid,
     tag = "cobblers_beat_%s" % tid
     m = re.fullmatch(r'execute as @e\[type=rctmod:trainer,[^\]]*nbt=\{TrainerId:"%s"\}\] at @s '
                      r"if entity @a\[distance=\.\.([0-9.]+),tag=%s\] "
-                     r"unless entity @a\[distance=\.\.([0-9.]+),tag=!%s\] "
-                     r"run data merge entity @s \{Cooldown:(\d+)\}" % (re.escape(tid), tag, tag), l)
+                     r"run data merge entity @s \{Cooldown:(\d+)\}" % (re.escape(tid), tag), l)
     assert m, l
+    assert "tag=!%s" % tag not in l, (
+        "the mixed-progress fault is back: requiring that no unbeaten player is near means a pair at "
+        "different progress gets no cooldown and the winner is force-battled again")
     tag_radius = float(re.search(r"@a\[distance=\.\.([0-9.]+)\]", tags[tid][0]).group(1))
-    assert float(m.group(1)) == float(m.group(2)) == tag_radius
-    assert int(m.group(3)) > 10          # outlasts the 10-tick period, so the cooldown never lapses between cycles
+    assert float(m.group(1)) == tag_radius
+    assert int(m.group(2)) > 10          # outlasts the 10-tick period, so the cooldown never lapses between cycles

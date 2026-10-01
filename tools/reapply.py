@@ -69,6 +69,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 "cobblers_route_events", "cobblers_scenes", "cobblers_trainers",
                 # the sleeping Celebi in the Route 1 sapling and its keeper (2026-09-25)
                 "cobblers_celebi",
+                # the authored legendary encounters and their chambers (2026-09-29, tools/legendaries.py):
+                # blocks plus the per-chamber gate; the legendaries themselves are summoned over RCON by R14L,
+                # and the pack's own tick drives the gates, so it is world-local below
+                "cobblers_legendaries",
                 # the Rift's own storm: thunder and lightning for players inside the Rift (2026-09-25)
                 "cobblers_rift_storm",
                 # 2026-09-26, the install sweep: three packs the game needs that were only ever copied by hand, or
@@ -91,6 +95,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-09-28: the wayside shrines on the approaches of towns people pass through (tools/shrines.py,
                 # data/shrines.json): block functions run by R16D after the dressing and the working Pokemon
                 "cobblers_shrines",
+                # 2026-09-29: the gym interiors (tools/gym_interiors.py, data/gym_interiors.json): the healing
+                # machines out of all eight placed gyms, and gym 1's works carved under its lot. Block functions run
+                # by R16E, after the donors (R9) that stamp the gyms whole and would erase anything written first
+                "cobblers_gym_interiors",
                 # 2026-09-28: no catching over the level cap (tools/levelcap_pack.py, data/level_cap.json): a Cobblemon
                 # callback acts on its own, so world-local below
                 "cobblers_levelcap",
@@ -149,7 +157,8 @@ EXCLUDED = {
 # world the server runs, the live one included (qa review of EXP-034, 2026-09-24)
 WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", "cobblers_celebi", "cobblers_rift_storm",
                "cobblers_sizes", "cobblers_blackout", "cobblers_rift_mines", "cobblers_gulch_mine", "cobblers_mega_recipes",
-               "cobblers_ferries", "cobblers_ambient", "cobblers_levelcap", "cobblers_mines")
+               "cobblers_ferries", "cobblers_ambient", "cobblers_levelcap", "cobblers_mines",
+               "cobblers_legendaries")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -371,6 +380,11 @@ def prepare_jobs(a):
     add("place_donor:function", "place_donor.py", "function", "--server-dir", a.server_dir)
     add("traders:function", "traders.py", "function", "--server-dir", a.server_dir)
     add("sapling_celebi", "sapling_celebi.py")
+    # the authored legendary chambers, then their offline audit: a chamber whose roof would break a lake bed,
+    # whose shell is not sealed, whose gate line lacks its badge flag or whose mouth falls outside the water
+    # export's keep zone stops prepare here, before anything is installed
+    add("legendaries", "legendaries.py")
+    add("legendaries:audit", "legendaries_audit.py")
     add("rift_storm", "rift_storm.py")
     add("signposts:function", "signposts.py", "function", *src)
     # the bridges, then their offline audit against the heightmap and the water: a bridge that would stand in the
@@ -393,6 +407,12 @@ def prepare_jobs(a):
     # faces included): the generator keeps clear of what they write
     add("shrines:build", "shrines.py", "build", *src)
     add("shrines_audit", "shrines_audit.py", *src)
+    # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
+    # then the offline audit, which re-derives every shell box from data/placements.json, replays the written
+    # functions into a voxel model and fails the prepare on a broken route, a trainer that can be walked round, a
+    # room that breaks its cover or a fall that would hurt
+    add("gym_interiors:build", "gym_interiors.py", "build", *src)
+    add("gym_interiors_audit", "gym_interiors_audit.py", *src)
     # no catching over the level cap: a callback and its check
     add("levelcap_pack", "levelcap_pack.py")
     add("location_titles", "location_titles.py")
@@ -892,6 +912,15 @@ def steps(with_spawns=False):
     shrine_ids = [q["id"] for q in json.loads((ROOT / "data" / "shrines.json").read_text(encoding="utf-8")).get("shrines") or []]
     out.append(("R16D", "wayside shrines on the town approaches (%d, data/shrines.json)" % len(shrine_ids),
                 [("fn", "cobblers:shrines/%s" % s) for s in shrine_ids]))
+    # the gym interiors (tools/gym_interiors.py): the healers out of all eight placed gyms, then each built gym's
+    # carved works. After the donors (R9), which are placed whole: a healer removed before the donor runs would be
+    # stamped back, and a shaft cut before it would be filled in. Listed from the committed data, not the built pack,
+    # so the step exists whether or not the pack is built here; the prepare's audit fails on a missing function
+    gym_doc = json.loads((ROOT / "data" / "gym_interiors.json").read_text(encoding="utf-8"))
+    gym_built = [g["id"] for g in gym_doc.get("gyms") or [] if g.get("built")]
+    out.append(("R16E", "gym interiors: no healer in any of the 8 gyms, and %d carved interior(s)" % len(gym_built),
+                [("fn", "cobblers:gym_interiors/healers")]
+                + [("fn", "cobblers:gym_interiors/%s" % g) for g in gym_built]))
     # the signposts after the donors too: a donor is placed whole, and Sabrina's department store's air margin erased
     # the post where Route 7 leaves her town when the signs went in first (the staging run of 2026-09-21)
     out.append(("R15", "route signposts, after the donors", [("fn", "cobblers:signs/place")]))
@@ -919,6 +948,12 @@ def steps(with_spawns=False):
     import sapling_celebi
     out.append(("R14C", "the Celebi in the Route 1 sapling", sapling_celebi.placement_steps(sapling_celebi.load())
                 + [("check", "celebi")]))
+    # the authored legendaries: the chambers are blocks, but each legendary is an entity that an export erases,
+    # so it is summoned over RCON here for the same reason as the Celebi (spawnpokemonat in a function spawns
+    # nothing until a /reload, EXP-046). Only the sited encounters are placed; a blocked one writes nothing.
+    import legendaries
+    out.append(("R14L", "the authored legendary chambers and their legendaries (data/legendaries.json)",
+                legendaries.placement_steps(legendaries.load())))
     out.append(("V", "floor verify and trader verify", [("check", "verify")]))
     return out
 
