@@ -230,6 +230,27 @@
   `tools/gulch_mine_audit.py:242,407` checks coordinates against the gulch's tight block `grid`, which
   these sites are far outside; dens write no blocks, so the fix is a separate declared box for anchors,
   **not a wider grid** -- a threshold widened to make data pass is not a threshold.
+- **THE STAGING WORLDS ARE GONE, so "in the world" currently means NOTHING** (found 2026-10-01, the
+  owner: record it plainly). Every claim anywhere in this file of the form "applied to
+  `cobblers-dryrun11`/`cobblers-dryrun12`", "built on staging" or "probed in the world" describes a world
+  **that no longer exists**: the gyms, the portals, the town dressing, the Route 1-3 event chains, the
+  working Pokemon, the ambient keeper, the Deep's city, the Rift mining town, the gulch prototype, the sea
+  town, the evolution-stone faces, the wayside shrines, the sleeping Celebi. The content is in `data/` and
+  in the generated packs; **none of it is standing anywhere.** Treat every "on staging" line below as "the
+  pack builds and once applied cleanly to a world that has since been deleted", and re-verify rather than
+  trust it. The live world `cobblers-10240` is untouched and is never to be read.
+- **A content-bearing staging world needs a fresh EXPORT, not a generated world** (verified 2026-10-01
+  from the tools' own contracts). `tools/reapply.py` describes itself as *"the re-application after an
+  export"* and takes `carry --old-world <retired old world copy> --world-dir <fresh export>`: it builds
+  ONTO terrain, it does not create it. Every placement sits at an absolute coordinate on
+  heightmap-shaped ground, so on plain generated terrain our towns would float or be buried.
+  `tools/reexport.py` runs WorldPainter through `wpscript` and **requires `--old-world <offline snapshot>`**
+  to carry the seed and settings out of its `level.dat`. The only candidate on disk beside the live world
+  is `cobblers-10240.pre-rescale`, whose name says it predates the vertical rescale -- whether its seed
+  and settings are still the right ones to carry is the owner's call.
+  **For a mod-or-config behaviour check, no export is needed at all**: a plain generated throwaway world
+  with the mod set answers `/pokespawn hoopa` and the trainer-card question, because neither touches
+  terrain or placements.
 - **There is no staging world, and that blocks every runtime test** (found 2026-10-01). The server
   directory holds `cobblers-10240` (the LIVE world, never to be enumerated or read) and
   `cobblers-10240.pre-rescale`; the `cobblers-dryrun*` worlds `docs/STATE.md` cites throughout are gone,
