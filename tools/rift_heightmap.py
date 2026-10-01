@@ -579,22 +579,59 @@ def plan_only(source_root, world_path):
     b = build(source_root, world_path, footprints=rec["footprints"])
     blocks = report(b)
     hm = b["world"]["heightmap"]
-    if b["current"].name != OUT_NAME:
-        raise SculptError("data/world.json names %s, not the sculpt %s: --plan only describes an applied sculpt"
-                          % (b["current"].name, OUT_NAME))
+    target, target_sha, via = plan_target(hm, b["current"])
     out = sculpted(b)
-    have = np.array(Image.open(b["current"])).astype(np.uint16)
+    have = np.array(Image.open(target)).astype(np.uint16)
     if have.shape != out.shape:
-        raise SculptError("%s is %s, the sculpt %s" % (b["current"].name, have.shape, out.shape))
+        raise SculptError("%s is %s, the sculpt %s" % (target.name, have.shape, out.shape))
     differ = int((have != out).sum())
     if differ:
         raise SculptError("the sculpt computed from data/rift_sculpt.json differs from %s in %d columns: the spec or "
                           "a tool changed since the last --apply, and that is a decision for --apply, not --plan"
-                          % (b["current"].name, differ))
-    write_plan(b, hm["sha256"], blocks)
-    print("wrote %s for %s (%s); the heightmap and data/world.json are untouched"
-          % (PLAN.relative_to(ROOT), OUT_NAME, hm["sha256"][:12]))
+                          % (target.name, differ))
+    write_plan(b, target_sha, blocks)
+    print("wrote %s for %s (%s)%s; the heightmap and data/world.json are untouched"
+          % (PLAN.relative_to(ROOT), OUT_NAME, target_sha[:12], via))
     return 0
+
+
+def plan_target(hm, current):
+    """(file, sha256, note) the plan must be verified against: the sculpt's own output, wherever it now sits.
+
+    `--plan` proves the sculpt reproduces a real file before describing it, and that check is the whole value of
+    the mode. It used to compare against the heightmap data/world.json PINS, which was the same file only while the
+    sculpt was the last pass over the heightmap. The water export (2026-09-29) added a pass on top, so the pin
+    became land_8k_16_rescaled_b145_pads_rift_water.png and `--plan` refused -- in EVERY checkout, not just an
+    agent's, which left derived/rift_sculpt/ unreproducible and the Rift's block passes resting on a folder nothing
+    could rebuild (docs/research/AGENT_WORKTREE_INPUTS.md).
+
+    The sculpt's output is still on disk and data/world.json still names AND hashes it, as one of the heightmap's
+    provenance entries -- `water_shaped_from` today. So the target is found by asking the data which entry names
+    OUT_NAME, rather than by hardcoding one hop: another pass layered on later moves the pin again and this keeps
+    working. The sha is checked, so a plan can never describe a file that is not the one the chain recorded.
+    """
+    if current.name == OUT_NAME:
+        return current, hm["sha256"], ""
+    named = sorted(k for k, v in hm.items()
+                   if isinstance(v, dict) and v.get("path") == OUT_NAME and v.get("sha256"))
+    if not named:
+        raise SculptError(
+            "data/world.json pins %s, and no heightmap provenance entry names the sculpt %s, so there is nothing to "
+            "verify the plan against. --apply records the sculpt; a later pass over the heightmap must record what "
+            "it consumed (path and sha256) or the sculpt becomes unreproducible."
+            % (current.name, OUT_NAME))
+    key = named[0]
+    sha = hm[key]["sha256"]
+    target = current.parent / OUT_NAME
+    if not target.exists():
+        raise SculptError("data/world.json's %s names %s, which is not beside %s. The sculpt output is the one file "
+                          "--plan can be verified against; without it, re-run --apply."
+                          % (key, OUT_NAME, current.name))
+    got = hashlib.sha256(target.read_bytes()).hexdigest()
+    if got != sha:
+        raise SculptError("%s hashes to %s, but data/world.json's %s records %s: the file beside the heightmap is "
+                          "not the sculpt the chain recorded." % (OUT_NAME, got[:12], key, sha[:12]))
+    return target, sha, ", reached through heightmap.%s because the pin has moved on to %s" % (key, current.name)
 
 
 def main(argv=None):
