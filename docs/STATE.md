@@ -1,5 +1,26 @@
 # Project state
 
+> ## READ THIS FIRST: nothing is in any world
+>
+> **The staging worlds are gone** (established 2026-10-01). `cobblers-dryrun9`, `dryrun11` and
+> `dryrun12` no longer exist. **Every claim in this file of the form "applied to dryrun12", "built on
+> staging", "stands on staging" or "probed in the world" describes a world that has been deleted.**
+>
+> That covers, non-exhaustively: all five built gym buildings, the twelve dive and sky portals, the town
+> dressing and its 85 pieces, the Routes 1-3 event chains, the 20 working Pokemon, the ambient keeper, the
+> Deep's city and the relic area's surface, the Rift mining town, the gulch prototype and its redesign,
+> the sea town's 15 rafts, the 22 evolution-stone faces, the 6 wayside shrines, the sleeping Celebi, the
+> marsh and jungle foliage export, and the Scar's ruins.
+>
+> **All of it exists as authored data in `data/` and as generated packs in `build/`. None of it is
+> standing anywhere.** The live world `cobblers-10240` is untouched, is not staging, and is never to be
+> read or enumerated.
+>
+> So: **"in the world" currently means nothing.** Before trusting any "on staging" line below, remember it
+> describes a pack that applied cleanly once, to a world that is gone. Re-verification needs a new world,
+> and a content-bearing one needs a fresh WorldPainter export (`tools/reexport.py`, which must carry a
+> seed from an offline snapshot -- the owner's decision, not a session's).
+
 ## World facts
 
 - **Authoring landmass:** 8,192 × 8,192 blocks at `x/z 0..8191`; the WorldPainter canvas is `x/z -1280..9471`.
@@ -296,6 +317,26 @@
   appears as a placeholder. `docs/world-building/DEEP_CITY.md`'s whole relic area is built on a visible
   Hoopa. **One command settles it: `/pokespawn hoopa`, and look.** Do not build the relic area until
   someone has.
+- **Hoopa EXISTS in Cobblemon 1.8.0** (measured in a running game, 2026-10-01). `pokespawn hoopa` on a
+  throwaway staging universe spawned it and the entity reported `cobblemon:hoopa`. So the species is real
+  and the Deep's relic area is not dead on that count. **The MODEL question is NOT answered and cannot be
+  over RCON**: a client model is a client fact, so only a player looking at it settles whether it renders
+  or shows a placeholder. `hoopa unbound` returned nothing conclusive. So: the premise survives, the look
+  is still unverified, and it is one glance in game.
+- **The trainer card: the campaign is NOT inert, and the earlier alarm was overstated** (measured in a
+  running game, 2026-10-01, against real shops rather than the data). Verified: our clerk's live shop is
+  exactly three categories -- Pokeballs (`poke_ball`, 200), Treatments (`potion`, 200), Remedies
+  (`antidote`, 100) -- with **no trainer card**; `trainer_card` appears **0 times** in the whole
+  `cobblers_vendors` pack; a plain `cobbledollars:cobble_merchant` summoned with no shop compound has
+  `CobbleMerchantShop: []`, so nothing injects the pack's global `defaultShop` into an entity at summon;
+  and the item id is real (`rctmod:trainer_card`, "Trainer Card"). **But `modpack/config/rctmod-server.toml`
+  says in its own comment that `spawningRequiresTrainerCard` "does not affect trainer spawners"** -- and
+  every authored fight we place reaches a player through a spawner or `summon_persistent`: the eight gym
+  leaders, the Elite Four, the Champion, Victory Road's ten, the route trainers, the mansion guardians.
+  So what a cardless player loses is **natural ambient RCT trainer spawns and the trainer-association
+  NPC**, not the campaign. Still worth fixing (a card our marts never sell is a dead config), and still
+  **NOT VERIFIED**: whether CobbleDollars falls back to `defaultShop` in the GUI despite the empty NBT,
+  which needs a player to open a counter, and whether the card is obtainable any other way.
 - **Two contracts fail today and are recorded as such** in `data/system_contracts.json` `fails_today`, strict
   xfail: C3 `sound_ferry_from_the_jetty` (its `to` end (7210,6960) is ground y55 under a sea of y62 and is not
   a deck cell - the sea town moved out from under the crossing, and both stops of the `sound_ferry` line are

@@ -125,7 +125,43 @@ It also means the agent that needed `tests/test_system_contracts.py` **was not b
 session's own claim that it would be -- in the handover, in STATE and in PR #104 -- was wrong. The
 constraint was real for `derived/`-dependent work and overstated for the rest.
 
-## 6. The decisive test, now narrowed to one command
+## 5c. THE TEST RAN. Nothing was refused, and the real blocker is something else entirely
+
+One throwaway agent, four plain commands, 2026-10-01. **Not one was refused** -- no permission prompt,
+no classifier block. So **CLAUDE.md's "the classifier refused `rift_heightmap.py --plan` twice" does not
+reproduce**, and the permission story this document was built around is wrong.
+
+Commands 1-3 passed: `git rev-parse HEAD`, `COBBLERS_SOURCE_ROOT` = `C:\Users\wnd\Documents`, and
+`ground.py` answered **122 at (4528, 4416)**, confirming section 5b a second time.
+
+**Command 4 ran, did the whole analysis** -- basin 1,568,203 columns, 78 stretches, 22 peaks, 5
+entrances, 513,198 columns changed, 0 over the ceiling, 12,887,187 blocks moved -- and then fail-closed
+on a **DATA** error, not a permission:
+
+```
+SculptError: data/world.json names land_8k_16_rescaled_b145_pads_rift_water.png,
+not the sculpt land_8k_16_rescaled_b145_pads_rift.png: --plan only describes an applied sculpt
+```
+
+**It fails identically in the main checkout** (run there immediately after, same error). So this is not an
+agent limitation at all: **`derived/rift_sculpt/` is currently not reproducible in ANY checkout**, and the
+main worktree only still has it because it was generated before the water export re-pinned the heightmap.
+That breaks the repository's own core rule -- *"anything in `derived/` or `build/` must be reproducible
+from `source/`, `data/` and `tools/` alone. If it is not, it is in the wrong place."* -- and it is a single
+point of failure: delete that folder and the Rift block passes lose inputs nothing can rebuild.
+
+**And the fix is already half-written in the data.** The pre-water heightmap still exists --
+`C:\Users\wnd\Documents\land_8k_16_rescaled_b145_pads_rift.png`, 47.6 MB -- and `data/world.json`'s
+heightmap provenance already names and hashes it as **`water_shaped_from`**. So `--plan` needs either an
+explicit source override or to read `water_shaped_from` when the pin has moved past the sculpt. That is a
+small change to one tool, and it makes `derived/rift_sculpt/` regenerable everywhere, agent worktrees
+included.
+
+**Conclusion: the serialisation constraint is not a harness limit and never was.** It is one tool that
+cannot rebuild one artefact since the heightmap pin moved. Fix that and heightmap-dependent build work
+delegates.
+
+## 6. The original test plan, for the record
 
 Steps 1, 2 and 4 below are **answered** by section 5b: the env var reaches agents, the heightmap is
 readable, and the heightmap-dependent tests run. **Only step 3 is still open**, and it is one command:
