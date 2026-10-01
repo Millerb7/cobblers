@@ -620,8 +620,20 @@ def plan_target(hm, current):
             "verify the plan against. --apply records the sculpt; a later pass over the heightmap must record what "
             "it consumed (path and sha256) or the sculpt becomes unreproducible."
             % (current.name, OUT_NAME))
+    shas = {hm[k]["sha256"] for k in named}
+    if len(shas) > 1:
+        # Found by this function's test author: `sorted(named)[0]` picked one silently and ignored the
+        # rest. Two entries claiming the sculpt with DIFFERENT hashes means the chain disagrees with
+        # itself about what was applied, and guessing which is right is exactly the kind of quiet choice
+        # that let the hand-edited plan sha hide a drift for two days.
+        raise SculptError("data/world.json has %d heightmap provenance entries naming the sculpt %s with "
+                          "DIFFERENT sha256s (%s): the chain disagrees with itself about what was applied, "
+                          "and --plan will not guess which one. Reconcile them."
+                          % (len(named), OUT_NAME, ", ".join("%s=%s" % (k, hm[k]["sha256"][:12]) for k in named)))
     key = named[0]
     sha = hm[key]["sha256"]
+    # the entry records a filename only, so the sculpt output is expected beside the pinned heightmap;
+    # every pass in the chain writes into that one directory (docs/world-building/HEIGHTMAP_PROVENANCE.md)
     target = current.parent / OUT_NAME
     if not target.exists():
         raise SculptError("data/world.json's %s names %s, which is not beside %s. The sculpt output is the one file "

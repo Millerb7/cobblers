@@ -27,6 +27,7 @@ land_8k_16_rescaled_b145.png
    ↓  tools/press_pads.py --apply        (input recorded as: pressed_from)
 land_8k_16_rescaled_b145_pads.png
    ↓  tools/rift_heightmap.py --apply    (input recorded as: rift_sculpted_from)
+   ↓  tools/water_shape.py                 (input recorded as: water_shaped_from)
 land_8k_16_rescaled_b145_pads_rift.png   ← heightmap.path today
 ```
 
@@ -42,6 +43,7 @@ land_8k_16_rescaled_b145_pads_rift.png   ← heightmap.path today
 | `rescaled_from` | the sculpted relief the b145 rescale consumed | `tools/rescale.py` | `tools/paint_maps.py` |
 | `pressed_from` | the rescaled map the pads were pressed on | `tools/press_pads.py` | `tools/press_pads.py` |
 | `rift_sculpted_from` | the pressed map the Rift sculpt consumed | `tools/rift_heightmap.py` | `tools/rift_heightmap.py`, `tests/test_rift_heightmap.py` |
+| `water_shaped_from` | **the Rift-sculpted map the water shaping consumed** -- the sculpt's own output. Added by the water export, 2026-09-29, and undocumented until now. **It is load-bearing, not cosmetic:** `tools/rift_heightmap.py` `plan_target()` resolves THROUGH this key to find the file `--plan` verifies the sculpt against, because the pin moved past the sculpt when this pass ran. Delete or mis-hash it and `derived/rift_sculpt/` becomes unrebuildable. | `tools/water_shape.py` | `tools/rift_heightmap.py` `plan_target`, `tests/test_rift_plan_target.py`, `tests/test_heightmap_provenance.py` |
 | `previous_sha256` | every hash the canonical file has had, newest first | every pass | — |
 | `revision_note` | prose about the current revision | by hand | — |
 | `width` | the image's width in pixels, one per block | by hand | `tools/terrain.py` |
