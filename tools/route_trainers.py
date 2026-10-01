@@ -304,6 +304,40 @@ def leader_cycle_lines():
         out += ["# %s (%s), the leader: no rematch once the badge is held" % (tid, doc["id"]),
                 "execute as %s at @s if entity @a[distance=..9.0,advancements={%s:flag/%s=true}] "
                 "run data merge entity @s {Cooldown:40}" % (me, NS, flag)]
+
+    # THE SAME GAP, FIVE MORE TRAINERS. Found by the 2026-09-30 sweep the owner asked for, straight after
+    # the leaders: the Elite Four and the Champion are overrides at the `kanto_league` template's OWN
+    # spawners, so like the leaders they are not in placements() and had no hold-off either. The Champion
+    # matters most - champion_cleared gates the endgame, and a refightable Blue is a level-cap bypass at
+    # the top of the ladder where the cap is loosest.
+    #
+    # Two things differ from a gym. There is no per-trainer seat: the spawners are inside the template and
+    # their coordinates are not ours to know, so each selector is scoped to the League lot
+    # (placements.json anchors.league_building) rather than to a cell. And the beaten test is UPSTREAM's own
+    # defeat advancement, which exists in COBBLEVERSE-DP-v31 (data/cobbleverse/advancement/trainer/kanto/
+    # defeat_elite_lorelei.json and its four siblings, read from the installed zip) - we do not need to
+    # mint a flag for something Cobbleverse already grants.
+    lot = None
+    for a in (((json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
+                .get("settlements") or {}).get("league") or {}).get("plan", {}).get("anchors") or []):
+        if a.get("id") == "league_building" and a.get("rect"):
+            lot = (a["rect"], a.get("level"))
+    if lot:
+        (x0, z0, x1, z1), level = lot
+        cx, cz = (x0 + x1) // 2, (z0 + z1) // 2
+        reach = max(x1 - x0, z1 - z0) // 2 + 12
+        for e in json.loads((ROOT / "data" / "league_trainers.json").read_text(encoding="utf-8"))["trainers"]:
+            tid = e.get("upstream_trainer_id")
+            adv = e.get("beaten_advancement") or "cobbleverse:trainer/kanto/defeat_%s" % (
+                "champion_blue" if "champion" in (e.get("id") or "") else
+                "elite_" + (e.get("id") or "").split("_")[-1])
+            if not tid:
+                continue
+            me = ('@e[type=rctmod:trainer,x=%d.5,y=%d,z=%d.5,distance=..%d,nbt={TrainerId:"%s"}]'
+                  % (cx, level or 88, cz, reach, tid))
+            out += ["# %s, the League: no rematch once upstream's defeat advancement is held" % tid,
+                    "execute as %s at @s if entity @a[distance=..9.0,advancements={%s=true}] "
+                    "run data merge entity @s {Cooldown:40}" % (me, adv)]
     return out
 
 

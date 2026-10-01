@@ -125,8 +125,13 @@ def test_every_placed_trainer_has_exactly_one_line_of_each_kind(cycle):
     # "beaten" test is the gymN_cleared ADVANCEMENT rather than a quest field, so no tag is needed.
     # A leader with a home or a tag line would mean something had started seating them, which is a
     # change this test should catch, not wave through.
+    # The Elite Four and the Champion are the same case, found by the sweep straight after the leaders:
+    # overrides at the kanto_league template's own spawners, so also absent from placements(). Their
+    # beaten test is UPSTREAM's defeat advancement, which Cobbleverse already grants.
     leaders = {"kanto_brock", "kanto_misty", "kanto_ltsurge", "kanto_erika",
-               "kanto_koga", "kanto_sabrina", "kanto_blaine", "kanto_giovanni"}
+               "kanto_koga", "kanto_sabrina", "kanto_blaine", "kanto_giovanni",
+               "kanto_league_lorelei", "kanto_league_bruno", "kanto_league_agatha",
+               "kanto_league_lance", "kanto_champion_blue"}
     for kind, got in (("home", home), ("tag", tags), ("cooldown", cool)):
         want = sorted(set(IDS) | leaders) if kind == "cooldown" else sorted(IDS)
         assert sorted(got) == want, (kind, sorted(set(want) ^ set(got)))

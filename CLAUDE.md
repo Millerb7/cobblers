@@ -391,6 +391,37 @@ columns and `floor(h)` at 52%. Reading a world to *check* a result (the verify p
 `tools/town_audit.py`) is different and still required. `tests/test_ground_rule.py` fails if a
 placement tool reads a world to decide.
 
+## Our list is not the world
+
+A generated list of what WE place is never a list of what is in the world. The
+world also holds what a donor template placed, what a mod placed, and what an
+earlier pass left behind. A system that reasons over our list silently excludes
+all of it, and the exclusion is invisible: the list is correct, the code is
+correct, and the thing that matters is simply not in it.
+
+This has now happened three times:
+
+- **The trainer rematch guard** (2026-09-30). `tools/route_trainers.py` builds
+  its cooldown from `placements()`. It covered the 28 trainers we seat and
+  **none of the eight gym leaders**, because a leader is spawned by its gym's own
+  `rctmod:trainer_spawner`. The owner beat Brock and then started him again. The
+  sweep that followed found the same gap for the **Elite Four and the Champion**,
+  overrides at the `kanto_league` template's own spawners — five more, including
+  the one that gates the endgame.
+- **The Habitat Blocks**, which live in the world-local folder and no generated
+  list knew about.
+- **The healers**. Every gym template ships one. `R16E` is a *sweep over all
+  eight gyms*, not a list of ours — which is why it works, and is the pattern to
+  copy.
+
+**So:** when a tool enumerates our own data to act on the world, say in the
+tool what it does NOT cover, and prefer a sweep or a world-shaped predicate over
+a list wherever one will do. When a new system keys on trainer ids, placement
+ids, or structure ids, ask first what in the world carries that id and is not in
+`data/placements.json` — the gym spawners and the League template are the known
+answers and there are others. An audit that counts our own output can only ever
+find faults in our own output.
+
 ## Verify before claiming
 
 A generated config, datapack or manifest is not proof that a feature works. A
