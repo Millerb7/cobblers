@@ -575,7 +575,7 @@
         "pacifidlog_square"
       ],
       "fare": 150,
-      "fare_why": "$150 each way: WATER_PROPOSAL decision 5. For scale, Brock's first win paid $732 and a blackout takes 20%; a fare should hurt less than dying on the swim",
+      "fare_why": "$150 each way: WATER_PROPOSAL decision 5. For scale, Brock's first win paid $732 and a blackout takes a flat $600 per blackout (20% of a $3,000 cap, never more than the balance; data/blackout.json, the owner's decision B10, 2026-10-01); a fare should hurt less than dying on the swim",
       "gates": [],
       "gate_why": "none: WATER_PROPOSAL decision 6 (the level-cap trap's fix covers early arrival; its fallback, a gym6_cleared gate if the fix is late, is the owner's call and not taken)",
       "swim": {

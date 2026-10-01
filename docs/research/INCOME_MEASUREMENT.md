@@ -196,7 +196,7 @@ Two mandatory sinks, both VERIFIED, neither modelled in §2.4:
   (ASSUMED allowance), which is **42% of model-B income by badge 1** and 22% by badge 8.
   Catching at all is expensive early: one Poke Ball is 5% of everything earned in the
   mansion-and-Route-1 leg.
-- **Blackout.** **20% of the player's whole balance per incident**, rounded up
+- **Blackout.** SUPERSEDED 2026-10-01 by decision B10: now a flat $600 per blackout (20% of a $3,000 cap, never more than the balance; data/blackout.json, the owner's decision B10, 2026-10-01). It was 20% of the whole balance per incident, rounded up
   (VERIFIED: `data/blackout.json:6-10`, `percent: 20`, "rounding: up; a balance above zero
   always loses at least 1 (`ceil(balance * percent / 100)`)"; raised from 10 by the owner
   2026-09-27). This is a *proportional* sink, so it does not scale with the ladder: three

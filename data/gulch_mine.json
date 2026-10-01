@@ -3152,7 +3152,7 @@
     "leash_every_ticks": 40,
     "spawn_clear": 24,
     "respawn_ticks": 18000,
-    "why": "The Cutting Floor's two Megas (decision 8) and the farms' dens (farms[].dens) share one keeper: spawned through the macro spawn_at (EXP-046: a plain spawnpokemonat line parsed at server start does nothing), uncatchable, claimed at once (tagged, PersistenceRequired), leashed like the recovery guardians (walked back by tp past the radius, every 2 s while a player is near). SOUTHERN_RIFT_MEGA.md 13 retires the faces' restore, so a Mega no longer comes back with a face: each den keeps a respawn clock, the game time its Mega was first seen gone, and spawns the next respawn_ticks later with nobody within spawn_clear of the anchor; nothing a player can repeat moves the clock. The mine's two drop nothing (the farms are the currency's source); their respawn_ticks is 15 minutes. A Mega that blacks a player out makes no item claim (decision 9: data/blackout.json claims.exempt_tag)",
+    "why": "The Cutting Floor's two Megas (decision 8) and the seven open-air farm dens that now exist (farms[].dens, one den per farm, four outer and three deeper) share one keeper: spawned through the macro spawn_at (EXP-046: a plain spawnpokemonat line parsed at server start does nothing), uncatchable, claimed at once (tagged, PersistenceRequired), leashed like the recovery guardians (walked back by tp past the radius, every 2 s while a player is near). SOUTHERN_RIFT_MEGA.md 13 retires the faces' restore, so a Mega no longer comes back with a face: each den keeps a respawn clock, the game time its Mega was first seen gone, and spawns the next respawn_ticks later with nobody within spawn_clear of the anchor; nothing a player can repeat moves the clock. The mine's two drop nothing (the farms are the currency's source); their respawn_ticks is 15 minutes. A Mega that blacks a player out makes no item claim (decision 9: data/blackout.json claims.exempt_tag)",
     "slots": [
       {
         "id": "steelix",
@@ -3228,7 +3228,7 @@
     },
     "why": "SOUTHERN_RIFT_MEGA.md 13: outer about level 60 (the owner: a cap of 50 after gym 5, \"lvl 60 or so, so it takes a team\"), 15% a defeat; deeper 65-70 at 25-35% (ASSUMED: the owner said \"more frequently\"). respawn_ticks is the farm's rate limit per den: 10 minutes outer, 15 deeper, so four outer dens give at most 24 fights an hour between them, about 3.6 raw stones at 15%. All ASSUMED until a fight is timed"
   },
-  "farms_why": "The open-air Mega farms (the owner, 2026-10-01): 'Mega Pokemon walking in the OPEN, not only in caverns -- a player should see them before they reach them.' Seven dens across the Rift's two southern arms, four outer and three deeper, keeping the material chain, the Cutters and the gates exactly as designed: a den's Mega rolls the same raw-stone drop at its tier's rate, the keyed stone is still cut at the Cutters, and each den is still behind the same badge flag. What changes is that the fight is on open ground a player can see across, not in a hall they have to be let into. The halls' two Megas (megas.slots) stay as they are: the owner said not ONLY in caverns. Sites measured off the canonical heightmap, never a world (CLAUDE.md): inside the arm polygons of data/regions.json, pad slope under 10 degrees, 24+ clear of every keep_clear box, 260+ apart so finding one is an event rather than a checklist. The sightline measurement that chose them saturated at its own 136-block ceiling for all twelve candidates, so it proves each has a long clear approach and did NOT rank them: spacing and arm coverage picked these seven. The east arm holds the gulch, its road and the Cutters, so it carries the outer tier; the west arm had nothing in it at all, so it carries the deeper tier and the longest walk.",
+  "farms_why": "The open-air Mega farms (the owner, 2026-10-01): 'Mega Pokemon walking in the OPEN, not only in caverns -- a player should see them before they reach them.' Seven dens across the Rift's two southern arms, four outer and three deeper, keeping the material chain and the Cutters exactly as designed: a den's Mega rolls the same raw-stone drop at its tier's rate, and the keyed stone is still cut at the Cutters inside the badge-gated gulch. What changes is that the fight is on open ground a player can see across, not in a hall they have to be let into. NO ZONE on any of the seven -- decision B4 (the owner, 2026-10-01): 'drop the zone on the open dens. A turn-back in open country reads as an invisible wall. Let the level band gate them; being seen and too strong is the point.' So no farm declares a `zone`: there is no polygon, no turn-back point, no zone advancement and no badge-flag check of its own anywhere in the farms. THE GATE IS THE LEVEL BAND ALONE -- outer level 60, deeper 67 (farm_tiers) against a level cap of 50 after gym 5 -- and the only thing that stops an underlevelled party is losing the fight. Nothing is hidden and nobody is bounced: a player at any badge count can walk up to a den, see what it is and try it. The badge flag still gates the GULCH itself (this file's own `zone`, the rockslide gate at gulch_mouth), which is a different thing and untouched: the Cutters who turn a raw stone into a keyed one are inside it, so a stone won in the open is worth nothing until that gate opens. The halls' two Megas (megas.slots) stay as they are: the owner said not ONLY in caverns. Sites measured off the canonical heightmap, never a world (CLAUDE.md): inside the arm polygons of data/regions.json, pad slope under 10 degrees, 24+ clear of every keep_clear box, 260+ apart so finding one is an event rather than a checklist. The sightline measurement that chose them saturated at its own 136-block ceiling for all twelve candidates, so it proves each has a long clear approach and did NOT rank them: spacing and arm coverage picked these seven. The east arm holds the gulch, its road and the Cutters, so it carries the outer tier; the west arm had nothing in it at all, so it carries the deeper tier and the longest walk.",
   "farms_grid": {
     "x": [
       3828,
@@ -3242,7 +3242,7 @@
       3840,
       5392
     ],
-    "why": "The box the farms' ANCHORS, turn-back points and approach boxes live in -- not a block box. The farms write no blocks at all: a den is a keeper line, a leash line, a zone advancement and a turn-back, and nothing in them places a single block. `grid` stays exactly as tight as it was, because it guards block writes and must keep doing so; widening it to admit these coordinates would have weakened the one guard that keeps this build inside its box, and a threshold widened to make data pass is not a threshold (CLAUDE.md). So the audit checks block writes against `grid` and farm coordinates against this."
+    "why": "The box the farms' ANCHORS and approach boxes live in -- not a block box. (It bounded the turn-back points too until decision B4 dropped the zones; the box itself is unchanged, and the audit still bounds a turn-back point for any farm that declares a zone.) The farms write no blocks at all: a den is a keeper line and a leash line, and nothing in them places a single block. `grid` stays exactly as tight as it was, because it guards block writes and must keep doing so; widening it to admit these coordinates would have weakened the one guard that keeps this build inside its box, and a threshold widened to make data pass is not a threshold (CLAUDE.md). So the audit checks block writes against `grid` and farm coordinates against this."
   },
   "farms": [
     {
@@ -3257,33 +3257,6 @@
         155,
         4480
       ],
-      "zone": {
-        "polygon": [
-          [
-            4508,
-            4396
-          ],
-          [
-            4548,
-            4396
-          ],
-          [
-            4548,
-            4436
-          ],
-          [
-            4508,
-            4436
-          ]
-        ],
-        "turn_back": [
-          4580,
-          119,
-          4416,
-          90
-        ],
-        "why": "A 41-square round the den's pad, not the whole arm. The owner wants the Mega SEEN before it is reached, so the zone is the pad a player would stand on to fight it and nothing more: from outside it the Mega is in plain sight across open ground, and the turn-back point 52 blocks E is still in view of it. A zone over the arm would hide what it is meant to advertise. The turn-back yaw faces the den, not away from it: a player put out of the pad looks straight back at the Mega, which is what makes it a cordon rather than a dead end."
-      },
       "dens": [
         {
           "id": "gm_east_arm_shoulder",
@@ -3300,7 +3273,7 @@
           "model_not_verified": "The Mega form's client model is not verified for this species, the same caveat data/gulch_mine.json already records for excadrill (M-7). A missing model shows a player a default, it does not break the fight."
         }
       ],
-      "why": "One den per farm, because the dens are 260+ blocks apart by construction and one zone cannot be tight around all of them at once."
+      "why": "One den per farm: the dens are 260+ blocks apart by construction, so each is its own walk rather than an item on a list. NO ZONE -- decision B4 (the owner, 2026-10-01): 'drop the zone on the open dens. A turn-back in open country reads as an invisible wall. Let the level band gate them; being seen and too strong is the point.' So this farm declares no polygon and no turn-back point, and nothing in it reads the badge flag. What gates it is its tier's level alone: outer, level 60 (farm_tiers.outer.level), against a level cap of 50 after gym 5. A player who comes early sees the Mega across open ground, walks up to it and loses; that is the gate."
     },
     {
       "id": "east_arm_bench",
@@ -3314,33 +3287,6 @@
         154,
         4744
       ],
-      "zone": {
-        "polygon": [
-          [
-            4556,
-            4660
-          ],
-          [
-            4596,
-            4660
-          ],
-          [
-            4596,
-            4700
-          ],
-          [
-            4556,
-            4700
-          ]
-        ],
-        "turn_back": [
-          4628,
-          121,
-          4680,
-          90
-        ],
-        "why": "A 41-square round the den's pad, not the whole arm. The owner wants the Mega SEEN before it is reached, so the zone is the pad a player would stand on to fight it and nothing more: from outside it the Mega is in plain sight across open ground, and the turn-back point 52 blocks E is still in view of it. A zone over the arm would hide what it is meant to advertise. The turn-back yaw faces the den, not away from it: a player put out of the pad looks straight back at the Mega, which is what makes it a cordon rather than a dead end."
-      },
       "dens": [
         {
           "id": "gm_east_arm_bench",
@@ -3357,7 +3303,7 @@
           "model_not_verified": "The Mega form's client model is not verified for this species, the same caveat data/gulch_mine.json already records for excadrill (M-7). A missing model shows a player a default, it does not break the fight."
         }
       ],
-      "why": "One den per farm, because the dens are 260+ blocks apart by construction and one zone cannot be tight around all of them at once."
+      "why": "One den per farm: the dens are 260+ blocks apart by construction, so each is its own walk rather than an item on a list. NO ZONE -- decision B4 (the owner, 2026-10-01): 'drop the zone on the open dens. A turn-back in open country reads as an invisible wall. Let the level band gate them; being seen and too strong is the point.' So this farm declares no polygon and no turn-back point, and nothing in it reads the badge flag. What gates it is its tier's level alone: outer, level 60 (farm_tiers.outer.level), against a level cap of 50 after gym 5. A player who comes early sees the Mega across open ground, walks up to it and loses; that is the gate."
     },
     {
       "id": "east_arm_head",
@@ -3371,33 +3317,6 @@
         165,
         5008
       ],
-      "zone": {
-        "polygon": [
-          [
-            4588,
-            4924
-          ],
-          [
-            4628,
-            4924
-          ],
-          [
-            4628,
-            4964
-          ],
-          [
-            4588,
-            4964
-          ]
-        ],
-        "turn_back": [
-          4608,
-          131,
-          4892,
-          0
-        ],
-        "why": "A 41-square round the den's pad, not the whole arm. The owner wants the Mega SEEN before it is reached, so the zone is the pad a player would stand on to fight it and nothing more: from outside it the Mega is in plain sight across open ground, and the turn-back point 52 blocks N is still in view of it. A zone over the arm would hide what it is meant to advertise. The turn-back yaw faces the den, not away from it: a player put out of the pad looks straight back at the Mega, which is what makes it a cordon rather than a dead end."
-      },
       "dens": [
         {
           "id": "gm_east_arm_head",
@@ -3414,7 +3333,7 @@
           "model_not_verified": "The Mega form's client model is not verified for this species, the same caveat data/gulch_mine.json already records for excadrill (M-7). A missing model shows a player a default, it does not break the fight."
         }
       ],
-      "why": "One den per farm, because the dens are 260+ blocks apart by construction and one zone cannot be tight around all of them at once."
+      "why": "One den per farm: the dens are 260+ blocks apart by construction, so each is its own walk rather than an item on a list. NO ZONE -- decision B4 (the owner, 2026-10-01): 'drop the zone on the open dens. A turn-back in open country reads as an invisible wall. Let the level band gate them; being seen and too strong is the point.' So this farm declares no polygon and no turn-back point, and nothing in it reads the badge flag. What gates it is its tier's level alone: outer, level 60 (farm_tiers.outer.level), against a level cap of 50 after gym 5. A player who comes early sees the Mega across open ground, walks up to it and loses; that is the gate."
     },
     {
       "id": "east_arm_tail",
@@ -3428,33 +3347,6 @@
         177,
         5280
       ],
-      "zone": {
-        "polygon": [
-          [
-            4468,
-            5196
-          ],
-          [
-            4508,
-            5196
-          ],
-          [
-            4508,
-            5236
-          ],
-          [
-            4468,
-            5236
-          ]
-        ],
-        "turn_back": [
-          4540,
-          145,
-          5216,
-          90
-        ],
-        "why": "A 41-square round the den's pad, not the whole arm. The owner wants the Mega SEEN before it is reached, so the zone is the pad a player would stand on to fight it and nothing more: from outside it the Mega is in plain sight across open ground, and the turn-back point 52 blocks E is still in view of it. A zone over the arm would hide what it is meant to advertise. The turn-back yaw faces the den, not away from it: a player put out of the pad looks straight back at the Mega, which is what makes it a cordon rather than a dead end."
-      },
       "dens": [
         {
           "id": "gm_east_arm_tail",
@@ -3471,7 +3363,7 @@
           "model_not_verified": "The Mega form's client model is not verified for this species, the same caveat data/gulch_mine.json already records for excadrill (M-7). A missing model shows a player a default, it does not break the fight."
         }
       ],
-      "why": "One den per farm, because the dens are 260+ blocks apart by construction and one zone cannot be tight around all of them at once."
+      "why": "One den per farm: the dens are 260+ blocks apart by construction, so each is its own walk rather than an item on a list. NO ZONE -- decision B4 (the owner, 2026-10-01): 'drop the zone on the open dens. A turn-back in open country reads as an invisible wall. Let the level band gate them; being seen and too strong is the point.' So this farm declares no polygon and no turn-back point, and nothing in it reads the badge flag. What gates it is its tier's level alone: outer, level 60 (farm_tiers.outer.level), against a level cap of 50 after gym 5. A player who comes early sees the Mega across open ground, walks up to it and loses; that is the gate."
     },
     {
       "id": "west_arm_crest",
@@ -3485,33 +3377,6 @@
         179,
         3968
       ],
-      "zone": {
-        "polygon": [
-          [
-            3924,
-            3884
-          ],
-          [
-            3964,
-            3884
-          ],
-          [
-            3964,
-            3924
-          ],
-          [
-            3924,
-            3924
-          ]
-        ],
-        "turn_back": [
-          3892,
-          147,
-          3904,
-          -90
-        ],
-        "why": "A 41-square round the den's pad, not the whole arm. The owner wants the Mega SEEN before it is reached, so the zone is the pad a player would stand on to fight it and nothing more: from outside it the Mega is in plain sight across open ground, and the turn-back point 52 blocks W is still in view of it. A zone over the arm would hide what it is meant to advertise. The turn-back yaw faces the den, not away from it: a player put out of the pad looks straight back at the Mega, which is what makes it a cordon rather than a dead end."
-      },
       "dens": [
         {
           "id": "gm_west_arm_crest",
@@ -3528,7 +3393,7 @@
           "model_not_verified": "The Mega form's client model is not verified for this species, the same caveat data/gulch_mine.json already records for excadrill (M-7). A missing model shows a player a default, it does not break the fight."
         }
       ],
-      "why": "One den per farm, because the dens are 260+ blocks apart by construction and one zone cannot be tight around all of them at once."
+      "why": "One den per farm: the dens are 260+ blocks apart by construction, so each is its own walk rather than an item on a list. NO ZONE -- decision B4 (the owner, 2026-10-01): 'drop the zone on the open dens. A turn-back in open country reads as an invisible wall. Let the level band gate them; being seen and too strong is the point.' So this farm declares no polygon and no turn-back point, and nothing in it reads the badge flag. What gates it is its tier's level alone: deeper, level 67 (farm_tiers.deeper.level), against a level cap of 50 after gym 5. A player who comes early sees the Mega across open ground, walks up to it and loses; that is the gate."
     },
     {
       "id": "west_arm_shelf",
@@ -3542,33 +3407,6 @@
         181,
         4232
       ],
-      "zone": {
-        "polygon": [
-          [
-            4060,
-            4148
-          ],
-          [
-            4100,
-            4148
-          ],
-          [
-            4100,
-            4188
-          ],
-          [
-            4060,
-            4188
-          ]
-        ],
-        "turn_back": [
-          4028,
-          149,
-          4220,
-          -45
-        ],
-        "why": "A 41-square round the den's pad, not the whole arm. The owner wants the Mega SEEN before it is reached, so the zone is the pad a player would stand on to fight it and nothing more: from outside it the Mega is in plain sight across open ground, and the turn-back point 52 blocks SW is still in view of it. A zone over the arm would hide what it is meant to advertise. The turn-back yaw faces the den, not away from it: a player put out of the pad looks straight back at the Mega, which is what makes it a cordon rather than a dead end."
-      },
       "dens": [
         {
           "id": "gm_west_arm_shelf",
@@ -3585,7 +3423,7 @@
           "model_not_verified": "The Mega form's client model is not verified for this species, the same caveat data/gulch_mine.json already records for excadrill (M-7). A missing model shows a player a default, it does not break the fight."
         }
       ],
-      "why": "One den per farm, because the dens are 260+ blocks apart by construction and one zone cannot be tight around all of them at once."
+      "why": "One den per farm: the dens are 260+ blocks apart by construction, so each is its own walk rather than an item on a list. NO ZONE -- decision B4 (the owner, 2026-10-01): 'drop the zone on the open dens. A turn-back in open country reads as an invisible wall. Let the level band gate them; being seen and too strong is the point.' So this farm declares no polygon and no turn-back point, and nothing in it reads the badge flag. What gates it is its tier's level alone: deeper, level 67 (farm_tiers.deeper.level), against a level cap of 50 after gym 5. A player who comes early sees the Mega across open ground, walks up to it and loses; that is the gate."
     },
     {
       "id": "west_arm_tail",
@@ -3599,33 +3437,6 @@
         161,
         5392
       ],
-      "zone": {
-        "polygon": [
-          [
-            4228,
-            5308
-          ],
-          [
-            4268,
-            5308
-          ],
-          [
-            4268,
-            5348
-          ],
-          [
-            4228,
-            5348
-          ]
-        ],
-        "turn_back": [
-          4300,
-          134,
-          5328,
-          90
-        ],
-        "why": "A 41-square round the den's pad, not the whole arm. The owner wants the Mega SEEN before it is reached, so the zone is the pad a player would stand on to fight it and nothing more: from outside it the Mega is in plain sight across open ground, and the turn-back point 52 blocks E is still in view of it. A zone over the arm would hide what it is meant to advertise. The turn-back yaw faces the den, not away from it: a player put out of the pad looks straight back at the Mega, which is what makes it a cordon rather than a dead end."
-      },
       "dens": [
         {
           "id": "gm_west_arm_tail",
@@ -3642,7 +3453,7 @@
           "model_not_verified": "The Mega form's client model is not verified for this species, the same caveat data/gulch_mine.json already records for excadrill (M-7). A missing model shows a player a default, it does not break the fight."
         }
       ],
-      "why": "One den per farm, because the dens are 260+ blocks apart by construction and one zone cannot be tight around all of them at once."
+      "why": "One den per farm: the dens are 260+ blocks apart by construction, so each is its own walk rather than an item on a list. NO ZONE -- decision B4 (the owner, 2026-10-01): 'drop the zone on the open dens. A turn-back in open country reads as an invisible wall. Let the level band gate them; being seen and too strong is the point.' So this farm declares no polygon and no turn-back point, and nothing in it reads the badge flag. What gates it is its tier's level alone: deeper, level 67 (farm_tiers.deeper.level), against a level cap of 50 after gym 5. A player who comes early sees the Mega across open ground, walks up to it and loses; that is the gate."
     }
   ]
 }

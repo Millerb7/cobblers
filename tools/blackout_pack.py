@@ -116,6 +116,17 @@ def molang_or(ids):
     return " || ".join("t.id == 'cobblemon:%s'" % s for s in ids)
 
 
+def charge_amount(money):
+    """The blackout's flat money charge: a percentage of the declared cap, rounded up (data/blackout.json money).
+
+    Decision B10 (the owner, 2026-10-01): a flat percentage of a CAP, never of the balance, so that saving for an
+    expensive ladder rung is not taxed by every death. The amount is a constant, so the pack computes it here and
+    sets it once at load; the only thing the runtime reads from the player is the balance, and only to stop the
+    charge exceeding it. Contract C15 in data/system_contracts.json.
+    """
+    return -((-money["cap"] * money["percent"]) // 100)
+
+
 def build(cfg, mounts, placements, progression, boat_rows=None):
     """{relative path: file text} for the whole pack."""
     files = {}
@@ -148,7 +159,7 @@ def build(cfg, mounts, placements, progression, boat_rows=None):
         "rewards": {"function": "%s:blackout/checkpoint/healer_used" % NS}}, indent=2) + "\n"
 
     # ---- load and tick -------------------------------------------------------------------------------------------
-    consts = {"#pct": money["percent"], "#100": 100, "#2": 2, "#5": 5, "#10": 10, "#16": 16, "#-1": -1, "#wmin": 1024,
+    consts = {"#pct": money["percent"], "#charge": charge_amount(money), "#100": 100, "#2": 2, "#5": 5, "#10": 10, "#16": 16, "#-1": -1, "#wmin": 1024,
               "#dedupe": cfg["dedupe_ticks"], "#jump": cfg["checkpoints"]["waystone_jump"],
               "#bpct": cats["balls"]["percent"], "#bmax": cats["balls"]["max"],
               "#mpct": cats["medicine"]["percent"], "#mmax": cats["medicine"]["max"],
@@ -256,22 +267,19 @@ def build(cfg, mounts, placements, progression, boat_rows=None):
         "function %s:recovery/killed" % NS,
         "tag @e[type=cobblemon:pokemon,tag=cobblers.victor] remove cobblers.victor"])
     fn("blackout/charge", [
-        "# %d%% of the balance, rounded up, so any balance above zero loses at least 1 (EXP-040: the query's result is the balance)" % money["percent"],
+        "# a FLAT $%d: %d%% of the declared cap of $%d (data/blackout.json money.cap, decision B10), whatever the balance,"
+        % (charge_amount(money), money["percent"], money["cap"]),
+        "# so saving for a ladder rung is not punished. The balance is read only to keep the charge inside it",
+        "# (EXP-040: the query's result is the balance)",
         "scoreboard players set @s bo.lost 0",
         "execute store result score @s bo.bal run cobbledollars query @s",
         "execute if score @s bo.bal matches 1.. run function %s:blackout/charge_calc" % NS])
     fn("blackout/charge_calc", [
-        "# ceil(b * p / 100) as (b / 100) * p + ceil((b mod 100) * p / 100), so no step overflows a 32-bit score (the",
-        "# test author's finding: b * p overflowed from about 214 million)",
-        "scoreboard players operation @s bo.lost = @s bo.bal",
-        "scoreboard players operation @s bo.lost /= #100 bo.cfg",
-        "scoreboard players operation @s bo.lost *= #pct bo.cfg",
-        "scoreboard players operation #rem bo.tmp = @s bo.bal",
-        "scoreboard players operation #rem bo.tmp %= #100 bo.cfg",
-        "scoreboard players operation #rem bo.tmp *= #pct bo.cfg",
-        "scoreboard players add #rem bo.tmp 99",
-        "scoreboard players operation #rem bo.tmp /= #100 bo.cfg",
-        "scoreboard players operation @s bo.lost += #rem bo.tmp",
+        "# the amount needs no arithmetic on the balance: it is ceil(cap * percent / 100), computed by the generator and",
+        "# set at load. `<` takes the smaller, so a player holding less than the charge loses exactly what they hold and",
+        "# the charge can never go negative (and nothing multiplies a balance, so no step can overflow a 32-bit score)",
+        "scoreboard players operation @s bo.lost = #charge bo.cfg",
+        "scoreboard players operation @s bo.lost < @s bo.bal",
         "execute store result storage %s:blackout charge.amount int 1 run scoreboard players get @s bo.lost" % NS,
         "function %s:blackout/charge_apply with storage %s:blackout charge" % (NS, NS)])
     fn("blackout/charge_apply", ["$cobbledollars remove @s $(amount)"])
