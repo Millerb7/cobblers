@@ -126,7 +126,10 @@
   `z{1,2,4,5}/qualify` functions that let a player earn a pass are called by nothing - the guards are
   armour-stand placeholders. Installed as it stands the walls go up and nobody can pass them. Both come back
   when every zone's guard calls its qualify AND `progression.json` declares `rift_crisis_resolved` with
-  something that sets it (the finale's quest stage: story, Codex's). Settled by the unit: the cradle goes to
+  something that sets it (the finale's quest stage: story, Codex's). **Re-checked 2026-10-01 across every
+  remote branch: there is still NO setter**, and `data/quests.json` says so itself -- "no current dialogue
+  node invokes this trigger" and "rift_crisis_resolved is approved in ARC.md but absent from the
+  progression ledger". The four withheld walls stay withheld; this is answered, not open. Settled by the unit: the cradle goes to
   (3357, 3306) and not FACTION.md's (3297, 2603), which is outside the Rift; Z3 is superseded by the gulch's
   own zone; Registeel's effective gate is 8 badges, not 7, anywhere in the Rift.
 - **The suite is 7 failed, 5,188 passed, 9 xfailed in 578 s (measured 2026-10-01 after the trainer-ownership fix). The baseline is 7, not 8.** The 19 extra passes over the previous 5,169 are the trainer tests that had been collected-but-dead: between 06:14 and that fix the suite reported `no tests ran` and an `INTERNALERROR` rather than any count, because `tools/route_trainers.py` raised `SystemExit` while `tests/test_trainer_cycle.py` was imported and a `SystemExit` escapes pytest's collection. `tests/conftest.py` now turns that into one named collection error and keeps the count. The four failures that were phase-2's own are FIXED, and `no_swallowed_crashes` with them. What remains is pre-existing and still not to be chased: heightmap provenance (`water_shaped_from` undocumented), `mines_independent` surface faces, two `rift_heightmap` sculpt tests, and three `sea_town` tests, the last three the sea-town/ferry migration contracts C3 and C14 record.
@@ -154,6 +157,45 @@
   `gym_trainers.json` and the gym's motif in `trainers.json`; `champion_blue`'s `order` is 5 in
   `league_trainers.json` and 1 in `trainers.json`. Each wants a rename, none is urgent, and the registry
   holds the judgement so the next session reads it instead of making it again.
+- **An agent's isolation worktree receives no `derived/`** (verified 2026-10-01: `agent-*/derived/` holds
+  only the tracked `README.md`, and there is no `.worktreeinclude` in the repository at all). So every
+  build that needs the canonical heightmap or a measured plan -- the Rift's terrain work, siting, the
+  cavern plans -- is main-session work by construction, and a night planned as a fan-out of builders
+  cannot run. Research and data authoring delegate; terrain does not.
+- **Heaven's Arena: designed and costed, not built** (`docs/world-building/HEAVENS_ARENA.md`, 2026-10-01).
+  The tower COEXISTS with the Deep's city as the Core spire grown upward: **0 of 196 buildings and 0 stair
+  towers lost**, because lots seed only within 16 blocks of a riser foot and the spire already occupies the
+  one large footprint that rule leaves empty. 7 tiers on the pit's 15-then-17 grammar, crown y128 (under
+  the HQ tower's y132), the y15 Relay Row bridge as tier 1's door. **A wider drum would cost buildings
+  SILENTLY**: lots are seeded after the spire claims its columns and a lot under 40 columns is dropped with
+  no error (`tools/deep_city.py:960,1064`).
+- **An endless rctmod ladder needs nothing we lack, and rests on one unproven gate**
+  (`docs/research/notes/rct-arena-capabilities.md`, 2026-10-01). Repeatable fights are the default
+  (`maxTrainerDefeats` negative = infinity), CobbleDollars pays every win automatically, and
+  `requiredDefeats` is a 2-D list expressing "tier N before N+1" per player. rctmod cannot generate a team,
+  hold a per-player champion, or keep per-mob state. **UNPROVEN (experiment A1): whether `requiredDefeats`
+  gates a trainer with `series: []`** -- and the cap trap is that a player's level cap derives from the next
+  required trainer IN THEIR SERIES, so an arena with a series hijacks every cap in the game. Principle 20:
+  prove A1 before building the ladder. Every bytecode claim in that file is a quotation of an earlier read,
+  not fresh jar evidence, because the jars are absent from agent worktrees and that agent has no shell.
+- **Market stock can be gated per player, and not on the merchant** (`docs/mechanics/MARKET_GATING.md`,
+  2026-10-01). A score or a CobbleDollars balance is a per-player TOTAL, not a per-player stock list; what
+  gates stock is per-player dialogue option visibility (`tools/compile_dialogue.py` `isVisible` from
+  `visible_when`, plus a `cobblers:flag/<id>` advancement probe). The recommendation is the ferry's proven
+  checked-payment sequence, rung 5 + rung 7, no new mod. What actually stalled the trader work was not
+  missing per-player machinery but that stock is baked into the `summon` line at BUILD time
+  (`tools/traders.py:163-201,248-275`), so a category withheld from one player is withheld from everyone.
+  Costs: no trade GUI at a gated counter, a restart rather than `/reload` to add one, and nothing stops
+  player A buying for player B. Unknown: two players in one NPC's dialogue at once (EXP-022 unrun).
+- **The open-air Mega farm is unbuilt, with its tool already written** (found 2026-10-01).
+  `tools/gulch_mine.py` implements `farms[]` end to end -- zone and turn-back, per-tier level, respawn
+  clock, drop roll, the shared macro keeper -- and **`data/gulch_mine.json` has no `farms` key at all**,
+  while its own `megas.why` references `farms[].dens` and `farm_tiers` describes "four outer dens" that do
+  not exist. 12 open-ground den sites across both southern arms are measured off the heightmap (in
+  `docs/HANDOVER_SESSION.md`; `derived/` is gitignored). The obstacle is that
+  `tools/gulch_mine_audit.py:242,407` checks coordinates against the gulch's tight block `grid`, which
+  these sites are far outside; dens write no blocks, so the fix is a separate declared box for anchors,
+  **not a wider grid** -- a threshold widened to make data pass is not a threshold.
 - **Two contracts fail today and are recorded as such** in `data/system_contracts.json` `fails_today`, strict
   xfail: C3 `sound_ferry_from_the_jetty` (its `to` end (7210,6960) is ground y55 under a sea of y62 and is not
   a deck cell - the sea town moved out from under the crossing, and both stops of the `sound_ferry` line are
