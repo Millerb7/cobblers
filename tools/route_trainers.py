@@ -16,8 +16,11 @@ From data/trainers.json (generated from docs/story/TRAINER_RULES.json) and four 
                                 rctmod:trainer_spawner{TrainerIds:["kanto_brock"]} and the badge is awarded
                                 for beating that id, so the id cannot be re-pointed and our roster reaches a
                                 player only by overriding it. Emits the team and nothing else -- their
-                                dialogue is Codex's to write. gym_08_giovanni is held (empty team) and is
-                                skipped by name
+                                dialogue is Codex's to write. gym_08_giovanni is still marked held in
+                                data/gym_trainers.json and skipped, and its reason no longer holds: as of
+                                2026-10-01 data/trainers.json gives him status 'authored', a team of six
+                                topping out at 55 (his contract level) and blocked_by None. Seven of the
+                                eight leaders' teams reach a player; the eighth waits on one field
   data/league_trainers.json     the Elite Four and the Champion. These have no seat: Cobbleverse's
                                 kanto_league template already carries five rctmod:trainer_spawner blocks
                                 locked to kanto_league_lorelei/_bruno/_agatha/_lance and kanto_champion_blue
@@ -204,8 +207,12 @@ def overrides():
     persistent kanto_brock anywhere awards the badge (verified on staging 2026-09-24), and
     data/progression.json binds gym1_cleared and the first-win rewards to the same id.
 
-    An entry marked "held" is skipped with its reason: data/trainers.json's gym_08_giovanni has an empty
-    team, and an override with no Pokemon in it is worse than leaving upstream's roster alone.
+    An entry marked "held" is skipped with its reason, and the reason is printed rather than trusted.
+    gym_08_giovanni's says data/trainers.json gives him an empty team and status 'held' -- an override
+    with no Pokemon in it being worse than leaving upstream's roster alone. That was true on 2026-09-30
+    and is NOT true now: docs/story/GIOVANNI_FORMAT.md settled the format (singles), #96 generated the
+    roster, and he carries six Pokemon at 52-55 with blocked_by None. Only data/gym_trainers.json's
+    `held: true` keeps him out, and the owner decides when it goes.
     """
     recs, _seats, _f = load()
     out, held = [], []

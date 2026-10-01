@@ -78,7 +78,15 @@ def _local(reg: dict, f: str) -> bool:
 
 
 def shared_fields(a: dict, b: dict) -> list[str]:
-    """Fields both records carry with DIFFERENT values. Equal values are not two authors of anything."""
+    """Fields both records carry with DIFFERENT values. Equal values are not two authors of anything.
+
+    This is deliberately looser than `route_trainers.ownership()`, which faults on a shared undeclared
+    field even where the two values agree, and the difference is the scope. Inside a declared space the
+    two files are read together by one tool, so an identical copy is a dead value that will drift and the
+    strict rule is right. Across the whole of data/, two unrelated systems writing the same string for
+    one id is a coincidence of vocabulary (`"why": "decision 3"`), not evidence that either value is
+    dead, and failing on it would make the check a list of things to suppress. A duplicate that is
+    identical today shows up here the moment one side changes, which is the moment it matters."""
     return sorted(f for f in set(a) & set(b) - {"id"} if a[f] != b[f])
 
 
@@ -105,6 +113,17 @@ def problems(recs: dict, reg: dict) -> list[str]:
         space = _space_of(reg, fa, fb)
         if space is not None:
             owner = space["owner"]
+            if owner not in (fa, fb):
+                # TWO SATELLITES, no owner in the pair. Found by the test author's review, 2026-10-01:
+                # until this branch existed the loop below named space["owner"] as the file carrying the
+                # field, so a collision between two seat files sent its reader to the generated roster,
+                # which carried neither value. A fault that names the wrong file is worse than a quiet
+                # one: it is a day spent in the wrong file.
+                bad.append("%s: %s and %s are both satellites of the %s space and both carry a record "
+                           "for it, sharing %s. A stand belongs to ONE seat file -- the two are not "
+                           "halves of each other, and %s (the owner) carries neither value."
+                           % (rid, fa, fb, space["id"], ", ".join(fields) or "no field yet", owner))
+                continue
             sat = fb if fa == owner else fa
             for f in fields:
                 mode = ("satellite" if f in space["satellite_fields"] else
@@ -125,7 +144,12 @@ def problems(recs: dict, reg: dict) -> list[str]:
             continue
         for f in fields:
             seen.setdefault((fa, fb, f), set()).add(rid)
-    for (fa, fb, f), ids in sorted(seen.items()):
+    # over the union, not over `seen`: a declaration whose ids ALL stop overlapping has no key in `seen`
+    # at all, so iterating the data alone could never report it. Found by the test author, 2026-10-01 --
+    # dropping `name` from data/ferries.json's sunset_south_pier, the only id of that declared overlap,
+    # produced no fault whatever, and the registry would have gone on describing data that had moved.
+    for (fa, fb, f) in sorted(set(seen) | set(declared)):
+        ids = seen.get((fa, fb, f), set())
         if (fa, fb, f) not in declared:
             bad.append("%s and %s both author %s for %d id(s) (%s) and %s declares no overlap for it. "
                        "Either one of the two values is dead -- say which file owns it -- or the two "
