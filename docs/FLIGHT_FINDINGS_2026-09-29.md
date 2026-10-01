@@ -267,3 +267,20 @@ It carries the same interim caveat as the seated trainers: `Cooldown` is entity 
 trainer, so it cannot be held per player. A player holding the badge is protected; an unbeaten partner
 beside them may have to start the fight by interacting. **Not yet seen in game** - the owner's rematch
 is the evidence the guard was absent, not that the guard works.
+
+## F12 — two of Codex's authored trainer points are inside a town
+
+Found 2026-09-30 by the agent that seated routes 4-8. For `docs/story/TRAINER_RULES.json`'s author,
+which is Codex: two of the 28 authored placement points fall inside a settlement's bounds, where a
+route trainer must not stand.
+
+- **`route_07_trainer_01`**: its authored point (6248, 3546) is inside Saffron's `gym6_town` box
+  (6092, 3292)-(6314, 3596), and route 7 does not leave that box for **253 blocks**. Seated 48 path
+  cells on, 68 blocks from the authored point, which needed the along-route reach widened to 120 path
+  cells — recorded in the tool with its reason rather than silently.
+- **`route_07_trainer_04`**: its authored point is inside `gorge_hamlet`. Seated at offset 6 instead of
+  the usual 3, 9.2 blocks moved.
+
+Neither was "fixed" in Codex's data: the seats moved, the authored points did not, and the move is
+recorded per seat. If the intent was for those two to be town trainers rather than route trainers, the
+fix belongs in TRAINER_RULES.json and these seats should go.

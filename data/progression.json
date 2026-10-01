@@ -1640,6 +1640,258 @@
       "why": "Victory Road fight 10 of 10, seated 2026-09-30 by tools/route_trainers.py on the stand tools/vr_caves.py already carved (data/vr_trainers.json). Numbered route_09_* because Victory Road is the ninth leg in data/routes.json, after route_08_blaine_to_giovanni."
     },
     {
+      "id": "quest.route_04_trainer_01.defeated",
+      "quest_id": "route_04_trainer_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 4 trainer 1 of 6, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_04_trainer_02.defeated",
+      "quest_id": "route_04_trainer_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 4 trainer 2 of 6, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_04_trainer_03.defeated",
+      "quest_id": "route_04_trainer_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 4 trainer 3 of 6, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_04_trainer_04.defeated",
+      "quest_id": "route_04_trainer_04",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 4 trainer 4 of 6, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_04_trainer_05.defeated",
+      "quest_id": "route_04_trainer_05",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 4 trainer 5 of 6, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_04_trainer_06.defeated",
+      "quest_id": "route_04_trainer_06",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 4 trainer 6 of 6, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_05_trainer_01.defeated",
+      "quest_id": "route_05_trainer_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 5 trainer 1 of 4, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_05_trainer_02.defeated",
+      "quest_id": "route_05_trainer_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 5 trainer 2 of 4, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_05_trainer_03.defeated",
+      "quest_id": "route_05_trainer_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 5 trainer 3 of 4, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_05_trainer_04.defeated",
+      "quest_id": "route_05_trainer_04",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 5 trainer 4 of 4, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_06_trainer_01.defeated",
+      "quest_id": "route_06_trainer_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 6 trainer 1 of 5, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_06_trainer_02.defeated",
+      "quest_id": "route_06_trainer_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 6 trainer 2 of 5, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_06_trainer_03.defeated",
+      "quest_id": "route_06_trainer_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 6 trainer 3 of 5, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_06_trainer_04.defeated",
+      "quest_id": "route_06_trainer_04",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 6 trainer 4 of 5, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_06_trainer_05.defeated",
+      "quest_id": "route_06_trainer_05",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 6 trainer 5 of 5, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_07_trainer_01.defeated",
+      "quest_id": "route_07_trainer_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 7 trainer 1 of 6, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_07_trainer_02.defeated",
+      "quest_id": "route_07_trainer_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 7 trainer 2 of 6, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_07_trainer_03.defeated",
+      "quest_id": "route_07_trainer_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 7 trainer 3 of 6, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_07_trainer_04.defeated",
+      "quest_id": "route_07_trainer_04",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 7 trainer 4 of 6, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_07_trainer_05.defeated",
+      "quest_id": "route_07_trainer_05",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 7 trainer 5 of 6, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_07_trainer_06.defeated",
+      "quest_id": "route_07_trainer_06",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 7 trainer 6 of 6, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_08_trainer_01.defeated",
+      "quest_id": "route_08_trainer_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 8 trainer 1 of 7, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_08_trainer_02.defeated",
+      "quest_id": "route_08_trainer_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 8 trainer 2 of 7, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_08_trainer_03.defeated",
+      "quest_id": "route_08_trainer_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 8 trainer 3 of 7, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_08_trainer_04.defeated",
+      "quest_id": "route_08_trainer_04",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 8 trainer 4 of 7, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_08_trainer_05.defeated",
+      "quest_id": "route_08_trainer_05",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 8 trainer 5 of 7, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_08_trainer_06.defeated",
+      "quest_id": "route_08_trainer_06",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 8 trainer 6 of 7, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
+      "id": "quest.route_08_trainer_07.defeated",
+      "quest_id": "route_08_trainer_07",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Route 8 trainer 7 of 7, seated 2026-09-30 by tools/late_route_trainers.py. Codex authored the team in docs/story/TRAINER_RULES.json and its pass explicitly did not place entities; this is the placement half."
+    },
+    {
       "id": "quest.sq_sunset_01.completed",
       "quest_id": "sq_sunset_01",
       "field": "completed",

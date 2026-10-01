@@ -116,7 +116,9 @@ def test_the_cycle_runs_every_10_ticks(files):
 def test_every_placed_trainer_has_exactly_one_line_of_each_kind(cycle):
     # 13 route + 5 mansion guardians + 10 Victory Road, seated 2026-09-30. Was 18. Every one of them
     # still needs exactly one line of each kind, which is what the rest of this test checks.
-    assert len(IDS) == 28 and len(set(IDS)) == 28
+    # 13 route + 28 late route (seated 2026-09-30) + 5 mansion guardians + 10 Victory Road.
+    # Was 18, then 28, now 56. Every one still needs exactly one line of each kind.
+    assert len(IDS) == 56 and len(set(IDS)) == 56
     home, tags, cool, other = _classify(cycle)
     assert not other, other
     # The eight GYM LEADERS get a cooldown and nothing else, added 2026-09-30 after the owner beat Brock

@@ -426,6 +426,11 @@ def prepare_jobs(a):
     # build, or anything stands on the walked line), then the scene runtime and the trainers
     add("route_events", "route_events.py", *src)
     add("scenes_pack", "scenes_pack.py")
+    # routes 4-8's 28 trainers (tools/late_route_trainers.py, data/late_route_trainers.json, 2026-09-30): the
+    # biggest unplaced content in the project until now. BEFORE route_trainers, which reads its seat file as a
+    # fourth source. No --write: it re-seats from the route paths and the heightmap and FAILS on drift, the way
+    # route_events does, so a seat cannot quietly move when the ground under it changes.
+    add("late_route_trainers", "late_route_trainers.py", *src)
     add("route_trainers", "route_trainers.py")
     add("rematerial", "rematerial.py")
     # the sea town's settlement, Centre, Mart, earthworks and clerk are generated into data/placements.json and
