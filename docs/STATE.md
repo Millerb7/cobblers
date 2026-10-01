@@ -369,6 +369,18 @@
   NPC**, not the campaign. Still worth fixing (a card our marts never sell is a dead config), and still
   **NOT VERIFIED**: whether CobbleDollars falls back to `defaultShop` in the GUI despite the empty NBT,
   which needs a player to open a counter, and whether the card is obtainable any other way.
+- **`cobbleDollarsIncomeMultiplier` is 1.25, ours, overlaid** (the owner, 2026-10-01, decisions B8+B9).
+  Cobbleverse ships **0.5** in `base-pack/cobbleverse/config/cobbledollars/common.json` and we had **no
+  overlay at all**, so upstream's value was live. `modpack/config/cobbledollars/common.json` now sets 1.25
+  and `tools/server_config_record.py install` copies it whole-file onto the server. **All measured income
+  multiplies by 2.5**, which is exactly the factor `docs/research/INCOME_MEASUREMENT.md` found the ladder
+  mispriced by: *"leg income rises 3.8x across eight badges and the ask rises 3.5x; the slopes match, the
+  intercept is about 2.5x off."* So the fix is one key rather than a re-priced column, and the trainer
+  card's 500 at Pallet stops being impossible. The ladder is being re-derived against 1.25 rather than
+  divided again, because dividing after the multiplier would double-correct.
+  **NOT YET LIVE:** the staging server is running on upstream's 0.5; the overlay reaches it on the next
+  `reapply.py install` plus a restart. And the multiplier also multiplies what `bank.json`'s 82 unreviewed
+  sell prices leak, which nobody has reviewed.
 - **Two contracts fail today and are recorded as such** in `data/system_contracts.json` `fails_today`, strict
   xfail: C3 `sound_ferry_from_the_jetty` (its `to` end (7210,6960) is ground y55 under a sea of y62 and is not
   a deck cell - the sea town moved out from under the crossing, and both stops of the `sound_ferry` line are

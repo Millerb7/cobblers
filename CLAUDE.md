@@ -201,6 +201,22 @@ and running Minecraft instead. Agents do not spawn their own agent teams.
 Read-only agents (`repo-scout`, `qa-reviewer`, `build-doctor`) do not need a
 worktree; worktrees exist to keep concurrent writers apart.
 
+**A guard that names its own remedy is not a refusal (the owner, 2026-10-01).** The
+worktree complexity guard refuses a compound command -- a heredoc, a `for` loop, a
+path it cannot verify stays inside the worktree -- and its own text says *"Split it
+into plain, separate commands and run them from <worktree>"*. Following that
+instruction, or using the `Write` tool for the same in-worktree path, **is compliance,
+not a workaround**: the guard objected to the SHAPE of the command and told the agent
+what shape to use. Eight or more agents hit it across 2026-10-01 and every one of them
+followed the remedy; treating that as a violation would mean treating the guard's own
+advice as off limits.
+
+The distinction that matters: a guard refusing a **path** while naming another is to be
+followed; a guard refusing an **outcome** ends the attempt. "Use plain commands" is the
+first. "Refusing to read the live world" or "this agent may not write there" is the
+second, and no second route may be tried. When it is not obvious which you have hit,
+treat it as the second and hand back.
+
 **A refusal ends the attempt (the owner, 2026-09-28).** A subagent whose action
 is refused (a permission prompt denied, a hook or safety check blocking a write,
 a guard in a tool) stops that line of work and hands back: what it tried, the
