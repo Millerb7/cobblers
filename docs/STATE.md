@@ -1,6 +1,38 @@
 # Project state
 
-> ## READ THIS FIRST: nothing is in any world
+> ## THERE IS A WORLD AGAIN, as of 2026-10-01
+>
+> **`C:\Users\wnd\Documents\cobblers-staging\staging-2026-10-01`** -- 484 regions, exported from the
+> pinned heightmap with the paint, seed `-472167725407180184` carried from a disposable copy of
+> `cobblers-10240.pre-rescale`'s `level.dat`. Boot it as a disposable universe, never by `level-name`:
+>
+> ```
+> java -Xmx16G -jar fabric-server-launch.jar nogui --universe C:/Users/wnd/Documents/cobblers-staging --world staging-2026-10-01
+> ```
+>
+> **38 of 38 apply steps ran.** In the world now: the Rift skin and biome, the lake beds, the Displaced
+> City cavern, the world tree, the groves and elders, Route 1's maze forest, Relic Island, 26 towns and
+> places, 32 pack donors, the Windward Deep **and the Heaven's Arena tower**, Victory Road's caves, the
+> dig camp's mines, the gulch's gate and Cutting Floor, 5 of 9 zone walls, the evolution-stone faces, the
+> Deep's city, Habitat Blocks, reward NPCs, bridges, lights, town dressing, working Pokemon, the wayside
+> shrines, the gym interiors and **the 7 authored gym buildings**, the ferry docks, **the 12 portals**,
+> route signposts, Routes 1-3's event sites, **the route trainers**, the ferrymen, the town traders, the
+> Celebi, and the authored legendary chambers.
+>
+> **Verified in the world, not in the plan:** the floor verify covers 27 places and **26 have zero gaps**.
+> The arena stands -- crown floor solid at y127, air above tier 1 and tier 7's stands, the balustrade at
+> y129, lobby floor solid at y5. A trainer answers at Victory Road's first seat
+> (`trainer.rctmod.route_09_trainer_01.name`, "League Applicant") and **the tenth seat holds the "League
+> Examiner"**, so main's roster is what a player meets and the Gate Warden survives only in data.
+>
+> **The one failure: `sea_town`, 92 floor gaps**, and its own verify exits 1. That is the known migration
+> -- contracts C3 and C14 already record that the sea town moved out from under its crossing -- now
+> measured in a world rather than inferred.
+>
+> **`cobblers-10240` was never opened.** `server.properties` is unchanged (`level-name=cobblers-10240`,
+> and `max-tick-time=60000` restored after the run, which requires -1).
+>
+> ## The week this replaces, when nothing was in any world
 >
 > **The staging worlds are gone** (established 2026-10-01). `cobblers-dryrun9`, `dryrun11` and
 > `dryrun12` no longer exist. **Every claim in this file of the form "applied to dryrun12", "built on
