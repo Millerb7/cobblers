@@ -1,6 +1,82 @@
-# Handover — two things first, then the state
+# Handover — #97's suite is DEAD, and one deletion must not be made
 
 A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else, before it starts.
+
+## 0. STOP: the whole pytest suite collects ZERO tests on `build/2026-09-29-phase2`
+
+`origin/main` was merged into #97's branch on 2026-10-01 (merge commit **`2e0487f`**). The one textual
+conflict (`data/progression.json`) was resolved correctly as a union -- 131 shared entries identical, 39 ours,
+7 theirs (`ambient_stone_tips` cursors), zero content clashes, purely additive, validators clean.
+
+**But git auto-merged a SEMANTIC collision it could not see.** Victory Road's ten fights,
+`route_09_trainer_01..10`, are now authored twice:
+
+- **ours**, `data/vr_trainers.json` -- the STAND: `seat`, `yaw`, `faces`, `eye_contact`, `sight_distance`,
+  `skin`, `stand_index`, and a written `unavoidable` rationale per stand. Only 1 of 10 carries a team.
+- **main's** (#96), `data/trainers.json` -- the ROSTER: `team`, `format`, `archetype`, `lesson`, `modes`, and
+  a `placement` block carrying `x`/`z`/`sampled_y` whose `placement_authority` is
+  *"data/vr_caves.json trainer stand"* -- the same stands, same coordinates.
+
+`tools/route_trainers.py:125` raises `SystemExit("data/vr_trainers.json re-authors %s, which
+data/trainers.json already has")`. That escapes during pytest COLLECTION, so the suite reports
+**`no tests ran`** and an `INTERNALERROR`, not a failure count. **Nothing is being tested on this branch.**
+Fix this before trusting any other result here.
+
+### Do NOT resolve it by deleting either file's ten
+
+The owner chose "keep main's, drop ours" on 2026-10-01 **while both sides were believed to be duplicates.**
+They are not, and the session checked twice before acting:
+
+1. First worry -- that dropping ours loses the coordinates -- was **wrong**: main carries `x`/`z`/`sampled_y`
+   with the same values. (An earlier check missed them only because main stores x/z as separate keys, not an
+   array.)
+2. Second check was the decisive one: `data/vr_trainers.json` declares
+   `generated_by: "hand, from derived/vr_caves/plan.json 'stands' (tools/vr_caves.py place_fights)"`.
+   **Hand-authored, not generated.** Deleting it destroys `yaw`, `faces`, `eye_contact`, `sight_distance`,
+   `skin` and the per-stand `unavoidable` rationale -- which way each trainer faces, whether it initiates on
+   sight, how far it sees, its texture, and why each stand is unavoidable. `seat` and `stand_index` are
+   re-derivable from `derived/vr_caves/plan.json`; **the judgement is not.** Seated without it, the ten face
+   arbitrary directions with no eye-contact behaviour.
+
+So **no deletion was made.** The real fix is the guard's assumption, which #96 invalidated: the two files are
+no longer rival authors but two halves -- main owns the roster, ours owns the stand behaviour. Options, the
+owner's to pick:
+
+- **(recommended) Teach the guard the split.** `tools/route_trainers.py` reads the roster from
+  `data/trainers.json` and the stand fields from `data/vr_trainers.json`, and the guard fires only on a field
+  authored in both. Keeps every field, needs a small change to the tool and one line in `vr_trainers.json`
+  saying it no longer authors trainers, only stands.
+- **Port then delete.** Move the six behavioural fields into main's `placement` block for each of the ten,
+  then drop `data/vr_trainers.json`. Loses nothing, but edits `data/trainers.json`, which is Codex's.
+- **Delete ours anyway**, accepting the loss, and re-derive facing and sight by hand later. Cheapest now,
+  most expensive later, and the rationale text is simply gone.
+
+Already cleared by the merge: `vr_trainers.json`'s own note said the ten `quest.<id>.defeated` fields were
+undeclared in `data/progression.json` as of 2026-09-30, which would have made `route_trainers.py` refuse to
+emit them. **This branch declares all ten.**
+
+## 0b. Also arrived with main: Giovanni is unblocked
+
+`docs/story/GIOVANNI_FORMAT.md` records the decision -- **singles** -- and `data/trainers.json`'s
+`gym_08_giovanni` is now `status: authored`, a team of 6, `blocked_by: None`. The long-standing "Giovanni's
+roster is held and empty" item is **closed by main**. Two loose ends: `tools/route_trainers.py`'s own comments
+(lines 19 and 140) still describe him as held with an empty team, and **whether his override actually emits is
+unverified** -- it needs a `prepare` run, which has not happened since the merge. If it does emit, all eight
+leaders carry our teams rather than seven.
+
+## 0c. The NPC placement: the count is wrong and the method needs a world
+
+The owner asked for "the 32 settlement NPCs and four Rift guards" placed, predict-then-probe as the 56
+trainers were. **There are not 32** (`docs/world-building/SETTLEMENT_NPCS.md`, merged as #99): `32` appears
+nowhere in the repository. The real figures are **15** conversation-bearing settlement NPCs (13 `npc_main_*`
+plus Pallet's Hank and Lena), **34** gate-guard positions with no characters authored at all, and the **four
+Rift guards, which already have seats with armour-stand placeholders**.
+
+**The blocker is standing blocks, not coordinates:** 10 of 13 carry a `recorded_position_xz` and **0 carry a
+`stand_marker`**. Nine of those ten check out against their settlement footprint and heightmap ground.
+
+The owner's decision (2026-10-01): **fix the lock permission first, then place in a fresh session.** The
+probe half of the method needs a running world, and there is none -- which is section 1.
 
 ## 1. FIRST: `install_check.py` has not run for three sessions. Fix the permission, do not skip it again
 
