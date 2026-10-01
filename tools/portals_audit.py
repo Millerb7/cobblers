@@ -8,7 +8,12 @@ holds that model against its own, separately written reading of:
 
   data/portals.json      the twelve portals, the gates, the room kinds, the rules and the loot
   tools/ground.py        the canonical heightmap, rounded -- the apron's y is recomputed here, not read back
-  data/landmarks.json    each dive portal's water body: its outline and its authored level_y
+  data/landmarks.json    each dive portal's water body: its `water_body.basin_polygons` and `level_y`, which
+                         is where tools/paint_maps.py actually paints water. NOT the landmark's `extent`
+                         polygons, which this tool used until F7: they are the place's label outline, they
+                         enclose 219,737 dry columns at Lake Tilpey alone, and a portal in that gap passed.
+                         This check is written separately from tools/water_mask.py on purpose, so the builder
+                         and the audit are still two independent readings of the same rule
   data/towns.json        town footprints            } the clearances, recomputed
   data/placements.json   built places               }
   data/legendaries.json  the sited legendary mouths }
@@ -110,7 +115,9 @@ def audit(a):
     rules, pocket = doc["rules"], doc["pocket"]
     fy, dim = pocket["floor_y"], pocket["dimension"]
     marks = json.loads((ROOT / "data" / "landmarks.json").read_text(encoding="utf-8"))["landmarks"]
-    bodies = {l["id"]: ((l.get("water_body") or {}).get("level_y"), (l.get("extent") or {}).get("polygons") or [])
+    # (level_y, basin polygons): the basin is the painted water, the extent is only the label outline (F7)
+    bodies = {l["id"]: ((l.get("water_body") or {}).get("level_y"),
+                        (l.get("water_body") or {}).get("basin_polygons") or [])
               for l in marks}
     towns = json.loads((ROOT / "data" / "towns.json").read_text(encoding="utf-8"))["towns"]
     places = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))["placements"]
@@ -209,9 +216,16 @@ def audit(a):
             lev, polys = bodies.get(spec.get("water_body"), (None, []))
             if lev is None:
                 bad.append("%s: water body %r has no authored level_y" % (pid, spec.get("water_body")))
+            elif not polys:
+                bad.append("%s: water body %r has no basin_polygons, so no water is painted in it at all"
+                           % (pid, spec.get("water_body")))
             else:
-                if not any(in_polygon(p, x, z) for p in polys):
-                    bad.append("%s: (%d, %d) is outside %s's outline" % (pid, x, z, spec["water_body"]))
+                # every apron column, not just the centre: an apron half outside the basin is half dry
+                outside = [c for c in cols if not any(in_polygon(p, c[0], c[1]) for p in polys)]
+                if outside:
+                    bad.append("%s: %d of its %d apron columns are outside %s's basin_polygons, where "
+                               "tools/paint_maps.py paints no water; first %s"
+                               % (pid, len(outside), len(cols), spec["water_body"], outside[0]))
                 top = max(by for (_bx, by, _bz) in wb)
                 if top > lev - rules["min_water_above"]:
                     bad.append("%s: its top block is y%d, only %d under the water at y%d (min %d)"

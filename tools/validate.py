@@ -19,6 +19,10 @@ Checks (see CHECKS at the bottom):
   manifest_sanity       modpack/manifest/*.json have the expected top-level shape
   ground_rule           no tool reads a world save except in a function its own WORLD_READS declares (a check,
                         never ground for a placement; tools/ground_rule.py)
+  water_claims          every column of every thing that claims to stand in water (the dive portals'
+                        aprons, the ferry docks' decks) is inside that body's water_body.basin_polygons,
+                        which is the only place tools/paint_maps.py paints water. Polygons only: the
+                        depth half of the rule needs the heightmap (tools/water_mask.py claims)
   template_provenance   every structure template git would publish matches a kits/PROVENANCE.json record
                         with a permissive licence (and a notice file when third-party); records for
                         non-permissive sources may only cover gitignored, local-only files
@@ -475,6 +479,37 @@ def check_ground_rule(ctx: Context) -> None:
         ctx.add("error", "tools/", msg)
 
 
+def check_water_claims(ctx: Context) -> None:
+    """Everything that says it stands in water stands inside the basin where water is PAINTED (F7).
+
+    tools/paint_maps.py paints a lake only inside a landmark's `water_body.basin_polygons`; the
+    landmark's `extent.polygons` is the place's label outline and encloses tens of thousands of dry
+    columns (`python tools/water_mask.py gap`). This is the cheap half of tools/water_mask.claim():
+    polygon membership only, so it needs no heightmap and runs in milliseconds here. The DEPTH half --
+    ground below the body's level_y, with the margin -- needs the canonical heightmap and is checked by
+    tools/portals.py, tools/portals_audit.py, `python tools/water_mask.py claims` and the slow case in
+    tests/test_water_mask.py. A clean run here does not mean a thing is submerged; it means it is in
+    the right basin."""
+    import sys as _sys
+    _sys.path.insert(0, str(ctx.root / "tools"))
+    import water_mask
+    bodies = water_mask.bodies()
+    for bid, b in bodies.items():
+        if not b["basin"]:
+            ctx.add("error", "data/landmarks.json", f"{bid} has water_body.level_y but no basin_polygons: "
+                                                    "nothing is painted in it, so no claim on it can hold")
+    for label, body, cols, _sub in water_mask.sited_claims():
+        if body == "sea":
+            continue              # the sea has no polygon: it is the ground-below-sea-level test alone
+        if body not in bodies:
+            ctx.add("error", "data/", f"{label}: {body}")
+            continue
+        outside = [c for c in cols if not water_mask.in_polygons(bodies[body]["basin"], *c)]
+        if outside:
+            ctx.add("error", "data/", f"{label}: {len(outside)} of {len(cols)} columns are outside "
+                                      f"{body}'s basin_polygons, where no water is painted; first {outside[0]}")
+
+
 def _stub(name: str, what: str):
     """Placeholder for a future campaign check. Reports 'skipped' so nobody mistakes it for coverage."""
 
@@ -496,6 +531,7 @@ CHECKS = [
     ("structure_manifest", check_structure_manifest),
     ("template_provenance", check_template_provenance),
     ("ground_rule", check_ground_rule),
+    ("water_claims", check_water_claims),
     # --- extension points (EXP-001..EXP-007 will define the data these need) ---
     ("duplicate_ids", _stub("duplicate_ids", "duplicate campaign ids across routes/trainers/rewards")),
     ("missing_pokemon_refs", _stub("missing_pokemon_refs", "species/form names that Cobblemon does not know")),
