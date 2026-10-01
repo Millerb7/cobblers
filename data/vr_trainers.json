@@ -1,14 +1,14 @@
 {
  "schema": "cobblers.vr-trainers/1",
  "status": "authored 2026-09-30; seats read from the cave model, not placed in any world",
- "generated_by": "hand, from derived/vr_caves/plan.json 'stands' (tools/vr_caves.py place_fights)",
+ "generated_by": "hand, from derived/vr_caves/plan.json 'stands' (tools/vr_caves.py place_fights). This file authors the STAND only -- seat, yaw, faces, eye_contact, sight_distance, skin, stand_index and the per-stand rationale. data/trainers.json authors the ROSTER for all ten (who each is, its team and its rct payload); tools/route_trainers.py reads each field from its owner and fails on any field authored in both (its STAND_FIELDS / ROSTER_ECHO / ROSTER_PRECEDENCE). The ten dialogue_text sets here are the fallback only: every record now carries its own, so the roster's lines are what a player hears and these are superseded -- route_trainers.py counts them out loud on every run.",
  "consumed_by": "tools/route_trainers.py (the rctmod data and the cycle) and its placements() for tools/reapply.py",
  "ground": "Every seat is a cell of tools/vr_caves.py's own walked route and the air block over a stand that place_fights() already carved (derived/vr_caves/plan.json 'stands'). No world save was read to decide any position (CLAUDE.md, 'Ground comes from the heightmap, never from a world'). The stands are therefore the blocks that are physically in the cave, which is why docs/STATE.md's Victory Road '--check' failure -- pins that disagree with where vr_caves.py puts the fights -- resolves in favour of these ten.",
  "spacing_rule": "By progress along the walked route, not by distance. place_fights() spaces the ten at even route index: idx = lo + (hi - lo) * (m + 0.5) / 10 across the span lo = 4% to hi = 94% of the 713-cell shortest path from the mouth to the exit, then steps to the nearest cell that is standable, outside the rest station's box, and at least min_apart (40) from every stand already placed. The result is even in progress (0.084, 0.174, 0.264 ... 0.893, a step of 0.0899 every time) and deliberately uneven in blocks (42.0 to 59.4 apart, 1 to 11 blocks of climb between them), because a braided cave's shortest path is not a straight line and even spacing in blocks would bunch the fights wherever the route doubles back. Ten fights over an 88-block climb then read as one every ninth of the way up, not one every nine metres.",
  "rest_station": "The rest station stands at (3606, 23, 2835), box x3606-3620 z2835-2849, and place_fights() refuses any stand within 3 blocks of it. So the fights fall five before and five after by accident of the route, not by design: the healing sits at about 44% of the climb, between stands 4 and 5, not at the halfway mark.",
  "unavoidable": "Two of the ten are unavoidable by geometry, the other eight by eye contact. Stand 10 sits 2.4 blocks from the exit ravine's foot (3656, 64, 2566), the 11-wide shaft that data/vr_caves.json names as the single opening onto the League's apron; stand 1 sits 55 blocks inside the mouth (3560, 1, 3064), which the same file calls 'the one way in from below'. The eight between stand ON the walked route -- the shortest way from mouth to exit through the carved network -- and each carries forceBattleOnSight at 7 blocks, one more than the 6-block lit ring place_fights() burns into the floor around every stand, so a player who can see the lit floor is already in the fight.",
  "unavoidable_not_verified": "data/vr_caves.json's guarantees say in terms: 'There is no path.' The network is braided on purpose (tunnels.loops 0.28) and only reachability is proven, so a determined player may be able to detour round one of the middle eight through a loop gallery. Nothing here proves otherwise, and forceBattleOnSight's check is known to pass through walls, which argues for the small radius rather than a large one. Walking the climb and counting how many of the ten actually force a battle is what EXP-033 has to answer.",
- "fields_needed": "Each of the ten sets quest.<id>.defeated, and tools/route_trainers.py refuses to emit a trainer whose fields are not declared in data/progression.json quest_fields. None of the ten are declared there (checked 2026-09-30). data/progression.json belongs to another unit tonight; the ten entries to add are written out in docs/world-building/VICTORY_ROAD_FIGHTS.md.",
+ "fields_needed": "Each of the ten sets quest.<id>.defeated, and tools/route_trainers.py refuses to emit a trainer whose fields are not declared in data/progression.json quest_fields. All ten ARE declared there as of 2026-10-01 (they were not on 2026-09-30; the entries came in with the phase-2 branch). docs/world-building/VICTORY_ROAD_FIGHTS.md lists them.",
  "trainers": [
   {
    "id": "route_09_trainer_01",
@@ -249,69 +249,12 @@
     "player_win": "Then go up. The Elite Four are four rooms and one lift, and none of them open backwards.",
     "player_loss": "Back down the climb with you. The door does not move."
    },
-   "display_name": "Gate Warden",
-   "class": "route",
-   "format": "GEN_9_SINGLES",
-   "route_id": "victory_road",
-   "route_order": 9,
-   "trainer_order": 10,
-   "archetype": "gym_prep",
-   "lesson": "The last gate asks for a full team at the cap, with no items and nothing held back.",
-   "for": "The tenth stand was carved by tools/vr_caves.py (trainers.count 10) and had no team: data/trainers.json holds nine. The Gate Warden is what the tenth stand is for -- the single fight that cannot be walked around, standing in the exit shaft so that the climb ends in a battle rather than in a staircase.",
-   "authored_here_because": "data/trainers.json is generated by docs/story/generate_trainers.py from docs/story/TRAINER_RULES.json (generation_contract route_trainers: 50) and must not be hand-edited; data/mansion_guardians.json is the precedent for a record that lives beside its seat. When TRAINER_RULES.json is next edited this record should migrate there and the contract's count rise to 51.",
-   "level_band_because": "data/progression.json does not settle the band: its notes say 'Level caps are computed by RCT per player from the active series (initialLevelCap 20, relativeLevelCap 0 in modpack/config/rctmod-server.toml since 2026-09-24), so chapters carry no level_cap here.' There is no Victory Road cap in the data to read. The band is therefore the one the nine imply: they climb 51 to 58 by one or two a fight, and the Elite Four open at 57-60 behind a level-60 ace. 57-59 continues the nine's own step and stops one level under Lorelei's ace, so the gate is the hardest fight in the cave and still easier than the first room above it.",
-   "team": [
-    {
-     "species": "klang",
-     "moveset": [
-      "geargrind",
-      "chargebeam",
-      "shiftgear"
-     ],
-     "level": 57
-    },
-    {
-     "species": "toxapex",
-     "moveset": [
-      "poisonjab",
-      "toxicspikes",
-      "recover"
-     ],
-     "level": 58
-    },
-    {
-     "species": "heracross",
-     "moveset": [
-      "brickbreak",
-      "megahorn",
-      "rockblast"
-     ],
-     "level": 59
-    }
-   ],
-   "rct": {
-    "identity": "route_09_trainer_10",
-    "name": {
-     "literal": "Gate Warden"
-    },
-    "battleFormat": "GEN_9_SINGLES",
-    "battleRules": {
-     "maxItemUses": 0,
-     "healPlayers": false,
-     "adjustPlayerLevels": false,
-     "adjustNPCLevels": false
-    },
-    "ai": {
-     "type": "rct",
-     "data": {
-      "moveBias": 1.0,
-      "switchBias": 0.35,
-      "statusMoveBias": 0.75,
-      "itemBias": 0.6,
-      "maxSelectMargin": 0.35
-     }
-    },
-    "bag": [],
+   "superseded_roster": {
+    "display_name": "Gate Warden",
+    "class": "route",
+    "format": "GEN_9_SINGLES",
+    "archetype": "gym_prep",
+    "lesson": "The last gate asks for a full team at the cap, with no items and nothing held back.",
     "team": [
      {
       "species": "klang",
@@ -340,7 +283,67 @@
       ],
       "level": 59
      }
-    ]
+    ],
+    "rct": {
+     "identity": "route_09_trainer_10",
+     "name": {
+      "literal": "Gate Warden"
+     },
+     "battleFormat": "GEN_9_SINGLES",
+     "battleRules": {
+      "maxItemUses": 0,
+      "healPlayers": false,
+      "adjustPlayerLevels": false,
+      "adjustNPCLevels": false
+     },
+     "ai": {
+      "type": "rct",
+      "data": {
+       "moveBias": 1.0,
+       "switchBias": 0.35,
+       "statusMoveBias": 0.75,
+       "itemBias": 0.6,
+       "maxSelectMargin": 0.35
+      }
+     },
+     "bag": [],
+     "team": [
+      {
+       "species": "klang",
+       "moveset": [
+        "geargrind",
+        "chargebeam",
+        "shiftgear"
+       ],
+       "level": 57
+      },
+      {
+       "species": "toxapex",
+       "moveset": [
+        "poisonjab",
+        "toxicspikes",
+        "recover"
+       ],
+       "level": 58
+      },
+      {
+       "species": "heracross",
+       "moveset": [
+        "brickbreak",
+        "megahorn",
+        "rockblast"
+       ],
+       "level": 59
+      }
+     ]
+    },
+    "route_id": "victory_road",
+    "route_order": 9,
+    "trainer_order": 10,
+    "for": "The tenth stand was carved by tools/vr_caves.py (trainers.count 10) and had no team: data/trainers.json holds nine. The Gate Warden is what the tenth stand is for -- the single fight that cannot be walked around, standing in the exit shaft so that the climb ends in a battle rather than in a staircase.",
+    "authored_here_because": "data/trainers.json is generated by docs/story/generate_trainers.py from docs/story/TRAINER_RULES.json (generation_contract route_trainers: 50) and must not be hand-edited; data/mansion_guardians.json is the precedent for a record that lives beside its seat. When TRAINER_RULES.json is next edited this record should migrate there and the contract's count rise to 51.",
+    "level_band_because": "data/progression.json does not settle the band: its notes say 'Level caps are computed by RCT per player from the active series (initialLevelCap 20, relativeLevelCap 0 in modpack/config/rctmod-server.toml since 2026-09-24), so chapters carry no level_cap here.' There is no Victory Road cap in the data to read. The band is therefore the one the nine imply: they climb 51 to 58 by one or two a fight, and the Elite Four open at 57-60 behind a level-60 ace. 57-59 continues the nine's own step and stops one level under Lorelei's ace, so the gate is the hardest fight in the cave and still easier than the first room above it.",
+    "why_kept": "data/trainers.json did not carry a record for this stand until #96 (merged into main 2026-10-01), so the roster was authored here beside the seat. It does now, and the roster is its half: team, rct, format, archetype, lesson, display_name and the route ordering are read from data/trainers.json and nothing here is emitted. Kept rather than deleted because this file is hand-authored (generated_by below) and because main's tenth is a DIFFERENT CHARACTER, not a regeneration of this one: main's League Examiner fights four Pokemon led by a Tailwind Crobat and examines; this Gate Warden fought three and held a door. Which of the two stands at the head of the exit ravine is the owner's to decide, and the losing one is here either way."
    }
   }
  ]

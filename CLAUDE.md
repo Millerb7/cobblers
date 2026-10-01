@@ -388,6 +388,55 @@ average 517k of context per turn: every turn re-sends everything before it.
   strangely, prune and re-read the refs before believing anything local, and
   re-state the head in the handover rather than carrying the old one forward.
 
+## A clean merge is not a clean union
+
+git merges text. **Two branches that author the same ids in DIFFERENT FILES never conflict**, so the
+merge is clean, the diff is clean, and nothing anywhere says that one thing now has two authors. The
+collision is semantic and invisible, and it costs nothing to make.
+
+On 2026-10-01 main's #96 generated roster records for Victory Road's ten trainers in
+`data/trainers.json` while this repository's `data/vr_trainers.json` already carried their stands. The
+tenth came out of the merge with **two names, two teams, two lessons and two sets of dialogue** — a
+League Examiner with four Pokemon and a Gate Warden with three — and git reported a clean merge. The
+first thing to notice was `tools/route_trainers.py` failing closed during pytest **collection**, which
+turned 5,200 tests into `no tests ran` and an `INTERNALERROR` for six hours: not a failure count, not a
+red test, nothing. A suite that reports nothing is worse than a suite that reports a failure, because
+nothing can be compared with the run before it.
+
+So:
+
+- **`python tools/id_authorship.py` runs on every merge** (`.githooks/post-merge`, also
+  `python tools/validate.py --only duplicate_ids` and `tests/test_id_authorship.py`). Every id that two
+  files in `data/` both carry a record for is declared in `data/id_authorship.json` — as a **space**
+  (two halves of one thing, each owning its own fields) or an **overlap** (one id two systems describe
+  in their own terms, listed id by id with why neither value is dead) — or it is a fault. Declarations
+  name their exact id set, so an id that joins one fails and is named. Never widen an entry to make the
+  data pass.
+- **A guard that keys on an id cannot tell halves from rivals; key it on the field.** The old guard said
+  "`data/vr_trainers.json` re-authors ..." and was right while the roster generated no record for that
+  trainer. The day a generator started emitting one, the same guard called two halves a collision and
+  took the suite with it.
+- **A tool that fails closed during collection must not end the run.** `tests/conftest.py` turns a
+  `SystemExit` raised while a test module is imported into one named collection error and keeps the
+  count. The finding still arrives; the other 5,200 results arrive with it.
+
+### A file declaring `generated_by` "hand" is never deleted to resolve a conflict
+
+Two files authoring the same ids look like duplicates, and deleting one looks like the fix. Check
+`generated_by` first. A generated file can be regenerated; **a hand-authored one cannot, and what is
+lost is the judgement, not the data.** `data/vr_trainers.json` declares `generated_by: "hand, from
+derived/vr_caves/plan.json 'stands'"`: `seat` and `stand_index` are re-derivable from the plan, but
+`yaw`, `faces`, `eye_contact`, `sight_distance`, `skin` and the per-stand `unavoidable` rationale — which
+way each trainer faces, whether it initiates on sight, how far it sees, and why that stand cannot be
+walked past — exist in no other file and in no generator. Deleting it would have seated ten trainers
+facing arbitrary directions with no eye contact.
+
+Resolve the collision by **giving each field one owner** and keeping both files. Where one side really is
+superseded, keep the displaced work in place under a `superseded_*` key with a note saying what replaced
+it and why it is kept — the tenth stand's Gate Warden is there, because main's tenth is a different
+character rather than a regeneration of ours, and which of the two stands at the exit ravine is the
+owner's decision, not a merge's.
+
 ## Ground comes from the heightmap, never from a world
 
 Every tool that decides where something goes takes its ground from `tools/ground.py` (the canonical
