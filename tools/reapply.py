@@ -212,7 +212,15 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
 WORLD_PACKS = (ROOT / "modpack" / "datapacks" / "cobblers_height", PACKS / "cobblers_worldtree")
 CROWN = (2044, 535, 2282)                      # the world tree's highest block (tools/build_audit.py world_tree)
-CAVERN = ["00_seal", "02_shell", "05_reset", "10_excavate", "20_surfaces", "30_trees", "40_light", "50_tunnel", "70_drain", "15_cap", "60_biome"]
+# 25_reshell added 2026-09-30: the shell's own fills run a SECOND time, after the carve and before the tunnel.
+# 02_shell runs once, before the excavation, and `replace #cobblers:cavern_void` only touches blocks the tag
+# names - so cave decoration the tag did not list (dripstone, hanging roots, lichen, vines) stayed standing,
+# and broke to air when the excavation took its support. That is the best account of how shell_voids went 0 -> 12
+# between exports; the pre-carve world is gone, so it is a hypothesis, not a measurement. The tag grew 8 -> 27
+# blocks in the same change. 25_reshell is safe where it sits because inside the box the shell starts at the
+# ceiling and the excavation stops at ceiling-2, so it cannot undo the carve. It must come BEFORE 50_tunnel,
+# which is dug THROUGH the shell and would otherwise be filled back in.
+CAVERN = ["00_seal", "02_shell", "05_reset", "10_excavate", "20_surfaces", "25_reshell", "30_trees", "40_light", "50_tunnel", "70_drain", "15_cap", "60_biome"]
 UNPLACED = {"hometown"}                          # has roads, not a town plan: placed by R7
 
 
