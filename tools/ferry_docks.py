@@ -151,7 +151,26 @@ def water_level(rec, world):
         if not w.get("level_source"):
             raise SystemExit("%s: a lake water level needs level_source naming the measured plan data it "
                              "comes from" % rec["id"])
-        return int(w["level"]), w["level_source"]
+        # F7's shape, one level down (found by the F7 agent, 2026-09-30): this used to RETURN the record's own
+        # `level`, so a dock's claim about water was tested against a number it supplied itself. The three
+        # Tilpey docks happened to be right because lake_tilpey's authored level_y is also 77 - luck, not
+        # construction. The landmark is the single definition now; `level` is kept as the record's reading and
+        # asserted against it, so a disagreement is a loud error instead of a silent dry dock.
+        import water_mask as WM
+        body = w.get("body")
+        if not body:
+            raise SystemExit("%s: a lake dock needs water.body naming the landmark whose painted water it "
+                             "stands in (one of %s)" % (rec["id"], ", ".join(sorted(WM.bodies()))))
+        known = WM.bodies()
+        if body not in known:
+            raise SystemExit("%s: water.body %r is not a landmark with an authored water body (have: %s)"
+                             % (rec["id"], body, ", ".join(sorted(known))))
+        lvl = int(known[body]["level_y"])
+        if int(w["level"]) != lvl:
+            raise SystemExit("%s: water.level is %d but %s's authored level_y is %d. The landmark is the "
+                             "definition; fix the record or the landmark, do not let them disagree"
+                             % (rec["id"], int(w["level"]), body, lvl))
+        return lvl, "data/landmarks.json %s water_body.level_y (the record's own reading agrees)" % body
     raise SystemExit("%s: water.kind %r is not sea or lake" % (rec["id"], w["kind"]))
 
 
@@ -422,7 +441,14 @@ def check(rec, e, geo, g, level, level_src, ferries, occ, suppression, spawn_blo
                    % (did, geo["deck_y"], level, level_src))
 
     if rec["structure"] == "jetty":
-        # --- every deck column over water, the head deep enough
+        # --- every deck column under the water that is actually PAINTED, not merely under a level.
+        # F7: a column can be below a lake's level and outside its basin polygons, where nothing is painted
+        # and the dock stands dry. tools/water_mask.py is the one definition; it is given the whole deck,
+        # because a footprint half out of the lake is half dry.
+        import water_mask as WM
+        body = "sea" if rec["water"]["kind"] == "sea" else rec["water"]["body"]
+        bad += ["%s: %s" % (did, m) for m in
+                WM.claim(body, geo["deck"], g, min_submersion=1, label="dock %s deck" % did)]
         dry = [(x, z, g(x, z)) for x, z in geo["deck"] if g(x, z) >= level]
         if dry:
             bad.append("%s: %d deck cell(s) do not stand over water (the water level is y%d); first %s"

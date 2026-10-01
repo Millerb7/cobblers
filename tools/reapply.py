@@ -485,6 +485,14 @@ def prepare_jobs(a):
     # then the offline audit, which replays the written functions into a voxel model and holds it against its own
     # reading of the heightmap, the lake levels, the towns, the placements, the legendary mouths and the other
     # packs. LAST of the block builds, because its cross-pack check reads what every other pack has written
+    # F7's gate, BEFORE the two below and before the ferry docks: every claim that a thing stands in water,
+    # tested against the water that is actually PAINTED (inside a basin_polygons ring and under that basin's
+    # level_y) rather than against a landmark's loose `extent`. The old check tested `extent` and the
+    # "independent" portals audit tested the same wrong polygons, so builder and auditor agreed with each other
+    # about a hole up to 219,737 columns wide on lake_tilpey alone. It is cheap and it covers portals, docks and
+    # anything else that claims water, so it runs first: one failing claim here beats a dry dive portal in the
+    # world (tools/water_mask.py, tests/test_water_mask.py).
+    add("water_mask:claims", "water_mask.py", "claims", *src)
     add("portals:build", "portals.py", "build", *src)
     add("portals_audit", "portals_audit.py", *src)
     # no catching over the level cap: a callback and its check
