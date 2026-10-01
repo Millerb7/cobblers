@@ -210,13 +210,62 @@ path). Every brief says so. On 2026-09-28 four builders hit the same worktree
 guard: three stopped and reported; one wrote its files through Bash and Python
 instead. The output was good; the workaround was still the failure.
 
-**Launching a writing agent (verified 2026-09-28 with three throwaway agents).**
-Two gates stand between an agent and a file, and both are the harness's: the
-worktree isolation checks (no write, working directory or git redirect into the
-main checkout, and every other worktree lies inside the main checkout's folder)
-and the permission classifier (a judgment on each command; it refused a copy
-from another checkout, and `rift_heightmap.py --plan` twice, although
-`Bash(python tools/:*)` is allowed). So:
+**Launching a writing agent (re-measured 2026-10-01 with six working agents and one
+throwaway probe; this replaces the 2026-09-28 reading, which was wrong).**
+
+**An agent can do far more than we believed, and the constraint that shaped three
+nights of planning does not exist.** Measured, not inferred:
+
+- **Nothing is refused by a permission classifier.** A throwaway agent ran
+  `git rev-parse`, `printenv`, a `ground.py` read and `rift_heightmap.py --plan` --
+  **not one prompt, not one block.** The old claim that the classifier refused
+  `--plan` twice **does not reproduce**, and the planning built on it was wasted.
+- **An agent CAN read the canonical heightmap.** `COBBLERS_SOURCE_ROOT` is set in
+  `.claude/settings.json` `env` and reaches agents, so `tools/ground.py` works in a
+  worktree: it answered y122 at (4528, 4416), the same ground the main session
+  measured. Confirmed three times, by three different agents, one of which ran the
+  heightmap-dependent contract suite it had been told it could not run.
+- **An agent can read outside its worktree.** Two agents read files from another
+  checkout by absolute path and said so. The isolation checks are about **writes**,
+  the working directory and git redirects -- not reads.
+- **`derived/` is the only real gap, and it is narrow.** It is gitignored and 198 MB,
+  so a worktree never has it. Across six agents it cost exactly one of them one test
+  (`derived/ambient/plan.json`), and one build unit needed nothing from it at all
+  because `rift_deep.model()` recomputes from the heightmap. **`COBBLERS_LOCAL_STORE`
+  cannot close it as it stands: 339 files, all kits.**
+- **`derived/rift_sculpt/` cannot be rebuilt anywhere**, which is a repository fault
+  and not an agent one: `--plan` fails in the main checkout too, because the sculpt
+  computed from today's spec differs from the applied one by 10,867 columns after a
+  normals fix landed without a re-apply (`docs/research/AGENT_WORKTREE_INPUTS.md`).
+
+**So what actually cannot be delegated** -- the whole list, after the false constraint
+is removed:
+
+1. **Anything touching the live server**: the coordination lock, install, apply, boot,
+   RCON. Irreducible.
+2. **Integration judgement.** Two agents in one wave priced the trainer card at 500 in
+   the first town and separately proved the first town has no income -- a contradiction
+   **neither could see**, visible only to whoever read both reports. The same pass
+   caught a relayed Mew coordinate that was under water. Cross-reading reports,
+   re-running every agent's audit in a full checkout, and resolving collisions is the
+   orchestrator's job and does not fan out.
+3. **`prepare` and the full suite**, for cost and time rather than capability: 679 s
+   and ~580 s, once for every agent's work, and an agent must not wait.
+
+**The one real tax is the worktree complexity guard.** Every one of the six hit it on
+compound commands -- heredocs, `for` loops, paths outside the worktree -- about ten
+times in all. It is never fatal and its own text names the remedy ("split it into
+plain, separate commands"), which every agent then followed. Brief agents to use plain
+single commands, and expect to commit an agent's work from the main session when its
+own `git add` is refused.
+
+**The division that works: authoring, research, generation and tests fan out; the
+server and the integration run serialise.** Six at once was the right number, and the
+collisions it surfaced were worth more than any single unit.
+
+Two gates still stand between an agent and a file, both the harness's: the worktree
+isolation checks (no write, working directory or git redirect into the main checkout)
+and the complexity guard above. So:
 
 1. Commit what the agent needs; its worktree starts from this session's
    committed HEAD (`worktree.baseRef: "head"` in `.claude/settings.json`).
@@ -225,10 +274,13 @@ from another checkout, and `rift_heightmap.py --plan` twice, although
    `git rev-parse HEAD`; if it is not the commit you named, `git merge --ff-only
    <sha>`.
 3. Kits: `python tools/local_inputs.py hydrate --store
-   C:/Users/wnd/Documents/cobblers-local` (allowed: all 338 files, verified).
-   Derived inputs (the Rift plan, the paint, the water shape) are refused to an
-   agent, and `.worktreeinclude` copied none of them: give the agent work that
-   does not need them, or run it in the main session.
+   C:/Users/wnd/Documents/cobblers-local` (allowed: all 338 files, verified). The
+   **heightmap needs nothing** -- it is readable at its absolute path through
+   `COBBLERS_SOURCE_ROOT`. Only `derived/` is absent, and `.worktreeinclude` did not
+   fix that (it existed, listed the right paths, copied none, and was removed in
+   `19838cc` -- a harness question, not a repository one). So: prefer work that
+   recomputes from the heightmap, and when a unit truly needs a derived plan, say so
+   and run that part in the main session.
 4. The agent edits, runs its unit's own generator and its unit's tests. It never
    runs prepare, the full suite or staging.
 5. Every brief carries the refusal rule above and the cost rules below.
