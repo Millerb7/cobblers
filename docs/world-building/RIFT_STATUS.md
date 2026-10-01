@@ -82,7 +82,11 @@ Two different things share this row, and only one of them exists.
 
 **The trailheads are applied by R1.** `data/rift_sculpt.json` `entrances` names five —
 `rim_post_descent` (switchback, 5 legs), `victory_road_descent` (switchback, 4 legs, snapped to
-the `victory_road` route), `excavation_haul_road` (landslide), `gulch_mouth` (canyon) and
+the `victory_road` route **as it ran when the sculpt was applied** — `35f2a56` re-routed Victory
+Road afterwards, so the gap the heightmap holds is at ring 5797, 44 blocks from the corridor's
+current crossing and 46 stations from where a re-snap would put it; `--plan` measures the applied
+gap rather than re-snapping, so every block pass still builds against the real one),
+`excavation_haul_road` (landslide), `gulch_mouth` (canyon) and
 `wilds_slip` (landslide) — each with a named guard. `entrance_policy` is explicit:
 "Guards' trailheads are marked with an armour stand placeholder and not staffed; Codex writes
 them (docs/HANDOVER_CODEX.md item 23)." The markers ride in on R1's `fx` pass (`tools/reapply.py`

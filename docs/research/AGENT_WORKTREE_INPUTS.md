@@ -161,6 +161,16 @@ included.
 cannot rebuild one artefact since the heightmap pin moved. Fix that and heightmap-dependent build work
 delegates.
 
+**Fixed, in two steps (2026-10-01).** `be85674` taught `plan_target()` to find the sculpt through whichever
+provenance entry names it, so `--plan` reaches `water_shaped_from` on its own. That immediately exposed the
+second half: the sculpt recomputed from today's data differed from the applied file in 10,867 columns, so
+`--plan` still refused everywhere. All 10,867 were at **one entrance** — `35f2a56` re-routed Victory Road
+after the sculpt, moving the gap 47 ring stations when re-snapped — so `--plan` now **measures** each gap
+off the applied rim (`measured_entrances()`) instead of re-snapping it, and the sculpt reproduces the
+applied heightmap pixel for pixel. `python tools/rift_heightmap.py --plan` rebuilds
+`derived/rift_sculpt/plan.json`, `basin.npy` and `changed.npy` in **40 s** in any checkout, agent worktrees
+included; verified in an isolated agent worktree with no `derived/` at all.
+
 ## 6. The original test plan, for the record
 
 Steps 1, 2 and 4 below are **answered** by section 5b: the env var reaches agents, the heightmap is
