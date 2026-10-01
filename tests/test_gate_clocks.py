@@ -474,6 +474,15 @@ def test_harness_the_boat_hop_scenario_sees_the_tipped_rider_bug():
 
 
 # Without it the ferry scenario passes on a trip that never sets its cooldown.
+@pytest.mark.xfail(strict=True, reason=(
+    "The ferry data is mid-migration and this scenario finds no live crossing to walk, so it raises "
+    "StopIteration before it can test anything. Same root cause as contract C14 "
+    "(ferry_cooldown-relog_restart), recorded in data/system_contracts.json `fails_today` on 2026-09-30 with "
+    "the measurement: the sound_ferry line's two stops are both status 'retired', pacifidlog_ferry's second "
+    "stop is retired too, and C3's `to` end (7210,6960) is ground y55 under a sea of y62 and not a deck cell "
+    "- the sea town moved out from under the crossing. Strict on purpose: when the migration is finished this "
+    "passes, the run fails, and this marker comes off with the registry entry. It fails identically at "
+    "36eb267, so it predates the 2026-09-30 work."))
 def test_harness_the_ferry_scenario_sees_a_missing_cooldown():
     _FR, fns = _ferry()
     fns = {k: [l for l in v if "cobblers_ferry_cd" not in l or "if score" in l] for k, v in fns.items()}

@@ -1,9 +1,9 @@
 {
   "schema": "cobblers.sapling-celebi/1",
-  "status": "planned: built on staging 2026-09-25; the wake is not designed",
-  "note": "The Celebi asleep in Route 1's world-tree sapling: visible from the clearing, inert. The mechanism is EXP-023 candidate A, a Pokemon entity, with every flag that experiment proved kept: not catchable, not battleable, immobile, asleep, no name tag, never despawns. What it could not give, damage immunity, comes from the branch instead: a shell of barrier blocks round it (invisible and solid, so a hit, an arrow or a thrown ball stops short and the Celebi is still seen). It is an entity, so a re-export erases it; tools/reapply.py R14C summons it again over RCON (Cobblemon's spawn command does nothing from a function) and the pack walls and dresses it. The wake (EXP-023 follow-up 3) is not designed: nothing here reacts to an item, and the shell will have to open when it is.",
+  "status": "planned: built on staging 2026-09-25; the wake is designed 2026-09-29 (docs/mechanics/CELEBI_WAKE.md) and not yet run in game",
+  "note": "The Celebi asleep in Route 1's world-tree sapling: visible from the clearing, inert until the wake. The mechanism is EXP-023 candidate A, a Pokemon entity, with every flag that experiment proved kept: not battleable, immobile, asleep, no name tag, never despawns. What it could not give, damage immunity, comes from the branch instead: a shell of barrier blocks round it (invisible and solid, so a hit, an arrow or a thrown ball stops short and the Celebi is still seen). It is an entity, so a re-export erases it; tools/reapply.py R14C summons it again over RCON (Cobblemon's spawn command does nothing from a plainly parsed function) and the pack walls and dresses it. The wake (EXP-023 follow-up 3) is the `wake` block below: the keeper itself watches for it, and hands off to cobblers:legendary/celebi_wake/open in cobblers_legendaries, where the badge gate already lives.",
   "species": "celebi",
-  "level": 70,
+  "level": 55,
   "position": [
     1383.5,
     144.0,
@@ -12,7 +12,6 @@
   "yaw": 200.0,
   "position_why": "the branch EXP-023 chose: the sapling prefab (kits/structures/prefabs/trees/tree_town/sapling_oak_a, placed at (1365, 123, 4612) by tools/maze_forest.py on ground y124) has oak log at (1383, 143, 4630) and air above it; at the crown top (y165) the Celebi could not be read from the ground, on this branch it is visible",
   "spawn_properties": [
-    "uncatchable",
     "no_ai"
   ],
   "nbt": {
@@ -31,7 +30,27 @@
     "period_ticks": 40,
     "player_radius": 48,
     "home_tolerance": 0.5,
-    "why": "every two seconds while a player is within 48 blocks of the sapling: remove a second Celebi if a load race ever made two, and teleport it back to its branch if anything moved it. It cannot summon a missing one (functions cannot run Cobblemon's spawn command); the shell is what keeps it from being killed"
+    "why": "every two seconds while a player is within 48 blocks of the sapling, AND ONLY WHILE IT SLEEPS: remove a second Celebi if a load race ever made two, and teleport it back to its branch if anything moved it. It cannot summon a missing one (Cobblemon's spawn command does nothing in a plainly parsed function); the shell is what keeps it from being killed. It stands down the moment the wake sets #awake, because a keeper that teleports a woken Celebi back onto its branch every 40 ticks would pin it through the battle the wake exists to give (docs/mechanics/CELEBI_WAKE.md, the keeper fault). Note it never re-merged the dormant NBT: docs/NIGHT_REVIEW.md said it did, and the generated celebi/keep has only a count, a kill and a tp.",
+    "stands_down_when_awake": true
   },
-  "shell_why": "barriers fill the air in the 3x4x3 box round the branch block, from the branch's own layer to two above the Celebi, and the Celebi's column is left open: every straight line from outside to its hitbox crosses a barrier or the branch log (tools/sapling_celebi.py shell_box)"
+  "shell_why": "barriers fill the air in the 3x4x3 box round the branch block, from the branch's own layer to two above the Celebi, and the Celebi's column is left open: every straight line from outside to its hitbox crosses a barrier or the branch log (tools/sapling_celebi.py shell_box)",
+  "level_why": "55, not the 70 this file carried until 2026-09-29. data/level_cap.json blocks a catch STRICTLY above the thrower's RCT level cap, a Master Ball included, so a legendary authored above the cap of its own gate cannot be caught at all. The real cap is RCT's max(initialLevelCap, min over the next trainers of their team's highest level + relativeLevelCap) (docs/research/notes/level-cap-catch-block.md, read from LevelUtils at v0.19.0-beta), with initialLevelCap 20 and relativeLevelCap 0 (modpack/config/rctmod-server.toml). It is NOT a fixed per-badge table: it is whatever the campaign's RCT series data says, and our gyms are not in that data yet. 55 is the authored gym 8 ace level (data/trainers.json generation_contract gym_ace_levels[7]), i.e. the cap tier a player was already on while Giovanni was the next trainer; the gate is gym8_cleared, so every player who can wake it has been at that tier. The next authored trainers after gym 8 are the Elite Four at 60, so 55 leaves five levels of margin. The wake also reads the waking player's real cap and says so if it is lower (celebi/cap_advice).",
+  "spawn_properties_why": "`uncatchable` was here until 2026-09-29 and is gone on purpose. It is a spawn property stored in the Pokemon's own data (EXP-023), and NO verified command or NBT path clears it on an entity that is already in the world, so a Celebi spawned uncatchable would still refuse every ball after the wake: the encounter would be a wall. While it sleeps it is protected by BLOCKS and by Unbattleable instead: the barrier shell stops a thrown ball the way it stops a sword and an arrow (shell_why), and Unbattleable means no battle and so no in-battle capture. NEEDS AN IN-GAME CHECK: that a ball thrown at the sleeping Celebi from the clearing bounces off the shell.",
+  "wake": {
+    "status": "PROPOSED, NOT DECIDED: the item and the gate are the owner's call (docs/mechanics/CELEBI_WAKE.md)",
+    "trigger": "held_item_near",
+    "trigger_why": "a STATE CHECK on the keeper's own 40-tick loop, not an event. EXP-023's candidate was a minecraft:item_used_on_block advancement and it is unsound here for two independent reasons: an advancement fires once per player for ever and its criteria cannot test another advancement, so a player who tries the item before the gate opens burns it; and the branch block cannot be right-clicked at all, because the barrier shell seals every face of it (shell_why). A state check re-arms itself, cannot be burned, needs no reachable block, and costs one command line per 40 ticks inside a loop that already runs.",
+    "item": "minecraft:clock",
+    "item_why": "PROPOSED. Celebi is the Time Travel Pokemon and a clock is vanilla (no new dependency), craftable, and does nothing when used on a block so it carries no other meaning. Nothing in the campaign names a wake item yet, and docs/story/EARLY_ROUTE_BUILD_HANDOFF.md forbids a Route 1 NPC naming one, so whatever is chosen must be taught somewhere after gym 8. Changing it is this one field.",
+    "radius": 16,
+    "radius_why": "measured from the Celebi on its branch at y144, about 20 blocks above the clearing floor: 16 blocks reaches the ground only close to the trunk, so the player must be at the sapling, under or in its crown, not merely on the road. The keeper's own 48-block player check still gates the whole loop.",
+    "gate_flags": [
+      "gym8_cleared"
+    ],
+    "gate_why": "the gate data/legendaries.json celebi_wake already declares and that cobblers:legendary/celebi_wake/open enforces itself. This file repeats it in the selector so an ungated player holding the item does not call a function that would refuse; open is the authority.",
+    "opens": "cobblers:legendary/celebi_wake/open",
+    "opens_why": "the shell removal, the met advancement and the awake NBT are written by tools/legendaries.py, which owns the gate. cobblers_celebi and cobblers_legendaries are both world-local server packs installed together by tools/reapply.py, so the cross-pack call always resolves.",
+    "awake_holder": "#awake",
+    "awake_holder_why": "the awake flag is a score on this pack's own objective, set by open and set back to 0 by celebi/dress. dress runs exactly when a fresh dormant Celebi is installed, so the flag cannot outlive the entity it describes: a re-export takes both, a re-application restores both. An entity tag would say the same thing but costs a whole-entity scan every 40 ticks."
+  }
 }

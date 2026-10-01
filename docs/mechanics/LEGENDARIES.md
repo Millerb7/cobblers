@@ -18,11 +18,11 @@ work.
 |---|---|---|---|
 | **Mesprit** | Arrow Lake, mouth at (2790, 4606), bed y55 | `gym3_cleared` | **emitted** |
 | **Azelf** | Marshy Marsh, mouth at (5158, 2166), bed y63 | `gym5_cleared` | **emitted** |
-| **Uxie** | Lake Tilpey, under the Weeping Elder island's apron | `gym7_cleared` | **blocked: the water export** |
+| **Uxie** | Lake Tilpey, mouth at (5714, 4079), 24 under water level y77 | `gym7_cleared` | **emitted** |
 | **Regirock** | The Scorched Plateau, portal (4800, 5200), y144 | `gym4_cleared` *(proposed)* | **emitted** |
 | **Regice** | The Glacial Tear's Upper Trough, portal (3900, 2050), y101 | `gym6_cleared` *(proposed)* | **emitted** |
 | **Registeel** | The Rift's anomalous chamber | `gym7_cleared` *(proposed)* | **blocked: the Rift plan** |
-| **Regigigas** | Beside the Displaced City, portal (3560, 1760), y126 | `gym8_cleared` *(proposed)* **and the three golems met** | **emitted** |
+| **Regigigas** | Beside the Displaced City, portal (3560, 1760), y126 | `gym8_cleared` *(proposed)* **and the three golems met** | **emitted, but UNREACHABLE until Registeel is sited** |
 | **Groudon** | The Craters' eastern bowl, portal (6672, 5508), y108 | `gym8_cleared` *(proposed)* | **emitted** |
 | **Lugia** | The Maelstrom Trench | Dive **and** `champion_cleared` | **blocked: no seabed** |
 | **Celebi's wake** | The Route 1 sapling | `gym8_cleared` *(proposed)* | **gate built, trigger open** |

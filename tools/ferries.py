@@ -98,9 +98,26 @@ def dock_built(d):
 
 
 def emitted_lines(doc):
-    """The lines every one of whose docks is built: only these are generated."""
+    """The lines every one of whose docks is built AND whose crossing has been measured.
+
+    Both halves matter. A line is generated when its docks exist - that is what the nine new docks did on
+    2026-09-30 - but a line whose `swim.declared` is still "unsited" has never had its water walked, so
+    nobody knows whether the ferry is a gate or a convenience, and the audit rightly refuses a built line
+    with an unsited crossing. Holding it here rather than failing the whole pack keeps the docks and the
+    ferrymen, and simply does not offer the trip until somebody measures it.
+
+    tilpey_launch is the one that hits this: it crosses a LAKE whose surface is y77, and this tool walks
+    every crossing at data/world.json's sea level 62, so its water cannot be walked at all yet. That is a
+    real gap in this tool, recorded in the line's own `swim.why`, not a property of the line."""
     docks = by_id(doc["docks"])
-    return [ln for ln in doc["lines"] if all(s in docks and dock_built(docks[s]) for s in ln["stops"])]
+    out = []
+    for ln in doc["lines"]:
+        if not all(s in docks and dock_built(docks[s]) for s in ln["stops"]):
+            continue
+        if (ln.get("swim") or {}).get("declared") == "unsited":
+            continue
+        out.append(ln)
+    return out
 
 
 def trips(line):
@@ -262,7 +279,13 @@ def build(doc):
     for ln in lines:
         for s in ln["stops"]:
             serving.setdefault(s, []).append(ln)
-    fields = {}
+    # the fields data/progression.json declares, NOT an empty dict. It was {} until 2026-09-30, which made every
+    # `quest_field` gate impossible: the compiler refuses an undeclared field, so any line gated on a quest would
+    # fail the whole pack with "undeclared field <id>" no matter what progression.json said. Nothing had hit it
+    # because no gated line was emitted until the ferry docks made four charters live. static_problems() below
+    # already reads the same list the same way.
+    fields = {f["id"]: f for f in json.loads(
+        (ROOT / "data" / "progression.json").read_text(encoding="utf-8")).get("quest_fields") or []}
     for d in sorted(serving):
         conv, quest = conversation(doc, docks[d], serving[d])
         got = CD.compile_conversation(conv, {quest["id"]: quest}, fields)

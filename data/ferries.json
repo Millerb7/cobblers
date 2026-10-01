@@ -172,97 +172,353 @@
       "id": "pacifidlog_south_jetty",
       "name": "Pacifidlog jetty",
       "status": "planned",
+      "built_by": "tools/sea_town.py (re-apply R8, the mainland_jetty district): the bamboo jetty from the plateau's south beach out to the landing x5153-5167 z6654-6662, deck at the sea level y62. tools/ferry_docks.py writes no block here; it sites the ferryman and the landing on that jetty and checks them. Staging only",
       "near": [
         5160,
         6658
       ],
       "near_basis": "the landing of the new mainland jetty in data/sea_town.json resite (x5153-5167 z6654-6662, 68-76 blocks out from the plateau's south beach at (5160, 6586)); the ferryman stands on it as on the Sound jetty",
-      "blocked_by": "the water export: Pacifidlog moves onto the Jungle Isle's bank (the owner, 2026-09-27; data/water_shape.json jungle_isle_bank), and its new jetty is built with it (tools/sea_town.py fold-resite, then write). Until the export is applied the site is the Jungle Isle's channel shore and the town is on the Sound",
-      "why": "the new Pacifidlog ferry's mainland end; it replaces pacifidlog_jetty, which retires with the Sound site"
+      "ferryman": {
+        "at": [
+          5163,
+          63,
+          6658
+        ],
+        "name": "Ferryman",
+        "greeting": "Pacifidlog's out on the open sea now, a good hour's row. There's no road and nothing to swim to. A hundred and fifty each way.",
+        "why": "on the landing at the jetty's end, three blocks east of its spine, clear of the fences, the lanterns and the boat rack the re-site built (data/placements.json sea_town_mainland_jetty). His ground is the town's own deck at the sea level (tools/ground.py for_settlement sea_town), measured plan data, not a world read"
+      },
+      "landing": {
+        "at": [
+          5160,
+          63,
+          6658
+        ],
+        "yaw": 180,
+        "why": "on the jetty's centre line where it meets the landing, facing north up the spine to the plateau's beach: an arrival steps off onto the walk, not into the water"
+      },
+      "why": "the new Pacifidlog ferry's mainland end; it replaces pacifidlog_jetty, which retired with the Sound site. SITED 2026-09-30 on the landing the re-site already built: the jetty exists, so the dock is the ferryman on it",
+      "why_planned": "Set back to planned on 2026-09-30 after tools/ferries.py audit measured it: its ferryman (5163,63,6658) and its landing (5160,63,6658) stand at y63 on ground of y55 - SEVEN BLOCKS UNDER a sea of y62. It is a `host` dock, its position taken from data/placements.json sea_town_mainland_jetty, so the position is the sea town's and the sea town has moved out from under it. This is the same migration that contracts C3 and C14 record. Measured for whoever re-sites it: along x5160 the water ends about z6574 (ground y62) with land at z6562 (y63); the jetty wants to reach that shore, not z6658. Its line pacifidlog_ferry cannot run regardless - its other stop pacifidlog_square is status retired."
     },
     {
       "id": "sunset_south_pier",
       "name": "Sunset West",
-      "status": "planned",
+      "status": "built",
+      "built_by": "data/placements.json sunset_pier_south (an authored earthwork, re-apply R8) for the pier itself, and tools/ferry_docks.py for the quay head at its root (x2695-2698, z6588-6592, boards at the ground y63, two bollards with lanterns). Staging only; nothing has run in a game",
       "near": [
         2701,
         6639
       ],
       "near_basis": "the seaward end of Sunset West's south pier (data/placements.json sunset_pier_south, planks x2700-2702 z6590-6639, deck y64): the pier is not in the heightmap, so a ferryman there needs the pier's own model",
-      "blocked_by": "the Sunset isle landing does not exist; the pier's ferryman and landing are not measured",
-      "why": "the Sunset strait's mainland end (WATER_PROPOSAL section 6 dock 6)"
+      "ferryman": {
+        "at": [
+          2697,
+          64,
+          6590
+        ],
+        "name": "Ferryman",
+        "greeting": "The isle's across the strait. Two hundred yards of open water and a current under it - you'll not swim that. A hundred each way.",
+        "why": "on the quay head boards at the pier's landward root, west of the pier itself: he stands on heightmap ground at y63, which is what tools/ferries.py audits, and the pier's head is 49 columns out over the flats. First Cast's boatman stands on his beach for the same reason"
+      },
+      "landing": {
+        "at": [
+          2697,
+          64,
+          6594
+        ],
+        "yaw": 180,
+        "why": "four blocks north of the ferryman on the same level shore, facing north up the beach into Sunset West: an arrival lands looking at the town, not the sea"
+      },
+      "keep_clear": [
+        [
+          2700,
+          6590,
+          2702,
+          6639
+        ]
+      ],
+      "keep_clear_why": "the south pier's own 50 columns of deck (data/placements.json sunset_pier_south): no NPC stands on the pier",
+      "why": "the Sunset strait's mainland end (WATER_PROPOSAL section 6 dock 6). SITED 2026-09-30: the pier was already built and the dock is its root - a quay head to stand on, and the pier as the deck"
     },
     {
       "id": "sunset_isle_landing",
       "name": "the Sunset isle",
-      "status": "planned",
+      "status": "built",
+      "built_by": "tools/ferry_docks.py (data/ferry_docks.json), 2026-09-30; nothing here has run in a game: a 3 x 14 spruce jetty at x2571-2573, z6880-6894, deck y64 on spruce log piles, a fence rail, mooring posts and lanterns at the head, a stair and two solid courses up from the shore, and a boarded forecourt at x2570-2574, z6897-6900",
       "near": [
         2578,
         6880
       ],
       "near_basis": "the Sunset isle's land nearest the mainland (tools/ferries.py measure, 2026-09-27); WATER_PROPOSAL section 6 dock 10 proposes about (2570, 6918)",
-      "blocked_by": "not built (WATER_PROPOSAL decision 12: one of the first new docks)",
-      "why": "the Sunset strait's island end"
+      "ferryman": {
+        "at": [
+          2572,
+          63,
+          6899
+        ],
+        "name": "Boatman",
+        "greeting": "Back to Sunset West? It's a fair pull across the strait, and the current runs hard in the middle. A hundred, and mind your feet getting in.",
+        "why": "on the forecourt boards five columns landward of the jetty's root, on the isle's own shore at y62: heightmap ground, off the deck, where anyone leaving the isle must pass him"
+      },
+      "landing": {
+        "at": [
+          2575,
+          63,
+          6899
+        ],
+        "yaw": 0,
+        "why": "three blocks east of the ferryman on the same forecourt, facing south inland onto the isle: an arrival steps off looking at the island, with the boatman beside him"
+      },
+      "keep_clear": [
+        [
+          2571,
+          6880,
+          2573,
+          6896
+        ]
+      ],
+      "keep_clear_why": "the jetty's deck, its step and its stair, as tools/ferry_docks.py builds them",
+      "why": "the Sunset strait's island end. SITED 2026-09-30: the jetty's head at (2572, 6880) lands on this dock's own `near`, the isle's land nearest the mainland, and its root is the nearest shore column with open water the whole way across"
     },
     {
       "id": "sunset_quay",
       "name": "Sunset West harbour",
-      "status": "planned",
+      "status": "built",
+      "built_by": "data/placements.json sunset_pier_west (an authored earthwork, re-apply R8) for the pier, and tools/ferry_docks.py for the harbour head east of its root (x2632-2636, z6518-6524, boards at the ground y63, four bollards with lanterns). Staging only; nothing has run in a game",
       "near": [
         2630,
         6521
       ],
       "near_basis": "Sunset West's west pier into the river mouth's lee (data/placements.json sunset_pier_west)",
-      "blocked_by": "the charters are postgame and their far ends are not built",
-      "why": "the charters' home port (WATER_PROPOSAL 4.3: 'Chartered travel from the harbour' is SQ-SUNSET-01's reward)"
+      "ferryman": {
+        "at": [
+          2634,
+          64,
+          6521
+        ],
+        "name": "Charter skipper",
+        "greeting": "I sail where the maps stop. Six hundred a trip, and I'll not take a soul who hasn't beaten the League - out there you'd be no use to me.",
+        "why": "in the middle of the harbour head, at the west pier's landward root on heightmap ground y63: the charters' home port, where a player who has finished with the League comes looking for a boat"
+      },
+      "landing": {
+        "at": [
+          2634,
+          64,
+          6525
+        ],
+        "yaw": -90,
+        "why": "four blocks south of the skipper, off the boards on the same level shore, facing east into Sunset West: a returning charter lands in the town, not on the pier"
+      },
+      "keep_clear": [
+        [
+          2579,
+          6520,
+          2630,
+          6522
+        ]
+      ],
+      "keep_clear_why": "the west pier's own deck (data/placements.json sunset_pier_west): no NPC stands on the pier",
+      "why": "the charters' home port (WATER_PROPOSAL 4.3: 'Chartered travel from the harbour' is SQ-SUNSET-01's reward). SITED 2026-09-30 at the west pier's root, which is the only built water frontage Sunset West has"
     },
     {
       "id": "tilpey_sabrina_dock",
       "name": "Sabrina's town dock",
-      "status": "planned",
-      "near": null,
-      "blocked_by": "not sited (WATER_PROPOSAL section 6 docks 11-13)",
+      "status": "built",
+      "built_by": "tools/ferry_docks.py (data/ferry_docks.json), 2026-09-30; nothing here has run in a game: a 3 x 14 spruce jetty at x6049-6051, z3614-3628, deck y79 on spruce log piles, a fence rail, mooring posts and lanterns at the head, a stair and two solid courses up from the shore, and a boarded forecourt at x6048-6052, z3607-3611",
+      "near": [
+        6051,
+        3610
+      ],
+      "near_basis": "SITED 2026-09-30 (it was `near: null`): Lake Tilpey's north shore below Sabrina's town, on the line from the town's centre (6196, 3398) toward the lake's anchor (5870, 3874) - the ground falls from y94 to the shore at y78 and the lake begins at its level y77 (data/legendaries.json uxie). The Dive school's north-shore sector is cut here too (data/water_shape.json lake_tilpey)",
+      "ferryman": {
+        "at": [
+          6050,
+          79,
+          3609
+        ],
+        "name": "Lake boatman",
+        "greeting": "Across to the Elder, or the far shore? Sit where you like. I take nothing for it - Sabrina's town keeps the boat.",
+        "why": "on the forecourt boards five columns landward of the jetty's root, on the lake's north shore at y78: heightmap ground, off the deck, on the way down from the town"
+      },
+      "landing": {
+        "at": [
+          6053,
+          79,
+          3609
+        ],
+        "yaw": 180,
+        "why": "three blocks east of the boatman on the same forecourt, facing north up the shore toward Sabrina's town: an arrival lands looking at where he is going"
+      },
+      "keep_clear": [
+        [
+          6049,
+          3612,
+          6051,
+          3628
+        ]
+      ],
+      "keep_clear_why": "the jetty's deck, its step and its stair, as tools/ferry_docks.py builds them",
       "why": "the Tilpey launch's first stop"
     },
     {
       "id": "weeping_elder_landing",
       "name": "the Weeping Elder",
-      "status": "planned",
-      "near": null,
-      "blocked_by": "not sited",
+      "status": "built",
+      "built_by": "tools/ferry_docks.py (data/ferry_docks.json), 2026-09-30; nothing here has run in a game: a 3 x 16 spruce jetty at x5689-5691, z4093-4109, deck y79 on spruce log piles, a fence rail, mooring posts and lanterns at the head, a stair and two solid courses up from the shore, and a boarded forecourt at x5688-5692, z4112-4115",
+      "near": [
+        5690,
+        4111
+      ],
+      "near_basis": "SITED 2026-09-30 (it was `near: null`): the Weeping Elder island's north shore, on the line from its centre (5640, 4176; data/foliage.json weeping_elder_tilpey.site) toward the lake's anchor (5870, 3874) - the same line data/legendaries.json walks to site Uxie's grotto mouth, which lies 30 blocks off this shore at (5714, 4079)",
+      "ferryman": {
+        "at": [
+          5690,
+          80,
+          4114
+        ],
+        "name": "Lake boatman",
+        "greeting": "Nobody stays on the Elder's island after dark. Say when you want fetching and I'll be here. No charge.",
+        "why": "on the forecourt boards five columns landward of the jetty's root, on the island's north shore at y79: heightmap ground, off the deck, between the landing and the tree"
+      },
+      "landing": {
+        "at": [
+          5693,
+          80,
+          4114
+        ],
+        "yaw": 0,
+        "why": "three blocks east of the boatman on the same forecourt, facing south inland toward the elder tree at the island's centre: an arrival lands looking at what he came for"
+      },
+      "keep_clear": [
+        [
+          5689,
+          4093,
+          5691,
+          4111
+        ]
+      ],
+      "keep_clear_why": "the jetty's deck, its step and its stair, as tools/ferry_docks.py builds them",
       "why": "the Tilpey launch's island stop (EVT-G6-SLOWPOKE-FERRY)"
     },
     {
       "id": "tilpey_south_landing",
       "name": "Tilpey's south shore",
-      "status": "planned",
-      "near": null,
-      "blocked_by": "not sited",
+      "status": "built",
+      "built_by": "tools/ferry_docks.py (data/ferry_docks.json), 2026-09-30; nothing here has run in a game: a 3 x 14 spruce jetty at x5878-5880, z4500-4514, deck y79 on spruce log piles, a fence rail, mooring posts and lanterns at the head, a stair and two solid courses up from the shore, and a boarded forecourt at x5877-5881, z4517-4520",
+      "near": [
+        5870,
+        4535
+      ],
+      "near_basis": "SITED 2026-09-30 (it was `near: null`): Lake Tilpey's southern edge on the anchor's own meridian, walked due south from (5870, 3874) to the first dry column (y78 at z4535). The jetty's root is 23 blocks east of it, the nearest shore column with open lake straight north",
+      "ferryman": {
+        "at": [
+          5879,
+          78,
+          4519
+        ],
+        "name": "Lake boatman",
+        "greeting": "Last boat of the day goes back to the town. Climb in, it costs you nothing - but the gorge road south is yours to walk.",
+        "why": "on the forecourt boards five columns landward of the jetty's root, on the lake's south shore at y77: heightmap ground, off the deck, where the gorge road leaves the water"
+      },
+      "landing": {
+        "at": [
+          5882,
+          79,
+          4519
+        ],
+        "yaw": 0,
+        "why": "three blocks east of the boatman on the same forecourt at y78, facing south inland toward the outflow gorge and the southern coast: an arrival lands facing the road he came for"
+      },
+      "keep_clear": [
+        [
+          5878,
+          4500,
+          5880,
+          4516
+        ]
+      ],
+      "keep_clear_why": "the jetty's deck, its step and its stair, as tools/ferry_docks.py builds them",
       "why": "the Tilpey launch's far shore"
     },
     {
       "id": "northeast_landing",
       "name": "the north-east landing",
-      "status": "planned",
+      "status": "built",
+      "built_by": "tools/ferry_docks.py (data/ferry_docks.json), 2026-09-30; nothing here has run in a game: a 3 x 16 spruce jetty at x6604-6606, z2285-2301, deck y64 on spruce log piles, a fence rail, mooring posts and lanterns at the head, a stair and two solid courses up from the shore, and a boarded forecourt at x6603-6607, z2304-2307",
       "near": [
         6605,
         2301
       ],
       "near_basis": "marsh country's shore cell nearest the Pine Isles (tests/test_system_contracts.py C3 northlight_packet); WATER_PROPOSAL section 6 dock 14 gives the gap from about (6586, 2294)",
-      "blocked_by": "not built; WATER_PROPOSAL decision 12 builds the Northlight pair with Northlight's content",
-      "why": "the Northlight packet's mainland end"
+      "ferryman": {
+        "at": [
+          6605,
+          63,
+          2306
+        ],
+        "name": "Packet master",
+        "greeting": "Northlight, is it? Four hundred, each way. It's the long crossing on this coast and I don't do it for less. We leave when you're aboard.",
+        "why": "on the forecourt boards five columns landward of the jetty's root, on marsh country's shore at y62: heightmap ground, off the deck, facing the only crossing to the Pine Isles"
+      },
+      "landing": {
+        "at": [
+          6608,
+          63,
+          2306
+        ],
+        "yaw": 0,
+        "why": "three blocks east of the packet master on the same forecourt, facing south inland onto the marsh: an arrival from the isles lands on the mainland looking at it"
+      },
+      "keep_clear": [
+        [
+          6604,
+          2285,
+          6606,
+          2303
+        ]
+      ],
+      "keep_clear_why": "the jetty's deck, its step and its stair, as tools/ferry_docks.py builds them",
+      "why": "the Northlight packet's mainland end. SITED 2026-09-30: the dock's own `near`, C3's shore cell nearest the Pine Isles, is itself the shore column the rule finds - dry, with open water straight north"
     },
     {
       "id": "northlight_landing",
       "name": "Northlight",
-      "status": "planned",
+      "status": "built",
+      "built_by": "tools/ferry_docks.py (data/ferry_docks.json), 2026-09-30; nothing here has run in a game: a 3 x 16 spruce jetty at x6877-6879, z1960-1976, deck y64 on spruce log piles, a fence rail, mooring posts and lanterns at the head, a stair and two solid courses up from the shore, and a boarded forecourt at x6876-6880, z1954-1957",
       "near": [
         6878,
         1960
       ],
       "near_basis": "South Pine Isle's shore nearest marsh country (C3 northlight_packet)",
-      "blocked_by": "not built",
-      "why": "the Northlight packet's island end"
+      "ferryman": {
+        "at": [
+          6878,
+          63,
+          1955
+        ],
+        "name": "Packet master",
+        "greeting": "The mainland's a long way south and the packet's the only way back. Four hundred. There's no other boat on this island.",
+        "why": "on the forecourt boards five columns landward of the jetty's root, on South Pine Isle's shore at y62: heightmap ground, off the deck, between the isle and its one crossing"
+      },
+      "landing": {
+        "at": [
+          6881,
+          63,
+          1955
+        ],
+        "yaw": 180,
+        "why": "three blocks east of the packet master on the same forecourt, facing north inland onto the isle: an arrival lands looking up the island, not back out to sea"
+      },
+      "keep_clear": [
+        [
+          6877,
+          1958,
+          6879,
+          1976
+        ]
+      ],
+      "keep_clear_why": "the jetty's deck, its step and its stair, as tools/ferry_docks.py builds them",
+      "why": "the Northlight packet's island end. SITED 2026-09-30 at the dock's own `near`, South Pine Isle's shore nearest marsh country (C3), which the shore rule confirms as dry with open water straight south"
     },
     {
       "id": "jungle_ruins_landing",
@@ -478,9 +734,10 @@
       "gate_why": "gym6_cleared: WATER_PROPOSAL decision 6",
       "swim": {
         "declared": "unsited",
-        "why": "a lake crossing between docks not yet sited; lakes are Surf content (WATER_MAP.md), so the launch is a convenience, not a gate, and is walked once its docks exist"
+        "why": "UNSITED because this tool cannot walk it. tools/ferries.py walks every crossing at data/world.json's sea level 62; the Tilpey launch crosses a LAKE whose surface is y77 (measured from Uxie's record in data/legendaries.json), so its water is never found and the swim can neither be declared a gate nor a leak. Its three docks ARE built (2026-09-30) and its ferrymen stand on them; the line is simply not offered until somebody teaches ferries.py a per-crossing water level and walks it. Until then it is held by emitted_lines(), not silently emitted with an unmeasured crossing."
       },
-      "why": "across Lake Tilpey by the Weeping Elder (WATER_PROPOSAL 4.3); waits for its three docks"
+      "why": "across Lake Tilpey by the Weeping Elder (WATER_PROPOSAL 4.3); waits for its three docks",
+      "blocked_by": "tools/ferries.py: a crossing is walked at data/world.json's sea level only, so a lake line cannot be declared. Its docks are built; the line is not emitted"
     },
     {
       "id": "northlight_packet",
@@ -569,11 +826,11 @@
         },
         {
           "kind": "quest_field",
-          "quest": "SQ-SUNSET-01",
-          "field": null,
+          "quest": "sq_sunset_01",
+          "field": "quest.sq_sunset_01.completed",
           "value": true,
           "says": "finished A Boat for the Outer Sea",
-          "blocked_by": "SQ-SUNSET-01 (docs/story/SIDEQUESTS.md) has no completion field in data/progression.json: the quest is story, not built",
+          "blocked_by": "DECLARED but never set: data/progression.json now has quest.sq_sunset_01.completed so this line builds, and nothing grants it, so the charter is shut. SQ-SUNSET-01 is story (docs/story/SIDEQUESTS.md) and Codex's. The alternative is to drop this gate and leave the charter on champion_cleared alone - the owner's call, one line.",
           "why": "WATER_PROPOSAL decision 6: chartered travel is SQ-SUNSET-01's reward"
         }
       ],
@@ -622,11 +879,11 @@
         },
         {
           "kind": "quest_field",
-          "quest": "SQ-SUNSET-01",
-          "field": null,
+          "quest": "sq_sunset_01",
+          "field": "quest.sq_sunset_01.completed",
           "value": true,
           "says": "finished A Boat for the Outer Sea",
-          "blocked_by": "SQ-SUNSET-01 has no completion field in data/progression.json",
+          "blocked_by": "DECLARED but never set: data/progression.json now has quest.sq_sunset_01.completed so this line builds, and nothing grants it, so the charter is shut. SQ-SUNSET-01 is story (docs/story/SIDEQUESTS.md) and Codex's. The alternative is to drop this gate and leave the charter on champion_cleared alone - the owner's call, one line.",
           "why": "WATER_PROPOSAL decision 6"
         }
       ],
@@ -655,11 +912,11 @@
         },
         {
           "kind": "quest_field",
-          "quest": "SQ-SUNSET-01",
-          "field": null,
+          "quest": "sq_sunset_01",
+          "field": "quest.sq_sunset_01.completed",
           "value": true,
           "says": "finished A Boat for the Outer Sea",
-          "blocked_by": "SQ-SUNSET-01 has no completion field in data/progression.json",
+          "blocked_by": "DECLARED but never set: data/progression.json now has quest.sq_sunset_01.completed so this line builds, and nothing grants it, so the charter is shut. SQ-SUNSET-01 is story (docs/story/SIDEQUESTS.md) and Codex's. The alternative is to drop this gate and leave the charter on champion_cleared alone - the owner's call, one line.",
           "why": "WATER_PROPOSAL decision 6"
         }
       ],
@@ -688,11 +945,11 @@
         },
         {
           "kind": "quest_field",
-          "quest": "SQ-SUNSET-01",
-          "field": null,
+          "quest": "sq_sunset_01",
+          "field": "quest.sq_sunset_01.completed",
           "value": true,
           "says": "finished A Boat for the Outer Sea",
-          "blocked_by": "SQ-SUNSET-01 has no completion field in data/progression.json",
+          "blocked_by": "DECLARED but never set: data/progression.json now has quest.sq_sunset_01.completed so this line builds, and nothing grants it, so the charter is shut. SQ-SUNSET-01 is story (docs/story/SIDEQUESTS.md) and Codex's. The alternative is to drop this gate and leave the charter on champion_cleared alone - the owner's call, one line.",
           "why": "WATER_PROPOSAL decision 6"
         }
       ],

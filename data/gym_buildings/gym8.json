@@ -1,0 +1,1273 @@
+{
+  "schema": "gym_building/1",
+  "id": "gym8",
+  "status": "authored 2026-09-30; file-valid only. Nothing here has been seen in a running game.",
+  "settlement": "gym8_town",
+  "supersedes_donor": "gym8_gym_building",
+  "supersedes_why": "the COBBLEVERSE donor shell (cobbleverse:giovanni, 27x17x24 rotated counterclockwise_90 to 3560,111,6403..3583,127,6429, one oval room, no second storey, its own rctmod:trainer_spawner) stands on this lot and is taken down by this function's own two clearing parts. Gyms 6 and 8 have NO record in data/gym_interiors.json with `superseded_by`, so tools/gym_demolish.py does not act on them and there is no dig under them to fill in - nothing was ever carved here. The clearing fills cover the donor's box on every axis: air y113-128 and stone y104-112, over x3559-3585 z6403-6429.",
+  "name": "The Gate of the South",
+  "reading": "Giovanni's town is the southern garrison, and its gym is the gate: 'for seven badges it is the building everyone walks past, and for the eighth it is the one you have to go through to leave' (data/placements.json gym8_town plan.reading). So the building is not a hall, it is a gatehouse - a walled muster yard open to the sky, with a gate mass seven wide and eight high filling its west end, sheer on the yard side, no opening in it at any height, and the walk on top of it where Giovanni stands looking down the road to Victory Road. He is a ground type and the garrison is under siege from the Rift, so the way past a shut gate is the way a garrison actually takes it: down the sap, along the counter-mine, into the undercroft, and up the gate's own inner stair. You go under the gate to get on top of it. The palette is the town's own: terracotta, polished granite, spruce, coarse dirt, mud brick for the sandbags (docs/world-building/TOWN_CHARACTER.md gym8_town).",
+  "site": {
+    "lot_rect": [
+      3556,
+      6400,
+      3588,
+      6432
+    ],
+    "lot_level": 112,
+    "lot_source": "data/placements.json settlements.gym8_town.plan.anchors gym8_gym (rect [3556,6400,3588,6432], level 112, facing east). The plan's prep_note: 'the gym's lot, below the square to the north-west, is levelled to the square.' tools/place_town.py cuts and fills a levelled lot to its level, so the pad is y112 - the same y as the gate square's own paving.",
+    "ground": {
+      "kind": "lot_level",
+      "why": "the pad is the ground. The raw heightmap over the lot rect runs y110 to y112 (tools/ground.py, rounded, measured for this record: min 110, max 112) and the prep levels it to 112, the top of that range and the square's y - a small fill and no real cut, which is what the prep_note says. Neither number was read from a world save (the ground rule, tests/test_ground_rule.py)."
+    },
+    "footprint": [
+      3560,
+      6404,
+      3584,
+      6428
+    ],
+    "footprint_size_why": "25 by 25 inside a 33x33 lot: margins 4 west, 4 east, 4 north, 4 south. There is no roof and no eaves overhang - a garrison yard is open to the sky - so the written extent never leaves x3559-3585 z6403-6429 and the lot's whole perimeter, where a player arrives from the gate square, is untouched pad at y112.",
+    "floor_y": 112,
+    "stand_y": 113
+  },
+  "bounds": [
+    3559,
+    104,
+    6403,
+    3585,
+    128,
+    6429
+  ],
+  "bounds_why": "the gatehouse (3560..3584 x 6404..6428) with one cell of working room round it, up to y128 for the curtain wall at y122 and the two air cells over Giovanni at y123, and DOWN TO y104 for the nine courses of rock this function lays under the pad and then cuts the mine out of. Inside the lot rect [3556,6400,3588,6432] with a margin of three on every side, AND inside the gym_giovanni spawn-free box on every side - the box, not the lot, is what binds the south edge.",
+  "leader": {
+    "id": "kanto_giovanni",
+    "name": "Giovanni",
+    "spawner": [
+      3565,
+      121,
+      6416
+    ],
+    "powered_by": [
+      3565,
+      120,
+      6416
+    ],
+    "why": "kanto_giovanni is the upstream Radical Cobblemon Trainers id and it is load-bearing: a persistent leader trainer anywhere awards the badge (verified on staging 2026-09-24, docs/STATE.md). EXP-013 E2 (VERIFIED, on staging): a bare rctmod:trainer_spawner set by command with TrainerIds on a redstone block spawned the leader and he battled. The donor shell's own spawner goes with the shell in this function's clearing fill, so this is the only kanto_giovanni in the town and the eighth badge cannot be won without going under the gate and coming up inside it.",
+    "chest": [
+      3565,
+      121,
+      6412
+    ]
+  },
+  "rooms": [
+    {
+      "id": "yard",
+      "box": [
+        3568,
+        112,
+        6405,
+        3583,
+        122,
+        6427
+      ],
+      "why": "the muster yard: sixteen by twenty-three of polished granite paving at y112, walked at y113, open to the sky, closed by ten courses of curtain wall on three sides and by the gate mass on the fourth. Three well heads are cut in its floor and two of them are one course deep."
+    },
+    {
+      "id": "sap",
+      "box": [
+        3568,
+        106,
+        6407,
+        3578,
+        112,
+        6421
+      ],
+      "why": "the sap and the counter-mine: a shaft three by three from the yard's paving down to y107, and a drift eleven long on a coarse-dirt floor at y106, with three headings driven south off it. Two of the three are two cells and a face."
+    },
+    {
+      "id": "undercroft",
+      "box": [
+        3561,
+        106,
+        6422,
+        3570,
+        111,
+        6426
+      ],
+      "why": "the chamber the counter-mine was driven to reach, ten by five under the gate mass itself, floor y106 and walked at y107. The foot of the gate's own stair is in its north-west corner."
+    },
+    {
+      "id": "stair",
+      "box": [
+        3561,
+        107,
+        6408,
+        3562,
+        123,
+        6421
+      ],
+      "why": "the gate's inner stair: a slot two wide cut up through the gate mass, fourteen courses from the undercroft at y107 to the gate walk at y121, each step closed above by the rock of the step in front of it."
+    },
+    {
+      "id": "gate_walk",
+      "box": [
+        3561,
+        121,
+        6405,
+        3567,
+        124,
+        6427
+      ],
+      "why": "the walk on top of the gate, seven by twenty-three at y121, eight courses over the yard, with the curtain wall standing two higher on three sides and an open drop into the yard on the fourth. Giovanni stands on it facing the road north."
+    }
+  ],
+  "route": [
+    {
+      "step": 1,
+      "id": "the_sap_head",
+      "from": [
+        3576,
+        113,
+        6415
+      ],
+      "to": [
+        3577,
+        107,
+        6408
+      ],
+      "how": "climb",
+      "why": "the yard has one gate and no stair. Three well heads are cut in its paving: two cisterns, one course deep, and the sap, which goes down six to the counter-mine. The sap alone carries a spruce headframe and a lamp, and that is the tell - a thing in the world, the same for every player. A ladder[facing=south] runs y107 to y112 in the shaft's north-west column, carried the whole way by the rock at (3577,y,6406). Stepping into the shaft head catches the ladder for nothing; stepping into any other column of it is a six-block fall onto the drift's floor for three damage. Both waypoints are standing cells: (3576,113,6415) is yard paving with the course at y112 under it, (3577,107,6408) is the drift with its coarse-dirt floor at y106.",
+      "not_skippable": "the curtain wall stands ten courses to y122 on three sides and the gate mass eight courses to y120 on the fourth, and neither has an opening above the yard's own gate at y113-115. The yard's furniture - two sandbag lines one course high, three palisade stakes two courses high, crates, a spoil heap - tops out at y114, so a player's feet reach y115 at best and the lowest thing to climb to is six courses further up. The two cisterns are floored one course down by the rock this function lays under the pad. The sap is the only cell in the yard with anything under it."
+    },
+    {
+      "step": 2,
+      "id": "the_shored_heading",
+      "from": [
+        3577,
+        107,
+        6408
+      ],
+      "to": [
+        3569,
+        107,
+        6420
+      ],
+      "how": "walk",
+      "why": "the drift runs eleven cells west from the sap's foot and three headings are driven south off it at x3576, x3572 and x3569. All three are one wide and two high and look the same at the mouth; two run two cells and stop at the face. The west one runs twelve to the undercroft, and it is the only one that is shored - a stripped-spruce crown down its whole ceiling course at y109 with three glowstones set into it, where the other two have bare stone. Both waypoints are standing cells on a coarse-dirt floor at y106.",
+      "not_skippable": "the drift, the headings and the undercroft are cut out of the nine courses of rock this function lays under the pad, so every wall and ceiling underground is solid stone and there is no cell open below y113 that this record did not cut. The drift itself ends at a face at x3568. Nothing reaches the undercroft but the west heading."
+    },
+    {
+      "step": 3,
+      "id": "the_tower_stair",
+      "from": [
+        3565,
+        107,
+        6423
+      ],
+      "to": [
+        3562,
+        121,
+        6408
+      ],
+      "how": "climb",
+      "why": "the gate's own inner stair leaves the undercroft's north-west corner and climbs fourteen courses inside the gate mass, two wide, from a step topping at y107 at z6421 to one topping at y120 at z6408. Each course is a one-block rise with three courses cut open over it, so a player's head is clear the whole way and no drop in the slot is longer than one block. Both waypoints are standing cells: (3565,107,6423) is the undercroft floor, (3562,121,6408) is the stair's head with the last step's top block at y120 under it.",
+      "not_skippable": "the stair is a slot cut through eight courses of solid granite and six of rock. Its foot is in the undercroft and its head is on the gate walk, and it touches nothing else: the counter-mine passes nowhere near it, and the yard is on the other side of the mass."
+    },
+    {
+      "step": 4,
+      "id": "the_gate_walk",
+      "from": [
+        3562,
+        121,
+        6408
+      ],
+      "to": [
+        3564,
+        121,
+        6416
+      ],
+      "how": "walk",
+      "why": "the stair's head opens east onto the walk. The walk's own parapet stands two courses along the well's east side from z6409 south, so a player cannot fall back into the slot - and it deliberately does not stand at z6408, which is the cell the stair arrives at. Giovanni is eight cells south at (3565,121,6416) on a redstone block set into the walk's course, with his chest four cells north of him. (3564,121,6416) is the standing cell beside him."
+    },
+    {
+      "step": 5,
+      "id": "the_drop_into_the_yard",
+      "from": [
+        3567,
+        121,
+        6416
+      ],
+      "to": [
+        3568,
+        113,
+        6416
+      ],
+      "how": "fall",
+      "why": "the way back, and the reason the walk is not a trap (GYM_BUILDINGS_REVIEW D8: Blaine's vault had no exit at all and 192 positions could not regain the lot). The walk's east edge is open over the yard: an eight-block drop from y121 onto the paving at y112, landing with the feet at y113 for five damage - inside data/gym_interiors.json rules.max_fall of 12 and inside the ten damage a route may cost, so it needs no hay and none is used anywhere in this gym. The stair is the other way down. Eight courses is also why the drop is not a way UP: nothing in the yard reaches past y115."
+    }
+  ],
+  "trainers": [],
+  "trainers_why": "none authored, exactly as gyms 1, 3, 4, 5, 6 and 7. A gym trainer has to be unavoidable, and unavoidability is a claim about where a player can physically stand and how far a trainer can see - the independent movement model settles that, and it is not this unit's to write (CLAUDE.md principle 16). The `trainers` array is supported by the generator and lands in derived/gym_buildings/trainer_seats.json for trainer-balance-designer. The four places that would hold one are the yard inside the gate, the drift's mouth at the sap's foot, the undercroft, and the walk at the stair's head.",
+  "no_build": [
+    {
+      "box": [
+        3560,
+        104,
+        6404,
+        3584,
+        124,
+        6428
+      ],
+      "why": "the whole gatehouse and the ground under it. Authored, not wired: the scene runtime's adventure-mode box (tools/scenes_pack.py no_build) needs a scene record in data/scenes.json and that is not written in this unit. Until it is, a player with blocks can pillar eight courses out of the yard straight onto the gate walk and skip the sap, the mine and the stair together."
+    }
+  ],
+  "spawn_suppression": {
+    "record": "gym_giovanni",
+    "box": [
+      3552,
+      6400,
+      3591,
+      6431
+    ],
+    "note": "data/spawn_suppression.json gym_giovanni, UNCHANGED, and this building lies wholly inside it. That is by construction and it bound the footprint: the box's south edge is z6431 while the gym lot runs south to z6432, so the lot's southernmost row is NOT covered and nothing is built on it. Every written cell of this record lies in x3559-3585 (inside 3552-3591) and z6403-6429 (inside 6400-6431). The box is already whole 8-blocks - 3552/8=444, 6400/8=800, 3592/8=449, 6432/8=804 - so tools/suppress_inherited_spawns.py does not fail closed on it and no change to data/spawn_suppression.json is needed for this gym. It matters more here than at gym 6: the yard and the gate walk are OPEN TO THE SKY, which is where a wild Pokemon would otherwise stand. No block this record places is named in data/spawn_blocks.json."
+  },
+  "blocks": [
+    "minecraft:air",
+    "minecraft:stone",
+    "minecraft:polished_granite",
+    "minecraft:granite",
+    "minecraft:terracotta",
+    "minecraft:orange_terracotta",
+    "minecraft:mud_bricks",
+    "minecraft:packed_mud",
+    "minecraft:coarse_dirt",
+    "minecraft:spruce_planks",
+    "minecraft:spruce_log",
+    "minecraft:stripped_spruce_log",
+    "minecraft:glowstone",
+    "minecraft:ladder",
+    "minecraft:barrel",
+    "minecraft:chest",
+    "minecraft:redstone_block",
+    "rctmod:trainer_spawner"
+  ],
+  "blocks_why": "the town's own palette (docs/world-building/TOWN_CHARACTER.md gym8_town: terracotta, polished granite, spruce, coarse dirt; mud brick for the sandbags) plus the lamp the town plan already names for this settlement (minecraft:glowstone, 'a plain warm light set flush into the earth streets; not a spawn condition'). There is NO water and NO lava in this gym, so no source can leak and nothing can drown; no leaves, so nothing decays; no sand or gravel, so nothing falls into a passage it was not meant to close; no soul sand, so there is no bubble column to prove; no rails, fences, walls or slabs anywhere, so no cell reads as solid that a player expects to walk through; and no lanterns and no chains - every light in the building is a glowstone let flush into a floor, a ceiling or a beam, which is a full block and cannot pop. Thirty-one lanterns stood in mid air across the five interiors this work replaces.",
+  "parts": [
+    {
+      "op": "comment",
+      "why": "gym 8, Giovanni: the Gate of the South (data/gym_buildings/gym8.json). Runs at R16G, after the pack donors (R16E). Like gym 6 it has no tools/gym_demolish.py record, so this function takes the COBBLEVERSE donor shell down itself: gym8_gym_building (cobbleverse:giovanni) occupies 3560,111,6403..3583,127,6429 and the two clearing parts below cover every cell of it."
+    },
+    {
+      "op": "fill",
+      "box": [
+        3559,
+        113,
+        6403,
+        3585,
+        128,
+        6429
+      ],
+      "block": "minecraft:air",
+      "why": "-- clear everything over the pad inside the building's bounds. The donor shell's upper sixteen courses, y113 to y127, are inside this box"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3559,
+        104,
+        6403,
+        3585,
+        112,
+        6429
+      ],
+      "block": "minecraft:stone",
+      "why": "and re-make the nine courses under the pad back to rock, y104 to y112. The donor's two lowest courses stand at y111-112 and this is what removes them. The pad's y is the lot's declared level 112 from data/placements.json gym8_town plan.anchors gym8_gym - never read from a world. This block of rock is also what the mine below is cut OUT of: every wall and ceiling underground is this stone"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3560,
+        112,
+        6404,
+        3584,
+        112,
+        6428
+      ],
+      "block": "minecraft:polished_granite",
+      "why": "the yard's paving at y112, polished granite: the through street's own stone (data/placements.json gym8_town paving main). A player walks at y113"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3560,
+        113,
+        6404,
+        3560,
+        122,
+        6428
+      ],
+      "block": "minecraft:polished_granite",
+      "why": "the west curtain wall, ten courses to y122"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3584,
+        113,
+        6404,
+        3584,
+        122,
+        6428
+      ],
+      "block": "minecraft:polished_granite",
+      "why": "the east curtain wall, ten courses to y122"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3561,
+        113,
+        6404,
+        3583,
+        122,
+        6404
+      ],
+      "block": "minecraft:polished_granite",
+      "why": "the north curtain wall, ten courses to y122"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3561,
+        113,
+        6428,
+        3583,
+        122,
+        6428
+      ],
+      "block": "minecraft:polished_granite",
+      "why": "the south curtain wall, ten courses to y122"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3560,
+        119,
+        6404,
+        3560,
+        119,
+        6428
+      ],
+      "block": "minecraft:orange_terracotta",
+      "why": "the garrison's orange band round the west wall"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3584,
+        119,
+        6404,
+        3584,
+        119,
+        6428
+      ],
+      "block": "minecraft:orange_terracotta",
+      "why": "the garrison's orange band round the east wall"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3561,
+        119,
+        6404,
+        3583,
+        119,
+        6404
+      ],
+      "block": "minecraft:orange_terracotta",
+      "why": "the garrison's orange band round the north wall"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3561,
+        119,
+        6428,
+        3583,
+        119,
+        6428
+      ],
+      "block": "minecraft:orange_terracotta",
+      "why": "the garrison's orange band round the south wall"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3584,
+        113,
+        6415,
+        3584,
+        115,
+        6417
+      ],
+      "block": "minecraft:air",
+      "why": "the gate of the yard, cut in the east wall facing the gate square and the waystone at (3594,6444): the only opening in the curtain, three wide and three high"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3584,
+        116,
+        6414,
+        3584,
+        116,
+        6418
+      ],
+      "block": "minecraft:stripped_spruce_log[axis=x]",
+      "why": "the spruce lintel over it"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3561,
+        113,
+        6405,
+        3567,
+        120,
+        6427
+      ],
+      "block": "minecraft:granite",
+      "why": "THE GATE MASS: seven wide, the full depth of the yard and eight courses high, solid granite from the paving to y120. This is the gate itself, and it is shut. Its east face is sheer for eight courses and there is no opening in it at any height. Its top at y120 is the gate walk, walked at y121, where Giovanni stands - eight courses over the yard, which nothing in the yard can reach"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3567,
+        113,
+        6414,
+        3567,
+        118,
+        6418
+      ],
+      "block": "minecraft:terracotta",
+      "why": "the blind arch in the gate mass's east face: terracotta let one course into the granite, the shape of the gate that does not open. It is a facing, not a passage - the cells behind it stay solid"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3561,
+        121,
+        6405,
+        3567,
+        121,
+        6427
+      ],
+      "block": "minecraft:air",
+      "why": "the gate walk's own course cleared, so nothing of the donor or of the clearing fill stands on it"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3568,
+        106,
+        6407,
+        3578,
+        106,
+        6409
+      ],
+      "block": "minecraft:coarse_dirt",
+      "why": "the drift's floor at y106, coarse dirt: the garrison's counter-mine, eleven long and three wide, driven west under the yard from the sap's foot"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3568,
+        107,
+        6407,
+        3578,
+        108,
+        6409
+      ],
+      "block": "minecraft:air",
+      "why": "and the drift cut out of the rock above it, two courses high. Its walls and its ceiling are the stone this function laid under the pad; nothing opens out of it but the three headings"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3576,
+        109,
+        6407,
+        3578,
+        112,
+        6409
+      ],
+      "block": "minecraft:air",
+      "why": "THE SAP: a shaft three by three cut from the drift's ceiling straight up through the yard's paving, y109 to y112. It is the only opening in the yard's floor that goes anywhere"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3575,
+        112,
+        6406,
+        3579,
+        112,
+        6406
+      ],
+      "block": "minecraft:mud_bricks",
+      "why": "the sap's collar, mud brick let flush into the paving round the shaft head - the town's own sandbag material. FOUR FILLS, a ring and not a disc: as one 5x5 fill it was written after the shaft was cut and filled eight of its nine mouth cells back in, leaving a 1x1 hole where the record promised three by three (found by the independent audit, 2026-09-30). `mode: outline` cannot say this - a box one course high has every cell on its y face, so outline returns the whole disc. The four corners the headframe stands on are all on the ring."
+    },
+    {
+      "op": "fill",
+      "box": [
+        3575,
+        112,
+        6410,
+        3579,
+        112,
+        6410
+      ],
+      "block": "minecraft:mud_bricks",
+      "why": "the sap collar's south side"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3575,
+        112,
+        6407,
+        3575,
+        112,
+        6409
+      ],
+      "block": "minecraft:mud_bricks",
+      "why": "the sap collar's west side"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3579,
+        112,
+        6407,
+        3579,
+        112,
+        6409
+      ],
+      "block": "minecraft:mud_bricks",
+      "why": "the sap collar's east side"
+    },
+    {
+      "op": "columns",
+      "cells": [
+        [
+          3575,
+          6406,
+          117
+        ],
+        [
+          3579,
+          6406,
+          117
+        ],
+        [
+          3575,
+          6410,
+          117
+        ],
+        [
+          3579,
+          6410,
+          117
+        ]
+      ],
+      "from_y": 113,
+      "block": "minecraft:spruce_log[axis=y]",
+      "why": "THE TELL, and it is the whole of stage 1: the sap alone carries a headframe. Four spruce posts stand on the collar's corners, five courses to y117. The two cisterns in the same floor carry nothing at all. It is a thing in the world that says which hole goes down, the same for every player, in the family of Brock's lit slot and Misty's three mouths - and it is a headframe, which is what a garrison puts over the shaft it is actually working"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3575,
+        117,
+        6406,
+        3579,
+        117,
+        6406
+      ],
+      "block": "minecraft:stripped_spruce_log[axis=x]",
+      "why": "the headframe's north beam"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3575,
+        117,
+        6410,
+        3579,
+        117,
+        6410
+      ],
+      "block": "minecraft:stripped_spruce_log[axis=x]",
+      "why": "its south beam"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3575,
+        117,
+        6407,
+        3575,
+        117,
+        6409
+      ],
+      "block": "minecraft:stripped_spruce_log[axis=z]",
+      "why": "its west beam"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3579,
+        117,
+        6407,
+        3579,
+        117,
+        6409
+      ],
+      "block": "minecraft:stripped_spruce_log[axis=z]",
+      "why": "its east beam"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        3577,
+        117,
+        6408
+      ],
+      "block": "minecraft:glowstone",
+      "why": "the sap's lamp, hung in the middle of the headframe. A glowstone block is a full block carried by the four beams round it and cannot pop; there is not one lantern or one chain in this gym"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3581,
+        112,
+        6412,
+        3582,
+        112,
+        6413
+      ],
+      "block": "minecraft:air",
+      "why": "the first cistern, cut one course into the paving: a player steps down to y112 and back up to y113, and there is nothing in it. Its floor is the rock this function laid, one course down"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3572,
+        112,
+        6424,
+        3573,
+        112,
+        6425
+      ],
+      "block": "minecraft:air",
+      "why": "the second cistern, the same"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3580,
+        112,
+        6411,
+        3583,
+        112,
+        6414
+      ],
+      "block": "minecraft:mud_bricks",
+      "mode": "replace",
+      "why": "the first cistern's mud-brick collar, laid only where the paving still stands. REPLACE polished_granite, not `keep`: keep fills AIR ONLY, so this laid mud brick into the cistern just cut below it and left the paving alone - the exact opposite of these words, and it destroyed the blind well that is half of stage 1's choice. The geometry audit read it as clean because the ROUTE still passed; the independent audit read the record against the blocks and did not (2026-09-30).",
+      "filter": "minecraft:polished_granite"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3571,
+        112,
+        6423,
+        3574,
+        112,
+        6426
+      ],
+      "block": "minecraft:mud_bricks",
+      "mode": "replace",
+      "why": "the second cistern's collar. REPLACE polished_granite, not `keep`: keep fills AIR ONLY, so this laid mud brick into the cistern just cut below it and left the paving alone - the exact opposite of these words, and it destroyed the blind well that is half of stage 1's choice. The geometry audit read it as clean because the ROUTE still passed; the independent audit read the record against the blocks and did not (2026-09-30).",
+      "filter": "minecraft:polished_granite"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3576,
+        106,
+        6410,
+        3576,
+        106,
+        6411
+      ],
+      "block": "minecraft:coarse_dirt",
+      "why": "the east heading's floor"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3576,
+        107,
+        6410,
+        3576,
+        108,
+        6411
+      ],
+      "block": "minecraft:air",
+      "why": "the east heading, driven two cells south off the drift and abandoned at the face. Bare rock, no shoring, no light: a dead end a player walks into and out of"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3572,
+        106,
+        6410,
+        3572,
+        106,
+        6411
+      ],
+      "block": "minecraft:coarse_dirt",
+      "why": "the middle heading's floor"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3572,
+        107,
+        6410,
+        3572,
+        108,
+        6411
+      ],
+      "block": "minecraft:air",
+      "why": "the middle heading, the same: two cells and the face"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3569,
+        106,
+        6410,
+        3569,
+        106,
+        6421
+      ],
+      "block": "minecraft:coarse_dirt",
+      "why": "the west heading's floor"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3569,
+        107,
+        6410,
+        3569,
+        108,
+        6421
+      ],
+      "block": "minecraft:air",
+      "why": "THE WEST HEADING, the one that goes through: twelve cells south off the drift to the undercroft under the gate. Two courses high, like the others, and indistinguishable from them at the mouth except for what is over it"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3569,
+        109,
+        6410,
+        3569,
+        109,
+        6421
+      ],
+      "block": "minecraft:stripped_spruce_log[axis=z]",
+      "why": "THE TELL, stage 2: the west heading alone is shored. A stripped-spruce crown runs its whole length in the ceiling course at y109, where the two blind headings have bare stone. Standing in the drift you are looking at three identical mouths and one of them has timber over it"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          3569,
+          109,
+          6412
+        ],
+        [
+          3569,
+          109,
+          6416
+        ],
+        [
+          3569,
+          109,
+          6420
+        ]
+      ],
+      "block": "minecraft:glowstone",
+      "why": "and it alone is lit: three glowstones set into the shoring, each carried by the rock round it"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3561,
+        106,
+        6422,
+        3570,
+        106,
+        6426
+      ],
+      "block": "minecraft:packed_mud",
+      "why": "the undercroft's floor at y106, packed mud: the chamber the counter-mine was driven to reach, under the gate mass itself, ten by five"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3561,
+        107,
+        6422,
+        3570,
+        110,
+        6426
+      ],
+      "block": "minecraft:air",
+      "why": "and the undercroft cut out above it, four courses high. The gate mass's eight courses of granite stand between its ceiling and the gate walk, so nothing here is open to the yard or to the sky"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          3563,
+          110,
+          6424
+        ],
+        [
+          3568,
+          110,
+          6424
+        ]
+      ],
+      "block": "minecraft:glowstone",
+      "why": "two glowstones let into the undercroft's ceiling, each a full block in solid rock"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          3567,
+          107,
+          6426
+        ],
+        [
+          3568,
+          107,
+          6426
+        ],
+        [
+          3569,
+          107,
+          6426
+        ]
+      ],
+      "block": "minecraft:barrel",
+      "why": "the garrison's stores against the undercroft's south wall, each standing on its floor"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3561,
+        108,
+        6421,
+        3562,
+        110,
+        6421
+      ],
+      "block": "minecraft:air",
+      "why": "the tower stair, course 1: the step's top is y107 and three courses are cut over it, so a player climbs one course at a time with their head clear the whole way. The stair is a SLOT cut through the gate mass, never a shaft: each course is closed above by the rock of the course in front, so there is no drop in it longer than one block anywhere"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3561,
+        109,
+        6420,
+        3562,
+        111,
+        6420
+      ],
+      "block": "minecraft:air",
+      "why": "the tower stair, course 2: the step's top is y108 and three courses are cut over it, so a player climbs one course at a time with their head clear the whole way. The stair is a SLOT cut through the gate mass, never a shaft: each course is closed above by the rock of the course in front, so there is no drop in it longer than one block anywhere"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3561,
+        110,
+        6419,
+        3562,
+        112,
+        6419
+      ],
+      "block": "minecraft:air",
+      "why": "the tower stair, course 3: the step's top is y109 and three courses are cut over it, so a player climbs one course at a time with their head clear the whole way. The stair is a SLOT cut through the gate mass, never a shaft: each course is closed above by the rock of the course in front, so there is no drop in it longer than one block anywhere"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3561,
+        111,
+        6418,
+        3562,
+        113,
+        6418
+      ],
+      "block": "minecraft:air",
+      "why": "the tower stair, course 4: the step's top is y110 and three courses are cut over it, so a player climbs one course at a time with their head clear the whole way. The stair is a SLOT cut through the gate mass, never a shaft: each course is closed above by the rock of the course in front, so there is no drop in it longer than one block anywhere"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3561,
+        112,
+        6417,
+        3562,
+        114,
+        6417
+      ],
+      "block": "minecraft:air",
+      "why": "the tower stair, course 5: the step's top is y111 and three courses are cut over it, so a player climbs one course at a time with their head clear the whole way. The stair is a SLOT cut through the gate mass, never a shaft: each course is closed above by the rock of the course in front, so there is no drop in it longer than one block anywhere"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3561,
+        113,
+        6416,
+        3562,
+        115,
+        6416
+      ],
+      "block": "minecraft:air",
+      "why": "the tower stair, course 6: the step's top is y112 and three courses are cut over it, so a player climbs one course at a time with their head clear the whole way. The stair is a SLOT cut through the gate mass, never a shaft: each course is closed above by the rock of the course in front, so there is no drop in it longer than one block anywhere"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3561,
+        114,
+        6415,
+        3562,
+        116,
+        6415
+      ],
+      "block": "minecraft:air",
+      "why": "the tower stair, course 7: the step's top is y113 and three courses are cut over it, so a player climbs one course at a time with their head clear the whole way. The stair is a SLOT cut through the gate mass, never a shaft: each course is closed above by the rock of the course in front, so there is no drop in it longer than one block anywhere"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3561,
+        115,
+        6414,
+        3562,
+        117,
+        6414
+      ],
+      "block": "minecraft:air",
+      "why": "the tower stair, course 8: the step's top is y114 and three courses are cut over it, so a player climbs one course at a time with their head clear the whole way. The stair is a SLOT cut through the gate mass, never a shaft: each course is closed above by the rock of the course in front, so there is no drop in it longer than one block anywhere"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3561,
+        116,
+        6413,
+        3562,
+        118,
+        6413
+      ],
+      "block": "minecraft:air",
+      "why": "the tower stair, course 9: the step's top is y115 and three courses are cut over it, so a player climbs one course at a time with their head clear the whole way. The stair is a SLOT cut through the gate mass, never a shaft: each course is closed above by the rock of the course in front, so there is no drop in it longer than one block anywhere"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3561,
+        117,
+        6412,
+        3562,
+        119,
+        6412
+      ],
+      "block": "minecraft:air",
+      "why": "the tower stair, course 10: the step's top is y116 and three courses are cut over it, so a player climbs one course at a time with their head clear the whole way. The stair is a SLOT cut through the gate mass, never a shaft: each course is closed above by the rock of the course in front, so there is no drop in it longer than one block anywhere"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3561,
+        118,
+        6411,
+        3562,
+        120,
+        6411
+      ],
+      "block": "minecraft:air",
+      "why": "the tower stair, course 11: the step's top is y117 and three courses are cut over it, so a player climbs one course at a time with their head clear the whole way. The stair is a SLOT cut through the gate mass, never a shaft: each course is closed above by the rock of the course in front, so there is no drop in it longer than one block anywhere"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3561,
+        119,
+        6410,
+        3562,
+        121,
+        6410
+      ],
+      "block": "minecraft:air",
+      "why": "the tower stair, course 12: the step's top is y118 and three courses are cut over it, so a player climbs one course at a time with their head clear the whole way. The stair is a SLOT cut through the gate mass, never a shaft: each course is closed above by the rock of the course in front, so there is no drop in it longer than one block anywhere"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3561,
+        120,
+        6409,
+        3562,
+        122,
+        6409
+      ],
+      "block": "minecraft:air",
+      "why": "the tower stair, course 13: the step's top is y119 and three courses are cut over it, so a player climbs one course at a time with their head clear the whole way. The stair is a SLOT cut through the gate mass, never a shaft: each course is closed above by the rock of the course in front, so there is no drop in it longer than one block anywhere"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3561,
+        121,
+        6408,
+        3562,
+        123,
+        6408
+      ],
+      "block": "minecraft:air",
+      "why": "the tower stair, course 14: the step's top is y120 and three courses are cut over it, so a player climbs one course at a time with their head clear the whole way. The stair is a SLOT cut through the gate mass, never a shaft: each course is closed above by the rock of the course in front, so there is no drop in it longer than one block anywhere"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3563,
+        121,
+        6409,
+        3563,
+        122,
+        6421
+      ],
+      "block": "minecraft:granite",
+      "why": "the stair well's parapet, two courses along its east side from z6409 to z6421. It is NOT in the cells the stair arrives at: the stair's head is at z6408 and this parapet starts at z6409, so the way onto the gate walk is open and what the parapet closes is the drop back into the well. GYM_BUILDINGS_REVIEW D7 is exactly this mistake made the other way - Blaine's own rail stood in the two columns his spoil steps arrived at and his gym could not be started"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        3565,
+        120,
+        6416
+      ],
+      "block": "minecraft:redstone_block",
+      "why": "the redstone block set into the gate walk's own course. EXP-013 E2 (VERIFIED, on staging): an unpowered rctmod:trainer_spawner spawns nobody; on a redstone block the leader spawned and battled"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        3565,
+        121,
+        6416
+      ],
+      "block": "rctmod:trainer_spawner{TrainerIds:[\"kanto_giovanni\"]}",
+      "why": "Giovanni, on the gate walk facing the road out. kanto_giovanni is the upstream Radical Cobblemon Trainers id. The donor shell's own spawner goes with the shell in this function's clearing fill, so this is the only kanto_giovanni in the town. Two air cells stand over him at y122 and y123 and nothing is written there"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        3565,
+        121,
+        6412
+      ],
+      "block": "minecraft:chest",
+      "why": "Giovanni's chest, four cells north of him on the walk, opened from the walk's own walking level. No healing machine stands in this gym (the brief)"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          3564,
+          120,
+          6410
+        ],
+        [
+          3566,
+          120,
+          6410
+        ],
+        [
+          3564,
+          120,
+          6422
+        ],
+        [
+          3566,
+          120,
+          6422
+        ]
+      ],
+      "block": "minecraft:glowstone",
+      "why": "four glowstones let flush into the gate walk's course, the town's own lamp (data/placements.json gym8_town paving lamp: 'a plain warm light set flush into the earth streets'). Flush in a floor: nothing hangs, nothing pops"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3561,
+        121,
+        6414,
+        3561,
+        122,
+        6418
+      ],
+      "block": "minecraft:orange_terracotta",
+      "why": "the garrison's colours on the walk's west parapet behind Giovanni"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3570,
+        113,
+        6412,
+        3574,
+        113,
+        6412
+      ],
+      "block": "minecraft:mud_bricks",
+      "why": "a sandbag line across the muster yard"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3570,
+        113,
+        6420,
+        3574,
+        113,
+        6420
+      ],
+      "block": "minecraft:mud_bricks",
+      "why": "and a second, one course, stepped over"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          3582,
+          113,
+          6406
+        ],
+        [
+          3582,
+          113,
+          6407
+        ],
+        [
+          3581,
+          113,
+          6406
+        ]
+      ],
+      "block": "minecraft:barrel",
+      "why": "the supply depot's crates in the yard's north-east corner, each on the paving"
+    },
+    {
+      "op": "columns",
+      "cells": [
+        [
+          3579,
+          6405,
+          114
+        ],
+        [
+          3582,
+          6427,
+          114
+        ],
+        [
+          3570,
+          6405,
+          114
+        ]
+      ],
+      "from_y": 113,
+      "block": "minecraft:spruce_log[axis=y]",
+      "why": "three palisade stakes, two courses. Nothing in the yard rises above y114, which puts a player's feet at y115: the curtain wall's top is y122 and the gate mass's is y120, so no piece of furniture here brings either within reach"
+    },
+    {
+      "op": "scatter",
+      "positions": [
+        [
+          3570,
+          112,
+          6416
+        ],
+        [
+          3580,
+          112,
+          6416
+        ],
+        [
+          3575,
+          112,
+          6426
+        ],
+        [
+          3575,
+          112,
+          6406
+        ]
+      ],
+      "block": "minecraft:glowstone",
+      "why": "glowstones let flush into the yard's paving"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3576,
+        113,
+        6412,
+        3578,
+        113,
+        6412
+      ],
+      "block": "minecraft:coarse_dirt",
+      "why": "the spoil the sap has thrown up, heaped one course beside its head"
+    },
+    {
+      "op": "fill",
+      "box": [
+        3577,
+        107,
+        6407,
+        3577,
+        112,
+        6407
+      ],
+      "block": "minecraft:ladder[facing=south]",
+      "why": "THE SAP'S LADDER, WRITTEN LAST ON PURPOSE. GYM_BUILDINGS_REVIEW D2: Brock's hoist ladder was cut through by a floor written after it and re-cut to AIR, and his gym could not be finished. Every fill that could cross this column - the paving, the drift, the shaft - is written above, and this part re-cuts the whole run y107 to y112 as LADDER. A ladder[facing=south] is carried by the block to its NORTH, and (3577,y,6406) is the rock this function laid under the pad, solid for every one of those six courses. A player who steps into the shaft head at y113 catches the ladder at y112 and takes no damage; a player who steps into one of the other eight columns falls six onto the drift's floor for three damage, which is inside the twelve of data/gym_interiors.json rules.max_fall and needs no hay"
+    }
+  ]
+}

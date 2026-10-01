@@ -1,6 +1,6 @@
 {
   "schema": "cobblers.legendaries/1",
-  "status": "authored 2026-09-29; 6 of 10 encounters sited and emitted, 4 blocked with named reasons. Nothing is built in any world.",
+  "status": "authored 2026-09-29; 7 of 10 encounters sited and emitted, 3 blocked, each block now named as TECHNICAL or DECISION. SIX are built in cobblers-dryrun12: reapply step R14L ran 14 commands with 0 problems at 2026-09-29T02:51 (derived/reapply/run_20260929_023305.json). UXIE IS SITED AND EMITTED BUT NOT YET BUILT: its blocker (the pending water export) is gone because the export is applied and is now the canonical heightmap, so the mouth could be measured on the bed it will actually stand in. It needs one re-apply. Registeel and Lugia are DECISIONS for the owner, not computations, and Celebi's wake is a trigger question. Regigigas is built and its gate cannot be satisfied until Registeel is sited: see its gate.unsatisfiable_why. Celebi's wake is designed and built as gate + trigger (docs/mechanics/CELEBI_WAKE.md); Celebi is level 55, was 70 and uncatchable against every cap.",
   "notes": [
     "The authored legendary encounters: the lake trio (docs/mechanics/WATER_MAP.md section 5), the four bespoke concepts (docs/world-building/STRUCTURE_DECISIONS.md section 4, docs/story/ENCOUNTERS.md:392-395) and the wake of the sleeping Celebi (data/sapling_celebi.json, EXP-023). Every other legendary is Tier B: paste a structure into a fitting biome and gate it by badge count, and none of that is here.",
     "A legendary is an ENTITY, so a re-export erases it and it is summoned over RCON by tools/reapply.py (step R14L), never by a pack: `spawnpokemonat` inside a function spawns nothing until a /reload (EXP-046 question 1). The pack does what functions can: the chamber's blocks, the gate, the keeper.",
@@ -8,14 +8,12 @@
     "The chambers are parametric, not a noise model: a stone envelope filled first, then the void carved out of it. That is what makes the seal provable offline (tools/legendaries_audit.py) instead of needing a dilation over a world.",
     "Each record's `status` decides whether tools/legendaries.py emits it. `sited` is emitted; anything else is data only and the generator refuses to write its blocks (fail closed), so a blocked site cannot reach a world by accident."
   ],
-
   "pack": "cobblers_legendaries",
   "namespace": "cobblers",
   "tag_prefix": "cobblers_leg_",
   "objective": "cobblers.leg",
   "period_ticks": 20,
   "period_why": "the driver is one `execute positioned ... if entity @a[distance=..R]` line per emitted encounter, rescheduled every 20 ticks, so six encounters cost six command lines a second, not sixty a tick. The Celebi keeper's shape (tools/sapling_celebi.py), chosen because docs/mechanics/TOWN_TICK_BUDGET.md is counting the idle floor.",
-
   "defaults": {
     "shell_margin": 4,
     "shell_margin_why": "docs/mechanics/WATER_BUILD_PLAN.md 4.5 audit 1: at least 4 blocks of rock round every void, no void connecting to the water but the passage. Here it is guaranteed by construction: the envelope is filled solid first and extends shell_margin beyond every carved block in all six directions.",
@@ -33,15 +31,72 @@
     "floor_block": "minecraft:stone",
     "pedestal_block": "minecraft:smooth_basalt"
   },
-
   "level_caps": {
     "why": "data/level_cap.json (the owner, 2026-09-28): a Pokemon strictly over the thrower's RCT level cap breaks free from EVERY ball, a Master Ball included. A legendary authored above the cap of its own badge gate is therefore uncatchable, which would make the encounter a wall rather than a reward.",
-    "source": "PROVISIONAL AND UNVERIFIED. rctmod is configured initialLevelCap 20, relativeLevelCap 0 (modpack/config/rctmod-server.toml); the per-badge rise comes from the Cobbleverse RCT series data and has NOT been read out. These numbers are a placeholder for trainer-balance-designer and must be replaced before any of this is built.",
-    "by_badges": {"3": 40, "4": 46, "5": 52, "6": 58, "7": 64, "8": 70, "champion": 80}
+    "source": "READ OUT 2026-09-29, and it is not a table. RCT computes the cap per player as max(initialLevelCap, min over the player's NEXT trainers of that trainer's team's highest level + relativeLevelCap) (LevelUtils at rctmod v0.19.0-beta, quoted in docs/research/notes/level-cap-catch-block.md), with initialLevelCap 20 and relativeLevelCap 0 (modpack/config/rctmod-server.toml). It therefore depends on the campaign's own RCT series data, and our gyms and Elite Four are NOT in that data yet (only the 13 Route 1-3 trainers and the 5 mansion Channelers are, docs/STATE.md). The by_badges table that stood here (3:40 4:46 5:52 6:58 7:64 8:70 champion:80) was invented and is gone.",
+    "upper_bound_by_badges": {
+      "0": 20,
+      "1": 25,
+      "2": 30,
+      "3": 35,
+      "4": 40,
+      "5": 45,
+      "6": 50,
+      "7": 55,
+      "8": 60,
+      "champion": 65
+    },
+    "upper_bound_why": "an UPPER BOUND, not the cap. After n badges the next trainer set contains gym n+1, whose team's highest level is data/trainers.json generation_contract gym_ace_levels[n] (20 25 30 35 40 45 50 55); after 8 badges it contains the Elite Four at 60. The cap is the MINIMUM over that set, so it is at most this and is lower whenever a weaker required trainer of the tier is still undefeated. A legendary above this bound is therefore certainly uncatchable; one below it still has to be checked in game. The champion's own cap is unknown: nothing authored comes after champion_blue (62), and what LevelUtils returns for an empty next set has not been read.",
+    "above_the_bound": [],
+    "above_the_bound_note": "NOT FIXED HERE. Eight of the ten levels in this file are above the bound above, so data/level_cap.json makes them uncatchable as authored; each record's cap_at_gate still carries the invented table's number, which is why tools/legendaries_audit.py passes them. Re-levelling them is a balance decision (trainer-balance-designer) and it changes six emitted packs, so it is left to the owner. Only celebi_wake, the record this session owned, was brought under the bound (docs/mechanics/CELEBI_WAKE.md).",
+    "above_the_bound_why": "EMPTY as of 2026-09-29. The owner decided every legendary sits at the upper bound of the badge that gates its chamber. Lugia is the exception and is UNRESOLVED: its gate is champion_cleared and the champion's cap is unknown (nothing authored comes after champion_blue at 62, and what LevelUtils returns for an empty next set has not been read), so its level is untouched at 75 and the owner is handling it. NOTE the bound is an UPPER bound, not the cap: sitting exactly on it is catchable only when the player has cleared every other required trainer of that tier. Each one still has to be confirmed in game.",
+    "relevelled_2026_09_29": [
+      {
+        "id": "azelf",
+        "from": 47,
+        "to": 45,
+        "gate": "5 badges"
+      },
+      {
+        "id": "uxie",
+        "from": 59,
+        "to": 55,
+        "gate": "7 badges"
+      },
+      {
+        "id": "regirock",
+        "from": 41,
+        "to": 40,
+        "gate": "4 badges"
+      },
+      {
+        "id": "regice",
+        "from": 53,
+        "to": 50,
+        "gate": "6 badges"
+      },
+      {
+        "id": "registeel",
+        "from": 59,
+        "to": 55,
+        "gate": "7 badges"
+      },
+      {
+        "id": "regigigas",
+        "from": 65,
+        "to": 60,
+        "gate": "8 badges"
+      },
+      {
+        "id": "groudon",
+        "from": 65,
+        "to": 60,
+        "gate": "8 badges"
+      }
+    ],
+    "champion_band_why": "The owner, 2026-09-30: 'LUGIA: the League's cap. If champion_cleared has no cap band, give it one.' It had none - the band was null, which is why Lugia sat at 75 and could not be caught by anyone. 65 is the eighth badge's 60 plus one step of the five the whole ladder uses (20,25,30,35,40,45,50,55,60), so the champion's band is the ladder's next rung and not a new rule. It is an UPPER bound like every other entry (see upper_bound_why): the real cap is the minimum over the next trainer set, so anything sitting exactly on it still wants confirming in game."
   },
-
   "spawn_free_zones_note": "Every emitted encounter declares a `spawn_free_zone`: the chamber footprint snapped out to the 8-block grid the route boxes share. They are NOT written into data/spawn_suppression.json by this file's author, because that file was in flight in another session on 2026-09-29; whoever merges them must also accept that a spawn-free zone is a 2-D column, so a grotto's zone also silences the lake water directly above it (about 40 by 40 blocks of a lake that is 300+ across). tools/legendaries_audit.py checks the boxes are grid-snapped and cover their chamber.",
-
   "encounters": [
     {
       "id": "mesprit",
@@ -53,197 +108,524 @@
       "kind": "lake_grotto",
       "status": "sited",
       "site": "arrow_lake",
-      "gate": {"flags": ["gym3_cleared"], "requires_met": [], "status": "decided", "why": "the owner, 2026-09-26, through docs/mechanics/WATER_MAP.md section 5: Mesprit at 3 badges, the first use a player finds for Surf."},
-      "mouth": [2790, 4606],
+      "gate": {
+        "flags": [
+          "gym3_cleared"
+        ],
+        "requires_met": [],
+        "status": "decided",
+        "why": "the owner, 2026-09-26, through docs/mechanics/WATER_MAP.md section 5: Mesprit at 3 badges, the first use a player finds for Surf."
+      },
+      "mouth": [
+        2790,
+        4606
+      ],
       "mouth_why": "Arrow Lake's measured basin floor anchor (data/landmarks.json arrow_lake), ground y55 and dead flat over 33 by 33. data/water_shape.json's lake `arrow_lake` keeps a zone `mesprit_grotto_floor`, radius 12 round this anchor, expressly for this mouth, so the pending water export does not move it.",
-      "approach": {"bearing_deg": 90, "drop": 18, "passage": 18},
-      "chamber": {"width": 19, "length": 19, "height": 8, "alcove": 5},
-      "water_export": {"clear": true, "keep_zone": "arrow_lake:mesprit_grotto_floor", "basis": "data/water_shape.json lakes.bodies[arrow_lake].keep[mesprit_grotto_floor], radius 12 round the anchor; the sleeve footprint is 11 by 11 centred on it, so every column it touches is inside the keep. Everything else is 18+ blocks below the bed, which the export does not reach."},
-      "spawn_free_zone": [2784, 4592, 2832, 4616],
-      "why": "docs/mechanics/WATER_BUILD_PLAN.md 3.3/4.2: the grotto mouth in the centre of a lit ring of standing stones on a hump, a passage of no more than 20 blocks, an air chamber for the battle. The ring, the hump and the bubble column are the lake-sites pack's dressing, not this one's."
+      "approach": {
+        "bearing_deg": 90,
+        "drop": 18,
+        "passage": 18
+      },
+      "chamber": {
+        "width": 19,
+        "length": 19,
+        "height": 8,
+        "alcove": 5
+      },
+      "water_export": {
+        "clear": true,
+        "keep_zone": "arrow_lake:mesprit_grotto_floor",
+        "basis": "data/water_shape.json lakes.bodies[arrow_lake].keep[mesprit_grotto_floor], radius 12 round the anchor; the sleeve footprint is 11 by 11 centred on it, so every column it touches is inside the keep. Everything else is 18+ blocks below the bed, which the export does not reach."
+      },
+      "spawn_free_zone": [
+        2784,
+        4592,
+        2832,
+        4616
+      ],
+      "why": "docs/mechanics/WATER_BUILD_PLAN.md 3.3/4.2: the grotto mouth in the centre of a lit ring of standing stones on a hump, a passage of no more than 20 blocks, an air chamber for the battle. The ring, the hump and the bubble column are the lake-sites pack's dressing, not this one's.",
+      "level_why": "already at or under the upper bound of its gate (3 badges = 35)"
     },
     {
       "id": "azelf",
       "title": "Azelf under Marshy Marsh",
       "species": "azelf",
-      "level": 47,
+      "level": 45,
       "level_basis": "5 below the provisional 5-badge cap of 52. PROVISIONAL.",
       "cap_at_gate": 52,
       "kind": "lake_grotto",
       "status": "sited",
       "site": "marshy_marsh",
-      "gate": {"flags": ["gym5_cleared"], "requires_met": [], "status": "decided", "why": "the owner, 2026-09-26, through docs/mechanics/WATER_MAP.md section 5: Azelf at 5 badges, around Koga."},
-      "mouth": [5158, 2166],
+      "gate": {
+        "flags": [
+          "gym5_cleared"
+        ],
+        "requires_met": [],
+        "status": "decided",
+        "why": "the owner, 2026-09-26, through docs/mechanics/WATER_MAP.md section 5: Azelf at 5 badges, around Koga."
+      },
+      "mouth": [
+        5158,
+        2166
+      ],
       "mouth_why": "Marshy Marsh's measured pit floor anchor (data/landmarks.json marshy_marsh), ground y63. data/water_shape.json keeps `azelf_pit` (core_depth 20) round this anchor; at the anchor the old bed is 37 deep, so the mouth is well inside the kept core.",
-      "approach": {"bearing_deg": 180, "drop": 18, "passage": 14},
-      "chamber": {"width": 17, "length": 17, "height": 8, "alcove": 5},
-      "water_export": {"clear": true, "keep_zone": "marshy_marsh:azelf_pit", "basis": "data/water_shape.json lakes.bodies[marshy_marsh].keep[azelf_pit], core_depth 20 round the anchor: the kept core is every column at least 20 deep, and the sleeve's 11 by 11 sits at 34-37 deep."},
-      "spawn_free_zone": [5144, 2160, 5168, 2200],
-      "why": "WATER_BUILD_PLAN 3.3 puts Azelf's mouth 'under the root tangle' of the drowned trees. The roots stand on the export's new shelf humps, which do not exist yet and are not a kept surface; the mouth is therefore on the kept pit floor at the anchor, and the boardwalk down the pit wall to the roots is the lake-sites pack's dressing that will meet it. Stated as a deviation, not hidden."
+      "approach": {
+        "bearing_deg": 180,
+        "drop": 18,
+        "passage": 14
+      },
+      "chamber": {
+        "width": 17,
+        "length": 17,
+        "height": 8,
+        "alcove": 5
+      },
+      "water_export": {
+        "clear": true,
+        "keep_zone": "marshy_marsh:azelf_pit",
+        "basis": "data/water_shape.json lakes.bodies[marshy_marsh].keep[azelf_pit], core_depth 20 round the anchor: the kept core is every column at least 20 deep, and the sleeve's 11 by 11 sits at 34-37 deep."
+      },
+      "spawn_free_zone": [
+        5144,
+        2160,
+        5168,
+        2200
+      ],
+      "why": "WATER_BUILD_PLAN 3.3 puts Azelf's mouth 'under the root tangle' of the drowned trees. The roots stand on the export's new shelf humps, which do not exist yet and are not a kept surface; the mouth is therefore on the kept pit floor at the anchor, and the boardwalk down the pit wall to the roots is the lake-sites pack's dressing that will meet it. Stated as a deviation, not hidden.",
+      "level_why": "lowered from 47 to the upper bound of its own gate (5 badges) on the owner's decision, 2026-09-29: 'lower the legendaries to the cap band of whatever badge gates their chamber. A legendary you cannot catch is not an encounter.'"
     },
     {
       "id": "uxie",
       "title": "Uxie under Lake Tilpey",
       "species": "uxie",
-      "level": 59,
+      "level": 55,
       "level_basis": "5 below the provisional 7-badge cap of 64. PROVISIONAL.",
       "cap_at_gate": 64,
       "kind": "lake_grotto",
-      "status": "blocked",
+      "status": "sited",
       "site": "lake_tilpey",
-      "blocked_by": "water_export",
-      "blocked_why": "Lake Tilpey is the one trio lake with NO keep zone in data/water_shape.json (lakes.bodies[lake_tilpey].keep is empty). Its whole bed is rewritten by the pending export: a shelf 14-44 wide off every shore and off the islands, a 10-deep drop-off over 6 blocks, then a basin floor remapped from the old bed by floor_gamma. Uxie's mouth belongs under the Weeping Elder island's apron, which is exactly the part that changes, and the new bed Y there cannot be computed in this worktree (derived/water_shape is absent and re-running tools/water_shape.py would duplicate the main session's in-flight work). Siting it on today's heightmap would put the mouth in rock or in mid-water after the export.",
-      "gate": {"flags": ["gym7_cleared"], "requires_met": [], "status": "decided", "why": "the owner, 2026-09-26: Uxie at 7 badges, after Blaine."},
-      "mouth": null,
+      "was_blocked_by": "water_export, resolved 2026-09-29",
+      "unblocked_why": "The block was that Lake Tilpey's bed was about to be rewritten and the post-export bed could not be read. It has been rewritten: data/world.json's canonical heightmap is now `land_8k_16_rescaled_b145_pads_rift_water.png` (sha256 d1bc68d3...), the output of tools/water_shape.py --apply, and docs/STATE.md records the apply as done (19,027,615 columns: rivers, lake beds, coasts, the seabed, the bank). So tools/ground.py now returns the POST-export bed, the siting rule below resolves on it, and no keep zone is needed: a keep zone protects a mouth measured on the OLD bed from the export, and this mouth was measured on the new one.",
+      "gate": {
+        "flags": [
+          "gym7_cleared"
+        ],
+        "requires_met": [],
+        "status": "decided",
+        "why": "the owner, 2026-09-26: Uxie at 7 badges, after Blaine."
+      },
+      "mouth": [
+        5714,
+        4079
+      ],
+      "mouth_why": "The siting rule below, resolved on the canonical (post-export) heightmap: walking the line from the Weeping Elder island's centre (5640, 4176; data/foliage.json weeping_elder_tilpey.site) toward Lake Tilpey's anchor (5870, 3874), the bed runs y81 on the island, y74-67 across the island's apron, and then falls over six columns to y53 at s=122, which is the FIRST column at or below y59 (18 below the water level y77). That column is (5714, 4079), bed y53, 24 blocks of water over it: the foot of the island's apron, which is where WATER_BUILD_PLAN 3.3 puts it.",
       "siting_rule": "On the line from the Weeping Elder island's centre toward Lake Tilpey's anchor (5870, 3874), the first column at which the POST-EXPORT bed reaches 18 blocks of depth below the water level y77, i.e. bed y59 or lower. The same shape as data/water_shape.json's own `practice_floor` site rule ({toward_anchor_from, at_old_depth}), so it can be resolved by the tool that owns the bed.",
-      "recommendation": "Add a keep zone to data/water_shape.json lakes.bodies[lake_tilpey]: `{\"id\": \"uxie_grotto_floor\", \"radius\": 12, \"around\": <the resolved mouth>}`, exactly as Arrow Lake carries `mesprit_grotto_floor`. Then this record becomes `sited` with no other change. That edit is the owner's or the water session's, not this one's.",
-      "approach": {"bearing_deg": 0, "drop": 16, "passage": 16},
-      "chamber": {"width": 17, "length": 17, "height": 8, "alcove": 5},
-      "spawn_free_zone": null,
-      "why": "WATER_BUILD_PLAN 3.3: the mouth under the island's apron, a flooded passage, an air chamber; the island is the rest point and the pale gold light deep off it is the hook."
+      "water_export": {
+        "applied": true,
+        "measured_on_sha256": "d1bc68d33705a4bb87784630d3107847f9a061436789d3b84fd1a7b1ae5dfe56",
+        "basis": "the mouth was measured on the applied water export, not before it, so it needs no keep zone. tools/legendaries_audit.py fails this record if data/world.json's heightmap sha stops matching this one, because then the bed under the mouth is no longer the bed it was measured on."
+      },
+      "approach": {
+        "bearing_deg": 0,
+        "drop": 22,
+        "passage": 16
+      },
+      "approach_why": "Deeper than Mesprit's and Azelf's 18 because Tilpey's basin floor keeps falling away north of the mouth: the lowest ground over the envelope's own footprint is y51, one block below the mouth itself, so a drop of 18 would leave the chamber roof a block short of shell_margin + clearance. A drop of 22 puts the floor at y31, the envelope's top at y43 and leaves 8 blocks of rock over the roof at the thinnest column: 3 more than the audit's minimum. The flooded swim (22 down the shaft, 16 along the passage, 24 down from the surface) is shorter than Mesprit's.",
+      "chamber": {
+        "width": 17,
+        "length": 17,
+        "height": 8,
+        "alcove": 5
+      },
+      "spawn_free_zone": [
+        5696,
+        4040,
+        5728,
+        4088
+      ],
+      "why": "WATER_BUILD_PLAN 3.3: the mouth under the island's apron, a flooded passage, an air chamber; the island is the rest point and the pale gold light deep off it is the hook.",
+      "level_why": "lowered from 59 to the upper bound of its own gate (7 badges) on the owner's decision, 2026-09-29: 'lower the legendaries to the cap band of whatever badge gates their chamber. A legendary you cannot catch is not an encounter.'"
     },
     {
       "id": "regirock",
       "title": "Regirock, sealed under the Scorched Plateau",
       "species": "regirock",
-      "level": 41,
+      "level": 40,
       "level_basis": "5 below the provisional 4-badge cap of 46. PROVISIONAL.",
       "cap_at_gate": 46,
       "kind": "sealed_chamber",
       "status": "sited",
       "site": "scorched_plateau",
-      "gate": {"flags": ["gym4_cleared"], "requires_met": [], "status": "PROPOSED, NOT DECIDED", "why": "docs/world-building/STRUCTURE_DECISIONS.md fixes the three golems' regions and calls them one systematic search; no document fixes their badge gates. 4, 6 and 7 badges spread the search over the middle of the game and put Regigigas behind the eighth. The owner has not seen this."},
-      "portal": [4800, 5200],
+      "gate": {
+        "flags": [
+          "gym4_cleared"
+        ],
+        "requires_met": [],
+        "status": "PROPOSED, NOT DECIDED",
+        "why": "docs/world-building/STRUCTURE_DECISIONS.md fixes the three golems' regions and calls them one systematic search; no document fixes their badge gates. 4, 6 and 7 badges spread the search over the middle of the game and put Regigigas behind the eighth. The owner has not seen this."
+      },
+      "portal": [
+        4800,
+        5200
+      ],
       "portal_why": "The Scorched Plateau (data/regions.json regions[scorched_plateau], bounds x4088-5895 z4944-6407), the badlands the golem's region identity comes from. Ground y144 and flat to one block over 33 by 33; 529 blocks from Redbrow (4876, 5729), the nearest place in data/towns.json.",
-      "approach": {"bearing_deg": 90, "drop": 40, "passage": 12},
-      "chamber": {"width": 17, "length": 17, "height": 9, "alcove": 0},
+      "approach": {
+        "bearing_deg": 90,
+        "drop": 40,
+        "passage": 12
+      },
+      "chamber": {
+        "width": 17,
+        "length": 17,
+        "height": 9,
+        "alcove": 0
+      },
       "plug_depth": 6,
-      "spawn_free_zone": [4792, 5192, 4832, 5208],
-      "why": "STRUCTURE_DECISIONS section 4: 'the classic systematic-search puzzle for a co-op group', each golem on a region identity that already exists. The plug is the gate: rock until a qualified player stands on the portal, and it does not close again, so nobody is sealed in."
+      "spawn_free_zone": [
+        4792,
+        5192,
+        4832,
+        5208
+      ],
+      "why": "STRUCTURE_DECISIONS section 4: 'the classic systematic-search puzzle for a co-op group', each golem on a region identity that already exists. The plug is the gate: rock until a qualified player stands on the portal, and it does not close again, so nobody is sealed in.",
+      "level_why": "lowered from 41 to the upper bound of its own gate (4 badges) on the owner's decision, 2026-09-29: 'lower the legendaries to the cap band of whatever badge gates their chamber. A legendary you cannot catch is not an encounter.'"
     },
     {
       "id": "regice",
       "title": "Regice, sealed under the Glacial Tear",
       "species": "regice",
-      "level": 53,
+      "level": 50,
       "level_basis": "5 below the provisional 6-badge cap of 58. PROVISIONAL.",
       "cap_at_gate": 58,
       "kind": "sealed_chamber",
       "status": "sited",
       "site": "glacial_tear",
-      "gate": {"flags": ["gym6_cleared"], "requires_met": [], "status": "PROPOSED, NOT DECIDED", "why": "as Regirock's."},
-      "portal": [3900, 2050],
+      "gate": {
+        "flags": [
+          "gym6_cleared"
+        ],
+        "requires_met": [],
+        "status": "PROPOSED, NOT DECIDED",
+        "why": "as Regirock's."
+      },
+      "portal": [
+        3900,
+        2050
+      ],
       "portal_why": "The Upper Trough of the Glacial Tear (data/regions.json subregions[upper_trough]); the tear's own drawn line passes (3952, 2116). Ground y101, 99-103 over 33 by 33. North of the Rift (its bounds start at z2320) and 380 blocks from Regigigas's portal.",
-      "approach": {"bearing_deg": 270, "drop": 34, "passage": 12},
-      "chamber": {"width": 17, "length": 17, "height": 9, "alcove": 0},
+      "approach": {
+        "bearing_deg": 270,
+        "drop": 34,
+        "passage": 12
+      },
+      "chamber": {
+        "width": 17,
+        "length": 17,
+        "height": 9,
+        "alcove": 0
+      },
       "plug_depth": 6,
-      "spawn_free_zone": [3864, 2040, 3912, 2064],
-      "why": "STRUCTURE_DECISIONS section 4: the ice golem in the region that is already ice."
+      "spawn_free_zone": [
+        3864,
+        2040,
+        3912,
+        2064
+      ],
+      "why": "STRUCTURE_DECISIONS section 4: the ice golem in the region that is already ice.",
+      "level_why": "lowered from 53 to the upper bound of its own gate (6 badges) on the owner's decision, 2026-09-29: 'lower the legendaries to the cap band of whatever badge gates their chamber. A legendary you cannot catch is not an encounter.'"
     },
     {
       "id": "registeel",
       "title": "Registeel, in the Rift's anomalous chamber",
       "species": "registeel",
-      "level": 59,
+      "level": 55,
       "level_basis": "5 below the provisional 7-badge cap of 64. PROVISIONAL.",
       "cap_at_gate": 64,
       "kind": "sealed_chamber",
-      "status": "blocked",
+      "status": "sited",
       "site": "the_rift",
-      "blocked_by": "rift_plan",
-      "blocked_why": "The Rift's authored voids are procedural: rift_deep, vr_caves, rift_mines, rift_league_tunnel and deep_city are seeds and rules in data/, not boxes, and their extents exist only in derived/ and build/ output this worktree does not have and must not regenerate (the Rift plan is refused to an isolated agent, CLAUDE.md 'Launching a writing agent' step 3). A sealed chamber carved blind inside the Rift could intersect Victory Road, the Deep's terraces, the spur's galleries or the League tunnel, and the failure would be silent until somebody walked into it.",
-      "gate": {"flags": ["gym7_cleared"], "requires_met": [], "status": "PROPOSED, NOT DECIDED", "why": "as Regirock's."},
-      "portal": null,
+      "blocked_by": "owner_decision: which part of the Rift",
+      "blocked_why": "A DECISION, not a computation. No document names where in the Rift the chamber is. docs/world-building/STRUCTURE_DECISIONS.md section 4 says only 'the Rift (the anomalous steel chamber)' -- a region identity, not a place -- and there is no such chamber in data/rift_regions.json's `sited` block, which holds the three places the Rift has actually sited (haven_compact_hq, hoopa_cradle, cradle_passage). The Rift has ELEVEN named regions and the choice between them is story, not arithmetic: the Rift's arc belongs to Codex (docs/story/ARC.md). The generator is fail-closed on a null portal and must stay that way until the owner picks. The candidates below are pre-cleared columns, offered so the answer can be one line rather than a design pass.",
+      "blocked_technical_residue": "Once the region is chosen, one technical step remains and it CANNOT be done in an isolated worktree: the final clearance proof. rift_deep, vr_caves, rift_mines, victory_road and deep_city are seeds and rules, and their built extents live in derived/ and build/, which this worktree does not have and must not regenerate (the Rift plan is refused to an isolated agent, CLAUDE.md 'Launching a writing agent' step 3). The candidates below are cleared against the extents the DATA declares, which is a bound, not the built geometry. Re-check the chosen column against the built plan from the main session before emitting.",
+      "gate": {
+        "flags": [
+          "gym7_cleared"
+        ],
+        "requires_met": [],
+        "status": "PROPOSED, NOT DECIDED",
+        "why": "as Regirock's."
+      },
+      "portal": [
+        4195,
+        3896
+      ],
       "siting_rule": "A column in the Rift whose envelope (see tools/legendaries.py envelope()) clears every authored Rift void by at least 24 blocks, measured against the built plan rather than the data: run tools/legendaries_audit.py --rift-plan <derived/rift plan> in a session that has the Rift plan, or site it from the main session.",
-      "approach": {"bearing_deg": 0, "drop": 30, "passage": 12},
-      "chamber": {"width": 17, "length": 17, "height": 9, "alcove": 0},
+      "candidates": {
+        "measured": "2026-09-29 on the canonical heightmap, with tools/legendaries.py's own geometry at this record's approach (bearing 0, drop 30, passage 12) and plug. Each column passes every geometric check the audit makes of a sealed chamber, with at least 2 spare blocks of roof rock, and stands at least 200 blocks from every keep-out the Rift's data declares: the eight rift_regions bboxes that hold or plan a void (e4_tower, gate, entrance_to_e4, the_deep, relic_area_shrine, rift_excavation_site, mega_stone_mine_the_gulch, hidden_rift_cavern), data/rift_mines.json's grid x3060-3290 z3060-3400, data/vr_caves.json's guide polyline grown by its band of 95, data/rift_league_tunnel.json's lot box, and the Displaced City cavern.",
+        "not_proved": "clearance against the BUILT plans in derived/. See blocked_technical_residue.",
+        "options": [
+          {
+            "region": "upper_rift",
+            "portal": [
+              4195,
+              3896
+            ],
+            "ground_y": 88,
+            "relief_over_33": 1,
+            "roof_slack": 12,
+            "nearest_declared_void": {
+              "id": "mega_stone_mine_the_gulch",
+              "blocks": 617
+            },
+            "why": "the most isolated flat ground in the whole Rift: 617 blocks from the nearest thing the Rift's data declares, 541 from the Deep. Dead flat, so the plug sits in ground that does not slope. The upper terrace is also the part of the Rift a player crosses on the way in, which suits a sealed anomaly nobody has opened."
+          },
+          {
+            "region": "rift_wilds",
+            "portal": [
+              4288,
+              4204
+            ],
+            "ground_y": 86,
+            "relief_over_33": 1,
+            "roof_slack": 12,
+            "nearest_declared_void": {
+              "id": "mega_stone_mine_the_gulch",
+              "blocks": 309
+            },
+            "why": "the wilds are unclaimed ground with no authored void of their own; 309 blocks from the gulch's mine is comfortable but it is the same corner of the map as that mine, so a systematic search would send a player twice to one place."
+          },
+          {
+            "region": "the_sink",
+            "portal": [
+              3573,
+              3687
+            ],
+            "ground_y": 133,
+            "relief_over_33": 0,
+            "roof_slack": 12,
+            "nearest_declared_void": {
+              "id": "the_deep",
+              "blocks": 258
+            },
+            "why": "perfectly flat high ground on the sink's west shoulder, overlooking the Deep. The most dramatic of the three and the closest to the Deep's pit (258 blocks to its region's bbox edge, and the pit's rings are 36 wide inside that), so it is the one most likely to fail the clearance proof against the built plan."
+          }
+        ],
+        "recommendation": "upper_rift (4195, 3896). It is the only one of the three whose clearance is so large that the built plan is very unlikely to change the answer."
+      },
+      "approach": {
+        "bearing_deg": 0,
+        "drop": 30,
+        "passage": 12
+      },
+      "chamber": {
+        "width": 17,
+        "length": 17,
+        "height": 9,
+        "alcove": 0
+      },
       "plug_depth": 6,
-      "spawn_free_zone": null,
-      "why": "STRUCTURE_DECISIONS section 4: the steel golem in the anomalous chamber, the Rift's own region identity."
+      "spawn_free_zone": [
+        4184,
+        3864,
+        4208,
+        3904
+      ],
+      "why": "STRUCTURE_DECISIONS section 4: the steel golem in the anomalous chamber, the Rift's own region identity.",
+      "level_why": "lowered from 59 to the upper bound of its own gate (7 badges) on the owner's decision, 2026-09-29: 'lower the legendaries to the cap band of whatever badge gates their chamber. A legendary you cannot catch is not an encounter.'",
+      "region": "upper_rift",
+      "sited_why": "The owner, 2026-09-30: 'REGISTEEL: upper_rift (4195, 3896). It unblocks Regigigas, which is otherwise permanently unreachable.' Registeel was `status: blocked` with no position, and Regigigas's gate lists registeel under `requires_met.unsatisfiable_until`: the met advancement is granted by exactly one command, in the met function of a SITED encounter, so an unsited Registeel made Regigigas unreachable forever. Siting Registeel is what clears it. The coordinate is the record's `portal` - the surface anchor a sealed_chamber is measured from, the same field regirock (4800, 5200) and regice (3900, 2050) use - and not a separate `at`, which tools/legendaries.py fail-closed on: 'a sited record needs a [x, z] mouth (lake_grotto) or portal'. Ground there is y88 and flat (y88-90 over 40 blocks), on the Rift's floor, so the approach's 30-block drop and 12-block passage fit as drawn.",
+      "spawn_free_zone_why": "Regirock's box rotated for this chamber's bearing, as the record's gate already says ('as Regirock's'). Regirock's approach bears 90 (east) and its box runs portal-8..portal+32 in x by portal-8..portal+8 in z; Registeel's bears 0, so the long side runs north in -z: x 4195-8..4195+8, z 3896-32..3896+8, snapped out to the 8-block grid the other two sit on. It covers the portal, the 12-block passage, the 17x17 chamber and a margin, so nothing wild stands in the approach or the fight."
     },
     {
       "id": "regigigas",
       "title": "Regigigas, beneath the glacier beside the Displaced City",
       "species": "regigigas",
-      "level": 65,
+      "level": 60,
       "level_basis": "5 below the provisional 8-badge cap of 70. PROVISIONAL.",
       "cap_at_gate": 70,
       "kind": "sealed_chamber",
       "status": "sited",
       "site": "glacial_tear",
-      "gate": {"flags": ["gym8_cleared"], "requires_met": ["regirock", "regice", "registeel"], "status": "PROPOSED for the badge, DECIDED for the three golems", "why": "STRUCTURE_DECISIONS section 4: 'a sealed site signposted from afar, opened only by bringing the three golems'. The three met records are the key; the eighth badge is this file's proposal. NOTE: with Registeel blocked, this gate can never be satisfied until Registeel is sited, which is correct behaviour, not a fault."},
-      "portal": [3560, 1760],
+      "gate": {
+        "flags": [
+          "gym8_cleared"
+        ],
+        "requires_met": [
+          "regirock",
+          "regice",
+          "registeel"
+        ],
+        "status": "PROPOSED for the badge, DECIDED for the three golems",
+        "why": "STRUCTURE_DECISIONS section 4: 'a sealed site signposted from afar, opened only by bringing the three golems'. The three met records are the key; the eighth badge is this file's proposal.",
+        "unsatisfiable_why": "CLEARED 2026-09-30: Registeel is sited at (4195, 3896) in upper_rift, so its met advancement can now be granted and Regigigas is reachable. The note this replaces read: LIVE IN BUILT CONTENT - cobblers:legendary/registeel/met is an impossible-trigger advancement granted by exactly one command, in the met function of a SITED encounter."
+      },
+      "portal": [
+        3560,
+        1760
+      ],
       "portal_why": "Under the glacier, 111 blocks east of the Displaced City cavern's east wall (the cavern is x3250-3449 z1650-1849, docs/STATE.md), so 87 blocks clear of its 24-block shell, and on the far side from its tunnel, whose bore runs WEST from the cavern to the city's surface footprint (tools/cavern_plan.py: mouth at the footprint's max_x, then +70 toward the cavern centre). Ground y126, 122-131 over 33 by 33.",
-      "approach": {"bearing_deg": 90, "drop": 46, "passage": 14},
-      "chamber": {"width": 21, "length": 21, "height": 11, "alcove": 0},
+      "approach": {
+        "bearing_deg": 90,
+        "drop": 46,
+        "passage": 14
+      },
+      "chamber": {
+        "width": 21,
+        "length": 21,
+        "height": 11,
+        "alcove": 0
+      },
       "plug_depth": 8,
-      "spawn_free_zone": [3552, 1744, 3600, 1776],
-      "why": "STRUCTURE_DECISIONS section 4: 'it gives the Displaced City a reason to exist below the ice'. A bigger chamber than a golem's, because Regigigas is the thing the golems open."
+      "spawn_free_zone": [
+        3552,
+        1744,
+        3600,
+        1776
+      ],
+      "why": "STRUCTURE_DECISIONS section 4: 'it gives the Displaced City a reason to exist below the ice'. A bigger chamber than a golem's, because Regigigas is the thing the golems open.",
+      "level_why": "lowered from 65 to the upper bound of its own gate (8 badges) on the owner's decision, 2026-09-29: 'lower the legendaries to the cap band of whatever badge gates their chamber. A legendary you cannot catch is not an encounter.'"
     },
     {
       "id": "groudon",
       "title": "Groudon, deep under the Craters",
       "species": "groudon",
-      "level": 65,
+      "level": 60,
       "level_basis": "5 below the provisional 8-badge cap of 70. PROVISIONAL.",
       "cap_at_gate": 70,
       "kind": "sealed_chamber",
       "status": "sited",
       "site": "the_craters",
-      "gate": {"flags": ["gym8_cleared"], "requires_met": [], "status": "PROPOSED, NOT DECIDED", "why": "STRUCTURE_DECISIONS: 'depth gates it through heat, lava and darkness' and it 'rewards going deeper than the fossil levels'. No badge is fixed anywhere; the eighth is this file's proposal, because gym 7 (Blaine, Cinderlee) is the crater town and the eighth badge sends a player back."},
-      "portal": [6672, 5508],
+      "gate": {
+        "flags": [
+          "gym8_cleared"
+        ],
+        "requires_met": [],
+        "status": "PROPOSED, NOT DECIDED",
+        "why": "STRUCTURE_DECISIONS: 'depth gates it through heat, lava and darkness' and it 'rewards going deeper than the fossil levels'. No badge is fixed anywhere; the eighth is this file's proposal, because gym 7 (Blaine, Cinderlee) is the crater town and the eighth badge sends a player back."
+      },
+      "portal": [
+        6672,
+        5508
+      ],
       "portal_why": "The eastern cone's bowl floor (data/landmarks.json craters.anchors.eastern_bowl), the one cone that actually has a crater. Ground y108 on the canonical heightmap (the landmark record's y126.8 predates the rescale and is stale). 211 blocks from Fossick, the Mining Town (6633, 5716).",
-      "approach": {"bearing_deg": 180, "drop": 40, "passage": 14},
-      "chamber": {"width": 21, "length": 21, "height": 11, "alcove": 0},
+      "approach": {
+        "bearing_deg": 180,
+        "drop": 40,
+        "passage": 14
+      },
+      "chamber": {
+        "width": 21,
+        "length": 21,
+        "height": 11,
+        "alcove": 0
+      },
       "plug_depth": 8,
-      "spawn_free_zone": [6656, 5496, 6688, 5544],
-      "why": "STRUCTURE_DECISIONS section 4: the mountain's sleeper, reached by going deeper than the fossil levels. The connection through Fossick's deep workings is dressing for a later pass; this record only owns the chamber and its plug."
+      "spawn_free_zone": [
+        6656,
+        5496,
+        6688,
+        5544
+      ],
+      "why": "STRUCTURE_DECISIONS section 4: the mountain's sleeper, reached by going deeper than the fossil levels. The connection through Fossick's deep workings is dressing for a later pass; this record only owns the chamber and its plug.",
+      "level_why": "lowered from 65 to the upper bound of its own gate (8 badges) on the owner's decision, 2026-09-29: 'lower the legendaries to the cap band of whatever badge gates their chamber. A legendary you cannot catch is not an encounter.'"
     },
     {
       "id": "lugia",
       "title": "Lugia in the Maelstrom Trench",
       "species": "lugia",
-      "level": 75,
+      "level": 65,
       "level_basis": "5 below the provisional champion cap of 80. PROVISIONAL.",
       "cap_at_gate": 80,
       "kind": "lake_grotto",
       "status": "blocked",
       "site": "maelstrom_trench",
-      "blocked_by": "water_export",
-      "blocked_why": "The trench is a proposal with no seabed pass and no build (docs/mechanics/WATER_MAP.md row 54: 'no seabed pass, no build'; data/regions.json holds only a trench_axis from (9000, 5200) to (6200, 8900)). data/water_shape.json's seabed and margin work rewrites the sea floor across exactly that ground, and the margin relief image has not been run. There is no seabed today to put a mouth in.",
-      "gate": {"flags": ["champion_cleared"], "requires_met": [], "requires_training": "dive", "requires_keys": ["lugia_cove_frostwater", "lugia_cove_eastern", "lugia_cove_outer"], "status": "decided for Dive and champion_cleared, the three coves are a proposal", "why": "the owner, 2026-09-26: Dive AND champion_cleared (docs/mechanics/WATER_MAP.md decision 2). The three cove keys are WATER_PROPOSAL 3.4 D4-D6 and are not built either."},
+      "blocked_by": "owner_decision: the trench does not exist and cannot be heightmap terrain",
+      "blocked_why": "NOT the water export any more, and not a siting computation. Three things were measured on 2026-09-29, on the canonical heightmap (which now IS the applied water export, sha d1bc68d3..., docs/STATE.md 'Canonical heightmap'), and each is fatal on its own. (1) THE AXIS IS OFF THE MAP. data/regions.json marine_regions[...].features.trench_axis runs (9000, 5200) -> (8600, 6200) -> (8200, 7400) -> (7400, 8400) -> (6200, 8900). The heightmap is 8192 x 8192 at origin (0, 0), so EVERY ONE of those five points is outside it: tools/ground.py raises IndexError at all five. The world border ring reaches 8703, but the ground under the outer margin is not in the heightmap the ground rule reads. (2) A TRENCH IS NOT A HEIGHTMAP FEATURE. docs/world-building/OCEAN.md puts the shrine at y-30 to y-40; the canonical heightmap's global minimum is y10.1. A floor below y10 cannot be expressed in it at all, so no export, past or future, can produce this trench: it has to be CARVED as blocks below the seabed, like a sealed chamber, not sited on a surface. (3) THE SEABED THERE IS NOT DEEP. Sampled just inside the map on the axis's own line: (8100, 7400) y49, (8000, 7800) y53, (7400, 8100) y45, (8100, 8100) y26. That is 10-40 blocks of water under sea level 62, not an abyss. So the trench is an unbuilt design, not a place, and building it is a world-design job (a spiral descent, three sealed air pockets, a flooded shrine with three door locks) that this generator's parametric grotto cannot express. It is also gated on content that does not exist: `requires_keys` names three shipwreck coves in three marine regions and none of them is sited in data/.",
+      "gate": {
+        "flags": [
+          "champion_cleared"
+        ],
+        "requires_met": [],
+        "requires_training": "dive",
+        "requires_keys": [
+          "lugia_cove_frostwater",
+          "lugia_cove_eastern",
+          "lugia_cove_outer"
+        ],
+        "status": "decided for Dive and champion_cleared, the three coves are a proposal",
+        "why": "the owner, 2026-09-26: Dive AND champion_cleared (docs/mechanics/WATER_MAP.md decision 2). The three cove keys are WATER_PROPOSAL 3.4 D4-D6 and are not built either."
+      },
       "mouth": null,
-      "siting_rule": "On the trench axis after the seabed pass, at the trench floor (planned y-20 to y-40), with the shrine's chamber roof at least shell_margin + clearance below the new floor.",
+      "siting_rule": "SUPERSEDED by the measurements in blocked_why: there is no trench floor to sit on, and the axis is off the heightmap. Whatever replaces it must say whether the trench is (a) carved as blocks under the seabed inside the map, (b) moved onto the map's own deepest open sea, or (c) dropped in favour of something the parametric grotto can build.",
+      "options_for_the_owner": [
+        {
+          "id": "carve_a_trench",
+          "what": "Keep the authored design and build the trench as a carve under the seabed, inside the heightmap, near where the axis enters it (about (8100, 7400), seabed y49). A new tool, on the pattern of tools/legendaries.py's envelope-then-void.",
+          "cost": "a world-design pass plus a builder: the spiral descent, three sealed air pockets and the three-lock shrine. The largest of the three.",
+          "keeps": "everything in OCEAN.md's set piece."
+        },
+        {
+          "id": "move_the_shrine_to_deep_water",
+          "what": "Drop the trench and site Lugia as an ordinary lake_grotto in the deepest open sea inside the map, with the descent itself as the difficulty. This generator can build it today.",
+          "cost": "one record and one run.",
+          "loses": "the spiral descent and the air pockets; the three coves can still be the key, since they are a gate, not geometry."
+        },
+        {
+          "id": "park_lugia",
+          "what": "Leave Lugia blocked until the ocean has a build pass of its own, and let the coves come first.",
+          "cost": "none now.",
+          "loses": "the apex sea reward for this round."
+        }
+      ],
+      "recommendation": "move_the_shrine_to_deep_water is the only one that produces a built encounter in this round, but it spends the set piece. If the ocean is getting a pass anyway, park_lugia is better than a cheap version of it. Either way the answer is the owner's; the two facts that decide it are that the axis is off the map and that y-30 cannot come out of a heightmap.",
       "open_question": "How Dive training is read by a function. The water ladder grants it with cobblers:water/grant_dive (tools/blackout_pack.py) and the party check is MoLang; whether that leaves anything a plain mcfunction selector can test was NOT established here. Until it is, `requires_training` has no implementation and this record carries no gate code.",
-      "approach": {"bearing_deg": 0, "drop": 14, "passage": 20},
-      "chamber": {"width": 23, "length": 23, "height": 9, "alcove": 6},
+      "approach": {
+        "bearing_deg": 0,
+        "drop": 14,
+        "passage": 20
+      },
+      "chamber": {
+        "width": 23,
+        "length": 23,
+        "height": 9,
+        "alcove": 6
+      },
       "spawn_free_zone": null,
-      "why": "docs/world-building/STRUCTURE_DECISIONS.md: the ocean is 56% of the world and needs an apex reward; WATER_MAP row 20. An air chamber even here, because a legendary battle outlasts any air budget."
+      "why": "docs/world-building/STRUCTURE_DECISIONS.md: the ocean is 56% of the world and needs an apex reward; WATER_MAP row 20. An air chamber even here, because a legendary battle outlasts any air budget.",
+      "level_why": "The owner, 2026-09-30: Lugia sits at the League's cap. It was 75 against a champion band of null - a legendary nobody could catch, which is not an encounter. The champion band is now 65 (level_caps.champion_band_why) and Lugia is on it."
     },
     {
       "id": "celebi_wake",
       "title": "The wake of the Celebi in the Route 1 sapling",
       "species": "celebi",
-      "level": 70,
-      "level_basis": "the level data/sapling_celebi.json already summons it at; unchanged here. Above every provisional cap, so it is uncatchable as it stands: trainer-balance-designer must decide whether the wake lowers it or whether Celebi is a battle and not a catch.",
-      "cap_at_gate": 80,
+      "level": 55,
+      "level_basis": "55, lowered from 70 on 2026-09-29 because 70 is above every cap this campaign can produce and data/level_cap.json refuses a catch strictly above the thrower's cap, a Master Ball included: as authored it could not be caught at all. 55 is the authored gym 8 ace level (data/trainers.json gym_ace_levels[7]), the cap tier a player was already on while Giovanni was the next trainer; the gate is gym8_cleared, so every player who can wake it has passed it. cap_at_gate 60 is the Elite Four's level, the upper bound after 8 badges (level_caps.upper_bound_by_badges), leaving 5 levels of margin. data/sapling_celebi.json carries the same 55 and is what the spawn command uses; tests/test_celebi_wake.py fails if the two disagree or if either rises above the bound.",
+      "cap_at_gate": 60,
       "kind": "sapling_wake",
       "status": "gate_only",
       "site": "route_1_sapling",
-      "blocked_by": "wake_trigger",
-      "blocked_why": "The trigger is not settled. EXP-023's untested candidate was `minecraft:item_used_on_block` on the branch, with an item predicate and the progression flag. Two things were established here and neither closes it: (a) `minecraft:item_used_on_block` is a real vanilla advancement trigger and a location-triggered advancement is already proven in this repo as a per-player, once-only carrier (tools/rewards_pack.py, ADR-002), so the MECHANISM can carry a wake; (b) an advancement fires once per player for ever and its criteria cannot test another advancement, so an advancement whose criterion is only 'used item X on block Y' is BURNED by a player who tries the right item before the gate is open, and that player can never wake it. That is a real fault, not a detail, and it cannot be settled offline: it needs either a second criterion the repo has not used, or a tick-driven check like this pack's own gate. WHICH ITEM is also undecided, and no document names one.",
-      "gate": {"flags": ["gym8_cleared"], "requires_met": [], "status": "PROPOSED, NOT DECIDED", "why": "the Celebi belongs to the mainline arc (docs/story/FUTURE_SIDE_CONTENT.md) and its story line is Codex's (ARC.md). A late gate is this file's proposal only."},
-      "opens": "the barrier shell tools/sapling_celebi.py writes round the branch (its shell_box), and the dormant flags on the Celebi itself",
+      "blocked_by": "owner_decision",
+      "blocked_why": "The MECHANISM is no longer blocked: the trigger is built (tools/sapling_celebi.py celebi/wake_check, docs/mechanics/CELEBI_WAKE.md) as a state check on the Celebi keeper's own 40-tick loop - a player past the gate, within 16 blocks of the branch, holding the wake item - and it calls this record's `open`, which still owns the gate. EXP-023's item_used_on_block advancement was dropped for two reasons: an advancement fires once per player for ever and cannot test another advancement (a player who tried the item early would burn it), and the barrier shell seals every face of the branch block so it cannot be used on at all. What still needs the owner: WHICH ITEM (the pack emits minecraft:clock as a proposal, one field in data/sapling_celebi.json wake.item) and whether gym8_cleared is the gate. The record stays gate_only because it has no chamber to carve, not because nothing works.",
+      "gate": {
+        "flags": [
+          "gym8_cleared"
+        ],
+        "requires_met": [],
+        "status": "PROPOSED, NOT DECIDED",
+        "why": "the Celebi belongs to the mainline arc (docs/story/FUTURE_SIDE_CONTENT.md) and its story line is Codex's (ARC.md). A late gate is this file's proposal only."
+      },
+      "opens": "the barrier shell tools/sapling_celebi.py writes round the branch (its shell_box), the dormant flags on the Celebi itself, and the awake score that stands its keeper down",
       "spawn_free_zone": null,
-      "why": "The sleeping Celebi is inert and walled in barriers precisely because Cobblemon ignores Invulnerable and a sword killed it (EXP-023). The wake is the moment those barriers come off, so it cannot be built before the trigger is chosen: the wall is the only thing protecting it."
+      "why": "The sleeping Celebi is inert and walled in barriers precisely because Cobblemon ignores Invulnerable and a sword killed it (EXP-023). The wake is the moment those barriers come off. It is also the moment the keeper has to stop keeping: celebi/keep teleports the Celebi home every 40 ticks, which would pin a woken one through its own battle. Both are in this function and its caller.",
+      "level_why": "already at or under the upper bound of its gate (8 badges = 60)"
     }
   ],
-
   "open_questions": [
     "Shared or per player? An entity's NBT is world state, so a qualified player who opens a grotto's inner door opens it for everyone standing in the chamber, and the first catch takes the encounter for the whole server. docs/mechanics/WATER_MAP.md decision 1 leaves this open for the trio and ENCOUNTERS.md:397 leaves it open for Lugia. Nothing here decides it; the build is shared, and per player would need the scene runtime's per-player actors (EXP-034, which needs a second account).",
     "A woken legendary can be killed. Cobblemon's PokemonEntity ignores Invulnerable and a sword killed the Celebi in three hits (EXP-023). While a chamber is shut the barrier door or the stone plug is the protection; once open, the legendary is as killable as any placed Pokemon. The re-application restores it, but within a session it is gone and the keeper cannot summon it back (functions cannot run Cobblemon's spawn command, EXP-046). No answer is proposed here.",
-    "The level cap. Every level in this file rests on an unread number (see level_caps.source). If a legendary is authored above its gate's cap it cannot be caught at all.",
+    "The level cap. RCT computes it per player from the series data and our gyms are not in that data yet; level_caps.upper_bound_by_badges bounds it from the authored ladder, and eight of the ten levels here are above that bound (level_caps.above_the_bound). A legendary above its gate's cap cannot be caught at all.",
     "The badge gates of the four bespoke encounters are this file's proposals. Only the trio's (3, 5, 7) and Lugia's (Dive and champion_cleared) are the owner's.",
-    "The Celebi wake's trigger, above."
+    "Celebi's wake item. The pack emits minecraft:clock as a proposal and nothing in the campaign teaches a wake item; docs/story/EARLY_ROUTE_BUILD_HANDOFF.md forbids a Route 1 NPC naming one, so it has to be taught after gym 8.",
+    "A woken Celebi stays on its branch about 20 blocks above the clearing (NoAI and NoGravity are kept), so the player must climb to it to battle or throw a ball. Whether it should instead descend is a design call and a data change."
   ]
 }

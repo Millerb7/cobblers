@@ -114,13 +114,33 @@ def test_the_cycle_runs_every_10_ticks(files):
 # Without it a trainer is not held home, not tagged for, or not cooled down (it rebattles its beaten players after a
 # restart), or is handled twice, or a line acts on some other trainer.
 def test_every_placed_trainer_has_exactly_one_line_of_each_kind(cycle):
-    assert len(IDS) == 18 and len(set(IDS)) == 18
+    # 13 route + 5 mansion guardians + 10 Victory Road, seated 2026-09-30. Was 18. Every one of them
+    # still needs exactly one line of each kind, which is what the rest of this test checks.
+    # 13 route + 28 late route (seated 2026-09-30) + 5 mansion guardians + 10 Victory Road.
+    # Was 18, then 28, now 56. Every one still needs exactly one line of each kind.
+    assert len(IDS) == 56 and len(set(IDS)) == 56
     home, tags, cool, other = _classify(cycle)
     assert not other, other
+    # The eight GYM LEADERS get a cooldown and nothing else, added 2026-09-30 after the owner beat Brock
+    # and then started him again by sending a Pokemon at him. They are not ours to move or tag: each is
+    # spawned by its gym's own rctmod:trainer_spawner, so there is no seat to send it home to, and its
+    # "beaten" test is the gymN_cleared ADVANCEMENT rather than a quest field, so no tag is needed.
+    # A leader with a home or a tag line would mean something had started seating them, which is a
+    # change this test should catch, not wave through.
+    # The Elite Four and the Champion are the same case, found by the sweep straight after the leaders:
+    # overrides at the kanto_league template's own spawners, so also absent from placements(). Their
+    # beaten test is UPSTREAM's defeat advancement, which Cobbleverse already grants.
+    leaders = {"kanto_brock", "kanto_misty", "kanto_ltsurge", "kanto_erika",
+               "kanto_koga", "kanto_sabrina", "kanto_blaine", "kanto_giovanni",
+               "kanto_league_lorelei", "kanto_league_bruno", "kanto_league_agatha",
+               "kanto_league_lance", "kanto_champion_blue"}
     for kind, got in (("home", home), ("tag", tags), ("cooldown", cool)):
-        assert sorted(got) == sorted(IDS), (kind, sorted(set(IDS) ^ set(got)))
+        want = sorted(set(IDS) | leaders) if kind == "cooldown" else sorted(IDS)
+        assert sorted(got) == want, (kind, sorted(set(want) ^ set(got)))
         assert all(len(v) == 1 for v in got.values()), (kind, {k: len(v) for k, v in got.items() if len(v) != 1})
         assert all(len(set(_selector_ids(v[0])) | {k}) == 1 for k, v in got.items()), kind
+    assert not (leaders & set(home)), "a leader has a home line: something is seating them now"
+    assert not (leaders & set(tags)), "a leader has a tag line: its beaten test should be the badge advancement"
 
 
 # Without it a trainer knocked off its seat in battle stays wherever it was pushed, is pulled mid-battle, or is

@@ -173,7 +173,11 @@ def test_the_load_tag_starts_the_keeper_and_every_called_function_exists():
     for text in functions().values():
         called |= set(re.findall(r"function cobblers:([a-z0-9_/]+)", text))
     called |= {v.split(":", 1)[1] for k, v in SC.placement_steps(D) if k == "fn"}
-    assert called and called <= have, sorted(called - have)
+    # the one deliberate exception, 2026-09-29: the wake hands off to the legendaries pack, which owns the badge
+    # gate. Both packs are world-local and installed together (tests/test_celebi_wake.py asserts that, and that the
+    # legendaries generator still emits this function).
+    outside = {SC.WAKE_FN.split(":", 1)[1]}
+    assert called and called - outside <= have, sorted(called - outside - have)
     assert "celebi/keeper" in "\n".join(fn("celebi/load"))
 
 

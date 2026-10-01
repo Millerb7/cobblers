@@ -99,6 +99,14 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # machines out of all eight placed gyms, and gym 1's works carved under its lot. Block functions run
                 # by R16E, after the donors (R9) that stamp the gyms whole and would erase anything written first
                 "cobblers_gym_interiors",
+                # 2026-09-29: the five rejected sets of gym works filled in and their COBBLEVERSE shells taken down
+                # (tools/gym_demolish.py, data/gym_interiors.json `superseded_by`). Gyms 1, 3, 4, 5 and 7 only:
+                # Misty's (gym 2) is kept exactly as built. Block functions run by R16F, after R16E
+                "cobblers_gym_demolish",
+                # 2026-09-29: the authored gym buildings (tools/gym_buildings.py, data/gym_buildings/*.json): one
+                # hall per gym with its puzzle inside it, on the lot the shell stood on. Block functions run by
+                # R16G, after the demolition (R16F) that clears the lot for them
+                "cobblers_gym_buildings",
                 # 2026-09-28: no catching over the level cap (tools/levelcap_pack.py, data/level_cap.json): a Cobblemon
                 # callback acts on its own, so world-local below
                 "cobblers_levelcap",
@@ -110,6 +118,20 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # blocks and the Cutters run by R9S; the gate, the zone check, the faces' ward and the Megas' keeper act
                 # on their own (advancements, a tick driver), so world-local below
                 "cobblers_gulch_mine",
+                # 2026-09-30: the Rift's zones Z1, Z2, Z4 and Z5 (tools/rift_zones.py, data/rift_zones.json,
+                # docs/mechanics/RIFT_ZONES.md): the cross-walls and gatehouse shells run by R9Z; the four zone
+                # checks, the exit boxes and the passes act on their own (advancements and a load function that
+                # makes the cob_pass objectives), so world-local below. Z3 is superseded by the gulch's own zone
+                "cobblers_rift_zones",
+                # 2026-09-30: the nine built ferry docks (tools/ferry_docks.py, data/ferry_docks.json).
+                # Blocks in the overworld, so WORLD_LOCAL like the other block packs
+                "cobblers_ferry_docks",
+                # 2026-09-30: the lake beds tools/rift_skin.py painted over before it was fixed the same day
+                # (F5). A REPAIR for worlds exported before the fix: the skin no longer writes those cells, so
+                # nothing puts back the gravel and clay tools/paint_maps.py paints, and re-running R1 leaves
+                # them purple (probed on cobblers-dryrun12, 2026-09-30). On a world exported after the fix it
+                # lays back exactly what is already there, so it is harmless rather than conditional
+                "cobblers_lakebed_repair",
                 # the 92 Mega Showdown stone recipes raised to 4 raw stones (decision 5A; tools/mega_recipes.py, generated
                 # from the server's own jar, never committed). Data only; world-local so no other world's recipes change
                 "cobblers_mega_recipes",
@@ -119,12 +141,37 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 "cobblers_ferries",
                 # 2026-09-28: the evolution-stone faces (tools/mines.py, data/mines.json, STONE_ECONOMY.md): blocks run by
                 # R9O; the faces' restore on approach acts on its own (a tick driver), so world-local below
-                "cobblers_mines")
+                "cobblers_mines",
+                # 2026-09-29: the dive and sky portals and the pocket dimension (tools/portals.py, data/portals.json,
+                # ADR-004, EXP-047). It ships a `dimension` and a `dimension_type`, which register only at a server
+                # BOOT, not at a /reload: installing this pack needs a restart before R16P will run. The arches are
+                # blocks in the overworld (R16P); the rooms live inside the world folder, which a re-export replaces,
+                # so R16P rebuilds them every time. The gate sweep and the rescue act on their own (tick drivers)
+                "cobblers_portals")
 
 # Packs that ship functions and deliberately have NO step, each with the reason. Anything not here and not run
 # by a step makes `prepare` fail: that is the fail-closed check.
 EXCLUDED = {
     "cobblers_reapply": "the loose-function container; its functions are run by the steps that own them",
+    # 2026-09-30: HELD BACK ON PURPOSE, and this is a safety hold, not tidiness. R9Z places obsidian walls
+    # across the Rift's throat, the League's gate and behind the League, plus gatehouse barriers. The hold was
+    # put on because the functions that let a player EARN a pass - cobblers:rift_zones/z{1,2,4,5}/qualify -
+    # were called by nothing at all, so the walls would have gone up with nobody able to pass them.
+    # `unreferenced()` found it, which is exactly what it is for (see its docstring).
+    #   HALF DONE, 2026-09-30 (later the same day): every qualify is now called. Each gate has a knock box --
+    #   the walkway blocks in front of the guard -- with a minecraft:location advancement whose reward runs
+    #   <zone>/qualify, the shape data/gulch_mine.json gate.knock already uses at the gulch's grille. Z2's two
+    #   unstaffed sculpted descents are staffed posts granting the same pass. With this pack un-excluded and
+    #   R9Z restored, `unreferenced()` is empty and `uncovered()` no longer names it (measured, not assumed).
+    #   STILL OWED, and why the hold stays: z5 gates on cobblers:flag/rift_crisis_resolved, which
+    #   data/progression.json does not declare and nothing sets (Codex has the contract on
+    #   origin/codex/trainer-modes data/quests.json and records that it has no authoritative setter), and z4's
+    #   120-species test exists only in G4's dialogue, which is not written. Both fail CLOSED, so those two
+    #   zones would simply be shut. Lift the hold and restore the R9Z step IN THE SAME CHANGE - un-excluding
+    #   without the step makes `uncovered()` fail, and the step without the pack installs nothing.
+    # (not excluded any more: R9Z installs the half that can be passed -- see the step)
+    "_cobblers_rift_zones_was": "held: z5's rift_crisis_resolved has no setter and z4's caught test has no dialogue, "
+                           "so both would be shut walls (2026-09-30; qualify is wired, see the note above)",
     "cobblers_vr_backfill": "staging only: it buries schema 1's labyrinth, which a fresh export never has",
     "cobblers_restore": "disposable worlds only; install() deletes it if it is found",
     "cobblers_rift_fracture": "retired, replaced by the sculpt in the heightmap",
@@ -156,7 +203,8 @@ EXCLUDED = {
 # (the scene runtime's tick; the trainers and event sites travel with it), and the global folder is loaded by every
 # world the server runs, the live one included (qa review of EXP-034, 2026-09-24)
 WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", "cobblers_celebi", "cobblers_rift_storm",
-               "cobblers_sizes", "cobblers_blackout", "cobblers_rift_mines", "cobblers_gulch_mine", "cobblers_mega_recipes",
+               "cobblers_sizes", "cobblers_blackout", "cobblers_rift_mines", "cobblers_gulch_mine",
+               "cobblers_rift_zones", "cobblers_mega_recipes",
                "cobblers_ferries", "cobblers_ambient", "cobblers_levelcap", "cobblers_mines",
                "cobblers_legendaries")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
@@ -164,7 +212,15 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
 WORLD_PACKS = (ROOT / "modpack" / "datapacks" / "cobblers_height", PACKS / "cobblers_worldtree")
 CROWN = (2044, 535, 2282)                      # the world tree's highest block (tools/build_audit.py world_tree)
-CAVERN = ["00_seal", "02_shell", "05_reset", "10_excavate", "20_surfaces", "30_trees", "40_light", "50_tunnel", "70_drain", "15_cap", "60_biome"]
+# 25_reshell added 2026-09-30: the shell's own fills run a SECOND time, after the carve and before the tunnel.
+# 02_shell runs once, before the excavation, and `replace #cobblers:cavern_void` only touches blocks the tag
+# names - so cave decoration the tag did not list (dripstone, hanging roots, lichen, vines) stayed standing,
+# and broke to air when the excavation took its support. That is the best account of how shell_voids went 0 -> 12
+# between exports; the pre-carve world is gone, so it is a hypothesis, not a measurement. The tag grew 8 -> 27
+# blocks in the same change. 25_reshell is safe where it sits because inside the box the shell starts at the
+# ceiling and the excavation stops at ceiling-2, so it cannot undo the carve. It must come BEFORE 50_tunnel,
+# which is dug THROUGH the shell and would otherwise be filled back in.
+CAVERN = ["00_seal", "02_shell", "05_reset", "10_excavate", "20_surfaces", "25_reshell", "30_trees", "40_light", "50_tunnel", "70_drain", "15_cap", "60_biome"]
 UNPLACED = {"hometown"}                          # has roads, not a town plan: placed by R7
 
 
@@ -341,6 +397,11 @@ def prepare_jobs(a):
     # the plan and the zone, the zone sealed except through the gate, cover over the halls, the faces and the Cutters
     add("gulch_mine:build", "gulch_mine.py", "build", *src)
     add("gulch_mine_audit", "gulch_mine_audit.py", *src)
+    # the Rift's zones (data/rift_zones.json): AFTER gulch_mine, because z2 is cut round the gulch's built zone
+    # and reads data/gulch_mine.json's polygon. `build` runs its own fail-closed report first and refuses on a
+    # problem. The boxes and wall lines are committed data; `trace` is not run here, because it needs the
+    # owner's annotated source map, which prepare does not have
+    add("rift_zones:build", "rift_zones.py", "build", *src)
     # the Mega Showdown stone recipes raised to 4 raw stones, from the server's own jar (never committed)
     add("mega_recipes", "mega_recipes.py", "--server-dir", a.server_dir)
     # the Deep's city and the relic area's surface, stood on the pit's ring model; the audit checks what it wrote
@@ -365,6 +426,11 @@ def prepare_jobs(a):
     # build, or anything stands on the walked line), then the scene runtime and the trainers
     add("route_events", "route_events.py", *src)
     add("scenes_pack", "scenes_pack.py")
+    # routes 4-8's 28 trainers (tools/late_route_trainers.py, data/late_route_trainers.json, 2026-09-30): the
+    # biggest unplaced content in the project until now. BEFORE route_trainers, which reads its seat file as a
+    # fourth source. No --write: it re-seats from the route paths and the heightmap and FAILS on drift, the way
+    # route_events does, so a seat cannot quietly move when the ground under it changes.
+    add("late_route_trainers", "late_route_trainers.py", *src)
     add("route_trainers", "route_trainers.py")
     add("rematerial", "rematerial.py")
     # the sea town's settlement, Centre, Mart, earthworks and clerk are generated into data/placements.json and
@@ -413,6 +479,27 @@ def prepare_jobs(a):
     # room that breaks its cover or a fall that would hurt
     add("gym_interiors:build", "gym_interiors.py", "build", *src)
     add("gym_interiors_audit", "gym_interiors_audit.py", *src)
+    # the demolition of the five rejected interiors and their donor shells, then the authored halls that replace
+    # them. In this order: the building is written onto a lot the shell has just been cleared off. Neither reads a
+    # world; both take their ground from tools/ground.py and the town plan's levelled lot
+    add("gym_demolish:build", "gym_demolish.py", "build", *src)
+    add("gym_buildings:build", "gym_buildings.py", "build", *src)
+    # (no audit job for the gym buildings yet: the audit and the tests are another agent's, CLAUDE.md principle 16.
+    # Add it here, after gym_buildings:build, so a broken hall stops the prepare before anything is installed.)
+    # the dive and sky portals and the pocket dimension they lead into (data/portals.json, EXP-047, ADR-004);
+    # then the offline audit, which replays the written functions into a voxel model and holds it against its own
+    # reading of the heightmap, the lake levels, the towns, the placements, the legendary mouths and the other
+    # packs. LAST of the block builds, because its cross-pack check reads what every other pack has written
+    # F7's gate, BEFORE the two below and before the ferry docks: every claim that a thing stands in water,
+    # tested against the water that is actually PAINTED (inside a basin_polygons ring and under that basin's
+    # level_y) rather than against a landmark's loose `extent`. The old check tested `extent` and the
+    # "independent" portals audit tested the same wrong polygons, so builder and auditor agreed with each other
+    # about a hole up to 219,737 columns wide on lake_tilpey alone. It is cheap and it covers portals, docks and
+    # anything else that claims water, so it runs first: one failing claim here beats a dry dive portal in the
+    # world (tools/water_mask.py, tests/test_water_mask.py).
+    add("water_mask:claims", "water_mask.py", "claims", *src)
+    add("portals:build", "portals.py", "build", *src)
+    add("portals_audit", "portals_audit.py", *src)
     # no catching over the level cap: a callback and its check
     add("levelcap_pack", "levelcap_pack.py")
     add("location_titles", "location_titles.py")
@@ -787,7 +874,9 @@ def unreferenced(todo):
     """Functions that no step runs and no file of any pack names: not called, scheduled, tagged, rewarded by an
     advancement or run by a dialogue. A pack with a step can still hold a function nothing runs: the Rift's entities
     (`cobblers:rift/fx`) sat beside its 1,005 block functions, the pack counted as covered, and the 2026-09-24
-    rehearsal found 0 of 14 in the world. Packs in EXCLUDED are skipped with their reason."""
+    rehearsal found 0 of 14 in the world. Packs in EXCLUDED are skipped with their reason, and so are the
+    functions HELD_FUNCTIONS names -- a function a step deliberately does not run YET, with the reason and the
+    condition that releases it read from the data, not a list anyone has to remember to prune."""
     names, text = {}, []
     for pack in sorted(p.name for p in PACKS.iterdir() if p.is_dir()) if PACKS.is_dir() else []:
         root = PACKS / pack / "data"
@@ -807,7 +896,32 @@ def unreferenced(todo):
     referenced = set()
     for t in text:
         referenced.update(FUNCTION_REF.findall(t))
-    return sorted(n for n, pack in names.items() if pack not in EXCLUDED and n not in run and n not in referenced)
+    held = held_functions()
+    return sorted(n for n, pack in names.items()
+                  if pack not in EXCLUDED and n not in run and n not in referenced and n not in held)
+
+
+def held_functions():
+    """{function: why} for output a step deliberately withholds, derived from the data that withholds it.
+
+    Today: the Rift's zone walls and gatehouses for a zone that cannot GRANT its pass yet (z4 needs Codex's
+    dialogue to read caught_count, z5 needs the rift_crisis_resolved setter). Their blocks are correct and
+    built; installing them would wall off the apex and seal the League's precinct, which ends the game for
+    anyone who reaches it. When Codex lands either half the `needs_*` field goes from data/rift_zones.json and
+    the function stops being held here, with nothing to remember."""
+    out = {}
+    f = ROOT / "data" / "rift_zones.json"
+    if not f.is_file():
+        return out
+    z = json.loads(f.read_text(encoding="utf-8"))["zones"]
+    shut = {zid: [k for k in ("needs_progression", "needs_dialogue") if zz.get(k)]
+            for zid, zz in z.items() if zz.get("needs_progression") or zz.get("needs_dialogue")}
+    for zid, why in shut.items():
+        out["cobblers:rift_zones/gatehouse_%s" % zid] = "%s cannot grant its pass: %s" % (zid, ", ".join(why))
+        w = z[zid].get("wall")
+        if w:
+            out["cobblers:rift_zones/wall_%s" % w] = "%s cannot grant its pass: %s" % (zid, ", ".join(why))
+    return out
 
 
 def steps(with_spawns=False):
@@ -819,6 +933,13 @@ def steps(with_spawns=False):
     out = [("R1", "the Rift skin: the block pass over the sculpted shape, then its entities",
             [("fn", "cobblers:rift/%s" % f) for f in indexed("cobblers_rift", "rift")]
             + [("fn", "cobblers:rift/fx"), ("wait", 8), ("check", "rift_fx")]),
+           # the lake-bed repair (tools/lakebed_repair.py): AFTER R1, because R1 is the pass that did the damage
+           # in every world exported before 2026-09-30 and would undo this if it ran second. The skin itself no
+           # longer writes these cells, so on a world exported after the fix this lays back exactly what is
+           # already there. Its 113,841 columns are the same set the skin now caps one course short - the two
+           # counts are derived independently and agree, which is what says the scope is right.
+           ("R1L", "the lake beds the Rift skin painted over, laid back (F5)",
+            [("fn", "cobblers:lakebed_repair/%s" % f) for f in indexed("cobblers_lakebed_repair", "lakebed_repair")]),
            ("R1B", "the Rift biome, painted over the skin",
             [("fn", "cobblers:rift/%s" % f) for f in indexed("cobblers_rift_biome", "rift")]),
            ("R2", "Displaced City cavern", [("fn", "cobblers:cavern/%s" % f) for f in CAVERN]),
@@ -866,6 +987,36 @@ def steps(with_spawns=False):
                        "Cutting Floor, then the Cutters",
                 [("fn", "cobblers:gulch_mine/%s" % f) for f in indexed("cobblers_gulch_mine", "gulch_mine")]
                 + [("fn", "cobblers:gulch_mine/cutters"), ("wait", 8)]))
+    # the Rift's zone walls and gatehouse shells (tools/rift_zones.py, data/rift_zones.json; docs/mechanics/
+    # RIFT_ZONES.md sections 5 and 6). After the Rift skin (R1), whose surface the walls stand on, after the
+    # Deep and Victory Road (R9B, R9C) and the gulch (R9S) whose zone z2 is cut around, and after the League's
+    # donor stamp, because the league_gate and behind_league walls run within 30 blocks of the lot and a donor
+    # stamped later would erase them. Before the Habitat Blocks (R9E) and the lights (R16). Three cross-walls
+    # then four gatehouse shells, in the pack's own index order. The zone checks, the exit boxes and the
+    # cob_pass objectives act on their own (advancements and a load function) and need no step. The guards
+    # themselves are armour-stand placeholders: Codex writes the NPCs (docs/HANDOVER_CODEX.md item 23)
+    # ONLY THE HALF THAT CAN BE PASSED. Every guard calls its qualify now (2026-09-30), so the owner's condition
+    # for releasing this is met -- but z4 and z5 still cannot GRANT: z4's test needs Codex's dialogue to read
+    # caught_count, z5's flag has no setter. Installing their walls would wall off the apex and, worse, seal the
+    # LEAGUE'S PRECINCT, which ends the game for anyone who reaches it. A wall nobody can pass is not a gate.
+    # So a zone's wall and gatehouses go in only when that zone declares nothing owed, read from the DATA
+    # (zones.<id>.needs_progression / needs_dialogue) and not from a list here: when Codex lands either half, the
+    # field goes and the wall follows with no switch to remember.
+    zspec = json.loads((ROOT / "data" / "rift_zones.json").read_text(encoding="utf-8"))
+    shut = {zid for zid, zz in zspec["zones"].items() if zz.get("needs_progression") or zz.get("needs_dialogue")}
+    # a zone names the cross-wall that closes it in zones.<id>.wall ("throat", "behind_league", ...)
+    closes = {"wall_%s" % zz["wall"]: zid for zid, zz in zspec["zones"].items() if zz.get("wall")}
+    def zone_of(fn):
+        # "gatehouse_z2_rim_post_descent" -> z2; a wall names the zone it closes in the spec
+        for zid in zspec["zones"]:
+            if fn.startswith("gatehouse_%s" % zid):
+                return zid
+        return closes.get(fn)
+    live = [f for f in indexed("cobblers_rift_zones", "rift_zones") if zone_of(f) not in shut]
+    heldb = [f for f in indexed("cobblers_rift_zones", "rift_zones") if zone_of(f) in shut]
+    out.append(("R9Z", "the Rift's zone walls and gatehouse shells for the zones that can be passed (%d of %d; "
+                       "held: %s)" % (len(live), len(live) + len(heldb), ", ".join(sorted(shut)) or "none"),
+                [("fn", "cobblers:rift_zones/%s" % f) for f in live]))
     # the evolution-stone faces (tools/mines.py, data/mines.json; STONE_ECONOMY.md 5.5 names the step): after the towns
     # (R8) and the donors (R9), whose cells they keep clear, and the Displaced City cavern (R2), whose shell two of the
     # sites cut into; before the Habitat Blocks (R9E) and the lights (R16). One build function a site, named from the
@@ -921,6 +1072,38 @@ def steps(with_spawns=False):
     out.append(("R16E", "gym interiors: no healer in any of the 8 gyms, and %d carved interior(s)" % len(gym_built),
                 [("fn", "cobblers:gym_interiors/healers")]
                 + [("fn", "cobblers:gym_interiors/%s" % g) for g in gym_built]))
+    # the demolition (tools/gym_demolish.py): the five rejected sets of works filled back in and their COBBLEVERSE
+    # shells taken down, at every gym data/gym_interiors.json marks `superseded_by`. Gym 2 is never in this list -
+    # Misty's is kept exactly as built (the owner, 2026-09-29). After R16E, whose healer sweep still runs over all
+    # eight shells, and before the buildings that stand where the shells were
+    gym_gone = [g["id"] for g in gym_doc.get("gyms") or [] if g.get("superseded_by")]
+    out.append(("R16F", "the rejected gym works filled in and %d donor shell(s) taken down" % len(gym_gone),
+                [("fn", "cobblers:gym_demolish/%s" % g) for g in gym_gone]))
+    # the authored gym buildings (tools/gym_buildings.py): one hall per record in data/gym_buildings/, each with
+    # its puzzle inside it and the leader's spawner at the end of it. Listed from the committed data, not the built
+    # pack, so the step exists whether or not the pack is built here; the prepare's audit fails on a missing one
+    gym_halls = sorted(p.stem for p in (ROOT / "data" / "gym_buildings").glob("*.json"))
+    out.append(("R16G", "the authored gym buildings (%d)" % len(gym_halls),
+                [("fn", "cobblers:gym_buildings/%s" % g) for g in gym_halls]))
+    # the dive and sky portals (tools/portals.py, data/portals.json): the world-side arches, then `place`, which
+    # builds every room inside cobblers:pocket. The rooms live in the world folder and a re-export makes a new one
+    # (EXP-047 result 6), so they are rebuilt here every run; they are flat and deterministic, so that is exact.
+    # The DIMENSION itself registers only at a server boot, so a first install must restart before this step runs.
+    # Listed from the committed data, not the built pack, so the step exists whether or not the pack is built here
+    portal_ids = [q["id"] for q in json.loads((ROOT / "data" / "portals.json").read_text(encoding="utf-8"))["portals"]]
+    # the ferry docks (tools/ferry_docks.py, data/ferry_docks.json): nine of the twelve planned, the other three
+    # unsited and saying why in their records. After R16G, because two of them stand on town ground the gym and
+    # town passes level, and BEFORE R17F, which stands a ferryman on each built dock: a ferryman with no dock
+    # under him is the fault this whole unit exists to fix. A dock whose `structure` is `host` is built by its
+    # host town's own pass (tools/sea_town.py) and is not run here.
+    import ferry_docks as FD
+    dock_ids = [d["id"] for d in FD.built_docks()] if hasattr(FD, "built_docks") else         [d["id"] for d in json.loads((ROOT / "data" / "ferry_docks.json").read_text(encoding="utf-8"))["docks"]
+         if d.get("structure") != "host"]
+    out.append(("R16H", "the ferry docks (%d) that make the charters reachable" % len(dock_ids),
+                [("fn", "cobblers:ferry_docks/%s" % d) for d in dock_ids]))
+    out.append(("R16P", "the dive and sky portals (%d) and their rooms in cobblers:pocket" % len(portal_ids),
+                [("fn", "cobblers:portals/world/%s" % p) for p in portal_ids]
+                + [("fn", "cobblers:portals/place")]))
     # the signposts after the donors too: a donor is placed whole, and Sabrina's department store's air margin erased
     # the post where Route 7 leaves her town when the signs went in first (the staging run of 2026-09-21)
     out.append(("R15", "route signposts, after the donors", [("fn", "cobblers:signs/place")]))
@@ -994,9 +1177,19 @@ def run(a):
     todo = steps(a.with_spawns)
     ids = [s[0] for s in todo]
     if a.only:
-        todo = [s for s in todo if s[0] == a.only]
+        # comma separated, and FAIL-CLOSED on an id that matches nothing. Until 2026-09-30 this was a single
+        # exact match, so `--only R16E,R16F,R16G` selected zero steps, ran nothing, wrote {"steps": []} and
+        # exited 0 - an apply that reports success without applying anything is the worst shape a tool can have.
+        want = [t.strip() for t in a.only.split(",") if t.strip()]
+        unknown = [w for w in want if w not in ids]
+        if unknown:
+            raise SystemExit("reapply run --only: no step named %s (have: %s)" % (", ".join(unknown), " ".join(ids)))
+        todo = [s for s in todo if s[0] in want]
+        print("run --only: %d step(s) selected in plan order: %s" % (len(todo), " ".join(s[0] for s in todo)))
     elif getattr(a, "from_step", None):
         todo = todo[ids.index(a.from_step):]
+    if not todo:
+        raise SystemExit("reapply run: no steps selected; nothing would be applied")
     if getattr(a, "no_reload", False):
         print("no reload: the packs loaded at boot (a second /reload on this pack stack exhausted a 10 GB heap twice on staging, 2026-09-24)")
     else:

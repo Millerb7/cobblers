@@ -1,14 +1,41 @@
 #!/usr/bin/env python
-"""The Route 1-3 trainers as Radical Cobblemon Trainers data: build/datapacks/cobblers_trainers.
+"""Every placed trainer as Radical Cobblemon Trainers data: build/datapacks/cobblers_trainers.
 
-From data/trainers.json (generated from docs/story/TRAINER_RULES.json) and data/route_trainers.json (where each one
-stands, tools/route_events.py), and the Gastly mansion's five Channeler guardians, whose record and seat are both in
-data/mansion_guardians.json:
+From data/trainers.json (generated from docs/story/TRAINER_RULES.json) and four seat sources:
+
+  data/route_trainers.json      Routes 1-3, where each one stands (tools/route_events.py)
+  data/late_route_trainers.json Routes 4-8's twenty-eight, seated by tools/late_route_trainers.py on the
+                                same shoulder rule. Their records in data/trainers.json carry dialogue ids
+                                that resolve nowhere, so their three lines are authored beside their seat,
+                                the way Victory Road's are (lines_of below)
+  data/mansion_guardians.json   the Gastly mansion's five Channeler guardians, record and seat together
+  data/vr_trainers.json         Victory Road's ten, on the stands tools/vr_caves.py carved along its walked
+                                route; the tenth (the Gate Warden) carries its own record beside its seat,
+                                because data/trainers.json is generated and holds only nine
+  data/gym_trainers.json        the eight gym leaders. No seat either: our own gym build sets
+                                rctmod:trainer_spawner{TrainerIds:["kanto_brock"]} and the badge is awarded
+                                for beating that id, so the id cannot be re-pointed and our roster reaches a
+                                player only by overriding it. Emits the team and nothing else -- their
+                                dialogue is Codex's to write. gym_08_giovanni is held (empty team) and is
+                                skipped by name
+  data/league_trainers.json     the Elite Four and the Champion. These have no seat: Cobbleverse's
+                                kanto_league template already carries five rctmod:trainer_spawner blocks
+                                locked to kanto_league_lorelei/_bruno/_agatha/_lance and kanto_champion_blue
+                                (data/structures.json, docs/world-building/STRUCTURE_INVENTORY.md), so our
+                                five authored teams reach a player by overriding those upstream ids' team and
+                                dialogue at the upstream path (.claude/rules/datapacks.md), the way
+                                data/progression.json upstream_neutralised already overrides their loot
+                                tables. Nothing else of theirs is overridden: the mob file stays upstream's
+                                so its spawner keeps working, and they are absent from placements() because
+                                there is no seat for reapply to summon at.
+
+A seated trainer gets:
 
   data/rctmod/trainers/<id>.json                    the team: name, ai, battleRules, bag, team from the record's rct
                                                     payload. rctapi 0.16's TrainerModel reads name, ai, bag, team and
-                                                    battleTheme (read from the jar, 2026-09-24); battleFormat is left
-                                                    out (singles is the default), battleRules is rctmod's own key
+                                                    battleTheme (read from the jar, 2026-09-24); battleRules is rctmod's own key.
+                                                    An OVERRIDE (below) also writes battleFormat, because it replaces
+                                                    upstream's whole file and would otherwise drop it
   data/rctmod/mobs/trainers/single/<id>.json        who it is to rctmod: type normal, no series, never spawns naturally
                                                     (spawnWeightFactor 0), beaten once per player (maxTrainerDefeats 1),
                                                     its skin (textureResource: one of rctmod's own trainer textures, which
@@ -60,7 +87,8 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "build" / "datapacks" / "cobblers_trainers"
 NS = "cobblers"
 PERIOD = 10
-COOLDOWN_LINE = {"guardian": "Leave me be a moment.", "route": "Let me catch my breath."}
+COOLDOWN_LINE = {"guardian": "Leave me be a moment.", "route": "Let me catch my breath.",
+                 "league": "Take the room. I will be here."}
 EXTRA_FIELDS = {"route_02_shore_trainer_01": ["quest.evt_viltri_north_bank.trainer_defeated"]}
 AFTER_WIN = {"route_02_shore_trainer_01": "The angler nods at the tackle box on the bank."}
 
@@ -69,26 +97,98 @@ def key(field):
     return "cobblers__" + field.replace(".", "__")
 
 
+def doc(name):
+    return json.loads((ROOT / "data" / name).read_text(encoding="utf-8"))
+
+
 def load():
-    t = json.loads((ROOT / "data" / "trainers.json").read_text(encoding="utf-8"))
-    seats = json.loads((ROOT / "data" / "route_trainers.json").read_text(encoding="utf-8"))["trainers"]
-    guards = json.loads((ROOT / "data" / "mansion_guardians.json").read_text(encoding="utf-8"))["trainers"]
-    prog = json.loads((ROOT / "data" / "progression.json").read_text(encoding="utf-8"))
+    t = doc("trainers.json")
+    seats = doc("route_trainers.json")["trainers"] + doc("late_route_trainers.json")["trainers"]
+    dupe = sorted(i for i in {s["id"] for s in seats} if sum(1 for s in seats if s["id"] == i) > 1)
+    if dupe:
+        raise SystemExit("two seat files claim the same trainer: %s" % dupe)
+    guards = doc("mansion_guardians.json")["trainers"]
+    vr = doc("vr_trainers.json")["trainers"]
+    prog = doc("progression.json")
     fields = {f["id"] for f in prog["quest_fields"]}
     recs = {r["id"]: r for r in t["trainers"]}
     clash = sorted(g["id"] for g in guards if g["id"] in recs)
     if clash:
         raise SystemExit("data/mansion_guardians.json reuses trainer ids from data/trainers.json: %s" % clash)
     recs.update({g["id"]: g for g in guards})
-    return recs, seats + guards, fields
+    # Victory Road: nine of the ten are seats only and keep the record data/trainers.json generated for them;
+    # the tenth carries its own record beside its seat, as a mansion guardian does
+    for e in vr:
+        if "rct" not in e:
+            continue
+        if e["id"] in recs:
+            raise SystemExit("data/vr_trainers.json re-authors %s, which data/trainers.json already has" % e["id"])
+        recs[e["id"]] = e
+    return recs, seats + guards + vr, fields
+
+
+def overrides():
+    """[(our record, the upstream rctmod id it overrides, the entry, the file it came from)].
+
+    The trainers who stand in somebody else's template and whose spawner names an upstream id we cannot
+    re-point: the Elite Four and the Champion (data/league_trainers.json) and the eight gym leaders
+    (data/gym_trainers.json). One mechanism, two files, for the same reason -- the id is load-bearing.
+    Re-pointing a gym's spawner would break its badge: data/gym_buildings/gym1.json records that a
+    persistent kanto_brock anywhere awards the badge (verified on staging 2026-09-24), and
+    data/progression.json binds gym1_cleared and the first-win rewards to the same id.
+
+    An entry marked "held" is skipped with its reason: data/trainers.json's gym_08_giovanni has an empty
+    team, and an override with no Pokemon in it is worse than leaving upstream's roster alone.
+    """
+    recs, _seats, _f = load()
+    out, held = [], []
+    for name in ("league_trainers.json", "gym_trainers.json"):
+        for e in doc(name)["trainers"]:
+            r = recs.get(e["id"])
+            if r is None:
+                raise SystemExit("data/%s names %s, which data/trainers.json does not have" % (name, e["id"]))
+            if e.get("held"):
+                held.append((e["id"], e.get("held_because", "held")))
+                continue
+            if not r.get("team"):
+                raise SystemExit("data/%s would override %s with %s, whose team in data/trainers.json is empty"
+                                 % (name, e["upstream_trainer_id"], e["id"]))
+            # the contract is checked, never applied: a leader whose roster disagrees with
+            # generation_contract.gym_ace_levels is a finding for docs/story/TRAINER_RULES.json, and this
+            # refuses to emit rather than quietly adjusting a level
+            if e.get("contract_ace_level") is not None:
+                top = max(m["level"] for m in r["team"])
+                if top != e["contract_ace_level"]:
+                    raise SystemExit("%s tops out at level %d, but generation_contract.gym_ace_levels says %d "
+                                     "for gym %s. Fix it in docs/story/TRAINER_RULES.json, not here."
+                                     % (e["id"], top, e["contract_ace_level"], e.get("order")))
+            out.append((r, e["upstream_trainer_id"], e, name))
+    return out, held
+
+
+def lines_of(rec, seat):
+    """The three dialogue lines: the record's own text, or the seat file's when the record has only ids.
+
+    data/trainers.json carries dialogue_text for Routes 1-3 only; for Victory Road and the League it carries
+    dialogue ids (dlg_*) that resolve nowhere yet (data/dialogue.json has none of them, 2026-09-30, and the
+    generation_contract calls them 'campaign metadata; RCT sidecars require a future compiler'). The seat file
+    is where their text is authored until that compiler exists."""
+    d = rec.get("dialogue_text") or (seat or {}).get("dialogue_text")
+    if not d:
+        raise SystemExit("%s has no dialogue_text in data/trainers.json or in its seat file" % rec["id"])
+    return d
 
 
 def files():
     recs, seats, fields = load()
     out = {"pack.mcmeta": {"pack": {"pack_format": 48,
-                                    "description": "Cobblers Route 1-3 trainers and mansion guardians (tools/route_trainers.py)"}}}
+                                    "description": "Cobblers placed trainers: Routes 1-3, the mansion guardians, "
+                                                   "Victory Road's ten and the League's five "
+                                                   "(tools/route_trainers.py)"}}}
     cycle = ["scoreboard players set #clock cobblers_trainers 0",
              "# each placed trainer: home, its players' beaten tags (from their own fields), and no rematch for them"]
+    # every undeclared field, not just the first: one run should name the whole list to add to data/progression.json
+    undeclared = []
     for s in seats:
         r = recs.get(s["id"])
         if r is None:
@@ -103,7 +203,7 @@ def files():
                         "forceBattleLookTicks": 30,
                         "forceBattleMaxLevelDiff": 10})
         out["data/rctmod/mobs/trainers/single/%s.json" % tid] = mob
-        d = r["dialogue_text"]
+        d = lines_of(r, s)
         line = lambda text: [{"text": text}]
         out["data/rctmod/dialogs/trainers/single/%s.json" % tid] = {
             "on_battle_start": line(d["pre"]), "on_battle_lost": line(d["player_win"]), "trainer_lost": line(d["player_win"]),
@@ -112,9 +212,7 @@ def files():
             "on_cooldown": line(COOLDOWN_LINE["guardian" if "sets" in r else "route"])}
         out["data/rctmod/loot_table/trainers/single/%s.json" % tid] = {"pools": []}
         setf = r["sets"] if "sets" in r else ["quest.%s.defeated" % tid] + EXTRA_FIELDS.get(tid, [])
-        missing = [f for f in setf if f not in fields]
-        if missing:
-            raise SystemExit("%s would set undeclared fields %s (data/progression.json)" % (tid, missing))
+        undeclared += [(tid, f) for f in setf if f not in fields]
         mol = "t.d = q.player.data(); %s q.player.save_data();" % " ".join("t.d.%s = 1;" % key(f) for f in setf)
         fn = ["# %s: this player won (rctmod defeat_count, winning side only)" % tid, 'runmolang "%s" @s' % mol,
               "tag @s add cobblers_beat_%s" % tid]
@@ -126,6 +224,33 @@ def files():
             "criteria": {"won": {"trigger": "rctmod:defeat_count", "conditions": {"trainer_ids": [tid], "count": 1}}},
             "rewards": {"function": "%s:trainers/won/%s" % (NS, tid)}}
         cycle += cycle_lines(tid, s, setf[0])
+    cycle += leader_cycle_lines()
+    if undeclared:
+        raise SystemExit("data/progression.json quest_fields does not declare %d field(s):\n%s"
+                         % (len(undeclared), "\n".join("  %s sets %s" % (t, f) for t, f in undeclared)))
+    # the League's five and the eight gym leaders: the team at the upstream id the spawner is locked to, and
+    # the lines only where the entry carries them (the League's are authored beside their entry; the leaders'
+    # are Codex's to write, so upstream's lines stand). No mob file (the spawner owns how each is spawned), no
+    # loot table (upstream_neutralised empties them and first_win_rewards pays instead), no advancement (every
+    # gymN_cleared and champion_cleared flag already fires from the upstream id through progression_pack), no
+    # cycle and no placement: none of these is summoned at a seat.
+    over, _held = overrides()
+    for rec, upstream, entry, _src in over:
+        rct = rec["rct"]
+        over_file = {k: rct[k] for k in ("name", "ai", "battleRules", "bag", "team") if k in rct}
+        # battleFormat, from the record and not inherited: THIS FILE REPLACES UPSTREAM'S WHOLE FILE, so a key we
+        # do not write is a key the game loses. All twelve read GEN_9_SINGLES in COBBLEVERSE-RCT-DP-v20 (checked
+        # 2026-09-30) and all twelve were silently dropping it. See battle_format_why in the two data files.
+        over_file["battleFormat"] = entry.get("battle_format", "GEN_9_SINGLES")
+        out["data/rctmod/trainers/%s.json" % upstream] = over_file
+        if not entry.get("dialogue_text"):
+            continue
+        d = lines_of(rec, entry)
+        ln = lambda text: [{"text": text}]
+        out["data/rctmod/dialogs/trainers/single/%s.json" % upstream] = {
+            "on_battle_start": ln(d["pre"]), "on_battle_lost": ln(d["player_win"]), "trainer_lost": ln(d["player_win"]),
+            "on_battle_won": ln(d["player_loss"]), "trainer_won": ln(d["player_loss"]),
+            "on_cooldown": ln(COOLDOWN_LINE[entry.get("cooldown", "league")])}
     out["data/%s/function/trainers/cycle.mcfunction" % NS] = cycle
     out["data/%s/function/trainers/tick.mcfunction" % NS] = [
         "scoreboard players add #clock cobblers_trainers 1",
@@ -133,6 +258,93 @@ def files():
     out["data/%s/function/trainers/load.mcfunction" % NS] = ["scoreboard objectives add cobblers_trainers dummy"]
     out["data/minecraft/tags/function/tick.json"] = {"values": ["%s:trainers/tick" % NS]}
     out["data/minecraft/tags/function/load.json"] = {"values": ["%s:trainers/load" % NS]}
+    return out
+
+
+def leader_cycle_lines():
+    """The eight gym leaders' hold-off, keyed on their badge flag instead of a quest field.
+
+    WHY THEY WERE MISSING. The cycle is built from placements(), and a gym leader is not placed by us:
+    its gym's own `rctmod:trainer_spawner` spawns it. So the cooldown covered the 28 trainers we seat -
+    13 route, 5 mansion, 10 Victory Road - and NONE of the eight leaders, and CLAUDE.md's standing
+    limitation ("rctmod never refuses a rematch with a placed trainer") applied to all of them with
+    nothing against it. The owner demonstrated it on 2026-09-30: beat Brock, then started him again by
+    sending a Pokemon at him.
+
+    WHAT A REMATCH COSTS, measured rather than feared: nothing in items. The per-win rctmod loot table
+    we write for each leader is {"pools": []}, deliberately emptied (data/progression.json
+    upstream_neutralised), and the badge and the TMs come from a cobblers:first_win table that fires
+    once. What it does give is battle XP, and data/level_cap.json caps CATCHING, not battling - so a
+    leader who can be refought at will is a level-cap bypass, and stops being a gate.
+
+    The test is the badge advancement, not a quest field: gymN_cleared already exists, is already bound
+    to the leader's upstream id, and is what the rest of progression reads. That also means neither a
+    molang callback nor a tag is needed here - the player selector tests the advancement directly.
+
+    The same INTERIM caveat as the seated trainers (see cycle_lines): Cooldown is entity NBT on a
+    shared trainer, so it cannot be held per player. A player holding the badge is protected; an
+    unbeaten partner beside them may have to start the fight by interacting.
+    """
+    seats = []
+    for f in sorted((ROOT / "data" / "gym_buildings").glob("gym*.json")):
+        doc = json.loads(f.read_text(encoding="utf-8"))
+        lead = doc.get("leader") or {}
+        seats.append((doc["id"], lead.get("id"), lead.get("spawner"), lead.get("flag")))
+    # Misty's gym 2 is the one surviving CARVED interior, so it has no data/gym_buildings record and was
+    # the one leader this loop still missed. Her spawner is the gym template's own, recorded in
+    # data/gym_interiors.json as `expect_spawner_at` - a measurement of where the donor puts it, which is
+    # exactly what this needs.
+    for g in json.loads((ROOT / "data" / "gym_interiors.json").read_text(encoding="utf-8"))["gyms"]:
+        if not g.get("built"):
+            continue
+        lead = g.get("leader") or {}
+        if lead.get("id") and lead.get("expect_spawner_at"):
+            seats.append((g["id"], lead["id"], lead["expect_spawner_at"], lead.get("flag")))
+    out = []
+    for gid, tid, seat, flag in sorted(seats):
+        if not tid or not seat:
+            continue
+        flag = flag or "gym%s_cleared" % gid.replace("gym", "")
+        doc = {"id": gid}
+        x, y, z = seat
+        me = '@e[type=rctmod:trainer,x=%d.5,y=%d,z=%d.5,distance=..24,nbt={TrainerId:"%s"}]' % (x, y, z, tid)
+        out += ["# %s (%s), the leader: no rematch once the badge is held" % (tid, doc["id"]),
+                "execute as %s at @s if entity @a[distance=..9.0,advancements={%s:flag/%s=true}] "
+                "run data merge entity @s {Cooldown:40}" % (me, NS, flag)]
+
+    # THE SAME GAP, FIVE MORE TRAINERS. Found by the 2026-09-30 sweep the owner asked for, straight after
+    # the leaders: the Elite Four and the Champion are overrides at the `kanto_league` template's OWN
+    # spawners, so like the leaders they are not in placements() and had no hold-off either. The Champion
+    # matters most - champion_cleared gates the endgame, and a refightable Blue is a level-cap bypass at
+    # the top of the ladder where the cap is loosest.
+    #
+    # Two things differ from a gym. There is no per-trainer seat: the spawners are inside the template and
+    # their coordinates are not ours to know, so each selector is scoped to the League lot
+    # (placements.json anchors.league_building) rather than to a cell. And the beaten test is UPSTREAM's own
+    # defeat advancement, which exists in COBBLEVERSE-DP-v31 (data/cobbleverse/advancement/trainer/kanto/
+    # defeat_elite_lorelei.json and its four siblings, read from the installed zip) - we do not need to
+    # mint a flag for something Cobbleverse already grants.
+    lot = None
+    for a in (((json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
+                .get("settlements") or {}).get("league") or {}).get("plan", {}).get("anchors") or []):
+        if a.get("id") == "league_building" and a.get("rect"):
+            lot = (a["rect"], a.get("level"))
+    if lot:
+        (x0, z0, x1, z1), level = lot
+        cx, cz = (x0 + x1) // 2, (z0 + z1) // 2
+        reach = max(x1 - x0, z1 - z0) // 2 + 12
+        for e in json.loads((ROOT / "data" / "league_trainers.json").read_text(encoding="utf-8"))["trainers"]:
+            tid = e.get("upstream_trainer_id")
+            adv = e.get("beaten_advancement") or "cobbleverse:trainer/kanto/defeat_%s" % (
+                "champion_blue" if "champion" in (e.get("id") or "") else
+                "elite_" + (e.get("id") or "").split("_")[-1])
+            if not tid:
+                continue
+            me = ('@e[type=rctmod:trainer,x=%d.5,y=%d,z=%d.5,distance=..%d,nbt={TrainerId:"%s"}]'
+                  % (cx, level or 88, cz, reach, tid))
+            out += ["# %s, the League: no rematch once upstream's defeat advancement is held" % tid,
+                    "execute as %s at @s if entity @a[distance=..9.0,advancements={%s=true}] "
+                    "run data merge entity @s {Cooldown:40}" % (me, adv)]
     return out
 
 
@@ -179,7 +391,11 @@ def main(argv=None):
         f.parent.mkdir(parents=True, exist_ok=True)
         text = "\n".join(content) + "\n" if isinstance(content, list) else json.dumps(content, indent=2, ensure_ascii=False) + "\n"
         f.write_text(text, encoding="utf-8", newline="\n")
-    print("wrote %d files for %d trainers to %s" % (len(fs), len(placements()), out))
+    over, held = overrides()
+    print("wrote %d files for %d seated trainers and %d upstream-id overrides to %s"
+          % (len(fs), len(placements()), len(over), out))
+    for tid, why in held:
+        print("  held, nothing emitted: %s -- %s" % (tid, why.split(". ")[0] + "."))
     return 0
 
 

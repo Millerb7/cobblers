@@ -60,14 +60,21 @@
     {
       "id": "gym_brock",
       "box": [
+        1800,
+        3656,
+        1847,
+        3711
+      ],
+      "why": "the owner, 2026-09-21: no wild Pokemon wanders into a leader battle, whatever the gym's theme. The box was Brock's gym (gym1_brock_gym, as placed) with 2 blocks round it, snapped out to the 8-block grid the route boxes share: [1808, 3664, 1847, 3695]. Widened south to 3711 on 2026-09-29 for the gym's carved interior (data/gym_interiors.json gym1): the boxes are x/z only, four numbers and all y, so the dig is covered as long as its x/z stays inside, and the pit and the foreman's room run to z3703, past the old edge. Contract G1. Snapped out to the 8-block grid on 2026-09-30: growing it to hold the authored building put it off the grid and tools/suppress_inherited_spawns.py fail-closed on \"box [1807, 3657, 1847, 3711] is not on the 8-block grid\" at install. The grid is the subregion grid the suppression writes on, so a box has to be whole 8-blocks; snapping OUTWARD only ever suppresses more.",
+      "mechanism": "as the League precinct's",
+      "not_covered": "Pokemon a player sends out, and the gym's own trainers",
+      "was_2026_09_29": [
         1808,
         3664,
         1847,
         3711
       ],
-      "why": "the owner, 2026-09-21: no wild Pokemon wanders into a leader battle, whatever the gym's theme. The box was Brock's gym (gym1_brock_gym, as placed) with 2 blocks round it, snapped out to the 8-block grid the route boxes share: [1808, 3664, 1847, 3695]. Widened south to 3711 on 2026-09-29 for the gym's carved interior (data/gym_interiors.json gym1): the boxes are x/z only, four numbers and all y, so the dig is covered as long as its x/z stays inside, and the pit and the foreman's room run to z3703, past the old edge. Contract G1.",
-      "mechanism": "as the League precinct's",
-      "not_covered": "Pokemon a player sends out, and the gym's own trainers"
+      "why_2026_09_29": "grown to hold the authored gym building, which is larger than the donor shell and the dig it replaces. The emitted extent is [1809, 3659, 1843, 3700]; the box keeps 2 blocks beyond it on every side. Measured from the commands tools/gym_buildings.py emits, not from the gym's own record."
     },
     {
       "id": "gym_misty",
@@ -85,37 +92,58 @@
       "id": "gym_surge",
       "box": [
         1720,
+        1384,
+        1759,
+        1439
+      ],
+      "why": "the owner, 2026-09-21: no wild Pokemon wanders into a leader battle, whatever the gym's theme. The box is Surge's gym (gym3_gym_building, as placed) with 2 blocks round it, snapped out to the 8-block grid the route boxes share. Snapped out to the 8-block grid on 2026-09-30: growing it to hold the authored building put it off the grid and tools/suppress_inherited_spawns.py fail-closed on \"box [1720, 1389, 1752, 1432] is not on the 8-block grid\" at install. The grid is the subregion grid the suppression writes on, so a box has to be whole 8-blocks; snapping OUTWARD only ever suppresses more.",
+      "mechanism": "as the League precinct's",
+      "not_covered": "Pokemon a player sends out, and the gym's own trainers",
+      "was_2026_09_29": [
+        1720,
         1392,
         1751,
         1431
       ],
-      "why": "the owner, 2026-09-21: no wild Pokemon wanders into a leader battle, whatever the gym's theme. The box is Surge's gym (gym3_gym_building, as placed) with 2 blocks round it, snapped out to the 8-block grid the route boxes share.",
-      "mechanism": "as the League precinct's",
-      "not_covered": "Pokemon a player sends out, and the gym's own trainers"
+      "why_2026_09_29": "grown to hold the authored gym building, which is larger than the donor shell and the dig it replaces. The emitted extent is [1725, 1391, 1750, 1430]; the box keeps 2 blocks beyond it on every side. Measured from the commands tools/gym_buildings.py emits, not from the gym's own record."
     },
     {
       "id": "gym_erika",
       "box": [
         4288,
         1472,
+        4335,
+        1519
+      ],
+      "why": "the owner, 2026-09-21: no wild Pokemon wanders into a leader battle, whatever the gym's theme. The box is Erika's gym (gym4_gym_building, as placed) with 2 blocks round it, snapped out to the 8-block grid the route boxes share. Snapped out to the 8-block grid on 2026-09-30: growing it to hold the authored building put it off the grid and tools/suppress_inherited_spawns.py fail-closed on \"box [4288, 1472, 4329, 1513] is not on the 8-block grid\" at install. The grid is the subregion grid the suppression writes on, so a box has to be whole 8-blocks; snapping OUTWARD only ever suppresses more.",
+      "mechanism": "as the League precinct's",
+      "not_covered": "Pokemon a player sends out, and the gym's own trainers",
+      "was_2026_09_29": [
+        4288,
+        1472,
         4327,
         1511
       ],
-      "why": "the owner, 2026-09-21: no wild Pokemon wanders into a leader battle, whatever the gym's theme. The box is Erika's gym (gym4_gym_building, as placed) with 2 blocks round it, snapped out to the 8-block grid the route boxes share.",
-      "mechanism": "as the League precinct's",
-      "not_covered": "Pokemon a player sends out, and the gym's own trainers"
+      "why_2026_09_29": "grown to hold the authored gym building, which is larger than the donor shell and the dig it replaces. The emitted extent is [4293, 1475, 4327, 1511]; the box keeps 2 blocks beyond it on every side. Measured from the commands tools/gym_buildings.py emits, not from the gym's own record."
     },
     {
       "id": "gym_koga",
       "box": [
         4568,
+        2456,
+        4607,
+        2495
+      ],
+      "why": "the owner, 2026-09-21: no wild Pokemon wanders into a leader battle, whatever the gym's theme. The box is Koga's gym (gym5_gym_building, as placed) with 2 blocks round it, snapped out to the 8-block grid the route boxes share. Snapped out to the 8-block grid on 2026-09-30: growing it to hold the authored building put it off the grid and tools/suppress_inherited_spawns.py fail-closed on \"box [4568, 2463, 4607, 2495] is not on the 8-block grid\" at install. The grid is the subregion grid the suppression writes on, so a box has to be whole 8-blocks; snapping OUTWARD only ever suppresses more.",
+      "mechanism": "as the League precinct's",
+      "not_covered": "Pokemon a player sends out, and the gym's own trainers",
+      "was_2026_09_29": [
+        4568,
         2464,
         4607,
         2495
       ],
-      "why": "the owner, 2026-09-21: no wild Pokemon wanders into a leader battle, whatever the gym's theme. The box is Koga's gym (gym5_gym_building, as placed) with 2 blocks round it, snapped out to the 8-block grid the route boxes share.",
-      "mechanism": "as the League precinct's",
-      "not_covered": "Pokemon a player sends out, and the gym's own trainers"
+      "why_2026_09_29": "grown to hold the authored gym building, which is larger than the donor shell and the dig it replaces. The emitted extent is [4576, 2465, 4604, 2493]; the box keeps 2 blocks beyond it on every side. Measured from the commands tools/gym_buildings.py emits, not from the gym's own record."
     },
     {
       "id": "gym_sabrina",
@@ -134,12 +162,19 @@
       "box": [
         6152,
         4976,
+        6191,
+        5015
+      ],
+      "why": "the owner, 2026-09-21: no wild Pokemon wanders into a leader battle, whatever the gym's theme. The box is Blaine's gym (gym7_gym_building, as placed) with 2 blocks round it, snapped out to the 8-block grid the route boxes share. Snapped out to the 8-block grid on 2026-09-30: growing it to hold the authored building put it off the grid and tools/suppress_inherited_spawns.py fail-closed on \"box [6152, 4976, 6184, 5015] is not on the 8-block grid\" at install. The grid is the subregion grid the suppression writes on, so a box has to be whole 8-blocks; snapping OUTWARD only ever suppresses more.",
+      "mechanism": "as the League precinct's",
+      "not_covered": "Pokemon a player sends out, and the gym's own trainers",
+      "was_2026_09_29": [
+        6152,
+        4976,
         6183,
         5015
       ],
-      "why": "the owner, 2026-09-21: no wild Pokemon wanders into a leader battle, whatever the gym's theme. The box is Blaine's gym (gym7_gym_building, as placed) with 2 blocks round it, snapped out to the 8-block grid the route boxes share.",
-      "mechanism": "as the League precinct's",
-      "not_covered": "Pokemon a player sends out, and the gym's own trainers"
+      "why_2026_09_29": "grown to hold the authored gym building, which is larger than the donor shell and the dig it replaces. The emitted extent is [6156, 4983, 6182, 5007]; the box keeps 2 blocks beyond it on every side. Measured from the commands tools/gym_buildings.py emits, not from the gym's own record."
     },
     {
       "id": "gym_giovanni",

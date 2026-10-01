@@ -38,6 +38,14 @@ coordination lock is active, stop without enumerating the runtime. Do not
 assume an existing coordination lock is stale merely because the server is
 down; resolve ownership with the user or other agent first.
 
+**A server started with PowerShell `Start-Process` does not outlive the tool
+call.** On 2026-09-30 the staging server was booted that way, answered RCON,
+was reported up, and then died silently: its console log ends mid-startup with
+no shutdown line and no crash, and it had been down for three and a half hours
+before the owner asked. Nothing was lost only because that boot ran no steps.
+Start it detached (the Bash tool's `run_in_background`), and before reporting a
+server up, check the PROCESS, not just that RCON answered once.
+
 Claude Code and Codex must never enumerate, read, copy, hash, inspect, or back
 up the live world directory at
 `C:\Users\wnd\Documents\github\cobblers-server\cobblers-10240`. This includes
@@ -365,6 +373,20 @@ average 517k of context per turn: every turn re-sends everything before it.
   merged PR, confirm the expected commit is on main
   (`git fetch` then `git merge-base --is-ancestor <sha> origin/main`); a PR
   marked merged is not proof that main has its final commits.
+- **A local `origin/<branch>` ref outlives the branch. Always `git fetch --prune`
+  before trusting one, and re-read every head you are about to quote.** The owner
+  merges while a session works, and GitHub deletes the branch on merge, so the
+  session's own base can vanish under it. On 2026-10-01 PRs #98 and #99 were
+  merged into `build/2026-09-29-phase2` mid-session: `gh pr create` refused with
+  "No commits between ... Base ref must be a branch" and the GitHub API answered
+  **"Branch not found"** for the intended base, while `git rev-parse
+  origin/docs/2026-09-30-settlement-npcs` still happily returned a sha, because a
+  plain `git fetch` never removes a deleted remote-tracking ref. The same merge
+  also moved #97's head from `27710fd` to `7b008b6b`, which silently invalidated
+  the `--match-head-commit` command already reported for it. So: a reported head
+  is only true until the owner touches the stack; when a PR command fails
+  strangely, prune and re-read the refs before believing anything local, and
+  re-state the head in the handover rather than carrying the old one forward.
 
 ## Ground comes from the heightmap, never from a world
 
@@ -382,6 +404,65 @@ Rounded, not floored: against a fresh export `round(h)` matches the exported gro
 columns and `floor(h)` at 52%. Reading a world to *check* a result (the verify passes,
 `tools/town_audit.py`) is different and still required. `tests/test_ground_rule.py` fails if a
 placement tool reads a world to decide.
+
+## How to prove an audit is independent
+
+An audit that shares the builder's derivation is not independent, however
+separate its file. On 2026-09-30 `portals.py` and `portals_audit.py` both read a
+landmark's `extent` as "where water is", so builder and auditor agreed with each
+other about a hole 219,737 columns wide; and `legendaries_audit.py` computed its
+expectation with `L.geometry()`, the builder's own function, under a header
+claiming "nothing is taken from the artifact being checked" — true, and a weaker
+guarantee than it sounds.
+
+Two standards came out of fixing them, and both are the standard now:
+
+**Mutate the GENERATOR, not the record.** A record-side mutation moves the
+expectation and the output together and proves nothing — it will pass a shared
+derivation happily. The only mutation that tests independence changes the code
+under test and leaves the authored data alone: `width + 4` inside
+`legendaries.geometry()`, with `data/legendaries.json` untouched, is what proved
+the new dimension check actually bites. If a mutation test only ever edits data,
+it is not testing independence.
+
+**Reject your own slack.** The first version of that check used a `+2` fudge and
+failed five chambers at 32 against a limit of 31. Widening the slack would have
+produced a check that passes and proves nothing. Reading the geometry showed the
+real accounting — along the long axis the air is `bore + passage + chamber`,
+3 + 12 + 17 = 32 exactly — so the formula names those two declared fields instead
+of a constant. **A threshold you tuned until the data passed is not a threshold.**
+If you cannot derive the number from the data, the check is not ready.
+
+## Our list is not the world
+
+A generated list of what WE place is never a list of what is in the world. The
+world also holds what a donor template placed, what a mod placed, and what an
+earlier pass left behind. A system that reasons over our list silently excludes
+all of it, and the exclusion is invisible: the list is correct, the code is
+correct, and the thing that matters is simply not in it.
+
+This has now happened three times:
+
+- **The trainer rematch guard** (2026-09-30). `tools/route_trainers.py` builds
+  its cooldown from `placements()`. It covered the 28 trainers we seat and
+  **none of the eight gym leaders**, because a leader is spawned by its gym's own
+  `rctmod:trainer_spawner`. The owner beat Brock and then started him again. The
+  sweep that followed found the same gap for the **Elite Four and the Champion**,
+  overrides at the `kanto_league` template's own spawners — five more, including
+  the one that gates the endgame.
+- **The Habitat Blocks**, which live in the world-local folder and no generated
+  list knew about.
+- **The healers**. Every gym template ships one. `R16E` is a *sweep over all
+  eight gyms*, not a list of ours — which is why it works, and is the pattern to
+  copy.
+
+**So:** when a tool enumerates our own data to act on the world, say in the
+tool what it does NOT cover, and prefer a sweep or a world-shaped predicate over
+a list wherever one will do. When a new system keys on trainer ids, placement
+ids, or structure ids, ask first what in the world carries that id and is not in
+`data/placements.json` — the gym spawners and the League template are the known
+answers and there are others. An audit that counts our own output can only ever
+find faults in our own output.
 
 ## Verify before claiming
 

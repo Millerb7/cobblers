@@ -1,0 +1,1840 @@
+{
+  "schema": "gym_building/1",
+  "id": "gym3",
+  "status": "authored 2026-09-29; file-valid only. Nothing here has been seen in a running game.",
+  "settlement": "gym3_town",
+  "supersedes_donor": "gym3_gym_building",
+  "supersedes_why": "the COBBLEVERSE donor shell (data/gym_interiors.json gym3.shell.expect_box 1726,173,1397..1748,189,1423, one oval room) is taken down by tools/gym_demolish.py, which also fills the works it cut under it (gym3.dig 1732,150,1400..1750,172,1427). This building is raised on the same lot. docs/world-building/GYM_BUILDINGS_BRIEF.md: the owner rejected a shaft into a cave under the shell and asked for a large building with the puzzle inside it.",
+  "name": "The Relay Works",
+  "reading": "gym3_town is the signal town under Mt Vessu: its people keep the power, the relays and the storm gear running (docs/world-building/TOWN_CHARACTER.md; palette deepslate and tuff, weathered and waxed copper; set dressing cable drums, copper spools, relay cabinets, insulator racks, a storm shutter being hung). The feeder from Surge's array on the Vessu shoulder comes down inside the hill and reaches the town here, which is why the gym is at the shelf's east end with its back in the rock. The building is the substation the feeder lands in: a long copper-roofed machine hall against a cut face, three bus runs carried overhead on insulator posts, and behind the face a duct, a cable-head shaft and the gallery where the feeder is terminated. Surge works at the cable head, inside the rock, and there is no other way to him.",
+  "site": {
+    "lot_rect": [
+      1722,
+      1388,
+      1752,
+      1432
+    ],
+    "lot_level": 174,
+    "lot_source": "data/placements.json settlements.gym3_town.plan.anchors gym3_gym (rect 1722,1388..1752,1432, level 174, facing west). The plan's prep_note: 'The pad is already pressed flat at y174.4 (data/sculpt.json), so the streets need almost no cut and fill; the work is the gym's bite into the wall east of x1730, which is the only real excavation in the town.' tools/place_town.py levels a lot rect that carries a `level` ('a levelled lot is cut and filled to its level by the prep, so that is its ground'), so the whole 31x45 rect is cut flat to y174.",
+    "ground": {
+      "kind": "lot_level",
+      "why": "the pad is the ground. GYM_BUILDINGS.md section 5 left this open: the brief measured the site from the raw heightmap (y174..212 across the lot) and the town plan declares a levelled lot at y174. The plan wins, because the prep levels the rect: tools/ground.py (rounded, all 1,395 columns of the lot) gives 174 at the west edge rising to 212 at x1752, and cutting that to 174 is exactly the 'bite into the wall east of x1730' the plan's own prep_note calls the town's only real excavation. So the building stands on flat ground at y174 and does not step down a slope. Neither number was read from a world."
+    },
+    "footprint": [
+      1726,
+      1392,
+      1742,
+      1428
+    ],
+    "footprint_size_why": "the hall is 17 by 37 inside the 31x45 lot, with margins 4 west, 4 north, 4 south and 9 east. The nine east columns are not margin: they are the rock the building is cut into (x1743..1750), and the two beyond that (x1751..1752) are the lot's own cut edge against the untouched hillside at x1753, which tools/ground.py puts at y207..210. The donor shell this replaces was 23x27.",
+    "floor_y": 174,
+    "stand_y": 175,
+    "eaves_y": 192,
+    "ridge_y": 196,
+    "hall_height_above_floor": 22,
+    "facing": "west",
+    "facing_why": "the lot anchor is `facing: west` - 'Its door faces back down the lane, so the town is behind you when you go in.' The lane runs east along the foot of the wall from the belvedere, which is north-west, so the door is at the north end of the west wall and the hall is read down its length on the way in."
+  },
+  "bounds": [
+    1725,
+    174,
+    1391,
+    1750,
+    206,
+    1430
+  ],
+  "bounds_why": "the hall (1726..1742 x 1392..1428), its one-block eaves and the door piers at x1725, and the rock mass east of it (x1743..1750) stepped up to y206 where it meets the natural hillside. Inside the lot rect on every side: margins 3 west, 2 east, 3 north, 2 south. The north edge is at z1391 and not z1390 so that all but the roof's north overhang course falls inside the gym's spawn-suppression box (data/gym_interiors.json gym3.spawn_suppression, 1720,1392..1751,1431), which nothing here is allowed to move.",
+  "rock_why": "The hall's back wall is a cut face, and behind it the building needs rock to be cut into: a duct, a shaft and a gallery. The prep levels the whole lot to y174, so the eight columns east of the hall are filled back as the mass the excavation left standing - four benches topped y190, y197, y202 and y206 against a natural hillside that tools/ground.py gives as y187, y191, y195, y200 at those same x and y207..210 immediately outside the lot. That is the bench a quarry leaves, not a building: the hall keeps its four-block margins on the three open sides and the mass is the hill.",
+  "leader": {
+    "id": "kanto_ltsurge",
+    "name": "Lt. Surge",
+    "spawner": [
+      1747,
+      191,
+      1414
+    ],
+    "powered_by": [
+      1747,
+      190,
+      1414
+    ],
+    "why": "EXP-013 E2 (VERIFIED, on staging): a bare rctmod:trainer_spawner set by command with TrainerIds on a redstone block spawned its leader and he battled. The donor template does the same (its own spawner stands at [1736, 174, 1403] and is removed with the shell by tools/gym_demolish.py), so once the shell is down this is the only kanto_ltsurge in the town and the badge cannot be won without reaching the gallery (a persistent leader spawner anywhere awards the badge: verified on staging 2026-09-24, docs/STATE.md).",
+    "chest": [
+      1747,
+      191,
+      1406
+    ]
+  },
+  "rooms": [
+    {
+      "id": "door_bay",
+      "box": [
+        1727,
+        175,
+        1393,
+        1741,
+        191,
+        1402
+      ],
+      "why": "the way in, at the north end of the west wall. From here the hall is read down its length: the drum store under you, the three bus runs crossing overhead to the east wall, the middle one bright copper and lit from beneath, and the transformer tower at the far end with the stair up its west face."
+    },
+    {
+      "id": "drum_store",
+      "box": [
+        1727,
+        175,
+        1393,
+        1741,
+        183,
+        1403
+      ],
+      "why": "cable drums, spools and barrels on the floor of the north bay. Nothing here tops higher than y178."
+    },
+    {
+      "id": "bus_floor",
+      "box": [
+        1727,
+        175,
+        1403,
+        1741,
+        183,
+        1417
+      ],
+      "why": "the floor under the three bus runs: relay cabinets along the west wall, insulator racks, and the bales of packing straw the works keep under the live line."
+    },
+    {
+      "id": "tower",
+      "box": [
+        1734,
+        174,
+        1418,
+        1740,
+        181,
+        1424
+      ],
+      "why": "the transformer bank at the south end, seven blocks high with copper fins on its faces. Its cap is the only standing surface in the hall above y178 that can be climbed to, and the stair up its west face is the one way onto it."
+    },
+    {
+      "id": "catwalk",
+      "box": [
+        1730,
+        181,
+        1402,
+        1733,
+        183,
+        1418
+      ],
+      "why": "the inspection catwalk, a copper-grate deck at y181 on tuff piers, running north from the tower along the hall's west side to the three downleads."
+    },
+    {
+      "id": "bus_level",
+      "box": [
+        1732,
+        184,
+        1404,
+        1741,
+        187,
+        1416
+      ],
+      "why": "the three bus runs at y184 on insulator posts, ten above the floor: two weathered and isolated, one bright and live. The live one runs east into the duct."
+    },
+    {
+      "id": "duct",
+      "box": [
+        1742,
+        185,
+        1409,
+        1745,
+        187,
+        1411
+      ],
+      "why": "the cable duct cut through the hall's east wall and four blocks into the rock."
+    },
+    {
+      "id": "shaft",
+      "box": [
+        1746,
+        185,
+        1409,
+        1749,
+        189,
+        1411
+      ],
+      "why": "the cable head shaft where the feeder turns upward, with its chain run and the ladder to the gallery on its east wall."
+    },
+    {
+      "id": "gallery",
+      "box": [
+        1746,
+        191,
+        1404,
+        1749,
+        194,
+        1416
+      ],
+      "why": "Surge's gallery, cut in the rock seventeen above the hall floor and sealed on all six sides but one: the ladder hole at [1749, 190, 1410]. Cover above the ceiling is two to eleven courses of rock, and the east wall at x1750 is solid to y206."
+    }
+  ],
+  "route": [
+    {
+      "step": 1,
+      "id": "the_stair",
+      "from": [
+        1733,
+        175,
+        1426
+      ],
+      "to": [
+        1734,
+        182,
+        1419
+      ],
+      "how": "climb",
+      "why": "seven tuff steps up the transformer tower's west face at x1733, tops y175 to y181 from z1425 north to z1419, then one step east onto the tower's copper cap at y181.",
+      "not_skippable": "the tower's cap and the catwalk deck are both at y181, seven above the floor, and every other thing standing on the hall floor - the drums, the cabinets, the insulator racks, the leaning storm shutter - tops at y178 or lower, which leaves a three-block rise no player can make. The tower is sheer on its other three faces. The catwalk's piers top at y180 but stand directly under the deck, so nothing can be stood on them."
+    },
+    {
+      "step": 2,
+      "id": "the_catwalk",
+      "from": [
+        1734,
+        182,
+        1419
+      ],
+      "to": [
+        1731,
+        182,
+        1410
+      ],
+      "how": "walk",
+      "why": "west off the tower cap onto the bridge at x1732..1733 z1417..1418 and north along the grate deck at x1730..1731 to the three downleads at z1404, z1410 and z1416.",
+      "not_skippable": "the deck is reached from the tower and from nowhere else; it is seven above the floor and its west rail is iron bars."
+    },
+    {
+      "step": 3,
+      "id": "the_downlead",
+      "from": [
+        1731,
+        182,
+        1410
+      ],
+      "to": [
+        1734,
+        185,
+        1410
+      ],
+      "how": "choose",
+      "why": "each bus run comes down to the catwalk on two copper piers, one topping y182 and one topping y183, and the bar itself is at y184. Only the middle run's pair is whole: from the deck at stand y182 the steps are y182, y183, y184, three one-block rises. The north run's upper pier (x1733, z1404) has been lifted out and the south run's lower pier (x1732, z1416) has been lifted out.",
+      "not_skippable": "on the north run a player reaches stand y183 on the surviving pier and then faces the bar's stand surface at y185 one block away: a two-block rise, which no player can make. On the south run the only pier is at x1733, two blocks from the deck and a two-block rise from it. The bright waxed copper of the live run and the lanterns hung under it say which one is whole before the walk is made; the weathered copper of the other two says why they are not."
+    },
+    {
+      "step": 4,
+      "id": "the_live_bus",
+      "from": [
+        1734,
+        185,
+        1410
+      ],
+      "to": [
+        1741,
+        185,
+        1410
+      ],
+      "how": "beam",
+      "why": "the live bar is one block wide and runs eight east to the wall at y184, ten above the floor, with the isolator open at x1737..1738 - two blocks of air to jump.",
+      "not_skippable": "there is nothing beside the bar to walk on and nothing under it for ten blocks. The two-block gap is a jump, not a skip: it is the route, and the only thing it can be skipped past is a fall. Missing it is a ten-block drop onto the bales at y174 (hay: about 80% off the fall), which costs the climb and nothing else. The gap cannot be used to reach anything else - the nearest other bar is six blocks north and three above the floor level of anything a player can stand on."
+    },
+    {
+      "step": 5,
+      "id": "the_duct",
+      "from": [
+        1741,
+        185,
+        1410
+      ],
+      "to": [
+        1746,
+        185,
+        1410
+      ],
+      "how": "walk",
+      "why": "the bar's east end meets the duct mouth cut through the hall's east wall at y185..187, and the duct runs four blocks east through the rock into the cable head shaft. The duct floor is the rock at y184, level with the bar.",
+      "not_skippable": "the mouth is ten above the hall floor in a sheer deepslate wall; the rock above and below it is unbroken from y174 to y190, and the only other openings in that wall are the door and the window slits, all of them at the hall's west and end walls."
+    },
+    {
+      "step": 6,
+      "id": "the_cable_ladder",
+      "from": [
+        1746,
+        185,
+        1410
+      ],
+      "to": [
+        1748,
+        191,
+        1410
+      ],
+      "how": "climb",
+      "why": "the feeder turns upward in the shaft. The ladder is on the shaft's east wall at x1749, carried by the solid rock at x1750, and climbs seven from y185 through the one hole in the gallery floor at [1749, 190, 1410].",
+      "not_skippable": "the gallery is cut in rock and has exactly one opening: this hole. Its west wall (x1745) is solid from y174 to y197, its east wall (x1750) to y206, its ends (z1403 and z1417) and its ceiling (y195..197 at the thinnest) likewise. Nothing outside can reach it: the bench over the hall tops at y190, sixteen above the pad and sheer on every face, and the ladder's foot is in a shaft with no floor-level way in."
+    },
+    {
+      "step": 7,
+      "id": "surge",
+      "from": [
+        1748,
+        191,
+        1410
+      ],
+      "to": [
+        1747,
+        191,
+        1414
+      ],
+      "how": "walk",
+      "why": "the spawner stands on a redstone block set into the gallery floor with two air cells over it; Surge spawns on it. His chest is at the gallery's north end, eight blocks the other way.",
+      "not_skippable": "this is the only rctmod:trainer_spawner in the town once the donor shell is down."
+    },
+    {
+      "step": 8,
+      "id": "the_way_back",
+      "from": [
+        1748,
+        191,
+        1410
+      ],
+      "to": [
+        1734,
+        185,
+        1410
+      ],
+      "how": "climb",
+      "why": "the ladder goes both ways, and from the bus a player who does not want to walk it again can simply step off onto the bales.",
+      "not_skippable": "not a route step: the way out. No step of the climb is one-way and nothing on it can kill."
+    }
+  ],
+  "trainers": [],
+  "trainers_why": "none authored here, and deliberately, as for gym 1. A gym trainer has to be unavoidable, and unavoidability on this route is a claim about where a player can physically stand and how far a trainer can see - the independent movement model settles that and it is not this unit's to write (CLAUDE.md principle 16). The catwalk (x1730..1733, z1402..1418) and the gallery's north end are the two places a seat could go; the bus is one block wide and cannot hold one.",
+  "no_build": [
+    {
+      "box": [
+        1725,
+        174,
+        1391,
+        1750,
+        206,
+        1430
+      ],
+      "why": "the whole works. Authored, not wired: the scene runtime's adventure-mode box (tools/scenes_pack.py no_build) needs a scene record in data/scenes.json and that is not written in this unit. Until it is, a player with blocks can build up to the bus."
+    }
+  ],
+  "spawn_suppression": {
+    "record": "gym_surge",
+    "box": [
+      1720,
+      1384,
+      1759,
+      1439
+    ],
+    "note": "data/gym_interiors.json gyms[gym3].spawn_suppression, unchanged and not moved by this record. The build lies inside it apart from the roof's north overhang course and the rock mass's north edge at z1391. Nothing written here is a spawn-condition block from data/spawn_blocks.json except the single redstone block buried under the spawner in the gallery floor, which the contract requires."
+  },
+  "blocks": [
+    "minecraft:air",
+    "minecraft:deepslate",
+    "minecraft:cobbled_deepslate",
+    "minecraft:deepslate_bricks",
+    "minecraft:deepslate_tiles",
+    "minecraft:polished_deepslate",
+    "minecraft:chiseled_deepslate",
+    "minecraft:tuff",
+    "minecraft:tuff_bricks",
+    "minecraft:polished_tuff",
+    "minecraft:chiseled_tuff",
+    "minecraft:waxed_copper_block",
+    "minecraft:waxed_exposed_copper",
+    "minecraft:waxed_weathered_copper",
+    "minecraft:waxed_weathered_cut_copper",
+    "minecraft:waxed_copper_grate",
+    "minecraft:chain",
+    "minecraft:lantern",
+    "minecraft:soul_lantern",
+    "minecraft:ladder",
+    "minecraft:iron_bars",
+    "minecraft:hay_block",
+    "minecraft:barrel",
+    "minecraft:chest",
+    "minecraft:redstone_block",
+    "rctmod:trainer_spawner"
+  ],
+  "blocks_why": "the town's own palette (docs/world-building/TOWN_CHARACTER.md gym3_town: deepslate and tuff, weathered and waxed copper) and nothing that is a spawn condition in data/spawn_blocks.json but the one redstone block the spawner contract requires. Every copper block is waxed, so none of it oxidises after the build and the bright live bus stays bright - the puzzle's clue would otherwise rot. No lightning rod: it is a spawn-condition block, and the town's ban on them is in TOWN_CHARACTER.md.",
+  "parts": [
+    {
+      "op": "comment",
+      "why": "gym 3, Lt. Surge: the Relay Works (data/gym_buildings/gym3.json). Run after the donor shell is taken down and the works under it filled in (tools/gym_demolish.py), which is after the pack donors are placed and after the town prep has levelled the lot to y174."
+    },
+    {
+      "op": "fill",
+      "box": [
+        1725,
+        175,
+        1391,
+        1750,
+        206,
+        1430
+      ],
+      "block": "minecraft:air",
+      "why": "-- clear the lot above the pad, so the build is the same on a fresh export and on a re-apply"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1726,
+        174,
+        1392,
+        1742,
+        174,
+        1428
+      ],
+      "block": "minecraft:deepslate_tiles",
+      "why": "-- the floor: the works' paving, laid over the prep's pad at y174"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1728,
+        174,
+        1394,
+        1740,
+        174,
+        1426
+      ],
+      "block": "minecraft:polished_deepslate",
+      "why": "the dressed floor inside the aisle"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1731,
+        174,
+        1408,
+        1741,
+        174,
+        1412
+      ],
+      "block": "minecraft:hay_block",
+      "why": "the bales of packing straw the drums are packed in, kept under the live line: a ten-block drop off the bus lands here and takes about 80% less, so no step of the climb can kill (contract G3)"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1743,
+        174,
+        1391,
+        1744,
+        190,
+        1430
+      ],
+      "block": "minecraft:tuff",
+      "why": "-- the rock the works are cut into: four benches of the mass the excavation left standing, east of the hall. See rock_why."
+    },
+    {
+      "op": "fill",
+      "box": [
+        1745,
+        174,
+        1391,
+        1746,
+        197,
+        1430
+      ],
+      "block": "minecraft:tuff"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        174,
+        1391,
+        1748,
+        202,
+        1430
+      ],
+      "block": "minecraft:tuff"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1749,
+        174,
+        1391,
+        1750,
+        206,
+        1430
+      ],
+      "block": "minecraft:tuff"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1743,
+        189,
+        1391,
+        1744,
+        190,
+        1430
+      ],
+      "block": "minecraft:cobbled_deepslate",
+      "why": "the dark cap on each bench, the horizon the flank's stone shows"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1745,
+        196,
+        1391,
+        1746,
+        197,
+        1430
+      ],
+      "block": "minecraft:cobbled_deepslate"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        201,
+        1391,
+        1748,
+        202,
+        1430
+      ],
+      "block": "minecraft:cobbled_deepslate"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1749,
+        205,
+        1391,
+        1750,
+        206,
+        1430
+      ],
+      "block": "minecraft:cobbled_deepslate"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1743,
+        174,
+        1391,
+        1743,
+        188,
+        1430
+      ],
+      "block": "minecraft:deepslate",
+      "why": "and the cut face itself, fresh off the chisel, which is the hall's back wall seen from outside"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1726,
+        175,
+        1392,
+        1726,
+        191,
+        1428
+      ],
+      "block": "minecraft:deepslate_bricks",
+      "why": "-- the hall: four walls, seventeen courses to the eaves"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1742,
+        175,
+        1392,
+        1742,
+        191,
+        1428
+      ],
+      "block": "minecraft:deepslate_bricks"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1727,
+        175,
+        1392,
+        1741,
+        191,
+        1392
+      ],
+      "block": "minecraft:deepslate_bricks"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1727,
+        175,
+        1428,
+        1741,
+        191,
+        1428
+      ],
+      "block": "minecraft:deepslate_bricks"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1726,
+        175,
+        1392,
+        1726,
+        176,
+        1428
+      ],
+      "block": "minecraft:polished_deepslate",
+      "why": "the plinth course"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1727,
+        175,
+        1392,
+        1741,
+        176,
+        1392
+      ],
+      "block": "minecraft:polished_deepslate"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1727,
+        175,
+        1428,
+        1741,
+        176,
+        1428
+      ],
+      "block": "minecraft:polished_deepslate"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1726,
+        183,
+        1392,
+        1726,
+        183,
+        1428
+      ],
+      "block": "minecraft:waxed_weathered_cut_copper",
+      "why": "and a copper string course at the bus's level, which is how the town reads a substation from the street"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1727,
+        183,
+        1392,
+        1741,
+        183,
+        1392
+      ],
+      "block": "minecraft:waxed_weathered_cut_copper"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1727,
+        183,
+        1428,
+        1741,
+        183,
+        1428
+      ],
+      "block": "minecraft:waxed_weathered_cut_copper"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1726,
+        175,
+        1396,
+        1726,
+        179,
+        1400
+      ],
+      "block": "minecraft:air",
+      "why": "-- the door in the west wall, five wide and five tall, at the north end where the lane comes in"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1726,
+        175,
+        1395,
+        1726,
+        179,
+        1395
+      ],
+      "block": "minecraft:polished_deepslate",
+      "why": "its jambs"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1726,
+        175,
+        1401,
+        1726,
+        179,
+        1401
+      ],
+      "block": "minecraft:polished_deepslate"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1726,
+        180,
+        1395,
+        1726,
+        180,
+        1401
+      ],
+      "block": "minecraft:chiseled_deepslate",
+      "why": "and its lintel"
+    },
+    {
+      "op": "columns",
+      "from_y": 186,
+      "block": "minecraft:air",
+      "why": "-- the window slits, one wide and four tall, set above the bus's level: too high to be climbed to from the floor or the catwalk and too high to climb out of from the bus, which is five blocks away at its nearest",
+      "cells": [
+        [
+          1726,
+          1404,
+          189
+        ],
+        [
+          1726,
+          1410,
+          189
+        ],
+        [
+          1726,
+          1416,
+          189
+        ],
+        [
+          1726,
+          1422,
+          189
+        ],
+        [
+          1730,
+          1392,
+          189
+        ],
+        [
+          1734,
+          1392,
+          189
+        ],
+        [
+          1738,
+          1392,
+          189
+        ],
+        [
+          1730,
+          1428,
+          189
+        ],
+        [
+          1734,
+          1428,
+          189
+        ],
+        [
+          1738,
+          1428,
+          189
+        ]
+      ]
+    },
+    {
+      "op": "gable_roof",
+      "box": [
+        1726,
+        1392,
+        1742,
+        1428
+      ],
+      "run": "x",
+      "eaves_y": 192,
+      "overhang": 1,
+      "material": "minecraft:waxed_weathered_copper",
+      "edge": "minecraft:waxed_weathered_cut_copper",
+      "gable": "minecraft:deepslate_bricks",
+      "gable_from_y": 192,
+      "why": "-- the roof: waxed weathered copper, one course every two columns, the ridge running north-south over x1734 at y196, a one-block eave all round and the two end gables filled in deepslate brick. Twenty-two above the floor, and the cut face behind it stands sixteen higher still."
+    },
+    {
+      "op": "fill",
+      "box": [
+        1727,
+        191,
+        1398,
+        1741,
+        191,
+        1398
+      ],
+      "block": "minecraft:waxed_weathered_cut_copper",
+      "why": "-- the tie beams at the wall heads, which the droplights hang from. None over the bus runs: nothing hanging is to be within reach of the climb."
+    },
+    {
+      "op": "fill",
+      "box": [
+        1727,
+        191,
+        1406,
+        1741,
+        191,
+        1406
+      ],
+      "block": "minecraft:waxed_weathered_cut_copper"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1727,
+        191,
+        1414,
+        1741,
+        191,
+        1414
+      ],
+      "block": "minecraft:waxed_weathered_cut_copper"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1727,
+        191,
+        1422,
+        1741,
+        191,
+        1422
+      ],
+      "block": "minecraft:waxed_weathered_cut_copper"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1734,
+        174,
+        1418,
+        1740,
+        180,
+        1424
+      ],
+      "block": "minecraft:polished_deepslate",
+      "why": "-- STAGE 1. The transformer bank at the hall's south end: seven by seven, seven courses, sheer on three faces"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1734,
+        181,
+        1418,
+        1740,
+        181,
+        1424
+      ],
+      "block": "minecraft:waxed_weathered_cut_copper",
+      "why": "its cap, level with the catwalk deck"
+    },
+    {
+      "op": "columns",
+      "from_y": 176,
+      "block": "minecraft:waxed_exposed_copper",
+      "why": "and the cooling fins on its three open faces",
+      "cells": [
+        [
+          1735,
+          1418,
+          180
+        ],
+        [
+          1737,
+          1418,
+          180
+        ],
+        [
+          1739,
+          1418,
+          180
+        ],
+        [
+          1735,
+          1424,
+          180
+        ],
+        [
+          1737,
+          1424,
+          180
+        ],
+        [
+          1739,
+          1424,
+          180
+        ],
+        [
+          1740,
+          1420,
+          180
+        ],
+        [
+          1740,
+          1422,
+          180
+        ]
+      ]
+    },
+    {
+      "op": "columns",
+      "from_y": 175,
+      "block": "minecraft:tuff_bricks",
+      "why": "the stair up its west face, seven steps topping y175 to y181, the only climb out of the hall",
+      "cells": [
+        [
+          1733,
+          1425,
+          175
+        ],
+        [
+          1733,
+          1424,
+          176
+        ],
+        [
+          1733,
+          1423,
+          177
+        ],
+        [
+          1733,
+          1422,
+          178
+        ],
+        [
+          1733,
+          1421,
+          179
+        ],
+        [
+          1733,
+          1420,
+          180
+        ],
+        [
+          1733,
+          1419,
+          181
+        ]
+      ]
+    },
+    {
+      "op": "fill",
+      "box": [
+        1730,
+        181,
+        1402,
+        1731,
+        181,
+        1418
+      ],
+      "block": "minecraft:waxed_copper_grate",
+      "why": "-- STAGE 2. The inspection catwalk: a grate deck two wide and seventeen long at y181, seven above the floor"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1732,
+        181,
+        1417,
+        1733,
+        181,
+        1418
+      ],
+      "block": "minecraft:waxed_copper_grate",
+      "why": "and the bridge from the transformer's cap onto it"
+    },
+    {
+      "op": "columns",
+      "from_y": 175,
+      "block": "minecraft:tuff_bricks",
+      "why": "its piers, every one of them under the deck and none standable",
+      "cells": [
+        [
+          1730,
+          1403,
+          180
+        ],
+        [
+          1730,
+          1409,
+          180
+        ],
+        [
+          1730,
+          1415,
+          180
+        ],
+        [
+          1731,
+          1406,
+          180
+        ],
+        [
+          1731,
+          1412,
+          180
+        ],
+        [
+          1731,
+          1418,
+          180
+        ],
+        [
+          1732,
+          1417,
+          180
+        ]
+      ]
+    },
+    {
+      "op": "fill",
+      "box": [
+        1730,
+        182,
+        1402,
+        1731,
+        182,
+        1402
+      ],
+      "block": "minecraft:iron_bars",
+      "why": "the rail at the deck's north end and along its west edge, broken where the downleads come down"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1730,
+        182,
+        1404,
+        1730,
+        182,
+        1408
+      ],
+      "block": "minecraft:iron_bars"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1730,
+        182,
+        1411,
+        1730,
+        182,
+        1415
+      ],
+      "block": "minecraft:iron_bars"
+    },
+    {
+      "op": "columns",
+      "from_y": 175,
+      "block": "minecraft:waxed_copper_block",
+      "why": "-- STAGE 3. The live downlead: two bright copper piers topping y182 and y183, the whole pair, stepping the catwalk up to the middle bar",
+      "cells": [
+        [
+          1732,
+          1410,
+          182
+        ],
+        [
+          1733,
+          1410,
+          183
+        ]
+      ]
+    },
+    {
+      "op": "columns",
+      "from_y": 175,
+      "block": "minecraft:waxed_weathered_copper",
+      "why": "and the two isolated ones, each with a step lifted out: the north run has lost its upper pier at x1733 and the south run its lower pier at x1732, so from the deck each is a two-block rise no player can make",
+      "cells": [
+        [
+          1732,
+          1404,
+          182
+        ],
+        [
+          1733,
+          1416,
+          183
+        ]
+      ]
+    },
+    {
+      "op": "columns",
+      "from_y": 175,
+      "block": "minecraft:waxed_weathered_cut_copper",
+      "why": "-- the insulator posts that carry the three bus runs, nine courses off the floor and topping one under the bars",
+      "cells": [
+        [
+          1734,
+          1404,
+          183
+        ],
+        [
+          1740,
+          1404,
+          183
+        ],
+        [
+          1734,
+          1410,
+          183
+        ],
+        [
+          1740,
+          1410,
+          183
+        ],
+        [
+          1734,
+          1416,
+          183
+        ],
+        [
+          1740,
+          1416,
+          183
+        ]
+      ]
+    },
+    {
+      "op": "fill",
+      "box": [
+        1734,
+        184,
+        1404,
+        1741,
+        184,
+        1404
+      ],
+      "block": "minecraft:waxed_weathered_copper",
+      "why": "the north bus run: weathered, isolated, dead"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1734,
+        184,
+        1416,
+        1741,
+        184,
+        1416
+      ],
+      "block": "minecraft:waxed_weathered_copper",
+      "why": "and the south one"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1734,
+        184,
+        1410,
+        1736,
+        184,
+        1410
+      ],
+      "block": "minecraft:waxed_copper_block",
+      "why": "-- STAGE 4. The live bus: bright waxed copper, one block wide, ten above the floor, in two lengths with the isolator open at x1737..1738 - two blocks of air, a jump and not a skip"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1739,
+        184,
+        1410,
+        1741,
+        184,
+        1410
+      ],
+      "block": "minecraft:waxed_copper_block"
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:lantern[hanging=true]",
+      "why": "the clue, hung under the live bar and nowhere else: from the door and from the catwalk one run of three is bright and lit from beneath",
+      "positions": [
+        [
+          1735,
+          183,
+          1410
+        ],
+        [
+          1736,
+          183,
+          1410
+        ],
+        [
+          1739,
+          183,
+          1410
+        ],
+        [
+          1741,
+          183,
+          1410
+        ]
+      ]
+    },
+    {
+      "op": "fill",
+      "box": [
+        1742,
+        185,
+        1409,
+        1742,
+        187,
+        1411
+      ],
+      "block": "minecraft:air",
+      "why": "-- STAGE 5. The duct mouth, cut through the hall's east wall where the live bar meets it"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1743,
+        185,
+        1409,
+        1745,
+        187,
+        1411
+      ],
+      "block": "minecraft:air",
+      "why": "and the duct itself, four blocks east through the rock, floored by the rock at y184 and level with the bar"
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:lantern",
+      "why": "lights along the duct floor, out of the walking line at z1410",
+      "positions": [
+        [
+          1743,
+          185,
+          1409
+        ],
+        [
+          1745,
+          185,
+          1411
+        ]
+      ]
+    },
+    {
+      "op": "fill",
+      "box": [
+        1746,
+        185,
+        1409,
+        1749,
+        189,
+        1411
+      ],
+      "block": "minecraft:air",
+      "why": "-- STAGE 6. The cable head shaft, cut in the rock where the feeder turns upward"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1747,
+        185,
+        1409,
+        1747,
+        189,
+        1409
+      ],
+      "block": "minecraft:chain",
+      "why": "the feeder's chain run in it, carried by the gallery floor above"
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:soul_lantern",
+      "why": "and the cold standby lamps on the shaft floor",
+      "positions": [
+        [
+          1746,
+          185,
+          1409
+        ],
+        [
+          1748,
+          185,
+          1411
+        ]
+      ]
+    },
+    {
+      "op": "fill",
+      "box": [
+        1746,
+        191,
+        1404,
+        1749,
+        194,
+        1416
+      ],
+      "block": "minecraft:air",
+      "why": "-- the gallery: cut in the rock, four by thirteen, four high, sealed on every side but the ladder hole"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1746,
+        190,
+        1404,
+        1749,
+        190,
+        1416
+      ],
+      "block": "minecraft:polished_deepslate",
+      "why": "its laid floor over the rock"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1749,
+        185,
+        1410,
+        1749,
+        191,
+        1410
+      ],
+      "block": "minecraft:ladder[facing=west]",
+      "why": "the cable ladder on the shaft's east wall, carried by the solid rock at x1750, climbing seven through the one hole in the gallery floor and one course above it, so a player steps off westward at floor level"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1747,
+        190,
+        1414
+      ],
+      "block": "minecraft:redstone_block",
+      "why": "-- Surge. The power under the spawner, set into the gallery floor as the donor template sets its own"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1747,
+        191,
+        1414
+      ],
+      "block": "rctmod:trainer_spawner{TrainerIds:[\"kanto_ltsurge\"]}",
+      "why": "the only trainer spawner in the town once the shell is down, with two air cells over it"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1747,
+        191,
+        1406
+      ],
+      "block": "minecraft:chest[facing=west]",
+      "why": "his chest, at the gallery's north end"
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:barrel",
+      "why": "the cable head's stores and spares",
+      "positions": [
+        [
+          1746,
+          191,
+          1416
+        ],
+        [
+          1749,
+          191,
+          1416
+        ],
+        [
+          1746,
+          191,
+          1405
+        ]
+      ]
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:lantern[hanging=true]",
+      "why": "the gallery's lights, hung from the rock ceiling clear of the spawner's two cells",
+      "positions": [
+        [
+          1746,
+          194,
+          1406
+        ],
+        [
+          1749,
+          194,
+          1408
+        ],
+        [
+          1746,
+          194,
+          1412
+        ],
+        [
+          1749,
+          194,
+          1415
+        ]
+      ]
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:lantern",
+      "why": "and two standing on the floor at the ladder head",
+      "positions": [
+        [
+          1746,
+          191,
+          1409
+        ],
+        [
+          1748,
+          191,
+          1412
+        ]
+      ]
+    },
+    {
+      "op": "fill",
+      "box": [
+        1729,
+        175,
+        1395,
+        1731,
+        177,
+        1397
+      ],
+      "block": "minecraft:waxed_exposed_copper",
+      "why": "-- the works: cable drums on the drum store's floor"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1735,
+        175,
+        1394,
+        1737,
+        177,
+        1396
+      ],
+      "block": "minecraft:waxed_exposed_copper"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1732,
+        175,
+        1399,
+        1734,
+        177,
+        1401
+      ],
+      "block": "minecraft:waxed_exposed_copper"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1738,
+        175,
+        1400,
+        1740,
+        177,
+        1402
+      ],
+      "block": "minecraft:chiseled_tuff",
+      "why": "and a stack of spool crates beside them"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1727,
+        175,
+        1404,
+        1728,
+        178,
+        1408
+      ],
+      "block": "minecraft:chiseled_deepslate",
+      "why": "the relay cabinets along the west wall, four courses high - two below the catwalk's deck, so none of them is a step up to it"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1729,
+        175,
+        1404,
+        1729,
+        178,
+        1408
+      ],
+      "block": "minecraft:waxed_copper_grate",
+      "why": "their grated fronts"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1727,
+        175,
+        1412,
+        1728,
+        178,
+        1416
+      ],
+      "block": "minecraft:chiseled_deepslate"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1729,
+        175,
+        1412,
+        1729,
+        178,
+        1416
+      ],
+      "block": "minecraft:waxed_copper_grate"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1727,
+        175,
+        1420,
+        1728,
+        178,
+        1424
+      ],
+      "block": "minecraft:chiseled_deepslate"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1729,
+        175,
+        1420,
+        1729,
+        178,
+        1424
+      ],
+      "block": "minecraft:waxed_copper_grate"
+    },
+    {
+      "op": "columns",
+      "from_y": 175,
+      "block": "minecraft:waxed_weathered_cut_copper",
+      "why": "the insulator racks on the bus floor, three courses and no more",
+      "cells": [
+        [
+          1736,
+          1406,
+          177
+        ],
+        [
+          1738,
+          1406,
+          177
+        ],
+        [
+          1736,
+          1414,
+          177
+        ],
+        [
+          1738,
+          1414,
+          177
+        ]
+      ]
+    },
+    {
+      "op": "fill",
+      "box": [
+        1727,
+        175,
+        1424,
+        1727,
+        178,
+        1427
+      ],
+      "block": "minecraft:waxed_weathered_copper",
+      "why": "a storm shutter leaning against the wall, waiting to be hung"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1727,
+        182,
+        1403,
+        1727,
+        187,
+        1407
+      ],
+      "block": "minecraft:waxed_weathered_copper",
+      "why": "and one already up, hung high on the west wall"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1727,
+        188,
+        1403,
+        1729,
+        188,
+        1407
+      ],
+      "block": "minecraft:waxed_weathered_cut_copper",
+      "why": "the gantry it hangs from"
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:chain",
+      "why": "and its chains",
+      "positions": [
+        [
+          1728,
+          187,
+          1403
+        ],
+        [
+          1728,
+          187,
+          1407
+        ]
+      ]
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:barrel",
+      "why": "the works' stores",
+      "positions": [
+        [
+          1728,
+          175,
+          1394
+        ],
+        [
+          1728,
+          175,
+          1402
+        ],
+        [
+          1739,
+          175,
+          1420
+        ],
+        [
+          1740,
+          175,
+          1426
+        ],
+        [
+          1727,
+          175,
+          1418
+        ]
+      ]
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:lantern",
+      "why": "-- light: standing on the floor",
+      "positions": [
+        [
+          1728,
+          175,
+          1398
+        ],
+        [
+          1739,
+          175,
+          1396
+        ],
+        [
+          1728,
+          175,
+          1410
+        ],
+        [
+          1733,
+          175,
+          1414
+        ],
+        [
+          1741,
+          175,
+          1424
+        ]
+      ]
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:lantern",
+      "why": "and on the relay cabinets' tops",
+      "positions": [
+        [
+          1727,
+          179,
+          1406
+        ],
+        [
+          1727,
+          179,
+          1414
+        ],
+        [
+          1727,
+          179,
+          1422
+        ]
+      ]
+    },
+    {
+      "op": "fill",
+      "box": [
+        1730,
+        188,
+        1398,
+        1730,
+        190,
+        1398
+      ],
+      "block": "minecraft:chain",
+      "why": "the droplights: chains from the tie beams, well clear of the bus runs"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1738,
+        188,
+        1398,
+        1738,
+        190,
+        1398
+      ],
+      "block": "minecraft:chain"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1730,
+        188,
+        1422,
+        1730,
+        190,
+        1422
+      ],
+      "block": "minecraft:chain"
+    },
+    {
+      "op": "fill",
+      "box": [
+        1738,
+        188,
+        1422,
+        1738,
+        190,
+        1422
+      ],
+      "block": "minecraft:chain"
+    },
+    {
+      "op": "scatter",
+      "block": "minecraft:lantern[hanging=true]",
+      "why": "and the lamps on their ends",
+      "positions": [
+        [
+          1730,
+          187,
+          1398
+        ],
+        [
+          1738,
+          187,
+          1398
+        ],
+        [
+          1730,
+          187,
+          1422
+        ],
+        [
+          1738,
+          187,
+          1422
+        ]
+      ]
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1725,
+        175,
+        1395
+      ],
+      "block": "minecraft:polished_tuff",
+      "why": "-- the door piers on the lane, and their lamps"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1725,
+        176,
+        1395
+      ],
+      "block": "minecraft:lantern"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1725,
+        175,
+        1401
+      ],
+      "block": "minecraft:polished_tuff"
+    },
+    {
+      "op": "setblock",
+      "pos": [
+        1725,
+        176,
+        1401
+      ],
+      "block": "minecraft:lantern"
+    }
+  ]
+}

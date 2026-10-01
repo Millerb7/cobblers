@@ -107,6 +107,44 @@ class Skin:
         self.counts[what] = self.counts.get(what, 0) + n
 
 
+def lake_surface(shape, X0, Z0, H):
+    """Columns inside a lake basin whose ground is below that lake's water level, on the skin's own grid.
+
+    WHY. `tools/paint_maps.py` already lays a proper lake bed: inside each landmark's `water_body`
+    basin, every column whose ground is under `level_y` is painted GRAVEL or CLAY, and the bank above
+    it SAND. That paint is baked into the world at export. The skin then runs as a datapack pass at
+    re-apply (R1) and, until 2026-09-30, filled EVERY column it touched right up to its own top - the
+    submerged ones included - so 268,972 columns of painted lake bed were overwritten with distortion
+    stone, deepslate, cobblestone and crystal block. That is 14.79% of the skin's 1,818,375 surface
+    fills, and it is what the owner saw from the air over Shrew Lake at (3009, 4008): the bed reading
+    as mottled dark purple instead of sand or gravel, with the shore above the waterline correct.
+
+    Proved, not assumed: at that column the emitted pack held
+    `fill 3009 102 4008 3009 104 4008 legendarymonuments:distortion_stone`, and a probe of the staging
+    world found water at y105 and distortion_stone at y104. Shrew Lake's `level_y` is 106.
+
+    The recorded hypothesis (FLIGHT_FINDINGS_2026-09-29.md F5) blamed the water-shape pass for
+    changing heights without re-materialising the surface, and said "the material decision lives in
+    the water-shape tool, unread". It does not. The water shape protects the Rift outright
+    (data/water_shape.json `protect.rift`), the paint gets the bed right, and the skin overwrites it.
+    The lake is not even inside the Rift's own polygons in data/regions.json - the skin reaches past
+    them, because its extent is every column the SCULPT moved, which is a different shape.
+    """
+    from PIL import Image, ImageDraw
+    lm = json.loads((ROOT / "data" / "landmarks.json").read_text(encoding="utf-8"))
+    wet = np.zeros(shape, bool)
+    for l in lm["landmarks"]:
+        wb = l.get("water_body")
+        if not wb:
+            continue
+        img = Image.new("L", (shape[1], shape[0]), 0)
+        d = ImageDraw.Draw(img)
+        for ring in wb["basin_polygons"]:
+            d.polygon([(q[0] - X0, q[1] - Z0) for q in ring], fill=1)
+        wet |= np.asarray(img).astype(bool) & (H < wb["level_y"])
+    return wet
+
+
 def build(source_root, server_dir=None):
     import ground as G
     import terrain as T
@@ -149,9 +187,22 @@ def build(source_root, server_dir=None):
     zz, xx = np.nonzero(touched)
     wx = xx + X0
     wz = zz + Z0
-    top = H[zz, xx]
+    # the skin stops ONE COURSE SHORT on a column a lake covers, so the bed tools/paint_maps.py painted
+    # survives (see lake_surface above). Capping `top` and not skipping the column keeps the Rift's rock
+    # under the water where it belongs; only the face the bed is made of is left alone.
+    wet = lake_surface(shape, X0, Z0, H)
+    top = np.where(wet[zz, xx], H[zz, xx] - 1, H[zz, xx])
     bottom = np.maximum(low[zz, xx] + 1, top - sk["face_depth"])
     bottom = np.minimum(bottom, top - sk["depth"] + 1)
+    plan.count("skin columns under a lake, capped one short", int(wet[zz, xx].sum()))
+    # a column whose whole band is under the cap has nothing left to skin: drop it rather than emit an
+    # inverted fill, which /fill would happily run backwards.
+    live = bottom <= top
+    dropped = int((~live).sum())
+    if dropped:
+        plan.count("skin columns dropped entirely (band below the lake cap)", dropped)
+    zz, xx, wx, wz = zz[live], xx[live], wx[live], wz[live]
+    top, bottom = top[live], bottom[live]
     band = sk["band"]
     segs = []
     for lo, hi, wxi, wzi in zip(bottom.tolist(), top.tolist(), wx.tolist(), wz.tolist()):
