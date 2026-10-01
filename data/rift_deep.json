@@ -48,7 +48,8 @@
   },
   "lifts": {
     "block": "lumymon:elevator",
-    "banks": 10,
+    "banks": 8,
+    "banks_how_it_is_read": "A TOTAL, spread across the four ring boundaries: tools/rift_deep.py:221 takes per = max(2, banks // (len(treads) - 1)), so 8 gives 2 a boundary and 8 pairs. It was 10 until 2026-10-01 and 10 was dead: 10 // 4 is 2, exactly what 8, 9 and 11 give, and only multiples of 4 above the floor of 2 are expressible at all (16 would be needed for 10 pairs). Changed to 8 because that is what the pit holds and what DEEP_CITY.md says; the formula is unchanged, and a run before and after places the same 8 pairs, 2 at each of boundaries 0-3.",
     "apart": 40,
     "read_from_the_jar": {
       "block_entity": "lumymon:elevator_entity",

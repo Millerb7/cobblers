@@ -340,6 +340,15 @@ not answers:
 
 Reported as findings, not smoothed over.
 
+**Findings 1-5 were FIXED on 2026-10-01 (owner decision D3), each by establishing which side the code or
+the data supported and changing only the wrong side. The entries below are kept as the record of what was
+wrong and are no longer live:** 1 — nine confirmed and `docs/STATE.md` and `RIFT_STATUS.md` corrected,
+from a run's own counts ("stair towers round lift banks 8", "the Sink Gate 1"); 2 — `data/rift_deep.json`
+`lifts.banks` is now 8, with a `banks_how_it_is_read` note, and the same 8 pairs are placed before and
+after; 3 — `DEEP_CITY.md` now carries the measured 196 beside the 130 estimate; 4 — its status header now
+says applied to `staging-2026-10-01` and records that the dryrun worlds are deleted; 5 — `FACTION.md` now
+puts the cradle at (3357, 3306) and records (3297, 2603) as retired and already propagated.
+
 1. **The stair-tower count.** `docs/STATE.md:191` reads "8 stair towers round the lift banks and the Sink
    Gate"; the owner says nine. `tools/deep_city.py:754-776` builds one tower per lift pair and `:778` builds
    the Sink Gate as an additional one, and `tools/rift_deep.py:221` yields 8 pairs. **Nine is the number the

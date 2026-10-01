@@ -1,8 +1,14 @@
 # The Deep: a city across the rings, its lights, Hoopa's relic area, and the west door
 
-**Status: design proposal, 2026-09-25. The city shell and the relic area's surface are generated from it
-(2026-09-27: `tools/deep_city.py`, `data/deep_city.json`, re-apply step R9DC, offline audit `tools/deep_city_audit.py`)
-into `build/` only: not run on staging, not seen in game.** `data/deep_city.json` `decisions` records where the build
+**Status: design proposal, 2026-09-25; generated and APPLIED TO STAGING. The city shell and the relic
+area's surface are generated from it (`tools/deep_city.py`, `data/deep_city.json`, re-apply step R9DC,
+offline audit `tools/deep_city_audit.py`) and, as of 2026-10-01, are applied to
+`C:\Users\wnd\Documents\cobblers-staging\staging-2026-10-01`, where "the Deep's city" is one of the 38 of
+38 apply steps that ran (`docs/STATE.md`, top). Not in the live world, and no part of it has been seen by
+a player in game. The earlier runs cannot be appealed to: `cobblers-dryrun9`, `dryrun11` and `dryrun12`
+have been DELETED (established 2026-10-01, `docs/STATE.md`), so the 2026-09-27 dryrun11 result — all 99
+functions run, 300 of 300 sampled blocks present — describes a world that no longer exists and cannot be
+re-checked.** `data/deep_city.json` `decisions` records where the build
 made a call this document leaves open (owner decisions 1-4 taken by default, 5-10 not built) and where
 it departs from it: the lifts are wrapped by stair towers rather than re-housed, because a lift moves its rider at its
 own column and needed a floor at both ends; Rimside's Centre and Mart are the League's unused CobbleTowns templates;
@@ -35,7 +41,7 @@ The southern Rift (town, mega stone mine, the approach) is in `SOUTHERN_RIFT.md`
 | The Deep (region) | x3421-3786, z3015-3429; centre measured (3603, 3222), surface y83 | 114,180 columns |
 | Rings (treads) | 36 wide each, 4-block bare-rock margin at the back, 4-block edge band at the front | y66 / y49 / y32 / y15 / y0 |
 | North sector | 55 degrees either side of the line to `entrance_to_e4`: ring 0, then one 66-block face to the floor | tunnel mouth 9 x 7 at the floor |
-| Lifts | `lumymon:elevator`, 2 banks per ring boundary = 8 pairs, 40 apart; ungated; none in the north sector | riding them is NOT PROVEN |
+| Lifts | `lumymon:elevator`, 2 banks per ring boundary = 8 pairs, 40 apart (`data/rift_deep.json` `lifts.banks` = 8, the total); ungated; none in the north sector. One stair tower round each, so **9 towers** with the Sink Gate | riding them is NOT PROVEN |
 | Tread lights | `legendarymonuments:galar_particle_block` where x and z are both multiples of 13: 468 | light 15 |
 | Relic area / shrine | x3285-3429, z3229-3384, the Deep's west lip | ground 86-100 |
 | Hoopa's cradle (sited) | centre (3357, 3306), floor y12, 76 cover, 50 under sea level | needs a cavern shell |
@@ -93,8 +99,14 @@ across all five elevations instead of five separate terraces.
 
 **Scale, est.** (circle of radius about 190; the real outline is the owner's traced shape): street lengths R0 about
 1,080, R1 590, R2 440, R3 280 (rings 1-4 cover about 250 of 360 degrees). At a 16-block frontage that is about 60
-+ 33 + 24 + 15 lots, about **130 buildings** plus the spire and the HQ. A 36-wide tread leaves a 6-8 street, about
++ 33 + 24 + 15 lots, about 130 buildings plus the spire and the HQ. A 36-wide tread leaves a 6-8 street, about
 20 deep for the riser building and room for a front row of low stalls or gardens.
+
+**Scale, MEASURED** (`python tools/deep_city.py build --source-root <root>`, re-run 2026-10-01; its own
+`buildings (<district>)` counts): **196 buildings**, not the 130 estimated above — Rimside **69**, the Works
+**38**, the Quarter **29**, Relay Row **20**, the Core **8**, the Stacks **27** (against the north face, which
+the circle arithmetic never counted) and the Compact's HQ **5** sections, plus the spire and the HQ tower. The
+estimate was 34% low and is kept above only as the arithmetic it was; the measured figures are the city.
 
 **The Core spire:** 15-21 across on the floor core (the core is est. 60 across), glass shell over a light column,
 rising to about y100 so its top shows over the lip from the Rift floor. Bridges at y15 to Relay Row; optionally one

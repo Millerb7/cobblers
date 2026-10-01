@@ -177,7 +177,7 @@ it: `data/deep_city.json` (schema `cobblers.deep_city/1`, seed 20260927, design
 `deep_city:build` then `deep_city_audit` (lines 362-363) and refuses a failing audit. **R9DC** is
 the step, deliberately not R9D: `tools/reapply.py` line 906 notes "R9D was the retired Victory Road
 regions step, and tests/test_reapply_vr_steps.py keeps that id retired." STATE line 155 records
-196 buildings, 8 stair towers, 193 ladders, the Core spire, 99 functions and about 85,000 commands,
+196 buildings, 9 stair towers (8 lift banks + the Sink Gate; corrected 2026-10-01 from a run's own counts), 193 ladders, the Core spire, 99 functions and about 85,000 commands,
 and "On staging (`cobblers-dryrun11`, world-local, 2026-09-27): all 99 functions run, 300 of 300
 sampled final blocks present" — claimed by STATE, not re-checked here. Not built, per the same
 entry: the Slip barrier, holo-signs, NPCs.

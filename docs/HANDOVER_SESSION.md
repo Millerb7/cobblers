@@ -250,13 +250,38 @@ build unit per session**, with its test rewrite as the session after.
   guard's suggested remediation counts as an exception, because it will keep happening.
 - **A heightmap rewrite was declined on the session's own judgement** (unit 3 above). Reversible route
   taken instead; the owner can overrule.
-- Six doc/data/code disagreements found and recorded, not silently fixed: STATE says 8 stair towers, the
-  code implies 9 (the owner says nine); `data/rift_deep.json`'s `"banks": 10` is dead (`max(2,10//4)`×4 =
-  8) and matches neither DEEP_CITY.md nor the code; DEEP_CITY.md estimates "about 130 buildings" against
-  196 actually built (34% low); DEEP_CITY.md's status header says "not run on staging" while STATE says
-  R9DC ran 2026-09-27; the cradle coordinate is still contradicted between FACTION.md and
-  `rift_regions.json`; and `docs/mechanics/GYM_INTERIORS.md:178-189` is stale about the trainer cooldown
-  rule. **`data/gulch_mine.json`'s missing `farms` key is the seventh.**
+- Seven doc/data/code disagreements were found and recorded rather than silently patched. **Owner
+  decision D3 (2026-10-01) was "fix all seven", and six are now FIXED** — each by reading the code or the
+  data first to establish which side was right, and changing only the wrong side:
+  1. **Stair towers: 9, not 8. FIXED.** A run's own counts are "stair towers round lift banks 8" and "the
+     Sink Gate 1" (`python tools/deep_city.py build --source-root <root>`), and `rift_deep.lift_sites()`
+     returns 8 pairs, 2 at each of the 4 boundaries. The code and the owner were right; `docs/STATE.md`
+     and `docs/world-building/RIFT_STATUS.md` now say nine.
+  2. **`data/rift_deep.json` `lifts.banks`: 10 → 8. FIXED in the data only.** The formula
+     `per = max(2, banks // (len(treads) - 1))` reads the field as a TOTAL across the four boundaries, so
+     only multiples of 4 above the floor of 2 are expressible and 10 could never mean 10. 8 is what the
+     pit holds and what DEEP_CITY.md says, so the value was corrected instead of the formula (no code
+     change, `tools/rift_deep.py` untouched); a `banks_how_it_is_read` note records why. `lift_sites()`
+     places the same 8 pairs before and after.
+  3. **"about 130 buildings" → the measured 196. FIXED.** DEEP_CITY.md now carries the run's per-district
+     counts (Rimside 69, the Works 38, the Quarter 29, Relay Row 20, the Core 8, the Stacks 27, HQ 5) and
+     keeps the 130 above them labelled as the circle arithmetic it was.
+  4. **DEEP_CITY.md's "not run on staging" header. FIXED.** It is applied to `staging-2026-10-01` (one of
+     the 38 of 38 steps). The header says so, keeps "not in the live world" and "never seen by a player",
+     and records that `cobblers-dryrun9`, `dryrun11` and `dryrun12` are DELETED, so the 2026-09-27 result
+     cannot be re-checked.
+  5. **The cradle coordinate. FIXED in `docs/story/FACTION.md`:** (3357, 3306) under the relic area, per
+     `data/rift_regions.json` and STATE's settled answer, with a note retiring (3297, 2603) — outside the
+     Rift, heightmap y118 against the League footprint's 86-99 — and naming the propagation it already
+     caused (`npc_main_league_steward`, Codex's to fix upstream).
+  6. **`GYM_INTERIORS.md`'s trainer-cooldown rule. FIXED.** `route_trainers.cycle_lines()` writes the
+     cooldown when **any** nearby player has beaten the trainer (the `unless entity @a[…,tag=!<tag>]`
+     clause went on 2026-09-29), so the doc's "every nearby player" and its first consequence were
+     inverted: the beaten player is protected and the unbeaten partner must start the fight by hand. The
+     section now states the live rule, the change, and the routing constraint that is lifted with it.
+  **The seventh, `data/gulch_mine.json`'s `megas.why` / missing `farms` key, was another agent's in the
+  same wave and is not covered by this entry.** `docs/world-building/HEAVENS_ARENA.md` section 8, where
+  findings 1-5 were recorded, now marks them fixed and keeps the entries as the record.
 - `tests/test_id_authorship.py` has three uncovered cases queued as chip `task_77d572d3`.
 
 ## 6. Nothing is in the world, and nothing was applied
