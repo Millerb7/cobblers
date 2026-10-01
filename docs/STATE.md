@@ -378,8 +378,14 @@
   intercept is about 2.5x off."* So the fix is one key rather than a re-priced column, and the trainer
   card's 500 at Pallet stops being impossible. The ladder is being re-derived against 1.25 rather than
   divided again, because dividing after the multiplier would double-correct.
-  **NOT YET LIVE:** the staging server is running on upstream's 0.5; the overlay reaches it on the next
-  `reapply.py install` plus a restart. And the multiplier also multiplies what `bank.json`'s 82 unreviewed
+  **NOT YET LIVE, AND IT MUST NOT GO LIVE UNTIL ONE TEST RUNS:** the staging server is still on upstream's
+  0.5, and the overlay reaches a server only on the next `reapply.py install` plus a restart. **The open
+  risk (raised by the ladder agent after the overlay was already written):** if the key scales
+  `bank.json`'s sell-backs as well as battle income, an `emerald_block` goes from 3,750 to **9,375** and
+  the bank becomes a money printer that invalidates the entire re-price. `bank.json` holds raw prices
+  (emerald 400, emerald_block 3,750), confirmed. **Sell one emerald block on the running 0.5 server: 3,750
+  means sales are untouched and 1.25 is safe; 1,875 means the multiplier applies and B8 must be
+  reconsidered.** Thirty seconds, and it gates the change. And the multiplier also multiplies what `bank.json`'s 82 unreviewed
   sell prices leak, which nobody has reviewed.
 - **Two contracts fail today and are recorded as such** in `data/system_contracts.json` `fails_today`, strict
   xfail: C3 `sound_ferry_from_the_jetty` (its `to` end (7210,6960) is ground y55 under a sea of y62 and is not
