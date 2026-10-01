@@ -153,6 +153,26 @@ def stone_items(policy):
     return list(((policy or {}).get("stones") or {}).get("items") or [])
 
 
+def card_policy(policy):
+    return ((policy or {}).get("trainer_card") or {})
+
+
+def card_shop(policy):
+    """The trainer card's own category, appended to the one Mart clerk that stocks it (nothing else is added)."""
+    c = card_policy(policy)
+    return [{"Category": c["category"],
+             "Offers": [{"Item": {"count": 1, "id": c["item"]}, "Price": str(int(c["price"]))}]}]
+
+
+def mart_shop_items(policy, rid=None):
+    """Every item id a Mart clerk's shop should offer: the basic items, plus the trainer card at the one clerk
+    the policy names. Used by the shop filter and by the in-game verify, so the two cannot disagree."""
+    items = set(mart_items(policy))
+    if rid is not None and card_policy(policy) and rid == card_policy(policy).get("trader"):
+        items.add(card_policy(policy)["item"])
+    return items
+
+
 def stone_shop(policy):
     """The Exchange's CobbleMerchantShop: one category, every stone once at the policy's price, unlimited."""
     st = policy["stones"]
@@ -160,14 +180,15 @@ def stone_shop(policy):
              "Offers": [{"Item": {"count": 1, "id": iid}, "Price": str(int(st["price"]))} for iid in st["items"]]}]
 
 
-def apply_stock_policy(data, policy, stock=None):
+def apply_stock_policy(data, policy, stock=None, rid=None):
     """(data with the shop filtered, kept item ids, withheld item ids).
 
     The shopkeeper templates sell whatever BCA stocked: ultra balls, max revives, X items next to the fish and
     bread. Until the badge-gated stock is designed, a trader sells only what the policy in data/traders.json
     leaves: whole categories and single items are withheld, and a category left empty is dropped. A Mart clerk
     (stock "mart") is the other way round: it sells only the policy's basic Mart items, whatever else the
-    template carries."""
+    template carries -- plus, at the single clerk stock_policy.trainer_card names, one authored offer for
+    rctmod:trainer_card, which no shopkeeper template carries and which nothing else in the region sells."""
     shop = data.get("CobbleMerchantShop")
     if stock == "stones":
         # the Exchange: the template's whole shop is replaced by the authored one (nothing of it is kept)
@@ -198,6 +219,15 @@ def apply_stock_policy(data, policy, stock=None):
             c = dict(cat)
             c["Offers"] = offers
             cats_out.append(c)
+    if stock == "mart" and card_policy(policy) and rid is not None and rid == card_policy(policy).get("trader"):
+        # rctmod:trainer_card is in no shopkeeper template and in no shop of ours: without the card
+        # `spawningRequiresTrainerCard = true` (modpack/config/rctmod-server.toml:87) means no RCT trainer ever
+        # spawns naturally for that player. Authored, like the Exchange's stones, in the offer shape the
+        # templates themselves carry. Appended after the filter, so the filter still governs the basics.
+        card = card_policy(policy)
+        cats_out = cats_out + card_shop(policy)
+        kept = kept + [card["item"]]
+        held = [i for i in held if i != card["item"]]
     out = dict(data)
     out["CobbleMerchantShop"] = cats_out
     return out, kept, held
@@ -247,7 +277,7 @@ def town_functions(town, recs, entity, policy=None):
     for rec in sorted(recs, key=lambda q: q["id"]):
         kind, data = entity(rec["template"])
         template_name = display_name(data)
-        data, kept, _held = apply_stock_policy(dict(data), policy, rec.get("stock"))
+        data, kept, _held = apply_stock_policy(dict(data), policy, rec.get("stock"), rec["id"])
         x, y, z = (rec["position"][k] for k in "xyz")
         tag = tag_of(rec["id"])
         if kept == [] or rec.get("stock") == "withdrawn":
@@ -355,6 +385,31 @@ def static_problems(doc, placements_doc=None, plans_dir=None):
                 if isinstance(py, int) and pos["y"] != py + 1:
                     out.append((rid, "stands at y%d, but the town plan paves the plaza at y%d, so it should be y%d"
                                 % (pos["y"], py, py + 1)))
+    card = card_policy(doc.get("stock_policy"))
+    if card:
+        # The card is a prerequisite rather than stock: one clerk sells it, and it is the only thing in the region
+        # that lets an RCT trainer spawn at all. A policy block naming a clerk that is not a Mart, or no clerk, is
+        # a dead config of exactly the kind this block exists to fix.
+        # NOT CHECKED HERE: that the named clerk exists at all. A manifest passed to this function can legitimately
+        # be a subset of one trader (tests/test_mart_clerks.py's function-mode fixtures), so absence cannot be a
+        # fault of every manifest -- but in data/traders.json it is, and a typo there emits no card and says nothing.
+        # That check needs the canonical manifest and belongs in a test (test-author owns it).
+        by_id = {r.get("id"): r for r in recs if isinstance(r, dict)}
+        who = card.get("trader")
+        if who in by_id and by_id[who].get("stock") != "mart":
+            out.append((who, "stock_policy.trainer_card names it, but its stock is %r, not \"mart\": the card is "
+                             "appended to a Mart clerk's shop" % by_id[who].get("stock")))
+        if not (isinstance(card.get("item"), str) and ":" in card["item"]):
+            out.append((None, "stock_policy.trainer_card.item must be a namespaced item id"))
+        if not (isinstance(card.get("price"), int) and not isinstance(card.get("price"), bool) and card["price"] > 0):
+            out.append((None, "stock_policy.trainer_card.price must be a positive integer"))
+        if not (isinstance(card.get("category"), str) and card["category"]):
+            out.append((None, "stock_policy.trainer_card needs a category"))
+        if card.get("buys") is not False:
+            out.append((None, "stock_policy.trainer_card must say buys: false: nothing in CobbleDollars' bank.json "
+                              "buys the card back, and a licence with a sell price is sold twice"))
+        if len([r for r in recs if isinstance(r, dict) and r.get("id") == who]) > 1:
+            out.append((who, "two traders carry the id the trainer card is attached to"))
     return out
 
 
@@ -405,7 +460,7 @@ def rcon_counts(server_dir, recs, settle=(4, 30), policy=None, leaks=None):
                     cats = set(re.findall(r'Category: "([^"]+)"', shop))
                     if r.get("stock") in ("mart", "stones"):
                         # a Mart sells the basic items and nothing else, and all of them; the Exchange the stones
-                        want = mart_items(policy) if r.get("stock") == "mart" else set(stone_items(policy))
+                        want = mart_shop_items(policy, r["id"]) if r.get("stock") == "mart" else set(stone_items(policy))
                         bad = sorted(ids - want) + sorted("missing " + i for i in want - ids)
                     else:
                         bad = sorted(ids & held) + sorted("category " + c for c in cats & set(policy.get("withhold_categories") or []))
@@ -507,7 +562,7 @@ def main(argv=None):
             encoding="utf-8", newline="\n")
         policy = doc.get("stock_policy")
         for r in recs:
-            _, kept, held = apply_stock_policy(dict(entity(r["template"])[1]), policy, r.get("stock"))
+            _, kept, held = apply_stock_policy(dict(entity(r["template"])[1]), policy, r.get("stock"), r["id"])
             if r.get("stock") == "mart":
                 missing = mart_items(policy) - set(kept or [])
                 if missing:

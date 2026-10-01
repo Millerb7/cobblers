@@ -26,6 +26,45 @@ here is urgent in the sense of unsafe** — they are all "a session cannot choos
 | **B6** | **The ladder's shape.** `docs/mechanics/PROGRESSION_LADDER.md` argues the backpack is **not** the spine: the convenience arc finishes at **badge 3 of 8**, because gold/diamond/netherite add ~12 slots each. It recommends two strands per counter, and the power strand if only one. | Nine numbered questions at the end of that file. An income measurement is in this wave and may re-price several rungs. |
 | **B7** | **`crafting_upgrade`'s home.** The ladder's own test failed one rung: portable crafting at badge 6 is too late for "never build a house". Proposed move: Brock's, priced out of reach until badge 3 — **price as the gate**, needing no flag, datapack or restart. | A cheap, reversible call. |
 
+### B8. The trainer card's price collides with the first town's income — found by two agents in one wave
+
+The card is now sold at **Pallet's Poke Mart for 500** (`data/traders.json`), priced from Cobbleverse's
+own `default_shop.json` rather than invented, and argued well: the card gates *natural* trainer spawns, so
+it must precede the Pallet → Route 1 → Brock stretch where the ambient layer teaches what a trainer is.
+
+In the same wave the income measurement found that **at badge 0 a player has no authored income at all**:
+not one reward, quest or first-win grant in the whole repository pays a dollar (`data/rewards.json` is 11
+items, all nine `first_win_rewards` are a badge plus a TM, and `grep` for currency in `data/quests.json`
+returns nothing), and **no starting-balance key exists in any config**.
+
+So the only money before Brock is **wild-Pokemon income**, which is `true` in config and **has never been
+measured** — the measurement's own biggest hole. The card is therefore reachable or not depending on a
+number nobody has.
+
+**Options:** (a) leave it and measure wild income first (one experiment, ~10 minutes); (b) drop the price,
+accepting two prices for one item if the `defaultShop` fallback turns out to exist; (c) grant the card
+with the starter instead of selling it, which makes the ambient layer unconditional; (d) accept that a new
+player catches a few wild Pokemon before buying it, which may simply be the intended shape.
+
+### B9. Prices are off by a scale factor, not a shape
+
+The income measurement's structural result, which is worth more than its list: **leg income rises 3.8x
+across eight badges and the ladder's per-badge ask rises 3.5x — the slopes match, the intercept is about
+2.5x off.** Full ladder including off-path is **$172,650** against $58,031 earned (model B).
+
+So the cheapest fix is one of two single changes, not a re-design: divide the price column by ~2.5, or
+raise `cobbleDollarsIncomeMultiplier` from 0.5 to about 1.25 (one key, but it also multiplies what the
+bank's 82 unreviewed sell prices leak). **Worst offenders:** Pallet's $550 at badge 0 (impossible,
+above), Brock's `crafting_upgrade` at 7,500 (2.0x of everything earned to badge 1), Giovanni's 45,000
+shelf, and the mining town's 15,800 at `gym3_cleared` (1.4x of *total* income to that point). Nothing is
+priced too low.
+
+### B10. A 20%-of-balance blackout charge and a 20,000 purchase cannot coexist
+
+`data/blackout.json` takes **20% of balance, rounded up**, on a blackout. The ladder asks up to 20,000 for
+a single item. Saving for one means one blackout costs 4,000. That is a **cross-system contract**, not a
+price — it belongs in `data/system_contracts.json` with a test, whichever way you resolve it.
+
 ## C. In-game checks only you can make
 
 | # | Check | Why a session cannot |
