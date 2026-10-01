@@ -129,10 +129,21 @@
   something that sets it (the finale's quest stage: story, Codex's). Settled by the unit: the cradle goes to
   (3357, 3306) and not FACTION.md's (3297, 2603), which is outside the Rift; Z3 is superseded by the gulch's
   own zone; Registeel's effective gate is 8 badges, not 7, anywhere in the Rift.
-- **The test suite's honest baseline is 4,937 passed, 8 failed, 8 xfailed.** All 8 failures reproduce at
-  36eb267 and none is from the 2026-09-30 work: heightmap provenance (`water_shaped_from` undocumented),
-  `mines_independent` surface faces, `no_swallowed_crashes`, two `rift_heightmap` sculpt tests, and three
-  `sea_town` tests - the last three the same sea-town/ferry migration that contracts C3 and C14 record.
+- **The suite is 5,138 passed, 12 failed, 9 xfailed (measured at 27710fd, 1,054 s). The "8 failed" baseline
+  is superseded, and the claim that none of the failures is from the 2026-09-30 work is WRONG.** The 8
+  baseline failures are still there and still pre-existing: heightmap provenance (`water_shaped_from`
+  undocumented), `mines_independent` surface faces, `no_swallowed_crashes`, two `rift_heightmap` sculpt
+  tests, and three `sea_town` tests - the last three the same sea-town/ferry migration that contracts C3
+  and C14 record. **Four more are this branch's own.** `tests/test_gym_buildings_independent.py` and
+  `tests/test_legendaries.py` are both new on `build/2026-09-29-phase2`, as are the data files they check
+  (`data/gym_buildings/` and `data/legendaries.json` exist on no other branch), and each pins a state a
+  later commit on the same branch moved past: the two gym tests assert **five** buildings where
+  `data/gym_buildings/` now holds **seven** (gyms 6 and 8 were added after them), and the two legendaries
+  tests fail with their own message, "registeel is sited now: this test no longer tests it". Content moved
+  and its tests did not follow - the staleness the different-agents rule exists to catch. Fixing them is
+  `test-author` work and is the next unit. `no_swallowed_crashes` now also names these two new files for
+  catching `BaseException` with the comment "no heightmap here"; the heightmap IS present on this machine,
+  so that excuse wants re-examining rather than inheriting.
 
 - **Routes 1-8 were re-routed on the water-shaped heightmap (2026-09-30) and did not move one column**;
   only `victory_road` moved, 246 of 3,677, in the surface approach at x3567-3580 z5282-5527, nowhere near
