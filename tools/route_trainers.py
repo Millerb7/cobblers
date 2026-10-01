@@ -10,17 +10,17 @@ From data/trainers.json (generated from docs/story/TRAINER_RULES.json) and four 
                                 the way Victory Road's are (lines_of below)
   data/mansion_guardians.json   the Gastly mansion's five Channeler guardians, record and seat together
   data/vr_trainers.json         Victory Road's ten, on the stands tools/vr_caves.py carved along its walked
-                                route; the tenth (the Gate Warden) carries its own record beside its seat,
-                                because data/trainers.json is generated and holds only nine
+                                route. All ten records are in data/trainers.json; the tenth is the League
+                                Examiner, chosen by the owner on 2026-10-01 over the Gate Warden this file
+                                used to author beside the seat (kept there, decided against, emitted nowhere)
   data/gym_trainers.json        the eight gym leaders. No seat either: our own gym build sets
                                 rctmod:trainer_spawner{TrainerIds:["kanto_brock"]} and the badge is awarded
                                 for beating that id, so the id cannot be re-pointed and our roster reaches a
                                 player only by overriding it. Emits the team and nothing else -- their
-                                dialogue is Codex's to write. gym_08_giovanni is still marked held in
-                                data/gym_trainers.json and skipped, and its reason no longer holds: as of
-                                2026-10-01 data/trainers.json gives him status 'authored', a team of six
-                                topping out at 55 (his contract level) and blocked_by None. Seven of the
-                                eight leaders' teams reach a player; the eighth waits on one field
+                                dialogue is Codex's to write. gym_08_giovanni's hold was cleared by the
+                                owner on 2026-10-01 -- data/trainers.json gives him status 'authored',
+                                blocked_by None and six Pokemon topping out at 55, his contract level -- so
+                                all EIGHT leaders' teams now reach a player, where seven did before
   data/league_trainers.json     the Elite Four and the Champion. These have no seat: Cobbleverse's
                                 kanto_league template already carries five rctmod:trainer_spawner blocks
                                 locked to kanto_league_lorelei/_bruno/_agatha/_lance and kanto_champion_blue
@@ -128,12 +128,23 @@ STAND_FIELDS = frozenset({
 # the roster's copy is read, the seat file's must match it exactly, and a drift apart is a fault.
 ROSTER_ECHO = frozenset({"lesson", "trainer_order", "route", "name"})
 # The one field with a declared precedence rather than one owner (see lines_of): the roster's wins when
-# it has one, and the seat file's is the fallback for a record that has none. Divergence is legal here
-# and therefore counted and printed, never silent -- the roster's lines are what a player hears.
+# it has one, and the seat file's is the fallback for a record that has none. Kept, not emptied, after the
+# 2026-10-01 deletion of Victory Road's ten dead sets: Routes 4-8's twenty-eight records carry
+# dialogue_text {} -- the key is present and empty -- so those twenty-eight seats STILL hold the only
+# lines those trainers have, and the fallback in lines_of() is what puts them in front of a player. The
+# guard is what stops a seat-side set going dead unnoticed, which is how the ten came to be dead.
 ROSTER_PRECEDENCE = frozenset({"dialogue_text"})
 
 
-# [(trainer id, field)] whose seat-file copy the roster supersedes: filled by load(), reported by files()
+# [(trainer id, field)] where the roster has a value of its own AND the seat file's differs, so the seat
+# file's is dead: filled by load(), warned about by main() only when non-empty.
+#
+# It used to be every divergence, empty roster value included, and that made the count it printed every
+# run wrong: "38 superseded sets" counted Victory Road's ten, whose records really do carry text, TOGETHER
+# WITH Routes 4-8's twenty-eight, whose records carry {} and whose seat-side lines lines_of() has always
+# preferred and emitted. Twenty-eight live sets were reported as dead. An empty roster value is the
+# fallback working as designed, not a supersession, so it is no longer counted -- and with the ten deleted
+# the list is empty and a clean run says nothing (the owner, 2026-10-01: no count every run).
 SUPERSEDED: list = []
 
 
@@ -151,7 +162,8 @@ def ownership(recs, entries, src):
             continue              # the seat file carries the whole record (every mansion guardian)
         for f in sorted(set(e) & set(r) - {"id"}):
             if f in ROSTER_PRECEDENCE:
-                if e[f] != r[f]:
+                # only a roster value that actually WINS supersedes: lines_of() falls back on a falsy one
+                if r[f] and e[f] != r[f]:
                     superseded.append((e["id"], f))
             elif f in ROSTER_ECHO:
                 if e[f] != r[f]:
@@ -208,11 +220,11 @@ def overrides():
     data/progression.json binds gym1_cleared and the first-win rewards to the same id.
 
     An entry marked "held" is skipped with its reason, and the reason is printed rather than trusted.
-    gym_08_giovanni's says data/trainers.json gives him an empty team and status 'held' -- an override
-    with no Pokemon in it being worse than leaving upstream's roster alone. That was true on 2026-09-30
-    and is NOT true now: docs/story/GIOVANNI_FORMAT.md settled the format (singles), #96 generated the
-    roster, and he carries six Pokemon at 52-55 with blocked_by None. Only data/gym_trainers.json's
-    `held: true` keeps him out, and the owner decides when it goes.
+    Nothing is held as of 2026-10-01: gym_08_giovanni's hold quoted an empty team and status 'held' that
+    no longer exist -- the format question is settled (singles), #96 generated the roster, and he carries
+    six Pokemon at 52-55 with blocked_by None and an ace at exactly his contract level -- so the owner
+    cleared it and all thirteen overrides emit. The mechanism stays: a leader can be held again, and a
+    held leader must be loud rather than missing.
     """
     recs, _seats, _f = load()
     out, held = [], []
@@ -470,15 +482,18 @@ def main(argv=None):
           % (len(fs), len(placements()), len(over), out))
     for tid, why in held:
         print("  held, nothing emitted: %s -- %s" % (tid, why.split(". ")[0] + "."))
-    # the one legal two-author case, said out loud: a seat file's dialogue_text that the roster's own
-    # supersedes. Legal (lines_of prefers the record) but never silent -- these lines are authored, and
-    # saying nothing is how 38 of them came to be dead without anyone noticing the merge that did it
+    # A clean run says nothing here. SUPERSEDED is empty while no seat file holds a dialogue_text the
+    # roster also has text for: Victory Road's ten were deleted on 2026-10-01 and Routes 4-8's
+    # twenty-eight are the only lines their trainers have, not superseded ones. It is kept rather than
+    # removed because what it catches is a value that is dead and silent -- how the ten came to be dead
+    # across a clean merge nobody could see. If this ever prints, the named seat file's text reaches no
+    # player and one of the two sides should go.
     byf = {}
     for tid, f in SUPERSEDED:
         byf.setdefault(f, []).append(tid)
     for f, ids in sorted(byf.items()):
-        print("  roster supersedes %d seat-file %s set(s); the record's is emitted: %s%s"
-              % (len(ids), f, ", ".join(sorted(ids)[:4]), " ..." if len(ids) > 4 else ""))
+        print("  WARNING: %d seat-file %s set(s) are DEAD -- the roster has its own and that is what is "
+              "emitted: %s%s" % (len(ids), f, ", ".join(sorted(ids)[:4]), " ..." if len(ids) > 4 else ""))
     return 0
 
 
