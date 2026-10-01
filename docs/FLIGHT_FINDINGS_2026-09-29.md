@@ -284,3 +284,31 @@ route trainer must not stand.
 Neither was "fixed" in Codex's data: the seats moved, the authored points did not, and the move is
 recorded per seat. If the intent was for those two to be town trainers rather than route trainers, the
 fix belongs in TRAINER_RULES.json and these seats should go.
+
+## The 28 route 4-8 seats, verified in the world (2026-09-30)
+
+R17 applied with 56 seated trainers, and the ten seats the seating agent itself nominated as most
+likely wrong were probed over RCON. **All ten trainers are in the world, no water under any seat,
+every footing solid.**
+
+The probe also corrected the agent's own prediction, which is the whole reason for probing rather than
+trusting. It expected air at the feet and head of all ten; five feet cells and two head cells are not:
+
+| seat | feet | head |
+|---|---|---|
+| route_07_trainer_01 (6293, 95, 3597) | `tall_grass` | its upper half |
+| route_04_trainer_01 (1899, 142, 1568) | `tall_grass` | its upper half |
+| route_06_trainer_05 (5964, 96, 3217) | `short_grass` | air |
+| route_04_trainer_02 (2371, 158, 1304) | `snow` layer | air |
+| route_04_trainer_05 (3569, 104, 1889) | `snow` layer | air |
+
+All five are **passable** — vegetation and snow layers, not obstruction — so every seat is standable
+and the substance of the claim holds. It also proves the footing twice over: tall grass, short grass
+and snow layers only exist on solid ground, so their presence is itself evidence the seat is not
+hanging over a hole. What the agent said would mean a seat was wrong — `water`, or a missing feet
+block — is what was not found.
+
+**Why this is the pattern to keep.** The plan could not have told us any of it. The agent cannot read
+a world and must not try; what it can do is name, in advance and in coordinates, what someone with a
+world should expect — and pick the cases most likely to embarrass it rather than the easy ones. That
+turns an unverifiable claim into a falsifiable one, and it cost one RCON pass.
