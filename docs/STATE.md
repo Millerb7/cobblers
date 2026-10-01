@@ -199,18 +199,31 @@
   worktree never receives. **So build units serialise through main sessions at roughly one per session**,
   and a night planned as a fan-out of builders cannot run. Plan one build per session, with its test
   rewrite as the next session.
-- **The open-air Mega farms are AUTHORED AND PARKED** (2026-10-01, `data/notes/mega_farms_proposal.json`).
-  Seven dens across the Rift's two southern arms, four `outer` and three `deeper`, measured off the
-  canonical heightmap and never a world: inside the arm polygons of `data/regions.json`, pad slope under
-  10 degrees, 24+ clear of every `keep_clear` box, 260+ apart. Each farm's zone is a 41-block square round
-  its den's pad and nothing more, with the turn-back yaw facing the den, so the Mega is **seen and not
-  reached** -- the cordon language the Deep already uses. Verified before parking: `gulch_mine.py build`
-  emits all seven (zone advancements, zone and turn_back functions, bind/gone/spawn per den) and
-  `gulch_mine_audit.py` is CLEAN. Held out of `data/gulch_mine.json` only for the test surface above;
-  `data/gulch_mine.json` is byte-identical to before the unit. Parked state: 185 passed, 2 xfailed, 0
-  failed across both gulch suites and the contracts. **Open for the owner:** whether an open-country
-  turn-back is wanted at all, or whether the level band (60 / 67 against a cap of 50) should be the only
-  gate. `farm_tiers` is ASSUMED throughout and nothing in it has been timed.
+- **The open-air Mega farms are LIVE in the data and green** (2026-10-01). Seven dens across the Rift's
+  two southern arms, four `outer` and three `deeper`, now in `data/gulch_mine.json` as `farms`,
+  `farms_why` and `farms_grid`. **NOT IN ANY WORLD** -- no world exists to apply them to (see the staging
+  entry above) -- but the data, the generated pack and the whole verification surface are done:
+  `gulch_mine.py build` emits all seven, `gulch_mine_audit.py` is CLEAN, and the four suites that had gone
+  15 red now read **215 passed, 3 xfailed, 0 failed** against the real data rather than an injected copy.
+  The parked proposal file was deleted once its three keys were confirmed byte-identical to the live
+  file: a second copy of the same ids is the two-author hazard `data/id_authorship.json` exists to catch,
+  and it would not have caught this one, because identical duplicates only surface once one side drifts.
+  **C14 is not violated** -- `gm.gone` behaves identically for farm dens, and leaving the approach box
+  freezes the clock rather than resetting it, asserted now for all seven dens on both restart and
+  re-approach. **Open for the owner:** whether an open-country turn-back is wanted at all, or whether the
+  level band (60 / 67 against a cap of 50) should be the only gate. `farm_tiers` is ASSUMED throughout and
+  nothing in it has been timed.
+- **An agent worktree CAN read the canonical heightmap; only `derived/` is missing**
+  (`docs/research/AGENT_WORKTREE_INPUTS.md`, proven 2026-10-01). `COBBLERS_SOURCE_ROOT` is set in
+  `.claude/settings.json` `env` and reaches agents, so `tools/ground.py` works there: a test-author agent
+  briefed that it could not run the heightmap-dependent suites ran them anyway and answered y122 at
+  (4528, 4416), the same ground this session measured for `east_arm_shoulder`. Verified independently:
+  that worktree's `derived/` held only `README.md`. **So three nights of "builds cannot be delegated" was
+  right about `derived/`-dependent work and WRONG about the rest**, including the gulch test rewrite. What
+  remains is `derived/` alone, 198 MB of regenerable artefacts, and the only recorded obstacle is the
+  permission classifier refusing `tools/rift_heightmap.py --plan` -- the tool written for exactly this
+  case. One command settles whether the constraint exists at all. `COBBLERS_LOCAL_STORE` cannot help as it
+  stands: it holds 339 files and all of them are kits, with no heightmap and no derived artefact in it.
 - **Three guards that were missing are now in** (2026-10-01, correct with or without the farms):
   `tools/gulch_mine_audit.py` read `s["level"]` on every den and crashed with `KeyError` on the first den
   that inherited its tier's level, which the generator's own `den_level` allows -- the rule is now written

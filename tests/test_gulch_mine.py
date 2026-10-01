@@ -116,6 +116,58 @@ def position(adv):
     return crit["conditions"]["player"]
 
 
+# ============================================================================================ the world model itself
+
+# Without it every conclusion the drop roll's tests draw rests on a storage model nobody checked, and a model that
+# quietly guesses hands back a PASS for a contract it never simulated. The gulch's roll is built on five NBT
+# behaviours and on what vanilla ANSWERS, so each is pinned here on functions written for this test alone:
+# `set value` and `append value`; a filtered element `dens[{id:"..."}]` found, created by a filtered set, and removed;
+# `set from entity <sel> UUID`; `set from storage`; `execute if data storage` on a filtered path; a macro call taking
+# its arguments from storage; and the two answers the roll's hitter comparison turns on -- a `set` that changes
+# nothing succeeds 0, and a source path with no element fails and changes nothing. An entity may be named by its
+# UUID's text, as `$execute as $(who)` does. A `data` form the gulch does not write raises NotModelled rather than
+# being guessed at.
+def test_the_gulch_model_follows_minecraft_nbt_storage_and_refuses_what_it_does_not_know():
+    S = "t:s"
+    w = GS.World({"t/a": [
+        'data modify storage t:s dens set value []',
+        'data modify storage t:s dens append value {id:"one"}',
+        'data modify storage t:s dens[{id:"one"}].pid set from entity @s UUID',
+        'data modify storage t:s me set from storage t:s dens[{id:"one"}].pid',
+        'execute store success score #same t.x run data modify storage t:s me set from storage t:s dens[{id:"one"}].pid',
+        'execute store success score #miss t.x run data modify storage t:s me set from storage t:s dens[{id:"two"}].pid',
+        'execute store success score #there t.x if data storage t:s dens[{id:"one"}]',
+        'execute store success score #absent t.x if data storage t:s dens[{id:"two"}]',
+        'data modify storage t:s dens[{id:"two"}].pid set value "made"',
+        'data remove storage t:s dens[{id:"one"}].pid',
+    ], "t/macro": ['$data modify storage t:s out set value "$(id)-$(pid)"'],
+        "t/call": ['function cobblers:t/macro with storage t:s dens[{id:"two"}]']})
+    me = w.player((0.5, 64, 0.5))
+    w.me = me
+    w.call("t/a")
+    # append then a filtered read; a filtered set that matches nothing appends the pattern it looked for (vanilla)
+    assert [d["id"] for d in w.sget(S, "dens")[0]] == ["one", "two"], w.nbt
+    assert w.sget(S, 'dens[{id:"two"}].pid') == ["made"]
+    assert w.sget(S, 'dens[{id:"one"}].pid') == [], "data remove left the tag behind"
+    # the hitter comparison: the same value succeeds 0, a source with no element fails and changes nothing
+    assert (w.get("#same", "t.x"), w.get("#miss", "t.x")) == (0, 0)
+    assert (w.get("#there", "t.x"), w.get("#absent", "t.x")) == (1, 0)
+    assert w.sget(S, "me") == [me["nbt"]["UUID"]], "a failed set overwrote the target"
+    w.me = None
+    w.call("t/call")
+    assert w.sget(S, "out") == ["two-made"], w.nbt          # macro arguments render a string as its own text
+    # an entity may be named by its UUID's text, as the roll's `$execute as $(who)` does
+    named = GS.World({"t/u": ["execute as %s run tag @s add hit" % GS.uuid_text(me["nbt"]["UUID"])]}, seed=11)
+    other = named.player((9.5, 64, 9.5))
+    named.entities.append(me)
+    assert GS.uuid_text(other["nbt"]["UUID"]) != GS.uuid_text(me["nbt"]["UUID"])
+    named.call("t/u")
+    assert "hit" in me["tags"] and not other["tags"], (me["tags"], other["tags"])
+    # and a form the gulch does not write is refused, not guessed
+    with pytest.raises(GS.NotModelled):
+        GS.World({"t/n": ["data modify storage t:s a prepend value 1"]}).call("t/n")
+
+
 # ================================================================================================= the gate, both ways
 
 FILES, FNS = gate()
@@ -360,6 +412,53 @@ def _mine_world(fns=None, near=True, gt=10_000_000, seed=7):
     return w
 
 
+# ---- the open-air Mega farms (data farms[]): a world inside one farm's approach box, used here, by
+# tests/test_gate_clocks.py's farm clock scenarios and by contract C12
+FARM_DENS = [(f["id"], d["id"]) for f in SPEC.get("farms", []) for d in f["dens"]]
+STORE = "cobblers:gulch_mine"               # the dens' storage, as data/gulch_mine.json's drop roll uses it
+
+
+def farm_spec(respawn=None):
+    """The data, with every farm tier's respawn_ticks cut to `respawn` so a den's clock runs inside a test."""
+    spec = copy.deepcopy(SPEC)
+    if respawn:
+        for tier in spec["farm_tiers"].values():
+            if isinstance(tier, dict):
+                tier["respawn_ticks"] = respawn
+    return spec
+
+
+def farm_keeper(respawn=None):
+    """The keeper built on the data, with every farm tier's respawn_ticks cut to `respawn` (None: the data's own)."""
+    return GM.keeper_files(spec_model(farm_spec(respawn)))
+
+
+def farm_spots(spec, site, den_id):
+    """Two standing places inside `site`'s approach box and clear of the den's anchor, so its Mega can still spawn."""
+    farm = next(f for f in spec["farms"] if f["id"] == site)
+    den = next(d for d in farm["dens"] if d["id"] == den_id)
+    ax, ay, az = den["anchor"]
+    x0, y0, z0, x1, y1, z1 = farm["approach"]
+    clear = spec["megas"]["spawn_clear"]
+    spots = [(ax + clear + 32.5, ay, az + 0.5), (ax + 0.5, ay, az + clear + 32.5)]
+    for s in spots:
+        assert x0 <= s[0] < x1 + 1 and y0 <= s[1] < y1 + 1 and z0 <= s[2] < z1 + 1, (site, s, farm["approach"])
+        assert math.dist(s, (ax + 0.5, ay, az + 0.5)) > clear, (site, s)
+    return den, spots
+
+
+def _farm_world(site, den_id, fns=None, respawn=1200, gt=10_000_000, seed=7, players=2):
+    """(spec, den, world, players): one farm den's Mega up and claimed, with `players` standing in its approach box."""
+    spec = farm_spec(respawn)
+    den, spots = farm_spots(spec, site, den_id)
+    w = world(fns or GM.keeper_files(spec_model(spec)), seed=seed)
+    w.gt = gt
+    w.call("%s/load" % F)
+    who = [w.player(s) for s in spots[:players]]
+    _run(w, 4 * PASS + 5)
+    return spec, den, w, who
+
+
 def _run(w, ticks):
     """Tick, recording (game time, den) for every Mega spawn."""
     out = []
@@ -435,7 +534,9 @@ def test_each_mega_is_spawned_once_uncatchable_tagged_and_persistent_at_its_anch
         (e,) = got
         assert e["props"] == [s["species"], s["aspect"], "uncatchable", "level=%d" % s["level"]], e["props"]
         assert e["tags"] == {MTAG, "%s.%s" % (MTAG, sid)}, e["tags"]
-        assert e.get("nbt") == ["{PersistenceRequired:1b}"], e
+        # the mine's slots are not farm dens: they carry neither the farm tag nor its drop roll
+        assert SPEC["megas"]["farm_tag"] not in e["tags"], e["tags"]
+        assert e["nbt"].get("PersistenceRequired") == 1, e["nbt"]
         assert (e["pos"][0] - 0.5, e["pos"][2] - 0.5) == tuple(s["anchor"]), e["pos"]
     before = len(w.entities)
     _run(w, 1000)

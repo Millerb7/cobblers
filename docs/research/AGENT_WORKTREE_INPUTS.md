@@ -95,10 +95,48 @@ What is **not** a blocker, on this evidence: size (39 MB is a trivial copy), git
 behaviour, and `--plan` exists to regenerate), git (a worktree is doing its job), and reading outside the
 worktree (demonstrably allowed).
 
-## 6. The decisive test, not yet run
+## 5b. PROVEN, hours after this was written: the heightmap half already works
 
-One throwaway agent, four commands, each issued **plain and separately** so the classifier's verdict on
-each is unambiguous. It should report each result verbatim and stop at the first refusal:
+The test-author agent sent to rewrite the gulch surface was briefed that it **could not** run those
+suites. It ran them anyway, and it was right to:
+
+> *"`COBBLERS_SOURCE_ROOT=C:\Users\wnd\Documents` loads the canonical heightmap in this worktree
+> (`tools/ground.py` answered 122 at 4528,4416); only `derived/` is missing, which gates other suites,
+> not these."*
+
+Checked independently from the main session rather than taken on its word:
+
+- its worktree's `derived/` contained **only `README.md`** -- it genuinely had no derived inputs;
+- `git status` there shows **nothing** under `data/`, `tools/` or `modpack/` -- it kept to `tests/`;
+- and y122 at (4528, 4416) is exactly the ground this session measured for the `east_arm_shoulder` den,
+  off the same heightmap.
+
+So **an agent worktree can read the 39 MB heightmap at its absolute path today, with no change to
+anything.** Section 4's inference is now a measurement. `COBBLERS_SOURCE_ROOT` is set in
+`.claude/settings.json` `env` and reaches agents; `terrain.py` takes it; the file is outside the
+worktree and is read anyway.
+
+**What is left of the blocker is `derived/` alone** -- 198 MB of regenerable artefacts -- and the only
+recorded obstacle to regenerating it in place is the classifier's refusal of
+`python tools/rift_heightmap.py --plan`, the tool written for this exact case. That is one command's
+permission, not a structural limit.
+
+It also means the agent that needed `tests/test_system_contracts.py` **was not blocked at all**, and this
+session's own claim that it would be -- in the handover, in STATE and in PR #104 -- was wrong. The
+constraint was real for `derived/`-dependent work and overstated for the rest.
+
+## 6. The decisive test, now narrowed to one command
+
+Steps 1, 2 and 4 below are **answered** by section 5b: the env var reaches agents, the heightmap is
+readable, and the heightmap-dependent tests run. **Only step 3 is still open**, and it is one command:
+does the classifier let an agent run `python tools/rift_heightmap.py --plan` and rebuild `derived/`?
+
+If yes, the constraint is gone. If refused, two fallbacks need no harness change: put the heightmap and
+the rift-sculpt plan in `COBBLERS_LOCAL_STORE` and extend `tools/local_inputs.py` (the one hydrate path
+already verified for agents), or give the `derived/`-reading tools a `--derived <dir>` override so an
+agent reads the main checkout's copy by absolute path, which section 5b proves is allowed.
+
+The original four, for the record:
 
 1. `echo $COBBLERS_SOURCE_ROOT` — is the env var even set in an agent?
 2. `python -c "import os;p=os.environ['COBBLERS_SOURCE_ROOT']+'/land_8k_16_rescaled_b145_pads_rift_water.png';print(os.path.exists(p), os.path.getsize(p))"` — can it reach the heightmap?

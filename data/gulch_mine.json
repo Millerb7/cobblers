@@ -13,9 +13,18 @@
   ],
   "seed": 20260928,
   "grid": {
-    "x": [4228, 4500],
-    "z": [4640, 4970],
-    "y": [36, 205],
+    "x": [
+      4228,
+      4500
+    ],
+    "z": [
+      4640,
+      4970
+    ],
+    "y": [
+      36,
+      205
+    ],
     "why": "every block this build writes: the rockslide wall at the gulch_mouth gap (x4345-4400, up to its crest at the crag tops, y194), the road down to the floor, the cove town, the Tally Hall and the Cutting Floor with its two faces (to x4483); y from under the Cutting Floor's shell to over the wall"
   },
   "cover_min": 4,
@@ -26,19 +35,64 @@
     "why": "decision 3: the gulch is its own zone at six badges (the badge whose leader gives the Mega Bracelet, decision 7). The flag is the advancement tools/progression_pack.py writes per player when rctmod counts the sixth leader beaten"
   },
   "palette": {
-    "rock_upper": ["minecraft:stone", "minecraft:stone", "minecraft:andesite", "minecraft:tuff"],
-    "rock_lower": ["minecraft:deepslate", "minecraft:deepslate", "minecraft:tuff", "minecraft:cobbled_deepslate"],
+    "rock_upper": [
+      "minecraft:stone",
+      "minecraft:stone",
+      "minecraft:andesite",
+      "minecraft:tuff"
+    ],
+    "rock_lower": [
+      "minecraft:deepslate",
+      "minecraft:deepslate",
+      "minecraft:tuff",
+      "minecraft:cobbled_deepslate"
+    ],
     "rock_split_y": 70,
-    "fill": ["minecraft:stone", "minecraft:andesite", "minecraft:tuff"],
-    "drift_floor": ["minecraft:cobbled_deepslate", "minecraft:tuff", "minecraft:polished_tuff"],
-    "hall_floor": ["minecraft:polished_deepslate", "minecraft:polished_tuff"],
-    "cutting_floor": ["minecraft:deepslate", "minecraft:smooth_basalt", "minecraft:deepslate", "minecraft:cobbled_deepslate"],
-    "rubble": ["minecraft:cobbled_deepslate", "minecraft:tuff", "minecraft:andesite", "minecraft:cobblestone", "minecraft:deepslate"],
+    "fill": [
+      "minecraft:stone",
+      "minecraft:andesite",
+      "minecraft:tuff"
+    ],
+    "drift_floor": [
+      "minecraft:cobbled_deepslate",
+      "minecraft:tuff",
+      "minecraft:polished_tuff"
+    ],
+    "hall_floor": [
+      "minecraft:polished_deepslate",
+      "minecraft:polished_tuff"
+    ],
+    "cutting_floor": [
+      "minecraft:deepslate",
+      "minecraft:smooth_basalt",
+      "minecraft:deepslate",
+      "minecraft:cobbled_deepslate"
+    ],
+    "rubble": [
+      "minecraft:cobbled_deepslate",
+      "minecraft:tuff",
+      "minecraft:andesite",
+      "minecraft:cobblestone",
+      "minecraft:deepslate"
+    ],
     "square_border": "minecraft:deepslate_bricks",
     "square_band": "minecraft:polished_tuff",
-    "square_field": ["minecraft:polished_deepslate", "minecraft:polished_deepslate", "minecraft:polished_deepslate", "minecraft:deepslate_tiles"],
-    "yard_floor": ["minecraft:polished_deepslate", "minecraft:cobbled_deepslate", "minecraft:tuff"],
-    "road": ["minecraft:coarse_dirt", "minecraft:coarse_dirt", "minecraft:cobbled_deepslate"],
+    "square_field": [
+      "minecraft:polished_deepslate",
+      "minecraft:polished_deepslate",
+      "minecraft:polished_deepslate",
+      "minecraft:deepslate_tiles"
+    ],
+    "yard_floor": [
+      "minecraft:polished_deepslate",
+      "minecraft:cobbled_deepslate",
+      "minecraft:tuff"
+    ],
+    "road": [
+      "minecraft:coarse_dirt",
+      "minecraft:coarse_dirt",
+      "minecraft:cobbled_deepslate"
+    ],
     "meteorid": "mega_showdown:mega_meteorid_block",
     "meteorid_radiated": "mega_showdown:mega_meteorid_radiated_block",
     "meteorid_polished": "mega_showdown:polished_mega_meteorid_block",
@@ -46,19 +100,41 @@
     "meteorid_brick": "mega_showdown:mega_meteorid_brick",
     "dormant_crystal": "mega_showdown:dormant_crystal",
     "mega_stone_crystal": "mega_showdown:mega_stone_crystal",
-    "spoil": ["minecraft:gravel", "minecraft:tuff", "minecraft:cobbled_deepslate", "minecraft:gravel", "minecraft:andesite", "minecraft:cobblestone"],
-    "ore": ["minecraft:raw_iron_block", "minecraft:raw_copper_block", "minecraft:coal_block", "minecraft:gravel", "minecraft:tuff"],
+    "spoil": [
+      "minecraft:gravel",
+      "minecraft:tuff",
+      "minecraft:cobbled_deepslate",
+      "minecraft:gravel",
+      "minecraft:andesite",
+      "minecraft:cobblestone"
+    ],
+    "ore": [
+      "minecraft:raw_iron_block",
+      "minecraft:raw_copper_block",
+      "minecraft:coal_block",
+      "minecraft:gravel",
+      "minecraft:tuff"
+    ],
     "post": "minecraft:polished_basalt",
     "beam": "minecraft:waxed_cut_copper",
     "msd_source": "read 2026-09-27 with Python zipfile from mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar, SHA-1 50b2012b5207706fd93d42dfad73f94aa294c7a2 (the hash modpack/manifest/overlay.json pins), a client profile copy: blockstates mega_meteorid_block, mega_meteorid_radiated_block, polished_mega_meteorid_block, chiseled_mega_meteorid_brick, mega_meteorid_brick (no properties), dormant_crystal (facing: 6 ways), mega_stone_crystal (facing: north, south, west, east)",
     "never": "no mega_showdown:mega_meteorid_*_ore block, anywhere: their loot tables drop Cobblemon evolution stones (SOUTHERN_RIFT_MEGA.md section 4), which would make the gulch an unplanned eighth evolution-stone site. No rail, no coal or iron ore, no light block (tools/gulch_mine_audit.py checks the output against data/spawn_blocks.json)"
   },
   "zone": {
-    "y": [-64, 575],
+    "y": [
+      -64,
+      575
+    ],
     "y_why": "full height, as RIFT_ZONES.md section 4 draws a zone: flying over or digging under is still inside",
     "trace": {
-      "from_near": [4350, 4600],
-      "to_near": [4196, 4927],
+      "from_near": [
+        4350,
+        4600
+      ],
+      "to_near": [
+        4196,
+        4927
+      ],
       "gap_inset": 2,
       "rim_outset": 3,
       "tolerance": 1.5,
@@ -67,83 +143,314 @@
     },
     "line_why": "the old branch-mouth line (4373, 4691)-(4196, 4927) put the canyon's foot on Victory Road's side (SOUTHERN_RIFT.md finding 1). The re-traced line runs from (4350, 4600) to (4196, 4927): the split (4180, 4745) is about 100 blocks outside it, Victory Road's corridor (data/routes.json, 104 wide) about 190, and the road down from the gate and the town about 16 or more inside",
     "polygon": [
-      [4354.0, 4599.8],
-      [4355.0, 4604.9],
-      [4350.0, 4615.9],
-      [4351.0, 4635.6],
-      [4359.0, 4648.5],
-      [4360.0, 4660.5],
-      [4355.0, 4662.3],
-      [4355.0, 4688.3],
-      [4357.0, 4692.4],
-      [4357.1, 4699.6],
-      [4358.1, 4700.6],
-      [4358.2, 4706.8],
-      [4359.2, 4707.8],
-      [4359.2, 4709.9],
-      [4361.2, 4713.9],
-      [4370.3, 4722.0],
-      [4372.3, 4726.0],
-      [4379.3, 4734.0],
-      [4385.3, 4744.1],
-      [4386.4, 4750.1],
-      [4391.4, 4748.3],
-      [4393.2, 4755.9],
-      [4406.4, 4769.4],
-      [4426.6, 4764.5],
-      [4431.8, 4766.6],
-      [4435.0, 4772.8],
-      [4435.0, 4784.8],
-      [4440.9, 4796.7],
-      [4445.8, 4798.6],
-      [4452.7, 4793.5],
-      [4459.7, 4793.5],
-      [4464.7, 4796.5],
-      [4473.1, 4805.8],
-      [4483.9, 4831.7],
-      [4499.6, 4830.5],
-      [4520.7, 4842.6],
-      [4521.8, 4849.0],
-      [4515.9, 4860.2],
-      [4514.0, 4870.7],
-      [4529.9, 4891.4],
-      [4521.9, 4902.2],
-      [4520.9, 4907.3],
-      [4536.8, 4935.9],
-      [4538.0, 4953.2],
-      [4541.9, 4960.8],
-      [4540.8, 4967.1],
-      [4526.3, 4971.9],
-      [4522.1, 4977.1],
-      [4521.8, 4982.4],
-      [4501.6, 4999.5],
-      [4489.3, 4999.7],
-      [4479.4, 5006.7],
-      [4468.1, 5008.8],
-      [4452.9, 5023.9],
-      [4440.1, 5016.8],
-      [4433.8, 5016.9],
-      [4412.8, 5032.9],
-      [4403.7, 5030.9],
-      [4381.7, 5031.9],
-      [4366.8, 5041.9],
-      [4342.8, 5047.0],
-      [4322.8, 5042.7],
-      [4306.1, 5023.9],
-      [4289.2, 5021.9],
-      [4284.5, 5031.0],
-      [4280.4, 5031.9],
-      [4266.6, 5017.6],
-      [4253.9, 5014.1],
-      [4245.1, 5003.3],
-      [4239.8, 4992.0],
-      [4221.3, 4981.4],
-      [4221.6, 4956.8],
-      [4216.5, 4952.7],
-      [4199.1, 4951.3],
-      [4197.3, 4948.5],
-      [4199.3, 4936.5],
-      [4192.9, 4931.1]
+      [
+        4354.0,
+        4599.8
+      ],
+      [
+        4355.0,
+        4604.9
+      ],
+      [
+        4350.0,
+        4615.9
+      ],
+      [
+        4351.0,
+        4635.6
+      ],
+      [
+        4359.0,
+        4648.5
+      ],
+      [
+        4360.0,
+        4660.5
+      ],
+      [
+        4355.0,
+        4662.3
+      ],
+      [
+        4355.0,
+        4688.3
+      ],
+      [
+        4357.0,
+        4692.4
+      ],
+      [
+        4357.1,
+        4699.6
+      ],
+      [
+        4358.1,
+        4700.6
+      ],
+      [
+        4358.2,
+        4706.8
+      ],
+      [
+        4359.2,
+        4707.8
+      ],
+      [
+        4359.2,
+        4709.9
+      ],
+      [
+        4361.2,
+        4713.9
+      ],
+      [
+        4370.3,
+        4722.0
+      ],
+      [
+        4372.3,
+        4726.0
+      ],
+      [
+        4379.3,
+        4734.0
+      ],
+      [
+        4385.3,
+        4744.1
+      ],
+      [
+        4386.4,
+        4750.1
+      ],
+      [
+        4391.4,
+        4748.3
+      ],
+      [
+        4393.2,
+        4755.9
+      ],
+      [
+        4406.4,
+        4769.4
+      ],
+      [
+        4426.6,
+        4764.5
+      ],
+      [
+        4431.8,
+        4766.6
+      ],
+      [
+        4435.0,
+        4772.8
+      ],
+      [
+        4435.0,
+        4784.8
+      ],
+      [
+        4440.9,
+        4796.7
+      ],
+      [
+        4445.8,
+        4798.6
+      ],
+      [
+        4452.7,
+        4793.5
+      ],
+      [
+        4459.7,
+        4793.5
+      ],
+      [
+        4464.7,
+        4796.5
+      ],
+      [
+        4473.1,
+        4805.8
+      ],
+      [
+        4483.9,
+        4831.7
+      ],
+      [
+        4499.6,
+        4830.5
+      ],
+      [
+        4520.7,
+        4842.6
+      ],
+      [
+        4521.8,
+        4849.0
+      ],
+      [
+        4515.9,
+        4860.2
+      ],
+      [
+        4514.0,
+        4870.7
+      ],
+      [
+        4529.9,
+        4891.4
+      ],
+      [
+        4521.9,
+        4902.2
+      ],
+      [
+        4520.9,
+        4907.3
+      ],
+      [
+        4536.8,
+        4935.9
+      ],
+      [
+        4538.0,
+        4953.2
+      ],
+      [
+        4541.9,
+        4960.8
+      ],
+      [
+        4540.8,
+        4967.1
+      ],
+      [
+        4526.3,
+        4971.9
+      ],
+      [
+        4522.1,
+        4977.1
+      ],
+      [
+        4521.8,
+        4982.4
+      ],
+      [
+        4501.6,
+        4999.5
+      ],
+      [
+        4489.3,
+        4999.7
+      ],
+      [
+        4479.4,
+        5006.7
+      ],
+      [
+        4468.1,
+        5008.8
+      ],
+      [
+        4452.9,
+        5023.9
+      ],
+      [
+        4440.1,
+        5016.8
+      ],
+      [
+        4433.8,
+        5016.9
+      ],
+      [
+        4412.8,
+        5032.9
+      ],
+      [
+        4403.7,
+        5030.9
+      ],
+      [
+        4381.7,
+        5031.9
+      ],
+      [
+        4366.8,
+        5041.9
+      ],
+      [
+        4342.8,
+        5047.0
+      ],
+      [
+        4322.8,
+        5042.7
+      ],
+      [
+        4306.1,
+        5023.9
+      ],
+      [
+        4289.2,
+        5021.9
+      ],
+      [
+        4284.5,
+        5031.0
+      ],
+      [
+        4280.4,
+        5031.9
+      ],
+      [
+        4266.6,
+        5017.6
+      ],
+      [
+        4253.9,
+        5014.1
+      ],
+      [
+        4245.1,
+        5003.3
+      ],
+      [
+        4239.8,
+        4992.0
+      ],
+      [
+        4221.3,
+        4981.4
+      ],
+      [
+        4221.6,
+        4956.8
+      ],
+      [
+        4216.5,
+        4952.7
+      ],
+      [
+        4199.1,
+        4951.3
+      ],
+      [
+        4197.3,
+        4948.5
+      ],
+      [
+        4199.3,
+        4936.5
+      ],
+      [
+        4192.9,
+        4931.1
+      ]
     ]
   },
   "gate": {
@@ -151,7 +458,10 @@
     "band": {
       "entrance": "gulch_mouth",
       "wall": {
-        "top": [194, 186],
+        "top": [
+          194,
+          186
+        ],
         "core": 2,
         "spread_out": 8,
         "spread_in": 1,
@@ -162,134 +472,769 @@
       },
       "why": "every ring point of the sculpt's gap (j = -44..44 from the entrance's ring index), with its inward normal, as `trace` prints it from derived/rift_sculpt/plan.json. Each claims the columns within 1 of its point moved -1, 0 and +1 along the normal (geometry.band): a band 4 to 6 wide along the lip. The rockfall stands on each column's ground (or the road) up to its ring point's ground + height, and at least min_rise over the column's own ground; outside the gap the sculpt raised the rim into crags (rift_heightmap.py, `open_at`), which are the barrier there",
       "points": [
-        [-44, 4357, 4662, -0.9854, 0.1705],
-        [-43, 4357, 4663, -0.9854, 0.1705],
-        [-42, 4357, 4664, -0.9854, 0.1705],
-        [-41, 4357, 4665, -0.9884, 0.1521],
-        [-40, 4357, 4666, -0.9884, 0.1521],
-        [-39, 4357, 4667, -0.9884, 0.1521],
-        [-38, 4357, 4668, -0.9911, 0.1334],
-        [-37, 4357, 4669, -0.9911, 0.1334],
-        [-36, 4357, 4670, -0.9934, 0.1146],
-        [-35, 4357, 4671, -0.9954, 0.0957],
-        [-34, 4357, 4672, -0.9954, 0.0957],
-        [-33, 4357, 4673, -0.9971, 0.0767],
-        [-32, 4357, 4674, -0.9954, 0.0957],
-        [-31, 4357, 4675, -0.9971, 0.0767],
-        [-30, 4357, 4676, -0.9971, 0.0767],
-        [-29, 4357, 4677, -0.9971, 0.0767],
-        [-28, 4357, 4678, -0.9983, 0.0576],
-        [-27, 4357, 4679, -0.9983, 0.0576],
-        [-26, 4357, 4680, -0.9983, 0.0576],
-        [-25, 4357, 4681, -0.9971, 0.0767],
-        [-24, 4357, 4682, -0.9971, 0.0767],
-        [-23, 4357, 4683, -0.9971, 0.0767],
-        [-22, 4357, 4684, -0.9954, 0.0957],
-        [-21, 4357, 4685, -0.9954, 0.0957],
-        [-20, 4357, 4686, -0.9934, 0.1146],
-        [-19, 4357, 4687, -0.9934, 0.1146],
-        [-18, 4357, 4688, -0.9911, 0.1334],
-        [-17, 4358, 4689, -0.9884, 0.1521],
-        [-16, 4358, 4690, -0.9854, 0.1705],
-        [-15, 4358, 4691, -0.9813, 0.1924],
-        [-14, 4359, 4692, -0.9775, 0.2108],
-        [-13, 4359, 4693, -0.9734, 0.229],
-        [-12, 4359, 4694, -0.969, 0.247],
-        [-11, 4359, 4695, -0.9643, 0.2647],
-        [-10, 4359, 4696, -0.9594, 0.2822],
-        [-9, 4359, 4697, -0.9594, 0.2822],
-        [-8, 4359, 4698, -0.9541, 0.2993],
-        [-7, 4359, 4699, -0.9487, 0.3162],
-        [-6, 4360, 4700, -0.9487, 0.3162],
-        [-5, 4360, 4701, -0.943, 0.3328],
-        [-4, 4360, 4702, -0.9371, 0.3491],
-        [-3, 4360, 4703, -0.931, 0.3651],
-        [-2, 4360, 4704, -0.931, 0.3651],
-        [-1, 4360, 4705, -0.9247, 0.3807],
-        [0, 4360, 4706, -0.9182, 0.3961],
-        [1, 4361, 4707, -0.9116, 0.4111],
-        [2, 4361, 4708, -0.9048, 0.4258],
-        [3, 4361, 4709, -0.9048, 0.4258],
-        [4, 4362, 4710, -0.8979, 0.4402],
-        [5, 4362, 4711, -0.8909, 0.4542],
-        [6, 4363, 4712, -0.8909, 0.4542],
-        [7, 4363, 4713, -0.8838, 0.4679],
-        [8, 4364, 4714, -0.8838, 0.4679],
-        [9, 4365, 4715, -0.8838, 0.4679],
-        [10, 4366, 4716, -0.8766, 0.4813],
-        [11, 4367, 4716, -0.8766, 0.4813],
-        [12, 4368, 4717, -0.8766, 0.4813],
-        [13, 4369, 4718, -0.8766, 0.4813],
-        [14, 4370, 4719, -0.8766, 0.4813],
-        [15, 4371, 4720, -0.8693, 0.4943],
-        [16, 4372, 4721, -0.8693, 0.4943],
-        [17, 4372, 4722, -0.8693, 0.4943],
-        [18, 4373, 4723, -0.8693, 0.4943],
-        [19, 4374, 4724, -0.8619, 0.507],
-        [20, 4374, 4725, -0.8693, 0.4943],
-        [21, 4375, 4726, -0.8693, 0.4943],
-        [22, 4376, 4727, -0.8693, 0.4943],
-        [23, 4377, 4728, -0.8693, 0.4943],
-        [24, 4377, 4729, -0.8619, 0.507],
-        [25, 4378, 4730, -0.8619, 0.507],
-        [26, 4379, 4731, -0.8545, 0.5194],
-        [27, 4380, 4732, -0.8619, 0.507],
-        [28, 4381, 4733, -0.8545, 0.5194],
-        [29, 4381, 4734, -0.8471, 0.5315],
-        [30, 4382, 4735, -0.8471, 0.5315],
-        [31, 4383, 4736, -0.8396, 0.5433],
-        [32, 4383, 4737, -0.8396, 0.5433],
-        [33, 4384, 4738, -0.8321, 0.5547],
-        [34, 4384, 4739, -0.8396, 0.5433],
-        [35, 4385, 4740, -0.8396, 0.5433],
-        [36, 4386, 4741, -0.8396, 0.5433],
-        [37, 4386, 4742, -0.8443, 0.5358],
-        [38, 4387, 4743, -0.8443, 0.5358],
-        [39, 4387, 4744, -0.8443, 0.5358],
-        [40, 4387, 4745, -0.8443, 0.5358],
-        [41, 4388, 4746, -0.8396, 0.5433],
-        [42, 4388, 4747, -0.8396, 0.5433],
-        [43, 4388, 4748, -0.8269, 0.5623],
-        [44, 4388, 4749, -0.8216, 0.5701]
+        [
+          -44,
+          4357,
+          4662,
+          -0.9854,
+          0.1705
+        ],
+        [
+          -43,
+          4357,
+          4663,
+          -0.9854,
+          0.1705
+        ],
+        [
+          -42,
+          4357,
+          4664,
+          -0.9854,
+          0.1705
+        ],
+        [
+          -41,
+          4357,
+          4665,
+          -0.9884,
+          0.1521
+        ],
+        [
+          -40,
+          4357,
+          4666,
+          -0.9884,
+          0.1521
+        ],
+        [
+          -39,
+          4357,
+          4667,
+          -0.9884,
+          0.1521
+        ],
+        [
+          -38,
+          4357,
+          4668,
+          -0.9911,
+          0.1334
+        ],
+        [
+          -37,
+          4357,
+          4669,
+          -0.9911,
+          0.1334
+        ],
+        [
+          -36,
+          4357,
+          4670,
+          -0.9934,
+          0.1146
+        ],
+        [
+          -35,
+          4357,
+          4671,
+          -0.9954,
+          0.0957
+        ],
+        [
+          -34,
+          4357,
+          4672,
+          -0.9954,
+          0.0957
+        ],
+        [
+          -33,
+          4357,
+          4673,
+          -0.9971,
+          0.0767
+        ],
+        [
+          -32,
+          4357,
+          4674,
+          -0.9954,
+          0.0957
+        ],
+        [
+          -31,
+          4357,
+          4675,
+          -0.9971,
+          0.0767
+        ],
+        [
+          -30,
+          4357,
+          4676,
+          -0.9971,
+          0.0767
+        ],
+        [
+          -29,
+          4357,
+          4677,
+          -0.9971,
+          0.0767
+        ],
+        [
+          -28,
+          4357,
+          4678,
+          -0.9983,
+          0.0576
+        ],
+        [
+          -27,
+          4357,
+          4679,
+          -0.9983,
+          0.0576
+        ],
+        [
+          -26,
+          4357,
+          4680,
+          -0.9983,
+          0.0576
+        ],
+        [
+          -25,
+          4357,
+          4681,
+          -0.9971,
+          0.0767
+        ],
+        [
+          -24,
+          4357,
+          4682,
+          -0.9971,
+          0.0767
+        ],
+        [
+          -23,
+          4357,
+          4683,
+          -0.9971,
+          0.0767
+        ],
+        [
+          -22,
+          4357,
+          4684,
+          -0.9954,
+          0.0957
+        ],
+        [
+          -21,
+          4357,
+          4685,
+          -0.9954,
+          0.0957
+        ],
+        [
+          -20,
+          4357,
+          4686,
+          -0.9934,
+          0.1146
+        ],
+        [
+          -19,
+          4357,
+          4687,
+          -0.9934,
+          0.1146
+        ],
+        [
+          -18,
+          4357,
+          4688,
+          -0.9911,
+          0.1334
+        ],
+        [
+          -17,
+          4358,
+          4689,
+          -0.9884,
+          0.1521
+        ],
+        [
+          -16,
+          4358,
+          4690,
+          -0.9854,
+          0.1705
+        ],
+        [
+          -15,
+          4358,
+          4691,
+          -0.9813,
+          0.1924
+        ],
+        [
+          -14,
+          4359,
+          4692,
+          -0.9775,
+          0.2108
+        ],
+        [
+          -13,
+          4359,
+          4693,
+          -0.9734,
+          0.229
+        ],
+        [
+          -12,
+          4359,
+          4694,
+          -0.969,
+          0.247
+        ],
+        [
+          -11,
+          4359,
+          4695,
+          -0.9643,
+          0.2647
+        ],
+        [
+          -10,
+          4359,
+          4696,
+          -0.9594,
+          0.2822
+        ],
+        [
+          -9,
+          4359,
+          4697,
+          -0.9594,
+          0.2822
+        ],
+        [
+          -8,
+          4359,
+          4698,
+          -0.9541,
+          0.2993
+        ],
+        [
+          -7,
+          4359,
+          4699,
+          -0.9487,
+          0.3162
+        ],
+        [
+          -6,
+          4360,
+          4700,
+          -0.9487,
+          0.3162
+        ],
+        [
+          -5,
+          4360,
+          4701,
+          -0.943,
+          0.3328
+        ],
+        [
+          -4,
+          4360,
+          4702,
+          -0.9371,
+          0.3491
+        ],
+        [
+          -3,
+          4360,
+          4703,
+          -0.931,
+          0.3651
+        ],
+        [
+          -2,
+          4360,
+          4704,
+          -0.931,
+          0.3651
+        ],
+        [
+          -1,
+          4360,
+          4705,
+          -0.9247,
+          0.3807
+        ],
+        [
+          0,
+          4360,
+          4706,
+          -0.9182,
+          0.3961
+        ],
+        [
+          1,
+          4361,
+          4707,
+          -0.9116,
+          0.4111
+        ],
+        [
+          2,
+          4361,
+          4708,
+          -0.9048,
+          0.4258
+        ],
+        [
+          3,
+          4361,
+          4709,
+          -0.9048,
+          0.4258
+        ],
+        [
+          4,
+          4362,
+          4710,
+          -0.8979,
+          0.4402
+        ],
+        [
+          5,
+          4362,
+          4711,
+          -0.8909,
+          0.4542
+        ],
+        [
+          6,
+          4363,
+          4712,
+          -0.8909,
+          0.4542
+        ],
+        [
+          7,
+          4363,
+          4713,
+          -0.8838,
+          0.4679
+        ],
+        [
+          8,
+          4364,
+          4714,
+          -0.8838,
+          0.4679
+        ],
+        [
+          9,
+          4365,
+          4715,
+          -0.8838,
+          0.4679
+        ],
+        [
+          10,
+          4366,
+          4716,
+          -0.8766,
+          0.4813
+        ],
+        [
+          11,
+          4367,
+          4716,
+          -0.8766,
+          0.4813
+        ],
+        [
+          12,
+          4368,
+          4717,
+          -0.8766,
+          0.4813
+        ],
+        [
+          13,
+          4369,
+          4718,
+          -0.8766,
+          0.4813
+        ],
+        [
+          14,
+          4370,
+          4719,
+          -0.8766,
+          0.4813
+        ],
+        [
+          15,
+          4371,
+          4720,
+          -0.8693,
+          0.4943
+        ],
+        [
+          16,
+          4372,
+          4721,
+          -0.8693,
+          0.4943
+        ],
+        [
+          17,
+          4372,
+          4722,
+          -0.8693,
+          0.4943
+        ],
+        [
+          18,
+          4373,
+          4723,
+          -0.8693,
+          0.4943
+        ],
+        [
+          19,
+          4374,
+          4724,
+          -0.8619,
+          0.507
+        ],
+        [
+          20,
+          4374,
+          4725,
+          -0.8693,
+          0.4943
+        ],
+        [
+          21,
+          4375,
+          4726,
+          -0.8693,
+          0.4943
+        ],
+        [
+          22,
+          4376,
+          4727,
+          -0.8693,
+          0.4943
+        ],
+        [
+          23,
+          4377,
+          4728,
+          -0.8693,
+          0.4943
+        ],
+        [
+          24,
+          4377,
+          4729,
+          -0.8619,
+          0.507
+        ],
+        [
+          25,
+          4378,
+          4730,
+          -0.8619,
+          0.507
+        ],
+        [
+          26,
+          4379,
+          4731,
+          -0.8545,
+          0.5194
+        ],
+        [
+          27,
+          4380,
+          4732,
+          -0.8619,
+          0.507
+        ],
+        [
+          28,
+          4381,
+          4733,
+          -0.8545,
+          0.5194
+        ],
+        [
+          29,
+          4381,
+          4734,
+          -0.8471,
+          0.5315
+        ],
+        [
+          30,
+          4382,
+          4735,
+          -0.8471,
+          0.5315
+        ],
+        [
+          31,
+          4383,
+          4736,
+          -0.8396,
+          0.5433
+        ],
+        [
+          32,
+          4383,
+          4737,
+          -0.8396,
+          0.5433
+        ],
+        [
+          33,
+          4384,
+          4738,
+          -0.8321,
+          0.5547
+        ],
+        [
+          34,
+          4384,
+          4739,
+          -0.8396,
+          0.5433
+        ],
+        [
+          35,
+          4385,
+          4740,
+          -0.8396,
+          0.5433
+        ],
+        [
+          36,
+          4386,
+          4741,
+          -0.8396,
+          0.5433
+        ],
+        [
+          37,
+          4386,
+          4742,
+          -0.8443,
+          0.5358
+        ],
+        [
+          38,
+          4387,
+          4743,
+          -0.8443,
+          0.5358
+        ],
+        [
+          39,
+          4387,
+          4744,
+          -0.8443,
+          0.5358
+        ],
+        [
+          40,
+          4387,
+          4745,
+          -0.8443,
+          0.5358
+        ],
+        [
+          41,
+          4388,
+          4746,
+          -0.8396,
+          0.5433
+        ],
+        [
+          42,
+          4388,
+          4747,
+          -0.8396,
+          0.5433
+        ],
+        [
+          43,
+          4388,
+          4748,
+          -0.8269,
+          0.5623
+        ],
+        [
+          44,
+          4388,
+          4749,
+          -0.8216,
+          0.5701
+        ]
       ]
     },
     "plug": {
       "half_j": 6,
       "max_x": 4362,
-      "trim_z": [4703, 4709],
+      "trim_z": [
+        4703,
+        4709
+      ],
       "top_y": 190,
       "why": "the wall's columns with |j| <= 6 are the plug, the gatehouse's solid rock, flat topped at the crest there (y190, the wall's crest line at j = 0); in the rows z4703-4709 round the grille every plug column east of x4362 is left out, so the grille stands in the plug's one flat face at the end of a 7-wide slot through the outer talus, the road and the knock alcove in it. Elsewhere the wall keeps its full width, so every ring point of the gap stays under rock"
     },
     "grille": {
       "x": 4362,
-      "z": [4705, 4707],
-      "y": [116, 118],
+      "z": [
+        4705,
+        4707
+      ],
+      "y": [
+        116,
+        118
+      ],
       "why": "iron bars 3 wide and 3 high in the plug's outer face, on the road (surface y115 at x4362), basalt posts either side and a lintel over; the plug is solid behind it, as the spur's gate was"
     },
     "road": {
-      "path": [[4392, 4706, 126], [4344, 4706, 108], [4320, 4722, 99], [4300, 4745, 95], [4288, 4765, 89], [4285, 4790, 88]],
+      "path": [
+        [
+          4392,
+          4706,
+          126
+        ],
+        [
+          4344,
+          4706,
+          108
+        ],
+        [
+          4320,
+          4722,
+          99
+        ],
+        [
+          4300,
+          4745,
+          95
+        ],
+        [
+          4288,
+          4765,
+          89
+        ],
+        [
+          4285,
+          4790,
+          88
+        ]
+      ],
       "half": 2,
       "clear_above": 3,
       "why": "the lookout's road, [x, z, surface y]: the sculpt's ramp is stepped by its own rounding into ridges up to 10 blocks apart between neighbouring columns (x4300-4340; heightmap, 2026-09-27), which a player cannot walk. The road grades a 5-wide way from the plateau (y126 at x4392) through the gate (y115 at the grille) down to the gulch floor (y88), no step over 1 block: 0.37 per block to x4344, then 0.31, 0.13, 0.26 and 0.04. Fill under it where the ground is lower, air over it to 3 above the higher of the ground and the road"
     },
-    "knock": [4363, 116, 4705, 4365, 119, 4707],
-    "exit": [4353, 112, 4705, 4354, 116, 4707],
-    "arrive": [4349.5, 111, 4706.5, 90],
-    "turn_back": [4370.5, 119, 4706.5, -90],
+    "knock": [
+      4363,
+      116,
+      4705,
+      4365,
+      119,
+      4707
+    ],
+    "exit": [
+      4353,
+      112,
+      4705,
+      4354,
+      116,
+      4707
+    ],
+    "arrive": [
+      4349.5,
+      111,
+      4706.5,
+      90
+    ],
+    "turn_back": [
+      4370.5,
+      119,
+      4706.5,
+      -90
+    ],
     "places_why": "boxes are [x0, y0, z0, x1, y1, z1], feet levels on the road's surface: the knock alcove directly outside the grille (road y115-116), the exit box just behind the rockfall (road y111-112), the arrival 4 blocks further in and facing down the road (yaw 90, west), the turn-back point 8 outside facing away (yaw -90, east)",
-    "ward": [4350, 106, 4689, 4377, 197, 4720],
+    "ward": [
+      4350,
+      106,
+      4689,
+      4377,
+      197,
+      4720
+    ],
     "ward_margin": 7,
     "ward_why": "the plug's columns (x4358-4370, z4696-4713, y114 over their lowest ground to the wall's crest at y190), the grille and the knock alcove, grown by 7 on every side: the test author showed margin 4 was reachable at the spur's gate (reach 4.5 from the eyes, 1.62 over the feet the box tests); 7 keeps the plug beyond reach from beside and below. Anyone in survival or adventure inside it has Mining Fatigue IV (the spur gate's ward, the owner's 'i can mine around the door'). The arrival (x4349.5) stands just outside it",
-    "lamp_posts": [[4367, 4703], [4367, 4709], [4351, 4703], [4351, 4709]],
-    "outside_ok": [4340, 4650, 4400, 4760],
+    "lamp_posts": [
+      [
+        4367,
+        4703
+      ],
+      [
+        4367,
+        4709
+      ],
+      [
+        4351,
+        4703
+      ],
+      [
+        4351,
+        4709
+      ]
+    ],
+    "outside_ok": [
+      4340,
+      4650,
+      4400,
+      4760
+    ],
     "outside_why": "the only built columns allowed outside the zone: the rockfall, the plug's outer face, the grille, the road above the gate and its lamp posts (the generator's zone check; the audit checks the same list block by block)",
     "messages_are_placeholders": "the actionbar lines are plain placeholders; the lookout's voice is Codex's (docs/HANDOVER_CODEX.md)"
   },
   "town": {
     "name": "the Cutters' Gulch (working name; names are the owner's and Codex's, HANDOVER_CODEX.md item 26)",
     "square": {
-      "rect": [4278, 4818, 4338, 4878],
-      "centre": [4308, 4848],
+      "rect": [
+        4278,
+        4818,
+        4338,
+        4878
+      ],
+      "centre": [
+        4308,
+        4848
+      ],
       "surface_y": 88,
       "border": 2,
       "band_every": 10,
@@ -297,27 +1242,94 @@
       "why": "decision 4: the 61-square at (4308, 4848). On the heightmap its ground is y88-91, median y88, nothing under y88: paved at y88, a cut of at most 3 over 1,246 columns and no fill. Deepslate brick border, tuff bands every 10, a meteorid plinth at the centre with a dormant crystal behind glass (the Crystal Yard's display, SOUTHERN_RIFT.md 3: never a mineable face)"
     },
     "yard": {
-      "rect": [4276, 4880, 4340, 4911],
+      "rect": [
+        4276,
+        4880,
+        4340,
+        4911
+      ],
       "surface_y": 88,
       "clear_above": 6,
       "why": "the rock-cut quarter: the slope south of the square (y89 at its foot to y97-100 at z4904-4911, heightmap) cut down to the square's level, leaving a rock face 6-14 high along z4912 that the houses stand against and the adit leaves from. The east wall SOUTHERN_RIFT_MEGA.md 4 names climbs later than it says (y92-100 within 60 blocks of the square, heightmap): the south slope is where the rock is"
     },
-    "lamp_posts": [[4281, 4821], [4308, 4821], [4335, 4821], [4281, 4848], [4335, 4848], [4281, 4875], [4335, 4875], [4314, 4884], [4326, 4884], [4286, 4884]],
+    "lamp_posts": [
+      [
+        4281,
+        4821
+      ],
+      [
+        4308,
+        4821
+      ],
+      [
+        4335,
+        4821
+      ],
+      [
+        4281,
+        4848
+      ],
+      [
+        4335,
+        4848
+      ],
+      [
+        4281,
+        4875
+      ],
+      [
+        4335,
+        4875
+      ],
+      [
+        4314,
+        4884
+      ],
+      [
+        4326,
+        4884
+      ],
+      [
+        4286,
+        4884
+      ]
+    ],
     "houses": [
       {
         "id": "cutters_workshop",
-        "rect": [4288, 4896, 4312, 4911],
+        "rect": [
+          4288,
+          4896,
+          4312,
+          4911
+        ],
         "door": "north",
         "walls": "minecraft:deepslate_bricks",
         "role": "cutting",
         "wall_height": 6,
-        "counters": [[[4290, 4902], [4310, 4902]]],
+        "counters": [
+          [
+            [
+              4290,
+              4902
+            ],
+            [
+              4310,
+              4902
+            ]
+          ]
+        ],
         "light_every": 6,
         "why": "the Cutting Hall (SOUTHERN_RIFT_MEGA.md 4): long benches along the back wall, a counter of polished meteorid across the room, and the three bench masters behind it"
       },
       {
         "id": "bunkhouse",
-        "rect": [4278, 4899, 4285, 4911],
+        "rect": [
+          4278,
+          4899,
+          4285,
+          4911
+        ],
         "door": "north",
         "walls": "minecraft:tuff_bricks",
         "role": "bunkhouse",
@@ -325,7 +1337,12 @@
       },
       {
         "id": "assay_counter",
-        "rect": [4316, 4899, 4324, 4911],
+        "rect": [
+          4316,
+          4899,
+          4324,
+          4911
+        ],
         "door": "north",
         "walls": "minecraft:deepslate_bricks",
         "role": "assay",
@@ -340,110 +1357,1363 @@
     "max_range": 3,
     "max_range_open": 5,
     "zone_margin": 3,
-    "alley": [2, 4],
-    "clear": {"square": 2, "road": 3},
+    "alley": [
+      2,
+      4
+    ],
+    "clear": {
+      "square": 2,
+      "road": 3
+    },
     "limits_why": "the cove is the gulch floor: zone columns (by zone_margin inside the zone) whose ground is at or under y96, less the square, the yard, the adit's portal, the gate's wall and ward and the lamp posts (grown by clear.square), and the road (grown by clear.road). A house stands on ground spanning at most max_range (its floor at the highest, a footing under it, steps down from its door); an open work (a headframe, a heap, a pile, a sluice) at most max_range_open. Buildings keep an alley of alley[0]..alley[1] between them",
     "paths": [
-      {"id": "crater_cutting", "path": [[4337, 4830, 88], [4372, 4829, 88], [4408, 4822, 88]], "half": 2, "clear_above": 3,
-       "why": "the east of the cove is a sunken floor at y88-89 inside a rim that stands at y97-102 on the square's side and drops 14 in a block or two to the floor (the heightmap, 2026-09-28): no walker climbs out, none steps in. A level cutting 5 wide at y88 from the square's east edge through the rim onto the floor, as the gate's road is rasterised (geometry.road); its walls are the rim's own rock. It stays clear of the Cutting Floor (43 from its centre where it meets the floor, the hall's reach 41)"}
+      {
+        "id": "crater_cutting",
+        "path": [
+          [
+            4337,
+            4830,
+            88
+          ],
+          [
+            4372,
+            4829,
+            88
+          ],
+          [
+            4408,
+            4822,
+            88
+          ]
+        ],
+        "half": 2,
+        "clear_above": 3,
+        "why": "the east of the cove is a sunken floor at y88-89 inside a rim that stands at y97-102 on the square's side and drops 14 in a block or two to the floor (the heightmap, 2026-09-28): no walker climbs out, none steps in. A level cutting 5 wide at y88 from the square's east edge through the rim onto the floor, as the gate's road is rasterised (geometry.road); its walls are the rim's own rock. It stays clear of the Cutting Floor (43 from its centre where it meets the floor, the hall's reach 41)"
+      }
     ],
-    "walls": ["minecraft:deepslate_bricks", "minecraft:tuff_bricks", "minecraft:polished_tuff", "minecraft:cobbled_deepslate", "minecraft:stone_bricks", "minecraft:polished_andesite"],
+    "walls": [
+      "minecraft:deepslate_bricks",
+      "minecraft:tuff_bricks",
+      "minecraft:polished_tuff",
+      "minecraft:cobbled_deepslate",
+      "minecraft:stone_bricks",
+      "minecraft:polished_andesite"
+    ],
     "sections": [
-      {"id": "heart", "name": "the Cutters' lapidaries", "seeds": [[4352, 4842], [4262, 4858]],
-       "kinds": [{"kind": "lapidary", "count": 4, "size": [8, 10, 11, 14], "wall_height": [5, 6]}],
-       "why": "round the square and the Cutters' workshop: the bench masters' own shops"},
-      {"id": "workers", "name": "the workers' quarter", "seeds": [[4246, 4884], [4300, 4800], [4250, 4830], [4262, 4775]],
-       "kinds": [{"kind": "canteen", "count": 1, "size": [11, 13, 15, 19], "wall_height": [5, 6]},
-                 {"kind": "washhouse", "count": 2, "size": [7, 8, 9, 11]},
-                 {"kind": "dwelling", "count": 24, "size": [7, 9, 9, 12]}],
-       "why": "the west of the cove and the road's foot: where the company's people live"},
-      {"id": "miners", "name": "the miners' camp", "seeds": [[4392, 4790], [4432, 4800], [4414, 4826], [4456, 4815]],
-       "kinds": [{"kind": "headframe", "count": 4, "size": [5, 5, 5, 5], "height": [14, 19], "scatter": true},
-                 {"kind": "winch", "count": 4, "size": [7, 8, 8, 10]},
-                 {"kind": "spoil_heap", "count": 6, "size": [9, 13, 9, 13], "height": [4, 7]},
-                 {"kind": "toolshed", "count": 3, "size": [7, 9, 9, 11]},
-                 {"kind": "dwelling", "count": 7, "size": [7, 9, 9, 12]}],
-       "why": "the sunken east floor of the cove, over the Cutting Floor (its roof 13 under the ground there), entered by the cutting (paths). The narrow floor north of the gate is left alone: no walker reaches it from the town"},
-      {"id": "extraction", "name": "the extraction works", "seeds": [[4382, 4886], [4420, 4880], [4452, 4860], [4412, 4840]],
-       "kinds": [{"kind": "crusher", "count": 3, "size": [11, 13, 13, 17], "wall_height": [6, 7]},
-                 {"kind": "sorting", "count": 3, "size": [9, 11, 11, 14]},
-                 {"kind": "sluice", "count": 4, "size": [3, 3, 13, 19]},
-                 {"kind": "ore_pile", "count": 10, "size": [5, 7, 5, 7], "height": [2, 4]},
-                 {"kind": "spoil_heap", "count": 3, "size": [9, 11, 9, 11], "height": [4, 6]}],
-       "why": "the south-east floor by the adit's end: where the stone that comes up is crushed, washed and sorted"}
+      {
+        "id": "heart",
+        "name": "the Cutters' lapidaries",
+        "seeds": [
+          [
+            4352,
+            4842
+          ],
+          [
+            4262,
+            4858
+          ]
+        ],
+        "kinds": [
+          {
+            "kind": "lapidary",
+            "count": 4,
+            "size": [
+              8,
+              10,
+              11,
+              14
+            ],
+            "wall_height": [
+              5,
+              6
+            ]
+          }
+        ],
+        "why": "round the square and the Cutters' workshop: the bench masters' own shops"
+      },
+      {
+        "id": "workers",
+        "name": "the workers' quarter",
+        "seeds": [
+          [
+            4246,
+            4884
+          ],
+          [
+            4300,
+            4800
+          ],
+          [
+            4250,
+            4830
+          ],
+          [
+            4262,
+            4775
+          ]
+        ],
+        "kinds": [
+          {
+            "kind": "canteen",
+            "count": 1,
+            "size": [
+              11,
+              13,
+              15,
+              19
+            ],
+            "wall_height": [
+              5,
+              6
+            ]
+          },
+          {
+            "kind": "washhouse",
+            "count": 2,
+            "size": [
+              7,
+              8,
+              9,
+              11
+            ]
+          },
+          {
+            "kind": "dwelling",
+            "count": 24,
+            "size": [
+              7,
+              9,
+              9,
+              12
+            ]
+          }
+        ],
+        "why": "the west of the cove and the road's foot: where the company's people live"
+      },
+      {
+        "id": "miners",
+        "name": "the miners' camp",
+        "seeds": [
+          [
+            4392,
+            4790
+          ],
+          [
+            4432,
+            4800
+          ],
+          [
+            4414,
+            4826
+          ],
+          [
+            4456,
+            4815
+          ]
+        ],
+        "kinds": [
+          {
+            "kind": "headframe",
+            "count": 4,
+            "size": [
+              5,
+              5,
+              5,
+              5
+            ],
+            "height": [
+              14,
+              19
+            ],
+            "scatter": true
+          },
+          {
+            "kind": "winch",
+            "count": 4,
+            "size": [
+              7,
+              8,
+              8,
+              10
+            ]
+          },
+          {
+            "kind": "spoil_heap",
+            "count": 6,
+            "size": [
+              9,
+              13,
+              9,
+              13
+            ],
+            "height": [
+              4,
+              7
+            ]
+          },
+          {
+            "kind": "toolshed",
+            "count": 3,
+            "size": [
+              7,
+              9,
+              9,
+              11
+            ]
+          },
+          {
+            "kind": "dwelling",
+            "count": 7,
+            "size": [
+              7,
+              9,
+              9,
+              12
+            ]
+          }
+        ],
+        "why": "the sunken east floor of the cove, over the Cutting Floor (its roof 13 under the ground there), entered by the cutting (paths). The narrow floor north of the gate is left alone: no walker reaches it from the town"
+      },
+      {
+        "id": "extraction",
+        "name": "the extraction works",
+        "seeds": [
+          [
+            4382,
+            4886
+          ],
+          [
+            4420,
+            4880
+          ],
+          [
+            4452,
+            4860
+          ],
+          [
+            4412,
+            4840
+          ]
+        ],
+        "kinds": [
+          {
+            "kind": "crusher",
+            "count": 3,
+            "size": [
+              11,
+              13,
+              13,
+              17
+            ],
+            "wall_height": [
+              6,
+              7
+            ]
+          },
+          {
+            "kind": "sorting",
+            "count": 3,
+            "size": [
+              9,
+              11,
+              11,
+              14
+            ]
+          },
+          {
+            "kind": "sluice",
+            "count": 4,
+            "size": [
+              3,
+              3,
+              13,
+              19
+            ]
+          },
+          {
+            "kind": "ore_pile",
+            "count": 10,
+            "size": [
+              5,
+              7,
+              5,
+              7
+            ],
+            "height": [
+              2,
+              4
+            ]
+          },
+          {
+            "kind": "spoil_heap",
+            "count": 3,
+            "size": [
+              9,
+              11,
+              9,
+              11
+            ],
+            "height": [
+              4,
+              6
+            ]
+          }
+        ],
+        "why": "the south-east floor by the adit's end: where the stone that comes up is crushed, washed and sorted"
+      }
     ],
     "buildings": [
-      {"id": "heart_lapidary_1", "section": "heart", "kind": "lapidary", "rect": [4262, 4854, 4270, 4867], "door": "east", "walls": "minecraft:polished_andesite", "wall_height": 5},
-      {"id": "heart_lapidary_2", "section": "heart", "kind": "lapidary", "rect": [4256, 4841, 4264, 4851], "door": "south", "walls": "minecraft:tuff_bricks", "wall_height": 6},
-      {"id": "heart_lapidary_3", "section": "heart", "kind": "lapidary", "rect": [4347, 4836, 4358, 4844], "door": "west", "walls": "minecraft:stone_bricks", "wall_height": 5},
-      {"id": "heart_lapidary_4", "section": "heart", "kind": "lapidary", "rect": [4343, 4849, 4350, 4861], "door": "north", "walls": "minecraft:tuff_bricks", "wall_height": 5},
-      {"id": "workers_canteen_1", "section": "workers", "kind": "canteen", "rect": [4292, 4794, 4302, 4811], "door": "south", "walls": "minecraft:polished_andesite", "wall_height": 6},
-      {"id": "workers_washhouse_1", "section": "workers", "kind": "washhouse", "rect": [4277, 4801, 4287, 4807], "door": "east", "walls": "minecraft:cobbled_deepslate", "wall_height": 4},
-      {"id": "workers_washhouse_2", "section": "workers", "kind": "washhouse", "rect": [4307, 4804, 4316, 4811], "door": "west", "walls": "minecraft:tuff_bricks", "wall_height": 4},
-      {"id": "workers_dwelling_1", "section": "workers", "kind": "dwelling", "rect": [4306, 4788, 4314, 4796], "door": "west", "walls": "minecraft:polished_andesite", "wall_height": 4},
-      {"id": "workers_dwelling_2", "section": "workers", "kind": "dwelling", "rect": [4264, 4796, 4274, 4803], "door": "east", "walls": "minecraft:cobbled_deepslate", "wall_height": 5},
-      {"id": "workers_dwelling_3", "section": "workers", "kind": "dwelling", "rect": [4272, 4781, 4278, 4791], "door": "south", "walls": "minecraft:deepslate_bricks", "wall_height": 5},
-      {"id": "workers_dwelling_4", "section": "workers", "kind": "dwelling", "rect": [4259, 4808, 4267, 4816], "door": "north", "walls": "minecraft:polished_andesite", "wall_height": 5},
-      {"id": "workers_dwelling_5", "section": "workers", "kind": "dwelling", "rect": [4319, 4797, 4325, 4808], "door": "west", "walls": "minecraft:tuff_bricks", "wall_height": 4},
-      {"id": "workers_dwelling_6", "section": "workers", "kind": "dwelling", "rect": [4263, 4821, 4270, 4829], "door": "north", "walls": "minecraft:polished_tuff", "wall_height": 4},
-      {"id": "workers_dwelling_7", "section": "workers", "kind": "dwelling", "rect": [4250, 4824, 4258, 4833], "door": "east", "walls": "minecraft:polished_tuff", "wall_height": 4},
-      {"id": "workers_dwelling_8", "section": "workers", "kind": "dwelling", "rect": [4330, 4799, 4339, 4807], "door": "west", "walls": "minecraft:polished_tuff", "wall_height": 4},
-      {"id": "workers_dwelling_9", "section": "workers", "kind": "dwelling", "rect": [4344, 4801, 4352, 4812], "door": "west", "walls": "minecraft:cobbled_deepslate", "wall_height": 4},
-      {"id": "workers_dwelling_10", "section": "workers", "kind": "dwelling", "rect": [4267, 4834, 4275, 4842], "door": "north", "walls": "minecraft:cobbled_deepslate", "wall_height": 4},
-      {"id": "workers_dwelling_11", "section": "workers", "kind": "dwelling", "rect": [4327, 4786, 4334, 4794], "door": "south", "walls": "minecraft:cobbled_deepslate", "wall_height": 4},
-      {"id": "workers_dwelling_12", "section": "workers", "kind": "dwelling", "rect": [4349, 4815, 4360, 4822], "door": "north", "walls": "minecraft:stone_bricks", "wall_height": 5},
-      {"id": "workers_dwelling_13", "section": "workers", "kind": "dwelling", "rect": [4292, 4783, 4300, 4789], "door": "south", "walls": "minecraft:cobbled_deepslate", "wall_height": 4},
-      {"id": "workers_dwelling_14", "section": "workers", "kind": "dwelling", "rect": [4305, 4779, 4313, 4785], "door": "west", "walls": "minecraft:polished_andesite", "wall_height": 4},
-      {"id": "workers_dwelling_15", "section": "workers", "kind": "dwelling", "rect": [4295, 4770, 4301, 4778], "door": "south", "walls": "minecraft:deepslate_bricks", "wall_height": 5},
-      {"id": "miners_headframe_1", "section": "miners", "kind": "headframe", "rect": [4393, 4785, 4397, 4789], "height": 18},
-      {"id": "miners_headframe_2", "section": "miners", "kind": "headframe", "rect": [4426, 4797, 4430, 4801], "height": 19},
-      {"id": "miners_headframe_3", "section": "miners", "kind": "headframe", "rect": [4456, 4810, 4460, 4814], "height": 16},
-      {"id": "miners_headframe_4", "section": "miners", "kind": "headframe", "rect": [4393, 4778, 4397, 4782], "height": 15},
-      {"id": "miners_winch_1", "section": "miners", "kind": "winch", "rect": [4380, 4780, 4388, 4787], "door": "east", "walls": "minecraft:polished_andesite", "wall_height": 5},
-      {"id": "miners_winch_2", "section": "miners", "kind": "winch", "rect": [4388, 4768, 4395, 4775], "door": "south", "walls": "minecraft:cobbled_deepslate", "wall_height": 5},
-      {"id": "miners_winch_3", "section": "miners", "kind": "winch", "rect": [4386, 4794, 4395, 4801], "door": "north", "walls": "minecraft:cobbled_deepslate", "wall_height": 4},
-      {"id": "miners_winch_4", "section": "miners", "kind": "winch", "rect": [4402, 4781, 4409, 4789], "door": "west", "walls": "minecraft:deepslate_bricks", "wall_height": 4},
-      {"id": "miners_spoil_heap_1", "section": "miners", "kind": "spoil_heap", "rect": [4407, 4794, 4416, 4803], "height": 7},
-      {"id": "miners_spoil_heap_2", "section": "miners", "kind": "spoil_heap", "rect": [4424, 4805, 4435, 4816], "height": 4},
-      {"id": "miners_spoil_heap_3", "section": "miners", "kind": "spoil_heap", "rect": [4439, 4812, 4451, 4823], "height": 4},
-      {"id": "miners_spoil_heap_4", "section": "miners", "kind": "spoil_heap", "rect": [4373, 4767, 4385, 4777], "height": 5},
-      {"id": "miners_spoil_heap_5", "section": "miners", "kind": "spoil_heap", "rect": [4368, 4782, 4376, 4792], "height": 4},
-      {"id": "miners_spoil_heap_6", "section": "miners", "kind": "spoil_heap", "rect": [4455, 4817, 4466, 4827], "height": 4},
-      {"id": "miners_toolshed_1", "section": "miners", "kind": "toolshed", "rect": [4461, 4832, 4469, 4841], "door": "north", "walls": "minecraft:tuff_bricks", "wall_height": 4},
-      {"id": "miners_toolshed_2", "section": "miners", "kind": "toolshed", "rect": [4415, 4813, 4421, 4823], "door": "east", "walls": "minecraft:stone_bricks", "wall_height": 4},
-      {"id": "miners_toolshed_3", "section": "miners", "kind": "toolshed", "rect": [4419, 4827, 4427, 4835], "door": "north", "walls": "minecraft:cobbled_deepslate", "wall_height": 4},
-      {"id": "miners_dwelling_1", "section": "miners", "kind": "dwelling", "rect": [4447, 4830, 4457, 4838], "door": "north", "walls": "minecraft:deepslate_bricks", "wall_height": 4},
-      {"id": "miners_dwelling_2", "section": "miners", "kind": "dwelling", "rect": [4467, 4845, 4478, 4852], "door": "north", "walls": "minecraft:cobbled_deepslate", "wall_height": 4},
-      {"id": "miners_dwelling_3", "section": "miners", "kind": "dwelling", "rect": [4456, 4850, 4464, 4858], "door": "east", "walls": "minecraft:deepslate_bricks", "wall_height": 5},
-      {"id": "miners_dwelling_4", "section": "miners", "kind": "dwelling", "rect": [4412, 4773, 4420, 4784], "door": "west", "walls": "minecraft:stone_bricks", "wall_height": 4},
-      {"id": "miners_dwelling_5", "section": "miners", "kind": "dwelling", "rect": [4450, 4800, 4458, 4807], "door": "south", "walls": "minecraft:tuff_bricks", "wall_height": 5},
-      {"id": "miners_dwelling_6", "section": "miners", "kind": "dwelling", "rect": [4370, 4795, 4381, 4801], "door": "east", "walls": "minecraft:stone_bricks", "wall_height": 5},
-      {"id": "miners_dwelling_7", "section": "miners", "kind": "dwelling", "rect": [4482, 4839, 4488, 4847], "door": "west", "walls": "minecraft:polished_andesite", "wall_height": 4},
-      {"id": "extraction_crusher_1", "section": "extraction", "kind": "crusher", "rect": [4378, 4880, 4388, 4896], "door": "west", "walls": "minecraft:stone_bricks", "wall_height": 7},
-      {"id": "extraction_crusher_2", "section": "extraction", "kind": "crusher", "rect": [4382, 4901, 4398, 4912], "door": "north", "walls": "minecraft:cobbled_deepslate", "wall_height": 6},
-      {"id": "extraction_crusher_3", "section": "extraction", "kind": "crusher", "rect": [4393, 4874, 4405, 4886], "door": "west", "walls": "minecraft:polished_tuff", "wall_height": 7},
-      {"id": "extraction_sorting_1", "section": "extraction", "kind": "sorting", "rect": [4394, 4915, 4407, 4925], "door": "north", "walls": "minecraft:deepslate_bricks", "wall_height": 5},
-      {"id": "extraction_sorting_2", "section": "extraction", "kind": "sorting", "rect": [4381, 4922, 4391, 4933], "door": "east", "walls": "minecraft:stone_bricks", "wall_height": 5},
-      {"id": "extraction_sorting_3", "section": "extraction", "kind": "sorting", "rect": [4364, 4893, 4374, 4904], "door": "east", "walls": "minecraft:deepslate_bricks", "wall_height": 5},
-      {"id": "extraction_sluice_1", "section": "extraction", "kind": "sluice", "rect": [4377, 4915, 4390, 4917], "head": "low"},
-      {"id": "extraction_sluice_2", "section": "extraction", "kind": "sluice", "rect": [4394, 4857, 4396, 4869], "head": "high"},
-      {"id": "extraction_sluice_3", "section": "extraction", "kind": "sluice", "rect": [4370, 4908, 4372, 4921], "head": "low"},
-      {"id": "extraction_sluice_4", "section": "extraction", "kind": "sluice", "rect": [4403, 4889, 4419, 4891], "head": "high"},
-      {"id": "extraction_ore_pile_1", "section": "extraction", "kind": "ore_pile", "rect": [4380, 4938, 4384, 4942], "height": 3},
-      {"id": "extraction_ore_pile_2", "section": "extraction", "kind": "ore_pile", "rect": [4395, 4889, 4400, 4893], "height": 4},
-      {"id": "extraction_ore_pile_3", "section": "extraction", "kind": "ore_pile", "rect": [4369, 4878, 4374, 4882], "height": 3},
-      {"id": "extraction_ore_pile_4", "section": "extraction", "kind": "ore_pile", "rect": [4367, 4924, 4373, 4930], "height": 3},
-      {"id": "extraction_ore_pile_5", "section": "extraction", "kind": "ore_pile", "rect": [4415, 4874, 4419, 4880], "height": 3},
-      {"id": "extraction_ore_pile_6", "section": "extraction", "kind": "ore_pile", "rect": [4378, 4872, 4382, 4877], "height": 2},
-      {"id": "extraction_ore_pile_7", "section": "extraction", "kind": "ore_pile", "rect": [4417, 4895, 4421, 4899], "height": 4},
-      {"id": "extraction_ore_pile_8", "section": "extraction", "kind": "ore_pile", "rect": [4354, 4901, 4359, 4906], "height": 2},
-      {"id": "extraction_ore_pile_9", "section": "extraction", "kind": "ore_pile", "rect": [4408, 4894, 4412, 4900], "height": 3},
-      {"id": "extraction_ore_pile_10", "section": "extraction", "kind": "ore_pile", "rect": [4355, 4910, 4360, 4915], "height": 3},
-      {"id": "extraction_spoil_heap_1", "section": "extraction", "kind": "spoil_heap", "rect": [4410, 4905, 4420, 4915], "height": 5},
-      {"id": "extraction_spoil_heap_2", "section": "extraction", "kind": "spoil_heap", "rect": [4424, 4885, 4433, 4894], "height": 4},
-      {"id": "extraction_spoil_heap_3", "section": "extraction", "kind": "spoil_heap", "rect": [4380, 4861, 4389, 4869], "height": 6}
+      {
+        "id": "heart_lapidary_1",
+        "section": "heart",
+        "kind": "lapidary",
+        "rect": [
+          4262,
+          4854,
+          4270,
+          4867
+        ],
+        "door": "east",
+        "walls": "minecraft:polished_andesite",
+        "wall_height": 5
+      },
+      {
+        "id": "heart_lapidary_2",
+        "section": "heart",
+        "kind": "lapidary",
+        "rect": [
+          4256,
+          4841,
+          4264,
+          4851
+        ],
+        "door": "south",
+        "walls": "minecraft:tuff_bricks",
+        "wall_height": 6
+      },
+      {
+        "id": "heart_lapidary_3",
+        "section": "heart",
+        "kind": "lapidary",
+        "rect": [
+          4347,
+          4836,
+          4358,
+          4844
+        ],
+        "door": "west",
+        "walls": "minecraft:stone_bricks",
+        "wall_height": 5
+      },
+      {
+        "id": "heart_lapidary_4",
+        "section": "heart",
+        "kind": "lapidary",
+        "rect": [
+          4343,
+          4849,
+          4350,
+          4861
+        ],
+        "door": "north",
+        "walls": "minecraft:tuff_bricks",
+        "wall_height": 5
+      },
+      {
+        "id": "workers_canteen_1",
+        "section": "workers",
+        "kind": "canteen",
+        "rect": [
+          4292,
+          4794,
+          4302,
+          4811
+        ],
+        "door": "south",
+        "walls": "minecraft:polished_andesite",
+        "wall_height": 6
+      },
+      {
+        "id": "workers_washhouse_1",
+        "section": "workers",
+        "kind": "washhouse",
+        "rect": [
+          4277,
+          4801,
+          4287,
+          4807
+        ],
+        "door": "east",
+        "walls": "minecraft:cobbled_deepslate",
+        "wall_height": 4
+      },
+      {
+        "id": "workers_washhouse_2",
+        "section": "workers",
+        "kind": "washhouse",
+        "rect": [
+          4307,
+          4804,
+          4316,
+          4811
+        ],
+        "door": "west",
+        "walls": "minecraft:tuff_bricks",
+        "wall_height": 4
+      },
+      {
+        "id": "workers_dwelling_1",
+        "section": "workers",
+        "kind": "dwelling",
+        "rect": [
+          4306,
+          4788,
+          4314,
+          4796
+        ],
+        "door": "west",
+        "walls": "minecraft:polished_andesite",
+        "wall_height": 4
+      },
+      {
+        "id": "workers_dwelling_2",
+        "section": "workers",
+        "kind": "dwelling",
+        "rect": [
+          4264,
+          4796,
+          4274,
+          4803
+        ],
+        "door": "east",
+        "walls": "minecraft:cobbled_deepslate",
+        "wall_height": 5
+      },
+      {
+        "id": "workers_dwelling_3",
+        "section": "workers",
+        "kind": "dwelling",
+        "rect": [
+          4272,
+          4781,
+          4278,
+          4791
+        ],
+        "door": "south",
+        "walls": "minecraft:deepslate_bricks",
+        "wall_height": 5
+      },
+      {
+        "id": "workers_dwelling_4",
+        "section": "workers",
+        "kind": "dwelling",
+        "rect": [
+          4259,
+          4808,
+          4267,
+          4816
+        ],
+        "door": "north",
+        "walls": "minecraft:polished_andesite",
+        "wall_height": 5
+      },
+      {
+        "id": "workers_dwelling_5",
+        "section": "workers",
+        "kind": "dwelling",
+        "rect": [
+          4319,
+          4797,
+          4325,
+          4808
+        ],
+        "door": "west",
+        "walls": "minecraft:tuff_bricks",
+        "wall_height": 4
+      },
+      {
+        "id": "workers_dwelling_6",
+        "section": "workers",
+        "kind": "dwelling",
+        "rect": [
+          4263,
+          4821,
+          4270,
+          4829
+        ],
+        "door": "north",
+        "walls": "minecraft:polished_tuff",
+        "wall_height": 4
+      },
+      {
+        "id": "workers_dwelling_7",
+        "section": "workers",
+        "kind": "dwelling",
+        "rect": [
+          4250,
+          4824,
+          4258,
+          4833
+        ],
+        "door": "east",
+        "walls": "minecraft:polished_tuff",
+        "wall_height": 4
+      },
+      {
+        "id": "workers_dwelling_8",
+        "section": "workers",
+        "kind": "dwelling",
+        "rect": [
+          4330,
+          4799,
+          4339,
+          4807
+        ],
+        "door": "west",
+        "walls": "minecraft:polished_tuff",
+        "wall_height": 4
+      },
+      {
+        "id": "workers_dwelling_9",
+        "section": "workers",
+        "kind": "dwelling",
+        "rect": [
+          4344,
+          4801,
+          4352,
+          4812
+        ],
+        "door": "west",
+        "walls": "minecraft:cobbled_deepslate",
+        "wall_height": 4
+      },
+      {
+        "id": "workers_dwelling_10",
+        "section": "workers",
+        "kind": "dwelling",
+        "rect": [
+          4267,
+          4834,
+          4275,
+          4842
+        ],
+        "door": "north",
+        "walls": "minecraft:cobbled_deepslate",
+        "wall_height": 4
+      },
+      {
+        "id": "workers_dwelling_11",
+        "section": "workers",
+        "kind": "dwelling",
+        "rect": [
+          4327,
+          4786,
+          4334,
+          4794
+        ],
+        "door": "south",
+        "walls": "minecraft:cobbled_deepslate",
+        "wall_height": 4
+      },
+      {
+        "id": "workers_dwelling_12",
+        "section": "workers",
+        "kind": "dwelling",
+        "rect": [
+          4349,
+          4815,
+          4360,
+          4822
+        ],
+        "door": "north",
+        "walls": "minecraft:stone_bricks",
+        "wall_height": 5
+      },
+      {
+        "id": "workers_dwelling_13",
+        "section": "workers",
+        "kind": "dwelling",
+        "rect": [
+          4292,
+          4783,
+          4300,
+          4789
+        ],
+        "door": "south",
+        "walls": "minecraft:cobbled_deepslate",
+        "wall_height": 4
+      },
+      {
+        "id": "workers_dwelling_14",
+        "section": "workers",
+        "kind": "dwelling",
+        "rect": [
+          4305,
+          4779,
+          4313,
+          4785
+        ],
+        "door": "west",
+        "walls": "minecraft:polished_andesite",
+        "wall_height": 4
+      },
+      {
+        "id": "workers_dwelling_15",
+        "section": "workers",
+        "kind": "dwelling",
+        "rect": [
+          4295,
+          4770,
+          4301,
+          4778
+        ],
+        "door": "south",
+        "walls": "minecraft:deepslate_bricks",
+        "wall_height": 5
+      },
+      {
+        "id": "miners_headframe_1",
+        "section": "miners",
+        "kind": "headframe",
+        "rect": [
+          4393,
+          4785,
+          4397,
+          4789
+        ],
+        "height": 18
+      },
+      {
+        "id": "miners_headframe_2",
+        "section": "miners",
+        "kind": "headframe",
+        "rect": [
+          4426,
+          4797,
+          4430,
+          4801
+        ],
+        "height": 19
+      },
+      {
+        "id": "miners_headframe_3",
+        "section": "miners",
+        "kind": "headframe",
+        "rect": [
+          4456,
+          4810,
+          4460,
+          4814
+        ],
+        "height": 16
+      },
+      {
+        "id": "miners_headframe_4",
+        "section": "miners",
+        "kind": "headframe",
+        "rect": [
+          4393,
+          4778,
+          4397,
+          4782
+        ],
+        "height": 15
+      },
+      {
+        "id": "miners_winch_1",
+        "section": "miners",
+        "kind": "winch",
+        "rect": [
+          4380,
+          4780,
+          4388,
+          4787
+        ],
+        "door": "east",
+        "walls": "minecraft:polished_andesite",
+        "wall_height": 5
+      },
+      {
+        "id": "miners_winch_2",
+        "section": "miners",
+        "kind": "winch",
+        "rect": [
+          4388,
+          4768,
+          4395,
+          4775
+        ],
+        "door": "south",
+        "walls": "minecraft:cobbled_deepslate",
+        "wall_height": 5
+      },
+      {
+        "id": "miners_winch_3",
+        "section": "miners",
+        "kind": "winch",
+        "rect": [
+          4386,
+          4794,
+          4395,
+          4801
+        ],
+        "door": "north",
+        "walls": "minecraft:cobbled_deepslate",
+        "wall_height": 4
+      },
+      {
+        "id": "miners_winch_4",
+        "section": "miners",
+        "kind": "winch",
+        "rect": [
+          4402,
+          4781,
+          4409,
+          4789
+        ],
+        "door": "west",
+        "walls": "minecraft:deepslate_bricks",
+        "wall_height": 4
+      },
+      {
+        "id": "miners_spoil_heap_1",
+        "section": "miners",
+        "kind": "spoil_heap",
+        "rect": [
+          4407,
+          4794,
+          4416,
+          4803
+        ],
+        "height": 7
+      },
+      {
+        "id": "miners_spoil_heap_2",
+        "section": "miners",
+        "kind": "spoil_heap",
+        "rect": [
+          4424,
+          4805,
+          4435,
+          4816
+        ],
+        "height": 4
+      },
+      {
+        "id": "miners_spoil_heap_3",
+        "section": "miners",
+        "kind": "spoil_heap",
+        "rect": [
+          4439,
+          4812,
+          4451,
+          4823
+        ],
+        "height": 4
+      },
+      {
+        "id": "miners_spoil_heap_4",
+        "section": "miners",
+        "kind": "spoil_heap",
+        "rect": [
+          4373,
+          4767,
+          4385,
+          4777
+        ],
+        "height": 5
+      },
+      {
+        "id": "miners_spoil_heap_5",
+        "section": "miners",
+        "kind": "spoil_heap",
+        "rect": [
+          4368,
+          4782,
+          4376,
+          4792
+        ],
+        "height": 4
+      },
+      {
+        "id": "miners_spoil_heap_6",
+        "section": "miners",
+        "kind": "spoil_heap",
+        "rect": [
+          4455,
+          4817,
+          4466,
+          4827
+        ],
+        "height": 4
+      },
+      {
+        "id": "miners_toolshed_1",
+        "section": "miners",
+        "kind": "toolshed",
+        "rect": [
+          4461,
+          4832,
+          4469,
+          4841
+        ],
+        "door": "north",
+        "walls": "minecraft:tuff_bricks",
+        "wall_height": 4
+      },
+      {
+        "id": "miners_toolshed_2",
+        "section": "miners",
+        "kind": "toolshed",
+        "rect": [
+          4415,
+          4813,
+          4421,
+          4823
+        ],
+        "door": "east",
+        "walls": "minecraft:stone_bricks",
+        "wall_height": 4
+      },
+      {
+        "id": "miners_toolshed_3",
+        "section": "miners",
+        "kind": "toolshed",
+        "rect": [
+          4419,
+          4827,
+          4427,
+          4835
+        ],
+        "door": "north",
+        "walls": "minecraft:cobbled_deepslate",
+        "wall_height": 4
+      },
+      {
+        "id": "miners_dwelling_1",
+        "section": "miners",
+        "kind": "dwelling",
+        "rect": [
+          4447,
+          4830,
+          4457,
+          4838
+        ],
+        "door": "north",
+        "walls": "minecraft:deepslate_bricks",
+        "wall_height": 4
+      },
+      {
+        "id": "miners_dwelling_2",
+        "section": "miners",
+        "kind": "dwelling",
+        "rect": [
+          4467,
+          4845,
+          4478,
+          4852
+        ],
+        "door": "north",
+        "walls": "minecraft:cobbled_deepslate",
+        "wall_height": 4
+      },
+      {
+        "id": "miners_dwelling_3",
+        "section": "miners",
+        "kind": "dwelling",
+        "rect": [
+          4456,
+          4850,
+          4464,
+          4858
+        ],
+        "door": "east",
+        "walls": "minecraft:deepslate_bricks",
+        "wall_height": 5
+      },
+      {
+        "id": "miners_dwelling_4",
+        "section": "miners",
+        "kind": "dwelling",
+        "rect": [
+          4412,
+          4773,
+          4420,
+          4784
+        ],
+        "door": "west",
+        "walls": "minecraft:stone_bricks",
+        "wall_height": 4
+      },
+      {
+        "id": "miners_dwelling_5",
+        "section": "miners",
+        "kind": "dwelling",
+        "rect": [
+          4450,
+          4800,
+          4458,
+          4807
+        ],
+        "door": "south",
+        "walls": "minecraft:tuff_bricks",
+        "wall_height": 5
+      },
+      {
+        "id": "miners_dwelling_6",
+        "section": "miners",
+        "kind": "dwelling",
+        "rect": [
+          4370,
+          4795,
+          4381,
+          4801
+        ],
+        "door": "east",
+        "walls": "minecraft:stone_bricks",
+        "wall_height": 5
+      },
+      {
+        "id": "miners_dwelling_7",
+        "section": "miners",
+        "kind": "dwelling",
+        "rect": [
+          4482,
+          4839,
+          4488,
+          4847
+        ],
+        "door": "west",
+        "walls": "minecraft:polished_andesite",
+        "wall_height": 4
+      },
+      {
+        "id": "extraction_crusher_1",
+        "section": "extraction",
+        "kind": "crusher",
+        "rect": [
+          4378,
+          4880,
+          4388,
+          4896
+        ],
+        "door": "west",
+        "walls": "minecraft:stone_bricks",
+        "wall_height": 7
+      },
+      {
+        "id": "extraction_crusher_2",
+        "section": "extraction",
+        "kind": "crusher",
+        "rect": [
+          4382,
+          4901,
+          4398,
+          4912
+        ],
+        "door": "north",
+        "walls": "minecraft:cobbled_deepslate",
+        "wall_height": 6
+      },
+      {
+        "id": "extraction_crusher_3",
+        "section": "extraction",
+        "kind": "crusher",
+        "rect": [
+          4393,
+          4874,
+          4405,
+          4886
+        ],
+        "door": "west",
+        "walls": "minecraft:polished_tuff",
+        "wall_height": 7
+      },
+      {
+        "id": "extraction_sorting_1",
+        "section": "extraction",
+        "kind": "sorting",
+        "rect": [
+          4394,
+          4915,
+          4407,
+          4925
+        ],
+        "door": "north",
+        "walls": "minecraft:deepslate_bricks",
+        "wall_height": 5
+      },
+      {
+        "id": "extraction_sorting_2",
+        "section": "extraction",
+        "kind": "sorting",
+        "rect": [
+          4381,
+          4922,
+          4391,
+          4933
+        ],
+        "door": "east",
+        "walls": "minecraft:stone_bricks",
+        "wall_height": 5
+      },
+      {
+        "id": "extraction_sorting_3",
+        "section": "extraction",
+        "kind": "sorting",
+        "rect": [
+          4364,
+          4893,
+          4374,
+          4904
+        ],
+        "door": "east",
+        "walls": "minecraft:deepslate_bricks",
+        "wall_height": 5
+      },
+      {
+        "id": "extraction_sluice_1",
+        "section": "extraction",
+        "kind": "sluice",
+        "rect": [
+          4377,
+          4915,
+          4390,
+          4917
+        ],
+        "head": "low"
+      },
+      {
+        "id": "extraction_sluice_2",
+        "section": "extraction",
+        "kind": "sluice",
+        "rect": [
+          4394,
+          4857,
+          4396,
+          4869
+        ],
+        "head": "high"
+      },
+      {
+        "id": "extraction_sluice_3",
+        "section": "extraction",
+        "kind": "sluice",
+        "rect": [
+          4370,
+          4908,
+          4372,
+          4921
+        ],
+        "head": "low"
+      },
+      {
+        "id": "extraction_sluice_4",
+        "section": "extraction",
+        "kind": "sluice",
+        "rect": [
+          4403,
+          4889,
+          4419,
+          4891
+        ],
+        "head": "high"
+      },
+      {
+        "id": "extraction_ore_pile_1",
+        "section": "extraction",
+        "kind": "ore_pile",
+        "rect": [
+          4380,
+          4938,
+          4384,
+          4942
+        ],
+        "height": 3
+      },
+      {
+        "id": "extraction_ore_pile_2",
+        "section": "extraction",
+        "kind": "ore_pile",
+        "rect": [
+          4395,
+          4889,
+          4400,
+          4893
+        ],
+        "height": 4
+      },
+      {
+        "id": "extraction_ore_pile_3",
+        "section": "extraction",
+        "kind": "ore_pile",
+        "rect": [
+          4369,
+          4878,
+          4374,
+          4882
+        ],
+        "height": 3
+      },
+      {
+        "id": "extraction_ore_pile_4",
+        "section": "extraction",
+        "kind": "ore_pile",
+        "rect": [
+          4367,
+          4924,
+          4373,
+          4930
+        ],
+        "height": 3
+      },
+      {
+        "id": "extraction_ore_pile_5",
+        "section": "extraction",
+        "kind": "ore_pile",
+        "rect": [
+          4415,
+          4874,
+          4419,
+          4880
+        ],
+        "height": 3
+      },
+      {
+        "id": "extraction_ore_pile_6",
+        "section": "extraction",
+        "kind": "ore_pile",
+        "rect": [
+          4378,
+          4872,
+          4382,
+          4877
+        ],
+        "height": 2
+      },
+      {
+        "id": "extraction_ore_pile_7",
+        "section": "extraction",
+        "kind": "ore_pile",
+        "rect": [
+          4417,
+          4895,
+          4421,
+          4899
+        ],
+        "height": 4
+      },
+      {
+        "id": "extraction_ore_pile_8",
+        "section": "extraction",
+        "kind": "ore_pile",
+        "rect": [
+          4354,
+          4901,
+          4359,
+          4906
+        ],
+        "height": 2
+      },
+      {
+        "id": "extraction_ore_pile_9",
+        "section": "extraction",
+        "kind": "ore_pile",
+        "rect": [
+          4408,
+          4894,
+          4412,
+          4900
+        ],
+        "height": 3
+      },
+      {
+        "id": "extraction_ore_pile_10",
+        "section": "extraction",
+        "kind": "ore_pile",
+        "rect": [
+          4355,
+          4910,
+          4360,
+          4915
+        ],
+        "height": 3
+      },
+      {
+        "id": "extraction_spoil_heap_1",
+        "section": "extraction",
+        "kind": "spoil_heap",
+        "rect": [
+          4410,
+          4905,
+          4420,
+          4915
+        ],
+        "height": 5
+      },
+      {
+        "id": "extraction_spoil_heap_2",
+        "section": "extraction",
+        "kind": "spoil_heap",
+        "rect": [
+          4424,
+          4885,
+          4433,
+          4894
+        ],
+        "height": 4
+      },
+      {
+        "id": "extraction_spoil_heap_3",
+        "section": "extraction",
+        "kind": "spoil_heap",
+        "rect": [
+          4380,
+          4861,
+          4389,
+          4869
+        ],
+        "height": 6
+      }
     ],
-    "lamp_posts": [[4272, 4863], [4345, 4843], [4349, 4847], [4300, 4813], [4289, 4807], [4305, 4810], [4304, 4795], [4278, 4793], [4266, 4806], [4269, 4819], [4260, 4831], [4328, 4806], [4342, 4809], [4274, 4832], [4333, 4796], [4357, 4813], [4299, 4791], [4303, 4785], [4390, 4786], [4393, 4792], [4400, 4788], [4468, 4830], [4423, 4821], [4426, 4825], [4475, 4843], [4466, 4857], [4383, 4801], [4480, 4846], [4376, 4891], [4393, 4899], [4391, 4883], [4403, 4913], [4393, 4930], [4376, 4901]]
+    "lamp_posts": [
+      [
+        4272,
+        4863
+      ],
+      [
+        4345,
+        4843
+      ],
+      [
+        4349,
+        4847
+      ],
+      [
+        4300,
+        4813
+      ],
+      [
+        4289,
+        4807
+      ],
+      [
+        4305,
+        4810
+      ],
+      [
+        4304,
+        4795
+      ],
+      [
+        4278,
+        4793
+      ],
+      [
+        4266,
+        4806
+      ],
+      [
+        4269,
+        4819
+      ],
+      [
+        4260,
+        4831
+      ],
+      [
+        4328,
+        4806
+      ],
+      [
+        4342,
+        4809
+      ],
+      [
+        4274,
+        4832
+      ],
+      [
+        4333,
+        4796
+      ],
+      [
+        4357,
+        4813
+      ],
+      [
+        4299,
+        4791
+      ],
+      [
+        4303,
+        4785
+      ],
+      [
+        4390,
+        4786
+      ],
+      [
+        4393,
+        4792
+      ],
+      [
+        4400,
+        4788
+      ],
+      [
+        4468,
+        4830
+      ],
+      [
+        4423,
+        4821
+      ],
+      [
+        4426,
+        4825
+      ],
+      [
+        4475,
+        4843
+      ],
+      [
+        4466,
+        4857
+      ],
+      [
+        4383,
+        4801
+      ],
+      [
+        4480,
+        4846
+      ],
+      [
+        4376,
+        4891
+      ],
+      [
+        4393,
+        4899
+      ],
+      [
+        4391,
+        4883
+      ],
+      [
+        4403,
+        4913
+      ],
+      [
+        4393,
+        4930
+      ],
+      [
+        4376,
+        4901
+      ]
+    ]
   },
   "cutters": {
     "why": "decision 5A: three bench masters whose trades turn raw mega stones (cutters.offer.raw_count) and a diamond into a keyed stone, unlimited, nothing bought back; decision 11: only the 60 stones whose Pokemon can be had here (SOUTHERN_RIFT_MEGA.md 7.3), split by generation so no list is unreadably long. Vanilla villagers placed the way tools/traders.py places the clerks (force-load, wait 40 ticks, summon tagged, keep one per spot 100 ticks later), NoAI, invulnerable, masons at master level so they neither level nor lose their trade",
@@ -464,62 +2734,184 @@
       {
         "id": "bench_1",
         "name": "Bench master (first and second generations)",
-        "at": [4293, 89, 4903],
+        "at": [
+          4293,
+          89,
+          4903
+        ],
         "yaw": 180,
-        "customer": [4293, 89, 4901],
-        "stones": ["mega_showdown:venusaurite", "mega_showdown:charizardite_x", "mega_showdown:charizardite_y", "mega_showdown:blastoisinite",
-                   "mega_showdown:beedrillite", "mega_showdown:pidgeotite", "mega_showdown:raichunite_x", "mega_showdown:raichunite_y",
-                   "mega_showdown:gengarite", "mega_showdown:starminite", "mega_showdown:gyaradosite", "mega_showdown:dragoninite", "mega_showdown:meganiumite",
-                   "mega_showdown:feraligite", "mega_showdown:ampharosite", "mega_showdown:scizorite", "mega_showdown:heracronite", "mega_showdown:steelixite",
-                   "mega_showdown:houndoominite", "mega_showdown:skarmorite"]
+        "customer": [
+          4293,
+          89,
+          4901
+        ],
+        "stones": [
+          "mega_showdown:venusaurite",
+          "mega_showdown:charizardite_x",
+          "mega_showdown:charizardite_y",
+          "mega_showdown:blastoisinite",
+          "mega_showdown:beedrillite",
+          "mega_showdown:pidgeotite",
+          "mega_showdown:raichunite_x",
+          "mega_showdown:raichunite_y",
+          "mega_showdown:gengarite",
+          "mega_showdown:starminite",
+          "mega_showdown:gyaradosite",
+          "mega_showdown:dragoninite",
+          "mega_showdown:meganiumite",
+          "mega_showdown:feraligite",
+          "mega_showdown:ampharosite",
+          "mega_showdown:scizorite",
+          "mega_showdown:heracronite",
+          "mega_showdown:steelixite",
+          "mega_showdown:houndoominite",
+          "mega_showdown:skarmorite"
+        ]
       },
       {
         "id": "bench_2",
         "name": "Bench master (third and fourth generations)",
-        "at": [4300, 89, 4903],
+        "at": [
+          4300,
+          89,
+          4903
+        ],
         "yaw": 180,
-        "customer": [4300, 89, 4901],
-        "stones": ["mega_showdown:sceptilite", "mega_showdown:blazikenite", "mega_showdown:swampertite", "mega_showdown:gardevoirite",
-                   "mega_showdown:sablenite", "mega_showdown:aggronite", "mega_showdown:medichamite", "mega_showdown:sharpedonite", "mega_showdown:cameruptite",
-                   "mega_showdown:altarianite", "mega_showdown:banettite", "mega_showdown:absolite", "mega_showdown:glalitite", "mega_showdown:metagrossite",
-                   "mega_showdown:lopunnite", "mega_showdown:garchompite", "mega_showdown:galladite", "mega_showdown:froslassite", "mega_showdown:abomasite",
-                   "mega_showdown:staraptite"]
+        "customer": [
+          4300,
+          89,
+          4901
+        ],
+        "stones": [
+          "mega_showdown:sceptilite",
+          "mega_showdown:blazikenite",
+          "mega_showdown:swampertite",
+          "mega_showdown:gardevoirite",
+          "mega_showdown:sablenite",
+          "mega_showdown:aggronite",
+          "mega_showdown:medichamite",
+          "mega_showdown:sharpedonite",
+          "mega_showdown:cameruptite",
+          "mega_showdown:altarianite",
+          "mega_showdown:banettite",
+          "mega_showdown:absolite",
+          "mega_showdown:glalitite",
+          "mega_showdown:metagrossite",
+          "mega_showdown:lopunnite",
+          "mega_showdown:garchompite",
+          "mega_showdown:galladite",
+          "mega_showdown:froslassite",
+          "mega_showdown:abomasite",
+          "mega_showdown:staraptite"
+        ]
       },
       {
         "id": "bench_3",
         "name": "Bench master (fifth generation on, and the Z stones)",
-        "at": [4307, 89, 4903],
+        "at": [
+          4307,
+          89,
+          4903
+        ],
         "yaw": 180,
-        "customer": [4307, 89, 4901],
-        "stones": ["mega_showdown:audinite", "mega_showdown:excadrite", "mega_showdown:scraftinite", "mega_showdown:chandelurite", "mega_showdown:golurkite",
-                   "mega_showdown:emboarite", "mega_showdown:chesnaughtite", "mega_showdown:delphoxite", "mega_showdown:greninjite", "mega_showdown:pyroarite",
-                   "mega_showdown:meowsticite", "mega_showdown:malamarite", "mega_showdown:barbaracite", "mega_showdown:hawluchanite",
-                   "mega_showdown:crabominite", "mega_showdown:drampanite", "zamega:golisopite", "mega_showdown:glimmoranite", "zamega:absolitez",
-                   "zamega:garchompitez"]
+        "customer": [
+          4307,
+          89,
+          4901
+        ],
+        "stones": [
+          "mega_showdown:audinite",
+          "mega_showdown:excadrite",
+          "mega_showdown:scraftinite",
+          "mega_showdown:chandelurite",
+          "mega_showdown:golurkite",
+          "mega_showdown:emboarite",
+          "mega_showdown:chesnaughtite",
+          "mega_showdown:delphoxite",
+          "mega_showdown:greninjite",
+          "mega_showdown:pyroarite",
+          "mega_showdown:meowsticite",
+          "mega_showdown:malamarite",
+          "mega_showdown:barbaracite",
+          "mega_showdown:hawluchanite",
+          "mega_showdown:crabominite",
+          "mega_showdown:drampanite",
+          "zamega:golisopite",
+          "mega_showdown:glimmoranite",
+          "zamega:absolitez",
+          "zamega:garchompitez"
+        ]
       }
     ],
     "offered_why": "the 60 of SOUTHERN_RIFT_MEGA.md 7.3: 50 whose line is caught in data/spawns.json at a weight above zero and 10 on the starter screen (modpack/config/cobblemon/starters.json); family links are mainline knowledge (ASSUMED). Each id is a stone in the pinned jars (tools/mega_recipes.py refuses the build if one is not)",
-    "left_out": ["mega_showdown:aerodactylite", "mega_showdown:alakazite", "mega_showdown:chimechite", "mega_showdown:clefablite", "mega_showdown:diancite",
-                 "mega_showdown:dragalgite", "mega_showdown:eelektrossite", "mega_showdown:falinksite", "mega_showdown:floettite",
-                 "mega_showdown:kangaskhanite", "mega_showdown:latiasite", "mega_showdown:latiosite", "mega_showdown:lucarionite", "mega_showdown:manectite",
-                 "mega_showdown:mawilite", "mega_showdown:mewtwonite_x", "mega_showdown:mewtwonite_y", "mega_showdown:pinsirite", "mega_showdown:salamencite",
-                 "mega_showdown:scolipite", "mega_showdown:scovillainite", "mega_showdown:slowbronite", "mega_showdown:tyranitarite",
-                 "mega_showdown:victreebelite", "zamega:baxcalibrite", "zamega:darkranite", "zamega:heatranite", "zamega:lucarionitez", "zamega:magearnite",
-                 "zamega:tatsugirinite", "zamega:zeraorite", "zamega:zygardite"],
+    "left_out": [
+      "mega_showdown:aerodactylite",
+      "mega_showdown:alakazite",
+      "mega_showdown:chimechite",
+      "mega_showdown:clefablite",
+      "mega_showdown:diancite",
+      "mega_showdown:dragalgite",
+      "mega_showdown:eelektrossite",
+      "mega_showdown:falinksite",
+      "mega_showdown:floettite",
+      "mega_showdown:kangaskhanite",
+      "mega_showdown:latiasite",
+      "mega_showdown:latiosite",
+      "mega_showdown:lucarionite",
+      "mega_showdown:manectite",
+      "mega_showdown:mawilite",
+      "mega_showdown:mewtwonite_x",
+      "mega_showdown:mewtwonite_y",
+      "mega_showdown:pinsirite",
+      "mega_showdown:salamencite",
+      "mega_showdown:scolipite",
+      "mega_showdown:scovillainite",
+      "mega_showdown:slowbronite",
+      "mega_showdown:tyranitarite",
+      "mega_showdown:victreebelite",
+      "zamega:baxcalibrite",
+      "zamega:darkranite",
+      "zamega:heatranite",
+      "zamega:lucarionitez",
+      "zamega:magearnite",
+      "zamega:tatsugirinite",
+      "zamega:zeraorite",
+      "zamega:zygardite"
+    ],
     "left_out_why": "the 32 of 7.3 for Pokemon nobody can catch here; the Cutters offer none of them (their recipes stay, raised)"
   },
   "mine": {
     "why": "SOUTHERN_RIFT_MEGA.md section 5's first two halls at real cavern scale, the slice of section 10: the Tally Hall (the company's works, lit, no Megas) and the Cutting Floor (dark, two faces, two Megas), reached by the Cutters' adit from the yard",
     "portal": {
-      "posts": [[4329, 4911], [4335, 4911]],
-      "y": [89, 93],
-      "open_rect": [4330, 4906, 4334, 4918],
+      "posts": [
+        [
+          4329,
+          4911
+        ],
+        [
+          4335,
+          4911
+        ]
+      ],
+      "y": [
+        89,
+        93
+      ],
+      "open_rect": [
+        4330,
+        4906,
+        4334,
+        4918
+      ],
       "why": "the adit leaves the yard through the rock face at z4912: basalt posts either side, a copper lintel over; the only place carved space comes within a block of the surface is this mouth (open_rect)"
     },
     "halls": [
       {
         "id": "tally_hall",
-        "centre": [4365, 4925],
+        "centre": [
+          4365,
+          4925
+        ],
         "radius": 28,
         "ragged": 0.08,
         "feet": 64,
@@ -527,19 +2919,69 @@
         "height": 16,
         "floor": "hall_floor",
         "light_every": 7,
-        "pillars": [[4357, 4917], [4373, 4917], [4357, 4933], [4373, 4933]],
+        "pillars": [
+          [
+            4357,
+            4917
+          ],
+          [
+            4373,
+            4917
+          ],
+          [
+            4357,
+            4933
+          ],
+          [
+            4373,
+            4933
+          ]
+        ],
         "props": [
-          {"at": [4350, 4914], "block": "minecraft:barrel[facing=up]"},
-          {"at": [4351, 4914], "block": "minecraft:barrel[facing=up]"},
-          {"at": [4380, 4936], "block": "minecraft:crafting_table"},
-          {"at": [4381, 4936], "block": "minecraft:smithing_table"},
-          {"at": [4378, 4914], "block": "minecraft:barrel[facing=up]"}
+          {
+            "at": [
+              4350,
+              4914
+            ],
+            "block": "minecraft:barrel[facing=up]"
+          },
+          {
+            "at": [
+              4351,
+              4914
+            ],
+            "block": "minecraft:barrel[facing=up]"
+          },
+          {
+            "at": [
+              4380,
+              4936
+            ],
+            "block": "minecraft:crafting_table"
+          },
+          {
+            "at": [
+              4381,
+              4936
+            ],
+            "block": "minecraft:smithing_table"
+          },
+          {
+            "at": [
+              4378,
+              4914
+            ],
+            "block": "minecraft:barrel[facing=up]"
+          }
         ],
         "why": "about 60 across, floor y64-67, roof y80 at the centre (SOUTHERN_RIFT_MEGA.md 5: y62-80). Moved from the proposal's (4350, 4905) to (4365, 4925): at (4350, 4905) the adit from the yard would have had to start over the hall's own roof. Lit (lanterns hung from the roof every 7), four basalt pillars with copper caps, a few company fittings"
       },
       {
         "id": "cutting_floor",
-        "centre": [4430, 4850],
+        "centre": [
+          4430,
+          4850
+        ],
         "radius": 38,
         "ragged": 0.08,
         "feet": 45,
@@ -553,7 +2995,38 @@
     "drifts": [
       {
         "id": "cutters_adit",
-        "path": [[4332, 89, 4910], [4332, 85, 4919], [4318, 80, 4932], [4318, 73, 4950], [4338, 68, 4955], [4350, 67, 4942]],
+        "path": [
+          [
+            4332,
+            89,
+            4910
+          ],
+          [
+            4332,
+            85,
+            4919
+          ],
+          [
+            4318,
+            80,
+            4932
+          ],
+          [
+            4318,
+            73,
+            4950
+          ],
+          [
+            4338,
+            68,
+            4955
+          ],
+          [
+            4350,
+            67,
+            4942
+          ]
+        ],
         "r": 2,
         "height": 5,
         "floor": "drift_floor",
@@ -562,7 +3035,23 @@
       },
       {
         "id": "tally_drift",
-        "path": [[4382, 66, 4908], [4400, 61, 4899], [4410, 52, 4873]],
+        "path": [
+          [
+            4382,
+            66,
+            4908
+          ],
+          [
+            4400,
+            61,
+            4899
+          ],
+          [
+            4410,
+            52,
+            4873
+          ]
+        ],
         "r": 2,
         "height": 5,
         "floor": "drift_floor",
@@ -570,7 +3059,18 @@
       },
       {
         "id": "face_a_alcove",
-        "path": [[4455, 49, 4850], [4474, 53, 4850]],
+        "path": [
+          [
+            4455,
+            49,
+            4850
+          ],
+          [
+            4474,
+            53,
+            4850
+          ]
+        ],
         "r": 2,
         "height": 5,
         "floor": "cutting_floor",
@@ -578,7 +3078,18 @@
       },
       {
         "id": "face_b_alcove",
-        "path": [[4430, 49, 4825], [4430, 53, 4806]],
+        "path": [
+          [
+            4430,
+            49,
+            4825
+          ],
+          [
+            4430,
+            53,
+            4806
+          ]
+        ],
         "r": 2,
         "height": 5,
         "floor": "cutting_floor",
@@ -589,9 +3100,20 @@
       {
         "id": "face_a",
         "hall": "cutting_floor",
-        "box": [4477, 53, 4847, 4483, 57, 4853],
+        "box": [
+          4477,
+          53,
+          4847,
+          4483,
+          57,
+          4853
+        ],
         "front": "west",
-        "stand": [4475, 53, 4850],
+        "stand": [
+          4475,
+          53,
+          4850
+        ],
         "crystals": 3,
         "radiated": 8,
         "why": "a 7 x 5 x 7 box (245 blocks) of meteorid at the end of its alcove, its west side the face"
@@ -599,9 +3121,20 @@
       {
         "id": "face_b",
         "hall": "cutting_floor",
-        "box": [4427, 53, 4797, 4433, 57, 4803],
+        "box": [
+          4427,
+          53,
+          4797,
+          4433,
+          57,
+          4803
+        ],
         "front": "south",
-        "stand": [4430, 53, 4805],
+        "stand": [
+          4430,
+          53,
+          4805
+        ],
         "crystals": 3,
         "radiated": 8,
         "why": "the same at the north alcove, its south side the face"
@@ -627,7 +3160,10 @@
         "species": "steelix",
         "aspect": "mega_evolution=mega",
         "level": 54,
-        "anchor": [4446, 4852],
+        "anchor": [
+          4446,
+          4852
+        ],
         "leash": 24,
         "head_room": 10,
         "why": "Mega Steelix, steelixite; Onix is caught at the Mining Town's fossil levels 42-50. Anchored toward face A; y is the hall's floor there"
@@ -638,7 +3174,10 @@
         "species": "excadrill",
         "aspect": "mega_evolution=mega",
         "level": 53,
-        "anchor": [4428, 4834],
+        "anchor": [
+          4428,
+          4834
+        ],
         "leash": 24,
         "head_room": 6,
         "why": "Mega Excadrill, excadrite (a Legends Z-A Mega Mega Showdown adds; its client model is NOT VERIFIED, M-7); Drilbur at the fossil levels 42-50. Anchored toward face B"
@@ -648,7 +3187,14 @@
   },
   "driver": {
     "every_ticks": 100,
-    "approach": [4250, 30, 4640, 4520, 150, 4990],
+    "approach": [
+      4250,
+      30,
+      4640,
+      4520,
+      150,
+      4990
+    ],
     "why": "the tick driver works only while a player is inside a site's approach box (the gate, the town and the mine with a margin; each farm its own): one selector a site every 5 s when nobody is near. Every 100 ticks it keeps each den's Mega (the respawn clock); every 40 ticks the leash"
   },
   "geometry": {
@@ -670,8 +3216,433 @@
     "why": "SOUTHERN_RIFT_MEGA.md 13: a defeated farm Mega drops a raw stone at the victor's feet, owner-only (an item entity whose Owner is the victor: only they can pick it up, vanilla 1.21.1 ItemEntity), never a finished stone. The roll is the den's drop_percent (farm_tiers). A battle win is seen by the battle_fainted callback, matched by the Pokemon UUID stored at spawn; a kill outside a battle by the keeper, from the last player to hurt it after it was last seen alive. One roll per Mega: the roll spends its UUID. The message is a placeholder (the voice is Codex's)"
   },
   "farm_tiers": {
-    "outer": {"level": 60, "drop_percent": 15, "respawn_ticks": 12000},
-    "deeper": {"level": 67, "drop_percent": 30, "respawn_ticks": 18000},
+    "outer": {
+      "level": 60,
+      "drop_percent": 15,
+      "respawn_ticks": 12000
+    },
+    "deeper": {
+      "level": 67,
+      "drop_percent": 30,
+      "respawn_ticks": 18000
+    },
     "why": "SOUTHERN_RIFT_MEGA.md 13: outer about level 60 (the owner: a cap of 50 after gym 5, \"lvl 60 or so, so it takes a team\"), 15% a defeat; deeper 65-70 at 25-35% (ASSUMED: the owner said \"more frequently\"). respawn_ticks is the farm's rate limit per den: 10 minutes outer, 15 deeper, so four outer dens give at most 24 fights an hour between them, about 3.6 raw stones at 15%. All ASSUMED until a fight is timed"
-  }
+  },
+  "farms_why": "The open-air Mega farms (the owner, 2026-10-01): 'Mega Pokemon walking in the OPEN, not only in caverns -- a player should see them before they reach them.' Seven dens across the Rift's two southern arms, four outer and three deeper, keeping the material chain, the Cutters and the gates exactly as designed: a den's Mega rolls the same raw-stone drop at its tier's rate, the keyed stone is still cut at the Cutters, and each den is still behind the same badge flag. What changes is that the fight is on open ground a player can see across, not in a hall they have to be let into. The halls' two Megas (megas.slots) stay as they are: the owner said not ONLY in caverns. Sites measured off the canonical heightmap, never a world (CLAUDE.md): inside the arm polygons of data/regions.json, pad slope under 10 degrees, 24+ clear of every keep_clear box, 260+ apart so finding one is an event rather than a checklist. The sightline measurement that chose them saturated at its own 136-block ceiling for all twelve candidates, so it proves each has a long clear approach and did NOT rank them: spacing and arm coverage picked these seven. The east arm holds the gulch, its road and the Cutters, so it carries the outer tier; the west arm had nothing in it at all, so it carries the deeper tier and the longest walk.",
+  "farms_grid": {
+    "x": [
+      3828,
+      4692
+    ],
+    "y": [
+      87,
+      197
+    ],
+    "z": [
+      3840,
+      5392
+    ],
+    "why": "The box the farms' ANCHORS, turn-back points and approach boxes live in -- not a block box. The farms write no blocks at all: a den is a keeper line, a leash line, a zone advancement and a turn-back, and nothing in them places a single block. `grid` stays exactly as tight as it was, because it guards block writes and must keep doing so; widening it to admit these coordinates would have weakened the one guard that keeps this build inside its box, and a threshold widened to make data pass is not a threshold (CLAUDE.md). So the audit checks block writes against `grid` and farm coordinates against this."
+  },
+  "farms": [
+    {
+      "id": "east_arm_shoulder",
+      "name": "the East Arm shoulder",
+      "tier": "outer",
+      "approach": [
+        4464,
+        99,
+        4352,
+        4592,
+        155,
+        4480
+      ],
+      "zone": {
+        "polygon": [
+          [
+            4508,
+            4396
+          ],
+          [
+            4548,
+            4396
+          ],
+          [
+            4548,
+            4436
+          ],
+          [
+            4508,
+            4436
+          ]
+        ],
+        "turn_back": [
+          4580,
+          119,
+          4416,
+          90
+        ],
+        "why": "A 41-square round the den's pad, not the whole arm. The owner wants the Mega SEEN before it is reached, so the zone is the pad a player would stand on to fight it and nothing more: from outside it the Mega is in plain sight across open ground, and the turn-back point 52 blocks E is still in view of it. A zone over the arm would hide what it is meant to advertise. The turn-back yaw faces the den, not away from it: a player put out of the pad looks straight back at the Mega, which is what makes it a cordon rather than a dead end."
+      },
+      "dens": [
+        {
+          "id": "gm_east_arm_shoulder",
+          "species": "aggron",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4528,
+            123,
+            4416
+          ],
+          "leash": 32,
+          "why": "Mega Aggron: steel and rock, the arm's own stone. Aron and Lairon are the Mining Town's fossil levels, so a player meets the line before the Mega",
+          "leash_why": "32, not the halls' 24: the owner asked for Megas WALKING in the open, so a den's Mega roams twice the radius a cavern slot does before the keeper puts it back.",
+          "model_not_verified": "The Mega form's client model is not verified for this species, the same caveat data/gulch_mine.json already records for excadrill (M-7). A missing model shows a player a default, it does not break the fight."
+        }
+      ],
+      "why": "One den per farm, because the dens are 260+ blocks apart by construction and one zone cannot be tight around all of them at once."
+    },
+    {
+      "id": "east_arm_bench",
+      "name": "the East Arm bench",
+      "tier": "outer",
+      "approach": [
+        4512,
+        98,
+        4616,
+        4640,
+        154,
+        4744
+      ],
+      "zone": {
+        "polygon": [
+          [
+            4556,
+            4660
+          ],
+          [
+            4596,
+            4660
+          ],
+          [
+            4596,
+            4700
+          ],
+          [
+            4556,
+            4700
+          ]
+        ],
+        "turn_back": [
+          4628,
+          121,
+          4680,
+          90
+        ],
+        "why": "A 41-square round the den's pad, not the whole arm. The owner wants the Mega SEEN before it is reached, so the zone is the pad a player would stand on to fight it and nothing more: from outside it the Mega is in plain sight across open ground, and the turn-back point 52 blocks E is still in view of it. A zone over the arm would hide what it is meant to advertise. The turn-back yaw faces the den, not away from it: a player put out of the pad looks straight back at the Mega, which is what makes it a cordon rather than a dead end."
+      },
+      "dens": [
+        {
+          "id": "gm_east_arm_bench",
+          "species": "pinsir",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4576,
+            122,
+            4680
+          ],
+          "leash": 32,
+          "why": "Mega Pinsir: the open scrub of the bench, and a flying Mega reads at distance, which is the point of putting it in the open",
+          "leash_why": "32, not the halls' 24: the owner asked for Megas WALKING in the open, so a den's Mega roams twice the radius a cavern slot does before the keeper puts it back.",
+          "model_not_verified": "The Mega form's client model is not verified for this species, the same caveat data/gulch_mine.json already records for excadrill (M-7). A missing model shows a player a default, it does not break the fight."
+        }
+      ],
+      "why": "One den per farm, because the dens are 260+ blocks apart by construction and one zone cannot be tight around all of them at once."
+    },
+    {
+      "id": "east_arm_head",
+      "name": "the East Arm head",
+      "tier": "outer",
+      "approach": [
+        4544,
+        109,
+        4880,
+        4672,
+        165,
+        5008
+      ],
+      "zone": {
+        "polygon": [
+          [
+            4588,
+            4924
+          ],
+          [
+            4628,
+            4924
+          ],
+          [
+            4628,
+            4964
+          ],
+          [
+            4588,
+            4964
+          ]
+        ],
+        "turn_back": [
+          4608,
+          131,
+          4892,
+          0
+        ],
+        "why": "A 41-square round the den's pad, not the whole arm. The owner wants the Mega SEEN before it is reached, so the zone is the pad a player would stand on to fight it and nothing more: from outside it the Mega is in plain sight across open ground, and the turn-back point 52 blocks N is still in view of it. A zone over the arm would hide what it is meant to advertise. The turn-back yaw faces the den, not away from it: a player put out of the pad looks straight back at the Mega, which is what makes it a cordon rather than a dead end."
+      },
+      "dens": [
+        {
+          "id": "gm_east_arm_head",
+          "species": "manectric",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4608,
+            133,
+            4944
+          ],
+          "leash": 32,
+          "why": "Mega Manectric: fast and loud on bare ground, and an Electric answer the route rosters are short of",
+          "leash_why": "32, not the halls' 24: the owner asked for Megas WALKING in the open, so a den's Mega roams twice the radius a cavern slot does before the keeper puts it back.",
+          "model_not_verified": "The Mega form's client model is not verified for this species, the same caveat data/gulch_mine.json already records for excadrill (M-7). A missing model shows a player a default, it does not break the fight."
+        }
+      ],
+      "why": "One den per farm, because the dens are 260+ blocks apart by construction and one zone cannot be tight around all of them at once."
+    },
+    {
+      "id": "east_arm_tail",
+      "name": "the East Arm tail",
+      "tier": "outer",
+      "approach": [
+        4424,
+        121,
+        5152,
+        4552,
+        177,
+        5280
+      ],
+      "zone": {
+        "polygon": [
+          [
+            4468,
+            5196
+          ],
+          [
+            4508,
+            5196
+          ],
+          [
+            4508,
+            5236
+          ],
+          [
+            4468,
+            5236
+          ]
+        ],
+        "turn_back": [
+          4540,
+          145,
+          5216,
+          90
+        ],
+        "why": "A 41-square round the den's pad, not the whole arm. The owner wants the Mega SEEN before it is reached, so the zone is the pad a player would stand on to fight it and nothing more: from outside it the Mega is in plain sight across open ground, and the turn-back point 52 blocks E is still in view of it. A zone over the arm would hide what it is meant to advertise. The turn-back yaw faces the den, not away from it: a player put out of the pad looks straight back at the Mega, which is what makes it a cordon rather than a dead end."
+      },
+      "dens": [
+        {
+          "id": "gm_east_arm_tail",
+          "species": "houndoom",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4488,
+            145,
+            5216
+          ],
+          "leash": 32,
+          "why": "Mega Houndoom: the southern tip's driest ground; Houndour is a night spawn a player will have seen",
+          "leash_why": "32, not the halls' 24: the owner asked for Megas WALKING in the open, so a den's Mega roams twice the radius a cavern slot does before the keeper puts it back.",
+          "model_not_verified": "The Mega form's client model is not verified for this species, the same caveat data/gulch_mine.json already records for excadrill (M-7). A missing model shows a player a default, it does not break the fight."
+        }
+      ],
+      "why": "One den per farm, because the dens are 260+ blocks apart by construction and one zone cannot be tight around all of them at once."
+    },
+    {
+      "id": "west_arm_crest",
+      "name": "the West Arm crest",
+      "tier": "deeper",
+      "approach": [
+        3880,
+        123,
+        3840,
+        4008,
+        179,
+        3968
+      ],
+      "zone": {
+        "polygon": [
+          [
+            3924,
+            3884
+          ],
+          [
+            3964,
+            3884
+          ],
+          [
+            3964,
+            3924
+          ],
+          [
+            3924,
+            3924
+          ]
+        ],
+        "turn_back": [
+          3892,
+          147,
+          3904,
+          -90
+        ],
+        "why": "A 41-square round the den's pad, not the whole arm. The owner wants the Mega SEEN before it is reached, so the zone is the pad a player would stand on to fight it and nothing more: from outside it the Mega is in plain sight across open ground, and the turn-back point 52 blocks W is still in view of it. A zone over the arm would hide what it is meant to advertise. The turn-back yaw faces the den, not away from it: a player put out of the pad looks straight back at the Mega, which is what makes it a cordon rather than a dead end."
+      },
+      "dens": [
+        {
+          "id": "gm_west_arm_crest",
+          "species": "abomasnow",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3944,
+            147,
+            3904
+          ],
+          "leash": 32,
+          "why": "Mega Abomasnow on the arm's highest open ground (y147): the one upland Mega whose own habitat is the height it stands on",
+          "leash_why": "32, not the halls' 24: the owner asked for Megas WALKING in the open, so a den's Mega roams twice the radius a cavern slot does before the keeper puts it back.",
+          "model_not_verified": "The Mega form's client model is not verified for this species, the same caveat data/gulch_mine.json already records for excadrill (M-7). A missing model shows a player a default, it does not break the fight."
+        }
+      ],
+      "why": "One den per farm, because the dens are 260+ blocks apart by construction and one zone cannot be tight around all of them at once."
+    },
+    {
+      "id": "west_arm_shelf",
+      "name": "the West Arm shelf",
+      "tier": "deeper",
+      "approach": [
+        4016,
+        125,
+        4104,
+        4144,
+        181,
+        4232
+      ],
+      "zone": {
+        "polygon": [
+          [
+            4060,
+            4148
+          ],
+          [
+            4100,
+            4148
+          ],
+          [
+            4100,
+            4188
+          ],
+          [
+            4060,
+            4188
+          ]
+        ],
+        "turn_back": [
+          4028,
+          149,
+          4220,
+          -45
+        ],
+        "why": "A 41-square round the den's pad, not the whole arm. The owner wants the Mega SEEN before it is reached, so the zone is the pad a player would stand on to fight it and nothing more: from outside it the Mega is in plain sight across open ground, and the turn-back point 52 blocks SW is still in view of it. A zone over the arm would hide what it is meant to advertise. The turn-back yaw faces the den, not away from it: a player put out of the pad looks straight back at the Mega, which is what makes it a cordon rather than a dead end."
+      },
+      "dens": [
+        {
+          "id": "gm_west_arm_shelf",
+          "species": "tyranitar",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4080,
+            149,
+            4168
+          ],
+          "leash": 32,
+          "why": "Mega Tyranitar: the deeper tier's anchor fight. Larvitar is a Rift-side spawn, so the line is reachable but the Mega is not, which is the tier's whole shape",
+          "leash_why": "32, not the halls' 24: the owner asked for Megas WALKING in the open, so a den's Mega roams twice the radius a cavern slot does before the keeper puts it back.",
+          "model_not_verified": "The Mega form's client model is not verified for this species, the same caveat data/gulch_mine.json already records for excadrill (M-7). A missing model shows a player a default, it does not break the fight."
+        }
+      ],
+      "why": "One den per farm, because the dens are 260+ blocks apart by construction and one zone cannot be tight around all of them at once."
+    },
+    {
+      "id": "west_arm_tail",
+      "name": "the West Arm tail",
+      "tier": "deeper",
+      "approach": [
+        4184,
+        105,
+        5264,
+        4312,
+        161,
+        5392
+      ],
+      "zone": {
+        "polygon": [
+          [
+            4228,
+            5308
+          ],
+          [
+            4268,
+            5308
+          ],
+          [
+            4268,
+            5348
+          ],
+          [
+            4228,
+            5348
+          ]
+        ],
+        "turn_back": [
+          4300,
+          134,
+          5328,
+          90
+        ],
+        "why": "A 41-square round the den's pad, not the whole arm. The owner wants the Mega SEEN before it is reached, so the zone is the pad a player would stand on to fight it and nothing more: from outside it the Mega is in plain sight across open ground, and the turn-back point 52 blocks E is still in view of it. A zone over the arm would hide what it is meant to advertise. The turn-back yaw faces the den, not away from it: a player put out of the pad looks straight back at the Mega, which is what makes it a cordon rather than a dead end."
+      },
+      "dens": [
+        {
+          "id": "gm_west_arm_tail",
+          "species": "garchomp",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4248,
+            129,
+            5328
+          ],
+          "leash": 32,
+          "why": "Mega Garchomp: the far end of the far arm, the longest walk in the Rift for the hardest open fight",
+          "leash_why": "32, not the halls' 24: the owner asked for Megas WALKING in the open, so a den's Mega roams twice the radius a cavern slot does before the keeper puts it back.",
+          "model_not_verified": "The Mega form's client model is not verified for this species, the same caveat data/gulch_mine.json already records for excadrill (M-7). A missing model shows a player a default, it does not break the fight."
+        }
+      ],
+      "why": "One den per farm, because the dens are 260+ blocks apart by construction and one zone cannot be tight around all of them at once."
+    }
+  ]
 }

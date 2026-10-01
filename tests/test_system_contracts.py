@@ -900,19 +900,78 @@ def test_harness_a_pack_without_boat_rows_lets_a_boat_cross_northlight(sea_groun
 # keeper gives its Megas and the tag the blackout exempts drift apart. The keeper's generated functions spawn a Mega on
 # the gulch model; the blackout's generated loss runs with that Mega as the victor: no claim, the money still charged.
 # An untagged wild victor still claims (the control).
+#
+# Since the open-air farms (data farms[], 2026-10-01) a gulch Mega can also PAY, so the same decision has a second
+# half: a Mega that wins must not hand its raw stone to the player it beat. Three legs, all run rather than read:
+#   1. the battle_fainted callback itself (the generated MoLang, on tests/nbt_sim.py's interpreter) calls the roll
+#      only when the Pokemon that fainted is wild, so a player whose own Pokemon fainted never reaches it;
+#   2. on the gulch world model, in each farm's approach box: a player who hurts a den's Mega and is then beaten by
+#      it (they leave, the Mega lives on) is paid nothing, then or when the Mega dies later -- their hit has gone
+#      stale against the keeper's gm.alive, and the Mega's UUID is still unspent;
+#   3. a roll that does pay leaves one item whose Owner is the victor's own UUID (vanilla 1.21.1 ItemEntity: only
+#      the owner picks it up), at the victor's feet, and nothing for the bystander standing beside them.
 def test_contract_c12_a_gulch_mega_makes_no_claim_on_the_player_it_blacks_out():
+    import gulch_mine as GM
+    import gulch_sim as GS
     import test_blackout_recovery_pid as RP
     import test_gulch_mine as TG
+    spec = _load("gulch_mine.json")
     w = TG._mine_world()
     TG._run(w, 500)
     megas = [e for e in w.entities if e["kind"] == "pokemon"]
-    assert len(megas) == len(_load("gulch_mine.json")["megas"]["slots"]), megas
+    assert len(megas) == len(spec["megas"]["slots"]), megas
     for e in megas:
         s = RP._wild_loss({0: ("cobblemon:ultra_ball", 20)}, balance=1000, victor_tags=tuple(e["tags"]))
         assert not RP.fn_calls(s, "recovery/make") and not (RP.ledger(s).get("claims") or []), (e["tags"], s.calls)
         assert s.get("@s", "bo.lost") > 0, "the loss must still cost money"
     control = RP._wild_loss({0: ("cobblemon:ultra_ball", 20)}, balance=1000, victor_tags=())
     assert RP.fn_calls(control, "recovery/make") and len(RP.ledger(control)["claims"]) == 1
+
+    # 1. the callback: only a wild fainter rolls
+    callback = GM.callback_files(spec)
+    if not callback:
+        assert not spec.get("farms"), "farms are in the data but no battle_fainted callback was generated"
+        pytest.skip("NOT_EXECUTED: no farm den in data/gulch_mine.json, so there is no drop roll to pay anyone")
+    (src,) = callback.values()
+    mol = N.Molang(src)
+    beaten = mol.run(context={"pokemon": {"actor": {"is_wild": 0}, "pokemon": {"id": "PID"}},
+                              "players": [{"player": {"uuid": "LOSER"}}]})
+    assert beaten == [], ("a player's own Pokemon fainting reached the roll", beaten)
+    won = mol.run(context={"pokemon": {"actor": {"is_wild": 1}, "pokemon": {"id": "PID"}},
+                           "players": [{"player": {"uuid": "WINNER"}}, {"player": {"uuid": "SECOND"}}]})
+    assert won == ['function cobblers:gulch_mine/drops/fainted {pid:"PID",who:"WINNER"}'], won
+
+    for site, den_id in TG.FARM_DENS:
+        # 2. hurt it, lose to it, walk away: no drop, then or later
+        fspec, den, fw, (victim, bystander) = TG._farm_world(site, den_id)
+        (mega,) = [e for e in fw.entities if e["kind"] == "pokemon"]
+        pid = fw.sget(TG.STORE, 'dens[{id:"%s"}].pid' % den_id)
+        assert pid, (site, "the den's Mega was never claimed: nothing to spend")
+        mega["attacker"] = victim
+        fw.tick(2)
+        mega["attacker"] = None
+        assert fw.sget(TG.STORE, 'dens[{id:"%s"}].who' % den_id) == [victim["nbt"]["UUID"]], site
+        # beaten: the blackout puts them back at a Center. They are still ONLINE, which is what makes this a real
+        # check -- drops/hitter_<den> runs `as @a`, so the only thing between them and the drop is that their hit
+        # went stale against the keeper's gm.alive while the Mega lived on
+        victim["pos"] = (4300.5, 89.0, 4850.5)
+        TG._run(fw, 3 * TG.PASS)                         # the Mega lives: every pass refreshes gm.alive
+        fw.rolls = [1] * 8                               # and every roll would pay, if one were taken
+        fw.entities.remove(mega)                          # something else finishes it off
+        TG._run(fw, 4 * TG.PASS)
+        assert fw.alive(victim), site                     # they must still be selectable, or this proves nothing
+        assert fw.sget(TG.STORE, 'dens[{id:"%s"}].pid' % den_id) == pid, (site, "the roll was taken")
+        assert not [e for e in fw.entities if e["kind"] == "item"], (site, "the Mega paid the player it beat")
+
+        # 3. a roll that pays, pays the victor and only the victor
+        _s2, _d2, vw, (victor, onlooker) = TG._farm_world(site, den_id)
+        vpid = vw.sget(TG.STORE, 'dens[{id:"%s"}].pid' % den_id)[0]
+        vw.rolls = [1]
+        vw.call("gulch_mine/drops/fainted", {"pid": vpid, "who": GS.uuid_text(victor["nbt"]["UUID"])})
+        items = [e for e in vw.entities if e["kind"] == "item"]
+        assert len(items) == 1, (site, items)
+        assert items[0]["nbt"]["Owner"] == victor["nbt"]["UUID"], (site, items[0]["nbt"])
+        assert items[0]["nbt"]["Owner"] != onlooker["nbt"]["UUID"] and items[0]["pos"] == victor["pos"], site
 
 
 # =================================================================================================================
