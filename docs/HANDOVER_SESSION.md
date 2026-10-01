@@ -5,9 +5,10 @@ A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else,
 ## 1. The branch
 
 - **`fix/2026-10-01-vr-trainer-ownership`**, head **see `git rev-parse HEAD`** -- re-read it rather than trusting a quoted one.
-- **[PR #102](https://github.com/Millerb7/cobblers/pull/102), OPEN, draft, base `main`, head
-  `39f72df30a2d896558c97b83d0f458e3efff347a`.** Merge with
-  `gh pr merge 102 --match-head-commit 39f72df30a2d896558c97b83d0f458e3efff347a`.
+- **[PR #102](https://github.com/Millerb7/cobblers/pull/102), OPEN, draft, base `main`.** For its head,
+  **re-read it** -- `gh pr view 102 --json headRefOid --jq .headRefOid`, and merge with
+  `gh pr merge 102 --match-head-commit <that sha>`. The PR body quotes the head it was pinned at; this
+  file deliberately does not, because a handover commit moves it and a quoted sha then lies.
 - **#102 was already open when this session started, and this session pushed to it before checking.**
   It had opened as the previous session's problem report ("main's pytest suite collects zero tests, and
   the obvious fix deletes hand-authored work") and had been reported to the owner, so CLAUDE.md's freeze
