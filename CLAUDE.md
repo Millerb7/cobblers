@@ -373,6 +373,20 @@ average 517k of context per turn: every turn re-sends everything before it.
   merged PR, confirm the expected commit is on main
   (`git fetch` then `git merge-base --is-ancestor <sha> origin/main`); a PR
   marked merged is not proof that main has its final commits.
+- **A local `origin/<branch>` ref outlives the branch. Always `git fetch --prune`
+  before trusting one, and re-read every head you are about to quote.** The owner
+  merges while a session works, and GitHub deletes the branch on merge, so the
+  session's own base can vanish under it. On 2026-10-01 PRs #98 and #99 were
+  merged into `build/2026-09-29-phase2` mid-session: `gh pr create` refused with
+  "No commits between ... Base ref must be a branch" and the GitHub API answered
+  **"Branch not found"** for the intended base, while `git rev-parse
+  origin/docs/2026-09-30-settlement-npcs` still happily returned a sha, because a
+  plain `git fetch` never removes a deleted remote-tracking ref. The same merge
+  also moved #97's head from `27710fd` to `7b008b6b`, which silently invalidated
+  the `--match-head-commit` command already reported for it. So: a reported head
+  is only true until the owner touches the stack; when a PR command fails
+  strangely, prune and re-read the refs before believing anything local, and
+  re-state the head in the handover rather than carrying the old one forward.
 
 ## Ground comes from the heightmap, never from a world
 
