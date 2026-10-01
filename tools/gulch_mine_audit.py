@@ -704,6 +704,56 @@ def audit(source_root=None):
     # ---- the Megas: the mine's slots and the farms' dens, one keeper
     mg = spec["megas"]
     all_dens = [("mine", s) for s in mg["slots"]] + [(fa["id"], dn) for fa in spec.get("farms", []) for dn in fa["dens"]]
+
+    # ---- every farm coordinate inside data farms_grid
+    # `grid` guards BLOCK WRITES and the farms write no blocks, so `grid` never looks at a den: the author
+    # of the farms expected it to and it did not. An anchor is a teleport target and a spawn point, so an
+    # unguarded one is a Mega anywhere in the world -- inside a town, on a route, in the live spawn. This
+    # is the check that makes `farms_grid` a guard instead of a sentence.
+    def _inside(poly, px, pz):
+        """Even-odd point-in-polygon, written here rather than imported from tools/gulch_mine.py.
+
+        The generator's own membership test is what placed these points; borrowing it would make the
+        audit agree with the builder by construction. Six lines is a cheap price for an independent
+        statement (CLAUDE.md, "How to prove an audit is independent")."""
+        inside = False
+        n = len(poly)
+        for a in range(n):
+            x0, z0 = poly[a]
+            x1, z1 = poly[(a + 1) % n]
+            if (z0 > pz) != (z1 > pz) and px < x0 + (pz - z0) * (x1 - x0) / (z1 - z0):
+                inside = not inside
+        return inside
+
+    if spec.get("farms"):
+        fg = spec.get("farms_grid")
+        if not fg:
+            probs.append("farms: %d farm(s) are authored and data has no farms_grid to hold them" % len(spec["farms"]))
+        else:
+            (GX0, GX1), (GY0, GY1), (GZ0, GZ1) = fg["x"], fg["y"], fg["z"]
+
+            def _fg(label, x, y, z):
+                if not (GX0 <= x <= GX1 and GY0 <= y <= GY1 and GZ0 <= z <= GZ1):
+                    probs.append("farms: %s is (%d, %d, %d), outside farms_grid x%s y%s z%s"
+                                 % (label, x, y, z, fg["x"], fg["y"], fg["z"]))
+
+            for fa in spec["farms"]:
+                for dn in fa["dens"]:
+                    _fg("%s's den %s anchor" % (fa["id"], dn["id"]), *dn["anchor"])
+                tb = fa["zone"]["turn_back"]
+                _fg("%s's turn-back point" % fa["id"], tb[0], tb[1], tb[2])
+                ap = fa["approach"]
+                _fg("%s's approach box corner" % fa["id"], ap[0], ap[1], ap[2])
+                _fg("%s's approach box corner" % fa["id"], ap[3], ap[4], ap[5])
+                # a turn-back point inside the zone it defends would teleport a player back into it
+                if _inside(fa["zone"]["polygon"], tb[0] + 0.5, tb[2] + 0.5):
+                    probs.append("farms: %s's turn-back point (%d, %d) is INSIDE its own zone polygon, so a "
+                                 "player turned back is turned back again" % (fa["id"], tb[0], tb[2]))
+                # and a den outside its own zone would be reachable without ever entering it
+                for dn in fa["dens"]:
+                    if not _inside(fa["zone"]["polygon"], dn["anchor"][0] + 0.5, dn["anchor"][2] + 0.5):
+                        probs.append("farms: %s's den %s stands outside its own zone polygon, so the gate "
+                                     "guards nothing" % (fa["id"], dn["id"]))
     sa = fn_text("megas/spawn_at").strip().splitlines()
     if sa != ["$spawnpokemonat $(x) $(y) $(z) $(species) $(aspect) uncatchable level=$(level)"]:
         probs.append("megas: megas/spawn_at is not the one macro line (EXP-046: a plain spawn line does nothing after a restart)")
@@ -719,9 +769,24 @@ def audit(source_root=None):
         else:
             x, y, z = s["anchor"]
         i = s["id"]
+        # A den's level is its own when it states one, else its farm's tier's (data farm_tiers[].level).
+        # The rule is written out here rather than imported from tools/gulch_mine.py: the audit must say
+        # for itself what the DATA means, or it is only checking the generator against the generator
+        # (CLAUDE.md, "an audit that shares the builder's derivation is not independent"). A mine slot
+        # always states its own, which is why this read used to be unconditional and crashed with
+        # KeyError on the first farm den that did not.
+        if "level" in s:
+            level = s["level"]
+        elif site == "mine":
+            probs.append("megas: mine slot %s states no level and has no tier to fall back on" % i)
+            continue
+        else:
+            farm = next(f for f in spec["farms"] if f["id"] == site)
+            tier = spec["farm_tiers"][s.get("tier", farm["tier"])]
+            level = tier["level"]
         sp = fn_text("megas/spawn_%s" % i)
         call = "function cobblers:gulch_mine/megas/spawn_at {x:%d,y:%d,z:%d,species:\"%s\",aspect:\"%s\",level:%d}" % (
-            x, y, z, s["species"], s["aspect"], s["level"])
+            x, y, z, s["species"], s["aspect"], level)
         if call not in sp.splitlines():
             probs.append("megas: %s's spawn is not `%s`" % (i, call))
         if "execute positioned %d %d %d as @e[type=cobblemon:pokemon,tag=!%s,distance=..2,limit=1,sort=nearest] run function " \

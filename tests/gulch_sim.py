@@ -30,6 +30,15 @@ sys.path.insert(0, str(ROOT / "tests"))
 
 import test_blackout_pack as TB  # noqa: E402
 
+
+class NotModelled(RuntimeError):
+    """A command this world model deliberately does not simulate.
+
+    Raised rather than guessed. A contract test that catches it reports NOT_EXECUTED with the command, so
+    an unsimulated path can never be mistaken for a satisfied one (.claude/rules/testing.md: "Never
+    describe an unexecuted check as passing")."""
+
+
 HALF = {"player": 0.3, "pokemon": 0.5, "villager": 0.3}
 HEIGHT = {"player": 1.8, "pokemon": 1.0, "villager": 1.95}
 
@@ -59,7 +68,8 @@ class World(TB.Sim):
         self.me = None                     # the executing entity (None: the server)
         self.pos = (0.0, 0.0, 0.0)
         self.loaded = lambda x, y, z: True
-        self.blocks = {}                   # (x, y, z) -> block id, what fill and setblock left
+        self.blocks = {}
+        self.storage = {}                   # (x, y, z) -> block id, what fill and setblock left
         self.block_tags = tags or {}       # "#ns:tag" -> set of ids
         self.rng = random.Random(seed)
         self.effects = []                  # (entity, effect line)
@@ -305,6 +315,27 @@ class World(TB.Sim):
         if t[0] == "title":
             self.titles.append((self.me, cmd))
             return None
+        if t[0] == "data":
+            # The farm dens' drop roll (tools/gulch_mine.py keeper_files) is the only thing in this build
+            # that touches NBT storage, and it did not exist until a farm den existed to serve: the data
+            # had no `farms` key, so these lines were never generated and this model never saw them.
+            #
+            # What is modelled here: `data modify storage <ns> <path> set value <json>`, which is how the
+            # keeper's load function seeds the hex-digit table and the empty den list. That is a plain
+            # assignment and the model can hold it honestly.
+            #
+            # What is NOT modelled: `set from entity ... UUID`, `append value`, and an indexed read of
+            # `dens[{id:"..."}]`. Those are the roll's per-player identity path, and a model that guessed
+            # at them would hand back a PASS for a contract it had not actually simulated, which is worse
+            # than no answer. So they raise NotModelled and the contract reports NOT_EXECUTED.
+            self.log.append(cmd)
+            m = re.match(r"^data modify storage (\S+) (\S+) set value (.*)$", cmd)
+            if m:
+                self.storage.setdefault(m.group(1), {})[m.group(2)] = m.group(3)
+                return None
+            if cmd.startswith("execute unless data storage") or " run data modify storage " in cmd:
+                return super().command(cmd)
+            raise NotModelled(cmd)
         if t[0] in ("scoreboard", "function", "execute", "return") or t[0] in ("advancement", "give", "forceload", "schedule"):
             if t[0] in ("advancement", "give", "forceload", "schedule"):
                 self.log.append(cmd)
