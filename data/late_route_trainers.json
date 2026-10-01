@@ -1,0 +1,1162 @@
+{
+  "schema": "cobblers.route-trainers/1",
+  "status": "seated 2026-09-30 from the heightmap and the walked lines; placed in no world yet",
+  "generated_by": "tools/late_route_trainers.py --write",
+  "consumed_by": "tools/route_trainers.py (the rctmod data and the cycle) and its placements(), which tools/reapply.py R17 summons each seat from over RCON",
+  "rule": "tools/route_events.py's seating rule, reusing its Road, frame and yaw_to: the authored point when it is already off the walked line, else onto the flatter shoulder facing the road. All 28 authored points lie exactly on the walked line, so all 28 are shouldered. A seat must also be standable: relief at most 1 over its 3x3 and 2 over its 5x5 (which is what routes 1-3's thirteen measured), within 2 blocks of the road's own ground, 2.2 to 7.0 blocks off every walked line, and outside every town, placement footprint, spawn-free zone, scene area, ferry dock and other trainer's seat.",
+  "spacing_rule": "Not ours. The distance along each route is data/trainers.json placement.at_distance_blocks, authored from docs/story/TRAINER_RULES.json; the shoulder moves a trainer sideways, and along the route only where the authored cell has no standable shoulder. Route 4 spaces six over 3,453 blocks (one about every 500); route 5 four over 1,051 (one every 160 to 290). Re-spacing them would be re-authoring TRAINER_RULES.json, which is another unit's file.",
+  "ground": "tools/ground.py, the canonical heightmap rounded. No world save was read to decide any position (CLAUDE.md, 'Ground comes from the heightmap, never from a world').",
+  "not_verified": "Painted lake and river water is not testable offline from the heightmap, and no world was read: whether a seat's feet are dry, and whether anything a donor template or a mod put there is already standing in the cell, is a block read in the exported world. The probe list in docs/story/LATE_ROUTE_TRAINER_SEATS.md is what settles it.",
+  "eye_contact": "None of the 28 forces a battle on sight. Routes 1-3 force exactly one (the first, as the eye-contact lesson) and Victory Road's ten all do; whether each route's gym_prep trainer should be unavoidable is a design call for the owner, not this tool's to take.",
+  "fields_needed": "Each of the 28 sets quest.<id>.defeated, and tools/route_trainers.py refuses to emit a trainer whose fields are not declared in data/progression.json quest_fields. None of the 28 are declared there (2026-09-30); the list is in docs/story/LATE_ROUTE_TRAINER_SEATS.md.",
+  "trainers": [
+    {
+      "id": "route_04_trainer_01",
+      "name": "Snowfield Novice",
+      "route": "route_04_surge_to_erika",
+      "trainer_order": 1,
+      "listed": [
+        1900,
+        1571
+      ],
+      "seat": [
+        1899,
+        142,
+        1568
+      ],
+      "yaw": -18,
+      "faces": "the walked line, looking south",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 349.9,
+      "authored_distance": 348,
+      "moved_blocks": 3.2,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "left",
+        "road_ground": 140,
+        "seat_ground": 141,
+        "relief_3x3": 1,
+        "relief_5x5": 1,
+        "off_any_walked_line": 2.8
+      },
+      "skin": "rctmod:textures/trainers/single/hiker_brice_00ba.png",
+      "eye_contact": false,
+      "lesson": "One Ice attacker previews Grass pressure.",
+      "dialogue_text": {
+        "pre": "Snowline starts here. One Pokemon, one lesson: Ice chips through what Erika grows.",
+        "player_win": "Chipped straight through. Keep that thought for the greenhouse.",
+        "player_loss": "Cold beats green. Come back when you have something that can land it."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the left shoulder, at the authored cell",
+      "gap_from_previous_blocks": 349.9
+    },
+    {
+      "id": "route_04_trainer_02",
+      "name": "Alpine Ranger",
+      "route": "route_04_surge_to_erika",
+      "trainer_order": 2,
+      "listed": [
+        2370,
+        1301
+      ],
+      "seat": [
+        2371,
+        158,
+        1304
+      ],
+      "yaw": 162,
+      "faces": "the walked line, looking north",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 940.6,
+      "authored_distance": 942,
+      "moved_blocks": 3.2,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "right",
+        "road_ground": 158,
+        "seat_ground": 157,
+        "relief_3x3": 0,
+        "relief_5x5": 2,
+        "off_any_walked_line": 2.8
+      },
+      "skin": "rctmod:textures/trainers/single/pokemon_ranger_taylor_0335.png",
+      "eye_contact": false,
+      "lesson": "Ice and Flying coverage are combined.",
+      "dialogue_text": {
+        "pre": "Ranger's count: two on the ridge. Ice above, wings over. Both at once, or neither.",
+        "player_win": "You covered both. The ridge is yours.",
+        "player_loss": "One answer for two angles is no answer. Try again."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the right shoulder, at the authored cell",
+      "gap_from_previous_blocks": 590.7
+    },
+    {
+      "id": "route_04_trainer_03",
+      "name": "Campfire Keeper",
+      "route": "route_04_surge_to_erika",
+      "trainer_order": 3,
+      "listed": [
+        3072,
+        1368
+      ],
+      "seat": [
+        3070,
+        108,
+        1370
+      ],
+      "yaw": -135,
+      "faces": "the walked line, looking north-east",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 1773.0,
+      "authored_distance": 1772,
+      "moved_blocks": 2.8,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "right",
+        "road_ground": 107,
+        "seat_ground": 107,
+        "relief_3x3": 0,
+        "relief_5x5": 0,
+        "off_any_walked_line": 2.2
+      },
+      "skin": "rctmod:textures/trainers/single/camper_jeff_0092.png",
+      "eye_contact": false,
+      "lesson": "Fire attacks preview Erika's weaknesses.",
+      "dialogue_text": {
+        "pre": "Fire is the only warm thing up here. Erika hates it. Want to see why?",
+        "player_win": "That is the lesson, and you had it already. Mind the embers.",
+        "player_loss": "Keep the fire. You will want it in her greenhouse."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the right shoulder, at the authored cell",
+      "gap_from_previous_blocks": 832.4
+    },
+    {
+      "id": "route_04_trainer_04",
+      "name": "Ridge Scout",
+      "route": "route_04_surge_to_erika",
+      "trainer_order": 4,
+      "listed": [
+        3226,
+        1561
+      ],
+      "seat": [
+        3224,
+        105,
+        1563
+      ],
+      "yaw": -135,
+      "faces": "the walked line, looking north-east",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 2029.8,
+      "authored_distance": 2029,
+      "moved_blocks": 2.8,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "right",
+        "road_ground": 104,
+        "seat_ground": 104,
+        "relief_3x3": 0,
+        "relief_5x5": 0,
+        "off_any_walked_line": 2.2
+      },
+      "skin": "rctmod:textures/trainers/single/engineer_bernie_00de.png",
+      "eye_contact": false,
+      "lesson": "Hazards punish careless switching.",
+      "dialogue_text": {
+        "pre": "Three of mine, and the floor is not friendly. Switch carelessly and the hazards bill you.",
+        "player_win": "You switched like someone who counts. Good.",
+        "player_loss": "The hazards did half of that. Count before you switch."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the right shoulder, at the authored cell",
+      "gap_from_previous_blocks": 256.8
+    },
+    {
+      "id": "route_04_trainer_05",
+      "name": "Bird Watcher",
+      "route": "route_04_surge_to_erika",
+      "trainer_order": 5,
+      "listed": [
+        3570,
+        1886
+      ],
+      "seat": [
+        3569,
+        104,
+        1889
+      ],
+      "yaw": -162,
+      "faces": "the walked line, looking north",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 2552.2,
+      "authored_distance": 2551,
+      "moved_blocks": 3.2,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "right",
+        "road_ground": 103,
+        "seat_ground": 103,
+        "relief_3x3": 1,
+        "relief_5x5": 1,
+        "off_any_walked_line": 2.8
+      },
+      "skin": "rctmod:textures/trainers/single/aroma_lady_violet_022e.png",
+      "eye_contact": false,
+      "lesson": "Flying offense is made visible before Erika.",
+      "dialogue_text": {
+        "pre": "Watch the sky, not me. Flying puts a hole in a garden.",
+        "player_win": "You saw it coming. Most do not.",
+        "player_loss": "Look up next time. That is where a garden loses."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the right shoulder, at the authored cell",
+      "gap_from_previous_blocks": 522.4
+    },
+    {
+      "id": "route_04_trainer_06",
+      "name": "Naturalist",
+      "route": "route_04_surge_to_erika",
+      "trainer_order": 6,
+      "listed": [
+        3993,
+        1844
+      ],
+      "seat": [
+        3992,
+        112,
+        1841
+      ],
+      "yaw": -18,
+      "faces": "the walked line, looking south",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 3018.3,
+      "authored_distance": 3017,
+      "moved_blocks": 3.2,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "left",
+        "road_ground": 111,
+        "seat_ground": 111,
+        "relief_3x3": 0,
+        "relief_5x5": 0,
+        "off_any_walked_line": 2.8
+      },
+      "skin": "rctmod:textures/trainers/single/scientist_ted_014f.png",
+      "eye_contact": false,
+      "lesson": "Sun interaction previews Erika's central mechanic.",
+      "dialogue_text": {
+        "pre": "Last stop before Celadon. Her sun makes her faster than she looks. Mine will show you.",
+        "player_win": "Then you are ready for the greenhouse. Go on.",
+        "player_loss": "The sun did that, not me. Learn it here, not in her gym."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the left shoulder, at the authored cell",
+      "gap_from_previous_blocks": 466.1
+    },
+    {
+      "id": "route_05_trainer_01",
+      "name": "Field Hand",
+      "route": "route_05_erika_to_koga",
+      "trainer_order": 1,
+      "listed": [
+        4383,
+        1812
+      ],
+      "seat": [
+        4380,
+        115,
+        1811
+      ],
+      "yaw": -72,
+      "faces": "the walked line, looking east",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 289.1,
+      "authored_distance": 288,
+      "moved_blocks": 3.2,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "right",
+        "road_ground": 114,
+        "seat_ground": 114,
+        "relief_3x3": 1,
+        "relief_5x5": 1,
+        "off_any_walked_line": 2.8
+      },
+      "skin": "rctmod:textures/trainers/single/worker_braden_0460.png",
+      "eye_contact": false,
+      "lesson": "A single Poison-type introduces status.",
+      "dialogue_text": {
+        "pre": "One Pokemon. Poison is patient, and so am I.",
+        "player_win": "Faster than the poison. Fine.",
+        "player_loss": "Patience wins. Ask the one lying down."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the right shoulder, at the authored cell",
+      "gap_from_previous_blocks": 289.1
+    },
+    {
+      "id": "route_05_trainer_02",
+      "name": "Field Medic",
+      "route": "route_05_erika_to_koga",
+      "trainer_order": 2,
+      "listed": [
+        4358,
+        1962
+      ],
+      "seat": [
+        4355,
+        116,
+        1962
+      ],
+      "yaw": -90,
+      "faces": "the walked line, looking east",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 448.0,
+      "authored_distance": 448,
+      "moved_blocks": 3.0,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "right",
+        "road_ground": 115,
+        "seat_ground": 115,
+        "relief_3x3": 0,
+        "relief_5x5": 0,
+        "off_any_walked_line": 3.0
+      },
+      "skin": "rctmod:textures/trainers/single/fisherman_andrew_00e9.png",
+      "eye_contact": false,
+      "lesson": "Recovery and status management become explicit.",
+      "dialogue_text": {
+        "pre": "Field medic. I keep mine standing, and you will hate how long that takes.",
+        "player_win": "You closed it before I could heal through. That is the trick.",
+        "player_loss": "Status and recovery. That is the whole fight on this road."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the right shoulder, at the authored cell",
+      "gap_from_previous_blocks": 158.9
+    },
+    {
+      "id": "route_05_trainer_03",
+      "name": "Mind Reader",
+      "route": "route_05_erika_to_koga",
+      "trainer_order": 3,
+      "listed": [
+        4366,
+        2133
+      ],
+      "seat": [
+        4363,
+        115,
+        2134
+      ],
+      "yaw": -108,
+      "faces": "the walked line, looking east",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 622.3,
+      "authored_distance": 622,
+      "moved_blocks": 3.2,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "right",
+        "road_ground": 114,
+        "seat_ground": 114,
+        "relief_3x3": 0,
+        "relief_5x5": 0,
+        "off_any_walked_line": 3.2
+      },
+      "skin": "rctmod:textures/trainers/single/aroma_lady_violet_022e.png",
+      "eye_contact": false,
+      "lesson": "Psychic attacks preview one Koga answer.",
+      "dialogue_text": {
+        "pre": "Koga's poison has one clean answer, and it is in your head. Psychic. Show me.",
+        "player_win": "Clean. Carry it into the dojo.",
+        "player_loss": "The answer was Psychic. Now you know, and you lost anyway."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the right shoulder, at the authored cell",
+      "gap_from_previous_blocks": 174.3
+    },
+    {
+      "id": "route_05_trainer_04",
+      "name": "Trail Warden",
+      "route": "route_05_erika_to_koga",
+      "trainer_order": 4,
+      "listed": [
+        4434,
+        2217
+      ],
+      "seat": [
+        4431,
+        114,
+        2218
+      ],
+      "yaw": -108,
+      "faces": "the walked line, looking east",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 734.5,
+      "authored_distance": 734,
+      "moved_blocks": 3.2,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "right",
+        "road_ground": 113,
+        "seat_ground": 113,
+        "relief_3x3": 0,
+        "relief_5x5": 0,
+        "off_any_walked_line": 3.2
+      },
+      "skin": "rctmod:textures/trainers/single/pokemon_ranger_jeffrey_0336.png",
+      "eye_contact": false,
+      "lesson": "Levitate and mixed Poison typings block a one-button Ground sweep.",
+      "dialogue_text": {
+        "pre": "Warden of this trail. Do not come at Koga with one Ground move: Levitate laughs at it.",
+        "player_win": "Mixed answers, mixed typings. You listened.",
+        "player_loss": "One button is not a plan. Levitate just proved it."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the right shoulder, at the authored cell",
+      "gap_from_previous_blocks": 112.2
+    },
+    {
+      "id": "route_06_trainer_01",
+      "name": "Marsh Novice",
+      "route": "route_06_koga_to_sabrina",
+      "trainer_order": 1,
+      "listed": [
+        4923,
+        2689
+      ],
+      "seat": [
+        4921,
+        136,
+        2691
+      ],
+      "yaw": -135,
+      "faces": "the walked line, looking north-east",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 376.7,
+      "authored_distance": 378,
+      "moved_blocks": 2.8,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "right",
+        "road_ground": 135,
+        "seat_ground": 135,
+        "relief_3x3": 0,
+        "relief_5x5": 0,
+        "off_any_walked_line": 2.2
+      },
+      "skin": "rctmod:textures/trainers/single/camper_liam_008e.png",
+      "eye_contact": false,
+      "lesson": "A Dark attacker previews Sabrina's weakness.",
+      "dialogue_text": {
+        "pre": "The marsh is quiet. Dark is quieter. Sabrina will like neither.",
+        "player_win": "Quiet and quick. Go.",
+        "player_loss": "Dark undoes Psychic. Remember that in Saffron."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the right shoulder, at the authored cell",
+      "gap_from_previous_blocks": 376.7
+    },
+    {
+      "id": "route_06_trainer_02",
+      "name": "Marsh Ranger",
+      "route": "route_06_koga_to_sabrina",
+      "trainer_order": 2,
+      "listed": [
+        5146,
+        2860
+      ],
+      "seat": [
+        5146,
+        132,
+        2857
+      ],
+      "yaw": 0,
+      "faces": "the walked line, looking south",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 668.7,
+      "authored_distance": 671,
+      "moved_blocks": 3.0,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "left",
+        "road_ground": 131,
+        "seat_ground": 131,
+        "relief_3x3": 0,
+        "relief_5x5": 1,
+        "off_any_walked_line": 2.2
+      },
+      "skin": "rctmod:textures/trainers/single/pokemon_ranger_taylor_0335.png",
+      "eye_contact": false,
+      "lesson": "Dark and Steel resistances are combined.",
+      "dialogue_text": {
+        "pre": "Two of mine: one shrugs off Psychic, one swallows it. Find the angle.",
+        "player_win": "Found it. Most swing and hope.",
+        "player_loss": "A resistance is a wall, not a bluff. Bring a key."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the left shoulder, at the authored cell",
+      "gap_from_previous_blocks": 292.0
+    },
+    {
+      "id": "route_06_trainer_03",
+      "name": "Night Courier",
+      "route": "route_06_koga_to_sabrina",
+      "trainer_order": 3,
+      "listed": [
+        5453,
+        2942
+      ],
+      "seat": [
+        5454,
+        125,
+        2939
+      ],
+      "yaw": 18,
+      "faces": "the walked line, looking south",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 1012.4,
+      "authored_distance": 1012,
+      "moved_blocks": 3.2,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "left",
+        "road_ground": 124,
+        "seat_ground": 124,
+        "relief_3x3": 0,
+        "relief_5x5": 0,
+        "off_any_walked_line": 3.2
+      },
+      "skin": "rctmod:textures/trainers/single/camper_jeff_0092.png",
+      "eye_contact": false,
+      "lesson": "Priority Dark damage is demonstrated.",
+      "dialogue_text": {
+        "pre": "Night courier. I hit first and I hit dark. Keep up.",
+        "player_win": "You were faster. Take the road.",
+        "player_loss": "Priority is not a trick, it is a schedule. Mine."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the left shoulder, at the authored cell",
+      "gap_from_previous_blocks": 343.7
+    },
+    {
+      "id": "route_06_trainer_04",
+      "name": "Lake Pathfinder",
+      "route": "route_06_koga_to_sabrina",
+      "trainer_order": 4,
+      "listed": [
+        5754,
+        3080
+      ],
+      "seat": [
+        5756,
+        106,
+        3078
+      ],
+      "yaw": 45,
+      "faces": "the walked line, looking south-east",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 1371.6,
+      "authored_distance": 1371,
+      "moved_blocks": 2.8,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "left",
+        "road_ground": 105,
+        "seat_ground": 105,
+        "relief_3x3": 0,
+        "relief_5x5": 0,
+        "off_any_walked_line": 2.2
+      },
+      "skin": "rctmod:textures/trainers/single/scientist_ted_014f.png",
+      "eye_contact": false,
+      "lesson": "Trick Room speed inversion is introduced.",
+      "dialogue_text": {
+        "pre": "Let me invert your afternoon. Slow is fast in here.",
+        "player_win": "You read the room backwards and still won. Good.",
+        "player_loss": "Trick Room. Your speed was your problem, not your answer."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the left shoulder, at the authored cell",
+      "gap_from_previous_blocks": 359.2
+    },
+    {
+      "id": "route_06_trainer_05",
+      "name": "Displaced Archivist",
+      "route": "route_06_koga_to_sabrina",
+      "trainer_order": 5,
+      "listed": [
+        5962,
+        3219
+      ],
+      "seat": [
+        5964,
+        96,
+        3217
+      ],
+      "yaw": 45,
+      "faces": "the walked line, looking south-east",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 1636.2,
+      "authored_distance": 1636,
+      "moved_blocks": 2.8,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "left",
+        "road_ground": 95,
+        "seat_ground": 95,
+        "relief_3x3": 0,
+        "relief_5x5": 1,
+        "off_any_walked_line": 2.8
+      },
+      "skin": "rctmod:textures/trainers/single/engineer_bernie_00de.png",
+      "eye_contact": false,
+      "lesson": "Mixed Psychic/Fairy coverage rehearses Sabrina's team shape.",
+      "dialogue_text": {
+        "pre": "Archivist, displaced, like everything else on this shore. Her team has this shape. Rehearse.",
+        "player_win": "That is her shape, and you beat it here. Saffron next.",
+        "player_loss": "Psychic and Fairy together. Go and build an answer."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the left shoulder, at the authored cell",
+      "gap_from_previous_blocks": 264.6
+    },
+    {
+      "id": "route_07_trainer_01",
+      "name": "Expedition Novice",
+      "route": "route_07_sabrina_to_blaine",
+      "trainer_order": 1,
+      "listed": [
+        6248,
+        3546
+      ],
+      "seat": [
+        6293,
+        95,
+        3597
+      ],
+      "yaw": -135,
+      "faces": "the walked line, looking north-east",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 237.4,
+      "authored_distance": 170,
+      "moved_blocks": 68.0,
+      "shoulder": {
+        "offset": 4,
+        "along_path_cells": 48,
+        "side": "right",
+        "road_ground": 95,
+        "seat_ground": 94,
+        "relief_3x3": 0,
+        "relief_5x5": 0,
+        "off_any_walked_line": 4.2
+      },
+      "skin": "rctmod:textures/trainers/single/fisherman_andrew_00e9.png",
+      "eye_contact": false,
+      "lesson": "A solo Water attacker previews Blaine.",
+      "dialogue_text": {
+        "pre": "One Water attacker. Blaine is a long way off and already losing.",
+        "player_win": "Water wins there. You knew.",
+        "player_loss": "Water. Just water. Bring one."
+      },
+      "why": "the authored point is on the walked line; 4 blocks onto the right shoulder, 48 cells on along the route",
+      "gap_from_previous_blocks": 237.4
+    },
+    {
+      "id": "route_07_trainer_02",
+      "name": "Bridge Hand",
+      "route": "route_07_sabrina_to_blaine",
+      "trainer_order": 2,
+      "listed": [
+        6423,
+        3711
+      ],
+      "seat": [
+        6422,
+        93,
+        3714
+      ],
+      "yaw": -162,
+      "faces": "the walked line, looking north",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 412.9,
+      "authored_distance": 413,
+      "moved_blocks": 3.2,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "right",
+        "road_ground": 92,
+        "seat_ground": 92,
+        "relief_3x3": 0,
+        "relief_5x5": 0,
+        "off_any_walked_line": 3.2
+      },
+      "skin": "rctmod:textures/trainers/single/worker_braden_0460.png",
+      "eye_contact": false,
+      "lesson": "Water and Ground offense are paired.",
+      "dialogue_text": {
+        "pre": "Bridge hand. Water and Ground, paired, because the ash gets into everything.",
+        "player_win": "Paired answers. The bridge is clear.",
+        "player_loss": "Two pressures, one at a time. That is how you lose slowly."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the right shoulder, at the authored cell",
+      "gap_from_previous_blocks": 175.5
+    },
+    {
+      "id": "route_07_trainer_03",
+      "name": "Shore Battler",
+      "route": "route_07_sabrina_to_blaine",
+      "trainer_order": 3,
+      "listed": [
+        6585,
+        4056
+      ],
+      "seat": [
+        6582,
+        92,
+        4055
+      ],
+      "yaw": -72,
+      "faces": "the walked line, looking east",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 908.8,
+      "authored_distance": 907,
+      "moved_blocks": 3.2,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "right",
+        "road_ground": 91,
+        "seat_ground": 91,
+        "relief_3x3": 0,
+        "relief_5x5": 1,
+        "off_any_walked_line": 2.8
+      },
+      "skin": "rctmod:textures/trainers/single/camper_liam_008e.png",
+      "eye_contact": false,
+      "lesson": "Fast Water pressure is made visible.",
+      "dialogue_text": {
+        "pre": "Fast Water. Not clever Water. See if clever helps you.",
+        "player_win": "Clever helped. Noted.",
+        "player_loss": "Speed is a type all its own."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the right shoulder, at the authored cell",
+      "gap_from_previous_blocks": 495.9
+    },
+    {
+      "id": "route_07_trainer_04",
+      "name": "Crater Geologist",
+      "route": "route_07_sabrina_to_blaine",
+      "trainer_order": 4,
+      "listed": [
+        6531,
+        4358
+      ],
+      "seat": [
+        6522,
+        108,
+        4360
+      ],
+      "yaw": -72,
+      "faces": "the walked line, looking east",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 1236.0,
+      "authored_distance": 1232,
+      "moved_blocks": 9.2,
+      "shoulder": {
+        "offset": 6,
+        "along_path_cells": 4,
+        "side": "right",
+        "road_ground": 107,
+        "seat_ground": 107,
+        "relief_3x3": 0,
+        "relief_5x5": 0,
+        "off_any_walked_line": 6.1
+      },
+      "skin": "rctmod:textures/trainers/single/hiker_nob_00b7.png",
+      "eye_contact": false,
+      "lesson": "Rock pressure previews Charizard.",
+      "dialogue_text": {
+        "pre": "Geologist. The crater is rock, and so is the thing Blaine closes with.",
+        "player_win": "Rock pressure, handled. He will not surprise you.",
+        "player_loss": "Rock hurts the one with wings. Work it out before Cinnabar."
+      },
+      "why": "the authored point is on the walked line; 6 blocks onto the right shoulder, 4 cells on along the route",
+      "gap_from_previous_blocks": 327.2
+    },
+    {
+      "id": "route_07_trainer_05",
+      "name": "Ash-Path Ranger",
+      "route": "route_07_sabrina_to_blaine",
+      "trainer_order": 5,
+      "listed": [
+        6433,
+        4606
+      ],
+      "seat": [
+        6430,
+        106,
+        4605
+      ],
+      "yaw": -72,
+      "faces": "the walked line, looking east",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 1521.8,
+      "authored_distance": 1520,
+      "moved_blocks": 3.2,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "right",
+        "road_ground": 105,
+        "seat_ground": 105,
+        "relief_3x3": 0,
+        "relief_5x5": 0,
+        "off_any_walked_line": 2.8
+      },
+      "skin": "rctmod:textures/trainers/single/pokemon_ranger_jeffrey_0336.png",
+      "eye_contact": false,
+      "lesson": "Sun and coverage punish a single Water answer.",
+      "dialogue_text": {
+        "pre": "Ash-path ranger. One Water answer and a sunny sky, and your plan is ash.",
+        "player_win": "You brought more than one answer. Good.",
+        "player_loss": "Sun burns off a single answer. Bring two."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the right shoulder, at the authored cell",
+      "gap_from_previous_blocks": 285.8
+    },
+    {
+      "id": "route_07_trainer_06",
+      "name": "Prospector",
+      "route": "route_07_sabrina_to_blaine",
+      "trainer_order": 6,
+      "listed": [
+        6215,
+        4833
+      ],
+      "seat": [
+        6212,
+        104,
+        4832
+      ],
+      "yaw": -72,
+      "faces": "the walked line, looking east",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 1842.0,
+      "authored_distance": 1841,
+      "moved_blocks": 3.2,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "right",
+        "road_ground": 103,
+        "seat_ground": 103,
+        "relief_3x3": 0,
+        "relief_5x5": 0,
+        "off_any_walked_line": 2.8
+      },
+      "skin": "rctmod:textures/trainers/single/hiker_brice_00ba.png",
+      "eye_contact": false,
+      "lesson": "Weather control and priority rehearse Blaine's closing turns.",
+      "dialogue_text": {
+        "pre": "Prospector, and the last of this road. Weather, then priority, the way he finishes you.",
+        "player_win": "Then Cinnabar is only a boat ride.",
+        "player_loss": "That is his closing turn. You have just seen it for free."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the right shoulder, at the authored cell",
+      "gap_from_previous_blocks": 320.2
+    },
+    {
+      "id": "route_08_trainer_01",
+      "name": "Crater Novice",
+      "route": "route_08_blaine_to_giovanni",
+      "trainer_order": 1,
+      "listed": [
+        5853,
+        5087
+      ],
+      "seat": [
+        5854,
+        116,
+        5090
+      ],
+      "yaw": 162,
+      "faces": "the walked line, looking north",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 260.5,
+      "authored_distance": 259,
+      "moved_blocks": 3.2,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "left",
+        "road_ground": 115,
+        "seat_ground": 115,
+        "relief_3x3": 0,
+        "relief_5x5": 0,
+        "off_any_walked_line": 2.8
+      },
+      "skin": "rctmod:textures/trainers/single/hiker_nob_00b7.png",
+      "eye_contact": false,
+      "lesson": "A solo Ground attacker opens the final leg.",
+      "dialogue_text": {
+        "pre": "Last leg. One Ground attacker, and the ground belongs to him.",
+        "player_win": "Through me, then. Mind the crater.",
+        "player_loss": "Ground is the whole road ahead. Start there."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the left shoulder, at the authored cell",
+      "gap_from_previous_blocks": 260.5
+    },
+    {
+      "id": "route_08_trainer_02",
+      "name": "Crater Scout",
+      "route": "route_08_blaine_to_giovanni",
+      "trainer_order": 2,
+      "listed": [
+        5661,
+        5186
+      ],
+      "seat": [
+        5661,
+        122,
+        5183
+      ],
+      "yaw": 0,
+      "faces": "the walked line, looking south",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 492.1,
+      "authored_distance": 492,
+      "moved_blocks": 3.0,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "right",
+        "road_ground": 121,
+        "seat_ground": 121,
+        "relief_3x3": 0,
+        "relief_5x5": 0,
+        "off_any_walked_line": 3.0
+      },
+      "skin": "rctmod:textures/trainers/single/camper_jeff_0092.png",
+      "eye_contact": false,
+      "lesson": "Mixed terrain types discourage a monotype answer.",
+      "dialogue_text": {
+        "pre": "Scout. The terrain changes twice between here and his floor. One type will not do.",
+        "player_win": "You are carrying answers, not a favourite. Good.",
+        "player_loss": "A monotype dies out here, slowly."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the right shoulder, at the authored cell",
+      "gap_from_previous_blocks": 231.6
+    },
+    {
+      "id": "route_08_trainer_03",
+      "name": "Grassland Keeper",
+      "route": "route_08_blaine_to_giovanni",
+      "trainer_order": 3,
+      "listed": [
+        5295,
+        5285
+      ],
+      "seat": [
+        5294,
+        136,
+        5282
+      ],
+      "yaw": -18,
+      "faces": "the walked line, looking south",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 899.1,
+      "authored_distance": 899,
+      "moved_blocks": 3.2,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "right",
+        "road_ground": 135,
+        "seat_ground": 135,
+        "relief_3x3": 0,
+        "relief_5x5": 0,
+        "off_any_walked_line": 3.2
+      },
+      "skin": "rctmod:textures/trainers/single/aroma_lady_violet_022e.png",
+      "eye_contact": false,
+      "lesson": "Grass offense answers Rock and Ground bodies.",
+      "dialogue_text": {
+        "pre": "Grass, out here. It answers rock and it answers ground, and nobody expects it.",
+        "player_win": "You expected it. Fine.",
+        "player_loss": "Grass. Against stone. Think about it."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the right shoulder, at the authored cell",
+      "gap_from_previous_blocks": 407.0
+    },
+    {
+      "id": "route_08_trainer_04",
+      "name": "Sand Runner",
+      "route": "route_08_blaine_to_giovanni",
+      "trainer_order": 4,
+      "listed": [
+        5018,
+        5387
+      ],
+      "seat": [
+        5017,
+        147,
+        5384
+      ],
+      "yaw": -18,
+      "faces": "the walked line, looking south",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 1218.4,
+      "authored_distance": 1218,
+      "moved_blocks": 3.2,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "right",
+        "road_ground": 146,
+        "seat_ground": 146,
+        "relief_3x3": 0,
+        "relief_5x5": 0,
+        "off_any_walked_line": 3.2
+      },
+      "skin": "rctmod:textures/trainers/single/worker_braden_0460.png",
+      "eye_contact": false,
+      "lesson": "Weather and Ground immunity create a positioning check.",
+      "dialogue_text": {
+        "pre": "Sand runner. Weather, immunity, position. Three things, and you are standing in all of them.",
+        "player_win": "Position taken. You move well.",
+        "player_loss": "You stood still. Out here that is a decision."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the right shoulder, at the authored cell",
+      "gap_from_previous_blocks": 319.3
+    },
+    {
+      "id": "route_08_trainer_05",
+      "name": "Plateau Ranger",
+      "route": "route_08_blaine_to_giovanni",
+      "trainer_order": 5,
+      "listed": [
+        4615,
+        5607
+      ],
+      "seat": [
+        4614,
+        157,
+        5604
+      ],
+      "yaw": -18,
+      "faces": "the walked line, looking south",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 1712.5,
+      "authored_distance": 1712,
+      "moved_blocks": 3.2,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "right",
+        "road_ground": 156,
+        "seat_ground": 156,
+        "relief_3x3": 0,
+        "relief_5x5": 0,
+        "off_any_walked_line": 3.2
+      },
+      "skin": "rctmod:textures/trainers/single/pokemon_ranger_taylor_0335.png",
+      "eye_contact": false,
+      "lesson": "Fighting and Dark coverage broaden the lesson.",
+      "dialogue_text": {
+        "pre": "Plateau ranger. Fighting and Dark, both, because he carries both answers to you.",
+        "player_win": "Broad enough. Go on up.",
+        "player_loss": "Narrow beats nothing. Widen it."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the right shoulder, at the authored cell",
+      "gap_from_previous_blocks": 494.1
+    },
+    {
+      "id": "route_08_trainer_06",
+      "name": "Rift Surveyor",
+      "route": "route_08_blaine_to_giovanni",
+      "trainer_order": 6,
+      "listed": [
+        4158,
+        6045
+      ],
+      "seat": [
+        4160,
+        126,
+        6047
+      ],
+      "yaw": 135,
+      "faces": "the walked line, looking north-west",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 2351.9,
+      "authored_distance": 2351,
+      "moved_blocks": 2.8,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "left",
+        "road_ground": 125,
+        "seat_ground": 125,
+        "relief_3x3": 0,
+        "relief_5x5": 0,
+        "off_any_walked_line": 2.2
+      },
+      "skin": "rctmod:textures/trainers/single/scientist_ted_014f.png",
+      "eye_contact": false,
+      "lesson": "Tailwind and split offense preview a possible doubles identity.",
+      "dialogue_text": {
+        "pre": "Surveying the Rift, while it surveys me. Tailwind, split offence. Keep your footing.",
+        "player_win": "You kept it. Few do, this close.",
+        "player_loss": "Tailwind took your turn order and then your fight."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the left shoulder, at the authored cell",
+      "gap_from_previous_blocks": 639.4
+    },
+    {
+      "id": "route_08_trainer_07",
+      "name": "Final Warden",
+      "route": "route_08_blaine_to_giovanni",
+      "trainer_order": 7,
+      "listed": [
+        3894,
+        6250
+      ],
+      "seat": [
+        3893,
+        102,
+        6247
+      ],
+      "yaw": -18,
+      "faces": "the walked line, looking south",
+      "listed_off_walked_line": 0.0,
+      "walked_distance": 2700.4,
+      "authored_distance": 2700,
+      "moved_blocks": 3.2,
+      "shoulder": {
+        "offset": 3,
+        "along_path_cells": 0,
+        "side": "right",
+        "road_ground": 101,
+        "seat_ground": 101,
+        "relief_3x3": 0,
+        "relief_5x5": 1,
+        "off_any_walked_line": 3.2
+      },
+      "skin": "rctmod:textures/trainers/single/engineer_bernie_00de.png",
+      "eye_contact": false,
+      "lesson": "A balanced three-member core tests preparation without defining Giovanni's format.",
+      "dialogue_text": {
+        "pre": "Final warden. Three, balanced, no gimmick. If this stops you, he will.",
+        "player_win": "Nothing stops you here. The last gym is yours to lose.",
+        "player_loss": "A balanced three stopped you. Prepare; do not hurry."
+      },
+      "why": "the authored point is on the walked line; 3 blocks onto the right shoulder, at the authored cell",
+      "gap_from_previous_blocks": 348.5
+    }
+  ]
+}

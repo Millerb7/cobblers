@@ -4,6 +4,10 @@
 From data/trainers.json (generated from docs/story/TRAINER_RULES.json) and four seat sources:
 
   data/route_trainers.json      Routes 1-3, where each one stands (tools/route_events.py)
+  data/late_route_trainers.json Routes 4-8's twenty-eight, seated by tools/late_route_trainers.py on the
+                                same shoulder rule. Their records in data/trainers.json carry dialogue ids
+                                that resolve nowhere, so their three lines are authored beside their seat,
+                                the way Victory Road's are (lines_of below)
   data/mansion_guardians.json   the Gastly mansion's five Channeler guardians, record and seat together
   data/vr_trainers.json         Victory Road's ten, on the stands tools/vr_caves.py carved along its walked
                                 route; the tenth (the Gate Warden) carries its own record beside its seat,
@@ -99,7 +103,10 @@ def doc(name):
 
 def load():
     t = doc("trainers.json")
-    seats = doc("route_trainers.json")["trainers"]
+    seats = doc("route_trainers.json")["trainers"] + doc("late_route_trainers.json")["trainers"]
+    dupe = sorted(i for i in {s["id"] for s in seats} if sum(1 for s in seats if s["id"] == i) > 1)
+    if dupe:
+        raise SystemExit("two seat files claim the same trainer: %s" % dupe)
     guards = doc("mansion_guardians.json")["trainers"]
     vr = doc("vr_trainers.json")["trainers"]
     prog = doc("progression.json")
