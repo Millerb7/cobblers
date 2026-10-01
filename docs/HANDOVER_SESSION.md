@@ -5,21 +5,27 @@ A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else,
 Three units: the overdue phase-2 PR, the settlement-NPC count, and the four red tests. ~150 turns, context
 over 300k, **~4M weighted** — against 42.9M for the 2026-09-30 run. Handing over on the cost rule.
 
-## 1. The PR stack — four drafts, merge bottom-up, each pinned
+## 1. The PRs — the stack collapsed on 2026-10-01, and #97's head moved
 
-Nothing is merged. **#97 inherits 38 commits from #95 and must not merge before it.**
+**The owner merged most of it while this session was working.** Verified against GitHub, not assumed:
 
-| PR | Branch | Base | Head |
-|---|---|---|---|
-| [#95](https://github.com/Millerb7/cobblers/pull/95) | `night/2026-09-29-water-export` | `main` | `5230051ed2d24d1c3b7c13b0a171159b44653b5c` |
-| [#97](https://github.com/Millerb7/cobblers/pull/97) | `build/2026-09-29-phase2` | `main` | `27710fdb82085d06d5cb01229b4651d2ba75b70a` |
-| [#98](https://github.com/Millerb7/cobblers/pull/98) | `docs/2026-09-30-phase2-handover` | #97 | `3bf300b056c2b7037f261bb3fc9ebbd4a7e11ee2` |
-| [#99](https://github.com/Millerb7/cobblers/pull/99) | `docs/2026-09-30-settlement-npcs` | #98 | `3a1aff32f818a076adffc33dcba77caf8a194594` |
-| #100 | `fix/2026-09-30-phase2-red-tests` | #99 | see §5 |
+| PR | Branch | State |
+|---|---|---|
+| #95 | `night/2026-09-29-water-export` | **MERGED to main** 04:22 |
+| #96 | `codex/trainer-modes` | **MERGED to main** 04:23 |
+| #98 | `docs/2026-09-30-phase2-handover` | **MERGED into `build/2026-09-29-phase2`** 04:25 |
+| #99 | `docs/2026-09-30-settlement-npcs` | **MERGED into `build/2026-09-29-phase2`** 04:26 (GitHub retargeted it when #98 merged) |
+| [#97](https://github.com/Millerb7/cobblers/pull/97) | `build/2026-09-29-phase2` -> `main` | **OPEN**, head now **`7b008b6b8f672cffa351e4c8ed59557aaaa18d44`** |
+| [#100](https://github.com/Millerb7/cobblers/pull/100) | `fix/2026-09-30-phase2-red-tests` -> `build/2026-09-29-phase2` | **OPEN** draft, head in the footer below |
 
-**The stack contradicts the owner's own rule** ("one big PR per batch, not a stack"). It grew because each
-PR opened before the next unit began, and a reported branch is frozen. **If one PR is wanted, the three doc
-and fix branches squash onto #97** — worth settling before any of it merges.
+- **Any earlier merge command pinned to `27710fd` for #97 is STALE.** #98 and #99 merged into its branch, so
+  use the head above. `origin/main` is `ac6487e`.
+- Both doc branches were deleted on merge, which is why a PR could not at first be opened against
+  `docs/2026-09-30-settlement-npcs` — GitHub reported "Branch not found" while the local `origin/` ref still
+  pointed at it. **Fetch with `--prune` before trusting a local remote ref.**
+- **The stack is no longer four deep.** Merging #100 into `build/2026-09-29-phase2` collapses everything into
+  #97, which is what the owner's one-big-PR rule wanted. That is the recommended order: merge #100 into
+  #97's branch, then #97 into main pinned to its then-current head.
 
 ## 2. The suite baseline is 7, not 8 or 12
 
