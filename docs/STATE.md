@@ -230,6 +230,38 @@
   `tools/gulch_mine_audit.py:242,407` checks coordinates against the gulch's tight block `grid`, which
   these sites are far outside; dens write no blocks, so the fix is a separate declared box for anchors,
   **not a wider grid** -- a threshold widened to make data pass is not a threshold.
+- **There is no staging world, and that blocks every runtime test** (found 2026-10-01). The server
+  directory holds `cobblers-10240` (the LIVE world, never to be enumerated or read) and
+  `cobblers-10240.pre-rescale`; the `cobblers-dryrun*` worlds `docs/STATE.md` cites throughout are gone,
+  and `C:/Users/wnd/Documents/cobblers-10240*.world` are WorldPainter PROJECT files, not Minecraft saves.
+  **`server.properties` has `level-name=cobblers-10240`**, so booting the server as it stands loads the
+  live world. `eula=true` is already the owner's and is not to be touched. So a runtime check needs either
+  a designated offline snapshot (CLAUDE.md: if none exists, stop and ask) or the owner's say-so to point
+  `level-name` at a throwaway level. Repointing the live server's world while the owner sleeps was not
+  done. **Two cheap, high-value checks are waiting on this**: `/pokespawn hoopa` (one command, below) and
+  whether a pasted legendary altar FUNCTIONS.
+- **The legendary structures carry no spawn presets to lose, and placement is already proven**
+  (`docs/research/notes/cobbleverse-legendary-structures.md`, 2026-10-01). 20 installed legendary
+  structures are named with id, source, legendary, dimension and functional blocks, and **every record has
+  `depends_on_it.spawn_entries: 0` and `advancements: []`** -- so the Gastly mansion's lost spawn presets
+  do NOT repeat here. `legendarymonuments:firescourge_shrine` already passed raw `/place template` with
+  rotation and mirror on Cobblemon 1.8.0 / Fabric 0.19.5, while REGISTERED placement failed its terrain
+  validator. **So the shrine test's question is not whether a structure travels but whether an altar
+  FUNCTIONS**, which narrows it to one in-game check. What does not travel: structure STARTS, so LumyMon
+  radars, `gym_map`, `/locate` and `location_check` go dead, and jigsaw sites (the three lakes, Turnback,
+  Giratina) give only a start piece. The trigger mechanism is mostly ASSUMED: VERIFIED only that Mew runs
+  command blocks gated on `defeat_champion_blue` (which our progression never grants) and the Necrozma
+  towers run `pokespawnat ... level=80`; LumyMon is closed source and the pack's wiki omits the Kanto
+  birds, the Ruinous four, Calyrex, Necrozma and Eternatus. Shortlist: Mew to the Jungle Isle ruins,
+  `crown_cemetery` to Peak Pond, Zapdos to the windward skerries. **Articuno at the Frostpeak shrine is
+  blocked by arithmetic**: pad y310 plus a 74-tall tower is 384, over the ceiling.
+- **Hoopa is species data, not a character, and the Deep's relic area rests on it** (2026-10-01).
+  Cobblemon 1.8.0's official new-species list excludes Hoopa, `wiki.cobblemon.com/index.php/Hoopa` is
+  **404**, and no Prison Bottle item or form-change mechanism was found in any Cobblemon source. Community
+  sources (ASSUMED) say the data and an Unbound toggle exist but that Hoopa "does not have a model yet" and
+  appears as a placeholder. `docs/world-building/DEEP_CITY.md`'s whole relic area is built on a visible
+  Hoopa. **One command settles it: `/pokespawn hoopa`, and look.** Do not build the relic area until
+  someone has.
 - **Two contracts fail today and are recorded as such** in `data/system_contracts.json` `fails_today`, strict
   xfail: C3 `sound_ferry_from_the_jetty` (its `to` end (7210,6960) is ground y55 under a sea of y62 and is not
   a deck cell - the sea town moved out from under the crossing, and both stops of the `sound_ferry` line are
