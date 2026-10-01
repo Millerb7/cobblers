@@ -10,3 +10,4 @@ inherit = "core"
 
 [shell_environment_policy.set]
 COBBLERS_SOURCE_ROOT = 'C:\Users\wnd\Documents'
+COBBLERS_LOCAL_STORE = 'C:\Users\wnd\Documents\cobblers-local'
