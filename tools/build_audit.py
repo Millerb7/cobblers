@@ -6,7 +6,11 @@ a town. On 2026-09-21 39 of 72 generated functions were found writing into chunk
 had worked only where something else happened to hold the chunks. These checks are what would have noticed.
 
   cavern      every column of the Displaced City (derived/cavern/plan.npz): grass at the planned floor, open
-              above it, the 4-block stone cap over the roof, and rock (not sky) above that
+              above it, the 4-block stone cap over the roof, and rock (not sky) above that. Every void left in
+              the 24-block shell is then flooded through open cells and classified (void_reach): one that reaches
+              daylight, a fluid body, or anything the flood cannot bound is a PROBLEM -- a back door into the
+              sealed city -- while a pocket shut in the rock, or an alcove open only into the chamber, is a note
+              with its coordinates. Counting voids never told the two apart.
   forest      every trunk in the Route 1 maze: for each `place template` in the tile functions, a log where that
               template puts its trunk
   world_tree  the trunk and crown columns replayed from the tree's own functions and compared block by block,
@@ -27,7 +31,7 @@ import json
 import math
 import re
 import sys
-from collections import Counter
+from collections import Counter, deque
 from pathlib import Path
 
 import numpy as np
@@ -49,6 +53,7 @@ FLOOR_OK = 0.98        # trees stand on dirt, and a trunk base replaces the gras
 ROOF_OK = 1.0          # the cap is laid over every column whatever is there
 TRUNKS_OK = 0.98       # a trunk can be cut by a later corridor dressing (the report counts them)
 COLUMNS_OK = 0.99
+SHELL_VOID_OK = 0.995   # at most 0.5% of the shell's columns may hold a void, however harmless each one is
 
 
 # The ground rule (tools/ground_rule.py): the functions here that read a world, each only to check, never to
@@ -229,6 +234,120 @@ def built_over(settlement, margin=2):
     return out
 
 
+# What a shell void is allowed to be. The shell exists to make every void within 24 blocks of the chamber into
+# rock, because a surface-open cave over the west rim and water pockets down the west wall were once back doors
+# into the sealed city. Counting voids never answered the only question that matters -- is this one a way in? -- so
+# each void is flooded through open cells and classified. Fail closed: anything the flood cannot bound is a
+# problem, and so is anything that reaches daylight, a fluid body or two different places at once.
+VOID_MARGIN = 24          # how far past the shell's own ring the flood may wander before it counts as escaped
+VOID_CAP = 20000          # cells per pocket; a void opening into something bigger is a problem by size alone
+VOID_MAX_POCKETS = 64     # more separate pockets than this and the shell has failed wholesale, not locally
+VOID_SKY_TOP = 319        # a clear column of non-solid blocks up to here is open to the sky
+VOID_STEPS = ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1))
+
+
+def void_reach(world, voids, search_box, cavern_box, floor, ceiling):
+    """([pocket record], [problems]) for the shell's voids: where each one's open space actually goes.
+
+    One flood per pocket, 6-connected through air and fluid. The chamber's own interior is a terminal, not
+    something to expand through (the city is 200 x 200 x 50 of deliberate open space; expanding into it would
+    flood the whole cavern and tell us nothing). Each pocket is classified by what it touches:
+
+      the surface      a reached cell with nothing but air/fluid above it to y319: a hole to daylight -- PROBLEM
+      a fluid body     any water or lava in the pocket: the west wall's old water pockets were a back door and a
+                       flood path both -- PROBLEM
+      escaped          the flood left the search box, or passed VOID_CAP cells: unbounded, so unproven -- PROBLEM
+      the chamber      the pocket's only contact is the sealed city's interior: an alcove in its wall, nobody can
+                       get in through it -- a note with its coordinates
+      isolated         bounded, no contact at all: a pocket of air in the rock -- a note with its coordinates
+
+    A pocket that reaches the chamber AND anything else is a through-path and the worst case: a way in."""
+    sx0, sz0, sx1, sz1 = search_box
+    cx0, cz0, cx1, cz1 = cavern_box
+
+    def is_open(x, y, z):
+        b = base(world.block(x, y, z))
+        return b in AIR or b in FLUID
+
+    def in_chamber(x, y, z):
+        if not (cx0 <= x <= cx1 and cz0 <= z <= cz1):
+            return False
+        i, j = x - cx0, z - cz0
+        return int(floor[j, i]) <= y <= int(ceiling[j, i])
+
+    def open_to_sky(x, y, z):
+        for yy in range(y + 1, VOID_SKY_TOP + 1):
+            if not is_open(x, yy, z):
+                return False
+        return True
+
+    seen_all, pockets, problems = set(), [], []
+    for (vx, vy, vz, vblock, inside) in voids:
+        if (vx, vy, vz) in seen_all:
+            continue                                   # already in a pocket this pass has flooded
+        if len(pockets) >= VOID_MAX_POCKETS:
+            problems.append("cavern shell: more than %d separate voids; the shell has failed wholesale, not "
+                            "locally (first unflooded at %d %d %d)" % (VOID_MAX_POCKETS, vx, vy, vz))
+            break
+        seen = {(vx, vy, vz)}
+        queue = deque([(vx, vy, vz)])
+        reaches, fluids, escaped, sky_at, chamber_at = set(), Counter(), False, None, None
+        while queue:
+            x, y, z = queue.popleft()
+            b = base(world.block(x, y, z))
+            if b in FLUID:
+                fluids[b.split(":")[-1]] += 1
+            if sky_at is None and open_to_sky(x, y, z):
+                sky_at = (x, y, z)
+            if len(seen) > VOID_CAP:
+                escaped = True
+                break
+            for dx, dy, dz in VOID_STEPS:
+                nx, ny, nz = x + dx, y + dy, z + dz
+                if (nx, ny, nz) in seen:
+                    continue
+                if not (sx0 <= nx <= sx1 and sz0 <= nz <= sz1 and -64 <= ny <= VOID_SKY_TOP):
+                    escaped = True
+                    continue
+                if not is_open(nx, ny, nz):
+                    continue
+                if in_chamber(nx, ny, nz):
+                    if chamber_at is None:
+                        chamber_at = (nx, ny, nz)
+                    continue                           # a terminal: the city's interior is open on purpose
+                seen.add((nx, ny, nz))
+                queue.append((nx, ny, nz))
+        seen_all |= seen
+        if sky_at:
+            reaches.add("the surface")
+        if fluids:
+            reaches.add("a fluid body (%s)" % ", ".join(sorted(fluids)))
+        if escaped:
+            reaches.add("past the search box (unbounded, so unproven)")
+        if chamber_at:
+            reaches.add("the sealed chamber")
+        xs = [c[0] for c in seen]
+        ys = [c[1] for c in seen]
+        zs = [c[2] for c in seen]
+        rec = {"seed": [vx, vy, vz], "block": vblock, "where": "over the roof" if inside else "in the walls",
+               "cells": len(seen), "bbox": [min(xs), min(ys), min(zs), max(xs), max(ys), max(zs)] if not escaped else None,
+               "contacts": sorted(reaches), "sky_at": list(sky_at) if sky_at else None,
+               "chamber_at": list(chamber_at) if chamber_at else None}
+        hard = [r for r in reaches if r != "the sealed chamber"]
+        if hard:
+            rec["verdict"] = "CONNECTS to " + " and ".join(sorted(reaches))
+            problems.append("cavern shell: the void at %d %d %d (%s, %s) connects to %s -- %d open cells%s"
+                            % (vx, vy, vz, vblock.split(":")[-1], rec["where"], " and ".join(sorted(reaches)),
+                               len(seen), "" if sky_at is None else "; daylight at %d %d %d" % sky_at))
+        elif chamber_at:
+            rec["verdict"] = ("an alcove open only into the sealed chamber (at %d %d %d), no way in from outside"
+                              % chamber_at)
+        else:
+            rec["verdict"] = "an isolated pocket in the rock, no way in or out"
+        pockets.append(rec)
+    return pockets, problems
+
+
 def cavern(world):
     plan = json.loads((ROOT / "derived" / "cavern" / "plan.json").read_text(encoding="utf-8"))
     town = built_over("displaced_city")
@@ -263,7 +382,8 @@ def cavern(world):
     # the shell (cavern_plan 02): no void within 24 blocks of the chamber, over the roof or round the walls, except
     # where the tunnel is dug through it and the town builds (its gate)
     shell_voids, shell_cols = Counter(), 0
-    problems = []
+    void_at = []
+    problems, notes = [], []
     # fail closed: the plan's own box is the expected set; a floor grid of another size, no column left for the floor
     # check, or no shell data at all is a failure, not a pass (Codex review, 2026-09-21)
     cx0, cz0, cx1, cz1 = plan["cavern"]
@@ -293,19 +413,41 @@ def cavern(world):
                     b = base(world.block(x, y, z))
                     if b in AIR or b in FLUID:
                         shell_voids["%s %s" % ("over the roof," if inside else "in the walls,", b.split(":")[-1])] += 1
+                        void_at.append((x, y, z, b, inside))
                         break
         if shell_cols == 0:
             problems.append("cavern: no shell column left to check")
+    pockets = []
+    if void_at:
+        bx0, bz0, bx1, bz1 = plan["cavern"]
+        sx0, sz0 = bx0 - m - VOID_MARGIN, bz0 - m - VOID_MARGIN
+        sx1, sz1 = bx1 + m + VOID_MARGIN, bz1 + m + VOID_MARGIN
+        pockets, flood_problems = void_reach(world, void_at, (sx0, sz0, sx1, sz1), plan["cavern"], floor, ceiling)
+        problems += flood_problems
+        for p in pockets:
+            notes.append("cavern shell: %s (%d cells, from %d %d %d, %s)"
+                         % (p["verdict"], p["cells"], p["seed"][0], p["seed"][1], p["seed"][2],
+                            "bbox %d %d %d to %d %d %d" % tuple(p["bbox"]) if p["bbox"] else "unbounded"))
     if sum(shell_voids.values()):
-        problems.append("cavern shell: %d columns with a void within 24 blocks of the chamber (%s)"
-                        % (sum(shell_voids.values()), dict(shell_voids)))
+        # the count alone was never the finding: 12 voids appeared between two exports and only an eye comparing
+        # two reports noticed, and nothing said whether any of them was a way in. The gate is now void_reach's
+        # verdict. The count still has one job: a shell whose fill never ran at all would leave voids by the
+        # thousand, every one of them harmlessly "open only into the chamber", and that must not pass.
+        notes.append("cavern shell: %d columns with a void within 24 blocks of the chamber (%s)"
+                     % (sum(shell_voids.values()), dict(shell_voids)))
+        if len(void_at) > (1 - SHELL_VOID_OK) * max(shell_cols, 1):
+            problems.append("cavern shell: %d of %d columns hold a void (%.2f%%), needs under %.1f%%: the shell "
+                            "pass did not run, whatever each void connects to"
+                            % (len(void_at), shell_cols, 100 * len(void_at) / max(shell_cols, 1),
+                               100 * (1 - SHELL_VOID_OK)))
     for what, got, total, need in (("floor", floor_ok, n_ground, FLOOR_OK), ("roof cap", roof_ok, n, ROOF_OK),
                                    ("open interior", open_ok, n_ground, COLUMNS_OK)):
         if got < need * total:
             problems.append("cavern %s: %d of %d columns (%.2f%%), needs %.0f%%" % (what, got, total, 100 * got / max(total, 1), 100 * need))
     return {"columns": n, "rebuilt_by_the_town": n - n_ground, "floor_ok": floor_ok, "roof_ok": roof_ok, "open_ok": open_ok,
-            "shell_columns": shell_cols, "shell_voids": dict(shell_voids),
-            "worst": bad.most_common(5), "problems": problems}
+            "shell_columns": shell_cols, "shell_voids": dict(shell_voids), "shell_void_columns": len(void_at),
+            "shell_pockets": [{k: p[k] for k in ("verdict", "seed", "cells", "bbox", "contacts")} for p in pockets],
+            "worst": bad.most_common(5), "problems": problems, "notes": notes}
 
 
 def _trunk_offsets():
@@ -528,7 +670,10 @@ def main(argv=None):
         res[name] = CHECKS[name](w)
         bad += len(res[name]["problems"])
         if not a.as_json:
-            print("%-10s %s" % (name, json.dumps({k: v for k, v in res[name].items() if k != "problems"})))
+            print("%-10s %s" % (name, json.dumps({k: v for k, v in res[name].items()
+                                                   if k not in ("problems", "notes", "shell_pockets")})))
+            for msg in res[name].get("notes") or []:
+                print("   note            %s" % msg)
             for msg in res[name]["problems"]:
                 print("   BUILD MISMATCH  %s" % msg)
     if a.as_json:
