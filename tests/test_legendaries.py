@@ -184,28 +184,49 @@ def test_a_mouth_with_no_export_provenance_is_rejected(doc, ground, tmp_path):
     assert failing(rep, "uxie: water_export declares neither"), "a mouth with no provenance was accepted: %s" % rep.errors
 
 
+def an_unsited_id(doc):
+    """One record that is not sited, read from the doc rather than named here.
+
+    Case 5 used to name `registeel`, and registeel was sited on 2026-09-30, which broke two tests at once.
+    A record's status is exactly the thing these tests are about, so the exemplar is chosen from the data
+    and never written down. If every encounter is ever sited, the tests below fail loudly saying the
+    fixture is gone -- which is the honest outcome, because the property would then be untestable here
+    rather than satisfied.
+    """
+    unsited = sorted(r["id"] for r in doc["encounters"] if r.get("status") != "sited")
+    assert unsited, "every encounter is sited: these tests need an unsited record and the data has none"
+    return unsited[0]
+
+
 @pytest.mark.slow
-def test_an_unadmitted_unsatisfiable_gate_is_rejected(doc, ground, tmp_path):
-    # Case 5, the live fault. Regigigas is built and needs registeel's `met`, which only a SITED record's function
-    # grants; registeel is not sited. If removed: that dead end, and every future one, becomes invisible again.
-    gigas = rec_of(doc, "regigigas")
-    assert "registeel" in gigas["gate"]["requires_met"], "regigigas no longer depends on registeel"
-    assert rec_of(doc, "registeel")["status"] != "sited", "registeel is sited now: this test no longer tests it"
-    gigas["gate"].pop("unsatisfiable_until")
+def test_a_correct_admission_is_accepted(doc, ground, tmp_path):
+    # The one direction nothing else here covers, and it was never covered. Case 5 used to drive the
+    # rejection path from a live fault -- regigigas needed registeel's `met` and registeel was not sited --
+    # and that dead end was CLOSED when registeel was sited on 2026-09-30, so the fault it pinned is gone.
+    # What no test ever proved is that the admission is honoured: if _met_is_reachable ignored
+    # gate.unsatisfiable_until and simply errored on any unbuilt prerequisite, both rejection tests below
+    # would still pass, and so would the committed data, which admits nothing at all. Then the only way to
+    # ship a knowingly-shut chamber would be unavailable and nobody would know why.
+    # If removed: `unsatisfiable_until` could stop working and every test here would stay green.
+    victim = an_unsited_id(doc)
+    groudon = rec_of(doc, "groudon")
+    groudon["gate"]["requires_met"] = [victim]
+    groudon["gate"]["unsatisfiable_until"] = [victim]
     rep = run(doc, ground, tmp_path / "pack")
-    assert failing(rep, "regigigas: its gate cannot be satisfied until registeel"), \
-        "an unreachable chamber was accepted: %s" % rep.errors
+    assert not failing(rep, "groudon: its gate cannot be satisfied"), \
+        "a correctly admitted dead end was rejected, so the admission does not work: %s" % rep.errors
 
 
 @pytest.mark.slow
 def test_a_new_unsatisfiable_dependency_must_be_admitted(doc, ground, tmp_path):
     # The property case 5 exists for, on a record that has no admission today: a sited chamber that acquires a
     # dependency on an unsited one must fail until it says so. If removed: the next dead gate ships silently.
+    victim = an_unsited_id(doc)
     groudon = rec_of(doc, "groudon")
     assert not groudon["gate"].get("unsatisfiable_until"), "groudon already admits something"
-    groudon["gate"]["requires_met"] = ["registeel"]
+    groudon["gate"]["requires_met"] = [victim]
     rep = run(doc, ground, tmp_path / "pack")
-    assert failing(rep, "groudon: its gate cannot be satisfied until registeel"), \
+    assert failing(rep, "groudon: its gate cannot be satisfied until %s" % victim), \
         "a newly unreachable chamber was accepted: %s" % rep.errors
 
 

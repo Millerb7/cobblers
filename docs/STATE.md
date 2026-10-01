@@ -129,22 +129,9 @@
   something that sets it (the finale's quest stage: story, Codex's). Settled by the unit: the cradle goes to
   (3357, 3306) and not FACTION.md's (3297, 2603), which is outside the Rift; Z3 is superseded by the gulch's
   own zone; Registeel's effective gate is 8 badges, not 7, anywhere in the Rift.
-- **The suite is 5,138 passed, 12 failed, 9 xfailed (measured at 27710fd, 1,054 s). The "8 failed" baseline
-  is superseded, and the claim that none of the failures is from the 2026-09-30 work is WRONG.** The 8
-  baseline failures are still there and still pre-existing: heightmap provenance (`water_shaped_from`
-  undocumented), `mines_independent` surface faces, `no_swallowed_crashes`, two `rift_heightmap` sculpt
-  tests, and three `sea_town` tests - the last three the same sea-town/ferry migration that contracts C3
-  and C14 record. **Four more are this branch's own.** `tests/test_gym_buildings_independent.py` and
-  `tests/test_legendaries.py` are both new on `build/2026-09-29-phase2`, as are the data files they check
-  (`data/gym_buildings/` and `data/legendaries.json` exist on no other branch), and each pins a state a
-  later commit on the same branch moved past: the two gym tests assert **five** buildings where
-  `data/gym_buildings/` now holds **seven** (gyms 6 and 8 were added after them), and the two legendaries
-  tests fail with their own message, "registeel is sited now: this test no longer tests it". Content moved
-  and its tests did not follow - the staleness the different-agents rule exists to catch. Fixing them is
-  `test-author` work and is the next unit. `no_swallowed_crashes` now also names these two new files for
-  catching `BaseException` with the comment "no heightmap here"; the heightmap IS present on this machine,
-  so that excuse wants re-examining rather than inheriting.
-
+- **The suite is 7 failed, 5,169 passed, 9 xfailed (measured 2026-10-01 after the fixes below). The baseline is 7, not 8.** The four failures that were phase-2's own are FIXED, and `no_swallowed_crashes` with them. What remains is pre-existing and still not to be chased: heightmap provenance (`water_shaped_from` undocumented), `mines_independent` surface faces, two `rift_heightmap` sculpt tests, and three `sea_town` tests, the last three the sea-town/ferry migration contracts C3 and C14 record.
+- **How the four were fixed (2026-10-01), none of them by moving a number until it passed.** `tests/test_gym_buildings_independent.py` hardcoded `GYMS = (gym1, gym3, gym4, gym5, gym7)` while `tools/gym_buildings_independent.py` has always globbed `data/gym_buildings/`, so gyms 6 and 8 were audited by the tool and unexamined by the tests for a day; `GYMS` now reads the folder, and **gyms 6 and 8 pass all 117 content properties**. The two `test_legendaries.py` failures shared one cause: `registeel` was their "unsited" exemplar and this branch sited it. The exemplar is now chosen from the data (`an_unsited_id`), and the test whose live fault had been CLOSED was replaced by the one direction nothing covered - that a correct `gate.unsatisfiable_until` is HONOURED. Proved by mutating the generator: with `admitted = []` forced in `tools/legendaries_audit.py` the new test fails and the rejection test still passes, so they cover different branches. `test_no_swallowed_crashes` was right about two `except BaseException` handlers in the two new gym test files; both now catch `terrain.TerrainUnavailable`, the one error that means "no heightmap here", and the skip path is verified with `COBBLERS_SOURCE_ROOT` unset.
+- **Gyms 6 and 8 are confirmed and `data/gym_interiors.json` records them superseded (the owner, 2026-10-01).** The record had carried a `why_not` for each while `data/gym_buildings/` held both buildings. gym6's was an owner gate - Sabrina's gym not built until EXP-034 has run, being the only per-player puzzle - and **EXP-034 is still unrun**; the gate is answered because the Hall of Lenses carries no per-player state, so the untested two-player machinery it protected against is not in it. gym8's `why_not` was "as gym2", which was stale: Giovanni's was a COBBLEVERSE donor shell, not Misty's carved interior. **Consequence, found by reading the consumers:** `tools/gym_demolish.py` selects on `superseded_by` and demanded both `dig` and `shell.expect_box`, so marking the two superseded fail-closed the step. Neither gym had works cut under it, so each now declares `works_existed: false` (absence declared, never inferred from a missing key) and carries a `shell.expect_box` derived from `data/placements.json`, the same source gym1's is derived from and not from the building's own record; `gym_demolish.py` re-derives it from the placement and refuses on disagreement, and it agrees. The report now covers 7 gyms, gym6 and gym8 at 2 commands each.
 - **Routes 1-8 were re-routed on the water-shaped heightmap (2026-09-30) and did not move one column**;
   only `victory_road` moved, 246 of 3,677, in the surface approach at x3567-3580 z5282-5527, nowhere near
   its caves. `tools/route_events.py`'s fail-closed guard is cleared and `prepare` runs again. Victory Road
