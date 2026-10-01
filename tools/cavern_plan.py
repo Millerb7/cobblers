@@ -317,9 +317,24 @@ def main(argv=None):
                 shell_n += (k - i + 1) * (hi - lo + 1)
             i = k + 1
     fn["02_shell"] = cmds
+    # 25 the shell again, after the carve. One pass before the excavation cannot hold, because it cannot see what
+    # the excavation opens. On the staging export cobblers-dryrun12 the audit found 12 shell columns holding air
+    # where the previous export had none: 7 pockets, 96 cells, every one of them in the row z=1850, one block south
+    # of the chamber's south wall, 8 blocks tall from the floor up, and open into the chamber. No generated command
+    # in any pack writes air there (checked command by command against build/), and 02_shell's own fill covers that
+    # row, so at shell time those cells cannot have been air: they held something the void tag does not name --
+    # cave decoration hanging in natural rock, which lost its support when the wall beside it was cut away and
+    # popped to air afterwards. That is a hypothesis, not a measurement (the pre-carve world is gone). The tag is
+    # widened below for the cause, and this second pass closes anything the carve opens whatever the cause was.
+    # Safe by construction: inside the box the shell starts at the ceiling and the excavation stops at ceiling-2,
+    # so it can never eat the chamber; outside the box it is all sealed rock. It must run AFTER the carve and
+    # BEFORE 50_tunnel, which is dug through the shell (tools/reapply.py CAVERN, after "20_surfaces").
+    fn["25_reshell"] = (["# the shell again, after the carve: close every void the excavation opened. Must run "
+                         "before 50_tunnel, which is dug through the shell"] + cmds[1:])
     report["shell"] = {"blocks": SHELL, "volume_checked": shell_n,
                        "over_roof": "ceiling to min(ceiling+%d, ground-1)" % (SHELL - 1),
-                       "round_walls": "a %d-block ring, y%d to min(edge ceiling+%d, ground-1)" % (SHELL, seal_lo, SHELL - 1)}
+                       "round_walls": "a %d-block ring, y%d to min(edge ceiling+%d, ground-1)" % (SHELL, seal_lo, SHELL - 1),
+                       "second_pass": "25_reshell, the same fills after the carve and before the tunnel"}
 
     # 05 reset what the previous cut of this cavern left behind. Its glowing false sky was sea lanterns behind
     # light blue glass at y71-72; where the new roof is higher those blocks fall inside the excavation and become
@@ -642,12 +657,23 @@ def main(argv=None):
             dest.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(LIBRARY / o["file"], dest)
     (out / "pack.mcmeta").write_text(json.dumps({"pack": {"pack_format": 48, "description": "Cobblers: Displaced City cavern (tools/cavern_plan.py)"}}, indent=2) + "\n", encoding="utf-8")
-    # what the shell (02) turns to rock: open space, fluids, and blocks that fall
+    # What the shell (02 and 25) turns to rock: open space, fluids, blocks that fall, and -- added 2026-09-30 --
+    # the natural cave decoration that needs a block to hang on. A shell pass skips what the tag does not name, so
+    # a dripstone spike or a hanging root in the rock beside the chamber survived the fill and then popped to air
+    # when the excavation took its support away: that is the best account of the 7 air pockets the dryrun12 audit
+    # found at z=1850 (tools/build_audit.py void_reach, docs/world-building/CAVERN_SHELL_VOIDS.md). All of this
+    # sits in sealed rock a player never sees, so turning it to stone costs nothing.
     tag = out / "data" / "cobblers" / "tags" / "block" / "cavern_void.json"
     tag.parent.mkdir(parents=True, exist_ok=True)
-    tag.write_text(json.dumps({"values": ["minecraft:air", "minecraft:cave_air", "minecraft:void_air", "minecraft:water",
-                                          "minecraft:lava", "minecraft:gravel", "minecraft:sand", "minecraft:red_sand"]},
-                              indent=1) + "\n", encoding="utf-8")
+    tag.write_text(json.dumps({"values": [
+        "minecraft:air", "minecraft:cave_air", "minecraft:void_air", "minecraft:water", "minecraft:lava",
+        "minecraft:gravel", "minecraft:sand", "minecraft:red_sand", "minecraft:powder_snow",
+        "minecraft:pointed_dripstone", "minecraft:glow_lichen", "minecraft:hanging_roots", "minecraft:vine",
+        "minecraft:cave_vines", "minecraft:cave_vines_plant", "minecraft:small_dripleaf", "minecraft:big_dripleaf",
+        "minecraft:big_dripleaf_stem", "minecraft:moss_carpet", "minecraft:sculk_vein", "minecraft:spore_blossom",
+        "minecraft:brown_mushroom", "minecraft:red_mushroom", "minecraft:amethyst_cluster",
+        "minecraft:large_amethyst_bud", "minecraft:medium_amethyst_bud", "minecraft:small_amethyst_bud"]},
+        indent=1) + "\n", encoding="utf-8")
     report["functions"] = {k: len(v) for k, v in fn.items()}
     rep = ROOT / "derived" / "cavern" / "plan.json"
     rep.parent.mkdir(parents=True, exist_ok=True)

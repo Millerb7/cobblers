@@ -1,0 +1,55 @@
+{
+ "schema": "cobblers.cavern_shell_voids/1",
+ "status": "measured. The twelve voids are seven alcoves in the chamber's south wall and no back door exists. The fix (02/25 reshell, the widened void tag) is generated into build/ only; it has not been run on any world, so the twelve are still in cobblers-dryrun12.",
+ "question": "The Displaced City's shell exists to make every void within 24 blocks of the chamber into rock, because a surface-open cave over the west rim and water pockets down the west wall were once back doors into the sealed city. The audit counted voids and could not say whether one was a way in. These are the twelve the dryrun12 audit counted, and what each one actually connects to.",
+ "measured": {
+  "date": "2026-09-30",
+  "world": "cobblers-runtime-proof/dryrun12-auditcopy, a stopped copy of the staging export cobblers-dryrun12",
+  "method": "tools/build_audit.py --only cavern, with the new void_reach pass: a 6-connected flood through air and fluid out of each void, the chamber's interior a terminal rather than something to expand through, bounded by the shell's own ring plus 24 blocks, open-to-sky tested as a clear column of non-solid blocks to y319",
+  "plan_basis": "derived/cavern/plan.npz regenerated from the canonical heightmap at commit dd81da1 (tools/cavern_plan.py); shell_columns 60992, matching the audited world's own figure",
+  "shell_columns": 60992,
+  "void_columns": 12,
+  "pockets": 7,
+  "open_cells_total": 96,
+  "verdict": "no back door. Every one of the twelve is in the single row z=1850, one block south of the chamber's south wall (the cavern box is x3250-3449, z1650-1849), runs 8 blocks up from the floor, and is solid rock on every side but the chamber's. None reaches the surface, none holds or touches water or lava, none escapes the search box, none joins any other pocket. They are alcoves a player standing in the city can step into; nobody outside the city can reach them."
+ },
+ "pockets": [
+  {"seed": [3266, 28, 1850], "columns": [3266, 3267], "cells": 16, "bbox": [3266, 28, 1850, 3267, 35, 1850],
+   "chamber_contact": [3266, 28, 1849], "planned_floor": 27, "ground_above": 101,
+   "verdict": "an alcove open only into the sealed chamber, no way in from outside"},
+  {"seed": [3269, 28, 1850], "columns": [3269], "cells": 8, "bbox": [3269, 28, 1850, 3269, 35, 1850],
+   "chamber_contact": [3269, 28, 1849], "planned_floor": 27, "ground_above": 101,
+   "verdict": "an alcove open only into the sealed chamber, no way in from outside"},
+  {"seed": [3286, 23, 1850], "columns": [3286], "cells": 8, "bbox": [3286, 23, 1850, 3286, 30, 1850],
+   "chamber_contact": [3286, 23, 1849], "planned_floor": 22, "ground_above": 101,
+   "verdict": "an alcove open only into the sealed chamber, no way in from outside"},
+  {"seed": [3289, 23, 1850], "columns": [3289, 3290], "cells": 16, "bbox": [3289, 23, 1850, 3290, 30, 1850],
+   "chamber_contact": [3289, 23, 1849], "planned_floor": 22, "ground_above": 101,
+   "verdict": "an alcove open only into the sealed chamber, no way in from outside"},
+  {"seed": [3331, 28, 1850], "columns": [3331], "cells": 8, "bbox": [3331, 28, 1850, 3331, 35, 1850],
+   "chamber_contact": [3331, 28, 1849], "planned_floor": 27, "ground_above": 101,
+   "verdict": "an alcove open only into the sealed chamber, no way in from outside"},
+  {"seed": [3390, 24, 1850], "columns": [3390, 3391, 3392], "cells": 24, "bbox": [3390, 24, 1850, 3392, 31, 1850],
+   "chamber_contact": [3390, 24, 1849], "planned_floor": 22, "ground_above": 100,
+   "verdict": "an alcove open only into the sealed chamber, no way in from outside"},
+  {"seed": [3394, 24, 1850], "columns": [3394, 3395], "cells": 16, "bbox": [3394, 24, 1850, 3395, 31, 1850],
+   "chamber_contact": [3394, 24, 1849], "planned_floor": 23, "ground_above": 100,
+   "verdict": "an alcove open only into the sealed chamber, no way in from outside"}
+ ],
+ "cause": {
+  "ruled_out": [
+   "a later build re-opening them: every fill and setblock in build/datapacks/cobblers_cavern, build/town_prep/prep_displaced_city.mcfunction and derived/towns/displaced_city_placement.json was tested against (3266, 30, 1850) and only 02_shell's own fill covers it",
+   "the excavation overrunning the box: no generated cavern command names z=1850 except the shell's",
+   "the town building there: the audit already skips columns the town rebuilds, and these twelve are not among them",
+   "the void tag failing to load: that would leave voids in all 60992 shell columns, not 12",
+   "the fill exceeding the command block limit: the row's widest fill is 75 x 83 x 1 = 6225 blocks, and tools/function_limits.py reports 0 problems over the pack"
+  ],
+  "hypothesis": "At shell time those cells held natural cave decoration that the void tag did not name -- a dripstone spike, hanging roots, a glow lichen, a cave vine. The shell's `fill ... replace #cobblers:cavern_void` skipped them. When the excavation cut the chamber wall one block away, their support went and they broke to air, after the only pass that would have filled them. It fits the shape (thin, one block wide in z, 8 blocks tall, hanging in rock), the position (every one of them touching the carve), and the history (dryrun4 measured 0, dryrun12 is a different export with different cave decoration). It is not measured: the pre-carve world is gone, so this cannot be confirmed without a fresh export, and the blocks involved are air now.",
+  "fix": [
+   "tools/cavern_plan.py: #cobblers:cavern_void widened from 8 blocks to 27, adding the support-dependent cave decoration (pointed dripstone, cave vines, glow lichen, hanging roots, dripleaf, moss carpet, sculk vein, spore blossom, mushrooms, amethyst buds and clusters, powder snow). All of it sits in sealed rock a player never sees.",
+   "tools/cavern_plan.py: a second shell pass, 25_reshell, the same 5367 fills run again AFTER the carve and BEFORE 50_tunnel, so anything the excavation opens is closed whatever the cause. Safe by construction: inside the box the shell starts at the ceiling and the excavation stops at ceiling-2, so it cannot eat the chamber; outside the box it is all sealed rock.",
+   "tools/build_audit.py: void_reach classifies every shell void instead of counting it. A void that reaches the surface, holds or touches a fluid, or cannot be bounded is a PROBLEM and the audit exits non-zero; an alcove or an isolated pocket is a note with its coordinates. SHELL_VOID_OK = 0.995 still fails a run where the shell pass did not happen at all."
+  ],
+  "needed": "tools/reapply.py CAVERN must gain \"25_reshell\" immediately after \"20_surfaces\" (before \"30_trees\", and in particular before \"50_tunnel\", which is dug through the shell). Not done here: reapply.py was out of scope for the session that found this."
+ }
+}
