@@ -36,7 +36,7 @@ main-session work by construction. Plan the next session as one build job, not a
 | 1. Heaven's Arena | **Designed, costed, not built** | Build the geometry; hold the fights behind A1 |
 | 2. Relic site underground | Not started; existing design contradicts the owner | Re-design section 5, then carve |
 | 3. Mining town / Deep barrier | **Designed already — "the Slip"** | Build it as blocks, not as a sculpt |
-| 4. Mega farm in the open | **12 sites measured; tool already supports it** | Author `farms`, add a den-anchor box |
+| 4. Mega farm in the open | **AUTHORED AND PARKED; audit clean** | Rewrite its test surface (chip `task_1cb2b2d7`) |
 | 5. The four withheld zone walls | **ANSWERED: stay withheld** | Nothing. Do not reopen |
 
 ### Unit 5 is closed, with proof
@@ -151,6 +151,24 @@ from "HQ ring-0 front at x3427 → a secure shaft down to the basement at y0 →
 So the shaft-from-the-HQ half is already designed and matches the owner; the **surface shrine is the part
 that must go down**, and the cordon must become a zone check. Re-write section 5 before carving anything.
 `tools/cavern_plan.py` is the named precedent for the rock shell.
+
+### Unit 4, done as far as it can go in one session
+Seven dens are authored in `data/notes/mega_farms_proposal.json`, ready to paste into
+`data/gulch_mine.json` as its `farms`, `farms_why` and `farms_grid` keys. With them in place
+`gulch_mine.py build` emits all seven and `gulch_mine_audit.py` is CLEAN. **They are parked because
+switching them on turns 15 tests red** — 12 in the gulch suites, 3 contracts (C12 once, C14 twice) — and
+**not one red is a fault in the data.** The gulch suite was written to assert the raw-stone drop roll is
+dormant (`test_the_drop_roll_is_inert_without_a_farm_den`) and `tests/gulch_sim.py` has no NBT storage
+model, which the roll is built on. The rewrite is chip **`task_1cb2b2d7`** and must be a **main session**
+(the contracts test imports the generator in-process, so it needs the heightmap and `derived/`) run by a
+**different hand** from the data's author.
+
+Do not dodge it by zeroing `drop_percent`: the roll is keyed on a den existing, not on its rate, and the
+drops are the farms' half of the material chain the owner said to keep.
+
+**The general lesson, which bears on units 1, 2 and 3 equally:** every build here activates a
+verification surface, and that surface needs a different author with heightmap access. So **plan one
+build unit per session**, with its test rewrite as the session after.
 
 ## 3. Part 3 — the economy
 

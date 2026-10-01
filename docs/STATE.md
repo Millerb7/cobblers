@@ -187,7 +187,41 @@
   (`tools/traders.py:163-201,248-275`), so a category withheld from one player is withheld from everyone.
   Costs: no trade GUI at a gated counter, a restart rather than `/reload` to add one, and nothing stops
   player A buying for player B. Unknown: two players in one NPC's dialogue at once (EXP-022 unrun).
-- **The open-air Mega farm is unbuilt, with its tool already written** (found 2026-10-01).
+- **Every build in this repository activates a verification surface, and that surface must be rewritten by
+  a different hand that has the heightmap** (2026-10-01, from unit 4). The open-air Mega farms looked like
+  pure data authoring -- the generator already implemented `farms[]` end to end and the data simply had no
+  `farms` key -- and authoring them turned 15 tests red: 12 in the gulch suites and 3 cross-system
+  contracts. Not one red was a fault in the data (the farms' own audit is clean with them in place); they
+  were a test surface written to assert the subsystem was dormant, including a test named
+  `test_the_drop_roll_is_inert_without_a_farm_den`. Rewriting it needs an author who did not write the
+  data (`.claude/rules/testing.md`) and who can run `tests/test_system_contracts.py`, which imports the
+  generator in-process and so needs the canonical heightmap and `derived/` -- which an agent's isolation
+  worktree never receives. **So build units serialise through main sessions at roughly one per session**,
+  and a night planned as a fan-out of builders cannot run. Plan one build per session, with its test
+  rewrite as the next session.
+- **The open-air Mega farms are AUTHORED AND PARKED** (2026-10-01, `data/notes/mega_farms_proposal.json`).
+  Seven dens across the Rift's two southern arms, four `outer` and three `deeper`, measured off the
+  canonical heightmap and never a world: inside the arm polygons of `data/regions.json`, pad slope under
+  10 degrees, 24+ clear of every `keep_clear` box, 260+ apart. Each farm's zone is a 41-block square round
+  its den's pad and nothing more, with the turn-back yaw facing the den, so the Mega is **seen and not
+  reached** -- the cordon language the Deep already uses. Verified before parking: `gulch_mine.py build`
+  emits all seven (zone advancements, zone and turn_back functions, bind/gone/spawn per den) and
+  `gulch_mine_audit.py` is CLEAN. Held out of `data/gulch_mine.json` only for the test surface above;
+  `data/gulch_mine.json` is byte-identical to before the unit. Parked state: 185 passed, 2 xfailed, 0
+  failed across both gulch suites and the contracts. **Open for the owner:** whether an open-country
+  turn-back is wanted at all, or whether the level band (60 / 67 against a cap of 50) should be the only
+  gate. `farm_tiers` is ASSUMED throughout and nothing in it has been timed.
+- **Three guards that were missing are now in** (2026-10-01, correct with or without the farms):
+  `tools/gulch_mine_audit.py` read `s["level"]` on every den and crashed with `KeyError` on the first den
+  that inherited its tier's level, which the generator's own `den_level` allows -- the rule is now written
+  out in the audit rather than imported, because an audit that borrows the builder's derivation only checks
+  the generator against itself. `data` `farms_grid` plus a check that reads it: `grid` guards BLOCK WRITES
+  and the farms write no blocks, so `grid` never looks at a den, which left a declared box nothing
+  enforced -- an anchor is a spawn point and a teleport target, so an unguarded one is a Mega anywhere in
+  the world. Proved by four mutations, each failing before and named after. And `tests/gulch_sim.py` now
+  models `data modify storage ... set value` and raises `NotModelled` for the roll's UUID paths instead of
+  guessing, so an unsimulated path cannot be mistaken for a satisfied contract.
+- **The open-air Mega farm's tool was already written** (found 2026-10-01).
   `tools/gulch_mine.py` implements `farms[]` end to end -- zone and turn-back, per-tier level, respawn
   clock, drop roll, the shared macro keeper -- and **`data/gulch_mine.json` has no `farms` key at all**,
   while its own `megas.why` references `farms[].dens` and `farm_tiers` describes "four outer dens" that do
