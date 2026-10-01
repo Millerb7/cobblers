@@ -37,6 +37,11 @@ GROUND comes from tools/ground.py (the canonical heightmap, rounded), never from
 apron sits on the lake floor and the whole arch must stand under the body's authored `level_y`; a sky portal's
 apron sits on its summit. A column lower than the apron is filled up to it with the apron block.
 
+WATER comes from tools/water_mask.py, which is where tools/paint_maps.py actually paints it: every one of a
+dive portal's 25 apron columns must be inside the body's `water_body.basin_polygons` and min_submersion blocks
+below its level. Until F7 this tested the landmark's `extent.polygons`, which is the place's label outline and
+not water at all.
+
   python tools/portals.py build [--source-root <root>]   # -> build/datapacks/cobblers_portals
   python tools/portals.py report [--source-root <root>]  # every site's geometry and clearances; writes nothing
 
@@ -58,6 +63,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 
 import function_limits  # noqa: E402
+import water_mask  # noqa: E402
 
 DATA = ROOT / "data" / "portals.json"
 PACK = ROOT / "build" / "datapacks" / "cobblers_portals"
@@ -126,26 +132,18 @@ def load(path=DATA):
 
 
 def water_bodies(path=None):
-    """{landmark id: (level_y, [polygons])} for every annotated body of water that has an authored level."""
-    doc = json.loads((path or ROOT / "data" / "landmarks.json").read_text(encoding="utf-8"))
-    out = {}
-    for l in doc["landmarks"]:
-        lev = (l.get("water_body") or {}).get("level_y")
-        polys = (l.get("extent") or {}).get("polygons") or []
-        if lev is not None and polys:
-            out[l["id"]] = (int(lev), polys)
-    return out
+    """{landmark id: {level_y, basin, extent}} -- tools/water_mask.bodies(), which is where water is painted.
+
+    This used to return the landmark's `extent.polygons` and water_check used to test a portal's centre
+    against them. That was F7 (docs/FLIGHT_FINDINGS_2026-09-29.md): water is painted ONLY inside
+    `water_body.basin_polygons` (tools/paint_maps.py's lake pass, then tools/worldpainter/paint.js), and
+    219,737 columns of Lake Tilpey's extent polygon hold no water at all. A portal sited in that gap
+    passed the check and would have stood in air. tools/water_mask.py is the one definition now."""
+    return water_mask.bodies(path)
 
 
 def in_polygon(poly, x, z):
-    n, c, j = len(poly), False, len(poly) - 1
-    for i in range(n):
-        xi, zi = poly[i]
-        xj, zj = poly[j]
-        if ((zi > z) != (zj > z)) and (x < (xj - xi) * (z - zi) / float(zj - zi) + xi):
-            c = not c
-        j = i
-    return c
+    return water_mask.in_polygons([poly], x, z)
 
 
 # ------------------------------------------------------------------------------------------- the geometry
@@ -358,24 +356,25 @@ def clearances(doc, sites):
 
 
 def water_check(doc, spec, site, bodies):
-    """[problem] for a dive portal that is not properly drowned."""
-    body = spec["water_body"]
-    if body not in bodies:
-        return ["%s: no water body %r with an authored level_y in data/landmarks.json" % (spec["id"], body)]
-    level, polys = bodies[body]
-    out = []
-    x, z = spec["at"]
-    if not any(in_polygon(p, x, z) for p in polys):
-        out.append("%s: (%d, %d) is outside %s's outline" % (spec["id"], x, z, body))
+    """[problem] for a dive portal that is not properly drowned. Fail-closed on the water that is PAINTED.
+
+    F7 (docs/FLIGHT_FINDINGS_2026-09-29.md): this used to test the portal's centre column against the
+    landmark's `extent.polygons`, which is not where water is. tools/water_mask.claim() is the rule now
+    -- EVERY one of the 25 apron columns inside the body's `basin_polygons`, and every one of them
+    min_submersion blocks below its `level_y`. The apron centre being in the right lake is not enough:
+    an apron half out of the basin is half dry, and the arch stands on all of it."""
+    body, out = spec["water_body"], []
+    g = site["ground"]
+    out += water_mask.claim(body, list(g), lambda x, z: g[(x, z)], doc["rules"]["min_submersion"],
+                            bodies_=bodies, label=spec["id"])
+    b = bodies.get(body)
+    if b is None:
+        return out
+    level = b["level_y"]
     top = site["apron_y"] + ARCH_HEIGHT
     if top > level - doc["rules"]["min_water_above"]:
         out.append("%s: its lintel tops out at y%d, %d under %s's level y%d (min %d)"
                    % (spec["id"], top, level - top, body, level, doc["rules"]["min_water_above"]))
-    for c, gy in site["ground"].items():
-        if gy > level - doc["rules"]["min_submersion"]:
-            out.append("%s: the apron column %s is at y%d, %d under %s's level y%d (min %d)"
-                       % (spec["id"], c, gy, level - gy, body, level, doc["rules"]["min_submersion"]))
-            break
     site["level_y"] = level
     return out
 
