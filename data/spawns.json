@@ -26079,9 +26079,9 @@
     {
       "id": "ursaluna_den_outskirts",
       "display_name": "Ursaluna den outskirts",
-      "intended_location": "the slope in front of the Ursaluna's den west of Highwire (data/ursaluna_cave.json): one natural Habitat Block, ursaluna_den_outskirts_ward in data/habitat_blocks.json, in the ground at (1514, 158, 1424), 14 blocks out from the mouth, range 20",
+      "intended_location": "the slope in front of the Ursaluna's den west of Highwire (data/ursaluna_cave.json): one activated Habitat Block, ursaluna_den_outskirts_ward in data/habitat_blocks.json, in the ground at (1514, 158, 1424), 14 blocks out from the mouth, keeping up to 4 Teddiursa alive within 16",
       "mechanism": "habitat_block",
-      "replace_spawns": true,
+      "replace_spawns": false,
       "level_band": {
         "minimum": 20,
         "maximum": 28

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""The Ursaluna's den west of Highwire, from data/ursaluna_cave.json: the cave, the sleeping bear and its keeper.
+"""The Ursaluna's den west of Highwire, from data/ursaluna_cave.json: the cave, the sleeping bear, its keeper and its wake.
 
 The owner, 2026-10-02: "make an ursuluna cave at 1504 164 1414, dig a solid size caev for a large ursuluna, have
 teddiursa spawn on the outskirt and have an npc one players can talk to". Four parts, each on a pattern the
@@ -14,14 +14,31 @@ repository already uses, so nothing here is new machinery:
                 hill's grass is its own and its surface is never raised.
   the bear      a Pokemon entity, summoned over RCON by the re-application (placement_steps below), because
                 `spawnpokemonat` in a plainly parsed function spawns nothing (tools/sapling_celebi.py, EXP-046).
-                This pack dresses it (the sleeping Celebi's flags, EXP-023) and keeps it. A barrier curtain across
-                the hall protects it, as the barrier shell protects the Celebi.
+                This pack dresses it (the sleeping Celebi's flags, EXP-023), keeps it while it sleeps, and WAKES it
+                when a player comes within wake.radius: the den's boss fight (below).
   Teddiursa     NOT in this pack: a Habitat Block record in data/habitat_blocks.json (placed by
                 tools/habitat_blocks.py with every other block) and a Habitat pool in data/spawns.json (compiled by
                 tools/compile_spawns.py). This tool only reads them, for the report.
   the watcher   NOT in this pack: a conversation in data/dialogue.json, compiled with every other one into
                 cobblers_dialogue by tools/compile_dialogue.py --all. npc_placements() names where the
                 re-application's "npc" action puts it.
+
+THE WAKE (the owner, 2026-10-02: "Wake it as a boss fight" - no wall). Until that day a 2-thick barrier curtain
+crossed the hall in front of the bear; it is gone, and nothing in this file writes a barrier. The wake is the sleeping
+Celebi's (docs/mechanics/CELEBI_WAKE.md, tools/sapling_celebi.py), rung for rung:
+
+  ursaluna_cave/keeper      every period_ticks, while a player is within player_radius: near
+  ursaluna_cave/near        AWAKE: return at once (the keeper stands down). ASLEEP: keep, then wake_check
+  ursaluna_cave/keep        remove a second bear (a load race), put it back on its spot if anything moved it
+  ursaluna_cave/wake_check  the trigger, a STATE CHECK: the nearest non-spectator within wake.radius of the spot
+  ursaluna_cave/wake        as that player: merge wake.awake_nbt (the Celebi's AWAKE), set the awake score, roar,
+                            and tell the player if their level cap is below the bear's (cap_advice, a macro)
+  ursaluna_cave/dress       the dormant flags, the tag, the spot - and the awake score back to 0, so the flag never
+                            outlives the bear it describes (a re-application after a knockout or a catch installs
+                            a fresh sleeping bear; one while it is awake and alive changes nothing)
+
+What is unproven (Unbattleable 0b on a live entity, a NoAI Pokemon in battle, RecalculatePose) is
+experiments/EXP-049-ursaluna-wake, for the integrator to run in game.
 
 THE SUMMON GUARD keys on the tag and on the species, never on a bare distance. R14C (the Celebi) uses
 `unless entity @e[type=cobblemon:pokemon,distance=..3]`, and a wild Pokemon wandering past the sapling has satisfied
@@ -52,7 +69,7 @@ OUT = ROOT / "build" / "datapacks" / "cobblers_ursaluna_cave"
 SCHEMA = "cobblers.ursaluna-cave/1"
 PACK_FORMAT = 48  # Minecraft 1.21.1
 FN = "ursaluna_cave"
-# every boundary in the record is inclusive to within EPS (exclusive for the curtain's far face): a block centre on
+# every boundary in the record is inclusive to within EPS: a block centre on
 # a diagonal axis lands exactly on s = 0 or on an ellipse, and float rounding must not decide which side it falls
 EPS = 1e-6
 
@@ -66,12 +83,24 @@ def load(path=DATA):
     if doc.get("schema") != SCHEMA:
         raise CaveError("%s: schema must be %s" % (path, SCHEMA))
     c = doc["cave"]
-    if c["den"]["curtain_from"] + c["den"]["curtain_thickness"] > doc["ursaluna"]["at_s"]:
-        raise CaveError("the bear stands in front of its own curtain")
-    if doc["ursaluna"].get("encounter") != "resident":
-        raise CaveError("only a resident (asleep, unbattleable) bear is built; a fight is the owner's decision")
-    if "uncatchable" in doc["ursaluna"].get("spawn_properties", []):
+    u = doc["ursaluna"]
+    if "curtain" in c["blocks"] or "curtain_from" in c["den"]:
+        raise CaveError("the barrier curtain is gone (the owner, 2026-10-02: 'Wake it as a boss fight' - no wall)")
+    if c["den"]["from"] > u["at_s"]:
+        raise CaveError("the bear stands in front of its own den floor")
+    if u.get("encounter") != "boss":
+        raise CaveError("the bear is a boss that wakes (data/ursaluna_cave.json encounter_why)")
+    if "uncatchable" in u.get("spawn_properties", []):
         raise CaveError("`uncatchable` cannot be cleared on a spawned Pokemon (data/sapling_celebi.json)")
+    w = u.get("wake") or {}
+    if w.get("trigger") != "player_near" or not isinstance(w.get("radius"), int) or w["radius"] <= 0:
+        raise CaveError("ursaluna.wake needs trigger player_near and a positive integer radius")
+    if (w.get("awake_nbt") or {}).get("Unbattleable") != "0b":
+        raise CaveError("a wake that leaves Unbattleable on is not a fight")
+    if "PoseType" in w["awake_nbt"]:
+        raise CaveError("only PoseType \"SLEEP\" is proven (EXP-023); the wake hands the pose back with RecalculatePose")
+    if w["radius"] >= u["keeper"]["player_radius"]:
+        raise CaveError("the wake is checked inside the keeper's loop, so its radius must be inside the keeper's")
     return doc
 
 
@@ -106,7 +135,7 @@ class Model:
 
     def __init__(self, doc, ground):
         c = doc["cave"]
-        pa, ch, den = c["passage"], c["chamber"], c["den"]
+        pa, ch = c["passage"], c["chamber"]
         m = int(c["margin"])
         self.floor = floor_y(doc, ground)
         ox, oz, (ux, uz), (vx, vz) = frame(doc)
@@ -133,12 +162,10 @@ class Model:
         Y = ys[:, None, None]
         under = Y <= (self.G[None] - int(c["keep_natural_top"]))
         self.shell = _dilate(self.void, m) & under
-        cf, ct = den["curtain_from"], den["curtain_from"] + den["curtain_thickness"]
-        self.curtain = self.void & (S >= cf - EPS) & (S < ct - EPS)
         cols = self.void.any(axis=0)
         level = (self.floor <= self.G)        # never lay a floor block over air: outside the hill there is none
         self.floor_cols = cols & level
-        self.den_cols = self.floor_cols & (self.S >= ct - EPS)
+        self.den_cols = self.floor_cols & (self.S >= c["den"]["from"] - EPS)
         self.hall_cols = self.floor_cols & ~self.den_cols
         self.lanterns = []
         for s, p in c["lanterns"]:
@@ -214,9 +241,7 @@ def carve_lines(doc, M):
     out.append("# 3. the floor, only where the floor is under the hill's own ground")
     out += [_fill(r, b["floor"]) for r in M.floor_runs(M.hall_cols)]
     out += [_fill(r, b["den_floor"]) for r in M.floor_runs(M.den_cols)]
-    out.append("# 4. the curtain: barriers across the hall, in front of the den")
-    out += [_fill(r, b["curtain"], " replace minecraft:air") for r in M.runs(M.curtain)]
-    out.append("# 5. the lanterns, hanging from the roof")
+    out.append("# 4. the lanterns, hanging from the roof. No barrier anywhere: the bear is a boss that wakes")
     out += ["setblock %d %d %d %s replace" % (x, y, z, b["light"]) for x, y, z in M.lanterns]
     return out
 
@@ -230,18 +255,45 @@ def _species_sel(doc):
     return 'nbt={Pokemon:{Species:"cobblemon:%s"}}' % doc["ursaluna"]["species"]
 
 
+OBJ = "cobblers.ursaluna"
+
+
+def awake_set(doc, value):
+    return "scoreboard players set %s %s %d" % (doc["ursaluna"]["wake"]["awake_holder"], OBJ, int(value))
+
+
+def awake_if(doc, value):
+    return "score %s %s matches %d" % (doc["ursaluna"]["wake"]["awake_holder"], OBJ, int(value))
+
+
+def wake_selector(doc):
+    """The player who wakes it: the nearest non-spectator within wake.radius of the bear's spot. No gate and no item
+    (the Celebi's selector carries both; the owner asked for a bear that wakes when you get close)."""
+    w = doc["ursaluna"]["wake"]
+    gate = "".join(",advancements={%s:flag/%s=true}" % (doc["namespace"], f) for f in w.get("gate_flags") or [])
+    return "@a[distance=..%d,gamemode=!spectator%s,limit=1,sort=nearest]" % (int(w["radius"]), gate)
+
+
 def files(doc, ground):
     ns = doc["namespace"]
     u = doc["ursaluna"]
     k = u["keeper"]
+    w = u["wake"]
     tag = u["tag"]
-    obj = "cobblers.ursaluna"
+    obj = OBJ
     M = Model(doc, ground)
     at = _at(M, doc)
+    bx, by, bz = M.bear
     nbt = ",".join("%s:%s" % (key, v) for key, v in u["nbt"].items())
+    awake = ",".join("%s:%s" % (key, v) for key, v in w["awake_nbt"].items())
+    name = u["species"].capitalize()
+    cap_msg = json.dumps({"text": "Your level cap is below %d: an %s that strong breaks free from every ball, a Master "
+                                  "Ball included." % (int(u["level"]), name), "color": "red"}, ensure_ascii=False)
     fn = {
         "%s/carve" % FN: carve_lines(doc, M),
         "%s/load" % FN: ["scoreboard objectives add %s dummy" % obj,
+                         "# the awake score is NOT reset here: a restart must not put a woken bear back to sleep.",
+                         "# ursaluna_cave/dress owns it.",
                          "schedule function %s:%s/keeper %dt replace" % (ns, FN, k["period_ticks"])],
         "%s/dress_new" % FN: [
             "# run by the re-application just after its summon: the nearest undressed Ursaluna at the den spot",
@@ -249,14 +301,46 @@ def files(doc, ground):
             "run function %s:%s/dress" % (at, tag, _species_sel(doc), ns, FN)],
         "%s/dress" % FN: ["data merge entity @s {%s}" % nbt,
                           "tag @s add %s" % tag,
-                          "tp @s %s %s 0" % (at, u["yaw"])],
-        "%s/keeper" % FN: ["execute positioned %s if entity @a[distance=..%d] run function %s:%s/keep"
+                          "tp @s %s %s 0" % (at, u["yaw"]),
+                          "# this bear is dormant by construction, so the awake flag describes it again",
+                          awake_set(doc, 0)],
+        "%s/keeper" % FN: ["execute positioned %s if entity @a[distance=..%d] run function %s:%s/near"
                            % (at, k["player_radius"], ns, FN),
                            "schedule function %s:%s/keeper %dt replace" % (ns, FN, k["period_ticks"])],
+        "%s/near" % FN: ["# WHILE IT SLEEPS ONLY. A woken bear is the fight: keeping it would teleport it back onto",
+                         "# its spot every %d ticks, through the battle the wake exists to give." % k["period_ticks"],
+                         "execute if %s run return 0" % awake_if(doc, 1),
+                         "function %s:%s/keep" % (ns, FN),
+                         "function %s:%s/wake_check" % (ns, FN)],
         "%s/keep" % FN: ["execute store result score #n %s if entity @e[tag=%s]" % (obj, tag),
                          "execute if score #n %s matches 2.. run kill @e[tag=%s,limit=1,sort=random]" % (obj, tag),
                          "execute as @e[tag=%s] positioned %s unless entity @s[distance=..%s] run tp @s %s %s 0"
                          % (tag, at, k["home_tolerance"], at, u["yaw"])],
+        "%s/wake_check" % FN: [
+            "# The wake (data/ursaluna_cave.json ursaluna.wake): a STATE CHECK on the keeper's loop, the sleeping",
+            "# Celebi's mechanism (docs/mechanics/CELEBI_WAKE.md 1), never an advancement, so it cannot be burned.",
+            "execute positioned %s as %s run function %s:%s/wake" % (at, wake_selector(doc), ns, FN)],
+        "%s/wake" % FN: [
+            "# run as the waking player, positioned at the bear's spot.",
+            "# chunks-loaded-by: the waking player, who stands within %d blocks of the bear" % int(w["radius"]),
+            "execute if %s run return 0" % awake_if(doc, 1),
+            "# no bear (knocked out or caught, not yet re-installed): nothing to wake, and nothing to say",
+            "execute unless entity @e[tag=%s] run return 0" % tag,
+            "data merge entity @e[tag=%s,limit=1] {%s}" % (tag, awake),
+            "# the keeper stands down on this score (ursaluna_cave/near)",
+            awake_set(doc, 1),
+            "tellraw @a[distance=..48] %s" % json.dumps({"text": w["message"], "color": "gold", "italic": True},
+                                                        ensure_ascii=False),
+            "playsound %s hostile @a[distance=..48] %d %d %d 2 0.6" % (w["sound"], bx, by, bz),
+            "function %s:%s/cap_advice {x:\"\"}" % (ns, FN)],
+        "%s/cap_advice" % FN: [
+            "# $(x) is empty: this line is a macro only so rctmod's command is parsed when it runs.",
+            "# A mod's command written plainly in a function may be parsed at server start before it",
+            "# is usable (.claude/rules/datapacks.md, EXP-046). The sleeping Celebi's cap_advice, exactly.",
+            "scoreboard players set @s %s 0" % obj,
+            "$execute store result score @s %s run rctmod player get level_cap @s$(x)" % obj,
+            "# a cap that did not read (0) says nothing: data/level_cap.json lets that catch through",
+            "execute if score @s %s matches 1..%d run tellraw @s %s" % (obj, int(u["level"]) - 1, cap_msg)],
     }
     out = {"data/%s/function/%s.mcfunction" % (ns, n): "\n".join(v) + "\n" for n, v in fn.items()}
     out["data/minecraft/tags/function/load.json"] = json.dumps({"values": ["%s:%s/load" % (ns, FN)]}, indent=2) + "\n"
@@ -316,14 +400,14 @@ def report(doc, ground):
     cover = np.where(M.void, M.G[None] - Y, 10 ** 6)
     inner = M.S[None] > c["open_mouth_until"]
     worst = int(cover[M.void & inner].min()) if (M.void & inner).any() else None
-    lines = ["mouth %s ground y%d = floor; cave voxels %d, shell %d, curtain %d, lanterns %d"
-             % (doc["site"]["mouth"], M.floor, int(M.void.sum()), int((M.shell & ~M.void).sum()),
-                int(M.curtain.sum()), len(M.lanterns)),
+    lines = ["mouth %s ground y%d = floor; cave voxels %d, shell %d, lanterns %d, no barrier"
+             % (doc["site"]["mouth"], M.floor, int(M.void.sum()), int((M.shell & ~M.void).sum()), len(M.lanterns)),
              "bbox x%d..%d z%d..%d y%d..%d" % (M.x0, M.x1, M.z0, M.z1, M.y0, M.y1),
              "least ground over a carved block past s=%s: %s (margin %d needs %d)"
              % (c["open_mouth_until"], worst, m, m + 1),
-             "bear at %s, yaw %s, scale %s, level %d" % (M.bear, doc["ursaluna"]["yaw"],
-                                                          doc["ursaluna"]["scale_modifier"], doc["ursaluna"]["level"])]
+             "bear at %s, yaw %s, scale %s, level %d; wakes for a player within %d (%s)"
+             % (M.bear, doc["ursaluna"]["yaw"], doc["ursaluna"]["scale_modifier"], doc["ursaluna"]["level"],
+                doc["ursaluna"]["wake"]["radius"], wake_selector(doc))]
     ch = c["chamber"]
     for s in (ch["centre"], doc["ursaluna"]["at_s"]):
         x, z = world_xz(doc, s, 0)

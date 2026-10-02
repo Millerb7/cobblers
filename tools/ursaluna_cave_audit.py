@@ -6,35 +6,43 @@ for geometry. It reads data/ursaluna_cave.json, the canonical heightmap (tools/g
 data/spawns.json, data/habitat_blocks.json and data/dialogue.json, derives the cave it expects from them with its
 own voxel predicate, then REPLAYS the generated carve function's fills into a block array and compares. The only
 thing taken from the generator is its output (the pack, and the re-application steps it hands tools/reapply.py),
-which is what is being checked. Mutating the generator's geometry (a chamber one block taller, a curtain one block
-thinner, a shell that skips a layer) fails a named check here with data/ursaluna_cave.json untouched; the tests in
+which is what is being checked. Mutating the generator's geometry or its wake (a chamber one block taller, a barrier
+put back, a wake that leaves Unbattleable on, a shell that skips a layer) fails a named check here with data/ursaluna_cave.json untouched; the tests in
 tests/test_ursaluna_cave.py do exactly that.
 
 What is checked, each from the data and the heightmap, never from the pack:
 
   footprint   no write lands outside the planned box
-  void        the air the carve leaves (with the curtain and the lanterns standing in it) is exactly the passage and
-              the hall the record describes
+  barrier     no line of the pack writes minecraft:barrier, anywhere (the owner, 2026-10-02: no wall)
+  void        the air the carve leaves (with the lanterns standing in it) is exactly the passage and the hall the
+              record describes
   cover       past the declared open mouth, every carved block has at least margin + 1 blocks of ground over it
   seal        past the open mouth, every block within margin of the cave is rock the carve wrote, the cave itself,
               or the hill's own ground (at or under its heightmap surface): no open air and no unwritten rock
               (a natural cavity) touches the cave anywhere but the mouth
   floor       every cave column whose floor is under the ground has the record's floor block, the den's under the
               den; no floor block is laid over air
-  curtain     a flood fill through the cave's air from the mouth reaches the hall and never the bear, and no air a
-              player can stand in is within reach + 1 of the bear's hitbox
+  open        a flood fill through the cave's air from the mouth reaches the hall AND the bear: nothing stands between
   bear        the summon and the keeper put it where the record says; the model, scaled, fits in the den's air;
               the summon guard keys on the tag and the species, never on a bare distance (R14C's failure)
+  wake        the trigger region, from the plan and the heightmap: a player can stand in it; every reachable block in
+              it is in the HALL, never the passage or the mouth; every reachable block within reach + 1 of the bear's
+              hitbox is in it (nobody touches the bear asleep); and no ground outside the cave is within it (nobody
+              wakes it through the hill). The wake function is positioned at the bear's spot with the record's radius
+              and no wider, merges the record's awake flags with Unbattleable 0b and no PoseType, and the keeper
+              stands down on the awake score BEFORE it keeps; dress resets the score and load does not
   lanterns    each hangs in the cave from a solid block
-  teddiursa   the Habitat Block and pool the record names exist, the block sits in the ground's top block outside
-              every write, its range reaches the mouth and stops short of the curtain, and the pool is Teddiursa
+  teddiursa   the Habitat Block and pool the record names exist; the block is ACTIVATED (style, no ReplaceSpawns, the
+              record's group as max_spawns, at least 2 alive, TICK at chance 1) in the ground's top block outside
+              every write; its spawn range reaches the mouth and stops short of the hall; and the pool is Teddiursa
               within the sub-region's band and below its evolution level
   watcher     the conversation exists and compiles, and the NPC stands one above the ground outside every write
   functions   every function passes tools/function_limits.py and is reached from the load tag or the steps
 
-NOT checked, and it needs a running server: that the fills land (chunk loading), that the bear is twice normal size
-(scale_modifier applied after the intrinsic scale), that it sleeps, that the barrier stops a ball, what a player
-sees, and that Teddiursa spawn in the Habitat Block's range.
+NOT checked, and it needs a running server (experiments/EXP-049-ursaluna-wake): that the fills land (chunk loading),
+that the bear is twice normal size (scale_modifier applied after the intrinsic scale), that it sleeps, that the wake
+fires, that Unbattleable 0b on a live entity lets a battle start, what a player sees, and that Teddiursa spawn round
+the activated block.
 
   python tools/ursaluna_cave_audit.py [--pack build/datapacks/cobblers_ursaluna_cave] [--source-root R]
 """
@@ -116,7 +124,9 @@ class Plan:
             void[yi] = in_p | in_c
         self.void = void
         den = c["den"]
-        self.cur0, self.cur1 = den["curtain_from"], den["curtain_from"] + den["curtain_thickness"]
+        self.den0 = den["from"]
+        # where the hall begins along the axis: the chamber ellipsoid's near tip, from the record's own numbers
+        self.hall0 = ch["centre"] - ch["half_length"]
 
     def idx(self, x, y, z):
         return y - self.y0, z - self.z0, x - self.x0
@@ -187,9 +197,8 @@ def check_cave(rec, plan, names, state, rep):
     c = rec["cave"]
     b = c["blocks"]
     air = names.get("minecraft:air", -1)
-    curtain = names.get(b["curtain"], -1)
     light = names.get(b["light"], -1)
-    open_space = (state == air) | (state == curtain) | (state == light)
+    open_space = (state == air) | (state == light)
     extra = open_space & ~plan.void
     missing = plan.void & ~open_space
     if extra.any() or missing.any():
@@ -226,7 +235,7 @@ def check_cave(rec, plan, names, state, rep):
     fi = plan.floor - plan.y0
     cols = plan.void.any(axis=0)
     under = plan.floor <= plan.g
-    den_cols = plan.s >= plan.cur1 - EPS
+    den_cols = plan.s >= plan.den0 - EPS
     want = np.where(den_cols, names.get(b["den_floor"], -2), names.get(b["floor"], -3))
     got = state[fi]
     bad = cols & under & (got != want)
@@ -242,7 +251,7 @@ def check_cave(rec, plan, names, state, rep):
         above = yi + 1
         if above < plan.shape[0]:
             st = state[above, zi, xi]
-            solid = (st not in (0, air, curtain, light)) or (st == 0 and plan.y0 + above <= plan.g[zi, xi])
+            solid = (st not in (0, air, light)) or (st == 0 and plan.y0 + above <= plan.g[zi, xi])
         else:
             solid = False
         if not solid or not plan.void[yi, zi, xi]:
@@ -255,7 +264,6 @@ def check_cave(rec, plan, names, state, rep):
 def check_bear(rec, plan, names, state, rep):
     u = rec["ursaluna"]
     air = names.get("minecraft:air", -1)
-    curtain = names.get(rec["cave"]["blocks"]["curtain"], -1)
     bx, by, bz = plan.bear()
     k = float(u["scale_modifier"])
     w, h = (v * k for v in u["model"]["hitbox"])
@@ -272,11 +280,12 @@ def check_bear(rec, plan, names, state, rep):
                 "e.g. %s" % (k, ml, mw, mh, int(clash.sum()), _first(plan, clash)))
     if state[plan.idx(bx, by - 1, bz)] == 0 or state[plan.idx(bx, by - 1, bz)] == air:
         rep.err("bear", "nothing solid under the bear at %s" % ((bx, by, bz),))
-    # the curtain: flood the cave's air from the mouth
+    # open: flood the cave's air from the mouth. There is no wall (the owner, 2026-10-02): the hall AND the bear are
+    # reached, and what keeps a player from touching it asleep is the wake region, checked below
     start = plan.idx(plan.mx, plan.floor + 1, plan.mz)
     walk = state == air
     if not walk[start]:
-        rep.err("curtain", "the mouth's floor block (%d, %d, %d) is not open air" % (plan.mx, plan.floor + 1, plan.mz))
+        rep.err("open", "the mouth's floor block (%d, %d, %d) is not open air" % (plan.mx, plan.floor + 1, plan.mz))
         return
     seen = np.zeros_like(walk)
     seen[start] = True
@@ -285,31 +294,80 @@ def check_bear(rec, plan, names, state, rep):
         y, z, x = q.popleft()
         for a, b2, c2 in ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1)):
             n = (y + a, z + b2, x + c2)
-            if 0 <= n[0] < walk.shape[0] and 0 <= n[1] < walk.shape[1] and 0 <= n[2] < walk.shape[2] \
-                    and walk[n] and not seen[n]:
+            if 0 <= n[0] < walk.shape[0] and 0 <= n[1] < walk.shape[1] and 0 <= n[2] < walk.shape[2]                     and walk[n] and not seen[n]:
                 seen[n] = True
                 q.append(n)
     ch = rec["cave"]["chamber"]
     hx, hz = plan.column(ch["centre"] - ch["half_length"] / 2, 0)
     if not seen[plan.idx(hx, plan.floor + 1, hz)]:
-        rep.err("curtain", "the hall in front of the curtain (%d, %d) cannot be reached from the mouth" % (hx, hz))
-    if seen[plan.idx(bx, by, bz)]:
-        rep.err("curtain", "the bear's own block %s is reachable from the mouth through open air" % ((bx, by, bz),))
-    # reach: from any reachable air block to the hitbox (axis aligned, w wide, h tall)
+        rep.err("open", "the hall (%d, %d) cannot be reached from the mouth" % (hx, hz))
+    if not seen[plan.idx(bx, by, bz)]:
+        rep.err("open", "the bear's own block %s cannot be reached from the mouth: something stands between"
+                % ((bx, by, bz),))
+    check_wake(rec, plan, names, state, seen, (w, h), rep)
+
+
+def check_wake(rec, plan, names, state, seen, hitbox, rep):
+    """The wake's trigger region, from the record's radius, the plan's bear spot and the heightmap.
+
+    Minecraft's `distance` is measured from the execute position (the bear's spot) to a player's feet, so a player
+    standing in block (x, y, z) is at (x + 0.5, y, z + 0.5)."""
+    u = rec["ursaluna"]
+    R = float(u["wake"]["radius"])
+    air = names.get("minecraft:air", -1)
+    light = names.get(rec["cave"]["blocks"]["light"], -1)
+    w, h = hitbox
+    bx, by, bz = plan.bear()
+    cx, cy, cz = bx + 0.5, float(by), bz + 0.5
     ys, zs, xs = np.nonzero(seen)
-    cx, cz = bx + 0.5, bz + 0.5
-    wx, wy, wz = xs + plan.x0, ys + plan.y0, zs + plan.z0      # world coordinates of each reachable air block
+    wx, wy, wz = xs + plan.x0, ys + plan.y0, zs + plan.z0
+    dist = np.sqrt((wx + 0.5 - cx) ** 2 + (wy - cy) ** 2 + (wz + 0.5 - cz) ** 2)
+    in_r = dist <= R
+    # a player can stand there: the block under the feet is solid (written rock or floor, or the hill's own ground)
+    below = state[ys - 1, zs, xs]
+    stand = (ys > 0) & (((below != 0) & (below != air) & (below != light))
+                        | ((below == 0) & (wy - 1 <= plan.g[zs, xs])))
+    if not (in_r & stand).any():
+        rep.err("wake", "no block a player can stand on is within %s of the bear's spot: the wake can never fire" % R)
+    s_at = plan.s[zs, xs]
+    early = in_r & (s_at < plan.hall0 - EPS)
+    if early.any():
+        i = int(np.nonzero(early)[0][0])
+        rep.err("wake", "%d reachable blocks before the hall (s < %s) are within %s of the bear, e.g. %s: the bear "
+                "would wake for a player still in the passage" % (int(early.sum()), plan.hall0, R,
+                                                                 (int(wx[i]), int(wy[i]), int(wz[i]))))
     gx = np.maximum(np.abs(wx + 0.5 - cx) - w / 2 - 0.5, 0)
     gz = np.maximum(np.abs(wz + 0.5 - cz) - w / 2 - 0.5, 0)
     gy = np.maximum(np.maximum(by - (wy + 1), wy - (by + h)), 0)
-    d = float(np.sqrt(gx ** 2 + gy ** 2 + gz ** 2).min()) if len(xs) else 1e9
-    if d < PLAYER_REACH + 1:
-        rep.err("curtain", "open air a player can reach is %.1f blocks from the bear's hitbox (reach %s + 1)"
-                % (d, PLAYER_REACH))
-    rep.note("bear at %s; nearest reachable air %.1f blocks from its hitbox; %d open blocks reachable"
-             % ((bx, by, bz), d, int(seen.sum())))
-    if not (state == curtain).any():
-        rep.err("curtain", "no %s written at all" % rec["cave"]["blocks"]["curtain"])
+    gap = np.sqrt(gx ** 2 + gy ** 2 + gz ** 2)
+    touch = (gap < PLAYER_REACH + 1) & ~in_r
+    if touch.any():
+        rep.err("wake", "%d reachable blocks within reach + 1 of the bear's hitbox are outside the wake's %s: a player "
+                "could hit the bear asleep" % (int(touch.sum()), R))
+    # the hill: a player standing on the ground anywhere outside the cave must be farther than R
+    if not (plan.x0 <= cx - R and cx + R <= plan.x1 + 1 and plan.z0 <= cz - R and cz + R <= plan.z1 + 1):
+        rep.err("wake", "the planned box does not hold the wake's %s round %s, so the surface was not checked"
+                % (R, (bx, by, bz)))
+    else:
+        X = np.arange(plan.x0, plan.x1 + 1)[None, :] + 0.5
+        Z = np.arange(plan.z0, plan.z1 + 1)[:, None] + 0.5
+        feet = plan.g + 1
+        d = np.sqrt((X - cx) ** 2 + (feet - cy) ** 2 + (Z - cz) ** 2)
+        fi = np.clip(feet - plan.y0, 0, plan.shape[0] - 1)
+        in_cave = np.take_along_axis(plan.void, fi[None], axis=0)[0] & (feet <= plan.y1)
+        topside = (d <= R) & ~in_cave
+        if topside.any():
+            zi, xi = (int(v[0]) for v in np.nonzero(topside))
+            rep.err("wake", "%d ground columns outside the cave stand within %s of the bear, e.g. (%d, y%d, %d): a "
+                    "player on the hill would wake it through the rock" % (int(topside.sum()), R, plan.x0 + xi,
+                                                                          int(feet[zi, xi]), plan.z0 + zi))
+        rep.note("wake %s: nearest ground outside the cave %.1f from the bear's spot"
+                 % (R, float(d[~in_cave].min())))
+    rep.note("bear at %s; %d reachable blocks inside the wake's %s, the nearest before the hall %.1f away; nearest "
+             "reachable air %.1f from its hitbox"
+             % ((bx, by, bz), int(in_r.sum()), R,
+                float(dist[s_at < plan.hall0].min()) if (s_at < plan.hall0).any() else float("inf"),
+                float(gap.min()) if len(gap) else float("inf")))
 
 
 def check_functions(rec, plan, pack, steps, rep):
@@ -350,7 +408,15 @@ def check_functions(rec, plan, pack, steps, rep):
             rep.err("dress", "dress does not merge %s:%s" % (key, v))
     if "tp @s %s %s 0" % (at, u["yaw"]) not in dress:
         rep.err("dress", "dress does not put the bear at %s facing yaw %s" % (at, u["yaw"]))
-    # reachability: load tag -> load -> keeper -> keep; steps -> carve, dress_new -> dress
+    check_wake_functions(rec, plan, fns, rep)
+    # the barrier: no line anywhere in the pack writes one (the owner, 2026-10-02: no wall)
+    for name, text in sorted(fns.items()):
+        hits = [n for n, line in enumerate(text.splitlines(), 1)
+                if not line.lstrip().startswith("#") and "minecraft:barrier" in line]
+        if hits:
+            rep.err("barrier", "%s writes minecraft:barrier on %d line(s), first line %d" % (name, len(hits), hits[0]))
+    # reachability: load tag -> load -> keeper -> near -> keep, wake_check -> wake -> cap_advice;
+    # steps -> carve, dress_new -> dress
     tags = json.loads((pack / "data" / "minecraft" / "tags" / "function" / "load.json").read_text(encoding="utf-8"))
     reached = set()
     todo = [v.split(":", 1)[1] for v in tags["values"]] + [s.split(":", 1)[1] for s in fn_steps]
@@ -364,6 +430,91 @@ def check_functions(rec, plan, pack, steps, rep):
         rep.err("functions", "%s:%s is reached by nothing (not the load tag, the steps or another function)" % (ns, f))
 
 
+def _code(text):
+    return [l.strip() for l in text.splitlines() if l.strip() and not l.strip().startswith("#")]
+
+
+def check_wake_functions(rec, plan, fns, rep):
+    """The wake as written, against the record and the plan's bear spot: the sleeping Celebi's shape
+    (docs/mechanics/CELEBI_WAKE.md) - a state check on the keeper's loop, a keeper that stands down on the awake
+    score before it keeps, the awake merge, the score set by the wake and reset only by dress."""
+    ns, u = rec["namespace"], rec["ursaluna"]
+    wk, kp, tag = u["wake"], u["keeper"], u["tag"]
+    bx, by, bz = plan.bear()
+    at = "%.1f %d %.1f" % (bx + 0.5, by, bz + 0.5)
+    fq = lambda n: "%s:ursaluna_cave/%s" % (ns, n)          # noqa: E731
+    load = _code(fns.get("ursaluna_cave/load", ""))
+    objs = [m.group(1) for l in load for m in [re.match(r"scoreboard objectives add (\S+) dummy$", l)] if m]
+    if len(objs) != 1:
+        rep.err("wake", "load declares %d objectives, expected one" % len(objs))
+        return
+    obj, holder = objs[0], wk["awake_holder"]
+    is_awake = "execute if score %s %s matches 1 run return 0" % (holder, obj)
+    sets = lambda v: "scoreboard players set %s %s %d" % (holder, obj, v)   # noqa: E731
+    if any(l.startswith("scoreboard players set %s " % holder) for l in load):
+        rep.err("wake", "load resets the awake score: a restart would put a woken bear back to sleep")
+    keeper = _code(fns.get("ursaluna_cave/keeper", ""))
+    want = "execute positioned %s if entity @a[distance=..%d] run function %s" % (at, kp["player_radius"], fq("near"))
+    if want not in keeper:
+        rep.err("wake", "the keeper does not drive near from the bear's spot within %d" % kp["player_radius"])
+    near = _code(fns.get("ursaluna_cave/near", ""))
+    keep_at = near.index("function %s" % fq("keep")) if "function %s" % fq("keep") in near else None
+    check_at = near.index("function %s" % fq("wake_check")) if "function %s" % fq("wake_check") in near else None
+    if not near or near[0] != is_awake:
+        rep.err("wake", "near does not stand down on the awake score first: a woken bear would be dragged home")
+    if keep_at is None or check_at is None:
+        rep.err("wake", "near does not run both keep and wake_check")
+    # the trigger: positioned at the bear's spot, the record's radius exactly, no wider and no narrower
+    wc = _code(fns.get("ursaluna_cave/wake_check", ""))
+    sel = [m for l in wc for m in [re.match(r"execute positioned (\S+ \S+ \S+) as (@a\[[^\]]*(?:\{[^}]*\}[^\]]*)?\]) "
+                                            r"run function (\S+)$", l)] if m]
+    if len(sel) != 1:
+        rep.err("wake", "wake_check has %d trigger lines, expected one" % len(sel))
+    else:
+        pos, s, target = sel[0].groups()
+        r = re.search(r"distance=\.\.(\d+(?:\.\d+)?)[,\]]", s)
+        if pos != at:
+            rep.err("wake", "the trigger is positioned at %s, not the bear's spot %s" % (pos, at))
+        if r is None or float(r.group(1)) != float(wk["radius"]):
+            rep.err("wake", "the trigger's distance is %s, the record's radius is %s"
+                    % (r.group(1) if r else "missing", wk["radius"]))
+        if "gamemode=!spectator" not in s:
+            rep.err("wake", "a spectator would wake the bear: %s" % s)
+        for f in wk.get("gate_flags") or []:
+            if "%s:flag/%s=true" % (ns, f) not in s:
+                rep.err("wake", "the trigger does not carry the gate %s" % f)
+        if target != fq("wake"):
+            rep.err("wake", "the trigger runs %s, not %s" % (target, fq("wake")))
+    wake = _code(fns.get("ursaluna_cave/wake", ""))
+    merges = [m.group(1) for l in wake for m in [re.match(r"data merge entity @e\[tag=%s,limit=1\] \{(.*)\}$"
+                                                         % re.escape(tag), l)] if m]
+    if len(merges) != 1:
+        rep.err("wake", "wake merges %d times onto the tagged bear, expected once" % len(merges))
+    else:
+        got = dict(kv.split(":", 1) for kv in merges[0].split(","))
+        if got != {k: str(v) for k, v in wk["awake_nbt"].items()}:
+            rep.err("wake", "wake merges %s, the record's awake flags are %s" % (got, wk["awake_nbt"]))
+        if got.get("Unbattleable") != "0b":
+            rep.err("wake", "wake leaves Unbattleable on: no battle could start, so there is no fight")
+        if "PoseType" in got:
+            rep.err("wake", "wake sets PoseType %s: only \"SLEEP\" is proven (EXP-023, principle 7)" % got["PoseType"])
+        mi = next(i for i, l in enumerate(wake) if l.startswith("data merge entity"))
+        if is_awake not in wake[:mi]:
+            rep.err("wake", "wake does not return before the merge when the bear is already awake")
+        if sets(1) not in wake[mi:]:
+            rep.err("wake", "wake does not set the awake score after the merge: the keeper would not stand down")
+    if sets(1) in _code(fns.get("ursaluna_cave/dress", "")) or sets(0) not in _code(fns.get("ursaluna_cave/dress", "")):
+        rep.err("wake", "dress does not reset the awake score to 0 for the fresh, dormant bear")
+    for name, text in fns.items():
+        if name not in ("ursaluna_cave/wake", "ursaluna_cave/dress") and (sets(0) in _code(text) or sets(1) in _code(text)):
+            rep.err("wake", "%s writes the awake score; only wake and dress may" % name)
+    cap = _code(fns.get("ursaluna_cave/cap_advice", ""))
+    if not any(l.startswith("$") and "rctmod player get level_cap @s" in l for l in cap):
+        rep.err("wake", "cap_advice does not read the player's cap from a macro line")
+    if not any("matches 1..%d " % (int(u["level"]) - 1) in l for l in cap):
+        rep.err("wake", "cap_advice does not warn exactly the caps below the bear's level %d" % int(u["level"]))
+
+
 def check_teddiursa(rec, plan, state, rep):
     t = rec["teddiursa"]
     hb = json.loads((DATA / "habitat_blocks.json").read_text(encoding="utf-8"))
@@ -374,21 +525,36 @@ def check_teddiursa(rec, plan, state, rep):
         rep.err("teddiursa", "block %s in data/habitat_blocks.json: %s; habitat %s in data/spawns.json: %s"
                 % (t["block"], blk is not None, t["habitat"], hab is not None))
         return
-    if blk["pool"] != "cobblers:%s" % t["habitat"] or blk["style"] != "natural" or blk["replace_spawns"] is not True:
-        rep.err("teddiursa", "the block is not a natural ReplaceSpawns block on cobblers:%s" % t["habitat"])
+    # ACTIVATED (2026-10-02): a natural block only swaps what natural spawning picks within its range, and staging
+    # measured 0 Pokemon within 32 of it. An activated one keeps its own group alive round itself.
+    act = blk.get("activated") or {}
+    if blk["pool"] != "cobblers:%s" % t["habitat"] or blk["style"] != "activated" or blk["replace_spawns"] is not False:
+        rep.err("teddiursa", "the block is not an activated, non-replacing block on cobblers:%s" % t["habitat"])
+    if "range_of_influence" in blk:
+        rep.err("teddiursa", "an activated block carries a natural block's range_of_influence")
+    if act.get("max_spawns") != t["group"] or not isinstance(t["group"], int) or t["group"] < 2:
+        rep.err("teddiursa", "max_spawns %s is not the record's group %s of at least 2"
+                % (act.get("max_spawns"), t["group"]))
+    if act.get("trigger") != "TICK" or act.get("chance") != 1.0:
+        rep.err("teddiursa", "the block does not refill on every tick at chance 1 (trigger %s, chance %s)"
+                % (act.get("trigger"), act.get("chance")))
+    if not 1 <= int(act.get("max_spawns_per_activation") or 0) <= int(act.get("max_spawns") or 0):
+        rep.err("teddiursa", "max_spawns_per_activation %s is outside 1..max_spawns"
+                % act.get("max_spawns_per_activation"))
     x, y, z = (blk["position"][k] for k in "xyz")
     if y != plan.ground(x, z):
         rep.err("teddiursa", "the block at %s is not in the ground's top block (heightmap y%d)" % ((x, y, z), plan.ground(x, z)))
     if plan.inside(x, y, z) and state[plan.idx(x, y, z)] != 0:
         rep.err("teddiursa", "the carve writes over the Habitat Block at %s" % ((x, y, z),))
-    r = blk["range_of_influence"]
+    r = int(act.get("spawn_range") or 0)
     mouth = (plan.mx + 0.5, plan.floor + 1.5, plan.mz + 0.5)
     if math.dist((x + 0.5, y + 0.5, z + 0.5), mouth) > r:
-        rep.err("teddiursa", "the range %d does not reach the mouth (%.1f away)" % (r, math.dist((x, y, z), mouth)))
-    cx, cz = plan.column(plan.cur0, 0)
+        rep.err("teddiursa", "the spawn range %d does not reach the mouth (%.1f away)"
+                % (r, math.dist((x + 0.5, y + 0.5, z + 0.5), mouth)))
+    cx, cz = plan.column(plan.hall0, 0)
     dc = math.dist((x + 0.5, y + 0.5, z + 0.5), (cx + 0.5, plan.floor + 1.5, cz + 0.5))
     if dc <= r:
-        rep.err("teddiursa", "the range %d reaches the curtain (%.1f away): the outskirts reach into the hall" % (r, dc))
+        rep.err("teddiursa", "the spawn range %d reaches the hall (%.1f away): the outskirts reach into the den" % (r, dc))
     # the band: the sub-region the mouth is in, by its polygons in data/regions.json
     sub = _subregion(plan.mx, plan.mz)
     band = next((s["level_band"] for s in sp["subregions"] if s["id"] == sub), None)
@@ -401,7 +567,8 @@ def check_teddiursa(rec, plan, state, rep):
             rep.err("teddiursa", "levels %s are outside %s's band %s" % (e["level"], sub, band))
         if hi >= TEDDIURSA_EVOLVES_AT:
             rep.err("teddiursa", "levels %s reach %d, where Teddiursa evolves" % (e["level"], TEDDIURSA_EVOLVES_AT))
-    rep.note("Teddiursa block %s range %d in %s (band %s); %.1f from the curtain" % ((x, y, z), r, sub, band, dc))
+    rep.note("Teddiursa block %s activated, up to %s within %d, in %s (band %s); %.1f from the hall"
+             % ((x, y, z), act.get("max_spawns"), r, sub, band, dc))
 
 
 def check_watcher(rec, plan, state, rep):
