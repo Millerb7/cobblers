@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-"""Offline audit of the Seaward Drift, its strip mine and Driftmouth Isle (tools/sea_drift.py, data/sea_drift.json).
+"""Offline audit of the Seaward Drift, its strip mine, its gatehouses and Driftmouth Isle with its lighthouse
+(tools/sea_drift.py, data/sea_drift.json).
 
 Independent of tools/sea_drift.py: nothing is imported from it and nothing is taken from its plan. The pack it wrote
 (build/datapacks/cobblers_sea_drift, every function in index order) is REPLAYED over a world made only from the canonical
@@ -11,27 +12,35 @@ above), and the result is checked against rules the data and the other files sta
             here (shell_r + export_tolerance + natural_seabed); no write is a fluid; the measured minimum is reported
   sealed    every opened cell under the heightmap world's surface touches only opened cells, blocks the pack wrote, or
             open air: never an unwritten natural block (a cave, the export's gravel) and never water
-  route     every route vertex of the data has an opened cell in its column (the drift follows the data's legs)
-  walk      a player can walk from the cut's head on the plateau to outside the headhouse's door, and to both barrels,
-            on full blocks and stairs, never climbing a whole block without a stair (a rail is not a stair)
-  light     block light flooded from every lantern the pack writes reaches 1 or more at every floor cell under a roof:
-            no cell a hostile could spawn on is at light 0 (there are none in this pack, docs/STATE.md; the rule holds
-            anyway)
+  route     the data's route is two ends on one axis (the owner, 2026-10-02: "a straight shot to the island")
+  walk      a player can walk from the line's stop in Foothill Gate to both of its doors, down the road and up the climb
+            into the keeper's hall, out of its south door, up the tower's stair to the lantern room, and to both
+            barrels, on full blocks and stairs, never climbing a whole block without a stair (a rail is not a stair)
+  light     block light flooded from every light source the pack writes (lanterns and glowstone, at their cited 15)
+            reaches 1 or more at every floor cell under a roof: no cell a hostile could spawn on is at light 0 (there
+            are none in this pack, docs/STATE.md; the rule holds anyway)
+  gatehouse Foothill Gate and the keeper's hall: every wall cell solid but the data's doors and the road's own opening
+            (over a rail of the line, within the tube's half-width and height), the roof whole, a sign naming the
+            place, the line's stop inside with its buffer in the wall
+  lighthouse the tower's walls whole to the lantern room, the room glazed with the data's glazing, a lamp in it of a
+            light-emitting block this audit knows (and no spawn condition, by `blocks`), lit, with nothing but glass
+            between it and the open air on all four sides, at least 10 over the isle's crown
   blocks    no written block is named by a spawn condition (data/spawn_blocks.json); every ore is one the data lists
             (or its deepslate variant) and stands in the strip mine's own area (north of the drift, within the
             branches' reach of the junction)
   ores      every branch the data's numbers give (first_branch_z, branch_every, corridor_to_z) exposes an ore, and the
             far half of the branches exposes more gold and lapis than the near half
   isle      Driftmouth Isle has dry ground and a shingle tide line; its record's ground_y is the replayed ground at its
-            centre and its heightmap_seabed_y the heightmap's; the stairwell surfaces inside the headhouse box
+            centre and its heightmap_seabed_y the heightmap's; the road surfaces only inside the keeper's hall
   habitats  every data/habitat_blocks.json record of the isle's sits on its mimic block in the replayed world, rock on
             all six sides, water within its spawn box (and the sea's surface for the upper ones); its pool exists in
             data/spawns.json, has none of the three species the owner named (Magikarp, Goldeen, Barraskewda), and
             every species in it is placed by an existing spawnable position
   rewards   both caches' containers are barrels in the replayed world and their trigger boxes hold a walkable place
   rails     the rail line, read from the replayed blocks: every rail joins its neighbours by its shape's ends into ONE
-            line whose two ends are the cut's head and the headhouse's floor, every rail on it, standing on a solid
-            block; curves only of minecraft:rail and minecraft:rail only in curves (its whitelist's scope)
+            line (a connected graph, no junction, no loop) whose two ends are the route's two ends, on Foothill Gate's
+            floor and the keeper's hall's, every rail on it, standing on a solid block; no rail turns
+  straight  every rail of that line on the axis through its two ends, each one column further along than the last
   power     every powered rail written powered has a lever (switched on, sealed in rock) or other source beside it or
             under its bed; none written unpowered can be reached by power; no activator rail can be powered by a
             source or a passing cart
@@ -68,7 +77,7 @@ OUT = ROOT / "derived" / "sea_drift" / "audit.json"
 NOT_WANTED = ("magikarp", "goldeen", "barraskewda")       # the owner, 2026-10-02 brief: the species every lake has
 NUM = r"(-?\d+)"
 FILL = re.compile(r"^fill %s %s %s %s %s %s (\S+)(?: replace (\S+))?$" % ((NUM,) * 6))
-SET = re.compile(r"^setblock %s %s %s (\S+)(?: replace)?$" % ((NUM,) * 3))
+SET = re.compile(r"^setblock %s %s %s (\S+?(?:\{.*\})?)$" % ((NUM,) * 3))      # a sign's text has spaces
 NATURAL, WATER, OPEN = "natural", "water", "open-air"
 
 
@@ -83,13 +92,21 @@ def bid(b):
 def passable(b):
     """A body can stand in it: air, a rail, a button. Not a lantern (it has a hitbox), a fence, a barrel or a stair."""
     i = bid(b)
-    return i in ("minecraft:air", "minecraft:cave_air", OPEN) or i.endswith("rail") or i.endswith("_button")
+    return (i in ("minecraft:air", "minecraft:cave_air", OPEN) or i.endswith("rail") or i.endswith("_button")
+            or i.endswith("_wall_sign"))
 
 
 def transparent(b):
-    """Block light passes: air, rails, lanterns, fences, stairs (half open), not full blocks or fluids."""
+    """Block light passes: air, rails, lanterns, fences, stairs (half open), signs, glass; not full blocks or fluids."""
     i = bid(b)
-    return passable(b) or i.endswith("lantern") or i.endswith("_fence") or i.endswith("_stairs")
+    return (passable(b) or i.endswith("lantern") or i.endswith("_fence") or i.endswith("_stairs")
+            or i in ("minecraft:glass", "minecraft:glass_pane"))
+
+
+# the block light each light source emits (minecraft.wiki: Light, "Light-emitting blocks"); a lamp the pack writes that
+# is not one of these is no lamp
+LIGHTS = {"minecraft:lantern": 15, "minecraft:glowstone": 15, "minecraft:sea_lantern": 15, "minecraft:shroomlight": 15,
+          "minecraft:ochre_froglight": 15, "minecraft:verdant_froglight": 15, "minecraft:pearlescent_froglight": 15}
 
 
 def solid_floor(b):
@@ -242,10 +259,11 @@ def audit(source_root=None, pack=PACK, spec=None):
     for q, base in leaks[:5]:
         P.append("sealed: (%d, %d, %d) is unwritten %s beside an opened cell" % (q + (base,)))
 
-    # -- route (the first vertex is the cut's head, on the surface: the walk starts there)
-    for vx, vz in spec["route"]["vertices"][1:]:
-        if not any((vx, y, vz) in opened for y in range(-64, 320)):
-            P.append("route: no opened cell in the column of vertex (%d, %d)" % (vx, vz))
+    # -- route: two ends on one axis (the owner: "a straight shot to the island"); the line's own straightness is read
+    #    from the rails below
+    vs = spec["route"]["vertices"]
+    if len(vs) != 2 or (vs[0][0] != vs[1][0] and vs[0][1] != vs[1][1]):
+        P.append("route: the data's route %s is not two ends on one axis" % (vs,))
 
     # -- walk: a standing place is a full block's top (one height) or a stair (its low half and its high half, so a
     #    run of stairs is walked half a block at a time); a move may change height by half a block at most
@@ -283,16 +301,26 @@ def audit(source_root=None, pack=PACK, spec=None):
                     dq.append(q)
     res["walk_nodes"] = len(seen)
     isl = spec["island"]
-    x0, z0, x1, z1 = isl["headhouse"]["box"]
-    door = (x0 - 1, isl["pad_y"] + 1, isl["stairwell"]["spine_z"])
-    if door not in seen:
-        P.append("walk: outside the headhouse door %s is not reached from the cut's head %s" % (door, start))
+    lh = isl["lighthouse"]
+    x0, z0, x1, z1 = lh["hall"]["box"]
+    gh = spec["gatehouse"]
+    goals = [("the keeper's hall's south door", (lh["hall"]["door_x"][0], isl["pad_y"] + 1, z1))]
+    goals += [("Foothill Gate's %s door" % side, (gh["doors_x"][0], gh["floor_y"] + 1, zz))
+              for side, zz in (("north", gh["box"][1]), ("south", gh["box"][3]))]
+    tx0, tz0, tx1, tz1 = lh["tower"]["box"]
+    fl = lh["tower"]["lantern_room_feet"]
+    room = [(x, fl, z) for x in range(tx0 + 1, tx1) for z in range(tz0 + 1, tz1)]
+    for what, p in goals:
+        if p not in seen:
+            P.append("walk: %s %s is not reached from the line's stop in the gatehouse %s" % (what, p, start))
+    if not any(p in seen for p in room):
+        P.append("walk: the lighthouse's lantern room (feet y%d) is not reached up the tower's stair" % fl)
 
-    # -- light (flooded from every lantern the pack writes)
-    lanterns = [p for p, b in W.w.items() if bid(b) == "minecraft:lantern"]
+    # -- light (flooded from every light source the pack writes)
+    lanterns = [p for p, b in W.w.items() if bid(b) in LIGHTS]
     if not lanterns:
         P.append("light: the pack writes no lantern")
-    light = {p: 15 for p in lanterns}
+    light = {p: LIGHTS[bid(W.w[p])] for p in lanterns}
     frontier = list(lanterns)
     for lv in range(14, 0, -1):
         nxt = []
@@ -398,8 +426,8 @@ def audit(source_root=None, pack=PACK, spec=None):
                 continue
             if t > sea:
                 dry += 1
-                if not (x0 <= x <= x1 and z0 <= z <= z1):           # the house's walls are not the ground
-                    crown = t if crown is None else max(crown, t)
+                if not any(b[0] <= x <= b[2] and b[1] <= z <= b[3] for b in (lh["hall"]["box"], lh["tower"]["box"])):
+                    crown = t if crown is None else max(crown, t)      # the lighthouse's walls are not the ground
             if abs(t - sea) <= 2 and bid(W.at(x, t, z)) == isl["beach"]:
                 shingle += 1
     res["isle_crown_y"] = crown
@@ -410,7 +438,10 @@ def audit(source_root=None, pack=PACK, spec=None):
         P.append("isle: no %s at the tide line" % isl["beach"])
     surf = [(x, y, z) for (x, y, z) in opened if y == isl["pad_y"] and abs(x - c["x"]) <= R and abs(z - c["z"]) <= R]
     if not surf or not all(x0 < x < x1 and z0 < z < z1 for (x, y, z) in surf):
-        P.append("isle: the stairwell does not surface inside the headhouse box")
+        P.append("isle: the road does not surface inside the keeper's hall %s" % (lh["hall"]["box"],))
+
+    # -- the buildings: both gatehouses whole and named, the lighthouse's tower whole and its lamp lit and seen
+    P += buildings(W, spec, res, light, crown)
 
     # -- habitats
     hdoc = json.loads((ROOT / "data" / "habitat_blocks.json").read_text(encoding="utf-8"))
@@ -515,6 +546,118 @@ def audit(source_root=None, pack=PACK, spec=None):
 #   solid neighbour); a powered rail passes power to the powered rails it joins, up to 8 away; an activator rail
 #   likewise to activator rails; a detector rail powers its neighbours and the block under it while a cart is on it
 
+def sign_text(b):
+    """The text on a sign block's front, joined, or None if it is not a sign."""
+    if not bid(b).endswith("_sign") or "{" not in b:
+        return None
+    return " ".join(re.findall(r"'\"((?:[^\"\\\\]|\\\\.)*)\"'", b))
+
+
+def buildings(W, spec, res, light, crown):
+    """Foothill Gate and the keeper's hall: every wall cell solid but the data's doors and the road's own opening, a roof,
+    a sign naming the place, and the line's stop inside with its buffer in the wall. Driftmouth Light's tower: its walls
+    whole to the lantern room, the room glazed, a lamp in it of an allowed light-emitting block, lit, with clear glass
+    between it and the sea on all four sides and standing over the isle's crown."""
+    P = []
+    r, H = spec["tube"]["r"], spec["tube"]["height"]
+    rails = {p: b for p, b in W.w.items() if bid(b) in RAIL_IDS}
+    by_col = {}
+    for (x, y, z) in rails:
+        by_col[(x, z)] = y
+    isl = spec["island"]
+    lh = isl["lighthouse"]
+    gh = spec["gatehouse"]
+    (vx, vz), (wx, wz) = spec["route"]["vertices"][:2]
+    axis_z = vz == wz
+
+    def road_open(x, y, z):
+        """A wall cell the road passes through: over a rail of the line, within the tube's half-width and height."""
+        for o in range(-r, r + 1):
+            k = (x, z - o) if axis_z else (x - o, z)
+            if k in by_col and (k[1] == vz if axis_z else k[0] == vx) and by_col[k] <= y < by_col[k] + H:
+                return True
+        return False
+
+    tdoor = tuple(lh["tower"]["door"])
+    halls = [("Foothill Gate", gh["display_name"], gh["box"], gh["floor_y"], gh["wall_height"],
+              {(x, z) for x in range(gh["doors_x"][0], gh["doors_x"][1] + 1) for z in (gh["box"][1], gh["box"][3])},
+              (vx, gh["floor_y"] + 1, vz)),
+             ("the keeper's hall", lh["display_name"], lh["hall"]["box"], isl["pad_y"], lh["hall"]["wall_height"],
+              {(x, lh["hall"]["box"][3]) for x in range(lh["hall"]["door_x"][0], lh["hall"]["door_x"][1] + 1)} | {tdoor},
+              (wx, isl["pad_y"] + 1, wz))]
+    found = []
+    for what, name, (x0, z0, x1, z1), fy, wh, doors, stop in halls:
+        holes = []
+        for x in range(x0, x1 + 1):
+            for z in range(z0, z1 + 1):
+                if not (x in (x0, x1) or z in (z0, z1)):
+                    continue
+                for y in range(fy + 1, fy + wh + 1):
+                    b = W.at(x, y, z)
+                    if not transparent(b) and b not in (OPEN, WATER):
+                        continue
+                    if ((x, z) in doors and y <= fy + 3) or road_open(x, y, z):
+                        continue
+                    holes.append((x, y, z))
+        roof = [(x, fy + wh + 1, z) for x in range(x0, x1 + 1) for z in range(z0, z1 + 1)
+                if transparent(W.at(x, fy + wh + 1, z)) or W.at(x, fy + wh + 1, z) in (OPEN, WATER)]
+        signs = [sign_text(b) for (x, y, z), b in W.w.items() if x0 - 1 <= x <= x1 + 1 and z0 - 1 <= z <= z1 + 1
+                 and fy < y <= fy + wh + 1 and sign_text(b) is not None]
+        named = [t for t in signs if name.lower() in t.lower()]
+        found.append({"building": what, "wall_holes": len(holes), "roof_holes": len(roof), "signs": len(signs),
+                      "named": len(named)})
+        for h in holes[:3]:
+            P.append("gatehouse: %s's wall is open at %s (no door and not the road)" % (what, h))
+        if roof:
+            P.append("gatehouse: %s's roof is open at %d cells, the first %s" % (what, len(roof), roof[0]))
+        if not named:
+            P.append("gatehouse: no sign on %s names %s" % (what, name))
+        if not (x0 < stop[0] < x1 and z0 < stop[2] < z1) or bid(W.at(*stop)) != "minecraft:powered_rail":
+            P.append("gatehouse: the line's stop %s is not a rail inside %s" % (stop, what))
+        beyond = [(x, stop[1], z) for x, z in ((stop[0] + 1, stop[2]), (stop[0] - 1, stop[2]), (stop[0], stop[2] + 1),
+                                                (stop[0], stop[2] - 1)) if x in (x0, x1) or z in (z0, z1)]
+        if not beyond or not all(solid_floor(W.at(*q)) for q in beyond):
+            P.append("gatehouse: the stop %s in %s is not against its wall (the buffer)" % (stop, what))
+    res["buildings"] = found
+    # -- the tower
+    tb = lh["tower"]
+    tx0, tz0, tx1, tz1 = tb["box"]
+    fl, pad = tb["lantern_room_feet"], isl["pad_y"]
+    holes = [(x, y, z) for x in range(tx0, tx1 + 1) for z in range(tz0, tz1 + 1) if x in (tx0, tx1) or z in (tz0, tz1)
+             for y in range(pad + 1, fl) if not ((x, z) == tdoor and y <= pad + 2)
+             and (transparent(W.at(x, y, z)) or W.at(x, y, z) in (OPEN, WATER))]
+    for h in holes[:3]:
+        P.append("lighthouse: the tower's wall is open at %s" % (h,))
+    glazing = [(x, y, z) for x in range(tx0, tx1 + 1) for z in range(tz0, tz1 + 1)
+               if (x in (tx0, tx1)) != (z in (tz0, tz1)) for y in range(fl, fl + 3)]
+    unglazed = [p for p in glazing if bid(W.at(*p)) != bid(tb["glazing"]) or not transparent(W.at(*p))]
+    if unglazed:
+        P.append("lighthouse: the lantern room is not glazed at %d cells, the first %s" % (len(unglazed), unglazed[0]))
+    lamps = [(p, b) for p, b in W.w.items() if tx0 < p[0] < tx1 and tz0 < p[2] < tz1 and fl <= p[1] < fl + 3
+             and bid(b) in LIGHTS]
+    res["lamp"] = [list(p) for p, _b in lamps]
+    if not lamps:
+        P.append("lighthouse: no light-emitting block in the lantern room (%s are the ones this audit knows)" % sorted(LIGHTS))
+    for p, b in lamps:
+        if bid(b) != bid(tb["lamp"]):
+            P.append("lighthouse: the lamp at %s is %s, not the data's %s" % (p, bid(b), tb["lamp"]))
+        if light.get(p, 0) < 15:
+            P.append("lighthouse: the lamp at %s is not lit" % (p,))
+        for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            x, z = p[0] + dx, p[2] + dz
+            while tx0 <= x <= tx1 and tz0 <= z <= tz1:
+                if not transparent(W.at(x, p[1], z)):
+                    P.append("lighthouse: the lamp at %s is hidden from the %s by %s at (%d, %d, %d)"
+                             % (p, {(1, 0): "east", (-1, 0): "west", (0, 1): "south", (0, -1): "north"}[(dx, dz)],
+                                W.at(x, p[1], z), x, p[1], z))
+                    break
+                x, z = x + dx, z + dz
+        if crown is not None and p[1] < crown + 10:
+            P.append("lighthouse: the lamp at y%d stands less than 10 over the isle's crown y%d" % (p[1], crown))
+    res["tower_wall_holes"] = len(holes)
+    return P
+
+
 RAIL_IDS = ("minecraft:rail", "minecraft:powered_rail", "minecraft:detector_rail", "minecraft:activator_rail")
 DIR = {"east": (1, 0), "west": (-1, 0), "south": (0, 1), "north": (0, -1)}
 STRAIGHT = {"east_west": ("east", "west"), "north_south": ("north", "south")}
@@ -572,10 +715,8 @@ def rail_line(W, spec, seen, res):
         if e is None:
             P.append("rails: %s at %s has no rail shape %r" % (bid(b), p, shape))
             continue
-        if curve and bid(b) != "minecraft:rail":
-            P.append("rails: %s at %s is curved, and only minecraft:rail turns" % (bid(b), p))
-        if bid(b) == "minecraft:rail" and not curve:
-            P.append("rails: minecraft:rail at %s is %s: it is whitelisted here for the curves only" % (p, shape))
+        if curve:
+            P.append("rails: %s at %s turns (%s): the line is straight, end to end" % (bid(b), p, shape))
         if not solid_floor(W.at(p[0], p[1] - 1, p[2])):
             P.append("rails: the rail at %s stands on %s" % (p, W.at(p[0], p[1] - 1, p[2])))
         ends[p] = e
@@ -594,15 +735,16 @@ def rail_line(W, spec, seen, res):
             P.append("rails: the line ends or breaks at %s (%s)" % (t, rails[t]))
         if len(tips) != 2:
             P.append("rails: %d loose ends, not the line's two stops" % len(tips))
-    # -- the two stops are where the data says: the cut's head, and the headhouse
-    vx, vz = spec["route"]["vertices"][0]
-    r = spec["tube"]["r"]
+    # -- the two stops are where the data says: the route's two ends, one on Foothill Gate's floor and one on the keeper's
+    #    hall's
+    (vx, vz), (wx, wz) = spec["route"]["vertices"][:2]
     isl = spec["island"]
-    x0, z0, x1, z1 = isl["headhouse"]["box"]
-    mouth = [t for t in tips if abs(t[0] - vx) <= r and abs(t[2] - vz) <= r]
-    house = [t for t in tips if x0 < t[0] < x1 and z0 < t[2] < z1 and t[1] == isl["pad_y"] + 1]
+    gh = spec["gatehouse"]
+    mouth = [t for t in tips if (t[0], t[2]) == (vx, vz) and t[1] == gh["floor_y"] + 1]
+    house = [t for t in tips if (t[0], t[2]) == (wx, wz) and t[1] == isl["pad_y"] + 1]
     if len(mouth) != 1 or len(house) != 1:
-        P.append("rails: the line's ends %s are not one at the cut's head and one on the headhouse's floor" % tips)
+        P.append("rails: the line's ends %s are not the route's two ends, on Foothill Gate's floor (y%d) and the keeper's "
+                 "hall's (y%d)" % (tips, gh["floor_y"] + 1, isl["pad_y"] + 1))
         return P
     # -- one line: from the mouth's stop to the headhouse's, every rail on it once
     path, prev, cur = [mouth[0]], None, mouth[0]
@@ -621,6 +763,16 @@ def rail_line(W, spec, seen, res):
                  % (mouth[0], path[-1], house[0]))
     if len(path) != len(rails):
         P.append("rails: %d rails are written and %d are on the line from stop to stop" % (len(rails), len(path)))
+    # -- straight: every rail of the line on the axis through its two ends, one column further along at each step
+    axis = 2 if vz == wz else 0                         # the coordinate that stays the same
+    off = [p for p in path if p[axis] != (vz if axis == 2 else vx)]
+    jumps = [(a, b) for a, b in zip(path, path[1:]) if abs(b[2 - axis] - a[2 - axis]) != 1]
+    res["rail_line_off_axis"] = len(off)
+    if off:
+        P.append("straight: %d rails of the line leave its axis (%s %d), the first at %s"
+                 % (len(off), "z" if axis == 2 else "x", vz if axis == 2 else vx, off[0]))
+    if jumps:
+        P.append("straight: the line does not advance one column a rail between %s and %s" % jumps[0])
     # -- power: every lever and button the pack writes
     sources, buttons, levers = set(), {}, []
     for p, b in W.w.items():

@@ -7057,9 +7057,9 @@
       "style": "activated",
       "replace_spawns": false,
       "position": {
-        "x": 364,
+        "x": 372,
         "y": 58,
-        "z": 1558
+        "z": 1762
       },
       "mimic": "minecraft:andesite",
       "activated": {
@@ -7080,9 +7080,9 @@
       "style": "activated",
       "replace_spawns": false,
       "position": {
-        "x": 364,
-        "y": 36,
-        "z": 1558
+        "x": 372,
+        "y": 53,
+        "z": 1762
       },
       "mimic": "minecraft:andesite",
       "activated": {
@@ -7103,9 +7103,9 @@
       "style": "activated",
       "replace_spawns": false,
       "position": {
-        "x": 308,
+        "x": 300,
         "y": 58,
-        "z": 1558
+        "z": 1762
       },
       "mimic": "minecraft:andesite",
       "activated": {
@@ -7126,9 +7126,9 @@
       "style": "activated",
       "replace_spawns": false,
       "position": {
-        "x": 308,
-        "y": 35,
-        "z": 1558
+        "x": 300,
+        "y": 38,
+        "z": 1762
       },
       "mimic": "minecraft:andesite",
       "activated": {
@@ -7149,9 +7149,9 @@
       "style": "activated",
       "replace_spawns": false,
       "position": {
-        "x": 308,
+        "x": 300,
         "y": 58,
-        "z": 1614
+        "z": 1834
       },
       "mimic": "minecraft:andesite",
       "activated": {
@@ -7172,9 +7172,9 @@
       "style": "activated",
       "replace_spawns": false,
       "position": {
-        "x": 308,
-        "y": 36,
-        "z": 1614
+        "x": 300,
+        "y": 45,
+        "z": 1834
       },
       "mimic": "minecraft:andesite",
       "activated": {
@@ -7195,9 +7195,9 @@
       "style": "activated",
       "replace_spawns": false,
       "position": {
-        "x": 364,
+        "x": 372,
         "y": 58,
-        "z": 1614
+        "z": 1834
       },
       "mimic": "minecraft:andesite",
       "activated": {
@@ -7218,9 +7218,9 @@
       "style": "activated",
       "replace_spawns": false,
       "position": {
-        "x": 364,
-        "y": 37,
-        "z": 1614
+        "x": 372,
+        "y": 57,
+        "z": 1834
       },
       "mimic": "minecraft:andesite",
       "activated": {
@@ -7243,7 +7243,7 @@
       "position": {
         "x": 336,
         "y": 58,
-        "z": 1606
+        "z": 1820
       },
       "mimic": "minecraft:andesite",
       "activated": {
@@ -7266,7 +7266,7 @@
       "position": {
         "x": 336,
         "y": 58,
-        "z": 1566
+        "z": 1776
       },
       "mimic": "minecraft:andesite",
       "activated": {

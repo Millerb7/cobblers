@@ -473,12 +473,12 @@
       "trigger": {
         "min": [
           1418,
-          103,
+          104,
           1732
         ],
         "max": [
           1422,
-          105,
+          106,
           1736
         ]
       },
@@ -486,7 +486,7 @@
         "block": "minecraft:barrel",
         "at": [
           1420,
-          103,
+          104,
           1732
         ]
       }
@@ -494,7 +494,7 @@
     {
       "id": "sea_drift_isle",
       "kind": "cache",
-      "place": "Driftmouth Isle: in the headhouse over the drift's stairwell, its north-west corner",
+      "place": "Driftmouth Isle: in Driftmouth Light's keeper's hall, its north-west corner by the tower door",
       "contents": [
         {
           "item": "cobblemon:net_ball",
@@ -507,27 +507,27 @@
           "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
         }
       ],
-      "message": "In the barrel in the headhouse: five Net Balls and two Super Potions.",
+      "message": "In the barrel in Driftmouth Light's keeper's hall: five Net Balls and two Super Potions.",
       "why": "data/sea_drift.json caches: the find that pays for the walk, as the old mine's barrels",
       "built_by": "tools/sea_drift.py (the barrel, in cobblers_sea_drift's surface pass)",
       "trigger": {
         "min": [
-          330,
+          325,
           70,
-          1583
+          1792
         ],
         "max": [
-          332,
+          327,
           72,
-          1585
+          1794
         ]
       },
       "container": {
         "block": "minecraft:barrel",
         "at": [
-          330,
+          325,
           70,
-          1583
+          1792
         ]
       }
     }

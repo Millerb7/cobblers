@@ -1,40 +1,45 @@
 #!/usr/bin/env python
-"""The Seaward Drift: a mine tunnel from the foothill plateau to a built isle in the northern sea, with a strip mine off
-it, from data/sea_drift.json (the owner, 2026-10-02: "make another mine tunnel with a strip mine attached to it near
-1455 113 1795, it would be cool if it spit out near the beach around 330 70 1584 ... make a small island with some cool
-water spawns around it").
+"""The Seaward Drift: a straight road under the land and the sea from Foothill Gate on the plateau to Driftmouth Light
+on Driftmouth Isle, a powered minecart line down its middle, with a strip mine off it, from data/sea_drift.json.
+
+The owner, 2026-10-02: "make another mine tunnel with a strip mine attached to it near 1455 113 1795 ... make a small
+island with some cool water spawns around it"; then, after riding the first line: "if we remake the tunnel, make it a
+straight shot to the island for sure ... if we could make it feel like a bike tunnel from the games that would be sick";
+and "make the house you come out a light house as well". The rule that placed the ends is data `rebuild`.
 
 Everything is decided from the data file, the canonical heightmap (tools/ground.py, rounded; never a world) and the sea
 level in data/world.json. One voxel model over the whole run:
 
-  the isle      Driftmouth Isle, raised out of y26 seabed with tools/islet.py's island_top (Relic Island's shape at this
+  the isle      Driftmouth Isle, raised out of the seabed with tools/islet.py's island_top (Relic Island's shape at this
                 radius, crown and seed) and a talus skirt below its waterline; a shingle beach (gravel: sand is a spawn
-                condition), dirt and grass above; a pad levelled for the headhouse; four sea stacks on the diagonals
-  the drift     three straight legs from a box-cut on the plateau to the isle's stairwell, 5 wide and 5 high. Its floor
-                is a PROFILE the tool computes: an open cut falling one in `incline_run` until the cover is reached
-                (the portal), then the even grade from the portal to the stairwell's foot, pushed down wherever the
-                cover needs it (never steeper than one in `max_run`). Every fall is one block, taken on a stair (and an
-                ascending powered rail in the middle column), never within `quiet_cells` of a corner, the junction or
-                the end
+                condition), dirt and grass above; a pad levelled for the lighthouse; four sea stacks on the diagonals
+  the road      ONE straight leg along the line's axis, 5 wide and 5 high, from the gatehouse to the lighthouse's hall.
+                Its floor is a PROFILE the tool computes: flat through the gatehouse; an open cut falling one in
+                `incline_run` until the cover is reached (the portal); then the long coast, the even grade down to the
+                lowest point the cover allows under the sea, pushed down wherever the cover needs it (never steeper
+                than one in `max_run`); a flat bottom; then a straight climb of one in one up into the hall. Every
+                change of level is one block, taken on a stair beside the rail (an ascending powered rail in the
+                middle), never within `quiet_cells` of the strip mine's junction, the bottom or the ends
   the cover     solid blocks between any cell this build opens and any water, Chebyshev: shell_r + export_tolerance +
                 natural_seabed (data `cover`), derived here and checked on every opened cell against the painted water
-                over the effective ground (the heightmap, with the isle's built ground laid over it)
-  the strips    a 3-wide corridor north off the drift at `junction_x` and 1-wide, 2-high branches every third block both
+                over the effective ground (the heightmap, with the isle's built ground laid over it). Down the coast
+                the floor also keeps that cover under the ground; on the climb, under the isle's dry crown and the
+                lighthouse pad, only the water's cover and one block of roof are required
+  the strips    a 3-wide corridor north off the road at `junction_x` and 1-wide, 2-high branches every third block both
                 sides, ending in a chamber with the miners' barrel; copper, lapis and gold ore in the faces (none that is
                 a spawn condition), richer toward the far end, a seam at every branch end, some hidden in the walls
-  the well      the drift's end climbs to the isle's crown in a scissor stair (flights of `flight_steps`, landings at the
-                ends, a one-block spine between the rows); the drift's end is lowered so the flights come out whole
   the shell     every cell within shell_r of anything opened, not opened, at or under the effective ground: rock
-  fittings      stairs, timber sets (basalt posts, copper beam), hanging lanterns, the barrels
-  the line      a rail line a ridden minecart can use (data `rail_line`): continuous from a stop at the cut's head to a
-                stop in the headhouse, down the drift's centre and up the well's flights, curving at the corners and
-                landings; every climb and at least every `boost_every`-th flat rail a powered rail with its own lever
-                sealed in the rock under its bed; detector rails between; at each end an unpowered powered rail against
-                a buffer with a launch button, parted from the line by one activator rail. Levers go before rails and
-                rails go in line order, as a player lays track (vanilla re-shapes a placed rail from its neighbours)
-  surface       the portal's stone-brick headwall at the cut, lantern posts at its head, the headhouse over the well
-                (stone brick, spruce corners and roof, a fenced stair hole, a door west), a lantern post and a path to
-                the shingle
+  the road dress  data `road`: a paved floor either side of the rail, its lane edges dashed in calcite, lanterns in
+                pairs over the footpaths, timber sets, distance boards on the walls counting down to either gate
+  the line      a rail line a ridden minecart can use (data `rail_line`): straight from a stop in the gatehouse to a
+                stop in the lighthouse's hall; every climb and at least every `boost_every`-th flat rail a powered rail
+                with its own lever sealed in the rock under its bed; detector rails between; at each end an unpowered
+                powered rail against the building's wall with a launch button, parted from the line by one activator
+                rail. Levers go before rails and rails go in line order, as a player lays track
+  surface       Foothill Gate over the line's head (stone brick, spruce, doors north and south, a named sign over each),
+                the portal's headwall, and Driftmouth Light: the keeper's hall the road climbs into (the stop against
+                its west wall, a door south to a path down to the shingle) and the striped tower beside it, a spiral
+                stair round a lit core up to a glazed lantern room with the lamp
 
 The Habitat Blocks (data/habitat_blocks.json), the caches' advancements (data/rewards.json) and the waters' pool
 (data/spawns.json) are records in those files, written by `records --write` from this model and placed by their own
@@ -44,19 +49,30 @@ packs: cobblers_habitats, cobblers_rewards, cobblers_spawns. This pack only writ
   python tools/sea_drift.py build   [--source-root DIR]     -> build/datapacks/cobblers_sea_drift, derived/sea_drift/plan.json
   python tools/sea_drift.py records [--write]               the habitat-block, reward and pool records (print, or
                                                             replace this build's own records in the three files)
+  python tools/sea_drift.py cleanup [--old-rev REV] [--out DIR]
+                                                            STAGING ONLY, one-off: the first drift (the L-shaped tunnel,
+                                                            its well and the isle at z1586, as built from REV) put back
+                                                            to the heightmap world wherever this build does not write;
+                                                            -> build/staging/cobblers_sea_drift_cleanup (outside
+                                                            build/datapacks, so tools/reapply.py's coverage check never
+                                                            asks a step for it)
 
 Run order on a world: every function in build/datapacks/cobblers_sea_drift/data/cobblers/function/sea_drift/index.txt in
 that order (island, clear, shell, air, fittings, surface), then cobblers_habitats (the isle's blocks sit in the island's
-rock), with the rewards and spawns packs installed.
+rock), with the rewards and spawns packs installed. On staging-2026-10-01, which holds the first drift, the cleanup's
+functions run first.
 
 The offline audit, independent of this tool's model, is tools/sea_drift_audit.py.
 """
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
 import math
+import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 import numpy as np
@@ -70,6 +86,8 @@ import terrain as T            # noqa: E402
 ROOT = Path(__file__).resolve().parent.parent
 SPEC = ROOT / "data" / "sea_drift.json"
 OUT = ROOT / "build" / "datapacks" / "cobblers_sea_drift"
+CLEANUP_OUT = ROOT / "build" / "staging" / "cobblers_sea_drift_cleanup"
+OLD_REV = "aa4851a"              # the commit whose tools/sea_drift.py and data/sea_drift.json built the first drift
 PLAN = ROOT / "derived" / "sea_drift" / "plan.json"
 HABITATS = ROOT / "data" / "habitat_blocks.json"
 REWARDS = ROOT / "data" / "rewards.json"
@@ -105,11 +123,26 @@ def stair(block, facing):
     return "%s[facing=%s,half=bottom,shape=straight,waterlogged=false]" % (block, facing)
 
 
+def wall_sign(wood, facing, lines):
+    """A wall sign facing `facing`, hung on the block behind it; four lines of plain text (JSON text components)."""
+    q = ",".join("'%s'" % json.dumps(t).replace("'", "\\'") for t in (list(lines) + ["", "", "", ""])[:4])
+    return "minecraft:%s_wall_sign[facing=%s,waterlogged=false]{front_text:{messages:[%s]}}" % (wood, facing, q)
+
+
 HANG = "minecraft:lantern[hanging=true,waterlogged=false]"
 STAND = "minecraft:lantern[hanging=false,waterlogged=false]"
 
 
+def lighthouse(spec):
+    return spec["island"]["lighthouse"]
+
+
 # ------------------------------------------------------------------ the isle (built ground)
+
+def pad_boxes(spec):
+    lh = lighthouse(spec)
+    return [lh["hall"]["box"], lh["tower"]["box"]]
+
 
 def isle_columns(spec, g, sea):
     """{(x, z): (top, kind, bed)} for every column the isle build raises; kind is core, skirt, pad or stack."""
@@ -132,12 +165,12 @@ def isle_columns(spec, g, sea):
                 t = int(math.floor(edge - (r[j, i] - R) / skirt * (edge - b) + 0.5))
                 if t > b:
                     cols[(x, z)] = (t, "skirt", b)
-    hx0, hz0, hx1, hz1 = isl["headhouse"]["box"]
-    for x in range(hx0 - 2, hx1 + 3):
-        for z in range(hz0 - 2, hz1 + 3):
-            if (x, z) not in cols or cols[(x, z)][1] != "core":
-                raise DriftError("the headhouse pad (%d, %d) is not on the isle's core" % (x, z))
-            cols[(x, z)] = (int(isl["pad_y"]), "pad", cols[(x, z)][2])
+    for bx0, bz0, bx1, bz1 in pad_boxes(spec):
+        for x in range(bx0 - 2, bx1 + 3):
+            for z in range(bz0 - 2, bz1 + 3):
+                if (x, z) not in cols or cols[(x, z)][1] not in ("core", "pad"):
+                    raise DriftError("the lighthouse pad (%d, %d) is not on the isle's core" % (x, z))
+                cols[(x, z)] = (int(isl["pad_y"]), "pad", cols[(x, z)][2])
     for st in isl["stacks"]:
         sx, sz, sr = st["x"], st["z"], st["r"]
         for x in range(sx - sr - 1, sx + sr + 2):
@@ -170,23 +203,34 @@ def isle_block(spec, sea, x, y, z, top, kind):
     return "minecraft:stone"
 
 
-# ------------------------------------------------------------------ the path and its profile
+# ------------------------------------------------------------------ the road and its profile
 
-def path_cells(vertices):
-    """[(x, z, (dx, dz))] one per column along the route, and the indices of the corner cells."""
-    cells, corners = [], []
-    for k, ((x0, z0), (x1, z1)) in enumerate(zip(vertices, vertices[1:])):
-        if x0 != x1 and z0 != z1:
-            raise DriftError("route leg %d is not straight along x or z" % k)
-        n = max(abs(x1 - x0), abs(z1 - z0))
-        d = ((x1 > x0) - (x1 < x0), (z1 > z0) - (z1 < z0))
-        if k:
-            corners.append(len(cells))
-        for i in range(n):
-            cells.append((x0 + d[0] * i, z0 + d[1] * i, d))
-    x1, z1 = vertices[-1]
-    cells.append((x1, z1, cells[-1][2]))
-    return cells, corners
+def route(spec):
+    """The line's two ends, ((x0, z0), (x1, z1)), on one axis: the road is ONE straight leg (the owner: "a straight
+    shot to the island")."""
+    vs = spec["route"]["vertices"]
+    if len(vs) != 2:
+        raise DriftError("the route has %d vertices: the road is one straight leg, two ends" % len(vs))
+    (x0, z0), (x1, z1) = vs
+    if x0 != x1 and z0 != z1:
+        raise DriftError("the route's ends (%d, %d) and (%d, %d) are not on one axis" % (x0, z0, x1, z1))
+    return (x0, z0), (x1, z1)
+
+
+def path_cells(spec):
+    """[(x, z, (dx, dz))] one per column from the gatehouse's stop to the hall's stop."""
+    (x0, z0), (x1, z1) = route(spec)
+    n = max(abs(x1 - x0), abs(z1 - z0))
+    d = ((x1 > x0) - (x1 < x0), (z1 > z0) - (z1 < z0))
+    return [(x0 + d[0] * i, z0 + d[1] * i, d) for i in range(n + 1)]
+
+
+def check_straight(cells):
+    """The road's own guard: every cell one step along one axis from the one before it."""
+    for (a, b, _d), (c, e, _f) in zip(cells, cells[1:]):
+        if abs(c - a) + abs(e - b) != 1 or (cells[0][0] != cells[-1][0] and e != cells[0][1]) \
+                or (cells[0][1] != cells[-1][1] and c != cells[0][0]):
+            raise DriftError("the road is not straight between (%d, %d) and (%d, %d)" % (a, b, c, e))
 
 
 class Model:
@@ -196,15 +240,18 @@ class Model:
         self.C = cover_blocks(spec)
         self.r, self.H, self.SR = spec["tube"]["r"], spec["tube"]["height"], spec["shell_r"]
         self.isle = isle_columns(spec, g, self.sea)
-        vs = spec["route"]["vertices"]
+        (ax, az), (bx, bz) = route(spec)
         sm = spec["strip_mine"]
         isl = spec["island"]
-        hx0, hz0, hx1, hz1 = isl["headhouse"]["box"]
         half = isl["radius"] + isl["skirt"] + 2
-        xs = [v[0] for v in vs] + [isl["centre"]["x"] - half, isl["centre"]["x"] + half, hx0, hx1,
-                                   sm["junction_x"] - sm["branch_length"] - 3, sm["junction_x"] + sm["branch_length"] + 3]
-        zs = [v[1] for v in vs] + [isl["centre"]["z"] - half, isl["centre"]["z"] + half, hz0, hz1,
-                                   sm["corridor_to_z"] - 2 * sm["chamber"]["r"] - 2]
+        boxes = pad_boxes(spec) + [spec["gatehouse"]["box"]]
+        xs = [ax, bx, isl["centre"]["x"] - half, isl["centre"]["x"] + half,
+              sm["junction_x"] - sm["branch_length"] - 3, sm["junction_x"] + sm["branch_length"] + 3]
+        zs = [az, bz, isl["centre"]["z"] - half, isl["centre"]["z"] + half,
+              sm["corridor_to_z"] - 2 * sm["chamber"]["r"] - 2]
+        for b in boxes:
+            xs += [b[0], b[2]]
+            zs += [b[1], b[3]]
         m = self.r + self.C + self.SR + 4
         self.X0, self.X1, self.Z0, self.Z1 = min(xs) - m, max(xs) + m, min(zs) - m, max(zs) + m
         self.Y0, self.Y1 = 0, 124
@@ -263,53 +310,107 @@ class Model:
             self.strip[a[0]:b[0] + 1, a[1]:b[1] + 1, a[2]:b[2] + 1] = True
 
 
+def window(m, x, z, d, along, across):
+    """The (x, z) slice of an (x, z) array round a road cell: `along` the road and `across` it."""
+    if d[1] == 0:
+        return (slice(x - along - m.X0, x + along + 1 - m.X0), slice(z - across - m.Z0, z + across + 1 - m.Z0))
+    return (slice(x - across - m.X0, x + across + 1 - m.X0), slice(z - along - m.Z0, z + along + 1 - m.Z0))
+
+
 def caps(m, cells):
-    """The highest feet each path cell may have: its whole cross-section and C round it under the effective ground by
-    C blocks of cover over the drift's roof."""
+    """The highest feet each road cell may have down the coast: its whole cross-section and C round it under the
+    effective ground by C blocks of cover over the road's roof."""
     reach = m.r + m.C
     out = []
-    for x, z, _d in cells:
-        w = m.geff[x - reach - m.X0:x + reach + 1 - m.X0, z - reach - m.Z0:z + reach + 1 - m.Z0]
-        out.append(int(w.min()) - m.C - (m.H - 1))
+    for x, z, d in cells:
+        out.append(int(m.geff[window(m, x, z, d, reach, reach)].min()) - m.C - (m.H - 1))
     return out
 
 
-def quiet_zones(m, cells, corners):
-    q = m.spec["grade"]["quiet_cells"]
-    jx = m.spec["strip_mine"]["junction_x"]
-    sj = next(i for i, (x, z, _d) in enumerate(cells) if x == jx and z == m.spec["route"]["vertices"][0][1])
-    zones = [(c - q, c + q) for c in corners] + [(sj - q, sj + q), (len(cells) - 1 - q, len(cells) - 1)]
-    return zones, sj
+def climb_caps(m, cells):
+    """The highest feet each road cell may have on the climb into the isle: C clear of every wet column within C of its
+    cross-section (the water's cover), and its roof one block under the ground over its own cross-section."""
+    out = []
+    for x, z, d in cells:
+        wet = m.wl[window(m, x, z, d, m.C, m.r + m.C)] >= 0
+        gw = m.geff[window(m, x, z, d, m.C, m.r + m.C)]
+        water = int(gw[wet].min()) - m.C - (m.H - 1) if wet.any() else 10 ** 6
+        roof = int(m.geff[window(m, x, z, d, 0, m.r)].min()) - m.H
+        out.append(min(water, roof))
+    return out
 
 
-def profile(m, cells, corners, end_feet=None):
-    """Feet per path cell: the open cut, then min(the even grade, the cover's lookahead envelope), monotone, quiet
-    zones flat. Returns (feet list, portal index, junction index, the lookahead's end)."""
-    gr = m.spec["grade"]
-    cap = caps(m, cells)
+def in_box(x, z, box):
+    x0, z0, x1, z1 = box
+    return x0 < x < x1 and z0 < z < z1
+
+
+def profile(m, cells):
+    """Feet per road cell: flat in the gatehouse, the open cut, the coast (min(the even grade, the cover's lookahead
+    envelope), monotone), a flat bottom, the climb of one in one, flat in the hall. Returns (feet list, portal index,
+    junction index, bottom (first, last), climb's top index, the caps)."""
+    spec = m.spec
+    gr = spec["grade"]
+    q = int(gr["quiet_cells"])
     L = len(cells)
-    x0, z0, _ = cells[0]
-    feet0 = m.G(x0, z0) + 1
-    inc = [feet0 - s // gr["incline_run"] for s in range(L)]
-    s_p = next((s for s in range(L) if inc[s] <= cap[s]), None)
+    cap = caps(m, cells)
+    ccap = climb_caps(m, cells)
+    gate = spec["gatehouse"]["box"]
+    hall = lighthouse(spec)["hall"]["box"]
+    n_gate = 0
+    while n_gate < L and gate[0] <= cells[n_gate][0] <= gate[2] and gate[1] < cells[n_gate][1] < gate[3]:
+        n_gate += 1
+    if n_gate < q + 2:
+        raise DriftError("the gatehouse holds %d cells of the line, fewer than its stop needs" % n_gate)
+    inside = {s for s, (x, z, _d) in enumerate(cells) if in_box(x, z, hall)}
+    F0 = int(spec["gatehouse"]["floor_y"]) + 1
+    for x, z, _d in cells[:n_gate]:
+        if m.G(x, z) != F0 - 1:
+            raise DriftError("the gatehouse floor y%d is not the ground y%d at (%d, %d)" % (F0 - 1, m.G(x, z), x, z))
+    F_stop = int(spec["island"]["pad_y"]) + 1
+    inc = [F0 if s < n_gate else F0 - (s - n_gate + 1) // gr["incline_run"] for s in range(L)]
+    s_p = next((s for s in range(n_gate, L) if inc[s] <= cap[s]), None)
     if s_p is None:
         raise DriftError("the open cut never reaches cover")
+    s_top = L - 1 - q
+    climb = [F_stop - max(0, s_top - s) for s in range(L)]
+    # the climb fits where it is under its cap, or inside the hall; its foot may be no further east than that
+    s_c = s_top
+    while s_c - 1 > s_p and (s_c - 1 in inside or climb[s_c - 1] <= ccap[s_c - 1]):
+        s_c -= 1
+    capd = [float(cap[s]) if s not in inside else 1e9 for s in range(L)]
     U = [0.0] * L
-    U[L - 1] = float(cap[L - 1])
+    U[L - 1] = capd[L - 1]
     for s in range(L - 2, -1, -1):
-        U[s] = min(float(cap[s]), U[s + 1] + 1.0 / gr["max_run"])
-    end = int(math.floor(U[L - 1])) if end_feet is None else end_feet
-    if end > U[L - 1]:
-        raise DriftError("the drift's end feet %d is over its cap %.1f" % (end, U[L - 1]))
+        U[s] = min(capd[s], U[s + 1] + 1.0 / gr["max_run"])
+    E = sb0 = sb1 = None
+    for e in range(F_stop - 1, -60, -1):
+        b1 = s_top - (F_stop - e)
+        b0 = b1 - q
+        if b0 <= s_p + q:
+            break
+        if b1 + 1 < s_c:
+            continue                                  # the climb would start where it breaks its cover
+        if e <= math.floor(min(U[s_p:b1 + 1]) + 1e-9) and all(e <= cap[s] for s in range(b0, b1 + 1)):
+            E, sb0, sb1 = e, b0, b1
+            break
+    if E is None:
+        raise DriftError("the climb into the isle cannot meet the coast under cover (the climb fits from cell %d, "
+                         "x%d)" % (s_c, cells[s_c][0]))
     P = [0] * L
     for s in range(L):
         if s < s_p:
             P[s] = inc[s]
-            continue
-        lin = inc[s_p] + 0.999 + (end - inc[s_p]) * (s - s_p) / float(L - 1 - s_p)   # floored: a step only once a whole block is lost
-        v = int(math.floor(min(U[s], lin) + 1e-9))
-        P[s] = v if s == s_p else min(v, P[s - 1])
-    zones, sj = quiet_zones(m, cells, corners)
+        elif s <= sb0:
+            lin = inc[s_p] + 0.999 + (E - inc[s_p]) * (s - s_p) / float(sb0 - s_p)   # floored: a step once a block is lost
+            v = int(math.floor(min(U[s], lin) + 1e-9))
+            P[s] = v if s == s_p else min(v, P[s - 1])
+        elif s <= sb1:
+            P[s] = E
+        else:
+            P[s] = climb[s]
+    sj = next(i for i, (x, z, _d) in enumerate(cells) if x == spec["strip_mine"]["junction_x"])
+    zones = [(sj - q, sj + q)]
     for a, b in zones:
         for s in range(a, b + 1):
             if 0 < s < L and P[s] < P[s - 1]:
@@ -318,57 +419,64 @@ def profile(m, cells, corners, end_feet=None):
                 lo = P[s]
                 for t in range(a - 1, s):
                     P[t] = min(P[t], lo)
-    P[L - 1 - gr["quiet_cells"]:] = [P[L - 1]] * (gr["quiet_cells"] + 1)
+    zones += [(sb0, sb1), (s_top, L - 1), (0, n_gate - 1)]
     for s in range(1, L):
-        if P[s] > P[s - 1] or P[s - 1] - P[s] > 1:
+        if abs(P[s] - P[s - 1]) > 1:
             raise DriftError("profile breaks at cell %d (%d -> %d)" % (s, P[s - 1], P[s]))
-        if s >= s_p and P[s] > cap[s]:
+        if s <= sb1 and P[s] > P[s - 1]:
+            raise DriftError("the road climbs at cell %d before its bottom" % s)
+        if s > sb1 and P[s] < P[s - 1]:
+            raise DriftError("the road falls at cell %d on its climb" % s)
+        if s_p <= s <= sb1 and P[s] > cap[s]:
             raise DriftError("cell %d (%d, %d) feet %d over its cap %d" % (s, cells[s][0], cells[s][1], P[s], cap[s]))
+        if s > sb1 and s not in inside and P[s] > ccap[s]:
+            raise DriftError("climb cell %d (%d, %d) feet %d over its cap %d" % (s, cells[s][0], cells[s][1], P[s], ccap[s]))
     for a, b in zones:
         for s in range(max(a, 1), b + 1):
-            if s < L and P[s] < P[s - 1]:
-                raise DriftError("a stair at cell %d is inside a quiet zone (%d..%d)" % (s, a, b))
-    return P, s_p, sj, cap
+            if s < L and P[s] != P[s - 1] and not (s == a):
+                raise DriftError("a step at cell %d is inside a quiet zone (%d..%d)" % (s, a, b))
+    m.n_gate, m.inside, m.zones, m.ccap = n_gate, inside, zones, ccap
+    return P, s_p, sj, (sb0, sb1), s_top, cap
 
 
 # ------------------------------------------------------------------ the openings
 
 def drift(m):
     spec = m.spec
-    cells, corners = path_cells(spec["route"]["vertices"])
-    sw = spec["island"]["stairwell"]
-    K = sw["flight_steps"]
-    F_top = spec["island"]["pad_y"] + 1
-    P0, _sp, _sj, _cap = profile(m, cells, corners)
-    n = int(math.ceil((F_top - P0[-1]) / float(K)))
-    end = F_top - K * n
-    P, s_p, sj, cap = profile(m, cells, corners, end_feet=end)
-    m.cells, m.corners, m.P, m.s_p, m.sj, m.cap, m.flights = cells, corners, P, s_p, sj, cap, n
+    cells = path_cells(spec)
+    check_straight(cells)
+    P, s_p, sj, bottom, s_top, cap = profile(m, cells)
+    m.cells, m.P, m.s_p, m.sj, m.bottom, m.s_top, m.cap = cells, P, s_p, sj, bottom, s_top, cap
     r, H = m.r, m.H
-    square = set(corners) | {len(cells) - 1}
     for s, (x, z, d) in enumerate(cells):
-        # a cell opens the line across the drift, so a column's floor is its own cell's feet and a stair is never
-        # undercut by the next cell's; a corner (flat by the quiet zone) and the end open the whole square
-        if s in square:
-            xa, xb, za, zb = x - r, x + r, z - r, z + r
-        elif d[1] == 0:
+        # a cell opens the line across the road, so a column's floor is its own cell's feet and a stair is never
+        # undercut by the next cell's
+        if d[1] == 0:
             xa, xb, za, zb = x, x, z - r, z + r
         else:
             xa, xb, za, zb = x - r, x + r, z, z
         top = P[s] + H - 1
-        if s < s_p:
+        if m.n_gate <= s < s_p:
             top = max(top, max(m.G(a, b) for a in range(xa, xb + 1) for b in range(za, zb + 1)))
             for a in range(-r - CLEAR_MARGIN, r + CLEAR_MARGIN + 1):
                 for b in range(-r - CLEAR_MARGIN, r + CLEAR_MARGIN + 1):
                     m.open_cut.add((x + a, z + b))
         m.carve(xa, xb, za, zb, P[s], top)
-    m.steps = [s for s in range(1, len(cells)) if P[s] < P[s - 1]]
+    # a stair stands in the lower of two cells a block apart, facing the higher
+    m.stairs = {}
+    for s in range(len(cells)):
+        d = cells[s][2]
+        if s > 0 and P[s] == P[s - 1] - 1:
+            m.stairs[s] = NAME[(-d[0], -d[1])]
+        if s + 1 < len(cells) and P[s + 1] == P[s] + 1:
+            m.stairs[s] = NAME[d]
+    m.steps = sorted(m.stairs)
 
 
 def strips(m):
     sm = m.spec["strip_mine"]
     jx = sm["junction_x"]
-    zr = m.spec["route"]["vertices"][0][1]
+    zr = route(m.spec)[0][1]
     f = m.P[m.sj]
     m.strip_feet = f
     dr, dh = sm["drift_r"], sm["drift_height"]
@@ -391,43 +499,6 @@ def strips(m):
             xa, xb = jx + sgn * (dr + 1), jx + sgn * (dr + L)
             m.carve(min(xa, xb), max(xa, xb), zb, zb, f, f + bh - 1, strip=True)
             m.branches.append({"k": k, "z": zb, "side": "east" if sgn > 0 else "west", "end_x": xb, "sgn": sgn})
-
-
-def well(m):
-    """The scissor stair from the drift's end feet to the pad: [(kind, data)] for the fittings."""
-    isl = m.spec["island"]
-    sw = isl["stairwell"]
-    K, hr = sw["flight_steps"], sw["headroom"]
-    ex0, ex1 = sw["east_landing_x"]
-    wx0, wx1 = sw["west_landing_x"]
-    za, zb = sw["rows_z"]
-    if ex0 - K - 1 != wx1:
-        raise DriftError("the flights (%d steps) do not span the landings %s and %s" % (K, sw["west_landing_x"], sw["east_landing_x"]))
-    if zb - za != 4 or sw["spine_z"] != za + 2:
-        raise DriftError("the stairwell rows must be 4 apart with the spine between them")
-    f = m.P[-1]
-    zl0, zl1 = za - 1, zb + 1
-    m.landings, m.flight_steps = [], []
-    m.carve(ex0, ex1, zl0, zl1, f, f + hr - 1)
-    m.landings.append(("east", f))
-    for i in range(m.flights):
-        start = f + K * i
-        west = i % 2 == 0
-        row = za if west else zb
-        for j in range(1, K + 1):
-            x = ex0 - j if west else wx1 + j
-            y = start + j - 1
-            m.carve(x, x, row - 1, row + 1, y, y + hr)
-            m.flight_steps.append((x, y, row, "west" if west else "east", i, j))
-        feet = start + K
-        if west:
-            m.carve(wx0, wx1, zl0, zl1, feet, feet + hr - 1)
-            m.landings.append(("west", feet))
-        else:
-            m.carve(ex0, ex1, zl0, zl1, feet, feet + hr - 1)
-            m.landings.append(("east", feet))
-    if m.landings[-1][1] != isl["pad_y"] + 1:
-        raise DriftError("the well tops out at feet %d, not the pad's %d" % (m.landings[-1][1], isl["pad_y"] + 1))
 
 
 # ------------------------------------------------------------------ the shell, ores and the passes' blocks
@@ -535,7 +606,7 @@ def blocks(m):
     m.shell_n = int(sh.sum())
     for (x, z) in sorted(cols):
         out["shell"] += [RM.cmd(x, a, c, z, bl) for a, c, bl in RM.column_runs(x, z, cols[(x, z)])]
-    # the air: every opened cell at or under the effective ground (over it the open cut and the hall are air already)
+    # the air: every opened cell at or under the effective ground (over it the open cut and the buildings are air)
     ug = m.env & under_ground(m)
     for i, k in np.argwhere(ug.any(axis=2)):
         x, z = int(i + m.X0), int(k + m.Z0)
@@ -543,10 +614,10 @@ def blocks(m):
         out["air"] += [RM.cmd(x, a, c, z, AIR) for a, c, _b in RM.column_runs(x, z, [(int(j + m.Y0), AIR) for j in js])]
     fittings(m, sh)
     surface(m)
-    # the line's blocks where the headhouse writes its own (air over the top landing) go in the surface pass instead
+    # the line's blocks where a building writes its own (its air) go in the surface pass instead
     for p in [p for p in m.fit if p in m.surf and (p in m.rail_order or p in m.line_extras)]:
         m.surf[p] = m.fit.pop(p)
-    delicate = ("lantern", "rail", "fence", "barrel", "lever", "button")
+    delicate = ("lantern", "rail", "fence", "barrel", "lever", "button", "sign", "glass")
 
     def order(kv):
         """Solids first; then the power (levers, buttons), so a rail placed later finds its source; then the other
@@ -572,30 +643,45 @@ def blocks(m):
 
 def fittings(m, sh):
     spec = m.spec
-    pal = spec["palette"]
+    pal, road = spec["palette"], spec["road"]
     r, H = m.r, m.H
-    zones, _sj = quiet_zones(m, m.cells, m.corners)
 
     def quiet(s):
-        return any(a <= s <= b for a, b in zones)
+        return any(a <= s <= b for a, b in m.zones)
 
     def stair_block(y):
         return pal["stair_upper"] if y >= pal["rock_split_y"] else pal["stair_lower"]
 
+    L = len(m.cells)
     steps = set(m.steps)
+    m.boards, m.lane_cells = [], 0
     for s, (x, z, d) in enumerate(m.cells):
         px, pz = -d[1], d[0]
         y = m.P[s]
-        if s in steps:
-            back = NAME[(-d[0], -d[1])]
+        if s in m.stairs:
             for o in range(-r, r + 1):
                 if o == 0:
                     continue                         # the middle column carries the rail line's ascending rail
-                m.fit[(x + px * o, y, z + pz * o)] = stair(stair_block(y), back)
+                m.fit[(x + px * o, y, z + pz * o)] = stair(stair_block(y), m.stairs[s])
+        else:
+            # the paved road: the footpaths' floor either side of the rail's bed, the lane edges dashed in calcite
+            for o in range(-r, r + 1):
+                if o == 0:
+                    continue
+                fx, fz = x + px * o, z + pz * o
+                if not sh[m.ix(fx, y - 1, fz)]:
+                    continue
+                dash = abs(o) == 1 and (s % (road["dash_on"] + road["dash_off"])) < road["dash_on"]
+                m.fit[(fx, y - 1, fz)] = road["lane"] if dash else (
+                    road["surface_upper"] if y - 1 >= pal["rock_split_y"] else road["surface_lower"])
+                m.lane_cells += dash
         n = s - m.s_p
         if s >= m.s_p and n % spec["lights"]["every"] == spec["lights"]["every"] // 2:
-            m.fit[(x, y + H - 1, z)] = HANG
-        if (s >= m.s_p + 2 and n % spec["lights"]["frames_every"] == 0 and not quiet(s)
+            for o in (-r, r):                         # a pair of road lamps over the footpaths
+                lx, lz = x + px * o, z + pz * o
+                if m.opened(lx, y + H - 1, lz) and sh[m.ix(lx, y + H, lz)]:
+                    m.fit[(lx, y + H - 1, lz)] = HANG
+        if (s >= m.s_p + 2 and n % spec["lights"]["frames_every"] == 0 and not quiet(s) and s not in m.inside
                 and not ({s - 1, s, s + 1} & steps)):
             for side in (-1, 1):
                 wx, wz = x + px * (r + 1) * side, z + pz * (r + 1) * side
@@ -606,10 +692,20 @@ def fittings(m, sh):
                 bx, bz = x + px * o, z + pz * o
                 if sh[m.ix(bx, y + H, bz)]:
                     m.fit[(bx, y + H, bz)] = pal["beam"]
+        # the distance boards: one each wall every boards_every cells, counting to the gate ahead on that side
+        if s >= m.s_p and s not in m.inside and not quiet(s) and (s - m.s_p) % road["boards_every"] == road["boards_every"] // 2:
+            for side, (dest, left) in ((1, (lighthouse(spec)["display_name"], L - 1 - s)),
+                                       (-1, (spec["gatehouse"]["display_name"], s))):
+                sx, sz = x + px * r * side, z + pz * r * side
+                wx, wz = x + px * (r + 1) * side, z + pz * (r + 1) * side
+                if m.opened(sx, y + 2, sz) and sh[m.ix(wx, y + 2, wz)] and (sx, y + 2, sz) not in m.fit:
+                    m.fit[(sx, y + 2, sz)] = wall_sign(pal["sign_wood"], NAME[(-px * side, -pz * side)],
+                                                       [dest, "{:,} blocks".format(left), spec["road"]["board_line"], ""])
+                    m.boards.append((sx, y + 2, sz, dest, left))
     # the strips: corridor lanterns, one at every branch end, one in the chamber; the barrel
     sm = spec["strip_mine"]
     jx, f = sm["junction_x"], m.strip_feet
-    zr = spec["route"]["vertices"][0][1]
+    zr = route(spec)[0][1]
     for z in range(zr - r - 1, sm["corridor_to_z"] - 1, -spec["lights"]["every"]):
         m.fit[(jx, f + sm["drift_height"] - 1, z)] = HANG
     for br in m.branches:
@@ -619,21 +715,6 @@ def fittings(m, sh):
     m.fit[(cx, f + sm["chamber"]["height"] - 1, cz)] = HANG
     m.strip_barrel = (cx, f, cz - cr)
     m.fit[m.strip_barrel] = "minecraft:barrel[facing=south,open=false]"
-    # the well: stairs on every step, a lantern on every landing and halfway up every flight
-    isl = spec["island"]
-    sw = isl["stairwell"]
-    for (x, y, row, facing, i, j) in m.flight_steps:
-        for zz in (row - 1, row + 1):                  # the row itself carries the rail line
-            m.fit[(x, y, zz)] = stair(stair_block(y), facing)
-        if (j == (sw["flight_steps"] + 1) // 2 and y + sw["headroom"] + 1 <= isl["pad_y"]
-                and m.opened(x, y + sw["headroom"], row) and not m.opened(x, y + sw["headroom"] + 1, row)):
-            m.fit[(x, y + sw["headroom"], row)] = HANG
-    zc = sw["spine_z"]
-    for side, feet in m.landings[:-1]:                 # the top landing is the hall's floor; the hall has its own
-        lx = sum(sw["east_landing_x" if side == "east" else "west_landing_x"]) // 2
-        ytop = feet + sw["headroom"] - 1
-        if not m.opened(lx, ytop + 1, zc):
-            m.fit[(lx, ytop, zc)] = HANG
     rail_line(m, sh)
 
 
@@ -649,41 +730,13 @@ def boost_every(spec):
 
 
 def line_cells(m):
-    """[(x, y, z)] the rail line in route order, the mouth's stop first: the drift's centre, on along the well's first
-    row to its first flight, up every flight's middle row, round each landing (in, a curve, across the spine, a curve,
-    out) and on the top landing to the stop against the headhouse wall."""
-    sw = m.spec["island"]["stairwell"]
-    K = sw["flight_steps"]
-    ex0, ex1 = sw["east_landing_x"]
-    wx0, wx1 = sw["west_landing_x"]
-    za, zb = sw["rows_z"]
-    if ex1 - ex0 != 2 or wx1 - wx0 != 2:
-        raise DriftError("the rail line turns on 3-wide landings, not %s and %s" % (sw["east_landing_x"], sw["west_landing_x"]))
-    out = [(x, m.P[s], z) for s, (x, z, _d) in enumerate(m.cells)]
-    xe, ze, de = m.cells[-1]
-    if de != (-1, 0) or ze != za or not ex1 < xe:
-        raise DriftError("the drift does not arrive westward on the well's first row (z%d)" % za)
-    f = m.P[-1]
-    out += [(x, f, za) for x in range(xe - 1, ex0 - 1, -1)]
-    for i in range(m.flights):
-        start = f + K * i
-        west = i % 2 == 0
-        row, other = (za, zb) if west else (zb, za)
-        for j in range(1, K + 1):                        # the flight's own cells, as well() carves them
-            out.append((ex0 - j if west else wx1 + j, start + j - 1, row))
-        F = start + K
-        inn, mid, far = (wx1, wx1 - 1, wx0) if west else (ex0, ex0 + 1, ex1)
-        if i < m.flights - 1:
-            st = 1 if other > row else -1
-            out += [(inn, F, row)] + [(mid, F, z) for z in range(row, other + st, st)] + [(inn, F, other)]
-        else:
-            out += [(inn, F, row), (mid, F, row), (far, F, row)]
-    return out
+    """[(x, y, z)] the rail line in route order, the gatehouse's stop first: the road's centre, end to end."""
+    return [(x, m.P[s], z) for s, (x, z, _d) in enumerate(m.cells)]
 
 
 def rail_shapes(cells):
     """The shape each rail must have to join its neighbours on the line: ascending toward a neighbour one block up,
-    straight between opposite neighbours, a curve between two at a right angle."""
+    straight between opposite neighbours. A turn is refused: the line is straight."""
     out = []
     for i, (x, y, z) in enumerate(cells):
         dirs = []
@@ -710,6 +763,11 @@ def rail_shapes(cells):
     return out
 
 
+def refuse_turn(cell, shape):
+    """The line is straight: a rail that would turn is a fault in the line, never a curve to lay."""
+    raise DriftError("the rail at %s is a curve (%s): the line is straight" % (cell, shape))
+
+
 def lever_cell(m, sh, x, y, z):
     """Where the hidden power of a powered rail at (x, y, z) goes, or None: the rock cell under the rail's bed, under
     the ground (the shell's, or the ground's own rock) with no opened cell beside it, so the lever on its ceiling is
@@ -731,8 +789,8 @@ def write_rail(m, p, block):
 
 
 def rail_line(m, sh):
-    """The line's rails, their levers, both stops' buffers and buttons, into m.fit (moved to the surface pass where
-    the headhouse's own blocks would overwrite them)."""
+    """The line's rails, their levers, both stops' buttons, into m.fit (moved to the surface pass where a building's
+    own blocks would overwrite them). Each stop's buffer is its building's wall, written by surface()."""
     rl = m.spec["rail_line"]
     pal = m.spec["palette"]
     cells = line_cells(m)
@@ -743,6 +801,7 @@ def rail_line(m, sh):
         if s.startswith("ascending_"):
             kinds[i] = "booster"
         elif s not in ("east_west", "north_south"):
+            refuse_turn(cells[i], s)
             kinds[i] = "curve"
     for i in (0, 1, n - 2, n - 1):
         if kinds[i] != "filler" or cells[i][1] != cells[1 if i < 2 else n - 2][1]:
@@ -750,13 +809,14 @@ def rail_line(m, sh):
     kinds[0] = kinds[-1] = "stop"
     kinds[1] = kinds[-2] = "station"
     for i in (2, n - 3):                       # never a detector rail beside the station: a passing cart would power it
-        if kinds[i] == "curve":
-            raise DriftError("the rail beside the station at %s is a curve" % (cells[i],))
         kinds[i] = "booster"
     every = boost_every(m.spec)
     levers, run, m.rail_max_unboosted = {}, 0, 0
     for i, (x, y, z) in enumerate(cells):
-        if kinds[i] == "filler" and run + 1 >= every:
+        ahead = 0                                  # rails that cannot be boosted next (a curve, were one ever laid)
+        while i + 1 + ahead < n and kinds[i + 1 + ahead] == "curve":
+            ahead += 1
+        if kinds[i] == "filler" and run + 1 + ahead >= every:
             lv = lever_cell(m, sh, x, y, z)
             if lv:
                 kinds[i] = "booster"
@@ -777,7 +837,7 @@ def rail_line(m, sh):
            "stop": "%s[shape=%%s,powered=false,waterlogged=false]" % pal["rail"],
            "station": "%s[shape=%%s,powered=false,waterlogged=false]" % rl["station"],
            "filler": "%s[shape=%%s,powered=false,waterlogged=false]" % rl["filler"],
-           "curve": "%s[shape=%%s,waterlogged=false]" % rl["curve"]}
+           "curve": "minecraft:rail[shape=%s,waterlogged=false]"}      # never written: refuse_turn() stops it first
     m.rail_order = {}
     for i, (p, k, s) in enumerate(zip(cells, kinds, shapes)):
         if p in m.fit:
@@ -786,97 +846,89 @@ def rail_line(m, sh):
         m.rail_order[p] = i
     m.line, m.line_kinds, m.levers = cells, kinds, levers
     m.rails = n
-    # the stops: a buffer beyond each end, a button to launch from it
+    # the stops: the building's wall beyond each end is the buffer; a button on the floor beside the stop launches
     m.line_extras = set()
     m.stops = []
-    for end, nxt in ((0, 1), (n - 1, n - 2)):
+    boxes = (m.spec["gatehouse"]["box"], lighthouse(m.spec)["hall"]["box"])
+    for (end, nxt), box in zip(((0, 1), (n - 1, n - 2)), boxes):
         (x, y, z), (a, _b, c) = cells[end], cells[nxt]
         bx, bz = 2 * x - a, 2 * z - c
-        if end == 0:                                     # the cut's head, in the open: a stone-brick buffer, its button on top
-            if m.opened(bx, y, bz) or m.opened(bx, y + 1, bz) or y + 1 <= m.G(bx, bz):
-                raise DriftError("no room for the mouth's buffer and button at (%d, %d, %d)" % (bx, y, bz))
-            m.fit[(bx, y, bz)] = rl["buffer"]
-            face = NAME[(a - x, c - z)]
-            button = (bx, y + 1, bz)
-            m.fit[button] = "%s[face=floor,facing=%s,powered=false]" % (rl["button"], face)
-            m.line_extras |= {(bx, y, bz), button}
-        else:                                            # the headhouse: its own wall is the buffer, a button on the floor
-            x0, z0, x1, z1 = m.spec["island"]["headhouse"]["box"]
-            if not (bx in (x0, x1) and z0 < bz < z1):
-                raise DriftError("the isle's stop at (%d, %d, %d) is not against the headhouse wall" % (x, y, z))
-            zc = m.spec["island"]["stairwell"]["spine_z"]
-            button = (x, y, z + (1 if zc > z else -1))
-            if not m.opened(*button) or m.opened(button[0], y - 1, button[2]):
-                raise DriftError("no floor for the isle's stop button at %s" % (button,))
-            m.fit[button] = "%s[face=floor,facing=%s,powered=false]" % (rl["button"], NAME[(a - x, c - z)])
-            m.line_extras.add(button)
+        x0, z0, x1, z1 = box
+        if not ((bx in (x0, x1) and z0 < bz < z1) or (bz in (z0, z1) and x0 < bx < x1)):
+            raise DriftError("the stop at (%d, %d, %d) is not against its building's wall" % (x, y, z))
+        button = (x + (1 if a == x else 0), y, z + (1 if c == z else 0))   # one across the line, on the floor
+        if not m.opened(*button) or m.opened(button[0], y - 1, button[2]):
+            raise DriftError("no floor for the stop button at %s" % (button,))
+        m.fit[button] = "%s[face=floor,facing=%s,powered=false]" % (rl["button"], NAME[(a - x, c - z)])
+        m.line_extras.add(button)
         m.stops.append({"rail": [x, y, z], "buffer": [bx, y, bz], "button": list(button)})
 
 
-def surface(m):
-    spec, pal = m.spec, m.spec["palette"]
-    isl = spec["island"]
-    pad = isl["pad_y"]
-    x0, z0, x1, z1 = isl["headhouse"]["box"]
-    wh = isl["headhouse"]["wall_height"]
-    sw = isl["stairwell"]
-    zc = sw["spine_z"]
-    # the hall: walls, roof, an open door west, air inside, a floor where the stair hole is not
-    hole = set()
-    for x in range(x0 + 1, x1):
-        for z in range(z0 + 1, z1):
-            if m.opened(x, pad, z):
-                hole.add((x, z))
-    top_side = m.landings[-1][0]
-    landing_x = sw["east_landing_x" if top_side == "east" else "west_landing_x"]
-    landing = {(x, z) for x in range(landing_x[0], landing_x[1] + 1) for z in range(sw["rows_z"][0] - 1, sw["rows_z"][1] + 2)}
+# ------------------------------------------------------------------ the buildings
+
+def building(m, box, floor_y, wall_height, line_feet, doors):
+    """A stone-brick hall with spruce corners and roof over `box`: walls from floor_y + 1, air inside, a floor where the
+    line does not show through it, open doors [(x, z) cells in the wall] three high. Writes into m.surf; returns the
+    interior cells (x, z)."""
+    pal, seed = m.spec["palette"], m.spec["seed"]
+    x0, z0, x1, z1 = box
+    inner = []
     for x in range(x0, x1 + 1):
         for z in range(z0, z1 + 1):
             wall = x in (x0, x1) or z in (z0, z1)
             corner = x in (x0, x1) and z in (z0, z1)
-            for y in range(pad + 1, pad + wh + 1):
+            for y in range(floor_y + 1, floor_y + wall_height + 1):
+                if m.opened(x, y, z) and wall:
+                    continue                           # the line passes through this wall
                 if corner:
                     m.surf[(x, y, z)] = pal["corner"] + "[axis=y]"
                 elif wall:
-                    door = x == x0 and abs(z - zc) <= 1 and y <= pad + 3
-                    m.surf[(x, y, z)] = AIR if door else pick(pal["wall"], spec["seed"], x, y, z, 51)
+                    door = (x, z) in doors and y <= floor_y + 3
+                    m.surf[(x, y, z)] = AIR if door else pick(pal["wall"], seed, x, y, z, 51)
                 else:
                     m.surf[(x, y, z)] = AIR
-            m.surf[(x, pad + wh + 1, z)] = pal["roof"]
-            if not wall and (x, z) not in hole:
-                m.surf[(x, pad, z)] = pal["floor"]
-    for (x, z) in hole:
-        for (a, b) in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-            q = (x + a, z + b)
-            if q in hole or q in landing or not (x0 < q[0] < x1 and z0 < q[1] < z1):
-                continue
-            m.surf[(q[0], pad + 1, q[1])] = pal["fence"]
-    m.hole = hole
-    for lx in (x0 + 4, x1 - 4):
-        m.surf[(lx, pad + wh, zc)] = HANG
-    m.isle_barrel = (x0 + 1, pad + 1, z0 + 1)
-    m.surf[m.isle_barrel] = "minecraft:barrel[facing=east,open=false]"
-    # outside: a lantern post either side of the door, and a path west to the shingle
-    for z in (zc - 2, zc + 2):
-        x = x0 - 2
-        g = m.G(x, z)
-        m.surf[(x, g + 1, z)] = pal["fence"]
-        m.surf[(x, g + 2, z)] = pal["fence"]
-        m.surf[(x, g + 3, z)] = STAND
-    m.path = []
-    x = x0 - 1
-    while True:
-        tops = [m.isle.get((x, z)) for z in (zc - 1, zc, zc + 1)]
-        if any(t is None or t[0] <= m.sea + 2 for t in tops):
-            break
-        for z in (zc - 1, zc, zc + 1):
-            t = m.isle[(x, z)][0]
-            if (x, t + 1, z) not in m.surf:
-                m.surf[(x, t, z)] = pal["path"]
-                m.path.append((x, t, z))
-        x -= 1
-    # the portal: a stone-brick headwall over the drift's opening where the cut goes under a roof, and lantern posts
-    # at the cut's head
+            m.surf[(x, floor_y + wall_height + 1, z)] = pal["roof"]
+            if not wall:
+                inner.append((x, z))
+                if not m.opened(x, floor_y, z) and line_feet.get((x, z)) != floor_y + 1:
+                    m.surf[(x, floor_y, z)] = pal["floor"]
+            elif (x, z) in doors:
+                m.surf[(x, floor_y, z)] = pal["floor"]
+    return inner
+
+
+def lantern_post(m, x, z, ground):
+    pal = m.spec["palette"]
+    m.surf[(x, ground + 1, z)] = pal["fence"]
+    m.surf[(x, ground + 2, z)] = pal["fence"]
+    m.surf[(x, ground + 3, z)] = STAND
+
+
+def surface(m):
+    spec, pal = m.spec, m.spec["palette"]
+    line_feet = {(x, z): m.P[s] for s, (x, z, _d) in enumerate(m.cells)}
+    r = m.r
+    for s, (x, z, d) in enumerate(m.cells):         # the whole cross-section shares its cell's feet
+        for o in range(-r, r + 1):
+            line_feet[(x - d[1] * o, z + d[0] * o)] = m.P[s]
+    # -- Foothill Gate: over the line's head, the stop against its far wall, doors north and south, a sign over each
+    gh = spec["gatehouse"]
+    gx0, gz0, gx1, gz1 = gh["box"]
+    fy = gh["floor_y"]
+    gdoors = {(x, z) for x in range(gh["doors_x"][0], gh["doors_x"][1] + 1) for z in (gz0, gz1)}
+    building(m, gh["box"], fy, gh["wall_height"], line_feet, gdoors)
+    m.gate_signs = []
+    sx = (gh["doors_x"][0] + gh["doors_x"][1]) // 2
+    for z, out, facing in ((gz0, -1, "north"), (gz1, 1, "south")):
+        p = (sx, fy + 4, z + out)
+        m.surf[p] = wall_sign(pal["sign_wood"], facing, gh["sign"])
+        m.gate_signs.append(p)
+        for lx in (gh["doors_x"][0] - 2, gh["doors_x"][1] + 2):
+            lantern_post(m, lx, z + 2 * out, m.G(lx, z + 2 * out))
+    for lx in (gx0 + 3, gx1 - 3):
+        m.surf[(lx, fy + gh["wall_height"], (gz0 + gz1) // 2 - 3)] = HANG
+        m.surf[(lx, fy + gh["wall_height"], (gz0 + gz1) // 2 + 3)] = HANG
+    # -- the portal: a stone-brick headwall over the road's opening where the cut goes under a roof
     s = m.s_p
     x, z, d = m.cells[s]
     px, pz = -d[1], d[0]
@@ -888,14 +940,143 @@ def surface(m):
             if not m.opened(cx, yy, cz):
                 m.surf[(cx, yy, cz)] = "minecraft:stone_bricks"
     m.portal = (x, y, z)
-    x, z, d = m.cells[0]
-    px, pz = -d[1], d[0]
-    for side in (-1, 1):
-        cx, cz = x + px * (m.r + 2) * side, z + pz * (m.r + 2) * side
-        g = int(m.base[cx - m.X0, cz - m.Z0])
-        m.surf[(cx, g + 1, cz)] = pal["fence"]
-        m.surf[(cx, g + 2, cz)] = pal["fence"]
-        m.surf[(cx, g + 3, cz)] = STAND
+    # -- Driftmouth Light: the keeper's hall the road climbs into, and the tower
+    isl = spec["island"]
+    lh = isl["lighthouse"]
+    pad = isl["pad_y"]
+    hb = lh["hall"]
+    hx0, hz0, hx1, hz1 = hb["box"]
+    hdoors = {(x, hz1) for x in range(hb["door_x"][0], hb["door_x"][1] + 1)}
+    tb = lh["tower"]
+    tx0, tz0, tx1, tz1 = tb["box"]
+    if tz1 != hz0 or not (hx0 <= tx0 and tx1 <= hx1) or tx1 - tx0 != 6 or tz1 - tz0 != 6:
+        raise DriftError("the tower %s must be 7 by 7 and stand on the hall's north wall %s" % (tb["box"], hb["box"]))
+    tdoor = tuple(tb["door"])
+    if tdoor != (tx0 + 3, hz0):
+        raise DriftError("the tower's door %s is not the middle of its south wall, the hall's north wall" % (tdoor,))
+    inner = building(m, hb["box"], pad, hb["wall_height"], line_feet, hdoors | {tdoor})
+    # the hole the road climbs out of, fenced where it is not the landing (the road's own floor at the stop's level)
+    hole = {(x, z) for (x, z) in inner if m.opened(x, pad, z)}
+    for (x, z) in hole:
+        for (a, b) in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            q = (x + a, z + b)
+            if q in hole or q not in inner or line_feet.get(q) == pad + 1:
+                continue
+            m.surf[(q[0], pad + 1, q[1])] = pal["fence"]
+    m.hole = hole
+    zc = (hz0 + hz1) // 2
+    for lx in (hx0 + 3, hx1 - 3):
+        m.surf[(lx, pad + hb["wall_height"], zc)] = HANG
+    m.isle_barrel = (hx0 + 1, pad + 1, hz0 + 1)
+    m.surf[m.isle_barrel] = "minecraft:barrel[facing=east,open=false]"
+    dx = (hb["door_x"][0] + hb["door_x"][1]) // 2
+    m.light_signs = [(dx, pad + 4, hz1 + 1)]
+    m.surf[(dx, pad + 4, hz1 + 1)] = wall_sign(pal["sign_wood"], "south", lh["sign"])
+    for lx in (hb["door_x"][0] - 2, hb["door_x"][1] + 2):
+        lantern_post(m, lx, hz1 + 2, m.G(lx, hz1 + 2))
+    # outside the door: a path south to the shingle
+    m.path = []
+    z = hz1 + 1
+    while True:
+        tops = [m.isle.get((x, z)) for x in range(hb["door_x"][0], hb["door_x"][1] + 1)]
+        if any(t is None or t[0] <= m.sea + 2 for t in tops):
+            break
+        for x in range(hb["door_x"][0], hb["door_x"][1] + 1):
+            t = m.isle[(x, z)][0]
+            if (x, t + 1, z) not in m.surf and (x, t, z) not in m.surf:
+                m.surf[(x, t, z)] = pal["path"]
+                m.path.append((x, t, z))
+        z += 1
+    tower(m, lh, pad, tdoor)
+
+
+def tower(m, lh, pad, tdoor):
+    """The lighthouse's tower: striped walls, a spiral stair round a lit core from the hall's door to the lantern room,
+    the glazed lantern room with the lamp, a gallery round it and a copper cap."""
+    pal, seed = m.spec["palette"], m.spec["seed"]
+    tb = lh["tower"]
+    tx0, tz0, tx1, tz1 = tb["box"]
+    feet_lr = int(tb["lantern_room_feet"])
+    band = int(tb["band"])
+    # lamps round the foot, under the gallery's overhang
+    for lx, lz in ((tx0 - 2, tz0 - 2), (tx1 + 2, tz0 - 2), (tx0 - 2, tz1 - 2), (tx1 + 2, tz1 - 2)):
+        lantern_post(m, lx, lz, m.G(lx, lz))
+    # the walls, in bands, to the lantern room's floor; the door into the hall
+    for x in range(tx0, tx1 + 1):
+        for z in range(tz0, tz1 + 1):
+            if x in (tx0, tx1) or z in (tz0, tz1):
+                for y in range(pad + 1, feet_lr):
+                    if (x, z) == tdoor and y <= pad + 2:
+                        m.surf[(x, y, z)] = AIR
+                        continue
+                    m.surf[(x, y, z)] = tb["bands"][((y - pad - 1) // band) % len(tb["bands"])]
+            else:
+                for y in range(pad + 1, feet_lr + 3):
+                    m.surf[(x, y, z)] = AIR
+    # the core: 3 by 3 of stone brick, a light in each face every core_light_every blocks
+    ix0, iz0 = tx0 + 1, tz0 + 1
+    for i in range(1, 4):
+        for j in range(1, 4):
+            for y in range(pad + 1, feet_lr - 1):
+                m.surf[(ix0 + i, y, iz0 + j)] = pal["core"]
+    m.core_lights = []
+    for y in range(pad + 3, feet_lr - 1, int(tb["core_light_every"])):
+        for (i, j) in ((1, 2), (3, 2), (2, 1), (2, 3)):
+            m.surf[(ix0 + i, y, iz0 + j)] = tb["core_light"]
+            m.core_lights.append((ix0 + i, y, iz0 + j))
+    # the spiral: round the ring from the door's cell, a stair on each side cell (one block up), a landing at each corner
+    ring = [(2, 4), (3, 4), (4, 4), (4, 3), (4, 2), (4, 1), (4, 0), (3, 0), (2, 0), (1, 0), (0, 0), (0, 1), (0, 2), (0, 3),
+            (0, 4), (1, 4)]
+    if (ix0 + 2, iz0 + 4) != (tdoor[0], tdoor[1] - 1):
+        raise DriftError("the tower's door does not open on the spiral's first cell")
+    cur, k, last = pad + 1, 1, {}
+    m.spiral = []
+    while cur < feet_lr:
+        i, j = ring[k % 16]
+        pi, pj = ring[(k - 1) % 16]
+        x, z = ix0 + i, iz0 + j
+        if i in (0, 4) and j in (0, 4):
+            m.surf[(x, cur - 1, z)] = pal["landing"]
+            last[(i, j)] = cur - 1
+        else:
+            m.surf[(x, cur, z)] = stair(pal["tower_stair"], NAME[(i - pi, j - pj)])
+            last[(i, j)] = cur
+            cur += 1
+        m.spiral.append((x, z, cur))
+        k += 1
+    # the lantern room's floor, open over the spiral's last flight
+    for i in range(5):
+        for j in range(5):
+            if (i, j) in last and last[(i, j)] >= feet_lr - 3:
+                continue
+            m.surf[(ix0 + i, feet_lr - 1, iz0 + j)] = pal["landing"]
+    # the gallery: a cornice one block out, a railing on it
+    for x in range(tx0 - 1, tx1 + 2):
+        for z in range(tz0 - 1, tz1 + 2):
+            if x in (tx0 - 1, tx1 + 1) or z in (tz0 - 1, tz1 + 1):
+                m.surf[(x, feet_lr - 1, z)] = pal["landing"]
+                m.surf[(x, feet_lr, z)] = pal["fence"]
+            elif x in (tx0, tx1) or z in (tz0, tz1):
+                m.surf[(x, feet_lr - 1, z)] = pal["landing"]
+    # the lantern room: glazed all round, the lamp two high in its middle, a copper cap
+    for x in range(tx0, tx1 + 1):
+        for z in range(tz0, tz1 + 1):
+            edge = x in (tx0, tx1) or z in (tz0, tz1)
+            corner = x in (tx0, tx1) and z in (tz0, tz1)
+            for y in range(feet_lr, feet_lr + 3):
+                if corner:
+                    m.surf[(x, y, z)] = pal["beam"]
+                elif edge:
+                    m.surf[(x, y, z)] = tb["glazing"]
+    lx, lz = ix0 + 2, iz0 + 2
+    m.lamp = [(lx, feet_lr, lz), (lx, feet_lr + 1, lz)]
+    for p in m.lamp:
+        m.surf[p] = tb["lamp"]
+    for k, y in enumerate(range(feet_lr + 3, feet_lr + 7)):
+        for x in range(tx0 + k, tx1 - k + 1):
+            for z in range(tz0 + k, tz1 - k + 1):
+                m.surf[(x, y, z)] = pal["beam"]
+    m.tower_top = feet_lr + 6
 
 
 # ------------------------------------------------------------------ the Habitat Blocks' places
@@ -938,7 +1119,6 @@ def checks(m):
         i, k = np.unravel_index(np.argmin(gap), gap.shape)
         p.append("cover: %d solid blocks between the opening at (%d, %d) and the water, under the %d required"
                  % (m.min_cover, i + m.X0, k + m.Z0, C))
-    # under the sea: the drift's own least cover over a wet column, and where
     m.sea_cells = [s for s, (x, z, _d) in enumerate(m.cells) if m.wl[x - m.X0, z - m.Z0] >= 0]
     # habitat blocks sit in the isle's rock with rock on all six sides and nothing opened near
     hab = habitat_positions(m)
@@ -948,7 +1128,7 @@ def checks(m):
                 p.append("habitat %s: (%d, %d, %d) is not inside the isle's rock" % (hid, x + a, y + b, z + c))
                 break
         if dilate_hit(m, x, y, z, m.SR + 1):
-            p.append("habitat %s: within reach of the drift's openings" % hid)
+            p.append("habitat %s: within reach of the road's openings" % hid)
     # every branch shows at least one ore
     for br in m.branches:
         cells = [c for c, (_b, ex) in m.ore_cells.items() if ex and c[2] in (br["z"] - 1, br["z"], br["z"] + 1)
@@ -973,10 +1153,15 @@ def model(source_root=None, spec=None):
     m = Model(spec, g)
     drift(m)
     strips(m)
-    well(m)
     m.lines = blocks(m)
     checks(m)
     return m
+
+
+def trip_seconds(m):
+    """The least time a cart can take, end to end: the cited cap of 8 blocks a second on each axis, over the line's
+    horizontal length (its climbs add nothing on the other axis: they are made along the line)."""
+    return len(m.cells) / 8.0
 
 
 def summary(m):
@@ -992,18 +1177,23 @@ def summary(m):
     prof = [{"s": s, "x": m.cells[s][0], "z": m.cells[s][1], "feet": m.P[s], "ground": m.G(m.cells[s][0], m.cells[s][1]),
              "water": int(m.wl[m.cells[s][0] - m.X0, m.cells[s][1] - m.Z0])} for s in list(range(0, L, 50)) + [L - 1]]
     hab = [{"id": h[3], "x": h[0], "y": h[1], "z": h[2]} for h in habitat_positions(m)]
+    sb0, sb1 = m.bottom
     return {
         "cover_required": m.C,
         "cover_min_measured": m.min_cover,
-        "route_cells": L, "portal_cell": m.s_p, "portal": list(m.portal),
-        "mouth_feet": m.P[0], "end_feet": m.P[-1], "stairs": len(m.steps), "rails": m.rails,
+        "route_cells": L, "trip_seconds_at_8_per_second": trip_seconds(m),
+        "ends": [list(m.cells[0][:2]), list(m.cells[-1][:2])],
+        "portal_cell": m.s_p, "portal": list(m.portal),
+        "mouth_feet": m.P[0], "bottom": {"feet": m.P[sb0], "from_x": m.cells[sb0][0], "to_x": m.cells[sb1][0]},
+        "climb": {"cells": m.s_top - sb1, "from_feet": m.P[sb1], "to_feet": m.P[m.s_top]},
+        "coast_grade": "1 in %.1f" % ((sb0 - m.s_p) / float(max(1, m.P[m.s_p] - m.P[sb0]))),
+        "end_feet": m.P[-1], "stairs": len(m.steps), "rails": m.rails,
         "rail_line": {"kinds": {k: m.line_kinds.count(k) for k in sorted(set(m.line_kinds))},
                       "levers": len(m.levers), "max_unboosted_run": m.rail_max_unboosted,
-                      "boost_every": boost_every(m.spec), "stops": m.stops,
-                      "curves": [list(p) for p, k in zip(m.line, m.line_kinds) if k == "curve"]},
+                      "boost_every": boost_every(m.spec), "stops": m.stops},
+        "road": {"lane_dash_cells": m.lane_cells, "boards": len(m.boards)},
         "sea_cells": len(m.sea_cells), "deepest_feet_under_sea": min(sea_feet) if sea_feet else None,
         "first_sea_cell": list(m.cells[m.sea_cells[0]][:2]) if m.sea_cells else None,
-        "flights": m.flights, "landings": m.landings,
         "strip_feet": m.strip_feet, "branches": len(m.branches),
         "branch_exposed_ores": [b["exposed"] for b in m.branches],
         "ores": ores,
@@ -1012,6 +1202,8 @@ def summary(m):
                  "centre_ground_y": m.isle[(isl["centre"]["x"], isl["centre"]["z"])][0],
                  "seabed_under_centre": m.isle[(isl["centre"]["x"], isl["centre"]["z"])][2],
                  "blocks": len(m.isle_cells)},
+        "lighthouse": {"lamp": [list(p) for p in m.lamp], "tower_top_y": m.tower_top, "spiral_steps": len(m.spiral),
+                       "nearest_shore": nearest_shore(m, m.lamp[0][0], m.lamp[0][2])},
         "habitat_blocks": hab,
         "strip_barrel": list(m.strip_barrel), "isle_barrel": list(m.isle_barrel),
         "shell_cells": m.shell_n,
@@ -1025,52 +1217,182 @@ def summary(m):
 def probes(m):
     """In-world checks for the integrating session: (x, y, z, expected block id, what)."""
     out = []
+    pal, rl = m.spec["palette"], m.spec["rail_line"]
     x, y, z = m.portal
-    out.append((x, y + m.H, z, "minecraft:stone_bricks", "the portal's headwall over the drift's opening"))
+    out.append((x, y + m.H, z, "minecraft:stone_bricks", "the portal's headwall over the road's opening"))
     s = next(s for s in m.steps if s > m.s_p + 10)
     cx, cz, d = m.cells[s]
     px, pz = -d[1], d[0]
-    out.append((cx + px, m.P[s], cz + pz, m.spec["palette"]["stair_upper"] if m.P[s] >= m.spec["palette"]["rock_split_y"]
-                else m.spec["palette"]["stair_lower"], "a stair on the drift's floor"))
+    out.append((cx + px, m.P[s], cz + pz, pal["stair_upper"] if m.P[s] >= pal["rock_split_y"] else pal["stair_lower"],
+                "a stair on the road's floor"))
+    s = next(s for s in range(m.s_p + 1, len(m.cells)) if s not in m.stairs and (s % (m.spec["road"]["dash_on"] + m.spec["road"]["dash_off"])) == 0)
+    cx, cz, d = m.cells[s]
+    out.append((cx - d[1], m.P[s] - 1, cz + d[0], m.spec["road"]["lane"], "a lane dash beside the rail"))
     if m.sea_cells:
         s = min(m.sea_cells, key=lambda t: m.G(m.cells[t][0], m.cells[t][1]) - m.P[t])
         cx, cz, _d = m.cells[s]
-        out.append((cx, m.P[s] + m.H - 1, cz, "minecraft:air", "the drift's roof row under the sea's least cover"))
+        out.append((cx, m.P[s] + m.H - 1, cz, "minecraft:air", "the road's roof row under the sea's least cover"))
         out.append((cx, m.P[s] + m.H, cz, "a rock block (stone, deepslate, tuff, andesite or cobbled deepslate)",
                     "the rock over it; the sea floor at y%d" % m.G(cx, cz)))
     out.append(tuple(m.strip_barrel) + ("minecraft:barrel", "the strips' cache"))
-    out.append(tuple(m.isle_barrel) + ("minecraft:barrel", "the isle's cache in the headhouse"))
-    isl = m.spec["island"]
-    x0, z0, _x1, _z1 = isl["headhouse"]["box"]
-    out.append((x0, isl["pad_y"] + 1, isl["stairwell"]["spine_z"], "minecraft:air", "the headhouse's west door"))
+    out.append(tuple(m.isle_barrel) + ("minecraft:barrel", "the isle's cache in the keeper's hall"))
+    b = m.boards[0]
+    out.append(b[:3] + ("minecraft:%s_wall_sign" % pal["sign_wood"], "a distance board: %s, %d blocks" % (b[3], b[4])))
+    for p in m.gate_signs[:1]:
+        out.append(p + ("minecraft:%s_wall_sign" % pal["sign_wood"], "Foothill Gate's sign over its north door"))
+    lh = m.spec["island"]["lighthouse"]
+    out.append(m.light_signs[0] + ("minecraft:%s_wall_sign" % pal["sign_wood"], "Driftmouth Light's sign over the hall's door"))
+    out.append(m.lamp[0] + (lh["tower"]["lamp"], "the lighthouse's lamp, in the glazed lantern room"))
+    tx0, tz0, _tx1, _tz1 = lh["tower"]["box"]
+    out.append((tx0 + 3, lh["tower"]["lantern_room_feet"] + 1, tz0, lh["tower"]["glazing"], "the lantern room's glazing, north face"))
+    hx0, _hz0, _hx1, hz1 = lh["hall"]["box"]
+    out.append((lh["hall"]["door_x"][0], m.spec["island"]["pad_y"] + 1, hz1, "minecraft:air", "the keeper's hall's south door"))
     for h in habitat_positions(m)[:2]:
         out.append((h[0], h[1], h[2], "cobblemon:habitat_block (after cobblers_habitats)", h[3]))
-    # the rail line: both stops, a climb's powered rail and its lever, a flat booster, a curve, a detector
-    rl, pal = m.spec["rail_line"], m.spec["palette"]
-    for st, where in zip(m.stops, ("the mouth", "the headhouse")):
-        out.append(tuple(st["rail"]) + ("%s[powered=false] (east_west or north_south, as the line runs)" % pal["rail"],
-                                        "the stop at %s: unpowered until its button is pressed" % where))
-        out.append(tuple(st["buffer"]) + ("a solid full block", "the buffer at %s's stop" % where))
-        out.append(tuple(st["button"]) + ("%s[face=floor]" % rl["button"], "the launch button at %s" % where))
+    # the rail line: both stops, a climb's powered rail and its lever, a flat booster, a detector
+    for st, where in zip(m.stops, ("Foothill Gate", "Driftmouth Light's hall")):
+        out.append(tuple(st["rail"]) + ("%s[shape=east_west,powered=false]" % pal["rail"],
+                                        "the stop in %s: unpowered until its button is pressed" % where))
+        out.append(tuple(st["buffer"]) + ("a solid full block (the building's wall)", "the buffer at %s's stop" % where))
+        out.append(tuple(st["button"]) + ("%s[face=floor]" % rl["button"], "the launch button in %s" % where))
     shown = set()
     for p, k in zip(m.line, m.line_kinds):
         b = m.surf.get(p) or m.fit.get(p)
         tag = "climb" if k == "booster" and "ascending" in b else k
-        if tag in shown or tag in ("stop", "station") or (tag == "booster" and p[2] != m.cells[0][1]):
+        if tag in shown or tag in ("stop", "station"):
             continue
         shown.add(tag)
         out.append(p + (b, "the rail line: a %s" % {"climb": "climb's powered rail (powered=true)", "booster": "flat booster (powered=true)",
-                                                    "filler": "detector rail", "curve": "curve"}[tag]))
+                                                    "filler": "detector rail"}[tag]))
         if k == "booster":
             lv = m.levers[m.line.index(p)]
             out.append(lv + (LEVER, "the sealed lever powering the rail two blocks over it"))
+    i = m.s_top - 10                                 # the climb into the isle, under its crown
+    out.append(m.line[i] + (m.fit.get(m.line[i]) or m.surf.get(m.line[i]), "the climb into the isle: an ascending powered rail"))
+    out.append(m.levers[i] + (LEVER, "its sealed lever"))
     return [{"x": a, "y": b, "z": c, "expect": e, "what": w} for a, b, c, e, w in out]
+
+
+def nearest_shore(m, x, z, reach=300):
+    """The nearest column of the heightmap's own dry ground (the isle is built, so none of it is), and its distance."""
+    reach = min(reach, x - m.g.ox, z - m.g.oz)
+    b = m.g.box(x - reach, z - reach, x + reach, z + reach)
+    js, is_ = np.nonzero(b >= m.sea)
+    if not len(js):
+        return None
+    d = np.hypot(is_ - reach, js - reach)
+    k = int(np.argmin(d))
+    return {"x": x - reach + int(is_[k]), "z": z - reach + int(js[k]), "blocks": round(float(d[k]))}
 
 
 def write(m):
     fn, order = RM.write_blocks(OUT, m.lines, PASSES, "tools/sea_drift.py",
-                                "Cobblers: the Seaward Drift, its strip mine and Driftmouth Isle (tools/sea_drift.py)")
+                                "Cobblers: the Seaward Drift, its strip mine, Driftmouth Isle and its light (tools/sea_drift.py)")
     return order
+
+
+# ------------------------------------------------------------------ the one-off staging cleanup of the first drift
+
+def written_cells(lines):
+    """{(x, y, z): block} every cell a pack's commands write, the last write winning."""
+    out = {}
+    for ln in lines:
+        t = ln.split(" ", 7)
+        if t[0] == "fill":
+            x0, y0, z0, x1, y1, z1 = (int(v) for v in t[1:7])
+            for x in range(min(x0, x1), max(x0, x1) + 1):
+                for z in range(min(z0, z1), max(z0, z1) + 1):
+                    for y in range(min(y0, y1), max(y0, y1) + 1):
+                        out[(x, y, z)] = t[7]
+        elif t[0] == "setblock":
+            out[(int(t[1]), int(t[2]), int(t[3]))] = ln.split(" ", 4)[4]
+    return out
+
+
+def old_model(rev=OLD_REV, source_root=None):
+    """The first drift's model, built by its own generator and data from `rev` (git show), with today's helpers."""
+    tmp = Path(tempfile.mkdtemp(prefix="sea_drift_old_"))
+    for rel, name in (("tools/sea_drift.py", "sea_drift_old.py"), ("data/sea_drift.json", "sea_drift_old.json")):
+        txt = subprocess.run(["git", "show", "%s:%s" % (rev, rel)], cwd=ROOT, capture_output=True, text=True,
+                             encoding="utf-8", check=True).stdout
+        (tmp / name).write_text(txt, encoding="utf-8")
+    spec = importlib.util.spec_from_file_location("sea_drift_old", tmp / "sea_drift_old.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    old = mod.model(source_root, spec=json.loads((tmp / "sea_drift_old.json").read_text(encoding="utf-8")))
+    return mod, old
+
+
+def natural(g, sea, x, y, z, surface):
+    """The heightmap world's block at a cell: air over the ground and the sea, water from the ground to the sea level,
+    rock under the ground. `surface` puts the export's layers back on an open column (grass on the ground, three of
+    dirt): ASSUMED, the foothill woods' surface (data/spawns.json foothill_woods) round the first drift's mouth."""
+    gy = g(x, z)
+    if y > gy:
+        return "minecraft:water" if y <= sea else AIR
+    if surface and y == gy:
+        return "minecraft:grass_block"
+    if surface and y >= gy - 3:
+        return "minecraft:dirt"
+    return "minecraft:stone" if y >= 48 else "minecraft:deepslate"
+
+
+ROCKS = {"minecraft:%s" % b for b in ("stone", "andesite", "tuff", "deepslate", "cobbled_deepslate", "cobblestone")}
+
+
+def rocklike(b):
+    """A block the first drift wrote that is rock already: its shell's rock and its ore."""
+    i = bid_of(b)
+    return i in ROCKS or i.endswith("_ore")
+
+
+def cleanup(new, rev=OLD_REV, source_root=None):
+    """{"restore": [commands]} that put every cell the first drift's pack wrote, and this build does not write, back
+    to the heightmap world (rock, water to the sea level, air), and a count of what is touched. Rock the first drift
+    wrote under the ground (its shell and ore) is left: it is rock already."""
+    mod, old = old_model(rev, source_root)
+    g, sea = new.g, new.sea
+    olds = written_cells([ln for p in mod.PASSES for ln in old.lines[p]])
+    news = written_cells([ln for p in PASSES for ln in new.lines[p]])
+    oenv = {(int(i + old.X0), int(j + old.Y0), int(k + old.Z0)) for i, k, j in np.argwhere(old.env)}
+    cut_cols = {(x, z) for (x, z) in old.open_cut} | {(x, z) for (x, y, z) in oenv if y > g(x, z) - 6}
+    todo = {}
+    counts = {"void_to_rock": 0, "fittings_and_buildings_under_ground_to_rock": 0, "cut_to_ground": 0,
+              "isle_and_buildings_to_water": 0, "isle_and_buildings_to_air": 0, "already_natural_rock_left": 0}
+    for p in set(olds) | oenv:
+        if p in news:
+            continue
+        x, y, z = p
+        b = olds.get(p, AIR)
+        gy = g(x, z)
+        if y <= gy and p not in oenv and rocklike(b):
+            counts["already_natural_rock_left"] += 1
+            continue
+        nat = natural(g, sea, x, y, z, (x, z) in cut_cols and gy >= sea)
+        if nat == AIR and bid_of(b) == AIR:
+            continue                                   # air over the ground, opened or cleared: natural already
+        if nat in ("minecraft:stone", "minecraft:deepslate"):
+            nat = mod.rock(old, x, y, z)               # the first drift's own rock, as the shell round the void
+        todo[p] = nat
+        if y > gy:
+            counts["isle_and_buildings_to_water" if nat == "minecraft:water" else "isle_and_buildings_to_air"] += 1
+        elif (x, z) in cut_cols and gy - y <= 3 and gy >= sea:
+            counts["cut_to_ground"] += 1
+        elif p in oenv:
+            counts["void_to_rock"] += 1
+        else:
+            counts["fittings_and_buildings_under_ground_to_rock"] += 1
+    cols = {}
+    for (x, y, z), b in todo.items():
+        cols.setdefault((x, z), []).append((y, b))
+    out = []
+    for (x, z) in sorted(cols):
+        out += [RM.cmd(x, a, c, z, b) for a, c, b in RM.column_runs(x, z, cols[(x, z)])]
+    return {"restore": out}, counts, old
+
+
+def bid_of(b):
+    return b.split("[")[0].split("{")[0]
 
 
 # ------------------------------------------------------------------ the records in shared files
@@ -1109,7 +1431,7 @@ def records(m):
             place = "the Seaward Drift's strip mine: the chamber at the corridor's far end, against its north wall"
         else:
             trig = {"min": [x, y, z], "max": [x + 2, y + 2, z + 2]}
-            place = "Driftmouth Isle: in the headhouse over the drift's stairwell, its north-west corner"
+            place = "Driftmouth Isle: in Driftmouth Light's keeper's hall, its north-west corner by the tower door"
         missing = [it["item"] for it in c["contents"] if it["item"] not in verified]
         if missing:
             raise DriftError("cache %s: %s verified by no other record in data/rewards.json" % (key, missing))
@@ -1133,13 +1455,14 @@ def pool_records(spec, spawns=None):
         k = (e.get("pokemon") or e.get("species") or "").lower()
         if e.get("spawnable_position") and k not in pos:
             pos[k] = e["spawnable_position"]
-    # NEVER this pool's own entries: on 2026-10-02 the encounter rebuild removed Binacle, Clauncher and Dragonair from
-    # every other table, and this loop went on finding the positions it had itself written - reading its own output as
-    # input. The other tables come first; a species no other table carries takes its position from Cobblemon's own
-    # spawn files (tools/position_types.py, the source tools/build_encounters.py uses), and says so.
+    # NEVER this pool's own entries as a source: on 2026-10-02 the encounter rebuild removed Binacle, Clauncher and
+    # Dragonair from every other table, and this loop went on finding the positions it had itself written - reading its
+    # own output as input. The other tables come first; a species no other table carries takes its position from
+    # Cobblemon's own spawn files (tools/position_types.py, the source tools/build_encounters.py uses), and says so.
     for e in spawns["entries"]:
         if e.get("scope") != w["pool"]:
             see(e)
+    kept = {}
     upstream = None
     for ro in w["roster"]:
         for sp in [ro["pokemon"]] + [e["pokemon"] for e in ro["evolutions"]]:
@@ -1148,11 +1471,21 @@ def pool_records(spec, spawns=None):
                     import position_types
                     jar = position_types.default_jar()
                     if jar is None:
-                        raise DriftError("%s is in no other table of data/spawns.json, and COBBLERS_SERVER_ROOT is unset, "
-                                         "so Cobblemon's own spawn files cannot be read for it" % sp)
+                        # The jar cannot be read (COBBLERS_SERVER_ROOT unset). The position this pool's record already
+                        # holds was chosen from the jar when it was written; it is KEPT, never re-derived, and named, so
+                        # that a run with the jar re-checks it (tools/sea_drift_audit.py judges it against the jar).
+                        old = next((e for e in spawns["entries"] if e.get("scope") == w["pool"] and e["species"] == sp
+                                    and e.get("spawnable_position")), None)
+                        if old is None:
+                            raise DriftError("%s is in no other table of data/spawns.json, COBBLERS_SERVER_ROOT is unset "
+                                             "and this pool holds no position for it" % sp)
+                        pos[sp] = kept[sp] = old["spawnable_position"]
+                        continue
                     upstream = position_types.upstream_positions(jar)
                 import position_types
                 pos[sp] = position_types.choose(sp, upstream)[0]
+    if kept:
+        print("pool: positions KEPT from this pool's own records (no jar to read): %s" % ", ".join(sorted(kept)), file=sys.stderr)
     lo, hi = w["level_band"]["minimum"], w["level_band"]["maximum"]
     level = "%d-%d" % (lo, hi)
     rar = spawns["rarity"]
@@ -1210,9 +1543,11 @@ def write_records(habs, rew, pool):
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("cmd", choices=("report", "build", "records"))
+    p.add_argument("cmd", choices=("report", "build", "records", "cleanup"))
     p.add_argument("--source-root", default=None)
     p.add_argument("--write", action="store_true", help="records: replace this build's records in the three files")
+    p.add_argument("--old-rev", default=OLD_REV, help="cleanup: the commit that built the first drift")
+    p.add_argument("--out", default=None, help="cleanup: the pack folder (default build/staging/cobblers_sea_drift_cleanup)")
     a = p.parse_args(argv)
     m = model(a.source_root)
     s = summary(m)
@@ -1223,6 +1558,16 @@ def main(argv=None):
             print("wrote %d habitat blocks, %d rewards, 1 pool with %d entries" % (len(habs), len(rew), len(pool["entries"])))
         else:
             print(json.dumps({"habitat_blocks": habs, "rewards": rew, "pool": pool}, indent=1))
+        return 0
+    if a.cmd == "cleanup":
+        lines, counts, _old = cleanup(m, a.old_rev, a.source_root)
+        out = Path(a.out) if a.out else CLEANUP_OUT
+        _fn, order = RM.write_blocks(out, lines, ("restore",), "tools/sea_drift.py cleanup",
+                                     "Cobblers STAGING ONLY: the first Seaward Drift (%s) put back to the heightmap world"
+                                     % a.old_rev)
+        print(json.dumps(counts))
+        print("wrote %s: %d functions, %d commands (cobblers:%s/...)" % (out, len(order), len(lines["restore"]),
+                                                                       out.name.replace("cobblers_", "")))
         return 0
     brief = {k: v for k, v in s.items() if k not in ("profile", "branch_exposed_ores")}
     print(json.dumps(brief, indent=1, default=list))

@@ -26109,7 +26109,7 @@
     {
       "id": "driftmouth_isle_waters",
       "display_name": "Driftmouth Isle waters",
-      "intended_location": "the water round Driftmouth Isle (336, 1586): ten activated Habitat Blocks in its four sea stacks and its shore rock (data/habitat_blocks.json driftmouth_*), each keeping up to 3 alive within 16",
+      "intended_location": "the water round Driftmouth Isle (336, 1798): ten activated Habitat Blocks in its four sea stacks and its shore rock (data/habitat_blocks.json driftmouth_*), each keeping up to 3 alive within 16",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
