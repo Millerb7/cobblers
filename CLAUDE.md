@@ -581,6 +581,60 @@ ids, or structure ids, ask first what in the world carries that id and is not in
 answers and there are others. An audit that counts our own output can only ever
 find faults in our own output.
 
+## Measure before relaying
+
+**A number you did not measure is not a fact, however good its source.** Four times on 2026-10-01 this
+session passed a figure from a report into a brief, a commit message or a decision, and every one was
+wrong. None was caught by the session that relayed it; all four were caught downstream by whoever had to
+act on them:
+
+| Relayed | Actually |
+|---|---|
+| A Mew site at (5160, 7463) | **Under water** -- ground y61 against sea level y62, and 0 of 961 sampled columns in a 301-block box above water. The water export had removed that isle. |
+| "38 superseded dialogue sets" | **10.** `ownership()` counted divergence from an *empty* roster value as supersession, so 28 LIVE sets were reported dead every run. Deleting them, as the number implied, would have silenced 28 trainers. |
+| "A sculpt built with a stale normals bug, never re-applied" | **Re-applied.** `rift_sculpted_from` records the same 12,811,417 blocks and 512,952 columns that the fix's own commit message reports. The drift was one entrance, moved by a deliberate re-route. |
+| "44 blocks from the gap" | **44 ring STATIONS** = 53.5 blocks. |
+
+So, before a figure goes into a brief, a commit, a document or a decision:
+
+- **Run the measurement, or mark the number as relayed and name its source.** `round(ground(x, z))`, a
+  `grep -c`, a length, a count out of the generator's own output -- these cost seconds. "The research note
+  says" is not a measurement, and a research note is exactly where the drowned coordinate came from.
+- **Carry the units.** Blocks, ring stations, columns, cells and chunks are not interchangeable, and the
+  one that reads most naturally in prose is usually the wrong one.
+- **A derived number is only as good as what it was derived from.** The "38" came from code this session
+  had written itself an hour earlier; being its author is not evidence.
+- **When a decision is built on a relayed number, say so in the decision.** The owner chose A1 on a
+  premise that turned out to be this session's error, and said afterwards it was not theirs to be held to.
+- **And an instruction built on a bad number should be questioned, not executed.** The agent told to
+  "delete the 38" deleted 10, kept 28, and explained. That is the behaviour, not an exception to it.
+
+## Delegation is a second reader, not a throughput trick
+
+The case for fan-out is **not** that agents are cheaper per unit -- measure and they often are not. It is
+that **a second reader catches what a summary loses**, and the orchestrating session is structurally the
+worst-placed reader in the system: it holds every unit's conclusions and none of their evidence.
+
+Every real save on 2026-10-01 has this shape. Two agents in one wave priced a trainer card at 500 in the
+first town while another proved that town has **no authored income at all** -- a contradiction **neither
+could see**, and visible only because both reports landed together. A builder sent to place a legendary
+shrine found the coordinate it was given was underwater. A test author found two defects in the tool its
+brief told it to test, and closed a failing baseline check nobody had connected to it. A mover found that
+"44 blocks" was ring stations. **None of those was a throughput gain. Each was a correction the single
+thread could not have made**, because it was reading its own summary.
+
+So delegate for the reading, and brief accordingly:
+
+- **Give an agent the evidence, not the conclusion** -- the file and line, not "STATE says". An agent that
+  can check you will.
+- **Say which numbers in the brief are relayed**, so the agent knows what to verify first. Three of the
+  four corrections above came from an agent checking a figure the brief stated as fact.
+- **Ask for the disagreement.** Every brief should invite "if this premise is wrong, say so and stop",
+  and mean it. The best returns of the night were refusals to build what was asked.
+- **Re-run an agent's audit yourself in a full checkout.** An agent's clean audit is provisional: one
+  could not run its own audit at all (no `derived/`), said so, and was right to.
+- **Cost still matters** (see the rules above) -- but it is the second question, not the first.
+
 ## Verify before claiming
 
 A generated config, datapack or manifest is not proof that a feature works. A
