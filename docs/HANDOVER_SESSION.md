@@ -6,8 +6,10 @@ A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else,
 
 - **Work branch `build/2026-10-01-rift-builds`** is FROZEN: its PR, [#104](https://github.com/Millerb7/cobblers/pull/104),
   is open and reported with head `201edbf`. Nothing more goes to it.
-- **The handover PR**: SUITE_AND_PR_PENDING. Re-read the head with `git rev-parse HEAD`
-  before quoting it; the owner merges while sessions work.
+- **The handover PR is [#105](https://github.com/Millerb7/cobblers/pull/105)**, draft, branch
+  `build/2026-10-02-gates-and-legendaries`: all of #104 plus 10 commits, 52 onto `main`. It supersedes #104 and is
+  FROZEN from the moment it was reported. Re-read its head with `gh pr view 105 --json headRefOid` before quoting
+  it; the owner merges while sessions work.
 - `origin/main` is `a271532`; **nothing from 2026-10-01 is merged**. #102 and #103 are the older drafts.
 
 ## 2. Where it stopped
