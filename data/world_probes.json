@@ -702,9 +702,9 @@
       {
         "what": "ridgejaw: bone chip",
         "block": [
-          3550,
-          163,
-          1603,
+          3526,
+          158,
+          1555,
           "minecraft:bone_block[axis=x]"
         ],
         "expect": true
@@ -732,9 +732,9 @@
       {
         "what": "whiteback: snow bank",
         "block": [
-          7030,
-          79,
-          302,
+          7058,
+          84,
+          298,
           "minecraft:snow_block"
         ],
         "expect": true
@@ -742,9 +742,9 @@
       {
         "what": "whiteback: broken marker",
         "block": [
-          7027,
-          78,
-          288,
+          7055,
+          85,
+          284,
           "minecraft:cobblestone"
         ],
         "expect": true
@@ -752,9 +752,9 @@
       {
         "what": "whiteback: windbreak",
         "block": [
-          7036,
-          80,
-          304,
+          7064,
+          86,
+          300,
           "minecraft:spruce_fence"
         ],
         "expect": true
@@ -802,8 +802,8 @@
       {
         "what": "dustback: the crushed marker",
         "block": [
-          6228,
-          143,
+          6256,
+          142,
           6124,
           "minecraft:cut_sandstone"
         ],
@@ -812,19 +812,19 @@
       {
         "what": "dustback: the migration scar",
         "block": [
-          6216,
+          6244,
           141,
           6106,
-          "minecraft:sandstone"
+          "minecraft:smooth_sandstone"
         ],
         "expect": true
       },
       {
         "what": "hornwall: the standing circle",
         "block": [
-          4200,
-          137,
-          5920,
+          4148,
+          135,
+          5872,
           "minecraft:coarse_dirt"
         ],
         "expect": true
@@ -852,8 +852,8 @@
       {
         "what": "split_bark: split log, bark half",
         "block": [
-          7364,
-          138,
+          7384,
+          140,
           7367,
           "minecraft:jungle_log[axis=z]"
         ],
@@ -862,8 +862,8 @@
       {
         "what": "split_bark: split log, heart half",
         "block": [
-          7365,
-          138,
+          7385,
+          140,
           7367,
           "minecraft:stripped_jungle_log[axis=z]"
         ],

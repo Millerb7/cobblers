@@ -13,7 +13,7 @@ cellar under the floor holding the find.
 
 ## The resident it is built round
 
-`data/resident_encounters.json` `orchard_sleeper`: a level 60 Slaking at **(2816, 7080)**, catchable after
+`data/resident_encounters.json` `orchard_sleeper`: a level 60 Slaking at **(2816, 7128)** (moved 2026-10-02 from (2816, 7080), which stood inside the palm sapling's nest range; see `tests/test_resident_siting.py`), catchable after
 `gym8_cleared`, trigger 18, leash 26. **Placed by another builder; this pack writes nothing within 4 blocks of the
 anchor and never its ground.** Its nearest write is the end of the cart track at (2805, 7080), 11 blocks west.
 

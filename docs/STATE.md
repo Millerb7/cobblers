@@ -85,7 +85,7 @@
 - **Large trees:** 1 world tree, 7 giants, 52 elders, and 5 painted giants exist (4 landmark trees and the demoted Weeping Elder); the Foothill grove contains 12 of those trees and 48 elders are distributed across 20 sub-regions.
 - **Foliage:** the current WorldPainter project records 77,750 custom foliage objects generated from `data/foliage.json`.
 - **Campaign content:** 64 trainer records exist as data (50 required route, 1 optional Lake Viltri shore, 13 authored bosses); all eight gyms and Routes 1–8 have Normal and Challenge payloads at the same level caps, the Elite Four and Champion carry identical placeholder variants, and Victory Road has ten fixed cave fights in a 4/rest/6 chain; the 13 Route 1–3 trainers and the Gastly mansion's 5 Channeler guardians (`data/mansion_guardians.json`) are Radical Cobblemon Trainers data (`tools/route_trainers.py`) standing pinned at their seats on staging (`data/route_trainers.json`: eleven listed points were on the walked line and stand three blocks onto the shoulder), with a per-player field set only by rctmod's win trigger (a Channeler's opens her room's puzzle); 10 Route 1–3 side events and the Gastly escort are built on staging, and the old mine west of Route 1 (a hill with an adit and a cave, and since 2026-09-25 workings about 110 blocks along the main line with two branches and a stope, `tools/route1_old_mine.py`, finds `r1_old_mine` and `r1_old_mine_stope`, nothing in it that decides a spawn; built on staging and spot-checked over RCON, not walked in game); the sleeping Celebi on the Route 1 sapling (`data/sapling_celebi.json`, R14C: EXP-023's entity, walled in barrier blocks because a player could kill it; inert, the wake undesigned) stands on staging. Nothing is placed in the live world; the owner's first playtest (EXP-035) saw the mansion, Hope, Brock and Misty.
-- **Named resident encounters:** 10 memorable non-legendary residents are authored in `data/resident_encounters.json` with coordinates, levels, gates, terrain briefs and build costs; 0 of 10 are placed or runtime-tested. Old Jaw's source requires catch refusal only before gym 1 (not runtime-proven); Whiteback and Hornwall are permanently uncatchable; the other 7 are catchable at their stated gates.
+- **Named resident encounters:** 10 memorable non-legendary residents are authored in `data/resident_encounters.json` with coordinates, levels, gates, terrain briefs and build costs; 0 of 10 are placed or runtime-tested. Old Jaw's source requires catch refusal only before gym 1 (not runtime-proven); Whiteback and Hornwall are permanently uncatchable; the other 7 are catchable at their stated gates. Re-sited 2026-10-02: see "The south" below.
 - **Death, wipe and water-depth system:** built as one generated datapack, `cobblers_blackout` (`tools/blackout_pack.py`, `data/blackout.json`, `data/water_mounts.json`; ADR-005's datapack-and-MoLang route, no companion mod). It covers the blackout (a death or a full-party battle loss, charged once per incident, 20% rounded up since the owner asked for harsher deaths on 2026-09-27; fleeing a battle is not a loss), Center and town-waystone checkpoints, wild-victor item claims with persistent guardians (balls 40% max 30, medicine 40% max 12, one battle or evolution item every time; the charge is held in the claim and paid back with the items; a wild Pokemon that kills the player outside battle claims the same way), and the Surf and Dive air ladder. Claims resolve by the guardian's Pokemon UUID (`recovery/pid`, `resolve_pid`): its faint in battle, its capture, or its death outside battle after a player or a player's Pokemon last hurt it (noted every tick, settled by maintenance). It is installed world-local on staging only (`cobblers-dryrun11`). Proven there without a player (EXP-042): it loads, its three Cobblemon callbacks register, and a guardian killed outright is rebuilt from the ledger exactly once (same Pokemon UUID and held item). The leash, duplicate removal and resolution also work. In game, with the owner (EXP-042, three sessions on staging):
   - The charge runs once per incident: 10% rounded up ($725 to $652; $59 of $586).
   - The return goes to Hometown with no checkpoint saved, and to the Hometown Center once its healing machine was used (the Center checkpoint works).
@@ -541,13 +541,20 @@
     (2790, 66, 7048), cellar barrel (2793, 62, 7051) with Leftovers, a Tart and a Sweet Apple; Applin Habitat Block
     (2754, 72, 7088); keeper Wenna Marlow (2786, 67, 7058). Slakoth and Vigoroth cannot spawn at the isle's band
     (43-53) under the evolution policy, so the pool is the Applin line and Tropius.
-  - **Codex's ten residents** (`data/resident_encounters.json`, pack `cobblers_residents`, R18R): Dustback
-    (6216, 142, 6112), Hornwall (4200, 138, 5920), Orchard Sleeper (2816, 67, 7080), Split-Bark (7360, 139, 7376), and
-    Old Jaw, Wiremother, Ridgejaw, Red Rail, Whiteback, River Grip. R18R summons only the two ungated ones (Old Jaw,
-    Whiteback); the other eight first appear when a player holding their gate flag comes within 96. A resident that
-    beats a player becomes its blackout guardian (contract C17). **Split-Bark's level 62 equals the Champion's ace**,
-    so it is catchable between the Elite Four and the Champion: the owner's or Codex's call. Its Sunset Isle dressing
-    is superseded by the Old Orchard (`build.superseded_dressing`).
+  - **Codex's ten residents** (`data/resident_encounters.json`, pack `cobblers_residents`, R18R), **re-sited
+    2026-10-02 at the owner's instruction** after the #107 review: Ridgejaw (3520, 1552), Whiteback (7050, 308),
+    Dustback (6244, 142, 6112), Hornwall (4148, 136, 5872), Orchard Sleeper (2816, 7128), Split-Bark (7380, 7376), each
+    moved 20-71 blocks so it stands at least 128 from every route path (Hornwall was 59 from Route 8's) and, from every
+    activated Habitat Block, at least that block's spawn_range plus its own leash (six stood about 24 from an elder's or
+    sapling's nests); old points kept as `superseded_location`. Wiremother L33 -> L30, its tier-2 place's ceiling, which
+    makes it a declared catch-gate leak (a partner between gyms 2 and 3 could catch it once it appears). Each candidate
+    was accepted only when `resident_encounters_audit` (and, for the Sleeper, `old_orchard_audit`) passed; the moved
+    dressing's 9 world probes were re-seated and match the pack. `tests/test_resident_siting.py` holds the rules.
+    Old Jaw, Red Rail and River Grip did not move. R18R summons only the two ungated ones (Old Jaw, Whiteback); the
+    other eight first appear when a player holding their gate flag comes within 96. A resident that beats a player
+    becomes its blackout guardian (contract C17). **For the owner: Split-Bark is L62, over its tier-8 place's ceiling of
+    60 (strict xfail) and equal to the Champion's ace; and Wiremother's leak (keep, or move it to a tier-3 place at 33).**
+    Its Sunset Isle dressing is superseded by the Old Orchard (`build.superseded_dressing`).
 - **Every seated trainer is in the world: 63 of 63 at their seats, none doubled, 8 of 8 gym spawners pass**
   (`tools/trainer_world_audit.py`, its first run against a world, 2026-10-02). The seven arena champions had
   never been seated - authored after R17 last ran - and R17's re-run placed exactly those seven. **One real

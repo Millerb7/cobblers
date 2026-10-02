@@ -3,7 +3,7 @@
 its collapsed roof and its cellar, the kitchen garden, the hives, the racks and the lantern posts.
 
 The owner, 2026-10-02 (relayed): "the south needs places, not just creatures. Somewhere to find, something in it."
-Built round Codex's resident orchard_sleeper (data/resident_encounters.json, a Slaking at (2816, 7080)); this pack
+Built round Codex's resident orchard_sleeper (data/resident_encounters.json, a Slaking at (2816, 7128), moved 48 blocks north from (2816, 7080) on 2026-10-02 out of the palm sapling's nest range); this pack
 writes nothing within data/old_orchard.json resident.no_write_within of its anchor and never its ground. Every part
 is an existing, proven piece; nothing here is new machinery:
 

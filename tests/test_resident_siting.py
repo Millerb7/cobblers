@@ -6,8 +6,8 @@ The owner, 2026-10-02, reviewing #107: a resident is a big Pokemon at a fixed sp
   - nothing big within clear_of_path_blocks (128) of a route path. Hornwall stood 59 blocks from Route 8's.
   - nothing above the place's ceiling: rules.hearts.next_cap of its sub-region's tier. Wiremother was L33 in a tier-2
     place whose ceiling is 30; a gate that keeps the fight shut until later does not excuse it.
-  - its fight does not overlap a nest: at least the largest activated Habitat Block spawn_range plus the 28-block
-    leash from every activated block. Six of ten stood about 24 blocks from one.
+  - its fight does not overlap a nest: from every activated Habitat Block, at least that block's spawn_range plus
+    the resident's own leash. Six of ten stood about 24 blocks from one.
 
 Every expectation is read from the data the rule lives in, never from data/resident_encounters.json itself.
 """
@@ -20,7 +20,7 @@ import numpy as np
 import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
-LEASH = 28          # the largest trigger/leash any resident brief names ("trigger 24, leash 28", "20/28")
+LEASH = 28          # a resident with no built leash: the largest any brief names ("trigger 24, leash 28", "20/28")
 
 
 def load(name):
@@ -58,10 +58,13 @@ def test_a_resident_stands_clear_of_every_route_path(rid):
 def test_a_residents_fight_does_not_overlap_a_nest(rid):
     e = next(r for r in RES if r["id"] == rid)
     x, z = _at(e)
+    leash = (e.get("build") or {}).get("leash") or LEASH
     act = [b for b in load("habitat_blocks.json")["blocks"] if b.get("style") == "activated"]
-    reach = max(b["activated"]["spawn_range"] for b in act) + LEASH
-    d = min(math.hypot(b["position"]["x"] - x, b["position"]["z"] - z) for b in act)
-    assert d >= reach, "%s is %.0f blocks from an activated Habitat Block; its fight needs %d" % (rid, d, reach)
+    near = [(math.hypot(b["position"]["x"] - x, b["position"]["z"] - z), b["activated"]["spawn_range"] + leash, b["id"])
+            for b in act]
+    bad = sorted(n for n in near if n[0] < n[1])
+    assert not bad, "%s's %d-block leash overlaps an activated Habitat Block's spawns: %s" % (
+        rid, leash, ["%s at %.0f, needs %d" % (i, d, need) for d, need, i in bad[:3]])
 
 
 CEILING_PENDING = {

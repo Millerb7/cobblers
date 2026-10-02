@@ -102,7 +102,14 @@ def test_a_block_set_in_the_palms_template_box_is_refused(ground, tmp_path, monk
             sets = sets + [(2814, g(2814, 7085) + 2, 7085, "minecraft:oak_leaves[persistent=true]", "crowding")]
         return sets, clears
     monkeypatch.setattr(R, "dressing", crowding)
-    rep = run(ground, tmp_path)
+    # 2026-10-02 the Sleeper moved out from under the palm (2816, 7080 -> 2816, 7128, out of its nest range), so its
+    # bbox no longer reaches the palm's box and the bbox guard would refuse the leaf first. Widen the bbox in a copy
+    # so the leaf reaches the guard this test is about: the keep-out
+    doc = copy.deepcopy(R.load())
+    e = next(r for r in doc["encounters"] if r["id"] == "orchard_sleeper")
+    bb = e["build"]["bbox"]
+    e["build"]["bbox"] = [min(bb[0], 2814), min(bb[1], 7085), max(bb[2], 2814), max(bb[3], 7085)]
+    rep = run(ground, tmp_path, doc)
     assert any("orchard_sleeper" in e and "keep-out" in e for e in rep.errors)
 
 
