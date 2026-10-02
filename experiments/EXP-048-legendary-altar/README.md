@@ -238,3 +238,39 @@ console half could never test. **Status: the altar mechanism WORKS when pasted.*
 `CalyrexStatue` strings name `calyrex level=70`; the owner saw Spectrier. Not resolved here; the Spectrier cap is
 built to cover every path to a Spectrier at the cemetery. What it unblocks is listed in
 `data/adopted_legendary_sites.json` `a_dead_altar_must_not_block.what_it_unblocks`.
+
+## The three "tooling causes", searched for, 2026-10-02 (offline, at dcb9f67)
+
+The owner's instruction of 2026-10-02 names three causes of earlier inert results: "/clone dropping shrine blocks,
+the missing ritual block, and the 71-block placement error". **None of the three could be found in the repository,
+in any branch's history or in any session transcript, and nothing was changed.** The instruction reached the
+sessions as pasted text opening "EXP-048 answered properly - and most of it being our own tooling rather than
+Cobbleverse is the right kind of correction" (first seen 2026-10-02 18:25Z); no Claude Code or Codex transcript
+under `~/.claude/projects` or `~/.codex/sessions/2026/10` carries a report naming the three before that message.
+So the three are RELAYED, source unknown, and until their source is named they are not facts about our tooling.
+
+What was measured:
+
+1. **/clone.** No generator in `tools/` emits a `clone` command. The only `clone` matches are recognisers in audits
+   and limits (`tools/function_limits.py:54,67`, `tools/shrines.py:237`, `tools/frostpeak_camp_audit.py:75`,
+   `tools/portals_audit.py:50`, `tools/gulch_mine_audit.py:682`). `git log --all -G "clone [0-9~-]"` finds only
+   audit and bootstrap commits. Every altar site is placed by `place template` (`tools/place_donor.py:218`,
+   `tools/articuno_tower.py:102`) or by `setblock` (`tools/research_station.py`). If a /clone dropped altar blocks,
+   it was a hand command in staging, which no file records.
+2. **The ritual block.** The only block in evidence that an altar may need and a site may lack is
+   `lumymon:summon_anchor` ("Summon Anchor not found near the Altar"; `docs/research/notes/lumymon-altars.md:78-84`).
+   The Articuno, Zapdos, Moltres and Mew templates carry none (data/structures.json `carries`), and whether their
+   altars require one is still UNREAD (see "Still open" above). The one generator that sets altars itself,
+   `tools/research_station.py`, sets the anchor first: built to a scratch dir, it emits
+   `setblock 422 64 2809 lumymon:summon_anchor`, then the Latias and Latios altars at (420|424, 64, 2812), exactly
+   the record's `shrine` coordinates. `tools/articuno_tower.py placement_steps()` pastes the template and adds no
+   anchor; adding one there is a design choice that waits on the Articuno feather click, not a fix.
+3. **71 blocks.** Every adopted site's `command` equals its `corner` and `y`, every `centre` is corner + size // 2,
+   every `top_y` is y + height - 1 (Mew, Zapdos, Articuno summit and shoulder, Moltres); each scheduled site's
+   data/placements.json position equals its `placement_lives_in` (Crown Cemetery, Dawn, Dusk); the Articuno probe
+   (682, 312, 380) is the corner plus the altar offset observed in staging. No altar or shrine generator emits a
+   position 71 blocks from its record. The only "71" near a site in this session's search is unrelated (six
+   residents moved 20-71 blocks, `tests/test_resident_siting.py`).
+
+**For the owner:** which session, chat or check named these three? If it was in game, the coordinates of the
+shrine that stood 71 blocks off, and the command that cloned it, would let this be fixed where it happened.
