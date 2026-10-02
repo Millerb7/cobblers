@@ -138,6 +138,29 @@ per theme now repeats a line anywhere, and never within 1,000 blocks.**
 The owner found the Swanna tree "way better" and it is unchanged, as are the Fletchling elder and the Route 1
 sapling.
 
+### Elders re-birded after the Jungle Isle move (2026-10-02)
+
+The owner had the four drowned Jungle Isle elders moved to Long Isle south on 2026-10-02 (commit `dcb9f67`,
+`data/elder_trees.json` `superseded_site`). Their ids and pools went with them, and one move broke rule 2:
+`elder_jungle_east_2`, now at (7760, 7072), stood 468 blocks from `elder_long_isle_south_2`'s Squawkabilly at
+(7920, 7512). No Long Isle south site is 1,000 from that tree, so the bird changes rather than the tree.
+
+| elder | was | becomes | levels | why |
+|---|---|---|---|---|
+| `elder_jungle_east_2` | Squawkabilly | Yanma | 25-30 | 468 from the Long Isle south Squawkabilly. A dragonfly by the island's jungle water. |
+
+How it was chosen, by this plan's rules: one line (Yanmega evolves by move, so the pool is base only at any level);
+the pool's 25-30 kept as the other three moved jungle elders keep theirs; implemented in the Cobblemon 1.8.0 jar and
+not on the client-model fault lists; the nearest other Yanma tree (`elder_lake_viltri_hollow_2`) is 7,167 blocks away.
+Neither of the tree's rosters can supply a bird: Long Isle south's only flyer is Squawkabilly, and Jungle east's are
+Chatot (522 from `elder_long_isle_south_3`'s Chatot co-resident) and Hawlucha (481 from `elder_jungle_east_1`). The
+runner-up was Natu + Xatu (5,299 from the nearest Natu), passed over because it would end the Wedge north tree's
+place as the only wild Xatu. To reverse: put Squawkabilly back only with a move of this tree or of
+`elder_long_isle_south_2` that leaves them 1,000 apart, or pick Natu + Xatu instead.
+
+Open, not decided here: the four moved trees keep the jungle's 25-30 while Long Isle's own elders give 44-50
+(`LONG_ISLE.md` D5).
+
 ### For the owner to decide
 
 1. **Flyers that are not birds.** Yanma, Ledyba, Combee, Hoppip, Emolga, Noibat, Gligar, Tropius and Sigilyph are
@@ -360,7 +383,7 @@ leg that this pass did not identify.
 | elder_jungle_west_1 | (7576, 7824, 106) | 163 | jungle / emergent_jungle | 25-45 / 25-30 | **Tropius** | v2 | single stage | Plan v2 (see above): re-birded so no line repeats within 1,000 blocks. Was: The roster's woodpecker in the emergent canopy. |
 | elder_jungle_west_2 ★ | (6928, 7576, 79) | 136 | jungle / emergent_jungle | 25-45 / Pikipek 25-30, Toucannon 30-34 | **Toucannon** (rare) over Pikipek 24 | R (authored-only in the roster) | authored final stage | The isle's high ground (y126): the toucan at the top. |
 | elder_jungle_east_1 | (8092, 6724, 84) | 141 | jungle / jungle_edge | 25-45 / 25-30 | **Hawlucha** | R | single stage | The roster's anchor, a wrestler on the jungle edge. |
-| elder_jungle_east_2 | (7760, 7072, 134) | 191 | jungle / jungle_edge | 25-45 / 25-30 | **Squawkabilly** | N to isle (long_isle_south) | single stage | Parrots on the jungle's edge. |
+| elder_jungle_east_2 | (7760, 7072, 134) | 191 | jungle / jungle_edge | 25-45 / 25-30 | **Yanma** | 2026-10-02 | base only (Yanmega by move) | Re-birded 2026-10-02 (see "Elders re-birded after the Jungle Isle move"). Was: Squawkabilly, parrots on the jungle's edge. |
 
 ### Long Isle (remote, 1460-3107 off any leg)
 
@@ -395,7 +418,7 @@ leg that this pass did not identify.
 | Swablu | 2 | grove, Shrew Lakes |
 | Murkrow | 2 | Wedge north, Wedge south |
 | Delibird | 2 | North Pine Isle ×2 |
-| Squawkabilly | 2 | Jungle east, Long Isle south |
+| Squawkabilly | 1 (was 2) | Long Isle south (Jungle east 2 became Yanma, 2026-10-02) |
 | Farfetch'd ★, Rufflet, Flamigo, Bombirdier, Cramorant, Vullaby, Hawlucha, Chatot, Oricorio ★ | 1 each | see tables |
 
 - **From the tree's own roster (R):** 18 trees. **From its region (RG):** 5. **New to the area (N):** 30.
