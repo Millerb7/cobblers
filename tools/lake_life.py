@@ -220,27 +220,16 @@ class Lake:
 
 
 def protect_mask(source_root):
-    """tools/water_shape.py's own protect mask over the whole map (its Ctx, its build_protect), unchanged, built on
-    the heightmap it was designed for: data/world.json heightmap.water_shaped_from (= water_shape.json applies_to).
-
-    FINDING (2026-10-02): run on the canonical heightmap instead, build_protect's `rift_sculpt` part (every column
-    that differs from the pre-Rift file within 200 of the Rift's box, grown by 8) also takes in every column the
-    water export itself changed there, and it protected 85% of Arrow Lake, 49% of Shrew Lake and 97% of the
-    Watering Hole. Fed its own input, it protects the Rift's changes only, as it did for the export."""
+    """tools/water_shape.py's own protect mask over the whole map (its Ctx, its build_protect), unchanged, on the
+    canonical heightmap. build_protect's `rift_sculpt` part reads the Rift's input and output itself, sha-checked
+    (water_shape.rift_sculpt_mask), so it is the Rift's columns whichever heightmap the Ctx holds."""
     from PIL import Image
     wp = ROOT / "data" / "world.json"
     world = T.load_world(wp)
     spec = json.loads(W.SPEC.read_text(encoding="utf-8"))
     hm = T.resolve_heightmap(world, wp, source_root)
-    base = world["heightmap"].get("water_shaped_from") or {}
-    if base.get("sha256") != spec["applies_to"]["heightmap_sha256"]:
-        raise LakeLifeError("data/world.json heightmap.water_shaped_from is not the file data/water_shape.json applies to")
-    pre = hm.parent / base["path"]
-    if not pre.is_file() or W.sha256_file(pre) != base["sha256"]:
-        raise LakeLifeError("%s is missing or does not hash to %s: water_shape's protect mask cannot be rebuilt on its "
-                            "own input" % (pre, base["sha256"][:12]))
-    raw = np.array(Image.open(pre))
-    ctx = W.Ctx(world, spec, raw, raw, pre)
+    raw = np.array(Image.open(hm))
+    ctx = W.Ctx(world, spec, raw, raw, hm)
     W.build_protect(ctx)
     return ctx.P, dict(ctx.protect_parts), spec["protect"]
 

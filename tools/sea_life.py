@@ -372,24 +372,6 @@ class Exclusions:
         WS.build_protect(ctx)
         WS.build_lake_mask(ctx)
         self.protect_parts = dict(ctx.protect_parts)
-        # FINDING (2026-10-02): data/sea_town.json's `resite` block has been folded into the plan (tools/sea_town.py
-        # fold-resite), so tools/water_shape.py resited_town(), which asks sea_town for the resite, now raises. The
-        # folded plan IS the re-sited town, so its cache is seeded here with resited_town's own construction over the
-        # folded plan; water_shape.py itself is another tool's and is not edited.
-        import sea_town as ST
-        plan = ST.load()
-        if plan.get("resite"):
-            plan = ST.load(resite=True)
-        by_d, deck = {}, set()
-        for e in ST.elements(plan):
-            if e["district"] == "mainland_jetty":
-                continue
-            by_d.setdefault(e["district"], []).append((e["kind"], e["rect"], e["min_depth"]))
-            if not e["decor"]:
-                deck |= ST.cells(e["rect"])
-        for b in plan["buildings"]:
-            by_d.setdefault(b["district"], []).append((b["type"], b["rect"], 1))
-        ctx._town = {"plan": plan, "by_district": by_d, "deck": deck}
         for c in wspec["crossings"]:
             if c["kind"] == "to_town":
                 a, b = WS.to_town_endpoints(ctx, c, ctx.G0, "before")

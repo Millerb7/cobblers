@@ -385,6 +385,52 @@ def islet_footprint(margin):
     return grow(out, margin) if margin > 0 else out
 
 
+def pinned_heightmap(ctx, name, sha, what):
+    """A heightmap beside the one ctx was loaded from, by its name in data/world.json or data/water_shape.json, only
+    if it hashes to the sha256 pinned there."""
+    p = Path(ctx.hm_path).parent / name
+    if not p.is_file() or sha256_file(p) != sha:
+        raise ShapeError("%s %s is missing or does not hash to %s: the Rift's columns cannot be protected, so nothing "
+                         "is shaped" % (what, p, sha[:12]))
+    return p
+
+
+def rift_sculpt_mask(ctx, box):
+    """(rbox, mask): every column the Rift's sculpt changed within 200 of the Rift region's box `box`, grown by 8.
+
+    The sculpt's input is data/world.json heightmap.rift_sculpted_from and its output is the file this design applies
+    to (data/water_shape.json applies_to: the heightmap tools/rift_heightmap.py wrote and the water export started
+    from). Both are read from the source root and sha-checked; the heightmap ctx was loaded from is never part of the
+    diff. Fixed 2026-10-02: the diff used to be the pre-Rift file against ctx.raw, which is right only while ctx.raw
+    IS the Rift's output. On today's canonical heightmap (the applied water export) it also caught every column the
+    export changed near the Rift, and protected 85% of Arrow Lake, 49% of Shrew Lake and 97% of the Watering Hole
+    from tools/lake_life.py. The diff is checked against the sculpt's own record (columns_changed): it cannot hold
+    more columns than the Rift changed."""
+    base = ctx.world["heightmap"].get("rift_sculpted_from")
+    if not base:
+        raise ShapeError("data/world.json has no heightmap.rift_sculpted_from: cannot find the columns the Rift changed")
+    at = ctx.spec["applies_to"]
+    shaped = ctx.world["heightmap"].get("water_shaped_from")
+    if shaped and shaped.get("sha256") != at["heightmap_sha256"]:
+        raise ShapeError("data/world.json heightmap.water_shaped_from (%s) is not the file data/water_shape.json "
+                         "applies to (%s): which file is the Rift's output is ambiguous" % (
+                             shaped.get("sha256", "")[:12], at["heightmap_sha256"][:12]))
+    pre = pinned_heightmap(ctx, base["path"], base["sha256"], "the pre-Rift heightmap")
+    post = pinned_heightmap(ctx, at["heightmap_path"], at["heightmap_sha256"], "the Rift's output (applies_to)")
+    x0, z0, x1, z1 = box
+    rbox = clip_box(x0 - 200, z0 - 200, x1 + 200, z1 + 200, ctx.N)
+    raw_pre = np.array(Image.open(pre).crop(rbox))
+    raw_post = np.array(Image.open(post).crop(rbox))
+    diff = raw_pre != raw_post
+    del raw_pre, raw_post
+    n, cap = int(diff.sum()), base.get("columns_changed")
+    if cap is not None and n > int(cap):
+        raise ShapeError("%d columns differ between the pre-Rift heightmap and the Rift's output near the Rift, more "
+                         "than the %d the sculpt records changing: one of the two is not the file it claims to be" % (
+                             n, int(cap)))
+    return rbox, grow(diff, 8)
+
+
 def build_protect(ctx):
     spec = ctx.spec["protect"]
     N = ctx.N
@@ -431,19 +477,7 @@ def build_protect(ctx):
     rs = spec["rift"]
     box, rm = ctx.region_mask(rs["region"], int(rs["grow_blocks"]))
     add("rift_region", box, rm)
-    base = ctx.world["heightmap"].get("rift_sculpted_from")
-    if not base:
-        raise ShapeError("data/world.json has no heightmap.rift_sculpted_from: cannot find the columns the Rift changed")
-    pre = ctx.hm_path.parent / base["path"]
-    if not pre.is_file() or sha256_file(pre) != base["sha256"]:
-        raise ShapeError("the pre-Rift heightmap %s is missing or does not hash to %s: the Rift's columns cannot be "
-                         "protected, so nothing is shaped" % (pre, base["sha256"][:12]))
-    raw_pre = np.array(Image.open(pre))
-    x0, z0, x1, z1 = box
-    rbox = clip_box(x0 - 200, z0 - 200, x1 + 200, z1 + 200, N)
-    diff = raw_pre[sl(rbox)] != ctx.raw[sl(rbox)]
-    del raw_pre
-    add("rift_sculpt", rbox, grow(diff, 8))
+    add("rift_sculpt", *rift_sculpt_mask(ctx, box))
 
     vr = load("vr_caves.json")
     band = int(vr["guide"]["band"]) + int(spec["victory_road"]["extra_blocks"])
@@ -573,10 +607,13 @@ def overlay_ground(ctx, G, names):
         for x, z in deck:
             out[(int(x), int(z))] = int(level)
     if "sea_town_resite" in names:
+        # sea_town.deck_ground(resite=True) over resited_plan (it asks for the resite block, gone after the fold)
         import sea_town
-        level, deck = sea_town.deck_ground(ctx.world, resite=True)
-        for x, z in deck:
-            out[(int(x), int(z))] = int(level)
+        level = sea_town.sea_level(ctx.world)
+        for e in sea_town.elements(resited_plan(ctx.world)):
+            if not e["decor"]:
+                for x, z in sea_town.cells(e["rect"]):
+                    out[(int(x), int(z))] = int(level)
     return out
 
 
@@ -2650,13 +2687,30 @@ def bank_footprint(ctx):
     return ctx._bank_fp
 
 
+def resited_plan(world, path=None):
+    """The re-sited sea town's plan. Before the apply, data/sea_town.json carries a `resite` block and the plan is that
+    block translated by tools/sea_town.py; after it, `sea_town.py fold-resite` has written the translation over the
+    layout and dropped the block, so the plan as it stands IS the re-sited town. A plan with no block counts as folded
+    only once the water export is applied (data/world.json heightmap.water_shaped_from), the same condition fold-resite
+    itself refuses without. Fixed 2026-10-02: this used to ask for the block unconditionally, and raised after the
+    fold."""
+    import sea_town as ST
+    plan = ST.load(path) if path is not None else ST.load()
+    if plan.get("resite"):
+        return ST.resited(plan)
+    if not (world.get("heightmap") or {}).get("water_shaped_from"):
+        raise ShapeError("data/sea_town.json has no resite block and the water export is not applied "
+                         "(no heightmap.water_shaped_from), so the plan is not the folded re-site")
+    return plan
+
+
 def resited_town(ctx):
-    """The re-sited sea town's elements and buildings (data/sea_town.json resite, translated by tools/sea_town.py),
-    by district: {district: [rects]}, and the deck cells. Pure geometry; cached."""
+    """The re-sited sea town's elements and buildings (resited_plan: the folded plan, or the resite block translated by
+    tools/sea_town.py), by district: {district: [rects]}, and the deck cells. Pure geometry; cached."""
     if getattr(ctx, "_town", None) is not None:
         return ctx._town
     import sea_town as ST
-    plan = ST.load(resite=True)
+    plan = resited_plan(ctx.world)
     by_d = {}
     deck = set()
     for e in ST.elements(plan):
@@ -3317,8 +3371,11 @@ def bank_maps(ctx, mdir, legend):
     line drawn; and the town's own close-up."""
     made = []
     import sea_town as ST
-    plan = ST.load(resite=True)
-    _lv, deck = ST.deck_ground(ctx.world, resite=True)
+    plan = resited_plan(ctx.world)
+    deck = set()
+    for e in ST.elements(plan):
+        if not e["decor"]:
+            deck |= ST.cells(e["rect"])
     for name, box, f in (("jungle_isle_bank", (4000, 6300, 6300, 8191), 2), ("pacifidlog_bank_town", (4880, 7200, 5320, 7720), 1)):
         box = clip_box(*box, ctx.N)
         gb = ctx.G0[sl(box)][::f, ::f]

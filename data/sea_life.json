@@ -23,7 +23,7 @@
     "placement_margin_blocks": 24,
     "placement_sources": "data/placements.json placements with a position",
     "pacifidlog_margin_blocks": 48,
-    "pacifidlog_source": "tools/water_shape.py resited_town (data/sea_town.json resite through tools/sea_town.py): its deck cells, and data/towns.json sea_town's old footprint",
+    "pacifidlog_source": "tools/water_shape.py resited_town (the folded data/sea_town.json plan, or its resite block through tools/sea_town.py before the fold): its deck cells, and data/towns.json sea_town's old footprint",
     "first_cast_hole_margin_blocks": 8,
     "relic_corridors": "tools/water_shape.py relic_corridor_mask (data/water_shape.json coasts.relic_corridors): kelp and wrecks stay off both Relic swim lines",
     "sea_drift": "data/sea_drift.json: Driftmouth Isle's square out to its farthest stack, and every route leg widened by the tube, its cover (tools/sea_drift.py cover_blocks) and drift_margin_blocks",
