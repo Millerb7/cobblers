@@ -100,7 +100,7 @@
     "ferry_lanes": "none: data/ferries.json moves a passenger by teleport (its mechanism), so no lake carries a boat channel"
   },
   "palette": {
-    "buoy": "minecraft:red_concrete",
+    "buoy": "moarconcrete:red_concrete_texture",
     "weight": "minecraft:polished_andesite",
     "chain": "minecraft:chain",
     "lantern": "minecraft:lantern",

@@ -311,7 +311,7 @@ def test_the_build_runs_before_the_habitat_blocks_once_it_is_a_step(ground, monk
     monkeypatch.setattr(reapply, "indexed", lambda *a, **k: ["stub"])
     try:
         steps = reapply.steps()
-    except (SystemExit, Exception) as e:      # a worktree has no derived/ (CLAUDE.md): the step list cannot be built
+    except SystemExit as e:                   # a worktree has no derived/ (CLAUDE.md): reapply fails closed with SystemExit
         pytest.skip("NOT_EXECUTED: tools/reapply.py steps() could not be built here: %s" % e)
     ids = [s[0] for s in steps]
     mine = [i for i, s in enumerate(steps) if ("fn", "cobblers:dune_ruin/build") in [tuple(a) for a in s[2]]]

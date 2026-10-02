@@ -308,7 +308,7 @@ def kit_centre_sign(k):
         for y in (2, 3, 4):
             if (dx, y) == (2, 4):
                 continue                                      # a corner broken off
-            c.append((dx, y, 0, "minecraft:white_concrete" if y == 3 else "minecraft:red_concrete"))
+            c.append((dx, y, 0, "moarconcrete:white_concrete_texture" if y == 3 else "moarconcrete:red_concrete_texture"))
     return {"cells": c, "cache": (0, 0, -1), "hook": ("lantern", -2, 0), "kind": "debris"}
 
 
@@ -338,7 +338,7 @@ def kit_bus_shelter(k):
                 c.append((dx, y, 1, "minecraft:glass_pane[waterlogged=true]"))
         c.append((dx, 0, 0, stairs("spruce", "north")))
     c += [(dx, 2, dz, "minecraft:smooth_stone") for dx in range(-2, 3) for dz in (-1, 0, 1)]
-    c += [(2, 3, -1, "minecraft:yellow_concrete")]
+    c += [(2, 3, -1, "moarconcrete:yellow_concrete_texture")]   # data/spawn_block_policy.json substitutions: vanilla concrete spawns varoom
     return {"cells": c, "cache": (0, 0, -1), "hook": ("lantern", -2, -1), "kind": "debris"}
 
 

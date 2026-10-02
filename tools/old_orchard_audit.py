@@ -425,7 +425,7 @@ def _jar_evolutions():
     try:
         import battle_sim
         jar = battle_sim.find_jar()
-    except Exception:
+    except battle_sim.SimError:                   # no jar on this machine: the caller reports the check as not run
         return None
     z = zipfile.ZipFile(jar)
     nxt, pre = {}, {}

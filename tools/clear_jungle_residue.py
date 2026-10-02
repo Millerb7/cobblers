@@ -18,12 +18,13 @@ What it does NOT cover: anything else the Jungle Isle carried that a later look 
 is exactly the two kinds above. Ground comes from the heightmap; the world is only written, never read to decide.
 
   python tools/clear_jungle_residue.py plan            print every command
-  python tools/clear_jungle_residue.py run --server-dir <dir>   send them over RCON (needs the coordination lock)
+  python tools/clear_jungle_residue.py run [--server-dir <dir>]   send them over RCON (needs the coordination lock)
 """
 from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -133,7 +134,8 @@ def commands():
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("mode", choices=("plan", "run"))
-    p.add_argument("--server-dir", default="C:/Users/wnd/Documents/github/cobblers-server")
+    p.add_argument("--server-dir", default=os.environ.get("COBBLERS_SERVER_ROOT"),
+                   help="the server directory; defaults to $COBBLERS_SERVER_ROOT (never a hard-coded runtime path)")
     a = p.parse_args(argv)
     work = commands()
     if a.mode == "plan":
@@ -142,6 +144,8 @@ def main(argv=None):
             for c in cmds:
                 print(c)
         return
+    if not a.server_dir:
+        raise SystemExit("run needs --server-dir or $COBBLERS_SERVER_ROOT")
     import reapply
     rc = reapply.Rcon(a.server_dir)
     for label, (x0, z0, x1, z1), cmds in work:
