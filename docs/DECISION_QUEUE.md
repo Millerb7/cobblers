@@ -65,6 +65,20 @@ priced too low.
 a single item. Saving for one means one blackout costs 4,000. That is a **cross-system contract**, not a
 price — it belongs in `data/system_contracts.json` with a test, whichever way you resolve it.
 
+### B11. Two things the trailhead move surfaced, neither of them the trailhead
+
+**The route runs 1-2 blocks from an 18-block drop.** Between x3556 and x3565 around z5287-5302 the
+ground falls from y111 to y93-95, right beside Victory Road's walked line. Verified from the heightmap.
+The trailhead ramp itself refuses those columns (33 refused, by a 1-block step rule that is Minecraft's
+own, not a fudge), so nothing is built over the edge — but a player walks past it. **A railing, or a
+route review.** Your call which.
+
+**`rift_entry` and the zone system's G2 gatehouse both sit at (3738, 5082)** — on the route, distance 0,
+but **145 blocks inside the basin and 300+ from the descent**. So the warden's marker is now at the
+trailhead (3548, 114, 5322) and the gate it belongs to is a long way in. Moving either is in
+`data/routes.json` or `data/rift_zones.json`, both of which were out of the mover's scope, so it stopped
+and said so. **Do the marker and the gate belong together, and if so which one moves?**
+
 ## C. In-game checks only you can make
 
 | # | Check | Why a session cannot |

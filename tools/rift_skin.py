@@ -107,6 +107,30 @@ class Skin:
         self.counts[what] = self.counts.get(what, 0) + n
 
 
+def route_lip_crossing(route_id, pts_in_basin, pts, ring, bi):
+    """The index on a route's dense walked line where it passes the lip, nearest the gap that entrance measures to.
+
+    The entrance's own gap is measured off the applied rim (tools/rift_heightmap.py measured_entrances), and
+    Victory Road was re-routed after the sculpt was applied (35f2a56), so the station the gap is centred on and
+    the station the route actually crosses are 44 stations apart. The sculpt cannot move (it is in the heightmap)
+    and the route is deliberate, so the BUILD meets the route here: the ramp and the trailhead marker are laid on
+    the walked line at its crossing, inside the same measured gap.
+    """
+    cross = [i for i in range(1, len(pts)) if pts_in_basin[i] and not pts_in_basin[i - 1]]
+    if not cross:
+        raise SkinError("route %s never crosses the lip: its entrance cannot be laid on it" % route_id)
+    gx, gz = ring[bi]
+    return min(cross, key=lambda i: (pts[i][0] - gx) ** 2 + (pts[i][1] - gz) ** 2)
+
+
+def dense_route(route_id):
+    paths = json.loads((ROOT / "data" / "route_paths.json").read_text(encoding="utf-8"))["paths"]
+    pts = paths.get(route_id)
+    if not pts:
+        raise SkinError("data/route_paths.json holds no walked line for route %s" % route_id)
+    return [(int(x), int(z)) for x, z in pts]
+
+
 def lake_surface(shape, X0, Z0, H):
     """Columns inside a lake basin whose ground is below that lake's water level, on the skin's own grid.
 
@@ -400,7 +424,53 @@ def build(source_root, server_dir=None):
                     plan.count("entrance path columns")
                     if j == 0 and d == 0 and dw == 0:
                         plan.checks.append((x, y, z, ["minecraft:dirt_path"], "entrance path"))
+        # ---- an entrance that names a route: the ramp and the marker go where the route really crosses the lip.
+        # The apron above is centred on the station the applied gap is measured at; Victory Road's crossing is 44
+        # stations along the same gap, so the walker met unmarked ground and the marker stood 53 blocks away. The
+        # sculpt (heightmap) and the corridor (data/routes.json) are both fixed, so this pass moves instead. A
+        # column the sculpt RAISED outside the basin is the parapet: the ramp refuses it rather than climbing it.
         gx, gz = int(round(rx - nx * 16)), int(round(rz - nz * 16))
+        if e.get("snap_route"):
+            rpts = dense_route(e["snap_route"])
+            inb = []
+            for px, pz in rpts:
+                pix, piz = px - X0, pz - Z0
+                inb.append(0 <= pix < shape[1] and 0 <= piz < shape[0] and bool(basin[piz, pix]))
+            ci = route_lip_crossing(e["snap_route"], inb, rpts, ring, bi)
+            wide = max(1, int(e.get("width", 4)))
+            laid = 0
+            for k in range(max(1, ci - 14), min(len(rpts) - 1, ci + 30)):
+                ax, az = rpts[k - 1]
+                bx2, bz2 = rpts[k + 1]
+                dx, dz = bx2 - ax, bz2 - az
+                ln = math.hypot(dx, dz) or 1.0
+                ux, uz = -dz / ln, dx / ln
+                cx, cz2 = rpts[k]
+                cy = int(H[cz2 - Z0, cx - X0])
+                for dw in range(-(wide // 2), wide - wide // 2):
+                    x = int(round(rpts[k][0] + ux * dw))
+                    z = int(round(rpts[k][1] + uz * dw))
+                    ix, iz = x - X0, z - Z0
+                    if not (0 <= ix < shape[1] and 0 <= iz < shape[0]):
+                        continue
+                    if H[iz, ix] > B[iz, ix] and not basin[iz, ix]:
+                        plan.count("%s: ramp columns refused on raised rim" % e["id"])
+                        continue
+                    y = int(H[iz, ix])
+                    # the ramp is a walking surface, so it is only as wide as the ground a player can walk: one
+                    # block of step, Minecraft's own, not a tolerance. Beside this crossing the sculpt dropped the
+                    # floor 18 blocks one block off the walked line, and a 4-wide stripe painted the drop as path.
+                    if abs(y - cy) > 1:
+                        plan.count("%s: ramp columns off the walking surface" % e["id"])
+                        continue
+                    plan.lines.append("setblock %d %d %d minecraft:dirt_path" % (x, y, z))
+                    laid += 1
+                    if k == ci and dw == 0:
+                        plan.checks.append((x, y, z, ["minecraft:dirt_path"], "entrance path"))
+            plan.count("entrance path columns", laid)
+            plan.count("%s: ramp columns on the walked line" % e["id"], laid)
+            gx, gz = rpts[max(0, ci - 16)]
+            plan.views["%s: the route's crossing" % e["id"]] = [rpts[ci][0], int(H[rpts[ci][1] - Z0, rpts[ci][0] - X0]) + 2, rpts[ci][1]]
         gix, giz = gx - X0, gz - Z0
         gy = int(H[giz, gix]) + 1 if (0 <= gix < shape[1] and 0 <= giz < shape[0]) else 150
         plan.entities.append(
