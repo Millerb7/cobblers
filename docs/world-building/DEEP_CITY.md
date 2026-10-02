@@ -153,6 +153,11 @@ lines, vertical conduits, and one column of light at the core rising toward the 
 
 ## 5. Hoopa's relic area
 
+> **Superseded in part, 2026-10-02.** The surface shrine, its arches, ring and standing stones moved into a hall
+> underground and the cordon was replaced by a zone check (the owner: "the relic site underground"). The surface
+> keeps only the sealed entrance, the lookout and the dig. See `RELIC_UNDERGROUND.md`; step R9RU carves the hall
+> and takes the old surface off a world that has it. The underground half below (shaft, passage, cradle) stands.
+
 **What it is:** an old native shrine on the Deep's west lip, older than the Compact. The Compact found Hoopa's
 anchor here and built its cradle 76 blocks under it. The "relics" are ring fragments from Hoopa's earlier, free
 visits. Rule 7 of `ARC.md` holds: the shrine adds depth; the only required way to Hoopa is through the HQ.
