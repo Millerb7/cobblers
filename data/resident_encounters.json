@@ -1750,7 +1750,7 @@
       "id": "split_bark",
       "name": "Split-Bark",
       "species": "cobblemon:kleavor",
-      "level": 62,
+      "level": 63,
       "location": {
         "x": 7360,
         "z": 7376,
@@ -1849,7 +1849,7 @@
           7387
         ],
         "bbox_why": "every block the dressing writes and the anchor, inclusive [x0, z0, x1, z1]; R18R force-loads exactly this box",
-        "catch_gate_leak": "its level 62 equals Champion Blue's strongest (data/trainers.json champion_blue 58-62), so a player who has beaten the Elite Four but not the Champion has a cap of 62 and the level-cap refusal does NOT stop their catch. The gate on Split-Bark is therefore its PRESENCE: it first appears only for a champion_cleared player; once it is in the world, a player between Lance and Blue could catch it. Codex's level; not changed here (the owner's or Codex's call: 63 would close it)"
+        "level_why": "63, the owner 2026-10-02: Codex's 62 equalled Champion Blue's strongest (58-62), so a player between the Elite Four and the Champion held a cap of 62 and could catch it, 'exactly the window I did not want'. At 63 the level-cap refusal closes that window; the audit now errs, rather than notes, on any level within it."
       }
     }
   ],

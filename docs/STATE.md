@@ -546,8 +546,8 @@
     (6216, 142, 6112), Hornwall (4200, 138, 5920), Orchard Sleeper (2816, 67, 7080), Split-Bark (7360, 139, 7376), and
     Old Jaw, Wiremother, Ridgejaw, Red Rail, Whiteback, River Grip. R18R summons only the two ungated ones (Old Jaw,
     Whiteback); the other eight first appear when a player holding their gate flag comes within 96. A resident that
-    beats a player becomes its blackout guardian (contract C17). **Split-Bark's level 62 equals the Champion's ace**,
-    so it is catchable between the Elite Four and the Champion: the owner's or Codex's call. Its Sunset Isle dressing
+    beats a player becomes its blackout guardian (contract C17). Split-Bark is level 63 (the owner, 2026-10-02), so it
+    cannot be caught between the Elite Four and the Champion. Its Sunset Isle dressing
     is superseded by the Old Orchard (`build.superseded_dressing`).
 - **Every seated trainer is in the world: 63 of 63 at their seats, none doubled, 8 of 8 gym spawners pass**
   (`tools/trainer_world_audit.py`, its first run against a world, 2026-10-02). The seven arena champions had
