@@ -128,6 +128,19 @@
     },
     "why": "A line, not a tube, with torn rock hanging over it (owner, second flyover). Over the whole Rift now, not one stretch."
   },
+  "entrance_railing": {
+    "rail": "minecraft:cobbled_deepslate_wall",
+    "lamp": "minecraft:lantern[hanging=false,waterlogged=false]",
+    "lamp_every": 5,
+    "min_drop": 4,
+    "min_drop_why": "A fall of more than three blocks hurts in Minecraft, so four is the first drop a railing is for. The ramp's own refusal threshold is one block -- Minecraft's step height -- which catches every harmless kerb as well; a railing on every kerb would read as scenery. Not a tuned number: 1 is the step, 4 is the fall.",
+    "reach_why": "Computed, not authored: the scan walks outward from the walked line at most the entrance's own `width` plus its half-width (6 columns at width 4 -- the ramp's outermost column, plus the path's whole width again). A drop further out than the path is wide is not a drop beside the path.",
+    "courses": 1,
+    "closure_why": "The railing is closed twice, because a scan along the walked line's normals is a list and the ground is not. A diagonal pair of walls does not touch, so the in-between column on the outward side is added; and every path column the entrance pass lays near the crossing has its four orthogonal neighbours checked, because an independent sweep of the laid path against the heightmap found four columns a walker could step straight off that no station's normal pointed at: (3556,5303) and (3557,5302) from the path at (3556,5304) and (3557,5303), and (3573,5285) from the path at (3574,5285).",
+    "courses_why": "One course, not two. A wall's collision box is a block and a half, so one course cannot be walked or stepped over, and its top sits below a walker's eyes at the brink: the Rift stays visible from the descent. Two courses would hold the eye exactly where the reveal is.",
+    "why": "Victory Road's walked line passes the Rift's lip one block from an 18-block drop (ground y111 beside y93-95, about x3556-3575 / z5287-5306). The owner, 2026-10-01: 'railing. The route runs 1-2 blocks from an 18-block drop and the ramp already refuses to build over the edge, so the geometry knows. Mark it rather than re-routing.' The pier under each rail block is the skin's own rock, so it reads as a rib on the cliff face; the rail and its lanterns are the dig camp's own vocabulary (tools/rift_mines.py lamp posts).",
+    "covers": "Only an entrance with `snap_route`: an entrance's broad apron is laid on the ring with no step rule at all and has no walked line to find a brink beside. The four apron-only entrances are NOT railed."
+  },
   "portal_sheets": {
     "tag": "rift_fx",
     "count": 9,

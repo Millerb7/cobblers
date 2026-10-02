@@ -6,7 +6,7 @@ The shape is in the heightmap (tools/rift_heightmap.py), so this pass never cuts
   - skins what can be seen: the surface of every column the sculpt moved, and the exposed face below it
   - lays the one-block crack grooves on the floor, the veins and the debris
   - hangs the sky tear and its shards, and sets the portal-sheet glimpses
-  - opens the entrance paths and marks each guard's trailhead
+  - opens the entrance paths, rails the brink beside them, and marks each guard's trailhead
   - paints the biome to the lip
 
 Everything is chosen by an integer hash of the coordinate, so it is vectorised and identical on every rebuild.
@@ -121,6 +121,131 @@ def route_lip_crossing(route_id, pts_in_basin, pts, ring, bi):
         raise SkinError("route %s never crosses the lip: its entrance cannot be laid on it" % route_id)
     gx, gz = ring[bi]
     return min(cross, key=lambda i: (pts[i][0] - gx) ** 2 + (pts[i][1] - gz) ** 2)
+
+
+def brink_columns(rpts, k0, k1, wide, H, Bq, basin, X0, Z0, shape, min_drop, path_cols):
+    """The columns at the brink of a real drop beside a walked line, found by the rule that refused the ramp.
+
+    The ramp lays a column only when its ground is within ONE block of the walked line's (Minecraft's step
+    height), and beside Victory Road's crossing it refused 33 columns because the sculpt dropped the floor 18
+    blocks one block off the line. That refusal already knows where the edge is, so this reuses it rather than
+    inventing a second edge-finder: from the walked line outward, the scan stops at the first column the step
+    rule refuses, and the column is a BRINK only if it is `min_drop` or more BELOW the line -- a drop a fall
+    hurts on, not a kerb.
+
+    It stops on a column the sculpt raised outside the basin: that is the rim parapet, which is already the
+    barrier, and the ramp refuses it for the same reason. It scans both sides, so it is a sweep over the
+    crossing rather than a list aimed at the one drop we know about.
+
+    Where the line runs diagonally the brink steps diagonally with it, and two walls on a diagonal do not
+    touch: the corner between them is open, and a railing with a hole in it is not a railing. So a diagonal
+    pair is closed with the in-between column on the OUTWARD side (the larger dot product with the scan's own
+    outward vector), and only if that column is itself over the drop and is not path or walked line.
+
+    THEN the scan is closed against the path the pass actually lays, because a scan along the walked line's own
+    normals is a list and the path is not: an independent sweep of the laid path columns against the heightmap
+    found four columns a walker could step straight off and no station's normal pointed at -- (3556,5303) and
+    (3557,5302) from path at (3556,5304)/(3557,5303), and (3573,5285) from path at (3574,5285). So every path
+    column near the crossing has its four orthogonal neighbours checked, and any that is `min_drop` or more
+    below the surface a player stands on is a brink column too. After this there is no path column in the
+    crossing with an unrailed step-off, which is the property the railing is for.
+
+    Returns [(x, z, y_low, cy)] ordered along the route (nearest station, then distance), deduplicated, with no
+    column of the walked line itself and none the entrance pass lays path on.
+    """
+    reach = wide + wide // 2          # the ramp's outermost column, plus the path's own width again
+    online = {(x, z) for x, z in rpts}
+    found, seen = [], set()
+
+    def drop_at(x, z, cy):
+        ix, iz = x - X0, z - Z0
+        if not (0 <= ix < shape[1] and 0 <= iz < shape[0]):
+            return None
+        if H[iz, ix] > Bq[iz, ix] and not basin[iz, ix]:
+            return None
+        y = int(H[iz, ix])
+        return y if cy - y >= min_drop else None
+
+    for k in range(k0, k1):
+        ax, az = rpts[k - 1]
+        bx, bz = rpts[k + 1]
+        dx, dz = bx - ax, bz - az
+        ln = math.hypot(dx, dz) or 1.0
+        ux, uz = -dz / ln, dx / ln
+        cx, cz = rpts[k]
+        cy = int(H[cz - Z0, cx - X0])
+        for side in (-1, 1):
+            for m in range(1, reach + 1):
+                x = int(round(cx + ux * side * m))
+                z = int(round(cz + uz * side * m))
+                ix, iz = x - X0, z - Z0
+                if not (0 <= ix < shape[1] and 0 <= iz < shape[0]):
+                    break
+                if H[iz, ix] > Bq[iz, ix] and not basin[iz, ix]:
+                    break                                  # the parapet: already the barrier
+                y = int(H[iz, ix])
+                if cy - y >= min_drop:
+                    if (x, z) not in seen and (x, z) not in online:
+                        seen.add((x, z))
+                        found.append((x, z, y, cy, cx, cz, ux * side, uz * side))
+                    break
+                if abs(y - cy) > 1:
+                    break                                  # a step the ramp refused, but not a fall
+
+    out = []
+    for i, rec in enumerate(found):
+        x, z, y, cy, cx, cz, ox, oz = rec
+        out.append((x, z, y, cy))
+        if i + 1 >= len(found):
+            continue
+        nx, nz = found[i + 1][0], found[i + 1][1]
+        if abs(nx - x) != 1 or abs(nz - z) != 1:
+            continue                                       # already orthogonal, or not adjacent at all
+        best = None
+        for fx, fz in ((x, nz), (nx, z)):
+            if (fx, fz) in seen or (fx, fz) in online:
+                continue
+            fy = drop_at(fx, fz, cy)
+            if fy is None:
+                continue
+            score = (fx - cx) * ox + (fz - cz) * oz        # the one further out from the walked line
+            if best is None or score > best[0]:
+                best = (score, fx, fz, fy)
+        if best:
+            _, fx, fz, fy = best
+            seen.add((fx, fz))
+            out.append((fx, fz, fy, cy))
+
+    # closed against the laid path, not just the walked line's normals (see the docstring)
+    stations = [rpts[k] for k in range(k0, k1)]
+    near = set()
+    for sx, sz in stations:
+        for dx in range(-reach, reach + 1):
+            for dz in range(-reach, reach + 1):
+                c = (sx + dx, sz + dz)
+                if c in path_cols:
+                    near.add(c)
+    for px, pz in sorted(near):
+        pix, piz = px - X0, pz - Z0
+        if not (0 <= pix < shape[1] and 0 <= piz < shape[0]):
+            continue
+        py = int(H[piz, pix])                              # the surface the entrance pass lays the path on
+        for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nx, nz = px + dx, pz + dz
+            if (nx, nz) in seen or (nx, nz) in online or (nx, nz) in path_cols:
+                continue
+            ny = drop_at(nx, nz, py)
+            if ny is None:
+                continue
+            seen.add((nx, nz))
+            out.append((nx, nz, ny, py))
+
+    def along(rec):                                        # order along the route, so the lamps space evenly
+        x, z = rec[0], rec[1]
+        k = min(range(len(stations)), key=lambda i: (stations[i][0] - x) ** 2 + (stations[i][1] - z) ** 2)
+        return (k, (stations[k][0] - x) ** 2 + (stations[k][1] - z) ** 2, x, z)
+
+    return sorted(out, key=along)
 
 
 def dense_route(route_id):
@@ -399,6 +524,8 @@ def build(source_root, server_dir=None):
 
     # ---- the entrances: the path surface and the guard's trailhead, from the sculpt's own ramps
     ent = sc["entrances"]
+    path_cols = set()       # every column the entrance pass lays path on: the railing never stands in one
+    rail_todo = []
     for e in ent:
         bi = e["ring"]
         rx, rz = ring[bi]
@@ -421,6 +548,7 @@ def build(source_root, server_dir=None):
                         continue
                     y = int(H[iz, ix])
                     plan.lines.append("setblock %d %d %d minecraft:dirt_path" % (x, y, z))
+                    path_cols.add((x, z))
                     plan.count("entrance path columns")
                     if j == 0 and d == 0 and dw == 0:
                         plan.checks.append((x, y, z, ["minecraft:dirt_path"], "entrance path"))
@@ -438,8 +566,10 @@ def build(source_root, server_dir=None):
                 inb.append(0 <= pix < shape[1] and 0 <= piz < shape[0] and bool(basin[piz, pix]))
             ci = route_lip_crossing(e["snap_route"], inb, rpts, ring, bi)
             wide = max(1, int(e.get("width", 4)))
+            k0, k1 = max(1, ci - 14), min(len(rpts) - 1, ci + 30)
+            rail_todo.append((e, rpts, k0, k1, wide))
             laid = 0
-            for k in range(max(1, ci - 14), min(len(rpts) - 1, ci + 30)):
+            for k in range(k0, k1):
                 ax, az = rpts[k - 1]
                 bx2, bz2 = rpts[k + 1]
                 dx, dz = bx2 - ax, bz2 - az
@@ -464,6 +594,7 @@ def build(source_root, server_dir=None):
                         plan.count("%s: ramp columns off the walking surface" % e["id"])
                         continue
                     plan.lines.append("setblock %d %d %d minecraft:dirt_path" % (x, y, z))
+                    path_cols.add((x, z))
                     laid += 1
                     if k == ci and dw == 0:
                         plan.checks.append((x, y, z, ["minecraft:dirt_path"], "entrance path"))
@@ -479,6 +610,45 @@ def build(source_root, server_dir=None):
             % (gx + 0.5, gy, gz + 0.5, e.get("guard", "Rift guard"), spec["portal_sheets"]["tag"], "rift_fx_all"))
         plan.views["%s: the trailhead" % e["id"]] = [gx, gy + 2, gz]
     plan.count("entrance trailheads", len(ent))
+
+    # ---- the railing on the brink beside a snapped entrance (owner, 2026-10-01: "mark it rather than re-routing")
+    # It stands in the FIRST column the drop refuses, outside the walking surface, never in a column the entrance
+    # pass lays path on and never on the walked line, so the route's walkable width does not change by a block.
+    # Each rail block is carried by a pier of the skin's own rock from the real ground at the bottom of the drop
+    # up to the walked line's level, so nothing floats and the pier reads as a rib on a face that is already rock.
+    # COVERS only entrances with `snap_route`: the apron entrances have no walked line to find a brink beside.
+    rl = spec["entrance_railing"]
+    nrail = npier = nlamp = 0
+    for e, rpts, k0, k1, wide in rail_todo:
+        brink = brink_columns(rpts, k0, k1, wide, H, B, basin, X0, Z0, shape, rl["min_drop"], path_cols)
+        kept = [(x, z, ylow, cy) for x, z, ylow, cy in brink if (x, z) not in path_cols]
+        plan.count("%s: railing columns in a path column, skipped" % e["id"], len(brink) - len(kept))
+        for i, (x, z, ylow, cy) in enumerate(kept):
+            y = ylow + 1
+            while y <= cy:                                   # the pier, in the skin's own five-block bands
+                y2 = min(cy, y + band - 1 - (y % band))
+                b = streak if unit(x, y // band, z, 12) < 1.0 / pal["streak"]["one_in"] \
+                    else rock[min(len(rock) - 1, int(unit(x, y // band, z, 11) * len(rock)))]
+                plan.lines.append("fill %d %d %d %d %d %d %s" % (x, y, z, x, y2, z, b))
+                npier += y2 - y + 1
+                y = y2 + 1
+            for c in range(rl["courses"]):
+                plan.lines.append("setblock %d %d %d %s" % (x, cy + 1 + c, z, rl["rail"]))
+            nrail += 1
+            if i % rl["lamp_every"] == 0:                    # a lamp post, as the dig camp's own posts are made
+                plan.lines.append("setblock %d %d %d %s" % (x, cy + 1 + rl["courses"], z, rl["rail"]))
+                plan.lines.append("setblock %d %d %d %s" % (x, cy + 2 + rl["courses"], z, rl["lamp"]))
+                nlamp += 1
+            if i == len(kept) // 2:
+                plan.checks.append((x, cy + 1, z, [rl["rail"]], "railing rail"))
+                plan.checks.append((x, cy, z, sorted(set(rock)) + [streak], "railing pier"))
+        plan.count("%s: railing columns" % e["id"], len(kept))
+        if kept:
+            mx, mz, _, mcy = kept[len(kept) // 2]
+            plan.views["%s: the railing on the brink" % e["id"]] = [mx, mcy + 3, mz]
+    plan.count("railing rail blocks", nrail)
+    plan.count("railing pier blocks", npier)
+    plan.count("railing lanterns", nlamp)
 
     # ---- the portal sheets: glimpses set deep in a tear in a solid face
     ps = spec["portal_sheets"]
@@ -798,7 +968,7 @@ def verify(world):
         return 1
     p = json.loads(PLAN.read_text(encoding="utf-8"))
     kinds = {c[4] for c in p["checks"]}
-    need = {"skin surface", "vein", "sky tear", "sky shard", "entrance path"}
+    need = {"skin surface", "vein", "sky tear", "sky shard", "entrance path", "railing rail"}
     if not need <= kinds:
         print("FAIL: the plan checks %s, which is not everything the build makes (%s missing)" % (
             sorted(kinds), sorted(need - kinds)))
