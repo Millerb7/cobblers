@@ -640,6 +640,46 @@
           6234
         ]
       }
+    },
+    {
+      "id": "drovers_hollow_store",
+      "kind": "cache",
+      "place": "the Drovers' Hollow (data/drovers_hollow.json): the store at the end of the old working under the east bank, reached down the well behind the barn's spring",
+      "contents": [
+        {
+          "item": "cobblemon:choice_band",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/choice_band.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:moomoo_milk",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/moomoo_milk.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel at the end of the old working, wrapped in oilcloth: a Choice Band, the herd bull's brow-band, and three bottles of Moomoo Milk.",
+      "why": "data/drovers_hollow.json find: the find that pays for the walk down the well. Late-game, as the place is (the Rift Foot is tier 8): a Choice Band, held nowhere else in the campaign but by trainers (data/trainers.json), and Moomoo Milk from the herd.",
+      "built_by": "tools/drovers_hollow.py (the barrel, in cobblers_drovers_hollow's build, step R9HF)",
+      "trigger": {
+        "min": [
+          4017,
+          92,
+          6021
+        ],
+        "max": [
+          4021,
+          94,
+          6025
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          4021,
+          92,
+          6023
+        ]
+      }
     }
   ]
 }

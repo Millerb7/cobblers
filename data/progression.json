@@ -2200,6 +2200,23 @@
         "door",
         "repeat"
       ]
+    },
+    {
+      "id": "quest.ambient_drovers_hollow.drover_cursor",
+      "quest_id": "ambient_drovers_hollow",
+      "field": "drover_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "greeting",
+      "allowed_values": [
+        "greeting",
+        "who",
+        "herd",
+        "spring",
+        "well",
+        "hornwall",
+        "repeat"
+      ]
     }
   ],
   "gym_markers": {

@@ -9873,6 +9873,83 @@
       "speakers": {
         "varn": "Dessa Varn"
       }
+    },
+    {
+      "id": "dlg_drovers_hollow_drover",
+      "quest_id": "ambient_drovers_hollow",
+      "npc_id": "npc_drovers_hollow_drover",
+      "source": "data/drovers_hollow.json; the owner's request of 2026-10-02 for places in the south (data/drovers_hollow.json request)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.ambient_drovers_hollow.drover_cursor",
+        "initial_node": "greeting",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "greeting",
+          "kind": "line",
+          "speaker": "owen",
+          "text": "Mind the fold gate. They'll walk straight out if you let them, and I'm past walking them back.",
+          "next": "who"
+        },
+        {
+          "id": "who",
+          "kind": "line",
+          "speaker": "owen",
+          "text": "Owen Cray. Last of the Hollow drovers. Forty winters we brought the herds down off the Rift's arms and wintered them in this barn.",
+          "next": "herd"
+        },
+        {
+          "id": "herd",
+          "kind": "line",
+          "speaker": "owen",
+          "text": "What's left is in the fold. Miltank for the milk, a few Tauros, Mudsdale for the hauling. They've been out here a long while, mind. They're not tame and they're not small.",
+          "next": "spring"
+        },
+        {
+          "id": "spring",
+          "kind": "line",
+          "speaker": "owen",
+          "text": "The Hollow's named for the spring at the back of the barn. Dry ravine, wet barn. My father swore the water came from somewhere older than us.",
+          "next": "well"
+        },
+        {
+          "id": "well",
+          "kind": "line",
+          "speaker": "owen",
+          "text": "When it ran low he dug behind the trough to chase it. Found an old working down there instead, and kept the best of each season's tack in it. Never told me what. Trapdoor behind the trough, if you want to look.",
+          "next": "hornwall"
+        },
+        {
+          "id": "hornwall",
+          "kind": "line",
+          "speaker": "owen",
+          "text": "And if you go east up the rise, give the big Bouffalant room. Hornwall, they call him. We never drove him. Nobody will.",
+          "next": "repeat"
+        },
+        {
+          "id": "repeat",
+          "kind": "line",
+          "speaker": "owen",
+          "text": "Behind the trough, down the ladder, along the old working. Shut the trapdoor after you, or the calves go exploring.",
+          "next": "repeat"
+        }
+      ],
+      "speakers": {
+        "owen": "Owen Cray"
+      }
     }
   ]
 }
