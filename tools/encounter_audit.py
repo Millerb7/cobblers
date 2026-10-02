@@ -356,10 +356,11 @@ def heart_geometry(pack, pools, ground_fn=None):
 
 def load_ground():
     """A box -> ground array function from tools/ground.py, or None when the heightmap is not reachable."""
+    import ground
+    import terrain
     try:
-        import ground
         g = ground.load()
-    except Exception:  # noqa: BLE001  the heightmap is optional here; the report says when it was missing
+    except terrain.TerrainUnavailable:  # no heightmap here: the report says the summit areas were not measured
         return None
     return lambda b: g.box(b[0], b[2], b[1], b[3])
 

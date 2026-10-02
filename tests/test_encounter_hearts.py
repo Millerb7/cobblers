@@ -160,10 +160,11 @@ def above(row, cap):
 
 @pytest.fixture(scope="session")
 def ground():
+    import ground as G
+    import terrain
     try:
-        import ground as G
         return G.load()
-    except Exception as exc:  # the heightmap lives outside the repo (COBBLERS_SOURCE_ROOT)
+    except terrain.TerrainUnavailable as exc:  # the heightmap lives outside the repo (COBBLERS_SOURCE_ROOT)
         pytest.skip("no canonical heightmap (%s): a summit heart's area needs it; a skip is not a pass" % exc)
 
 
