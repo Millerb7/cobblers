@@ -12,6 +12,10 @@ Route files (spawn_pool_world/routes/<route>.json), per spawns.json compilation.
   - a box no sample falls in takes the sub-region of the nearest polyline segment
   - an entry is every ambient spawns.json entry scoped to that sub-region, with its biomes and conditions
 
+Sub-region files (spawn_pool_world/subregions/<sub>.json): every ambient entry scoped to the sub-region over its
+polygon, corridor excluded; an entry carrying a "heart" (docs/mechanics/ENCOUNTER_DESIGN.md section 10) only over the
+heart's cells (heart_boxes), and never in a route file.
+
 Habitat files (habitat_pools/<habitat>.json): every ambient entry scoped to the habitat.
 
 Marine files (spawn_pool_world/marine/<band>.json), from spawns.json marine_zones: open sea no sub-region, route or
@@ -236,27 +240,91 @@ def compile_route(route, entries_by_scope, allowed=None, zones=()):
     return doc, summary
 
 
+def box_gap(a, b):
+    """The Chebyshev gap between two inclusive (minX, maxX, minZ, maxZ) boxes, 0 where they overlap."""
+    dx = max(0, a[0] - b[1], b[0] - a[1])
+    dz = max(0, a[2] - b[3], b[2] - a[3])
+    return max(dx, dz)
+
+
+def heart_boxes(sub, heart, grid, exclude, waterways=()):
+    """World-space boxes of a sub-region's heart (docs/mechanics/ENCOUNTER_DESIGN.md section 10).
+
+    The heart's cells are the sub-region's own cells after the same exclusions as its roster (corridor by centre,
+    waterway and spawn-free zone by any overlap), minus every cell within heart["clear_of_path_blocks"] of a route
+    corridor box (Chebyshev gap, as section 1 measures "within 128 blocks of a route"), so the band beside the path
+    keeps the base table alone; a focus heart further keeps only the cells whose centre lies within heart["radius"] of
+    (heart["x"], heart["z"]). A summit heart keeps every remaining cell: its height line is the entries' minY.
+    """
+    cells, x0, z0, _, _ = subregion_boxes.rasterise(sub["polygons"], grid)
+    if exclude:
+        cells -= subregion_boxes.covered_by(cells, x0, z0, grid, exclude)
+    if waterways:
+        cells -= subregion_boxes.covered_by(cells, x0, z0, grid, waterways, whole_cell=True)
+    import numpy as np
+    clear = heart.get("clear_of_path_blocks") or 0
+    cand = []
+    for ix, iz in sorted(cells):
+        cx0, cz0 = x0 + ix * grid, z0 + iz * grid
+        if heart["kind"] == "focus" and math.hypot(cx0 + grid / 2.0 - heart["x"], cz0 + grid / 2.0 - heart["z"]) > heart["radius"]:
+            continue
+        cand.append((ix, iz))
+    keep = set(cand)
+    if clear and cand and exclude:
+        # box_gap for every candidate cell against every corridor box at once
+        c = np.array([(x0 + ix * grid, x0 + ix * grid + grid - 1, z0 + iz * grid, z0 + iz * grid + grid - 1)
+                      for ix, iz in cand], dtype=np.int64)
+        b = np.array([bx[:4] for bx in exclude], dtype=np.int64)
+        dx = np.maximum(0, np.maximum(c[:, None, 0] - b[None, :, 1], b[None, :, 0] - c[:, None, 1]))
+        dz = np.maximum(0, np.maximum(c[:, None, 2] - b[None, :, 3], b[None, :, 2] - c[:, None, 3]))
+        near = (np.maximum(dx, dz) <= clear).any(axis=1)
+        keep = {cell for cell, n in zip(cand, near.tolist()) if not n}
+    return sorted((int(x0 + ix0 * grid), int(x0 + (ix1 + 1) * grid - 1), int(z0 + iz0 * grid), int(z0 + (iz1 + 1) * grid - 1))
+                  for ix0, ix1, iz0, iz1 in subregion_boxes.merge_rectangles(keep))
+
+
 def compile_subregion(sub, entries, exclude, grid, waterways=()):
     """A sub-region's roster over its own polygon, minus the route corridor boxes.
 
     Until 2026-09-17 a roster reached the world only where a route corridor passed through it, so 35
     of 71 sub-regions compiled to nothing. The corridor cells are excluded rather than overlaid: both
     tables would otherwise spawn in the same place and double the weights.
+
+    An entry carrying a "heart" (tools/build_encounters.py, ENCOUNTER_DESIGN.md section 10) is laid over the heart's
+    boxes only (heart_boxes), on top of the base roster there, with ids <sub>_h<n>_<species>; a table without one
+    compiles exactly as before.
     """
+    base = [e for e in entries if not e.get("heart")]
+    hearts = [e for e in entries if e.get("heart")]
     boxes = subregion_boxes.boxes_for(sub["polygons"], grid, exclude, waterways)
     spawns = []
     for n, b in enumerate(boxes):
-        for e in entries:
+        for e in base:
             cond = box_condition(b[0], b[1], b[2], b[3], e)
             spawns.append({"id": "%s_b%04d_%s" % (sub["id"], n, e["species"].replace(" ", "_")), "pokemon": e["species"],
                            "type": "pokemon", "spawnablePositionType": position_type(e),
                            "bucket": e["bucket"], "level": e["level"], "weight": e["weight"], "condition": cond})
+    hboxes = []
+    if hearts:
+        geoms = {json.dumps(e["heart"], sort_keys=True) for e in hearts}
+        if len(geoms) != 1:
+            raise SystemExit("%s: heart entries disagree on the heart's geometry: %s" % (sub["id"], sorted(geoms)))
+        hboxes = heart_boxes(sub, hearts[0]["heart"], grid, exclude, waterways)
+        for n, b in enumerate(hboxes):
+            for e in hearts:
+                cond = box_condition(b[0], b[1], b[2], b[3], e)
+                spawns.append({"id": "%s_h%04d_%s" % (sub["id"], n, e["species"].replace(" ", "_")), "pokemon": e["species"],
+                               "type": "pokemon", "spawnablePositionType": position_type(e),
+                               "bucket": e["bucket"], "level": e["level"], "weight": e["weight"], "condition": cond})
     doc = {"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [], "spawns": spawns}
     summary = {"subregion_id": sub["id"], "box_count": len(boxes), "compiled_entry_count": len(spawns),
-               "species": sorted({e["species"] for e in entries}),
+               "species": sorted({e["species"] for e in base}),
                "covered_blocks": subregion_boxes.area(boxes),
                "corridor_blocks_excluded": subregion_boxes.area(subregion_boxes.boxes_for(sub["polygons"], grid)) - subregion_boxes.area(boxes),
                "output": "spawn_pool_world/subregions/%s.json" % sub["id"]}
+    if hearts:
+        summary["heart"] = dict(hearts[0]["heart"], box_count=len(hboxes), covered_blocks=subregion_boxes.area(hboxes),
+                                species=sorted({e["species"] for e in hearts}))
     return doc, summary
 
 
@@ -321,7 +389,8 @@ def build_waterways(spawns, waterways, grid=WATERWAY_GRID):
 def build(spawns, routes):
     by_scope = {}
     for e in spawns["entries"]:
-        if e["mechanism"] == "spawn_json_coordinate_boxes" and e["ambient"] and e["weight"] > 0:
+        # a heart entry never reaches a corridor (ENCOUNTER_DESIGN.md section 10: the path is always catchable)
+        if e["mechanism"] == "spawn_json_coordinate_boxes" and e["ambient"] and e["weight"] > 0 and not e.get("heart"):
             by_scope.setdefault(e["scope"], []).append(e)
     files, route_summaries, habitat_summaries = {"pack.mcmeta": dumps(PACK_MCMETA)}, [], []
     for r in routes["routes"]:
