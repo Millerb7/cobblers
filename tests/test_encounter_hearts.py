@@ -100,6 +100,8 @@ def doc_hearts():
 def mask_of(box_set):
     """(x0, z0, bool mask[z, x]) covering a set of inclusive boxes."""
     bs = np.array(sorted(box_set), dtype=np.int64).reshape(-1, 4)
+    if len(bs) == 0:
+        return 0, 0, np.zeros((0, 0), dtype=bool)
     x0, z0 = int(bs[:, 0].min()), int(bs[:, 1].min())
     m = np.zeros((int(bs[:, 3].max()) - z0 + 1, int(bs[:, 2].max()) - x0 + 1), dtype=bool)
     for a, b, c, d in bs:
@@ -212,6 +214,12 @@ def test_a_summit_heart_is_cut_at_the_documents_line(world):
 
 # ------------------------------------------------------------------ section 10: the path is always catchable
 
+def base_signatures(t):
+    if "_base_sigs" not in t:
+        t["_base_sigs"] = {ED.detail_signature(e) for e in t["base"]}
+    return t["_base_sigs"]
+
+
 def test_no_heart_spawn_compiles_into_a_route_corridor(world):
     # Without it a route could carry a heart's above-cap presences or its bigger stages, and the road a new player
     # walks would stop being catchable (section 10, "The path is always catchable").
@@ -226,8 +234,9 @@ def test_no_heart_spawn_compiles_into_a_route_corridor(world):
             if sub is None:
                 unread += 1
                 continue
-            t = world["subs"][sub]
-            if ED.species_of(e) not in {row[0] for row in t["base_rows"]}:
+            # a corridor carries its sub-region's base entries as they are (species, bucket, level, weight, every
+            # condition but the box), so a detail that is not one of them came from somewhere else -- the heart
+            if ED.detail_signature(e) not in base_signatures(world["subs"][sub]):
                 leaked.setdefault(r, set()).add(e["id"])
     assert not leaked, {k: sorted(v)[:5] for k, v in leaked.items()}
     total = sum(len(v) for v in world["route_details"].values())
@@ -243,6 +252,9 @@ def test_a_heart_covers_at_most_a_ninth_of_its_place(world, ground):
     for k, t in hearts(world).items():
         _bx, _bz, bm = mask_of(boxes_of(t["base"]))
         x0, z0, hm = mask_of(boxes_of(t["heart"]))
+        if not bm.any():
+            over[k] = "no base area at all"
+            continue
         area = hm
         y = heart_min_y(t)
         if y is not None:
