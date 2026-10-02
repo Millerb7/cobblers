@@ -941,7 +941,11 @@ def pool_records(spec, spawns=None):
             hab_entries.append({"species": sp.capitalize(), "pokemon": sp, "family": ro["family"],
                                 "family_priority": ro["rarity"], "ambient": ambient, "eligibility_reason": why,
                                 "level": level, "bucket": bucket, "weight": weight, "conditions": {}})
-            top.append({"id": "habitat.%s.%s" % (w["pool"], sp), "species": sp, "bucket": bucket, "level": level,
+            # "authored-only" is the established bucket INSIDE a habitat's pool (247 nested entries used it before
+            # this file existed) but not one the schema allows on a top-level entry record, where every weight-0
+            # record carries "ultra-rare" (264 of them). validate_data caught the top-level four, 2026-10-02.
+            top.append({"id": "habitat.%s.%s" % (w["pool"], sp), "species": sp,
+                        "bucket": "ultra-rare" if bucket == "authored-only" else bucket, "level": level,
                         "weight": weight, "ambient": ambient, "scope": w["pool"], "mechanism": "habitat_block",
                         "conditions": {}, "eligibility_reason": why, "spawnable_position": pos[sp]})
     isl = spec["island"]

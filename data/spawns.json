@@ -17751,7 +17751,7 @@
     {
       "id": "habitat.driftmouth_isle_waters.lanturn",
       "species": "lanturn",
-      "bucket": "authored-only",
+      "bucket": "ultra-rare",
       "level": "24-30",
       "weight": 0,
       "ambient": false,
@@ -17777,7 +17777,7 @@
     {
       "id": "habitat.driftmouth_isle_waters.seadra",
       "species": "seadra",
-      "bucket": "authored-only",
+      "bucket": "ultra-rare",
       "level": "24-30",
       "weight": 0,
       "ambient": false,
@@ -17816,7 +17816,7 @@
     {
       "id": "habitat.driftmouth_isle_waters.jellicent",
       "species": "jellicent",
-      "bucket": "authored-only",
+      "bucket": "ultra-rare",
       "level": "24-30",
       "weight": 0,
       "ambient": false,
@@ -17894,7 +17894,7 @@
     {
       "id": "habitat.driftmouth_isle_waters.dragonair",
       "species": "dragonair",
-      "bucket": "authored-only",
+      "bucket": "ultra-rare",
       "level": "24-30",
       "weight": 0,
       "ambient": false,
