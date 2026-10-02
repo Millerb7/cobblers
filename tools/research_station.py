@@ -965,10 +965,14 @@ def _box(x0, y0, z0, x1, y1, z1):
 
 
 def storm_box(doc):
-    site = next(s for s in json.loads((ROOT / "data" / "adopted_legendary_sites.json").read_text(encoding="utf-8"))["sites"]
-                if s["id"] == "adopted_zapdos_tower")
-    (cx, cz), y = site["placement"]["corner"], site["placement"]["y"]
-    sx, sy, sz = site["size"]
+    # through tools/adopted_sites.py: the tower is scheduled (data/placements.json legendary_zapdos_tower), so its
+    # position is no longer in the adopted record's `placement` block
+    import adopted_sites
+    w = adopted_sites.where(adopted_sites.site("adopted_zapdos_tower"))
+    if w["rotation"] != "none" or w["mirror"] != "none":
+        raise SystemExit("storm_box assumes the Zapdos tower unturned; it is %s/%s" % (w["rotation"], w["mirror"]))
+    (cx, cz), y = w["corner"], w["y"]
+    sx, sy, sz = w["size"]
     top = doc["economy"]["storm_log"]["top_storey"]
     return (cx, y + sy - top, cz, cx + sx - 1, y + sy - 1, cz + sz - 1)
 

@@ -238,13 +238,12 @@ def load_ctx(source_root=None, with_gates=True):
             keep.append(("legendary %s spawn_free_zone" % e["id"], (z[0] - lg, z[1] - lg, z[2] + lg, z[3] + lg)))
         if e.get("mouth"):
             keep.append(("legendary %s mouth" % e["id"], R.chebyshev_box(e["mouth"][0], e["mouth"][1], lg)))
-    for s in R.load("adopted_legendary_sites.json").get("sites", []):
-        corner = (s.get("placement") or {}).get("corner")
-        size = s.get("size")
-        if corner and size:
-            keep.append(("adopted legendary %s" % s.get("id"), (corner[0] - lg, corner[1] - lg,
-                                                                corner[0] + size[0] - 1 + lg,
-                                                                corner[1] + size[2] - 1 + lg)))
+    # every adopted site, scheduled or not (tools/adopted_sites.py): a scheduled site's position is in
+    # data/placements.json, and reading `placement` alone dropped it from this keep-out
+    import adopted_sites
+    for s in adopted_sites.sites(R.load("adopted_legendary_sites.json")):
+        x0, z0, x1, z1 = adopted_sites.footprint(s, R.load("placements.json")["placements"])
+        keep.append(("adopted legendary %s" % s.get("id"), (x0 - lg, z0 - lg, x1 + lg, z1 + lg)))
     # placements
     plm = int(ex["placement_margin_blocks"])
     for p in R.load("placements.json")["placements"]:
