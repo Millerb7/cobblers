@@ -39,6 +39,7 @@
       "any",
       "held_item",
       "not",
+      "player_tag",
       "progression_equals",
       "progression_in"
     ],
@@ -9469,6 +9470,254 @@
       ],
       "speakers": {
         "hollis": "Hollis"
+      }
+    },
+    {
+      "id": "dlg_lopunny_superfan",
+      "quest_id": "evt_lopunny_superfan",
+      "npc_id": "npc_lopunny_superfan",
+      "source": "data/lopunny_house.json; docs: the owner's request of 2026-10-02 (data/lopunny_house.json request)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_lopunny_superfan.dialogue_cursor",
+        "initial_node": "h001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_lopunny_superfan.started",
+            "value": true
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_lopunny_superfan.started",
+            "value": false
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ],
+          "node": "h001"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "h001",
+          "kind": "line",
+          "speaker": "hopgood",
+          "text": "Shut the door! SHUT it. They get out, and then they get cold, and then they get sad.",
+          "next": "h002"
+        },
+        {
+          "id": "h002",
+          "kind": "line",
+          "speaker": "hopgood",
+          "text": "Ellis Hopgood. Wipe your boots. You are standing on top of forty-one Buneary. Forty-two. There's a new one. She's shy.",
+          "next": "h003"
+        },
+        {
+          "id": "h003",
+          "kind": "line",
+          "speaker": "hopgood",
+          "text": "You know what a Lopunny is. Course you do. Tall. Poised. Ears like a pair of church spires. A Lopunny is what a Buneary is trying to be.",
+          "next": "h004"
+        },
+        {
+          "id": "h004",
+          "kind": "line",
+          "speaker": "hopgood",
+          "text": "Eleven years I've kept Buneary under this floor. Fed them, sung to them, knitted the little ones hats. Not one of them has ever turned into a Lopunny. Not ONE.",
+          "next": "why"
+        },
+        {
+          "id": "why",
+          "kind": "choice",
+          "speaker": "hopgood",
+          "text": "Go on. Ask me why.",
+          "responses": [
+            {
+              "id": "r_catch",
+              "text": "Have you tried catching one?",
+              "next": "c001"
+            },
+            {
+              "id": "r_wild",
+              "text": "Why not catch a wild Lopunny?",
+              "next": "w001"
+            },
+            {
+              "id": "r_leave",
+              "text": "I should go.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ],
+              "next": "why"
+            }
+          ]
+        },
+        {
+          "id": "c001",
+          "kind": "line",
+          "speaker": "hopgood",
+          "text": "Catch one? In a BALL? They're not luggage, they're family. They live free down there, in the warm, with the carrots.",
+          "next": "c002"
+        },
+        {
+          "id": "c002",
+          "kind": "line",
+          "speaker": "hopgood",
+          "text": "...I'm told that's the problem. A Buneary comes into the world caring nothing for anybody. Zero, the professor's book says. Not low. Zero.",
+          "next": "c003"
+        },
+        {
+          "id": "c003",
+          "kind": "line",
+          "speaker": "hopgood",
+          "text": "It has to come to love its trainer, deep down, a hundred and sixty of whatever love is counted in. Then one day it grows a little, and up stands a Lopunny.",
+          "next": "c004"
+        },
+        {
+          "id": "c004",
+          "kind": "line",
+          "speaker": "hopgood",
+          "text": "Mine haven't got a trainer. Mine have got me. I've done the sums. I come to about nought.",
+          "next": "ask01"
+        },
+        {
+          "id": "w001",
+          "kind": "line",
+          "speaker": "hopgood",
+          "text": "There ARE wild Lopunny on this isle. Out in the snow. I've seen them. They look at me the way you're looking at me now. Then they run.",
+          "next": "w002"
+        },
+        {
+          "id": "w002",
+          "kind": "line",
+          "speaker": "hopgood",
+          "text": "And it wouldn't be the same. I want to see one that grew up. One that was loved into it. You understand.",
+          "next": "ask01"
+        },
+        {
+          "id": "ask01",
+          "kind": "line",
+          "speaker": "hopgood",
+          "text": "So. You've got a trainer's face. Raise a Buneary. Love it until it can't stand it. And when it's a Lopunny, bring her here.",
+          "next": "ask02"
+        },
+        {
+          "id": "ask02",
+          "kind": "line",
+          "speaker": "hopgood",
+          "text": "Just so I can see one. Up close. In my house. I won't touch. Much.",
+          "next": "hub"
+        },
+        {
+          "id": "hub",
+          "kind": "choice",
+          "speaker": "hopgood",
+          "text": "Well? Is she with you?",
+          "responses": [
+            {
+              "id": "r_show",
+              "text": "Show him your Lopunny.",
+              "visible_when": {
+                "kind": "player_tag",
+                "tag": "cobblers_lopunny_in_party"
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "show_lopunny"
+                }
+              ],
+              "next": "s001"
+            },
+            {
+              "id": "r_not_yet",
+              "text": "Not yet.",
+              "next": "wait01"
+            },
+            {
+              "id": "r_again",
+              "text": "How does a Buneary become a Lopunny, again?",
+              "next": "c002"
+            },
+            {
+              "id": "r_bye",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ],
+              "next": "hub"
+            }
+          ]
+        },
+        {
+          "id": "wait01",
+          "kind": "line",
+          "speaker": "hopgood",
+          "text": "No? No. That's all right. That's all right. The kettle's on. It's always on.",
+          "next": "hub"
+        },
+        {
+          "id": "s001",
+          "kind": "line",
+          "speaker": "hopgood",
+          "text": "Oh. Oh, LOOK at her. Look at the EARS.",
+          "next": "s002"
+        },
+        {
+          "id": "s002",
+          "kind": "line",
+          "speaker": "hopgood",
+          "text": "The fluff. The posture. She's looking at me. Is she looking at me? She's looking at the door.",
+          "next": "s003"
+        },
+        {
+          "id": "s003",
+          "kind": "line",
+          "speaker": "hopgood",
+          "text": "You did that. You loved something until it turned into itself. Here. I bought this for them years ago: a Soothe Bell. The shop swore it would make them fond of me.",
+          "next": "s004",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant_reward"
+            }
+          ]
+        },
+        {
+          "id": "s004",
+          "kind": "line",
+          "speaker": "hopgood",
+          "text": "They never noticed it. Maybe the next one of yours will. Mind the trapdoor on your way out.",
+          "next": "done01"
+        },
+        {
+          "id": "done01",
+          "kind": "line",
+          "speaker": "hopgood",
+          "text": "She was perfect. I've started a sketchbook. The Buneary are being very understanding about it.",
+          "next": "done01"
+        }
+      ],
+      "speakers": {
+        "hopgood": "Ellis Hopgood"
       }
     }
   ]

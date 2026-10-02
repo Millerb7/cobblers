@@ -4998,6 +4998,168 @@
       "progression_field_refs": [
         "quest.ambient_ursaluna_den.watcher_cursor"
       ]
+    },
+    {
+      "id": "evt_lopunny_superfan",
+      "source": "data/lopunny_house.json; docs: the owner's request of 2026-10-02 (data/lopunny_house.json request)",
+      "reward_record": "data/rewards.json lopunny_superfan",
+      "place": "data/lopunny_house.json: Ellis Hopgood's house on the South Pine Isle, (6950, 1360)",
+      "dialogue_id": "dlg_lopunny_superfan",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        6948,
+        118,
+        1362
+      ],
+      "objectives": [
+        {
+          "id": "show_a_lopunny",
+          "active_when": {
+            "field": "quest.evt_lopunny_superfan.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_lopunny_superfan.lopunny_shown",
+            "equals": true
+          },
+          "text": "Raise a Buneary into a Lopunny and bring her to Ellis Hopgood."
+        },
+        {
+          "id": "take_the_bell",
+          "active_when": {
+            "field": "quest.evt_lopunny_superfan.lopunny_shown",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_lopunny_superfan.reward_claimed",
+            "equals": true
+          },
+          "text": "Hear Hopgood out."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_lopunny_superfan.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_lopunny_superfan.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_lopunny_superfan.dialogue_cursor",
+              "value": "h001"
+            }
+          ]
+        },
+        {
+          "id": "show_lopunny",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_lopunny_superfan.lopunny_shown",
+              "value": false
+            },
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_lopunny_in_party"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_lopunny_superfan.lopunny_shown",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_lopunny_superfan.dialogue_cursor",
+              "value": "s001"
+            }
+          ]
+        },
+        {
+          "id": "grant_reward",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_lopunny_superfan.lopunny_shown",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_lopunny_superfan.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_lopunny_superfan",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_lopunny_superfan.reward_claimed",
+              "idempotency_key": "evt_lopunny_superfan:reward_lopunny_superfan:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_lopunny_superfan.dialogue_cursor",
+              "value": "s004"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_lopunny_superfan",
+          "status": "item_ids_verified",
+          "record": "data/rewards.json lopunny_superfan (kind npc_grant); contents and verification strings copied from it",
+          "contents": [
+            {
+              "item": "cobblemon:soothe_bell",
+              "count": 1,
+              "verification": "assets/cobblemon/models/item/soothe_bell.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ]
+        }
+      ],
+      "lopunny_check": "The 'Show him your Lopunny' option and the show_lopunny transition read the player tag cobblers_lopunny_in_party (compile_dialogue player_tag), which the cobblers_lopunny_house pack's player_tick_pre callback sets once a second while a Lopunny is in the party and removes otherwise (tools/lopunny_house.py; the party read is the water ladder's, EXP-042). Nothing is taken from the player: showing is enough. End to end NOT verified: experiments/EXP-052-lopunny-show.",
+      "repeat_dialogue": {
+        "before_show": "hub",
+        "after_claim": "done01"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; the tag is each player's own; no player may read or write another player's fields"
+      },
+      "generation_blockers": [
+        "Install cobblers_lopunny_house (its callback) with cobblers_dialogue before boot; place npc_lopunny_superfan at npc_at with spawnnpcat after the restart (tools/reapply.py R9F, from data/rewards.json lopunny_superfan).",
+        "The tag-and-dialogue chain is unproven end to end: experiments/EXP-052-lopunny-show."
+      ],
+      "progression_field_refs": [
+        "quest.evt_lopunny_superfan.started",
+        "quest.evt_lopunny_superfan.lopunny_shown",
+        "quest.evt_lopunny_superfan.reward_claimed",
+        "quest.evt_lopunny_superfan.dialogue_cursor"
+      ]
     }
   ]
 }

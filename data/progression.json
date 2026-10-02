@@ -2108,6 +2108,64 @@
         "curtain",
         "repeat"
       ]
+    },
+    {
+      "id": "quest.evt_lopunny_superfan.started",
+      "quest_id": "evt_lopunny_superfan",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Ellis Hopgood (data/lopunny_house.json); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_lopunny_superfan.lopunny_shown",
+      "quest_id": "evt_lopunny_superfan",
+      "field": "lopunny_shown",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player chose 'Show him your Lopunny' while a Lopunny was in the party (the tag cobblers_lopunny_in_party, tools/lopunny_house.py)."
+    },
+    {
+      "id": "quest.evt_lopunny_superfan.reward_claimed",
+      "quest_id": "evt_lopunny_superfan",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for the Soothe Bell (data/rewards.json lopunny_superfan)."
+    },
+    {
+      "id": "quest.evt_lopunny_superfan.dialogue_cursor",
+      "quest_id": "evt_lopunny_superfan",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "h001",
+      "allowed_values": [
+        "h001",
+        "h002",
+        "h003",
+        "h004",
+        "why",
+        "c001",
+        "c002",
+        "c003",
+        "c004",
+        "w001",
+        "w002",
+        "ask01",
+        "ask02",
+        "hub",
+        "wait01",
+        "s001",
+        "s002",
+        "s003",
+        "s004",
+        "done01"
+      ],
+      "why": "the dialogue cursor of Ellis Hopgood's conversation (dlg_lopunny_superfan)."
     }
   ],
   "gym_markers": {

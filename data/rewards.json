@@ -530,6 +530,26 @@
           1792
         ]
       }
+    },
+    {
+      "id": "lopunny_superfan",
+      "kind": "npc_grant",
+      "place": "Ellis Hopgood's house on the South Pine Isle (data/lopunny_house.json), by the door inside",
+      "npc_at": [
+        6948,
+        118,
+        1362
+      ],
+      "quest": "evt_lopunny_superfan",
+      "contents": [
+        {
+          "item": "cobblemon:soothe_bell",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/soothe_bell.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "why": "The Lopunny superfan's thanks for being shown a Lopunny (the owner, 2026-10-02: he 'wants one of his own'). A Soothe Bell: he bought it for his Buneary, which are wild and never noticed. The dialogue makes no claim for what the bell does. One per player, by grant_reward_once. An owner decision: a Lopunnite (mega_showdown:lopunnite, docs/research/notes/reward-item-inventory.md) would fit better and is deliberately not given, because mega stones are scarce by the owner's design (docs/world-building/SOUTHERN_RIFT_MEGA.md).",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/lopunny_house.py seats him on, checked by tools/lopunny_house_audit.py"
     }
   ]
 }

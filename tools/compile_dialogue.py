@@ -28,6 +28,10 @@ The runtime pieces, each proven on the disposable world before this compiler rel
              (cobblers:flag/<id>, tools/progression_pack.py). Advancements are not in q.player.data(), so it is probed as
              the held items are: `execute as <uuid> if entity @s[advancements={...=true}] run tag @s add <tag>`, then
              q.player.has_tag, in the same action (first used by the ferry, tools/ferries.py, 2026-09-27).
+  player_tag a condition {"kind": "player_tag", "tag": "<tag>"} holds when the player carries that scoreboard tag,
+             read with q.player.has_tag like every probe here. Nothing in the dialogue sets it: another pack keeps it
+             (the first, tools/lopunny_house.py: a player_tick_pre callback tags a player with a Lopunny in the party,
+             the party read the water ladder proved, EXP-042). End to end it is experiments/EXP-052-lopunny-show.
   functions  an effect {"kind": "function", "function": "cobblers:<path>"} runs that function as and at the player, like
              scene_function but for a function a generated pack owns (the ferry's trips).
   opened by  a conversation with "npc_id": null has no NPC class: a prop or an actor opens it (the scene runtime runs
@@ -164,6 +168,13 @@ class Compiler:
             tag = self.tag_for("flag", sel)
             probes.setdefault(("flag", sel), run(["tag ", UUID, " remove %s" % tag]) +
                               run(["execute as ", UUID, " if entity %s run tag @s add %s" % (sel, tag)]))
+            return "q.player.has_tag('%s')" % tag
+        if k == "player_tag":
+            # a tag another pack keeps on the player (the Lopunny house's party callback, tools/lopunny_house.py):
+            # read directly, as every probe above reads the tag it set. No probe: this compiler sets nothing here
+            tag = c.get("tag")
+            if not isinstance(tag, str) or not re.fullmatch(r"[a-z0-9_.]+", tag):
+                raise Unsupported("player_tag %r is not [a-z0-9_.]+" % (tag,))
             return "q.player.has_tag('%s')" % tag
         raise Unsupported("condition kind %s" % k)
 
