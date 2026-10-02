@@ -687,15 +687,21 @@ def _charge(balance):
     return s.get("@s", "bo.lost"), applied
 
 
-# Without it the charge rounds down (a balance of 1 to 9 loses nothing, against the spec) or up by a whole unit on an
-# exact multiple, or the amount the macro removes differs from the amount the message reports.
-def test_the_charge_is_the_ceiling_of_percent_of_the_balance_and_at_least_one():
-    pct = CFG["money"]["percent"]
+# The rule this guards changed with decision B10 (the owner, 2026-10-01): the charge is a flat ceil(cap * percent /
+# 100) -- $600 at the authored values -- clamped to the balance, not a percentage of the balance (data/blackout.json
+# money.charge_rule, contract C15). The hazards are the same ones, re-aimed: without it the flat amount rounds down
+# (a cap * percent that is not an exact multiple of 100 charges a unit less than the data says), a balance below the
+# charge is taken for more than it holds (`cobbledollars remove` more than the player has), a balance above zero
+# loses nothing, a balance of zero is charged anyway, or the amount the macro removes differs from the amount
+# bo.lost reports to the message.
+def test_the_charge_is_the_flat_amount_clamped_to_the_balance_and_at_least_one():
+    flat = math.ceil(CFG["money"]["cap"] * CFG["money"]["percent"] / 100)
+    assert flat >= 1, flat
     for bal in list(range(0, 1001)) + [9_999, 10_000, 10_001, 123_457, 2_000_000, 99_999_999]:
         lost, applied = _charge(bal)
-        assert lost == math.ceil(bal * pct / 100), (bal, lost)
+        assert lost == min(bal, flat), (bal, lost, flat)
         if bal > 0:
-            assert lost >= 1, bal
+            assert 1 <= lost <= bal, (bal, lost)
             assert len(applied) == 1 and applied[0][1] == "with storage %s:blackout charge" % NS, applied
             assert applied[0][2][("%s:blackout" % NS, "charge.amount")] == lost, (bal, applied)
             assert s_log(bal) == ["cobbledollars remove @s %d" % lost], s_log(bal)
@@ -713,19 +719,24 @@ def s_log(balance):
 
 # Without it a balance large enough to overflow `balance * percent` in a 32-bit score is charged a negative amount
 # (and `cobbledollars remove @s -N` either fails or pays the player), at the data's percent or any other the owner may
-# set. (Found by this suite at 1b9bbc1: 214,748,355 and up at 10%; fixed in 5d522d7.)
+# set. (Found by this suite at 1b9bbc1: 214,748,355 and up at 10%; fixed in 5d522d7.) Decision B10 removed the
+# multiplication that overflowed -- the amount is now a constant from the cap, clamped to the balance -- so the same
+# balances are checked for the same hazard against the flat rule: the largest score a player can hold is charged the
+# flat amount, positively, at every percent the owner may set. If the balance term ever returns, 2**31-1 goes negative
+# here again.
 @pytest.mark.parametrize("pct", [CFG["money"]["percent"], 1, 7, 33, 100])
 def test_the_charge_is_correct_for_every_balance_a_score_can_hold(pct):
     cfg = copy.deepcopy(CFG)
     cfg["money"]["percent"] = pct
     fns = functions(build(cfg))
+    flat = math.ceil(cfg["money"]["cap"] * pct / 100)
     for bal in (1, 99, 100, 101, 12_345, 214_748_355, 214_748_364, 500_000_000, 2 ** 31 - 100, 2 ** 31 - 1):
         s = Sim(fns=fns, query=lambda cmd, b=bal: b if cmd.startswith("cobbledollars query") else 0)
         for f in load_functions():
             s.call(f)
         s.call("blackout/charge")
-        want = -(-bal * pct // 100)
-        assert s.get("@s", "bo.lost") == want, (pct, bal, s.get("@s", "bo.lost"))
+        want = min(bal, flat)
+        assert 0 < want == s.get("@s", "bo.lost"), (pct, bal, s.get("@s", "bo.lost"), want)
         assert [l for l in s.log if l.startswith("cobbledollars ")] == ["cobbledollars remove @s %d" % want]
 
 

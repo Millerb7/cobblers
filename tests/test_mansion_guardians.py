@@ -73,6 +73,7 @@ SCENE = next(s for s in _load("scenes.json")["scenes"] if s["id"] == "route1_gas
 ROUTE_SEATS = _load("route_trainers.json")["trainers"]
 VR_SEATS = _load("vr_trainers.json")["trainers"]   # Victory Road's ten, seated 2026-09-30
 LATE_SEATS = _load("late_route_trainers.json")["trainers"]   # routes 4-8's 28, seated 2026-09-30
+ARENA_SEATS = _load("arena_trainers.json")["trainers"]       # Heaven's Arena's seven tier champions, 2026-10-01
 ROUTE_TRAINER_IDS = {r["id"] for r in _load("trainers.json")["trainers"]}
 PLACEMENTS = _load("placements.json")
 
@@ -606,15 +607,25 @@ def test_with_every_guardian_beaten_the_escort_reaches_family_and_grants_the_spe
 
 # Without it R17 places only the route trainers (the guardians are generated but never stand in the house), or seats
 # a guardian somewhere other than its record.
+#
+# The ordering guarantee this protects: R17's trainer list is the CONCATENATION OF THE SEAT FILES in a fixed order,
+# one entry per seat record and nothing else -- so every seat file reaches R17 (a new file appended to load()'s
+# `seats` and forgotten here fails), no file's records are dropped, interleaved or duplicated, and each entry carries
+# that record's own seat and yaw. The order itself matters because R17 replays into a freshly exported world and a
+# re-run must issue the same commands in the same sequence; a group that moves in load() is a deliberate change and
+# shows up here as a failure rather than silently reordering the re-apply.
 def test_r17_placements_are_the_route_seats_then_the_guardians():
-    # placements() order: routes 1-3, then routes 4-8, then the guardians, then Victory Road
+    # placements() order: routes 1-3, routes 4-8, the guardians, Victory Road, then Heaven's Arena's seven tier
+    # champions (appended last by load(), 2026-10-01)
     want = [(s["id"], tuple(s["seat"]), s["yaw"]) for s in ROUTE_SEATS] + \
            [(s["id"], tuple(s["seat"]), s["yaw"]) for s in LATE_SEATS] + \
            [(g["id"], tuple(g["seat"]), g["yaw"]) for g in GUARDS] + \
-           [(v["id"], tuple(v["seat"]), v["yaw"]) for v in VR_SEATS]
-    # 13 route + 28 late route + 5 guardians + 10 Victory Road. It was 18, then 28, now 56; the count is
-    # asserted so the data cannot shrink silently, and it moves only when records are deliberately added.
-    assert len(want) == 56
+           [(v["id"], tuple(v["seat"]), v["yaw"]) for v in VR_SEATS] + \
+           [(a["id"], tuple(a["seat"]), a["yaw"]) for a in ARENA_SEATS]
+    # 13 route + 28 late route + 5 guardians + 10 Victory Road + 7 arena. It was 18, then 28, then 56, now 63; the
+    # count is asserted so the data cannot shrink silently, and it moves only when records are deliberately added.
+    assert (len(ROUTE_SEATS), len(LATE_SEATS), len(GUARDS), len(VR_SEATS), len(ARENA_SEATS)) == (13, 28, 5, 10, 7)
+    assert len(want) == 63
     assert RT.placements() == want
 
 

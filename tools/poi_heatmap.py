@@ -67,10 +67,9 @@ for f in sorted(glob.glob(ROOT + "/data/*.json")) + sorted(glob.glob(ROOT + "/da
     if base in GEOMETRY_ONLY:
         continue
     cat = CATEGORY.get(base, "other")
-    try:
-        d = json.load(open(f, encoding="utf-8"))
-    except Exception:
-        continue
+    # no handler: every file under data/ is valid JSON (tools/validate.py), so a parse error here is a real
+    # fault in the data, and silently dropping that file off the map would hide it
+    d = json.load(open(f, encoding="utf-8"))
     p = []
     points(d, p)
     cats[cat].extend(p)
@@ -83,8 +82,8 @@ print("total POIs:", len(allpts))
 small = np.zeros((MAP, MAP), np.float32)
 shade = np.full((MAP, MAP), 0.5, np.float32)
 land = np.zeros((MAP, MAP), bool)
+import terrain as T
 try:
-    import terrain as T
     h, world = T.load(ROOT + "/data/world.json", None)
     sea = T.sea_level(world)
     step = max(1, h.shape[0] // MAP)
@@ -94,8 +93,9 @@ try:
     g = np.gradient(small)
     shade = np.clip(0.5 + (g[1] - g[0]) * 0.35, 0, 1)
     print("terrain backdrop %dx%d, sea %d, land %.1f%%" % (small.shape[1], small.shape[0], sea, 100 * land.mean()))
-except Exception as e:
-    print("no terrain backdrop (%s: %s)" % (type(e).__name__, e))
+except T.TerrainUnavailable as e:
+    # the one error that means "no heightmap on this machine": the map still draws, on a flat backdrop
+    print("no terrain backdrop (%s)" % e)
 
 scale = MAP / float(W)
 dens = np.zeros((MAP, MAP), np.float32)
@@ -140,10 +140,7 @@ d = ImageDraw.Draw(canvas)
 
 drawn = {}
 for fname, col in (("routes.json", (205, 205, 215)), ("rivers.json", (70, 120, 180))):
-    try:
-        doc = json.load(open(ROOT + "/data/" + fname, encoding="utf-8"))
-    except Exception:
-        continue
+    doc = json.load(open(ROOT + "/data/" + fname, encoding="utf-8"))
     lines = []
 
     def grab(o):
@@ -180,7 +177,7 @@ try:
     F = ImageFont.truetype("arial.ttf", 17)
     FB = ImageFont.truetype("arialbd.ttf", 27)
     FS = ImageFont.truetype("arial.ttf", 14)
-except Exception:
+except OSError:                       # ImageFont.truetype's error for a font this machine does not have
     F = FB = FS = ImageFont.load_default()
 
 for i in range(9):
@@ -193,10 +190,7 @@ for i in range(8):
     d.text((PAD_L - 22, PAD_T + (i + 0.5) * MAP / 8.0 - 8), "ABCDEFGH"[i], font=FS, fill=(150, 150, 160))
 
 # the named settlements, so a hot spot can be identified rather than only admired
-try:
-    towns = json.load(open(ROOT + "/data/towns.json", encoding="utf-8"))["towns"]
-except Exception:
-    towns = []
+towns = json.load(open(ROOT + "/data/towns.json", encoding="utf-8"))["towns"]
 placed_labels = 0
 for t in towns:
     c = t.get("centre") or {}

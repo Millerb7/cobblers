@@ -97,13 +97,20 @@ def test_r17_places_every_scene_npc_at_its_position_with_its_class(steps):
 
 
 # Without it a route trainer or a mansion guardian is not placed after a re-export, or at a seat other than the
-# recorded one.
+# recorded one. The guarantee here is COVERAGE, not order (the comparison is sorted): every seat record in every seat
+# file reaches R17 exactly once, with its own position and yaw, and R17 places nothing that is not a seat record --
+# so a new seat file that no step replays, or a trainer R17 invents, fails. The fixed ORDER of the groups is
+# tests/test_mansion_guardians.py::test_r17_placements_are_the_route_seats_then_the_guardians.
 def test_r17_places_every_trainer_at_its_seat(steps):
     # routes 4-8's 28, seated 2026-09-30 by tools/late_route_trainers.py: the biggest unplaced content in the
-    # project until then. They join R17 like any other placed trainer.
+    # project until then. They join R17 like any other placed trainer, as do Heaven's Arena's seven tier
+    # champions (data/arena_trainers.json, 2026-10-01), which are summoned like any other seated trainer -- the
+    # arena's repeatability changes its cycle lines, not whether R17 has to stand it up after an export.
     LATE = json.loads((ROOT / "data" / "late_route_trainers.json").read_text(encoding="utf-8"))["trainers"]
-    want = [(t["id"], tuple(t["seat"]), t["yaw"]) for t in SEATS + LATE + GUARDIANS + VR_SEATS]
-    assert (len(SEATS), len(LATE), len(GUARDIANS), len(VR_SEATS)) == (13, 28, 5, 10)
+    ARENA = json.loads((ROOT / "data" / "arena_trainers.json").read_text(encoding="utf-8"))["trainers"]
+    want = [(t["id"], tuple(t["seat"]), t["yaw"]) for t in SEATS + LATE + GUARDIANS + VR_SEATS + ARENA]
+    assert (len(SEATS), len(LATE), len(GUARDIANS), len(VR_SEATS), len(ARENA)) == (13, 28, 5, 10, 7)
+    assert len(want) == len(set(want)) == 63
     assert sorted(_acts(steps, "R17", "trainer")) == sorted(want)
 
 

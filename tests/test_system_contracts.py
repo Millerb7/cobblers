@@ -40,6 +40,7 @@ from __future__ import annotations
 import ast
 import copy
 import fnmatch
+import inspect
 import json
 import math
 import os
@@ -1079,6 +1080,139 @@ import test_gate_clocks as GC  # noqa: E402
 @pytest.mark.parametrize("case", _params("C14", [(k, (k,)) for k in sorted(GC.SCENARIOS)]))
 def test_contract_c14_no_repeatable_player_action_resets_an_accumulating_gate_clock(case):
     GC.SCENARIOS[case]()
+
+
+# =================================================================================================================
+# C15. A blackout's money charge is flat, so saving is never punished
+# =================================================================================================================
+
+# the spread the registry's note_for_the_test_author asks for: under the charge, at it, just over it, the cap, two
+# balances a saver might hold while planning a ladder rung, and the largest number a scoreboard score can hold
+C15_BALANCES = (1, 199, 599, 600, 601, 3_000, 20_000, 250_000, 2 ** 31 - 1)
+C15_PATH = ("blackout/charge", "blackout/charge_calc", "blackout/charge_apply")
+
+
+def _c15_flat():
+    """ceil(cap * percent / 100) re-derived from data/blackout.json with a different expression than the generator's
+    (math.ceil of a true division, not its negated floor-divide), so the expectation is the data's, not the tool's."""
+    m = BLACKOUT["money"]
+    return math.ceil(m["cap"] * m["percent"] / 100)
+
+
+def _c15_charge(fns, balance):
+    """One blackout at `balance`, run on a generated pack: (bo.lost, the CobbleDollars removals, the functions the
+    charge entry point reached)."""
+    s = TB.Sim(fns=fns, query=lambda cmd, b=balance: b if cmd.startswith("cobbledollars query") else 0)
+    for f in TB.load_functions():
+        s.call(f)
+    reached_from = len(s.calls)
+    s.call("blackout/charge")
+    return (s.get("@s", "bo.lost"), [l for l in s.log if l.startswith("cobbledollars remove")],
+            [c[0] for c in s.calls[reached_from:]])
+
+
+def _c15_const(fns):
+    """The #charge constant the pack sets at load."""
+    s = TB.Sim(fns=fns)
+    for f in TB.load_functions():
+        s.call(f)
+    return s.get("#charge", "bo.cfg")
+
+
+def _c15_contract(fns):
+    """C15's owner half, asserted on whatever generator produced `fns`: the real pack, and a mutant's (below)."""
+    flat = _c15_flat()
+    for bal in C15_BALANCES:
+        lost, removed, _ = _c15_charge(fns, bal)
+        assert lost == min(bal, flat), "balance %d charged %d, not min(%d, %d)" % (bal, lost, bal, flat)
+        assert 0 <= lost <= bal, (bal, lost)
+        assert removed == ["cobbledollars remove @s %d" % lost], (bal, removed)
+    # strictly flat: identical at any two balances above the charge, however far apart
+    charged = {b: _c15_charge(fns, b)[0] for b in C15_BALANCES if b > flat}
+    assert set(charged.values()) == {flat}, charged
+    # 0 charges nothing and never reaches the calc; 1 charges exactly 1
+    lost0, removed0, reached0 = _c15_charge(fns, 0)
+    assert (lost0, removed0) == (0, []) and "blackout/charge_calc" not in reached0, (lost0, removed0, reached0)
+    assert _c15_charge(fns, 1)[0] == 1, _c15_charge(fns, 1)
+    # the hazard the 20%-of-balance rule carried: 2**31-1 times a percent wraps a 32-bit score negative, and
+    # `cobbledollars remove @s -N` pays the player. The flat charge is positive and is the flat amount.
+    big, removed_big, _ = _c15_charge(fns, 2 ** 31 - 1)
+    assert big == flat > 0 and removed_big == ["cobbledollars remove @s %d" % flat], (big, removed_big)
+
+
+def _c15_mutant(*subs):
+    """charge_amount() and build() with the GENERATOR's own source rewritten in memory (CLAUDE.md "How to prove an
+    audit is independent": mutate the generator, never the record). data/blackout.json is not touched."""
+    src = inspect.getsource(TB.BP.charge_amount) + "\n\n" + inspect.getsource(TB.BP.build)
+    for old, new in subs:
+        assert old in src, "mutation target %r is no longer in the generator's source; re-aim it" % old
+        src = src.replace(old, new, 1)
+    ns = dict(TB.BP.__dict__)
+    exec(compile(src, "<mutant blackout_pack>", "exec"), ns)  # noqa: S102 - deliberate, in-memory, test-only
+    return TB.functions(ns["build"](copy.deepcopy(BLACKOUT), copy.deepcopy(TB.MOUNTS),
+                                    copy.deepcopy(TB.PLACEMENTS), copy.deepcopy(TB.PROGRESSION), None))
+
+
+# Without it decision B10's guarantee is unenforced in either direction: the charge could go back to scaling with the
+# balance (so every rung the ladder or a trader prices raises the expected cost of saving for it, the conflict
+# INCOME_MEASUREMENT.md 4.3.3 measured), or the clamp could go (a charge larger than the balance, or a negative one
+# from a 32-bit overflow, which `cobbledollars remove @s -N` pays to the player instead of taking).
+def test_contract_c15_a_blackouts_money_charge_is_flat_and_never_exceeds_the_balance():
+    flat = _c15_flat()
+    _c15_contract(TB.FNS)
+    # the amount is the data's, set once at load, not recomputed per player
+    assert _c15_const(TB.FNS) == flat, (_c15_const(TB.FNS), flat)
+
+    # ---- the consumer half: the charge path reads no price and no balance-derived scale, so no rung in
+    # docs/mechanics/PROGRESSION_LADDER.md and no entry in data/traders.json can change what a death costs.
+    _, _, reached = _c15_charge(TB.FNS, 20_000)
+    assert set(reached) == {"blackout/charge_calc", "blackout/charge_apply"}, reached
+    body = [l.strip() for name in C15_PATH for l in TB.FNS[name] if l.strip() and not l.lstrip().startswith("#")]
+    assert [l for l in body if l.startswith("scoreboard players operation")] == [
+        "scoreboard players operation @s bo.lost = #charge bo.cfg",       # the constant
+        "scoreboard players operation @s bo.lost < @s bo.bal"], body      # min(charge, balance): the only balance read
+    assert not [l for l in body if re.search(r"(\*=|/=|%=|\+=|-=)", l)], body
+    assert {o for l in body for o in re.findall(r"bo\.\w+", l)} == {"bo.lost", "bo.bal", "bo.cfg"}, body
+    assert [l for l in body if "cobbledollars" in l] == [
+        "execute store result score @s bo.bal run cobbledollars query @s",
+        "$cobbledollars remove @s $(amount)"], body
+    # no progress is read either, so the charge is the same at badge 0 and after the Champion
+    assert not [l for l in body if "advancement" in l or "tag=" in l], body
+    # the only numbers written into the path are 0 (the reset) and 1 (the `matches 1..` guard and the storage scale):
+    # no price and no amount is inlined, and the amount can only come from #charge
+    assert {int(n) for l in body for n in re.findall(r"(?<![\w.])-?\d+", l)} <= {0, 1}, body
+    # and no price is even an input to the generator
+    src = (ROOT / "tools" / "blackout_pack.py").read_text(encoding="utf-8")
+    reads = set(re.findall(r'load\("([\w.]+\.json)"\)', src))
+    assert reads and reads <= {"blackout.json", "water_mounts.json", "placements.json", "progression.json",
+                               "towns.json"}, reads
+    assert "traders.json" not in src and "PROGRESSION_LADDER" not in src
+    assert set(inspect.signature(TB.BP.build).parameters) == {"cfg", "mounts", "placements", "progression",
+                                                              "boat_rows"}
+
+
+# Without it C15's check above could share the generator's own arithmetic and would then pass on whatever amount the
+# generator emits. Each mutation changes tools/blackout_pack.py's source in memory and leaves data/blackout.json alone.
+def test_harness_the_c15_charge_check_bites_when_the_generator_is_mutated():
+    # (1) the balance term back: the pre-B10 rule, floored percent of the balance, still clamped
+    old_rule = _c15_mutant(('        "scoreboard players operation @s bo.lost = #charge bo.cfg",',
+                            '        "scoreboard players operation @s bo.lost = @s bo.bal",\n'
+                            '        "scoreboard players operation @s bo.lost *= #pct bo.cfg",\n'
+                            '        "scoreboard players operation @s bo.lost /= #100 bo.cfg",'))
+    with pytest.raises(AssertionError):
+        _c15_contract(old_rule)
+    assert _c15_charge(old_rule, 20_000)[0] == 20_000 * BLACKOUT["money"]["percent"] // 100
+    # and it brings back the overflow: at 2**31-1 the old rule charges a negative amount, which the check catches
+    assert _c15_charge(old_rule, 2 ** 31 - 1)[0] < 0
+
+    # (2) the constant off by one. (A pure floor instead of the ceiling is NOT observable at the authored values --
+    # 3000 * 20% is exactly 600 -- so the ceiling is held by re-deriving it with math.ceil from cap and percent, which
+    # bites the day either changes to a value the two disagree on, not by this mutation.)
+    off_by_one = _c15_mutant(('    return -((-money["cap"] * money["percent"]) // 100)',
+                              '    return -((-money["cap"] * money["percent"]) // 100) + 1'))
+    assert _c15_const(off_by_one) == _c15_flat() + 1
+    with pytest.raises(AssertionError):
+        _c15_contract(off_by_one)
 
 
 # =================================================================================================================
