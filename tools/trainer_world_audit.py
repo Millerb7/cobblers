@@ -24,6 +24,8 @@ installed cobblers_trainers with the build).
 """
 from __future__ import annotations
 
+import os
+
 import argparse
 import json
 import sys
@@ -163,7 +165,8 @@ def spawner_check(rc):
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--server-dir", default=str(ROOT.parent / "cobblers-server"))
+    p.add_argument("--server-dir", default=os.environ.get("COBBLERS_SERVER_ROOT"),
+                   help="the server directory; defaults to $COBBLERS_SERVER_ROOT (never a hard-coded runtime path)")
     p.add_argument("--out", help="write every row here; the console gets the verdict and the failures only")
     a = p.parse_args(argv)
     import reapply

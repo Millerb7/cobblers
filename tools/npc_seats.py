@@ -18,6 +18,8 @@ those is a different question from "are OUR seats right" (CLAUDE.md "Our list is
 """
 from __future__ import annotations
 
+import os
+
 import argparse
 import json
 import math
@@ -156,7 +158,8 @@ def verify(rc, doc=None, classes=None):
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("action", choices=("check", "verify"))
-    p.add_argument("--server-dir", default=str(ROOT.parent / "cobblers-server"))
+    p.add_argument("--server-dir", default=os.environ.get("COBBLERS_SERVER_ROOT"),
+                   help="the server directory; defaults to $COBBLERS_SERVER_ROOT (never a hard-coded runtime path)")
     a = p.parse_args(argv)
     sys.path.insert(0, str(ROOT / "tools"))
     if a.action == "check":

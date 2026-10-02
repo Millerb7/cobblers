@@ -236,9 +236,10 @@ def ground():
     if not os.environ.get("COBBLERS_SOURCE_ROOT"):
         pytest.skip("COBBLERS_SOURCE_ROOT unset: the canonical heightmap is not readable here")
     import ground as G
+    from terrain import TerrainUnavailable
     try:
         return G.load()
-    except Exception as e:  # terrain.TerrainUnavailable, a missing or mismatched file
+    except TerrainUnavailable as e:  # a missing or mismatched heightmap; never a bare except (test_no_swallowed_crashes)
         pytest.skip("heightmap unreadable: %s" % e)
 
 
