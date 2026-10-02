@@ -109,6 +109,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 "cobblers_frostpeak_summit",
                 # 2026-10-02: the Lopunny superfan's house and its Buneary cellar (tools/lopunny_house.py), run by R9LH
                 "cobblers_lopunny_house",
+                # 2026-10-02: Shrew Station on Shrew Lake's south strand (tools/research_station.py), run by R9RS; every
+                # item it can give stays held behind data/research_station.json economy.issuing
+                "cobblers_research_station",
                 # 2026-09-29: the gym interiors (tools/gym_interiors.py, data/gym_interiors.json): the healing
                 # machines out of all eight placed gyms, and gym 1's works carved under its lot. Block functions run
                 # by R16E, after the donors (R9) that stamp the gyms whole and would erase anything written first
@@ -498,6 +501,8 @@ def prepare_jobs(a):
     add("frostpeak_summit_audit", "frostpeak_summit_audit.py", *src)
     add("lopunny_house:build", "lopunny_house.py", "build", *src)
     add("lopunny_house_audit", "lopunny_house_audit.py", *src)
+    add("research_station:build", "research_station.py", "build", *src)
+    add("research_station_audit", "research_station_audit.py", *src)
     add("sea_drift_audit", "sea_drift_audit.py", *src)
     # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
     # then the offline audit, which re-derives every shell box from data/placements.json, replays the written
@@ -1070,6 +1075,11 @@ def steps(with_spawns=False):
     import lopunny_house
     out.append(("R9LH", "the Lopunny superfan's house and its Buneary cellar (data/lopunny_house.json)",
                 lopunny_house.placement_steps()))
+    # Shrew Station (2026-10-02, tools/research_station.py): BEFORE R9E, because the Psyduck Habitat Block sits in a
+    # post this pack writes; its four NPCs are placed by R9F
+    import research_station
+    out.append(("R9RS", "Shrew Station, the research station on Shrew Lake's south strand (data/research_station.json)",
+                research_station.placement_steps()))
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
