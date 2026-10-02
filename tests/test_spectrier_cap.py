@@ -542,6 +542,8 @@ def test_mutation_plain_kill_is_caught(tmp_path):
 
 # without it: nothing shows the refusal test would notice the footprint check going missing.
 def test_mutation_no_centre_check_is_caught(tmp_path):
-    mod = mutant("    if not inside:\n", "    if False:\n")
+    # every guard in check_centre switched off at once (inside, footprint centre, coverage)
+    mod = mutant("    x, y, z = doc[\"site\"][\"centre\"]\n    p = rec[\"position\"]\n",
+                 "    return\n    x, y, z = doc[\"site\"][\"centre\"]\n    p = rec[\"position\"]\n")
     moved = _moved(tmp_path, x=100)
     assert generate(tmp_path, mod=mod, placements=moved, name="mutant").is_dir()

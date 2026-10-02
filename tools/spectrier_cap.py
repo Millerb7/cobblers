@@ -66,7 +66,7 @@ def placement(pid, path=PLACEMENTS):
 
 
 def check_centre(doc, rec):
-    """Fail closed if the authored centre has left the placement's footprint: the cemetery moved and this did not."""
+    """Fail closed if the cemetery moved and this did not, or if the radii no longer cover it."""
     x, y, z = doc["site"]["centre"]
     p = rec["position"]
     sx, sy, sz = rec["size"]
@@ -77,6 +77,22 @@ def check_centre(doc, rec):
     if not inside:
         raise SystemExit("centre %s is outside %s's footprint (%d %d %d, size %d x %d x %d): the cemetery moved"
                          % ((x, y, z), rec["id"], p["x"], p["y"], p["z"], sx, sy, sz))
+    # Inside is not enough: a cemetery moved 20 blocks still contains the old centre, and its far corners fall outside
+    # the search. The centre is the footprint's own centre, column for column.
+    if (x, z) != (p["x"] + sx // 2, p["z"] + sz // 2):
+        raise SystemExit("centre (%d, %d) is not %s's footprint centre (%d, %d): the cemetery moved"
+                         % (x, z, rec["id"], p["x"] + sx // 2, p["z"] + sz // 2))
+    # Every footprint corner, floor and top, must be inside the search sphere, and the tick must wake for a summoner
+    # standing as far out as a Spectrier at the sphere's edge plus the summoner radius.
+    r = doc["radii"]
+    cx, cy, cz = x + 0.5, y, z + 0.5
+    far = max(((cx - qx) ** 2 + (cy - qy) ** 2 + (cz - qz) ** 2) ** 0.5
+              for qx in (p["x"], p["x"] + sx) for qy in (p["y"], p["y"] + sy) for qz in (p["z"], p["z"] + sz))
+    if r["spawn"] < far:
+        raise SystemExit("spawn radius %s misses %s's farthest corner, %.2f from the centre" % (r["spawn"], rec["id"], far))
+    if r["player_near"] < r["spawn"] + r["summoner"]:
+        raise SystemExit("player_near %s is under spawn %s + summoner %s: a summoner of a Spectrier at the edge would "
+                         "never wake the tick" % (r["player_near"], r["spawn"], r["summoner"]))
 
 
 def _fn(name):
