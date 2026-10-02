@@ -42,4 +42,4 @@ A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else,
 
 ## 5. Cost
 
-`tools/session_cost.py`: main session about 2.8M weighted at ~300k context; one test-author agent 0.44M.
+`tools/session_cost.py`: main session 3.8M weighted (119 turns, 328k context at hand-over); one test-author agent 0.44M.
