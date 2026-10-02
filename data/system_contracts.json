@@ -171,6 +171,13 @@
         "data/traders.json",
         "docs/mechanics/MARKET_GATING.md"
       ]
+    },
+    "settlement_npcs": {
+      "what": "the dialogue NPCs seated by data/npc_seats.json and placed by reapply R17N",
+      "paths": [
+        "data/npc_seats.json",
+        "tools/npc_seats.py"
+      ]
     }
   },
   "contracts": [
@@ -394,6 +401,7 @@
         "rift_mines_audit.py": "checker: the built rift_mines pack (source rift_mines)",
         "gulch_mine_audit.py": "checker: the built gulch_mine pack (source gulch_mine)",
         "mines_audit.py": "checker: the built mines pack (the evolution-stone faces; data/mines.json names no spawn condition)",
+        "sea_drift_audit.py": "checker: the built sea_drift pack (the Seaward Drift, its strips and Driftmouth Isle), replayed: no written block is a spawn condition. tools/sea_drift.py does not read the file and is not yet one of this contract's sources (the test author's to add)",
         "portals_audit.py": "checker: the built portals pack, against data/portals.json blocks and the spawn conditions. It checks the WORLD side only: the pocket dimension's rooms carry a chest, which is a spawn condition (Gimmighoul), and the dimension's biome is minecraft:the_void, whose mob spawn list is empty. Whether a Cobblemon pool can match that biome is UNTESTED (EXP-047 left spawning in the pocket unrun)",
         "vr_caves.py": "source: vr_caves",
         "route1_old_mine.py": "source: earthworks (its record is the route1_old_mine earthwork in data/placements.json)",
@@ -405,7 +413,8 @@
         "gym_interiors_independent.py": "checker: the independent audit of the gym interiors (written 2026-09-29 by an agent that built none of them, CLAUDE.md principle 16). It reads data/spawn_blocks.json to check that no block a gym interior places is a spawn condition. Recorded here on 2026-09-30: the audit agent could not edit this registry and said so in docs/world-building/GYM_BUILDINGS_REVIEW.md, so its reader went unlisted and this contract failed for a day. It is a checker, not a source - it reads the conditions to test against them and writes no blocks.",
         "rift_zones.py": "checker: the Rift's zone system (tools/rift_zones.py, written 2026-09-30). It reads data/spawn_blocks.json so its `report` can refuse a wall built from a block that is a spawn condition - an obsidian wall that draws wild Pokemon to it would be a gate with a crowd at it. A checker and a block source at once: it names the wall blocks itself, and it checks them against this contract rather than assuming them, which is why it is listed and not marked \"not covered\".",
         "ferry_docks.py": "checker: the ferry docks (tools/ferry_docks.py, 2026-09-30) read data/spawn_blocks.json and its own `report` refuses a dock built from a block that is a spawn condition - a jetty that draws wild Pokemon onto itself is a crowd on the quay. Recorded after the F7 agent found it omitted; that agent could not edit this registry. NOT YET A `source`, and that is a named gap rather than a classification: it IS a block source (it names the dock palette), but this contract's `source` slot means a block list cross-checked against the spawn-policy scopes, and the list lives in tests/test_system_contracts.py _source_blocks() - a test author's file, needing the palette enumerated. Until that is done its palette is checked by itself and not by this contract, which is weaker than town_dressing and should not be mistaken for it.",
-        "poi_heatmap.py": "not covered: reads data/spawn_blocks.json only for the coordinates of its records, to plot them on derived/maps/poi_heatmap.png; it places no block, emits no function and checks no spawn condition"
+        "poi_heatmap.py": "not covered: reads data/spawn_blocks.json only for the coordinates of its records, to plot them on derived/maps/poi_heatmap.png; it places no block, emits no function and checks no spawn condition",
+        "frostpeak_camp_audit.py": "checker: the built Frostpeak research camp (tools/frostpeak_camp.py, 2026-10-02), against data/frostpeak_camp.json blocks.ids and the spawn conditions. tools/frostpeak_camp.py is a block source that does not read the conditions file itself (it refuses any block outside blocks.ids); NOT YET one of this contract's sources - adding its blocks.ids to _source_blocks() in tests/test_system_contracts.py is the test author's."
       }
     },
     {
@@ -744,6 +753,33 @@
         "tests/test_system_contracts.py::test_contract_c15_a_blackouts_money_charge_is_flat_and_never_exceeds_the_balance"
       ],
       "note_for_the_test_author": "Written by the implementer of the charge, who may not write its test (.claude/rules/testing.md). The test does not exist yet, so tests/test_system_contracts.py::test_every_contract_names_existing_tests fails on this commit until it is written; the entry is not to be deleted to make the suite green. What the test must assert, against the GENERATED pack rather than against data/blackout.json's own arithmetic: (1) run blackout/charge in the simulator at a spread of balances across the cap (1, 199, 599, 600, 601, 3000, 20000, 250000, 2147483647) and assert bo.lost == min(balance, ceil(cap * percent / 100)) every time; (2) assert the charge is strictly flat, i.e. bo.lost is identical at any two balances above the cap, however far apart; (3) assert it never exceeds the balance and is never negative, including balance 0 (nothing charged, charge_calc not called) and balance 1 (exactly 1 charged); (4) prove independence by mutating the GENERATOR, not the data (CLAUDE.md 'How to prove an audit is independent'): re-derive the amount from money.cap and money.percent as read from data/blackout.json, assert it equals the #charge constant the pack sets at load, then change charge_amount() in tools/blackout_pack.py -- drop the ceiling, or put a balance term back -- and assert the test fails; (5) the consumer half: assert the charge path reads no price and no balance-derived scale at all, so no rung in docs/mechanics/PROGRESSION_LADDER.md and no entry in data/traders.json can change what a death costs."
+    },
+    {
+      "id": "C16",
+      "title": "An immovable NPC never stands in the road, and stands on the surface the town plan lays",
+      "owner": "towns",
+      "consumers": [
+        "settlement_npcs"
+      ],
+      "constrained_by": [
+        "terrain"
+      ],
+      "statement": "Every seated NPC (isMovable false) stands 3 or more blocks from every walked route line in data/route_paths.json, so the walked line and the street stay open; and a seat on a plaza or a levelled lot stands one block above the y the town plan records for it (plaza.y, lot level), the surface tools/place_town.py lays, while a seat elsewhere stands one above the rounded canonical heightmap. A re-route, a plaza re-level or a re-sited town can break either half without touching data/npc_seats.json.",
+      "stated_in": [
+        {
+          "at": "docs/world-building/TOWN_CHARACTER.md:308",
+          "quote": "A guard stands beside the road, never on it."
+        },
+        {
+          "at": "data/npc_seats.json:3",
+          "quote": "Ground is never read from a world"
+        }
+      ],
+      "tests": [
+        "tests/test_npc_seats.py::test_no_seat_stands_within_three_blocks_of_a_walked_route_segment",
+        "tests/test_npc_seats.py::test_plaza_and_lot_seats_stand_one_above_the_plans_paved_or_levelled_surface",
+        "tests/test_npc_seats.py::test_heightmap_seats_stand_one_above_the_rounded_canonical_heightmap"
+      ]
     }
   ]
 }

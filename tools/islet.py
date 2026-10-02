@@ -32,22 +32,29 @@ TOP = 68                    # a low crown, 6 over the sea
 SEED = 20260916
 
 
-def island_top(bed, sea, seed=SEED):
-    """Island surface y over a (2R+1) square, and the radius field. NaN where the column stays seabed."""
-    n = 2 * RADIUS + 1
+def island_top(bed, sea, seed=SEED, radius=None, top=None, half=None):
+    """Island surface y over a (2 * half + 1) square, and the radius field. NaN where the column stays seabed.
+
+    Relic Island is the defaults (radius RADIUS, crown TOP, half = radius). tools/sea_drift.py builds Driftmouth Isle
+    with the same shape and its own radius, crown and seed, over a wider square (half > radius) so that it can read the
+    radius field past the waterline for the isle's underwater skirt."""
+    radius = RADIUS if radius is None else radius
+    top_y = TOP if top is None else top
+    half = radius if half is None else half
+    n = 2 * half + 1
     zz, xx = np.mgrid[0:n, 0:n].astype(np.float64)
-    u, v = xx - RADIUS, zz - RADIUS
+    u, v = xx - half, zz - half
     ang = np.arctan2(v, u)
     # an outline that is not a circle: three harmonics, so it reads as a torn fragment rather than a dish
     wob = 4.6 * np.cos(2 * ang + 0.9) + 3.1 * np.cos(3 * ang + 2.6) + 2.0 * np.cos(5 * ang + 5.1)
     r = np.hypot(u, v * 1.06) + wob
-    t = np.clip(1.0 - r / RADIUS, 0.0, 1.0)
+    t = np.clip(1.0 - r / radius, 0.0, 1.0)
     rng = np.random.default_rng(seed)
     noise = rng.normal(0.0, 1.0, (n, n))
     for _ in range(3):                                  # smooth the noise so it is relief, not speckle
         q = np.pad(noise, 1, mode="edge")
         noise = 0.36 * noise + 0.16 * (q[:-2, 1:-1] + q[2:, 1:-1] + q[1:-1, :-2] + q[1:-1, 2:])
-    top = (sea - 4) + (TOP - (sea - 4)) * np.power(t, 0.62) + 3.2 * np.tanh(noise * 2.2) * t
+    top = (sea - 4) + (top_y - (sea - 4)) * np.power(t, 0.62) + 3.2 * np.tanh(noise * 2.2) * t
     top = np.where(t <= 0, np.nan, np.rint(top))
     return top, r
 

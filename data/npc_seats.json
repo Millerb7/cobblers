@@ -1,0 +1,443 @@
+{
+  "schema": "cobblers.npc_seats/1",
+  "about": "Where each dialogue NPC that no other file seats stands: the settlement residents of main_worldshift_reveal and the stone-tip speakers of ambient_stone_tips. The STAND half of each NPC; its conversation, name and class are data/dialogue.json's, compiled by tools/compile_dialogue.py into cobblers_dialogue. tools/npc_seats.py reads it and tools/reapply.py R17N places each with spawnnpcat and turns it to `yaw`. Ground is never read from a world: each seat names its ground kind and source, and at[1] = ground.y + 1.",
+  "yaw_convention": "Minecraft yaw: 0 faces south (+z), 90 west, 180 north, -90 east.",
+  "verified_in_world": "NONE as of 2026-10-02. Taking the server lock was refused by the permission classifier, so no seat has been placed or probed. tools/npc_seats.py verify is the probe.",
+  "not_covered": "route NPCs (data/scenes.json npcs, R17), reward NPCs (data/rewards.json npc_grant, R9F), ferrymen (data/ferries.json, R17F), trader clerks (data/traders.json, R14), trainers (tools/route_trainers.py), the gym leaders, Elite Four and Champion (their templates' own rctmod:trainer_spawner), the Rift guards' armour-stand placeholders (data/rift_zones.json, R1), and the 34 town gate guards, which have no character authored.",
+  "seats": [
+    {
+      "id": "npc_main_misty_relief_clerk",
+      "conversation": "dlg_main_misty_relief_clerk",
+      "settlement": "gym2_town",
+      "at": [
+        1601,
+        108,
+        2801
+      ],
+      "yaw": -90,
+      "ground": {
+        "kind": "heightmap",
+        "y": 107,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "the road at (1605, 2801), 4.0 blocks off",
+      "why": "Codex's recorded column (1605, 2801) is ON the walked critical-path line (data/route_paths.json, distance 0). An NPC there is immovable (its class has isMovable false) and would stand in the road. Moved to the nearest column, 4.0 blocks away, that is 4+ off every route line, off every plan street by its half-width + 1.5, outside every building footprint + 1, and level within one block over 3x3.",
+      "supersedes_stand_marker": {
+        "recorded_at": [
+          1605,
+          108,
+          2801
+        ],
+        "why": "on the walked route line"
+      }
+    },
+    {
+      "id": "npc_main_surge_signal_clerk",
+      "conversation": "dlg_main_surge_signal_clerk",
+      "settlement": "gym3_town",
+      "at": [
+        1685,
+        175,
+        1413
+      ],
+      "yaw": -90,
+      "ground": {
+        "kind": "heightmap",
+        "y": 174,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "the road at (1689, 1413), 4.0 blocks off",
+      "why": "Codex's recorded column (1688, 1410) is ON the walked critical-path line (data/route_paths.json, distance 0) and on wall_lane. An NPC there is immovable (its class has isMovable false) and would stand in the road. Moved to the nearest column, 4.2 blocks away, that is 4+ off every route line, off every plan street by its half-width + 1.5, outside every building footprint + 1, and level within one block over 3x3.",
+      "supersedes_stand_marker": {
+        "recorded_at": [
+          1688,
+          175,
+          1410
+        ],
+        "why": "on the walked route line"
+      }
+    },
+    {
+      "id": "npc_main_erika_survey_archivist",
+      "conversation": "dlg_main_erika_survey_archivist",
+      "settlement": "gym4_town",
+      "at": [
+        4309,
+        111,
+        1551
+      ],
+      "yaw": 0,
+      "ground": {
+        "kind": "plaza",
+        "y": 110,
+        "source": "data/placements.json settlements.gym4_town.plan.plaza.y (the paved surface tools/place_town.py lays)"
+      },
+      "faces": "the road at (4309, 1555), 4.0 blocks off",
+      "why": "Codex's recorded column (4309, 1555) is ON the walked critical-path line (data/route_paths.json, distance 0); its marker also took y from the heightmap (111) where the plaza is paved at y110, so it would have floated a block. An NPC there is immovable (its class has isMovable false) and would stand in the road. Moved to the nearest column, 4.0 blocks away, that is 4+ off every route line, off every plan street by its half-width + 1.5, outside every building footprint + 1, and level within one block over 3x3.",
+      "supersedes_stand_marker": {
+        "recorded_at": [
+          4309,
+          112,
+          1555
+        ],
+        "why": "on the walked route line"
+      }
+    },
+    {
+      "id": "npc_main_koga_marsh_tracker",
+      "conversation": "dlg_main_koga_marsh_tracker",
+      "settlement": "gym5_town",
+      "at": [
+        4643,
+        118,
+        2449
+      ],
+      "yaw": -135,
+      "ground": {
+        "kind": "heightmap",
+        "y": 117,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "the road at (4646, 2446), 4.2 blocks off",
+      "why": "Codex's recorded column (4646, 2446) is ON the walked critical-path line (data/route_paths.json, distance 0) and on post_road. An NPC there is immovable (its class has isMovable false) and would stand in the road. Moved to the nearest column, 4.2 blocks away, that is 4+ off every route line, off every plan street by its half-width + 1.5, outside every building footprint + 1, and level within one block over 3x3.",
+      "supersedes_stand_marker": {
+        "recorded_at": [
+          4646,
+          118,
+          2446
+        ],
+        "why": "on the walked route line"
+      }
+    },
+    {
+      "id": "npc_main_sabrina_pattern",
+      "conversation": "dlg_main_sabrina_pattern",
+      "settlement": "gym6_town",
+      "at": [
+        6191,
+        95,
+        3394
+      ],
+      "yaw": 0,
+      "ground": {
+        "kind": "plaza",
+        "y": 94,
+        "source": "data/placements.json settlements.gym6_town.plan.plaza.y (the paved surface tools/place_town.py lays)"
+      },
+      "faces": "the road at (6191, 3398), 4.0 blocks off",
+      "why": "Codex's recorded column (6196, 3398) is ON the walked critical-path line (data/route_paths.json, distance 0) and on grand_axis and cross_street. An NPC there is immovable (its class has isMovable false) and would stand in the road. Moved to the nearest column, 6.4 blocks away, that is 4+ off every route line, off every plan street by its half-width + 1.5, outside every building footprint + 1, and level within one block over 3x3.",
+      "supersedes_stand_marker": {
+        "recorded_at": [
+          6196,
+          95,
+          3398
+        ],
+        "why": "on the walked route line"
+      }
+    },
+    {
+      "id": "npc_main_blaine_crater_analyst",
+      "conversation": "dlg_main_blaine_crater_analyst",
+      "settlement": "gym7_town",
+      "at": [
+        6071,
+        108,
+        4992
+      ],
+      "yaw": -45,
+      "ground": {
+        "kind": "plaza",
+        "y": 107,
+        "source": "data/placements.json settlements.gym7_town.plan.plaza.y (the paved surface tools/place_town.py lays)"
+      },
+      "faces": "the road at (6074, 4995), 4.2 blocks off",
+      "why": "Codex's recorded column (6074, 4995) is ON the walked critical-path line (data/route_paths.json, distance 0) and on rim_road. An NPC there is immovable (its class has isMovable false) and would stand in the road. Moved to the nearest column, 4.2 blocks away, that is 4+ off every route line, off every plan street by its half-width + 1.5, outside every building footprint + 1, and level within one block over 3x3.",
+      "supersedes_stand_marker": {
+        "recorded_at": [
+          6074,
+          108,
+          4995
+        ],
+        "why": "on the walked route line"
+      }
+    },
+    {
+      "id": "npc_main_giovanni_watch",
+      "conversation": "dlg_main_giovanni_watch",
+      "settlement": "gym8_town",
+      "at": [
+        3643,
+        114,
+        6497
+      ],
+      "yaw": -90,
+      "ground": {
+        "kind": "heightmap",
+        "y": 113,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "the road at (3647, 6497), 4.0 blocks off",
+      "why": "Codex's recorded column (3647, 6497) is ON the walked critical-path line (data/route_paths.json, distance 0). An NPC there is immovable (its class has isMovable false) and would stand in the road. Moved to the nearest column, 4.0 blocks away, that is 4+ off every route line, off every plan street by its half-width + 1.5, outside every building footprint + 1, and level within one block over 3x3.",
+      "supersedes_stand_marker": {
+        "recorded_at": [
+          3647,
+          114,
+          6497
+        ],
+        "why": "on the walked route line"
+      }
+    },
+    {
+      "id": "npc_main_pallet_mina",
+      "conversation": "dlg_main_pallet_mina",
+      "settlement": "hometown",
+      "at": [
+        1454,
+        118,
+        5287
+      ],
+      "yaw": -54,
+      "ground": {
+        "kind": "heightmap",
+        "y": 117,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "the crossroads (1461, 5292)",
+      "why": "Codex's recorded column (1456, 5287) is the Pallet sign's own template position (data/placements.json hometown_sign), so a marker there stands inside the sign. The nearest clear column beside it, off both streets.",
+      "supersedes_stand_marker": {
+        "recorded_at": [
+          1456,
+          118,
+          5287
+        ],
+        "why": "inside the hometown_sign template"
+      }
+    },
+    {
+      "id": "npc_main_pallet_maren",
+      "conversation": "dlg_main_pallet_maren",
+      "settlement": "hometown",
+      "at": [
+        1472,
+        117,
+        5321
+      ],
+      "yaw": 180,
+      "ground": {
+        "kind": "heightmap",
+        "y": 116,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "Oak's lab lane (z5318)",
+      "why": "Codex records only the lab lane's polyline (1461..1486, 5318) as Maren's anchor. Beside it on the south side, off the lane's 3-block width, outside every building footprint."
+    },
+    {
+      "id": "npc_main_pallet_oak",
+      "conversation": "dlg_main_pallet_oak",
+      "settlement": "hometown",
+      "at": [
+        1493,
+        118,
+        5317
+      ],
+      "yaw": 135,
+      "ground": {
+        "kind": "template_floor",
+        "y": 117,
+        "source": "tools/place_town.py build('hometown') seats hometown_oaks_lab at origin y117, grade_layer 0, so the lab floor (polished andesite, template layer 0) is y117; template cells (6,0,8) solid, (6,1,8) and (6,2,8) air"
+      },
+      "faces": "the lab's double door (x1490, z5314-5315)",
+      "why": "INDOORS: the heightmap under a building is terrain, not floor. The floor is the template's own layer 0 at the origin place_town computes, read from the template, never from a world. Three blocks in from the door, off its line."
+    },
+    {
+      "id": "npc_main_brock_witness",
+      "conversation": "dlg_main_brock_witness",
+      "settlement": "gym1_town",
+      "at": [
+        1832,
+        142,
+        3661
+      ],
+      "yaw": 90,
+      "ground": {
+        "kind": "lot_level",
+        "y": 141,
+        "source": "data/gym_buildings/gym1.json site.lot_level 141; the forecourt apron is polished_andesite at y141 (part 'the forecourt apron in front of the door', box 1811..1841 x 3659..3663)"
+      },
+      "faces": "west, toward the door (x1824-1828, z3664)",
+      "why": "Codex's anchor is 'built Brock gym prefab' with the donor origin (1838, 140, 3690), now the Stoneworks Hall. Brock the leader stands on the gallery at the spawner (1832, 156, 3696) and is not doubled there; the witness Brock stands outside on the forecourt, east of the door lamp at x1830, off the door line."
+    },
+    {
+      "id": "npc_main_league_steward",
+      "conversation": "dlg_main_league_steward",
+      "settlement": "league",
+      "at": [
+        3647,
+        89,
+        2490
+      ],
+      "yaw": -114,
+      "ground": {
+        "kind": "lot_level",
+        "y": 88,
+        "source": "data/placements.json settlements.league.plan.anchors league_forecourt_west level 88"
+      },
+      "faces": "the ramp head (3656, 2486)",
+      "why": "Codex's recorded (3297, 2603) is the retired FACTION.md cradle coordinate, 433 blocks from the League and inside no settlement (docs/world-building/SETTLEMENT_NPCS.md section 3). That record is LEFT AS IT IS in data/quests.json so the propagation stays visible for Codex to correct; the steward is seated where the League's arrivals are, on the west forecourt beside the ramp head, off the ramp cut x3651-3661."
+    },
+    {
+      "id": "npc_main_rift_surveyor",
+      "conversation": "dlg_main_rift_surveyor",
+      "settlement": null,
+      "at": [
+        3552,
+        112,
+        5334
+      ],
+      "yaw": 129,
+      "ground": {
+        "kind": "heightmap",
+        "y": 111,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "the Victory Road trailhead road at (3547, 5330)",
+      "why": "Codex's recorded (3738, 86.46, 5082) is G2's old site on the basin floor inside zone Z2: since G2 moved to the trailhead (3548, 5322) on 2026-10-01 an unqualified player is turned back long before reaching it. Seated at the trailhead instead, outside the zone on the approach side of the gatehouse, 6.4 off the walked line and clear of the turn-back point (3545.6, 5329.6)."
+    },
+    {
+      "id": "npc_stone_tip_displaced_city_mason",
+      "conversation": "dlg_stone_tip_displaced_city",
+      "settlement": "displaced_city",
+      "at": [
+        3323,
+        47,
+        1752
+      ],
+      "yaw": -40,
+      "ground": {
+        "kind": "plaza",
+        "y": 46,
+        "source": "data/placements.json settlements.displaced_city.plan.plaza.y"
+      },
+      "faces": "the plaza centre (3328, 1758)",
+      "why": "No position authored (data/quests.json ambient_stone_tips has no actors). On the town's plaza, the one surface whose height the plan records, two blocks in from its edge, facing into it."
+    },
+    {
+      "id": "npc_stone_tip_gorge_hamlet_elder",
+      "conversation": "dlg_stone_tip_gorge_hamlet",
+      "settlement": "gorge_hamlet",
+      "at": [
+        6813,
+        114,
+        4370
+      ],
+      "yaw": 180,
+      "ground": {
+        "kind": "plaza",
+        "y": 113,
+        "source": "data/placements.json settlements.gorge_hamlet.plan.plaza.y"
+      },
+      "faces": "the plaza centre (6813, 4367)",
+      "why": "The plan's own npc point (data/placements.json gorge_hamlet plan.npc, 'a bridge-keeper'), on the plaza."
+    },
+    {
+      "id": "npc_stone_tip_mining_town_foreman",
+      "conversation": "dlg_stone_tip_mining_town",
+      "settlement": "mining_town",
+      "at": [
+        6638,
+        138,
+        5708
+      ],
+      "yaw": 114,
+      "ground": {
+        "kind": "plaza",
+        "y": 137,
+        "source": "data/placements.json settlements.mining_town.plan.plaza.y"
+      },
+      "faces": "the plaza centre (6620, 5700)",
+      "why": "No position authored (data/quests.json ambient_stone_tips has no actors). On the town's plaza, the one surface whose height the plan records, two blocks in from its edge, facing into it."
+    },
+    {
+      "id": "npc_stone_tip_northlight_field_hand",
+      "conversation": "dlg_stone_tip_northlight",
+      "settlement": "northlight",
+      "at": [
+        7247,
+        117,
+        1568
+      ],
+      "yaw": -126,
+      "ground": {
+        "kind": "plaza",
+        "y": 116,
+        "source": "data/placements.json settlements.northlight.plan.plaza.y"
+      },
+      "faces": "the plaza centre (7265, 1555)",
+      "why": "No position authored (data/quests.json ambient_stone_tips has no actors). On the town's plaza, the one surface whose height the plan records, two blocks in from its edge, facing into it."
+    },
+    {
+      "id": "npc_stone_tip_tea_town_picker",
+      "conversation": "dlg_stone_tip_tea_town",
+      "settlement": "tea_town",
+      "at": [
+        2630,
+        115,
+        3583
+      ],
+      "yaw": 90,
+      "ground": {
+        "kind": "plaza",
+        "y": 114,
+        "source": "data/placements.json settlements.tea_town.plan.plaza.y"
+      },
+      "faces": "the plaza centre (2618, 3583)",
+      "why": "No position authored (data/quests.json ambient_stone_tips has no actors). On the town's plaza, the one surface whose height the plan records, two blocks in from its edge, facing into it."
+    },
+    {
+      "id": "npc_stone_tip_the_scar_scavenger",
+      "conversation": "dlg_stone_tip_the_scar",
+      "settlement": "the_scar",
+      "at": [
+        2098,
+        281,
+        938
+      ],
+      "yaw": -45,
+      "ground": {
+        "kind": "plaza",
+        "y": 280,
+        "source": "data/placements.json settlements.the_scar.plan.plaza.y"
+      },
+      "faces": "the plaza centre (2110, 950)",
+      "why": "No position authored (data/quests.json ambient_stone_tips has no actors). On the town's plaza, the one surface whose height the plan records, two blocks in from its edge, facing into it."
+    },
+    {
+      "id": "npc_stone_tip_viltri_light_keeper",
+      "conversation": "dlg_stone_tip_viltri_light",
+      "settlement": "viltri_light",
+      "at": [
+        555,
+        71,
+        4514
+      ],
+      "yaw": -14,
+      "ground": {
+        "kind": "plaza",
+        "y": 70,
+        "source": "data/placements.json settlements.viltri_light.plan.plaza.y"
+      },
+      "faces": "the plaza centre (556, 4518)",
+      "why": "No position authored. On the lighthouse's paved apron, the one surface whose height the plan records. At x555, the one column pair where the apron (x554-559) and data/towns.json's footprint (x544-555) overlap: at x556 the seat stood on the apron's overhang outside the town (found by tests/test_npc_seats.py)."
+    }
+  ],
+  "not_seated": [
+    {
+      "id": "npc_pallet_crushed_house_hank",
+      "why": "tools/compile_dialogue.py refuses dlg_pallet_crushed_house_hank: world-scoped field quest.evt_pallet_crushed_house.house_state. No NPC class exists to spawn."
+    },
+    {
+      "id": "npc_pallet_crushed_house_lena",
+      "why": "tools/compile_dialogue.py refuses dlg_pallet_crushed_house_lena for the same world-scoped field, and she relocates after the rescue (data/quests.json actor_relocation), so her stand must come from that world field on load, not a fixed seat."
+    }
+  ]
+}

@@ -4972,6 +4972,32 @@
         "quest.ambient_stone_tips.gorge_hamlet_cursor",
         "quest.ambient_stone_tips.mining_town_cursor"
       ]
+    },
+    {
+      "id": "ambient_ursaluna_den",
+      "source": "data/ursaluna_cave.json; docs: the owner's request of 2026-10-02 (data/ursaluna_cave.json request)",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": true,
+        "npcs_remain_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_ursaluna_den_watcher"
+      ],
+      "objectives": [],
+      "transitions": [],
+      "writer": "dialogue cursor persistence only; the conversation sets no story, reward, or completion state",
+      "readers": "the den watcher's conversation only",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player advances and restores their own cursor"
+      },
+      "progression_field_refs": [
+        "quest.ambient_ursaluna_den.watcher_cursor"
+      ]
     }
   ]
 }
