@@ -348,7 +348,7 @@
   site any step places). The owner chose the summit once the runtime build limit was measured at **y575**
   (`cobblers_height`), not the 320 that the 2026-10-01 refusal assumed and that had pushed it onto the east
   shoulder; its crown clears the crest seen from the Frostpeak camp at y370, and the camp's telescope aims at it. Eight Nether/End structures stay generated where they are, by
-  decision. **EXP-048, the console half, ran 2026-10-02** (`experiments/EXP-048-legendary-altar/README.md`): both
+  decision. **EXP-048: a pasted altar WORKS** (2026-10-02, the owner in staging): right-clicking the pasted Calyrex statue with the crown summoned Calyrex, and the summon CONSUMED the statue (the block is air afterwards), so a site summons once per placed statue unless our data re-places it; the crown appears kept. Open: whether the anchorless altars (Articuno, Zapdos, Mew) need an anchor - one right-click at (682, 312, 380). The console half: both
   the Crown Cemetery and the Articuno shrine place and now STAND in staging at their adopted corners, all eight
   LumyMon blocks are where the templates put them, and a shaderoot carrot dropped from the console onto the
   Spectrier trigger does nothing - not proof of silence, since the trigger may need a PLAYER's throw. **The
