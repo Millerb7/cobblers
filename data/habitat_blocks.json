@@ -7303,6 +7303,29 @@
       "status": "planned",
       "why": "A crowd of Buneary kept alive in Ellis Hopgood's cellar (the owner, 2026-10-02: 'a man who has a dungeon of buneary'). ACTIVATED, the den's pattern (ursaluna_den_outskirts_ward): up to 12 alive at once, refilled 3 at a time as they are caught or despawn, TICK at chance 1. The position is the cellar floor's centre as tools/lopunny_house.py seats it (house floor y117 = max heightmap ground under the walls 116 + 1; the cellar floor 5 below it), in a stone-brick floor that pack writes; the pack must run BEFORE R9E or it writes the floor back over this block. spawn_range 4: the activated spawner searches a box of spawn_range round the block (docs/research/notes/habitat-nest-perching.md 4, ActivatedHabitatSpawning.kt), and 4 makes that box the cellar exactly: x and z the 9 by 9 room, y from the stone under the floor (y108) to the ceiling (y116). The house floor is y117, so no place a player walks in the house, and none outside, is in it (tools/lopunny_house_audit.py checks every standing place in the box). cancel_range 7: the pack's natural spawns are cancelled in a sphere of 7 round the block, which takes in the whole room (its far corner is 6.4 away) and the house's floor above it (feet 6 above), and no ground outside the walls (a feet place at y117 outside the walls is at least 7.8 away). Activated blocks cancel nothing of one another; the nearest other Habitat Block is elder_south_pine_isle_2's nest, 237 blocks away (measured 2026-10-02 from this file's positions).",
       "mimic_why": "the cellar's own floor block (data/lopunny_house.json blocks.cellar_floor), so the block is one more stone brick in the floor."
+    },
+    {
+      "id": "station_study_pool",
+      "place": "Shrew Station's study pool in the lagoon (data/research_station.json lagoon): in the post under the study deck's middle, mid-water",
+      "pool": "cobblers:station_study_pool",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2574,
+        "y": 103,
+        "z": 4114
+      },
+      "mimic": "minecraft:stripped_spruce_log",
+      "activated": {
+        "spawn_range": 8,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 8,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 4
+      },
+      "status": "planned",
+      "why": "A few Psyduck kept in the station's study pool (docs/world-building/RESEARCH_STATION.md section 5.3, the Seaward Drift's precedent: a water Habitat Block). ACTIVATED, up to 4 alive at once, one at a time. The position is the middle of the post tools/research_station.py sets under the study deck's centre (2574, 4114): the lagoon's floor there is y100 (heightmap, rounded), 6 under the lake's y106, the post runs y101-105 and the block replaces its middle; the pack must run BEFORE R9E or it writes the post back over this block. spawn_range 8 reaches the lagoon's water round the deck; cancel_range 8 holds the shores' natural pool off it. In-water activated spawning is not verified (the Drift's caveat)."
     }
   ]
 }

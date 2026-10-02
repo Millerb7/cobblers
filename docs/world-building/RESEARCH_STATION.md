@@ -1,7 +1,21 @@
 # The Legendary and Mythical Research Station (proposal)
 
-**Status: PROPOSAL, 2026-10-02. Nothing here is built, authored as data, or placed in any world.** No file in
-`data/`, `tools/` or any world was changed to write it. Every ground and depth figure was measured on the
+**Status: APPROVED and BUILT AS DATA, 2026-10-02; not applied to any world. EVERY ITEM IS HELD.** The owner's
+decisions, verbatim: "Shrew Lake south shore, the Latias and Latios shrine, hold every item until EXP-048 proves an
+altar responds, Moltres yes, no waystone, surveyor stays at the dig camp." The build is `data/research_station.json`
+(site C as re-measured, the layout, the shrine, the held economy, the in-world probes), `tools/research_station.py`
+(pack `cobblers_research_station`, four zone functions run before R9E), `tools/research_station_audit.py`, four
+conversations and quests (`dlg_station_director`, `_field_officer`, `_archivist`, `_shrine_keeper`), four
+`npc_grant` records placed by R9F, and one Psyduck Habitat Block (`station_study_pool`). **The switch is
+`data/research_station.json` `economy.issuing`** (false): read `economy.switch` there for what flipping it does.
+Not built: replacements (bought copies), the town-ground paving tag and its roster, lily pads, a healer, and
+Halvard's half of the courier inside her own conversation. Re-measured where this proposal differs: the shrine's
+centre is **26** deep, not 23; `shrew_lake_shores` is **13-22**, not 10-22. Latias and Latios also verified:
+`latias_altar` and `latios_altar` take `ruby_dew` and `sapphire_dew` and a `summon_anchor`; Moltres rolls 50, 55
+or 60 (`MoltresAltar.class`), so the ember feather takes Zapdos's gate.
+
+The proposal as written follows, unchanged. When it was written nothing was built, authored as data, or placed in
+any world; no file in `data/`, `tools/` or any world was changed to write it. Every ground and depth figure was measured on the
 post-export canonical heightmap through `tools/ground.py` (rounded; probe `ground(4528, 4416) = 122` and
 `ground(5160, 7463) = 61` both reproduced). Figures marked **relayed** were not re-measured here and name their
 source.

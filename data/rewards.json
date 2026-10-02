@@ -550,6 +550,100 @@
       ],
       "why": "The Lopunny superfan's thanks for being shown a Lopunny (the owner, 2026-10-02: he 'wants one of his own'). A Soothe Bell: he bought it for his Buneary, which are wild and never noticed. The dialogue makes no claim for what the bell does. One per player, by grant_reward_once. An owner decision: a Lopunnite (mega_showdown:lopunnite, docs/research/notes/reward-item-inventory.md) would fit better and is deliberately not given, because mega stones are scarce by the owner's design (docs/world-building/SOUTHERN_RIFT_MEGA.md).",
       "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/lopunny_house.py seats him on, checked by tools/lopunny_house_audit.py"
+    },
+    {
+      "id": "station_director",
+      "kind": "npc_grant",
+      "place": "Shrew Station's Institute, behind the reception desk",
+      "npc_at": [
+        2632,
+        109,
+        4115
+      ],
+      "quest": "evt_station_director",
+      "contents": [
+        {
+          "item": "lumymon:thunder_feather",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/thunder_feather.json in LumyMon-0.6.6.jar"
+        },
+        {
+          "item": "lumymon:ember_feather",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/ember_feather.json in LumyMon-0.6.6.jar"
+        }
+      ],
+      "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
+      "why": "The thunder feather (a storm watched from the Zapdos tower's top, after eight badges) and the ember feather (the Nether's Moltres tower surveyed, after eight badges: the owner, 2026-10-02, 'Moltres yes').",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/research_station.py seats it on, checked by tools/research_station_audit.py"
+    },
+    {
+      "id": "station_field_officer",
+      "kind": "npc_grant",
+      "place": "Shrew Station's weather hut on the causeway",
+      "npc_at": [
+        2693,
+        107,
+        4054
+      ],
+      "quest": "evt_station_courier",
+      "contents": [
+        {
+          "item": "lumymon:glacier_feather",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/glacier_feather.json in LumyMon-0.6.6.jar"
+        }
+      ],
+      "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
+      "why": "The glacier feather, for the courier commission to Dr. Halvard's camp on Frostpeak (after eight badges).",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/research_station.py seats it on, checked by tools/research_station_audit.py"
+    },
+    {
+      "id": "station_archivist",
+      "kind": "npc_grant",
+      "place": "Shrew Station's Archive, among the empty cases",
+      "npc_at": [
+        2651,
+        110,
+        4116
+      ],
+      "quest": "evt_station_archive",
+      "contents": [
+        {
+          "item": "lumymon:calyrex_crown",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/calyrex_crown.json in LumyMon-0.6.6.jar"
+        }
+      ],
+      "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
+      "why": "The Calyrex crown, traded for sixteen shaderoot carrots from the Crown Cemetery's field (after the Champion, and only once the post-Champion cap is measured at 70 or more).",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/research_station.py seats it on, checked by tools/research_station_audit.py"
+    },
+    {
+      "id": "station_shrine_keeper",
+      "kind": "npc_grant",
+      "place": "the Eon shrine on Shrew Station's platform, south of the dais",
+      "npc_at": [
+        2740,
+        107,
+        4037
+      ],
+      "quest": "evt_station_eon_shrine",
+      "contents": [
+        {
+          "item": "lumymon:ruby_dew",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/ruby_dew.json in LumyMon-0.6.6.jar"
+        },
+        {
+          "item": "lumymon:sapphire_dew",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/sapphire_dew.json in LumyMon-0.6.6.jar"
+        }
+      ],
+      "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
+      "why": "The ruby and sapphire dews, for a player who has met Mesprit, Azelf and Uxie: they wake this station's own Latias and Latios altars.",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/research_station.py seats it on, checked by tools/research_station_audit.py"
     }
   ]
 }
