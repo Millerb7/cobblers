@@ -4,7 +4,7 @@
   "generated_by": "hand",
   "built_by": "tools/frostpeak_camp.py build -> build/datapacks/cobblers_frostpeak_camp; audited by tools/frostpeak_camp_audit.py",
   "owner_request": "\"i feel like a research site around 2079 115 1048 could be cool. i assume we will have a legendary at teh top of the mountain or close by they are looking into. it would be frostpeak shrine yeah.\" Then: \"i got my x or y wrong, the research site is meant to be at the foot of the south end of the frostpeak\". The site (688, 688) was measured and accepted on 2026-10-01.",
-  "purpose": "A small field camp at Frostpeak's south foot whose researchers study Articuno. Its job in the world: the adopted Articuno shrine (data/adopted_legendary_sites.json adopted_articuno_shrine) has no finder, so the camp is how a player learns where to look - a telescope trained on the east shoulder, field notes on a board, and researchers who point. Nothing here promises the shrine's altar works (adopted_legendary_sites.json a_dead_altar_must_not_block; EXP-048): the researchers observe and speculate, and no step, reward or gate requires the altar.",
+  "purpose": "A small field camp at Frostpeak's south foot whose researchers study Articuno. Its job in the world: the adopted Articuno shrine (data/adopted_legendary_sites.json adopted_articuno_shrine) has no finder, so the camp is how a player learns where to look - a telescope trained on the tower's crown, which shows over the false crest from the summit where the tower stands (moved there 2026-10-02 on the owner's word), field notes on a board, and researchers who point up the mountain. Nothing here promises the shrine's altar works (adopted_legendary_sites.json a_dead_altar_must_not_block; EXP-048): the researchers observe and speculate, and no step, reward or gate requires the altar.",
   "ground_rule": "Every Y is computed by tools/frostpeak_camp.py from tools/ground.py (the canonical heightmap, rounded). Nothing in this file is a Y. Each piece is seated on max(ground under its footprint) + 1, with a foundation down to the ground under any lower column (tools/shrines.py's convention).",
   "site": {
     "corner": [688, 688],
@@ -15,7 +15,7 @@
   "targets": {
     "shrine": {
       "source": "data/adopted_legendary_sites.json sites[id=adopted_articuno_shrine]: placement.centre (x, z) and placement.top_y",
-      "aim": "the middle of the part of the tower's centre column visible over the shoulder from the telescope, computed from the heightmap"
+      "aim": "the middle of the part of the tower's centre column visible over the false crest from the telescope (its crown), computed from the heightmap"
     },
     "summit": {
       "source": "data/towns.json towns[id=frostpeak_shrine].centre: the centre of the pressed summit platform (data/sculpt.json pads frostpeak_shrine, radius 55, y310)",
@@ -43,7 +43,7 @@
      "why": "a plank deck on the high north edge of the bench, the camp's best view of the mountain"},
     {"id": "frostpeak_camp_telescope", "kind": "instrument", "at": [716, 691], "on": "frostpeak_camp_instrument_deck",
      "target": "shrine", "tube": {"block": "minecraft:waxed_copper_block", "length": 1.6, "width": 0.24},
-     "why": "the survey's telescope, trained on the Articuno tower on the east shoulder"},
+     "why": "the survey's telescope, trained on the crown of the Articuno tower on the summit, the part that shows over the false crest"},
     {"id": "frostpeak_camp_theodolite", "kind": "instrument", "at": [709, 691], "on": "frostpeak_camp_instrument_deck",
      "target": "summit", "tube": {"block": "minecraft:polished_deepslate", "length": 0.9, "width": 0.2},
      "why": "the surveyor's theodolite, laid on the summit's bearing and stopped at the false crest that hides it"},
@@ -65,30 +65,30 @@
   "notes_board": {
     "signs": [
       ["FROSTPEAK", "SURVEY", "field notes", "- S. Halvard"],
-      ["East tower", "bearing {shrine_bearing}", "~{shrine_range} blocks", "crown y{shrine_top}"],
+      ["Summit tower", "bearing {shrine_bearing}", "~{shrine_range} blocks", "crown y{shrine_top}"],
       ["Summit table", "bearing {summit_bearing}", "behind the", "false crest"],
       ["Articuno:", "sightings", "none confirmed", "keep watching"]
     ]
   },
   "researchers": [
     {"id": "frostpeak_camp_halvard", "name": "Dr. Signe Halvard", "role": "lead observer", "at": [714, 692], "on": "frostpeak_camp_instrument_deck",
-     "greeting": "Mind the tripod. We are the Frostpeak survey: three of us, one telescope, and a tower on the east shoulder that nobody alive remembers being built.",
+     "greeting": "Mind the tripod. We are the Frostpeak survey: three of us, one telescope, and a tower on the summit that nobody alive remembers being built.",
      "topics": [
        {"id": "watching", "ask": "What are you watching?",
-        "says": "That tower. It stands at bearing {shrine_bearing}, a little east of north, about {shrine_range} blocks off and far above us. Look where the telescope points: its crown shows over the shoulder."},
+        "says": "That tower, up on the summit. Bearing {shrine_bearing}, just west of north, about {shrine_range} blocks off and far above us. Look where the telescope points: the top {crown_showing} blocks of it stand over the crest. The rest is hidden behind the mountain."},
        {"id": "articuno", "ask": "Why Articuno?",
         "says": "Three winters of notes. Frost on the tower when the slopes are bare, a cold wind out of a clear sky, a pale blue shape the herders swear to. I have not seen it myself. I would very much like to."},
        {"id": "altar", "ask": "What is the tower for?",
         "says": "There is an old altar in it. Some say it calls the bird; some say it never did. We have not made it do anything, and I would not promise you that anyone can. We watch, and we write down what we see."},
        {"id": "route", "ask": "How do I get there?",
-        "says": "North-east, and keep climbing. The shoulder rises about {climb} blocks above this camp and then runs level; the tower stands alone on the snow. Once you are on top you cannot miss it."}
+        "says": "Up. North, a touch west, and keep climbing. The summit rises about {climb} blocks above this camp, and past that false crest the top is a flat table of snow with the tower in the middle of it. Once you are over the crest you cannot miss it."}
      ],
      "leave": "Goodbye."},
     {"id": "frostpeak_camp_krell", "name": "Edda Krell", "role": "surveyor", "at": [708, 692], "on": "frostpeak_camp_instrument_deck",
-     "greeting": "The summit? Not from here. That edge up there is a false crest. The middle of the summit table is another {summit_beyond} blocks behind it, flat as a floor.",
+     "greeting": "The summit? Not from here. That edge up there is a false crest. The middle of the summit table is another {summit_beyond} blocks behind it, flat as a floor. All you see of it from here is the tower's crown.",
      "topics": [
        {"id": "instrument", "ask": "What is that instrument?",
-        "says": "A theodolite. Two sightings on the board: the crest, bearing {summit_bearing}, and the east tower, bearing {shrine_bearing}. Two bearings from two camps give you a position. We have one camp, so we walk."},
+        "says": "A theodolite. Two sightings on the board: the crest, bearing {summit_bearing}, and the tower's crown, bearing {shrine_bearing}. Near enough one line: the tower stands on the summit table, behind the crest. That is how we know where the table is without seeing it."},
        {"id": "danger", "ask": "Is it dangerous up there?",
         "says": "The mountain is. The wild Pokemon on these slopes are not the lowlands' kind, and the weather turns in an hour. Go up with a team you trust and come back down before dark."}
      ],
@@ -99,7 +99,7 @@
        {"id": "what_is_up_there", "ask": "What do you think is up there?",
         "says": "The Doctor says a bird. Edda says a surveying problem. I say nobody hauls stone up a mountain for nothing. Whether anything up there still listens, none of us knows."},
        {"id": "strange", "ask": "Seen anything strange?",
-        "says": "Frost on the inside of the tent in summer. Snorunt in the supply crates. And once a shadow crossing the shoulder with no cloud to throw it. Make of that what you like."}
+        "says": "Frost on the inside of the tent in summer. Snorunt in the supply crates. And once a shadow crossing the summit with no cloud to throw it. Make of that what you like."}
      ],
      "leave": "Goodbye."}
   ],

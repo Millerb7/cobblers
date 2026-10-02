@@ -169,6 +169,10 @@ Mew's `origin_fossil` has a recipe; the cemetery's Spectrier route has its own c
 2. **Articuno**, at its adopted site, altar at (914, 153, 331): `/give @s lumymon:glacier_feather`, then
    right-click the altar, first empty-handed, then holding the feather. Record the exact chat line. If it says a
    Summon Anchor is missing, `/setblock 915 153 331 lumymon:summon_anchor` and try again.
+   **Moved 2026-10-02:** the owner sent the tower to the summit and the shoulder copy is removed from staging by
+   `cobblers:articuno_cleanup/shoulder`. Once the summit step has run, the same check is at the summit altar,
+   (682, 312, 380) - the template's altar offset (10, 2, 11) from its corner, as observed above - and the anchor
+   try is `/setblock 683 312 380 lumymon:summon_anchor`.
 3. **Calyrex**, at the cemetery statue (4140, 112, 2005): `/give @s lumymon:calyrex_crown`, then right-click it.
 
 Three test carrots tagged `exp048_carrot`, `exp048_carrot2` and `exp048_carrot3` were left by the ring with

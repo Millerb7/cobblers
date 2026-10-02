@@ -26,8 +26,10 @@ the generator's matrix; sight lines by stepping column boundaries rather than fi
                  tube lies on the summit's bearing at the false crest's elevation; the summit platform is NOT visible
                  from it (so the false-crest line is true); each tube's axis passes through its pivot and clears its
                  pier, and each tube's block is a declared display block
-  C8  numbers    every bearing, range, crown height, climb and distance a sign or a page states matches this audit's
-                 own computation
+  C8  numbers    every bearing, range, crown height, climb, distance and count of crown layers showing over the
+                 crest that a sign or a page states matches this audit's own computation. The tower's top is
+                 derived here as y + the template's height (data/structures.json footprint) - 1, not read from the
+                 record's top_y, and the record's top_y is checked against it (C7 tower top)
   C9  no gate    the dialogues run no command, write no player data but their own cursor, show every option to every
                  player, and promise no summon (data/adopted_legendary_sites.json a_dead_altar_must_not_block)
   C10 clearance  no other built pack writes or summons within 8 blocks of the camp, no column is water (sea level or
@@ -39,7 +41,11 @@ quaternion() (atan2(-dx, dz), the convention tools/rift_skin.py uses for sheets)
 floor by one in the generator's seat() PASSED the first version of this audit -- the foundation simply grew a course,
 so nothing floated and nothing had a gap -- which is why C2 max+1 exists; with it, that mutation fails. The first run
 of this audit also caught the generator's own crest search stepping whole blocks and aiming the theodolite 0.06
-degrees into the crest; the generator now steps a quarter block.
+degrees into the crest; the generator now steps a quarter block. When the tower moved to the summit (2026-10-02) this
+audit caught two more: the generator's quarter-block sight walk called the crown visible from y369 where the exact
+column walk here says y370 (so a page stating 15 layers showing was one too many; the generator's sight test is now an
+exact clip of the line to each column's square, a different method from this one), and the 40-degree telescope's
+eyepiece end dipped 0.2 into its pier (the generator now shortens the tube's back end when it is steep).
 
   python tools/frostpeak_camp_audit.py [--pack DIR] [--inputs-root <full checkout>] [--source-root R]
 """
@@ -307,7 +313,12 @@ def audit(pack, inputs_root, source_root):
     shrine = next(s for s in load_json(ROOT / "data" / "adopted_legendary_sites.json")["sites"]
                   if s["id"] == "adopted_articuno_shrine")
     tcx, tcz = shrine["placement"]["centre"]
-    tseat, ttop = shrine["placement"]["y"], shrine["placement"]["top_y"]
+    tseat = shrine["placement"]["y"]
+    # the top occupied layer from the template's own height, not from the record's top_y (which is checked against it)
+    tpl = next(s for s in load_json(ROOT / "data" / "structures.json")["structures"] if s["id"] == shrine["template"])
+    ttop = tseat + int(re.match(r"^(\d+)x(\d+)x(\d+)", tpl["footprint"]).group(2)) - 1
+    rep.check(shrine["placement"]["top_y"] == ttop, "C7 tower top",
+              "the record's top_y is %s; y%d + the template's height - 1 is y%d" % (shrine["placement"]["top_y"], tseat, ttop))
     summit = next(t for t in load_json(ROOT / "data" / "towns.json")["towns"] if t["id"] == "frostpeak_shrine")["centre"]
     disp_ok = set(doc["blocks"].get("display_blocks") or [])
     tubes = {}
@@ -362,6 +373,8 @@ def audit(pack, inputs_root, source_root):
                       "the line along the tube runs into the terrain before the tower")
             measured["shrine_bearing"], measured["shrine_range"] = want_b, hd
             measured["climb"] = g(tcx, tcz) - g(math.floor(px), math.floor(pz))
+            if lo is not None:
+                measured["crown_showing"] = ttop - lo + 1
         else:
             sx, sz = summit["x"] + 0.5, summit["z"] + 0.5
             want_b = compass(sx - px, sz - pz)
@@ -409,7 +422,8 @@ def audit(pack, inputs_root, source_root):
                       "C8 board", "the notes board does not state the %s" % key)
         checks = [(r"~(\d+) blocks", measured["shrine_range"], 10), (r"about (\d+) blocks off", measured["shrine_range"], 10),
                   (r"crown y(\d+)", ttop, 0), (r"another (\d+) blocks behind", measured["summit_beyond"], 10),
-                  (r"rises about (\d+) blocks", measured["climb"], 5)]
+                  (r"rises about (\d+) blocks", measured["climb"], 5),
+                  (r"the top (\d+) blocks of it", measured.get("crown_showing", -1), 0)]
         for pat, val, tol in checks:
             found = [int(v) for v in re.findall(pat, blob)]
             rep.check(found and all(abs(v - val) <= tol for v in found), "C8 %s" % pat,

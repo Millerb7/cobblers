@@ -3,8 +3,8 @@
 
 Generated from data/frostpeak_camp.json into the world-local datapack build/datapacks/cobblers_frostpeak_camp.
 
-The adopted Articuno shrine (data/adopted_legendary_sites.json adopted_articuno_shrine, on the east shoulder) has no
-finder in the game. The camp is the natural way a player learns where to look: a telescope trained on the tower, a
+The adopted Articuno shrine (data/adopted_legendary_sites.json adopted_articuno_shrine, on the summit since 2026-10-02)
+has no finder in the game. The camp is the natural way a player learns where to look: a telescope trained on the tower, a
 theodolite on the summit's bearing, field notes on a board, and three researchers who point. Nothing here promises the
 shrine's LumyMon altar works (EXP-048; the record's a_dead_altar_must_not_block rule): the dialogue only talks. It
 sets no quest state but its own cursor, runs no command, gives nothing and gates nothing.
@@ -17,7 +17,7 @@ Every part is an existing, proven piece:
                   logs and leaves first. tools/function_limits.py force-loads what the function writes.
   the instruments block_display entities (the format tools/rift_skin.py uses) whose transformation points the tube
                   along the exact bearing and elevation to its target, which a block cannot. The shrine target is
-                  the middle of the part of the tower's centre column visible over the shoulder from the telescope;
+                  the middle of the part of the tower's centre column visible over the false crest from the telescope;
                   the summit target is the false crest that hides the summit platform, on the summit's bearing.
                   Both are computed here from the heightmap.
   the researchers Cobblemon NPCs whose classes open a dialogue compiled by tools/compile_dialogue.py's Compiler from
@@ -98,19 +98,40 @@ def bearing(dx, dz):
     return math.degrees(math.atan2(dx, -dz)) % 360
 
 
-def clear_above(g, a, b, skip=3.0, step=0.25):
+def clear_above(g, a, b, skip=3.0):
     """True when the straight line from a to b (x, y, z) passes above the top face of every ground block, ignoring the
-    first `skip` blocks of horizontal distance (the camp's own bench under the instrument)."""
+    first `skip` blocks of horizontal distance (the camp's own bench under the instrument).
+
+    Exact, by clipping the segment to each column's square (Liang-Barsky) over the segment's bounding box: the line is
+    lowest at one end of the stretch it spends over a column, so a column blocks it when either end of that stretch is
+    at or below the column's top face. A fixed-step walk misses the corners of columns it crosses; on 2026-10-02 the
+    quarter-block walk this replaced called the summit tower visible from y369 where the crest still hides that layer."""
     (ax, ay, az), (bx, by, bz) = a, b
-    d = math.hypot(bx - ax, bz - az)
-    n = max(1, int(d / step))
-    for i in range(1, n):
-        t = i / n
-        if t * d < skip:
+    dx, dy, dz = bx - ax, by - ay, bz - az
+    d = math.hypot(dx, dz)
+
+    def span(p0, dp, lo, hi):
+        """The t interval in which p0 + t*dp lies in [lo, hi], or None."""
+        if dp == 0:
+            return (0.0, 1.0) if lo <= p0 <= hi else None
+        t0, t1 = sorted(((lo - p0) / dp, (hi - p0) / dp))
+        return t0, t1
+
+    for cx in range(math.floor(min(ax, bx)), math.floor(max(ax, bx)) + 1):
+        sx = span(ax, dx, cx, cx + 1)
+        if sx is None or min(1.0, sx[1]) < max(0.0, sx[0]):
             continue
-        x, y, z = ax + (bx - ax) * t, ay + (by - ay) * t, az + (bz - az) * t
-        if y <= g(math.floor(x), math.floor(z)) + 1:
-            return False
+        # only the rows the segment can reach inside this column of x
+        za, zb = sorted((az + dz * max(0.0, sx[0]), az + dz * min(1.0, sx[1])))
+        for cz in range(math.floor(za), math.floor(zb) + 1):
+            sz = span(az, dz, cz, cz + 1)
+            if sz is None:
+                continue
+            t0, t1 = max(0.0, sx[0], sz[0]), min(1.0, sx[1], sz[1])
+            if t1 <= t0 or (t0 + t1) / 2 * d < skip:
+                continue
+            if min(ay + dy * t0, ay + dy * t1) <= g(cx, cz) + 1:
+                return False
     return True
 
 
@@ -370,6 +391,7 @@ def plan(doc, g):
                 numbers["shrine_bearing"] = "%03d" % round(bearing(cx + 0.5 - pivot[0], cz + 0.5 - pivot[2]))
                 numbers["shrine_range"] = "%d" % (round(math.hypot(cx + 0.5 - pivot[0], cz + 0.5 - pivot[2]) / 10) * 10)
                 numbers["shrine_top"] = "%d" % top
+                numbers["crown_showing"] = "%d" % (top - lo + 1)
                 numbers["climb"] = "%d" % (round((g(cx, cz) - g(x, z)) / 5) * 5)
                 extra = {"visible_from_y": lo, "top_y": top}
             elif spec["target"] == "summit":
@@ -387,7 +409,14 @@ def plan(doc, g):
             q = quaternion(d)
             tube = spec["tube"]
             w, ln = tube["width"], tube["length"]
-            t = rotate(q, [-w / 2, -w / 2, -TUBE_BACK * ln])
+            # the share of the tube behind the pivot, cut down when the tube is steep enough for its eyepiece end to
+            # dip into the pier top (PIVOT_DY - 2 below the pivot): the summit tower (2026-10-02) is 40 degrees up
+            elev = math.asin(d[1])
+            back = TUBE_BACK
+            if elev > 0:
+                room = (PIVOT_DY - 2) - (w / 2) * math.cos(elev)
+                back = min(back, max(0.0, room / (ln * math.sin(elev))) * 0.9)
+            t = rotate(q, [-w / 2, -w / 2, -back * ln])
             cmd = ('summon minecraft:block_display %.2f %.2f %.2f {block_state:{Name:"%s"},'
                    'transformation:{left_rotation:[%s],right_rotation:[0f,0f,0f,1f],translation:[%s],scale:[%s]},'
                    'Tags:["%s","%s"]}' % (pivot[0], pivot[1], pivot[2], tube["block"], ",".join(f(v) for v in q),

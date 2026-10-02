@@ -21,8 +21,11 @@ THE INDEPENDENT SIDES, none of them this record:
                  re-measured over the footprint the record's own `corner` and `size` imply. No
                  expectation is ever taken from the record's `ground` block.
   the templates  `data/structures.json` `footprint`, for each template's x/height/z.
-  the ceilings   `data/world.json` `vertical.max_y` (310) and `sea_level` (62), and Minecraft 1.21.1's
-                 build limit of 320.
+  the ceiling    the RUNTIME's build top, read from the dimension type our pack ships
+                 (`modpack/datapacks/cobblers_height/.../dimension_type/overworld.json`: min_y + height - 1,
+                 y575), and `data/world.json` `sea_level` (62). `vertical.max_y` (310) is NOT a ceiling for
+                 built blocks: it caps authored terrain only (world.json measured_ceiling_note), and a template
+                 pasted on that terrain may rise above it.
   the rule       `data/portals.json` `rules.min_from_legendary_mouth`.
 
 ON PROVING THESE BITE. The repository's standard is "mutate the GENERATOR, not the record", because a
@@ -33,23 +36,18 @@ and it is a real proof rather than a shared derivation precisely because the exp
 heightmap, which a mutated record cannot move. The file on disk is never written: every mutation test
 works on `copy.deepcopy`.
 
-TWO RECORDING INCONSISTENCIES, found by these tests and NOT fixed here (a test author does not edit
-`data/`; see the report):
+CHANGED 2026-10-02, BY A DIFFERENT AUTHOR THAN THE ONE WHO WROTE THIS FILE (the agent that moved Articuno's
+tower to the summit, disclosed here). This file used to hold every site under BOTH `vertical.max_y` 310 and
+a hard-coded vanilla build limit of 320. Neither is this runtime's: `cobblers_height` ships an overworld
+dimension type of min_y -64, height 640, so the highest buildable layer is y575 (docs/STATE.md "World
+facts"), and max_y is a terrain line. The same wrong 320 is what refused the summit for Articuno on
+2026-10-01. So the ceiling is now READ from that dimension type file, max_y no longer bounds built blocks,
+and the two recording conventions this file used to tolerate are gone -- the record was rewritten to one:
 
-  `top_y`           three sites record the topmost OCCUPIED layer (`y + height - 1`: Mew 142+25-1=166,
-                    Crown 109+24-1=132, Zapdos 74+66-1=139); `adopted_articuno_shrine` records
-                    `y + height` (151+74=225, where the top occupied layer is y224). Both are safe --
-                    Articuno's is the conservative direction -- so `test_top_y_is_the_templates_top`
-                    accepts either and asserts the direction that matters: `top_y` may never UNDERSTATE
-                    the occupied top, because an understated `top_y` is how a ceiling breach would hide.
-                    The hard clearance check uses `y + height - 1` computed here and allows no slack.
-  `ceiling_margin`  Mew, Crown and Zapdos measure it against `max_y` 310; Articuno measures it against
-                    320 and adds `max_y_margin` for 310. So the field means two different things in one
-                    file. `test_declared_margins_are_arithmetic` therefore asserts that each declared
-                    margin resolves EXACTLY onto one of the two real, externally defined ceilings -- not
-                    a tolerance, a disjunction over two constants that come from `data/world.json` and
-                    the game. A margin computed from any third number, or left stale when `y` or
-                    `max_y` moves, lands on neither and fails.
+  `top_y`           the top OCCUPIED layer, `y + height - 1`, exactly, for all four sites. Over- and
+                    understating are both failures now: there is one convention, not a safe direction.
+  `ceiling_margin`  `runtime_top - top_y`, exactly, for all four sites. `max_y_margin` is a second
+                    convention and is refused wherever it appears.
 
 ALSO FIXED HERE, a cross-system hole the record asks for by name: `tools/portals.py` `clearances()` reads
 `data/legendaries.json` `encounters` for its `min_from_legendary_mouth` check (tools/portals.py:345-348)
@@ -72,9 +70,8 @@ NOT COVERED, by any of it. Validity is not behaviour (`.claude/rules/testing.md`
     footprint edge, and Zapdos' "63 blocks" to the nearest sub-sea-level column is 63.1 from the centre
     and 45.1 from the edge. The conclusions hold either way; the numbers are not interchangeable and no
     test asserts the prose.
-  * the `ceiling` and `why_a_sibling_of_legendaries_json` blocks still say THREE sites and name Zapdos as
-    the tallest top. Articuno joined later and is both the fourth and the tallest (y225 against y139).
-    `test_record_ceiling_max_y_is_world_json` pins the one number in that block; the stale counts are a
+  * the `why_a_sibling_of_legendaries_json` block still says THREE sites. Articuno joined later.
+    `test_record_ceiling_is_the_runtime_top` pins the numbers in the `ceiling` block; the stale count is a
     finding, not a thing to assert.
   * anything about `data/placements.json`. These sites are deliberately absent from it until a paste is
     approved, so no scheduling, demolition or audit tool sees them -- which is exactly why this file is
@@ -100,12 +97,20 @@ SITES = {s["id"]: s for s in RECORD["sites"]}
 IDS = tuple(sorted(SITES))
 
 WORLD = json.loads((ROOT / "data" / "world.json").read_text(encoding="utf-8"))
-MAX_Y = WORLD["vertical"]["max_y"]
+MAX_Y = WORLD["vertical"]["max_y"]          # authored TERRAIN only; never a ceiling for a built block
 SEA_LEVEL = WORLD["vertical"]["sea_level"]
 
-# Minecraft 1.21.1's overworld build limit. Not ours to configure and not in data/world.json: the world's
-# own max_y (310) is the tighter, authored ceiling and this is the one the game enforces.
-BUILD_CEILING = 320
+# The runtime's overworld build top, read from the dimension type our pack ships rather than typed in: the
+# old hard-coded 320 was vanilla's, and it refused the summit for Articuno on 2026-10-01.
+DIMENSION = ROOT / "modpack" / "datapacks" / "cobblers_height" / "data" / "minecraft" / "dimension_type" / "overworld.json"
+
+
+def runtime_top(path=DIMENSION):
+    dim = json.loads(Path(path).read_text(encoding="utf-8"))
+    return dim["min_y"] + dim["height"] - 1
+
+
+RUNTIME_TOP = runtime_top()
 
 # /place template's own argument vocabulary (the command form data/adopted_legendary_sites.json
 # `placement_method.command` declares). A rotation outside this list is a command that will not run.
@@ -191,27 +196,31 @@ def ground_problems(site, g):
     return bad
 
 
-def ceiling_problems(site):
-    """[problem] in the vertical arithmetic: the occupied top, both ceilings, and every declared margin."""
+def ceiling_problems(site, top=None):
+    """[problem] in the vertical arithmetic: the occupied top against the runtime's build top, and the margin.
+
+    `top` defaults to RUNTIME_TOP; it is a parameter so a test can prove the check bites on the ceiling it is
+    given (the old 320) rather than on anything the record says."""
+    top = RUNTIME_TOP if top is None else top
     p = site["placement"]
     height = template_size(site)[1]
     occupied_top = p["y"] + height - 1
     bad = []
-    if occupied_top > MAX_Y:
-        bad.append("the top occupied layer is y%d, over the world's max_y %d" % (occupied_top, MAX_Y))
-    if occupied_top > BUILD_CEILING:
-        bad.append("the top occupied layer is y%d, over the %d build limit" % (occupied_top, BUILD_CEILING))
+    if occupied_top > top:
+        bad.append("the top occupied layer is y%d, over the runtime build limit y%d" % (occupied_top, top))
     if p["top_y"] < occupied_top:
-        # The dangerous direction: a top_y below the real top is how a breach of the ceiling hides.
+        # the dangerous direction: a top_y below the real top is how a breach of the ceiling hides
         bad.append("top_y %d understates the top occupied layer y%d" % (p["top_y"], occupied_top))
-    if p["top_y"] > p["y"] + height:
-        bad.append("top_y %d is above y + height (%d)" % (p["top_y"], p["y"] + height))
-    for key in ("ceiling_margin", "max_y_margin"):
-        if key in p and (p[key] + p["top_y"]) not in (MAX_Y, BUILD_CEILING):
-            bad.append("%s %d implies a ceiling of y%d, which is neither max_y %d nor the %d limit"
-                       % (key, p[key], p[key] + p["top_y"], MAX_Y, BUILD_CEILING))
+    elif p["top_y"] != occupied_top:
+        bad.append("top_y %d is not the top occupied layer y%d (one convention: y + height - 1)"
+                   % (p["top_y"], occupied_top))
     if "ceiling_margin" not in p:
         bad.append("placement declares no ceiling_margin")
+    elif p["ceiling_margin"] != top - occupied_top:
+        bad.append("ceiling_margin %d is not runtime top y%d - top occupied layer y%d = %d"
+                   % (p["ceiling_margin"], top, occupied_top, top - occupied_top))
+    if "max_y_margin" in p:
+        bad.append("max_y_margin is a second margin convention, against a terrain line that is not a ceiling")
     return bad
 
 
@@ -355,21 +364,20 @@ def test_centre_is_the_corner_plus_half_the_size(sid):
 
 
 @pytest.mark.parametrize("sid", IDS)
-def test_top_y_is_the_templates_top_and_clears_both_ceilings(sid):
+def test_top_y_is_the_templates_top_and_clears_the_runtime_ceiling(sid):
     # Without it a 74-block template seated high pokes through the build limit and the record still reads
-    # fine. See the module docstring: the file has two top_y conventions, so this asserts the direction
-    # that matters and computes the hard clearance itself.
+    # fine. The clearance is computed here from y and data/structures.json's height, never read from top_y.
     assert ceiling_problems(SITES[sid]) == []
 
 
 @pytest.mark.parametrize("sid", IDS)
-def test_declared_margins_are_arithmetic_against_a_declared_ceiling(sid):
+def test_declared_margin_is_the_runtime_top_minus_the_occupied_top(sid):
     # Without it `ceiling_margin` is a number from the day it was typed. It is covered by
     # ceiling_problems(); this test names the property so a stale margin is not reported as "ceiling".
-    p = SITES[sid]["placement"]
-    for key in ("ceiling_margin", "max_y_margin"):
-        if key in p:
-            assert p[key] + p["top_y"] in (MAX_Y, BUILD_CEILING)
+    site = SITES[sid]
+    p = site["placement"]
+    assert p["ceiling_margin"] == RUNTIME_TOP - (p["y"] + template_size(site)[1] - 1)
+    assert "max_y_margin" not in p
 
 
 @pytest.mark.parametrize("sid", IDS)
@@ -392,10 +400,20 @@ def test_no_site_is_also_positioned_by_placements_json(sid):
         "%s is also placed by data/placements.json, so two files carry a position for it" % site["template"]
 
 
-def test_record_ceiling_max_y_is_world_json():
-    # Without it the record's ceiling block can quote a max_y data/world.json no longer has, and every
-    # margin computed from it is silently against the wrong roof.
-    assert RECORD["ceiling"]["max_y"] == MAX_Y
+def test_record_ceiling_is_the_runtime_top():
+    # Without it the record's ceiling block can quote a roof the runtime no longer has -- which it did, as
+    # max_y 310 and the vanilla 320, until 2026-10-02 -- and every margin computed from it is silently
+    # against the wrong one. The terrain line it also quotes must still be world.json's.
+    assert RECORD["ceiling"]["runtime_top_y"] == RUNTIME_TOP
+    assert RECORD["ceiling"]["terrain_max_y"] == MAX_Y
+
+
+def test_the_runtime_top_is_read_from_the_shipped_dimension_type():
+    # Without it a change to cobblers_height would silently move every margin. Pinned so that change is
+    # loud: re-derive every ceiling_margin in the record when this fails.
+    dim = json.loads(DIMENSION.read_text(encoding="utf-8"))
+    assert (dim["min_y"], dim["height"]) == (-64, 640), "cobblers_height changed: re-derive every margin"
+    assert RUNTIME_TOP == 575
 
 
 # --------------------------------------------------------------------------------------- the cross-system hole
@@ -502,15 +520,43 @@ def test_a_drowned_site_is_caught(ground):
 
 def test_a_structure_raised_through_the_build_limit_is_caught():
     # Proves the ceiling check is arithmetic over the template's real height and not a reading of
-    # ceiling_margin. Articuno's template is 74 blocks tall, so y260 puts its top at y333.
+    # ceiling_margin. Articuno's template is 74 blocks tall, so y520 puts its top occupied layer at y593.
+    # The copy is kept internally consistent (top_y and margin re-derived) so only the ceiling can fail.
     site = copy.deepcopy(SITES["adopted_articuno_shrine"])
-    site["placement"]["y"] = 260
-    site["placement"]["top_y"] = 260 + template_size(site)[1]
-    site["placement"]["ceiling_margin"] = BUILD_CEILING - site["placement"]["top_y"]
-    site["placement"]["max_y_margin"] = MAX_Y - site["placement"]["top_y"]
+    site["placement"]["y"] = 520
+    site["placement"]["top_y"] = 520 + template_size(site)[1] - 1
+    site["placement"]["ceiling_margin"] = RUNTIME_TOP - site["placement"]["top_y"]
     problems = ceiling_problems(site)
     assert any("build limit" in p for p in problems), problems
-    assert any("max_y" in p for p in problems), problems
+
+
+def test_the_summit_tower_fails_against_the_vanilla_320_that_refused_it():
+    # A mutation of the check's input, not of the record: hand ceiling_problems the old 320 and the summit
+    # site (top y383) must go red, so the check is bounded by the ceiling it is given and the summit passes
+    # only because this runtime's top is y575.
+    problems = ceiling_problems(SITES["adopted_articuno_shrine"], top=320)
+    assert any("build limit y320" in p for p in problems), problems
+
+
+def test_terrain_max_y_is_not_treated_as_a_ceiling_for_built_blocks():
+    # The summit tower stands on y310 terrain and rises to y383, over max_y 310. That must pass.
+    site = SITES["adopted_articuno_shrine"]
+    assert site["placement"]["y"] + template_size(site)[1] - 1 > MAX_Y
+    assert ceiling_problems(site) == []
+
+
+def test_a_second_margin_convention_is_caught():
+    site = copy.deepcopy(SITES["adopted_mew_temple"])
+    site["placement"]["max_y_margin"] = MAX_Y - site["placement"]["top_y"]
+    assert any("max_y_margin" in p for p in ceiling_problems(site))
+
+
+def test_a_top_y_that_overstates_the_template_is_caught():
+    # One convention now: y + height (Articuno's old form) is as wrong as an understatement.
+    site = copy.deepcopy(SITES["adopted_zapdos_tower"])
+    site["placement"]["top_y"] += 1
+    site["placement"]["ceiling_margin"] -= 1
+    assert any("not the top occupied layer" in p for p in ceiling_problems(site))
 
 
 def test_a_stale_ceiling_margin_is_caught():
