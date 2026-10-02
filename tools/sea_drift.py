@@ -922,8 +922,26 @@ def pool_records(spec, spawns=None):
         k = (e.get("pokemon") or e.get("species") or "").lower()
         if e.get("spawnable_position") and k not in pos:
             pos[k] = e["spawnable_position"]
+    # NEVER this pool's own entries: on 2026-10-02 the encounter rebuild removed Binacle, Clauncher and Dragonair from
+    # every other table, and this loop went on finding the positions it had itself written - reading its own output as
+    # input. The other tables come first; a species no other table carries takes its position from Cobblemon's own
+    # spawn files (tools/position_types.py, the source tools/build_encounters.py uses), and says so.
     for e in spawns["entries"]:
-        see(e)
+        if e.get("scope") != w["pool"]:
+            see(e)
+    upstream = None
+    for ro in w["roster"]:
+        for sp in [ro["pokemon"]] + [e["pokemon"] for e in ro["evolutions"]]:
+            if sp not in pos:
+                if upstream is None:
+                    import position_types
+                    jar = position_types.default_jar()
+                    if jar is None:
+                        raise DriftError("%s is in no other table of data/spawns.json, and COBBLERS_SERVER_ROOT is unset, "
+                                         "so Cobblemon's own spawn files cannot be read for it" % sp)
+                    upstream = position_types.upstream_positions(jar)
+                import position_types
+                pos[sp] = position_types.choose(sp, upstream)[0]
     lo, hi = w["level_band"]["minimum"], w["level_band"]["maximum"]
     level = "%d-%d" % (lo, hi)
     rar = spawns["rarity"]

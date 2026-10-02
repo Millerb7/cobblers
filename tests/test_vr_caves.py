@@ -61,7 +61,9 @@ CORED = [z for z in ZONES if z["id"] != "the_dark"]
 POOLS = {h["id"]: h for h in SPAWNS["habitats"] if h["id"].startswith("vrc_")}
 TILES = [b for b in HABITATS["blocks"] if b["id"].startswith("vrc_")]
 BAND = SPEC["spawns"]["band"]
-PRIZE_LEVELS = (60, 64)
+# A prize is at the top of the band, like a find (docs/mechanics/ENCOUNTER_DESIGN.md 7a, 2026-10-02): the old 60-64
+# put a third of it over Victory Road's cap of 60, where a ball cannot hold it (data/level_cap.json).
+PRIZE_LEVELS = (57, 60)
 
 
 def _levels(entry):
@@ -408,9 +410,9 @@ def test_the_vrc_pools_are_exactly_the_cave_pool_and_each_zones_pair():
 
 
 # Without it a pool spawns outside the level band the owner set for Victory Road (a level 40 Golbat under the
-# League, or a level 70 one past the cap), or a prize comes in below 60.
+# League, or a level 70 one past the cap), or a prize comes in below the top of the band.
 @pytest.mark.parametrize("pool", sorted(POOLS))
-def test_every_vrc_pool_spawns_inside_the_band_and_prizes_at_60_to_64(pool):
+def test_every_vrc_pool_spawns_inside_the_band_and_prizes_at_the_top_of_it(pool):
     h = POOLS[pool]
     assert (h["level_band"]["minimum"], h["level_band"]["maximum"]) == tuple(BAND), pool
     prizes = {_prize(z["id"]) for z in CORED}

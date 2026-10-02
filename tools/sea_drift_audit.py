@@ -442,7 +442,21 @@ def audit(source_root=None, pack=PACK, spec=None):
             P.append("habitats: %s is one of the species the owner is tired of" % e["species"])
         others = [o_ for o_ in sdoc["entries"] if o_.get("scope") != spec["waters"]["pool"]
                   and o_.get("species") == e["species"] and o_.get("spawnable_position")]
-        if not others or e.get("spawnable_position") != others[0]["spawnable_position"]:
+        if not others:
+            # No other table carries it (the encounter rebuild of 2026-10-02 dropped Binacle, Clauncher and Dragonair
+            # from all of them). Judge it against Cobblemon's own spawn files instead: the position must be one
+            # Cobblemon itself uses for this species. The RAW counts, not position_types.choose() - that is the
+            # generator's rule, and an audit sharing it would agree with the generator by construction.
+            import position_types
+            jar = position_types.default_jar()
+            if jar is None:
+                P.append("habitats: %s is in no other table and COBBLERS_SERVER_ROOT is unset: cannot judge its "
+                         "position" % e["species"])
+            elif not position_types.upstream_positions(jar).get(e["species"], {}).get(e.get("spawnable_position")):
+                P.append("habitats: %s's position %r is not one Cobblemon's own spawn files use for it"
+                         % (e["species"], e.get("spawnable_position")))
+            continue
+        if e.get("spawnable_position") != others[0]["spawnable_position"]:
             P.append("habitats: %s's position %r is not the one data/spawns.json already gives it"
                      % (e["species"], e.get("spawnable_position")))
 
