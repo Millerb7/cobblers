@@ -28,9 +28,11 @@ enforces, which is exactly the state the repository was in on the morning of 202
 
 Facts the mutations lean on, read off the committed data (2026-10-01): data/late_route_trainers.json
 restates `lesson` and `trainer_order` for 28 trainers and they MATCH the roster (declared echoes);
-data/late_route_trainers.json and data/vr_trainers.json carry a `dialogue_text` that DIFFERS from the
-roster's for 38 trainers (declared precedence, so superseded rather than faulted); no seat file shares
-any other field with data/trainers.json. Each such assumption is guarded by a fixture check that says
+its 28 seats also author a `dialogue_text` whose roster value is EMPTY, which is the declared
+precedence falling back rather than superseding anything, while Victory Road's ten carry real roster
+text and author no seat copy -- so after B2 deleted the ten superseded sets there is no superseded pair
+in the committed data, and the precedence case is reached by mutation; no seat file shares any other
+field with data/trainers.json. Each such assumption is guarded by a fixture check that says
 "fixture no longer exercises the property" rather than passing vacuously.
 
 TWO DEFECTS WERE FOUND WHILE WRITING THIS FILE, REPORTED, AND FIXED THE SAME DAY BY THE TOOL'S AUTHOR.
@@ -257,19 +259,49 @@ def test_a_matching_echo_is_not_a_fault_when_both_sides_move_together(tmp_path):
     assert _faults(root) == []
 
 
-def test_a_diverging_dialogue_text_is_superseded_rather_than_faulted(tmp_path):
-    # dialogue_text is the one declared precedence: the roster's lines are what a player hears and the
-    # seat file's are a fallback. If this ever faults, 38 real trainers stop building; if the supersede
-    # list stops being returned, a hand-written line dies silently, which is the whole fault class.
+def test_a_dialogue_text_supersedes_only_when_the_roster_really_has_one(tmp_path):
+    # dialogue_text is the one declared precedence, and the rule is `if r[f] and e[f] != r[f]`: the
+    # roster's lines are what a player hears, but ONLY when it has any -- lines_of() falls back on an
+    # empty roster value, so a seat set against one is the fallback working, not a superseded copy.
+    # B2 deleted the ten superseded sets (docs/HANDOVER_SESSION.md), so the real data has no superseded
+    # pair today and the old assertion `RT.SUPERSEDED` was asserting the state before that deletion.
+    # The two halves that still matter: a precedence field NEVER faults (if it did, 38 real trainers
+    # stop building), and a seat copy that sits behind a REAL roster line is still REPORTED, because an
+    # unreported one is a hand-written line dying silently -- the whole fault class.
+    roster = {r["id"]: r for r in _doc(TRAINERS)["trainers"]}
+    late = _doc(LATE)["trainers"]
+    vr = _doc(VR)["trainers"]
+    # fixture: the 28 late-route seats author dialogue_text against an EMPTY roster value (the fallback
+    # case), and the 10 Victory Road roster records carry REAL text (the precedence case, reachable only
+    # by mutation because those seats author none). If either stops being true the test is vacuous.
+    fallback = [e for e in late if "dialogue_text" in e]
+    assert len(fallback) == 28 and all(
+        "dialogue_text" in roster[e["id"]] and not roster[e["id"]]["dialogue_text"] for e in fallback), (
+        "fixture no longer exercises the property: data/late_route_trainers.json's seats no longer sit "
+        "against an empty roster dialogue_text")
+    assert len(vr) == 10 and all(roster[v["id"]].get("dialogue_text") for v in vr), (
+        "fixture no longer exercises the property: Victory Road's roster records no longer carry real "
+        "dialogue_text, so nothing here can supersede")
+
+    # the fallback half: not superseded, not a fault, and the seat's own text is what lines_of emits
     RT.load()
-    assert RT.SUPERSEDED, "no superseded copy reported, so divergence has gone silent"
-    assert {f for _i, f in RT.SUPERSEDED} == {"dialogue_text"}
-    rid, field = RT.SUPERSEDED[0]
-    assert _naming(_faults(ROOT), rid, field) == []
+    both = [(e["id"], "dialogue_text") for ent in (late, vr) for e in ent
+            if "dialogue_text" in e and roster.get(e["id"], {}).get("dialogue_text")
+            and e["dialogue_text"] != roster[e["id"]]["dialogue_text"]]
+    assert sorted(RT.SUPERSEDED) == sorted(both), (sorted(RT.SUPERSEDED), sorted(both))
+    assert {f for _i, f in RT.SUPERSEDED} <= {"dialogue_text"}
+    for e in fallback:
+        assert RT.ownership({e["id"]: roster[e["id"]]}, [dict(e)], LATE) == []
+        assert RT.lines_of(roster[e["id"]], e) == e["dialogue_text"]
+    assert _naming(_faults(ROOT), fallback[0]["id"], "dialogue_text") == []
+
+    # the precedence half: a seat set against a REAL, DIFFERENT roster line IS superseded -- reported,
+    # never faulted -- and the roster's line is the one a player would hear
     stand = dict(_record(_doc(VR), "route_09_trainer_10"))
-    roster = _record(_doc(TRAINERS), "route_09_trainer_10")
+    r10 = _record(_doc(TRAINERS), "route_09_trainer_10")
     stand["dialogue_text"] = {"pre": "a line only the seat file has"}
-    assert RT.ownership({roster["id"]: roster}, [stand], VR) == [("route_09_trainer_10", "dialogue_text")]
+    assert RT.ownership({r10["id"]: r10}, [stand], VR) == [("route_09_trainer_10", "dialogue_text")]
+    assert RT.lines_of(r10, stand) == r10["dialogue_text"] != stand["dialogue_text"]
     root = _mutate(tmp_path, (VR, lambda d: _record(d, "route_09_trainer_10").update(
         {"dialogue_text": {"pre": "a line only the seat file has"}})))
     assert _naming(_faults(root), "route_09_trainer_10", "dialogue_text") == []

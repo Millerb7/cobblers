@@ -116,6 +116,74 @@ rather than silently changed:** `data/rift_sculpt.json:49,51`; **`data/quests.js
 `RIFT_STATUS.md:111`; `SOUTHERN_RIFT.md:54,58,91,100`. Benign and left alone: `landmarks.json`'s
 south-west arm geography, `placements.json:2276`, and `routes.json`'s corridor points.
 
+### B15. The Jungle Isle drowned and four systems never heard about it — found from the air, 2026-10-01
+
+**Measured, not relayed.** The water pass put the whole Jungle Isle under the sea: every column inside its
+polygon is at or below y61 against a sea level of **62** (`data/regions.json`'s own measured block says
+`max: 61.0`, and the canonical heightmap agrees). Four things still stand on it as if it were land.
+
+**(a) Four world trees hang in the air.** `data/elder_trees.json` is a pinned file, and
+`tools/elder_trees.py` takes each trunk's `ground_y` straight out of it — skipping both the heightmap and
+the `wet = heights <= sea_level` guard its own siting path applies, because the pinned branch sets
+`included = []`. The four jungle elders kept their pre-water heights:
+
+| Elder | At | Records | Heightmap | Hanging by |
+|---|---|---|---|---|
+| `elder_jungle_west_2` | (4968, 7416) | 126 | 58 | **68 blocks** |
+| `elder_jungle_east_1` | (5216, 7904) | 81 | 53 | 28 |
+| `elder_jungle_east_2` | (5248, 6976) | 77 | 54 | 23 |
+| `elder_jungle_west_1` | (4464, 7312) | 70 | 53 | 17 |
+
+**Exactly 4 of the 48 pinned elders are wrong, and all four are on the drowned isle** — the other 44 match
+the heightmap exactly. Their **16 bird Habitat Blocks** ride inside the trunks. Your options are the two you
+named: **extend the trunks down to the seabed** (they become drowned world-trees, and the birds — currently
+at trunk +12/+35/+58/+74 — move up or drown with them), or **re-site all four onto land**, which means
+editing `data/elder_trees.json` and `data/habitat_blocks.json` together, as the file's own note requires.
+
+**Why nothing caught it:** `tests/test_elder_birds.py` checks the doc table, the pinned file and the site
+file **against each other**. All three carry the same stale number, so three sources agreed and only the
+terrain disagreed — exactly the closed-loop audit CLAUDE.md warns about.
+`tests/test_pinned_ground_is_the_heightmap.py` now asks the terrain instead; the four are a **strict xfail**
+pointing here, so answering this turns it green. The same sweep cleared every other `ground_y` in `data/`.
+
+**(b) The drowned ruin and the raft town are built on the same water.** `jungle_ruins` was already re-seated
+on 2026-09-30 for *this very bug* (it had been hanging 60–64 blocks up) and correctly became
+`minecraft:underwater_ruin/*` at seabed+1. Nobody then checked what else was there. Measured over the
+rotated 16x16 footprints against `data/sea_town.json`'s 59 rectangles:
+
+| Ruin | Overlaps | Columns |
+|---|---|---|
+| `ruin_east_court` (5170, 7387) | raft 1 | **192** |
+| `ruin_great_hall` (5152, 7503) | a building + a walk | 120 |
+| `ruin_west_wall` (5145, 7412) | raft 13 + a building | 104 |
+| `ruin_north_gate` (5147, 7351) | raft 3 + a building | 80 |
+| `ruin_court_east`, `ruin_court_west` | nothing | 0 |
+
+**Four of six ruins, 496 columns, inside the raft town** — one of them 192 columns inside a single raft.
+That is the stone ruin standing in the middle of Pacifidlog in your third screenshot. **Options:** move the
+ruin set clear of the town (it is the newer arrival on the owner's reading, but the *town* is the thing with
+services); drop `jungle_ruins` entirely and let the sunken isle be bare seabed; or keep the collision
+deliberately and rebuild the town square *around* the ruin, which is the only one that costs real work but is
+also the only one that makes the overlap read as intended. `tools/sea_town.py` refuses overlaps **inside its
+own plan** and cannot see another settlement's, which is why this was silent.
+
+**(c) Two names still announce a place that no longer exists.** `regions.json` keeps `jungle_isle` ("Jungle
+Isle", jungle and sparse-jungle paint over open water) and `towns.json` keeps `jungle_ruins`' display name
+**"Sunken Court"**. Both fire over the sea, which is the title in your second screenshot. "Sunken Court" is
+arguably *better* now than when it was written; "Jungle Isle" over 1.2 km2 of ocean is not.
+
+### B16. Articuno — TAKEN, (904, 320)
+
+The owner, 2026-10-01: *"take (904, 320). The refusal tested one pad and refused a mountain, and your site keeps
+what it said was the point."* Seat y151, top occupied layer y224, 86 blocks under `max_y`; 235 blocks due east of the summit at
+almost the same latitude and 159 below it; ground spread **1** over 440 columns; **73 blocks of fill, zero cut**.
+Recorded in `data/adopted_legendary_sites.json` as `adopted_articuno_shrine`. The two measured alternatives stay in
+the file as measurements, not open options — the south-foot one at (760, 652) becomes live again only if the
+research camp and the shrine are ever meant to read as one place.
+
+**Still gated by EXP-LEG-ALTAR**, like the other three: all four carry LumyMon altars and nothing has yet shown a
+pasted altar responds to anything. Placing is not the question; functioning is.
+
 ## C. In-game checks only you can make
 
 | # | Check | Why a session cannot |
