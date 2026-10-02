@@ -1,148 +1,272 @@
-# Handover — the suite is alive, the collision has a check, and the NPCs are next
+# Handover — the Rift's research is done, the builds are a fresh session's
 
 A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else, before it starts.
 
-## 1. The branch
+## 0. Why this session stopped before building
 
-- **`fix/2026-10-01-vr-trainer-ownership`**, head **see `git rev-parse HEAD`** -- re-read it rather than trusting a quoted one.
-- **[PR #102](https://github.com/Millerb7/cobblers/pull/102), OPEN, draft, base `main`.** For its head,
-  **re-read it** -- `gh pr view 102 --json headRefOid --jq .headRefOid`, and merge with
-  `gh pr merge 102 --match-head-commit <that sha>`. The PR body quotes the head it was pinned at; this
-  file deliberately does not, because a handover commit moves it and a quoted sha then lies.
-- **#102 was already open when this session started, and this session pushed to it before checking.**
-  It had opened as the previous session's problem report ("main's pytest suite collects zero tests, and
-  the obvious fix deletes hand-authored work") and had been reported to the owner, so CLAUDE.md's freeze
-  rule applied and the two commits should have gone on a new branch stacked on it. The check
-  (`gh pr view --json state`) was run after the push, not before; a force-push to undo it is also
-  forbidden. Remedy taken: the PR's title and body now describe what the branch carries, with the
-  original report preserved verbatim in a collapsed section. **Check the PR's state BEFORE the push, not
-  after** -- `gh pr list --head $(git branch --show-current)` costs one command.
-- `origin/main` carries #97 (merge `a271532`), which this branch has merged in and which is an ancestor
-  of this head (checked with `git merge-base --is-ancestor` after a `--prune` fetch).
-- **Prune before trusting any remote ref** (`git fetch --prune`) and re-read every head you quote. The
-  owner merges while a session works and GitHub deletes the branch on merge; on 2026-10-01 that
-  invalidated two reported `--match-head-commit` commands in one night.
+**It hit the owner's own hand-over threshold.** `python tools/session_cost.py` at the stop: 186 turns,
+**context 370k, every turn costing 37k to send**, weighted 5.5M — of which the four subagents were only
+1.6M and this session's own thread was 3.9M. CLAUDE.md: "Over 300k: hand over", because "a long session is
+the single most expensive thing we do". Continuing the builds at 370k a turn would have bought less than a
+cold session buys at 70k. That is the finding, not an excuse: the research phase and the build phase are
+different jobs and the boundary is here.
 
-## 2. What was done, and what proves it
+**The builds cannot be delegated either, and that is the night's structural finding.** Three of the five
+Rift units (the Slip, the relic site, the Mega dens) need `derived/` and the canonical heightmap. Verified
+this session: an agent's isolation worktree receives **no `derived/`** (`agent-*/derived/` holds only the
+tracked `README.md`) and there is no `.worktreeinclude` at all. So every heightmap-dependent build is
+main-session work by construction. Plan the next session as one build job, not as a fan-out.
 
-**The suite was reporting nothing at all and now reports a count.** It had been dying at collection since
-06:14: `tools/route_trainers.py` raised `SystemExit` while `tests/test_trainer_cycle.py` was imported, and
-a `SystemExit` is a `BaseException`, so pytest answered `no tests ran` plus `INTERNALERROR` — no failures,
-no passes, nothing comparable with the day before. Three things changed:
+## 1. The branch and the PRs
 
-1. **The trainer guard is field-level** (`tools/route_trainers.py`, the "who authors what" block). The
-   roster (`data/trainers.json`) owns who a trainer is; a seat file owns where it stands and how it
-   behaves standing there. Three declared modes: `STAND_FIELDS` the roster must not carry, `ROSTER_ECHO`
-   that must stay identical, and `ROSTER_PRECEDENCE` (`dialogue_text`) where the roster wins and the seat
-   file is the fallback. Against the real data it named the real collision — **9 fields on
-   `route_09_trainer_10`**, not the whole id.
-2. **Nothing hand-authored was deleted.** The tenth stand's roster moved into `superseded_roster` in
-   `data/vr_trainers.json`, verbatim, with a note saying why it is kept. Verified after the change: all
-   ten stands keep their seats and yaws (`(3563,2,3009)` through `(3655,65,2564)`), and the tenth emits
-   main's roster on our stand's skin with `forceBattleOnSight` on.
-3. **`tests/test_id_authorship.py` (18 tests, written by a `test-author` agent, not by the session that
-   wrote the tool).** It found two real defects, both fixed and both verified by hand against mutated
-   copies of `data/`, and **neither has a test** -- a chip is queued (`task_77d572d3`) with the three
-   cases:
-   - a collision between **two satellites** of one space named `space["owner"]`, a file carrying neither
-     value. (The report diagnosed an `fa`/`fb` sort-order bug in the owner-satellite case; checking it
-     against the data showed that case attributes correctly and the real hole was the ownerless pair.
-     A fault that names the wrong file is worse than a quiet one: it is a day spent in the wrong file.)
-   - a declared overlap whose ids stop overlapping **entirely** was never reported stale, because the
-     check ran over the data's keys and an emptied declaration has none. It iterates the union now.
-   - `test_the_registry_is_not_derived_from_the_tool` asserts that two sets differ after one is
-     monkeypatched, which is true of any two sets. It proves nothing and should be rewritten or dropped.
-4. **A tool failing closed at import can no longer end the run.** `tests/conftest.py`'s
-   `pytest_make_collect_report` turns it into one named collection error carrying the tool's message
-   verbatim, and `continue_on_collection_errors` keeps the count. **Proved by mutating the generator**
-   (a deliberate `raise SystemExit` in `load()`): `10 passed, 1 error`, message intact, instead of
-   INTERNALERROR.
+- Working branch **`build/2026-10-01-rift-economy`**, cut from `fix/2026-10-01-vr-trainer-ownership`.
+  Re-read its head: `git rev-parse HEAD`. One commit of substance: `485e364`.
+- **[PR #102](https://github.com/Millerb7/cobblers/pull/102) is OPEN, draft, base `main`, and FROZEN** —
+  it carries the trainer-ownership work and was reported to the owner. Push nothing to
+  `fix/2026-10-01-vr-trainer-ownership`. Check a branch's PR state **before** a push, not after:
+  `gh pr list --head $(git branch --show-current)`. This session's predecessor got that order wrong.
+- `origin/main` is `a271532` and does **not** yet have #102's suite fix. Anything that runs the suite on
+  main will still report `no tests ran`.
+- No PR opened for `build/2026-10-01-rift-economy` yet.
 
-**And the general case, because this will happen again.** `tools/id_authorship.py` +
-`data/id_authorship.json`: every id two files in `data/` both carry a record for is declared as a space or
-an overlap, by exact id set, or it is a fault. 265 such ids, 132 cross-file field pairs, 15 overlap
-classes read value by value, **6 marked `finding`** (listed in `docs/STATE.md`). Runs from
-`.githooks/post-merge` — where the fault is made — and as `python tools/validate.py --only duplicate_ids`
-(the `duplicate_ids` stub is now real).
+## 2. Part 1 — the Rift, unit by unit
 
-**CLAUDE.md gained two rules**: "A clean merge is not a clean union", and a file declaring `generated_by`
-"hand" is never deleted to resolve a conflict.
+| Unit | State | Next step |
+|---|---|---|
+| 1. Heaven's Arena | **Designed, costed, not built** | Build the geometry; hold the fights behind A1 |
+| 2. Relic site underground | Not started; existing design contradicts the owner | Re-design section 5, then carve |
+| 3. Mining town / Deep barrier | **Designed already — "the Slip"** | Build it as blocks, not as a sculpt |
+| 4. Mega farm in the open | **12 sites measured; tool already supports it** | Author `farms`, add a den-anchor box |
+| 5. The four withheld zone walls | **ANSWERED: stay withheld** | Nothing. Do not reopen |
 
-**`install_check.py` ran for the first time in four sessions: 0 problems (packs and configs).** Port 25565
-free, no Java process. `Bash(python tools/server_lock.py:*)` in `.claude/settings.local.json` was enough —
-**the lock write was not refused.** Whatever stopped the last three sessions, it is not that rule.
+### Unit 5 is closed, with proof
+`rift_crisis_resolved` still has **no setter on any branch**. `data/quests.json` on `origin/main` says it
+itself, verbatim: *"Invoke only after the authoritative rift_crisis_resolved setter commits successfully;
+no current dialogue node invokes this trigger"*, and *"rift_crisis_resolved is approved in ARC.md but
+absent from the progression ledger"*. Checked across every remote branch including
+`codex/mainline-reveal-pallet-brock`. The walls stay withheld; the finale's quest stage is Codex's.
 
-Measured: `validate_data.py` 0 errors / 0 warnings, `validate.py` 1,238 files 0/0,
-`tools/id_authorship.py` 0 faults, trainer/gym/league tests **887 passed, 1 xfailed**. Full suite **7 failed, 5,188 passed, 9 xfailed in 578 s** -- the baseline seven exactly (heightmap
-provenance, `mines_independent` surface faces, two `rift_heightmap` sculpt tests, three `sea_town`), no
-new failure, and 19 more passes than the 5,169 of the last run that counted, because the trainer tests
-that had been collected-but-dead now run.
+### Unit 1 — the answer the owner asked for
+`docs/world-building/HEAVENS_ARENA.md` (385 lines). **They coexist: the arena is the Core spire grown
+upward. 0 of 196 buildings and 0 stair towers lost**, because lots seed only within 16 blocks of a riser
+foot and the spire already stands on the one large footprint that rule leaves empty. 7 tiers on the pit's
+own 15-then-17 grammar, crown y128 (4 under the HQ tower, so the HQ stays dominant), the existing y15
+bridge from Relay Row is tier 1's door, and the 9 stair towers plus 8 lift pairs are the lift. Runners-up
+costed: the Core (8 buildings plus the confrontation's stage), the north face (up to 27 Stacks lots).
 
-## 3. What waits on the owner
+**Two things the builder must not miss.**
+- **Lots are seeded AFTER the spire claims its columns, and a lot under 40 columns is dropped with no
+  error** (`tools/deep_city.py:960,1064`). A wider drum therefore costs buildings *silently*. Diff
+  per-district lot counts before and after, every time.
+- Use `rift_deep.model()["centre"]`, not DEEP_CITY.md's `(3603,3222)` and not `the_deep.seed`
+  `(3600,3150)`; they disagree.
 
-- **Which tenth trainer stands at the exit ravine.** Main's **League Examiner** (four Pokemon, Tailwind
-  Crobat with a Focus Sash, "the exam is what you do after that") is what emits today. Our **Gate Warden**
-  (three Pokemon, "nobody walks onto the apron without going through me") is in
-  `data/vr_trainers.json`'s `superseded_roster`. The same choice, smaller, applies to the other nine and to
-  the 28 late-route trainers: the roster's dialogue is what a player hears and **38 hand-authored
-  seat-file sets are superseded** (the generator prints the count on every run). Nothing is lost either way
-  — it is which lines play.
-- **Giovanni: one stale field stands between seven leaders' teams and eight.** `data/trainers.json` gives
-  `gym_08_giovanni` `status: authored`, `blocked_by: None`, singles, six Pokemon at 52-55 whose top is
-  exactly his contract's 55. `docs/story/GIOVANNI_FORMAT.md` settled the format. Only
-  `data/gym_trainers.json`'s `held: true` skips him, and its `held_because` quotes an empty team that no
-  longer exists. The generator fails closed if the ace disagrees with the contract, so it cannot emit a
-  wrong level. Left undone deliberately: it changes what a player fights.
-- **Whether superseding the server lock was mine to do.** Its owner line named *this worktree's* session
-  from 2026-09-29 ("morning flight; owner awake and flying cobblers-dryrun12"), two days old, server down.
-  Taken with `--supersede`, so the old line is recorded inside the lock file, but CLAUDE.md says resolve
-  ownership with the owner rather than judge a lock stale.
-- **Six declared `finding` overlaps want renames**, none urgent: `tri_peaks` / `glacial_tear` are both a
-  landmark and a region; `sunset_west` is both a town and a spawn subregion; `kind`, `theme` and `order`
-  each mean two things in two files one tool reads together. All in `data/id_authorship.json` with reasons.
+### Unit 1's fights are BLOCKED on one experiment, deliberately
+`docs/research/notes/rct-arena-capabilities.md` (368 lines). An endless ladder needs **nothing we lack**:
+repeatable fights are the default (`maxTrainerDefeats` negative = infinity), CobbleDollars pays every win
+automatically ($732, then $600 on a rematch), and `requiredDefeats` is a 2-D list (OR within, AND across)
+that expresses "beat tier N before N+1" **per player** natively. rctmod cannot generate a team, hold a
+per-player champion, or keep per-mob state; a per-player tier holder rides the MoLang quest fields
+`tools/route_trainers.py` already writes.
 
-## 4. The next job: the settlement NPCs, in a fresh session
+- **A1, the blocker: does `requiredDefeats` gate a trainer with `series: []`?** UNPROVEN. Principle 20
+  says prove it before building the ladder. The exact commands are in the file's section 7.
+- **The cap trap:** a player's level cap is derived from the next required trainer **in their series**, so
+  the arena must use `series: []` or it hijacks every cap in the game. This is the kind of cross-system
+  consequence that has bitten before — read the consumers before wiring it.
+- Geometry and fights are separable. Build the tower; leave the ladder until A1 answers.
 
-The owner's method is predict-then-probe, as the 56 trainers were done. **The count is 15, not 32**
-(`docs/world-building/SETTLEMENT_NPCS.md`): 15 conversation-bearing settlement NPCs, **34 gate-guard
-positions with no characters authored at all**, and the **four Rift guards, which already have seats with
-armour-stand placeholders**. The owner has confirmed these figures; the 32 was a session's error.
+### Unit 3 — the Slip, and why NOT to sculpt it
+The owner's own design already exists: `docs/world-building/DEEP_CITY.md` section 6, **"The barrier
+(recommended): the Slip"** — a landslide ridge across the spur floor at about **x3290–3310** (trace it from
+the two region masks, which overlap there), 24–30 above the floor, sheer on the camp side, with a one-way
+down-lift on the relic side and an up-lift gated on a flag. `data/rift_mines.json`'s `keep_clear` box
+`relic_area_and_the_slip` (`rect [3280, 3150, 3440, 3440]`) already reserves the ground for it.
 
-**The blocker is standing blocks, not coordinates:** 10 of 13 `npc_main_*` carry a `recorded_position_xz`
-and **0 carry a `stand_marker`**. Nine of the ten check out against their settlement footprint and
-heightmap ground. The probe half needs a running world and there is none — the server is down and this
-session held the lock only for `install_check` (see below).
+**The document says to sculpt it into `data/rift_sculpt.json`. Do not, without the owner awake.**
+`tools/rift_heightmap.py --apply` **rewrites the canonical heightmap and `data/world.json`**, which
+re-pins the sha256 every measured artifact in the repo is keyed to and needs a full world re-export. That
+is the one irreversible act available here and it is not a thing to do unsupervised. The reversible route
+is a **block-built rockslide**, and there is a proven precedent to copy: the gulch's rockslide wall
+(`tools/gulch_mine.py`, `data/gulch_mine.json` `gate.band` — `top`, `core`, `spread_out`, `spread_in`,
+`batter`, `jag`, `min_rise`), raised to the crag tops after the owner's gate test found a y122 rockfall
+read as passable. It re-applies and can be undone.
 
-Deliberately not fixed, for Codex: `npc_main_league_steward` is recorded at (3297, 2603), 433 blocks from
-the League, inside no settlement, heightmap y118 against the League's 86.3-98.9. It is the retired
-`FACTION.md` cradle coordinate the Rift-zones unit already rejected. Correcting it here would hide the
-propagation.
+### Unit 4 — the cheapest thing left, and it is nearly free
+**`tools/gulch_mine.py` already implements `farms[]` end to end** — the zone check and turn-back, the
+per-tier level, the respawn clock, the drop roll and the shared keeper (macro `megas/spawn_at`, per
+EXP-046). **`data/gulch_mine.json` has no `farms` key at all.** Its own `megas.why` references
+`farms[].dens` and `farm_tiers` describes "four outer dens" that do not exist. So the open-air Mega farm
+is *unbuilt, with its tool already written*. The unit is data authoring.
 
-## 5. State of the machine
+The schema the tool reads (extracted from the code, not guessed):
+- a farm: `id`, `name`, `tier`, `approach` `[x0,y0,z0,x1,y1,z1]`, `zone` `{polygon, turn_back:[x,y,z,yaw]}`, `dens`
+- a den: `id`, `species`, `aspect`, `anchor` `[x,y,z]`, `leash`, optional `level` / `tier` /
+  `drop_percent` / `respawn_ticks` (the tier supplies the rest from `farm_tiers`)
 
-- **Server down**: no listener on 25565, no Java process (checked 2026-10-01).
-- **The coordination lock is FREE** (released at the end of this session). It had been held since
-  2026-09-29 by a line naming *this worktree's* session ("morning flight; owner awake and flying
-  cobblers-dryrun12"); this session took it with `--supersede`, ran `install_check`, and released it.
-- No worktree, branch or process is left half-done by this session. `build/datapacks/cobblers_trainers`
-  was regenerated (359 files, 56 seated trainers, 12 overrides) and is disposable.
+**The one obstacle, and the wrong way to clear it.** `tools/gulch_mine_audit.py:242,407` checks coordinates
+against `spec["grid"]` (`x 4228–4500, z 4640–4970`) and these sites are far outside it. **Widening `grid`
+would weaken the block-write guard** that keeps this build inside its box — a threshold widened to make
+data pass is not a threshold (CLAUDE.md). Dens write **no blocks** (keeper and zone functions only), so the
+right change is a *separate declared box* for den anchors and turn-back points, leaving `grid` tight.
 
-## 6. What a cold start must not rediscover
+**The 12 measured sites** (off the canonical heightmap, never a world; inside the arm polygons, pad slope
+< 10°, 24+ clear of every `keep_clear` box, 260+ apart). `derived/` is gitignored, so they are written out
+here rather than lost:
 
-- **A clean merge is not a clean union** — now a CLAUDE.md rule with the case, and a check that runs on
-  merge. A guard keyed on an id cannot tell halves from rivals.
-- **Check `generated_by` before deleting either side of a duplicate.** A generated file regenerates; a
-  hand-authored one loses judgement that exists in no generator.
-- **`SystemExit` is a `BaseException`**, so it escapes pytest's collection and takes the whole run with it.
-  Handled in `tests/conftest.py` now; the same trap waits anywhere else a tool is imported.
-- **The harness's `totalTokens` per agent is its FINAL CONTEXT, not its spend.** Use
-  `python tools/session_cost.py`.
-- The full suite is over the 600 s tool timeout — run it backgrounded.
-- `COBBLERS_SOURCE_ROOT` must be `C:\Users\wnd\Documents` in every shell.
-- `tools/ground.py` is `ground.load()` returning a callable, plus `.box()`; there is no `ground.at()`.
+| Arm | x | z | ground | pad slope |
+|---|---|---|---|---|
+| west | 3944 | 3904 | 146.0 | 9.1 |
+| west | 4080 | 4168 | 148.0 | 8.3 |
+| west | 4104 | 4728 | 84.6 | 8.4 |
+| west | 4200 | 5056 | 118.1 | 7.0 |
+| west | 4248 | 5328 | 127.7 | 9.0 |
+| west | 3984 | 5392 | 122.4 | 6.6 |
+| east | 4344 | 3904 | 87.7 | 3.2 |
+| east | 4264 | 4312 | 87.1 | 6.2 |
+| east | 4528 | 4416 | 121.7 | 3.2 |
+| east | 4576 | 4680 | 121.2 | 8.3 |
+| east | 4608 | 4944 | 132.3 | 5.5 |
+| east | 4488 | 5216 | 144.0 | 6.8 |
 
-## 7. What this session cost
+Notes for whoever picks: **the sightline metric saturated at its own 136-block ceiling for all twelve**, so
+it proves each has a long clear approach and did NOT rank them — spacing and arm coverage chose them. The
+scan script is `scratchpad/site_megas.py` (disposable; re-run it rather than trusting this table if the
+heightmap moves). Drop the four under y100 if the intent is the arms' open uplands rather than the Rift
+basin floor. The east arm holds the gulch, its road and the Cutters; the **west arm has nothing in it**,
+which is the obvious home for the "deeper" tier.
+**A design caution:** a turn-back zone around an open-air den fights the owner's own brief ("a player
+should see them before they reach them"). Keep each zone tight to the den's pad so a Mega is *seen, not
+reached* — the cordon language the Deep already uses — or let the level band (60 / 67 against a cap of 50)
+be the gate and give the open farms no zone at all. That is an owner decision; `farm_tiers` is ASSUMED
+throughout and nothing in it has been timed.
 
-`python tools/session_cost.py`: **3.1M weighted**, 130 turns, context 259k at the end (average 180k).
-One subagent, 0.35M. Cheap for what it carried because the expensive things ran once: one full suite
-(578 s), one `prepare`-free path, and no staging.
+### Unit 2 — not started, and the existing design now contradicts the owner
+The owner wants the relic site **much deeper, reachable only upward from the Compact HQ, with the zone
+check turning players back rather than glass or barriers.** `DEEP_CITY.md` section 5 currently has the
+opposite: a **surface** platform on the Deep's west lip (x3285–3429, z3229–3384, y86–100) with six ring
+arches, inside "a Compact cordon (a fence of tinted glass and iron bars)" — the exact glass-and-barrier
+answer the owner has now rejected — plus the cradle already deep at **floor y12, (3357, 3306)**, reached
+from "HQ ring-0 front at x3427 → a secure shaft down to the basement at y0 → the 70-block passage west".
+So the shaft-from-the-HQ half is already designed and matches the owner; the **surface shrine is the part
+that must go down**, and the cordon must become a zone check. Re-write section 5 before carving anything.
+`tools/cavern_plan.py` is the named precedent for the rock shell.
+
+## 3. Part 3 — the economy
+
+- **3d is ANSWERED** — `docs/mechanics/MARKET_GATING.md` (257 lines). **Stock can be gated per player, and
+  not on the merchant.** The casino's score reaches a *total*, not a stock list; per-player **dialogue
+  option visibility** does (`tools/compile_dialogue.py` `isVisible` from `visible_when`, plus a
+  `cobblers:flag/<id>` advancement probe per player). The recommendation is the **ferry's already-proven
+  checked-payment sequence** (`cobbledollars query` → refuse if short → `remove` → re-read and verify →
+  deliver), rung 5 + rung 7, no scripting and no new mod. It **corrects the brief**: what stalled was not
+  missing per-player machinery but that trader stock is baked into the `summon` line at build time
+  (`tools/traders.py:163-201,248-275`), so a category withheld from one player is withheld from everyone.
+  Costs: the trade GUI is lost at gated counters, a new counter needs a restart rather than `/reload`, and
+  **nothing stops player A buying for player B** — gating controls purchase, not possession.
+  **Unknown:** whether two players can hold an open dialogue with the same NPC at once (EXP-022's
+  two-player test is still unrun, blocked on a second account).
+- **3a is ANSWERED** — `docs/research/PROGRESSION_UNLOCKABLES.md`. The backpack is **Sophisticated
+  Backpacks** (`sophisticatedbackpacks` 1.21.1-3.23.4.3.106), in OUR overlay, on both sides. Six tiers
+  (27 / 45 / **81** / 96 / 108 / 120 slots) plus **56 upgrade items**, including a six-rung stack ladder
+  and portable crafting/anvil/smithing/stonecutter — the most on-brief items in the pack. Obtained by
+  **crafting and nothing else** (verified: chest loot off, mob drop 0.0, loot tables empty), so nothing
+  hands a tier out behind our back. Gateable **EASY** by datapack recipe suppression.
+  **Three findings that bear on the ladder's shape:**
+  1. **Cobbleverse has already flattened its own curve.** Iron is buffed from the mod's 54 slots / 2
+     upgrades to **81 / 7**, so gold, diamond and netherite add about 12 slots and one upgrade slot each.
+     Four of the six rungs have almost nothing left to give — a ladder built on tiers alone would feel
+     flat, and the 56 upgrades are the better currency.
+  2. **A suppressed recipe reads as a mystery, not a goal**: the tier stays registered and givable but
+     shows no recipe in REI with no explanation. The better lever is selling tiers in CobbleDollars'
+     `default_shop.json`, a plain per-item price list.
+  3. **No mod in the pack exposes a per-player gate. The only per-player mechanism is possession of an
+     item.** This is the same wall `MARKET_GATING.md` hit from the other side, and together they are the
+     answer to Part 3: per-player dialogue visibility decides *who may buy*, and the item in the pack
+     decides *what they then have*.
+  **THE HIGHEST-VALUE OPEN QUESTION, and 3b waits on it:** is CobbleDollars' `defaultShop` **global or
+  per-merchant**? It decides whether a mining town can sell what a mining town would, or whether every
+  town sells one list. Answer that before designing the ladder.
+  **Caveat that could collapse the ratings:** the jars are **not on this machine at all**
+  (`base-pack/cobbleverse/mods/` does not exist; `modpack/mods/` holds a README). No recipe file was read.
+  Every item id is verified from the pack's own REI index
+  (`config/roughlyenoughitems/collapsible.json5`) at Cobbleverse **1.7.42**, and **13 mods are
+  version-replaced for 1.8**, so ids need re-checking. Datapack recipe suppression itself is **ASSUMED
+  and untested in this pack — if it fails, every "EASY" rating drops to NONE.**
+  Other EASY levers: CobbleDollars (the market itself), TMCraft (six blank grades, no config at all),
+  Waystones (**world-critical**; `defaultVisibility="ACTIVATION"` already makes travel the unlock, plus a
+  `warpRequirements` cost language), CobbleverseBadges (40 plain badge items, the cheapest rung token),
+  Comforts (**world-critical**; sleeping bags are what make "no house" literal).
+  **Not available:** the raid dens' seven tiers — **our overlay removes the mod** (1.8 world-load crash).
+  **Already running a parallel progression, to be reconciled rather than layered on:** our own
+  `modpack/config/rctmod-server.toml` sets `initialLevelCap=20`, `initialSeries="kanto"`,
+  `freeroamRequiresCompletedSeries=true`, `spawningRequiresTrainerCard=true`; and Lumymon's
+  `remotePcEnabled=true` gives remote Pokemon storage from day one, which undercuts storage as a reward.
+- **3b and 3c (the ladder, and the backpack as the spine) were NOT started.** 3a is now in hand, so they
+  are the next session's first economy job — after the `defaultShop` question above.
+
+## 4. What waits on the owner
+
+1. **Which tenth Victory Road trainer stands at the exit ravine** — main's League Examiner (4 Pokemon)
+   or our Gate Warden (3), kept in `data/vr_trainers.json`'s `superseded_roster`. Also 38 superseded
+   seat-file dialogue sets: the roster's lines are what a player hears.
+2. **Giovanni.** One stale field: `data/gym_trainers.json`'s `held: true`, whose reason quotes an empty
+   team that no longer exists. `data/trainers.json` has him authored, six Pokemon at 52–55 (top = his
+   contract's 55), singles, `blocked_by: None`. Clearing it makes eight leaders' teams reach a player
+   instead of seven. Not done: it changes what a player fights.
+3. **The arena's 10 numbered questions** at the end of `HEAVENS_ARENA.md`.
+4. **Unit 4's zone question** above: seen-not-reached, or no zone and let the level band gate it.
+5. **Whether the Slip may be sculpted** (irreversible, needs a re-export) or must stay a block build.
+
+## 5. The review list — refusals and judgement calls this session
+
+- **`cobblemon-researcher` has no Bash at all.** Verbatim: *"No such tool available: Bash. Bash is disabled
+  for this session, in subagents as well as here."* It stopped that line correctly and did the work with
+  Read/Grep/WebFetch, so **every bytecode claim in `rct-arena-capabilities.md` is a quotation of an
+  earlier read recorded in the repo, not fresh jar evidence** — the jars are absent from agent worktrees
+  too. Brief that agent type without jar work.
+- **THREE agents were refused a compound Bash command** (a heredoc twice, a `for` loop once) and then used the `Write` tool for the same
+  in-worktree path. The refusal's own text says *"Split it into plain, separate commands"*, so both read it
+  as a complaint about command shape rather than a denial. **Strictly, CLAUDE.md's rule is "a different
+  tool reaching the same outcome" and that is what happened — twice.** The owner should decide whether the
+  guard's suggested remediation counts as an exception, because it will keep happening.
+- **A heightmap rewrite was declined on the session's own judgement** (unit 3 above). Reversible route
+  taken instead; the owner can overrule.
+- Six doc/data/code disagreements found and recorded, not silently fixed: STATE says 8 stair towers, the
+  code implies 9 (the owner says nine); `data/rift_deep.json`'s `"banks": 10` is dead (`max(2,10//4)`×4 =
+  8) and matches neither DEEP_CITY.md nor the code; DEEP_CITY.md estimates "about 130 buildings" against
+  196 actually built (34% low); DEEP_CITY.md's status header says "not run on staging" while STATE says
+  R9DC ran 2026-09-27; the cradle coordinate is still contradicted between FACTION.md and
+  `rift_regions.json`; and `docs/mechanics/GYM_INTERIORS.md:178-189` is stale about the trainer cooldown
+  rule. **`data/gulch_mine.json`'s missing `farms` key is the seventh.**
+- `tests/test_id_authorship.py` has three uncovered cases queued as chip `task_77d572d3`.
+
+## 6. Nothing is in the world, and nothing was applied
+
+**No `prepare`, no install, no apply, no staging boot, no server start.** The server was down at the start
+(no listener on 25565, no Java process) and is down now. `python tools/install_check.py --server-dir
+C:/Users/wnd/Documents/github/cobblers-server` ran clean at session start: **0 problems (packs and
+configs)**. `python tools/validate.py`: 1,238 files, 0 errors, 0 warnings.
+
+**The coordination lock is FREE** — taken at the start for `install_check`, released at the end.
+
+## 7. What this session cost, per unit
+
+`python tools/session_cost.py`, weighted (context × turns, cache reads at a tenth) — never the harness's
+per-agent figure, which is final context and about 20× low:
+
+| Unit | Agent | Weighted |
+|---|---|---|
+| 1. Heaven's Arena, cost to the city | `content-architect` | 0.52M |
+| 1. RCT arena capability | `cobblemon-researcher` | 0.43M |
+| 3d. Market gating | `minecraft-systems-dev` | 0.30M |
+| 3a. Mod unlockables audit | `dependency-auditor` | 0.46M |
+| **Agents together** | | **1.7M** |
+| **This session's own thread** | | **4.0M** |
+| **Total** | | **5.7M** |
+
+The ratio is the lesson, and it is the same one as 2026-09-28: **the four agents that answered four
+questions cost 1.6M between them; the single thread that briefed them and read the files cost 3.9M.** The
+owner's instinct that parallel agents beat one long thread is right, and the way to act on it is to keep
+the orchestrating session short — hand over at the phase boundary rather than carrying the research
+phase's context into the build phase.
