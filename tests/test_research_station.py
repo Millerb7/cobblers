@@ -6,9 +6,14 @@ the generator section changes the generator's CODE (a function wrapped or replac
 and the quest records alone. A record-side mutation moves the expectation and the output together and proves nothing;
 the one record-side case here (an ungated transition) tests a check that is ABOUT the records, the hold.
 
-Needs the canonical heightmap (COBBLERS_SOURCE_ROOT); a skip names it. NOT covered, and it needs a running server
-(data/research_station.json probes): that the fills land, that the altars render and answer, that Psyduck spawn, that
-the NPCs render, that the tick function removes a tag added by hand.
+Re-sited 2026-10-02 to the west sea coast (the owner: "research station should be near 552 2812 not the lake"); the
+cleanup section checks the one-off staging cleanup of the lake build against the audit's own water model, and a cleanup
+that drains the lake (the generator's natural() mutated) fails it.
+
+Needs the canonical heightmap (COBBLERS_SOURCE_ROOT); a skip names it. The cleanup tests also need git and commit
+42ce560 (the lake build) in this checkout's history. NOT covered, and it needs a running server (data/research_station.json
+probes): that the fills land, that the altars render and answer, that the study pool's Horsea spawn, that the NPCs
+render, that the tick function removes a tag added by hand, that the cleanup's kills find the old NPCs.
 """
 import copy
 import json
@@ -61,23 +66,44 @@ def test_the_committed_station_is_clean(ground, tmp_path):
 def test_the_habitat_block_and_the_npcs_are_where_the_plan_puts_them(ground):
     p = R.plan(R.load(), ground)
     hb = {b["id"]: b for b in json.loads((ROOT / "data" / "habitat_blocks.json").read_text(encoding="utf-8"))["blocks"]}
-    b = hb[REC["lagoon"]["habitat_block"]]
+    b = hb[REC["study_pool"]["habitat_block"]]
     assert p.habitat == (b["position"]["x"], b["position"]["y"], b["position"]["z"])
     rw = {r["id"]: r for r in json.loads((ROOT / "data" / "rewards.json").read_text(encoding="utf-8"))["rewards"]}
     for n in REC["npcs"]:
         assert tuple(rw[n["reward"]]["npc_at"]) == p.npcs[n["id"]], n["id"]
 
 
-def test_the_shrine_is_over_the_pit_and_every_deck_floats_by_its_rule(ground):
-    w = R.Water(REC, ground)
+def test_the_shrine_is_over_open_sea_and_every_deck_floats_by_its_rule(ground):
+    # the audit's own water model (data/world.json's sea level, its own polygon test against every lake), not the
+    # generator's: the two must agree column for column over every deck
+    w = A.Water(REC, ground)
+    assert REC["site"]["water"] == "sea" and w.level == REC["site"]["level_y"] == 62
     cx, cz = REC["shrine"]["centre"]
-    assert w.depth(cx, cz) >= 20
+    assert w.depth(cx, cz) >= REC["shrine"]["min_depth"]
+    gen = R.Water(REC, ground)
     for wk in REC["walks"]:
         need = REC["rules"]["min_depth"][wk["kind"]]
         for x, z in R.cells(wk["rect"]):
             d = w.depth(x, z)
+            assert d == gen.depth(x, z), (wk["id"], x, z, d, gen.depth(x, z))
             assert (d is None and ground(x, z) == w.level and wk["kind"] in REC["rules"]["landfall_kinds"]) or \
                 (d is not None and d >= need), (wk["id"], x, z, d)
+
+
+def test_the_station_is_near_the_owners_coordinate_and_clear_of_the_zapdos_tower(ground):
+    # the owner, 2026-10-02: "research station should be near 552 2812 not the lake"
+    assert REC["site"]["asked_at"] == [552, 2812]
+    land = [b["rect"] for b in REC["buildings"] if b["on"] == "land"] + [REC["plaza"]["rect"]]
+    assert any(r[0] <= 552 <= r[2] and r[1] <= 2812 <= r[3] for r in land)
+    for b in REC["buildings"]:
+        if b["on"] == "land":
+            assert min(ground(x, z) for x, z in R.cells(b["rect"])) >= REC["site"]["level_y"] + 1, b["id"]
+    site = next(s for s in json.loads((ROOT / "data" / "adopted_legendary_sites.json").read_text(encoding="utf-8"))["sites"]
+                if s["id"] == "adopted_zapdos_tower")
+    (tx, tz), (sx, _sy, sz) = site["placement"]["corner"], site["size"]
+    p = R.plan(R.load(), ground)
+    near = min(max(tx - x, 0, x - (tx + sx - 1)) + max(tz - z, 0, z - (tz + sz - 1)) for (x, _y, z) in p.blocks())
+    assert near > 100, near
 
 
 # ------------------------------------------------------------------------------------------- the hold
@@ -119,7 +145,8 @@ def _data_copy(tmp_path):
     d = tmp_path / "data"
     d.mkdir()
     for name in ("research_station.json", "landmarks.json", "habitat_blocks.json", "spawns.json", "rewards.json",
-                 "quests.json", "dialogue.json", "spawn_blocks.json", "spawn_block_policy.json", "progression.json"):
+                 "quests.json", "dialogue.json", "spawn_blocks.json", "spawn_block_policy.json", "progression.json",
+                 "world.json"):
         shutil.copy(ROOT / "data" / name, d / name)
     return d
 
@@ -147,7 +174,7 @@ def _wrap(monkeypatch, name, after):
 
 def test_a_bridge_left_without_its_deck_is_caught(ground, tmp_path, monkeypatch):
     def drop(p):
-        r = next(w for w in p.doc["walks"] if w["id"] == "bridge_east")["rect"]
+        r = next(w for w in p.doc["walks"] if w["id"] == "bridge_west")["rect"]
         for x, z in R.cells(r):
             p.solid["crossing"].pop((x, p.level, z), None)
     _wrap(monkeypatch, "walks", drop)
@@ -157,7 +184,7 @@ def test_a_bridge_left_without_its_deck_is_caught(ground, tmp_path, monkeypatch)
 
 def test_a_deck_written_a_block_low_is_caught(ground, tmp_path, monkeypatch):
     def sink(p):
-        r = next(w for w in p.doc["walks"] if w["id"] == "pier_east")["rect"]
+        r = next(w for w in p.doc["walks"] if w["id"] == "pier_west")["rect"]
         for x, z in R.cells(r):
             st = p.solid["platform"].pop((x, p.level, z), None)
             if st:
@@ -193,9 +220,9 @@ def test_the_anchor_left_out_is_caught(ground, tmp_path, monkeypatch):
 
 def test_the_habitat_post_cut_short_is_caught(ground, tmp_path, monkeypatch):
     def cut(p):
-        x, z = p.doc["lagoon"]["habitat_post"]
-        p.solid["lagoon"].pop((x, p.g(x, z) + 1, z))
-    _wrap(monkeypatch, "lagoon", cut)
+        x, z = p.doc["study_pool"]["habitat_post"]
+        p.solid["study_pool"].pop((x, p.g(x, z) + 1, z))
+    _wrap(monkeypatch, "study_pool", cut)
     rep = run(ground, tmp_path)
     assert "habitat" in checks(rep)
 
@@ -220,7 +247,8 @@ def test_a_spawn_condition_slipped_in_is_caught(ground, tmp_path, monkeypatch):
     monkeypatch.setattr(R.Plan, "_check", lambda self, st: None)
 
     def bell(p):
-        p.solid["strand"][(2632, p.floors["institute"] + 1, 4112)] = "minecraft:lightning_rod"
+        x0, z0, _x1, _z1 = next(b for b in p.doc["buildings"] if b["id"] == "institute")["rect"]
+        p.solid["strand"][(x0 + 8, p.floors["institute"] + 1, z0 + 4)] = "minecraft:lightning_rod"
     _wrap(monkeypatch, "plaza", bell)
     rep = run(ground, tmp_path)
     assert "blocks" in checks(rep)
@@ -260,22 +288,37 @@ def test_a_zone_step_that_holds_too_little_is_caught(ground, tmp_path, monkeypat
 # ------------------------------------------------------------------------------------------- generator refusals
 def test_a_pier_over_the_shoal_is_refused(ground):
     doc = copy.deepcopy(R.load())
-    next(w for w in doc["walks"] if w["id"] == "causeway")["kind"] = "pier"
+    next(w for w in doc["walks"] if w["id"] == "junction")["kind"] = "pier"
     with pytest.raises(SystemExit, match="needs 3"):
         R.plan(doc, ground)
 
 
-def test_a_land_building_in_the_lake_is_refused(ground):
+def test_a_land_building_in_the_sea_is_refused(ground):
     doc = copy.deepcopy(R.load())
     b = next(b for b in doc["buildings"] if b["id"] == "bunkhouse")
-    b["rect"] = [2580, 4110, 2588, 4116]
-    with pytest.raises(SystemExit, match="in the lake"):
+    b["rect"] = [500, 2796, 508, 2802]
+    with pytest.raises(SystemExit, match="in the water"):
+        R.plan(doc, ground)
+
+
+def test_a_land_building_on_the_waterline_strip_is_refused(ground):
+    doc = copy.deepcopy(R.load())
+    b = next(b for b in doc["buildings"] if b["id"] == "bunkhouse")
+    b["rect"] = [526, 2796, 534, 2802]          # ground y62, dry but level with the sea
+    with pytest.raises(SystemExit, match="under the water's level"):
+        R.plan(doc, ground)
+
+
+def test_a_shrine_over_less_water_than_its_minimum_is_refused(ground):
+    doc = copy.deepcopy(R.load())
+    doc["shrine"]["min_depth"] = REC["site"]["level_y"] - ground(*doc["shrine"]["centre"]) + 1
+    with pytest.raises(SystemExit, match="shrine.min_depth"):
         R.plan(doc, ground)
 
 
 def test_a_record_in_no_zone_is_refused(tmp_path):
     doc = copy.deepcopy(REC)
-    doc["zones"]["lagoon"]["walks"] = ["lagoon_walk"]
+    doc["zones"]["study_pool"]["walks"] = ["study_walk"]
     f = tmp_path / "rs.json"
     f.write_text(json.dumps(doc), encoding="utf-8")
     with pytest.raises(SystemExit, match="belongs to no zone"):
@@ -284,6 +327,94 @@ def test_a_record_in_no_zone_is_refused(tmp_path):
 
 def test_the_generator_reads_no_world():
     assert R.WORLD_READS == set()
+
+
+# ------------------------------------------------------------------------------------------- the staging cleanup
+OLD = REC["superseded_site"]
+
+
+@pytest.fixture(scope="module")
+def cleaned(ground):
+    import subprocess
+    if subprocess.run(["git", "cat-file", "-e", R.OLD_REV + "^{commit}"], cwd=ROOT).returncode != 0:
+        pytest.skip("NOT_EXECUTED: commit %s (the lake build) is not in this checkout" % R.OLD_REV)
+    return R.cleanup(R.plan(R.load(), ground), ground)
+
+
+def _restored(lines):
+    W = A.Replay()
+    rep = A.Report()
+    W.run("restore", lines, rep)
+    assert rep.errors == []
+    return W.blocks
+
+
+def _expect_wrong(ground, op, restored):
+    """[(cell, wanted, got)] against the audit's own lake model (data/landmarks.json, its own polygon test): over the
+    ground, Shrew Lake's water to its level where the lake holds the column and air above it; the ground's own block
+    sand or grass; and every cell the lake build wrote is either restored or was air written over air."""
+    lake = A.Water({"site": {"water": OLD["lake"]}}, ground)
+    assert lake.level == OLD["level_y"]
+    out = []
+    for (x, y, z), st in op.blocks().items():
+        gy = ground(x, z)
+        got = restored.get((x, y, z))
+        if y > gy:
+            want = "minecraft:water" if lake.depth(x, z) is not None and y <= lake.level else "minecraft:air"
+            if got is None and want == "minecraft:air" and A.base(st) == "minecraft:air":
+                continue
+            if got != want:
+                out.append(((x, y, z), want, got))
+        elif got not in ("minecraft:sand", "minecraft:grass_block"):
+            out.append(((x, y, z), "sand or grass", got))
+    return out
+
+
+def test_the_cleanup_puts_every_cell_the_lake_build_wrote_back_to_the_heightmap_world(ground, cleaned):
+    lines, counts, _seats, op = cleaned
+    restored = _restored(lines["restore"])
+    assert _expect_wrong(ground, op, restored) == []
+    hab = tuple(OLD["habitat_block"]["at"])
+    assert restored[hab] == "minecraft:water"                  # the old Habitat Block's cell, mid-lake
+    assert set(restored) <= set(op.blocks()) | {hab}           # nothing outside what the lake build wrote
+    assert counts["to_water"] > 0 and counts["ground_top_restored"] > 0 and counts["under_ground"] == 0
+    new = R.plan(R.load(), ground).blocks()
+    assert not set(restored) & set(new)
+
+
+def test_a_cleanup_that_drains_the_lake_is_caught(ground, cleaned, monkeypatch):
+    monkeypatch.setattr(R, "natural", lambda s, g, x, y, z: "minecraft:air" if y > g(x, z) else "minecraft:grass_block")
+    lines, _counts, _seats, op = R.cleanup(R.plan(R.load(), ground), ground)
+    wrong = _expect_wrong(ground, op, _restored(lines["restore"]))
+    assert wrong and all(w[1] == "minecraft:water" for w in wrong)
+
+
+def test_the_cleanup_removes_the_four_old_npcs_by_type_in_a_tight_box_at_their_old_seats(cleaned, tmp_path):
+    _lines, _counts, seats, _op = cleaned
+    assert seats == {k: tuple(v) for k, v in OLD["npc_seats"].items()}
+    hold, go = R.npc_cleanup_lines(seats, "research_station_cleanup")
+    kills = [l for l in go if " kill " in l]
+    assert len(kills) == 4
+    for nid, (x, y, z) in seats.items():
+        k = next(l for l in kills if ".%s " % nid in l)
+        assert "@e[type=cobblemon:npc,x=%d,y=%d,z=%d,dx=2,dy=1,dz=2]" % (x - 1, y, z - 1) in k
+        assert "distance" not in k
+    assert any(l.startswith("schedule function cobblers:research_station_cleanup/npcs_go") for l in hold)
+    assert go[0].startswith("# chunks-loaded-by: cobblers:research_station_cleanup/npcs")
+    for x, _y, z in seats.values():
+        assert "forceload add %d %d" % (x >> 4 << 4, z >> 4 << 4) in hold
+        assert "forceload remove %d %d" % (x >> 4 << 4, z >> 4 << 4) in go
+
+
+def test_the_cleanup_pack_is_staging_only_and_every_function_would_run(cleaned, tmp_path):
+    import function_limits
+    lines, _counts, seats, _op = cleaned
+    assert R.CLEANUP_OUT.parent.name == "staging" and "datapacks" not in R.CLEANUP_OUT.parts
+    out = tmp_path / "cobblers_research_station_cleanup"
+    fn, order = R.write_cleanup(out, lines, seats)
+    assert order[-1] == "npcs" and len(order) >= 2
+    for f in fn.glob("*.mcfunction"):
+        assert function_limits.check_lines(f.read_text(encoding="utf-8").splitlines(), f.name) == [], f.name
 
 
 # ------------------------------------------------------------------------------------------- the jar, when present

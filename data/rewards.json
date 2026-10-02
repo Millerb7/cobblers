@@ -556,9 +556,9 @@
       "kind": "npc_grant",
       "place": "Shrew Station's Institute, behind the reception desk",
       "npc_at": [
-        2632,
-        109,
-        4115
+        550,
+        67,
+        2823
       ],
       "quest": "evt_station_director",
       "contents": [
@@ -580,11 +580,11 @@
     {
       "id": "station_field_officer",
       "kind": "npc_grant",
-      "place": "Shrew Station's weather hut on the causeway",
+      "place": "Shrew Station's weather hut beside the spine",
       "npc_at": [
-        2693,
-        107,
-        4054
+        484,
+        63,
+        2793
       ],
       "quest": "evt_station_courier",
       "contents": [
@@ -603,9 +603,9 @@
       "kind": "npc_grant",
       "place": "Shrew Station's Archive, among the empty cases",
       "npc_at": [
-        2651,
-        110,
-        4116
+        569,
+        69,
+        2824
       ],
       "quest": "evt_station_archive",
       "contents": [
@@ -624,9 +624,9 @@
       "kind": "npc_grant",
       "place": "the Eon shrine on Shrew Station's platform, south of the dais",
       "npc_at": [
-        2740,
-        107,
-        4037
+        422,
+        63,
+        2819
       ],
       "quest": "evt_station_eon_shrine",
       "contents": [

@@ -1,25 +1,26 @@
 #!/usr/bin/env python
-"""The legendary and mythical research station on Shrew Lake's south strand, from data/research_station.json.
+"""The legendary and mythical research station on the west sea coast, from data/research_station.json.
 
 The owner, 2026-10-02, on the approved proposal (docs/world-building/RESEARCH_STATION.md): "Shrew Lake south shore,
 the Latias and Latios shrine, hold every item until EXP-048 proves an altar responds, Moltres yes, no waystone,
-surveyor stays at the dig camp." Every part is an existing, proven piece; nothing here is new machinery:
+surveyor stays at the dig camp"; and later the same day, moving it: "research station should be near 552 2812 not the
+lake". Everything but the site stands. Every part is an existing, proven piece; nothing here is new machinery:
 
-  the strand     four buildings on the beach (the Institute, the Archive, the bunkhouse, the wet lab), seated the
-                 repository's way: the floor on max(ground under the walls) + 1, ground from tools/ground.py (the
-                 canonical heightmap, rounded), never a world. The beach between them is paved in the station's
-                 signature tuff and copper where it is dry; trees and plants are cleared from y107 up, which no
-                 lake water reaches.
-  the walks      jetty, junction, bridges, the causeway boardwalk, the pier and the platforms: data/sea_town.json's
-                 rules with the lake's level for the sea's. A deck block replaces the lake's top water layer, so it is
-                 AT the level (y106) and the walk one above. Every column is re-measured (tools/water_mask.py's rule:
-                 lake water where the ground is below the level inside the basin) and a deck over water shallower
-                 than its kind's min_depth, or over ground above the deck, is refused.
+  the strand     four buildings on the coast's dry ground (the Institute, the Archive, the bunkhouse, the wet lab),
+                 seated the repository's way: the floor on max(ground under the walls) + 1, ground from tools/ground.py
+                 (the canonical heightmap, rounded), never a world. The ground between them is paved in the station's
+                 signature tuff and copper where it is dry; trees and plants are cleared from the water's level + 1 up,
+                 which no water reaches.
+  the walks      jetty, junction, bridge, the spine boardwalk, the pier and the platforms: data/sea_town.json's rules.
+                 A deck block replaces the top water layer, so it is AT the water's level (the sea's y62, data/world.json)
+                 and the walk one above. Every column is re-measured (tools/water_mask.py's rule, level_at: the site's
+                 body of water where the ground is below its level, a lake inside its basin before the sea) and a deck
+                 over water shallower than its kind's min_depth, or over ground above the deck, is refused.
   the shrine     the Eon shrine on the platform: lumymon:latias_altar and lumymon:latios_altar, set directly by
                  setblock on a tuff dais, and the lumymon:summon_anchor between them. No template.
-  Psyduck        NOT in this pack: one ACTIVATED Habitat Block in data/habitat_blocks.json (placed with every other
-                 block, R9E) set in a post under the study deck in the lagoon; this pack writes that post, so it must
-                 run BEFORE R9E (tools/lopunny_house.py's rule).
+  the study pool NOT in this pack: one ACTIVATED Habitat Block in data/habitat_blocks.json (placed with every other
+                 block, R9E) set in a post under the study deck; this pack writes that post, so it must run BEFORE R9E
+                 (tools/lopunny_house.py's rule).
   the people     NOT in this pack: four conversations in data/dialogue.json and four quests in data/quests.json,
                  compiled with every other one by tools/compile_dialogue.py --all, and placed by R9F from
                  data/rewards.json (npc_grant), as Hopgood and the Abandoned Cut's digger are.
@@ -27,8 +28,13 @@ surveyor stays at the dig camp." Every part is an existing, proven piece; nothin
                  every item route requires: false (today) REMOVES them from every player, and the earning
                  advancements are not shipped at all; true adds them and ships the advancements. See economy.switch.
 
-  python tools/research_station.py build [--source-root R] [--out DIR] [--data FILE]   write the pack
-  python tools/research_station.py plan  [--source-root R]                              the numbers; writes nothing
+  python tools/research_station.py build   [--source-root R] [--out DIR] [--data FILE]   write the pack
+  python tools/research_station.py plan    [--source-root R]                              the numbers; writes nothing
+  python tools/research_station.py cleanup [--source-root R] [--old-rev REV] [--out DIR]
+                 STAGING ONLY, one-off: the first station, on Shrew Lake's south strand as built from REV (42ce560),
+                 put back to the heightmap world wherever this build does not write, and its four NPCs removed at
+                 their old seats; -> build/staging/cobblers_research_station_cleanup (outside build/datapacks, so
+                 tools/reapply.py's coverage check never asks a step for it). See cleanup().
 
 The re-application (tools/reapply.py is not edited here): placement_steps() is the step, BEFORE R9E.
 """
@@ -46,11 +52,13 @@ import function_limits  # noqa: E402
 
 DATA = ROOT / "data" / "research_station.json"
 DEFAULT_OUT = ROOT / "build" / "datapacks" / "cobblers_research_station"
+CLEANUP_OUT = ROOT / "build" / "staging" / "cobblers_research_station_cleanup"
+OLD_REV = "42ce560"   # the commit whose tools/research_station.py and data/research_station.json built the lake station
 SCHEMA = "cobblers.research-station/1"
 NS = "cobblers"
 FN = "research_station"
 PACK_FORMAT = 48  # Minecraft 1.21.1
-ZONES = ("strand", "crossing", "platform", "lagoon")
+ZONES = ("strand", "crossing", "platform", "study_pool")
 SIDES = {"north": (0, -1), "south": (0, 1), "west": (-1, 0), "east": (1, 0)}
 OPPOSITE = {"north": "south", "south": "north", "east": "west", "west": "east"}
 SIGN_ROTATION = {"south": 0, "west": 4, "north": 8, "east": 12}
@@ -114,28 +122,61 @@ HANGING = "minecraft:lantern[hanging=true,waterlogged=false]"
 
 
 # ------------------------------------------------------------------------------------------------------------ water
+class Surface:
+    """tools/water_mask.py level_at(), with each lake's basin boxed first so a column far from every lake is not
+    ray-cast against every basin: (body id, surface y) for the painted water over a column, or (None, None)."""
+
+    def __init__(self, g):
+        import water_mask as W
+        self.g, self.W = g, W
+        self.bodies = W.bodies()
+        self.sea = W.sea_level()
+        self.boxes = {}
+        for bid, b in self.bodies.items():
+            pts = [q for ring in b["basin"] for q in ring]
+            if pts:
+                self.boxes[bid] = (min(q[0] for q in pts), min(q[1] for q in pts),
+                                   max(q[0] for q in pts), max(q[1] for q in pts))
+
+    def at(self, x, z):
+        h = self.g(x, z)
+        best = (None, None)
+        for bid, (x0, z0, x1, z1) in self.boxes.items():
+            b = self.bodies[bid]
+            if h < b["level_y"] and x0 <= x <= x1 and z0 <= z <= z1 and self.W.in_polygons(b["basin"], x, z):
+                if best[1] is None or b["level_y"] > best[1]:
+                    best = (bid, b["level_y"])
+        if best[0] is not None:
+            return best
+        return ("sea", self.sea) if h < self.sea else (None, None)
+
+
 class Water:
-    """Lake depth by tools/water_mask.py's rule, the lake alone (no other body is near the site)."""
+    """Depth of the site's body of water (site.water: "sea", or a lake's landmark id) by tools/water_mask.py's rule."""
 
     def __init__(self, doc, g):
-        import water_mask as W
         self.g = g
-        lake = doc["site"]["lake"]
-        bodies = W.bodies()
-        if lake not in bodies:
-            raise StationError("data/landmarks.json has no water body %s" % lake)
-        self.level = bodies[lake]["level_y"]
+        self.s = Surface(g)
+        body = doc["site"]["water"]
+        if body == "sea":
+            self.level = self.s.sea
+        elif body in self.s.bodies:
+            self.level = self.s.bodies[body]["level_y"]
+        else:
+            raise StationError("site.water %r is neither \"sea\" nor a water body in data/landmarks.json" % body)
         if self.level != doc["site"]["level_y"]:
-            raise StationError("site.level_y %s is not %s's level y%s (data/landmarks.json)"
-                               % (doc["site"]["level_y"], lake, self.level))
-        self.lake, self.basin, self.W = lake, bodies[lake]["basin"], W
+            raise StationError("site.level_y %s is not %s's level y%s (data/world.json, data/landmarks.json)"
+                               % (doc["site"]["level_y"], body, self.level))
+        self.body = body
+        self._cache = {}
 
     def depth(self, x, z):
-        """Blocks of lake water over the column, or None where it is dry."""
-        h = self.g(x, z)
-        if h < self.level and self.W.in_polygons(self.basin, x, z):
-            return self.level - h
-        return None
+        """Blocks of the site's water over the column, or None where it is dry (or another body's water)."""
+        k = (x, z)
+        if k not in self._cache:
+            bid, level = self.s.at(x, z)
+            self._cache[k] = (level - self.g(x, z)) if bid == self.body else None
+        return self._cache[k]
 
 
 # ------------------------------------------------------------------------------------------------------------ the plan
@@ -350,9 +391,13 @@ def seat(p, b):
             if (x, z) not in p.walk_cells:
                 raise StationError("building %s stands off its deck at (%d, %d)" % (b["id"], x, z))
         return p.level
+    above = p.doc["rules"]["land_above_level"]
     for x, z in cells(b["rect"]):
         if p.w.depth(x, z) is not None:
-            raise StationError("building %s stands in the lake at (%d, %d)" % (b["id"], x, z))
+            raise StationError("building %s stands in the water at (%d, %d)" % (b["id"], x, z))
+        if p.g(x, z) < p.level + above:
+            raise StationError("building %s stands on ground y%d at (%d, %d), under the water's level + %d"
+                               % (b["id"], p.g(x, z), x, z, above))
     return max(p.g(x, z) for x, z in cells(b["rect"])) + 1
 
 
@@ -448,46 +493,64 @@ def _fit(p, f, items):
             p.put(x, f + dy, z, st)
 
 
-def fit_institute(p, b, f):
+def _deep(b):
+    """(z of the row `d` blocks in from the door wall, the facing back toward the door) for a north or south door."""
     x0, z0, x1, z1 = b["rect"]
-    items = [(x, 1, 4114, "minecraft:spruce_slab[type=top,waterlogged=false]") for x in range(2629, 2636)]
-    items += [(2628, 1, 4114, "minecraft:lectern[facing=north,has_book=false,powered=false]")]
-    items += [(2635, 2, 4114, LANTERN)]
+    side = b["door"]["side"]
+    if side not in ("north", "south"):
+        raise StationError("building %s: its fit is laid out from a north or south door, not %s" % (b["id"], side))
+    return (lambda d: z0 + d if side == "north" else z1 - d), side
+
+
+def fit_institute(p, b, f):
+    """The reception desk across the room six in from the door, the Director's place behind it; bookshelves down both
+    side walls, a cartography table either side at the back, the sightings banners on the back wall."""
+    x0, z0, x1, z1 = b["rect"]
+    row, toward = _deep(b)
+    items = [(x, 1, row(6), "minecraft:spruce_slab[type=top,waterlogged=false]") for x in range(x0 + 5, x0 + 12)]
+    items += [(x0 + 4, 1, row(6), "minecraft:lectern[facing=%s,has_book=false,powered=false]" % toward)]
+    items += [(x0 + 11, 2, row(6), LANTERN)]
     for x in (x0 + 1, x1 - 1):
-        for z in range(z0 + 2, z1 - 1):
-            if z % 3 != 2:
+        for d in range(2, (z1 - z0) - 1):
+            if d % 3 != 1:
                 for dy in (1, 2):
-                    items.append((x, dy, z, "minecraft:bookshelf"))
-    items += [(2626, 1, 4116, "minecraft:cartography_table"), (2638, 1, 4116, "minecraft:cartography_table")]
+                    items.append((x, dy, row(d), "minecraft:bookshelf"))
+    items += [(x0 + 2, 1, row(8), "minecraft:cartography_table"), (x0 + 14, 1, row(8), "minecraft:cartography_table")]
     _fit(p, f, items)
     for x in range(x0 + 2, x1 - 1, 2):
-        p.hang(x, f + 3, z1 - 1, "minecraft:cyan_wall_banner[facing=north]")
-    for x in range(2630, 2635):
-        for z in (4110, 4111):
-            p.hang(x, f + 1, z, "minecraft:cyan_carpet")
+        p.hang(x, f + 3, row(z1 - z0 - 1), "minecraft:cyan_wall_banner[facing=%s]" % toward)
+    for x in range(x0 + 6, x0 + 11):
+        for d in (2, 3):
+            p.hang(x, f + 1, row(d), "minecraft:cyan_carpet")
 
 
 def fit_archive(p, b, f):
+    """Bookshelves down both side walls, four empty glass cases across the room three in from the door, the reading
+    lectern against the back wall."""
     x0, z0, x1, z1 = b["rect"]
+    row, toward = _deep(b)
     items = []
     for x in (x0 + 1, x1 - 1):
-        for z in range(z0 + 2, z1 - 1):
-            if z % 3 != 2:
+        for d in range(2, (z1 - z0) - 1):
+            if d % 3 != 2:
                 for dy in (1, 2, 3):
-                    items.append((x, dy, z, "minecraft:bookshelf" if dy != 2 else "minecraft:chiseled_bookshelf[facing=%s,slot_0_occupied=false,slot_1_occupied=false,slot_2_occupied=false,slot_3_occupied=false,slot_4_occupied=false,slot_5_occupied=false]" % ("east" if x == x0 + 1 else "west")))
-    for x in (2648, 2650, 2652, 2654):
-        items += [(x, 1, 4113, "minecraft:polished_tuff"), (x, 2, 4113, "minecraft:glass")]
-    items += [(2651, 1, 4117, "minecraft:lectern[facing=north,has_book=false,powered=false]")]
+                    items.append((x, dy, row(d), "minecraft:bookshelf" if dy != 2 else "minecraft:chiseled_bookshelf[facing=%s,slot_0_occupied=false,slot_1_occupied=false,slot_2_occupied=false,slot_3_occupied=false,slot_4_occupied=false,slot_5_occupied=false]" % ("east" if x == x0 + 1 else "west")))
+    for x in (x0 + 2, x0 + 4, x0 + 6, x0 + 8):
+        items += [(x, 1, row(3), "minecraft:polished_tuff"), (x, 2, row(3), "minecraft:glass")]
+    items += [(x0 + 5, 1, row(z1 - z0 - 1), "minecraft:lectern[facing=%s,has_book=false,powered=false]" % toward)]
     _fit(p, f, items)
 
 
 def fit_bunkhouse(p, b, f):
+    """Carpet bedrolls along the wall away from the door, two barrels by it."""
     x0, z0, x1, z1 = b["rect"]
+    row, _toward = _deep(b)
+    depth = z1 - z0
     for x in (x0 + 1, x0 + 3, x1 - 3, x1 - 1):
-        for z in (z1 - 1, z1 - 2):
-            p.hang(x, f + 1, z, "minecraft:light_gray_carpet")
-    _fit(p, f, [(x0 + 1, 1, z0 + 2, "minecraft:barrel[facing=up,open=false]"),
-                (x1 - 1, 1, z0 + 2, "minecraft:barrel[facing=up,open=false]")])
+        for d in (depth - 1, depth - 2):
+            p.hang(x, f + 1, row(d), "minecraft:light_gray_carpet")
+    _fit(p, f, [(x0 + 1, 1, row(2), "minecraft:barrel[facing=up,open=false]"),
+                (x1 - 1, 1, row(2), "minecraft:barrel[facing=up,open=false]")])
 
 
 def fit_wet_lab(p, b, f):
@@ -528,9 +591,14 @@ def fit_darkroom(p, b, f):
 
 
 def fit_observatory(p, b, f):
+    """A chart table and a lectern against the wall opposite an east or west door, the lectern facing the room."""
     x0, z0, x1, z1 = b["rect"]
-    _fit(p, f, [(x1 - 1, 1, z0 + 1, "minecraft:cartography_table"),
-                (x1 - 1, 1, z1 - 1, "minecraft:lectern[facing=west,has_book=false,powered=false]")])
+    side = b["door"]["side"]
+    if side not in ("east", "west"):
+        raise StationError("building %s: its fit is laid out from an east or west door, not %s" % (b["id"], side))
+    x = x1 - 1 if side == "west" else x0 + 1
+    _fit(p, f, [(x, 1, z0 + 1, "minecraft:cartography_table"),
+                (x, 1, z1 - 1, "minecraft:lectern[facing=%s,has_book=false,powered=false]" % side)])
 
 
 FITS = {"institute": fit_institute, "archive": fit_archive, "bunkhouse": fit_bunkhouse, "wet_lab": fit_wet_lab,
@@ -585,6 +653,9 @@ def shrine(p):
     cx, cz = s["centre"]
     n = s["dais_half"]
     L = p.level
+    d = p.w.depth(cx, cz)
+    if d is None or d < s["min_depth"]:
+        raise StationError("the shrine's centre (%d, %d) is over %s of water; shrine.min_depth is %d" % (cx, cz, d, s["min_depth"]))
     for x in range(cx - n, cx + n + 1):
         for z in range(cz - n, cz + n + 1):
             if (x, z) not in p.walk_cells:
@@ -660,10 +731,10 @@ def signs(p):
             p.lit_cells.remove((x, y, z))
 
 
-def lagoon(p):
+def study_pool(p):
     doc = p.doc
-    p.zone = "lagoon"
-    x, z = doc["lagoon"]["habitat_post"]
+    p.zone = "study_pool"
+    x, z = doc["study_pool"]["habitat_post"]
     if (x, z) not in p.walk_cells:
         raise StationError("the habitat post is not under a deck")
     d = p.w.depth(x, z)
@@ -774,7 +845,7 @@ def plan(doc, g):
     shrine(p)
     mast(p)
     signs(p)
-    lagoon(p)
+    study_pool(p)
     light_fill(p)
     npcs(p)
     return p
@@ -803,12 +874,13 @@ def _runs(blocks, top_down=False):
 
 def zone_lines(p, zone):
     out = ["# Generated by tools/research_station.py from data/research_station.json. Re-run to rebuild; do not edit.",
-           "# The research station on Shrew Lake's south strand: zone %s." % zone,
-           "# Run BEFORE R9E: the Habitat Block station_study_pool sits in a post the lagoon zone writes.",
-           "# 1. clear trees, leaves and plants over everything above the lake's surface (y%d and up)" % (p.level + 1)]
+           "# The research station on the west sea coast: zone %s." % zone,
+           "# Run BEFORE R9E: the Habitat Block %s sits in a post the study_pool zone writes."
+           % p.doc["study_pool"]["habitat_block"],
+           "# 1. clear trees, leaves and plants over everything above the water's surface (y%d and up)" % (p.level + 1)]
     for (x0, y0, z0, x1, y1, z1) in p.clear[zone]:
         if y0 <= p.level:
-            raise StationError("a clear box reaches y%d, at or below the lake's surface y%d" % (y0, p.level))
+            raise StationError("a clear box reaches y%d, at or below the water's surface y%d" % (y0, p.level))
         for tag in ("#minecraft:logs", "#minecraft:leaves", "#minecraft:replaceable"):
             out.append("fill %d %d %d %d %d %d minecraft:air replace %s" % (x0, y0, z0, x1, y1, z1, tag))
     out.append("# 2. the structure, bottom up")
@@ -989,7 +1061,7 @@ def write(out_files, out):
 
 def report(doc, p):
     b = p.blocks()
-    lines = ["lake %s level y%d: decks y%d, walks y%d" % (doc["site"]["lake"], p.level, p.level, p.level + 1),
+    lines = ["water %s level y%d: decks y%d, walks y%d" % (doc["site"]["water"], p.level, p.level, p.level + 1),
              "floors: %s" % ", ".join("%s y%d" % kv for kv in sorted(p.floors.items())),
              "blocks written: %d (%s)" % (len(b), ", ".join("%s %d" % (z, len(p.blocks(z))) for z in ZONES)),
              "lanterns: %d; lit cells to check: %d" % (len(p.lanterns), len(p.lit_cells)),
@@ -1002,12 +1074,166 @@ def report(doc, p):
     return lines
 
 
+# ------------------------------------------------------------------------------------------------------------ cleanup
+# STAGING ONLY, one-off (tools/sea_drift.py cleanup's pattern). The owner moved the station from Shrew Lake's south
+# strand to the west coast on 2026-10-02 after the lake build had been applied to staging (R9RS). This puts every cell
+# the lake build wrote, and this build does not, back to the heightmap world, and removes the lake build's four NPCs.
+# What it cannot put back, stated: the trees, plants and snow the lake build's clear fills took off the strand (the
+# heightmap does not say where they stood), and Psyduck already spawned by the old Habitat Block (wild Pokemon; they
+# despawn as wild Pokemon do).
+AIR = "minecraft:air"
+
+
+def old_station(rev=OLD_REV, g=None):
+    """The first station's generator, record and plan as built at `rev` (git show), run on today's heightmap, and its
+    npc_grant records from that rev's data/rewards.json (what R9F seated)."""
+    import importlib.util
+    import subprocess
+    import tempfile
+    tmp = Path(tempfile.mkdtemp(prefix="research_station_old_"))
+    text = {}
+    for rel in ("tools/research_station.py", "data/research_station.json", "data/rewards.json"):
+        text[rel] = subprocess.run(["git", "show", "%s:%s" % (rev, rel)], cwd=ROOT, capture_output=True, text=True,
+                                   encoding="utf-8", check=True).stdout
+    (tmp / "research_station_old.py").write_text(text["tools/research_station.py"], encoding="utf-8")
+    (tmp / "research_station_old.json").write_text(text["data/research_station.json"], encoding="utf-8")
+    spec = importlib.util.spec_from_file_location("research_station_old", tmp / "research_station_old.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    doc = mod.load(tmp / "research_station_old.json")
+    p = mod.plan(doc, g)
+    grants = {r["id"]: r for r in json.loads(text["data/rewards.json"])["rewards"] if r.get("kind") == "npc_grant"}
+    return mod, doc, p, grants
+
+
+def _float_height(g, x, z):
+    h = getattr(g, "heights", None)
+    return float(h[int(z) - g.oz, int(x) - g.ox]) if h is not None else float(g(x, z))
+
+
+def natural(s, g, x, y, z):
+    """The heightmap world's block at a cell: air over the ground, the water that tools/water_mask.py level_at() paints
+    (a lake to its level, the sea to y62) between the ground and its surface, and the ground under it.
+
+    The ground's own block is ASSUMED from tools/paint_maps.py's rules, which is what the export was told to paint:
+    inside a lake basin where the float height is under the level + 2 (its bank, and its wet edge where the rounded
+    ground meets the level) sand - the wet edge is really gravel or clay by paint_maps' noise, which is not reproduced
+    here - and elsewhere grass (Shrew Lake's shores are the blossom preset, GRASS). Under it dirt, then stone. Only the
+    ground's top block is ever asked for: the lake build wrote nothing deeper (its plaza paving and its jetty's
+    landfall deck replaced the ground block itself; every other write stood above the ground or in the water)."""
+    gy = g(x, z)
+    if y > gy:
+        bid, level = s.at(x, z)
+        return "minecraft:water" if bid is not None and y <= level else AIR
+    if y == gy:
+        hf = _float_height(g, x, z)
+        for bid, (x0, z0, x1, z1) in s.boxes.items():
+            b = s.bodies[bid]
+            if x0 <= x <= x1 and z0 <= z <= z1 and hf < b["level_y"] + 2 and s.W.in_polygons(b["basin"], x, z):
+                return "minecraft:sand"
+        return "minecraft:grass_block"
+    return "minecraft:dirt" if y >= gy - 3 else "minecraft:stone"
+
+
+def npc_box(seat):
+    """A tight box round one seat: the seat's column and one block round it, from the feet to the head. Never a bare
+    distance sweep (the brief): a sweep would take any NPC that wandered near, this takes the one R9F seated there."""
+    x, y, z = seat
+    return "x=%d,y=%d,z=%d,dx=2,dy=1,dz=2" % (x - 1, y, z - 1)
+
+
+def cleanup(new_p, g, rev=OLD_REV):
+    """({"restore": [commands]}, counts, {npc id: old seat}, the old plan): every cell the lake build's pack wrote,
+    and this build does not, put back to the heightmap world (natural()), the old Habitat Block's cell included."""
+    _mod, _odoc, op, grants = old_station(rev, g)
+    s = Surface(g)
+    olds = op.blocks()
+    news = new_p.blocks()
+    cells = set(olds)
+    if op.habitat:
+        cells.add(tuple(op.habitat))
+    counts = {"to_water": 0, "to_air": 0, "ground_top_restored": 0, "under_ground": 0, "air_over_air_skipped": 0,
+              "kept_because_this_build_writes_it": 0}
+    todo = {}
+    for c in sorted(cells):
+        if c in news:
+            counts["kept_because_this_build_writes_it"] += 1
+            continue
+        x, y, z = c
+        nat = natural(s, g, x, y, z)
+        if nat == AIR and _base(olds.get(c, AIR)) == AIR:
+            counts["air_over_air_skipped"] += 1
+            continue
+        todo[c] = nat
+        gy = g(x, z)
+        if y > gy:
+            counts["to_water" if nat == "minecraft:water" else "to_air"] += 1
+        elif y == gy:
+            counts["ground_top_restored"] += 1
+        else:
+            counts["under_ground"] += 1
+    import rift_mines as RM   # its column runs and command shape, not its model (tools/sea_drift.py does the same)
+    cols = {}
+    for (x, y, z), b in todo.items():
+        cols.setdefault((x, z), []).append((y, b))
+    out = []
+    for (x, z) in sorted(cols):
+        out += [RM.cmd(x, a, c, z, b) for a, c, b in RM.column_runs(x, z, cols[(x, z)])]
+    seats = {}
+    for n in _odoc["npcs"]:
+        seat = tuple(op.npcs[n["id"]])
+        rec = grants.get(n["reward"])
+        if rec is None or tuple(rec["npc_at"]) != seat:
+            raise StationError("the old %s's seat %s is not %s's npc_at at %s (%s)"
+                               % (n["id"], seat, n["reward"], rev, rec and rec.get("npc_at")))
+        seats[n["id"]] = seat
+    return {"restore": out}, counts, seats, op
+
+
+def npc_cleanup_lines(seats, folder):
+    """Two functions: hold each old seat's chunk and come back in 60 ticks, when its entities have loaded (a chunk's
+    entities load after its blocks: tools/reapply.py's npc step and tools/rift_mines.py's carts), then remove the
+    cobblemon:npc in each seat's tight box, storing how many went, and release."""
+    chunks = sorted({(x >> 4, z >> 4) for x, _y, z in seats.values()})
+    hold = ["# Generated by tools/research_station.py cleanup: STAGING ONLY. The first station's four NPCs, at the seats",
+            "# the lake build gave them (git show %s, data/rewards.json npc_grant npc_at). Their chunks are held here and"
+            % OLD_REV, "# the removal runs 60 ticks on, when their entities have loaded."]
+    hold += ["forceload add %d %d" % (cx * 16, cz * 16) for cx, cz in chunks]
+    hold += ["schedule function %s:%s/npcs_go 60t replace" % (NS, folder)]
+    go = ["# chunks-loaded-by: %s:%s/npcs" % (NS, folder),
+          "# how many went at each seat: data get storage %s:%s npcs (1 each is the expected answer)" % (NS, folder)]
+    for nid, seat in sorted(seats.items()):
+        go.append("execute store result storage %s:%s npcs.%s int 1 run kill @e[type=cobblemon:npc,%s]"
+                  % (NS, folder, nid, npc_box(seat)))
+    go += ["forceload remove %d %d" % (cx * 16, cz * 16) for cx, cz in chunks]
+    return hold, go
+
+
+def write_cleanup(out, lines, seats, rev=OLD_REV):
+    import rift_mines as RM
+    out = Path(out)
+    fn, order = RM.write_blocks(out, lines, ("restore",), "tools/research_station.py cleanup",
+                                "Cobblers STAGING ONLY: the first Shrew Station (%s, Shrew Lake's south strand) put back "
+                                "to the heightmap world, and its four NPCs removed" % rev)
+    folder = out.name.replace("cobblers_", "")
+    hold, go = npc_cleanup_lines(seats, folder)
+    for name, body in (("npcs", hold), ("npcs_go", go)):
+        bad = function_limits.check_lines(body, name)
+        if bad:
+            raise StationError("cleanup function %s would be refused: %s" % (name, bad[:2]))
+        (fn / (name + ".mcfunction")).write_text("\n".join(body) + "\n", encoding="utf-8", newline="\n")
+    order = list(order) + ["npcs"]
+    (fn / "index.txt").write_text("\n".join(order) + "\n", encoding="utf-8", newline="\n")
+    return fn, order
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("cmd", choices=("build", "plan"))
+    ap.add_argument("cmd", choices=("build", "plan", "cleanup"))
     ap.add_argument("--data", default=str(DATA))
-    ap.add_argument("--out", default=str(DEFAULT_OUT))
+    ap.add_argument("--out", default=None)
     ap.add_argument("--source-root")
+    ap.add_argument("--old-rev", default=OLD_REV, help="cleanup: the commit that built the lake station")
     a = ap.parse_args(argv)
     import ground as G
     doc = load(Path(a.data))
@@ -1016,6 +1242,16 @@ def main(argv=None):
     if a.cmd == "plan":
         print("\n".join(report(doc, p)))
         return 0
+    if a.cmd == "cleanup":
+        lines, counts, seats, _op = cleanup(p, g, a.old_rev)
+        out = Path(a.out) if a.out else CLEANUP_OUT
+        fn, order = write_cleanup(out, lines, seats, a.old_rev)
+        print(json.dumps(counts))
+        print("old seats: %s" % json.dumps({k: list(v) for k, v in seats.items()}))
+        print("wrote %s: %d functions (%d restore, then npcs -> npcs_go), %d restore commands (cobblers:%s/..., in "
+              "index.txt order)" % (out, len(order) + 1, len(order) - 1, len(lines["restore"]), fn.name))
+        return 0
+    a.out = a.out or str(DEFAULT_OUT)
     write(out_files, a.out)
     n = sum(1 for rel, t in out_files.items() if rel.endswith(".mcfunction")
             for l in t.splitlines() if l and not l.startswith("#"))
