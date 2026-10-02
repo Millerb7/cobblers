@@ -44,7 +44,7 @@
       "6": 50,
       "7": 55,
       "8": 60,
-      "champion": 65
+      "champion": 100
     },
     "upper_bound_why": "an UPPER BOUND, not the cap. After n badges the next trainer set contains gym n+1, whose team's highest level is data/trainers.json generation_contract gym_ace_levels[n] (20 25 30 35 40 45 50 55); after 8 badges it contains the Elite Four at 60. The cap is the MINIMUM over that set, so it is at most this and is lower whenever a weaker required trainer of the tier is still undefeated. A legendary above this bound is therefore certainly uncatchable; one below it still has to be checked in game. The champion's own cap is unknown: nothing authored comes after champion_blue (62), and what LevelUtils returns for an empty next set has not been read.",
     "above_the_bound": [],
@@ -94,7 +94,7 @@
         "gate": "8 badges"
       }
     ],
-    "champion_band_why": "The owner, 2026-09-30: 'LUGIA: the League's cap. If champion_cleared has no cap band, give it one.' It had none - the band was null, which is why Lugia sat at 75 and could not be caught by anyone. 65 is the eighth badge's 60 plus one step of the five the whole ladder uses (20,25,30,35,40,45,50,55,60), so the champion's band is the ladder's next rung and not a new rule. It is an UPPER bound like every other entry (see upper_bound_why): the real cap is the minimum over the next trainer set, so anything sitting exactly on it still wants confirming in game."
+    "champion_band_why": "SETTLED 2026-10-02 (docs/mechanics/LEAGUE_LEVEL_CAP.md): after the Champion the player's Kanto series has no next trainer, and rctmod v0.19.0-beta LevelUtils returns maxLevel() = 100 for an empty next set; completing a series never resets it. So the champion band is 100, not the 65 invented on 2026-09-30. tools/legendaries_audit.py rct_caps derives every band from data/trainers.json and the RCT config and checks each record's level and cap_at_gate against it."
   },
   "spawn_free_zones_note": "Every emitted encounter declares a `spawn_free_zone`: the chamber footprint snapped out to the 8-block grid the route boxes share. They are NOT written into data/spawn_suppression.json by this file's author, because that file was in flight in another session on 2026-09-29; whoever merges them must also accept that a spawn-free zone is a 2-D column, so a grotto's zone also silences the lake water directly above it (about 40 by 40 blocks of a lake that is 300+ across). tools/legendaries_audit.py checks the boxes are grid-snapped and cover their chamber.",
   "encounters": [
@@ -104,7 +104,7 @@
       "species": "mesprit",
       "level": 35,
       "level_basis": "5 below the provisional 3-badge cap of 40, so a player at the gate can catch it (data/level_cap.json). PROVISIONAL.",
-      "cap_at_gate": 40,
+      "cap_at_gate": 35,
       "kind": "lake_grotto",
       "status": "sited",
       "site": "arrow_lake",
@@ -152,7 +152,7 @@
       "species": "azelf",
       "level": 45,
       "level_basis": "5 below the provisional 5-badge cap of 52. PROVISIONAL.",
-      "cap_at_gate": 52,
+      "cap_at_gate": 45,
       "kind": "lake_grotto",
       "status": "sited",
       "site": "marshy_marsh",
@@ -200,7 +200,7 @@
       "species": "uxie",
       "level": 55,
       "level_basis": "5 below the provisional 7-badge cap of 64. PROVISIONAL.",
-      "cap_at_gate": 64,
+      "cap_at_gate": 55,
       "kind": "lake_grotto",
       "status": "sited",
       "site": "lake_tilpey",
@@ -252,7 +252,7 @@
       "species": "regirock",
       "level": 40,
       "level_basis": "5 below the provisional 4-badge cap of 46. PROVISIONAL.",
-      "cap_at_gate": 46,
+      "cap_at_gate": 40,
       "kind": "sealed_chamber",
       "status": "sited",
       "site": "scorched_plateau",
@@ -296,7 +296,7 @@
       "species": "regice",
       "level": 50,
       "level_basis": "5 below the provisional 6-badge cap of 58. PROVISIONAL.",
-      "cap_at_gate": 58,
+      "cap_at_gate": 50,
       "kind": "sealed_chamber",
       "status": "sited",
       "site": "glacial_tear",
@@ -340,7 +340,7 @@
       "species": "registeel",
       "level": 55,
       "level_basis": "5 below the provisional 7-badge cap of 64. PROVISIONAL.",
-      "cap_at_gate": 64,
+      "cap_at_gate": 55,
       "kind": "sealed_chamber",
       "status": "sited",
       "site": "the_rift",
@@ -442,7 +442,7 @@
       "species": "regigigas",
       "level": 60,
       "level_basis": "5 below the provisional 8-badge cap of 70. PROVISIONAL.",
-      "cap_at_gate": 70,
+      "cap_at_gate": 60,
       "kind": "sealed_chamber",
       "status": "sited",
       "site": "glacial_tear",
@@ -491,7 +491,7 @@
       "species": "groudon",
       "level": 60,
       "level_basis": "5 below the provisional 8-badge cap of 70. PROVISIONAL.",
-      "cap_at_gate": 70,
+      "cap_at_gate": 60,
       "kind": "sealed_chamber",
       "status": "sited",
       "site": "the_craters",
@@ -533,9 +533,9 @@
       "id": "lugia",
       "title": "Lugia in the Maelstrom Trench",
       "species": "lugia",
-      "level": 65,
-      "level_basis": "5 below the provisional champion cap of 80. PROVISIONAL.",
-      "cap_at_gate": 80,
+      "level": 75,
+      "level_basis": "75, its original: after the Champion the RCT cap is 100 (series complete, rctmod LevelUtils), so the postgame is uncapped. The owner, 2026-10-02.",
+      "cap_at_gate": 100,
       "kind": "lake_grotto",
       "status": "blocked",
       "site": "maelstrom_trench",
@@ -592,7 +592,7 @@
       },
       "spawn_free_zone": null,
       "why": "docs/world-building/STRUCTURE_DECISIONS.md: the ocean is 56% of the world and needs an apex reward; WATER_MAP row 20. An air chamber even here, because a legendary battle outlasts any air budget.",
-      "level_why": "The owner, 2026-09-30: Lugia sits at the League's cap. It was 75 against a champion band of null - a legendary nobody could catch, which is not an encounter. The champion band is now 65 (level_caps.champion_band_why) and Lugia is on it."
+      "level_why": "The owner, 2026-10-02: 'LUGIA: 75, its original. It is postgame and uncapped there.' The 2026-09-30 move to 65 rested on an invented champion band (level_caps.champion_band_why); rctmod v0.19.0-beta source shows the cap after the last series trainer is maxLevel() = 100 (docs/mechanics/LEAGUE_LEVEL_CAP.md)."
     },
     {
       "id": "celebi_wake",
