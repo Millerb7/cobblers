@@ -175,7 +175,7 @@ arguably *better* now than when it was written; "Jungle Isle" over 1.2 km2 of oc
 ### B16. Articuno — TAKEN, (904, 320)
 
 The owner, 2026-10-01: *"take (904, 320). The refusal tested one pad and refused a mountain, and your site keeps
-what it said was the point."* Seat y151, top y225, 85 blocks under `max_y`; 235 blocks due east of the summit at
+what it said was the point."* Seat y151, top occupied layer y224, 86 blocks under `max_y`; 235 blocks due east of the summit at
 almost the same latitude and 159 below it; ground spread **1** over 440 columns; **73 blocks of fill, zero cut**.
 Recorded in `data/adopted_legendary_sites.json` as `adopted_articuno_shrine`. The two measured alternatives stay in
 the file as measurements, not open options — the south-foot one at (760, 652) becomes live again only if the

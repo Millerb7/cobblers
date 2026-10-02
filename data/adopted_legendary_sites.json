@@ -4,7 +4,7 @@
  "why_a_sibling_of_legendaries_json": [
   "data/legendaries.json is OUR parametric chamber system, not a register of sites. tools/legendaries.py `load()` rejects any record whose `kind` is outside (lake_grotto, sealed_chamber, sapling_wake) and any record without a non-empty `gate.flags`, and `geometry()` derives every box of a sited record from `mouth`/`portal`, `approach` and `chamber`. A pasted third-party template has none of those: no bore, no shell margin, no carve, and - the load-bearing one - NO GATE WE MAY AUTHOR, because what triggers a `lumymon:*_altar` has never been read (LumyMon is closed source).",
   "Putting these three in that file would therefore mean mutating KINDS and the gate rule of a generator that emits six built chambers, to carry records it must never emit. That is the opposite of fail-closed, so they live here.",
-  "No id and no species in this file is authored in data/legendaries.json: that file owns mesprit, azelf, uxie, regirock, regice, registeel, regigigas, groudon, lugia and celebi_wake; this one owns mew, calyrex (with spectrier) and zapdos. Checked 2026-10-01 - there is no two-author id and no two-author legendary. The three lakes were REFUSED for exactly that reason (see refused)."
+  "No id and no species in this file is authored in data/legendaries.json: that file owns mesprit, azelf, uxie, regirock, regice, registeel, regigigas, groudon, lugia and celebi_wake; this one owns mew, calyrex (with spectrier), zapdos and articuno. Checked 2026-10-01 - there is no two-author id and no two-author legendary. The three lakes were REFUSED for exactly that reason (see refused)."
  ],
  "provenance": {
   "no_nbt_committed": "Nothing in this file is a file. Every template is referenced BY RESOURCE ID and resolved by the installed pack at `/place` time, the same way data/placements.json `kind: donor` records do (`source.licence`: 'placed by resource id from the installed pack or the server jar; never copied').",
@@ -15,7 +15,7 @@
  "ceiling": {
   "max_y": 310,
   "source": "data/world.json vertical.max_y, and measured_ceiling_y 310",
-  "verdict": "all three clear it by 144 blocks or more; the tallest top is y139 (Zapdos)"
+  "verdict": "all four clear it by 86 blocks or more; the tallest top is y224 (Articuno). Every top_y here is the top OCCUPIED layer, y + height - 1, and every ceiling_margin is measured against this max_y."
  },
  "what_never_travels": {
   "verified": "EXP-013 on a disposable world: `/place structure`, `/place jigsaw` and `/place template` all leave every chunk with empty `starts` and `References`, and `/locate`, `location_check` and the gym map ignore the build (docs/world-building/STRUCTURE_INVENTORY.md:271-274).",
@@ -260,7 +260,7 @@
     ],
     "cell": "C1",
     "paint": "preset `coast_scrub` (data/regions.json subregions.north_west_coast). NOT a biome match: the template wants `minecraft:stony_shore` and no region on the map is painted that. coast_scrub is the closest cover we have on a windward cliff, and the mismatch is VISUAL ONLY - a raw paste reads no biome. Recorded rather than papered over: the owner may want a small stony patch painted round it at the next export, or may not care.",
-    "why": "66 blocks tall on a cliff 63 blocks from the shoreline, inside the windward band (the Windward Sea is 'sea west of x4096 between z2600 and z5200', data/regions.json windward_deep; this site is z2614-2642, just inside it) and inside the windward skerries box x0..760 z2600..5200, so the sea stacks and skerries the water export placed offshore stand in front of it. The top is y139, 77 above the water: a silhouette seen from the sea long before it is reached, which is the distance cue the LEGENDARY placement rule asks for (STRUCTURE_INVENTORY.md:317).",
+    "why": "66 blocks tall on a cliff 45 blocks from the shoreline (footprint edge; 64 from its centre), inside the windward band (the Windward Sea is 'sea west of x4096 between z2600 and z5200', data/regions.json windward_deep; this site is z2614-2642, just inside it) and inside the windward skerries box x0..760 z2600..5200, so the sea stacks and skerries the water export placed offshore stand in front of it. The top is y139, 77 above the water: a silhouette seen from the sea long before it is reached, which is the distance cue the LEGENDARY placement rule asks for (STRUCTURE_INVENTORY.md:317).",
     "findable_by_eye": "this is the one of the three that finds itself: a 66-block tower on an exposed cliff, with nothing authored within 478 blocks to compete with it."
    },
    "placement": {
@@ -304,7 +304,7 @@
     "fill_columns": 352,
     "terrain": "at y74, 248 of 899 columns stand above the bottom layer (297 blocks shaved) and 352 stand below it (533 blocks of gap that want filling with the local stone, or the tower's base floats on its seaward side). THIS IS THE ONE SITE THAT NEEDS DRESSING, and the amount is named so nobody discovers it in the world: about 830 blocks of work in a 31x29 box.",
     "foliage": "coast_scrub has no foliage assign of its own, so the cover is the region preset's scrub rather than trees: little to lose.",
-    "built_content": "nothing. Nearest authored records 478 blocks: vertices of the `channel` axis of the viltris_path landmark (data/landmarks.json). The site is inside no landmark extent and no water basin; the nearest column at or below sea level y62 is 63 blocks away, so the tower stands on land, not in the surf.",
+    "built_content": "nothing. Nearest authored records 478 blocks: vertices of the `channel` axis of the viltris_path landmark (data/landmarks.json). The site is inside no landmark extent and no water basin; the nearest column at or below sea level y62, (518, 2652), is 45.1 blocks from the footprint edge (63.7 from the centre), so the tower stands on land, not in the surf.",
     "not_on_a_skerry": "the skerries and stacks the water export placed in this box are OFFSHORE (top y63-65 and y72-86 on radius 4-9 rock, data/water_shape.json windward_skerries). A 31x29 footprint does not fit on any of them and none is used: this is a cliff-top site with the skerries in front of it."
    },
    "does_not_travel_here": [
@@ -344,8 +344,8 @@
     ],
     "cell": "A1",
     "paint": "preset `snowy_peak` (data/regions.json subregions.frostpeak). NOT an exact biome match: the template wants `minecraft:snowy_plains` and data/structures.json lists only `northern_isles` as a region carrying one. snowy_peak is the same cover family on the only mountain the story wants, and a raw paste reads no biome, so the mismatch is VISUAL ONLY - recorded, like the Zapdos tower's, rather than papered over.",
-    "why": "a high eastern shoulder of Frostpeak, 235 blocks due east of the summit at almost the same latitude (z320 against the summit's z324) and 159 blocks below it. It keeps what the refusal said was the whole reason to want this template - a shrine high on the lone mountain in the most remote corner of the mainland - while fitting under the ceiling with 85 blocks to spare. The ground is as near flat as the map offers up there: spread 1 over 440 columns.",
-    "findable_by_eye": "a 74-block tower topping out at y225 on an open snowy shoulder, with nothing else on the mountain. Visible from the southern apron and from the sea to the east. No finder exists (see what_never_travels.finding_them_instead)."
+    "why": "a high eastern shoulder of Frostpeak, 235 blocks due east of the summit at almost the same latitude (z320 against the summit's z324) and 159 blocks below it. It keeps what the refusal said was the whole reason to want this template - a shrine high on the lone mountain in the most remote corner of the mainland - while fitting under max_y with 86 blocks to spare (top occupied layer y224). The ground is as near flat as the map offers up there: spread 1 over 440 columns.",
+    "findable_by_eye": "a 74-block tower topping out at y224 on an open snowy shoulder, with nothing else on the mountain. Visible from the southern apron and from the sea to the east. No finder exists (see what_never_travels.finding_them_instead)."
    },
    "placement": {
     "corner": [
@@ -362,9 +362,8 @@
     "anchor_mode": "corner",
     "y_mode": "absolute",
     "command": "/place template cobbleverse:legendary/articuno 904 151 320 none none",
-    "top_y": 225,
-    "ceiling_margin": 95,
-    "max_y_margin": 85
+    "top_y": 224,
+    "ceiling_margin": 86
    },
    "ground": {
     "min": 150,
@@ -496,7 +495,7 @@
   }
  ],
  "cross_system_consequences": [
-  "tools/portals.py reads data/legendaries.json `encounters` directly for its `min_from_legendary_mouth` clearance (tools/portals.py:323). A site in THIS file is invisible to that check, so a portal could be sited on top of one. All three sites clear 120 blocks from every portal today (the nearest is `sky_far_reach`, 395 from Mew's temple), but that is measured here, not enforced anywhere. Whoever makes one of these real either teaches portals.py about this file or declares the clearance in a test.",
+  "tools/portals.py reads data/legendaries.json `encounters` directly for its `min_from_legendary_mouth` clearance (tools/portals.py:323). A site in THIS file is invisible to that check, so a portal could be sited on top of one. All four sites clear 120 blocks from every portal today, measured from each FOOTPRINT EDGE: the nearest is `sky_far_reach`, 378 blocks from the Mew temple's edge (the 395 this line used to give was centre to centre, 397 re-measured, and a clearance is an edge distance). ENFORCED since 2026-10-01 by tests/test_adopted_legendary_sites.py; portals.py itself still cannot see this file.",
   "data/spawn_suppression.json: every emitted encounter in data/legendaries.json declares a `spawn_free_zone`. These three declare none, on purpose - they are not encounters and nothing is dormant in them. If an altar ever works, the site needs one.",
   "the trainer and gym sweeps: nothing here carries a trainer id, a gym id or a placement id, so no list-versus-world problem is introduced. The one thing in the world these sites WOULD not be in is data/placements.json, which is stated above as deliberate."
  ],
