@@ -68,7 +68,7 @@
       "water": [["psyduck", "anchor"], ["dratini", "find", {"maxY": 98}]]},
 
     "foothill_woods": {"tier": 3, "levels": [19, 26], "themes": ["forest"], "placement": "path", "water_body": "foothill_pond",
-      "land": [["teddiursa", "anchor"], ["diglett", "common"], ["pachirisu", "common"], ["scyther", "uncommon"], ["heracross", "uncommon"]],
+      "land": [["wurmple", "anchor"], ["diglett", "common"], ["pachirisu", "common"], ["scyther", "uncommon"], ["heracross", "uncommon"]],
       "water": [["poliwag", "anchor"], ["feebas", "rare"]]},
     "the_tri_peaks": {"tier": 3, "levels": [20, 28], "themes": ["alpine"], "placement": "path",
       "land": [["rookidee", "anchor"], ["skiddo", "common"], ["swablu", "common"], ["absol", "rare"]]},
@@ -89,7 +89,7 @@
       "water": [["tadbulb", "anchor"]]},
 
     "the_crags": {"tier": 4, "levels": [25, 32], "themes": ["alpine"], "placement": "path", "water_body": "crags_tarn",
-      "land": [["aron", "anchor"], ["bronzor", "common"], ["skarmory", "uncommon"], ["carbink", "rare"]],
+      "land": [["aron", "anchor"], ["geodude", "common"], ["skarmory", "uncommon"], ["carbink", "rare"]],
       "water": [["barboach", "anchor"], ["carvanha", "common"]]},
     "upper_trough": {"tier": 4, "levels": [26, 33], "themes": ["snow"], "placement": "path",
       "land": [["cubchoo", "anchor"], ["vanillite", "common"], ["snorunt", "common"], ["snom", "uncommon"]]},
@@ -145,7 +145,7 @@
       "land": [["deerling", "anchor"], ["sentret", "common"], ["lillipup", "common"], ["axew", "find"]]},
 
     "tilpey_waters": {"tier": 7, "themes": ["water"], "placement": "path", "water_body": "lake_tilpey_open",
-      "land": [["psyduck", "anchor"]],
+      "land": [["wingull", "anchor"]],
       "water": [["magikarp", "anchor"], ["veluza", "common"], ["psyduck", "uncommon"]]},
     "tilpey_south_shore": {"tier": 7, "themes": ["forest"], "placement": "path", "water_body": "lake_tilpey",
       "land": [["caterpie", "anchor"], ["weedle", "anchor"], ["pidgey", "common"], ["combee", "uncommon"]],
@@ -210,7 +210,7 @@
       "water": [["lanturn", "common"], ["kingdra", "common"], ["gyarados", "common"], ["toxapex", "common"], ["dhelmise", "uncommon"]]},
     "vrc_drowned_core": {"tier": 9, "levels": [54, 60], "themes": ["water"], "staple": true, "core_of": "vrc_drowned", "prize": "milotic"},
     "vrc_slagworks": {"tier": 9, "levels": [54, 60], "themes": ["volcanic"], "staple": true,
-      "land": [["magmortar", "common"], ["chandelure", "common"], ["coalossal", "common"], ["centiskorch", "uncommon"], ["salazzle", "uncommon"]]},
+      "land": [["magmortar", "common"], ["arcanine", "common"], ["coalossal", "common"], ["centiskorch", "uncommon"], ["salazzle", "uncommon"]]},
     "vrc_slagworks_core": {"tier": 9, "levels": [54, 60], "themes": ["volcanic"], "staple": true, "core_of": "vrc_slagworks", "prize": "garchomp"},
     "vrc_bloom": {"tier": 9, "levels": [54, 60], "themes": ["mushroom"], "staple": true,
       "land": [["breloom", "common"], ["amoonguss", "common"], ["vileplume", "common"], ["shiinotic", "uncommon"]]},
