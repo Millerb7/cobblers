@@ -1122,6 +1122,236 @@
         "expect": true
       },
       {
+        "what": "passed]  the HQ's front door (the city's)",
+        "block": [
+          3443,
+          67,
+          3282,
+          "minecraft:iron_door"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the plate outside it",
+        "block": [
+          3444,
+          67,
+          3282,
+          "minecraft:polished_blackstone_pressure_plate"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the plate inside it",
+        "block": [
+          3442,
+          67,
+          3282,
+          "minecraft:polished_blackstone_pressure_plate"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the shaft head OPEN in the room's floor",
+        "block": [
+          3429,
+          66,
+          3299,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  its first tread",
+        "block": [
+          3429,
+          65,
+          3299,
+          "minecraft:polished_blackstone_brick_stairs"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the head flight under the room's wall",
+        "block": [
+          3429,
+          63,
+          3302,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "failed]  ... whose ceiling is the tread, intact",
+        "block": [
+          3429,
+          66,
+          3302,
+          "minecraft:air"
+        ],
+        "expect": false
+      },
+      {
+        "what": "passed]  a landing (landing_1, floor y52)",
+        "block": [
+          3430,
+          52,
+          3312,
+          "minecraft:polished_blackstone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  its head room",
+        "block": [
+          3430,
+          53,
+          3312,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  its lantern, in the spine",
+        "block": [
+          3430,
+          53,
+          3311,
+          "minecraft:lantern"
+        ],
+        "expect": true
+      },
+      {
+        "what": "failed]  the spine between the lanes is rock",
+        "block": [
+          3430,
+          30,
+          3308,
+          "minecraft:air"
+        ],
+        "expect": false
+      },
+      {
+        "what": "passed]  the stair's foot",
+        "block": [
+          3429,
+          0,
+          3308,
+          "minecraft:polished_blackstone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  through the spine into the room",
+        "block": [
+          3430,
+          1,
+          3308,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the records room's floor",
+        "block": [
+          3425,
+          0,
+          3306,
+          "minecraft:polished_blackstone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  its air",
+        "block": [
+          3425,
+          1,
+          3306,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  its ceiling",
+        "block": [
+          3425,
+          5,
+          3306,
+          "minecraft:deepslate_tiles"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the records",
+        "block": [
+          3425,
+          2,
+          3301,
+          "minecraft:bookshelf"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the knock box, carved",
+        "block": [
+          3423,
+          1,
+          3306,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  ... on the room's floor",
+        "block": [
+          3423,
+          0,
+          3306,
+          "minecraft:polished_blackstone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the doorway, room side",
+        "block": [
+          3422,
+          2,
+          3306,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the doorway, passage side (floor y1, one step up)",
+        "block": [
+          3421,
+          2,
+          3306,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the old hatch, laid back to rock",
+        "block": [
+          3427,
+          66,
+          3308,
+          "minecraft:deepslate"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]",
+        "block": [
+          3427,
+          66,
+          3309,
+          "minecraft:deepslate"
+        ],
+        "expect": true
+      },
+      {
         "what": "passed]  was the cordon's tinted glass (ground y93)",
         "block": [
           3285,
