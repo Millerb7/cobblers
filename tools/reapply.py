@@ -101,6 +101,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-02: the Frostpeak research camp (tools/frostpeak_camp.py, data/frostpeak_camp.json): block
                 # functions and the instruments' display entities, run by R18F
                 "cobblers_frostpeak_camp",
+                # 2026-10-02: the Seaward Drift, its strip mine and Driftmouth Isle (tools/sea_drift.py,
+                # data/sea_drift.json): 90 block functions run by R9SD, before the Habitat Blocks that sit in its rock
+                "cobblers_sea_drift",
                 # 2026-09-29: the gym interiors (tools/gym_interiors.py, data/gym_interiors.json): the healing
                 # machines out of all eight placed gyms, and gym 1's works carved under its lot. Block functions run
                 # by R16E, after the donors (R9) that stamp the gyms whole and would erase anything written first
@@ -485,6 +488,8 @@ def prepare_jobs(a):
     add("ursaluna_cave_audit", "ursaluna_cave_audit.py", *src)
     add("frostpeak_camp:build", "frostpeak_camp.py", "build", *src)
     add("frostpeak_camp_audit", "frostpeak_camp_audit.py", "--inputs-root", str(ROOT), *src)
+    add("sea_drift:build", "sea_drift.py", "build", *src)
+    add("sea_drift_audit", "sea_drift_audit.py", *src)
     # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
     # then the offline audit, which re-derives every shell box from data/placements.json, replays the written
     # functions into a voxel model and fails the prepare on a broken route, a trainer that can be walked round, a
@@ -1045,6 +1050,12 @@ def steps(with_spawns=False):
     # the Habitat Blocks, after everything that builds the floors they sit in (R9C's shell pass overwrites them). A
     # block placed by command stays inert until its chunk loads from disk, and EXP-021 found only a restart does that
     # reliably: the audit runs with the server stopped, so the boot after it is that restart. Verify after it.
+    # the Seaward Drift, its strip mine and Driftmouth Isle (2026-10-02, tools/sea_drift.py): a pure block pass, so it
+    # runs here, BEFORE R9E - ten of the Habitat Blocks sit inside the isle's rock, and a block pass after R9E would
+    # write rock over them. Each function force-loads its own chunks first, the pattern R1's Rift pass has used on
+    # every verified apply
+    out.append(("R9SD", "the Seaward Drift, its strip mine and Driftmouth Isle (data/sea_drift.json)",
+                [("fn", "cobblers:sea_drift/%s" % f) for f in indexed("cobblers_sea_drift", "sea_drift")]))
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
