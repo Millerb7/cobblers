@@ -1410,7 +1410,36 @@
         "appears_after": "gym8_cleared",
         "message": "Among the bent trees, the Orchard Sleeper opens one eye.",
         "sound": "minecraft:entity.polar_bear.ambient",
-        "dressing": [
+        "dressing": [],
+        "why": "Sunset Isle's failed orchard west of the palm sapling (data/themed_saplings.json sapling_palm_sunset_east, 24 east): seven storm-bent trees leaning north-east, two overgrown rows, a windfall and a collapsed shed, the Slaking asleep between the rows",
+        "anchor": [
+          2816,
+          67,
+          7080
+        ],
+        "ground_y": 66,
+        "anchor_why": "x/z are Codex's location, measured and kept (dry land, outside every town, placement and Rift zone footprint, off the route line: docs/world-building/RESIDENT_ENCOUNTERS.md 2); feet one above the rounded heightmap ground",
+        "bbox": [
+          2786,
+          7067,
+          2817,
+          7101
+        ],
+        "bbox_why": "every block the dressing writes and the anchor, inclusive [x0, z0, x1, z1]; R18R force-loads exactly this box",
+        "keep_out": [
+          {
+            "box": [
+              2814,
+              7055,
+              2862,
+              7105
+            ],
+            "what": "the themed giant palm sapling_palm_sunset_east's template box (trunk 2840, 7080): the Orchard Sleeper's anchor is inside it, under the crown",
+            "source": "RELAYED by the orchard builder through the coordinator, 2026-10-02 (box x2814-2862 z7055-7105; no palm block within 4 of the anchor below y115); not measured here: the template is a kit this build does not read",
+            "rule": "no block is set inside it; only the standing space's plant clear (air replace #minecraft:replaceable, y67-68 on the anchor's 3x3) reaches in"
+          }
+        ],
+        "superseded_dressing": [
           {
             "kind": "strip",
             "name": "overgrown row",
@@ -1713,34 +1742,8 @@
             ]
           }
         ],
-        "why": "Sunset Isle's failed orchard west of the palm sapling (data/themed_saplings.json sapling_palm_sunset_east, 24 east): seven storm-bent trees leaning north-east, two overgrown rows, a windfall and a collapsed shed, the Slaking asleep between the rows",
-        "anchor": [
-          2816,
-          67,
-          7080
-        ],
-        "ground_y": 66,
-        "anchor_why": "x/z are Codex's location, measured and kept (dry land, outside every town, placement and Rift zone footprint, off the route line: docs/world-building/RESIDENT_ENCOUNTERS.md 2); feet one above the rounded heightmap ground",
-        "bbox": [
-          2786,
-          7067,
-          2817,
-          7101
-        ],
-        "bbox_why": "every block the dressing writes and the anchor, inclusive [x0, z0, x1, z1]; R18R force-loads exactly this box",
-        "keep_out": [
-          {
-            "box": [
-              2814,
-              7055,
-              2862,
-              7105
-            ],
-            "what": "the themed giant palm sapling_palm_sunset_east's template box (trunk 2840, 7080): the Orchard Sleeper's anchor is inside it, under the crown",
-            "source": "RELAYED by the orchard builder through the coordinator, 2026-10-02 (box x2814-2862 z7055-7105; no palm block within 4 of the anchor below y115); not measured here: the template is a kit this build does not read",
-            "rule": "no block is set inside it; only the standing space's plant clear (air replace #minecraft:replaceable, y67-68 on the anchor's 3x3) reaches in"
-          }
-        ]
+        "superseded_dressing_why": "Integration, 2026-10-02: the Old Orchard (data/old_orchard.json, tools/old_orchard.py, R9SO) was built in the same batch as this resident's place, with its own rows, press-house and cart track over the same ground (its bbox x2734-2805 z7036-7110 overlaps this dressing's x2786-2817 z7067-7101). The dedicated place owns the ground; this dressing is kept here unbuilt, not deleted, so the owner can choose it instead.",
+        "dressing_by": "data/old_orchard.json"
       }
     },
     {

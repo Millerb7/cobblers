@@ -73,6 +73,8 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # blocks plus the per-chamber gate; the legendaries themselves are summoned over RCON by R14L,
                 # and the pack's own tick drives the gates, so it is world-local below
                 "cobblers_legendaries",
+               # 2026-10-02: the den keeper loop holds the bear on its own tick, so world-local as its own comment says
+               "cobblers_ursaluna_cave",
                 # the Rift's own storm: thunder and lightning for players inside the Rift (2026-09-25)
                 "cobblers_rift_storm",
                 # 2026-09-26, the install sweep: three packs the game needs that were only ever copied by hand, or
@@ -228,6 +230,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_rift_zones", "cobblers_mega_recipes",
                "cobblers_ferries", "cobblers_ambient", "cobblers_levelcap", "cobblers_mines",
                "cobblers_legendaries",
+               # 2026-10-02: the den keeper loop holds the bear on its own tick, so world-local as its own comment says
+               "cobblers_ursaluna_cave",
                # 2026-10-02: the residents' keeper SPAWNS Pokemon on its own when a player comes near, so it must never
                # load in the global folder, where the live world would run it too
                "cobblers_residents")

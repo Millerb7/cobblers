@@ -284,7 +284,14 @@ def check_writes(doc, W, fns, rep):
                 if bad <= 5:
                     rep.err("writes", "%s: %s at (%d, %d, %d) %s" % (i, block, x, y, z, why))
         if n == 0:
-            rep.err("writes", "%s: the dressing writes no block" % i)
+            # a resident whose ground belongs to a place built round it writes nothing itself, but only when that
+            # place's own record names this resident back (integration, 2026-10-02: the Old Orchard and the Sleeper)
+            owner = bb.get("dressing_by")
+            back = None
+            if owner and (ROOT / owner).exists():
+                back = json.loads((ROOT / owner).read_text(encoding="utf-8")).get("resident", {}).get("id")
+            if back != i:
+                rep.err("writes", "%s: the dressing writes no block" % i)
         stand = "fill %d %d %d %d %d %d air replace #minecraft:replaceable" % (ax, ay, az, ax, ay + 1, az)
         if stand not in _code(text):
             rep.err("writes", "%s: no clear of its standing space at the anchor %s" % (i, bb["anchor"]))
