@@ -249,8 +249,14 @@ def test_every_gym_pool_is_exactly_what_the_sidecar_records(pack):
         got = [r["species"] for r in avail[g]["rows"]]
         assert got == want, "gym %d: the reader and the sidecar disagree" % g
     g8 = [r["species"] for r in avail[8]["rows"]]
-    assert sorted(x for x in g8 if x.startswith("nidoran")) == ["nidoranf", "nidoranm"], \
-        "both gendered Nidoran must be in Gym 8's pool"
+    # the gender sign is the only thing that tells the two Nidoran lines apart; dropping it once collapsed them onto one
+    # id the jar does not have. Since the 2026-10-02 encounter rebuild Gym 8's pool holds both lines evolved (the base
+    # forms are off the path at tier 1), so the check is that both lines arrive, kept apart, and that the signs still
+    # key to two different jar species.
+    assert {"nidorina", "nidoqueen"} <= set(g8) and {"nidorino", "nidoking"} <= set(g8), \
+        "both gendered Nidoran lines must be in Gym 8's pool, kept apart"
+    assert (B.key("Nidoran♀"), B.key("Nidoran♂")) == ("nidoranf", "nidoranm")
+    assert "nidoranf" in species and "nidoranm" in species
     assert len(g8) == len(side["gyms"]["8"]) > 98, \
         "Gym 8's pool is %d, no larger than the markdown table it replaced" % len(g8)
 

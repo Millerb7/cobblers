@@ -27,6 +27,11 @@ spawn within the bucket by its weight. A table is the union of its entries over 
 timeRange counts as present at all times. Base-stat means are spawn-chance weighted within a table's land context,
 then averaged over tables with equal weight per table.
 
+Hearts (section 10, 2026-10-02): a sub-region file holds its base table and, for 28 places, a heart's added rows.
+split_heart() tells them apart from the compiled condition alone (a `minY`, or a box set other than the base's).
+Targets 1, 4 (strength) and 5 read the BASE rows, the table a player meets across the place; the other targets
+read the file's union, as before. Section 10's own limits on the heart are in tests/test_encounter_hearts.py.
+
 Not covered, and it needs a running server or a world: real spawn rates (Cobblemon's per-position weights, the
 spawn caps, the biome and block conditions, day and night), whether a player actually meets a table on the leg
 the geometry puts it on, whether a wild Pokemon over the cap really breaks free, the client's rendering (target 8
@@ -216,15 +221,72 @@ def level_range(s):
     return int(s), int(s)
 
 
-def table_rows(path):
-    """A pool's distinct spawns: (species, bucket, position type, weight, lo, hi), union over its boxes."""
-    d = json.loads(path.read_text(encoding="utf-8"))
+def details(path):
+    return json.loads(path.read_text(encoding="utf-8")).get("spawns") or []
+
+
+def rows_of(spawns):
+    """Distinct spawns: (species, bucket, position type, weight, lo, hi, timeRange), union over their boxes."""
     rows = set()
-    for e in d.get("spawns") or []:
+    for e in spawns:
         lo, hi = level_range(e.get("level") or e.get("levelRange"))
         rows.add((species_of(e), e["bucket"], e.get("spawnablePositionType", "grounded"), float(e["weight"]), lo, hi,
                   json.dumps((e.get("condition") or {}).get("timeRange") or e.get("timeRange"))))
     return rows
+
+
+def table_rows(path):
+    """A pool's distinct spawns, union over its boxes (a sub-region's heart included)."""
+    return rows_of(details(path))
+
+
+BOX_KEYS = ("minX", "minZ", "maxX", "maxZ")
+
+
+def box_of(e):
+    c = e.get("condition") or {}
+    return tuple(c.get(k) for k in BOX_KEYS)
+
+
+def detail_signature(e):
+    """Everything a compiled detail says except its id and its box: the spawn it is, wherever it is."""
+    c = {k: v for k, v in (e.get("condition") or {}).items() if k not in BOX_KEYS}
+    return json.dumps([{k: v for k, v in e.items() if k not in ("id", "condition")}, c], sort_keys=True)
+
+
+def columns_of(box_set):
+    """How many (x, z) columns a set of inclusive boxes covers, overlaps counted once."""
+    bs = np.array(sorted(box_set), dtype=np.int64).reshape(-1, 4)
+    if len(bs) == 0:
+        return 0
+    x0, z0 = bs[:, 0].min(), bs[:, 1].min()
+    mask = np.zeros((int(bs[:, 3].max() - z0 + 1), int(bs[:, 2].max() - x0 + 1)), dtype=bool)
+    for a, b, c, d in bs:
+        mask[b - z0:d - z0 + 1, a - x0:c - x0 + 1] = True
+    return int(mask.sum())
+
+
+def split_heart(spawns):
+    """(base details, heart details) of one compiled sub-region file, told apart by the compiled condition alone.
+
+    Section 10: a table may carry one heart; its entries ADD to the base inside the heart, a summit heart's
+    entries carry `minY` (section 9: the only entries that do), and a focus heart's cover a circle of the
+    sub-region's cells. So in the compiled file every base spawn spans the same box set -- the whole place, the
+    largest -- and a heart spawn either carries `minY` or spans a different (smaller) box set. Nothing here reads
+    the id or the generator; test_the_condition_split_agrees_with_the_documented_heart_ids checks it against the
+    id convention section 10 states.
+    """
+    spans = {}
+    for e in spawns:
+        spans.setdefault(detail_signature(e), set()).add(box_of(e))
+    if not spans:
+        return [], []
+    base_set = max({frozenset(v) for v in spans.values()}, key=lambda s: (columns_of(s), len(s)))
+    base, heart = [], []
+    for e in spawns:
+        in_base = frozenset(spans[detail_signature(e)]) == base_set and "minY" not in (e.get("condition") or {})
+        (base if in_base else heart).append(e)
+    return base, heart
 
 
 def chances(rows, context):
@@ -280,14 +342,21 @@ def world(pack):
         near = [route_leg[r] for r, g in gaps.items() if g is not None and g <= MARGIN]
         nearest = min((g, route_leg[r], r) for r, g in gaps.items() if g is not None)
         authored = (DESIGN["tables"].get(p.stem) or {}).get("tier")
-        subs[p.stem] = {"rows": table_rows(p), "on_path": bool(near), "leg": min(near) if near else None,
+        spawns = details(p)
+        base, heart = split_heart(spawns)
+        subs[p.stem] = {"rows": rows_of(spawns), "base_rows": rows_of(base), "heart_rows": rows_of(heart),
+                        "base": base, "heart": heart,
+                        "on_path": bool(near), "leg": min(near) if near else None,
                         "nearest": nearest, "authored_tier": authored,
                         "tier": min(near) if near else (authored if authored is not None else nearest[1])}
-    vrc = {p.stem: {"rows": table_rows(p), "on_path": True, "leg": 9, "tier": 9}
-           for p in sorted((pack / "habitat_pools").glob("vrc_*.json"))}
+    vrc = {}
+    for p in sorted((pack / "habitat_pools").glob("vrc_*.json")):
+        rows = table_rows(p)
+        vrc[p.stem] = {"rows": rows, "base_rows": rows, "heart_rows": set(), "on_path": True, "leg": 9, "tier": 9}
     assert len(subs) == 63, "section 1 counts 63 sub-region tables; the pack has %d" % len(subs)
     assert len(vrc) == 11, "section 1 counts 11 Victory Road pools; the pack has %d" % len(vrc)
-    return {"subs": subs, "vrc": vrc, "route_leg": route_leg, "route_rows": route_rows}
+    return {"subs": subs, "vrc": vrc, "route_leg": route_leg, "route_rows": route_rows, "route_boxes": route_boxes,
+            "route_details": {r: details(pw / "routes" / ("%s.json" % r)) for r in route_leg}}
 
 
 def all_tables(world):
@@ -304,10 +373,10 @@ def evolved_share(dex, rows):
     return sum(p for s, p in ch.items() if dex.evolved(s)) if ch else None
 
 
-def tier_means(dex, tables, measure):
+def tier_means(dex, tables, measure, rows="rows"):
     by = {}
     for name, t in tables.items():
-        v = measure(dex, t["rows"])
+        v = measure(dex, t[rows])
         if v is not None:
             by.setdefault(t["tier"], []).append(v)
     return {k: sum(v) / len(v) for k, v in sorted(by.items())}
@@ -399,8 +468,10 @@ def test_off_path_tables_are_never_a_tier_before_their_nearest_route(world):
 
 def test_on_path_land_strength_never_falls_from_one_tier_to_the_next(world, jar):
     # Without it a later leg could again offer the same or weaker land Pokemon than an earlier one, the flat
-    # roster the owner rejected on 2026-10-02 (target 1).
-    means = tier_means(jar, on_path_tables(world), land_bst)
+    # roster the owner rejected on 2026-10-02 (target 1). Measured on the BASE tables: a heart covers at most a
+    # ninth of its place (section 10), so its rows are not what a player meets across the leg; the hearts are
+    # checked on their own in tests/test_encounter_hearts.py.
+    means = tier_means(jar, on_path_tables(world), land_bst, rows="base_rows")
     tiers = sorted(means)
     falls = [(a, round(means[a]), b, round(means[b])) for a, b in zip(tiers, tiers[1:]) if means[b] < means[a]]
     assert not falls, "mean land BST falls (tier, mean, next tier, mean): %s; all: %s" % (
@@ -565,24 +636,27 @@ def test_no_route_corridor_carries_a_find(world, jar):
 
 
 def test_off_path_tables_are_no_weaker_than_on_path_at_the_same_tier(world, jar):
-    # Without it a detour could be rarer but weaker, which is no reward (target 4).
-    on = tier_means(jar, {k: t for k, t in world["subs"].items() if t["on_path"]}, land_bst)
-    off = tier_means(jar, off_path_tables(world), land_bst)
+    # Without it a detour could be rarer but weaker, which is no reward (target 4). Base tables on both sides:
+    # a heart's above-cap presences would otherwise make a place look stronger than most of it is (section 10).
+    on = tier_means(jar, {k: t for k, t in world["subs"].items() if t["on_path"]}, land_bst, rows="base_rows")
+    off = tier_means(jar, off_path_tables(world), land_bst, rows="base_rows")
     weaker = {k: (round(off[k]), round(on[k])) for k in sorted(set(on) & set(off)) if off[k] < on[k]}
     assert not weaker, "tier: (off-path mean BST, on-path mean BST) %s" % weaker
 
 
 # ------------------------------------------------------------------ target 5: catchable
 
-def test_no_spawn_in_a_table_is_above_its_tiers_cap(world):
-    # Without it wild Pokemon a player cannot catch on that leg (they break free over the cap) come back (target 5).
+def test_no_spawn_in_a_base_table_is_above_its_tiers_cap(world):
+    # Without it wild Pokemon a player cannot catch on that leg (they break free over the cap) could spread across
+    # a whole place (target 5). Section 10 lets a heart exceed the cap, so this reads the base tables (every
+    # sub-region's base rows, every Victory Road pool); the heart's own limits are in test_encounter_hearts.py.
     over = {}
     for name, t in all_tables(world).items():
         cap = TIER_CAP[t["tier"]]
-        high = max((r[5] for r in t["rows"]), default=0)
+        high = max((r[5] for r in t["base_rows"]), default=0)
         if high > cap:
             over[name] = (t["tier"], cap, high)
-    assert not over, "table: (tier, cap, highest level) %s" % over
+    assert not over, "table: (tier, cap, highest level in the base table) %s" % over
 
 
 def test_no_route_corridor_spawn_is_above_its_legs_cap(world):

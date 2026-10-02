@@ -238,3 +238,76 @@ def test_a_stale_admission_is_rejected(doc, ground, tmp_path):
     rep = run(doc, ground, tmp_path / "pack")
     assert failing(rep, "groudon: its gate cannot be satisfied"), \
         "a stale admission was accepted: %s" % rep.errors
+
+
+# ------------------------------------------------------------ the real cap --
+# Until 2026-10-02 the audit compared each level with the record's own cap_at_gate, which still held an invented
+# table (Regigigas 70, Lugia 80), so a legendary placed above the real cap passed. These pin the replacement:
+# the cap is derived from data/trainers.json and the RCT config the way rctmod computes it (rct_caps), never from
+# data/legendaries.json.
+
+TRAINERS = json.loads((DATA / "trainers.json").read_text(encoding="utf-8"))
+TOML = "initialLevelCap = 20\nrelativeLevelCap = 0\n"
+
+
+def _set_ace(trainers, cls, order, level):
+    """Every member of that trainer's team at or under `level`, so its ace is exactly `level`."""
+    t = next(t for t in trainers["trainers"] if t["class"] == cls and t["order"] == order)
+    for m in t["team"]:
+        m["level"] = min(m["level"], level)
+    t["team"][-1]["level"] = level
+
+
+def test_the_real_cap_ladder_follows_the_trainers_not_the_records():
+    # If removed: the cap could be read back out of the records it is meant to check.
+    caps = A.rct_caps(TRAINERS, TOML)
+    aces = TRAINERS["generation_contract"]["gym_ace_levels"]
+    assert caps[None] == max(20, aces[0])
+    assert [caps["gym%d_cleared" % n] for n in range(1, 8)] == aces[1:]
+    # after gym 8 the next trainer is the first of the Elite Four
+    lorelei = next(t for t in TRAINERS["trainers"] if t["class"] == "elite_four" and t["order"] == 1)
+    assert caps["gym8_cleared"] == max(m["level"] for m in lorelei["team"])
+    # after the Champion the series has no next trainer: rctmod's maxLevel()
+    assert caps["champion_cleared"] == 100
+    # mutate the INPUT, not the record: a weaker gym 4 ace moves the cap after gym 3 with it
+    t = copy.deepcopy(TRAINERS)
+    _set_ace(t, "gym_leader", 4, 33)
+    assert A.rct_caps(t, TOML)["gym3_cleared"] == 33
+    # rctmod's floor: a trainer is never weaker than one that must be beaten first
+    t = copy.deepcopy(TRAINERS)
+    _set_ace(t, "elite_four", 1, 50)
+    assert A.rct_caps(t, TOML)["gym8_cleared"] == aces[7], "a level-50 Lorelei still caps at Giovanni's ace"
+    # the config's relativeLevelCap applies to every trainer
+    assert A.rct_caps(TRAINERS, "initialLevelCap = 20\nrelativeLevelCap = -1\n")["gym8_cleared"] == \
+        caps["gym8_cleared"] - 1
+
+
+@pytest.mark.slow
+def test_a_legendary_above_its_real_cap_fails(doc, ground, tmp_path):
+    # If removed: a legendary authored over the cap its gate reaches is uncatchable (data/level_cap.json), a wall.
+    rec = rec_of(doc, "regigigas")
+    rec["level"] = A.rct_caps()["gym8_cleared"] + 1
+    rep = run(doc, ground, tmp_path / "pack")
+    assert failing(rep, "regigigas: level %d is above the RCT cap" % rec["level"]), rep.errors
+
+
+@pytest.mark.slow
+def test_a_lower_real_cap_fails_a_record_that_did_not_change(doc, ground, tmp_path):
+    # The independence proof (CLAUDE.md, "Mutate the GENERATOR, not the record"): the records are untouched and
+    # only the trainers the cap comes from change. An audit that read cap_at_gate would still pass.
+    t = copy.deepcopy(TRAINERS)
+    for order in range(1, 5):
+        _set_ace(t, "elite_four", order, 58)
+    caps = A.rct_caps(t, TOML)
+    assert caps["gym8_cleared"] == 58
+    rep = A.audit(doc, ground, emit(doc, ground, tmp_path / "pack"), WATER, PROGRESSION, LANDMARKS, WORLD, caps=caps)
+    assert failing(rep, "regigigas: level 60 is above the RCT cap 58"), rep.errors
+    assert failing(rep, "groudon: level 60 is above the RCT cap 58"), rep.errors
+
+
+@pytest.mark.slow
+def test_a_stale_cap_at_gate_fails(doc, ground, tmp_path):
+    # If removed: cap_at_gate drifts back into an invented number and misleads whoever levels the next one.
+    rec_of(doc, "regigigas")["cap_at_gate"] = 70
+    rep = run(doc, ground, tmp_path / "pack")
+    assert failing(rep, "regigigas: cap_at_gate 70 is not the RCT cap 60"), rep.errors
