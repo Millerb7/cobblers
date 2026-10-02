@@ -184,7 +184,10 @@ def _check_activated_commands(b):
     cmds = HB.commands(b)
     assert len(cmds) == 2, cmds
     assert cmds[0] == "setblock %d %d %d %s replace" % (x, y, z, b["mimic"]), cmds[0]
-    head = "setblock %d %d %d cobblemon:habitat_block[cancels_regular_spawns=false,activated_style=true]{" % (x, y, z)
+    # the blockstate follows the record's cancel_range (tools/habitat_blocks.py: true when it is positive); every block
+    # of 2026-09-26 had -1, Driftmouth Isle's (data/sea_drift.json waters, 2026-10-02) cancel the pack's spawns round them
+    cancels = "true" if b["activated"]["cancel_range"] > 0 else "false"
+    head = "setblock %d %d %d cobblemon:habitat_block[cancels_regular_spawns=%s,activated_style=true]{" % (x, y, z, cancels)
     assert cmds[1].startswith(head) and cmds[1].endswith("} replace"), cmds[1]
     for part in ('PhaseOrder:"SIMPLE"', 'SpawningStyle:"cobblemon:activated"', 'MimicId:"%s"' % b["mimic"],
                  'PoolId:"%s"' % b["pool"], "MaxSpawns:%d," % b["activated"]["max_spawns"],
