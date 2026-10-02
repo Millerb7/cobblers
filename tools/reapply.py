@@ -480,6 +480,9 @@ def prepare_jobs(a):
     # declared a gate still unswimmable under data/blackout.json's fatigue on the heightmap
     add("ferries:build", "ferries.py", "build")
     add("ferries:audit", "ferries.py", "audit", *src)
+    # the ferry docks' pack (a SERVER_PACKS member): until 2026-10-02 no job built it, and a build/ left over from an
+    # earlier hand run hid that; function_limits failed on a fresh checkout without it
+    add("ferry_docks:build", "ferry_docks.py", "build", *src)
     # Routes 1-3: the event sites (it fails when data/scenes.json or data/route_trainers.json disagree with the
     # build, or anything stands on the walked line), then the scene runtime and the trainers
     add("route_events", "route_events.py", *src)
