@@ -1,0 +1,353 @@
+{
+ "schema": "cobblers.id-authorship/1",
+ "status": "started 2026-10-01, after a clean merge gave Victory Road's tenth trainer two names, two teams and two sets of lines, and the first thing that noticed stopped the whole pytest suite at collection. Enforced by tools/id_authorship.py, tools/validate.py --only duplicate_ids, tests/test_id_authorship.py and .githooks/post-merge",
+ "rule": "git merges text, so two branches that author the same ids in DIFFERENT FILES never conflict: the merge is clean, the diff is clean, and nothing says that one thing now has two authors. Every id that two files in data/ both carry a record for is declared here -- as a SPACE (two halves of one thing, each owning its own fields) or as an OVERLAP (an id two systems describe in their own terms, listed id by id) -- or it is a fault. An overlap is declared by its exact id set: an id that joins one fails and is named. No entry here may be widened to make the data pass.",
+ "a_record_is": "an object with a string `id` sitting directly in a top-level array of a data document. A nested object is its parent's, not its own record, so a town's doors and a gym's rooms are not compared across files.",
+ "modes": {
+  "satellite_fields": "the satellite file owns it and the owner file must not carry it at all: the stand, which exists nowhere else",
+  "echo_fields": "restated in the satellite for whoever reads the satellite, never the value the tool uses. It must equal the owner's exactly; drifting apart is a fault, because then one of the two is wrong and nothing says which",
+  "precedence_fields": "both may carry it and the owner's wins. For a field whose satellite copy is a real fallback -- a record that has none gets the satellite's. The tool counts and prints every superseded copy, because a silently dead authored value is the whole fault class this file exists for"
+ },
+ "spaces": [
+  {
+   "id": "trainers",
+   "owner": "data/trainers.json",
+   "owner_is": "the ROSTER: who a trainer is and what it fights with (team, rct, format, archetype, display_name, the route ordering). Generated from docs/story/TRAINER_RULES.json; never hand-edited",
+   "satellites": [
+    "data/route_trainers.json",
+    "data/late_route_trainers.json",
+    "data/mansion_guardians.json",
+    "data/vr_trainers.json"
+   ],
+   "satellite_is": "the STAND: where it stands and how it behaves standing there (seat, yaw, faces, eye_contact, sight_distance, skin) and, for a trainer the roster does not generate, the whole record beside its seat",
+   "read_by": "tools/route_trainers.py, whose STAND_FIELDS / ROSTER_ECHO / ROSTER_PRECEDENCE state the same split in the tool. The two statements are deliberately separate: tests/test_id_authorship.py asserts they agree, which is a check worth something only because neither is derived from the other",
+   "satellite_fields": [
+    "seat",
+    "yaw",
+    "faces",
+    "eye_contact",
+    "sight_distance",
+    "skin",
+    "stand_index",
+    "route_index",
+    "route_progress",
+    "climb_gained_blocks",
+    "gap_from_previous_blocks",
+    "unavoidable",
+    "listed",
+    "listed_off_walked_line",
+    "moved_blocks",
+    "walked_distance",
+    "authored_distance",
+    "shoulder",
+    "why",
+    "superseded_roster",
+    "sets",
+    "gates",
+    "checkpoint",
+    "room",
+    "after_win"
+   ],
+   "echo_fields": [
+    "lesson",
+    "trainer_order",
+    "route",
+    "name"
+   ],
+   "precedence_fields": [
+    "dialogue_text"
+   ],
+   "why": "Until #96 (merged into main 2026-10-01) the roster generated no record for Victory Road's tenth trainer or for the five mansion guardians, so those carried a whole record beside their seat and an id in both files could only mean two authors. tools/route_trainers.py guarded it at the id and said 'data/vr_trainers.json re-authors ...'. #96 generated all ten, git merged it cleanly, and that guard -- correct the day before -- fired on halves rather than rivals and took the suite down with it. The guard is field-level now, and the ten stands keep the yaw, faces, eye_contact, sight_distance, skin and per-stand rationale that exist in no other file."
+  }
+ ],
+ "file_local_ids": [
+  "data/gym_buildings/*.json"
+ ],
+ "file_local_why": "Each gym's build plan names its own steps and rooms -- door_bay, gallery, the_stair, the_chute, flue. The ids are local to the plan and mean a different place in each gym, so they are never compared across these files. They are still compared against every other data file, because a plan id that collides with a campaign id is a real fault.",
+ "overlaps": [
+  {
+   "files": [
+    "data/ferries.json",
+    "data/ferry_docks.json"
+   ],
+   "fields": [
+    "name"
+   ],
+   "ids": [
+    "sunset_south_pier"
+   ],
+   "why": "The line calls the dock 'Sunset West'; the dock calls itself 'Sunset West, the south pier'. The dock file is the longer, more specific label and is the one a player-facing sign should use. Nothing shows either in game yet."
+  },
+  {
+   "files": [
+    "data/ferries.json",
+    "data/ferry_docks.json"
+   ],
+   "fields": [
+    "why"
+   ],
+   "ids": [
+    "appearing_island_landing",
+    "jungle_ruins_landing",
+    "northeast_landing",
+    "northlight_landing",
+    "pacifidlog_south_jetty",
+    "sunset_isle_landing",
+    "sunset_quay",
+    "sunset_south_pier",
+    "tilpey_sabrina_dock",
+    "tilpey_south_landing",
+    "trench_marker",
+    "weeping_elder_landing"
+   ],
+   "why": "data/ferries.json says why the LINE calls at the dock; data/ferry_docks.json says why the dock itself is sited where it is, or why it is not sited at all. Same prose field, two subjects."
+  },
+  {
+   "files": [
+    "data/ferries.json",
+    "data/water_shape.json"
+   ],
+   "fields": [
+    "why"
+   ],
+   "ids": [
+    "northlight_packet",
+    "sunset_strait"
+   ],
+   "why": "data/ferries.json says why the LINE exists; data/water_shape.json says which decision and which contract put the CROSSING in the water shape. Two sentences about two things."
+  },
+  {
+   "files": [
+    "data/foliage.json",
+    "data/towns.json"
+   ],
+   "fields": [
+    "kind"
+   ],
+   "ids": [
+    "cherry_elder_shrew",
+    "great_oak_pallet",
+    "patriarch_wedge",
+    "sentinel_spruce_tarn"
+   ],
+   "why": "A landmark tree is `landmark_tree` to the town that owns it and `route` to the foliage system that plants it (which kind of placement it is). Same shared-name hazard as landmarks/rivers above.",
+   "finding": true
+  },
+  {
+   "files": [
+    "data/gym_buildings/gym5.json",
+    "data/sea_town.json"
+   ],
+   "fields": [
+    "why"
+   ],
+   "ids": [
+    "jetty"
+   ],
+   "why": "Two unrelated places both called `jetty`: gym 5's room at the end of its boardwalk, and the sea town's walk out over the shelf. The gym plans' ids are file-local (file_local_ids), which is why this shows only against a file outside them. Generic build-plan names are expected to collide; nothing reads one as the other."
+  },
+  {
+   "files": [
+    "data/gym_buildings/gym7.json",
+    "data/rift_zones.json"
+   ],
+   "fields": [
+    "why"
+   ],
+   "ids": [
+    "throat"
+   ],
+   "why": "The same generic-name case as `jetty`: gym 7's cooled `throat` room and the rift's `throat` cut. Unrelated places, unrelated prose."
+  },
+  {
+   "files": [
+    "data/gym_trainers.json",
+    "data/trainers.json"
+   ],
+   "fields": [
+    "theme"
+   ],
+   "ids": [
+    "gym_01_brock",
+    "gym_02_misty",
+    "gym_03_surge",
+    "gym_04_erika",
+    "gym_05_koga",
+    "gym_06_sabrina",
+    "gym_07_blaine",
+    "gym_08_giovanni"
+   ],
+   "why": "data/gym_trainers.json's `theme` is the leader's TYPE ('Rock'); data/trainers.json's is the gym's motif ('Fault Line'). One name, two meanings, and the override file is read beside the roster by the same tool (tools/route_trainers.py overrides()), which is the worst place for that. Nothing reads either as the other today. Worth renaming to type / motif.",
+   "finding": true
+  },
+  {
+   "files": [
+    "data/habitat_blocks.json",
+    "data/spawns.json"
+   ],
+   "fields": [
+    "why"
+   ],
+   "ids": [
+    "elder_foothill_grove_1",
+    "elder_foothill_grove_2",
+    "elder_foothill_grove_3",
+    "elder_foothill_grove_4",
+    "elder_foothill_woods_1",
+    "elder_foothill_woods_2",
+    "elder_foothill_woods_3",
+    "elder_foothill_woods_4",
+    "elder_jungle_east_1",
+    "elder_jungle_east_2",
+    "elder_jungle_west_1",
+    "elder_jungle_west_2",
+    "elder_lake_viltri_hollow_1",
+    "elder_lake_viltri_hollow_2",
+    "elder_long_isle_middle_1",
+    "elder_long_isle_middle_2",
+    "elder_long_isle_north_1",
+    "elder_long_isle_north_2",
+    "elder_long_isle_south_1",
+    "elder_long_isle_south_2",
+    "elder_long_isle_south_3",
+    "elder_marshy_marsh_1",
+    "elder_marshy_marsh_2",
+    "elder_marshy_marsh_3",
+    "elder_north_pine_isle_1",
+    "elder_north_pine_isle_2",
+    "elder_northgate_east_1",
+    "elder_northgate_east_2",
+    "elder_northgate_west_1",
+    "elder_northgate_west_2",
+    "elder_peak_pond_hollow_1",
+    "elder_peak_pond_hollow_2",
+    "elder_peak_pond_hollow_3",
+    "elder_shrew_lake_shores_1",
+    "elder_shrew_lake_shores_2",
+    "elder_shrew_lake_shores_3",
+    "elder_south_pine_isle_1",
+    "elder_south_pine_isle_2",
+    "elder_south_pine_isle_3",
+    "elder_tilpey_east_shore_1",
+    "elder_tilpey_east_shore_2",
+    "elder_tilpey_north_shore_1",
+    "elder_tilpey_north_shore_2",
+    "elder_viltri_plateau_1",
+    "elder_viltri_plateau_2",
+    "elder_viltri_plateau_3",
+    "elder_viltris_path_valley_1",
+    "elder_viltris_path_valley_2",
+    "elder_wedge_north_1",
+    "elder_wedge_north_2",
+    "elder_wedge_south_1",
+    "elder_wedge_south_2"
+   ],
+   "why": "One habitat: data/spawns.json says why the SPECIES belongs there, data/habitat_blocks.json says why the BLOCK sits at that height in the trunk. Two sentences about two things, and neither is the other's value. `why` is prose for a reader throughout data/, never read as data except where a generator requires it to be non-empty (tools/ferries.py)."
+  },
+  {
+   "files": [
+    "data/landmarks.json",
+    "data/regions.json"
+   ],
+   "fields": [
+    "measured"
+   ],
+   "ids": [
+    "marshy_marsh"
+   ],
+   "why": "The same id reuse as `status` above, one record of it: `measured` holds the landmark's own outline statistics in one file and the subregion's bounds and elevation spread in the other. Different measurements of different shapes."
+  },
+  {
+   "files": [
+    "data/landmarks.json",
+    "data/regions.json"
+   ],
+   "fields": [
+    "status"
+   ],
+   "ids": [
+    "glacial_tear",
+    "tri_peaks"
+   ],
+   "why": "tri_peaks and glacial_tear name BOTH a landmark and a region, and each carries its own build status: the landmark is `built`, the region is still `draft`. Two different objects, one id -- which is the reuse, not the status. An id that means two things is how a tool that reasons over one list silently reaches the other thing (CLAUDE.md, 'Our list is not the world').",
+   "finding": true
+  },
+  {
+   "files": [
+    "data/landmarks.json",
+    "data/rivers.json"
+   ],
+   "fields": [
+    "kind"
+   ],
+   "ids": [
+    "arrow_lake_south",
+    "arrow_lake_south_east_branch",
+    "marsh_outflow",
+    "marsh_to_tilpey",
+    "peak_pond_creek",
+    "tilpey_south_west_outlet",
+    "viltri_ravine"
+   ],
+   "why": "A watercourse that is also a named landmark carries each system's own taxonomy: arrow_lake_south is `river` to data/landmarks.json (what kind of landmark) and `creek` to data/rivers.json (what size of channel). Both are live and neither is wrong. The hazard is the shared field name: a reader who takes `kind` from whichever file it reaches first gets a different answer. A rename (landmark_kind / channel_kind) would end it.",
+   "finding": true
+  },
+  {
+   "files": [
+    "data/league_trainers.json",
+    "data/trainers.json"
+   ],
+   "fields": [
+    "order"
+   ],
+   "ids": [
+    "champion_blue"
+   ],
+   "why": "champion_blue is `order` 5 in data/league_trainers.json (fifth of the five the League template spawns) and `order` 1 in data/trainers.json (the first champion). One field name, two scopes, in two files one tool reads together. Worth renaming to league_order / champion_order.",
+   "finding": true
+  },
+  {
+   "files": [
+    "data/placements.json",
+    "data/sea_town.json"
+   ],
+   "fields": [
+    "materials"
+   ],
+   "ids": [
+    "sea_town_pokecenter",
+    "sea_town_pokemart"
+   ],
+   "why": "data/placements.json carries the palette MAP that the build applies; data/sea_town.json carries the palette's NAME ('centre', 'mart'). The name selects the map. One field name, two levels of the same thing."
+  },
+  {
+   "files": [
+    "data/placements.json",
+    "data/sea_town.json"
+   ],
+   "fields": [
+    "position"
+   ],
+   "ids": [
+    "sea_town_pokecenter",
+    "sea_town_pokemart"
+   ],
+   "why": "The same point, written for two readers: data/placements.json carries {x, z} because tools/reapply.py reads placements that way, data/sea_town.json carries [x, z] in its services list. The VALUES agree -- (5151, 7345) and (5177, 7369) -- so this is a shape difference, not two authors, and tools/sea_town.py is what keeps them equal. It is on this list rather than off it because a field-level check cannot tell a reshaped value from a changed one, and the pair must be looked at whenever either moves."
+  },
+  {
+   "files": [
+    "data/spawns.json",
+    "data/towns.json"
+   ],
+   "fields": [
+    "region"
+   ],
+   "ids": [
+    "sunset_west"
+   ],
+   "why": "`sunset_west` is BOTH a town (data/towns.json) and a spawn subregion (data/spawns.json), and each says which region it sits in: the subregion answers `sunset_isle`, the town answers `southern_coast`. Two different objects under one id, which is the fault; the two answers are each correct about their own object. Renaming one of them is the fix.",
+   "finding": true
+  }
+ ],
+ "findings_why": "`finding: true` is an overlap that is legal today and still a hazard: two different things sharing an id, or one field name meaning two things in two files. The check does not fail on them -- they are declared -- and they are written down so that the next session reads a judgement rather than making one again. Five of them, 2026-10-01."
+}

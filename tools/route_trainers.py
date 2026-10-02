@@ -16,8 +16,11 @@ From data/trainers.json (generated from docs/story/TRAINER_RULES.json) and four 
                                 rctmod:trainer_spawner{TrainerIds:["kanto_brock"]} and the badge is awarded
                                 for beating that id, so the id cannot be re-pointed and our roster reaches a
                                 player only by overriding it. Emits the team and nothing else -- their
-                                dialogue is Codex's to write. gym_08_giovanni is held (empty team) and is
-                                skipped by name
+                                dialogue is Codex's to write. gym_08_giovanni is still marked held in
+                                data/gym_trainers.json and skipped, and its reason no longer holds: as of
+                                2026-10-01 data/trainers.json gives him status 'authored', a team of six
+                                topping out at 55 (his contract level) and blocked_by None. Seven of the
+                                eight leaders' teams reach a player; the eighth waits on one field
   data/league_trainers.json     the Elite Four and the Champion. These have no seat: Cobbleverse's
                                 kanto_league template already carries five rctmod:trainer_spawner blocks
                                 locked to kanto_league_lorelei/_bruno/_agatha/_lance and kanto_champion_blue
@@ -101,6 +104,73 @@ def doc(name):
     return json.loads((ROOT / "data" / name).read_text(encoding="utf-8"))
 
 
+# ------------------------------------------------------------------ who authors what
+# data/trainers.json is the ROSTER -- who a trainer is and what it fights with. A seat file is the
+# STAND -- where it stands and how it behaves standing there. The two are halves of one trainer, not
+# rival authors, so the guard below is FIELD-level, not id-level.
+#
+# It was id-level until 2026-10-01, and that was right while it was true: Victory Road's tenth had no
+# generated record at all, so data/vr_trainers.json carried a whole one beside its seat, and a record
+# appearing in data/trainers.json for the same id could only mean two authors. #96 then generated all
+# ten, git merged it CLEANLY because the two authors sit in DIFFERENT FILES, and the id-level guard
+# fired on the only reading it had -- "re-authors" -- which stopped the whole pytest suite at
+# collection. vr_trainers.json had not re-authored anything; it still owns the ten stands, and its yaw,
+# faces, eye_contact, sight_distance, skin and per-stand rationale exist nowhere else.
+#
+# A seat file owns these, and the roster must not carry one of them:
+STAND_FIELDS = frozenset({
+    "seat", "yaw", "faces", "eye_contact", "sight_distance", "skin", "stand_index", "route_index",
+    "route_progress", "climb_gained_blocks", "gap_from_previous_blocks", "unavoidable", "listed",
+    "listed_off_walked_line", "moved_blocks", "walked_distance", "authored_distance", "shoulder",
+    "why", "superseded_roster", "sets", "gates", "checkpoint", "room", "after_win",
+})
+# Fields a seat file may RESTATE for whoever reads the seat list, and never the value this tool uses:
+# the roster's copy is read, the seat file's must match it exactly, and a drift apart is a fault.
+ROSTER_ECHO = frozenset({"lesson", "trainer_order", "route", "name"})
+# The one field with a declared precedence rather than one owner (see lines_of): the roster's wins when
+# it has one, and the seat file's is the fallback for a record that has none. Divergence is legal here
+# and therefore counted and printed, never silent -- the roster's lines are what a player hears.
+ROSTER_PRECEDENCE = frozenset({"dialogue_text"})
+
+
+# [(trainer id, field)] whose seat-file copy the roster supersedes: filled by load(), reported by files()
+SUPERSEDED: list = []
+
+
+def ownership(recs, entries, src):
+    """Every field a seat file and the roster both author. Faults raise; the superseded are returned.
+
+    Three ways a field can sit in both files and only one of them is legal silently. A STAND field in
+    the roster, or any field outside these three sets in both, is two authors for one value: one of the
+    two is dead and nothing says which. An echo that no longer matches is a drift. A precedence field
+    is the designed case."""
+    faults, superseded = [], []
+    for e in entries:
+        r = recs.get(e["id"])
+        if r is None:
+            continue              # the seat file carries the whole record (every mansion guardian)
+        for f in sorted(set(e) & set(r) - {"id"}):
+            if f in ROSTER_PRECEDENCE:
+                if e[f] != r[f]:
+                    superseded.append((e["id"], f))
+            elif f in ROSTER_ECHO:
+                if e[f] != r[f]:
+                    faults.append((e["id"], f, "%s restates the roster's %s and no longer matches it"
+                                               % (src, f)))
+            elif f in STAND_FIELDS:
+                faults.append((e["id"], f, "data/trainers.json carries %s, which the stand owns (%s)"
+                                           % (f, src)))
+            else:
+                faults.append((e["id"], f, "%s and data/trainers.json both author %s" % (src, f)))
+    if faults:
+        joined = "\n".join("  %s %s: %s" % f for f in faults)
+        raise SystemExit("two authors for one trainer field (%d):\n%s\n\nThe roster owns who a "
+                         "trainer is; a seat file owns where it stands and how it behaves standing "
+                         "there. Move the field to its owner -- do not delete the hand-authored side "
+                         "(CLAUDE.md)." % (len(faults), joined))
+    return superseded
+
+
 def load():
     t = doc("trainers.json")
     seats = doc("route_trainers.json")["trainers"] + doc("late_route_trainers.json")["trainers"]
@@ -112,18 +182,18 @@ def load():
     prog = doc("progression.json")
     fields = {f["id"] for f in prog["quest_fields"]}
     recs = {r["id"]: r for r in t["trainers"]}
-    clash = sorted(g["id"] for g in guards if g["id"] in recs)
-    if clash:
-        raise SystemExit("data/mansion_guardians.json reuses trainer ids from data/trainers.json: %s" % clash)
-    recs.update({g["id"]: g for g in guards})
-    # Victory Road: nine of the ten are seats only and keep the record data/trainers.json generated for them;
-    # the tenth carries its own record beside its seat, as a mansion guardian does
-    for e in vr:
-        if "rct" not in e:
-            continue
-        if e["id"] in recs:
-            raise SystemExit("data/vr_trainers.json re-authors %s, which data/trainers.json already has" % e["id"])
-        recs[e["id"]] = e
+    del SUPERSEDED[:]
+    for name, entries in (("data/route_trainers.json", doc("route_trainers.json")["trainers"]),
+                          ("data/late_route_trainers.json", doc("late_route_trainers.json")["trainers"]),
+                          ("data/mansion_guardians.json", guards),
+                          ("data/vr_trainers.json", vr)):
+        SUPERSEDED.extend(ownership(recs, entries, name))
+    # a seat file whose trainer has no generated record carries the record itself: the five mansion
+    # guardians, and before #96 Victory Road's tenth. ownership() has already proved it clashes with
+    # nothing, so this adds rather than overwrites
+    for e in guards + vr:
+        if "rct" in e and e["id"] not in recs:
+            recs[e["id"]] = e
     return recs, seats + guards + vr, fields
 
 
@@ -137,8 +207,12 @@ def overrides():
     persistent kanto_brock anywhere awards the badge (verified on staging 2026-09-24), and
     data/progression.json binds gym1_cleared and the first-win rewards to the same id.
 
-    An entry marked "held" is skipped with its reason: data/trainers.json's gym_08_giovanni has an empty
-    team, and an override with no Pokemon in it is worse than leaving upstream's roster alone.
+    An entry marked "held" is skipped with its reason, and the reason is printed rather than trusted.
+    gym_08_giovanni's says data/trainers.json gives him an empty team and status 'held' -- an override
+    with no Pokemon in it being worse than leaving upstream's roster alone. That was true on 2026-09-30
+    and is NOT true now: docs/story/GIOVANNI_FORMAT.md settled the format (singles), #96 generated the
+    roster, and he carries six Pokemon at 52-55 with blocked_by None. Only data/gym_trainers.json's
+    `held: true` keeps him out, and the owner decides when it goes.
     """
     recs, _seats, _f = load()
     out, held = [], []
@@ -396,6 +470,15 @@ def main(argv=None):
           % (len(fs), len(placements()), len(over), out))
     for tid, why in held:
         print("  held, nothing emitted: %s -- %s" % (tid, why.split(". ")[0] + "."))
+    # the one legal two-author case, said out loud: a seat file's dialogue_text that the roster's own
+    # supersedes. Legal (lines_of prefers the record) but never silent -- these lines are authored, and
+    # saying nothing is how 38 of them came to be dead without anyone noticing the merge that did it
+    byf = {}
+    for tid, f in SUPERSEDED:
+        byf.setdefault(f, []).append(tid)
+    for f, ids in sorted(byf.items()):
+        print("  roster supersedes %d seat-file %s set(s); the record's is emitted: %s%s"
+              % (len(ids), f, ", ".join(sorted(ids)[:4]), " ..." if len(ids) > 4 else ""))
     return 0
 
 

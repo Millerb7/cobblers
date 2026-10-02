@@ -1,0 +1,18 @@
+#!/bin/sh
+# After every merge: did two branches author the same ids in DIFFERENT FILES?
+#
+# That collision never conflicts, so the merge is clean, the diff is clean, and nothing says that one
+# thing now has two authors. On 2026-10-01 it gave Victory Road's tenth trainer two names, two teams and
+# two sets of lines, and the first thing to notice was a generator failing closed during pytest
+# collection -- which turned 5,200 tests into `no tests ran` and an INTERNALERROR for six hours.
+#
+# This runs where the fault is made. It does not block the merge (the merge has already happened); it
+# prints the collision now, instead of a day later as something that looks like a broken test run.
+# Enable once per clone: git config core.hooksPath .githooks
+python tools/id_authorship.py || {
+  echo "" >&2
+  echo "post-merge: this merge left an id authored in two files (data/id_authorship.json)." >&2
+  echo "Resolve it by moving each field to its owner. Do NOT delete the hand-authored side:" >&2
+  echo "a file declaring generated_by \"hand\" is never deleted to resolve a conflict (CLAUDE.md)." >&2
+  exit 1
+}

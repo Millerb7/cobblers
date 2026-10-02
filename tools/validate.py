@@ -510,6 +510,19 @@ def check_water_claims(ctx: Context) -> None:
                                       f"{body}'s basin_polygons, where no water is painted; first {outside[0]}")
 
 
+def check_duplicate_ids(ctx: Context) -> None:
+    """Every id two files in data/ both carry a record for is declared in data/id_authorship.json.
+
+    A clean merge is not a clean union: two branches authoring the same ids in DIFFERENT FILES never
+    conflict, so nothing says that one thing now has two authors (tools/id_authorship.py for the case
+    that produced this)."""
+    import sys as _sys
+    _sys.path.insert(0, str(ctx.root / "tools"))
+    import id_authorship
+    for msg in id_authorship.problems(id_authorship.records(ctx.root), id_authorship.registry(ctx.root)):
+        ctx.add("error", "data/", msg)
+
+
 def _stub(name: str, what: str):
     """Placeholder for a future campaign check. Reports 'skipped' so nobody mistakes it for coverage."""
 
@@ -532,8 +545,8 @@ CHECKS = [
     ("template_provenance", check_template_provenance),
     ("ground_rule", check_ground_rule),
     ("water_claims", check_water_claims),
+    ("duplicate_ids", check_duplicate_ids),
     # --- extension points (EXP-001..EXP-007 will define the data these need) ---
-    ("duplicate_ids", _stub("duplicate_ids", "duplicate campaign ids across routes/trainers/rewards")),
     ("missing_pokemon_refs", _stub("missing_pokemon_refs", "species/form names that Cobblemon does not know")),
     ("broken_refs", _stub("broken_refs", "encounter/trainer/reward references pointing at nothing")),
     ("progression_deps", _stub("progression_deps", "progression dependencies that cycle or reference unknown steps")),

@@ -1,129 +1,148 @@
-# Handover — two things first, then the state
+# Handover — the suite is alive, the collision has a check, and the NPCs are next
 
 A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else, before it starts.
 
-## 1. FIRST: `install_check.py` has not run for three sessions. Fix the permission, do not skip it again
+## 1. The branch
 
-**This is the check that catches built-but-never-installed, and it has been blind since Monday.**
+- **`fix/2026-10-01-vr-trainer-ownership`**, head **see `git rev-parse HEAD`** -- re-read it rather than trusting a quoted one.
+- **[PR #102](https://github.com/Millerb7/cobblers/pull/102), OPEN, draft, base `main`.** For its head,
+  **re-read it** -- `gh pr view 102 --json headRefOid --jq .headRefOid`, and merge with
+  `gh pr merge 102 --match-head-commit <that sha>`. The PR body quotes the head it was pinned at; this
+  file deliberately does not, because a handover commit moves it and a quoted sha then lies.
+- **#102 was already open when this session started, and this session pushed to it before checking.**
+  It had opened as the previous session's problem report ("main's pytest suite collects zero tests, and
+  the obvious fix deletes hand-authored work") and had been reported to the owner, so CLAUDE.md's freeze
+  rule applied and the two commits should have gone on a new branch stacked on it. The check
+  (`gh pr view --json state`) was run after the push, not before; a force-push to undo it is also
+  forbidden. Remedy taken: the PR's title and body now describe what the branch carries, with the
+  original report preserved verbatim in a collapsed section. **Check the PR's state BEFORE the push, not
+  after** -- `gh pr list --head $(git branch --show-current)` costs one command.
+- `origin/main` carries #97 (merge `a271532`), which this branch has merged in and which is an ancestor
+  of this head (checked with `git merge-base --is-ancestor` after a `--prune` fetch).
+- **Prune before trusting any remote ref** (`git fetch --prune`) and re-read every head you quote. The
+  owner merges while a session works and GitHub deletes the branch on merge; on 2026-10-01 that
+  invalidated two reported `--match-head-commit` commands in one night.
 
-The cause is the same every time: the session-start gate needs the shared lock at
-`C:\Users\wnd\Documents\github\.cobblers-server-agent.lock`, and **the write to take it over is refused by the
-auto-mode permission classifier** (`Modify Shared Resources`). Per CLAUDE.md a refusal ends the attempt, so it
-is correctly not routed around — and `tools/install_check.py` reads the server's `config/` and `datapacks/`,
-so it dies with the gate. Three sessions have now started repo-only and skipped it.
+## 2. What was done, and what proves it
 
-**Do not skip it a fourth time.** Get the lock write permitted properly — a Bash permission rule for that one
-path, or the owner taking the lock over by hand before the session starts — then run, as CLAUDE.md requires:
+**The suite was reporting nothing at all and now reports a count.** It had been dying at collection since
+06:14: `tools/route_trainers.py` raised `SystemExit` while `tests/test_trainer_cycle.py` was imported, and
+a `SystemExit` is a `BaseException`, so pytest answered `no tests ran` plus `INTERNALERROR` — no failures,
+no passes, nothing comparable with the day before. Three things changed:
 
-```
-python tools/install_check.py --server-dir C:/Users/wnd/Documents/github/cobblers-server
-```
+1. **The trainer guard is field-level** (`tools/route_trainers.py`, the "who authors what" block). The
+   roster (`data/trainers.json`) owns who a trainer is; a seat file owns where it stands and how it
+   behaves standing there. Three declared modes: `STAND_FIELDS` the roster must not carry, `ROSTER_ECHO`
+   that must stay identical, and `ROSTER_PRECEDENCE` (`dialogue_text`) where the roster wins and the seat
+   file is the fallback. Against the real data it named the real collision — **9 fields on
+   `route_09_trainer_10`**, not the whole id.
+2. **Nothing hand-authored was deleted.** The tenth stand's roster moved into `superseded_roster` in
+   `data/vr_trainers.json`, verbatim, with a note saying why it is kept. Verified after the change: all
+   ten stands keep their seats and yaws (`(3563,2,3009)` through `(3655,65,2564)`), and the tenth emits
+   main's roster on our stand's skin with `forceBattleOnSight` on.
+3. **`tests/test_id_authorship.py` (18 tests, written by a `test-author` agent, not by the session that
+   wrote the tool).** It found two real defects, both fixed and both verified by hand against mutated
+   copies of `data/`, and **neither has a test** -- a chip is queued (`task_77d572d3`) with the three
+   cases:
+   - a collision between **two satellites** of one space named `space["owner"]`, a file carrying neither
+     value. (The report diagnosed an `fa`/`fb` sort-order bug in the owner-satellite case; checking it
+     against the data showed that case attributes correctly and the real hole was the ownerless pair.
+     A fault that names the wrong file is worse than a quiet one: it is a day spent in the wrong file.)
+   - a declared overlap whose ids stop overlapping **entirely** was never reported stale, because the
+     check ran over the data's keys and an emptied declaration has none. It iterates the union now.
+   - `test_the_registry_is_not_derived_from_the_tool` asserts that two sets differ after one is
+     monkeypatched, which is true of any two sets. It proves nothing and should be rewritten or dropped.
+4. **A tool failing closed at import can no longer end the run.** `tests/conftest.py`'s
+   `pytest_make_collect_report` turns it into one named collection error carrying the tool's message
+   verbatim, and `continue_on_collection_errors` keeps the count. **Proved by mutating the generator**
+   (a deliberate `raise SystemExit` in `load()`): `10 passed, 1 error`, message intact, instead of
+   INTERNALERROR.
 
-Why it matters, in the repository's own words: work done in the repo that never reached the running game has
-happened **four times** — the spawn tables; five config overlays, starters among them; the re-apply steps; and
-the structures pack, present only because it had been copied by hand. The leaders' teams (F11) were the fifth.
-This check is what stands between that and a sixth. A session that cannot run it should say so loudly rather
-than quietly doing repo work, which is what the last three did.
+**And the general case, because this will happen again.** `tools/id_authorship.py` +
+`data/id_authorship.json`: every id two files in `data/` both carry a record for is declared as a space or
+an overlap, by exact id set, or it is a fault. 265 such ids, 132 cross-file field pairs, 15 overlap
+classes read value by value, **6 marked `finding`** (listed in `docs/STATE.md`). Runs from
+`.githooks/post-merge` — where the fault is made — and as `python tools/validate.py --only duplicate_ids`
+(the `duplicate_ids` stub is now real).
 
-Current server state: **down** — no listener on 25565, no Java process. The lock still carries the
-2026-09-29 owner line.
+**CLAUDE.md gained two rules**: "A clean merge is not a clean union", and a file declaring `generated_by`
+"hand" is never deleted to resolve a conflict.
 
-## 2. SECOND: the demolish coverage gap, and the general question behind it
+**`install_check.py` ran for the first time in four sessions: 0 problems (packs and configs).** Port 25565
+free, no Java process. `Bash(python tools/server_lock.py:*)` in `.claude/settings.local.json` was enough —
+**the lock write was not refused.** Whatever stopped the last three sessions, it is not that rule.
 
-The chip is queued (`task_29e9ef92`) with the full brief and seven properties worth protecting. **It must go
-to a `test-author` agent**: the session that found the gap also changed `tools/gym_demolish.py`, so it must
-not write its first test.
+Measured: `validate_data.py` 0 errors / 0 warnings, `validate.py` 1,238 files 0/0,
+`tools/id_authorship.py` 0 faults, trainer/gym/league tests **887 passed, 1 xfailed**. Full suite **7 failed, 5,188 passed, 9 xfailed in 578 s** -- the baseline seven exactly (heightmap
+provenance, `mines_independent` surface faces, two `rift_heightmap` sculpt tests, three `sea_town`), no
+new failure, and 19 more passes than the 5,169 of the last run that counted, because the trainer tests
+that had been collected-but-dead now run.
 
-**The general finding, which is worth more than the one tool.** On 2026-10-01 marking gyms 6 and 8
-`superseded_by` made `gym_demolish.py` fail-closed with `SystemExit` — step R16F would refuse to build
-anything. A full suite run in that state reported `7 failed, 5169 passed, 9 xfailed`: **identical, test for
-test, to a healthy run.**
+## 3. What waits on the owner
 
-> A suite that reports identically whether a step works or fail-closes is not covering that step.
+- **Which tenth trainer stands at the exit ravine.** Main's **League Examiner** (four Pokemon, Tailwind
+  Crobat with a Focus Sash, "the exam is what you do after that") is what emits today. Our **Gate Warden**
+  (three Pokemon, "nobody walks onto the apron without going through me") is in
+  `data/vr_trainers.json`'s `superseded_roster`. The same choice, smaller, applies to the other nine and to
+  the 28 late-route trainers: the roster's dialogue is what a player hears and **38 hand-authored
+  seat-file sets are superseded** (the generator prints the count on every run). Nothing is lost either way
+  — it is which lines play.
+- **Giovanni: one stale field stands between seven leaders' teams and eight.** `data/trainers.json` gives
+  `gym_08_giovanni` `status: authored`, `blocked_by: None`, singles, six Pokemon at 52-55 whose top is
+  exactly his contract's 55. `docs/story/GIOVANNI_FORMAT.md` settled the format. Only
+  `data/gym_trainers.json`'s `held: true` skips him, and its `held_because` quotes an empty team that no
+  longer exists. The generator fails closed if the ace disagrees with the contract, so it cannot emit a
+  wrong level. Left undone deliberately: it changes what a player fights.
+- **Whether superseding the server lock was mine to do.** Its owner line named *this worktree's* session
+  from 2026-09-29 ("morning flight; owner awake and flying cobblers-dryrun12"), two days old, server down.
+  Taken with `--supersede`, so the old line is recorded inside the lock file, but CLAUDE.md says resolve
+  ownership with the owner rather than judge a lock stale.
+- **Six declared `finding` overlaps want renames**, none urgent: `tri_peaks` / `glacial_tear` are both a
+  landmark and a region; `sunset_west` is both a town and a spawn subregion; `kind`, `theme` and `order`
+  each mean two things in two files one tool reads together. All in `data/id_authorship.json` with reasons.
 
-It was found by reading the consumers of a field that had changed and running the tool by hand. No check
-noticed.
+## 4. The next job: the settlement NPCs, in a fresh session
 
-**So the unit is not just one test file. Ask which other `reapply.py` steps have the same hole.** `prepare`
-fail-closes on several conditions and every block pass is a generated-mcfunction step; the question for each
-is whether anything in `tests/` would go red if that step refused to emit. The cheap probe is the one that
-worked here: break the step deliberately, run the suite, and see whether the numbers move. Where they do not,
-that step is uncovered. Candidates to start from are the steps with their own audits run by `prepare`, since
-an audit that is never asserted on is the same shape of gap.
+The owner's method is predict-then-probe, as the 56 trainers were done. **The count is 15, not 32**
+(`docs/world-building/SETTLEMENT_NPCS.md`): 15 conversation-bearing settlement NPCs, **34 gate-guard
+positions with no characters authored at all**, and the **four Rift guards, which already have seats with
+armour-stand placeholders**. The owner has confirmed these figures; the 32 was a session's error.
 
-## 3. The PRs: everything collapsed into #97, which is the only one open
+**The blocker is standing blocks, not coordinates:** 10 of 13 `npc_main_*` carry a `recorded_position_xz`
+and **0 carry a `stand_marker`**. Nine of the ten check out against their settlement footprint and
+heightmap ground. The probe half needs a running world and there is none — the server is down and this
+session held the lock only for `install_check` (see below).
 
-Verified against GitHub after a `--prune` fetch, not assumed:
+Deliberately not fixed, for Codex: `npc_main_league_steward` is recorded at (3297, 2603), 433 blocks from
+the League, inside no settlement, heightmap y118 against the League's 86.3-98.9. It is the retired
+`FACTION.md` cradle coordinate the Rift-zones unit already rejected. Correcting it here would hide the
+propagation.
 
-| PR | Branch | State |
-|---|---|---|
-| #95 | `night/2026-09-29-water-export` | MERGED to main, 2026-10-01 04:22 |
-| #96 | `codex/trainer-modes` | MERGED to main, 04:23 |
-| #98 | `docs/2026-09-30-phase2-handover` | MERGED into `build/2026-09-29-phase2`, 04:25 |
-| #99 | `docs/2026-09-30-settlement-npcs` | MERGED into `build/2026-09-29-phase2`, 04:26 |
-| #100 | `fix/2026-09-30-phase2-red-tests` | MERGED into `build/2026-09-29-phase2`, 06:05 (merge commit `cc9a8339`) |
-| [#97](https://github.com/Millerb7/cobblers/pull/97) | `build/2026-09-29-phase2` -> `main` | **OPEN**, head **`cc9a833`** |
+## 5. State of the machine
 
-- **The stack is gone: #97 is now one PR carrying the whole batch**, which is what the one-big-PR rule wanted.
-- **Every earlier merge command for #97 is stale** — it was reported at `27710fd`, then `7b008b6b`, now
-  `cc9a833`. Re-read the head before quoting it (CLAUDE.md now says why).
-- `origin/main` was `ac6487e` at the time of writing; #97 is not merged.
-- This branch, `docs/2026-10-01-handover`, carries only this file and the CLAUDE.md line, and targets
-  `build/2026-09-29-phase2`.
+- **Server down**: no listener on 25565, no Java process (checked 2026-10-01).
+- **The coordination lock is FREE** (released at the end of this session). It had been held since
+  2026-09-29 by a line naming *this worktree's* session ("morning flight; owner awake and flying
+  cobblers-dryrun12"); this session took it with `--supersede`, ran `install_check`, and released it.
+- No worktree, branch or process is left half-done by this session. `build/datapacks/cobblers_trainers`
+  was regenerated (359 files, 56 seated trainers, 12 overrides) and is disposable.
 
-## 4. The suite baseline is 7
+## 6. What a cold start must not rediscover
 
-**Measured 2026-10-01: `7 failed, 5169 passed, 9 xfailed in 641 s`.** The four failures that were phase-2's
-own are fixed, and `no_swallowed_crashes` with them, so the baseline dropped from 8. The seven remaining are
-pre-existing and still not to be chased: heightmap provenance, `mines_independent` surface faces, two
-`rift_heightmap` sculpt tests, three `sea_town` tests (contracts C3 and C14).
+- **A clean merge is not a clean union** — now a CLAUDE.md rule with the case, and a check that runs on
+  merge. A guard keyed on an id cannot tell halves from rivals.
+- **Check `generated_by` before deleting either side of a duplicate.** A generated file regenerates; a
+  hand-authored one loses judgement that exists in no generator.
+- **`SystemExit` is a `BaseException`**, so it escapes pytest's collection and takes the whole run with it.
+  Handled in `tests/conftest.py` now; the same trap waits anywhere else a tool is imported.
+- **The harness's `totalTokens` per agent is its FINAL CONTEXT, not its spend.** Use
+  `python tools/session_cost.py`.
+- The full suite is over the 600 s tool timeout — run it backgrounded.
+- `COBBLERS_SOURCE_ROOT` must be `C:\Users\wnd\Documents` in every shell.
+- `tools/ground.py` is `ground.load()` returning a callable, plus `.box()`; there is no `ground.at()`.
 
-How they were fixed is in `docs/STATE.md`; the short version is that none was fixed by moving a number. The
-gym pair was a hardcoded five in the test while the tool globbed the folder, so gyms 6 and 8 were unexamined
-for a day — they then passed all 117 content properties. The legendaries pair lost their "unsited" exemplar
-when `registeel` was sited; the exemplar now comes from the data, and the one whose fault had been closed was
-replaced by the direction nothing covered, that `gate.unsatisfiable_until` is honoured — proved by mutating
-the generator.
+## 7. What this session cost
 
-## 5. Decisions taken this session that a cold start should not reopen
-
-- **Gyms 6 and 8 are confirmed** (the owner, 2026-10-01) and `data/gym_interiors.json` records both
-  superseded. **gym6's `why_not` had been an owner gate** — Sabrina's gym not built until EXP-034 has run —
-  and **EXP-034 is still unrun**; the gate is answered because the Hall of Lenses carries no per-player state,
-  not by the experiment. If anyone wants it honoured literally, that is the decision to revisit. gym8's
-  `"as gym2"` was stale: Giovanni's was a donor shell.
-- **The worktree cleanup was removal only, with no teardown rule** (the owner's choice). `.claude/worktrees/`
-  went 44 directories / 7.9 GB -> 8 / 4.77 GB. It will rebuild; if it should not, the rule belongs in
-  CLAUDE.md's Delegation section. Left alone: the locked `agent-a935361eae89fb3d0`, the empty
-  `canonical-data`, and `winui3-widget-board-60b59c`, which belongs to the **`Job-Bored`** repo.
-
-## 6. Open, and not this session's to fix
-
-- **The settlement NPCs are 15, not 32** (`docs/world-building/SETTLEMENT_NPCS.md`). The blocker is
-  **standing blocks, not coordinates**: 10 of 13 actors have a position, **0 have a `stand_marker`**. The bulk
-  is 12 physical-evidence objects, 10 unbuilt. Separately **34 gate-guard positions have no characters**.
-- **For Codex, deliberately not fixed:** `npc_main_league_steward` is recorded at (3297, 2603) — 433 blocks
-  from the League, inside no settlement, heightmap y118 against the League's 86.3-98.9. It is the retired
-  `FACTION.md` cradle coordinate the Rift-zones unit already rejected for (3357, 3306). Correcting it here
-  would hide the propagation.
-- **F12** — two authored trainer points inside town boxes; seats moved, authored points left alone. Codex's
-  `TRAINER_RULES.json`.
-- **Four zone walls withheld by data:** z4 needs Codex dialogue reading `q.player.pokedex.caught_count`; z5
-  needs `rift_crisis_resolved`, which has **no setter** on `origin/codex/trainer-modes`. Do not invent it.
-- **Giovanni's roster held and empty**, blocked on `docs/story/GIOVANNI_FORMAT.md`; the decision goes in
-  `data/gym_trainers.json` as his `battle_format`.
-- **Unproven, owner only: whether Brock refuses a rematch with the badge in hand.** Installed is not working.
-
-## 7. What a cold start must not rediscover
-
-- **Prune before trusting a remote ref, and re-read every head you quote** — now a CLAUDE.md rule, with the
-  2026-10-01 case that produced it.
-- **Read the consumers of any field you change.** One `superseded_by` edit fail-closed a build step.
-- **Mutate the generator, not the record**, and reject your own slack.
-- **A nested isolation worktree is based on the MAIN checkout's HEAD**; `git merge --ff-only` fails.
-  Authorise `git reset --hard <sha>` in the brief.
-- The full suite is **~640-1,050 s** — over the 600 s tool timeout. Run it backgrounded.
-- `tools/ground.py` is `ground.load()` returning a callable, plus `.box()`; there is no `ground.at()`. It
-  raises `terrain.TerrainUnavailable` when the heightmap is missing.
-- `COBBLERS_SOURCE_ROOT` must be `C:\Users\wnd\Documents` in every shell. Both validators are clean at the
-  tip: `validate_data.py` 0/0, `validate.py` 1,237 files 0/0.
+`python tools/session_cost.py`: **3.1M weighted**, 130 turns, context 259k at the end (average 180k).
+One subagent, 0.35M. Cheap for what it carried because the expensive things ran once: one full suite
+(578 s), one `prepare`-free path, and no staging.
