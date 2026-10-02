@@ -185,3 +185,21 @@ Standing, by RCON: the statue (4140, 112, 2005), the cemetery's own `summon_anch
 from the statue, and the Articuno altar (682, 312, 380). `give` to the owner: 1 `lumymon:calyrex_crown`, 2
 `lumymon:glacier_feather` (both ids resolve). Server log line 7,685 marks the start; every chat or console line
 after it is the result. The owner's hold (2026-10-02): no further altar-driven site is built until this lands.
+
+## Result of the owner's right-click, 2026-10-02 ~13:35 - INCONCLUSIVE
+
+The owner, holding the crown at the Calyrex statue: "calyrex said nothing". Measured afterwards over RCON and
+from the staging world's files (not the live world):
+
+- **No Calyrex** within 64 blocks of the statue; nothing from LumyMon in the server log after line 7,685 (refusals
+  are player-chat lines and are not logged, so the log cannot say whether one was printed).
+- **The statue is gone.** (4140, 112, 2005) is air up to y114, and no statue stands within 3 blocks; the same
+  `execute if block` passed minutes before the click. A right-click with the crown should only flip the statue's
+  `has_crown` state (`calyrex_statue` blockstate `facing x has_crown`), never remove it.
+- **The crown was not consumed**: the owner's saved playerdata (13:36:58) still names `lumymon:calyrex_crown`.
+- No statue item on the ground; three loose items within 12 blocks: brown mushroom, redstone dust, wheat seeds.
+
+Not told apart: a left-click that broke the statue (a modded block with no loot table drops nothing) against the
+altar removing its own block and its summon command then failing silently. **Next run:** re-place the statue
+(`setblock 4140 112 2005 lumymon:calyrex_statue`), poll that block once a second over RCON while the owner
+right-clicks, so the moment it changes is timed against the click.
