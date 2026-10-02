@@ -2061,6 +2061,36 @@
       "scope": "player",
       "initial": false,
       "why": "Heaven's Arena tier 7 of 7, the crown (data/arena_trainers.json). Not a gate, and deliberately not an endgame flag: nothing in chapters or flags reads it, and the arena is optional content after the Deep. If a crown reward or a per-tier lift condition is ever authored, this is the field it reads."
+    },
+    {
+      "id": "quest.frostpeak_camp.halvard_cursor",
+      "quest_id": "frostpeak_camp",
+      "field": "halvard_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "hub",
+      "allowed_values": "node ids from dlg_frostpeak_camp_halvard",
+      "why": "the dialogue cursor of Dr. Signe Halvard at the Frostpeak research camp (data/frostpeak_camp.json, tools/frostpeak_camp.py). Talk only: the conversation always opens at its hub, sets nothing else and gates nothing."
+    },
+    {
+      "id": "quest.frostpeak_camp.krell_cursor",
+      "quest_id": "frostpeak_camp",
+      "field": "krell_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "hub",
+      "allowed_values": "node ids from dlg_frostpeak_camp_krell",
+      "why": "the dialogue cursor of Edda Krell at the Frostpeak research camp (data/frostpeak_camp.json, tools/frostpeak_camp.py). Talk only: the conversation always opens at its hub, sets nothing else and gates nothing."
+    },
+    {
+      "id": "quest.frostpeak_camp.ostrow_cursor",
+      "quest_id": "frostpeak_camp",
+      "field": "ostrow_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "hub",
+      "allowed_values": "node ids from dlg_frostpeak_camp_ostrow",
+      "why": "the dialogue cursor of Bram Ostrow at the Frostpeak research camp (data/frostpeak_camp.json, tools/frostpeak_camp.py). Talk only: the conversation always opens at its hub, sets nothing else and gates nothing."
     }
   ],
   "gym_markers": {

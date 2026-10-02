@@ -1,0 +1,110 @@
+{
+  "schema": "cobblers.frostpeak_camp/1",
+  "status": "authored 2026-10-02, not yet applied to any world",
+  "generated_by": "hand",
+  "built_by": "tools/frostpeak_camp.py build -> build/datapacks/cobblers_frostpeak_camp; audited by tools/frostpeak_camp_audit.py",
+  "owner_request": "\"i feel like a research site around 2079 115 1048 could be cool. i assume we will have a legendary at teh top of the mountain or close by they are looking into. it would be frostpeak shrine yeah.\" Then: \"i got my x or y wrong, the research site is meant to be at the foot of the south end of the frostpeak\". The site (688, 688) was measured and accepted on 2026-10-01.",
+  "purpose": "A small field camp at Frostpeak's south foot whose researchers study Articuno. Its job in the world: the adopted Articuno shrine (data/adopted_legendary_sites.json adopted_articuno_shrine) has no finder, so the camp is how a player learns where to look - a telescope trained on the east shoulder, field notes on a board, and researchers who point. Nothing here promises the shrine's altar works (adopted_legendary_sites.json a_dead_altar_must_not_block; EXP-048): the researchers observe and speculate, and no step, reward or gate requires the altar.",
+  "ground_rule": "Every Y is computed by tools/frostpeak_camp.py from tools/ground.py (the canonical heightmap, rounded). Nothing in this file is a Y. Each piece is seated on max(ground under its footprint) + 1, with a foundation down to the ground under any lower column (tools/shrines.py's convention).",
+  "site": {
+    "corner": [688, 688],
+    "size": 40,
+    "region": "frostpeak",
+    "measured": "2026-10-02 from tools/ground.py: ground y108..113 over x688..727 z688..727, median 111 rounded (raw median 110.62, relief 4.93); the north edge is the high side (y113), the south-east the low (y109). Nothing any built pack writes and no data point lies within 64 blocks (scanned 2026-10-02 against the full checkout's build/datapacks)."
+  },
+  "targets": {
+    "shrine": {
+      "source": "data/adopted_legendary_sites.json sites[id=adopted_articuno_shrine]: placement.centre (x, z) and placement.top_y",
+      "aim": "the middle of the part of the tower's centre column visible over the shoulder from the telescope, computed from the heightmap"
+    },
+    "summit": {
+      "source": "data/towns.json towns[id=frostpeak_shrine].centre: the centre of the pressed summit platform (data/sculpt.json pads frostpeak_shrine, radius 55, y310)",
+      "aim": "the crest that hides it: the highest elevation angle along the summit's bearing, computed from the heightmap. The summit platform itself is not visible from the camp."
+    }
+  },
+  "blocks": {
+    "rule": "vanilla 1.21.1 only, none a spawn condition in data/spawn_blocks.json (white and red wool are not; grey, light grey, orange and the other coloured wools are). No chests: tools/portals_audit.py records a chest as a Gimmighoul spawn condition, though data/spawn_blocks.json does not list it, so barrels carry the stores. No beds: a bed sets a respawn point, which the blackout recovery owns (docs/mechanics/BLACKOUT_RECOVERY_COUPLING.md).",
+    "ids": [
+      "minecraft:spruce_planks", "minecraft:spruce_log", "minecraft:stripped_spruce_log", "minecraft:stripped_spruce_wood",
+      "minecraft:spruce_fence", "minecraft:spruce_slab", "minecraft:spruce_wall_sign",
+      "minecraft:white_wool", "minecraft:red_wool", "minecraft:red_carpet",
+      "minecraft:cobblestone", "minecraft:cobblestone_wall",
+      "minecraft:barrel", "minecraft:smoker", "minecraft:campfire", "minecraft:lantern",
+      "minecraft:cauldron"
+    ],
+    "display_blocks": ["minecraft:waxed_copper_block", "minecraft:polished_deepslate"],
+    "display_note": "the instrument tubes are block_display entities (the format tools/rift_skin.py already uses), not blocks: a block cannot point at an arbitrary bearing. An entity is erased by an export like an NPC, so the instruments function re-summons them.",
+    "foundation": "minecraft:cobblestone",
+    "canvas": "minecraft:white_wool",
+    "canvas_trim": "minecraft:red_wool"
+  },
+  "pieces": [
+    {"id": "frostpeak_camp_instrument_deck", "kind": "deck", "at": [713, 691], "half": [7, 2], "rail": "north",
+     "why": "a plank deck on the high north edge of the bench, the camp's best view of the mountain"},
+    {"id": "frostpeak_camp_telescope", "kind": "instrument", "at": [716, 691], "on": "frostpeak_camp_instrument_deck",
+     "target": "shrine", "tube": {"block": "minecraft:waxed_copper_block", "length": 1.6, "width": 0.24},
+     "why": "the survey's telescope, trained on the Articuno tower on the east shoulder"},
+    {"id": "frostpeak_camp_theodolite", "kind": "instrument", "at": [709, 691], "on": "frostpeak_camp_instrument_deck",
+     "target": "summit", "tube": {"block": "minecraft:polished_deepslate", "length": 0.9, "width": 0.2},
+     "why": "the surveyor's theodolite, laid on the summit's bearing and stopped at the false crest that hides it"},
+    {"id": "frostpeak_camp_notes_board", "kind": "notes_board", "at": [713, 693], "on": "frostpeak_camp_instrument_deck",
+     "why": "the field notes, on the deck's south edge where a player walking up from the camp reads them first"},
+    {"id": "frostpeak_camp_mess_tent", "kind": "ridge_tent", "at": [698, 708], "facing": "south", "width": 7, "length": 9,
+     "fit_out": "mess", "why": "the mess: a long tent with a smoker, stores and a counter, its door to the fire"},
+    {"id": "frostpeak_camp_bunk_tent_north", "kind": "ridge_tent", "at": [720, 703], "facing": "west", "width": 5, "length": 7,
+     "fit_out": "bunk", "why": "sleeping tent, door towards the fire; bedrolls, not beds"},
+    {"id": "frostpeak_camp_bunk_tent_south", "kind": "ridge_tent", "at": [720, 713], "facing": "west", "width": 5, "length": 7,
+     "fit_out": "bunk", "why": "the second sleeping tent"},
+    {"id": "frostpeak_camp_fire", "kind": "fire_ring", "at": [707, 717],
+     "why": "the camp's fire between the tents, with log benches; its smoke is the camp's mark from the slopes"},
+    {"id": "frostpeak_camp_supply_cache", "kind": "supply_cache", "at": [692, 721],
+     "why": "crates and barrels hauled up from the coast"},
+    {"id": "frostpeak_camp_weather_mast", "kind": "weather_mast", "at": [691, 697],
+     "why": "a mast with a lantern and a cauldron for a snow gauge (a cauldron fills with powder snow in a cold biome)"}
+  ],
+  "notes_board": {
+    "signs": [
+      ["FROSTPEAK", "SURVEY", "field notes", "- S. Halvard"],
+      ["East tower", "bearing {shrine_bearing}", "~{shrine_range} blocks", "crown y{shrine_top}"],
+      ["Summit table", "bearing {summit_bearing}", "behind the", "false crest"],
+      ["Articuno:", "sightings", "none confirmed", "keep watching"]
+    ]
+  },
+  "researchers": [
+    {"id": "frostpeak_camp_halvard", "name": "Dr. Signe Halvard", "role": "lead observer", "at": [714, 692], "on": "frostpeak_camp_instrument_deck",
+     "greeting": "Mind the tripod. We are the Frostpeak survey: three of us, one telescope, and a tower on the east shoulder that nobody alive remembers being built.",
+     "topics": [
+       {"id": "watching", "ask": "What are you watching?",
+        "says": "That tower. It stands at bearing {shrine_bearing}, a little east of north, about {shrine_range} blocks off and far above us. Look where the telescope points: its crown shows over the shoulder."},
+       {"id": "articuno", "ask": "Why Articuno?",
+        "says": "Three winters of notes. Frost on the tower when the slopes are bare, a cold wind out of a clear sky, a pale blue shape the herders swear to. I have not seen it myself. I would very much like to."},
+       {"id": "altar", "ask": "What is the tower for?",
+        "says": "There is an old altar in it. Some say it calls the bird; some say it never did. We have not made it do anything, and I would not promise you that anyone can. We watch, and we write down what we see."},
+       {"id": "route", "ask": "How do I get there?",
+        "says": "North-east, and keep climbing. The shoulder rises about {climb} blocks above this camp and then runs level; the tower stands alone on the snow. Once you are on top you cannot miss it."}
+     ],
+     "leave": "Goodbye."},
+    {"id": "frostpeak_camp_krell", "name": "Edda Krell", "role": "surveyor", "at": [708, 692], "on": "frostpeak_camp_instrument_deck",
+     "greeting": "The summit? Not from here. That edge up there is a false crest. The middle of the summit table is another {summit_beyond} blocks behind it, flat as a floor.",
+     "topics": [
+       {"id": "instrument", "ask": "What is that instrument?",
+        "says": "A theodolite. Two sightings on the board: the crest, bearing {summit_bearing}, and the east tower, bearing {shrine_bearing}. Two bearings from two camps give you a position. We have one camp, so we walk."},
+       {"id": "danger", "ask": "Is it dangerous up there?",
+        "says": "The mountain is. The wild Pokemon on these slopes are not the lowlands' kind, and the weather turns in an hour. Go up with a team you trust and come back down before dark."}
+     ],
+     "leave": "Goodbye."},
+    {"id": "frostpeak_camp_ostrow", "name": "Bram Ostrow", "role": "camp hand", "at_local": [0, 1], "in": "frostpeak_camp_mess_tent",
+     "greeting": "Close the flap, you are letting the warm out. The soup is for the survey, but sit a minute.",
+     "topics": [
+       {"id": "what_is_up_there", "ask": "What do you think is up there?",
+        "says": "The Doctor says a bird. Edda says a surveying problem. I say nobody hauls stone up a mountain for nothing. Whether anything up there still listens, none of us knows."},
+       {"id": "strange", "ask": "Seen anything strange?",
+        "says": "Frost on the inside of the tent in summer. Snorunt in the supply crates. And once a shadow crossing the shoulder with no cloud to throw it. Make of that what you like."}
+     ],
+     "leave": "Goodbye."}
+  ],
+  "spawns": {
+    "decision": "none added",
+    "why": "Frostpeak already carries 21 surface entries in data/spawns.json (scope frostpeak, level 25-45: Delibird, Crabrawler, Sneasel, Snorunt, Absol, Drampa and their lines; docs/story/ENCOUNTERS.md), which cover the bench. A camp-specific table would add a second author for the same ground for no new species."
+  }
+}
