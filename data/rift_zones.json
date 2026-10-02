@@ -1616,12 +1616,30 @@
         "edge_distance": 141,
         "zone_begins_at": [3100, 3270],
         "zone_begins_in": 0,
+        "approach": {
+          "outer": [
+            [
+              3097,
+              3271,
+              88,
+              null
+            ]
+          ],
+          "inner": [
+            [
+              3106,
+              3267,
+              88,
+              null
+            ]
+          ]
+        },
         "outside_at": [2983, 3349],
         "outside_distance": 141
       },
       "arrive": [3102.5, 88, 3268.5, -124.0],
       "turn_back": [2976.5, 104, 3353.5, 56.0],
-      "exit": [3104, 88, 3267, 3104, 89, 3267],
+      "exit": [3101, 88, 3269, 3101, 89, 3269],
       "wall": "throat",
       "why": "Z1 is the only zone a player can reach before the mid-game, and the only one whose gate is a low number of badges.",
       "boxes": [
@@ -1701,8 +1719,8 @@
       ],
       "boxes_columns": 160362,
       "boxes_from": "union of the traced regions rift_excavation_site at grid 8, a cell kept when this zone covers at least half of it and more of it than any other zone, so the zones cannot overlap",
-      "places_why": "measured from the GUARD'S OWN BLOCK along the axis, every place that stands on the gatehouse at the walkway's own flat floor level y88 (the guard's ground + 1, which is what cmd_build lays for every column of the shell): the arrival 3 blocks inside facing in; the exit box 5 inside; the knock box the 2 walkway blocks outside the guard, which is what calls the zone's qualify. All three are columns of walkway_path(), checked. Only the turn-back takes its y from tools/ground.py at its own column, because it stands 8 blocks out on open terrain, PAST the nearest outside column (2983, 3349) and facing away, so it is outside the zone however far inside the guard stands.",
-      "knock": [3098, 88, 3271, 3099, 89, 3271]
+      "places_why": "measured from the GUARD'S OWN BLOCK along the axis, every place that stands on the gatehouse at the walkway's own flat floor level y88 (the guard's ground + 1, which is what cmd_build lays for every column of the shell): the arrival 3 blocks inside facing in; the exit box the walkway column directly behind the barrier (2 in where the step is straight); the knock box the 2 walkway blocks outside the guard and the guard's own column, where a player walking up comes to rest, which is what calls the zone's qualify. All three are columns of walkway_path(), checked. Only the turn-back takes its y from tools/ground.py at its own column, because it stands 8 blocks out on open terrain, PAST the nearest outside column (2983, 3349) and facing away, so it is outside the zone however far inside the guard stands.",
+      "knock": [3098, 88, 3270, 3100, 89, 3271]
     },
     "z2": {
       "name": "Victory Road and the Rift's floor",
@@ -1759,13 +1777,31 @@
         "zone_begins_at": [3564, 5271],
         "zone_begins_in": 53,
         "on_route_at": [1174.0, 1104],
+        "approach": {
+          "outer": [
+            [
+              3547,
+              5325,
+              112,
+              null
+            ]
+          ],
+          "inner": [
+            [
+              3551,
+              5316,
+              112,
+              null
+            ]
+          ]
+        },
         "inside_at": [3580, 5301],
         "inside_distance": 38,
         "axis_why": "the axis is route victory_road's own heading on data/route_paths.json's walked line at point 1104, 1174 blocks along it, averaged over 8 points either way: a gate across a road lies along the road. The traced mask's own axis here is (-0.8360, 0.5487), 39 degrees off, which would stand the gatehouse diagonally across it; it is still measured and still has to agree on which way is out (tools/rift_zones.py survey)."
       },
       "arrive": [3549.5, 112, 5319.5, -162.6],
       "turn_back": [3546.5, 112, 5330.5, 17.4],
-      "exit": [3549, 112, 5317, 3549, 113, 5317],
+      "exit": [3548, 112, 5320, 3548, 113, 5320],
       "wall": null,
       "wall_why": "Z2's boundary is the Rift's own rim everywhere except at the three cuts, and RIFT_FRACTURE.md is explicit that 'the scarps are the barrier'. No wall is generated for Z2: its three cross-walls belong to the zones on the far side of them (throat to z1, league_gate to z5, behind_league to z4).",
       "why": "the largest zone and the one the story runs through: the finale stands here, not in a caught-count zone (RIFT_ZONES.md section 2a).",
@@ -2034,7 +2070,7 @@
       ],
       "boxes_columns": 1467095,
       "boxes_from": "union of the traced regions entrance_to_e4, the_deep, relic_area_shrine, the_sink, upper_rift, rift_wilds, hidden_rift_cavern at grid 8, a cell kept when this zone covers at least half of it and more of it than any other zone, so the zones cannot overlap",
-      "places_why": "measured from the guard's own block along the axis, every place that stands on the gatehouse at the walkway's own flat floor level y112 (the guard's ground + 1, which is what cmd_build lays for every column of the shell): the arrival 3 blocks past the barrier facing in; the exit box 5 in on the walkway; the knock box the 2 walkway blocks outside the guard, which is what calls the zone's qualify. All three are columns of walkway_path(), checked. Only the turn-back takes its y from tools/ground.py at its own column: it stands 8 blocks outward on open terrain, already outside the zone, so an unqualified player is put back on the approach they walked up rather than teleported across the basin.",
+      "places_why": "measured from the guard's own block along the axis, every place that stands on the gatehouse at the walkway's own flat floor level y112 (the guard's ground + 1, which is what cmd_build lays for every column of the shell): the arrival 3 blocks past the barrier facing in; the exit box the walkway column directly behind the barrier (2 in where the step is straight); the knock box the 2 walkway blocks outside the guard and the guard's own column, where a player walking up comes to rest, which is what calls the zone's qualify. All three are columns of walkway_path(), checked. Only the turn-back takes its y from tools/ground.py at its own column: it stands 8 blocks outward on open terrain, already outside the zone, so an unqualified player is put back on the approach they walked up rather than teleported across the basin.",
       "posts": [
         {
           "id": "victory_road_descent",
@@ -2054,12 +2090,30 @@
           "zone_begins_in": 0,
           "arrive": [3741.5, 87, 5083.5, -71.3],
           "turn_back": [3591.5, 90, 5032.5, 108.7],
-          "exit": [3743, 87, 5084, 3743, 88, 5084],
-          "knock": [3736, 87, 5081, 3737, 88, 5082],
+          "exit": [3740, 87, 5082, 3740, 88, 5082],
+          "knock": [3736, 87, 5081, 3738, 88, 5082],
           "outside_at": [3602, 5036],
           "outside_distance": 144,
           "block_why": "the guard stands on its surveyed site, unmoved, inside the zone it gates. The outward direction and the distance to the nearest column outside the zone (144 blocks) are measured from the traced mask.",
-          "places_why": "measured from the GUARD'S OWN BLOCK along the axis, every place that stands on the gatehouse at the walkway's own flat floor level y87 (the guard's ground + 1, which is what cmd_build lays for every column of the shell): the arrival 3 blocks inside facing in; the exit box 5 inside; the knock box the 2 walkway blocks outside the guard, which is what calls the zone's qualify. All three are columns of walkway_path(), checked. Only the turn-back takes its y from tools/ground.py at its own column, because it stands 8 blocks out on open terrain, PAST the nearest outside column (3602, 5036) and facing away, so it is outside the zone however far inside the guard stands."
+          "places_why": "measured from the GUARD'S OWN BLOCK along the axis, every place that stands on the gatehouse at the walkway's own flat floor level y87 (the guard's ground + 1, which is what cmd_build lays for every column of the shell): the arrival 3 blocks inside facing in; the exit box the walkway column directly behind the barrier (2 in where the step is straight); the knock box the 2 walkway blocks outside the guard and the guard's own column, where a player walking up comes to rest, which is what calls the zone's qualify. All three are columns of walkway_path(), checked. Only the turn-back takes its y from tools/ground.py at its own column, because it stands 8 blocks out on open terrain, PAST the nearest outside column (3602, 5036) and facing away, so it is outside the zone however far inside the guard stands.",
+          "approach": {
+            "outer": [
+              [
+                3735,
+                5081,
+                87,
+                null
+              ]
+            ],
+            "inner": [
+              [
+                3745,
+                5084,
+                87,
+                null
+              ]
+            ]
+          }
         },
         {
           "id": "rim_post_descent",
@@ -2075,14 +2129,32 @@
           "block_why": "the guard stands on its surveyed site, unmoved, inside the zone it gates. The outward direction and the distance to the nearest column outside the zone (62 blocks) are measured from the traced mask.",
           "arrive": [3878.5, 146, 3821.5, -154.3],
           "turn_back": [3847.5, 146, 3887.5, 25.7],
-          "exit": [3879, 146, 3819, 3879, 147, 3819],
-          "knock": [3876, 146, 3825, 3877, 147, 3826],
-          "places_why": "measured from the GUARD'S OWN BLOCK along the axis, every place that stands on the gatehouse at the walkway's own flat floor level y146 (the guard's ground + 1, which is what cmd_build lays for every column of the shell): the arrival 3 blocks inside facing in; the exit box 5 inside; the knock box the 2 walkway blocks outside the guard, which is what calls the zone's qualify. All three are columns of walkway_path(), checked. Only the turn-back takes its y from tools/ground.py at its own column, because it stands 8 blocks out on open terrain, PAST the nearest outside column (3850, 3880) and facing away, so it is outside the zone however far inside the guard stands.",
+          "exit": [3877, 146, 3822, 3877, 147, 3822],
+          "knock": [3876, 146, 3824, 3877, 147, 3826],
+          "places_why": "measured from the GUARD'S OWN BLOCK along the axis, every place that stands on the gatehouse at the walkway's own flat floor level y146 (the guard's ground + 1, which is what cmd_build lays for every column of the shell): the arrival 3 blocks inside facing in; the exit box the walkway column directly behind the barrier (2 in where the step is straight); the knock box the 2 walkway blocks outside the guard and the guard's own column, where a player walking up comes to rest, which is what calls the zone's qualify. All three are columns of walkway_path(), checked. Only the turn-back takes its y from tools/ground.py at its own column, because it stands 8 blocks out on open terrain, PAST the nearest outside column (3850, 3880) and facing away, so it is outside the zone however far inside the guard stands.",
           "side": "inside",
           "edge_at": [3850, 3880],
           "edge_distance": 62,
           "zone_begins_at": [3877, 3824],
-          "zone_begins_in": 0
+          "zone_begins_in": 0,
+          "approach": {
+            "outer": [
+              [
+                3876,
+                3827,
+                146,
+                null
+              ]
+            ],
+            "inner": [
+              [
+                3881,
+                3819,
+                145,
+                null
+              ]
+            ]
+          }
         },
         {
           "id": "wilds_slip",
@@ -2098,18 +2170,61 @@
           "block_why": "the guard stands on its surveyed site, unmoved, inside the zone it gates. The outward direction and the distance to the nearest column outside the zone (153 blocks) are measured from the traced mask.",
           "arrive": [4203.5, 95, 4301.5, -76.4],
           "turn_back": [4039.5, 147, 4261.5, 103.6],
-          "exit": [4205, 95, 4301, 4205, 96, 4301],
-          "knock": [4198, 95, 4300, 4199, 96, 4300],
-          "places_why": "measured from the GUARD'S OWN BLOCK along the axis, every place that stands on the gatehouse at the walkway's own flat floor level y95 (the guard's ground + 1, which is what cmd_build lays for every column of the shell): the arrival 3 blocks inside facing in; the exit box 5 inside; the knock box the 2 walkway blocks outside the guard, which is what calls the zone's qualify. All three are columns of walkway_path(), checked. Only the turn-back takes its y from tools/ground.py at its own column, because it stands 8 blocks out on open terrain, PAST the nearest outside column (4051, 4264) and facing away, so it is outside the zone however far inside the guard stands.",
+          "exit": [4202, 95, 4300, 4202, 96, 4300],
+          "knock": [4198, 95, 4300, 4200, 96, 4300],
+          "places_why": "measured from the GUARD'S OWN BLOCK along the axis, every place that stands on the gatehouse at the walkway's own flat floor level y95 (the guard's ground + 1, which is what cmd_build lays for every column of the shell): the arrival 3 blocks inside facing in; the exit box the walkway column directly behind the barrier (2 in where the step is straight); the knock box the 2 walkway blocks outside the guard and the guard's own column, where a player walking up comes to rest, which is what calls the zone's qualify. All three are columns of walkway_path(), checked. Only the turn-back takes its y from tools/ground.py at its own column, because it stands 8 blocks out on open terrain, PAST the nearest outside column (4051, 4264) and facing away, so it is outside the zone however far inside the guard stands.",
           "side": "inside",
           "edge_at": [4051, 4264],
           "edge_distance": 153,
           "zone_begins_at": [4200, 4300],
-          "zone_begins_in": 0
+          "zone_begins_in": 0,
+          "approach": {
+            "outer": [
+              [
+                4197,
+                4300,
+                95,
+                null
+              ],
+              [
+                4196,
+                4300,
+                96,
+                null
+              ],
+              [
+                4195,
+                4300,
+                97,
+                null
+              ]
+            ],
+            "inner": [
+              [
+                4207,
+                4301,
+                95,
+                null
+              ],
+              [4208, 4301, 94, 91],
+              [
+                4209,
+                4301,
+                95,
+                null
+              ],
+              [
+                4210,
+                4301,
+                96,
+                null
+              ]
+            ]
+          }
         }
       ],
       "posts_why": "data/rift_sculpt.json cuts THREE ways down into Z2, not one, and each of the three already carries a guard's name in that file. Since 2026-10-01 all three are posts: G2 itself stands outside the zone at the Victory Road trailhead (guard.supersedes), so the descent it used to stand at keeps a post like the other two. RIFT_ZONES_BUILD.md 'Open for the owner' item 1 recorded the consequence: a player with eight badges who walks in at the rim post or the wilds slip was turned back by the zone check with no guard there to earn the pass from. Resolved the way the sculpt's own data points: every sculpted way into the zone is staffed. A post is a full gate -- gatehouse shell, barrier, armour-stand placeholder, knock box, its own arrival, exit and turn-back point -- and it grants the SAME pass on the SAME test as G2, because it is the same zone. The alternative, walling the two trailheads shut, would undo ground the sculpt deliberately opened.",
-      "knock": [3547, 112, 5323, 3548, 113, 5324]
+      "knock": [3547, 112, 5322, 3548, 113, 5324]
     },
     "z3": {
       "name": "The south-east branch",
@@ -2165,12 +2280,30 @@
         "edge_distance": 6,
         "zone_begins_at": [3600, 2554],
         "zone_begins_in": 0,
+        "approach": {
+          "outer": [
+            [
+              3600,
+              2557,
+              87,
+              null
+            ]
+          ],
+          "inner": [
+            [
+              3600,
+              2547,
+              87,
+              null
+            ]
+          ]
+        },
         "outside_at": [3600, 2560],
         "outside_distance": 6
       },
       "arrive": [3600.5, 87, 2551.5, 180.0],
       "turn_back": [3600.5, 86, 2568.5, -0.0],
-      "exit": [3600, 87, 2549, 3600, 88, 2549],
+      "exit": [3600, 87, 2552, 3600, 88, 2552],
       "wall": "behind_league",
       "why": "Z4 holds nothing the story or the League needs (RIFT_ZONES.md section 2a), so a Nuzlocke player who never reaches 120 species loses no required content.",
       "boxes": [
@@ -2202,8 +2335,8 @@
       ],
       "boxes_columns": 52871,
       "boxes_from": "union of the traced regions e4_tower at grid 8, a cell kept when this zone covers at least half of it and more of it than any other zone, so the zones cannot overlap",
-      "places_why": "measured from the GUARD'S OWN BLOCK along the axis, every place that stands on the gatehouse at the walkway's own flat floor level y87 (the guard's ground + 1, which is what cmd_build lays for every column of the shell): the arrival 3 blocks inside facing in; the exit box 5 inside; the knock box the 2 walkway blocks outside the guard, which is what calls the zone's qualify. All three are columns of walkway_path(), checked. Only the turn-back takes its y from tools/ground.py at its own column, because it stands 8 blocks out on open terrain, PAST the nearest outside column (3600, 2560) and facing away, so it is outside the zone however far inside the guard stands.",
-      "knock": [3600, 87, 2555, 3600, 88, 2556],
+      "places_why": "measured from the GUARD'S OWN BLOCK along the axis, every place that stands on the gatehouse at the walkway's own flat floor level y87 (the guard's ground + 1, which is what cmd_build lays for every column of the shell): the arrival 3 blocks inside facing in; the exit box the walkway column directly behind the barrier (2 in where the step is straight); the knock box the 2 walkway blocks outside the guard and the guard's own column, where a player walking up comes to rest, which is what calls the zone's qualify. All three are columns of walkway_path(), checked. Only the turn-back takes its y from tools/ground.py at its own column, because it stands 8 blocks out on open terrain, PAST the nearest outside column (3600, 2560) and facing away, so it is outside the zone however far inside the guard stands.",
+      "knock": [3600, 87, 2554, 3600, 88, 2556],
       "needs_dialogue": {
         "what": "G4's dialogue must read q.player.pokedex.caught_count and call cobblers:rift_zones/z4/grant",
         "why": "No command reads how many species a player owns, so z4/qualify can only ever refuse and the zone stays shut until Codex writes the dialogue (docs/HANDOVER_CODEX.md item 23). Declared here beside z5's needs_progression so the state is in the DATA and not only in the report's prose: tools/reapply.py reads these two fields to decide which walls may be installed, and the moment Codex's half lands the field goes and the wall follows without anyone remembering to flip a switch.",
@@ -2260,12 +2393,30 @@
         "edge_distance": 1,
         "zone_begins_at": [3584, 2680],
         "zone_begins_in": 11,
+        "approach": {
+          "outer": [
+            [
+              3570,
+              2680,
+              85,
+              null
+            ]
+          ],
+          "inner": [
+            [
+              3580,
+              2680,
+              85,
+              null
+            ]
+          ]
+        },
         "outside_at": [3572, 2680],
         "outside_distance": 1
       },
       "arrive": [3576.5, 85, 2680.5, -90.0],
       "turn_back": [3565.5, 85, 2680.5, 90.0],
-      "exit": [3578, 85, 2680, 3578, 86, 2680],
+      "exit": [3575, 85, 2680, 3575, 86, 2680],
       "wall": "league_gate",
       "why": "this is the zone that makes the Rift's finale precede the League instead of running beside it.",
       "boxes": [
@@ -2286,8 +2437,8 @@
       ],
       "boxes_columns": 41571,
       "boxes_from": "union of the traced regions gate at grid 8, a cell kept when this zone covers at least half of it and more of it than any other zone, so the zones cannot overlap",
-      "places_why": "measured from the GUARD'S OWN BLOCK along the axis, every place that stands on the gatehouse at the walkway's own flat floor level y85 (the guard's ground + 1, which is what cmd_build lays for every column of the shell): the arrival 3 blocks inside facing in; the exit box 5 inside; the knock box the 2 walkway blocks outside the guard, which is what calls the zone's qualify. All three are columns of walkway_path(), checked. Only the turn-back takes its y from tools/ground.py at its own column, because it stands 8 blocks out on open terrain, PAST the nearest outside column (3572, 2680) and facing away, so it is outside the zone however far inside the guard stands.",
-      "knock": [3571, 85, 2680, 3572, 86, 2680]
+      "places_why": "measured from the GUARD'S OWN BLOCK along the axis, every place that stands on the gatehouse at the walkway's own flat floor level y85 (the guard's ground + 1, which is what cmd_build lays for every column of the shell): the arrival 3 blocks inside facing in; the exit box the walkway column directly behind the barrier (2 in where the step is straight); the knock box the 2 walkway blocks outside the guard and the guard's own column, where a player walking up comes to rest, which is what calls the zone's qualify. All three are columns of walkway_path(), checked. Only the turn-back takes its y from tools/ground.py at its own column, because it stands 8 blocks out on open terrain, PAST the nearest outside column (3572, 2680) and facing away, so it is outside the zone however far inside the guard stands.",
+      "knock": [3571, 85, 2680, 3573, 86, 2680]
     }
   },
   "gatehouse": {
@@ -2296,10 +2447,13 @@
     "barrier_height": 2,
     "arrive_in": 3,
     "turn_back_out": 8,
-    "exit_in": 5,
+    "exit_in": 2,
+    "walkway_in": 6,
     "knock_out": 2,
-    "knock_why": "the two walkway blocks directly OUTSIDE the guard, under the gatehouse's own roof, where a player stands face to face with it. This box is what calls the zone's qualify: a minecraft:location advancement over it, exactly as data/gulch_mine.json gate.knock does at the gulch's grille, whose reward function runs cobblers:rift_zones/<zone>/qualify. Before this existed nothing called qualify at all and the walls would have sealed the Rift (tools/reapply.py EXCLUDED, 2026-09-30).",
-    "why": "docs/mechanics/RIFT_ZONES.md section 6, its drawn section, unchanged: a one-wide walkway between obsidian, roofed at y+2 so nothing jumps the guard, closed by a two-high barrier column directly behind the guard. The barrier is what physically stops a player; the guard reads as the thing that stops them. The passed player arrives 3 blocks inside facing in; an unqualified player is put 8 blocks outside facing away; the exit box sits 5 blocks inside on the walkway.",
+    "knock_why": "the two walkway blocks directly OUTSIDE the guard AND the guard's own column, under the gatehouse's own roof, where a player stands face to face with it. This box is what calls the zone's qualify: a minecraft:location advancement over it, exactly as data/gulch_mine.json gate.knock does at the gulch's grille, whose reward function runs cobblers:rift_zones/<zone>/qualify. Before this existed nothing called qualify at all and the walls would have sealed the Rift (tools/reapply.py EXCLUDED, 2026-09-30).",
+    "rest_why": "2026-10-02: the knock box and the exit box are where a player COMES TO REST, against the barrier, and not a column they cross on the way. A minecraft:location advancement is tested about once a second (every 20 ticks; tools/gulch_mine.py and docs/mechanics/GYM_INTERIORS.md record the same cadence), and a walking player crosses a one-block box in about a quarter of that, so a box that is only crossed fires on roughly one pass in four. Neither the armour stand nor a Cobblemon NPC (isPushable false) stops a player, so a player walking up to the guard stops against the barrier IN the guard's own column: the knock box now covers it (t = -2..0), and at an inside-sited gate (G1, G4, whose zones begin at the guard's feet) a player resting there is no longer turned back by the zone check before the guard has answered. The exit box was 5 blocks in, between the arrival (3 in) and the zone: a passed player walking in crossed it and was thrown back outside on about one walk in four, and a player walking out stopped against the barrier at 2 in, past it, with nothing happening. It is now 2 in, the column directly behind the barrier, which is where a player walking out comes to rest. `walkway_in` keeps the walkway's inner end where it was (6 in), so moving the exit does not shorten the shell (data/rift_zones.json measured_defects[gate_boxes_are_crossed_not_stood_in]).",
+    "approach_why": "2026-10-02: the walkway is laid flat at the guard's feet, and the ground at its two mouths is not always there. Measured on the canonical heightmap: the Victory Road descent post's and G5's inner mouths stand 1 above the walkway and the wilds slip's outer mouth 5 above and inner 2 above, so a passed player arriving inside could not climb out (a one-block step cannot be jumped from under a roof two blocks up) and nobody could reach the wilds slip's knock box at all. Each gate's `approach` (measured by `trace`, from tools/ground.py) is the run of columns, straight on from each mouth, that the build cuts to air three high so the walkway meets the ground: the mouth column at the walkway's own level, then one block up per column until the natural ground is reached. Nothing is filled: a mouth that falls more than one block to the ground fails `trace` closed rather than being bridged (data/rift_zones.json measured_defects[gatehouse_mouths_do_not_meet_the_ground]).",
+    "why": "docs/mechanics/RIFT_ZONES.md section 6, its drawn section, unchanged: a one-wide walkway between obsidian, roofed at y+2 so nothing jumps the guard, closed by a two-high barrier column directly behind the guard. The barrier is what physically stops a player; the guard reads as the thing that stops them. The passed player arrives 3 blocks inside facing in; an unqualified player is put 8 blocks outside facing away; the exit box sits 2 blocks inside on the walkway, directly behind the barrier (rest_why; it was 5 until 2026-10-02).",
     "blocks": {
       "shell": "minecraft:obsidian",
       "barrier": "minecraft:barrier",
@@ -2418,6 +2572,36 @@
       "fixed": "2026-10-01, in tools/rift_zones.py survey(). Three changes, all in the one function. (1) Every place that stands on the gatehouse -- the arrival, the exit box and the knock box -- now takes its y from fy = int(g(guard)) + 1, the walkway's own flat floor level, and not from tools/ground.py at its own column; cmd_build lays the shell flat at that level for every column, so this is the floor the player actually walks on. The TURN-BACK deliberately keeps its own column's ground: it stands turn_back_out = 8 blocks outward, past the gatehouse's outer mouth, on terrain the shell never touches. (2) EVERY gate now anchors its places on the GUARD'S OWN BLOCK. An inside-sited gate anchored on `zone_begins_at`, the first column inside the 8-grid boxes, which at G5 is 11 blocks along -- further than the whole walkway is long -- so the arrival landed 14 blocks in and the exit box 16, both on open ground past the inner mouth. `zone_begins_at` and `zone_begins_in` are still measured and still recorded; they are a rasterisation fact, not a place to teleport to. The two fallbacks that pulled an inside gate's places back to that anchor when they fell outside the boxes are gone with it. (3) Both places are checked against walkway_path(), the shell's own geometry, and survey() raises if either is not a column cmd_build will lay walkway on. cmd_report gained the same three checks (on the walkway, arrival y == floor, exit box y == floor..floor+1), and its inside-sited boxes check now accepts a place that is on the gate's own walkway, because at G5 demanding the arrival inside the 8-grid boxes was demanding it off the gatehouse. No block moved: the shells are driven by block, outward and ground_y, none of which changed, and `walkable` reports the same 11/11/11/11/9/8/8 standable columns as B12's own fixed_measured.",
       "fixed_measured": "re-measured off the EMITTED gatehouse_*.mcfunction text (voxelised in command order, standable columns at the walkway's own level taken from the knock box's y) for all seven gates, before and after. Before: z1 floor y88 arrive y88 exit y88 OK; z2 y112/112/112 OK; z2/victory_road_descent floor y87 with arrive AND exit at y88 (1 too high); z2/rim_post_descent y146/146/146 OK; z2/wilds_slip floor y95 with arrive y93 (2 low) and exit y97 (2 high); z4 y87/87/87 OK; z5 floor y85 with arrive (3587, 2680) y86 and exit (3589, 2680) y86, NEITHER of them a standable column of a walkway that runs (3571, 2680) to (3579, 2680). 3 of 7 gates faulty, which reproduces this record's own numbers exactly. After: all seven have both places on a standable walkway column at the walkway's own floor level -- z1 y88, z2 y112, z2/victory_road_descent y87, z2/rim_post_descent y146, z2/wilds_slip y95, z4 y87, z5 y85 with arrive (3576, 2680) and exit (3578, 2680), both inside the walkway. 0 of 7 faulty. Only three records moved: z2/victory_road_descent's arrive 88 -> 87 and exit 88,89 -> 87,88; z2/wilds_slip's arrive 93 -> 95 and exit 97,98 -> 95,96; z5's arrive (3587.5, 86) -> (3576.5, 85) and exit (3589, 86) -> (3578, 85). z1, z2, z2/rim_post_descent and z4 kept every coordinate they had. `python tools/rift_zones.py walkable` still reports 7 of 7 walkable end to end with the barrier the only break, exit 0, so B12 did not regress. NOT VERIFIED IN GAME: this is read off the emitted commands and the heightmap, not observed on a server.",
       "tests_not_dropped": "tests/test_rift_zones.py carries this defect as three STRICT xfails in its own FOUND_HERE dict, keyed (gate, 'places') and NOT keyed on this record, so adding `fixed` here does not drop them: its recorded_break() reads only measured_defects[gatehouse_walkway_is_not_continuous]. After the fix they XPASS and a strict XPASS is a failure, so `python -m pytest tests/test_rift_zones.py` reports 5 failed, 67 passed: the three XPASS(strict) entries, plus test_every_gates_places_stand_one_block_above_the_heightmap[z2_victory_road_descent] and [z2_wilds_slip], whose premise -- every place is one block above the heightmap at its OWN column -- is exactly what this fix had to stop being true for the arrival and the exit box on a sloping walkway (ground y87 at (3741, 5083) against a floor of y87; ground y92 at (4203, 4301) and y96 at (4205, 4301) against a floor of y95). The guard's own ground and the turn-back still satisfy it. The implementer did not edit tests/ (CLAUDE.md principle 16); whoever grades this decides whether those three marks retire and how that test's property should now read."
+    },
+    {
+      "id": "held_zone_checks_shut_the_league",
+      "found": "2026-10-02, while readying R9Z for the apply (minecraft-systems-dev).",
+      "what": "tools/reapply.py held z4's and z5's walls and gatehouses out of R9Z, but `build` still wrote z4_zone, z5_zone and their knock and exit advancements into cobblers_rift_zones, and `install` copies the whole pack into the world. A zone check acts on its own: every survival player inside z5's 14 boxes without cob_pass_z5 is teleported out, and nothing can set cob_pass_z5 (no rift_crisis_resolved setter) or cob_pass_z4 (no dialogue reads caught_count). So installing the pack shut the League's precinct to every survival player, walls or no walls; and with no gatehouse built, z5's exit box (open ground in front of the League) teleported anyone who stepped on it.",
+      "fixed": "2026-10-02: `build` emits no advancement for a zone tools/rift_zones.py held_zones() names (zones.<id>.needs_progression / needs_dialogue). Its functions are still emitted, so dialogue has a grant to call, and tools/reapply.py held_functions() holds them as deliberately unreferenced. `build` also now empties the pack directory before writing; its old clean-up loop was a no-op, so a file the data no longer produced stayed in build/ and was installed.",
+      "fixed_measured": "build/datapacks/cobblers_rift_zones after the fix: 12 advancements (z1 zone/knock/exit, z2 zone and knock/exit for its four gates), none for z4 or z5; before, 18.",
+      "consequence_for_staging": "if staging-2026-10-01's world had this pack installed, its League precinct turns back survival players NOW; `install` replaces the pack and is the fix. Not checked on the server."
+    },
+    {
+      "id": "gate_boxes_are_crossed_not_stood_in",
+      "found": "2026-10-02, while readying R9Z for the apply.",
+      "what": "The knock box covered the two walkway columns outside the guard and not the guard's own column; the exit box stood 5 in, between the arrival (3 in) and the inner mouth. A minecraft:location advancement is tested about once a second, a walking player crosses one column in about a quarter of that, and neither the armour stand nor a Cobblemon NPC stops a player, so: a player walking up came to rest against the barrier in the guard's own column, outside the knock box, and at G1 and G4 (zones beginning at the guard's feet) was turned back by the zone check, 149 blocks away at G1, before the guard had answered; a passed player walking in from the arrival crossed the exit box and was thrown back out on roughly one walk in four; a player walking out came to rest at 2 in against the barrier, past the exit box, and nothing happened.",
+      "fixed": "2026-10-02, survey(): the knock box is the walkway from its outer mouth to the guard's own column inclusive, and the exit box the walkway column directly behind the barrier, taken from walkway_path() (gatehouse.rest_why). `walkway_in` keeps the walkway's inner end at 6 in. cmd_report now REQUIRES the knock box to cover the guard's block; it used to forbid it, with no reason recorded.",
+      "not_verified": "the once-a-second cadence is relayed from tools/gulch_mine.py and docs/mechanics/GYM_INTERIORS.md, not measured here; nothing here has run in Minecraft."
+    },
+    {
+      "id": "gatehouse_mouths_do_not_meet_the_ground",
+      "found": "2026-10-02, walking the emitted functions over the canonical heightmap (tests/test_rift_zones_apply.py).",
+      "what": "The walkway is laid flat at the guard's feet and its mouths were left to the terrain. At the Victory Road descent post (3745, 5084) and at G5 (3580, 2680) the inner mouth's ground is one block above the walkway; a one-block step cannot be jumped from under a roof two blocks up, so a passed player teleported to the arrival could not walk out into the zone. At the wilds slip the outer mouth (4197, 4300) is five blocks above, so nobody could reach its knock box, and the inner mouth is two above with a six-deep one-column crack behind it. And on staging, where R9Z ran on 2026-10-01 with the pre-B12 shell, the rim post's inner mouth (3881, 3819) is a column of that shell's obsidian, y145-147, which nothing the fixed shell writes would clear.",
+      "fixed": "2026-10-02: each gate record carries `approach` (trace, from tools/ground.py): straight on from each mouth, one block up or down per column, cut or bridged, until the ground is within one block; the mouth column itself always laid. `build` writes each column's floor in the shell's block and three blocks of air over it, BEFORE the shell; `report` fails if an approach column lands on the walkway or its walls. The guards' placeholders moved out of the gatehouse functions into rift_zones/guards (force-load, 40 ticks, summon tagged _new, 100 ticks on kill every other guard stand on the block), which R9Z runs after the shells, so a re-run leaves one per gate (the descent post's block held G2's old stand under another tag) and none is placed for a held zone.",
+      "fixed_measured": "walked over the heightmap with tests/test_rift_zones_apply.py's model (one block up with headroom, up to three down): all five gatehouses R9Z runs (z1, and z2's guard and three posts), with the throat wall up, reach their knock box from outside and back, and their arrival reaches the zone and the zone their exit box. Laid over the 2026-10-01 pack rebuilt from 92da469 (scratch, not a test): the same five pass; before the mouth was always laid, the rim post failed on the stale column.",
+      "approach_counts": "z1, z2, z2/rim_post_descent, z4: mouth columns only. z2/victory_road_descent and z5: the inner mouth cut 1. z2/wilds_slip: outer 3 columns cut (95, 96, 97), inner 4 (95 cut, 94 bridged over the crack from y91, 95, 96). The wilds slip is broken ground and its gatehouse reads it badly; re-siting it is the owner's call, not a fault this fix leaves."
+    },
+    {
+      "id": "held_walls_do_not_meet_their_gatehouses",
+      "found": "2026-10-02, walking every emitted function, held ones included, over the heightmap.",
+      "what": "The two walls R9Z holds would not work as gates if released. behind_league (closes z4) runs 4-5 blocks OUTSIDE G4's outer mouth, across its approach, so G4's gatehouse stands wholly behind its own wall and its knock box cannot be reached from z5. league_gate (closes z5) runs ALONG G5's walkway, east-west like it, through the guard's block and down both flanks, so the walkway is embedded lengthwise in the wall and its inner mouth opens onto more wall: a passed player cannot walk from the arrival into the precinct, nor a player inside reach the exit. Each gatehouse alone, without its wall, walks.",
+      "fixed": null,
+      "why_not_fixed": "both zones are held (z4 needs Codex's caught_count dialogue, z5 the rift_crisis_resolved setter), so neither wall is installed and nothing in the world is wrong today. Fixing it means moving a guard or re-cutting a wall, a siting decision; it must be done before either zone's needs_* field is removed. tests/test_rift_zones_apply.py carries it as a strict xfail keyed on this record."
     }
   ],
   "interior": {
