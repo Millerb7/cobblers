@@ -40,11 +40,16 @@ def _yaw_diff(a, b):
 
 
 def _num(reply):
-    tail = reply.rsplit(":", 1)[-1].strip().rstrip("fdb")
-    try:
-        return float(tail)
-    except ValueError:
-        return None
+    """The number a reply ends with. Most replies put it after a colon ("... entity data: 315.0f"), but `attribute
+    ... get` does not ("Attribute Speed for entity Trail Novice is 0.0"), and reading only after the colon turned
+    every pinned trainer into "not pinned" on this audit's first run against a world (2026-10-02)."""
+    words = reply.split()
+    for tail in (reply.rsplit(":", 1)[-1], words[-1] if words else ""):
+        try:
+            return float(tail.strip().rstrip("fdb"))
+        except ValueError:
+            continue
+    return None
 
 
 def _hold(rc, x, y, z):
