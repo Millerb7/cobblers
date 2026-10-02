@@ -17721,6 +17721,19 @@
       "eligibility_reason": "base stage",
       "biomes": [],
       "spawnable_position": "surface"
+    },
+    {
+      "id": "habitat.ursaluna_den_outskirts.teddiursa",
+      "species": "teddiursa",
+      "bucket": "common",
+      "level": "24-29",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "ursaluna_den_outskirts",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
     }
   ],
   "subregions": [
@@ -38560,6 +38573,36 @@
         }
       ],
       "placement_status": "pending_or_authored_world_asset"
+    },
+    {
+      "id": "ursaluna_den_outskirts",
+      "display_name": "Ursaluna den outskirts",
+      "intended_location": "the slope in front of the Ursaluna's den west of Highwire (data/ursaluna_cave.json): one natural Habitat Block, ursaluna_den_outskirts_ward in data/habitat_blocks.json, in the ground at (1514, 158, 1424), 14 blocks out from the mouth, range 20",
+      "mechanism": "habitat_block",
+      "replace_spawns": true,
+      "level_band": {
+        "minimum": 24,
+        "maximum": 29
+      },
+      "level_band_why": "inside the_tri_peaks band (24-35), the sub-region the den is in, and below level 30, where Teddiursa evolves into Ursaring (Cobblemon 1.8.0 species data), so no wild Teddiursa here is older than its own evolution",
+      "entries": [
+        {
+          "species": "Teddiursa",
+          "pokemon": "teddiursa",
+          "types": [
+            "normal"
+          ],
+          "family": "teddiursa",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "24-29",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json ursaluna_den_outskirts_ward, status planned"
     }
   ],
   "route_species_selection_note": "The species each critical route's pool may use: at most 20 per route (the 10-20 authored choices of the spawn philosophy). Recorded 2026-09-16 from the 2026-09-16 compilation, whose selection rule was not recorded; tools/compile_spawns.py reads this list and does not choose. A species a rerouted corridor newly reaches is excluded until it is added here.",

@@ -9393,6 +9393,83 @@
           "next": "repeat"
         }
       ]
+    },
+    {
+      "id": "dlg_ursaluna_den_watcher",
+      "quest_id": "ambient_ursaluna_den",
+      "npc_id": "npc_ursaluna_den_watcher",
+      "source": "data/ursaluna_cave.json; docs: the owner's request of 2026-10-02 (data/ursaluna_cave.json request)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.ambient_ursaluna_den.watcher_cursor",
+        "initial_node": "greeting",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "greeting",
+          "kind": "line",
+          "speaker": "hollis",
+          "text": "Easy. Voices carry in there, and she's a light sleeper for something that size.",
+          "next": "who"
+        },
+        {
+          "id": "who",
+          "kind": "line",
+          "speaker": "hollis",
+          "text": "Ursaluna. Came over the ridge two winters back, dug herself in, and hasn't left. Highwire's been very polite about it.",
+          "next": "size"
+        },
+        {
+          "id": "size",
+          "kind": "line",
+          "speaker": "hollis",
+          "text": "No, your eyes are fine. She's bigger than the books say. Whatever she found to eat up here, it agreed with her.",
+          "next": "peat"
+        },
+        {
+          "id": "peat",
+          "kind": "line",
+          "speaker": "hollis",
+          "text": "Old folk say an Ursaring fed peat under a full moon wakes up as one of those. I've handled a lot of peat. Nobody's woken up as anything.",
+          "next": "cubs"
+        },
+        {
+          "id": "cubs",
+          "kind": "line",
+          "speaker": "hollis",
+          "text": "The little ones on the slope are Teddiursa. Hers, or they'd like to think so. She won't stir if you catch one. I'd ask first, though.",
+          "next": "curtain"
+        },
+        {
+          "id": "curtain",
+          "kind": "line",
+          "speaker": "hollis",
+          "text": "Go and look. Stay this side of where the air goes stiff. That's not me. That's her.",
+          "next": "repeat"
+        },
+        {
+          "id": "repeat",
+          "kind": "line",
+          "speaker": "hollis",
+          "text": "She sleeps, I watch, Highwire gets its quiet. Mind the air in there.",
+          "next": "repeat"
+        }
+      ],
+      "speakers": {
+        "hollis": "Hollis"
+      }
     }
   ]
 }

@@ -7025,6 +7025,21 @@
       },
       "status": "placed",
       "why": "A nest in a themed sapling (tools/themed_saplings.py; SAPLING_BIRDS.md plan v2). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_desert, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "ursaluna_den_outskirts_ward",
+      "place": "the Ursaluna's den west of Highwire, the slope in front of the mouth (data/ursaluna_cave.json)",
+      "pool": "cobblers:ursaluna_den_outskirts",
+      "style": "natural",
+      "replace_spawns": true,
+      "range_of_influence": 20,
+      "position": {
+        "x": 1514,
+        "y": 158,
+        "z": 1424
+      },
+      "status": "planned",
+      "why": "Teddiursa on the den's outskirts (the owner, 2026-10-02). Set in the ground's own top block on the cave's axis 14 blocks out from the mouth (tools/ground.py: y158), so its range of 20 covers the slope a player climbs to the opening and the first few blocks of the passage, and stops well short of the hall and the den. The nearest other Habitat Block is 360 blocks away (the Mt Vessu sapling, activated), so nothing overlaps."
     }
   ]
 }

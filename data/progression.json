@@ -2091,6 +2091,23 @@
       "initial": "hub",
       "allowed_values": "node ids from dlg_frostpeak_camp_ostrow",
       "why": "the dialogue cursor of Bram Ostrow at the Frostpeak research camp (data/frostpeak_camp.json, tools/frostpeak_camp.py). Talk only: the conversation always opens at its hub, sets nothing else and gates nothing."
+    },
+    {
+      "id": "quest.ambient_ursaluna_den.watcher_cursor",
+      "quest_id": "ambient_ursaluna_den",
+      "field": "watcher_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "greeting",
+      "allowed_values": [
+        "greeting",
+        "who",
+        "size",
+        "peat",
+        "cubs",
+        "curtain",
+        "repeat"
+      ]
     }
   ],
   "gym_markers": {
