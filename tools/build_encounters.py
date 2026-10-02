@@ -514,7 +514,7 @@ def generate(design, spawns, regions, routes, dex, dolls):
             if any(parse_family(f, rules, pid)[1] in ("rare", "find") for f in (zone.get("land") or []) + (zone.get("water") or [])):
                 problems.append("%s: its zone %s has a rare family; the prize must be the only one" % (pid, p["core_of"]))
             t["land"], t["water"] = zone.get("land") or [], zone.get("water") or []
-            extra.append(([p["prize"], "rare", 2], "water" if any(p["prize"] == f[0] for f in t["water"]) else "land", "prize"))
+            extra.append(([p["prize"], "find", 2], "water" if any(p["prize"] == f[0] for f in t["water"]) else "land", "prize"))
             if not dex.has(p["prize"]):
                 problems.append("%s: prize %s is not a species in the Cobblemon jar" % (pid, p["prize"]))
                 continue

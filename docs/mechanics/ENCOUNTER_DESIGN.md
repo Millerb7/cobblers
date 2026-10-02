@@ -151,7 +151,7 @@ Drowned Gallery water, the Slagworks fire, the Bloom spores, the Raw Tear psychi
 steel), and a small cave staple shared by the themed zones (Crobat, Steelix, Golem) that is never more than a third
 of one. A zone has no anchor: three or four strong families at even weight, so no one species dominates. The owner's named misfits leave it: **Excadrill, Quagsire, Whiscash, Boldore and Graveler** belong to tiers 3-5
 and now live there. The five prizes (Milotic, Garchomp, Tangrowth, Dragapult, Metagross) stay where the owner flew
-them, the only rare-bucket species in their core tiles. Levels are 54-60, all under the Victory Road cap of 60: the
+them, the only rare-bucket species in their core tiles, at the top of the band like a find (57-60). Levels are 54-60, all under the Victory Road cap of 60: the
 old 58-64 made a third of the cave's spawns uncatchable.
 
 ## 8. Targets a test checks (written before the build)
