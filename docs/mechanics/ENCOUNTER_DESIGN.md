@@ -280,7 +280,9 @@ inside the path band: 60% of the glacier-foot fields' cells and 74% of the crate
 heart is the open water); **Marsh creek, the eastern moor and the dunes and plateaus** (no focal point read from
 the data); the **Frostpeak strand** (the shore under Frostpeak, whose heart is the summit); **Fungal south** and the
 **Sunset east**, **Northgate east** and **Long Isle north and south** (one heart an island); the **north-west coast**
-and **Viltri's Path valley** (each already holds two finds); and the **Jungle Isle** (under the sea, decision B15).
+and **Viltri's Path valley** (each already holds two finds); the **foothill woods** and the **south strand** (Routes 3 and 8 run through them, so they are the path's); the
+**Arrow creeks** (left without a heart in this pass, a candidate for the next: its Dondozo find already sits in the
+deep pools); and the **Jungle Isle** (under the sea, decision B15).
 Untouched as section 9 says: the bird nests, the mansion, the marine bands, the waterway, Victory Road's pools.
 
 ### What the tests make of it
@@ -305,8 +307,9 @@ with its area share, its gap to the nearest route and its above-cap share.
 the tables, on the existing rules (the tier's band, maturity rising with the tier, finds exclusive and off the
 corridors): an **uncommon** family on or near the path, a **find** off it, and a heart may hold the final form as a
 presence. Grass on the first three legs (Bulbasaur, Treecko, Snivy, Chikorita, Turtwig), Fire on the Grass gym's leg
-(Tepig, Cyndaquil), Water starters on shores (`neededNearbyBlocks` water, standing on land, so no starter is any
-water table's family).
+(Tepig, Cyndaquil), Water starters on shores (`neededNearbyBlocks` water, standing on land, so no starter placed here is a
+water table's family). Two were already water families before this: Totodile at Marshy Marsh and Piplup at the
+Lower Trough (section 5), and they stay so; those are the only starters in a water table.
 
 | Leg | Family: table (how) |
 |---|---|
