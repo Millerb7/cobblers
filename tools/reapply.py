@@ -1014,15 +1014,49 @@ def held_functions():
     f = ROOT / "data" / "rift_zones.json"
     if not f.is_file():
         return out
-    z = json.loads(f.read_text(encoding="utf-8"))["zones"]
-    shut = {zid: [k for k in ("needs_progression", "needs_dialogue") if zz.get(k)]
-            for zid, zz in z.items() if zz.get("needs_progression") or zz.get("needs_dialogue")}
-    for zid, why in shut.items():
-        out["cobblers:rift_zones/gatehouse_%s" % zid] = "%s cannot grant its pass: %s" % (zid, ", ".join(why))
+    import rift_zones as RZ
+    spec = json.loads(f.read_text(encoding="utf-8"))
+    z = spec["zones"]
+    for zid, why in RZ.held_zones(spec).items():
+        reason = "%s cannot grant its pass: %s" % (zid, ", ".join(why))
+        # every gatehouse of the zone, posts included (gatehouse_<zid>_<post>), and its wall
+        for name, *_ in RZ.gates_of(zid, z[zid]):
+            out["cobblers:rift_zones/gatehouse_%s" % name] = reason
         w = z[zid].get("wall")
         if w:
-            out["cobblers:rift_zones/wall_%s" % w] = "%s cannot grant its pass: %s" % (zid, ", ".join(why))
+            out["cobblers:rift_zones/wall_%s" % w] = reason
+        # 2026-10-02: and the zone's own functions. `build` emits no advancement for a held zone -- its zone
+        # check alone would turn back every player, which for z5 is the League's precinct -- so the zone
+        # check, the knock and the exit are deliberately called by nothing until the zone can grant
+        for fn in RZ.zone_functions(zid, z[zid]):
+            out["cobblers:rift_zones/%s" % fn] = reason
     return out
+
+
+def rift_zone_steps(index, spec):
+    """(run, held): R9Z's build functions out of cobblers_rift_zones' index.txt, split by whether the zone they
+    belong to can grant its pass (tools/rift_zones.py held_zones, from the data). A wall names the zone it
+    closes in zones.<id>.wall; a gatehouse is gatehouse_<zone> or gatehouse_<zone>_<post>."""
+    import rift_zones as RZ
+    shut = set(RZ.held_zones(spec))
+    closes = {"wall_%s" % zz["wall"]: zid for zid, zz in spec["zones"].items() if zz.get("wall")}
+    gate = {}
+    for zid, zz in spec["zones"].items():
+        if str(zz.get("status", "")).startswith("SUPERSEDED") or not zz.get("guard"):
+            continue
+        for name, *_ in RZ.gates_of(zid, zz):
+            gate["gatehouse_%s" % name] = zid
+
+    def zone_of(fn):
+        if fn in gate:
+            return gate[fn]
+        if fn in closes:
+            return closes[fn]
+        raise SystemExit("cobblers_rift_zones index names %s, which is neither a gatehouse nor a wall of any zone "
+                         "in data/rift_zones.json: rebuild the pack" % fn)
+    run = [f for f in index if zone_of(f) not in shut]
+    held = [f for f in index if zone_of(f) in shut]
+    return run, held
 
 
 def steps(with_spawns=False):
@@ -1103,21 +1137,21 @@ def steps(with_spawns=False):
     # So a zone's wall and gatehouses go in only when that zone declares nothing owed, read from the DATA
     # (zones.<id>.needs_progression / needs_dialogue) and not from a list here: when Codex lands either half, the
     # field goes and the wall follows with no switch to remember.
+    # 2026-10-02: and since that day the PACK holds the rest. `build` emits no zone check, knock or exit
+    # advancement for a held zone, because the zone check acts on its own the moment the pack is installed and
+    # would turn every player back from the League's precinct whatever this step withholds. Each gatehouse
+    # also lays its approach (data/rift_zones.json gatehouse.approach_why) and replaces its own placeholder, so
+    # re-running this step over a world it already ran on (staging-2026-10-01) is what repairs it.
+    import rift_zones as RZ
     zspec = json.loads((ROOT / "data" / "rift_zones.json").read_text(encoding="utf-8"))
-    shut = {zid for zid, zz in zspec["zones"].items() if zz.get("needs_progression") or zz.get("needs_dialogue")}
-    # a zone names the cross-wall that closes it in zones.<id>.wall ("throat", "behind_league", ...)
-    closes = {"wall_%s" % zz["wall"]: zid for zid, zz in zspec["zones"].items() if zz.get("wall")}
-    def zone_of(fn):
-        # "gatehouse_z2_rim_post_descent" -> z2; a wall names the zone it closes in the spec
-        for zid in zspec["zones"]:
-            if fn.startswith("gatehouse_%s" % zid):
-                return zid
-        return closes.get(fn)
-    live = [f for f in indexed("cobblers_rift_zones", "rift_zones") if zone_of(f) not in shut]
-    heldb = [f for f in indexed("cobblers_rift_zones", "rift_zones") if zone_of(f) in shut]
+    shut = RZ.held_zones(zspec)
+    live, heldb = rift_zone_steps(indexed("cobblers_rift_zones", "rift_zones"), zspec)
     out.append(("R9Z", "the Rift's zone walls and gatehouse shells for the zones that can be passed (%d of %d; "
                        "held: %s)" % (len(live), len(live) + len(heldb), ", ".join(sorted(shut)) or "none"),
-                [("fn", "cobblers:rift_zones/%s" % f) for f in live]))
+                [("fn", "cobblers:rift_zones/%s" % f) for f in live]
+                # the guards' placeholders, one per gate it built, after the shells: force-load, 40 ticks for the
+                # stands already saved there, summon, 100 ticks on keep one per block (the Cutters' pattern)
+                + [("fn", "cobblers:rift_zones/guards"), ("wait", 8)]))
     # the evolution-stone faces (tools/mines.py, data/mines.json; STONE_ECONOMY.md 5.5 names the step): after the towns
     # (R8) and the donors (R9), whose cells they keep clear, and the Displaced City cavern (R2), whose shell two of the
     # sites cut into; before the Habitat Blocks (R9E) and the lights (R16). One build function a site, named from the
