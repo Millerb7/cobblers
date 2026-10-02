@@ -53,8 +53,12 @@ def can_grant(z):
     p = z["pass"]
     if p["kind"] not in ("badges", "flag") or not p.get("advancements"):
         return False
-    declared = {f["id"] for f in PROGRESSION["flags"]}
-    return all(a.startswith("cobblers:flag/") and a[len("cobblers:flag/"):] in declared for a in p["advancements"])
+    # a flag the server can grant is declared AND, where its setter names who invokes it (`set_by.invoked_by`, a
+    # quest-transition setter), something does: rift_crisis_resolved is declared with its transition since 2026-10-02
+    # but nothing invokes it yet, which tools/rift_zones.py's report already counts as owed (the same rule here)
+    grantable = {f["id"] for f in PROGRESSION["flags"]
+                 if not ("invoked_by" in (f.get("set_by") or {}) and not f["set_by"]["invoked_by"])}
+    return all(a.startswith("cobblers:flag/") and a[len("cobblers:flag/"):] in grantable for a in p["advancements"])
 
 
 def _quiet_report(_a, quiet=False):

@@ -982,11 +982,13 @@ def ember_box(doc):
     which writes no structure reference, so a location predicate on the structure cannot fire there: the survey is a
     position box, as storm_log is (the trigger box of tools/rewards_pack.py)."""
     es = doc["economy"]["ember_survey"]
-    site = next(s for s in json.loads((ROOT / "data" / "adopted_legendary_sites.json").read_text(encoding="utf-8"))["sites"]
-                if s["id"] == es["site"])
-    (cx, cz), y = site["placement"]["corner"], site["placement"]["y"]
-    sx, sy, sz = site["size"]
-    if site["placement"].get("rotation", "none") not in ("none", None):
+    # through tools/adopted_sites.py, as storm_box: the tower is scheduled (data/placements.json
+    # legendary_moltres_tower), so its position lives there and the record's placement block is gone
+    import adopted_sites
+    w = adopted_sites.where(adopted_sites.site(es["site"]))
+    (cx, cz), y = w["corner"], w["y"]
+    sx, sy, sz = w["size"]
+    if w.get("rotation", "none") not in ("none", None):
         raise StationError("ember_survey: %s is rotated; the box assumes rotation none" % es["site"])
     return (cx, y, cz, cx + sx - 1, y + sy - 1, cz + sz - 1)
 
