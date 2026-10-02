@@ -1,307 +1,527 @@
 {
-  "schema": "cobblers.adopted_legendary_sites/1",
-  "status": "authored 2026-10-01. THREE sites measured off the canonical heightmap, NONE pasted and NONE scheduled: no record of these exists in data/placements.json and no tool emits them. Each site is a measured coordinate plus the exact raw `/place template` form, so a single command in a disposable world is all that is needed to find out whether the altar does anything (EXP-LEG-ALTAR below). A fourth candidate, Mew's own landmark site, had to be re-sited: the Jungle Isle is under the sea.",
-  "why_a_sibling_of_legendaries_json": [
-    "data/legendaries.json is OUR parametric chamber system, not a register of sites. tools/legendaries.py `load()` rejects any record whose `kind` is outside (lake_grotto, sealed_chamber, sapling_wake) and any record without a non-empty `gate.flags`, and `geometry()` derives every box of a sited record from `mouth`/`portal`, `approach` and `chamber`. A pasted third-party template has none of those: no bore, no shell margin, no carve, and - the load-bearing one - NO GATE WE MAY AUTHOR, because what triggers a `lumymon:*_altar` has never been read (LumyMon is closed source).",
-    "Putting these three in that file would therefore mean mutating KINDS and the gate rule of a generator that emits six built chambers, to carry records it must never emit. That is the opposite of fail-closed, so they live here.",
-    "No id and no species in this file is authored in data/legendaries.json: that file owns mesprit, azelf, uxie, regirock, regice, registeel, regigigas, groudon, lugia and celebi_wake; this one owns mew, calyrex (with spectrier) and zapdos. Checked 2026-10-01 - there is no two-author id and no two-author legendary. The three lakes were REFUSED for exactly that reason (see refused)."
+ "schema": "cobblers.adopted_legendary_sites/1",
+ "status": "authored 2026-10-01, extended the same day. FOUR sites measured off the canonical heightmap, NONE pasted and NONE scheduled: no record of these exists in data/placements.json and no tool emits them. Each site is a measured coordinate plus the exact raw `/place template` form, so a single command in a disposable world is the whole of the work. Articuno joined on 2026-10-01 by re-measuring a refusal rather than by a new decision: see its `unblocks`. The other six refused groups stand, and the largest of them - the eight Nether and End structures - is a refusal to make things WORSE, not a gap waiting to be filled.",
+ "why_a_sibling_of_legendaries_json": [
+  "data/legendaries.json is OUR parametric chamber system, not a register of sites. tools/legendaries.py `load()` rejects any record whose `kind` is outside (lake_grotto, sealed_chamber, sapling_wake) and any record without a non-empty `gate.flags`, and `geometry()` derives every box of a sited record from `mouth`/`portal`, `approach` and `chamber`. A pasted third-party template has none of those: no bore, no shell margin, no carve, and - the load-bearing one - NO GATE WE MAY AUTHOR, because what triggers a `lumymon:*_altar` has never been read (LumyMon is closed source).",
+  "Putting these three in that file would therefore mean mutating KINDS and the gate rule of a generator that emits six built chambers, to carry records it must never emit. That is the opposite of fail-closed, so they live here.",
+  "No id and no species in this file is authored in data/legendaries.json: that file owns mesprit, azelf, uxie, regirock, regice, registeel, regigigas, groudon, lugia and celebi_wake; this one owns mew, calyrex (with spectrier) and zapdos. Checked 2026-10-01 - there is no two-author id and no two-author legendary. The three lakes were REFUSED for exactly that reason (see refused)."
+ ],
+ "provenance": {
+  "no_nbt_committed": "Nothing in this file is a file. Every template is referenced BY RESOURCE ID and resolved by the installed pack at `/place` time, the same way data/placements.json `kind: donor` records do (`source.licence`: 'placed by resource id from the installed pack or the server jar; never copied').",
+  "mew_and_crown_cemetery_and_zapdos": "COBBLEVERSE-DP-v31.zip, which is gitignored under a no-redistribution licence (CLAUDE.md 'Baseline and target'). The zip is never opened, copied or committed by this file or by anything it asks for.",
+  "ids_read_from": "data/structures.json (the per-structure classification record: id, source, footprint, biome, carries, depends_on_it). No .nbt was read, so no claim here describes the inside of a template."
+ },
+ "ground_rule": "Every y, every min/max/median/mode and every cut/fill count below was measured with tools/ground.py (the canonical heightmap, rounded) over the exact footprint. No world was read. Probe check: ground(4528,4416) = 122.",
+ "ceiling": {
+  "max_y": 310,
+  "source": "data/world.json vertical.max_y, and measured_ceiling_y 310",
+  "verdict": "all three clear it by 144 blocks or more; the tallest top is y139 (Zapdos)"
+ },
+ "what_never_travels": {
+  "verified": "EXP-013 on a disposable world: `/place structure`, `/place jigsaw` and `/place template` all leave every chunk with empty `starts` and `References`, and `/locate`, `location_check` and the gym map ignore the build (docs/world-building/STRUCTURE_INVENTORY.md:271-274).",
+  "so_for_every_site_here": [
+   "a LumyMon radar will not find it (closed source; 'probably do not find hand-placed builds', STRUCTURE_INVENTORY.md:267 - not verified either way)",
+   "`/locate structure` will not find it",
+   "an exploration map will not point at it",
+   "any `location_check` or Cobblemon `structures` spawn condition keyed on the template is dead inside it",
+   "the mod's own terrain validator, spacing and separation do not apply - which is WHY raw placement is the method: the REGISTERED placement of legendarymonuments:firescourge_shrine resolved and then rejected its site in that validator, while the raw template placement passed (docs/world-building/STRUCTURE_WORKFLOW.md:95-98)"
   ],
-  "provenance": {
-    "no_nbt_committed": "Nothing in this file is a file. Every template is referenced BY RESOURCE ID and resolved by the installed pack at `/place` time, the same way data/placements.json `kind: donor` records do (`source.licence`: 'placed by resource id from the installed pack or the server jar; never copied').",
-    "mew_and_crown_cemetery_and_zapdos": "COBBLEVERSE-DP-v31.zip, which is gitignored under a no-redistribution licence (CLAUDE.md 'Baseline and target'). The zip is never opened, copied or committed by this file or by anything it asks for.",
-    "ids_read_from": "data/structures.json (the per-structure classification record: id, source, footprint, biome, carries, depends_on_it). No .nbt was read, so no claim here describes the inside of a template."
-  },
-  "ground_rule": "Every y, every min/max/median/mode and every cut/fill count below was measured with tools/ground.py (the canonical heightmap, rounded) over the exact footprint. No world was read. Probe check: ground(4528,4416) = 122.",
-  "ceiling": {
-    "max_y": 310,
-    "source": "data/world.json vertical.max_y, and measured_ceiling_y 310",
-    "verdict": "all three clear it by 144 blocks or more; the tallest top is y139 (Zapdos)"
-  },
-  "what_never_travels": {
-    "verified": "EXP-013 on a disposable world: `/place structure`, `/place jigsaw` and `/place template` all leave every chunk with empty `starts` and `References`, and `/locate`, `location_check` and the gym map ignore the build (docs/world-building/STRUCTURE_INVENTORY.md:271-274).",
-    "so_for_every_site_here": [
-      "a LumyMon radar will not find it (closed source; 'probably do not find hand-placed builds', STRUCTURE_INVENTORY.md:267 - not verified either way)",
-      "`/locate structure` will not find it",
-      "an exploration map will not point at it",
-      "any `location_check` or Cobblemon `structures` spawn condition keyed on the template is dead inside it",
-      "the mod's own terrain validator, spacing and separation do not apply - which is WHY raw placement is the method: the REGISTERED placement of legendarymonuments:firescourge_shrine resolved and then rejected its site in that validator, while the raw template placement passed (docs/world-building/STRUCTURE_WORKFLOW.md:95-98)"
+  "finding_them_instead": "decided already, not re-opened here: no replacement finder item; navigation is waystones plus Xaero markers (docs/world-building/STRUCTURE_DATA_FALLOUT.md:107-110). Each site below records what makes it findable by eye."
+ },
+ "placement_method": {
+  "command": "`/place template <id> <x> <y> <z> [rotation] [mirror]`",
+  "proven": "VERIFIED on THIS runtime (Minecraft 1.21.1, Fabric 0.19.5, Cobblemon 1.8.0, 2026-09-09): legendarymonuments:firescourge_shrine PASSED via raw `/place template`, with rotation 90 and mirror front_back both PASS (docs/world-building/STRUCTURE_WORKFLOW.md:81,90). 'Functional elements UNKNOWN' in the same record.",
+  "anchor": "`/place template` takes the structure's MINIMUM corner, so every `corner` below is the command's x/z and every `y` is the bottom layer. anchor_mode is therefore always `corner` and y_mode `absolute`.",
+  "rotation_is_none_on_purpose": "No .nbt has been read, so which way a template's door faces is UNKNOWN and a rotation chosen to 'face the approach' would be invented. Each site records `rotation: none` as the command form AND the measured ground for the transposed footprint, so 90 or 270 remains free at no cost once someone has looked at the paste. Mirror stays `none`.",
+  "not_in_placements_json": "Deliberate, and it is the id-authorship rule: until a paste is approved these three ids have ONE author, this file. Whoever schedules one copies template, cell, position (x, y, z), size, rotation, mirror, anchor_mode `corner`, y_mode `absolute` and a `source.licence` line into a data/placements.json `kind: donor` record, and then DELETES the `placement` block here, leaving the measurement and the reasoning. Two files carrying a position for the same site is the invisible collision data/id_authorship.json exists to catch."
+ },
+ "a_dead_altar_must_not_block": {
+  "rule": "Nothing in the campaign may require any of these three altars to work. Every site below is authored as a place to find, with its reward in what is already in the template (brushable gravel, chests, the silhouette) or in nothing at all. No quest, no progression flag and no gate in data/progression.json refers to them, and none may until an experiment shows the altar responds.",
+  "what_is_actually_known": [
+   "VERIFIED: Mew's temple runs command blocks gated on Cobbleverse's `defeat_champion_blue` advancement, which our progression NEVER GRANTS (STRUCTURE_INVENTORY.md:128, STRUCTURE_DECISIONS.md:222). So Mew's chain is inert for us by construction, not by accident.",
+   "VERIFIED: the Necrozma towers (not adopted) run `pokespawnat ... level=80` from command blocks, so command blocks in these templates do carry working commands.",
+   "ASSUMED, no source: that a LumyMon altar 'consumes an activation item, checks a summon anchor nearby and spawns the Pokemon at level 70-90' (STRUCTURE_DECISIONS.md:216-217, uncited). The pack's own unversioned wiki corroborates the SHAPE item by item but does not mention Articuno, Zapdos, Moltres or Calyrex at all.",
+   "UNKNOWN: whether an altar needs state written at WORLDGEN time rather than at placement. If it does, a pasted altar is scenery for ever."
+  ],
+  "and_the_level_problem": "If an altar ever does summon, data/level_cap.json applies: a Pokemon strictly above the thrower's RCT level cap breaks free from every ball, a Master Ball included. The wiki's levels for these (70-90) are far above the 65 upper bound at champion, so a working altar would most likely produce an UNCATCHABLE legendary. That is a second reason nothing may depend on one, and a question for trainer-balance-designer, not for this file."
+ },
+ "sites": [
+  {
+   "id": "adopted_mew_temple",
+   "template": "cobbleverse:mythical/mew",
+   "legendary": "Mew",
+   "rank": 1,
+   "status": "sited, not placed",
+   "source_archive": "COBBLEVERSE-DP-v31.zip",
+   "size": [
+    37,
+    25,
+    39
+   ],
+   "size_source": "data/structures.json footprint \"37x25x39\"",
+   "template_biome": "minecraft:jungle",
+   "site": {
+    "region": "long_isle_south",
+    "containing_polygons": [
+     "long_isle",
+     "long_isle_south"
     ],
-    "finding_them_instead": "decided already, not re-opened here: no replacement finder item; navigation is waystones plus Xaero markers (docs/world-building/STRUCTURE_DATA_FALLOUT.md:107-110). Each site below records what makes it findable by eye."
-  },
-  "placement_method": {
-    "command": "`/place template <id> <x> <y> <z> [rotation] [mirror]`",
-    "proven": "VERIFIED on THIS runtime (Minecraft 1.21.1, Fabric 0.19.5, Cobblemon 1.8.0, 2026-09-09): legendarymonuments:firescourge_shrine PASSED via raw `/place template`, with rotation 90 and mirror front_back both PASS (docs/world-building/STRUCTURE_WORKFLOW.md:81,90). 'Functional elements UNKNOWN' in the same record.",
-    "anchor": "`/place template` takes the structure's MINIMUM corner, so every `corner` below is the command's x/z and every `y` is the bottom layer. anchor_mode is therefore always `corner` and y_mode `absolute`.",
-    "rotation_is_none_on_purpose": "No .nbt has been read, so which way a template's door faces is UNKNOWN and a rotation chosen to 'face the approach' would be invented. Each site records `rotation: none` as the command form AND the measured ground for the transposed footprint, so 90 or 270 remains free at no cost once someone has looked at the paste. Mirror stays `none`.",
-    "not_in_placements_json": "Deliberate, and it is the id-authorship rule: until a paste is approved these three ids have ONE author, this file. Whoever schedules one copies template, cell, position (x, y, z), size, rotation, mirror, anchor_mode `corner`, y_mode `absolute` and a `source.licence` line into a data/placements.json `kind: donor` record, and then DELETES the `placement` block here, leaving the measurement and the reasoning. Two files carrying a position for the same site is the invisible collision data/id_authorship.json exists to catch."
-  },
-  "a_dead_altar_must_not_block": {
-    "rule": "Nothing in the campaign may require any of these three altars to work. Every site below is authored as a place to find, with its reward in what is already in the template (brushable gravel, chests, the silhouette) or in nothing at all. No quest, no progression flag and no gate in data/progression.json refers to them, and none may until an experiment shows the altar responds.",
-    "what_is_actually_known": [
-      "VERIFIED: Mew's temple runs command blocks gated on Cobbleverse's `defeat_champion_blue` advancement, which our progression NEVER GRANTS (STRUCTURE_INVENTORY.md:128, STRUCTURE_DECISIONS.md:222). So Mew's chain is inert for us by construction, not by accident.",
-      "VERIFIED: the Necrozma towers (not adopted) run `pokespawnat ... level=80` from command blocks, so command blocks in these templates do carry working commands.",
-      "ASSUMED, no source: that a LumyMon altar 'consumes an activation item, checks a summon anchor nearby and spawns the Pokemon at level 70-90' (STRUCTURE_DECISIONS.md:216-217, uncited). The pack's own unversioned wiki corroborates the SHAPE item by item but does not mention Articuno, Zapdos, Moltres or Calyrex at all.",
-      "UNKNOWN: whether an altar needs state written at WORLDGEN time rather than at placement. If it does, a pasted altar is scenery for ever."
+    "cell": "G8",
+    "paint": "preset `jungle`, foliage type `emergent_jungle` (data/regions.json subregions, data/foliage.json assign.long_isle_south) - the template's own biome, so this is a match, not an approximation",
+    "why": "the only jungle land left above sea level on the map (see re_sited_from). A dead-flat summit plateau 80 blocks above the sea in the middle of the Long Isle's jungle half: the temple stands on the one shelf a 37x39 footprint fits on with ZERO cut and ZERO fill, and the climb up through emergent jungle is what makes finding it an event now that the boat trip is gone.",
+    "findable_by_eye": "it is not visible from the sea: a plateau top seen only from inside the jungle, 396 blocks from the nearest authored thing. That is the cost of the re-site and it is the honest state - no finder exists (see what_never_travels.finding_them_instead)."
+   },
+   "placement": {
+    "corner": [
+     7604,
+     7082
     ],
-    "and_the_level_problem": "If an altar ever does summon, data/level_cap.json applies: a Pokemon strictly above the thrower's RCT level cap breaks free from every ball, a Master Ball included. The wiki's levels for these (70-90) are far above the 65 upper bound at champion, so a working altar would most likely produce an UNCATCHABLE legendary. That is a second reason nothing may depend on one, and a question for trainer-balance-designer, not for this file."
+    "y": 142,
+    "centre": [
+     7622,
+     7101
+    ],
+    "rotation": "none",
+    "mirror": "none",
+    "anchor_mode": "corner",
+    "y_mode": "absolute",
+    "command": "/place template cobbleverse:mythical/mew 7604 142 7082 none none",
+    "top_y": 166,
+    "ceiling_margin": 144
+   },
+   "ground": {
+    "min": 142,
+    "max": 142,
+    "median": 142,
+    "mode": 142,
+    "columns": 1443,
+    "mode_columns": 1443,
+    "spread": 0,
+    "transposed_39x37": {
+     "min": 142,
+     "max": 143,
+     "note": "rotation 90 or 270 costs 7 columns of cut at y142 - still free"
+    },
+    "measured_by": "tools/ground.py over x7604..7640, z7082..7120"
+   },
+   "displaces": {
+    "cut_blocks": 0,
+    "fill_blocks": 0,
+    "terrain": "none. All 1,443 columns of the footprint are ground y142 exactly, so the paste's bottom layer meets the plateau with no lip and no gap - the only footprint of the three that is perfect.",
+    "foliage": "the emergent jungle the paint grows on that plateau: by data/foliage.json's own density model the footprint (0.14 ha) carries a handful of emergent trees and their understory, and the paste overwrites whatever stands in its 37x39. Not counted per-tree because the paint lands with an export, not from a list.",
+    "built_content": "nothing. Nearest authored record 396 blocks: the jungle elders' habitat blocks (data/habitat_blocks.json elder_long_isle_middle_2*, elder_long_isle_south_3*) and the `sky_far_reach` portal (data/portals.json) at 395."
+   },
+   "re_sited_from": {
+    "research_said": "the Jungle Isle ruins, (5160, 7463), 301 square, y120-134 (docs/research/notes/cobbleverse-legendary-structures.md section 4.1, from docs/world-building/SETTLEMENTS.md:195)",
+    "measured_2026_10_01": "ground at (5160,7463) is y61. Over the 301-square around it: min 55, max 61, median 57, and ZERO of 90,601 columns above sea level y62. Over the whole `jungle_isle` region: 0 of 19,109 sampled columns above y62.",
+    "why": "the water export of 2026-09-29 removed the island (data/water_shape.json jungle_isle_bank; data/ferries.json:862 'the jungle ruins now measure y55-61 against a sea level of y62, so there is no island to charter to'). The research note was written from SETTLEMENTS.md, which still describes the pre-export isle. THE SITE IS UNDER WATER and y120-134 no longer exists anywhere in that region.",
+    "not_the_ruins_re_site": "docs/world-building/LONG_ISLE.md 11.4 leaves the jungle ruins' own move to the Long Isle's jungle half as an OWNER DECISION, not done. This temple does not pre-empt it: it is a separate site 396 blocks from anything, and if the owner does move the ruins here, this coordinate must be re-checked against them before anything is pasted."
+   },
+   "does_not_travel_here": [
+    "the LumyMon Mew radar",
+    "`/locate` and exploration maps",
+    "nothing else: data/structures.json records `depends_on_it.spawn_entries: 0` and `advancements: []` for this template, so NO spawn preset and NO advancement is lost by pasting it"
+   ],
+   "carries_into_the_world": {
+    "from": "data/structures.json `carries`",
+    "blocks": [
+     "lumymon:mew_shrine",
+     "cobblefurnies:statue_ancient",
+     "cobblemon:gilded_chest",
+     "cobblemon:gimmighoul_chest"
+    ],
+    "commands": [
+     "execute",
+     "fill",
+     "tellraw"
+    ],
+    "needs": "enable-command-block=true for the chain to be able to run at all; command blocks 'run only from their own trigger, never on placement' (VERIFIED, EXP-013 C)",
+    "expected_result": "INERT. The chain gates on `defeat_champion_blue`, an advancement our progression never grants. The chests should still roll their loot tables on first open (ASSUMED, vanilla behaviour, untested for this template)."
+   },
+   "gate": null,
+   "gate_why_null": "no gate may be authored: the trigger is unknown and `defeat_champion_blue` is not ours to grant. The site is a place, not an encounter. If EXP-LEG-ALTAR shows the shrine responds, the gate to design is OUR advancement gate (the one in docs/mechanics/LEGENDARIES.md:101-143), never the pack's."
   },
-  "sites": [
+  {
+   "id": "adopted_crown_cemetery",
+   "template": "cobbleverse:crown_cemetery",
+   "legendary": "Calyrex, with Spectrier",
+   "rank": 2,
+   "status": "sited, not placed",
+   "source_archive": "COBBLEVERSE-DP-v31.zip",
+   "size": [
+    45,
+    24,
+    47
+   ],
+   "size_source": "data/structures.json footprint \"45x24x47\"",
+   "template_biome": "minecraft:old_growth_pine_taiga",
+   "site": {
+    "region": "peak_pond_hollow",
+    "containing_polygons": [
+     "northern_downs",
+     "peak_pond_hollow"
+    ],
+    "cell": "B5",
+    "paint": "preset `taiga_dense`, foliage type `old_growth_spruce`, whose declared biome is `minecraft:old_growth_pine_taiga` (data/foliage.json types.old_growth_spruce) - the template's own biome, a match. NOTE data/structures.json `plan_regions_with_a_valid_biome` lists `rim_uplands`, a region id that no longer exists in data/regions.json; the biome match was re-established here from the foliage paint, not from that field.",
+    "why": "a cathedral of giant 2x2 spruce over a dark mossy floor (docs/world-building/FOLIAGE.md:86) is the one cover on the map that suits a cemetery, and the flattest 45x47 in the whole hollow sits 218 blocks off the most-walked forest on the map - near enough that players pass it every badge, far enough that it is found rather than handed over. Its brushable gravel loot makes the discovery itself the reward.",
+    "findable_by_eye": "218 blocks east of the route 4 and route 5 legs through the hollow, through old growth whose core sightline is 212 blocks at eye level (FOLIAGE.md:86) - so it is at the edge of what can be seen from the path, which is the right distance for a thing you glimpse and go to look at."
+   },
+   "placement": {
+    "corner": [
+     4118,
+     1982
+    ],
+    "y": 109,
+    "centre": [
+     4140,
+     2005
+    ],
+    "rotation": "none",
+    "mirror": "none",
+    "anchor_mode": "corner",
+    "y_mode": "absolute",
+    "command": "/place template cobbleverse:crown_cemetery 4118 109 1982 none none",
+    "top_y": 132,
+    "ceiling_margin": 178
+   },
+   "ground": {
+    "min": 109,
+    "max": 110,
+    "median": 109,
+    "mode": 109,
+    "columns": 2115,
+    "mode_columns": 1466,
+    "spread": 1,
+    "transposed_47x45": {
+     "min": 109,
+     "max": 111,
+     "note": "rotation 90 or 270 costs 694 columns of cut at y109 instead of 649 - also usable"
+    },
+    "measured_by": "tools/ground.py over x4118..4162, z1982..2028; the flattest 45x47 window in peak_pond_hollow at least 200 blocks from anything authored"
+   },
+   "displaces": {
+    "cut_blocks": 649,
+    "fill_blocks": 0,
+    "terrain": "649 of 2,115 columns stand one block above y109, so the paste shaves a single layer off a little under a third of the footprint and needs no fill anywhere. The alternative, y110, needs 1,466 blocks of fill and no cut; y109 was chosen because a cut of one layer disappears under the template's own floor while 1,466 blocks of fill is a visible plinth.",
+    "foliage": "about four giant spruce, by the paint's own figure: old_growth_spruce core density is 17 stems/ha (FOLIAGE.md:86) over a 0.21 ha footprint. The clearing the template needs is therefore real but small, and it is the one cost the research named.",
+    "built_content": "nothing. Nearest authored records 218 blocks: route_04_trainer_06 (data/trainers.json), the route_04_surge_to_erika and route_05_erika_to_koga legs (data/routes.json), and a vertex of the glacial_tear landmark outline (data/landmarks.json). The site is inside no landmark extent and no water basin: Peak Pond's own basin is 500 blocks north and its water level is y105, four blocks below this ground.",
+    "our_own_legendary_nearby": "Regice's sealed chamber is the nearest legendary of ours: its portal is (3900, 2050), 244 blocks west-north-west, and its envelope spans x3866..3905 - no overlap, and more than the pack's own 180-block spacing for crown_cemetery. Two legendary sites in one subregion is worth the owner knowing about; they are different legendaries in different idioms (a carved chamber and a pasted cemetery) and nothing in either touches the other."
+   },
+   "does_not_travel_here": [
+    "the LumyMon radar and `/locate`",
+    "AND TWO SPAWN ENTRIES, which the research got wrong. data/structures.json records `depends_on_it.spawn_entries: 2` for this template - `cobblemon:0971_greavard` and `cobblemon:0972_houndstone`, spawning VIA `cobbleverse:crown_cemetery` - so unlike the other two, pasting this one loses a real spawn preset: no Greavard and no Houndstone will spawn at the cemetery, which is precisely what the Gastly mansion lost.",
+    "the replacement, if the owner wants the graveyard dogs: a Cobblemon Habitat Block in data/habitat_blocks.json, which is 1.8's spawn-control block and needs no structure data (the same mechanism already in use elsewhere). NOT authored here - habitat blocks are a different owner's file and a spawn decision, not a placement one."
+   ],
+   "carries_into_the_world": {
+    "from": "data/structures.json `carries`",
+    "blocks": [
+     "lumymon:summon_trigger",
+     "lumymon:calyrex_statue",
+     "lumymon:summon_anchor"
+    ],
+    "signals": [
+     "altar",
+     "archaeology",
+     "loot"
+    ],
+    "loot_tables": [
+     "minecraft:cobblemon/ancient_pokeball",
+     "minecraft:cobblemon/ancient_special_pokeball",
+     "minecraft:cobblemon/pokeball",
+     "minecraft:cobblemon/rare_items",
+     "minecraft:cobblemon/tms",
+     "minecraft:cobblemon/vitamin",
+     "minecraft:cobblemon/x_items"
+    ],
+    "expected_result": "the brushable gravel and its seven loot tables are datapack data and ARE loaded, so they should resolve when brushed (ASSUMED: loot resolving from a pasted block entity is vanilla behaviour and has not been tested for this template). The summon trigger is the unknown, and the reason this site is worth pasting first in the experiment: its reward does not depend on the altar at all."
+   },
+   "gate": null,
+   "gate_why_null": "same as Mew's: the trigger is unreadable. Its class_reason in data/structures.json says 'awakened with a carrot crop grown on site', which is a plausible reading of a closed-source block and is not a source. Nothing is authored on it."
+  },
+  {
+   "id": "adopted_zapdos_tower",
+   "template": "cobbleverse:legendary/zapdos",
+   "legendary": "Zapdos",
+   "rank": 3,
+   "status": "sited, not placed",
+   "source_archive": "COBBLEVERSE-DP-v31.zip",
+   "size": [
+    31,
+    66,
+    29
+   ],
+   "size_source": "data/structures.json footprint \"31x66x29\"",
+   "template_biome": "minecraft:stony_shore",
+   "site": {
+    "region": "north_west_coast",
+    "containing_polygons": [
+     "viltri_woods",
+     "north_west_coast"
+    ],
+    "cell": "C1",
+    "paint": "preset `coast_scrub` (data/regions.json subregions.north_west_coast). NOT a biome match: the template wants `minecraft:stony_shore` and no region on the map is painted that. coast_scrub is the closest cover we have on a windward cliff, and the mismatch is VISUAL ONLY - a raw paste reads no biome. Recorded rather than papered over: the owner may want a small stony patch painted round it at the next export, or may not care.",
+    "why": "66 blocks tall on a cliff 63 blocks from the shoreline, inside the windward band (the Windward Sea is 'sea west of x4096 between z2600 and z5200', data/regions.json windward_deep; this site is z2614-2642, just inside it) and inside the windward skerries box x0..760 z2600..5200, so the sea stacks and skerries the water export placed offshore stand in front of it. The top is y139, 77 above the water: a silhouette seen from the sea long before it is reached, which is the distance cue the LEGENDARY placement rule asks for (STRUCTURE_INVENTORY.md:317).",
+    "findable_by_eye": "this is the one of the three that finds itself: a 66-block tower on an exposed cliff, with nothing authored within 478 blocks to compete with it."
+   },
+   "placement": {
+    "corner": [
+     562,
+     2614
+    ],
+    "y": 74,
+    "centre": [
+     577,
+     2628
+    ],
+    "rotation": "none",
+    "mirror": "none",
+    "anchor_mode": "corner",
+    "y_mode": "absolute",
+    "command": "/place template cobbleverse:legendary/zapdos 562 74 2614 none none",
+    "top_y": 139,
+    "ceiling_margin": 171
+   },
+   "ground": {
+    "min": 71,
+    "max": 76,
+    "median": 74,
+    "mode": 74,
+    "columns": 899,
+    "mode_columns": 299,
+    "spread": 5,
+    "transposed_29x31": {
+     "min": 70,
+     "max": 76,
+     "note": "rotation 90 or 270 is slightly tidier at y74: 214 blocks of cut and 596 of fill against 297 and 533"
+    },
+    "measured_by": "tools/ground.py over x562..592, z2614..2642; the flattest 31x29 in the windward coast_scrub band (x416..760, z2600..3183) within 110 blocks of the sea",
+    "y_choice": "y74 is the modal ground and the balance point of the whole column: y71 costs 2,461 blocks of cut and no fill, y76 costs 2,034 of fill and no cut, y74 costs 297 cut and 533 fill. The coast is rugged and there is no flatter 31x29 in the band - spread 5 is the floor, not a bad choice."
+   },
+   "displaces": {
+    "cut_blocks": 297,
+    "cut_columns": 248,
+    "fill_blocks": 533,
+    "fill_columns": 352,
+    "terrain": "at y74, 248 of 899 columns stand above the bottom layer (297 blocks shaved) and 352 stand below it (533 blocks of gap that want filling with the local stone, or the tower's base floats on its seaward side). THIS IS THE ONE SITE THAT NEEDS DRESSING, and the amount is named so nobody discovers it in the world: about 830 blocks of work in a 31x29 box.",
+    "foliage": "coast_scrub has no foliage assign of its own, so the cover is the region preset's scrub rather than trees: little to lose.",
+    "built_content": "nothing. Nearest authored records 478 blocks: vertices of the `channel` axis of the viltris_path landmark (data/landmarks.json). The site is inside no landmark extent and no water basin; the nearest column at or below sea level y62 is 63 blocks away, so the tower stands on land, not in the surf.",
+    "not_on_a_skerry": "the skerries and stacks the water export placed in this box are OFFSHORE (top y63-65 and y72-86 on radius 4-9 rock, data/water_shape.json windward_skerries). A 31x29 footprint does not fit on any of them and none is used: this is a cliff-top site with the skerries in front of it."
+   },
+   "does_not_travel_here": [
+    "the LumyMon Zapdos radar and `/locate`",
+    "nothing else: `depends_on_it.spawn_entries: 0` and `advancements: []`"
+   ],
+   "carries_into_the_world": {
+    "from": "data/structures.json `carries`",
+    "blocks": [
+     "lumymon:zapdos_altar"
+    ],
+    "expected_result": "UNKNOWN, and the least known of the three. The pack's own wiki does not mention Articuno, Zapdos or Moltres at all (checked 2026-10-01), so how a Kanto bird's altar is triggered is not documented anywhere we can read. Worth pasting precisely because the silhouette is the reward whether or not the altar answers."
+   },
+   "gate": null,
+   "gate_why_null": "no trigger is known for any of the three birds. Nothing is authored on it."
+  },
+  {
+   "id": "adopted_articuno_shrine",
+   "template": "cobbleverse:legendary/articuno",
+   "legendary": "Articuno",
+   "rank": 4,
+   "status": "sited, not placed",
+   "source_archive": "COBBLEVERSE-DP-v31.zip",
+   "size": [
+    20,
+    74,
+    22
+   ],
+   "size_source": "data/structures.json footprint \"20x74x22\"",
+   "template_biome": "minecraft:snowy_plains",
+   "unblocks": "refused group 6. The refusal was CORRECT about the site it tested and WRONG as a general claim: it measured the pressed y310 summit pad, where 310 + 74 = 384 overruns the 1.21.1 ceiling of 320 by 64, and concluded the template could not be used without giving up the summit. Sweeping the whole of Frostpeak at a 4-block step finds 624 pads where the shrine fits under our own max_y of 310, so the arithmetic never ruled out the mountain, only its flattened crown. Measured 2026-10-01.",
+   "site": {
+    "region": "frostpeak",
+    "containing_polygons": [
+     "frostpeak",
+     "frostpeak_point"
+    ],
+    "cell": "A1",
+    "paint": "preset `snowy_peak` (data/regions.json subregions.frostpeak). NOT an exact biome match: the template wants `minecraft:snowy_plains` and data/structures.json lists only `northern_isles` as a region carrying one. snowy_peak is the same cover family on the only mountain the story wants, and a raw paste reads no biome, so the mismatch is VISUAL ONLY - recorded, like the Zapdos tower's, rather than papered over.",
+    "why": "a high eastern shoulder of Frostpeak, 235 blocks due east of the summit at almost the same latitude (z320 against the summit's z324) and 159 blocks below it. It keeps what the refusal said was the whole reason to want this template - a shrine high on the lone mountain in the most remote corner of the mainland - while fitting under the ceiling with 85 blocks to spare. The ground is as near flat as the map offers up there: spread 1 over 440 columns.",
+    "findable_by_eye": "a 74-block tower topping out at y225 on an open snowy shoulder, with nothing else on the mountain. Visible from the southern apron and from the sea to the east. No finder exists (see what_never_travels.finding_them_instead)."
+   },
+   "placement": {
+    "corner": [
+     904,
+     320
+    ],
+    "y": 151,
+    "centre": [
+     914,
+     331
+    ],
+    "rotation": "none",
+    "mirror": "none",
+    "anchor_mode": "corner",
+    "y_mode": "absolute",
+    "command": "/place template cobbleverse:legendary/articuno 904 151 320 none none",
+    "top_y": 225,
+    "ceiling_margin": 95,
+    "max_y_margin": 85
+   },
+   "ground": {
+    "min": 150,
+    "max": 151,
+    "median": 151,
+    "mode": 151,
+    "columns": 440,
+    "spread": 1,
+    "measured_by": "tools/ground.py over x904..923, z320..341, rounded"
+   },
+   "displaces": {
+    "cut_blocks": 0,
+    "fill_blocks": 73,
+    "why": "seated on max(ground) so no column is buried, the repository's convention. 73 blocks of fill under a 440-column pad is one block under 73 of them; nothing is terraced."
+   },
+   "alternatives_measured": [
     {
-      "id": "adopted_mew_temple",
-      "template": "cobbleverse:mythical/mew",
-      "legendary": "Mew",
-      "rank": 1,
-      "status": "sited, not placed",
-      "source_archive": "COBBLEVERSE-DP-v31.zip",
-      "size": [37, 25, 39],
-      "size_source": "data/structures.json footprint \"37x25x39\"",
-      "template_biome": "minecraft:jungle",
-      "site": {
-        "region": "long_isle_south",
-        "containing_polygons": ["long_isle", "long_isle_south"],
-        "cell": "G8",
-        "paint": "preset `jungle`, foliage type `emergent_jungle` (data/regions.json subregions, data/foliage.json assign.long_isle_south) - the template's own biome, so this is a match, not an approximation",
-        "why": "the only jungle land left above sea level on the map (see re_sited_from). A dead-flat summit plateau 80 blocks above the sea in the middle of the Long Isle's jungle half: the temple stands on the one shelf a 37x39 footprint fits on with ZERO cut and ZERO fill, and the climb up through emergent jungle is what makes finding it an event now that the boat trip is gone.",
-        "findable_by_eye": "it is not visible from the sea: a plateau top seen only from inside the jungle, 396 blocks from the nearest authored thing. That is the cost of the re-site and it is the honest state - no finder exists (see what_never_travels.finding_them_instead)."
-      },
-      "placement": {
-        "corner": [7604, 7082],
-        "y": 142,
-        "centre": [7622, 7101],
-        "rotation": "none",
-        "mirror": "none",
-        "anchor_mode": "corner",
-        "y_mode": "absolute",
-        "command": "/place template cobbleverse:mythical/mew 7604 142 7082 none none",
-        "top_y": 166,
-        "ceiling_margin": 144
-      },
-      "ground": {
-        "min": 142, "max": 142, "median": 142, "mode": 142,
-        "columns": 1443,
-        "mode_columns": 1443,
-        "spread": 0,
-        "transposed_39x37": {"min": 142, "max": 143, "note": "rotation 90 or 270 costs 7 columns of cut at y142 - still free"},
-        "measured_by": "tools/ground.py over x7604..7640, z7082..7120"
-      },
-      "displaces": {
-        "cut_blocks": 0,
-        "fill_blocks": 0,
-        "terrain": "none. All 1,443 columns of the footprint are ground y142 exactly, so the paste's bottom layer meets the plateau with no lip and no gap - the only footprint of the three that is perfect.",
-        "foliage": "the emergent jungle the paint grows on that plateau: by data/foliage.json's own density model the footprint (0.14 ha) carries a handful of emergent trees and their understory, and the paste overwrites whatever stands in its 37x39. Not counted per-tree because the paint lands with an export, not from a list.",
-        "built_content": "nothing. Nearest authored record 396 blocks: the jungle elders' habitat blocks (data/habitat_blocks.json elder_long_isle_middle_2*, elder_long_isle_south_3*) and the `sky_far_reach` portal (data/portals.json) at 395."
-      },
-      "re_sited_from": {
-        "research_said": "the Jungle Isle ruins, (5160, 7463), 301 square, y120-134 (docs/research/notes/cobbleverse-legendary-structures.md section 4.1, from docs/world-building/SETTLEMENTS.md:195)",
-        "measured_2026_10_01": "ground at (5160,7463) is y61. Over the 301-square around it: min 55, max 61, median 57, and ZERO of 90,601 columns above sea level y62. Over the whole `jungle_isle` region: 0 of 19,109 sampled columns above y62.",
-        "why": "the water export of 2026-09-29 removed the island (data/water_shape.json jungle_isle_bank; data/ferries.json:862 'the jungle ruins now measure y55-61 against a sea level of y62, so there is no island to charter to'). The research note was written from SETTLEMENTS.md, which still describes the pre-export isle. THE SITE IS UNDER WATER and y120-134 no longer exists anywhere in that region.",
-        "not_the_ruins_re_site": "docs/world-building/LONG_ISLE.md 11.4 leaves the jungle ruins' own move to the Long Isle's jungle half as an OWNER DECISION, not done. This temple does not pre-empt it: it is a separate site 396 blocks from anything, and if the owner does move the ruins here, this coordinate must be re-checked against them before anything is pasted."
-      },
-      "does_not_travel_here": [
-        "the LumyMon Mew radar",
-        "`/locate` and exploration maps",
-        "nothing else: data/structures.json records `depends_on_it.spawn_entries: 0` and `advancements: []` for this template, so NO spawn preset and NO advancement is lost by pasting it"
-      ],
-      "carries_into_the_world": {
-        "from": "data/structures.json `carries`",
-        "blocks": ["lumymon:mew_shrine", "cobblefurnies:statue_ancient", "cobblemon:gilded_chest", "cobblemon:gimmighoul_chest"],
-        "commands": ["execute", "fill", "tellraw"],
-        "needs": "enable-command-block=true for the chain to be able to run at all; command blocks 'run only from their own trigger, never on placement' (VERIFIED, EXP-013 C)",
-        "expected_result": "INERT. The chain gates on `defeat_champion_blue`, an advancement our progression never grants. The chests should still roll their loot tables on first open (ASSUMED, vanilla behaviour, untested for this template)."
-      },
-      "gate": null,
-      "gate_why_null": "no gate may be authored: the trigger is unknown and `defeat_champion_blue` is not ours to grant. The site is a place, not an encounter. If EXP-LEG-ALTAR shows the shrine responds, the gate to design is OUR advancement gate (the one in docs/mechanics/LEGENDARIES.md:101-143), never the pack's."
+     "corner": [
+      816,
+      244
+     ],
+     "seat_y": 172,
+     "top_y": 246,
+     "fill_blocks": 1943,
+     "spread": 8,
+     "why_not": "the HIGHEST pad on Frostpeak that fits, 162 from the summit - but it needs 1,943 blocks of fill and would stand on a visible plinth. Mew's site was chosen for zero cut and zero fill; this is 27x that for 21 blocks of extra height."
     },
     {
-      "id": "adopted_crown_cemetery",
-      "template": "cobbleverse:crown_cemetery",
-      "legendary": "Calyrex, with Spectrier",
-      "rank": 2,
-      "status": "sited, not placed",
-      "source_archive": "COBBLEVERSE-DP-v31.zip",
-      "size": [45, 24, 47],
-      "size_source": "data/structures.json footprint \"45x24x47\"",
-      "template_biome": "minecraft:old_growth_pine_taiga",
-      "site": {
-        "region": "peak_pond_hollow",
-        "containing_polygons": ["northern_downs", "peak_pond_hollow"],
-        "cell": "B5",
-        "paint": "preset `taiga_dense`, foliage type `old_growth_spruce`, whose declared biome is `minecraft:old_growth_pine_taiga` (data/foliage.json types.old_growth_spruce) - the template's own biome, a match. NOTE data/structures.json `plan_regions_with_a_valid_biome` lists `rim_uplands`, a region id that no longer exists in data/regions.json; the biome match was re-established here from the foliage paint, not from that field.",
-        "why": "a cathedral of giant 2x2 spruce over a dark mossy floor (docs/world-building/FOLIAGE.md:86) is the one cover on the map that suits a cemetery, and the flattest 45x47 in the whole hollow sits 218 blocks off the most-walked forest on the map - near enough that players pass it every badge, far enough that it is found rather than handed over. Its brushable gravel loot makes the discovery itself the reward.",
-        "findable_by_eye": "218 blocks east of the route 4 and route 5 legs through the hollow, through old growth whose core sightline is 212 blocks at eye level (FOLIAGE.md:86) - so it is at the edge of what can be seen from the path, which is the right distance for a thing you glimpse and go to look at."
-      },
-      "placement": {
-        "corner": [4118, 1982],
-        "y": 109,
-        "centre": [4140, 2005],
-        "rotation": "none",
-        "mirror": "none",
-        "anchor_mode": "corner",
-        "y_mode": "absolute",
-        "command": "/place template cobbleverse:crown_cemetery 4118 109 1982 none none",
-        "top_y": 132,
-        "ceiling_margin": 178
-      },
-      "ground": {
-        "min": 109, "max": 110, "median": 109, "mode": 109,
-        "columns": 2115,
-        "mode_columns": 1466,
-        "spread": 1,
-        "transposed_47x45": {"min": 109, "max": 111, "note": "rotation 90 or 270 costs 694 columns of cut at y109 instead of 649 - also usable"},
-        "measured_by": "tools/ground.py over x4118..4162, z1982..2028; the flattest 45x47 window in peak_pond_hollow at least 200 blocks from anything authored"
-      },
-      "displaces": {
-        "cut_blocks": 649,
-        "fill_blocks": 0,
-        "terrain": "649 of 2,115 columns stand one block above y109, so the paste shaves a single layer off a little under a third of the footprint and needs no fill anywhere. The alternative, y110, needs 1,466 blocks of fill and no cut; y109 was chosen because a cut of one layer disappears under the template's own floor while 1,466 blocks of fill is a visible plinth.",
-        "foliage": "about four giant spruce, by the paint's own figure: old_growth_spruce core density is 17 stems/ha (FOLIAGE.md:86) over a 0.21 ha footprint. The clearing the template needs is therefore real but small, and it is the one cost the research named.",
-        "built_content": "nothing. Nearest authored records 218 blocks: route_04_trainer_06 (data/trainers.json), the route_04_surge_to_erika and route_05_erika_to_koga legs (data/routes.json), and a vertex of the glacial_tear landmark outline (data/landmarks.json). The site is inside no landmark extent and no water basin: Peak Pond's own basin is 500 blocks north and its water level is y105, four blocks below this ground.",
-        "our_own_legendary_nearby": "Regice's sealed chamber is the nearest legendary of ours: its portal is (3900, 2050), 244 blocks west-north-west, and its envelope spans x3866..3905 - no overlap, and more than the pack's own 180-block spacing for crown_cemetery. Two legendary sites in one subregion is worth the owner knowing about; they are different legendaries in different idioms (a carved chamber and a pasted cemetery) and nothing in either touches the other."
-      },
-      "does_not_travel_here": [
-        "the LumyMon radar and `/locate`",
-        "AND TWO SPAWN ENTRIES, which the research got wrong. data/structures.json records `depends_on_it.spawn_entries: 2` for this template - `cobblemon:0971_greavard` and `cobblemon:0972_houndstone`, spawning VIA `cobbleverse:crown_cemetery` - so unlike the other two, pasting this one loses a real spawn preset: no Greavard and no Houndstone will spawn at the cemetery, which is precisely what the Gastly mansion lost.",
-        "the replacement, if the owner wants the graveyard dogs: a Cobblemon Habitat Block in data/habitat_blocks.json, which is 1.8's spawn-control block and needs no structure data (the same mechanism already in use elsewhere). NOT authored here - habitat blocks are a different owner's file and a spawn decision, not a placement one."
-      ],
-      "carries_into_the_world": {
-        "from": "data/structures.json `carries`",
-        "blocks": ["lumymon:summon_trigger", "lumymon:calyrex_statue", "lumymon:summon_anchor"],
-        "signals": ["altar", "archaeology", "loot"],
-        "loot_tables": ["minecraft:cobblemon/ancient_pokeball", "minecraft:cobblemon/ancient_special_pokeball", "minecraft:cobblemon/pokeball", "minecraft:cobblemon/rare_items", "minecraft:cobblemon/tms", "minecraft:cobblemon/vitamin", "minecraft:cobblemon/x_items"],
-        "expected_result": "the brushable gravel and its seven loot tables are datapack data and ARE loaded, so they should resolve when brushed (ASSUMED: loot resolving from a pasted block entity is vanilla behaviour and has not been tested for this template). The summon trigger is the unknown, and the reason this site is worth pasting first in the experiment: its reward does not depend on the altar at all."
-      },
-      "gate": null,
-      "gate_why_null": "same as Mew's: the trigger is unreadable. Its class_reason in data/structures.json says 'awakened with a carrot crop grown on site', which is a plausible reading of a closed-source block and is not a source. Nothing is authored on it."
-    },
-    {
-      "id": "adopted_zapdos_tower",
-      "template": "cobbleverse:legendary/zapdos",
-      "legendary": "Zapdos",
-      "rank": 3,
-      "status": "sited, not placed",
-      "source_archive": "COBBLEVERSE-DP-v31.zip",
-      "size": [31, 66, 29],
-      "size_source": "data/structures.json footprint \"31x66x29\"",
-      "template_biome": "minecraft:stony_shore",
-      "site": {
-        "region": "north_west_coast",
-        "containing_polygons": ["viltri_woods", "north_west_coast"],
-        "cell": "C1",
-        "paint": "preset `coast_scrub` (data/regions.json subregions.north_west_coast). NOT a biome match: the template wants `minecraft:stony_shore` and no region on the map is painted that. coast_scrub is the closest cover we have on a windward cliff, and the mismatch is VISUAL ONLY - a raw paste reads no biome. Recorded rather than papered over: the owner may want a small stony patch painted round it at the next export, or may not care.",
-        "why": "66 blocks tall on a cliff 63 blocks from the shoreline, inside the windward band (the Windward Sea is 'sea west of x4096 between z2600 and z5200', data/regions.json windward_deep; this site is z2614-2642, just inside it) and inside the windward skerries box x0..760 z2600..5200, so the sea stacks and skerries the water export placed offshore stand in front of it. The top is y139, 77 above the water: a silhouette seen from the sea long before it is reached, which is the distance cue the LEGENDARY placement rule asks for (STRUCTURE_INVENTORY.md:317).",
-        "findable_by_eye": "this is the one of the three that finds itself: a 66-block tower on an exposed cliff, with nothing authored within 478 blocks to compete with it."
-      },
-      "placement": {
-        "corner": [562, 2614],
-        "y": 74,
-        "centre": [577, 2628],
-        "rotation": "none",
-        "mirror": "none",
-        "anchor_mode": "corner",
-        "y_mode": "absolute",
-        "command": "/place template cobbleverse:legendary/zapdos 562 74 2614 none none",
-        "top_y": 139,
-        "ceiling_margin": 171
-      },
-      "ground": {
-        "min": 71, "max": 76, "median": 74, "mode": 74,
-        "columns": 899,
-        "mode_columns": 299,
-        "spread": 5,
-        "transposed_29x31": {"min": 70, "max": 76, "note": "rotation 90 or 270 is slightly tidier at y74: 214 blocks of cut and 596 of fill against 297 and 533"},
-        "measured_by": "tools/ground.py over x562..592, z2614..2642; the flattest 31x29 in the windward coast_scrub band (x416..760, z2600..3183) within 110 blocks of the sea",
-        "y_choice": "y74 is the modal ground and the balance point of the whole column: y71 costs 2,461 blocks of cut and no fill, y76 costs 2,034 of fill and no cut, y74 costs 297 cut and 533 fill. The coast is rugged and there is no flatter 31x29 in the band - spread 5 is the floor, not a bad choice."
-      },
-      "displaces": {
-        "cut_blocks": 297,
-        "cut_columns": 248,
-        "fill_blocks": 533,
-        "fill_columns": 352,
-        "terrain": "at y74, 248 of 899 columns stand above the bottom layer (297 blocks shaved) and 352 stand below it (533 blocks of gap that want filling with the local stone, or the tower's base floats on its seaward side). THIS IS THE ONE SITE THAT NEEDS DRESSING, and the amount is named so nobody discovers it in the world: about 830 blocks of work in a 31x29 box.",
-        "foliage": "coast_scrub has no foliage assign of its own, so the cover is the region preset's scrub rather than trees: little to lose.",
-        "built_content": "nothing. Nearest authored records 478 blocks: vertices of the `channel` axis of the viltris_path landmark (data/landmarks.json). The site is inside no landmark extent and no water basin; the nearest column at or below sea level y62 is 63 blocks away, so the tower stands on land, not in the surf.",
-        "not_on_a_skerry": "the skerries and stacks the water export placed in this box are OFFSHORE (top y63-65 and y72-86 on radius 4-9 rock, data/water_shape.json windward_skerries). A 31x29 footprint does not fit on any of them and none is used: this is a cliff-top site with the skerries in front of it."
-      },
-      "does_not_travel_here": [
-        "the LumyMon Zapdos radar and `/locate`",
-        "nothing else: `depends_on_it.spawn_entries: 0` and `advancements: []`"
-      ],
-      "carries_into_the_world": {
-        "from": "data/structures.json `carries`",
-        "blocks": ["lumymon:zapdos_altar"],
-        "expected_result": "UNKNOWN, and the least known of the three. The pack's own wiki does not mention Articuno, Zapdos or Moltres at all (checked 2026-10-01), so how a Kanto bird's altar is triggered is not documented anywhere we can read. Worth pasting precisely because the silhouette is the reward whether or not the altar answers."
-      },
-      "gate": null,
-      "gate_why_null": "no trigger is known for any of the three birds. Nothing is authored on it."
+     "corner": [
+      760,
+      652
+     ],
+     "seat_y": 112,
+     "top_y": 186,
+     "fill_blocks": 455,
+     "spread": 2,
+     "why_not": "at the FOOT of the south face, 77 blocks from the research camp the owner sited on 2026-10-01 - the tightest story on offer, researchers camped beside the thing they study. It is here rather than chosen because it gives up the summit entirely, which is the one thing refused group 6 said must not be given up. If the owner wants the camp and the shrine to read as one place, this is the site and this record should say so."
     }
-  ],
-  "refused": [
-    {
-      "ids": ["legendarymonuments:lake_acuity", "legendarymonuments:lake_valor", "legendarymonuments:lake_verity"],
-      "legendaries": ["Uxie", "Azelf", "Mesprit"],
-      "why": "WE ALREADY AUTHOR ALL THREE. data/legendaries.json carries `uxie`, `azelf` and `mesprit` as lake grottos, three of them sited and emitted, and tools/legendaries.py builds their chambers and their badge gates. Adopting these templates would give one legendary two authors in two files - the exact class of invisible collision data/id_authorship.json exists to catch, and the worse half is that a clean git merge would never report it.",
-      "and_also": "all three are depth-7 jigsaws that generate NOWHERE in our install (their biome tag is in the disabled Sinnoh pack), so a raw paste yields one 37x48x37 start piece and no assembly."
-    },
-    {
-      "ids": ["legendarymonuments:stark_mountain"],
-      "legendaries": ["Heatran"],
-      "why": "120x90x137 is a region, not a structure - it would redraw whatever terrain it landed on - and it ships two SINNOH RCT trainers (`sinnoh_buck`, `team_galactic_charon`, data/structures.json:6480-6483) who have no place in a Kanto-series campaign. Its RCT spawners DO work in a pasted build (VERIFIED, EXP-013 E), which is what makes importing the wrong characters a real risk rather than a cosmetic one."
-    },
-    {
-      "ids": ["legendarymonuments:giratina_island", "legendarymonuments:distortion_portal"],
-      "legendaries": ["Giratina"],
-      "why": "the island generates only inside Legendary Monuments' own Distortion World dimension. Adopting it means adopting a dimension, and dimensions are a world-critical dependency decision (CLAUDE.md principles 9 and 10), not a placement."
-    },
-    {
-      "ids": ["cobbleverse:crown_spire"],
-      "legendaries": ["Glastrier", "Calyrex"],
-      "why": "it ends at Calyrex, and so does `crown_cemetery`, which is adopted above. Two sites for one legendary is the checklist feeling the design is trying to avoid. If the owner prefers the spire (41x38x49, snowy_plains), it REPLACES the cemetery; it does not join it."
-    },
-    {
-      "ids": ["cobbleverse:legendary/moltres", "legendarymonuments:firescourge_shrine", "legendarymonuments:grasswither_shrine", "legendarymonuments:groundblight_shrine", "legendarymonuments:icerend_shrine", "cobbleverse:dawn_tower", "cobbleverse:dusk_tower", "legendarymonuments:eternatus_cocoon"],
-      "legendaries": ["Moltres", "Chi-Yu", "Wo-Chien", "Ting-Lu", "Chien-Pao", "Necrozma", "Eternatus"],
-      "why": "LEAVE THEM WHERE THEY ARE. The Nether and the End are vanilla-generated, so these keep their structure data, their terrain validation, their spacing and - the part a paste destroys - their finders. Already decided (STRUCTURE_INVENTORY.md:140-141, :320-321; DIMENSIONS_AND_BORDERS.md:317). Pasting one would be a strict downgrade."
-    },
-    {
-      "ids": ["cobbleverse:legendary/articuno"],
-      "legendaries": ["Articuno"],
-      "why": "BLOCKED BY ARITHMETIC, not by taste. The story fit is the best on the list - the Frostpeak shrine, a shrine on the lone summit of the most remote corner of the mainland, 1,440 blocks from anything - but its pad is a pressed y310 (the measured ceiling: 9,886 columns pressed exactly to the top of the heightmap line, data/world.json measured_ceiling_note) and the tower is 74 blocks tall. 310 + 74 = 384, sixty-four blocks above the 1.21.1 build ceiling of 320 and seventy-four above our own max_y of 310.",
-      "alternatives_not_taken": "a lower snowy site would fit (the Glacial Tear trough, where Regice's portal is y101 per docs/mechanics/LEGENDARIES.md:23) but every one of them throws away the reason to want this template, which is the summit. Left for the owner: either a lower site or not this template."
-    },
-    {
-      "ids": ["legendarymonuments:turnback_cave"],
-      "legendaries": ["Giratina, the route to it"],
-      "why": "not refused as an idea, refused as a PASTE: a depth-7 jigsaw up to 232 blocks wide yields one 41x13x41 start piece from `/place template`, and `/place structure` misplaces jigsaws 20-54 blocks below painted terrain (VERIFIED, STRUCTURE_INVENTORY.md:277-279). Its 16 trial spawners and 28 vaults are the shape the Rift wants; adopt the vocabulary, not the file (STRUCTURE_CATALOG.md:101, REFERENCE ONLY)."
-    }
-  ],
-  "cross_system_consequences": [
-    "tools/portals.py reads data/legendaries.json `encounters` directly for its `min_from_legendary_mouth` clearance (tools/portals.py:323). A site in THIS file is invisible to that check, so a portal could be sited on top of one. All three sites clear 120 blocks from every portal today (the nearest is `sky_far_reach`, 395 from Mew's temple), but that is measured here, not enforced anywhere. Whoever makes one of these real either teaches portals.py about this file or declares the clearance in a test.",
-    "data/spawn_suppression.json: every emitted encounter in data/legendaries.json declares a `spawn_free_zone`. These three declare none, on purpose - they are not encounters and nothing is dormant in them. If an altar ever works, the site needs one.",
-    "the trainer and gym sweeps: nothing here carries a trainer id, a gym id or a placement id, so no list-versus-world problem is introduced. The one thing in the world these sites WOULD not be in is data/placements.json, which is stated above as deliberate."
-  ],
-  "experiments_needed": [
-    {
-      "id": "EXP-LEG-ALTAR",
-      "question": "does a pasted LumyMon altar FUNCTION?",
-      "method": "on a disposable world with enable-command-block=true, `/place template cobbleverse:crown_cemetery 4118 109 1982 none none` (the cemetery first: its brushable loot is a reward that does not depend on the altar, so the paste is worth something either way). Then: are `lumymon:summon_trigger`, `lumymon:calyrex_statue` and `lumymon:summon_anchor` present and interactable; does right-click with an empty hand give ANY response; does a brush on the gravel roll the loot tables; and does anything in the chunk log an error.",
-      "a_pass_is_not_that_it_placed": "placing already passed on this runtime for legendarymonuments:firescourge_shrine (STRUCTURE_WORKFLOW.md:90). The result wanted is a BLOCK RESPONSE or a confirmed silence.",
-      "then": "if it is silent, these three stay what they are authored as - places. If it answers, the next question is the activation item, and after that the level cap, and neither is settled by this experiment."
-    },
-    {
-      "id": "EXP-LEG-MEW-CHAIN",
-      "question": "what do Mew's command blocks do when the gate they check is never granted?",
-      "method": "paste `cobbleverse:mythical/mew` at 7604 142 7082, read the command blocks in place (they are blocks, they can be read), and confirm the chain is inert for a player without `defeat_champion_blue`. Also open the gilded and Gimmighoul chests to see whether the loot tables roll.",
-      "why_it_matters": "it is the only one of the three whose trigger mechanism is VERIFIED, and verified to be gated on something we never grant. If the chain is inert as expected, the temple is safe to place with no risk of a free mythical."
-    },
-    {
-      "id": "EXP-LEG-ZAPDOS-DRESS",
-      "question": "how much dressing does the Zapdos cliff actually need?",
-      "method": "paste at 562 74 2614 and look at the seaward side: the measurement says 352 columns sit below the bottom layer (533 blocks of gap). Confirm whether the template's own base already covers it before anyone writes a fill.",
-      "why_it_matters": "it decides whether this site costs one command or one command plus a terrain pass, and nothing in a measurement can answer it: no .nbt has been read."
-    }
-  ],
-  "verified_vs_not": {
-    "verified_here": "every coordinate, ground figure, cut/fill count, clearance distance and ceiling margin in this file was computed from the canonical heightmap through tools/ground.py on 2026-10-01, and the Jungle Isle's drowning was measured the same way. The file parses.",
-    "not_verified_here": "NOTHING HAS BEEN PASTED. No command in this file has been run, no altar has been seen, no loot table has been rolled, and no claim is made that any of these three templates resolves, places or works on our server. Raw `/place template` is proven on this runtime for a DIFFERENT template (firescourge_shrine, 2026-09-09); that these three ids resolve from the installed pack is expected and unproven."
+   ],
+   "still_gated_by": "EXP-LEG-ALTAR, exactly as the other three are: this template carries `lumymon:articuno_altar` (data/structures.json carries.notable_blocks) and nothing has yet shown that a pasted LumyMon altar responds to anything. Placing is not the question; functioning is."
   }
+ ],
+ "refused": [
+  {
+   "ids": [
+    "legendarymonuments:lake_acuity",
+    "legendarymonuments:lake_valor",
+    "legendarymonuments:lake_verity"
+   ],
+   "legendaries": [
+    "Uxie",
+    "Azelf",
+    "Mesprit"
+   ],
+   "why": "WE ALREADY AUTHOR ALL THREE. data/legendaries.json carries `uxie`, `azelf` and `mesprit` as lake grottos, three of them sited and emitted, and tools/legendaries.py builds their chambers and their badge gates. Adopting these templates would give one legendary two authors in two files - the exact class of invisible collision data/id_authorship.json exists to catch, and the worse half is that a clean git merge would never report it.",
+   "and_also": "all three are depth-7 jigsaws that generate NOWHERE in our install (their biome tag is in the disabled Sinnoh pack), so a raw paste yields one 37x48x37 start piece and no assembly."
+  },
+  {
+   "ids": [
+    "legendarymonuments:stark_mountain"
+   ],
+   "legendaries": [
+    "Heatran"
+   ],
+   "why": "120x90x137 is a region, not a structure - it would redraw whatever terrain it landed on - and it ships two SINNOH RCT trainers (`sinnoh_buck`, `team_galactic_charon`, data/structures.json:6480-6483) who have no place in a Kanto-series campaign. Its RCT spawners DO work in a pasted build (VERIFIED, EXP-013 E), which is what makes importing the wrong characters a real risk rather than a cosmetic one."
+  },
+  {
+   "ids": [
+    "legendarymonuments:giratina_island",
+    "legendarymonuments:distortion_portal"
+   ],
+   "legendaries": [
+    "Giratina"
+   ],
+   "why": "the island generates only inside Legendary Monuments' own Distortion World dimension. Adopting it means adopting a dimension, and dimensions are a world-critical dependency decision (CLAUDE.md principles 9 and 10), not a placement."
+  },
+  {
+   "ids": [
+    "cobbleverse:crown_spire"
+   ],
+   "legendaries": [
+    "Glastrier",
+    "Calyrex"
+   ],
+   "why": "it ends at Calyrex, and so does `crown_cemetery`, which is adopted above. Two sites for one legendary is the checklist feeling the design is trying to avoid. If the owner prefers the spire (41x38x49, snowy_plains), it REPLACES the cemetery; it does not join it."
+  },
+  {
+   "ids": [
+    "cobbleverse:legendary/moltres",
+    "legendarymonuments:firescourge_shrine",
+    "legendarymonuments:grasswither_shrine",
+    "legendarymonuments:groundblight_shrine",
+    "legendarymonuments:icerend_shrine",
+    "cobbleverse:dawn_tower",
+    "cobbleverse:dusk_tower",
+    "legendarymonuments:eternatus_cocoon"
+   ],
+   "legendaries": [
+    "Moltres",
+    "Chi-Yu",
+    "Wo-Chien",
+    "Ting-Lu",
+    "Chien-Pao",
+    "Necrozma",
+    "Eternatus"
+   ],
+   "why": "LEAVE THEM WHERE THEY ARE. The Nether and the End are vanilla-generated, so these keep their structure data, their terrain validation, their spacing and - the part a paste destroys - their finders. Already decided (STRUCTURE_INVENTORY.md:140-141, :320-321; DIMENSIONS_AND_BORDERS.md:317). Pasting one would be a strict downgrade."
+  },
+  {
+   "ids": [
+    "cobbleverse:legendary/articuno"
+   ],
+   "legendaries": [
+    "Articuno"
+   ],
+   "why": "BLOCKED BY ARITHMETIC, not by taste. The story fit is the best on the list - the Frostpeak shrine, a shrine on the lone summit of the most remote corner of the mainland, 1,440 blocks from anything - but its pad is a pressed y310 (the measured ceiling: 9,886 columns pressed exactly to the top of the heightmap line, data/world.json measured_ceiling_note) and the tower is 74 blocks tall. 310 + 74 = 384, sixty-four blocks above the 1.21.1 build ceiling of 320 and seventy-four above our own max_y of 310.",
+   "alternatives_not_taken": "a lower snowy site would fit (the Glacial Tear trough, where Regice's portal is y101 per docs/mechanics/LEGENDARIES.md:23) but every one of them throws away the reason to want this template, which is the summit. Left for the owner: either a lower site or not this template.",
+   "superseded_2026_10_01": "ADOPTED as adopted_articuno_shrine. This entry is kept, not deleted, because its arithmetic is still right about the summit pad and a later session must not re-derive it: 310 + 74 = 384 against a 320 ceiling. What it got wrong was the scope of the conclusion - it tested one pad and refused the mountain. 624 pads on Frostpeak fit."
+  },
+  {
+   "ids": [
+    "legendarymonuments:turnback_cave"
+   ],
+   "legendaries": [
+    "Giratina, the route to it"
+   ],
+   "why": "not refused as an idea, refused as a PASTE: a depth-7 jigsaw up to 232 blocks wide yields one 41x13x41 start piece from `/place template`, and `/place structure` misplaces jigsaws 20-54 blocks below painted terrain (VERIFIED, STRUCTURE_INVENTORY.md:277-279). Its 16 trial spawners and 28 vaults are the shape the Rift wants; adopt the vocabulary, not the file (STRUCTURE_CATALOG.md:101, REFERENCE ONLY)."
+  }
+ ],
+ "cross_system_consequences": [
+  "tools/portals.py reads data/legendaries.json `encounters` directly for its `min_from_legendary_mouth` clearance (tools/portals.py:323). A site in THIS file is invisible to that check, so a portal could be sited on top of one. All three sites clear 120 blocks from every portal today (the nearest is `sky_far_reach`, 395 from Mew's temple), but that is measured here, not enforced anywhere. Whoever makes one of these real either teaches portals.py about this file or declares the clearance in a test.",
+  "data/spawn_suppression.json: every emitted encounter in data/legendaries.json declares a `spawn_free_zone`. These three declare none, on purpose - they are not encounters and nothing is dormant in them. If an altar ever works, the site needs one.",
+  "the trainer and gym sweeps: nothing here carries a trainer id, a gym id or a placement id, so no list-versus-world problem is introduced. The one thing in the world these sites WOULD not be in is data/placements.json, which is stated above as deliberate."
+ ],
+ "experiments_needed": [
+  {
+   "id": "EXP-LEG-ALTAR",
+   "question": "does a pasted LumyMon altar FUNCTION?",
+   "method": "on a disposable world with enable-command-block=true, `/place template cobbleverse:crown_cemetery 4118 109 1982 none none` (the cemetery first: its brushable loot is a reward that does not depend on the altar, so the paste is worth something either way). Then: are `lumymon:summon_trigger`, `lumymon:calyrex_statue` and `lumymon:summon_anchor` present and interactable; does right-click with an empty hand give ANY response; does a brush on the gravel roll the loot tables; and does anything in the chunk log an error.",
+   "a_pass_is_not_that_it_placed": "placing already passed on this runtime for legendarymonuments:firescourge_shrine (STRUCTURE_WORKFLOW.md:90). The result wanted is a BLOCK RESPONSE or a confirmed silence.",
+   "then": "if it is silent, these three stay what they are authored as - places. If it answers, the next question is the activation item, and after that the level cap, and neither is settled by this experiment."
+  },
+  {
+   "id": "EXP-LEG-MEW-CHAIN",
+   "question": "what do Mew's command blocks do when the gate they check is never granted?",
+   "method": "paste `cobbleverse:mythical/mew` at 7604 142 7082, read the command blocks in place (they are blocks, they can be read), and confirm the chain is inert for a player without `defeat_champion_blue`. Also open the gilded and Gimmighoul chests to see whether the loot tables roll.",
+   "why_it_matters": "it is the only one of the three whose trigger mechanism is VERIFIED, and verified to be gated on something we never grant. If the chain is inert as expected, the temple is safe to place with no risk of a free mythical."
+  },
+  {
+   "id": "EXP-LEG-ZAPDOS-DRESS",
+   "question": "how much dressing does the Zapdos cliff actually need?",
+   "method": "paste at 562 74 2614 and look at the seaward side: the measurement says 352 columns sit below the bottom layer (533 blocks of gap). Confirm whether the template's own base already covers it before anyone writes a fill.",
+   "why_it_matters": "it decides whether this site costs one command or one command plus a terrain pass, and nothing in a measurement can answer it: no .nbt has been read."
+  }
+ ],
+ "verified_vs_not": {
+  "verified_here": "every coordinate, ground figure, cut/fill count, clearance distance and ceiling margin in this file was computed from the canonical heightmap through tools/ground.py on 2026-10-01, and the Jungle Isle's drowning was measured the same way. The file parses.",
+  "not_verified_here": "NOTHING HAS BEEN PASTED. No command in this file has been run, no altar has been seen, no loot table has been rolled, and no claim is made that any of these three templates resolves, places or works on our server. Raw `/place template` is proven on this runtime for a DIFFERENT template (firescourge_shrine, 2026-09-09); that these three ids resolve from the installed pack is expected and unproven."
+ }
 }
