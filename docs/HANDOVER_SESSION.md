@@ -7,7 +7,7 @@ A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else,
 - **`build/2026-10-02-place-all-trainers`**, pushed, **no PR** (the owner's instruction: one integration PR per
   batch, and this batch has three sessions). It sits on draft PR
   [#105](https://github.com/Millerb7/cobblers/pull/105)'s head `2de7170`, which is frozen. Head: see the last commit
-  on the branch (`git log -1 origin/build/2026-10-02-place-all-trainers`); it was `HEAD_SHA` at hand-over.
+  on the branch (`git log -1 origin/build/2026-10-02-place-all-trainers`); the commit that carries this file.
 - The other session tonight ("Cobblers Cobblemon adventure map session start") merges this branch into its own and
   runs the one batched apply. It has been told the branch, the head and that R17N is new.
 
@@ -82,8 +82,16 @@ python tools/npc_seats.py verify && python tools/trainer_world_audit.py --out de
   `.claude/worktrees/cobblers-cobblemon-session-start-531d15/` (current to #105) rather than a full `prepare`.
 - **The lock file can be written by hand in the wrong format** (`owner=` not `owner:`); `server_lock.py` then cannot
   release it. Tonight's was the other session's finished agent's, removed by that session.
-- TEST_RESULT_PLACEHOLDER
+- **The tests by a different hand found two of my seats wrong, both fixed** (`tests/test_npc_seats.py`, 10 properties, 7 generator
+  mutations all caught): the steward's yaw was 24 degrees off the point it names, and the Viltri keeper stood on the
+  apron's overhang outside its town. Contract **C16** registers the off-road and plan-ground assumption. Last run:
+  **755 passed, 2 xfailed** (seat, contract, trainer, reapply, ground-rule, authorship and dialogue suites); the full
+  suite was not run. `validate_data` needs `COBBLERS_SOURCE_ROOT` set or it reports one integrity error.
+- The test agent was refused twice (a `time`-prefixed `place_town.build`, an `awk` search): Oak's origin y117 is
+  therefore checked only by this session, not independently, and the `npc` action's tp has no fake-RCON test.
 
 ## 5. Cost
 
-COST_PLACEHOLDER
+`python tools/session_cost.py --session b2986980-daa1-47e0-bfee-e78e302a9641`: **about 125 turns, 3.1M weighted,
+context ~290k at hand-over** (the 200-300k band: the job is done, so hand over). One agent (test-author), 0.5M. About
+3.6M in all.
