@@ -7037,7 +7037,7 @@
         "y": 158,
         "z": 1424
       },
-      "mimic": "minecraft:grass_block",
+      "mimic": "minecraft:stone",
       "activated": {
         "spawn_range": 16,
         "chance": 1.0,
@@ -7047,7 +7047,8 @@
         "max_spawns": 4
       },
       "status": "planned",
-      "why": "Teddiursa on the den's outskirts (the owner, 2026-10-02). ACTIVATED since the owner walked the slope the same day and 'didnt see ... many teddiursa spawns': as a natural ReplaceSpawns block (range 20) it only swapped the species natural spawning happened to pick, and staging measured 0 Pokemon within 32 of it. Activated, it keeps up to 4 Teddiursa (data/ursaluna_cave.json teddiursa.group) alive within 16 blocks, refilling 2 at a time as they are caught or despawn, the elder nests' and Driftmouth Isle's settings (spawn_range 16, chance 1.0, TICK). cancel_range -1, as on the elders: the tri-peaks' own spawns continue round it; the cubs are added, not substituted. Kept at the SAME position, in the ground's own top block on the cave's axis 14 blocks out from the mouth (tools/ground.py: y158), so the activated placement's first setblock (the mimic) overwrites the natural block already there on staging and no stale one is left. Its 16 reach the mouth (15.0 away, from the block centre to the mouth's standing block) and stop 39 blocks short of the hall (55.4 away, tools/ursaluna_cave_audit.py), far outside the bear's wake. Mimic: grass, the hill's own skin as data/ursaluna_cave.json describes it (keep_natural_top_why), NOT read from a world; if the slope there is another block, this one field changes. Activated blocks cancel nothing and are cancelled by nothing (EXP-021), and the nearest other Habitat Block is 360 blocks away."
+      "why": "Teddiursa on the den's outskirts (the owner, 2026-10-02). ACTIVATED since the owner walked the slope the same day and 'didnt see ... many teddiursa spawns': as a natural ReplaceSpawns block (range 20) it only swapped the species natural spawning happened to pick, and staging measured 0 Pokemon within 32 of it. Activated, it keeps up to 4 Teddiursa (data/ursaluna_cave.json teddiursa.group) alive within 16 blocks, refilling 2 at a time as they are caught or despawn, the elder nests' and Driftmouth Isle's settings (spawn_range 16, chance 1.0, TICK). cancel_range -1, as on the elders: the tri-peaks' own spawns continue round it; the cubs are added, not substituted. Kept at the SAME position, in the ground's own top block on the cave's axis 14 blocks out from the mouth (tools/ground.py: y158), so the activated placement's first setblock (the mimic) overwrites the natural block already there on staging and no stale one is left. Its 16 reach the mouth (15.0 away, from the block centre to the mouth's standing block) and stop 39 blocks short of the hall (55.4 away, tools/ursaluna_cave_audit.py), far outside the bear's wake. Mimic: grass, the hill's own skin as data/ursaluna_cave.json describes it (keep_natural_top_why), NOT read from a world; if the slope there is another block, this one field changes. Activated blocks cancel nothing and are cancelled by nothing (EXP-021), and the nearest other Habitat Block is 360 blocks away.",
+      "mimic_why": "the den's rocky apron: probed in staging 2026-10-02, the 24 columns round this block at y158 are 10 stone, 8 cobblestone and 6 other; a grass_block disguise set the same day read as a lone grass tile there. Stone is also what this block was before (no mimic set, the default; MimicId minecraft:stone read off it that morning)."
     },
     {
       "id": "driftmouth_stack_ne_high",
