@@ -43,7 +43,13 @@ Four ace, with `relativeLevelCap` 0), and since 2026-09-28 a wild Pokemon over t
 
 The top of every band is at or under its cap, so everything a player meets on a leg can be caught on that leg
 (the old placeholder band of 25-45 on fifteen off-path places is gone). Bands overlap their neighbours by about five
-levels so a leg's end meets the next leg's start. A table may narrow its band (`levels`) inside its tier's band --
+levels so a leg's end meets the next leg's start.
+
+**The owner, 2026-10-02 (after the rebuild): uncatchable spawns inside a band are welcome.** "It adds to revisiting
+and makes a region feel more like it should." So the catchable ceiling above is the rule for the *base* of a band,
+not a ceiling on everything in it: the heart of a place (a summit, a lake's centre, a crater bowl) may hold
+Pokemon above the leg's cap, met first as a sight and caught on a return. The next job builds that (section 10);
+until then target 5 still checks the uniform bands as built. A table may narrow its band (`levels`) inside its tier's band --
 Pallet's meadows are 4-8 -- but never leave it.
 
 ## 3. Escalation: a family's weight moves to its evolved stages as the tier rises
@@ -185,3 +191,20 @@ All measured on the compiled pack with `tools/encounter_audit.py`'s rule for cha
   `neededNearbyBlocks` water, `neededBaseBlocks` sand) are used, so contract C4 is untouched.
 - The Jungle Isle's two tables stand over open sea since the water export (decision B15); they are rebuilt on the
   rules but are inert until B15 is decided.
+
+## 10. Next: small at the edges, big at the focal points (the owner, 2026-10-02)
+
+Not built. One table still covers a whole sub-region uniformly. The owner's direction: small Pokemon on a place's
+outskirts, big ones grouped round its focal points, and on a mountain "big snowy creatures, anything you'd see on a
+mountain" -- Frostpeak, the mountain near (0, 0), is the first case (summit (679, 324) y310; today tier 5, Absol,
+Delibird, Snorunt, Eiscue). Two mechanisms, both to prove before content:
+
+1. **Altitude bands on mountains**: a family's stages limited by height (the data already uses `maxY`; `minY` is
+   unused here and must be checked against Cobblemon 1.8.0's `SpawningCondition` before use), so the summit holds
+   the evolved forms and the find and the foothills the base forms.
+2. **Rings round a focus** for lakes, the crater, groves and the Rift's mouths: a focus per sub-region, cells nearer
+   it matured further (the shape of `compile_spawns.marine_bands`, distance from land).
+
+The heart may exceed the leg's cap (above). Target 5 and the per-table tests then become per band or ring, rewritten
+by a test author from this section, not by the builder.
+

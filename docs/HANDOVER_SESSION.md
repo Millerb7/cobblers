@@ -31,6 +31,10 @@ python tools/reapply.py install --server-dir C:/Users/wnd/Documents/github/cobbl
 
 Install regenerates the suppression against that server and world (it reads the server, so take the lock). Then restart: Habitat pools resolve after a chunk reload.
 
+**The next job (the owner, 2026-10-02, after reading this):** small at the edges, big at the focal points, and Pokemon
+above the cap allowed at a place's heart. Frostpeak first ("big snowy creatures"). `ENCOUNTER_DESIGN.md` section 10;
+a fresh session, one builder plus one test author.
+
 **Half-done:** nothing. No server started, no lock held (released twice, verified free), and the two agent worktrees
 (`agent-a34fe9f3a8cb8935a`, `agent-a74e5041a4bd3d3c6`) hold only what is merged here.
 

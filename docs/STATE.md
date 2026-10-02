@@ -112,6 +112,7 @@
 - **Base and target:** preserve the Cobbleverse experience through an overlay while targeting Cobblemon 1.8.x on Minecraft 1.21.1 Fabric.
 - **Live-world isolation:** agents check process/port and acquire `C:\Users\wnd\Documents\github\.cobblers-server-agent.lock` before any server-runtime access; agents never read `cobblers-server/cobblers-10240/`, and disposable worlds are seeded only from designated offline snapshots.
 - **Spawn philosophy:** use curated exclusive pools on critical-path route corridors and keep the default Cobbleverse pool open in wilderness and postgame areas.
+- **Wild Pokemon above the cap are welcome where they make a place (the owner, 2026-10-02):** "it adds to revisiting and makes a region feel more like it should." Small Pokemon on a place's outskirts, big ones at its focal points (`docs/mechanics/ENCOUNTER_DESIGN.md` section 10, not built).
 - **Map geometry:** use 1,024-block square planning cells, terrain-following region polygons, and no hex grid.
 - **Vertical scale:** use the Option B rescale above `y145`, with authored terrain capped at `y310` and the runtime ceiling raised to `y575`.
 - **World source:** commit reproducible heightmaps, WorldPainter sources, templates, data, and tools; do not treat the live save as source code.
