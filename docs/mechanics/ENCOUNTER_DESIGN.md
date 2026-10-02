@@ -196,8 +196,9 @@ All measured on the compiled pack with `tools/encounter_audit.py`'s rule for cha
 
 ## 10. Small at the edges, big at the heart (the owner, 2026-10-02)
 
-**Built 2026-10-02 (mechanism and content, valid data only, not seen in game). The four numbers below are proposed,
-for the owner to confirm, before a test fixes them.**
+**Built 2026-10-02 (mechanism and content, valid data only, not seen in game). The four numbers below were proposed
+here and are confirmed by the owner (2026-10-02): "a ninth, 11.2% above cap, next leg's cap as the ceiling, 128
+blocks from a path. Those read right."**
 
 The owner's direction: small Pokemon on a place's outskirts, big ones grouped round its focal points, and on a
 mountain "big snowy creatures, anything you'd see on a mountain" -- Frostpeak, the mountain near (0, 0), first (its
@@ -239,7 +240,7 @@ holds no find, a base table holds no presence, and a presence that evolves other
 next leg's tier allows it (section 3). The generator fails closed on a presence in the common bucket, a presence
 past the next cap, and a heart over the above-cap share below.
 
-### The numbers (proposed, for the owner to confirm)
+### The numbers (confirmed by the owner, 2026-10-02)
 
 | Number | Proposed | Derived from | Measured on the compiled pack |
 |---|---|---|---|
@@ -302,6 +303,8 @@ Target 5 and the per-table tests now become per heart and per base, rewritten by
 with its area share, its gap to the nearest route and its above-cap share.
 
 ## 11. The mainline starters in the wild (the owner, 2026-10-02)
+
+**Read with the mythical-starter decision (the owner, 2026-10-02):** with all 27 starter families wild, "traditional starters become something you find rather than something you are handed, which is what I wanted from idea 1"; so the mythical-starter choice (`docs/research/MYTHICAL_STARTERS.md`) and this section are one decision read together, and neither should be changed without the other.
 
 "Bake normal starters from every region and their evolutions as spawns now." All 27 Gen 1-9 starter families are in
 the tables, on the existing rules (the tier's band, maturity rising with the tier, finds exclusive and off the

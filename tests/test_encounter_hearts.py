@@ -11,7 +11,7 @@ Independent sources: section 10's prose and its table of numbers (1/9, 11.2%, "c
 where each lives; section 2's caps and bands; modpack/config/cobblemon/starters.json for which 27 species are the
 mainline starters; the Cobblemon 1.8.0 jar for stages, types and the level each stage evolves at.
 
-Section 10's four numbers are marked "proposed, for the owner to confirm". They are tested AS WRITTEN and parsed
+Section 10's four numbers were proposed and are confirmed by the owner (2026-10-02). They are tested AS WRITTEN and parsed
 from the document (test_section_10s_numbers_are_still_the_documents), so they move only with it.
 
 How a heart's spawn chance is computed: test_encounter_design's rule (bucket weight renormalised over the buckets
@@ -172,7 +172,7 @@ def ground():
 
 def test_section_10s_numbers_are_still_the_documents():
     # Without it a threshold here could be edited until the data passed and nothing would say it left the doc.
-    assert "The four numbers below are proposed, for the owner to confirm" in S10   # tested as written
+    assert "are confirmed by the owner (2026-10-02)" in S10   # confirmed 2026-10-02; tested as written
     assert abs(float(re.search(r"\*\*1/9 \(([\d.]+)\)\*\*", S10).group(1)) - HEART_AREA_MAX) < 0.001
     assert abs(ABOVE_CAP_MAX - 0.112) < 1e-9 and (PRESENCE_STEP, PRESENCE_TOP_9) == (5, 62) and NEAR_PATH == 128
     # the 11.2% is Cobbleverse's uncommon and rare draw, as section 10 derives it: check the arithmetic still holds
