@@ -495,7 +495,7 @@ def audit(fns, order, zone, spec, ground, pit, others, old, city, city_blocks=No
     lim = (3340, -5, 3230, 3450, 80, 3330)
     head = tuple(spec["zone"]["hq_access"]["shaft_head"])
 
-    def walk(guards):
+    def walk(guards, parent=None):
         seen, todo, fired = set(starts), list(starts), set()
         while todo:
             x, y, z = todo.pop()
@@ -522,14 +522,23 @@ def audit(fns, order, zone, spec, ground, pit, others, old, city, city_blocks=No
                 if n not in seen:
                     seen.add(n)
                     todo.append(n)
+                    if parent is not None:
+                        parent[n] = (x, y, z)
         return seen, fired
-    alone, _f = walk([])
+    came = {}
+    alone, _f = walk([], came)
+
+    def path_to(c, last=8):
+        out = [c]
+        while out[-1] in came and len(out) < 4000:
+            out.append(came[out[-1]])
+        return list(reversed(out))[-last:]
     targets = {name: to for name, _s, _r, to in edges}
     if city_blocks is not None and starts:
         inside = [c for c in (targets.get("guard"), head) if c is not None and c in alone]
         if inside:
             bad("route", "the HQ's storey-0 room is reached from the doorstep WITHOUT the guard (%s reached): the door "
-                         "%s opens for anyone" % (inside, fd["at"]))
+                         "%s opens for anyone; the last steps in: %s" % (inside, fd["at"], path_to(inside[0], 12)))
         if "inside_guard" in targets and targets["inside_guard"] not in alone:
             bad("guard", "the inside guard's way out lands at %s, which the doorstep walk does not reach"
                 % (targets["inside_guard"],))

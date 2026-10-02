@@ -35,10 +35,10 @@ report the surface ring and cordon still standing and the hall not carved: that 
 2. `python tools/reapply.py prepare` (full, because dialogue, spawns, habitat pools and seven new packs all change;
    the cheap gates are already clean: `validate_data` 0 errors, `validate` 0 errors over 1,254 files).
 3. `install`, then boot. The restart loads the new dialogue classes.
-4. `python tools/reapply.py run --only R9Z,R9RU,R9DU,R9HF,R9SO,R9E,R18DU,R18HF,R18SO,R18R`. It runs in PLAN order:
+4. `python tools/reapply.py run --only R9Z,R9RU,R9DU,R9HF,R9SO,R9MD,R9E,R18DU,R18HF,R18SO,R18R,R18RU`. It runs in PLAN order:
    the three block passes and R9RU before R9E (Habitat Blocks sit in their blocks), then the NPCs, then R18R.
 5. Restart once (Habitat Blocks activate on load), then:
-   `python tools/presence_audit.py --out <scratch>/presence_after.tsv` (adds `extra`: 164 block and 4 entity probes
+   `python tools/presence_audit.py --out <scratch>/presence_after.tsv` (adds `extra`: 223 block and 7 entity probes
    from `data/world_probes.json`) and `python tools/deep_city.py verify --world <staging>` (after R9RU).
 6. `tools/trainer_world_audit.py` is unaffected; skip it unless R17 runs.
 
@@ -53,14 +53,19 @@ report the surface ring and cordon still standing and the hall not carved: that 
 - **Copperway Khan**: (6744, 149, 6207), gate. **Drovers' Hollow**: (3960, 101, 6023), barn door. **Old Orchard**:
   (2790, 66, 7048), press-house. Residents: see `docs/STATE.md` "The south".
 
-## 5. Decisions waiting on the owner
+## 5. Decided by the owner since (built, not applied)
 
-- Split-Bark (level 62) equals the Champion's ace, so it is catchable between the Elite Four and the Champion. 63 closes it.
-- The relic hall's spawn decision (unlit; anything there can walk up to the HQ). Should the plates open the HQ's
-  iron door for anyone?
-- The Mega dens are invisible from the air by design. Do you want den dressing (scarred ground, boulders) or a taller
-  approach box?
-- Drovers' Hollow is a barn in a dry ravine, not a cave in the Rift's south wall: measured, there is no wall there.
+- Split-Bark is level 63: no catch between the Elite Four and the Champion.
+- Nothing spawns in Hoopa's hall (three spawn-free zones). The HQ door needs `rift_crisis_pending` or later: the plates
+  are gone, a Compact guard at (3444, 67, 3283) moves the player through, step R18RU. A wall at z3278 closes the room off
+  from the next HQ section's street door (3445, 67, 3252); without it the guard could be walked round (found by the
+  relic audit over the BUILT city pack, which no builder worktree had).
+- The Mega dens are dressed to be seen from the air (step R9MD, `docs/world-building/MEGA_DENS.md`): Aggron
+  (4536, 126, 4419), Pinsir (4583, 123, 4683), Manectric (4605, 132, 4936), Houndoom (4482, 145, 5210), Abomasnow
+  (3937, 152, 3909), Tyranitar (4071, 146, 4168), Garchomp (4243, 125, 5321).
+
+Still open: the guards' lines are placeholders; keep the inside guard? Drovers' Hollow is a barn, not a cave (no
+wall there to cut).
 
 ## 6. Do not rediscover
 

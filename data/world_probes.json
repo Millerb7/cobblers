@@ -1132,22 +1132,72 @@
         "expect": true
       },
       {
-        "what": "passed]  the plate outside it",
+        "what": "passed]  ... and shut",
         "block": [
-          3444,
+          3443,
           67,
           3282,
-          "minecraft:polished_blackstone_pressure_plate"
+          "minecraft:iron_door[open=false]"
         ],
         "expect": true
       },
       {
-        "what": "passed]  the plate inside it",
+        "what": "passed]  the doorstep: NO plate (the first build's is gone)",
+        "block": [
+          3444,
+          67,
+          3282,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  inside the door: NO plate",
         "block": [
           3442,
           67,
           3282,
-          "minecraft:polished_blackstone_pressure_plate"
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the guard's floor",
+        "block": [
+          3444,
+          66,
+          3283,
+          "minecraft:polished_blackstone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the inside landing, clear",
+        "block": [
+          3440,
+          67,
+          3282,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  ... and its head room",
+        "block": [
+          3440,
+          68,
+          3282,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the inside guard's cell (air; he is an entity)",
+        "block": [
+          3441,
+          67,
+          3280,
+          "minecraft:air"
         ],
         "expect": true
       },
@@ -1352,6 +1402,36 @@
         "expect": true
       },
       {
+        "what": "the guard",
+        "entity": "@e[type=cobblemon:npc,x=3444,y=67,z=3283,distance=..2]",
+        "count": 1,
+        "hold": [
+          3444,
+          67,
+          3283
+        ]
+      },
+      {
+        "what": "the inside guard",
+        "entity": "@e[type=cobblemon:npc,x=3441,y=67,z=3280,distance=..2]",
+        "count": 1,
+        "hold": [
+          3441,
+          67,
+          3280
+        ]
+      },
+      {
+        "what": "nothing stands IN the doorway",
+        "entity": "@e[type=cobblemon:npc,x=3443,y=67,z=3282,distance=..1]",
+        "count": 0,
+        "hold": [
+          3443,
+          67,
+          3282
+        ]
+      },
+      {
         "what": "passed]  was the cordon's tinted glass (ground y93)",
         "block": [
           3285,
@@ -1448,6 +1528,26 @@
           68,
           3308,
           "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the storey-0 room's north partition (no way in but the guard)",
+        "block": [
+          3436,
+          67,
+          3278,
+          "minecraft:polished_deepslate"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the partition at the corner the audit walk found open",
+        "block": [
+          3443,
+          68,
+          3278,
+          "minecraft:polished_deepslate"
         ],
         "expect": true
       }

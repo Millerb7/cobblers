@@ -78,12 +78,20 @@ def test_r9ru_runs_after_the_pit_it_cuts_the_stair_into():
 def test_the_hq_way_down_stays_in_the_reserved_boxes():
     hp = R.hq_plan(SPEC)
     boxes = R.reserved_boxes(SPEC)
-    assert set(boxes) == {"hq_basement", "hq_secure_shaft", "hq_shaft_head"}
+    assert set(boxes) == {"hq_basement", "hq_secure_shaft", "hq_shaft_head", "hq_room_north_partition"}
     out = [c for c in hp["cells"] if c not in hp["undo"] and not R.in_boxes(c, boxes.values())]
     assert not out, out[:3]
     # nothing at or over the HQ room's floor (the door's plates came off 2026-10-02); the stair's head opens the floor
     room_y = SPEC["geometry"]["hq"]["room"]["floor_y"]
-    assert not {c for c in hp["cells"] if c[1] > room_y}
+    # except the one wall that closes the storey-0 room off from the next HQ section (2026-10-02): without it a player
+    # walks in at that section's street door and never meets the guard. It lies on the room's north boundary, not in it.
+    ix0, iz0, ix1, iz1 = SPEC["geometry"]["hq"]["room"]["interior"]
+    over = {c for c in hp["cells"] if c[1] > room_y}
+    seal = [d for d in SPEC["geometry"]["hq"]["dressing"] if d.get("seals_room")]
+    assert len(seal) == 1
+    f = seal[0]["fill"]
+    assert over == {(x, y, z) for x in range(f[0], f[3] + 1) for y in range(f[1], f[4] + 1) for z in range(f[2], f[5] + 1)}
+    assert f[2] == f[5] == iz0 - 1 and f[0] <= ix0 + 2 and f[3] >= ix1 + 1
     assert "plates" not in hp and "plates" not in SPEC["geometry"]["hq"]["front_door"]
     assert tuple(SPEC["zone"]["hq_access"]["shaft_head"]) in hp["air"]
     # the knock box is the records room's air, on its floor

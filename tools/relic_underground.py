@@ -813,7 +813,13 @@ def cmd_report(a):
         if in_city:
             bad.append("%d cells of the HQ's way down are cells the city writes, first %s (%s)"
                        % (len(in_city), in_city[0], city[in_city[0]]))
-        in_pit_air = sorted(c for c in hp["cells"] if pit(c[0], c[2]) is not None and c[1] > pit(c[0], c[2]))
+        # a dressing fill declared seals_room is the one thing allowed over the tread: the wall that closes the
+        # storey-0 room off from the next HQ section (2026-10-02), inside its own reservation (checked above)
+        sealing = {(x, y, z) for d in h["dressing"] if d.get("seals_room")
+                   for x in range(d["fill"][0], d["fill"][3] + 1) for y in range(d["fill"][1], d["fill"][4] + 1)
+                   for z in range(d["fill"][2], d["fill"][5] + 1)}
+        in_pit_air = sorted(c for c in hp["cells"] if c not in sealing
+                            and pit(c[0], c[2]) is not None and c[1] > pit(c[0], c[2]))
         if in_pit_air:
             bad.append("%d cells of the HQ's way down are in the Deep's air or the HQ room, first %s"
                        % (len(in_pit_air), in_pit_air[0]))

@@ -585,6 +585,8 @@ execute if block 3353 88 3330 minecraft:raw_gold_block [passed]  a ring fragment
 execute if block 3444 66 3308 minecraft:polished_blackstone_bricks [passed]  the turn-back's floor
 execute if block 3444 67 3308 minecraft:air            [passed]  the turn-back's head room
 execute if block 3444 68 3308 minecraft:air            [passed]
+execute if block 3436 67 3278 minecraft:polished_deepslate  [passed]  the storey-0 room's north partition (no way in but the guard)
+execute if block 3443 68 3278 minecraft:polished_deepslate  [passed]  the partition at the corner the audit walk found open
 ```
 
 Entities: R9RU summons none. Nothing spawns there (section 8d), so after the spawn packs are rebuilt and

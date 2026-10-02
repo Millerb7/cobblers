@@ -16,9 +16,9 @@
     "hall": [3369, 3241, 3411, 3283],
     "gallery": [3389, 3284, 3391, 3304],
     "passage": [3358, 3305, 3421, 3307],
-    "hq": [3421, 3282, 3444, 3312],
-    "hq_why": "the HQ's way down (geometry.hq): the stair x3428-3431 z3298-3313, the records room x3421-3429 z3300-3311; y0-67. Inside carve_with_shell, so the step's one forceload already holds it",
-    "y": {"carve": [5, 40], "shell": [-19, 65], "undo": [84, 110], "hq": [0, 67]}
+    "hq": [3421, 3278, 3444, 3312],
+    "hq_why": "the HQ's way down (geometry.hq): the stair x3428-3431 z3298-3313, the records room x3421-3429 z3300-3311; y0-67; and the storey-0 room's north partition x3431-3443 z3278 y67-70 (dressing seals_room). Inside carve_with_shell, so the step's one forceload already holds it",
+    "y": {"carve": [5, 40], "shell": [-19, 65], "undo": [84, 110], "hq": [0, 70]}
   },
 
   "rung": "datapack plus functions and commands (CLAUDE.md principle 6, rungs 5 and 6). The rungs below it do not reach: Cobblemon native has no player-zone concept and no area permission; no installed addon gates an area (data/rift_zones.json rung, same finding); Cobbleverse ships none; no config key expresses a box a player may not stand in. A vanilla datapack does: a minecraft:location advancement fires on a player inside a box and its reward function acts. The rung is PROVEN in this repository rather than assumed, by tools/gulch_mine.py's gate and tools/rift_zones.py's five zones, which are this exact shape.",
@@ -195,7 +195,8 @@
       "dressing": [
         {"fill": [3422, 1, 3301, 3428, 3, 3301], "block": "minecraft:bookshelf", "why": "the records: shelves along the north wall"},
         {"fill": [3422, 1, 3310, 3427, 2, 3310], "block": "minecraft:barrel[facing=up,open=false]", "why": "the Compact's stores along the south wall; empty, no loot (rewards are not this file's)"},
-        {"fill": [3425, 1, 3302, 3425, 1, 3302], "block": "minecraft:lectern[facing=south,has_book=false,powered=false]", "why": "a reading desk before the shelves"}
+        {"fill": [3425, 1, 3302, 3425, 1, 3302], "block": "minecraft:lectern[facing=south,has_book=false,powered=false]", "why": "a reading desk before the shelves"},
+        {"fill": [3431, 67, 3278, 3443, 70, 3278], "block": "minecraft:polished_deepslate", "seals_room": true, "why": "2026-10-02 integration: with the city's pack built, the audit's doorstep walk reached this sealed room WITHOUT the guard, in at the next HQ section's street door (3445, 67, 3252) and across z3278, where the city writes no dividing wall. This wall makes the guard the only way in. Reserved as hq_room_north_partition in data/deep_city.json."}
       ],
       "lights": {
         "block": "minecraft:lantern[hanging=false,waterlogged=false]",
@@ -209,7 +210,7 @@
       },
       "hatch_undo": {"cells": [[3427, 66, 3308], [3427, 66, 3309]], "block": "minecraft:deepslate", "why": "tools/deep_city.py no longer lays the hatch (it sat under a wall where no shaft opens). A world applied before 2026-10-02 still holds it, so R9RU lays those two cells back to the rock under the wall: x3427 there is inside the tread's bare-rock margin (tools/rift_deep.py rock_margin), so the cell was native rock, laid as the palette's rock under y70."},
       "hull": "every face-neighbour of the stair's or the room's air that this file does not write is made rock if it is a void (replace #cobblers:relic_void), inside the three reserved boxes only and never above a pit column's tread, so it cannot reach the room or the Deep. R9B has already sealed every pit column from y-4 to y65 and the relic shell every column near the passage, so the hull is a guard; `report` and the audit both check that every face of every HQ air cell is one of those.",
-      "reserved_boxes": ["hq_basement", "hq_secure_shaft", "hq_shaft_head"],
+      "reserved_boxes": ["hq_basement", "hq_secure_shaft", "hq_shaft_head", "hq_room_north_partition"],
       "outside_the_reserved_boxes": "the two hatch cells (under the wall), and nothing else (the door's two pressure plates were the other two until 2026-10-02: front_door.superseded_plates)"
     },
     "shell": {
