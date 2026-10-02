@@ -126,6 +126,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-02: the Drovers' Hollow in the Rift Foot (tools/drovers_hollow.py): a longbarn, its fold and
                 # the old working under the bank, run by R9HF
                 "cobblers_drovers_hollow",
+                # 2026-10-02: the seven open-air Mega dens made visible (tools/mega_dens.py, data/mega_dens.json): scrape,
+                # boulders, bones and each species' sign round the gulch's den anchors. Block functions run by R9MD
+                "cobblers_mega_dens",
                 # 2026-09-29: the gym interiors (tools/gym_interiors.py, data/gym_interiors.json): the healing
                 # machines out of all eight placed gyms, and gym 1's works carved under its lot. Block functions run
                 # by R16E, after the donors (R9) that stamp the gyms whole and would erase anything written first
@@ -534,6 +537,8 @@ def prepare_jobs(a):
     add("resident_encounters_audit", "resident_encounters_audit.py", *src)
     add("drovers_hollow:build", "drovers_hollow.py", "build", *src)
     add("drovers_hollow_audit", "drovers_hollow_audit.py", *src)
+    add("mega_dens:build", "mega_dens.py", "build", *src)
+    add("mega_dens_audit", "mega_dens_audit.py", *src)
     add("sea_drift_audit", "sea_drift_audit.py", *src)
     add("relic_underground_audit", "relic_underground_audit.py", *src)
     # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
@@ -1128,6 +1133,12 @@ def steps(with_spawns=False):
     import drovers_hollow
     out.append(("R9HF", "the Drovers' Hollow: its barn, fold and old working (data/drovers_hollow.json)",
                 drovers_hollow.placement_steps()))
+    # the seven open-air Mega dens, dressed (2026-10-02, tools/mega_dens.py): a pure block pass round each den anchor of
+    # data/gulch_mine.json. AFTER R9S (the gulch's own block pass, whose keeper spawns the Megas at these anchors) and
+    # the Rift skin (R1), whose surface it rewrites; BEFORE R9E with the other block passes. Per den: hold, build, release
+    import mega_dens
+    out.append(("R9MD", "the seven open-air Mega dens: scrape, boulders, bones and each species' sign (data/mega_dens.json)",
+                mega_dens.placement_steps()))
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
