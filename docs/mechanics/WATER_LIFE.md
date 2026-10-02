@@ -1,6 +1,6 @@
 # Water life: the block pass over the water export
 
-**Status:** build spec, 2026-10-02. It is `WATER_BUILD_PLAN.md` Phase C items 1 (the skin), 2, 3, the surfacing
+**Status:** built offline 2026-10-02 (both packs, both audits clean, wired as `reapply.py` R9LL and R9SL); not installed in any world, not seen in game. `docs/STATE.md` "Water life" has the numbers. Originally the build spec, 2026-10-02. It is `WATER_BUILD_PLAN.md` Phase C items 1 (the skin), 2, 3, the surfacing
 cave from item 4, and item 5, made concrete. It redesigns nothing: every role, stage and site is `WATER_MAP.md`'s
 allocation and `WATER_BUILD_PLAN.md`'s tables. Where this spec departs from them it says so under "Departures".
 
@@ -123,3 +123,23 @@ needs an export or an owner decision:
 
 None of this has run in a game. Specifically unproven [A]: that kelp and seagrass hold in a lake (proof P6); that
 a lantern 25-50 deep is seen from the surface (P4); that an air chamber at depth stays dry across a restart (P1).
+
+## Found while building (2026-10-02)
+
+- **There are no cliffs on the windward or north-west mainland.** The ground rises at most about 10 blocks in the
+  first 12 inland; the big rises are sea stacks. The waterline cave's mouth is therefore an open cleft that steps down
+  to y59, not a hole in a cliff face. A cliff is a height, so it would need the water export's next revision.
+- **The surfacing cave's swim is measured as a lower bound, not along the centre line.** The audit's mutation test
+  showed a passage the builder measured at 326.7 blocks has a provable lower bound of 283.1, under a Surf player's
+  305. The built cave's lower bound is 319.6.
+- **Shrew's case lies on the pit floor, 49 deep.** From the float's shoal (141 columns away) that is past a Surf
+  player's air; straight down from a mount over the pit it is about 10 s each way. Decision 1 (trained players do not
+  tire under water) is what makes it Surf content; `WATER_BUILD_PLAN.md` 4.4's "no time on the floor" is the
+  superseded reading.
+- **Uxie's light stands on the deep side of the mouth.** The island side of the apron is only 3 deep.
+- **Doors, beds, fence gates and cauldrons hold no water**, so each is a breathing pocket under water. None is written
+  under water; a house's door is two waterlogged trapdoors and its bed is wool.
+- **`tools/water_shape.py`'s `build_protect` and `resited_town` are broken on today's data** (the protect mask, run
+  on the applied heightmap, takes the water export's own changes for the Rift sculpt and excluded 85% of Arrow Lake;
+  `resited_town` asks for a `resite` block that has been folded). Both packs work round them (the pre-water heightmap,
+  sha-checked; the folded plan); the helpers themselves are not fixed.
