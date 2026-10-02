@@ -178,6 +178,14 @@
         "data/npc_seats.json",
         "tools/npc_seats.py"
       ]
+    },
+    "residents": {
+      "what": "Codex's ten named world residents: their dressing, keeper, respawn clock, trigger and leash (cobblers_residents, R18R)",
+      "paths": [
+        "data/resident_encounters.json",
+        "tools/resident_encounters.py",
+        "tools/resident_encounters_audit.py"
+      ]
     }
   },
   "contracts": [
@@ -781,6 +789,33 @@
         "tests/test_npc_seats.py::test_no_seat_stands_within_three_blocks_of_a_walked_route_segment",
         "tests/test_npc_seats.py::test_plaza_and_lot_seats_stand_one_above_the_plans_paved_or_levelled_surface",
         "tests/test_npc_seats.py::test_heightmap_seats_stand_one_above_the_rounded_canonical_heightmap"
+      ]
+    },
+    {
+      "id": "C17",
+      "title": "A resident that blacks a player out becomes the claim's guardian, and the residents' keeper never touches a guardian",
+      "owner": "recovery_claims",
+      "consumers": [
+        "residents"
+      ],
+      "constrained_by": [
+        "residents"
+      ],
+      "statement": "A resident's tags are never the blackout's exempt tag, so a resident that beats a player makes the item claim and becomes its guardian (tag cobblers.guardian, added by the blackout's recovery/bind); from then on the residents' generated keeper only counts it: no kill, hold, leash, wake, settle or merge selector of the pack reaches an entity tagged cobblers.guardian, and nothing in the pack adds or removes cobblers.guardian or the exempt tag.",
+      "stated_in": [
+        {
+          "at": "tools/blackout_pack.py:493",
+          "quote": "\"tag @s add cobblers.guardian\","
+        },
+        {
+          "at": "data/resident_encounters.json:1882",
+          "quote": "never a kill (the duplicate rule kills only tag=!cobblers.guardian)"
+        }
+      ],
+      "tests": [
+        "tests/test_resident_encounters.py::test_a_kill_that_can_reach_a_guardian_is_refused",
+        "tests/test_resident_encounters.py::test_holding_a_guardian_is_refused",
+        "tests/test_resident_encounters.py::test_a_resident_made_exempt_from_the_blackout_is_refused"
       ]
     }
   ]

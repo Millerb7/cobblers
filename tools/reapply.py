@@ -109,6 +109,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 "cobblers_frostpeak_summit",
                 # 2026-10-02: the Lopunny superfan's house and its Buneary cellar (tools/lopunny_house.py), run by R9LH
                 "cobblers_lopunny_house",
+                # 2026-10-02: Codex's ten named residents (tools/resident_encounters.py, data/resident_encounters.json):
+                # a keeper loop and respawn clock hold them, so world-local; dressed and the ungated ones summoned by R18R
+                "cobblers_residents",
                 # 2026-09-29: the gym interiors (tools/gym_interiors.py, data/gym_interiors.json): the healing
                 # machines out of all eight placed gyms, and gym 1's works carved under its lot. Block functions run
                 # by R16E, after the donors (R9) that stamp the gyms whole and would erase anything written first
@@ -220,7 +223,10 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_sizes", "cobblers_blackout", "cobblers_rift_mines", "cobblers_gulch_mine",
                "cobblers_rift_zones", "cobblers_mega_recipes",
                "cobblers_ferries", "cobblers_ambient", "cobblers_levelcap", "cobblers_mines",
-               "cobblers_legendaries")
+               "cobblers_legendaries",
+               # 2026-10-02: the residents' keeper SPAWNS Pokemon on its own when a player comes near, so it must never
+               # load in the global folder, where the live world would run it too
+               "cobblers_residents")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -498,6 +504,10 @@ def prepare_jobs(a):
     add("frostpeak_summit_audit", "frostpeak_summit_audit.py", *src)
     add("lopunny_house:build", "lopunny_house.py", "build", *src)
     add("lopunny_house_audit", "lopunny_house_audit.py", *src)
+    # the ten named residents (2026-10-02), then their independent audit, which re-derives every site and write from
+    # the data and the heightmap and fails the prepare on a broken pack
+    add("resident_encounters", "resident_encounters.py", *src)
+    add("resident_encounters_audit", "resident_encounters_audit.py", *src)
     add("sea_drift_audit", "sea_drift_audit.py", *src)
     # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
     # then the offline audit, which re-derives every shell box from data/placements.json, replays the written
@@ -1172,6 +1182,13 @@ def steps(with_spawns=False):
     import ursaluna_cave
     out.append(("R18U", "the Ursaluna's den west of Highwire (data/ursaluna_cave.json)",
                 ursaluna_cave.placement_steps() + [("npc", n) for n in ursaluna_cave.npc_placements()]))
+    # Codex's ten named residents (2026-10-02, data/resident_encounters.json): each one's dressing inside a forceload of
+    # its recorded bbox, then - for the two with no presence gate (Old Jaw, Whiteback) - an RCON summon guarded on tag
+    # AND species, and its bind. The eight gated ones are left to the pack's keeper, which brings each in the first time
+    # a player holding its gate comes near. Entities, so an export erases them, as the den's bear
+    import resident_encounters
+    out.append(("R18R", "the ten named residents (data/resident_encounters.json)",
+                resident_encounters.placement_steps()))
     # the Frostpeak research camp (2026-10-02): its blocks and instruments, held in a forceload so no fill lands on an
     # unloaded chunk, then its three researchers
     import frostpeak_camp
