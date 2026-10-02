@@ -2110,6 +2110,23 @@
       ]
     },
     {
+      "id": "quest.ambient_old_orchard.keeper_cursor",
+      "quest_id": "ambient_old_orchard",
+      "field": "keeper_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "greeting",
+      "allowed_values": [
+        "greeting",
+        "who",
+        "sleeper",
+        "warn",
+        "applin",
+        "cellar",
+        "repeat"
+      ]
+    },
+    {
       "id": "quest.evt_lopunny_superfan.started",
       "quest_id": "evt_lopunny_superfan",
       "field": "started",

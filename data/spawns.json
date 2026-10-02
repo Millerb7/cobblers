@@ -13824,6 +13824,58 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.old_orchard_rows.applin",
+      "species": "applin",
+      "bucket": "common",
+      "level": "43-53",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "old_orchard_rows",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.old_orchard_rows.tropius",
+      "species": "tropius",
+      "bucket": "uncommon",
+      "level": "43-53",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "old_orchard_rows",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.old_orchard_rows.flapple",
+      "species": "flapple",
+      "bucket": "rare",
+      "level": "48-53",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "old_orchard_rows",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "player evolution (non-level method)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.old_orchard_rows.appletun",
+      "species": "appletun",
+      "bucket": "rare",
+      "level": "48-53",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "old_orchard_rows",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "player evolution (non-level method)",
+      "spawnable_position": "grounded"
     }
   ],
   "subregions": [
@@ -31637,6 +31689,85 @@
         }
       ],
       "placement_status": "authored: data/habitat_blocks.json lopunny_superfan_cellar_ward, status planned"
+    },
+    {
+      "id": "old_orchard_rows",
+      "display_name": "Old Orchard rows",
+      "intended_location": "the Old Orchard on Sunset Isle (data/old_orchard.json): one activated Habitat Block, old_orchard_rows_ward in data/habitat_blocks.json, in the trunk of the living tree at (2754, 72, 7088), keeping up to 6 alive within 12 of it in the west rows",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 43,
+        "maximum": 53
+      },
+      "level_band_why": "the band of sunset_east (data/spawns.json subregions: 43-53, tier 8, basis route_08_blaine_to_giovanni), the sub-region the orchard stands in (data/regions.json polygons). The evolution policy (evolution_policy above): Applin evolves only by item (Cobblemon 1.8.0 applin.json: item_interact with a tart, sweet or syrupy apple), so it spawns over the whole band; Flapple and Appletun are non-level evolutions, which appear from tier 6 in the upper half of the band (48-53); Tropius does not evolve. Slakoth and Vigoroth, first proposed, cannot spawn in this band: Slakoth evolves at 18 and Vigoroth at 36 (Cobblemon 1.8.0 species data), so their ranges (43-22, 43-40) are empty. The table rule's maturity split is not applied: the evolved apples are rare on purpose, because the cellar's find (data/rewards.json old_orchard_cellar) is the two apples that make them.",
+      "entries": [
+        {
+          "species": "Applin",
+          "pokemon": "applin",
+          "types": [
+            "grass",
+            "dragon"
+          ],
+          "family": "applin",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "43-53",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        },
+        {
+          "species": "Tropius",
+          "pokemon": "tropius",
+          "types": [
+            "grass",
+            "flying"
+          ],
+          "family": "tropius",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "43-53",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Flapple",
+          "pokemon": "flapple",
+          "types": [
+            "grass",
+            "dragon"
+          ],
+          "family": "applin",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "player evolution (non-level method)",
+          "level": "48-53",
+          "bucket": "rare",
+          "weight": 2.0,
+          "conditions": {}
+        },
+        {
+          "species": "Appletun",
+          "pokemon": "appletun",
+          "types": [
+            "grass",
+            "dragon"
+          ],
+          "family": "applin",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "player evolution (non-level method)",
+          "level": "48-53",
+          "bucket": "rare",
+          "weight": 2.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json old_orchard_rows_ward, status planned"
     }
   ],
   "route_species_selection_note": "Generated by tools/build_encounters.py from data/encounter_design.json (docs/mechanics/ENCOUNTER_DESIGN.md section 6): per route, the families in rules.corridor_roles (never rare, never a find) of every sub-region its corridor crosses (data/routes.json geography transitions), at most corridor_species_limit, every crossed table's water species kept and the rest by chance times corridor length. tools/compile_spawns.py reads this list and does not choose. Do not edit by hand.",

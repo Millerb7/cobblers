@@ -109,6 +109,8 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 "cobblers_frostpeak_summit",
                 # 2026-10-02: the Lopunny superfan's house and its Buneary cellar (tools/lopunny_house.py), run by R9LH
                 "cobblers_lopunny_house",
+                # 2026-10-02: the Old Orchard on Sunset Isle round the Orchard Sleeper (tools/old_orchard.py), run by R9SO
+                "cobblers_old_orchard",
                 # 2026-09-29: the gym interiors (tools/gym_interiors.py, data/gym_interiors.json): the healing
                 # machines out of all eight placed gyms, and gym 1's works carved under its lot. Block functions run
                 # by R16E, after the donors (R9) that stamp the gyms whole and would erase anything written first
@@ -498,6 +500,8 @@ def prepare_jobs(a):
     add("frostpeak_summit_audit", "frostpeak_summit_audit.py", *src)
     add("lopunny_house:build", "lopunny_house.py", "build", *src)
     add("lopunny_house_audit", "lopunny_house_audit.py", *src)
+    add("old_orchard:build", "old_orchard.py", "build", *src)
+    add("old_orchard_audit", "old_orchard_audit.py", *src)
     add("sea_drift_audit", "sea_drift_audit.py", *src)
     # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
     # then the offline audit, which re-derives every shell box from data/placements.json, replays the written
@@ -1070,6 +1074,11 @@ def steps(with_spawns=False):
     import lopunny_house
     out.append(("R9LH", "the Lopunny superfan's house and its Buneary cellar (data/lopunny_house.json)",
                 lopunny_house.placement_steps()))
+    # the Old Orchard on Sunset Isle (2026-10-02, tools/old_orchard.py): BEFORE R9E, because its build writes the trunk
+    # the Applin Habitat Block sits in - after R9E it would write the log back over the block
+    import old_orchard
+    out.append(("R9SO", "the Old Orchard on Sunset Isle: rows, press-house and cellar, garden (data/old_orchard.json)",
+                old_orchard.placement_steps()))
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
@@ -1166,6 +1175,10 @@ def steps(with_spawns=False):
     import npc_seats
     out.append(("R17N", "the settlement NPCs (data/npc_seats.json)",
                 [("npc", n) for n in npc_seats.placements()]))
+    # the Old Orchard's keeper (2026-10-02, tools/old_orchard.py): an NPC like the settlement ones, placed over RCON
+    # after the restart that loaded cobblers_dialogue's classes, on the ground R9SO's orchard stands on
+    out.append(("R18SO", "the Old Orchard's keeper, Wenna Marlow (data/old_orchard.json npc)",
+                [("npc", n) for n in old_orchard.npc_placements()]))
     # the Ursaluna's den (2026-10-02): carve, summon the sleeping bear over RCON (an entity the export erases, as the
     # Celebi and the legendaries are, and guarded on its tag AND species, not distance - R14C failed twice on a bare
     # distance guard), dress, then its keeper Hollis, whose class loads at boot from cobblers_dialogue
