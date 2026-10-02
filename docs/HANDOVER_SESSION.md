@@ -1,68 +1,90 @@
-# Handover: blockers on the south map (2026-10-02, session e183ad9d)
+# Handover: the consolidation of 2026-10-02 (session a292b1c5, worktree consolidate-parallel-sessions-b6b9d7)
 
-A cold session reads CLAUDE.md, `docs/STATE.md` and this file. `docs/HANDOVER_SOUTH.md` is the south session's own
-handover and is still current for its batched apply (section 2 below folds it in).
+A cold session reads CLAUDE.md, `docs/STATE.md` and this file. The job: main holds everything the five parallel
+sessions of 2026-10-02 built, as ONE PR, applied to staging and verified against the world.
 
 ## 1. The branch
 
-- **`claude/blockers-on-south-map`**, pushed, **no PR** (the owner wants one PR per batch; open it when the apply
-  is done). Re-read the head: `git fetch --prune; git rev-parse origin/claude/blockers-on-south-map`.
-- It merges three inputs: `origin/claude/south-map-world-audit-2219f3` (the base: theirs wins on the relic hall,
-  `deep_city` and the residents), `origin/main` at `1a4b85f` (#108, the hearts, which the south branch lacked), and
-  the server session's local `build/2026-10-02-followups` at `a2fb389` (Shrew Station etc., 21 commits the south
-  branch lacked). If followups has moved since, merge it again.
-- **Not merged:** `claude/legendary-followups-2026-10-02` (worktree `legendary-shrines-placement-fa3eea`), which
-  had UNCOMMITTED edits to `data/adopted_legendary_sites.json`, `server.properties.example` and
-  `tools/install_check.py`. The owner routed the EXP-048 fixes there (clone dropping shrine blocks, the missing ritual
-  block, the 71-block placement error, Mew's fossil from the research station, unblocking Spectrier, Calyrex, the
-  feathers, Zacian and Zamazenta). Do not do that work from here.
-- Superseded and never pushed: `claude/integration-blockers-outstanding-4ac1df` at `d198fcd` (its relic and resident
-  changes lost to the south branch's; its guard, validator fix and siting test were carried over).
+- **`build/2026-10-02-consolidation`**, off main `1a4b85f`, pushed, **no PR yet** (open it only when the apply is
+  verified; the owner wants one big correct PR). Re-read the head: `git fetch --prune; git rev-parse
+  origin/build/2026-10-02-consolidation`.
+- Merged, in order: `claude/blockers-on-south-map` `cee7430` (which already held the south branch to `b9e8963`, main
+  and the server session's followups to `a2fb389`); `build/2026-10-02-followups` `aa5b5b9` (EXP-048 PASS, local
+  only); `claude/south-map-world-audit-2219f3` `b6b1f0b` (Mega dens R9MD, Hoopa's HQ guard, Split-Bark 63); the
+  legendary stack `0bebc5a` (#109-#112); water `b4cef78` (#113); cherry-pick of `edc81c4` (the water_shape fix that
+  was only on local `claude/affectionate-chaplygin-fa86cd`).
+- **Close without merging once the consolidation PR merges:** #109, #110, #111, #112, #113 (all inside it).
+- **Delete after merge:** `build/2026-10-02-station-coast`, `claude/integration-blockers-outstanding-4ac1df`
+  (`d198fcd`, superseded; its guard, validator fix and siting test were carried into blockers), the 38
+  `worktree-agent-*` branches (every one is tip-contained or its work re-committed under the orchestrator's title).
+- **Not part of this job, for the owner:** old Codex branches whose files never reached main:
+  `codex/trainer-modes` (validate_trainers.py; an EXP-047 that collides with main's EXP-047-pocket-dimension),
+  `codex/handover-content`, `codex/celebi-sapling-narrative`, `codex/legendary-system-audit`,
+  `codex/trader-stock-planning`.
 
-## 2. Where it stopped: the apply, waiting on the lock all session
+## 2. Where it stopped
 
-The server (java pid 26736, since 12:15) and the lock (`cobblers-cobblemon-session-start-531d15`, since 08:47) were
-held the whole session; per the hard gate the runtime was never read. When they free, in this order:
+Done and verified:
+- All merges committed; data files merged by id and field from the index stages (refusing any field both sides
+  changed). The touched suites: 209 passed; 2 resident tests wait on `build/` (prepare).
+- **The owner's player progress on staging was reset, everything** (owner's choice): 32 scoreboard scores reset over
+  RCON; after a clean `stop`, 20 per-player files (vanilla, advancements, stats, Cobblemon party/PC/pokedex/molang/
+  player data, CobbleDollars, Cobblenav, TM moves, the RCT player record and the one-trainer RCT memory of the Brock
+  defeat) MOVED to `C:/Users/wnd/Documents/cobblers-staging/player-reset-backup-2026-10-02/<uuid>/`. Left by
+  decision: the recovery ledger's name registry, waystone ownership, a backpack's storage.
+- `enable-command-block=true` set in the server's `server.properties` (was false; the Necrozma towers and Mew's door
+  need it).
+- **Server UP on staging** since 16:25:54, pid 54688, launched `nohup ... & disown` from a background task and
+  checked alive after that task exited (it is not tied to a tool timeout). Command line:
+  `java -Xmx16G -jar fabric-server-launch.jar nogui --universe C:/Users/wnd/Documents/cobblers-staging --world
+  staging-2026-10-01` from `C:/Users/wnd/Documents/github/cobblers-server`. **`server.properties` level-name is
+  `cobblers-10240`, the LIVE world: never boot without `--universe/--world`.**
+- **The lock is HELD by this session** (taken over from `cobblers-cobblemon-session-start-531d15` with the owner's
+  approval). RCON needs `COBBLERS_SERVER_LOCK=<lock path>` and `COBBLERS_LOCK_OWNER=<its owner line>` (runtime_guard).
 
-1. Take the lock. `python tools/install_check.py --server-dir C:/Users/wnd/Documents/github/cobblers-server --world-dir C:/Users/wnd/Documents/cobblers-staging/staging-2026-10-01`.
-2. **World probe BEFORE any apply** (the owner asked whether the Mega mine, Hoopa underground, the arena and the
-   Deep's changes are in the world): `python tools/presence_audit.py --only arena,gulch,dens,relic --out <scratch>/before.tsv`
-   (`dens` drives the keepers: staging only). Repo-side verdicts are in `docs/HANDOVER_SOUTH.md` section 2.
-3. **The hearts may already be installed**: followups' STATE says the server session installed them at 12:16
-   (world-local `cobblers_spawns` byte-identical to its compile, 989 heart ids). Check that, do not repeat it blind.
-4. `docs/HANDOVER_SOUTH.md` section 3's batched apply (`max-tick-time=-1`, full `prepare`, `install`, boot detached and
-   check the PROCESS, `run --only R9Z,R9RU,R9DU,R9HF,R9SO,R9E,R18DU,R18HF,R18SO,R18R`), plus Shrew Station's R9RS from
-   followups. Then the owner's own asks: `run --only R17N` and `python tools/npc_seats.py verify`.
-5. Restart, `presence_audit.py --out <scratch>/after.tsv`, `deep_city.py verify --world <staging>`.
-6. The full suite after prepare. Before prepare it was 27 failed, 5,279 passed, 66 errors (nearly all need
-   `build/` or `derived/`; the four battle_sim tests that needed `derived/availability.json` passed).
-
-Then tell the owner where to stand on Frostpeak (re-measured): above the y180 line (566, 227, 316); just above
-(794, 183, 250); just below (806, 177, 244), 13 blocks from the last.
+Next, in order:
+1. **The Jungle Isle residue (the owner's in-game notes 3 and 4), decision B15 "jungle isle should be removed":**
+   - A dirt prism y56-128 capped by an underwater-ruin template stands at x5140-5180, z7470-7500, read from the
+     staging world 2026-10-02: `ruin_great_hall` from its old y126 seat. `data/placements.json` re-seated the six
+     `jungle_ruins` ruins to y59-62 on 2026-09-30, but nothing removed the old builds. And at the NEW seats four of
+     the six overlap Pacifidlog by 496 columns (STATE). Proposed: retire the `jungle_ruins` placements, and a
+     one-off clear of the old seats' volumes in staging (old positions from git before the 2026-09-30 re-seat).
+   - The four drowned jungle elders (`elder_jungle_east_1/2`, `elder_jungle_west_1/2` in `data/elder_trees.json`,
+     pinned to pre-water ground) hang 17-68 blocks in the air with their nests. The owner: "need to be moved". New
+     sites are a design call; the old trees need clearing.
+2. `python tools/local_inputs.py hydrate --store C:/Users/wnd/Documents/cobblers-local`; copy `derived/` from the
+   primary checkout (`C:/Users/wnd/Documents/github/cobblers/derived`, gitignored, ~198 MB; rift_sculpt cannot be
+   rebuilt anywhere). `validate_data`, then `reapply.py prepare` once, then the full suite.
+3. After prepare, check the water packs (R9LL, R9SL) against the new builds: neither generator reads Shrew Station,
+   the Old Orchard, the Mega dens, the Hollow or the Khan. The apply order already puts water first so a build wins.
+4. Warn the owner, then stop, install (with `max-tick-time=-1`), boot detached, check the PROCESS, run the batched
+   steps (`docs/HANDOVER_SOUTH.md` section 3: R9Z, R9RU, R9DU, R9HF, R9SO, R9E, R18DU, R18HF, R18SO, R18R; plus R9RS,
+   R9MD, R9LL, R9SL, R18A, R18S, R9LH and the Spectrier cap), then `run --only R17N` and `python tools/npc_seats.py
+   verify`, then `presence_audit.py`. The owner's notes 1-2 (no Mega mine or south-Rift changes; the shrine still on
+   Shrew Lake) are this apply, never run because the lock was held all day.
+5. Rewrite STATE in one pass from the world, open the draft PR with its head pinned.
 
 ## 3. What waits on the owner
 
-- **Split-Bark L62** is over its tier-8 place's ceiling of 60 (`tests/test_resident_siting.py`, strict xfail); the
-  south session proposed 63 to close its catch leak instead. One call.
-- **Wiremother L30** (lowered to its ceiling) is a declared catch-gate leak: a partner between gyms 2 and 3 can catch
-  it once it appears. Keep, or move to a tier-3 place and restore 33.
-- **The relic hall's spawn decision** (spawn-free zones are x/z only, so one would also blank the dig above).
-- The moved ROSTER + GATE ONLY residents (Ridgejaw, Hornwall, Split-Bark) no longer stand in a clearing: look in game.
+- **Feathers and Kubfu's scrolls have two authors**, both inert: Shrew Station's Director (`data/research_station.json`
+  economy, issuing false) and the Frostpeak camp's dialogue (`data/frostpeak_camp.json` item_economy, not built).
+  Recommended: scrolls, crown and dews at the station; feathers via the camp, per the owner's later quoted words.
+  The station's ember survey still targets the Nether structure; Moltres is now in the Craters.
+- **EXP-048's species**: the two sessions relayed Calyrex and Spectrier for the same click.
+- **Wiremother L30** is a declared catch-gate leak (pinned in `tests/test_resident_encounters.py` as the only one).
+- New sites for the four jungle elders.
 
 ## 4. Do not rediscover
 
-- **The primary checkout is fixed**: `C:/Users/wnd/Documents/github/cobblers` is on `main` at `1a4b85f` with the `env`
-  block. Its old history (no common ancestor with origin/main) is `backup/main-pre-cleanup-2026-10-02`.
-  `COBBLEVERSE/` there now shows untracked (its datapacks intact). This session still lacked the variable.
-- **The suite refuses green without the heightmap** (`tests/conftest.py`); `--allow-no-heightmap` for a partial run.
-  A skip naming `rift_heightmap.py` is a missing derived plan and is not counted.
-- **The 263 spawn-block errors** were unhydrated local kits; `python tools/local_inputs.py hydrate --store C:/Users/wnd/Documents/cobblers-local`.
-- **Merging data files by text loses records.** Both sides appending to one list makes git interleave half-records;
-  joined, they become one object with duplicate keys and JSON keeps the last. Merge by id from `:1:`/`:2:`/`:3:` and
-  check the result is additive against both sides (`validate_data` caught a lost cursor field here).
-- `#107` was merged at 16:57 before review; its premise of overlapping the encounter rebuild was wrong (no shared file
-  or id).
+- Text-merging data JSON loses records; merge by id from `:1:/:2:/:3:` (the scratch tool was a 90-line three-way
+  merge refusing any field both sides changed). Formats: most data files are `json.dumps(indent=2)`;
+  `adopted_legendary_sites.json` is indent=1; `research_station.json` and `frostpeak_camp.json` are hand-formatted.
+- `cobblers_ursaluna_cave` had been listed twice in reapply's generated-pack list since blockers (an earlier text
+  merge); it broke 29 install_check tests. Fixed in `e301dcf`.
+- #107 and the encounter rebuild share no file, id or co-located species; their overlap was resident levels against
+  tier ceilings.
+- The Pacifidlog pillar is dirt, not an elder trunk (nearest elder 240 blocks away).
 
 ## 5. Cost
 
-`python tools/session_cost.py`: 227 turns, context now 402k (average 259k), weighted 7.4M. No agents.
+`python tools/session_cost.py`: 139 turns at the handover, context 316k (average 216k), weighted 3.9M. No agents.
