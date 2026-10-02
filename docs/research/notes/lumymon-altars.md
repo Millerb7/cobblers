@@ -1,5 +1,7 @@
 # What a pasted LumyMon altar can and cannot do (offline reading, 2026-10-02)
 
+> **CORRECTION, 2026-10-02, measured by the main session against the server's files under the lock.** This note's claim that the feathers and the crown are inside the templates' barrels is **wrong**. The templates were read: Articuno's barrel holds wind charges, ice gems, glass panes, breeze rods and diamond boots; Zapdos's holds redstone, electric gems, a trident and copper bulbs; the cemetery stocks no barrel. Across all 102 mod jars and every server datapack, **no recipe or loot table produces `glacier_feather`, `thunder_feather` or `calyrex_crown`** (they appear only as advancement icons and TM-recipe ingredients). Obtainable: the `origin_fossil` (LumyMon recipe) and the shaderoot carrot (the cemetery's own crop). So a working altar is usable in play only for Mew and for the cemetery's Spectrier trigger, unless the campaign supplies the item.
+
 Prepared for EXP-048. Nothing here was booted, placed or clicked. **VERIFIED** means read in a jar, zip or
 config file named on the line. **INFERRED** means a conclusion from names, strings or vanilla behaviour that
 the files do not state outright. LumyMon is closed source (`CC BY-NC-ND 4.0`, `fabric.mod.json`); it was read
