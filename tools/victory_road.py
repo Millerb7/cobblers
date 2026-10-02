@@ -32,6 +32,7 @@ from pathlib import Path
 import numpy as np
 
 import function_limits as FL
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 
 ROOT = Path(__file__).resolve().parent.parent
 SPEC = ROOT / "data" / "victory_road.json"
@@ -401,7 +402,7 @@ def build(source_root, server_dir=None):
     import rift_deep as RD
     # the same fallback tools/ground.py makes: without it a missing --source-root died inside region_mask with a
     # TypeError about NoneType instead of saying what was missing
-    source_root = source_root or os.environ.get("COBBLERS_SOURCE_ROOT")
+    source_root = source_root or env_source_root()
     if not source_root:
         raise RoadError("no --source-root and no COBBLERS_SOURCE_ROOT: the heightmap and the owner's tracings "
                         "both live under it")

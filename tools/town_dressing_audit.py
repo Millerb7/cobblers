@@ -35,6 +35,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 
 PACK = ROOT / "build" / "datapacks" / "cobblers_town_dressing"
 N = r"(-?\d+)"
@@ -187,7 +188,7 @@ def audit_town(settlement, lines, plan, plan_data, building_rects, ground, spawn
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--pack", default=str(PACK))
-    p.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"))
+    p.add_argument("--source-root", default=env_source_root())
     a = p.parse_args(argv)
     import ground as G
     import town_character as TC

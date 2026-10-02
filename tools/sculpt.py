@@ -41,6 +41,7 @@ from PIL import Image, ImageDraw
 import terrain as T
 from coast_measure import open_sea, shoreline_samples, smooth
 from foliage import inside_distance, noise as grid_noise
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 
 
 def bilinear(h, xs, zs):
@@ -773,7 +774,7 @@ def main(argv=None):
     landmarks = json.loads((ROOT / "data" / "landmarks.json").read_text(encoding="utf-8"))
     import os
     cut_out = rivers["cut"]["output"]
-    root = Path(a.source_root or os.environ.get("COBBLERS_SOURCE_ROOT") or ".")
+    root = Path(a.source_root or env_source_root() or ".")
     src_path = Path(a.from_heightmap) if a.from_heightmap else root / cut_out["path"]
     raw = np.array(Image.open(src_path))
     sha = hashlib.sha256(src_path.read_bytes()).hexdigest()

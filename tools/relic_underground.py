@@ -18,11 +18,18 @@ Re-applied by tools/reapply.py step R9RU, after R9DC and before R9E: hold the ch
 down (40_hq), then release. The pack is world-local: its zone advancement acts on its own and needs no step.
 
 THE HQ'S WAY DOWN (geometry.hq, 2026-10-02). The owner's "reachable only through the Compact HQ" needs a way in that no
-other tool builds: a pressure plate either side of the HQ ring-0 section's iron door (the city's sealed lot has nothing
-that opens it), a switchback stair from that room's south-west corner down the reserved secure shaft, and a records room
+other tool builds: a switchback stair from that room's south-west corner down the reserved secure shaft, and a records room
 at y0 whose open west doorway is the passage's east end and holds the zone's knock box. It is carved AFTER the reshell
 so no shell pass seals it, and the shell never lays a cell of it. tools/deep_city.py owns the HQ above ground and no
 longer lays the old hatch; everything under the room's floor is this file's, inside data/deep_city.json's reservations.
+
+THE DOOR (the owner, 2026-10-02: "the HQ door should need the finale's quest stage, not a plate anyone can stand on").
+The ring-0 section's iron door stays SHUT: nothing beside it opens it (the first build's two pressure plates are gone,
+geometry.hq.front_door.superseded_plates). The gate is a Compact guard (geometry.hq.guard) whose compiled dialogue
+(data/dialogue.json dlg_main_relic_hq_guard) offers "Go through." only to a player whose quest.main_worldshift_reveal.stage
+is rift_crisis_pending or later, and whose action runs hq_admit as THAT player: a teleport to the inside landing. The
+door never opens, so nobody follows. The way out is the inside guard (hq_release, ungated). Both NPCs are placed by
+tools/reapply.py step R18RU after R17N (npc_placements()).
 
 THE UNDO. A world applied before 2026-10-02 (staging, R9DC on 2026-10-01 17:10) holds the relic area's old surface
 build: the platform, the six arches, the plinth and gold ring, the standing stones, the processional way and the
@@ -62,6 +69,7 @@ import numpy as np
 
 ROOT =Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 DATA = ROOT / "data" / "relic_underground.json"
 OUT = ROOT / "build" / "datapacks" / "cobblers_relic_underground"
 NS = "cobblers"
@@ -200,7 +208,7 @@ class Geo:
 
 def source_root_of(given):
     import os
-    sr = given or os.environ.get("COBBLERS_SOURCE_ROOT")
+    sr = given or env_source_root()
     if not sr:
         raise RelicError("no source root: pass --source-root or set COBBLERS_SOURCE_ROOT")
     return sr
@@ -483,11 +491,11 @@ UPHILL = {(0, 1): "north", (0, -1): "south", (1, 0): "west", (-1, 0): "east"}
 
 
 def hq_plan(spec):
-    """-> {"cells": {(x, y, z): block}, "air": set, "floors": set, "plates": set, "undo": set}: everything
-    carve/40_hq writes (the hull aside), from data/relic_underground.json geometry.hq alone. Layered: the records
-    room's shell and air, then the runs (their floors, then their head room), the dressing, the lights, the door's
-    plates and the hatch's two cells. Nothing is written at or over the HQ room's floor except the plates, and no
-    cell the passage writes is touched."""
+    """-> {"cells": {(x, y, z): block}, "air": set, "floors": set, "undo": set}: everything carve/40_hq writes (the
+    hull aside), from data/relic_underground.json geometry.hq alone. Layered: the records room's shell and air, then the
+    runs (their floors, then their head room), the dressing, the lights and the hatch's two cells. Nothing is written at
+    or over the HQ room's floor (the door's plates came off 2026-10-02: the guard is the way in), and no cell the passage
+    writes is touched."""
     h = spec["geometry"]["hq"]
     geo = Geo(spec)
     room_y, hr = h["room"]["floor_y"], h["head_room"]
@@ -544,18 +552,13 @@ def hq_plan(spec):
         cells[tuple(c)] = L["block"]
     for c in L["hanging"]:
         cells[tuple(c)] = L["hanging_block"]
-    fd = h["front_door"]
-    plates = {tuple(c) for c in fd["plates"]}
-    for c in plates:
-        cells[c] = fd["plate_block"]
     undo = {tuple(c) for c in h["hatch_undo"]["cells"]}
     for c in undo:
         cells[c] = h["hatch_undo"]["block"]
     bad = [c for c in cells if passage_owns(*c)]
     if bad:
         raise RelicError("the HQ's way down writes %d cells the passage writes, first %s" % (len(bad), bad[0]))
-    return {"cells": cells, "air": {c for c, v in cells.items() if v == AIR}, "floors": set(floors), "plates": plates,
-            "undo": undo}
+    return {"cells": cells, "air": {c for c, v in cells.items() if v == AIR}, "floors": set(floors), "undo": undo}
 
 
 def reserved_boxes(spec):
@@ -802,8 +805,7 @@ def cmd_report(a):
         hp = None
     if hp is not None:
         boxes = reserved_boxes(spec)
-        outside = [c for c in hp["cells"] if c not in hp["plates"] and c not in hp["undo"]
-                   and not in_boxes(c, boxes.values())]
+        outside = [c for c in hp["cells"] if c not in hp["undo"] and not in_boxes(c, boxes.values())]
         if outside:
             bad.append("%d cells of the HQ's way down are outside the reserved boxes %s, first %s"
                        % (len(outside), sorted(boxes), sorted(outside)[0]))
@@ -811,8 +813,13 @@ def cmd_report(a):
         if in_city:
             bad.append("%d cells of the HQ's way down are cells the city writes, first %s (%s)"
                        % (len(in_city), in_city[0], city[in_city[0]]))
-        in_pit_air = sorted(c for c in hp["cells"] if c not in hp["plates"] and pit(c[0], c[2]) is not None
-                            and c[1] > pit(c[0], c[2]))
+        # a dressing fill declared seals_room is the one thing allowed over the tread: the wall that closes the
+        # storey-0 room off from the next HQ section (2026-10-02), inside its own reservation (checked above)
+        sealing = {(x, y, z) for d in h["dressing"] if d.get("seals_room")
+                   for x in range(d["fill"][0], d["fill"][3] + 1) for y in range(d["fill"][1], d["fill"][4] + 1)
+                   for z in range(d["fill"][2], d["fill"][5] + 1)}
+        in_pit_air = sorted(c for c in hp["cells"] if c not in sealing
+                            and pit(c[0], c[2]) is not None and c[1] > pit(c[0], c[2]))
         if in_pit_air:
             bad.append("%d cells of the HQ's way down are in the Deep's air or the HQ room, first %s"
                        % (len(in_pit_air), in_pit_air[0]))
@@ -822,13 +829,41 @@ def cmd_report(a):
         if door.split("[")[0] != "minecraft:iron_door" or "half=lower" not in door:
             bad.append("the HQ's front door %s is %s in the city's build, not an iron door's lower half"
                        % (fd["at"], door or "nothing"))
-        for c in hp["plates"]:
+        # the door stays shut: nothing this pack writes stands beside it
+        near_door = [c for c in hp["cells"] if abs(c[0] - dx_) <= 1 and abs(c[2] - dz_) <= 1 and dy_ - 1 <= c[1] <= dy_ + 2]
+        if near_door:
+            bad.append("the HQ's way down writes %s beside the door %s: the door is the guard's" % (near_door[:2], fd["at"]))
+        # the guards: each seat, the doorstep and both landings stand on the city's floor or the pit's tread with two
+        # clear blocks over them; each guard is in talking reach of where its player stands
+        def stands(c):
             under = city.get((c[0], c[1] - 1, c[2]))
             t = pit(c[0], c[2])
-            if not ((under and under.split("[")[0] != AIR) or (t is not None and t == c[1] - 1)):
-                bad.append("the pressure plate %s stands on nothing solid" % (c,))
-            if abs(c[0] - dx_) + abs(c[2] - dz_) != 1 or c[1] != dy_:
-                bad.append("the pressure plate %s is not beside the door's lower half %s" % (c, fd["at"]))
+            on = (under is not None and under.split("[")[0] != AIR) or (under is None and t == c[1] - 1)
+            clear = all((city.get((c[0], c[1] + dy, c[2])) or AIR).split("[")[0] == AIR and
+                        (t is None or c[1] + dy > t) for dy in (0, 1))
+            return on and clear
+        gd, ig = h["guard"], h["inside_guard"]
+        spots = {"the guard": gd["at"], "the doorstep": gd["front_step"], "the inside landing": gd["inside_landing"],
+                 "the inside guard": ig["at"],
+                 "the way out's landing": [int(math.floor(v)) for v in ig["release"]["to"]]}
+        for what, c in spots.items():
+            if not stands(tuple(c)):
+                bad.append("%s %s does not stand on a floor with two clear blocks over it" % (what, c))
+        if [int(math.floor(v)) for v in gd["admit"]["to"]] != list(gd["inside_landing"]):
+            bad.append("the guard's admit target %s is not the inside landing %s" % (gd["admit"]["to"], gd["inside_landing"]))
+        rx0, rz0, rx1, rz1 = h["room"]["interior"]
+        for what, c in (("the inside landing", gd["inside_landing"]), ("the inside guard", ig["at"])):
+            if not (rx0 <= c[0] <= rx1 and rz0 <= c[2] <= rz1 and c[1] == h["room"]["floor_y"] + 1):
+                bad.append("%s %s is not on the storey-0 room's floor %s" % (what, c, h["room"]["interior"]))
+        for what, a_, b_ in (("the guard", gd["at"], gd["front_step"]), ("the inside guard", ig["at"], gd["inside_landing"])):
+            if math.dist(a_, b_) > 3:
+                bad.append("%s %s is out of talking reach of %s" % (what, a_, b_))
+        if math.dist(gd["at"], ig["at"]) <= 3:
+            bad.append("the two guards stand within 3 blocks: R18RU's 'already there' probe (distance ..2) could mistake one")
+        try:
+            npc_placements(spec)
+        except RelicError as e:
+            bad.append(str(e))
         for c in hp["undo"]:
             if c in city:
                 bad.append("the city still writes %s at the old hatch %s: the undo would fight R9DC" % (city[c], c))
@@ -844,9 +879,10 @@ def cmd_report(a):
         open_ = hq_unsealed(spec, hp, hull, sr)
         if open_:
             bad.append("%d faces of the HQ's way down are not sealed, first %s" % (len(open_), open_[0]))
-        note.append("the HQ's way down: %d cells (%d air, %d treads and landings), hull %d, plates %s, hatch cells %s"
-                    % (len(hp["cells"]), len(hp["air"]), len(hp["floors"]), len(hull), sorted(hp["plates"]),
-                       sorted(hp["undo"])))
+        note.append("the HQ's way down: %d cells (%d air, %d treads and landings), hull %d, hatch cells %s; the door "
+                    "shut, the guard at %s, the inside landing %s, the inside guard at %s"
+                    % (len(hp["cells"]), len(hp["air"]), len(hp["floors"]), len(hull), sorted(hp["undo"]),
+                       h["guard"]["at"], h["guard"]["inside_landing"], h["inside_guard"]["at"]))
 
     # 8 the undo: what it takes off and what it lays back
     try:
@@ -861,8 +897,16 @@ def cmd_report(a):
     except RelicError as e:
         bad.append("the undo cannot be planned: %s" % e)
 
-    owed.append("a spawn decision for the hall: the Deep's spawn-free precinct or its own Habitat band (NOT decided "
-                "here: Hoopa's cradle at (3357, 3306) is Codex's story)")
+    # 9 the spawn decision (the owner, 2026-10-02: nothing spawns in the hall): its zones are in the spawn suppression
+    sd = spec["composition"]["spawn_decision"]
+    ss = json.loads((ROOT / "data" / "spawn_suppression.json").read_text(encoding="utf-8"))
+    have = {z_["id"]: z_["box"] for z_ in ss.get("spawn_free_zones") or []}
+    for zid, box in (sd.get("zones") or {}).items():
+        if have.get(zid) != box:
+            bad.append("spawn-free zone %s %s is not in data/spawn_suppression.json as decided (there: %s)"
+                       % (zid, box, have.get(zid)))
+    if not sd.get("zones"):
+        owed.append("a spawn decision for the hall (composition.spawn_decision has no zones)")
 
     for n in note:
         print("  " + n)
@@ -891,6 +935,29 @@ def box_cond(lo, hi):
 def adv(conds, reward):
     return {"criteria": {"here": {"trigger": "minecraft:location", "conditions": {"player": conds}}},
             "rewards": {"function": reward}}
+
+
+def guard_functions(spec):
+    """{function name: lines} for the HQ door's guards (geometry.hq.guard, inside_guard; the owner, 2026-10-02). The
+    iron door never opens: each guard's compiled dialogue runs one of these as and at THE ONE PLAYER who chose it
+    (tools/compile_dialogue.py `function` effect), and that player is moved past the door. The stage test is the
+    dialogue's (a per-player enum in Cobblemon player data, which no command can read); these test only that the player
+    is at the guard."""
+    fn = {}
+    for key, side, act, what in (("guard", "admit", "hq_admit", "in to the storey-0 room"),
+                                 ("inside_guard", "release", "hq_release", "back out to ring 0's doorstep")):
+        gd = spec["geometry"]["hq"][key]
+        mv = gd[side]
+        ax, ay, az = gd["at"]
+        x, y, z = mv["to"]
+        fn[act] = [
+            "# the HQ guard's %s (data/dialogue.json %s): %s. Run as and at the player who chose it, never" % (
+                act, gd["conversation"], what),
+            "# @a: the door stays shut and nobody else moves. Nothing for a player not at the guard.",
+            "execute unless entity @s[x=%d,y=%d,z=%d,distance=..%d] run return fail" % (ax, ay, az, mv["reach"]),
+            "ride @s dismount",
+            "tp @s %s %d %s %s %s" % (x, y, z, mv["yaw"], mv["pitch"])]
+    return fn
 
 
 def cmd_build(a):
@@ -958,6 +1025,8 @@ def cmd_build(a):
         % (obj, text("The Compact's passage is open to you.", color="aqua")),
         "scoreboard players set @s %s 1" % obj]
 
+    fn.update(guard_functions(spec))
+
     # ---- the carve: shell, void, surfaces, re-shell, composition. The CAVERN pattern (tools/cavern_plan.py).
     fp = geo.footprint()
     cells_void, cells_rock, shell = {}, {}, {}
@@ -1019,9 +1088,9 @@ def cmd_build(a):
         [fill(r[0], r[1], r[2], r[3], r[4]) for r in rows(comp)]
     # the HQ's way down (geometry.hq): after the reshell, so nothing seals it again. Its hull first (a void beside it
     # made rock, inside the reserved boxes only), then its cells: the records room, the stair, the dressing, the
-    # lanterns, the plates at the city's iron door, and the old hatch's two cells laid back to rock
+    # lanterns, and the old hatch's two cells laid back to rock. Nothing at the city's iron door: the guard is the way in
     hull = hq_hull(spec, hp, sr)
-    fn["carve/40_hq"] = ["# the HQ's way down: front door plates -> storey-0 room -> the stair in the reserved shaft ->",
+    fn["carve/40_hq"] = ["# the HQ's way down: the guard (hq_admit) -> storey-0 room -> the stair in the reserved shaft ->",
                          "# the records room at y0 -> its open west doorway into the passage (data/relic_underground.json",
                          "# geometry.hq). Hull first, `replace` only: it turns a void beside the air into rock."] + \
         [fill(r[0], r[1], r[2], r[3], r[4], "replace #%s:%s" % (NS, VOID_TAG))
@@ -1101,6 +1170,23 @@ def hold_box(spec=None):
     return (min(x[0] for x in boxes), min(x[1] for x in boxes), max(x[2] for x in boxes), max(x[3] for x in boxes))
 
 
+def npc_placements(spec=None):
+    """[(conversation id, (x, y, z), npc class, yaw)] for tools/reapply.py step R18RU's "npc" actions: the Compact guard
+    at the HQ's ring-0 door and the one inside it, from the committed data alone. Fails closed when a conversation is
+    not in data/dialogue.json with that NPC."""
+    spec = spec or load()
+    dl = json.loads((ROOT / "data" / "dialogue.json").read_text(encoding="utf-8"))
+    convs = {c["id"]: c for c in dl["conversations"]}
+    out = []
+    for key in ("guard", "inside_guard"):
+        g = spec["geometry"]["hq"][key]
+        conv = convs.get(g["conversation"])
+        if conv is None or conv.get("npc_id") != g["npc"]:
+            raise RelicError("%s is not a conversation with NPC %s in data/dialogue.json" % (g["conversation"], g["npc"]))
+        out.append((conv["id"], tuple(g["at"]), "%s:%s" % (NS, g["npc"]), g["yaw"]))
+    return out
+
+
 def placement_steps(pack_dir=None):
     """For tools/reapply.py, as step R9RU after R9DC and before R9E: hold the chunks, run the indexed block
     functions (undo, then the CAVERN pattern), release. Named from the built pack's own index, like R9DC."""
@@ -1125,7 +1211,7 @@ def cmd_verify(a):
           "section 9 are the check for a live staging server. The checks a world read must make: every column of the zone's boxes at "
           "y41..y85 is solid; the hall's air matches 10_void exactly; the choked shaft holds no air; the "
           "relic ring's apex stands clear of the dome; the HQ doorway at (3421, 2..5, 3305..3307) is open; and the "
-          "HQ's way down (40_hq) matches its cells: plates either side of (3443, 67, 3282), the stair from "
+          "HQ's way down (40_hq) matches its cells: nothing beside the shut door (3443, 67, 3282), the stair from "
           "(3429, 66, 3299), the records room x3422-3428 y1-4 z3301-3310.")
     return 1
 

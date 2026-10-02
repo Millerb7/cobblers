@@ -52,6 +52,7 @@
     "effect_kinds": [
       "compare_and_set_progression",
       "consume_held_item",
+      "function",
       "give_item",
       "grant_reward_once",
       "relocate_actor",
@@ -693,7 +694,9 @@
         "dlg_main_blaine_crater_analyst",
         "dlg_main_giovanni_watch",
         "dlg_main_rift_surveyor",
-        "dlg_main_league_steward"
+        "dlg_main_league_steward",
+        "dlg_main_relic_hq_guard",
+        "dlg_main_relic_hq_guard_inside"
       ],
       "beats": [
         {
@@ -1738,6 +1741,38 @@
               "value": "league_recognized"
             }
           ]
+        },
+        {
+          "id": "relic_hq_admit",
+          "source": "data/relic_underground.json geometry.hq.guard; the owner, 2026-10-02: 'the HQ door should need the finale's quest stage, not a plate anyone can stand on', at rift_crisis_pending or later",
+          "conditions": [
+            {
+              "kind": "progression_in",
+              "field": "quest.main_worldshift_reveal.stage",
+              "values": [
+                "rift_crisis_pending",
+                "rift_released",
+                "league_recognized"
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "kind": "function",
+              "function": "cobblers:relic_underground/hq_admit"
+            }
+          ]
+        },
+        {
+          "id": "relic_hq_release",
+          "source": "data/relic_underground.json geometry.hq.inside_guard: the iron door opens for nobody, so the way out is the inside guard; ungated",
+          "conditions": [],
+          "effects": [
+            {
+              "kind": "function",
+              "function": "cobblers:relic_underground/hq_release"
+            }
+          ]
         }
       ],
       "world_changes": [
@@ -1868,7 +1903,9 @@
         "quest.main_worldshift_reveal.blaine_cursor",
         "quest.main_worldshift_reveal.giovanni_cursor",
         "quest.main_worldshift_reveal.rift_cursor",
-        "quest.main_worldshift_reveal.league_cursor"
+        "quest.main_worldshift_reveal.league_cursor",
+        "quest.main_worldshift_reveal.relic_guard_cursor",
+        "quest.main_worldshift_reveal.relic_inside_cursor"
       ]
     },
     {

@@ -43,6 +43,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 import function_limits as FL                        # noqa: E402
 from victory_road import installed_blocks, pick     # noqa: E402
 
@@ -1387,7 +1388,7 @@ def whitelisted():
 
 
 def build(source_root=None, server_dir=None, strict=True):
-    source_root = source_root or os.environ.get("COBBLERS_SOURCE_ROOT")
+    source_root = source_root or env_source_root()
     if not source_root:
         raise CaveError("no --source-root and no COBBLERS_SOURCE_ROOT: the heightmap lives under it")
     spec = json.loads(SPEC.read_text(encoding="utf-8"))

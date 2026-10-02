@@ -30,7 +30,7 @@ dressing writes plus the anchor's standing space, inclusive `[x0, z0, x1, z1]`; 
 | **dustback** | Dustback | copperajah | 56 | **(6216, 142, 6112)** | 141 | 24 / 36 | gym8_cleared | catchable after gate | [6179, 6059, 6253, 6153] |
 | **hornwall** | Hornwall | bouffalant | 56 | **(4200, 138, 5920)** | 137 | 24 / 34 | gym8_cleared | never | [4194, 5914, 4206, 5926] |
 | **orchard_sleeper** | Orchard Sleeper | slaking | 60 | **(2816, 67, 7080)** | 66 | 18 / 26 | gym8_cleared | catchable after gate | [2786, 7067, 2817, 7101] |
-| **split_bark** | Split-Bark | kleavor | 62 | **(7360, 139, 7376)** | 138 | 20 / 28 | champion_cleared | catchable after gate (see 4.3) | [7356, 7367, 7371, 7387] |
+| **split_bark** | Split-Bark | kleavor | 63 | **(7360, 139, 7376)** | 138 | 20 / 28 | champion_cleared | catchable after gate (see 4.3) | [7356, 7367, 7371, 7387] |
 
 The four in bold are the south ones the owner cares about most: Dustback in the south-east dunes, Hornwall on the
 Rift Foot shelf, the Orchard Sleeper on Sunset Isle, Split-Bark in Long Isle South's jungle.
@@ -130,14 +130,13 @@ gate) have no presence gate and are summoned by R18R.
 | river_grip | 52 | 50 | 55 |
 | dustback | 56 | 55 | 60 (the Elite Four) |
 | orchard_sleeper | 60 | 55 | 60 |
-| split_bark | 62 | **62** (Champion Blue) | not known (post-champion cap, NOT VERIFIED) |
+| split_bark | 63 | **62** (Champion Blue) | not known (post-champion cap, NOT VERIFIED) |
 
 These are upper bounds: a player still owing a route trainer has a lower cap and is refused until they beat it.
 
-**Split-Bark's catch gate leaks** (declared in its record as `catch_gate_leak`): at 62 it equals the Champion's
-strongest, so a player who has beaten the Elite Four but not the Champion has a cap of 62 and can catch it once it is
-present. Its gate is therefore its presence alone. Codex's level is kept; **63 would close it** (the owner's or
-Codex's call).
+**Split-Bark is level 63** (the owner, 2026-10-02): at Codex's 62 it equalled the Champion's strongest, so a player
+between the Elite Four and the Champion could catch it. At 63 the cap refusal closes that window, and the audit errs on
+any level inside it.
 
 ### 4.4 The blackout (decision, with reasons)
 

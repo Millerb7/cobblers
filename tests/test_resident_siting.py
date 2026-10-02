@@ -68,9 +68,10 @@ def test_a_residents_fight_does_not_overlap_a_nest(rid):
 
 
 CEILING_PENDING = {
-    # L62 in long_isle_south (tier 8, ceiling 60). Gated on champion_cleared, the same argument the owner rejected
-    # for Wiremother on 2026-10-02; found while writing this test, left for the owner rather than changed silently
-    "split_bark": "L62 over long_isle_south's ceiling of 60: the owner's call (2026-10-02)",
+    # L63 in long_isle_south (tier 8, ceiling 60), BY DECISION: the owner, 2026-10-02, raised it from Codex's 62 so
+    # it sits above Champion Blue's ace and cannot be caught between the Elite Four and the Champion
+    # (data/resident_encounters.json split_bark build.level_why). Strict, so a level brought back under 61 is noticed
+    "split_bark": "L63 over long_isle_south's ceiling of 60: the owner's decision (2026-10-02), above the Champion's ace",
 }
 
 

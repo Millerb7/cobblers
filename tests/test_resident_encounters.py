@@ -54,7 +54,8 @@ def checks(rep):
 def test_the_committed_residents_are_clean(ground, tmp_path):
     rep = run(ground, tmp_path)
     assert rep.errors == []
-    assert any("DECLARED catch-gate leak" in n and "split_bark" in n for n in rep.notes)
+    # Split-Bark is 63 (the owner, 2026-10-02): no resident is let through on a declared leak any more
+    assert not any("catch-gate leak" in n for n in rep.notes)
 
 
 def test_the_record_holds_ten_built_never_placed():
@@ -173,10 +174,14 @@ def test_the_generator_refuses_a_stale_anchor(ground):
         R.files(doc, ground)
 
 
+# Without it, Split-Bark back at Codex's 62 (the Champion's ace) would be catchable between the Elite Four and the
+# Champion, the window the owner closed on 2026-10-02, and nothing would say so.
 def test_an_undeclared_catch_gate_leak_is_reported(ground, tmp_path):
     doc = copy.deepcopy(DOC)
     for e in doc["encounters"]:
         e["build"].pop("catch_gate_leak", None)
+        if e["id"] == "split_bark":
+            e["level"] = 62
     rep = run(ground, tmp_path, doc)
     assert any(e.startswith("catch:") and "split_bark" in e for e in rep.errors)
 

@@ -264,6 +264,9 @@ def test_explicit_heightmap_accepts_the_verified_file():
 def test_every_tool_refuses_the_real_blocked_heightmap(mod, args, tmp_path, capsys, monkeypatch):
     """Without a source root the real heightmap cannot be verified; no tool may produce output."""
     monkeypatch.delenv("COBBLERS_SOURCE_ROOT", raising=False)
+    # the root also falls back to .claude/settings.json (terrain.env_source_root), so "unconfigured" means both
+    import terrain
+    monkeypatch.setattr(terrain, "env_source_root", lambda: None)
     with pytest.raises(SystemExit) as exc:
         mod.main(args + ["--out", str(tmp_path / "nope")])
     assert "terrain unavailable" in str(exc.value)

@@ -40,6 +40,7 @@ from collections import deque
 from pathlib import Path
 
 import numpy as np
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 
 ROOT = Path(__file__).resolve().parent.parent
 PACK = ROOT / "build" / "datapacks" / "cobblers_deep_city"
@@ -350,7 +351,7 @@ def output_lines():
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"))
+    ap.add_argument("--source-root", default=env_source_root())
     a = ap.parse_args(argv)
     if not a.source_root:
         ap.error("needs --source-root or COBBLERS_SOURCE_ROOT: the plan comes from the heightmap")

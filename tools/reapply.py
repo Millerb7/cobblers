@@ -46,6 +46,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 TOOLS = ROOT / "tools"
 sys.path.insert(0, str(TOOLS))
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 import runtime_guard  # noqa: E402
 BUILD = ROOT / "build"
 PACKS = BUILD / "datapacks"
@@ -128,6 +129,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-02: Shrew Station on the west sea coast (tools/research_station.py), run by R9RS; every
                 # item it can give stays held behind data/research_station.json economy.issuing
                 "cobblers_research_station",
+                # 2026-10-02: the seven open-air Mega dens made visible (tools/mega_dens.py, data/mega_dens.json): scrape,
+                # boulders, bones and each species' sign round the gulch's den anchors. Block functions run by R9MD
+                "cobblers_mega_dens",
                 # 2026-09-29: the gym interiors (tools/gym_interiors.py, data/gym_interiors.json): the healing
                 # machines out of all eight placed gyms, and gym 1's works carved under its lot. Block functions run
                 # by R16E, after the donors (R9) that stamp the gyms whole and would erase anything written first
@@ -538,6 +542,8 @@ def prepare_jobs(a):
     add("drovers_hollow_audit", "drovers_hollow_audit.py", *src)
     add("research_station:build", "research_station.py", "build", *src)
     add("research_station_audit", "research_station_audit.py", *src)
+    add("mega_dens:build", "mega_dens.py", "build", *src)
+    add("mega_dens_audit", "mega_dens_audit.py", *src)
     add("sea_drift_audit", "sea_drift_audit.py", *src)
     add("relic_underground_audit", "relic_underground_audit.py", *src)
     # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
@@ -1137,6 +1143,12 @@ def steps(with_spawns=False):
     import research_station
     out.append(("R9RS", "Shrew Station, the research station on the west sea coast (data/research_station.json)",
                 research_station.placement_steps()))
+    # the seven open-air Mega dens, dressed (2026-10-02, tools/mega_dens.py): a pure block pass round each den anchor of
+    # data/gulch_mine.json. AFTER R9S (the gulch's own block pass, whose keeper spawns the Megas at these anchors) and
+    # the Rift skin (R1), whose surface it rewrites; BEFORE R9E with the other block passes. Per den: hold, build, release
+    import mega_dens
+    out.append(("R9MD", "the seven open-air Mega dens: scrape, boulders, bones and each species' sign (data/mega_dens.json)",
+                mega_dens.placement_steps()))
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
@@ -1247,6 +1259,12 @@ def steps(with_spawns=False):
     import ursaluna_cave
     out.append(("R18U", "the Ursaluna's den west of Highwire (data/ursaluna_cave.json)",
                 ursaluna_cave.placement_steps() + [("npc", n) for n in ursaluna_cave.npc_placements()]))
+    # the Compact guards at the HQ's ring-0 door (2026-10-02, data/relic_underground.json geometry.hq.guard): the door
+    # stays shut and the guard's dialogue moves a player at rift_crisis_pending or later inside; the inside guard lets
+    # anyone out. NPCs, so after the restart that loaded cobblers_dialogue's classes, like R17N's, each turned to its yaw
+    import relic_underground
+    out.append(("R18RU", "the Compact guards at the HQ's ring-0 door (data/relic_underground.json geometry.hq.guard)",
+                [("npc", n) for n in relic_underground.npc_placements()]))
     # Codex's ten named residents (2026-10-02, data/resident_encounters.json): each one's dressing inside a forceload of
     # its recorded bbox, then - for the two with no presence gate (Old Jaw, Whiteback) - an RCON summon guarded on tag
     # AND species, and its bind. The eight gated ones are left to the pack's keeper, which brings each in the first time
@@ -1658,14 +1676,14 @@ def main(argv=None):
     q.add_argument("--rehearsal", action="store_true",
                    help="staging only: allow a retained snapshot or an older copy as the source")
     q = sub.add_parser("prepare")
-    q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"), required=not os.environ.get("COBBLERS_SOURCE_ROOT"))
+    q.add_argument("--source-root", default=env_source_root(), required=not env_source_root())
     q.add_argument("--server-dir", required=True)
     q.add_argument("--only", help="run only these jobs (comma separated, shell patterns: town:*,mines*); see --list")
     q.add_argument("--from", dest="from_job", help="run from this job to the end, after a failure")
     q.add_argument("--list", action="store_true", help="print the job names in order and stop")
     q = sub.add_parser("hydrate", help="only the inputs a fresh checkout lacks (local kits, Rift plan, paint, water "
                        "shape); an agent's worktree runs this first. Needs the lock only with --server-dir")
-    q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"), required=not os.environ.get("COBBLERS_SOURCE_ROOT"))
+    q.add_argument("--source-root", default=env_source_root(), required=not env_source_root())
     q.add_argument("--server-dir", help="extract the jar-sourced kit files from this server's jars (takes the lock)")
     q.add_argument("--store", help="a folder holding the local-only kit files (default: COBBLERS_LOCAL_STORE)")
     q = sub.add_parser("install")
@@ -1687,7 +1705,7 @@ def main(argv=None):
     q = sub.add_parser("audit")
     q.add_argument("--server-dir", required=True)
     q.add_argument("--world", required=True)
-    q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"), help="heightmap root, for the light check")
+    q.add_argument("--source-root", default=env_source_root(), help="heightmap root, for the light check")
     q = sub.add_parser("plan", help="print the steps and their commands without running anything")
     a = p.parse_args(argv)
     if a.cmd == "plan":

@@ -54,6 +54,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 
 DATA = ROOT / "data" / "ambient.json"
 OUT = ROOT / "build" / "datapacks" / "cobblers_ambient"
@@ -600,7 +601,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = ap.add_subparsers(dest="cmd", required=True)
     b = sub.add_parser("build")
-    b.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"))
+    b.add_argument("--source-root", default=env_source_root())
     v = sub.add_parser("verify")
     v.add_argument("--rcon", action="store_true", required=True)
     v.add_argument("--server-dir", required=True)

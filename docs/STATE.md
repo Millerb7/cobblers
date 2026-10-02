@@ -264,6 +264,10 @@
   worktree never receives. **So build units serialise through main sessions at roughly one per session**,
   and a night planned as a fan-out of builders cannot run. Plan one build per session, with its test
   rewrite as the next session.
+- **The Mega dens are dressed to be SEEN, built offline 2026-10-02, NOT applied** (`tools/mega_dens.py`,
+  `data/mega_dens.json`, step R9MD after R9S; the owner: "see something from the air and go down to it"): a lair 24-30
+  across round each anchor (scraped ground, a ring of boulders, a trampled approach, bones, the species' sign), the
+  anchor's pad kept open for the keeper's spawn, dark by design. Fly-to points in `docs/world-building/MEGA_DENS.md`.
 - **The open-air Mega farms: in the data, the pack and staging-2026-10-01's apply; never seen** (R9S ran
   2026-10-01 17:10 from a head containing `5198d14`, which unparked them; no step since re-ran it). Seven dens
   across the Rift's two southern arms, four `outer` and three `deeper` (`data/gulch_mine.json` `farms`):
@@ -275,8 +279,9 @@
   that apply; the level band (60 / 67 against a cap of 50) is now the only gate. `tools/presence_audit.py
   --only gulch,dens` drives each keeper over RCON and counts the Megas. `farm_tiers` is ASSUMED and untimed.
 - **An agent worktree CAN read the canonical heightmap; only `derived/` is missing**
-  **But on 2026-10-02 it reached neither this session's shell nor three of six agents**: each passed
-  `--source-root C:/Users/wnd/Documents` (or the variable) by hand. Brief agents to set it explicitly.
+  **The variable is not reliably injected** (missing from a session's shell and three of six agents on
+  2026-10-02), so every tool now resolves it through `terrain.env_source_root()`, which falls back to the
+  committed `.claude/settings.json`; `tests/test_source_root_fallback.py` holds that.
   (`docs/research/AGENT_WORKTREE_INPUTS.md`, proven 2026-10-01). `COBBLERS_SOURCE_ROOT` is set in
   `.claude/settings.json` `env` and reaches agents, so `tools/ground.py` works there: a test-author agent
   briefed that it could not run the heightmap-dependent suites ran them anyway and answered y122 at
@@ -458,11 +463,18 @@
     no step existed, so the world has the old surface and no hall. R9RU now: undoes the superseded surface (2,858
     cells to air, 669 back to painted gravel, from the old build's write set, never a world), carves the hall
     (centre (3390, 8, 3262), floor y5, dome to y34), the gallery and the passage, and **the way in, which no tool had
-    ever built**: pressure plates either side of the HQ room's iron door (3443, 67, 3282), a lit switchback stair
+    ever built**: the HQ room's iron door (3443, 67, 3282) stays shut, and a Compact guard at (3444, 67, 3283) moves a
+    player through to (3440, 67, 3282) only when their `quest.main_worldshift_reveal.stage` is `rift_crisis_pending` or
+    later (the owner, 2026-10-02; set by the Rift surveyor's `rift_007`, R17N, at (3552, 112, 5334); R18RU seats both
+    guards; an inside guard lets a player out); a wall at z3278 closes the room off from the next HQ section, whose
+    own street door at (3445, 67, 3252) was a way round the guard that only a walk over the BUILT city found; a lit
+    switchback stair
     from (3429, 66, 3299) to a records room at (3425, 1, 3306) whose west end is the zone's knock box, a doorway
     (3421, 2, 3306) into the passage. The zone (y-64..40) turns a passless player back to (3444, 67, 3308). Report 0
-    problems; the audit walks from outside the HQ door to the hall's centre. **Open:** the hall's spawn decision
-    (unlit; anything spawned there can walk up to the HQ), and whether the plates should open the HQ door for anyone.
+    problems; the audit walks from outside the HQ door to the hall's centre, and refuses a walk that reaches the room
+    without the guard. **Nothing spawns in the hall** (the owner: "the end of the story, not a cave"): three
+    spawn-free zones over the hall, gallery and way down (`data/spawn_suppression.json`), all heights, so they also
+    clear the surface above. **Open:** the guards' lines are placeholders; keep the inside guard?
   - **A wild Mega works in battle** (EXP-036, staging 2026-09-25): `spawnpokemonat ... charizard mega_evolution=mega_x uncatchable` gave form `megax` with Tough Claws, the battle started and it stayed Mega. The owner tested a wild Mega in game on staging and it worked (2026-09-27, reported by the owner; not logged). Not yet tested: a ball refused in play, after the battle, enraged via fightorflight's `always_aggro_aspects`, and spawning from our pools (`docs/research/notes/wild-mega-pokemon.md`).
   - **Built on staging 2026-09-25:** the Craters' mining town in stone (its 14 houses re-materialed, `mining_deepslate` / `mining_tuff`) and dressed as a working mine (`tools/mining_works.py`, earthwork `mining_town_works`: 184 rails from the adit to the pithead yard, a headframe over a capped shaft, four ore piles, a slag heap, smoke at the adit; the owner let rails and ore draw mining Pokemon, recorded in `data/spawn_block_policy.json`); the Scar as a ruined city (`data/ruins.json`, `tools/ruins.py`: 33 ruined copies of the Displaced City's house designs on the drawn lots, four towers, broken terrace walls, the empty cairn plinth; roofs gone, so the houses stand only 2-7 high; 0 floor gaps; not seen in game). The story docs still describe the Scar as a bare footprint.
   - **Marsh and jungle foliage, exported on staging** (`cobblers-dryrun11`, 2026-09-25; `data/foliage.json` overlays, `docs/world-building/FOLIAGE_MARSH_JUNGLE.md`): about 960 mangroves, 1,500 mangrove scrubs, 510 root tangles, 130 tall mangroves and 97 swamp giants; marsh trees 17 to 24 per hectare, eye-level sightlines in the dense stands about 350 blocks to 70; denser jungle-isle patches. Not seen in game; not in the live world. `mangrove_propagule` is new to the flowers spawn tag's reach and needs a policy entry.

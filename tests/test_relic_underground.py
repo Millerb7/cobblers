@@ -78,12 +78,21 @@ def test_r9ru_runs_after_the_pit_it_cuts_the_stair_into():
 def test_the_hq_way_down_stays_in_the_reserved_boxes():
     hp = R.hq_plan(SPEC)
     boxes = R.reserved_boxes(SPEC)
-    assert set(boxes) == {"hq_basement", "hq_secure_shaft", "hq_shaft_head"}
-    out = [c for c in hp["cells"] if c not in hp["plates"] and c not in hp["undo"] and not R.in_boxes(c, boxes.values())]
+    assert set(boxes) == {"hq_basement", "hq_secure_shaft", "hq_shaft_head", "hq_room_north_partition"}
+    out = [c for c in hp["cells"] if c not in hp["undo"] and not R.in_boxes(c, boxes.values())]
     assert not out, out[:3]
-    # nothing at or over the HQ room's floor but the plates; the stair's head opens the room's floor
+    # nothing at or over the HQ room's floor (the door's plates came off 2026-10-02); the stair's head opens the floor
     room_y = SPEC["geometry"]["hq"]["room"]["floor_y"]
-    assert {c for c in hp["cells"] if c[1] > room_y} == hp["plates"]
+    # except the one wall that closes the storey-0 room off from the next HQ section (2026-10-02): without it a player
+    # walks in at that section's street door and never meets the guard. It lies on the room's north boundary, not in it.
+    ix0, iz0, ix1, iz1 = SPEC["geometry"]["hq"]["room"]["interior"]
+    over = {c for c in hp["cells"] if c[1] > room_y}
+    seal = [d for d in SPEC["geometry"]["hq"]["dressing"] if d.get("seals_room")]
+    assert len(seal) == 1
+    f = seal[0]["fill"]
+    assert over == {(x, y, z) for x in range(f[0], f[3] + 1) for y in range(f[1], f[4] + 1) for z in range(f[2], f[5] + 1)}
+    assert f[2] == f[5] == iz0 - 1 and f[0] <= ix0 + 2 and f[3] >= ix1 + 1
+    assert "plates" not in hp and "plates" not in SPEC["geometry"]["hq"]["front_door"]
     assert tuple(SPEC["zone"]["hq_access"]["shaft_head"]) in hp["air"]
     # the knock box is the records room's air, on its floor
     kb = SPEC["zone"]["knock"]["box"]
@@ -96,11 +105,50 @@ def test_the_hq_way_down_stays_in_the_reserved_boxes():
     assert A.expected_hq(SPEC, pair)[0] == hp["air"]
 
 
-def test_the_open_decisions_are_recorded_not_invented():
-    assert SPEC["composition"]["spawn_decision"]["status"].startswith("OPEN")
+def test_the_spawn_decision_is_recorded_and_made_real():
+    # the owner, 2026-10-02: nothing spawns in Hoopa's hall. Spawn-free zones, the gyms' mechanism; no Habitat Block
+    sd = SPEC["composition"]["spawn_decision"]
+    assert sd["status"].startswith("DECIDED")
+    ss = json.loads((ROOT / "data" / "spawn_suppression.json").read_text(encoding="utf-8"))
+    have = {z["id"]: z["box"] for z in ss["spawn_free_zones"]}
+    assert sd["zones"] and all(have.get(k) == v for k, v in sd["zones"].items())
+    import compile_spawns as CS
+    for b in sd["zones"].values():
+        assert (b[0], b[2], b[1], b[3]) in CS.spawn_free_zones()          # what compile_spawns and the suppression read
     assert SPEC["zone"]["hq_access"]["status"].startswith("BUILT")
     hb = (ROOT / "data" / "habitat_blocks.json").read_text(encoding="utf-8")
     assert "relic_underground" not in hb and "hoopa" not in hb.lower()
+
+
+def _zone_texts(fns):
+    return {k + ".mcfunction": "\n".join(v) + "\n" for k, v in fns.items()}
+
+
+def test_the_guard_is_the_only_edge_and_it_is_stage_gated():
+    # the audit's guard reading, against the committed dialogue and the generator's guard functions (no heightmap)
+    edges, probs = A.guard_edges(SPEC, _zone_texts(R.guard_functions(SPEC)))
+    assert probs == []
+    got = {name: to for name, _seat, _reach, to in edges}
+    hq = SPEC["geometry"]["hq"]
+    assert got == {"guard": tuple(hq["guard"]["inside_landing"]), "inside_guard": tuple(hq["guard"]["front_step"])}
+
+
+def test_a_guard_function_that_moves_everyone_is_refused():
+    # mutate the GENERATOR's function (the data untouched): @a would carry every player through the shut door
+    fns = R.guard_functions(SPEC)
+    fns["hq_admit"] = [l.replace("tp @s", "tp @a") for l in fns["hq_admit"]]
+    _edges, probs = A.guard_edges(SPEC, _zone_texts(fns))
+    assert any("other than @s" in p for p in probs), probs
+
+
+def test_r18ru_places_both_guards_after_the_settlement_npcs():
+    src = (ROOT / "tools" / "reapply.py").read_text(encoding="utf-8")
+    assert src.index('("R17N"') < src.index('("R18RU"')
+    got = R.npc_placements()
+    hq = SPEC["geometry"]["hq"]
+    assert [(c, xyz, cls) for c, xyz, cls, _yaw in got] == [
+        ("dlg_main_relic_hq_guard", tuple(hq["guard"]["at"]), "cobblers:npc_main_relic_hq_guard"),
+        ("dlg_main_relic_hq_guard_inside", tuple(hq["inside_guard"]["at"]), "cobblers:npc_main_relic_hq_guard_inside")]
 
 
 # ------------------------------------------------------------------ the heightmap
@@ -160,7 +208,7 @@ def test_the_built_pack_is_clean(sr, inputs, tmp_path):
     assert not probs, probs
     assert st["undo_air"] > 0 and st["undo_ground"] > 0 and st["shell"] > 0
     assert st["route_from"].startswith("outside the HQ's front door")
-    assert st["route_via"] == {"stair": True, "records room": True}
+    assert st["route_via"] == {"stair": True, "records room": True, "guard": True}
 
 
 def test_the_city_no_longer_lays_the_hatch(sr, inputs):
@@ -218,14 +266,34 @@ def test_a_resealed_shaft_head_fails_the_route(sr, inputs, tmp_path, monkeypatch
     assert st["route_via"]["stair"] is False
 
 
-def test_a_front_door_without_plates_fails_the_route(sr, inputs, tmp_path, monkeypatch):
-    def unplate(hp, spec):
-        for c in hp["plates"]:
-            del hp["cells"][c]
-    _tampered_hq(monkeypatch, unplate)
+def test_a_plate_put_back_at_the_door_is_refused(sr, inputs, tmp_path, monkeypatch):
+    # the generator lays the first build's outside plate again (the data untouched): a door anyone can open
+    def plate(hp, spec):
+        hp["cells"][(3444, 67, 3282)] = "minecraft:polished_blackstone_pressure_plate"
+    _tampered_hq(monkeypatch, plate)
+    # the generator's own report catches it and refuses to build ...
+    with pytest.raises(R.RelicError):
+        R.cmd_build(argparse.Namespace(source_root=sr, out=str(tmp_path / "refused")))
+    # ... and with that report silenced, the audit still does: the opener, and the room reached without the guard
+    monkeypatch.setattr(R, "cmd_report", lambda a: 0)
+    kinds, probs, _st = build_and_audit(sr, inputs, tmp_path / "pack")
+    assert {"hq", "route"} <= kinds, probs
+    assert any("opener beside it" in m for k, m in probs if k == "hq"), probs
+    assert any("WITHOUT the guard" in m for k, m in probs if k == "route"), probs
+
+
+def test_a_guard_that_moves_the_player_nowhere_fails_the_route(sr, inputs, tmp_path, monkeypatch):
+    # the generator's admit teleports back onto the doorstep (the data untouched): no edge past the shut door
+    real = R.guard_functions
+
+    def outside(spec):
+        fns = real(spec)
+        fns["hq_admit"] = [l.replace("tp @s 3440.5 67 3282.5", "tp @s 3444.5 67 3282.5") for l in fns["hq_admit"]]
+        return fns
+    monkeypatch.setattr(R, "guard_functions", outside)
     kinds, probs, st = build_and_audit(sr, inputs, tmp_path / "pack")
-    assert "route" in kinds and "hq" in kinds, probs
-    assert st["route_via"]["stair"] is False        # shut outside the door: the street, never the stair
+    assert "route" in kinds, probs
+    assert st["route_via"]["stair"] is False
 
 
 def test_a_records_room_short_of_the_doorway_fails(sr, inputs, tmp_path, monkeypatch):

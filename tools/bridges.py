@@ -48,6 +48,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 PACK = ROOT / "build" / "datapacks" / "cobblers_bridges"
 FN_DIR = PACK / "data" / "cobblers" / "function" / "bridges"
 REPORT = ROOT / "derived" / "bridges"
@@ -668,7 +669,7 @@ def main(argv=None):
     sub = p.add_subparsers(dest="cmd", required=True)
     for name in ("function", "audit"):
         q = sub.add_parser(name)
-        q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"))
+        q.add_argument("--source-root", default=env_source_root())
     a = p.parse_args(argv)
     return {"function": function, "audit": audit}[a.cmd](a)
 

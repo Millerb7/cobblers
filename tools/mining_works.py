@@ -28,6 +28,7 @@ import re
 from pathlib import Path
 
 import ground as G
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 
 ROOT = Path(__file__).resolve().parent.parent
 SID = "mining_town"
@@ -197,7 +198,7 @@ def build(g, plan, doc, report):
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"))
+    p.add_argument("--source-root", default=env_source_root())
     a = p.parse_args(argv)
     g = G.Ground(a.source_root)
     plan = json.loads((ROOT / "derived" / "towns" / ("%s_plan.json" % SID)).read_text(encoding="utf-8"))

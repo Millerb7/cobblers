@@ -21,6 +21,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 
 import validate_data as V  # noqa: E402
 
@@ -68,7 +69,7 @@ def refresh(towns_doc, routes_doc, heights=None, world=None):
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--data", default=str(ROOT / "data"))
-    p.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"),
+    p.add_argument("--source-root", default=env_source_root(),
                    help="root of the out-of-repo source/ tree; without it heights are not measured")
     p.add_argument("--write", action="store_true", help="rewrite towns.json")
     a = p.parse_args(argv)
