@@ -13,7 +13,8 @@ blocks that meet only at a corner when both orthogonal corners are solid -- and 
 call every gatehouse in this repository connected and report nothing.
 
 WHAT IS INERT, AND THEREFORE NOT ASSERTED HERE. `cobblers_rift_zones` is in tools/reapply.py's EXCLUDED, R9Z
-places 6 of the 10 shells, z4 and z5 are held because `rift_crisis_resolved` has no setter on any branch, and
+places 6 of the 10 shells, z4 and z5 are held because nothing invokes `rift_crisis_resolved`'s setter (declared 2026-10-02, its
+release beat unbuilt: tests/test_rift_crisis_resolved.py), and
 every guard is an armour-stand placeholder. Nothing here asserts the system is installed, enabled or reachable
 in game, and a held zone is not a failure. `build` is allowed to exit 1 on its OWED dependencies; this file
 does not treat that as a problem either.

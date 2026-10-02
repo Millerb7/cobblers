@@ -854,8 +854,8 @@ def cmd_report(a, quiet=False):
     """Returns 0 only when there is neither a problem nor an owed dependency.
 
     A PROBLEM is something wrong in this data. An OWED item is something another file must still supply --
-    today, the rift_crisis_resolved flag and its setter, which are Codex's story data (data/rift_zones.json
-    zones.z5.needs_progression). Both make `report` exit 1, because neither may be forgotten. Only a PROBLEM
+    today, the dialogue that invokes rift_crisis_resolved's setter (the flag and its setter transition are declared
+    since 2026-10-02; Hoopa's release beat is Codex's story data, data/rift_zones.json zones.z5.needs_progression). Both make `report` exit 1, because neither may be forgotten. Only a PROBLEM
     stops `build`: an advancement that does not exist yet fails CLOSED, since a condition on a missing
     advancement never matches and nobody is granted the pass."""
     spec = load()
@@ -1130,9 +1130,17 @@ def cmd_report(a, quiet=False):
         bad("data/rift_regions.json moved Hoopa's cradle; settles.hoopa_cradle is stale")
     if point_in(ext, 3297.5, 2603.5):
         bad("FACTION.md's (3297, 2603) is inside the Rift after all; settles.hoopa_cradle is wrong")
-    if "rift_crisis_resolved" not in have:
+    crisis = next((f for f in prog.get("flags") or [] if f.get("id") == "rift_crisis_resolved"), None)
+    if crisis is None:
         owed("the setter for rift_crisis_resolved: it is the finale's quest stage, story data this tool must "
              "not invent. Until it exists z5 is shut to everyone, which is closed, not open.")
+    elif not (crisis.get("set_by") or {}).get("invoked_by"):
+        # declared, with a setter (the transition that grants it), but no dialogue node invokes that transition yet:
+        # nobody can hold the flag, so z5 is still shut to everyone
+        owed("the invoker of rift_crisis_resolved's setter: data/progression.json declares it, set by %s, but "
+             "set_by.invoked_by is null -- Hoopa's release (NPCS_AND_RIFT_FINALE.md Scene 5) needs the cradle "
+             "carved and its scene. Until then z5 is shut to everyone, which is closed, not open."
+             % (crisis.get("set_by") or {}).get("transition"))
     # 9b. a caught-count zone's knock box calls a qualify that can only refuse: no command or predicate reads
     #     species owned (docs/research/CAUGHT_COUNT_AND_NPC_GUARDS.md; the VERIFIED custom stat counts BALL
     #     CAPTURES, not species). Its guard's dialogue must call <zone>/grant itself. Owed, not a problem: the
