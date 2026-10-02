@@ -1,6 +1,14 @@
 # The level cap after gym 8 and after the League: the numbers, what they unblock, what they break
 
-**Status:** PROPOSAL, research only (2026-10-02). Nothing is built. The owner's instruction (2026-10-02):
+**Status:** DECIDED by the owner (2026-10-02): **keep today's behaviour.**
+- After gym 8 the cap stays at **60**. Lowering it would make Regigigas, Groudon, the Victory Road prizes and the 234
+  spawns at 60 uncatchable: the opposite of "a player with eight badges can collect and prepare".
+- Capped until Blue (62), and none after him.
+- **No Elite Four override, so the licence question is moot.**
+- Lugia goes back to 75.
+- `tools/legendaries_audit.py` now checks every legendary against the real cap (`rct_caps`).
+
+§3's recommendation of 59 was withdrawn on that ground. The analysis below stands as the record. The owner's instruction (2026-10-02):
 - after gym 8, the cap rises to just under the Elite Four;
 - after the Elite Four, there is no cap.
 
@@ -132,7 +140,11 @@ today's behaviour.
 - **Effort:** about one session including the re-levelling, plus the staging check. It could share EXP-049's staging
   session.
 
-## 7. Decisions for the owner
+## 7. Decisions (taken 2026-10-02)
+
+L1: 60, unchanged. L2: capped until Blue. L3: moot. Lugia: 75.
+
+The original questions:
 
 1. **L1, the post-gym-8 number:** 59 (recommended), 58 or 57.
 2. **L2, the Champion:** uncapped from Lance's defeat (literal), or capped until Blue and none after (today's

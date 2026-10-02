@@ -153,7 +153,7 @@ integration session.
 
 ## 6a. Owner decisions so far (2026-10-02)
 
-- **Taken:** a-lite at 30 and 45. EXP-049 first. Reconcile with `194330c` before building. **Meltan stays.**
+- **Taken:** a-lite at 30 and 45. EXP-049 first. Reconcile with `194330c` before building. **Meltan stays, approved as drafted** (no anvil; the 12-move physical pool scoring 16 of 35). Evolutions are **offered**. **The research station hands out Kubfu's scrolls.**
 - **Meltan's evolution, under a-lite** (this note's call, as the owner asked):
 
 | Stage | Form | From | How it advances |
@@ -197,6 +197,6 @@ The owner's change to the cap after gym 8 and after the League is costed separat
 
 1. ~~**Points**~~: **30/45, decided** (2026-10-02).
 2. ~~**Two points on every line or one**~~: **a-lite, decided** (2026-10-02), subject to EXP-049.
-3. **Forced or offered:** `optional: false`, or let a player keep the base form?
+3. ~~**Forced or offered**~~: **offered, decided** (2026-10-02). A player choosing when to evolve is a real decision, so `optional` stays at its default `true`. EXP-049 step 6 becomes optional.
 4. ~~**Meltan:** keep it with an authored movepool, or replace it?~~ **Kept** (2026-10-02); see §6a.
-5. **Kubfu's scrolls:** handed out by whom, and at which point?
+5. ~~**Kubfu's scrolls**~~: **the research station hands them out** (2026-10-02). It is the place that studies these things, and it needs a reason to exist beyond the shrine. The point is 45, when Kubfu's final evolution opens.

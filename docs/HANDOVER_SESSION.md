@@ -23,17 +23,21 @@ in-game checks and decisions are unchanged by this session. Read it with
 
 ## 3. What waits on the owner
 
-**Decided on 2026-10-02:** a-lite at 30/45, EXP-049 first, reconcile with `194330c` before building, and Meltan stays
-(no anvil, authored movepool: `NATIVE_STARTERS_COST.md` §6a).
+**Everything asked is decided** (2026-10-02):
+- a-lite at 30/45; EXP-049 first; reconcile with `194330c` before building;
+- evolutions offered, not forced;
+- the research station hands out Kubfu's scrolls;
+- Meltan approved as drafted;
+- the cap stays at 60 after gym 8 and is capped until Blue;
+- Lugia at 75.
 
-**Open:**
-- **Kubfu's scrolls:** who hands them out, and when.
-- **Forced or offered** evolutions (`optional: false`).
-- **The cap after gym 8** (`docs/mechanics/LEAGUE_LEVEL_CAP.md`):
-  - **L1:** 59 (recommended), 58 or 57.
-  - **L2:** the Champion uncapped from Lance's defeat, or capped until Blue.
-  - **L3:** may we commit an authored override of Cobbleverse's League mob files?
-  - **Lugia's level**, now that its band is known to be uncapped.
+**Next work:** EXP-049, in a staging session holding the lock. Then the a-lite build, which must start by integrating
+`194330c`.
+
+**Changed in code this session:** `tools/legendaries_audit.py` (`rct_caps`, the real-cap check), four tests in
+`tests/test_legendaries.py`, and `data/legendaries.json` (`cap_at_gate` corrected, Lugia 75, champion band 100).
+- Lugia is `blocked`, so no emitted pack changes.
+- The other records' levels are unchanged, so no re-apply is needed.
 
 ## 4. What a cold start must not rediscover
 
@@ -49,6 +53,8 @@ in-game checks and decisions are unchanged by this session. Read it with
 - **A refused command:** `python tools/compile_spawns.py && python tools/availability.py --write` was refused by the
   permission classifier ("Irreversible Local Destruction"). It was not retried. The starter duels need no availability:
   the gym caps and foes were built straight from `data/trainers.json` with `battle_sim`'s own functions.
+- **Run heightmap tests with `COBBLERS_SOURCE_ROOT='C:\Users\wnd\Documents'`.** This session's shell did not inherit it from `.claude/settings.json`, and without it 47 tests skip silently.
+- **`tools/validate_data.py` reports 263 errors, all `[spawn-blocks]` in `data/placements.json`.** None were introduced here.
 - **The scratch scripts** (`spread.py`, `forms.py`, `evolv.py`) lived in the session scratchpad and are not in the
   repo. The method is in the research note, §8.
 - **Learned in rctmod v0.19.0-beta source:**
