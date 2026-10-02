@@ -107,6 +107,8 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-02: Frostpeak's summit dressing round Articuno's tower (tools/frostpeak_summit.py): wind-shaped
                 # tors, rime, lee plants and the old pilgrims' way to the north door. Block functions run by R18S
                 "cobblers_frostpeak_summit",
+                # 2026-10-02: the Lopunny superfan's house and its Buneary cellar (tools/lopunny_house.py), run by R9LH
+                "cobblers_lopunny_house",
                 # 2026-09-29: the gym interiors (tools/gym_interiors.py, data/gym_interiors.json): the healing
                 # machines out of all eight placed gyms, and gym 1's works carved under its lot. Block functions run
                 # by R16E, after the donors (R9) that stamp the gyms whole and would erase anything written first
@@ -494,6 +496,8 @@ def prepare_jobs(a):
     add("sea_drift:build", "sea_drift.py", "build", *src)
     add("frostpeak_summit:build", "frostpeak_summit.py", "build", *src)
     add("frostpeak_summit_audit", "frostpeak_summit_audit.py", *src)
+    add("lopunny_house:build", "lopunny_house.py", "build", *src)
+    add("lopunny_house_audit", "lopunny_house_audit.py", *src)
     add("sea_drift_audit", "sea_drift_audit.py", *src)
     # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
     # then the offline audit, which re-derives every shell box from data/placements.json, replays the written
@@ -1061,6 +1065,11 @@ def steps(with_spawns=False):
     # every verified apply
     out.append(("R9SD", "the Seaward Drift, its strip mine and Driftmouth Isle (data/sea_drift.json)",
                 [("fn", "cobblers:sea_drift/%s" % f) for f in indexed("cobblers_sea_drift", "sea_drift")]))
+    # the Lopunny superfan's house (2026-10-02, tools/lopunny_house.py): BEFORE R9E, because its build writes the cellar
+    # floor - after R9E it would lay stone bricks over the Buneary Habitat Block set in that floor
+    import lopunny_house
+    out.append(("R9LH", "the Lopunny superfan's house and its Buneary cellar (data/lopunny_house.json)",
+                lopunny_house.placement_steps()))
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
