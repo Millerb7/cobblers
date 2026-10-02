@@ -14,8 +14,15 @@ cordon with a zone check.
   python tools/relic_underground.py verify --world DIR   # read a world to CHECK the result (never to decide)
 
 Re-applied by tools/reapply.py step R9RU, after R9DC and before R9E: hold the chunks, take the old surface build off
-(`undo_*`), then the CAVERN pattern (02_shell, 10_void, 20_surfaces, 25_reshell, 30_composition), then release.
-The pack is world-local: its zone advancement acts on its own and needs no step.
+(`undo_*`), then the CAVERN pattern (02_shell, 10_void, 20_surfaces, 25_reshell, 30_composition), then the HQ's way
+down (40_hq), then release. The pack is world-local: its zone advancement acts on its own and needs no step.
+
+THE HQ'S WAY DOWN (geometry.hq, 2026-10-02). The owner's "reachable only through the Compact HQ" needs a way in that no
+other tool builds: a pressure plate either side of the HQ ring-0 section's iron door (the city's sealed lot has nothing
+that opens it), a switchback stair from that room's south-west corner down the reserved secure shaft, and a records room
+at y0 whose open west doorway is the passage's east end and holds the zone's knock box. It is carved AFTER the reshell
+so no shell pass seals it, and the shell never lays a cell of it. tools/deep_city.py owns the HQ above ground and no
+longer lays the old hatch; everything under the room's floor is this file's, inside data/deep_city.json's reservations.
 
 THE UNDO. A world applied before 2026-10-02 (staging, R9DC on 2026-10-01 17:10) holds the relic area's old surface
 build: the platform, the six arches, the plinth and gold ring, the standing stones, the processional way and the
@@ -469,6 +476,158 @@ def composition(geo, spec):
     return cells
 
 
+# --------------------------------------------------------------- the HQ's way down (geometry.hq)
+
+# a run descending along `step` faces back up it: the stair's tall side is uphill
+UPHILL = {(0, 1): "north", (0, -1): "south", (1, 0): "west", (-1, 0): "east"}
+
+
+def hq_plan(spec):
+    """-> {"cells": {(x, y, z): block}, "air": set, "floors": set, "plates": set, "undo": set}: everything
+    carve/40_hq writes (the hull aside), from data/relic_underground.json geometry.hq alone. Layered: the records
+    room's shell and air, then the runs (their floors, then their head room), the dressing, the lights, the door's
+    plates and the hatch's two cells. Nothing is written at or over the HQ room's floor except the plates, and no
+    cell the passage writes is touched."""
+    h = spec["geometry"]["hq"]
+    geo = Geo(spec)
+    room_y, hr = h["room"]["floor_y"], h["head_room"]
+    cells = {}
+
+    def passage_owns(x, y, z):
+        r = geo.carved_range(x, z)
+        return r is not None and r[0] <= y <= r[1]
+
+    b = h["basement"]
+    ox0, oy0, oz0, ox1, oy1, oz1 = b["outer"]
+    ix0, iy0, iz0, ix1, iy1, iz1 = b["interior"]
+    for x in range(ox0, ox1 + 1):
+        for y in range(oy0, oy1 + 1):
+            for z in range(oz0, oz1 + 1):
+                if passage_owns(x, y, z):
+                    continue
+                if ix0 <= x <= ix1 and iy0 <= y <= iy1 and iz0 <= z <= iz1:
+                    cells[(x, y, z)] = AIR
+                elif y == oy0:
+                    cells[(x, y, z)] = b["floor_block"]
+                elif y == oy1:
+                    cells[(x, y, z)] = b["ceiling_block"]
+                else:
+                    cells[(x, y, z)] = b["wall_block"]
+    floors, airs = {}, set()
+    for run in h["runs"]:
+        if "landing" in run:
+            x0, z0, x1, z1 = run["landing"]
+            steps = [(x, z, run["floor_y"], h["landing_block"]) for x in range(x0, x1 + 1) for z in range(z0, z1 + 1)]
+        else:
+            (fx, fz), (sx, sz) = run["from"], run["step"]
+            blk = "%s[facing=%s,half=bottom,shape=straight,waterlogged=false]" % (h["stair_block"], UPHILL[(sx, sz)])
+            steps = [(fx + k * sx, fz + k * sz, run["floor_y"] - k, blk) for k in range(run["n"])]
+        for x, z, f, blk in steps:
+            if (x, f, z) in floors:
+                raise RelicError("run %s lays a second floor at %s" % (run["id"], (x, f, z)))
+            floors[(x, f, z)] = blk
+            airs.update((x, y, z) for y in range(f + 1, min(f + hr, room_y) + 1))
+    clash = sorted(set(floors) & airs)
+    if clash:
+        raise RelicError("a tread or landing is in another flight's head room at %s" % (clash[:3],))
+    for c in airs:
+        cells[c] = AIR
+    cells.update(floors)
+    for d in h["dressing"]:
+        x0, y0, z0, x1, y1, z1 = d["fill"]
+        for x in range(x0, x1 + 1):
+            for y in range(y0, y1 + 1):
+                for z in range(z0, z1 + 1):
+                    cells[(x, y, z)] = d["block"]
+    L = h["lights"]
+    for c in L["standing"]:
+        cells[tuple(c)] = L["block"]
+    for c in L["hanging"]:
+        cells[tuple(c)] = L["hanging_block"]
+    fd = h["front_door"]
+    plates = {tuple(c) for c in fd["plates"]}
+    for c in plates:
+        cells[c] = fd["plate_block"]
+    undo = {tuple(c) for c in h["hatch_undo"]["cells"]}
+    for c in undo:
+        cells[c] = h["hatch_undo"]["block"]
+    bad = [c for c in cells if passage_owns(*c)]
+    if bad:
+        raise RelicError("the HQ's way down writes %d cells the passage writes, first %s" % (len(bad), bad[0]))
+    return {"cells": cells, "air": {c for c, v in cells.items() if v == AIR}, "floors": set(floors), "plates": plates,
+            "undo": undo}
+
+
+def reserved_boxes(spec):
+    """{id: (x0, y0, z0, x1, y1, z1)} of the data/deep_city.json reservations geometry.hq names."""
+    dc = json.loads((ROOT / "data" / "deep_city.json").read_text(encoding="utf-8"))
+    have = {r["id"]: tuple(r["box"]) for r in dc["reserved"]}
+    want = spec["geometry"]["hq"]["reserved_boxes"]
+    miss = [w for w in want if w not in have]
+    if miss:
+        raise RelicError("data/deep_city.json reserves no %s" % miss)
+    return {w: have[w] for w in want}
+
+
+def in_boxes(c, boxes):
+    return any(b[0] <= c[0] <= b[3] and b[1] <= c[1] <= b[4] and b[2] <= c[2] <= b[5] for b in boxes)
+
+
+N6 = ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1))
+
+
+def hq_hull(spec, hp, source_root):
+    """The cells carve/40_hq makes rock if they are void: every face-neighbour of the way down's air that it does not
+    write, inside the reserved boxes, never above a pit column's tread (so never into the HQ room or the Deep), never a
+    cell the passage or the city writes."""
+    geo = Geo(spec)
+    boxes = list(reserved_boxes(spec).values())
+    pit = pit_of(source_root)
+    city = city_cells(source_root)
+    out = set()
+    for (x, y, z) in hp["air"]:
+        for dx, dy, dz in N6:
+            n = (x + dx, y + dy, z + dz)
+            if n in hp["cells"] or n in city or not in_boxes(n, boxes):
+                continue
+            r = geo.carved_range(n[0], n[2])
+            if r is not None and r[0] <= n[1] <= r[1]:
+                continue
+            t = pit(n[0], n[2])
+            if t is not None and n[1] > t:
+                continue
+            out.add(n)
+    return out
+
+
+def hq_unsealed(spec, hp, hull, source_root):
+    """[(air cell, neighbour)] for every face of the way down's air that nothing guarantees is rock or meant to be
+    open. A face is sealed when the neighbour is written by the way down, is the passage's (carved_range), is in the
+    hull, is under a pit column's tread at y-4 or above (tools/rift_deep.py refills every void there, R9B), or is
+    the HQ room's air over the stair's head (the one opening, y over the room's floor)."""
+    geo = Geo(spec)
+    pit = pit_of(source_root)
+    room_y = spec["geometry"]["hq"]["room"]["floor_y"]
+    floor_y = json.loads((ROOT / "data" / "rift_deep.json").read_text(encoding="utf-8"))["floor_y"]
+    depth = json.loads((ROOT / "data" / "rift_deep.json").read_text(encoding="utf-8"))["shell"]["depth"]
+    out = []
+    for (x, y, z) in sorted(hp["air"]):
+        for dx, dy, dz in N6:
+            n = (x + dx, y + dy, z + dz)
+            if n in hp["cells"] or n in hull:
+                continue
+            r = geo.carved_range(n[0], n[2])
+            if r is not None and r[0] <= n[1] <= r[1]:
+                continue
+            t = pit(n[0], n[2])
+            if t is not None and floor_y - depth <= n[1] < t:
+                continue
+            if t is not None and n[1] > room_y and y <= room_y:
+                continue
+            out.append(((x, y, z), n))
+    return out
+
+
 # --------------------------------------------------------------- fills
 
 def rows(cells):
@@ -633,10 +792,61 @@ def cmd_report(a):
             bad.append("the turn-back (%d, %d, %d) is inside the city's %s" % (tx, ty + dy, tz, b))
     note.append("turn-back (%d, %d, %d): tread y%s, floor %s, two clear blocks over it"
                 % (tx, ty, tz, t, (floor or "the tread itself").split("[")[0]))
-    hq = spec["zone"]["hq_access"]
-    for k in ("shaft_hatch",):
-        x_, y_, z_ = hq[k]["at"]
-        note.append("the HQ's %s at (%d, %d, %d): %s in the city's build" % (k, x_, y_, z_, city.get((x_, y_, z_))))
+    # 7a the HQ's way down (geometry.hq): its own cells, the city's door it opens, the reserved boxes it stays in, the
+    # knock box it carves, and every face of its air sealed
+    h = spec["geometry"]["hq"]
+    try:
+        hp = hq_plan(spec)
+    except RelicError as e:
+        bad.append("the HQ's way down cannot be planned: %s" % e)
+        hp = None
+    if hp is not None:
+        boxes = reserved_boxes(spec)
+        outside = [c for c in hp["cells"] if c not in hp["plates"] and c not in hp["undo"]
+                   and not in_boxes(c, boxes.values())]
+        if outside:
+            bad.append("%d cells of the HQ's way down are outside the reserved boxes %s, first %s"
+                       % (len(outside), sorted(boxes), sorted(outside)[0]))
+        in_city = sorted(c for c in hp["cells"] if c in city)
+        if in_city:
+            bad.append("%d cells of the HQ's way down are cells the city writes, first %s (%s)"
+                       % (len(in_city), in_city[0], city[in_city[0]]))
+        in_pit_air = sorted(c for c in hp["cells"] if c not in hp["plates"] and pit(c[0], c[2]) is not None
+                            and c[1] > pit(c[0], c[2]))
+        if in_pit_air:
+            bad.append("%d cells of the HQ's way down are in the Deep's air or the HQ room, first %s"
+                       % (len(in_pit_air), in_pit_air[0]))
+        fd = h["front_door"]
+        dx_, dy_, dz_ = fd["at"]
+        door = city.get((dx_, dy_, dz_), "")
+        if door.split("[")[0] != "minecraft:iron_door" or "half=lower" not in door:
+            bad.append("the HQ's front door %s is %s in the city's build, not an iron door's lower half"
+                       % (fd["at"], door or "nothing"))
+        for c in hp["plates"]:
+            under = city.get((c[0], c[1] - 1, c[2]))
+            t = pit(c[0], c[2])
+            if not ((under and under.split("[")[0] != AIR) or (t is not None and t == c[1] - 1)):
+                bad.append("the pressure plate %s stands on nothing solid" % (c,))
+            if abs(c[0] - dx_) + abs(c[2] - dz_) != 1 or c[1] != dy_:
+                bad.append("the pressure plate %s is not beside the door's lower half %s" % (c, fd["at"]))
+        for c in hp["undo"]:
+            if c in city:
+                bad.append("the city still writes %s at the old hatch %s: the undo would fight R9DC" % (city[c], c))
+        kb = spec["zone"]["knock"]["box"]
+        hole = [(x, y, zz) for x in range(kb[0], kb[3] + 1) for y in range(kb[1], kb[4] + 1)
+                for zz in range(kb[2], kb[5] + 1) if hp["cells"].get((x, y, zz)) != AIR]
+        nofl = [(x, zz) for x in range(kb[0], kb[3] + 1) for zz in range(kb[2], kb[5] + 1)
+                if hp["cells"].get((x, kb[1] - 1, zz), AIR) == AIR]
+        if hole or nofl:
+            bad.append("the knock box %s is not the records room's air over its floor: %d solid cells, %d columns with "
+                       "no floor, first %s" % (kb, len(hole), len(nofl), (hole or nofl)[0]))
+        hull = hq_hull(spec, hp, sr)
+        open_ = hq_unsealed(spec, hp, hull, sr)
+        if open_:
+            bad.append("%d faces of the HQ's way down are not sealed, first %s" % (len(open_), open_[0]))
+        note.append("the HQ's way down: %d cells (%d air, %d treads and landings), hull %d, plates %s, hatch cells %s"
+                    % (len(hp["cells"]), len(hp["air"]), len(hp["floors"]), len(hull), sorted(hp["plates"]),
+                       sorted(hp["undo"])))
 
     # 8 the undo: what it takes off and what it lays back
     try:
@@ -653,9 +863,6 @@ def cmd_report(a):
 
     owed.append("a spawn decision for the hall: the Deep's spawn-free precinct or its own Habitat band (NOT decided "
                 "here: Hoopa's cradle at (3357, 3306) is Codex's story)")
-    owed.append("the HQ's basement and secure shaft are reserved in data/deep_city.json and built by NO tool: the "
-                "passage ends in rock at x3422 and the knock box (3422-3424, 1-3, 3305-3307) is solid, so nobody can "
-                "walk in or be granted the pass until they are carved (zone.hq_access)")
 
     for n in note:
         print("  " + n)
@@ -775,7 +982,10 @@ def cmd_build(a):
     # converts a cell the city writes: its rooms cut into the risers are air the shell's `replace` would fill
     pit = pit_of(sr)
     city = city_cells(sr)
-    shell_cmds, shell_n, clipped = [], 0, 0
+    # the HQ's way down is carved AFTER the reshell (carve/40_hq), so the shell must never be laid in its cells: a
+    # `replace` over its air would only be undone by 40_hq, but a shell cell in its walls is a second owner
+    hp = hq_plan(spec)
+    shell_cmds, shell_n, clipped, hq_skipped = [], 0, 0, 0
     for (x, zz), (lo, hi) in sorted(shell.items()):
         t = pit(x, zz)
         if t is not None and hi >= t:
@@ -784,6 +994,9 @@ def cmd_build(a):
         for y in range(lo, hi + 1):
             if (x, y, zz) in city:
                 clipped += 1
+                continue
+            if (x, y, zz) in hp["cells"]:
+                hq_skipped += 1
                 continue
             shell_cmds.append((x, y, zz, rock_for(y, spec)))
             shell_n += 1
@@ -804,6 +1017,16 @@ def cmd_build(a):
     fn["carve/30_composition"] = ["# the relic site itself: DEEP_CITY.md section 5's platform, six arches,",
                                   "# plinth, broken ring and standing stones, at their own numbers, in the hall"] + \
         [fill(r[0], r[1], r[2], r[3], r[4]) for r in rows(comp)]
+    # the HQ's way down (geometry.hq): after the reshell, so nothing seals it again. Its hull first (a void beside it
+    # made rock, inside the reserved boxes only), then its cells: the records room, the stair, the dressing, the
+    # lanterns, the plates at the city's iron door, and the old hatch's two cells laid back to rock
+    hull = hq_hull(spec, hp, sr)
+    fn["carve/40_hq"] = ["# the HQ's way down: front door plates -> storey-0 room -> the stair in the reserved shaft ->",
+                         "# the records room at y0 -> its open west doorway into the passage (data/relic_underground.json",
+                         "# geometry.hq). Hull first, `replace` only: it turns a void beside the air into rock."] + \
+        [fill(r[0], r[1], r[2], r[3], r[4], "replace #%s:%s" % (NS, VOID_TAG))
+         for r in rows({c: rock_for(c[1], spec) for c in hull})] + \
+        [fill(r[0], r[1], r[2], r[3], r[4]) for r in rows(hp["cells"])]
 
     # ---- the undo: the old surface build taken off, BEFORE the carve (it is on the surface, the carve 50 down).
     # rows() sorts by y, so in every column the ground goes back from the bottom up and no gravel is laid over air
@@ -816,7 +1039,7 @@ def cmd_build(a):
     # every block function split into parts of PART commands, in order; each says its chunks are held by the step
     order, written = [], {}
     for name in ("undo", "carve/02_shell", "carve/10_void", "carve/20_surfaces", "carve/25_reshell",
-                 "carve/30_composition"):
+                 "carve/30_composition", "carve/40_hq"):
         lines = fn.pop(name)
         head = [l for l in lines if l.startswith("#")]
         cmds = [l for l in lines if not l.startswith("#")]
@@ -856,6 +1079,8 @@ def cmd_build(a):
     print(json.dumps({"out": str(out), "carved_columns": len(fp), "air_blocks": len(cells_void),
                       "surface_blocks": len(cells_rock), "shell_cells": shell_n, "shell_cells_clipped": clipped,
                       "shell_commands": len(body), "composition_blocks": len(comp),
+                      "hq_cells": len(hp["cells"]), "hq_air": len(hp["air"]), "hq_hull": len(hull),
+                      "shell_cells_left_to_the_hq": hq_skipped,
                       "undo_cells": len(ucells), "undo": {k: v for k, v in ust.items()},
                       "functions": {k: len(v) for k, v in fn.items()},
                       "advancements": len(files)}, indent=1))
@@ -899,7 +1124,9 @@ def cmd_verify(a):
     print("relic_underground verify: NOT IMPLEMENTED. The RCON probes in docs/world-building/RELIC_UNDERGROUND.md "
           "section 9 are the check for a live staging server. The checks a world read must make: every column of the zone's boxes at "
           "y41..y85 is solid; the hall's air matches 10_void exactly; the choked shaft holds no air; the "
-          "relic ring's apex stands clear of the dome; and the HQ doorway at (3421, 1..5, 3305..3307) is open.")
+          "relic ring's apex stands clear of the dome; the HQ doorway at (3421, 2..5, 3305..3307) is open; and the "
+          "HQ's way down (40_hq) matches its cells: plates either side of (3443, 67, 3282), the stair from "
+          "(3429, 66, 3299), the records room x3422-3428 y1-4 z3301-3310.")
     return 1
 
 

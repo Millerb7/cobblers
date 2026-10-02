@@ -53,7 +53,7 @@
     "chain": {"block": "minecraft:chain", "for": "cables, lamp hangers", "why": "industrial detail"},
     "hatch": {"block": "minecraft:waxed_copper_trapdoor", "for": "roof hatches over every ladder", "why": "a copper trapdoor opens by hand in 1.21 (an iron one needs redstone), and an open trapdoor over a ladder of the same facing is climbable"},
     "door_sealed": {"block": "minecraft:iron_door", "for": "the HQ's restricted rooms", "why": "an iron door with no button is shut to everyone: sealed until the story gives it a mechanism"},
-    "seal": {"block": "minecraft:reinforced_deepslate", "for": "the relic entrance's seal and the shaft hatch", "why": "the hardest block a player can meet in survival, drops nothing: a physical seal"},
+    "seal": {"block": "minecraft:reinforced_deepslate", "for": "the relic entrance's seal (the shaft hatch it also made was removed 2026-10-02: it lay under the HQ section's wall, and the shaft now opens by a stair, data/relic_underground.json geometry.hq)", "why": "the hardest block a player can meet in survival, drops nothing: a physical seal"},
     "ancient_stone": {"block": "minecraft:tuff_bricks", "for": "the relic shrine", "why": "older than the Compact: native masonry, not panels"},
     "distortion": {"block": "legendarymonuments:distortion_stone", "fallback": "minecraft:tuff", "for": "the relic arches", "why": "the Rift's own stone (data/rift_skin.json palette, placed on staging)"},
     "hoopa_gold": {"block": "minecraft:raw_gold_block", "for": "the relic ring and its fragments", "why": "Hoopa's rings are gold; raw gold reads as found, not forged, and conditions no spawn"},
@@ -207,7 +207,7 @@
     "why": "The dominant building: its sections take the west sector's riser lots on every ring and the floor, all in black panel and tinted glass, and its tower rises 48 over the lip from the ring-0 section, over the sited HQ column."
   },
   "rooms": [
-    {"id": "hq_secure_shaft_head", "in": "hq", "ring": 0, "storey": 0, "sealed": true, "who": "the loyalists", "note": "the head of the secure shaft to the basement at (3427, 0, 3308). The shaft is reserved rock below; a reinforced-deepslate hatch in the floor marks where it will open."},
+    {"id": "hq_secure_shaft_head", "in": "hq", "ring": 0, "storey": 0, "sealed": true, "who": "the loyalists", "note": "the head of the secure shaft to the basement at (3427, 0, 3308). Since 2026-10-02 the shaft is a stair from this room's south-west corner (3429, 66, 3299) down to the Compact's records room at y0, carved by tools/relic_underground.py R9RU (data/relic_underground.json geometry.hq), which also lays a pressure plate either side of this room's iron door. The reinforced-deepslate hatch this build used to lay lay under the room's west wall and is gone."},
     {"id": "hq_director_office", "in": "hq", "ring": 0, "storey": -1, "sealed": true, "who": "Director Elara Venn"},
     {"id": "hq_briefing_hall", "in": "hq", "ring": 1, "storey": 0, "sealed": false, "who": "Captain Brann Saye's guards"},
     {"id": "hq_archive", "in": "hq", "ring": 2, "storey": 0, "sealed": false, "who": "the Compact's records"},
@@ -227,7 +227,8 @@
     {"id": "hoopa_cradle", "box": [3317, -12, 3266, 3397, 72, 3346], "why": "the relic cavern: Hoopa's cradle, sited at (3357, 3306) floor y12 under the relic area (data/rift_regions.json sited.hoopa_cradle), 40 either way for a chamber and the Displaced City's 24-block rock shell (tools/cavern_plan.py precedent), up to y72, 14 under the lowest relic ground. Sealed: nothing is written here."},
     {"id": "cradle_passage", "box": [3357, -4, 3298, 3433, 24, 3318], "why": "the 70-block passage from the HQ basement to the cradle, climbing 12 (data/rift_regions.json sited.cradle_passage)"},
     {"id": "hq_basement", "box": [3419, -4, 3296, 3445, 16, 3320], "why": "the HQ's basement at (3427, 0, 3308) (data/rift_regions.json sited.haven_compact_hq), under ring 0's rock"},
-    {"id": "hq_secure_shaft", "box": [3423, 0, 3304, 3431, 65, 3312], "why": "the secure shaft from the HQ's ring-0 front down to the basement (DEEP_CITY.md section 5), in the rock under ring 0's tread"}
+    {"id": "hq_secure_shaft", "box": [3423, 0, 3304, 3431, 65, 3312], "why": "the secure shaft from the HQ's ring-0 front down to the basement (DEEP_CITY.md section 5), in the rock under ring 0's tread"},
+    {"id": "hq_shaft_head", "box": [3428, 58, 3298, 3430, 66, 3303], "why": "2026-10-02: the secure shaft's head. hq_secure_shaft was drawn for a tower at x3422-3432; the built tower is x3428-3438 and has no door, and no column of the ring-0 section's storey-0 room (hq_secure_shaft_head) is over the shaft. So the stair starts in that room's south-west corner (x3429, z3299) and runs south under the room's and the tower's walls into the shaft. Carved by tools/relic_underground.py R9RU (data/relic_underground.json geometry.hq); this build writes nothing here, and fails closed if it ever does."}
   ],
   "keep_clear": {
     "mouth_tunnel": {"half_width": 5, "north": 90, "south": 2, "height": 8, "why": "Victory Road's mouth tunnel (data/vr_caves.json mouth, 7 wide, floor y1): nothing written"},

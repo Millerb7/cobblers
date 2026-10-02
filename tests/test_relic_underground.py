@@ -68,9 +68,37 @@ def test_deep_city_verify_no_longer_needs_the_ring():
     assert "relic ring" not in need and "relic seal" in need
 
 
+def test_r9ru_runs_after_the_pit_it_cuts_the_stair_into():
+    # the audit's EARLIER exemption (cobblers_deep's replace fills) is only sound while R9B runs before R9RU
+    src = (ROOT / "tools" / "reapply.py").read_text(encoding="utf-8")
+    assert src.index('("R9B"') < src.index('("R9DC"') < src.index('("R9RU"')
+    assert set(A.EARLIER) == {"cobblers_deep"}
+
+
+def test_the_hq_way_down_stays_in_the_reserved_boxes():
+    hp = R.hq_plan(SPEC)
+    boxes = R.reserved_boxes(SPEC)
+    assert set(boxes) == {"hq_basement", "hq_secure_shaft", "hq_shaft_head"}
+    out = [c for c in hp["cells"] if c not in hp["plates"] and c not in hp["undo"] and not R.in_boxes(c, boxes.values())]
+    assert not out, out[:3]
+    # nothing at or over the HQ room's floor but the plates; the stair's head opens the room's floor
+    room_y = SPEC["geometry"]["hq"]["room"]["floor_y"]
+    assert {c for c in hp["cells"] if c[1] > room_y} == hp["plates"]
+    assert tuple(SPEC["zone"]["hq_access"]["shaft_head"]) in hp["air"]
+    # the knock box is the records room's air, on its floor
+    kb = SPEC["zone"]["knock"]["box"]
+    for x in range(kb[0], kb[3] + 1):
+        for z in range(kb[2], kb[5] + 1):
+            assert hp["cells"][(x, kb[1] - 1, z)] != R.AIR
+            assert all(hp["cells"][(x, y, z)] == R.AIR for y in range(kb[1], kb[4] + 1))
+    # the audit's own re-derivation agrees with the generator on the air, cell for cell
+    pair, _f = A.expected_air(SPEC)
+    assert A.expected_hq(SPEC, pair)[0] == hp["air"]
+
+
 def test_the_open_decisions_are_recorded_not_invented():
     assert SPEC["composition"]["spawn_decision"]["status"].startswith("OPEN")
-    assert SPEC["zone"]["hq_access"]["status"].startswith("NOT BUILT")
+    assert SPEC["zone"]["hq_access"]["status"].startswith("BUILT")
     hb = (ROOT / "data" / "habitat_blocks.json").read_text(encoding="utf-8")
     assert "relic_underground" not in hb and "hoopa" not in hb.lower()
 
@@ -112,14 +140,14 @@ def inputs(sr):
     edge = [(j + RX0, i + RZ0) for i in range(H) for j in range(W) if rm[i, j] and any(
         not (0 <= i + di < H and 0 <= j + dj < W) or not rm[i + di, j + dj]
         for di, dj in ((1, 0), (-1, 0), (0, 1), (0, -1)))]
-    return {"g": g, "pit": pit, "old": dict(S.old_write_set(sr)), "city": view, "edge": edge}
+    return {"g": g, "pit": pit, "old": dict(S.old_write_set(sr)), "city": view, "edge": edge, "blocks": dict(city)}
 
 
 def build_and_audit(sr, inputs, out):
     R.cmd_build(argparse.Namespace(source_root=sr, out=str(out)))
     fns, order, zone = A.read_pack(out)
     probs, st = A.audit(fns, order, zone, SPEC, inputs["g"], inputs["pit"], {"cobblers_deep_city": inputs["city"]["all"]},
-                        inputs["old"], inputs["city"])
+                        inputs["old"], inputs["city"], city_blocks=inputs["blocks"])
     undo = {c: A.base(w[6]) for n in order if n.startswith("undo") for w in fns[n] for c in A.cells(w)}
     left = A.cordon_check(undo, inputs["edge"], inputs["g"], inputs["city"]["all"])
     if left:
@@ -131,6 +159,15 @@ def test_the_built_pack_is_clean(sr, inputs, tmp_path):
     kinds, probs, st = build_and_audit(sr, inputs, tmp_path / "pack")
     assert not probs, probs
     assert st["undo_air"] > 0 and st["undo_ground"] > 0 and st["shell"] > 0
+    assert st["route_from"].startswith("outside the HQ's front door")
+    assert st["route_via"] == {"stair": True, "records room": True}
+
+
+def test_the_city_no_longer_lays_the_hatch(sr, inputs):
+    for c in SPEC["geometry"]["hq"]["hatch_undo"]["cells"]:
+        assert tuple(c) not in inputs["blocks"]
+    door = inputs["blocks"][tuple(SPEC["geometry"]["hq"]["front_door"]["at"])]
+    assert door.startswith("minecraft:iron_door[") and "half=lower" in door and "facing=east" in door
 
 
 def test_the_capped_city_writes_no_shrine_and_no_fence(sr):
@@ -156,6 +193,55 @@ def test_a_gallery_one_short_of_the_passage_fails_the_route(sr, inputs, tmp_path
     monkeypatch.setattr(R.Geo, "__init__", short)
     kinds, probs, _st = build_and_audit(sr, inputs, tmp_path / "pack")
     assert "route" in kinds, probs
+
+
+def _tampered_hq(monkeypatch, change):
+    real = R.hq_plan
+
+    def tampered(spec):
+        hp = real(spec)
+        change(hp, spec)
+        hp["air"] = {c for c, v in hp["cells"].items() if v == R.AIR}
+        return hp
+    monkeypatch.setattr(R, "hq_plan", tampered)
+
+
+def test_a_resealed_shaft_head_fails_the_route(sr, inputs, tmp_path, monkeypatch):
+    # the generator lays the HQ room's floor back over the stair's head (the old hatch, in effect); the data is untouched
+    def reseal(hp, spec):
+        y = spec["geometry"]["hq"]["room"]["floor_y"]
+        for c in [c for c in hp["cells"] if c[1] == y and hp["cells"][c] == R.AIR]:
+            hp["cells"][c] = "minecraft:reinforced_deepslate"
+    _tampered_hq(monkeypatch, reseal)
+    kinds, probs, st = build_and_audit(sr, inputs, tmp_path / "pack")
+    assert "route" in kinds and "hq" in kinds, probs
+    assert st["route_via"]["stair"] is False
+
+
+def test_a_front_door_without_plates_fails_the_route(sr, inputs, tmp_path, monkeypatch):
+    def unplate(hp, spec):
+        for c in hp["plates"]:
+            del hp["cells"][c]
+    _tampered_hq(monkeypatch, unplate)
+    kinds, probs, st = build_and_audit(sr, inputs, tmp_path / "pack")
+    assert "route" in kinds and "hq" in kinds, probs
+    assert st["route_via"]["stair"] is False        # shut outside the door: the street, never the stair
+
+
+def test_a_records_room_short_of_the_doorway_fails(sr, inputs, tmp_path, monkeypatch):
+    # the generator stops the room's air one column east of the doorway: the knock box's first column is wall
+    def short(hp, spec):
+        for (x, y, z), v in list(hp["cells"].items()):
+            if x == 3422 and v == R.AIR:
+                hp["cells"][(x, y, z)] = "minecraft:deepslate_bricks"
+    _tampered_hq(monkeypatch, short)
+    # the generator's own report catches this one and refuses to build ...
+    with pytest.raises(R.RelicError):
+        R.cmd_build(argparse.Namespace(source_root=sr, out=str(tmp_path / "refused")))
+    # ... and with that report silenced, the audit still does, from its own derivation
+    monkeypatch.setattr(R, "cmd_report", lambda a: 0)
+    kinds, probs, _st = build_and_audit(sr, inputs, tmp_path / "pack")
+    assert {"route", "zone", "hq"} <= kinds, probs
 
 
 def test_an_undo_that_forgets_the_city_fails(sr, inputs, tmp_path, monkeypatch):

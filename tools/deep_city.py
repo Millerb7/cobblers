@@ -1274,21 +1274,13 @@ def build(source_root, server_dir=None):
                                   "door": [lot.door[0], lot.level + 1, lot.door[1]] if lot.door and si == 0 else None,
                                   "sealed": bool(room.get("sealed")), "storey": si,
                                   "section_columns": len(lot.cols)})
-    # the shaft head's hatch: reinforced deepslate where the shaft will open, flush in the HQ's ring-0 floor
-    hx, hz = hq["tower"]["at"]
-    hatch = []
-    for dx in (-1, 0, 1):
-        for dz in (-1, 0, 1):
-            c = (hx + dx, hz + dz)
-            if c in hq0.cols:
-                cv.put(c[0], rings[0], c[1], P("seal"), owner="hq_0")
-                hatch.append(c)
-    if not hatch:
-        # the sited column is under the tower: the hatch goes in the ring-0 section's floor nearest it
-        c = min(hq0.cols, key=lambda c: (abs(c[0] - hx) + abs(c[1] - hz), c))
-        cv.put(c[0], rings[0], c[1], P("seal"), owner="hq_0")
-        hatch.append(c)
-    plan["hq_shaft_hatch"] = [list(c) for c in hatch]
+    # the shaft head is NOT the city's (2026-10-02). This build used to lay a reinforced-deepslate hatch on the ring-0
+    # section's columns nearest the sited column (3427, 3308); the tower box and the pit's edge left only (3427, 3308)
+    # and (3427, 3309), both boundary columns, so the hatch lay under the section's own west wall where no shaft can
+    # open. The secure shaft is now a stair from storey 0's south-west corner, carved with the records room by
+    # tools/relic_underground.py (R9RU, data/relic_underground.json geometry.hq), which also lays those two cells back
+    # to rock on a world that has the hatch. The stair's head is reserved (data/deep_city.json hq_shaft_head).
+    plan["hq_shaft_head"] = "tools/relic_underground.py, data/relic_underground.json geometry.hq"
     # the HQ tower
     x0, z0, x1, z1 = tower_box
     base = rings[0] + 1
