@@ -91,3 +91,110 @@ one encounter in ten. Victory Road jumps, but 82% of what it shows is a family t
   `box_condition`) are not verified in game.
 - The elder and sapling bird pools (66) and their nests are the owner's approved design (2026-09-26) and are
   audited but not judged here.
+
+## After the rebuild (2026-10-02, measured the same way)
+
+The tables are now generated from `data/encounter_design.json` by `tools/build_encounters.py`
+(`docs/mechanics/ENCOUNTER_DESIGN.md`). `tests/test_encounter_design.py` (a different hand) checks the design's eight
+targets on the compiled pack: 25 of 25 pass; on the pre-rebuild data 20 of them failed.
+
+| Leg (cap) | Tables | Evolved share | Final or single-stage share | Mean base-stat total | Families new this leg |
+|---|---|---|---|---|---|
+| 1 (20) | 6 | 0.00 | 0.00 | 282 | 1.00 |
+| 2 (25) | 3 | 0.00 | 0.07 | 280 | 0.47 |
+| 3 (30) | 9 | 0.15 | 0.20 | 313 | 0.89 |
+| 4 (35) | 12 | 0.15 | 0.05 | 326 | 0.75 |
+| 5 (40) | 5 | 0.37 | 0.31 | 377 | 0.54 |
+| 6 (45) | 6 | 0.77 | 0.62 | 425 | 0.78 |
+| 7 (50) | 10 | 0.86 | 0.76 | 439 | 0.66 |
+| 8 (55) | 10 | 0.81 | 0.86 | 465 | 0.61 |
+| Victory Road (60) | 16 | 0.97 | 0.98 | 503 | 0.12 |
+
+Two readings to keep honest. By this audit's grouping (each leg's corridor plus the sub-regions `availability.py` puts
+near it) leg 2 sits 1.8 below leg 1; the design test groups by each table's own tier and finds no fall. And Victory
+Road's families are mostly ones a player has met before -- it is their final forms (Crobat, Steelix, Golem,
+Magmortar, Kingdra...) that are new, which is the end-of-journey shape the design chose; no novelty target was set.
+The most alike pair of different waters now shares 0.20 of its spawns (`foothill_woods` and `marsh_creek`, Poliwag's
+line at two stages), against 1.00 before.
+
+### Every table, before and after
+
+Land base-stat total is probability-weighted; "evolved" is the share of land spawns that are a middle or final stage.
+"off" marks an off-path table.
+
+| Table | Tier | Before: levels | Before: land BST / evolved | Before: most common (land ~ water) | After: levels | After: land BST / evolved | After: most common (land ~ water) |
+|---|---|---|---|---|---|---|---|
+| pallet_meadows | 1 | 5-8 | 260 / 0.00 | pidgey, rattata, mareep | 4-8 | 262 / 0.00 | pidgey, wooloo, mareep |
+| route1_maze_forest | 1 | 7-10 | 254 / 0.00 | pidgey, combee, rattata | 6-11 | 273 / 0.00 | skwovet, sewaddle, applin |
+| viltri_plateau | 1 | 12-15 | 253 / 0.00 | hoothoot, combee, fomantis | 9-14 | 251 / 0.00 | gossifleur, smoliv, bunnelby |
+| river_of_shrews_vale | 1 | 9-12 | 292 / 0.00 | buizel, bidoof, pawmi ~ surskit, magikarp | 8-13 | 305 / 0.00 | deerling, shinx, bidoof ~ goldeen, marill |
+| west_shore | 1 | 7-10 | 284 / 0.00 | pidgey, wingull, krabby ~ shellder | 6-12 | 287 / 0.00 | wingull, krabby, wattrel ~ shellder, staryu |
+| south_west_fields | 1 off | 5-15 | 239 / 0.00 | pidgey, caterpie, hoppip | 6-14 | 304 / 0.22 | cottonee, pikachu, growlithe |
+| lake_viltri_hollow | 2 | 18-21 | 273 / 0.03 | hoothoot, lotad, corphish ~ surskit, magikarp | 13-19 | 294 / 0.00 | nincada, venonat, volbeat ~ magikarp, corphish |
+| viltris_path_valley | 2 off | 15-28 | 245 / 0.00 | hoothoot, poochyena, zigzagoon | 13-22 | 308 / 0.11 | exeggcute, spearow, patrat |
+| shrew_lake_shores | 2 off | 10-22 | 262 / 0.00 | cherubi, poltchageist, ralts ~ surskit, magikarp | 13-22 | 297 / 0.00 | poltchageist, cherubi, snubbull ~ psyduck, dratini |
+| foothill_woods | 3 | 21-23 | 386 / 0.03 | heracross, hoothoot, scyther ~ goldeen, barboach | 19-26 | 384 / 0.49 | beautifly, dustox, pachirisu ~ poliwag, poliwhirl |
+| the_tri_peaks | 3 | 24-35 | 320 / 0.03 | swablu, skiddo, rookidee | 20-28 | 302 / 0.10 | rookidee, skiddo, swablu |
+| mt_vessu | 3 | 24-26 | 329 / 0.00 | swablu, skiddo, meditite | 22-28 | 319 / 0.00 | meditite, nosepass, spoink |
+| mt_clay | 3 | 22-25 | 293 / 0.00 | swablu, rockruff, makuhita | 20-26 | 308 / 0.10 | machop, rockruff, makuhita |
+| arrow_lake_shores | 3 off | 10-22 | 243 / 0.00 | azurill, budew, audino ~ surskit, arrokuda | 18-28 | 369 / 0.18 | flabebe, togedemaru, floette ~ arrokuda, chewtle |
+| north_west_coast | 3 off | 15-28 | 282 / 0.00 | hoothoot, krabby, wingull ~ shellder | 18-28 | 341 / 0.00 | slowpoke, corsola, inkay ~ horsea, finneon |
+| fungal_north | 3 off | 25-45 | 301 / 0.07 | shroomish, paras, foongus | 18-28 | 324 / 0.27 | paras, shroomish, morelull |
+| fungal_south | 3 off | 25-45 | 290 / 0.07 | shroomish, poliwag, wooper | 18-28 | 336 / 0.00 | pumpkaboo, venonat, tangela ~ tadbulb |
+| the_crags | 4 | 28-30 | 334 / 0.00 | bergmite, aron, nosepass ~ magikarp, gyarados | 25-32 | 362 / 0.27 | aron, geodude, lairon ~ barboach, carvanha |
+| upper_trough | 4 | 29-31 | 286 / 0.00 | bergmite, vanillite, snom | 26-33 | 292 / 0.00 | cubchoo, vanillite, snorunt |
+| merian_cirque | 4 | 27-29 | 345 / 0.00 | bergmite, smoochum, cryogonal | 25-31 | 305 / 0.07 | bergmite, swinub, smoochum |
+| peak_pond_hollow | 4 | 30-32 | 299 / 0.07 | wooloo, mareep, pichu ~ goldeen, magikarp | 26-33 | 398 / 0.14 | teddiursa, growlithe, stantler ~ basculin, buizel |
+| north_shore_downs | 4 | 30-38 | 296 / 0.07 | wooloo, hoppip, buneary | 23-33 | 358 / 0.67 | fletchinder, minccino, skiploom |
+| north_east_downs | 4 | 32-34 | 272 / 0.08 | wooloo, sentret, stunky | 27-33 | 368 / 0.70 | staravia, thievul, stunky |
+| sunset_west | 5 off | 25-45 | 393 / 0.00 | oricorio, doduo, girafarig | 28-38 | 450 / 0.00 | girafarig, ponyta, oricorio |
+| sunset_east | 8 off | 25-45 | 358 / 0.03 | oricorio, cutiefly, fomantis | 43-53 | 490 / 0.49 | comfey, arboliva, lurantis |
+| lower_trough | 5 | 27-38 | 309 / 0.05 | bergmite, spheal, piplup ~ goldeen, magikarp | 28-38 | 333 / 0.12 | cetoddle, swinub, piloswine ~ spheal, sealeo |
+| marshy_marsh | 5 | 34-44 | 292 / 0.07 | wooper, totodile, croagunk ~ barboach, surskit | 28-38 | 411 / 0.24 | croagunk, stunfisk, toxicroak ~ croconaw, feraligatr |
+| glacier_foot_fields | 5 | 34-36 | 242 / 0.05 | wooper, lechonk, tarountula | 30-38 | 375 / 0.67 | spidops, hatenna, drilbur |
+| frostpeak | 5 off | 25-45 | 358 / 0.00 | delibird, crabrawler, sneasel | 28-38 | 398 / 0.01 | absol, delibird, snorunt |
+| frostpeak_strand | 5 off | 25-45 | 322 / 0.03 | delibird, spheal, vulpix alolan | 28-38 | 300 / 0.00 | sandshrew alolan, vulpix alolan ~ seel, dewgong |
+| tilpey_north_shore | 6 | 39-41 | 345 / 0.31 | psyduck, ducklett, bibarel ~ yanma, goldeen | 33-43 | 446 / 0.72 | dunsparce, dudunsparce, whirlipede ~ yanma, yanmega |
+| tilpey_east_shore | 6 | 41-43 | 287 / 0.07 | psyduck, seedot, sewaddle ~ goldeen, magikarp | 33-43 | 428 / 0.90 | nuzleaf, shiftry, swadloon ~ lombre, ludicolo |
+| marsh_creek | 6 | 37-39 | 270 / 0.10 | wooper, poliwag, tympole ~ barboach, whiscash | 33-43 | 431 / 0.80 | arbok, koffing, weezing ~ poliwhirl, poliwrath |
+| tilpey_west_meadows | 6 off | 39-48 | 315 / 0.08 | psyduck, oddish, petilil ~ goldeen, magikarp | 33-43 | 446 / 0.90 | ribombee, gloom, vileplume ~ masquerain |
+| wedge_north | 6 off | 25-45 | 348 / 0.05 | phantump, gastly, murkrow | 33-43 | 444 / 0.86 | haunter, drifblim, mismagius |
+| north_pine_isle | 6 off | 25-45 | 287 / 0.00 | snover, snom, vulpix alolan | 33-43 | 473 / 0.60 | weavile, sneasel, abomasnow |
+| south_pine_isle | 6 off | 25-45 | 325 / 0.01 | snover, vulpix alolan, buneary | 33-43 | 425 / 0.60 | lopunny, buneary, zoroark |
+| northgate_west | 6 off | 25-45 | 306 / 0.03 | pineco, teddiursa, hoothoot | 33-43 | 436 / 0.56 | forretress, heracross, noctowl |
+| northgate_east | 6 off | 25-45 | 283 / 0.06 | pineco, sentret, deerling | 33-43 | 427 / 0.80 | sawsbuck, furret, deerling |
+| tilpey_waters | 7 | 39-48 | 319 / 0.00 | psyduck, tadbulb ~ goldeen, basculin | 38-48 | 440 / 1.00 | pelipper ~ gyarados, veluza |
+| tilpey_south_shore | 7 | 42-44 | 259 / 0.10 | psyduck, caterpie, hoothoot ~ goldeen, magikarp | 38-48 | 410 / 1.00 | butterfree, beedrill, pidgeot ~ gastrodon |
+| east_coast_dunes | 7 | 25-45 | 302 / 0.00 | sandile, trapinch, silicobra | 38-48 | 438 / 0.78 | krookodile, krokorok, sandaconda |
+| eastern_moor | 7 | 34-44 | 262 / 0.00 | wooper, foongus, karrablast | 38-48 | 418 / 0.60 | escavalier, accelgor, karrablast |
+| crater_rim_north_west | 7 | 44-46 | 338 / 0.04 | slugma, sizzlipede, heatmor | 38-48 | 475 / 0.71 | salazzle, centiskorch, rhyhorn |
+| east_cones | 7 | 44-52 | 277 / 0.10 | slugma, rolycoly, aron | 38-48 | 443 / 0.90 | coalossal, camerupt, carkol |
+| long_isle_north | 7 off | 44-50 | 400 / 0.06 | sandygast, zangoose, seviper | 38-48 | 442 / 0.42 | palossand, seviper, zangoose |
+| long_isle_middle | 7 off | 44-50 | 394 / 0.06 | yamask, zangoose, seviper | 38-48 | 439 / 0.62 | heliolisk, sandaconda, helioptile |
+| long_isle_south | 8 off | 44-50 | 328 / 0.03 | chatot, fomantis, bounsweet | 43-53 | 474 / 0.86 | araquanid, tsareena, lurantis |
+| wedge_south | 8 off | 25-45 | 297 / 0.05 | phantump, zubat, venonat | 43-53 | 517 / 1.00 | crobat, drifblim, dusknoir |
+| great_crater | 8 | 44-52 | 323 / 0.10 | slugma, magby, numel | 43-53 | 500 / 0.90 | magmortar, chandelure, charizard |
+| plateau_south | 8 | 47-54 | 349 / 0.05 | cacnea, phanpy, mudbray | 43-53 | 480 / 0.74 | donphan, mudsdale, klawf |
+| plateau_west | 8 | 47-49 | 348 / 0.07 | cacnea, skorupi, vullaby | 43-53 | 461 / 0.61 | drapion, cacturne, maractus |
+| rift_foot | 8 | 49-51 | 280 / 0.07 | wattrel, nidoranf, nidoranm | 43-53 | 467 / 0.86 | scrafty, nidoqueen, nidoking |
+| south_strand | 8 | 50-52 | 298 / 0.07 | wattrel, mareanie, wimpod ~ clauncher, pincurchin | 43-53 | 454 / 0.80 | crabominable, kilowattrel, crabrawler ~ clawitzer, toxapex |
+| arrow_creeks | 8 off | 49-56 | 343 / 0.06 | wattrel, doduo, girafarig ~ goldeen, magikarp | 43-53 | 492 / 0.39 | flamigo, dodrio, farigiraf ~ tatsugiri, dondozo |
+| plateau_east | 8 off | 47-54 | 360 / 0.04 | cacnea, houndour, larvesta | 43-53 | 486 / 0.11 | durant, heatmor, orthworm |
+| south_east_dunes | 8 off | 25-45 | 304 / 0.00 | sandile, hippopotas, rellor | 43-53 | 476 / 0.46 | sigilyph, espathra, rabsca |
+| jungle_west | 8 off | 25-45 | 347 / 0.04 | aipom, pikipek, kecleon | 43-53 | 472 / 0.81 | ambipom, toucannon, tropius |
+| jungle_east | 8 off | 25-45 | 423 / 0.00 | pikipek, hawlucha, passimian | 43-53 | 466 / 0.49 | grafaiai, komala, chatot |
+| rift_trunk | 9 off | 55-57 | 320 / 0.10 | roggenrola, rolycoly, orthworm | 52-60 | 502 / 0.99 | garganacl, tinkaton, gigalith |
+| rift_west_spur | 9 off | 56-58 | 295 / 0.09 | rolycoly, klink, varoom | 52-60 | 509 / 0.93 | kingambit, revavroom, klinklang |
+| rift_south_west_arm | 9 off | 53-55 | 313 / 0.05 | rolycoly, cubone, dwebble | 52-60 | 477 / 0.85 | glimmora, marowak, sableye |
+| rift_south_east_arm | 9 off | 54-56 | 343 / 0.03 | rolycoly, gligar, baltoy | 52-60 | 496 / 0.96 | claydol, golurk, gliscor |
+| vrc_cave | 9 | 58-64 | 438 / 0.95 | golbat, excadrill, boldore | 54-60 | 510 / 1.00 | crobat, steelix, golem |
+| vrc_drowned | 9 | 58-64 | 440 / 0.97 | quagsire, golbat, excadrill ~ whiscash, lanturn | 54-60 | 505 / 1.00 | golisopod, barbaracle, crawdaunt ~ lanturn, kingdra |
+| vrc_drowned_core | 9 | 58-64 | 439 / 0.97 | quagsire, golbat, excadrill ~ whiscash, lanturn | 54-60 | 505 / 1.00 | golisopod, barbaracle, crawdaunt ~ lanturn, kingdra |
+| vrc_slagworks | 9 | 58-64 | 444 / 0.96 | magcargo, camerupt, golbat | 54-60 | 532 / 1.00 | magmortar, arcanine, coalossal |
+| vrc_slagworks_core | 9 | 58-64 | 446 / 0.96 | magcargo, camerupt, golbat | 54-60 | 533 / 1.00 | magmortar, arcanine, coalossal |
+| vrc_bloom | 9 | 58-64 | 447 / 0.98 | amoonguss, breloom, golbat | 54-60 | 481 / 1.00 | breloom, amoonguss, vileplume |
+| vrc_bloom_core | 9 | 58-64 | 447 / 0.98 | amoonguss, breloom, golbat | 54-60 | 481 / 1.00 | breloom, amoonguss, vileplume |
+| vrc_raw_tear | 9 | 58-64 | 468 / 0.94 | claydol, bronzong, golbat | 54-60 | 517 / 0.99 | noivern, claydol, bronzong |
+| vrc_raw_tear_core | 9 | 58-64 | 469 / 0.94 | claydol, bronzong, golbat | 54-60 | 518 / 0.99 | noivern, claydol, bronzong |
+| vrc_abandoned_cut | 9 | 58-64 | 477 / 0.97 | klinklang, probopass, golbat | 54-60 | 524 / 1.00 | aggron, probopass, klinklang |
+| vrc_abandoned_cut_core | 9 | 58-64 | 478 / 0.97 | klinklang, probopass, golbat | 54-60 | 525 / 1.00 | aggron, probopass, klinklang |
