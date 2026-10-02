@@ -205,6 +205,20 @@ Delibird, Snorunt, Eiscue). Two mechanisms, both to prove before content:
 2. **Rings round a focus** for lakes, the crater, groves and the Rift's mouths: a focus per sub-region, cells nearer
    it matured further (the shape of `compile_spawns.marine_bands`, distance from land).
 
-The heart may exceed the leg's cap (above). Target 5 and the per-table tests then become per band or ring, rewritten
+**The balance (the owner, 2026-10-02): "a new player should be able to find pockets and readily catchable mons
+without scouring a landscape."** So above-cap Pokemon are the exception at a heart, never the texture of a place:
+
+- **The path is always catchable.** A route corridor never carries heart content; everything a player meets on the
+  road is at or under the leg's cap.
+- **Most of a place is catchable.** The outskirts and middle -- most of a sub-region's area -- stay inside the leg's
+  band; only the heart (a summit band, an inner ring) may exceed it.
+- **Catchable pockets are near the path.** Every on- or near-path sub-region keeps catchable spawns within easy
+  reach of the corridor, not only at its far edge.
+- **A heart is mixed, not walled.** Even at a summit, the common bucket keeps catchable stages; the above-cap ones
+  are the big, rarer presences that make the place, seen first and caught on a return.
+
+The exact shares (how much of an area may be heart, what fraction of a heart may exceed the cap) are for the next
+session to propose with measurements and the owner to confirm, before a test fixes them. The heart may exceed the
+leg's cap (above). Target 5 and the per-table tests then become per band or ring, rewritten
 by a test author from this section, not by the builder.
 
