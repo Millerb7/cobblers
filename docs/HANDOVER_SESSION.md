@@ -9,7 +9,8 @@ A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else,
   parallel sessions' branches, merged here and re-verified in a full checkout:
   `build/2026-10-02-place-all-trainers` (1c57d67), `build/2026-10-02-encounter-rebuild` (acd9a6a),
   `design/2026-10-02-starters` (f1b333c).
-- **The PR**: PR_PENDING. It supersedes #105 and #104; if it merges, close both unmerged. Re-read its head
+- **The PR is [#106](https://github.com/Millerb7/cobblers/pull/106)**, draft. It supersedes #105 and #104; if it merges,
+  close both unmerged. FROZEN from the moment it was reported. Re-read its head
   with `gh pr view <N> --json headRefOid` before quoting it.
 - `origin/main` is still `a271532`; nothing from 2026-10-01 or 2026-10-02 is merged.
 
