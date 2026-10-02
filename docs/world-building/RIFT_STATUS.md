@@ -82,7 +82,11 @@ Two different things share this row, and only one of them exists.
 
 **The trailheads are applied by R1.** `data/rift_sculpt.json` `entrances` names five —
 `rim_post_descent` (switchback, 5 legs), `victory_road_descent` (switchback, 4 legs, snapped to
-the `victory_road` route), `excavation_haul_road` (landslide), `gulch_mouth` (canyon) and
+the `victory_road` route **as it ran when the sculpt was applied** — `35f2a56` re-routed Victory
+Road afterwards, so the gap the heightmap holds is at ring 5797, 44 blocks from the corridor's
+current crossing and 46 stations from where a re-snap would put it; `--plan` measures the applied
+gap rather than re-snapping, so every block pass still builds against the real one),
+`excavation_haul_road` (landslide), `gulch_mouth` (canyon) and
 `wilds_slip` (landslide) — each with a named guard. `entrance_policy` is explicit:
 "Guards' trailheads are marked with an armour stand placeholder and not staffed; Codex writes
 them (docs/HANDOVER_CODEX.md item 23)." The markers ride in on R1's `fx` pass (`tools/reapply.py`
@@ -177,7 +181,7 @@ it: `data/deep_city.json` (schema `cobblers.deep_city/1`, seed 20260927, design
 `deep_city:build` then `deep_city_audit` (lines 362-363) and refuses a failing audit. **R9DC** is
 the step, deliberately not R9D: `tools/reapply.py` line 906 notes "R9D was the retired Victory Road
 regions step, and tests/test_reapply_vr_steps.py keeps that id retired." STATE line 155 records
-196 buildings, 8 stair towers, 193 ladders, the Core spire, 99 functions and about 85,000 commands,
+196 buildings, 9 stair towers (8 lift banks + the Sink Gate; corrected 2026-10-01 from a run's own counts), 193 ladders, the Core spire, 99 functions and about 85,000 commands,
 and "On staging (`cobblers-dryrun11`, world-local, 2026-09-27): all 99 functions run, 300 of 300
 sampled final blocks present" — claimed by STATE, not re-checked here. Not built, per the same
 entry: the Slip barrier, holo-signs, NPCs.

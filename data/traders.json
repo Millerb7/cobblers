@@ -411,7 +411,7 @@
       "building": "hometown_pokemart",
       "facing": "west",
       "status": "planned",
-      "chosen_because": "the Mart's clerk, behind its counter: cobblers:f4/services/structure_pokemart's shopkeeper jigsaw, which a template placed by command never fills",
+      "chosen_because": "the Mart's clerk, behind its counter: cobblers:f4/services/structure_pokemart's shopkeeper jigsaw, which a template placed by command never fills. It is also the region's only seller of rctmod:trainer_card: see stock_policy.trainer_card",
       "stock": "mart"
     },
     {
@@ -542,7 +542,7 @@
   ],
   "stock_policy": {
     "mode": "regional_only",
-    "status": "interim, 2026-09-21: until the badge-gated stock plan (Codex) replaces it",
+    "status": "interim, 2026-09-21: until the badge-gated stock plan replaces it. That plan is now docs/mechanics/MARKET_GATING.md (the mechanism: per-player dialogue-option visibility on a cobblers:flag/<id> probe) with the shelf town by town in docs/mechanics/PROGRESSION_LADDER.md section 1. Neither is built: no gated counter exists in this file or in tools/traders.py, so the blanket withholding below is still what a player meets. The one thing added ahead of that plan is stock_policy.trainer_card, because the card is a prerequisite for meeting any trainer at all, not a rung on the shelf (PROGRESSION_LADDER section 5.1)",
     "why": "The shopkeeper templates came stocked by BCA for a generic world: ultra balls, max revives, full restores and X items on a plaza in the first town. Until stock is gated by badges, a trader sells only what its town produces: seeds, herbs, mulch, fish, game, food. Anything that wins a battle or catches a Pokemon is withheld.",
     "withhold_categories": [
       "Pokéballs",
@@ -567,6 +567,18 @@
       "name": "Poké Mart",
       "status": "owner decision 2026-09-25: basic stock in every town from the start; badge-gated stock comes later",
       "why": "A town with no balls is not a town. Every Mart sells Poké Balls, Potions and Antidotes from the first visit, at the general shopkeeper's prices (200, 200, 100); what wins battles stays withheld until the badge-gated stock replaces this policy."
+    },
+    "trainer_card": {
+      "trader": "hometown_mart",
+      "item": "rctmod:trainer_card",
+      "price": 500,
+      "category": "Cards",
+      "buys": false,
+      "status": "built as data 2026-10-01 (the owner: make rctmod:trainer_card obtainable). One authored category appended to one Mart clerk's filtered shop (tools/traders.py card_shop), in the offer shape the shopkeeper templates themselves carry. That it sells in game is NOT RUN: the same gap as the Exchange's proof P-7. The gated dialogue counters of MARKET_GATING.md are not built and this is not one of them",
+      "what_it_fixes": "modpack/config/rctmod-server.toml:87 sets spawningRequiresTrainerCard = true: a player with no card in inventory meets no naturally spawned RCT trainer, and RCT's trainer-association NPC has nothing to offer. Measured on a throwaway staging world 2026-10-01: our clerk's live shop was exactly three categories (poke_ball 200, potion 200, antidote 100) and the string trainer_card appeared 0 times in the whole cobblers_vendors pack, so the card was unobtainable anywhere in the region. It is NOT the campaign: that config key's own comment says it does not affect trainer spawners, and every authored fight reaches a player through a spawner or summon_persistent (the eight leaders, the Elite Four, the Champion, Victory Road's ten, the route trainers, the mansion guardians). What a cardless player loses is the ambient layer and the association NPC, not the ladder",
+      "why": "Pallet, because of what the town is rather than because it is first on the road. TOWN_CHARACTER.md's hometown row is 'Pallet Town as it was in Kanto, whole, set down on ground that is not Kanto', with Oak's Lab standing: it is the one town in the region that IS a house, and the place a journey is authorised. A licence handed over at home is the scene the town was placed to reproduce, and PROGRESSION_LADDER.md section 5.1 recommends exactly this ('a hometown handing over the licence is the right scene', open decision Q-4). It must also precede the walk: the stretch from Pallet through Route 1 to Brock is where the ambient layer teaches a player what a trainer is, and a card bought at Brock's leaves that whole stretch empty of them. The alternative, gym1_town, is the masons' and rescue town, and PROGRESSION_LADDER section 1.1 already gives it the workstation upgrades: a mason's yard has no claim on a trainer credential. Inside Pallet there is no second candidate, hometown_mart being the town's only counter.",
+      "price_why": "500 is Cobbleverse's own price for this exact item, read from base-pack/cobbleverse/config/cobbledollars/default_shop.json's 'Cards' category (2026-10-01), and the category name here is that file's too. The figure is not ours to invent and there are two reasons to leave it alone. First, it prices the card as a tax on the first hour rather than a purchase: 500 against Mart basics of 200/200/100 is two and a half Poké Balls, paid out of wild-Pokémon income alone (earnCobbleDollarsFromWildPokemon: true at cobbleDollarsIncomeMultiplier: 0.5), because trainer income is the thing it unlocks. Second, whether CobbleDollars falls back to defaultShop for a merchant carrying no shop compound is NOT VERIFIED (PROGRESSION_LADDER U-3). If it does, the card may already be buyable and this counter is belt and braces -- and at 500 the player meets one price by either route. Any cheaper figure would put two prices on one item. No measurement of CobbleDollars per hour exists (U-1), so re-price with the rest of the ladder when it does, not on its own.",
+      "buys_why": "rctmod:trainer_card is not in base-pack/cobbleverse/config/cobbledollars/bank.json (checked 2026-10-01), so nothing in the pack buys it back. A licence that can be sold is sold once the trainers start paying."
     },
     "stones": {
       "items": [

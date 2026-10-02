@@ -1,14 +1,14 @@
 {
  "schema": "cobblers.vr-trainers/1",
  "status": "authored 2026-09-30; seats read from the cave model, not placed in any world",
- "generated_by": "hand, from derived/vr_caves/plan.json 'stands' (tools/vr_caves.py place_fights)",
+ "generated_by": "hand, from derived/vr_caves/plan.json 'stands' (tools/vr_caves.py place_fights). This file authors the STAND only -- seat, yaw, faces, eye_contact, sight_distance, skin, stand_index and the per-stand rationale. data/trainers.json authors the ROSTER for all ten (who each is, its team and its rct payload); tools/route_trainers.py reads each field from its owner and fails on any field authored in both (its STAND_FIELDS / ROSTER_ECHO / ROSTER_PRECEDENCE). The ten dialogue_text sets that used to sit here are GONE, deleted on 2026-10-01 on the owner's decision ('the roster's lines play. Delete the 38 superseded sets rather than leaving dead fallbacks printing a count every run'): all ten records in data/trainers.json carry their own non-empty dialogue_text, which lines_of() already preferred, so what stood here was dead text. Dialogue for these ten is now authored in exactly one place. Routes 4-8's twenty-eight were NOT deleted: their records carry dialogue_text {} -- empty -- so their seat-side lines are the only lines they have and are what a player hears.",
  "consumed_by": "tools/route_trainers.py (the rctmod data and the cycle) and its placements() for tools/reapply.py",
  "ground": "Every seat is a cell of tools/vr_caves.py's own walked route and the air block over a stand that place_fights() already carved (derived/vr_caves/plan.json 'stands'). No world save was read to decide any position (CLAUDE.md, 'Ground comes from the heightmap, never from a world'). The stands are therefore the blocks that are physically in the cave, which is why docs/STATE.md's Victory Road '--check' failure -- pins that disagree with where vr_caves.py puts the fights -- resolves in favour of these ten.",
  "spacing_rule": "By progress along the walked route, not by distance. place_fights() spaces the ten at even route index: idx = lo + (hi - lo) * (m + 0.5) / 10 across the span lo = 4% to hi = 94% of the 713-cell shortest path from the mouth to the exit, then steps to the nearest cell that is standable, outside the rest station's box, and at least min_apart (40) from every stand already placed. The result is even in progress (0.084, 0.174, 0.264 ... 0.893, a step of 0.0899 every time) and deliberately uneven in blocks (42.0 to 59.4 apart, 1 to 11 blocks of climb between them), because a braided cave's shortest path is not a straight line and even spacing in blocks would bunch the fights wherever the route doubles back. Ten fights over an 88-block climb then read as one every ninth of the way up, not one every nine metres.",
  "rest_station": "The rest station stands at (3606, 23, 2835), box x3606-3620 z2835-2849, and place_fights() refuses any stand within 3 blocks of it. So the fights fall five before and five after by accident of the route, not by design: the healing sits at about 44% of the climb, between stands 4 and 5, not at the halfway mark.",
  "unavoidable": "Two of the ten are unavoidable by geometry, the other eight by eye contact. Stand 10 sits 2.4 blocks from the exit ravine's foot (3656, 64, 2566), the 11-wide shaft that data/vr_caves.json names as the single opening onto the League's apron; stand 1 sits 55 blocks inside the mouth (3560, 1, 3064), which the same file calls 'the one way in from below'. The eight between stand ON the walked route -- the shortest way from mouth to exit through the carved network -- and each carries forceBattleOnSight at 7 blocks, one more than the 6-block lit ring place_fights() burns into the floor around every stand, so a player who can see the lit floor is already in the fight.",
  "unavoidable_not_verified": "data/vr_caves.json's guarantees say in terms: 'There is no path.' The network is braided on purpose (tunnels.loops 0.28) and only reachability is proven, so a determined player may be able to detour round one of the middle eight through a loop gallery. Nothing here proves otherwise, and forceBattleOnSight's check is known to pass through walls, which argues for the small radius rather than a large one. Walking the climb and counting how many of the ten actually force a battle is what EXP-033 has to answer.",
- "fields_needed": "Each of the ten sets quest.<id>.defeated, and tools/route_trainers.py refuses to emit a trainer whose fields are not declared in data/progression.json quest_fields. None of the ten are declared there (checked 2026-09-30). data/progression.json belongs to another unit tonight; the ten entries to add are written out in docs/world-building/VICTORY_ROAD_FIGHTS.md.",
+ "fields_needed": "Each of the ten sets quest.<id>.defeated, and tools/route_trainers.py refuses to emit a trainer whose fields are not declared in data/progression.json quest_fields. All ten ARE declared there as of 2026-10-01 (they were not on 2026-09-30; the entries came in with the phase-2 branch). docs/world-building/VICTORY_ROAD_FIGHTS.md lists them.",
  "trainers": [
   {
    "id": "route_09_trainer_01",
@@ -27,12 +27,7 @@
    "skin": "rctmod:textures/trainers/single/camper_liam_008e.png",
    "eye_contact": true,
    "sight_distance": 7.0,
-   "unavoidable": "First battle past the Deep's mouth: the drowned low caverns funnel every climber onto this stand.",
-   "dialogue_text": {
-    "pre": "Applicant too? The examiners start their count here. Show me one Pokemon that can end a fight.",
-    "player_win": "One attacker, one answer. You have the baseline. Up you go.",
-    "player_loss": "The baseline is a Pokemon that closes. Come back with one."
-   }
+   "unavoidable": "First battle past the Deep's mouth: the drowned low caverns funnel every climber onto this stand."
   },
   {
    "id": "route_09_trainer_02",
@@ -51,12 +46,7 @@
    "skin": "rctmod:textures/trainers/single/hiker_nob_00b7.png",
    "eye_contact": true,
    "sight_distance": 7.0,
-   "unavoidable": "On the first long gallery out of the drowned band; the lit ring fills the gallery's width.",
-   "dialogue_text": {
-    "pre": "Watch your footing and watch the floor. What I leave underfoot lasts longer than I do.",
-    "player_win": "You cleared the spikes before they mattered. That is the road, not the fight.",
-    "player_loss": "Hazards do not tire. You did."
-   }
+   "unavoidable": "On the first long gallery out of the drowned band; the lit ring fills the gallery's width."
   },
   {
    "id": "route_09_trainer_03",
@@ -75,12 +65,7 @@
    "skin": "rctmod:textures/trainers/single/worker_braden_0460.png",
    "eye_contact": true,
    "sight_distance": 7.0,
-   "unavoidable": "In the Slagworks' core cavern, on the lit lip between its lava pools; the route threads the lip.",
-   "dialogue_text": {
-    "pre": "Everything down here is steel and slag. Bring more than one kind of hit.",
-    "player_win": "You had the coverage. Most applicants bring one club and a prayer.",
-    "player_loss": "Steel does not care how hard you swing if you swing the same way twice."
-   }
+   "unavoidable": "In the Slagworks' core cavern, on the lit lip between its lava pools; the route threads the lip."
   },
   {
    "id": "route_09_trainer_04",
@@ -99,12 +84,7 @@
    "skin": "rctmod:textures/trainers/single/engineer_bernie_00de.png",
    "eye_contact": true,
    "sight_distance": 7.0,
-   "unavoidable": "The Slagworks' north shoulder, where the gallery narrows out of the core cavern.",
-   "dialogue_text": {
-    "pre": "I have mapped every turn of this cave. What I cannot map is how fast you are.",
-    "player_win": "Pivot, reposition, pivot. You read the board instead of the map.",
-    "player_loss": "Standing still is a decision. It was the wrong one."
-   }
+   "unavoidable": "The Slagworks' north shoulder, where the gallery narrows out of the core cavern."
   },
   {
    "id": "route_09_trainer_05",
@@ -123,12 +103,7 @@
    "skin": "rctmod:textures/trainers/single/hiker_brice_00ba.png",
    "eye_contact": true,
    "sight_distance": 7.0,
-   "unavoidable": "At the trench step above the rest station; the climb regains six blocks here in one gallery.",
-   "dialogue_text": {
-    "pre": "Past the rest room there is no more sitting down. Fast or finished.",
-    "player_win": "Priority first, then the sweep. You did it in the right order.",
-    "player_loss": "Your sweeper was one turn too slow and one point too soft."
-   }
+   "unavoidable": "At the trench step above the rest station; the climb regains six blocks here in one gallery."
   },
   {
    "id": "route_09_trainer_06",
@@ -147,12 +122,7 @@
    "skin": "rctmod:textures/trainers/single/aroma_lady_violet_022e.png",
    "eye_contact": true,
    "sight_distance": 7.0,
-   "unavoidable": "In the Bloom, on the moss shelf the route crosses; the lit ring is the only dry footing.",
-   "dialogue_text": {
-    "pre": "I patch people up on their way down. Let us see whether you need it.",
-    "player_win": "You planned for the long fight instead of hoping for a short one.",
-    "player_loss": "You ran out of healing before you ran out of enemy. That is planning, not luck."
-   }
+   "unavoidable": "In the Bloom, on the moss shelf the route crosses; the lit ring is the only dry footing."
   },
   {
    "id": "route_09_trainer_07",
@@ -171,12 +141,7 @@
    "skin": "rctmod:textures/trainers/single/pokemon_ranger_taylor_0335.png",
    "eye_contact": true,
    "sight_distance": 7.0,
-   "unavoidable": "The Raw Tear's approach gallery; the veins light the stand and the route carries no branch here.",
-   "dialogue_text": {
-    "pre": "Three on the field, three jobs. Name them or lose to them.",
-    "player_win": "You knew which of mine was the wall and which was the knife. Good.",
-    "player_loss": "You fought all three the same way. They are not the same."
-   }
+   "unavoidable": "The Raw Tear's approach gallery; the veins light the stand and the route carries no branch here."
   },
   {
    "id": "route_09_trainer_08",
@@ -195,12 +160,7 @@
    "skin": "rctmod:textures/trainers/single/camper_jeff_0092.png",
    "eye_contact": true,
    "sight_distance": 7.0,
-   "unavoidable": "Inside the Abandoned Cut's workings, between the rail line and the spoil heap.",
-   "dialogue_text": {
-    "pre": "Depth, not favourites. The League will ask for your whole roster.",
-    "player_win": "Deep bench. You will need every one of them up top.",
-    "player_loss": "Three of mine, and you only ever had two answers."
-   }
+   "unavoidable": "Inside the Abandoned Cut's workings, between the rail line and the spoil heap."
   },
   {
    "id": "route_09_trainer_09",
@@ -219,12 +179,7 @@
    "skin": "rctmod:textures/trainers/single/scientist_ted_014f.png",
    "eye_contact": true,
    "sight_distance": 7.0,
-   "unavoidable": "The Cut's upper hall, where the route turns for the exit ravine.",
-   "dialogue_text": {
-    "pre": "Final exam. Hazards, speed, and something that does not die on schedule.",
-    "player_win": "Passed. Sign the wall on your way out; the warden keeps the register.",
-    "player_loss": "Failed, and honestly. Come back when the exam is boring."
-   }
+   "unavoidable": "The Cut's upper hall, where the route turns for the exit ravine."
   },
   {
    "id": "route_09_trainer_10",
@@ -244,74 +199,12 @@
    "eye_contact": true,
    "sight_distance": 7.0,
    "unavoidable": "Two and a half blocks from the exit ravine's foot (3656, 64, 2566), inside the 11-wide shaft that data/vr_caves.json names as the only opening from the cave onto the League's apron: there is no way past this stand that does not pass this stand.",
-   "dialogue_text": {
-    "pre": "The ravine behind me is the door. Nobody walks onto the apron without going through me.",
-    "player_win": "Then go up. The Elite Four are four rooms and one lift, and none of them open backwards.",
-    "player_loss": "Back down the climb with you. The door does not move."
-   },
-   "display_name": "Gate Warden",
-   "class": "route",
-   "format": "GEN_9_SINGLES",
-   "route_id": "victory_road",
-   "route_order": 9,
-   "trainer_order": 10,
-   "archetype": "gym_prep",
-   "lesson": "The last gate asks for a full team at the cap, with no items and nothing held back.",
-   "for": "The tenth stand was carved by tools/vr_caves.py (trainers.count 10) and had no team: data/trainers.json holds nine. The Gate Warden is what the tenth stand is for -- the single fight that cannot be walked around, standing in the exit shaft so that the climb ends in a battle rather than in a staircase.",
-   "authored_here_because": "data/trainers.json is generated by docs/story/generate_trainers.py from docs/story/TRAINER_RULES.json (generation_contract route_trainers: 50) and must not be hand-edited; data/mansion_guardians.json is the precedent for a record that lives beside its seat. When TRAINER_RULES.json is next edited this record should migrate there and the contract's count rise to 51.",
-   "level_band_because": "data/progression.json does not settle the band: its notes say 'Level caps are computed by RCT per player from the active series (initialLevelCap 20, relativeLevelCap 0 in modpack/config/rctmod-server.toml since 2026-09-24), so chapters carry no level_cap here.' There is no Victory Road cap in the data to read. The band is therefore the one the nine imply: they climb 51 to 58 by one or two a fight, and the Elite Four open at 57-60 behind a level-60 ace. 57-59 continues the nine's own step and stops one level under Lorelei's ace, so the gate is the hardest fight in the cave and still easier than the first room above it.",
-   "team": [
-    {
-     "species": "klang",
-     "moveset": [
-      "geargrind",
-      "chargebeam",
-      "shiftgear"
-     ],
-     "level": 57
-    },
-    {
-     "species": "toxapex",
-     "moveset": [
-      "poisonjab",
-      "toxicspikes",
-      "recover"
-     ],
-     "level": 58
-    },
-    {
-     "species": "heracross",
-     "moveset": [
-      "brickbreak",
-      "megahorn",
-      "rockblast"
-     ],
-     "level": 59
-    }
-   ],
-   "rct": {
-    "identity": "route_09_trainer_10",
-    "name": {
-     "literal": "Gate Warden"
-    },
-    "battleFormat": "GEN_9_SINGLES",
-    "battleRules": {
-     "maxItemUses": 0,
-     "healPlayers": false,
-     "adjustPlayerLevels": false,
-     "adjustNPCLevels": false
-    },
-    "ai": {
-     "type": "rct",
-     "data": {
-      "moveBias": 1.0,
-      "switchBias": 0.35,
-      "statusMoveBias": 0.75,
-      "itemBias": 0.6,
-      "maxSelectMargin": 0.35
-     }
-    },
-    "bag": [],
+   "superseded_roster": {
+    "display_name": "Gate Warden",
+    "class": "route",
+    "format": "GEN_9_SINGLES",
+    "archetype": "gym_prep",
+    "lesson": "The last gate asks for a full team at the cap, with no items and nothing held back.",
     "team": [
      {
       "species": "klang",
@@ -340,7 +233,68 @@
       ],
       "level": 59
      }
-    ]
+    ],
+    "rct": {
+     "identity": "route_09_trainer_10",
+     "name": {
+      "literal": "Gate Warden"
+     },
+     "battleFormat": "GEN_9_SINGLES",
+     "battleRules": {
+      "maxItemUses": 0,
+      "healPlayers": false,
+      "adjustPlayerLevels": false,
+      "adjustNPCLevels": false
+     },
+     "ai": {
+      "type": "rct",
+      "data": {
+       "moveBias": 1.0,
+       "switchBias": 0.35,
+       "statusMoveBias": 0.75,
+       "itemBias": 0.6,
+       "maxSelectMargin": 0.35
+      }
+     },
+     "bag": [],
+     "team": [
+      {
+       "species": "klang",
+       "moveset": [
+        "geargrind",
+        "chargebeam",
+        "shiftgear"
+       ],
+       "level": 57
+      },
+      {
+       "species": "toxapex",
+       "moveset": [
+        "poisonjab",
+        "toxicspikes",
+        "recover"
+       ],
+       "level": 58
+      },
+      {
+       "species": "heracross",
+       "moveset": [
+        "brickbreak",
+        "megahorn",
+        "rockblast"
+       ],
+       "level": 59
+      }
+     ]
+    },
+    "route_id": "victory_road",
+    "route_order": 9,
+    "trainer_order": 10,
+    "for": "The tenth stand was carved by tools/vr_caves.py (trainers.count 10) and had no team: data/trainers.json holds nine. The Gate Warden is what the tenth stand is for -- the single fight that cannot be walked around, standing in the exit shaft so that the climb ends in a battle rather than in a staircase.",
+    "authored_here_because": "data/trainers.json is generated by docs/story/generate_trainers.py from docs/story/TRAINER_RULES.json (generation_contract route_trainers: 50) and must not be hand-edited; data/mansion_guardians.json is the precedent for a record that lives beside its seat. When TRAINER_RULES.json is next edited this record should migrate there and the contract's count rise to 51.",
+    "level_band_because": "data/progression.json does not settle the band: its notes say 'Level caps are computed by RCT per player from the active series (initialLevelCap 20, relativeLevelCap 0 in modpack/config/rctmod-server.toml since 2026-09-24), so chapters carry no level_cap here.' There is no Victory Road cap in the data to read. The band is therefore the one the nine imply: they climb 51 to 58 by one or two a fight, and the Elite Four open at 57-60 behind a level-60 ace. 57-59 continues the nine's own step and stops one level under Lorelei's ace, so the gate is the hardest fight in the cave and still easier than the first room above it.",
+    "decided": "The owner chose the League Examiner, 2026-10-01: 'the League Examiner. Four Pokemon with a Tailwind Crobat is a better last fight than a door-holder.' The question of which character stands at the head of the exit ravine is CLOSED. data/trainers.json's League Examiner is the tenth stand's trainer; the Gate Warden below is the decided-against design and is emitted nowhere.",
+    "why_kept": "Kept as a record of a decision, not as an alternative awaiting one. data/trainers.json did not carry a record for this stand until #96 (merged into main 2026-10-01), so the roster was authored here beside the seat; it does now, and the roster owns its half -- team, rct, format, archetype, lesson, display_name and the route ordering are read from data/trainers.json and nothing in this block is emitted. The two were never the same trainer regenerated: the League Examiner fights four Pokemon led by a Tailwind Crobat and examines, this Gate Warden fought three and held a door. The Gate Warden's text stays because this file is hand-authored (generated_by above), because a design that was weighed and decided against is a record of why the tenth stand is what it is, and because its level_band_because and authored_here_because below reason about the band and the generation contract in terms that still hold for whoever edits docs/story/TRAINER_RULES.json next. Nothing here is a live option; read it as history."
    }
   }
  ]

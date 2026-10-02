@@ -19,11 +19,14 @@ What it builds, all from the data file and the canonical heightmap (tools/ground
                a drift; a shell of rock round everything carved, so nothing this build opens meets a natural void
   the faces    two crystal faces in the Cutting Floor, each a 7 x 5 x 7 box of meteorid holding 3 mega_stone_crystal:
                scenery, written once by the build and warded for good every tick (the restore cycle is retired)
-  the Megas    the Cutting Floor's two roaming Megas (and any farm den's, data `farms`), spawned by the keeper through
-               the macro megas/spawn_at (EXP-046), uncatchable, claimed at once, tagged, leashed like the recovery
-               guardians; each den's respawn clock is the game time its Mega was first seen gone, and it spawns
-               respawn_ticks later with nobody near. A farm den's Mega also rolls a raw-stone drop when beaten
-               (battle_fainted callback, by its Pokemon UUID) or killed (the attacker watch); none are in the data yet
+  the Megas    the Cutting Floor's two roaming Megas and the seven open-air farm dens (data `farms`), spawned by the
+               keeper through the macro megas/spawn_at (EXP-046), uncatchable, claimed at once, tagged, leashed like
+               the recovery guardians; each den's respawn clock is the game time its Mega was first seen gone, and it
+               spawns respawn_ticks later with nobody near. A farm den's Mega also rolls a raw-stone drop when beaten
+               (battle_fainted callback, by its Pokemon UUID) or killed (the attacker watch). A farm's `zone` is
+               OPTIONAL: decision B4 (the owner, 2026-10-01) dropped it from all seven open-air dens, so each emits no
+               zone advancement, no turn-back function and nothing in the zone check, and is gated by its tier's level
+               alone. The gulch's own `zone` (the rockslide gate) is a different thing and is always built
 
   python tools/gulch_mine.py trace  [--source-root DIR]   the ring-derived geometry (band, zone polygon) as JSON, for
                                                           authoring data/gulch_mine.json; nothing written
@@ -1218,9 +1221,15 @@ def gate_files(m, boxes):
             "tp @s %s %d %s %d 0" % (tx, ty, tz, tyaw),
             "title @s actionbar %s" % text("Turned back: the gulch opens with the %s badge." % ordinal(badge), color="gold")],
     }
-    # the Mega farms' zone checks (SOUTHERN_RIFT_MEGA.md 13): the same flag, each farm its own boxes and turn-back point
+    # the Mega farms' zone checks: ONLY for a farm that declares a `zone`. Decision B4 (the owner, 2026-10-01) dropped
+    # the zone from all seven open-air dens -- "a turn-back in open country reads as an invisible wall. Let the level
+    # band gate them" -- so `zone` is optional per farm: a zoneless farm emits no zone advancement, no turn-back
+    # function and no entry in the check, and its gate is its tier's level alone (data farm_tiers). This is NOT the
+    # gulch's own zone (spec["zone"], the rockslide gate), which is built above whatever the farms declare.
     for fa in spec.get("farms", []):
-        fz = fa["zone"]
+        fz = fa.get("zone")
+        if not fz:
+            continue
         fboxes = zone_boxes(fz["polygon"])
         fzone = [box_cond((b[0], zmin, b[1]), (b[2], zmax, b[3])) for b in fboxes]
         files["advancement/%s/farm_%s_zone.json" % (FOLDER, fa["id"])] = adv(
@@ -1476,8 +1485,8 @@ def keeper_files(m):
             "execute if score #diff gm.t matches 0 at @s run function %s/drops/give" % F]
     farm_dens = [d for s_, d in all_dens if s_ != "mine"]
     if not farm_dens:
-        # the drop roll's functions and its callback exist only with a farm den to serve: with none (the farms wait on
-        # the owner's zone decision) they would be functions nothing runs, which prepare refuses
+        # the drop roll's functions and its callback exist only with a farm den to serve: with none they would be
+        # functions nothing runs, which prepare refuses
         return fn
     fn["megas/watch"] = [
         "# as a farm Mega, every tick: its attacker, if a player or a player's Pokemon, is noted on its den",

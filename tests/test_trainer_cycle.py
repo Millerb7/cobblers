@@ -10,8 +10,10 @@ who have beaten it are near.
 
 What is asserted, on tools/route_trainers.files() and placements() over the real data: the tick and load function
 tags name cobblers:trainers/tick and /load; the load function creates the clock's objective; the clock, simulated
-from the generated lines, runs the cycle every 10 ticks; for every placed trainer (13 route + 5 guardians) the cycle
-has exactly one home line, one tag line and one cooldown line, each keyed to that trainer's own TrainerId, seat and
+from the generated lines, runs the cycle every 10 ticks; for every placed trainer (63 seats) the cycle has exactly
+one home line, one tag line, and one cooldown line unless the seat is `repeatable` (the arena's seven tiers, which
+get the home and tag lines and no cooldown, so they can be refought for ever), each keyed to that trainer's own
+TrainerId, seat and
 defeat field (a guardian's first `sets` field, a route trainer's quest.<id>.defeated); the tag is per trainer; the
 cooldown requires both a tagged player near and no untagged player near; the tag radius is past the trainer's sight
 (everyone it can battle on sight has a fresh tag).
@@ -35,6 +37,15 @@ FN = "data/cobblers/function/trainers/%s.mcfunction"
 RECS, SEATS, _FIELDS = RT.load()
 PLACED = RT.placements()
 IDS = [t for t, _s, _y in PLACED]
+# Seats marked `repeatable` in data/route_trainers.json (the arena's seven tiers, the owner 2026-10-01: plain
+# standalone fights, endlessly repeatable). They deliberately get NO cooldown line -- our Cooldown merge is the only
+# thing that refuses a rematch with a trainer we place -- so the cooldown tests run on the fight-once seats and
+# the complement below asserts the absence.
+REPEATABLE = {s["id"] for s in SEATS if s.get("repeatable")}
+FIGHT_ONCE = [(t, s, y) for t, s, y in PLACED if t not in REPEATABLE]
+FIGHT_ONCE_IDS = [t for t, _s, _y in FIGHT_ONCE]
+REPEATABLE_SEATS = [(t, s, y) for t, s, y in PLACED if t in REPEATABLE]
+REPEATABLE_IDS = [t for t, _s, _y in REPEATABLE_SEATS]
 
 
 @pytest.fixture(scope="module")
@@ -114,11 +125,12 @@ def test_the_cycle_runs_every_10_ticks(files):
 # Without it a trainer is not held home, not tagged for, or not cooled down (it rebattles its beaten players after a
 # restart), or is handled twice, or a line acts on some other trainer.
 def test_every_placed_trainer_has_exactly_one_line_of_each_kind(cycle):
-    # 13 route + 5 mansion guardians + 10 Victory Road, seated 2026-09-30. Was 18. Every one of them
-    # still needs exactly one line of each kind, which is what the rest of this test checks.
-    # 13 route + 28 late route (seated 2026-09-30) + 5 mansion guardians + 10 Victory Road.
-    # Was 18, then 28, now 56. Every one still needs exactly one line of each kind.
-    assert len(IDS) == 56 and len(set(IDS)) == 56
+    # 13 route + 28 late route (seated 2026-09-30) + 5 mansion guardians + 10 Victory Road + the arena's 7 tiers
+    # (2026-10-01). Was 18, then 28, then 56, now 63. Every one still needs exactly one home and one tag line, and
+    # one cooldown line UNLESS its seat is `repeatable` (the arena's seven: REPEATABLE above, asserted absent below
+    # and in test_a_repeatable_seat_keeps_its_home_and_tag_and_has_no_cooldown).
+    assert len(IDS) == 63 and len(set(IDS)) == 63
+    assert len(REPEATABLE) == 7 and REPEATABLE <= set(IDS), sorted(REPEATABLE)
     home, tags, cool, other = _classify(cycle)
     assert not other, other
     # The eight GYM LEADERS get a cooldown and nothing else, added 2026-09-30 after the owner beat Brock
@@ -135,7 +147,7 @@ def test_every_placed_trainer_has_exactly_one_line_of_each_kind(cycle):
                "kanto_league_lorelei", "kanto_league_bruno", "kanto_league_agatha",
                "kanto_league_lance", "kanto_champion_blue"}
     for kind, got in (("home", home), ("tag", tags), ("cooldown", cool)):
-        want = sorted(set(IDS) | leaders) if kind == "cooldown" else sorted(IDS)
+        want = sorted((set(IDS) - REPEATABLE) | leaders) if kind == "cooldown" else sorted(IDS)
         assert sorted(got) == want, (kind, sorted(set(want) ^ set(got)))
         assert all(len(v) == 1 for v in got.values()), (kind, {k: len(v) for k, v in got.items() if len(v) != 1})
         assert all(len(set(_selector_ids(v[0])) | {k}) == 1 for k, v in got.items()), kind
@@ -195,7 +207,9 @@ def test_the_beaten_tag_is_per_trainer(cycle, files):
 # asserts a bug as correct is worse than no test, so the `unless` term is gone from the pattern and the
 # radius and duration checks stay. The trade the interim accepts -- an unbeaten player standing with a
 # beaten one must start the fight themselves -- is the owner's call of 2026-09-29, not an accident.
-@pytest.mark.parametrize("tid,seat,_yaw", PLACED, ids=IDS)
+# It runs on the FIGHT-ONCE seats only: a `repeatable` seat has no cooldown line by design, and that
+# absence is asserted by the complement below rather than by excusing a missing line here.
+@pytest.mark.parametrize("tid,seat,_yaw", FIGHT_ONCE, ids=FIGHT_ONCE_IDS)
 def test_the_cooldown_needs_a_tagged_player_near_and_no_untagged_one(cycle, tid, seat, _yaw):
     _h, tags, cool, _o = _classify(cycle)
     (l,) = cool[tid]
@@ -210,3 +224,31 @@ def test_the_cooldown_needs_a_tagged_player_near_and_no_untagged_one(cycle, tid,
     tag_radius = float(re.search(r"@a\[distance=\.\.([0-9.]+)\]", tags[tid][0]).group(1))
     assert float(m.group(1)) == tag_radius
     assert int(m.group(2)) > 10          # outlasts the 10-tick period, so the cooldown never lapses between cycles
+
+
+# The complement of the test above, and the only thing standing between "endlessly repeatable" and a champion that
+# refuses a rematch: without it a later change to cycle_lines() -- or dropping `repeatable` from a seat -- gives the
+# arena's tiers our Cooldown merge, and each tier can then be fought once per player per restart, which is the whole
+# point of the arena gone. It also asserts what must NOT disappear with the cooldown: the home line (knockback still
+# moves a champion pinned at movement speed 0) and the tag line (the per-player defeat field stays the record of
+# having taken that tier, which a prize or a lift condition reads).
+@pytest.mark.parametrize("tid,seat,_yaw", REPEATABLE_SEATS, ids=REPEATABLE_IDS)
+def test_a_repeatable_seat_keeps_its_home_and_tag_and_has_no_cooldown(cycle, files, tid, seat, _yaw):
+    home, tags, cool, _o = _classify(cycle)
+    assert tid not in cool, "a repeatable seat has a Cooldown line: %s" % cool.get(tid)
+    assert not [l for l in cycle if "{Cooldown:" in l and tid in l], "a Cooldown line names %s" % tid
+    assert len(home.get(tid, [])) == 1 and len(tags.get(tid, [])) == 1, (home.get(tid), tags.get(tid))
+    # rctmod's own per-player limit says the same thing in the mob record: -1 (documented as infinity) for a
+    # repeatable seat, 1 for every other, so the data and the cycle cannot disagree about who may be refought
+    mob = files["data/rctmod/mobs/trainers/single/%s.json" % tid]
+    assert mob["maxTrainerDefeats"] == -1, mob["maxTrainerDefeats"]
+
+
+# Without it the -1 above could be the default for every seat, which would quietly make every route trainer
+# refightable on a spawner block (the documented path route_trainers.py names), and this file's one-line-of-each-kind
+# test would not notice.
+def test_only_a_repeatable_seat_is_given_an_unlimited_defeat_count(files):
+    got = {t: files["data/rctmod/mobs/trainers/single/%s.json" % t]["maxTrainerDefeats"] for t in IDS}
+    assert {t for t, v in got.items() if v == -1} == REPEATABLE, sorted(
+        {t for t, v in got.items() if v == -1} ^ REPEATABLE)
+    assert {v for t, v in got.items() if t not in REPEATABLE} == {1}, sorted(set(got.values()))

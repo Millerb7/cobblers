@@ -123,31 +123,87 @@ def mask_to_cells(mask, X0, Z0, grid):
     return cov, gx0, gz0
 
 
-def outward_from(mask, X0, Z0, at):
-    """The nearest column OUTSIDE the zone to the guard's surveyed site, and the unit direction to it.
+def zone_axis(mask, X0, Z0, at):
+    """The gate's in/out axis, the nearest column across its zone's boundary, and which side it stands on.
 
-    The guard stands where the data sites it -- data/rift_sculpt.json's own entrances for G1 and G2,
-    docs/mechanics/RIFT_ZONES.md's survey for G4 and G5 -- and is NOT snapped to the zone's edge. Two of the
-    four are well inside the traced boundary (G2's descent at (3738, 5082) is 145 blocks inside the Rift's
-    coarse extent hull), and moving an authored guard 145 blocks to suit a hull would be the tool overruling
-    the data. So the direction and the turn-back distance are measured instead: whatever is outside, however
-    far, is where an unqualified player is put."""
+    The guard stands where the data sites it -- data/rift_sculpt.json's own entrances, or
+    docs/mechanics/RIFT_ZONES.md's survey -- and is NOT snapped to the zone's edge. So the direction and the
+    turn-back distance are measured instead, and there are two measured cases:
+
+      side "inside"  -- the guard stands in its own zone (G1, G4, G5 and both of z2's posts). The axis
+                        points at the nearest column OUTSIDE the zone, which is where an unqualified
+                        player is put. Two of those sites are a long way in -- z2's rim_post_descent is 62
+                        blocks and wilds_slip 153 -- and moving an authored guard to suit a coarse hull
+                        would be the tool overruling the data.
+      side "outside" -- the guard stands IN FRONT of its zone, which is what a gate on a road has to do.
+                        The axis points at the nearest column INSIDE the zone. The owner, 2026-10-01, on
+                        G2: "the gatehouse moves to the trailhead. A gate 300 blocks inside the basin is
+                        passed before a player reaches what gates it." An outside-sited guard is met before
+                        the zone's own location test can bounce the player, which is the whole point of
+                        having a guard rather than a silent teleport.
+
+    Returns ((x, z), (outward_dx, outward_dz), distance, side): the column is the nearest one across the
+    boundary, and `outward` always points AWAY from the zone whichever side the guard is on."""
     H, W = mask.shape
     ax, az = at
     ix, iz = ax - X0, az - Z0
-    if not (0 <= ix < W and 0 <= iz < H and mask[iz, ix]):
-        raise ZoneError("the guard site (%d, %d) is not inside its own zone" % (ax, az))
-    zz, xx = np.nonzero(~mask)
+    if not (0 <= ix < W and 0 <= iz < H):
+        raise ZoneError("the guard site (%d, %d) is outside the traced frame" % (ax, az))
+    side = "inside" if mask[iz, ix] else "outside"
+    zz, xx = np.nonzero(~mask if side == "inside" else mask)
     if len(zz) == 0:
-        raise ZoneError("the zone covers the whole frame; no outside column")
+        raise ZoneError("the zone has no column on the far side of the guard site; it covers the whole frame "
+                        "or none of it")
     d = (xx - ix) ** 2 + (zz - iz) ** 2
     i = int(np.argmin(d))
-    ox, oz = int(xx[i]) + X0, int(zz[i]) + Z0
-    dx, dz = ox - ax, oz - az
+    ex, ez = int(xx[i]) + X0, int(zz[i]) + Z0
+    dx, dz = ex - ax, ez - az
     n = math.hypot(dx, dz)
     if n < 1e-6:
-        raise ZoneError("outward direction at the guard site is degenerate")
-    return (ox, oz), (dx / n, dz / n), n
+        raise ZoneError("the axis at the guard site is degenerate")
+    dx, dz = dx / n, dz / n
+    if side == "outside":                      # the near column is INSIDE, so that direction is inward
+        dx, dz = -dx, -dz
+    return (ex, ez), (dx, dz), n, side
+
+
+def route_axis(route_id, at, span=8):
+    """The in/out axis of a gate that stands on a route: the walked line's own heading there.
+
+    A gate across a road must lie along the road, or its walkway runs off the surface and its knock box
+    sits beside it rather than in front of the guard. The nearest-column axis zone_axis() measures is the
+    right one for a gate in a wall and the wrong one for a gate on a road: at G2's trailhead the two are 39
+    degrees apart (measured, and written into the record's axis_why), which would stand the gatehouse
+    diagonally across Victory Road.
+
+    The line is data/route_paths.json's dense walked line -- the same file tools/rift_skin.py lays this
+    entrance's ramp and trailhead marker on (its route_lip_crossing), so gate, ramp and marker share one
+    axis. The heading is averaged over `span` points either way so a single 8-connected step does not set
+    it. Fails closed if the guard block is not ON the line: a gate beside a road is not a gate.
+
+    Returns (outward_dx, outward_dz) -- away from the zone, which on a route means back the way the player
+    came -- plus the index and the walked distance, so the record can say where on the route it stands."""
+    paths = load(ROOT / "data" / "route_paths.json")["paths"]
+    pts = paths.get(route_id)
+    if not pts:
+        raise ZoneError("data/route_paths.json holds no walked line for route %s; a gate cannot take its "
+                        "axis from a route that is not there" % route_id)
+    pts = [(int(p[0]), int(p[1])) for p in pts]
+    ax, az = at
+    i = min(range(len(pts)), key=lambda k: (pts[k][0] - ax) ** 2 + (pts[k][1] - az) ** 2)
+    off = math.dist(pts[i], (ax, az))
+    if off > 0.5:
+        raise ZoneError("the guard site (%d, %d) is %.1f blocks off route %s's walked line (nearest point "
+                        "%s). A gate takes its axis from the road it closes, so it has to stand on it."
+                        % (ax, az, off, route_id, pts[i]))
+    a = pts[max(0, i - span)]
+    b = pts[min(len(pts) - 1, i + span)]
+    dx, dz = b[0] - a[0], b[1] - a[1]
+    n = math.hypot(dx, dz)
+    if n < 1e-6:
+        raise ZoneError("route %s doubles back on itself at (%d, %d); no heading" % (route_id, ax, az))
+    walked = sum(math.dist(pts[k - 1], pts[k]) for k in range(1, i + 1))
+    return (-dx / n, -dz / n), i, walked
 
 
 def yaw_towards(dx, dz):
@@ -497,7 +553,10 @@ def cmd_trace(a):
     print("outline threshold %d; every traced bbox matches data/rift_regions.json" % thr)
 
     # the frame must hold the traced regions AND the Rift's whole extent AND every guard site: the extent
-    # reaches z5388 where the traced regions stop at z5079, and G2's descent (3738, 5082) is in that tail.
+    # reaches z5388 where the traced regions stop at z5079, and the Victory Road descent post (3738, 5082)
+    # is in that tail. Since 2026-10-01 G2 itself stands further out again, at the trailhead (3548, 5322),
+    # which is OUTSIDE the extent hull altogether -- so the guard sites have to be padded into the frame
+    # here, not merely contained by the regions. The pad below is what makes that work.
     land0 = load(ROOT / "data" / "landmarks.json")
     rift0 = [l for l in land0["landmarks"] if l["id"] == "rift"][0]
     pts = [(p[0], p[1]) for poly in rift0["extent"]["polygons"] for p in poly]
@@ -605,15 +664,30 @@ def cmd_trace(a):
     # the guards, their posts, and the places round them
     gh = spec["gatehouse"]
 
-    def survey(zid, at, bxs, mask):
+    def survey(zid, at, bxs, mask, on_route=None):
         """Every measured field one gate needs: the guard's block, the walkway's places and its knock box.
 
         Used for a zone's own guard and for each extra post (data/rift_zones.json zones.z2.posts). The places
         are measured against the RASTERISED BOXES, not the mask, because the boxes are what the advancement
         tests. A guard standing a few blocks from the edge can otherwise have its arrival land in an 8-block
-        cell that did not make the majority cut, and the player would arrive already outside."""
+        cell that did not make the majority cut, and the player would arrive already outside.
+
+        `on_route` names a route in data/route_paths.json whose walked line sets the axis instead of the
+        nearest column across the boundary: see route_axis(). The mask's own axis is still measured and the
+        two must agree on which way is out, so a route that runs the other way past its zone fails closed
+        rather than siting the gatehouse backwards."""
         bx, bz = at
-        (ox, oz), (dx, dz), dist = outward_from(mask, X0, Z0, (bx, bz))
+        (ox, oz), (dx, dz), dist, side = zone_axis(mask, X0, Z0, (bx, bz))
+        rinfo = None
+        if on_route:
+            (rdx, rdz), ri, rwalked = route_axis(on_route, (bx, bz))
+            if rdx * dx + rdz * dz <= 0:
+                raise ZoneError("%s: route %s heads the wrong way past its zone at (%d, %d). The walked line's "
+                                "outward is (%.2f, %.2f) and the mask's is (%.2f, %.2f); a gate sited on that "
+                                "axis would face the player into the zone it is meant to close."
+                                % (zid, on_route, bx, bz, rdx, rdz, dx, dz))
+            rinfo = (on_route, ri, rwalked, (dx, dz))
+            dx, dz = rdx, rdz
         inx, inz = -dx, -dz
 
         def inb(x, zz):
@@ -627,20 +701,60 @@ def cmd_trace(a):
             raise ZoneError("%s: no column %s the boxes within %d of the guard along (%.2f, %.2f)"
                             % (zid, "inside" if want else "outside", limit, ux, uz))
 
-        sx, sz, _ = walk(bx, bz, inx, inz, True)
-        ax, az = int(round(sx + inx * gh["arrive_in"])), int(round(sz + inz * gh["arrive_in"]))
-        if not inb(ax, az):
-            ax, az = sx, sz
-        ex, ez = int(round(sx + inx * gh["exit_in"])), int(round(sz + inz * gh["exit_in"]))
-        if not inb(ex, ez):
-            ex, ez = sx, sz
-        # outward may be a long way: G1 and G2 stand at sculpted rim entrances that are well inside the Rift's
-        # coarse extent hull, so the first column outside the BOXES can be hundreds of blocks off. 600 is under
-        # the Rift's own width, so a failure here means the geometry is wrong rather than the limit too small.
+        # how far along the axis the zone's BOXES begin. 0 at G1 and G4, 11 at G5 (whose block is in the
+        # traced mask but not in the 8-grid majority raster), and for an outside-sited gate the stretch an
+        # unqualified player still walks before the location test can bounce them. That stretch is why G2
+        # moved out here: inside it, nothing ever met them.
+        zx, zz_, zn = walk(bx, bz, inx, inz, True, 600)
+        # EVERY gate, inside-sited or outside-sited, anchors its places on the GUARD'S OWN BLOCK, because
+        # that is what cmd_build anchors the gatehouse on: walkway_path() runs from t = -knock_out to
+        # t = exit_in + 1 measured from this block, and both arrive_in and exit_in lie inside that span.
+        #
+        # An inside-sited gate used to anchor on `zone_begins_at`, the first column inside the 8-grid BOXES,
+        # so that its arrival could not land in a cell that missed the majority cut. At G5 that column is 11
+        # blocks along the axis, which put the arrival 14 blocks inside the guard and the exit box 16 -- both
+        # on open ground 8 blocks PAST the walkway's inner mouth, and neither on the gatehouse at all
+        # (data/rift_zones.json measured_defects[gate_places_are_not_on_the_gatehouse_floor], second_part).
+        # A minecraft:location box over ground a player's feet never occupy never fires, so that trade was
+        # the wrong way round: the 8-grid raster not reaching the guard's own corner is a rasterisation
+        # fact, not a place to teleport to. `zone_begins_at` and `zone_begins_in` are still measured, still
+        # recorded, and still what cmd_report's boxes check reads.
+        #
+        # The columns are taken against the ROUNDED outward, which is the figure the record carries and the
+        # one cmd_build reads back, so the places cannot round onto a different column than the shell does.
+        ow = [round(dx, 4), round(dz, 4)]
+        iw = (-ow[0], -ow[1])
+        sx, sz = bx, bz
+        ax, az = int(round(sx + iw[0] * gh["arrive_in"])), int(round(sz + iw[1] * gh["arrive_in"]))
+        ex, ez = int(round(sx + iw[0] * gh["exit_in"])), int(round(sz + iw[1] * gh["exit_in"]))
+        # fail closed if either place is not a column cmd_build will actually lay walkway on. This asks the
+        # shell's own geometry, deliberately: these two places exist in order to be stood on IN the walkway,
+        # and an advancement box beside it is an advancement that never fires. The INDEPENDENT measure of the
+        # same property is tests/test_rift_zones.py place_problems(), which reads the emitted commands.
+        wpath = set(walkway_path([bx, bz], ow, gh))
+        for what, col in (("arrival", (ax, az)), ("exit box", (ex, ez))):
+            if col not in wpath:
+                raise ZoneError("%s: the %s column %s is not on the walkway cmd_build lays from (%d, %d) "
+                                "along (%.4f, %.4f), which runs %s to %s. A minecraft:location box off the "
+                                "walkway is one a player's feet never occupy."
+                                % (zid, what, col, bx, bz, iw[0], iw[1],
+                                   min(wpath), max(wpath)))
+        # outward may be a long way: z2's two posts stand at sculpted rim entrances well inside the Rift's
+        # coarse extent hull, so the first column outside the BOXES can be over a hundred blocks off. 600 is
+        # under the Rift's own width, so a failure here means the geometry is wrong rather than the limit small.
         qx, qz, _ = walk(bx, bz, dx, dz, False, 600)
         tx, tz = int(round(qx + dx * gh["turn_back_out"])), int(round(qz + dz * gh["turn_back_out"]))
         if inb(tx, tz):
             tx, tz = qx, qz
+        # THE WALKWAY'S OWN FLOOR LEVEL, and the feet level of every place that stands on the gatehouse.
+        # cmd_build lays the shell flat: the floor at fy - 1 and the air at fy and fy + 1 for EVERY column of
+        # the walkway, from the guard's own ground and nothing else. So the arrival, the exit box and the
+        # knock box all take their y from here and not from tools/ground.py at their own column. Taking it
+        # per-column is the defect this fixes: where the ground slopes along the walkway the two disagree,
+        # and at the two sloping posts the boxes stood 1 and 2 blocks off the floor the player walks on
+        # (data/rift_zones.json measured_defects[gate_places_are_not_on_the_gatehouse_floor]). The turn-back
+        # is the one place that keeps its own column's ground: it stands turn_back_out = 8 blocks outward,
+        # well past the gatehouse's outer mouth, on open terrain the shell never touches.
         fy = int(g(bx, bz)) + 1
         # the knock box: the walkway blocks OUTSIDE the guard, under the gatehouse's own roof, where a player
         # stands face to face with it. Its y is the walkway's, which the shell lays flat at the guard's own feet
@@ -648,37 +762,83 @@ def cmd_trace(a):
         kc = [(int(round(bx + dx * t)), int(round(bz + dz * t))) for t in range(1, gh["knock_out"] + 1)]
         knock = [min(p[0] for p in kc), fy, min(p[1] for p in kc),
                  max(p[0] for p in kc), fy + 1, max(p[1] for p in kc)]
-        return {
+        out = {
             "block": [bx, bz], "ground_y": int(g(bx, bz)),
-            "inward": [round(inx, 4), round(inz, 4)], "outward": [round(dx, 4), round(dz, 4)],
-            "outside_at": [ox, oz], "outside_distance": int(round(dist)),
-            "block_why": ("the guard stands on its surveyed site, unmoved. The outward direction and the "
-                          "distance to the nearest column outside the zone (%d blocks) are measured from the "
-                          "traced mask." % round(dist)),
-            "arrive": [ax + 0.5, int(g(ax, az)) + 1, az + 0.5, yaw_towards(inx, inz)],
+            "side": side,
+            "inward": [round(inx, 4), round(inz, 4)], "outward": ow,
+            "edge_at": [ox, oz], "edge_distance": int(round(dist)),
+            "zone_begins_at": [zx, zz_], "zone_begins_in": zn,
+            "arrive": [ax + 0.5, fy, az + 0.5, yaw_towards(inx, inz)],
             "turn_back": [tx + 0.5, int(g(tx, tz)) + 1, tz + 0.5, yaw_towards(dx, dz)],
-            "exit": [ex, int(g(ex, ez)) + 1, ez, ex, int(g(ex, ez)) + 2, ez],
+            "exit": [ex, fy, ez, ex, fy + 1, ez],
             "knock": knock,
-            "places_why": ("feet levels from tools/ground.py at each column: the arrival %d blocks inside facing "
-                           "in; the turn-back %d blocks PAST the nearest outside column (%d, %d), facing away, so "
-                           "it is outside the zone however far inside the guard stands; the exit box %d inside on "
-                           "the walkway; the knock box the %d walkway blocks outside the guard, which is what "
-                           "calls the zone's qualify. Guard feet at y%d."
-                           % (gh["arrive_in"], gh["turn_back_out"], ox, oz, gh["exit_in"], gh["knock_out"], fy)),
         }
+        if side == "inside":
+            # unchanged fields for every gate that stands in its own zone, so their records do not churn
+            out["outside_at"] = [ox, oz]
+            out["outside_distance"] = int(round(dist))
+            out["block_why"] = ("the guard stands on its surveyed site, unmoved, inside the zone it gates. The "
+                                "outward direction and the distance to the nearest column outside the zone (%d "
+                                "blocks) are measured from the traced mask." % round(dist))
+            out["places_why"] = ("measured from the GUARD'S OWN BLOCK along the axis, every place that stands on "
+                                 "the gatehouse at the walkway's own flat floor level y%d (the guard's ground + 1, "
+                                 "which is what cmd_build lays for every column of the shell): the arrival %d "
+                                 "blocks inside facing in; the exit box %d inside; the knock box the %d walkway "
+                                 "blocks outside the guard, which is what calls the zone's qualify. All three are "
+                                 "columns of walkway_path(), checked. Only the turn-back takes its y from "
+                                 "tools/ground.py at its own column, because it stands %d blocks out on open "
+                                 "terrain, PAST the nearest outside column (%d, %d) and facing away, so it is "
+                                 "outside the zone however far inside the guard stands."
+                                 % (fy, gh["arrive_in"], gh["exit_in"], gh["knock_out"],
+                                    gh["turn_back_out"], ox, oz))
+        else:
+            out["inside_at"] = [ox, oz]
+            out["inside_distance"] = int(round(dist))
+            out["block_why"] = ("the guard stands on its surveyed site, unmoved, and that site is OUTSIDE the "
+                                "zone it gates: the nearest column of the zone is (%d, %d), %d blocks away, and "
+                                "the zone's own boxes begin %d blocks along the axis at (%d, %d). That stretch is "
+                                "the point: a player walking in meets the gate before the zone's location test "
+                                "can turn them back." % (ox, oz, round(dist), zn, zx, zz_))
+            out["places_why"] = ("measured from the guard's own block along the axis, every place that stands on "
+                                 "the gatehouse at the walkway's own flat floor level y%d (the guard's ground + 1, "
+                                 "which is what cmd_build lays for every column of the shell): the arrival %d "
+                                 "blocks past the barrier facing in; the exit box %d in on the walkway; the knock "
+                                 "box the %d walkway blocks outside the guard, which is what calls the zone's "
+                                 "qualify. All three are columns of walkway_path(), checked. Only the turn-back "
+                                 "takes its y from tools/ground.py at its own column: it stands %d blocks outward "
+                                 "on open terrain, already outside the zone, so an unqualified player is put back "
+                                 "on the approach they walked up rather than teleported across the basin."
+                                 % (fy, gh["arrive_in"], gh["exit_in"], gh["knock_out"], gh["turn_back_out"]))
+        if rinfo:
+            rid, ri, rwalked, maskdir = rinfo
+            out["on_route"] = rid
+            out["on_route_at"] = [round(rwalked, 2), ri]
+            out["axis_why"] = ("the axis is route %s's own heading on data/route_paths.json's walked line at "
+                               "point %d, %.0f blocks along it, averaged over 8 points either way: a gate across "
+                               "a road lies along the road. The traced mask's own axis here is (%.4f, %.4f), %.0f "
+                               "degrees off, which would stand the gatehouse diagonally across it; it is still "
+                               "measured and still has to agree on which way is out (tools/rift_zones.py "
+                               "survey)." % (rid, ri, rwalked, maskdir[0], maskdir[1],
+                                             abs(math.degrees(math.atan2(maskdir[1], maskdir[0])
+                                                              - math.atan2(dz, dx)))))
+        return out
 
     for zid in order:
         z = spec["zones"][zid]
         if not z.get("guard"):
             continue
         bxs = [tuple(b) for b in z["boxes"]]
-        s = survey(zid, z["guard"]["at"], bxs, masks[zid])
-        for k in ("block", "ground_y", "inward", "outward", "outside_at", "outside_distance", "block_why"):
-            z["guard"][k] = s[k]
-        for k in ("arrive", "turn_back", "exit", "knock", "places_why"):
-            z[k] = s[k]
+        s = survey(zid, z["guard"]["at"], bxs, masks[zid], z["guard"].get("on_route"))
+        # the walkway's places belong to the zone, everything else to the guard record. Which keys survey
+        # returns depends on the side the guard stands on, so the split is by name and not by a fixed list:
+        # a gate outside its zone has inside_at where one inside it has outside_at.
+        zone_keys = ("arrive", "turn_back", "exit", "knock", "places_why")
+        for k in ("outside_at", "outside_distance", "inside_at", "inside_distance", "axis_why"):
+            z["guard"].pop(k, None)
+        for k, v in s.items():
+            (z if k in zone_keys else z["guard"])[k] = v
         for post in z.get("posts", []):
-            ps = survey("%s/%s" % (zid, post["id"]), post["at"], bxs, masks[zid])
+            ps = survey("%s/%s" % (zid, post["id"]), post["at"], bxs, masks[zid], post.get("on_route"))
             post.update(ps)
     spec["status"] =("traced 2026-09-30 from %s at outline threshold %d; boxes and spans are measured, nothing is "
                       "built, nothing installed, not seen in game" % (spec["source"]["file"], thr))
@@ -805,13 +965,67 @@ def cmd_report(a, quiet=False):
         for gname, gid, gd, arr, tb, eb, knock in gates_of(zid, z):
             ax, _, az, _ = arr
             tx, _, tz, _ = tb
-            if not inside(z, ax, az):
-                bad("%s (%s): the arrival (%s, %s) is not inside the zone" % (gname, gid, ax, az))
+            q = gd["block"]
+            ow = gd["outward"]
+            # the side-agnostic rule, which is what these places are FOR: the arrival and the exit box are on
+            # the gatehouse's INWARD side of the guard, and the turn-back is on its outward side. The dot
+            # product against the measured outward axis says so for any heading, diagonal included.
+            for what, px, pz_, want_in in (("arrival", ax, az, True), ("exit box", eb[0], eb[2], True),
+                                           ("turn-back point", tx, tz, False)):
+                dot = (px - q[0]) * ow[0] + (pz_ - q[1]) * ow[1]
+                if want_in and dot >= 0:
+                    bad("%s (%s): the %s (%s, %s) is not on the inward side of the guard's block %s along the "
+                        "measured axis %s; a player let through would be put back outside the barrier"
+                        % (gname, gid, what, px, pz_, q, ow))
+                if not want_in and dot <= 0:
+                    bad("%s (%s): the %s (%s, %s) is not on the outward side of the guard's block %s along the "
+                        "measured axis %s" % (gname, gid, what, px, pz_, q, ow))
             if inside(z, tx, tz):
                 bad("%s (%s): the turn-back point (%s, %s) is INSIDE the zone, so it would loop"
                     % (gname, gid, tx, tz))
-            if not inside(z, eb[0], eb[2]):
-                bad("%s (%s): the exit box is not inside the zone" % (gname, gid))
+            # a gate that stands IN its zone has no excuse for an arrival or an exit box outside it: the
+            # walkway is a few blocks long and the zone starts at the guard's feet. A gate that stands in
+            # FRONT of its zone (gd["side"] == "outside", G2 since 2026-10-01) has both of them on the
+            # approach by construction -- the zone begins gd["zone_begins_in"] blocks further along -- so
+            # that pair of checks would be asking the geometry to be what the move deliberately changed.
+            # 5a. the arrival and the exit box are columns of the gate's OWN walkway, at the walkway's own
+            # flat floor level -- the guard's ground + 1, which is what cmd_build lays for every column of
+            # the shell. This is the pair of properties measured_defects[gate_places_are_not_on_the_
+            # gatehouse_floor] failed: a minecraft:location box over ground the player's feet never occupy
+            # NEVER FIRES, so a box 1 block above the walkway's air, 2 blocks under its floor, or 8 blocks
+            # past its inner mouth is a door that cannot be opened. Checked here against the walkway's own
+            # geometry; measured independently off the emitted commands by tests/test_rift_zones.py.
+            wpath = set(walkway_path(q, ow, spec["gatehouse"]))
+            wfy = gd["ground_y"] + 1
+            # the arrival is a teleport target, so its x and z are block CENTRES; the exit box is a block box
+            acol = (int(arr[0] - 0.5), int(arr[2] - 0.5))
+            for what, col in (("arrival", acol), ("exit box", (eb[0], eb[2]))):
+                if col not in wpath:
+                    bad("%s (%s): the %s column %s is not on its own gatehouse's walkway, which runs %s to "
+                        "%s (%d columns). A location box off the walkway never fires."
+                        % (gname, gid, what, col, min(wpath), max(wpath), len(wpath)))
+            if int(arr[1]) != wfy:
+                bad("%s (%s): the arrival is at y%s and the gatehouse's walkway floor is y%d"
+                    % (gname, gid, arr[1], wfy))
+            if eb[1] != wfy or eb[4] != wfy + 1:
+                bad("%s (%s): the exit box spans y%d..y%d; the walkway floor is y%d and a player is two "
+                    "blocks tall" % (gname, gid, eb[1], eb[4], wfy))
+            if gd.get("side", "inside") == "inside":
+                # The 8-grid raster need not reach the guard's own corner. At G5 the first column inside the
+                # BOXES is zone_begins_in = 11 blocks along the axis -- further than the whole walkway is
+                # long -- so demanding the arrival inside the boxes was demanding it OFF the gatehouse, and
+                # that is how it came to stand 14 blocks in on open ground. A place on the gate's own
+                # walkway satisfies this check; a place neither in the boxes nor on the walkway does not.
+                if not inside(z, ax, az) and acol not in wpath:
+                    bad("%s (%s): the arrival (%s, %s) is neither inside the zone nor on the gatehouse's "
+                        "walkway" % (gname, gid, ax, az))
+                if not inside(z, eb[0], eb[2]) and (eb[0], eb[2]) not in wpath:
+                    bad("%s (%s): the exit box is neither inside the zone nor on the gatehouse's walkway"
+                        % (gname, gid))
+            else:
+                if inside(z, q[0], q[1]):
+                    bad("%s (%s): its record says side 'outside' and its block %s is inside the zone's boxes"
+                        % (gname, gid, q))
             # 5b. the knock box: what calls qualify. It must be the walkway OUTSIDE the guard -- beside its
             # block, never on it, and never holding the arrival, which would put a granted player back in the
             # box that grants and loop. tools/reapply.py held the whole pack because nothing called qualify;
@@ -1024,6 +1238,208 @@ def wall_columns(g, spec, cut):
     return [(x, z, max(g(x, z), floor) + rise) for x, z in cut["line"]]
 
 
+# ------------------------------------------- the walkway, and the measure of whether it can be walked
+#
+# These are deliberately two halves that do NOT share a derivation. walkway_path() and walkway_shell()
+# DECIDE the shape; simulate_function(), standable_cells() and walk_pieces() MEASURE the emitted
+# .mcfunction text and know nothing about either. The measuring half is what caught
+# data/rift_zones.json measured_defects[gatehouse_walkway_is_not_continuous], and it would have caught it
+# just as well had the shape been drawn by hand, because it reads the commands and not the geometry.
+
+PASSABLE = {"minecraft:air", "minecraft:cave_air", "minecraft:void_air"}
+
+
+def walkway_path(block, outward, gh):
+    """One gatehouse's walkway columns in order, outer mouth first, every step 4-CONNECTED to the last.
+
+    THE BUG THIS FIXES (data/rift_zones.json measured_defects). The walkway's centre is the surveyed axis
+    sampled at whole blocks, `round(block + inward * t)`. On any axis not aligned to x or z that sequence
+    steps DIAGONALLY every few blocks -- (3548, 5323) to (3547, 5324) at G2 -- and two blocks that meet only
+    at a corner are two blocks a player cannot walk between. The old shell emitted those centres as the
+    walkway and walled the two columns perpendicular to the DOMINANT axis, which put obsidian on both of the
+    corner's orthogonal joins, so every sideways shift sealed itself.
+
+    So a diagonal step gets the column that joins its two ends, and the walkway stays ONE COLUMN WIDE: the
+    corner makes an L, not a 2x2, and the check below fails closed if a 2x2 ever appears. A corridor widened
+    until the diagonals stopped mattering would pass a flood fill and still be the wrong shape (the owner,
+    2026-10-01).
+
+    The joining column is taken on the axis the heading leans on, so the walkway stays on the surveyed line
+    rather than bulging off it. Returns [(x, z)] from t = -knock_out (the outer mouth, open to the approach)
+    to t = exit_in + 1 (the inner mouth)."""
+    dx, dz = -outward[0], -outward[1]            # inward: t grows towards the zone
+    centres = []
+    for t in range(-gh["knock_out"], gh["exit_in"] + 2):
+        c = (int(round(block[0] + dx * t)), int(round(block[1] + dz * t)))
+        if not centres or c != centres[-1]:
+            centres.append(c)                    # a near-diagonal axis rounds twice onto one column
+    if len(centres) < 3:
+        raise ZoneError("the walkway at %s is %d columns long; a gatehouse needs an outside, a barrier and "
+                        "an inside" % (block, len(centres)))
+    path = [centres[0]]
+    for c in centres[1:]:
+        ax, az = path[-1]
+        sx, sz = c[0] - ax, c[1] - az
+        if abs(sx) > 1 or abs(sz) > 1:
+            raise ZoneError("the walkway at %s jumps %s from %s to %s; the axis is not a unit vector"
+                            % (block, (sx, sz), (ax, az), c))
+        if sx and sz:
+            path.append((ax + sx, az) if abs(dx) >= abs(dz) else (ax, az + sz))
+        path.append(c)
+    on = set(path)
+    for (x, z) in path:
+        if (x + 1, z) in on and (x, z + 1) in on and (x + 1, z + 1) in on:
+            raise ZoneError("the walkway at %s is two columns wide at (%d, %d): that is a widening, not a "
+                            "corner, and a widened corridor passes a flood fill while being the wrong shape"
+                            % (block, x, z))
+    return path
+
+
+def walkway_shell(path):
+    """The columns that wall one walkway in: every 4-neighbour of it that is not walkway and not a mouth.
+
+    Laid as the COMPLEMENT of the walked set rather than as a perpendicular pair per step. That is what makes
+    it safe at a corner: the old per-step pair was computed from one step's own direction, so the pair of the
+    step after a bend landed on the very column the bend needed, and one step's wall could overwrite the
+    next step's walkway. A complement cannot seal the walkway, because the walkway is what it is the
+    complement of.
+
+    Four-neighbours and not eight: the outer diagonal of a bend is left open on purpose, because a player
+    cannot walk through a corner either, which is the whole premise of walkway_path(). The two mouths -- one
+    column beyond each end, continuing that end's own heading -- are left open, because they are the door."""
+    on = set(path)
+    mouths = {(2 * b[0] - a[0], 2 * b[1] - a[1]) for a, b in ((path[1], path[0]), (path[-2], path[-1]))}
+    walls = set()
+    for (x, z) in path:
+        for n in ((x + 1, z), (x - 1, z), (x, z + 1), (x, z - 1)):
+            if n not in on and n not in mouths:
+                walls.add(n)
+    return sorted(walls, key=lambda p: (p[1], p[0]))
+
+
+def x_runs(cells):
+    """[(x0, x1, z)] -- cells merged into runs of consecutive x, so a floor is fills and not setblocks."""
+    out = []
+    for z in sorted({c[1] for c in cells}):
+        xs = sorted(c[0] for c in cells if c[1] == z)
+        a = prev = xs[0]
+        for x in xs[1:]:
+            if x != prev + 1:
+                out.append((a, prev, z))
+                a = x
+            prev = x
+        out.append((a, prev, z))
+    return out
+
+
+def simulate_function(lines):
+    """{(x, y, z): block id} from an emitted .mcfunction's own fill/setblock lines, applied in order.
+
+    THE MEASURING HALF. It reads the commands a gatehouse function actually contains and takes nothing from
+    the geometry that wrote them; everything else (forceload, summon, execute, comments) is ignored. Only
+    literal coordinates are understood, which is all these functions use -- a relative or selector coordinate
+    raises rather than being silently skipped and counted as open ground."""
+    world = {}
+    for raw in lines:
+        ln = raw.strip()
+        if not ln or ln.startswith("#"):
+            continue
+        t = ln.split()
+        if t[0] not in ("fill", "setblock"):
+            continue
+        n = 6 if t[0] == "fill" else 3
+        for c in t[1:1 + n]:
+            if not __import__("re").fullmatch(r"-?\d+", c):
+                raise ZoneError("%s uses the non-literal coordinate %r; this measure reads literals only"
+                                % (t[0], c))
+        v = [int(c) for c in t[1:1 + n]]
+        b = t[1 + n].split("[")[0].split("{")[0]
+        if t[0] == "setblock":
+            world[(v[0], v[1], v[2])] = b
+        else:
+            for x in range(min(v[0], v[3]), max(v[0], v[3]) + 1):
+                for y in range(min(v[1], v[4]), max(v[1], v[4]) + 1):
+                    for z in range(min(v[2], v[5]), max(v[2], v[5]) + 1):
+                        world[(x, y, z)] = b
+    return world
+
+
+def standable_cells(world):
+    """{(x, y, z)} feet positions a player can stand in: two passable blocks over a solid one.
+
+    An unwritten block OVERHEAD counts as open, because a gatehouse writes only its own shell and the sky
+    above a mouth is air. An unwritten block UNDERFOOT counts as nothing: the measure will not call a column
+    standable on terrain this function never placed, so what it returns is the gatehouse's own floor."""
+    out = set()
+    for (x, y, z), b in world.items():
+        if b not in PASSABLE:
+            continue
+        if world.get((x, y + 1, z), "minecraft:air") not in PASSABLE:
+            continue
+        below = world.get((x, y - 1, z))
+        if below is None or below in PASSABLE:
+            continue
+        out.add((x, y, z))
+    return out
+
+
+def walk_pieces(cells):
+    """`cells` split into the pieces a player can actually walk between, largest first.
+
+    FOUR-connected, with a one-block step up or down. Not eight: a player cannot walk between two blocks that
+    meet only at a corner, so an 8-connected fill would have called G2's four pieces one and reported the
+    gatehouse sound. That is the entire defect."""
+    left, pieces = set(cells), []
+    while left:
+        start = left.pop()
+        q = deque([start])
+        piece = [start]
+        while q:
+            (x, y, z) = q.popleft()
+            for (nx, nz) in ((x + 1, z), (x - 1, z), (x, z + 1), (x, z - 1)):
+                for ny in (y, y + 1, y - 1):
+                    if (nx, ny, nz) in left:
+                        left.discard((nx, ny, nz))
+                        piece.append((nx, ny, nz))
+                        q.append((nx, ny, nz))
+        pieces.append(sorted(piece, key=lambda c: (c[2], c[0], c[1])))
+    return sorted(pieces, key=lambda p: (-len(p), p[0]))
+
+
+def cmd_walkable(a):
+    """Flood-fill every emitted gatehouse function and print its pieces.
+
+    Separate from `report` on purpose, in both directions: `report` never reads anything this tool emitted,
+    and this reads nothing else."""
+    out = PACKS / PACK / "data" / NS / "function" / FOLDER
+    paths = sorted(out.glob("gatehouse_*.mcfunction"))
+    if not paths:
+        raise ZoneError("no gatehouse function in %s; run `build` first" % out)
+    barrier_block = load()["gatehouse"]["blocks"]["barrier"]
+    bad = 0
+    for p in paths:
+        world = simulate_function(p.read_text(encoding="utf-8").splitlines())
+        pieces = walk_pieces(standable_cells(world))
+        n_stand = sum(len(x) for x in pieces)
+        barriers = sorted(k for k, b in world.items() if b == barrier_block)
+        # the barrier is meant to be the ONLY break: with it opened the walkway must come out one piece.
+        opened = dict(world)
+        for k in barriers:
+            opened[k] = "minecraft:air"
+        whole = walk_pieces(standable_cells(opened))
+        ok = len(pieces) == 2 and len(whole) == 1
+        bad += 0 if ok else 1
+        print("%-42s %2d standable, %d piece(s) %-12s %d barrier block(s), barrier open -> %d piece(s)  %s"
+              % (p.stem, n_stand, len(pieces), [len(x) for x in pieces], len(barriers), len(whole),
+                 "OK" if ok else "BROKEN"))
+        if not ok or getattr(a, "verbose", False):
+            for i, piece in enumerate(pieces):
+                print("    piece %d: %s" % (i + 1, [(c[0], c[2]) for c in piece]))
+    print("%d of %d gatehouses walkable end to end with the barrier as the only break"
+          % (len(paths) - bad, len(paths)))
+    return 1 if bad else 0
+
+
 def cmd_build(a):
     spec = load()
     rc = cmd_report(argparse.Namespace())
@@ -1137,13 +1553,13 @@ def cmd_build(a):
             cols = wall_columns(g, spec, c)
             body = spec["wall"]["palette"]["body"]
             crest = spec["wall"]["palette"]["crest"]
-            # every gate's walkway is left out of the fill, so its gatehouse opens it
+            # every gate's walkway is left out of the fill, so its gatehouse opens it. The walkway's OWN
+            # columns, from walkway_path(): the old cross of radius walkway+1 round the guard's block was an
+            # axis cross, and on a diagonal axis it missed most of the walkway it was there to protect, so
+            # the cross-wall filled the walkway's own columns as a second seal on top of the shell's.
             keep = set()
             for (_n, _gid, gd, _a, _t, _e, _k) in zgates:
-                q = gd["block"]
-                for d in range(-gh["walkway"] - 1, gh["walkway"] + 2):
-                    keep.add((q[0] + d, q[1]))
-                    keep.add((q[0], q[1] + d))
+                keep.update(walkway_path(gd["block"], gd["outward"], gh))
             lines = ["# the %s cross-wall (data/rift_zones.json cuts[%s]): %d columns on walkable floor, core %d,"
                      % (w, w, c["columns"], spec["wall"]["core"]),
                      "# each column to its own ground + %d. %d further frontier columns stand on scarp and carry no"
@@ -1160,28 +1576,41 @@ def cmd_build(a):
             fn[name] = lines
             index.append(name)
         # the gatehouse shell at each gate's block: every guard and every post has one, walled zone or not.
-        # G2's stands at the sculpted Victory Road descent, where the Rift's own rim is the barrier and no
-        # cross-wall is built; Z2's two posts stand at the other two sculpted descents, for the same reason.
+        # G2's stands on Victory Road at the trailhead, outside the Rift's rim, where the rim itself is the
+        # barrier and no cross-wall is built; Z2's three posts stand at the three sculpted descents, for the
+        # same reason.
         for (gname, gid, gd, _a, _t, _e, knock) in zgates:
             gq = gd["block"]
-            dx, dz = [-v for v in gd["outward"]]
             fy = gd["ground_y"] + 1
             sh = gh["blocks"]
+            # the walked set first, then the shell as its complement. Emitted in that order and in three
+            # passes -- floor, walls, then the walkway's air and roof -- so that no column of the shell can
+            # land on a column of the walkway: a per-step pair could, and did (measured_defects).
+            path = walkway_path(gq, gd["outward"], gh)
+            walls = walkway_shell(path)
             gl = ["# the %s gatehouse shell (RIFT_ZONES.md section 6): a one-wide roofed walkway, a two-high barrier"
                   % gid,
                   "# behind the guard, and an armour stand where Codex's NPC will stand (data/rift_sculpt.json's policy).",
                   "# The walkway blocks OUTSIDE the guard are the knock box %s: standing there runs %s's qualify."
-                  % (knock, gid)]
-            px, pz = (0, 1) if abs(dx) > abs(dz) else (1, 0)
-            for t in range(-gh["knock_out"], gh["exit_in"] + 2):
-                cx = int(round(gq[0] + dx * t))
-                cz = int(round(gq[1] + dz * t))
-                gl.append("fill %d %d %d %d %d %d %s" % (cx - px, fy - 1, cz - pz, cx + px, fy - 1, cz + pz, sh["shell"]))
-                gl.append("fill %d %d %d %d %d %d %s" % (cx - px, fy, cz - pz, cx - px, fy + 1, cz - pz, sh["shell"]))
-                gl.append("fill %d %d %d %d %d %d %s" % (cx + px, fy, cz + pz, cx + px, fy + 1, cz + pz, sh["shell"]))
-                gl.append("fill %d %d %d %d %d %d minecraft:air" % (cx, fy, cz, cx, fy + 1, cz))
-                gl.append("setblock %d %d %d %s" % (cx, fy + 2, cz, sh["shell"]))
-            bx = int(round(gq[0] + dx)), int(round(gq[1] + dz))
+                  % (knock, gid),
+                  "# %d walkway columns from %s to %s, 4-connected (a diagonal step carries its own corner, so"
+                  % (len(path), tuple(path[0]), tuple(path[-1])),
+                  "# the walkway can be WALKED and not only teleported through), walled by %d columns."
+                  % (len(walls))]
+            for (x0, x1, z_) in x_runs(set(path) | set(walls)):
+                gl.append("fill %d %d %d %d %d %d %s" % (x0, fy - 1, z_, x1, fy - 1, z_, sh["shell"]))
+            for (x, z_) in walls:
+                gl.append("fill %d %d %d %d %d %d %s" % (x, fy, z_, x, fy + 1, z_, sh["shell"]))
+            for (x, z_) in path:
+                gl.append("fill %d %d %d %d %d %d minecraft:air" % (x, fy, z_, x, fy + 1, z_))
+                gl.append("setblock %d %d %d %s" % (x, fy + 2, z_, sh["shell"]))
+            # the barrier is the walkway's OWN next column inward of the guard, not round(guard + inward):
+            # where the step inward is a diagonal, those are two different columns and only the first of them
+            # touches the guard. One column, and the only break the walkway is allowed to have.
+            if tuple(gq) not in path or path.index(tuple(gq)) + 1 >= len(path):
+                raise ZoneError("%s's guard block %s is not on its own walkway, or is its last column; the "
+                                "barrier has nowhere to stand" % (gid, gq))
+            bx = path[path.index(tuple(gq)) + 1]
             gl.append("# the barrier directly behind the guard: this is what actually stops a player")
             gl.append("fill %d %d %d %d %d %d %s" % (bx[0], fy, bx[1], bx[0], fy + gh["barrier_height"] - 1, bx[1],
                                                      sh["barrier"]))
@@ -1235,9 +1664,13 @@ def main(argv=None):
     sub.add_parser("report", help="fail-closed audit of the data")
     b = sub.add_parser("build", help="emit build/datapacks/" + PACK)
     b.add_argument("--source-root")
+    w = sub.add_parser("walkable", help="flood-fill the EMITTED gatehouse functions; exit 1 on any break "
+                                        "that is not the barrier")
+    w.add_argument("--verbose", action="store_true")
     a = p.parse_args(argv)
     try:
-        rc = {"trace": cmd_trace, "report": cmd_report, "build": cmd_build}[a.cmd](a)
+        rc = {"trace": cmd_trace, "report": cmd_report, "build": cmd_build,
+              "walkable": cmd_walkable}[a.cmd](a)
         return 1 if rc else 0
     except ZoneError as e:
         print("rift_zones: %s" % e, file=sys.stderr)

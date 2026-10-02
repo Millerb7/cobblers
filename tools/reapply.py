@@ -95,6 +95,15 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-09-28: the wayside shrines on the approaches of towns people pass through (tools/shrines.py,
                 # data/shrines.json): block functions run by R16D after the dressing and the working Pokemon
                 "cobblers_shrines",
+                # 2026-10-02: the Ursaluna's den west of Highwire (tools/ursaluna_cave.py, data/ursaluna_cave.json): a
+                # keeper loop holds the bear in its den, so world-local; carved, summoned and dressed by R18U
+                "cobblers_ursaluna_cave",
+                # 2026-10-02: the Frostpeak research camp (tools/frostpeak_camp.py, data/frostpeak_camp.json): block
+                # functions and the instruments' display entities, run by R18F
+                "cobblers_frostpeak_camp",
+                # 2026-10-02: the Seaward Drift, its strip mine and Driftmouth Isle (tools/sea_drift.py,
+                # data/sea_drift.json): 90 block functions run by R9SD, before the Habitat Blocks that sit in its rock
+                "cobblers_sea_drift",
                 # 2026-09-29: the gym interiors (tools/gym_interiors.py, data/gym_interiors.json): the healing
                 # machines out of all eight placed gyms, and gym 1's works carved under its lot. Block functions run
                 # by R16E, after the donors (R9) that stamp the gyms whole and would erase anything written first
@@ -473,6 +482,14 @@ def prepare_jobs(a):
     # faces included): the generator keeps clear of what they write
     add("shrines:build", "shrines.py", "build", *src)
     add("shrines_audit", "shrines_audit.py", *src)
+    # the Ursaluna's den and the Frostpeak research camp (2026-10-02), each then its own independent audit, which
+    # replays the written functions against its own reading of the plan and fails the prepare on a broken build
+    add("ursaluna_cave", "ursaluna_cave.py", *src)
+    add("ursaluna_cave_audit", "ursaluna_cave_audit.py", *src)
+    add("frostpeak_camp:build", "frostpeak_camp.py", "build", *src)
+    add("frostpeak_camp_audit", "frostpeak_camp_audit.py", "--inputs-root", str(ROOT), *src)
+    add("sea_drift:build", "sea_drift.py", "build", *src)
+    add("sea_drift_audit", "sea_drift_audit.py", *src)
     # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
     # then the offline audit, which re-derives every shell box from data/placements.json, replays the written
     # functions into a voxel model and fails the prepare on a broken route, a trainer that can be walked round, a
@@ -1033,6 +1050,12 @@ def steps(with_spawns=False):
     # the Habitat Blocks, after everything that builds the floors they sit in (R9C's shell pass overwrites them). A
     # block placed by command stays inert until its chunk loads from disk, and EXP-021 found only a restart does that
     # reliably: the audit runs with the server stopped, so the boot after it is that restart. Verify after it.
+    # the Seaward Drift, its strip mine and Driftmouth Isle (2026-10-02, tools/sea_drift.py): a pure block pass, so it
+    # runs here, BEFORE R9E - ten of the Habitat Blocks sit inside the isle's rock, and a block pass after R9E would
+    # write rock over them. Each function force-loads its own chunks first, the pattern R1's Rift pass has used on
+    # every verified apply
+    out.append(("R9SD", "the Seaward Drift, its strip mine and Driftmouth Isle (data/sea_drift.json)",
+                [("fn", "cobblers:sea_drift/%s" % f) for f in indexed("cobblers_sea_drift", "sea_drift")]))
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
@@ -1123,6 +1146,26 @@ def steps(with_spawns=False):
     import ferries
     out.append(("R17F", "the ferrymen at the built docks (data/ferries.json)",
                 [("fn", "cobblers:ferries/load")] + [("npc", n) for n in ferries.npc_placements(ferries.load())]))
+    # the settlement NPCs (data/npc_seats.json): the main reveal's residents and the stone-tip speakers. NPCs like the
+    # ferrymen, so placed over RCON after the restart that loaded cobblers_dialogue's classes, and after every town and
+    # gym pass so the plaza, lot and lab floor they stand on exist. Each is turned to its authored yaw
+    import npc_seats
+    out.append(("R17N", "the settlement NPCs (data/npc_seats.json)",
+                [("npc", n) for n in npc_seats.placements()]))
+    # the Ursaluna's den (2026-10-02): carve, summon the sleeping bear over RCON (an entity the export erases, as the
+    # Celebi and the legendaries are, and guarded on its tag AND species, not distance - R14C failed twice on a bare
+    # distance guard), dress, then its keeper Hollis, whose class loads at boot from cobblers_dialogue
+    import ursaluna_cave
+    out.append(("R18U", "the Ursaluna's den west of Highwire (data/ursaluna_cave.json)",
+                ursaluna_cave.placement_steps() + [("npc", n) for n in ursaluna_cave.npc_placements()]))
+    # the Frostpeak research camp (2026-10-02): its blocks and instruments, held in a forceload so no fill lands on an
+    # unloaded chunk, then its three researchers
+    import frostpeak_camp
+    out.append(("R18F", "the Frostpeak research camp (data/frostpeak_camp.json)",
+                [("cmd", "forceload add 680 680 735 735"), ("wait", 3),
+                 ("fn", "cobblers:frostpeak_camp/build"), ("fn", "cobblers:frostpeak_camp/instruments"),
+                 ("cmd", "forceload remove 680 680 735 735")]
+                + [("npc", n) for n in frostpeak_camp.npc_placements()]))
     trad = json.loads((ROOT / "data" / "traders.json").read_text(encoding="utf-8"))
     towns = sorted({t["settlement"] for t in trad.get("traders") or [] if t.get("settlement")})
     out.append(("R14", "town traders", [x for t in towns for x in (("fn", "cobblers:towns/vendors_%s" % t), ("wait", 8))]))
@@ -1251,7 +1294,10 @@ def _run_steps(a, rc, todo, rec, path):
                 if "count: 1" not in n:
                     bad.append("celebi: expected one tagged Celebi on its branch, got %r" % n)
             elif kind == "npc":
-                conv, (x, y, z), cls = v
+                # (conversation, (x, y, z), class) or, for a seat that faces somewhere (data/npc_seats.json), a fourth
+                # element: its yaw, applied below whether the NPC was just spawned or already stood there
+                conv, (x, y, z), cls = v[:3]
+                yaw = v[3] if len(v) > 3 else None
                 rc("forceload add %d %d" % (x, z))
                 for _ in range(30):
                     if "passed" in rc("execute if loaded %d %d %d" % (x, y, z)):
@@ -1270,6 +1316,9 @@ def _run_steps(a, rc, todo, rec, path):
                 if not there:
                     r = rc("spawnnpcat %d %d %d %s" % (x, y, z, cls))
                     print("   %s -> %s" % (cls, r[:120] or "(no reply)"), flush=True)
+                if yaw is not None:
+                    time.sleep(1)
+                    rc("tp %s %d.5 %d %d.5 %d 0" % (near.replace("]", ",limit=1]"), x, y, z, yaw))
                 rc("execute store result storage cobblers:reapply npcs int 1 if entity %s" % near)
                 got = rc("data get storage cobblers:reapply npcs")
                 n = int(got.rsplit(":", 1)[-1].strip()) if got.rsplit(":", 1)[-1].strip().isdigit() else -1

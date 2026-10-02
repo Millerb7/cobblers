@@ -1998,6 +1998,116 @@
         "assayer",
         "repeat"
       ]
+    },
+    {
+      "id": "quest.arena_tier_1_champion.defeated",
+      "quest_id": "arena_tier_1_champion",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Heaven's Arena tier 1 of 7 (data/arena_trainers.json; the stand is derived/deep_city/plan.json arena.tiers[0]). Declared because tools/route_trainers.py refuses to emit a trainer whose defeat field is not declared here. The field is NOT a gate: the arena authors no gating at all (the owner, 2026-10-01), and the tier is repeatable, so this records that the player has TAKEN the tier once -- the advancement that sets it fires on the first win only -- rather than that they hold it or may pass."
+    },
+    {
+      "id": "quest.arena_tier_2_champion.defeated",
+      "quest_id": "arena_tier_2_champion",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Heaven's Arena tier 2 of 7 (data/arena_trainers.json). Not a gate; see tier 1."
+    },
+    {
+      "id": "quest.arena_tier_3_champion.defeated",
+      "quest_id": "arena_tier_3_champion",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Heaven's Arena tier 3 of 7 (data/arena_trainers.json). Not a gate; see tier 1."
+    },
+    {
+      "id": "quest.arena_tier_4_champion.defeated",
+      "quest_id": "arena_tier_4_champion",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Heaven's Arena tier 4 of 7 (data/arena_trainers.json). Not a gate; see tier 1."
+    },
+    {
+      "id": "quest.arena_tier_5_champion.defeated",
+      "quest_id": "arena_tier_5_champion",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Heaven's Arena tier 5 of 7 (data/arena_trainers.json), the tier level with the Rift floor. Not a gate; see tier 1."
+    },
+    {
+      "id": "quest.arena_tier_6_champion.defeated",
+      "quest_id": "arena_tier_6_champion",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Heaven's Arena tier 6 of 7 (data/arena_trainers.json). Not a gate; see tier 1."
+    },
+    {
+      "id": "quest.arena_tier_7_champion.defeated",
+      "quest_id": "arena_tier_7_champion",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Heaven's Arena tier 7 of 7, the crown (data/arena_trainers.json). Not a gate, and deliberately not an endgame flag: nothing in chapters or flags reads it, and the arena is optional content after the Deep. If a crown reward or a per-tier lift condition is ever authored, this is the field it reads."
+    },
+    {
+      "id": "quest.frostpeak_camp.halvard_cursor",
+      "quest_id": "frostpeak_camp",
+      "field": "halvard_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "hub",
+      "allowed_values": "node ids from dlg_frostpeak_camp_halvard",
+      "why": "the dialogue cursor of Dr. Signe Halvard at the Frostpeak research camp (data/frostpeak_camp.json, tools/frostpeak_camp.py). Talk only: the conversation always opens at its hub, sets nothing else and gates nothing."
+    },
+    {
+      "id": "quest.frostpeak_camp.krell_cursor",
+      "quest_id": "frostpeak_camp",
+      "field": "krell_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "hub",
+      "allowed_values": "node ids from dlg_frostpeak_camp_krell",
+      "why": "the dialogue cursor of Edda Krell at the Frostpeak research camp (data/frostpeak_camp.json, tools/frostpeak_camp.py). Talk only: the conversation always opens at its hub, sets nothing else and gates nothing."
+    },
+    {
+      "id": "quest.frostpeak_camp.ostrow_cursor",
+      "quest_id": "frostpeak_camp",
+      "field": "ostrow_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "hub",
+      "allowed_values": "node ids from dlg_frostpeak_camp_ostrow",
+      "why": "the dialogue cursor of Bram Ostrow at the Frostpeak research camp (data/frostpeak_camp.json, tools/frostpeak_camp.py). Talk only: the conversation always opens at its hub, sets nothing else and gates nothing."
+    },
+    {
+      "id": "quest.ambient_ursaluna_den.watcher_cursor",
+      "quest_id": "ambient_ursaluna_den",
+      "field": "watcher_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "greeting",
+      "allowed_values": [
+        "greeting",
+        "who",
+        "size",
+        "peat",
+        "cubs",
+        "curtain",
+        "repeat"
+      ]
     }
   ],
   "gym_markers": {

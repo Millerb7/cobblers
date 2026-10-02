@@ -1,129 +1,99 @@
-# Handover — two things first, then the state
+# Handover — the night of 2026-10-02: four sessions integrated, everything applied and probed in staging
 
 A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else, before it starts.
 
-## 1. FIRST: `install_check.py` has not run for three sessions. Fix the permission, do not skip it again
+## 1. The branch and the PR
 
-**This is the check that catches built-but-never-installed, and it has been blind since Monday.**
+- **`build/2026-10-02-night`** — ONE integration branch for the whole batch, as the owner prefers
+  (memory: one-big-pr-per-batch). It carries PR #105's work (and so #104's), this session's night, and the three
+  parallel sessions' branches, merged here and re-verified in a full checkout:
+  `build/2026-10-02-place-all-trainers` (1c57d67), `build/2026-10-02-encounter-rebuild` (acd9a6a),
+  `design/2026-10-02-starters` (f1b333c).
+- **The PR is [#106](https://github.com/Millerb7/cobblers/pull/106)**, draft. It supersedes #105 and #104; if it merges,
+  close both unmerged. FROZEN from the moment it was reported. Re-read its head
+  with `gh pr view <N> --json headRefOid` before quoting it.
+- `origin/main` is still `a271532`; nothing from 2026-10-01 or 2026-10-02 is merged.
 
-The cause is the same every time: the session-start gate needs the shared lock at
-`C:\Users\wnd\Documents\github\.cobblers-server-agent.lock`, and **the write to take it over is refused by the
-auto-mode permission classifier** (`Modify Shared Resources`). Per CLAUDE.md a refusal ends the attempt, so it
-is correctly not routed around — and `tools/install_check.py` reads the server's `config/` and `datapacks/`,
-so it dies with the gate. Three sessions have now started repo-only and skipped it.
+## 2. Where it stopped — everything is applied and the server is down
 
-**Do not skip it a fourth time.** Get the lock write permitted properly — a Bash permission rule for that one
-path, or the owner taking the lock over by hand before the session starts — then run, as CLAUDE.md requires:
+Final suite on the integration head: **11 failed, 5,534 passed, 11 xfailed, 0 errors** (614 s, full checkout) - the
+known ten, named in `docs/STATE.md`, plus Brock's witness on gym 1's apron (a decision, section 3).
 
-```
-python tools/install_check.py --server-dir C:/Users/wnd/Documents/github/cobblers-server
-```
+**In staging-2026-10-01, applied and probed against the world tonight** (`reapply.py run --only
+R9SD,R9E,R17N,R18U,R18F`, then `--only R17`, then a second prepare + install for the encounter tables):
 
-Why it matters, in the repository's own words: work done in the repo that never reached the running game has
-happened **four times** — the spawn tables; five config overlays, starters among them; the re-apply steps; and
-the structures pack, present only because it had been copied by hand. The leaders' teams (F11) were the fifth.
-This check is what stands between that and a sixth. A session that cannot run it should say so loudly rather
-than quietly doing repo work, which is what the last three did.
+| What | Verified in the world |
+|---|---|
+| Ursaluna's den, Frostpeak camp, Seaward Drift + Driftmouth Isle | 31 of 31 probes, each named by its builder before the apply |
+| The Ursaluna | species, level 35, `ScaleModifier` 2.0, `NoAI` - read off the entity |
+| 20 settlement NPCs (R17N) | 20 of 20 (`npc_seats.py verify`) |
+| Every seated trainer + gym spawners | 63 of 63 at their seats, none doubled; 8 of 8 spawners (`trainer_world_audit.py`) |
+| The rebuilt encounter tables | 166 pool files installed; boot shows 0 spawn warnings and the same 43 third-party errors as before |
+| EXP-048 | both adopted templates placed; all 8 LumyMon blocks real; a console-dropped carrot does nothing |
 
-Current server state: **down** — no listener on 25565, no Java process. The lock still carries the
-2026-09-29 owner line.
+**Nothing is running.** Server stopped cleanly, `max-tick-time` restored to 60000, `level-name` still
+`cobblers-10240` (never touched), coordination lock released and free.
 
-## 2. SECOND: the demolish coverage gap, and the general question behind it
+## 3. What waits on the owner
 
-The chip is queued (`task_29e9ef92`) with the full brief and seven properties worth protecting. **It must go
-to a `test-author` agent**: the session that found the gap also changed `tools/gym_demolish.py`, so it must
-not write its first test.
+**In-game checks, with coordinates:**
 
-**The general finding, which is worth more than the one tool.** On 2026-10-01 marking gyms 6 and 8
-`superseded_by` made `gym_demolish.py` fail-closed with `SystemExit` — step R16F would refuse to build
-anything. A full suite run in that state reported `7 failed, 5169 passed, 9 xfailed`: **identical, test for
-test, to a healthy run.**
+- **EXP-048, the right-click half** (`experiments/EXP-048-legendary-altar/README.md`): Articuno altar at
+  (914, 153, 331) with `/give @s lumymon:glacier_feather`; Calyrex statue (4140, 112, 2005) with a crown; THROW a
+  carrot from the crop (4156, 111, 2009) onto the Spectrier ring round (4153, 112, 1999). Record any chat line.
+- **The encounter tables** (the encounter session's list): Lake Viltri (Magikarp, Lotad, Corphish, deep Chinchou;
+  no Goldeen); Lake Tilpey's open water (Gyarados, Veluza, Golduck); Marshy Marsh; Victory Road's Drowned Gallery
+  (no Quagsire, Whiscash or Excadrill); an off-path find such as Riolu in the Viltri path valley.
+- **The den** at (1504, 162, 1414): does the Ursaluna look twice its size? The mouth faces south-east, 45 degrees
+  off the line to Highwire, because that is where the ground is thick enough to roof a cave.
+- **The camp** at (688-723, 688-725) and **Driftmouth Isle** at (336, 1586): do they read right from a distance?
 
-> A suite that reports identically whether a step works or fail-closes is not covering that step.
+**Decisions:**
 
-It was found by reading the consumers of a field that had changed and running the tool by hand. No check
-noticed.
+- **The altars are scenery for three of four sites** unless the campaign supplies the item: no recipe or loot table
+  anywhere makes a glacier_feather, thunder_feather or calyrex_crown. Supply them (a reward, the research camp?)
+  or accept the sites as places. This decides the "import more of the catalogue" question.
+- **route_03_trainer_05 stands inside a signpost** at (1980, 134, 1602). Move the trainer or the signpost.
+- **Brock's witness stands on gym 1's forecourt apron** at (1832, 142, 3661), which the gym's own check counts as inside
+  the building. Both records are deliberate. Does an NPC that writes no blocks "claim" a building's columns? Until
+  decided, `test_gym_buildings_independent::test_nothing_else_claims_the_columns_a_building_occupies` stays red.
+- **The sleeping Ursaluna** is unbattleable at level 35; the rebuilt band there is 20-28. Should it wake and fight?
+- **"Frostpeak shrine"**: the summit outpost in `towns.json` or the Articuno tower on the east shoulder?
+- **The starters design** (`docs/mechanics/STARTER_DESIGN_COMPARISON.md`, `docs/research/STARTER_OPTIONS.md`):
+  costed, not built. Note that the encounter rebuild already put starters and pseudo-legendary bases off the path.
+- **B15 (the Jungle Isle)** and **Tri Peaks foliage** are unchanged from the previous handover.
 
-**So the unit is not just one test file. Ask which other `reapply.py` steps have the same hole.** `prepare`
-fail-closes on several conditions and every block pass is a generated-mcfunction step; the question for each
-is whether anything in `tests/` would go red if that step refused to emit. The cheap probe is the one that
-worked here: break the step deliberately, run the suite, and see whether the numbers move. Where they do not,
-that step is uncovered. Candidates to start from are the steps with their own audits run by `prepare`, since
-an audit that is never asserted on is the same shape of gap.
+## 4. What a cold start must not rediscover
 
-## 3. The PRs: everything collapsed into #97, which is the only one open
+- **Take the lock only through `tools/server_lock.py take`**: an agent wrote it by hand as `owner=...`, which the tool
+  cannot parse, so it could not be released; it was removed by its owning session after verifying the agent had
+  finished. `runtime_guard` needs `COBBLERS_SERVER_LOCK` and `COBBLERS_LOCK_OWNER` (exactly the `owner:` line).
+- **`reapply.py run` needs `max-tick-time=-1`**, set with the server stopped and put back after. `--only` runs in
+  PLAN order, not the order given.
+- **R17 and the "npc" action are idempotent** (a trainer or NPC already standing is left), so re-running R17 seats
+  only what is missing.
+- **A function that force-loads and writes in the next command works on this runtime** - R1's Rift pass does it
+  and has landed on every verified apply - so no waits were added to the drift's 90 functions.
+- **`trainer_world_audit.py`'s first run in a world** misread `attribute ... get` (fixed), measures transient AI
+  rotation as "facing" (reported), and counts flowers and carpets as solid (reported).
+- **`data/spawns.json` is generated** by `tools/build_encounters.py`, which owns the sub-region rosters, Victory
+  Road's pools and route selection and copies everything else through. `"authored-only"` is the bucket INSIDE a
+  pool (247 nested entries), never on a top-level entry (weight-0 top-level records use `"ultra-rare"`).
+- **The drift's generator read its own output**: species positions now skip its own pool and fall back to
+  Cobblemon's own spawn files (`tools/position_types.py`).
+- **Relayed and wrong tonight, caught by measuring:** that the altar feathers are in the templates' barrels (false;
+  it went into a data record unmeasured and was corrected); the isle's "1,228" dry columns (1,289 by its audit);
+  Frostpeak's "summit" (679, 324), which is the pad's north rim, and its "27 degrees", a point not visible from the
+  camp.
+- **A green suite is not proof of a right change**: one fix rewrote 268 records, 264 of them other systems', and
+  every test passed. The count caught it; it was reverted.
+- **NPC coverage** (`tests/test_npc_seats.py`) is now a sweep over the step list, but covers only NPC classes
+  compiled from `data/dialogue.json`; the camp ships its own classes and is invisible to it.
+- **For a test author:** `test_habitat_blocks_activated.py` now copies `tools/habitat_blocks.py`'s cancel rule
+  (changed by the drift's builder); `test_adopted_legendary_sites.py` can tighten `top_y` to one convention.
 
-Verified against GitHub after a `--prune` fetch, not assumed:
+## 5. Cost
 
-| PR | Branch | State |
-|---|---|---|
-| #95 | `night/2026-09-29-water-export` | MERGED to main, 2026-10-01 04:22 |
-| #96 | `codex/trainer-modes` | MERGED to main, 04:23 |
-| #98 | `docs/2026-09-30-phase2-handover` | MERGED into `build/2026-09-29-phase2`, 04:25 |
-| #99 | `docs/2026-09-30-settlement-npcs` | MERGED into `build/2026-09-29-phase2`, 04:26 |
-| #100 | `fix/2026-09-30-phase2-red-tests` | MERGED into `build/2026-09-29-phase2`, 06:05 (merge commit `cc9a8339`) |
-| [#97](https://github.com/Millerb7/cobblers/pull/97) | `build/2026-09-29-phase2` -> `main` | **OPEN**, head **`cc9a833`** |
-
-- **The stack is gone: #97 is now one PR carrying the whole batch**, which is what the one-big-PR rule wanted.
-- **Every earlier merge command for #97 is stale** — it was reported at `27710fd`, then `7b008b6b`, now
-  `cc9a833`. Re-read the head before quoting it (CLAUDE.md now says why).
-- `origin/main` was `ac6487e` at the time of writing; #97 is not merged.
-- This branch, `docs/2026-10-01-handover`, carries only this file and the CLAUDE.md line, and targets
-  `build/2026-09-29-phase2`.
-
-## 4. The suite baseline is 7
-
-**Measured 2026-10-01: `7 failed, 5169 passed, 9 xfailed in 641 s`.** The four failures that were phase-2's
-own are fixed, and `no_swallowed_crashes` with them, so the baseline dropped from 8. The seven remaining are
-pre-existing and still not to be chased: heightmap provenance, `mines_independent` surface faces, two
-`rift_heightmap` sculpt tests, three `sea_town` tests (contracts C3 and C14).
-
-How they were fixed is in `docs/STATE.md`; the short version is that none was fixed by moving a number. The
-gym pair was a hardcoded five in the test while the tool globbed the folder, so gyms 6 and 8 were unexamined
-for a day — they then passed all 117 content properties. The legendaries pair lost their "unsited" exemplar
-when `registeel` was sited; the exemplar now comes from the data, and the one whose fault had been closed was
-replaced by the direction nothing covered, that `gate.unsatisfiable_until` is honoured — proved by mutating
-the generator.
-
-## 5. Decisions taken this session that a cold start should not reopen
-
-- **Gyms 6 and 8 are confirmed** (the owner, 2026-10-01) and `data/gym_interiors.json` records both
-  superseded. **gym6's `why_not` had been an owner gate** — Sabrina's gym not built until EXP-034 has run —
-  and **EXP-034 is still unrun**; the gate is answered because the Hall of Lenses carries no per-player state,
-  not by the experiment. If anyone wants it honoured literally, that is the decision to revisit. gym8's
-  `"as gym2"` was stale: Giovanni's was a donor shell.
-- **The worktree cleanup was removal only, with no teardown rule** (the owner's choice). `.claude/worktrees/`
-  went 44 directories / 7.9 GB -> 8 / 4.77 GB. It will rebuild; if it should not, the rule belongs in
-  CLAUDE.md's Delegation section. Left alone: the locked `agent-a935361eae89fb3d0`, the empty
-  `canonical-data`, and `winui3-widget-board-60b59c`, which belongs to the **`Job-Bored`** repo.
-
-## 6. Open, and not this session's to fix
-
-- **The settlement NPCs are 15, not 32** (`docs/world-building/SETTLEMENT_NPCS.md`). The blocker is
-  **standing blocks, not coordinates**: 10 of 13 actors have a position, **0 have a `stand_marker`**. The bulk
-  is 12 physical-evidence objects, 10 unbuilt. Separately **34 gate-guard positions have no characters**.
-- **For Codex, deliberately not fixed:** `npc_main_league_steward` is recorded at (3297, 2603) — 433 blocks
-  from the League, inside no settlement, heightmap y118 against the League's 86.3-98.9. It is the retired
-  `FACTION.md` cradle coordinate the Rift-zones unit already rejected for (3357, 3306). Correcting it here
-  would hide the propagation.
-- **F12** — two authored trainer points inside town boxes; seats moved, authored points left alone. Codex's
-  `TRAINER_RULES.json`.
-- **Four zone walls withheld by data:** z4 needs Codex dialogue reading `q.player.pokedex.caught_count`; z5
-  needs `rift_crisis_resolved`, which has **no setter** on `origin/codex/trainer-modes`. Do not invent it.
-- **Giovanni's roster held and empty**, blocked on `docs/story/GIOVANNI_FORMAT.md`; the decision goes in
-  `data/gym_trainers.json` as his `battle_format`.
-- **Unproven, owner only: whether Brock refuses a rematch with the badge in hand.** Installed is not working.
-
-## 7. What a cold start must not rediscover
-
-- **Prune before trusting a remote ref, and re-read every head you quote** — now a CLAUDE.md rule, with the
-  2026-10-01 case that produced it.
-- **Read the consumers of any field you change.** One `superseded_by` edit fail-closed a build step.
-- **Mutate the generator, not the record**, and reject your own slack.
-- **A nested isolation worktree is based on the MAIN checkout's HEAD**; `git merge --ff-only` fails.
-  Authorise `git reset --hard <sha>` in the brief.
-- The full suite is **~640-1,050 s** — over the 600 s tool timeout. Run it backgrounded.
-- `tools/ground.py` is `ground.load()` returning a callable, plus `.box()`; there is no `ground.at()`. It
-  raises `terrain.TerrainUnavailable` when the heightmap is missing.
-- `COBBLERS_SOURCE_ROOT` must be `C:\Users\wnd\Documents` in every shell. Both validators are clean at the
-  tip: `validate_data.py` 0/0, `validate.py` 1,237 files 0/0.
+`python tools/session_cost.py`: this session **991 turns, 58.8M weighted**, context 726k at the end (the
+owner lifted the hand-over threshold for tonight); agents together **36.3M**. About 95M across the session's life,
+not counting the three parallel sessions, which report their own.

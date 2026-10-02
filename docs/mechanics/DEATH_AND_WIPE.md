@@ -15,7 +15,7 @@ water. It supersedes earlier death-only wording in this file.
    last town waystone they successfully travelled through.
 3. The player's ordinary inventory is kept. The blackout handler removes only
    the bounded eligible items described below.
-4. Every blackout loses 10% of current CobbleDollars, whether the cause was a
+4. Every blackout costs a flat $600 per blackout (20% of a $3,000 cap, never more than the balance; data/blackout.json, the owner's decision B10, 2026-10-01), whether the cause was a
    Pokemon, trainer, fall, lava, drowning or another environment hazard.
 5. **Items are lost only when a Pokemon or trainer defeated the player. The
    Pokemon or trainer that won holds the recovery claim. Environmental death
@@ -65,7 +65,7 @@ The server performs one idempotent transaction:
 1. Record an incident ID, cause, player UUID, dimension, safe defeat coordinate,
    current checkpoint and, when present, the wild Pokemon UUID or stable trainer
    ID.
-2. Read the CobbleDollars balance and calculate 10%, rounded up, with a minimum
+2. Read the CobbleDollars balance and take the lesser of it and the flat charge, with a minimum
    loss of 1 when the balance is above zero.
 3. If and only if the cause has a Pokemon or trainer victor, select recoverable
    items from one complete inventory snapshot and prepare a claim.
@@ -102,7 +102,7 @@ The Center and Waystones hooks are not yet proven in this pack.
 ## Money and eligible items
 
 Money loss is permanent and never enters a recovery claim. The initial value is
-**10% of current CobbleDollars, rounded up**, minimum 1 above a zero balance and
+**a flat $600 per blackout (20% of a $3,000 cap, never more than the balance; data/blackout.json, the owner's decision B10, 2026-10-01)**, minimum 1 above a zero balance and
 with no cap. Keep the percentage configurable for playtesting.
 
 Item selection is calculated by category across the entire carried inventory,

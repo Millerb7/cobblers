@@ -9,15 +9,28 @@ From data/trainers.json (generated from docs/story/TRAINER_RULES.json) and four 
                                 that resolve nowhere, so their three lines are authored beside their seat,
                                 the way Victory Road's are (lines_of below)
   data/mansion_guardians.json   the Gastly mansion's five Channeler guardians, record and seat together
+  data/arena_trainers.json      Heaven's Arena's seven tier champions, record and seat together, on the stands
+                                tools/deep_city.py's arena_plan() reserves in derived/deep_city/plan.json
+                                ("arena".tiers[n].stand, y16 to y118). PLAIN STANDALONE FIGHTS, by the owner's
+                                decision of 2026-10-01: no series, no requiredDefeats, no tier gating at all,
+                                because a player's level cap is derived from their next required trainer in
+                                their series and the seriesless-gate path (EXP-A1) is unproven. They are the
+                                first REPEATABLE seats: `repeatable: true` gives maxTrainerDefeats -1 and NO
+                                Cooldown line in the cycle, which is the whole of "endless fights, real money"
+                                (CobbleDollars pays every win by itself). See the file's own repeatability
+                                block for the argument and what it is not verified to do
   data/vr_trainers.json         Victory Road's ten, on the stands tools/vr_caves.py carved along its walked
-                                route; the tenth (the Gate Warden) carries its own record beside its seat,
-                                because data/trainers.json is generated and holds only nine
+                                route. All ten records are in data/trainers.json; the tenth is the League
+                                Examiner, chosen by the owner on 2026-10-01 over the Gate Warden this file
+                                used to author beside the seat (kept there, decided against, emitted nowhere)
   data/gym_trainers.json        the eight gym leaders. No seat either: our own gym build sets
                                 rctmod:trainer_spawner{TrainerIds:["kanto_brock"]} and the badge is awarded
                                 for beating that id, so the id cannot be re-pointed and our roster reaches a
                                 player only by overriding it. Emits the team and nothing else -- their
-                                dialogue is Codex's to write. gym_08_giovanni is held (empty team) and is
-                                skipped by name
+                                dialogue is Codex's to write. gym_08_giovanni's hold was cleared by the
+                                owner on 2026-10-01 -- data/trainers.json gives him status 'authored',
+                                blocked_by None and six Pokemon topping out at 55, his contract level -- so
+                                all EIGHT leaders' teams now reach a player, where seven did before
   data/league_trainers.json     the Elite Four and the Champion. These have no seat: Cobbleverse's
                                 kanto_league template already carries five rctmod:trainer_spawner blocks
                                 locked to kanto_league_lorelei/_bruno/_agatha/_lance and kanto_champion_blue
@@ -37,7 +50,8 @@ A seated trainer gets:
                                                     An OVERRIDE (below) also writes battleFormat, because it replaces
                                                     upstream's whole file and would otherwise drop it
   data/rctmod/mobs/trainers/single/<id>.json        who it is to rctmod: type normal, no series, never spawns naturally
-                                                    (spawnWeightFactor 0), beaten once per player (maxTrainerDefeats 1),
+                                                    (spawnWeightFactor 0), beaten once per player (maxTrainerDefeats 1;
+                                                    -1, documented as infinity, for a seat marked `repeatable`),
                                                     its skin (textureResource: one of rctmod's own trainer textures, which
                                                     every client has) and, for the first trainer, eye contact
                                                     (forceBattleOnSight: the lesson it teaches; every mansion
@@ -63,7 +77,11 @@ A seated trainer gets:
                                                       their own defeat field is set (the field stays the truth);
                                                     - while only players who have beaten it are near, a short
                                                       Cooldown, which rctmod's canBattleAgainst refuses to battle
-                                                      through. rctmod itself never refuses a rematch with a trainer
+                                                      through -- EXCEPT for a seat marked `repeatable`, which gets
+                                                      no Cooldown line at all (the seven arena champions: the
+                                                      hold-off is the only thing that would refuse a rematch, so
+                                                      dropping it IS the endless ladder). Those seats keep the home
+                                                      line and the tag line. rctmod itself never refuses a rematch with a trainer
                                                       placed by summon_persistent: couldBattleAgainst returns true
                                                       for a persistent trainer before checking who beat it, and for
                                                       the others that memory (TrainerMob.winsAndDefeats) is never
@@ -88,7 +106,10 @@ OUT = ROOT / "build" / "datapacks" / "cobblers_trainers"
 NS = "cobblers"
 PERIOD = 10
 COOLDOWN_LINE = {"guardian": "Leave me be a moment.", "route": "Let me catch my breath.",
-                 "league": "Take the room. I will be here."}
+                 "league": "Take the room. I will be here.",
+                 # the arena's tiers are repeatable, so this is never OUR hold-off talking: it is rctmod's own
+                 # battleCooldownTicks (240, twelve seconds) in the moment after a fight either way
+                 "arena": "Breathe. The stand is still here when you are ready."}
 EXTRA_FIELDS = {"route_02_shore_trainer_01": ["quest.evt_viltri_north_bank.trainer_defeated"]}
 AFTER_WIN = {"route_02_shore_trainer_01": "The angler nods at the tackle box on the bank."}
 
@@ -101,6 +122,90 @@ def doc(name):
     return json.loads((ROOT / "data" / name).read_text(encoding="utf-8"))
 
 
+# ------------------------------------------------------------------ who authors what
+# data/trainers.json is the ROSTER -- who a trainer is and what it fights with. A seat file is the
+# STAND -- where it stands and how it behaves standing there. The two are halves of one trainer, not
+# rival authors, so the guard below is FIELD-level, not id-level.
+#
+# It was id-level until 2026-10-01, and that was right while it was true: Victory Road's tenth had no
+# generated record at all, so data/vr_trainers.json carried a whole one beside its seat, and a record
+# appearing in data/trainers.json for the same id could only mean two authors. #96 then generated all
+# ten, git merged it CLEANLY because the two authors sit in DIFFERENT FILES, and the id-level guard
+# fired on the only reading it had -- "re-authors" -- which stopped the whole pytest suite at
+# collection. vr_trainers.json had not re-authored anything; it still owns the ten stands, and its yaw,
+# faces, eye_contact, sight_distance, skin and per-stand rationale exist nowhere else.
+#
+# A seat file owns these, and the roster must not carry one of them:
+STAND_FIELDS = frozenset({
+    "seat", "yaw", "faces", "eye_contact", "sight_distance", "skin", "stand_index", "route_index",
+    "route_progress", "climb_gained_blocks", "gap_from_previous_blocks", "unavoidable", "listed",
+    "listed_off_walked_line", "moved_blocks", "walked_distance", "authored_distance", "shoulder",
+    "why", "superseded_roster", "sets", "gates", "checkpoint", "room", "after_win",
+    # the arena's stands: which tier floor it stands on, whether it may be refought endlessly (the Cooldown
+    # line and maxTrainerDefeats), and which on_cooldown line it speaks. All three are how it behaves STANDING
+    # THERE, so if data/trainers.json ever generates records for these seven, a copy of one of these in the
+    # roster is two authors for one value and must fault rather than quietly win.
+    "tier", "repeatable", "cooldown",
+})
+# Fields a seat file may RESTATE for whoever reads the seat list, and never the value this tool uses:
+# the roster's copy is read, the seat file's must match it exactly, and a drift apart is a fault.
+ROSTER_ECHO = frozenset({"lesson", "trainer_order", "route", "name"})
+# The one field with a declared precedence rather than one owner (see lines_of): the roster's wins when
+# it has one, and the seat file's is the fallback for a record that has none. Kept, not emptied, after the
+# 2026-10-01 deletion of Victory Road's ten dead sets: Routes 4-8's twenty-eight records carry
+# dialogue_text {} -- the key is present and empty -- so those twenty-eight seats STILL hold the only
+# lines those trainers have, and the fallback in lines_of() is what puts them in front of a player. The
+# guard is what stops a seat-side set going dead unnoticed, which is how the ten came to be dead.
+ROSTER_PRECEDENCE = frozenset({"dialogue_text"})
+
+
+# [(trainer id, field)] where the roster has a value of its own AND the seat file's differs, so the seat
+# file's is dead: filled by load(), warned about by main() only when non-empty.
+#
+# It used to be every divergence, empty roster value included, and that made the count it printed every
+# run wrong: "38 superseded sets" counted Victory Road's ten, whose records really do carry text, TOGETHER
+# WITH Routes 4-8's twenty-eight, whose records carry {} and whose seat-side lines lines_of() has always
+# preferred and emitted. Twenty-eight live sets were reported as dead. An empty roster value is the
+# fallback working as designed, not a supersession, so it is no longer counted -- and with the ten deleted
+# the list is empty and a clean run says nothing (the owner, 2026-10-01: no count every run).
+SUPERSEDED: list = []
+
+
+def ownership(recs, entries, src):
+    """Every field a seat file and the roster both author. Faults raise; the superseded are returned.
+
+    Three ways a field can sit in both files and only one of them is legal silently. A STAND field in
+    the roster, or any field outside these three sets in both, is two authors for one value: one of the
+    two is dead and nothing says which. An echo that no longer matches is a drift. A precedence field
+    is the designed case."""
+    faults, superseded = [], []
+    for e in entries:
+        r = recs.get(e["id"])
+        if r is None:
+            continue              # the seat file carries the whole record (every mansion guardian)
+        for f in sorted(set(e) & set(r) - {"id"}):
+            if f in ROSTER_PRECEDENCE:
+                # only a roster value that actually WINS supersedes: lines_of() falls back on a falsy one
+                if r[f] and e[f] != r[f]:
+                    superseded.append((e["id"], f))
+            elif f in ROSTER_ECHO:
+                if e[f] != r[f]:
+                    faults.append((e["id"], f, "%s restates the roster's %s and no longer matches it"
+                                               % (src, f)))
+            elif f in STAND_FIELDS:
+                faults.append((e["id"], f, "data/trainers.json carries %s, which the stand owns (%s)"
+                                           % (f, src)))
+            else:
+                faults.append((e["id"], f, "%s and data/trainers.json both author %s" % (src, f)))
+    if faults:
+        joined = "\n".join("  %s %s: %s" % f for f in faults)
+        raise SystemExit("two authors for one trainer field (%d):\n%s\n\nThe roster owns who a "
+                         "trainer is; a seat file owns where it stands and how it behaves standing "
+                         "there. Move the field to its owner -- do not delete the hand-authored side "
+                         "(CLAUDE.md)." % (len(faults), joined))
+    return superseded
+
+
 def load():
     t = doc("trainers.json")
     seats = doc("route_trainers.json")["trainers"] + doc("late_route_trainers.json")["trainers"]
@@ -109,22 +214,24 @@ def load():
         raise SystemExit("two seat files claim the same trainer: %s" % dupe)
     guards = doc("mansion_guardians.json")["trainers"]
     vr = doc("vr_trainers.json")["trainers"]
+    arena = doc("arena_trainers.json")["trainers"]
     prog = doc("progression.json")
     fields = {f["id"] for f in prog["quest_fields"]}
     recs = {r["id"]: r for r in t["trainers"]}
-    clash = sorted(g["id"] for g in guards if g["id"] in recs)
-    if clash:
-        raise SystemExit("data/mansion_guardians.json reuses trainer ids from data/trainers.json: %s" % clash)
-    recs.update({g["id"]: g for g in guards})
-    # Victory Road: nine of the ten are seats only and keep the record data/trainers.json generated for them;
-    # the tenth carries its own record beside its seat, as a mansion guardian does
-    for e in vr:
-        if "rct" not in e:
-            continue
-        if e["id"] in recs:
-            raise SystemExit("data/vr_trainers.json re-authors %s, which data/trainers.json already has" % e["id"])
-        recs[e["id"]] = e
-    return recs, seats + guards + vr, fields
+    del SUPERSEDED[:]
+    for name, entries in (("data/route_trainers.json", doc("route_trainers.json")["trainers"]),
+                          ("data/late_route_trainers.json", doc("late_route_trainers.json")["trainers"]),
+                          ("data/mansion_guardians.json", guards),
+                          ("data/vr_trainers.json", vr),
+                          ("data/arena_trainers.json", arena)):
+        SUPERSEDED.extend(ownership(recs, entries, name))
+    # a seat file whose trainer has no generated record carries the record itself: the five mansion
+    # guardians, the arena's seven, and before #96 Victory Road's tenth. ownership() has already proved it
+    # clashes with nothing, so this adds rather than overwrites
+    for e in guards + vr + arena:
+        if "rct" in e and e["id"] not in recs:
+            recs[e["id"]] = e
+    return recs, seats + guards + vr + arena, fields
 
 
 def overrides():
@@ -137,8 +244,12 @@ def overrides():
     persistent kanto_brock anywhere awards the badge (verified on staging 2026-09-24), and
     data/progression.json binds gym1_cleared and the first-win rewards to the same id.
 
-    An entry marked "held" is skipped with its reason: data/trainers.json's gym_08_giovanni has an empty
-    team, and an override with no Pokemon in it is worse than leaving upstream's roster alone.
+    An entry marked "held" is skipped with its reason, and the reason is printed rather than trusted.
+    Nothing is held as of 2026-10-01: gym_08_giovanni's hold quoted an empty team and status 'held' that
+    no longer exist -- the format question is settled (singles), #96 generated the roster, and he carries
+    six Pokemon at 52-55 with blocked_by None and an ace at exactly his contract level -- so the owner
+    cleared it and all thirteen overrides emit. The mechanism stays: a leader can be held again, and a
+    held leader must be loud rather than missing.
     """
     recs, _seats, _f = load()
     out, held = [], []
@@ -195,8 +306,16 @@ def files():
             raise SystemExit("data/route_trainers.json seats %s, which data/trainers.json does not have" % s["id"])
         tid, rct = r["id"], r["rct"]
         out["data/rctmod/trainers/%s.json" % tid] = {k: rct[k] for k in ("name", "ai", "battleRules", "bag", "team") if k in rct}
+        # maxTrainerDefeats: -1 is documented as infinity. It does nothing for a trainer we place
+        # (couldBattleAgainst returns true for a persistent trainer before it checks who beat it), so this
+        # states the intent in the data and is the DOCUMENTED path should a tier ever move to a spawner block.
+        # `series` and `requiredDefeats` stay empty for every seat, the arena's seven included: the owner's
+        # 2026-10-01 decision is plain standalone fights, because the level cap is derived from the next
+        # required trainer in the player's series and EXP-A1 (whether requiredDefeats gates a seriesless
+        # trainer) is unproven. Authoring a gate here would risk hijacking every level cap in the game.
         mob = {"type": "normal", "series": [], "requiredDefeats": [], "optional": True, "maxTrainerWins": -1,
-               "maxTrainerDefeats": 1, "battleCooldownTicks": 240, "spawnWeightFactor": 0,
+               "maxTrainerDefeats": -1 if s.get("repeatable") else 1,
+               "battleCooldownTicks": 240, "spawnWeightFactor": 0,
                "biomeTagBlacklist": [], "biomeTagWhitelist": [], "textureResource": s["skin"]}
         if s.get("eye_contact"):
             mob.update({"forceBattleOnSight": True, "forceBattleMaxDistance": float(s.get("sight_distance", 8.0)),
@@ -209,7 +328,7 @@ def files():
             "on_battle_start": line(d["pre"]), "on_battle_lost": line(d["player_win"]), "trainer_lost": line(d["player_win"]),
             "on_battle_won": line(d["player_loss"]), "trainer_won": line(d["player_loss"]),
             # what it says while on cooldown: after a battle either way, and to a player who has beaten it (cycle)
-            "on_cooldown": line(COOLDOWN_LINE["guardian" if "sets" in r else "route"])}
+            "on_cooldown": line(COOLDOWN_LINE[s.get("cooldown") or ("guardian" if "sets" in r else "route")])}
         out["data/rctmod/loot_table/trainers/single/%s.json" % tid] = {"pools": []}
         setf = r["sets"] if "sets" in r else ["quest.%s.defeated" % tid] + EXTRA_FIELDS.get(tid, [])
         undeclared += [(tid, f) for f in setf if f not in fields]
@@ -349,7 +468,14 @@ def leader_cycle_lines():
 
 
 def cycle_lines(tid, seat, field):
-    """One trainer's part of the cycle: its seat, its players' tags from their field, its cooldown."""
+    """One trainer's part of the cycle: its seat, its players' tags from their field, its cooldown.
+
+    A seat marked `repeatable` gets the first two and NOT the cooldown: our Cooldown merge is the only
+    thing in the game that refuses a rematch with a trainer we placed, so a seat that wants endless
+    rematches wants exactly this line gone (data/arena_trainers.json repeatability). The home line stays
+    because knockback still moves a champion pinned at movement speed 0, and the tag line stays because
+    the per-player defeat field is still the record of having taken that tier -- a future prize or lift
+    condition reads it, and it is set on the first win only."""
     x, y, z = seat["seat"]
     near = max(float(seat.get("sight_distance", 8.0)), 6.0) + 1
     tag = "cobblers_beat_%s" % tid
@@ -368,8 +494,9 @@ def cycle_lines(tid, seat, field):
             # won is worse than having to right-click one you have not, so the beaten player is protected and the
             # unbeaten partner may have to start the fight by interacting while their friend stands there.
             # The real fix is per-player trainers through the scene runtime (docs/STATE.md), gated on EXP-034.
+            ] + ([] if seat.get("repeatable") else [
             "execute as %s at @s if entity @a[distance=..%s,tag=%s] run data merge entity @s {Cooldown:40}"
-            % (me, near, tag)]
+            % (me, near, tag)])
 
 
 def placements():
@@ -396,6 +523,18 @@ def main(argv=None):
           % (len(fs), len(placements()), len(over), out))
     for tid, why in held:
         print("  held, nothing emitted: %s -- %s" % (tid, why.split(". ")[0] + "."))
+    # A clean run says nothing here. SUPERSEDED is empty while no seat file holds a dialogue_text the
+    # roster also has text for: Victory Road's ten were deleted on 2026-10-01 and Routes 4-8's
+    # twenty-eight are the only lines their trainers have, not superseded ones. It is kept rather than
+    # removed because what it catches is a value that is dead and silent -- how the ten came to be dead
+    # across a clean merge nobody could see. If this ever prints, the named seat file's text reaches no
+    # player and one of the two sides should go.
+    byf = {}
+    for tid, f in SUPERSEDED:
+        byf.setdefault(f, []).append(tid)
+    for f, ids in sorted(byf.items()):
+        print("  WARNING: %d seat-file %s set(s) are DEAD -- the roster has its own and that is what is "
+              "emitted: %s%s" % (len(ids), f, ", ".join(sorted(ids)[:4]), " ..." if len(ids) > 4 else ""))
     return 0
 
 

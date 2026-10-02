@@ -445,6 +445,91 @@
           4092
         ]
       }
+    },
+    {
+      "id": "sea_drift_strips",
+      "kind": "cache",
+      "place": "the Seaward Drift's strip mine: the chamber at the corridor's far end, against its north wall",
+      "contents": [
+        {
+          "item": "cobblemon:heavy_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/heavy_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:great_ball",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/great_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:revive",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/revive.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel at the end of the strips: three Heavy Balls, two Great Balls and a Revive.",
+      "why": "data/sea_drift.json caches: the find that pays for the walk, as the old mine's barrels",
+      "built_by": "tools/sea_drift.py (the barrel, in cobblers_sea_drift's fittings pass)",
+      "trigger": {
+        "min": [
+          1418,
+          103,
+          1732
+        ],
+        "max": [
+          1422,
+          105,
+          1736
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          1420,
+          103,
+          1732
+        ]
+      }
+    },
+    {
+      "id": "sea_drift_isle",
+      "kind": "cache",
+      "place": "Driftmouth Isle: in the headhouse over the drift's stairwell, its north-west corner",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 5,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel in the headhouse: five Net Balls and two Super Potions.",
+      "why": "data/sea_drift.json caches: the find that pays for the walk, as the old mine's barrels",
+      "built_by": "tools/sea_drift.py (the barrel, in cobblers_sea_drift's surface pass)",
+      "trigger": {
+        "min": [
+          330,
+          70,
+          1583
+        ],
+        "max": [
+          332,
+          72,
+          1585
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          330,
+          70,
+          1583
+        ]
+      }
     }
   ]
 }

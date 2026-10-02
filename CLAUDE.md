@@ -201,6 +201,22 @@ and running Minecraft instead. Agents do not spawn their own agent teams.
 Read-only agents (`repo-scout`, `qa-reviewer`, `build-doctor`) do not need a
 worktree; worktrees exist to keep concurrent writers apart.
 
+**A guard that names its own remedy is not a refusal (the owner, 2026-10-01).** The
+worktree complexity guard refuses a compound command -- a heredoc, a `for` loop, a
+path it cannot verify stays inside the worktree -- and its own text says *"Split it
+into plain, separate commands and run them from <worktree>"*. Following that
+instruction, or using the `Write` tool for the same in-worktree path, **is compliance,
+not a workaround**: the guard objected to the SHAPE of the command and told the agent
+what shape to use. Eight or more agents hit it across 2026-10-01 and every one of them
+followed the remedy; treating that as a violation would mean treating the guard's own
+advice as off limits.
+
+The distinction that matters: a guard refusing a **path** while naming another is to be
+followed; a guard refusing an **outcome** ends the attempt. "Use plain commands" is the
+first. "Refusing to read the live world" or "this agent may not write there" is the
+second, and no second route may be tried. When it is not obvious which you have hit,
+treat it as the second and hand back.
+
 **A refusal ends the attempt (the owner, 2026-09-28).** A subagent whose action
 is refused (a permission prompt denied, a hook or safety check blocking a write,
 a guard in a tool) stops that line of work and hands back: what it tried, the
@@ -210,13 +226,62 @@ path). Every brief says so. On 2026-09-28 four builders hit the same worktree
 guard: three stopped and reported; one wrote its files through Bash and Python
 instead. The output was good; the workaround was still the failure.
 
-**Launching a writing agent (verified 2026-09-28 with three throwaway agents).**
-Two gates stand between an agent and a file, and both are the harness's: the
-worktree isolation checks (no write, working directory or git redirect into the
-main checkout, and every other worktree lies inside the main checkout's folder)
-and the permission classifier (a judgment on each command; it refused a copy
-from another checkout, and `rift_heightmap.py --plan` twice, although
-`Bash(python tools/:*)` is allowed). So:
+**Launching a writing agent (re-measured 2026-10-01 with six working agents and one
+throwaway probe; this replaces the 2026-09-28 reading, which was wrong).**
+
+**An agent can do far more than we believed, and the constraint that shaped three
+nights of planning does not exist.** Measured, not inferred:
+
+- **Nothing is refused by a permission classifier.** A throwaway agent ran
+  `git rev-parse`, `printenv`, a `ground.py` read and `rift_heightmap.py --plan` --
+  **not one prompt, not one block.** The old claim that the classifier refused
+  `--plan` twice **does not reproduce**, and the planning built on it was wasted.
+- **An agent CAN read the canonical heightmap.** `COBBLERS_SOURCE_ROOT` is set in
+  `.claude/settings.json` `env` and reaches agents, so `tools/ground.py` works in a
+  worktree: it answered y122 at (4528, 4416), the same ground the main session
+  measured. Confirmed three times, by three different agents, one of which ran the
+  heightmap-dependent contract suite it had been told it could not run.
+- **An agent can read outside its worktree.** Two agents read files from another
+  checkout by absolute path and said so. The isolation checks are about **writes**,
+  the working directory and git redirects -- not reads.
+- **`derived/` is the only real gap, and it is narrow.** It is gitignored and 198 MB,
+  so a worktree never has it. Across six agents it cost exactly one of them one test
+  (`derived/ambient/plan.json`), and one build unit needed nothing from it at all
+  because `rift_deep.model()` recomputes from the heightmap. **`COBBLERS_LOCAL_STORE`
+  cannot close it as it stands: 339 files, all kits.**
+- **`derived/rift_sculpt/` cannot be rebuilt anywhere**, which is a repository fault
+  and not an agent one: `--plan` fails in the main checkout too, because the sculpt
+  computed from today's spec differs from the applied one by 10,867 columns after a
+  normals fix landed without a re-apply (`docs/research/AGENT_WORKTREE_INPUTS.md`).
+
+**So what actually cannot be delegated** -- the whole list, after the false constraint
+is removed:
+
+1. **Anything touching the live server**: the coordination lock, install, apply, boot,
+   RCON. Irreducible.
+2. **Integration judgement.** Two agents in one wave priced the trainer card at 500 in
+   the first town and separately proved the first town has no income -- a contradiction
+   **neither could see**, visible only to whoever read both reports. The same pass
+   caught a relayed Mew coordinate that was under water. Cross-reading reports,
+   re-running every agent's audit in a full checkout, and resolving collisions is the
+   orchestrator's job and does not fan out.
+3. **`prepare` and the full suite**, for cost and time rather than capability: 679 s
+   and ~580 s, once for every agent's work, and an agent must not wait.
+
+**The one real tax is the worktree complexity guard.** Every one of the six hit it on
+compound commands -- heredocs, `for` loops, paths outside the worktree -- about ten
+times in all. It is never fatal and its own text names the remedy ("split it into
+plain, separate commands"), which every agent then followed. Brief agents to use plain
+single commands, and expect to commit an agent's work from the main session when its
+own `git add` is refused.
+
+**The division that works: authoring, research, generation and tests fan out; the
+server and the integration run serialise.** Six at once was the right number, and the
+collisions it surfaced were worth more than any single unit.
+
+Two gates still stand between an agent and a file, both the harness's: the worktree
+isolation checks (no write, working directory or git redirect into the main checkout)
+and the complexity guard above. So:
 
 1. Commit what the agent needs; its worktree starts from this session's
    committed HEAD (`worktree.baseRef: "head"` in `.claude/settings.json`).
@@ -225,10 +290,13 @@ from another checkout, and `rift_heightmap.py --plan` twice, although
    `git rev-parse HEAD`; if it is not the commit you named, `git merge --ff-only
    <sha>`.
 3. Kits: `python tools/local_inputs.py hydrate --store
-   C:/Users/wnd/Documents/cobblers-local` (allowed: all 338 files, verified).
-   Derived inputs (the Rift plan, the paint, the water shape) are refused to an
-   agent, and `.worktreeinclude` copied none of them: give the agent work that
-   does not need them, or run it in the main session.
+   C:/Users/wnd/Documents/cobblers-local` (allowed: all 338 files, verified). The
+   **heightmap needs nothing** -- it is readable at its absolute path through
+   `COBBLERS_SOURCE_ROOT`. Only `derived/` is absent, and `.worktreeinclude` did not
+   fix that (it existed, listed the right paths, copied none, and was removed in
+   `19838cc` -- a harness question, not a repository one). So: prefer work that
+   recomputes from the heightmap, and when a unit truly needs a derived plan, say so
+   and run that part in the main session.
 4. The agent edits, runs its unit's own generator and its unit's tests. It never
    runs prepare, the full suite or staging.
 5. Every brief carries the refusal rule above and the cost rules below.
@@ -388,6 +456,55 @@ average 517k of context per turn: every turn re-sends everything before it.
   strangely, prune and re-read the refs before believing anything local, and
   re-state the head in the handover rather than carrying the old one forward.
 
+## A clean merge is not a clean union
+
+git merges text. **Two branches that author the same ids in DIFFERENT FILES never conflict**, so the
+merge is clean, the diff is clean, and nothing anywhere says that one thing now has two authors. The
+collision is semantic and invisible, and it costs nothing to make.
+
+On 2026-10-01 main's #96 generated roster records for Victory Road's ten trainers in
+`data/trainers.json` while this repository's `data/vr_trainers.json` already carried their stands. The
+tenth came out of the merge with **two names, two teams, two lessons and two sets of dialogue** — a
+League Examiner with four Pokemon and a Gate Warden with three — and git reported a clean merge. The
+first thing to notice was `tools/route_trainers.py` failing closed during pytest **collection**, which
+turned 5,200 tests into `no tests ran` and an `INTERNALERROR` for six hours: not a failure count, not a
+red test, nothing. A suite that reports nothing is worse than a suite that reports a failure, because
+nothing can be compared with the run before it.
+
+So:
+
+- **`python tools/id_authorship.py` runs on every merge** (`.githooks/post-merge`, also
+  `python tools/validate.py --only duplicate_ids` and `tests/test_id_authorship.py`). Every id that two
+  files in `data/` both carry a record for is declared in `data/id_authorship.json` — as a **space**
+  (two halves of one thing, each owning its own fields) or an **overlap** (one id two systems describe
+  in their own terms, listed id by id with why neither value is dead) — or it is a fault. Declarations
+  name their exact id set, so an id that joins one fails and is named. Never widen an entry to make the
+  data pass.
+- **A guard that keys on an id cannot tell halves from rivals; key it on the field.** The old guard said
+  "`data/vr_trainers.json` re-authors ..." and was right while the roster generated no record for that
+  trainer. The day a generator started emitting one, the same guard called two halves a collision and
+  took the suite with it.
+- **A tool that fails closed during collection must not end the run.** `tests/conftest.py` turns a
+  `SystemExit` raised while a test module is imported into one named collection error and keeps the
+  count. The finding still arrives; the other 5,200 results arrive with it.
+
+### A file declaring `generated_by` "hand" is never deleted to resolve a conflict
+
+Two files authoring the same ids look like duplicates, and deleting one looks like the fix. Check
+`generated_by` first. A generated file can be regenerated; **a hand-authored one cannot, and what is
+lost is the judgement, not the data.** `data/vr_trainers.json` declares `generated_by: "hand, from
+derived/vr_caves/plan.json 'stands'"`: `seat` and `stand_index` are re-derivable from the plan, but
+`yaw`, `faces`, `eye_contact`, `sight_distance`, `skin` and the per-stand `unavoidable` rationale — which
+way each trainer faces, whether it initiates on sight, how far it sees, and why that stand cannot be
+walked past — exist in no other file and in no generator. Deleting it would have seated ten trainers
+facing arbitrary directions with no eye contact.
+
+Resolve the collision by **giving each field one owner** and keeping both files. Where one side really is
+superseded, keep the displaced work in place under a `superseded_*` key with a note saying what replaced
+it and why it is kept — the tenth stand's Gate Warden is there, because main's tenth is a different
+character rather than a regeneration of ours, and which of the two stands at the exit ravine is the
+owner's decision, not a merge's.
+
 ## Ground comes from the heightmap, never from a world
 
 Every tool that decides where something goes takes its ground from `tools/ground.py` (the canonical
@@ -463,6 +580,60 @@ ids, or structure ids, ask first what in the world carries that id and is not in
 `data/placements.json` — the gym spawners and the League template are the known
 answers and there are others. An audit that counts our own output can only ever
 find faults in our own output.
+
+## Measure before relaying
+
+**A number you did not measure is not a fact, however good its source.** Four times on 2026-10-01 this
+session passed a figure from a report into a brief, a commit message or a decision, and every one was
+wrong. None was caught by the session that relayed it; all four were caught downstream by whoever had to
+act on them:
+
+| Relayed | Actually |
+|---|---|
+| A Mew site at (5160, 7463) | **Under water** -- ground y61 against sea level y62, and 0 of 961 sampled columns in a 301-block box above water. The water export had removed that isle. |
+| "38 superseded dialogue sets" | **10.** `ownership()` counted divergence from an *empty* roster value as supersession, so 28 LIVE sets were reported dead every run. Deleting them, as the number implied, would have silenced 28 trainers. |
+| "A sculpt built with a stale normals bug, never re-applied" | **Re-applied.** `rift_sculpted_from` records the same 12,811,417 blocks and 512,952 columns that the fix's own commit message reports. The drift was one entrance, moved by a deliberate re-route. |
+| "44 blocks from the gap" | **44 ring STATIONS** = 53.5 blocks. |
+
+So, before a figure goes into a brief, a commit, a document or a decision:
+
+- **Run the measurement, or mark the number as relayed and name its source.** `round(ground(x, z))`, a
+  `grep -c`, a length, a count out of the generator's own output -- these cost seconds. "The research note
+  says" is not a measurement, and a research note is exactly where the drowned coordinate came from.
+- **Carry the units.** Blocks, ring stations, columns, cells and chunks are not interchangeable, and the
+  one that reads most naturally in prose is usually the wrong one.
+- **A derived number is only as good as what it was derived from.** The "38" came from code this session
+  had written itself an hour earlier; being its author is not evidence.
+- **When a decision is built on a relayed number, say so in the decision.** The owner chose A1 on a
+  premise that turned out to be this session's error, and said afterwards it was not theirs to be held to.
+- **And an instruction built on a bad number should be questioned, not executed.** The agent told to
+  "delete the 38" deleted 10, kept 28, and explained. That is the behaviour, not an exception to it.
+
+## Delegation is a second reader, not a throughput trick
+
+The case for fan-out is **not** that agents are cheaper per unit -- measure and they often are not. It is
+that **a second reader catches what a summary loses**, and the orchestrating session is structurally the
+worst-placed reader in the system: it holds every unit's conclusions and none of their evidence.
+
+Every real save on 2026-10-01 has this shape. Two agents in one wave priced a trainer card at 500 in the
+first town while another proved that town has **no authored income at all** -- a contradiction **neither
+could see**, and visible only because both reports landed together. A builder sent to place a legendary
+shrine found the coordinate it was given was underwater. A test author found two defects in the tool its
+brief told it to test, and closed a failing baseline check nobody had connected to it. A mover found that
+"44 blocks" was ring stations. **None of those was a throughput gain. Each was a correction the single
+thread could not have made**, because it was reading its own summary.
+
+So delegate for the reading, and brief accordingly:
+
+- **Give an agent the evidence, not the conclusion** -- the file and line, not "STATE says". An agent that
+  can check you will.
+- **Say which numbers in the brief are relayed**, so the agent knows what to verify first. Three of the
+  four corrections above came from an agent checking a figure the brief stated as fact.
+- **Ask for the disagreement.** Every brief should invite "if this premise is wrong, say so and stop",
+  and mean it. The best returns of the night were refusals to build what was asked.
+- **Re-run an agent's audit yourself in a full checkout.** An agent's clean audit is provisional: one
+  could not run its own audit at all (no `derived/`), said so, and was right to.
+- **Cost still matters** (see the rules above) -- but it is the second question, not the first.
 
 ## Verify before claiming
 

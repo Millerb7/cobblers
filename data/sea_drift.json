@@ -1,0 +1,182 @@
+{
+  "schema": "cobblers.sea-drift/1",
+  "status": "authored 2026-10-02; generated and audited offline, not applied to any world",
+  "builder": "tools/sea_drift.py",
+  "audit": "tools/sea_drift_audit.py",
+  "request": "the owner, 2026-10-02: \"make another mine tunnel with a strip mine attached to it near 1455 113 1795, it would be cool if it spit out near the beach around 330 70 1584, this would be in the ocean, but make a small island with some cool water spawns around it\"",
+  "measured": {
+    "basis": "tools/ground.py (the canonical heightmap, rounded) and data/world.json's sea level, 2026-10-02; never a world",
+    "mouth": "(1455, 1795): ground y112 on a flat plateau (y111-115 across x1300-1540, z1700-1850), foothill_woods (data/spawns.json subregion band 21-23, basis route_03_misty_to_surge)",
+    "exit": "(330, 1584): ground y26 under a sea at y62, 36 blocks of water. The nearest dry column is (502, 1862), 327 blocks away: there is no beach there, so the island is built (the owner: 'make a small island')",
+    "between": "the straight line is 1,145 blocks: land falling from y112 to the coast at about x740, then a shelf at y47-50 out to x460, then a drop to a basin at y26-28. Nothing authored lies within 150 blocks of it except a site candidate never built (data/towns.json gym3_town site_history) and the mt_clay_outflow waterway, 95 blocks south of the mouth"
+  },
+  "seed": 20261002,
+  "tube": {
+    "r": 2,
+    "height": 5,
+    "why": "five wide and five high, as the Rift dig camp's adit (data/rift_mines.json features adit): room to ride a Pokemon down 1.3 km of drift"
+  },
+  "shell_r": 2,
+  "shell_why": "every cell within 2 of anything carved, and at or under the ground, is written as rock, so the drift is bounded only by blocks this build wrote (tools/rift_mines.py SHELL_R, the same rule)",
+  "cover": {
+    "export_tolerance": 1,
+    "export_tolerance_why": "tools/ground.py: round(h) is the exported ground at 99.85% of columns; the rest are one block LOW, at water edges. Under water that block is one block less of seabed than the heightmap promises",
+    "natural_seabed": 1,
+    "natural_seabed_why": "one block of the export's own ground is left untouched over the shell, so the sea floor keeps the export's dressing and nothing this build writes is ever the sea floor itself",
+    "rule": "cover = shell_r + export_tolerance + natural_seabed solid blocks between any cell this build opens and any water, in every direction (Chebyshev). The tool computes it from these three; nothing here states the total"
+  },
+  "grade": {
+    "incline_run": 2,
+    "incline_why": "the mouth is cut into a flat plateau, so the first stretch is an open box-cut falling one block in two (a stair every other block) until the cover is reached and the drift goes under a roof",
+    "max_run": 6,
+    "max_run_why": "the steepest the roofed drift may fall where the seabed forces it down: one block in six. Elsewhere it falls at the even grade from the portal to the island, so the walk is one long gentle descent and not a copy of the ground's bumps",
+    "quiet_cells": 3,
+    "quiet_why": "no stair within 3 cells of a corner, the strip mine's junction or the drift's end: a powered rail cannot turn or meet a stair, and a turn on a step is a trip"
+  },
+  "route": {
+    "vertices": [
+      [1458, 1795],
+      [900, 1795],
+      [900, 1584],
+      [345, 1584]
+    ],
+    "why": "three straight legs (a powered rail runs only straight): west under the plateau, south under the foothills, west under the coast, the shelf and the basin to the island's stairwell. The cut's head is 3 blocks east of the owner's point so the point stands in the cut's first steps"
+  },
+  "strip_mine": {
+    "junction_x": 1420,
+    "side": "north",
+    "drift_r": 1,
+    "drift_height": 3,
+    "corridor_to_z": 1736,
+    "branch_every": 3,
+    "branch_length": 14,
+    "branch_height": 2,
+    "first_branch_z": 1777,
+    "chamber": {"r": 2, "height": 3},
+    "why": "the ordinary strip mine: a 3-wide corridor north off the drift, and from it 1-wide, 2-high branches every third block on both sides, two blocks of rock between each pair, so a player walking the branches sees every face. It ends in a small chamber with the miners' barrel",
+    "ores": {
+      "near": ["minecraft:copper_ore", "minecraft:copper_ore", "minecraft:copper_ore", "minecraft:lapis_ore"],
+      "far": ["minecraft:copper_ore", "minecraft:lapis_ore", "minecraft:gold_ore", "minecraft:gold_ore"],
+      "deep_variant": "minecraft:deepslate_%s",
+      "share_near": 0.04,
+      "share_far": 0.08,
+      "hidden_share": 0.02,
+      "end_seam": 3,
+      "why": "the ores the Rift dig camp's faces already carry (data/rift_mines.json veins: copper, gold, lapis), and nothing else: coal, iron, redstone, diamond and emerald ore are spawn conditions (data/spawn_blocks.json: rolycoly, aron, klink, carbink, sableye and more), and a mine is not the place to decide encounters by accident. Exposure rises from the corridor's start to its end and the far branches carry more gold and lapis, so walking further pays; every branch ends on a seam of end_seam ore cells, and hidden_share more lie one block into the walls for anyone who digs"
+    }
+  },
+  "island": {
+    "id": "driftmouth_isle",
+    "display_name": "Driftmouth Isle",
+    "centre": {
+      "x": 336,
+      "z": 1586,
+      "ground_y": 69,
+      "heightmap_seabed_y": 26,
+      "ground_note": "built ground: tools/sea_drift.py raises the isle out of y26 seabed with tools/islet.py's island_top (the Relic Island shape at this radius, crown and seed), so the heightmap carries the seabed and the ground is ours: y69 here is the headhouse pad (pad_y), the crown elsewhere reaches y73"
+    },
+    "built_ground": "tools/sea_drift.py",
+    "radius": 24,
+    "crown_y": 72,
+    "skirt": 10,
+    "skirt_why": "islet.py's shape ends at the waterline in a wall 4 under the sea; over 36 blocks of water that would be a pillar, so a talus skirt falls from there to the seabed over 10 more blocks of radius",
+    "beach": "minecraft:gravel",
+    "beach_why": "a shingle beach, the mine's spoil: sand is a spawn condition (sandygast, palossand: data/spawn_blocks.json), gravel is not",
+    "pad_y": 69,
+    "pad_why": "the ground the headhouse stands on, levelled over the house and 2 round it; the isle's crown there is about y67-72",
+    "stairwell": {
+      "east_landing_x": [342, 344],
+      "west_landing_x": [330, 332],
+      "rows_z": [1584, 1588],
+      "spine_z": 1586,
+      "flight_steps": 9,
+      "headroom": 4,
+      "why": "the drift arrives under the isle at the seabed's depth and climbs to the crown in a scissor stair: straight flights of nine steps along x, turning at landings, the two rows parted by a one-block spine of rock so a fall is never longer than one flight"
+    },
+    "headhouse": {
+      "box": [329, 1582, 345, 1590],
+      "wall_height": 5,
+      "door": "west",
+      "why": "the made thing the drift surfaces in: a stone-brick hall with spruce corners over the stairwell's top, its door facing west over the isle to the open sea, a lantern post outside and a path down to the shingle"
+    },
+    "stacks": [
+      {"id": "ne", "x": 364, "z": 1558, "r": 3, "top": 67},
+      {"id": "nw", "x": 308, "z": 1558, "r": 3, "top": 69},
+      {"id": "sw", "x": 308, "z": 1614, "r": 3, "top": 66},
+      {"id": "se", "x": 364, "z": 1614, "r": 3, "top": 68}
+    ],
+    "stacks_why": "four sea stacks 40 blocks out on the diagonals, each carrying two of the isle's Habitat Blocks inside its rock: one 4 under the sea for the surface and the upper water, one 10 over the seabed for the deep water and the floor. 56 blocks apart, so no two stacks' spawn boxes (16 each way) overlap; activated blocks do not cancel one another in any case (tools/habitat_blocks.py)"
+  },
+  "waters": {
+    "pool": "driftmouth_isle_waters",
+    "level_band": {"minimum": 24, "maximum": 30},
+    "level_band_why": "reached from the foothill woods (band 21-23) off Route 3, before the third gym, whose cap is 30 (derived/availability.json caps: gym 3 30; docs/mechanics/PROGRESSION_LADDER.md 4.1). One cap band, the shape the western sea's bands take (data/spawns.json marine_zones windward_sea: one gym cap per band): the top of the band is the cap the player holds there, so everything caught is usable",
+    "style": "activated",
+    "spawn_range": 16,
+    "cancel_range": 16,
+    "max_spawns": 3,
+    "max_spawns_per_activation": 1,
+    "high_below_sea": 4,
+    "low_above_seabed": 10,
+    "roster": [
+      {"pokemon": "chinchou", "family": "chinchou", "rarity": "anchor", "evolutions": [{"pokemon": "lanturn", "level": 27}]},
+      {"pokemon": "horsea", "family": "horsea", "rarity": "common", "evolutions": [{"pokemon": "seadra", "level": 32}]},
+      {"pokemon": "binacle", "family": "binacle", "rarity": "common", "evolutions": []},
+      {"pokemon": "frillish", "family": "frillish", "rarity": "uncommon", "evolutions": [{"pokemon": "jellicent", "level": 40}]},
+      {"pokemon": "luvdisc", "family": "luvdisc", "rarity": "uncommon", "evolutions": []},
+      {"pokemon": "qwilfish", "family": "qwilfish", "rarity": "uncommon", "evolutions": []},
+      {"pokemon": "clauncher", "family": "clauncher", "rarity": "uncommon", "evolutions": []},
+      {"pokemon": "relicanth", "family": "relicanth", "rarity": "rare", "evolutions": []},
+      {"pokemon": "dratini", "family": "dratini", "rarity": "rare", "evolutions": [{"pokemon": "dragonair", "level": 30}]},
+      {"pokemon": "lapras", "family": "lapras", "rarity": "rare", "evolutions": []}
+    ],
+    "roster_why": "cold, strange and old: what lives off a spoil heap in the northern shelf's water. None of Magikarp, Goldeen or Barraskewda (the owner is tired of them: every lake is that), and none of the western sea's deep band (data/spawns.json windward_depths: chinchou is the one shared, as the anchor). Binacle clings to the stacks and the shingle, the one grounded species, so the isle's dry ground is not empty where the blocks cancel the pack's spawns. Rarity buckets and family weights are data/spawns.json `rarity`. Each species' spawnable position is taken from its existing entries in data/spawns.json (tools/position_types.py derived them from the Cobblemon jar), never written here. An evolution whose level is above the band's minimum is listed authored-only (weight 0), the evolution_policy's eligibility rule; the levels are the ones data/spawns.json's eligibility reasons already record. Barbaracle and Clawitzer are left out: no entry in data/spawns.json records their level",
+    "shore": [[336, 1606], [336, 1566]],
+    "shore_why": "two more blocks inside the isle's own shore rock, north and south, 4 under the sea, so the water against the beach is the isle's too",
+    "why": "activated blocks keep up to max_spawns of the pool alive round themselves (data/habitat_blocks.json, the elder nests), and cancel_range 16 cancels the pack's own natural spawns round each block, which is where the Magikarp come from: the open sea here is the pack's inherited pools (STATE: 'the pack's own ocean pools ran there (Magikarp 1-20 and Wishiwashi 1-18)'). Whether an activated block's fixed-area spawner places submerged, surface and seafloor spawns in water is NOT verified: the research reads it as the ordinary position search (docs/research/notes/habitat-nest-perching.md: the spawner is a box round the block) and no one has looked"
+  },
+  "palette": {
+    "rock_upper": ["minecraft:stone", "minecraft:stone", "minecraft:andesite", "minecraft:tuff"],
+    "rock_lower": ["minecraft:deepslate", "minecraft:deepslate", "minecraft:tuff", "minecraft:cobbled_deepslate"],
+    "rock_split_y": 48,
+    "rock_split_why": "the Rift dig camp's two rock palettes (data/rift_mines.json), split lower here: the drift's land half runs in stone, its sea half in deepslate",
+    "stack_rock": ["minecraft:andesite", "minecraft:andesite", "minecraft:tuff", "minecraft:stone", "minecraft:cobblestone"],
+    "stair_upper": "minecraft:stone_brick_stairs",
+    "stair_lower": "minecraft:cobbled_deepslate_stairs",
+    "rail": "minecraft:powered_rail",
+    "rail_why": "as the Rift dig camp (data/rift_mines.json palette rail_why): minecraft:rail is a spawn condition (rolycoly, carkol, coalossal); powered rail is named by none. Unpowered, it is scenery",
+    "post": "minecraft:polished_basalt",
+    "beam": "minecraft:waxed_cut_copper",
+    "wall": ["minecraft:stone_bricks", "minecraft:stone_bricks", "minecraft:mossy_stone_bricks", "minecraft:cracked_stone_bricks"],
+    "corner": "minecraft:spruce_log",
+    "roof": "minecraft:spruce_planks",
+    "floor": "minecraft:spruce_planks",
+    "fence": "minecraft:spruce_fence",
+    "path": "minecraft:dirt_path"
+  },
+  "lights": {
+    "every": 6,
+    "frames_every": 6,
+    "why": "a lantern under the roof every 6 blocks of drift, a timber set (basalt posts in the walls, a copper beam in the roof) between each pair, as the dig camp's adit (frames 5, light_every 5). Light is checked, not assumed: the audit floods block light from every lantern and fails any floor cell under a roof at light 0. There are no vanilla hostiles in this pack (docs/STATE.md, MobsBeGone), so the light is for the walk; at light 1 or more nothing hostile could spawn anyway"
+  },
+  "caches": {
+    "strips": {
+      "reward": "sea_drift_strips",
+      "contents": [
+        {"item": "cobblemon:heavy_ball", "count": 3},
+        {"item": "cobblemon:great_ball", "count": 2},
+        {"item": "cobblemon:revive", "count": 1}
+      ],
+      "message": "In the barrel at the end of the strips: three Heavy Balls, two Great Balls and a Revive."
+    },
+    "isle": {
+      "reward": "sea_drift_isle",
+      "contents": [
+        {"item": "cobblemon:net_ball", "count": 5},
+        {"item": "cobblemon:super_potion", "count": 2}
+      ],
+      "message": "In the barrel in the headhouse: five Net Balls and two Super Potions."
+    },
+    "why": "the dig's finds as the old mine's are (data/rewards.json r1_old_mine: a barrel as scenery, the reward an advancement on reaching it, per player and once). Every item id is one data/rewards.json already verified against its jar"
+  }
+}

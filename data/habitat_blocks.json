@@ -7025,6 +7025,251 @@
       },
       "status": "placed",
       "why": "A nest in a themed sapling (tools/themed_saplings.py; SAPLING_BIRDS.md plan v2). The point is a cell of the tree's own trunk, solid on all six faces in the prefab cobblers:kits/trees/themed/sapling_desert, so the block is hidden. Up to 8 of the tree's bird alive within 16 blocks of it, as in the elders' nests."
+    },
+    {
+      "id": "ursaluna_den_outskirts_ward",
+      "place": "the Ursaluna's den west of Highwire, the slope in front of the mouth (data/ursaluna_cave.json)",
+      "pool": "cobblers:ursaluna_den_outskirts",
+      "style": "natural",
+      "replace_spawns": true,
+      "range_of_influence": 20,
+      "position": {
+        "x": 1514,
+        "y": 158,
+        "z": 1424
+      },
+      "status": "planned",
+      "why": "Teddiursa on the den's outskirts (the owner, 2026-10-02). Set in the ground's own top block on the cave's axis 14 blocks out from the mouth (tools/ground.py: y158), so its range of 20 covers the slope a player climbs to the opening and the first few blocks of the passage, and stops well short of the hall and the den. The nearest other Habitat Block is 360 blocks away (the Mt Vessu sapling, activated), so nothing overlaps."
+    },
+    {
+      "id": "driftmouth_stack_ne_high",
+      "place": "Driftmouth Isle, the NE sea stack: inside its rock, 4 under the sea (the surface and the upper water)",
+      "pool": "cobblers:driftmouth_isle_waters",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 364,
+        "y": 58,
+        "z": 1558
+      },
+      "mimic": "minecraft:andesite",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 16,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 3
+      },
+      "status": "planned",
+      "why": "data/sea_drift.json waters: written by tools/sea_drift.py records --write from its model, in rock its island pass writes (the mimic is that rock). Keeps up to 3 of the isle's water roster alive within 16 and cancels the pack's natural spawns within 16 (the Magikarp). In-water activated spawning is not verified"
+    },
+    {
+      "id": "driftmouth_stack_ne_low",
+      "place": "Driftmouth Isle, the NE sea stack: inside its rock, 10 over the seabed (the deep water and the floor)",
+      "pool": "cobblers:driftmouth_isle_waters",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 364,
+        "y": 36,
+        "z": 1558
+      },
+      "mimic": "minecraft:andesite",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 16,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 3
+      },
+      "status": "planned",
+      "why": "data/sea_drift.json waters: written by tools/sea_drift.py records --write from its model, in rock its island pass writes (the mimic is that rock). Keeps up to 3 of the isle's water roster alive within 16 and cancels the pack's natural spawns within 16 (the Magikarp). In-water activated spawning is not verified"
+    },
+    {
+      "id": "driftmouth_stack_nw_high",
+      "place": "Driftmouth Isle, the NW sea stack: inside its rock, 4 under the sea (the surface and the upper water)",
+      "pool": "cobblers:driftmouth_isle_waters",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 308,
+        "y": 58,
+        "z": 1558
+      },
+      "mimic": "minecraft:andesite",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 16,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 3
+      },
+      "status": "planned",
+      "why": "data/sea_drift.json waters: written by tools/sea_drift.py records --write from its model, in rock its island pass writes (the mimic is that rock). Keeps up to 3 of the isle's water roster alive within 16 and cancels the pack's natural spawns within 16 (the Magikarp). In-water activated spawning is not verified"
+    },
+    {
+      "id": "driftmouth_stack_nw_low",
+      "place": "Driftmouth Isle, the NW sea stack: inside its rock, 10 over the seabed (the deep water and the floor)",
+      "pool": "cobblers:driftmouth_isle_waters",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 308,
+        "y": 35,
+        "z": 1558
+      },
+      "mimic": "minecraft:andesite",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 16,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 3
+      },
+      "status": "planned",
+      "why": "data/sea_drift.json waters: written by tools/sea_drift.py records --write from its model, in rock its island pass writes (the mimic is that rock). Keeps up to 3 of the isle's water roster alive within 16 and cancels the pack's natural spawns within 16 (the Magikarp). In-water activated spawning is not verified"
+    },
+    {
+      "id": "driftmouth_stack_sw_high",
+      "place": "Driftmouth Isle, the SW sea stack: inside its rock, 4 under the sea (the surface and the upper water)",
+      "pool": "cobblers:driftmouth_isle_waters",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 308,
+        "y": 58,
+        "z": 1614
+      },
+      "mimic": "minecraft:andesite",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 16,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 3
+      },
+      "status": "planned",
+      "why": "data/sea_drift.json waters: written by tools/sea_drift.py records --write from its model, in rock its island pass writes (the mimic is that rock). Keeps up to 3 of the isle's water roster alive within 16 and cancels the pack's natural spawns within 16 (the Magikarp). In-water activated spawning is not verified"
+    },
+    {
+      "id": "driftmouth_stack_sw_low",
+      "place": "Driftmouth Isle, the SW sea stack: inside its rock, 10 over the seabed (the deep water and the floor)",
+      "pool": "cobblers:driftmouth_isle_waters",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 308,
+        "y": 36,
+        "z": 1614
+      },
+      "mimic": "minecraft:andesite",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 16,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 3
+      },
+      "status": "planned",
+      "why": "data/sea_drift.json waters: written by tools/sea_drift.py records --write from its model, in rock its island pass writes (the mimic is that rock). Keeps up to 3 of the isle's water roster alive within 16 and cancels the pack's natural spawns within 16 (the Magikarp). In-water activated spawning is not verified"
+    },
+    {
+      "id": "driftmouth_stack_se_high",
+      "place": "Driftmouth Isle, the SE sea stack: inside its rock, 4 under the sea (the surface and the upper water)",
+      "pool": "cobblers:driftmouth_isle_waters",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 364,
+        "y": 58,
+        "z": 1614
+      },
+      "mimic": "minecraft:andesite",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 16,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 3
+      },
+      "status": "planned",
+      "why": "data/sea_drift.json waters: written by tools/sea_drift.py records --write from its model, in rock its island pass writes (the mimic is that rock). Keeps up to 3 of the isle's water roster alive within 16 and cancels the pack's natural spawns within 16 (the Magikarp). In-water activated spawning is not verified"
+    },
+    {
+      "id": "driftmouth_stack_se_low",
+      "place": "Driftmouth Isle, the SE sea stack: inside its rock, 10 over the seabed (the deep water and the floor)",
+      "pool": "cobblers:driftmouth_isle_waters",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 364,
+        "y": 37,
+        "z": 1614
+      },
+      "mimic": "minecraft:andesite",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 16,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 3
+      },
+      "status": "planned",
+      "why": "data/sea_drift.json waters: written by tools/sea_drift.py records --write from its model, in rock its island pass writes (the mimic is that rock). Keeps up to 3 of the isle's water roster alive within 16 and cancels the pack's natural spawns within 16 (the Magikarp). In-water activated spawning is not verified"
+    },
+    {
+      "id": "driftmouth_shore_south",
+      "place": "Driftmouth Isle: inside its own shore rock, 4 under the sea",
+      "pool": "cobblers:driftmouth_isle_waters",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 336,
+        "y": 58,
+        "z": 1606
+      },
+      "mimic": "minecraft:andesite",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 16,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 3
+      },
+      "status": "planned",
+      "why": "data/sea_drift.json waters: written by tools/sea_drift.py records --write from its model, in rock its island pass writes (the mimic is that rock). Keeps up to 3 of the isle's water roster alive within 16 and cancels the pack's natural spawns within 16 (the Magikarp). In-water activated spawning is not verified"
+    },
+    {
+      "id": "driftmouth_shore_north",
+      "place": "Driftmouth Isle: inside its own shore rock, 4 under the sea",
+      "pool": "cobblers:driftmouth_isle_waters",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 336,
+        "y": 58,
+        "z": 1566
+      },
+      "mimic": "minecraft:andesite",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 16,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 3
+      },
+      "status": "planned",
+      "why": "data/sea_drift.json waters: written by tools/sea_drift.py records --write from its model, in rock its island pass writes (the mimic is that rock). Keeps up to 3 of the isle's water roster alive within 16 and cancels the pack's natural spawns within 16 (the Magikarp). In-water activated spawning is not verified"
     }
   ]
 }

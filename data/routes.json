@@ -161,7 +161,7 @@
             3882
           ]
         ],
-        "basis": "the measured Rift entry into the south-west arm, the fork, and the apex (this route's barriers' source coordinates); the trunk runs fork to apex (3643, 6100) added 2026-09-21: moving the start to Giovanni's gate square let the line drift 50 blocks west into a 13-block seam between sub-region polygons at (3606-3611, 6011-6022); this holds it on its earlier line, which had no hole. The apex (3686, 2442) dropped 2026-09-21: the League moved onto the trunk head below it, and the route ends at its forecourt."
+        "basis": "the measured Rift entry into the south-west arm, the fork, and the apex (the fork and the apex are still this route's barriers' source coordinates; (3738, 5082) is NOT any more -- the rift_entry barrier moved out to the trailhead at (3548, 5322) on 2026-10-01, and this waypoint deliberately did not follow it. It pins the line across the south-west arm's floor, and moving it would re-run the A*, which would move the walked line, the 104-block corridor, the 281 spawn boxes and the ground the Rift sculpt was already applied to. The line through it is unchanged); the trunk runs fork to apex (3643, 6100) added 2026-09-21: moving the start to Giovanni's gate square let the line drift 50 blocks west into a 13-block seam between sub-region polygons at (3606-3611, 6011-6022); this holds it on its earlier line, which had no hole. The apex (3686, 2442) dropped 2026-09-21: the League moved onto the trunk head below it, and the route ends at its forecourt."
       }
     },
     "endpoints": {
@@ -20099,13 +20099,20 @@
           "id": "rift_entry",
           "kind": "rift_descent",
           "at": {
+            "x": 3548,
+            "y": 110.84,
+            "z": 5322
+          },
+          "note": "The Victory Road trailhead, on the rim at walked distance 1,174: where the route meets the gate and starts down into the dry south-west arm. The lip crossing is 20 blocks on at (3557, 111.22, 5306) and the sculpted switchback below it; the floor is 299 walked blocks further, at (3738, 86.46, 5082), where this barrier used to stand.",
+          "source_coordinate": {
+            "x": 3548,
+            "z": 5322
+          },
+          "moved_on": "2026-10-01",
+          "moved_why": "the owner's decision B11b: \"the gatehouse moves to the trailhead. A gate 300 blocks inside the basin is passed before a player reaches what gates it.\" At (3738, 5082) this barrier and the zone system's G2 gatehouse stood together 318.70 walked blocks PAST the trailhead and 298.97 past the lip crossing, on the basin floor, while Z2's own boxes begin 53 blocks along the road from the trailhead -- so the descent a player had already made was what the barrier named, and the warden who gates it stood where no unqualified player could reach. Both moved here together (data/rift_zones.json zones.z2.guard). The sculpted descent itself did not: it is in the heightmap, and it keeps a backstop post (zones.z2.posts[victory_road_descent]).",
+          "superseded_at": {
             "x": 3738,
             "y": 86.46,
-            "z": 5082
-          },
-          "note": "Drops into the dry south-west arm.",
-          "source_coordinate": {
-            "x": 3738,
             "z": 5082
           }
         },
