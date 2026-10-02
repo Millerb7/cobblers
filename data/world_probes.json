@@ -1693,6 +1693,528 @@
         ],
         "expect": true
       }
+    ],
+    "mega_dens": [
+      {
+        "what": "-> Test passed (the pad under the anchor)",
+        "block": [
+          4528,
+          122,
+          4416,
+          "minecraft:coarse_dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the anchor itself is open)",
+        "block": [
+          4528,
+          123,
+          4416,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the top of the head room)",
+        "block": [
+          4528,
+          128,
+          4416,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the edge of the spawn cylinder)",
+        "block": [
+          4531,
+          124,
+          4416,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the sign's own column, at its top (spoil_heap))",
+        "block": [
+          4536,
+          126,
+          4419,
+          "minecraft:iron_bars"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the trampled approach)",
+        "block": [
+          4512,
+          122,
+          4411,
+          "minecraft:dirt_path"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the top of the tallest ring boulder)",
+        "block": [
+          4540,
+          124,
+          4407,
+          "minecraft:tuff"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the pad under the anchor)",
+        "block": [
+          4576,
+          121,
+          4680,
+          "minecraft:rooted_dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the anchor itself is open)",
+        "block": [
+          4576,
+          122,
+          4680,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the top of the head room)",
+        "block": [
+          4576,
+          127,
+          4680,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the edge of the spawn cylinder)",
+        "block": [
+          4579,
+          123,
+          4680,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the sign's own column, at its top (woodpile))",
+        "block": [
+          4583,
+          123,
+          4683,
+          "minecraft:stripped_oak_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the trampled approach)",
+        "block": [
+          4561,
+          121,
+          4674,
+          "minecraft:dirt_path"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the top of the tallest ring boulder)",
+        "block": [
+          4586,
+          124,
+          4670,
+          "minecraft:mossy_cobblestone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the pad under the anchor)",
+        "block": [
+          4608,
+          132,
+          4944,
+          "minecraft:coarse_dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the anchor itself is open)",
+        "block": [
+          4608,
+          133,
+          4944,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the top of the head room)",
+        "block": [
+          4608,
+          138,
+          4944,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the edge of the spawn cylinder)",
+        "block": [
+          4611,
+          134,
+          4944,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the sign's own column, at its top (strike))",
+        "block": [
+          4605,
+          132,
+          4936,
+          "minecraft:obsidian"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the trampled approach)",
+        "block": [
+          4614,
+          133,
+          4959,
+          "minecraft:dirt_path"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the top of the tallest ring boulder)",
+        "block": [
+          4622,
+          136,
+          4944,
+          "minecraft:tuff"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the pad under the anchor)",
+        "block": [
+          4488,
+          144,
+          5216,
+          "minecraft:soul_soil"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the anchor itself is open)",
+        "block": [
+          4488,
+          145,
+          5216,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the top of the head room)",
+        "block": [
+          4488,
+          150,
+          5216,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the edge of the spawn cylinder)",
+        "block": [
+          4491,
+          146,
+          5216,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the sign's own column, at its top (bone_pile))",
+        "block": [
+          4482,
+          145,
+          5210,
+          "minecraft:bone_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the trampled approach)",
+        "block": [
+          4500,
+          145,
+          5228,
+          "minecraft:dirt_path"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the top of the tallest ring boulder)",
+        "block": [
+          4502,
+          147,
+          5216,
+          "minecraft:cobbled_deepslate"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (a skull)",
+        "block": [
+          4481,
+          145,
+          5211,
+          "minecraft:skeleton_skull"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the pad under the anchor)",
+        "block": [
+          3944,
+          146,
+          3904,
+          "minecraft:snow_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the anchor itself is open)",
+        "block": [
+          3944,
+          147,
+          3904,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the top of the head room)",
+        "block": [
+          3944,
+          152,
+          3904,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the edge of the spawn cylinder)",
+        "block": [
+          3947,
+          148,
+          3904,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the sign's own column, at its top (frost))",
+        "block": [
+          3937,
+          152,
+          3909,
+          "minecraft:blue_ice"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the trampled approach)",
+        "block": [
+          3961,
+          144,
+          3894,
+          "minecraft:dirt_path"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the top of the tallest ring boulder)",
+        "block": [
+          3946,
+          149,
+          3918,
+          "minecraft:calcite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the pad under the anchor)",
+        "block": [
+          4080,
+          148,
+          4168,
+          "minecraft:coarse_dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the anchor itself is open)",
+        "block": [
+          4080,
+          149,
+          4168,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the top of the head room)",
+        "block": [
+          4080,
+          154,
+          4168,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the edge of the spawn cylinder)",
+        "block": [
+          4083,
+          150,
+          4168,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the sign's own column, at its top (crater))",
+        "block": [
+          4071,
+          146,
+          4168,
+          "minecraft:andesite"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the crater is open where the ground was)",
+        "block": [
+          4071,
+          148,
+          4168,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the trampled approach)",
+        "block": [
+          4097,
+          146,
+          4169,
+          "minecraft:dirt_path"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the top of the tallest ring boulder)",
+        "block": [
+          4091,
+          151,
+          4159,
+          "minecraft:cobblestone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the pad under the anchor)",
+        "block": [
+          4248,
+          128,
+          5328,
+          "minecraft:smooth_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the anchor itself is open)",
+        "block": [
+          4248,
+          129,
+          5328,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the top of the head room)",
+        "block": [
+          4248,
+          134,
+          5328,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the edge of the spawn cylinder)",
+        "block": [
+          4251,
+          130,
+          5328,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the sign's own column, at its top (burrow))",
+        "block": [
+          4243,
+          125,
+          5321,
+          "minecraft:smooth_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the burrow is open where the ground was)",
+        "block": [
+          4243,
+          127,
+          5321,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the trampled approach)",
+        "block": [
+          4258,
+          129,
+          5341,
+          "minecraft:dirt_path"
+        ],
+        "expect": true
+      },
+      {
+        "what": "-> Test passed (the top of the tallest ring boulder)",
+        "block": [
+          4261,
+          130,
+          5322,
+          "minecraft:sandstone"
+        ],
+        "expect": true
+      }
     ]
   }
 }
