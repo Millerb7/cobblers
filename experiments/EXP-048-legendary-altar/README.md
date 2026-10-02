@@ -185,3 +185,12 @@ pickup disabled. They are evidence, harmless, and despawn on their own.
 - Still not recorded: the Spectrier thrown carrot (step 1), Articuno's feather (step 2).
 - **Consequence for play is unchanged:** the crown has no recipe or loot source, so in normal play Calyrex needs the
   campaign to hand the crown out, as the feathers will be.
+
+### VERIFIED IN GAME by the owner, 2026-10-02 (supersedes "the owner also reports" above)
+
+At the pasted Crown Cemetery on staging the owner put the Calyrex crown on the statue: **Spectrier spawned and walked
+around.** A real player action fired a raw-pasted LumyMon altar on Cobblemon 1.8.0 / LumyMon 0.6.6 - the thing the
+console half could never test. **Status: the altar mechanism WORKS when pasted.** Species note: the jar's
+`CalyrexStatue` strings name `calyrex level=70`; the owner saw Spectrier. Not resolved here; the Spectrier cap is
+built to cover every path to a Spectrier at the cemetery. What it unblocks is listed in
+`data/adopted_legendary_sites.json` `a_dead_altar_must_not_block.what_it_unblocks`.
