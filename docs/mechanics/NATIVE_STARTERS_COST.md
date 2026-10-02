@@ -151,10 +151,52 @@ integration session.
 5. **Budget about one session for the stress-test starter model whichever option is chosen.** Do not trust a stress
    figure for the five until it lands.
 
+## 6a. Owner decisions so far (2026-10-02)
+
+- **Taken:** a-lite at 30 and 45. EXP-049 first. Reconcile with `194330c` before building. **Meltan stays.**
+- **Meltan's evolution, under a-lite** (this note's call, as the owner asked):
+
+| Stage | Form | From | How it advances |
+|---|---|---|---|
+| 1 | Meltan, aspect `cobblers_starter_1`, 330 BST in Melmetal's shape, authored movepool | level 5 | `level_up`, `level` 30, result `meltan unaspect=cobblers_starter_1 aspect=cobblers_starter_2` |
+| 2 | Meltan, aspect `cobblers_starter_2`, 430 BST, the same pool continued | 30 | `level_up`, `level` **45**, result `melmetal unaspect=cobblers_starter_2`, **no anvil** |
+| 3 | Melmetal, native 600 | 45 | none |
+
+- **The anvil is dropped.** Every other line reaches its final form on level alone at 45. Kubfu keeps its scroll
+  only because the scroll *is* the Single/Rapid choice; the anvil chooses nothing. A held-item condition would make
+  Meltan the one starter that silently fails to evolve at the shared moment unless the player knows to hand it a
+  block. Passive evolutions are tried every second (`PlayerPartyStore.kt:146`), so a forgotten anvil means no
+  evolution at all, not a late one.
+- **Wild Meltan are untouched.** The 45 lives in our form's own `evolutions`, which never falls back to the species
+  list (`FormData.kt:210-211`). So Cobbleverse's anvil + 70 still governs a wild-caught Meltan. Lowering that too
+  would mean shadowing Cobbleverse's `species_additions/meltan.json` id, which Mega Showdown also ships, so it would
+  depend on pack order. **Not recommended, and not needed for the starter.**
+- **The movepool, MEASURED** (wins of 35 leader Pokémon, a-lite at 30/45, stages 330/430, native Melmetal):
+
+| Variant | Wins | Note |
+|---|---|---|
+| native moves, Meltan's own shape | 7 | the floor every earlier table found |
+| authored pool, Meltan's own shape | 13 | |
+| **authored pool, Melmetal's shape** | **16** | **inside the other four's 12–19 band** |
+| the same plus a Melmetal form with its own pool | 21 | above the band; an 11th form, not needed |
+
+- **The draft pool** is a balance pass's starting point, not a decision: 1 headbutt, thundershock, harden; 8 rock
+  tomb; 14 brick break; 18 thunder punch; 22 ice punch; 26 iron head; 30 rock slide; 34 high horsepower; 38 body
+  press; 42 darkest lariat.
+  - Every move is in Melmetal's 1.8.0 learnset, so it is plausible for the line.
+  - The pool is physical, because Meltan's Attack beats its Special Attack and its own legal list is special
+    Electric/Steel.
+- **So Meltan needs no extra machinery.** Its stage forms already exist under a-lite; the pool is data in them.
+
+## 6b. The level cap after gym 8
+
+The owner's change to the cap after gym 8 and after the League is costed separately in
+`docs/mechanics/LEAGUE_LEVEL_CAP.md`. It does not move a-lite's points (30 and 45 sit under gyms 3 and 6).
+
 ## 7. Decisions for the owner
 
-1. **Points:** 30/45 (evolves *for* gyms 3 and 6) or 31/46 (a reward *for* beating them)? Or the starter curve, 16/36?
-2. **Two points on every line** (a-lite) **or one** on the two-stage lines (b or c)?
+1. ~~**Points**~~: **30/45, decided** (2026-10-02).
+2. ~~**Two points on every line or one**~~: **a-lite, decided** (2026-10-02), subject to EXP-049.
 3. **Forced or offered:** `optional: false`, or let a player keep the base form?
-4. **Meltan:** keep it with an authored movepool, or replace it?
+4. ~~**Meltan:** keep it with an authored movepool, or replace it?~~ **Kept** (2026-10-02); see §6a.
 5. **Kubfu's scrolls:** handed out by whom, and at which point?

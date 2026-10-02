@@ -1,4 +1,4 @@
-# Handover: 2026-10-02, five native-evolving starters (research and costing only)
+# Handover: 2026-10-02, five native-evolving starters and the League's level cap (research and costing only)
 
 A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else, before it starts.
 
@@ -23,12 +23,17 @@ in-game checks and decisions are unchanged by this session. Read it with
 
 ## 3. What waits on the owner
 
-The five decisions at the end of `docs/mechanics/NATIVE_STARTERS_COST.md`:
-1. 30/45 or 31/46 (or 16/36);
-2. two points on every line (a-lite) or one;
-3. forced or offered evolutions;
-4. Meltan kept with an authored movepool, or replaced;
-5. who hands out Kubfu's scrolls.
+**Decided on 2026-10-02:** a-lite at 30/45, EXP-049 first, reconcile with `194330c` before building, and Meltan stays
+(no anvil, authored movepool: `NATIVE_STARTERS_COST.md` §6a).
+
+**Open:**
+- **Kubfu's scrolls:** who hands them out, and when.
+- **Forced or offered** evolutions (`optional: false`).
+- **The cap after gym 8** (`docs/mechanics/LEAGUE_LEVEL_CAP.md`):
+  - **L1:** 59 (recommended), 58 or 57.
+  - **L2:** the Champion uncapped from Lance's defeat, or capped until Blue.
+  - **L3:** may we commit an authored override of Cobbleverse's League mob files?
+  - **Lugia's level**, now that its band is known to be uncapped.
 
 ## 4. What a cold start must not rediscover
 
@@ -46,6 +51,12 @@ The five decisions at the end of `docs/mechanics/NATIVE_STARTERS_COST.md`:
   the gym caps and foes were built straight from `data/trainers.json` with `battle_sim`'s own functions.
 - **The scratch scripts** (`spread.py`, `forms.py`, `evolv.py`) lived in the session scratchpad and are not in the
   repo. The method is in the research note, §8.
+- **Learned in rctmod v0.19.0-beta source:**
+  - the cap after the last series trainer is 100;
+  - a series is never reset on completion;
+  - per-trainer `relativeLevelCap` lives in the mob file;
+  - the trainer-level cache survives `/reload`.
+- **The brief's "E4 aces 57/58/59/60" is the spread inside each team.** All four aces are 60 (`data/trainers.json`).
 - **Learned in 1.8.0 source:**
   - passive evolutions are tried every second (`PlayerPartyStore.kt:146`);
   - `evolution_tested` has `set_result`;
