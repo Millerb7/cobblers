@@ -1221,6 +1221,248 @@
         ],
         "expect": true
       }
+    ],
+    "drovers_hollow": [
+      {
+        "what": "the barn floor ring at the cattle doorway",
+        "block": [
+          3960,
+          100,
+          6023,
+          "minecraft:cobblestone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the cattle doorway is open",
+        "block": [
+          3960,
+          102,
+          6023,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the ramp's top step",
+        "block": [
+          3959,
+          100,
+          6023,
+          "minecraft:spruce_stairs"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the man's doorway",
+        "block": [
+          3972,
+          101,
+          6030,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the spring trough",
+        "block": [
+          3982,
+          101,
+          6023,
+          "minecraft:water_cauldron"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the well's trapdoor",
+        "block": [
+          3984,
+          100,
+          6023,
+          "minecraft:spruce_trapdoor"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the well-head ring",
+        "block": [
+          3984,
+          101,
+          6022,
+          "minecraft:mossy_stone_brick_slab"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the well's ladder",
+        "block": [
+          3984,
+          95,
+          6023,
+          "minecraft:ladder"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the loft ladder",
+        "block": [
+          3976,
+          103,
+          6017,
+          "minecraft:ladder"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the loft floor",
+        "block": [
+          3980,
+          104,
+          6023,
+          "minecraft:spruce_planks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the drift",
+        "block": [
+          3998,
+          93,
+          6023,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the drift's floor",
+        "block": [
+          3998,
+          91,
+          6023,
+          "minecraft:gravel"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the shell over the drift",
+        "block": [
+          3998,
+          97,
+          6023,
+          "minecraft:stone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "a roof beam at the drift's first prop",
+        "block": [
+          3988,
+          95,
+          6023,
+          "minecraft:stripped_spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the drift's first lantern",
+        "block": [
+          3990,
+          94,
+          6023,
+          "minecraft:lantern"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the store",
+        "block": [
+          4017,
+          93,
+          6023,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the store's floor",
+        "block": [
+          4017,
+          91,
+          6023,
+          "minecraft:cobblestone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the find's barrel",
+        "block": [
+          4021,
+          92,
+          6023,
+          "minecraft:barrel"
+        ],
+        "expect": true
+      },
+      {
+        "what": "THE STORE sign",
+        "block": [
+          4021,
+          93,
+          6023,
+          "minecraft:spruce_wall_sign"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the fold's gate",
+        "block": [
+          3972,
+          99,
+          6034,
+          "minecraft:spruce_fence_gate"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the fold's north-west corner post (ground y99 there)",
+        "block": [
+          3962,
+          100,
+          6034,
+          "minecraft:spruce_fence"
+        ],
+        "expect": true
+      },
+      {
+        "what": "where the drover stands",
+        "block": [
+          3975,
+          98,
+          6032,
+          "minecraft:dirt_path"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the ridge",
+        "block": [
+          3964,
+          114,
+          6023,
+          "minecraft:spruce_planks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "an aisle lantern",
+        "block": [
+          3963,
+          105,
+          6023,
+          "minecraft:lantern"
+        ],
+        "expect": true
+      }
     ]
   }
 }
