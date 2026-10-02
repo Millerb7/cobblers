@@ -25,7 +25,13 @@ level in data/world.json. One voxel model over the whole run:
   the well      the drift's end climbs to the isle's crown in a scissor stair (flights of `flight_steps`, landings at the
                 ends, a one-block spine between the rows); the drift's end is lowered so the flights come out whole
   the shell     every cell within shell_r of anything opened, not opened, at or under the effective ground: rock
-  fittings      stairs, powered rail, timber sets (basalt posts, copper beam), hanging lanterns, the barrels
+  fittings      stairs, timber sets (basalt posts, copper beam), hanging lanterns, the barrels
+  the line      a rail line a ridden minecart can use (data `rail_line`): continuous from a stop at the cut's head to a
+                stop in the headhouse, down the drift's centre and up the well's flights, curving at the corners and
+                landings; every climb and at least every `boost_every`-th flat rail a powered rail with its own lever
+                sealed in the rock under its bed; detector rails between; at each end an unpowered powered rail against
+                a buffer with a launch button, parted from the line by one activator rail. Levers go before rails and
+                rails go in line order, as a player lays track (vanilla re-shapes a placed rail from its neighbours)
   surface       the portal's stone-brick headwall at the cut, lantern posts at its head, the headhouse over the well
                 (stone brick, spruce corners and roof, a fenced stair hole, a door west), a lantern post and a path to
                 the shingle
@@ -537,9 +543,22 @@ def blocks(m):
         out["air"] += [RM.cmd(x, a, c, z, AIR) for a, c, _b in RM.column_runs(x, z, [(int(j + m.Y0), AIR) for j in js])]
     fittings(m, sh)
     surface(m)
-    delicate = ("lantern", "rail", "fence", "barrel")
-    fits = sorted(m.fit.items(), key=lambda kv: (any(d in kv[1] for d in delicate), kv[0][1], kv[0][0], kv[0][2]))
-    out["fittings"] = ["setblock %d %d %d %s" % (x, y, z, b) for (x, y, z), b in fits]
+    # the line's blocks where the headhouse writes its own (air over the top landing) go in the surface pass instead
+    for p in [p for p in m.fit if p in m.surf and (p in m.rail_order or p in m.line_extras)]:
+        m.surf[p] = m.fit.pop(p)
+    delicate = ("lantern", "rail", "fence", "barrel", "lever", "button")
+
+    def order(kv):
+        """Solids first; then the power (levers, buttons), so a rail placed later finds its source; then the other
+        delicate blocks; then the rails in the line's order, so each new rail meets the one before it, as a player
+        lays track (vanilla re-shapes a placed rail from its neighbours)."""
+        (x, y, z), b = kv
+        if (x, y, z) in m.rail_order:
+            return (3, m.rail_order[(x, y, z)], 0, 0)
+        if "lever" in b or "button" in b:
+            return (1, y, x, z)
+        return (2 if any(d in b for d in delicate) else 0, y, x, z)
+    out["fittings"] = ["setblock %d %d %d %s" % (x, y, z, b) for (x, y, z), b in sorted(m.fit.items(), key=order)]
     solid = [(p, b) for p, b in m.surf.items() if not any(d in b for d in delicate)]
     soft = [(p, b) for p, b in m.surf.items() if any(d in b for d in delicate)]
     scols = {}
@@ -547,7 +566,7 @@ def blocks(m):
         scols.setdefault((x, z), []).append((y, b))
     for (x, z) in sorted(scols):
         out["surface"] += [RM.cmd(x, a, c, z, b) for a, c, b in RM.column_runs(x, z, scols[(x, z)])]
-    out["surface"] += ["setblock %d %d %d %s" % (x, y, z, b) for (x, y, z), b in sorted(soft, key=lambda kv: (kv[0][1], kv[0]))]
+    out["surface"] += ["setblock %d %d %d %s" % (x, y, z, b) for (x, y, z), b in sorted(soft, key=order)]
     return out
 
 
@@ -564,23 +583,15 @@ def fittings(m, sh):
         return pal["stair_upper"] if y >= pal["rock_split_y"] else pal["stair_lower"]
 
     steps = set(m.steps)
-    m.rails = 0
     for s, (x, z, d) in enumerate(m.cells):
         px, pz = -d[1], d[0]
         y = m.P[s]
         if s in steps:
             back = NAME[(-d[0], -d[1])]
             for o in range(-r, r + 1):
-                if o == 0 and s >= m.s_p and not quiet(s):
-                    continue
+                if o == 0:
+                    continue                         # the middle column carries the rail line's ascending rail
                 m.fit[(x + px * o, y, z + pz * o)] = stair(stair_block(y), back)
-        if s >= m.s_p and not quiet(s):
-            if s in steps:
-                shape = "ascending_" + NAME[(-d[0], -d[1])]
-            else:
-                shape = "east_west" if d[1] == 0 else "north_south"
-            m.fit[(x, y, z)] = "%s[shape=%s,powered=false,waterlogged=false]" % (pal["rail"], shape)
-            m.rails += 1
         n = s - m.s_p
         if s >= m.s_p and n % spec["lights"]["every"] == spec["lights"]["every"] // 2:
             m.fit[(x, y + H - 1, z)] = HANG
@@ -612,7 +623,7 @@ def fittings(m, sh):
     isl = spec["island"]
     sw = isl["stairwell"]
     for (x, y, row, facing, i, j) in m.flight_steps:
-        for zz in (row - 1, row, row + 1):
+        for zz in (row - 1, row + 1):                  # the row itself carries the rail line
             m.fit[(x, y, zz)] = stair(stair_block(y), facing)
         if (j == (sw["flight_steps"] + 1) // 2 and y + sw["headroom"] + 1 <= isl["pad_y"]
                 and m.opened(x, y + sw["headroom"], row) and not m.opened(x, y + sw["headroom"] + 1, row)):
@@ -623,6 +634,183 @@ def fittings(m, sh):
         ytop = feet + sw["headroom"] - 1
         if not m.opened(lx, ytop + 1, zc):
             m.fit[(lx, ytop, zc)] = HANG
+    rail_line(m, sh)
+
+
+# ------------------------------------------------------------------ the rail line
+
+N6 = ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1))
+LEVER = "minecraft:lever[face=ceiling,facing=north,powered=true]"
+
+
+def boost_every(spec):
+    """At least every this many rails on the flat is a powered rail (data rail_line boost_every)."""
+    return int(spec["rail_line"]["boost_every"])
+
+
+def line_cells(m):
+    """[(x, y, z)] the rail line in route order, the mouth's stop first: the drift's centre, on along the well's first
+    row to its first flight, up every flight's middle row, round each landing (in, a curve, across the spine, a curve,
+    out) and on the top landing to the stop against the headhouse wall."""
+    sw = m.spec["island"]["stairwell"]
+    K = sw["flight_steps"]
+    ex0, ex1 = sw["east_landing_x"]
+    wx0, wx1 = sw["west_landing_x"]
+    za, zb = sw["rows_z"]
+    if ex1 - ex0 != 2 or wx1 - wx0 != 2:
+        raise DriftError("the rail line turns on 3-wide landings, not %s and %s" % (sw["east_landing_x"], sw["west_landing_x"]))
+    out = [(x, m.P[s], z) for s, (x, z, _d) in enumerate(m.cells)]
+    xe, ze, de = m.cells[-1]
+    if de != (-1, 0) or ze != za or not ex1 < xe:
+        raise DriftError("the drift does not arrive westward on the well's first row (z%d)" % za)
+    f = m.P[-1]
+    out += [(x, f, za) for x in range(xe - 1, ex0 - 1, -1)]
+    for i in range(m.flights):
+        start = f + K * i
+        west = i % 2 == 0
+        row, other = (za, zb) if west else (zb, za)
+        for j in range(1, K + 1):                        # the flight's own cells, as well() carves them
+            out.append((ex0 - j if west else wx1 + j, start + j - 1, row))
+        F = start + K
+        inn, mid, far = (wx1, wx1 - 1, wx0) if west else (ex0, ex0 + 1, ex1)
+        if i < m.flights - 1:
+            st = 1 if other > row else -1
+            out += [(inn, F, row)] + [(mid, F, z) for z in range(row, other + st, st)] + [(inn, F, other)]
+        else:
+            out += [(inn, F, row), (mid, F, row), (far, F, row)]
+    return out
+
+
+def rail_shapes(cells):
+    """The shape each rail must have to join its neighbours on the line: ascending toward a neighbour one block up,
+    straight between opposite neighbours, a curve between two at a right angle."""
+    out = []
+    for i, (x, y, z) in enumerate(cells):
+        dirs = []
+        for k in (i - 1, i + 1):
+            if not 0 <= k < len(cells):
+                continue
+            a, b, c = cells[k]
+            d = (a - x, c - z)
+            if abs(d[0]) + abs(d[1]) != 1 or abs(b - y) > 1:
+                raise DriftError("the rail line breaks between (%d, %d, %d) and (%d, %d, %d)" % (x, y, z, a, b, c))
+            dirs.append((d, b - y))
+        straight = len(dirs) == 1 or dirs[0][0] == (-dirs[1][0][0], -dirs[1][0][1])
+        up = [d for d, dy in dirs if dy == 1]
+        if len(up) > 1 or (up and not straight):
+            raise DriftError("the rail at (%d, %d, %d) cannot climb to both neighbours or climb into a turn" % (x, y, z))
+        if up:
+            out.append("ascending_" + NAME[up[0]])
+        elif straight:
+            out.append("east_west" if dirs[0][0][1] == 0 else "north_south")
+        else:
+            ns = next(d for d, _dy in dirs if d[1])
+            ew = next(d for d, _dy in dirs if d[0])
+            out.append("%s_%s" % (NAME[ns], NAME[ew]))
+    return out
+
+
+def lever_cell(m, sh, x, y, z):
+    """Where the hidden power of a powered rail at (x, y, z) goes, or None: the rock cell under the rail's bed, under
+    the ground (the shell's, or the ground's own rock) with no opened cell beside it, so the lever on its ceiling is
+    sealed in rock."""
+    p, bed = (x, y - 2, z), (x, y - 1, z)
+    if p in m.fit or bed[1] > m.G(x, z) or m.opened(*bed) or m.opened(*p):
+        return None
+    if any(m.opened(p[0] + a, p[1] + b, p[2] + c) for a, b, c in N6):
+        return None
+    return p
+
+
+def write_power(m, p):
+    m.fit[p] = LEVER
+
+
+def write_rail(m, p, block):
+    m.fit[p] = block
+
+
+def rail_line(m, sh):
+    """The line's rails, their levers, both stops' buffers and buttons, into m.fit (moved to the surface pass where
+    the headhouse's own blocks would overwrite them)."""
+    rl = m.spec["rail_line"]
+    pal = m.spec["palette"]
+    cells = line_cells(m)
+    shapes = rail_shapes(cells)
+    n = len(cells)
+    kinds = ["filler"] * n
+    for i, s in enumerate(shapes):
+        if s.startswith("ascending_"):
+            kinds[i] = "booster"
+        elif s not in ("east_west", "north_south"):
+            kinds[i] = "curve"
+    for i in (0, 1, n - 2, n - 1):
+        if kinds[i] != "filler" or cells[i][1] != cells[1 if i < 2 else n - 2][1]:
+            raise DriftError("the line's stop or station at %s is not on the flat" % (cells[i],))
+    kinds[0] = kinds[-1] = "stop"
+    kinds[1] = kinds[-2] = "station"
+    for i in (2, n - 3):                       # never a detector rail beside the station: a passing cart would power it
+        if kinds[i] == "curve":
+            raise DriftError("the rail beside the station at %s is a curve" % (cells[i],))
+        kinds[i] = "booster"
+    every = boost_every(m.spec)
+    levers, run, m.rail_max_unboosted = {}, 0, 0
+    for i, (x, y, z) in enumerate(cells):
+        if kinds[i] == "filler" and run + 1 >= every:
+            lv = lever_cell(m, sh, x, y, z)
+            if lv:
+                kinds[i] = "booster"
+        if kinds[i] == "booster":
+            lv = lever_cell(m, sh, x, y, z)
+            if lv is None:
+                raise DriftError("no sealed place for the power under the powered rail at (%d, %d, %d)" % (x, y, z))
+            levers[i] = lv
+            run = 0
+            continue
+        run += 1
+        m.rail_max_unboosted = max(m.rail_max_unboosted, run)
+    if m.rail_max_unboosted >= every:
+        raise DriftError("%d rails run unboosted, at least %d" % (m.rail_max_unboosted, every))
+    for i in sorted(levers):
+        write_power(m, levers[i])
+    blk = {"booster": "%s[shape=%%s,powered=true,waterlogged=false]" % pal["rail"],
+           "stop": "%s[shape=%%s,powered=false,waterlogged=false]" % pal["rail"],
+           "station": "%s[shape=%%s,powered=false,waterlogged=false]" % rl["station"],
+           "filler": "%s[shape=%%s,powered=false,waterlogged=false]" % rl["filler"],
+           "curve": "%s[shape=%%s,waterlogged=false]" % rl["curve"]}
+    m.rail_order = {}
+    for i, (p, k, s) in enumerate(zip(cells, kinds, shapes)):
+        if p in m.fit:
+            raise DriftError("the rail at %s would replace %s" % (p, m.fit[p]))
+        write_rail(m, p, blk[k] % s)
+        m.rail_order[p] = i
+    m.line, m.line_kinds, m.levers = cells, kinds, levers
+    m.rails = n
+    # the stops: a buffer beyond each end, a button to launch from it
+    m.line_extras = set()
+    m.stops = []
+    for end, nxt in ((0, 1), (n - 1, n - 2)):
+        (x, y, z), (a, _b, c) = cells[end], cells[nxt]
+        bx, bz = 2 * x - a, 2 * z - c
+        if end == 0:                                     # the cut's head, in the open: a stone-brick buffer, its button on top
+            if m.opened(bx, y, bz) or m.opened(bx, y + 1, bz) or y + 1 <= m.G(bx, bz):
+                raise DriftError("no room for the mouth's buffer and button at (%d, %d, %d)" % (bx, y, bz))
+            m.fit[(bx, y, bz)] = rl["buffer"]
+            face = NAME[(a - x, c - z)]
+            button = (bx, y + 1, bz)
+            m.fit[button] = "%s[face=floor,facing=%s,powered=false]" % (rl["button"], face)
+            m.line_extras |= {(bx, y, bz), button}
+        else:                                            # the headhouse: its own wall is the buffer, a button on the floor
+            x0, z0, x1, z1 = m.spec["island"]["headhouse"]["box"]
+            if not (bx in (x0, x1) and z0 < bz < z1):
+                raise DriftError("the isle's stop at (%d, %d, %d) is not against the headhouse wall" % (x, y, z))
+            zc = m.spec["island"]["stairwell"]["spine_z"]
+            button = (x, y, z + (1 if zc > z else -1))
+            if not m.opened(*button) or m.opened(button[0], y - 1, button[2]):
+                raise DriftError("no floor for the isle's stop button at %s" % (button,))
+            m.fit[button] = "%s[face=floor,facing=%s,powered=false]" % (rl["button"], NAME[(a - x, c - z)])
+            m.line_extras.add(button)
+        m.stops.append({"rail": [x, y, z], "buffer": [bx, y, bz], "button": list(button)})
 
 
 def surface(m):
@@ -809,6 +997,10 @@ def summary(m):
         "cover_min_measured": m.min_cover,
         "route_cells": L, "portal_cell": m.s_p, "portal": list(m.portal),
         "mouth_feet": m.P[0], "end_feet": m.P[-1], "stairs": len(m.steps), "rails": m.rails,
+        "rail_line": {"kinds": {k: m.line_kinds.count(k) for k in sorted(set(m.line_kinds))},
+                      "levers": len(m.levers), "max_unboosted_run": m.rail_max_unboosted,
+                      "boost_every": boost_every(m.spec), "stops": m.stops,
+                      "curves": [list(p) for p, k in zip(m.line, m.line_kinds) if k == "curve"]},
         "sea_cells": len(m.sea_cells), "deepest_feet_under_sea": min(sea_feet) if sea_feet else None,
         "first_sea_cell": list(m.cells[m.sea_cells[0]][:2]) if m.sea_cells else None,
         "flights": m.flights, "landings": m.landings,
@@ -853,6 +1045,25 @@ def probes(m):
     out.append((x0, isl["pad_y"] + 1, isl["stairwell"]["spine_z"], "minecraft:air", "the headhouse's west door"))
     for h in habitat_positions(m)[:2]:
         out.append((h[0], h[1], h[2], "cobblemon:habitat_block (after cobblers_habitats)", h[3]))
+    # the rail line: both stops, a climb's powered rail and its lever, a flat booster, a curve, a detector
+    rl, pal = m.spec["rail_line"], m.spec["palette"]
+    for st, where in zip(m.stops, ("the mouth", "the headhouse")):
+        out.append(tuple(st["rail"]) + ("%s[powered=false] (east_west or north_south, as the line runs)" % pal["rail"],
+                                        "the stop at %s: unpowered until its button is pressed" % where))
+        out.append(tuple(st["buffer"]) + ("a solid full block", "the buffer at %s's stop" % where))
+        out.append(tuple(st["button"]) + ("%s[face=floor]" % rl["button"], "the launch button at %s" % where))
+    shown = set()
+    for p, k in zip(m.line, m.line_kinds):
+        b = m.surf.get(p) or m.fit.get(p)
+        tag = "climb" if k == "booster" and "ascending" in b else k
+        if tag in shown or tag in ("stop", "station") or (tag == "booster" and p[2] != m.cells[0][1]):
+            continue
+        shown.add(tag)
+        out.append(p + (b, "the rail line: a %s" % {"climb": "climb's powered rail (powered=true)", "booster": "flat booster (powered=true)",
+                                                    "filler": "detector rail", "curve": "curve"}[tag]))
+        if k == "booster":
+            lv = m.levers[m.line.index(p)]
+            out.append(lv + (LEVER, "the sealed lever powering the rail two blocks over it"))
     return [{"x": a, "y": b, "z": c, "expect": e, "what": w} for a, b, c, e, w in out]
 
 

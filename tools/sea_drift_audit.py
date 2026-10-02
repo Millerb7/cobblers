@@ -29,6 +29,16 @@ above), and the result is checked against rules the data and the other files sta
             data/spawns.json, has none of the three species the owner named (Magikarp, Goldeen, Barraskewda), and
             every species in it is placed by an existing spawnable position
   rewards   both caches' containers are barrels in the replayed world and their trigger boxes hold a walkable place
+  rails     the rail line, read from the replayed blocks: every rail joins its neighbours by its shape's ends into ONE
+            line whose two ends are the cut's head and the headhouse's floor, every rail on it, standing on a solid
+            block; curves only of minecraft:rail and minecraft:rail only in curves (its whitelist's scope)
+  power     every powered rail written powered has a lever (switched on, sealed in rock) or other source beside it or
+            under its bed; none written unpowered can be reached by power; no activator rail can be powered by a
+            source or a passing cart
+  stops     each end is an unpowered powered rail with a solid buffer beyond it, a button that powers it, no detector
+            beside it, and a walkable place at it
+  boost     every climbing rail powered; no run of unpowered rails longer than data rail_line physics allows (the
+            cited full-speed run over the margin)
   limits    tools/function_limits.py finds nothing the server would refuse
 
 Fails closed: no pack, an empty index, an unknown command, no lantern or no habitat record is a failure.
@@ -71,9 +81,9 @@ def bid(b):
 
 
 def passable(b):
-    """A body can stand in it: air, a rail. Not a lantern (it has a hitbox), a fence, a barrel or a stair."""
+    """A body can stand in it: air, a rail, a button. Not a lantern (it has a hitbox), a fence, a barrel or a stair."""
     i = bid(b)
-    return i in ("minecraft:air", "minecraft:cave_air", OPEN) or i.endswith("rail")
+    return i in ("minecraft:air", "minecraft:cave_air", OPEN) or i.endswith("rail") or i.endswith("_button")
 
 
 def transparent(b):
@@ -310,7 +320,10 @@ def audit(source_root=None, pack=PACK, spec=None):
     cond = json.loads((ROOT / "data" / "spawn_blocks.json").read_text(encoding="utf-8"))["blocks"]
     if not cond:
         P.append("blocks: data/spawn_blocks.json lists nothing: the check cannot run")
-    bad = sorted({bid(b) for b in W.w.values() if bid(b) in cond})
+    policy = json.loads((ROOT / "data" / "spawn_block_policy.json").read_text(encoding="utf-8"))["whitelist"]
+    scoped = {b for w in policy if "sea_drift" in (w.get("scope") or "") for b in w["blocks"]}
+    res["whitelisted_here"] = sorted(scoped)
+    bad = sorted({bid(b) for b in W.w.values() if bid(b) in cond and bid(b) not in scoped})
     for b in bad:
         P.append("blocks: %s is a spawn condition (%s)" % (b, ", ".join(sorted({c.split(" [")[0] for c in cond[b]}))[:80]))
     sm = spec["strip_mine"]
@@ -475,6 +488,9 @@ def audit(source_root=None, pack=PACK, spec=None):
         if not any(all(lo[i] <= q[i] <= hi[i] for i in range(3)) for q in seen):
             P.append("rewards: no walkable place reached from the cut lies in %s's trigger box" % rid)
 
+    # -- the rail line
+    P += rail_line(W, spec, seen, res)
+
     # -- limits
     probs = []
     fn = Path(pack) / "data" / "cobblers" / "function" / "sea_drift"
@@ -485,6 +501,218 @@ def audit(source_root=None, pack=PACK, spec=None):
         P.append("limits: %s" % (pr,))
     res["problems"] = P
     return res
+
+
+# ------------------------------------------------------------------ the rail line
+#
+# Read from the replayed blocks alone: which rails there are, the shape each was written with, and every lever and
+# button. Nothing is taken from tools/sea_drift.py's own list of the line. The rules are vanilla's for 1.21.1, cited
+# in data/sea_drift.json rail_line physics (the Minecraft Wiki), and the World methods they rest on:
+#   a rail's two ends are its shape's two directions, the uphill end one block up; two rails join where an end of
+#   one is an end of the other at the same height
+#   a lever or button weakly powers its six neighbours and strongly powers the block it hangs on; a solid block that
+#   is strongly powered powers the six cells round it (World.isReceivingRedstonePower takes only STRONG power from a
+#   solid neighbour); a powered rail passes power to the powered rails it joins, up to 8 away; an activator rail
+#   likewise to activator rails; a detector rail powers its neighbours and the block under it while a cart is on it
+
+RAIL_IDS = ("minecraft:rail", "minecraft:powered_rail", "minecraft:detector_rail", "minecraft:activator_rail")
+DIR = {"east": (1, 0), "west": (-1, 0), "south": (0, 1), "north": (0, -1)}
+STRAIGHT = {"east_west": ("east", "west"), "north_south": ("north", "south")}
+
+
+def props(b):
+    if "[" not in b:
+        return {}
+    return dict(kv.split("=", 1) for kv in b[b.index("[") + 1:b.rindex("]")].split(",") if "=" in kv)
+
+
+def rail_ends(x, y, z, shape):
+    """The two ends of a rail at (x, y, z) as (2x + dx, height, 2z + dz), or None for a shape that is not a rail's."""
+    if shape in STRAIGHT:
+        ds = [(DIR[a], 0) for a in STRAIGHT[shape]]
+    elif shape.startswith("ascending_") and shape[10:] in DIR:
+        d = DIR[shape[10:]]
+        ds = [(d, 1), ((-d[0], -d[1]), 0)]
+    elif shape.count("_") == 1 and all(p in DIR for p in shape.split("_")):
+        a, b = shape.split("_")
+        if (DIR[a][0] == 0) == (DIR[b][0] == 0):
+            return None
+        ds = [(DIR[a], 0), (DIR[b], 0)]
+    else:
+        return None
+    return [(2 * x + d[0], y + h, 2 * z + d[1]) for d, h in ds]
+
+
+def attached(p, b):
+    """The block a lever or button hangs on."""
+    pr = props(b)
+    x, y, z = p
+    if pr.get("face") == "ceiling":
+        return (x, y + 1, z)
+    if pr.get("face") == "floor":
+        return (x, y - 1, z)
+    d = DIR.get(pr.get("facing"), (0, 0))
+    return (x - d[0], y, z - d[1])
+
+
+def rail_line(W, spec, seen, res):
+    P = []
+    rl = spec["rail_line"]
+    ph = rl["physics"]
+    rails = {p: b for p, b in W.w.items() if bid(b) in RAIL_IDS}
+    res["rails"] = len(rails)
+    if not rails:
+        return ["rails: the pack writes no rail"]
+    # -- shapes, support and the ends graph
+    ends, key = {}, {}
+    for p, b in rails.items():
+        shape = props(b).get("shape", "")
+        e = rail_ends(*p, shape)
+        curve = e is not None and shape not in STRAIGHT and not shape.startswith("ascending_")
+        if e is None:
+            P.append("rails: %s at %s has no rail shape %r" % (bid(b), p, shape))
+            continue
+        if curve and bid(b) != "minecraft:rail":
+            P.append("rails: %s at %s is curved, and only minecraft:rail turns" % (bid(b), p))
+        if bid(b) == "minecraft:rail" and not curve:
+            P.append("rails: minecraft:rail at %s is %s: it is whitelisted here for the curves only" % (p, shape))
+        if not solid_floor(W.at(p[0], p[1] - 1, p[2])):
+            P.append("rails: the rail at %s stands on %s" % (p, W.at(p[0], p[1] - 1, p[2])))
+        ends[p] = e
+        for k in e:
+            key.setdefault(k, []).append(p)
+    nbr = {p: [] for p in ends}
+    for k, ps in key.items():
+        if len(ps) > 2:
+            P.append("rails: %d rails meet at one end %s (a junction)" % (len(ps), ps))
+        for a in ps:
+            nbr[a] += [q for q in ps if q != a]
+    tips = sorted(p for p in nbr if len(nbr[p]) < 2)
+    res["rail_line_ends"] = [list(t) for t in tips]
+    if len(tips) != 2:
+        for t in tips[:6]:
+            P.append("rails: the line ends or breaks at %s (%s)" % (t, rails[t]))
+        if len(tips) != 2:
+            P.append("rails: %d loose ends, not the line's two stops" % len(tips))
+    # -- the two stops are where the data says: the cut's head, and the headhouse
+    vx, vz = spec["route"]["vertices"][0]
+    r = spec["tube"]["r"]
+    isl = spec["island"]
+    x0, z0, x1, z1 = isl["headhouse"]["box"]
+    mouth = [t for t in tips if abs(t[0] - vx) <= r and abs(t[2] - vz) <= r]
+    house = [t for t in tips if x0 < t[0] < x1 and z0 < t[2] < z1 and t[1] == isl["pad_y"] + 1]
+    if len(mouth) != 1 or len(house) != 1:
+        P.append("rails: the line's ends %s are not one at the cut's head and one on the headhouse's floor" % tips)
+        return P
+    # -- one line: from the mouth's stop to the headhouse's, every rail on it once
+    path, prev, cur = [mouth[0]], None, mouth[0]
+    while True:
+        nx = [q for q in nbr[cur] if q != prev]
+        if not nx:
+            break
+        prev, cur = cur, nx[0]
+        if cur in path:
+            P.append("rails: the line loops at %s" % (cur,))
+            break
+        path.append(cur)
+    res["rail_line_length"] = len(path)
+    if path[-1] != house[0]:
+        P.append("rails: the line from the mouth's stop %s ends at %s, not at the headhouse's stop %s"
+                 % (mouth[0], path[-1], house[0]))
+    if len(path) != len(rails):
+        P.append("rails: %d rails are written and %d are on the line from stop to stop" % (len(rails), len(path)))
+    # -- power: every lever and button the pack writes
+    sources, buttons, levers = set(), {}, []
+    for p, b in W.w.items():
+        i = bid(b)
+        if i == "minecraft:lever" or i.endswith("_button"):
+            att = attached(p, b)
+            if not solid_floor(W.at(*att)):
+                P.append("power: the %s at %s hangs on %s" % (i, p, W.at(*att)))
+            reach = {(p[0] + a, p[1] + b_, p[2] + c) for a, b_, c in N6}
+            if solid_floor(W.at(*att)):
+                reach |= {(att[0] + a, att[1] + b_, att[2] + c) for a, b_, c in N6}
+            if i.endswith("_button") and props(b).get("powered") != "true":
+                buttons[p] = reach
+            elif props(b).get("powered") == "true":
+                sources |= reach
+            if i == "minecraft:lever":
+                levers.append(p)
+                if any(transparent(W.at(p[0] + a, p[1] + b_, p[2] + c)) or W.at(p[0] + a, p[1] + b_, p[2] + c) == WATER
+                       for a, b_, c in N6):
+                    P.append("power: the lever at %s is not sealed in rock (a player could see it and switch it off)" % (p,))
+        elif i in ("minecraft:redstone_block", "minecraft:redstone_torch"):
+            sources |= {(p[0] + a, p[1] + b_, p[2] + c) for a, b_, c in N6}
+    res["rail_levers"] = len(levers)
+
+    def chain(kind, seeds):
+        """Rails of one kind reached from seeds through joined rails of that kind, up to 8 away."""
+        got, front = set(seeds), list(seeds)
+        for _ in range(int(ph["propagation"])):
+            front = [q for p in front for q in nbr.get(p, []) if bid(rails[q]) == kind and q not in got]
+            got |= set(front)
+        return got
+
+    pr_ = [p for p in path if bid(rails[p]) == "minecraft:powered_rail"]
+    direct = {p for p in pr_ if p in sources}
+    live = chain("minecraft:powered_rail", direct)
+    for p in pr_:
+        on = props(rails[p]).get("powered") == "true"
+        if on and p not in direct:
+            P.append("power: the powered rail at %s is written powered and has no power source beside it or under it" % (p,))
+        if not on and p in live:
+            P.append("power: the powered rail at %s is written unpowered and power reaches it: it would switch on" % (p,))
+    detectors = [p for p in path if bid(rails[p]) == "minecraft:detector_rail"]
+    cart = {(p[0] + a, p[1] + b_, p[2] + c) for p in detectors for a, b_, c in N6}
+    cart |= {(p[0] + a, p[1] - 1 + b_, p[2] + c) for p in detectors for a, b_, c in N6}
+    acts = [p for p in path if bid(rails[p]) == "minecraft:activator_rail"]
+    for p in chain("minecraft:activator_rail", [q for q in acts if q in sources or q in cart]):
+        P.append("power: the activator rail at %s can be powered (by a source or a passing cart): it would throw the "
+                 "rider out" % (p,))
+    # -- the stops: unpowered powered rail, a solid buffer beyond its free end, a button, a place to get on
+    stops = []
+    for t in (mouth[0], house[0]):
+        b = rails[t]
+        st = {"rail": list(t)}
+        if bid(b) != "minecraft:powered_rail" or props(b).get("powered") != "false" or t in live:
+            P.append("stops: the stop at %s is %s: an unpowered powered rail brakes a cart to a stop" % (t, b))
+        free = [k for k in ends[t] if len(key[k]) == 1]
+        if len(free) == 1:
+            k = free[0]
+            beyond = ((k[0] + (k[0] - 2 * t[0])) // 2, t[1], (k[2] + (k[2] - 2 * t[2])) // 2)
+            st["buffer"] = list(beyond)
+            if not solid_floor(W.at(*beyond)):
+                P.append("stops: beyond the stop at %s is %s, not a solid block to stop at and launch from"
+                         % (t, W.at(*beyond)))
+        if not any(t in reach for reach in buttons.values()):
+            P.append("stops: no button powers the stop at %s" % (t,))
+        if t in cart:
+            P.append("stops: a detector rail beside the stop at %s would power it under an arriving cart" % (t,))
+        if not (t in seen or any((t[0] + a, t[1] + dy, t[2] + c) in seen for a, c in ((1, 0), (-1, 0), (0, 1), (0, -1))
+                                 for dy in (-1, 0, 1))):
+            P.append("stops: no walkable place reached from the cut lies at the stop %s" % (t,))
+        stops.append(st)
+    res["rail_stops"] = stops
+    # -- boost: every climb powered; on the flat, no more unpowered rails between powered ones than the cited full-speed
+    #    run allows with the data's margin
+    limit = min(ph["occupied_subsequent_max"]) // int(ph["margin"])
+    res["boost_limit"] = limit
+    run, worst = 0, (0, None)
+    for p in path:
+        b = rails[p]
+        boosted = bid(b) == "minecraft:powered_rail" and p in direct
+        if props(b).get("shape", "").startswith("ascending_") and not boosted:
+            P.append("boost: the climb at %s is %s, not a powered rail with power" % (p, b))
+        run = 0 if boosted else run + 1
+        if run > worst[0]:
+            worst = (run, p)
+    res["max_unboosted_run"] = worst[0]
+    if worst[0] > limit:
+        P.append("boost: %d rails without a powered one, ending at %s, over the %d that %s rails at full speed / margin "
+                 "%s allow" % (worst[0], worst[1], limit, min(ph["occupied_subsequent_max"]), ph["margin"]))
+    res["rail_kinds"] = {k: sum(1 for p in path if bid(rails[p]) == k) for k in RAIL_IDS}
+    res["rail_boosted"] = len(direct)
+    return P
 
 
 def main(argv=None):

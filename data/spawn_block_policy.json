@@ -430,6 +430,15 @@
       "why": "tools/place_town.py clears every fluid from two blocks under a building's floor up, over its footprint and two blocks round it, so a Centre seated on a raft leaves a dry layer between its raft and the sea; the earthwork puts the sea back (fill ... water replace air, never over a block). It restores the Sound the export painted, which was water there already, and adds no water anywhere the export had none. The town is built on water on purpose (docs/world-building/LONG_ISLE.md section 4): the Sound's water spawns round it are the point of a fishing town.",
       "consequence": "none beyond what the export's own sea already conditions: the same water, in the same cells, as before the Centre and the Mart were placed",
       "decided": "2026-09-26, by the implementing session under the owner's \"add the sea town from hoenn\" (LONG_ISLE.md: the town's water needs one deliberate entry, like gym2_town's); on the review list"
+    },
+    {
+      "blocks": [
+        "minecraft:rail"
+      ],
+      "scope": "the Seaward Drift (sea_drift: tools/sea_drift.py, data/sea_drift.json rail_line): the curves of its rail line only, the drift's two corners and two at each of the well's five turns, 12 rails",
+      "why": "the line from the mine mouth to Driftmouth Isle must turn, and minecraft:rail is the only rail that curves (powered, detector and activator rails are always straight: minecraft.wiki/w/Powered_Rail). Every straight rail of the line is a powered or detector rail, neither a spawn condition. tools/sea_drift_audit.py fails a minecraft:rail written in any shape but a curve",
+      "consequence": "within the reach of those 12 rails, deep in rock (the corners at (900, 1795) and (900, 1584), the well's turns under Driftmouth Isle at (331, 1584-1588) and (343, 1584-1588)), Cobblemon's and Cobbleverse's own rail spawns: rolycoly, carkol and coalossal (and a herd entry) at the upstream bands. In an abandoned mine drift, the fauna the mining town and Victory Road's Abandoned Cut already accept",
+      "decided": "2026-10-02, by the implementing session under the owner's \"make the mine crat rails activated so a player could use them if they build a minecart\" (a usable line cannot turn without it); on the review list"
     }
   ],
   "checked_paving": {

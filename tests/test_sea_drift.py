@@ -98,6 +98,75 @@ def test_the_audit_catches_a_shell_that_leaves_natural_ground_beside_the_drift(g
     assert any(p.startswith("sealed:") for p in problems(out))
 
 
+def test_the_rail_line_runs_stop_to_stop_with_power(ground, tmp_path, monkeypatch):
+    """The owner, 2026-10-02: the rails must work for a player who builds a minecart."""
+    m, out = build(tmp_path, monkeypatch)
+    res = SA.audit(pack=out)
+    assert not [p for p in res["problems"] if p.split(":")[0] in ("rails", "power", "stops", "boost")]
+    assert res["rail_line_length"] == res["rails"] == len(m.line) > 1325
+    assert res["rail_boosted"] == len(m.levers) and res["max_unboosted_run"] <= res["boost_limit"]
+    assert res["rail_kinds"]["minecraft:rail"] == 2 + 2 * (m.flights - 1)       # the curves, and nothing else
+
+
+def _skip_nth(monkeypatch, name, n, swap=None):
+    """Wrap one of the generator's writers so its n-th call writes nothing (or `swap(block)`)."""
+    real = getattr(SD, name)
+    calls = []
+
+    def wrapped(m, p, *rest):
+        calls.append(p)
+        if len(calls) == n:
+            if swap is None:
+                return None
+            return real(m, p, swap(*rest))
+        return real(m, p, *rest)
+    monkeypatch.setattr(SD, name, wrapped)
+
+
+def test_the_audit_catches_a_powered_rail_whose_lever_is_dropped(ground, tmp_path, monkeypatch):
+    _skip_nth(monkeypatch, "write_power", 120)
+    _m, out = build(tmp_path, monkeypatch)
+    ps = problems(out)
+    assert sum(1 for p in ps if p.startswith("power:") and "no power source" in p) == 1
+
+
+def test_the_audit_catches_a_gap_in_the_line(ground, tmp_path, monkeypatch):
+    _skip_nth(monkeypatch, "write_rail", 700)
+    _m, out = build(tmp_path, monkeypatch)
+    ps = problems(out)
+    assert any(p.startswith("rails:") and "breaks" in p for p in ps)
+
+
+def test_the_audit_catches_boosts_too_far_apart(ground, tmp_path, monkeypatch):
+    monkeypatch.setattr(SD, "boost_every", lambda spec: 40)
+    _m, out = build(tmp_path, monkeypatch)
+    assert any(p.startswith("boost:") and "without a powered one" in p for p in problems(out))
+
+
+def test_the_audit_catches_a_detector_beside_a_stop(ground, tmp_path, monkeypatch):
+    """The station rail parts the stop from the line; a detector there would power the stop under an arriving cart."""
+    real = SD.write_rail
+    monkeypatch.setattr(SD, "write_rail", lambda m, p, b: real(m, p, b.replace("activator_rail", "detector_rail")))
+    _m, out = build(tmp_path, monkeypatch)
+    assert any(p.startswith("stops:") and "detector" in p for p in problems(out))
+
+
+def test_the_audit_catches_curves_laid_straight(ground, tmp_path, monkeypatch):
+    real = SD.rail_shapes
+    monkeypatch.setattr(SD, "rail_shapes", lambda cells: [s if s in ("east_west", "north_south") or s.startswith("ascending")
+                                                          else "east_west" for s in real(cells)])
+    _m, out = build(tmp_path, monkeypatch)
+    assert any(p.startswith("rails:") and "breaks" in p for p in problems(out))
+
+
+def test_the_audit_catches_a_plain_rail_on_the_straight(ground, tmp_path, monkeypatch):
+    """minecraft:rail is a spawn condition, whitelisted here for the curves only."""
+    real = SD.write_rail
+    monkeypatch.setattr(SD, "write_rail", lambda m, p, b: real(m, p, b.replace("detector_rail", "rail")))
+    _m, out = build(tmp_path, monkeypatch)
+    assert any("whitelisted here for the curves only" in p for p in problems(out))
+
+
 def test_the_isles_pool_has_no_species_the_owner_is_tired_of():
     sdoc = json.loads((ROOT / "data" / "spawns.json").read_text(encoding="utf-8"))
     pool = json.loads((ROOT / "data" / "sea_drift.json").read_text(encoding="utf-8"))["waters"]["pool"]
