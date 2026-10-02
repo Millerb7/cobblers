@@ -1296,6 +1296,8 @@ A habitat pool only spawns where a Cobblemon Habitat Block stands. `data/habitat
 | --- | --- | --- |
 | displaced_city_cavern | 0 |  |
 | driftmouth_isle_waters | 10 |  |
+| drovers_hollow_fold | 1 |  |
+| dune_ruin_undercroft | 1 |  |
 | elder_foothill_grove_1 | 4 |  |
 | elder_foothill_grove_2 | 4 |  |
 | elder_foothill_grove_3 | 4 |  |
@@ -1350,9 +1352,11 @@ A habitat pool only spawns where a Cobblemon Habitat Block stands. `data/habitat
 | elder_wedge_south_2 | 4 |  |
 | glacial_tear_deep_valley | 0 |  |
 | great_crater_bowls | 0 |  |
+| lopunny_superfan_cellar | 1 |  |
 | marshy_marsh_basin | 0 |  |
 | mining_town_fossil_levels | 0 |  |
 | northgate_old_growth_grove | 0 |  |
+| old_orchard_rows | 1 |  |
 | rift_depths | 0 |  |
 | route_1_ghost_mansion | 1 |  |
 | route_1_sapling_crown | 2 |  |
@@ -1370,6 +1374,7 @@ A habitat pool only spawns where a Cobblemon Habitat Block stands. `data/habitat
 | sapling_scorched_great_crater | 3 |  |
 | sapling_storm_rift_foot | 3 |  |
 | sapling_storm_rift_trunk | 3 |  |
+| station_study_pool | 1 |  |
 | tree_town_canopy | 0 |  |
 | ursaluna_den_outskirts | 1 |  |
 | vrc_abandoned_cut | 2 |  |

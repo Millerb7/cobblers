@@ -12388,8 +12388,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.elder_jungle_east_2.squawkabilly",
-      "species": "squawkabilly",
+      "id": "habitat.elder_jungle_east_2.yanma",
+      "species": "yanma",
       "bucket": "common",
       "level": "25-30",
       "weight": 24.0,
@@ -30714,16 +30714,16 @@
         "minimum": 25,
         "maximum": 30
       },
-      "why": "Parrots on the jungle's edge. (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels from the table (band / pool: 25-45 / 25-30); pool: Squawkabilly 24; evolution thresholds read from the Cobblemon 1.8.0 jar's species files; the wide band is narrowed to min..min+5 (owner decision 4: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken).",
+      "why": "Parrots on the jungle's edge. (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels from the table (band / pool: 25-45 / 25-30); pool: Squawkabilly 24; evolution thresholds read from the Cobblemon 1.8.0 jar's species files; the wide band is narrowed to min..min+5 (owner decision 4: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Re-birded 2026-10-02 (SAPLING_BIRDS.md, 'Elders re-birded after the Jungle Isle move'): the bird changes from Squawkabilly to Yanma because the tree's move to Long Isle south put it 468 blocks from elder_long_isle_south_2's Squawkabilly; the nearest other Yanma tree is 7,167 away.",
       "entries": [
         {
-          "species": "Squawkabilly",
-          "pokemon": "squawkabilly",
+          "species": "Yanma",
+          "pokemon": "yanma",
           "types": [
-            "normal",
+            "bug",
             "flying"
           ],
-          "family": "squawkabilly",
+          "family": "yanma",
           "family_priority": "anchor",
           "level": "25-30",
           "conditions": {},
