@@ -348,8 +348,10 @@
   and NOT placed** (`data/adopted_legendary_sites.json`, checked against the heightmap by
   `tests/test_adopted_legendary_sites.py`, which also enforces their 120-block portal clearance): the Mew temple
   at (7604, 142, 7082) on the Long Isle, `crown_cemetery` at (4118, 109, 1982), Zapdos at (562, 74, 2614) and
-  **Articuno at (904, 151, 320)** on Frostpeak's east shoulder, top y224 - its old refusal tested only the pressed
-  y310 summit, and 624 Frostpeak pads fit. Eight Nether/End structures stay generated where they are, by
+  **Articuno's tower on Frostpeak's SUMMIT at (672, 310, 369)**, top y383, placed by re-apply R18A (the first adopted
+  site any step places). The owner chose the summit once the runtime build limit was measured at **y575**
+  (`cobblers_height`), not the 320 that the 2026-10-01 refusal assumed and that had pushed it onto the east
+  shoulder; its crown clears the crest seen from the Frostpeak camp at y370, and the camp's telescope aims at it. Eight Nether/End structures stay generated where they are, by
   decision. **EXP-048, the console half, ran 2026-10-02** (`experiments/EXP-048-legendary-altar/README.md`): both
   the Crown Cemetery and the Articuno shrine place and now STAND in staging at their adopted corners, all eight
   LumyMon blocks are where the templates put them, and a shaderoot carrot dropped from the console onto the
@@ -532,7 +534,9 @@
   finds 71% of land columns under 2% of peak authored-point density (point records, not built volume).
 - **Pacifidlog moves onto the sea where the Jungle Isle stood: designed, not applied** (the owner, 2026-09-27: "pacifidlog should be on an island, it should be on the sea, jungle isle should be removed and pacifidlog should be around there"; the main session's reading in `LONG_ISLE.md` section 11 for the owner to correct). The island is removed to a bank in the water export's design (`data/water_shape.json` `jungle_isle_bank`); the town's layout moves whole by (-2050, +420) to the square at (5160, 7380) with a new mainland jetty on the plateau's south beach (`data/sea_town.json` `resite`), and `tools/sea_town.py plan --resite --heightmap <copy>` passes every rule on the copy. The new ferry (`data/ferries.json` `pacifidlog_ferry`, planned, swim `unsited` until the apply) is a gate for unaided and trained swimmers on the copy (659 and 686 blocks). Everything else keeps the Sound town until the export is applied (`sea_town.py fold-resite` refuses before it); `WATER_SHAPE.md` 15.4 lists every record that changes then, including the Jungle Isle's rosters, foliage, four elders, the jungle ruins and Codex's `SQ-SUNSET-02`, `SQ-JUNGLE-01`, `SQ-JUNGLE-02`.
 - **The Long Isle and the jungle isle repainted** (the owner, 2026-09-26): north and middle a desert (desert and sandstone uplands presets, xeric scrub), south a jungle; desert and jungle rosters at 44-50; the jungle isle gains emergent mega jungle trees with vines and cocoa and bamboo groves (emergent canopy 0% to 7-13%). The owner, 2026-09-27: the Long Isle "half jungle half desert": the middle/south line is moved north in `data/regions.json` (desert 1.284 km², jungle 1.285 km² of land). Paint: lands at the next WorldPainter export, not on staging yet.
-- **Celebi's wake:** the sleeping Celebi is inert; what wakes it, and how the barrier shell opens then, is undesigned (EXP-023 follow-up 3).
+- **Celebi's wake:** designed and built 2026-09-29 (`docs/mechanics/CELEBI_WAKE.md`), never run in game. The Ursaluna den's
+  boss wake (2026-10-02) copies it; both wait on the same in-game proof, EXP-049, that clearing `Unbattleable` on a
+  live entity lets a battle start.
 - **Snapshot cleanup:** the user runs the delete commands for the non-retained snapshots and boot-check copies (about 42.5 GiB); this blocks nothing technical.
 - **Hometown waystone:** decide whether it starts unlocked or is earned; this blocks its final progression trigger.
 - **Midpoint waystones:** decide whether routes receive none, post-gym unlocks, or discovery unlocks; this blocks final navigation data and retreat rules.

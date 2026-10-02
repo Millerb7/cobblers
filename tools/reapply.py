@@ -1166,6 +1166,12 @@ def steps(with_spawns=False):
                  ("fn", "cobblers:frostpeak_camp/build"), ("fn", "cobblers:frostpeak_camp/instruments"),
                  ("cmd", "forceload remove 680 680 735 735")]
                 + [("npc", n) for n in frostpeak_camp.npc_placements()]))
+    # Articuno's tower on Frostpeak's summit (2026-10-02, tools/articuno_tower.py): the first adopted Cobbleverse site
+    # any step places. On the summit because the owner chose it once the build limit was measured at y575
+    # (cobblers_height), not the 320 that had pushed it onto the shoulder. After R18F, whose telescope aims at its crown
+    import articuno_tower
+    out.append(("R18A", "Articuno's tower on Frostpeak's summit (data/adopted_legendary_sites.json)",
+                articuno_tower.placement_steps()))
     trad = json.loads((ROOT / "data" / "traders.json").read_text(encoding="utf-8"))
     towns = sorted({t["settlement"] for t in trad.get("traders") or [] if t.get("settlement")})
     out.append(("R14", "town traders", [x for t in towns for x in (("fn", "cobblers:towns/vendors_%s" % t), ("wait", 8))]))

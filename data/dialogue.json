@@ -9456,14 +9456,14 @@
           "id": "curtain",
           "kind": "line",
           "speaker": "hollis",
-          "text": "Go and look. Stay this side of where the air goes stiff. That's not me. That's her.",
+          "text": "Go and look. Get close and she wakes, and she wakes cross. That's a fight, not a visit. Bring a team that can take it.",
           "next": "repeat"
         },
         {
           "id": "repeat",
           "kind": "line",
           "speaker": "hollis",
-          "text": "She sleeps, I watch, Highwire gets its quiet. Mind the air in there.",
+          "text": "She sleeps, I watch, Highwire gets its quiet. Wake her and you'd best be ready.",
           "next": "repeat"
         }
       ],
