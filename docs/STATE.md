@@ -511,9 +511,12 @@
   the **Ursaluna's den** west of Highwire (mouth (1504, 162, 1414); a sleeping, unbattleable Ursaluna at level 35
   with Cobblemon `ScaleModifier` 2.0 read off the entity; Teddiursa Habitat Block; keeper Hollis; re-apply R18U);
   the **Frostpeak research camp** at (688-723, 688-725) with three researchers whose talk points at the Articuno
-  shrine without promising it works (R18F); and the **Seaward Drift**, 1,325 cells from (1458, 113, 1795) under
-  the sea to a headhouse on **Driftmouth Isle** at (336, 1586), with a 28-branch strip mine and ten water Habitat
-  Blocks (R9SD, before R9E). Whether they LOOK right - the bear's size, the camp's tent shapes, the isle from the
+  shrine without promising it works (R18F); and the **Seaward Drift**, rebuilt 2026-10-02 as ONE STRAIGHT
+  cycling road on z1795: Foothill Gate over the mouth at (1455, 113, 1795), a steady 1-in-16 coast under the sea,
+  and a 32-rail climb into **Driftmouth Light**, a lighthouse on **Driftmouth Isle** moved to (336, 1798) - 1,137
+  powered rails, about 142 s at the 8 blocks/s minecart cap; a 28-branch strip mine and ten water Habitat Blocks
+  (R9SD, before R9E). In staging the old L-shaped build is removed by a one-off cleanup
+  (`python tools/sea_drift.py cleanup`), which a fresh export does not need. Whether they LOOK right - the bear's size, the camp's tent shapes, the isle from the
   sea - is the owner's eye. Habitat Blocks activate after a restart, which the owner's next boot is.
 - **Every seated trainer is in the world: 63 of 63 at their seats, none doubled, 8 of 8 gym spawners pass**
   (`tools/trainer_world_audit.py`, its first run against a world, 2026-10-02). The seven arena champions had
