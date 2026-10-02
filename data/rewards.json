@@ -575,6 +575,606 @@
           3976
         ]
       }
+    },
+    {
+      "id": "sea_life_debris_south_2",
+      "kind": "cache",
+      "place": "the seabed at (4373, 7700), 36 deep in the southern_shallows: a bench (Rift debris), its barrel",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel on the sea floor: three Net Balls and a Super Potion.",
+      "why": "data/sea_life.json caches.dive_find: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          4371,
+          27,
+          7696
+        ],
+        "max": [
+          4375,
+          29,
+          7700
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          4373,
+          27,
+          7698
+        ]
+      }
+    },
+    {
+      "id": "sea_life_debris_south_4",
+      "kind": "cache",
+      "place": "the seabed at (4388, 7784), 43 deep in the southern_shallows: a house broken (Rift debris), its barrel",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel on the sea floor: three Net Balls and a Super Potion.",
+      "why": "data/sea_life.json caches.dive_find: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          4387,
+          21,
+          7781
+        ],
+        "max": [
+          4391,
+          23,
+          7785
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          4389,
+          21,
+          7783
+        ]
+      }
+    },
+    {
+      "id": "sea_life_debris_south_5",
+      "kind": "cache",
+      "place": "the seabed at (4393, 7826), 43 deep in the southern_shallows: a rail cart (Rift debris), its barrel",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel on the sea floor: three Net Balls and a Super Potion.",
+      "why": "data/sea_life.json caches.dive_find: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          4390,
+          20,
+          7824
+        ],
+        "max": [
+          4394,
+          22,
+          7828
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          4392,
+          20,
+          7826
+        ]
+      }
+    },
+    {
+      "id": "sea_life_debris_west_2",
+      "kind": "cache",
+      "place": "the seabed at (121, 4117), 38 deep in the windward_deep: a rail cart (Rift debris), its barrel",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel on the sea floor: three Net Balls and a Super Potion.",
+      "why": "data/sea_life.json caches.dive_find: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          119,
+          25,
+          4114
+        ],
+        "max": [
+          123,
+          27,
+          4118
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          121,
+          25,
+          4116
+        ]
+      }
+    },
+    {
+      "id": "sea_life_find_eastern_reach_dive_4",
+      "kind": "cache",
+      "place": "the seabed at (8077, 3639), 45 deep in the eastern_reach: a fishing boat wreck, its barrel",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel on the sea floor: three Net Balls and a Super Potion.",
+      "why": "data/sea_life.json caches.dive_find: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          8078,
+          19,
+          3637
+        ],
+        "max": [
+          8082,
+          21,
+          3641
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          8080,
+          19,
+          3639
+        ]
+      }
+    },
+    {
+      "id": "sea_life_find_frostwater_shelf_dive_1",
+      "kind": "cache",
+      "place": "the seabed at (4393, 112), 38 deep in the frostwater_shelf: a fishing boat wreck, its barrel",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel on the sea floor: three Net Balls and a Super Potion.",
+      "why": "data/sea_life.json caches.dive_find: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          4391,
+          26,
+          107
+        ],
+        "max": [
+          4395,
+          28,
+          111
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          4393,
+          26,
+          109
+        ]
+      }
+    },
+    {
+      "id": "sea_life_find_frostwater_shelf_dive_2",
+      "kind": "cache",
+      "place": "the seabed at (6294, 46), 48 deep in the frostwater_shelf: a rowboat wreck, its barrel",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel on the sea floor: three Net Balls and a Super Potion.",
+      "why": "data/sea_life.json caches.dive_find: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          6292,
+          16,
+          45
+        ],
+        "max": [
+          6296,
+          18,
+          49
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          6294,
+          16,
+          47
+        ]
+      }
+    },
+    {
+      "id": "sea_life_find_frostwater_shelf_dive_6",
+      "kind": "cache",
+      "place": "the seabed at (2928, 48), 46 deep in the frostwater_shelf: a fishing boat wreck, its barrel",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel on the sea floor: three Net Balls and a Super Potion.",
+      "why": "data/sea_life.json caches.dive_find: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          2923,
+          18,
+          46
+        ],
+        "max": [
+          2927,
+          20,
+          50
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          2925,
+          18,
+          48
+        ]
+      }
+    },
+    {
+      "id": "sea_life_find_southern_shallows_dive_3",
+      "kind": "cache",
+      "place": "the seabed at (4086, 7889), 36 deep in the southern_shallows: a two master broken wreck, its barrel",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel on the sea floor: three Net Balls and a Super Potion.",
+      "why": "data/sea_life.json caches.dive_find: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          4077,
+          28,
+          7887
+        ],
+        "max": [
+          4081,
+          30,
+          7891
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          4079,
+          28,
+          7889
+        ]
+      }
+    },
+    {
+      "id": "sea_life_find_southern_shallows_dive_5",
+      "kind": "cache",
+      "place": "the seabed at (271, 7281), 36 deep in the southern_shallows: a two master broken wreck, its barrel",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel on the sea floor: three Net Balls and a Super Potion.",
+      "why": "data/sea_life.json caches.dive_find: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          276,
+          28,
+          7279
+        ],
+        "max": [
+          280,
+          30,
+          7283
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          278,
+          28,
+          7281
+        ]
+      }
+    },
+    {
+      "id": "sea_life_find_windward_deep_dive_2",
+      "kind": "cache",
+      "place": "the seabed at (83, 4843), 44 deep in the windward_deep: a fishing boat wreck, its barrel",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel on the sea floor: three Net Balls and a Super Potion.",
+      "why": "data/sea_life.json caches.dive_find: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          81,
+          20,
+          4844
+        ],
+        "max": [
+          85,
+          22,
+          4848
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          83,
+          20,
+          4846
+        ]
+      }
+    },
+    {
+      "id": "sea_life_find_windward_deep_dive_6",
+      "kind": "cache",
+      "place": "the seabed at (112, 3991), 38 deep in the windward_deep: a rowboat wreck, its barrel",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel on the sea floor: three Net Balls and a Super Potion.",
+      "why": "data/sea_life.json caches.dive_find: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          109,
+          26,
+          3989
+        ],
+        "max": [
+          113,
+          28,
+          3993
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          111,
+          26,
+          3991
+        ]
+      }
+    },
+    {
+      "id": "sea_life_beached_wreck",
+      "kind": "cache",
+      "place": "the south strand at (4070, 6584): the hull on its side on the sand",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:oran_berry",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/oran_berry.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel in the beached hull: two Net Balls and three Oran Berries.",
+      "why": "data/sea_life.json caches.beached_wreck: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          4066,
+          64,
+          6582
+        ],
+        "max": [
+          4070,
+          66,
+          6586
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          4068,
+          64,
+          6584
+        ]
+      }
+    },
+    {
+      "id": "sea_life_sea_cave",
+      "kind": "cache",
+      "place": "the windward coast's waterline sea cave, mouth at (376, 3503): its far chamber",
+      "contents": [
+        {
+          "item": "cobblemon:great_ball",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/great_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:revive",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/revive.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel at the back of the sea cave: two Great Balls and a Revive.",
+      "why": "data/sea_life.json caches.sea_cave: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          409,
+          59,
+          3501
+        ],
+        "max": [
+          413,
+          61,
+          3505
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          411,
+          59,
+          3503
+        ]
+      }
+    },
+    {
+      "id": "sea_life_windward_surfacing_cave",
+      "kind": "cache",
+      "place": "The Windward Sink under the windward headland: the end of the dry gallery past the pool",
+      "contents": [
+        {
+          "item": "cobblemon:water_stone",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/water_stone.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:revive",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/revive.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel at the end of the dry gallery: a Water Stone and two Revives.",
+      "why": "data/sea_life.json caches.surfacing_cave: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          640,
+          63,
+          4612
+        ],
+        "max": [
+          644,
+          65,
+          4616
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          642,
+          63,
+          4614
+        ]
+      }
     }
   ]
 }
