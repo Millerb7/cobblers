@@ -10232,7 +10232,7 @@
             },
             {
               "id": "r_ember",
-              "text": "I went inside the fire tower in the Nether.",
+              "text": "I went inside the fire tower in the Craters.",
               "visible_when": {
                 "kind": "all",
                 "conditions": [
@@ -10342,7 +10342,7 @@
           "id": "m001",
           "kind": "line",
           "speaker": "vale",
-          "text": "Into the Nether, for a feather. Here: an ember feather, from our store. Mind your sleeves.",
+          "text": "Up the crater's flank, past Blaine's town, for a feather. Here: an ember feather, from our store. Mind your sleeves.",
           "next": "m002"
         },
         {
@@ -10875,7 +10875,7 @@
                 "kind": "not",
                 "condition": {
                   "kind": "player_tag",
-                  "tag": "cobblers_station_issuing"
+                  "tag": "cobblers_station_issuing_eon"
                 }
               },
               "next": "h001"
@@ -10889,6 +10889,10 @@
                   {
                     "kind": "player_tag",
                     "tag": "cobblers_station_issuing"
+                  },
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_issuing_eon"
                   },
                   {
                     "kind": "player_tag",

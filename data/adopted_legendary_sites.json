@@ -604,7 +604,8 @@
    "template": "cobbleverse:legendary/moltres",
    "legendary": "Moltres",
    "rank": 7,
-   "status": "SITED, NOT SCHEDULED. The owner, 2026-10-02: 'Measure the Moltres site in the Craters before anything else is built around it.' Its encounter is a right-click altar wanting an ember_feather, which the Frostpeak research camp will hand out (data/frostpeak_camp.json item_economy).",
+   "status": "SITED, NOT SCHEDULED. The owner, 2026-10-02: 'Measure the Moltres site in the Craters before anything else is built around it.' Its encounter is a right-click altar wanting an ember_feather, which Shrew Station's Director hands out after an ember survey of this tower's box (data/research_station.json economy; the owner, 2026-10-02: one source, the station). Until the tower is pasted that box is open ground.",
+  "superseded_feather_source": "until 2026-10-02 this record named the Frostpeak research camp (data/frostpeak_camp.json item_economy) as the ember feather's source, in status, gate and carries_into_the_world.expected_result; the owner then chose the research station's dialogue (owner_decisions_2026_10_02.the_three_feathers_source)",
    "source_archive": "COBBLEVERSE-DP-v31.zip",
    "size": [
     31,
@@ -669,9 +670,9 @@
      "lumymon:moltres_altar"
     ],
     "read_from": "docs/research/notes/legendary-catalogue-reopened.md section 2: the altar at template [14,1,16], two barrels of blaze powder, fire gems and glass panes",
-    "expected_result": "a right-click with an ember_feather spawns Moltres at 50-60 (LumyMon 0.6.6 class strings). No recipe or loot table makes the feather; the research camp is to hand it out."
+    "expected_result": "a right-click with an ember_feather spawns Moltres at 50-60 (LumyMon 0.6.6 class strings). No recipe or loot table makes the feather; Shrew Station hands it out (data/research_station.json economy.items ember_feather)."
    },
-   "gate": "gym8_cleared, through the feather: the camp hands it out by dialogue as a reward for the researchers' work, at gym8_cleared, the first gate at which every 50/55/60 roll is catchable (cap 60). DECIDED, the owner, 2026-10-02.",
+   "gate": "gym8_cleared, through the feather: Shrew Station hands it out by dialogue as a reward for the researchers' work, at gym8_cleared, the first gate at which every 50/55/60 roll is catchable (cap 60). DECIDED, the owner, 2026-10-02.",
    "does_not_travel_here": [
     "the LumyMon Moltres radar and `/locate`",
     "nothing else: spawn_entries 0, advancements []"
@@ -818,6 +819,7 @@
   "necrozma_one_per_tower_server_wide": "KEPT: 'a one-per-server legendary is a better story on a server for friends - whoever gets there first gets it.'",
   "spectrier": "ONCE PER PLAYER, PERMANENTLY: 'a regrowing carrot crop with a per-player cooldown lost on restart is a farm, not a reward.' Designed in adopted_crown_cemetery.spectrier_once_per_player; BUILT, NOT RUN (tools/spectrier_cap.py -> cobblers_spectrier_cap).",
   "the_three_feathers": "worth building toward: Moltres in the Craters with Blaine, Articuno on Frostpeak, Zapdos on the western cliffs, with the feathers handed out by the Frostpeak research camp (data/frostpeak_camp.json item_economy). The feathers are handed out THROUGH DIALOGUE, as a reward for work the researchers ask for - not a shop: 'earning one should mean helping them study.' Gate gym8_cleared, DECIDED. The Moltres site is measured: adopted_moltres_tower.",
+  "the_three_feathers_source": "DECIDED LATER THE SAME DAY, the owner, 2026-10-02, verbatim: \"the feathers handed out through the research station's dialogue, gated on gym8_cleared\". One source: Shrew Station (data/research_station.json economy.the_one_source_2026_10_02), its errands keeping 'earning one should mean helping them study'. The camp named in the_three_feathers above is now a pointer (data/frostpeak_camp.json item_economy); its part is Dr. Halvard's deck in the glacier errand.",
   "eternatus": "STAYS OUT until a Galar Particle supply is authored."
  }
 }
