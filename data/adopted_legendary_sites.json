@@ -220,7 +220,7 @@
    "gate": {
     "place": "none: a cemetery in the woods is found, not unlocked",
     "spectrier": "THE LEVEL CAP. A shaderoot carrot THROWN onto the trigger ring (not a right-click) spawns Spectrier at 50-59 or 70 (lumymon-altars.md section 1); above a player's RCT cap it breaks free from every ball (data/level_cap.json), so in practice it is caught after the cap reaches its level. Whether a player-thrown carrot fires the trigger at all is EXP-048's owner half, step 1.",
-    "calyrex": "nothing reachable: the statue wants a calyrex_crown, which no recipe or loot table makes. Scenery."
+    "calyrex": "THE ALTAR WORKS: the owner gave the pasted statue the crown in staging and Calyrex came (2026-10-02, experiments/EXP-048-legendary-altar/README.md). But nothing in the game makes a calyrex_crown, so in normal play Calyrex is unreachable until the campaign hands the crown out, as it will the feathers. Calyrex is 70: catchable only after the Champion (cap 100)."
    },
    "gate_why_null": "same as Mew's: the trigger is unreadable. Its class_reason in data/structures.json says 'awakened with a carrot crop grown on site', which is a plausible reading of a closed-source block and is not a source. Nothing is authored on it.",
    "scheduled_as": "legendary_crown_cemetery",
