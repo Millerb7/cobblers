@@ -1172,6 +1172,208 @@ def wall_columns(g, spec, cut):
     return [(x, z, max(g(x, z), floor) + rise) for x, z in cut["line"]]
 
 
+# ------------------------------------------- the walkway, and the measure of whether it can be walked
+#
+# These are deliberately two halves that do NOT share a derivation. walkway_path() and walkway_shell()
+# DECIDE the shape; simulate_function(), standable_cells() and walk_pieces() MEASURE the emitted
+# .mcfunction text and know nothing about either. The measuring half is what caught
+# data/rift_zones.json measured_defects[gatehouse_walkway_is_not_continuous], and it would have caught it
+# just as well had the shape been drawn by hand, because it reads the commands and not the geometry.
+
+PASSABLE = {"minecraft:air", "minecraft:cave_air", "minecraft:void_air"}
+
+
+def walkway_path(block, outward, gh):
+    """One gatehouse's walkway columns in order, outer mouth first, every step 4-CONNECTED to the last.
+
+    THE BUG THIS FIXES (data/rift_zones.json measured_defects). The walkway's centre is the surveyed axis
+    sampled at whole blocks, `round(block + inward * t)`. On any axis not aligned to x or z that sequence
+    steps DIAGONALLY every few blocks -- (3548, 5323) to (3547, 5324) at G2 -- and two blocks that meet only
+    at a corner are two blocks a player cannot walk between. The old shell emitted those centres as the
+    walkway and walled the two columns perpendicular to the DOMINANT axis, which put obsidian on both of the
+    corner's orthogonal joins, so every sideways shift sealed itself.
+
+    So a diagonal step gets the column that joins its two ends, and the walkway stays ONE COLUMN WIDE: the
+    corner makes an L, not a 2x2, and the check below fails closed if a 2x2 ever appears. A corridor widened
+    until the diagonals stopped mattering would pass a flood fill and still be the wrong shape (the owner,
+    2026-10-01).
+
+    The joining column is taken on the axis the heading leans on, so the walkway stays on the surveyed line
+    rather than bulging off it. Returns [(x, z)] from t = -knock_out (the outer mouth, open to the approach)
+    to t = exit_in + 1 (the inner mouth)."""
+    dx, dz = -outward[0], -outward[1]            # inward: t grows towards the zone
+    centres = []
+    for t in range(-gh["knock_out"], gh["exit_in"] + 2):
+        c = (int(round(block[0] + dx * t)), int(round(block[1] + dz * t)))
+        if not centres or c != centres[-1]:
+            centres.append(c)                    # a near-diagonal axis rounds twice onto one column
+    if len(centres) < 3:
+        raise ZoneError("the walkway at %s is %d columns long; a gatehouse needs an outside, a barrier and "
+                        "an inside" % (block, len(centres)))
+    path = [centres[0]]
+    for c in centres[1:]:
+        ax, az = path[-1]
+        sx, sz = c[0] - ax, c[1] - az
+        if abs(sx) > 1 or abs(sz) > 1:
+            raise ZoneError("the walkway at %s jumps %s from %s to %s; the axis is not a unit vector"
+                            % (block, (sx, sz), (ax, az), c))
+        if sx and sz:
+            path.append((ax + sx, az) if abs(dx) >= abs(dz) else (ax, az + sz))
+        path.append(c)
+    on = set(path)
+    for (x, z) in path:
+        if (x + 1, z) in on and (x, z + 1) in on and (x + 1, z + 1) in on:
+            raise ZoneError("the walkway at %s is two columns wide at (%d, %d): that is a widening, not a "
+                            "corner, and a widened corridor passes a flood fill while being the wrong shape"
+                            % (block, x, z))
+    return path
+
+
+def walkway_shell(path):
+    """The columns that wall one walkway in: every 4-neighbour of it that is not walkway and not a mouth.
+
+    Laid as the COMPLEMENT of the walked set rather than as a perpendicular pair per step. That is what makes
+    it safe at a corner: the old per-step pair was computed from one step's own direction, so the pair of the
+    step after a bend landed on the very column the bend needed, and one step's wall could overwrite the
+    next step's walkway. A complement cannot seal the walkway, because the walkway is what it is the
+    complement of.
+
+    Four-neighbours and not eight: the outer diagonal of a bend is left open on purpose, because a player
+    cannot walk through a corner either, which is the whole premise of walkway_path(). The two mouths -- one
+    column beyond each end, continuing that end's own heading -- are left open, because they are the door."""
+    on = set(path)
+    mouths = {(2 * b[0] - a[0], 2 * b[1] - a[1]) for a, b in ((path[1], path[0]), (path[-2], path[-1]))}
+    walls = set()
+    for (x, z) in path:
+        for n in ((x + 1, z), (x - 1, z), (x, z + 1), (x, z - 1)):
+            if n not in on and n not in mouths:
+                walls.add(n)
+    return sorted(walls, key=lambda p: (p[1], p[0]))
+
+
+def x_runs(cells):
+    """[(x0, x1, z)] -- cells merged into runs of consecutive x, so a floor is fills and not setblocks."""
+    out = []
+    for z in sorted({c[1] for c in cells}):
+        xs = sorted(c[0] for c in cells if c[1] == z)
+        a = prev = xs[0]
+        for x in xs[1:]:
+            if x != prev + 1:
+                out.append((a, prev, z))
+                a = x
+            prev = x
+        out.append((a, prev, z))
+    return out
+
+
+def simulate_function(lines):
+    """{(x, y, z): block id} from an emitted .mcfunction's own fill/setblock lines, applied in order.
+
+    THE MEASURING HALF. It reads the commands a gatehouse function actually contains and takes nothing from
+    the geometry that wrote them; everything else (forceload, summon, execute, comments) is ignored. Only
+    literal coordinates are understood, which is all these functions use -- a relative or selector coordinate
+    raises rather than being silently skipped and counted as open ground."""
+    world = {}
+    for raw in lines:
+        ln = raw.strip()
+        if not ln or ln.startswith("#"):
+            continue
+        t = ln.split()
+        if t[0] not in ("fill", "setblock"):
+            continue
+        n = 6 if t[0] == "fill" else 3
+        for c in t[1:1 + n]:
+            if not __import__("re").fullmatch(r"-?\d+", c):
+                raise ZoneError("%s uses the non-literal coordinate %r; this measure reads literals only"
+                                % (t[0], c))
+        v = [int(c) for c in t[1:1 + n]]
+        b = t[1 + n].split("[")[0].split("{")[0]
+        if t[0] == "setblock":
+            world[(v[0], v[1], v[2])] = b
+        else:
+            for x in range(min(v[0], v[3]), max(v[0], v[3]) + 1):
+                for y in range(min(v[1], v[4]), max(v[1], v[4]) + 1):
+                    for z in range(min(v[2], v[5]), max(v[2], v[5]) + 1):
+                        world[(x, y, z)] = b
+    return world
+
+
+def standable_cells(world):
+    """{(x, y, z)} feet positions a player can stand in: two passable blocks over a solid one.
+
+    An unwritten block OVERHEAD counts as open, because a gatehouse writes only its own shell and the sky
+    above a mouth is air. An unwritten block UNDERFOOT counts as nothing: the measure will not call a column
+    standable on terrain this function never placed, so what it returns is the gatehouse's own floor."""
+    out = set()
+    for (x, y, z), b in world.items():
+        if b not in PASSABLE:
+            continue
+        if world.get((x, y + 1, z), "minecraft:air") not in PASSABLE:
+            continue
+        below = world.get((x, y - 1, z))
+        if below is None or below in PASSABLE:
+            continue
+        out.add((x, y, z))
+    return out
+
+
+def walk_pieces(cells):
+    """`cells` split into the pieces a player can actually walk between, largest first.
+
+    FOUR-connected, with a one-block step up or down. Not eight: a player cannot walk between two blocks that
+    meet only at a corner, so an 8-connected fill would have called G2's four pieces one and reported the
+    gatehouse sound. That is the entire defect."""
+    left, pieces = set(cells), []
+    while left:
+        start = left.pop()
+        q = deque([start])
+        piece = [start]
+        while q:
+            (x, y, z) = q.popleft()
+            for (nx, nz) in ((x + 1, z), (x - 1, z), (x, z + 1), (x, z - 1)):
+                for ny in (y, y + 1, y - 1):
+                    if (nx, ny, nz) in left:
+                        left.discard((nx, ny, nz))
+                        piece.append((nx, ny, nz))
+                        q.append((nx, ny, nz))
+        pieces.append(sorted(piece, key=lambda c: (c[2], c[0], c[1])))
+    return sorted(pieces, key=lambda p: (-len(p), p[0]))
+
+
+def cmd_walkable(a):
+    """Flood-fill every emitted gatehouse function and print its pieces.
+
+    Separate from `report` on purpose, in both directions: `report` never reads anything this tool emitted,
+    and this reads nothing else."""
+    out = PACKS / PACK / "data" / NS / "function" / FOLDER
+    paths = sorted(out.glob("gatehouse_*.mcfunction"))
+    if not paths:
+        raise ZoneError("no gatehouse function in %s; run `build` first" % out)
+    barrier_block = load()["gatehouse"]["blocks"]["barrier"]
+    bad = 0
+    for p in paths:
+        world = simulate_function(p.read_text(encoding="utf-8").splitlines())
+        pieces = walk_pieces(standable_cells(world))
+        n_stand = sum(len(x) for x in pieces)
+        barriers = sorted(k for k, b in world.items() if b == barrier_block)
+        # the barrier is meant to be the ONLY break: with it opened the walkway must come out one piece.
+        opened = dict(world)
+        for k in barriers:
+            opened[k] = "minecraft:air"
+        whole = walk_pieces(standable_cells(opened))
+        ok = len(pieces) == 2 and len(whole) == 1
+        bad += 0 if ok else 1
+        print("%-42s %2d standable, %d piece(s) %-12s %d barrier block(s), barrier open -> %d piece(s)  %s"
+              % (p.stem, n_stand, len(pieces), [len(x) for x in pieces], len(barriers), len(whole),
+                 "OK" if ok else "BROKEN"))
+        if not ok or getattr(a, "verbose", False):
+            for i, piece in enumerate(pieces):
+                print("    piece %d: %s" % (i + 1, [(c[0], c[2]) for c in piece]))
+    print("%d of %d gatehouses walkable end to end with the barrier as the only break"
+          % (len(paths) - bad, len(paths)))
+    return 1 if bad else 0
+
+
 def cmd_build(a):
     spec = load()
     rc = cmd_report(argparse.Namespace())
@@ -1285,13 +1487,13 @@ def cmd_build(a):
             cols = wall_columns(g, spec, c)
             body = spec["wall"]["palette"]["body"]
             crest = spec["wall"]["palette"]["crest"]
-            # every gate's walkway is left out of the fill, so its gatehouse opens it
+            # every gate's walkway is left out of the fill, so its gatehouse opens it. The walkway's OWN
+            # columns, from walkway_path(): the old cross of radius walkway+1 round the guard's block was an
+            # axis cross, and on a diagonal axis it missed most of the walkway it was there to protect, so
+            # the cross-wall filled the walkway's own columns as a second seal on top of the shell's.
             keep = set()
             for (_n, _gid, gd, _a, _t, _e, _k) in zgates:
-                q = gd["block"]
-                for d in range(-gh["walkway"] - 1, gh["walkway"] + 2):
-                    keep.add((q[0] + d, q[1]))
-                    keep.add((q[0], q[1] + d))
+                keep.update(walkway_path(gd["block"], gd["outward"], gh))
             lines = ["# the %s cross-wall (data/rift_zones.json cuts[%s]): %d columns on walkable floor, core %d,"
                      % (w, w, c["columns"], spec["wall"]["core"]),
                      "# each column to its own ground + %d. %d further frontier columns stand on scarp and carry no"
@@ -1313,24 +1515,36 @@ def cmd_build(a):
         # same reason.
         for (gname, gid, gd, _a, _t, _e, knock) in zgates:
             gq = gd["block"]
-            dx, dz = [-v for v in gd["outward"]]
             fy = gd["ground_y"] + 1
             sh = gh["blocks"]
+            # the walked set first, then the shell as its complement. Emitted in that order and in three
+            # passes -- floor, walls, then the walkway's air and roof -- so that no column of the shell can
+            # land on a column of the walkway: a per-step pair could, and did (measured_defects).
+            path = walkway_path(gq, gd["outward"], gh)
+            walls = walkway_shell(path)
             gl = ["# the %s gatehouse shell (RIFT_ZONES.md section 6): a one-wide roofed walkway, a two-high barrier"
                   % gid,
                   "# behind the guard, and an armour stand where Codex's NPC will stand (data/rift_sculpt.json's policy).",
                   "# The walkway blocks OUTSIDE the guard are the knock box %s: standing there runs %s's qualify."
-                  % (knock, gid)]
-            px, pz = (0, 1) if abs(dx) > abs(dz) else (1, 0)
-            for t in range(-gh["knock_out"], gh["exit_in"] + 2):
-                cx = int(round(gq[0] + dx * t))
-                cz = int(round(gq[1] + dz * t))
-                gl.append("fill %d %d %d %d %d %d %s" % (cx - px, fy - 1, cz - pz, cx + px, fy - 1, cz + pz, sh["shell"]))
-                gl.append("fill %d %d %d %d %d %d %s" % (cx - px, fy, cz - pz, cx - px, fy + 1, cz - pz, sh["shell"]))
-                gl.append("fill %d %d %d %d %d %d %s" % (cx + px, fy, cz + pz, cx + px, fy + 1, cz + pz, sh["shell"]))
-                gl.append("fill %d %d %d %d %d %d minecraft:air" % (cx, fy, cz, cx, fy + 1, cz))
-                gl.append("setblock %d %d %d %s" % (cx, fy + 2, cz, sh["shell"]))
-            bx = int(round(gq[0] + dx)), int(round(gq[1] + dz))
+                  % (knock, gid),
+                  "# %d walkway columns from %s to %s, 4-connected (a diagonal step carries its own corner, so"
+                  % (len(path), tuple(path[0]), tuple(path[-1])),
+                  "# the walkway can be WALKED and not only teleported through), walled by %d columns."
+                  % (len(walls))]
+            for (x0, x1, z_) in x_runs(set(path) | set(walls)):
+                gl.append("fill %d %d %d %d %d %d %s" % (x0, fy - 1, z_, x1, fy - 1, z_, sh["shell"]))
+            for (x, z_) in walls:
+                gl.append("fill %d %d %d %d %d %d %s" % (x, fy, z_, x, fy + 1, z_, sh["shell"]))
+            for (x, z_) in path:
+                gl.append("fill %d %d %d %d %d %d minecraft:air" % (x, fy, z_, x, fy + 1, z_))
+                gl.append("setblock %d %d %d %s" % (x, fy + 2, z_, sh["shell"]))
+            # the barrier is the walkway's OWN next column inward of the guard, not round(guard + inward):
+            # where the step inward is a diagonal, those are two different columns and only the first of them
+            # touches the guard. One column, and the only break the walkway is allowed to have.
+            if tuple(gq) not in path or path.index(tuple(gq)) + 1 >= len(path):
+                raise ZoneError("%s's guard block %s is not on its own walkway, or is its last column; the "
+                                "barrier has nowhere to stand" % (gid, gq))
+            bx = path[path.index(tuple(gq)) + 1]
             gl.append("# the barrier directly behind the guard: this is what actually stops a player")
             gl.append("fill %d %d %d %d %d %d %s" % (bx[0], fy, bx[1], bx[0], fy + gh["barrier_height"] - 1, bx[1],
                                                      sh["barrier"]))
@@ -1384,9 +1598,13 @@ def main(argv=None):
     sub.add_parser("report", help="fail-closed audit of the data")
     b = sub.add_parser("build", help="emit build/datapacks/" + PACK)
     b.add_argument("--source-root")
+    w = sub.add_parser("walkable", help="flood-fill the EMITTED gatehouse functions; exit 1 on any break "
+                                        "that is not the barrier")
+    w.add_argument("--verbose", action="store_true")
     a = p.parse_args(argv)
     try:
-        rc = {"trace": cmd_trace, "report": cmd_report, "build": cmd_build}[a.cmd](a)
+        rc = {"trace": cmd_trace, "report": cmd_report, "build": cmd_build,
+              "walkable": cmd_walkable}[a.cmd](a)
         return 1 if rc else 0
     except ZoneError as e:
         print("rift_zones: %s" % e, file=sys.stderr)
