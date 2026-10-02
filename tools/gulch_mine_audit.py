@@ -36,7 +36,12 @@ The output (replayed in index order):
               cutting, the portal and the gate's wall; its ground within the data's limits (the heightmap); no two
               closer than the alley; the cutting a floor at its y with air over it; the walk above reaches every
               house's doorway from the gate's arrival
-Not checked here: the farm dens' drop roll (no farm is in the data yet; SOUTHERN_RIFT_MEGA.md 13 holds them)
+  farms       every open-air farm coordinate (each den's anchor, each approach box corner) inside data farms_grid,
+              which is what makes that box a guard rather than a sentence: an anchor is a spawn point and a
+              teleport target. A farm's `zone` is optional since decision B4 (2026-10-01) and none of the seven
+              declare one, so the two zone-shaped checks (a den inside its own polygon, a turn-back point outside
+              it) skip a zoneless farm and still bite for any farm that declares a zone
+Not checked here: the farm dens' drop roll
   faces       scenery (SOUTHERN_RIFT_MEGA.md 13): each face box written whole with exactly its crystals; no function
               outside the build's passes writes into a face box (the restore is retired, and its block tag gone); the
               tick wards each face every tick with the data's margin
@@ -704,6 +709,81 @@ def audit(source_root=None):
     # ---- the Megas: the mine's slots and the farms' dens, one keeper
     mg = spec["megas"]
     all_dens = [("mine", s) for s in mg["slots"]] + [(fa["id"], dn) for fa in spec.get("farms", []) for dn in fa["dens"]]
+
+    # ---- every farm coordinate inside data farms_grid
+    # `grid` guards BLOCK WRITES and the farms write no blocks, so `grid` never looks at a den: the author
+    # of the farms expected it to and it did not. An anchor is a teleport target and a spawn point, so an
+    # unguarded one is a Mega anywhere in the world -- inside a town, on a route, in the live spawn. This
+    # is the check that makes `farms_grid` a guard instead of a sentence. It is unconditional: decision B4
+    # took the zones away, not the anchors, and an anchor is still both of those things.
+    #
+    # A farm's `zone` is OPTIONAL (decision B4, the owner, 2026-10-01: the seven open-air dens have none).
+    # The two checks that read a polygon therefore skip a farm that declares no zone, rather than raising
+    # KeyError on it -- and they are kept, not deleted, because a farm that DOES declare a zone must still
+    # be caught putting its turn-back point inside it or its den outside it.
+    def _inside(poly, px, pz):
+        """Even-odd point-in-polygon, written here rather than imported from tools/gulch_mine.py.
+
+        The generator's own membership test is what placed these points; borrowing it would make the
+        audit agree with the builder by construction. Six lines is a cheap price for an independent
+        statement (CLAUDE.md, "How to prove an audit is independent")."""
+        inside = False
+        n = len(poly)
+        for a in range(n):
+            x0, z0 = poly[a]
+            x1, z1 = poly[(a + 1) % n]
+            if (z0 > pz) != (z1 > pz) and px < x0 + (pz - z0) * (x1 - x0) / (z1 - z0):
+                inside = not inside
+        return inside
+
+    if spec.get("farms"):
+        fg = spec.get("farms_grid")
+        if not fg:
+            probs.append("farms: %d farm(s) are authored and data has no farms_grid to hold them" % len(spec["farms"]))
+        else:
+            (GX0, GX1), (GY0, GY1), (GZ0, GZ1) = fg["x"], fg["y"], fg["z"]
+
+            def _fg(label, x, y, z):
+                if not (GX0 <= x <= GX1 and GY0 <= y <= GY1 and GZ0 <= z <= GZ1):
+                    probs.append("farms: %s is (%d, %d, %d), outside farms_grid x%s y%s z%s"
+                                 % (label, x, y, z, fg["x"], fg["y"], fg["z"]))
+
+            zoned = 0
+            for fa in spec["farms"]:
+                for dn in fa["dens"]:
+                    _fg("%s's den %s anchor" % (fa["id"], dn["id"]), *dn["anchor"])
+                ap = fa["approach"]
+                _fg("%s's approach box corner" % fa["id"], ap[0], ap[1], ap[2])
+                _fg("%s's approach box corner" % fa["id"], ap[3], ap[4], ap[5])
+                fz = fa.get("zone")
+                if not fz:
+                    # zoneless by decision B4: the level band gates it, so there is no polygon to be inside
+                    # or outside of, and no turn-back point to bound. Nothing to check, and nothing wrong.
+                    continue
+                zoned += 1
+                tb = fz["turn_back"]
+                _fg("%s's turn-back point" % fa["id"], tb[0], tb[1], tb[2])
+                # a turn-back point inside the zone it defends would teleport a player back into it
+                if _inside(fz["polygon"], tb[0] + 0.5, tb[2] + 0.5):
+                    probs.append("farms: %s's turn-back point (%d, %d) is INSIDE its own zone polygon, so a "
+                                 "player turned back is turned back again" % (fa["id"], tb[0], tb[2]))
+                # and a den outside its own zone would be reachable without ever entering it
+                for dn in fa["dens"]:
+                    if not _inside(fz["polygon"], dn["anchor"][0] + 0.5, dn["anchor"][2] + 0.5):
+                        probs.append("farms: %s's den %s stands outside its own zone polygon, so the gate "
+                                     "guards nothing" % (fa["id"], dn["id"]))
+            notes["farms (zoned / all)"] = [zoned, len(spec["farms"])]
+            # a zoneless farm must not leave a zone advancement or a turn-back function behind in the pack
+            for fa in spec["farms"]:
+                if fa.get("zone"):
+                    continue
+                if (ADV / ("farm_%s_zone.json" % fa["id"])).is_file():
+                    probs.append("farms: %s declares no zone and the pack still has farm_%s_zone.json"
+                                 % (fa["id"], fa["id"]))
+                for leaf in ("zone", "turn_back"):
+                    if (FN / "farms" / fa["id"] / ("%s.mcfunction" % leaf)).is_file():
+                        probs.append("farms: %s declares no zone and the pack still has farms/%s/%s.mcfunction"
+                                     % (fa["id"], fa["id"], leaf))
     sa = fn_text("megas/spawn_at").strip().splitlines()
     if sa != ["$spawnpokemonat $(x) $(y) $(z) $(species) $(aspect) uncatchable level=$(level)"]:
         probs.append("megas: megas/spawn_at is not the one macro line (EXP-046: a plain spawn line does nothing after a restart)")
@@ -719,9 +799,24 @@ def audit(source_root=None):
         else:
             x, y, z = s["anchor"]
         i = s["id"]
+        # A den's level is its own when it states one, else its farm's tier's (data farm_tiers[].level).
+        # The rule is written out here rather than imported from tools/gulch_mine.py: the audit must say
+        # for itself what the DATA means, or it is only checking the generator against the generator
+        # (CLAUDE.md, "an audit that shares the builder's derivation is not independent"). A mine slot
+        # always states its own, which is why this read used to be unconditional and crashed with
+        # KeyError on the first farm den that did not.
+        if "level" in s:
+            level = s["level"]
+        elif site == "mine":
+            probs.append("megas: mine slot %s states no level and has no tier to fall back on" % i)
+            continue
+        else:
+            farm = next(f for f in spec["farms"] if f["id"] == site)
+            tier = spec["farm_tiers"][s.get("tier", farm["tier"])]
+            level = tier["level"]
         sp = fn_text("megas/spawn_%s" % i)
         call = "function cobblers:gulch_mine/megas/spawn_at {x:%d,y:%d,z:%d,species:\"%s\",aspect:\"%s\",level:%d}" % (
-            x, y, z, s["species"], s["aspect"], s["level"])
+            x, y, z, s["species"], s["aspect"], level)
         if call not in sp.splitlines():
             probs.append("megas: %s's spawn is not `%s`" % (i, call))
         if "execute positioned %d %d %d as @e[type=cobblemon:pokemon,tag=!%s,distance=..2,limit=1,sort=nearest] run function " \

@@ -68,8 +68,24 @@ native settlement disappeared.
 
 ## Hoopa
 
-Hoopa is held in a containment cradle beneath the League plateau at the head of
-the Rift, anchored to the `league` site at (3297, 2603). The cradle lets field
+Hoopa is held in a containment cradle **beneath the relic area on the Windward
+Deep's west lip, centred (3357, 3306), floor y12** — `data/rift_regions.json`
+`hoopa_cradle`, which is where the build and `docs/world-building/DEEP_CITY.md`
+put it, reachable only by the Compact HQ's passage (70 blocks west of
+(3427, 0, 3308), climbing 12).
+
+> **Retired coordinate: (3297, 2603), "beneath the League plateau".** This
+> document carried it until 2026-10-01. It is wrong twice over: it is **outside
+> the Rift**, and the canonical heightmap reads y118 there against the League
+> footprint's 86-99, so it is not under the plateau either. The Rift-zones unit
+> settled the cradle at (3357, 3306) (`docs/STATE.md`). It is recorded here
+> rather than deleted because **it has already propagated**: `data/quests.json`
+> places `npc_main_league_steward` at (3297, 2603), 433 blocks from the League
+> and inside no settlement, and that file is story data Codex corrects upstream.
+> Anything else anchored to (3297, 2603) inherited it from this paragraph and is
+> wrong for the same reason.
+
+The cradle lets field
 crews trigger operations elsewhere without transporting Hoopa. It also keeps
 Hoopa isolated from anyone who might release it.
 
@@ -235,8 +251,11 @@ quests. It cannot resume forced exchanges without undoing the ending.
 ## Data and build gaps
 
 1. Elara, Oren, Nia, Tomas, Brann, the Asters, and Maren need stable NPC IDs.
-2. The containment cradle beneath (3297, 2603) needs an exact Y, footprint,
-   entrance, and structure ID from the terrain owner.
+2. The containment cradle under the relic area at (3357, 3306) is sited with a
+   floor at y12, 76 of cover and the HQ passage as its only entrance
+   (`data/rift_regions.json`); it is **not built**, and still needs its cavern
+   shell, footprint and structure ID from the terrain owner. (It was listed here
+   as "beneath (3297, 2603)" until 2026-10-01: see the Hoopa section.)
 3. Field-anchor props, the Compact symbol, and visual language have no approved
    assets.
 4. The setters for `crater_operation_stopped` and `rift_crisis_resolved` await

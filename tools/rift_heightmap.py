@@ -23,8 +23,17 @@ it twice never sculpts a sculpt.
 
 --plan rebuilds the plan and masks the block passes read (rift_skin, gulch_mine, the audits) in a checkout that has
 the heightmap but not derived/, such as a fresh clone or an agent's worktree. It never writes the heightmap or
-data/world.json, and it refuses unless the sculpt it computes is, pixel for pixel, the heightmap data/world.json
-names: a plan for a different heightmap would be worse than none.
+data/world.json.
+
+--plan MEASURES the applied sculpt rather than recomputing it from today's data. The plan's ring, normals and masks
+are what the block passes BUILD AGAINST, so they have to describe the lip the heightmap really has: recomputed from
+data that has moved since the sculpt was applied they would seat skin, mines and audits against a lip that is not
+there. So the entrances -- the one part of the sculpt that follows data outside data/rift_sculpt.json, because they
+snap to a route -- are read off the applied rim: outside the lip the sculpt only ever RAISES, and it skips an
+entrance's 2*gap+1 stations, so an applied entrance is exactly a window of that width in which nothing outside the
+basin was raised (measured_entrances). Victory Road was re-routed after the sculpt (35f2a56) and its gap had moved
+47 stations; with the gap measured instead of re-snapped, the sculpt reproduces the applied heightmap pixel for
+pixel again, so the proof that the plan describes a real file is kept rather than traded away.
 """
 from __future__ import annotations
 
@@ -254,28 +263,41 @@ def route_points(route_id):
     return out
 
 
-def entrance_indices(spec, ring, X0, Z0):
-    """Each named entrance's ring index.
+def entrance_targets(e):
+    """The world points an entrance snaps to: its route's whole corridor, or its one named point."""
+    if e.get("snap_route"):
+        return route_points(e["snap_route"])
+    ex, ez = e["near"]
+    return [(float(ex), float(ez))]
+
+
+def entrance_indices(spec, ring, X0, Z0, at=None):
+    """Each named entrance's ring index, and how far that station is from the point it snaps to.
 
     An entrance that names a route snaps to where that route actually meets the lip, not to a hand-picked point:
     a gap 152 blocks off Victory Road's crossing would leave the route facing the lethal lip it is meant to pass.
+
+    `at` is {entrance id: ring index}: the gap the heightmap ACTUALLY holds, as measured_entrances() read it off
+    the applied rim. --plan passes it, so the plan describes the sculpt that was applied rather than the one
+    today's routes would ask for; --apply passes nothing and snaps to the data as it stands. The distance is
+    computed for whichever station is used, so the report still says how far the gap is from the route.
     """
     out = []
     for e in spec["entrances"]:
-        if e.get("snap_route"):
-            rp = route_points(e["snap_route"])
-            best, bi = None, 0
-            for i, (z, x) in enumerate(ring):
-                wx, wz = x + X0, z + Z0
-                d = min((wx - px) ** 2 + (wz - pz) ** 2 for px, pz in rp)
-                if best is None or d < best:
-                    best, bi = d, i
-            out.append((bi, e, math.sqrt(best)))
+        pts = entrance_targets(e)
+
+        def d2(i, pts=pts):
+            z, x = ring[i]
+            wx, wz = x + X0, z + Z0
+            return min((wx - px) ** 2 + (wz - pz) ** 2 for px, pz in pts)
+
+        if at is not None and e["id"] in at:
+            bi = int(at[e["id"]]) % len(ring)
+            out.append((bi, e, math.sqrt(d2(bi))))
             continue
-        ex, ez = e["near"]
         best, bi = None, 0
-        for i, (z, x) in enumerate(ring):
-            d = (x + X0 - ex) ** 2 + (z + Z0 - ez) ** 2
+        for i in range(len(ring)):
+            d = d2(i)
             if best is None or d < best:
                 best, bi = d, i
         out.append((bi, e, math.sqrt(best)))
@@ -312,9 +334,12 @@ def town_footprints():
             for t in towns if (t.get("footprint") or {}).get("min_x") is not None]
 
 
-def build(source_root, world_path=None, footprints=None):
+def build(source_root, world_path=None, footprints=None, ent_at=None):
     """The sculpt. `footprints` are the town footprints it leaves untouched: data/towns.json's today when None (what
-    --apply would write now), or the list the last --apply recorded (what the heightmap holds; --plan)."""
+    --apply would write now), or the list the last --apply recorded (what the heightmap holds; --plan).
+
+    `ent_at` is {entrance id: ring index} measured off the applied rim; see entrance_indices(). --apply passes
+    neither and so always computes the sculpt today's data asks for."""
     world = T.load_world(world_path or str(ROOT / "data" / "world.json"))
     current = T.resolve_heightmap(world, Path(world_path or str(ROOT / "data" / "world.json")), source_root)
     base = world["heightmap"].get("rift_sculpted_from")
@@ -362,7 +387,7 @@ def build(source_root, world_path=None, footprints=None):
     total = len(ring)
     nrm = smooth_normals(ring, basin)
     segs = segments(spec, total, seed)
-    ent = entrance_indices(spec, ring, X0, Z0)
+    ent = entrance_indices(spec, ring, X0, Z0, at=ent_at)
     peaks = peak_indices(spec, ring, segs, total, seed, ent)
 
     # the floor each station's cut drops to
@@ -498,7 +523,7 @@ def build(source_root, world_path=None, footprints=None):
             "segs": segs, "ent": ent, "peaks": peaks, "spec": spec, "imp": imp, "hi_out": hi_out,
             "ox": ox, "oz": oz, "n_basin": n_basin, "top": top, "width": width, "plateau": plateau,
             "floor": floor, "nrm": nrm, "ramps": ramps, "protected": kept,
-            "footprints": footprints_used}
+            "footprints": footprints_used, "idx": idx}
 
 
 def report(b):
@@ -566,35 +591,180 @@ def write_plan(b, sha, blocks):
     }), encoding="utf-8")
 
 
+def applied_box(b, have):
+    """The applied sculpt's own heights over the Rift's box: the ground that is really there, in y."""
+    X0, X1, Z0, Z1 = b["box"]
+    if have.shape != b["raw"].shape:
+        raise SculptError("the applied sculpt is %s and the heightmap it was made from is %s: they are not the same "
+                          "map, so nothing can be measured against it" % (have.shape, b["raw"].shape))
+    sub = have[Z0 - b["oz"]:Z1 - b["oz"] + 1, X0 - b["ox"]:X1 - b["ox"] + 1]
+    return RS.y_of_h(sub.astype(np.float64), b["imp"], b["hi_out"])
+
+
+def measured_entrances(b, appY):
+    """{entrance id: ring index} as the APPLIED sculpt holds them, read off the rim and not off data/routes.json.
+
+    An entrance is the one part of the sculpt that follows data outside data/rift_sculpt.json: it snaps to where its
+    route meets the lip. Victory Road was re-routed after the sculpt was applied (35f2a56), so re-snapping now moves
+    its gap 47 stations and the plan would hand rift_skin, gulch_mine and the audits a way down that the heightmap
+    does not have. Measuring it instead makes them agree with the world.
+
+    The signal is the rim, and it is exact rather than fitted. Outside the lip the sculpt only ever RAISES -- the
+    parapet is written with np.maximum -- and it skips every station of an entrance (`~open_i`). So an applied
+    entrance is precisely a window of 2*gap+1 consecutive stations in which NO column outside the basin was raised,
+    and the width comes from data/rift_sculpt.json's own `gap`, not from a tolerance. Where more than one such
+    window exists the one nearest the station the data would snap to is taken, so a sculpt that has not drifted
+    measures back to exactly what it was built from.
+    """
+    ring, basin, idx, Y = b["ring"], b["basin"], b["idx"], b["Y"]
+    total = len(ring)
+    zz, xx = np.nonzero((idx >= 0) & (~basin))
+    rose = (appY[zz, xx] - Y[zz, xx]) > 0.5
+    raised = np.bincount(idx[zz, xx], weights=rose.astype(np.float64), minlength=total) > 0
+    if not raised.any():
+        raise SculptError("no column outside the lip stands higher in %s than in the heightmap it was sculpted "
+                          "from: that file holds no rim, so its entrances cannot be measured" % OUT_NAME)
+    # a window that wraps the ring is one slice of the doubled prefix sum
+    cs = np.concatenate([[0], np.cumsum(np.concatenate([raised, raised]).astype(np.int64))])
+
+    def clear(bi, gap):
+        s = (bi - gap) % total
+        return cs[s + 2 * gap + 1] - cs[s] == 0
+
+    at, spans = {}, []
+    for bi0, e, _ in b["ent"]:
+        gap = int(e["gap"])
+        cand = [bi for bi in range(total) if clear(bi, gap)]
+        if not cand:
+            raise SculptError("%s: no window of %d stations in %s has an unraised rim, so the heightmap holds no gap "
+                              "for this entrance. The applied sculpt is not the one data/rift_sculpt.json describes; "
+                              "re-run --apply." % (e["id"], 2 * gap + 1, OUT_NAME))
+        bi = min(cand, key=lambda i: (min(abs(i - bi0), total - abs(i - bi0)), i))
+        at[e["id"]] = bi
+        spans.append((e["id"], bi, gap, bi0))
+    for i in range(len(spans)):
+        for j in range(i + 1, len(spans)):
+            (ai, abi, ag, _), (bj, bbi, bg, _) = spans[i], spans[j]
+            if min(abs(abi - bbi), total - abs(abi - bbi)) <= ag + bg:
+                raise SculptError("%s and %s both measure to the same gap in %s (stations %d and %d): the heightmap "
+                                  "holds fewer ways in than data/rift_sculpt.json names, and a plan that says "
+                                  "otherwise would route two descents through one. Re-run --apply."
+                                  % (ai, bj, OUT_NAME, abi, bbi))
+    for eid, bi, gap, bi0 in sorted(spans, key=lambda s: -min(abs(s[1] - s[3]), total - abs(s[1] - s[3]))):
+        d = min(abs(bi - bi0), total - abs(bi - bi0))
+        print("    %-24s applied gap at ring %6d%s" % (
+            eid, bi, "" if not d else ", %d stations from the %d today's data would snap it to" % (d, bi0)))
+    return at
+
+
+def differ_where(b, have, out):
+    """Where the recomputed sculpt and the applied file part company, named by the nearest entrance: a refusal that
+    says only how many columns differ sends the next session to re-derive what this one already knows."""
+    X0, X1, Z0, Z1 = b["box"]
+    d = (have != out)[Z0 - b["oz"]:Z1 - b["oz"] + 1, X0 - b["ox"]:X1 - b["ox"] + 1]
+    zz, xx = np.nonzero(d)
+    bits = []
+    for bi, e, _ in b["ent"]:
+        rz, rx = b["ring"][bi]
+        n = int((np.hypot(zz - rz, xx - rx) < 400).sum())
+        if n:
+            bits.append("%s %d" % (e["id"], n))
+    far = int(len(zz) - sum(int(p.rsplit(" ", 1)[1]) for p in bits))
+    if far > 0:
+        bits.append("away from every entrance %d" % far)
+    return "; ".join(bits) or "nowhere near the lip"
+
+
 def plan_only(source_root, world_path):
-    """Write the plan for the heightmap data/world.json already names, after proving the sculpt reproduces it.
+    """Write the plan for the heightmap data/world.json already names, measured from the sculpt it applied.
 
     It sculpts with the town footprints the last --apply recorded, not today's data/towns.json: a town sited or moved
-    since (the rim post moved 178 blocks after the sculpt) would otherwise change the answer."""
+    since (the rim post moved 178 blocks after the sculpt) would otherwise change the answer. For the same reason the
+    entrances are measured off the applied rim rather than re-snapped to today's routes (measured_entrances)."""
     world = T.load_world(world_path)
     rec = world["heightmap"].get("rift_sculpted_from") or {}
     if "footprints" not in rec:
         raise SculptError("data/world.json heightmap.rift_sculpted_from records no footprints: the sculpt cannot be "
                           "reproduced from it")
     b = build(source_root, world_path, footprints=rec["footprints"])
-    blocks = report(b)
     hm = b["world"]["heightmap"]
-    if b["current"].name != OUT_NAME:
-        raise SculptError("data/world.json names %s, not the sculpt %s: --plan only describes an applied sculpt"
-                          % (b["current"].name, OUT_NAME))
+    target, target_sha, via = plan_target(hm, b["current"])
+    have = np.array(Image.open(target)).astype(np.uint16)
+    at = measured_entrances(b, applied_box(b, have))
+    if any(at[e["id"]] != bi for bi, e, _ in b["ent"]):
+        # the gap moved, so the rim profile, the ramps and the peaks that avoid an entrance all move with it
+        print("  re-sculpting with the gaps the heightmap holds", flush=True)
+        b = build(source_root, world_path, footprints=rec["footprints"], ent_at=at)
+    blocks = report(b)
+    was = rec.get("blocks_moved")
+    if was is not None:
+        print("blocks moved, against the %d data/world.json recorded when it was applied: %s" % (
+            was, "the same" if was == blocks else "DIFFERENT by %d" % (blocks - was)))
     out = sculpted(b)
-    have = np.array(Image.open(b["current"])).astype(np.uint16)
     if have.shape != out.shape:
-        raise SculptError("%s is %s, the sculpt %s" % (b["current"].name, have.shape, out.shape))
+        raise SculptError("%s is %s, the sculpt %s" % (target.name, have.shape, out.shape))
     differ = int((have != out).sum())
     if differ:
-        raise SculptError("the sculpt computed from data/rift_sculpt.json differs from %s in %d columns: the spec or "
-                          "a tool changed since the last --apply, and that is a decision for --apply, not --plan"
-                          % (b["current"].name, differ))
-    write_plan(b, hm["sha256"], blocks)
-    print("wrote %s for %s (%s); the heightmap and data/world.json are untouched"
-          % (PLAN.relative_to(ROOT), OUT_NAME, hm["sha256"][:12]))
+        raise SculptError("the sculpt differs from %s in %d columns even with its entrances measured off the rim "
+                          "(%s): something other than the entrances has moved since the last --apply -- the region "
+                          "polygon, data/rift_sculpt.json, or the sculpt's own code -- and reconciling that is a "
+                          "decision for --apply, not --plan"
+                          % (target.name, differ, differ_where(b, have, out)))
+    write_plan(b, target_sha, blocks)
+    print("wrote %s for %s (%s)%s; the heightmap and data/world.json are untouched"
+          % (PLAN.relative_to(ROOT), OUT_NAME, target_sha[:12], via))
     return 0
+
+
+def plan_target(hm, current):
+    """(file, sha256, note) the plan must be verified against: the sculpt's own output, wherever it now sits.
+
+    `--plan` proves the sculpt reproduces a real file before describing it, and that check is the whole value of
+    the mode. It used to compare against the heightmap data/world.json PINS, which was the same file only while the
+    sculpt was the last pass over the heightmap. The water export (2026-09-29) added a pass on top, so the pin
+    became land_8k_16_rescaled_b145_pads_rift_water.png and `--plan` refused -- in EVERY checkout, not just an
+    agent's, which left derived/rift_sculpt/ unreproducible and the Rift's block passes resting on a folder nothing
+    could rebuild (docs/research/AGENT_WORKTREE_INPUTS.md).
+
+    The sculpt's output is still on disk and data/world.json still names AND hashes it, as one of the heightmap's
+    provenance entries -- `water_shaped_from` today. So the target is found by asking the data which entry names
+    OUT_NAME, rather than by hardcoding one hop: another pass layered on later moves the pin again and this keeps
+    working. The sha is checked, so a plan can never describe a file that is not the one the chain recorded.
+    """
+    if current.name == OUT_NAME:
+        return current, hm["sha256"], ""
+    named = sorted(k for k, v in hm.items()
+                   if isinstance(v, dict) and v.get("path") == OUT_NAME and v.get("sha256"))
+    if not named:
+        raise SculptError(
+            "data/world.json pins %s, and no heightmap provenance entry names the sculpt %s, so there is nothing to "
+            "verify the plan against. --apply records the sculpt; a later pass over the heightmap must record what "
+            "it consumed (path and sha256) or the sculpt becomes unreproducible."
+            % (current.name, OUT_NAME))
+    shas = {hm[k]["sha256"] for k in named}
+    if len(shas) > 1:
+        # Found by this function's test author: `sorted(named)[0]` picked one silently and ignored the
+        # rest. Two entries claiming the sculpt with DIFFERENT hashes means the chain disagrees with
+        # itself about what was applied, and guessing which is right is exactly the kind of quiet choice
+        # that let the hand-edited plan sha hide a drift for two days.
+        raise SculptError("data/world.json has %d heightmap provenance entries naming the sculpt %s with "
+                          "DIFFERENT sha256s (%s): the chain disagrees with itself about what was applied, "
+                          "and --plan will not guess which one. Reconcile them."
+                          % (len(named), OUT_NAME, ", ".join("%s=%s" % (k, hm[k]["sha256"][:12]) for k in named)))
+    key = named[0]
+    sha = hm[key]["sha256"]
+    # the entry records a filename only, so the sculpt output is expected beside the pinned heightmap;
+    # every pass in the chain writes into that one directory (docs/world-building/HEIGHTMAP_PROVENANCE.md)
+    target = current.parent / OUT_NAME
+    if not target.exists():
+        raise SculptError("data/world.json's %s names %s, which is not beside %s. The sculpt output is the one file "
+                          "--plan can be verified against; without it, re-run --apply."
+                          % (key, OUT_NAME, current.name))
+    got = hashlib.sha256(target.read_bytes()).hexdigest()
+    if got != sha:
+        raise SculptError("%s hashes to %s, but data/world.json's %s records %s: the file beside the heightmap is "
+                          "not the sculpt the chain recorded." % (OUT_NAME, got[:12], key, sha[:12]))
+    return target, sha, ", reached through heightmap.%s because the pin has moved on to %s" % (key, current.name)
 
 
 def main(argv=None):

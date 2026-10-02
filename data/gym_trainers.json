@@ -5,7 +5,7 @@
   "finding_this_fixes": "F11 in docs/FLIGHT_FINDINGS_2026-09-29.md: our eight authored gym leader teams reached no player. grep -rl gym_01_brock over build/, modpack/ and server/ returned nothing on 2026-09-29. tools/route_trainers.py was the only tool writing data/rctmod/trainers/* and it wrote Routes 1-3 only; data/progression.json's upstream_neutralised emptied each leader's loot table at the upstream id but never replaced the roster behind it. So a player fought Cobbleverse's own kanto_brock and won our badge and our first-win rewards.",
   "why_overrides_and_not_new_ids": "The spawner names the id and cannot be re-pointed without breaking the badge. data/gym_buildings/gym1.json places rctmod:trainer_spawner{TrainerIds:[\"kanto_brock\"]} and records the verified consequence: 'a persistent kanto_brock anywhere awards the badge (verified on staging 2026-09-24)'. data/progression.json binds gym1_cleared to kanto_brock, the first-win reward table is keyed by kanto_brock, and Cobbleverse's own gym template carries a spawner locked to the same id. Overriding the upstream id's team at the upstream path (.claude/rules/datapacks.md) is therefore the only change that puts our roster in front of a player while leaving every badge, flag and reward where it already points. It is the same mechanism as data/league_trainers.json, for the same reason.",
   "not_emitted": "Deliberately not written for these eight: the dialogue file (story is Codex's; these leaders' dlg_* ids resolve nowhere in data/dialogue.json and no text is invented here, so upstream's lines stand until Codex writes ours), the rctmod mob file (the spawner owns how each is spawned, and a spawnWeightFactor 0 override could break it), the loot table (already emptied by data/progression.json upstream_neutralised, which pays the badge and the TM through first_win_rewards instead), an advancement (each gymN_cleared flag already fires from the upstream id through tools/progression_pack.py), and any entry in placements(): these stand where their spawner puts them, so there is nothing for tools/reapply.py to summon.",
-  "contract": "generation_contract.gym_ace_levels is [20, 25, 30, 35, 40, 45, 50, 55]. All seven emittable leaders' top level equals their contract level exactly (checked 2026-09-30, and re-checked by tools/route_trainers.py on every run, which fails closed on a disagreement rather than adjusting one). Giovanni's 55 has no team to check.",
+  "contract": "generation_contract.gym_ace_levels is [20, 25, 30, 35, 40, 45, 50, 55]. All seven emittable leaders' top level equals their contract level exactly (checked 2026-09-30, and re-checked by tools/route_trainers.py on every run, which fails closed on a disagreement rather than adjusting one). Giovanni's 55 is now checked with the rest: his hold was cleared on 2026-10-01 and his Rhyperior tops the team at exactly 55, so all eight leaders are emitted and all eight ace levels are verified against the contract.",
   "trainers": [
     {
       "id": "gym_01_brock",
@@ -182,11 +182,14 @@
       "flag": "gym8_cleared",
       "display_name": "Giovanni",
       "theme": "Open",
-      "members": 0,
-      "levels": null,
+      "members": 6,
+      "levels": [
+        52,
+        55
+      ],
       "ace": {
-        "species": null,
-        "level": null
+        "species": "rhyperior",
+        "level": 55
       },
       "contract_ace_level": 55,
       "seat": null,
@@ -194,8 +197,8 @@
       "emit": [
         "data/rctmod/trainers/kanto_giovanni.json"
       ],
-      "held": true,
-      "held_because": "data/trainers.json gives gym_08_giovanni status 'held' and an empty team: 'Roster intentionally withheld until the singles-versus-doubles decision is settled.' (blocked_by: 'Giovanni battle-format decision'). Nothing is emitted for it, because an override with an empty team would put a leader with no Pokemon in front of a player -- strictly worse than leaving upstream's roster in place. The fix belongs in docs/story/TRAINER_RULES.json, upstream of the generated data/trainers.json, once the battle-format decision is made.",
+      "held": false,
+      "hold_cleared_because": "The owner cleared the hold on 2026-10-01: 'clear Giovanni's hold. It's one stale field quoting an empty team that no longer exists.' The hold was raised when data/trainers.json gave this id status 'held', an empty team and blocked_by 'Giovanni battle-format decision', and nothing could be emitted because an override with no Pokemon is worse than leaving upstream's roster in place. That record is gone: data/trainers.json now gives gym_08_giovanni status 'authored', blocked_by null, format GEN_9_SINGLES -- the singles-versus-doubles question is answered -- and six Pokemon at 52-55 (Hippowdon, Persian, Mudsdale, Nidoqueen, Krookodile, ace Rhyperior 55). The ace's 55 equals contract_ace_level, so tools/route_trainers.py's ace check passes rather than being waived, and the eighth override now emits. The `held` flag is kept as false rather than removed: the field is read by tools/route_trainers.py overrides() and a leader can be held again.",
       "battle_format": "GEN_9_SINGLES"
     }
   ],

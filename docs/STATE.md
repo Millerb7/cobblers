@@ -1,5 +1,58 @@
 # Project state
 
+> ## THERE IS A WORLD AGAIN, as of 2026-10-01
+>
+> **`C:\Users\wnd\Documents\cobblers-staging\staging-2026-10-01`** -- 484 regions, exported from the
+> pinned heightmap with the paint, seed `-472167725407180184` carried from a disposable copy of
+> `cobblers-10240.pre-rescale`'s `level.dat`. Boot it as a disposable universe, never by `level-name`:
+>
+> ```
+> java -Xmx16G -jar fabric-server-launch.jar nogui --universe C:/Users/wnd/Documents/cobblers-staging --world staging-2026-10-01
+> ```
+>
+> **38 of 38 apply steps ran.** In the world now: the Rift skin and biome, the lake beds, the Displaced
+> City cavern, the world tree, the groves and elders, Route 1's maze forest, Relic Island, 26 towns and
+> places, 32 pack donors, the Windward Deep **and the Heaven's Arena tower**, Victory Road's caves, the
+> dig camp's mines, the gulch's gate and Cutting Floor, 5 of 9 zone walls, the evolution-stone faces, the
+> Deep's city, Habitat Blocks, reward NPCs, bridges, lights, town dressing, working Pokemon, the wayside
+> shrines, the gym interiors and **the 7 authored gym buildings**, the ferry docks, **the 12 portals**,
+> route signposts, Routes 1-3's event sites, **the route trainers**, the ferrymen, the town traders, the
+> Celebi, and the authored legendary chambers.
+>
+> **Verified in the world, not in the plan:** the floor verify covers 27 places and **26 have zero gaps**.
+> The arena stands -- crown floor solid at y127, air above tier 1 and tier 7's stands, the balustrade at
+> y129, lobby floor solid at y5. A trainer answers at Victory Road's first seat
+> (`trainer.rctmod.route_09_trainer_01.name`, "League Applicant") and **the tenth seat holds the "League
+> Examiner"**, so main's roster is what a player meets and the Gate Warden survives only in data.
+>
+> **The one failure: `sea_town`, 92 floor gaps**, and its own verify exits 1. That is the known migration
+> -- contracts C3 and C14 already record that the sea town moved out from under its crossing -- now
+> measured in a world rather than inferred.
+>
+> **`cobblers-10240` was never opened.** `server.properties` is unchanged (`level-name=cobblers-10240`,
+> and `max-tick-time=60000` restored after the run, which requires -1).
+>
+> ## The week this replaces, when nothing was in any world
+>
+> **The staging worlds are gone** (established 2026-10-01). `cobblers-dryrun9`, `dryrun11` and
+> `dryrun12` no longer exist. **Every claim in this file of the form "applied to dryrun12", "built on
+> staging", "stands on staging" or "probed in the world" describes a world that has been deleted.**
+>
+> That covers, non-exhaustively: all five built gym buildings, the twelve dive and sky portals, the town
+> dressing and its 85 pieces, the Routes 1-3 event chains, the 20 working Pokemon, the ambient keeper, the
+> Deep's city and the relic area's surface, the Rift mining town, the gulch prototype and its redesign,
+> the sea town's 15 rafts, the 22 evolution-stone faces, the 6 wayside shrines, the sleeping Celebi, the
+> marsh and jungle foliage export, and the Scar's ruins.
+>
+> **All of it exists as authored data in `data/` and as generated packs in `build/`. None of it is
+> standing anywhere.** The live world `cobblers-10240` is untouched, is not staging, and is never to be
+> read or enumerated.
+>
+> So: **"in the world" currently means nothing.** Before trusting any "on staging" line below, remember it
+> describes a pack that applied cleanly once, to a world that is gone. Re-verification needs a new world,
+> and a content-bearing one needs a fresh WorldPainter export (`tools/reexport.py`, which must carry a
+> seed from an offline snapshot -- the owner's decision, not a session's).
+
 ## World facts
 
 - **Authoring landmass:** 8,192 × 8,192 blocks at `x/z 0..8191`; the WorldPainter canvas is `x/z -1280..9471`.
@@ -130,7 +183,7 @@
   remote branch: there is still NO setter**, and `data/quests.json` says so itself -- "no current dialogue
   node invokes this trigger" and "rift_crisis_resolved is approved in ARC.md but absent from the
   progression ledger". The four withheld walls stay withheld; this is answered, not open. Settled by the unit: the cradle goes to
-  (3357, 3306) and not FACTION.md's (3297, 2603), which is outside the Rift; Z3 is superseded by the gulch's
+  (3357, 3306) and not the retired (3297, 2603), which is outside the Rift (FACTION.md now says so too, 2026-10-01); Z3 is superseded by the gulch's
   own zone; Registeel's effective gate is 8 badges, not 7, anywhere in the Rift.
 - **The suite is 7 failed, 5,188 passed, 9 xfailed in 578 s (measured 2026-10-01 after the trainer-ownership fix). The baseline is 7, not 8.** The 19 extra passes over the previous 5,169 are the trainer tests that had been collected-but-dead: between 06:14 and that fix the suite reported `no tests ran` and an `INTERNALERROR` rather than any count, because `tools/route_trainers.py` raised `SystemExit` while `tests/test_trainer_cycle.py` was imported and a `SystemExit` escapes pytest's collection. `tests/conftest.py` now turns that into one named collection error and keeps the count. The four failures that were phase-2's own are FIXED, and `no_swallowed_crashes` with them. What remains is pre-existing and still not to be chased: heightmap provenance (`water_shaped_from` undocumented), `mines_independent` surface faces, two `rift_heightmap` sculpt tests, and three `sea_town` tests, the last three the sea-town/ferry migration contracts C3 and C14 record.
 - **How the four were fixed (2026-10-01), none of them by moving a number until it passed.** `tests/test_gym_buildings_independent.py` hardcoded `GYMS = (gym1, gym3, gym4, gym5, gym7)` while `tools/gym_buildings_independent.py` has always globbed `data/gym_buildings/`, so gyms 6 and 8 were audited by the tool and unexamined by the tests for a day; `GYMS` now reads the folder, and **gyms 6 and 8 pass all 117 content properties**. The two `test_legendaries.py` failures shared one cause: `registeel` was their "unsited" exemplar and this branch sited it. The exemplar is now chosen from the data (`an_unsited_id`), and the test whose live fault had been CLOSED was replaced by the one direction nothing covered - that a correct `gate.unsatisfiable_until` is HONOURED. Proved by mutating the generator: with `admitted = []` forced in `tools/legendaries_audit.py` the new test fails and the rejection test still passes, so they cover different branches. `test_no_swallowed_crashes` was right about two `except BaseException` handlers in the two new gym test files; both now catch `terrain.TerrainUnavailable`, the one error that means "no heightmap here", and the skip path is verified with `COBBLERS_SOURCE_ROOT` unset.
@@ -187,7 +240,54 @@
   (`tools/traders.py:163-201,248-275`), so a category withheld from one player is withheld from everyone.
   Costs: no trade GUI at a gated counter, a restart rather than `/reload` to add one, and nothing stops
   player A buying for player B. Unknown: two players in one NPC's dialogue at once (EXP-022 unrun).
-- **The open-air Mega farm is unbuilt, with its tool already written** (found 2026-10-01).
+- **Every build in this repository activates a verification surface, and that surface must be rewritten by
+  a different hand that has the heightmap** (2026-10-01, from unit 4). The open-air Mega farms looked like
+  pure data authoring -- the generator already implemented `farms[]` end to end and the data simply had no
+  `farms` key -- and authoring them turned 15 tests red: 12 in the gulch suites and 3 cross-system
+  contracts. Not one red was a fault in the data (the farms' own audit is clean with them in place); they
+  were a test surface written to assert the subsystem was dormant, including a test named
+  `test_the_drop_roll_is_inert_without_a_farm_den`. Rewriting it needs an author who did not write the
+  data (`.claude/rules/testing.md`) and who can run `tests/test_system_contracts.py`, which imports the
+  generator in-process and so needs the canonical heightmap and `derived/` -- which an agent's isolation
+  worktree never receives. **So build units serialise through main sessions at roughly one per session**,
+  and a night planned as a fan-out of builders cannot run. Plan one build per session, with its test
+  rewrite as the next session.
+- **The open-air Mega farms are LIVE in the data and green** (2026-10-01). Seven dens across the Rift's
+  two southern arms, four `outer` and three `deeper`, now in `data/gulch_mine.json` as `farms`,
+  `farms_why` and `farms_grid`. **NOT IN ANY WORLD** -- no world exists to apply them to (see the staging
+  entry above) -- but the data, the generated pack and the whole verification surface are done:
+  `gulch_mine.py build` emits all seven, `gulch_mine_audit.py` is CLEAN, and the four suites that had gone
+  15 red now read **215 passed, 3 xfailed, 0 failed** against the real data rather than an injected copy.
+  The parked proposal file was deleted once its three keys were confirmed byte-identical to the live
+  file: a second copy of the same ids is the two-author hazard `data/id_authorship.json` exists to catch,
+  and it would not have caught this one, because identical duplicates only surface once one side drifts.
+  **C14 is not violated** -- `gm.gone` behaves identically for farm dens, and leaving the approach box
+  freezes the clock rather than resetting it, asserted now for all seven dens on both restart and
+  re-approach. **Open for the owner:** whether an open-country turn-back is wanted at all, or whether the
+  level band (60 / 67 against a cap of 50) should be the only gate. `farm_tiers` is ASSUMED throughout and
+  nothing in it has been timed.
+- **An agent worktree CAN read the canonical heightmap; only `derived/` is missing**
+  (`docs/research/AGENT_WORKTREE_INPUTS.md`, proven 2026-10-01). `COBBLERS_SOURCE_ROOT` is set in
+  `.claude/settings.json` `env` and reaches agents, so `tools/ground.py` works there: a test-author agent
+  briefed that it could not run the heightmap-dependent suites ran them anyway and answered y122 at
+  (4528, 4416), the same ground this session measured for `east_arm_shoulder`. Verified independently:
+  that worktree's `derived/` held only `README.md`. **So three nights of "builds cannot be delegated" was
+  right about `derived/`-dependent work and WRONG about the rest**, including the gulch test rewrite. What
+  remains is `derived/` alone, 198 MB of regenerable artefacts, and the only recorded obstacle is the
+  permission classifier refusing `tools/rift_heightmap.py --plan` -- the tool written for exactly this
+  case. One command settles whether the constraint exists at all. `COBBLERS_LOCAL_STORE` cannot help as it
+  stands: it holds 339 files and all of them are kits, with no heightmap and no derived artefact in it.
+- **Three guards that were missing are now in** (2026-10-01, correct with or without the farms):
+  `tools/gulch_mine_audit.py` read `s["level"]` on every den and crashed with `KeyError` on the first den
+  that inherited its tier's level, which the generator's own `den_level` allows -- the rule is now written
+  out in the audit rather than imported, because an audit that borrows the builder's derivation only checks
+  the generator against itself. `data` `farms_grid` plus a check that reads it: `grid` guards BLOCK WRITES
+  and the farms write no blocks, so `grid` never looks at a den, which left a declared box nothing
+  enforced -- an anchor is a spawn point and a teleport target, so an unguarded one is a Mega anywhere in
+  the world. Proved by four mutations, each failing before and named after. And `tests/gulch_sim.py` now
+  models `data modify storage ... set value` and raises `NotModelled` for the roll's UUID paths instead of
+  guessing, so an unsimulated path cannot be mistaken for a satisfied contract.
+- **The open-air Mega farm's tool was already written** (found 2026-10-01).
   `tools/gulch_mine.py` implements `farms[]` end to end -- zone and turn-back, per-tier level, respawn
   clock, drop roll, the shared macro keeper -- and **`data/gulch_mine.json` has no `farms` key at all**,
   while its own `megas.why` references `farms[].dens` and `farm_tiers` describes "four outer dens" that do
@@ -196,6 +296,97 @@
   `tools/gulch_mine_audit.py:242,407` checks coordinates against the gulch's tight block `grid`, which
   these sites are far outside; dens write no blocks, so the fix is a separate declared box for anchors,
   **not a wider grid** -- a threshold widened to make data pass is not a threshold.
+- **THE STAGING WORLDS ARE GONE, so "in the world" currently means NOTHING** (found 2026-10-01, the
+  owner: record it plainly). Every claim anywhere in this file of the form "applied to
+  `cobblers-dryrun11`/`cobblers-dryrun12`", "built on staging" or "probed in the world" describes a world
+  **that no longer exists**: the gyms, the portals, the town dressing, the Route 1-3 event chains, the
+  working Pokemon, the ambient keeper, the Deep's city, the Rift mining town, the gulch prototype, the sea
+  town, the evolution-stone faces, the wayside shrines, the sleeping Celebi. The content is in `data/` and
+  in the generated packs; **none of it is standing anywhere.** Treat every "on staging" line below as "the
+  pack builds and once applied cleanly to a world that has since been deleted", and re-verify rather than
+  trust it. The live world `cobblers-10240` is untouched and is never to be read.
+- **A content-bearing staging world needs a fresh EXPORT, not a generated world** (verified 2026-10-01
+  from the tools' own contracts). `tools/reapply.py` describes itself as *"the re-application after an
+  export"* and takes `carry --old-world <retired old world copy> --world-dir <fresh export>`: it builds
+  ONTO terrain, it does not create it. Every placement sits at an absolute coordinate on
+  heightmap-shaped ground, so on plain generated terrain our towns would float or be buried.
+  `tools/reexport.py` runs WorldPainter through `wpscript` and **requires `--old-world <offline snapshot>`**
+  to carry the seed and settings out of its `level.dat`. The only candidate on disk beside the live world
+  is `cobblers-10240.pre-rescale`, whose name says it predates the vertical rescale -- whether its seed
+  and settings are still the right ones to carry is the owner's call.
+  **For a mod-or-config behaviour check, no export is needed at all**: a plain generated throwaway world
+  with the mod set answers `/pokespawn hoopa` and the trainer-card question, because neither touches
+  terrain or placements.
+- **There is no staging world, and that blocks every runtime test** (found 2026-10-01). The server
+  directory holds `cobblers-10240` (the LIVE world, never to be enumerated or read) and
+  `cobblers-10240.pre-rescale`; the `cobblers-dryrun*` worlds `docs/STATE.md` cites throughout are gone,
+  and `C:/Users/wnd/Documents/cobblers-10240*.world` are WorldPainter PROJECT files, not Minecraft saves.
+  **`server.properties` has `level-name=cobblers-10240`**, so booting the server as it stands loads the
+  live world. The EULA is already accepted on the owner's side and no tool, script or agent may touch it (`.claude/rules/security.md`); `tests/test_no_eula.py` scans every tracked file for the literal acceptance line, so do not write it even in prose -- this sentence replaced a version that did, and the guard caught it. So a runtime check needs either
+  a designated offline snapshot (CLAUDE.md: if none exists, stop and ask) or the owner's say-so to point
+  `level-name` at a throwaway level. Repointing the live server's world while the owner sleeps was not
+  done. **Two cheap, high-value checks are waiting on this**: `/pokespawn hoopa` (one command, below) and
+  whether a pasted legendary altar FUNCTIONS.
+- **The legendary structures carry no spawn presets to lose, and placement is already proven**
+  (`docs/research/notes/cobbleverse-legendary-structures.md`, 2026-10-01). 20 installed legendary
+  structures are named with id, source, legendary, dimension and functional blocks, and **every record has
+  `depends_on_it.spawn_entries: 0` and `advancements: []`** -- so the Gastly mansion's lost spawn presets
+  do NOT repeat here. `legendarymonuments:firescourge_shrine` already passed raw `/place template` with
+  rotation and mirror on Cobblemon 1.8.0 / Fabric 0.19.5, while REGISTERED placement failed its terrain
+  validator. **So the shrine test's question is not whether a structure travels but whether an altar
+  FUNCTIONS**, which narrows it to one in-game check. What does not travel: structure STARTS, so LumyMon
+  radars, `gym_map`, `/locate` and `location_check` go dead, and jigsaw sites (the three lakes, Turnback,
+  Giratina) give only a start piece. The trigger mechanism is mostly ASSUMED: VERIFIED only that Mew runs
+  command blocks gated on `defeat_champion_blue` (which our progression never grants) and the Necrozma
+  towers run `pokespawnat ... level=80`; LumyMon is closed source and the pack's wiki omits the Kanto
+  birds, the Ruinous four, Calyrex, Necrozma and Eternatus. Shortlist: Mew to the Jungle Isle ruins,
+  `crown_cemetery` to Peak Pond, Zapdos to the windward skerries. **Articuno at the Frostpeak shrine is
+  blocked by arithmetic**: pad y310 plus a 74-tall tower is 384, over the ceiling.
+- **Hoopa is species data, not a character, and the Deep's relic area rests on it** (2026-10-01).
+  Cobblemon 1.8.0's official new-species list excludes Hoopa, `wiki.cobblemon.com/index.php/Hoopa` is
+  **404**, and no Prison Bottle item or form-change mechanism was found in any Cobblemon source. Community
+  sources (ASSUMED) say the data and an Unbound toggle exist but that Hoopa "does not have a model yet" and
+  appears as a placeholder. `docs/world-building/DEEP_CITY.md`'s whole relic area is built on a visible
+  Hoopa. **One command settles it: `/pokespawn hoopa`, and look.** Do not build the relic area until
+  someone has.
+- **Hoopa EXISTS in Cobblemon 1.8.0** (measured in a running game, 2026-10-01). `pokespawn hoopa` on a
+  throwaway staging universe spawned it and the entity reported `cobblemon:hoopa`. So the species is real
+  and the Deep's relic area is not dead on that count. **The MODEL question is NOT answered and cannot be
+  over RCON**: a client model is a client fact, so only a player looking at it settles whether it renders
+  or shows a placeholder. `hoopa unbound` returned nothing conclusive. So: the premise survives, the look
+  is still unverified, and it is one glance in game.
+- **The trainer card: the campaign is NOT inert, and the earlier alarm was overstated** (measured in a
+  running game, 2026-10-01, against real shops rather than the data). Verified: our clerk's live shop is
+  exactly three categories -- Pokeballs (`poke_ball`, 200), Treatments (`potion`, 200), Remedies
+  (`antidote`, 100) -- with **no trainer card**; `trainer_card` appears **0 times** in the whole
+  `cobblers_vendors` pack; a plain `cobbledollars:cobble_merchant` summoned with no shop compound has
+  `CobbleMerchantShop: []`, so nothing injects the pack's global `defaultShop` into an entity at summon;
+  and the item id is real (`rctmod:trainer_card`, "Trainer Card"). **But `modpack/config/rctmod-server.toml`
+  says in its own comment that `spawningRequiresTrainerCard` "does not affect trainer spawners"** -- and
+  every authored fight we place reaches a player through a spawner or `summon_persistent`: the eight gym
+  leaders, the Elite Four, the Champion, Victory Road's ten, the route trainers, the mansion guardians.
+  So what a cardless player loses is **natural ambient RCT trainer spawns and the trainer-association
+  NPC**, not the campaign. Still worth fixing (a card our marts never sell is a dead config), and still
+  **NOT VERIFIED**: whether CobbleDollars falls back to `defaultShop` in the GUI despite the empty NBT,
+  which needs a player to open a counter, and whether the card is obtainable any other way.
+- **`cobbleDollarsIncomeMultiplier` is 1.25, ours, overlaid** (the owner, 2026-10-01, decisions B8+B9).
+  Cobbleverse ships **0.5** in `base-pack/cobbleverse/config/cobbledollars/common.json` and we had **no
+  overlay at all**, so upstream's value was live. `modpack/config/cobbledollars/common.json` now sets 1.25
+  and `tools/server_config_record.py install` copies it whole-file onto the server. **All measured income
+  multiplies by 2.5**, which is exactly the factor `docs/research/INCOME_MEASUREMENT.md` found the ladder
+  mispriced by: *"leg income rises 3.8x across eight badges and the ask rises 3.5x; the slopes match, the
+  intercept is about 2.5x off."* So the fix is one key rather than a re-priced column, and the trainer
+  card's 500 at Pallet stops being impossible. The ladder is being re-derived against 1.25 rather than
+  divided again, because dividing after the multiplier would double-correct.
+  **NOT YET LIVE, AND IT MUST NOT GO LIVE UNTIL ONE TEST RUNS:** the staging server is still on upstream's
+  0.5, and the overlay reaches a server only on the next `reapply.py install` plus a restart. **The open
+  risk (raised by the ladder agent after the overlay was already written):** if the key scales
+  `bank.json`'s sell-backs as well as battle income, an `emerald_block` goes from 3,750 to **9,375** and
+  the bank becomes a money printer that invalidates the entire re-price. `bank.json` holds raw prices
+  (emerald 400, emerald_block 3,750), confirmed. **Sell one emerald block on the running 0.5 server: 3,750
+  means sales are untouched and 1.25 is safe; 1,875 means the multiplier applies and B8 must be
+  reconsidered.** Thirty seconds, and it gates the change. And the multiplier also multiplies what `bank.json`'s 82 unreviewed
+  sell prices leak, which nobody has reviewed.
 - **Two contracts fail today and are recorded as such** in `data/system_contracts.json` `fails_today`, strict
   xfail: C3 `sound_ferry_from_the_jetty` (its `to` end (7210,6960) is ground y55 under a sea of y62 and is not
   a deck cell - the sea town moved out from under the crossing, and both stops of the `sound_ferry` line are
@@ -245,7 +436,7 @@
   - **The Rift dig camp as a mining town, with the mega stone seam: cut back on staging** (`data/rift_mines.json`, `tools/rift_mines.py`, pack `cobblers_rift_mines` run by `reapply.py` R9M, world-local). "The Rift mining town" is `rift_dig_camp`, not the Craters' `mining_town`. Forge Row (9 rock houses, no timber) east of the camp track, 2 quarries, a worked face, 3 drifts, 11 ore piles, 303 powered rails (not `minecraft:rail`, a spawn condition), 9 carts; the seam cut with a Mega Showdown meteorid seam in its face at z3159; an ungated adit hall. The first build (a company gate on `gym5_cleared`, gated galleries, 5 chambers, the Heart, 40 finite crystals) stood on staging and the owner walked its gate; it is **cut back on staging** (2026-09-27, branch `world/gulch-prototype`, the owner's decisions 1-2 of `SOUTHERN_RIFT_MEGA.md`): the gated section is retired (`retired_gated_section`), the decline ends in rubble, and drift C ends at the company's grille with one crystal behind it, warded per player (Mining Fatigue IV unless the player holds `gym6_cleared`) and restored on approach once a day (1,728,000 ticks); `cobblers_rift_mines_refill` (staging only, excluded from the driver) puts 14,627 cells of rock back into the carved gated envelope. `tools/rift_mines_audit.py` is rewritten for what remains and is clean. On staging the cut-back R9M (49 functions) and the refill ran, and the refill pack was removed: 300 of 300 sampled final blocks match for each. The ward and the daily face are not yet run by a player. Not in the live world. The owner wants the camp reshaped (2026-09-27, `SOUTHERN_RIFT_MEGA.md` section 13): fitted to its pocket, a large deep quarry over about half of it with strip mines above, an unplanned layout; not built.
   - **The southern Rift's mega site, prototype slice: built on staging, not seen in game** (branch `world/gulch-prototype`, 2026-09-27; `data/gulch_mine.json`, `tools/gulch_mine.py`, pack `cobblers_gulch_mine` run by `reapply.py` R9S, world-local; what and where in `SOUTHERN_RIFT_MEGA.md` section 12). The gulch as its own zone on `cobblers:flag/gym6_cleared` behind a rockfall and grille across the sculpt's `gulch_mouth` gap, with a graded road; the 61-square at (4308, 4848) and a rock-cut yard with the Cutters' workshop (three villagers: 4 raw mega stone + a diamond for any of the 60 local stones, unlimited); the Tally Hall and the Cutting Floor at cavern scale (106,177 cells of air); two 3-crystal faces restored on approach every 30 minutes; two roaming Megas (Steelix, Excadrill) spawned uncatchable by a keeper and leashed. The 92 stone recipes are raised to 4 raw stones from the server's jar (`tools/mega_recipes.py`, never committed); a gulch Mega's win makes no item claim (`data/blackout.json` `claims.exempt_tag`). `tools/gulch_mine_audit.py` (offline, run by `prepare`) is clean. The Fight or Flight enrage line (`always_aggro_aspects` plus the four Mega aspects) is in the server's config since 2026-09-27, the owner's go (the config folder is shared with the live world, which has no wild Megas); staging restarted on it with 0 load problems; unseen in game. **The owner redesigned the site on 2026-09-27 (`SOUTHERN_RIFT_MEGA.md` section 13), not built:** the gate raised to the crag tops, the town filling the cove in worker, miner and extractor sections, Megas at about level 60 in the Rift's two western zones as the only source of raw stones (15% a win, more deeper; 2 raw a stone; no arrival floor), the faces unmineable scenery. On staging (`cobblers-dryrun11`, world-local, 2026-09-27): R9S run (50 block functions, then the Cutters step), 300 of 300 sampled final blocks match; the three Cutters stand with their offers (4 raw + 1 diamond per stone, unlimited, read back over RCON); the mega recipes pack loads. Proof M-1 PASSED in game on 2026-09-27 (EXP-045: a player Mega Evolves with the bracelet worn in its Accessories slot before the battle; it reverts after; held in the hand or equipped mid-battle, no option). M-2 to M-7 (a Mega from a function, the enrage, a ball refused, the faces, the Cutters' trades, the Megas' models) are unrun by a player.
   - **The owner's redesign (SOUTHERN_RIFT_MEGA.md section 13, 13.1), on staging 2026-09-28, not seen in game:** the Megas' keeper spawns through a macro (it did nothing after a plain restart, EXP-046); the rockfall raised into a rockslide wall to the crag tops (y186-194), the grille in a slot, the ward widened; a Mega respawns a fixed time after it was first seen gone, a clock only the keeper writes; the keyed stone costs 2 raw stones and a diamond at the Cutters and in the recipes, and the Tally Hall's free raw stones are gone; the crystal faces are scenery, warded every tick, the restore retired; the cove town, 69 buildings grown by accretion with a level cutting into its sunken east, every doorway walkable from the gate. Audits clean; independent tests merged. **Held for the owner:** the Mega farms (both sites fall inside Victory Road's Z2, 8 badges, in RIFT_ZONES.md, while the design puts them after gym 6: a gym-6 zone of their own, or 8 badges?); the drop roll's functions are generated only once a farm den exists. **Not started:** the West Spur Dig reshape (about 300k tokens more). **Question:** the spur's daily crystal after gym 6 (`data/rift_mines.json`) may hand out a free raw stone, against section 13's "not free"; its loot is unverified.
-  - **The Deep's city and the relic area's surface: built on staging, not seen in game** (`tools/deep_city.py`, `data/deep_city.json`, 2026-09-27). Stood on the pit's ring model (`rift_deep.model()`), never a world: 196 buildings against every riser with roofs flush with the street above (Rimside 69, the Works 38, the Quarter 29, Relay Row 20, the Core 8, the Stacks 27 against the north face, the HQ 5 sections and a tower to y132 with the Compact's ring-and-bridge symbol), 8 stair towers round the lift banks and the Sink Gate (lip y82 to ring 0), 193 ladders with copper roof hatches, the Core spire (y100, one beacon on gold, bridges at y15 to Relay Row), the League's unused CobbleTowns Centre and Mart by the Sink Gate, and lighting built into the fabric (L1-L7, never light blocks; the plan model, not a measurement, puts every street cell at 12 or more but one). The relic area: a stepped shrine, the broken relic ring (top about y110), six ring arches, eight standing stones, the Compact's dig and its cordon round the whole traced edge; its entrance is sealed with reinforced deepslate and nothing is carved behind it. Left empty and labelled for Codex: the HQ's shaft head, director's office, briefing hall, archive, anchor control, lower hall and tower; Nia's clinic, the Asters' home, the canteen, school, survey office, signal room, refinery hall and conduit house. Reserved and unbuilt: Hoopa's cradle, its passage, the HQ's basement and shaft. 99 functions, about 85,000 commands, re-applied by `reapply.py` step R9DC (after R9C, before R9E); `tools/deep_city_audit.py` checks the output offline against the ring model, Victory Road's mouth and the sealed volumes (clean) and `prepare` refuses a failing audit. Found: a lumymon lift moves its rider by `yOffset` at its own column, so the pit's up-lifts aimed at open air over the lower ring and its down-lifts into rock; each lift bank's tower now gives both ends a floor (riding still NOT PROVEN). `docs/story/FACTION.md` still puts the cradle under the League plateau at (3297, 2603); the build follows `data/rift_regions.json` (under the relic area) and builds nothing at either. On staging (`cobblers-dryrun11`, world-local, 2026-09-27): all 99 functions run, 300 of 300 sampled final blocks present (8 panes recomputed their connections); the Centre and Mart placements are not checked. Not in the live world. Not built: the Slip barrier, holo-signs, NPCs.
+  - **The Deep's city and the relic area's surface: built on staging, not seen in game** (`tools/deep_city.py`, `data/deep_city.json`, 2026-09-27). Stood on the pit's ring model (`rift_deep.model()`), never a world: 196 buildings against every riser with roofs flush with the street above (Rimside 69, the Works 38, the Quarter 29, Relay Row 20, the Core 8, the Stacks 27 against the north face, the HQ 5 sections and a tower to y132 with the Compact's ring-and-bridge symbol), **9 stair towers: one round each of the 8 lift banks, plus the Sink Gate** (lip y82 to ring 0; measured 2026-10-01 from the build's own counts, "stair towers round lift banks 8" and "the Sink Gate 1"), 193 ladders with copper roof hatches, the Core spire (y100, one beacon on gold, bridges at y15 to Relay Row), the League's unused CobbleTowns Centre and Mart by the Sink Gate, and lighting built into the fabric (L1-L7, never light blocks; the plan model, not a measurement, puts every street cell at 12 or more but one). The relic area: a stepped shrine, the broken relic ring (top about y110), six ring arches, eight standing stones, the Compact's dig and its cordon round the whole traced edge; its entrance is sealed with reinforced deepslate and nothing is carved behind it. Left empty and labelled for Codex: the HQ's shaft head, director's office, briefing hall, archive, anchor control, lower hall and tower; Nia's clinic, the Asters' home, the canteen, school, survey office, signal room, refinery hall and conduit house. Reserved and unbuilt: Hoopa's cradle, its passage, the HQ's basement and shaft. 100 functions and 88,651 commands (re-measured 2026-10-01 after the arena landed), re-applied by `reapply.py` step R9DC (after R9C, before R9E); `tools/deep_city_audit.py` checks the output offline against the ring model, Victory Road's mouth and the sealed volumes (clean) and `prepare` refuses a failing audit. Found: a lumymon lift moves its rider by `yOffset` at its own column, so the pit's up-lifts aimed at open air over the lower ring and its down-lifts into rock; each lift bank's tower now gives both ends a floor (riding still NOT PROVEN). `docs/story/FACTION.md` put the cradle under the League plateau at (3297, 2603) until 2026-10-01 and now carries (3357, 3306) with the old coordinate recorded as retired; the build follows `data/rift_regions.json` (under the relic area) and builds nothing there yet. On staging (`cobblers-dryrun11`, world-local, 2026-09-27): all 99 functions run, 300 of 300 sampled final blocks present (8 panes recomputed their connections); the Centre and Mart placements are not checked. Not in the live world. Not built: the Slip barrier, holo-signs, NPCs.
   - **A wild Mega works in battle** (EXP-036, staging 2026-09-25): `spawnpokemonat ... charizard mega_evolution=mega_x uncatchable` gave form `megax` with Tough Claws, the battle started and it stayed Mega. The owner tested a wild Mega in game on staging and it worked (2026-09-27, reported by the owner; not logged). Not yet tested: a ball refused in play, after the battle, enraged via fightorflight's `always_aggro_aspects`, and spawning from our pools (`docs/research/notes/wild-mega-pokemon.md`).
   - **Built on staging 2026-09-25:** the Craters' mining town in stone (its 14 houses re-materialed, `mining_deepslate` / `mining_tuff`) and dressed as a working mine (`tools/mining_works.py`, earthwork `mining_town_works`: 184 rails from the adit to the pithead yard, a headframe over a capped shaft, four ore piles, a slag heap, smoke at the adit; the owner let rails and ore draw mining Pokemon, recorded in `data/spawn_block_policy.json`); the Scar as a ruined city (`data/ruins.json`, `tools/ruins.py`: 33 ruined copies of the Displaced City's house designs on the drawn lots, four towers, broken terrace walls, the empty cairn plinth; roofs gone, so the houses stand only 2-7 high; 0 floor gaps; not seen in game). The story docs still describe the Scar as a bare footprint.
   - **Marsh and jungle foliage, exported on staging** (`cobblers-dryrun11`, 2026-09-25; `data/foliage.json` overlays, `docs/world-building/FOLIAGE_MARSH_JUNGLE.md`): about 960 mangroves, 1,500 mangrove scrubs, 510 root tangles, 130 tall mangroves and 97 swamp giants; marsh trees 17 to 24 per hectare, eye-level sightlines in the dense stands about 350 blocks to 70; denser jungle-isle patches. Not seen in game; not in the live world. `mangrove_propagule` is new to the flowers spawn tag's reach and needs a policy entry.

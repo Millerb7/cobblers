@@ -17,9 +17,10 @@
     "data/route_trainers.json",
     "data/late_route_trainers.json",
     "data/mansion_guardians.json",
-    "data/vr_trainers.json"
+    "data/vr_trainers.json",
+    "data/arena_trainers.json"
    ],
-   "satellite_is": "the STAND: where it stands and how it behaves standing there (seat, yaw, faces, eye_contact, sight_distance, skin) and, for a trainer the roster does not generate, the whole record beside its seat",
+   "satellite_is": "the STAND: where it stands and how it behaves standing there (seat, yaw, faces, eye_contact, sight_distance, skin, and -- for Heaven's Arena -- tier, repeatable and cooldown) and, for a trainer the roster does not generate, the whole record beside its seat. data/mansion_guardians.json and data/arena_trainers.json carry whole records today: data/trainers.json generates none of those twelve, so none of their ids is cross-file at all and this space's field rules bite for them only if the roster ever starts generating them",
    "read_by": "tools/route_trainers.py, whose STAND_FIELDS / ROSTER_ECHO / ROSTER_PRECEDENCE state the same split in the tool. The two statements are deliberately separate: tests/test_id_authorship.py asserts they agree, which is a check worth something only because neither is derived from the other",
    "satellite_fields": [
     "seat",
@@ -46,7 +47,10 @@
     "gates",
     "checkpoint",
     "room",
-    "after_win"
+    "after_win",
+    "tier",
+    "repeatable",
+    "cooldown"
    ],
    "echo_fields": [
     "lesson",

@@ -1,0 +1,875 @@
+{
+  "schema": "cobblers.arena-trainers/1",
+  "status": "authored 2026-10-01; record and stand together, nothing placed in any world and nothing observed in game",
+  "source": "docs/world-building/HEAVENS_ARENA.md (the tower), docs/research/notes/rct-arena-capabilities.md (what rctmod supports), and the owner's decision of 2026-10-01: \"the arena stands. Author plain standalone fights -- the series gating resting on unproven A1 is not worth the risk of hijacking every level cap.\"",
+  "generated_by": "hand, from derived/deep_city/plan.json 'arena' tiers (tools/deep_city.py arena_plan, run 2026-10-01). Each seat is that tier's own reserved `stand` triple verbatim; each yaw is computed from the stand to that tier's own `door` (round(degrees(atan2(-dx, dz))), Minecraft's convention: 0 = +Z, -90 = +X). Nothing here re-derives the geometry and nothing here edits it: tools/deep_city.py owns the tower, and plan[\"arena\"][\"tiers\"][n][\"trainer\"] is the null slot this file fills.",
+  "consumed_by": "tools/route_trainers.py (the rctmod trainer, mob, dialog and loot files, the per-player defeat advancement, and the cycle) and its placements() for tools/reapply.py R17, which summons each one at its seat.",
+  "ground": "No world save was read to decide any position (CLAUDE.md, 'Ground comes from the heightmap, never from a world'). The stands are inside a built tower, not on terrain: tools/deep_city.py reserves each as a 3x3x3 checked-clear cell (`clear`) on the tier's own floor, and the seat is the plan's `stand`, which is the floor block's air column. The arena is below the heightmap entirely -- the pit's y15 to y118 -- so ground.py does not apply to it.",
+  "authored_as_plain_standalone_fights": {
+    "no_gating_is_authored": "There is no mechanical lock on any tier. A player may walk up the spiral stair and challenge tier 7 first. Every mob file tools/route_trainers.py writes for these seven carries `series: []` and `requiredDefeats: []`, exactly as it does for the 56 trainers already seated, and this file authors no `requiredDefeats`, no series, no advancement gate on a door and no per-tier lift condition.",
+    "why": "A player's rctmod level cap is DERIVED from their next required trainer in their current series plus relativeLevelCap (docs/research/notes/rct-arena-capabilities.md, from the docs' gameplay/progression page and base-pack/cobbleverse/config/rctmod-server.toml). Our campaign already puts players in a Kanto series with authored caps, so a tier that joined that series would start dictating the level cap for everyone, and a tier in its own series would make a climber leave Kanto to climb. The note's proposed way out -- `requiredDefeats` with `series: []`, the gate without the cap -- rests on experiment A1 (whether requiredDefeats is enforced at all for a trainer belonging to no series), which is UNPROVEN. Getting it wrong hijacks every level cap in the game, so the owner's call is to author no gate rather than an unproven one.",
+    "what_the_climb_is_instead": "The geometry and the difficulty. The tiers are 17 apart up a drum whose only route is the spiral stair round the light core (HEAVENS_ARENA.md section 5), and the level band below climbs from just under the League to well past the Champion. Tier 7 at 76 is the hardest fight authored in the campaign; a player who skips to it loses to it. That is the whole gate and it is deliberate.",
+    "if_A1_is_ever_proven": "Adding `requiredDefeats: [[\"arena_tier_<N-1>_champion\"]]` to a tier would be a one-field change per tier in tools/route_trainers.py's mob payload plus a field here. Nothing in this file is shaped to prevent it. Do not add it before A1 runs."
+  },
+  "repeatability": {
+    "decision": "Every tier is REPEATABLE, endlessly, for every player: `repeatable: true` on all seven. tools/route_trainers.py therefore writes `maxTrainerDefeats: -1` in their mob files and writes NO Cooldown line for them in cobblers:trainers/cycle.",
+    "why_1_the_owner_asked_for_it": "The original want recorded at the head of docs/research/notes/rct-arena-capabilities.md is \"endless fights, real money\". CobbleDollars pays out on every rctmod trainer win including rematches -- measured on staging by the owner 2026-09-24: a persistent kanto_brock paid $732, and a second win straight after paid $600 (docs/STATE.md). Nothing has to be built for the money; it arrives because earnCobbleDollarsFromNPC is true.",
+    "why_2_it_is_already_the_behaviour": "rctmod never refuses a rematch with a trainer placed by summon_persistent: couldBattleAgainst returns true for a persistent trainer before it checks who beat it, and TrainerMob.winsAndDefeats is never saved anyway (rctmod 0.19.0-beta bytecode, read 2026-09-24; tools/route_trainers.py). So `maxTrainerDefeats` does nothing for ours either way. -1 is written because it states the intent in the data, and because it is the DOCUMENTED path (negative = infinity) if a tier is ever moved to an rctmod:trainer_spawner block, where the bypass would not apply.",
+    "why_3_the_one_thing_that_would_stop_it_is_ours": "The only mechanism that actually refuses a rematch today is our own `data merge entity @s {Cooldown:40}` line in the cycle, which rctmod's canBattleAgainst does respect. The arena opts out of that line. That is the entire implementation of repeatability.",
+    "why_4_it_costs_no_gate": "The hold-off exists because the gym leaders, the Elite Four and the Champion GATE progression -- a badge, gymN_cleared, champion_cleared -- and a refight there is a level-cap bypass at a gate (tools/route_trainers.py leader_cycle_lines). The arena gates nothing: no badge, no flag read by another system, nothing in data/progression.json chapters, and `no_gating_is_authored` above. A player farming tier 1 bypasses no gate; they are grinding battle XP and CobbleDollars in the last city before the League, which is what the owner asked the arena to be.",
+    "what_is_still_once_per_player": "quest.arena_tier_N_champion.defeated and the tag cobblers_beat_arena_tier_N_champion. The advancement that sets the field fires on the first win only (rctmod:defeat_count with count 1, winning side only, EXP-027), so the field is a record of HAVING taken that tier, not of the last fight. It is what a future prize, a per-tier lift condition or a crown advancement would read.",
+    "the_cycle_keeps_the_home_line": "The tp-home line stays for all seven: battle knockback moves a trainer pinned at movement speed 0, and a champion knocked off a tier's annulus at y118 falls down the drum. Only the Cooldown line is dropped.",
+    "not_verified": "That dropping the Cooldown line really produces an immediate rematch at these seats, and that an endless ladder does not break rctmod's unique-identity or battle-cooldown handling at a tier where two players fight in turn. battleCooldownTicks 240 (rctmod's own, default) still applies for 12 seconds after each battle, which is why these seven have an `on_cooldown` line of their own."
+  },
+  "level_band": {
+    "chosen": "Ace levels 56, 59, 62, 65, 68, 72, 76 for tiers 1 to 7; member counts 3, 3, 4, 4, 5, 5, 6.",
+    "why": "The arena sits after the Deep, whose level cap is 60 (data/trainers.json generation_contract relative_level_cap 0; DEEP_CITY.md: the cap there is 60, the first Elite Four ace). data/league_trainers.json's band is 57-60 for the Elite Four and 58-62 for Blue, and Victory Road's caves beyond are 58-64. So tier 1's ace at 56 sits JUST UNDER Lorelei's lead -- a fight a player ready for the League can take -- tier 3 at 62 matches the Champion's ace exactly, and tiers 4 to 7 climb past the end of the authored campaign to 76. Steps are +3 to the Champion's level and then +3/+3/+4/+4, so no single rung is a wall and the top is four clear bands above the hardest League fight.",
+    "why_it_may_exceed_the_cap": "A trainer's team level is not bounded by the player's level cap: rctmod's over_level_cap refusal is about the PLAYER's party exceeding the player's own cap, and data/level_cap.json caps CATCHING rather than battling. Tiers above 62 are therefore reachable and simply hard, which is the design: difficulty is the only gate (see authored_as_plain_standalone_fights).",
+    "member_counts_climb": "3 at the floor to a full 6 at the crown, so the tower escalates in attrition as well as in level. Tier 7 is the only six-member fight here and is pitched above champion_blue's six at 58-62.",
+    "a_balance_decision_not_a_contract": "generation_contract.gym_ace_levels (20..55) covers the eight gyms and does not reach the arena; tools/route_trainers.py's contract_ace_level check applies only to the gym overrides. Nothing validates these seven levels against a contract, so this block is the record of the choice. HEAVENS_ARENA.md section 9 item 6 ('the ladder's level band ... a pacing decision for trainer-balance-designer') is answered here and should be read against it."
+  },
+  "eye_contact": {
+    "decision": "false on all seven, decided tier by tier and coming out the same for every tier.",
+    "why": "forceBattleOnSight plus repeatability is a trap. The spiral stair opens onto EVERY tier (HEAVENS_ARENA.md section 5), so a climber crosses each floor on the way up and back down, and our one protection against being dragged into a fight already won -- the Cooldown merge -- is exactly what repeatability gives up. A tier champion that battles on sight would restart itself every time its own tier is walked through. The arena's fiction is also that the challenger challenges: a player right-clicks the champion whose stand they want. rctmod starts a battle on a right-click or on a few moments' look (docs gameplay/entities), so interaction is enough and nothing is lost.",
+    "consequence_for_the_cycle": "With eye_contact unset, tools/route_trainers.py writes no forceBattle* keys and no sight_distance is read; the cycle's tag radius falls back to its floor of 9.0 blocks around the seat, which covers the 3x3 stand and the floor in front of it. No sight_distance is authored here BECAUSE it would be a dead field -- it is read only when eye_contact is set."
+  },
+  "skins": "Each tier reuses an rctmod trainer texture ALREADY referenced by a record in this repository (data/route_trainers.json, data/late_route_trainers.json, data/vr_trainers.json), because those filenames carry rctmod's own hex suffixes and the mod jars are not in this worktree to read a fresh list from. Every client has rctmod's textures, which is the requirement. The seven are distinct from each other; several are also worn by a route trainer hundreds of blocks away and eight levels of band apart, which is a cosmetic repeat and not a conflict. Not verified: that each path resolves in game -- only that it is the same string an existing seated trainer uses.",
+  "team_vocabulary": "Every move, ability, held item and nature below is one already used by a record in data/trainers.json, so no identifier here is newly invented. The Cobblemon 1.8.0 jar is NOT in this worktree (gitignored; .worktreeinclude copied none of them), so nothing here is a fresh species-data read: that each species learns each of these moves at or below its level is NOT verified, unlike data/mansion_guardians.json's movesets, which were read from the jar in 2026-09-24. `ability` is omitted for a species whose real ability is not already in that evidenced vocabulary, which lets Cobblemon use the species default rather than guess an id. tools/validate.py's missing_pokemon_refs check is a stub, so nothing in the repository checks these names either.",
+  "not_authored_here": [
+    "Prizes. CobbleDollars pays automatically and the rctmod loot table tools/route_trainers.py writes for a seated trainer is {\"pools\": []} -- deliberately empty, as for every route fight. No TM, no item, no first-win reward, and nothing in data/rewards.json refers to the arena.",
+    "The lift's per-tier requiredAdvancement, the tier-5 terrace and the second bridge: open questions in HEAVENS_ARENA.md section 9, untouched.",
+    "Per-player tier state and 'who holds tier 7'. One rctmod:trainer is one shared entity and cannot be per player (the capabilities note, section 3). The quest field above is the only per-player record and it says 'this player has taken this tier', not 'this player holds it'.",
+    "Signage, seating and dressing inside the drum, and any dialogue beyond the three lines per champion that rctmod reads.",
+    "healPlayers. Every entry sets battleRules.healPlayers false, matching all thirteen authored bosses and the five mansion guardians. For an ENDLESS ladder with no recorded healer in the Deep's city that is a real pacing question -- a climber must walk out between fights -- and it is left as the owner's to answer rather than invented here."
+  ],
+  "trainers": [
+    {
+      "id": "arena_tier_1_champion",
+      "tier": 1,
+      "display_name": "Pit-Hand Odell",
+      "class": "arena_champion",
+      "theme": "Fighting",
+      "status": "authored",
+      "strategy": "The floor's doorman. Fake Out and Sucker Punch punish a player who opens with a setup move, and Guts plus a Flame Orb means burning him is the wrong answer.",
+      "format": "GEN_9_SINGLES",
+      "ace_level": 56,
+      "ace_species": "conkeldurr",
+      "member_count": 3,
+      "team": [
+        {
+          "species": "scrafty",
+          "moveset": ["fakeout", "knockoff", "revenge", "scaryface"],
+          "ability": "moxie",
+          "heldItem": "black_glasses",
+          "nature": "adamant",
+          "level": 54
+        },
+        {
+          "species": "bisharp",
+          "moveset": ["suckerpunch", "ironhead", "swordsdance", "protect"],
+          "ability": "pressure",
+          "heldItem": "focus_sash",
+          "nature": "adamant",
+          "level": 55
+        },
+        {
+          "species": "conkeldurr",
+          "moveset": ["hammerarm", "stoneedge", "firepunch", "protect"],
+          "ability": "guts",
+          "heldItem": "flame_orb",
+          "nature": "adamant",
+          "level": 56
+        }
+      ],
+      "dialogue_text": {
+        "pre": "Tier one. Everyone starts on the floor and most of them stay here. Hands up.",
+        "player_win": "Huh. Go on up then. The stair's behind the core -- and the ones above me do not hit like I do.",
+        "player_loss": "Floor's mine. Walk it off and come back, I am not going anywhere."
+      },
+      "after_win": "Odell steps off the stand and waves you at the stair. The light core hums seventeen blocks up to the next floor.",
+      "seat": [3617, 16, 3255],
+      "yaw": 126,
+      "faces": "across the annulus at tier 1's door, the city's own y15 bridge from Relay Row",
+      "eye_contact": false,
+      "repeatable": true,
+      "cooldown": "arena",
+      "skin": "rctmod:textures/trainers/single/worker_braden_0460.png",
+      "rct": {
+        "name": {
+          "literal": "Pit-Hand Odell"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.05,
+            "switchBias": 0.5,
+            "statusMoveBias": 0.8,
+            "itemBias": 0.6,
+            "maxSelectMargin": 0.3
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "scrafty",
+            "moveset": ["fakeout", "knockoff", "revenge", "scaryface"],
+            "ability": "moxie",
+            "heldItem": "black_glasses",
+            "nature": "adamant",
+            "level": 54
+          },
+          {
+            "species": "bisharp",
+            "moveset": ["suckerpunch", "ironhead", "swordsdance", "protect"],
+            "ability": "pressure",
+            "heldItem": "focus_sash",
+            "nature": "adamant",
+            "level": 55
+          },
+          {
+            "species": "conkeldurr",
+            "moveset": ["hammerarm", "stoneedge", "firepunch", "protect"],
+            "ability": "guts",
+            "heldItem": "flame_orb",
+            "nature": "adamant",
+            "level": 56
+          }
+        ]
+      }
+    },
+    {
+      "id": "arena_tier_2_champion",
+      "tier": 2,
+      "display_name": "Shaftwalker Nessa",
+      "class": "arena_champion",
+      "theme": "Water / Ground",
+      "status": "authored",
+      "strategy": "The flooded shafts. Gastrodon stalls with Recover and Toxic while Dry Skin and Water Absorb make the obvious water answer worse than none, and Swampert closes with Ice Punch for whatever the player brought for the mud.",
+      "format": "GEN_9_SINGLES",
+      "ace_level": 59,
+      "ace_species": "swampert",
+      "member_count": 3,
+      "team": [
+        {
+          "species": "gastrodon",
+          "moveset": ["muddywater", "earthpower", "recover", "toxic"],
+          "ability": "waterabsorb",
+          "heldItem": "leftovers",
+          "nature": "calm",
+          "level": 57
+        },
+        {
+          "species": "toxicroak",
+          "moveset": ["poisonjab", "revenge", "suckerpunch", "swordsdance"],
+          "ability": "dryskin",
+          "heldItem": "life_orb",
+          "nature": "adamant",
+          "level": 58
+        },
+        {
+          "species": "swampert",
+          "moveset": ["liquidation", "earthquake", "icepunch", "protect"],
+          "ability": "torrent",
+          "heldItem": "muscle_band",
+          "nature": "adamant",
+          "level": 59
+        }
+      ],
+      "dialogue_text": {
+        "pre": "I walked the drowned shafts for eleven years before they built this drum. Water does not tire.",
+        "player_win": "Then you do not tire either. Tier three runs the conduits -- mind the floor, it is all steel up there.",
+        "player_loss": "The water wins by waiting. It always did."
+      },
+      "after_win": "Nessa wrings out a sleeve and points up the stair with her chin.",
+      "seat": [3612, 33, 3258],
+      "yaw": 162,
+      "faces": "across the annulus at tier 2's door on the north arc",
+      "eye_contact": false,
+      "repeatable": true,
+      "cooldown": "arena",
+      "skin": "rctmod:textures/trainers/single/hiker_nob_00b7.png",
+      "rct": {
+        "name": {
+          "literal": "Shaftwalker Nessa"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.1,
+            "switchBias": 0.6,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.7,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "gastrodon",
+            "moveset": ["muddywater", "earthpower", "recover", "toxic"],
+            "ability": "waterabsorb",
+            "heldItem": "leftovers",
+            "nature": "calm",
+            "level": 57
+          },
+          {
+            "species": "toxicroak",
+            "moveset": ["poisonjab", "revenge", "suckerpunch", "swordsdance"],
+            "ability": "dryskin",
+            "heldItem": "life_orb",
+            "nature": "adamant",
+            "level": 58
+          },
+          {
+            "species": "swampert",
+            "moveset": ["liquidation", "earthquake", "icepunch", "protect"],
+            "ability": "torrent",
+            "heldItem": "muscle_band",
+            "nature": "adamant",
+            "level": 59
+          }
+        ]
+      }
+    },
+    {
+      "id": "arena_tier_3_champion",
+      "tier": 3,
+      "display_name": "Conduit Chief Veyl",
+      "class": "arena_champion",
+      "theme": "Steel / Electric",
+      "status": "authored",
+      "strategy": "Trick Room under the light core. Bronzong inverts the speed order, Magnet Pull holds a steel answer in, Spikes make switching out of the room cost, and Metagross swings four punches of coverage while the player is slower than everything.",
+      "format": "GEN_9_SINGLES",
+      "ace_level": 62,
+      "ace_species": "metagross",
+      "member_count": 4,
+      "team": [
+        {
+          "species": "bronzong",
+          "moveset": ["trickroom", "gyroball", "heavyslam", "earthquake"],
+          "ability": "levitate",
+          "heldItem": "leftovers",
+          "nature": "relaxed",
+          "level": 59
+        },
+        {
+          "species": "magnezone",
+          "moveset": ["thunderbolt", "flashcannon", "thunderwave", "bodypress"],
+          "ability": "magnetpull",
+          "heldItem": "magnet",
+          "nature": "modest",
+          "level": 60
+        },
+        {
+          "species": "ferrothorn",
+          "moveset": ["spikes", "gyroball", "knockoff", "protect"],
+          "heldItem": "rocky_helmet",
+          "nature": "relaxed",
+          "level": 61
+        },
+        {
+          "species": "metagross",
+          "moveset": ["ironhead", "earthquake", "icepunch", "thunderpunch"],
+          "heldItem": "expert_belt",
+          "nature": "adamant",
+          "level": 62
+        }
+      ],
+      "dialogue_text": {
+        "pre": "I keep the conduits that light this tower. Up here the clock runs backwards. Mind your order.",
+        "player_win": "Clean. You read the room instead of panicking in it. Tier four floods -- Marro keeps the sluice.",
+        "player_loss": "Slow is not the same as safe, and you were neither."
+      },
+      "after_win": "Veyl kills the floor's work lamps and the light core takes over, white all the way up the stair.",
+      "seat": [3609, 50, 3259],
+      "yaw": 180,
+      "faces": "due north across the annulus at tier 3's door, which is directly opposite the stand",
+      "eye_contact": false,
+      "repeatable": true,
+      "cooldown": "arena",
+      "skin": "rctmod:textures/trainers/single/engineer_bernie_00de.png",
+      "rct": {
+        "name": {
+          "literal": "Conduit Chief Veyl"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.15,
+            "switchBias": 0.7,
+            "statusMoveBias": 0.9,
+            "itemBias": 0.8,
+            "maxSelectMargin": 0.2
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "bronzong",
+            "moveset": ["trickroom", "gyroball", "heavyslam", "earthquake"],
+            "ability": "levitate",
+            "heldItem": "leftovers",
+            "nature": "relaxed",
+            "level": 59
+          },
+          {
+            "species": "magnezone",
+            "moveset": ["thunderbolt", "flashcannon", "thunderwave", "bodypress"],
+            "ability": "magnetpull",
+            "heldItem": "magnet",
+            "nature": "modest",
+            "level": 60
+          },
+          {
+            "species": "ferrothorn",
+            "moveset": ["spikes", "gyroball", "knockoff", "protect"],
+            "heldItem": "rocky_helmet",
+            "nature": "relaxed",
+            "level": 61
+          },
+          {
+            "species": "metagross",
+            "moveset": ["ironhead", "earthquake", "icepunch", "thunderpunch"],
+            "heldItem": "expert_belt",
+            "nature": "adamant",
+            "level": 62
+          }
+        ]
+      }
+    },
+    {
+      "id": "arena_tier_4_champion",
+      "tier": 4,
+      "display_name": "Sluicekeep Marro",
+      "class": "arena_champion",
+      "theme": "Ice / Water",
+      "status": "authored",
+      "strategy": "Rain and a Shell Smash lead. Cloyster opens on a Focus Sash and fires multi-hit through a Substitute or a Sturdy, Jellicent walls physical with Will-O-Wisp and Hex, and Kingdra under its own rain outspeeds a player who was fast enough three floors down.",
+      "format": "GEN_9_SINGLES",
+      "ace_level": 65,
+      "ace_species": "kingdra",
+      "member_count": 4,
+      "team": [
+        {
+          "species": "cloyster",
+          "moveset": ["shellsmash", "iciclespear", "rockblast", "liquidation"],
+          "heldItem": "focus_sash",
+          "nature": "jolly",
+          "level": 62
+        },
+        {
+          "species": "jellicent",
+          "moveset": ["hex", "surf", "willowisp", "recover"],
+          "ability": "waterabsorb",
+          "heldItem": "black_sludge",
+          "nature": "calm",
+          "level": 63
+        },
+        {
+          "species": "beartic",
+          "moveset": ["iciclecrash", "liquidation", "playrough", "protect"],
+          "ability": "swiftswim",
+          "heldItem": "lum_berry",
+          "nature": "adamant",
+          "level": 64
+        },
+        {
+          "species": "kingdra",
+          "moveset": ["raindance", "hydropump", "dracometeor", "icebeam"],
+          "ability": "swiftswim",
+          "heldItem": "mystic_water",
+          "nature": "modest",
+          "level": 65
+        }
+      ],
+      "dialogue_text": {
+        "pre": "Four up. Past here nobody is pretending this is practice. I keep the sluice and the sluice keeps the pit.",
+        "player_win": "Then you are better than the pit. Five has daylight in it -- first you will have seen in a while.",
+        "player_loss": "Dry off downstairs. The floor below will take you back."
+      },
+      "after_win": "Marro spins the sluice wheel shut behind you. Somewhere above, the drum's wall opens onto the Rift.",
+      "seat": [3606, 67, 3258],
+      "yaw": -162,
+      "faces": "across the annulus at tier 4's door on the north arc",
+      "eye_contact": false,
+      "repeatable": true,
+      "cooldown": "arena",
+      "skin": "rctmod:textures/trainers/single/fisherman_andrew_00e9.png",
+      "rct": {
+        "name": {
+          "literal": "Sluicekeep Marro"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.2,
+            "switchBias": 0.8,
+            "statusMoveBias": 0.95,
+            "itemBias": 0.85,
+            "maxSelectMargin": 0.16
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "cloyster",
+            "moveset": ["shellsmash", "iciclespear", "rockblast", "liquidation"],
+            "heldItem": "focus_sash",
+            "nature": "jolly",
+            "level": 62
+          },
+          {
+            "species": "jellicent",
+            "moveset": ["hex", "surf", "willowisp", "recover"],
+            "ability": "waterabsorb",
+            "heldItem": "black_sludge",
+            "nature": "calm",
+            "level": 63
+          },
+          {
+            "species": "beartic",
+            "moveset": ["iciclecrash", "liquidation", "playrough", "protect"],
+            "ability": "swiftswim",
+            "heldItem": "lum_berry",
+            "nature": "adamant",
+            "level": 64
+          },
+          {
+            "species": "kingdra",
+            "moveset": ["raindance", "hydropump", "dracometeor", "icebeam"],
+            "ability": "swiftswim",
+            "heldItem": "mystic_water",
+            "nature": "modest",
+            "level": 65
+          }
+        ]
+      }
+    },
+    {
+      "id": "arena_tier_5_champion",
+      "tier": 5,
+      "display_name": "Ilse of the Terrace",
+      "class": "arena_champion",
+      "theme": "Grass / Fairy, sun",
+      "status": "authored",
+      "strategy": "Sun on the one floor level with the Rift. Torkoal sets Drought and burns, Whimsicott's Encore and Taunt strand a setup sweeper, and Roserade under sun turns Giga Drain and Leech Seed into a clock the player cannot outlast without hazard-free switching.",
+      "format": "GEN_9_SINGLES",
+      "ace_level": 68,
+      "ace_species": "roserade",
+      "member_count": 5,
+      "team": [
+        {
+          "species": "torkoal",
+          "moveset": ["lavaplume", "bodypress", "willowisp", "protect"],
+          "ability": "drought",
+          "heldItem": "heat_rock",
+          "nature": "relaxed",
+          "level": 64
+        },
+        {
+          "species": "tsareena",
+          "moveset": ["playrough", "highhorsepower", "uturn", "protect"],
+          "heldItem": "muscle_band",
+          "nature": "adamant",
+          "level": 65
+        },
+        {
+          "species": "whimsicott",
+          "moveset": ["moonblast", "energyball", "encore", "taunt"],
+          "ability": "infiltrator",
+          "heldItem": "focus_sash",
+          "nature": "timid",
+          "level": 66
+        },
+        {
+          "species": "florges",
+          "moveset": ["dazzlinggleam", "synthesis", "lifedew", "protect"],
+          "heldItem": "leftovers",
+          "nature": "calm",
+          "level": 67
+        },
+        {
+          "species": "roserade",
+          "moveset": ["gigadrain", "sludgebomb", "dazzlinggleam", "leechseed"],
+          "ability": "naturalcure",
+          "heldItem": "life_orb",
+          "nature": "modest",
+          "level": 68
+        }
+      ],
+      "dialogue_text": {
+        "pre": "Look out the wall before we start. That is the Rift floor, level with your boots. Everything below us never sees it.",
+        "player_win": "You looked. Most of them only ever look up. Six watches the tear -- Quell does not talk much.",
+        "player_loss": "Sit on the terrace a while. The light is better than the company downstairs."
+      },
+      "after_win": "Ilse opens the terrace door. Cold Rift air comes in at floor height for the first time in the climb.",
+      "seat": [3601, 84, 3255],
+      "yaw": -126,
+      "faces": "across the annulus at tier 5's door, the terrace wall behind her",
+      "eye_contact": false,
+      "repeatable": true,
+      "cooldown": "arena",
+      "skin": "rctmod:textures/trainers/single/aroma_lady_violet_022e.png",
+      "rct": {
+        "name": {
+          "literal": "Ilse of the Terrace"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.25,
+            "switchBias": 0.85,
+            "statusMoveBias": 1.0,
+            "itemBias": 0.9,
+            "maxSelectMargin": 0.13
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "torkoal",
+            "moveset": ["lavaplume", "bodypress", "willowisp", "protect"],
+            "ability": "drought",
+            "heldItem": "heat_rock",
+            "nature": "relaxed",
+            "level": 64
+          },
+          {
+            "species": "tsareena",
+            "moveset": ["playrough", "highhorsepower", "uturn", "protect"],
+            "heldItem": "muscle_band",
+            "nature": "adamant",
+            "level": 65
+          },
+          {
+            "species": "whimsicott",
+            "moveset": ["moonblast", "energyball", "encore", "taunt"],
+            "ability": "infiltrator",
+            "heldItem": "focus_sash",
+            "nature": "timid",
+            "level": 66
+          },
+          {
+            "species": "florges",
+            "moveset": ["dazzlinggleam", "synthesis", "lifedew", "protect"],
+            "heldItem": "leftovers",
+            "nature": "calm",
+            "level": 67
+          },
+          {
+            "species": "roserade",
+            "moveset": ["gigadrain", "sludgebomb", "dazzlinggleam", "leechseed"],
+            "ability": "naturalcure",
+            "heldItem": "life_orb",
+            "nature": "modest",
+            "level": 68
+          }
+        ]
+      }
+    },
+    {
+      "id": "arena_tier_6_champion",
+      "tier": 6,
+      "display_name": "Tear-Watcher Quell",
+      "class": "arena_champion",
+      "theme": "Psychic / Ghost",
+      "status": "authored",
+      "strategy": "Two Trick Room setters and a Magic Bounce wall, so hazards and status come back at the player and the speed order never settles. Reuniclus with Magic Guard ignores the Life Orb and poison answers the previous five floors taught, and Recover inside the room makes it a war of attrition the player has to break with damage alone.",
+      "format": "GEN_9_SINGLES",
+      "ace_level": 72,
+      "ace_species": "reuniclus",
+      "member_count": 5,
+      "team": [
+        {
+          "species": "slowking",
+          "moveset": ["psychic", "surf", "thunderwave", "slackoff"],
+          "ability": "regenerator",
+          "heldItem": "heavy_duty_boots",
+          "nature": "bold",
+          "level": 68
+        },
+        {
+          "species": "polteageist",
+          "moveset": ["shellsmash", "shadowball", "dazzlinggleam", "protect"],
+          "ability": "cursedbody",
+          "heldItem": "focus_sash",
+          "nature": "timid",
+          "level": 69
+        },
+        {
+          "species": "hatterene",
+          "moveset": ["trickroom", "psychic", "mysticalfire", "playrough"],
+          "ability": "magicbounce",
+          "heldItem": "leftovers",
+          "nature": "quiet",
+          "level": 70
+        },
+        {
+          "species": "aegislash",
+          "moveset": ["ironhead", "shadowclaw", "closecombat", "protect"],
+          "heldItem": "weakness_policy",
+          "nature": "adamant",
+          "level": 71
+        },
+        {
+          "species": "reuniclus",
+          "moveset": ["trickroom", "psychic", "focusblast", "recover"],
+          "ability": "magicguard",
+          "heldItem": "leftovers",
+          "nature": "quiet",
+          "level": 72
+        }
+      ],
+      "dialogue_text": {
+        "pre": "Three hundred blocks up there is a tear in the sky and it has been watching this pit longer than the pit has stood. I watch it back. Your turn.",
+        "player_win": "It noticed that. I would not go up still breathing hard -- the crown does not wait for you to be ready.",
+        "player_loss": "You looked away. Everyone does, the first dozen times."
+      },
+      "after_win": "Quell goes back to the ceiling without another word. The stair above this floor is unlit the whole way to the crown.",
+      "seat": [3600, 101, 3252],
+      "yaw": -108,
+      "faces": "across the annulus at tier 6's door on the east arc",
+      "eye_contact": false,
+      "repeatable": true,
+      "cooldown": "arena",
+      "skin": "rctmod:textures/trainers/single/scientist_ted_014f.png",
+      "rct": {
+        "name": {
+          "literal": "Tear-Watcher Quell"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.3,
+            "switchBias": 0.95,
+            "statusMoveBias": 1.0,
+            "itemBias": 0.95,
+            "maxSelectMargin": 0.1
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "slowking",
+            "moveset": ["psychic", "surf", "thunderwave", "slackoff"],
+            "ability": "regenerator",
+            "heldItem": "heavy_duty_boots",
+            "nature": "bold",
+            "level": 68
+          },
+          {
+            "species": "polteageist",
+            "moveset": ["shellsmash", "shadowball", "dazzlinggleam", "protect"],
+            "ability": "cursedbody",
+            "heldItem": "focus_sash",
+            "nature": "timid",
+            "level": 69
+          },
+          {
+            "species": "hatterene",
+            "moveset": ["trickroom", "psychic", "mysticalfire", "playrough"],
+            "ability": "magicbounce",
+            "heldItem": "leftovers",
+            "nature": "quiet",
+            "level": 70
+          },
+          {
+            "species": "aegislash",
+            "moveset": ["ironhead", "shadowclaw", "closecombat", "protect"],
+            "heldItem": "weakness_policy",
+            "nature": "adamant",
+            "level": 71
+          },
+          {
+            "species": "reuniclus",
+            "moveset": ["trickroom", "psychic", "focusblast", "recover"],
+            "ability": "magicguard",
+            "heldItem": "leftovers",
+            "nature": "quiet",
+            "level": 72
+          }
+        ]
+      }
+    },
+    {
+      "id": "arena_tier_7_champion",
+      "tier": 7,
+      "display_name": "Oryx of the Crown",
+      "class": "arena_champion",
+      "theme": "Mixed",
+      "status": "authored",
+      "strategy": "The hardest fight authored in the campaign, and it answers every lesson below it: Intimidate and Dragon Dance for tempo, sand for chip and a Special Defence wall, Milotic's Haze to erase a setup the player finally landed, Nasty Plot plus Sucker Punch for the sixth switch, and an Infiltrator closer that goes through Substitute and screens at four bands above the Champion.",
+      "format": "GEN_9_SINGLES",
+      "ace_level": 76,
+      "ace_species": "dragapult",
+      "member_count": 6,
+      "team": [
+        {
+          "species": "salamence",
+          "moveset": ["dragondance", "dragonclaw", "earthquake", "firefang"],
+          "ability": "intimidate",
+          "heldItem": "lum_berry",
+          "nature": "jolly",
+          "level": 73
+        },
+        {
+          "species": "milotic",
+          "moveset": ["surf", "icebeam", "recover", "haze"],
+          "heldItem": "mystic_water",
+          "nature": "calm",
+          "level": 74
+        },
+        {
+          "species": "excadrill",
+          "moveset": ["earthquake", "ironhead", "rockslide", "rapidspin"],
+          "heldItem": "focus_sash",
+          "nature": "jolly",
+          "level": 74
+        },
+        {
+          "species": "tyranitar",
+          "moveset": ["stoneedge", "crunch", "earthquake", "icepunch"],
+          "ability": "sandstream",
+          "heldItem": "weakness_policy",
+          "nature": "adamant",
+          "level": 75
+        },
+        {
+          "species": "houndoom",
+          "moveset": ["nastyplot", "darkpulse", "flamethrower", "suckerpunch"],
+          "ability": "flashfire",
+          "heldItem": "life_orb",
+          "nature": "timid",
+          "level": 75
+        },
+        {
+          "species": "dragapult",
+          "moveset": ["dracometeor", "shadowball", "flamethrower", "uturn"],
+          "ability": "infiltrator",
+          "heldItem": "life_orb",
+          "nature": "timid",
+          "level": 76
+        }
+      ],
+      "dialogue_text": {
+        "pre": "Seven. I came down this pit to die and I climbed out of it instead. Nobody has taken this stand from me. Try.",
+        "player_win": "Take it. Stand here a while and look down the drum -- that is the whole city under your feet. Then come back tomorrow, because I want it back.",
+        "player_loss": "That is the crown. It is not cruel, it is just higher than you are."
+      },
+      "after_win": "Oryx steps aside and lets you stand on the crown's floor. The light core ends here; above it is only the shaft and, far up, the tear.",
+      "seat": [3599, 118, 3249],
+      "yaw": -90,
+      "faces": "due east across the annulus at tier 7's door, which is directly opposite the stand",
+      "eye_contact": false,
+      "repeatable": true,
+      "cooldown": "arena",
+      "skin": "rctmod:textures/trainers/single/pokemon_ranger_jeffrey_0336.png",
+      "rct": {
+        "name": {
+          "literal": "Oryx of the Crown"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.4,
+            "switchBias": 1.0,
+            "statusMoveBias": 1.0,
+            "itemBias": 1.0,
+            "maxSelectMargin": 0.06
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "salamence",
+            "moveset": ["dragondance", "dragonclaw", "earthquake", "firefang"],
+            "ability": "intimidate",
+            "heldItem": "lum_berry",
+            "nature": "jolly",
+            "level": 73
+          },
+          {
+            "species": "milotic",
+            "moveset": ["surf", "icebeam", "recover", "haze"],
+            "heldItem": "mystic_water",
+            "nature": "calm",
+            "level": 74
+          },
+          {
+            "species": "excadrill",
+            "moveset": ["earthquake", "ironhead", "rockslide", "rapidspin"],
+            "heldItem": "focus_sash",
+            "nature": "jolly",
+            "level": 74
+          },
+          {
+            "species": "tyranitar",
+            "moveset": ["stoneedge", "crunch", "earthquake", "icepunch"],
+            "ability": "sandstream",
+            "heldItem": "weakness_policy",
+            "nature": "adamant",
+            "level": 75
+          },
+          {
+            "species": "houndoom",
+            "moveset": ["nastyplot", "darkpulse", "flamethrower", "suckerpunch"],
+            "ability": "flashfire",
+            "heldItem": "life_orb",
+            "nature": "timid",
+            "level": 75
+          },
+          {
+            "species": "dragapult",
+            "moveset": ["dracometeor", "shadowball", "flamethrower", "uturn"],
+            "ability": "infiltrator",
+            "heldItem": "life_orb",
+            "nature": "timid",
+            "level": 76
+          }
+        ]
+      }
+    }
+  ]
+}

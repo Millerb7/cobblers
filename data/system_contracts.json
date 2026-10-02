@@ -149,6 +149,28 @@
         "data/placements.json",
         "data/towns.json"
       ]
+    },
+    "blackout_money": {
+      "what": "what a blackout costs in money: the flat charge, its cap and the balance floor under it",
+      "paths": [
+        "data/blackout.json",
+        "tools/blackout_pack.py",
+        "docs/mechanics/DEATH_AND_WIPE.md"
+      ]
+    },
+    "progression_ladder": {
+      "what": "the priced ladder of unlockables: what each rung asks for and the income it is priced against",
+      "paths": [
+        "docs/mechanics/PROGRESSION_LADDER.md",
+        "docs/research/INCOME_MEASUREMENT.md"
+      ]
+    },
+    "markets": {
+      "what": "what the towns' shops and the bank stock, charge and pay, and which badge opens each",
+      "paths": [
+        "data/traders.json",
+        "docs/mechanics/MARKET_GATING.md"
+      ]
     }
   },
   "contracts": [
@@ -682,6 +704,45 @@
           "ferry_cooldown-relog_restart": "Raised by the same migration as C3 above: the harness walks the ferry's gate clock and the case ends in StopIteration at tests/test_gate_clocks.py:238, which is a fixture finding no live crossing to walk rather than a clock that resets. Not diagnosed further tonight and not touched. It fails identically at 36eb267, checked in a throwaway worktree, so it predates 2026-09-30's work."
         }
       }
+    },
+    {
+      "id": "C15",
+      "title": "A blackout's money charge is flat, so saving is never punished",
+      "owner": "blackout_money",
+      "consumers": [
+        "progression_ladder",
+        "markets"
+      ],
+      "constrained_by": [
+        "recovery_claims"
+      ],
+      "statement": "A blackout costs a flat amount of money that does not depend on what the player has saved: ceil(money.cap * money.percent / 100) from data/blackout.json, $600 at the recorded values, the same at badge 0 and after the Champion. Nothing in the charge path multiplies, divides or scales the amount by the balance; the balance is read only to keep the charge inside it, so the charge is never more than the player holds, never negative, and a balance above zero always loses at least 1. Therefore the ladder and the markets may price any rung at any amount, however large, without raising the cost of a death: saving for a 20,000 purchase costs $600 a blackout, not 4,000, and a rung's price may change with no change here. Decision B10 (the owner, 2026-10-01), which replaced 20% of the whole balance -- a charge whose expected cost grew with how long the player saved (docs/research/INCOME_MEASUREMENT.md 4.3.3). The charge does not scale with progress by design; the penalties that do are the item claim and the return to a checkpoint, which belong to recovery_claims and blackout_checkpoints.",
+      "stated_in": [
+        {
+          "at": "data/blackout.json:9",
+          "quote": "a FLAT charge of percent of cap -- ceil(cap * percent / 100) = $600 per incident -- whatever the balance, and never more than the player has"
+        },
+        {
+          "at": "data/blackout.json:17",
+          "quote": "up, applied to the cap, not to the balance"
+        },
+        {
+          "at": "tools/blackout_pack.py:122",
+          "quote": "a flat percentage of a CAP, never of the balance"
+        },
+        {
+          "at": "tools/blackout_pack.py:281",
+          "quote": "scoreboard players operation @s bo.lost = #charge bo.cfg"
+        },
+        {
+          "at": "docs/research/INCOME_MEASUREMENT.md:321",
+          "quote": "This is a cross-system contract, not a price."
+        }
+      ],
+      "tests": [
+        "tests/test_system_contracts.py::test_contract_c15_a_blackouts_money_charge_is_flat_and_never_exceeds_the_balance"
+      ],
+      "note_for_the_test_author": "Written by the implementer of the charge, who may not write its test (.claude/rules/testing.md). The test does not exist yet, so tests/test_system_contracts.py::test_every_contract_names_existing_tests fails on this commit until it is written; the entry is not to be deleted to make the suite green. What the test must assert, against the GENERATED pack rather than against data/blackout.json's own arithmetic: (1) run blackout/charge in the simulator at a spread of balances across the cap (1, 199, 599, 600, 601, 3000, 20000, 250000, 2147483647) and assert bo.lost == min(balance, ceil(cap * percent / 100)) every time; (2) assert the charge is strictly flat, i.e. bo.lost is identical at any two balances above the cap, however far apart; (3) assert it never exceeds the balance and is never negative, including balance 0 (nothing charged, charge_calc not called) and balance 1 (exactly 1 charged); (4) prove independence by mutating the GENERATOR, not the data (CLAUDE.md 'How to prove an audit is independent'): re-derive the amount from money.cap and money.percent as read from data/blackout.json, assert it equals the #charge constant the pack sets at load, then change charge_amount() in tools/blackout_pack.py -- drop the ceiling, or put a balance term back -- and assert the test fails; (5) the consumer half: assert the charge path reads no price and no balance-derived scale at all, so no rung in docs/mechanics/PROGRESSION_LADDER.md and no entry in data/traders.json can change what a death costs."
     }
   ]
 }

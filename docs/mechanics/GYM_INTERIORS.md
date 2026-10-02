@@ -175,23 +175,37 @@ returns true for a `summon_persistent` trainer before it looks at who beat it, a
 never saved (`docs/STATE.md:16`, `tools/route_trainers.py:36-45`). `maxTrainerDefeats` does nothing for ours
 (`tools/route_trainers.py:45`). **Design against rctmod as if it forgets every win.**
 
-**What holds them off today** (`tools/route_trainers.py:139-152`): every 10 ticks, for each placed trainer,
-(a) it is teleported home if knockback moved it; (b) every nearby player gets or loses the tag
+**What holds them off today** (`tools/route_trainers.py`, `cycle_lines()`): every 10 ticks, for each placed
+trainer, (a) it is teleported home if knockback moved it; (b) every nearby player gets or loses the tag
 `cobblers_beat_<id>` from **their own** defeat field, which is the truth; (c) a 40-tick `Cooldown` is merged
-onto the trainer **only while every nearby player has beaten it** (`:151-152`).
+onto the trainer whenever **ANY** nearby player has beaten it — the generated line is
+`execute as <trainer> at @s if entity @a[distance=..<near>,tag=cobblers_beat_<id>] run data merge entity @s
+{Cooldown:40}`, and there is no second condition.
+
+**That rule changed on 2026-09-29 (the owner) and this section described the old one until 2026-10-01.**
+It used to require that *every* nearby player had beaten it (a second clause, `unless entity
+@a[…,tag=!<tag>]`), so a pair at mixed progress got no cooldown at all. `Cooldown` is entity NBT on a
+trainer both players share, so it cannot be held per player and one of the two has to give; the owner's
+call is that being dragged into a fight you have already won is worse than having to start one you have
+not. The real fix is per-player trainers through the scene runtime, gated on **EXP-034, still unrun**
+(`docs/STATE.md`).
 
 Three consequences for gym interiors, and they are the whole multiplayer story for trainers:
 
-1. **A mixed-progress pair removes the cooldown.** The cooldown line requires `if entity @a[…,tag=beat]` and
-   `unless entity @a[…,tag=!beat]`. Two players in a gym where one has beaten a trainer and one has not satisfy
-   the first and fail the second, so no cooldown is written and **the player who already won can be pulled into
-   a rematch while their partner is still fighting**. VERIFIED from the generated line; **not observed in
-   game** (EXP-034, two players at once, is unrun: `docs/STATE.md:44, 211`).
-2. **So a gym route must not walk a beaten player back past a trainer.** Either the way out is a different way
-   (a one-way drop, a ladder from the leader's room to the entrance) or the trainers stand where a returning
-   player does not pass them.
-3. **Do not use the fight as the gate; use the fight's field as the gate.** A trainer's win writes a per-player
-   field (`tools/route_trainers.py:118-127`); the room's door reads that field. That is exactly the mansion's
+1. **A mixed-progress pair protects the beaten player and taxes the unbeaten one.** With any beaten player
+   in range the trainer sits on cooldown, so the player who already won is **not** pulled into a rematch —
+   and their partner, who has not fought it, **cannot be battled on sight either** and must start the fight
+   by interacting with the trainer while their friend stands there. Both halves are VERIFIED from the
+   generated line and **not observed in game** (EXP-034, two players at once, is unrun).
+2. **So a gym room must not depend on eye contact to force the fight.** `forceBattleOnSight` makes a trainer
+   unavoidable for a lone player, not for the second of a pair; a room whose progress needs that fight must
+   be passable by a player who right-clicks it, and a trainer that can be slipped past while on someone
+   else's cooldown must not be the only thing holding a door. (The old constraint this list carried — never
+   walk a beaten player back past a trainer — was the OLD rule's hazard and is lifted: a returning winner is
+   exactly the case the cooldown now covers.)
+3. **Do not use the fight as the gate; use the fight's field as the gate.** A trainer's win writes a
+   per-player field (`tools/route_trainers.py`, the `trainers/won/<id>` function); the room's door reads that
+   field. That is exactly the mansion's
    design — "each room guarded by a Channeler who battles on sight and must be beaten before the room's puzzle
    opens" (`docs/STATE.md:211`) — and it is robust against rctmod forgetting, because the field never forgets.
 

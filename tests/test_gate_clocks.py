@@ -304,6 +304,66 @@ def gulch_megas_reapproach(fns=None):
     assert not [d for _t, d in got if d == "excadrill"], got
 
 
+# ---- the open-air farms' dens (data farms[], 2026-10-01). The halls' two Megas sit inside one approach box the
+# player is in for the whole visit; a farm den's box is its own 128-block square in open country, and the keeper runs
+# only while a player is inside it. So walking out of the box and back is a cheaper, more obvious repeat than the
+# mine's, and it is swept over every den the data declares rather than one.
+
+FARM_RESP = 1200                     # each tier's respawn_ticks, cut so a den's clock runs inside a test
+
+
+def _farm_dens():
+    """Every farm den the data declares. None: the scenario is reported NOT_EXECUTED rather than passed, because a
+    sweep over nothing is not a clock that held (.claude/rules/testing.md)."""
+    import test_gulch_mine as TG
+    if not TG.FARM_DENS:
+        pytest.skip("NOT_EXECUTED: data/gulch_mine.json declares no farm den, so no farm clock was run")
+    return TG.FARM_DENS
+
+
+def _gone_farm_mega(site, den_id, fns=None):
+    """One farm den whose Mega has just been taken, one player standing inside that farm's approach box."""
+    import test_gulch_mine as TG
+    spec, _den, w, who = TG._farm_world(site, den_id, fns=fns or TG.farm_keeper(FARM_RESP),
+                                        respawn=FARM_RESP, players=1)
+    megas = [e for e in w.entities if e["kind"] == "pokemon"]
+    assert len(megas) == 1, (site, "the den's Mega never came up: the scenario would prove nothing", megas)
+    w.entities.remove(megas[0])
+    return TG, w, w.gt, who[0]
+
+
+def _farm_back(TG, w, ticks, den_id):
+    return [t for t, d in TG._run(w, ticks) if d == den_id]
+
+
+def gulch_farm_megas_restart(fns=None):
+    """A restart (minecraft:load again), every pass, never brings a farm den's Mega back before its respawn time,
+    and it still comes back once the clock has run."""
+    for site, den_id in _farm_dens():
+        TG, w, t_gone, _p = _gone_farm_mega(site, den_id, fns)
+        early = []
+        while w.gt - t_gone < FARM_RESP - 3 * TG.PASS:
+            w.call("%s/load" % TG.F)
+            early += _farm_back(TG, w, TG.PASS, den_id)
+        assert not early, (site, "back early after a restart", early, t_gone)
+        back = _farm_back(TG, w, 8 * TG.PASS, den_id)
+        assert back and back[0] - t_gone >= FARM_RESP, (site, "never came back, or came back early", back, t_gone)
+
+
+def gulch_farm_megas_reapproach(fns=None):
+    """Leaving a farm's approach box and coming back -- the keeper runs only while a player is inside it, so this is
+    the cheapest repeat there is -- never brings its den's Mega back before its respawn time."""
+    for site, den_id in _farm_dens():
+        TG, w, t_gone, visitor = _gone_farm_mega(site, den_id, fns)
+        early = _farm_back(TG, w, 2 * TG.PASS, den_id)
+        while w.gt - t_gone < FARM_RESP - 3 * TG.PASS:
+            w.entities.remove(visitor)
+            early += _farm_back(TG, w, TG.PASS, den_id)
+            w.entities.append(visitor)
+            early += _farm_back(TG, w, TG.PASS, den_id)
+        assert not early, (site, "back early after leaving and returning", early, t_gone)
+
+
 # ------------------------------------------------------------------------------------------------ the wards
 
 TRIGGER_TICKS = 20                    # vanilla: a location advancement is tested every 20 ticks
@@ -410,6 +470,8 @@ SCENARIOS = {
     "ferry_cooldown-relog_restart": ferry_cooldown_relog_restart,
     "gulch_megas-restart": gulch_megas_restart,
     "gulch_megas-reapproach": gulch_megas_reapproach,
+    "gulch_farm_megas-restart": gulch_farm_megas_restart,
+    "gulch_farm_megas-reapproach": gulch_farm_megas_reapproach,
     "seam_ward-milk": seam_ward_milk,
     "gulch_ward-milk": gulch_ward_milk,
 }
@@ -459,6 +521,22 @@ def test_harness_the_megas_scenarios_see_a_reset_respawn_clock():
     drive = dict(kf, drive=kf["drive"] + ["execute unless entity %s run scoreboard players set #excadrill gm.gone 0"
                                           % kf["drive"][2].split(" ")[3]])
     _fails_on_its_clock(gulch_megas_reapproach, drive)
+
+
+# Without it the FARM dens' scenarios pass on a keeper whose clock a restart or a walk out of the approach box
+# resets -- the keeper runs only while a player is inside that box, so forgetting a gone Mega on an empty pass would
+# make each den's Mega free. Both resets are injected on the same cut-respawn keeper the scenarios build, and the one
+# den they name is the first the data declares, so a scenario that silently swept nothing cannot pass either.
+def test_harness_the_farm_megas_scenarios_see_a_reset_respawn_clock():
+    import test_gulch_mine as TG
+    site, den_id = _farm_dens()[0]
+    kf = TG.farm_keeper(FARM_RESP)
+    load = dict(kf, load=kf["load"] + ["scoreboard players set #%s gm.gone 0" % den_id])
+    _fails_on_its_clock(gulch_farm_megas_restart, load)
+    (pass_line,) = [l for l in kf["drive"] if l.endswith("/drive_%s" % site)]
+    drive = dict(kf, drive=kf["drive"] + ["execute unless entity %s run scoreboard players set #%s gm.gone 0"
+                                          % (pass_line.split(" ")[3], den_id)])
+    _fails_on_its_clock(gulch_farm_megas_reapproach, drive)
 
 
 # Without it the boat-hop scenario passes on a pack that lets a tipped rider recover: the pre-0f190dd surface/tick,

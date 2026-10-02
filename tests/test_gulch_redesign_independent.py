@@ -8,8 +8,9 @@ parser, and every expectation comes from the design text, the data's own words, 
 the sculpt's lip ring (tools/rift_heightmap.py), never from the generated output.
 
 Spec-only (always run): the Mega spawn macro and its claim; the respawn clock under kill / wait / reload / restart /
-leave / camp / unload (a seeded fuzz and an exact schedule); who may write the clock; the drop roll inert without a
-farm and, on a synthetic farm den, only for the victor, owner-only, at the tier's chance, once per Mega; the 2-stone
+leave / camp / unload (a seeded fuzz and an exact schedule); who may write the clock; the drop roll inert with the
+farms taken out of the spec and, on a synthetic farm den and on every den data/gulch_mine.json declares, only for
+the victor, owner-only, at the tier's chance, once per Mega; the 2-stone
 price at the Cutters and in the recipe raiser (synthetic jars); no free stone anywhere; the faces warded every tick
 beyond reach and never rewritten; the cove town's count, footprints, streets, zone and Victory Road.
 
@@ -482,6 +483,26 @@ def farm_spec(respawn=None):
     return spec
 
 
+def den_level(spec, site, d):
+    """A den's Mega's level, from the data's own rule written out here.
+
+    tools/gulch_mine.py has a den_level of its own; importing it would only check the generator against itself
+    (CLAUDE.md, "How to prove an audit is independent"), so the rule is restated from data/gulch_mine.json's words:
+    a den's own `level` if it states one, else the level of its tier -- the den's own `tier` if it names one,
+    otherwise its farm's -- out of `farm_tiers`. Every mine slot (`megas.slots`) states its own."""
+    if "level" in d:
+        return d["level"]
+    assert site != "mine", ("a mine slot states its own level", d)
+    farm = next(f for f in spec["farms"] if f["id"] == site)
+    return spec["farm_tiers"][d.get("tier", farm["tier"])]["level"]
+
+
+def data_dens(spec):
+    """[(site, den)] for every den the spec declares: the mine's slots under "mine", then each farm's own."""
+    return [("mine", s) for s in spec["megas"]["slots"]] + \
+           [(f["id"], d) for f in spec.get("farms", []) for d in f["dens"]]
+
+
 _ZB = {}
 
 
@@ -617,8 +638,15 @@ def test_every_spawnpokemonat_is_the_macro_line_and_every_den_spawns_through_it(
     fns = all_functions(spec)
     lines = [(n, l.strip()) for n, b in fns.items() for l in b if "spawnpokemonat" in l and not l.strip().startswith("#")]
     assert lines == [("megas/spawn_at", "$spawnpokemonat $(x) $(y) $(z) $(species) $(aspect) uncatchable level=$(level)")]
-    dens = [s["id"] for s in spec["megas"]["slots"]] + [d["id"] for f in spec.get("farms", []) for d in f["dens"]]
-    assert len(dens) == (2 if which == "data" else 4)
+    mine = [s["id"] for s in spec["megas"]["slots"]]
+    farmed = [d["id"] for f in spec.get("farms", []) for d in f["dens"]]
+    dens = mine + farmed
+    # the check is not vacuous, and the generator wrote a spawn for every den the data declares and for nothing else:
+    # the den list comes from the data, the function names from the pack, so a dropped or invented den is named here.
+    # The synthetic case always carries farm dens, so the farm half is covered whether or not the data has farms.
+    assert mine, which
+    assert farmed or which == "data", which
+    assert {n[len("megas/spawn_"):] for n in fns if n.startswith("megas/spawn_") and n != "megas/spawn_at"} == set(dens)
     for d in dens:
         assert calls_of(fns["megas/spawn_%s" % d]) == {"megas/spawn_at", "megas/bind_%s" % d}, d
 
@@ -632,16 +660,17 @@ def test_every_spawnpokemonat_is_the_macro_line_and_every_den_spawns_through_it(
 def test_each_den_spawn_leaves_one_claimed_mega_in_the_same_function(which):
     spec = SPEC if which == "data" else farm_spec()
     fns = GM.keeper_files(model_of(spec))
-    dens = [("mine", s) for s in spec["megas"]["slots"]] + [(f["id"], d) for f in spec.get("farms", []) for d in f["dens"]]
+    dens = data_dens(spec)
     blackout = json.loads((ROOT / "data" / "blackout.json").read_text(encoding="utf-8"))
     assert blackout["claims"]["exempt_tag"] == spec["megas"]["tag"]
     for site, d in dens:
+        lvl = den_level(spec, site, d)          # a farm den may inherit its tier's level and state none of its own
         w = Sim(fns)
         w.run_load()
         w.function(NS_F + "megas/spawn_%s" % d["id"], w.server())
         (e,) = [x for x in w.entities if x.type == "cobblemon:pokemon"]
-        assert e.nbt["Pokemon"]["Species"] == d["species"] and e.nbt["Pokemon"]["Level"] == d["level"]
-        assert e.props == [d["aspect"], "uncatchable", "level=%d" % d["level"]] and e.nbt.get("Uncatchable") == 1
+        assert e.nbt["Pokemon"]["Species"] == d["species"] and e.nbt["Pokemon"]["Level"] == lvl
+        assert e.props == [d["aspect"], "uncatchable", "level=%d" % lvl] and e.nbt.get("Uncatchable") == 1
         want = {spec["megas"]["tag"], "%s.%s" % (spec["megas"]["tag"], d["id"])}
         if site != "mine":
             want.add(spec["megas"]["farm_tag"])
@@ -818,18 +847,30 @@ def test_only_the_keeper_moves_a_respawn_clock(which):
 DROP_FNS = ("drops/", "megas/pid", "megas/watch", "megas/hit_")
 
 
+def no_farm_spec():
+    """The spec with its farms taken out, whatever the data currently holds: the farmless case the generator's early
+    return exists for. The farms went into data/gulch_mine.json on 2026-10-01, so this is no longer the data as it
+    stands -- the property protected is the generator's, not the data's, and it has to keep working because a farm
+    can be taken out again (the owner's zone decision was still open when they went in)."""
+    spec = copy.deepcopy(SPEC)
+    spec.pop("farms", None)
+    return spec
+
+
 # Without it the drop machinery is live before any farm exists (SOUTHERN_RIFT_MEGA.md 13.1: "inert until a farm den
-# exists in the data"), or missing once one does: with the data as it is, no drop function (roll, slain, hitter, give,
-# fainted, hit, watch, pid) and no battle_fainted callback is generated, the Cutting Floor's Megas are not farm-tagged,
-# and on the interpreter a player hurting and killing a Mega summons no item and writes no storage; with a synthetic
-# farm den, all of them and the callback are generated (their behaviour is the tests below).
+# exists in the data"), or missing once one does: with the farms taken out of the spec, no drop function (roll, slain,
+# hitter, give, fainted, hit, watch, pid) and no battle_fainted callback is generated, the Cutting Floor's Megas are not
+# farm-tagged, and on the interpreter a player hurting and killing a Mega summons no item and writes no storage; with a
+# synthetic farm den, all of them and the callback are generated (their behaviour is the tests below, and
+# test_the_drop_roll_is_live_for_every_farm_den_in_the_data runs it on the data's own farms).
 def test_the_drop_roll_is_inert_without_a_farm_den():
-    assert not SPEC.get("farms"), "a farm is in the data now: this test's premise is gone"
-    fns = GM.keeper_files(model_of(SPEC))
+    nofarm = no_farm_spec()
+    assert not nofarm.get("farms")
+    fns = GM.keeper_files(model_of(nofarm))
     assert not [n for n in fns if n.startswith(DROP_FNS)], [n for n in fns if n.startswith(DROP_FNS)]
-    assert GM.callback_files(SPEC) == {}
-    for s in SPEC["megas"]["slots"]:
-        assert SPEC["megas"]["farm_tag"] not in " ".join(fns["megas/bind_%s" % s["id"]])
+    assert GM.callback_files(nofarm) == {}
+    for s in nofarm["megas"]["slots"]:
+        assert nofarm["megas"]["farm_tag"] not in " ".join(fns["megas/bind_%s" % s["id"]])
     w = Sim(fns)
     w.run_load()
     p = w.player(SQUARE)
@@ -957,8 +998,90 @@ def test_a_kill_pays_only_the_player_who_hurt_it_since_it_was_last_seen_alive(ca
         assert it.nbt["Owner"] == b.nbt["UUID"] and it.pos == b.pos
 
 
+# ------------------------------------------------------------------- the roll on the data's own farm dens (live case)
+
+DATA_DENS = [(site, d["id"]) for site, d in data_dens(SPEC) if site != "mine"]
+
+
+def den_drop_percent(spec, site, d):
+    """A farm den's drop chance, restated from data/gulch_mine.json's own words rather than taken from
+    tools/gulch_mine.py's den_rules: the den's own `drop_percent` if it states one, else its tier's
+    (the den's `tier` if it names one, otherwise its farm's) out of `farm_tiers`."""
+    if "drop_percent" in d:
+        return d["drop_percent"]
+    farm = next(f for f in spec["farms"] if f["id"] == site)
+    return spec["farm_tiers"][d.get("tier", farm["tier"])]["drop_percent"]
+
+
+def _data_farm_world(site, den_id, resp=400):
+    """A world on the data's own farms, with two players inside `site`'s approach box and well clear of the anchor.
+
+    Every tier's respawn_ticks is cut to `resp` so the den's Mega is up in a few passes (the farm dens' own rate
+    limit is the subject of test_a_farm_dens_clock_survives_a_restart_and_a_re_approach in tests/test_gate_clocks.py,
+    not of the roll); nothing else about the data is changed."""
+    spec = copy.deepcopy(SPEC)
+    for tier in spec["farm_tiers"].values():
+        if isinstance(tier, dict):
+            tier["respawn_ticks"] = resp
+    farm = next(f for f in spec["farms"] if f["id"] == site)
+    den = next(d for d in farm["dens"] if d["id"] == den_id)
+    ax, ay, az = den["anchor"]
+    x0, y0, z0, x1, y1, z1 = farm["approach"]
+    clear = spec["megas"]["spawn_clear"]
+    spots = [(ax + clear + 32.5, ay, az + 0.5), (ax + 0.5, ay, az + clear + 32.5)]
+    for sx, sy, sz in spots:                     # inside the approach box, outside spawn_clear: the spawn can happen
+        assert x0 <= sx < x1 + 1 and y0 <= sy < y1 + 1 and z0 <= sz < z1 + 1, (site, (sx, sy, sz), farm["approach"])
+        assert math.dist((sx, sy, sz), (ax + 0.5, ay, az + 0.5)) > clear, (site, (sx, sy, sz))
+    w = Sim(GM.keeper_files(model_of(spec)), seed=5)
+    w.run_load()
+    a = w.player(spots[0], name="victor")
+    b = w.player(spots[1], name="bystander")
+    w.tick(4 * spec["driver"]["every_ticks"] + resp + 5)
+    return spec, den, w, a, b
+
+
+# Without it the farms ship with a drop chain that never pays: the complement of
+# test_the_drop_roll_is_inert_without_a_farm_den, run on the data's OWN seven dens rather than a synthetic one. Each
+# den's Mega is kept by the keeper and claimed with its Pokemon UUID in storage; the callback's roll at the den's tier
+# chance (farm_tiers.drop_percent, restated above) leaves exactly one raw stone at the victor's feet whose Owner is the
+# victor, so no one else can pick it up; one over that chance leaves nothing; and either way the Mega's UUID is spent,
+# so a second call for the same Mega -- naming a different player -- pays nobody. A den whose data drifts out of a tier
+# that declares a chance, or whose roll stops being generated, fails here.
+@pytest.mark.parametrize("roll", ["pct", "pct+1"])
+@pytest.mark.parametrize("site,den_id", DATA_DENS or [pytest.param(None, None, marks=pytest.mark.skip(
+    reason="NOT_EXECUTED: data/gulch_mine.json declares no farm den, so the live drop roll was not run"))])
+def test_the_drop_roll_is_live_for_every_farm_den_in_the_data(site, den_id, roll):
+    spec, den, w, a, b = _data_farm_world(site, den_id)
+    pct = den_drop_percent(spec, site, den)
+    assert 0 < pct < 100, (site, pct)           # a den at 0 or 100 would make one leg of this test vacuous
+    fns = GM.keeper_files(model_of(spec))
+    assert {"drops/roll_%s" % den_id, "drops/slain_%s" % den_id, "drops/hitter_%s" % den_id,
+            "megas/hit_%s" % den_id} <= set(fns), den_id
+    assert 'dens[{id:"%s",pid:"$(pid)"}]' % den_id in " ".join(fns["drops/fainted"]), den_id
+    (e,) = den_megas(w, den_id)
+    pid = _uuid_text(e.nbt["Pokemon"]["UUID"])
+    assert [d.get("pid") for d in w.storage["cobblers:gulch_mine"]["dens"] if d["id"] == den_id] == [pid]
+    w.rolls = [pct if roll == "pct" else pct + 1]
+    w.function(NS_F + "drops/fainted", w.server(), {"pid": pid, "who": a.uuid})
+    got = _items(w)
+    if roll == "pct":
+        (it,) = got
+        assert it.nbt["Item"] == {"id": SPEC["drops"]["item"], "count": SPEC["drops"]["count"]}, it.nbt
+        assert it.nbt["Owner"] == a.nbt["UUID"] and it.pos == a.pos and it.nbt.get("PickupDelay") == 0
+    else:
+        assert got == [], [i.nbt for i in got]
+    # the Mega's UUID is spent whichever way the roll fell: one roll per Mega, so nobody is paid for it again
+    assert [d.get("pid") for d in w.storage["cobblers:gulch_mine"]["dens"] if d["id"] == den_id] == [None]
+    w.rolls = [1]
+    w.function(NS_F + "drops/fainted", w.server(), {"pid": pid, "who": b.uuid})
+    w.tick(300)
+    assert len(_items(w)) == len(got), "a second roll for the same Mega"
+    assert not [i for i in _items(w) if i.nbt.get("Owner") == b.nbt["UUID"]]
+
+
 # Without it a farm den of a tier gets some other level than its tier's: data farm_tiers gives each tier a level (outer
-# 60, deeper 67; SOUTHERN_RIFT_MEGA.md 13's table), and a den that names only its tier should spawn at that level.
+# 60, deeper 67; SOUTHERN_RIFT_MEGA.md 13's table), and a den that names only its tier should spawn at that level. The
+# data's own dens state no level of their own, so the same rule is checked on each of them against farm_tiers.
 def test_a_farm_den_without_its_own_level_spawns_at_its_tiers_level():
     spec = farm_spec()
     for d in spec["farms"][0]["dens"]:
@@ -966,6 +1089,11 @@ def test_a_farm_den_without_its_own_level_spawns_at_its_tiers_level():
     fns = GM.keeper_files(model_of(spec))
     for d, lvl in (("den_outer", 60), ("den_deep", 67)):
         assert ("level:%d}" % lvl) in fns["megas/spawn_%s" % d][1]
+    data_fns = GM.keeper_files(model_of(SPEC))
+    for site, den in data_dens(SPEC):
+        if site == "mine":
+            continue
+        assert ("level:%d}" % den_level(SPEC, site, den)) in data_fns["megas/spawn_%s" % den["id"]][1], den["id"]
 
 
 # ============================================================================================ the price
@@ -1047,12 +1175,15 @@ def test_no_raw_stone_is_given_anywhere_but_a_farm_roll(which):
               if re.search(r"\b(give|loot|item replace|summon minecraft:item)\b", re.sub(r"function \S+", "", l))
               and "mining_fatigue" not in l}
     assert givers <= {"drops/give"}, givers
-    assert ("drops/give" in fns) == (which != "data")
+    # the one giver exists exactly when a farm den exists to pay for -- the premise is read off the spec, not
+    # hard-coded for the day the data had no farms (it has had seven since 2026-10-01)
+    farmed = any(f.get("dens") for f in spec.get("farms", []))
+    assert ("drops/give" in fns) == farmed, (which, farmed)
     if "drops/give" in fns:
         assert "mega_showdown:mega_stone" in " ".join(fns["drops/give"])
     callers = {n for n, b in fns.items() if "drops/give" in calls_of(b)}
     assert callers <= {n for n in fns if n.startswith(("drops/roll_", "drops/hitter_"))}, callers
-    assert bool(callers) == (which != "data")
+    assert bool(callers) == farmed, (which, farmed)
     for p in sorted((ROOT / "data").glob("*.json")):
         text = p.read_text(encoding="utf-8")
         if p.name == "gulch_mine.json":
