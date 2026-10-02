@@ -109,6 +109,8 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 "cobblers_frostpeak_summit",
                 # 2026-10-02: the Lopunny superfan's house and its Buneary cellar (tools/lopunny_house.py), run by R9LH
                 "cobblers_lopunny_house",
+                # 2026-10-02: the Copperway Khan in the south-east dunes and its milestones (tools/dune_ruin.py), run by R9DU
+                "cobblers_dune_ruin",
                 # 2026-09-29: the gym interiors (tools/gym_interiors.py, data/gym_interiors.json): the healing
                 # machines out of all eight placed gyms, and gym 1's works carved under its lot. Block functions run
                 # by R16E, after the donors (R9) that stamp the gyms whole and would erase anything written first
@@ -498,6 +500,8 @@ def prepare_jobs(a):
     add("frostpeak_summit_audit", "frostpeak_summit_audit.py", *src)
     add("lopunny_house:build", "lopunny_house.py", "build", *src)
     add("lopunny_house_audit", "lopunny_house_audit.py", *src)
+    add("dune_ruin:build", "dune_ruin.py", "build", *src)
+    add("dune_ruin_audit", "dune_ruin_audit.py", *src)
     add("sea_drift_audit", "sea_drift_audit.py", *src)
     # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
     # then the offline audit, which re-derives every shell box from data/placements.json, replays the written
@@ -1070,6 +1074,11 @@ def steps(with_spawns=False):
     import lopunny_house
     out.append(("R9LH", "the Lopunny superfan's house and its Buneary cellar (data/lopunny_house.json)",
                 lopunny_house.placement_steps()))
+    # the Copperway Khan (2026-10-02, tools/dune_ruin.py): BEFORE R9E, because its build writes the vault floor - after
+    # R9E it would lay smooth sandstone over the Cofagrigus Habitat Block set in that floor
+    import dune_ruin
+    out.append(("R9DU", "the Copperway Khan, its sealed store and the Copperway's milestones (data/dune_ruin.json)",
+                dune_ruin.placement_steps()))
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
@@ -1166,6 +1175,10 @@ def steps(with_spawns=False):
     import npc_seats
     out.append(("R17N", "the settlement NPCs (data/npc_seats.json)",
                 [("npc", n) for n in npc_seats.placements()]))
+    # the Copperway Khan's salvager (2026-10-02): an NPC on the dug-out hall's floor R9DU wrote, her class loaded at boot
+    # from cobblers_dialogue, so placed over RCON after the restart like R17N's
+    out.append(("R18DU", "the Copperway Khan's salvager (data/dune_ruin.json npc)",
+                [("npc", n) for n in dune_ruin.npc_placements()]))
     # the Ursaluna's den (2026-10-02): carve, summon the sleeping bear over RCON (an entity the export erases, as the
     # Celebi and the legendaries are, and guarded on its tag AND species, not distance - R14C failed twice on a bare
     # distance guard), dress, then its keeper Hollis, whose class loads at boot from cobblers_dialogue

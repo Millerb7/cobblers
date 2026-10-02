@@ -7303,6 +7303,30 @@
       "status": "planned",
       "why": "A crowd of Buneary kept alive in Ellis Hopgood's cellar (the owner, 2026-10-02: 'a man who has a dungeon of buneary'). ACTIVATED, the den's pattern (ursaluna_den_outskirts_ward): up to 12 alive at once, refilled 3 at a time as they are caught or despawn, TICK at chance 1. The position is the cellar floor's centre as tools/lopunny_house.py seats it (house floor y117 = max heightmap ground under the walls 116 + 1; the cellar floor 5 below it), in a stone-brick floor that pack writes; the pack must run BEFORE R9E or it writes the floor back over this block. spawn_range 4: the activated spawner searches a box of spawn_range round the block (docs/research/notes/habitat-nest-perching.md 4, ActivatedHabitatSpawning.kt), and 4 makes that box the cellar exactly: x and z the 9 by 9 room, y from the stone under the floor (y108) to the ceiling (y116). The house floor is y117, so no place a player walks in the house, and none outside, is in it (tools/lopunny_house_audit.py checks every standing place in the box). cancel_range 7: the pack's natural spawns are cancelled in a sphere of 7 round the block, which takes in the whole room (its far corner is 6.4 away) and the house's floor above it (feet 6 above), and no ground outside the walls (a feet place at y117 outside the walls is at least 7.8 away). Activated blocks cancel nothing of one another; the nearest other Habitat Block is elder_south_pine_isle_2's nest, 237 blocks away (measured 2026-10-02 from this file's positions).",
       "mimic_why": "the cellar's own floor block (data/lopunny_house.json blocks.cellar_floor), so the block is one more stone brick in the floor."
+    },
+    {
+      "id": "dune_ruin_undercroft_ward",
+      "place": "the Copperway Khan's master's store in the south-east dunes (data/dune_ruin.json): the middle of the vault floor",
+      "pool": "cobblers:dune_ruin_undercroft",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6734,
+        "y": 139,
+        "z": 6234
+      },
+      "mimic": "minecraft:smooth_sandstone",
+      "activated": {
+        "spawn_range": 4,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 7,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 4
+      },
+      "status": "planned",
+      "why": "Cofagrigus keeping the sealed master's store under the Copperway Khan (the owner, 2026-10-02: 'the south needs places, not just creatures. Somewhere to find, something in it'). ACTIVATED, the den's and the Lopunny cellar's pattern: up to 4 alive, refilled 2 at a time, TICK at chance 1. The position is the vault floor's centre as tools/dune_ruin.py seats it (sand line S y148 = max heightmap ground under the Khan's outer walls; floor F y144 = S - 4; the vault's ceiling at F, 4 of air under it, its floor y139), in a smooth sandstone floor that pack writes; the pack (R9DU) must run BEFORE R9E or it writes the floor back over this block. spawn_range 4: the activated spawner searches a box of spawn_range round the block (docs/research/notes/habitat-nest-perching.md 4, ActivatedHabitatSpawning.kt), and 4 makes that box the vault exactly: x and z its 9 by 9 interior, y from the sandstone under its floor (y135) to its top row of air (y143). tools/dune_ruin_audit.py checks every standing place in the box. cancel_range 7: the vault's far cell is 6.9 away, and the nearest ground outside the Khan's walls is more than 7 (the audit checks both). The nearest other Habitat Block is sapling_desert_south_east_dunes_low at (6192, 6112), 556 blocks west (measured 2026-10-02 from this file's positions).",
+      "mimic_why": "the vault's own floor block (data/dune_ruin.json blocks.vault_floor), so the block is one more slab of smooth sandstone in the floor."
     }
   ]
 }

@@ -5160,6 +5160,32 @@
         "quest.evt_lopunny_superfan.reward_claimed",
         "quest.evt_lopunny_superfan.dialogue_cursor"
       ]
+    },
+    {
+      "id": "ambient_dune_ruin",
+      "source": "data/dune_ruin.json; docs: the owner's request of 2026-10-02 (data/dune_ruin.json request)",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": true,
+        "npcs_remain_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_dune_ruin_salvager"
+      ],
+      "objectives": [],
+      "transitions": [],
+      "writer": "dialogue cursor persistence only; the conversation sets no story, reward, or completion state",
+      "readers": "the salvager's conversation only",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player advances and restores their own cursor"
+      },
+      "progression_field_refs": [
+        "quest.ambient_dune_ruin.salvager_cursor"
+      ]
     }
   ]
 }
