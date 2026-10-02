@@ -8,12 +8,12 @@
     "dimension": "minecraft:overworld",
     "centre": [4140, 112, 2005],
     "centre_source": "relayed from the spec's mechanism text. Horizontally it is the footprint centre of data/placements.json legendary_crown_cemetery (corner 4118, 1982, size 45 x 24 x 47 -> 4140.5, 2005.5); y112 is three above the paste's floor y109. tools/spectrier_cap.py fails closed if the centre leaves that footprint.",
-    "coverage_note": "a sphere of spawn_radius 32 about y112 reaches every column of the 45 x 47 footprint at floor height except the four extreme corners (half-diagonal 32.5 horizontally). The summon anchor is expected near the statue at the middle; a Spectrier appearing in a corner, or high in the template, would not be recorded."
+    "coverage_note": "spawn radius 40 about y112 (raised from the builder's 32 by the main session, 2026-10-02) covers every column of the 45 x 47 footprint: the extreme corners are 32.5 horizontally and under 35 with the template's 24-block height. No Spectrier spawns naturally (Cobbleverse's spectrier label is weight 0), so a wild one this close was summoned here."
   },
   "radii": {
     "player_near": 48,
     "player_near_why": "the tick does nothing unless a player is this close to the centre: one selector a tick otherwise",
-    "spawn": 32,
+    "spawn": 40,
     "spawn_why": "a wild Spectrier this close to the centre is one the cemetery summoned",
     "summoner": 16,
     "summoner_why": "the nearest player this close to the new Spectrier is its summoner (the spec's accepted weak point: in a group, stand back or summon alone)"
