@@ -130,6 +130,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-02: the seven open-air Mega dens made visible (tools/mega_dens.py, data/mega_dens.json): scrape,
                 # boulders, bones and each species' sign round the gulch's den anchors. Block functions run by R9MD
                 "cobblers_mega_dens",
+                # 2026-10-02: water life (docs/mechanics/WATER_LIFE.md): the lake skin and the lake hooks
+                # (tools/lake_life.py), and the shore, the seabed's wrecks and Rift debris and the two sea caves
+                # (tools/sea_life.py). Pure block functions, no load or tick, run by R9LL and R9SL
+                "cobblers_lake_life", "cobblers_sea_life",
                 # 2026-09-29: the gym interiors (tools/gym_interiors.py, data/gym_interiors.json): the healing
                 # machines out of all eight placed gyms, and gym 1's works carved under its lot. Block functions run
                 # by R16E, after the donors (R9) that stamp the gyms whole and would erase anything written first
@@ -550,6 +554,12 @@ def prepare_jobs(a):
     add("mega_dens_audit", "mega_dens_audit.py", *src)
     add("sea_drift_audit", "sea_drift_audit.py", *src)
     add("relic_underground_audit", "relic_underground_audit.py", *src)
+    # water life (docs/mechanics/WATER_LIFE.md): each pack, then its independent audit, which replays the written
+    # functions over a world built from the heightmap alone and never imports its builder
+    add("lake_life:build", "lake_life.py", "build", *src)
+    add("lake_life_audit", "lake_life_audit.py", *src)
+    add("sea_life:build", "sea_life.py", "build", *src)
+    add("sea_life_audit", "sea_life_audit.py", *src)
     # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
     # then the offline audit, which re-derives every shell box from data/placements.json, replays the written
     # functions into a voxel model and fails the prepare on a broken route, a trainer that can be walked round, a
@@ -1124,6 +1134,15 @@ def steps(with_spawns=False):
     # every verified apply
     out.append(("R9SD", "the Seaward Drift, its strip mine and Driftmouth Isle (data/sea_drift.json)",
                 [("fn", "cobblers:sea_drift/%s" % f) for f in indexed("cobblers_sea_drift", "sea_drift")]))
+    # water life (2026-10-02, docs/mechanics/WATER_LIFE.md): pure block passes over the applied water export, after
+    # the drift (Driftmouth Isle's rock and cover are excluded from both) and before R9E and BEFORE the 2026-10-02 builds below, so a build that overlaps a wreck or
+    # shore dressing writes last and wins (merge, 2026-10-02); no Habitat Block placed
+    # there is written over. Every lake-skin write replaces only water, air or a natural bed block (the pack's own
+    # #cobblers:lake_bed tag), so it cannot overwrite a build it does not know about
+    out.append(("R9LL", "the lake skin and the lake hooks (data/lake_life.json)",
+                [("fn", "cobblers:lake_life/%s" % f) for f in indexed("cobblers_lake_life", "lake_life")]))
+    out.append(("R9SL", "the shore, the wrecks and Rift debris, and the sea caves (data/sea_life.json)",
+                [("fn", "cobblers:sea_life/%s" % f) for f in indexed("cobblers_sea_life", "sea_life")]))
     # the Lopunny superfan's house (2026-10-02, tools/lopunny_house.py): BEFORE R9E, because its build writes the cellar
     # floor - after R9E it would lay stone bricks over the Buneary Habitat Block set in that floor
     import lopunny_house

@@ -1,0 +1,225 @@
+{
+  "schema": "cobblers.lake_life/1",
+  "status": "built offline 2026-10-02; not run in a game",
+  "spec": "docs/mechanics/WATER_LIFE.md sections 1 (the skin) and 2 (the hooks), from docs/mechanics/WATER_BUILD_PLAN.md 3.3 'Skin (blocks)' and 4.2",
+  "generator": "python tools/lake_life.py build -> build/datapacks/cobblers_lake_life",
+  "lakes_from": "tools/water_mask.bodies(): every landmark with a water_body and basin_polygons. Depth is level_y - round(ground) (tools/ground.py, the applied water export), so every zone is read off the applied bed and never restated here. drop_depth per lake is data/water_shape.json lakes.bodies[].drop_depth",
+  "seed": 52317,
+  "zones": {
+    "shelf_depths": [1, 2],
+    "drop_from_depth": 3,
+    "drop_to": "data/water_shape.json lakes.bodies[].drop_depth",
+    "floor": "deeper than drop_depth"
+  },
+  "skin": {
+    "seagrass": {
+      "patch_scale_blocks": 11,
+      "patch_threshold": 0.45,
+      "share_in_patch": 0.7,
+      "tall_share_at_depth_2": 0.35,
+      "why": "WATER_LIFE 1: seagrass on the shelf, some tall where it is 2 deep. Patches from value noise so the beds read as beds, not speckle"
+    },
+    "lily_pad": {
+      "patch_scale_blocks": 7,
+      "patch_threshold": 0.72,
+      "share_in_patch": 0.45,
+      "why": "lily pads over still shelf water, in small rafts"
+    },
+    "reeds": {
+      "share": 0.22,
+      "patch_scale_blocks": 9,
+      "patch_threshold": 0.5,
+      "height": [1, 3],
+      "soil_tags": ["#minecraft:dirt", "#minecraft:sand"],
+      "why": "sugar cane at the bank: a bank column is ground exactly at the lake's level beside a lake column, so the water is level with the soil block, which is vanilla's rule. The soil's block is not known offline (paint decides sand, dirt or grass), so every cane is guarded by `execute if block` on vanilla's own two soil tags, and on air above it"
+    },
+    "kelp": {
+      "patch_scale_blocks": 14,
+      "patch_threshold": 0.55,
+      "share_in_patch": 0.6,
+      "max_height": 9,
+      "top_below_surface": 3,
+      "why": "kelp in patches in the drop-off band, its top at most level - 3 (never within 2 of the surface) and set to age 25 so it never grows toward it"
+    },
+    "scree": {
+      "share": 0.28,
+      "blocks": ["minecraft:gravel", "minecraft:gravel", "minecraft:cobblestone"],
+      "why": "gravel and cobble scree in the drop-off band, replacing the top bed block only"
+    },
+    "silt": {
+      "patch_scale_blocks": 19,
+      "patch_threshold": 0.52,
+      "blocks": ["minecraft:mud", "minecraft:clay"],
+      "kind_scale_blocks": 41,
+      "why": "mud and clay patches on the basin floor, replacing the top bed block only: no column changes height"
+    },
+    "logs": {
+      "per_floor_columns": 1400,
+      "length": [3, 5],
+      "max_relief": 1,
+      "blocks": ["minecraft:oak_log", "minecraft:spruce_log", "minecraft:dark_oak_log"],
+      "stumps_per_floor_columns": 1800,
+      "why": "sunken logs lying on the floor and stumps standing on it"
+    },
+    "boulders": {
+      "hump_radius_blocks": 7,
+      "prominence_blocks": 3,
+      "min_spacing_blocks": 24,
+      "max_per_lake": 14,
+      "pile_radius": 2,
+      "blocks": ["minecraft:stone", "minecraft:mossy_cobblestone", "minecraft:andesite"],
+      "why": "boulder piles on humps and shoals, the local maxima of the bed. A pile's top stays at least one block under the surface, so a 1-deep shoal gets none (it is already a rest point)"
+    },
+    "drowned_trees": {
+      "lake": "marshy_marsh",
+      "hump_radius_blocks": 4,
+      "min_from_dry_blocks": 4,
+      "min_spacing_blocks": 14,
+      "max": 8,
+      "max_why": "data/water_shape.json marshy_marsh shelf_humps count 8: at most one tree per declared hump",
+      "above_water": [2, 5],
+      "trunk": "minecraft:stripped_dark_oak_log",
+      "why": "WATER_LIFE 1: drowned trees, dead trunks rising out of the water with roots in the bed, on Marshy Marsh's shelf humps (data/water_shape.json marshy_marsh shelf_humps: top_depth 1). The humps' positions are written only to derived/water_shape/, which a worktree does not have, so they are found here as the bed's own local maxima on the shelf"
+    }
+  },
+  "exclusions": {
+    "from_helpers": "tools/water_shape.py build_protect (towns with their margins, route corridors, bridges, the Rift, Victory Road, the islet, its event sites), tools/portals.py sites (the dive arches), tools/legendaries.py geometry (sleeves and shafts), tools/water_mask.py sited_claims (the jetty decks)",
+    "portal_clearance_blocks": 6,
+    "portal_why": "beyond the 5 by 5 apron the arch stands on: no skin, no hook, all heights (the dive line down to the arch)",
+    "mouth_clearance_blocks": 2,
+    "mouth_why": "beyond a grotto's 3 by 3 shaft, all heights: no hook, so no grotto mouth and no dive line down to it is ever blocked. The skin keeps out of the whole sleeve footprint and spawn_free_zone as well (WATER_LIFE 1)",
+    "dock_margin_blocks": 4,
+    "ferry_point_margin_blocks": 6,
+    "scene_margin_blocks": 4,
+    "seat_margin_blocks": 6,
+    "habitat_margin_blocks": 3,
+    "placement_margin_blocks": 16,
+    "placement_why": "a placement's position outside every town footprint, grown by this (inside a footprint, the town's own margin already holds it)",
+    "route_crossing_half_width": "data/water_shape.json protect.road_half_width_blocks",
+    "landmark_tree_radius": "data/foliage.json landmark_trees[].glade_radius",
+    "ferry_lanes": "none: data/ferries.json moves a passenger by teleport (its mechanism), so no lake carries a boat channel"
+  },
+  "palette": {
+    "buoy": "minecraft:red_concrete",
+    "weight": "minecraft:polished_andesite",
+    "chain": "minecraft:chain",
+    "lantern": "minecraft:lantern",
+    "soul_lantern": "minecraft:soul_lantern",
+    "float": "minecraft:stripped_birch_wood",
+    "case": "minecraft:barrel",
+    "standing_stones": ["minecraft:stone", "minecraft:andesite", "minecraft:mossy_cobblestone"],
+    "boardwalk": "minecraft:spruce_slab",
+    "post": "minecraft:spruce_fence",
+    "hull": "minecraft:spruce_planks",
+    "gunwale": "minecraft:spruce_slab",
+    "cairn": ["minecraft:mossy_cobblestone", "minecraft:cobblestone"]
+  },
+  "hooks": [
+    {
+      "id": "viltri_survey_buoys",
+      "lake": "lake_viltri",
+      "kind": "buoy_line",
+      "from": [1697, 3004],
+      "from_why": "two blocks west of scenes.json route2_viltri_sounding's area (x1700..1784), whose platform the line starts from; the event site's own box (data/water_shape.json protect.event_sites viltri_sounding_platform) is excluded and the line stays out of it",
+      "toward": {"portal": "dive_viltri_floor"},
+      "spacing_blocks": 7,
+      "min_depth": 6,
+      "lowest_lantern": true,
+      "leads_to": ["SQ-G2-01 (the survey floor at y75)", "data/portals.json dive_viltri_floor"],
+      "why": "WATER_LIFE 2: a line of survey buoys from the sounding platform over the drop-off, chains running down to weighted markers; a lantern on the lowest marker"
+    },
+    {
+      "id": "shrew_torn_float",
+      "lake": "shrew_lake",
+      "kind": "float_line",
+      "pit": {"portal": "dive_shrew_pit"},
+      "shoal_max_depth": 2,
+      "shoal_min_from_dry_blocks": 10,
+      "case_from_portal_blocks": [10, 18],
+      "cache": {
+        "reward": "lake_life_shrew_field_case",
+        "contents": [
+          {"item": "cobblemon:net_ball", "count": 3},
+          {"item": "cobblemon:super_potion", "count": 2},
+          {"item": "cobblemon:revive", "count": 1}
+        ],
+        "message": "The surveyor's field case, on the floor of Shrew Lake's pit: three Net Balls, two Super Potions and a Revive."
+      },
+      "leads_to": ["SQ-DIG-02 (docs/story/SIDEQUESTS.md: the missing surveyor; the quest itself is not built)", "data/portals.json dive_shrew_pit"],
+      "why": "WATER_LIFE 2: a torn surveyor's float on the nearest shoal, its line running down into the pit; the surveyor's field case on the floor (a cache)"
+    },
+    {
+      "id": "arrow_standing_stones",
+      "lake": "arrow_lake",
+      "kind": "stone_ring",
+      "around": {"legendary": "mesprit"},
+      "radius": 8,
+      "stones": 8,
+      "height": [3, 5],
+      "inner_lanterns": 4,
+      "inner_lantern_radius": 5,
+      "leads_to": ["data/legendaries.json mesprit (its chamber; the ring is 'the lake-sites pack's dressing')"],
+      "why": "WATER_LIFE 2: a ring of standing stones on the floor round Mesprit's grotto mouth, lit from inside (lanterns on the floor and glow lichen on the stones' inner faces; no bubble column, WATER_LIFE Departures)"
+    },
+    {
+      "id": "marshy_drowned_ring",
+      "lake": "marshy_marsh",
+      "kind": "drowned_ring",
+      "around": {"legendary": "azelf"},
+      "trees": 7,
+      "rim_max_depth": 3,
+      "max_reach_blocks": 200,
+      "min_trees": 5,
+      "above_water": [3, 6],
+      "boardwalk_post_every": 8,
+      "boardwalk_light_every": 16,
+      "leads_to": ["data/legendaries.json azelf (the mouth on the kept pit floor; the boardwalk down the pit wall to the roots is this pack's, per that record)"],
+      "why": "WATER_LIFE 2: drowned trees in a ring round the pit, one with a soul-lantern glow in its roots; a sunken boardwalk down the pit wall"
+    },
+    {
+      "id": "tilpey_gold_light",
+      "lake": "lake_tilpey",
+      "kind": "gold_light",
+      "near": {"legendary": "uxie"},
+      "away_from": {"landmark_tree": "weeping_elder_tilpey"},
+      "distance": 6,
+      "distance_why": "the mouth is the foot of the island's apron (data/legendaries.json uxie mouth_why); toward the island the apron is 3 deep six blocks from it (measured by this tool), so the light stands six past the mouth on the line away from the island, in the deep water 'off' the apron",
+      "leads_to": ["data/legendaries.json uxie", "data/portals.json dive_tilpey_gate"],
+      "why": "WATER_LIFE 2: a pale gold light deep off the Weeping Elder island's apron, beside Uxie's grotto mouth"
+    },
+    {
+      "id": "peak_pond_skiff",
+      "lake": "peak_pond",
+      "kind": "skiff",
+      "near": {"portal": "dive_peak_pond_floor"},
+      "distance": [9, 20],
+      "leads_to": ["data/portals.json dive_peak_pond_floor"],
+      "why": "WATER_LIFE 2: a sunken skiff over the floor near the dive portal, a lantern still burning in it"
+    },
+    {
+      "id": "watering_hole_skiff",
+      "lake": "watering_hole",
+      "kind": "skiff",
+      "near": {"portal": "dive_watering_hole_floor"},
+      "distance": [9, 20],
+      "leads_to": ["data/portals.json dive_watering_hole_floor"],
+      "why": "WATER_LIFE 2: a sunken skiff over the floor near the dive portal"
+    },
+    {
+      "id": "tarn_chained_lantern",
+      "lake": "ravine_head_tarn",
+      "kind": "chained_lantern",
+      "near": {"portal": "dive_tarn_bottom"},
+      "distance": [9, 16],
+      "above_floor": 3,
+      "leads_to": ["data/portals.json dive_tarn_bottom"],
+      "why": "WATER_LIFE 2: a lantern on a chain over the floor near the dive portal, hung from a float at the surface"
+    }
+  ],
+  "lights": {
+    "blocks": ["lantern", "soul_lantern", "sea_pickle", "glow_lichen"],
+    "within_blocks": 8,
+    "forbidden": ["minecraft:light", "minecraft:bubble_column", "minecraft:soul_sand", "minecraft:magma_block"],
+    "why": "WATER_LIFE 2 and Departures: lights are waterlogged lanterns and soul lanterns, sea pickles and glow lichen; never a light block, and never a bubble column or what makes one (a player in a bubble column does not lose air)"
+  }
+}
