@@ -29,8 +29,9 @@ import numpy as np
 from deep_city import CityError, D4, DIR, ROOT, ang_diff, hsh, stair
 
 
-def old_write_set(source_root, spec=None, P=None):
-    """{(x, y, z): block} for every cell the superseded surface build wrote, on a fresh canvas."""
+def _old_build(source_root, spec=None, P=None):
+    """(canvas, record) of the superseded surface build on a fresh canvas: record is build_relic()'s own `out`
+    (the shrine's base, the ring's centre and radius, the cordon's gate), which the capped plan no longer carries."""
     import copy
     import deep_city as DC
     spec = copy.deepcopy(spec or json.loads(DC.SPEC.read_text(encoding="utf-8")))
@@ -42,8 +43,22 @@ def old_write_set(source_root, spec=None, P=None):
             ra.setdefault(k, v)
     P = P or DC.Palette(spec)
     cv = DC.Canvas()
-    build_relic(cv, P, spec, source_root, lambda *_a, **_k: None, [])
+    rec = build_relic(cv, P, spec, source_root, lambda *_a, **_k: None, [])
+    return cv, rec
+
+
+def old_write_set(source_root, spec=None, P=None):
+    """{(x, y, z): block} for every cell the superseded surface build wrote, on a fresh canvas."""
+    cv, _rec = _old_build(source_root, spec, P)
     return {k: v[0] for k, v in cv.v.items()}
+
+
+def old_record(source_root, spec=None, P=None):
+    """build_relic()'s record of the superseded surface: {"shrine": {centre, radius, base}, "ring": {centre [x, y, z],
+    radius, top}, "cordon": {gate [[x, z], ...], ...}, ...}. Where the old ring and cordon stood, for a world check
+    (tools/presence_audit.py relic) that must not depend on the current, capped tools/deep_city.py plan."""
+    _cv, rec = _old_build(source_root, spec, P)
+    return rec
 
 
 # ---------------------------------------------------------------- verbatim from tools/deep_city.py at c63b67a

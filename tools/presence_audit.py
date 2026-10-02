@@ -25,7 +25,8 @@ What each check expects comes from the authored record or the build's own plan, 
           its Mega counted by its own tag. A count other than 1 is reported WITH the den's clock scores (gm.gone,
           gm.resp, #now gm.t) and any player within `megas.spawn_clear`, which blocks a spawn by design.
           This WRITES: it spawns any Mega that is due. Staging only.
-  relic   the superseded surface (derived/deep_city/plan.json `relic`: the ring on its plinth, the cordon's gate) and
+  relic   the superseded surface (the ring on its plinth, the cordon's gate: tools/relic_surface_superseded.py
+          old_record, the old build's own record, since the capped derived/deep_city/plan.json carries neither) and
           the underground hall (data/relic_underground.json). Before R9RU: surface present, hall solid. After: the
           reverse.
   extra   data/world_probes.json: per-place probes the builders of 2026-10-02 named (block or entity), so the new
@@ -196,8 +197,18 @@ def dens(rc, wait):
     return out
 
 
-def relic(rc):
-    r = _plan()["relic"]
+def relic(rc, source_root=None):
+    # Where the old ring and cordon stood comes from the SUPERSEDED generator's own record
+    # (tools/relic_surface_superseded.py old_record, the old build kept verbatim), never from derived/deep_city/plan.json:
+    # since data/deep_city.json relic_area.capped (2026-10-02) the current build writes no ring or cordon and its plan
+    # records neither, which crashed this probe with KeyError 'ring'. The hall is data/relic_underground.json's.
+    import relic_surface_superseded as S
+    from terrain import env_source_root
+    sr = source_root or env_source_root()
+    if not sr:
+        raise SystemExit("presence_audit relic: needs --source-root or COBBLERS_SOURCE_ROOT (the old ring's height "
+                         "comes from the heightmap, as the old build took it)")
+    r = S.old_record(sr)
     u = json.loads((ROOT / "data" / "relic_underground.json").read_text(encoding="utf-8"))
     out = []
     cx, ry, cz = r["ring"]["centre"]
@@ -249,6 +260,8 @@ def main(argv=None):
                    help="the server directory; defaults to $COBBLERS_SERVER_ROOT (never a hard-coded runtime path)")
     p.add_argument("--only", default="arena,gulch,dens,relic,extra")
     p.add_argument("--den-wait", type=int, default=6, help="seconds to let a den's keeper run after its chunk loads")
+    p.add_argument("--source-root", default=None, help="the heightmap root for the relic probe; defaults to "
+                                                       "COBBLERS_SOURCE_ROOT (tools/terrain.py env_source_root)")
     p.add_argument("--out", help="write every row here; the console gets the verdict and the failures only")
     a = p.parse_args(argv)
     import reapply
@@ -256,7 +269,7 @@ def main(argv=None):
     want = a.only.split(",")
     rows = []
     for name, fn in (("arena", arena), ("gulch", gulch), ("dens", lambda r: dens(r, a.den_wait)),
-                     ("relic", relic), ("extra", extra)):
+                     ("relic", lambda r: relic(r, a.source_root)), ("extra", extra)):
         if name in want:
             rows += fn(rc)
     fails = [r for r in rows if r[3]]

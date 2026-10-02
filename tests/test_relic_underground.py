@@ -73,6 +73,9 @@ def test_r9ru_runs_after_the_pit_it_cuts_the_stair_into():
     src = (ROOT / "tools" / "reapply.py").read_text(encoding="utf-8")
     assert src.index('("R9B"') < src.index('("R9DC"') < src.index('("R9RU"')
     assert set(A.EARLIER) == {"cobblers_deep"}
+    # the undo leaves the Rift skin's cells (UNDO_LEAVES, relic_underground.skin_cells) only while R1 runs before R9RU
+    assert src.index('[("R1"') < src.index('("R9RU"')
+    assert set(A.UNDO_LEAVES) == {"cobblers_rift"}
 
 
 def test_the_hq_way_down_stays_in_the_reserved_boxes():
@@ -191,11 +194,40 @@ def inputs(sr):
     return {"g": g, "pit": pit, "old": dict(S.old_write_set(sr)), "city": view, "edge": edge, "blocks": dict(city)}
 
 
-def build_and_audit(sr, inputs, out):
+_SKIN_MEMO = {}
+
+
+def _skin_written():
+    """The Rift skin's definite writes in the undo's box, read with the AUDIT's parser (not the generator's skin_cells)."""
+    if "skin" not in _SKIN_MEMO:
+        x0, z0, x1, z1 = SPEC["bounds"]["undo"]
+        out = set()
+        for f in (A.PACKS / "cobblers_rift" / "data").rglob("*.mcfunction"):
+            for w in A.parse(f.read_text(encoding="utf-8", errors="replace").splitlines()):
+                if w[7] or w[3] < x0 or w[0] > x1 or w[5] < z0 or w[2] > z1:
+                    continue
+                out.update(c for c in A.cells(w) if x0 <= c[0] <= x1 and z0 <= c[2] <= z1)
+        _SKIN_MEMO["skin"] = out
+    return _SKIN_MEMO["skin"]
+
+
+def build_and_audit(sr, inputs, out, swept=None):
+    """swept: (others, others_definite) from A.other_packs, the other built packs as prepare's audit sees them; without
+    it only the city is swept (what every test before 2026-10-02 did, and why none saw cobblers_deep or cobblers_rift)."""
+    if not R.SKIN.is_dir():
+        pytest.skip("no build/datapacks/cobblers_rift: the undo leaves the Rift skin's cells and fails closed without "
+                    "it (run `python tools/rift_skin.py build`)")
     R.cmd_build(argparse.Namespace(source_root=sr, out=str(out)))
     fns, order, zone = A.read_pack(out)
-    probs, st = A.audit(fns, order, zone, SPEC, inputs["g"], inputs["pit"], {"cobblers_deep_city": inputs["city"]["all"]},
-                        inputs["old"], inputs["city"], city_blocks=inputs["blocks"])
+    if swept:
+        others, definite = swept
+    else:
+        # the city, and the Rift skin the undo now leaves (UNDO_LEAVES): without it the audit expects those cells back
+        skin = _skin_written()
+        others = {"cobblers_deep_city": inputs["city"]["all"], "cobblers_rift": skin}
+        definite = {"cobblers_deep_city": inputs["city"]["all"], "cobblers_rift": skin}
+    probs, st = A.audit(fns, order, zone, SPEC, inputs["g"], inputs["pit"], others,
+                        inputs["old"], inputs["city"], city_blocks=inputs["blocks"], others_definite=definite)
     undo = {c: A.base(w[6]) for n in order if n.startswith("undo") for w in fns[n] for c in A.cells(w)}
     left = A.cordon_check(undo, inputs["edge"], inputs["g"], inputs["city"]["all"])
     if left:
@@ -334,3 +366,91 @@ def test_an_undo_that_skips_the_fence_fails_the_independent_cordon_check(sr, inp
     monkeypatch.setattr(S, "old_write_set", no_fence)
     kinds, probs, _st = build_and_audit(sr, inputs, tmp_path / "pack")
     assert "cordon" in kinds and "undo" in kinds, probs
+
+
+# ------------------------------------------------------------------ the other built packs, swept as prepare's audit does
+# 2026-10-02: prepare's audit failed 52 shell cells against cobblers_deep (the HQ room's north partition, a wall the
+# integration added over R9B's void) and 62 undo cells against cobblers_rift (the undo paving the Rift skin, R1, with
+# gravel). No test here saw either: build_and_audit swept only the city. These sweep every built pack.
+
+@pytest.fixture(scope="module")
+def swept():
+    need = [A.PACKS / p for p in ("cobblers_deep", "cobblers_rift", "cobblers_deep_city")]
+    if not all(p.is_dir() for p in need):
+        pytest.skip("needs the built cobblers_deep, cobblers_rift and cobblers_deep_city packs in build/datapacks")
+    b = SPEC["bounds"]
+    box = (min(b["undo"][0], b["carve_with_shell"][0]), min(b["undo"][1], b["carve_with_shell"][1]),
+           max(b["undo"][2], b["carve_with_shell"][2]), max(b["undo"][3], b["carve_with_shell"][3]))
+    return A.other_packs(box)
+
+
+def test_the_built_pack_is_clean_against_every_built_pack(sr, inputs, swept, tmp_path):
+    kinds, probs, st = build_and_audit(sr, inputs, tmp_path / "pack", swept)
+    assert not probs, probs
+    assert st["undo_left_to_earlier"] > 0            # the skin and the old build do share cells: the case is live
+    assert st["pit_fixtures"] == 13 * 4              # the north partition, x3431-3443 y67-70, and nothing more
+
+
+def test_an_undo_that_paves_the_rift_skin_fails(sr, inputs, swept, tmp_path, monkeypatch):
+    # the generator mutated back to before the fix: skin_cells() leaves nothing, so the undo lays painted ground on R1's
+    # cells; data untouched
+    monkeypatch.setattr(R, "skin_cells", lambda box: set())
+    kinds, probs, _st = build_and_audit(sr, inputs, tmp_path / "pack", swept)
+    assert any(k == "undo" and "cobblers_rift" in m for k, m in probs), probs
+
+
+def test_a_wall_in_the_pit_outside_the_declared_partition_fails(sr, inputs, swept, tmp_path, monkeypatch):
+    # the generator lays one more solid block in R9B's void, beside the declared partition but outside its reserved
+    # box (x3430): the pit-fixture ordering admits the declared wall and nothing else
+    def stray(hp, spec):
+        hp["cells"][(3430, 68, 3278)] = "minecraft:polished_deepslate"
+    _tampered_hq(monkeypatch, stray)
+    # the generator's own report refuses it ...
+    with pytest.raises(R.RelicError):
+        R.cmd_build(argparse.Namespace(source_root=sr, out=str(tmp_path / "refused")))
+    # ... and with that report silenced, the audit's sweep still does
+    monkeypatch.setattr(R, "cmd_report", lambda a: 0)
+    kinds, probs, _st = build_and_audit(sr, inputs, tmp_path / "pack", swept)
+    assert any(k == "shell" and "cobblers_deep" in m for k, m in probs), probs
+
+
+def test_the_skin_reader_fails_closed_without_the_skin(monkeypatch, tmp_path):
+    monkeypatch.setattr(R, "SKIN", tmp_path / "absent")
+    monkeypatch.setattr(R, "_MEMO", {})
+    with pytest.raises(R.RelicError):
+        R.skin_cells((0, 0, 1, 1))
+
+
+# ------------------------------------------------------------------ tools/presence_audit.py relic, on the capped plan
+
+def test_the_presence_relic_probe_runs_on_the_capped_plan(sr, monkeypatch):
+    # 2026-10-02: relic() read derived/deep_city/plan.json's relic ring, which the capped build no longer records, and
+    # crashed with KeyError 'ring'. It now takes the old ring from the superseded generator's record.
+    import deep_city as DC
+    import presence_audit as PA
+    import relic_surface_superseded as S
+    spec = json.loads(DC.SPEC.read_text(encoding="utf-8"))
+    assert spec["relic_area"]["capped"]["capped"] is True
+    _cv, plan, _s, _sp = DC.build(sr, None)
+    assert "ring" not in plan["relic"] and "cordon" not in plan["relic"]     # the plan the old probe crashed on
+
+    def no_plan():
+        raise AssertionError("the relic probe read derived/deep_city/plan.json")
+    monkeypatch.setattr(PA, "_plan", no_plan)
+    monkeypatch.setattr(PA.time, "sleep", lambda s: None)
+    sent = []
+
+    def rc(cmd):
+        sent.append(cmd)
+        return "Test failed" if cmd.startswith("execute if block") else "Test passed"
+    rows = PA.relic(rc, sr)
+    rec = S.old_record(sr)
+    assert [r[0] for r in rows] == ["relic", "relic", "relic"]
+    assert rows[0][2] == tuple(rec["ring"]["centre"])
+    assert rows[1][2][0] == rec["cordon"]["gate"][0][0] and rows[1][2][2] == rec["cordon"]["gate"][0][1]
+    hall = SPEC["geometry"]["hall"]
+    assert rows[2][2] == (hall["centre"][0], hall["floor_y"] + 2, hall["centre"][1])
+    ring = rec["ring"]
+    probe = "execute if block %d %d %d minecraft:air" % (ring["centre"][0] + ring["radius"], ring["centre"][1],
+                                                         ring["centre"][2])
+    assert probe in sent
