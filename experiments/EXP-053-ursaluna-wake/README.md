@@ -1,4 +1,4 @@
-# EXP-049: the Ursaluna's wake - does a sleeping bear become a boss fight?
+# EXP-053: the Ursaluna's wake - does a sleeping bear become a boss fight?
 
 Status: **built 2026-10-02, not run.** For the integrating session, on staging, under the coordination lock.
 

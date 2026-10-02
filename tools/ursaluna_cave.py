@@ -52,7 +52,7 @@ late. A boss that stays dead is an event; one that returns is a place."):
                             free and wakes the bear; awake, it breaks free unless the thrower holds catch.gate_flags
 
 What is unproven (Unbattleable 0b on a live entity, a NoAI Pokemon in battle, RecalculatePose, the capture hook in
-play, the return in play) is experiments/EXP-049-ursaluna-wake, for the integrator to run in game.
+play, the return in play) is experiments/EXP-053-ursaluna-wake, for the integrator to run in game.
 
 THE SUMMON GUARD keys on the tag and on the species, never on a bare distance. R14C (the Celebi) uses
 `unless entity @e[type=cobblemon:pokemon,distance=..3]`, and a wild Pokemon wandering past the sapling has satisfied

@@ -51,7 +51,7 @@ What is checked, each from the data and the heightmap, never from the pack:
   watcher     the conversation exists and compiles, and the NPC stands one above the ground outside every write
   functions   every function passes tools/function_limits.py and is reached from the load tag or the steps
 
-NOT checked, and it needs a running server (experiments/EXP-049-ursaluna-wake): that the fills land (chunk loading),
+NOT checked, and it needs a running server (experiments/EXP-053-ursaluna-wake): that the fills land (chunk loading),
 that the bear is twice normal size (scale_modifier applied after the intrinsic scale), that it sleeps, that the wake
 fires, that Unbattleable 0b on a live entity lets a battle start, what a player sees, and that Teddiursa spawn round
 the activated block.

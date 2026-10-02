@@ -6,7 +6,7 @@ tamper case below changes the generator's CODE or OUTPUT and leaves data/ursalun
 mutation moves the expectation and the output together and proves nothing.
 
 Needs the canonical heightmap (COBBLERS_SOURCE_ROOT); a skip names it. NOT covered, and it needs a running server
-(experiments/EXP-049-ursaluna-wake): that the fills land, that the bear is twice normal size, that it sleeps, that the
+(experiments/EXP-053-ursaluna-wake): that the fills land, that the bear is twice normal size, that it sleeps, that the
 wake fires and a battle can then start, that the callbacks fire for this bear, that a ball breaks free, and that
 Teddiursa spawn round the activated block.
 

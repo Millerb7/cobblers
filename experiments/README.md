@@ -39,10 +39,11 @@ are not features. Decisions they produce are recorded in `docs/decisions/`.
 | EXP-043 | Can a datapack run a Game Corner (coins, a slot machine, a prize counter) per player? | proposed in docs/research/CASINO.md (branch research/casino); not run |
 | EXP-044 | Does surface exhaustion stop a player swimming across the sea? | built, loads clean on staging; not run in game |
 | EXP-048 | Does a pasted LumyMon altar respond? | console half run 2026-10-02: both adopted templates place and all eight LumyMon blocks are real; a console-dropped carrot does nothing; three of four activation items exist nowhere in the pack. The right-click half waits on the owner |
-| EXP-049 | Does the Ursaluna's wake turn the sleeping bear into a boss fight? | built and audited offline 2026-10-02 (copies the Celebi's wake); not run in game |
+| EXP-049 | Native-evolving starters: forms, a same-species stage, the cap gate and the evolution veto | designed 2026-10-02, not run ([README](EXP-049-native-starter-evolution/README.md)) |
 | EXP-050 | Does the Seaward Drift's straight rail line carry a ridden minecart from Foothill Gate to Driftmouth Light and back? | rebuilt 2026-10-02 straight and audited offline (1,137 rails on z1795, 167 powered by sealed levers, no curve; 142 s at the cap); probes and the ride test not run |
 | EXP-051 | Do our NPCs render as people once their classes name a model? | fixed and audited offline 2026-10-02: all 40 classes name `cobblemon:standard` (Cobblemon's trainer); pre-fix build audited 40 of 40 dolls; in-game look not run |
 | EXP-052 | Can Ellis Hopgood see the player's Lopunny (a party callback's tag read by his dialogue), and do his Buneary stay in the cellar? | built and audited offline 2026-10-02 (`tools/lopunny_house.py`, `tools/lopunny_house_audit.py`); not run in game |
+| EXP-053 | Does the Ursaluna's wake turn the sleeping bear into a boss fight? | built and audited offline 2026-10-02 (copies the Celebi's wake); not run in game |
 | EXP-046 | Can a town hold a working Pokemon through restarts, unloads and players, doing visible work? | run headless on staging: held, protected against every `/damage` type, survives unload and restart, moves by `tp`; `spawnpokemonat` in a function works only after a `/reload` unless it is a macro; 13 workers placed and verified. Walk animation, clicks and a sword need the owner |
 | EXP-045 | Can a player Mega Evolve with a Mega Bracelet? | PASS in game 2026-09-27: worn in the Accessories slot before the battle; reverts after; not held, not equipped mid-battle |
 
