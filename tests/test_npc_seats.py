@@ -114,10 +114,18 @@ def _gym_sites():
 def coverage_problems(classes, refused_npcs, gen=None):
     seats = _seats(gen)
     sources = {}
-    for name, rows in (("data/scenes.json", reapply.scene_npcs()), ("data/rewards.json", reapply.npcs()),
-                       ("data/ferries.json", ferries.npc_placements(ferries.load()))):
-        for r in rows:
-            sources.setdefault(r[2].split(":", 1)[1], []).append(name)
+    # A SWEEP over every "npc" action in reapply.steps(), not a list of the sources known when this was written.
+    # It was a fixed list of three - scenes (R17), rewards and the ferrymen (R17F) - and on 2026-10-02 a fourth
+    # source arrived the same night (the Ursaluna's den, R18U, then the Frostpeak camp, R18F) and its NPC read as
+    # "placed by nothing" although a step places it (CLAUDE.md "Our list is not the world": prefer a sweep). Every
+    # old source is itself an "npc" action in a step, so the sweep finds all of them and loses none. R17N is the
+    # one step NOT read from steps(): its seats come from _seats(gen), so that a mutated generator stays visible.
+    for sid, _title, acts in _all_steps():
+        if sid == "R17N":
+            continue
+        for a in acts:
+            if a[0] == "npc":
+                sources.setdefault(a[1][2].split(":", 1)[1], []).append(sid)
     for nid in seats:
         sources.setdefault(nid, []).append("data/npc_seats.json")
     not_seated = {n["id"]: n.get("why") for n in DOC.get("not_seated") or []}
@@ -239,6 +247,17 @@ def _steps(monkeypatch_ctx):
     monkeypatch_ctx.setattr(reapply, "indexed", lambda *a, **k: [])
     monkeypatch_ctx.setattr(ambient, "placement_steps", lambda *a, **k: [])
     return reapply.steps()
+
+
+_STEPS_CACHE = []
+
+
+def _all_steps():
+    """reapply.steps() once per run, with the two step sources that need built output patched out (as _steps does)."""
+    if not _STEPS_CACHE:
+        with pytest.MonkeyPatch.context() as mp:
+            _STEPS_CACHE.append(_steps(mp))
+    return _STEPS_CACHE[0]
 
 
 @pytest.fixture(scope="module")

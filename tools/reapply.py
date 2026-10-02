@@ -95,6 +95,12 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-09-28: the wayside shrines on the approaches of towns people pass through (tools/shrines.py,
                 # data/shrines.json): block functions run by R16D after the dressing and the working Pokemon
                 "cobblers_shrines",
+                # 2026-10-02: the Ursaluna's den west of Highwire (tools/ursaluna_cave.py, data/ursaluna_cave.json): a
+                # keeper loop holds the bear in its den, so world-local; carved, summoned and dressed by R18U
+                "cobblers_ursaluna_cave",
+                # 2026-10-02: the Frostpeak research camp (tools/frostpeak_camp.py, data/frostpeak_camp.json): block
+                # functions and the instruments' display entities, run by R18F
+                "cobblers_frostpeak_camp",
                 # 2026-09-29: the gym interiors (tools/gym_interiors.py, data/gym_interiors.json): the healing
                 # machines out of all eight placed gyms, and gym 1's works carved under its lot. Block functions run
                 # by R16E, after the donors (R9) that stamp the gyms whole and would erase anything written first
@@ -473,6 +479,12 @@ def prepare_jobs(a):
     # faces included): the generator keeps clear of what they write
     add("shrines:build", "shrines.py", "build", *src)
     add("shrines_audit", "shrines_audit.py", *src)
+    # the Ursaluna's den and the Frostpeak research camp (2026-10-02), each then its own independent audit, which
+    # replays the written functions against its own reading of the plan and fails the prepare on a broken build
+    add("ursaluna_cave", "ursaluna_cave.py", *src)
+    add("ursaluna_cave_audit", "ursaluna_cave_audit.py", *src)
+    add("frostpeak_camp:build", "frostpeak_camp.py", "build", *src)
+    add("frostpeak_camp_audit", "frostpeak_camp_audit.py", "--inputs-root", str(ROOT), *src)
     # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
     # then the offline audit, which re-derives every shell box from data/placements.json, replays the written
     # functions into a voxel model and fails the prepare on a broken route, a trainer that can be walked round, a
@@ -1129,6 +1141,20 @@ def steps(with_spawns=False):
     import npc_seats
     out.append(("R17N", "the settlement NPCs (data/npc_seats.json)",
                 [("npc", n) for n in npc_seats.placements()]))
+    # the Ursaluna's den (2026-10-02): carve, summon the sleeping bear over RCON (an entity the export erases, as the
+    # Celebi and the legendaries are, and guarded on its tag AND species, not distance - R14C failed twice on a bare
+    # distance guard), dress, then its keeper Hollis, whose class loads at boot from cobblers_dialogue
+    import ursaluna_cave
+    out.append(("R18U", "the Ursaluna's den west of Highwire (data/ursaluna_cave.json)",
+                ursaluna_cave.placement_steps() + [("npc", n) for n in ursaluna_cave.npc_placements()]))
+    # the Frostpeak research camp (2026-10-02): its blocks and instruments, held in a forceload so no fill lands on an
+    # unloaded chunk, then its three researchers
+    import frostpeak_camp
+    out.append(("R18F", "the Frostpeak research camp (data/frostpeak_camp.json)",
+                [("cmd", "forceload add 680 680 735 735"), ("wait", 3),
+                 ("fn", "cobblers:frostpeak_camp/build"), ("fn", "cobblers:frostpeak_camp/instruments"),
+                 ("cmd", "forceload remove 680 680 735 735")]
+                + [("npc", n) for n in frostpeak_camp.npc_placements()]))
     trad = json.loads((ROOT / "data" / "traders.json").read_text(encoding="utf-8"))
     towns = sorted({t["settlement"] for t in trad.get("traders") or [] if t.get("settlement")})
     out.append(("R14", "town traders", [x for t in towns for x in (("fn", "cobblers:towns/vendors_%s" % t), ("wait", 8))]))
