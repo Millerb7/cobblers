@@ -35,7 +35,8 @@ THE UNDO. A world applied before 2026-10-02 (staging, R9DC on 2026-10-01 17:10) 
 build: the platform, the six arches, the plinth and gold ring, the standing stones, the processional way and the
 cordon. tools/deep_city.py no longer writes them, and a data edit changes nothing in a world, so this pack takes them
 off. WHICH cells: tools/relic_surface_superseded.py, the old generator kept verbatim, minus every cell the CURRENT
-tools/deep_city.py build writes (R9DC rewrites those itself; the sealed entrance, the lookout and the dig stay). WHAT
+tools/deep_city.py build writes (R9DC rewrites those itself; the sealed entrance, the lookout and the dig stay), and minus every cell the Rift skin
+lays definitely (R1 rewrites those itself, earlier in the same run; skin_cells() reads its emitted functions). WHAT
 goes back: air over the ground, and under it the ground tools/paint_maps.py painted there for the export (the
 preset's terrain code, from the same value noise and seed; GRAVEL as gravel, ROCK and STONE_MIX as stone). A cell
 the old build wrote as AIR over the ground is left alone: that world already has air there, and a fresh world may
@@ -235,6 +236,48 @@ def city_cells(source_root):
     return _MEMO[("city", source_root)]
 
 
+# the Rift skin's emitted block functions (R1, tools/rift_skin.py). R1 runs before R9RU in every tools/reapply.py run
+SKIN = ROOT / "build" / "datapacks" / "cobblers_rift" / "data" / "cobblers" / "function" / "rift"
+
+
+def skin_cells(box):
+    """{(x, y, z)} every cell R1 (tools/rift_skin.py) writes DEFINITELY (a plain fill or setblock, not `replace
+    <filter>` or `keep`) inside box (x0, z0, x1, z1), read from the skin's own emitted functions, as
+    tools/lakebed_repair.py reads them. The skin cannot be rebuilt here (it needs derived/rift_sculpt), so its output is
+    the record of what R1 lays. Not built: fail closed, since an empty set would silently let the undo pave the skin."""
+    key = ("skin", tuple(box))
+    if key in _MEMO:
+        return _MEMO[key]
+    if not SKIN.is_dir():
+        raise RelicError("no %s: run `python tools/rift_skin.py build` first; the undo must leave the cells R1 lays"
+                         % SKIN)
+    x0, z0, x1, z1 = box
+    out = set()
+    for f in sorted(SKIN.glob("blocks_*.mcfunction")):
+        for line in f.read_text(encoding="utf-8").splitlines():
+            t = line.split()
+            if not t or t[0] not in ("fill", "setblock"):
+                continue
+            n = 6 if t[0] == "fill" else 3
+            mode = t[n + 2:]
+            if mode and mode not in (["replace"], ["destroy"]):
+                if mode[0] in ("keep",) or (mode[0] == "replace" and len(mode) == 2):
+                    continue
+                raise RelicError("%s: a skin write this undo does not model: %s" % (f.name, line))
+            v = [int(s) for s in t[1:n + 1]]
+            if t[0] == "setblock":
+                v = v + v
+            ax, bx = min(v[0], v[3]), max(v[0], v[3])
+            az, bz = min(v[2], v[5]), max(v[2], v[5])
+            if bx < x0 or ax > x1 or bz < z0 or az > z1:
+                continue
+            out.update((x, y, z) for x in range(max(ax, x0), min(bx, x1) + 1)
+                       for y in range(min(v[1], v[4]), max(v[1], v[4]) + 1)
+                       for z in range(max(az, z0), min(bz, z1) + 1))
+    _MEMO[key] = out
+    return out
+
+
 def pit_of(source_root):
     """(x, z) -> the Deep's tread y at a pit column, or None outside the pit (tools/rift_deep.py model())."""
     if ("pit", source_root) not in _MEMO:
@@ -353,15 +396,24 @@ def _numbers2(o):
 def undo_plan(source_root):
     """-> (cells {(x, y, z): block to write}, stats). The cells the superseded surface build wrote that the current
     tools/deep_city.py does not, each put back to the ground the export had: air over the ground, the painted
-    terrain at and under it. Cells the old build wrote as air over the ground are skipped (see the module doc)."""
+    terrain at and under it. Cells the old build wrote as air over the ground are skipped (see the module doc).
+
+    Cells the Rift skin lays (R1, tools/rift_skin.py) are left too, like the city's: R1 runs before R9RU in every
+    tools/reapply.py run, so by the time the undo runs it has already laid its block over the old build's, and the
+    painted ground would pave the skin over (2026-10-02: 62 cells of distortion stone and crying obsidian at the
+    region's south-west, turned to gravel)."""
     import relic_surface_superseded as S
     g = ground_of(source_root)
     old = S.old_write_set(source_root)
     city = city_cells(source_root)
+    skin = skin_cells(json.loads(DATA.read_text(encoding="utf-8"))["bounds"]["undo"])
     keep = {k: b for k, b in old.items() if k not in city}
+    by_city = len(old) - len(keep)
+    keep = {k: b for k, b in keep.items() if k not in skin}
     ground_cols = sorted({(x, z) for (x, y, z) in keep if y <= g(x, z)})
     paint = painted_terrain(ground_cols, source_root) if ground_cols else {}
-    cells, st = {}, {"old_cells": len(old), "rewritten_by_city": len(old) - len(keep), "air_over_ground_skipped": 0,
+    cells, st = {}, {"old_cells": len(old), "rewritten_by_city": by_city,
+                     "rewritten_by_rift_skin": len(old) - by_city - len(keep), "air_over_ground_skipped": 0,
                      "to_air": 0, "to_ground": 0, "paint": {}}
     for (x, y, z), b in keep.items():
         gy = g(x, z)
@@ -887,9 +939,10 @@ def cmd_report(a):
     # 8 the undo: what it takes off and what it lays back
     try:
         ucells, ust = undo_plan(sr)
-        note.append("undo: %d cells of the old surface build; %d rewritten by the current city; %d cut-air cells over the "
-                    "ground skipped; %d to air, %d to painted ground %s; bbox %s"
-                    % (ust["old_cells"], ust["rewritten_by_city"], ust["air_over_ground_skipped"], ust["to_air"],
+        note.append("undo: %d cells of the old surface build; %d rewritten by the current city; %d left to the Rift skin "
+                    "(R1); %d cut-air cells over the ground skipped; %d to air, %d to painted ground %s; bbox %s"
+                    % (ust["old_cells"], ust["rewritten_by_city"], ust["rewritten_by_rift_skin"],
+                       ust["air_over_ground_skipped"], ust["to_air"],
                        ust["to_ground"], ust["paint"], ust.get("bbox")))
         hit = [c for c in ucells if geo.carved_range(c[0], c[2]) and c[1] <= geo.carved_range(c[0], c[2])[1] + SHELL]
         if hit:

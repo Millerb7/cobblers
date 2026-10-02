@@ -47,11 +47,13 @@ What must hold:
   shell      no shell cell is in the carve's or the HQ's air (25_reshell would fill it back), none is above its column's
              ground minus one, none is in the Deep's air, and none touches a cell another pack writes -- except the
              `replace` fills of a pack applied BEFORE R9RU (EARLIER: tools/rift_deep.py's pit, R9B), which ran first;
-             before 2026-10-02 this check failed 46,909 cells against cobblers_deep in any checkout that built it
-  zone       the advancement's boxes and y bounds are the data's; every carved column west of the threshold is in a
+             before 2026-10-02 this check failed 46,909 cells against cobblers_deep in any checkout that built it;
+             and a solid seals_room wall over R9B's void where data/deep_city.json reserves the cell (pit_fixtures)
+  zone      the advancement's boxes and y bounds are the data's; every carved column west of the threshold is in a
              box; the knock box and the turn-back are outside them; the knock box is carved air over a floor; the turn-back stands on the city's floor or the
              pit's tread with two clear blocks over it; the pass is tested fail-closed (`unless score ... matches 1..`)
-  undo       writes exactly the old build's cells minus the city's: air over the ground where the old block was
+  undo       writes exactly the old build's cells minus the city's and minus the definite writes of a pack applied
+             before R9RU that lays its own cells again (UNDO_LEAVES: the Rift skin, R1): air over the ground where the old block was
              solid, never a cell the old build cut to air over the ground, a non-air natural block at and under the
              ground, and none of the old build's materials; touches no cell another pack writes
   cordon     independently of the superseded generator: every edge column of the traced relic region (the old
@@ -379,6 +381,40 @@ def guard_edges(spec, zone):
 # exception until 2026-10-02; there are none now, so there is no exception).
 EARLIER = {"cobblers_deep": "R9B, tools/rift_deep.py: the pit, whose refill under every tread is replace #rift_void"}
 
+# The one kind of DEFINITE cobblers_deep write the carve may overwrite: R9B's void over a pit tread, where the relic data
+# declares a wall that seals the HQ's room (geometry.hq.dressing, seals_room) and data/deep_city.json reserves the cell
+# for this pack, so the city writes nothing there. R9B digs the pit and every later step builds in it, as R9DC's walls
+# do; the wall is the later step and must win, and R9B runs before R9RU (tools/reapply.py, checked by the tests). Added
+# 2026-10-02 for the north partition (hq_room_north_partition): the integration added the wall after this audit was
+# written, so it failed 52 cells. Any other definite overlap with the pit, solid or not, still fails.
+DEEP_CITY_DATA = ROOT / "data" / "deep_city.json"
+
+# Packs applied BEFORE R9RU whose DEFINITE writes the undo leaves (tools/reapply.py order, checked by the tests). Each
+# rewrites its cells itself earlier in the same run, over the old build's, so the undo is neither expected to write them
+# nor allowed to (it would pave over that pack's block). The city (R9DC) is the original case, handled by `city`.
+UNDO_LEAVES = {"cobblers_rift": "R1, tools/rift_skin.py: the Rift skin's surface, laid before every later step"}
+
+
+def pit_fixtures(spec, pit, deep_city=None):
+    """{cell} the carve may write over cobblers_deep's definite void (see above): the relic data's seals_room dressing,
+    inside a data/deep_city.json reserved box, over a pit tread (tools/rift_deep.py model())."""
+    dc = deep_city if deep_city is not None else json.loads(DEEP_CITY_DATA.read_text(encoding="utf-8"))
+    boxes = [r["box"] for r in dc.get("reserved", [])]
+    out = set()
+    for d in spec["geometry"]["hq"]["dressing"]:
+        if not d.get("seals_room"):
+            continue
+        a, b, c, d2, e, f = d["fill"]
+        for x in range(a, d2 + 1):
+            for y in range(b, e + 1):
+                for z in range(c, f + 1):
+                    t = pit(x, z)
+                    if t is None or y <= t:
+                        continue
+                    if any(bx[0] <= x <= bx[3] and bx[1] <= y <= bx[4] and bx[2] <= z <= bx[5] for bx in boxes):
+                        out.add((x, y, z))
+    return out
+
 
 def audit(fns, order, zone, spec, ground, pit, others, old, city, city_blocks=None, others_definite=None):
     """fns/order/zone: read_pack(). ground(x, z) -> y; pit(x, z) -> tread y or None. others: {pack: set of cells}
@@ -604,9 +640,15 @@ def audit(fns, order, zone, spec, ground, pit, others, old, city, city_blocks=No
     if deep:
         bad("shell", "%d shell cells in the Deep's air, e.g. %s" % (len(deep), sorted(deep)[:3]))
     carved = set(final) | shell
+    fixtures = pit_fixtures(spec, pit)
+    st["pit_fixtures"] = 0
     for name, cs in others.items():
         if name in EARLIER:
             hit = carved & (others_definite or {}).get(name, cs)
+            if name == "cobblers_deep":
+                ok = {c for c in hit if c in fixtures and c in final and final[c] != AIR}
+                st["pit_fixtures"] = len(ok)
+                hit -= ok
         else:
             hit = carved & cs
         if hit:
@@ -690,7 +732,12 @@ def audit(fns, order, zone, spec, ground, pit, others, old, city, city_blocks=No
                     undo[c] = base(w[6])
     st["undo"] = len(undo)
     city_cells = city["all"]
-    expect = {c: b for c, b in old.items() if c not in city_cells}
+    leave = set()
+    for name in UNDO_LEAVES:
+        if name in others:
+            leave |= (others_definite or {}).get(name, others[name])
+    expect = {c: b for c, b in old.items() if c not in city_cells and c not in leave}
+    st["undo_left_to_earlier"] = sum(1 for c in old if c not in city_cells and c in leave)
     extra = [c for c in undo if c not in expect]
     if extra:
         bad("undo", "%d undo cells the old build never wrote, e.g. %s" % (len(extra), sorted(extra)[:3]))
