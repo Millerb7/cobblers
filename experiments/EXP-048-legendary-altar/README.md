@@ -136,3 +136,40 @@ Read from `LumyMon-0.6.6.jar` and `COBBLEVERSE-DP-v31.zip` with `zipfile` only; 
    installed to grant it.
 7. **Server console** around every click: `Summoning failed: {}` is LumyMon's own log line for a `pokespawnat`
    that Cobblemon 1.8.0 rejected.
+
+## Results, 2026-10-02 (01:53-02:05), the console half
+
+**Runtime:** Minecraft 1.21.1, Fabric Loader 0.19.5, Cobblemon 1.8.0, LumyMon 0.6.6, COBBLEVERSE-DP-v31,
+staging universe `staging-2026-10-01` booted with `--universe` (never `cobblers-10240`), coordination lock held.
+Every coordinate below is template position + corner, read from the template files themselves.
+
+| Probe | Result |
+|---|---|
+| `place template cobbleverse:crown_cemetery 4118 109 1982 none none` | **placed** - so the Cobbleverse datapack IS loaded on staging, which nothing had checked |
+| the eight LumyMon blocks at their template positions (statue (4140,112,2005), anchor (4153,112,1999), five triggers round it, carrot crop (4156,111,2009) age 7) | **all eight present** |
+| `data get block` on the Calyrex statue | "The target block is not a block entity" - **matches the jar** |
+| a shaderoot carrot summoned onto the trigger ring, twice, plus once inside the trigger's own block space | **nothing.** No Spectrier within 48 blocks (selector keyed on SPECIES, not distance, so a wild Pokemon cannot fake a pass), the carrots were NOT consumed, and the console logged nothing from LumyMon about summoning. The carrots rest at y111.875: the trigger has no collision, so they fall through it onto the block below while still overlapping the trigger's space. |
+| `place template cobbleverse:legendary/articuno 904 151 320 none none` | **placed**; `lumymon:articuno_altar` present at (914, 153, 331) |
+
+**What this does and does not show.** A console-summoned item entity does not fire the Spectrier trigger.
+That is NOT proof the trigger is silent: it may require an item a PLAYER threw (the thrower is part of an
+item entity), which RCON cannot fake. The right-click altars cannot be exercised from the console at all.
+
+**The finding that matters more than the probe.** The activation items for three of the four altars do not
+exist in obtainable form: across all 102 mod jars and every server datapack, no recipe or loot table makes a
+`glacier_feather`, `thunder_feather` or `calyrex_crown`, and the templates' barrels do not hold them
+(measured; `docs/research/notes/lumymon-altars.md`, head). So **as the sites stand, Articuno, Zapdos and
+Calyrex cannot be summoned in normal play even if their altars work: in practice those three are scenery.**
+Mew's `origin_fossil` has a recipe; the cemetery's Spectrier route has its own carrot crop.
+
+## The owner's half - in-game, both sites are now standing in staging
+
+1. **Spectrier**, at the Crown Cemetery (4118-4162, 109-132, 1982-2028): harvest the carrot crop at
+   (4156, 111, 2009), then THROW a carrot onto the trigger ring round (4153, 112, 1999). Note any chat line.
+2. **Articuno**, at its adopted site, altar at (914, 153, 331): `/give @s lumymon:glacier_feather`, then
+   right-click the altar, first empty-handed, then holding the feather. Record the exact chat line. If it says a
+   Summon Anchor is missing, `/setblock 915 153 331 lumymon:summon_anchor` and try again.
+3. **Calyrex**, at the cemetery statue (4140, 112, 2005): `/give @s lumymon:calyrex_crown`, then right-click it.
+
+Three test carrots tagged `exp048_carrot`, `exp048_carrot2` and `exp048_carrot3` were left by the ring with
+pickup disabled. They are evidence, harmless, and despawn on their own.
