@@ -1,14 +1,14 @@
 {
-  "schema": "cobblers.sea-drift/1",
-  "status": "authored 2026-10-02; generated and audited offline, not applied to any world",
+  "schema": "cobblers.sea-drift/2",
+  "status": "rebuilt 2026-10-02 as a straight road (the owner, after riding the first line); generated and audited offline, not applied to any world. The first drift (an L-shaped tunnel to an isle at z1586) is built in staging-2026-10-01 and is removed there by `tools/sea_drift.py cleanup`",
   "builder": "tools/sea_drift.py",
   "audit": "tools/sea_drift_audit.py",
   "request": "the owner, 2026-10-02: \"make another mine tunnel with a strip mine attached to it near 1455 113 1795, it would be cool if it spit out near the beach around 330 70 1584, this would be in the ocean, but make a small island with some cool water spawns around it\"",
   "measured": {
     "basis": "tools/ground.py (the canonical heightmap, rounded) and data/world.json's sea level, 2026-10-02; never a world",
-    "mouth": "(1455, 1795): ground y112 on a flat plateau (y111-115 across x1300-1540, z1700-1850), foothill_woods (data/spawns.json subregion band 21-23, basis route_03_misty_to_surge)",
-    "exit": "(330, 1584): ground y26 under a sea at y62, 36 blocks of water. The nearest dry column is (502, 1862), 327 blocks away: there is no beach there, so the island is built (the owner: 'make a small island')",
-    "between": "the straight line is 1,145 blocks: land falling from y112 to the coast at about x740, then a shelf at y47-50 out to x460, then a drop to a basin at y26-28. Nothing authored lies within 150 blocks of it except a site candidate never built (data/towns.json gym3_town site_history) and the mt_clay_outflow waterway, 95 blocks south of the mouth"
+    "mouth": "(1455, 1795): ground y112, a 21-by-21 box round it flat at y112, on the plateau (y110-113 from x1300 to x1460 along z1795); foothill_woods (data/spawns.json subregion band 21-23, basis route_03_misty_to_surge)",
+    "isle": "(336, 1795) on the line and (336, 1798), the isle's centre: ground y38 under a sea at y62, 24 blocks of water; y29-46 within 34. The isle is built. Its lamp at (327, 94, 1788) is 189 blocks from the nearest dry ground of the heightmap, (497, 1870)",
+    "between": "along z1795: land falling from y112 to the coast at x673 (y92 at x900, y84 at x840, y70 at x800), shallows y55-59 from x560 to x640, then the shelf y47-51 to x400 and a slope to y38 at the isle"
   },
   "seed": 20261002,
   "tube": {
@@ -27,20 +27,26 @@
   },
   "grade": {
     "incline_run": 2,
-    "incline_why": "the mouth is cut into a flat plateau, so the first stretch is an open box-cut falling one block in two (a stair every other block) until the cover is reached and the drift goes under a roof",
+    "incline_why": "past the gatehouse the road drops into an open box-cut falling one block in two until the cover is reached and it goes under a roof (the portal)",
     "max_run": 6,
-    "max_run_why": "the steepest the roofed drift may fall where the seabed forces it down: one block in six. Elsewhere it falls at the even grade from the portal to the island, so the walk is one long gentle descent and not a copy of the ground's bumps",
+    "max_run_why": "the steepest the roofed road may fall where the cover forces it down: one block in six. Elsewhere it falls at the even grade from the portal to its lowest point, one long steady coast, the Cycling Road's downhill",
+    "climb_run": 1,
+    "climb_why": "the road's last stretch climbs one in one, every rail an ascending powered rail and every step a stair beside it, from its lowest point under the isle's skirt up into the keeper's hall: straight, so the line has no curve and needs no minecraft:rail",
     "quiet_cells": 3,
-    "quiet_why": "no stair within 3 cells of a corner, the strip mine's junction or the drift's end: a powered rail cannot turn or meet a stair, and a turn on a step is a trip"
+    "quiet_why": "no stair within 3 cells of the strip mine's junction or of either end, and a flat bottom of 4 cells: a powered rail cannot meet a stair at a junction, and the stops are on the flat"
   },
   "route": {
     "vertices": [
-      [1458, 1795],
-      [900, 1795],
-      [900, 1584],
-      [345, 1584]
+      [
+        1461,
+        1795
+      ],
+      [
+        325,
+        1795
+      ]
     ],
-    "why": "three straight legs (a powered rail runs only straight): west under the plateau, south under the foothills, west under the coast, the shelf and the basin to the island's stairwell. The cut's head is 3 blocks east of the owner's point so the point stands in the cut's first steps"
+    "why": "ONE straight leg along z1795, west, from the stop in Foothill Gate (its east wall is the buffer) to the stop in Driftmouth Light's keeper's hall (its west wall is the buffer). The owner's point (1455 113 1795) stands inside the gatehouse, on the line"
   },
   "strip_mine": {
     "junction_x": 1420,
@@ -52,11 +58,24 @@
     "branch_length": 14,
     "branch_height": 2,
     "first_branch_z": 1777,
-    "chamber": {"r": 2, "height": 3},
+    "chamber": {
+      "r": 2,
+      "height": 3
+    },
     "why": "the ordinary strip mine: a 3-wide corridor north off the drift, and from it 1-wide, 2-high branches every third block on both sides, two blocks of rock between each pair, so a player walking the branches sees every face. It ends in a small chamber with the miners' barrel",
     "ores": {
-      "near": ["minecraft:copper_ore", "minecraft:copper_ore", "minecraft:copper_ore", "minecraft:lapis_ore"],
-      "far": ["minecraft:copper_ore", "minecraft:lapis_ore", "minecraft:gold_ore", "minecraft:gold_ore"],
+      "near": [
+        "minecraft:copper_ore",
+        "minecraft:copper_ore",
+        "minecraft:copper_ore",
+        "minecraft:lapis_ore"
+      ],
+      "far": [
+        "minecraft:copper_ore",
+        "minecraft:lapis_ore",
+        "minecraft:gold_ore",
+        "minecraft:gold_ore"
+      ],
       "deep_variant": "minecraft:deepslate_%s",
       "share_near": 0.04,
       "share_far": 0.08,
@@ -70,46 +89,106 @@
     "display_name": "Driftmouth Isle",
     "centre": {
       "x": 336,
-      "z": 1586,
+      "z": 1798,
       "ground_y": 69,
-      "heightmap_seabed_y": 26,
-      "ground_note": "built ground: tools/sea_drift.py raises the isle out of y26 seabed with tools/islet.py's island_top (the Relic Island shape at this radius, crown and seed), so the heightmap carries the seabed and the ground is ours: y69 here is the headhouse pad (pad_y), the crown elsewhere reaches y73"
+      "heightmap_seabed_y": 38,
+      "ground_note": "built ground: tools/sea_drift.py raises the isle out of the seabed with tools/islet.py's island_top (the Relic Island shape at this radius, crown and seed), so the heightmap carries the seabed and the ground is ours. The centre is set 3 south of the road's axis so that its column is ground, not road: y69 here is the lighthouse pad (pad_y)"
     },
     "built_ground": "tools/sea_drift.py",
-    "radius": 24,
+    "radius": 28,
+    "radius_why": "28, not the first isle's 24: the road climbs one in one from its bottom under the isle's skirt into the keeper's hall, and needs the isle's dry crown along 32 blocks of it. At 24 the climb broke its water cover by up to 6 blocks (tools/sea_drift.py refuses: 'the climb into the isle cannot meet the coast under cover'), measured 2026-10-02; at 28 it holds 4 everywhere. The water here is shallower than at z1586, so each stack's lower Habitat Block (10 over the seabed) stands 1 to 20 under its upper one (4 under the sea, y58): y53 NE, y38 NW, y45 SW and y57 SE, where the two are adjacent",
     "crown_y": 72,
     "skirt": 10,
     "skirt_why": "islet.py's shape ends at the waterline in a wall 4 under the sea; over 36 blocks of water that would be a pillar, so a talus skirt falls from there to the seabed over 10 more blocks of radius",
     "beach": "minecraft:gravel",
     "beach_why": "a shingle beach, the mine's spoil: sand is a spawn condition (sandygast, palossand: data/spawn_blocks.json), gravel is not",
     "pad_y": 69,
-    "pad_why": "the ground the headhouse stands on, levelled over the house and 2 round it; the isle's crown there is about y67-72",
-    "stairwell": {
-      "east_landing_x": [342, 344],
-      "west_landing_x": [330, 332],
-      "rows_z": [1584, 1588],
-      "spine_z": 1586,
-      "flight_steps": 9,
-      "headroom": 4,
-      "why": "the drift arrives under the isle at the seabed's depth and climbs to the crown in a scissor stair: straight flights of nine steps along x, turning at landings, the two rows parted by a one-block spine of rock so a fall is never longer than one flight"
-    },
-    "headhouse": {
-      "box": [329, 1582, 345, 1590],
-      "wall_height": 5,
-      "door": "west",
-      "why": "the made thing the drift surfaces in: a stone-brick hall with spruce corners over the stairwell's top, its door facing west over the isle to the open sea, a lantern post outside and a path down to the shingle"
-    },
+    "pad_why": "the ground the lighthouse stands on, levelled over the hall and the tower and 2 round them",
     "stacks": [
-      {"id": "ne", "x": 364, "z": 1558, "r": 3, "top": 67},
-      {"id": "nw", "x": 308, "z": 1558, "r": 3, "top": 69},
-      {"id": "sw", "x": 308, "z": 1614, "r": 3, "top": 66},
-      {"id": "se", "x": 364, "z": 1614, "r": 3, "top": 68}
+      {
+        "id": "ne",
+        "x": 372,
+        "z": 1762,
+        "r": 3,
+        "top": 67
+      },
+      {
+        "id": "nw",
+        "x": 300,
+        "z": 1762,
+        "r": 3,
+        "top": 69
+      },
+      {
+        "id": "sw",
+        "x": 300,
+        "z": 1834,
+        "r": 3,
+        "top": 66
+      },
+      {
+        "id": "se",
+        "x": 372,
+        "z": 1834,
+        "r": 3,
+        "top": 68
+      }
     ],
-    "stacks_why": "four sea stacks 40 blocks out on the diagonals, each carrying two of the isle's Habitat Blocks inside its rock: one 4 under the sea for the surface and the upper water, one 10 over the seabed for the deep water and the floor. 56 blocks apart, so no two stacks' spawn boxes (16 each way) overlap; activated blocks do not cancel one another in any case (tools/habitat_blocks.py)"
+    "stacks_why": "four sea stacks 51 blocks out on the diagonals, each carrying two of the isle's Habitat Blocks inside its rock: one 4 under the sea for the surface and the upper water, one 10 over the seabed for the deep water and the floor. 72 blocks apart, so no two stacks' spawn boxes (16 each way) overlap; activated blocks do not cancel one another in any case (tools/habitat_blocks.py)",
+    "lighthouse": {
+      "id": "driftmouth_light",
+      "display_name": "Driftmouth Light",
+      "sign": [
+        "DRIFTMOUTH LIGHT",
+        "Seaward Drift",
+        "Foothill Gate",
+        "1,136 blocks east"
+      ],
+      "hall": {
+        "box": [
+          324,
+          1791,
+          335,
+          1799
+        ],
+        "wall_height": 5,
+        "door_x": [
+          327,
+          329
+        ],
+        "why": "the keeper's hall, the road's west gatehouse: the road climbs out of the floor into it, the stop against its west wall, a door south to a path down to the shingle, the tower's door in its north wall"
+      },
+      "tower": {
+        "box": [
+          324,
+          1785,
+          330,
+          1791
+        ],
+        "door": [
+          327,
+          1791
+        ],
+        "lantern_room_feet": 94,
+        "band": 4,
+        "bands": [
+          "minecraft:calcite",
+          "minecraft:red_terracotta"
+        ],
+        "core_light": "minecraft:glowstone",
+        "core_light_every": 6,
+        "lamp": "minecraft:glowstone",
+        "glazing": "minecraft:glass",
+        "why": "a 7-by-7 tower on the hall's north wall, white and red in bands of four (calcite and red terracotta), a stair spiralling round a 3-by-3 stone-brick core lit by glowstone in its faces, to a glazed lantern room at y94 with a gallery round it and a copper cap to y100. The lamp is glowstone, two high: light 15 and no spawn condition (data/spawn_blocks.json names neither glowstone nor glass; the sea lantern is not one either, but this repo swaps it out of ruins for looks, and a lighthouse's lamp reads warm)"
+      }
+    }
   },
   "waters": {
     "pool": "driftmouth_isle_waters",
-    "level_band": {"minimum": 24, "maximum": 30},
+    "level_band": {
+      "minimum": 24,
+      "maximum": 30
+    },
     "level_band_why": "reached from the foothill woods (band 21-23) off Route 3, before the third gym, whose cap is 30 (derived/availability.json caps: gym 3 30; docs/mechanics/PROGRESSION_LADDER.md 4.1). One cap band, the shape the western sea's bands take (data/spawns.json marine_zones windward_sea: one gym cap per band): the top of the band is the cap the player holds there, so everything caught is usable",
     "style": "activated",
     "spawn_range": 16,
@@ -119,64 +198,298 @@
     "high_below_sea": 4,
     "low_above_seabed": 10,
     "roster": [
-      {"pokemon": "chinchou", "family": "chinchou", "rarity": "anchor", "evolutions": [{"pokemon": "lanturn", "level": 27}]},
-      {"pokemon": "horsea", "family": "horsea", "rarity": "common", "evolutions": [{"pokemon": "seadra", "level": 32}]},
-      {"pokemon": "binacle", "family": "binacle", "rarity": "common", "evolutions": []},
-      {"pokemon": "frillish", "family": "frillish", "rarity": "uncommon", "evolutions": [{"pokemon": "jellicent", "level": 40}]},
-      {"pokemon": "luvdisc", "family": "luvdisc", "rarity": "uncommon", "evolutions": []},
-      {"pokemon": "qwilfish", "family": "qwilfish", "rarity": "uncommon", "evolutions": []},
-      {"pokemon": "clauncher", "family": "clauncher", "rarity": "uncommon", "evolutions": []},
-      {"pokemon": "relicanth", "family": "relicanth", "rarity": "rare", "evolutions": []},
-      {"pokemon": "dratini", "family": "dratini", "rarity": "rare", "evolutions": [{"pokemon": "dragonair", "level": 30}]},
-      {"pokemon": "lapras", "family": "lapras", "rarity": "rare", "evolutions": []}
+      {
+        "pokemon": "chinchou",
+        "family": "chinchou",
+        "rarity": "anchor",
+        "evolutions": [
+          {
+            "pokemon": "lanturn",
+            "level": 27
+          }
+        ]
+      },
+      {
+        "pokemon": "horsea",
+        "family": "horsea",
+        "rarity": "common",
+        "evolutions": [
+          {
+            "pokemon": "seadra",
+            "level": 32
+          }
+        ]
+      },
+      {
+        "pokemon": "binacle",
+        "family": "binacle",
+        "rarity": "common",
+        "evolutions": []
+      },
+      {
+        "pokemon": "frillish",
+        "family": "frillish",
+        "rarity": "uncommon",
+        "evolutions": [
+          {
+            "pokemon": "jellicent",
+            "level": 40
+          }
+        ]
+      },
+      {
+        "pokemon": "luvdisc",
+        "family": "luvdisc",
+        "rarity": "uncommon",
+        "evolutions": []
+      },
+      {
+        "pokemon": "qwilfish",
+        "family": "qwilfish",
+        "rarity": "uncommon",
+        "evolutions": []
+      },
+      {
+        "pokemon": "clauncher",
+        "family": "clauncher",
+        "rarity": "uncommon",
+        "evolutions": []
+      },
+      {
+        "pokemon": "relicanth",
+        "family": "relicanth",
+        "rarity": "rare",
+        "evolutions": []
+      },
+      {
+        "pokemon": "dratini",
+        "family": "dratini",
+        "rarity": "rare",
+        "evolutions": [
+          {
+            "pokemon": "dragonair",
+            "level": 30
+          }
+        ]
+      },
+      {
+        "pokemon": "lapras",
+        "family": "lapras",
+        "rarity": "rare",
+        "evolutions": []
+      }
     ],
     "roster_why": "cold, strange and old: what lives off a spoil heap in the northern shelf's water. None of Magikarp, Goldeen or Barraskewda (the owner is tired of them: every lake is that), and none of the western sea's deep band (data/spawns.json windward_depths: chinchou is the one shared, as the anchor). Binacle clings to the stacks and the shingle, the one grounded species, so the isle's dry ground is not empty where the blocks cancel the pack's spawns. Rarity buckets and family weights are data/spawns.json `rarity`. Each species' spawnable position is taken from its existing entries in data/spawns.json (tools/position_types.py derived them from the Cobblemon jar), never written here. An evolution whose level is above the band's minimum is listed authored-only (weight 0), the evolution_policy's eligibility rule; the levels are the ones data/spawns.json's eligibility reasons already record. Barbaracle and Clawitzer are left out: no entry in data/spawns.json records their level",
-    "shore": [[336, 1606], [336, 1566]],
+    "shore": [
+      [
+        336,
+        1820
+      ],
+      [
+        336,
+        1776
+      ]
+    ],
     "shore_why": "two more blocks inside the isle's own shore rock, north and south, 4 under the sea, so the water against the beach is the isle's too",
     "why": "activated blocks keep up to max_spawns of the pool alive round themselves (data/habitat_blocks.json, the elder nests), and cancel_range 16 cancels the pack's own natural spawns round each block, which is where the Magikarp come from: the open sea here is the pack's inherited pools (STATE: 'the pack's own ocean pools ran there (Magikarp 1-20 and Wishiwashi 1-18)'). Whether an activated block's fixed-area spawner places submerged, surface and seafloor spawns in water is NOT verified: the research reads it as the ordinary position search (docs/research/notes/habitat-nest-perching.md: the spawner is a box round the block) and no one has looked"
   },
   "palette": {
-    "rock_upper": ["minecraft:stone", "minecraft:stone", "minecraft:andesite", "minecraft:tuff"],
-    "rock_lower": ["minecraft:deepslate", "minecraft:deepslate", "minecraft:tuff", "minecraft:cobbled_deepslate"],
+    "rock_upper": [
+      "minecraft:stone",
+      "minecraft:stone",
+      "minecraft:andesite",
+      "minecraft:tuff"
+    ],
+    "rock_lower": [
+      "minecraft:deepslate",
+      "minecraft:deepslate",
+      "minecraft:tuff",
+      "minecraft:cobbled_deepslate"
+    ],
     "rock_split_y": 48,
     "rock_split_why": "the Rift dig camp's two rock palettes (data/rift_mines.json), split lower here: the drift's land half runs in stone, its sea half in deepslate",
-    "stack_rock": ["minecraft:andesite", "minecraft:andesite", "minecraft:tuff", "minecraft:stone", "minecraft:cobblestone"],
+    "stack_rock": [
+      "minecraft:andesite",
+      "minecraft:andesite",
+      "minecraft:tuff",
+      "minecraft:stone",
+      "minecraft:cobblestone"
+    ],
     "stair_upper": "minecraft:stone_brick_stairs",
     "stair_lower": "minecraft:cobbled_deepslate_stairs",
     "rail": "minecraft:powered_rail",
-    "rail_why": "as the Rift dig camp (data/rift_mines.json palette rail_why): minecraft:rail is a spawn condition (rolycoly, carkol, coalossal); powered rail is named by none. Unpowered, it is scenery",
+    "rail_why": "the boosters and the two stops of the rail line (see rail_line). minecraft:rail is a spawn condition (rolycoly, carkol, coalossal) and is used nowhere: the line is straight, so it never turns",
     "post": "minecraft:polished_basalt",
     "beam": "minecraft:waxed_cut_copper",
-    "wall": ["minecraft:stone_bricks", "minecraft:stone_bricks", "minecraft:mossy_stone_bricks", "minecraft:cracked_stone_bricks"],
+    "wall": [
+      "minecraft:stone_bricks",
+      "minecraft:stone_bricks",
+      "minecraft:mossy_stone_bricks",
+      "minecraft:cracked_stone_bricks"
+    ],
     "corner": "minecraft:spruce_log",
     "roof": "minecraft:spruce_planks",
     "floor": "minecraft:spruce_planks",
     "fence": "minecraft:spruce_fence",
-    "path": "minecraft:dirt_path"
+    "path": "minecraft:dirt_path",
+    "sign_wood": "spruce",
+    "core": "minecraft:stone_bricks",
+    "landing": "minecraft:stone_bricks",
+    "tower_stair": "minecraft:stone_brick_stairs"
+  },
+  "rail_line": {
+    "request": [
+      "the owner, 2026-10-02: \"for the long mine tunnel tothe island, make the mine crat rails activated so a player could use them if they build a minecart\"",
+      "the owner, 2026-10-02: \"if we remake the tunnel, make it a straight shot to the island for sure, or closer to it. if we could make it feel like a bike tunnel from the games that would be sick.\" No client mod"
+    ],
+    "filler": "minecraft:detector_rail",
+    "station": "minecraft:activator_rail",
+    "lever": "minecraft:lever",
+    "button": "minecraft:stone_button",
+    "buffer": "minecraft:stone_bricks",
+    "boost_every": 12,
+    "design": "one straight line down the road's centre from a stop in Foothill Gate to a stop in Driftmouth Light's keeper's hall. Every ascending rail (every step of the coast, every rail of the climb) is a powered rail with power; on the flat a powered rail at least every boost_every-th rail; the rest are detector rails, which a cart rides as plain rail and which are no spawn condition. There is no curve, so no minecraft:rail. Each powered rail is powered by its own lever, switched on, two blocks under it, on the ceiling of the rock cell under the rail's bed: the lever strongly powers the bed, the bed powers the rail. The lever is sealed in rock, so nobody sees or flips it. Each stop is an unpowered powered rail against its building's wall (the buffer) with a stone button on the floor beside it: an arriving cart is braked to a stop on it, and a press launches a stationary cart away from the wall. Between each stop and the line is one activator rail, unpowered, so no powered rail is connected to the stop and nothing powers it but its button",
+    "physics": {
+      "edition": "Java Edition 1.21.1. The experimental minecart changes of 1.21.2 and later (the minecart_improvements feature, game rule minecartMaxSpeed) do NOT apply",
+      "source": "the Minecraft Wiki, read 2026-10-02: https://minecraft.wiki/w/Rail (section 'Minecart speeds'), https://minecraft.wiki/w/Powered_Rail, https://minecraft.wiki/w/Activator_Rail, https://minecraft.wiki/w/Minecart",
+      "occupied_initial_full_speed_rails": 112,
+      "occupied_subsequent_max": [
+        38,
+        26
+      ],
+      "occupied_why": "Rail, 'Minecart speeds' table, 'Minecart with entity': 112 rails at full speed initially, then 38 and 26 alternately, each followed by one powered rail, keep full speed. The audit takes the smaller, 26",
+      "margin": 2,
+      "margin_why": "the audit fails any run of more than 26 / 2 = 13 rails between powered rails; boost_every 12 gives at most 11, so the line is boosted at 26/11, more than twice as often as the wiki says full speed needs",
+      "climb": "Rail: 'The minimum number of powered rails to keep the cart climbing constantly is 3 every 6 blocks'; 'With a rider, a minecart can climb at most 24 blocks before stopping'. Every ascending rail here is powered: 6 in 6, twice the minimum",
+      "propagation": 8,
+      "propagation_why": "Powered Rail: 'An activated powered rail also activates any adjacent powered rails it is connected to, up to eight away from the original activation source'. Not relied on (every booster has its own source); it is why the stops are parted from the line by an activator rail",
+      "brake": "Powered Rail: 'An inactive powered rail reduces the speed of a moving minecart, usually stopping it within one block's distance even on a downward-slanted track'",
+      "launch": "Powered Rail: an activated powered rail will 'accelerate a non-moving minecart away from a solid opaque block the powered rail is facing'",
+      "max_speed": "Minecart: 'a predefined speed limit of exactly 8 blocks per second per axis of travel'",
+      "activator": "Activator Rail: when activated it 'ejects mobs (including players) from minecarts', so no power source and no detector rail is ever next to one",
+      "assumed": "NOT from a source, to be probed in game (experiments/EXP-050-drift-minecart-line): that an occupied cart arriving at full speed stops on the single stop rail without leaving the line, that a cart holds the climb of one in one for its whole length on powered rails, and that rails placed by setblock in route order settle to the shapes written"
+    },
+    "spawn_policy": "none: the line writes no minecraft:rail (the first line's 12 curves and their data/spawn_block_policy.json exception went with the bends); tools/sea_drift_audit.py fails any rail that turns and any spawn condition written"
   },
   "lights": {
     "every": 6,
     "frames_every": 6,
-    "why": "a lantern under the roof every 6 blocks of drift, a timber set (basalt posts in the walls, a copper beam in the roof) between each pair, as the dig camp's adit (frames 5, light_every 5). Light is checked, not assumed: the audit floods block light from every lantern and fails any floor cell under a roof at light 0. There are no vanilla hostiles in this pack (docs/STATE.md, MobsBeGone), so the light is for the walk; at light 1 or more nothing hostile could spawn anyway"
+    "why": "a pair of lanterns under the roof over the footpaths every 6 cells, a timber set (basalt posts in the walls, a copper beam in the roof) between each pair, as the dig camp's adit (frames 5, light_every 5): at 8 blocks a second a rider passes a pair of lamps and a set of timbers every three quarters of a second. Light is checked, not assumed: the audit floods block light from every lamp and fails any floor cell under a roof at light 0. There are no vanilla hostiles in this pack (docs/STATE.md, MobsBeGone), so the light is for the ride"
   },
   "caches": {
     "strips": {
       "reward": "sea_drift_strips",
       "contents": [
-        {"item": "cobblemon:heavy_ball", "count": 3},
-        {"item": "cobblemon:great_ball", "count": 2},
-        {"item": "cobblemon:revive", "count": 1}
+        {
+          "item": "cobblemon:heavy_ball",
+          "count": 3
+        },
+        {
+          "item": "cobblemon:great_ball",
+          "count": 2
+        },
+        {
+          "item": "cobblemon:revive",
+          "count": 1
+        }
       ],
       "message": "In the barrel at the end of the strips: three Heavy Balls, two Great Balls and a Revive."
     },
     "isle": {
       "reward": "sea_drift_isle",
       "contents": [
-        {"item": "cobblemon:net_ball", "count": 5},
-        {"item": "cobblemon:super_potion", "count": 2}
+        {
+          "item": "cobblemon:net_ball",
+          "count": 5
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 2
+        }
       ],
-      "message": "In the barrel in the headhouse: five Net Balls and two Super Potions."
+      "message": "In the barrel in Driftmouth Light's keeper's hall: five Net Balls and two Super Potions."
     },
     "why": "the dig's finds as the old mine's are (data/rewards.json r1_old_mine: a barrel as scenery, the reward an advancement on reaching it, per player and once). Every item id is one data/rewards.json already verified against its jar"
+  },
+  "rebuild": {
+    "request": [
+      "the owner, 2026-10-02, after riding the first line in staging: the cart \"is cool, its just too slow\"",
+      "the owner, 2026-10-02: \"if we remake the tunnel, make it a straight shot to the island for sure, or closer to it. if we could make it feel like a bike tunnel from the games that would be sick.\" No client mod",
+      "the owner, 2026-10-02: \"make the house you come out a light house as well\""
+    ],
+    "constraint": "a vanilla 1.21.1 minecart is capped at 8 blocks a second on each axis (rail_line physics max_speed), and the first line already ran at the cap. A rail runs along one axis, so a rail route between two ends is at least |dx| + |dz| long: the first line's ends, (1458, 1795) and (345, 1584), give 1,113 + 211 = 1,324, its own length. The trip is shortened only by moving an end, and a straight line needs both ends on one axis",
+    "options": {
+      "a": {
+        "what": "the mouth moves onto the isle's line, z1584 near x1455",
+        "length": 1113,
+        "trip_seconds": 139,
+        "mouth_ground": "y130 at (1455, 1584); a 21-by-21 box round it spans y127-134 (not flat): off the owner's plateau and his named point",
+        "isle_seabed": "y26 under the isle (y25-27 within 34), 36 blocks of water: the road's bottom about y18 and a climb of about 52 into the isle"
+      },
+      "b": {
+        "what": "the isle moves onto the mouth's line, z1795, keeping its x",
+        "length": 1137,
+        "trip_seconds": 142,
+        "mouth_ground": "the owner's point kept: y112 at (1455, 1795), a 21-by-21 box round it flat at y112",
+        "isle_seabed": "y38 at (336, 1795), y29-46 within 34: 12 blocks shallower than z1586, so a shorter climb; the nearest dry ground is 178 blocks away at (497, 1870), against 321 from the first isle"
+      },
+      "c": {
+        "what": "either, with the mouth moved west down the plateau's line toward the coast",
+        "examples": {
+          "x1300": {
+            "ground": "y111 (y110-111 in 21 by 21)",
+            "length": 976,
+            "trip_seconds": 122
+          },
+          "x1100": {
+            "ground": "y100 (y99-101)",
+            "length": 776,
+            "trip_seconds": 97
+          },
+          "x900": {
+            "ground": "y92 (y91-93)",
+            "length": 576,
+            "trip_seconds": 72
+          }
+        },
+        "why_not_chosen": "it moves the mouth off the point the owner named, so it is his to choose; this build keeps his point. Moving it is a change to route.vertices[0] and the gatehouse box, nothing else"
+      }
+    },
+    "rule": "straight is required (the owner: 'for sure'); closer is welcome. Keep the ends the owner named where they can stay: the mouth is his exact point (1455 113 1795, y and all), the isle was only 'around' his point and is ground this build raises. So the isle moves onto the mouth's line keeping its x (b), not the mouth onto the isle's (a), which would also put the mouth on rough ground and the road 12 blocks deeper. Moving the mouth west (c) is the owner's decision, not this build's",
+    "chosen": "b",
+    "nearby": "every data/*.json record with an x and z within 150 blocks of the new line (x290-1470, z1795) or of the isle, measured 2026-10-02: the low end of Viltri's Path (data/landmarks.json viltris_path, the outflow's mouth at (674, 1846)) 51 blocks south of the line, under the open sea; data/towns.json gym3_town's site candidate B (never built) 65 blocks off; nothing else. No lake basin (tools/water_mask.py) within 60 of it"
+  },
+  "gatehouse": {
+    "id": "foothill_gate",
+    "display_name": "Foothill Gate",
+    "box": [
+      1450,
+      1790,
+      1462,
+      1800
+    ],
+    "floor_y": 112,
+    "wall_height": 5,
+    "doors_x": [
+      1454,
+      1456
+    ],
+    "sign": [
+      "SEAWARD DRIFT",
+      "Foothill Gate",
+      "Driftmouth Light",
+      "1,136 blocks west"
+    ],
+    "why": "the Cycling Road's gatehouse: a stone-brick hall with spruce corners and roof over the line's head, a door in each long wall, the road leaving through its west wall into the cut. The name is the place's: the mouth is in the foothill woods (data/spawns.json foothill_woods). The sign's distance is the line's own length"
+  },
+  "road": {
+    "surface_upper": "minecraft:polished_andesite",
+    "surface_lower": "minecraft:polished_deepslate",
+    "lane": "minecraft:calcite",
+    "dash_on": 3,
+    "dash_off": 3,
+    "boards_every": 128,
+    "board_line": "Seaward Drift",
+    "why": "the Cycling Road in this campaign's stone: the floor either side of the rail paved (polished andesite in the stone half, polished deepslate in the deepslate half, as the rock splits), the lane edges beside the rail dashed in calcite three on, three off, so the dashes stream past a rider; a pair of lanterns over the footpaths every lights.every cells, timber sets between, and a distance board on each wall every boards_every cells counting down to the gate ahead on that side. None of these blocks is a spawn condition (data/spawn_blocks.json): calcite, not white concrete or quartz, which are"
   }
 }

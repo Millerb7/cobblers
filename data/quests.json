@@ -4998,6 +4998,882 @@
       "progression_field_refs": [
         "quest.ambient_ursaluna_den.watcher_cursor"
       ]
+    },
+    {
+      "id": "evt_lopunny_superfan",
+      "source": "data/lopunny_house.json; docs: the owner's request of 2026-10-02 (data/lopunny_house.json request)",
+      "reward_record": "data/rewards.json lopunny_superfan",
+      "place": "data/lopunny_house.json: Ellis Hopgood's house on the South Pine Isle, (6950, 1360)",
+      "dialogue_id": "dlg_lopunny_superfan",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        6948,
+        118,
+        1362
+      ],
+      "objectives": [
+        {
+          "id": "show_a_lopunny",
+          "active_when": {
+            "field": "quest.evt_lopunny_superfan.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_lopunny_superfan.lopunny_shown",
+            "equals": true
+          },
+          "text": "Raise a Buneary into a Lopunny and bring her to Ellis Hopgood."
+        },
+        {
+          "id": "take_the_bell",
+          "active_when": {
+            "field": "quest.evt_lopunny_superfan.lopunny_shown",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_lopunny_superfan.reward_claimed",
+            "equals": true
+          },
+          "text": "Hear Hopgood out."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_lopunny_superfan.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_lopunny_superfan.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_lopunny_superfan.dialogue_cursor",
+              "value": "h001"
+            }
+          ]
+        },
+        {
+          "id": "show_lopunny",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_lopunny_superfan.lopunny_shown",
+              "value": false
+            },
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_lopunny_in_party"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_lopunny_superfan.lopunny_shown",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_lopunny_superfan.dialogue_cursor",
+              "value": "s001"
+            }
+          ]
+        },
+        {
+          "id": "grant_reward",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_lopunny_superfan.lopunny_shown",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_lopunny_superfan.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_lopunny_superfan",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_lopunny_superfan.reward_claimed",
+              "idempotency_key": "evt_lopunny_superfan:reward_lopunny_superfan:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_lopunny_superfan.dialogue_cursor",
+              "value": "s004"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_lopunny_superfan",
+          "status": "item_ids_verified",
+          "record": "data/rewards.json lopunny_superfan (kind npc_grant); contents and verification strings copied from it",
+          "contents": [
+            {
+              "item": "cobblemon:soothe_bell",
+              "count": 1,
+              "verification": "assets/cobblemon/models/item/soothe_bell.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ]
+        }
+      ],
+      "lopunny_check": "The 'Show him your Lopunny' option and the show_lopunny transition read the player tag cobblers_lopunny_in_party (compile_dialogue player_tag), which the cobblers_lopunny_house pack's player_tick_pre callback sets once a second while a Lopunny is in the party and removes otherwise (tools/lopunny_house.py; the party read is the water ladder's, EXP-042). Nothing is taken from the player: showing is enough. End to end NOT verified: experiments/EXP-052-lopunny-show.",
+      "repeat_dialogue": {
+        "before_show": "hub",
+        "after_claim": "done01"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; the tag is each player's own; no player may read or write another player's fields"
+      },
+      "generation_blockers": [
+        "Install cobblers_lopunny_house (its callback) with cobblers_dialogue before boot; place npc_lopunny_superfan at npc_at with spawnnpcat after the restart (tools/reapply.py R9F, from data/rewards.json lopunny_superfan).",
+        "The tag-and-dialogue chain is unproven end to end: experiments/EXP-052-lopunny-show."
+      ],
+      "progression_field_refs": [
+        "quest.evt_lopunny_superfan.started",
+        "quest.evt_lopunny_superfan.lopunny_shown",
+        "quest.evt_lopunny_superfan.reward_claimed",
+        "quest.evt_lopunny_superfan.dialogue_cursor"
+      ]
+    },
+    {
+      "id": "ambient_old_orchard",
+      "source": "data/old_orchard.json; docs: docs/world-building/OLD_ORCHARD.md",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": true,
+        "npcs_remain_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_old_orchard_keeper"
+      ],
+      "objectives": [],
+      "transitions": [],
+      "writer": "dialogue cursor persistence only; the conversation sets no story, reward, or completion state (the cellar's find is a cache, data/rewards.json old_orchard_cellar, granted on reaching it)",
+      "readers": "the orchard keeper's conversation only",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player advances and restores their own cursor"
+      },
+      "progression_field_refs": [
+        "quest.ambient_old_orchard.keeper_cursor"
+      ]
+    },
+    {
+      "id": "ambient_dune_ruin",
+      "source": "data/dune_ruin.json; docs: the owner's request of 2026-10-02 (data/dune_ruin.json request)",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": true,
+        "npcs_remain_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_dune_ruin_salvager"
+      ],
+      "objectives": [],
+      "transitions": [],
+      "writer": "dialogue cursor persistence only; the conversation sets no story, reward, or completion state",
+      "readers": "the salvager's conversation only",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player advances and restores their own cursor"
+      },
+      "progression_field_refs": [
+        "quest.ambient_dune_ruin.salvager_cursor"
+      ]
+    },
+    {
+      "id": "ambient_drovers_hollow",
+      "source": "data/drovers_hollow.json; the owner's request of 2026-10-02 for places in the south (data/drovers_hollow.json request)",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": true,
+        "npcs_remain_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_drovers_hollow_drover"
+      ],
+      "objectives": [],
+      "transitions": [],
+      "writer": "dialogue cursor persistence only; the conversation sets no story, reward, or completion state (the find is data/rewards.json drovers_hollow_store, a cache granted by reaching the store)",
+      "readers": "the drover's conversation only",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player advances and restores their own cursor"
+      },
+      "progression_field_refs": [
+        "quest.ambient_drovers_hollow.drover_cursor"
+      ]
+    },
+    {
+      "id": "evt_station_director",
+      "source": "data/research_station.json; docs/world-building/RESEARCH_STATION.md (the approved proposal); the owner's decisions of 2026-10-02 (data/research_station.json request)",
+      "reward_record": "data/rewards.json station_director",
+      "place": "Shrew Station's Institute on the west coast (data/research_station.json buildings.institute)",
+      "dialogue_id": "dlg_station_director",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        550,
+        67,
+        2823
+      ],
+      "objectives": [
+        {
+          "id": "thunder_feather",
+          "active_when": {
+            "field": "quest.evt_station_director.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_station_director.thunder_claimed",
+            "equals": true
+          },
+          "text": "Watch a storm from the thunder tower's top and tell the Director (held: no item is issued yet)."
+        },
+        {
+          "id": "ember_feather",
+          "active_when": {
+            "field": "quest.evt_station_director.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_station_director.ember_claimed",
+            "equals": true
+          },
+          "text": "Survey the Nether's fire tower and tell the Director (held: no item is issued yet)."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_station_director.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_station_director.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_station_director.dialogue_cursor",
+              "value": "d001"
+            }
+          ]
+        },
+        {
+          "id": "grant_thunder",
+          "conditions": [
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_station_issuing"
+            },
+            {
+              "kind": "flag",
+              "flag": "gym8_cleared"
+            },
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_station_storm_log"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_station_director.thunder_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_station_thunder_feather",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_station_director.thunder_claimed",
+              "idempotency_key": "evt_station_director:reward_station_thunder_feather:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_station_director.dialogue_cursor",
+              "value": "t001"
+            }
+          ]
+        },
+        {
+          "id": "grant_ember",
+          "conditions": [
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_station_issuing"
+            },
+            {
+              "kind": "flag",
+              "flag": "gym8_cleared"
+            },
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_station_ember_survey"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_station_director.ember_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_station_ember_feather",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_station_director.ember_claimed",
+              "idempotency_key": "evt_station_director:reward_station_ember_feather:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_station_director.dialogue_cursor",
+              "value": "m001"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_station_thunder_feather",
+          "status": "item_ids_verified; HELD",
+          "record": "data/rewards.json station_director",
+          "contents": [
+            {
+              "item": "lumymon:thunder_feather",
+              "count": 1,
+              "verification": "assets/lumymon/models/item/thunder_feather.json in LumyMon-0.6.6.jar"
+            }
+          ]
+        },
+        {
+          "id": "reward_station_ember_feather",
+          "status": "item_ids_verified; HELD",
+          "record": "data/rewards.json station_director",
+          "contents": [
+            {
+              "item": "lumymon:ember_feather",
+              "count": 1,
+              "verification": "assets/lumymon/models/item/ember_feather.json in LumyMon-0.6.6.jar"
+            }
+          ]
+        }
+      ],
+      "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
+      "repeat_dialogue": {
+        "after_intro": "hub"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; every tag and field is the player's own; no player may read or write another player's fields. An item, once given, can be dropped, traded or chested: a pacing tool, not an enforcement (docs/mechanics/MARKET_GATING.md)"
+      },
+      "progression_field_refs": [
+        "quest.evt_station_director.started",
+        "quest.evt_station_director.thunder_claimed",
+        "quest.evt_station_director.ember_claimed",
+        "quest.evt_station_director.dialogue_cursor"
+      ]
+    },
+    {
+      "id": "evt_station_courier",
+      "source": "data/research_station.json; docs/world-building/RESEARCH_STATION.md (the approved proposal); the owner's decisions of 2026-10-02 (data/research_station.json request)",
+      "reward_record": "data/rewards.json station_field_officer",
+      "place": "Shrew Station's weather hut beside the spine (data/research_station.json buildings.weather_hut)",
+      "dialogue_id": "dlg_station_field_officer",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        484,
+        63,
+        2793
+      ],
+      "objectives": [
+        {
+          "id": "carry_the_case",
+          "active_when": {
+            "field": "quest.evt_station_courier.case_given",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_station_courier.glacier_claimed",
+            "equals": true
+          },
+          "text": "Carry the calibrated spyglass to Dr. Halvard at the Frostpeak camp and bring her notes back (held: not offered yet)."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_station_courier.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_station_courier.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_station_courier.dialogue_cursor",
+              "value": "f001"
+            }
+          ]
+        },
+        {
+          "id": "give_case",
+          "conditions": [
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_station_issuing"
+            },
+            {
+              "kind": "flag",
+              "flag": "gym8_cleared"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_station_courier.case_given",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "give_item",
+              "item": "minecraft:spyglass[minecraft:custom_data={cobblers_station:courier_case}]",
+              "count": 1,
+              "target": "triggering_player"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_station_courier.case_given",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_station_courier.dialogue_cursor",
+              "value": "k001"
+            }
+          ]
+        },
+        {
+          "id": "trade_notes",
+          "conditions": [
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_station_issuing"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_station_courier.case_given",
+              "value": true
+            },
+            {
+              "kind": "held_item",
+              "item": "minecraft:paper",
+              "item_predicate": "minecraft:paper[minecraft:custom_data={cobblers_station:glacier_notes}]"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_station_courier.glacier_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "consume_held_item",
+              "item": "minecraft:paper",
+              "item_predicate": "minecraft:paper[minecraft:custom_data={cobblers_station:glacier_notes}]",
+              "count": 1
+            },
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_station_glacier_feather",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_station_courier.glacier_claimed",
+              "idempotency_key": "evt_station_courier:reward_station_glacier_feather:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_station_courier.dialogue_cursor",
+              "value": "n001"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_station_glacier_feather",
+          "status": "item_ids_verified; HELD",
+          "record": "data/rewards.json station_field_officer",
+          "contents": [
+            {
+              "item": "lumymon:glacier_feather",
+              "count": 1,
+              "verification": "assets/lumymon/models/item/glacier_feather.json in LumyMon-0.6.6.jar"
+            }
+          ]
+        }
+      ],
+      "courier": "The hand-over at the camp is an advancement the station pack ships only while issuing (cobblers:research_station/courier_delivery): standing on Dr. Halvard's instrument deck (data/frostpeak_camp.json frostpeak_camp_instrument_deck) with the case in the main hand swaps the case for the notes. Halvard's own conversation is generated by tools/frostpeak_camp.py and has no item exchange; moving the swap into it is that file's owner's.",
+      "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
+      "repeat_dialogue": {
+        "after_intro": "hub"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; every tag and field is the player's own; no player may read or write another player's fields. An item, once given, can be dropped, traded or chested: a pacing tool, not an enforcement (docs/mechanics/MARKET_GATING.md)"
+      },
+      "progression_field_refs": [
+        "quest.evt_station_courier.started",
+        "quest.evt_station_courier.case_given",
+        "quest.evt_station_courier.glacier_claimed",
+        "quest.evt_station_courier.dialogue_cursor"
+      ]
+    },
+    {
+      "id": "evt_station_archive",
+      "source": "data/research_station.json; docs/world-building/RESEARCH_STATION.md (the approved proposal); the owner's decisions of 2026-10-02 (data/research_station.json request)",
+      "reward_record": "data/rewards.json station_archivist",
+      "place": "Shrew Station's Archive on the west coast (data/research_station.json buildings.archive)",
+      "dialogue_id": "dlg_station_archivist",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        569,
+        69,
+        2824
+      ],
+      "objectives": [
+        {
+          "id": "the_harvest",
+          "active_when": {
+            "field": "quest.evt_station_archive.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_station_archive.crown_claimed",
+            "equals": true
+          },
+          "text": "Bring sixteen shaderoot carrots from the Crown Cemetery's field to the archivist (held: not offered yet)."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_station_archive.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_station_archive.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_station_archive.dialogue_cursor",
+              "value": "a001"
+            }
+          ]
+        },
+        {
+          "id": "offer_harvest",
+          "conditions": [
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_station_issuing_crown"
+            },
+            {
+              "kind": "flag",
+              "flag": "champion_cleared"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_station_archive.crown_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "function",
+              "function": "cobblers:research_station/crown_offering"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_station_archive.dialogue_cursor",
+              "value": "c_count"
+            }
+          ]
+        },
+        {
+          "id": "grant_crown",
+          "conditions": [
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_station_issuing_crown"
+            },
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_station_harvest_paid"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_station_archive.crown_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_station_calyrex_crown",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_station_archive.crown_claimed",
+              "idempotency_key": "evt_station_archive:reward_station_calyrex_crown:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_station_archive.dialogue_cursor",
+              "value": "c001"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_station_calyrex_crown",
+          "status": "item_ids_verified; HELD",
+          "record": "data/rewards.json station_archivist",
+          "contents": [
+            {
+              "item": "lumymon:calyrex_crown",
+              "count": 1,
+              "verification": "assets/lumymon/models/item/calyrex_crown.json in LumyMon-0.6.6.jar"
+            }
+          ]
+        }
+      ],
+      "harvest": "cobblers:research_station/crown_offering (tools/research_station.py) counts the player's lumymon:shaderoot_carrot with clear <item> 0 and, at sixteen or more, takes sixteen and tags the player cobblers_station_harvest_paid; it does nothing without cobblers_station_issuing_crown or once paid. The dialogue compiler's item checks take one item only, hence the function.",
+      "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today. The crown is held twice: cobblers_station_issuing_crown is added only when economy.issuing is true AND economy.post_champion_cap is measured at 70 or more (Calyrex is a fixed level 70).",
+      "repeat_dialogue": {
+        "after_intro": "hub"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; every tag and field is the player's own; no player may read or write another player's fields. An item, once given, can be dropped, traded or chested: a pacing tool, not an enforcement (docs/mechanics/MARKET_GATING.md)"
+      },
+      "progression_field_refs": [
+        "quest.evt_station_archive.started",
+        "quest.evt_station_archive.crown_claimed",
+        "quest.evt_station_archive.dialogue_cursor"
+      ]
+    },
+    {
+      "id": "evt_station_eon_shrine",
+      "source": "data/research_station.json; docs/world-building/RESEARCH_STATION.md (the approved proposal); the owner's decisions of 2026-10-02 (data/research_station.json request)",
+      "reward_record": "data/rewards.json station_shrine_keeper",
+      "place": "the Eon shrine on Shrew Station's platform (data/research_station.json shrine)",
+      "dialogue_id": "dlg_station_shrine_keeper",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        422,
+        63,
+        2819
+      ],
+      "objectives": [
+        {
+          "id": "the_ledger",
+          "active_when": {
+            "field": "quest.evt_station_eon_shrine.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_station_eon_shrine.dews_claimed",
+            "equals": true
+          },
+          "text": "Meet Mesprit, Azelf and Uxie, and tell the shrine's keeper (held: no dew is issued yet)."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_station_eon_shrine.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_station_eon_shrine.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_station_eon_shrine.dialogue_cursor",
+              "value": "k001"
+            }
+          ]
+        },
+        {
+          "id": "grant_dews",
+          "conditions": [
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_station_issuing"
+            },
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_station_lake_trio"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_station_eon_shrine.dews_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_station_eon_dews",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_station_eon_shrine.dews_claimed",
+              "idempotency_key": "evt_station_eon_shrine:reward_station_eon_dews:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_station_eon_shrine.dialogue_cursor",
+              "value": "g001"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_station_eon_dews",
+          "status": "item_ids_verified; HELD",
+          "record": "data/rewards.json station_shrine_keeper",
+          "contents": [
+            {
+              "item": "lumymon:ruby_dew",
+              "count": 1,
+              "verification": "assets/lumymon/models/item/ruby_dew.json in LumyMon-0.6.6.jar"
+            },
+            {
+              "item": "lumymon:sapphire_dew",
+              "count": 1,
+              "verification": "assets/lumymon/models/item/sapphire_dew.json in LumyMon-0.6.6.jar"
+            }
+          ]
+        }
+      ],
+      "levels": "Latias and Latios roll level 50, 55 or 75 (LatiasAltar/LatiosAltar constant-pool strings, LumyMon-0.6.6.jar). THE 75 CAN NEVER BE CAUGHT under any cap the campaign has; the keeper says to let it go.",
+      "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
+      "repeat_dialogue": {
+        "after_intro": "hub"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; every tag and field is the player's own; no player may read or write another player's fields. An item, once given, can be dropped, traded or chested: a pacing tool, not an enforcement (docs/mechanics/MARKET_GATING.md)"
+      },
+      "progression_field_refs": [
+        "quest.evt_station_eon_shrine.started",
+        "quest.evt_station_eon_shrine.dews_claimed",
+        "quest.evt_station_eon_shrine.dialogue_cursor"
+      ]
     }
   ]
 }

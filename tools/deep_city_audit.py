@@ -23,7 +23,8 @@ What must hold:
              floor (a block written at its target) and the down-lift lands in the open (air at its target)
   streets    on every ring and the floor, the lifts at that level are joined by open ground: the city has not walled a
              street off
-  cordon     every edge column of the relic area carries the fence
+  cordon     NO edge column of the relic area carries a fence, and nothing in it stands over the capped surface's
+             kept pieces: the cordon was rejected and the shrine is underground (2026-10-02, relic_underground.py)
   nonempty   the output writes something on every ring, the floor and the relic area
 
   python tools/deep_city_audit.py [--source-root <root>]
@@ -59,6 +60,7 @@ def not_solid(b):
     return b.endswith(NOT_SOLID)
 CEILING = 150
 RELIC_DOWN, RELIC_UP = 6, 32
+RELIC_CAPPED_OVER, RELIC_CAPPED_REACH = 3, 9     # the capped surface's tallest kept piece (see the cordon check)
 CRADLE_REACH = 40            # a chamber of up to 16 and the Displaced City's 24-block rock shell (DEEP_CITY.md)
 CRADLE_ABOVE_FLOOR = 60      # a chamber and its shell over the floor; capped under the relic ground below
 
@@ -248,16 +250,45 @@ def audit(writes, M):
                 bad("streets", "at y%d, %s cannot be walked to from %s" % (lv, p, start))
         stats.setdefault("street_cells", {})[lv] = len(seen)
 
-    # the cordon: every edge column of the relic area carries the fence
+    # the cordon: NO edge column of the relic area carries a fence. Until 2026-10-02 this check demanded the fence on
+    # every edge column; the owner then rejected it ("turned back by the zone check rather than barriers", 2026-10-01)
+    # and the relic site went underground (data/relic_underground.json), so the same test now fails on any fence.
+    # A fenced column is one where the three blocks over its ground are all written and none is passable -- the
+    # shape of the old fence (glass then two of bars, or a post), measured from the mask and the heightmap alone
     edge = []
     zz, xx = np.nonzero(relic)
     for z, x in zip(zz.tolist(), xx.tolist()):
         if any(not (0 <= z + dz < NZ and 0 <= x + dx < NX) or not relic[z + dz, x + dx]
                for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1))):
             edge.append((x + X0, z + Z0, int(H[z, x])))
-    gaps = [(x, z) for x, z, g in edge if not all(blocked(x, g + dy, z) for dy in (1, 2, 3))]
-    if gaps:
-        bad("cordon", "%d of %d edge columns of the relic area have no fence, e.g. %s" % (len(gaps), len(edge), gaps[:3]))
+    fenced = [(x, z) for x, z, g in edge if all(blocked(x, g + dy, z) for dy in (1, 2, 3))]
+    if fenced:
+        bad("cordon", "%d of %d edge columns of the relic area are fenced, e.g. %s: the cordon was rejected"
+            % (len(fenced), len(edge), fenced[:3]))
+    # and the shrine itself is not on the surface. What the cap keeps is all ground-hugging, and each piece's height is
+    # set over ground it stands on or beside: a spoil heap is 3 over its own ground, a trench's marker and end rod 2,
+    # a fragment 1, the lookout's rail and lantern 1 over the highest ground of its 5x5, the sealed entrance's walls 1
+    # over the median ground of its 10x7 forecourt. So no kept block stands more than RELIC_CAPPED_OVER (3) over the
+    # highest ground within RELIC_CAPPED_REACH (9, the forecourt's span) of it. The ring stood 22 over the shrine's
+    # median ground, the arches 10 and the standing stones 5 to 8 over their own: all above that line
+    hmax = H.copy()
+    r_ = RELIC_CAPPED_REACH
+    pad = np.pad(H, r_, mode="edge")
+    for dz in range(-r_, r_ + 1):
+        for dx in range(-r_, r_ + 1):
+            hmax = np.maximum(hmax, pad[r_ + dz:r_ + dz + NZ, r_ + dx:r_ + dx + NX])
+    high = 0
+    for (x, z), spans in cols.items():
+        a, c = z - Z0, x - X0
+        if not (0 <= a < NZ and 0 <= c < NX) or not relic[a, c] or pit[a, c]:
+            continue
+        solid = [y1 for _y0, y1, bb in spans if bb != "minecraft:air"]
+        if solid and max(solid) > int(hmax[a, c]) + RELIC_CAPPED_OVER:
+            high += 1
+            if high <= 3:
+                bad("cordon", "a block at y%d stands %d over the highest ground near (%d, %d): the shrine is underground"
+                    % (max(solid), max(solid) - int(hmax[a, c]), x, z))
+    stats["relic_high"] = high
     stats["cordon_edge"] = len(edge)
 
     # nonempty: something on every level of the pit and in the relic area

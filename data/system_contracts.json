@@ -111,10 +111,11 @@
       ]
     },
     "gate_clocks": {
-      "what": "every clock or accumulator a gate relies on: swim fatigue and its collapse clock, the Surf bonus, the drowning pulses, the blackout dedupe, the gulch Megas' respawn clock, the ferry cooldown, the wards' refresh",
+      "what": "every clock or accumulator a gate relies on: swim fatigue and its collapse clock, the Surf bonus, the drowning pulses, the blackout dedupe, the gulch Megas' respawn clock, the Ursaluna den's return clock, the ferry cooldown, the wards' refresh",
       "paths": [
         "tools/blackout_pack.py",
         "tools/gulch_mine.py",
+        "tools/ursaluna_cave.py",
         "tools/rift_mines.py",
         "tools/ferries.py",
         "data/blackout.json",
@@ -177,6 +178,14 @@
       "paths": [
         "data/npc_seats.json",
         "tools/npc_seats.py"
+      ]
+    },
+    "residents": {
+      "what": "Codex's ten named world residents: their dressing, keeper, respawn clock, trigger and leash (cobblers_residents, R18R)",
+      "paths": [
+        "data/resident_encounters.json",
+        "tools/resident_encounters.py",
+        "tools/resident_encounters_audit.py"
       ]
     }
   },
@@ -401,7 +410,7 @@
         "rift_mines_audit.py": "checker: the built rift_mines pack (source rift_mines)",
         "gulch_mine_audit.py": "checker: the built gulch_mine pack (source gulch_mine)",
         "mines_audit.py": "checker: the built mines pack (the evolution-stone faces; data/mines.json names no spawn condition)",
-        "sea_drift_audit.py": "checker: the built sea_drift pack (the Seaward Drift, its strips and Driftmouth Isle), replayed: no written block is a spawn condition. tools/sea_drift.py does not read the file and is not yet one of this contract's sources (the test author's to add)",
+        "sea_drift_audit.py": "checker: the built sea_drift pack (the Seaward Drift, its strips, Driftmouth Isle and its lighthouse), replayed: no written block is a spawn condition unless a data/spawn_block_policy.json entry scoped to sea_drift whitelists it (none since 2026-10-02: the line is straight and writes no minecraft:rail, and the audit fails any rail that turns). tools/sea_drift.py does not read the file and is not yet one of this contract's sources (the test author's to add)",
         "portals_audit.py": "checker: the built portals pack, against data/portals.json blocks and the spawn conditions. It checks the WORLD side only: the pocket dimension's rooms carry a chest, which is a spawn condition (Gimmighoul), and the dimension's biome is minecraft:the_void, whose mob spawn list is empty. Whether a Cobblemon pool can match that biome is UNTESTED (EXP-047 left spawning in the pocket unrun)",
         "vr_caves.py": "source: vr_caves",
         "route1_old_mine.py": "source: earthworks (its record is the route1_old_mine earthwork in data/placements.json)",
@@ -414,7 +423,13 @@
         "rift_zones.py": "checker: the Rift's zone system (tools/rift_zones.py, written 2026-09-30). It reads data/spawn_blocks.json so its `report` can refuse a wall built from a block that is a spawn condition - an obsidian wall that draws wild Pokemon to it would be a gate with a crowd at it. A checker and a block source at once: it names the wall blocks itself, and it checks them against this contract rather than assuming them, which is why it is listed and not marked \"not covered\".",
         "ferry_docks.py": "checker: the ferry docks (tools/ferry_docks.py, 2026-09-30) read data/spawn_blocks.json and its own `report` refuses a dock built from a block that is a spawn condition - a jetty that draws wild Pokemon onto itself is a crowd on the quay. Recorded after the F7 agent found it omitted; that agent could not edit this registry. NOT YET A `source`, and that is a named gap rather than a classification: it IS a block source (it names the dock palette), but this contract's `source` slot means a block list cross-checked against the spawn-policy scopes, and the list lives in tests/test_system_contracts.py _source_blocks() - a test author's file, needing the palette enumerated. Until that is done its palette is checked by itself and not by this contract, which is weaker than town_dressing and should not be mistaken for it.",
         "poi_heatmap.py": "not covered: reads data/spawn_blocks.json only for the coordinates of its records, to plot them on derived/maps/poi_heatmap.png; it places no block, emits no function and checks no spawn condition",
-        "frostpeak_camp_audit.py": "checker: the built Frostpeak research camp (tools/frostpeak_camp.py, 2026-10-02), against data/frostpeak_camp.json blocks.ids and the spawn conditions. tools/frostpeak_camp.py is a block source that does not read the conditions file itself (it refuses any block outside blocks.ids); NOT YET one of this contract's sources - adding its blocks.ids to _source_blocks() in tests/test_system_contracts.py is the test author's."
+        "frostpeak_camp_audit.py": "checker: the built Frostpeak research camp (tools/frostpeak_camp.py, 2026-10-02), against data/frostpeak_camp.json blocks.ids and the spawn conditions. tools/frostpeak_camp.py is a block source that does not read the conditions file itself (it refuses any block outside blocks.ids); NOT YET one of this contract's sources - adding its blocks.ids to _source_blocks() in tests/test_system_contracts.py is the test author's.",
+        "frostpeak_summit_audit.py": "checker: the built Frostpeak summit pack (tools/frostpeak_summit.py, 2026-10-02: tors, rime, the lee's plants, the pilgrims' way and its cairns round Articuno's tower), replayed: no written block is a spawn condition and every written block is in data/frostpeak_summit.json blocks.ids (S4). tools/frostpeak_summit.py does not read the conditions file and does not refuse a block itself, so the audit is the only gate; NOT YET one of this contract's sources - adding its blocks.ids to _source_blocks() in tests/test_system_contracts.py is the test author's.",
+        "lopunny_house_audit.py": "checker: the built Lopunny superfan's house (tools/lopunny_house.py, 2026-10-02: a cottage, its Buneary cellar and a Lopunny statue on the South Pine Isle), replayed: no written block is a spawn condition unless a data/spawn_block_policy.json entry scoped to lopunny_house allows it (none does), every written block is in data/lopunny_house.json blocks.ids, and no chest or bed. tools/lopunny_house.py does not read the conditions file (it refuses any block outside blocks.ids); NOT YET one of this contract's sources - adding its blocks.ids to _source_blocks() in tests/test_system_contracts.py is the test author's.",
+        "dune_ruin_audit.py": "checker: the built Copperway Khan (tools/dune_ruin.py, 2026-10-02: a half-buried caravanserai, its sealed store and the Copperway's milestones in the south-east dunes), replayed: no written block is a spawn condition unless a data/spawn_block_policy.json entry scoped to dune_ruin allows it (none does), every written block is in data/dune_ruin.json blocks.ids, and no chest, bed or sand (the Khan's sand is the dune's own, never written). tools/dune_ruin.py does not read the conditions file (it refuses any block outside blocks.ids); NOT YET one of this contract's sources - adding its blocks.ids to _source_blocks() in tests/test_system_contracts.py is the test author's.",
+        "drovers_hollow_audit.py": "checker: the built Drovers' Hollow (tools/drovers_hollow.py, 2026-10-02: a longbarn, its fold and the old working under the bank in the Rift Foot), replayed: no written block is a spawn condition and every written block is in data/drovers_hollow.json blocks.ids",
+        "old_orchard_audit.py": "checker: the built Old Orchard (tools/old_orchard.py, 2026-10-02: an abandoned orchard, its press-house and cellar round the Orchard Sleeper on Sunset Isle), replayed: no written block is a spawn condition (data/spawn_blocks.json) unless the record allows it AND data/spawn_block_policy.json lists it for old_orchard. tools/old_orchard.py does not read the conditions file; NOT YET one of this contract's sources - adding its blocks to _source_blocks() in tests/test_system_contracts.py is the test author's. Entry added at integration: the orchard's builder wrote the checker but not this line.",
+        "research_station_audit.py": "checker: the built Shrew Station pack (tools/research_station.py, 2026-10-02: re-sited the same day to the west sea coast near (552, 2812): the strand's buildings and paving, the walks and platforms over the sea, the Eon shrine), replayed: no written block is a spawn condition unless a data/spawn_block_policy.json entry scoped to research_station allows it (none does), every written block is in data/research_station.json blocks.ids, and no chest, bed or water. tools/research_station.py does not read the conditions file (it refuses any block outside blocks.ids); NOT YET one of this contract's sources - adding its blocks.ids to _source_blocks() in tests/test_system_contracts.py is the test author's."
       }
     },
     {
@@ -683,7 +698,7 @@
         "rift_mine_gate",
         "water_sites"
       ],
-      "statement": "No action a player can repeat at will (relog, a server restart, placing and boarding a boat, a touch of land, bobbing to the surface, leaving and re-entering an approach box, drinking milk) resets, refreshes early or skips a clock or accumulator a gate relies on: swim fatigue and its collapse clock, the Surf bonus, the ladder's drowning pulses, the blackout dedupe, the gulch Megas' respawn clock, the ferry's cooldown, the wards' Mining Fatigue. Each case is a scenario in tests/test_gate_clocks.py run with the generated packs. Excepted by design: riding a water Pokemon (it ends fatigue, WATER_BUILD_PLAN 11.2), a blackout (it costs money and a checkpoint return), operator-only gamemode changes.",
+      "statement": "No action a player can repeat at will (relog, a server restart, placing and boarding a boat, a touch of land, bobbing to the surface, leaving and re-entering an approach box, drinking milk) resets, refreshes early or skips a clock or accumulator a gate relies on: swim fatigue and its collapse clock, the Surf bonus, the ladder's drowning pulses, the blackout dedupe, the gulch Megas' respawn clock, the Ursaluna den's return clock, the ferry's cooldown, the wards' Mining Fatigue. Each case is a scenario in tests/test_gate_clocks.py run with the generated packs. Excepted by design: riding a water Pokemon (it ends fatigue, WATER_BUILD_PLAN 11.2), a blackout (it costs money and a checkpoint return), operator-only gamemode changes.",
       "stated_in": [
         {
           "at": "data/blackout.json:124",
@@ -779,6 +794,33 @@
         "tests/test_npc_seats.py::test_no_seat_stands_within_three_blocks_of_a_walked_route_segment",
         "tests/test_npc_seats.py::test_plaza_and_lot_seats_stand_one_above_the_plans_paved_or_levelled_surface",
         "tests/test_npc_seats.py::test_heightmap_seats_stand_one_above_the_rounded_canonical_heightmap"
+      ]
+    },
+    {
+      "id": "C17",
+      "title": "A resident that blacks a player out becomes the claim's guardian, and the residents' keeper never touches a guardian",
+      "owner": "recovery_claims",
+      "consumers": [
+        "residents"
+      ],
+      "constrained_by": [
+        "residents"
+      ],
+      "statement": "A resident's tags are never the blackout's exempt tag, so a resident that beats a player makes the item claim and becomes its guardian (tag cobblers.guardian, added by the blackout's recovery/bind); from then on the residents' generated keeper only counts it: no kill, hold, leash, wake, settle or merge selector of the pack reaches an entity tagged cobblers.guardian, and nothing in the pack adds or removes cobblers.guardian or the exempt tag.",
+      "stated_in": [
+        {
+          "at": "tools/blackout_pack.py:493",
+          "quote": "\"tag @s add cobblers.guardian\","
+        },
+        {
+          "at": "data/resident_encounters.json:1882",
+          "quote": "never a kill (the duplicate rule kills only tag=!cobblers.guardian)"
+        }
+      ],
+      "tests": [
+        "tests/test_resident_encounters.py::test_a_kill_that_can_reach_a_guardian_is_refused",
+        "tests/test_resident_encounters.py::test_holding_a_guardian_is_refused",
+        "tests/test_resident_encounters.py::test_a_resident_made_exempt_from_the_blackout_is_refused"
       ]
     }
   ]

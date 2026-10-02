@@ -102,8 +102,9 @@ Read from `LumyMon-0.6.6.jar` and `COBBLEVERSE-DP-v31.zip` with `zipfile` only; 
   or fails for one of the reasons it prints.**
 - **Activation items** (VERIFIED): Articuno `lumymon:glacier_feather`, Zapdos `lumymon:thunder_feather`,
   Mew `lumymon:origin_fossil` (crafted), Calyrex `lumymon:calyrex_crown`, Spectrier: a `lumymon:shaderoot_carrot`
-  **dropped as an item onto `summon_trigger`** (Glastrier: `iceroot_carrot`). The feathers and the crown ship
-  **inside the templates' barrels**, and the cemetery's shaderoot crop is pasted at `age=7`.
+  **dropped as an item onto `summon_trigger`** (Glastrier: `iceroot_carrot`). **The feathers and the crown have NO
+  source** in the 102 jars or the datapacks (the earlier "inside the templates' barrels" was relayed, never
+  measured, and false); the cemetery's shaderoot crop is pasted at `age=7`.
 - **The refusals print in chat**, so the probe distinguishes them: "This altar requires a %s to activate"
   (wrong item), "Summon Anchor not found near the Altar" (no anchor), "You do not have permission to use this
   altar" (`lumymon.altar.use`), and the `pokemon_already_nearby` line. **Articuno, Zapdos and Mew templates
@@ -169,7 +170,18 @@ Mew's `origin_fossil` has a recipe; the cemetery's Spectrier route has its own c
 2. **Articuno**, at its adopted site, altar at (914, 153, 331): `/give @s lumymon:glacier_feather`, then
    right-click the altar, first empty-handed, then holding the feather. Record the exact chat line. If it says a
    Summon Anchor is missing, `/setblock 915 153 331 lumymon:summon_anchor` and try again.
+   **Moved 2026-10-02:** the owner sent the tower to the summit and the shoulder copy is removed from staging by
+   `cobblers:articuno_cleanup/shoulder`. Once the summit step has run, the same check is at the summit altar,
+   (682, 312, 380) - the template's altar offset (10, 2, 11) from its corner, as observed above - and the anchor
+   try is `/setblock 683 312 380 lumymon:summon_anchor`.
 3. **Calyrex**, at the cemetery statue (4140, 112, 2005): `/give @s lumymon:calyrex_crown`, then right-click it.
 
 Three test carrots tagged `exp048_carrot`, `exp048_carrot2` and `exp048_carrot3` were left by the ring with
 pickup disabled. They are evidence, harmless, and despawn on their own.
+
+## Set up for the owner, 2026-10-02 afternoon (staging-2026-10-01)
+
+Standing, by RCON: the statue (4140, 112, 2005), the cemetery's own `summon_anchor` (4153, 112, 1999), 14 blocks
+from the statue, and the Articuno altar (682, 312, 380). `give` to the owner: 1 `lumymon:calyrex_crown`, 2
+`lumymon:glacier_feather` (both ids resolve). Server log line 7,685 marks the start; every chat or console line
+after it is the result. The owner's hold (2026-10-02): no further altar-driven site is built until this lands.

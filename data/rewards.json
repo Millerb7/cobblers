@@ -473,12 +473,12 @@
       "trigger": {
         "min": [
           1418,
-          103,
+          104,
           1732
         ],
         "max": [
           1422,
-          105,
+          106,
           1736
         ]
       },
@@ -486,7 +486,7 @@
         "block": "minecraft:barrel",
         "at": [
           1420,
-          103,
+          104,
           1732
         ]
       }
@@ -494,7 +494,7 @@
     {
       "id": "sea_drift_isle",
       "kind": "cache",
-      "place": "Driftmouth Isle: in the headhouse over the drift's stairwell, its north-west corner",
+      "place": "Driftmouth Isle: in Driftmouth Light's keeper's hall, its north-west corner by the tower door",
       "contents": [
         {
           "item": "cobblemon:net_ball",
@@ -507,29 +507,273 @@
           "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
         }
       ],
-      "message": "In the barrel in the headhouse: five Net Balls and two Super Potions.",
+      "message": "In the barrel in Driftmouth Light's keeper's hall: five Net Balls and two Super Potions.",
       "why": "data/sea_drift.json caches: the find that pays for the walk, as the old mine's barrels",
       "built_by": "tools/sea_drift.py (the barrel, in cobblers_sea_drift's surface pass)",
       "trigger": {
         "min": [
-          330,
+          325,
           70,
-          1583
+          1792
         ],
         "max": [
-          332,
+          327,
           72,
-          1585
+          1794
         ]
       },
       "container": {
         "block": "minecraft:barrel",
         "at": [
-          330,
+          325,
           70,
-          1583
+          1792
         ]
       }
+    },
+    {
+      "id": "lopunny_superfan",
+      "kind": "npc_grant",
+      "place": "Ellis Hopgood's house on the South Pine Isle (data/lopunny_house.json), by the door inside",
+      "npc_at": [
+        6948,
+        118,
+        1362
+      ],
+      "quest": "evt_lopunny_superfan",
+      "contents": [
+        {
+          "item": "cobblemon:soothe_bell",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/soothe_bell.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "why": "The Lopunny superfan's thanks for being shown a Lopunny (the owner, 2026-10-02: he 'wants one of his own'). A Soothe Bell: he bought it for his Buneary, which are wild and never noticed. The dialogue makes no claim for what the bell does. One per player, by grant_reward_once. An owner decision: a Lopunnite (mega_showdown:lopunnite, docs/research/notes/reward-item-inventory.md) would fit better and is deliberately not given, because mega stones are scarce by the owner's design (docs/world-building/SOUTHERN_RIFT_MEGA.md).",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/lopunny_house.py seats him on, checked by tools/lopunny_house_audit.py"
+    },
+    {
+      "id": "old_orchard_cellar",
+      "kind": "cache",
+      "place": "the Old Orchard on Sunset Isle (data/old_orchard.json): the press cellar under the press-house, its south-east corner, the cask at the back",
+      "contents": [
+        {
+          "item": "cobblemon:leftovers",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/leftovers.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:tart_apple",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/tart_apple.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:sweet_apple",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/sweet_apple.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the cask at the back of the press cellar, wrapped in oilcloth: Leftovers, a Tart Apple and a Sweet Apple.",
+      "why": "data/old_orchard.json find: the keeper's father's 'best, for a long winter'. Leftovers is a late-game held item worth the ferry (the isle is tier 8); the Tart Apple and the Sweet Apple evolve the orchard's Applin into Flapple and Appletun (Cobblemon 1.8.0 applin.json, item_interact). Ungated, as every cache is: the cellar lies outside the Orchard Sleeper's leash, so it is taken without the fight.",
+      "built_by": "tools/old_orchard.py (the barrel, in cobblers_old_orchard's build, reapply R9SO); the room and the barrel's place checked by tools/old_orchard_audit.py",
+      "trigger": {
+        "min": [
+          2791,
+          62,
+          7049
+        ],
+        "max": [
+          2793,
+          63,
+          7051
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          2793,
+          62,
+          7051
+        ]
+      }
+    },
+    {
+      "id": "dune_ruin_strongroom",
+      "kind": "cache",
+      "place": "the Copperway Khan in the south-east dunes: the master's strongbox against the east wall of the sealed store under the hall",
+      "contents": [
+        {
+          "item": "cobblemon:metal_coat",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/metal_coat.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:reaper_cloth",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/reaper_cloth.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:dusk_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/dusk_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the caravan master's strongbox: a Metal Coat, a Reaper Cloth and three Dusk Balls.",
+      "why": "data/dune_ruin.json find: the reason to break into the store. Late-game south (tier 8): a Metal Coat (the haulers' brass, and Onix's and Scyther's evolution item), a Reaper Cloth (the store's ghosts; Dusclops's), and Dusk Balls, the dark place's situational ball (docs/research/notes/reward-item-inventory.md section 4). Each item id verified in the Cobblemon 1.8.0 jar 2026-10-02.",
+      "built_by": "tools/dune_ruin.py (the barrel, in cobblers_dune_ruin's build, reapply step R9DU)",
+      "trigger": {
+        "min": [
+          6736,
+          140,
+          6233
+        ],
+        "max": [
+          6738,
+          141,
+          6235
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          6738,
+          140,
+          6234
+        ]
+      }
+    },
+    {
+      "id": "drovers_hollow_store",
+      "kind": "cache",
+      "place": "the Drovers' Hollow (data/drovers_hollow.json): the store at the end of the old working under the east bank, reached down the well behind the barn's spring",
+      "contents": [
+        {
+          "item": "cobblemon:choice_band",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/choice_band.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:moomoo_milk",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/moomoo_milk.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel at the end of the old working, wrapped in oilcloth: a Choice Band, the herd bull's brow-band, and three bottles of Moomoo Milk.",
+      "why": "data/drovers_hollow.json find: the find that pays for the walk down the well. Late-game, as the place is (the Rift Foot is tier 8): a Choice Band, held nowhere else in the campaign but by trainers (data/trainers.json), and Moomoo Milk from the herd.",
+      "built_by": "tools/drovers_hollow.py (the barrel, in cobblers_drovers_hollow's build, step R9HF)",
+      "trigger": {
+        "min": [
+          4017,
+          92,
+          6021
+        ],
+        "max": [
+          4021,
+          94,
+          6025
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          4021,
+          92,
+          6023
+        ]
+      }
+    },
+    {
+      "id": "station_director",
+      "kind": "npc_grant",
+      "place": "Shrew Station's Institute, behind the reception desk",
+      "npc_at": [
+        550,
+        67,
+        2823
+      ],
+      "quest": "evt_station_director",
+      "contents": [
+        {
+          "item": "lumymon:thunder_feather",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/thunder_feather.json in LumyMon-0.6.6.jar"
+        },
+        {
+          "item": "lumymon:ember_feather",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/ember_feather.json in LumyMon-0.6.6.jar"
+        }
+      ],
+      "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
+      "why": "The thunder feather (a storm watched from the Zapdos tower's top, after eight badges) and the ember feather (the Nether's Moltres tower surveyed, after eight badges: the owner, 2026-10-02, 'Moltres yes').",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/research_station.py seats it on, checked by tools/research_station_audit.py"
+    },
+    {
+      "id": "station_field_officer",
+      "kind": "npc_grant",
+      "place": "Shrew Station's weather hut beside the spine",
+      "npc_at": [
+        484,
+        63,
+        2793
+      ],
+      "quest": "evt_station_courier",
+      "contents": [
+        {
+          "item": "lumymon:glacier_feather",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/glacier_feather.json in LumyMon-0.6.6.jar"
+        }
+      ],
+      "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
+      "why": "The glacier feather, for the courier commission to Dr. Halvard's camp on Frostpeak (after eight badges).",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/research_station.py seats it on, checked by tools/research_station_audit.py"
+    },
+    {
+      "id": "station_archivist",
+      "kind": "npc_grant",
+      "place": "Shrew Station's Archive, among the empty cases",
+      "npc_at": [
+        569,
+        69,
+        2824
+      ],
+      "quest": "evt_station_archive",
+      "contents": [
+        {
+          "item": "lumymon:calyrex_crown",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/calyrex_crown.json in LumyMon-0.6.6.jar"
+        }
+      ],
+      "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
+      "why": "The Calyrex crown, traded for sixteen shaderoot carrots from the Crown Cemetery's field (after the Champion, and only once the post-Champion cap is measured at 70 or more).",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/research_station.py seats it on, checked by tools/research_station_audit.py"
+    },
+    {
+      "id": "station_shrine_keeper",
+      "kind": "npc_grant",
+      "place": "the Eon shrine on Shrew Station's platform, south of the dais",
+      "npc_at": [
+        422,
+        63,
+        2819
+      ],
+      "quest": "evt_station_eon_shrine",
+      "contents": [
+        {
+          "item": "lumymon:ruby_dew",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/ruby_dew.json in LumyMon-0.6.6.jar"
+        },
+        {
+          "item": "lumymon:sapphire_dew",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/sapphire_dew.json in LumyMon-0.6.6.jar"
+        }
+      ],
+      "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
+      "why": "The ruby and sapphire dews, for a player who has met Mesprit, Azelf and Uxie: they wake this station's own Latias and Latios altars.",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/research_station.py seats it on, checked by tools/research_station_audit.py"
     }
   ]
 }

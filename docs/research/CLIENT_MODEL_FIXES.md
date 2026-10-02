@@ -19,6 +19,7 @@
 | --- | --- | --- | --- |
 | 2026-09-14 | Screen went black while flying the painted `cobblers-10240`. The server logged the player as "Disconnected" | Client crash report `crash-2026-09-14_07.51.45-client.txt`: `java.util.NoSuchElementException: Can't find part persian` in `PersianAlolanModel.<init>`, while rendering a wild Persian at 3076, 114, 4837. Not related to the terrain or the paint | Scanned the enabled pack stack; built and installed `cobblers-model-fixes.zip` |
 | 2026-09-26 | Staging playtest: some wild Pokémon are the green substitute doll ("??? Lv.N"), Vullaby and Oranguru among them; Talonflame and Pidgeot are mis-assembled | [`COBBLEVERSE_COMPATIBILITY.md`](COBBLEVERSE_COMPATIBILITY.md), "Client model audit, 2026-09-26" | Added the `missing` and `uv_mismatch` rules; built `cobblers-client-AllTheMons-subset.zip`; not yet delivered |
+| 2026-10-02 | Staging: the den keeper Hollis is a small green doll ("buried"); every NPC we ship was | Cobblemon 1.8.0 bytecode: the client renders an NPC by the class's `resourceIdentifier`, which defaults to the class id; no variation is named `cobblers:<npc>` ([EXP-051](../../experiments/EXP-051-npc-models/README.md)) | Server-side, not this tool: `tools/compile_dialogue.py` writes `"resourceIdentifier": "cobblemon:standard"` on every class; `tools/npc_model_audit.py` checks each shipped class resolves in the jar |
 
 ## How the scan rebuilds the stack
 

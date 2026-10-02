@@ -1,6 +1,6 @@
 {
  "schema": "cobblers.adopted_legendary_sites/1",
- "status": "authored 2026-10-01, extended the same day. FOUR sites measured off the canonical heightmap, NONE pasted and NONE scheduled: no record of these exists in data/placements.json and no tool emits them. Each site is a measured coordinate plus the exact raw `/place template` form, so a single command in a disposable world is the whole of the work. Articuno joined on 2026-10-01 by re-measuring a refusal rather than by a new decision: see its `unblocks`. The other six refused groups stand, and the largest of them - the eight Nether and End structures - is a refusal to make things WORSE, not a gap waiting to be filled.",
+ "status": "authored 2026-10-01, extended the same day, Articuno moved to the summit 2026-10-02. FOUR sites measured off the canonical heightmap and NONE in any apply step: no record of these exists in data/placements.json and tools/reapply.py emits none of them yet (tools/articuno_tower.py placement_steps() is the first, for Articuno, and is not wired in). TWO were pasted by hand in the disposable staging world for EXP-048 - the Crown Cemetery and Articuno's tower at its since-superseded shoulder site (904, 320) - and the live world has none. Each site is a measured coordinate plus the exact raw `/place template` form. Articuno joined on 2026-10-01 by re-measuring a refusal, and moved to the summit on 2026-10-02 once the refusal's build ceiling of 320 was found to be wrong for this runtime (y575): see its `unblocks` and refused group 6. The other six refused groups stand, and the largest of them - the eight Nether and End structures - is a refusal to make things WORSE, not a gap waiting to be filled.",
  "why_a_sibling_of_legendaries_json": [
   "data/legendaries.json is OUR parametric chamber system, not a register of sites. tools/legendaries.py `load()` rejects any record whose `kind` is outside (lake_grotto, sealed_chamber, sapling_wake) and any record without a non-empty `gate.flags`, and `geometry()` derives every box of a sited record from `mouth`/`portal`, `approach` and `chamber`. A pasted third-party template has none of those: no bore, no shell margin, no carve, and - the load-bearing one - NO GATE WE MAY AUTHOR, because what triggers a `lumymon:*_altar` has never been read (LumyMon is closed source).",
   "Putting these three in that file would therefore mean mutating KINDS and the gate rule of a generator that emits six built chambers, to carry records it must never emit. That is the opposite of fail-closed, so they live here.",
@@ -13,9 +13,13 @@
  },
  "ground_rule": "Every y, every min/max/median/mode and every cut/fill count below was measured with tools/ground.py (the canonical heightmap, rounded) over the exact footprint. No world was read. Probe check: ground(4528,4416) = 122.",
  "ceiling": {
-  "max_y": 310,
-  "source": "data/world.json vertical.max_y, and measured_ceiling_y 310",
-  "verdict": "all four clear it by 86 blocks or more; the tallest top is y224 (Articuno). Every top_y here is the top OCCUPIED layer, y + height - 1, and every ceiling_margin is measured against this max_y."
+  "runtime_top_y": 575,
+  "source": "modpack/datapacks/cobblers_height/data/minecraft/dimension_type/overworld.json: min_y -64, height 640, so the highest buildable layer is -64 + 640 - 1 = y575 (docs/STATE.md 'World facts': the runtime overworld build range is y-64..575; data/world.json built_ceiling.runtime_limit says the same).",
+  "terrain_max_y": 310,
+  "terrain_max_y_is_not_a_build_ceiling": "data/world.json vertical.max_y (and measured_ceiling_y) 310 caps authored TERRAIN only: its measured_ceiling_note says built structures are not terrain, and the world tree is recorded there at y535 as built_ceiling. A template pasted ON the terrain may rise above 310; it may not rise above y575.",
+  "convention": "ONE convention for all four sites: `top_y` is the top OCCUPIED layer, y + height - 1, and `ceiling_margin` = runtime_top_y - top_y.",
+  "verdict": "all four clear y575 by 192 blocks or more; the tallest top is y383 (Articuno, on the summit).",
+  "corrected_2026_10_02": "until 2026-10-02 the margins here were measured against max_y 310 (and Articuno's once against 320), and refused group 6 refused the summit against 'the 1.21.1 build ceiling of 320'. 320 is vanilla's overworld height; cobblers_height raises this runtime's to y575, and 310 is a terrain line, not a roof. Every margin below was re-derived on the one convention above."
  },
  "what_never_travels": {
   "verified": "EXP-013 on a disposable world: `/place structure`, `/place jigsaw` and `/place template` all leave every chunk with empty `starts` and `References`, and `/locate`, `location_check` and the gym map ignore the build (docs/world-building/STRUCTURE_INVENTORY.md:271-274).",
@@ -87,7 +91,7 @@
     "y_mode": "absolute",
     "command": "/place template cobbleverse:mythical/mew 7604 142 7082 none none",
     "top_y": 166,
-    "ceiling_margin": 144
+    "ceiling_margin": 409
    },
    "ground": {
     "min": 142,
@@ -182,7 +186,7 @@
     "y_mode": "absolute",
     "command": "/place template cobbleverse:crown_cemetery 4118 109 1982 none none",
     "top_y": 132,
-    "ceiling_margin": 178
+    "ceiling_margin": 443
    },
    "ground": {
     "min": 109,
@@ -279,7 +283,7 @@
     "y_mode": "absolute",
     "command": "/place template cobbleverse:legendary/zapdos 562 74 2614 none none",
     "top_y": 139,
-    "ceiling_margin": 171
+    "ceiling_margin": 436
    },
    "ground": {
     "min": 71,
@@ -326,7 +330,7 @@
    "template": "cobbleverse:legendary/articuno",
    "legendary": "Articuno",
    "rank": 4,
-   "status": "SITED AND TAKEN, not placed. The owner, 2026-10-01: \"take (904, 320). The refusal tested one pad and refused a mountain, and your site keeps what it said was the point.\"",
+   "status": "SITED ON THE SUMMIT, not in any apply step. The owner, 2026-10-02: \"Paste the real Cobbleverse Articuno tower on the summit; its crown shows over the crest from the research camp, so the camp's telescope sees what the researchers study. The shoulder copy is removed.\" The step that places it is tools/articuno_tower.py placement_steps(); it is not yet in tools/reapply.py.",
    "source_archive": "COBBLEVERSE-DP-v31.zip",
    "size": [
     20,
@@ -335,7 +339,7 @@
    ],
    "size_source": "data/structures.json footprint \"20x74x22\"",
    "template_biome": "minecraft:snowy_plains",
-   "unblocks": "refused group 6. The refusal was CORRECT about the site it tested and WRONG as a general claim: it measured the pressed y310 summit pad, where 310 + 74 = 384 overruns the 1.21.1 ceiling of 320 by 64, and concluded the template could not be used without giving up the summit. Sweeping the whole of Frostpeak at a 4-block step finds 624 pads where the shrine fits under our own max_y of 310, so the arithmetic never ruled out the mountain, only its flattened crown. Measured 2026-10-01.",
+   "unblocks": "refused group 6, twice. On 2026-10-01 the refusal was found WRONG as a general claim - it tested one pad and refused the mountain - and the tower went to the east shoulder (kept under superseded_shoulder_site). On 2026-10-02 the refusal's own arithmetic was found wrong for THIS runtime: 310 + 74 - 1 = y383 is the top occupied layer on the summit pad, and the ceiling it was held against, 'the 1.21.1 build ceiling of 320', is vanilla's, not ours - cobblers_height sets the overworld to y-64..575. So the summit fits, with 192 blocks to spare, and the tower stands where the refusal said the reason to want it was.",
    "site": {
     "region": "frostpeak",
     "containing_polygons": [
@@ -344,40 +348,47 @@
     ],
     "cell": "A1",
     "paint": "preset `snowy_peak` (data/regions.json subregions.frostpeak). NOT an exact biome match: the template wants `minecraft:snowy_plains` and data/structures.json lists only `northern_isles` as a region carrying one. snowy_peak is the same cover family on the only mountain the story wants, and a raw paste reads no biome, so the mismatch is VISUAL ONLY - recorded, like the Zapdos tower's, rather than papered over.",
-    "why": "a high eastern shoulder of Frostpeak, 235 blocks due east of the summit at almost the same latitude (z320 against the summit's z324) and 159 blocks below it. It keeps what the refusal said was the whole reason to want this template - a shrine high on the lone mountain in the most remote corner of the mainland - while fitting under max_y with 86 blocks to spare (top occupied layer y224). The ground is as near flat as the map offers up there: spread 1 over 440 columns.",
-    "findable_by_eye": "a 74-block tower topping out at y224 on an open snowy shoulder, with nothing else on the mountain. Visible from the southern apron and from the sea to the east. No finder exists (see what_never_travels.finding_them_instead)."
+    "why": "the summit of Frostpeak: the pressed y310 pad of the frostpeak_shrine outpost (data/sculpt.json pads frostpeak_shrine, radius 55), with the tower's centre on the outpost's own centre (682, 380) (data/towns.json). It is what the refusal said the template was for - a shrine on the lone summit of the most remote corner of the mainland - and the pad is the flattest ground on the map: all 440 columns of the footprint are y310, so the paste needs no cut and no fill.",
+    "findable_by_eye": "a 74-block tower on the highest ground on the map, its top occupied layer y383. From the Frostpeak research camp at the south foot (data/frostpeak_camp.json) the summit pad itself is hidden by a false crest, but the tower's centre column clears that crest from y370 to y383 - 14 layers, measured from the telescope's pivot (716.5, 115.2, 691.5) by tools/frostpeak_camp_audit.py's exact column walk; the generator's old quarter-block walk said y369 - at bearing 354, 313 blocks off. The camp's telescope is trained on the middle of that crown (y376.5), so the place a player learns about is the thing they can see. No finder exists (see what_never_travels.finding_them_instead)."
    },
    "placement": {
     "corner": [
-     904,
-     320
+     672,
+     369
     ],
-    "y": 151,
+    "y": 310,
     "centre": [
-     914,
-     331
+     682,
+     380
     ],
     "rotation": "none",
     "mirror": "none",
     "anchor_mode": "corner",
     "y_mode": "absolute",
-    "command": "/place template cobbleverse:legendary/articuno 904 151 320 none none",
-    "top_y": 224,
-    "ceiling_margin": 86
+    "command": "/place template cobbleverse:legendary/articuno 672 310 369 none none",
+    "top_y": 383,
+    "ceiling_margin": 192
    },
    "ground": {
-    "min": 150,
-    "max": 151,
-    "median": 151,
-    "mode": 151,
+    "min": 310,
+    "max": 310,
+    "median": 310,
+    "mode": 310,
     "columns": 440,
-    "spread": 1,
-    "measured_by": "tools/ground.py over x904..923, z320..341, rounded"
+    "mode_columns": 440,
+    "spread": 0,
+    "transposed_22x20": {
+     "min": 310,
+     "max": 310,
+     "note": "rotation 90 or 270 is on the same flat pad - free"
+    },
+    "measured_by": "tools/ground.py over x672..691, z369..390, rounded"
    },
    "displaces": {
     "cut_blocks": 0,
-    "fill_blocks": 73,
-    "why": "seated on max(ground) so no column is buried, the repository's convention. 73 blocks of fill under a 440-column pad is one block under 73 of them; nothing is terraced."
+    "fill_blocks": 0,
+    "terrain": "none. All 440 columns are ground y310 exactly, so the paste's bottom layer meets the pad with no lip and no gap. Within 40 blocks of the footprint the pad is y309..310 (10,092 of 10,200 columns at y310).",
+    "built_content": "nothing. No built pack writes or summons within 16 blocks of the footprint (scanned 2026-10-02 against the 52 packs in the full checkout's build/datapacks), and no data/placements.json position lies inside it. The frostpeak_shrine outpost (data/towns.json, status proposed) has its centre at this tower's centre and has no buildings of its own: this file does not edit towns.json."
    },
    "alternatives_measured": [
     {
@@ -404,7 +415,46 @@
     }
    ],
    "still_gated_by": "EXP-LEG-ALTAR, exactly as the other three are: this template carries `lumymon:articuno_altar` (data/structures.json carries.notable_blocks) and nothing has yet shown that a pasted LumyMon altar responds to anything. Placing is not the question; functioning is.",
-   "alternatives_measured_note": "kept as measurements, not as open options: the owner took (904, 320) on 2026-10-01. The two below are recorded so a later session does not re-derive them, and because the south-foot one becomes live again if the research camp and the shrine are ever meant to read as one place."
+   "alternatives_measured_note": "kept as measurements, not as open options: the owner took the shoulder (904, 320) on 2026-10-01 and the summit on 2026-10-02 (see superseded_shoulder_site). These two were measured against the wrong ceiling of 320 and only existed because the summit was believed not to fit; they are recorded so a later session does not re-derive them.",
+   "superseded_shoulder_site": {
+    "superseded_2026_10_02": "The owner, 2026-10-02: \"Paste the real Cobbleverse Articuno tower on the summit; its crown shows over the crest from the research camp, so the camp's telescope sees what the researchers study. The shoulder copy is removed.\"",
+    "why_kept": "the site the owner took on 2026-10-01 is kept, not deleted: its measurements are still true of the shoulder, it is the box the staging cleanup clears, and a later session must not re-derive it. It was chosen only because the summit was believed not to fit under a ceiling of 320; with this runtime's y575 the summit fits with 192 to spare, so the reason for the shoulder is gone.",
+    "status_when_taken": "SITED AND TAKEN, not placed. The owner, 2026-10-01: \"take (904, 320). The refusal tested one pad and refused a mountain, and your site keeps what it said was the point.\"",
+    "why_when_taken": "a high eastern shoulder of Frostpeak, 235 blocks due east of the summit at almost the same latitude (z320 against the summit's z324) and 159 blocks below it. It keeps what the refusal said was the whole reason to want this template - a shrine high on the lone mountain in the most remote corner of the mainland - while fitting under max_y with 86 blocks to spare (top occupied layer y224). The ground is as near flat as the map offers up there: spread 1 over 440 columns.",
+    "placement": {
+     "corner": [
+      904,
+      320
+     ],
+     "y": 151,
+     "centre": [
+      914,
+      331
+     ],
+     "rotation": "none",
+     "mirror": "none",
+     "anchor_mode": "corner",
+     "y_mode": "absolute",
+     "command": "/place template cobbleverse:legendary/articuno 904 151 320 none none",
+     "top_y": 224,
+     "ceiling_margin": 86
+    },
+    "ground": {
+     "min": 150,
+     "max": 151,
+     "median": 151,
+     "mode": 151,
+     "columns": 440,
+     "spread": 1,
+     "measured_by": "tools/ground.py over x904..923, z320..341, rounded"
+    },
+    "displaces": {
+     "cut_blocks": 0,
+     "fill_blocks": 73,
+     "why": "seated on max(ground) so no column is buried, the repository's convention. 73 blocks of fill under a 440-column pad is one block under 73 of them; nothing is terraced."
+    },
+    "in_the_world": "pasted ONCE, by hand, into the disposable staging world during EXP-048 (2026-10-02; experiments/EXP-048-legendary-altar/README.md), box x904..923, y151..224, z320..341, altar at (914, 153, 331). It is in no apply step and the live world never had it. STAGING ONLY: `function cobblers:articuno_cleanup/shoulder` (tools/articuno_tower.py) clears that box to air above heightmap ground and puts the surface back."
+   }
   }
  ],
  "refused": [
@@ -482,7 +532,8 @@
    ],
    "why": "BLOCKED BY ARITHMETIC, not by taste. The story fit is the best on the list - the Frostpeak shrine, a shrine on the lone summit of the most remote corner of the mainland, 1,440 blocks from anything - but its pad is a pressed y310 (the measured ceiling: 9,886 columns pressed exactly to the top of the heightmap line, data/world.json measured_ceiling_note) and the tower is 74 blocks tall. 310 + 74 = 384, sixty-four blocks above the 1.21.1 build ceiling of 320 and seventy-four above our own max_y of 310.",
    "alternatives_not_taken": "a lower snowy site would fit (the Glacial Tear trough, where Regice's portal is y101 per docs/mechanics/LEGENDARIES.md:23) but every one of them throws away the reason to want this template, which is the summit. Left for the owner: either a lower site or not this template.",
-   "superseded_2026_10_01": "ADOPTED as adopted_articuno_shrine. This entry is kept, not deleted, because its arithmetic is still right about the summit pad and a later session must not re-derive it: 310 + 74 = 384 against a 320 ceiling. What it got wrong was the scope of the conclusion - it tested one pad and refused the mountain. 624 pads on Frostpeak fit."
+   "superseded_2026_10_01": "ADOPTED as adopted_articuno_shrine. This entry is kept, not deleted, because its arithmetic is still right about the summit pad and a later session must not re-derive it: 310 + 74 = 384 against a 320 ceiling. What it got wrong was the scope of the conclusion - it tested one pad and refused the mountain. 624 pads on Frostpeak fit.",
+   "corrected_2026_10_02": "the 'build ceiling of 320' above is WRONG for this runtime: modpack/datapacks/cobblers_height sets the overworld dimension to min_y -64, height 640, so the highest buildable layer is y575 (docs/STATE.md 'World facts'). And max_y 310 caps authored terrain, not built blocks. On the summit pad the tower's top occupied layer is 310 + 74 - 1 = y383, 192 under y575. That is why, on the owner's word of 2026-10-02, the tower now stands ON the summit (adopted_articuno_shrine) and the shoulder site is superseded. The text above is kept as it was written."
   },
   {
    "ids": [
@@ -521,7 +572,7 @@
   }
  ],
  "verified_vs_not": {
-  "verified_here": "every coordinate, ground figure, cut/fill count, clearance distance and ceiling margin in this file was computed from the canonical heightmap through tools/ground.py on 2026-10-01, and the Jungle Isle's drowning was measured the same way. The file parses.",
-  "not_verified_here": "NOTHING HAS BEEN PASTED. No command in this file has been run, no altar has been seen, no loot table has been rolled, and no claim is made that any of these three templates resolves, places or works on our server. Raw `/place template` is proven on this runtime for a DIFFERENT template (firescourge_shrine, 2026-09-09); that these three ids resolve from the installed pack is expected and unproven."
+  "verified_here": "every coordinate, ground figure, cut/fill count, clearance distance and ceiling margin in this file was computed from the canonical heightmap through tools/ground.py (2026-10-01; Articuno's summit site and every margin re-derived 2026-10-02), and the Jungle Isle's drowning was measured the same way. The file parses.",
+  "not_verified_here": "two pastes, both in the disposable staging world for EXP-048: the Crown Cemetery and Articuno's tower at the superseded shoulder site, both PLACED, with their LumyMon blocks present; no altar has answered. Nothing has been pasted on the summit, no loot table has been rolled, and Mew's and Zapdos's templates have never been placed on our server."
  }
 }

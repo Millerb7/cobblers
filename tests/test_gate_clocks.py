@@ -21,6 +21,8 @@ The clocks, and the actions tried on each (the sweep's result is in the registry
   the gulch Megas gm.gone       restart, leaving and re-entering the approach box (the faces' gm.last was retired
                                 with their restore, SOUTHERN_RIFT_MEGA.md 13)
   the ferry cooldown            relog and restart inside it
+  the Ursaluna den #gone        restart, walking into the den and out past the return's clear radius (the den's
+                                return clock, tests/test_ursaluna_cave.py; added by the den's builder, 2026-10-02)
   the seam's ward               drinking milk (vanilla: clears every effect) between the ward's refreshes
   the gulch gate's ward         the same, with the zone check behind it
 Not swept, and why: a gamemode change (only an operator can); dying (a blackout costs money and returns the player
@@ -474,7 +476,16 @@ SCENARIOS = {
     "gulch_farm_megas-reapproach": gulch_farm_megas_reapproach,
     "seam_ward-milk": seam_ward_milk,
     "gulch_ward-milk": gulch_ward_milk,
+    "ursaluna_den-restart": lambda fns=None: _den().den_restart(fns),
+    "ursaluna_den-reapproach": lambda fns=None: _den().den_reapproach(fns),
 }
+
+
+def _den():
+    """The Ursaluna den's return clock (data/ursaluna_cave.json ursaluna.returns), run on its generated pack by
+    tests/test_ursaluna_cave.py's world; it needs the canonical heightmap and skips without it."""
+    import test_ursaluna_cave as TU
+    return TU
 
 
 # ================================================================================================= the harness
@@ -521,6 +532,22 @@ def test_harness_the_megas_scenarios_see_a_reset_respawn_clock():
     drive = dict(kf, drive=kf["drive"] + ["execute unless entity %s run scoreboard players set #excadrill gm.gone 0"
                                           % kf["drive"][2].split(" ")[3]])
     _fails_on_its_clock(gulch_megas_reapproach, drive)
+
+
+# Without it the Ursaluna den's scenarios pass on a pack whose clock a restart or a walk out of the den resets: with
+# load setting the clock to 0 (due at once), and with the keeper forgetting the clock whenever nobody is within the
+# return's clear radius, each fails.
+def test_harness_the_ursaluna_den_scenarios_see_a_reset_return_clock():
+    TU = _den()
+    fns = TU.den_fns()
+    load = dict(fns)
+    load["ursaluna_cave/load"] = fns["ursaluna_cave/load"] + ["scoreboard players set #gone cobblers.ursaluna 0"]
+    _fails_on_its_clock(SCENARIOS["ursaluna_den-restart"], load)
+    _b, (x, y, z) = TU.spot()
+    keeper = dict(fns)
+    keeper["ursaluna_cave/keeper"] = ["execute positioned %s %s %s unless entity @a[distance=..%d] run scoreboard "
+                                      "players set #gone cobblers.ursaluna 0" % (x, y, z, TU.CLEAR)] + fns["ursaluna_cave/keeper"]
+    _fails_on_its_clock(SCENARIOS["ursaluna_den-reapproach"], keeper)
 
 
 # Without it the FARM dens' scenarios pass on a keeper whose clock a restart or a walk out of the approach box

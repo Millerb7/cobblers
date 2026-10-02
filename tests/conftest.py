@@ -1,3 +1,4 @@
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -25,6 +26,74 @@ def tracked_files(repo_root: Path) -> list[Path]:
 @pytest.fixture(scope="session")
 def python() -> str:
     return sys.executable
+
+
+def pytest_addoption(parser):
+    parser.addoption(
+        "--allow-no-heightmap", action="store_true", default=False,
+        help="accept a run that skipped tests for want of the canonical heightmap (COBBLERS_SOURCE_ROOT); "
+             "without it such a run exits non-zero however many tests passed")
+
+
+# A skip whose reason names the heightmap or its root is a test that could not run here, not one that
+# passed. On 2026-10-02 a session's shell did not inherit COBBLERS_SOURCE_ROOT from .claude/settings.json
+# and 47 tests skipped among 5,300 passes: the run read green and the terrain checks had not run at all.
+HEIGHTMAP_SKIP = ("COBBLERS_SOURCE_ROOT", "heightmap")
+_heightmap_skips: list[str] = []
+
+
+def _skip_reason(report) -> str:
+    lr = report.longrepr
+    if isinstance(lr, tuple) and len(lr) == 3:
+        return str(lr[2])
+    return str(lr or "")
+
+
+def _note_heightmap_skip(report):
+    if report.skipped and not hasattr(report, "wasxfail"):
+        # a tool's name is not the heightmap: "tools/rift_heightmap.py's plan" is a missing derived/ file
+        reason = _skip_reason(report).replace("rift_heightmap", "")
+        if any(k.lower() in reason.lower() for k in HEIGHTMAP_SKIP):
+            _heightmap_skips.append("%s: %s" % (report.nodeid, reason.splitlines()[0][:160]))
+
+
+def pytest_runtest_logreport(report):
+    _note_heightmap_skip(report)
+
+
+def pytest_collectreport(report):
+    _note_heightmap_skip(report)
+
+
+def pytest_report_header(config):
+    root = os.environ.get("COBBLERS_SOURCE_ROOT")
+    if not root:
+        return ("COBBLERS_SOURCE_ROOT is NOT SET: every heightmap test will skip and the run will exit "
+                "non-zero (pass --allow-no-heightmap to accept a partial run)")
+    return "COBBLERS_SOURCE_ROOT=%s" % root
+
+
+def pytest_sessionfinish(session, exitstatus):
+    """Refuse to report green when tests skipped for want of the heightmap: the run did not test terrain."""
+    if _heightmap_skips and exitstatus == 0 and not session.config.getoption("--allow-no-heightmap"):
+        session.exitstatus = pytest.ExitCode.TESTS_FAILED
+
+
+def pytest_terminal_summary(terminalreporter, exitstatus, config):
+    if not _heightmap_skips:
+        return
+    accepted = config.getoption("--allow-no-heightmap")
+    tr = terminalreporter
+    tr.section("heightmap tests NOT EXECUTED", sep="=", red=not accepted, yellow=accepted, bold=True)
+    tr.line("%d test(s) skipped because the canonical heightmap was not available (COBBLERS_SOURCE_ROOT=%r)."
+            % (len(_heightmap_skips), os.environ.get("COBBLERS_SOURCE_ROOT")))
+    tr.line("This run is NOT green: %s." % (
+        "accepted as partial by --allow-no-heightmap" if accepted
+        else "it exits non-zero. Set COBBLERS_SOURCE_ROOT, or pass --allow-no-heightmap to accept a partial run"))
+    for line in _heightmap_skips[:10]:
+        tr.line("  " + line)
+    if len(_heightmap_skips) > 10:
+        tr.line("  ... and %d more" % (len(_heightmap_skips) - 10))
 
 
 def pytest_configure(config):

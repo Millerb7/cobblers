@@ -5,8 +5,10 @@ The pit (tools/rift_deep.py) is five terraced rings stepping 17 down to a floor 
 on it, as docs/world-building/DEEP_CITY.md designs it and data/deep_city.json lays it out: buildings for the
 families against every riser, their roofs flush with the street above; the Haven Compact's HQ down the west risers
 with its tower over the lip; a stair tower round every lift bank and at the Sink Gate; the Core spire and its
-bridges; the lighting layers; the Centre and Mart; and the relic area's surface beside the Deep -- its shrine, ring,
-arches, dig and the Compact's cordon -- with the cavern beneath left sealed.
+bridges; the lighting layers; the Centre and Mart; and the relic area's surface beside the Deep, CAPPED: the sealed
+entrance, the lookout and the Compact's dig. The shrine, ring, arches and standing stones went underground on
+2026-10-02 (tools/relic_underground.py, the owner: "the relic site underground"), and the cordon was replaced by that
+tool's zone check; the old surface build is kept verbatim in tools/relic_surface_superseded.py for R9RU's undo.
 
 It builds shells. The rooms the story needs are left empty and labelled (data/deep_city.json rooms); Hoopa's
 cradle, the passage to it, the HQ's basement and its shaft are reserved volumes nothing is written into.
@@ -1272,21 +1274,13 @@ def build(source_root, server_dir=None):
                                   "door": [lot.door[0], lot.level + 1, lot.door[1]] if lot.door and si == 0 else None,
                                   "sealed": bool(room.get("sealed")), "storey": si,
                                   "section_columns": len(lot.cols)})
-    # the shaft head's hatch: reinforced deepslate where the shaft will open, flush in the HQ's ring-0 floor
-    hx, hz = hq["tower"]["at"]
-    hatch = []
-    for dx in (-1, 0, 1):
-        for dz in (-1, 0, 1):
-            c = (hx + dx, hz + dz)
-            if c in hq0.cols:
-                cv.put(c[0], rings[0], c[1], P("seal"), owner="hq_0")
-                hatch.append(c)
-    if not hatch:
-        # the sited column is under the tower: the hatch goes in the ring-0 section's floor nearest it
-        c = min(hq0.cols, key=lambda c: (abs(c[0] - hx) + abs(c[1] - hz), c))
-        cv.put(c[0], rings[0], c[1], P("seal"), owner="hq_0")
-        hatch.append(c)
-    plan["hq_shaft_hatch"] = [list(c) for c in hatch]
+    # the shaft head is NOT the city's (2026-10-02). This build used to lay a reinforced-deepslate hatch on the ring-0
+    # section's columns nearest the sited column (3427, 3308); the tower box and the pit's edge left only (3427, 3308)
+    # and (3427, 3309), both boundary columns, so the hatch lay under the section's own west wall where no shaft can
+    # open. The secure shaft is now a stair from storey 0's south-west corner, carved with the records room by
+    # tools/relic_underground.py (R9RU, data/relic_underground.json geometry.hq), which also lays those two cells back
+    # to rock on a world that has the hatch. The stair's head is reserved (data/deep_city.json hq_shaft_head).
+    plan["hq_shaft_head"] = "tools/relic_underground.py, data/relic_underground.json geometry.hq"
     # the HQ tower
     x0, z0, x1, z1 = tower_box
     base = rings[0] + 1
@@ -1811,76 +1805,22 @@ def build_relic(cv, P, spec, source_root, count, checks):
 
     out = {"reserved_below": [r["id"] for r in spec["reserved"] if r["id"] == "hoopa_cradle"]}
     own = "relic"
-    # the shrine: a stepped round platform at its median ground
+    # THE RELIC SITE IS UNDERGROUND (the owner, 2026-10-01; data/relic_underground.json, RELIC_UNDERGROUND.md).
+    # The shrine platform, the six ring arches, the plinth and its ring, the standing stones, the processional way
+    # and the Compact's cordon are NOT BUILT here any more: the first five stand in the hall under this ground
+    # (tools/relic_underground.py), and the cordon is replaced by that file's zone check. This surface keeps only the
+    # Compact's cap: the sealed entrance, the lookout and the dig (data/deep_city.json relic_area.capped).
+    # The shrine's disc, the way and the stones' footprints are still COMPUTED, writing nothing, because the dig's
+    # placement is keyed to them (`keep` below): the dig the world already holds must not move when this is rebuilt.
+    # What the old build left in a world is taken off by R9RU's undo (tools/relic_underground.py), not by this file.
     sh = rs["shrine"]
     scx, scz = sh["centre"]
     rad = sh["radius"]
     disc = [(x, z) for x in range(scx - rad, scx + rad + 1) for z in range(scz - rad, scz + rad + 1)
             if math.hypot(x - scx, z - scz) <= rad + 0.5 and inr(x, z)]
     base = int(np.median([gr(x, z) for x, z in disc]))
-    tops = {}
-    for x, z in disc:
-        r = math.hypot(x - scx, z - scz)
-        band = 0 if r > rad * 0.69 else (1 if r > rad * 0.38 else 2)
-        top = base + band
-        gy = gr(x, z)
-        for y in range(min(gy, top) + 1 if gy < top else top + 1, max(gy, top) + 1):
-            cv.put(x, y, z, "minecraft:air" if y > top else P("ancient_stone"), owner=own)
-        for y in range(top + 1, top + 7):
-            cv.put(x, y, z, "minecraft:air", owner=own)
-        b = {0: P("ancient_stone"), 1: "minecraft:polished_tuff", 2: "minecraft:chiseled_tuff_bricks"}[band]
-        a = math.degrees(math.atan2(x - scx, -(z - scz))) % 360
-        if abs(r - rad * 0.69) < 0.7 and ang_diff(a, round(a / 30.0) * 30.0) < 4:
-            b = P("rift_seep")
-        cv.put(x, top, z, b, owner=own, exterior=b == P("rift_seep"))
-        tops[(x, z)] = top
-    out["shrine"] = {"centre": [scx, scz], "radius": rad, "base": base}
-    count("relic shrine columns", len(disc))
-    # six ring arches round it, each an upright ring you look through from the middle
-    ar = rs["arches"]
-    arches = []
-    for k in range(ar["count"]):
-        a = math.radians(30 + k * 360.0 / ar["count"])
-        ax, az = scx + ar["orbit"] * math.sin(a), scz - ar["orbit"] * math.cos(a)
-        n = (math.sin(a), -math.cos(a))
-        tvec = (-n[1], n[0])
-        R_ = ar["radius"]
-        cy = base + R_ + 1
-        pts = _ring_voxels(ax, cy, az, n, tvec, R_, 0.5)
-        for (x, y, z, ang) in pts:
-            if not inr(x, z):
-                continue
-            b = P("distortion")
-            if ang_diff(ang, 90) < 12:
-                b = P("rift_seep")
-            elif int(ang) % 90 in range(40, 50):
-                b = P("glass_band")
-            cv.put(x, y, z, b, owner=own, exterior=b == P("rift_seep"))
-        arches.append([round(ax), round(az)])
-    out["arches"] = arches
-    count("relic arches", len(arches))
-    # the plinth and the relic ring, broken, facing the dig camp and the Deep
-    rg = rs["ring"]
-    top2 = base + 2
-    for dx in range(-2, 3):
-        for dz in range(-2, 3):
-            x, z = scx + dx, scz + dz
-            for y in range(top2 + 1, top2 + rg["plinth"] + 1):
-                corner = abs(dx) == 2 and abs(dz) == 2
-                cv.put(x, y, z, P("rift_seep") if corner else "minecraft:chiseled_tuff_bricks", owner=own, exterior=corner)
-    cy = top2 + rg["plinth"] + rg["radius"] + 1
-    n = (1.0, 0.0)
-    tvec = (0.0, 1.0)
-    ring_top = 0
-    for (x, y, z, ang) in _ring_voxels(scx, cy, scz, n, tvec, rg["radius"], 1.0):
-        if ang_diff(ang, 60) < rg["gap_degrees"] / 2.0:
-            continue
-        rr = math.hypot(z - scz, y - cy)
-        b = P("rift_seep") if rr < rg["radius"] - 0.3 else P("hoopa_gold")
-        cv.put(x, y, z, b, owner=own, exterior=b == P("rift_seep"))
-        ring_top = max(ring_top, y)
-    out["ring"] = {"centre": [scx, cy, scz], "radius": rg["radius"], "top": ring_top}
-    checks.append((scx, cy - rg["radius"], scz, [P("hoopa_gold"), P("rift_seep")], "relic ring"))
+    out["shrine"] = {"centre": [scx, scz], "radius": rad, "base": base, "built": False,
+                     "moved_to": "data/relic_underground.json"}
     # the sealed entrance: a sunken forecourt down to a doorway walled with reinforced deepslate behind bars
     se = rs["sealed_entrance"]
     ex, ez = se["at"]
@@ -1932,17 +1872,14 @@ def build_relic(cv, P, spec, source_root, count, checks):
             cv.put(x, ly + 1, z, P("rail"), 2, owner=own)
     cv.put(lx, ly + 1, lz, "minecraft:lantern[hanging=false,waterlogged=false]", 2, owner=own, exterior=True)
     out["lookout"] = [lx, ly, lz]
-    # the processional way from the shrine to the lookout, flush in the ground
+    # the processional way's and the standing stones' footprints: computed, NOT BUILT (see the top of this function).
+    # The shrine they served is underground; the dig below keeps clear of where they stood, exactly as it always has
     way = set()
     for x in range(scx + rad, lx - 2):
         for z in (lz - 1, lz, lz + 1):
             zc = round(scz + (lz - scz) * (x - scx - rad) / max(1, lx - 2 - scx - rad)) + (z - lz)
             if inr(x, zc):
-                cv.put(x, gr(x, zc), zc, P("ancient_stone"), owner=own)
-                for y in range(gr(x, zc) + 1, gr(x, zc) + 4):
-                    cv.put(x, y, zc, "minecraft:air", owner=own)
                 way.add((x, zc))
-    # the standing stones round the shrine, two of them fallen
     stn = rs["stones"]
     stones = []
     for k in range(stn["count"]):
@@ -1951,28 +1888,11 @@ def build_relic(cv, P, spec, source_root, count, checks):
         fp = [(sx_ + dx, sz_ + dz) for dx in (0, 1) for dz in (0, 1)]
         if not all(inr(*p) for p in fp) or any(p in way for p in fp):
             continue
-        h = stn["height"][0] + hsh(sx_, 0, sz_, 31) % (stn["height"][1] - stn["height"][0] + 1)
-        if len(stones) < stn["fallen"] and k % 3 == 1:
-            # fallen: lying along the ground, tangent to the circle
-            tx, tz = (1, 0) if abs(math.cos(a)) > 0.7 else (0, 1)
-            for i in range(h):
-                for p in ((sx_ + tx * i, sz_ + tz * i), (sx_ + tx * i + tz, sz_ + tz * i + tx)):
-                    if inr(*p):
-                        cv.put(p[0], gr(*p) + 1, p[1], P("ancient_stone") if i % 3 else "minecraft:chiseled_tuff", owner=own)
-            stones.append({"at": [sx_, sz_], "fallen": True})
-            continue
-        for x, z in fp:
-            gy = gr(x, z)
-            for y in range(gy + 1, gy + h + 1):
-                b = P("ancient_stone")
-                if y == gy + h:
-                    b = "minecraft:chiseled_tuff"
-                elif y == gy + h // 2 + 1:
-                    b = P("rift_seep")
-                cv.put(x, y, z, b, owner=own, exterior=b == P("rift_seep"))
-        stones.append({"at": [sx_, sz_], "height": h})
-    out["stones"] = stones
-    count("relic standing stones", len(stones))
+        stones.append({"at": [sx_, sz_]})
+    out["not_built"] = {"why": "the relic site is underground (data/relic_underground.json); R9RU takes the old "
+                               "surface build off a world that has it",
+                        "elements": ["shrine platform", "six ring arches", "plinth and relic ring", "standing stones",
+                                     "processional way", "the Compact cordon"]}
     # the Compact's dig: trenches, spoil heaps, fallen fragments, crates, survey stakes
     keep = {(x, z) for x, z in disc} | {(x, z) for x in range(ex - 1, ex + 11) for z in range(ez - 4, ez + 5)} | set(look)
     keep |= way | {(s["at"][0] + dx, s["at"][1] + dz) for s in stones for dx in range(-2, 10) for dz in range(-2, 10)}
@@ -2041,53 +1961,13 @@ def build_relic(cv, P, spec, source_root, count, checks):
     out["debris"] = placed
     for k_, v_ in placed.items():
         count("relic %s" % k_, v_)
-    # the cordon: tinted glass under iron bars along the whole traced edge, copper posts with lamps, the gate shut
-    cd = rs["cordon"]
-    ring_ = sorted(boundary)
-    dp = regions_seed(cd["gate_toward"])
-    gate = sorted(ring_, key=lambda c: ((c[0] - dp[0]) ** 2 + (c[1] - dp[1]) ** 2, c))[:5]
-    n_post = 0
-    for k_, (x, z) in enumerate(ring_):
-        gy = gr(x, z)
-        post = hsh(x, 5, z, 29) % cd["post_every"] == 0 or (x, z) in gate[:1] or (x, z) in gate[-1:]
-        if post:
-            for y in range(gy + 1, gy + cd["height"] + 1):
-                cv.put(x, y, z, P("rib_teal"), owner="cordon")
-            cv.put(x, gy + cd["height"] + 1, z, P("sea_lantern") if (x, z) in gate else "minecraft:end_rod[facing=up]",
-                   2 if (x, z) not in gate else 1, owner="cordon", exterior=True)
-            n_post += 1
-        else:
-            cv.put(x, gy + 1, z, P("glass_dark"), owner="cordon")
-            for y in range(gy + 2, gy + cd["height"] + 1):
-                cv.put(x, y, z, P("bars"), 2, owner="cordon")
-    out["cordon"] = {"columns": len(ring_), "posts": n_post, "gate": [list(c) for c in gate], "gate_state": "shut"}
-    count("relic cordon columns", len(ring_))
+    # no cordon: the owner rejected the fence (2026-10-01, "turned back by the zone check rather than barriers"). The
+    # zone check is data/relic_underground.json's, and it is underground; the relic area's surface is open ground
     return out
 
 
-def regions_seed(region):
-    r = json.loads((ROOT / "data" / "rift_regions.json").read_text(encoding="utf-8"))["regions"][region]
-    x0, z0, x1, z1 = r["bbox"]
-    return ((x0 + x1) / 2.0, (z0 + z1) / 2.0)
-
-
-def _ring_voxels(cx, cy, cz, n, t, R, half):
-    """Voxels of an upright ring of radius R centred (cx, cy, cz), its plane's normal the horizontal unit vector n,
-    t the horizontal in-plane unit vector; half is half its thickness along n. -> [(x, y, z, angle from +t)]"""
-    out = []
-    span = int(R + 2)
-    for x in range(int(math.floor(cx - span)), int(math.ceil(cx + span)) + 1):
-        for z in range(int(math.floor(cz - span)), int(math.ceil(cz + span)) + 1):
-            for y in range(int(cy - span), int(cy + span) + 1):
-                dx, dz, dy = x - cx, z - cz, y - cy
-                u = dx * n[0] + dz * n[1]
-                if abs(u) > half:
-                    continue
-                v = dx * t[0] + dz * t[1]
-                rr = math.hypot(v, dy)
-                if R - 0.75 <= rr <= R + 0.5:
-                    out.append((x, y, z, math.degrees(math.atan2(dy, v)) % 360))
-    return out
+# regions_seed() and _ring_voxels() served only the cordon and the ring arches; they moved with the superseded surface
+# build to tools/relic_surface_superseded.py, verbatim, where R9RU's undo derives what to take off a world.
 
 
 # ------------------------------------------------------------------ writing the pack
@@ -2202,7 +2082,8 @@ def verify(world):
         return 1
     p = json.loads(PLAN.read_text(encoding="utf-8"))
     kinds = {c[4] for c in p["checks"]}
-    need = {"lift landing roof", "tower core", "spire beacon", "relic seal", "relic ring", "block"}
+    # no "relic ring": the ring is underground (tools/relic_underground.py) and its own verify checks it
+    need = {"lift landing roof", "tower core", "spire beacon", "relic seal", "block"}
     if not need <= kinds:
         print("FAIL: the plan checks %s, missing %s" % (sorted(kinds), sorted(need - kinds)))
         return 1
