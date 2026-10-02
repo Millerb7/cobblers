@@ -72,25 +72,36 @@ rematch with a persistent trainer anyway), and the Victory Road trailhead moved 
 
 ## 5. THE TESTS ARE THE DEBT. Fix this first.
 
-**29 failed, 5,235 passed** on the last full run (658 s), against a baseline of **6**. **Not one is a fault
-in the data** — every one is a test asserting something a decision deliberately changed. Chip
-**`task_4e2821f9`** carries the brief. Known contributors:
+**29 failed, 5,235 passed, 9 xfailed** (758 s). Baseline is **6**. **All 29 are accounted for by name
+below, and not one is a fault in the data** — every new failure is a test asserting behaviour a decision
+deliberately changed. Chip **`task_4e2821f9`** carries the brief.
 
-- **C15 has no test, on purpose.** `test_every_contract_names_existing_tests` and
-  `test_every_contract_test_here_is_registered` fail until it is written. C15 carries a verbatim
-  `note_for_the_test_author` and a reserved test name.
-- **8 in `test_trainer_cycle.py`** — one asserts 56 seats where there are now 63; seven are the cooldown
-  parametrisation hitting arena seats that **deliberately have no cooldown line**.
-- **6 in `test_blackout_pack.py`** near lines 690 and 717, still asserting `ceil(balance*pct/100)`.
-- **1 in `test_id_authorship.py`** — `test_a_diverging_dialogue_text_is_superseded_rather_than_faulted`
-  asserts `RT.SUPERSEDED` is non-empty, and B2 deleted the ten sets that made it so. **Proved
-  pre-existing** by stashing the arena work out, where it still fails.
-- **2 in `test_rift_heightmap.py`** — `_maps()` reads `heightmap["path"]`, which the water pass moved.
-  They want `plan_target()`.
+**The 6 baseline failures, unchanged and not to be chased:**
+3 `test_sea_town.py` (`the_towns_record_covers_every_authored_element_and_building`,
+`the_jetty_starts_on_the_beach`, `plan_refuses_a_raft_over_land`), 2 `test_rift_heightmap.py`
+(`the_sculpt_moves_no_settlement_footprint`, `the_sculpt_changes_only_the_rift_and_stays_under_the_ceiling`
+— `_maps()` reads `heightmap["path"]`, which the water pass moved; they want `plan_target()`), and 1
+`test_mines_independent.py` (`every_surface_face_stands_inside_the_towns_it_belongs_to`).
 
-**Re-run the suite and account for all 29 by name before building anything.** The list above is assembled
-from agent reports and may be incomplete: the run that produced the number had its output truncated by a
-`tail`, which is my error and exactly the kind this handover warns about.
+**The 23 new ones, by cause:**
+
+| Count | Test | Cause |
+|---:|---|---|
+| 7 | `test_trainer_cycle::test_the_cooldown_needs_a_tagged_player_near_and_no_untagged_one[arena_tier_1..7]` | the arena's seats **deliberately have no cooldown line** (`repeatable: true`) |
+| 1 | `test_trainer_cycle::test_every_placed_trainer_has_exactly_one_line_of_each_kind` | asserts 56 seats; there are now **63** |
+| 5 | `test_blackout_pack::test_the_charge_is_correct_for_every_balance_a_score_can_hold[…]` | B10: the charge is flat, not `ceil(balance*pct/100)` |
+| 1 | `test_blackout_pack::test_the_charge_is_the_ceiling_of_percent_of_the_balance_and_at_least_one` | B10: the test's own name is now the old rule |
+| 3 | `test_blackout_recovery_pid::test_a_tagged_gulch_mega_makes_no_claim_but_the_loss_still_costs_money[…]` | B10, **not previously known** — the recovery path asserts the proportional charge too |
+| 1 | `test_blackout_recovery_pid::test_a_wild_victors_claim_holds_the_money_its_win_took_and_pays_it_back_once` | B10, same cause |
+| 2 | `test_system_contracts::test_every_contract_names_existing_tests` / `…_test_here_is_registered` | **C15 has no test, on purpose.** It carries a verbatim `note_for_the_test_author` and a reserved name |
+| 1 | `test_id_authorship::test_a_diverging_dialogue_text_is_superseded_rather_than_faulted` | B2 deleted the ten superseded sets, so `RT.SUPERSEDED` is legitimately empty. **Proved pre-existing** by stashing the arena work out, where it still fails |
+| 1 | `test_reapply_route_steps::test_r17_places_every_trainer_at_its_seat` | the arena added 7 seats to R17 |
+| 1 | `test_mansion_guardians::test_r17_placements_are_the_route_seats_then_the_guardians` | same: R17's placement order now has the arena in it |
+
+**Two of those groups were not in any agent's report** — the four `test_blackout_recovery_pid` failures and
+the two R17 placement-order tests — which is why the list was re-derived from a full run rather than
+assembled from reports. The first attempt at this number had its output truncated by a `tail`, and the
+guess that followed would have missed six.
 
 ## 6. What waits on the owner
 
