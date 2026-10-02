@@ -55,8 +55,8 @@ TWO RECORDING INCONSISTENCIES in the unscheduled sites, found by the first autho
                     for 310. Each declared margin must resolve EXACTLY onto one of the two real ceilings.
 
 A scheduled site has no `top_y`, `ceiling_margin`, `centre` or `command`: they went with the deleted block.
-What it has instead is a one-line pointer (`placement_moved` on the Crown, `placement_lives_in` on the towers --
-two names for one thing) that QUOTES the corner, y, rotation and mirror, and on the towers the top layer and
+What it has instead is a one-line pointer (`placement_lives_in` on every scheduled site)
+that QUOTES the corner, y, rotation and mirror, and on the towers the top layer and
 its margin. A quoted position is a second copy of the position, so `pointer_problems` holds every number it
 quotes to the placements record and the template height; it is to a scheduled site what `command_problems` is
 to an unscheduled one.
@@ -133,7 +133,7 @@ CELLS = json.loads((ROOT / "data" / "cells.json").read_text(encoding="utf-8"))["
 
 # The pointer a scheduled site leaves where its `placement` block was. The Crown's is named one way and the
 # towers' another; either is accepted, and a scheduled site with neither fails.
-POINTER_KEYS = ("placement_moved", "placement_lives_in")
+POINTER_KEYS = ("placement_lives_in",)
 
 
 @pytest.fixture(scope="module")
@@ -853,8 +853,8 @@ def test_an_unscheduled_template_turning_up_in_placements_is_caught():
     ("adopted_dawn_tower", lambda s: s.__setitem__("placement_lives_in", s["placement_lives_in"].replace("y188", "y189"))),
     ("adopted_dawn_tower", lambda s: s.__setitem__("placement_lives_in", s["placement_lives_in"].replace("(122", "(121"))),
     ("adopted_dusk_tower", lambda s: s.__setitem__("placement_lives_in", s["placement_lives_in"].replace("7216", "7217"))),
-    ("adopted_crown_cemetery", lambda s: s.__setitem__("placement_moved", s["placement_moved"].replace("rotation none", "rotation 180"))),
-    ("adopted_crown_cemetery", lambda s: s.pop("placement_moved")),
+    ("adopted_crown_cemetery", lambda s: s.__setitem__("placement_lives_in", s["placement_lives_in"].replace("rotation none", "rotation 180"))),
+    ("adopted_crown_cemetery", lambda s: s.pop("placement_lives_in")),
 ])
 def test_a_stale_pointer_is_caught(sid, mutate):
     # Proves pointer_problems reads every number it says it reads.

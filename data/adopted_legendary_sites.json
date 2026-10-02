@@ -15,7 +15,7 @@
  "ceiling": {
   "max_y": 310,
   "source": "data/world.json vertical.max_y, and measured_ceiling_y 310",
-  "verdict": "all four clear it by 86 blocks or more; the tallest top is y224 (Articuno). Every top_y here is the top OCCUPIED layer, y + height - 1, and every ceiling_margin is measured against this max_y."
+  "verdict": "all six clear it by 75 blocks or more; the tallest top is y235 (the Dusk tower). Every top_y here is the top OCCUPIED layer, y + height - 1, and every ceiling_margin is measured against this max_y; a scheduled site's top is stated in its placement_lives_in line."
  },
  "what_never_travels": {
   "verified": "EXP-013 on a disposable world: `/place structure`, `/place jigsaw` and `/place template` all leave every chunk with empty `starts` and `References`, and `/locate`, `location_check` and the gym map ignore the build (docs/world-building/STRUCTURE_INVENTORY.md:271-274).",
@@ -224,8 +224,8 @@
    },
    "gate_why_null": "same as Mew's: the trigger is unreadable. Its class_reason in data/structures.json says 'awakened with a carrot crop grown on site', which is a plausible reading of a closed-source block and is not a source. Nothing is authored on it.",
    "scheduled_as": "legendary_crown_cemetery",
-   "placement_moved": "the position, rotation and mirror now live ONLY in data/placements.json legendary_crown_cemetery: corner (4118, 1982), y109, rotation none, mirror none. Deleted here so one site has one author (placement_method.not_in_placements_json).",
-   "what_a_player_gets": "brushable gravel rolling seven Cobblemon loot tables (ancient and special balls, Poke Balls, rare items, TMs, vitamins, X items), a regrowing shaderoot carrot crop, and Spectrier if the trigger answers a thrown carrot. NOTE: the crop regrows and the trigger's only brake is a 'pokemon_already_nearby' check and an in-memory per-player cooldown, so Spectrier is probably REPEATABLE (INFERRED). Owner's call whether that is a reward or a farm."
+   "what_a_player_gets": "brushable gravel rolling seven Cobblemon loot tables (ancient and special balls, Poke Balls, rare items, TMs, vitamins, X items), a regrowing shaderoot carrot crop, and Spectrier if the trigger answers a thrown carrot. NOTE: the crop regrows and the trigger's only brake is a 'pokemon_already_nearby' check and an in-memory per-player cooldown, so Spectrier is probably REPEATABLE (INFERRED). Owner's call whether that is a reward or a farm.",
+   "placement_lives_in": "the position, rotation and mirror now live ONLY in data/placements.json legendary_crown_cemetery: corner (4118, 1982), y109, rotation none, mirror none. Deleted here so one site has one author (placement_method.not_in_placements_json)."
   },
   {
    "id": "adopted_zapdos_tower",
