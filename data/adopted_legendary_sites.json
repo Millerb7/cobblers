@@ -235,7 +235,7 @@
    "what_a_player_gets": "brushable gravel rolling seven Cobblemon loot tables (ancient and special balls, Poke Balls, rare items, TMs, vitamins, X items), a regrowing shaderoot carrot crop, and Spectrier if the trigger answers a thrown carrot. NOTE: the crop regrows and the trigger's only brake is a 'pokemon_already_nearby' check and an in-memory per-player cooldown, so Spectrier is probably REPEATABLE (INFERRED). DECIDED, the owner, 2026-10-02: a farm, not a reward. Capped to once per player, permanently (spectrier_once_per_player).",
    "placement_lives_in": "the position, rotation and mirror now live ONLY in data/placements.json legendary_crown_cemetery: corner (4118, 1982), y109, rotation none, mirror none. Deleted here so one site has one author (placement_method.not_in_placements_json).",
    "spectrier_once_per_player": {
-    "status": "APPROVED (the owner, 2026-10-02: two agents), BUILDING. No longer waiting on EXP-048: the owner summoned Spectrier in game. Until it lands, Spectrier is repeatable.",
+    "status": "BUILT, NOT RUN (2026-10-02): tools/spectrier_cap.py generates build/datapacks/cobblers_spectrier_cap from data/spectrier_cap.json (its parameters, the wild-vs-owned NBT test with Cobblemon 1.8.0 sources, and the one reading the spec left open: a Spectrier with nobody within 16 waits for the first player to come that close). World-local and self-driving through its own tick tag (tools/reapply.py SERVER_PACKS, WORLD_LOCAL, EXCLUDED; prepare job spectrier_cap). Tests are another agent's; nothing is verified in game. Until it is installed, Spectrier is repeatable.",
     "why_lumymon_cannot_do_it": "the trigger's only brakes are a 'pokemon_already_nearby' check and a cooldown held in an in-memory map keyed by player UUID (lumymon-altars.md section 1), lost on restart. LumyMon is closed source; nothing in its config (11 keys) caps a summon.",
     "mechanism": [
      "a tick function guarded by `execute if entity @a[<within 48 of the cemetery centre (4140, 112, 2005)>]`, costing nothing when nobody is there",
@@ -765,7 +765,7 @@
  "owner_decisions_2026_10_02": {
   "enable_command_block": "TRUE, a server requirement. tools/install_check.py reports anything else as a PROPERTY problem; server/config/server.properties.example carries it.",
   "necrozma_one_per_tower_server_wide": "KEPT: 'a one-per-server legendary is a better story on a server for friends - whoever gets there first gets it.'",
-  "spectrier": "ONCE PER PLAYER, PERMANENTLY: 'a regrowing carrot crop with a per-player cooldown lost on restart is a farm, not a reward.' Designed in adopted_crown_cemetery.spectrier_once_per_player; NOT BUILT.",
+  "spectrier": "ONCE PER PLAYER, PERMANENTLY: 'a regrowing carrot crop with a per-player cooldown lost on restart is a farm, not a reward.' Designed in adopted_crown_cemetery.spectrier_once_per_player; BUILT, NOT RUN (tools/spectrier_cap.py -> cobblers_spectrier_cap).",
   "the_three_feathers": "worth building toward: Moltres in the Craters with Blaine, Articuno on Frostpeak, Zapdos on the western cliffs, with the feathers handed out by the Frostpeak research camp (data/frostpeak_camp.json item_economy). The feathers are handed out THROUGH DIALOGUE, as a reward for work the researchers ask for - not a shop: 'earning one should mean helping them study.' Gate gym8_cleared, DECIDED. The Moltres site is measured: adopted_moltres_tower.",
   "eternatus": "STAYS OUT until a Galar Particle supply is authored."
  }

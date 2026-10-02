@@ -119,6 +119,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-09-28: no catching over the level cap (tools/levelcap_pack.py, data/level_cap.json): a Cobblemon
                 # callback acts on its own, so world-local below
                 "cobblers_levelcap",
+                # 2026-10-02: one Spectrier per player at the Crown Cemetery (tools/spectrier_cap.py,
+                # data/spectrier_cap.json): its own tick tag judges each new wild Spectrier, so world-local below,
+                # the cobblers_sizes shape (self-driving, no blocks, no step)
+                "cobblers_spectrier_cap",
                 # 2026-09-27: the Rift dig camp's mines, quarries and the mega stone seam (tools/rift_mines.py): blocks
                 # run by R9M, and the seam crystal's ward and daily face that act on their own (an advancement, a tick
                 # driver), so world-local below. Its gated galleries went to the gulch the same day
@@ -192,6 +196,8 @@ EXCLUDED = {
     "cobblers_sizes": "self-driving: its own minecraft load tag runs it",
     "cobblers_levelcap": "self-driving: a Cobblemon poke_ball_capture_calculated callback runs its check; its load tag makes the scores",
     "cobblers_rift_storm": "self-driving: its own minecraft load tag starts the storm loop (tools/rift_storm.py)",
+    "cobblers_spectrier_cap": "self-driving: its own minecraft tick tag judges each new wild Spectrier at the Crown "
+                              "Cemetery (tools/spectrier_cap.py); it writes no blocks",
     "cobblers_blackout": "self-driving: its own load and tick tags, an advancement and three Cobblemon callbacks run it; "
                          "it writes no blocks",
     "cobblers_titles": "event functions (enter_place_*), fired on entering a place, not applied to the world",
@@ -215,7 +221,7 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_sizes", "cobblers_blackout", "cobblers_rift_mines", "cobblers_gulch_mine",
                "cobblers_rift_zones", "cobblers_mega_recipes",
                "cobblers_ferries", "cobblers_ambient", "cobblers_levelcap", "cobblers_mines",
-               "cobblers_legendaries")
+               "cobblers_legendaries", "cobblers_spectrier_cap")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -530,6 +536,8 @@ def prepare_jobs(a):
     add("kit:pack", "kit.py", "pack")
     add("spawn_tag_pack", "spawn_tag_pack.py", "--check-paint", str(BUILD / "paint" / "biomes.png"))
     add("size_outliers", "size_outliers.py")
+    # one Spectrier per player at the Crown Cemetery (data/spectrier_cap.json; fails closed if the placement moved)
+    add("spectrier_cap", "spectrier_cap.py")
     # blackout, recovery claims and the water ladder (data/blackout.json, data/water_mounts.json)
     add("blackout_pack", "blackout_pack.py")
     # the loose functions (town prep, elders, grove, islet) in one pack
