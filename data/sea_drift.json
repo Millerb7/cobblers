@@ -179,7 +179,7 @@
       "launch": "Powered Rail: an activated powered rail will 'accelerate a non-moving minecart away from a solid opaque block the powered rail is facing'",
       "max_speed": "Minecart: 'a predefined speed limit of exactly 8 blocks per second per axis of travel'",
       "activator": "Activator Rail: when activated it 'ejects mobs (including players) from minecarts', so no power source and no detector rail is ever next to one",
-      "assumed": "NOT from a source, to be probed in game (experiments/EXP-049-drift-minecart-line): that an occupied cart arriving at full speed stops on the single stop rail without leaving the line, and that rails placed by setblock in route order settle to the shapes written (vanilla re-shapes a new rail from its neighbours)"
+      "assumed": "NOT from a source, to be probed in game (experiments/EXP-050-drift-minecart-line): that an occupied cart arriving at full speed stops on the single stop rail without leaving the line, and that rails placed by setblock in route order settle to the shapes written (vanilla re-shapes a new rail from its neighbours)"
     },
     "spawn_policy": "the curves' minecraft:rail is whitelisted for this place only (data/spawn_block_policy.json, scope 'sea_drift'); the audit fails a minecraft:rail written in any shape but a curve"
   },
