@@ -13,8 +13,10 @@ half unchanged. Section 3's removal is **applied** (2026-10-02): `tools/deep_cit
 surface shrine, `data/deep_city.json` carries `relic_area.capped`, and the old generator is kept verbatim in
 `tools/relic_surface_superseded.py`.
 
-**Read section 8 before flying it: the HQ's basement and shaft are built by no tool, so the hall is carved,
-complete and SEALED -- nobody walks in until they are.**
+**The way in is built (section 8b, 2026-10-02):** the HQ's ring-0 front door at (3443, 67, 3282), opened by a
+pressure plate each side, then a lit stair from the storey-0 room's south-west corner down the reserved secure shaft
+to a records room at y0, whose open west doorway is the passage's east end. Until then (section 8, item 3) the hall
+was carved, complete and sealed.
 
 Sources: `DEEP_CITY.md` sections 2, 3 and 5 (the HQ's siting, the passage's arithmetic, the composition's
 numbers); `docs/mechanics/RIFT_ZONES.md` section 4 (the zone check); `data/rift_zones.json` and
@@ -136,9 +138,9 @@ exact shape. And the rung above configuration that the superseded design used wa
 a fence is a barrier, not a rung.
 
 ```
-          ring 0, y66   [HQ tower x3427-3439]        turn-back: (3444, 67, 3308), facing east (moved 2026-10-02)
-                              |  shaft down 66   (UNBUILT: a reinforced-deepslate hatch at (3427, 66, 3308))
-   y0  ................  [HQ basement]  <-- knock box (3422-3424, 1-3, 3305-3307), OUTSIDE the zone (UNBUILT: rock)
+          ring 0, y66   HQ front door (3443, 67, 3282) -> storey-0 room   turn-back: (3444, 67, 3308), facing east
+                              |  the stair, 66 down from (3429, 66, 3299) in the reserved shaft (section 8b)
+   y0  ................  [records room x3422-3428]  <-- knock box (3422-3424, 1-3, 3305-3307), OUTSIDE the zone
                               |
    y1          x3421 OPEN DOORWAY  ---- threshold x3420-3421: carved, NOT in the zone
                               |          a passless player stands here and sees the passage
@@ -319,7 +321,8 @@ The pack's output path moved from `build/cobblers_relic_underground` to `build/d
    (3422-3424, 1-3, 3305-3307) is solid, **nobody can walk in and nobody can be granted the pass.** The hall is
    reachable only by digging, and the zone turns a passless digger back. Carving the basement and shaft is
    DEEP_CITY.md section 9 step 5 ("HQ, shaft, passage and cradle, once Codex sends the chamber's needs") and an
-   owner/Codex decision; it is not done here (`zone.hq_access`).
+   owner/Codex decision; it is not done here (`zone.hq_access`). **Superseded the same day by section 8b**, which
+   builds them.
 4. **The shell would have filled the city.** The shell's `replace` converts air; under the Deep's ring 0 the
    city cuts rooms into the risers. The build now caps a pit column's shell at its tread and drops any cell the
    city writes. Measured: **0 cells clipped** either way at today's geometry, so this is a guard, not a repair.
@@ -346,6 +349,68 @@ from a world. **What goes back:**
 **Swept, not assumed:** `cobblers_rift_zones` (the throat wall runs along the relic area's west side) writes 0
 cells the old build wrote; the audit sweeps every built pack for a cell the undo or the shell touches.
 
+## 8b. The HQ's way down (2026-10-02, `carve/40_hq` in R9RU)
+
+The owner's sentence needs a way in through the HQ, and no tool built one. `data/relic_underground.json`
+`geometry.hq` is the data and `tools/relic_underground.py` builds it as `carve/40_hq`, the last block function of
+R9RU: after the reshell, so no shell pass seals it, and the shell never lays a cell of it.
+
+**What the HQ actually is, measured off `tools/deep_city.py`'s build (not a world):**
+
+- The HQ **tower** is `tower_box` [3428, 3303, 3438, 3313]: walls x3428 and x3438, interior x3429-3437. It has **no
+  door** ("the tower's storeys, empty; no way in is built"). The ring-0 section's own walls flank it at x3427 or x3428
+  and x3439, which is where the earlier "x3427-3439" came from.
+- The HQ's **ring-0 section** is lot `hq_66` (939 columns, x3427-3448, z3251-3320). Its storey 0 is the room
+  `hq_secure_shaft_head`: air y67-70 over the Deep's tread y66. Its one door is **(3443, 67, 3282), an iron door
+  facing east, closed, with nothing to open it** (the lot is sealed because that room is).
+- The city's **hatch** at (3427, 66, 3308) and (3427, 66, 3309) lay **under the section's west wall** (waxed oxidized
+  copper from y67 up): the sited column lost its 3x3 to the tower box and the pit's edge. No shaft could open there.
+- The reserved **secure shaft** [3423, 0, 3304, 3431, 65, 3312] was drawn for a tower at x3422-3432. Today x3423-3426
+  is the lip's rock outside the pit, x3427-3428 walls, x3429-3431 under the tower's sealed ground storey; no column
+  of the room's floor is over it.
+
+**What is built:**
+
+| Part | Where | What |
+| --- | --- | --- |
+| Front door | (3443, 67, 3282), the city's iron door | a `polished_blackstone_pressure_plate` outside at (3444, 67, 3282) on the sidewalk and inside at (3442, 67, 3282). The door is untouched |
+| Stair head | (3429, 66, 3299), the room's south-west corner | the first three treads open in the room's floor (z3299-3301); the next two pass under the room's and the tower's walls at z3302-3303 with the tread y66 as their ceiling |
+| The stair | x3429-3431, z3299-3312, y0-66 | a switchback in the shaft's 3 x 9: lane a (x3429) descends south, lane b (x3431) north, the spine x3430 is R9B's rock, landings at z3304 and z3312 cross it. 59 `polished_blackstone_brick_stairs` treads facing uphill, 23 `polished_blackstone_bricks` landing cells, three clear over every one. Floors: head y65-53, landings y52/44/36/28/20/12/4, the foot y0 |
+| Stair foot | (3429-3430, 0, 3308) | west through the spine into the records room |
+| Records room | interior x3422-3428, y1-4, z3301-3310 | floor `polished_blackstone_bricks` y0, walls `deepslate_bricks`, ceiling `deepslate_tiles` y5; bookshelves along the north wall, barrels (empty) along the south, a lectern |
+| Doorway | x3421, z3305-3307 | the passage's own cells, open: its floor is y1, so a step up west from the room's y0 |
+| Knock box | (3422-3424, 1-3, 3305-3307) | the room's west end at the doorway: carved air on the room's floor |
+| Lanterns | 19 standing, 2 hanging | in spine niches at every landing and each flight's middle, three along the head flight, five in the room. Never light blocks. Light NOT MEASURED |
+| Old hatch | (3427, 66, 3308), (3427, 66, 3309) | laid back to `deepslate` (the tread's bare-rock margin there was native rock). `tools/deep_city.py` no longer lays it |
+
+**Reserved, and sealed.** Every cell is inside `data/deep_city.json`'s `hq_basement`, `hq_secure_shaft` or the new
+`hq_shaft_head` [3428, 58, 3298, 3430, 66, 3303], except the two plates and the two hatch cells. The city build fails
+closed if it ever writes into any of them; with the hatch gone its build diff is **exactly those two cells removed,
+0 added, 0 changed** (452,337 cells before, 452,335 after). Every face of the way down's air is written, in the shell
+or a hull (`replace` void with rock, inside the reserved boxes, never over a pit tread), under a pit tread where R9B
+refills every void from y-4, or the HQ room's open air over the stair's head; `report` and the audit both check it.
+
+**The walk, checked.** `tools/relic_underground_audit.py` now walks from **outside the front door** (3444, 67, 3282)
+to the plinth's foot through the blocks actually there: the relic pack's writes, else the city pack's (read as text),
+else the pit's tread and the heightmap; an iron door passes only with a plate on both sides; the walk must pass the
+stair's head and the knock box. CLEAN: 2,025 places, both reached. Mutating the **generator** (data untouched) bites:
+the stair's head re-sealed (the hatch, in effect) fails `route` and `hq`; the plates left out fail `route` and `hq`
+(the walk stays on the street); the room one column short of the doorway is refused by the generator's own report
+and, with that report silenced, fails `route`, `zone` and `hq` (`tests/test_relic_underground.py`).
+
+**Found while doing it, fixed here:** the audit failed in any checkout that had built `cobblers_deep` (the pit,
+R9B): 46,909 shell cells overlapped R9B's own `replace #rift_void` fills, and the old rule counted any overlap as a
+conflict. Two void-to-rock fills never fight and R9B runs first, so the audit now exempts the `replace` fills of
+packs applied before R9RU (`EARLIER`, today only `cobblers_deep`; a test pins R9B < R9DC < R9RU in
+`tools/reapply.py`) and still fails on any definite write but the plates.
+
+**Sequencing.** A re-run of R9B after R9RU would refill the stair and the room (its refill is `replace`). R9B runs
+before R9DC before R9RU in `tools/reapply.py`.
+
+**For the owner:** the HQ's ring-0 door was an iron door on a sealed room. The plates open it for anyone, which is
+the instruction (the zone check is the gate, not a door). If the story wants that door locked until some moment,
+that is a gate and belongs in the zone or the dialogue; say so and the plates come off.
+
 ## 9. World probes
 
 For the session that holds the server, after R9RU, over RCON. Each `execute if block` prints "Test passed" when
@@ -366,9 +431,41 @@ execute if block 3390 5 3304 minecraft:deepslate       [passed]  its floor
 execute if block 3390 7 3306 minecraft:air             [passed]  the passage at the junction (floor y6)
 execute if block 3421 2 3306 minecraft:air             [passed]  the passage at the HQ doorway (floor y1)
 execute if block 3421 1 3306 minecraft:deepslate       [passed]  the doorway's floor
-execute unless block 3422 2 3306 minecraft:air         [passed]  BEYOND the doorway is rock: the basement is unbuilt
 execute if block 3358 13 3306 minecraft:air            [passed]  the passage's west end at the cradle's doorstep
 ```
+
+The HQ's way down (section 8b):
+
+```
+execute if block 3443 67 3282 minecraft:iron_door      [passed]  the HQ's front door (the city's)
+execute if block 3444 67 3282 minecraft:polished_blackstone_pressure_plate [passed]  the plate outside it
+execute if block 3442 67 3282 minecraft:polished_blackstone_pressure_plate [passed]  the plate inside it
+execute if block 3429 66 3299 minecraft:air            [passed]  the shaft head OPEN in the room's floor
+execute if block 3429 65 3299 minecraft:polished_blackstone_brick_stairs [passed]  its first tread
+execute if block 3429 63 3302 minecraft:air            [passed]  the head flight under the room's wall
+execute if block 3429 66 3302 minecraft:air            [failed]  ... whose ceiling is the tread, intact
+execute if block 3430 52 3312 minecraft:polished_blackstone_bricks [passed]  a landing (landing_1, floor y52)
+execute if block 3430 53 3312 minecraft:air            [passed]  its head room
+execute if block 3430 53 3311 minecraft:lantern        [passed]  its lantern, in the spine
+execute if block 3430 30 3308 minecraft:air            [failed]  the spine between the lanes is rock
+execute if block 3429 0 3308 minecraft:polished_blackstone_bricks [passed]  the stair's foot
+execute if block 3430 1 3308 minecraft:air             [passed]  through the spine into the room
+execute if block 3425 0 3306 minecraft:polished_blackstone_bricks [passed]  the records room's floor
+execute if block 3425 1 3306 minecraft:air             [passed]  its air
+execute if block 3425 5 3306 minecraft:deepslate_tiles [passed]  its ceiling
+execute if block 3425 2 3301 minecraft:bookshelf       [passed]  the records
+execute if block 3423 1 3306 minecraft:air             [passed]  the knock box, carved
+execute if block 3423 0 3306 minecraft:polished_blackstone_bricks [passed]  ... on the room's floor
+execute if block 3422 2 3306 minecraft:air             [passed]  the doorway, room side
+execute if block 3421 2 3306 minecraft:air             [passed]  the doorway, passage side (floor y1, one step up)
+execute if block 3427 66 3308 minecraft:deepslate      [passed]  the old hatch, laid back to rock
+execute if block 3427 66 3309 minecraft:deepslate      [passed]
+```
+
+A walk, for the session holding the server: `/tp @p 3444 67 3282 90 0`, walk west through the door, along the room
+to its south-west corner, down the stair to the room at y0, west to the doorway. With fewer than eight badges,
+stepping west past x3419 must turn you back to (3444.5, 67, 3308.5); with all eight, standing in the knock box must
+print "The Compact's passage is open to you." and `scoreboard players get @p cob_pass_relic` must read 1.
 
 The zone (installed and loaded):
 
@@ -402,8 +499,12 @@ Entities: R9RU summons none. `execute if entity @e[type=cobblemon:pokemon,x=3369
 | What | Coordinates | Note |
 | --- | --- | --- |
 | The HQ front step (turn-back) | (3444, 67, 3308), facing east | ring 0's sidewalk; the turned-back land here |
-| The shaft head | (3427, 66, 3308) | a reinforced-deepslate hatch; NOTHING under it (unbuilt) |
-| The passage, HQ end | (3421, 2, 3306) | dead-ends in rock one block east; spectator through rock |
+| The HQ's front door | (3444, 67, 3282), facing west | stand on the outside plate; the iron door is (3443, 67, 3282) |
+| The shaft head | (3429, 66, 3299); stand at (3429, 67, 3297) to look down it | the stair opens in the storey-0 room's south-west corner |
+| A landing | (3430, 53, 3312) | landing_1, lantern in the spine beside it |
+| The records room (basement) | (3425, 1, 3306) | floor y0; the stair's foot is (3429, 1, 3308) |
+| The doorway into the passage | (3421, 2, 3306) | the passage's end; the knock box is the room's west end, (3422-3424, 1, 3305-3307) |
+| The old hatch | (3427, 66, 3308) | deepslate under the HQ section's wall; nothing to see |
 | The gallery mouth | (3390, 7, 3305) | step down north into the gallery at y6 |
 | The hall centre | (3390, 8, 3262) | on the platform by the plinth; the ring stands over it to y26 |
 | The surface over it | (3390, 94, 3262) | the capped relic area: no shrine, no fence |
@@ -418,10 +519,12 @@ Entities: R9RU summons none. `execute if entity @e[type=cobblemon:pokemon,x=3369
 3. Whether the lookout keeps its railing and lantern on a surface that is otherwise bare spoil.
 4. **The hall's spawn decision (OPEN, 2026-10-02):** inside the Deep's spawn-free precinct, or its own Habitat
    band chosen with the cradle's story. Not decided by the unit that wired the carve, and no Hoopa encounter is
-   invented: Hoopa's cradle (3357, 3306) is Codex's. While the basement and shaft are unbuilt the hall is sealed
-   rock-to-rock, so nothing spawned in it reaches a player who has not dug in.
-5. **The HQ's basement and secure shaft (NEW, 2026-10-02):** carve them (and open the hatch at
-   (3427, 66, 3308)) so the hall is reachable as designed, or keep the hall sealed until Codex's HQ work.
+   invented: Hoopa's cradle (3357, 3306) is Codex's. **Now more pressing:** with the way down built (section 8b),
+   anything that spawns in the unlit passage, gallery or hall can walk to the records room and up the stair.
+5. **The HQ's basement and secure shaft: BUILT 2026-10-02 (section 8b).** What is left for the owner: whether the
+   HQ's ring-0 door should open for anyone (two pressure plates now) or stay shut until a story moment; and whether
+   the records room should hold anything (a reward, a Compact NPC, readable records) -- it holds shelves, barrels and
+   a lectern, and no loot.
 
 ## 12. Not verified (2026-10-02)
 
@@ -434,6 +537,10 @@ Entities: R9RU summons none. `execute if entity @e[type=cobblemon:pokemon,x=3369
   crack groove sat at a ground cell the old platform overwrote, the undo lays gravel there instead.
 - Victory Road's caves and any pack not built in the worktree were not swept: the audit swept
   `cobblers_deep_city` and `cobblers_rift_zones` only here. In `prepare` it sweeps every pack built before it.
+  The 2026-10-02 HQ unit swept `cobblers_deep` and `cobblers_deep_city` (built in its worktree), nothing else.
+- The HQ's way down (section 8b): nothing seen in game. That the pressure plates open the city's iron door, that the
+  stair walks (the audit models a tread as a full block and a step of one), the light on the stair and in the room,
+  and the zone's turn-back and grant at the new knock box are all unverified.
 - `tools/lakebed_repair.py` seeds its bed noise from `data/world.json` `seed` (null, so 0) + 17, but
   `tools/paint_maps.py` paints with `--seed` 20260914 + 17: the two disagree. Found here, not fixed (not this
   unit's file).
