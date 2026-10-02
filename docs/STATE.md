@@ -222,8 +222,12 @@
   build that needs the canonical heightmap or a measured plan -- the Rift's terrain work, siting, the
   cavern plans -- is main-session work by construction, and a night planned as a fan-out of builders
   cannot run. Research and data authoring delegate; terrain does not.
-- **Heaven's Arena: designed and costed, not built** (`docs/world-building/HEAVENS_ARENA.md`, 2026-10-01).
-  The tower COEXISTS with the Deep's city as the Core spire grown upward: **0 of 196 buildings and 0 stair
+- **Heaven's Arena: built and applied to staging-2026-10-01 by R9DC** (`docs/world-building/HEAVENS_ARENA.md`,
+  `tools/deep_city.py`; apply run 2026-10-01 17:10, from a head containing `72666b5`). The apply's own probes found
+  the crown floor solid at y127, the balustrade at y129, the lobby floor at y5 and air over tiers 1 and 7's stands;
+  no step since has re-run R9DC. Centre **(3609, 3249)**, beacon (3609, 129, 3249), tiers y15-117, crown y128, its
+  top ~45 blocks over the Deep's lip. The seven champions were seated by R17 on 2026-10-02. Empty shells: no seating
+  or dressing. `tools/presence_audit.py --only arena` re-checks it in the world. The tower COEXISTS with the Deep's city as the Core spire grown upward: **0 of 196 buildings and 0 stair
   towers lost**, because lots seed only within 16 blocks of a riser foot and the spire already occupies the
   one large footprint that rule leaves empty. 7 tiers on the pit's 15-then-17 grammar, crown y128 (under
   the HQ tower's y132), the y15 Relay Row bridge as tier 1's door. **A wider drum would cost buildings
@@ -259,21 +263,19 @@
   worktree never receives. **So build units serialise through main sessions at roughly one per session**,
   and a night planned as a fan-out of builders cannot run. Plan one build per session, with its test
   rewrite as the next session.
-- **The open-air Mega farms are LIVE in the data and green** (2026-10-01). Seven dens across the Rift's
-  two southern arms, four `outer` and three `deeper`, now in `data/gulch_mine.json` as `farms`,
-  `farms_why` and `farms_grid`. **NOT IN ANY WORLD** -- no world exists to apply them to (see the staging
-  entry above) -- but the data, the generated pack and the whole verification surface are done:
-  `gulch_mine.py build` emits all seven, `gulch_mine_audit.py` is CLEAN, and the four suites that had gone
-  15 red now read **215 passed, 3 xfailed, 0 failed** against the real data rather than an injected copy.
-  The parked proposal file was deleted once its three keys were confirmed byte-identical to the live
-  file: a second copy of the same ids is the two-author hazard `data/id_authorship.json` exists to catch,
-  and it would not have caught this one, because identical duplicates only surface once one side drifts.
-  **C14 is not violated** -- `gm.gone` behaves identically for farm dens, and leaving the approach box
-  freezes the clock rather than resetting it, asserted now for all seven dens on both restart and
-  re-approach. **Open for the owner:** whether an open-country turn-back is wanted at all, or whether the
-  level band (60 / 67 against a cap of 50) should be the only gate. `farm_tiers` is ASSUMED throughout and
-  nothing in it has been timed.
+- **The open-air Mega farms: in the data, the pack and staging-2026-10-01's apply; never seen** (R9S ran
+  2026-10-01 17:10 from a head containing `5198d14`, which unparked them; no step since re-ran it). Seven dens
+  across the Rift's two southern arms, four `outer` and three `deeper` (`data/gulch_mine.json` `farms`):
+  Aggron (4528, 123, 4416), Pinsir (4576, 122, 4680), Manectric (4608, 133, 4944), Houndoom (4488, 145, 5216),
+  Abomasnow (3944, 147, 3904), Tyranitar (4080, 149, 4168), Garchomp (4248, 129, 5328). **A den writes no block
+  and its Mega exists only after a player has stood inside its approach box** (128 square, anchor-24 to
+  anchor+32: the tick calls `drive_<farm>` only then) **with nobody within 24 of the anchor**; flying over higher
+  never spawns one, which is why none has been seen. B4 (`cbcff87`) dropped the dens' turn-back zones AFTER
+  that apply; the level band (60 / 67 against a cap of 50) is now the only gate. `tools/presence_audit.py
+  --only gulch,dens` drives each keeper over RCON and counts the Megas. `farm_tiers` is ASSUMED and untimed.
 - **An agent worktree CAN read the canonical heightmap; only `derived/` is missing**
+  **But on 2026-10-02 it reached neither this session's shell nor three of six agents**: each passed
+  `--source-root C:/Users/wnd/Documents` (or the variable) by hand. Brief agents to set it explicitly.
   (`docs/research/AGENT_WORKTREE_INPUTS.md`, proven 2026-10-01). `COBBLERS_SOURCE_ROOT` is set in
   `.claude/settings.json` `env` and reaches agents, so `tools/ground.py` works there: a test-author agent
   briefed that it could not run the heightmap-dependent suites ran them anyway and answered y122 at
@@ -294,15 +296,6 @@
   the world. Proved by four mutations, each failing before and named after. And `tests/gulch_sim.py` now
   models `data modify storage ... set value` and raises `NotModelled` for the roll's UUID paths instead of
   guessing, so an unsimulated path cannot be mistaken for a satisfied contract.
-- **The open-air Mega farm's tool was already written** (found 2026-10-01).
-  `tools/gulch_mine.py` implements `farms[]` end to end -- zone and turn-back, per-tier level, respawn
-  clock, drop roll, the shared macro keeper -- and **`data/gulch_mine.json` has no `farms` key at all**,
-  while its own `megas.why` references `farms[].dens` and `farm_tiers` describes "four outer dens" that do
-  not exist. 12 open-ground den sites across both southern arms are measured off the heightmap (in
-  `docs/HANDOVER_SESSION.md`; `derived/` is gitignored). The obstacle is that
-  `tools/gulch_mine_audit.py:242,407` checks coordinates against the gulch's tight block `grid`, which
-  these sites are far outside; dens write no blocks, so the fix is a separate declared box for anchors,
-  **not a wider grid** -- a threshold widened to make data pass is not a threshold.
 - **THE STAGING WORLDS ARE GONE, so "in the world" currently means NOTHING** (found 2026-10-01, the
   owner: record it plainly). Every claim anywhere in this file of the form "applied to
   `cobblers-dryrun11`/`cobblers-dryrun12`", "built on staging" or "probed in the world" describes a world
@@ -520,6 +513,29 @@
   (R9SD, before R9E). In staging the old L-shaped build is removed by a one-off cleanup
   (`python tools/sea_drift.py cleanup`), which a fresh export does not need. Whether they LOOK right - the bear's size, the camp's tent shapes, the isle from the
   sea - is the owner's eye. Habitat Blocks activate after a restart, which the owner's next boot is.
+- **The south: four places and ten residents, built offline 2026-10-02, NOT applied to any world** (branch
+  `claude/south-map-world-audit-2219f3`). Each has a generator, an independent audit (clean), its own tests (green)
+  and World probes collected in `data/world_probes.json` for `tools/presence_audit.py --only extra`:
+  - **The Copperway Khan** (`data/dune_ruin.json`, R9DU + R18DU): a half-buried caravanserai at (6744, 148, 6224),
+    gate (6744, 149, 6207), tower lantern (6730, 167, 6210); salvager Dessa Varn (6749, 145, 6237); bricked door
+    (6734, 145, 6237) to a sealed vault, strongbox (6738, 140, 6234) with Metal Coat, Reaper Cloth, 3 Dusk Balls;
+    Cofagrigus Habitat Block in the vault. 10 milestones from Fossick's south edge.
+  - **The Drovers' Hollow** (`data/drovers_hollow.json`, R9HF + R18HF): a drovers' longbarn in the dry ravine
+    `arrow_lake_south_east_branch` (walls x3960-3986 z6016-6030, floor y100), well trapdoor (3984, 100, 6023) to an
+    old working, cache barrel (4021, 92, 6023): Choice Band, 3 Moomoo Milk; fold Habitat Block (3971, 98, 6041) with
+    Miltank, Tauros, Mudsdale; drover Owen Cray (3975, 99, 6032). Not the cave-barn in the Rift's south wall that was
+    asked for: measured, there is no wall there (savanna at about 1 in 25 south of z5408).
+  - **The Old Orchard** (`data/old_orchard.json`, R9SO + R18SO) on Sunset Isle round the Orchard Sleeper: press-house
+    (2790, 66, 7048), cellar barrel (2793, 62, 7051) with Leftovers, a Tart and a Sweet Apple; Applin Habitat Block
+    (2754, 72, 7088); keeper Wenna Marlow (2786, 67, 7058). Slakoth and Vigoroth cannot spawn at the isle's band
+    (43-53) under the evolution policy, so the pool is the Applin line and Tropius.
+  - **Codex's ten residents** (`data/resident_encounters.json`, pack `cobblers_residents`, R18R): Dustback
+    (6216, 142, 6112), Hornwall (4200, 138, 5920), Orchard Sleeper (2816, 67, 7080), Split-Bark (7360, 139, 7376), and
+    Old Jaw, Wiremother, Ridgejaw, Red Rail, Whiteback, River Grip. R18R summons only the two ungated ones (Old Jaw,
+    Whiteback); the other eight first appear when a player holding their gate flag comes within 96. A resident that
+    beats a player becomes its blackout guardian (contract C17). **Split-Bark's level 62 equals the Champion's ace**,
+    so it is catchable between the Elite Four and the Champion: the owner's or Codex's call. Its Sunset Isle dressing
+    is superseded by the Old Orchard (`build.superseded_dressing`).
 - **Every seated trainer is in the world: 63 of 63 at their seats, none doubled, 8 of 8 gym spawners pass**
   (`tools/trainer_world_audit.py`, its first run against a world, 2026-10-02). The seven arena champions had
   never been seated - authored after R17 last ran - and R17's re-run placed exactly those seven. **One real
