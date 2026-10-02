@@ -768,7 +768,8 @@ def cmd_report(a):
         if have and adv not in have:
             owed.append("the pass names %s and data/progression.json has no such flag" % adv)
     if "cobblers:flag/rift_crisis_resolved" in spec["zone"]["pass"]["threshold_advancements"]:
-        bad.append("the pass names cobblers:flag/rift_crisis_resolved, which has NO SETTER on any branch: "
+        bad.append("the pass names cobblers:flag/rift_crisis_resolved, whose setter NOTHING INVOKES (data/progression.json "
+                   "set_by.invoked_by is null): "
                    "the zone would be shut forever (data/relic_underground.json needs.upgrade_path)")
     # 7 the Deep and the city: nothing carved into the pit's air or into a cell the city writes, and the turn-back
     # lands on the Compact's front step in the open (measured: tools/rift_deep.py's treads, tools/deep_city.py's build)

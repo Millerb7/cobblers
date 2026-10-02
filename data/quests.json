@@ -784,7 +784,7 @@
           "requires_stage": "giovanni_reveal_complete",
           "requires_existing_flag": "gym8_cleared",
           "world_change_flag": "champion_cleared",
-          "missing_story_flag": "rift_crisis_resolved",
+          "story_flag": "rift_crisis_resolved",
           "required_fact": "Forced use ends, Hoopa is released, the world remains changed, and the region opens the League in recognition.",
           "prelude_stage": "rift_crisis_pending",
           "completion_stage": "league_recognized"
@@ -1412,7 +1412,7 @@
             "field": "quest.main_worldshift_reveal.stage",
             "equals": "rift_crisis_pending"
           },
-          "missing_gate_flag": "rift_crisis_resolved",
+          "gate_flag": "rift_crisis_resolved",
           "complete_when": {
             "field": "quest.main_worldshift_reveal.stage",
             "equals": "league_recognized"
@@ -1704,7 +1704,7 @@
         },
         {
           "id": "unlock_league_after_rift_resolution",
-          "external_trigger_contract": "Invoke only after the authoritative rift_crisis_resolved setter commits successfully; no current dialogue node invokes this transition.",
+          "external_trigger_contract": "THIS transition is rift_crisis_resolved's setter (data/progression.json flags, set_by quest_transition): its first effect grants the flag's advancement to the releasing player, then the stage and League cursor move. It is meant to be invoked by Hoopa's release choice at the cradle (docs/story/NPCS_AND_RIFT_FINALE.md Scene 5, unmerged branch codex/trainer-modes); no current dialogue node invokes it, because the cradle is not carved and no scene seats the Hoopa actor.",
           "conditions": [
             {
               "kind": "progression_equals",
@@ -1713,6 +1713,10 @@
             }
           ],
           "effects": [
+            {
+              "kind": "function",
+              "function": "cobblers:flag/rift_crisis_resolved/grant"
+            },
             {
               "kind": "set_progression",
               "field": "quest.main_worldshift_reveal.stage",
@@ -1854,10 +1858,11 @@
         },
         {
           "beat": "league",
-          "kind": "missing_progression_flag",
+          "kind": "existing_progression_flag",
           "flag": "rift_crisis_resolved",
+          "fires": "when unlock_league_after_rift_resolution runs (its first effect, cobblers:flag/rift_crisis_resolved/grant)",
           "result": "Should release Hoopa, stop the forced activation, and unlock the League steward and League access.",
-          "runtime_status": "approved in ARC.md but absent from data/progression.json; the handoff transition is defined but has no authoritative setter or caller"
+          "runtime_status": "declared in data/progression.json (2026-10-02) with its setter, the transition; NOTHING INVOKES the transition yet: Hoopa's release actor (NPCS_AND_RIFT_FINALE.md Scene 5) needs the cradle carved and a scene"
         },
         {
           "beat": "league",
@@ -1885,7 +1890,7 @@
         "Blaine needs an occupied-destination model and acknowledged warning; crater_operation_stopped is approved in ARC.md but absent from the progression ledger.",
         "Giovanni needs an approved dissenter evidence carrier; the route packet is a content requirement, not a placed object.",
         "The containment cradle beneath the League plateau has no Y, entrance, footprint, structure ID, or build.",
-        "rift_crisis_resolved is approved in ARC.md but absent from the progression ledger; unlock_league_after_rift_resolution defines the required per-player handoff, but no authoritative setter invokes it or corrects the current early League gate.",
+        "rift_crisis_resolved is declared in the progression ledger and unlock_league_after_rift_resolution grants it, but no dialogue node invokes that transition: Hoopa's release actor (NPCS_AND_RIFT_FINALE.md Scene 5) waits on the cradle chamber and its scene. The in-game League gate (RCT's chain after gym8) is unchanged.",
         "Physical evidence is visible corroboration only because no proven coordinate, proximity, block-interaction, or object-inspection predicate exists.",
         "The compiled mechanism remains single-player proven only; two-player independent cursors are not runtime verified."
       ],
