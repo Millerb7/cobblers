@@ -9719,6 +9719,83 @@
       "speakers": {
         "hopgood": "Ellis Hopgood"
       }
+    },
+    {
+      "id": "dlg_old_orchard_keeper",
+      "quest_id": "ambient_old_orchard",
+      "npc_id": "npc_old_orchard_keeper",
+      "source": "data/old_orchard.json; docs: docs/world-building/OLD_ORCHARD.md",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.ambient_old_orchard.keeper_cursor",
+        "initial_node": "greeting",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "greeting",
+          "kind": "line",
+          "speaker": "wenna",
+          "text": "Mind the rows. Half the trees are on the ground and the other half are full of Applin.",
+          "next": "who"
+        },
+        {
+          "id": "who",
+          "kind": "line",
+          "speaker": "wenna",
+          "text": "Marlow. We pressed cider here, my grandfather and my father and then me, until the storm took the roof and the last of the buyers took the ferry. I came over to see what was left.",
+          "next": "sleeper"
+        },
+        {
+          "id": "sleeper",
+          "kind": "line",
+          "speaker": "wenna",
+          "text": "That isn't a log at the end of the track. He came for the windfall the first autumn nobody picked it, and he's been eating his way up the rows ever since. Lies down where it lands.",
+          "next": "warn"
+        },
+        {
+          "id": "warn",
+          "kind": "line",
+          "speaker": "wenna",
+          "text": "Walk the last trees and you'll wake him. He doesn't get up for much, but he gets up for that, and he's not glad about it.",
+          "next": "applin"
+        },
+        {
+          "id": "applin",
+          "kind": "line",
+          "speaker": "wenna",
+          "text": "The apples that walk off are Applin. Always were. Father said a good year was one where the fruit stayed on the tree.",
+          "next": "cellar"
+        },
+        {
+          "id": "cellar",
+          "kind": "line",
+          "speaker": "wenna",
+          "text": "The press-house is behind me, roof half in. There's a cellar under the floor, trapdoor in the far corner. Father kept his best down there for a long winter, and I can't face the ladder. Whatever's in it does more good in your bag than in the damp.",
+          "next": "repeat"
+        },
+        {
+          "id": "repeat",
+          "kind": "line",
+          "speaker": "wenna",
+          "text": "Go on, the cellar. Mind the rubble on the way through, and let him sleep.",
+          "next": "repeat"
+        }
+      ],
+      "speakers": {
+        "wenna": "Wenna Marlow"
+      }
     }
   ]
 }

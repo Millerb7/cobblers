@@ -7303,6 +7303,30 @@
       "status": "planned",
       "why": "A crowd of Buneary kept alive in Ellis Hopgood's cellar (the owner, 2026-10-02: 'a man who has a dungeon of buneary'). ACTIVATED, the den's pattern (ursaluna_den_outskirts_ward): up to 12 alive at once, refilled 3 at a time as they are caught or despawn, TICK at chance 1. The position is the cellar floor's centre as tools/lopunny_house.py seats it (house floor y117 = max heightmap ground under the walls 116 + 1; the cellar floor 5 below it), in a stone-brick floor that pack writes; the pack must run BEFORE R9E or it writes the floor back over this block. spawn_range 4: the activated spawner searches a box of spawn_range round the block (docs/research/notes/habitat-nest-perching.md 4, ActivatedHabitatSpawning.kt), and 4 makes that box the cellar exactly: x and z the 9 by 9 room, y from the stone under the floor (y108) to the ceiling (y116). The house floor is y117, so no place a player walks in the house, and none outside, is in it (tools/lopunny_house_audit.py checks every standing place in the box). cancel_range 7: the pack's natural spawns are cancelled in a sphere of 7 round the block, which takes in the whole room (its far corner is 6.4 away) and the house's floor above it (feet 6 above), and no ground outside the walls (a feet place at y117 outside the walls is at least 7.8 away). Activated blocks cancel nothing of one another; the nearest other Habitat Block is elder_south_pine_isle_2's nest, 237 blocks away (measured 2026-10-02 from this file's positions).",
       "mimic_why": "the cellar's own floor block (data/lopunny_house.json blocks.cellar_floor), so the block is one more stone brick in the floor."
+    },
+    {
+      "id": "old_orchard_rows_ward",
+      "place": "the Old Orchard on Sunset Isle (data/old_orchard.json): the trunk of the living tree at (2754, 7088), its second log",
+      "pool": "cobblers:old_orchard_rows",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2754,
+        "y": 72,
+        "z": 7088
+      },
+      "mimic": "minecraft:oak_log",
+      "activated": {
+        "spawn_range": 12,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 6
+      },
+      "status": "planned",
+      "why": "The orchard's fruit walks: up to 6 Pokemon of the orchard's own pool (Applin, Tropius, Flapple and Appletun rare) kept alive round one tree in the west half of the rows, refilled 2 at a time. ACTIVATED, the sapling nests' pattern (a block in a trunk, disguised as its log: tools/themed_saplings.py) and the den's (ursaluna_den_outskirts_ward). The position is the tree's second log as tools/old_orchard.py seats it (heightmap ground y70 + 2), in a trunk that pack writes; the pack must run BEFORE R9E (R9SO) or it writes the log back over this block. spawn_range 12: the box x2742-2766, z7076-7100 holds the west rows and the cart track, and its nearest point is 50 blocks from the Orchard Sleeper's anchor (2816, 7080), outside its leash (26), so nothing this block spawns crowds the resident. cancel_range -1: natural spawning is left alone, as the nests leave it; the nearest other Habitat Blocks are the palm sapling's nests at (2840, 7080), 86 blocks east (measured 2026-10-02 from this file's positions).",
+      "mimic_why": "the trunk's own log (data/old_orchard.json orchard: oak, axis y), so the block is one more log in the tree."
     }
   ]
 }

@@ -550,6 +550,51 @@
       ],
       "why": "The Lopunny superfan's thanks for being shown a Lopunny (the owner, 2026-10-02: he 'wants one of his own'). A Soothe Bell: he bought it for his Buneary, which are wild and never noticed. The dialogue makes no claim for what the bell does. One per player, by grant_reward_once. An owner decision: a Lopunnite (mega_showdown:lopunnite, docs/research/notes/reward-item-inventory.md) would fit better and is deliberately not given, because mega stones are scarce by the owner's design (docs/world-building/SOUTHERN_RIFT_MEGA.md).",
       "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/lopunny_house.py seats him on, checked by tools/lopunny_house_audit.py"
+    },
+    {
+      "id": "old_orchard_cellar",
+      "kind": "cache",
+      "place": "the Old Orchard on Sunset Isle (data/old_orchard.json): the press cellar under the press-house, its south-east corner, the cask at the back",
+      "contents": [
+        {
+          "item": "cobblemon:leftovers",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/leftovers.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:tart_apple",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/tart_apple.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:sweet_apple",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/sweet_apple.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the cask at the back of the press cellar, wrapped in oilcloth: Leftovers, a Tart Apple and a Sweet Apple.",
+      "why": "data/old_orchard.json find: the keeper's father's 'best, for a long winter'. Leftovers is a late-game held item worth the ferry (the isle is tier 8); the Tart Apple and the Sweet Apple evolve the orchard's Applin into Flapple and Appletun (Cobblemon 1.8.0 applin.json, item_interact). Ungated, as every cache is: the cellar lies outside the Orchard Sleeper's leash, so it is taken without the fight.",
+      "built_by": "tools/old_orchard.py (the barrel, in cobblers_old_orchard's build, reapply R9SO); the room and the barrel's place checked by tools/old_orchard_audit.py",
+      "trigger": {
+        "min": [
+          2791,
+          62,
+          7049
+        ],
+        "max": [
+          2793,
+          63,
+          7051
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          2793,
+          62,
+          7051
+        ]
+      }
     }
   ]
 }
