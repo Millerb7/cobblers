@@ -47,6 +47,55 @@ MAX_LAKE_PASSAGE = 20      # WATER_BUILD_PLAN 3.3: "a passage of no more than 20
 GRID = 8                   # the spawn-box grid the route boxes share
 MIN_GROTTO_DEPTH = 18      # a grotto mouth is deep water, not a paddle: 18 below the lake's own level
 
+TRAINERS = ROOT / "data" / "trainers.json"
+RCT_OVERLAY = ROOT / "modpack" / "config" / "rctmod-server.toml"
+RCT_BASE = ROOT / "base-pack" / "cobbleverse" / "config" / "rctmod-server.toml"
+RCT_MAX_LEVEL = 100        # LevelUtils.maxLevel() at rctmod v0.19.0-beta
+
+
+def rct_caps(trainers=None, toml_text=None):
+    """The level cap a player holds after each gate flag, computed the way rctmod does, from the trainers and the
+    RCT config -- never from data/legendaries.json, whose `cap_at_gate` is the claim being checked.
+
+    rctmod v0.19.0-beta LevelUtils (docs/mechanics/LEAGUE_LEVEL_CAP.md 1): the cap is max(initialLevelCap,
+    min over the NEXT trainers of trainerLevel), where trainerLevel = max(team top + relativeLevelCap, the
+    trainerLevel of every trainer that must be beaten first); with no next trainer it is maxLevel() = 100, and
+    completing a series never resets it. Our series is Cobbleverse's 13-trainer Kanto chain (gyms 1-8, the four
+    Elite Four in order, the Champion; COBBLEVERSE-RCT-DP-v20 requiredDefeats, read 2026-10-02), carrying our
+    teams from data/trainers.json. No trainer overrides relativeLevelCap (the owner, 2026-10-02: 60 after gym 8
+    is kept), so the config's value applies to every one; an override would have to be modelled here.
+
+    Returns {flag: cap} for every gymN_cleared and champion_cleared, plus None for "nothing cleared yet".
+    """
+    if trainers is None:
+        trainers = json.loads(TRAINERS.read_text(encoding="utf-8"))
+    if toml_text is None:
+        toml_text = (RCT_OVERLAY if RCT_OVERLAY.is_file() else RCT_BASE).read_text(encoding="utf-8")
+    init = int(re.search(r"^\s*initialLevelCap\s*=\s*(-?\d+)", toml_text, re.M).group(1))
+    rel = int(re.search(r"^\s*relativeLevelCap\s*=\s*(-?\d+)", toml_text, re.M).group(1))
+    by_class = {}
+    for t in trainers["trainers"]:
+        by_class.setdefault(t.get("class"), []).append(t)
+    chain = []
+    for cls, n in (("gym_leader", 8), ("elite_four", 4), ("champion", 1)):
+        group = sorted(by_class.get(cls) or [], key=lambda t: t["order"])
+        if len(group) != n or [t["order"] for t in group] != list(range(1, n + 1)):
+            raise ValueError("expected %d %s trainers ordered 1..%d in data/trainers.json, found %s"
+                             % (n, cls, n, [t.get("order") for t in group]))
+        chain += group
+    levels, floor = [], 0
+    for t in chain:
+        top = max(m["level"] for m in t["team"])
+        floor = max(min(RCT_MAX_LEVEL, max(0, top + rel)), floor)
+        levels.append(floor)
+    after = lambda i: max(init, levels[i + 1]) if i + 1 < len(levels) else RCT_MAX_LEVEL  # noqa: E731
+    caps = {None: max(init, levels[0])}
+    for n in range(1, 9):
+        caps["gym%d_cleared" % n] = after(n - 1)
+    caps["champion_cleared"] = after(len(chain) - 1)
+    return caps
+
+
 NUM = r"(-?\d+)"
 FILL = re.compile(r"^fill %s %s %s %s %s %s\s+(\S+)" % ((NUM,) * 6))
 SETBLOCK = re.compile(r"^setblock %s %s %s\s+(\S+)" % ((NUM,) * 3))
@@ -177,8 +226,9 @@ def _met_is_reachable(rec, doc, rep):
     return True
 
 
-def audit(doc, ground, pack, water=None, progression=None, landmarks=None, world=None):
+def audit(doc, ground, pack, water=None, progression=None, landmarks=None, world=None, caps=None):
     rep = Report()
+    caps = rct_caps() if caps is None else caps
     d = doc["defaults"]
     m = int(d["shell_margin"])
     clear = int(d["clearance_blocks"])
@@ -212,9 +262,20 @@ def audit(doc, ground, pack, water=None, progression=None, landmarks=None, world
     # ---- 3. every record's levels and gate are declared --------------------
     for rec in doc["encounters"]:
         rid = rec["id"]
-        rep.check(isinstance(rec.get("cap_at_gate"), int) and int(rec["level"]) <= rec["cap_at_gate"],
-                  "%s: level %s is above cap_at_gate %s, so data/level_cap.json makes it uncatchable"
-                  % (rid, rec.get("level"), rec.get("cap_at_gate")))
+        # the REAL cap its gate reaches (rct_caps), not the record's own cap_at_gate: until 2026-10-02 this
+        # compared the level with cap_at_gate, which still held an invented table (Regigigas 70, Lugia 80), so a
+        # legendary placed above the cap passed. Holding every flag means having cleared the latest of them.
+        gflags = rec["gate"]["flags"]
+        unknown = [f for f in gflags if f not in caps]
+        rep.check(not unknown, "%s: no RCT cap can be derived for gate flag(s) %s" % (rid, unknown))
+        if not unknown:
+            real = max(caps[f] for f in gflags) if gflags else caps[None]
+            rep.check(int(rec["level"]) <= real,
+                      "%s: level %s is above the RCT cap %s its gate %s reaches, so data/level_cap.json makes it "
+                      "uncatchable" % (rid, rec["level"], real, gflags))
+            rep.check(rec.get("cap_at_gate") == real,
+                      "%s: cap_at_gate %s is not the RCT cap %s its gate %s reaches" % (rid, rec.get("cap_at_gate"),
+                                                                                       real, gflags))
         rep.check(len(rec.get("level_basis") or "") > 10, "%s: no level_basis" % rid)
         for f in rec["gate"]["flags"]:
             rep.check(f in flags, "%s: gate flag %r is not declared in data/progression.json flags" % (rid, f))

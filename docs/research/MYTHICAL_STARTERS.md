@@ -1,5 +1,18 @@
 # Mythical starters: Cosmog, Kubfu, Type: Null, Poipole, Meltan
 
+> **Reconciled 2026-10-02 (integration).** This note and `docs/research/NATIVE_STARTERS_1_8_0.md` answered the
+> same brief independently.
+>
+> - **Every shared measurement agrees**, and the option (b) simulator figures match to the unit.
+> - **Its recommendation (option c, §8) is superseded** by the owner's decisions recorded in
+>   `docs/mechanics/NATIVE_STARTERS_COST.md` §6a and §7:
+>   - a-lite (forms on stages 1 and 2, native final) at 30 and 45;
+>   - evolutions offered, not forced;
+>   - Kubfu's scrolls from the research station;
+>   - Meltan with no anvil and an authored movepool;
+>   - the level cap kept at 60 after gym 8 (`docs/mechanics/LEAGUE_LEVEL_CAP.md`).
+> - **Kept as evidence**, not as a plan.
+
 **Asked by:** the owner, 2026-10-02 ("Starter candidates decided in principle ... Report before changing anything").
 **Answered for:** Cobblemon 1.8.0+1.21.1 (jar `Cobblemon-fabric-1.8.0+1.21.1.jar`, found by `tools/battle_sim.py`
 `find_jar()`), Mega Showdown `1.0.2+1.8+1.21.1` (the overlay's build, `modpack/manifest/overlay.json:215`, read from a
