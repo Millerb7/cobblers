@@ -4,6 +4,13 @@ Measured from the files on 2026-09-30, at `3bf300b`. The job was "establish what
 the 32 settlement NPCs are" before anyone places them. **There are not 32, and
 there is no file that ever said there were.**
 
+> **Update 2026-10-02: seated in data.** `data/npc_seats.json` now seats 20 of these NPCs (the 13 `npc_main_*` and
+> the 7 stone-tip speakers, which this document did not count), and re-apply step R17N places them. Hank and Lena
+> stay unseated: the compiler refuses their conversations. Sections 2 and 5 below describe the state before that.
+> Two corrections to section 2: of the eight markers that were authored, **seven stand on the walked route line**
+> (`data/route_paths.json` distance 0) and one inside the Pallet sign, so the seats move them off the road and say
+> why; and Erika's took the heightmap's y111 on a plaza paved at y110. No seat has been placed in a world yet.
+
 ## 1. The number
 
 `32` appears nowhere in the repository in connection with NPCs. The only

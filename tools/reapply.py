@@ -1123,6 +1123,12 @@ def steps(with_spawns=False):
     import ferries
     out.append(("R17F", "the ferrymen at the built docks (data/ferries.json)",
                 [("fn", "cobblers:ferries/load")] + [("npc", n) for n in ferries.npc_placements(ferries.load())]))
+    # the settlement NPCs (data/npc_seats.json): the main reveal's residents and the stone-tip speakers. NPCs like the
+    # ferrymen, so placed over RCON after the restart that loaded cobblers_dialogue's classes, and after every town and
+    # gym pass so the plaza, lot and lab floor they stand on exist. Each is turned to its authored yaw
+    import npc_seats
+    out.append(("R17N", "the settlement NPCs (data/npc_seats.json)",
+                [("npc", n) for n in npc_seats.placements()]))
     trad = json.loads((ROOT / "data" / "traders.json").read_text(encoding="utf-8"))
     towns = sorted({t["settlement"] for t in trad.get("traders") or [] if t.get("settlement")})
     out.append(("R14", "town traders", [x for t in towns for x in (("fn", "cobblers:towns/vendors_%s" % t), ("wait", 8))]))
@@ -1251,7 +1257,10 @@ def _run_steps(a, rc, todo, rec, path):
                 if "count: 1" not in n:
                     bad.append("celebi: expected one tagged Celebi on its branch, got %r" % n)
             elif kind == "npc":
-                conv, (x, y, z), cls = v
+                # (conversation, (x, y, z), class) or, for a seat that faces somewhere (data/npc_seats.json), a fourth
+                # element: its yaw, applied below whether the NPC was just spawned or already stood there
+                conv, (x, y, z), cls = v[:3]
+                yaw = v[3] if len(v) > 3 else None
                 rc("forceload add %d %d" % (x, z))
                 for _ in range(30):
                     if "passed" in rc("execute if loaded %d %d %d" % (x, y, z)):
@@ -1270,6 +1279,9 @@ def _run_steps(a, rc, todo, rec, path):
                 if not there:
                     r = rc("spawnnpcat %d %d %d %s" % (x, y, z, cls))
                     print("   %s -> %s" % (cls, r[:120] or "(no reply)"), flush=True)
+                if yaw is not None:
+                    time.sleep(1)
+                    rc("tp %s %d.5 %d %d.5 %d 0" % (near.replace("]", ",limit=1]"), x, y, z, yaw))
                 rc("execute store result storage cobblers:reapply npcs int 1 if entity %s" % near)
                 got = rc("data get storage cobblers:reapply npcs")
                 n = int(got.rsplit(":", 1)[-1].strip()) if got.rsplit(":", 1)[-1].strip().isdigit() else -1

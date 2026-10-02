@@ -171,6 +171,13 @@
         "data/traders.json",
         "docs/mechanics/MARKET_GATING.md"
       ]
+    },
+    "settlement_npcs": {
+      "what": "the dialogue NPCs seated by data/npc_seats.json and placed by reapply R17N",
+      "paths": [
+        "data/npc_seats.json",
+        "tools/npc_seats.py"
+      ]
     }
   },
   "contracts": [
@@ -745,6 +752,33 @@
         "tests/test_system_contracts.py::test_contract_c15_a_blackouts_money_charge_is_flat_and_never_exceeds_the_balance"
       ],
       "note_for_the_test_author": "Written by the implementer of the charge, who may not write its test (.claude/rules/testing.md). The test does not exist yet, so tests/test_system_contracts.py::test_every_contract_names_existing_tests fails on this commit until it is written; the entry is not to be deleted to make the suite green. What the test must assert, against the GENERATED pack rather than against data/blackout.json's own arithmetic: (1) run blackout/charge in the simulator at a spread of balances across the cap (1, 199, 599, 600, 601, 3000, 20000, 250000, 2147483647) and assert bo.lost == min(balance, ceil(cap * percent / 100)) every time; (2) assert the charge is strictly flat, i.e. bo.lost is identical at any two balances above the cap, however far apart; (3) assert it never exceeds the balance and is never negative, including balance 0 (nothing charged, charge_calc not called) and balance 1 (exactly 1 charged); (4) prove independence by mutating the GENERATOR, not the data (CLAUDE.md 'How to prove an audit is independent'): re-derive the amount from money.cap and money.percent as read from data/blackout.json, assert it equals the #charge constant the pack sets at load, then change charge_amount() in tools/blackout_pack.py -- drop the ceiling, or put a balance term back -- and assert the test fails; (5) the consumer half: assert the charge path reads no price and no balance-derived scale at all, so no rung in docs/mechanics/PROGRESSION_LADDER.md and no entry in data/traders.json can change what a death costs."
+    },
+    {
+      "id": "C16",
+      "title": "An immovable NPC never stands in the road, and stands on the surface the town plan lays",
+      "owner": "towns",
+      "consumers": [
+        "settlement_npcs"
+      ],
+      "constrained_by": [
+        "terrain"
+      ],
+      "statement": "Every seated NPC (isMovable false) stands 3 or more blocks from every walked route line in data/route_paths.json, so the walked line and the street stay open; and a seat on a plaza or a levelled lot stands one block above the y the town plan records for it (plaza.y, lot level), the surface tools/place_town.py lays, while a seat elsewhere stands one above the rounded canonical heightmap. A re-route, a plaza re-level or a re-sited town can break either half without touching data/npc_seats.json.",
+      "stated_in": [
+        {
+          "at": "docs/world-building/TOWN_CHARACTER.md:308",
+          "quote": "A guard stands beside the road, never on it."
+        },
+        {
+          "at": "data/npc_seats.json:3",
+          "quote": "Ground is never read from a world"
+        }
+      ],
+      "tests": [
+        "tests/test_npc_seats.py::test_no_seat_stands_within_three_blocks_of_a_walked_route_segment",
+        "tests/test_npc_seats.py::test_plaza_and_lot_seats_stand_one_above_the_plans_paved_or_levelled_surface",
+        "tests/test_npc_seats.py::test_heightmap_seats_stand_one_above_the_rounded_canonical_heightmap"
+      ]
     }
   ]
 }

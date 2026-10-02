@@ -1,84 +1,97 @@
-# Handover — the gates are fixed, the legendaries are measured, and three of the owner's builds were never started
+# Handover — the trainers and settlement NPCs are seated in data; nothing reached the world, because the lock was refused
 
 A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else, before it starts.
 
 ## 1. The branch
 
-- **Work branch `build/2026-10-01-rift-builds`** is FROZEN: its PR, [#104](https://github.com/Millerb7/cobblers/pull/104),
-  is open and reported with head `201edbf`. Nothing more goes to it.
-- **The handover PR is [#105](https://github.com/Millerb7/cobblers/pull/105)**, draft, branch
-  `build/2026-10-02-gates-and-legendaries`: all of #104 plus 10 commits, 52 onto `main`. It supersedes #104 and is
-  FROZEN from the moment it was reported. Re-read its head with `gh pr view 105 --json headRefOid` before quoting
-  it; the owner merges while sessions work.
-- `origin/main` is `a271532`; **nothing from 2026-10-01 is merged**. #102 and #103 are the older drafts.
+- **`build/2026-10-02-place-all-trainers`**, pushed, **no PR** (the owner's instruction: one integration PR per
+  batch, and this batch has three sessions). It sits on draft PR
+  [#105](https://github.com/Millerb7/cobblers/pull/105)'s head `2de7170`, which is frozen. Head: see the last commit
+  on the branch (`git log -1 origin/build/2026-10-02-place-all-trainers`); the commit that carries this file.
+- The other session tonight ("Cobblers Cobblemon adventure map session start") merges this branch into its own and
+  runs the one batched apply. It has been told the branch, the head and that R17N is new.
 
 ## 2. Where it stopped
 
-Everything delegated has been integrated, re-run in a full checkout and committed. Last verified state:
-**10 failed, 5,411 passed, 11 xfailed, 0 errors** (771 s, full checkout) - the known ten, by name, in
-`docs/STATE.md`. `validate.py` clean at 1,242 files.
+**The job:** the owner's "PLACE ALL TRAINERS. Everything Codex authored that is not yet seated. All routes, all
+settlements, the guards. Verify against the world, not the plan."
 
-**Half-done and still running:**
+**Measured, not relayed:**
 
-- **The staging server is UP** (`staging-2026-10-01`, started from this session as a background shell) and
-  **this session holds the coordination lock** (`python tools/server_lock.py status`). The owner left the
-  server at 23:23 on 2026-10-01. Stop it gracefully and release the lock when the owner is done flying.
-- **Six agent worktrees** under `.claude/worktrees/agent-*` hold copies of work that is now committed here;
-  none holds anything that is not. Safe to clean up.
+| Set | Authored | Seated in data | In the world |
+|---|---:|---:|---|
+| Roster trainers (`data/trainers.json` route + VR) | 51 | 51 (all) | R17 ran on staging on 2026-10-01; **not re-probed tonight** |
+| Mansion guardians, arena champions | 5 + 7 | 12 (all) | as above |
+| Gym leaders, Elite Four, Champion | 13 | spawned by their templates, correctly NOT seated | not probed |
+| Settlement NPCs `npc_main_*` | 13 | **13** (`data/npc_seats.json`) | **none** |
+| Stone-tip speakers | 7 | **7** | **none** |
+| Pallet's Hank, Lena | 2 | 0: the compiler refuses both conversations | — |
+| Rift guards G1 G2 G4 G5 + 3 posts | placeholders | armour stands by R1; no character or lines exist | not probed |
+| Town gate guards | **0 characters** (34 positions) | nothing to seat | — |
+
+So "the owner's 15 settlement NPCs" is 15 of 22; "34 gate guards with no characters" holds; "4 Rift guards already
+seated" holds as four guards in data (plus three posts), as placeholders, not seen in a world tonight.
+
+**Done and verified offline:** `data/npc_seats.json` + `tools/npc_seats.py` (`check` clean) + reapply step **R17N**
+(after R17F; the `npc` action takes an optional 4th element, the yaw); `tools/trainer_world_audit.py` (the world
+probe for all 63 seats and the eight gym spawners). 698 targeted tests passed; validate and validate_data clean.
+Tests for the seats are by a different hand (`tests/test_npc_seats.py`, test-author) — see section 4 for its result.
+
+**Not done: anything in a world.** `python tools/server_lock.py take --owner ...` was **refused by the permission
+classifier ("Interfere With Workloads")**. Under CLAUDE.md that ended the attempt: no boot, no RCON, no placement,
+no probe. No lock file was written; no java is running; the staging world is untouched by this session.
+
+**Next, when the owner allows the lock** (two commands after the usual boot of `staging-2026-10-01`, lock env exported):
+
+```bash
+python tools/reapply.py run --server-dir C:/Users/wnd/Documents/github/cobblers-server --only R17N --no-reload
+```
+
+```bash
+python tools/npc_seats.py verify && python tools/trainer_world_audit.py --out derived/trainer_world_audit.tsv
+```
+
+(`--no-reload` straight after a boot. The classes come from `cobblers_dialogue`, which must be installed before that boot. The other session may run R17N inside its batched apply instead.)
 
 ## 3. What waits on the owner
 
-**Their requests that were NEVER STARTED.** All three were asked for on 2026-10-01 and the session was
-pulled onto other work. It told the owner it was starting the first two; it did not.
-
-| Request | Measured | Next |
-|---|---|---|
-| **Ursaluna cave** at (1504, 164, 1414): a solid cave for a large Ursaluna, Teddiursa on the outskirts, an NPC players can talk to | ground y162; 157-244 blocks west of Highwire (gym 3's town); nothing else in the way | build it |
-| **Mine tunnel + strip mine** from near (1455, 113, 1795), surfacing near the beach at (330, 70, 1584), with **a small island** and water spawns round it | mouth ground y112, empty for ~400 blocks; the exit is ground **y26 in 36 blocks of sea**, so the island is required, not optional | build it |
-| **Research site** at the south foot of Frostpeak, studying the legendary above | **(688, 688), ground y110.6**, relief 4.9 over 40x40, on the summit's own N-S axis (summit (679, 324) y310), 385 blocks off and 27 degrees up. Articuno's shrine is now at (904, 320). | author it. NB the session's last message to the owner wrongly called this "a different place" from the south foot. It IS the south foot. |
-
-**Decisions** (`docs/DECISION_QUEUE.md`):
-
-- **B15, the Jungle Isle.** Four pinned elders hang 17-68 blocks over the sea; four ruin templates sit
-  inside Pacifidlog's rafts (496 columns); "Jungle Isle" and "Sunken Court" title open water. The owner's
-  2026-09-27 "jungle isle should be removed" governs - so this is most likely finishing a removal (re-site or
-  drop the four elders and their 16 bird blocks; move or drop the ruin set; retire the region's name)
-  rather than a fresh design question. Confirm, then do it.
-- **Tri Peaks foliage**: the region has no foliage model at all. Proposed: a `foliage.json` entry for its three
-  alpine subregions plus scatter.
-- **More of the Cobbleverse catalogue** waits on EXP-048: if an altar is silent, the four adopted sites are
-  scenery and `stark_mountain`, `crown_spire` and the lake trio should be judged as scenery too.
-- **Placing the four adopted sites**: they need `placements.json` records and an apply step; nothing emits them.
-
-**In-game checks only the owner can make:**
-
-- **EXP-048** (`experiments/EXP-048-legendary-altar/README.md`): place `crown_cemetery` at (4118, 109, 1982)
-  and right-click its altar with an empty hand. The commands are in the file, in order.
-- **The railing** at (3565, 114, 5294) and the gatehouse at the trailhead (3548, 114, 5322) - `docs/FLIGHT_LIST.md` 4b.
-  The gatehouse can now be **walked out of**; that is worth trying.
-- C1 (Hoopa renders), C2b (sell one emerald block: 3,750 or 1,875), C3 (Brock refuses a rematch), C4 (two players).
+- **The lock refusal.** Placing and probing need `server_lock.py take` allowed for this kind of session, or the
+  owner runs the two commands above.
+- **Probe these first** — the seats most likely to be wrong, with coordinates:
+  - Oak, INDOORS at (1493, 118, 5317), on the lab template's floor layer (y117), facing the door. Off by a jigsaw
+    piece if the lab's up-jigsaws placed decor there.
+  - Brock (witness) on the Stoneworks Hall forecourt (1832, 142, 3661), beside the door lamp, facing the door.
+  - Erika's archivist on the plaza (4309, 111, 1551): plaza y110 vs heightmap 111 — the plaza is the claim.
+  - The Displaced City mason, underground on the summit square (3323, 47, 1752).
+  - The Scar scavenger (2098, 281, 938) on the ruined square, a pad the older worlds lacked.
+  - The rift surveyor at the Victory Road trailhead (3552, 112, 5334), beside G2's gatehouse: is it outside the shell?
+  - The League steward on the west forecourt (3647, 89, 2490).
+- **Codex:** seven `stand_marker`s in `data/quests.json` are on the road; the League steward's recorded position is
+  still the retired cradle coordinate; the 34 gate guards and the Rift guards need characters and lines; Hank and
+  Lena need a world-scoped dialogue design before they can be seated.
 
 ## 4. What a cold start must not rediscover
 
-- **RCON writes to the running server are refused** by the permission classifier as *Remote Shell Writes*
-  (2026-10-01, EXP-048). A refusal of the outcome: do not retry it another way. It needs a permission rule or the owner.
-- **A test that reads the real heightmap is not therefore independent.** `rift_zones`' places test checked each
-  place against the ground at its own column - the generator's rule - and was green through the whole defect.
-  Re-scoped to the floor the player stands on; proved by running it on the pre-fix data from git (`db406fb`).
-- **A strict xfail keyed in a test file, not on the record, does not drop when the record gains `fixed`.**
-  The implementer correctly reported those rather than editing a test it was not entitled to grade.
-- **Integration needs `derived/`**: the test-debt agent's 18 failures and 66 errors were all missing plans.
-  In a full checkout they were zero.
-- **The four blackout recovery failures are not a fault**: `docs/mechanics/BLACKOUT_RECOVERY_COUPLING.md`.
-  Re-point as relations and add one contract; test-author work.
-- **`brink_columns` (the railing) still has no test.**
-- **R14C's Celebi guard is not idempotent against wild spawns** - a wild Pokemon at the sapling satisfies
-  `distance=..3` and suppresses the spawn. It wants a tag or species selector.
-- **The heatmap counts point records, not built volume**: the Displaced City reads 3% of peak.
-- The session relayed an unmeasured count again ("six gatehouses"; there are seven) and wrote two
-  off-by-one figures into its own Articuno record. Agents caught all three.
+- **All 51 roster trainers already have seats** — "all routes" was done before tonight; the gap was the dialogue NPCs.
+- **A plan's entry/exit point is ON the road** — the gate-guard table in `TOWN_CHARACTER.md` lists those points, so a
+  guard seat needs an offset beside it; and seven of eight `npc_main_*` markers were on the walked line. Check
+  `route_paths.json` distance for anything immovable.
+- **The North Bank Angler's y106 is right**: it stands on the `route_events` deck at Lake Viltri's 103 + 2.
+- **The arena seats equal `derived/deep_city/plan.json`'s stands exactly; VR's tenth is the League Examiner.**
+- **A test worktree needs `derived/` and `build/`**: copied from
+  `.claude/worktrees/cobblers-cobblemon-session-start-531d15/` (current to #105) rather than a full `prepare`.
+- **The lock file can be written by hand in the wrong format** (`owner=` not `owner:`); `server_lock.py` then cannot
+  release it. Tonight's was the other session's finished agent's, removed by that session.
+- **The tests by a different hand found two of my seats wrong, both fixed** (`tests/test_npc_seats.py`, 10 properties, 7 generator
+  mutations all caught): the steward's yaw was 24 degrees off the point it names, and the Viltri keeper stood on the
+  apron's overhang outside its town. Contract **C16** registers the off-road and plan-ground assumption. Last run:
+  **755 passed, 2 xfailed** (seat, contract, trainer, reapply, ground-rule, authorship and dialogue suites); the full
+  suite was not run. `validate_data` needs `COBBLERS_SOURCE_ROOT` set or it reports one integrity error.
+- The test agent was refused twice (a `time`-prefixed `place_town.build`, an `awk` search): Oak's origin y117 is
+  therefore checked only by this session, not independently, and the `npc` action's tp has no fake-RCON test.
 
 ## 5. Cost
 
-`python tools/session_cost.py`: **767 turns, 44.3M weighted, context 411k at hand-over** (the threshold is
-300k); **agents together 26.4M**. About 70.7M in all.
+`python tools/session_cost.py --session b2986980-daa1-47e0-bfee-e78e302a9641`: **about 125 turns, 3.1M weighted,
+context ~290k at hand-over** (the 200-300k band: the job is done, so hand over). One agent (test-author), 0.5M. About
+3.6M in all.
