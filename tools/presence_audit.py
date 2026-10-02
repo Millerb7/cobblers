@@ -231,8 +231,9 @@ def extra(rc):
             if "block" in pr:
                 x, y, z, want = pr["block"]
                 _hold(rc, x, y, z, settle=0)
-                ok = _block(rc, x, y, z, want)
-                out.append((place, pr["what"], (x, y, z), "" if ok else "expected %s" % want))
+                ok = _block(rc, x, y, z, want) == pr.get("expect", True)
+                out.append((place, pr["what"], (x, y, z), "" if ok else "expected %s%s"
+                            % ("" if pr.get("expect", True) else "NOT ", want)))
             else:
                 x, y, z = pr["hold"]
                 _hold(rc, x, y, z)

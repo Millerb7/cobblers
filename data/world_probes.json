@@ -1,0 +1,1226 @@
+{
+  "schema": "world_probes/1",
+  "generated_by": "the builders' 'World probes' doc sections, collected 2026-10-02",
+  "read_by": "tools/presence_audit.py (extra)",
+  "why": "each place's own builder named these checks against its plan; presence_audit runs them over RCON",
+  "places": {
+    "old_orchard": [
+      {
+        "what": "minecraft:oak_planks",
+        "block": [
+          2790,
+          66,
+          7048,
+          "minecraft:oak_planks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:oak_door[half=lower]",
+        "block": [
+          2790,
+          67,
+          7054,
+          "minecraft:oak_door[half=lower]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:oak_door[half=upper]",
+        "block": [
+          2790,
+          68,
+          7054,
+          "minecraft:oak_door[half=upper]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:oak_trapdoor[open=false]",
+        "block": [
+          2787,
+          66,
+          7045,
+          "minecraft:oak_trapdoor[open=false]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:ladder",
+        "block": [
+          2787,
+          65,
+          7045,
+          "minecraft:ladder"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:ladder",
+        "block": [
+          2787,
+          62,
+          7045,
+          "minecraft:ladder"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:stone_bricks",
+        "block": [
+          2790,
+          61,
+          7048,
+          "minecraft:stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:air",
+        "block": [
+          2790,
+          63,
+          7048,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:lantern[hanging=true]",
+        "block": [
+          2790,
+          64,
+          7048,
+          "minecraft:lantern[hanging=true]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:barrel",
+        "block": [
+          2793,
+          62,
+          7051,
+          "minecraft:barrel"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:lantern[hanging=true]",
+        "block": [
+          2787,
+          75,
+          7048,
+          "minecraft:lantern[hanging=true]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:stripped_oak_log",
+        "block": [
+          2793,
+          72,
+          7048,
+          "minecraft:stripped_oak_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:oak_log",
+        "block": [
+          2794,
+          67,
+          7072,
+          "minecraft:oak_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:oak_log[axis=x]",
+        "block": [
+          2796,
+          67,
+          7072,
+          "minecraft:oak_log[axis=x]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:beehive",
+        "block": [
+          2742,
+          71,
+          7058,
+          "minecraft:beehive"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:oak_fence_gate",
+        "block": [
+          2769,
+          66,
+          7044,
+          "minecraft:oak_fence_gate"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:lantern",
+        "block": [
+          2793,
+          68,
+          7058,
+          "minecraft:lantern"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:lantern",
+        "block": [
+          2792,
+          75,
+          7108,
+          "minecraft:lantern"
+        ],
+        "expect": true
+      },
+      {
+        "what": "(after R9E)",
+        "block": [
+          2754,
+          72,
+          7088,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "(the sleeper's feet: nothing of ours; expect 1)",
+        "block": [
+          2816,
+          67,
+          7080,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the keeper",
+        "entity": "@e[type=cobblemon:npc,x=2786,y=67,z=7058,distance=..2]",
+        "count": 1,
+        "hold": [
+          2786,
+          67,
+          7058
+        ]
+      }
+    ],
+    "copperway_khan": [
+      {
+        "what": "minecraft:air",
+        "block": [
+          6744,
+          149,
+          6207,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:air",
+        "block": [
+          6744,
+          150,
+          6207,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:waxed_oxidized_cut_copper",
+        "block": [
+          6744,
+          151,
+          6207,
+          "minecraft:waxed_oxidized_cut_copper"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:waxed_oxidized_cut_copper",
+        "block": [
+          6741,
+          156,
+          6207,
+          "minecraft:waxed_oxidized_cut_copper"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:lantern",
+        "block": [
+          6741,
+          150,
+          6205,
+          "minecraft:lantern"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:chiseled_sandstone",
+        "block": [
+          6736,
+          148,
+          6214,
+          "minecraft:chiseled_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:cut_sandstone",
+        "block": [
+          6737,
+          148,
+          6214,
+          "minecraft:cut_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:smooth_sandstone",
+        "block": [
+          6737,
+          149,
+          6214,
+          "minecraft:smooth_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:cut_sandstone",
+        "block": [
+          6728,
+          150,
+          6224,
+          "minecraft:cut_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:cut_sandstone",
+        "block": [
+          6730,
+          160,
+          6210,
+          "minecraft:cut_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:waxed_oxidized_cut_copper",
+        "block": [
+          6730,
+          166,
+          6210,
+          "minecraft:waxed_oxidized_cut_copper"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:lantern",
+        "block": [
+          6730,
+          167,
+          6210,
+          "minecraft:lantern"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:sandstone_stairs",
+        "block": [
+          6744,
+          147,
+          6230,
+          "minecraft:sandstone_stairs"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:sandstone_stairs",
+        "block": [
+          6744,
+          145,
+          6232,
+          "minecraft:sandstone_stairs"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:smooth_sandstone",
+        "block": [
+          6744,
+          144,
+          6233,
+          "minecraft:smooth_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:air",
+        "block": [
+          6744,
+          145,
+          6234,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:lantern",
+        "block": [
+          6742,
+          150,
+          6229,
+          "minecraft:lantern"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:acacia_sign",
+        "block": [
+          6747,
+          149,
+          6229,
+          "minecraft:acacia_sign"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:smooth_sandstone",
+        "block": [
+          6744,
+          144,
+          6237,
+          "minecraft:smooth_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:air",
+        "block": [
+          6744,
+          146,
+          6237,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:lantern",
+        "block": [
+          6750,
+          148,
+          6237,
+          "minecraft:lantern"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:smooth_sandstone",
+        "block": [
+          6744,
+          149,
+          6237,
+          "minecraft:smooth_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:air",
+        "block": [
+          6749,
+          145,
+          6237,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:air",
+        "block": [
+          6749,
+          146,
+          6237,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:sandstone",
+        "block": [
+          6734,
+          145,
+          6237,
+          "minecraft:sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:sandstone",
+        "block": [
+          6734,
+          146,
+          6237,
+          "minecraft:sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:chiseled_sandstone",
+        "block": [
+          6734,
+          147,
+          6236,
+          "minecraft:chiseled_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:acacia_wall_sign",
+        "block": [
+          6735,
+          147,
+          6236,
+          "minecraft:acacia_wall_sign"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:soul_lantern",
+        "block": [
+          6732,
+          145,
+          6236,
+          "minecraft:soul_lantern"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:acacia_trapdoor",
+        "block": [
+          6730,
+          144,
+          6238,
+          "minecraft:acacia_trapdoor"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:ladder",
+        "block": [
+          6730,
+          141,
+          6238,
+          "minecraft:ladder"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:air",
+        "block": [
+          6734,
+          141,
+          6234,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:soul_lantern",
+        "block": [
+          6732,
+          143,
+          6234,
+          "minecraft:soul_lantern"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:barrel",
+        "block": [
+          6738,
+          140,
+          6234,
+          "minecraft:barrel"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:smooth_sandstone",
+        "block": [
+          6734,
+          144,
+          6234,
+          "minecraft:smooth_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:acacia_wall_sign",
+        "block": [
+          6734,
+          141,
+          6230,
+          "minecraft:acacia_wall_sign"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:sandstone",
+        "block": [
+          6734,
+          135,
+          6234,
+          "minecraft:sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "cobblemon:habitat_block",
+        "block": [
+          6734,
+          139,
+          6234,
+          "cobblemon:habitat_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:chiseled_sandstone",
+        "block": [
+          6700,
+          143,
+          5845,
+          "minecraft:chiseled_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:cut_sandstone",
+        "block": [
+          6700,
+          144,
+          5845,
+          "minecraft:cut_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:lantern",
+        "block": [
+          6700,
+          145,
+          5845,
+          "minecraft:lantern"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:acacia_wall_sign",
+        "block": [
+          6700,
+          144,
+          5844,
+          "minecraft:acacia_wall_sign"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:chiseled_sandstone",
+        "block": [
+          6740,
+          148,
+          6169,
+          "minecraft:chiseled_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "Dessa Varn, after R18DU",
+        "entity": "@e[type=cobblemon:npc,x=6749,y=145,z=6237,distance=..1.5]",
+        "count": 1,
+        "hold": [
+          6749,
+          145,
+          6237
+        ]
+      }
+    ],
+    "residents": [
+      {
+        "what": "old_jaw: the wreck's bow",
+        "block": [
+          550,
+          67,
+          4306,
+          "minecraft:spruce_stairs[facing=east]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "old_jaw: drag mark north",
+        "block": [
+          558,
+          70,
+          4302,
+          "minecraft:mud"
+        ],
+        "expect": true
+      },
+      {
+        "what": "wiremother: standing pole",
+        "block": [
+          1116,
+          128,
+          3602,
+          "minecraft:stripped_spruce_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "wiremother: fallen pole",
+        "block": [
+          1127,
+          128,
+          3607,
+          "minecraft:stripped_spruce_log[axis=x]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "ridgejaw: bone chip",
+        "block": [
+          3550,
+          163,
+          1603,
+          "minecraft:bone_block[axis=x]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "red_rail: shell fragment",
+        "block": [
+          5523,
+          99,
+          1681,
+          "minecraft:red_terracotta"
+        ],
+        "expect": true
+      },
+      {
+        "what": "red_rail: the trail",
+        "block": [
+          5526,
+          97,
+          1687,
+          "minecraft:coarse_dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "whiteback: snow bank",
+        "block": [
+          7030,
+          79,
+          302,
+          "minecraft:snow_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "whiteback: broken marker",
+        "block": [
+          7027,
+          78,
+          288,
+          "minecraft:cobblestone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "whiteback: windbreak",
+        "block": [
+          7036,
+          80,
+          304,
+          "minecraft:spruce_fence"
+        ],
+        "expect": true
+      },
+      {
+        "what": "river_grip: drowned mooring",
+        "block": [
+          6964,
+          54,
+          3967,
+          "minecraft:mossy_stone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "river_grip: snapped chain",
+        "block": [
+          6956,
+          54,
+          3968,
+          "minecraft:chain[waterlogged=true]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "river_grip: observation deck",
+        "block": [
+          6961,
+          65,
+          3944,
+          "minecraft:spruce_planks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "river_grip: water over the spot",
+        "block": [
+          6970,
+          62,
+          3970,
+          "minecraft:water"
+        ],
+        "expect": true
+      },
+      {
+        "what": "dustback: the crushed marker",
+        "block": [
+          6228,
+          143,
+          6124,
+          "minecraft:cut_sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "dustback: the migration scar",
+        "block": [
+          6216,
+          141,
+          6106,
+          "minecraft:sandstone"
+        ],
+        "expect": true
+      },
+      {
+        "what": "hornwall: the standing circle",
+        "block": [
+          4200,
+          137,
+          5920,
+          "minecraft:coarse_dirt"
+        ],
+        "expect": true
+      },
+      {
+        "what": "orchard_sleeper: a bent tree",
+        "block": [
+          2790,
+          67,
+          7071,
+          "minecraft:oak_log"
+        ],
+        "expect": true
+      },
+      {
+        "what": "orchard_sleeper: the shed",
+        "block": [
+          2794,
+          71,
+          7098,
+          "minecraft:oak_planks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "split_bark: split log, bark half",
+        "block": [
+          7364,
+          138,
+          7367,
+          "minecraft:jungle_log[axis=z]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "split_bark: split log, heart half",
+        "block": [
+          7365,
+          138,
+          7367,
+          "minecraft:stripped_jungle_log[axis=z]"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:air",
+        "block": [
+          613,
+          81,
+          4306,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:air",
+        "block": [
+          1138,
+          127,
+          3610,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:air",
+        "block": [
+          3544,
+          161,
+          1600,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:air",
+        "block": [
+          5541,
+          96,
+          1703,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:air",
+        "block": [
+          7022,
+          80,
+          312,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:air",
+        "block": [
+          6970,
+          63,
+          3970,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:air",
+        "block": [
+          6216,
+          142,
+          6112,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:air",
+        "block": [
+          4200,
+          138,
+          5920,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:air",
+        "block": [
+          2816,
+          67,
+          7080,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "minecraft:air",
+        "block": [
+          7360,
+          139,
+          7376,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "old_jaw present after R18R (ungated)",
+        "entity": "@e[type=cobblemon:pokemon,tag=cobblers.res.old_jaw,nbt={Pokemon:{Species:\"cobblemon:drednaw\"}}]",
+        "count": 1,
+        "hold": [
+          613,
+          81,
+          4306
+        ]
+      },
+      {
+        "what": "whiteback present after R18R (ungated)",
+        "entity": "@e[type=cobblemon:pokemon,tag=cobblers.res.whiteback,nbt={Pokemon:{Species:\"cobblemon:mamoswine\"}}]",
+        "count": 1,
+        "hold": [
+          7022,
+          80,
+          312
+        ]
+      }
+    ],
+    "relic_underground": [
+      {
+        "what": "passed]  hall air at its centre, over the plinth",
+        "block": [
+          3390,
+          20,
+          3262,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the dome's apex",
+        "block": [
+          3390,
+          34,
+          3262,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the choked shaft (cobbled_deepslate/tuff), no air",
+        "block": [
+          3390,
+          35,
+          3262,
+          "minecraft:tuff"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the hall's floor at its south rim",
+        "block": [
+          3390,
+          5,
+          3282,
+          "minecraft:deepslate"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the platform's lowest step, laid in the floor",
+        "block": [
+          3390,
+          5,
+          3262,
+          "minecraft:tuff_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the plinth",
+        "block": [
+          3390,
+          8,
+          3262,
+          "minecraft:chiseled_tuff_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the gallery",
+        "block": [
+          3390,
+          6,
+          3295,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the gallery's mouth through the passage wall",
+        "block": [
+          3390,
+          6,
+          3304,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  its floor",
+        "block": [
+          3390,
+          5,
+          3304,
+          "minecraft:deepslate"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the passage at the junction (floor y6)",
+        "block": [
+          3390,
+          7,
+          3306,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the passage at the HQ doorway (floor y1)",
+        "block": [
+          3421,
+          2,
+          3306,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the doorway's floor",
+        "block": [
+          3421,
+          1,
+          3306,
+          "minecraft:deepslate"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the passage's west end at the cradle's doorstep",
+        "block": [
+          3358,
+          13,
+          3306,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  was the cordon's tinted glass (ground y93)",
+        "block": [
+          3285,
+          94,
+          3352,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  was the gold relic ring",
+        "block": [
+          3386,
+          101,
+          3292,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  was the ring (raw gold), ground y88",
+        "block": [
+          3385,
+          94,
+          3298,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  was a distortion-stone arch",
+        "block": [
+          3373,
+          89,
+          3298,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  was the platform, ground y88, painted GRAVEL",
+        "block": [
+          3370,
+          88,
+          3296,
+          "minecraft:gravel"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the sealed entrance KEPT",
+        "block": [
+          3360,
+          85,
+          3304,
+          "minecraft:reinforced_deepslate"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  a ring fragment in the dig KEPT",
+        "block": [
+          3353,
+          88,
+          3330,
+          "minecraft:raw_gold_block"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the turn-back's floor",
+        "block": [
+          3444,
+          66,
+          3308,
+          "minecraft:polished_blackstone_bricks"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]  the turn-back's head room",
+        "block": [
+          3444,
+          67,
+          3308,
+          "minecraft:air"
+        ],
+        "expect": true
+      },
+      {
+        "what": "passed]",
+        "block": [
+          3444,
+          68,
+          3308,
+          "minecraft:air"
+        ],
+        "expect": true
+      }
+    ]
+  }
+}
