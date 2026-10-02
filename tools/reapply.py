@@ -104,6 +104,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-02: the Seaward Drift, its strip mine and Driftmouth Isle (tools/sea_drift.py,
                 # data/sea_drift.json): 90 block functions run by R9SD, before the Habitat Blocks that sit in its rock
                 "cobblers_sea_drift",
+                # 2026-10-02: water life (docs/mechanics/WATER_LIFE.md): the lake skin and the lake hooks
+                # (tools/lake_life.py), and the shore, the seabed's wrecks and Rift debris and the two sea caves
+                # (tools/sea_life.py). Pure block functions, no load or tick, run by R9LL and R9SL
+                "cobblers_lake_life", "cobblers_sea_life",
                 # 2026-09-29: the gym interiors (tools/gym_interiors.py, data/gym_interiors.json): the healing
                 # machines out of all eight placed gyms, and gym 1's works carved under its lot. Block functions run
                 # by R16E, after the donors (R9) that stamp the gyms whole and would erase anything written first
@@ -490,6 +494,8 @@ def prepare_jobs(a):
     add("frostpeak_camp_audit", "frostpeak_camp_audit.py", "--inputs-root", str(ROOT), *src)
     add("sea_drift:build", "sea_drift.py", "build", *src)
     add("sea_drift_audit", "sea_drift_audit.py", *src)
+    add("lake_life:build", "lake_life.py", "build", *src)
+    add("sea_life:build", "sea_life.py", "build", *src)
     # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
     # then the offline audit, which re-derives every shell box from data/placements.json, replays the written
     # functions into a voxel model and fails the prepare on a broken route, a trainer that can be walked round, a
@@ -1056,6 +1062,14 @@ def steps(with_spawns=False):
     # every verified apply
     out.append(("R9SD", "the Seaward Drift, its strip mine and Driftmouth Isle (data/sea_drift.json)",
                 [("fn", "cobblers:sea_drift/%s" % f) for f in indexed("cobblers_sea_drift", "sea_drift")]))
+    # water life (2026-10-02, docs/mechanics/WATER_LIFE.md): pure block passes over the applied water export, after
+    # the drift (Driftmouth Isle's rock and cover are excluded from both) and before R9E, so no Habitat Block placed
+    # there is written over. Every lake-skin write replaces only water, air or a natural bed block (the pack's own
+    # #cobblers:lake_bed tag), so it cannot overwrite a build it does not know about
+    out.append(("R9LL", "the lake skin and the lake hooks (data/lake_life.json)",
+                [("fn", "cobblers:lake_life/%s" % f) for f in indexed("cobblers_lake_life", "lake_life")]))
+    out.append(("R9SL", "the shore, the wrecks and Rift debris, and the sea caves (data/sea_life.json)",
+                [("fn", "cobblers:sea_life/%s" % f) for f in indexed("cobblers_sea_life", "sea_life")]))
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
