@@ -276,13 +276,13 @@
         89,
         2490
       ],
-      "yaw": -90,
+      "yaw": -114,
       "ground": {
         "kind": "lot_level",
         "y": 88,
         "source": "data/placements.json settlements.league.plan.anchors league_forecourt_west level 88"
       },
-      "faces": "east, toward the ramp head (3656, 2486)",
+      "faces": "the ramp head (3656, 2486)",
       "why": "Codex's recorded (3297, 2603) is the retired FACTION.md cradle coordinate, 433 blocks from the League and inside no settlement (docs/world-building/SETTLEMENT_NPCS.md section 3). That record is LEFT AS IT IS in data/quests.json so the propagation stays visible for Codex to correct; the steward is seated where the League's arrivals are, on the west forecourt beside the ramp head, off the ramp cut x3651-3661."
     },
     {
@@ -416,18 +416,18 @@
       "conversation": "dlg_stone_tip_viltri_light",
       "settlement": "viltri_light",
       "at": [
-        556,
+        555,
         71,
         4514
       ],
-      "yaw": 0,
+      "yaw": -14,
       "ground": {
         "kind": "plaza",
         "y": 70,
         "source": "data/placements.json settlements.viltri_light.plan.plaza.y"
       },
       "faces": "the plaza centre (556, 4518)",
-      "why": "No position authored. On the lighthouse's paved apron, the one surface whose height the plan records."
+      "why": "No position authored. On the lighthouse's paved apron, the one surface whose height the plan records. At x555, the one column pair where the apron (x554-559) and data/towns.json's footprint (x544-555) overlap: at x556 the seat stood on the apron's overhang outside the town (found by tests/test_npc_seats.py)."
     }
   ],
   "not_seated": [

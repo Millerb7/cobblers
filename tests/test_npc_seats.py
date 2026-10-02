@@ -403,7 +403,7 @@ def test_mutated_generator_dropping_yaw_is_caught_in_r17n(ground):
 
 
 # ------------------------------------------------------------------------------------------------- facing
-XFAIL_YAW = {"npc_main_league_steward"}
+XFAIL_YAW = set()  # npc_main_league_steward fixed 2026-10-02: yaw -114, toward its named (3656, 2486)
 
 
 @pytest.mark.parametrize("nid", sorted(RECORD))
@@ -426,7 +426,7 @@ def test_mutated_generator_reversing_yaw_is_caught_on_facing():
 
 
 # ------------------------------------------------------------------------------------------------- 6. footprints
-XFAIL_FOOTPRINT = {"npc_stone_tip_viltri_light_keeper"}
+XFAIL_FOOTPRINT = set()  # npc_stone_tip_viltri_light_keeper fixed 2026-10-02: moved to x555
 
 
 @pytest.mark.parametrize("nid", sorted(n for n, r in RECORD.items() if r.get("settlement")))
