@@ -35,6 +35,12 @@ The runtime pieces, each proven on the disposable world before this compiler rel
   speakers   a conversation may name its speakers ("speakers": {"pip": "Pip", "narration": null}); a speaker mapped to
              null is narration and its page names no speaker. Without the map, the id is title-cased as before.
   initial    a condition on an enum field's declared initial value also matches the unset key (0), as the cursor's did.
+  model      every class names "resourceIdentifier": NPC_RESOURCE. The client renders an NPC by the entity's synced
+             resource identifier, which is the class's resourceIdentifier and, when the class gives none, THE CLASS ID
+             (Cobblemon 1.8.0 NPCClasses reload: path "dummy" -> id). No client variation is named cobblers:<npc id>, so
+             without the field every one of our NPCs fell to the green substitute doll (2026-10-02, Hollis).
+             cobblemon:standard is Cobblemon's own variation (bedrock/npcs/variations/standard/0_standard_base.json):
+             trainer.geo, textures/npcs/standard/trainer.png, poser standard. Checked by tools/npc_model_audit.py.
 
 Only the constructs listed here are supported; anything else stops compilation rather than guessing.
 
@@ -52,6 +58,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_OUT = ROOT / "build" / "datapacks" / "cobblers_dialogue"
 NS = "cobblers"
+# The client variation every NPC class renders as (see "model" above). Shipped in the Cobblemon jar itself, so the
+# fix is server-side data and no client needs a new pack.
+NPC_RESOURCE = "cobblemon:standard"
 
 
 class Unsupported(SystemExit):
@@ -355,7 +364,7 @@ def compile_conversation(conv, quests, fields):
         first = next((n.get("speaker") for n in conv["nodes"] if n.get("speaker")), None)
         name = conv.get("npc_name") or (c.speaker_name(first) if first else None) or npc
         files["data/%s/npcs/%s.json" % (NS, npc)] = {
-            "hitbox": "player", "names": [name],
+            "hitbox": "player", "names": [name], "resourceIdentifier": NPC_RESOURCE,
             "interaction": {"type": "dialogue", "dialogue": "%s:%s" % (NS, conv["id"])},
             "canDespawn": False, "isInvulnerable": True, "isMovable": False, "isLeashable": False,
             "allowProjectileHits": False,
