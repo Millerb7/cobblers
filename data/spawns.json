@@ -42,7 +42,7 @@
       "species": "pineco",
       "bucket": "common",
       "level": "33-35",
-      "weight": 12.0,
+      "weight": 9.6,
       "ambient": true,
       "scope": "northgate_west",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -56,7 +56,7 @@
       "species": "forretress",
       "bucket": "common",
       "level": "33-43",
-      "weight": 12.0,
+      "weight": 14.4,
       "ambient": true,
       "scope": "northgate_west",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -66,18 +66,16 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.northgate_west.ariados",
-      "species": "ariados",
+      "id": "surface.northgate_west.heracross",
+      "species": "heracross",
       "bucket": "common",
       "level": "33-43",
       "weight": 12.0,
       "ambient": true,
       "scope": "northgate_west",
       "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {
-        "timeRange": "night"
-      },
-      "eligibility_reason": "evolves from Spinarak at level 22: spawns 33-43, inside the tier 6 band 33-43",
+      "conditions": {},
+      "eligibility_reason": "named common family, tier 6: the family starts here",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -102,7 +100,7 @@
       "species": "primeape",
       "bucket": "rare",
       "level": "38-43",
-      "weight": 1.0,
+      "weight": 0.7,
       "ambient": true,
       "scope": "northgate_west",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -116,7 +114,7 @@
       "species": "annihilape",
       "bucket": "rare",
       "level": "38-43",
-      "weight": 1.0,
+      "weight": 1.3,
       "ambient": true,
       "scope": "northgate_west",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -130,7 +128,7 @@
       "species": "deerling",
       "bucket": "common",
       "level": "33-38",
-      "weight": 12.0,
+      "weight": 9.6,
       "ambient": true,
       "scope": "northgate_east",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -144,7 +142,7 @@
       "species": "sawsbuck",
       "bucket": "common",
       "level": "34-43",
-      "weight": 12.0,
+      "weight": 14.4,
       "ambient": true,
       "scope": "northgate_east",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -172,7 +170,7 @@
       "species": "herdier",
       "bucket": "common",
       "level": "33-36",
-      "weight": 6.0,
+      "weight": 4.0,
       "ambient": true,
       "scope": "northgate_east",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -186,7 +184,7 @@
       "species": "stoutland",
       "bucket": "common",
       "level": "33-43",
-      "weight": 6.0,
+      "weight": 8.0,
       "ambient": true,
       "scope": "northgate_east",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -200,7 +198,7 @@
       "species": "axew",
       "bucket": "rare",
       "level": "38-42",
-      "weight": 1.0,
+      "weight": 0.8,
       "ambient": true,
       "scope": "northgate_east",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -214,7 +212,7 @@
       "species": "fraxure",
       "bucket": "rare",
       "level": "38-43",
-      "weight": 1.0,
+      "weight": 1.2,
       "ambient": true,
       "scope": "northgate_east",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -228,7 +226,7 @@
       "species": "sneasel",
       "bucket": "common",
       "level": "33-43",
-      "weight": 12.0,
+      "weight": 9.6,
       "ambient": true,
       "scope": "north_pine_isle",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -242,7 +240,7 @@
       "species": "weavile",
       "bucket": "common",
       "level": "38-43",
-      "weight": 12.0,
+      "weight": 14.4,
       "ambient": true,
       "scope": "north_pine_isle",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -256,7 +254,7 @@
       "species": "snover",
       "bucket": "common",
       "level": "33-43",
-      "weight": 6.0,
+      "weight": 4.8,
       "ambient": true,
       "scope": "north_pine_isle",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -270,7 +268,7 @@
       "species": "abomasnow",
       "bucket": "common",
       "level": "40-43",
-      "weight": 6.0,
+      "weight": 7.2,
       "ambient": true,
       "scope": "north_pine_isle",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -284,7 +282,7 @@
       "species": "stantler",
       "bucket": "common",
       "level": "33-43",
-      "weight": 6.0,
+      "weight": 4.8,
       "ambient": true,
       "scope": "north_pine_isle",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -298,7 +296,7 @@
       "species": "wyrdeer",
       "bucket": "common",
       "level": "38-43",
-      "weight": 6.0,
+      "weight": 7.2,
       "ambient": true,
       "scope": "north_pine_isle",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -326,7 +324,7 @@
       "species": "buneary",
       "bucket": "common",
       "level": "33-43",
-      "weight": 12.0,
+      "weight": 9.6,
       "ambient": true,
       "scope": "south_pine_isle",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -340,7 +338,7 @@
       "species": "lopunny",
       "bucket": "common",
       "level": "38-43",
-      "weight": 12.0,
+      "weight": 14.4,
       "ambient": true,
       "scope": "south_pine_isle",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -354,7 +352,7 @@
       "species": "zorua",
       "bucket": "common",
       "level": "33-34",
-      "weight": 6.0,
+      "weight": 4.8,
       "ambient": true,
       "scope": "south_pine_isle",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -368,7 +366,7 @@
       "species": "zoroark",
       "bucket": "common",
       "level": "33-43",
-      "weight": 6.0,
+      "weight": 7.2,
       "ambient": true,
       "scope": "south_pine_isle",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -382,7 +380,7 @@
       "species": "vanillite",
       "bucket": "uncommon",
       "level": "33-39",
-      "weight": 3.0,
+      "weight": 2.4,
       "ambient": true,
       "scope": "south_pine_isle",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -396,7 +394,7 @@
       "species": "vanillish",
       "bucket": "uncommon",
       "level": "35-43",
-      "weight": 3.0,
+      "weight": 3.6,
       "ambient": true,
       "scope": "south_pine_isle",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -410,7 +408,7 @@
       "species": "dartrix",
       "bucket": "rare",
       "level": "38-38",
-      "weight": 1.0,
+      "weight": 0.7,
       "ambient": true,
       "scope": "south_pine_isle",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -424,7 +422,7 @@
       "species": "decidueye",
       "bucket": "rare",
       "level": "38-43",
-      "weight": 1.0,
+      "weight": 1.3,
       "ambient": true,
       "scope": "south_pine_isle",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -438,7 +436,7 @@
       "species": "paras",
       "bucket": "common",
       "level": "18-28",
-      "weight": 19.2,
+      "weight": 16.8,
       "ambient": true,
       "scope": "fungal_north",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -452,7 +450,7 @@
       "species": "parasect",
       "bucket": "common",
       "level": "24-28",
-      "weight": 4.8,
+      "weight": 7.2,
       "ambient": true,
       "scope": "fungal_north",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -466,7 +464,7 @@
       "species": "shroomish",
       "bucket": "common",
       "level": "18-27",
-      "weight": 9.6,
+      "weight": 8.4,
       "ambient": true,
       "scope": "fungal_north",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -480,7 +478,7 @@
       "species": "breloom",
       "bucket": "common",
       "level": "23-28",
-      "weight": 2.4,
+      "weight": 3.6,
       "ambient": true,
       "scope": "fungal_north",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -494,7 +492,7 @@
       "species": "morelull",
       "bucket": "common",
       "level": "18-28",
-      "weight": 9.6,
+      "weight": 8.4,
       "ambient": true,
       "scope": "fungal_north",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -508,7 +506,7 @@
       "species": "shiinotic",
       "bucket": "common",
       "level": "24-28",
-      "weight": 2.4,
+      "weight": 3.6,
       "ambient": true,
       "scope": "fungal_north",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -546,38 +544,38 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.fungal_south.venonat",
-      "species": "venonat",
+      "id": "surface.fungal_south.pumpkaboo",
+      "species": "pumpkaboo",
       "bucket": "common",
       "level": "18-28",
       "weight": 24.0,
       "ambient": true,
       "scope": "fungal_south",
       "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {
-        "timeRange": "night"
-      },
+      "conditions": {},
       "eligibility_reason": "named anchor family, tier 3: the family starts here",
       "biomes": [],
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.fungal_south.pumpkaboo",
-      "species": "pumpkaboo",
+      "id": "surface.fungal_south.venonat",
+      "species": "venonat",
       "bucket": "common",
       "level": "18-28",
       "weight": 12.0,
       "ambient": true,
       "scope": "fungal_south",
       "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
+      "conditions": {
+        "timeRange": "night"
+      },
       "eligibility_reason": "named common family, tier 3: the family starts here",
       "biomes": [],
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.fungal_south.impidimp",
-      "species": "impidimp",
+      "id": "surface.fungal_south.tangela",
+      "species": "tangela",
       "bucket": "uncommon",
       "level": "18-28",
       "weight": 6.0,
@@ -677,41 +675,13 @@
       "id": "surface.sunset_east.comfey",
       "species": "comfey",
       "bucket": "common",
-      "level": "28-38",
+      "level": "43-53",
       "weight": 24.0,
       "ambient": true,
       "scope": "sunset_east",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
-      "eligibility_reason": "named anchor family, tier 5: the family starts here",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.sunset_east.smoliv",
-      "species": "smoliv",
-      "bucket": "common",
-      "level": "28-29",
-      "weight": 7.2,
-      "ambient": true,
-      "scope": "sunset_east",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "named common family, tier 5: the family starts here",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.sunset_east.dolliv",
-      "species": "dolliv",
-      "bucket": "common",
-      "level": "28-38",
-      "weight": 3.2,
-      "ambient": true,
-      "scope": "sunset_east",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Smoliv at level 25: spawns 28-38, inside the tier 5 band 28-38",
+      "eligibility_reason": "named anchor family, tier 8: the family starts here",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -719,27 +689,13 @@
       "id": "surface.sunset_east.arboliva",
       "species": "arboliva",
       "bucket": "common",
-      "level": "35-38",
-      "weight": 1.6,
+      "level": "43-53",
+      "weight": 12.0,
       "ambient": true,
       "scope": "sunset_east",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
-      "eligibility_reason": "evolves from Dolliv at level 35: spawns 35-38, inside the tier 5 band 28-38",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.sunset_east.fomantis",
-      "species": "fomantis",
-      "bucket": "common",
-      "level": "28-38",
-      "weight": 7.2,
-      "ambient": true,
-      "scope": "sunset_east",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "named common family, tier 5: the family starts here",
+      "eligibility_reason": "evolves from Dolliv at level 35: spawns 43-53, inside the tier 8 band 43-53",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -747,13 +703,13 @@
       "id": "surface.sunset_east.lurantis",
       "species": "lurantis",
       "bucket": "common",
-      "level": "34-38",
-      "weight": 4.8,
+      "level": "43-53",
+      "weight": 12.0,
       "ambient": true,
       "scope": "sunset_east",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
-      "eligibility_reason": "evolves from Fomantis at level 34: spawns 34-38, inside the tier 5 band 28-38",
+      "eligibility_reason": "evolves from Fomantis at level 34: spawns 43-53, inside the tier 8 band 43-53",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -761,13 +717,13 @@
       "id": "surface.sunset_east.miltank",
       "species": "miltank",
       "bucket": "rare",
-      "level": "33-38",
+      "level": "48-53",
       "weight": 2.0,
       "ambient": true,
       "scope": "sunset_east",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
-      "eligibility_reason": "find: the reason to leave the path, rare bucket, top half of the band (33-38)",
+      "eligibility_reason": "find: the reason to leave the path, rare bucket, top half of the band (48-53)",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -776,7 +732,7 @@
       "species": "aipom",
       "bucket": "common",
       "level": "43-53",
-      "weight": 7.2,
+      "weight": 3.6,
       "ambient": true,
       "scope": "jungle_west",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -790,7 +746,7 @@
       "species": "ambipom",
       "bucket": "common",
       "level": "48-53",
-      "weight": 16.8,
+      "weight": 20.4,
       "ambient": true,
       "scope": "jungle_west",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -902,7 +858,7 @@
       "species": "sandygast",
       "bucket": "common",
       "level": "38-46",
-      "weight": 9.6,
+      "weight": 7.2,
       "ambient": true,
       "scope": "long_isle_north",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -920,7 +876,7 @@
       "species": "palossand",
       "bucket": "common",
       "level": "42-48",
-      "weight": 14.4,
+      "weight": 16.8,
       "ambient": true,
       "scope": "long_isle_north",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -938,7 +894,7 @@
       "species": "yamask",
       "bucket": "common",
       "level": "38-38",
-      "weight": 4.8,
+      "weight": 3.6,
       "ambient": true,
       "scope": "long_isle_north",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -952,7 +908,7 @@
       "species": "cofagrigus",
       "bucket": "common",
       "level": "38-48",
-      "weight": 7.2,
+      "weight": 8.4,
       "ambient": true,
       "scope": "long_isle_north",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -994,7 +950,7 @@
       "species": "gimmighoul",
       "bucket": "rare",
       "level": "43-48",
-      "weight": 0.8,
+      "weight": 0.6,
       "ambient": true,
       "scope": "long_isle_north",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -1008,7 +964,7 @@
       "species": "gholdengo",
       "bucket": "rare",
       "level": "43-48",
-      "weight": 1.2,
+      "weight": 1.4,
       "ambient": true,
       "scope": "long_isle_north",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -1022,7 +978,7 @@
       "species": "helioptile",
       "bucket": "common",
       "level": "38-48",
-      "weight": 9.6,
+      "weight": 7.2,
       "ambient": true,
       "scope": "long_isle_middle",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -1036,7 +992,7 @@
       "species": "heliolisk",
       "bucket": "common",
       "level": "43-48",
-      "weight": 14.4,
+      "weight": 16.8,
       "ambient": true,
       "scope": "long_isle_middle",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -1046,11 +1002,11 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.long_isle_middle.dwebble",
-      "species": "dwebble",
+      "id": "surface.long_isle_middle.silicobra",
+      "species": "silicobra",
       "bucket": "common",
-      "level": "38-38",
-      "weight": 4.8,
+      "level": "38-40",
+      "weight": 3.6,
       "ambient": true,
       "scope": "long_isle_middle",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -1060,22 +1016,22 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.long_isle_middle.crustle",
-      "species": "crustle",
+      "id": "surface.long_isle_middle.sandaconda",
+      "species": "sandaconda",
       "bucket": "common",
       "level": "38-48",
-      "weight": 7.2,
+      "weight": 8.4,
       "ambient": true,
       "scope": "long_isle_middle",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
-      "eligibility_reason": "evolves from Dwebble at level 34: spawns 38-48, inside the tier 7 band 38-48",
+      "eligibility_reason": "evolves from Silicobra at level 36: spawns 38-48, inside the tier 7 band 38-48",
       "biomes": [],
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.long_isle_middle.castform",
-      "species": "castform",
+      "id": "surface.long_isle_middle.sigilyph",
+      "species": "sigilyph",
       "bucket": "uncommon",
       "level": "38-48",
       "weight": 6.0,
@@ -1105,13 +1061,13 @@
       "id": "surface.long_isle_south.steenee",
       "species": "steenee",
       "bucket": "common",
-      "level": "38-48",
-      "weight": 8.0,
+      "level": "43-53",
+      "weight": 2.4,
       "ambient": true,
       "scope": "long_isle_south",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
-      "eligibility_reason": "evolves from Bounsweet at level 18: spawns 38-48, inside the tier 7 band 38-48",
+      "eligibility_reason": "evolves from Bounsweet at level 18: spawns 43-53, inside the tier 8 band 43-53",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -1119,27 +1075,13 @@
       "id": "surface.long_isle_south.tsareena",
       "species": "tsareena",
       "bucket": "common",
-      "level": "43-48",
-      "weight": 16.0,
+      "level": "48-53",
+      "weight": 21.6,
       "ambient": true,
       "scope": "long_isle_south",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
-      "eligibility_reason": "evolves from Steenee knowing a move, not by level: in the wild from tier 6, in the upper half of the band (43-48)",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.long_isle_south.fomantis",
-      "species": "fomantis",
-      "bucket": "common",
-      "level": "38-38",
-      "weight": 4.8,
-      "ambient": true,
-      "scope": "long_isle_south",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "named common family, tier 7: the family starts here",
+      "eligibility_reason": "evolves from Steenee knowing a move, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -1147,13 +1089,13 @@
       "id": "surface.long_isle_south.lurantis",
       "species": "lurantis",
       "bucket": "common",
-      "level": "38-48",
-      "weight": 7.2,
+      "level": "43-53",
+      "weight": 12.0,
       "ambient": true,
       "scope": "long_isle_south",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
-      "eligibility_reason": "evolves from Fomantis at level 34: spawns 38-48, inside the tier 7 band 38-48",
+      "eligibility_reason": "evolves from Fomantis at level 34: spawns 43-53, inside the tier 8 band 43-53",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -1161,13 +1103,13 @@
       "id": "surface.long_isle_south.squawkabilly",
       "species": "squawkabilly",
       "bucket": "common",
-      "level": "38-48",
+      "level": "43-53",
       "weight": 12.0,
       "ambient": true,
       "scope": "long_isle_south",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
-      "eligibility_reason": "named common family, tier 7: the family starts here",
+      "eligibility_reason": "named common family, tier 8: the family starts here",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -1175,13 +1117,13 @@
       "id": "surface.long_isle_south.hakamoo",
       "species": "hakamoo",
       "bucket": "rare",
-      "level": "43-48",
-      "weight": 0.7,
+      "level": "48-49",
+      "weight": 0.2,
       "ambient": true,
       "scope": "long_isle_south",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
-      "eligibility_reason": "evolves from Jangmo-o at level 35: spawns 43-48, inside the tier 7 band 38-48",
+      "eligibility_reason": "evolves from Jangmo-o at level 35: spawns 48-49, inside the tier 8 band 43-53",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -1189,13 +1131,13 @@
       "id": "surface.long_isle_south.kommoo",
       "species": "kommoo",
       "bucket": "rare",
-      "level": "45-48",
-      "weight": 1.3,
+      "level": "48-53",
+      "weight": 1.8,
       "ambient": true,
       "scope": "long_isle_south",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
-      "eligibility_reason": "evolves from Hakamo-o at level 45: spawns 45-48, inside the tier 7 band 38-48",
+      "eligibility_reason": "evolves from Hakamo-o at level 45: spawns 48-53, inside the tier 8 band 43-53",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -1203,7 +1145,7 @@
       "id": "surface.long_isle_south.araquanid",
       "species": "araquanid",
       "bucket": "common",
-      "level": "38-48",
+      "level": "43-53",
       "weight": 24.0,
       "ambient": true,
       "scope": "long_isle_south",
@@ -1213,7 +1155,7 @@
           "minecraft:water"
         ]
       },
-      "eligibility_reason": "evolves from Dewpider at level 22: spawns 38-48, inside the tier 7 band 38-48",
+      "eligibility_reason": "evolves from Dewpider at level 22: spawns 43-53, inside the tier 8 band 43-53",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -1221,7 +1163,7 @@
       "id": "surface.long_isle_south.golisopod",
       "species": "golisopod",
       "bucket": "common",
-      "level": "38-48",
+      "level": "43-53",
       "weight": 12.0,
       "ambient": true,
       "scope": "long_isle_south",
@@ -1231,7 +1173,7 @@
           "minecraft:water"
         ]
       },
-      "eligibility_reason": "evolves from Wimpod at level 30: spawns 38-48, inside the tier 7 band 38-48",
+      "eligibility_reason": "evolves from Wimpod at level 30: spawns 43-53, inside the tier 8 band 43-53",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -1910,14 +1852,14 @@
     {
       "id": "surface.rift_trunk.orthworm",
       "species": "orthworm",
-      "bucket": "uncommon",
-      "level": "52-60",
-      "weight": 6.0,
+      "bucket": "rare",
+      "level": "56-60",
+      "weight": 2.0,
       "ambient": true,
       "scope": "rift_trunk",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
-      "eligibility_reason": "named uncommon family, tier 9: the family starts here",
+      "eligibility_reason": "find: the reason to leave the path, rare bucket, top half of the band (56-60)",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -2016,6 +1958,20 @@
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
       "eligibility_reason": "evolves from Bronzor at level 33: spawns 52-60, inside the tier 9 band 52-60",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.rift_west_spur.bastiodon",
+      "species": "bastiodon",
+      "bucket": "rare",
+      "level": "56-60",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "rift_west_spur",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "evolves from Shieldon at level 30: spawns 56-60, inside the tier 9 band 52-60",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -2162,14 +2118,14 @@
     {
       "id": "surface.rift_south_east_arm.druddigon",
       "species": "druddigon",
-      "bucket": "uncommon",
-      "level": "52-60",
-      "weight": 6.0,
+      "bucket": "rare",
+      "level": "56-60",
+      "weight": 2.0,
       "ambient": true,
       "scope": "rift_south_east_arm",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
-      "eligibility_reason": "named uncommon family, tier 9: the family starts here",
+      "eligibility_reason": "find: the reason to leave the path, rare bucket, top half of the band (56-60)",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -2682,7 +2638,7 @@
       "species": "charcadet",
       "bucket": "rare",
       "level": "48-53",
-      "weight": 0.6,
+      "weight": 0.3,
       "ambient": true,
       "scope": "plateau_east",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -2696,7 +2652,7 @@
       "species": "armarouge",
       "bucket": "rare",
       "level": "48-53",
-      "weight": 0.7,
+      "weight": 0.8,
       "ambient": true,
       "scope": "plateau_east",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -2710,7 +2666,7 @@
       "species": "ceruledge",
       "bucket": "rare",
       "level": "48-53",
-      "weight": 0.7,
+      "weight": 0.8,
       "ambient": true,
       "scope": "plateau_east",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -2720,8 +2676,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.frostpeak.snorunt",
-      "species": "snorunt",
+      "id": "surface.frostpeak.absol",
+      "species": "absol",
       "bucket": "common",
       "level": "28-38",
       "weight": 24.0,
@@ -2736,6 +2692,20 @@
     {
       "id": "surface.frostpeak.delibird",
       "species": "delibird",
+      "bucket": "common",
+      "level": "28-38",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "frostpeak",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "named common family, tier 5: the family starts here",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.frostpeak.snorunt",
+      "species": "snorunt",
       "bucket": "common",
       "level": "28-38",
       "weight": 12.0,
@@ -2766,7 +2736,7 @@
       "species": "larvitar",
       "bucket": "rare",
       "level": "33-34",
-      "weight": 1.2,
+      "weight": 1.0,
       "ambient": true,
       "scope": "frostpeak",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -2780,7 +2750,7 @@
       "species": "pupitar",
       "bucket": "rare",
       "level": "33-38",
-      "weight": 0.8,
+      "weight": 1.0,
       "ambient": true,
       "scope": "frostpeak",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -2822,7 +2792,7 @@
       "species": "seel",
       "bucket": "common",
       "level": "28-38",
-      "weight": 14.4,
+      "weight": 12.0,
       "ambient": true,
       "scope": "frostpeak_strand",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -2836,7 +2806,7 @@
       "species": "dewgong",
       "bucket": "common",
       "level": "34-38",
-      "weight": 9.6,
+      "weight": 12.0,
       "ambient": true,
       "scope": "frostpeak_strand",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -3144,7 +3114,7 @@
       "species": "gloom",
       "bucket": "common",
       "level": "33-43",
-      "weight": 12.0,
+      "weight": 8.0,
       "ambient": true,
       "scope": "tilpey_west_meadows",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -3158,7 +3128,7 @@
       "species": "vileplume",
       "bucket": "common",
       "level": "38-43",
-      "weight": 6.0,
+      "weight": 8.0,
       "ambient": true,
       "scope": "tilpey_west_meadows",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -3172,7 +3142,7 @@
       "species": "bellossom",
       "bucket": "common",
       "level": "38-43",
-      "weight": 6.0,
+      "weight": 8.0,
       "ambient": true,
       "scope": "tilpey_west_meadows",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -3186,7 +3156,7 @@
       "species": "petilil",
       "bucket": "common",
       "level": "33-43",
-      "weight": 6.0,
+      "weight": 4.8,
       "ambient": true,
       "scope": "tilpey_west_meadows",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -3200,7 +3170,7 @@
       "species": "lilligant",
       "bucket": "common",
       "level": "38-43",
-      "weight": 6.0,
+      "weight": 7.2,
       "ambient": true,
       "scope": "tilpey_west_meadows",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -3228,7 +3198,7 @@
       "species": "chansey",
       "bucket": "rare",
       "level": "38-43",
-      "weight": 1.0,
+      "weight": 0.8,
       "ambient": true,
       "scope": "tilpey_west_meadows",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -3242,7 +3212,7 @@
       "species": "blissey",
       "bucket": "rare",
       "level": "38-43",
-      "weight": 1.0,
+      "weight": 1.2,
       "ambient": true,
       "scope": "tilpey_west_meadows",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -3382,7 +3352,7 @@
       "species": "misdreavus",
       "bucket": "common",
       "level": "33-43",
-      "weight": 6.0,
+      "weight": 4.8,
       "ambient": true,
       "scope": "wedge_north",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -3396,7 +3366,7 @@
       "species": "mismagius",
       "bucket": "common",
       "level": "38-43",
-      "weight": 6.0,
+      "weight": 7.2,
       "ambient": true,
       "scope": "wedge_north",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -3406,8 +3376,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.wedge_north.phantump",
-      "species": "phantump",
+      "id": "surface.wedge_north.drifblim",
+      "species": "drifblim",
       "bucket": "common",
       "level": "33-43",
       "weight": 12.0,
@@ -3415,7 +3385,7 @@
       "scope": "wedge_north",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
-      "eligibility_reason": "named common family, tier 6: the family starts here",
+      "eligibility_reason": "evolves from Drifloon at level 28: spawns 33-43, inside the tier 6 band 33-43",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -3424,7 +3394,7 @@
       "species": "sinistea",
       "bucket": "uncommon",
       "level": "33-43",
-      "weight": 3.0,
+      "weight": 2.4,
       "ambient": true,
       "scope": "wedge_north",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -3438,7 +3408,7 @@
       "species": "polteageist",
       "bucket": "uncommon",
       "level": "38-43",
-      "weight": 3.0,
+      "weight": 3.6,
       "ambient": true,
       "scope": "wedge_north",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -3466,7 +3436,7 @@
       "species": "golbat",
       "bucket": "common",
       "level": "43-53",
-      "weight": 4.0,
+      "weight": 2.4,
       "ambient": true,
       "scope": "wedge_south",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -3480,7 +3450,7 @@
       "species": "crobat",
       "bucket": "common",
       "level": "48-53",
-      "weight": 20.0,
+      "weight": 21.6,
       "ambient": true,
       "scope": "wedge_south",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -3494,7 +3464,7 @@
       "species": "dusclops",
       "bucket": "common",
       "level": "43-53",
-      "weight": 2.0,
+      "weight": 1.2,
       "ambient": true,
       "scope": "wedge_south",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -3508,7 +3478,7 @@
       "species": "dusknoir",
       "bucket": "common",
       "level": "48-53",
-      "weight": 10.0,
+      "weight": 10.8,
       "ambient": true,
       "scope": "wedge_south",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -3536,7 +3506,7 @@
       "species": "doublade",
       "bucket": "rare",
       "level": "48-53",
-      "weight": 0.3,
+      "weight": 0.2,
       "ambient": true,
       "scope": "wedge_south",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -3550,7 +3520,7 @@
       "species": "aegislash",
       "bucket": "rare",
       "level": "48-53",
-      "weight": 1.7,
+      "weight": 1.8,
       "ambient": true,
       "scope": "wedge_south",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -4056,8 +4026,8 @@
       "spawnable_position": "submerged"
     },
     {
-      "id": "surface.marsh_creek.drednaw",
-      "species": "drednaw",
+      "id": "surface.marsh_creek.quagsire",
+      "species": "quagsire",
       "bucket": "common",
       "level": "33-43",
       "weight": 12.0,
@@ -4065,9 +4035,9 @@
       "scope": "marsh_creek",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
-      "eligibility_reason": "evolves from Chewtle at level 22: spawns 33-43, inside the tier 6 band 33-43",
+      "eligibility_reason": "evolves from Wooper at level 20: spawns 33-43, inside the tier 6 band 33-43",
       "biomes": [],
-      "spawnable_position": "seafloor"
+      "spawnable_position": "submerged"
     },
     {
       "id": "surface.eastern_moor.karrablast",
@@ -4283,8 +4253,8 @@
       "id": "surface.lake_viltri_hollow.nincada",
       "species": "nincada",
       "bucket": "common",
-      "level": "13-22",
-      "weight": 21.6,
+      "level": "13-19",
+      "weight": 24.0,
       "ambient": true,
       "scope": "lake_viltri_hollow",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -4294,56 +4264,42 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.lake_viltri_hollow.ninjask",
-      "species": "ninjask",
+      "id": "surface.lake_viltri_hollow.venonat",
+      "species": "venonat",
       "bucket": "common",
-      "level": "20-22",
-      "weight": 2.4,
+      "level": "13-19",
+      "weight": 12.0,
       "ambient": true,
       "scope": "lake_viltri_hollow",
       "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Nincada at level 20: spawns 20-22, inside the tier 2 band 13-22",
+      "conditions": {
+        "timeRange": "night"
+      },
+      "eligibility_reason": "named common family, tier 2: the family starts here",
       "biomes": [],
       "spawnable_position": "grounded"
     },
     {
       "id": "surface.lake_viltri_hollow.volbeat",
       "species": "volbeat",
-      "bucket": "common",
-      "level": "13-22",
-      "weight": 12.0,
+      "bucket": "uncommon",
+      "level": "13-19",
+      "weight": 6.0,
       "ambient": true,
       "scope": "lake_viltri_hollow",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {
         "timeRange": "night"
       },
-      "eligibility_reason": "named common family, tier 2: the family starts here",
+      "eligibility_reason": "named uncommon family, tier 2: the family starts here",
       "biomes": [],
       "spawnable_position": "grounded"
     },
     {
       "id": "surface.lake_viltri_hollow.illumise",
       "species": "illumise",
-      "bucket": "common",
-      "level": "13-22",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "lake_viltri_hollow",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {
-        "timeRange": "night"
-      },
-      "eligibility_reason": "named common family, tier 2: the family starts here",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.lake_viltri_hollow.venonat",
-      "species": "venonat",
       "bucket": "uncommon",
-      "level": "13-22",
+      "level": "13-19",
       "weight": 6.0,
       "ambient": true,
       "scope": "lake_viltri_hollow",
@@ -4359,27 +4315,13 @@
       "id": "surface.lake_viltri_hollow.magikarp",
       "species": "magikarp",
       "bucket": "common",
-      "level": "13-22",
-      "weight": 21.6,
+      "level": "13-19",
+      "weight": 24.0,
       "ambient": true,
       "scope": "lake_viltri_hollow",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
       "eligibility_reason": "named anchor family, tier 2: the family starts here",
-      "biomes": [],
-      "spawnable_position": "submerged"
-    },
-    {
-      "id": "surface.lake_viltri_hollow.gyarados",
-      "species": "gyarados",
-      "bucket": "common",
-      "level": "20-22",
-      "weight": 2.4,
-      "ambient": true,
-      "scope": "lake_viltri_hollow",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Magikarp at level 20: spawns 20-22, inside the tier 2 band 13-22",
       "biomes": [],
       "spawnable_position": "submerged"
     },
@@ -4401,13 +4343,13 @@
       "id": "surface.lake_viltri_hollow.lombre",
       "species": "lombre",
       "bucket": "common",
-      "level": "14-22",
+      "level": "14-19",
       "weight": 1.2,
       "ambient": true,
       "scope": "lake_viltri_hollow",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
-      "eligibility_reason": "evolves from Lotad at level 14: spawns 14-22, inside the tier 2 band 13-22",
+      "eligibility_reason": "evolves from Lotad at level 14: spawns 14-19, inside the tier 2 band 13-19",
       "biomes": [],
       "spawnable_position": "surface"
     },
@@ -4415,7 +4357,7 @@
       "id": "surface.lake_viltri_hollow.corphish",
       "species": "corphish",
       "bucket": "common",
-      "level": "13-22",
+      "level": "13-19",
       "weight": 12.0,
       "ambient": true,
       "scope": "lake_viltri_hollow",
@@ -4429,7 +4371,7 @@
       "id": "surface.lake_viltri_hollow.chinchou",
       "species": "chinchou",
       "bucket": "rare",
-      "level": "13-22",
+      "level": "13-19",
       "weight": 2.0,
       "ambient": true,
       "scope": "lake_viltri_hollow",
@@ -4442,11 +4384,11 @@
       "spawnable_position": "submerged"
     },
     {
-      "id": "surface.viltris_path_valley.zigzagoon",
-      "species": "zigzagoon",
+      "id": "surface.viltris_path_valley.exeggcute",
+      "species": "exeggcute",
       "bucket": "common",
       "level": "13-22",
-      "weight": 21.6,
+      "weight": 24.0,
       "ambient": true,
       "scope": "viltris_path_valley",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -4456,8 +4398,22 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.viltris_path_valley.linoone",
-      "species": "linoone",
+      "id": "surface.viltris_path_valley.spearow",
+      "species": "spearow",
+      "bucket": "common",
+      "level": "13-22",
+      "weight": 9.6,
+      "ambient": true,
+      "scope": "viltris_path_valley",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "named common family, tier 2: the family starts here",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.viltris_path_valley.fearow",
+      "species": "fearow",
       "bucket": "common",
       "level": "20-22",
       "weight": 2.4,
@@ -4465,7 +4421,7 @@
       "scope": "viltris_path_valley",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
-      "eligibility_reason": "evolves from Zigzagoon at level 20: spawns 20-22, inside the tier 2 band 13-22",
+      "eligibility_reason": "evolves from Spearow at level 20: spawns 20-22, inside the tier 2 band 13-22",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -4474,7 +4430,7 @@
       "species": "patrat",
       "bucket": "common",
       "level": "13-22",
-      "weight": 10.8,
+      "weight": 9.6,
       "ambient": true,
       "scope": "viltris_path_valley",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -4488,7 +4444,7 @@
       "species": "watchog",
       "bucket": "common",
       "level": "20-22",
-      "weight": 1.2,
+      "weight": 2.4,
       "ambient": true,
       "scope": "viltris_path_valley",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -4498,43 +4454,11 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.viltris_path_valley.poochyena",
-      "species": "poochyena",
-      "bucket": "common",
-      "level": "13-22",
-      "weight": 10.8,
-      "ambient": true,
-      "scope": "viltris_path_valley",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {
-        "timeRange": "night"
-      },
-      "eligibility_reason": "named common family, tier 2: the family starts here",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.viltris_path_valley.mightyena",
-      "species": "mightyena",
-      "bucket": "common",
-      "level": "18-22",
-      "weight": 1.2,
-      "ambient": true,
-      "scope": "viltris_path_valley",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {
-        "timeRange": "night"
-      },
-      "eligibility_reason": "evolves from Poochyena at level 18: spawns 18-22, inside the tier 2 band 13-22",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
       "id": "surface.viltris_path_valley.fletchling",
       "species": "fletchling",
       "bucket": "uncommon",
       "level": "13-21",
-      "weight": 5.4,
+      "weight": 4.8,
       "ambient": true,
       "scope": "viltris_path_valley",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -4548,7 +4472,7 @@
       "species": "fletchinder",
       "bucket": "uncommon",
       "level": "17-22",
-      "weight": 0.6,
+      "weight": 1.2,
       "ambient": true,
       "scope": "viltris_path_valley",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -4726,8 +4650,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.north_west_coast.binacle",
-      "species": "binacle",
+      "id": "surface.north_west_coast.corsola",
+      "species": "corsola",
       "bucket": "common",
       "level": "18-28",
       "weight": 12.0,
@@ -4770,8 +4694,8 @@
       "spawnable_position": "submerged"
     },
     {
-      "id": "surface.north_west_coast.tentacool",
-      "species": "tentacool",
+      "id": "surface.north_west_coast.finneon",
+      "species": "finneon",
       "bucket": "common",
       "level": "18-28",
       "weight": 12.0,
@@ -4868,8 +4792,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.shrew_lake_shores.cherubi",
-      "species": "cherubi",
+      "id": "surface.shrew_lake_shores.poltchageist",
+      "species": "poltchageist",
       "bucket": "common",
       "level": "13-22",
       "weight": 24.0,
@@ -4882,11 +4806,11 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.shrew_lake_shores.ralts",
-      "species": "ralts",
+      "id": "surface.shrew_lake_shores.cherubi",
+      "species": "cherubi",
       "bucket": "common",
       "level": "13-22",
-      "weight": 10.8,
+      "weight": 12.0,
       "ambient": true,
       "scope": "shrew_lake_shores",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -4896,30 +4820,16 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.shrew_lake_shores.kirlia",
-      "species": "kirlia",
+      "id": "surface.shrew_lake_shores.snubbull",
+      "species": "snubbull",
       "bucket": "common",
-      "level": "20-22",
-      "weight": 1.2,
-      "ambient": true,
-      "scope": "shrew_lake_shores",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Ralts at level 20: spawns 20-22, inside the tier 2 band 13-22",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.shrew_lake_shores.poltchageist",
-      "species": "poltchageist",
-      "bucket": "uncommon",
       "level": "13-22",
-      "weight": 6.0,
+      "weight": 12.0,
       "ambient": true,
       "scope": "shrew_lake_shores",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
-      "eligibility_reason": "named uncommon family, tier 2: the family starts here",
+      "eligibility_reason": "named common family, tier 2: the family starts here",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -4972,7 +4882,7 @@
       "species": "flabebe",
       "bucket": "common",
       "level": "18-23",
-      "weight": 19.2,
+      "weight": 16.8,
       "ambient": true,
       "scope": "arrow_lake_shores",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -4986,7 +4896,7 @@
       "species": "floette",
       "bucket": "common",
       "level": "19-28",
-      "weight": 4.8,
+      "weight": 7.2,
       "ambient": true,
       "scope": "arrow_lake_shores",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -4996,8 +4906,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.arrow_lake_shores.skitty",
-      "species": "skitty",
+      "id": "surface.arrow_lake_shores.togedemaru",
+      "species": "togedemaru",
       "bucket": "common",
       "level": "18-28",
       "weight": 12.0,
@@ -5028,7 +4938,7 @@
       "species": "arrokuda",
       "bucket": "common",
       "level": "18-28",
-      "weight": 19.2,
+      "weight": 16.8,
       "ambient": true,
       "scope": "arrow_lake_shores",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -5042,7 +4952,7 @@
       "species": "barraskewda",
       "bucket": "common",
       "level": "26-28",
-      "weight": 4.8,
+      "weight": 7.2,
       "ambient": true,
       "scope": "arrow_lake_shores",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -5056,7 +4966,7 @@
       "species": "chewtle",
       "bucket": "common",
       "level": "18-26",
-      "weight": 9.6,
+      "weight": 8.4,
       "ambient": true,
       "scope": "arrow_lake_shores",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -5070,7 +4980,7 @@
       "species": "drednaw",
       "bucket": "common",
       "level": "22-28",
-      "weight": 2.4,
+      "weight": 3.6,
       "ambient": true,
       "scope": "arrow_lake_shores",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -5410,8 +5320,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.south_west_fields.hoppip",
-      "species": "hoppip",
+      "id": "surface.south_west_fields.cottonee",
+      "species": "cottonee",
       "bucket": "common",
       "level": "6-14",
       "weight": 24.0,
@@ -5424,8 +5334,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.south_west_fields.cottonee",
-      "species": "cottonee",
+      "id": "surface.south_west_fields.pikachu",
+      "species": "pikachu",
       "bucket": "common",
       "level": "6-14",
       "weight": 12.0,
@@ -5438,8 +5348,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.south_west_fields.sunkern",
-      "species": "sunkern",
+      "id": "surface.south_west_fields.growlithe",
+      "species": "growlithe",
       "bucket": "common",
       "level": "6-14",
       "weight": 12.0,
@@ -5526,7 +5436,7 @@
       "species": "girafarig",
       "bucket": "uncommon",
       "level": "43-53",
-      "weight": 1.8,
+      "weight": 0.9,
       "ambient": true,
       "scope": "arrow_creeks",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -5540,7 +5450,7 @@
       "species": "farigiraf",
       "bucket": "uncommon",
       "level": "48-53",
-      "weight": 4.2,
+      "weight": 5.1,
       "ambient": true,
       "scope": "arrow_creeks",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -5906,7 +5816,7 @@
       "species": "rellor",
       "bucket": "common",
       "level": "43-53",
-      "weight": 3.6,
+      "weight": 1.8,
       "ambient": true,
       "scope": "south_east_dunes",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -5920,7 +5830,7 @@
       "species": "rabsca",
       "bucket": "common",
       "level": "48-53",
-      "weight": 8.4,
+      "weight": 10.2,
       "ambient": true,
       "scope": "south_east_dunes",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -11035,7 +10945,7 @@
           "eligibility_reason": "named anchor family, tier 6: the family starts here",
           "level": "33-35",
           "bucket": "common",
-          "weight": 12.0,
+          "weight": 9.6,
           "conditions": {}
         },
         {
@@ -11051,26 +10961,24 @@
           "eligibility_reason": "evolves from Pineco at level 31: spawns 33-43, inside the tier 6 band 33-43",
           "level": "33-43",
           "bucket": "common",
-          "weight": 12.0,
+          "weight": 14.4,
           "conditions": {}
         },
         {
-          "species": "Ariados",
-          "pokemon": "ariados",
+          "species": "Heracross",
+          "pokemon": "heracross",
           "types": [
             "bug",
-            "poison"
+            "fighting"
           ],
-          "family": "spinarak",
+          "family": "heracross",
           "family_priority": "common",
           "ambient": true,
-          "eligibility_reason": "evolves from Spinarak at level 22: spawns 33-43, inside the tier 6 band 33-43",
+          "eligibility_reason": "named common family, tier 6: the family starts here",
           "level": "33-43",
           "bucket": "common",
           "weight": 12.0,
-          "conditions": {
-            "timeRange": "night"
-          }
+          "conditions": {}
         },
         {
           "species": "Noctowl",
@@ -11102,7 +11010,7 @@
           "eligibility_reason": "evolves from Mankey at level 28: spawns 38-43, inside the tier 6 band 33-43",
           "level": "38-43",
           "bucket": "rare",
-          "weight": 1.0,
+          "weight": 0.7,
           "conditions": {}
         },
         {
@@ -11118,7 +11026,7 @@
           "eligibility_reason": "evolves from Primeape by use_move, not by level: in the wild from tier 6, in the upper half of the band (38-43)",
           "level": "38-43",
           "bucket": "rare",
-          "weight": 1.0,
+          "weight": 1.3,
           "conditions": {}
         }
       ],
@@ -11154,7 +11062,7 @@
           "eligibility_reason": "named anchor family, tier 6: the family starts here",
           "level": "33-38",
           "bucket": "common",
-          "weight": 12.0,
+          "weight": 9.6,
           "conditions": {}
         },
         {
@@ -11170,7 +11078,7 @@
           "eligibility_reason": "evolves from Deerling at level 34: spawns 34-43, inside the tier 6 band 33-43",
           "level": "34-43",
           "bucket": "common",
-          "weight": 12.0,
+          "weight": 14.4,
           "conditions": {}
         },
         {
@@ -11200,7 +11108,7 @@
           "eligibility_reason": "evolves from Lillipup at level 16: spawns 33-36, inside the tier 6 band 33-43",
           "level": "33-36",
           "bucket": "common",
-          "weight": 6.0,
+          "weight": 4.0,
           "conditions": {}
         },
         {
@@ -11215,7 +11123,7 @@
           "eligibility_reason": "evolves from Herdier at level 32: spawns 33-43, inside the tier 6 band 33-43",
           "level": "33-43",
           "bucket": "common",
-          "weight": 6.0,
+          "weight": 8.0,
           "conditions": {}
         },
         {
@@ -11230,7 +11138,7 @@
           "eligibility_reason": "find: the reason to leave the path, rare bucket, top half of the band (38-42)",
           "level": "38-42",
           "bucket": "rare",
-          "weight": 1.0,
+          "weight": 0.8,
           "conditions": {}
         },
         {
@@ -11245,7 +11153,7 @@
           "eligibility_reason": "evolves from Axew at level 38: spawns 38-43, inside the tier 6 band 33-43",
           "level": "38-43",
           "bucket": "rare",
-          "weight": 1.0,
+          "weight": 1.2,
           "conditions": {}
         }
       ],
@@ -11281,7 +11189,7 @@
           "eligibility_reason": "named anchor family, tier 6: the family starts here",
           "level": "33-43",
           "bucket": "common",
-          "weight": 12.0,
+          "weight": 9.6,
           "conditions": {}
         },
         {
@@ -11297,7 +11205,7 @@
           "eligibility_reason": "evolves from Sneasel holding razor claw, not by level: in the wild from tier 6, in the upper half of the band (38-43)",
           "level": "38-43",
           "bucket": "common",
-          "weight": 12.0,
+          "weight": 14.4,
           "conditions": {}
         },
         {
@@ -11313,7 +11221,7 @@
           "eligibility_reason": "named common family, tier 6: the family starts here",
           "level": "33-43",
           "bucket": "common",
-          "weight": 6.0,
+          "weight": 4.8,
           "conditions": {}
         },
         {
@@ -11329,7 +11237,7 @@
           "eligibility_reason": "evolves from Snover at level 40: spawns 40-43, inside the tier 6 band 33-43",
           "level": "40-43",
           "bucket": "common",
-          "weight": 6.0,
+          "weight": 7.2,
           "conditions": {}
         },
         {
@@ -11344,7 +11252,7 @@
           "eligibility_reason": "named common family, tier 6: the family starts here",
           "level": "33-43",
           "bucket": "common",
-          "weight": 6.0,
+          "weight": 4.8,
           "conditions": {}
         },
         {
@@ -11360,7 +11268,7 @@
           "eligibility_reason": "evolves from Stantler knowing a move, not by level: in the wild from tier 6, in the upper half of the band (38-43)",
           "level": "38-43",
           "bucket": "common",
-          "weight": 6.0,
+          "weight": 7.2,
           "conditions": {}
         },
         {
@@ -11410,7 +11318,7 @@
           "eligibility_reason": "named anchor family, tier 6: the family starts here",
           "level": "33-43",
           "bucket": "common",
-          "weight": 12.0,
+          "weight": 9.6,
           "conditions": {}
         },
         {
@@ -11425,7 +11333,7 @@
           "eligibility_reason": "evolves from Buneary by friendship, not by level: in the wild from tier 6, in the upper half of the band (38-43)",
           "level": "38-43",
           "bucket": "common",
-          "weight": 12.0,
+          "weight": 14.4,
           "conditions": {}
         },
         {
@@ -11440,7 +11348,7 @@
           "eligibility_reason": "named common family, tier 6: the family starts here",
           "level": "33-34",
           "bucket": "common",
-          "weight": 6.0,
+          "weight": 4.8,
           "conditions": {}
         },
         {
@@ -11455,7 +11363,7 @@
           "eligibility_reason": "evolves from Zorua at level 30: spawns 33-43, inside the tier 6 band 33-43",
           "level": "33-43",
           "bucket": "common",
-          "weight": 6.0,
+          "weight": 7.2,
           "conditions": {}
         },
         {
@@ -11470,7 +11378,7 @@
           "eligibility_reason": "named uncommon family, tier 6: the family starts here",
           "level": "33-39",
           "bucket": "uncommon",
-          "weight": 3.0,
+          "weight": 2.4,
           "conditions": {}
         },
         {
@@ -11485,7 +11393,7 @@
           "eligibility_reason": "evolves from Vanillite at level 35: spawns 35-43, inside the tier 6 band 33-43",
           "level": "35-43",
           "bucket": "uncommon",
-          "weight": 3.0,
+          "weight": 3.6,
           "conditions": {}
         },
         {
@@ -11501,7 +11409,7 @@
           "eligibility_reason": "evolves from Rowlet at level 17: spawns 38-38, inside the tier 6 band 33-43",
           "level": "38-38",
           "bucket": "rare",
-          "weight": 1.0,
+          "weight": 0.7,
           "conditions": {}
         },
         {
@@ -11517,7 +11425,7 @@
           "eligibility_reason": "evolves from Dartrix at level 34: spawns 38-43, inside the tier 6 band 33-43",
           "level": "38-43",
           "bucket": "rare",
-          "weight": 1.0,
+          "weight": 1.3,
           "conditions": {}
         }
       ],
@@ -11553,7 +11461,7 @@
           "eligibility_reason": "named anchor family, tier 3: the family starts here",
           "level": "18-28",
           "bucket": "common",
-          "weight": 19.2,
+          "weight": 16.8,
           "conditions": {}
         },
         {
@@ -11569,7 +11477,7 @@
           "eligibility_reason": "evolves from Paras at level 24: spawns 24-28, inside the tier 3 band 18-28",
           "level": "24-28",
           "bucket": "common",
-          "weight": 4.8,
+          "weight": 7.2,
           "conditions": {}
         },
         {
@@ -11584,7 +11492,7 @@
           "eligibility_reason": "named common family, tier 3: the family starts here",
           "level": "18-27",
           "bucket": "common",
-          "weight": 9.6,
+          "weight": 8.4,
           "conditions": {}
         },
         {
@@ -11600,7 +11508,7 @@
           "eligibility_reason": "evolves from Shroomish at level 23: spawns 23-28, inside the tier 3 band 18-28",
           "level": "23-28",
           "bucket": "common",
-          "weight": 2.4,
+          "weight": 3.6,
           "conditions": {}
         },
         {
@@ -11616,7 +11524,7 @@
           "eligibility_reason": "named common family, tier 3: the family starts here",
           "level": "18-28",
           "bucket": "common",
-          "weight": 9.6,
+          "weight": 8.4,
           "conditions": {}
         },
         {
@@ -11632,7 +11540,7 @@
           "eligibility_reason": "evolves from Morelull at level 24: spawns 24-28, inside the tier 3 band 18-28",
           "level": "24-28",
           "bucket": "common",
-          "weight": 2.4,
+          "weight": 3.6,
           "conditions": {}
         },
         {
@@ -11688,24 +11596,6 @@
       },
       "entries": [
         {
-          "species": "Venonat",
-          "pokemon": "venonat",
-          "types": [
-            "bug",
-            "poison"
-          ],
-          "family": "venonat",
-          "family_priority": "anchor",
-          "ambient": true,
-          "eligibility_reason": "named anchor family, tier 3: the family starts here",
-          "level": "18-28",
-          "bucket": "common",
-          "weight": 24.0,
-          "conditions": {
-            "timeRange": "night"
-          }
-        },
-        {
           "species": "Pumpkaboo",
           "pokemon": "pumpkaboo",
           "types": [
@@ -11713,22 +11603,39 @@
             "grass"
           ],
           "family": "pumpkaboo",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "named anchor family, tier 3: the family starts here",
+          "level": "18-28",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        },
+        {
+          "species": "Venonat",
+          "pokemon": "venonat",
+          "types": [
+            "bug",
+            "poison"
+          ],
+          "family": "venonat",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 3: the family starts here",
           "level": "18-28",
           "bucket": "common",
           "weight": 12.0,
-          "conditions": {}
+          "conditions": {
+            "timeRange": "night"
+          }
         },
         {
-          "species": "Impidimp",
-          "pokemon": "impidimp",
+          "species": "Tangela",
+          "pokemon": "tangela",
           "types": [
-            "dark",
-            "fairy"
+            "grass"
           ],
-          "family": "impidimp",
+          "family": "tangela",
           "family_priority": "uncommon",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 3: the family starts here",
@@ -11864,10 +11771,10 @@
       "mechanism": "spawn_json_coordinate_boxes",
       "policy": "signature_overlay_keep_defaults",
       "level_band": {
-        "minimum": 28,
-        "maximum": 38,
-        "basis_route": "route_05_erika_to_koga",
-        "tier": 5
+        "minimum": 43,
+        "maximum": 53,
+        "basis_route": "route_08_blaine_to_giovanni",
+        "tier": 8
       },
       "entries": [
         {
@@ -11879,42 +11786,10 @@
           "family": "comfey",
           "family_priority": "anchor",
           "ambient": true,
-          "eligibility_reason": "named anchor family, tier 5: the family starts here",
-          "level": "28-38",
+          "eligibility_reason": "named anchor family, tier 8: the family starts here",
+          "level": "43-53",
           "bucket": "common",
           "weight": 24.0,
-          "conditions": {}
-        },
-        {
-          "species": "Smoliv",
-          "pokemon": "smoliv",
-          "types": [
-            "grass",
-            "normal"
-          ],
-          "family": "smoliv",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 5: the family starts here",
-          "level": "28-29",
-          "bucket": "common",
-          "weight": 7.2,
-          "conditions": {}
-        },
-        {
-          "species": "Dolliv",
-          "pokemon": "dolliv",
-          "types": [
-            "grass",
-            "normal"
-          ],
-          "family": "smoliv",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "evolves from Smoliv at level 25: spawns 28-38, inside the tier 5 band 28-38",
-          "level": "28-38",
-          "bucket": "common",
-          "weight": 3.2,
           "conditions": {}
         },
         {
@@ -11927,25 +11802,10 @@
           "family": "smoliv",
           "family_priority": "common",
           "ambient": true,
-          "eligibility_reason": "evolves from Dolliv at level 35: spawns 35-38, inside the tier 5 band 28-38",
-          "level": "35-38",
+          "eligibility_reason": "evolves from Dolliv at level 35: spawns 43-53, inside the tier 8 band 43-53",
+          "level": "43-53",
           "bucket": "common",
-          "weight": 1.6,
-          "conditions": {}
-        },
-        {
-          "species": "Fomantis",
-          "pokemon": "fomantis",
-          "types": [
-            "grass"
-          ],
-          "family": "fomantis",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 5: the family starts here",
-          "level": "28-38",
-          "bucket": "common",
-          "weight": 7.2,
+          "weight": 12.0,
           "conditions": {}
         },
         {
@@ -11957,10 +11817,10 @@
           "family": "fomantis",
           "family_priority": "common",
           "ambient": true,
-          "eligibility_reason": "evolves from Fomantis at level 34: spawns 34-38, inside the tier 5 band 28-38",
-          "level": "34-38",
+          "eligibility_reason": "evolves from Fomantis at level 34: spawns 43-53, inside the tier 8 band 43-53",
+          "level": "43-53",
           "bucket": "common",
-          "weight": 4.8,
+          "weight": 12.0,
           "conditions": {}
         },
         {
@@ -11972,8 +11832,8 @@
           "family": "miltank",
           "family_priority": "find",
           "ambient": true,
-          "eligibility_reason": "find: the reason to leave the path, rare bucket, top half of the band (33-38)",
-          "level": "33-38",
+          "eligibility_reason": "find: the reason to leave the path, rare bucket, top half of the band (48-53)",
+          "level": "48-53",
           "bucket": "rare",
           "weight": 2.0,
           "conditions": {}
@@ -11982,7 +11842,7 @@
       "biomes": [
         "minecraft:flower_forest"
       ],
-      "roster_basis": "Generated by tools/build_encounters.py from data/encounter_design.json tables.sunset_east: tier 5, off the path, themes meadow; the same island as sunset_west. Do not edit by hand."
+      "roster_basis": "Generated by tools/build_encounters.py from data/encounter_design.json tables.sunset_east: tier 8, off the path, themes meadow; the Sunset isle's east end, nearest Route 8 (601 blocks): a tier is never below its nearest route's leg. Do not edit by hand."
     },
     {
       "id": "jungle_west",
@@ -12010,7 +11870,7 @@
           "eligibility_reason": "named anchor family, tier 8: the family starts here",
           "level": "43-53",
           "bucket": "common",
-          "weight": 7.2,
+          "weight": 3.6,
           "conditions": {}
         },
         {
@@ -12025,7 +11885,7 @@
           "eligibility_reason": "evolves from Aipom knowing a move, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
           "level": "48-53",
           "bucket": "common",
-          "weight": 16.8,
+          "weight": 20.4,
           "conditions": {}
         },
         {
@@ -12192,7 +12052,7 @@
           "eligibility_reason": "named anchor family, tier 7: the family starts here",
           "level": "38-46",
           "bucket": "common",
-          "weight": 9.6,
+          "weight": 7.2,
           "conditions": {
             "neededNearbyBlocks": [
               "minecraft:water"
@@ -12212,7 +12072,7 @@
           "eligibility_reason": "evolves from Sandygast at level 42: spawns 42-48, inside the tier 7 band 38-48",
           "level": "42-48",
           "bucket": "common",
-          "weight": 14.4,
+          "weight": 16.8,
           "conditions": {
             "neededNearbyBlocks": [
               "minecraft:water"
@@ -12231,7 +12091,7 @@
           "eligibility_reason": "named common family, tier 7: the family starts here",
           "level": "38-38",
           "bucket": "common",
-          "weight": 4.8,
+          "weight": 3.6,
           "conditions": {}
         },
         {
@@ -12246,7 +12106,7 @@
           "eligibility_reason": "evolves from Yamask at level 34: spawns 38-48, inside the tier 7 band 38-48",
           "level": "38-48",
           "bucket": "common",
-          "weight": 7.2,
+          "weight": 8.4,
           "conditions": {}
         },
         {
@@ -12291,7 +12151,7 @@
           "eligibility_reason": "find: the reason to leave the path, rare bucket, top half of the band (43-48)",
           "level": "43-48",
           "bucket": "rare",
-          "weight": 0.8,
+          "weight": 0.6,
           "conditions": {}
         },
         {
@@ -12307,7 +12167,7 @@
           "eligibility_reason": "evolves from Gimmighoul by properties, not by level: in the wild from tier 6, in the upper half of the band (43-48)",
           "level": "43-48",
           "bucket": "rare",
-          "weight": 1.2,
+          "weight": 1.4,
           "conditions": {}
         }
       ],
@@ -12343,7 +12203,7 @@
           "eligibility_reason": "named anchor family, tier 7: the family starts here",
           "level": "38-48",
           "bucket": "common",
-          "weight": 9.6,
+          "weight": 7.2,
           "conditions": {}
         },
         {
@@ -12359,48 +12219,47 @@
           "eligibility_reason": "evolves from Helioptile using sun stone, not by level: in the wild from tier 6, in the upper half of the band (43-48)",
           "level": "43-48",
           "bucket": "common",
-          "weight": 14.4,
+          "weight": 16.8,
           "conditions": {}
         },
         {
-          "species": "Dwebble",
-          "pokemon": "dwebble",
+          "species": "Silicobra",
+          "pokemon": "silicobra",
           "types": [
-            "bug",
-            "rock"
+            "ground"
           ],
-          "family": "dwebble",
+          "family": "silicobra",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 7: the family starts here",
-          "level": "38-38",
+          "level": "38-40",
           "bucket": "common",
-          "weight": 4.8,
+          "weight": 3.6,
           "conditions": {}
         },
         {
-          "species": "Crustle",
-          "pokemon": "crustle",
+          "species": "Sandaconda",
+          "pokemon": "sandaconda",
           "types": [
-            "bug",
-            "rock"
+            "ground"
           ],
-          "family": "dwebble",
+          "family": "silicobra",
           "family_priority": "common",
           "ambient": true,
-          "eligibility_reason": "evolves from Dwebble at level 34: spawns 38-48, inside the tier 7 band 38-48",
+          "eligibility_reason": "evolves from Silicobra at level 36: spawns 38-48, inside the tier 7 band 38-48",
           "level": "38-48",
           "bucket": "common",
-          "weight": 7.2,
+          "weight": 8.4,
           "conditions": {}
         },
         {
-          "species": "Castform",
-          "pokemon": "castform",
+          "species": "Sigilyph",
+          "pokemon": "sigilyph",
           "types": [
-            "normal"
+            "psychic",
+            "flying"
           ],
-          "family": "castform",
+          "family": "sigilyph",
           "family_priority": "uncommon",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 7: the family starts here",
@@ -12435,14 +12294,14 @@
       "display_name": "Long Isle South",
       "region": "long_isle",
       "terrain_basis": "jungle island (paint jungle, repainted 2026-09-26 from sparse_jungle); median y119; slope p90 22.5°",
-      "roster_basis": "Generated by tools/build_encounters.py from data/encounter_design.json tables.long_isle_south: tier 7, off the path, themes jungle; the Long Isle's jungle end. Do not edit by hand.",
+      "roster_basis": "Generated by tools/build_encounters.py from data/encounter_design.json tables.long_isle_south: tier 8, off the path, themes jungle; the Long Isle's jungle end, nearest Route 8 (1,585 blocks); the owner's 44-50 lies across tiers 7 and 8. Do not edit by hand.",
       "mechanism": "spawn_json_coordinate_boxes",
       "policy": "signature_overlay_keep_defaults",
       "level_band": {
-        "minimum": 38,
-        "maximum": 48,
-        "basis_route": "route_07_sabrina_to_blaine",
-        "tier": 7
+        "minimum": 43,
+        "maximum": 53,
+        "basis_route": "route_08_blaine_to_giovanni",
+        "tier": 8
       },
       "entries": [
         {
@@ -12454,10 +12313,10 @@
           "family": "bounsweet",
           "family_priority": "anchor",
           "ambient": true,
-          "eligibility_reason": "evolves from Bounsweet at level 18: spawns 38-48, inside the tier 7 band 38-48",
-          "level": "38-48",
+          "eligibility_reason": "evolves from Bounsweet at level 18: spawns 43-53, inside the tier 8 band 43-53",
+          "level": "43-53",
           "bucket": "common",
-          "weight": 8.0,
+          "weight": 2.4,
           "conditions": {}
         },
         {
@@ -12469,25 +12328,10 @@
           "family": "bounsweet",
           "family_priority": "anchor",
           "ambient": true,
-          "eligibility_reason": "evolves from Steenee knowing a move, not by level: in the wild from tier 6, in the upper half of the band (43-48)",
-          "level": "43-48",
+          "eligibility_reason": "evolves from Steenee knowing a move, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
+          "level": "48-53",
           "bucket": "common",
-          "weight": 16.0,
-          "conditions": {}
-        },
-        {
-          "species": "Fomantis",
-          "pokemon": "fomantis",
-          "types": [
-            "grass"
-          ],
-          "family": "fomantis",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 7: the family starts here",
-          "level": "38-38",
-          "bucket": "common",
-          "weight": 4.8,
+          "weight": 21.6,
           "conditions": {}
         },
         {
@@ -12499,10 +12343,10 @@
           "family": "fomantis",
           "family_priority": "common",
           "ambient": true,
-          "eligibility_reason": "evolves from Fomantis at level 34: spawns 38-48, inside the tier 7 band 38-48",
-          "level": "38-48",
+          "eligibility_reason": "evolves from Fomantis at level 34: spawns 43-53, inside the tier 8 band 43-53",
+          "level": "43-53",
           "bucket": "common",
-          "weight": 7.2,
+          "weight": 12.0,
           "conditions": {}
         },
         {
@@ -12515,8 +12359,8 @@
           "family": "squawkabilly",
           "family_priority": "common",
           "ambient": true,
-          "eligibility_reason": "named common family, tier 7: the family starts here",
-          "level": "38-48",
+          "eligibility_reason": "named common family, tier 8: the family starts here",
+          "level": "43-53",
           "bucket": "common",
           "weight": 12.0,
           "conditions": {}
@@ -12531,10 +12375,10 @@
           "family": "jangmoo",
           "family_priority": "find",
           "ambient": true,
-          "eligibility_reason": "evolves from Jangmo-o at level 35: spawns 43-48, inside the tier 7 band 38-48",
-          "level": "43-48",
+          "eligibility_reason": "evolves from Jangmo-o at level 35: spawns 48-49, inside the tier 8 band 43-53",
+          "level": "48-49",
           "bucket": "rare",
-          "weight": 0.7,
+          "weight": 0.2,
           "conditions": {}
         },
         {
@@ -12547,10 +12391,10 @@
           "family": "jangmoo",
           "family_priority": "find",
           "ambient": true,
-          "eligibility_reason": "evolves from Hakamo-o at level 45: spawns 45-48, inside the tier 7 band 38-48",
-          "level": "45-48",
+          "eligibility_reason": "evolves from Hakamo-o at level 45: spawns 48-53, inside the tier 8 band 43-53",
+          "level": "48-53",
           "bucket": "rare",
-          "weight": 1.3,
+          "weight": 1.8,
           "conditions": {}
         },
         {
@@ -12563,8 +12407,8 @@
           "family": "dewpider",
           "family_priority": "anchor",
           "ambient": true,
-          "eligibility_reason": "evolves from Dewpider at level 22: spawns 38-48, inside the tier 7 band 38-48",
-          "level": "38-48",
+          "eligibility_reason": "evolves from Dewpider at level 22: spawns 43-53, inside the tier 8 band 43-53",
+          "level": "43-53",
           "bucket": "common",
           "weight": 24.0,
           "conditions": {
@@ -12583,8 +12427,8 @@
           "family": "wimpod",
           "family_priority": "common",
           "ambient": true,
-          "eligibility_reason": "evolves from Wimpod at level 30: spawns 38-48, inside the tier 7 band 38-48",
-          "level": "38-48",
+          "eligibility_reason": "evolves from Wimpod at level 30: spawns 43-53, inside the tier 8 band 43-53",
+          "level": "43-53",
           "bucket": "common",
           "weight": 12.0,
           "conditions": {
@@ -13512,19 +13356,19 @@
             "steel"
           ],
           "family": "orthworm",
-          "family_priority": "uncommon",
+          "family_priority": "find",
           "ambient": true,
-          "eligibility_reason": "named uncommon family, tier 9: the family starts here",
-          "level": "52-60",
-          "bucket": "uncommon",
-          "weight": 6.0,
+          "eligibility_reason": "find: the reason to leave the path, rare bucket, top half of the band (56-60)",
+          "level": "56-60",
+          "bucket": "rare",
+          "weight": 2.0,
           "conditions": {}
         }
       ],
       "biomes": [
         "minecraft:windswept_gravelly_hills"
       ],
-      "roster_basis": "Generated by tools/build_encounters.py from data/encounter_design.json tables.rift_trunk: tier 9, on or near the path, themes cave; Victory Road's corridor crosses it; the Rift is Victory Road's country. Do not edit by hand."
+      "roster_basis": "Generated by tools/build_encounters.py from data/encounter_design.json tables.rift_trunk: tier 9, off the path, themes cave; the Rift floor beside Victory Road's tunnels: over 128 blocks from every gym route (313 from Route 4), so off the path by section 1; Victory Road's band. Do not edit by hand."
     },
     {
       "id": "rift_west_spur",
@@ -13649,12 +13493,28 @@
           "bucket": "uncommon",
           "weight": 6.0,
           "conditions": {}
+        },
+        {
+          "species": "Bastiodon",
+          "pokemon": "bastiodon",
+          "types": [
+            "rock",
+            "steel"
+          ],
+          "family": "shieldon",
+          "family_priority": "find",
+          "ambient": true,
+          "eligibility_reason": "evolves from Shieldon at level 30: spawns 56-60, inside the tier 9 band 52-60",
+          "level": "56-60",
+          "bucket": "rare",
+          "weight": 2.0,
+          "conditions": {}
         }
       ],
       "biomes": [
         "minecraft:windswept_gravelly_hills"
       ],
-      "roster_basis": "Generated by tools/build_encounters.py from data/encounter_design.json tables.rift_west_spur: tier 9, on or near the path, themes cave. Do not edit by hand."
+      "roster_basis": "Generated by tools/build_encounters.py from data/encounter_design.json tables.rift_west_spur: tier 9, off the path, themes cave; the Rift's west spur, 569 blocks from Route 4; off the path by section 1; Victory Road's band. Do not edit by hand."
     },
     {
       "id": "rift_south_west_arm",
@@ -13855,12 +13715,12 @@
             "dragon"
           ],
           "family": "druddigon",
-          "family_priority": "uncommon",
+          "family_priority": "find",
           "ambient": true,
-          "eligibility_reason": "named uncommon family, tier 9: the family starts here",
-          "level": "52-60",
-          "bucket": "uncommon",
-          "weight": 6.0,
+          "eligibility_reason": "find: the reason to leave the path, rare bucket, top half of the band (56-60)",
+          "level": "56-60",
+          "bucket": "rare",
+          "weight": 2.0,
           "conditions": {}
         },
         {
@@ -14562,7 +14422,7 @@
           "eligibility_reason": "find: the reason to leave the path, rare bucket, top half of the band (48-53)",
           "level": "48-53",
           "bucket": "rare",
-          "weight": 0.6,
+          "weight": 0.3,
           "conditions": {}
         },
         {
@@ -14578,7 +14438,7 @@
           "eligibility_reason": "evolves from Charcadet using auspicious armor, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
           "level": "48-53",
           "bucket": "rare",
-          "weight": 0.7,
+          "weight": 0.8,
           "conditions": {}
         },
         {
@@ -14594,7 +14454,7 @@
           "eligibility_reason": "evolves from Charcadet using malicious armor, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
           "level": "48-53",
           "bucket": "rare",
-          "weight": 0.7,
+          "weight": 0.8,
           "conditions": {}
         }
       ],
@@ -14618,12 +14478,12 @@
       },
       "entries": [
         {
-          "species": "Snorunt",
-          "pokemon": "snorunt",
+          "species": "Absol",
+          "pokemon": "absol",
           "types": [
-            "ice"
+            "dark"
           ],
-          "family": "snorunt",
+          "family": "absol",
           "family_priority": "anchor",
           "ambient": true,
           "eligibility_reason": "named anchor family, tier 5: the family starts here",
@@ -14640,6 +14500,21 @@
             "flying"
           ],
           "family": "delibird",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 5: the family starts here",
+          "level": "28-38",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Snorunt",
+          "pokemon": "snorunt",
+          "types": [
+            "ice"
+          ],
+          "family": "snorunt",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 5: the family starts here",
@@ -14676,7 +14551,7 @@
           "eligibility_reason": "find: the reason to leave the path, rare bucket, top half of the band (33-34)",
           "level": "33-34",
           "bucket": "rare",
-          "weight": 1.2,
+          "weight": 1.0,
           "conditions": {}
         },
         {
@@ -14692,7 +14567,7 @@
           "eligibility_reason": "evolves from Larvitar at level 30: spawns 33-38, inside the tier 5 band 28-38",
           "level": "33-38",
           "bucket": "rare",
-          "weight": 0.8,
+          "weight": 1.0,
           "conditions": {}
         }
       ],
@@ -14760,7 +14635,7 @@
           "eligibility_reason": "named anchor family, tier 5: the family starts here",
           "level": "28-38",
           "bucket": "common",
-          "weight": 14.4,
+          "weight": 12.0,
           "conditions": {}
         },
         {
@@ -14776,7 +14651,7 @@
           "eligibility_reason": "evolves from Seel at level 34: spawns 34-38, inside the tier 5 band 28-38",
           "level": "34-38",
           "bucket": "common",
-          "weight": 9.6,
+          "weight": 12.0,
           "conditions": {}
         },
         {
@@ -15205,7 +15080,7 @@
           "eligibility_reason": "evolves from Oddish at level 21: spawns 33-43, inside the tier 6 band 33-43",
           "level": "33-43",
           "bucket": "common",
-          "weight": 12.0,
+          "weight": 8.0,
           "conditions": {}
         },
         {
@@ -15221,7 +15096,7 @@
           "eligibility_reason": "evolves from Gloom using leaf stone, not by level: in the wild from tier 6, in the upper half of the band (38-43)",
           "level": "38-43",
           "bucket": "common",
-          "weight": 6.0,
+          "weight": 8.0,
           "conditions": {}
         },
         {
@@ -15236,7 +15111,7 @@
           "eligibility_reason": "evolves from Gloom using sun stone, not by level: in the wild from tier 6, in the upper half of the band (38-43)",
           "level": "38-43",
           "bucket": "common",
-          "weight": 6.0,
+          "weight": 8.0,
           "conditions": {}
         },
         {
@@ -15251,7 +15126,7 @@
           "eligibility_reason": "named common family, tier 6: the family starts here",
           "level": "33-43",
           "bucket": "common",
-          "weight": 6.0,
+          "weight": 4.8,
           "conditions": {}
         },
         {
@@ -15266,7 +15141,7 @@
           "eligibility_reason": "evolves from Petilil using sun stone, not by level: in the wild from tier 6, in the upper half of the band (38-43)",
           "level": "38-43",
           "bucket": "common",
-          "weight": 6.0,
+          "weight": 7.2,
           "conditions": {}
         },
         {
@@ -15297,7 +15172,7 @@
           "eligibility_reason": "find: the reason to leave the path, rare bucket, top half of the band (38-43)",
           "level": "38-43",
           "bucket": "rare",
-          "weight": 1.0,
+          "weight": 0.8,
           "conditions": {}
         },
         {
@@ -15312,7 +15187,7 @@
           "eligibility_reason": "evolves from Chansey by friendship, not by level: in the wild from tier 6, in the upper half of the band (38-43)",
           "level": "38-43",
           "bucket": "rare",
-          "weight": 1.0,
+          "weight": 1.2,
           "conditions": {}
         },
         {
@@ -15510,7 +15385,7 @@
           "eligibility_reason": "named common family, tier 6: the family starts here",
           "level": "33-43",
           "bucket": "common",
-          "weight": 6.0,
+          "weight": 4.8,
           "conditions": {}
         },
         {
@@ -15525,20 +15400,20 @@
           "eligibility_reason": "evolves from Misdreavus using dusk stone, not by level: in the wild from tier 6, in the upper half of the band (38-43)",
           "level": "38-43",
           "bucket": "common",
-          "weight": 6.0,
+          "weight": 7.2,
           "conditions": {}
         },
         {
-          "species": "Phantump",
-          "pokemon": "phantump",
+          "species": "Drifblim",
+          "pokemon": "drifblim",
           "types": [
             "ghost",
-            "grass"
+            "flying"
           ],
-          "family": "phantump",
+          "family": "drifloon",
           "family_priority": "common",
           "ambient": true,
-          "eligibility_reason": "named common family, tier 6: the family starts here",
+          "eligibility_reason": "evolves from Drifloon at level 28: spawns 33-43, inside the tier 6 band 33-43",
           "level": "33-43",
           "bucket": "common",
           "weight": 12.0,
@@ -15556,7 +15431,7 @@
           "eligibility_reason": "named uncommon family, tier 6: the family starts here",
           "level": "33-43",
           "bucket": "uncommon",
-          "weight": 3.0,
+          "weight": 2.4,
           "conditions": {}
         },
         {
@@ -15571,7 +15446,7 @@
           "eligibility_reason": "evolves from Sinistea using cracked pot, not by level: in the wild from tier 6, in the upper half of the band (38-43)",
           "level": "38-43",
           "bucket": "uncommon",
-          "weight": 3.0,
+          "weight": 3.6,
           "conditions": {}
         },
         {
@@ -15623,7 +15498,7 @@
           "eligibility_reason": "evolves from Zubat at level 22: spawns 43-53, inside the tier 8 band 43-53",
           "level": "43-53",
           "bucket": "common",
-          "weight": 4.0,
+          "weight": 2.4,
           "conditions": {}
         },
         {
@@ -15639,7 +15514,7 @@
           "eligibility_reason": "evolves from Golbat by friendship, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
           "level": "48-53",
           "bucket": "common",
-          "weight": 20.0,
+          "weight": 21.6,
           "conditions": {}
         },
         {
@@ -15654,7 +15529,7 @@
           "eligibility_reason": "evolves from Duskull at level 37: spawns 43-53, inside the tier 8 band 43-53",
           "level": "43-53",
           "bucket": "common",
-          "weight": 2.0,
+          "weight": 1.2,
           "conditions": {}
         },
         {
@@ -15669,7 +15544,7 @@
           "eligibility_reason": "evolves from Dusclops by trade holding reaper cloth, not by level: in the wild from tier 7, in the upper half of the band (48-53)",
           "level": "48-53",
           "bucket": "common",
-          "weight": 10.0,
+          "weight": 10.8,
           "conditions": {}
         },
         {
@@ -15701,7 +15576,7 @@
           "eligibility_reason": "evolves from Honedge at level 35: spawns 48-53, inside the tier 8 band 43-53",
           "level": "48-53",
           "bucket": "rare",
-          "weight": 0.3,
+          "weight": 0.2,
           "conditions": {}
         },
         {
@@ -15717,7 +15592,7 @@
           "eligibility_reason": "evolves from Doublade using dusk stone, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
           "level": "48-53",
           "bucket": "rare",
-          "weight": 1.7,
+          "weight": 1.8,
           "conditions": {}
         }
       ],
@@ -16367,16 +16242,16 @@
           "conditions": {}
         },
         {
-          "species": "Drednaw",
-          "pokemon": "drednaw",
+          "species": "Quagsire",
+          "pokemon": "quagsire",
           "types": [
             "water",
-            "rock"
+            "ground"
           ],
-          "family": "chewtle",
+          "family": "wooper",
           "family_priority": "common",
           "ambient": true,
-          "eligibility_reason": "evolves from Chewtle at level 22: spawns 33-43, inside the tier 6 band 33-43",
+          "eligibility_reason": "evolves from Wooper at level 20: spawns 33-43, inside the tier 6 band 33-43",
           "level": "33-43",
           "bucket": "common",
           "weight": 12.0,
@@ -16668,7 +16543,7 @@
       "policy": "exclusive_curated",
       "level_band": {
         "minimum": 13,
-        "maximum": 22,
+        "maximum": 19,
         "basis_route": "route_02_brock_to_misty",
         "tier": 2
       },
@@ -16684,26 +16559,28 @@
           "family_priority": "anchor",
           "ambient": true,
           "eligibility_reason": "named anchor family, tier 2: the family starts here",
-          "level": "13-22",
+          "level": "13-19",
           "bucket": "common",
-          "weight": 21.6,
+          "weight": 24.0,
           "conditions": {}
         },
         {
-          "species": "Ninjask",
-          "pokemon": "ninjask",
+          "species": "Venonat",
+          "pokemon": "venonat",
           "types": [
             "bug",
-            "flying"
+            "poison"
           ],
-          "family": "nincada",
-          "family_priority": "anchor",
+          "family": "venonat",
+          "family_priority": "common",
           "ambient": true,
-          "eligibility_reason": "evolves from Nincada at level 20: spawns 20-22, inside the tier 2 band 13-22",
-          "level": "20-22",
+          "eligibility_reason": "named common family, tier 2: the family starts here",
+          "level": "13-19",
           "bucket": "common",
-          "weight": 2.4,
-          "conditions": {}
+          "weight": 12.0,
+          "conditions": {
+            "timeRange": "night"
+          }
         },
         {
           "species": "Volbeat",
@@ -16712,12 +16589,12 @@
             "bug"
           ],
           "family": "volbeat",
-          "family_priority": "common",
+          "family_priority": "uncommon",
           "ambient": true,
-          "eligibility_reason": "named common family, tier 2: the family starts here",
-          "level": "13-22",
-          "bucket": "common",
-          "weight": 12.0,
+          "eligibility_reason": "named uncommon family, tier 2: the family starts here",
+          "level": "13-19",
+          "bucket": "uncommon",
+          "weight": 6.0,
           "conditions": {
             "timeRange": "night"
           }
@@ -16729,28 +16606,10 @@
             "bug"
           ],
           "family": "illumise",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 2: the family starts here",
-          "level": "13-22",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {
-            "timeRange": "night"
-          }
-        },
-        {
-          "species": "Venonat",
-          "pokemon": "venonat",
-          "types": [
-            "bug",
-            "poison"
-          ],
-          "family": "venonat",
           "family_priority": "uncommon",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 2: the family starts here",
-          "level": "13-22",
+          "level": "13-19",
           "bucket": "uncommon",
           "weight": 6.0,
           "conditions": {
@@ -16767,25 +16626,9 @@
           "family_priority": "anchor",
           "ambient": true,
           "eligibility_reason": "named anchor family, tier 2: the family starts here",
-          "level": "13-22",
+          "level": "13-19",
           "bucket": "common",
-          "weight": 21.6,
-          "conditions": {}
-        },
-        {
-          "species": "Gyarados",
-          "pokemon": "gyarados",
-          "types": [
-            "water",
-            "flying"
-          ],
-          "family": "magikarp",
-          "family_priority": "anchor",
-          "ambient": true,
-          "eligibility_reason": "evolves from Magikarp at level 20: spawns 20-22, inside the tier 2 band 13-22",
-          "level": "20-22",
-          "bucket": "common",
-          "weight": 2.4,
+          "weight": 24.0,
           "conditions": {}
         },
         {
@@ -16814,8 +16657,8 @@
           "family": "lotad",
           "family_priority": "common",
           "ambient": true,
-          "eligibility_reason": "evolves from Lotad at level 14: spawns 14-22, inside the tier 2 band 13-22",
-          "level": "14-22",
+          "eligibility_reason": "evolves from Lotad at level 14: spawns 14-19, inside the tier 2 band 13-19",
+          "level": "14-19",
           "bucket": "common",
           "weight": 1.2,
           "conditions": {}
@@ -16830,7 +16673,7 @@
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 2: the family starts here",
-          "level": "13-22",
+          "level": "13-19",
           "bucket": "common",
           "weight": 12.0,
           "conditions": {}
@@ -16846,7 +16689,7 @@
           "family_priority": "rare",
           "ambient": true,
           "eligibility_reason": "named rare family, tier 2: the family starts here",
-          "level": "13-22",
+          "level": "13-19",
           "bucket": "rare",
           "weight": 2.0,
           "conditions": {
@@ -16874,30 +16717,48 @@
       },
       "entries": [
         {
-          "species": "Zigzagoon",
-          "pokemon": "zigzagoon",
+          "species": "Exeggcute",
+          "pokemon": "exeggcute",
           "types": [
-            "normal"
+            "grass",
+            "psychic"
           ],
-          "family": "zigzagoon",
+          "family": "exeggcute",
           "family_priority": "anchor",
           "ambient": true,
           "eligibility_reason": "named anchor family, tier 2: the family starts here",
           "level": "13-22",
           "bucket": "common",
-          "weight": 21.6,
+          "weight": 24.0,
           "conditions": {}
         },
         {
-          "species": "Linoone",
-          "pokemon": "linoone",
+          "species": "Spearow",
+          "pokemon": "spearow",
           "types": [
-            "normal"
+            "normal",
+            "flying"
           ],
-          "family": "zigzagoon",
-          "family_priority": "anchor",
+          "family": "spearow",
+          "family_priority": "common",
           "ambient": true,
-          "eligibility_reason": "evolves from Zigzagoon at level 20: spawns 20-22, inside the tier 2 band 13-22",
+          "eligibility_reason": "named common family, tier 2: the family starts here",
+          "level": "13-22",
+          "bucket": "common",
+          "weight": 9.6,
+          "conditions": {}
+        },
+        {
+          "species": "Fearow",
+          "pokemon": "fearow",
+          "types": [
+            "normal",
+            "flying"
+          ],
+          "family": "spearow",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Spearow at level 20: spawns 20-22, inside the tier 2 band 13-22",
           "level": "20-22",
           "bucket": "common",
           "weight": 2.4,
@@ -16915,7 +16776,7 @@
           "eligibility_reason": "named common family, tier 2: the family starts here",
           "level": "13-22",
           "bucket": "common",
-          "weight": 10.8,
+          "weight": 9.6,
           "conditions": {}
         },
         {
@@ -16930,42 +16791,8 @@
           "eligibility_reason": "evolves from Patrat at level 20: spawns 20-22, inside the tier 2 band 13-22",
           "level": "20-22",
           "bucket": "common",
-          "weight": 1.2,
+          "weight": 2.4,
           "conditions": {}
-        },
-        {
-          "species": "Poochyena",
-          "pokemon": "poochyena",
-          "types": [
-            "dark"
-          ],
-          "family": "poochyena",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 2: the family starts here",
-          "level": "13-22",
-          "bucket": "common",
-          "weight": 10.8,
-          "conditions": {
-            "timeRange": "night"
-          }
-        },
-        {
-          "species": "Mightyena",
-          "pokemon": "mightyena",
-          "types": [
-            "dark"
-          ],
-          "family": "poochyena",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "evolves from Poochyena at level 18: spawns 18-22, inside the tier 2 band 13-22",
-          "level": "18-22",
-          "bucket": "common",
-          "weight": 1.2,
-          "conditions": {
-            "timeRange": "night"
-          }
         },
         {
           "species": "Fletchling",
@@ -16980,7 +16807,7 @@
           "eligibility_reason": "named uncommon family, tier 2: the family starts here",
           "level": "13-21",
           "bucket": "uncommon",
-          "weight": 5.4,
+          "weight": 4.8,
           "conditions": {}
         },
         {
@@ -16996,7 +16823,7 @@
           "eligibility_reason": "evolves from Fletchling at level 17: spawns 17-22, inside the tier 2 band 13-22",
           "level": "17-22",
           "bucket": "uncommon",
-          "weight": 0.6,
+          "weight": 1.2,
           "conditions": {}
         },
         {
@@ -17225,13 +17052,13 @@
           "conditions": {}
         },
         {
-          "species": "Binacle",
-          "pokemon": "binacle",
+          "species": "Corsola",
+          "pokemon": "corsola",
           "types": [
-            "rock",
-            "water"
+            "water",
+            "rock"
           ],
-          "family": "binacle",
+          "family": "corsola",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 3: the family starts here",
@@ -17274,13 +17101,12 @@
           "conditions": {}
         },
         {
-          "species": "Tentacool",
-          "pokemon": "tentacool",
+          "species": "Finneon",
+          "pokemon": "finneon",
           "types": [
-            "water",
-            "poison"
+            "water"
           ],
-          "family": "tentacool",
+          "family": "finneon",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 3: the family starts here",
@@ -17423,12 +17249,13 @@
       },
       "entries": [
         {
-          "species": "Cherubi",
-          "pokemon": "cherubi",
+          "species": "Poltchageist",
+          "pokemon": "poltchageist",
           "types": [
-            "grass"
+            "grass",
+            "ghost"
           ],
-          "family": "cherubi",
+          "family": "poltchageist",
           "family_priority": "anchor",
           "ambient": true,
           "eligibility_reason": "named anchor family, tier 2: the family starts here",
@@ -17438,51 +17265,33 @@
           "conditions": {}
         },
         {
-          "species": "Ralts",
-          "pokemon": "ralts",
+          "species": "Cherubi",
+          "pokemon": "cherubi",
           "types": [
-            "psychic",
-            "fairy"
+            "grass"
           ],
-          "family": "ralts",
+          "family": "cherubi",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 2: the family starts here",
           "level": "13-22",
           "bucket": "common",
-          "weight": 10.8,
+          "weight": 12.0,
           "conditions": {}
         },
         {
-          "species": "Kirlia",
-          "pokemon": "kirlia",
+          "species": "Snubbull",
+          "pokemon": "snubbull",
           "types": [
-            "psychic",
             "fairy"
           ],
-          "family": "ralts",
+          "family": "snubbull",
           "family_priority": "common",
           "ambient": true,
-          "eligibility_reason": "evolves from Ralts at level 20: spawns 20-22, inside the tier 2 band 13-22",
-          "level": "20-22",
-          "bucket": "common",
-          "weight": 1.2,
-          "conditions": {}
-        },
-        {
-          "species": "Poltchageist",
-          "pokemon": "poltchageist",
-          "types": [
-            "grass",
-            "ghost"
-          ],
-          "family": "poltchageist",
-          "family_priority": "uncommon",
-          "ambient": true,
-          "eligibility_reason": "named uncommon family, tier 2: the family starts here",
+          "eligibility_reason": "named common family, tier 2: the family starts here",
           "level": "13-22",
-          "bucket": "uncommon",
-          "weight": 6.0,
+          "bucket": "common",
+          "weight": 12.0,
           "conditions": {}
         },
         {
@@ -17564,7 +17373,7 @@
           "eligibility_reason": "named anchor family, tier 3: the family starts here",
           "level": "18-23",
           "bucket": "common",
-          "weight": 19.2,
+          "weight": 16.8,
           "conditions": {}
         },
         {
@@ -17579,16 +17388,17 @@
           "eligibility_reason": "evolves from Flabebe at level 19: spawns 19-28, inside the tier 3 band 18-28",
           "level": "19-28",
           "bucket": "common",
-          "weight": 4.8,
+          "weight": 7.2,
           "conditions": {}
         },
         {
-          "species": "Skitty",
-          "pokemon": "skitty",
+          "species": "Togedemaru",
+          "pokemon": "togedemaru",
           "types": [
-            "normal"
+            "electric",
+            "steel"
           ],
-          "family": "skitty",
+          "family": "togedemaru",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 3: the family starts here",
@@ -17624,7 +17434,7 @@
           "eligibility_reason": "named anchor family, tier 3: the family starts here",
           "level": "18-28",
           "bucket": "common",
-          "weight": 19.2,
+          "weight": 16.8,
           "conditions": {}
         },
         {
@@ -17639,7 +17449,7 @@
           "eligibility_reason": "evolves from Arrokuda at level 26: spawns 26-28, inside the tier 3 band 18-28",
           "level": "26-28",
           "bucket": "common",
-          "weight": 4.8,
+          "weight": 7.2,
           "conditions": {}
         },
         {
@@ -17654,7 +17464,7 @@
           "eligibility_reason": "named common family, tier 3: the family starts here",
           "level": "18-26",
           "bucket": "common",
-          "weight": 9.6,
+          "weight": 8.4,
           "conditions": {}
         },
         {
@@ -17670,7 +17480,7 @@
           "eligibility_reason": "evolves from Chewtle at level 22: spawns 22-28, inside the tier 3 band 18-28",
           "level": "22-28",
           "bucket": "common",
-          "weight": 2.4,
+          "weight": 3.6,
           "conditions": {}
         },
         {
@@ -18139,13 +17949,13 @@
       },
       "entries": [
         {
-          "species": "Hoppip",
-          "pokemon": "hoppip",
+          "species": "Cottonee",
+          "pokemon": "cottonee",
           "types": [
             "grass",
-            "flying"
+            "fairy"
           ],
-          "family": "hoppip",
+          "family": "cottonee",
           "family_priority": "anchor",
           "ambient": true,
           "eligibility_reason": "named anchor family, tier 1: the family starts here",
@@ -18155,13 +17965,12 @@
           "conditions": {}
         },
         {
-          "species": "Cottonee",
-          "pokemon": "cottonee",
+          "species": "Pikachu",
+          "pokemon": "pikachu",
           "types": [
-            "grass",
-            "fairy"
+            "electric"
           ],
-          "family": "cottonee",
+          "family": "pichu",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 1: the family starts here",
@@ -18171,12 +17980,12 @@
           "conditions": {}
         },
         {
-          "species": "Sunkern",
-          "pokemon": "sunkern",
+          "species": "Growlithe",
+          "pokemon": "growlithe",
           "types": [
-            "grass"
+            "fire"
           ],
-          "family": "sunkern",
+          "family": "growlithe",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 1: the family starts here",
@@ -18295,7 +18104,7 @@
           "eligibility_reason": "named uncommon family, tier 8: the family starts here",
           "level": "43-53",
           "bucket": "uncommon",
-          "weight": 1.8,
+          "weight": 0.9,
           "conditions": {}
         },
         {
@@ -18311,7 +18120,7 @@
           "eligibility_reason": "evolves from Girafarig knowing a move, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
           "level": "48-53",
           "bucket": "uncommon",
-          "weight": 4.2,
+          "weight": 5.1,
           "conditions": {}
         },
         {
@@ -18796,7 +18605,7 @@
           "eligibility_reason": "named common family, tier 8: the family starts here",
           "level": "43-53",
           "bucket": "common",
-          "weight": 3.6,
+          "weight": 1.8,
           "conditions": {}
         },
         {
@@ -18812,7 +18621,7 @@
           "eligibility_reason": "evolves from Rellor by blocks_traveled, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
           "level": "48-53",
           "bucket": "common",
-          "weight": 8.4,
+          "weight": 10.2,
           "conditions": {}
         },
         {
@@ -26106,13 +25915,11 @@
         "corphish",
         "fomantis",
         "gossifleur",
-        "gyarados",
         "illumise",
         "lombre",
         "lotad",
         "magikarp",
         "nincada",
-        "ninjask",
         "smoliv",
         "venonat",
         "volbeat"
@@ -26122,14 +25929,14 @@
       "species": [
         "beautifly",
         "corphish",
+        "corvisquire",
         "diglett",
         "dugtrio",
         "dustox",
-        "gyarados",
         "heracross",
-        "illumise",
         "lombre",
         "lotad",
+        "machop",
         "magikarp",
         "nincada",
         "pachirisu",
@@ -26139,7 +25946,7 @@
         "scyther",
         "skiddo",
         "swablu",
-        "volbeat"
+        "venonat"
       ]
     },
     "route_04_surge_to_erika": {
@@ -26193,7 +26000,6 @@
     "route_06_koga_to_sabrina": {
       "species": [
         "arbok",
-        "drednaw",
         "drilbur",
         "ducklett",
         "dudunsparce",
@@ -26204,6 +26010,7 @@
         "koffing",
         "poliwhirl",
         "poliwrath",
+        "quagsire",
         "scolipede",
         "spidops",
         "swanna",
@@ -26268,7 +26075,6 @@
         "claydol",
         "crabominable",
         "crabrawler",
-        "druddigon",
         "garganacl",
         "gigalith",
         "glimmora",
@@ -26278,12 +26084,13 @@
         "marowak",
         "nidoking",
         "nidoqueen",
-        "orthworm",
+        "pincurchin",
         "sableye",
         "scrafty",
         "scraggy",
         "tinkaton",
-        "toxapex"
+        "toxapex",
+        "zebstrika"
       ]
     }
   },

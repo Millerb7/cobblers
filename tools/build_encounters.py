@@ -261,8 +261,9 @@ def parse_family(item, rules, where):
     return species, role, weight, cond
 
 
-def expand_family(dex, rules, tier, band, species, role, weight, where):
-    """[(stage name, lo, hi, weight, reason)] for one family."""
+def expand_family(dex, rules, tier, band, species, role, weight, where, mtier=None):
+    """[(stage name, lo, hi, weight, reason)] for one family. mtier is the tier whose maturity and final share apply
+    (an off-path table is matured rules.off_path_maturity_step tiers further, ENCOUNTER_DESIGN.md section 6)."""
     if not dex.has(species):
         raise DesignError("%s: %s is not a species in the Cobblemon jar" % (where, species))
     lo_b, hi_b = band
@@ -291,8 +292,9 @@ def expand_family(dex, rules, tier, band, species, role, weight, where):
                 frontier.append((res, depth + 1, nf, nf, name, (m, None, h)))
     alive = [n for n in nodes if n["lo"] <= n["hi"]]
     depths = sorted({n["depth"] for n in alive})
-    m = rules["maturity"][str(tier)]
-    f = final_share(rules, tier)
+    mt = mtier or tier
+    m = rules["maturity"][str(mt)]
+    f = final_share(rules, mt)
     share = {}
     if len(depths) == 1:
         share[depths[0]] = 1.0
@@ -337,6 +339,7 @@ def build_table(dex, rules, tid, t, kind, extra_families=()):
     band = tuple(t.get("levels") or tband)
     if not (tband[0] <= band[0] <= band[1] <= tband[1]):
         raise DesignError("%s: levels %s are not inside the tier %d band %s" % (tid, list(band), tier, list(tband)))
+    mtier = min(9, tier + rules.get("off_path_maturity_step", 0)) if t.get("placement") == "off" else tier
     fams = [(item, "land") for item in t.get("land") or []] + [(item, "water") for item in t.get("water") or []]
     fams += list(extra_families)
     rows = []
@@ -346,7 +349,7 @@ def build_table(dex, rules, tid, t, kind, extra_families=()):
         if kind == HABITAT and " " in species:
             raise DesignError("%s: %s has a space; a habitat pool species is a bare id" % (tid, species))
         nearby_water = "minecraft:water" in (cond.get("neededNearbyBlocks") or [])
-        for name, lo, hi, w, reason in expand_family(dex, rules, tier, band, species, role, weight, tid):
+        for name, lo, hi, w, reason in expand_family(dex, rules, tier, band, species, role, weight, tid, mtier):
             if " " in name and kind == HABITAT:
                 raise DesignError("%s: stage %s has a space; a habitat pool species is a bare id" % (tid, name))
             if hi > cap or lo < band[0] or hi > band[1]:

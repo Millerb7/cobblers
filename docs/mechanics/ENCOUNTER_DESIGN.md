@@ -27,7 +27,9 @@ Four ace, with `relativeLevelCap` 0), and since 2026-09-28 a wild Pokemon over t
 - **Off the path** (over 128 blocks from every route): the tier is the leg of the nearest route, raised where a
   real barrier stands between the path and the place, and the reason is written on the table (`tier_why`).
   Islands are raised to the leg by which a player plausibly crosses the sea; the Rift is tier 9 because it is
-  Victory Road's country and its levels are Victory Road's.
+  Victory Road's country and its levels are Victory Road's. A tier is never below the nearest route's leg.
+  `availability.py` does not walk Victory Road, so all four Rift tables are off the path by this rule, and
+  that is deliberate: the Rift floor beside Victory Road's tunnels is ground to explore, and each has a find.
 
 ## 2. Levels come from the tier, and stay catchable
 
@@ -117,7 +119,8 @@ to the player who leaves the path. The corridor otherwise takes a sub-region's a
 (at most 20 species per route, `route_species_selection`), and keeps the water families where the route crosses water.
 
 A detour should also be *stronger*, not only rarer: at the same tier, the off-path tables' mean base-stat total is at
-least the on-path tables'.
+least the on-path tables'. So an off-path table is **matured one tier further** than its tier (`off_path_maturity_step`):
+its families show the evolved share of the next leg, inside its own catchable band.
 
 ## 7. Legibility: a theme per place, read by type
 

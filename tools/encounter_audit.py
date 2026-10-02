@@ -110,6 +110,9 @@ def species_index(jar=None):
 def lookup(idx, name):
     import battle_sim
     parts = name.split()
+    regional = {"alolan": "alola", "galarian": "galar", "hisuian": "hisui", "paldean": "paldea"}
+    if len(parts) > 1 and parts[1] in regional and battle_sim.key(parts[0] + regional[parts[1]]) in idx:
+        return idx[battle_sim.key(parts[0] + regional[parts[1]])]
     k = battle_sim.key(name.replace(" ", ""))
     if k in idx:
         return idx[k]

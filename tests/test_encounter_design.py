@@ -153,7 +153,7 @@ class Dex:
                     self.parent.setdefault(res, k)
 
     def get(self, name):
-        k = BS.key(name)
+        k = BS.key(str(name).split()[0])
         assert k in self.sp, "species %r is not in the Cobblemon jar" % name
         return k
 
@@ -186,12 +186,26 @@ class Dex:
         return max(self.bst(m) for m in self.members(root) if not self.children.get(m))
 
     def types(self, name):
+        # a regional form ("sandshrew alolan") has its own types in the species' forms list: Alolan Sandshrew is
+        # Ice/Steel, not Ground. Without this the snow theme read 0% at the Frostpeak strand (2026-10-02).
         d = self.sp[self.get(name)]
+        parts = str(name).split()
+        if len(parts) > 1 and parts[1] in REGIONAL:
+            for f in d.get("forms") or []:
+                if str(f.get("name") or "").lower() == REGIONAL[parts[1]] and f.get("primaryType"):
+                    d = f
+                    break
         return {t.lower() for t in (d.get("primaryType"), d.get("secondaryType")) if t}
 
 
+REGIONAL = {"alolan": "alola", "galarian": "galar", "hisuian": "hisui", "paldean": "paldea"}
+
+
 def species_of(entry):
-    return BS.key(str(entry.get("pokemon") or entry.get("species") or "").split()[0])
+    """The species key, keeping a regional aspect ("sandshrew alolan") so its form's types can be read."""
+    parts = str(entry.get("pokemon") or entry.get("species") or "").lower().split()
+    base = BS.key(parts[0]) if parts else ""
+    return base + " " + parts[1] if len(parts) > 1 and parts[1] in REGIONAL else base
 
 
 def level_range(s):
