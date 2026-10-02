@@ -1,0 +1,310 @@
+{
+  "schema": "cobblers.resident-encounters/1",
+  "status": "authored_not_placed",
+  "purpose": "Ten memorable named non-legendary residents in sparse parts of the map. Terrain explains each creature; none is a quest or shrine.",
+  "rules": {
+    "count": 10,
+    "shared_world_residents": true,
+    "uncatchable_at_intended_first_meeting": [
+      "old_jaw",
+      "whiteback",
+      "hornwall"
+    ],
+    "permanently_uncatchable": [
+      "whiteback",
+      "hornwall"
+    ],
+    "no_loot_drops": true,
+    "capture_is_reward_where_catchable": true,
+    "respawn_ticks_after_faint_death_or_catch": 36000,
+    "keeper": "Reuse the persistent resident/guardian pattern. Never replace or despawn an entity tagged cobblers.guardian; blackout recovery belongs to that exact Pokemon.",
+    "aggression": "Bounded local trigger and leash; never change Fight or Flight behavior for the species globally.",
+    "reexport": "Reapply from source after export through the established RCON resident path, then verify UUID, species, level, persistence, catch rule, trigger and leash."
+  },
+  "old_jaw_blackout_check": {
+    "fresh_balance": {
+      "value": 0,
+      "evidence": "CobbleDollars PlayerMixin bytecode initializes the synced value to string 0; jar sha256 5d8690980ecc79b5f33005dd274d148d0b9b7713ff5e8223c7011aa8bb08401a",
+      "runtime_status": "not observed with a fresh staging account"
+    },
+    "starter_grant": "Repository search found only the Pokemon grant and no item or money kit; not observed with a fresh staging account",
+    "exact_fresh_wipe": {
+      "money": 0,
+      "items": [],
+      "other": "blackout, checkpoint return and walk back"
+    },
+    "after_first_cast_only": {
+      "money": 0,
+      "items": [],
+      "reason": "fishing rod is a protected Minecraft tool"
+    },
+    "after_route_1_old_mine_cache": {
+      "money": "20% of earned balance, rounded up",
+      "items": [
+        "1 Heavy Ball",
+        "1 Potion"
+      ],
+      "protected": [
+        "Hard Stone"
+      ],
+      "recovery": "returned by defeating or catching the same guardian"
+    },
+    "judgement": "Under the current authored rules, it is not economically harsh for a fresh player. Keep level 25. Telegraph danger and offer a bypass.",
+    "runtime_proof_needed": "Fresh account inventory/balance, current 20% charge, and above-cap catch refusal have not been observed together on staging.",
+    "implementation_note": "Current blackout code removes positive money without a guardian claim when no eligible item is selected. This does not affect the fresh $0 case; preserve or deliberately fix it during integration."
+  },
+  "cost_basis": {
+    "unit": "person_day",
+    "shared_runtime": 1,
+    "item_total": 6.5,
+    "note": "Planning estimates after shared keeper exists; include dressing, config, checks and one staging observation."
+  },
+  "encounters": [
+    {
+      "id": "old_jaw",
+      "name": "Old Jaw",
+      "species": "cobblemon:drednaw",
+      "level": 25,
+      "location": {
+        "x": 613,
+        "z": 4306,
+        "measured_surface_or_bed_y": 80.4,
+        "y_rule": "fit feet to final exported surface; x/z authoritative"
+      },
+      "cost": {
+        "size": "M",
+        "person_days": 1
+      },
+      "build_kind": "world_build",
+      "priority": 1,
+      "intended_stage": "pre_gym_1",
+      "gate": "gym1_cleared",
+      "catch_rule": "requires_level_cap_refusal_until_gym1",
+      "build_brief": "Dry estuary bowl; visible 96-128 blocks out; drag marks and wreck at 64; inland bypass 36-40 blocks clear; trigger 24, leash 28; no drop.",
+      "reward": "capture itself; no defeat item",
+      "status": "authored_not_placed"
+    },
+    {
+      "id": "wiremother",
+      "name": "Wiremother",
+      "species": "cobblemon:galvantula",
+      "level": 33,
+      "location": {
+        "x": 1138,
+        "z": 3610,
+        "measured_surface_or_bed_y": 126,
+        "y_rule": "fit feet to final exported surface; x/z authoritative"
+      },
+      "cost": {
+        "size": "M+",
+        "person_days": 1.5
+      },
+      "build_kind": "world_build",
+      "priority": 2,
+      "intended_stage": "post_gym_3",
+      "gate": "gym3_cleared",
+      "catch_rule": "catchable_after_gate",
+      "build_brief": "Failed survey crossing remains visible before gym 3; the resident appears after gym3_cleared. Snapped poles, sagging wire/web, flags and instrument case; bypass shelf; trigger 20, leash 28.",
+      "reward": "capture itself; no defeat item",
+      "status": "authored_not_placed"
+    },
+    {
+      "id": "ridgejaw",
+      "name": "Ridgejaw",
+      "species": "cobblemon:tyrantrum",
+      "level": 39,
+      "location": {
+        "x": 3544,
+        "z": 1600,
+        "measured_surface_or_bed_y": 160.2,
+        "y_rule": "fit feet to final exported surface; x/z authoritative"
+      },
+      "cost": {
+        "size": "XS",
+        "person_days": 0.25
+      },
+      "build_kind": "roster_and_gate_only",
+      "priority": 7,
+      "intended_stage": "post_gym_4",
+      "gate": "gym4_cleared",
+      "catch_rule": "catchable_after_gate",
+      "build_brief": "Use existing Crags clearing; optional bone chips and scraped stone only; trigger 22, leash 30.",
+      "reward": "capture itself; no defeat item",
+      "status": "authored_not_placed"
+    },
+    {
+      "id": "red_rail",
+      "name": "Red Rail",
+      "species": "cobblemon:scolipede",
+      "level": 44,
+      "location": {
+        "x": 5541,
+        "z": 1703,
+        "measured_surface_or_bed_y": 95,
+        "y_rule": "fit feet to final exported surface; x/z authoritative"
+      },
+      "cost": {
+        "size": "S",
+        "person_days": 0.5
+      },
+      "build_kind": "world_build",
+      "priority": 5,
+      "intended_stage": "post_gym_5",
+      "gate": "gym5_cleared",
+      "catch_rule": "catchable_after_gate",
+      "build_brief": "Iron-red 60-80 block trail through marsh reeds; shell fragments; opposite bank remains escape; trigger 18, leash 26.",
+      "reward": "capture itself; no defeat item",
+      "status": "authored_not_placed"
+    },
+    {
+      "id": "whiteback",
+      "name": "Whiteback",
+      "species": "cobblemon:mamoswine",
+      "level": 50,
+      "location": {
+        "x": 7022,
+        "z": 312,
+        "measured_surface_or_bed_y": 79.1,
+        "y_rule": "fit feet to final exported surface; x/z authoritative"
+      },
+      "cost": {
+        "size": "S",
+        "person_days": 0.5
+      },
+      "build_kind": "world_build",
+      "priority": 6,
+      "intended_stage": "late_game",
+      "gate": null,
+      "catch_rule": "permanently_uncatchable",
+      "build_brief": "North Pine Isle old trail; snow banks, two broken markers and bare windbreak; wide bypass; trigger 24, leash 34.",
+      "reward": "none",
+      "status": "authored_not_placed"
+    },
+    {
+      "id": "river_grip",
+      "name": "River Grip",
+      "species": "cobblemon:grapploct",
+      "level": 52,
+      "location": {
+        "x": 6970,
+        "z": 3970,
+        "measured_bed_y": 53,
+        "water_block_y": 62,
+        "pokemon_feet_y": 63,
+        "y_rule": "water occupies block y62; place Pokemon feet at y63 over the measured y53 bed"
+      },
+      "cost": {
+        "size": "M",
+        "person_days": 1
+      },
+      "build_kind": "world_build",
+      "priority": 8,
+      "intended_stage": "post_gym_7",
+      "gate": "gym7_cleared",
+      "catch_rule": "catchable_after_gate",
+      "build_brief": "River-mouth pool at water y62; drowned mooring, snapped chains and debris; dry observation point; trigger 20, leash 30.",
+      "reward": "capture itself; no defeat item",
+      "status": "authored_not_placed"
+    },
+    {
+      "id": "dustback",
+      "name": "Dustback",
+      "species": "cobblemon:copperajah",
+      "level": 56,
+      "location": {
+        "x": 6216,
+        "z": 6112,
+        "measured_surface_or_bed_y": 141.1,
+        "y_rule": "fit feet to final exported surface; x/z authoritative"
+      },
+      "cost": {
+        "size": "M",
+        "person_days": 0.75
+      },
+      "build_kind": "world_build",
+      "priority": 3,
+      "intended_stage": "post_gym_8",
+      "gate": "gym8_cleared",
+      "catch_rule": "catchable_after_gate",
+      "build_brief": "80-120 block migration scar, 12-18 blocks broad, across southeast dunes; one crushed marker; trigger 24, leash 36.",
+      "reward": "capture itself; no defeat item",
+      "status": "authored_not_placed"
+    },
+    {
+      "id": "hornwall",
+      "name": "Hornwall",
+      "species": "cobblemon:bouffalant",
+      "level": 56,
+      "location": {
+        "x": 4200,
+        "z": 5920,
+        "measured_surface_or_bed_y": 136.7,
+        "y_rule": "fit feet to final exported surface; x/z authoritative"
+      },
+      "cost": {
+        "size": "XS",
+        "person_days": 0.25
+      },
+      "build_kind": "roster_and_gate_only",
+      "priority": 9,
+      "intended_stage": "pre_league",
+      "gate": "gym8_cleared",
+      "catch_rule": "permanently_uncatchable",
+      "build_brief": "Use existing Rift Foot shelf; bare standing circle and visible bypass only; trigger 24, leash 34.",
+      "reward": "none",
+      "status": "authored_not_placed"
+    },
+    {
+      "id": "orchard_sleeper",
+      "name": "Orchard Sleeper",
+      "species": "cobblemon:slaking",
+      "level": 60,
+      "location": {
+        "x": 2816,
+        "z": 7080,
+        "measured_surface_or_bed_y": 65.8,
+        "y_rule": "fit feet to final exported surface; x/z authoritative"
+      },
+      "cost": {
+        "size": "S",
+        "person_days": 0.5
+      },
+      "build_kind": "world_build",
+      "priority": 10,
+      "intended_stage": "post_gym_8",
+      "gate": "gym8_cleared",
+      "catch_rule": "catchable_after_gate",
+      "build_brief": "Sunset Isle failed orchard: 6-10 storm-bent trees, overgrown rows, windfall and collapsed shed; trigger 18, leash 26.",
+      "reward": "capture itself; no defeat item",
+      "status": "authored_not_placed"
+    },
+    {
+      "id": "split_bark",
+      "name": "Split-Bark",
+      "species": "cobblemon:kleavor",
+      "level": 62,
+      "location": {
+        "x": 7360,
+        "z": 7376,
+        "measured_surface_or_bed_y": 138.3,
+        "y_rule": "fit feet to final exported surface; x/z authoritative"
+      },
+      "cost": {
+        "size": "XS",
+        "person_days": 0.25
+      },
+      "build_kind": "roster_and_gate_only",
+      "priority": 4,
+      "intended_stage": "post_champion",
+      "gate": "champion_cleared",
+      "catch_rule": "catchable_after_gate",
+      "build_brief": "Use Long Isle South elder clearing; split logs and scored bark only; trigger 20, leash 28. Replaces drowned Jungle West anchor.",
+      "reward": "capture itself; no defeat item",
+      "status": "authored_not_placed"
+    }
+  ],
+  "findings": [
+    "Offline jar inventory found species, model and animation resources for all ten in Cobblemon 1.8.0+1.21.1 jar sha256 a6228f3291c70ed6348b9a47beadabc79cb241b6522312e7e2b56d428dc9ec31; not observed in these resident placements.",
+    "The approved Jungle West Split-Bark anchor (4464,7312) is below sea level on the canonical water heightmap: sub-region median y56, maximum y61. Long Isle South is actual jungle land in the same sparse southeast sector, so Split-Bark moves to (7360,7376)."
+  ]
+}
