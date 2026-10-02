@@ -15,7 +15,8 @@ A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else,
 
 ## 2. Where it stopped — everything is applied and the server is down
 
-Final suite on the integration head: SUITE_PENDING.
+Final suite on the integration head: **11 failed, 5,534 passed, 11 xfailed, 0 errors** (614 s, full checkout) - the
+known ten, named in `docs/STATE.md`, plus Brock's witness on gym 1's apron (a decision, section 3).
 
 **In staging-2026-10-01, applied and probed against the world tonight** (`reapply.py run --only
 R9SD,R9E,R17N,R18U,R18F`, then `--only R17`, then a second prepare + install for the encounter tables):
@@ -92,4 +93,6 @@ R9SD,R9E,R17N,R18U,R18F`, then `--only R17`, then a second prepare + install for
 
 ## 5. Cost
 
-COST_PENDING
+`python tools/session_cost.py`: this session **991 turns, 58.8M weighted**, context 726k at the end (the
+owner lifted the hand-over threshold for tonight); agents together **36.3M**. About 95M across the session's life,
+not counting the three parallel sessions, which report their own.
