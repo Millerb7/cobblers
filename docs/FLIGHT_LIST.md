@@ -90,6 +90,26 @@ whether "seen, not reached" feels right or merely annoying in open country. (c) 
 that chose these sites **saturated at its 136-block ceiling for all twelve candidates**, so it proved
 each has a long clear approach but did *not* rank them. Your eye is the real ranking.
 
+## 4b. The new railing on Victory Road's brink — does it read, without crowding the reveal?
+
+**Stand at (3565, 114, 5294)**, then walk the approach down toward the lip crossing at (3557, 113, 5306)
+and on to the trailhead at **(3548, 114, 5322)**, where the gatehouse now stands.
+
+The route passes **1-2 blocks from an 18-block drop** — ground falls y111 to y93 in a single block — and
+37 railing columns now mark it: a pier of the skin's own rock on the same band hash, one course of
+cobbled deepslate wall, a lantern every fifth column.
+
+**Three things only your eye can settle.** (a) Does it read as a barrier, or as scenery you would walk
+through? (b) **One course was chosen deliberately** so the wall's collision cannot be stepped over while
+its top stays below eye level and the Rift is still revealed from the descent — is that right, or does it
+crowd the reveal? (c) **Two isolated end posts** stand where the brink turns, at (3555, 5304) and
+(3572, 5283); the coverage count proves they are not holes, but they may still *look* like a mistake.
+
+While you are there: the **gatehouse moved here** from 318 blocks inside the basin. Does a gate on flat
+open ground at the trailhead read as a gate at all, or does it need the rock around it? And **do not try
+to walk out of it** — all six gatehouse walkways are impassable on foot (decision B12, being fixed now),
+so leaving on foot is expected to fail until that lands.
+
 ## 5. The portals — do they read as relics?
 
 Six dive and six sky, applied and re-skinned on the deleted world, so unseen as they now stand.
