@@ -494,8 +494,12 @@ def prepare_jobs(a):
     add("frostpeak_camp_audit", "frostpeak_camp_audit.py", "--inputs-root", str(ROOT), *src)
     add("sea_drift:build", "sea_drift.py", "build", *src)
     add("sea_drift_audit", "sea_drift_audit.py", *src)
+    # water life (docs/mechanics/WATER_LIFE.md): each pack, then its independent audit, which replays the written
+    # functions over a world built from the heightmap alone and never imports its builder
     add("lake_life:build", "lake_life.py", "build", *src)
+    add("lake_life_audit", "lake_life_audit.py", *src)
     add("sea_life:build", "sea_life.py", "build", *src)
+    add("sea_life_audit", "sea_life_audit.py", *src)
     # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
     # then the offline audit, which re-derives every shell box from data/placements.json, replays the written
     # functions into a voxel model and fails the prepare on a broken route, a trainer that can be walked round, a
