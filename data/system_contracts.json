@@ -111,10 +111,11 @@
       ]
     },
     "gate_clocks": {
-      "what": "every clock or accumulator a gate relies on: swim fatigue and its collapse clock, the Surf bonus, the drowning pulses, the blackout dedupe, the gulch Megas' respawn clock, the ferry cooldown, the wards' refresh",
+      "what": "every clock or accumulator a gate relies on: swim fatigue and its collapse clock, the Surf bonus, the drowning pulses, the blackout dedupe, the gulch Megas' respawn clock, the Ursaluna den's return clock, the ferry cooldown, the wards' refresh",
       "paths": [
         "tools/blackout_pack.py",
         "tools/gulch_mine.py",
+        "tools/ursaluna_cave.py",
         "tools/rift_mines.py",
         "tools/ferries.py",
         "data/blackout.json",
@@ -685,7 +686,7 @@
         "rift_mine_gate",
         "water_sites"
       ],
-      "statement": "No action a player can repeat at will (relog, a server restart, placing and boarding a boat, a touch of land, bobbing to the surface, leaving and re-entering an approach box, drinking milk) resets, refreshes early or skips a clock or accumulator a gate relies on: swim fatigue and its collapse clock, the Surf bonus, the ladder's drowning pulses, the blackout dedupe, the gulch Megas' respawn clock, the ferry's cooldown, the wards' Mining Fatigue. Each case is a scenario in tests/test_gate_clocks.py run with the generated packs. Excepted by design: riding a water Pokemon (it ends fatigue, WATER_BUILD_PLAN 11.2), a blackout (it costs money and a checkpoint return), operator-only gamemode changes.",
+      "statement": "No action a player can repeat at will (relog, a server restart, placing and boarding a boat, a touch of land, bobbing to the surface, leaving and re-entering an approach box, drinking milk) resets, refreshes early or skips a clock or accumulator a gate relies on: swim fatigue and its collapse clock, the Surf bonus, the ladder's drowning pulses, the blackout dedupe, the gulch Megas' respawn clock, the Ursaluna den's return clock, the ferry's cooldown, the wards' Mining Fatigue. Each case is a scenario in tests/test_gate_clocks.py run with the generated packs. Excepted by design: riding a water Pokemon (it ends fatigue, WATER_BUILD_PLAN 11.2), a blackout (it costs money and a checkpoint return), operator-only gamemode changes.",
       "stated_in": [
         {
           "at": "data/blackout.json:124",

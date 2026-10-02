@@ -12,10 +12,11 @@ repository already uses, so nothing here is new machinery:
                 diagonal axis into a half-ellipsoid hall, voxelised from the record and written as one `fill` per
                 run of blocks along z. The shell never writes the top `keep_natural_top` blocks of a column, so the
                 hill's grass is its own and its surface is never raised.
-  the bear      a Pokemon entity, summoned over RCON by the re-application (placement_steps below), because
-                `spawnpokemonat` in a plainly parsed function spawns nothing (tools/sapling_celebi.py, EXP-046).
-                This pack dresses it (the sleeping Celebi's flags, EXP-023), keeps it while it sleeps, and WAKES it
-                when a player comes within wake.radius: the den's boss fight (below).
+  the bear      a Pokemon entity, summoned over RCON by the re-application (placement_steps below), and after that
+                by this pack's own keeper through a macro line when it returns (a plain `spawnpokemonat` line parsed
+                at server start spawns nothing, EXP-046). This pack dresses it (the sleeping Celebi's flags,
+                EXP-023), keeps it while it sleeps, WAKES it when a player comes within wake.radius (the den's boss
+                fight), brings it back after it is beaten, and lets only a late player catch it (below).
   Teddiursa     NOT in this pack: a Habitat Block record in data/habitat_blocks.json (placed by
                 tools/habitat_blocks.py with every other block) and a Habitat pool in data/spawns.json (compiled by
                 tools/compile_spawns.py). This tool only reads them, for the report.
@@ -32,19 +33,33 @@ Celebi's (docs/mechanics/CELEBI_WAKE.md, tools/sapling_celebi.py), rung for rung
   ursaluna_cave/keep        remove a second bear (a load race), put it back on its spot if anything moved it
   ursaluna_cave/wake_check  the trigger, a STATE CHECK: the nearest non-spectator within wake.radius of the spot
   ursaluna_cave/wake        as that player: merge wake.awake_nbt (the Celebi's AWAKE), set the awake score, roar,
-                            and tell the player if their level cap is below the bear's (cap_advice, a macro)
+                            and tell the player if they may not catch it (ursaluna.catch)
   ursaluna_cave/dress       the dormant flags, the tag, the spot - and the awake score back to 0, so the flag never
-                            outlives the bear it describes (a re-application after a knockout or a catch installs
-                            a fresh sleeping bear; one while it is awake and alive changes nothing)
+                            outlives the bear it describes; the return clock cleared; the bear's Pokemon UUID stored
 
-What is unproven (Unbattleable 0b on a live entity, a NoAI Pokemon in battle, RecalculatePose) is
-experiments/EXP-049-ursaluna-wake, for the integrator to run in game.
+THE BOSS RULES (the owner, 2026-10-02: "Den boss: returns after it is beaten, no badge to wake it, catchable only
+late. A boss that stays dead is an event; one that returns is a place."):
+
+  ursaluna_cave/track       every keeper pass with the den spot loaded: a tagged bear anywhere loaded resets the
+                            absence count (it has NoAI and NoGravity: it cannot wander); absent on returns.absent_passes
+                            loaded passes in a row, it is gone, and with no callback having seen it go the clock starts
+                            (vanished); once returns.cooldown_ticks of game time have passed and nobody is within
+                            returns.clear_radius, respawn. An awake bear left alone lies down again (dress)
+  ursaluna_cave/gone        from the battle_fainted (why 1) and pokemon_captured (why 2) callbacks, by the Pokemon
+                            UUID dress stored: the blackout guardians' route, proven on staging (EXP-042 session 5)
+  ursaluna_cave/respawn     the summon guard, then spawn_at (a macro line, EXP-046) and dress_new
+  ursaluna_cave/catch_check from the poke_ball_capture_calculated callback, as the thrower: asleep, the ball breaks
+                            free and wakes the bear; awake, it breaks free unless the thrower holds catch.gate_flags
+
+What is unproven (Unbattleable 0b on a live entity, a NoAI Pokemon in battle, RecalculatePose, the capture hook in
+play, the return in play) is experiments/EXP-049-ursaluna-wake, for the integrator to run in game.
 
 THE SUMMON GUARD keys on the tag and on the species, never on a bare distance. R14C (the Celebi) uses
 `unless entity @e[type=cobblemon:pokemon,distance=..3]`, and a wild Pokemon wandering past the sapling has satisfied
 that twice and suppressed the summon (docs/HANDOVER_SESSION.md). Here: no tagged bear anywhere loaded, and no
-Ursaluna of any tag within 4 blocks of the den spot (an undressed one from an interrupted run, which dress_new then
-takes).
+undressed Ursaluna with NoAI 1b within 4 blocks of the den spot (an interrupted spawn, which dress_new then takes).
+NoAI is set on the entity alone by the `no_ai` property (the jar's NoAIProperty), so a player's own Ursaluna never
+matches.
 
 Ground comes from tools/ground.py (the canonical heightmap, rounded), never from a world.
 
@@ -101,6 +116,21 @@ def load(path=DATA):
         raise CaveError("only PoseType \"SLEEP\" is proven (EXP-023); the wake hands the pose back with RecalculatePose")
     if w["radius"] >= u["keeper"]["player_radius"]:
         raise CaveError("the wake is checked inside the keeper's loop, so its radius must be inside the keeper's")
+    r = u.get("returns") or {}
+    if not isinstance(r.get("cooldown_ticks"), int) or r["cooldown_ticks"] < 20 * 60 * 30:
+        raise CaveError("ursaluna.returns.cooldown_ticks must be an integer of at least half an hour (36000): a boss "
+                        "that returns faster is a farm (the owner, 2026-10-02: 'one that returns is a place')")
+    if not isinstance(r.get("clear_radius"), int) or r["clear_radius"] <= w["radius"]:
+        raise CaveError("ursaluna.returns.clear_radius must exceed the wake's radius: it never returns in a player's face")
+    if not isinstance(r.get("absent_passes"), int) or r["absent_passes"] < 2:
+        raise CaveError("ursaluna.returns.absent_passes must be at least 2 (entities load a moment after their chunk)")
+    c = u.get("catch") or {}
+    if not c.get("gate_flags"):
+        raise CaveError("ursaluna.catch.gate_flags is empty: the owner asked for a bear catchable only late")
+    flags = {f["id"] for f in json.loads((ROOT / "data" / "progression.json").read_text(encoding="utf-8"))["flags"]}
+    unknown = [f for f in c["gate_flags"] if f not in flags]
+    if unknown:
+        raise CaveError("ursaluna.catch.gate_flags %s are not flags in data/progression.json" % unknown)
     return doc
 
 
@@ -252,10 +282,79 @@ def _at(M, doc):
 
 
 def _species_sel(doc):
-    return 'nbt={Pokemon:{Species:"cobblemon:%s"}}' % doc["ursaluna"]["species"]
+    """The bear by what it IS, never by where it stands: the species, and NoAI 1b, which the `no_ai` spawn property sets
+    on the entity only (NoAIProperty's Pokemon-side setter does nothing, Cobblemon 1.8.0 jar), so a player's own
+    Ursaluna - the bear itself after a catch, sent out - never matches."""
+    return 'nbt={NoAI:1b,Pokemon:{Species:"cobblemon:%s"}}' % doc["ursaluna"]["species"]
 
 
 OBJ = "cobblers.ursaluna"
+STORE = "cobblers:ursaluna"
+FREE = "cobblers.ursaluna_free"
+CALLBACKS = "data/cobblemon/callbacks/%s/cobblers_ursaluna.molang"
+
+
+def pid_lines(score):
+    """As the bear: its Pokemon UUID as the text MoLang's `pokemon.id` gives (Java's UUID.toString of the int array),
+    into STORE bear.pid. The blackout's recovery/pid method (tools/blackout_pack.py), which matched a fainted and a
+    caught guardian on staging (EXP-042 session 5): each int's eight hex digits, least significant first (scoreboard
+    %= and /= floor, so a negative int's two's complement digits come out right), joined 8-4-4-4-12."""
+    out = ["execute store result score #u%d %s run data get entity @s Pokemon.UUID[%d]" % (w, score, w) for w in range(4)]
+    for w in range(4):
+        for p in range(7, -1, -1):
+            out += ["scoreboard players operation #n %s = #u%d %s" % (score, w, score),
+                    "scoreboard players operation #n %s %%= #16 %s" % (score, score),
+                    "execute store result storage %s hx.i int 1 run scoreboard players get #n %s" % (STORE, score),
+                    'data modify storage %s hx.k set value "c%d%d"' % (STORE, w, p),
+                    "function cobblers:%s/pid_hex with storage %s hx" % (FN, STORE),
+                    "scoreboard players operation #u%d %s /= #16 %s" % (w, score, score)]
+    out.append("function cobblers:%s/pid_join with storage %s px" % (FN, STORE))
+    return out
+
+
+def pid_join_line():
+    d = lambda w, ps: "".join("$(c%d%d)" % (w, p) for p in ps)   # noqa: E731
+    return '$data modify storage %s bear.pid set value "%s-%s-%s-%s-%s%s"' % (
+        STORE, d(0, range(8)), d(1, range(4)), d(1, range(4, 8)), d(2, range(4)), d(2, range(4, 8)), d(3, range(8)))
+
+
+def callback_files(doc):
+    """The three MoLang callbacks, beside Cobblemon's own files under a cobblers_ name (EXP-042: a callback fires only
+    from data/cobblemon/callbacks/<event>/; Cobblemon itself ships several scripts per event, e.g. pokemon_captured's
+    three). No apostrophe in a comment string: MoLang strings are single-quoted."""
+    ns, tag = doc["namespace"], doc["ursaluna"]["tag"]
+    gone = "function %s:%s/gone {pid:\"' + t.pid + '\",why:%d}"
+    return {
+        CALLBACKS % "battle_fainted": "\n".join([
+            "'Generated by tools/ursaluna_cave.py from data/ursaluna_cave.json. A wild Pokemon fainting in battle: if it';",
+            "'is the Ursaluna of the den, matched by the Pokemon UUID ursaluna_cave/dress stored, its return clock starts.';",
+            "'The route the blackout guardians proved on staging (EXP-042 session 5).';",
+            "c.pokemon.actor.is_wild ? {",
+            "  t.pid = c.pokemon.pokemon.id;",
+            "  q.run_command('%s');" % (gone % (ns, FN, 1)),
+            "};", ""]),
+        CALLBACKS % "pokemon_captured": "\n".join([
+            "'Generated by tools/ursaluna_cave.py from data/ursaluna_cave.json. A Pokemon caught: if it is the Ursaluna';",
+            "'of the den, matched by its Pokemon UUID (the entity is gone by the time this runs), its return clock starts.';",
+            "t.pid = q.pokemon.id;",
+            "q.run_command('%s');" % (gone % (ns, FN, 2)),
+            ""]),
+        CALLBACKS % "poke_ball_capture_calculated": "\n".join([
+            "'Generated by tools/ursaluna_cave.py from data/ursaluna_cave.json. A ball at the Ursaluna of the den: asleep,';",
+            "'it breaks free and wakes the bear; awake, it breaks free unless the thrower holds the late badge flags.';",
+            "'The level cap callback (cobblers_level_cap) shape: the answer comes back as a tag on the thrower.';",
+            "t.pk = q.pokemon;",
+            "t.th = q.thrower;",
+            "t.pk.has_tag('%s') ? {" % tag,
+            "  t.th.is_player ? {",
+            "    q.run_command('execute as ' + t.th.uuid + ' at @s run function %s:%s/catch_check');" % (ns, FN),
+            "    t.th.has_tag('%s') ? {" % FREE,
+            "      q.set_shakes(0);",
+            "      t.th.remove_tag('%s');" % FREE,
+            "    };",
+            "  };",
+            "};", ""]),
+    }
 
 
 def awake_set(doc, value):
@@ -264,6 +363,15 @@ def awake_set(doc, value):
 
 def awake_if(doc, value):
     return "score %s %s matches %d" % (doc["ursaluna"]["wake"]["awake_holder"], OBJ, int(value))
+
+
+def gate_filter(doc, flags):
+    return ",".join("%s:flag/%s=true" % (doc["namespace"], f) for f in flags)
+
+
+def catch_allowed(doc):
+    """`@s` when the thrower holds every late flag the record names (data/ursaluna_cave.json ursaluna.catch)."""
+    return "@s[advancements={%s}]" % gate_filter(doc, doc["ursaluna"]["catch"]["gate_flags"])
 
 
 def wake_selector(doc):
@@ -286,27 +394,101 @@ def files(doc, ground):
     bx, by, bz = M.bear
     nbt = ",".join("%s:%s" % (key, v) for key, v in u["nbt"].items())
     awake = ",".join("%s:%s" % (key, v) for key, v in w["awake_nbt"].items())
-    name = u["species"].capitalize()
-    cap_msg = json.dumps({"text": "Your level cap is below %d: an %s that strong breaks free from every ball, a Master "
-                                  "Ball included." % (int(u["level"]), name), "color": "red"}, ensure_ascii=False)
+    ret = u["returns"]
+    clear = int(ret["clear_radius"])
+    catch_msg = json.dumps({"text": u["catch"]["message"], "color": "red"}, ensure_ascii=False)
     fn = {
         "%s/carve" % FN: carve_lines(doc, M),
         "%s/load" % FN: ["scoreboard objectives add %s dummy" % obj,
                          "# the awake score is NOT reset here: a restart must not put a woken bear back to sleep.",
                          "# ursaluna_cave/dress owns it.",
+                         "# The return clock #gone (the game time the bear was first known gone; -1 while it stands) is",
+                         "# set here only when it has never been set: a restart never moves it (contract C14's shape).",
+                         "execute unless score #gone %s matches -2147483648.. run scoreboard players set #gone %s -1"
+                         % (obj, obj),
+                         "scoreboard players set #cool %s %d" % (obj, int(ret["cooldown_ticks"])),
+                         "scoreboard players set #16 %s 16" % obj,
+                         "data modify storage %s hex set value %s" % (STORE, json.dumps(list("0123456789abcdef"))),
                          "schedule function %s:%s/keeper %dt replace" % (ns, FN, k["period_ticks"])],
         "%s/dress_new" % FN: [
-            "# run by the re-application just after its summon: the nearest undressed Ursaluna at the den spot",
+            "# just after a summon (the re-application's, or ursaluna_cave/respawn's): the nearest undressed Ursaluna",
+            "# at the den spot, by species and NoAI, never a bare distance",
             "execute positioned %s as @e[type=cobblemon:pokemon,tag=!%s,distance=..4,%s,limit=1,sort=nearest] "
             "run function %s:%s/dress" % (at, tag, _species_sel(doc), ns, FN)],
         "%s/dress" % FN: ["data merge entity @s {%s}" % nbt,
                           "tag @s add %s" % tag,
                           "tp @s %s %s 0" % (at, u["yaw"]),
                           "# this bear is dormant by construction, so the awake flag describes it again",
-                          awake_set(doc, 0)],
-        "%s/keeper" % FN: ["execute positioned %s if entity @a[distance=..%d] run function %s:%s/near"
+                          awake_set(doc, 0),
+                          "# and it stands: the return clock and its bookkeeping are clear",
+                          "scoreboard players set #gone %s -1" % obj,
+                          "scoreboard players set #why %s 0" % obj,
+                          "scoreboard players set #abs %s 0" % obj,
+                          "# its Pokemon UUID, for the callbacks that see it beaten or caught",
+                          "function %s:%s/pid" % (ns, FN)],
+        "%s/pid" % FN: ["# as the bear (from dress)"] + pid_lines(obj),
+        "%s/pid_hex" % FN: ["$data modify storage %s px.$(k) set from storage %s hex[$(i)]" % (STORE, STORE)],
+        "%s/pid_join" % FN: [pid_join_line()],
+        "%s/keeper" % FN: ["# the return: only where the den spot is loaded; absence counts only on loaded passes in a row",
+                           "execute unless loaded %d %d %d run scoreboard players set #abs %s 0" % (bx, by, bz, obj),
+                           "execute if loaded %d %d %d run function %s:%s/track" % (bx, by, bz, ns, FN),
+                           "execute positioned %s if entity @a[distance=..%d] run function %s:%s/near"
                            % (at, k["player_radius"], ns, FN),
                            "schedule function %s:%s/keeper %dt replace" % (ns, FN, k["period_ticks"])],
+        "%s/track" % FN: [
+            "# Is the bear here? It has NoAI and NoGravity, and keep puts a sleeping one back on its spot, so it cannot",
+            "# wander: a tagged bear anywhere loaded is THE bear, and none means gone or not yet loaded.",
+            "execute store result score #n %s if entity @e[type=cobblemon:pokemon,tag=%s]" % (obj, tag),
+            "execute if score #n %s matches 1.. run scoreboard players set #abs %s 0" % (obj, obj),
+            "# awake, alive and left alone (nobody within %d): it lies down again on its spot (a fight fled is not won)"
+            % clear,
+            "execute if score #n %s matches 1.. if %s if score #gone %s matches -1 positioned %s unless entity "
+            "@a[distance=..%d] as @e[type=cobblemon:pokemon,tag=%s] run function %s:%s/dress"
+            % (obj, awake_if(doc, 1), obj, at, clear, tag, ns, FN),
+            "execute if score #n %s matches 1.. run return 0" % obj,
+            "# absent on %d loaded passes in a row before it counts (entities load a moment after their chunk)"
+            % int(ret["absent_passes"]),
+            "scoreboard players add #abs %s 1" % obj,
+            "execute if score #abs %s matches ..%d run return 0" % (obj, int(ret["absent_passes"]) - 1),
+            "# gone with no callback having seen it go (a sword, an arrow, /kill): the clock starts now",
+            "execute if score #gone %s matches -1 run function %s:%s/vanished" % (obj, ns, FN),
+            "execute store result score #now %s run time query gametime" % obj,
+            "scoreboard players operation #d %s = #now %s" % (obj, obj),
+            "scoreboard players operation #d %s -= #gone %s" % (obj, obj),
+            "execute if score #d %s < #cool %s run return 0" % (obj, obj),
+            "# due: it returns only with nobody within %d, never in front of a player" % clear,
+            "execute positioned %s if entity @a[distance=..%d] run return 0" % (at, clear),
+            "function %s:%s/respawn" % (ns, FN)],
+        "%s/vanished" % FN: ["execute store result score #gone %s run time query gametime" % obj,
+                             "scoreboard players set #why %s 3" % obj],
+        "%s/gone" % FN: [
+            "# from a callback: $(pid) a Pokemon's UUID as text, $(why) 1 fainted in battle, 2 caught. Only the bear's",
+            "$execute unless data storage %s bear{pid:\"$(pid)\"} run return 0" % STORE,
+            "# the first sighting starts the clock; nothing later moves it",
+            "execute unless score #gone %s matches -1 run return 0" % obj,
+            "execute store result score #gone %s run time query gametime" % obj,
+            "$scoreboard players set #why %s $(why)" % obj],
+        "%s/respawn" % FN: [
+            "# The summon guard: no tagged bear is loaded (track counted none) AND no undressed one of the species,",
+            "# NoAI from its spawn, stands at the spot (an interrupted spawn, which is dressed instead). Never a bare",
+            "# distance: R14C's failure, twice.",
+            "execute positioned %s if entity @e[type=cobblemon:pokemon,tag=!%s,distance=..4,%s] run return run "
+            "function %s:%s/dress_new" % (at, tag, _species_sel(doc), ns, FN),
+            "# a spawn line parsed at server start spawns nothing until a /reload; a macro line is parsed when it runs",
+            "# (EXP-046, which also saw a keeper put a killed worker back through its macro at a fresh boot)",
+            "function %s:%s/spawn_at {x:%d,y:%d,z:%d}" % (ns, FN, bx, by, bz),
+            "function %s:%s/dress_new" % (ns, FN)],
+        "%s/spawn_at" % FN: ["$spawnpokemonat $(x) $(y) $(z) %s level=%d scale_modifier=%s %s"
+                             % (u["species"], int(u["level"]), u["scale_modifier"], " ".join(u["spawn_properties"]))],
+        "%s/catch_check" % FN: [
+            "# as and at the thrower, from the poke_ball_capture_calculated callback: FREE on the thrower = it breaks free",
+            "tag @s remove %s" % FREE,
+            "# asleep: no ball takes it, and the ball wakes it (wake tells the thrower whether they may catch it)",
+            "execute unless %s run tag @s add %s" % (awake_if(doc, 1), FREE),
+            "execute unless %s positioned %s run return run function %s:%s/wake" % (awake_if(doc, 1), at, ns, FN),
+            "# awake: only a thrower with the late badge flags (data/ursaluna_cave.json ursaluna.catch)",
+            "execute unless entity %s run tag @s add %s" % (catch_allowed(doc), FREE),
+            "execute if entity @s[tag=%s] run tellraw @s %s" % (FREE, catch_msg)],
         "%s/near" % FN: ["# WHILE IT SLEEPS ONLY. A woken bear is the fight: keeping it would teleport it back onto",
                          "# its spot every %d ticks, through the battle the wake exists to give." % k["period_ticks"],
                          "execute if %s run return 0" % awake_if(doc, 1),
@@ -324,7 +506,7 @@ def files(doc, ground):
             "# run as the waking player, positioned at the bear's spot.",
             "# chunks-loaded-by: the waking player, who stands within %d blocks of the bear" % int(w["radius"]),
             "execute if %s run return 0" % awake_if(doc, 1),
-            "# no bear (knocked out or caught, not yet re-installed): nothing to wake, and nothing to say",
+            "# no bear (knocked out or caught, not yet returned): nothing to wake, and nothing to say",
             "execute unless entity @e[tag=%s] run return 0" % tag,
             "data merge entity @e[tag=%s,limit=1] {%s}" % (tag, awake),
             "# the keeper stands down on this score (ursaluna_cave/near)",
@@ -332,17 +514,11 @@ def files(doc, ground):
             "tellraw @a[distance=..48] %s" % json.dumps({"text": w["message"], "color": "gold", "italic": True},
                                                         ensure_ascii=False),
             "playsound %s hostile @a[distance=..48] %d %d %d 2 0.6" % (w["sound"], bx, by, bz),
-            "function %s:%s/cap_advice {x:\"\"}" % (ns, FN)],
-        "%s/cap_advice" % FN: [
-            "# $(x) is empty: this line is a macro only so rctmod's command is parsed when it runs.",
-            "# A mod's command written plainly in a function may be parsed at server start before it",
-            "# is usable (.claude/rules/datapacks.md, EXP-046). The sleeping Celebi's cap_advice, exactly.",
-            "scoreboard players set @s %s 0" % obj,
-            "$execute store result score @s %s run rctmod player get level_cap @s$(x)" % obj,
-            "# a cap that did not read (0) says nothing: data/level_cap.json lets that catch through",
-            "execute if score @s %s matches 1..%d run tellraw @s %s" % (obj, int(u["level"]) - 1, cap_msg)],
+            "# the catch is per thrower and late (ursaluna.catch): say so to a waker who may not catch it",
+            "execute unless entity %s run tellraw @s %s" % (catch_allowed(doc), catch_msg)],
     }
     out = {"data/%s/function/%s.mcfunction" % (ns, n): "\n".join(v) + "\n" for n, v in fn.items()}
+    out.update(callback_files(doc))
     out["data/minecraft/tags/function/load.json"] = json.dumps({"values": ["%s:%s/load" % (ns, FN)]}, indent=2) + "\n"
     out["pack.mcmeta"] = json.dumps({"pack": {"pack_format": PACK_FORMAT,
                                               "description": "Cobblers: the Ursaluna's den west of Highwire "
@@ -407,7 +583,10 @@ def report(doc, ground):
              % (c["open_mouth_until"], worst, m, m + 1),
              "bear at %s, yaw %s, scale %s, level %d; wakes for a player within %d (%s)"
              % (M.bear, doc["ursaluna"]["yaw"], doc["ursaluna"]["scale_modifier"], doc["ursaluna"]["level"],
-                doc["ursaluna"]["wake"]["radius"], wake_selector(doc))]
+                doc["ursaluna"]["wake"]["radius"], wake_selector(doc)),
+             "returns %d ticks (%.1f h of server time) after it is gone, with nobody within %d; caught only by %s"
+             % (doc["ursaluna"]["returns"]["cooldown_ticks"], doc["ursaluna"]["returns"]["cooldown_ticks"] / 72000.0,
+                doc["ursaluna"]["returns"]["clear_radius"], catch_allowed(doc))]
     ch = c["chamber"]
     for s in (ch["centre"], doc["ursaluna"]["at_s"]):
         x, z = world_xz(doc, s, 0)
