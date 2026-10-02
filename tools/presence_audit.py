@@ -19,10 +19,12 @@ What each check expects comes from the authored record or the build's own plan, 
   gulch   data/gulch_mine.json: the square paved at its surface_y, the adit's posts and open mouth, air in the Tally
           Hall and the Cutting Floor, the grille's iron bars, the three Cutters, the two hall Megas, and six of the
           cove's 69 buildings (their wall block somewhere up the rect's corner column).
-  dens    data/gulch_mine.json `farms[].dens`: each den's chunk is held, then its Mega counted by its own tag. A den's
-          Mega exists only while its chunk is loaded with nobody within `megas.spawn_clear` of the anchor; a den nobody
-          has visited has never spawned. So a count of 0 is reported WITH the den's clock scores (gm.gone, gm.resp,
-          #now gm.t), which say whether the keeper ran and when it will spawn, rather than as a bare absence.
+  dens    data/gulch_mine.json `farms[].dens` and the mine's two hall slots: each den's chunk is held, its keeper
+          driven three times from the console (the tick drives it only while a PLAYER is inside the den's approach
+          box, 128 square and anchor-24 to anchor+32, so a player flying over higher never sees a den spawn), then
+          its Mega counted by its own tag. A count other than 1 is reported WITH the den's clock scores (gm.gone,
+          gm.resp, #now gm.t) and any player within `megas.spawn_clear`, which blocks a spawn by design.
+          This WRITES: it spawns any Mega that is due. Staging only.
   relic   the superseded surface (derived/deep_city/plan.json `relic`: the ring on its plinth, the cordon's gate) and
           the underground hall (data/relic_underground.json). Before R9RU: surface present, hall solid. After: the
           reverse.
@@ -165,7 +167,7 @@ def gulch(rc):
 def dens(rc, wait):
     d = json.loads((ROOT / "data" / "gulch_mine.json").read_text(encoding="utf-8"))
     tag = d["megas"]["tag"]
-    rows = [(s["id"], s["anchor"][0], None, s["anchor"][1], "hall") for s in d["megas"]["slots"]]
+    rows = [(s["id"], s["anchor"][0], None, s["anchor"][1], "mine") for s in d["megas"]["slots"]]
     for f in d.get("farms", []):
         for den in f["dens"]:
             x, y, z = den["anchor"]
@@ -174,6 +176,14 @@ def dens(rc, wait):
     for did, x, y, z, where in rows:
         y = 64 if y is None else y
         _hold(rc, x, y, z, settle=wait)
+        # The tick runs a den's keeper (drive_<farm>) only while a PLAYER stands in its approach box (128 square,
+        # anchor-24 to anchor+32), so a held chunk with nobody in it never spawns its Mega. Drive it as the tick
+        # would: the keeper waits for two absent passes before it counts the Mega gone, then spawns it.
+        for _ in range(3):
+            rc("execute store result score #now gm.t run time query gametime")
+            rc("function cobblers:gulch_mine/drive_%s" % where)
+            time.sleep(1)
+        time.sleep(wait)
         n = _count(rc, "@e[type=cobblemon:pokemon,tag=%s.%s]" % (tag, did))
         why = ""
         if n != 1:
