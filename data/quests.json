@@ -5160,6 +5160,32 @@
         "quest.evt_lopunny_superfan.reward_claimed",
         "quest.evt_lopunny_superfan.dialogue_cursor"
       ]
+    },
+    {
+      "id": "ambient_drovers_hollow",
+      "source": "data/drovers_hollow.json; the owner's request of 2026-10-02 for places in the south (data/drovers_hollow.json request)",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": true,
+        "npcs_remain_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_drovers_hollow_drover"
+      ],
+      "objectives": [],
+      "transitions": [],
+      "writer": "dialogue cursor persistence only; the conversation sets no story, reward, or completion state (the find is data/rewards.json drovers_hollow_store, a cache granted by reaching the store)",
+      "readers": "the drover's conversation only",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player advances and restores their own cursor"
+      },
+      "progression_field_refs": [
+        "quest.ambient_drovers_hollow.drover_cursor"
+      ]
     }
   ]
 }

@@ -109,6 +109,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 "cobblers_frostpeak_summit",
                 # 2026-10-02: the Lopunny superfan's house and its Buneary cellar (tools/lopunny_house.py), run by R9LH
                 "cobblers_lopunny_house",
+                # 2026-10-02: the Drovers' Hollow in the Rift Foot (tools/drovers_hollow.py): a longbarn, its fold and
+                # the old working under the bank, run by R9HF
+                "cobblers_drovers_hollow",
                 # 2026-09-29: the gym interiors (tools/gym_interiors.py, data/gym_interiors.json): the healing
                 # machines out of all eight placed gyms, and gym 1's works carved under its lot. Block functions run
                 # by R16E, after the donors (R9) that stamp the gyms whole and would erase anything written first
@@ -498,6 +501,8 @@ def prepare_jobs(a):
     add("frostpeak_summit_audit", "frostpeak_summit_audit.py", *src)
     add("lopunny_house:build", "lopunny_house.py", "build", *src)
     add("lopunny_house_audit", "lopunny_house_audit.py", *src)
+    add("drovers_hollow:build", "drovers_hollow.py", "build", *src)
+    add("drovers_hollow_audit", "drovers_hollow_audit.py", *src)
     add("sea_drift_audit", "sea_drift_audit.py", *src)
     # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
     # then the offline audit, which re-derives every shell box from data/placements.json, replays the written
@@ -1070,6 +1075,11 @@ def steps(with_spawns=False):
     import lopunny_house
     out.append(("R9LH", "the Lopunny superfan's house and its Buneary cellar (data/lopunny_house.json)",
                 lopunny_house.placement_steps()))
+    # the Drovers' Hollow (2026-10-02, tools/drovers_hollow.py): BEFORE R9E, because its build writes the fold's floor -
+    # after R9E it would lay coarse dirt over the herd's Habitat Block set in that floor
+    import drovers_hollow
+    out.append(("R9HF", "the Drovers' Hollow: its barn, fold and old working (data/drovers_hollow.json)",
+                drovers_hollow.placement_steps()))
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
@@ -1172,6 +1182,10 @@ def steps(with_spawns=False):
     import ursaluna_cave
     out.append(("R18U", "the Ursaluna's den west of Highwire (data/ursaluna_cave.json)",
                 ursaluna_cave.placement_steps() + [("npc", n) for n in ursaluna_cave.npc_placements()]))
+    # the Drovers' Hollow's drover (2026-10-02): after R17N, on the path R9HF wrote, his class loaded at boot from
+    # cobblers_dialogue
+    out.append(("R18HF", "the Drovers' Hollow's drover, Owen Cray (data/drovers_hollow.json npc)",
+                [("npc", n) for n in drovers_hollow.npc_placements()]))
     # the Frostpeak research camp (2026-10-02): its blocks and instruments, held in a forceload so no fill lands on an
     # unloaded chunk, then its three researchers
     import frostpeak_camp

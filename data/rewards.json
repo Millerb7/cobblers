@@ -550,6 +550,46 @@
       ],
       "why": "The Lopunny superfan's thanks for being shown a Lopunny (the owner, 2026-10-02: he 'wants one of his own'). A Soothe Bell: he bought it for his Buneary, which are wild and never noticed. The dialogue makes no claim for what the bell does. One per player, by grant_reward_once. An owner decision: a Lopunnite (mega_showdown:lopunnite, docs/research/notes/reward-item-inventory.md) would fit better and is deliberately not given, because mega stones are scarce by the owner's design (docs/world-building/SOUTHERN_RIFT_MEGA.md).",
       "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/lopunny_house.py seats him on, checked by tools/lopunny_house_audit.py"
+    },
+    {
+      "id": "drovers_hollow_store",
+      "kind": "cache",
+      "place": "the Drovers' Hollow (data/drovers_hollow.json): the store at the end of the old working under the east bank, reached down the well behind the barn's spring",
+      "contents": [
+        {
+          "item": "cobblemon:choice_band",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/choice_band.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:moomoo_milk",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/moomoo_milk.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel at the end of the old working, wrapped in oilcloth: a Choice Band, the herd bull's brow-band, and three bottles of Moomoo Milk.",
+      "why": "data/drovers_hollow.json find: the find that pays for the walk down the well. Late-game, as the place is (the Rift Foot is tier 8): a Choice Band, held nowhere else in the campaign but by trainers (data/trainers.json), and Moomoo Milk from the herd.",
+      "built_by": "tools/drovers_hollow.py (the barrel, in cobblers_drovers_hollow's build, step R9HF)",
+      "trigger": {
+        "min": [
+          4017,
+          92,
+          6021
+        ],
+        "max": [
+          4021,
+          94,
+          6025
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          4021,
+          92,
+          6023
+        ]
+      }
     }
   ]
 }
