@@ -525,7 +525,9 @@ def prepare_jobs(a):
     # keep clear of; then their offline audit, which recomputes every rule from other files' data and stops the prepare
     # on a face the build should not have written
     add("mines:build", "mines.py", "build", *src)
-    add("mines_audit", "mines_audit.py", *src)
+    # the lake-bed repair pack (R1R): until 2026-10-02 no prepare job built it, and only a build/ left over from
+    # 2026-09-30 hid that. mines_audit runs at the END (below): it lists reapply's steps, which index every pack
+    add("lakebed_repair:build", "lakebed_repair.py", "build", *src)
     # the wayside shrines, then their offline audit against the plans, the legs, the water and the other packs, which
     # fails the prepare on any write where a shrine may not stand. After every other block pack is built (the stone
     # faces included): the generator keeps clear of what they write
@@ -610,6 +612,9 @@ def prepare_jobs(a):
     add("blackout_pack", "blackout_pack.py")
     # the loose functions (town prep, elders, grove, islet) in one pack
 
+    # the stone faces' audit LAST: it checks R9O through steps(), which indexes every pack built above, so on a fresh
+    # build/ it failed closed on whichever pack came after it in this list (found 2026-10-02 on a new worktree)
+    add("mines_audit", "mines_audit.py", *src)
     return J
 
 
