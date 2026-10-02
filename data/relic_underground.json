@@ -17,7 +17,7 @@
     "gallery": [3389, 3284, 3391, 3304],
     "passage": [3358, 3305, 3421, 3307],
     "hq": [3421, 3282, 3444, 3312],
-    "hq_why": "the HQ's way down (geometry.hq): the front door's plates at x3442-3444 z3282, the stair x3428-3431 z3298-3313, the records room x3421-3429 z3300-3311; y0-67. Inside carve_with_shell, so the step's one forceload already holds it",
+    "hq_why": "the HQ's way down (geometry.hq): the stair x3428-3431 z3298-3313, the records room x3421-3429 z3300-3311; y0-67. Inside carve_with_shell, so the step's one forceload already holds it",
     "y": {"carve": [5, 40], "shell": [-19, 65], "undo": [84, 110], "hq": [0, 67]}
   },
 
@@ -108,10 +108,54 @@
       "front_door": {
         "at": [3443, 67, 3282],
         "is": "minecraft:iron_door[facing=east] (lower half; upper at y68), the city's (tools/deep_city.py build_lot, sealed lot hq_66)",
-        "plates": [[3444, 67, 3282], [3442, 67, 3282]],
-        "plate_block": "minecraft:polished_blackstone_pressure_plate",
-        "why": "an iron door opens only to redstone, and the city's sealed lot has none, so the HQ could not be entered. A pressure plate on each side opens it for whoever walks up and lets them out again. That is not a barrier and not a gate: the zone check is the gate (zone.doorway.why). The door itself stays the city's and is not touched; the plates stand in air the city leaves (the outside one on its ring-0 sidewalk, the inside one on the tread).",
-        "owner_check": "if the story wants the HQ's ring-0 door locked until something happens, that is a gate and belongs in the zone or the dialogue, not in a door: say so and the plates come off"
+        "opened_by": "NOTHING. The iron door stays shut for everyone, from both sides: no plate, button or lever is laid beside it. The way in is the guard (geometry.hq.guard), who moves one player at a time; the way out is the inside guard (geometry.hq.inside_guard). The door itself stays the city's and is not touched.",
+        "decision": "the owner, 2026-10-02: 'The pressure plates are wrong: the HQ door should need the finale's quest stage, not a plate anyone can stand on.' Chosen stage: rift_crisis_pending, so the door is the guard's for a player whose quest.main_worldshift_reveal.stage is rift_crisis_pending or later (rift_released, league_recognized).",
+        "superseded_plates": {
+          "plates": [[3444, 67, 3282], [3442, 67, 3282]],
+          "plate_block": "minecraft:polished_blackstone_pressure_plate",
+          "was": "a pressure plate on each side of the door, opening it for whoever walked up (built 2026-10-02 by carve/40_hq)",
+          "removed": "2026-10-02 by the owner's decision above. carve/40_hq no longer writes them and tools/relic_underground_audit.py refuses any opener beside the door. R9RU had never run on any world, so no world holds them and nothing has to be taken off one.",
+          "kept_why": "the record of what the first build did, under a superseded_* key (CLAUDE.md, 'A file declaring generated_by hand')"
+        }
+      },
+      "guard": {
+        "conversation": "dlg_main_relic_hq_guard",
+        "npc": "npc_main_relic_hq_guard",
+        "at": [3444, 67, 3283],
+        "yaw": -90,
+        "yaw_why": "facing east, out over ring 0's street (Minecraft yaw -90 faces +x)",
+        "at_why": "on ring 0's sidewalk one block south of the doorstep, standing one above the city's polished_blackstone_bricks at (3444, 66, 3283) with nothing the city writes at y67-68 (measured 2026-10-02 from tools/deep_city.py's build via relic_underground.city_cells and tools/rift_deep.py's tread y66). Beside the door, not in front of it: the doorstep stays clear",
+        "front_step": [3444, 67, 3282],
+        "front_step_why": "the doorstep: the cell east of the door's lower half along its facing (the city's sidewalk), where a player stands to talk to the guard. tools/relic_underground_audit.py starts its walk here",
+        "stage_field": "quest.main_worldshift_reveal.stage",
+        "stages": ["rift_crisis_pending", "rift_released", "league_recognized"],
+        "stages_why": "rift_crisis_pending and every later value of the field's enum (data/progression.json), the owner's choice. A per-player enum in Cobblemon player data, readable by dialogue (tools/compile_dialogue.py) and by no command, so the gate is a dialogue option and not a door, an advancement or a function test",
+        "admit": {
+          "function": "cobblers:relic_underground/hq_admit",
+          "to": [3440.5, 67, 3282.5],
+          "yaw": 90,
+          "pitch": 0,
+          "reach": 6,
+          "why": "the guard's 'Go through.' runs this as and at THAT player only (compile_dialogue's `function` effect: execute as <their uuid>). It moves them to the inside landing; the door never opens, so nobody behind them comes in. reach: the function does nothing for a player more than 6 blocks from the guard"
+        },
+        "inside_landing": [3440, 67, 3282],
+        "inside_landing_why": "two blocks inside the door in the storey-0 room hq_secure_shaft_head (interior x3429-3442, z3279-3301), on the Deep's ring-0 tread y66 with the room's air over it (the city writes nothing at x3440 z3282 y66-70; measured 2026-10-02). Facing west into the room, toward the stair's head in its south-west corner",
+        "set_by": "quest.main_worldshift_reveal.stage reaches rift_crisis_pending through transition record_rift_crisis_pending (data/quests.json), run when a player acknowledges the Rift surveyor's line rift_007 (data/dialogue.json dlg_main_rift_surveyor, NPC seated by R17N at (3552, 112, 5334), data/npc_seats.json) while at giovanni_reveal_complete. A setter EXISTS in data and compiles; whether a player in game has walked that chain is NOT VERIFIED"
+      },
+      "inside_guard": {
+        "conversation": "dlg_main_relic_hq_guard_inside",
+        "npc": "npc_main_relic_hq_guard_inside",
+        "at": [3441, 67, 3280],
+        "yaw": 0,
+        "yaw_why": "facing south (+z), toward the inside landing two blocks from it",
+        "release": {
+          "function": "cobblers:relic_underground/hq_release",
+          "to": [3444.5, 67, 3282.5],
+          "yaw": -90,
+          "pitch": 0,
+          "reach": 6
+        },
+        "why": "the door opens for nobody from either side, so without a way out an admitted player would be shut in the HQ (the hall is a dead end and the zone's turn-back never fires for a player holding the pass). Ungated: anyone inside may leave. ADDED BY THE UNIT THAT TOOK THE PLATES OFF, not asked for; the owner may prefer another way out"
       },
       "room": {"id": "hq_secure_shaft_head", "floor_y": 66, "interior": [3429, 3279, 3442, 3301], "why": "storey 0 of the HQ's ring-0 section, air y67-70: the door at x3443 z3282 opens into it and the stair's head is in its south-west corner. This pack writes nothing at or above y67 inside it."},
       "head_room": 3,
@@ -166,7 +210,7 @@
       "hatch_undo": {"cells": [[3427, 66, 3308], [3427, 66, 3309]], "block": "minecraft:deepslate", "why": "tools/deep_city.py no longer lays the hatch (it sat under a wall where no shaft opens). A world applied before 2026-10-02 still holds it, so R9RU lays those two cells back to the rock under the wall: x3427 there is inside the tread's bare-rock margin (tools/rift_deep.py rock_margin), so the cell was native rock, laid as the palette's rock under y70."},
       "hull": "every face-neighbour of the stair's or the room's air that this file does not write is made rock if it is a void (replace #cobblers:relic_void), inside the three reserved boxes only and never above a pit column's tread, so it cannot reach the room or the Deep. R9B has already sealed every pit column from y-4 to y65 and the relic shell every column near the passage, so the hull is a guard; `report` and the audit both check that every face of every HQ air cell is one of those.",
       "reserved_boxes": ["hq_basement", "hq_secure_shaft", "hq_shaft_head"],
-      "outside_the_reserved_boxes": "the two pressure plates (in the city's air at the door) and the two hatch cells (under the wall), and nothing else"
+      "outside_the_reserved_boxes": "the two hatch cells (under the wall), and nothing else (the door's two pressure plates were the other two until 2026-10-02: front_door.superseded_plates)"
     },
     "shell": {
       "blocks": 24,
@@ -210,8 +254,8 @@
       "no_light_blocks": "no minecraft:light anywhere (docs/STATE.md: places are lit as towns, never light blocks)",
       "target": "NOT MEASURED. tools/light_plan.py is the measure and its emitter table is known to be missing modded emitters (DEEP_CITY.md section 4). The hall is not a street and section 4's 12-or-more street target is not claimed here."
     },
-    "spawns": "the hall needs to be inside the Deep's spawn-free precinct or to carry its own Habitat band. NOT AUTHORED HERE: data/habitat_blocks.json and the precinct are not this file's, and a dark 1,849-column room with no decision is a mob farm.",
-    "spawn_decision": {"status": "OPEN (2026-10-02). Deliberately not decided by the unit that wired the carve.", "why_open": "what lives in the hall is part of Hoopa's story, and Hoopa's cradle (3357, 3306) is Codex's (DEEP_CITY.md section 5, HANDOVER_CODEX.md item 26). No Hoopa encounter, Habitat Block or spawn pool is invented here.", "options": ["(a) the Deep's spawn-free precinct extended over the hall: nothing spawns, the room is architecture and relics", "(b) a Habitat band of its own, chosen with the cradle's story", "(c) leave it to light: NOT RECOMMENDED, the hall's light is not measured"], "meanwhile": "with the HQ's basement and shaft unbuilt (zone.hq_access) the hall is sealed rock-to-rock, so a hostile spawning in it reaches no player who has not dug in", "meanwhile_changed_2026_10_02": "the HQ's way down is now built (geometry.hq), so the hall is no longer sealed: a hostile spawning in the hall, the gallery or the passage can walk to the records room and up the stair. The decision is still open and is now more pressing; the stair and the records room are lanterned, the passage and gallery are not lit by this file at all"}
+    "spawns": "DECIDED 2026-10-02 (spawn_decision): nothing spawns in the hall, the gallery, the passage, the records room or the stair. Three spawn-free zones in data/spawn_suppression.json, the gyms' mechanism; no Habitat Block.",
+    "spawn_decision": {"status": "DECIDED (the owner, 2026-10-02): 'Hoopa's hall: nothing spawns there. It is the end of the story, not a cave.'", "decision": "option (a) in kind: a spawn-free zone, the way the gyms are (data/spawn_suppression.json spawn_free_zones: tools/compile_spawns.py cuts each box out of every route, sub-region and waterway pool, and tools/suppress_inherited_spawns.py adds it to the inherited pools' anticondition boxes). No Habitat Block, no spawn pool, no Hoopa encounter.", "zones": {"relic_hall": [3360, 3232, 3415, 3287], "relic_gallery": [3384, 3280, 3399, 3311], "relic_way_down": [3352, 3296, 3431, 3319]}, "zones_why": "[x0, z0, x1, z1], snapped OUT to the 8-block grid tools/suppress_inherited_spawns.py merge_boxes enforces: the hall's zone box 1 [3366, 3238, 3414, 3286], the gallery's box 2 [3386, 3284, 3394, 3304], and the passage's box 3 [3357, 3302, 3419, 3310] joined to the HQ's way down (records room and stair, cells x3421-3431 z3299-3312 from hq_plan). tools/relic_underground_audit.py checks that every carved column and every column of the way down is inside one of them.", "all_y": "a spawn-free box is x/z only, every y (data/spawn_suppression.json gym_brock's why). So it also suppresses Cobblemon spawns on whatever stands over these columns: the capped relic area's surface over the hall and passage (about y85-95, inside zone z2), and the Deep's HQ section over the stair (x3424-3431, z3296-3319, its storey-0 room and 60 columns of ring 0's street). Snapping out also takes in x3352-3356 at the cradle's doorstep, Codex's, where a scripted Hoopa is not a wild spawn and is not affected (not_covered).", "vanilla_hostiles": "none to stop: Cobbleverse's MobsBeGone cancels every vanilla hostile (docs/STATE.md, 'No vanilla hostiles'). The zones are about wild Pokemon", "superseded_open": {"status": "OPEN (2026-10-02). Deliberately not decided by the unit that wired the carve.", "why_open": "what lives in the hall is part of Hoopa's story, and Hoopa's cradle (3357, 3306) is Codex's (DEEP_CITY.md section 5, HANDOVER_CODEX.md item 26). No Hoopa encounter, Habitat Block or spawn pool is invented here.", "options": ["(a) the Deep's spawn-free precinct extended over the hall: nothing spawns, the room is architecture and relics", "(b) a Habitat band of its own, chosen with the cradle's story", "(c) leave it to light: NOT RECOMMENDED, the hall's light is not measured"], "meanwhile": "with the HQ's basement and shaft unbuilt (zone.hq_access) the hall is sealed rock-to-rock, so a hostile spawning in it reaches no player who has not dug in", "meanwhile_changed_2026_10_02": "the HQ's way down is now built (geometry.hq), so the hall is no longer sealed: a hostile spawning in the hall, the gallery or the passage can walk to the records room and up the stair. The decision is still open and is now more pressing; the stair and the records room are lanterned, the passage and gallery are not lit by this file at all"}}
   },
 
   "zone": {
@@ -274,7 +318,7 @@
       "why": "the owner: 'turned back by the zone check rather than barriers'. An open doorway with a zone behind it is the instruction exactly: the player can see the passage, can walk at it, and is turned back by the check and not by a block. It also deletes the dependency DEEP_CITY.md section 5 carried: a lumymon:elevator with requiredAdvancement set on the shaft. THAT FIELD IS ASSUMED, NOT SOURCED (DEEP_CITY.md cites it; no jar read or documentation is quoted anywhere in this repository), and this design does not need it: the shaft down from ring 0 can be plain stairs or an ungated lift, because the gate is not the shaft."
     },
     "hq_access": {
-      "status": "BUILT BY THIS FILE (2026-10-02, carve/40_hq in step R9RU; geometry.hq), not yet applied to any world. The walk is: the HQ's ring-0 front door (3443, 67, 3282), opened by a pressure plate on each side -> the storey-0 room hq_secure_shaft_head -> the stair's head in its south-west corner (3429, 66, 3299) -> 64 treads and landings down the reserved secure shaft -> the stair's foot (3429-3430, 0, 3308) -> the records room (basement) at y0 -> its open west doorway (3421, 3305-3307) -> the passage. The knock box is the records room's west end at that doorway, carved air. tools/relic_underground_audit.py walks it from outside the front door to the hall's centre through the blocks actually written.",
+      "status": "BUILT BY THIS FILE (2026-10-02, carve/40_hq in step R9RU; geometry.hq), not yet applied to any world. The walk is: the HQ's ring-0 front door (3443, 67, 3282), which stays shut: the Compact guard at (3444, 67, 3283) moves a player whose main quest stage is rift_crisis_pending or later to the inside landing (3440, 67, 3282) (geometry.hq.guard, 2026-10-02) -> the storey-0 room hq_secure_shaft_head -> the stair's head in its south-west corner (3429, 66, 3299) -> 64 treads and landings down the reserved secure shaft -> the stair's foot (3429-3430, 0, 3308) -> the records room (basement) at y0 -> its open west doorway (3421, 3305-3307) -> the passage. The knock box is the records room's west end at that doorway, carved air. tools/relic_underground_audit.py walks it from outside the front door to the hall's centre through the blocks actually written.",
       "was": "NOT BUILT BY ANY TOOL until 2026-10-02: the passage ended in rock at x3422, the knock box was solid, and the city's hatch at (3427, 66, 3308)/(3427, 66, 3309) sat under the HQ section's west wall. DEEP_CITY.md section 9 step 5 had put the shaft after Codex's chamber needs; the orchestrator's brief of 2026-10-02 asked for it now, and the cradle stays Codex's (nothing here goes west of x3421).",
       "shaft_hatch": {"at": [3427, 66, 3308], "also": [3427, 66, 3309], "status": "REMOVED from tools/deep_city.py 2026-10-02 (geometry.hq.hatch_undo lays the two cells back to rock)", "was": "minecraft:reinforced_deepslate, the city's materials.seal"},
       "front_door": [3443, 67, 3282],
@@ -359,6 +403,7 @@
       "the carve must run BEFORE Codex's cradle, or the cradle's own 24-block shell will seal this passage's west end: tools/cavern_plan.py's shell converts every void it finds within 24 blocks, and x3358 is 1 block from the cradle's centre column",
       "WRITTEN 2026-10-02: tools/reapply.py step R9RU, after R9DC and before R9E: forceload the bounds, undo, 02_shell, 10_void, 20_surfaces, 25_reshell, 30_composition, release (relic_underground.placement_steps). The undo runs after R9DC because it subtracts what the current city writes, and R9DC must not run after it on a world that still has the old build (it does not: R9DC no longer writes those cells)",
       "the zone pack itself needs no step: it is advancement-driven, like the gulch's",
+      "the two Compact guards at the HQ door (geometry.hq.guard, inside_guard) are placed by tools/reapply.py step R18RU, after R17N: NPCs over RCON after the restart that loaded cobblers_dialogue's classes, on the floor R9DC and R9B laid. Their functions (hq_admit, hq_release) are in this pack, loaded with it",
       "the HQ's way down (carve/40_hq) runs AFTER R9B (tools/rift_deep.py, the pit): R9B's refill under every tread is `replace #cobblers:rift_void`, so a re-run of R9B after R9RU would fill the stair and the records room with rock. R9B before R9DC before R9RU is the order tools/reapply.py has, and tests/test_relic_underground.py checks it"
     ],
     "upgrade_path": {
@@ -370,7 +415,10 @@
       "is the hall the right place for the shrine, or should it be a chamber the cradle passage ENDS in, past the cradle? (That would put the shrine behind the finale, which is a different game.)",
       "what the hall holds after the finale: DEEP_CITY.md section 5's options (a) presence, (b) a battle or catch, (c) the ring becomes a waystone. Unchanged by moving underground, except that (c) is now a waystone in a sealed room reached through the HQ.",
       "whether the lookout keeps a railing and a lantern on a surface that is otherwise bare spoil",
-      "the hall's spawn decision: inside the Deep's spawn-free precinct, or its own Habitat band"
+      "DECIDED 2026-10-02 (was: the hall's spawn decision): nothing spawns there (composition.spawn_decision)",
+      "DECIDED 2026-10-02 (was: whether the HQ door opens for anyone): the door stays shut; the guard admits a player at rift_crisis_pending or later (geometry.hq.guard)",
+      "the way OUT of the HQ: an inside guard who lets anyone out (geometry.hq.inside_guard) was added by the unit that took the plates off, because nothing else opens the door. Keep it, or choose another way out",
+      "whether the zone pass should also need the guard: today the knock box grants it at eight badges, so a player who digs into the records room past the guard and holds eight badges is let into the hall. The guard's hq_admit could set a per-player score the qualify function also tests. Not done: the brief kept the zone and the knock box as they are"
     ]
   },
 

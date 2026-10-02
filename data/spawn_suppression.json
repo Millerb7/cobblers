@@ -187,6 +187,42 @@
       "why": "the owner, 2026-09-21: no wild Pokemon wanders into a leader battle, whatever the gym's theme. The box is Giovanni's gym (gym8_gym_building, as placed) with 2 blocks round it, snapped out to the 8-block grid the route boxes share.",
       "mechanism": "as the League precinct's",
       "not_covered": "Pokemon a player sends out, and the gym's own trainers"
+    },
+    {
+      "id": "relic_hall",
+      "box": [
+        3360,
+        3232,
+        3415,
+        3287
+      ],
+      "why": "the owner, 2026-10-02: \"Hoopa's hall: nothing spawns there. It is the end of the story, not a cave.\" The hall under the relic area (data/relic_underground.json zone box 1 [3366, 3238, 3414, 3286], its footprint grown 3 for the wall), snapped out to the 8-block grid. All y, so the capped relic area's surface over it is spawn-free too (data/relic_underground.json composition.spawn_decision.all_y).",
+      "mechanism": "as the League precinct's",
+      "not_covered": "Pokemon a player sends out, and anything a scripted event puts there (a Hoopa at the cradle is Codex's)"
+    },
+    {
+      "id": "relic_gallery",
+      "box": [
+        3384,
+        3280,
+        3399,
+        3311
+      ],
+      "why": "the owner, 2026-10-02, as relic_hall: the gallery from the passage north to the hall (data/relic_underground.json zone box 2 [3386, 3284, 3394, 3304]), snapped out to the 8-block grid.",
+      "mechanism": "as the League precinct's",
+      "not_covered": "Pokemon a player sends out"
+    },
+    {
+      "id": "relic_way_down",
+      "box": [
+        3352,
+        3296,
+        3431,
+        3319
+      ],
+      "why": "the owner, 2026-10-02, as relic_hall: the passage (data/relic_underground.json zone box 3 [3357, 3302, 3419, 3310]) joined to the HQ's way down, the records room and the stair (cells x3421-3431, z3299-3312), snapped out to the 8-block grid. All y, so it also covers the Deep's HQ section over the stair and about 60 columns of ring 0's street; and x3352-3356 at the cradle's doorstep.",
+      "mechanism": "as the League precinct's",
+      "not_covered": "Pokemon a player sends out, and anything a scripted event puts there"
     }
   ]
 }

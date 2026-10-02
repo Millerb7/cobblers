@@ -9950,6 +9950,160 @@
       "speakers": {
         "owen": "Owen Cray"
       }
+    },
+    {
+      "id": "dlg_main_relic_hq_guard",
+      "quest_id": "main_worldshift_reveal",
+      "npc_id": "npc_main_relic_hq_guard",
+      "npc_name": "Compact guard",
+      "source": "data/relic_underground.json geometry.hq.guard; the owner, 2026-10-02: the HQ's ring-0 door needs the finale's quest stage (rift_crisis_pending or later), not a pressure plate",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.main_worldshift_reveal.relic_guard_cursor",
+        "initial_node": "turned_away",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "rift_crisis_pending",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "admit"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "always"
+          },
+          "node": "turned_away"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "turned_away",
+          "kind": "line",
+          "speaker": "guard",
+          "text": "Compact HQ. This door opens on orders, and I've none with your name on them.",
+          "next": "turned_away_2"
+        },
+        {
+          "id": "turned_away_2",
+          "kind": "line",
+          "speaker": "guard",
+          "text": "When the operation needs you, they'll tell me. Move along.",
+          "next": "turned_away_2"
+        },
+        {
+          "id": "admit",
+          "kind": "choice",
+          "speaker": "guard",
+          "text": "Your clearance came down from the surveyor. The way below is through here.",
+          "responses": [
+            {
+              "id": "r_go",
+              "text": "Go through.",
+              "visible_when": {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "rift_crisis_pending",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "relic_hq_admit"
+                },
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            },
+            {
+              "id": "r_not_yet",
+              "text": "Not yet.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "speakers": {
+        "guard": "Compact guard"
+      }
+    },
+    {
+      "id": "dlg_main_relic_hq_guard_inside",
+      "quest_id": "main_worldshift_reveal",
+      "npc_id": "npc_main_relic_hq_guard_inside",
+      "npc_name": "Compact guard",
+      "source": "data/relic_underground.json geometry.hq.inside_guard: the iron door opens for nobody, from either side, so the way back out to ring 0 is this guard",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.main_worldshift_reveal.relic_inside_cursor",
+        "initial_node": "out",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "out"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "out",
+          "kind": "choice",
+          "speaker": "guard",
+          "text": "Heading back up to the street?",
+          "responses": [
+            {
+              "id": "r_out",
+              "text": "Let me out.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "relic_hq_release"
+                },
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            },
+            {
+              "id": "r_stay",
+              "text": "Not yet.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "speakers": {
+        "guard": "Compact guard"
+      }
     }
   ]
 }
