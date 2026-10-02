@@ -54,8 +54,11 @@ def checks(rep):
 def test_the_committed_residents_are_clean(ground, tmp_path):
     rep = run(ground, tmp_path)
     assert rep.errors == []
-    # Split-Bark is 63 (the owner, 2026-10-02): no resident is let through on a declared leak any more
-    assert not any("catch-gate leak" in n for n in rep.notes)
+    # Split-Bark is 63 (the owner, 2026-10-02): it is no longer let through on a declared leak. Wiremother IS, by
+    # the owner's other instruction the same day (L33 -> L30, its tier-2 place's ceiling; build.catch_gate_leak),
+    # and whether to keep that leak is still the owner's call. The exact set is pinned, so a new leak fails.
+    leaks = {n.split(":")[0] for n in rep.notes if "catch-gate leak" in n}
+    assert leaks == {"wiremother"}, leaks
 
 
 def test_the_record_holds_ten_built_never_placed():

@@ -27990,6 +27990,209 @@
         "setblock 5166 63 6661 minecraft:jungle_fence",
         "setblock 5166 64 6661 minecraft:lantern[hanging=false]"
       ]
+    },
+    {
+      "id": "legendary_crown_cemetery",
+      "pack_template": "cobbleverse:crown_cemetery",
+      "template": "cobbleverse:crown_cemetery",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/cobbleverse/structure/crown_cemetery.nbt",
+        "licence": "Cobbleverse, no redistribution: never copied into the repository. The pack is installed on the server, so the structure is placed by resource id."
+      },
+      "cell": "B5",
+      "kind": "donor",
+      "position": {
+        "x": 4118,
+        "y": 109,
+        "z": 1982
+      },
+      "size": [
+        45,
+        24,
+        47
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "adopted_site": "adopted_crown_cemetery",
+      "chosen_because": "measured and argued in data/adopted_legendary_sites.json adopted_crown_cemetery (the flattest 45x47 in the Peak Pond old growth, 218 blocks off the route 4 and 5 legs); scheduled 2026-10-02 because nothing it gives depends on a right-click altar: the brushable gravel is archaeology and the Spectrier trigger takes a THROWN carrot (lumymon-altars.md section 1). The Calyrex statue is a right-click altar whose crown nothing in the game makes, so it is scenery."
+    },
+    {
+      "id": "legendary_dawn_tower",
+      "pack_template": "cobbleverse:dawn_tower",
+      "template": "cobbleverse:dawn_tower",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/cobbleverse/structure/dawn_tower.nbt",
+        "licence": "Cobbleverse, no redistribution: never copied into the repository. The pack is installed on the server, so the structure is placed by resource id."
+      },
+      "cell": "A8",
+      "kind": "donor",
+      "position": {
+        "x": 7480,
+        "y": 99,
+        "z": 316
+      },
+      "size": [
+        46,
+        90,
+        45
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "adopted_site": "adopted_dawn_tower",
+      "chosen_because": "measured and argued in data/adopted_legendary_sites.json adopted_dawn_tower: the eastern Pine Isle, the north-east corner of the map, where the sun comes up; re-homed from the End, which no player can enter.",
+      "set_commands": [
+        {
+          "at": [
+            16,
+            77,
+            22
+          ],
+          "was": "empty",
+          "command": "execute unless entity @p[distance=..12,advancements={cobblers:flag/champion_cleared=true}] run tellraw @a[distance=..12] {\"text\":\"Nothing answers. The light at the top of this tower is waiting for the Champion.\",\"color\":\"gray\",\"italic\":true}"
+        },
+        {
+          "at": [
+            15,
+            77,
+            22
+          ],
+          "was": "blindness on everyone within 25",
+          "command": "execute if entity @p[distance=..12,advancements={cobblers:flag/champion_cleared=true}] run effect give @a[distance=..25] minecraft:blindness 3 2 true"
+        },
+        {
+          "at": [
+            14,
+            77,
+            22
+          ],
+          "was": "thunder",
+          "command": "execute if entity @p[distance=..12,advancements={cobblers:flag/champion_cleared=true}] run playsound minecraft:entity.lightning_bolt.thunder master @a[distance=..50] ~ ~ ~ 9 1"
+        },
+        {
+          "at": [
+            13,
+            77,
+            22
+          ],
+          "was": "slowness on everyone within 10",
+          "command": "execute if entity @p[distance=..12,advancements={cobblers:flag/champion_cleared=true}] run effect give @a[distance=..10] minecraft:slowness 5 10 true"
+        },
+        {
+          "at": [
+            12,
+            77,
+            22
+          ],
+          "was": "the spawn, ungated",
+          "command": "execute if entity @p[distance=..12,advancements={cobblers:flag/champion_cleared=true}] run pokespawnat ~ ~2 ~ necrozma prism_fusion=dawn level=80 attack_iv=30 defence_iv=30 hp_iv=30 speed_iv=30 special_attack_iv=30 special_defence_iv=30 moves=nightslash,photongeyser,powergem,shadowclaw"
+        },
+        {
+          "at": [
+            11,
+            77,
+            22
+          ],
+          "was": "the chain filling itself in, ungated",
+          "command": "execute if entity @p[distance=..12,advancements={cobblers:flag/champion_cleared=true}] run fill ~5 ~5 ~5 ~-5 ~-5 ~-5 minecraft:deepslate_bricks replace minecraft:chain_command_block"
+        }
+      ],
+      "set_commands_why": "The template's summit chain (template x11-19, y77, z22, read from COBBLEVERSE-DP-v31 2026-10-02: docs/research/notes/legendary-catalogue-reopened.md section 1) spawns a level-80 Necrozma for WHOEVER steps on the summit plate and then fills itself with deepslate bricks: one spawn, for the whole server. Level 80 is above every cap until the Champion falls (100 after Blue, docs/mechanics/LEAGUE_LEVEL_CAP.md), so as shipped a player before the League would burn the server's only spawn on a Pokemon that breaks free from every ball. Each link is rewritten to run only when a player holding cobblers:flag/champion_cleared (data/progression.json, OUR flag, not Cobbleverse's) is within 12 of the chain; anyone else is told so and the chain survives. The levitation lift at the foot stays open to all, so the tower can be climbed and looked at before it can be woken. The spawn line keeps the template's own species, form, level, IVs and moves.",
+      "needs": "enable-command-block=true in server.properties. The live server has false (lumymon-altars.md section 3). With false the lift does not lift and the summit does nothing: the tower is a 90-block landmark with no way up but climbing. That setting is the owner's call and is NOT changed by this record."
+    },
+    {
+      "id": "legendary_dusk_tower",
+      "pack_template": "cobbleverse:dusk_tower",
+      "template": "cobbleverse:dusk_tower",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/cobbleverse/structure/dusk_tower.nbt",
+        "licence": "Cobbleverse, no redistribution: never copied into the repository. The pack is installed on the server, so the structure is placed by resource id."
+      },
+      "cell": "H2",
+      "kind": "donor",
+      "position": {
+        "x": 1156,
+        "y": 146,
+        "z": 7216
+      },
+      "size": [
+        46,
+        90,
+        45
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "adopted_site": "adopted_dusk_tower",
+      "chosen_because": "measured and argued in data/adopted_legendary_sites.json adopted_dusk_tower: the western heights of the Sunset Isle, the south-west corner of the map, where the sun goes down; re-homed from the End, which no player can enter.",
+      "set_commands": [
+        {
+          "at": [
+            16,
+            77,
+            22
+          ],
+          "was": "empty",
+          "command": "execute unless entity @p[distance=..12,advancements={cobblers:flag/champion_cleared=true}] run tellraw @a[distance=..12] {\"text\":\"Nothing answers. The light at the top of this tower is waiting for the Champion.\",\"color\":\"gray\",\"italic\":true}"
+        },
+        {
+          "at": [
+            15,
+            77,
+            22
+          ],
+          "was": "blindness on everyone within 25",
+          "command": "execute if entity @p[distance=..12,advancements={cobblers:flag/champion_cleared=true}] run effect give @a[distance=..25] minecraft:blindness 3 2 true"
+        },
+        {
+          "at": [
+            14,
+            77,
+            22
+          ],
+          "was": "thunder",
+          "command": "execute if entity @p[distance=..12,advancements={cobblers:flag/champion_cleared=true}] run playsound minecraft:entity.lightning_bolt.thunder master @a[distance=..50] ~ ~ ~ 9 1"
+        },
+        {
+          "at": [
+            13,
+            77,
+            22
+          ],
+          "was": "slowness on everyone within 10",
+          "command": "execute if entity @p[distance=..12,advancements={cobblers:flag/champion_cleared=true}] run effect give @a[distance=..10] minecraft:slowness 5 10 true"
+        },
+        {
+          "at": [
+            12,
+            77,
+            22
+          ],
+          "was": "the spawn, ungated",
+          "command": "execute if entity @p[distance=..12,advancements={cobblers:flag/champion_cleared=true}] run pokespawnat ~ ~2 ~ necrozma prism_fusion=dusk level=80 attack_iv=30 defence_iv=30 hp_iv=30 speed_iv=30 special_attack_iv=30 special_defence_iv=30 moves=photongeyser,earthquake,nightslash,mirrorshot"
+        },
+        {
+          "at": [
+            11,
+            77,
+            22
+          ],
+          "was": "the chain filling itself in, ungated",
+          "command": "execute if entity @p[distance=..12,advancements={cobblers:flag/champion_cleared=true}] run fill ~5 ~5 ~5 ~-5 ~-5 ~-5 minecraft:deepslate_bricks replace minecraft:chain_command_block"
+        }
+      ],
+      "set_commands_why": "The template's summit chain (template x11-19, y77, z22, read from COBBLEVERSE-DP-v31 2026-10-02: docs/research/notes/legendary-catalogue-reopened.md section 1) spawns a level-80 Necrozma for WHOEVER steps on the summit plate and then fills itself with deepslate bricks: one spawn, for the whole server. Level 80 is above every cap until the Champion falls (100 after Blue, docs/mechanics/LEAGUE_LEVEL_CAP.md), so as shipped a player before the League would burn the server's only spawn on a Pokemon that breaks free from every ball. Each link is rewritten to run only when a player holding cobblers:flag/champion_cleared (data/progression.json, OUR flag, not Cobbleverse's) is within 12 of the chain; anyone else is told so and the chain survives. The levitation lift at the foot stays open to all, so the tower can be climbed and looked at before it can be woken. The spawn line keeps the template's own species, form, level, IVs and moves.",
+      "needs": "enable-command-block=true in server.properties. The live server has false (lumymon-altars.md section 3). With false the lift does not lift and the summit does nothing: the tower is a 90-block landmark with no way up but climbing. That setting is the owner's call and is NOT changed by this record."
     }
   ]
 }

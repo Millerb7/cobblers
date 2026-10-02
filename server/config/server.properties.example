@@ -85,3 +85,10 @@ resource-pack-sha1=
 initial-enabled-packs=vanilla
 function-permission-level=2
 op-permission-level=4
+
+# --- gameplay requirements ----------------------------------------------
+# REQUIRED, the owner 2026-10-02: the Necrozma towers (lift and summit chain)
+# and Mew's temple door are command blocks. With false the towers have no way
+# up and nothing fires. tools/install_check.py reports anything else as a
+# PROPERTY problem. Do not turn it off.
+enable-command-block=true

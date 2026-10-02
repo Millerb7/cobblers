@@ -209,3 +209,32 @@ Measured afterwards over RCON and from the staging world's files (not the live w
 **Still open:** the altars whose templates carry NO anchor (Articuno, Zapdos, Mew). Their `isAnchorRequired` default
 was not read; one right-click at the Articuno altar (682, 312, 380) with a glacier feather settles it (the owner
 holds two). If it says "Summon Anchor not found", `setblock 683 312 380 lumymon:summon_anchor` and click again.
+## Reconciliation, 2026-10-02 (merging the parallel sessions)
+
+Two sessions recorded the owner's result for the same click at the pasted Crown Cemetery, and they disagree on the
+species: the section above (the server session) quotes the owner, "it spawned the calyrex when i clicked him", and
+measured the statue consumed; the section below (the legendary session) records "Spectrier spawned and walked
+around". Both agree the pasted altar WORKS, which is the experiment's question, so the result stands as PASS. **Which
+Pokemon appeared is for the owner to say**, and it matters: the Spectrier cap (`tools/spectrier_cap.py`) is built
+on the reading that a Spectrier can come from this site.
+
+## Result, the owner's half (reported by the owner in chat, 2026-10-02)
+
+- **Calyrex, at the pasted Crown Cemetery statue (4140, 112, 2005): given the crown, it WORKED** ("i gave the calyrex
+  the crown and it worked", the owner, 2026-10-02). So a raw-pasted LumyMon right-click altar functions on Cobblemon
+  1.8.0 / LumyMon 0.6.6 in staging. The owner also reports that pasted altars work in general, and that the earlier inert
+  results came from our own tooling: `/clone` dropping shrine blocks, a missing ritual block, and a shrine placed 71
+  blocks from its record. **Those three are not yet recorded in any file this session could read**; the chat line, the
+  item used and whether the crown was consumed should be written here by whoever ran it.
+- Still not recorded: the Spectrier thrown carrot (step 1), Articuno's feather (step 2).
+- **Consequence for play is unchanged:** the crown has no recipe or loot source, so in normal play Calyrex needs the
+  campaign to hand the crown out, as the feathers will be.
+
+### VERIFIED IN GAME by the owner, 2026-10-02 (supersedes "the owner also reports" above)
+
+At the pasted Crown Cemetery on staging the owner put the Calyrex crown on the statue: **Spectrier spawned and walked
+around.** A real player action fired a raw-pasted LumyMon altar on Cobblemon 1.8.0 / LumyMon 0.6.6 - the thing the
+console half could never test. **Status: the altar mechanism WORKS when pasted.** Species note: the jar's
+`CalyrexStatue` strings name `calyrex level=70`; the owner saw Spectrier. Not resolved here; the Spectrier cap is
+built to cover every path to a Spectrier at the cemetery. What it unblocks is listed in
+`data/adopted_legendary_sites.json` `a_dead_altar_must_not_block.what_it_unblocks`.

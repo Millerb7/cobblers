@@ -1,0 +1,222 @@
+#!/usr/bin/env python
+"""Generate the Spectrier cap datapack from data/spectrier_cap.json: one Spectrier per player, permanently.
+
+The design is the owner's (2026-10-02), authored in data/adopted_legendary_sites.json
+adopted_crown_cemetery.spectrier_once_per_player. LumyMon's summon trigger at the pasted Crown Cemetery
+has no lasting cap (an in-memory per-player cooldown, lost on restart) and its shaderoot carrots regrow,
+so this pack records the summon ON THE SPAWN rather than the trigger: whatever path made the Spectrier,
+the new entity is what gets judged.
+
+What it emits (namespace cobblers, folder spectrier_cap/):
+
+  tick      every tick; costs one selector unless a player is within player_near of the centre
+  near      runs as nothing, at the centre: every Pokemon within spawn radius not yet inspected
+  inspect   runs as one Pokemon: not a wild Spectrier -> tagged skip for good; a wild one -> wait for a
+            player within the summoner radius, then tag it seen and judge its nearest such player
+  judge     runs as the summoner: holds the advancement -> refuse; does not -> grant it, leave the Pokemon
+  refuse    runs as the summoner: tell them why, then remove the new Spectrier
+  remove    runs as the new Spectrier: below the world, then kill, so nothing it drops is left behind
+
+and the advancement (one minecraft:impossible criterion, granted only by `judge`).
+
+WILD vs OWNED, the trap this exists to avoid: a player's own Spectrier sent out at the cemetery is a
+Spectrier entity too. It is never judged, because it fails the wild test on two independent fields
+(Pokemon.PokemonOriginalTrainerType reads PLAYER once any player has held it; and a sent-out entity carries
+a top-level Owner). The sources, with Cobblemon 1.8.0 path:line, are in data/spectrier_cap.json wild_test.
+
+What this does NOT cover: a Spectrier that appears more than spawn radius from the centre (the footprint's
+extreme corners), one in another dimension, and a Spectrier that arrived before this pack was installed
+(it is judged on the first tick a player is near, like a new one).
+
+  python tools/spectrier_cap.py                 # write build/datapacks/cobblers_spectrier_cap
+  python tools/spectrier_cap.py --out <dir>
+
+Ownership: the output is generated and lives in build/ (gitignored); data/spectrier_cap.json is the source.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import shutil
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "tools"))
+import function_limits  # noqa: E402
+
+DATA = ROOT / "data" / "spectrier_cap.json"
+PLACEMENTS = ROOT / "data" / "placements.json"
+DEFAULT_OUT = ROOT / "build" / "datapacks" / "cobblers_spectrier_cap"
+NS = "cobblers"
+FOLDER = "spectrier_cap"
+PACK_FORMAT = 48
+
+
+def load(path=DATA):
+    return json.loads(Path(path).read_text(encoding="utf-8"))
+
+
+def placement(pid, path=PLACEMENTS):
+    doc = json.loads(Path(path).read_text(encoding="utf-8"))
+    for rec in doc.get("placements", []):
+        if rec.get("id") == pid:
+            return rec
+    raise SystemExit("data/placements.json has no placement %r: the cap's centre has nothing to stand on" % pid)
+
+
+def check_centre(doc, rec):
+    """Fail closed if the cemetery moved and this did not, or if the radii no longer cover it."""
+    x, y, z = doc["site"]["centre"]
+    p = rec["position"]
+    sx, sy, sz = rec["size"]
+    if rec.get("anchor_mode") != "corner" or rec.get("rotation") not in (None, "none"):
+        raise SystemExit("%s is no longer an unrotated corner placement; re-derive the centre in data/spectrier_cap.json"
+                         % rec["id"])
+    inside = (p["x"] <= x < p["x"] + sx and p["y"] <= y < p["y"] + sy and p["z"] <= z < p["z"] + sz)
+    if not inside:
+        raise SystemExit("centre %s is outside %s's footprint (%d %d %d, size %d x %d x %d): the cemetery moved"
+                         % ((x, y, z), rec["id"], p["x"], p["y"], p["z"], sx, sy, sz))
+    # Inside is not enough: a cemetery moved 20 blocks still contains the old centre, and its far corners fall outside
+    # the search. The centre is the footprint's own centre, column for column.
+    if (x, z) != (p["x"] + sx // 2, p["z"] + sz // 2):
+        raise SystemExit("centre (%d, %d) is not %s's footprint centre (%d, %d): the cemetery moved"
+                         % (x, z, rec["id"], p["x"] + sx // 2, p["z"] + sz // 2))
+    # Every footprint corner, floor and top, must be inside the search sphere, and the tick must wake for a summoner
+    # standing as far out as a Spectrier at the sphere's edge plus the summoner radius.
+    r = doc["radii"]
+    cx, cy, cz = x + 0.5, y, z + 0.5
+    far = max(((cx - qx) ** 2 + (cy - qy) ** 2 + (cz - qz) ** 2) ** 0.5
+              for qx in (p["x"], p["x"] + sx) for qy in (p["y"], p["y"] + sy) for qz in (p["z"], p["z"] + sz))
+    if r["spawn"] < far:
+        raise SystemExit("spawn radius %s misses %s's farthest corner, %.2f from the centre" % (r["spawn"], rec["id"], far))
+    if r["player_near"] < r["spawn"] + r["summoner"]:
+        raise SystemExit("player_near %s is under spawn %s + summoner %s: a summoner of a Spectrier at the edge would "
+                         "never wake the tick" % (r["player_near"], r["spawn"], r["summoner"]))
+
+
+def _fn(name):
+    return "%s:%s/%s" % (NS, FOLDER, name)
+
+
+def functions(doc):
+    tag = doc["tag_prefix"]
+    seen, skip, new = tag + "seen", tag + "skip", tag + "new"
+    x, y, z = doc["site"]["centre"]
+    r = doc["radii"]
+    adv = doc["advancement"]
+    holds = "@s[advancements={%s=true}]" % adv
+    who = "distance=..%d" % int(r["summoner"])
+    if doc.get("summoner_excludes_spectators"):
+        who += ",gamemode=!spectator"
+    if doc.get("unattributed") != "wait":
+        raise SystemExit("data/spectrier_cap.json unattributed=%r: only 'wait' is generated" % doc.get("unattributed"))
+    species = doc["species"]
+    msg = {k: v for k, v in doc["refusal_message"].items() if k in ("text", "color", "italic", "bold")}
+    head = "# Generated by tools/spectrier_cap.py from data/spectrier_cap.json; never edit (build/ is regenerated)."
+    out = {}
+    out["tick"] = [
+        head,
+        "# The Spectrier cap (data/adopted_legendary_sites.json adopted_crown_cemetery.spectrier_once_per_player).",
+        "# One selector a tick unless a player is within %d of the Crown Cemetery." % int(r["player_near"]),
+        "execute in %s positioned %d %d %d if entity @a[distance=..%d] run function %s"
+        % (doc["site"]["dimension"], x, y, z, int(r["player_near"]), _fn("near")),
+    ]
+    out["near"] = [
+        head,
+        "# At the cemetery's centre. Every Pokemon within %d not yet inspected; a Pokemon is inspected until it is"
+        % int(r["spawn"]),
+        "# tagged skip (not a wild Spectrier) or seen (a wild Spectrier already judged).",
+        "execute as @e[type=cobblemon:pokemon,distance=..%d,tag=!%s,tag=!%s] run function %s"
+        % (int(r["spawn"]), skip, seen, _fn("inspect")),
+    ]
+    out["inspect"] = [
+        head,
+        "# As one Pokemon. NOT A WILD SPECTRIER: tagged skip, never looked at again. Wild means BOTH of these:",
+        "#   Pokemon.PokemonOriginalTrainerType NONE (PLAYER once any player's party has held it), and",
+        "#   no top-level Owner (set on every sent-out Pokemon, a player's or an NPC trainer's).",
+        "# A player's own Spectrier sent out here fails both, and a pastured one has no Pokemon compound at all.",
+        "execute unless entity @s[nbt={Pokemon:{Species:\"%s\",PokemonOriginalTrainerType:\"NONE\"}}] run tag @s add %s"
+        % (species, skip),
+        "execute if data entity @s Owner run tag @s add %s" % skip,
+        "execute if entity @s[tag=%s] run return 0" % skip,
+        "# A wild Spectrier. With nobody within %d it waits, untagged, and is looked at again next tick: the first"
+        % int(r["summoner"]),
+        "# player to come that close is its summoner (data/spectrier_cap.json unattributed).",
+        "execute at @s unless entity @a[%s] run return 0" % who,
+        "tag @s add %s" % seen,
+        "tag @s add %s" % new,
+        "execute at @s as @a[%s,sort=nearest,limit=1] run function %s" % (who, _fn("judge")),
+        "tag @s remove %s" % new,
+    ]
+    out["judge"] = [
+        head,
+        "# As the summoner, with the new Spectrier tagged %s. Refuse first: a holder is still a holder after it," % new,
+        "# so the grant below never runs for one, and a first summoner is never refused.",
+        "execute if entity %s run function %s" % (holds, _fn("refuse")),
+        "execute unless entity %s run advancement grant @s only %s" % (holds, adv),
+    ]
+    out["refuse"] = [
+        head,
+        "# As a summoner who already has had their Spectrier. Tell them, then take the new one away.",
+        "tellraw @s %s" % json.dumps(msg, ensure_ascii=False),
+        "execute as @e[type=cobblemon:pokemon,tag=%s,limit=1] at @s run function %s" % (new, _fn("remove")),
+    ]
+    out["remove"] = [
+        head,
+        "# As the new Spectrier: %s." % doc["removal"]["method"],
+        "# Killed under the world's floor, anything it drops falls into the void instead of lying in the cemetery.",
+        "tp @s ~ %d ~" % int(doc["removal"]["below_y"]),
+        "kill @s",
+    ]
+    return out
+
+
+def advancement():
+    return {"criteria": {"granted": {"trigger": "minecraft:impossible"}}, "requirements": [["granted"]]}
+
+
+def build(doc):
+    adv_ns, adv_path = doc["advancement"].split(":", 1)
+    files = {
+        "pack.mcmeta": json.dumps({"pack": {"pack_format": PACK_FORMAT,
+                                            "description": "Cobblers: one Spectrier per player at the Crown Cemetery "
+                                                           "(tools/spectrier_cap.py)"}}, indent=2) + "\n",
+        "data/minecraft/tags/function/tick.json": json.dumps({"values": [_fn("tick")]}, indent=2) + "\n",
+        "data/%s/advancement/%s.json" % (adv_ns, adv_path): json.dumps(advancement(), indent=2) + "\n",
+    }
+    for name, lines in functions(doc).items():
+        rel = "data/%s/function/%s/%s.mcfunction" % (NS, FOLDER, name)
+        refused = function_limits.check_lines(lines, rel)
+        if refused:
+            for n, cmd, why in refused:
+                print("REFUSED %s line %d: %s\n   %s" % (rel, n, why, cmd))
+            raise SystemExit("%s: %d command(s) the server would refuse; nothing written" % (rel, len(refused)))
+        files[rel] = "\n".join(lines) + "\n"
+    return files
+
+
+def main(argv=None):
+    p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    p.add_argument("--data", default=str(DATA))
+    p.add_argument("--placements", default=str(PLACEMENTS))
+    p.add_argument("--out", default=str(DEFAULT_OUT))
+    a = p.parse_args(argv)
+    doc = load(a.data)
+    check_centre(doc, placement(doc["site"]["placement_id"], a.placements))
+    files = build(doc)
+    out = Path(a.out)
+    if (out / "pack.mcmeta").is_file():
+        shutil.rmtree(out)      # a previous build of this pack: regenerate whole, so no stale function survives
+    for rel, text in files.items():
+        f = out / rel
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text(text, encoding="utf-8", newline="\n")
+    print("wrote %d files to %s: %d functions, advancement %s, centre %s"
+          % (len(files), out, sum(1 for r in files if r.endswith(".mcfunction")), doc["advancement"],
+             tuple(doc["site"]["centre"])))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

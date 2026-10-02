@@ -190,12 +190,33 @@ def functions(rec, subs, check=None, extra=None):
     return out
 
 
+def command_rewrites(rec):
+    """`data merge block` for each command block the record rewrites after the paste.
+
+    The Necrozma towers ship a summit chain that spawns a level-80 Necrozma for whoever steps on the plate, then
+    fills itself in: one spawn, for the whole server. Placed as shipped, a player below the cap would burn it on a
+    Pokemon nobody can catch, so the records gate each link on our own Champion flag. `at` is template-relative and
+    turned with the template; the command is authored in data/placements.json, never read from the template."""
+    import place_town
+    if rec.get("mirror", "none") != "none" and rec.get("set_commands"):
+        raise SystemExit("%s: set_commands under a mirror is not supported" % rec["id"])
+    out = []
+    for c in rec.get("set_commands") or []:
+        tx, ty, tz = c["at"]
+        rx, rz = place_town.rotate(tx, tz, rec.get("rotation", "none"))
+        out.append("data merge block %d %d %d {Command:%s}" % (rec["position"]["x"] + rx, rec["position"]["y"] + ty,
+                                                              rec["position"]["z"] + rz,
+                                                              json.dumps(c["command"], ensure_ascii=False)))
+    return out
+
+
 def commands(rec, subs):
     x, y, z = (rec["position"][k] for k in "xyz")
     lo, hi = box(rec)
     out = ["# %s: %s at (%d, %d, %d) rotation %s" % (rec["id"], rec["pack_template"], x, y, z, rec.get("rotation", "none")),
            "forceload add %d %d %d %d" % load_box(rec),
            "place template %s %d %d %d %s %s 1.0 0" % (rec["pack_template"], x, y, z, rec.get("rotation", "none"), rec.get("mirror", "none"))]
+    out += command_rewrites(rec)
     # /fill refuses more than 32,768 blocks, and it refuses the whole command rather than part of it.
     # Brock's gym is 11,016 and fitted; Misty's is 46,080 and every substitution silently did nothing
     # until this was split (found 2026-09-20 by place_donor.py verify, 958 blocks left unsubstituted).

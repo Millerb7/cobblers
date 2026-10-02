@@ -112,6 +112,8 @@
 
 - **Base and target:** preserve the Cobbleverse experience through an overlay while targeting Cobblemon 1.8.x on Minecraft 1.21.1 Fabric.
 - **Live-world isolation:** agents check process/port and acquire `C:\Users\wnd\Documents\github\.cobblers-server-agent.lock` before any server-runtime access; agents never read `cobblers-server/cobblers-10240/`, and disposable worlds are seeded only from designated offline snapshots.
+- **SERVER REQUIREMENT: `enable-command-block=true` (the owner, 2026-10-02). Do not turn it off.** The Necrozma towers' lift and summit chain and Mew's temple door are command blocks; with false the towers have no way up and nothing fires. `tools/install_check.py` reports any other value as a PROPERTY problem, and `server/config/server.properties.example` carries it. **The live server's file still says false** (unchanged 2026-10-02: the coordination lock was held by another session); the next session that holds the lock sets it, with the server stopped.
+- **Legendary catalogue decisions (the owner, 2026-10-02; `data/adopted_legendary_sites.json` `owner_decisions_2026_10_02`):** one Necrozma per tower, server-wide, kept ("whoever gets there first gets it"); **Spectrier capped to once per player, permanently** (designed in `adopted_crown_cemetery.spectrier_once_per_player`, keyed on the SPAWN so it covers every path; BUILT, NOT RUN: `tools/spectrier_cap.py`, pack `cobblers_spectrier_cap` (world-local, self-driving tick), `tests/test_spectrier_cap.py` 25 passed; runtime checks listed in `data/spectrier_cap.json`); the three bird feathers are worth building toward, handed out by the Frostpeak research camp **through dialogue, as a reward for work the researchers ask for, not a shop**, at **`gym8_cleared` (decided)** (`data/frostpeak_camp.json` `item_economy`, which also records Kubfu's scrolls; NOT BUILT), with **Moltres re-homed to the Craters, measured: `adopted_moltres_tower` corner (6252, 168, 5344), top y231, sited not scheduled**; Eternatus stays out until a Galar Particle supply is authored.
 - **Spawn philosophy:** use curated exclusive pools on critical-path route corridors and keep the default Cobbleverse pool open in wilderness and postgame areas.
 - **Wild Pokemon above the cap are welcome where they make a place (the owner, 2026-10-02):** "it adds to revisiting and makes a region feel more like it should." Small Pokemon on a place's outskirts, big ones at its focal points, **in balance**: the path and most of every place stay catchable, with catchable pockets near the path, so a new player never has to scour a landscape (`docs/mechanics/ENCOUNTER_DESIGN.md` section 10, not built).
 - **Map geometry:** use 1,024-block square planning cells, terrain-following region polygons, and no hex grid.
@@ -342,18 +344,32 @@
   validator. **So the shrine test's question is not whether a structure travels but whether an altar
   FUNCTIONS**, which narrows it to one in-game check. What does not travel: structure STARTS, so LumyMon
   radars, `gym_map`, `/locate` and `location_check` go dead, and jigsaw sites (the three lakes, Turnback,
-  Giratina) give only a start piece. The trigger mechanism is mostly ASSUMED: VERIFIED only that Mew runs
-  command blocks gated on `defeat_champion_blue` (which our progression never grants) and the Necrozma
-  towers run `pokespawnat ... level=80`; LumyMon is closed source and the pack's wiki omits the Kanto
-  birds, the Ruinous four, Calyrex, Necrozma and Eternatus. **Four are adopted, measured
-  and NOT placed** (`data/adopted_legendary_sites.json`, checked against the heightmap by
-  `tests/test_adopted_legendary_sites.py`, which also enforces their 120-block portal clearance): the Mew temple
-  at (7604, 142, 7082) on the Long Isle, `crown_cemetery` at (4118, 109, 1982), Zapdos at (562, 74, 2614) and
-  **Articuno's tower on Frostpeak's SUMMIT at (672, 310, 369)**, top y383, placed by re-apply R18A (the first adopted
-  site any step places). The owner chose the summit once the runtime build limit was measured at **y575**
-  (`cobblers_height`), not the 320 that the 2026-10-01 refusal assumed and that had pushed it onto the east
-  shoulder; its crown clears the crest seen from the Frostpeak camp at y370, and the camp's telescope aims at it. Eight Nether/End structures stay generated where they are, by
-  decision. **EXP-048: a pasted altar WORKS** (2026-10-02, the owner in staging): right-clicking the pasted Calyrex statue with the crown summoned Calyrex, and the summon CONSUMED the statue (the block is air afterwards), so a site summons once per placed statue unless our data re-places it; the crown appears kept. Open: whether the anchorless altars (Articuno, Zapdos, Mew) need an anchor - one right-click at (682, 312, 380). The console half: both
+  Giratina) give only a start piece. **Seven sites are adopted and measured** (`data/adopted_legendary_sites.json`,
+  `tests/test_adopted_legendary_sites.py`, which also enforces their 120-block portal clearance; every margin is
+  against the runtime build ceiling **y575** (`cobblers_height`), not terrain max y310). **Three are SCHEDULED in
+  `data/placements.json` (status planned, not yet run by `prepare`)** because nothing they give depends on a
+  right-click altar: the Crown Cemetery (4118, 109, 1982); and **both Necrozma towers, re-homed from the End, which
+  no player can enter**: **Dawn** on the eastern Pine Isle (7480, 99, 316), **Dusk** on the Sunset Isle's western
+  heights (1156, 146, 7216). A tower's summit is a pressure plate driving a command chain that spawns Necrozma at 80
+  once for the whole server; `tools/place_donor.py` `set_commands` rewrites each link to fire only for a holder of
+  `cobblers:flag/champion_cleared`. **The towers and Mew's door need `enable-command-block=true`: a server
+  requirement (see "What is decided"), checked by `install_check.py`.** Four stay sited, NOT scheduled, because their
+  encounter is a right-click altar: Mew (7604, 142, 7082), Zapdos (562, 74, 2614), **Articuno's tower on Frostpeak's
+  SUMMIT at (672, 310, 369)**, top y383 (the owner's choice once the y575 limit was measured; the shoulder site
+  (904, 151, 320) is superseded; `tools/articuno_tower.py`, step R18A; the Frostpeak camp's telescope aims at its
+  crown), and **Moltres in the Craters** (6252, 168, 5344, re-homed from the Nether by the owner). The Ruinous four
+  stay Nether-generated; Eternatus stays out until a Galar Particle supply is authored
+  (`docs/research/notes/legendary-catalogue-reopened.md`). Mew's door very probably opens for our Champion once
+  command blocks are on (`kanto_champion_blue` grants `defeat_champion_blue` cleanly; not seen in game).
+  **EXP-048: a pasted LumyMon altar WORKS, VERIFIED IN GAME by the owner (2026-10-02)** at the pasted Crown Cemetery
+  on staging; the summon CONSUMED the statue (air afterwards), so a site summons once per placed statue unless our
+  data re-places it; the crown appears kept. **The two sessions relayed different species for that click**
+  (Calyrex, quoting the owner, in the followups session; Spectrier "walked around" in the legendary session):
+  **for the owner** (`experiments/EXP-048-legendary-altar/README.md`). Open: whether the anchorless altars
+  (Articuno, Zapdos, Mew) need an anchor - one right-click at (682, 312, 380). **Feathers and Kubfu's scrolls have
+  two authors, both inert, for the owner**: Shrew Station's Director (`data/research_station.json`, issuing false)
+  and the Frostpeak camp's dialogue (`data/frostpeak_camp.json` item_economy, not built); the station's ember survey
+  still targets the Nether structure. The console half: both
   the Crown Cemetery and the Articuno shrine place and now STAND in staging at their adopted corners, all eight
   LumyMon blocks are where the templates put them, and a shaderoot carrot dropped from the console onto the
   Spectrier trigger does nothing - not proof of silence, since the trigger may need a PLAYER's throw. **The
