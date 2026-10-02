@@ -7,9 +7,11 @@ SCHEDULED (commit dfad147). No generator emits this record.
 TWO KINDS OF SITE, ONE POSITION EACH. The record's own rule is `placement_method.not_in_placements_json`: a
 site has ONE author for its position.
 
-  unscheduled   (Mew, Zapdos, Articuno) carry a `placement` block here -- corner, y, rotation, mirror and
-                the raw `/place template` line -- and NO record in data/placements.json names their template.
-  scheduled     (Crown Cemetery, Dawn tower, Dusk tower) carry `scheduled_as: <placements id>` and NO
+  unscheduled   (Articuno, placed by its own step, tools/articuno_tower.py) carries a `placement` block here --
+                corner, y, rotation, mirror and the raw `/place template` line -- and NO record in
+                data/placements.json names its template. Mew and Zapdos were here until 2026-10-02.
+  scheduled     (Crown Cemetery, Dawn tower, Dusk tower; Zapdos, Mew and Moltres since 2026-10-02, once
+                EXP-048 passed) carry `scheduled_as: <placements id>` and NO
                 `placement` block. Their corner is that record's `position` x/z, their bottom layer its
                 `position` y, their rotation and mirror its own. The measurement and the reasoning stay here.
 
@@ -729,11 +731,14 @@ def test_a_perturbed_ground_stat_is_caught(field, delta, ground):
 
 
 @pytest.mark.slow
-@pytest.mark.parametrize("sid", ["adopted_zapdos_tower", "adopted_dusk_tower"])
+@pytest.mark.parametrize("sid", ["adopted_zapdos_tower", "adopted_dusk_tower", "adopted_articuno_shrine"])
 @pytest.mark.parametrize("field", ["cut_blocks", "fill_blocks", "cut_columns", "fill_columns"])
 def test_a_perturbed_cut_or_fill_count_is_caught(field, sid, ground):
-    # Proves the displacement counts are re-derived rather than read back, for one site of each kind.
+    # Proves the displacement counts are re-derived rather than read back, for sites of both kinds (Articuno is
+    # the one unscheduled site since 2026-10-02, and declares only the block counts).
     site = copy.deepcopy(SITES[sid])
+    if field not in site["displaces"]:
+        pytest.skip("%s declares no displaces.%s" % (sid, field))
     site["displaces"][field] += 1
     assert any(("displaces.%s" % field) in p for p in ground_problems(site, ground))
 
@@ -741,7 +746,10 @@ def test_a_perturbed_cut_or_fill_count_is_caught(field, sid, ground):
 @pytest.mark.slow
 @pytest.mark.parametrize("record_id,sid", [("legendary_dawn_tower", "adopted_dawn_tower"),
                                            ("legendary_dusk_tower", "adopted_dusk_tower"),
-                                           ("legendary_crown_cemetery", "adopted_crown_cemetery")])
+                                           ("legendary_crown_cemetery", "adopted_crown_cemetery"),
+                                           ("legendary_zapdos_tower", "adopted_zapdos_tower"),
+                                           ("legendary_mew_temple", "adopted_mew_temple"),
+                                           ("legendary_moltres_tower", "adopted_moltres_tower")])
 @pytest.mark.parametrize("dy", [1, -1])
 def test_a_scheduled_record_reseated_by_one_block_is_caught(record_id, sid, dy, ground):
     # The input the scheduled checks read is the placements record, so THAT is what is moved: one block up
@@ -765,7 +773,7 @@ def test_a_scheduled_record_moved_onto_different_terrain_is_caught(ground):
 @pytest.mark.slow
 def test_a_site_moved_onto_different_terrain_is_caught(ground):
     # The same for an unscheduled site, whose corner lives in its own placement block.
-    site = copy.deepcopy(SITES["adopted_zapdos_tower"])
+    site = copy.deepcopy(SITES["adopted_articuno_shrine"])
     site["placement"]["corner"] = [site["placement"]["corner"][0] + 60, site["placement"]["corner"][1] + 60]
     assert ground_problems(site, ground) != []
 
@@ -774,9 +782,9 @@ def test_a_site_moved_onto_different_terrain_is_caught(ground):
 def test_a_drowned_site_is_caught(ground):
     # Mew's researched coordinate (5160, 7463) measures y61 against a sea level of y62: the site the water
     # pass removed. A record re-sited back onto it must fail the sea-level check.
-    site = copy.deepcopy(SITES["adopted_mew_temple"])
-    site["placement"]["corner"] = [5160, 7463]
-    x0, z0, x1, z1 = footprint(site)
+    # Mew is scheduled, so the record moved is its placements record.
+    moved = _placements_with("legendary_mew_temple", position={"x": 5160, "z": 7463})
+    x0, z0, x1, z1 = footprint(SITES["adopted_mew_temple"], moved)
     assert measure(ground, x0, z0, x1, z1)["min"] <= SEA_LEVEL
 
 
@@ -808,14 +816,14 @@ def test_terrain_max_y_is_not_treated_as_a_ceiling_for_built_blocks():
 
 
 def test_a_second_margin_convention_is_caught():
-    site = copy.deepcopy(SITES["adopted_mew_temple"])
+    site = copy.deepcopy(SITES["adopted_articuno_shrine"])
     site["placement"]["max_y_margin"] = MAX_Y - site["placement"]["top_y"]
     assert any("max_y_margin" in p for p in ceiling_problems(site))
 
 
 def test_a_top_y_that_overstates_the_template_is_caught():
     # One convention now: y + height (Articuno's old form) is as wrong as an understatement.
-    site = copy.deepcopy(SITES["adopted_zapdos_tower"])
+    site = copy.deepcopy(SITES["adopted_articuno_shrine"])
     site["placement"]["top_y"] += 1
     site["placement"]["ceiling_margin"] -= 1
     assert any("not the top occupied layer" in p for p in ceiling_problems(site))
@@ -837,14 +845,14 @@ def test_a_scheduled_tower_raised_through_the_ceiling_is_caught():
 
 def test_a_stale_ceiling_margin_is_caught():
     # The margin that was true when it was typed. One block off and it resolves onto no real ceiling.
-    site = copy.deepcopy(SITES["adopted_mew_temple"])
+    site = copy.deepcopy(SITES["adopted_articuno_shrine"])
     site["placement"]["ceiling_margin"] += 1
     assert any("ceiling_margin" in p for p in ceiling_problems(site))
 
 
 def test_a_top_y_that_understates_the_template_is_caught():
     # The dangerous direction: a top_y below the real top would let a breach of the ceiling read as safe.
-    site = copy.deepcopy(SITES["adopted_zapdos_tower"])
+    site = copy.deepcopy(SITES["adopted_articuno_shrine"])
     site["placement"]["top_y"] -= 1
     assert any("understates" in p for p in ceiling_problems(site))
 
@@ -855,7 +863,7 @@ def test_a_top_y_that_understates_the_template_is_caught():
 def test_a_command_that_no_longer_matches_its_fields_is_caught(field, value):
     # Proves the command is parsed against the fields rather than merely present. Each of these is a real
     # way for the two to part: a re-site, a re-seat, a rotation chosen once the .nbt has been looked at.
-    site = copy.deepcopy(SITES["adopted_mew_temple"])
+    site = copy.deepcopy(SITES["adopted_articuno_shrine"])
     site["placement"][field] = value
     assert command_problems(site) != []
 
@@ -902,10 +910,42 @@ def test_a_scheduled_site_that_keeps_its_placement_block_is_caught():
 
 
 def test_an_unscheduled_template_turning_up_in_placements_is_caught():
-    # Mew's temple copied into data/placements.json while its placement block stays here.
-    rogue = {"id": "legendary_mew_temple", "template": SITES["adopted_mew_temple"]["template"],
-             "position": {"x": 7604, "y": 142, "z": 7082}}
-    assert unscheduled_problems(SITES["adopted_mew_temple"], PLACEMENTS + [rogue]) != []
+    # Articuno's tower copied into data/placements.json while its placement block stays here: tools/place_donor.py
+    # and tools/articuno_tower.py (R18A) would then both paste it.
+    rogue = {"id": "legendary_articuno_shrine", "template": SITES["adopted_articuno_shrine"]["template"],
+             "position": {"x": 672, "y": 310, "z": 369}}
+    assert unscheduled_problems(SITES["adopted_articuno_shrine"], PLACEMENTS + [rogue]) != []
+
+
+def test_articuno_is_placed_by_its_own_step_and_never_scheduled():
+    # Articuno's tower is pasted by tools/articuno_tower.py (reapply R18A) from its `placement` block. A
+    # data/placements.json donor for it would paste it a second time in R9.
+    assert "adopted_articuno_shrine" in UNSCHEDULED
+    assert not [q["id"] for q in PLACEMENTS if SITES["adopted_articuno_shrine"]["template"]
+                in (q.get("template"), q.get("pack_template"))]
+
+
+@pytest.mark.parametrize("sid", IDS)
+def test_the_shared_resolver_agrees_with_this_files_own(sid):
+    # tools/adopted_sites.py is what other systems (sea life, the research station) read a site's position
+    # through. Its footprint must be this file's, for scheduled and unscheduled sites alike, or a consumer
+    # keeps out of the wrong box.
+    import adopted_sites
+    assert adopted_sites.footprint(SITES[sid], PLACEMENTS) == footprint(SITES[sid])
+    if "placement" in SITES[sid] and "centre" in SITES[sid]["placement"]:
+        assert adopted_sites.centre(SITES[sid], PLACEMENTS) == SITES[sid]["placement"]["centre"]
+
+
+def test_the_shared_resolver_fails_closed_on_a_site_with_no_position():
+    # A silent None is how a scheduled site dropped out of the sea-life keep-out.
+    import adopted_sites
+    site = copy.deepcopy(SITES["adopted_zapdos_tower"])
+    site["scheduled_as"] = "no_such_record"
+    with pytest.raises(SystemExit):
+        adopted_sites.where(site, PLACEMENTS)
+    site.pop("scheduled_as")
+    with pytest.raises(SystemExit):
+        adopted_sites.where(site, PLACEMENTS)
 
 
 @pytest.mark.parametrize("sid,mutate", [

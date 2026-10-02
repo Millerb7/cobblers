@@ -98,9 +98,10 @@ def test_the_station_is_near_the_owners_coordinate_and_clear_of_the_zapdos_tower
     for b in REC["buildings"]:
         if b["on"] == "land":
             assert min(ground(x, z) for x, z in R.cells(b["rect"])) >= REC["site"]["level_y"] + 1, b["id"]
-    site = next(s for s in json.loads((ROOT / "data" / "adopted_legendary_sites.json").read_text(encoding="utf-8"))["sites"]
-                if s["id"] == "adopted_zapdos_tower")
-    (tx, tz), (sx, _sy, sz) = site["placement"]["corner"], site["size"]
+    # the tower is scheduled: its position is data/placements.json legendary_zapdos_tower's, read through the resolver
+    import adopted_sites
+    w = adopted_sites.where(adopted_sites.site("adopted_zapdos_tower"))
+    (tx, tz), (sx, _sy, sz) = w["corner"], w["size"]
     p = R.plan(R.load(), ground)
     near = min(max(tx - x, 0, x - (tx + sx - 1)) + max(tz - z, 0, z - (tz + sz - 1)) for (x, _y, z) in p.blocks())
     assert near > 100, near

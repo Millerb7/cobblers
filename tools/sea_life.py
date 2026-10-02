@@ -419,12 +419,13 @@ class Exclusions:
                 self.rect("legendary %s" % e["id"], x0, z0, x1, z1, ex["legendary_margin_blocks"])
             if e.get("mouth"):
                 self.box("legendary %s" % e["id"], e["mouth"], ex["legendary_margin_blocks"])
-        for s in json.loads((ROOT / "data" / "adopted_legendary_sites.json").read_text(encoding="utf-8"))["sites"]:
-            pl = s.get("placement") or {}
-            if pl.get("centre"):
-                sz = s.get("size") or [48, 0, 48]
-                half = int(max(sz[0], sz[-1]) if isinstance(sz, list) else 48) // 2 + 1
-                self.box("adopted site %s" % s["id"], pl["centre"], half + ex["legendary_margin_blocks"])
+        # every adopted site, scheduled or not, through tools/adopted_sites.py: reading `placement` alone dropped
+        # each site once it was scheduled into data/placements.json (its block is deleted there)
+        import adopted_sites
+        for s in adopted_sites.sites():
+            sz = s.get("size") or [48, 0, 48]
+            half = int(max(sz[0], sz[-1]) if isinstance(sz, list) else 48) // 2 + 1
+            self.box("adopted site %s" % s["id"], adopted_sites.centre(s), half + ex["legendary_margin_blocks"])
         for q in json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))["placements"]:
             p = q.get("position")
             if isinstance(p, dict) and "x" in p and "z" in p:
