@@ -3,8 +3,9 @@
 
 INDEPENDENCE (CLAUDE.md, "How to prove an audit is independent"). audit() never imports tools/research_station.py or
 tools/water_mask.py; main() calls the generator's placement_steps() only to obtain the step list, which is one of the
-outputs being checked (tools/lopunny_house_audit.py's arrangement). It reads data/research_station.json, the canonical heightmap (tools/ground.py), the lake's
-basin and level in data/landmarks.json (with its own point-in-polygon test), data/habitat_blocks.json, data/spawns.json,
+outputs being checked (tools/lopunny_house_audit.py's arrangement). It reads data/research_station.json, the canonical heightmap (tools/ground.py), the sea's
+level in data/world.json and every lake's basin and level in data/landmarks.json (with its own point-in-polygon test: a
+column a lake holds is not the sea's), data/habitat_blocks.json, data/spawns.json,
 data/rewards.json, data/quests.json, data/dialogue.json, data/spawn_blocks.json and data/spawn_block_policy.json,
 derives what it expects with its own arithmetic, then REPLAYS the generated build functions into a block model and
 compares. The only things taken from the generator are its outputs (the pack, and the re-application steps it hands
@@ -14,11 +15,13 @@ a named check here with the data untouched; tests/test_research_station.py does 
 
 What is checked, each from the data and the heightmap, never from the pack:
 
-  site       the lake's level in data/landmarks.json is the record's level_y
-  depth      every walk column is lake water at least its kind's min_depth deep, or (a landfall kind) dry ground
+  site       the water's level (data/world.json for the sea, data/landmarks.json for a lake) is the record's level_y;
+             the shrine's centre is over shrine.min_depth or more; every land building's ground is at least
+             rules.land_above_level over the water's level
+  depth      every walk column is the site's water at least its kind's min_depth deep, or (a landfall kind) dry ground
              exactly at the deck's level; every land building stands on dry columns (own polygon test)
   footprint  no write lands outside the walks, the buildings (and their roof lip and door steps), the plaza, the
-             signs and the mast; nothing is written into the lake but a deck at the level, a post, or the
+             signs and the mast; nothing is written into the water but a deck at the level, a post, or the
              hydrophone's waterlogged hatch; nothing below ground but the plaza's paving and a landfall deck
   decks      every walk column has a solid deck at the level, except the dive opening, where nothing is written; a
              post stands under every wet corner from the bed to the deck; a railed deck's open edges are railed
@@ -31,12 +34,14 @@ What is checked, each from the data and the heightmap, never from the pack:
   light      block light flooded from every replayed lantern (15, one less a step, through air, water and what does
              not stop light) reaches every standing place on the decks, the plaza, the dais and the buildings' floors
              at min_light or more
-  clear      every clear box starts above the lake's surface (a #replaceable fill at the surface would take water)
+  clear      every clear box starts above the water's surface (a #replaceable fill at the surface would take water)
   npc        each station NPC's data/rewards.json npc_grant and data/quests.json npc_at is the spot derived here, with
              two blocks of air and a floor under it, and one npc_grant per quest
   habitat    data/habitat_blocks.json station_study_pool: activated, its pool the record's, at the middle of the post
              derived here (ground + 1 .. level - 1), which the replay writes and R9E replaces; its spawn box holds at
-             least max_spawns columns of water; the pool is Psyduck alone, inside shrew_lake_shores' band
+             least max_spawns columns of water; the pool is study_pool.species alone, at levels inside the band
+             study_pool.band_from names in data/spawns.json (a marine band or a sub-region), the pool record's
+             level_band is that band, the species is already in that band's roster, and it spawns in water
   hold       THE SWITCH. The tick function removes the issuing tags while economy.issuing is false and adds them only
              when it is true (the crown's only with post_champion_cap >= 70); no earning advancement and no `give` is
              shipped while held; every station transition that gives an item or runs a function, and every option
@@ -46,7 +51,7 @@ What is checked, each from the data and the heightmap, never from the pack:
              tools/function_limits.py
 
 NOT checked, and it needs a running server (data/research_station.json probes): that the fills land, that the altars
-render and answer, that Psyduck spawn, that the NPCs render, that the tick function removes a tag added by hand.
+render and answer, that the study pool's Horsea spawn, that the NPCs render, that the tick function removes a tag added by hand.
 
   python tools/research_station_audit.py [--pack build/datapacks/cobblers_research_station] [--source-root R]
 """
@@ -64,7 +69,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 DATA = ROOT / "data"
 PACK = ROOT / "build" / "datapacks" / "cobblers_research_station"
 FN_DIR = "data/cobblers/function/research_station"
-ZONES = ("strand", "crossing", "platform", "lagoon")
+ZONES = ("strand", "crossing", "platform", "study_pool")
 FILL = re.compile(r"^fill (-?\d+) (-?\d+) (-?\d+) (-?\d+) (-?\d+) (-?\d+) (\S+)(?: replace (\S+))?$")
 SETBLOCK = re.compile(r"^setblock (-?\d+) (-?\d+) (-?\d+) (\S.*?)(?: replace)?$")
 FORCELOAD = re.compile(r"^forceload (add|remove) (-?\d+) (-?\d+) (-?\d+) (-?\d+)$")
@@ -110,7 +115,7 @@ def cells(r):
     return [(x, z) for x in range(r[0], r[2] + 1) for z in range(r[1], r[3] + 1)]
 
 
-# ------------------------------------------------------------------------------------------------ the lake, re-derived
+# ------------------------------------------------------------------------------------------------ the water, re-derived
 def _in_poly(x, z, poly):
     """Even-odd ray cast on the column's centre; written here, not taken from tools/water_mask.py."""
     px, pz = x + 0.5, z + 0.5
@@ -125,22 +130,45 @@ def _in_poly(x, z, poly):
     return inside
 
 
-class Lake:
+class Water:
+    """The site's water (site.water: "sea" or a lake's landmark id), read from data/world.json and data/landmarks.json
+    with this file's own polygon test. The sea is water where the ground is under vertical.sea_level and no lake basin
+    holds the column (a lake's water there is the lake's, not the sea's); a lake is water where the ground is under its
+    level_y inside its basin_polygons."""
+
     def __init__(self, rec, g, data=DATA):
-        body = next((l.get("water_body") for l in load_json("landmarks.json", data)["landmarks"]
-                     if l.get("id") == rec["site"]["lake"]), None)
-        if not body:
-            raise SystemExit("data/landmarks.json has no water body %s" % rec["site"]["lake"])
-        self.level = int(body["level_y"])
-        self.polys = body.get("basin_polygons") or []
+        self.body = rec["site"]["water"]
+        self.lakes = []
+        for l in load_json("landmarks.json", data)["landmarks"]:
+            wb = l.get("water_body") or {}
+            if wb.get("level_y") is None or not wb.get("basin_polygons"):
+                continue
+            pts = [q for ring in wb["basin_polygons"] for q in ring]
+            box = (min(q[0] for q in pts), min(q[1] for q in pts), max(q[0] for q in pts), max(q[1] for q in pts))
+            self.lakes.append((l["id"], int(wb["level_y"]), wb["basin_polygons"], box))
+        if self.body == "sea":
+            self.level = int(load_json("world.json", data)["vertical"]["sea_level"])
+            self.polys = None
+        else:
+            hit = [k for k in self.lakes if k[0] == self.body]
+            if not hit:
+                raise SystemExit("data/landmarks.json has no water body %s" % self.body)
+            self.level, self.polys = hit[0][1], hit[0][2]
         self.g = g
         self._cache = {}
+
+    def _in_lake(self, x, z, h):
+        return any(h < lv and b[0] <= x <= b[2] and b[1] <= z <= b[3] and any(_in_poly(x, z, p) for p in polys)
+                   for _lid, lv, polys, b in self.lakes)
 
     def depth(self, x, z):
         k = (x, z)
         if k not in self._cache:
             h = self.g(x, z)
-            wet = h < self.level and any(_in_poly(x, z, p) for p in self.polys)
+            if self.polys is None:
+                wet = h < self.level and not self._in_lake(x, z, h)
+            else:
+                wet = h < self.level and any(_in_poly(x, z, p) for p in self.polys)
             self._cache[k] = (self.level - h) if wet else None
         return self._cache[k]
 
@@ -219,7 +247,7 @@ class Expect:
         return (x, self.L + 1, z)
 
     def habitat(self):
-        x, z = self.rec["lagoon"]["habitat_post"]
+        x, z = self.rec["study_pool"]["habitat_post"]
         gy = self.g(x, z)
         return (x, gy + 1 + (self.L - gy - 1) // 2, z)
 
@@ -227,7 +255,20 @@ class Expect:
 # ------------------------------------------------------------------------------------------------ checks
 def check_site(R, rec, lake):
     if lake.level != rec["site"]["level_y"]:
-        R.err("site", "data/landmarks.json gives %s level y%d; the record says y%d" % (rec["site"]["lake"], lake.level, rec["site"]["level_y"]))
+        R.err("site", "data/world.json or data/landmarks.json gives %s level y%d; the record says y%d"
+              % (rec["site"]["water"], lake.level, rec["site"]["level_y"]))
+    sh = rec["shrine"]["centre"]
+    d = lake.depth(*sh)
+    need = rec["shrine"]["min_depth"]
+    if d is None or d < need:
+        R.err("site", "the shrine's centre %s stands over %s of water; shrine.min_depth is %d" % (sh, d, need))
+    above = rec["rules"]["land_above_level"]
+    for b in rec["buildings"]:
+        if b["on"] == "land":
+            low = [c for c in cells(b["rect"]) if lake.g(*c) < lake.level + above]
+            if low:
+                R.err("site", "land building %s has ground under y%d (the water's level + rules.land_above_level) at %s"
+                      % (b["id"], lake.level + above, low[:3]))
 
 
 def check_depth(R, E):
@@ -248,7 +289,7 @@ def check_depth(R, E):
         if b["on"] == "land":
             wet = [c for c in cells(b["rect"]) if E.lake.depth(*c) is not None]
             if wet:
-                R.err("depth", "building %s stands in the lake at %s" % (b["id"], wet[:3]))
+                R.err("depth", "building %s stands in the water at %s" % (b["id"], wet[:3]))
 
 
 def allowed_columns(E):
@@ -286,7 +327,7 @@ def check_footprint(R, E, W):
             if not (paving or landfall):
                 below.append(((x, y, z), st[:40]))
     if into_lake:
-        R.err("footprint", "%d write(s) into the lake that are neither a deck at the level nor a post: %s" % (len(into_lake), into_lake[:3]))
+        R.err("footprint", "%d write(s) into the water that are neither a deck at the level nor a post: %s" % (len(into_lake), into_lake[:3]))
     if below:
         R.err("footprint", "%d write(s) at or below the ground that are neither paving nor a landfall deck: %s" % (len(below), below[:3]))
 
@@ -422,7 +463,7 @@ def check_blocks(R, E, W, data=DATA):
     wl = [k for k, st in W.blocks.items() if prop(st, "waterlogged") == "true"
           and not (E.lake.depth(k[0], k[2]) is not None and k[1] == E.L)]
     if wl:
-        R.err("blocks", "waterlogged blocks out of the lake's surface: %s" % wl[:3])
+        R.err("blocks", "waterlogged blocks out of the water's surface: %s" % wl[:3])
 
 
 def check_light(R, E, W):
@@ -491,7 +532,7 @@ def check_light(R, E, W):
 def check_clear(R, E, W):
     low = [c for c in W.clears if c[1][1] <= E.L or c[1][4] <= E.L]
     if low:
-        R.err("clear", "%d clear box(es) reach the lake's surface y%d: %s" % (len(low), E.L, low[:2]))
+        R.err("clear", "%d clear box(es) reach the water's surface y%d: %s" % (len(low), E.L, low[:2]))
     for w in E.rec["walks"]:
         x0, z0, x1, z1 = w["rect"]
         if not any(t == "#minecraft:replaceable" and b[0] <= x0 and b[2] <= z0 and b[3] >= x1 and b[5] >= z1 and b[1] == E.L + 1
@@ -557,15 +598,16 @@ def reach_door(R, E, W, b, spot, who):
 
 def check_habitat(R, E, W, data=DATA):
     want = E.habitat()
+    sp_rec = E.rec["study_pool"]
     hb = {b["id"]: b for b in load_json("habitat_blocks.json", data)["blocks"]}
-    b = hb.get(E.rec["lagoon"]["habitat_block"])
+    b = hb.get(sp_rec["habitat_block"])
     if not b:
-        R.err("habitat", "data/habitat_blocks.json has no %s" % E.rec["lagoon"]["habitat_block"])
+        R.err("habitat", "data/habitat_blocks.json has no %s" % sp_rec["habitat_block"])
         return
     pos = (b["position"]["x"], b["position"]["y"], b["position"]["z"])
     if pos != want:
         R.err("habitat", "the block is at %s; the post's middle is %s" % (pos, want))
-    if b.get("style") != "activated" or b.get("pool") != "cobblers:%s" % E.rec["lagoon"]["habitat_block"]:
+    if b.get("style") != "activated" or b.get("pool") != "cobblers:%s" % sp_rec["habitat_block"]:
         R.err("habitat", "the block is not the record's activated pool")
     st = W.blocks.get(want)
     if not st or base(st) != base(b.get("mimic") or ""):
@@ -582,15 +624,37 @@ def check_habitat(R, E, W, data=DATA):
     if water < a.get("max_spawns", 1):
         R.err("habitat", "the spawn box holds %d water columns, fewer than max_spawns" % water)
     sp = load_json("spawns.json", data)
-    pool = next((h for h in sp["habitats"] if h["id"] == E.rec["lagoon"]["habitat_block"]), None)
-    ents = [e for e in sp["entries"] if e.get("scope") == E.rec["lagoon"]["habitat_block"] and e.get("mechanism") == "habitat_block"]
-    if not pool or {e["species"] for e in ents} != {"psyduck"}:
-        R.err("habitat", "the pool is not Psyduck alone: %s" % sorted({e["species"] for e in ents}))
+    pool = next((h for h in sp["habitats"] if h["id"] == sp_rec["habitat_block"]), None)
+    ents = [e for e in sp["entries"] if e.get("scope") == sp_rec["habitat_block"] and e.get("mechanism") == "habitat_block"]
+    if not pool or {e["species"] for e in ents} != {sp_rec["species"]}:
+        R.err("habitat", "the pool is not %s alone: %s" % (sp_rec["species"], sorted({e["species"] for e in ents})))
+        return
+    # the band the pool's water lies in, read from data/spawns.json (a land sub-region or a marine zone's band)
+    src = sp_rec["band_from"]
+    if "subregion" in src:
+        band = next((s["level_band"] for s in sp["subregions"] if s["id"] == src["subregion"]), None)
     else:
-        band = next(s for s in sp["subregions"] if s["id"] == "shrew_lake_shores")["level_band"]
-        lo, hi = (int(v) for v in ents[0]["level"].split("-"))
+        zone = next((m for m in sp.get("marine_zones") or [] if m["id"] == src["marine_zone"]), {})
+        band = next((bd["level_band"] for bd in zone.get("bands") or [] if bd["id"] == src["band"]), None)
+    if band is None:
+        R.err("habitat", "data/spawns.json has no band %s" % src)
+        return
+    for e in ents:
+        lo, hi = (int(v) for v in e["level"].split("-"))
         if lo < band["minimum"] or hi > band["maximum"]:
-            R.err("habitat", "the pool's levels %d-%d are outside shrew_lake_shores' band" % (lo, hi))
+            R.err("habitat", "the pool's %s levels %d-%d are outside %s's band %d-%d"
+                  % (e["species"], lo, hi, src, band["minimum"], band["maximum"]))
+    if pool.get("level_band") != {"minimum": band["minimum"], "maximum": band["maximum"]}:
+        R.err("habitat", "the pool record's level_band %s is not %s's %s" % (pool.get("level_band"), src, band))
+    # the species must already live in that band, so the roster round the station is unchanged
+    if "band" in src:
+        here = {e["species"] for e in sp["entries"] if e.get("scope") == src["band"]}
+    else:
+        here = {e["species"] for e in sp["entries"] if e.get("scope") == src["subregion"]}
+    if sp_rec["species"] not in here:
+        R.err("habitat", "%s is not already in %s's roster: the study pool would add a species" % (sp_rec["species"], src))
+    if any(e.get("spawnable_position") not in ("submerged", "surface") for e in ents):
+        R.err("habitat", "a pool entry does not spawn in water: %s" % [(e["species"], e.get("spawnable_position")) for e in ents])
 
 
 def _conds(c):
@@ -734,7 +798,7 @@ def check_steps(R, rec, W, pack, steps):
 def audit(rec, g, pack, steps=None, data=DATA):
     R = Report()
     pack = Path(pack)
-    lake = Lake(rec, g, data)
+    lake = Water(rec, g, data)
     E = Expect(rec, g, lake)
     W = Replay()
     for zone in ZONES:

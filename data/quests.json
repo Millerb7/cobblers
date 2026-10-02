@@ -5165,7 +5165,7 @@
       "id": "evt_station_director",
       "source": "data/research_station.json; docs/world-building/RESEARCH_STATION.md (the approved proposal); the owner's decisions of 2026-10-02 (data/research_station.json request)",
       "reward_record": "data/rewards.json station_director",
-      "place": "Shrew Station's Institute on Shrew Lake's south strand (data/research_station.json buildings.institute)",
+      "place": "Shrew Station's Institute on the west coast (data/research_station.json buildings.institute)",
       "dialogue_id": "dlg_station_director",
       "scope": "player",
       "optional": true,
@@ -5176,9 +5176,9 @@
         "npc_remains_after_completion": true
       },
       "npc_at": [
-        2632,
-        109,
-        4115
+        550,
+        67,
+        2823
       ],
       "objectives": [
         {
@@ -5352,7 +5352,7 @@
       "id": "evt_station_courier",
       "source": "data/research_station.json; docs/world-building/RESEARCH_STATION.md (the approved proposal); the owner's decisions of 2026-10-02 (data/research_station.json request)",
       "reward_record": "data/rewards.json station_field_officer",
-      "place": "Shrew Station's weather hut on the causeway (data/research_station.json buildings.weather_hut)",
+      "place": "Shrew Station's weather hut beside the spine (data/research_station.json buildings.weather_hut)",
       "dialogue_id": "dlg_station_field_officer",
       "scope": "player",
       "optional": true,
@@ -5363,9 +5363,9 @@
         "npc_remains_after_completion": true
       },
       "npc_at": [
-        2693,
-        107,
-        4054
+        484,
+        63,
+        2793
       ],
       "objectives": [
         {
@@ -5523,7 +5523,7 @@
       "id": "evt_station_archive",
       "source": "data/research_station.json; docs/world-building/RESEARCH_STATION.md (the approved proposal); the owner's decisions of 2026-10-02 (data/research_station.json request)",
       "reward_record": "data/rewards.json station_archivist",
-      "place": "Shrew Station's Archive on Shrew Lake's south strand (data/research_station.json buildings.archive)",
+      "place": "Shrew Station's Archive on the west coast (data/research_station.json buildings.archive)",
       "dialogue_id": "dlg_station_archivist",
       "scope": "player",
       "optional": true,
@@ -5534,9 +5534,9 @@
         "npc_remains_after_completion": true
       },
       "npc_at": [
-        2651,
-        110,
-        4116
+        569,
+        69,
+        2824
       ],
       "objectives": [
         {
@@ -5685,9 +5685,9 @@
         "npc_remains_after_completion": true
       },
       "npc_at": [
-        2740,
-        107,
-        4037
+        422,
+        63,
+        2819
       ],
       "objectives": [
         {

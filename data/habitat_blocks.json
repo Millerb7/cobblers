@@ -7306,14 +7306,14 @@
     },
     {
       "id": "station_study_pool",
-      "place": "Shrew Station's study pool in the lagoon (data/research_station.json lagoon): in the post under the study deck's middle, mid-water",
+      "place": "Shrew Station's study pool off the west coast (data/research_station.json study_pool): in the post under the study deck's middle, mid-water",
       "pool": "cobblers:station_study_pool",
       "style": "activated",
       "replace_spawns": false,
       "position": {
-        "x": 2574,
-        "y": 103,
-        "z": 4114
+        "x": 456,
+        "y": 60,
+        "z": 2828
       },
       "mimic": "minecraft:stripped_spruce_log",
       "activated": {
@@ -7325,7 +7325,7 @@
         "max_spawns": 4
       },
       "status": "planned",
-      "why": "A few Psyduck kept in the station's study pool (docs/world-building/RESEARCH_STATION.md section 5.3, the Seaward Drift's precedent: a water Habitat Block). ACTIVATED, up to 4 alive at once, one at a time. The position is the middle of the post tools/research_station.py sets under the study deck's centre (2574, 4114): the lagoon's floor there is y100 (heightmap, rounded), 6 under the lake's y106, the post runs y101-105 and the block replaces its middle; the pack must run BEFORE R9E or it writes the post back over this block. spawn_range 8 reaches the lagoon's water round the deck; cancel_range 8 holds the shores' natural pool off it. In-water activated spawning is not verified (the Drift's caveat)."
+      "why": "A few Horsea kept in the station's study pool (docs/world-building/RESEARCH_STATION.md section 5.3, the Seaward Drift's precedent: a water Habitat Block). ACTIVATED, up to 4 alive at once, one at a time. The position is the middle of the post tools/research_station.py sets under the study deck's centre (456, 2828): the sea floor there is y57 (heightmap, rounded), 5 under the sea's y62, the post runs y58-61 and the block replaces its middle; the pack must run BEFORE R9E or it writes the post back over this block. spawn_range 8 reaches the water round the deck (its 17 by 17 box, x448-464, z2820-2836, is 289 water columns 3-8 deep, measured 2026-10-02); cancel_range 8 holds the shallows band's natural pool off it. The nearest other Habitat Block is elder_lake_viltri_hollow_1, 898 blocks away (measured from this file's positions). Moved 2026-10-02 from Shrew Lake's lagoon (2574, 103, 4114), where it kept Psyduck, when the owner moved the station to the coast; tools/research_station.py cleanup puts that cell back to lake water on staging. In-water activated spawning is not verified (the Drift's caveat)."
     }
   ]
 }

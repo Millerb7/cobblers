@@ -109,7 +109,7 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 "cobblers_frostpeak_summit",
                 # 2026-10-02: the Lopunny superfan's house and its Buneary cellar (tools/lopunny_house.py), run by R9LH
                 "cobblers_lopunny_house",
-                # 2026-10-02: Shrew Station on Shrew Lake's south strand (tools/research_station.py), run by R9RS; every
+                # 2026-10-02: Shrew Station on the west sea coast (tools/research_station.py), run by R9RS; every
                 # item it can give stays held behind data/research_station.json economy.issuing
                 "cobblers_research_station",
                 # 2026-09-29: the gym interiors (tools/gym_interiors.py, data/gym_interiors.json): the healing
@@ -1075,10 +1075,10 @@ def steps(with_spawns=False):
     import lopunny_house
     out.append(("R9LH", "the Lopunny superfan's house and its Buneary cellar (data/lopunny_house.json)",
                 lopunny_house.placement_steps()))
-    # Shrew Station (2026-10-02, tools/research_station.py): BEFORE R9E, because the Psyduck Habitat Block sits in a
+    # Shrew Station (2026-10-02, tools/research_station.py): BEFORE R9E, because the study pool's Habitat Block sits in a
     # post this pack writes; its four NPCs are placed by R9F
     import research_station
-    out.append(("R9RS", "Shrew Station, the research station on Shrew Lake's south strand (data/research_station.json)",
+    out.append(("R9RS", "Shrew Station, the research station on the west sea coast (data/research_station.json)",
                 research_station.placement_steps()))
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
