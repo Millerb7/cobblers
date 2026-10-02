@@ -79,6 +79,43 @@ trailhead (3548, 114, 5322) and the gate it belongs to is a long way in. Moving 
 `data/routes.json` or `data/rift_zones.json`, both of which were out of the mover's scope, so it stopped
 and said so. **Do the marker and the gate belong together, and if so which one moves?**
 
+### B12. All six gatehouse walkways are impassable on foot — pre-existing, found moving G2
+
+`tools/rift_zones.py`'s `cmd_build` snaps each wall perpendicular to the dominant axis, so **every
+sideways shift seals its own diagonal**. G2's standable columns come out as **four disconnected pieces**
+and only one of those breaks is the barrier that is supposed to stop you. **Passing still works, because
+passing is a teleport. Leaving on foot does not** — the exit box is one sealed diagonal from the
+walkway's inner mouth.
+
+Proved not to be the mover's doing: the post it left at the old site reproduces the old G2 shell block
+for block and splits identically, 1 of 8 before and 1 of 8 after. Recorded in `data/rift_zones.json`
+`measured_defects`.
+
+**It is inert today** — `cobblers_rift_zones` is still in `reapply.py`'s `EXCLUDED`, nothing is installed,
+and the guards are armour-stand placeholders. So this is not urgent, but **it is what would have shipped**
+the day the zone system was switched on, in all six gatehouses at once. It wants the shell geometry fixed
+and a flood-fill test over the *emitted function*, independent of the geometry that writes it. **No test
+anywhere references `rift_zones`.**
+
+### B13. The old gate was not merely late — it was unreachable
+
+Worse than the report that prompted B11b. **Z2's boxes begin 53 blocks along the road from the
+trailhead**, while the gate sat 318.70 blocks further on. So an unqualified player crossed into the zone,
+was teleported to the old turn-back at (3591.5, 90, 5032.5) — 144 blocks away on the Rift floor — and
+**could never reach the warden at all**. The gate is now at the trailhead (3548, 5322) with its turn-back
+8 blocks back down the road at the gatehouse door.
+
+### B14. Stale (3738, 5082) references left outside the mover's scope
+
+This coordinate has propagated before — it is how the retired cradle coordinate reached the League
+steward. Fixed in scope: `tools/rift_zones.py`'s comments and `routes.json`'s waypoint basis (the
+waypoint itself deliberately **not** moved, because that would re-run the A*). **Still stale and listed
+rather than silently changed:** `data/rift_sculpt.json:49,51`; **`data/quests.json:1105`**
+(`npc_main_rift_surveyor`, anchor `victory_road_entry`) and **`:1215`**
+(`rift_victory_road_damage`) — both story-side; `docs/DECISION_QUEUE.md:76`; `RIFT_ZONES.md:17,22,45`;
+`RIFT_STATUS.md:111`; `SOUTHERN_RIFT.md:54,58,91,100`. Benign and left alone: `landmarks.json`'s
+south-west arm geography, `placements.json:2276`, and `routes.json`'s corridor points.
+
 ## C. In-game checks only you can make
 
 | # | Check | Why a session cannot |
