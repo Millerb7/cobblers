@@ -1238,6 +1238,12 @@ def steps(with_spawns=False):
     import ursaluna_cave
     out.append(("R18U", "the Ursaluna's den west of Highwire (data/ursaluna_cave.json)",
                 ursaluna_cave.placement_steps() + [("npc", n) for n in ursaluna_cave.npc_placements()]))
+    # the Compact guards at the HQ's ring-0 door (2026-10-02, data/relic_underground.json geometry.hq.guard): the door
+    # stays shut and the guard's dialogue moves a player at rift_crisis_pending or later inside; the inside guard lets
+    # anyone out. NPCs, so after the restart that loaded cobblers_dialogue's classes, like R17N's, each turned to its yaw
+    import relic_underground
+    out.append(("R18RU", "the Compact guards at the HQ's ring-0 door (data/relic_underground.json geometry.hq.guard)",
+                [("npc", n) for n in relic_underground.npc_placements()]))
     # Codex's ten named residents (2026-10-02, data/resident_encounters.json): each one's dressing inside a forceload of
     # its recorded bbox, then - for the two with no presence gate (Old Jaw, Whiteback) - an RCON summon guarded on tag
     # AND species, and its bind. The eight gated ones are left to the pack's keeper, which brings each in the first time

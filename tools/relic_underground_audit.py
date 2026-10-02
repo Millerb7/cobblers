@@ -23,14 +23,27 @@ What must hold:
              every carved column is written solid; the choked shaft holds no air
   hq         the HQ's way down (data geometry.hq), re-derived HERE from the data's runs, records room, dressing and
              lights: every air cell air, every tread a stair facing uphill, every landing, wall, floor, ceiling and
-             fixture solid, a pressure plate either side of the front door, the old hatch laid back to rock, and every
+             fixture solid, NOTHING beside the front door that opens it, the old hatch laid back to rock, and every
              face of its air sealed (written, shell or hull, under a pit tread where tools/rift_deep.py refills every
              void, or the HQ room's open air over the stair's head)
   route      a player can walk from OUTSIDE THE HQ'S FRONT DOOR to the hall's centre through the blocks actually there
              (two passable, a floor under, steps of one): the relic pack's writes, else the city pack's (read as text),
-             else the pit's tread and the heightmap. An iron door passes only with a pressure plate on both sides. The
-             walk must pass the stair's head and the knock box. Found the gallery sealed off from the passage on
+             else the pit's tread and the heightmap. An iron door passes when an opener (pressure plate, button,
+             lever) stands beside it, and the HQ's door having one is itself a fault (the owner, 2026-10-02: the door
+             needs the finale's quest stage, not a plate anyone can stand on). Walked TWICE: with no guard, the walk
+             from the doorstep must NOT reach the storey-0 room; with the guards' edges added it must reach the hall,
+             through the guard, the stair's head and the knock box. Found the gallery sealed off from the passage on
              2026-10-02; extended the same day from the passage's end to the front door
+  guard      the only edge past the door, re-read from sources the generator does not write: the guard's
+             conversation (data/dialogue.json) has an option whose visible_when, and whose quest transition's
+             conditions (data/quests.json), each admit exactly the stages from rift_crisis_pending on in
+             data/progression.json's enum order (the owner's choice, written HERE, not read from the relic data);
+             nothing else anywhere calls a transition that runs the guard's function; the built function moves @s
+             only (no @a/@e/@p/@r), only near the guard, by one tp, which is the edge's target. The way out
+             (the inside guard) is ungated and lands on the street the doorstep walk reaches
+  spawns     every column of the hall, gallery, passage and the HQ's way down (this audit's own derivation) is inside
+             a spawn-free zone in data/spawn_suppression.json, and no Habitat Block stands in one (the owner,
+             2026-10-02: nothing spawns there)
   shell      no shell cell is in the carve's or the HQ's air (25_reshell would fill it back), none is above its column's
              ground minus one, none is in the Deep's air, and none touches a cell another pack writes -- except the
              `replace` fills of a pack applied BEFORE R9RU (EARLIER: tools/rift_deep.py's pit, R9B), which ran first;
@@ -160,7 +173,8 @@ _DIR = {"east": (1, 0), "west": (-1, 0), "south": (0, 1), "north": (0, -1)}
 
 def expected_hq(spec, passage_air):
     """The HQ's way down from data/relic_underground.json geometry.hq's declared numbers, re-implemented: (air, floors
-    {cell: facing or None}, solid {cell}, plates {cell}, hatch {cell}). Nothing imported from the generator.
+    {cell: facing or None}, solid {cell}, hatch {cell}). Nothing imported from the generator. Nothing at the door:
+    since 2026-10-02 the way in is the guard, never a plate.
     passage_air: expected_air()'s air, whose cells the records room's walls leave to the passage."""
     h = spec["geometry"]["hq"]
     room_y, hr = h["room"]["floor_y"], h["head_room"]
@@ -192,9 +206,8 @@ def expected_hq(spec, passage_air):
         fixtures.update((x, y, z) for x in range(a, d2 + 1) for y in range(b, e + 1) for z in range(c, f + 1))
     fixtures.update(tuple(c) for c in h["lights"]["standing"] + h["lights"]["hanging"])
     air -= fixtures
-    plates = {tuple(c) for c in h["front_door"]["plates"]}
     hatch = {tuple(c) for c in h["hatch_undo"]["cells"]}
-    return air, floors, solid | fixtures, plates, hatch
+    return air, floors, solid | fixtures, hatch
 
 
 PASS = ("minecraft:air", "minecraft:cave_air", "minecraft:void_air")
@@ -203,8 +216,9 @@ PASS = ("minecraft:air", "minecraft:cave_air", "minecraft:void_air")
 def walkable_world(final, city_blocks, pit, ground):
     """(block_at, passable): the world after R9RU as this audit models it, from sources the generator does not decide
     for the HQ: what the relic pack wrote, else what the city pack writes, else the Deep's pit (air over its tread,
-    rock at and under it) or the heightmap's ground. An iron door is passable only with a pressure plate on BOTH sides
-    of its lower half along its facing: the plate you stand on opens it, the one past it lets you back out."""
+    rock at and under it) or the heightmap's ground. An iron door is passable when an opener (a pressure plate, a
+    button or a lever) stands in a cell beside either half of it: whoever uses it walks through. openers(lower) names
+    them. -> (block_at, passable, openers)"""
     def block_at(c):
         if c in final:
             return final[c]
@@ -215,8 +229,10 @@ def walkable_world(final, city_blocks, pit, ground):
             return AIR if c[1] > t else "rock"
         return AIR if c[1] > ground(c[0], c[2]) else "rock"
 
-    def plate(c):
-        return base(block_at(c)).endswith("_pressure_plate")
+    def openers(lower):
+        x, y, z = lower
+        return sorted(c for c in ((x + dx, y + dy, z + dz) for dx in (-1, 0, 1) for dz in (-1, 0, 1) for dy in (0, 1)
+                                  if (dx, dz) != (0, 0)) if is_opener(block_at(c)))
 
     def passable(c):
         b = block_at(c)
@@ -228,18 +244,139 @@ def walkable_world(final, city_blocks, pit, ground):
             m = re.search(r"facing=(\w+)", block_at(lower))
             if not m or base(block_at(lower)) != "minecraft:iron_door":
                 return False
-            dx, dz = _DIR[m.group(1)]
-            return plate((lower[0] + dx, lower[1], lower[2] + dz)) and plate((lower[0] - dx, lower[1], lower[2] - dz))
+            return bool(openers(lower))
         return False
-    return block_at, passable
+    return block_at, passable, openers
+
+
+def is_opener(b):
+    bb = base(b)
+    return bb.endswith("_pressure_plate") or bb.endswith("_button") or bb == "minecraft:lever"
+
+
+# ---------------------------------------------------------------- the guards: the only edge past the HQ's door
+
+OWNER_STAGE = "rift_crisis_pending"     # the owner, 2026-10-02: the door is the guard's from this stage on
+STAGE_FIELD = "quest.main_worldshift_reveal.stage"
+TALK = 3.0                              # blocks: vanilla's entity interaction range, cell centre to the guard's seat
+TP = re.compile(r"^tp @s (-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?)(?: \S+ \S+)?$")
+REACH = re.compile(r"^execute unless entity @s\[x=(-?\d+),y=(-?\d+),z=(-?\d+),distance=\.\.(\d+(?:\.\d+)?)\] "
+                   r"run return fail$")
+
+
+def _holds(c, stage):
+    """Does condition c hold for a player at this main-quest stage? Only what the guard may test is understood;
+    anything else raises, and the caller reports it."""
+    k = c.get("kind")
+    if k == "always":
+        return True
+    if k == "all":
+        return all(_holds(x, stage) for x in c["conditions"])
+    if k == "any":
+        return any(_holds(x, stage) for x in c["conditions"])
+    if k == "not":
+        return not _holds(c["condition"], stage)
+    if k == "progression_equals" and c.get("field") == STAGE_FIELD:
+        return c["value"] == stage
+    if k == "progression_in" and c.get("field") == STAGE_FIELD:
+        return stage in c["values"]
+    raise ValueError("a condition the guard audit cannot evaluate: %s" % (c,))
+
+
+def guard_edges(spec, zone):
+    """([(name, seat (x, y, z), reach, target cell)], problems) for the HQ door's two guards, from data/dialogue.json,
+    data/quests.json and data/progression.json (none of which the generator writes) and the built functions in `zone`
+    ({file name: text}, read_pack()). The seat is the relic data's, which is what R18RU spawns the NPC at."""
+    probs, edges = [], []
+    dl = json.loads((ROOT / "data" / "dialogue.json").read_text(encoding="utf-8"))
+    qs = json.loads((ROOT / "data" / "quests.json").read_text(encoding="utf-8"))
+    prog = json.loads((ROOT / "data" / "progression.json").read_text(encoding="utf-8"))
+    field = next((f for f in prog["quest_fields"] if f["id"] == STAGE_FIELD), None)
+    vals = field["allowed_values"] if field and isinstance(field.get("allowed_values"), list) else []
+    if OWNER_STAGE not in vals:
+        return edges, ["%s is not a value of %s in data/progression.json" % (OWNER_STAGE, STAGE_FIELD)]
+    want = set(vals[vals.index(OWNER_STAGE):])
+    h = spec["geometry"]["hq"]
+    for key, side, gated in (("guard", "admit", True), ("inside_guard", "release", False)):
+        g = h[key]
+        fname = g[side]["function"]
+        runners = {(q["id"], t["id"]): t for q in qs["quests"] for t in q.get("transitions") or []
+                   if any(e.get("kind") == "function" and e.get("function") == fname for e in t.get("effects") or [])}
+        if not runners:
+            probs.append("no quest transition runs %s" % fname)
+            continue
+        calls = []
+        for conv in dl["conversations"]:
+            def call(tid, how, resp=None):
+                if (conv["quest_id"], tid) in runners:
+                    calls.append((conv, how, resp, runners[(conv["quest_id"], tid)]))
+            for rule in conv.get("entry_rules") or []:
+                for a in rule.get("actions") or []:
+                    if a.get("kind") == "quest_transition":
+                        call(a.get("transition"), "an entry rule")
+            for n in conv.get("nodes") or []:
+                for a in n.get("actions_after_acknowledge") or []:
+                    if a.get("kind") == "quest_transition":
+                        call(a.get("transition"), "line %s" % n.get("id"))
+                for r in n.get("responses") or []:
+                    for a in r.get("actions") or []:
+                        if a.get("kind") == "quest_transition":
+                            call(a.get("transition"), "option", r)
+        if not calls:
+            probs.append("%s: no conversation calls a transition that runs %s" % (key, fname))
+            continue
+        for conv, how, r, t in calls:
+            if conv["id"] != g["conversation"] or conv.get("npc_id") != g["npc"]:
+                probs.append("%s runs %s too (%s): only the %s at the door may" % (conv["id"], fname, how, key))
+                continue
+            if not gated:
+                continue
+            if how != "option":
+                probs.append("%s runs %s from %s, not from a stage-gated option" % (conv["id"], fname, how))
+                continue
+            try:
+                shown = {v for v in vals if _holds(r.get("visible_when") or {"kind": "always"}, v)}
+                passes = {v for v in vals if all(_holds(c, v) for c in t.get("conditions") or [])}
+            except ValueError as e:
+                probs.append("%s option %s: %s" % (conv["id"], r.get("id"), e))
+                continue
+            if shown != want:
+                probs.append("%s option %s is shown at %s, not exactly the stages from %s on %s"
+                             % (conv["id"], r.get("id"), sorted(shown), OWNER_STAGE, sorted(want)))
+            if passes != want:
+                probs.append("%s's transition %s passes at %s, not exactly the stages from %s on %s"
+                             % (conv["id"], t.get("id"), sorted(passes), OWNER_STAGE, sorted(want)))
+        # the built function: @s only, near the guard only, one tp
+        text = zone.get(fname.rsplit("/", 1)[-1] + ".mcfunction")
+        if text is None:
+            probs.append("the pack has no function %s" % fname)
+            continue
+        cmds = [l.strip() for l in text.splitlines() if l.strip() and not l.strip().startswith("#")]
+        if any(re.search(r"@[aepr]\b", c_) for c_ in cmds):
+            probs.append("%s names a selector other than @s: it would move more than the player who chose it" % fname)
+        tps = [TP.match(c_) for c_ in cmds if c_.startswith("tp ")]
+        reach = [REACH.match(c_) for c_ in cmds if REACH.match(c_)]
+        if len(tps) != 1 or not tps[0]:
+            probs.append("%s does not move @s by exactly one tp: %s" % (fname, [c_ for c_ in cmds if "tp" in c_]))
+            continue
+        if len(reach) != 1 or cmds.index(reach[0].group(0)) > cmds.index(tps[0].group(0)):
+            probs.append("%s does not refuse, before its tp, a player away from the guard" % fname)
+            continue
+        seat = tuple(int(v) for v in reach[0].groups()[:3])
+        if list(seat) != list(g["at"]):
+            probs.append("%s tests nearness to %s, but the %s stands at %s" % (fname, seat, key, g["at"]))
+        tx, ty, tz = (float(v) for v in tps[0].groups())
+        edges.append((key, tuple(g["at"]), min(TALK, float(reach[0].group(4))),
+                      (int(math.floor(tx)), int(math.floor(ty)), int(math.floor(tz)))))
+    return edges, probs
 
 
 # ---------------------------------------------------------------- the checks
 
 # Packs applied BEFORE R9RU whose writes the HQ's way down is cut into on purpose (tools/reapply.py order, checked by
 # tests/test_relic_underground.py). Overlap with their `replace` fills is not a conflict: they ran first, and two
-# void-to-rock fills never fight. Overlap with their DEFINITE writes still is, but for the door's plates, which stand
-# in the pit's open air (R9B cuts it to air and R9RU puts a plate in it afterwards).
+# void-to-rock fills never fight. Overlap with their DEFINITE writes still is (the door's plates were the one
+# exception until 2026-10-02; there are none now, so there is no exception).
 EARLIER = {"cobblers_deep": "R9B, tools/rift_deep.py: the pit, whose refill under every tread is replace #rift_void"}
 
 
@@ -272,8 +409,8 @@ def audit(fns, order, zone, spec, ground, pit, others, old, city, city_blocks=No
                 final[c] = base(w[6])
                 full[c] = w[6]
     air_exp, floor_exp = expected_air(spec)
-    hq_air, hq_floors, hq_solid, hq_plates, hq_hatch = expected_hq(spec, air_exp)
-    hq_cells = hq_air | set(hq_floors) | hq_solid | hq_plates | hq_hatch
+    hq_air, hq_floors, hq_solid, hq_hatch = expected_hq(spec, air_exp)
+    hq_cells = hq_air | set(hq_floors) | hq_solid | hq_hatch
     comp = {c for n in carve if "composition" in n for w in fns[n] for c in cells(w)}
     ch = spec["geometry"]["choked_shaft"]
     half = ch["ring"] // 2
@@ -287,7 +424,7 @@ def audit(fns, order, zone, spec, ground, pit, others, old, city, city_blocks=No
         bad("carve", "%d air cells outside the hall, gallery, passage and the HQ's way down, e.g. %s"
             % (len(stray), sorted(stray)[:3]))
     # the HQ's way down, against its own re-derived expectation: every air cell air, every tread a stair facing uphill,
-    # every landing and wall solid, the plates plates, the old hatch rock
+    # every landing and wall solid, the old hatch rock (and, in the route below, nothing at the door that opens it)
     miss = [c for c in hq_air if final.get(c) != AIR]
     if miss:
         bad("hq", "%d cells of the HQ's way down that the data says are air are not, e.g. %s"
@@ -300,9 +437,6 @@ def audit(fns, order, zone, spec, ground, pit, others, old, city, city_blocks=No
     if unsolid:
         bad("hq", "%d wall, floor, ceiling or fixture cells of the records room are not written solid, e.g. %s"
             % (len(unsolid), sorted(unsolid)[:3]))
-    noplate = [c for c in hq_plates if not base(final.get(c, "")).endswith("_pressure_plate")]
-    if noplate:
-        bad("hq", "no pressure plate at %s" % (sorted(noplate),))
     openhatch = [c for c in hq_hatch if final.get(c) in (None, AIR)]
     if openhatch:
         bad("hq", "the old hatch's cells %s are not laid back to rock" % (sorted(openhatch),))
@@ -325,8 +459,9 @@ def audit(fns, order, zone, spec, ground, pit, others, old, city, city_blocks=No
     # written. A standing place is two passable cells over a solid one; a step goes to a 4-neighbour at most one up or
     # down, with head room. The world is walkable_world(): the relic pack's writes, else the city pack's, else the pit
     # and the heightmap. Independent of the data's own boxes: a gallery that stops one block short of the passage passes
-    # every box check and fails here, and so does a stair whose head is sealed or an iron door nothing opens
-    block_at, passable = walkable_world(final, city_blocks or {}, pit, ground)
+    # every box check and fails here, and so does a stair whose head is sealed. Walked twice: without the guards, the
+    # storey-0 room must be OUT of reach (a plate at the door fails here); with their edges, the hall must be in reach
+    block_at, passable, openers = walkable_world(final, city_blocks or {}, pit, ground)
 
     def stand(c):
         return passable(c) and passable((c[0], c[1] + 1, c[2])) and not passable((c[0], c[1] - 1, c[2]))
@@ -346,35 +481,68 @@ def audit(fns, order, zone, spec, ground, pit, others, old, city, city_blocks=No
         ox, oz = _DIR[re.search(r"facing=(\w+)", door).group(1)]
         starts = [(dx_ + ox, dy_, dz_ + oz)] if stand((dx_ + ox, dy_, dz_ + oz)) else []
         st["route_from"] = "outside the HQ's front door %s" % ((dx_ + ox, dy_, dz_ + oz),)
+        ops = openers((dx_, dy_, dz_))
+        if ops:
+            bad("hq", "the HQ's front door %s has an opener beside it at %s (%s): it opens for anyone, and the door is "
+                      "the guard's (the owner, 2026-10-02)" % (fd["at"], ops, base(block_at(ops[0]))))
+    edges, gprobs = guard_edges(spec, zone)
+    for gp in gprobs:
+        bad("guard", gp)
     cx, cz = spec["geometry"]["hall"]["centre"]
     # the plinth (radius 4, data composition.ring) fills the centre, so "the centre" is standing at the plinth's foot:
     # anywhere within 6 of the hall's centre, which is on the platform's top disc
     goal = {(x, z) for x in range(cx - 6, cx + 7) for z in range(cz - 6, cz + 7) if math.hypot(x - cx, z - cz) <= 6}
     lim = (3340, -5, 3230, 3450, 80, 3330)
-    seen, todo, reached = set(starts), list(starts), False
-    via = {"stair": False, "records room": False}
     head = tuple(spec["zone"]["hq_access"]["shaft_head"])
-    while todo and not reached:
-        x, y, z = todo.pop()
-        for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-            for dy in (0, 1, -1):
-                n = (x + dx, y + dy, z + dz)
-                if n in seen or not (lim[0] <= n[0] <= lim[3] and lim[1] <= n[1] <= lim[4] and lim[2] <= n[2] <= lim[5]):
-                    continue
-                if not stand(n):
-                    continue
-                if dy == 1 and not passable((x, y + 2, z)):
-                    continue                                     # no head room to step up
-                if dy == -1 and not passable((n[0], n[1] + 2, n[2])):
-                    continue                                     # no head room stepping down into it
-                seen.add(n)
-                todo.append(n)
-                if (n[0], n[2]) in goal:
-                    reached = True
+
+    def walk(guards):
+        seen, todo, fired = set(starts), list(starts), set()
+        while todo:
+            x, y, z = todo.pop()
+            nxt = []
+            for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                for dy in (0, 1, -1):
+                    n = (x + dx, y + dy, z + dz)
+                    if n in seen or not (lim[0] <= n[0] <= lim[3] and lim[1] <= n[1] <= lim[4] and lim[2] <= n[2] <= lim[5]):
+                        continue
+                    if not stand(n):
+                        continue
+                    if dy == 1 and not passable((x, y + 2, z)):
+                        continue                                     # no head room to step up
+                    if dy == -1 and not passable((n[0], n[1] + 2, n[2])):
+                        continue                                     # no head room stepping down into it
+                    nxt.append(n)
+            for name, seat, reach, to in guards:
+                # talking to a guard from here moves THIS player to its target, if the target is a place to stand
+                if math.dist((x + 0.5, y, z + 0.5), (seat[0] + 0.5, seat[1], seat[2] + 0.5)) <= reach and stand(to):
+                    if to not in seen:
+                        nxt.append(to)
+                    fired.add(name)
+            for n in nxt:
+                if n not in seen:
+                    seen.add(n)
+                    todo.append(n)
+        return seen, fired
+    alone, _f = walk([])
+    targets = {name: to for name, _s, _r, to in edges}
+    if city_blocks is not None and starts:
+        inside = [c for c in (targets.get("guard"), head) if c is not None and c in alone]
+        if inside:
+            bad("route", "the HQ's storey-0 room is reached from the doorstep WITHOUT the guard (%s reached): the door "
+                         "%s opens for anyone" % (inside, fd["at"]))
+        if "inside_guard" in targets and targets["inside_guard"] not in alone:
+            bad("guard", "the inside guard's way out lands at %s, which the doorstep walk does not reach"
+                % (targets["inside_guard"],))
+        if "guard" in targets and not stand(targets["guard"]):
+            bad("guard", "the guard's target %s is not a place to stand" % (targets["guard"],))
+    seen, fired = walk(edges)
+    reached = any((n[0], n[2]) in goal for n in seen)
+    via = {"stair": head in seen, "records room": False}
     st["route_cells"] = len(seen)
-    via["stair"] = head in seen
+    st["route_alone"] = len(alone)
     kb = spec["zone"]["knock"]["box"]
     via["records room"] = any((x, kb[1], z) in seen for x in range(kb[0], kb[3] + 1) for z in range(kb[2], kb[5] + 1))
+    via["guard"] = "guard" in fired
     st["route_via"] = via
     if not starts:
         bad("route", "nowhere to stand outside the HQ's front door %s" % (fd["at"],))
@@ -383,8 +551,9 @@ def audit(fns, order, zone, spec, ground, pit, others, old, city, city_blocks=No
         bad("route", "the hall's centre cannot be walked to from %s (%d places reached, nearest %s; stair head reached: "
                      "%s, knock box reached: %s)" % (st.get("route_from"), len(seen), far, via["stair"],
                                                      via["records room"]))
-    elif city_blocks is not None and not (via["stair"] and via["records room"]):
-        bad("route", "the hall was reached from the HQ's door but not by the stair's head and the knock box: %s" % via)
+    elif city_blocks is not None and not (via["stair"] and via["records room"] and via["guard"]):
+        bad("route", "the hall was reached from the HQ's door but not by the guard, the stair's head and the knock box: "
+                     "%s" % via)
 
     # the knock box is the records room's air at the doorway, over its floor
     kair = [(x, y, z) for x in range(kb[0], kb[3] + 1) for y in range(kb[1], kb[4] + 1) for z in range(kb[2], kb[5] + 1)
@@ -428,7 +597,7 @@ def audit(fns, order, zone, spec, ground, pit, others, old, city, city_blocks=No
     carved = set(final) | shell
     for name, cs in others.items():
         if name in EARLIER:
-            hit = (carved & (others_definite or {}).get(name, cs)) - hq_plates
+            hit = carved & (others_definite or {}).get(name, cs)
         else:
             hit = carved & cs
         if hit:
@@ -476,6 +645,32 @@ def audit(fns, order, zone, spec, ground, pit, others, old, city, city_blocks=No
         bad("zone", "turn_back.mcfunction does not teleport to the data's point %s" % (z["turn_back"]["at"],))
     if "unless score @s %s matches 1.." % z["objective"] not in zone.get("zone.mcfunction", ""):
         bad("zone", "the zone function does not test the pass fail-closed")
+
+    # nothing spawns in the hall (the owner, 2026-10-02): every column this audit derives for the hall, the gallery, the
+    # passage and the HQ's way down is inside a spawn-free zone, and no Habitat Block stands in one
+    ss = json.loads((ROOT / "data" / "spawn_suppression.json").read_text(encoding="utf-8"))
+    zb = [b_["box"] for b_ in ss.get("spawn_free_zones") or []]
+    cols = {(c[0], c[2]) for c in air_exp | hq_air} | {(c[0], c[2]) for c in hq_floors}
+    loose = sorted(c for c in cols if not any(b_[0] <= c[0] <= b_[2] and b_[1] <= c[1] <= b_[3] for b_ in zb))
+    if loose:
+        bad("spawns", "%d columns of the hall, gallery, passage or the HQ's way down are in no spawn-free zone "
+                      "(data/spawn_suppression.json), e.g. %s" % (len(loose), loose[:3]))
+    hbs = []
+
+    def sweep(o):
+        if isinstance(o, dict):
+            if isinstance(o.get("x"), (int, float)) and isinstance(o.get("z"), (int, float)):
+                hbs.append((int(o["x"]), int(o["z"])))
+            for v in o.values():
+                sweep(v)
+        elif isinstance(o, list):
+            for v in o:
+                sweep(v)
+    sweep(json.loads((ROOT / "data" / "habitat_blocks.json").read_text(encoding="utf-8")))
+    hb_in = sorted(c for c in hbs if c in cols)
+    if hb_in:
+        bad("spawns", "a Habitat Block stands over the hall's or the way down's columns at %s" % (hb_in[:3],))
+    st["spawn_columns"] = len(cols)
 
     # the undo
     undo = {}
@@ -646,11 +841,12 @@ def main(argv=None):
     print("carve air %d (HQ's way down %d); shell cells %d; undo %d (%d to air, %d to ground); relic edge columns %d"
           % (st.get("air", 0), st.get("hq_air", 0), st.get("shell", 0), st.get("undo", 0), st.get("undo_air", 0),
              st.get("undo_ground", 0), len(edge)))
-    print("route from %s: %d places, via %s" % (st.get("route_from"), st.get("route_cells", 0), st.get("route_via")))
+    print("route from %s: %d places (%d without the guards), via %s" % (
+        st.get("route_from"), st.get("route_cells", 0), st.get("route_alone", 0), st.get("route_via")))
     kinds = {}
     for k, msg in problems:
         kinds.setdefault(k, []).append(msg)
-    for k in ("carve", "hq", "route", "shell", "zone", "undo", "cordon", "nonempty"):
+    for k in ("carve", "hq", "route", "guard", "shell", "zone", "spawns", "undo", "cordon", "nonempty"):
         got = kinds.get(k, [])
         print("%-9s %s" % (k, "clean" if not got else "%d PROBLEM(S): %s" % (len(got), "; ".join(got[:3]))))
     print("relic_underground audit: %s" % ("CLEAN" if not problems else "%d PROBLEMS" % len(problems)))

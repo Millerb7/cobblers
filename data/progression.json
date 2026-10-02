@@ -745,6 +745,26 @@
       "allowed_values": "node ids from dlg_main_league_steward"
     },
     {
+      "id": "quest.main_worldshift_reveal.relic_guard_cursor",
+      "quest_id": "main_worldshift_reveal",
+      "field": "relic_guard_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "turned_away",
+      "allowed_values": "node ids from dlg_main_relic_hq_guard",
+      "why": "the dialogue cursor of the Compact guard at the HQ's ring-0 door (data/relic_underground.json geometry.hq.guard, 2026-10-02). Its entry rules always pick the node from quest.main_worldshift_reveal.stage, so the cursor gates nothing."
+    },
+    {
+      "id": "quest.main_worldshift_reveal.relic_inside_cursor",
+      "quest_id": "main_worldshift_reveal",
+      "field": "relic_inside_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "out",
+      "allowed_values": "node ids from dlg_main_relic_hq_guard_inside",
+      "why": "the dialogue cursor of the Compact guard inside the HQ's storey-0 room (data/relic_underground.json geometry.hq.inside_guard, 2026-10-02). One menu; gates nothing."
+    },
+    {
       "id": "quest.evt_vr_abandoned_cut.started",
       "quest_id": "evt_vr_abandoned_cut",
       "field": "started",
