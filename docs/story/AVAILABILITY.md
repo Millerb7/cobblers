@@ -1295,6 +1295,7 @@ A habitat pool only spawns where a Cobblemon Habitat Block stands. `data/habitat
 | Pool | Blocks placed | Species |
 | --- | --- | --- |
 | displaced_city_cavern | 0 |  |
+| driftmouth_isle_waters | 10 |  |
 | elder_foothill_grove_1 | 4 |  |
 | elder_foothill_grove_2 | 4 |  |
 | elder_foothill_grove_3 | 4 |  |
@@ -1370,6 +1371,7 @@ A habitat pool only spawns where a Cobblemon Habitat Block stands. `data/habitat
 | sapling_storm_rift_foot | 3 |  |
 | sapling_storm_rift_trunk | 3 |  |
 | tree_town_canopy | 0 |  |
+| ursaluna_den_outskirts | 1 |  |
 | vrc_abandoned_cut | 2 |  |
 | vrc_abandoned_cut_core | 4 |  |
 | vrc_bloom | 5 |  |

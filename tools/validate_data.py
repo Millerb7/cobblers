@@ -2930,6 +2930,11 @@ def check_spawn_blocks(ctx: Context):
 
     # the templates a placement or plan names, plus every prefab
     placed, skipped = {}, []
+    # kits/LOCAL_ONLY.json lists the templates we may not commit (licence): a checkout has them only once
+    # tools/local_inputs.py hydrates them. Their absence is one cause, reported once, not 263 faults.
+    lo = ctx.data_dir.parent / "kits" / "LOCAL_ONLY.json"
+    local_only = {f["path"] for f in json.loads(lo.read_text(encoding="utf-8")).get("files", [])} if lo.is_file() else set()
+    unhydrated = []
     plf = ctx.files.get("placements.json")
     doc = plf.doc if plf else None
     if doc is None and (ctx.data_dir / "placements.json").is_file():
@@ -2960,6 +2965,9 @@ def check_spawn_blocks(ctx: Context):
                 skipped.append("%s (placement %s, placed from the installed pack)" % (p["pack_template"], p.get("id")))
                 continue
             path = ctx.data_dir.parent / p["file"] if isinstance(p.get("file"), str) else None
+            if path is not None and not path.is_file() and p["file"] in local_only:
+                unhydrated.append(p.get("id"))
+                continue
             if path is None or not path.is_file():
                 rep.error(C, 'placement "%s" names template file %r, which is not in the repository'
                           % (p.get("id"), p.get("file")), file="data/placements.json", where=p.get("id"))
@@ -2976,6 +2984,11 @@ def check_spawn_blocks(ctx: Context):
                     skipped.append("%s (%s)" % (tid, sid))
                     continue
                 placed.setdefault(path.resolve(), []).append("%s anchor %s" % (sid, a.get("id", tid)))
+    if unhydrated:
+        rep.error(C, "%d placements name local-only templates (kits/LOCAL_ONLY.json) that this checkout has not "
+                  "hydrated, so their spawn blocks were NOT checked: run python tools/local_inputs.py hydrate "
+                  "--store %s (first: %s)" % (len(unhydrated), os.environ.get("COBBLERS_LOCAL_STORE") or "<COBBLERS_LOCAL_STORE>",
+                                            ", ".join(unhydrated[:3])), file="data/placements.json")
     if skipped:
         rep.skip(C, "template ids that do not resolve to a file under %s were not checked: %s"
                  % ("/".join(KITS), ", ".join(sorted(set(skipped)))), file=rel_p)
