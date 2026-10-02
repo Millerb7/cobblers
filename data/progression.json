@@ -2183,6 +2183,23 @@
         "done01"
       ],
       "why": "the dialogue cursor of Ellis Hopgood's conversation (dlg_lopunny_superfan)."
+    },
+    {
+      "id": "quest.ambient_dune_ruin.salvager_cursor",
+      "quest_id": "ambient_dune_ruin",
+      "field": "salvager_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "greeting",
+      "allowed_values": [
+        "greeting",
+        "khan",
+        "haulers",
+        "salvage",
+        "store",
+        "door",
+        "repeat"
+      ]
     }
   ],
   "gym_markers": {

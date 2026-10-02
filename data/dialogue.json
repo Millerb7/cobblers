@@ -9796,6 +9796,83 @@
       "speakers": {
         "wenna": "Wenna Marlow"
       }
+    },
+    {
+      "id": "dlg_dune_ruin_salvager",
+      "quest_id": "ambient_dune_ruin",
+      "npc_id": "npc_dune_ruin_salvager",
+      "source": "data/dune_ruin.json; docs: the owner's request of 2026-10-02 (data/dune_ruin.json request)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.ambient_dune_ruin.salvager_cursor",
+        "initial_node": "greeting",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "greeting",
+          "kind": "line",
+          "speaker": "varn",
+          "text": "Mind the steps. The third one is sand all the way down. I just haven't told it yet.",
+          "next": "khan"
+        },
+        {
+          "id": "khan",
+          "kind": "line",
+          "speaker": "varn",
+          "text": "This was the Copperway Khan. Last stop on the freight road out of Fossick: ore south to the coast, salt and money back north.",
+          "next": "haulers"
+        },
+        {
+          "id": "haulers",
+          "kind": "line",
+          "speaker": "varn",
+          "text": "Copperajah pulled the wagons. When the road closed, the company turned them loose out here. Most went to dust. One didn't. You'll know him if you meet him.",
+          "next": "salvage"
+        },
+        {
+          "id": "salvage",
+          "kind": "line",
+          "speaker": "varn",
+          "text": "Three summers I've been pulling brass out of this hall. The rest of the place is under sand to the lintels, and nobody pays me to dig out a courtyard.",
+          "next": "store"
+        },
+        {
+          "id": "store",
+          "kind": "line",
+          "speaker": "varn",
+          "text": "Every khan kept a master's store, somewhere cool and down. The company ledger says this one was locked when the last caravan left. It doesn't say where the key went.",
+          "next": "door"
+        },
+        {
+          "id": "door",
+          "kind": "line",
+          "speaker": "varn",
+          "text": "That west wall was bricked up by somebody in a hurry. I'm not opening it. At night, something on the other side knocks back.",
+          "next": "repeat"
+        },
+        {
+          "id": "repeat",
+          "kind": "line",
+          "speaker": "varn",
+          "text": "Brass is brass. Whatever's behind that wall can stay there, as far as I'm concerned.",
+          "next": "repeat"
+        }
+      ],
+      "speakers": {
+        "varn": "Dessa Varn"
+      }
     }
   ]
 }

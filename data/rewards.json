@@ -595,6 +595,51 @@
           7051
         ]
       }
+    },
+    {
+      "id": "dune_ruin_strongroom",
+      "kind": "cache",
+      "place": "the Copperway Khan in the south-east dunes: the master's strongbox against the east wall of the sealed store under the hall",
+      "contents": [
+        {
+          "item": "cobblemon:metal_coat",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/metal_coat.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:reaper_cloth",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/reaper_cloth.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:dusk_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/dusk_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the caravan master's strongbox: a Metal Coat, a Reaper Cloth and three Dusk Balls.",
+      "why": "data/dune_ruin.json find: the reason to break into the store. Late-game south (tier 8): a Metal Coat (the haulers' brass, and Onix's and Scyther's evolution item), a Reaper Cloth (the store's ghosts; Dusclops's), and Dusk Balls, the dark place's situational ball (docs/research/notes/reward-item-inventory.md section 4). Each item id verified in the Cobblemon 1.8.0 jar 2026-10-02.",
+      "built_by": "tools/dune_ruin.py (the barrel, in cobblers_dune_ruin's build, reapply step R9DU)",
+      "trigger": {
+        "min": [
+          6736,
+          140,
+          6233
+        ],
+        "max": [
+          6738,
+          141,
+          6235
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          6738,
+          140,
+          6234
+        ]
+      }
     }
   ]
 }
