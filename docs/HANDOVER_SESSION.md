@@ -36,6 +36,28 @@ python tools/reapply.py install --server-dir C:/Users/wnd/Documents/github/cobbl
 Install regenerates the suppression against that server and world (it reads the server, so take the lock). Then
 restart.
 
+**Not installed: staging was busy (2026-10-02, after the owner confirmed the balance).** At the install attempt
+port 25565 was listening (java pid 40584) and the coordination lock was held by session
+`cobblers-cobblemon-session-start-531d15` since 08:47 ("staging-2026-10-01 up for the owner to see tonight's
+builds"). Per the hard gate nothing in the runtime was read. Install when that session releases the lock and the
+server is stopped, then boot detached and check the process.
+
+**Where to stand** (ground from the canonical heightmap, +1 to stand on it; not yet checked in the world):
+
+| Place | Stand at | What should spawn |
+|---|---|---|
+| Frostpeak, well above the y180 line | (566, 227, 316) | Absol and Delibird, Piloswine common, the presences (Abomasnow, Mamoswine, Beartic, Avalugg, Glalie) |
+| Frostpeak, just above the line | (794, 183, 250) | as above, thinner; no heart Pokemon should stand below y180 |
+| Frostpeak, just below the line | (806, 177, 244), 13 blocks from the last | slope table only: Absol, Delibird, Snorunt, Eiscue |
+| Marshy Marsh's middle | (5158, ~63, 2166), the landmark centre | Toxicroak and Seismitoad thick, Swampert and Sliggoo, a big Feraligatr in the water |
+| Lake Tilpey's middle | (5870, 63, 3874), by boat | Gyarados and Veluza; Wailord at 48-55 |
+| The Great Crater's bowl | (6080, 195, 5530) | Chandelure; Charizard and Magmortar at 53-60, Volcarona |
+| The dark Wedge's deep wood | (4016, 144, 3120) | Haunter, Drifblim; Gengar, Mismagius, Dusknoir at 43-50 |
+| Lake Viltri's far woods | (1200, 103, 2928) | Bayleef common; Ninjask and Beedrill |
+| The south-west fields' middle | (1904, 119, 5840) | Cottonee, Pikachu, Growlithe; Nidorina and Nidorino at 16-25 |
+
+Spawns land around a player, not on them: read each Pokemon's own y (F3 while looking at it) for the summit line.
+
 **Half-done:** nothing. No server, no lock held. Five agent worktrees under `.claude/worktrees/agent-*` hold only
 what is merged here or pushed.
 
