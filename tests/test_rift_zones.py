@@ -63,26 +63,23 @@ RECORDED_BREAK = "gatehouse_walkway_is_not_continuous"
 # xfail keyed (gate, property): the moment the generator or the data changes, each flips to a failure and must
 # be removed along with the fix. Reported to the owner; nothing outside tests/ was touched.
 FOUND_HERE = {
-    ("z5", "places"):
-        "z5's arrival is 14 blocks inside the guard's block and its exit box 16, because survey() anchors an "
-        "inside-sited gate's places on zone_begins_at -- 11 blocks in for z5, the first column inside the "
-        "8-grid boxes -- while cmd_build lays the shell from the guard's OWN block out to exit_in + 1 = 6. "
-        "Both places therefore stand on open terrain past the end of the walkway, not on it. z5 is the only "
-        "gate with zone_begins_in != 0. Found by tests/test_rift_zones.py.",
     # RETIRED 2026-10-01 by decision B12, not by a change here. The rim post's exit box column (3879, 3819)
     # was step t=5's own walkway centre, which step t=6's wall fill overwrote with obsidian -- the exit box
     # was inside a wall, not beside one. walkway_shell() now lays the walls as the COMPLEMENT of the walked
     # set, and a complement cannot contain a column of the thing it is the complement of, so the whole class
     # is gone rather than this one instance. The strict xfail turned into an XPASS on the first run after the
     # fix landed, which is the mark doing its job.
-    ("z2_victory_road_descent", "places"):
-        "the descent post's arrival and exit box are at y88 while the shell lays its walkway flat at the "
-        "guard's own feet level y87 (ground_y 86 + 1): survey() takes each place's y from tools/ground.py at "
-        "its own column and nothing reconciles that with the flat walkway. Found by tests/test_rift_zones.py.",
-    ("z2_wilds_slip", "places"):
-        "the wilds ranger's arrival is at y93 and its exit box at y97 while its walkway is flat at y95: the "
-        "ground falls 2 and rises 2 across the nine columns and the places follow it, the walkway does not. "
-        "Found by tests/test_rift_zones.py.",
+    #
+    # RETIRED 2026-10-01, all three, by the fix to data/rift_zones.json measured_defects
+    # [gate_places_are_not_on_the_gatehouse_floor] in tools/rift_zones.py survey(). They were:
+    #   z5                       arrival 14 and exit box 16 blocks in, past the walkway's inner mouth, because
+    #                            an inside-sited gate anchored on zone_begins_at (11 in) instead of the guard
+    #   z2_victory_road_descent  places at y88 over a walkway laid flat at y87
+    #   z2_wilds_slip            arrival y93, exit box y97, over a walkway flat at y95
+    # survey() now anchors every gate on the guard's block and gives arrive and exit the flat floor cmd_build
+    # lays, and fails closed if either is not a column of walkway_path(). All three marks came back XPASS.
+    # They were carried HERE rather than on the record, so adding `fixed` to the record could not drop them;
+    # that is why the implementer reported them instead of editing this file.
 }
 
 
@@ -579,17 +576,31 @@ def test_every_guards_ground_is_the_heightmaps_ground(gate):
         "%s: ground_y %d, heightmap y%d at %s" % (gate[0], gate[2]["ground_y"], g(q[0], q[1]), q))
 
 
-# Without it the arrival, turn-back and exit box drift off the ground they were surveyed on, and a player is
-# teleported into rock or one block above the floor.
+# Without it a player is teleported into rock or one block above the floor. RE-SCOPED 2026-10-01, and the reason
+# is worth keeping: as first written this checked every place against the heightmap at the place's OWN column. That
+# was the generator's rule, not the player's reality, and it was green for the whole life of the defect it should
+# have caught -- at the wilds slip the arrival was y93 over own-column ground y92, so it passed, while the walkway
+# the player actually stands on was flat at y95. A check that reads the real heightmap is not independent if what
+# it computes from it is the builder's own rule.
+#
+# Where a player's feet are is the question. Arrival and exit box stand ON the gatehouse walkway, which the shell
+# lays flat at the guard's feet level for its whole length, so they are checked against the heightmap at the
+# GUARD'S block. The turn-back stands outside, on terrain the shell never touches, so it keeps its own column.
+# test_every_gates_arrival_and_exit_box_sit_on_the_walkway_the_shell_builds checks the same two places against
+# the EMITTED shell; this checks them against the heightmap. Two sides, neither of them survey().
 @pytest.mark.slow
 @pytest.mark.parametrize("gate", GATES, ids=NAMES)
-def test_every_gates_places_stand_one_block_above_the_heightmap(gate):
+def test_every_gates_places_stand_on_the_floor_a_player_actually_stands_on(gate):
     import ground as GD
     g = GD.load(_source_root())
+    bx, bz = gate[2]["block"][0], gate[2]["block"][1]
+    floor = g(bx, bz) + 1
     arrive, tb, ebox = gate[3], gate[4], gate[5]
-    for what, (x, y, z) in (("arrival", (arrive[0] - 0.5, arrive[1], arrive[2] - 0.5)),
-                            ("turn-back", (tb[0] - 0.5, tb[1], tb[2] - 0.5)),
-                            ("exit box", (ebox[0], ebox[1], ebox[2]))):
-        assert int(y) == g(int(x), int(z)) + 1, (
-            "%s: the %s is at y%s, the heightmap's ground at (%d, %d) is y%d"
-            % (gate[0], what, y, int(x), int(z), g(int(x), int(z))))
+    for what, y in (("arrival", arrive[1]), ("exit box", ebox[1])):
+        assert int(y) == floor, (
+            "%s: the %s is at y%s, but the walkway it stands on is laid flat at the guard's feet level y%d "
+            "(heightmap y%d at the guard's block (%d, %d))" % (gate[0], what, y, floor, floor - 1, bx, bz))
+    x, y, z = tb[0] - 0.5, tb[1], tb[2] - 0.5
+    assert int(y) == g(int(x), int(z)) + 1, (
+        "%s: the turn-back is at y%s, the heightmap's ground at its own column (%d, %d) is y%d"
+        % (gate[0], y, int(x), int(z), g(int(x), int(z))))
