@@ -43,7 +43,13 @@ Four ace, with `relativeLevelCap` 0), and since 2026-09-28 a wild Pokemon over t
 
 The top of every band is at or under its cap, so everything a player meets on a leg can be caught on that leg
 (the old placeholder band of 25-45 on fifteen off-path places is gone). Bands overlap their neighbours by about five
-levels so a leg's end meets the next leg's start. A table may narrow its band (`levels`) inside its tier's band --
+levels so a leg's end meets the next leg's start.
+
+**The owner, 2026-10-02 (after the rebuild): uncatchable spawns inside a band are welcome.** "It adds to revisiting
+and makes a region feel more like it should." So the catchable ceiling above is the rule for the *base* of a band,
+not a ceiling on everything in it: the heart of a place (a summit, a lake's centre, a crater bowl) may hold
+Pokemon above the leg's cap, met first as a sight and caught on a return. Section 10 builds that; target 5 still
+checks the uniform bands, and fails on the hearts until a test author rewrites it per heart. A table may narrow its band (`levels`) inside its tier's band --
 Pallet's meadows are 4-8 -- but never leave it.
 
 ## 3. Escalation: a family's weight moves to its evolved stages as the tier rises
@@ -182,6 +188,144 @@ All measured on the compiled pack with `tools/encounter_audit.py`'s rule for cha
   Windward Sea's marine bands, the Mt Clay outflow waterway (Gym 3's Ground answers) and the unplaced habitat pools.
 - The sub-region polygons, the suppression, the compiler and the Habitat Block placements.
 - The spawn conditions vocabulary: only conditions already in the data (`timeRange`, `isRaining`, `maxY`,
-  `neededNearbyBlocks` water, `neededBaseBlocks` sand) are used, so contract C4 is untouched.
+  `neededNearbyBlocks` water, `neededBaseBlocks` sand) are used, so contract C4 is untouched. The one addition is
+  `minY`, verified in the jar and set by the generator on a summit heart's entries only (section 10); it names no
+  block.
 - The Jungle Isle's two tables stand over open sea since the water export (decision B15); they are rebuilt on the
   rules but are inert until B15 is decided.
+
+## 10. Small at the edges, big at the heart (the owner, 2026-10-02)
+
+**Built 2026-10-02 (mechanism and content, valid data only, not seen in game). The four numbers below were proposed
+here and are confirmed by the owner (2026-10-02): "a ninth, 11.2% above cap, next leg's cap as the ceiling, 128
+blocks from a path. Those read right."**
+
+The owner's direction: small Pokemon on a place's outskirts, big ones grouped round its focal points, and on a
+mountain "big snowy creatures, anything you'd see on a mountain" -- Frostpeak, the mountain near (0, 0), first (its
+highest column is y310 at (679, 313) and (679, 324) on the canonical heightmap). And the balance: **"a new player
+should be able to find pockets and readily catchable mons without scouring a landscape."** So above-cap Pokemon are
+the exception at a heart, never the texture of a place:
+
+- **The path is always catchable.** A route corridor never carries heart content; everything a player meets on the
+  road is at or under the leg's cap.
+- **Most of a place is catchable.** The outskirts and middle -- most of a sub-region's area -- stay inside the leg's
+  band; only the heart (a summit band, an inner circle) may exceed it.
+- **Catchable pockets are near the path.** Every on- or near-path sub-region keeps catchable spawns within easy
+  reach of the corridor, not only at its far edge.
+- **A heart is mixed, not walled.** Even at a summit, the common bucket keeps catchable stages; the above-cap ones
+  are the big, rarer presences that make the place, seen first and caught on a return.
+
+### The mechanism
+
+A design table may carry one `heart` (`data/encounter_design.json`). Its entries **add** to the base table inside
+the heart; the base table is unchanged everywhere, so a heart is mixed by construction.
+
+- **summit**: a height line. Every heart entry carries `minY`, and the heart covers the sub-region's cells (below).
+  `minY` is a Cobblemon 1.8.0 spawn-condition key: the string is in `SpawningCondition.class` beside `maxY` and
+  `canSeeSky`, and 504 spawns in the jar's own 1,544 `spawn_pool_world` files use `condition.minY`
+  (Cobblemon-fabric-1.8.0+1.21.1.jar, sha256 a6228f32...dc9ec31). That verifies the key, not its behaviour.
+- **focus**: a point (a `data/landmarks.json` landmark, or an x, z with a written reason) and a radius; the heart
+  covers the sub-region's cells whose centre lies within the radius.
+
+`tools/compile_spawns.py heart_boxes` takes the sub-region's own cells after the same exclusions as its roster
+(corridor, waterway, spawn-free zone), drops every cell within 128 blocks of a corridor box, and for a focus keeps the
+circle. Heart entries compile only there (ids `<sub>_h<n>_<species>`), never into a route file. A table without a
+heart compiles byte for byte as before (checked: 164 of 164 files identical before any heart was authored).
+
+What a heart holds (`tools/build_encounters.py build_heart`): its **families**, named by the bigger stage itself,
+spawn on the upper half of the table's band, from the level they evolve at, matured one tier further than the
+table (`hearts.maturity_step`); they stay under the cap. Its **presences** (role `presence`, uncommon bucket, weight
+3) are single species from the band's top -- or the level they evolve at, if later -- to the next leg's cap. A heart
+holds no find, a base table holds no presence, and a presence that evolves other than by level appears only if the
+next leg's tier allows it (section 3). The generator fails closed on a presence in the common bucket, a presence
+past the next cap, and a heart over the above-cap share below.
+
+### The numbers (confirmed by the owner, 2026-10-02)
+
+| Number | Proposed | Derived from | Measured on the compiled pack |
+|---|---|---|---|
+| Most a heart may cover of its sub-region | **1/9 (0.111)** of the compiled area | The owner's three words for a place -- outskirts, middle, heart -- as three rings of equal width: the inner ring of a disc is (1/3)^2 = 1/9 of it, so 8/9 stays the base table ("most of a place is catchable"). A summit's line is the lowest whole Y at or above which at most 1/9 of the area lies; a focus radius is the largest multiple of 16 blocks at or under 1/9, or a feature's own radius if smaller (the crater bowl, 96). | 28 hearts, 4.8% (the Great Crater's bowl) to 11.1% |
+| Most of a heart's spawn chance above the cap | **11.2%** | Above-cap spawns are presences, and a presence is never common (the owner: "the big, rarer presences"). Cobbleverse draws uncommon and rare together (10 + 1.2) / (88.5 + 10 + 1.2) = 11.2% of the time, so that is the ceiling by construction. | 0.9% (Lake Viltri's hollow, land) to 10.2% (the Lower Trough, water), over the heart contexts holding a presence; 0 in every base table and every corridor |
+| How far above the cap a presence may go | **to the next leg's cap**: cap + 5 on tiers 1-8, and 62 at tier 9 | "Seen first and caught on a return": a presence is catchable on the next leg. Caps step 5 a leg (`data/trainers.json` gym aces 20-55, the Elite Four at 60); after the Elite Four the next level a player can carry is the champion's top, 62 (`champion_blue`, measured). | Top levels 25 (tier 1) to 62 (tier 9) |
+| How "catchable pockets near the path" is measured | **No heart cell within 128 blocks of a route corridor box** (Chebyshev gap) | Section 1's own measure of "near the path" (128 blocks). So the whole band beside the path is the base table, catchable, in every sub-region. | Nearest heart box to any route box: 129 blocks (five hearts: Mt Clay, the Tri Peaks, the Crags, the Lower Trough, the east cones) |
+
+Two assumptions sit under the shares, as under the audit: a bucket with no candidate at a position is renormalised
+away, and every level in a range is equally likely. Neither is verified in game.
+
+### Where the hearts are (28), and where there are none
+
+Summits: **Frostpeak** (y180, 11.1%), the **Tri Peaks** (y195), **Mt Clay** (y212), the **Crags** (y171, land
+only: the tarn is below the line), the **east cones** (y228, the Craters landmark's cone). **Mt Vessu** has a focus
+instead: its top is a flat plateau at y280 (15.1% of the place at or above y280, 0.9% above it), so no height line
+takes a ninth; the heart is a circle on the plateau.
+
+Focal points: the lakes -- **Shrew Lake**, **Arrow Lake**, **Lake Tilpey's open water** (94.5% of its heart is lake
+bed under y62), the **Ravine Head Tarn** in Peak Pond Hollow, the **Glacial Tear** in the Lower Trough; **Marshy
+Marsh**'s middle; the **Great Crater**'s bowl (floor about y195-205 inside a rim up to y302, breached to the east, read from the
+heightmap on a 20-block grid);
+the **dark Wedge** (north and south); **Northgate's old growth** (the west half, `taiga_dense`); the four **Rift**
+tables; the islands -- **Fungal North**, the **north** and **south Pine isles**, **Sunset west**, the **Long Isle**'s
+uplands; and two early places, the **south-west fields** (tier 1) and **Lake Viltri's hollow** (tier 2). Where no
+landmark marks a focus, it is the place's deepest interior: the cell farthest from every cell outside the place
+or inside the path band.
+
+Three focal points belong to the path and stay catchable: **Lake Viltri** (41 blocks from Route 2), **Peak Pond**
+(113 blocks from Route 4) and the **Merian** landmark's anchor (65 blocks from Route 4). Their places' hearts are
+the far woods, the Ravine Head Tarn and the cirque's interior away from Route 4 instead.
+
+No heart: **Pallet's meadows, the Route 1 forest, the Viltri plateau, the River of Shrews and the west shore** (the
+first leg on the path: a new player's ground stays wholly catchable); the **downs, the trough's upper pass, the
+glacier-foot fields, the crater rim and the Rift's foot** (open country with no focal point of their own, or mostly
+inside the path band: 60% of the glacier-foot fields' cells and 74% of the crater rim's have their centre within
+128 blocks of a corridor box); the **Tilpey shores** (their lake's
+heart is the open water); **Marsh creek, the eastern moor and the dunes and plateaus** (no focal point read from
+the data); the **Frostpeak strand** (the shore under Frostpeak, whose heart is the summit); **Fungal south** and the
+**Sunset east**, **Northgate east** and **Long Isle north and south** (one heart an island); the **north-west coast**
+and **Viltri's Path valley** (each already holds two finds); the **foothill woods** and the **south strand** (Routes 3 and 8 run through them, so they are the path's); the
+**Arrow creeks** (left without a heart in this pass, a candidate for the next: its Dondozo find already sits in the
+deep pools); and the **Jungle Isle** (under the sea, decision B15).
+Untouched as section 9 says: the bird nests, the mansion, the marine bands, the waterway, Victory Road's pools.
+
+### What the tests make of it
+
+`tests/test_encounter_design.py` reads a sub-region file as one table, so heart rows count as if they covered the
+whole place. Three of its tests fail on the hearts, and none was edited (the builder does not write its own tests):
+
+- `test_no_spawn_in_a_table_is_above_its_tiers_cap` (target 5): the 28 hearts' presences, as this section allows.
+- `test_on_path_land_strength_never_falls_from_one_tier_to_the_next` (target 1): tier 3 reads 368 and tier 4 360 with
+  hearts in; on the base rows alone, by the test's own rule, the tiers rise 277, 289, 326, 348, 375, 435, 438, 473, 512.
+- `test_off_path_tables_are_no_weaker_than_on_path_at_the_same_tier` (target 4): tiers 2, 3 and 5 with hearts in; on
+  base rows alone off-path is at least on-path at every tier (304/277, 303/289, 343/326, 382/375, 442/435, 441/438,
+  484/473).
+
+Target 5 and the per-table tests now become per heart and per base, rewritten by a test author from this section.
+`tools/encounter_audit.py` already reports each heart as its own table (base roster plus the heart's own spawns),
+with its area share, its gap to the nearest route and its above-cap share.
+
+## 11. The mainline starters in the wild (the owner, 2026-10-02)
+
+**Read with the mythical-starter decision (the owner, 2026-10-02):** with all 27 starter families wild, "traditional starters become something you find rather than something you are handed, which is what I wanted from idea 1"; so the mythical-starter choice (`docs/research/MYTHICAL_STARTERS.md`) and this section are one decision read together, and neither should be changed without the other.
+
+"Bake normal starters from every region and their evolutions as spawns now." All 27 Gen 1-9 starter families are in
+the tables, on the existing rules (the tier's band, maturity rising with the tier, finds exclusive and off the
+corridors): an **uncommon** family on or near the path, a **find** off it, and a heart may hold the final form as a
+presence. Grass on the first three legs (Bulbasaur, Treecko, Snivy, Chikorita, Turtwig), Fire on the Grass gym's leg
+(Tepig, Cyndaquil), Water starters on shores (`neededNearbyBlocks` water, standing on land, so no starter placed here is a
+water table's family). Two were already water families before this: Totodile at Marshy Marsh and Piplup at the
+Lower Trough (section 5), and they stay so; those are the only starters in a water table.
+
+| Leg | Family: table (how) |
+|---|---|
+| 1 | Bulbasaur: Pallet's meadows. Treecko: the Route 1 forest. Snivy: the Viltri plateau. Popplio: the west shore (shore) |
+| 2 | Chikorita: Lake Viltri's hollow (Bayleef common in its heart). Squirtle: Lake Viltri's hollow (shore). Sprigatito: Viltri's Path valley (find) |
+| 3 | Turtwig: the foothill woods. Froakie: the north-west coast (find, shore). Quaxly: Arrow Lake (find, shore) |
+| 4 | Tepig: the north shore downs. Cyndaquil: the north-east downs. Oshawott: Peak Pond Hollow (shore; Samurott in the tarn heart) |
+| 5 | Fennekin: the glacier-foot fields. Mudkip: Marshy Marsh (shore; Swampert in the heart). Litten: Sunset west (find; Incineroar in the heart). Totodile: Marshy Marsh (already; Feraligatr in the heart). Piplup: the Lower Trough (already; Empoleon in the heart) |
+| 6 | Chimchar: Tilpey's north shore. Chespin: Tilpey's east shore. Fuecoco: the north Wedge (find). Grookey: Northgate's old growth (find; Rillaboom in the heart). Rowlet: the south Pine isle (already a find; Decidueye in the heart) |
+| 7 | Sobble: Tilpey's south shore (shore). Torchic: the crater rim |
+| 8 | Scorbunny: the Rift's foot. Charmander: the Great Crater (already; Charizard in the heart) |
+
+`modpack/config/cobblemon/starters.json` was read, not changed: it still lists the 27 normal starters in nine region
+categories plus a Hisui set, no mythical, with `useConfigStarters: false`. The owner's mythical starters are not in
+that file.
+

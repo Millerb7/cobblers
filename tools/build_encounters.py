@@ -38,6 +38,15 @@ The expansion (ENCOUNTER_DESIGN.md sections 2-4, 7a):
   conditions passed through from the design's family entries; only keys and blocks already in the data
              (timeRange, isRaining, maxY, neededNearbyBlocks water, neededBaseBlocks sand), contract C4.
 
+hearts (ENCOUNTER_DESIGN.md section 10): a design table's optional `heart`, a summit (minY, a verified Cobblemon
+1.8.0 condition key, set here on the heart's entries only) or a focus (a data/landmarks.json landmark, or an x, z with
+a why, and a radius). Its entries carry the heart's geometry for tools/compile_spawns.py, which lays them over the
+heart's cells only and never into a corridor. Its families name the bigger stage, spawn on the upper half of the band
+from the level they evolve at, matured rules.hearts.maturity_step tiers further; its presences (uncommon) run from
+the band's top, or the level they evolve at, to rules.hearts.next_cap. Fails closed on a presence in a base table, a
+presence in the common bucket, a presence past the next cap, a find in a heart, and a heart whose share of spawn
+chance above the cap (base and heart rows together, the audit's chance rule) exceeds rules.hearts.above_cap_max_share.
+
 route_species_selection: per route, the sub-regions data/routes.json's geography transitions cross; from each such
 table only families in rules.corridor_roles (never rare, never a find). Each species is scored by its chance in the
 table (the audit's rule: bucket share renormalised over the buckets its context holds, times weight over the bucket's
@@ -77,6 +86,7 @@ SPAWNS = ROOT / "data" / "spawns.json"
 REGIONS = ROOT / "data" / "regions.json"
 ROUTES = ROOT / "data" / "routes.json"
 DOLLS = ROOT / "modpack" / "manifest" / "client-pack-atm-subset.json"
+LANDMARKS = ROOT / "data" / "landmarks.json"
 
 SURFACE = "spawn_json_coordinate_boxes"
 HABITAT = "habitat_block"
@@ -345,6 +355,8 @@ def build_table(dex, rules, tid, t, kind, extra_families=()):
     rows = []
     for item, half, *prio in [(f[0], f[1]) + tuple(f[2:]) for f in fams]:
         species, role, weight, cond = parse_family(item, rules, tid)
+        if role == "presence":
+            raise DesignError("%s: %s is a presence; a presence lives only in a heart (section 10)" % (tid, species))
         priority = prio[0] if prio else role
         if kind == HABITAT and " " in species:
             raise DesignError("%s: %s has a space; a habitat pool species is a bare id" % (tid, species))
@@ -379,11 +391,146 @@ def build_table(dex, rules, tid, t, kind, extra_families=()):
     return [merged[k] for k in order], band
 
 
-def entry_of(dex, r, scope, kind, authored):
+# ------------------------------------------------------------------ hearts (ENCOUNTER_DESIGN.md section 10)
+
+def above_cap_fraction(level, cap):
+    """The share of a level range above the cap, every level in the range taken as equally likely (an assumption
+    about Cobblemon 1.8.0's level draw, stated in section 10)."""
+    lo, hi = map(int, str(level).split("-"))
+    return max(0, hi - max(lo, cap + 1) + 1) / float(hi - lo + 1)
+
+
+def heart_geometry(tid, heart, landmarks, hrules):
+    """The record tools/compile_spawns.py clips a heart's entries to, from the design's heart."""
+    clear = hrules["clear_of_path_blocks"]
+    if heart.get("kind") == "summit":
+        if not isinstance(heart.get("minY"), int) or isinstance(heart.get("minY"), bool):
+            raise DesignError("%s: a summit heart needs a whole-number minY" % tid)
+        return {"kind": "summit", "minY": heart["minY"], "clear_of_path_blocks": clear}
+    if heart.get("kind") == "focus":
+        at = heart.get("at") or {}
+        if "landmark" in at:
+            lm = landmarks.get(at["landmark"])
+            if lm is None:
+                raise DesignError("%s: heart landmark %s is not in data/landmarks.json" % (tid, at["landmark"]))
+            x, z = lm["anchor"]["x"], lm["anchor"]["z"]
+        elif isinstance(at.get("x"), int) and isinstance(at.get("z"), int) and at.get("why"):
+            x, z = at["x"], at["z"]
+        else:
+            raise DesignError("%s: a focus heart is at a landmark, or at an x, z with a why" % tid)
+        r = heart.get("radius")
+        if not isinstance(r, int) or r <= 0:
+            raise DesignError("%s: a focus heart needs a whole-number radius" % tid)
+        return {"kind": "focus", "x": x, "z": z, "radius": r, "clear_of_path_blocks": clear}
+    raise DesignError("%s: a heart is kind summit or focus, not %r" % (tid, heart.get("kind")))
+
+
+def presence_levels(dex, rules, tier, band, species, where):
+    """(lo, hi, how) for a presence: from the band's top, or the level it evolves at if later, to the next leg's cap."""
+    hrules = rules["hearts"]
+    hi = int(hrules["next_cap"][str(tier)])
+    lo, how = band[1], "a presence, from the band's top"
+    base = dex.split(species)[0]
+    pre = dex.pre.get(base)
+    if pre is not None:
+        ev = next(((m, lv, h) for res, m, lv, h in dex.evolutions(pre) if dex.split(res)[0] == base), None)
+        if ev is not None:
+            m, lv, h = ev
+            if m == "level":
+                if lv > lo:
+                    lo, how = lv, "a presence, from the level it evolves at (%d)" % lv
+            else:
+                need = rules["non_level_evolution_min_tier"]["trade" if m == "trade" else "other"]
+                if tier + 1 < need:
+                    raise DesignError("%s: presence %s evolves %s, in the wild from tier %d; a presence is the next "
+                                      "leg's (tier %d)" % (where, species, h, need, tier + 1))
+    if lo > hi:
+        raise DesignError("%s: presence %s cannot spawn: from %d is past the next leg's cap %d" % (where, species, lo, hi))
+    return lo, hi, how
+
+
+def build_heart(dex, rules, tid, t, band, mtier):
+    """[(row dict)] for one table's heart: its families on the upper half of the table's band, matured a step
+    further than the table, and its presences from the band's top to the next leg's cap."""
+    hrules = rules["hearts"]
+    tier = t["tier"]
+    cap, _ = tier_rules(rules, tier)
+    heart = t["heart"]
+    half = (band[0] + band[1] + 1) // 2
+    hband = (half, band[1])
+    hmtier = min(9, mtier + hrules["maturity_step"])
+    rows = []
+    for item, side in [(f, "land") for f in heart.get("land") or []] + [(f, "water") for f in heart.get("water") or []]:
+        species, role, weight, cond = parse_family(item, rules, tid + " heart")
+        if role == "find":
+            raise DesignError("%s: a heart holds no find; a find is the table's own (section 6)" % tid)
+        nearby_water = "minecraft:water" in (cond.get("neededNearbyBlocks") or [])
+        if heart.get("kind") == "summit":
+            cond = dict(cond, minY=heart["minY"])
+        if role == "presence":
+            if not dex.has(species):
+                raise DesignError("%s heart: %s is not a species in the Cobblemon jar" % (tid, species))
+            lo, hi, how = presence_levels(dex, rules, tier, band, species, tid + " heart")
+            w = weight if weight is not None else float(rules["roles"]["presence"]["weight"])
+            stages = [(species, lo, hi, w, "%s, %d-%d against the tier %d cap %d: seen on this leg, caught on the next "
+                       "(next cap %d)" % (how, lo, hi, tier, cap, hrules["next_cap"][str(tier)]))]
+        else:
+            # a heart names the bigger stage itself; it spawns from the level it evolves at, never below
+            fband = hband
+            pre = dex.pre.get(dex.split(species)[0])
+            ev = next(((m, lv) for res, m, lv, _ in dex.evolutions(pre) if dex.split(res)[0] == dex.split(species)[0]),
+                      None) if pre is not None else None
+            if ev is not None and ev[0] == "level" and ev[1] > fband[0]:
+                fband = (ev[1], fband[1])
+                if fband[0] > fband[1]:
+                    raise DesignError("%s heart: %s evolves at %d, past the band's top %d" % (tid, species, ev[1], fband[1]))
+            stages = expand_family(dex, rules, tier, fband, species, role, weight, tid + " heart", hmtier)
+            stages = [(n, lo, hi, w, "heart: " + why) for n, lo, hi, w, why in stages]
+        for name, lo, hi, w, reason in stages:
+            if role != "presence" and hi > cap:
+                raise DesignError("%s heart: %s spawns %d-%d over the tier %d cap %d; only a presence may" % (tid, name, lo, hi, tier, cap))
+            pos, _ = dex.position(name, side == "water", nearby_water, species)
+            rows.append({"name": name, "bucket": rules["roles"][role]["bucket"], "level": "%d-%d" % (lo, hi),
+                         "weight": w, "conditions": dict(cond), "reason": reason, "position": pos,
+                         "family": dex.family(species), "priority": role, "role": role, "half": side})
+    merged, order = {}, []
+    for r in rows:
+        k = r["name"]
+        if k in merged:
+            raise DesignError("%s heart: %s comes twice; the compiled heart ids would collide" % (tid, k))
+        merged[k] = r
+        order.append(k)
+    return [merged[k] for k in order]
+
+
+def heart_above_cap(base_rows, heart_rows, cap):
+    """{context: share of the heart's spawn chance above the cap}, the heart being its base rows and its own, by the
+    audit's chance rule (buckets renormalised over those present in the context, weight within the bucket)."""
+    out = {}
+    rows = [("b", r) for r in base_rows] + [("h", r) for r in heart_rows]
+    for ctx in ("land", "water"):
+        rs = [r for _, r in rows if (r["position"] in WATER_POS) == (ctx == "water")]
+        if not rs:
+            continue
+        buckets = {}
+        for r in rs:
+            buckets.setdefault(r["bucket"], []).append(r)
+        tb = sum(BUCKET_P[b] for b in buckets)
+        share = 0.0
+        for b, brs in buckets.items():
+            tw = sum(r["weight"] for r in brs) or 1
+            share += sum(BUCKET_P[b] / tb * r["weight"] / tw * above_cap_fraction(r["level"], cap) for r in brs)
+        out[ctx] = round(share, 4)
+    return out
+
+
+def entry_of(dex, r, scope, kind, authored, heart=None):
     sid = r["name"].replace(" ", "_")
-    e = {"id": ("surface.%s.%s" if kind == SURFACE else "habitat.%s.%s") % (scope, sid),
+    e = {"id": ("surface.%s.%s" if kind == SURFACE else "habitat.%s.%s") % (scope, ("heart." + sid) if heart else sid),
          "species": r["name"], "bucket": r["bucket"], "level": r["level"], "weight": r["weight"], "ambient": True,
          "scope": scope, "mechanism": kind, "conditions": r["conditions"], "eligibility_reason": r["reason"]}
+    if heart:
+        e["heart"] = heart
     if kind == SURFACE:
         e["biomes"] = []
     e["spawnable_position"] = r["position"]
@@ -475,8 +622,9 @@ ROUTE_NOTE = ("Generated by tools/build_encounters.py from data/encounter_design
               "length. tools/compile_spawns.py reads this list and does not choose. Do not edit by hand.")
 
 
-def generate(design, spawns, regions, routes, dex, dolls):
+def generate(design, spawns, regions, routes, dex, dolls, landmarks=None):
     rules = design["rules"]
+    landmarks = {lm["id"]: lm for lm in (landmarks or {}).get("landmarks") or []}
     problems = []
     sub_ids = [s["id"] for s in regions["subregions"]]
     tables = design["tables"]
@@ -526,7 +674,29 @@ def generate(design, spawns, regions, routes, dex, dolls):
             problems.append(str(ex))
     if problems:
         raise DesignError("\n".join(problems))
-    for pid, rows in gen_rows.items():
+    heart_rows, heart_geo = {}, {}
+    for tid in sub_ids:
+        t = tables[tid]
+        if not t.get("heart"):
+            continue
+        try:
+            heart_geo[tid] = heart_geometry(tid, t["heart"], landmarks, rules["hearts"])
+            mtier = min(9, t["tier"] + rules.get("off_path_maturity_step", 0)) if t.get("placement") == "off" else t["tier"]
+            heart_rows[tid] = build_heart(dex, rules, tid, t, bands[tid], mtier)
+        except DesignError as ex:
+            problems.append(str(ex))
+            continue
+        cap, _ = tier_rules(rules, t["tier"])
+        for r in heart_rows[tid]:
+            if above_cap_fraction(r["level"], cap) > 0 and r["bucket"] == "common":
+                problems.append("%s heart: %s is above the cap in the common bucket; a presence is never common" % (tid, r["name"]))
+        for ctx, share in heart_above_cap(gen_rows[tid], heart_rows[tid], cap).items():
+            if share > rules["hearts"]["above_cap_max_share"]:
+                problems.append("%s heart: %.1f%% of its %s spawns are above the cap, over the %.1f%% allowed"
+                                % (tid, 100 * share, ctx, 100 * rules["hearts"]["above_cap_max_share"]))
+    if problems:
+        raise DesignError("\n".join(problems))
+    for pid, rows in list(gen_rows.items()) + [(k + " heart", v) for k, v in heart_rows.items()]:
         for r in rows:
             if dex.split(r["name"])[0] in dolls:
                 problems.append("%s: %s is drawn by the client as the substitute doll "
@@ -538,6 +708,8 @@ def generate(design, spawns, regions, routes, dex, dolls):
     gen_entries = {}
     for tid in sub_ids:
         gen_entries[(SURFACE, tid)] = [entry_of(dex, r, tid, SURFACE, authored) for r in gen_rows[tid]]
+        gen_entries[(SURFACE, tid)] += [entry_of(dex, r, tid, SURFACE, authored, heart_geo[tid])
+                                        for r in heart_rows.get(tid, [])]
     for pid in pools:
         gen_entries[(HABITAT, pid)] = [entry_of(dex, r, pid, HABITAT, authored) for r in gen_rows[pid]]
     entries, done = [], set()
@@ -562,6 +734,12 @@ def generate(design, spawns, regions, routes, dex, dolls):
                              "tier": t["tier"]}
         rec["entries"] = [mirror_of(dex, r) for r in gen_rows[rec["id"]]]
         rec.pop("conditions_note", None)
+        rec.pop("heart", None)
+        if rec["id"] in heart_rows:
+            cap, _ = tier_rules(rules, t["tier"])
+            rec["heart"] = dict(heart_geo[rec["id"]], why=t["heart"].get("why", ""),
+                                above_cap_share=heart_above_cap(gen_rows[rec["id"]], heart_rows[rec["id"]], cap),
+                                entries=[mirror_of(dex, r) for r in heart_rows[rec["id"]]])
         rec["roster_basis"] = ("Generated by tools/build_encounters.py from data/encounter_design.json tables.%s: tier %d, "
                                "%s the path, themes %s%s. Do not edit by hand." % (
                                    rec["id"], t["tier"], "on or near" if t.get("placement") == "path" else "off",
@@ -585,6 +763,7 @@ def main(argv=None):
     p.add_argument("--regions", default=str(REGIONS))
     p.add_argument("--routes", default=str(ROUTES))
     p.add_argument("--dolls", default=str(DOLLS))
+    p.add_argument("--landmarks", default=str(LANDMARKS))
     p.add_argument("--jar", default=None, help="Cobblemon 1.8 jar; defaults to tools/battle_sim.py find_jar()")
     p.add_argument("--check", action="store_true", help="exit 1 if data/spawns.json differs from what the design produces")
     a = p.parse_args(argv)
@@ -593,7 +772,8 @@ def main(argv=None):
     dolls = set(load(a.dolls).get("species") or []) if Path(a.dolls).is_file() else set()
     try:
         dex = Dex(a.jar or battle_sim.find_jar())
-        out, rows = generate(load(a.design), load(spawns_path), load(a.regions), load(a.routes), dex, dolls)
+        out, rows = generate(load(a.design), load(spawns_path), load(a.regions), load(a.routes), dex, dolls,
+                             load(a.landmarks))
     except DesignError as ex:
         print("FAIL: the design does not expand:", file=sys.stderr)
         for line in str(ex).splitlines():
