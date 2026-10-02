@@ -407,3 +407,45 @@ For Codex to pick up. Claude has not edited any of the files named here.
 - npc_stone_tip_northlight_field_hand — Field Station Hand; stand beside the weather mast, facing the square-side Ice Stone cut.
 - npc_stone_tip_gorge_hamlet_elder — Hamlet Elder; stand at the bridgeward edge of the central square, facing the paired Dusk/Dawn outcrop.
 - npc_stone_tip_mining_town_foreman — Mine Foreman; stand on the minehead side of the pithead yard between the adit path and plaza, with the Assayer nearby.
+
+
+## Named resident encounter build list (Codex, 2026-10-02)
+
+Source of truth: `data/resident_encounters.json`. **Status: 10 authored, 0 placed, 0 runtime-tested.** These are shared named residents, not quests, shrines, ambient pools, or loot encounters. Three are uncatchable at their intended first meeting: Old Jaw until Brock raises the cap, and Whiteback/Hornwall permanently.
+
+### Old Jaw wipe check
+
+CobbleDollars 2.0.0+Beta-5.1 `PlayerMixin` bytecode initializes the synced balance to **$0** (jar sha256 `5d869098...`), and repository search finds no starter item or money kit. This has not yet been observed with a fresh staging account. Under the current authored rules, a first wipe to Old Jaw therefore costs **$0 and 0 items**; the real cost is the blackout, checkpoint return, and walk back. First Cast does not change that because its rod is a protected Minecraft tool. If the player has already opened the Route 1 old-mine cache, the representative claim is **1 Heavy Ball + 1 Potion**, plus 20% of any money earned; Hard Stone is protected and the claim returns when that exact guardian is beaten or caught.
+
+Keep Old Jaw at level 25. Make the danger fair through the approach: Drednaw visible from 96-128 blocks, shell gouges/drag marks/a wreck visible by 64, a clear inland bypass at least 36-40 blocks from the trigger, then a 24-block trigger and 28-block leash that never follows onto the bypass. No treasure and no defeat reward.
+
+One blackout edge needs a deliberate call during integration: the current pack removes positive money without creating a guardian claim when no eligible item was selected. It does not affect the fresh-player $0 case.
+
+### Build order and cost
+
+Costs are planning estimates after the shared resident keeper exists. They include the site dressing, one resident record, offline checks, and one staging observation. The shared keeper/reapply work is about **1 person-day** once; the ten items total about **6.5 person-days**.
+
+| Priority | Resident | Position (x, z) | Level / catch rule | Build | Physical handoff | Cost |
+| ---: | --- | ---: | --- | --- | --- | ---: |
+| 1 | **Old Jaw** — Drednaw | **613, 4306**, measured terrain y80.4 | 25; source requires catch refusal before `gym1_cleared`, catchable after; staging proof pending | World build | Dry estuary bowl, long telegraph and inland bypass exactly as above | M / **1.0 d** |
+| 2 | **Wiremother** — Galvantula | **1138, 3610**, y126.0 | 33; actual encounter opens after `gym3_cleared`; crossing is visible earlier | World build | Failed survey crossing: two snapped poles, sagging wire/web, survey flags, dropped instrument case, and a slower bypass shelf outside a 20/28 trigger/leash | M+ / **1.5 d** |
+| 3 | **Dustback** — Copperajah | **6216, 6112**, y141.1 | 56; catchable after `gym8_cleared` | World build | An irregular 80-120 block migration scar, 12-18 blocks broad, crossing several dunes; one crushed marker and leeward debris; no shrine or chest | M / **0.75 d** |
+| 4 | **Split-Bark** — Kleavor | **7360, 7376**, y138.3 | 62; catchable after `champion_cleared` | **ROSTER + GATE ONLY** | Existing Long Isle South elder clearing; optional split logs and scored bark; no cave or arena | XS / **0.25 d** |
+| 5 | **Red Rail** — Scolipede | **5541, 1703**, y95.0 | 44; catchable after `gym5_cleared` | World build | A narrow iron-red 60-80 block trail through marsh reeds, molted fragments, opposite-bank escape | S / **0.5 d** |
+| 6 | **Whiteback** — Mamoswine | **7022, 312**, y79.1 | 50; permanently uncatchable | World build | North Pine Isle old trail between snow banks and pines, two broken markers, rubbed-bare windbreak, wide bypass | S / **0.5 d** |
+| 7 | **Ridgejaw** — Tyrantrum | **3544, 1600**, y160.2 | 39; catchable after `gym4_cleared` | **ROSTER + GATE ONLY** | Existing Crags clearing; optional bone chips and scraped stone only | XS / **0.25 d** |
+| 8 | **River Grip** — Grapploct | **6970, 3970**, water block y62, feet y63, bed y53 | 52; catchable after `gym7_cleared` | World build | Drowned mooring, snapped chains, current-caught debris, dry observation point; never dam the river | M / **1.0 d** |
+| 9 | **Hornwall** — Bouffalant | **4200, 5920**, y136.7 | 56; permanently uncatchable after `gym8_cleared` opens the site | **ROSTER + GATE ONLY** | Existing Rift Foot shelf; bare standing circle and visible bypass only | XS / **0.25 d** |
+| 10 | **Orchard Sleeper** — Slaking | **2816, 7080**, y65.8 | 60; catchable after `gym8_cleared` | World build | Failed Sunset Isle orchard: 6-10 storm-bent trees, overgrown rows, windfall, collapsed shed, sleeping hollow | S / **0.5 d** |
+
+The x/z positions are authoritative; fit feet y to the final export rather than hard-coding a stale surface. River Grip is the exception: water occupies block y62; place its feet at y63 over the measured y53 bed.
+
+### Runtime contract for Claude
+
+- One shared persistent resident per site; restore it 36,000 ticks after faint, death, or catch so one friend cannot consume the encounter for everyone.
+- Reuse the established resident/blackout guardian pattern. A resident tagged `cobblers.guardian` must never be replaced, despawned, or reset until that claim resolves.
+- Use a bounded local trigger and leash. Do not change a species globally in Fight or Flight.
+- Place through the established reapply/RCON path; after re-export, reapply all ten from source.
+- Verify on staging: species, level, name, UUID persistence through chunk unload/restart, trigger and leash, early catch refusal or permanent uncatchability, gate opening, capture, respawn, and blackout claim recovery. Also prove the current 20% charge and a fresh account's actual starting balance/inventory.
+- Offline inventory found species, model and animation resources for all ten in Cobblemon 1.8.0+1.21.1 jar sha256 `a6228f32...`; the ten resident placements remain unobserved.
+- **Coordinate correction:** the approved Jungle West point for Split-Bark, (4464, 7312), is underwater on the canonical water heightmap (that sub-region has median y56 and max y61). The handoff moves it to real jungle land at Long Isle South. Do not revive the drowned coordinate.
