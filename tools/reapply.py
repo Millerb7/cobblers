@@ -104,6 +104,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-02: the Seaward Drift, its strip mine and Driftmouth Isle (tools/sea_drift.py,
                 # data/sea_drift.json): 90 block functions run by R9SD, before the Habitat Blocks that sit in its rock
                 "cobblers_sea_drift",
+                # 2026-10-02: Frostpeak's summit dressing round Articuno's tower (tools/frostpeak_summit.py): wind-shaped
+                # tors, rime, lee plants and the old pilgrims' way to the north door. Block functions run by R18S
+                "cobblers_frostpeak_summit",
                 # 2026-09-29: the gym interiors (tools/gym_interiors.py, data/gym_interiors.json): the healing
                 # machines out of all eight placed gyms, and gym 1's works carved under its lot. Block functions run
                 # by R16E, after the donors (R9) that stamp the gyms whole and would erase anything written first
@@ -489,6 +492,8 @@ def prepare_jobs(a):
     add("frostpeak_camp:build", "frostpeak_camp.py", "build", *src)
     add("frostpeak_camp_audit", "frostpeak_camp_audit.py", "--inputs-root", str(ROOT), *src)
     add("sea_drift:build", "sea_drift.py", "build", *src)
+    add("frostpeak_summit:build", "frostpeak_summit.py", "build", *src)
+    add("frostpeak_summit_audit", "frostpeak_summit_audit.py", *src)
     add("sea_drift_audit", "sea_drift_audit.py", *src)
     # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
     # then the offline audit, which re-derives every shell box from data/placements.json, replays the written
@@ -1172,6 +1177,10 @@ def steps(with_spawns=False):
     import articuno_tower
     out.append(("R18A", "Articuno's tower on Frostpeak's summit (data/adopted_legendary_sites.json)",
                 articuno_tower.placement_steps()))
+    # the summit round it (2026-10-02, tools/frostpeak_summit.py): after the tower, whose box and north door it keeps clear
+    import frostpeak_summit
+    out.append(("R18S", "Frostpeak's summit: tors, rime, lee plants and the pilgrims' way (data/frostpeak_summit.json)",
+                frostpeak_summit.placement_steps()))
     trad = json.loads((ROOT / "data" / "traders.json").read_text(encoding="utf-8"))
     towns = sorted({t["settlement"] for t in trad.get("traders") or [] if t.get("settlement")})
     out.append(("R14", "town traders", [x for t in towns for x in (("fn", "cobblers:towns/vendors_%s" % t), ("wait", 8))]))
