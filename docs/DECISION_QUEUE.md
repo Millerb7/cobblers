@@ -172,6 +172,18 @@ Isle", jungle and sparse-jungle paint over open water) and `towns.json` keeps `j
 **"Sunken Court"**. Both fire over the sea, which is the title in your second screenshot. "Sunken Court" is
 arguably *better* now than when it was written; "Jungle Isle" over 1.2 km2 of ocean is not.
 
+### B16. Articuno — TAKEN, (904, 320)
+
+The owner, 2026-10-01: *"take (904, 320). The refusal tested one pad and refused a mountain, and your site keeps
+what it said was the point."* Seat y151, top y225, 85 blocks under `max_y`; 235 blocks due east of the summit at
+almost the same latitude and 159 below it; ground spread **1** over 440 columns; **73 blocks of fill, zero cut**.
+Recorded in `data/adopted_legendary_sites.json` as `adopted_articuno_shrine`. The two measured alternatives stay in
+the file as measurements, not open options — the south-foot one at (760, 652) becomes live again only if the
+research camp and the shrine are ever meant to read as one place.
+
+**Still gated by EXP-LEG-ALTAR**, like the other three: all four carry LumyMon altars and nothing has yet shown a
+pasted altar responds to anything. Placing is not the question; functioning is.
+
 ## C. In-game checks only you can make
 
 | # | Check | Why a session cannot |

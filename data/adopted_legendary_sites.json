@@ -326,7 +326,7 @@
    "template": "cobbleverse:legendary/articuno",
    "legendary": "Articuno",
    "rank": 4,
-   "status": "sited, not placed",
+   "status": "SITED AND TAKEN, not placed. The owner, 2026-10-01: \"take (904, 320). The refusal tested one pad and refused a mountain, and your site keeps what it said was the point.\"",
    "source_archive": "COBBLEVERSE-DP-v31.zip",
    "size": [
     20,
@@ -404,7 +404,8 @@
      "why_not": "at the FOOT of the south face, 77 blocks from the research camp the owner sited on 2026-10-01 - the tightest story on offer, researchers camped beside the thing they study. It is here rather than chosen because it gives up the summit entirely, which is the one thing refused group 6 said must not be given up. If the owner wants the camp and the shrine to read as one place, this is the site and this record should say so."
     }
    ],
-   "still_gated_by": "EXP-LEG-ALTAR, exactly as the other three are: this template carries `lumymon:articuno_altar` (data/structures.json carries.notable_blocks) and nothing has yet shown that a pasted LumyMon altar responds to anything. Placing is not the question; functioning is."
+   "still_gated_by": "EXP-LEG-ALTAR, exactly as the other three are: this template carries `lumymon:articuno_altar` (data/structures.json carries.notable_blocks) and nothing has yet shown that a pasted LumyMon altar responds to anything. Placing is not the question; functioning is.",
+   "alternatives_measured_note": "kept as measurements, not as open options: the owner took (904, 320) on 2026-10-01. The two below are recorded so a later session does not re-derive them, and because the south-foot one becomes live again if the research camp and the shrine are ever meant to read as one place."
   }
  ],
  "refused": [
