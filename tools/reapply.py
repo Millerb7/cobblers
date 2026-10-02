@@ -118,6 +118,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-02: Codex's ten named residents (tools/resident_encounters.py, data/resident_encounters.json):
                 # a keeper loop and respawn clock hold them, so world-local; dressed and the ungated ones summoned by R18R
                 "cobblers_residents",
+                # 2026-10-02: the relic site underground (tools/relic_underground.py, data/relic_underground.json): the
+                # old surface build taken off, then the hall, gallery and passage carved, by R9RU; its zone check acts on
+                # its own (an advancement), so world-local below
+                "cobblers_relic_underground",
                 # 2026-09-29: the gym interiors (tools/gym_interiors.py, data/gym_interiors.json): the healing
                 # machines out of all eight placed gyms, and gym 1's works carved under its lot. Block functions run
                 # by R16E, after the donors (R9) that stamp the gyms whole and would erase anything written first
@@ -234,7 +238,7 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_ursaluna_cave",
                # 2026-10-02: the residents' keeper SPAWNS Pokemon on its own when a player comes near, so it must never
                # load in the global folder, where the live world would run it too
-               "cobblers_residents")
+               "cobblers_residents", "cobblers_relic_underground")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -436,6 +440,10 @@ def prepare_jobs(a):
     # against the ring model, Victory Road's mouth and the sealed volumes, and refuses to go on if anything is wrong
     add("deep_city:build", "deep_city.py", "build", *src)
     add("deep_city_audit", "deep_city_audit.py", *src)
+    # the relic site underground (2026-10-02): its own fail-closed report runs first and refuses on a problem; the
+    # undo is derived from the superseded surface generator minus the city build above. Its audit runs LATE (below),
+    # once every other block pack is built, because it sweeps them all for a cell the undo or the shell would touch
+    add("relic_underground:build", "relic_underground.py", *src, "build")
     add("habitat_blocks:function", "habitat_blocks.py", "function")
     add("rewards_pack", "rewards_pack.py")
     # every conversation that compiles, in one pack: the NPCs', the props' and the actors' (refusals are listed)
@@ -521,6 +529,7 @@ def prepare_jobs(a):
     add("resident_encounters", "resident_encounters.py", *src)
     add("resident_encounters_audit", "resident_encounters_audit.py", *src)
     add("sea_drift_audit", "sea_drift_audit.py", *src)
+    add("relic_underground_audit", "relic_underground_audit.py", *src)
     # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
     # then the offline audit, which re-derives every shell box from data/placements.json, replays the written
     # functions into a voxel model and fails the prepare on a broken route, a trainer that can be walked round, a
@@ -1078,6 +1087,12 @@ def steps(with_spawns=False):
     # R9D was the retired Victory Road regions step, and tests/test_reapply_vr_steps.py keeps that id retired
     out.append(("R9DC", "the Deep's city and the relic area's surface (tools/deep_city.py)",
                 [("fn", "cobblers:deep_city/%s" % f) for f in indexed("cobblers_deep_city", "deep_city")]))
+    # the relic site underground (2026-10-02, tools/relic_underground.py): AFTER R9DC, because its undo takes off the
+    # old surface build minus what the city now writes, and its passage meets the HQ's side of the pit; BEFORE R9E and
+    # before Codex's cradle, whose own shell would seal the passage. Hold the box, undo, carve (CAVERN pattern), release
+    import relic_underground
+    out.append(("R9RU", "the relic site underground: the old surface build off, the hall carved (data/relic_underground.json)",
+                relic_underground.placement_steps()))
     # the Habitat Blocks, after everything that builds the floors they sit in (R9C's shell pass overwrites them). A
     # block placed by command stays inert until its chunk loads from disk, and EXP-021 found only a restart does that
     # reliably: the audit runs with the server stopped, so the boot after it is that restart. Verify after it.

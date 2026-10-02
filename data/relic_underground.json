@@ -1,10 +1,23 @@
 {
   "schema": "cobblers.relic_underground/1",
-  "status": "design plus generator, 2026-10-01. Nothing is installed, nothing is in any world, nothing has been seen in game. The owner's instruction this file answers: 'THE RELIC SITE UNDERGROUND, reachable only through the Compact HQ, turned back by the zone check rather than barriers.'",
+  "status": "wired 2026-10-02: built by prepare into build/datapacks/cobblers_relic_underground (world-local) and applied by tools/reapply.py step R9RU, after R9DC and before R9E, which first takes the old surface build off and then carves. NOT YET APPLIED to any world and nothing seen in game. The owner's instruction this file answers: 'THE RELIC SITE UNDERGROUND, reachable only through the Compact HQ, turned back by the zone check rather than barriers.'",
   "builder": "tools/relic_underground.py",
+  "audit": "tools/relic_underground_audit.py",
   "design": "docs/world-building/RELIC_UNDERGROUND.md",
   "generated_by": "hand; every coordinate is measured off the canonical heightmap (tools/ground.py) or off tools/rift_deep.py's pit model, never off a world",
   "pack": "cobblers_relic_underground",
+  "step": "R9RU",
+  "bounds": {
+    "why": "every column this pack writes, for the integrator's collision checks and the step's one forceload",
+    "undo": [3285, 3229, 3429, 3384],
+    "undo_why": "the traced relic_area_shrine region's bbox (data/rift_regions.json): the old surface build wrote only inside it",
+    "carve_with_shell": [3345, 3217, 3445, 3331],
+    "carve_with_shell_why": "the hall, gallery and passage (x3358-3421, z3241-3307) grown by the 24-block shell",
+    "hall": [3369, 3241, 3411, 3283],
+    "gallery": [3389, 3284, 3391, 3304],
+    "passage": [3358, 3305, 3421, 3307],
+    "y": {"carve": [5, 40], "shell": [-19, 65], "undo": [84, 110]}
+  },
 
   "rung": "datapack plus functions and commands (CLAUDE.md principle 6, rungs 5 and 6). The rungs below it do not reach: Cobblemon native has no player-zone concept and no area permission; no installed addon gates an area (data/rift_zones.json rung, same finding); Cobbleverse ships none; no config key expresses a box a player may not stand in. A vanilla datapack does: a minecraft:location advancement fires on a player inside a box and its reward function acts. The rung is PROVEN in this repository rather than assumed, by tools/gulch_mine.py's gate and tools/rift_zones.py's five zones, which are this exact shape.",
   "rung_why_not_barriers": "the rung ABOVE configuration that the superseded design used was none at all: a built fence (tinted glass under iron bars) is a barrier, not a mechanism, and the owner has rejected it. Removing it removes blocks, not machinery.",
@@ -12,12 +25,7 @@
   "supersedes": {
     "document": "docs/world-building/DEEP_CITY.md section 5",
     "what": "the relic area's SURFACE composition and its Compact cordon. The shaft-from-the-HQ half of section 5 is kept unchanged and this file depends on it.",
-    "not_edited_here": [
-      "docs/world-building/DEEP_CITY.md",
-      "data/deep_city.json",
-      "tools/deep_city.py"
-    ],
-    "why_not_edited": "another agent is extending those three this wave. The removal is a proposal: surface_proposal below, and docs/world-building/RELIC_UNDERGROUND.md section 3, name the exact keys and the exact lines."
+    "applied_2026_10_02": "surface_proposal below is DONE: tools/deep_city.py no longer builds the platform, arches, ring, stones, way or cordon (it still computes the shrine's, the way's and the stones' footprints, writing nothing, so the dig does not move); data/deep_city.json relic_area.capped names this file and its arches/ring/cordon moved under relic_area.superseded_surface; decisions.relic_cordon became superseded_relic_cordon; tools/deep_city_audit.py's cordon check now FAILS on a fence; the old generator is kept verbatim in tools/relic_surface_superseded.py, and this file's pack carries the undo for a world that already has the old build."
   },
 
   "measured": {
@@ -48,11 +56,12 @@
     "junction": {"at": [3390, 3306], "floor_y": 6, "why": "the gallery leaves the passage at x3390, 37 blocks west of the HQ column and 33 east of the cradle: far enough from both that neither chamber's rock is thinned."},
     "gallery": {
       "x": [3389, 3391],
-      "z": [3284, 3303],
+      "z": [3284, 3304],
       "floor_y": 5,
       "height": 5,
-      "step": "one step down from the passage's y6 at z3304 to the gallery's y5",
-      "length": 20
+      "step": "one step down from the passage's floor (y6 at x3390-3391, y7 at x3389) through the passage's north wall at z3304 to the gallery's y5",
+      "length": 21,
+      "fixed_2026_10_02": "the gallery was [3284, 3303] and 20 long, which left the passage's one-block north wall at z3304 standing between them: the gallery and the hall were sealed off from the passage. Neither the generator's report nor anything else noticed, because each read the same numbers; tools/relic_underground_audit.py's route check (a walk from the HQ doorway to the hall's centre) found it. z3304 is now the gallery's, so the wall has a three-wide opening at x3389-3391."
     },
     "hall": {
       "centre": [3390, 3262],
@@ -127,7 +136,8 @@
       "no_light_blocks": "no minecraft:light anywhere (docs/STATE.md: places are lit as towns, never light blocks)",
       "target": "NOT MEASURED. tools/light_plan.py is the measure and its emitter table is known to be missing modded emitters (DEEP_CITY.md section 4). The hall is not a street and section 4's 12-or-more street target is not claimed here."
     },
-    "spawns": "the hall needs to be inside the Deep's spawn-free precinct or to carry its own Habitat band. NOT AUTHORED HERE: data/habitat_blocks.json and the precinct are not this file's, and a dark 1,849-column room with no decision is a mob farm."
+    "spawns": "the hall needs to be inside the Deep's spawn-free precinct or to carry its own Habitat band. NOT AUTHORED HERE: data/habitat_blocks.json and the precinct are not this file's, and a dark 1,849-column room with no decision is a mob farm.",
+    "spawn_decision": {"status": "OPEN (2026-10-02). Deliberately not decided by the unit that wired the carve.", "why_open": "what lives in the hall is part of Hoopa's story, and Hoopa's cradle (3357, 3306) is Codex's (DEEP_CITY.md section 5, HANDOVER_CODEX.md item 26). No Hoopa encounter, Habitat Block or spawn pool is invented here.", "options": ["(a) the Deep's spawn-free precinct extended over the hall: nothing spawns, the room is architecture and relics", "(b) a Habitat band of its own, chosen with the cradle's story", "(c) leave it to light: NOT RECOMMENDED, the hall's light is not measured"], "meanwhile": "with the HQ's basement and shaft unbuilt (zone.hq_access) the hall is sealed rock-to-rock, so a hostile spawning in it reaches no player who has not dug in"}
   },
 
   "zone": {
@@ -189,16 +199,22 @@
       "state": "OPEN. No door, no bars, no seal, nothing to break and nothing to pick.",
       "why": "the owner: 'turned back by the zone check rather than barriers'. An open doorway with a zone behind it is the instruction exactly: the player can see the passage, can walk at it, and is turned back by the check and not by a block. It also deletes the dependency DEEP_CITY.md section 5 carried: a lumymon:elevator with requiredAdvancement set on the shaft. THAT FIELD IS ASSUMED, NOT SOURCED (DEEP_CITY.md cites it; no jar read or documentation is quoted anywhere in this repository), and this design does not need it: the shaft down from ring 0 can be plain stairs or an ungated lift, because the gate is not the shaft."
     },
+    "hq_access": {
+      "status": "NOT BUILT BY ANY TOOL (measured 2026-10-02). data/deep_city.json reserves hq_basement [3419, -4, 3296, 3445, 16, 3320] and hq_secure_shaft [3423, 0, 3304, 3431, 65, 3312] and nothing writes into them; tools/deep_city.py lays a reinforced-deepslate hatch at the shaft's head on ring 0. So the passage this file carves ends in rock at x3422, and the knock box is solid rock: until the basement and the shaft are carved, nobody walks in and nobody can be granted the pass. The hall is reachable only by digging, and the zone turns a passless digger back. DEEP_CITY.md section 9 step 5 puts 'HQ, shaft, passage and cradle' after Codex sends the chamber's needs; carving the basement and shaft is an owner/Codex decision, not this file's.",
+      "shaft_hatch": {"at": [3427, 66, 3308], "block": "minecraft:reinforced_deepslate", "also": [3427, 66, 3309], "read_from": "tools/deep_city.py build (the HQ's shaft hatch, materials.seal)"},
+      "front_step": [3444, 66, 3308]
+    },
     "arrive": null,
     "arrive_why": "nothing is teleported in. The doorway is open and the player walks. tools/rift_zones.py teleports on grant because its guards stand behind walls; there is no wall here.",
     "exit": null,
     "exit_why": "no exit box. RIFT_ZONES.md section 4 needs one because its zones sit behind walls with gatehouses and leaving has to be arranged. Leaving here is walking east out of box 3 into the basement, which no check touches. Two advancements and two functions fewer, and one fewer thing that can misfire.",
     "turn_back": {
-      "at": [3436.5, 67, 3308.5],
+      "at": [3444.5, 67, 3308.5],
       "yaw": -90,
       "pitch": 0,
       "facing": "east, away from the HQ, out over the city",
-      "why": "ring 0 of the Deep, nine blocks east of the HQ tower (x3422-3432) and on the Compact's own front step, which is where RIFT_ZONES.md section 4 puts a turned-back player: in front of the gate, facing away. Measured, not guessed: tools/rift_deep.py model() gives ring 0 and tread_y 66 at (3436, 3308), so y67 is standing on the tread. It is 27 blocks above the zone's ceiling and outside every box.",
+      "why": "ring 0 of the Deep, on the Compact's own front step: the sidewalk the city lays at y66 just east of the HQ's ring-0 building, which is where RIFT_ZONES.md section 4 puts a turned-back player: in front of the gate, facing away. MEASURED 2026-10-02 from tools/rift_deep.py model() (ring 0, tread y66 at x3427-3461 on z3308) and from tools/deep_city.py's build (x3444 z3308: polished blackstone bricks at y66, nothing at y67-68; the HQ tower's walls are x3427-3428 and x3438-3439 and an HQ wall stands at x3442). tools/relic_underground.py report re-checks all three every run. It is 27 blocks above the zone's ceiling and outside every box.",
+      "was": {"at": [3436.5, 67, 3308.5], "why_moved": "the first siting put the player INSIDE the HQ tower's ground floor (interior x3429-3437, z3304-3312, walls closed at y67-68 in the city's build): a turned-back player would have been shut in a sealed room. Its premise 'the HQ tower (x3422-3432)' was wrong; the built tower is x3427-3439."},
       "spawnpoint_reset": "a bed or respawn anchor set inside the zone is overridden first (`spawnpoint @s` for non-creative players) before the teleport, so a respawn cannot loop: RIFT_ZONES.md section 4 and tools/rift_zones.py turn_back.",
       "message": "Turned back: the relic hall is reached through the Compact's HQ."
     },
@@ -221,7 +237,7 @@
   },
 
   "surface_proposal": {
-    "status": "PROPOSAL. Not applied. tools/deep_city.py, data/deep_city.json and docs/world-building/DEEP_CITY.md are another agent's this wave.",
+    "status": "APPLIED 2026-10-02 (supersedes.applied_2026_10_02). The line numbers below are the 2026-10-01 ones and no longer match.",
     "principle": "a player on the lip sees that the Compact dug here, found something and closed it up, and learns nothing about where it went. Everything that says WHAT was found goes underground; everything that says A DIG HAPPENED stays.",
     "stops_being_built": [
       {"element": "the stepped platform", "data_key": "relic_area.shrine", "code": "tools/deep_city.py build_relic, the stepped round platform, about lines 1704-1728 (the disc, its steps, out['shrine'])", "why": "it is the shrine's floor and the shrine is underground"},
@@ -262,7 +278,7 @@
     "sequencing": [
       "the carve must run AFTER tools/rift_deep.py's pit and AFTER tools/deep_city.py's HQ, because it joins the HQ basement at x3421 y0-y5 and would otherwise end in unbuilt rock",
       "the carve must run BEFORE Codex's cradle, or the cradle's own 24-block shell will seal this passage's west end: tools/cavern_plan.py's shell converts every void it finds within 24 blocks, and x3358 is 1 block from the cradle's centre column",
-      "a tools/reapply.py step is needed and is NOT WRITTEN HERE (that file is not this one's to edit): one step after R9DC and before R9E, on the CAVERN pattern (02_shell, carve, 25_reshell, then the composition). prepare fails closed until it exists, which is the correct behaviour",
+      "WRITTEN 2026-10-02: tools/reapply.py step R9RU, after R9DC and before R9E: forceload the bounds, undo, 02_shell, 10_void, 20_surfaces, 25_reshell, 30_composition, release (relic_underground.placement_steps). The undo runs after R9DC because it subtracts what the current city writes, and R9DC must not run after it on a world that still has the old build (it does not: R9DC no longer writes those cells)",
       "the zone pack itself needs no step: it is advancement-driven, like the gulch's"
     ],
     "upgrade_path": {
