@@ -62,6 +62,7 @@ import numpy as np
 
 ROOT =Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 DATA = ROOT / "data" / "relic_underground.json"
 OUT = ROOT / "build" / "datapacks" / "cobblers_relic_underground"
 NS = "cobblers"
@@ -200,7 +201,7 @@ class Geo:
 
 def source_root_of(given):
     import os
-    sr = given or os.environ.get("COBBLERS_SOURCE_ROOT")
+    sr = given or env_source_root()
     if not sr:
         raise RelicError("no source root: pass --source-root or set COBBLERS_SOURCE_ROOT")
     return sr

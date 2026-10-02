@@ -46,6 +46,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 
 import function_limits  # noqa: E402
 
@@ -1073,12 +1074,12 @@ def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = p.add_subparsers(dest="cmd", required=True)
     q = sub.add_parser("build")
-    q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"))
+    q.add_argument("--source-root", default=env_source_root())
     q.add_argument("--suggest", action="store_true",
                    help="authoring: for a piece that does not fit, print the nearest place it does; writes nothing")
     q = sub.add_parser("map")
     q.add_argument("settlement")
-    q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"))
+    q.add_argument("--source-root", default=env_source_root())
     q.add_argument("--at")
     q.add_argument("--radius", type=int, default=40)
     q.add_argument("--step", type=int, default=1)
@@ -1090,7 +1091,7 @@ def main(argv=None):
     q.add_argument("--spec", help="extra piece fields as JSON, e.g. '{\"length\": 5}'")
     q.add_argument("--radius", type=int, default=30)
     q.add_argument("--count", type=int, default=3)
-    q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"))
+    q.add_argument("--source-root", default=env_source_root())
     a = p.parse_args(argv)
     return {"build": build, "map": show_map, "fit": fit}[a.cmd](a) or 0
 

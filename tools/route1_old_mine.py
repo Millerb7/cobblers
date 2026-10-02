@@ -42,6 +42,7 @@ import os
 from pathlib import Path
 
 import ground as G
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 
 ROOT = Path(__file__).resolve().parent.parent
 SID = "route1_old_mine"
@@ -437,7 +438,7 @@ def find_spot(g):
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"))
+    p.add_argument("--source-root", default=env_source_root())
     a = p.parse_args(argv)
     g = G.Ground(a.source_root)
     top, clear = plan(g)

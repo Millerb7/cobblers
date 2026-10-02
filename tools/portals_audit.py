@@ -37,6 +37,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 
 DATA = ROOT / "data" / "portals.json"
 PACK = ROOT / "build" / "datapacks" / "cobblers_portals"
@@ -463,7 +464,7 @@ def audit(a):
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"))
+    p.add_argument("--source-root", default=env_source_root())
     p.add_argument("--packs", default=str(ROOT / "build" / "datapacks"))
     a = p.parse_args(argv)
     bad = audit(a)

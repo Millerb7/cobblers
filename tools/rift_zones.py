@@ -36,6 +36,7 @@ from collections import deque
 from pathlib import Path
 
 import numpy as np
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 
 ROOT = Path(__file__).resolve().parent.parent
 SPEC = ROOT / "data" / "rift_zones.json"
@@ -220,7 +221,7 @@ def resolve_source_root(source_root):
     "TypeError: expected str, bytes or os.PathLike object, not NoneType", which says nothing about what
     is missing. tools/terrain.py raises TerrainUnavailable with the variable's name for exactly this."""
     import os
-    r = source_root or os.environ.get("COBBLERS_SOURCE_ROOT")
+    r = source_root or env_source_root()
     if not r:
         raise ZoneError("source_root is unset: pass --source-root or set COBBLERS_SOURCE_ROOT")
     return r

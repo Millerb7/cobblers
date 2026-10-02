@@ -60,6 +60,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 DATA = ROOT / "data" / "relic_underground.json"
 PACKS = ROOT / "build" / "datapacks"
 PACK = PACKS / "cobblers_relic_underground"
@@ -587,7 +588,7 @@ def city_blocks_of(bounds):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"))
+    ap.add_argument("--source-root", default=env_source_root())
     ap.add_argument("--pack", default=str(PACK))
     a = ap.parse_args(argv)
     if not a.source_root:

@@ -19,6 +19,7 @@ import os
 import re
 import sys
 from pathlib import Path
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -3184,7 +3185,7 @@ def render_text(report: Report, ctx: Context):
 def main(argv=None):
     p = argparse.ArgumentParser(description="Validate authored campaign data.")
     p.add_argument("--data", default=str(ROOT / "data"), help="data directory")
-    p.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"),
+    p.add_argument("--source-root", default=env_source_root(),
                    help="root of the out-of-repo source/ tree")
     p.add_argument("--world-save", default=os.environ.get("COBBLERS_WORLD_SAVE"),
                    help="a stopped world copy to check placed Habitat Blocks against (never the live world)")

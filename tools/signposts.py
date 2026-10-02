@@ -27,6 +27,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 OUT = ROOT / "build" / "datapacks" / "cobblers_signs"
 REPORT = ROOT / "derived" / "signposts.json"
 MIN_GAP = 150                 # blocks between transition posts on one route
@@ -318,7 +319,7 @@ def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = p.add_subparsers(dest="cmd", required=True)
     f = sub.add_parser("function")
-    f.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"))
+    f.add_argument("--source-root", default=env_source_root())
     v = sub.add_parser("verify")
     v.add_argument("--world", required=True)
     a = p.parse_args(argv)

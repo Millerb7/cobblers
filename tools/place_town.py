@@ -38,6 +38,7 @@ import numpy as np
 
 import function_limits
 import nbt
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 
 ROOT = Path(__file__).resolve().parent.parent
 DIRS = ["north", "east", "south", "west"]
@@ -676,7 +677,7 @@ def main(argv=None):
     p.add_argument("--placements", default=str(ROOT / "data" / "placements.json"))
     p.add_argument("--legs", default=str(ROOT / "derived" / "routes" / "critical_legs.json"))
     p.add_argument("--surface-world", default=None, help=argparse.SUPPRESS)
-    p.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"),
+    p.add_argument("--source-root", default=env_source_root(),
                    help="heightmap root: the only source of ground (tools/ground.py)")
     p.add_argument("--out", default=None)
     p.add_argument("--install", default=None, help="copy the datapack into this datapacks folder")

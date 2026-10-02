@@ -184,6 +184,9 @@ def test_cli_reads_the_axis_from_a_landmark(tmp_path):
 
 def test_cli_refuses_the_real_unconfigured_terrain(tmp_path, monkeypatch):
     monkeypatch.delenv("COBBLERS_SOURCE_ROOT", raising=False)
+    # the root also falls back to .claude/settings.json (terrain.env_source_root), so "unconfigured" means both
+    import terrain
+    monkeypatch.setattr(terrain, "env_source_root", lambda: None)
     with pytest.raises(SystemExit) as exc:
         X.main(["--polyline", "0,0;10,0", "--width", "10", "--out", str(tmp_path / "n.json")])
     assert "terrain unavailable" in str(exc.value)

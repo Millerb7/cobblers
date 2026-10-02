@@ -275,8 +275,9 @@
   that apply; the level band (60 / 67 against a cap of 50) is now the only gate. `tools/presence_audit.py
   --only gulch,dens` drives each keeper over RCON and counts the Megas. `farm_tiers` is ASSUMED and untimed.
 - **An agent worktree CAN read the canonical heightmap; only `derived/` is missing**
-  **But on 2026-10-02 it reached neither this session's shell nor three of six agents**: each passed
-  `--source-root C:/Users/wnd/Documents` (or the variable) by hand. Brief agents to set it explicitly.
+  **The variable is not reliably injected** (missing from a session's shell and three of six agents on
+  2026-10-02), so every tool now resolves it through `terrain.env_source_root()`, which falls back to the
+  committed `.claude/settings.json`; `tests/test_source_root_fallback.py` holds that.
   (`docs/research/AGENT_WORKTREE_INPUTS.md`, proven 2026-10-01). `COBBLERS_SOURCE_ROOT` is set in
   `.claude/settings.json` `env` and reaches agents, so `tools/ground.py` works there: a test-author agent
   briefed that it could not run the heightmap-dependent suites ran them anyway and answered y122 at

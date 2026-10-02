@@ -236,11 +236,17 @@ nights of planning does not exist.** Measured, not inferred:
   `git rev-parse`, `printenv`, a `ground.py` read and `rift_heightmap.py --plan` --
   **not one prompt, not one block.** The old claim that the classifier refused
   `--plan` twice **does not reproduce**, and the planning built on it was wasted.
-- **An agent CAN read the canonical heightmap.** `COBBLERS_SOURCE_ROOT` is set in
-  `.claude/settings.json` `env` and reaches agents, so `tools/ground.py` works in a
-  worktree: it answered y122 at (4528, 4416), the same ground the main session
-  measured. Confirmed three times, by three different agents, one of which ran the
-  heightmap-dependent contract suite it had been told it could not run.
+- **An agent CAN read the canonical heightmap -- but NOT because the environment
+  variable arrives.** `COBBLERS_SOURCE_ROOT` is configured in `.claude/settings.json`
+  `env`, and the harness does NOT reliably inject it: on 2026-10-02 it was missing
+  from a main session's shell and from three of six agents' worktrees, and present in
+  the same session after a restart. Two sessions lost time to the old claim that it
+  "reaches agents". **Tools no longer depend on it:** `terrain.env_source_root()` reads
+  the variable, else the committed `.claude/settings.json` (`settings.local.json`
+  overrides), and every tool resolves the root through it
+  (`tests/test_source_root_fallback.py` fails if one reads `os.environ` directly). So
+  `tools/ground.py` works in any worktree, injected or not; it answered y122 at
+  (4528, 4416), the same ground the main session measured.
 - **An agent can read outside its worktree.** Two agents read files from another
   checkout by absolute path and said so. The isolation checks are about **writes**,
   the working directory and git redirects -- not reads.
@@ -291,8 +297,8 @@ and the complexity guard above. So:
    <sha>`.
 3. Kits: `python tools/local_inputs.py hydrate --store
    C:/Users/wnd/Documents/cobblers-local` (allowed: all 338 files, verified). The
-   **heightmap needs nothing** -- it is readable at its absolute path through
-   `COBBLERS_SOURCE_ROOT`. Only `derived/` is absent, and `.worktreeinclude` did not
+   **heightmap needs nothing** -- tools find it through `terrain.env_source_root()`,
+   which falls back to `.claude/settings.json` when the variable was not injected. Only `derived/` is absent, and `.worktreeinclude` did not
    fix that (it existed, listed the right paths, copied none, and was removed in
    `19838cc` -- a harness question, not a repository one). So: prefer work that
    recomputes from the heightmap, and when a unit truly needs a derived plan, say so

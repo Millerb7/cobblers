@@ -37,6 +37,7 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 
 EMIT = {"lantern": 15, "sea_lantern": 15, "glowstone": 15, "shroomlight": 15, "jack_o_lantern": 15, "beacon": 15,
         "ochre_froglight": 15, "pearlescent_froglight": 15, "verdant_froglight": 15, "campfire": 15, "lava": 15,
@@ -508,7 +509,7 @@ def cmd_check(a):
             print("%-16s DARK BY DESIGN, not a light-check target: %s" % (sid, dark_on_purpose))
             bad += 1
             continue
-        m, scope, cells, _ = build_model(sid, doc, os.environ.get("COBBLERS_SOURCE_ROOT") or a.source_root, a.server_dir)
+        m, scope, cells, _ = build_model(sid, doc, env_source_root() or a.source_root, a.server_dir)
         # fail closed: the expected set is the model's (from the plan), and a check that finds nothing, or far fewer
         # positions than the plan builds, has not checked the place (Surge's town read "0 positions, 0 dark" on a
         # world it was not built in, 2026-09-21)
@@ -564,7 +565,7 @@ def main(argv=None):
     for name in ("plan", "check"):
         q = sub.add_parser(name)
         q.add_argument("settlements", nargs="+")
-        q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"))
+        q.add_argument("--source-root", default=env_source_root())
         q.add_argument("--server-dir", default=os.environ.get("COBBLERS_SERVER_ROOT"))
         if name == "check":
             q.add_argument("--world", required=True)

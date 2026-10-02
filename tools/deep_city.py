@@ -36,6 +36,7 @@ from pathlib import Path
 import numpy as np
 
 import function_limits as FL
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 
 ROOT = Path(__file__).resolve().parent.parent
 SPEC = ROOT / "data" / "deep_city.json"
@@ -2130,7 +2131,7 @@ def main(argv=None):
     if a.cmd == "rooms":
         return rooms()
     import os
-    src = a.source_root or os.environ.get("COBBLERS_SOURCE_ROOT")
+    src = a.source_root or env_source_root()
     cv, plan, services, spec = build(src, a.server_dir)
     order, ncmd = emit(cv, services, plan)
     for k, v in sorted(plan["counts"].items()):

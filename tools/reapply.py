@@ -46,6 +46,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 TOOLS = ROOT / "tools"
 sys.path.insert(0, str(TOOLS))
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 import runtime_guard  # noqa: E402
 BUILD = ROOT / "build"
 PACKS = BUILD / "datapacks"
@@ -1648,14 +1649,14 @@ def main(argv=None):
     q.add_argument("--rehearsal", action="store_true",
                    help="staging only: allow a retained snapshot or an older copy as the source")
     q = sub.add_parser("prepare")
-    q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"), required=not os.environ.get("COBBLERS_SOURCE_ROOT"))
+    q.add_argument("--source-root", default=env_source_root(), required=not env_source_root())
     q.add_argument("--server-dir", required=True)
     q.add_argument("--only", help="run only these jobs (comma separated, shell patterns: town:*,mines*); see --list")
     q.add_argument("--from", dest="from_job", help="run from this job to the end, after a failure")
     q.add_argument("--list", action="store_true", help="print the job names in order and stop")
     q = sub.add_parser("hydrate", help="only the inputs a fresh checkout lacks (local kits, Rift plan, paint, water "
                        "shape); an agent's worktree runs this first. Needs the lock only with --server-dir")
-    q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"), required=not os.environ.get("COBBLERS_SOURCE_ROOT"))
+    q.add_argument("--source-root", default=env_source_root(), required=not env_source_root())
     q.add_argument("--server-dir", help="extract the jar-sourced kit files from this server's jars (takes the lock)")
     q.add_argument("--store", help="a folder holding the local-only kit files (default: COBBLERS_LOCAL_STORE)")
     q = sub.add_parser("install")
@@ -1677,7 +1678,7 @@ def main(argv=None):
     q = sub.add_parser("audit")
     q.add_argument("--server-dir", required=True)
     q.add_argument("--world", required=True)
-    q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"), help="heightmap root, for the light check")
+    q.add_argument("--source-root", default=env_source_root(), help="heightmap root, for the light check")
     q = sub.add_parser("plan", help="print the steps and their commands without running anything")
     a = p.parse_args(argv)
     if a.cmd == "plan":
