@@ -530,6 +530,51 @@
           1583
         ]
       }
+    },
+    {
+      "id": "lake_life_shrew_field_case",
+      "kind": "cache",
+      "place": "Shrew Lake: the surveyor's field case on the pit floor at (2864, 58, 3976), 49 deep, at the end of the line from the torn float on the shoal",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:revive",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/revive.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "The surveyor's field case, on the floor of Shrew Lake's pit: three Net Balls, two Super Potions and a Revive.",
+      "why": "data/lake_life.json hooks shrew_torn_float: WATER_LIFE 2's surveyor's field case (SQ-DIG-02's find)",
+      "built_by": "tools/lake_life.py (the barrel, in cobblers_lake_life's hooks pass)",
+      "trigger": {
+        "min": [
+          2862,
+          57,
+          3974
+        ],
+        "max": [
+          2866,
+          60,
+          3978
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          2864,
+          58,
+          3976
+        ]
+      }
     }
   ]
 }
