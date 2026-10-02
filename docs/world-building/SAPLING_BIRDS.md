@@ -357,10 +357,10 @@ leg that this pass did not identify.
 
 | id | (x, z, ground) | block y | tree | band / pool | bird | src | stages at pool | why |
 |---|---|---|---|---|---|---|---|---|
-| elder_jungle_west_1 | (4464, 7312, 70) | 127 | jungle / emergent_jungle | 25-45 / 25-30 | **Tropius** | v2 | single stage | Plan v2 (see above): re-birded so no line repeats within 1,000 blocks. Was: The roster's woodpecker in the emergent canopy. |
-| elder_jungle_west_2 ★ | (4968, 7416, 126) | 183 | jungle / emergent_jungle | 25-45 / Pikipek 25-30, Toucannon 30-34 | **Toucannon** (rare) over Pikipek 24 | R (authored-only in the roster) | authored final stage | The isle's high ground (y126): the toucan at the top. |
-| elder_jungle_east_1 | (5216, 7904, 81) | 138 | jungle / jungle_edge | 25-45 / 25-30 | **Hawlucha** | R | single stage | The roster's anchor, a wrestler on the jungle edge. |
-| elder_jungle_east_2 | (5248, 6976, 77) | 134 | jungle / jungle_edge | 25-45 / 25-30 | **Squawkabilly** | N to isle (long_isle_south) | single stage | Parrots on the jungle's edge. |
+| elder_jungle_west_1 | (7576, 7824, 106) | 163 | jungle / emergent_jungle | 25-45 / 25-30 | **Tropius** | v2 | single stage | Plan v2 (see above): re-birded so no line repeats within 1,000 blocks. Was: The roster's woodpecker in the emergent canopy. |
+| elder_jungle_west_2 ★ | (6928, 7576, 79) | 136 | jungle / emergent_jungle | 25-45 / Pikipek 25-30, Toucannon 30-34 | **Toucannon** (rare) over Pikipek 24 | R (authored-only in the roster) | authored final stage | The isle's high ground (y126): the toucan at the top. |
+| elder_jungle_east_1 | (8092, 6724, 84) | 141 | jungle / jungle_edge | 25-45 / 25-30 | **Hawlucha** | R | single stage | The roster's anchor, a wrestler on the jungle edge. |
+| elder_jungle_east_2 | (7760, 7072, 134) | 191 | jungle / jungle_edge | 25-45 / 25-30 | **Squawkabilly** | N to isle (long_isle_south) | single stage | Parrots on the jungle's edge. |
 
 ### Long Isle (remote, 1460-3107 off any leg)
 

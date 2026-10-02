@@ -3786,6 +3786,7 @@
       ],
       "footprint_from": "data/towns.json",
       "status": "drafted and laid out on the disposable world 2026-09-21 without the owner's review (batch 3); not in the live world; no traders",
+      "retired": "2026-10-02, decision B15 ('jungle isle should be removed', the owner 2026-09-27; and 2026-10-02 in game: 'jungle isle stuff still intrudes pacifidlog'). The Jungle Isle is under the sea since the water export, four of the six ruins' seats overlap Pacifidlog's raft town by 496 columns, and the old y126 seat of ruin_great_hall stood in staging as a dirt column y56-128. tools/reapply.py places() and donors() skip a retired settlement; its records are kept here as they were. The built residue is cleared by tools/clear_jungle_residue.py.",
       "plan": {
         "reading": "An overgrown causeway comes up from the north shore into the jungle and ends in a ruined court. The ruins are what is left of a stone city the jungle has taken: broken walls either side of the causeway, half sunk, and the great ruin at the court's south side. Nothing is lit and nothing is kept.",
         "entries": [

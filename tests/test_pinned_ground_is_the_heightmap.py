@@ -46,14 +46,12 @@ sys.path.insert(0, str(ROOT / "tools"))
 # A LIVE FAULT, strict xfail until decision B13 is answered: the four drowned jungle elders. The remedy is
 # the owner's ("in the ocean with the roots extended, or somewhere else entirely"), so the data is not
 # guessed at here -- answering B13 removes the mark and this test turns green on its own.
-DROWNED_ELDERS = (
-    "data/elder_trees.json's four jungle elders carry their pre-water heights (70, 126, 81, 77) where the "
-    "heightmap now has 53, 58, 53 and 54: the water pass drowned the Jungle Isle and tools/elder_trees.py's "
-    "pinned path neither re-reads the ground nor applies the siting path's `wet` guard. Four world trees "
-    "stand in open air over the ocean with 16 bird Habitat Blocks in their trunks. Decision B13.")
+# Decision B13, answered by the owner 2026-10-02 ("move them to long isle south"): the four drowned jungle elders
+# and their 16 nests moved to Long Isle south (data/elder_trees.json superseded_site keeps the old trunks), so the
+# strict xfails that held this defect are gone and both checks below run as plain tests.
 
 SWEPT = (
-    pytest.param("data/elder_trees.json", marks=pytest.mark.xfail(strict=True, reason=DROWNED_ELDERS)),
+    "data/elder_trees.json",
     "data/towns.json",
     "data/themed_saplings.json",
 )
@@ -107,7 +105,6 @@ def test_every_authored_ground_is_the_heightmaps_ground(rel, ground):
         "stands in mid-air or buried:\n  %s" % (rel, "\n  ".join(wrong)))
 
 
-@pytest.mark.xfail(strict=True, reason=DROWNED_ELDERS)
 def test_no_pinned_elder_is_planted_on_a_drowned_column(ground):
     """A tree needs soil. tools/elder_trees.py's siting path refuses a wet cell (`wet = heights <=
     sea_level`); its pinned path never looks, which is how four elders came to stand over open ocean."""

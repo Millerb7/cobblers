@@ -337,6 +337,8 @@ def places(doc=None):
     ids = []
     for sid, value in doc["settlements"].items():
         plan = value.get("plan") or {}
+        if value.get("retired"):
+            continue                              # data/placements.json settlements.<id>.retired says why
         if sid not in UNPLACED and (plan.get("streets") or plan.get("plaza") or plan.get("anchors")):
             ids.append(sid)
     late = [s for s in ("relic_island", "displaced_city") if s in ids]
@@ -345,7 +347,9 @@ def places(doc=None):
 
 def donors(doc=None):
     doc = doc or placements()
-    return [q["id"] for q in doc["placements"] if q.get("pack_template") and q.get("kind") != "vendor"]
+    retired = {s for s, v in doc["settlements"].items() if v.get("retired")}
+    return [q["id"] for q in doc["placements"] if q.get("pack_template") and q.get("kind") != "vendor"
+            and q.get("settlement") not in retired]
 
 
 def py(*args, cwd=ROOT):

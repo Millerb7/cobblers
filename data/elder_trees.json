@@ -45,43 +45,71 @@
     },
     {
       "id": "elder_jungle_east_1",
-      "subregion": "jungle_east",
-      "x": 5216,
-      "z": 7904,
-      "ground_y": 81,
+      "subregion": "long_isle_south",
+      "x": 8092,
+      "z": 6724,
+      "ground_y": 84,
       "species": "jungle",
       "variant": "a",
-      "rotation": "none"
+      "rotation": "none",
+      "superseded_site": {
+        "subregion": "jungle_east",
+        "x": 5216,
+        "z": 7904,
+        "why_moved": "moved 2026-10-02 (the owner: 'move them to long isle south'): the Jungle Isle went under the sea in the water export (decision B15) and this elder hung 17-68 blocks in the air on its pre-water ground. New site by tools/elder_trees.py pick() over long_isle_south with every other elder held (pad relief <= 1, dry, 220 from every elder, 120 clear of anything authored); the id is kept so its bird pool keeps its name",
+        "pre_water_ground_y": 81
+      }
     },
     {
       "id": "elder_jungle_east_2",
-      "subregion": "jungle_east",
-      "x": 5248,
-      "z": 6976,
-      "ground_y": 77,
+      "subregion": "long_isle_south",
+      "x": 7760,
+      "z": 7072,
+      "ground_y": 134,
       "species": "jungle",
       "variant": "b",
-      "rotation": "none"
+      "rotation": "none",
+      "superseded_site": {
+        "subregion": "jungle_east",
+        "x": 5248,
+        "z": 6976,
+        "why_moved": "moved 2026-10-02 (the owner: 'move them to long isle south'): the Jungle Isle went under the sea in the water export (decision B15) and this elder hung 17-68 blocks in the air on its pre-water ground. New site by tools/elder_trees.py pick() over long_isle_south with every other elder held (pad relief <= 1, dry, 220 from every elder, 120 clear of anything authored); the id is kept so its bird pool keeps its name",
+        "pre_water_ground_y": 77
+      }
     },
     {
       "id": "elder_jungle_west_1",
-      "subregion": "jungle_west",
-      "x": 4464,
-      "z": 7312,
-      "ground_y": 70,
+      "subregion": "long_isle_south",
+      "x": 7576,
+      "z": 7824,
+      "ground_y": 106,
       "species": "jungle",
       "variant": "a",
-      "rotation": "180"
+      "rotation": "180",
+      "superseded_site": {
+        "subregion": "jungle_west",
+        "x": 4464,
+        "z": 7312,
+        "why_moved": "moved 2026-10-02 (the owner: 'move them to long isle south'): the Jungle Isle went under the sea in the water export (decision B15) and this elder hung 17-68 blocks in the air on its pre-water ground. New site by tools/elder_trees.py pick() over long_isle_south with every other elder held (pad relief <= 1, dry, 220 from every elder, 120 clear of anything authored); the id is kept so its bird pool keeps its name",
+        "pre_water_ground_y": 70
+      }
     },
     {
       "id": "elder_jungle_west_2",
-      "subregion": "jungle_west",
-      "x": 4968,
-      "z": 7416,
-      "ground_y": 126,
+      "subregion": "long_isle_south",
+      "x": 6928,
+      "z": 7576,
+      "ground_y": 79,
       "species": "jungle",
       "variant": "b",
-      "rotation": "none"
+      "rotation": "none",
+      "superseded_site": {
+        "subregion": "jungle_west",
+        "x": 4968,
+        "z": 7416,
+        "why_moved": "moved 2026-10-02 (the owner: 'move them to long isle south'): the Jungle Isle went under the sea in the water export (decision B15) and this elder hung 17-68 blocks in the air on its pre-water ground. New site by tools/elder_trees.py pick() over long_isle_south with every other elder held (pad relief <= 1, dry, 220 from every elder, 120 clear of anything authored); the id is kept so its bird pool keeps its name",
+        "pre_water_ground_y": 126
+      }
     },
     {
       "id": "elder_lake_viltri_hollow_1",
