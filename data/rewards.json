@@ -1349,7 +1349,7 @@
         }
       ],
       "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
-      "why": "The thunder feather (a storm watched from the Zapdos tower's top, after eight badges) and the ember feather (the Nether's Moltres tower surveyed, after eight badges: the owner, 2026-10-02, 'Moltres yes').",
+      "why": "The thunder feather (a storm watched from the Zapdos tower's top, after eight badges) and the ember feather (the Craters' Moltres tower surveyed, after eight badges: the owner, 2026-10-02, 'Moltres yes', re-homed to the Craters the same day; data/research_station.json economy.ember_survey). The station is the one source of the three feathers (the owner, 2026-10-02; economy.the_one_source_2026_10_02).",
       "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/research_station.py seats it on, checked by tools/research_station_audit.py"
     },
     {
@@ -1417,7 +1417,7 @@
         }
       ],
       "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
-      "why": "The ruby and sapphire dews, for a player who has met Mesprit, Azelf and Uxie: they wake this station's own Latias and Latios altars.",
+      "why": "The ruby and sapphire dews, for a player who has met Mesprit, Azelf and Uxie: they wake this station's own Latias and Latios altars. Held twice: the dews also need cobblers_station_issuing_eon, added only while economy.eon_issuing is true, so the switch thrown for the feathers does not issue them (data/research_station.json eon_issuing_why).",
       "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/research_station.py seats it on, checked by tools/research_station_audit.py"
     }
   ]

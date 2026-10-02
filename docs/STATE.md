@@ -384,10 +384,11 @@
   data re-places it; the crown appears kept. **The two sessions relayed different species for that click**
   (Calyrex, quoting the owner, in the followups session; Spectrier "walked around" in the legendary session):
   **for the owner** (`experiments/EXP-048-legendary-altar/README.md`). Open: whether the anchorless altars
-  (Articuno, Zapdos, Mew) need an anchor - one right-click at (682, 312, 380). **Feathers and Kubfu's scrolls have
-  two authors, both inert, for the owner**: Shrew Station's Director (`data/research_station.json`, issuing false)
-  and the Frostpeak camp's dialogue (`data/frostpeak_camp.json` item_economy, not built); the station's ember survey
-  still targets the Nether structure. The console half: both
+  (Articuno, Zapdos, Mew) need an anchor - one right-click at (682, 312, 380). **The three feathers have one source,
+  Shrew Station's dialogue at `gym8_cleared` (the owner, 2026-10-02)**: `data/research_station.json` economy, still
+  issuing false (`issuing_open_2026_10_02`: a pinned hold test, the unplaced Zapdos and Moltres towers); the ember
+  survey is a position box on `adopted_moltres_tower`; the dews have their own hold (`eon_issuing`); the camp's
+  `item_economy` is a pointer. Kubfu's scrolls belong to the starter build. The console half: both
   the Crown Cemetery and the Articuno shrine place and now STAND in staging at their adopted corners, all eight
   LumyMon blocks are where the templates put them, and a shaderoot carrot dropped from the console onto the
   Spectrier trigger does nothing - not proof of silence, since the trigger may need a PLAYER's throw. **The

@@ -5323,7 +5323,7 @@
             "field": "quest.evt_station_director.ember_claimed",
             "equals": true
           },
-          "text": "Survey the Nether's fire tower and tell the Director (held: no item is issued yet)."
+          "text": "Survey the fire tower in the Craters and tell the Director (held: no item is issued yet)."
         }
       ],
       "transitions": [
@@ -5852,6 +5852,10 @@
             {
               "kind": "player_tag",
               "tag": "cobblers_station_issuing"
+            },
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_station_issuing_eon"
             },
             {
               "kind": "player_tag",
