@@ -2217,6 +2217,184 @@
         "hornwall",
         "repeat"
       ]
+    },
+    {
+      "id": "quest.evt_station_director.started",
+      "quest_id": "evt_station_director",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has spoken to this Shrew Station NPC (data/research_station.json); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_station_director.thunder_claimed",
+      "quest_id": "evt_station_director",
+      "field": "thunder_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for the thunder feather (HELD: data/research_station.json economy.issuing)."
+    },
+    {
+      "id": "quest.evt_station_director.ember_claimed",
+      "quest_id": "evt_station_director",
+      "field": "ember_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for the ember feather (HELD: data/research_station.json economy.issuing)."
+    },
+    {
+      "id": "quest.evt_station_director.dialogue_cursor",
+      "quest_id": "evt_station_director",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "d001",
+      "allowed_values": [
+        "d001",
+        "d002",
+        "d003",
+        "hub",
+        "s001",
+        "s002",
+        "s003",
+        "e001",
+        "e002",
+        "i001",
+        "i002",
+        "t001",
+        "t002",
+        "m001",
+        "m002"
+      ],
+      "why": "the dialogue cursor of Dr. Imogen Vale (dlg_station_director)."
+    },
+    {
+      "id": "quest.evt_station_courier.started",
+      "quest_id": "evt_station_courier",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has spoken to this Shrew Station NPC (data/research_station.json); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_station_courier.case_given",
+      "quest_id": "evt_station_courier",
+      "field": "case_given",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the field officer has lent this player the calibrated spyglass (HELD: data/research_station.json economy.issuing)."
+    },
+    {
+      "id": "quest.evt_station_courier.glacier_claimed",
+      "quest_id": "evt_station_courier",
+      "field": "glacier_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for the glacier feather (HELD: data/research_station.json economy.issuing)."
+    },
+    {
+      "id": "quest.evt_station_courier.dialogue_cursor",
+      "quest_id": "evt_station_courier",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "f001",
+      "allowed_values": [
+        "f001",
+        "f002",
+        "hub",
+        "w001",
+        "h001",
+        "k001",
+        "k002",
+        "n001",
+        "n002"
+      ],
+      "why": "the dialogue cursor of Dr. Ansel Brandt (dlg_station_field_officer)."
+    },
+    {
+      "id": "quest.evt_station_archive.started",
+      "quest_id": "evt_station_archive",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has spoken to this Shrew Station NPC (data/research_station.json); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_station_archive.crown_claimed",
+      "quest_id": "evt_station_archive",
+      "field": "crown_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for the Calyrex crown (HELD twice: economy.issuing and economy.post_champion_cap)."
+    },
+    {
+      "id": "quest.evt_station_archive.dialogue_cursor",
+      "quest_id": "evt_station_archive",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "a001",
+      "allowed_values": [
+        "a001",
+        "hub",
+        "x001",
+        "x002",
+        "y001",
+        "h001",
+        "c_count",
+        "c_short",
+        "c001",
+        "c002"
+      ],
+      "why": "the dialogue cursor of Tobias Quill (dlg_station_archivist)."
+    },
+    {
+      "id": "quest.evt_station_eon_shrine.started",
+      "quest_id": "evt_station_eon_shrine",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has spoken to this Shrew Station NPC (data/research_station.json); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_station_eon_shrine.dews_claimed",
+      "quest_id": "evt_station_eon_shrine",
+      "field": "dews_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for the ruby and sapphire dews (HELD: data/research_station.json economy.issuing)."
+    },
+    {
+      "id": "quest.evt_station_eon_shrine.dialogue_cursor",
+      "quest_id": "evt_station_eon_shrine",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "k001",
+      "allowed_values": [
+        "k001",
+        "k002",
+        "hub",
+        "v001",
+        "l001",
+        "l002",
+        "h001",
+        "g001",
+        "g002",
+        "g003"
+      ],
+      "why": "the dialogue cursor of Mireille Sato (dlg_station_shrine_keeper)."
     }
   ],
   "gym_markers": {

@@ -7375,6 +7375,29 @@
       "status": "planned",
       "why": "The drovers' herd kept alive in the Hollow's fold (the owner, 2026-10-02: 'the south needs places, not just creatures. Somewhere to find, something in it'). ACTIVATED, the Lopunny cellar's and the Ursaluna den's pattern: up to 6 alive at once, refilled 2 at a time as they are caught or despawn, TICK at chance 1. The position is the fold floor's centre in the ground's own top block (tools/ground.py: y98), which tools/drovers_hollow.py writes as coarse dirt; that pack must run BEFORE R9E (step R9HF) or it writes the floor back over this block. spawn_range 6: the activated spawner searches a box of spawn_range round the block (docs/research/notes/habitat-nest-perching.md 4, ActivatedHabitatSpawning.kt), and 6 keeps that box (x3965-3977, z6035-6047) inside the fold's fence (interior x3963-3979, z6035-6047), so every place a Pokemon can be put is in the pen; nothing is under it (the old working runs at z6019-6027) and the barn's floor (z6016-6030) is outside it (tools/drovers_hollow_audit.py checks every standing place in the box). cancel_range 11: the pack's natural spawns are cancelled in a sphere of 11 round the block, which takes in the whole pen (its far interior corner is 10.7 away) and the lane, and not the barn's floor (12.3 away at the nearest). Nothing holds a Pokemon in afterwards but the fence (the same note: no tether exists for wild spawns). The nearest other Habitat Block is sapling_storm_rift_foot_low, 243 blocks away (measured 2026-10-02 from this file's positions).",
       "mimic_why": "the fold's own floor block (tools/drovers_hollow.py writes coarse dirt in the ground's top block across the pen), so the block is one more patch of trodden earth."
+    },
+    {
+      "id": "station_study_pool",
+      "place": "Shrew Station's study pool off the west coast (data/research_station.json study_pool): in the post under the study deck's middle, mid-water",
+      "pool": "cobblers:station_study_pool",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 456,
+        "y": 60,
+        "z": 2828
+      },
+      "mimic": "minecraft:stripped_spruce_log",
+      "activated": {
+        "spawn_range": 8,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 8,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 4
+      },
+      "status": "planned",
+      "why": "A few Horsea kept in the station's study pool (docs/world-building/RESEARCH_STATION.md section 5.3, the Seaward Drift's precedent: a water Habitat Block). ACTIVATED, up to 4 alive at once, one at a time. The position is the middle of the post tools/research_station.py sets under the study deck's centre (456, 2828): the sea floor there is y57 (heightmap, rounded), 5 under the sea's y62, the post runs y58-61 and the block replaces its middle; the pack must run BEFORE R9E or it writes the post back over this block. spawn_range 8 reaches the water round the deck (its 17 by 17 box, x448-464, z2820-2836, is 289 water columns 3-8 deep, measured 2026-10-02); cancel_range 8 holds the shallows band's natural pool off it. The nearest other Habitat Block is elder_lake_viltri_hollow_1, 898 blocks away (measured from this file's positions). Moved 2026-10-02 from Shrew Lake's lagoon (2574, 103, 4114), where it kept Psyduck, when the owner moved the station to the coast; tools/research_station.py cleanup puts that cell back to lake water on staging. In-water activated spawning is not verified (the Drift's caveat)."
     }
   ]
 }

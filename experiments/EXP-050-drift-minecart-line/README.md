@@ -102,4 +102,21 @@ Run the probes after a second R9SD as well: the shapes and states must be the sa
 
 ## Results
 
-Not run.
+**2026-10-02, staging-2026-10-01, by console (no player).** The first drift's cleanup (26 functions, in index order),
+then `reapply.py run --only R9SD,R9LH,R9E,R9F,R18U,R18S`, no problems.
+
+- **Probes: 28 of 28.** 22 matched the plan's block ids verbatim. The six the plan wrote in prose were probed by hand:
+  - the rock over the bore at (661, 52, 1795) is andesite;
+  - the strips' cache barrel (1420, 104, 1732) is a barrel;
+  - both isle Habitat Blocks (372, 58/53, 1762) are Habitat Blocks;
+  - both buffers, (1462, 113, 1795) and (324, 70, 1795), are mossy stone brick, part of the wall palette.
+- **Loaded ride, both ways: PASS.** The test used a minecart carrying a NoAI, invulnerable villager, with x320-1470 of
+  z1795 force-loaded. Each ride was launched by its stop's own stone button (set powered for 1.5 s), and the
+  passenger was checked every 5 s (`ride_test.py` in this folder; needs the coordination lock env for RCON).
+  - **Gate to isle:** 145 s, at a steady 40 blocks per 5 s (the 8 b/s cap). The cart reached y38 at x372 and climbed
+    the 32 rails to the lighthouse stop (325.5, 70.1, 1795.5) between 135 and 145 s. Passenger aboard, never off z1795.5.
+  - **Isle to gate:** 145 s. It climbed the coast steps and the gatehouse rise into the Foothill Gate stop
+    (1461.5, 113.1, 1795.5). Passenger aboard.
+  - **What this does not show:** a player's own ride. A player's cart gets the same boost, but a player can push
+    against it, which a NoAI villager cannot.
+

@@ -1,7 +1,38 @@
 # The Legendary and Mythical Research Station (proposal)
 
-**Status: PROPOSAL, 2026-10-02. Nothing here is built, authored as data, or placed in any world.** No file in
-`data/`, `tools/` or any world was changed to write it. Every ground and depth figure was measured on the
+**Status: APPROVED, BUILT AS DATA and RE-SITED, 2026-10-02. EVERY ITEM IS HELD.** The owner's decisions, verbatim:
+"Shrew Lake south shore, the Latias and Latios shrine, hold every item until EXP-048 proves an altar responds, Moltres
+yes, no waystone, surveyor stays at the dig camp." Then, the same day: **"research station should be near 552 2812 not
+the lake".** The station now stands on the **west sea coast**: land buildings on dry ground y63-68 just east of
+(552, 2812), a jetty over the 1-deep shoal, a boardwalk spine with the instrument huts over 3-4 deep, a pier west across
+the shelf, the Eon shrine on a platform at **(422, 2812), 15 deep** (sea level y62) about 100 blocks off the beach, and
+the observatory beyond it over 16. Every other decision stands. The measured site, every deck's depth and the lake
+site's superseded record are in `data/research_station.json` (`site`, `superseded_site`); nothing of the proposal
+below was re-written, so **sections 1, 5.1 and 5.4 describe the lake site, which is no longer the build**.
+
+The build is `data/research_station.json`, `tools/research_station.py` (pack `cobblers_research_station`, four zone
+functions run by R9RS before R9E), `tools/research_station_audit.py`, four conversations and quests
+(`dlg_station_director`, `_field_officer`, `_archivist`, `_shrine_keeper`; two lines that named the lake now name the
+sea), four `npc_grant` records placed by R9F (Vale (550, 67, 2823), Quill (569, 69, 2824), Brandt (484, 63, 2793),
+Mireille (422, 63, 2819)), and one **Horsea** Habitat Block (`station_study_pool`, (456, 60, 2828); Horsea, not the
+lake's Psyduck, because it is the coast's own water species and Psyduck is in no roster here). **The switch is
+`data/research_station.json` `economy.issuing`** (false): read `economy.switch` there for what flipping it does.
+
+**The lake build reached staging; the coast build has reached no world.** `python tools/research_station.py cleanup`
+writes `build/staging/cobblers_research_station_cleanup` (staging only, one-off, outside `build/datapacks`): every cell
+the lake build (commit 42ce560) wrote put back to the heightmap world (lake water to y106, air, the ground's top block
+as sand or grass, ASSUMED from `tools/paint_maps.py`), the old Habitat Block's cell included, and the four old NPCs
+removed by type in a tight box at their old seats. It cannot put back the trees and plants the lake build cleared.
+Its run order and check are `data/research_station.json` probe P0.
+
+Not built: replacements (bought copies), the town-ground paving tag and its roster, lily pads, a healer, and Halvard's
+half of the courier inside her own conversation. Latias and Latios verified: `latias_altar` and `latios_altar` take
+`ruby_dew` and `sapphire_dew` and a `summon_anchor`; Moltres rolls 50, 55 or 60 (`MoltresAltar.class`), so the ember
+feather takes Zapdos's gate. **The name "Shrew Station" was kept** although it no longer stands on Shrew Lake; renaming it
+(signs, four conversations, quest and reward places) is the owner's call.
+
+The proposal as written follows, unchanged. When it was written nothing was built, authored as data, or placed in
+any world; no file in `data/`, `tools/` or any world was changed to write it. Every ground and depth figure was measured on the
 post-export canonical heightmap through `tools/ground.py` (rounded; probe `ground(4528, 4416) = 122` and
 `ground(5160, 7463) = 61` both reproduced). Figures marked **relayed** were not re-measured here and name their
 source.

@@ -680,6 +680,100 @@
           6023
         ]
       }
+    },
+    {
+      "id": "station_director",
+      "kind": "npc_grant",
+      "place": "Shrew Station's Institute, behind the reception desk",
+      "npc_at": [
+        550,
+        67,
+        2823
+      ],
+      "quest": "evt_station_director",
+      "contents": [
+        {
+          "item": "lumymon:thunder_feather",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/thunder_feather.json in LumyMon-0.6.6.jar"
+        },
+        {
+          "item": "lumymon:ember_feather",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/ember_feather.json in LumyMon-0.6.6.jar"
+        }
+      ],
+      "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
+      "why": "The thunder feather (a storm watched from the Zapdos tower's top, after eight badges) and the ember feather (the Nether's Moltres tower surveyed, after eight badges: the owner, 2026-10-02, 'Moltres yes').",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/research_station.py seats it on, checked by tools/research_station_audit.py"
+    },
+    {
+      "id": "station_field_officer",
+      "kind": "npc_grant",
+      "place": "Shrew Station's weather hut beside the spine",
+      "npc_at": [
+        484,
+        63,
+        2793
+      ],
+      "quest": "evt_station_courier",
+      "contents": [
+        {
+          "item": "lumymon:glacier_feather",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/glacier_feather.json in LumyMon-0.6.6.jar"
+        }
+      ],
+      "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
+      "why": "The glacier feather, for the courier commission to Dr. Halvard's camp on Frostpeak (after eight badges).",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/research_station.py seats it on, checked by tools/research_station_audit.py"
+    },
+    {
+      "id": "station_archivist",
+      "kind": "npc_grant",
+      "place": "Shrew Station's Archive, among the empty cases",
+      "npc_at": [
+        569,
+        69,
+        2824
+      ],
+      "quest": "evt_station_archive",
+      "contents": [
+        {
+          "item": "lumymon:calyrex_crown",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/calyrex_crown.json in LumyMon-0.6.6.jar"
+        }
+      ],
+      "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
+      "why": "The Calyrex crown, traded for sixteen shaderoot carrots from the Crown Cemetery's field (after the Champion, and only once the post-Champion cap is measured at 70 or more).",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/research_station.py seats it on, checked by tools/research_station_audit.py"
+    },
+    {
+      "id": "station_shrine_keeper",
+      "kind": "npc_grant",
+      "place": "the Eon shrine on Shrew Station's platform, south of the dais",
+      "npc_at": [
+        422,
+        63,
+        2819
+      ],
+      "quest": "evt_station_eon_shrine",
+      "contents": [
+        {
+          "item": "lumymon:ruby_dew",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/ruby_dew.json in LumyMon-0.6.6.jar"
+        },
+        {
+          "item": "lumymon:sapphire_dew",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/sapphire_dew.json in LumyMon-0.6.6.jar"
+        }
+      ],
+      "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
+      "why": "The ruby and sapphire dews, for a player who has met Mesprit, Azelf and Uxie: they wake this station's own Latias and Latios altars.",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/research_station.py seats it on, checked by tools/research_station_audit.py"
     }
   ]
 }

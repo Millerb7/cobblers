@@ -9950,6 +9950,873 @@
       "speakers": {
         "owen": "Owen Cray"
       }
+    },
+    {
+      "id": "dlg_station_director",
+      "quest_id": "evt_station_director",
+      "npc_id": "npc_station_director",
+      "source": "data/research_station.json; docs/world-building/RESEARCH_STATION.md (the approved proposal); the owner's decisions of 2026-10-02 (data/research_station.json request)",
+      "scope": "player",
+      "speakers": {
+        "vale": "Dr. Imogen Vale"
+      },
+      "cursor": {
+        "progression_field": "quest.evt_station_director.dialogue_cursor",
+        "initial_node": "d001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_station_director.started",
+            "value": true
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_station_director.started",
+            "value": false
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ],
+          "node": "d001"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "d001",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "Welcome to Shrew Station. Mind the copper, it's new. We study the things the old stories say live in this region: the legends, and the places they keep coming back to.",
+          "next": "d002"
+        },
+        {
+          "id": "d002",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "Imogen Vale, Director. Out on the platform is the Eon shrine: one altar for Latias, one for Latios, built over the deepest water we could reach.",
+          "next": "d003"
+        },
+        {
+          "id": "d003",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "Fair warning, because the last visitor wanted a promise. We have never seen an altar answer. Not that one, not any. Until we do, nothing that might wake one leaves this station.",
+          "next": "hub"
+        },
+        {
+          "id": "hub",
+          "kind": "choice",
+          "speaker": "vale",
+          "text": "What can the station do for you?",
+          "responses": [
+            {
+              "id": "r_study",
+              "text": "What does the station study?",
+              "next": "s001"
+            },
+            {
+              "id": "r_shrine",
+              "text": "Why build a shrine on the water?",
+              "next": "e001"
+            },
+            {
+              "id": "r_hold",
+              "text": "Could I have a feather? Or a crown?",
+              "visible_when": {
+                "kind": "not",
+                "condition": {
+                  "kind": "player_tag",
+                  "tag": "cobblers_station_issuing"
+                }
+              },
+              "next": "i001"
+            },
+            {
+              "id": "r_storm",
+              "text": "I stood on the thunder tower in a storm.",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_issuing"
+                  },
+                  {
+                    "kind": "flag",
+                    "flag": "gym8_cleared"
+                  },
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_storm_log"
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_station_director.thunder_claimed",
+                    "value": false
+                  }
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "grant_thunder"
+                }
+              ],
+              "next": "t001"
+            },
+            {
+              "id": "r_ember",
+              "text": "I went inside the fire tower in the Nether.",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_issuing"
+                  },
+                  {
+                    "kind": "flag",
+                    "flag": "gym8_cleared"
+                  },
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_ember_survey"
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_station_director.ember_claimed",
+                    "value": false
+                  }
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "grant_ember"
+                }
+              ],
+              "next": "m001"
+            },
+            {
+              "id": "r_bye",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ],
+              "next": "hub"
+            }
+          ]
+        },
+        {
+          "id": "s001",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "Three things. The sea past the platforms, where the shelf drops away into water nobody has sounded to the bottom. The towers on the coasts and the summits: there's one up this very shore. And the items nobody makes.",
+          "next": "s002"
+        },
+        {
+          "id": "s002",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "Every altar we know of wants something held up to it: a feather, a crown, a dew. Not one of them is sold, crafted or found anywhere we have looked. That is either an accident or a lock.",
+          "next": "s003"
+        },
+        {
+          "id": "s003",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "I think it's a lock. We are trying to find the key without breaking the door.",
+          "next": "hub"
+        },
+        {
+          "id": "e001",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "The old books say Latias and Latios guard a city built on canals. A shrine you can only reach by walking over water seemed the right kind of home for them.",
+          "next": "e002"
+        },
+        {
+          "id": "e002",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "Mireille keeps it, out on the platform. Ask her about the dews. Ask her about the old one, too.",
+          "next": "hub"
+        },
+        {
+          "id": "i001",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "Not yet. The rule is mine and it is simple: nothing leaves this station until someone shows me an altar answering. I won't hand out a key to a door that may be painted on the wall.",
+          "next": "i002"
+        },
+        {
+          "id": "i002",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "When that day comes, my people will tell you what each one costs. Not money. Work: a storm watched, a parcel carried, a harvest brought in.",
+          "next": "hub"
+        },
+        {
+          "id": "t001",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "You stood up there in the thunder and came down again. Then the station owes you this: a thunder feather, from our store.",
+          "next": "t002"
+        },
+        {
+          "id": "t002",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "If the thunder tower's altar answers anyone, it should answer that. Go with every badge you have.",
+          "next": "hub"
+        },
+        {
+          "id": "m001",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "Into the Nether, for a feather. Here: an ember feather, from our store. Mind your sleeves.",
+          "next": "m002"
+        },
+        {
+          "id": "m002",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "The fire tower's altar is its own business. We have only ever read about it answering.",
+          "next": "hub"
+        }
+      ]
+    },
+    {
+      "id": "dlg_station_field_officer",
+      "quest_id": "evt_station_courier",
+      "npc_id": "npc_station_field_officer",
+      "source": "data/research_station.json; docs/world-building/RESEARCH_STATION.md (the approved proposal); the owner's decisions of 2026-10-02 (data/research_station.json request)",
+      "scope": "player",
+      "speakers": {
+        "brandt": "Dr. Ansel Brandt"
+      },
+      "cursor": {
+        "progression_field": "quest.evt_station_courier.dialogue_cursor",
+        "initial_node": "f001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_station_courier.started",
+            "value": true
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_station_courier.started",
+            "value": false
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ],
+          "node": "f001"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "f001",
+          "kind": "line",
+          "speaker": "brandt",
+          "text": "Brandt, field officer. I count clouds, time storms, and lose arguments with the weather mast.",
+          "next": "f002"
+        },
+        {
+          "id": "f002",
+          "kind": "line",
+          "speaker": "brandt",
+          "text": "I also run the station's errands to the other camps. Frostpeak, mostly. Dr. Halvard watches the tower on the summit, and she keeps the best notes in the region.",
+          "next": "hub"
+        },
+        {
+          "id": "hub",
+          "kind": "choice",
+          "speaker": "brandt",
+          "text": "Something you need?",
+          "responses": [
+            {
+              "id": "r_mast",
+              "text": "What does the mast measure?",
+              "next": "w001"
+            },
+            {
+              "id": "r_hold",
+              "text": "Is there work for me?",
+              "visible_when": {
+                "kind": "not",
+                "condition": {
+                  "kind": "player_tag",
+                  "tag": "cobblers_station_issuing"
+                }
+              },
+              "next": "h001"
+            },
+            {
+              "id": "r_courier",
+              "text": "Do you need a courier?",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_issuing"
+                  },
+                  {
+                    "kind": "flag",
+                    "flag": "gym8_cleared"
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_station_courier.case_given",
+                    "value": false
+                  }
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "give_case"
+                }
+              ],
+              "next": "k001"
+            },
+            {
+              "id": "r_notes",
+              "text": "I've brought Dr. Halvard's notes.",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_issuing"
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_station_courier.case_given",
+                    "value": true
+                  },
+                  {
+                    "kind": "held_item",
+                    "item": "minecraft:paper",
+                    "item_predicate": "minecraft:paper[minecraft:custom_data={cobblers_station:glacier_notes}]"
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_station_courier.glacier_claimed",
+                    "value": false
+                  }
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "trade_notes"
+                }
+              ],
+              "next": "n001"
+            },
+            {
+              "id": "r_bye",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ],
+              "next": "hub"
+            }
+          ]
+        },
+        {
+          "id": "w001",
+          "kind": "line",
+          "speaker": "brandt",
+          "text": "Wind, cold, pressure, and the hour the thunder starts. No lightning rods out here: they pull every Electric type off the coast, and I like my instruments unchewed.",
+          "next": "hub"
+        },
+        {
+          "id": "h001",
+          "kind": "line",
+          "speaker": "brandt",
+          "text": "Not today. The Director has frozen every errand that ends in a feather until we have seen an altar answer. She calls it caution. I call it paperwork.",
+          "next": "hub"
+        },
+        {
+          "id": "k001",
+          "kind": "line",
+          "speaker": "brandt",
+          "text": "Good. This spyglass is calibrated against ours. Take it to Dr. Halvard at the Frostpeak camp, stand on her instrument deck and hold it out where she can see it.",
+          "next": "k002"
+        },
+        {
+          "id": "k002",
+          "kind": "line",
+          "speaker": "brandt",
+          "text": "She'll swap it for her season's notes. Bring those back in your hand, and the station's glacier feather is yours.",
+          "next": "hub"
+        },
+        {
+          "id": "n001",
+          "kind": "line",
+          "speaker": "brandt",
+          "text": "Halvard's handwriting. Three winters of frost on that tower, in one bundle. Thank you.",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "kind": "line",
+          "speaker": "brandt",
+          "text": "Here: the glacier feather. Articuno is said to come to it. Nobody here has seen it come.",
+          "next": "hub"
+        }
+      ]
+    },
+    {
+      "id": "dlg_station_archivist",
+      "quest_id": "evt_station_archive",
+      "npc_id": "npc_station_archivist",
+      "source": "data/research_station.json; docs/world-building/RESEARCH_STATION.md (the approved proposal); the owner's decisions of 2026-10-02 (data/research_station.json request)",
+      "scope": "player",
+      "speakers": {
+        "quill": "Tobias Quill"
+      },
+      "cursor": {
+        "progression_field": "quest.evt_station_archive.dialogue_cursor",
+        "initial_node": "a001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_station_archive.started",
+            "value": true
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_station_archive.started",
+            "value": false
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ],
+          "node": "a001"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "a001",
+          "kind": "line",
+          "speaker": "quill",
+          "text": "Shh. No, not you, the floor creaks. Tobias Quill, archivist. Everything the station knows is written down in this room, and most of it is questions.",
+          "next": "hub"
+        },
+        {
+          "id": "hub",
+          "kind": "choice",
+          "speaker": "quill",
+          "text": "What can I find for you?",
+          "responses": [
+            {
+              "id": "r_cases",
+              "text": "What are the empty cases?",
+              "next": "x001"
+            },
+            {
+              "id": "r_mew",
+              "text": "What about Mew?",
+              "next": "y001"
+            },
+            {
+              "id": "r_hold",
+              "text": "Could I trade for the crown?",
+              "visible_when": {
+                "kind": "not",
+                "condition": {
+                  "kind": "player_tag",
+                  "tag": "cobblers_station_issuing_crown"
+                }
+              },
+              "next": "h001"
+            },
+            {
+              "id": "r_harvest",
+              "text": "I've brought the cemetery's harvest.",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_issuing_crown"
+                  },
+                  {
+                    "kind": "flag",
+                    "flag": "champion_cleared"
+                  },
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "player_tag",
+                      "tag": "cobblers_station_harvest_paid"
+                    }
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_station_archive.crown_claimed",
+                    "value": false
+                  }
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "offer_harvest"
+                }
+              ],
+              "next": "c_count"
+            },
+            {
+              "id": "r_crown",
+              "text": "About the crown...",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_issuing_crown"
+                  },
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_harvest_paid"
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_station_archive.crown_claimed",
+                    "value": false
+                  }
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "grant_crown"
+                }
+              ],
+              "next": "c001"
+            },
+            {
+              "id": "r_bye",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ],
+              "next": "hub"
+            }
+          ]
+        },
+        {
+          "id": "x001",
+          "kind": "line",
+          "speaker": "quill",
+          "text": "Four exhibits we do not have. A glacier feather, a thunder feather, an ember feather, and a crown of roots. Every altar we know of wants one, and none is made anywhere we have found.",
+          "next": "x002"
+        },
+        {
+          "id": "x002",
+          "kind": "line",
+          "speaker": "quill",
+          "text": "The cases are empty because the honest exhibit is the label. And the dews, for the Eon shrine: Mireille has opinions about the dews.",
+          "next": "hub"
+        },
+        {
+          "id": "y001",
+          "kind": "line",
+          "speaker": "quill",
+          "text": "Mew's fossil is the odd one out: there is a way to make it, if you can find the parts. But what answers that shrine is far stronger than any Pokemon a trainer here could hold. We do not encourage it.",
+          "next": "hub"
+        },
+        {
+          "id": "h001",
+          "kind": "line",
+          "speaker": "quill",
+          "text": "Not yet. The crown stays in its case until two things are true: an altar has been seen to answer, and the Director is satisfied that whoever wears it could hold what comes. Neither is true yet.",
+          "next": "hub"
+        },
+        {
+          "id": "c_count",
+          "kind": "choice",
+          "speaker": "quill",
+          "text": "Let me count them.",
+          "responses": [
+            {
+              "id": "r_paid",
+              "text": "Sixteen. Here.",
+              "visible_when": {
+                "kind": "player_tag",
+                "tag": "cobblers_station_harvest_paid"
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "grant_crown"
+                }
+              ],
+              "next": "c001"
+            },
+            {
+              "id": "r_short",
+              "text": "That isn't sixteen, is it.",
+              "visible_when": {
+                "kind": "not",
+                "condition": {
+                  "kind": "player_tag",
+                  "tag": "cobblers_station_harvest_paid"
+                }
+              },
+              "next": "c_short"
+            }
+          ]
+        },
+        {
+          "id": "c_short",
+          "kind": "line",
+          "speaker": "quill",
+          "text": "Sixteen, I said. Shaderoot carrots, from the Crown Cemetery's own field. The crown's old keepers asked a full harvest, and we keep to their price.",
+          "next": "hub"
+        },
+        {
+          "id": "c001",
+          "kind": "line",
+          "speaker": "quill",
+          "text": "Sixteen shaderoot carrots from the cemetery's field. That was the price the crown's old keepers asked, and it is paid.",
+          "next": "c002"
+        },
+        {
+          "id": "c002",
+          "kind": "line",
+          "speaker": "quill",
+          "text": "The crown. Calyrex is said to come to it, and it is strong. You'll want every badge you have, and then some.",
+          "next": "hub"
+        }
+      ]
+    },
+    {
+      "id": "dlg_station_shrine_keeper",
+      "quest_id": "evt_station_eon_shrine",
+      "npc_id": "npc_station_shrine_keeper",
+      "source": "data/research_station.json; docs/world-building/RESEARCH_STATION.md (the approved proposal); the owner's decisions of 2026-10-02 (data/research_station.json request)",
+      "scope": "player",
+      "speakers": {
+        "mireille": "Mireille Sato"
+      },
+      "cursor": {
+        "progression_field": "quest.evt_station_eon_shrine.dialogue_cursor",
+        "initial_node": "k001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_station_eon_shrine.started",
+            "value": true
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_station_eon_shrine.started",
+            "value": false
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ],
+          "node": "k001"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "k001",
+          "kind": "line",
+          "speaker": "mireille",
+          "text": "Careful on the dais. Mireille. I keep the shrine, which mostly means I keep the gulls off it.",
+          "next": "k002"
+        },
+        {
+          "id": "k002",
+          "kind": "line",
+          "speaker": "mireille",
+          "text": "Red for Latias, blue for Latios. Each altar wants a dew of its own colour, and the grey stone between them is where the old books say they come down.",
+          "next": "hub"
+        },
+        {
+          "id": "hub",
+          "kind": "choice",
+          "speaker": "mireille",
+          "text": "Ask, if you like.",
+          "responses": [
+            {
+              "id": "r_dew",
+              "text": "What is a dew?",
+              "next": "v001"
+            },
+            {
+              "id": "r_old",
+              "text": "Would they come to my ball?",
+              "next": "l001"
+            },
+            {
+              "id": "r_hold",
+              "text": "Could I have a dew?",
+              "visible_when": {
+                "kind": "not",
+                "condition": {
+                  "kind": "player_tag",
+                  "tag": "cobblers_station_issuing"
+                }
+              },
+              "next": "h001"
+            },
+            {
+              "id": "r_spirits",
+              "text": "I've met the three spirits of the lakes.",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_issuing"
+                  },
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_lake_trio"
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_station_eon_shrine.dews_claimed",
+                    "value": false
+                  }
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "grant_dews"
+                }
+              ],
+              "next": "g001"
+            },
+            {
+              "id": "r_bye",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ],
+              "next": "hub"
+            }
+          ]
+        },
+        {
+          "id": "v001",
+          "kind": "line",
+          "speaker": "mireille",
+          "text": "A ruby dew and a sapphire dew. Nobody here has ever made one or sold one. The ledger says they were given, once, to people the three lake spirits had met. We keep to the ledger.",
+          "next": "hub"
+        },
+        {
+          "id": "l001",
+          "kind": "line",
+          "speaker": "mireille",
+          "text": "Some would. The ledger has them young and old: some no stronger than a gym leader's best, and sometimes one so old that no trainer in this region could ever hold it.",
+          "next": "l002"
+        },
+        {
+          "id": "l002",
+          "kind": "line",
+          "speaker": "mireille",
+          "text": "If the old one comes, let it go home. That's my rule, not the ledger's.",
+          "next": "hub"
+        },
+        {
+          "id": "h001",
+          "kind": "line",
+          "speaker": "mireille",
+          "text": "Not yet. The Director keeps the dews locked in the ledger room until someone shows her an altar answering. I think she's right.",
+          "next": "hub"
+        },
+        {
+          "id": "g001",
+          "kind": "line",
+          "speaker": "mireille",
+          "text": "Mesprit, Azelf and Uxie. All three. Then the ledger says you are owed these, and I keep to the ledger.",
+          "next": "g002"
+        },
+        {
+          "id": "g002",
+          "kind": "line",
+          "speaker": "mireille",
+          "text": "A ruby dew and a sapphire dew. If these altars answer anyone, they'll answer you. And if the old one comes...",
+          "next": "g003"
+        },
+        {
+          "id": "g003",
+          "kind": "line",
+          "speaker": "mireille",
+          "text": "...you know my rule.",
+          "next": "hub"
+        }
+      ]
     }
   ]
 }

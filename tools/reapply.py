@@ -125,6 +125,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-02: the Drovers' Hollow in the Rift Foot (tools/drovers_hollow.py): a longbarn, its fold and
                 # the old working under the bank, run by R9HF
                 "cobblers_drovers_hollow",
+                # 2026-10-02: Shrew Station on the west sea coast (tools/research_station.py), run by R9RS; every
+                # item it can give stays held behind data/research_station.json economy.issuing
+                "cobblers_research_station",
                 # 2026-09-29: the gym interiors (tools/gym_interiors.py, data/gym_interiors.json): the healing
                 # machines out of all eight placed gyms, and gym 1's works carved under its lot. Block functions run
                 # by R16E, after the donors (R9) that stamp the gyms whole and would erase anything written first
@@ -533,6 +536,8 @@ def prepare_jobs(a):
     add("resident_encounters_audit", "resident_encounters_audit.py", *src)
     add("drovers_hollow:build", "drovers_hollow.py", "build", *src)
     add("drovers_hollow_audit", "drovers_hollow_audit.py", *src)
+    add("research_station:build", "research_station.py", "build", *src)
+    add("research_station_audit", "research_station_audit.py", *src)
     add("sea_drift_audit", "sea_drift_audit.py", *src)
     add("relic_underground_audit", "relic_underground_audit.py", *src)
     # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
@@ -1127,6 +1132,11 @@ def steps(with_spawns=False):
     import drovers_hollow
     out.append(("R9HF", "the Drovers' Hollow: its barn, fold and old working (data/drovers_hollow.json)",
                 drovers_hollow.placement_steps()))
+    # Shrew Station (2026-10-02, tools/research_station.py): BEFORE R9E, because the study pool's Habitat Block sits in a
+    # post this pack writes; its four NPCs are placed by R9F
+    import research_station
+    out.append(("R9RS", "Shrew Station, the research station on the west sea coast (data/research_station.json)",
+                research_station.placement_steps()))
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
