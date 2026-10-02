@@ -78,7 +78,8 @@ WATERLOGGABLE = ("_slab", "_stairs", "_fence", "_wall", "glass_pane", "iron_bars
                  "powered_rail", "sea_pickle", "_coral", "_coral_fan", "_coral_wall_fan", "ladder")
 # not waterloggable and not air: they keep water out of their own cell. Doors and beds block a fluid's spread in
 # vanilla's FlowingFluid.canHoldFluid; a closed fence gate and a cauldron block motion. [A] read from vanilla, not run
-DRY_IN_WATER = ("_door", "_bed", "_fence_gate", "cauldron", "barrel")
+DRY_IN_WATER = ("barrel",)    # a full block: no swimmer's eyes can enter it. Doors, beds, fence gates and
+                               # cauldrons are partial and hold no water, so they are never written under water
 NOT_FULL = ("_slab", "_stairs", "_fence", "_wall", "glass_pane", "iron_bars", "chain", "lantern", "_trapdoor", "rail",
             "sea_pickle", "coral", "_door", "_bed", "_fence_gate", "cauldron", "kelp", "seagrass")
 
@@ -276,10 +277,13 @@ def kit_house_broken(k):
             if h32(k, dx, dz, 8) % 3:
                 c.append((dx, 0, dz, stairs("spruce", "east")))
     c += [(2, y, 2, "minecraft:bricks") for y in (1, 2, 3)]   # the chimney stack
-    fit = [(0, 1, -3, "minecraft:oak_door[facing=north,half=lower,hinge=left,open=false,powered=false]"),
-           (0, 2, -3, "minecraft:oak_door[facing=north,half=upper,hinge=left,open=false,powered=false]"),
-           (-1, 1, 2, "minecraft:red_bed[facing=north,part=foot,occupied=false]"),
-           (-1, 1, 1, "minecraft:red_bed[facing=north,part=head,occupied=false]")]
+    # the door hangs open off its frame as two waterlogged trapdoors, and the bed is its mattress in wool: a door, a
+    # bed, a fence gate or a cauldron holds no water, so a swimmer whose eyes reach its cell breathes there - a free
+    # air pocket on the seabed, the ladder bypassed (tools/sea_life_audit.py, 2026-10-02)
+    fit = [(0, 1, -3, "minecraft:oak_trapdoor[facing=east,half=bottom,open=true,powered=false,waterlogged=true]"),
+           (0, 2, -3, "minecraft:oak_trapdoor[facing=east,half=top,open=true,powered=false,waterlogged=true]"),
+           (-1, 1, 2, "minecraft:red_wool"),
+           (-1, 1, 1, "minecraft:white_wool")]
     return {"cells": c, "pairs": fit, "cache": (1, 1, -1), "hook": ("chimney", 2, 2), "kind": "debris"}
 
 
@@ -287,7 +291,7 @@ def kit_rail_cart(k):
     c = [(0, 0, dz, "minecraft:polished_andesite") for dz in range(-5, 4)]
     c += [(0, 1, dz, "minecraft:powered_rail[shape=north_south,powered=false,waterlogged=true]")
           for dz in range(-5, 3) if dz != -1]
-    c += [(1, 0, 3, "minecraft:cauldron"), (1, 0, 4, "minecraft:iron_trapdoor[facing=east,half=bottom,open=false,"
+    c += [(1, 0, 3, "minecraft:iron_block"), (1, 0, 4, "minecraft:iron_trapdoor[facing=east,half=bottom,open=false,"
                                                      "powered=false,waterlogged=true]")]
     return {"cells": c, "cache": (-1, 0, 0), "hook": ("lantern", 0, 3), "kind": "debris"}
 
@@ -311,8 +315,7 @@ def kit_centre_sign(k):
 def kit_garden_gate_mailbox(k):
     c = []
     for dx in range(-3, 4):
-        c.append((dx, 0, 0, "minecraft:dark_oak_fence_gate[facing=north,in_wall=false,open=false,powered=false]"
-                  if dx == 0 else fence("dark_oak")))
+        c.append((dx, 0, 0, fence("dark_oak")))       # the gate itself is gone: a fence gate holds no water
     c += [(2, 0, -2, fence("dark_oak")), (2, 1, -2, "minecraft:red_terracotta")]
     return {"cells": c, "cache": (-2, 0, -2), "hook": ("lantern", 2, -2), "kind": "debris"}
 
@@ -957,6 +960,8 @@ def sea_cave(m):
                             m.put(cx_, y, cz_, AIR, "carve", owner)
                 m.put(*rec["barrel"], BARREL, "fittings", owner)
                 m.put(*rec["lantern"], LANTERN_HANG, "fittings", owner)
+                for at in rec["passage_lanterns"]:
+                    m.put(*at, LANTERN_HANG, "fittings", owner)
                 rec["candidates_tried"] = tried
                 rec["rise_in_12"] = int(rise[i])
                 rec["columns"] = len(cols)
@@ -1025,6 +1030,10 @@ def try_sea_cave(m, spec, x, z, f):
     v.solid_fit.add(barrel)
     rec["barrel"] = barrel
     rec["lantern"] = (ex, feet + int(ch["height"]) - 1, ez)
+    # hanging lanterns down the roofed passage, every 8 cells, so no floor cell between the mouth's daylight and the
+    # chamber's lantern is dark (tools/sea_life_audit.py found 23 roofed cells at block light 0, 2026-10-02)
+    rec["passage_lanterns"] = [(x + d[0] * s, feet_at(s) + H - 1, z + d[1] * s)
+                               for s in range(s_p + 4, n - hc - 2, 8)]
     probs, least = cover_problems(v, C, "sea cave")
     if probs:
         return None
@@ -1526,6 +1535,9 @@ def flora(m):
     rm = fp & (Gb < sea) & (depth >= rf["depth"][0]) & (depth <= rf["depth"][1]) & ~m.ex.X[z0:z1, x0:x1] \
         & ~m.reserved[z0:z1, x0:x1] & ~done[z0:z1, x0:x1]
     ZZ, XX = np.mgrid[z0:z1, x0:x1]
+    # reef_footprint is the flats pass's keep-out mask, 6 wider than the reef; coral stops at the reef's own outer
+    # edge, its outer radius plus the drop (tools/sea_life_audit.py found 1,294 coral blocks past it, 2026-10-02)
+    rm &= np.hypot(XX - cx, ZZ - cz) <= float(ws["outer_radius"][1] + ws["drop_width_blocks"])
     mound = WS.value_noise(XX, ZZ, rf["mound_scale_blocks"], seed + 7)
     kind = WS.value_noise(XX, ZZ, 14, seed + 8)
     h1 = WS._hash01(XX, ZZ, seed + 9)

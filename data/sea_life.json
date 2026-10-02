@@ -31,7 +31,7 @@
     "the_deep": "data/rift_regions.json regions.the_deep bbox, grown by deep_margin_blocks (inside the Rift's protected region in any case)",
     "deep_margin_blocks": 32,
     "top_gap_blocks": 3,
-    "top_gap_why": "'no structure top within 2 of the surface inside the gate clearance': a top at sea - 3 leaves two blocks of water over it. Everything this pack writes in the sea keeps to it everywhere, so no find, rim or mast is ever a rest point anywhere, gate or not; kelp alone is allowed to sea - 2 outside a gate's clearance (kelp cannot be stood on)"
+    "top_gap_why": "'no structure top within 2 of the surface inside the gate clearance': a top at sea - 3 leaves two blocks of water over it. Everything this pack writes in the sea keeps to it everywhere, so no find, rim or mast is ever a rest point anywhere, gate or not; kelp too (shore.kelp.max_top_below_surface 3, the lake pack's reading of WATER_LIFE.md \"never within 2 of the surface\")"
   },
 
   "shore": {
@@ -46,7 +46,7 @@
     "kelp": {
       "depth": [3, 12],
       "from_land_blocks": 40,
-      "max_top_below_surface": 2,
+      "max_top_below_surface": 3,
       "patch_scale_blocks": 22,
       "patch_over": 0.58,
       "density": 0.6,

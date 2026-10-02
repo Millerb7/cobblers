@@ -285,19 +285,10 @@ def real():
     return SA.audit(c)
 
 
-KNOWN = {
-    "flora": "sea kelp tops stand at sea - 2 (13,585 of them on 2026-10-02): data/sea_life.json shore.kelp."
-             "max_top_below_surface 2, applied at tools/sea_life.py:1487, against WATER_LIFE 3's 'never within 2 of "
-             "the surface' (the lake pack reads the same sentence as level - 3)",
-    "coral": "1,294 coral writes 101-107 from the reef's centre, past outer_radius max + drop_width_blocks: "
-             "tools/sea_life.py:1522 takes water_shape.reef_footprint, the flats pass's keep-out mask with a +6 margin "
-             "(tools/water_shape.py:2181), as the reef's extent",
-    "flooded": "4 oak doors, 4 red beds and 2 fence gates under the sea in the house and garden-gate debris "
-               "(tools/sea_life.py:279-282, 314): none is waterloggable, so each cell is a dry pocket a diver breathes "
-               "in; tools/sea_life.py:81 and 1707 exempt them from the builder's own flooded check",
-    "light": "23 roofed floor cells of the waterline sea cave at block light 0 (e.g. 391, 59, 3502): hostiles spawn "
-             "in an S0 cave beside the beach",
-}
+# Known faults in tools/sea_life.py, each an xfail(strict) until it is fixed. The four this suite found on 2026-10-02
+# (kelp at sea - 2, coral past the reef, doors/beds/gates/cauldrons as dry pockets under the sea, a dark waterline
+# cave) were fixed the same day; see docs/research/notes/water_life_audit.md.
+KNOWN = {}
 REAL_CHECKS = ["parse", "flora", "coral", "finds", "flooded", "cut", "clear", "surfacing", "seacave", "light",
                "cache", "blocks", "foreign", "limits"]
 
