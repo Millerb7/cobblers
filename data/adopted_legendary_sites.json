@@ -224,8 +224,24 @@
    },
    "gate_why_null": "same as Mew's: the trigger is unreadable. Its class_reason in data/structures.json says 'awakened with a carrot crop grown on site', which is a plausible reading of a closed-source block and is not a source. Nothing is authored on it.",
    "scheduled_as": "legendary_crown_cemetery",
-   "what_a_player_gets": "brushable gravel rolling seven Cobblemon loot tables (ancient and special balls, Poke Balls, rare items, TMs, vitamins, X items), a regrowing shaderoot carrot crop, and Spectrier if the trigger answers a thrown carrot. NOTE: the crop regrows and the trigger's only brake is a 'pokemon_already_nearby' check and an in-memory per-player cooldown, so Spectrier is probably REPEATABLE (INFERRED). Owner's call whether that is a reward or a farm.",
-   "placement_lives_in": "the position, rotation and mirror now live ONLY in data/placements.json legendary_crown_cemetery: corner (4118, 1982), y109, rotation none, mirror none. Deleted here so one site has one author (placement_method.not_in_placements_json)."
+   "what_a_player_gets": "brushable gravel rolling seven Cobblemon loot tables (ancient and special balls, Poke Balls, rare items, TMs, vitamins, X items), a regrowing shaderoot carrot crop, and Spectrier if the trigger answers a thrown carrot. NOTE: the crop regrows and the trigger's only brake is a 'pokemon_already_nearby' check and an in-memory per-player cooldown, so Spectrier is probably REPEATABLE (INFERRED). DECIDED, the owner, 2026-10-02: a farm, not a reward. Capped to once per player, permanently (spectrier_once_per_player).",
+   "placement_lives_in": "the position, rotation and mirror now live ONLY in data/placements.json legendary_crown_cemetery: corner (4118, 1982), y109, rotation none, mirror none. Deleted here so one site has one author (placement_method.not_in_placements_json).",
+   "spectrier_once_per_player": {
+    "status": "DESIGNED, NOT BUILT. The cemetery may be placed without it: until it lands, Spectrier stays repeatable.",
+    "why_lumymon_cannot_do_it": "the trigger's only brakes are a 'pokemon_already_nearby' check and a cooldown held in an in-memory map keyed by player UUID (lumymon-altars.md section 1), lost on restart. LumyMon is closed source; nothing in its config (11 keys) caps a summon.",
+    "mechanism": [
+     "a tick function guarded by `execute if entity @a[<within 32 of the trigger ring (4153, 112, 1999)>]`, so it costs nothing when nobody is there",
+     "ATTRIBUTE: each tick, a lumymon:shaderoot_carrot item entity within 4 of the ring has its `Thrower` UUID copied to storage cobblers:spectrier last_thrower",
+     "RECORD: when a wild cobblemon:pokemon of species spectrier, untagged, appears within 16 of the anchor (4153, 112, 1999), tag it and grant cobblers:legendary/spectrier_summoned to the player whose UUID is last_thrower (a macro: `$advancement grant @a[nbt={UUID:$(u)}] only ...`). An advancement is per player and permanent, which is exactly the cap asked for.",
+     "REFUSE: each tick, for every player holding that advancement within 32, a macro kills any shaderoot carrot item entity within 4 of the ring whose Thrower is that player, before the trigger can take it. The carrot is lost; a tellraw says why."
+    ],
+    "weak_points": [
+     "a carrot thrown by player A and spawning Spectrier is credited to A, but a carrot that the trigger takes in the same tick it lands may never be seen by a 1-tick poll: EXP needed",
+     "a capped player can hand a carrot to an uncapped friend, who throws it: that is the friend's one Spectrier, which is the rule working, not a leak",
+     "UNVERIFIED that a player-thrown carrot fires the trigger at all (EXP-048 owner half, step 1). Build only after that answers."
+    ],
+    "owner": "a datapack generator (datapack-content-dev) plus its tests by a different agent; see docs/HANDOVER_SESSION.md"
+   }
   },
   {
    "id": "adopted_zapdos_tower",
@@ -451,14 +467,15 @@
     "lift": "a light weighted plate at template [23,2,22] gives levitation 15 s and resistance: the ONLY way up",
     "summit": "a polished blackstone plate at [19,79,22] drives the chain at [11..19,77,22]: blindness, thunder, slowness, pokespawnat necrozma level=80 (IVs 30), then the chain fills itself with deepslate",
     "barrels": "eight sophisticatedstorage barrels at y49; their contents are packed storage and were NOT read",
-    "needs": "enable-command-block=true, for the lift and for the summit. The owner's call; not changed here."
+    "needs": "enable-command-block=true: DECIDED, the owner, 2026-10-02; enforced by tools/install_check.py."
    },
    "gate": "OUR Champion flag, cobblers:flag/champion_cleared, written into the template's own summit chain after the paste (data/placements.json set_commands, emitted by tools/place_donor.py as `data merge block`). Every link runs only with a Champion within 12 blocks; anyone else is told so and the chain SURVIVES, so the server's one spawn cannot be burned early. The lift stays open: the tower can be climbed before it can be woken. NOT VERIFIED IN GAME.",
    "does_not_travel_here": [
     "`/locate` and any finder: none exists for these towers anyway",
     "ONE SPAWN ENTRY: data/structures.json records spawn_entries 1, cobblemon:0803_poipole spawning via the tower. Pasted, no Poipole spawns there. A Habitat Block would restore it if the owner wants it (not authored here)."
    ],
-   "what_a_player_gets": "after the Champion: a 90-block climb by levitation to a summit where Necrozma (Dawn Wings) appears at level 80 with IVs of 30 and four set moves, catchable at the post-Blue cap of 100. ONE per tower for the WHOLE server: the chain fills itself in once it fires. Before the Champion: the tower, the climb and the view."
+   "what_a_player_gets": "after the Champion: a 90-block climb by levitation to a summit where Necrozma (Dawn Wings) appears at level 80 with IVs of 30 and four set moves, catchable at the post-Blue cap of 100. ONE per tower for the WHOLE server: the chain fills itself in once it fires. Before the Champion: the tower, the climb and the view.",
+   "one_per_server": "DECIDED, the owner, 2026-10-02: kept as Cobbleverse designed it. Whoever gets there first gets it."
   },
   {
    "id": "adopted_dusk_tower",
@@ -516,14 +533,15 @@
     "lift": "a light weighted plate at template [23,2,22] gives levitation 15 s and resistance: the ONLY way up",
     "summit": "a polished blackstone plate at [19,79,22] drives the chain at [11..19,77,22]: blindness, thunder, slowness, pokespawnat necrozma level=80 (IVs 30), then the chain fills itself with deepslate",
     "barrels": "eight sophisticatedstorage barrels at y49; their contents are packed storage and were NOT read",
-    "needs": "enable-command-block=true, for the lift and for the summit. The owner's call; not changed here."
+    "needs": "enable-command-block=true: DECIDED, the owner, 2026-10-02; enforced by tools/install_check.py."
    },
    "gate": "OUR Champion flag, cobblers:flag/champion_cleared, written into the template's own summit chain after the paste (data/placements.json set_commands, emitted by tools/place_donor.py as `data merge block`). Every link runs only with a Champion within 12 blocks; anyone else is told so and the chain SURVIVES, so the server's one spawn cannot be burned early. The lift stays open: the tower can be climbed before it can be woken. NOT VERIFIED IN GAME.",
    "does_not_travel_here": [
     "`/locate` and any finder: none exists for these towers anyway",
     "ONE SPAWN ENTRY: data/structures.json records spawn_entries 1, cobblemon:0803_poipole spawning via the tower. Pasted, no Poipole spawns there. A Habitat Block would restore it if the owner wants it (not authored here)."
    ],
-   "what_a_player_gets": "after the Champion: a 90-block climb by levitation to a summit where Necrozma (Dusk Mane) appears at level 80 with IVs of 30 and four set moves, catchable at the post-Blue cap of 100. ONE per tower for the WHOLE server: the chain fills itself in once it fires. Before the Champion: the tower, the climb and the view."
+   "what_a_player_gets": "after the Champion: a 90-block climb by levitation to a summit where Necrozma (Dusk Mane) appears at level 80 with IVs of 30 and four set moves, catchable at the post-Blue cap of 100. ONE per tower for the WHOLE server: the chain fills itself in once it fires. Before the Champion: the tower, the climb and the view.",
+   "one_per_server": "DECIDED, the owner, 2026-10-02: kept as Cobbleverse designed it. Whoever gets there first gets it."
   }
  ],
  "refused": [
@@ -595,8 +613,8 @@
     "asked_by": "the owner, 2026-10-02: 're-open the eight that were left where they generate'",
     "evidence": "docs/research/notes/legendary-catalogue-reopened.md",
     "cobbleverse:dawn_tower, cobbleverse:dusk_tower": "RE-HOMED, now adopted_dawn_tower and adopted_dusk_tower. 'Leave them where they are' assumed the End is visited; no player can enter it (no stronghold, no portal room). And they are the one encounter in the catalogue with no altar and no missing item: a pressure plate and a command chain.",
-    "legendarymonuments:eternatus_cocoon": "BETTER HOME, NOT YET. Unreachable twice: in the End, and fed by 500 Galar Particles whose ore generates ONLY in the overworld (ModOreGeneration foundInOverworld), which our export never runs; the template carries 45. Worth an overworld site only alongside an authored particle supply (the ore scatter pass WORLDGEN_FEATURES.md specifies, or a mine). Its trigger is a right-click with particles: wait for EXP-048.",
-    "cobbleverse:legendary/moltres": "BETTER HOME, NOT YET. Its altar wants an ember_feather that no recipe or loot table makes (0 producers, client jars and datapacks), so it is scenery in the Nether too. If the campaign ever supplies the three feathers, Moltres belongs in the Craters with Blaine (a fire bird on the volcano), completing a trio with Articuno on Frostpeak and Zapdos on the windward cliffs. Altar-only: wait for EXP-048.",
+    "legendarymonuments:eternatus_cocoon": "BETTER HOME, NOT YET. Unreachable twice: in the End, and fed by 500 Galar Particles whose ore generates ONLY in the overworld (ModOreGeneration foundInOverworld), which our export never runs; the template carries 45. Worth an overworld site only alongside an authored particle supply (the ore scatter pass WORLDGEN_FEATURES.md specifies, or a mine). Its trigger is a right-click with particles: wait for EXP-048. DECIDED, the owner, 2026-10-02: stays out until a particle supply is authored.",
+    "cobbleverse:legendary/moltres": "BETTER HOME, NOT YET. Its altar wants an ember_feather that no recipe or loot table makes (0 producers, client jars and datapacks), so it is scenery in the Nether too. If the campaign ever supplies the three feathers, Moltres belongs in the Craters with Blaine (a fire bird on the volcano), completing a trio with Articuno on Frostpeak and Zapdos on the windward cliffs. Altar-only: wait for EXP-048. DECIDED, the owner, 2026-10-02: worth building toward, with the feathers handed out by the Frostpeak research camp (data/frostpeak_camp.json item_economy). The Craters site is NOT yet measured.",
     "the four Ruinous shrines": "STAY, and this is the decision the original line got right. Their mechanism is a stake hunt: LegendaryMonuments generates *_stake blocks as a FEATURE in every #minecraft:is_nether biome and counts each player's progress per shrine type. The stakes exist only because the Nether generates normally; a shrine pasted into our exported overworld would have no stakes anywhere."
    }
   },
@@ -658,5 +676,12 @@
   "verified_here": "every coordinate, ground figure, cut/fill count, clearance distance and ceiling margin in this file was computed from the canonical heightmap through tools/ground.py on 2026-10-01, and the Jungle Isle's drowning was measured the same way. The file parses.",
   "not_verified_here": "NOTHING HAS BEEN PASTED. No command in this file has been run, no altar has been seen, no loot table has been rolled, and no claim is made that any of these three templates resolves, places or works on our server. Raw `/place template` is proven on this runtime for a DIFFERENT template (firescourge_shrine, 2026-09-09); that these three ids resolve from the installed pack is expected and unproven.",
   "verified_2026_10_02": "the two tower sites' every ground figure, from tools/ground.py; the towers' chain positions and commands, from the template NBT in the client profile; and the emitted `data merge block` lines, from tools/place_donor.py run on these three records alone. NOTHING placed, booted or clicked."
+ },
+ "owner_decisions_2026_10_02": {
+  "enable_command_block": "TRUE, a server requirement. tools/install_check.py reports anything else as a PROPERTY problem; server/config/server.properties.example carries it.",
+  "necrozma_one_per_tower_server_wide": "KEPT: 'a one-per-server legendary is a better story on a server for friends - whoever gets there first gets it.'",
+  "spectrier": "ONCE PER PLAYER, PERMANENTLY: 'a regrowing carrot crop with a per-player cooldown lost on restart is a farm, not a reward.' Designed in adopted_crown_cemetery.spectrier_once_per_player; NOT BUILT.",
+  "the_three_feathers": "worth building toward: Moltres in the Craters with Blaine, Articuno on Frostpeak, Zapdos on the western cliffs, with the feathers handed out by the Frostpeak research camp (data/frostpeak_camp.json item_economy).",
+  "eternatus": "STAYS OUT until a Galar Particle supply is authored."
  }
 }

@@ -112,6 +112,8 @@
 
 - **Base and target:** preserve the Cobbleverse experience through an overlay while targeting Cobblemon 1.8.x on Minecraft 1.21.1 Fabric.
 - **Live-world isolation:** agents check process/port and acquire `C:\Users\wnd\Documents\github\.cobblers-server-agent.lock` before any server-runtime access; agents never read `cobblers-server/cobblers-10240/`, and disposable worlds are seeded only from designated offline snapshots.
+- **SERVER REQUIREMENT: `enable-command-block=true` (the owner, 2026-10-02). Do not turn it off.** The Necrozma towers' lift and summit chain and Mew's temple door are command blocks; with false the towers have no way up and nothing fires. `tools/install_check.py` reports any other value as a PROPERTY problem, and `server/config/server.properties.example` carries it. **The live server's file still says false** (unchanged 2026-10-02: the coordination lock was held by another session); the next session that holds the lock sets it, with the server stopped.
+- **Legendary catalogue decisions (the owner, 2026-10-02; `data/adopted_legendary_sites.json` `owner_decisions_2026_10_02`):** one Necrozma per tower, server-wide, kept ("whoever gets there first gets it"); **Spectrier capped to once per player, permanently** (designed in `adopted_crown_cemetery.spectrier_once_per_player`, NOT BUILT, and waits on EXP-048 showing a thrown carrot fires the trigger); the three bird feathers are worth building toward, handed out by the Frostpeak research camp (`data/frostpeak_camp.json` `item_economy`, which also records Kubfu's scrolls; mechanism not chosen, gate `gym8_cleared` proposed), with Moltres re-homed to the Craters (site not measured); Eternatus stays out until a Galar Particle supply is authored.
 - **Spawn philosophy:** use curated exclusive pools on critical-path route corridors and keep the default Cobbleverse pool open in wilderness and postgame areas.
 - **Wild Pokemon above the cap are welcome where they make a place (the owner, 2026-10-02):** "it adds to revisiting and makes a region feel more like it should." Small Pokemon on a place's outskirts, big ones at its focal points, **in balance**: the path and most of every place stay catchable, with catchable pockets near the path, so a new player never has to scour a landscape (`docs/mechanics/ENCOUNTER_DESIGN.md` section 10, not built).
 - **Map geometry:** use 1,024-block square planning cells, terrain-following region polygons, and no hex grid.
@@ -351,8 +353,8 @@
   on the Sunset Isle's western heights (1156, 146, 7216). A tower's summit is a pressure plate driving a command
   chain that spawns Necrozma at 80 once for the whole server and fills itself in; `tools/place_donor.py`
   `set_commands` rewrites each link after the paste to fire only for a holder of `cobblers:flag/champion_cleared`.
-  **The towers need `enable-command-block=true`, which the server does not have - the owner's call; without it they
-  are landmarks with no way up.** Three stay sited, NOT scheduled, because their encounter is only a right-click
+  **The towers need `enable-command-block=true`: decided as a server requirement (see "What is decided"), not yet
+  set on the live server.** Three stay sited, NOT scheduled, because their encounter is only a right-click
   altar: Mew (7604, 142, 7082), Zapdos (562, 74, 2614), Articuno (904, 151, 320). Of the other six Nether/End
   structures (`docs/research/notes/legendary-catalogue-reopened.md`): the **Ruinous four stay** (their stakes are a
   Nether-only worldgen feature); **Moltres** (its ember feather, like the other two, has no producer anywhere) and

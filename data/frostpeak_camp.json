@@ -106,5 +106,38 @@
   "spawns": {
     "decision": "none added",
     "why": "Frostpeak already carries 21 surface entries in data/spawns.json (scope frostpeak, level 25-45: Delibird, Crabrawler, Sneasel, Snorunt, Absol, Drampa and their lines; docs/story/ENCOUNTERS.md), which cover the bench. A camp-specific table would add a second author for the same ground for no new species."
+  },
+  "item_economy": {
+    "status": "DECIDED IN PRINCIPLE, NOT BUILT (2026-10-02). Nothing here is emitted by tools/frostpeak_camp.py; the researchers are still talk-only.",
+    "why_here": "the owner, 2026-10-02: the research station 'is the place that studies these things' (docs/mechanics/NATIVE_STARTERS_COST.md section 7.5) and 'the place that would produce' the feathers.",
+    "mechanism": "NOT CHOSEN. No recipe or loot table in the installed pack produces any of these items (docs/research/notes/legendary-catalogue-reopened.md section 2; lumymon-altars.md correction), so the camp must hand them out itself: a quest reward, a dialogue-stage give, or a trader stock. Which one is a design call for whoever builds it.",
+    "items": [
+      {
+        "item": "Kubfu's two scrolls",
+        "for": "Kubfu's final evolution, which opens at 45",
+        "decided": "the owner, 2026-10-02 (NATIVE_STARTERS_COST.md section 7.5)",
+        "gate": "the point at which Kubfu's final evolution opens (45); exact flag to be set by the starter build"
+      },
+      {
+        "item": "lumymon:glacier_feather",
+        "for": "Articuno at adopted_articuno_shrine (904, 151, 320), the shrine this camp studies",
+        "decided": "the owner, 2026-10-02",
+        "gate_proposed": "gym8_cleared"
+      },
+      {
+        "item": "lumymon:thunder_feather",
+        "for": "Zapdos at adopted_zapdos_tower (562, 74, 2614)",
+        "decided": "the owner, 2026-10-02",
+        "gate_proposed": "gym8_cleared"
+      },
+      {
+        "item": "lumymon:ember_feather",
+        "for": "Moltres, re-homed to the Craters with Blaine (site NOT measured; data/adopted_legendary_sites.json refused[].reopened_2026_10_02)",
+        "decided": "the owner, 2026-10-02",
+        "gate_proposed": "gym8_cleared"
+      }
+    ],
+    "why_gym8_cleared_is_proposed": "each altar spawns its bird at 50, 55 or 60 (VERIFIED, LumyMon 0.6.6 class strings), and a Pokemon above a player's cap breaks free from every ball. The cap is 60 after gym 8 (docs/mechanics/LEAGUE_LEVEL_CAP.md), the first point at which every roll is catchable. A lower gate lets a 55 or 60 roll escape. Proposal, for trainer-balance-designer to confirm.",
+    "blocked_on": "EXP-048: none of the three bird altars has been shown to answer a pasted right-click."
   }
 }

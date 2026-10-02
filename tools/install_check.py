@@ -12,6 +12,7 @@ disagreement does. `tools/reapply.py install` runs it last and stops on any prob
             unless the repo installs it there. The live world's own datapacks folder is never read (CLAUDE.md): pass
             --world-dir only for a staging or disposable world.
   configs   tools/server_config_record.py check
+  property  every key in REQUIRED_PROPERTIES has its required value in server.properties (enable-command-block=true)
 
   python tools/install_check.py --server-dir <server> [--world-dir <staging world>]
 """
@@ -97,6 +98,28 @@ def configs(server_dir):
     return SCR.check(Path(server_dir) / "config")
 
 
+# server.properties keys the campaign depends on, each with what breaks without it. Only these keys are read.
+REQUIRED_PROPERTIES = {
+    "enable-command-block": ("true", "the owner, 2026-10-02: the Necrozma towers' lift and summit chain and Mew's "
+                                     "temple door are command blocks; with false the towers have no way up and nothing "
+                                     "fires (data/placements.json legendary_dawn_tower, legendary_dusk_tower)"),
+}
+
+
+def properties(server_dir):
+    import runtime_guard
+    path = runtime_guard.check(Path(server_dir) / "server.properties", "read the required keys in")
+    if not path.exists():
+        return ["server.properties: not found in %s" % server_dir]
+    have = {}
+    for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
+        key, sep, value = line.partition("=")
+        if sep and key.strip() in REQUIRED_PROPERTIES:
+            have[key.strip()] = value.strip()
+    return ["server.properties: %s=%s, the campaign needs %s: %s" % (k, have.get(k, "<unset>"), want, why)
+            for k, (want, why) in REQUIRED_PROPERTIES.items() if have.get(k) != want]
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--server-dir", required=True)
@@ -105,7 +128,8 @@ def main(argv=None):
     if a.world_dir:
         import runtime_guard
         runtime_guard.check(Path(a.world_dir) / "datapacks", "read the world's installed packs in")
-    problems = [("PACK", m) for m in packs(a.server_dir, a.world_dir)] + [("CONFIG", m) for m in configs(a.server_dir)]
+    problems = ([("PACK", m) for m in packs(a.server_dir, a.world_dir)] + [("CONFIG", m) for m in configs(a.server_dir)]
+                + [("PROPERTY", m) for m in properties(a.server_dir)])
     for kind, m in problems:
         print("%s %s" % (kind, m))
     print("%d problems (packs and configs)" % len(problems))

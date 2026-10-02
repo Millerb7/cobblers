@@ -84,6 +84,9 @@ def inst(tmp_path, monkeypatch):
     (repo / "modpack/config/rctmod-server.toml").write_text("maxTrainers = 0\n", encoding="utf-8")
     (s.server / "config").mkdir()
     (s.server / "config/rctmod-server.toml").write_text("# rewritten\nmaxTrainers = 0\n", encoding="utf-8")
+    # a complete install carries every key IC.REQUIRED_PROPERTIES names, at its required value
+    (s.server / "server.properties").write_text(
+        "".join("%s=%s\n" % (k, v) for k, (v, _why) in IC.REQUIRED_PROPERTIES.items()), encoding="utf-8")
     monkeypatch.setattr(SCR, "ROOT", repo)
     monkeypatch.setattr(SCR, "OVERLAY", repo / "modpack/config")
     monkeypatch.setattr(SCR, "MIRROR", repo / "server/config/mods")

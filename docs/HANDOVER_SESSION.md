@@ -2,44 +2,44 @@
 
 A cold session reads CLAUDE.md, `docs/STATE.md` and this file, and nothing else, before it starts.
 
-## 1. Branch
+## 1. Branches
 
-- `claude/legendary-shrines-placement-fa3eea`, from `origin/main` at `1a4b85f` (#108). Draft PR: see the PR list for
-  this head; it is frozen once reported. Pin any merge with `--match-head-commit` to the head the PR report gives.
-- Commits: `dfad147` (data, generator, research note), `2147ffc` (tests, by a separate test-author agent), and a
-  final commit (test-fixture key rename, `ceiling.verdict`, STATE, this file).
+- **PR #109** `claude/legendary-shrines-placement-fa3eea` at `735a3496c0b8fe3e090f78fe3c8ad6430219e03f`, draft, FROZEN.
+  Schedules the Crown Cemetery and both Necrozma towers; `place_donor.py` `set_commands`.
+- **Stacked on it:** `claude/legendary-followups-2026-10-02` (the owner's decisions of 2026-10-02), its own draft PR
+  with base `claude/legendary-shrines-placement-fa3eea`. Merge #109 first.
 
 ## 2. Where the job stopped
 
-- **Done and verified offline:** three sites SCHEDULED in `data/placements.json` (`legendary_crown_cemetery`,
-  `legendary_dawn_tower`, `legendary_dusk_tower`, status planned); `tools/place_donor.py` `set_commands`
-  (`command_rewrites`) emits the towers' six gated `data merge block` lines; `tests/test_adopted_legendary_sites.py`
-  + `tests/test_donor_set_commands.py` 175 passed; id_authorship 0 faults; validate_data's 263 errors are all
-  un-hydrated kits in the worktree (pre-existing, environmental).
-- **Not run:** `prepare`, the full suite, staging. The staging server was up with another session's lock held
-  (`cobblers-cobblemon-session-start-531d15`), so `install_check` was NOT run and nothing touched the server.
-- **Next, in the main session:** `prepare` (it emits the three donors), re-apply on staging, then EXP-LEG-TOWER-GATE
-  (`data/adopted_legendary_sites.json` experiments_needed).
+- Done offline: `enable-command-block=true` is a server requirement (`tools/install_check.py` PROPERTY check, the
+  example properties, STATE); decisions recorded in `data/adopted_legendary_sites.json` `owner_decisions_2026_10_02`;
+  `data/frostpeak_camp.json` `item_economy` (Kubfu's scrolls, the three feathers, gate `gym8_cleared` proposed,
+  mechanism not chosen). Tests on the touched files: 224 passed.
+- **NOT done: the live server's `server.properties` still says `enable-command-block=false`.** The coordination lock was
+  held by `cobblers-cobblemon-session-start-531d15`. Next session holding the lock: stop the server, set it, and
+  `install_check` will then report clean on that key.
+- **NOT built: Spectrier once per player.** Design in `adopted_crown_cemetery.spectrier_once_per_player` (tick
+  function near (4153, 112, 1999); record the carrot's `Thrower`; grant `cobblers:legendary/spectrier_summoned` when an
+  untagged Spectrier appears; thereafter kill that player's carrots at the ring). Build it only after EXP-048's owner
+  half shows a player-thrown carrot fires the trigger. Two agents: a builder (datapack-content-dev: generator + pack +
+  reapply wiring) and a test-author, roughly 0.5M each. Owner approval needed for two agents.
+- Also not done: `prepare`, the full suite, staging, EXP-LEG-TOWER-GATE.
 
 ## 3. Waiting on the owner
 
-- **`enable-command-block=true`** in server.properties: the towers' lift and summit (and Mew's door) need it. Not changed.
-- **One Necrozma per tower for the whole server** (upstream design, kept). Keep, or make it per player?
-- **Spectrier is probably repeatable** (regrowing crop, in-memory cooldown). Reward or farm?
-- EXP-048's owner half still decides Mew, Zapdos, Articuno (held: altar-only).
-- In game, after re-apply: Dawn tower (7480, 99, 316) summit chain at (7491-7499, 176, 338); Dusk tower (1156, 146, 7216)
-  chain at (1167-1175, 223, 7238).
+- EXP-048's owner half (Spectrier thrown carrot; Articuno and Calyrex right-clicks).
+- Feathers: which mechanism the camp hands them out by (quest, dialogue give, trader), and confirm `gym8_cleared`.
+- In game after re-apply: Dawn tower summit chain at (7491-7499, 176, 338); Dusk at (1167-1175, 223, 7238).
 
 ## 4. Do not rediscover
 
-- The End is unreachable: no stronghold can generate, no portal room is authored (`legendary-catalogue-reopened.md` s5).
-- No recipe or loot makes ember/glacier/thunder feathers or the Calyrex crown (client jars + DPs, 0 producers).
-- Ruinous shrines' stakes are a Nether-only worldgen feature (`StakePlacement`, `#minecraft:is_nether`): keep them there.
-- Galar Particle ore is overworld-only (`foundInOverworld`), so absent from our export; the cocoon needs 500.
-- `defeat_champion_blue` very probably IS granted by beating our Blue (`kanto_champion_blue`); the old "never grants" was wrong.
-- A client copy of the pack (DP-v31, LumyMon 0.6.6, LegendaryMonuments) is in the Modrinth profile
-  `COBBLEVERSE - Pokemon Adventure [Cobblemon]` and can be read with no server lock.
+- The End is unreachable (no stronghold, no portal room). Ruinous stakes are Nether-only features. Galar ore is
+  overworld-only. No recipe or loot makes any bird feather or the Calyrex crown.
+- `defeat_champion_blue` very probably IS granted by beating our Blue (`kanto_champion_blue`).
+- A client copy of the pack is in the Modrinth profile `COBBLEVERSE - Pokemon Adventure [Cobblemon]`; readable
+  with no server lock (`docs/research/notes/legendary-catalogue-reopened.md`).
+- `data/frostpeak_camp.json` does not round-trip through `json.dumps`: edit it as text, or the whole file reflows.
 
 ## 5. Cost
 
-`tools/session_cost.py`: main session 2.5M weighted (82 turns, 294k context at hand-over); one test-author agent 0.44M.
+`tools/session_cost.py`: main session about 2.8M weighted at ~300k context; one test-author agent 0.44M.
