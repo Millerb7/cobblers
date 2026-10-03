@@ -337,10 +337,12 @@ def owned_ids(doc):
     return out
 
 
-def authored_points(doc):
+def authored_points(doc, own_file=None):
     """Every x/z any other data/*.json authors: dicts with x and z; [x, z], [x, y, z] (read both ways, so a
     [x, z, y] polyline counts too) and [x0, z0, x1, z1] boxes (corners and centre). Our own records in the shared
-    files are skipped by id, and this file is skipped whole."""
+    files are skipped by id, and this file is skipped whole. `own_file` names the residents file to skip when another
+    tool calls this one (tools/northern_residents.py, whose sites are checked against THIS file as any other)."""
+    own_path = Path(own_file) if own_file else DATA
     own = owned_ids(doc)
     pts = []
 
@@ -371,10 +373,43 @@ def authored_points(doc):
                 for v in o:
                     walk(v, f)
     for p in sorted((ROOT / "data").glob("*.json")):
-        if p.resolve() == DATA.resolve():
+        if p.resolve() == own_path.resolve():
             continue
         walk(json.loads(p.read_text(encoding="utf-8")), p.name)
     return pts
+
+
+def corridor_boxes():
+    """data/routes.json's spawn-corridor boxes, routes[].spawn_scope.boxes ({id, min_x, max_x, min_z, max_z}), as
+    [(x0, z0, x1, z1, "route id box id")]. authored_points() reads only x/z dicts and short lists, so it never saw
+    these: a site 73 blocks from a corridor box's edge passed it while every corner and mid-point stood 98 away
+    (2026-10-03, stubborn_tree, found by tools/northern_residents_audit.py)."""
+    out = []
+    for rt in jload("routes.json")["routes"]:
+        for b in (rt.get("spawn_scope") or {}).get("boxes") or []:
+            out.append((b["min_x"], b["min_z"], b["max_x"], b["max_z"], "%s %s" % (rt["id"], b.get("id"))))
+    return out
+
+
+def corridor_check(rid, cols, clearance, boxes=None):
+    """(problems, nearest): every column held `clearance` from every corridor box counted as a FILLED rectangle (a
+    column inside one is 0 from it), the way the audits count a box."""
+    import numpy as np
+    boxes = corridor_boxes() if boxes is None else boxes
+    C = np.array(sorted(cols), float)
+    best = (1e9, None, None)
+    for x0, z0, x1, z1, name in boxes:
+        dx = np.maximum(np.maximum(x0 - C[:, 0], C[:, 0] - x1), 0)
+        dz = np.maximum(np.maximum(z0 - C[:, 1], C[:, 1] - z1), 0)
+        d = np.hypot(dx, dz)
+        j = int(np.argmin(d))
+        if d[j] < best[0]:
+            best = (float(d[j]), tuple(int(v) for v in C[j]), "%s [%d, %d, %d, %d]" % (name, x0, z0, x1, z1))
+    probs = []
+    if best[0] < clearance:
+        probs.append("%s: (%d, %d) is %.0f blocks from the route corridor box %s in data/routes.json (needs %d)"
+                     % (rid, best[1][0], best[1][1], best[0], best[2], clearance))
+    return probs, best
 
 
 def _sub_of(x, z):
@@ -410,6 +445,8 @@ def siting(doc, r, s, extra, pts=None):
     if best[0] < rules["authored_clearance"]:
         probs.append("%s: (%d, %d) is %.0f blocks from an x/z authored in data/%s (needs %d)"
                      % (r["id"], best[1][0], best[1][1], best[0], best[2], rules["authored_clearance"]))
+    # the route corridor boxes, which the point scan above never reads: a filled rectangle each
+    probs += corridor_check(r["id"], cols, rules["authored_clearance"])[0]
     fx0, fz0, fx1, fz1 = rules["keep_out_box"]["box"]
     if any(fx0 <= x <= fx1 and fz0 <= z <= fz1 for x, z in cols):
         probs.append("%s: writes inside the keep-out box %s" % (r["id"], rules["keep_out_box"]["box"]))
