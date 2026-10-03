@@ -523,8 +523,9 @@ def check_writes(doc, r, E, R, spots, rep, data, spawn, whitelist):
         rep.err("writes", "%s: the build writes nothing" % i)
 
 
-def authored(doc, data):
-    """Every x/z another data file authors: (points [(x, z, file)], rects [(x0, z0, x1, z1, file)]).
+def authored(doc, data, record=RECORD):
+    """Every x/z another data file authors (`record` is the residents file skipped whole: tools/northern_residents_audit.py
+    passes its own, so THIS file's sites count against the northern ones like any other): (points [(x, z, file)], rects [(x0, z0, x1, z1, file)]).
 
     A dict with numeric x and z; a list of two numbers; a list of three read both as [x, y, z] and [x, z, y]; a list
     of four with x1 >= x0, z1 >= z0 a box, read as a FILLED rectangle (stricter than corners: a column inside another
@@ -574,7 +575,7 @@ def authored(doc, data):
                     walk(v, f)
 
     for p in sorted(Path(data).glob("*.json")):
-        if p.name == RECORD:
+        if p.name == record:
             continue
         walk(json.loads(p.read_text(encoding="utf-8")), p.name)
     return pts, rects
@@ -764,7 +765,8 @@ def check_keeper(doc, built, fns, rep, data):
                 rep.err("keeper", "%s: an item reward (no_loot_drops): %s" % (name, l[:120]))
 
 
-def check_steps(doc, spots_by_id, steps, rep, data):
+def check_steps(doc, spots_by_id, steps, rep, data, npc_step="R18SR"):
+    """`npc_step` names the step that places the NPCs R9F does not (tools/northern_residents_audit.py passes R18NR)."""
     b = doc["build"]
     held, summons, built_fns, npcs = [], {}, {}, []
     for s in steps:
@@ -830,18 +832,18 @@ def check_steps(doc, spots_by_id, steps, rep, data):
             if not is_grant:
                 rep.err("steps", "%s: placed by R9F, but data/rewards.json has no npc_grant %s" % (i, r["records"].get("reward")))
             if mine:
-                rep.err("steps", "%s: placed by R9F and again by R18SR" % i)
-        elif n["placed_by"] == "R18SR":
+                rep.err("steps", "%s: placed by R9F and again by %s" % (i, npc_step))
+        elif n["placed_by"] == npc_step:
             if is_grant:
-                rep.err("steps", "%s: placed by R18SR and again by R9F (an npc_grant record)" % i)
+                rep.err("steps", "%s: placed by %s and again by R9F (an npc_grant record)" % (i, npc_step))
             if len(mine) != 1:
-                rep.err("steps", "%s: %d R18SR npc steps, expected 1" % (i, len(mine)))
+                rep.err("steps", "%s: %d %s npc steps, expected 1" % (i, len(mine), npc_step))
             elif conv is not None and (tuple(mine[0][1]) != feet or mine[0][2] != "cobblers:%s" % conv.get("npc_id")
                                        or float(mine[0][3]) != float(n["yaw"])):
                 rep.err("steps", "%s: the npc step %s, expected %s at %s facing %s"
                         % (i, mine[0], conv.get("npc_id"), list(feet), n["yaw"]))
         else:
-            rep.err("steps", "%s: placed_by %s is neither R9F nor R18SR" % (i, n["placed_by"]))
+            rep.err("steps", "%s: placed_by %s is neither R9F nor %s" % (i, n["placed_by"], npc_step))
 
 
 def _conds(c):
@@ -887,7 +889,9 @@ def _gated(q, tid, flag, depth=0):
     return False
 
 
-def check_dialogue(doc, r, rep, data, compile_fn):
+def check_dialogue(doc, r, rep, data, compile_fn, flags_named=None, grant_flags=None):
+    """`flags_named` replaces the scan of the record for the flags the conversation must read; `grant_flags` names
+    the ones every grant must require (default: all of them). Both are tools/northern_residents_audit.py's."""
     i, rec = r["id"], r.get("records") or {}
     dl = {c["id"]: c for c in jload("dialogue.json", data)["conversations"]}
     qs = {q["id"]: q for q in jload("quests.json", data)["quests"]}
@@ -962,11 +966,17 @@ def check_dialogue(doc, r, rep, data, compile_fn):
         rep.err("dialogue", "%s: reads flag %s, which data/progression.json does not have" % (i, f))
     text = json.dumps({k: v for k, v in r.items() if k not in ("pokemon",)})
     declared = {f for f in flags if re.search(r"\b%s\b" % re.escape(f), text)}
+    if flags_named is not None:
+        # the caller's own expectation (tools/northern_residents_audit.py: a record that names its flags as a range,
+        # "gymN_cleared", in prose this scan cannot read)
+        declared = set(flags_named)
     if read != declared:
         rep.err("dialogue", "%s: the conversation reads flags %s, the record names %s" % (i, sorted(read), sorted(declared)))
     grants = [t["id"] for t in q["transitions"] if any(e["kind"] == "grant_reward_once" for e in t["effects"])]
     for f in sorted(declared):
         for g in grants:
+            if grant_flags is not None and f not in grant_flags:
+                continue
             if not _gated(q, g, f):
                 rep.err("dialogue", "%s: %s.%s grants a reward without requiring %s" % (i, q["id"], g, f))
         gated_tr = {t for t in trs if t != "start" and _gated(q, t, f)}

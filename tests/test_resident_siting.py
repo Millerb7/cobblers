@@ -109,7 +109,7 @@ def test_a_residents_level_is_within_its_places_ceiling(rid):
 @pytest.mark.parametrize("rid", [i for i in IDS if i not in SOUTH_IDS])
 def test_a_residents_recorded_ground_is_the_heightmaps(rid):
     # the southern residents' anchors are re-derived from the heightmap by tools/southern_residents_audit.py; the
-    # northern residents' by tools/northern_residents.py's own record check (an independent audit is owed)
+    # northern residents' by tools/northern_residents_audit.py (tests/test_northern_residents_audit.py)
     if not os.environ.get("COBBLERS_SOURCE_ROOT"):
         pytest.skip("NOT_EXECUTED: COBBLERS_SOURCE_ROOT is not set: the canonical heightmap is outside the repo")
     import sys

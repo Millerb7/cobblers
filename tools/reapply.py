@@ -613,9 +613,10 @@ def prepare_jobs(a):
     # the steps, and the NPCs' dialogue, rewards and hand-in compiled by compile_dialogue above
     add("southern_residents", "southern_residents.py", *src)
     add("southern_residents_audit", "southern_residents_audit.py", *src)
-    # the northern residents (2026-10-03): the same generator's pieces and guards; its independent audit is owed
-    # (data/northern_residents.json audit_checklist)
+    # the northern residents (2026-10-03): the same generator's pieces and guards, then its independent audit
+    # (tools/northern_residents_audit.py, another agent's), after the pack it reads
     add("northern_residents", "northern_residents.py", *src)
+    add("northern_residents_audit", "northern_residents_audit.py", *src)
     add("drovers_hollow:build", "drovers_hollow.py", "build", *src)
     add("drovers_hollow_audit", "drovers_hollow_audit.py", *src)
     # the three wayside places of 2026-10-03. Each generator refuses a spawn-condition palette and any block outside its
