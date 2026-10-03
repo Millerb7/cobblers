@@ -14,6 +14,16 @@
     "final": 45,
     "why": "30 and 45 are the arrival caps for gyms 3 and 6 (gym aces 20/25/30/35/40/45/50/55, relativeLevelCap 0), so each point is reached on the leg to that gym and not before its previous badge. Depends on the cap holding against Rare Candy (EXP-049 step 4)."
   },
+  "kubfu_scrolls": {
+    "status": "NOT BUILT: recorded and left, as the brief allows when it needs more than a pointer. It does.",
+    "decision": "The owner, 2026-10-02 (docs/mechanics/NATIVE_STARTERS_COST.md section 7.5): Shrew Station hands out Kubfu's scrolls; the point is 45, when Kubfu's final evolution opens.",
+    "items": ["cobblemon:scroll_of_darkness", "cobblemon:scroll_of_waters"],
+    "why_both": "The scroll IS the Single Strike / Rapid Strike choice: the stage-2 form's two item_interact evolutions (this file, starter_kubfu) each take one scroll at level 45, so a player needs both in hand to have a choice.",
+    "where_it_would_go": "data/research_station.json economy.items, one record in the shape of the feather and dew records there (id, item, route, levels), given by the Director's dialogue through tools/research_station.py, behind that file's one switch economy.issuing (false today, held for the owner and the test author).",
+    "proposed_gate": "cobblers:flag/gym5_cleared (data/progression.json gym5_cleared): the cap reaches 45 only on the leg to gym 6, so a scroll given earlier does nothing for a starter Kubfu, and holding it back keeps it out of reach of a wild Kubfu, whose native scroll evolution has no level requirement. PROPOSED, not decided.",
+    "what_it_needs": ["the items record and its route text in data/research_station.json", "a Director dialogue option and a grant function emitted by tools/research_station.py, once per player", "tools/research_station_audit.py and tests/test_research_station.py updated by their owners (the test pins every item as held today)", "the owner's word on the gate and on whether every player or only a Kubfu player is given them"],
+    "already_true": "data/blackout.json excludes both scrolls from its consumables (docs/research/NATIVE_STARTERS_1_8_0.md section 3c)."
+  },
   "starter_category": {
     "name": "cobblers_mythical",
     "displayName": "Cobblers"

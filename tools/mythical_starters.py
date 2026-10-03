@@ -19,7 +19,9 @@ Formats, each shown in the 1.8.0 jar or a shipped pack (docs/research/NATIVE_STA
                       APPEND (SpeciesAdditions.class). So ours live at data/cobblers/species_additions/ and cannot
                       collide with Mega Showdown's or COBBLEVERSE's data/cobblemon/species_additions/<same name>.
   a form              `name`, `aspects`, `baseStats`, `moves`, `evolutions`: COBBLEVERSE-DP-v31 ships forms with all
-                      five (Primal Dialga, Shadow and Armored Mewtwo, Origin Palkia).
+                      five (Primal Dialga, Shadow and Armored Mewtwo, Origin Palkia); and Mega Showdown 1.0.2's
+                      data/cobblemon/species_additions/pikachu.json adds forms whose `evolutions` are NON-empty, with
+                      a properties result carrying a custom property (`raichu cosmetic_item=pewter_crunchies`).
   an evolution        the jar's own species JSON: `id`, `variant` level_up / item_interact, `result` (a properties
                       string), `consumeHeldItem`, `learnableMoves`, `requirements` (`level` minLevel, `time_range`
                       range), `requiredContext` (the scroll), `drops`.
