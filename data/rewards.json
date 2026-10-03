@@ -1327,6 +1327,126 @@
       }
     },
     {
+      "id": "challengers_cairn_cist",
+      "kind": "cache",
+      "place": "the Challengers' Cairn on the south strand (data/challengers_cairn.json): the barrel at the north end of the cist under the cairn, down the stair from the south",
+      "contents": [
+        {
+          "item": "cobblemon:revive",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/revive.json in Cobblemon-fabric-1.8.0+1.21.1.jar (relayed: checked for data/rewards.json r1_north_ring; the jar was not re-opened on 2026-10-03)"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar (relayed: checked for data/rewards.json r1_old_mine_stope; the jar was not re-opened on 2026-10-03)"
+        }
+      ],
+      "message": "Left in the cist for the next one up the road: two Revives and three Super Potions.",
+      "why": "data/challengers_cairn.json find: what one challenger leaves for the next at the foot of Victory Road. Supplies before the road's hardest stretch, not a curve-breaker; the critical path needs none of it.",
+      "built_by": "tools/challengers_cairn.py (the barrel, in cobblers_challengers_cairn's build, step R9CN)",
+      "trigger": {
+        "min": [
+          3554,
+          103,
+          6111
+        ],
+        "max": [
+          3558,
+          104,
+          6112
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          3556,
+          103,
+          6110
+        ]
+      }
+    },
+    {
+      "id": "dry_cistern_store",
+      "kind": "cache",
+      "place": "the Dry Cistern on the Scorched Plateau's west brow (data/dry_cistern.json): the barrel at the cistern's east end, down the keepers' stair or the draw-shaft",
+      "contents": [
+        {
+          "item": "cobblemon:water_stone",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/water_stone.json in Cobblemon-fabric-1.8.0+1.21.1.jar (relayed: checked for data/rewards.json vr_drowned_gallery; the jar was not re-opened on 2026-10-03)"
+        },
+        {
+          "item": "cobblemon:heavy_ball",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/heavy_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar (relayed: checked for data/rewards.json r1_old_mine; the jar was not re-opened on 2026-10-03)"
+        }
+      ],
+      "message": "In the keepers' barrel at the dry end of the cistern: a Water Stone, kept to keep the water sweet, and two Heavy Balls.",
+      "why": "data/dry_cistern.json find: on Route 8, before Giovanni. A Water Stone is an answer to a ground team findable in the region before the boss (docs/vision/GAME_VISION.md pillar 1); the Heavy Balls are rock country's situational ball (docs/research/notes/reward-item-inventory.md section 4). Optional: the critical path needs none of it.",
+      "built_by": "tools/dry_cistern.py (the barrel, in cobblers_dry_cistern's build, step R9CI)",
+      "trigger": {
+        "min": [
+          4533,
+          152,
+          5849
+        ],
+        "max": [
+          4533,
+          153,
+          5851
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          4534,
+          152,
+          5850
+        ]
+      }
+    },
+    {
+      "id": "survey_benchmark_store",
+      "kind": "cache",
+      "place": "the Surveyors' Benchmark in the Rift Foot (data/survey_benchmark.json): the party's barrel against the east wall of the survey hut",
+      "contents": [
+        {
+          "item": "cobblemon:everstone",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/everstone.json in Cobblemon-fabric-1.8.0+1.21.1.jar (relayed: checked for data/rewards.json r1_old_mine_stope; the jar was not re-opened on 2026-10-03)"
+        },
+        {
+          "item": "cobblemon:sitrus_berry",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/sitrus_berry.json in Cobblemon-fabric-1.8.0+1.21.1.jar (relayed: checked for data/rewards.json r3_world_tree_roots; the jar was not re-opened on 2026-10-03)"
+        }
+      ],
+      "message": "In the survey party's stores: an Everstone, the benchmark's reference stone, and two Sitrus Berries.",
+      "why": "data/survey_benchmark.json find: an Everstone (a stone that never changes, which is what a benchmark is; and a breeding tool) and two Sitrus Berries. Useful, not a curve-breaker.",
+      "built_by": "tools/survey_benchmark.py (the barrel, in cobblers_survey_benchmark's build, step R9BM)",
+      "trigger": {
+        "min": [
+          3716,
+          117,
+          5715
+        ],
+        "max": [
+          3716,
+          118,
+          5717
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          3717,
+          117,
+          5716
+        ]
+      }
+    },
+    {
       "id": "station_director",
       "kind": "npc_grant",
       "place": "Shrew Station's Institute, behind the reception desk",
