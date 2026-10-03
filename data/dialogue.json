@@ -10106,6 +10106,147 @@
       }
     },
     {
+      "id": "dlg_main_relic_hall_release",
+      "quest_id": "main_worldshift_reveal",
+      "npc_id": "npc_main_relic_hall_binder",
+      "npc_name": "Compact binder",
+      "source": "docs/story/NPCS_AND_RIFT_FINALE.md Scene 5 (Codex, commit 9cbfd213, local branch codex/trainer-modes), ported minimally into the carved relic hall by the owner's decision of 2026-10-03 (data/relic_underground.json geometry.release). Codex's narration and Hoopa's lines are kept, except 'The machine is quiet' and 'because the steering anchors are silent', which Scenes 1-4 would have made true and which are not built; the binder's lines are Elara's Scene 4 lines 6-7, given to the cradle staff Scene 1 names. Placeholders for Codex or the owner to replace.",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.main_worldshift_reveal.relic_release_cursor",
+        "initial_node": "release_closed",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.main_worldshift_reveal.stage",
+            "value": "rift_crisis_pending"
+          },
+          "node": "bound_001"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "released_repeat"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "release_closed"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "release_closed",
+          "kind": "line",
+          "speaker": "binder",
+          "text": "Nobody comes down to the ring without the surveyor's word. Go back up.",
+          "next": "release_closed"
+        },
+        {
+          "id": "bound_001",
+          "kind": "line",
+          "speaker": "binder",
+          "text": "Hoopa is below the relic that first taught this place how to bind it.",
+          "next": "bound_002"
+        },
+        {
+          "id": "bound_002",
+          "kind": "line",
+          "speaker": "binder",
+          "text": "Release it. Then we begin the work that cannot be solved by exchanging somebody else's home.",
+          "next": "bound_003"
+        },
+        {
+          "id": "bound_003",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The rings pull inward each time Hoopa moves. The binding holds.",
+          "next": "bound_004"
+        },
+        {
+          "id": "bound_004",
+          "kind": "choice",
+          "speaker": "hoopa",
+          "text": "Hoo... pa.",
+          "responses": [
+            {
+              "id": "r_release",
+              "text": "Release Hoopa.",
+              "visible_when": {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.stage",
+                "value": "rift_crisis_pending"
+              },
+              "next": "release_001"
+            },
+            {
+              "id": "r_not_yet",
+              "text": "Not yet.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "release_001",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The restraint opens.",
+          "next": "release_002",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "unlock_league_after_rift_resolution"
+            }
+          ]
+        },
+        {
+          "id": "release_002",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "Hoopa folds the last ring into itself. Nothing returns. Nothing else is taken.",
+          "next": "release_003"
+        },
+        {
+          "id": "release_003",
+          "kind": "line",
+          "speaker": "hoopa",
+          "text": "Hoopa!",
+          "next": "released_repeat"
+        },
+        {
+          "id": "released_repeat",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "The ring is empty. The Rift has stopped widening, but the exchanged world remains.",
+          "next": "released_repeat"
+        }
+      ],
+      "speakers": {
+        "binder": "Compact binder",
+        "hoopa": "Hoopa",
+        "narration": null
+      }
+    },
+    {
       "id": "dlg_station_director",
       "quest_id": "evt_station_director",
       "npc_id": "npc_station_director",

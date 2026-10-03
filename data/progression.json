@@ -309,8 +309,9 @@
         "kind": "quest_transition",
         "quest": "main_worldshift_reveal",
         "transition": "unlock_league_after_rift_resolution",
-        "invoked_by": null,
-        "invoked_by_owed": "Hoopa's release at the cradle: docs/story/NPCS_AND_RIFT_FINALE.md Scene 5 (Codex, commit 9cbfd213 on the local branch codex/trainer-modes, NOT merged), actor_finale_hoopa at the cradle centre (3357, 12, 3306), player choice 'Release Hoopa.'. It needs the cradle chamber carved (data/deep_city.json reserves its box, nothing carves it) and a data/scenes.json scene whose Hoopa actor opens that conversation. Until then nothing invokes the transition and nobody holds this flag. Set invoked_by to the conversation id when it lands; tests/test_rift_crisis_resolved.py holds the two in step."
+        "invoked_by": "dlg_main_relic_hall_release",
+        "invoked_at": "line release_001 ('The restraint opens.'), reached by the choice 'Release Hoopa.' at stage rift_crisis_pending; NPC npc_main_relic_hall_binder at (3390, 8, 3268) in the carved relic hall, seated by tools/reapply.py step R18RU (data/relic_underground.json geometry.release). The owner, 2026-10-03: 'set it ourselves at the quest stage that ends the Rift crisis'",
+        "superseded_invoked_by_owed": "Kept as the plan the binder replaced (Scene 5 at the cradle still waits on the cradle and a verified Hoopa model). Hoopa's release at the cradle: docs/story/NPCS_AND_RIFT_FINALE.md Scene 5 (Codex, commit 9cbfd213 on the local branch codex/trainer-modes, NOT merged), actor_finale_hoopa at the cradle centre (3357, 12, 3306), player choice 'Release Hoopa.'. It needs the cradle chamber carved (data/deep_city.json reserves its box, nothing carves it) and a data/scenes.json scene whose Hoopa actor opens that conversation. Until then nothing invokes the transition and nobody holds this flag. Set invoked_by to the conversation id when it lands; tests/test_rift_crisis_resolved.py holds the two in step."
       },
       "why": "Approved in docs/story/ARC.md ('The final story confrontation ends the forced activation and releases Hoopa from the steering mechanism. It sets rift_crisis_resolved', and the League row 'Requires rift_crisis_resolved'). Per player, like every flag here: an advancement, granted by cobblers:flag/rift_crisis_resolved/grant, which the transition's first effect runs as and at the releasing player. It is the gate data/rift_zones.json z5 names.",
       "multiplayer": "per player. Each player releases Hoopa for themselves; a late joiner, a player who died or disconnected keeps or lacks it on their own record. Codex's 'one world transition that advances every eligible player' (Scene 5) is NOT built: it is world-scoped state the dialogue compiler refuses, and an owner call."
@@ -776,6 +777,16 @@
       "initial": "out",
       "allowed_values": "node ids from dlg_main_relic_hq_guard_inside",
       "why": "the dialogue cursor of the Compact guard inside the HQ's storey-0 room (data/relic_underground.json geometry.hq.inside_guard, 2026-10-02). One menu; gates nothing."
+    },
+    {
+      "id": "quest.main_worldshift_reveal.relic_release_cursor",
+      "quest_id": "main_worldshift_reveal",
+      "field": "relic_release_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "release_closed",
+      "allowed_values": "node ids from dlg_main_relic_hall_release",
+      "why": "the dialogue cursor of the Compact binder at the relic ring (data/relic_underground.json geometry.release, 2026-10-03), the conversation that releases Hoopa. Its entry rules always pick the node from quest.main_worldshift_reveal.stage, so the cursor gates nothing; the release itself is gated by the stage."
     },
     {
       "id": "quest.evt_vr_abandoned_cut.started",

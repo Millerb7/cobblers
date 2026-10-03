@@ -2267,24 +2267,24 @@
       "gates": "the trunk's head, the Glacial Tear and whatever the postgame puts there",
       "guard": {
         "id": "G4",
-        "at": [3600, 2554],
+        "at": [3600, 2557],
         "facing": "in",
-        "why": "in the behind_league wall on the trunk's floor centre line, 6 blocks NORTH of the cut at z2560, so it stands inside Z4 with its gatehouse in the wall and the player talks to it through the walkway from the League's side. docs/mechanics/RIFT_ZONES.md section 2 says only 'in the wall behind the League'. An earlier draft put it at z2566, south of the cut, which is inside Z5 and not inside the zone it gates; tools/rift_zones.py refused it, which is the check working.",
-        "block": [3600, 2554],
+        "why": "in the behind_league wall on the trunk's floor centre line: the guard stands at z2557, the wall's inner face, so its walkway's two outer columns (z2559, z2558) ARE the wall's two rows and its outer mouth (z2560) opens onto the League's side, outside Z4's boxes. The player talks to it through the walkway from the League's side. docs/mechanics/RIFT_ZONES.md section 2 says only 'in the wall behind the League'. An earlier draft put it at z2566, south of the cut, which is inside Z5 and not inside the zone it gates; tools/rift_zones.py refused it, which is the check working.",
+        "block": [3600, 2557],
         "ground_y": 86,
         "inward": [-0.0, -1.0],
-        "block_why": "the guard stands on its surveyed site, unmoved, inside the zone it gates. The outward direction and the distance to the nearest column outside the zone (6 blocks) are measured from the traced mask.",
+        "block_why": "the guard stands on its surveyed site, unmoved, inside the zone it gates. The outward direction and the distance to the nearest column outside the zone (3 blocks) are measured from the traced mask.",
         "outward": [0.0, 1.0],
         "side": "inside",
         "edge_at": [3600, 2560],
-        "edge_distance": 6,
-        "zone_begins_at": [3600, 2554],
+        "edge_distance": 3,
+        "zone_begins_at": [3600, 2557],
         "zone_begins_in": 0,
         "approach": {
           "outer": [
             [
               3600,
-              2557,
+              2560,
               87,
               null
             ]
@@ -2292,18 +2292,26 @@
           "inner": [
             [
               3600,
-              2547,
+              2550,
               87,
               null
             ]
           ]
         },
+        "moved": {
+          "from": [3600, 2554],
+          "to": [3600, 2557],
+          "on": "2026-10-03",
+          "why": "data/rift_zones.json measured_defects[held_walls_do_not_meet_their_gatehouses]. At z2554 the gatehouse (walkway z2547-2556) stood wholly north of behind_league, whose two rows run z2558-2559 across its outer approach, so nobody on the League's side could reach the knock box. Three blocks south puts the walkway THROUGH the wall: the wall's own columns flank it and no wall column moves. Rejected, the cheaper-looking re-cut (open (3600, 2558..2559), add wall at (3599, 2557) and (3601, 2557), 68 block positions: four wall columns of 17, ground y86 to the crest at y102): it left the mouth and the gap, z2557-2559, inside Z4's boxes and outside the knock box, so once z4's zone check is installed a passless player walking up would be turned back before the guard could answer. Moved, the outer mouth z2560 is in Z5's boxes and every column from it to the guard is the knock box. The owner's decision, 2026-10-03: 'Fix the gatehouses ... Pick whichever route is cheapest and record which gatehouses change shape' (docs/world-building/GATEHOUSE_CHANGES.md).",
+          "blocks_changed": 87,
+          "blocks_changed_why": "block positions whose final block differs between the emitted wall_behind_league + gatehouse_z4 before and after the move, simulated from the functions' own fill/setblock lines (tools/rift_zones.py simulate_function): 56 no longer written, 10 newly written, 21 written with a different block."
+        },
         "outside_at": [3600, 2560],
-        "outside_distance": 6
+        "outside_distance": 3
       },
-      "arrive": [3600.5, 87, 2551.5, 180.0],
+      "arrive": [3600.5, 87, 2554.5, 180.0],
       "turn_back": [3600.5, 86, 2568.5, -0.0],
-      "exit": [3600, 87, 2552, 3600, 88, 2552],
+      "exit": [3600, 87, 2555, 3600, 88, 2555],
       "wall": "behind_league",
       "why": "Z4 holds nothing the story or the League needs (RIFT_ZONES.md section 2a), so a Nuzlocke player who never reaches 120 species loses no required content.",
       "boxes": [
@@ -2336,7 +2344,7 @@
       "boxes_columns": 52871,
       "boxes_from": "union of the traced regions e4_tower at grid 8, a cell kept when this zone covers at least half of it and more of it than any other zone, so the zones cannot overlap",
       "places_why": "measured from the GUARD'S OWN BLOCK along the axis, every place that stands on the gatehouse at the walkway's own flat floor level y87 (the guard's ground + 1, which is what cmd_build lays for every column of the shell): the arrival 3 blocks inside facing in; the exit box the walkway column directly behind the barrier (2 in where the step is straight); the knock box the 2 walkway blocks outside the guard and the guard's own column, where a player walking up comes to rest, which is what calls the zone's qualify. All three are columns of walkway_path(), checked. Only the turn-back takes its y from tools/ground.py at its own column, because it stands 8 blocks out on open terrain, PAST the nearest outside column (3600, 2560) and facing away, so it is outside the zone however far inside the guard stands.",
-      "knock": [3600, 87, 2554, 3600, 88, 2556],
+      "knock": [3600, 87, 2557, 3600, 88, 2559],
       "needs_dialogue": {
         "what": "G4's dialogue must read q.player.pokedex.caught_count and call cobblers:rift_zones/z4/grant",
         "why": "No command reads how many species a player owns, so z4/qualify can only ever refuse and the zone stays shut until Codex writes the dialogue (docs/HANDOVER_CODEX.md item 23). Declared here beside z5's needs_progression so the state is in the DATA and not only in the report's prose: tools/reapply.py reads these two fields to decide which walls may be installed, and the moment Codex's half lands the field goes and the wall follows without anyone remembering to flip a switch.",
@@ -2369,7 +2377,13 @@
         ],
         "why": "data/rift_regions.json owner_intent[2]: 'The entrance to the Elite Four is sealed off unless you go through the town first.' RIFT_ZONES.md section 2a: releasing Hoopa (rift_crisis_resolved) is what opens the League."
       },
-      "needs_progression": {
+      "superseded_needs_walls": {
+        "met": "2026-10-03, when the two branches that made this field and fixed its defect were merged: measured_defects[held_walls_do_not_meet_their_gatehouses] is fixed (league_gate leaves G5's inner approach column (3581, 2680) open; tests/test_rift_zones_apply.py walks G5 with every wall up and finds the barrier the only way past). Nothing else holds z5: its flag's setter is invoked (the relic hall's binder, which stands in z2, not z5, so the pass is earned outside the zone it opens), and G5's knock box lies outside z5's boxes (tools/rift_zones.py knock_reachable), so a passless player can walk up to the guard. z5 now ships its zone check, knock and exit, and R9Z builds league_gate and gatehouse_z5. Kept as the record of what z5 waited on; held_zones() no longer reads it",
+        "defect": "held_walls_do_not_meet_their_gatehouses",
+        "why": "z5's pass can now be granted (rift_crisis_resolved is declared, and its setter is invoked by the Compact binder's release in the relic hall, data/progression.json set_by.invoked_by, 2026-10-03), so the flag no longer holds it. What still holds it is its wall: league_gate runs along G5's walkway and a passed player cannot walk from the arrival into the precinct (measured_defects[held_walls_do_not_meet_their_gatehouses], fixed null). Remove this field in the same change that fixes that defect; tests/test_rift_zones_apply.py fails if the two drift."
+      },
+      "superseded_needs_progression": {
+        "met": "2026-10-03: data/progression.json declares rift_crisis_resolved with its quest_transition setter (2026-10-02) and set_by.invoked_by = dlg_main_relic_hall_release (2026-10-03, the owner's decision to set it ourselves rather than wait for Codex's cradle). Kept as the record of what z5 waited on; tools/rift_zones.py held_zones() no longer reads it",
         "file": "data/progression.json",
         "not_changed_here": true,
         "add_flag": "rift_crisis_resolved",
@@ -2407,6 +2421,12 @@
               3580,
               2680,
               85,
+              null
+            ],
+            [
+              3581,
+              2680,
+              86,
               null
             ]
           ]
@@ -2599,9 +2619,22 @@
     {
       "id": "held_walls_do_not_meet_their_gatehouses",
       "found": "2026-10-02, walking every emitted function, held ones included, over the heightmap.",
-      "what": "The two walls R9Z holds would not work as gates if released. behind_league (closes z4) runs 4-5 blocks OUTSIDE G4's outer mouth, across its approach, so G4's gatehouse stands wholly behind its own wall and its knock box cannot be reached from z5. league_gate (closes z5) runs ALONG G5's walkway, east-west like it, through the guard's block and down both flanks, so the walkway is embedded lengthwise in the wall and its inner mouth opens onto more wall: a passed player cannot walk from the arrival into the precinct, nor a player inside reach the exit. Each gatehouse alone, without its wall, walks.",
+      "what": "The two walls R9Z holds would not work as gates if released. behind_league (closes z4) runs 4-5 blocks OUTSIDE G4's outer mouth, across its approach, so G4's gatehouse stands wholly behind its own wall and its knock box cannot be reached from z5. league_gate (closes z5) runs ALONG G5's walkway, east-west like it, through the guard's block and down both flanks, so the walkway is embedded lengthwise in the wall and its inner mouth opens onto more wall: a passed player cannot walk from the arrival into the precinct, nor a player inside reach the exit. Each gatehouse alone, without its wall, walks. MEASURED AGAIN 2026-10-03 before fixing: only G4 failed the walk. G5 already walked, since its inner approach (3580, 2680) was cut on 2026-10-02 and a player can sidestep north onto the ground beside the wall; what remained was the column straight on from that mouth, (3581, 2680), being league_gate obsidian.",
+      "fixed": "2026-10-03, the owner's call ('Fix the gatehouses ... pick whichever route is cheapest'). G4 moved 3 blocks south, (3600, 2554) to (3600, 2557): its walkway now runs through behind_league's two rows (z2558-2559) and its outer mouth z2560 opens on the League's side; 87 block positions change, no wall column moves (zones.z4.guard.moved). G5: tools/rift_zones.py mouth_cut no longer ends an approach facing its own zone's wall, so the inner run takes (3581, 2680) and build leaves that one column out of league_gate; 16 block positions change. tests/test_rift_zones_apply.py walks all seven gatehouses with every wall up, checks each mouth straight on, and checks the barrier is the only way past both walled gates. docs/world-building/GATEHOUSE_CHANGES.md lists every gatehouse for the owner's flight."
+    },
+    {
+      "id": "gates_stand_deep_inside_their_own_zone",
+      "found": "2026-10-03, walking a player WITHOUT the pass from 8 blocks outside each gate to its knock box and counting every column where the zone check would turn them back (in the zone's boxes, outside every knock box).",
+      "gates": [
+        "z1",
+        "z2_rim_post_descent",
+        "z2_victory_road_descent",
+        "z2_wilds_slip"
+      ],
+      "what": "G1 and the three z2 posts stand inside their own zone's boxes by 141 (G1), 144 (Victory Road descent), 62 (rim post) and 153 (wilds slip) blocks: their records' edge_distance, measured from the traced mask. Every column from the guard outward to 14 blocks is in the zone's boxes, so a player without the pass is turned back by the zone check long before reaching the guard, and the knock box, the only thing that calls qualify, cannot be reached by anyone it could admit. For z1 that means no survival player can earn the pass by walking up to G1: z1 opens only if G1's dialogue (Codex, not written) or something else calls z1/grant. For the posts it means they serve only players who already hold z2's pass. G2 (outside-sited at the trailhead since 2026-10-01, guard.supersedes) and G5 (boxes begin 11 blocks in) pass; G4 passes since its move.",
       "fixed": null,
-      "why_not_fixed": "both zones are held (z4 needs Codex's caught_count dialogue, z5 the rift_crisis_resolved setter), so neither wall is installed and nothing in the world is wrong today. Fixing it means moving a guard or re-cutting a wall, a siting decision; it must be done before either zone's needs_* field is removed. tests/test_rift_zones_apply.py carries it as a strict xfail keyed on this record."
+      "fails_open": "2026-10-03, the owner's rule that a player turned back with no way through is the worse failure. tools/rift_zones.py unreachable_zones() finds, from the geometry alone, every zone none of whose gates has a knock box outside the zone's boxes or on their edge (knock_reachable), and `build` ships that zone no advancement at all: no zone check, no turn-back, no knock, no exit. Its wall, gatehouses and placeholders are still built by R9Z. Today that is z1 alone, so z1 is OPEN to everyone until G1 is re-sited. z2 is NOT in it: G2's knock box at the trailhead lies outside z2's boxes, so a passless player can walk up to G2 and earn the pass there, and the three posts keep their knocks for players who already hold it. The z1 check was installed and R9Z ran on staging on 2026-10-02; the next `install` replaces cobblers_rift_zones and removes it. tests/test_rift_zones_apply.py holds the rule (and a mutation of the generator that ships the checks again fails it).",
+      "why_not_fixed": "not a gatehouse's shape: the zone's boxes, or where the guard stands relative to them, a siting decision for the owner. G2's move is the precedent (stand the gate where the zone begins). Not caught before because every check measured the gatehouse, and zone_begins_in = 0 reads as 'the zone begins at the guard' when it says only that the guard's own column is in it. tests/test_rift_zones_apply.py carries it as a strict xfail keyed on this record, and a second test holds `gates` to exactly the gates that fail."
     }
   ],
   "interior": {

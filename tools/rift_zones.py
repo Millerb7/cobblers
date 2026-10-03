@@ -776,8 +776,11 @@ def cmd_trace(a):
         kc = wlist[:gi + 1]
         knock = [min(p[0] for p in kc), fy, min(p[1] for p in kc),
                  max(p[0] for p in kc), fy + 1, max(p[1] for p in kc)]
-        approach = {"outer": mouth_cut(wlist[1], wlist[0], fy, g, "%s outer mouth" % zid),
-                    "inner": mouth_cut(wlist[-2], wlist[-1], fy, g, "%s inner mouth" % zid)}
+        # the zone's own cross-wall, as the line `build` lays it: an approach never ends facing it (mouth_cut)
+        wcut = spec["zones"][zid.split("/")[0]].get("wall")
+        wset = frozenset(tuple(p) for c in spec["cuts"] if c["id"] == wcut for p in c["line"])
+        approach = {"outer": mouth_cut(wlist[1], wlist[0], fy, g, "%s outer mouth" % zid, wset),
+                    "inner": mouth_cut(wlist[-2], wlist[-1], fy, g, "%s inner mouth" % zid, wset)}
         out = {
             "block": [bx, bz], "ground_y": int(g(bx, bz)),
             "side": side,
@@ -874,8 +877,9 @@ def cmd_report(a, quiet=False):
     """Returns 0 only when there is neither a problem nor an owed dependency.
 
     A PROBLEM is something wrong in this data. An OWED item is something another file must still supply --
-    today, the dialogue that invokes rift_crisis_resolved's setter (the flag and its setter transition are declared
-    since 2026-10-02; Hoopa's release beat is Codex's story data, data/rift_zones.json zones.z5.needs_progression). Both make `report` exit 1, because neither may be forgotten. Only a PROBLEM
+    today, z4's caught-count dialogue, and a re-sited G1 (z1 fails open, unreachable_zones). z5 owes nothing since
+    2026-10-03: its flag is set by the Compact binder's release in the relic hall and its wall meets G5. Owed items
+    make `report` exit 1, because none may be forgotten. Only a PROBLEM
     stops `build`: an advancement that does not exist yet fails CLOSED, since a condition on a missing
     advancement never matches and nobody is granted the pass."""
     spec = load()
@@ -1174,9 +1178,33 @@ def cmd_report(a, quiet=False):
         # declared, with a setter (the transition that grants it), but no dialogue node invokes that transition yet:
         # nobody can hold the flag, so z5 is still shut to everyone
         owed("the invoker of rift_crisis_resolved's setter: data/progression.json declares it, set by %s, but "
-             "set_by.invoked_by is null -- Hoopa's release (NPCS_AND_RIFT_FINALE.md Scene 5) needs the cradle "
-             "carved and its scene. Until then z5 is shut to everyone, which is closed, not open."
+             "set_by.invoked_by is null -- Hoopa's release (the Compact binder in the relic hall, "
+             "data/relic_underground.json geometry.release, or NPCS_AND_RIFT_FINALE.md Scene 5). Until then z5 is shut "
+             "to everyone, which is closed, not open."
              % (crisis.get("set_by") or {}).get("transition"))
+    # 9a. a zone held for its WALLS (zones.<id>.needs_walls): it can grant its pass, but the wall it would put up does
+    #     not let a passed player through. Owed until the named defect is fixed, and named here so it is not forgotten;
+    #     a needs_walls naming a defect that is fixed or absent is a problem (the hold would outlive its reason)
+    defects = {d.get("id"): d for d in spec.get("measured_defects") or []}
+    for zid, z in sorted(live.items()):
+        nw = z.get("needs_walls")
+        if not nw:
+            continue
+        d = defects.get(nw.get("defect"))
+        if d is None or d.get("fixed"):
+            bad("%s is held by needs_walls on measured_defects[%s], which is %s: remove needs_walls"
+                % (zid, nw.get("defect"), "absent" if d is None else "fixed"))
+        else:
+            owed("%s's wall: %s can grant its pass but is held until measured_defects[%s] is fixed (its wall and "
+                 "gatehouse do not meet). Until then neither its wall nor its zone check is installed, so it is open."
+                 % (zid, zid, nw["defect"]))
+    # 9a'. a zone none of whose guards a passless player can reach (unreachable_zones): `build` ships no check for it,
+    #     so it is OPEN, and stays so until a guard is re-sited where the zone begins -- the owner's decision
+    for zid, gates in sorted(unreachable_zones(spec).items()):
+        owed("%s's guards: none can be reached from outside (%s blocks inside), so %s ships no zone check, knock or "
+             "exit and is OPEN (measured_defects[gates_stand_deep_inside_their_own_zone]). Re-site a guard where the "
+             "zone begins (docs/world-building/GATEHOUSE_CHANGES.md) and the checks come back."
+             % (zid, ", ".join("%s %s" % (n, d) for n, d in sorted(gates.items())), zid))
     # 9b. a caught-count zone's knock box calls a qualify that can only refuse: no command or predicate reads
     #     species owned (docs/research/CAUGHT_COUNT_AND_NPC_GUARDS.md; the VERIFIED custom stat counts BALL
     #     CAPTURES, not species). Its guard's dialogue must call <zone>/grant itself. Owed, not a problem: the
@@ -1254,13 +1282,56 @@ def adv(conds, reward):
 def held_zones(spec):
     """{zone id: [what it owes]} for every live zone that cannot GRANT its pass yet.
 
-    Read from the data, zones.<id>.needs_progression / needs_dialogue, and nowhere else: `build` emits no
-    advancement for such a zone and tools/reapply.py's R9Z runs neither its wall nor its gatehouses. When the
-    owed half lands, the field goes and both follow."""
-    return {zid: [k for k in ("needs_progression", "needs_dialogue") if z.get(k)]
+    Read from the data, zones.<id>.needs_progression / needs_dialogue / needs_walls, and nowhere else: `build`
+    emits no advancement for such a zone and tools/reapply.py's R9Z runs neither its wall nor its gatehouses. When
+    the owed half lands, the field goes and both follow. needs_walls (2026-10-03) holds a zone that CAN grant its
+    pass but whose wall would not let a passed player through (it names the measured defect)."""
+    keys = ("needs_progression", "needs_dialogue", "needs_walls")
+    return {zid: [k for k in keys if z.get(k)]
             for zid, z in spec["zones"].items()
             if not str(z.get("status", "")).startswith("SUPERSEDED")
-            and (z.get("needs_progression") or z.get("needs_dialogue"))}
+            and any(z.get(k) for k in keys)}
+
+
+def knock_reachable(z, knock):
+    """Whether a player WITHOUT the pass can step into this knock box from outside the zone: some column of the knock
+    box is itself outside every one of the zone's boxes, or 4-adjacent to a column outside them. The zone check turns
+    back a passless player anywhere in the boxes except a knock box, so a knock box wholly surrounded by the boxes
+    can be reached only by crossing ground where the check fires first. Columns only, from the data: whether the
+    ground lets a player walk there is tests/test_rift_zones_apply.py's walk, not this."""
+    boxes = z["boxes"]
+
+    def inside(x, zz):
+        return any(b[0] <= x <= b[2] and b[1] <= zz <= b[3] for b in boxes)
+    for x in range(knock[0], knock[3] + 1):
+        for zz in range(knock[2], knock[5] + 1):
+            if not inside(x, zz) or any(not inside(x + dx, zz + dz)
+                                        for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+                return True
+    return False
+
+
+def unreachable_zones(spec):
+    """{zone id: {gate name: the guard's edge_distance}} for every live zone that is NOT held (held_zones) and none
+    of whose gates a passless player can reach from outside (knock_reachable). Derived from the geometry, never a
+    hand list.
+
+    Such a zone ships NO advancement -- no zone check (so no turn-back), no knock, no exit -- and keeps everything
+    it builds: its gatehouses, its wall and its guards' placeholders. Its zone check would turn back every player
+    who has not been granted the pass, and nothing a passless player can reach grants it: no way through, which the
+    owner ruled the worse failure (2026-10-03). Open is the cheaper fault. data/rift_zones.json
+    measured_defects[gates_stand_deep_inside_their_own_zone] (G1 141 blocks inside z1); re-siting the guard is the
+    owner's decision (docs/world-building/GATEHOUSE_CHANGES.md), and the moment a gate's knock box touches the
+    zone's edge the zone ships its checks again, with nothing to remember."""
+    held = held_zones(spec)
+    out = {}
+    for zid, z in spec["zones"].items():
+        if str(z.get("status", "")).startswith("SUPERSEDED") or not z.get("guard") or zid in held:
+            continue
+        gates = gates_of(zid, z)
+        if not any(knock_reachable(z, g[6]) for g in gates):
+            out[zid] = {g[0]: g[2].get("edge_distance") for g in gates}
+    return out
 
 
 def zone_functions(zid, z):
@@ -1390,7 +1461,7 @@ def walkway_shell(path):
 APPROACH_MAX = 16
 
 
-def mouth_cut(prev, end, fy, g, label):
+def mouth_cut(prev, end, fy, g, label, wall=frozenset()):
     """[[x, z, feet, fill_from]] -- the columns, straight on from one walkway mouth, that `build` cuts or
     bridges so the walkway meets the ground. Measured once by `trace` and kept in the gate's record as
     `approach`, so `build` reads no heightmap.
@@ -1408,7 +1479,15 @@ def mouth_cut(prev, end, fy, g, label):
       bridged, while it stands lower.
     Every column gets three blocks of air at its feet, so a jump up from it has headroom. A cut column's floor
     is the ground it was cut into (`fill_from` null); a bridged column's floor is filled from the ground up
-    (`fill_from` = the first block above the ground). No ground within APPROACH_MAX columns: ZoneError."""
+    (`fill_from` = the first block above the ground). No ground within APPROACH_MAX columns: ZoneError.
+
+    `wall` is the zone's own cross-wall line (cuts[].line), and the run never ENDS facing it (2026-10-03,
+    data/rift_zones.json measured_defects[held_walls_do_not_meet_their_gatehouses]): ground was the only
+    thing this measured, so at G5 the inner approach stopped one column short of a column of league_gate and
+    a passed player walking straight out of the walkway walked into obsidian. A wall column straight on from
+    the run is taken into it at its own ground, and `build` leaves every approach column out of the wall.
+    Opening a wall column can open a way round the barrier; tests/test_rift_zones_apply.py's bypass check is
+    what says it did not."""
     d = (end[0] - prev[0], end[1] - prev[1])
     if abs(d[0]) + abs(d[1]) != 1:
         raise ZoneError("%s: the walkway's last step %s is not one axis step" % (label, d))
@@ -1417,6 +1496,12 @@ def mouth_cut(prev, end, fy, g, label):
         m = (end[0] + d[0] * k, end[1] + d[1] * k)
         feet = g(*m) + 1
         top = h if k == 1 else h + 1            # the walkway's roof forbids a step up at the mouth itself
+        if h - 1 <= feet <= top and (tuple(m) in wall or (m[0] + d[0], m[1] + d[1]) in wall):
+            # the run would end here, but this column or the next is the wall: carry it on, at the ground
+            if k == 1 or tuple(m) in wall:
+                cols.append([m[0], m[1], feet, None])
+            h = feet
+            continue
         if h - 1 <= feet <= top:
             if k == 1:
                 # the mouth is always laid, at its own ground, even where nothing needs cutting: a world the
@@ -1575,8 +1660,9 @@ def cmd_build(a):
     files, fn, index, guards = {}, {}, [], []
     live = {z: r for z, r in spec["zones"].items() if not str(r.get("status", "")).startswith("SUPERSEDED")}
     held = held_zones(spec)
+    unreachable = unreachable_zones(spec)
 
-    load_lines = ["# one dummy objective per zone; never reset, never unset by this pack"]
+    load_lines =["# one dummy objective per zone; never reset, never unset by this pack"]
     for zid, z in sorted(live.items(), key=lambda kv: kv[1]["order"]):
         obj = spec["pass"]["objective_prefix"] + zid
         load_lines.append("scoreboard objectives add %s %s" % (obj, spec["pass"]["criterion"]))
@@ -1592,6 +1678,9 @@ def cmd_build(a):
         # back every survival player. Its functions are still emitted, so Codex's dialogue has its grant to
         # call; when the zone's needs_* field goes, the advancements follow with nothing to remember.
         enforced = zid not in held
+        # and a zone none of whose guards a passless player can walk up to (unreachable_zones) fails OPEN: its
+        # check would turn everyone back before any guard could answer. Its blocks are still built (R9Z).
+        enforced = enforced and zid not in unreachable
         if enforced:
             files["data/%s/advancement/%s/%s_zone.json" % (NS, FOLDER, zid)] = adv(
                 [{"condition": "minecraft:any_of", "terms": boxes}], "%s/%s/zone" % (F, zid))

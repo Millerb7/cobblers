@@ -96,6 +96,21 @@
       "why": "a 5x5 ring of native masonry in the dome's apex with rubble above it, so a player standing under the apex reads 'there was a way down from above and it fell in' without there being one. Gravel is listed and NOT used: a gravel column falls. The choke stops at y40, which is also the zone's ceiling, so the one thing a player could mine upward through is the last thing inside the zone.",
       "not_a_route": "no column of it is air; the shaft is never passable and no function ever opens it"
     },
+    "release": {
+      "what": "the Rift finale's one beat: a Compact binder at the relic ring, whose conversation offers 'Release Hoopa.' to a player whose quest.main_worldshift_reveal.stage is rift_crisis_pending. Acknowledging the release line runs the transition unlock_league_after_rift_resolution (data/quests.json), whose first effect grants cobblers:flag/rift_crisis_resolved to THAT player. A minimal port of docs/story/NPCS_AND_RIFT_FINALE.md Scene 5 (Codex, commit 9cbfd213, local branch codex/trainer-modes) into the carved hall instead of the uncarved cradle.",
+      "decision": "the owner, 2026-10-03: 'rift_crisis_resolved: if Codex's finale writing never lands a setter, set it ourselves at the quest stage that ends the Rift crisis. I would rather have the finale fire than wait another week.'",
+      "conversation": "dlg_main_relic_hall_release",
+      "npc": "npc_main_relic_hall_binder",
+      "at": [3390, 8, 3268],
+      "yaw": 0,
+      "yaw_why": "facing south (+z, Minecraft yaw 0), toward the gallery's mouth at the hall's south rim (z3283), so a player climbing the platform from the gallery meets the binder face on with the ring behind",
+      "at_why": "on the platform's top disc (polished_tuff at y7, the third step, radius 12), six blocks south of the hall's centre on the gallery's axis x3390: two clear of the plinth (radius 4), under the ring (whose lowest block in that column is raw_gold_block at y13), and inside the six-block circle tools/relic_underground_audit.py's route walk must reach. Measured 2026-10-03 off tools/relic_underground.py composition(), the cells it writes: (3390, 7, 3268) polished_tuff, (3390, 8..12, 3268) nothing. tools/relic_underground.py report refuses a seat that stops being air over a block the hall builds",
+      "why_an_npc_not_the_hoopa_actor": "Codex's Scene 5 opens on actor_finale_hoopa, a scene-runtime Pokemon actor, and Codex itself gates it: 'model/form must be verified in the installed pack before placement'. Hoopa's model is NOT verified on the client (unverified[] below), and a scene actor's click has not been seen in game (experiments/EXP-034-scene-runtime: 'Not yet seen: a player clicking'). A Cobblemon NPC opening a compiled dialogue is the mechanism the two HQ guards use (R18RU), and an NPC dialogue ran on a disposable world (EXP-022). The binder stands for the cradle staff Codex's Scene 1 names ('my authorization to evacuate the cradle staff'); the lines are Codex's Scene 4 and 5 where they still hold, flagged in the conversation's source",
+      "why_here_not_the_cradle": "the cradle (3357, 12, 3306) is reserved and NOT carved (geometry.passage.stops_why); the hall is carved and in staging (R9RU). Codex's Scene 4 puts Hoopa 'below the relic that first taught this place how to bind it', and the relic ring is in this hall",
+      "stage_gate": "the release reads stage == rift_crisis_pending, not Codex's cradle_open: Scenes 1-4 (Nia, Brann, Oren, Elara) are not built and their stages are not in the enum, so cradle_open is unreachable. The owner chose the finale firing over waiting",
+      "placed_by": "tools/reapply.py step R18RU, with the two HQ guards (npc_placements)",
+      "not_built": "a visible Hoopa (Codex's restrained and then freed actor), the post-release 'restrained actor disappears' world change, and Codex's 'one release advances every eligible player'. Each player releases for themselves"
+    },
     "hq": {
       "what": "the way down from the Compact HQ to the passage: the HQ's ring-0 front door, its storey-0 room, a lit switchback stair through the reserved secure shaft, and a records room (the basement) at y0 whose open west doorway is the passage's east end. Built 2026-10-02 by this file and tools/relic_underground.py (carve/40_hq), the owner's 'reachable only through the Compact HQ'.",
       "measured_2026_10_02": [
@@ -357,7 +372,8 @@
     "different_order": "the pass depends on eight badges and on standing at one doorway. It has no ordering with the cradle, the finale, the shrine's contents or any other zone, so two players at different points in the story reach it at their own pace with no shared state between them.",
     "one_player_cannot_carry_another": "the grant is `@s` inside the knock box, so only the player standing there is granted. A passed player walking west ahead of a passless one does nothing for the one behind: the one behind is turned back at x3419.",
     "multiplayer_cost": "one location test per player per second against three boxes. Negligible, and an order of magnitude cheaper than z1-z5, which test a few hundred boxes each.",
-    "no_server_wide_state": "no shared flag, no global counter, no first-player-wins. The hall's own contents, if a Hoopa actor is ever put in it, are the scene runtime's per-player actors (DEEP_CITY.md section 5, EXP-034) and are not this file's."
+    "no_server_wide_state": "no shared flag, no global counter, no first-player-wins. The hall's own contents, if a Hoopa actor is ever put in it, are the scene runtime's per-player actors (DEEP_CITY.md section 5, EXP-034) and are not this file's.",
+    "release_per_player": "the binder (geometry.release) is one shared, static NPC; what it changes is per player. Its dialogue reads and writes the TALKING player's Cobblemon player data (quest.main_worldshift_reveal.stage), and the transition's grant runs `advancement grant @s` as and at that player only (tools/compile_dialogue.py's `function` effect: execute as <their uuid>). Two players release Hoopa twice, each for themselves; a late joiner, a player who died, or one who disconnected mid-conversation is re-offered the choice while their own stage is still rift_crisis_pending, and a re-grant is a no-op. A player who released and comes back gets the after-release line."
   },
 
   "surface_proposal": {
@@ -404,12 +420,14 @@
       "the carve must run BEFORE Codex's cradle, or the cradle's own 24-block shell will seal this passage's west end: tools/cavern_plan.py's shell converts every void it finds within 24 blocks, and x3358 is 1 block from the cradle's centre column",
       "WRITTEN 2026-10-02: tools/reapply.py step R9RU, after R9DC and before R9E: forceload the bounds, undo, 02_shell, 10_void, 20_surfaces, 25_reshell, 30_composition, release (relic_underground.placement_steps). The undo runs after R9DC because it subtracts what the current city writes, and R9DC must not run after it on a world that still has the old build (it does not: R9DC no longer writes those cells)",
       "the zone pack itself needs no step: it is advancement-driven, like the gulch's",
+      "the binder at the relic ring (geometry.release, 2026-10-03) is placed by the same step R18RU, after the two guards",
       "the two Compact guards at the HQ door (geometry.hq.guard, inside_guard) are placed by tools/reapply.py step R18RU, after R17N: NPCs over RCON after the restart that loaded cobblers_dialogue's classes, on the floor R9DC and R9B laid. Their functions (hq_admit, hq_release) are in this pack, loaded with it",
       "the HQ's way down (carve/40_hq) runs AFTER R9B (tools/rift_deep.py, the pit): R9B's refill under every tread is `replace #cobblers:rift_void`, so a re-run of R9B after R9RU would fill the stair and the records room with rock. R9B before R9DC before R9RU is the order tools/reapply.py has, and tests/test_relic_underground.py checks it"
     ],
     "upgrade_path": {
       "when": "a setter exists for the finale's stage",
       "change": "data/relic_underground.json zone.pass.threshold_advancements, nothing else. No code, no geometry, no re-carve.",
+      "superseded_2026_10_03": "the finale's setter now exists and is invoked INSIDE this zone (geometry.release: the binder at the relic ring), so this upgrade can never be made: keying the pass on rift_crisis_resolved would shut the hall to the only place the flag is earned. tools/relic_underground.py report refuses it. Kept as the record of what was planned",
       "do_not": "add cobblers:flag/rift_crisis_resolved to this file before it has a setter. An advancement that does not exist never matches, so a zone keyed on it would be SHUT FOREVER rather than open at eight badges, and this zone's whole purpose is to be the one that works."
     },
     "owner_decisions": [
