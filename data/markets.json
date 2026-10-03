@@ -1,0 +1,362 @@
+{
+  "schema": 1,
+  "generated_by": "hand",
+  "status": "authored 2026-10-03; generated into the world-local pack cobblers_markets by tools/markets.py; keepers placed by tools/reapply.py R17M; NOT run in game (docs/mechanics/MARKET_GATING.md section 5 is the experiment)",
+  "owner_brief": "the owner, 2026-10-03: 'I want a player to rely on money throughout the game, and to advance materially as they travel ... Backpack tiers from the Cobbleverse backpack mod, unlocked town by town so a player upgrades as they go ... Per-town stock that reads as the place - a mining town sells what a mining town would. Priced so money matters.'",
+  "mechanism": {
+    "summary": "a market keeper is a Cobblemon dialogue NPC beside the town's Mart: one option per shelf item, an option gated on a badge visible only to a player holding that badge (compile_dialogue 'flag' probe -> isVisible), each option running a function that re-checks the gate, reads the balance, refuses if short, charges by macro, verifies the balance fell by exactly the price, and only then gives the item as the player. The ferry's sequence (tools/ferries.py trip_lines) with the teleport replaced by a give",
+    "sources": [
+      "docs/mechanics/MARKET_GATING.md sections 4-5 (the recommendation and its experiment)",
+      "tools/compile_dialogue.py: visible_when -> isVisible; the flag probe; the function effect",
+      "tools/ferries.py trip_lines: cooldown, gate re-check, balance read (EXP-040), macro charge (EXP-042 run 1), verify",
+      "experiments/EXP-022-native-dialogue-runtime/README.md bugs 1-2: give runs as the player, and the score objective exists before a store"
+    ],
+    "rung": "5 (datapack) + 7 (functions), with 2 (CobbleDollars) for the money and 4 (configuration) for the recipes; no scripting layer, no companion, no mod",
+    "what_it_is_not": "the Mart clerks (data/traders.json) are untouched: they keep the trade GUI and the ungated basics. A town gets a clerk AND a keeper"
+  },
+  "income_basis": {
+    "relayed": true,
+    "source": "docs/mechanics/PROGRESSION_LADDER.md section 0.2 (model B, the middle bracket, at cobbleDollarsIncomeMultiplier 1.25 = docs/research/INCOME_MEASUREMENT.md section 2.4 x 2.5). Not measured here: EXP-A (U-2) collapses the band",
+    "cumulative_by_badge": {"1": 9475, "2": 17023, "3": 28655, "4": 45615, "5": 60905, "6": 82275, "7": 109038, "8": 145078},
+    "leg_by_badge": {"1": 9475, "2": 7548, "3": 11633, "4": 16958, "5": 15293, "6": 21370, "7": 26760, "8": 36040},
+    "target_ratio": 0.7,
+    "target_source": "PROGRESSION_LADDER.md section 0.3: 'cumulative spend stays near 0.65-0.70 of cumulative income at every badge. The remaining 30-35% is the Mart, the ferry, the stones and the blackout.' The blackout is a flat $600 (data/blackout.json money.charge_rule)",
+    "counts": "the critical path only (the eight gym towns and Pallet), one of each option, a pick-one group at its dearest member, stretch items excluded from the ratio and included in the hard check that a badge's cumulative ask never exceeds its cumulative income"
+  },
+  "badges": {
+    "gym1_cleared": "the Boulder Badge",
+    "gym2_cleared": "the Cascade Badge",
+    "gym3_cleared": "the Thunder Badge",
+    "gym4_cleared": "the Rainbow Badge",
+    "gym5_cleared": "the Soul Badge",
+    "gym6_cleared": "the Marsh Badge",
+    "gym7_cleared": "the Volcano Badge",
+    "gym8_cleared": "the Earth Badge"
+  },
+  "purchase": {
+    "cooldown_ticks": 20,
+    "cooldown_why": "the ferry's rule (data/ferries.json trip.cooldown_why): a second submit of the same option must not pay twice. The menu closes after every purchase, so one second is ample"
+  },
+  "messages": {
+    "voice": "PLACEHOLDERS for Codex's voice (the keepers' greetings are on the counters). Placeholders: {item}, {price}, {count}, {requirement}, and {balance} in 'short' only",
+    "option": "{item}: ${price}",
+    "option_count": "{item} x{count}: ${price}",
+    "leave": "Just looking.",
+    "short": "That's ${price}. You have ${balance}.",
+    "gated": "I only sell that to trainers with {requirement}.",
+    "charge_failed": "The payment didn't go through, so nothing changed hands. Check your balance and try again.",
+    "give_failed": "I couldn't hand that over, so your ${price} is back with you.",
+    "paid": "Paid ${price} for {item}."
+  },
+  "recipe_overlay": {
+    "file": "modpack/config/sophisticatedcore-common.toml",
+    "base": "base-pack/cobbleverse/config/sophisticatedcore-common.toml",
+    "key": "enabledItems",
+    "key_source": "the shipped comment above the key: 'Disable / enable any items here (disables their recipes)'; read in sophisticatedcore-1.21.1-1.2.9.21.168.jar by ItemEnabledCondition (recipe load condition) and the creative-tab code only (docs/mechanics/TIERED_GOODS.md 2.1)",
+    "rule": "every sophisticatedbackpacks item a counter sells is '|false' in the overlay, and the overlay differs from the base in nothing else; an item sold while its recipe stays on is listed in left_craftable with why",
+    "left_craftable": {
+      "sophisticatedbackpacks:backpack": "the first tier is leather, string and a chest: a player who can make it should, and Pallet's shelf is a kindness for the first hour, not a gate"
+    },
+    "not_run": "that a disabled item's recipe is gone and the item still works when given is read from the jar, not run: audit item A-6"
+  },
+  "counters": [
+    {
+      "id": "pallet",
+      "town": "hometown",
+      "path": "critical",
+      "badge": 0,
+      "status": "unsited",
+      "unsited_why": "Pallet is a donor town with no plan anchors (tools/town_plan.py hometown stops at KeyError 'plan'), so nothing offline can say which cell outside its Mart is open. The clerk stands inside, behind the counter (data/traders.json hometown_mart). Site it in a full checkout or by a world probe, then set status sited",
+      "near_trader": "hometown_mart",
+      "keeper": {"name": "Packmaker", "greeting": "First time out? Everyone leaves Pallet with a pack and a bedroll. The rest you'll buy on the road."},
+      "theme": "the one town that is a house: the last thing home gives you is the means never to come back (PROGRESSION_LADDER 1.1)",
+      "stock": [
+        {"id": "backpack", "item": "sophisticatedbackpacks:backpack", "name": "Leather backpack", "count": 1, "price": 300, "gate": null, "strand": "convenience", "why": "tier 1 of 6: 27 slots, 1 upgrade slot. Craftable too (recipe_overlay.left_craftable)"},
+        {"id": "bedroll", "item": "comforts:sleeping_bag_brown", "name": "Sleeping bag", "count": 1, "price": 250, "gate": null, "strand": "convenience", "why": "passes the night and sets no spawn (comforts sleepingBagUse DAY_OR_NIGHT): the item that makes 'never build a house' literal"}
+      ]
+    },
+    {
+      "id": "stoneford",
+      "town": "gym1_town",
+      "path": "critical",
+      "badge": 1,
+      "status": "sited",
+      "at": [1802, 139, 3611],
+      "yaw": -90,
+      "near_trader": "gym1_mart",
+      "sited_by": "measured 2026-10-03: the nearest cell to the Mart clerk that tools/ambient.py's Site marks free (lots, anchors, lamps, building footprints with a 1-block margin, earthworks) on all 3x3 round it, level with its neighbours, 3.5+ blocks from every placed NPC and 3+ from every walked route line; y = the plan's ground + 1. The dressing pieces were not in that measurement (derived/signposts.json absent in the agent worktree): tools/markets.py audit checks them in a full checkout",
+      "keeper": {"name": "Yard Steward", "greeting": "Masons' yard. Boulder Badge holders can buy from the back shelf: copper packs, the stonecutter and anvil fittings, and, if you can stand the price, the crafting kit."},
+      "theme": "the plateau's builders' town, dressed with a stonecutter, a grindstone and an anvil bench (TOWN_CHARACTER.md): a masons' town sells workstations",
+      "stock": [
+        {"id": "copper_backpack", "item": "sophisticatedbackpacks:copper_backpack", "name": "Copper backpack", "count": 1, "price": 1200, "gate": "gym1_cleared", "strand": "convenience", "why": "tier 2: 45 slots"},
+        {"id": "stonecutter_upgrade", "item": "sophisticatedbackpacks:stonecutter_upgrade", "name": "Stonecutter upgrade", "count": 1, "price": 1800, "gate": "gym1_cleared", "strand": "convenience", "why": "a mason's tool, in the pack"},
+        {"id": "anvil_upgrade", "item": "sophisticatedbackpacks:anvil_upgrade", "name": "Anvil upgrade", "count": 1, "price": 2500, "gate": "gym1_cleared", "strand": "convenience", "why": "repairs on the road, while gear is still repaired rather than replaced (PROGRESSION_LADDER 4.1)"},
+        {"id": "hard_stone", "item": "cobblemon:hard_stone", "name": "Hard Stone", "count": 1, "price": 500, "gate": "gym1_cleared", "strand": "power", "why": "the rock town's held item, replacing the TM blank the ladder put here (TIERED_GOODS 2.2)"},
+        {"id": "crafting_upgrade", "item": "sophisticatedbackpacks:crafting_upgrade", "name": "Crafting upgrade", "count": 1, "price": 7500, "gate": "gym1_cleared", "strand": "convenience", "stretch": true, "affordable_by": 3, "why": "decision B7: price as the gate. Visible from badge 1, affordable around badge 3 to a player who saves (PROGRESSION_LADDER 4)"}
+      ]
+    },
+    {
+      "id": "viltri_quay",
+      "town": "gym2_town",
+      "path": "critical",
+      "badge": 2,
+      "status": "sited",
+      "at": [1650, 108, 2775],
+      "yaw": -90,
+      "near_trader": "gym2_mart",
+      "sited_by": "as stoneford",
+      "keeper": {"name": "Rescue Quartermaster", "greeting": "We kit out the rescue crews. Cascade Badge holders can have what the crews carry: water tanks, filters, and the stronger medicine."},
+      "theme": "the lake town that takes in whoever the water brings: a rescue crew sells water carried and medicine",
+      "stock": [
+        {"id": "filter_upgrade", "item": "sophisticatedbackpacks:filter_upgrade", "name": "Filter upgrade", "count": 1, "price": 1200, "gate": "gym2_cleared", "strand": "convenience", "why": "sorting matters while the pack is small (PROGRESSION_LADDER 4.1)"},
+        {"id": "tank_upgrade", "item": "sophisticatedbackpacks:tank_upgrade", "name": "Tank upgrade", "count": 1, "price": 1500, "gate": "gym2_cleared", "strand": "convenience", "why": "water carried, for a lake crew"},
+        {"id": "super_potion", "item": "cobblemon:super_potion", "name": "Super Potion", "count": 3, "price": 1200, "gate": "gym2_cleared", "strand": "power", "why": "the first medicine above the Mart's Potion, released from stock_policy's withheld Treatments; 400 each against bank.json's 175 sell-back"},
+        {"id": "mystic_water", "item": "cobblemon:mystic_water", "name": "Mystic Water", "count": 1, "price": 1000, "gate": "gym2_cleared", "strand": "power", "why": "the water town's held item"}
+      ]
+    },
+    {
+      "id": "highwire",
+      "town": "gym3_town",
+      "path": "critical",
+      "badge": 3,
+      "status": "sited",
+      "at": [1687, 174, 1467],
+      "yaw": 0,
+      "near_trader": "gym3_mart",
+      "sited_by": "as stoneford",
+      "keeper": {"name": "Relay Storekeeper", "greeting": "Relay stores. Thunder Badge holders can have the iron pack, a battery, a magnet, and Great Balls by the five."},
+      "theme": "the signal town that keeps the power and the relays running: the one trade that would sell a battery",
+      "stock": [
+        {"id": "iron_backpack", "item": "sophisticatedbackpacks:iron_backpack", "name": "Iron backpack", "count": 1, "price": 4500, "gate": "gym3_cleared", "strand": "convenience", "why": "tier 3, the hinge: 81 slots and 7 upgrade slots, a complete 'no house' loadout (PROGRESSION_LADDER 2.1)"},
+        {"id": "battery_upgrade", "item": "sophisticatedbackpacks:battery_upgrade", "name": "Battery upgrade", "count": 1, "price": 1500, "gate": "gym3_cleared", "strand": "convenience", "why": "the relay town's own stock"},
+        {"id": "magnet", "item": "cobblemon:magnet", "name": "Magnet", "count": 1, "price": 800, "gate": "gym3_cleared", "strand": "power", "why": "the electric town's held item"},
+        {"id": "great_ball", "item": "cobblemon:great_ball", "name": "Great Ball", "count": 5, "price": 1750, "gate": "gym3_cleared", "strand": "power", "why": "the first ball above the Mart's Poke Ball (200), released from the withheld Pokeballs; 350 each, under defaultShop's 750 because the clerk's Poke Ball is already half defaultShop's"}
+      ]
+    },
+    {
+      "id": "greenhollow",
+      "town": "gym4_town",
+      "path": "critical",
+      "badge": 4,
+      "status": "sited",
+      "at": [4309, 111, 1627],
+      "yaw": 0,
+      "near_trader": "gym4_mart",
+      "sited_by": "as stoneford",
+      "keeper": {"name": "Green Grocer", "greeting": "From the green. Rainbow Badge holders can buy the feeding fittings, malasadas and puffs your partners will love you for, and a Miracle Seed."},
+      "theme": "the garden town built round a green: food, and the feeding upgrade is food that follows you",
+      "stock": [
+        {"id": "feeding_upgrade", "item": "sophisticatedbackpacks:feeding_upgrade", "name": "Feeding upgrade", "count": 1, "price": 2000, "gate": "gym4_cleared", "strand": "convenience", "why": "food that follows you"},
+        {"id": "advanced_feeding_upgrade", "item": "sophisticatedbackpacks:advanced_feeding_upgrade", "name": "Advanced feeding upgrade", "count": 1, "price": 4500, "gate": "gym4_cleared", "strand": "convenience", "why": "the second step of the same"},
+        {"id": "sweet_malasada", "item": "cobblecuisine:sweet_malasada", "name": "Sweet Malasada", "count": 1, "price": 900, "gate": "gym4_cleared", "strand": "power", "why": "friendship +12 (cobblecuisine.json malasadaFriendship): a friendship evolution bought rather than walked. The plain 'malasada' id does not exist (TIERED_GOODS 2.6)"},
+        {"id": "sweet_pokepuff", "item": "cobblecuisine:sweet_pokepuff", "name": "Sweet Pokepuff", "count": 1, "price": 500, "gate": "gym4_cleared", "strand": "power", "why": "friendship +6 (pokepuffFriendship)"},
+        {"id": "miracle_seed", "item": "cobblemon:miracle_seed", "name": "Miracle Seed", "count": 1, "price": 1000, "gate": "gym4_cleared", "strand": "power", "why": "the grass town's held item"},
+        {"id": "full_heal", "item": "cobblemon:full_heal", "name": "Full Heal", "count": 3, "price": 900, "gate": "gym4_cleared", "strand": "power", "why": "released Remedies: the garden's cure-all"}
+      ]
+    },
+    {
+      "id": "fenhide",
+      "town": "gym5_town",
+      "path": "critical",
+      "badge": 5,
+      "status": "sited",
+      "at": [4732, 121, 2476],
+      "yaw": -90,
+      "near_trader": "gym5_mart",
+      "sited_by": "as stoneford",
+      "keeper": {"name": "Tracker's Outfitter", "greeting": "Trappers' gear. Soul Badge holders can buy pickup and magnet fittings, a Poison Barb, and the Mega Bracelet, if they've saved for it."},
+      "theme": "the fen-edge watch town that traps and tracks: pickup and magnet are trapping",
+      "stock": [
+        {"id": "pickup_upgrade", "item": "sophisticatedbackpacks:pickup_upgrade", "name": "Pickup upgrade", "count": 1, "price": 1500, "gate": "gym5_cleared", "strand": "convenience", "why": "trapping"},
+        {"id": "magnet_upgrade", "item": "sophisticatedbackpacks:magnet_upgrade", "name": "Magnet upgrade", "count": 1, "price": 1500, "gate": "gym5_cleared", "strand": "convenience", "why": "trapping at a distance. The ladder's advanced magnet (3,000) is not sold: the shelf with the bracelet ran to 98% of the leg (TIERED_GOODS 3)"},
+        {"id": "mega_bracelet", "item": "mega_showdown:mega_bracelet", "name": "Mega Bracelet", "count": 1, "price": 7500, "gate": "gym5_cleared", "strand": "power", "why": "Mega Evolution at cap 45 of 55, three gyms left to use it on (PROGRESSION_LADDER 4.1); the one rung a player should save for, and the flat $600 blackout makes saving safe"},
+        {"id": "poison_barb", "item": "cobblemon:poison_barb", "name": "Poison Barb", "count": 1, "price": 1000, "gate": "gym5_cleared", "strand": "power", "why": "the poison town's held item"}
+      ]
+    },
+    {
+      "id": "tilpey_cross",
+      "town": "gym6_town",
+      "path": "critical",
+      "badge": 6,
+      "status": "sited",
+      "at": [6227, 95, 3366],
+      "yaw": 180,
+      "near_trader": "gym6_mart",
+      "sited_by": "as stoneford",
+      "keeper": {"name": "Archive Stores", "greeting": "The archive keeps what it records, and packs it tight. Marsh Badge holders can buy the smithing and stacking fittings, a Twisted Spoon, and Ultra Balls by the five."},
+      "theme": "the region's place of study, a town of record-keepers: it sells compression",
+      "stock": [
+        {"id": "smithing_upgrade", "item": "sophisticatedbackpacks:smithing_upgrade", "name": "Smithing upgrade", "count": 1, "price": 3000, "gate": "gym6_cleared", "strand": "convenience", "why": "the last portable workstation"},
+        {"id": "stack_upgrade_starter_tier", "item": "sophisticatedbackpacks:stack_upgrade_starter_tier", "name": "Stack upgrade (starter)", "count": 1, "price": 2000, "gate": "gym6_cleared", "strand": "convenience", "why": "compression; capped at 3 per pack (maxUpgradesPerStorage stack_upgrades|3)"},
+        {"id": "stack_upgrade_tier_1", "item": "sophisticatedbackpacks:stack_upgrade_tier_1", "name": "Stack upgrade (tier 1)", "count": 1, "price": 3500, "gate": "gym6_cleared", "strand": "convenience", "why": "tiers 2 and up are crafted from this one, so the purchase gates them (TIERED_GOODS 2.1 residuals)"},
+        {"id": "twisted_spoon", "item": "cobblemon:twisted_spoon", "name": "Twisted Spoon", "count": 1, "price": 1000, "gate": "gym6_cleared", "strand": "power", "why": "the psychic town's held item"},
+        {"id": "ultra_ball", "item": "cobblemon:ultra_ball", "name": "Ultra Ball", "count": 5, "price": 4000, "gate": "gym6_cleared", "strand": "power", "why": "the strongest standard ball, at the central hub; 800 each against defaultShop's 1,000"}
+      ]
+    },
+    {
+      "id": "cinderlee",
+      "town": "gym7_town",
+      "path": "critical",
+      "badge": 7,
+      "status": "sited",
+      "at": [6055, 109, 5068],
+      "yaw": 0,
+      "near_trader": "gym7_mart",
+      "sited_by": "as stoneford",
+      "keeper": {"name": "Rim Ironmonger", "greeting": "Heat's our trade. Volcano Badge holders can buy the gold pack, one cooking fitting of their choice, a Charcoal Stick, and Max Potions."},
+      "theme": "the research town on the crater rim: a town on a volcano sells heat, and nowhere else should",
+      "stock": [
+        {"id": "gold_backpack", "item": "sophisticatedbackpacks:gold_backpack", "name": "Gold backpack", "count": 1, "price": 8000, "gate": "gym7_cleared", "strand": "convenience", "why": "tier 4: 96 slots, 8 upgrade slots; a receipt more than a reward (PROGRESSION_LADDER 2.4)"},
+        {"id": "smelting_upgrade", "item": "sophisticatedbackpacks:smelting_upgrade", "name": "Smelting upgrade", "count": 1, "price": 2800, "gate": "gym7_cleared", "strand": "convenience", "group": "furnace_upgrades", "why": "furnace_upgrades|1: a pack holds one, so the group is priced to stand alone"},
+        {"id": "smoking_upgrade", "item": "sophisticatedbackpacks:smoking_upgrade", "name": "Smoking upgrade", "count": 1, "price": 2000, "gate": "gym7_cleared", "strand": "convenience", "group": "furnace_upgrades", "why": "moved from Fenhide with the rest of the furnace group"},
+        {"id": "blasting_upgrade", "item": "sophisticatedbackpacks:blasting_upgrade", "name": "Blasting upgrade", "count": 1, "price": 2500, "gate": "gym7_cleared", "strand": "convenience", "group": "furnace_upgrades", "why": "ore, for a crater town"},
+        {"id": "auto_smelting_upgrade", "item": "sophisticatedbackpacks:auto_smelting_upgrade", "name": "Auto-smelting upgrade", "count": 1, "price": 4500, "gate": "gym7_cleared", "strand": "convenience", "group": "furnace_upgrades", "why": "the dearest of the group"},
+        {"id": "charcoal_stick", "item": "cobblemon:charcoal_stick", "name": "Charcoal Stick", "count": 1, "price": 1000, "gate": "gym7_cleared", "strand": "power", "why": "the fire town's held item (the id is charcoal_stick, TIERED_GOODS 2.6)"},
+        {"id": "max_potion", "item": "cobblemon:max_potion", "name": "Max Potion", "count": 3, "price": 2700, "gate": "gym7_cleared", "strand": "power", "why": "released Treatments; 900 each against bank.json's 625"}
+      ]
+    },
+    {
+      "id": "holdfast",
+      "town": "gym8_town",
+      "path": "critical",
+      "badge": 8,
+      "status": "sited",
+      "at": [3639, 113, 6492],
+      "yaw": -13,
+      "near_trader": "gym8_mart",
+      "sited_by": "as stoneford",
+      "keeper": {"name": "Garrison Quartermaster", "greeting": "Last stores before the Road. Earth Badge holders draw the diamond pack, the inception fitting, gold caps, and what the League will cost you in medicine."},
+      "theme": "the southern garrison at the last gate before Victory Road: a quartermaster's answer to 'I have too much' is packs inside packs, and the caps are for hyper-training a level-55 team at the last gate",
+      "stock": [
+        {"id": "diamond_backpack", "item": "sophisticatedbackpacks:diamond_backpack", "name": "Diamond backpack", "count": 1, "price": 10000, "gate": "gym8_cleared", "strand": "convenience", "why": "tier 5: 108 slots, 9 upgrade slots. 10,000 is PROGRESSION_LADDER revision 2's figure; revision 1's 20,000 is the one the owner's brief quotes (TIERED_GOODS 3), an owner call. Netherite is smithed from this pack (recipe left on)"},
+        {"id": "inception_upgrade", "item": "sophisticatedbackpacks:inception_upgrade", "name": "Inception upgrade", "count": 1, "price": 7000, "gate": "gym8_cleared", "strand": "convenience", "why": "packs inside packs"},
+        {"id": "bottle_cap_gold", "item": "obc:bottle_cap_gold", "name": "Gold Bottle Cap", "count": 1, "price": 6000, "gate": "gym8_cleared", "strand": "power", "why": "the one reliable gold-cap tap (obc treasure goldBottleCap 0.0); at 6,000 a badge-8 player can buy two or three"},
+        {"id": "max_revive", "item": "cobblemon:max_revive", "name": "Max Revive", "count": 1, "price": 2500, "gate": "gym8_cleared", "strand": "power", "why": "released Treatments; against bank.json's 1,000"},
+        {"id": "full_restore", "item": "cobblemon:full_restore", "name": "Full Restore", "count": 2, "price": 3000, "gate": "gym8_cleared", "strand": "power", "why": "released Treatments; 1,500 each against bank.json's 750"}
+      ]
+    },
+    {
+      "id": "fossick",
+      "town": "mining_town",
+      "path": "off_path",
+      "badge": 3,
+      "status": "sited",
+      "at": [6652, 138, 5688],
+      "yaw": 150,
+      "near_trader": "mining_mart",
+      "sited_by": "as stoneford",
+      "keeper": {"name": "Mine Stores", "greeting": "Mine stores. Thunder Badge holders can buy the compacting and voiding fittings every digger swears by. The Assayer next door has the stones."},
+      "theme": "the mine, smelter and fossil lab: a mining town sells what a digger needs to carry ore home, and its Assayer (data/traders.json mining_assayer) already sells the ten stones",
+      "stock": [
+        {"id": "compacting_upgrade", "item": "sophisticatedbackpacks:compacting_upgrade", "name": "Compacting upgrade", "count": 1, "price": 2000, "gate": "gym3_cleared", "strand": "convenience", "why": "ore into blocks, in the pack"},
+        {"id": "advanced_compacting_upgrade", "item": "sophisticatedbackpacks:advanced_compacting_upgrade", "name": "Advanced compacting upgrade", "count": 1, "price": 3500, "gate": "gym3_cleared", "strand": "convenience", "why": "the second step"},
+        {"id": "void_upgrade", "item": "sophisticatedbackpacks:void_upgrade", "name": "Void upgrade", "count": 1, "price": 1200, "gate": "gym3_cleared", "strand": "convenience", "why": "spoil, voided"},
+        {"id": "advanced_void_upgrade", "item": "sophisticatedbackpacks:advanced_void_upgrade", "name": "Advanced void upgrade", "count": 1, "price": 2500, "gate": "gym3_cleared", "strand": "convenience", "why": "the second step"}
+      ]
+    },
+    {
+      "id": "northlight_station",
+      "town": "northlight",
+      "path": "off_path",
+      "badge": 6,
+      "status": "sited",
+      "at": [7282, 114, 1516],
+      "yaw": -164,
+      "near_trader": "northlight_mart",
+      "sited_by": "as stoneford",
+      "keeper": {"name": "Station Supply", "greeting": "Station supply. Hammocks for anyone; Marsh Badge holders can buy the supplements the station feeds its own team."},
+      "theme": "the research station and aurora observatory: a research station sells supplements",
+      "stock": [
+        {"id": "hammock", "item": "comforts:hammock_white", "name": "Hammock", "count": 1, "price": 800, "gate": null, "strand": "convenience", "why": "a researcher's bed; ungated, since travel already gates the station (PROGRESSION_LADDER 5.4)"},
+        {"id": "hp_up", "item": "cobblemon:hp_up", "name": "HP Up", "count": 1, "price": 3500, "gate": "gym6_cleared", "strand": "power", "why": "above bank.json's 2,500 sell-back on purpose (PROGRESSION_LADDER 6.4)"},
+        {"id": "protein", "item": "cobblemon:protein", "name": "Protein", "count": 1, "price": 3500, "gate": "gym6_cleared", "strand": "power", "why": "as hp_up"},
+        {"id": "iron", "item": "cobblemon:iron", "name": "Iron", "count": 1, "price": 3500, "gate": "gym6_cleared", "strand": "power", "why": "as hp_up"},
+        {"id": "calcium", "item": "cobblemon:calcium", "name": "Calcium", "count": 1, "price": 3500, "gate": "gym6_cleared", "strand": "power", "why": "as hp_up"},
+        {"id": "zinc", "item": "cobblemon:zinc", "name": "Zinc", "count": 1, "price": 3500, "gate": "gym6_cleared", "strand": "power", "why": "as hp_up"},
+        {"id": "carbos", "item": "cobblemon:carbos", "name": "Carbos", "count": 1, "price": 3500, "gate": "gym6_cleared", "strand": "power", "why": "as hp_up"}
+      ]
+    },
+    {
+      "id": "steepside",
+      "town": "tea_town",
+      "path": "off_path",
+      "badge": null,
+      "status": "sited",
+      "at": [2574, 115, 3604],
+      "yaw": 90,
+      "near_trader": "tea_mart",
+      "sited_by": "as stoneford",
+      "keeper": {"name": "Tea House Kitchen", "greeting": "From the tea house kitchen. Cheaper than Greenhollow, and we don't ask for badges."},
+      "theme": "the tea town stepping down the slope below the tea house: its kitchen's sweets, cheaper than the garden town's, the region's cheapest route to a friendship evolution",
+      "stock": [
+        {"id": "sweet_malasada", "item": "cobblecuisine:sweet_malasada", "name": "Sweet Malasada", "count": 1, "price": 700, "gate": null, "strand": "power", "why": "Greenhollow's 900 less a margin (PROGRESSION_LADDER 1.2)"},
+        {"id": "sweet_pokepuff", "item": "cobblecuisine:sweet_pokepuff", "name": "Sweet Pokepuff", "count": 1, "price": 400, "gate": null, "strand": "power", "why": "Greenhollow's 500 less a margin"}
+      ]
+    },
+    {
+      "id": "sunset_harbour",
+      "town": "sunset_west",
+      "path": "off_path",
+      "badge": null,
+      "status": "unsited",
+      "unsited_why": "tools/town_plan.py sunset_west needs build/paint/manifest.json, absent in the agent worktree, so its plan could not be measured here. Site it in a full checkout with the same measurement as stoneford",
+      "near_trader": "sunset_west_mart",
+      "keeper": {"name": "Harbour Scrivener", "greeting": "Scrolls for travellers. Anyone can have a blank or a return scroll; warp and bound scrolls are for Soul Badge holders."},
+      "theme": "the port where the boats go: a port sells the way home and the way onward",
+      "stock": [
+        {"id": "blank_scroll", "item": "waystones:blank_scroll", "name": "Blank scroll", "count": 1, "price": 400, "gate": null, "strand": "convenience", "why": "a convenience: scrolls are cheap to craft (TIERED_GOODS 2.6)"},
+        {"id": "return_scroll", "item": "waystones:return_scroll", "name": "Return scroll", "count": 1, "price": 1200, "gate": null, "strand": "convenience", "why": "as blank_scroll"},
+        {"id": "warp_scroll", "item": "waystones:warp_scroll", "name": "Warp scroll", "count": 1, "price": 3500, "gate": "gym5_cleared", "strand": "convenience", "why": "as blank_scroll"},
+        {"id": "bound_scroll", "item": "waystones:bound_scroll", "name": "Bound scroll", "count": 1, "price": 2600, "gate": "gym5_cleared", "strand": "convenience", "why": "as blank_scroll"}
+      ]
+    },
+    {
+      "id": "pacifidlog",
+      "town": "sea_town",
+      "path": "off_path",
+      "badge": null,
+      "status": "unsited",
+      "unsited_why": "the town stands on log decks at the sea level; the heightmap there is seabed (data/towns.json sea_town ground_note), and no cell beside its Mart reads as ground offline. Site it on a deck cell from tools/sea_town.py's plan",
+      "near_trader": "sea_town_mart",
+      "keeper": {"name": "Deck Chandler", "greeting": "Balls for the water. The ferry's the badge out here, so no badges asked."},
+      "theme": "the town on the sea: the balls that work on water",
+      "stock": [
+        {"id": "dive_ball", "item": "cobblemon:dive_ball", "name": "Dive Ball", "count": 5, "price": 3000, "gate": null, "strand": "power", "why": "travel gates the town (the ferry), so the shelf is ungated (PROGRESSION_LADDER 5.4)"},
+        {"id": "net_ball", "item": "cobblemon:net_ball", "name": "Net Ball", "count": 5, "price": 3000, "gate": null, "strand": "power", "why": "as dive_ball"},
+        {"id": "lure_ball", "item": "cobblemon:lure_ball", "name": "Lure Ball", "count": 5, "price": 3000, "gate": null, "strand": "power", "why": "as dive_ball"}
+      ]
+    },
+    {
+      "id": "redbrow",
+      "town": "tableland_stop",
+      "path": "off_path",
+      "badge": null,
+      "status": "unsited",
+      "unsited_why": "PROGRESSION_LADDER open question Q-4 (does the stop get a counter at all) is the owner's; and the stop has no Mart clerk to stand beside. Designed, not emitted",
+      "near_trader": null,
+      "keeper": {"name": "Prospector", "greeting": "Sieve's been kind this week."},
+      "theme": "the prospector's waystation on the red tableland, dressed with sample piles, a sieve and ore crates",
+      "stock": [
+        {"id": "soft_sand", "item": "cobblemon:soft_sand", "name": "Soft Sand", "count": 1, "price": 1000, "gate": null, "strand": "power", "why": "what a sieve leaves"},
+        {"id": "heavy_ball", "item": "cobblemon:heavy_ball", "name": "Heavy Ball", "count": 5, "price": 3000, "gate": null, "strand": "power", "why": "a prospector's ball, for heavy rock-dwellers"}
+      ]
+    }
+  ],
+  "no_counter": [
+    {"town": "league", "why": "the League sells nothing (PROGRESSION_LADDER 1.1 row 9); netherite and TMCraft grade 6 are rewards, owner Q-5"},
+    {"town": "displaced_city", "why": "a summit town of displaced people, no trader record, and its residents' own name is still unwritten; a market would decide a story question"},
+    {"town": "merian_hut", "why": "a bed at the end of a walk (PROGRESSION_LADDER 1.2)"},
+    {"town": "gorge_hamlet", "why": "the bridge-keepers' hamlet has no trade to sell; a candidate if the owner wants one (rope, not stock)"},
+    {"town": "rift_rim_stop", "why": "a rangers' post: a Centre, not a shop (PROGRESSION_LADDER 1.2); Holdfast is the last stores before the Road"},
+    {"town": "relic_island", "why": "an outpost reached by the free Relic row; dark and unkept is the point"},
+    {"town": "the_scar", "why": "dark and unkept by design"},
+    {"town": "viltri_light", "why": "a lighthouse, not a town"},
+    {"town": "rift_dig_camp", "why": "an archaeologists' dig, not a town"},
+    {"town": "frostpeak_shrine", "why": "a shrine at the top of the world"},
+    {"town": "jungle_ruins", "why": "dark and unkept by design"},
+    {"town": "great_oak_pallet", "why": "a landmark tree"},
+    {"town": "sentinel_spruce_tarn", "why": "a landmark tree"},
+    {"town": "patriarch_wedge", "why": "a landmark tree"},
+    {"town": "cherry_elder_shrew", "why": "a landmark tree"}
+  ]
+}
