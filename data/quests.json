@@ -6610,6 +6610,192 @@
         "quest.evt_stubborn_tree.told",
         "quest.evt_stubborn_tree.dialogue_cursor"
       ]
+    },
+    {
+      "id": "evt_agnes_carving",
+      "source": "data/northern_residents.json agnes_carving; the owner's brief of 2026-10-03 (data/northern_residents.json request)",
+      "reward_record": "data/rewards.json agnes_sun_stone",
+      "place": "data/northern_residents.json agnes_carving: Agnes Merrow's carving, (1696, 2224)",
+      "dialogue_id": "dlg_agnes_carving",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        1694,
+        105,
+        2231
+      ],
+      "objectives": [
+        {
+          "id": "read_the_back",
+          "active_when": {
+            "field": "quest.evt_agnes_carving.asked",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_agnes_carving.read",
+            "equals": true
+          },
+          "text": "Read what is carved on the back of the old oak sixty paces north of Agnes Merrow's wagon, and tell her."
+        },
+        {
+          "id": "take_the_stone",
+          "active_when": {
+            "field": "quest.evt_agnes_carving.read",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_agnes_carving.reward_claimed",
+            "equals": true
+          },
+          "text": "Hear Agnes Merrow out."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_agnes_carving.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_agnes_carving.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_agnes_carving.dialogue_cursor",
+              "value": "a001"
+            }
+          ]
+        },
+        {
+          "id": "ask",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_agnes_carving.asked",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_agnes_carving.asked",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_agnes_carving.dialogue_cursor",
+              "value": "hub"
+            }
+          ]
+        },
+        {
+          "id": "read",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_agnes_carving.asked",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_agnes_carving.read",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_agnes_carving.read",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_agnes_carving.dialogue_cursor",
+              "value": "s001"
+            }
+          ]
+        },
+        {
+          "id": "grant_reward",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_agnes_carving.read",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_agnes_carving.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_agnes_sun_stone",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_agnes_carving.reward_claimed",
+              "idempotency_key": "evt_agnes_carving:reward_agnes_sun_stone:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_agnes_carving.dialogue_cursor",
+              "value": "s004"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_agnes_sun_stone",
+          "status": "item_ids_verified",
+          "record": "data/rewards.json agnes_sun_stone (kind npc_grant); contents and verification string copied from it, which copies data/rewards.json vr_bloom's",
+          "contents": [
+            {
+              "item": "cobblemon:sun_stone",
+              "count": 1,
+              "verification": "assets/cobblemon/models/item/sun_stone.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ]
+        }
+      ],
+      "story_beat": "The answer is out in the wood: the back of the oak 56 blocks north of the wagon carries a sign whose four lines are the true reading (data/northern_residents.json agnes_carving, 'the old oak'). The front carries the reading she already knows, which sends the player back round.",
+      "answer_check": "The three readings are three responses visible while asked is true and read is false; only r_back runs the read transition. Nothing stops a player trying all three: a wrong one says so and returns to the hub. The puzzle is honest (the answer is written in the world) and not secure (a guess finds it in at most three tries). NOT verified in game.",
+      "repeat_dialogue": {
+        "before_read": "hub",
+        "after_claim": "done01"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "generation_blockers": [
+        "Place npc_agnes_carving at npc_at with spawnnpcat after the restart that loads cobblers_dialogue (tools/reapply.py R9F, from data/rewards.json agnes_sun_stone), on the ground R9NR's site stands on."
+      ],
+      "progression_field_refs": [
+        "quest.evt_agnes_carving.started",
+        "quest.evt_agnes_carving.asked",
+        "quest.evt_agnes_carving.read",
+        "quest.evt_agnes_carving.reward_claimed",
+        "quest.evt_agnes_carving.dialogue_cursor"
+      ]
     }
   ]
 }

@@ -2677,6 +2677,67 @@
         "y001"
       ],
       "why": "the dialogue cursor of Hesketh Fell's conversation (dlg_stubborn_tree)."
+    },
+    {
+      "id": "quest.evt_agnes_carving.started",
+      "quest_id": "evt_agnes_carving",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Agnes Merrow (data/northern_residents.json agnes_carving); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_agnes_carving.asked",
+      "quest_id": "evt_agnes_carving",
+      "field": "asked",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Agnes has asked the player to read the back of the oak (dlg_agnes_carving k003)."
+    },
+    {
+      "id": "quest.evt_agnes_carving.read",
+      "quest_id": "evt_agnes_carving",
+      "field": "read",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player gave Agnes the carving's true reading (dlg_agnes_carving r_back); the two wrong readings set nothing."
+    },
+    {
+      "id": "quest.evt_agnes_carving.reward_claimed",
+      "quest_id": "evt_agnes_carving",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for the Sun Stone (data/rewards.json agnes_sun_stone)."
+    },
+    {
+      "id": "quest.evt_agnes_carving.dialogue_cursor",
+      "quest_id": "evt_agnes_carving",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "a001",
+      "allowed_values": [
+        "a001",
+        "a002",
+        "hub",
+        "w001",
+        "k001",
+        "k002",
+        "k003",
+        "f001",
+        "x001",
+        "s001",
+        "s002",
+        "s003",
+        "s004",
+        "done01"
+      ],
+      "why": "the dialogue cursor of Agnes Merrow's conversation (dlg_agnes_carving)."
     }
   ],
   "gym_markers": {

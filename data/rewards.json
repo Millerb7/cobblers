@@ -1624,6 +1624,26 @@
       ],
       "why": "Hale's thanks for being shown the eighth badge he never got: his Snorlax Burl's Leftovers, so that they go through the gate. After gym 8, on the way to the League, when a held item that heals every turn matters. One per player, by grant_reward_once. The verification string is data/rewards.json old_orchard_cellar's, copied, not re-checked against a jar here; Leftovers are also in the Old Orchard's cellar, so this is a second source.",
       "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/southern_residents.py seats him on, and it refuses to build when they differ"
+    },
+    {
+      "id": "agnes_sun_stone",
+      "kind": "npc_grant",
+      "place": "Agnes Merrow's wagon in the foothill woods (data/northern_residents.json agnes_carving), at the foot of its shafts",
+      "npc_at": [
+        1694,
+        105,
+        2231
+      ],
+      "quest": "evt_agnes_carving",
+      "contents": [
+        {
+          "item": "cobblemon:sun_stone",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/sun_stone.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "why": "Agnes's thanks for reading her the back of the oak: the stone Edwin gave her instead of a ring. One per player, by grant_reward_once. A Sun Stone evolves Gloom (Bellossom), Sunkern, Cottonee, Petilil and Helioptile; at tier 3 it is an early stone, as data/rewards.json's other evolution-stone finds are. The verification string is data/rewards.json vr_bloom's, copied, not re-checked against a jar here.",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/northern_residents.py seats Agnes Merrow on, and it refuses to build when they differ"
     }
   ]
 }

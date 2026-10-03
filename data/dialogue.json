@@ -11980,6 +11980,253 @@
       "speakers": {
         "hesketh": "Hesketh Fell"
       }
+    },
+    {
+      "id": "dlg_agnes_carving",
+      "quest_id": "evt_agnes_carving",
+      "npc_id": "npc_agnes_carving",
+      "source": "data/northern_residents.json agnes_carving; the owner's brief of 2026-10-03 (data/northern_residents.json request)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_agnes_carving.dialogue_cursor",
+        "initial_node": "a001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_agnes_carving.started",
+            "value": true
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_agnes_carving.started",
+            "value": false
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ],
+          "node": "a001"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "a001",
+          "kind": "line",
+          "speaker": "agnes",
+          "text": "Is someone there? Come round where I can hear you. Agnes Merrow. I'd offer you tea, but the kettle's the one thing in here I can't find any more.",
+          "next": "a002"
+        },
+        {
+          "id": "a002",
+          "kind": "line",
+          "speaker": "agnes",
+          "text": "My eyes went the winter before last. Not all at once. Things went soft at the edges, and then the edges went.",
+          "next": "hub"
+        },
+        {
+          "id": "hub",
+          "kind": "choice",
+          "speaker": "agnes",
+          "text": "Sit if you like. The step's sound.",
+          "responses": [
+            {
+              "id": "r_wagon",
+              "text": "How long have you lived here?",
+              "next": "w001"
+            },
+            {
+              "id": "r_ask",
+              "text": "Is there anything I can do?",
+              "visible_when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_agnes_carving.asked",
+                "value": false
+              },
+              "next": "k001"
+            },
+            {
+              "id": "r_front",
+              "text": "It says 'A.M. + E.M., 1st of May.'",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_agnes_carving.asked",
+                    "value": true
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_agnes_carving.read",
+                    "value": false
+                  }
+                ]
+              },
+              "next": "f001"
+            },
+            {
+              "id": "r_wrong",
+              "text": "It says 'Agnes is always right.'",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_agnes_carving.asked",
+                    "value": true
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_agnes_carving.read",
+                    "value": false
+                  }
+                ]
+              },
+              "next": "x001"
+            },
+            {
+              "id": "r_back",
+              "text": "It says 'She said yes. I still can't believe it.'",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_agnes_carving.asked",
+                    "value": true
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_agnes_carving.read",
+                    "value": false
+                  }
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "read"
+                }
+              ],
+              "next": "s001"
+            },
+            {
+              "id": "r_bye",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ],
+              "next": "hub"
+            }
+          ]
+        },
+        {
+          "id": "w001",
+          "kind": "line",
+          "speaker": "agnes",
+          "text": "Sixty-one years. Edwin built her the spring we married. The horse went long ago, and then Edwin did, and the wagon and I just stayed where we'd stopped.",
+          "next": "hub"
+        },
+        {
+          "id": "k001",
+          "kind": "line",
+          "speaker": "agnes",
+          "text": "There is, if you've young legs. Sixty paces north, up the rise, there's an old oak. Dead now, I'm told. The morning we married, Edwin carved our names in it.",
+          "next": "k002"
+        },
+        {
+          "id": "k002",
+          "kind": "line",
+          "speaker": "agnes",
+          "text": "Then he went round the back of the tree and carved something else, and came back laughing, and never would tell me what. 'You'll read it when you need to,' he said.",
+          "next": "k003"
+        },
+        {
+          "id": "k003",
+          "kind": "line",
+          "speaker": "agnes",
+          "text": "Well. I need to now, and I can't. Would you go and read it to me? Exactly as it's written, mind. I'll know if you're making it up.",
+          "next": "hub",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "ask"
+            }
+          ]
+        },
+        {
+          "id": "f001",
+          "kind": "line",
+          "speaker": "agnes",
+          "text": "That's the front, love. I know the front, I was there. Round the back. The side he wouldn't let me see.",
+          "next": "hub"
+        },
+        {
+          "id": "x001",
+          "kind": "line",
+          "speaker": "agnes",
+          "text": "Ha! He'd never have carved that. Not where people could read it.",
+          "next": "hub"
+        },
+        {
+          "id": "s001",
+          "kind": "line",
+          "speaker": "agnes",
+          "text": "...Say it again.",
+          "next": "s002"
+        },
+        {
+          "id": "s002",
+          "kind": "line",
+          "speaker": "agnes",
+          "text": "'She said yes. I still can't believe it.' Sixty-one years and he never told me that. The daft, soft, lovely man.",
+          "next": "s003"
+        },
+        {
+          "id": "s003",
+          "kind": "line",
+          "speaker": "agnes",
+          "text": "Here. Hold out your hand. That's the stone he gave me that morning instead of a ring. Found it in the creek. Said it was warmer than gold. It still is.",
+          "next": "s004",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant_reward"
+            }
+          ]
+        },
+        {
+          "id": "s004",
+          "kind": "line",
+          "speaker": "agnes",
+          "text": "A Sun Stone, the woman at the market called it, years after. You have it. I know what the tree says now, and that's enough to keep.",
+          "next": "done01"
+        },
+        {
+          "id": "done01",
+          "kind": "line",
+          "speaker": "agnes",
+          "text": "Sixty paces north. She said yes. I'd say it again.",
+          "next": "done01"
+        }
+      ],
+      "speakers": {
+        "agnes": "Agnes Merrow"
+      }
     }
   ]
 }
