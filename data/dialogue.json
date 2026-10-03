@@ -10405,6 +10405,33 @@
               "next": "m001"
             },
             {
+              "id": "r_scroll",
+              "text": "My Kubfu is nearly grown. Do you know of the scrolls?",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_issuing"
+                  },
+                  {
+                    "kind": "flag",
+                    "flag": "gym5_cleared"
+                  },
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_kubfu"
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_station_director.scroll_claimed",
+                    "value": false
+                  }
+                ]
+              },
+              "next": "k001"
+            },
+            {
               "id": "r_bye",
               "text": "Goodbye.",
               "actions": [
@@ -10415,6 +10442,127 @@
               "next": "hub"
             }
           ]
+        },
+        {
+          "id": "k001",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "Know of them? We keep two. A Kubfu does not grow into its last shape by training alone: it reads one of two scrolls, and the scroll decides how it fights for the rest of its life.",
+          "next": "k002"
+        },
+        {
+          "id": "k002",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "Darkness makes a single, crushing strike. Waters makes a flowing run of blows. The station gives one, once, to whoever raised the Kubfu. Not both: the choice is the point.",
+          "next": "k003"
+        },
+        {
+          "id": "k003",
+          "kind": "choice",
+          "speaker": "vale",
+          "text": "Which will your Kubfu read?",
+          "responses": [
+            {
+              "id": "r_darkness",
+              "text": "The Scroll of Darkness.",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_issuing"
+                  },
+                  {
+                    "kind": "flag",
+                    "flag": "gym5_cleared"
+                  },
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_kubfu"
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_station_director.scroll_claimed",
+                    "value": false
+                  }
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "grant_scroll_darkness"
+                }
+              ],
+              "next": "k010"
+            },
+            {
+              "id": "r_waters",
+              "text": "The Scroll of Waters.",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_issuing"
+                  },
+                  {
+                    "kind": "flag",
+                    "flag": "gym5_cleared"
+                  },
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_kubfu"
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_station_director.scroll_claimed",
+                    "value": false
+                  }
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "grant_scroll_waters"
+                }
+              ],
+              "next": "k020"
+            },
+            {
+              "id": "r_scroll_later",
+              "text": "Let me think about it.",
+              "next": "hub"
+            }
+          ]
+        },
+        {
+          "id": "k010",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "Darkness, then. Here: the Scroll of Darkness, from our store. Hold it out to your Kubfu once it reaches level 45, and not before.",
+          "next": "k011"
+        },
+        {
+          "id": "k011",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "Write and tell me what it becomes. The station has only ever read about it.",
+          "next": "hub"
+        },
+        {
+          "id": "k020",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "Waters, then. Here: the Scroll of Waters, from our store. Hold it out to your Kubfu once it reaches level 45, and not before.",
+          "next": "k021"
+        },
+        {
+          "id": "k021",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "Write and tell me what it becomes. The station has only ever read about it.",
+          "next": "hub"
         },
         {
           "id": "s001",
