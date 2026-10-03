@@ -2579,6 +2579,55 @@
         "f001"
       ],
       "why": "the dialogue cursor of Bettany Oake's conversation (dlg_prospector_claim)."
+    },
+    {
+      "id": "quest.evt_gate_watcher.started",
+      "quest_id": "evt_gate_watcher",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Hale Brannock (data/southern_residents.json gate_watcher); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_gate_watcher.shown",
+      "quest_id": "evt_gate_watcher",
+      "field": "shown",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player, holding gym8_cleared, chose 'Show him your Earth Badge.' (show_badge)."
+    },
+    {
+      "id": "quest.evt_gate_watcher.reward_claimed",
+      "quest_id": "evt_gate_watcher",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for Burl's Leftovers (data/rewards.json gate_watcher_leftovers)."
+    },
+    {
+      "id": "quest.evt_gate_watcher.dialogue_cursor",
+      "quest_id": "evt_gate_watcher",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "h001",
+      "allowed_values": [
+        "h001",
+        "h002",
+        "hub",
+        "y001",
+        "y002",
+        "b001",
+        "s001",
+        "s002",
+        "s003",
+        "s004",
+        "done01"
+      ],
+      "why": "the dialogue cursor of Hale Brannock's conversation (dlg_gate_watcher)."
     }
   ],
   "gym_markers": {

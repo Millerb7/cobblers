@@ -1484,6 +1484,26 @@
           5640
         ]
       }
+    },
+    {
+      "id": "gate_watcher_leftovers",
+      "kind": "npc_grant",
+      "place": "Hale Brannock's bench on the plain east of Holdfast (data/southern_residents.json gate_watcher), in front of the bench",
+      "npc_at": [
+        4135,
+        110,
+        6336
+      ],
+      "quest": "evt_gate_watcher",
+      "contents": [
+        {
+          "item": "cobblemon:leftovers",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/leftovers.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "why": "Hale's thanks for being shown the eighth badge he never got: his Snorlax Burl's Leftovers, so that they go through the gate. After gym 8, on the way to the League, when a held item that heals every turn matters. One per player, by grant_reward_once. The verification string is data/rewards.json old_orchard_cellar's, copied, not re-checked against a jar here; Leftovers are also in the Old Orchard's cellar, so this is a second source.",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/southern_residents.py seats him on, and it refuses to build when they differ"
     }
   ]
 }

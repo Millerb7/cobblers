@@ -11525,6 +11525,180 @@
       "speakers": {
         "bettany": "Bettany Oake"
       }
+    },
+    {
+      "id": "dlg_gate_watcher",
+      "quest_id": "evt_gate_watcher",
+      "npc_id": "npc_gate_watcher",
+      "source": "data/southern_residents.json gate_watcher; the owner's brief of 2026-10-03 (data/southern_residents.json request)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_gate_watcher.dialogue_cursor",
+        "initial_node": "h001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_gate_watcher.started",
+            "value": true
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_gate_watcher.started",
+            "value": false
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ],
+          "node": "h001"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "h001",
+          "kind": "line",
+          "speaker": "hale",
+          "text": "Sit down, sit down. Best seat on the plain. Look west. See the wall on the skyline, and the gate in it?",
+          "next": "h002"
+        },
+        {
+          "id": "h002",
+          "kind": "line",
+          "speaker": "hale",
+          "text": "Hale Brannock. Seven badges. Thirty-one years ago I walked up to that gate with my Golem and my Nidoking and old Burl, and came back down the same road.",
+          "next": "hub"
+        },
+        {
+          "id": "hub",
+          "kind": "choice",
+          "speaker": "hale",
+          "text": "Lovely evening for it. It's always a lovely evening for it.",
+          "responses": [
+            {
+              "id": "r_why",
+              "text": "Why didn't you try again?",
+              "next": "y001"
+            },
+            {
+              "id": "r_board",
+              "text": "What's the board?",
+              "next": "b001"
+            },
+            {
+              "id": "r_show",
+              "text": "Show him your Earth Badge.",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "flag",
+                    "flag": "gym8_cleared"
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_gate_watcher.shown",
+                    "value": false
+                  }
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "show_badge"
+                }
+              ],
+              "next": "s001"
+            },
+            {
+              "id": "r_bye",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ],
+              "next": "hub"
+            }
+          ]
+        },
+        {
+          "id": "y001",
+          "kind": "line",
+          "speaker": "hale",
+          "text": "I meant to. Next spring, I said. Then my knees, then Burl's knees. You'd be surprised how many springs there are, and how quick they go.",
+          "next": "y002"
+        },
+        {
+          "id": "y002",
+          "kind": "line",
+          "speaker": "hale",
+          "text": "So I sit here instead, where I can see it. Seven on the board and a hole where the eighth goes. I don't mind the hole. It's honest.",
+          "next": "hub"
+        },
+        {
+          "id": "b001",
+          "kind": "line",
+          "speaker": "hale",
+          "text": "Boulder, Cascade, Thunder, Rainbow, Soul, Marsh, Volcano. And the gap. I made that board the week I came back down. Thought I'd have it filled by the autumn.",
+          "next": "hub"
+        },
+        {
+          "id": "s001",
+          "kind": "line",
+          "speaker": "hale",
+          "text": "You've... let me see it. No, hold it up. To the light.",
+          "next": "s002"
+        },
+        {
+          "id": "s002",
+          "kind": "line",
+          "speaker": "hale",
+          "text": "Well. There it is. That's what it looks like up close. I always wondered if it'd be heavier.",
+          "next": "s003"
+        },
+        {
+          "id": "s003",
+          "kind": "line",
+          "speaker": "hale",
+          "text": "Here. These were Burl's Leftovers. My Snorlax. He held them through every fight we ever had, and the one we lost. They ought to go through that gate, and he can't take them.",
+          "next": "s004",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant_reward"
+            }
+          ]
+        },
+        {
+          "id": "s004",
+          "kind": "line",
+          "speaker": "hale",
+          "text": "Go on, then. You've been through it once. Go through it again for the both of us, on your way out to the League.",
+          "next": "done01"
+        },
+        {
+          "id": "done01",
+          "kind": "line",
+          "speaker": "hale",
+          "text": "The hole's still in the board. Funny. I find I don't mind it at all now.",
+          "next": "done01"
+        }
+      ],
+      "speakers": {
+        "hale": "Hale Brannock"
+      }
     }
   ]
 }

@@ -51,7 +51,10 @@
       "minecraft:oak_wall_sign",
       "minecraft:white_wool", "minecraft:red_wool", "minecraft:cartography_table", "minecraft:lectern",
       "minecraft:chiseled_stone_bricks", "minecraft:stone_bricks",
-      "minecraft:mossy_cobblestone", "minecraft:cauldron", "minecraft:spruce_trapdoor", "minecraft:grindstone"
+      "minecraft:mossy_cobblestone", "minecraft:cauldron", "minecraft:spruce_trapdoor", "minecraft:grindstone",
+      "minecraft:spruce_stairs", "minecraft:gray_glazed_terracotta", "minecraft:blue_glazed_terracotta",
+      "minecraft:orange_glazed_terracotta", "minecraft:lime_glazed_terracotta", "minecraft:pink_glazed_terracotta",
+      "minecraft:yellow_glazed_terracotta", "minecraft:red_glazed_terracotta"
     ]
   },
   "residents": [
@@ -406,6 +409,66 @@
       ],
       "records": {"quest": "evt_prospector_claim", "conversation": "dlg_prospector_claim", "reward": "prospector_claim"},
       "bbox": [2249, 5639, 2436, 5700]
+    },
+    {
+      "id": "gate_watcher",
+      "name": "Hale Brannock's bench",
+      "kind": "a beat gated on the player's own progress: he has waited thirty-one years for someone to bring him the eighth badge",
+      "cell": "G5",
+      "subregion": "rift_foot",
+      "situation": "Out on the open plain east of Holdfast, on a rise from which the gatehouse of the Holdfast gym shows on the western skyline, an old man has put a bench, two lanterns, a fire, and behind the bench a board with eight slots. Seven hold a badge's colours (Boulder, Cascade, Thunder, Rainbow, Soul, Marsh, Volcano); the eighth is a hole straight through the board. Hale Brannock walked up to that gate thirty-one years ago with seven badges and came back down the same road. The Holdfast gym is the Gate of the South (data/gym_buildings/gym8.json: 'for seven badges it is the building everyone walks past, and for the eighth it is the one you have to go through to leave'). He will talk to anyone; when the player has cleared gym 8 he asks to see the badge, and gives them the Leftovers his Snorlax carried through every fight they had, so that it goes through the gate.",
+      "story_rule": "the gym's leader thirty-one years ago is never named: Hale says 'that gate', never a person. The badge names are the Kanto badges our eight leaders give (data/towns.json leaders; CobbleverseBadges). The option to show the badge reads the progression flag gym8_cleared (compile_dialogue's flag probe, the ferry's proven shape), not a badge item",
+      "site": {
+        "centre": [4136, 6336],
+        "measured": "2026-10-03 from tools/ground.py: y110 at the bench, a gentle rise falling west and south (105..113 within 16). The straight line from a standing eye here (y111.6) to the gatehouse's curtain wall at (3572, 122, 6416) (data/gym_buildings/gym8.json bounds and bounds_why: the wall is at y122), 570 blocks west, clears the canonical heightmap's ground everywhere along it by at least 3.6 blocks: on the heightmap the wall is in sight. Trees, Holdfast's houses and the gatehouse's real silhouette are NOT modelled: whether it is in sight in game is NOT verified. tools/water_mask.py: dry. The nearest route path is about 200 blocks away; the nearest x/z authored in another data file is reported by tools/southern_residents.py --report."
+      },
+      "pieces": [
+        {"kind": "ground_blocks", "name": "the bench and the fire", "at": [0, 0], "blocks": [
+          [0, 1, -1, "minecraft:spruce_stairs[facing=east,half=bottom,shape=straight,waterlogged=false]"],
+          [0, 1, 0, "minecraft:spruce_stairs[facing=east,half=bottom,shape=straight,waterlogged=false]"],
+          [0, 1, 1, "minecraft:spruce_stairs[facing=east,half=bottom,shape=straight,waterlogged=false]"],
+          [0, 1, -2, "minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=false]"],
+          [0, 1, 2, "minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=false]"],
+          [-3, 1, 2, "minecraft:campfire[facing=north,lit=true,signal_fire=false,waterlogged=false]"],
+          [1, 1, 3, "minecraft:barrel[facing=up,open=false]"]
+         ],
+         "hung": [
+          [0, 2, -2, "minecraft:lantern[hanging=false,waterlogged=false]"],
+          [0, 2, 2, "minecraft:lantern[hanging=false,waterlogged=false]"]
+         ]},
+        {"kind": "structure", "name": "the board", "footprint": [2, -5, 2, 4], "foundation": "minecraft:cobblestone", "clear_up": 6,
+         "fills": [
+          [2, 0, -5, 2, 0, 4, "minecraft:cobblestone"],
+          [2, 1, -5, 2, 3, -5, "minecraft:stripped_spruce_log[axis=y]"],
+          [2, 1, 4, 2, 3, 4, "minecraft:stripped_spruce_log[axis=y]"],
+          [2, 4, -5, 2, 4, 4, "minecraft:stripped_spruce_log[axis=z]"],
+          [2, 1, -4, 2, 1, 3, "minecraft:spruce_planks"],
+          [2, 3, -4, 2, 3, 3, "minecraft:spruce_planks"]
+         ],
+         "blocks": [
+          [2, 2, -4, "minecraft:gray_glazed_terracotta[facing=west]"],
+          [2, 2, -3, "minecraft:blue_glazed_terracotta[facing=west]"],
+          [2, 2, -2, "minecraft:orange_glazed_terracotta[facing=west]"],
+          [2, 2, -1, "minecraft:lime_glazed_terracotta[facing=west]"],
+          [2, 2, 0, "minecraft:pink_glazed_terracotta[facing=west]"],
+          [2, 2, 1, "minecraft:yellow_glazed_terracotta[facing=west]"],
+          [2, 2, 2, "minecraft:red_glazed_terracotta[facing=west]"],
+          [2, 2, 3, "minecraft:air"]
+         ],
+         "hung": [
+          [1, 3, -2, {"sign": {"wood": "spruce", "wall": "west", "lines": ["H. BRANNOCK", "seven of eight", "", "(so far)"]}}]
+         ]}
+      ],
+      "npc": {
+        "name": "Hale Brannock",
+        "at": [-1, 0, "ground"],
+        "feet": [4135, 110, 6336],
+        "yaw": 90.0,
+        "placed_by": "R9F",
+        "why": "in front of his bench, facing west at the gate. He gives the Leftovers through grant_reward_once, so data/rewards.json gate_watcher_leftovers (npc_grant) records him and R9F places him; this tool refuses to build when that record's npc_at is not this spot"
+      },
+      "records": {"quest": "evt_gate_watcher", "conversation": "dlg_gate_watcher", "reward": "gate_watcher_leftovers"},
+      "bbox": [4133, 6330, 4139, 6341]
     }
   ]
 }

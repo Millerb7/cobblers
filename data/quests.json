@@ -6349,6 +6349,167 @@
         "quest.evt_prospector_claim.told",
         "quest.evt_prospector_claim.dialogue_cursor"
       ]
+    },
+    {
+      "id": "evt_gate_watcher",
+      "source": "data/southern_residents.json gate_watcher; the owner's brief of 2026-10-03 (data/southern_residents.json request)",
+      "reward_record": "data/rewards.json gate_watcher_leftovers",
+      "place": "data/southern_residents.json gate_watcher: Hale Brannock's bench on the plain east of Holdfast, (4136, 6336)",
+      "dialogue_id": "dlg_gate_watcher",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        4135,
+        110,
+        6336
+      ],
+      "objectives": [
+        {
+          "id": "bring_the_eighth",
+          "active_when": {
+            "field": "quest.evt_gate_watcher.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_gate_watcher.shown",
+            "equals": true
+          },
+          "text": "Clear the Holdfast gym and show Hale Brannock the badge he never got."
+        },
+        {
+          "id": "take_burls_leftovers",
+          "active_when": {
+            "field": "quest.evt_gate_watcher.shown",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_gate_watcher.reward_claimed",
+            "equals": true
+          },
+          "text": "Hear Hale Brannock out."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_gate_watcher.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_gate_watcher.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_gate_watcher.dialogue_cursor",
+              "value": "h001"
+            }
+          ]
+        },
+        {
+          "id": "show_badge",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_gate_watcher.shown",
+              "value": false
+            },
+            {
+              "kind": "flag",
+              "flag": "gym8_cleared"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_gate_watcher.shown",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_gate_watcher.dialogue_cursor",
+              "value": "s001"
+            }
+          ]
+        },
+        {
+          "id": "grant_reward",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_gate_watcher.shown",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_gate_watcher.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_gate_watcher_leftovers",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_gate_watcher.reward_claimed",
+              "idempotency_key": "evt_gate_watcher:reward_gate_watcher_leftovers:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_gate_watcher.dialogue_cursor",
+              "value": "s004"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_gate_watcher_leftovers",
+          "status": "item_ids_verified",
+          "record": "data/rewards.json gate_watcher_leftovers (kind npc_grant); contents and verification string copied from it, which copies data/rewards.json old_orchard_cellar's",
+          "contents": [
+            {
+              "item": "cobblemon:leftovers",
+              "count": 1,
+              "verification": "assets/cobblemon/models/item/leftovers.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ]
+        }
+      ],
+      "badge_check": "The 'Show him your Earth Badge.' option and show_badge read the progression flag gym8_cleared through compile_dialogue's flag probe (an advancement, cobblers:flag/gym8_cleared, tools/progression_pack.py), the ferry's proven shape; no badge item is read or taken. NOT verified in game.",
+      "repeat_dialogue": {
+        "before_show": "hub",
+        "after_claim": "done01"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; the flag is each player's own advancement; no player may read or write another player's fields"
+      },
+      "generation_blockers": [
+        "Place npc_gate_watcher at npc_at with spawnnpcat after the restart that loads cobblers_dialogue (tools/reapply.py R9F, from data/rewards.json gate_watcher_leftovers), in front of the bench R9SR builds."
+      ],
+      "progression_field_refs": [
+        "quest.evt_gate_watcher.started",
+        "quest.evt_gate_watcher.shown",
+        "quest.evt_gate_watcher.reward_claimed",
+        "quest.evt_gate_watcher.dialogue_cursor"
+      ]
     }
   ]
 }

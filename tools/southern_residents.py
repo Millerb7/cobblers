@@ -417,6 +417,19 @@ def siting(doc, r, s, extra, pts=None):
         d = min(math.hypot(x - ax, z - az) for x, z in cols)
         if d < rules["away_from"]["blocks"]:
             probs.append("%s: %.0f blocks from the new place at (%d, %d) (needs %d)" % (r["id"], d, ax, az, rules["away_from"]["blocks"]))
+    # areas the point scan cannot see inside: a town's footprint and a Rift zone's boxes (dicts and boxes of min/max)
+    for t in jload("towns.json")["towns"]:
+        f = t.get("footprint") or {}
+        if f.get("min_x") is None:
+            continue
+        m = rules["authored_clearance"]
+        if any(f["min_x"] - m <= x <= f["max_x"] + m and f["min_z"] - m <= z <= f["max_z"] + m for x, z in cols):
+            probs.append("%s: within %d of town %s's footprint" % (r["id"], m, t["id"]))
+    for k, zone in jload("rift_zones.json")["zones"].items():
+        for bx in zone.get("boxes") or []:
+            if any(bx[0] <= x <= bx[2] and bx[1] <= z <= bx[3] for x, z in cols):
+                probs.append("%s: inside Rift zone %s" % (r["id"], k))
+                break
     if any(z < rules["south_of_z"] for _x, z in cols):
         probs.append("%s: writes north of z %d" % (r["id"], rules["south_of_z"]))
     paths = np.array([p for pl in jload("route_paths.json")["paths"].values() for p in pl], float)
