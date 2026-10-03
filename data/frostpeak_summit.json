@@ -1,0 +1,123 @@
+{
+  "schema": "cobblers.frostpeak_summit/1",
+  "status": "authored 2026-10-02, not yet applied to any world",
+  "generated_by": "hand",
+  "built_by": "tools/frostpeak_summit.py build -> build/datapacks/cobblers_frostpeak_summit; audited by tools/frostpeak_summit_audit.py",
+  "owner_request": "The owner, 2026-10-02, standing on the summit in staging looking at Articuno's tower: \"there should be some foliage and something else up here.\" Their screenshot: a smooth bare snow dome about 110 blocks across, the tower alone in the middle, clouds below.",
+  "purpose": "Make Frostpeak's pressed summit read as a place without making it stop being 'a flat table of snow with the tower in the middle of it' (Dr. Halvard's words at the research camp, data/frostpeak_camp.json). One west wind explains everything placed here: it breaks rock through the snow at the exposed rim, plasters rime on the rocks' windward faces, and leaves a sheltered lee behind each rock where the only plants on the summit grow and a drift tails off. And the old pilgrims' way comes up the long west ridge into that wind and turns to the tower's north door, marked by cairns, some fallen.",
+  "story": {
+    "chosen": "the old pilgrims' way and the rime",
+    "why": "The camp tells a player two things about the summit that a player cannot check from below: the tower is old ('a tower on the summit that nobody alive remembers being built'; 'nobody hauls stone up a mountain for nothing') and it is cold ('frost on the tower when the slopes are bare, a cold wind out of a clear sky'). The cairned way is the evidence for the first: people came here, long ago, and came to the door; half its cairns have been knocked down by the wind and nobody has rebuilt them. The rime is the evidence for the second, up close. The way also does a job: the camp sees the tower's south face, the door is on the north, and the way leads a player round to it.",
+    "rejected": {
+      "researchers_traces": "The camp's own dialogue says the survey has never stood on the summit: Krell knows where the table is only by theodolite ('That is how we know where the table is without seeing it') and Halvard has not seen the bird. A survey cairn or a cache up here would contradict them.",
+      "older_shrine_ruins": "A second ruin beside a tower nobody remembers building says the same thing twice and competes with the tower for the eye.",
+      "lights": "No lantern or light block: the summit is wilderness, not a town (docs/STATE.md 'Places are lit as towns'); it is dark by design."
+    },
+    "never_promises": "Nothing placed here refers to the altar, offers anything, gates anything or runs a command. Whether the LumyMon altar works and how a player gets its glacier feather are open owner decisions (data/adopted_legendary_sites.json still_gated_by; EXP-048)."
+  },
+  "ground_rule": "Every Y is computed by tools/frostpeak_summit.py from tools/ground.py (the canonical heightmap, rounded). Nothing in this file is a Y except the tower door's sill, read from the template.",
+  "site": {
+    "town": "frostpeak_shrine",
+    "centre": [682, 380],
+    "dress_radius": 60,
+    "path_radius": 62,
+    "measured": "2026-10-02 from tools/ground.py: ground y310 at radius 50 and 60 on all 24 bearings (every 15 degrees) and y308..309 at 70, so the pressed table is flat to at least radius 60 everywhere; data/towns.json says 'flat within 55 blocks of the centre, feathered over 70'."
+  },
+  "tower": {
+    "site": "adopted_articuno_shrine",
+    "clearance": 8,
+    "door": {
+      "x": [681, 683],
+      "step_z": 372,
+      "sill_y": 311,
+      "faces": "north",
+      "read_from": "COBBLEVERSE-DP-v31.zip data/cobbleverse/structure/legendary/articuno.nbt, read 2026-10-02 with tools/structure_nbt.py load: template layer 0 is all structure void (no block entries), so the paste never touches ground y310; the entrance is three prismarine_brick_stairs facing south at template (9..11, 1, 3), flanked by stairs at (8, 1, 4) and (12, 1, 4), and the doorway is open at x9..11 z5..7 on layers 2 and 3. At the summit corner (672, 310, 369) that is the step at x681..683 z372 y311, entered walking south.",
+      "approach": {
+        "half_width_beyond_door": 3,
+        "from_z": 340,
+        "rule": "the straight 9-wide lane out of the door, from the tower box's north edge to z340: nothing stands above the ground in it; the way's flagstones and worn cells lie flush at ground level"
+      }
+    }
+  },
+  "camp_sightline": {
+    "from": "data/frostpeak_camp.json frostpeak_camp_telescope (the pivot and a player's eye on the deck beside it)",
+    "to": "the tower's box from y370 to its top layer: the part of the tower that clears the false crest from the camp (data/adopted_legendary_sites.json site.findable_by_eye)",
+    "rule": "no block this pack writes lies on any line from either viewpoint to that box"
+  },
+  "wind": {
+    "from": "west",
+    "basis": "the map already has one: the repository's krummholz objects (tools/foliage_objects.py krummholz) stream their leaves to +x, so the wind that shaped Frostpeak's strand blows from the west. The summit gets the same wind: rime on the west faces, shelter, plants and drifts to the east."
+  },
+  "table": {
+    "keep_bare_radius": 30,
+    "why": "Halvard promises 'a flat table of snow with the tower in the middle of it'. Inside radius 30 nothing grows and no rock breaks the snow; only the way crosses it."
+  },
+  "tors": {
+    "rule": "Rock breaks through the snow only where the wind scours, on the rim: one tor per 30-degree slot round the table, between radius 40 and 54, its bearing and radius nudged by a hash of the slot (never random), each a repository boulder (tools/foliage_objects.py boulder, moss off) sunk one block into the ground. A slot is skipped when its tor, rime or lee would come within path_clearance of the way's centreline, within the tower's clearance, inside the bare table, onto another tor's cells, or past dress_radius (radius 60, where the measured table is still y310 on every bearing).",
+    "slots": 12,
+    "first_bearing": 15,
+    "ring": [40, 54],
+    "jitter_bearing": 8,
+    "sink": 1,
+    "path_clearance": 6,
+    "sizes": [[2.2, 2.6, 1.8], [2.8, 3.4, 2.3], [3.4, 4.0, 2.6], [2.0, 2.2, 3.0], [4.0, 4.4, 3.2], [1.6, 1.8, 1.4]],
+    "sizes_note": "(rx, ry, rz) for tools/foliage_objects.py boulder(): the library's six boulder shapes stretched upwards, so a tor stands one to four blocks over the snow, to be seen across the table"
+  },
+  "rime": {
+    "block": "minecraft:packed_ice",
+    "rule": "on the west face of a tor, one block thick, in front of a share of the rock cells above the ground; the share grows with the tor's exposure to the west wind: share = low + (high - low) * (1 + cos(bearing - 270)) / 2, bearing from the table's centre, so the west rim's tors are white-faced and the east rim's barely frosted",
+    "low": 0.3,
+    "high": 0.85
+  },
+  "lee": {
+    "rule": "Behind each row of a tor (its blocks at one z), the lee reaches twice the row's height above the ground, at most reach_max. Cells are numbered d = 1, 2, ... east of the row's last rock block; each takes its band's soil and at most one plant, the plant chosen by a hash of the cell against the band's cumulative shares. The most sheltered cells carry the most and tallest plants; past the reach a drift tails off in snow layers. Nothing woody: the summit is y310 and the snowy_peak preset's treeline is y145 (data/regions.json), so the plants are the fellfield's herbs, ferns and moss.",
+    "reach_max": 6,
+    "bands": [
+      {"d": [1, 1], "soil": "minecraft:coarse_dirt", "plants": [["minecraft:large_fern", 0.2], ["minecraft:fern", 0.45]]},
+      {"d": [2, 2], "soil": "minecraft:coarse_dirt", "plants": [["minecraft:fern", 0.25], ["minecraft:short_grass", 0.35]]},
+      {"d": [3, 3], "soil": "minecraft:coarse_dirt", "plants": [["minecraft:short_grass", 0.25], ["minecraft:dead_bush", 0.15]]},
+      {"d": [4, 6], "soil": "minecraft:stone", "plants": [["minecraft:moss_carpet", 0.4]]}
+    ],
+    "drift_layers": [3, 2, 1]
+  },
+  "way": {
+    "rule": "The pilgrims' way leaves the door straight north as a threshold of old flagstones, then runs straight to the rim at the arrival bearing: the bearing whose ground stays highest from 100 to 200 blocks out (the long gentle ridge a pilgrim would climb), searched every 5 degrees. Worn, not built: each cell's surface is chosen by a hash, and a share of cells is left under snow.",
+    "half_width": 1,
+    "threshold_length": 12,
+    "arrive_radius": 60,
+    "ridge_search": {"step_degrees": 5, "from": 100, "to": 200, "every": 10},
+    "threshold": [["minecraft:stone_bricks", 0.5], ["minecraft:cracked_stone_bricks", 0.3]],
+    "worn": [["minecraft:gravel", 0.35], ["minecraft:stone", 0.2], ["minecraft:cobblestone", 0.15]]
+  },
+  "cairns": {
+    "rule": "Two gatepost cairns flank the threshold where it begins; then one every `spacing` blocks along the way, alternating sides, `offset` blocks from the centreline; every third is fallen, its stones strewn downwind (east) by the same wind; and a taller way-marker stands at the rim where the way arrives, seen from the ridge below.",
+    "offset": 5,
+    "spacing": 11,
+    "gatepost_back": 2,
+    "standing": ["minecraft:cobblestone", "minecraft:cobblestone", "minecraft:cobblestone_wall"],
+    "marker": ["minecraft:cobblestone", "minecraft:andesite", "minecraft:cobblestone", "minecraft:cobblestone_wall"],
+    "fallen": "minecraft:cobblestone"
+  },
+  "blocks": {
+    "rule": "vanilla 1.21.1 only; none a spawn condition in data/spawn_blocks.json (azure bluet and the other flowers are, so no flower is used); nothing that emits light; no chest, bed or block entity",
+    "ids": [
+      "minecraft:stone", "minecraft:andesite", "minecraft:cobblestone", "minecraft:tuff",
+      "minecraft:packed_ice",
+      "minecraft:coarse_dirt", "minecraft:large_fern", "minecraft:fern", "minecraft:short_grass", "minecraft:dead_bush",
+      "minecraft:moss_carpet", "minecraft:snow",
+      "minecraft:gravel", "minecraft:stone_bricks", "minecraft:cracked_stone_bricks", "minecraft:cobblestone_wall"
+    ]
+  },
+  "lighting": {
+    "dark_by_design": true,
+    "why": "wilderness, not a town: no light is added (docs/STATE.md, 'Places are lit as towns ... the Scar and the jungle ruins are dark by design'). The tower's own sea lanterns are its light."
+  },
+  "spawns": {
+    "decision": "none added",
+    "why": "Frostpeak's surface table (data/spawns.json scope frostpeak) covers the summit; no block placed here is a spawn condition, so the dressing changes nothing about what spawns."
+  },
+  "known_limits": [
+    "Snow weather lays one snow layer over any bare cell (vanilla snowAccumulationHeight 1), so in time the worn way and the lee's soil can whiten; the rocks, rime, plants and cairns stand through it. NOT VERIFIED in game.",
+    "The export's surface block on the table is ASSUMED to be snow (data/regions.json snowy_peak terrain DEEP_SNOW above y165); the way and the lee replace the ground block itself, so they read the same whatever it is."
+  ]
+}

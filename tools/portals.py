@@ -61,6 +61,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 
 import function_limits  # noqa: E402
 import water_mask  # noqa: E402
@@ -618,7 +619,7 @@ def main(argv=None):
     sub = p.add_subparsers(dest="cmd", required=True)
     for name in ("build", "report"):
         q = sub.add_parser(name)
-        q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"))
+        q.add_argument("--source-root", default=env_source_root())
     a = p.parse_args(argv)
     return {"build": build, "report": report}[a.cmd](a) or 0
 

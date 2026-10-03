@@ -153,6 +153,11 @@ lines, vertical conduits, and one column of light at the core rising toward the 
 
 ## 5. Hoopa's relic area
 
+> **Superseded in part, 2026-10-02.** The surface shrine, its arches, ring and standing stones moved into a hall
+> underground and the cordon was replaced by a zone check (the owner: "the relic site underground"). The surface
+> keeps only the sealed entrance, the lookout and the dig. See `RELIC_UNDERGROUND.md`; step R9RU carves the hall
+> and takes the old surface off a world that has it. The underground half below (shaft, passage, cradle) stands.
+
 **What it is:** an old native shrine on the Deep's west lip, older than the Compact. The Compact found Hoopa's
 anchor here and built its cradle 76 blocks under it. The "relics" are ring fragments from Hoopa's earlier, free
 visits. Rule 7 of `ARC.md` holds: the shrine adds depth; the only required way to Hoopa is through the HQ.
@@ -168,7 +173,11 @@ visits. Rule 7 of `ARC.md` holds: the shrine adds depth; the only required way t
 - **The way in:** HQ ring-0 front at x3427 -> a secure shaft down to the basement at y0 (a `lumymon:elevator` with
   `requiredAdvancement` set to an advancement the finale's dialogue grants, so the shaft is a per-player gate) ->
   the 70-block passage west, climbing 12 -> the cradle. The cradle's zone check opens on the quest stage
-  (`rift_crisis_pending`), as the owner decided.
+  (`rift_crisis_pending`), as the owner decided. **Built 2026-10-02 without the elevator:** a pressure plate either
+  side of the HQ ring-0 section's iron door (3443, 67, 3282), a stair from storey 0's south-west corner
+  (3429, 66, 3299) down the reserved shaft, and a records room at y0 opening on the passage, by
+  `tools/relic_underground.py` (`docs/world-building/RELIC_UNDERGROUND.md` section 8b). The city no longer lays the
+  shaft hatch, which sat under the section's west wall.
 - **Hoopa itself:** a per-player actor (the scene runtime's per-player actors, proven to load on staging, not seen
   in game: EXP-034), so one player's release does not empty the cradle for another.
 - **After `rift_crisis_resolved`:** the cordon stands down for that player; Hoopa appears at the shrine by choice.

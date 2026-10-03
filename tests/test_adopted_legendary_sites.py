@@ -7,9 +7,11 @@ SCHEDULED (commit dfad147). No generator emits this record.
 TWO KINDS OF SITE, ONE POSITION EACH. The record's own rule is `placement_method.not_in_placements_json`: a
 site has ONE author for its position.
 
-  unscheduled   (Mew, Zapdos, Articuno) carry a `placement` block here -- corner, y, rotation, mirror and
-                the raw `/place template` line -- and NO record in data/placements.json names their template.
-  scheduled     (Crown Cemetery, Dawn tower, Dusk tower) carry `scheduled_as: <placements id>` and NO
+  unscheduled   (Articuno, placed by its own step, tools/articuno_tower.py) carries a `placement` block here --
+                corner, y, rotation, mirror and the raw `/place template` line -- and NO record in
+                data/placements.json names its template. Mew and Zapdos were here until 2026-10-02.
+  scheduled     (Crown Cemetery, Dawn tower, Dusk tower; Zapdos, Mew and Moltres since 2026-10-02, once
+                EXP-048 passed) carry `scheduled_as: <placements id>` and NO
                 `placement` block. Their corner is that record's `position` x/z, their bottom layer its
                 `position` y, their rotation and mirror its own. The measurement and the reasoning stay here.
 
@@ -32,8 +34,11 @@ THE INDEPENDENT SIDES, none of them this record:
                  over the footprint the resolved corner, rotation and `size` imply. No expectation is ever
                  taken from the record's `ground` block.
   the templates  `data/structures.json` `footprint`, for each template's x/height/z.
-  the ceilings   `data/world.json` `vertical.max_y` (310) and `sea_level` (62), and Minecraft 1.21.1's build
-                 limit of 320.
+  the ceiling    the RUNTIME's build top, read from the dimension type our pack ships
+                 (`modpack/datapacks/cobblers_height/.../dimension_type/overworld.json`: min_y + height - 1,
+                 y575), and `data/world.json` `sea_level` (62). `vertical.max_y` (310) is NOT a ceiling for
+                 built blocks: it caps authored terrain only (world.json measured_ceiling_note), and a template
+                 pasted on that terrain may rise above it.
   the cells      `data/cells.json` bounds, for the cell a scheduled record and a site name.
   the rule       `data/portals.json` `rules.min_from_legendary_mouth`.
 
@@ -44,15 +49,18 @@ that perturbs a COPY of the record -- or of the placements list -- in memory and
 is the right proof, and a real one, because the expectation comes from the heightmap, which a mutated record
 cannot move. No file on disk is ever written: every mutation works on `copy.deepcopy`.
 
-TWO RECORDING INCONSISTENCIES in the unscheduled sites, found by the first author and NOT fixed here:
+CHANGED 2026-10-02, BY A DIFFERENT AUTHOR THAN THE ONE WHO WROTE THIS FILE (the agent that moved Articuno's
+tower to the summit, disclosed here). This file used to hold every site under BOTH `vertical.max_y` 310 and
+a hard-coded vanilla build limit of 320. Neither is this runtime's: `cobblers_height` ships an overworld
+dimension type of min_y -64, height 640, so the highest buildable layer is y575 (docs/STATE.md "World
+facts"), and max_y is a terrain line. The same wrong 320 is what refused the summit for Articuno on
+2026-10-01. So the ceiling is now READ from that dimension type file, max_y no longer bounds built blocks,
+and the two recording conventions this file used to tolerate are gone -- the record was rewritten to one:
 
-  `top_y`           Mew and Zapdos record the topmost OCCUPIED layer (`y + height - 1`);
-                    `adopted_articuno_shrine` records `y + height` (151+74=225, top occupied layer y224). Both
-                    are safe, so `ceiling_problems` accepts either and asserts the direction that matters:
-                    `top_y` may never UNDERSTATE the occupied top. The hard clearance uses `y + height - 1`
-                    computed here, no slack.
-  `ceiling_margin`  Mew and Zapdos measure it against `max_y` 310; Articuno against 320 plus `max_y_margin`
-                    for 310. Each declared margin must resolve EXACTLY onto one of the two real ceilings.
+  `top_y`           the top OCCUPIED layer, `y + height - 1`, exactly, for all four sites. Over- and
+                    understating are both failures now: there is one convention, not a safe direction.
+  `ceiling_margin`  `runtime_top - top_y`, exactly, for all four sites. `max_y_margin` is a second
+                    convention and is refused wherever it appears.
 
 A scheduled site has no `top_y`, `ceiling_margin`, `centre` or `command`: they went with the deleted block.
 What it has instead is a one-line pointer (`placement_lives_in` on every scheduled site)
@@ -81,9 +89,8 @@ NOT COVERED, by any of it. Validity is not behaviour (`.claude/rules/testing.md`
     site needs; nothing here places one.
   * the record's distance prose ("395 to sky_far_reach", "482 to Whiteback"). Several are centre-to-centre
     and read as clearances; no test asserts them.
-  * the top-level `ceiling` block's verdict ("all four", "the tallest top is y224") predates the towers, whose
-    tops are y188 and y235. `test_record_ceiling_max_y_is_world_json` pins the one number in that block; the
-    stale counts are a finding, not a thing to assert.
+  * the top-level `ceiling` block's verdict prose. `test_record_ceiling_is_the_runtime_top` pins its numbers;
+    the counts in its sentences are a finding, not a thing to assert.
 """
 from __future__ import annotations
 
@@ -109,12 +116,20 @@ UNSCHEDULED = tuple(i for i in IDS if "scheduled_as" not in SITES[i])
 PLACEMENTS = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))["placements"]
 
 WORLD = json.loads((ROOT / "data" / "world.json").read_text(encoding="utf-8"))
-MAX_Y = WORLD["vertical"]["max_y"]
+MAX_Y = WORLD["vertical"]["max_y"]          # authored TERRAIN only; never a ceiling for a built block
 SEA_LEVEL = WORLD["vertical"]["sea_level"]
 
-# Minecraft 1.21.1's overworld build limit. Not ours to configure and not in data/world.json: the world's
-# own max_y (310) is the tighter, authored ceiling and this is the one the game enforces.
-BUILD_CEILING = 320
+# The runtime's overworld build top, read from the dimension type our pack ships rather than typed in: the
+# old hard-coded 320 was vanilla's, and it refused the summit for Articuno on 2026-10-01.
+DIMENSION = ROOT / "modpack" / "datapacks" / "cobblers_height" / "data" / "minecraft" / "dimension_type" / "overworld.json"
+
+
+def runtime_top(path=DIMENSION):
+    dim = json.loads(Path(path).read_text(encoding="utf-8"))
+    return dim["min_y"] + dim["height"] - 1
+
+
+RUNTIME_TOP = runtime_top()
 
 # /place template's own argument vocabulary (the command form data/adopted_legendary_sites.json
 # `placement_method.command` declares). A rotation outside this list is a command that will not run.
@@ -272,34 +287,36 @@ def seat_problems(site, g, placements=None):
     return []
 
 
-def ceiling_problems(site, placements=None):
-    """[problem] in the vertical arithmetic: the occupied top, both ceilings, and every declared margin.
+def ceiling_problems(site, placements=None, top=None):
+    """[problem] in the vertical arithmetic: the occupied top against the runtime's build top, and the margin.
 
-    The occupied top comes from the resolved y and the template's height for EVERY site. `top_y` and the
-    margins exist only in an unscheduled site's `placement` block; a scheduled site's quoted top is held by
-    pointer_problems instead."""
+    The occupied top comes from the resolved y and the template's height for EVERY site. `top_y` and the margin
+    exist only in an unscheduled site's `placement` block; a scheduled site's quoted top is held by
+    pointer_problems instead. `top` defaults to RUNTIME_TOP; it is a parameter so a test can prove the check
+    bites on the ceiling it is given (the old 320) rather than on anything the record says."""
+    top = RUNTIME_TOP if top is None else top
     y = where(site, placements)["y"]
     height = template_size(site)[1]
     occupied_top = y + height - 1
     bad = []
-    if occupied_top > MAX_Y:
-        bad.append("the top occupied layer is y%d, over the world's max_y %d" % (occupied_top, MAX_Y))
-    if occupied_top > BUILD_CEILING:
-        bad.append("the top occupied layer is y%d, over the %d build limit" % (occupied_top, BUILD_CEILING))
+    if occupied_top > top:
+        bad.append("the top occupied layer is y%d, over the runtime build limit y%d" % (occupied_top, top))
     if "scheduled_as" in site:
         return bad
     p = site["placement"]
     if p["top_y"] < occupied_top:
-        # The dangerous direction: a top_y below the real top is how a breach of the ceiling hides.
+        # the dangerous direction: a top_y below the real top is how a breach of the ceiling hides
         bad.append("top_y %d understates the top occupied layer y%d" % (p["top_y"], occupied_top))
-    if p["top_y"] > y + height:
-        bad.append("top_y %d is above y + height (%d)" % (p["top_y"], y + height))
-    for key in ("ceiling_margin", "max_y_margin"):
-        if key in p and (p[key] + p["top_y"]) not in (MAX_Y, BUILD_CEILING):
-            bad.append("%s %d implies a ceiling of y%d, which is neither max_y %d nor the %d limit"
-                       % (key, p[key], p[key] + p["top_y"], MAX_Y, BUILD_CEILING))
+    elif p["top_y"] != occupied_top:
+        bad.append("top_y %d is not the top occupied layer y%d (one convention: y + height - 1)"
+                   % (p["top_y"], occupied_top))
     if "ceiling_margin" not in p:
         bad.append("placement declares no ceiling_margin")
+    elif p["ceiling_margin"] != top - occupied_top:
+        bad.append("ceiling_margin %d is not runtime top y%d - top occupied layer y%d = %d"
+                   % (p["ceiling_margin"], top, occupied_top, top - occupied_top))
+    if "max_y_margin" in p:
+        bad.append("max_y_margin is a second margin convention, against a terrain line that is not a ceiling")
     return bad
 
 
@@ -402,15 +419,17 @@ def pointer_problems(site, placements=None):
         m = re.search(r"\b%s (\S+?)[,.]" % field, text)
         if not m or m.group(1) != w[field]:
             bad.append("%s quotes %s %s; the record's is %s" % (keys[0], field, m and m.group(1), w[field]))
-    m = re.search(r"top occupied layer y(\d+) \((\d+) under max_y (\d+)\)", text)
+    m = re.search(r"top occupied layer y(\d+) \((\d+) under the runtime ceiling y(\d+)", text)
+    if "top occupied layer" in text and not m:
+        bad.append("%s quotes a top occupied layer without its margin under the runtime ceiling" % keys[0])
     if m:
         top, margin, roof = (int(v) for v in m.groups())
         want = w["y"] + template_size(site)[1] - 1
         if top != want:
             bad.append("%s quotes the top occupied layer y%d; y + height - 1 is y%d" % (keys[0], top, want))
-        if roof != MAX_Y or margin != MAX_Y - want:
-            bad.append("%s quotes %d under max_y %d; data/world.json max_y %d gives %d"
-                       % (keys[0], margin, roof, MAX_Y, MAX_Y - want))
+        if roof != RUNTIME_TOP or margin != RUNTIME_TOP - want:
+            bad.append("%s quotes %d under y%d; the runtime top y%d gives %d"
+                       % (keys[0], margin, roof, RUNTIME_TOP, RUNTIME_TOP - want))
     return bad
 
 
@@ -593,20 +612,20 @@ def test_centre_is_the_corner_plus_half_the_size(sid):
 
 
 @pytest.mark.parametrize("sid", IDS)
-def test_top_y_is_the_templates_top_and_clears_both_ceilings(sid):
+def test_top_y_is_the_templates_top_and_clears_the_runtime_ceiling(sid):
     # Without it a 90-block tower seated high pokes through the build limit and the record still reads fine.
-    # Every site: y + height - 1 from the resolved y. Unscheduled sites: top_y and margins as well.
+    # Every site: y + height - 1 from the resolved y. Unscheduled sites: top_y and the margin as well.
     assert ceiling_problems(SITES[sid]) == []
 
 
 @pytest.mark.parametrize("sid", UNSCHEDULED)
-def test_declared_margins_are_arithmetic_against_a_declared_ceiling(sid):
-    # Without it `ceiling_margin` is a number from the day it was typed. Covered by ceiling_problems(); this
-    # test names the property so a stale margin is not reported as "ceiling".
-    p = SITES[sid]["placement"]
-    for key in ("ceiling_margin", "max_y_margin"):
-        if key in p:
-            assert p[key] + p["top_y"] in (MAX_Y, BUILD_CEILING)
+def test_declared_margin_is_the_runtime_top_minus_the_occupied_top(sid):
+    # Without it `ceiling_margin` is a number from the day it was typed. It is covered by
+    # ceiling_problems(); this test names the property so a stale margin is not reported as "ceiling".
+    site = SITES[sid]
+    p = site["placement"]
+    assert p["ceiling_margin"] == RUNTIME_TOP - (p["y"] + template_size(site)[1] - 1)
+    assert "max_y_margin" not in p
 
 
 @pytest.mark.parametrize("sid", UNSCHEDULED)
@@ -616,10 +635,20 @@ def test_command_text_is_the_fields_beside_it(sid):
     assert command_problems(SITES[sid]) == []
 
 
-def test_record_ceiling_max_y_is_world_json():
-    # Without it the record's ceiling block can quote a max_y data/world.json no longer has, and every
-    # margin computed from it is silently against the wrong roof.
-    assert RECORD["ceiling"]["max_y"] == MAX_Y
+def test_record_ceiling_is_the_runtime_top():
+    # Without it the record's ceiling block can quote a roof the runtime no longer has -- which it did, as
+    # max_y 310 and the vanilla 320, until 2026-10-02 -- and every margin computed from it is silently
+    # against the wrong one. The terrain line it also quotes must still be world.json's.
+    assert RECORD["ceiling"]["runtime_top_y"] == RUNTIME_TOP
+    assert RECORD["ceiling"]["terrain_max_y"] == MAX_Y
+
+
+def test_the_runtime_top_is_read_from_the_shipped_dimension_type():
+    # Without it a change to cobblers_height would silently move every margin. Pinned so that change is
+    # loud: re-derive every ceiling_margin in the record when this fails.
+    dim = json.loads(DIMENSION.read_text(encoding="utf-8"))
+    assert (dim["min_y"], dim["height"]) == (-64, 640), "cobblers_height changed: re-derive every margin"
+    assert RUNTIME_TOP == 575
 
 
 # --------------------------------------------------------------------------------------- the cross-system hole
@@ -702,11 +731,14 @@ def test_a_perturbed_ground_stat_is_caught(field, delta, ground):
 
 
 @pytest.mark.slow
-@pytest.mark.parametrize("sid", ["adopted_zapdos_tower", "adopted_dusk_tower"])
+@pytest.mark.parametrize("sid", ["adopted_zapdos_tower", "adopted_dusk_tower", "adopted_articuno_shrine"])
 @pytest.mark.parametrize("field", ["cut_blocks", "fill_blocks", "cut_columns", "fill_columns"])
 def test_a_perturbed_cut_or_fill_count_is_caught(field, sid, ground):
-    # Proves the displacement counts are re-derived rather than read back, for one site of each kind.
+    # Proves the displacement counts are re-derived rather than read back, for sites of both kinds (Articuno is
+    # the one unscheduled site since 2026-10-02, and declares only the block counts).
     site = copy.deepcopy(SITES[sid])
+    if field not in site["displaces"]:
+        pytest.skip("%s declares no displaces.%s" % (sid, field))
     site["displaces"][field] += 1
     assert any(("displaces.%s" % field) in p for p in ground_problems(site, ground))
 
@@ -714,7 +746,10 @@ def test_a_perturbed_cut_or_fill_count_is_caught(field, sid, ground):
 @pytest.mark.slow
 @pytest.mark.parametrize("record_id,sid", [("legendary_dawn_tower", "adopted_dawn_tower"),
                                            ("legendary_dusk_tower", "adopted_dusk_tower"),
-                                           ("legendary_crown_cemetery", "adopted_crown_cemetery")])
+                                           ("legendary_crown_cemetery", "adopted_crown_cemetery"),
+                                           ("legendary_zapdos_tower", "adopted_zapdos_tower"),
+                                           ("legendary_mew_temple", "adopted_mew_temple"),
+                                           ("legendary_moltres_tower", "adopted_moltres_tower")])
 @pytest.mark.parametrize("dy", [1, -1])
 def test_a_scheduled_record_reseated_by_one_block_is_caught(record_id, sid, dy, ground):
     # The input the scheduled checks read is the placements record, so THAT is what is moved: one block up
@@ -738,7 +773,7 @@ def test_a_scheduled_record_moved_onto_different_terrain_is_caught(ground):
 @pytest.mark.slow
 def test_a_site_moved_onto_different_terrain_is_caught(ground):
     # The same for an unscheduled site, whose corner lives in its own placement block.
-    site = copy.deepcopy(SITES["adopted_zapdos_tower"])
+    site = copy.deepcopy(SITES["adopted_articuno_shrine"])
     site["placement"]["corner"] = [site["placement"]["corner"][0] + 60, site["placement"]["corner"][1] + 60]
     assert ground_problems(site, ground) != []
 
@@ -747,44 +782,77 @@ def test_a_site_moved_onto_different_terrain_is_caught(ground):
 def test_a_drowned_site_is_caught(ground):
     # Mew's researched coordinate (5160, 7463) measures y61 against a sea level of y62: the site the water
     # pass removed. A record re-sited back onto it must fail the sea-level check.
-    site = copy.deepcopy(SITES["adopted_mew_temple"])
-    site["placement"]["corner"] = [5160, 7463]
-    x0, z0, x1, z1 = footprint(site)
+    # Mew is scheduled, so the record moved is its placements record.
+    moved = _placements_with("legendary_mew_temple", position={"x": 5160, "z": 7463})
+    x0, z0, x1, z1 = footprint(SITES["adopted_mew_temple"], moved)
     assert measure(ground, x0, z0, x1, z1)["min"] <= SEA_LEVEL
 
 
 def test_a_structure_raised_through_the_build_limit_is_caught():
     # Proves the ceiling check is arithmetic over the template's real height and not a reading of
-    # ceiling_margin. Articuno's template is 74 blocks tall, so y260 puts its top at y333.
+    # ceiling_margin. Articuno's template is 74 blocks tall, so y520 puts its top occupied layer at y593.
+    # The copy is kept internally consistent (top_y and margin re-derived) so only the ceiling can fail.
     site = copy.deepcopy(SITES["adopted_articuno_shrine"])
-    site["placement"]["y"] = 260
-    site["placement"]["top_y"] = 260 + template_size(site)[1]
-    site["placement"]["ceiling_margin"] = BUILD_CEILING - site["placement"]["top_y"]
-    site["placement"]["max_y_margin"] = MAX_Y - site["placement"]["top_y"]
+    site["placement"]["y"] = 520
+    site["placement"]["top_y"] = 520 + template_size(site)[1] - 1
+    site["placement"]["ceiling_margin"] = RUNTIME_TOP - site["placement"]["top_y"]
     problems = ceiling_problems(site)
     assert any("build limit" in p for p in problems), problems
-    assert any("max_y" in p for p in problems), problems
 
 
-def test_a_scheduled_tower_raised_through_the_ceilings_is_caught():
-    # The same for a scheduled site, moving only its placements record: the Dawn tower is 90 tall, so y231
-    # puts the top layer at y320 -- over max_y 310 but not the 320 limit -- and y232 over both.
-    at_limit = ceiling_problems(SITES["adopted_dawn_tower"], _placements_with("legendary_dawn_tower", position={"y": 231}))
-    assert any("max_y" in p for p in at_limit) and not any("build limit" in p for p in at_limit), at_limit
-    over = ceiling_problems(SITES["adopted_dawn_tower"], _placements_with("legendary_dawn_tower", position={"y": 232}))
+def test_the_summit_tower_fails_against_the_vanilla_320_that_refused_it():
+    # A mutation of the check's input, not of the record: hand ceiling_problems the old 320 and the summit
+    # site (top y383) must go red, so the check is bounded by the ceiling it is given and the summit passes
+    # only because this runtime's top is y575.
+    problems = ceiling_problems(SITES["adopted_articuno_shrine"], top=320)
+    assert any("build limit y320" in p for p in problems), problems
+
+
+def test_terrain_max_y_is_not_treated_as_a_ceiling_for_built_blocks():
+    # The summit tower stands on y310 terrain and rises to y383, over max_y 310. That must pass.
+    site = SITES["adopted_articuno_shrine"]
+    assert site["placement"]["y"] + template_size(site)[1] - 1 > MAX_Y
+    assert ceiling_problems(site) == []
+
+
+def test_a_second_margin_convention_is_caught():
+    site = copy.deepcopy(SITES["adopted_articuno_shrine"])
+    site["placement"]["max_y_margin"] = MAX_Y - site["placement"]["top_y"]
+    assert any("max_y_margin" in p for p in ceiling_problems(site))
+
+
+def test_a_top_y_that_overstates_the_template_is_caught():
+    # One convention now: y + height (Articuno's old form) is as wrong as an understatement.
+    site = copy.deepcopy(SITES["adopted_articuno_shrine"])
+    site["placement"]["top_y"] += 1
+    site["placement"]["ceiling_margin"] -= 1
+    assert any("not the top occupied layer" in p for p in ceiling_problems(site))
+
+
+def test_a_scheduled_tower_raised_through_the_ceiling_is_caught():
+    # The same for a scheduled site, moving only its placements record: a y that puts the Dawn tower's top layer
+    # exactly on the runtime top is clean, and one block higher breaches it. Derived from the template's height
+    # and RUNTIME_TOP, so the check is held to the dimension type, not to a typed number.
+    height = template_size(SITES["adopted_dawn_tower"])[1]
+    at_limit_y = RUNTIME_TOP - height + 1
+    at_limit = ceiling_problems(SITES["adopted_dawn_tower"],
+                                _placements_with("legendary_dawn_tower", position={"y": at_limit_y}))
+    assert not any("build limit" in p for p in at_limit), at_limit
+    over = ceiling_problems(SITES["adopted_dawn_tower"],
+                            _placements_with("legendary_dawn_tower", position={"y": at_limit_y + 1}))
     assert any("build limit" in p for p in over), over
 
 
 def test_a_stale_ceiling_margin_is_caught():
     # The margin that was true when it was typed. One block off and it resolves onto no real ceiling.
-    site = copy.deepcopy(SITES["adopted_mew_temple"])
+    site = copy.deepcopy(SITES["adopted_articuno_shrine"])
     site["placement"]["ceiling_margin"] += 1
     assert any("ceiling_margin" in p for p in ceiling_problems(site))
 
 
 def test_a_top_y_that_understates_the_template_is_caught():
     # The dangerous direction: a top_y below the real top would let a breach of the ceiling read as safe.
-    site = copy.deepcopy(SITES["adopted_zapdos_tower"])
+    site = copy.deepcopy(SITES["adopted_articuno_shrine"])
     site["placement"]["top_y"] -= 1
     assert any("understates" in p for p in ceiling_problems(site))
 
@@ -795,7 +863,7 @@ def test_a_top_y_that_understates_the_template_is_caught():
 def test_a_command_that_no_longer_matches_its_fields_is_caught(field, value):
     # Proves the command is parsed against the fields rather than merely present. Each of these is a real
     # way for the two to part: a re-site, a re-seat, a rotation chosen once the .nbt has been looked at.
-    site = copy.deepcopy(SITES["adopted_mew_temple"])
+    site = copy.deepcopy(SITES["adopted_articuno_shrine"])
     site["placement"][field] = value
     assert command_problems(site) != []
 
@@ -842,16 +910,48 @@ def test_a_scheduled_site_that_keeps_its_placement_block_is_caught():
 
 
 def test_an_unscheduled_template_turning_up_in_placements_is_caught():
-    # Mew's temple copied into data/placements.json while its placement block stays here.
-    rogue = {"id": "legendary_mew_temple", "template": SITES["adopted_mew_temple"]["template"],
-             "position": {"x": 7604, "y": 142, "z": 7082}}
-    assert unscheduled_problems(SITES["adopted_mew_temple"], PLACEMENTS + [rogue]) != []
+    # Articuno's tower copied into data/placements.json while its placement block stays here: tools/place_donor.py
+    # and tools/articuno_tower.py (R18A) would then both paste it.
+    rogue = {"id": "legendary_articuno_shrine", "template": SITES["adopted_articuno_shrine"]["template"],
+             "position": {"x": 672, "y": 310, "z": 369}}
+    assert unscheduled_problems(SITES["adopted_articuno_shrine"], PLACEMENTS + [rogue]) != []
+
+
+def test_articuno_is_placed_by_its_own_step_and_never_scheduled():
+    # Articuno's tower is pasted by tools/articuno_tower.py (reapply R18A) from its `placement` block. A
+    # data/placements.json donor for it would paste it a second time in R9.
+    assert "adopted_articuno_shrine" in UNSCHEDULED
+    assert not [q["id"] for q in PLACEMENTS if SITES["adopted_articuno_shrine"]["template"]
+                in (q.get("template"), q.get("pack_template"))]
+
+
+@pytest.mark.parametrize("sid", IDS)
+def test_the_shared_resolver_agrees_with_this_files_own(sid):
+    # tools/adopted_sites.py is what other systems (sea life, the research station) read a site's position
+    # through. Its footprint must be this file's, for scheduled and unscheduled sites alike, or a consumer
+    # keeps out of the wrong box.
+    import adopted_sites
+    assert adopted_sites.footprint(SITES[sid], PLACEMENTS) == footprint(SITES[sid])
+    if "placement" in SITES[sid] and "centre" in SITES[sid]["placement"]:
+        assert adopted_sites.centre(SITES[sid], PLACEMENTS) == SITES[sid]["placement"]["centre"]
+
+
+def test_the_shared_resolver_fails_closed_on_a_site_with_no_position():
+    # A silent None is how a scheduled site dropped out of the sea-life keep-out.
+    import adopted_sites
+    site = copy.deepcopy(SITES["adopted_zapdos_tower"])
+    site["scheduled_as"] = "no_such_record"
+    with pytest.raises(SystemExit):
+        adopted_sites.where(site, PLACEMENTS)
+    site.pop("scheduled_as")
+    with pytest.raises(SystemExit):
+        adopted_sites.where(site, PLACEMENTS)
 
 
 @pytest.mark.parametrize("sid,mutate", [
     ("adopted_dawn_tower", lambda s: s.__setitem__("placement_lives_in", s["placement_lives_in"].replace("y99", "y98"))),
     ("adopted_dawn_tower", lambda s: s.__setitem__("placement_lives_in", s["placement_lives_in"].replace("y188", "y189"))),
-    ("adopted_dawn_tower", lambda s: s.__setitem__("placement_lives_in", s["placement_lives_in"].replace("(122", "(121"))),
+    ("adopted_dawn_tower", lambda s: s.__setitem__("placement_lives_in", s["placement_lives_in"].replace("(387", "(386"))),
     ("adopted_dusk_tower", lambda s: s.__setitem__("placement_lives_in", s["placement_lives_in"].replace("7216", "7217"))),
     ("adopted_crown_cemetery", lambda s: s.__setitem__("placement_lives_in", s["placement_lives_in"].replace("rotation none", "rotation 180"))),
     ("adopted_crown_cemetery", lambda s: s.pop("placement_lives_in")),

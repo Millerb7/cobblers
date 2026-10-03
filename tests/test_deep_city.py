@@ -76,11 +76,9 @@ def _clean():
     w.append((8, 21, 8, 8, 22, 8, "minecraft:end_rod[facing=up]"))                   # something on the upper ring
     w.append((15, 20, 20, 15, 20, 20, "rechiseled:blackstone_polished_connecting"))  # the up-lift's landing floor
     w.append((14, 11, 20, 14, 12, 20, "minecraft:air"))                              # the down-lift's landing, cut
-    for z in range(80, 86):                                                           # the relic cordon
-        for x in range(96, 100):
-            if x in (96, 99) or z in (80, 85):
-                w.append((x, 31, z, x, 33, z, "minecraft:iron_bars"))
-    w.append((97, 31, 82, 97, 40, 82, "minecraft:raw_gold_block"))                   # a relic ring piece
+    # the relic area, capped (2026-10-02): a spoil heap three high and a fragment, and no cordon and no ring
+    w.append((97, 31, 82, 97, 33, 82, "minecraft:gravel"))                          # a spoil heap
+    w.append((98, 31, 83, 98, 31, 83, "minecraft:raw_gold_block"))                  # a ring fragment in the spoil
     return w
 
 
@@ -129,9 +127,17 @@ def test_the_audit_catches_a_street_walled_off():
     assert "streets" in kinds, problems
 
 
-def test_the_audit_catches_a_gap_in_the_cordon():
-    kinds, _p = _kinds([w for w in _clean() if w[:3] != (99, 31, 83)])
-    assert "cordon" in kinds
+def test_the_audit_catches_a_cordon_put_back():
+    # the owner rejected the fence (2026-10-01): one fenced edge column is a fault, glass under two of bars
+    fence = [(96, 31, 83, 96, 31, 83, "minecraft:tinted_glass"), (96, 32, 83, 96, 33, 83, "minecraft:iron_bars")]
+    kinds, problems = _kinds(_clean() + fence)
+    assert "cordon" in kinds, problems
+
+
+def test_the_audit_catches_the_relic_ring_back_on_the_surface():
+    # the ring is underground (tools/relic_underground.py): a ring piece ten over the relic ground is a fault
+    kinds, problems = _kinds(_clean() + [(97, 31, 82, 97, 40, 82, "minecraft:raw_gold_block")])
+    assert "cordon" in kinds, problems
 
 
 def test_the_audit_catches_an_empty_output():

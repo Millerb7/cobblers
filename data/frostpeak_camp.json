@@ -4,7 +4,7 @@
   "generated_by": "hand",
   "built_by": "tools/frostpeak_camp.py build -> build/datapacks/cobblers_frostpeak_camp; audited by tools/frostpeak_camp_audit.py",
   "owner_request": "\"i feel like a research site around 2079 115 1048 could be cool. i assume we will have a legendary at teh top of the mountain or close by they are looking into. it would be frostpeak shrine yeah.\" Then: \"i got my x or y wrong, the research site is meant to be at the foot of the south end of the frostpeak\". The site (688, 688) was measured and accepted on 2026-10-01.",
-  "purpose": "A small field camp at Frostpeak's south foot whose researchers study Articuno. Its job in the world: the adopted Articuno shrine (data/adopted_legendary_sites.json adopted_articuno_shrine) has no finder, so the camp is how a player learns where to look - a telescope trained on the east shoulder, field notes on a board, and researchers who point. Nothing here promises the shrine's altar works (adopted_legendary_sites.json a_dead_altar_must_not_block; EXP-048): the researchers observe and speculate, and no step, reward or gate requires the altar.",
+  "purpose": "A small field camp at Frostpeak's south foot whose researchers study Articuno. Its job in the world: the adopted Articuno shrine (data/adopted_legendary_sites.json adopted_articuno_shrine) has no finder, so the camp is how a player learns where to look - a telescope trained on the tower's crown, which shows over the false crest from the summit where the tower stands (moved there 2026-10-02 on the owner's word), field notes on a board, and researchers who point up the mountain. Nothing here promises the shrine's altar works (adopted_legendary_sites.json a_dead_altar_must_not_block; EXP-048): the researchers observe and speculate, and no step, reward or gate requires the altar.",
   "ground_rule": "Every Y is computed by tools/frostpeak_camp.py from tools/ground.py (the canonical heightmap, rounded). Nothing in this file is a Y. Each piece is seated on max(ground under its footprint) + 1, with a foundation down to the ground under any lower column (tools/shrines.py's convention).",
   "site": {
     "corner": [688, 688],
@@ -15,7 +15,7 @@
   "targets": {
     "shrine": {
       "source": "data/adopted_legendary_sites.json sites[id=adopted_articuno_shrine]: placement.centre (x, z) and placement.top_y",
-      "aim": "the middle of the part of the tower's centre column visible over the shoulder from the telescope, computed from the heightmap"
+      "aim": "the middle of the part of the tower's centre column visible over the false crest from the telescope (its crown), computed from the heightmap"
     },
     "summit": {
       "source": "data/towns.json towns[id=frostpeak_shrine].centre: the centre of the pressed summit platform (data/sculpt.json pads frostpeak_shrine, radius 55, y310)",
@@ -43,7 +43,7 @@
      "why": "a plank deck on the high north edge of the bench, the camp's best view of the mountain"},
     {"id": "frostpeak_camp_telescope", "kind": "instrument", "at": [716, 691], "on": "frostpeak_camp_instrument_deck",
      "target": "shrine", "tube": {"block": "minecraft:waxed_copper_block", "length": 1.6, "width": 0.24},
-     "why": "the survey's telescope, trained on the Articuno tower on the east shoulder"},
+     "why": "the survey's telescope, trained on the crown of the Articuno tower on the summit, the part that shows over the false crest"},
     {"id": "frostpeak_camp_theodolite", "kind": "instrument", "at": [709, 691], "on": "frostpeak_camp_instrument_deck",
      "target": "summit", "tube": {"block": "minecraft:polished_deepslate", "length": 0.9, "width": 0.2},
      "why": "the surveyor's theodolite, laid on the summit's bearing and stopped at the false crest that hides it"},
@@ -65,30 +65,30 @@
   "notes_board": {
     "signs": [
       ["FROSTPEAK", "SURVEY", "field notes", "- S. Halvard"],
-      ["East tower", "bearing {shrine_bearing}", "~{shrine_range} blocks", "crown y{shrine_top}"],
+      ["Summit tower", "bearing {shrine_bearing}", "~{shrine_range} blocks", "crown y{shrine_top}"],
       ["Summit table", "bearing {summit_bearing}", "behind the", "false crest"],
       ["Articuno:", "sightings", "none confirmed", "keep watching"]
     ]
   },
   "researchers": [
     {"id": "frostpeak_camp_halvard", "name": "Dr. Signe Halvard", "role": "lead observer", "at": [714, 692], "on": "frostpeak_camp_instrument_deck",
-     "greeting": "Mind the tripod. We are the Frostpeak survey: three of us, one telescope, and a tower on the east shoulder that nobody alive remembers being built.",
+     "greeting": "Mind the tripod. We are the Frostpeak survey: three of us, one telescope, and a tower on the summit that nobody alive remembers being built.",
      "topics": [
        {"id": "watching", "ask": "What are you watching?",
-        "says": "That tower. It stands at bearing {shrine_bearing}, a little east of north, about {shrine_range} blocks off and far above us. Look where the telescope points: its crown shows over the shoulder."},
+        "says": "That tower, up on the summit. Bearing {shrine_bearing}, just west of north, about {shrine_range} blocks off and far above us. Look where the telescope points: the top {crown_showing} blocks of it stand over the crest. The rest is hidden behind the mountain."},
        {"id": "articuno", "ask": "Why Articuno?",
         "says": "Three winters of notes. Frost on the tower when the slopes are bare, a cold wind out of a clear sky, a pale blue shape the herders swear to. I have not seen it myself. I would very much like to."},
        {"id": "altar", "ask": "What is the tower for?",
         "says": "There is an old altar in it. Some say it calls the bird; some say it never did. We have not made it do anything, and I would not promise you that anyone can. We watch, and we write down what we see."},
        {"id": "route", "ask": "How do I get there?",
-        "says": "North-east, and keep climbing. The shoulder rises about {climb} blocks above this camp and then runs level; the tower stands alone on the snow. Once you are on top you cannot miss it."}
+        "says": "Up. North, a touch west, and keep climbing. The summit rises about {climb} blocks above this camp, and past that false crest the top is a flat table of snow with the tower in the middle of it. Once you are over the crest you cannot miss it."}
      ],
      "leave": "Goodbye."},
     {"id": "frostpeak_camp_krell", "name": "Edda Krell", "role": "surveyor", "at": [708, 692], "on": "frostpeak_camp_instrument_deck",
-     "greeting": "The summit? Not from here. That edge up there is a false crest. The middle of the summit table is another {summit_beyond} blocks behind it, flat as a floor.",
+     "greeting": "The summit? Not from here. That edge up there is a false crest. The middle of the summit table is another {summit_beyond} blocks behind it, flat as a floor. All you see of it from here is the tower's crown.",
      "topics": [
        {"id": "instrument", "ask": "What is that instrument?",
-        "says": "A theodolite. Two sightings on the board: the crest, bearing {summit_bearing}, and the east tower, bearing {shrine_bearing}. Two bearings from two camps give you a position. We have one camp, so we walk."},
+        "says": "A theodolite. Two sightings on the board: the crest, bearing {summit_bearing}, and the tower's crown, bearing {shrine_bearing}. Near enough one line: the tower stands on the summit table, behind the crest. That is how we know where the table is without seeing it."},
        {"id": "danger", "ask": "Is it dangerous up there?",
         "says": "The mountain is. The wild Pokemon on these slopes are not the lowlands' kind, and the weather turns in an hour. Go up with a team you trust and come back down before dark."}
      ],
@@ -99,7 +99,7 @@
        {"id": "what_is_up_there", "ask": "What do you think is up there?",
         "says": "The Doctor says a bird. Edda says a surveying problem. I say nobody hauls stone up a mountain for nothing. Whether anything up there still listens, none of us knows."},
        {"id": "strange", "ask": "Seen anything strange?",
-        "says": "Frost on the inside of the tent in summer. Snorunt in the supply crates. And once a shadow crossing the shoulder with no cloud to throw it. Make of that what you like."}
+        "says": "Frost on the inside of the tent in summer. Snorunt in the supply crates. And once a shadow crossing the summit with no cloud to throw it. Make of that what you like."}
      ],
      "leave": "Goodbye."}
   ],
@@ -108,7 +108,14 @@
     "why": "Frostpeak already carries 21 surface entries in data/spawns.json (scope frostpeak, level 25-45: Delibird, Crabrawler, Sneasel, Snorunt, Absol, Drampa and their lines; docs/story/ENCOUNTERS.md), which cover the bench. A camp-specific table would add a second author for the same ground for no new species."
   },
   "item_economy": {
+    "status": "A POINTER, NOT AN ECONOMY (2026-10-02). The owner, verbatim: \"the feathers handed out through the research station's dialogue, gated on gym8_cleared\". Shrew Station is the one source of lumymon:thunder_feather, lumymon:ember_feather and lumymon:glacier_feather: data/research_station.json economy (the_one_source_2026_10_02, items), built by tools/research_station.py. This camp authors no item and tools/frostpeak_camp.py emits none.",
+    "the_camps_part": "Dr. Halvard's instrument deck (pieces frostpeak_camp_instrument_deck) is the far end of the station's glacier courier errand: the field officer's calibrated spyglass, held out on her deck, is swapped for her season's notes by an advancement the station's pack ships (data/research_station.json economy.courier, tools/research_station.py courier_box reads the deck from this file). Her own conversation stays talk-only; moving the hand-over into it is this file's owner's (a second pass).",
+    "second_author_resolved_2026_10_02": "the question superseded_item_economy.second_author_2026_10_02 left open is answered by the owner's decision in status: one source, the station",
+    "kubfus_scrolls": "NOT the station's and not this camp's: the starter build owns them (docs/mechanics/NATIVE_STARTERS_COST.md section 7.5). Their record is kept in superseded_item_economy.items[0].",
+    "superseded_item_economy": {
+      "superseded_by": "item_economy.status, above: the owner's decision of 2026-10-02 that the feathers come from the research station's dialogue. Kept in place as the camp's record of the decisions it carried (the mechanism, the gate and why), which the station's economy now implements",
     "status": "DECIDED IN PRINCIPLE, NOT BUILT (2026-10-02). Nothing here is emitted by tools/frostpeak_camp.py; the researchers are still talk-only.",
+    "second_author_2026_10_02": "OPEN, FOR THE OWNER. A parallel session built the same items into Shrew Station (data/research_station.json economy.items: thunder, ember and glacier feathers from its Director after an errand, the glacier errand running through Dr. Halvard's deck here; Kubfu's scrolls nowhere yet). Both are inert: the station's economy.issuing is false and this economy is not built, so no player can get a feather from either today. One source must be chosen before either is switched on. NATIVE_STARTERS_COST.md 7.5's 'the research station ... needs a reason to exist beyond the shrine' describes Shrew Station (it holds the Eon shrine), so Kubfu's scrolls are likely the station's; the feathers' 'research camp' wording is the owner's own (adopted_legendary_sites.json owner_decisions_2026_10_02.the_three_feathers).",
     "why_here": "the owner, 2026-10-02: the research station 'is the place that studies these things' (docs/mechanics/NATIVE_STARTERS_COST.md section 7.5) and 'the place that would produce' the feathers.",
     "mechanism": "DECIDED, the owner 2026-10-02: THROUGH DIALOGUE, as a reward for work the researchers ask for, not a shop. 'They are studying the birds, so earning one should mean helping them study.' What the work is (observations, a sighting, samples) is for the dialogue author. No recipe or loot table in the installed pack produces these items (docs/research/notes/legendary-catalogue-reopened.md section 2), so the camp's dialogue is their only source.",
     "items": [
@@ -120,7 +127,7 @@
       },
       {
         "item": "lumymon:glacier_feather",
-        "for": "Articuno at adopted_articuno_shrine (904, 151, 320), the shrine this camp studies",
+        "for": "Articuno at adopted_articuno_shrine on Frostpeak's summit (corner (672, 310, 369), centre (682, 380)), the tower this camp's telescope studies; the shoulder site (904, 151, 320) was superseded 2026-10-02",
         "decided": "the owner, 2026-10-02",
         "gate": "gym8_cleared (DECIDED, the owner 2026-10-02)"
       },
@@ -139,5 +146,6 @@
     ],
     "why_gym8_cleared_is_proposed": "each altar spawns its bird at 50, 55 or 60 (VERIFIED, LumyMon 0.6.6 class strings), and a Pokemon above a player's cap breaks free from every ball. The cap is 60 after gym 8 (docs/mechanics/LEAGUE_LEVEL_CAP.md), the first point at which every roll is catchable. A lower gate lets a 55 or 60 roll escape. Confirmed by the owner, 2026-10-02.",
     "blocked_on": "nothing on the altar side: a pasted LumyMon altar answered a player in game (the owner, 2026-10-02; data/adopted_legendary_sites.json a_dead_altar_must_not_block.verified_in_game_2026_10_02). It waits on its own build: the researchers' dialogue."
+    }
   }
 }

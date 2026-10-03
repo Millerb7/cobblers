@@ -1,6 +1,6 @@
 {
  "schema": "cobblers.adopted_legendary_sites/1",
- "status": "authored 2026-10-01, extended 2026-10-02. SIX sites measured off the canonical heightmap. THREE are SCHEDULED in data/placements.json (2026-10-02: the Crown Cemetery and the two Necrozma towers, each named by `scheduled_as`), because nothing they give depends on a right-click altar; their `placement` block was deleted here as placement_method.not_in_placements_json requires, and this file keeps the measurement and the reasoning. THREE stay sited and NOT scheduled (Mew, Zapdos, Articuno): each one's encounter is a right-click altar, and EXP-048 has not yet shown that a pasted altar answers. The two towers were re-homed from the End, which no player can enter. Of the eight Nether and End structures, the other six are re-opened one by one in the refused entry: the four Ruinous shrines STAY (their stakes generate only as Nether features), and Moltres and Eternatus have better homes only once the campaign supplies what their altars want.",
+ "status": "authored 2026-10-01, extended 2026-10-02 by three sessions. SEVEN sites measured off the canonical heightmap. SIX are SCHEDULED in data/placements.json, each named by `scheduled_as`: the Crown Cemetery and the two Necrozma towers (nothing they give depends on a right-click altar), and Zapdos, Mew and Moltres, scheduled 2026-10-02 once EXP-048 showed a pasted altar answers (the owner summoned from the pasted Calyrex statue). Their `placement` blocks are deleted here as placement_method.not_in_placements_json requires; this file keeps the measurement and the reasoning, and tools/adopted_sites.py resolves any site's position from whichever file authors it. ONE stays unscheduled here: Articuno, on Frostpeak's summit, placed by its own step (tools/articuno_tower.py placement_steps(), reapply R18A) from its `placement` block and never from data/placements.json - scheduling it too would paste it twice. The live world has none of the seven; the disposable staging world had the Crown Cemetery and Articuno's superseded shoulder copy pasted by hand for EXP-048. Of the eight Nether and End structures, the re-opening is recorded group by group in `refused`.",
  "why_a_sibling_of_legendaries_json": [
   "data/legendaries.json is OUR parametric chamber system, not a register of sites. tools/legendaries.py `load()` rejects any record whose `kind` is outside (lake_grotto, sealed_chamber, sapling_wake) and any record without a non-empty `gate.flags`, and `geometry()` derives every box of a sited record from `mouth`/`portal`, `approach` and `chamber`. A pasted third-party template has none of those: no bore, no shell margin, no carve, and - the load-bearing one - NO GATE WE MAY AUTHOR, because what triggers a `lumymon:*_altar` has never been read (LumyMon is closed source).",
   "Putting these three in that file would therefore mean mutating KINDS and the gate rule of a generator that emits six built chambers, to carry records it must never emit. That is the opposite of fail-closed, so they live here.",
@@ -13,9 +13,13 @@
  },
  "ground_rule": "Every y, every min/max/median/mode and every cut/fill count below was measured with tools/ground.py (the canonical heightmap, rounded) over the exact footprint. No world was read. Probe check: ground(4528,4416) = 122.",
  "ceiling": {
-  "max_y": 310,
-  "source": "data/world.json vertical.max_y, and measured_ceiling_y 310",
-  "verdict": "all seven clear it by 75 blocks or more; the tallest top is y235 (the Dusk tower). Every top_y here is the top OCCUPIED layer, y + height - 1, and every ceiling_margin is measured against this max_y; a scheduled site's top is stated in its placement_lives_in line."
+  "runtime_top_y": 575,
+  "source": "modpack/datapacks/cobblers_height/data/minecraft/dimension_type/overworld.json: min_y -64, height 640, so the highest buildable layer is -64 + 640 - 1 = y575 (docs/STATE.md 'World facts': the runtime overworld build range is y-64..575; data/world.json built_ceiling.runtime_limit says the same).",
+  "terrain_max_y": 310,
+  "terrain_max_y_is_not_a_build_ceiling": "data/world.json vertical.max_y (and measured_ceiling_y) 310 caps authored TERRAIN only: its measured_ceiling_note says built structures are not terrain, and the world tree is recorded there at y535 as built_ceiling. A template pasted ON the terrain may rise above 310; it may not rise above y575.",
+  "convention": "ONE convention for every site: `top_y` is the top OCCUPIED layer, y + height - 1, and `ceiling_margin` = runtime_top_y - top_y. A scheduled site's top is stated in its placement_lives_in line and measured the same way.",
+  "verdict": "every site clears y575 by 192 blocks or more; the tallest top is y383 (adopted_articuno_shrine, the one site whose `placement` block is still here). The six scheduled sites quote their tops in `placement_lives_in`.",
+  "corrected_2026_10_02": "until 2026-10-02 the margins here were measured against max_y 310 (and Articuno's once against 320), and refused group 6 refused the summit against 'the 1.21.1 build ceiling of 320'. 320 is vanilla's overworld height; cobblers_height raises this runtime's to y575, and 310 is a terrain line, not a roof. Every margin below was re-derived on the one convention above."
  },
  "what_never_travels": {
   "verified": "EXP-013 on a disposable world: `/place structure`, `/place jigsaw` and `/place template` all leave every chunk with empty `starts` and `References`, and `/locate`, `location_check` and the gym map ignore the build (docs/world-building/STRUCTURE_INVENTORY.md:271-274).",
@@ -50,7 +54,7 @@
    "Mew (adopted_mew_temple): the encounter now waits only on items and gates the campaign can supply - the door (command blocks, now a server requirement, opens for defeat_champion_blue) and the Origin Fossil (craftable)",
    "Zapdos, Articuno, Moltres: their altars can be expected to answer; each now waits only on its feather, which the Frostpeak camp is to give through dialogue at gym8_cleared",
    "the Spectrier cap (adopted_crown_cemetery.spectrier_once_per_player): no longer waits on anything; a player can summon, so it is repeatable until capped",
-   "STILL HELD, by the owner's order: scheduling any further altar site waits on the three EXP-048 tooling causes (/clone dropping shrine blocks, a missing ritual block, a shrine 71 blocks from its record), which no file records"
+   "LIFTED 2026-10-02 (the main session while the owner was out; docs/REVIEW_2026-10-02.md). The hold waited on three EXP-048 'tooling causes' (/clone dropping shrine blocks, a missing ritual block, a shrine 71 blocks from its record). A search of every tool, branch and transcript (experiments/EXP-048-legendary-altar/README.md) found none in our code: no generator writes /clone, every site's command and centre match its record, and the only ritual-block candidate is lumymon:summon_anchor, which Shrew Station already places. They are relayed and unconfirmed. Zapdos, Mew and Moltres are scheduled in data/placements.json. Open: whether the anchorless bird altars need a summon_anchor (EXP-048 step 2)."
   ]
  },
  "sites": [
@@ -59,7 +63,8 @@
    "template": "cobbleverse:mythical/mew",
    "legendary": "Mew",
    "rank": 1,
-   "status": "sited, NOT scheduled: the encounter is a right-click altar, waiting on EXP-048",
+   "status": "SCHEDULED 2026-10-02 as data/placements.json legendary_mew_temple, once EXP-048 showed a pasted altar answers. Its door opens for the Champion (command blocks, enable-command-block true) and its shrine wants a craftable origin_fossil.",
+   "scheduled_as": "legendary_mew_temple",
    "source_archive": "COBBLEVERSE-DP-v31.zip",
    "size": [
     37,
@@ -77,26 +82,9 @@
     "cell": "G8",
     "paint": "preset `jungle`, foliage type `emergent_jungle` (data/regions.json subregions, data/foliage.json assign.long_isle_south) - the template's own biome, so this is a match, not an approximation",
     "why": "the only jungle land left above sea level on the map (see re_sited_from). A dead-flat summit plateau 80 blocks above the sea in the middle of the Long Isle's jungle half: the temple stands on the one shelf a 37x39 footprint fits on with ZERO cut and ZERO fill, and the climb up through emergent jungle is what makes finding it an event now that the boat trip is gone.",
-    "findable_by_eye": "it is not visible from the sea: a plateau top seen only from inside the jungle, 396 blocks from the nearest authored thing. That is the cost of the re-site and it is the honest state - no finder exists (see what_never_travels.finding_them_instead)."
+    "findable_by_eye": "it is not visible from the sea: a plateau top seen only from inside the jungle. Re-measured 2026-10-02: the nearest authored thing is now the jungle elder elder_jungle_east_2, 120 blocks east (see displaces.built_content). No finder exists (see what_never_travels.finding_them_instead)."
    },
-   "placement": {
-    "corner": [
-     7604,
-     7082
-    ],
-    "y": 142,
-    "centre": [
-     7622,
-     7101
-    ],
-    "rotation": "none",
-    "mirror": "none",
-    "anchor_mode": "corner",
-    "y_mode": "absolute",
-    "command": "/place template cobbleverse:mythical/mew 7604 142 7082 none none",
-    "top_y": 166,
-    "ceiling_margin": 144
-   },
+   "placement_lives_in": "data/placements.json legendary_mew_temple: corner (7604, 7082), y142, rotation none, mirror none, top occupied layer y166 (409 under the runtime ceiling y575; 144 under terrain max_y 310). Deleted here so one site has one author (placement_method.not_in_placements_json).",
    "ground": {
     "min": 142,
     "max": 142,
@@ -117,7 +105,7 @@
     "fill_blocks": 0,
     "terrain": "none. All 1,443 columns of the footprint are ground y142 exactly, so the paste's bottom layer meets the plateau with no lip and no gap - the only footprint of the three that is perfect.",
     "foliage": "the emergent jungle the paint grows on that plateau: by data/foliage.json's own density model the footprint (0.14 ha) carries a handful of emergent trees and their understory, and the paste overwrites whatever stands in its 37x39. Not counted per-tree because the paint lands with an export, not from a list.",
-    "built_content": "nothing. Nearest authored record 396 blocks: the jungle elders' habitat blocks (data/habitat_blocks.json elder_long_isle_middle_2*, elder_long_isle_south_3*) and the `sky_far_reach` portal (data/portals.json) at 395."
+    "built_content": "nothing inside the footprint. Re-measured 2026-10-02 after the jungle elders moved to the Long Isle's south (commit dcb9f67): the nearest authored record is elder_jungle_east_2 (data/elder_trees.json, trunk (7760, 7072), ground y134, with its habitat blocks in data/habitat_blocks.json), 120.4 blocks from the footprint's east edge; then the split_bark resident (data/resident_encounters.json) at 340. Nearest portal: sky_far_reach (data/portals.json), 378 from the footprint edge. The 396 this line used to give pre-dates the elders' move."
    },
    "re_sited_from": {
     "research_said": "the Jungle Isle ruins, (5160, 7463), 301 square, y120-134 (docs/research/notes/cobbleverse-legendary-structures.md section 4.1, from docs/world-building/SETTLEMENTS.md:195)",
@@ -144,10 +132,11 @@
      "tellraw"
     ],
     "needs": "enable-command-block=true for the chain to be able to run at all; command blocks 'run only from their own trigger, never on placement' (VERIFIED, EXP-013 C)",
-    "expected_result": "the door (a 5x4 chiseled-stone-brick wall at template z26 x16-20 y2-5, read 2026-10-02) opens for a player holding `defeat_champion_blue`, which beating our Blue very probably grants (see what_is_actually_known), and only if enable-command-block is true. The mew_shrine is a right-click altar behind it. The chests should still roll their loot tables on first open (ASSUMED, vanilla behaviour, untested for this template)."
+    "expected_result": "the door (a 5x4 chiseled-stone-brick wall at template z26 x16-20 y2-5, read 2026-10-02) opens for a player holding `defeat_champion_blue`, which beating our Blue very probably grants (see what_is_actually_known), and only if enable-command-block is true. The mew_shrine is a right-click altar behind it. The chests should still roll their loot tables on first open (ASSUMED, vanilla behaviour, untested for this template).",
+    "read_2026_10_02": "from the template itself: lumymon:mew_shrine at template [18,2,18], world (7622, 144, 7100); one command_block and three chain_command_blocks; NO lumymon:summon_anchor. Whether the anchorless shrine answers is EXP-048's open step 2."
    },
    "gate": null,
-   "gate_why_null": "the encounter is a right-click altar (mew_shrine, origin_fossil in hand) and EXP-048 has not shown that a pasted altar answers, so the site is NOT scheduled. If it answers, the gate is already the right one: the pack's own door opens for the Champion, and Mew at 75-90 is catchable only at the post-Blue cap of 100. Two things to settle then: enable-command-block, and the Origin Fossil's ancient_dna, whose other source (kanto_giovanni's first-defeat loot) data/progression.json empties."
+   "gate_why_null": "no gate of OURS is authored: the pack's own door is the gate. Its command blocks open the 5x4 wall for a player holding defeat_champion_blue, which beating our Blue very probably grants (INFERRED), with enable-command-block true (DECIDED, enforced by tools/install_check.py). Mew at 75-90 is catchable only at the post-Blue cap of 100. Still open: the Origin Fossil's ancient_dna, whose other source (kanto_giovanni's first-defeat loot) data/progression.json empties, and whether the shrine needs an anchor."
   },
   {
    "id": "adopted_crown_cemetery",
@@ -232,7 +221,7 @@
    },
    "gate_why_null": "same as Mew's: the trigger is unreadable. Its class_reason in data/structures.json says 'awakened with a carrot crop grown on site', which is a plausible reading of a closed-source block and is not a source. Nothing is authored on it.",
    "scheduled_as": "legendary_crown_cemetery",
-   "what_a_player_gets": "brushable gravel rolling seven Cobblemon loot tables (ancient and special balls, Poke Balls, rare items, TMs, vitamins, X items), a regrowing shaderoot carrot crop, and Spectrier if the trigger answers a thrown carrot. NOTE: the crop regrows and the trigger's only brake is a 'pokemon_already_nearby' check and an in-memory per-player cooldown, so Spectrier is probably REPEATABLE (INFERRED). DECIDED, the owner, 2026-10-02: a farm, not a reward. Capped to once per player, permanently (spectrier_once_per_player).",
+   "what_a_player_gets": "brushable gravel rolling seven Cobblemon loot tables (ancient and special balls, Poke Balls, rare items, TMs, vitamins, X items), ONE shaderoot carrot plant (see shaderoot_supply_measured_2026_10_02: it does not multiply), and Spectrier if the trigger answers a thrown carrot. NOTE: the crop can be replanted and the trigger's only brake is a 'pokemon_already_nearby' check and an in-memory per-player cooldown, so Spectrier is probably REPEATABLE (INFERRED). DECIDED, the owner, 2026-10-02: a farm, not a reward. Capped to once per player, permanently (spectrier_once_per_player).",
    "placement_lives_in": "the position, rotation and mirror now live ONLY in data/placements.json legendary_crown_cemetery: corner (4118, 1982), y109, rotation none, mirror none. Deleted here so one site has one author (placement_method.not_in_placements_json).",
    "spectrier_once_per_player": {
     "status": "BUILT, NOT RUN (2026-10-02): tools/spectrier_cap.py generates build/datapacks/cobblers_spectrier_cap from data/spectrier_cap.json (its parameters, the wild-vs-owned NBT test with Cobblemon 1.8.0 sources, and the one reading the spec left open: a Spectrier with nobody within 16 waits for the first player to come that close). World-local and self-driving through its own tick tag (tools/reapply.py SERVER_PACKS, WORLD_LOCAL, EXCLUDED; prepare job spectrier_cap). Tests are another agent's; nothing is verified in game. Until it is installed, Spectrier is repeatable.",
@@ -247,6 +236,12 @@
      "the removed Spectrier's trigger item is not refunded"
     ],
     "owner": "a datapack generator (datapack-content-dev) plus its tests by a different agent; see docs/HANDOVER_SESSION.md"
+   },
+   "shaderoot_supply_measured_2026_10_02": {
+    "template": "COBBLEVERSE-DP-v31.zip crown_cemetery.nbt, read by zipfile and tools/nbt.py, nothing copied: 8 farmland at template y1 under ONE lumymon:shaderoot_carrot_crop (age 7, template [38,2,27], world (4156, 111, 2009)) and SEVEN minecraft:carrots (ages 0, 0, 4, 7, 7, 7, 7), which drop vanilla carrots. Five plants stand ripe: four vanilla and the one shaderoot.",
+    "yield": "LumyMon-0.6.6.jar data/lumymon/loot_table/blocks/shaderoot_carrot_crop.json: one roll of exactly one lumymon:shaderoot_carrot, only at age 7, with no fortune bonus and no seed drop. The class strings show the carrot is the crop's own seed (ModItems registers it as an aliased block item of SHADEROOT_CARROT_CROP; ShaderootCarrotCrop extends the vanilla crop block and names SHADEROOT_CARROT as its seed).",
+    "so": "a ripe plant gives one carrot and replanting costs one: the crop is a CONSERVED stock, never a farm. One plant means at most one shaderoot carrot in the world from this site, ever, unless the template is pasted again. Nothing else makes one: a scan of the 137 client mod jars and the 10 Cobbleverse datapack zips finds shaderoot_carrot only in this template and that loot table.",
+    "against_the_design": "data/research_station.json economy.harvest asks sixteen for the Calyrex crown 'from the Crown Cemetery's own crop', and the Spectrier trigger wants one thrown. Sixteen is 15 more plants than the template grows - and since a carrot traded is consumed, even sixteen plants buy ONE crown for the whole server, after which there is none to throw for Spectrier. No number of pasted plants makes a per-player price payable; that is a design decision, not a block count. NOT AUTHORED: the owner's '11 missing' matches nothing measured here (16 less the five ripe plants is 11 only if the four vanilla carrots are counted as shaderoot, which they are not)."
    }
   },
   {
@@ -254,7 +249,8 @@
    "template": "cobbleverse:legendary/zapdos",
    "legendary": "Zapdos",
    "rank": 3,
-   "status": "sited, not placed",
+   "status": "SCHEDULED 2026-10-02 as data/placements.json legendary_zapdos_tower, once EXP-048 showed a pasted altar answers. Its altar wants a thunder_feather that nothing in the game makes, so the encounter waits on the campaign handing one out; the tower is worth standing without it.",
+   "scheduled_as": "legendary_zapdos_tower",
    "source_archive": "COBBLEVERSE-DP-v31.zip",
    "size": [
     31,
@@ -272,26 +268,9 @@
     "cell": "C1",
     "paint": "preset `coast_scrub` (data/regions.json subregions.north_west_coast). NOT a biome match: the template wants `minecraft:stony_shore` and no region on the map is painted that. coast_scrub is the closest cover we have on a windward cliff, and the mismatch is VISUAL ONLY - a raw paste reads no biome. Recorded rather than papered over: the owner may want a small stony patch painted round it at the next export, or may not care.",
     "why": "66 blocks tall on a cliff 45 blocks from the shoreline (footprint edge; 64 from its centre), inside the windward band (the Windward Sea is 'sea west of x4096 between z2600 and z5200', data/regions.json windward_deep; this site is z2614-2642, just inside it) and inside the windward skerries box x0..760 z2600..5200, so the sea stacks and skerries the water export placed offshore stand in front of it. The top is y139, 77 above the water: a silhouette seen from the sea long before it is reached, which is the distance cue the LEGENDARY placement rule asks for (STRUCTURE_INVENTORY.md:317).",
-    "findable_by_eye": "this is the one of the three that finds itself: a 66-block tower on an exposed cliff, with nothing authored within 478 blocks to compete with it."
+    "findable_by_eye": "this is the one of the three that finds itself: a 66-block tower on an exposed cliff. Re-measured 2026-10-02: Shrew Station (data/research_station.json, re-sited to the west sea coast that day) is the nearest authored thing, its field officer 170 blocks from the footprint edge - sited there to study the tower, not in competition with it."
    },
-   "placement": {
-    "corner": [
-     562,
-     2614
-    ],
-    "y": 74,
-    "centre": [
-     577,
-     2628
-    ],
-    "rotation": "none",
-    "mirror": "none",
-    "anchor_mode": "corner",
-    "y_mode": "absolute",
-    "command": "/place template cobbleverse:legendary/zapdos 562 74 2614 none none",
-    "top_y": 139,
-    "ceiling_margin": 171
-   },
+   "placement_lives_in": "data/placements.json legendary_zapdos_tower: corner (562, 2614), y74, rotation none, mirror none, top occupied layer y139 (436 under the runtime ceiling y575; 171 under terrain max_y 310). Deleted here so one site has one author (placement_method.not_in_placements_json).",
    "ground": {
     "min": 71,
     "max": 76,
@@ -315,8 +294,9 @@
     "fill_columns": 352,
     "terrain": "at y74, 248 of 899 columns stand above the bottom layer (297 blocks shaved) and 352 stand below it (533 blocks of gap that want filling with the local stone, or the tower's base floats on its seaward side). THIS IS THE ONE SITE THAT NEEDS DRESSING, and the amount is named so nobody discovers it in the world: about 830 blocks of work in a 31x29 box.",
     "foliage": "coast_scrub has no foliage assign of its own, so the cover is the region preset's scrub rather than trees: little to lose.",
-    "built_content": "nothing. Nearest authored records 478 blocks: vertices of the `channel` axis of the viltris_path landmark (data/landmarks.json). The site is inside no landmark extent and no water basin; the nearest column at or below sea level y62, (518, 2652), is 45.1 blocks from the footprint edge (63.7 from the centre), so the tower stands on land, not in the surf.",
-    "not_on_a_skerry": "the skerries and stacks the water export placed in this box are OFFSHORE (top y63-65 and y72-86 on radius 4-9 rock, data/water_shape.json windward_skerries). A 31x29 footprint does not fit on any of them and none is used: this is a cliff-top site with the skerries in front of it."
+    "built_content": "nothing inside the footprint. Re-measured 2026-10-02 by a sweep of every [x, z] and {x, z} pair in data/*.json: the nearest authored record is Shrew Station (data/research_station.json npcs.field_officer), 170 blocks from the footprint edge, which that file measured as 133 blocks from its own nearest write; its storm-log advancement reads this tower's top storey through tools/adopted_sites.py. The 478 this line used to give (the viltris_path channel) pre-dates the station. The site is inside no landmark extent and no water basin; the nearest column at or below sea level y62, (518, 2652), is 45.1 blocks from the footprint edge (63.7 from the centre), so the tower stands on land, not in the surf.",
+    "not_on_a_skerry": "the skerries and stacks the water export placed in this box are OFFSHORE (top y63-65 and y72-86 on radius 4-9 rock, data/water_shape.json windward_skerries). A 31x29 footprint does not fit on any of them and none is used: this is a cliff-top site with the skerries in front of it.",
+    "void_under_the_base_2026_10_02": "read from the template itself (COBBLEVERSE-DP-v31.zip legendary/zapdos.nbt, by zipfile and tools/nbt.py, nothing copied): its bottom layer is 447 smooth_sandstone. Of the 352 columns whose ground is below y74, 167 lie under that solid base and leave 21 blocks of open air beneath it, the other 185 under template air, where the ground simply stays lower. fill_blocks above counts y - ground; with ground the top solid block (tools/place_town.py seats a waystone at surface + 1), a base at y74 on ground y73 has no gap, so the real void is y - 1 - ground. The dressing is therefore 21 blocks, not 533. None is authored: tools/place_donor.py's `plinth` fills air across the whole 31x29 rectangle and would raise a lip on the 185 open columns."
    },
    "does_not_travel_here": [
     "the LumyMon Zapdos radar and `/locate`",
@@ -327,17 +307,18 @@
     "blocks": [
      "lumymon:zapdos_altar"
     ],
-    "expected_result": "UNKNOWN, and the least known of the three. The pack's own wiki does not mention Articuno, Zapdos or Moltres at all (checked 2026-10-01), so how a Kanto bird's altar is triggered is not documented anywhere we can read. Worth pasting precisely because the silhouette is the reward whether or not the altar answers."
+    "expected_result": "UNKNOWN, and the least known of the three. The pack's own wiki does not mention Articuno, Zapdos or Moltres at all (checked 2026-10-01), so how a Kanto bird's altar is triggered is not documented anywhere we can read. Worth pasting precisely because the silhouette is the reward whether or not the altar answers.",
+    "read_2026_10_02": "the template's only LumyMon block is lumymon:zapdos_altar at template [14,2,14], world (576, 76, 2628); it carries NO lumymon:summon_anchor. The altar wants a thunder_feather in hand (docs/research/notes/lumymon-altars.md). Whether an anchorless altar answers is EXP-048's open step 2 (the Articuno altar, the same shape)."
    },
    "gate": null,
-   "gate_why_null": "no trigger is known for any of the three birds. Nothing is authored on it."
+   "gate_why_null": "no gate of ours is authored on it. The altar wants a thunder_feather that no recipe or loot table makes; where the campaign hands one out (Shrew Station's storm log, data/research_station.json, issuing false; or the Frostpeak camp's dialogue) is the owner's open call. Zapdos rolls 50-60, catchable once a player's cap reaches the level rolled."
   },
   {
    "id": "adopted_articuno_shrine",
    "template": "cobbleverse:legendary/articuno",
    "legendary": "Articuno",
    "rank": 4,
-   "status": "SITED AND TAKEN, not placed. The owner, 2026-10-01: \"take (904, 320). The refusal tested one pad and refused a mountain, and your site keeps what it said was the point.\"",
+   "status": "SITED ON THE SUMMIT, not in any apply step. The owner, 2026-10-02: \"Paste the real Cobbleverse Articuno tower on the summit; its crown shows over the crest from the research camp, so the camp's telescope sees what the researchers study. The shoulder copy is removed.\" The step that places it is tools/articuno_tower.py placement_steps(); it is not yet in tools/reapply.py.",
    "source_archive": "COBBLEVERSE-DP-v31.zip",
    "size": [
     20,
@@ -346,7 +327,7 @@
    ],
    "size_source": "data/structures.json footprint \"20x74x22\"",
    "template_biome": "minecraft:snowy_plains",
-   "unblocks": "refused group 6. The refusal was CORRECT about the site it tested and WRONG as a general claim: it measured the pressed y310 summit pad, where 310 + 74 = 384 overruns the 1.21.1 ceiling of 320 by 64, and concluded the template could not be used without giving up the summit. Sweeping the whole of Frostpeak at a 4-block step finds 624 pads where the shrine fits under our own max_y of 310, so the arithmetic never ruled out the mountain, only its flattened crown. Measured 2026-10-01.",
+   "unblocks": "refused group 6, twice. On 2026-10-01 the refusal was found WRONG as a general claim - it tested one pad and refused the mountain - and the tower went to the east shoulder (kept under superseded_shoulder_site). On 2026-10-02 the refusal's own arithmetic was found wrong for THIS runtime: 310 + 74 - 1 = y383 is the top occupied layer on the summit pad, and the ceiling it was held against, 'the 1.21.1 build ceiling of 320', is vanilla's, not ours - cobblers_height sets the overworld to y-64..575. So the summit fits, with 192 blocks to spare, and the tower stands where the refusal said the reason to want it was.",
    "site": {
     "region": "frostpeak",
     "containing_polygons": [
@@ -355,40 +336,47 @@
     ],
     "cell": "A1",
     "paint": "preset `snowy_peak` (data/regions.json subregions.frostpeak). NOT an exact biome match: the template wants `minecraft:snowy_plains` and data/structures.json lists only `northern_isles` as a region carrying one. snowy_peak is the same cover family on the only mountain the story wants, and a raw paste reads no biome, so the mismatch is VISUAL ONLY - recorded, like the Zapdos tower's, rather than papered over.",
-    "why": "a high eastern shoulder of Frostpeak, 235 blocks due east of the summit at almost the same latitude (z320 against the summit's z324) and 159 blocks below it. It keeps what the refusal said was the whole reason to want this template - a shrine high on the lone mountain in the most remote corner of the mainland - while fitting under max_y with 86 blocks to spare (top occupied layer y224). The ground is as near flat as the map offers up there: spread 1 over 440 columns.",
-    "findable_by_eye": "a 74-block tower topping out at y224 on an open snowy shoulder, with nothing else on the mountain. Visible from the southern apron and from the sea to the east. No finder exists (see what_never_travels.finding_them_instead)."
+    "why": "the summit of Frostpeak: the pressed y310 pad of the frostpeak_shrine outpost (data/sculpt.json pads frostpeak_shrine, radius 55), with the tower's centre on the outpost's own centre (682, 380) (data/towns.json). It is what the refusal said the template was for - a shrine on the lone summit of the most remote corner of the mainland - and the pad is the flattest ground on the map: all 440 columns of the footprint are y310, so the paste needs no cut and no fill.",
+    "findable_by_eye": "a 74-block tower on the highest ground on the map, its top occupied layer y383. From the Frostpeak research camp at the south foot (data/frostpeak_camp.json) the summit pad itself is hidden by a false crest, but the tower's centre column clears that crest from y370 to y383 - 14 layers, measured from the telescope's pivot (716.5, 115.2, 691.5) by tools/frostpeak_camp_audit.py's exact column walk; the generator's old quarter-block walk said y369 - at bearing 354, 313 blocks off. The camp's telescope is trained on the middle of that crown (y376.5), so the place a player learns about is the thing they can see. No finder exists (see what_never_travels.finding_them_instead)."
    },
    "placement": {
     "corner": [
-     904,
-     320
+     672,
+     369
     ],
-    "y": 151,
+    "y": 310,
     "centre": [
-     914,
-     331
+     682,
+     380
     ],
     "rotation": "none",
     "mirror": "none",
     "anchor_mode": "corner",
     "y_mode": "absolute",
-    "command": "/place template cobbleverse:legendary/articuno 904 151 320 none none",
-    "top_y": 224,
-    "ceiling_margin": 86
+    "command": "/place template cobbleverse:legendary/articuno 672 310 369 none none",
+    "top_y": 383,
+    "ceiling_margin": 192
    },
    "ground": {
-    "min": 150,
-    "max": 151,
-    "median": 151,
-    "mode": 151,
+    "min": 310,
+    "max": 310,
+    "median": 310,
+    "mode": 310,
     "columns": 440,
-    "spread": 1,
-    "measured_by": "tools/ground.py over x904..923, z320..341, rounded"
+    "mode_columns": 440,
+    "spread": 0,
+    "transposed_22x20": {
+     "min": 310,
+     "max": 310,
+     "note": "rotation 90 or 270 is on the same flat pad - free"
+    },
+    "measured_by": "tools/ground.py over x672..691, z369..390, rounded"
    },
    "displaces": {
     "cut_blocks": 0,
-    "fill_blocks": 73,
-    "why": "seated on max(ground) so no column is buried, the repository's convention. 73 blocks of fill under a 440-column pad is one block under 73 of them; nothing is terraced."
+    "fill_blocks": 0,
+    "terrain": "none. All 440 columns are ground y310 exactly, so the paste's bottom layer meets the pad with no lip and no gap. Within 40 blocks of the footprint the pad is y309..310 (10,092 of 10,200 columns at y310).",
+    "built_content": "nothing. No built pack writes or summons within 16 blocks of the footprint (scanned 2026-10-02 against the 52 packs in the full checkout's build/datapacks), and no data/placements.json position lies inside it. The frostpeak_shrine outpost (data/towns.json, status proposed) has its centre at this tower's centre and has no buildings of its own: this file does not edit towns.json."
    },
    "alternatives_measured": [
     {
@@ -415,7 +403,46 @@
     }
    ],
    "still_gated_by": "EXP-LEG-ALTAR, exactly as the other three are: this template carries `lumymon:articuno_altar` (data/structures.json carries.notable_blocks) and nothing has yet shown that a pasted LumyMon altar responds to anything. Placing is not the question; functioning is.",
-   "alternatives_measured_note": "kept as measurements, not as open options: the owner took (904, 320) on 2026-10-01. The two below are recorded so a later session does not re-derive them, and because the south-foot one becomes live again if the research camp and the shrine are ever meant to read as one place."
+   "alternatives_measured_note": "kept as measurements, not as open options: the owner took the shoulder (904, 320) on 2026-10-01 and the summit on 2026-10-02 (see superseded_shoulder_site). These two were measured against the wrong ceiling of 320 and only existed because the summit was believed not to fit; they are recorded so a later session does not re-derive them.",
+   "superseded_shoulder_site": {
+    "superseded_2026_10_02": "The owner, 2026-10-02: \"Paste the real Cobbleverse Articuno tower on the summit; its crown shows over the crest from the research camp, so the camp's telescope sees what the researchers study. The shoulder copy is removed.\"",
+    "why_kept": "the site the owner took on 2026-10-01 is kept, not deleted: its measurements are still true of the shoulder, it is the box the staging cleanup clears, and a later session must not re-derive it. It was chosen only because the summit was believed not to fit under a ceiling of 320; with this runtime's y575 the summit fits with 192 to spare, so the reason for the shoulder is gone.",
+    "status_when_taken": "SITED AND TAKEN, not placed. The owner, 2026-10-01: \"take (904, 320). The refusal tested one pad and refused a mountain, and your site keeps what it said was the point.\"",
+    "why_when_taken": "a high eastern shoulder of Frostpeak, 235 blocks due east of the summit at almost the same latitude (z320 against the summit's z324) and 159 blocks below it. It keeps what the refusal said was the whole reason to want this template - a shrine high on the lone mountain in the most remote corner of the mainland - while fitting under max_y with 86 blocks to spare (top occupied layer y224). The ground is as near flat as the map offers up there: spread 1 over 440 columns.",
+    "placement": {
+     "corner": [
+      904,
+      320
+     ],
+     "y": 151,
+     "centre": [
+      914,
+      331
+     ],
+     "rotation": "none",
+     "mirror": "none",
+     "anchor_mode": "corner",
+     "y_mode": "absolute",
+     "command": "/place template cobbleverse:legendary/articuno 904 151 320 none none",
+     "top_y": 224,
+     "ceiling_margin": 86
+    },
+    "ground": {
+     "min": 150,
+     "max": 151,
+     "median": 151,
+     "mode": 151,
+     "columns": 440,
+     "spread": 1,
+     "measured_by": "tools/ground.py over x904..923, z320..341, rounded"
+    },
+    "displaces": {
+     "cut_blocks": 0,
+     "fill_blocks": 73,
+     "why": "seated on max(ground) so no column is buried, the repository's convention. 73 blocks of fill under a 440-column pad is one block under 73 of them; nothing is terraced."
+    },
+    "in_the_world": "pasted ONCE, by hand, into the disposable staging world during EXP-048 (2026-10-02; experiments/EXP-048-legendary-altar/README.md), box x904..923, y151..224, z320..341, altar at (914, 153, 331). It is in no apply step and the live world never had it. STAGING ONLY: `function cobblers:articuno_cleanup/shoulder` (tools/articuno_tower.py) clears that box to air above heightmap ground and puts the surface back."
+   }
   },
   {
    "id": "adopted_dawn_tower",
@@ -443,7 +470,7 @@
     "why": "the eastern Pine Isle, in the map's north-east corner: the Dawn tower stands where the sun comes up, diagonally across the whole continent from its Dusk twin. The flattest 46x45 on the isle that is 480 or more from anything authored; 466 blocks from the east shore.",
     "findable_by_eye": "a 90-block tower topping out at y188 on a low snowy island: seen from the sea and the northern ferry lane long before it is reached. The isle is reached by the north-east charter (data/ferries.json northgate_to_pine)."
    },
-   "placement_lives_in": "data/placements.json legendary_dawn_tower: corner (7480, 316), y99, rotation none, mirror none, top occupied layer y188 (122 under max_y 310)",
+   "placement_lives_in": "data/placements.json legendary_dawn_tower: corner (7480, 316), y99, rotation none, mirror none, top occupied layer y188 (387 under the runtime ceiling y575; 122 under terrain max_y 310)",
    "ground": {
     "min": 98,
     "max": 99,
@@ -509,7 +536,7 @@
     "why": "the western heights of the Sunset Isle, in the map's south-west corner: the Dusk tower stands where the sun goes down, on the highest flat ground of the isle's savanna end, 333 blocks from the west shore. Its twin is on the Pine Isle, 6,000 blocks away across the continent.",
     "findable_by_eye": "a 90-block tower topping out at y235 on the isle's high savanna, against the sunset from anywhere east of it. The isle is reached by the Sunset Isle charter (data/ferries.json sunset_isle_landing, jetty at (2572, 6887)), and the tower is a 1,400-block walk west from the jetty."
    },
-   "placement_lives_in": "data/placements.json legendary_dusk_tower: corner (1156, 7216), y146, rotation none, mirror none, top occupied layer y235 (75 under max_y 310)",
+   "placement_lives_in": "data/placements.json legendary_dusk_tower: corner (1156, 7216), y146, rotation none, mirror none, top occupied layer y235 (340 under the runtime ceiling y575; 75 under terrain max_y 310)",
    "ground": {
     "min": 145,
     "max": 147,
@@ -554,7 +581,8 @@
    "template": "cobbleverse:legendary/moltres",
    "legendary": "Moltres",
    "rank": 7,
-   "status": "SITED, NOT SCHEDULED. The owner, 2026-10-02: 'Measure the Moltres site in the Craters before anything else is built around it.' Its encounter is a right-click altar wanting an ember_feather, which the Frostpeak research camp will hand out (data/frostpeak_camp.json item_economy).",
+   "status": "SCHEDULED 2026-10-02 as data/placements.json legendary_moltres_tower, once EXP-048 showed a pasted altar answers. The owner, 2026-10-02: 'Measure the Moltres site in the Craters before anything else is built around it.' Its altar wants an ember_feather, which Shrew Station's Director hands out after an ember survey of this tower's box (data/research_station.json economy; the owner, 2026-10-02: one source, the station), once the station's issuing is switched on.",
+   "superseded_feather_source": "until 2026-10-02 this record named the Frostpeak research camp (data/frostpeak_camp.json item_economy) as the ember feather's source, in status, gate and carries_into_the_world.expected_result; the owner then chose the research station's dialogue (owner_decisions_2026_10_02.the_three_feathers_source)",
    "source_archive": "COBBLEVERSE-DP-v31.zip",
    "size": [
     31,
@@ -572,24 +600,6 @@
     "paint": "the Craters' basalt and blackstone cones (data/regions.json the_craters). The template is a Nether build; a raw paste reads no biome, and a fire bird's tower on a volcano is the fit the Nether never gave it.",
     "why": "the flank of a Craters cone at y168, below a summit that reaches y299 within 150 blocks: the third of the birds' trio, with Articuno on Frostpeak and Zapdos on the western cliffs. 389 blocks from Blaine's gym (data/placements.json gym7_gym_building, (6181, 4982)), so it belongs to Blaine's country without standing in his town, and 431 from Groudon's chamber portal (6672, 5508). The least-disturbing 31x34 on the Craters' upper flanks at least 200 blocks from anything authored.",
     "findable_by_eye": "a 64-block tower topping out at y231 on the cone's flank, 126 blocks above Blaine's town (y105): seen from the town and the approach to it."
-   },
-   "placement": {
-    "corner": [
-     6252,
-     5344
-    ],
-    "y": 168,
-    "centre": [
-     6267,
-     5361
-    ],
-    "rotation": "none",
-    "mirror": "none",
-    "anchor_mode": "corner",
-    "y_mode": "absolute",
-    "command": "/place template cobbleverse:legendary/moltres 6252 168 5344 none none",
-    "top_y": 231,
-    "ceiling_margin": 79
    },
    "ground": {
     "min": 167,
@@ -612,21 +622,25 @@
     "fill_blocks": 46,
     "fill_columns": 46,
     "terrain": "seated on y168, the modal ground and the unique cheapest seat: 197 blocks shaved off 165 columns, 46 filled.",
-    "built_content": "nothing within 200 blocks; nearest portal 699 from the footprint edge."
+    "built_content": "nothing within 200 blocks; nearest portal 699 from the footprint edge.",
+    "void_under_the_base_2026_10_02": "read from the template itself: the bottom layer is 645 netherrack, 4 shroomlight and a barrel; 29 of the 46 columns below y168 lie under it and none leaves a gap (each is one block low, so the base rests on it). No dressing."
    },
    "carries_into_the_world": {
     "blocks": [
      "lumymon:moltres_altar"
     ],
     "read_from": "docs/research/notes/legendary-catalogue-reopened.md section 2: the altar at template [14,1,16], two barrels of blaze powder, fire gems and glass panes",
-    "expected_result": "a right-click with an ember_feather spawns Moltres at 50-60 (LumyMon 0.6.6 class strings). No recipe or loot table makes the feather; the research camp is to hand it out."
+    "expected_result": "a right-click with an ember_feather spawns Moltres at 50-60 (LumyMon 0.6.6 class strings). No recipe or loot table makes the feather; Shrew Station hands it out (data/research_station.json economy.items ember_feather).",
+    "read_2026_10_02": "the template's only LumyMon block is lumymon:moltres_altar at template [14,1,16], world (6266, 169, 5360); NO lumymon:summon_anchor."
    },
-   "gate": "gym8_cleared, through the feather: the camp hands it out by dialogue as a reward for the researchers' work, at gym8_cleared, the first gate at which every 50/55/60 roll is catchable (cap 60). DECIDED, the owner, 2026-10-02.",
+   "gate": "gym8_cleared, through the feather: Shrew Station hands it out by dialogue as a reward for the researchers' work, at gym8_cleared, the first gate at which every 50/55/60 roll is catchable (cap 60). DECIDED, the owner, 2026-10-02.",
    "does_not_travel_here": [
     "the LumyMon Moltres radar and `/locate`",
     "nothing else: spawn_entries 0, advancements []"
    ],
-   "re_homed_from": "the Nether, where it generates on nether_wastes with an altar nobody can feed. Its Nether copies still generate; if the feather ever reaches a player who goes to the Nether, those altars answer too (one per copy). A structure-set override would close that (the same unproven experiment as Blaine's Nether copies)."
+   "re_homed_from": "the Nether, where it generates on nether_wastes with an altar nobody can feed. Its Nether copies still generate; if the feather ever reaches a player who goes to the Nether, those altars answer too (one per copy). A structure-set override would close that (the same unproven experiment as Blaine's Nether copies).",
+   "scheduled_as": "legendary_moltres_tower",
+   "placement_lives_in": "data/placements.json legendary_moltres_tower: corner (6252, 5344), y168, rotation none, mirror none, top occupied layer y231 (344 under the runtime ceiling y575; 79 under terrain max_y 310). Deleted here so one site has one author (placement_method.not_in_placements_json)."
   }
  ],
  "refused": [
@@ -712,7 +726,8 @@
    ],
    "why": "BLOCKED BY ARITHMETIC, not by taste. The story fit is the best on the list - the Frostpeak shrine, a shrine on the lone summit of the most remote corner of the mainland, 1,440 blocks from anything - but its pad is a pressed y310 (the measured ceiling: 9,886 columns pressed exactly to the top of the heightmap line, data/world.json measured_ceiling_note) and the tower is 74 blocks tall. 310 + 74 = 384, sixty-four blocks above the 1.21.1 build ceiling of 320 and seventy-four above our own max_y of 310.",
    "alternatives_not_taken": "a lower snowy site would fit (the Glacial Tear trough, where Regice's portal is y101 per docs/mechanics/LEGENDARIES.md:23) but every one of them throws away the reason to want this template, which is the summit. Left for the owner: either a lower site or not this template.",
-   "superseded_2026_10_01": "ADOPTED as adopted_articuno_shrine. This entry is kept, not deleted, because its arithmetic is still right about the summit pad and a later session must not re-derive it: 310 + 74 = 384 against a 320 ceiling. What it got wrong was the scope of the conclusion - it tested one pad and refused the mountain. 624 pads on Frostpeak fit."
+   "superseded_2026_10_01": "ADOPTED as adopted_articuno_shrine. This entry is kept, not deleted, because its arithmetic is still right about the summit pad and a later session must not re-derive it: 310 + 74 = 384 against a 320 ceiling. What it got wrong was the scope of the conclusion - it tested one pad and refused the mountain. 624 pads on Frostpeak fit.",
+   "corrected_2026_10_02": "the 'build ceiling of 320' above is WRONG for this runtime: modpack/datapacks/cobblers_height sets the overworld dimension to min_y -64, height 640, so the highest buildable layer is y575 (docs/STATE.md 'World facts'). And max_y 310 caps authored terrain, not built blocks. On the summit pad the tower's top occupied layer is 310 + 74 - 1 = y383, 192 under y575. That is why, on the owner's word of 2026-10-02, the tower now stands ON the summit (adopted_articuno_shrine) and the shoulder site is superseded. The text above is kept as it was written."
   },
   {
    "ids": [
@@ -725,10 +740,11 @@
   }
  ],
  "cross_system_consequences": [
-  "tools/portals.py reads data/legendaries.json `encounters` directly for its `min_from_legendary_mouth` clearance (tools/portals.py:323). A site in THIS file is invisible to that check, so a portal could be sited on top of one. All four sites clear 120 blocks from every portal today, measured from each FOOTPRINT EDGE: the nearest is `sky_far_reach`, 378 blocks from the Mew temple's edge (the 395 this line used to give was centre to centre, 397 re-measured, and a clearance is an edge distance). ENFORCED since 2026-10-01 by tests/test_adopted_legendary_sites.py; portals.py itself still cannot see this file.",
+  "tools/portals.py reads data/legendaries.json `encounters` directly for its `min_from_legendary_mouth` clearance (tools/portals.py:323). A site in THIS file is invisible to that check, so a portal could be sited on top of one. All seven sites clear 120 blocks from every portal today, measured from each FOOTPRINT EDGE: the nearest is `sky_far_reach`, 378 blocks from the Mew temple's edge (the 395 this line used to give was centre to centre, 397 re-measured, and a clearance is an edge distance). ENFORCED since 2026-10-01 by tests/test_adopted_legendary_sites.py; portals.py itself still cannot see this file.",
   "data/spawn_suppression.json: every emitted encounter in data/legendaries.json declares a `spawn_free_zone`. These three declare none, on purpose - they are not encounters and nothing is dormant in them. If an altar ever works, the site needs one.",
   "the trainer and gym sweeps: nothing here carries a trainer id, a gym id or a placement id, so no list-versus-world problem is introduced. The one thing in the world these sites WOULD not be in is data/placements.json, which is stated above as deliberate.",
-  "2026-10-02: three sites are now ALSO data/placements.json records (kind donor, ids legendary_*), so every system that sweeps placements.json sees them; tools/place_donor.py places them, and their position is authored there only. The towers' set_commands rewrite command blocks after the paste and are the only placements that do."
+  "2026-10-02: six sites are now ALSO data/placements.json records (kind donor, ids legendary_*), so every system that sweeps placements.json sees them; tools/place_donor.py places them, and their position is authored there only. The towers' set_commands rewrite command blocks after the paste and are the only placements that do.",
+  "2026-10-02: tools/adopted_sites.py `where()` resolves a site's position from data/placements.json when it is scheduled and from its `placement` block when not, failing closed on neither. tools/sea_life.py, tools/sea_life_audit.py and tools/research_station.py read through it: reading `placement` alone silently dropped every scheduled site, so the sea-life keep-out had already lost the Crown Cemetery and both towers before Zapdos, Mew and Moltres were scheduled (CLAUDE.md 'Our list is not the world')."
  ],
  "experiments_needed": [
   {
@@ -748,7 +764,8 @@
    "id": "EXP-LEG-ZAPDOS-DRESS",
    "question": "how much dressing does the Zapdos cliff actually need?",
    "method": "paste at 562 74 2614 and look at the seaward side: the measurement says 352 columns sit below the bottom layer (533 blocks of gap). Confirm whether the template's own base already covers it before anyone writes a fill.",
-   "why_it_matters": "it decides whether this site costs one command or one command plus a terrain pass, and nothing in a measurement can answer it: no .nbt has been read."
+   "why_it_matters": "it decides whether this site costs one command or one command plus a terrain pass, and nothing in a measurement can answer it: no .nbt has been read.",
+   "answered_in_part_2026_10_02": "from the template's NBT: 21 blocks of open air under its solid base, not 533 (adopted_zapdos_tower.displaces.void_under_the_base_2026_10_02). What is left for the paste is whether 21 blocks on the seaward side show."
   },
   {
    "id": "EXP-LEG-TOWER-GATE",
@@ -758,15 +775,17 @@
   }
  ],
  "verified_vs_not": {
-  "verified_here": "every coordinate, ground figure, cut/fill count, clearance distance and ceiling margin in this file was computed from the canonical heightmap through tools/ground.py on 2026-10-01, and the Jungle Isle's drowning was measured the same way. The file parses.",
-  "not_verified_here": "NOTHING HAS BEEN PASTED. No command in this file has been run, no altar has been seen, no loot table has been rolled, and no claim is made that any of these three templates resolves, places or works on our server. Raw `/place template` is proven on this runtime for a DIFFERENT template (firescourge_shrine, 2026-09-09); that these three ids resolve from the installed pack is expected and unproven.",
-  "verified_2026_10_02": "the two tower sites' every ground figure, from tools/ground.py; the towers' chain positions and commands, from the template NBT in the client profile; and the emitted `data merge block` lines, from tools/place_donor.py run on these three records alone. NOTHING placed, booted or clicked."
+  "verified_here": "every coordinate, ground figure, cut/fill count, clearance distance and ceiling margin in this file was computed from the canonical heightmap through tools/ground.py (2026-10-01; Articuno's summit site and every margin re-derived 2026-10-02), and the Jungle Isle's drowning was measured the same way. The file parses.",
+  "not_verified_here": "two pastes, both in the disposable staging world for EXP-048: the Crown Cemetery and Articuno's tower at the superseded shoulder site, both PLACED, with their LumyMon blocks present; no altar has answered. Nothing has been pasted on the summit, no loot table has been rolled, and Mew's and Zapdos's templates have never been placed on our server.",
+  "verified_2026_10_02": "the two tower sites' every ground figure, from tools/ground.py; the towers' chain positions and commands, from the template NBT in the client profile; and the emitted `data merge block` lines, from tools/place_donor.py run on these three records alone. NOTHING placed, booted or clicked.",
+  "verified_2026_10_02_schedule": "Zapdos, Mew and Moltres re-measured from tools/ground.py before scheduling: ground, seat, cut/fill, top and margin unchanged from this file; portal edges 1,117 (Zapdos), 378 (Mew), 699 (Moltres) against the rule's 120; no data/placements.json position in any footprint. NOTHING placed, booted or clicked; whether the three anchorless altars answer is not verified."
  },
  "owner_decisions_2026_10_02": {
   "enable_command_block": "TRUE, a server requirement. tools/install_check.py reports anything else as a PROPERTY problem; server/config/server.properties.example carries it.",
   "necrozma_one_per_tower_server_wide": "KEPT: 'a one-per-server legendary is a better story on a server for friends - whoever gets there first gets it.'",
   "spectrier": "ONCE PER PLAYER, PERMANENTLY: 'a regrowing carrot crop with a per-player cooldown lost on restart is a farm, not a reward.' Designed in adopted_crown_cemetery.spectrier_once_per_player; BUILT, NOT RUN (tools/spectrier_cap.py -> cobblers_spectrier_cap).",
   "the_three_feathers": "worth building toward: Moltres in the Craters with Blaine, Articuno on Frostpeak, Zapdos on the western cliffs, with the feathers handed out by the Frostpeak research camp (data/frostpeak_camp.json item_economy). The feathers are handed out THROUGH DIALOGUE, as a reward for work the researchers ask for - not a shop: 'earning one should mean helping them study.' Gate gym8_cleared, DECIDED. The Moltres site is measured: adopted_moltres_tower.",
+  "the_three_feathers_source": "DECIDED LATER THE SAME DAY, the owner, 2026-10-02, verbatim: \"the feathers handed out through the research station's dialogue, gated on gym8_cleared\". One source: Shrew Station (data/research_station.json economy.the_one_source_2026_10_02), its errands keeping 'earning one should mean helping them study'. The camp named in the_three_feathers above is now a pointer (data/frostpeak_camp.json item_economy); its part is Dr. Halvard's deck in the glacier errand.",
   "eternatus": "STAYS OUT until a Galar Particle supply is authored."
  }
 }

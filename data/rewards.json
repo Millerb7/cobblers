@@ -473,12 +473,12 @@
       "trigger": {
         "min": [
           1418,
-          103,
+          104,
           1732
         ],
         "max": [
           1422,
-          105,
+          106,
           1736
         ]
       },
@@ -486,7 +486,7 @@
         "block": "minecraft:barrel",
         "at": [
           1420,
-          103,
+          104,
           1732
         ]
       }
@@ -494,7 +494,7 @@
     {
       "id": "sea_drift_isle",
       "kind": "cache",
-      "place": "Driftmouth Isle: in the headhouse over the drift's stairwell, its north-west corner",
+      "place": "Driftmouth Isle: in Driftmouth Light's keeper's hall, its north-west corner by the tower door",
       "contents": [
         {
           "item": "cobblemon:net_ball",
@@ -507,29 +507,918 @@
           "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
         }
       ],
-      "message": "In the barrel in the headhouse: five Net Balls and two Super Potions.",
+      "message": "In the barrel in Driftmouth Light's keeper's hall: five Net Balls and two Super Potions.",
       "why": "data/sea_drift.json caches: the find that pays for the walk, as the old mine's barrels",
       "built_by": "tools/sea_drift.py (the barrel, in cobblers_sea_drift's surface pass)",
       "trigger": {
         "min": [
-          330,
+          325,
           70,
-          1583
+          1792
         ],
         "max": [
-          332,
+          327,
           72,
-          1585
+          1794
         ]
       },
       "container": {
         "block": "minecraft:barrel",
         "at": [
-          330,
+          325,
           70,
-          1583
+          1792
         ]
       }
+    },
+    {
+      "id": "lake_life_shrew_field_case",
+      "kind": "cache",
+      "place": "Shrew Lake: the surveyor's field case on the pit floor at (2864, 58, 3976), 49 deep, at the end of the line from the torn float on the shoal",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:revive",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/revive.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "The surveyor's field case, on the floor of Shrew Lake's pit: three Net Balls, two Super Potions and a Revive.",
+      "why": "data/lake_life.json hooks shrew_torn_float: WATER_LIFE 2's surveyor's field case (SQ-DIG-02's find)",
+      "built_by": "tools/lake_life.py (the barrel, in cobblers_lake_life's hooks pass)",
+      "trigger": {
+        "min": [
+          2862,
+          57,
+          3974
+        ],
+        "max": [
+          2866,
+          60,
+          3978
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          2864,
+          58,
+          3976
+        ]
+      }
+    },
+    {
+      "id": "sea_life_debris_south_2",
+      "kind": "cache",
+      "place": "the seabed at (4373, 7700), 36 deep in the southern_shallows: a bench (Rift debris), its barrel",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel on the sea floor: three Net Balls and a Super Potion.",
+      "why": "data/sea_life.json caches.dive_find: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          4371,
+          27,
+          7696
+        ],
+        "max": [
+          4375,
+          29,
+          7700
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          4373,
+          27,
+          7698
+        ]
+      }
+    },
+    {
+      "id": "sea_life_debris_south_4",
+      "kind": "cache",
+      "place": "the seabed at (4388, 7784), 43 deep in the southern_shallows: a house broken (Rift debris), its barrel",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel on the sea floor: three Net Balls and a Super Potion.",
+      "why": "data/sea_life.json caches.dive_find: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          4387,
+          21,
+          7781
+        ],
+        "max": [
+          4391,
+          23,
+          7785
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          4389,
+          21,
+          7783
+        ]
+      }
+    },
+    {
+      "id": "sea_life_debris_south_5",
+      "kind": "cache",
+      "place": "the seabed at (4393, 7826), 43 deep in the southern_shallows: a rail cart (Rift debris), its barrel",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel on the sea floor: three Net Balls and a Super Potion.",
+      "why": "data/sea_life.json caches.dive_find: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          4390,
+          20,
+          7824
+        ],
+        "max": [
+          4394,
+          22,
+          7828
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          4392,
+          20,
+          7826
+        ]
+      }
+    },
+    {
+      "id": "sea_life_debris_west_2",
+      "kind": "cache",
+      "place": "the seabed at (121, 4117), 38 deep in the windward_deep: a rail cart (Rift debris), its barrel",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel on the sea floor: three Net Balls and a Super Potion.",
+      "why": "data/sea_life.json caches.dive_find: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          119,
+          25,
+          4114
+        ],
+        "max": [
+          123,
+          27,
+          4118
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          121,
+          25,
+          4116
+        ]
+      }
+    },
+    {
+      "id": "sea_life_find_eastern_reach_dive_4",
+      "kind": "cache",
+      "place": "the seabed at (8077, 3639), 45 deep in the eastern_reach: a fishing boat wreck, its barrel",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel on the sea floor: three Net Balls and a Super Potion.",
+      "why": "data/sea_life.json caches.dive_find: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          8078,
+          19,
+          3637
+        ],
+        "max": [
+          8082,
+          21,
+          3641
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          8080,
+          19,
+          3639
+        ]
+      }
+    },
+    {
+      "id": "sea_life_find_frostwater_shelf_dive_1",
+      "kind": "cache",
+      "place": "the seabed at (4393, 112), 38 deep in the frostwater_shelf: a fishing boat wreck, its barrel",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel on the sea floor: three Net Balls and a Super Potion.",
+      "why": "data/sea_life.json caches.dive_find: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          4391,
+          26,
+          107
+        ],
+        "max": [
+          4395,
+          28,
+          111
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          4393,
+          26,
+          109
+        ]
+      }
+    },
+    {
+      "id": "sea_life_find_frostwater_shelf_dive_2",
+      "kind": "cache",
+      "place": "the seabed at (6294, 46), 48 deep in the frostwater_shelf: a rowboat wreck, its barrel",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel on the sea floor: three Net Balls and a Super Potion.",
+      "why": "data/sea_life.json caches.dive_find: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          6292,
+          16,
+          45
+        ],
+        "max": [
+          6296,
+          18,
+          49
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          6294,
+          16,
+          47
+        ]
+      }
+    },
+    {
+      "id": "sea_life_find_frostwater_shelf_dive_6",
+      "kind": "cache",
+      "place": "the seabed at (2928, 48), 46 deep in the frostwater_shelf: a fishing boat wreck, its barrel",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel on the sea floor: three Net Balls and a Super Potion.",
+      "why": "data/sea_life.json caches.dive_find: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          2923,
+          18,
+          46
+        ],
+        "max": [
+          2927,
+          20,
+          50
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          2925,
+          18,
+          48
+        ]
+      }
+    },
+    {
+      "id": "sea_life_find_southern_shallows_dive_3",
+      "kind": "cache",
+      "place": "the seabed at (4086, 7889), 36 deep in the southern_shallows: a two master broken wreck, its barrel",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel on the sea floor: three Net Balls and a Super Potion.",
+      "why": "data/sea_life.json caches.dive_find: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          4077,
+          28,
+          7887
+        ],
+        "max": [
+          4081,
+          30,
+          7891
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          4079,
+          28,
+          7889
+        ]
+      }
+    },
+    {
+      "id": "sea_life_find_southern_shallows_dive_5",
+      "kind": "cache",
+      "place": "the seabed at (271, 7281), 36 deep in the southern_shallows: a two master broken wreck, its barrel",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel on the sea floor: three Net Balls and a Super Potion.",
+      "why": "data/sea_life.json caches.dive_find: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          276,
+          28,
+          7279
+        ],
+        "max": [
+          280,
+          30,
+          7283
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          278,
+          28,
+          7281
+        ]
+      }
+    },
+    {
+      "id": "sea_life_find_windward_deep_dive_2",
+      "kind": "cache",
+      "place": "the seabed at (83, 4843), 44 deep in the windward_deep: a fishing boat wreck, its barrel",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel on the sea floor: three Net Balls and a Super Potion.",
+      "why": "data/sea_life.json caches.dive_find: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          81,
+          20,
+          4844
+        ],
+        "max": [
+          85,
+          22,
+          4848
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          83,
+          20,
+          4846
+        ]
+      }
+    },
+    {
+      "id": "sea_life_find_windward_deep_dive_6",
+      "kind": "cache",
+      "place": "the seabed at (112, 3991), 38 deep in the windward_deep: a rowboat wreck, its barrel",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel on the sea floor: three Net Balls and a Super Potion.",
+      "why": "data/sea_life.json caches.dive_find: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          109,
+          26,
+          3989
+        ],
+        "max": [
+          113,
+          28,
+          3993
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          111,
+          26,
+          3991
+        ]
+      }
+    },
+    {
+      "id": "sea_life_beached_wreck",
+      "kind": "cache",
+      "place": "the south strand at (4070, 6584): the hull on its side on the sand",
+      "contents": [
+        {
+          "item": "cobblemon:net_ball",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/net_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:oran_berry",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/oran_berry.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel in the beached hull: two Net Balls and three Oran Berries.",
+      "why": "data/sea_life.json caches.beached_wreck: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          4066,
+          64,
+          6582
+        ],
+        "max": [
+          4070,
+          66,
+          6586
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          4068,
+          64,
+          6584
+        ]
+      }
+    },
+    {
+      "id": "sea_life_sea_cave",
+      "kind": "cache",
+      "place": "the windward coast's waterline sea cave, mouth at (376, 3503): its far chamber",
+      "contents": [
+        {
+          "item": "cobblemon:great_ball",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/great_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:revive",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/revive.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel at the back of the sea cave: two Great Balls and a Revive.",
+      "why": "data/sea_life.json caches.sea_cave: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          409,
+          59,
+          3501
+        ],
+        "max": [
+          413,
+          61,
+          3505
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          411,
+          59,
+          3503
+        ]
+      }
+    },
+    {
+      "id": "sea_life_windward_surfacing_cave",
+      "kind": "cache",
+      "place": "The Windward Sink under the windward headland: the end of the dry gallery past the pool",
+      "contents": [
+        {
+          "item": "cobblemon:water_stone",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/water_stone.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:revive",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/revive.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel at the end of the dry gallery: a Water Stone and two Revives.",
+      "why": "data/sea_life.json caches.surfacing_cave: the find that pays for the swim or the walk",
+      "built_by": "tools/sea_life.py (the barrel, in cobblers_sea_life's fittings pass)",
+      "trigger": {
+        "min": [
+          640,
+          63,
+          4612
+        ],
+        "max": [
+          644,
+          65,
+          4616
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          642,
+          63,
+          4614
+        ]
+      }
+    },
+    {
+      "id": "lopunny_superfan",
+      "kind": "npc_grant",
+      "place": "Ellis Hopgood's house on the South Pine Isle (data/lopunny_house.json), by the door inside",
+      "npc_at": [
+        6948,
+        118,
+        1362
+      ],
+      "quest": "evt_lopunny_superfan",
+      "contents": [
+        {
+          "item": "cobblemon:soothe_bell",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/soothe_bell.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "why": "The Lopunny superfan's thanks for being shown a Lopunny (the owner, 2026-10-02: he 'wants one of his own'). A Soothe Bell: he bought it for his Buneary, which are wild and never noticed. The dialogue makes no claim for what the bell does. One per player, by grant_reward_once. An owner decision: a Lopunnite (mega_showdown:lopunnite, docs/research/notes/reward-item-inventory.md) would fit better and is deliberately not given, because mega stones are scarce by the owner's design (docs/world-building/SOUTHERN_RIFT_MEGA.md).",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/lopunny_house.py seats him on, checked by tools/lopunny_house_audit.py"
+    },
+    {
+      "id": "old_orchard_cellar",
+      "kind": "cache",
+      "place": "the Old Orchard on Sunset Isle (data/old_orchard.json): the press cellar under the press-house, its south-east corner, the cask at the back",
+      "contents": [
+        {
+          "item": "cobblemon:leftovers",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/leftovers.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:tart_apple",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/tart_apple.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:sweet_apple",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/sweet_apple.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the cask at the back of the press cellar, wrapped in oilcloth: Leftovers, a Tart Apple and a Sweet Apple.",
+      "why": "data/old_orchard.json find: the keeper's father's 'best, for a long winter'. Leftovers is a late-game held item worth the ferry (the isle is tier 8); the Tart Apple and the Sweet Apple evolve the orchard's Applin into Flapple and Appletun (Cobblemon 1.8.0 applin.json, item_interact). Ungated, as every cache is: the cellar lies outside the Orchard Sleeper's leash, so it is taken without the fight.",
+      "built_by": "tools/old_orchard.py (the barrel, in cobblers_old_orchard's build, reapply R9SO); the room and the barrel's place checked by tools/old_orchard_audit.py",
+      "trigger": {
+        "min": [
+          2791,
+          62,
+          7049
+        ],
+        "max": [
+          2793,
+          63,
+          7051
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          2793,
+          62,
+          7051
+        ]
+      }
+    },
+    {
+      "id": "dune_ruin_strongroom",
+      "kind": "cache",
+      "place": "the Copperway Khan in the south-east dunes: the master's strongbox against the east wall of the sealed store under the hall",
+      "contents": [
+        {
+          "item": "cobblemon:metal_coat",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/metal_coat.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:reaper_cloth",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/reaper_cloth.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:dusk_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/dusk_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the caravan master's strongbox: a Metal Coat, a Reaper Cloth and three Dusk Balls.",
+      "why": "data/dune_ruin.json find: the reason to break into the store. Late-game south (tier 8): a Metal Coat (the haulers' brass, and Onix's and Scyther's evolution item), a Reaper Cloth (the store's ghosts; Dusclops's), and Dusk Balls, the dark place's situational ball (docs/research/notes/reward-item-inventory.md section 4). Each item id verified in the Cobblemon 1.8.0 jar 2026-10-02.",
+      "built_by": "tools/dune_ruin.py (the barrel, in cobblers_dune_ruin's build, reapply step R9DU)",
+      "trigger": {
+        "min": [
+          6736,
+          140,
+          6233
+        ],
+        "max": [
+          6738,
+          141,
+          6235
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          6738,
+          140,
+          6234
+        ]
+      }
+    },
+    {
+      "id": "drovers_hollow_store",
+      "kind": "cache",
+      "place": "the Drovers' Hollow (data/drovers_hollow.json): the store at the end of the old working under the east bank, reached down the well behind the barn's spring",
+      "contents": [
+        {
+          "item": "cobblemon:choice_band",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/choice_band.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:moomoo_milk",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/moomoo_milk.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the barrel at the end of the old working, wrapped in oilcloth: a Choice Band, the herd bull's brow-band, and three bottles of Moomoo Milk.",
+      "why": "data/drovers_hollow.json find: the find that pays for the walk down the well. Late-game, as the place is (the Rift Foot is tier 8): a Choice Band, held nowhere else in the campaign but by trainers (data/trainers.json), and Moomoo Milk from the herd.",
+      "built_by": "tools/drovers_hollow.py (the barrel, in cobblers_drovers_hollow's build, step R9HF)",
+      "trigger": {
+        "min": [
+          4017,
+          92,
+          6021
+        ],
+        "max": [
+          4021,
+          94,
+          6025
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          4021,
+          92,
+          6023
+        ]
+      }
+    },
+    {
+      "id": "station_director",
+      "kind": "npc_grant",
+      "place": "Shrew Station's Institute, behind the reception desk",
+      "npc_at": [
+        550,
+        67,
+        2823
+      ],
+      "quest": "evt_station_director",
+      "contents": [
+        {
+          "item": "lumymon:thunder_feather",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/thunder_feather.json in LumyMon-0.6.6.jar"
+        },
+        {
+          "item": "lumymon:ember_feather",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/ember_feather.json in LumyMon-0.6.6.jar"
+        }
+      ],
+      "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
+      "why": "The thunder feather (a storm watched from the Zapdos tower's top, after eight badges) and the ember feather (the Craters' Moltres tower surveyed, after eight badges: the owner, 2026-10-02, 'Moltres yes', re-homed to the Craters the same day; data/research_station.json economy.ember_survey). The station is the one source of the three feathers (the owner, 2026-10-02; economy.the_one_source_2026_10_02).",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/research_station.py seats it on, checked by tools/research_station_audit.py"
+    },
+    {
+      "id": "station_field_officer",
+      "kind": "npc_grant",
+      "place": "Shrew Station's weather hut beside the spine",
+      "npc_at": [
+        484,
+        63,
+        2793
+      ],
+      "quest": "evt_station_courier",
+      "contents": [
+        {
+          "item": "lumymon:glacier_feather",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/glacier_feather.json in LumyMon-0.6.6.jar"
+        }
+      ],
+      "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
+      "why": "The glacier feather, for the courier commission to Dr. Halvard's camp on Frostpeak (after eight badges).",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/research_station.py seats it on, checked by tools/research_station_audit.py"
+    },
+    {
+      "id": "station_archivist",
+      "kind": "npc_grant",
+      "place": "Shrew Station's Archive, among the empty cases",
+      "npc_at": [
+        569,
+        69,
+        2824
+      ],
+      "quest": "evt_station_archive",
+      "contents": [
+        {
+          "item": "lumymon:calyrex_crown",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/calyrex_crown.json in LumyMon-0.6.6.jar"
+        }
+      ],
+      "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
+      "why": "The Calyrex crown, traded for sixteen shaderoot carrots from the Crown Cemetery's field (after the Champion, and only once the post-Champion cap is measured at 70 or more).",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/research_station.py seats it on, checked by tools/research_station_audit.py"
+    },
+    {
+      "id": "station_shrine_keeper",
+      "kind": "npc_grant",
+      "place": "the Eon shrine on Shrew Station's platform, south of the dais",
+      "npc_at": [
+        422,
+        63,
+        2819
+      ],
+      "quest": "evt_station_eon_shrine",
+      "contents": [
+        {
+          "item": "lumymon:ruby_dew",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/ruby_dew.json in LumyMon-0.6.6.jar"
+        },
+        {
+          "item": "lumymon:sapphire_dew",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/sapphire_dew.json in LumyMon-0.6.6.jar"
+        }
+      ],
+      "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
+      "why": "The ruby and sapphire dews, for a player who has met Mesprit, Azelf and Uxie: they wake this station's own Latias and Latios altars. Held twice: the dews also need cobblers_station_issuing_eon, added only while economy.eon_issuing is true, so the switch thrown for the feathers does not issue them (data/research_station.json eon_issuing_why).",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/research_station.py seats it on, checked by tools/research_station_audit.py"
     }
   ]
 }

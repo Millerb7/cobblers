@@ -52,6 +52,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 
 import function_limits  # noqa: E402
 import town_dressing as TD  # noqa: E402
@@ -591,7 +592,7 @@ def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = p.add_subparsers(dest="cmd", required=True)
     q = sub.add_parser("build")
-    q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"))
+    q.add_argument("--source-root", default=env_source_root())
     q = sub.add_parser("fit")
     q.add_argument("kind")
     q.add_argument("--near", required=True)
@@ -600,7 +601,7 @@ def main(argv=None):
     q.add_argument("--leg-band", help="min,max distance from the nearest routed leg, e.g. 5,12")
     q.add_argument("--radius", type=int, default=24)
     q.add_argument("--count", type=int, default=5)
-    q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"))
+    q.add_argument("--source-root", default=env_source_root())
     a = p.parse_args(argv)
     return {"build": build, "fit": fit}[a.cmd](a) or 0
 

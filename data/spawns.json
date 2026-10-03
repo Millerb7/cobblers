@@ -12388,8 +12388,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.elder_jungle_east_2.squawkabilly",
-      "species": "squawkabilly",
+      "id": "habitat.elder_jungle_east_2.yanma",
+      "species": "yanma",
       "bucket": "common",
       "level": "25-30",
       "weight": 24.0,
@@ -13811,6 +13811,136 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "spawnable_position": "surface"
+    },
+    {
+      "id": "habitat.lopunny_superfan_cellar.buneary",
+      "species": "buneary",
+      "bucket": "common",
+      "level": "33-43",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "lopunny_superfan_cellar",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.old_orchard_rows.applin",
+      "species": "applin",
+      "bucket": "common",
+      "level": "43-53",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "old_orchard_rows",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.old_orchard_rows.tropius",
+      "species": "tropius",
+      "bucket": "uncommon",
+      "level": "43-53",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "old_orchard_rows",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.old_orchard_rows.flapple",
+      "species": "flapple",
+      "bucket": "rare",
+      "level": "48-53",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "old_orchard_rows",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "player evolution (non-level method)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.old_orchard_rows.appletun",
+      "species": "appletun",
+      "bucket": "rare",
+      "level": "48-53",
+      "weight": 2.0,
+      "ambient": true,
+      "scope": "old_orchard_rows",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "player evolution (non-level method)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.dune_ruin_undercroft.cofagrigus",
+      "species": "cofagrigus",
+      "bucket": "common",
+      "level": "43-53",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "dune_ruin_undercroft",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "level evolution eligible",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.drovers_hollow_fold.miltank",
+      "species": "miltank",
+      "bucket": "common",
+      "level": "43-53",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "drovers_hollow_fold",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "no evolution (Cobblemon 1.8.0 species data)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.drovers_hollow_fold.tauros",
+      "species": "tauros",
+      "bucket": "common",
+      "level": "43-53",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "drovers_hollow_fold",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "no evolution (Cobblemon 1.8.0 species data)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.drovers_hollow_fold.mudsdale",
+      "species": "mudsdale",
+      "bucket": "uncommon",
+      "level": "43-53",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "drovers_hollow_fold",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "final stage: Mudbray evolves into Mudsdale at 30, below the band",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.station_study_pool.horsea",
+      "species": "horsea",
+      "bucket": "common",
+      "level": "16-20",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "station_study_pool",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base stage",
+      "spawnable_position": "submerged"
     }
   ],
   "subregions": [
@@ -30584,16 +30714,16 @@
         "minimum": 25,
         "maximum": 30
       },
-      "why": "Parrots on the jungle's edge. (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels from the table (band / pool: 25-45 / 25-30); pool: Squawkabilly 24; evolution thresholds read from the Cobblemon 1.8.0 jar's species files; the wide band is narrowed to min..min+5 (owner decision 4: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken).",
+      "why": "Parrots on the jungle's edge. (docs/world-building/SAPLING_BIRDS.md, owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Levels from the table (band / pool: 25-45 / 25-30); pool: Squawkabilly 24; evolution thresholds read from the Cobblemon 1.8.0 jar's species files; the wide band is narrowed to min..min+5 (owner decision 4: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). One pool per tree (owner decision 9: owner approved the proposal 2026-09-26 ('i like those birds ... add the birds'); recommended default taken). Re-birded 2026-10-02 (SAPLING_BIRDS.md, 'Elders re-birded after the Jungle Isle move'): the bird changes from Squawkabilly to Yanma because the tree's move to Long Isle south put it 468 blocks from elder_long_isle_south_2's Squawkabilly; the nearest other Yanma tree is 7,167 away.",
       "entries": [
         {
-          "species": "Squawkabilly",
-          "pokemon": "squawkabilly",
+          "species": "Yanma",
+          "pokemon": "yanma",
           "types": [
-            "normal",
+            "bug",
             "flying"
           ],
-          "family": "squawkabilly",
+          "family": "yanma",
           "family_priority": "anchor",
           "level": "25-30",
           "conditions": {},
@@ -31385,9 +31515,9 @@
     {
       "id": "ursaluna_den_outskirts",
       "display_name": "Ursaluna den outskirts",
-      "intended_location": "the slope in front of the Ursaluna's den west of Highwire (data/ursaluna_cave.json): one natural Habitat Block, ursaluna_den_outskirts_ward in data/habitat_blocks.json, in the ground at (1514, 158, 1424), 14 blocks out from the mouth, range 20",
+      "intended_location": "the slope in front of the Ursaluna's den west of Highwire (data/ursaluna_cave.json): one activated Habitat Block, ursaluna_den_outskirts_ward in data/habitat_blocks.json, in the ground at (1514, 158, 1424), 14 blocks out from the mouth, keeping up to 4 Teddiursa alive within 16",
       "mechanism": "habitat_block",
-      "replace_spawns": true,
+      "replace_spawns": false,
       "level_band": {
         "minimum": 20,
         "maximum": 28
@@ -31415,7 +31545,7 @@
     {
       "id": "driftmouth_isle_waters",
       "display_name": "Driftmouth Isle waters",
-      "intended_location": "the water round Driftmouth Isle (336, 1586): ten activated Habitat Blocks in its four sea stacks and its shore rock (data/habitat_blocks.json driftmouth_*), each keeping up to 3 alive within 16",
+      "intended_location": "the water round Driftmouth Isle (336, 1798): ten activated Habitat Blocks in its four sea stacks and its shore rock (data/habitat_blocks.json driftmouth_*), each keeping up to 3 alive within 16",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {
@@ -31594,6 +31724,235 @@
           "conditions": {}
         }
       ]
+    },
+    {
+      "id": "lopunny_superfan_cellar",
+      "display_name": "Lopunny superfan's cellar",
+      "intended_location": "the Buneary cellar under Ellis Hopgood's house on the South Pine Isle (data/lopunny_house.json): one activated Habitat Block, lopunny_superfan_cellar_ward in data/habitat_blocks.json, in the middle of the cellar floor at (6950, 112, 1360), keeping up to 12 Buneary alive in the 9 by 9 room",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 33,
+        "maximum": 43
+      },
+      "level_band_why": "the band of south_pine_isle (data/spawns.json subregions: 33-43, tier 6, basis route_06_koga_to_sabrina), the sub-region the house stands in (data/regions.json polygons), and the level its own surface Buneary already spawn at (surface.south_pine_isle.buneary, 33-43). Buneary evolves by friendship, not by level (Cobblemon 1.8.0 species data: friendship 160), so no level in the band is older than its evolution.",
+      "entries": [
+        {
+          "species": "Buneary",
+          "pokemon": "buneary",
+          "types": [
+            "normal"
+          ],
+          "family": "buneary",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "33-43",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json lopunny_superfan_cellar_ward, status planned"
+    },
+    {
+      "id": "old_orchard_rows",
+      "display_name": "Old Orchard rows",
+      "intended_location": "the Old Orchard on Sunset Isle (data/old_orchard.json): one activated Habitat Block, old_orchard_rows_ward in data/habitat_blocks.json, in the trunk of the living tree at (2754, 72, 7088), keeping up to 6 alive within 12 of it in the west rows",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 43,
+        "maximum": 53
+      },
+      "level_band_why": "the band of sunset_east (data/spawns.json subregions: 43-53, tier 8, basis route_08_blaine_to_giovanni), the sub-region the orchard stands in (data/regions.json polygons). The evolution policy (evolution_policy above): Applin evolves only by item (Cobblemon 1.8.0 applin.json: item_interact with a tart, sweet or syrupy apple), so it spawns over the whole band; Flapple and Appletun are non-level evolutions, which appear from tier 6 in the upper half of the band (48-53); Tropius does not evolve. Slakoth and Vigoroth, first proposed, cannot spawn in this band: Slakoth evolves at 18 and Vigoroth at 36 (Cobblemon 1.8.0 species data), so their ranges (43-22, 43-40) are empty. The table rule's maturity split is not applied: the evolved apples are rare on purpose, because the cellar's find (data/rewards.json old_orchard_cellar) is the two apples that make them.",
+      "entries": [
+        {
+          "species": "Applin",
+          "pokemon": "applin",
+          "types": [
+            "grass",
+            "dragon"
+          ],
+          "family": "applin",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "43-53",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        },
+        {
+          "species": "Tropius",
+          "pokemon": "tropius",
+          "types": [
+            "grass",
+            "flying"
+          ],
+          "family": "tropius",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "43-53",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Flapple",
+          "pokemon": "flapple",
+          "types": [
+            "grass",
+            "dragon"
+          ],
+          "family": "applin",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "player evolution (non-level method)",
+          "level": "48-53",
+          "bucket": "rare",
+          "weight": 2.0,
+          "conditions": {}
+        },
+        {
+          "species": "Appletun",
+          "pokemon": "appletun",
+          "types": [
+            "grass",
+            "dragon"
+          ],
+          "family": "applin",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "player evolution (non-level method)",
+          "level": "48-53",
+          "bucket": "rare",
+          "weight": 2.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json old_orchard_rows_ward, status planned"
+    },
+    {
+      "id": "dune_ruin_undercroft",
+      "display_name": "Copperway Khan's master's store",
+      "intended_location": "the sealed vault under the Copperway Khan in the south-east dunes (data/dune_ruin.json): one activated Habitat Block, dune_ruin_undercroft_ward in data/habitat_blocks.json, in the middle of the vault floor at (6734, 139, 6234), keeping up to 4 Cofagrigus alive in the 9 by 9 room",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 43,
+        "maximum": 53
+      },
+      "level_band_why": "the band of south_east_dunes (data/spawns.json subregions: 43-53, tier 8, basis route_08_blaine_to_giovanni), the sub-region the Khan stands in (data/regions.json polygons). Yamask evolves into Cofagrigus at 34 (Cobblemon 1.8.0 species data), so no Cofagrigus in the band is younger than its evolution. Cofagrigus is ghost, a type of the desert theme (data/encounter_design.json rules.themes.desert).",
+      "entries": [
+        {
+          "species": "Cofagrigus",
+          "pokemon": "cofagrigus",
+          "types": [
+            "ghost"
+          ],
+          "family": "yamask",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "level evolution eligible",
+          "level": "43-53",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json dune_ruin_undercroft_ward, status planned"
+    },
+    {
+      "id": "drovers_hollow_fold",
+      "display_name": "Drovers' Hollow fold",
+      "intended_location": "the fold of the Drovers' Hollow in the Rift Foot (data/drovers_hollow.json): one activated Habitat Block, drovers_hollow_fold_ward in data/habitat_blocks.json, in the middle of the fold floor at (3971, 98, 6041), keeping up to 6 of the drovers' kind alive in the pen",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 43,
+        "maximum": 53
+      },
+      "level_band_why": "the band of rift_foot (data/spawns.json subregions: 43-53, tier 8, basis route_08_blaine_to_giovanni), the sub-region the Hollow stands in (data/regions.json polygons), under tier 8's cap of 55 (data/encounter_design.json rules.tiers). Tauros and Miltank do not evolve; Mudbray evolves into Mudsdale at 30 (Cobblemon 1.8.0 species data), so only Mudsdale is spawned and nothing in the band is younger than its own stage.",
+      "entries": [
+        {
+          "species": "Miltank",
+          "pokemon": "miltank",
+          "types": [
+            "normal"
+          ],
+          "family": "miltank",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "no evolution (Cobblemon 1.8.0 species data)",
+          "level": "43-53",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        },
+        {
+          "species": "Tauros",
+          "pokemon": "tauros",
+          "types": [
+            "normal"
+          ],
+          "family": "tauros",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "no evolution (Cobblemon 1.8.0 species data)",
+          "level": "43-53",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Mudsdale",
+          "pokemon": "mudsdale",
+          "types": [
+            "ground"
+          ],
+          "family": "mudbray",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "final stage: Mudbray evolves into Mudsdale at 30, below the band",
+          "level": "43-53",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json drovers_hollow_fold_ward, status planned"
+    },
+    {
+      "id": "station_study_pool",
+      "display_name": "Shrew Station study pool",
+      "intended_location": "the study pool off the west coast at Shrew Station (data/research_station.json study_pool): one activated Habitat Block, station_study_pool in data/habitat_blocks.json, at (456, 60, 2828), keeping up to 4 Horsea alive round the study deck",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 16,
+        "maximum": 20
+      },
+      "level_band_why": "the band of windward_shallows (data/spawns.json marine_zones windward_sea: 16-20), the marine band the study deck stands in by tools/compile_spawns.py marine_bands, and the level the shallows' own Horsea already spawn at (marine entry windward_shallows horsea, 16-20). Horsea evolves at 32, above the band. The study subject is the shallows' own species and the coast sub-region's water anchor (north_west_coast horsea, 18-28), so the roster round the station is unchanged. Moved 2026-10-02 from Shrew Lake (Psyduck, 13-22) when the owner moved the station: Psyduck is in no roster on this coast.",
+      "entries": [
+        {
+          "species": "Horsea",
+          "pokemon": "horsea",
+          "types": [
+            "water"
+          ],
+          "family": "horsea",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "base stage",
+          "level": "16-20",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json station_study_pool, status planned"
     }
   ],
   "route_species_selection_note": "Generated by tools/build_encounters.py from data/encounter_design.json (docs/mechanics/ENCOUNTER_DESIGN.md section 6): per route, the families in rules.corridor_roles (never rare, never a find) of every sub-region its corridor crosses (data/routes.json geography transitions), at most corridor_species_limit, every crossed table's water species kept and the rest by chance times corridor length. tools/compile_spawns.py reads this list and does not choose. Do not edit by hand.",

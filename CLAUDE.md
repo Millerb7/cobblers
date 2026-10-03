@@ -236,11 +236,17 @@ nights of planning does not exist.** Measured, not inferred:
   `git rev-parse`, `printenv`, a `ground.py` read and `rift_heightmap.py --plan` --
   **not one prompt, not one block.** The old claim that the classifier refused
   `--plan` twice **does not reproduce**, and the planning built on it was wasted.
-- **An agent CAN read the canonical heightmap.** `COBBLERS_SOURCE_ROOT` is set in
-  `.claude/settings.json` `env` and reaches agents, so `tools/ground.py` works in a
-  worktree: it answered y122 at (4528, 4416), the same ground the main session
-  measured. Confirmed three times, by three different agents, one of which ran the
-  heightmap-dependent contract suite it had been told it could not run.
+- **An agent CAN read the canonical heightmap -- but NOT because the environment
+  variable arrives.** `COBBLERS_SOURCE_ROOT` is configured in `.claude/settings.json`
+  `env`, and the harness does NOT reliably inject it: on 2026-10-02 it was missing
+  from a main session's shell and from three of six agents' worktrees, and present in
+  the same session after a restart. Two sessions lost time to the old claim that it
+  "reaches agents". **Tools no longer depend on it:** `terrain.env_source_root()` reads
+  the variable, else the committed `.claude/settings.json` (`settings.local.json`
+  overrides), and every tool resolves the root through it
+  (`tests/test_source_root_fallback.py` fails if one reads `os.environ` directly). So
+  `tools/ground.py` works in any worktree, injected or not; it answered y122 at
+  (4528, 4416), the same ground the main session measured.
 - **An agent can read outside its worktree.** Two agents read files from another
   checkout by absolute path and said so. The isolation checks are about **writes**,
   the working directory and git redirects -- not reads.
@@ -291,8 +297,8 @@ and the complexity guard above. So:
    <sha>`.
 3. Kits: `python tools/local_inputs.py hydrate --store
    C:/Users/wnd/Documents/cobblers-local` (allowed: all 338 files, verified). The
-   **heightmap needs nothing** -- it is readable at its absolute path through
-   `COBBLERS_SOURCE_ROOT`. Only `derived/` is absent, and `.worktreeinclude` did not
+   **heightmap needs nothing** -- tools find it through `terrain.env_source_root()`,
+   which falls back to `.claude/settings.json` when the variable was not injected. Only `derived/` is absent, and `.worktreeinclude` did not
    fix that (it existed, listed the right paths, copied none, and was removed in
    `19838cc` -- a harness question, not a repository one). So: prefer work that
    recomputes from the heightmap, and when a unit truly needs a derived plan, say so
@@ -307,6 +313,18 @@ them were off by roughly 20x (2026-09-28: "3.0M" was 26.5M). Spend is every
 turn's context added up: context x turns, cache reads at a tenth.
 `python tools/session_cost.py` reports the real figure for a session and each
 of its agents; quote that, never the harness's.
+
+**What a builder actually costs (measured 2026-10-02, `python tools/agent_spend.py <session>`):** a builder that
+authors a place end to end (data, generator, independent audit, tests, wiring) runs **130-160 turns, grows to
+330-380k of context and costs 3.4-4.6M**; a narrow follow-up on an existing tool, 90 turns and 2.6M. Six of them cost
+22.8M against an estimate of 5-7M, because the estimate came from research agents (0.6M, few turns). **Estimate a
+build fan-out at 4M per builder.** Where it went, over all six: 24% the starting context (62k: system, CLAUDE.md,
+the brief) re-read on every one of 823 turns; 14% the builder's own written files sitting in context; 14% reading
+existing tools for their patterns (`reapply.py` alone is 119 KB); 9% inline Python measuring the heightmap and data;
+8% grep; 7% output. Tests and audits were under 2%: their output was piped. **None of it was rebuilding
+`derived/`**: no agent ran prepare. The levers are therefore turns and what is read: brief with the exact excerpt
+and line range of a pattern rather than "read this tool", and keep CLAUDE.md short, since every agent pays for it
+on every turn.
 
 **Cost rules (the owner, 2026-09-28, from the measured night), each with its
 reason:**

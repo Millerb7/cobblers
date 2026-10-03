@@ -1,6 +1,6 @@
 {
   "schema": "cobblers.resident-encounters/1",
-  "status": "authored_not_placed",
+  "status": "built_not_placed",
   "purpose": "Ten memorable named non-legendary residents in sparse parts of the map. Terrain explains each creature; none is a quest or shrine.",
   "rules": {
     "count": 10,
@@ -82,13 +82,268 @@
       "catch_rule": "requires_level_cap_refusal_until_gym1",
       "build_brief": "Dry estuary bowl; visible 96-128 blocks out; drag marks and wreck at 64; inland bypass 36-40 blocks clear; trigger 24, leash 28; no drop.",
       "reward": "capture itself; no defeat item",
-      "status": "authored_not_placed"
+      "status": "built_not_placed",
+      "build": {
+        "yaw": -68.0,
+        "trigger": 24,
+        "leash": 28,
+        "appears_after": null,
+        "message": "Old Jaw lifts its head from the dry bowl.",
+        "sound": "minecraft:entity.turtle.ambient_land",
+        "dressing": [
+          {
+            "kind": "strip",
+            "name": "the bowl",
+            "from": [
+              0,
+              0
+            ],
+            "to": [
+              0,
+              0
+            ],
+            "half_width": 5,
+            "clear": 2,
+            "surface": [
+              [
+                "minecraft:mud",
+                3
+              ],
+              [
+                "minecraft:coarse_dirt",
+                3
+              ],
+              [
+                "minecraft:gravel",
+                2
+              ],
+              [
+                "minecraft:clay",
+                1
+              ]
+            ]
+          },
+          {
+            "kind": "strip",
+            "name": "drag mark north",
+            "from": [
+              -56,
+              -4
+            ],
+            "to": [
+              -7,
+              -2
+            ],
+            "half_width": 0,
+            "clear": 2,
+            "surface": [
+              [
+                "minecraft:mud",
+                3
+              ],
+              [
+                "minecraft:coarse_dirt",
+                2
+              ],
+              [
+                "minecraft:gravel",
+                1
+              ]
+            ]
+          },
+          {
+            "kind": "strip",
+            "name": "drag mark south",
+            "from": [
+              -56,
+              3
+            ],
+            "to": [
+              -7,
+              2
+            ],
+            "half_width": 0,
+            "clear": 2,
+            "surface": [
+              [
+                "minecraft:mud",
+                3
+              ],
+              [
+                "minecraft:coarse_dirt",
+                2
+              ],
+              [
+                "minecraft:gravel",
+                1
+              ]
+            ]
+          },
+          {
+            "kind": "blocks",
+            "name": "the wreck",
+            "at": [
+              -62,
+              0
+            ],
+            "blocks": [
+              [
+                -1,
+                1,
+                0,
+                "minecraft:spruce_stairs[facing=east]"
+              ],
+              [
+                0,
+                1,
+                -1,
+                "minecraft:spruce_planks"
+              ],
+              [
+                1,
+                1,
+                -1,
+                "minecraft:spruce_planks"
+              ],
+              [
+                2,
+                1,
+                -1,
+                "minecraft:spruce_planks"
+              ],
+              [
+                3,
+                1,
+                -1,
+                "minecraft:spruce_planks"
+              ],
+              [
+                4,
+                1,
+                -1,
+                "minecraft:spruce_planks"
+              ],
+              [
+                5,
+                1,
+                -1,
+                "minecraft:spruce_planks"
+              ],
+              [
+                0,
+                1,
+                1,
+                "minecraft:spruce_planks"
+              ],
+              [
+                1,
+                1,
+                1,
+                "minecraft:spruce_planks"
+              ],
+              [
+                3,
+                1,
+                1,
+                "minecraft:spruce_planks"
+              ],
+              [
+                6,
+                1,
+                1,
+                "minecraft:spruce_planks"
+              ],
+              [
+                1,
+                1,
+                0,
+                "minecraft:spruce_slab[type=bottom]"
+              ],
+              [
+                2,
+                1,
+                0,
+                "minecraft:spruce_slab[type=bottom]"
+              ],
+              [
+                4,
+                1,
+                0,
+                "minecraft:spruce_slab[type=bottom]"
+              ],
+              [
+                1,
+                2,
+                -1,
+                "minecraft:spruce_slab[type=bottom]"
+              ],
+              [
+                2,
+                2,
+                -1,
+                "minecraft:spruce_slab[type=bottom]"
+              ],
+              [
+                3,
+                2,
+                -1,
+                "minecraft:spruce_slab[type=bottom]"
+              ],
+              [
+                3,
+                2,
+                0,
+                "minecraft:spruce_fence"
+              ],
+              [
+                3,
+                3,
+                0,
+                "minecraft:spruce_fence"
+              ],
+              [
+                4,
+                1,
+                2,
+                "minecraft:stripped_spruce_log[axis=x]"
+              ],
+              [
+                5,
+                1,
+                2,
+                "minecraft:stripped_spruce_log[axis=x]"
+              ],
+              [
+                6,
+                1,
+                2,
+                "minecraft:stripped_spruce_log[axis=x]"
+              ]
+            ]
+          }
+        ],
+        "why": "Codex's brief: a dry estuary bowl at the mouth of the Viltri (data/landmarks.json mouth_of_viltri anchor (613, 4306)), drag marks, a wreck at 64. The wreck stands 62 west on the drag marks' line, where the ground is still dry (the sea is ~70 west); the marks run from it to the bowl. The inland bypass is the open slope east of the bowl, nothing built. Trigger 24, leash 28 from the brief",
+        "anchor": [
+          613,
+          81,
+          4306
+        ],
+        "ground_y": 80,
+        "anchor_why": "x/z are Codex's location, measured and kept (dry land, outside every town, placement and Rift zone footprint, off the route line: docs/world-building/RESIDENT_ENCOUNTERS.md 2); feet one above the rounded heightmap ground",
+        "bbox": [
+          550,
+          4301,
+          618,
+          4311
+        ],
+        "bbox_why": "every block the dressing writes and the anchor, inclusive [x0, z0, x1, z1]; R18R force-loads exactly this box"
+      }
     },
     {
       "id": "wiremother",
       "name": "Wiremother",
       "species": "cobblemon:galvantula",
-      "level": 33,
+      "level": 30,
       "location": {
         "x": 1138,
         "z": 3610,
@@ -106,7 +361,201 @@
       "catch_rule": "catchable_after_gate",
       "build_brief": "Failed survey crossing remains visible before gym 3; the resident appears after gym3_cleared. Snapped poles, sagging wire/web, flags and instrument case; bypass shelf; trigger 20, leash 28.",
       "reward": "capture itself; no defeat item",
-      "status": "authored_not_placed"
+      "status": "built_not_placed",
+      "build": {
+        "yaw": -69.0,
+        "trigger": 20,
+        "leash": 28,
+        "appears_after": "gym3_cleared",
+        "message": "Threads tighten across the old crossing. Wiremother is home.",
+        "sound": "minecraft:entity.spider.ambient",
+        "dressing": [
+          {
+            "kind": "post",
+            "name": "pole, standing",
+            "at": [
+              -22,
+              -8
+            ],
+            "blocks": [
+              "minecraft:stripped_spruce_log",
+              "minecraft:stripped_spruce_log",
+              "minecraft:stripped_spruce_log",
+              "minecraft:cobweb"
+            ]
+          },
+          {
+            "kind": "post",
+            "name": "pole, snapped",
+            "at": [
+              -12,
+              -4
+            ],
+            "blocks": [
+              "minecraft:stripped_spruce_log"
+            ]
+          },
+          {
+            "kind": "log",
+            "name": "pole, fallen",
+            "from": [
+              -11,
+              -3
+            ],
+            "dir": "x",
+            "length": 3,
+            "block": "minecraft:stripped_spruce_log"
+          },
+          {
+            "kind": "post",
+            "name": "pole with a flag",
+            "at": [
+              12,
+              4
+            ],
+            "blocks": [
+              "minecraft:stripped_spruce_log",
+              "minecraft:stripped_spruce_log",
+              "minecraft:spruce_fence",
+              "minecraft:yellow_wool"
+            ]
+          },
+          {
+            "kind": "post",
+            "name": "pole, snapped low",
+            "at": [
+              22,
+              8
+            ],
+            "blocks": [
+              "minecraft:stripped_spruce_log",
+              "minecraft:chain"
+            ]
+          },
+          {
+            "kind": "blocks",
+            "name": "sagging web",
+            "at": [
+              -17,
+              -6
+            ],
+            "blocks": [
+              [
+                0,
+                2,
+                0,
+                "minecraft:cobweb"
+              ],
+              [
+                1,
+                1,
+                0,
+                "minecraft:cobweb"
+              ],
+              [
+                -1,
+                3,
+                -1,
+                "minecraft:cobweb"
+              ]
+            ]
+          },
+          {
+            "kind": "blocks",
+            "name": "web and wire on the ground",
+            "at": [
+              5,
+              2
+            ],
+            "blocks": [
+              [
+                0,
+                1,
+                0,
+                "minecraft:cobweb"
+              ],
+              [
+                2,
+                1,
+                1,
+                "minecraft:cobweb"
+              ],
+              [
+                -3,
+                1,
+                2,
+                "minecraft:cobweb"
+              ],
+              [
+                3,
+                1,
+                -4,
+                "minecraft:cobweb"
+              ]
+            ]
+          },
+          {
+            "kind": "blocks",
+            "name": "the instrument case",
+            "at": [
+              7,
+              -6
+            ],
+            "blocks": [
+              [
+                0,
+                1,
+                0,
+                "minecraft:barrel[facing=up]"
+              ],
+              [
+                1,
+                1,
+                0,
+                "minecraft:spruce_trapdoor[half=bottom,open=false,facing=east]"
+              ],
+              [
+                0,
+                1,
+                1,
+                "minecraft:white_carpet"
+              ]
+            ]
+          },
+          {
+            "kind": "post",
+            "name": "survey flag",
+            "at": [
+              -6,
+              9
+            ],
+            "blocks": [
+              "minecraft:spruce_fence",
+              "minecraft:white_wool"
+            ]
+          }
+        ],
+        "why": "the failed survey crossing above the Viltri Ravine (data/landmarks.json viltri_ravine, 39 west). The poles, wire and case are blocks, so they stand before gym 3 as the brief asks; the resident itself appears after gym3_cleared. The bypass shelf is the open ground north and south of the line",
+        "anchor": [
+          1138,
+          127,
+          3610
+        ],
+        "ground_y": 126,
+        "anchor_why": "x/z are Codex's location, measured and kept (dry land, outside every town, placement and Rift zone footprint, off the route line: docs/world-building/RESIDENT_ENCOUNTERS.md 2); feet one above the rounded heightmap ground",
+        "bbox": [
+          1116,
+          3602,
+          1160,
+          3619
+        ],
+        "bbox_why": "every block the dressing writes and the anchor, inclusive [x0, z0, x1, z1]; R18R force-loads exactly this box",
+        "catch_gate_leak": "its level 30 (lowered 2026-10-02 to its tier-2 place's ceiling, superseded_level) equals the cap a player holds before gym3_cleared, so the level-cap refusal does NOT stop their catch. The gate is therefore its PRESENCE: it first appears only for a gym3_cleared player; once it is in the world, a co-op partner between gyms 2 and 3 could catch it. The owner's call: keep this, or move it to a tier-3 place (ceiling 35) and restore 33, which closes it."
+      },
+      "superseded_level": {
+        "level": 33,
+        "why_changed": "Its place, viltris_path_valley, is tier 2 in data/encounter_design.json: the ceiling ENCOUNTER_DESIGN.md section 10 allows any presence there is rules.hearts.next_cap['2'] = 30. 33 broke it, fair only if the gym-3 gate held (the owner, 2026-10-02: fix it). Lowered to the ceiling rather than moved: the failed survey crossing is the site."
+      }
     },
     {
       "id": "ridgejaw",
@@ -114,9 +563,9 @@
       "species": "cobblemon:tyrantrum",
       "level": 39,
       "location": {
-        "x": 3544,
-        "z": 1600,
-        "measured_surface_or_bed_y": 160.2,
+        "x": 3520,
+        "z": 1552,
+        "measured_surface_or_bed_y": 155.0,
         "y_rule": "fit feet to final exported surface; x/z authoritative"
       },
       "cost": {
@@ -130,7 +579,134 @@
       "catch_rule": "catchable_after_gate",
       "build_brief": "Use existing Crags clearing; optional bone chips and scraped stone only; trigger 22, leash 30.",
       "reward": "capture itself; no defeat item",
-      "status": "authored_not_placed"
+      "status": "built_not_placed",
+      "build": {
+        "yaw": 56.0,
+        "trigger": 22,
+        "leash": 30,
+        "appears_after": "gym4_cleared",
+        "message": "Ridgejaw grinds its jaws on the crag. The clearing is its.",
+        "sound": "minecraft:entity.ravager.roar",
+        "dressing": [
+          {
+            "kind": "strip",
+            "name": "scraped stone",
+            "from": [
+              4,
+              0
+            ],
+            "to": [
+              4,
+              0
+            ],
+            "half_width": 3,
+            "clear": 2,
+            "surface": [
+              [
+                "minecraft:cobblestone",
+                2
+              ],
+              [
+                "minecraft:gravel",
+                2
+              ],
+              [
+                "minecraft:andesite",
+                1
+              ],
+              [
+                "minecraft:tuff",
+                1
+              ]
+            ]
+          },
+          {
+            "kind": "strip",
+            "name": "scrape line",
+            "from": [
+              2,
+              -7
+            ],
+            "to": [
+              10,
+              6
+            ],
+            "half_width": 0,
+            "clear": 2,
+            "surface": [
+              [
+                "minecraft:gravel",
+                2
+              ],
+              [
+                "minecraft:cobblestone",
+                1
+              ]
+            ]
+          },
+          {
+            "kind": "blocks",
+            "name": "bone chips",
+            "at": [
+              0,
+              0
+            ],
+            "blocks": [
+              [
+                6,
+                1,
+                3,
+                "minecraft:bone_block[axis=x]"
+              ],
+              [
+                -3,
+                1,
+                5,
+                "minecraft:bone_block[axis=z]"
+              ],
+              [
+                8,
+                1,
+                -4,
+                "minecraft:bone_block[axis=y]"
+              ],
+              [
+                2,
+                1,
+                -7,
+                "minecraft:bone_block[axis=x]"
+              ]
+            ]
+          }
+        ],
+        "why": "the existing Crags clearing (the crag sapling's ring, data/themed_saplings.json sapling_crag_the_crags 24 west); optional bone chips and scraped stone only, on the side away from the sapling",
+        "anchor": [
+          3520,
+          156,
+          1552
+        ],
+        "ground_y": 155,
+        "anchor_why": "x/z are Codex's location, measured and kept (dry land, outside every town, placement and Rift zone footprint, off the route line: docs/world-building/RESIDENT_ENCOUNTERS.md 2); feet one above the rounded heightmap ground",
+        "bbox": [
+          3517,
+          1545,
+          3530,
+          1558
+        ],
+        "bbox_why": "every block the dressing writes and the anchor, inclusive [x0, z0, x1, z1]; R18R force-loads exactly this box",
+        "siting_rule": "Moved 2026-10-02 (the owner's review of #107). A resident stands at least 128 blocks from every route path (data/route_paths.json; ENCOUNTER_DESIGN.md section 10's clear_of_path_blocks) and, from every activated Habitat Block, at least that block's spawn_range plus this resident's leash, so its fight never overlaps a nest's spawns. The nearest such ground in the same sub-region, outside every focus heart, standable (at most 3 of relief within 6) and above sea, whose translated dressing tools/resident_encounters_audit.py passes. tests/test_resident_siting.py holds all of it."
+      },
+      "superseded_location": {
+        "x": 3544,
+        "z": 1600,
+        "measured_surface_or_bed_y": 160.2,
+        "anchor": [
+          3544,
+          161,
+          1600
+        ],
+        "why_moved": "within an activated Habitat Block's spawn range plus its own leash"
+      }
     },
     {
       "id": "red_rail",
@@ -154,7 +730,104 @@
       "catch_rule": "catchable_after_gate",
       "build_brief": "Iron-red 60-80 block trail through marsh reeds; shell fragments; opposite bank remains escape; trigger 18, leash 26.",
       "reward": "capture itself; no defeat item",
-      "status": "authored_not_placed"
+      "status": "built_not_placed",
+      "build": {
+        "yaw": 44.0,
+        "trigger": 18,
+        "leash": 26,
+        "appears_after": "gym5_cleared",
+        "message": "Something long and red uncoils in the reeds. Red Rail.",
+        "sound": "minecraft:entity.silverfish.ambient",
+        "dressing": [
+          {
+            "kind": "strip",
+            "name": "the iron-red trail",
+            "from": [
+              -40,
+              -40
+            ],
+            "to": [
+              10,
+              8
+            ],
+            "half_width": 1,
+            "clear": 2,
+            "surface": [
+              [
+                "minecraft:red_terracotta",
+                3
+              ],
+              [
+                "minecraft:granite",
+                2
+              ],
+              [
+                "minecraft:terracotta",
+                1
+              ],
+              [
+                "minecraft:coarse_dirt",
+                1
+              ]
+            ]
+          },
+          {
+            "kind": "blocks",
+            "name": "shell fragments",
+            "at": [
+              0,
+              0
+            ],
+            "blocks": [
+              [
+                -18,
+                1,
+                -22,
+                "minecraft:red_terracotta"
+              ],
+              [
+                -29,
+                1,
+                -33,
+                "minecraft:granite_slab[type=bottom]"
+              ],
+              [
+                -4,
+                1,
+                -9,
+                "minecraft:granite_slab[type=bottom]"
+              ],
+              [
+                7,
+                1,
+                3,
+                "minecraft:red_terracotta"
+              ],
+              [
+                -12,
+                1,
+                -16,
+                "minecraft:granite_slab[type=bottom]"
+              ]
+            ]
+          }
+        ],
+        "why": "a 69-block iron-red trail through the marsh reeds west of the marsh outflow (data/rivers.json marshy_marsh_outflow, 24 east); the opposite bank stays the escape. The trail skips every wet column",
+        "anchor": [
+          5541,
+          96,
+          1703
+        ],
+        "ground_y": 95,
+        "anchor_why": "x/z are Codex's location, measured and kept (dry land, outside every town, placement and Rift zone footprint, off the route line: docs/world-building/RESIDENT_ENCOUNTERS.md 2); feet one above the rounded heightmap ground",
+        "bbox": [
+          5500,
+          1662,
+          5552,
+          1712
+        ],
+        "bbox_why": "every block the dressing writes and the anchor, inclusive [x0, z0, x1, z1]; R18R force-loads exactly this box"
+      }
     },
     {
       "id": "whiteback",
@@ -162,9 +835,9 @@
       "species": "cobblemon:mamoswine",
       "level": 50,
       "location": {
-        "x": 7022,
-        "z": 312,
-        "measured_surface_or_bed_y": 79.1,
+        "x": 7050,
+        "z": 308,
+        "measured_surface_or_bed_y": 82.0,
         "y_rule": "fit feet to final exported surface; x/z authoritative"
       },
       "cost": {
@@ -178,7 +851,210 @@
       "catch_rule": "permanently_uncatchable",
       "build_brief": "North Pine Isle old trail; snow banks, two broken markers and bare windbreak; wide bypass; trigger 24, leash 34.",
       "reward": "none",
-      "status": "authored_not_placed"
+      "status": "built_not_placed",
+      "build": {
+        "yaw": 63.0,
+        "trigger": 24,
+        "leash": 34,
+        "appears_after": null,
+        "message": "The snow bank stands up. It is Whiteback.",
+        "sound": "minecraft:entity.polar_bear.warning",
+        "dressing": [
+          {
+            "kind": "strip",
+            "name": "the old trail",
+            "from": [
+              -2,
+              -40
+            ],
+            "to": [
+              10,
+              40
+            ],
+            "half_width": 1,
+            "clear": 2,
+            "surface": [
+              [
+                "minecraft:coarse_dirt",
+                3
+              ],
+              [
+                "minecraft:gravel",
+                2
+              ],
+              [
+                "minecraft:packed_ice",
+                1
+              ]
+            ]
+          },
+          {
+            "kind": "post",
+            "name": "snow bank",
+            "at": [
+              8,
+              -10
+            ],
+            "blocks": [
+              "minecraft:snow_block",
+              "minecraft:snow[layers=4]"
+            ]
+          },
+          {
+            "kind": "post",
+            "name": "snow bank",
+            "at": [
+              9,
+              -11
+            ],
+            "blocks": [
+              "minecraft:snow_block"
+            ]
+          },
+          {
+            "kind": "post",
+            "name": "snow bank",
+            "at": [
+              9,
+              -9
+            ],
+            "blocks": [
+              "minecraft:snow[layers=6]"
+            ]
+          },
+          {
+            "kind": "post",
+            "name": "snow bank",
+            "at": [
+              -6,
+              8
+            ],
+            "blocks": [
+              "minecraft:snow_block",
+              "minecraft:snow[layers=3]"
+            ]
+          },
+          {
+            "kind": "post",
+            "name": "snow bank",
+            "at": [
+              -7,
+              9
+            ],
+            "blocks": [
+              "minecraft:snow[layers=5]"
+            ]
+          },
+          {
+            "kind": "post",
+            "name": "broken marker",
+            "at": [
+              5,
+              -24
+            ],
+            "blocks": [
+              "minecraft:cobblestone",
+              "minecraft:cobblestone_wall"
+            ]
+          },
+          {
+            "kind": "post",
+            "name": "broken marker",
+            "at": [
+              9,
+              22
+            ],
+            "blocks": [
+              "minecraft:mossy_cobblestone"
+            ]
+          },
+          {
+            "kind": "post",
+            "name": "windbreak",
+            "at": [
+              14,
+              -8
+            ],
+            "blocks": [
+              "minecraft:spruce_fence",
+              "minecraft:spruce_fence"
+            ]
+          },
+          {
+            "kind": "post",
+            "name": "windbreak",
+            "at": [
+              14,
+              -6
+            ],
+            "blocks": [
+              "minecraft:spruce_fence"
+            ]
+          },
+          {
+            "kind": "post",
+            "name": "windbreak",
+            "at": [
+              14,
+              -2
+            ],
+            "blocks": [
+              "minecraft:spruce_fence",
+              "minecraft:spruce_fence"
+            ]
+          },
+          {
+            "kind": "post",
+            "name": "windbreak",
+            "at": [
+              14,
+              2
+            ],
+            "blocks": [
+              "minecraft:spruce_fence",
+              "minecraft:spruce_fence"
+            ]
+          },
+          {
+            "kind": "post",
+            "name": "windbreak",
+            "at": [
+              14,
+              6
+            ],
+            "blocks": [
+              "minecraft:spruce_fence"
+            ]
+          }
+        ],
+        "why": "the old trail on North Pine Isle past the elder (data/elder_trees.json elder_north_pine_isle_2, 24 west): snow banks, two broken markers and a bare windbreak, all east of the elder's root flare. Off-route (2,950 blocks from a leg), so the wide bypass is the whole isle",
+        "anchor": [
+          7050,
+          83,
+          308
+        ],
+        "ground_y": 82,
+        "anchor_why": "x/z are Codex's location, measured and kept (dry land, outside every town, placement and Rift zone footprint, off the route line: docs/world-building/RESIDENT_ENCOUNTERS.md 2); feet one above the rounded heightmap ground",
+        "bbox": [
+          7043,
+          267,
+          7064,
+          349
+        ],
+        "bbox_why": "every block the dressing writes and the anchor, inclusive [x0, z0, x1, z1]; R18R force-loads exactly this box",
+        "siting_rule": "Moved 2026-10-02 (the owner's review of #107). A resident stands at least 128 blocks from every route path (data/route_paths.json; ENCOUNTER_DESIGN.md section 10's clear_of_path_blocks) and, from every activated Habitat Block, at least that block's spawn_range plus this resident's leash, so its fight never overlaps a nest's spawns. The nearest such ground in the same sub-region, outside every focus heart, standable (at most 3 of relief within 6) and above sea, whose translated dressing tools/resident_encounters_audit.py passes. tests/test_resident_siting.py holds all of it."
+      },
+      "superseded_location": {
+        "x": 7022,
+        "z": 312,
+        "measured_surface_or_bed_y": 79.1,
+        "anchor": [
+          7022,
+          80,
+          312
+        ],
+        "why_moved": "within an activated Habitat Block's spawn range plus its own leash"
+      }
     },
     {
       "id": "river_grip",
@@ -204,7 +1080,138 @@
       "catch_rule": "catchable_after_gate",
       "build_brief": "River-mouth pool at water y62; drowned mooring, snapped chains and debris; dry observation point; trigger 20, leash 30.",
       "reward": "capture itself; no defeat item",
-      "status": "authored_not_placed"
+      "status": "built_not_placed",
+      "build": {
+        "yaw": 102.0,
+        "trigger": 20,
+        "leash": 30,
+        "appears_after": "gym7_cleared",
+        "message": "The river mouth's water heaves. River Grip has hold of the moorings.",
+        "sound": "minecraft:entity.guardian.ambient",
+        "in_water": true,
+        "dormant_extra": {
+          "NoGravity": "1b"
+        },
+        "dressing": [
+          {
+            "kind": "post",
+            "name": "drowned mooring",
+            "at": [
+              -6,
+              -3
+            ],
+            "in_water": true,
+            "blocks": [
+              "minecraft:mossy_stone_bricks",
+              "minecraft:mossy_stone_bricks",
+              "minecraft:mossy_stone_bricks",
+              "minecraft:stone_brick_wall[waterlogged=true]",
+              "minecraft:chain[waterlogged=true]"
+            ]
+          },
+          {
+            "kind": "log",
+            "name": "snapped chain",
+            "from": [
+              -14,
+              -2
+            ],
+            "dir": "x",
+            "length": 5,
+            "in_water": true,
+            "block": "minecraft:chain[waterlogged=true]"
+          },
+          {
+            "kind": "log",
+            "name": "snapped chain",
+            "from": [
+              3,
+              -6
+            ],
+            "dir": "z",
+            "length": 3,
+            "in_water": true,
+            "block": "minecraft:chain[waterlogged=true]"
+          },
+          {
+            "kind": "blocks",
+            "name": "debris",
+            "at": [
+              0,
+              0
+            ],
+            "in_water": true,
+            "blocks": [
+              [
+                3,
+                1,
+                -3,
+                "minecraft:spruce_slab[type=bottom,waterlogged=true]"
+              ],
+              [
+                -9,
+                1,
+                1,
+                "minecraft:spruce_slab[type=bottom,waterlogged=true]"
+              ],
+              [
+                -3,
+                1,
+                4,
+                "minecraft:spruce_slab[type=bottom,waterlogged=true]"
+              ]
+            ]
+          },
+          {
+            "kind": "strip",
+            "name": "observation deck",
+            "from": [
+              -8,
+              -25
+            ],
+            "to": [
+              -8,
+              -25
+            ],
+            "half_width": 1,
+            "clear": 2,
+            "surface": [
+              [
+                "minecraft:spruce_planks",
+                1
+              ]
+            ]
+          },
+          {
+            "kind": "post",
+            "name": "observation post",
+            "at": [
+              -9,
+              -26
+            ],
+            "blocks": [
+              "minecraft:spruce_fence",
+              "minecraft:lantern"
+            ]
+          }
+        ],
+        "why": "the river-mouth pool where Lake Tilpey's outflow meets the sea (data/rivers.json lake_tilpey_outflow end_at (6970, 3970)): bed y53 measured, sea water y62 (data/world.json sea level), so the Pokemon floats at the surface (feet y63, NoGravity while dormant). The mooring, chains and debris lie on the bed, every block under the surface; the dry observation deck is on the north bank 25 out, beyond the trigger",
+        "anchor": [
+          6970,
+          63,
+          3970
+        ],
+        "ground_y": 53,
+        "water_surface_y": 62,
+        "anchor_why": "x/z are Codex's location, measured and kept: the bed is y53 and the sea's surface block y62 (data/world.json sea level 62), so the feet are y63, on the surface",
+        "bbox": [
+          6956,
+          3944,
+          6973,
+          3974
+        ],
+        "bbox_why": "every block the dressing writes and the anchor, inclusive [x0, z0, x1, z1]; R18R force-loads exactly this box"
+      }
     },
     {
       "id": "dustback",
@@ -212,9 +1219,9 @@
       "species": "cobblemon:copperajah",
       "level": 56,
       "location": {
-        "x": 6216,
+        "x": 6244,
         "z": 6112,
-        "measured_surface_or_bed_y": 141.1,
+        "measured_surface_or_bed_y": 141.0,
         "y_rule": "fit feet to final exported surface; x/z authoritative"
       },
       "cost": {
@@ -228,7 +1235,110 @@
       "catch_rule": "catchable_after_gate",
       "build_brief": "80-120 block migration scar, 12-18 blocks broad, across southeast dunes; one crushed marker; trigger 24, leash 36.",
       "reward": "capture itself; no defeat item",
-      "status": "authored_not_placed"
+      "status": "built_not_placed",
+      "build": {
+        "yaw": 156.0,
+        "trigger": 24,
+        "leash": 36,
+        "appears_after": "gym8_cleared",
+        "message": "The dune shudders. Dustback turns its trunk toward you.",
+        "sound": "minecraft:entity.ravager.roar",
+        "dressing": [
+          {
+            "kind": "strip",
+            "name": "the migration scar",
+            "from": [
+              -30,
+              -46
+            ],
+            "to": [
+              30,
+              34
+            ],
+            "half_width": 7,
+            "clear": 2,
+            "surface": [
+              [
+                "minecraft:sandstone",
+                3
+              ],
+              [
+                "minecraft:smooth_sandstone",
+                1
+              ],
+              [
+                "minecraft:coarse_dirt",
+                2
+              ],
+              [
+                "minecraft:gravel",
+                1
+              ]
+            ]
+          },
+          {
+            "kind": "blocks",
+            "name": "the crushed marker",
+            "at": [
+              12,
+              12
+            ],
+            "blocks": [
+              [
+                0,
+                1,
+                0,
+                "minecraft:cut_sandstone"
+              ],
+              [
+                1,
+                1,
+                0,
+                "minecraft:sandstone_wall"
+              ],
+              [
+                0,
+                1,
+                1,
+                "minecraft:smooth_sandstone_slab[type=bottom]"
+              ],
+              [
+                -1,
+                1,
+                -1,
+                "minecraft:smooth_sandstone_slab[type=bottom]"
+              ]
+            ]
+          }
+        ],
+        "why": "a 100-block migration scar, 15 broad, across the south-east dunes, through Dustback's spot and on the side of it away from the desert sapling (data/themed_saplings.json sapling_desert_south_east_dunes, 24 west); one crushed marker",
+        "anchor": [
+          6244,
+          142,
+          6112
+        ],
+        "ground_y": 141,
+        "anchor_why": "x/z are Codex's location, measured and kept (dry land, outside every town, placement and Rift zone footprint, off the route line: docs/world-building/RESIDENT_ENCOUNTERS.md 2); feet one above the rounded heightmap ground",
+        "bbox": [
+          6207,
+          6059,
+          6281,
+          6153
+        ],
+        "bbox_why": "every block the dressing writes and the anchor, inclusive [x0, z0, x1, z1]; R18R force-loads exactly this box",
+        "siting_rule": "Moved 2026-10-02 (the owner's review of #107). A resident stands at least 128 blocks from every route path (data/route_paths.json; ENCOUNTER_DESIGN.md section 10's clear_of_path_blocks) and, from every activated Habitat Block, at least that block's spawn_range plus this resident's leash, so its fight never overlaps a nest's spawns. The nearest such ground in the same sub-region, outside every focus heart, standable (at most 3 of relief within 6) and above sea, whose translated dressing tools/resident_encounters_audit.py passes. tests/test_resident_siting.py holds all of it."
+      },
+      "superseded_location": {
+        "x": 6216,
+        "z": 6112,
+        "measured_surface_or_bed_y": 141.1,
+        "anchor": [
+          6216,
+          142,
+          6112
+        ],
+        "why_moved": "within an activated Habitat Block's spawn range plus its own leash"
+      }
     },
     {
       "id": "hornwall",
@@ -236,9 +1346,9 @@
       "species": "cobblemon:bouffalant",
       "level": 56,
       "location": {
-        "x": 4200,
-        "z": 5920,
-        "measured_surface_or_bed_y": 136.7,
+        "x": 4148,
+        "z": 5872,
+        "measured_surface_or_bed_y": 135.0,
         "y_rule": "fit feet to final exported surface; x/z authoritative"
       },
       "cost": {
@@ -252,7 +1362,76 @@
       "catch_rule": "permanently_uncatchable",
       "build_brief": "Use existing Rift Foot shelf; bare standing circle and visible bypass only; trigger 24, leash 34.",
       "reward": "none",
-      "status": "authored_not_placed"
+      "status": "built_not_placed",
+      "build": {
+        "yaw": -46.0,
+        "trigger": 24,
+        "leash": 34,
+        "appears_after": "gym8_cleared",
+        "message": "Hornwall lowers its head. It will not move for you.",
+        "sound": "minecraft:entity.hoglin.angry",
+        "dressing": [
+          {
+            "kind": "strip",
+            "name": "the bare standing circle",
+            "from": [
+              0,
+              0
+            ],
+            "to": [
+              0,
+              0
+            ],
+            "half_width": 6,
+            "clear": 2,
+            "surface": [
+              [
+                "minecraft:coarse_dirt",
+                3
+              ],
+              [
+                "minecraft:dirt",
+                1
+              ],
+              [
+                "minecraft:gravel",
+                1
+              ],
+              [
+                "minecraft:rooted_dirt",
+                1
+              ]
+            ]
+          }
+        ],
+        "why": "the existing Rift Foot shelf beside the storm sapling (data/themed_saplings.json sapling_storm_rift_foot, 24 west); a bare standing circle only. The visible bypass is the slope between it and Route 8's line, 59 blocks south-east: nothing is built there",
+        "anchor": [
+          4148,
+          136,
+          5872
+        ],
+        "ground_y": 135,
+        "anchor_why": "x/z are Codex's location, measured and kept (dry land, outside every town, placement and Rift zone footprint, off the route line: docs/world-building/RESIDENT_ENCOUNTERS.md 2); feet one above the rounded heightmap ground",
+        "bbox": [
+          4142,
+          5866,
+          4154,
+          5878
+        ],
+        "bbox_why": "every block the dressing writes and the anchor, inclusive [x0, z0, x1, z1]; R18R force-loads exactly this box",
+        "siting_rule": "Moved 2026-10-02 (the owner's review of #107). A resident stands at least 128 blocks from every route path (data/route_paths.json; ENCOUNTER_DESIGN.md section 10's clear_of_path_blocks) and, from every activated Habitat Block, at least that block's spawn_range plus this resident's leash, so its fight never overlaps a nest's spawns. The nearest such ground in the same sub-region, outside every focus heart, standable (at most 3 of relief within 6) and above sea, whose translated dressing tools/resident_encounters_audit.py passes. tests/test_resident_siting.py holds all of it."
+      },
+      "superseded_location": {
+        "x": 4200,
+        "z": 5920,
+        "measured_surface_or_bed_y": 136.7,
+        "anchor": [
+          4200,
+          138,
+          5920
+        ],
+        "why_moved": "59 blocks from Route 8's path (the hearts keep 128) and within an activated Habitat Block's spawn range plus its own leash"
+      }
     },
     {
       "id": "orchard_sleeper",
@@ -261,8 +1440,8 @@
       "level": 60,
       "location": {
         "x": 2816,
-        "z": 7080,
-        "measured_surface_or_bed_y": 65.8,
+        "z": 7128,
+        "measured_surface_or_bed_y": 74.0,
         "y_rule": "fit feet to final exported surface; x/z authoritative"
       },
       "cost": {
@@ -276,17 +1455,371 @@
       "catch_rule": "catchable_after_gate",
       "build_brief": "Sunset Isle failed orchard: 6-10 storm-bent trees, overgrown rows, windfall and collapsed shed; trigger 18, leash 26.",
       "reward": "capture itself; no defeat item",
-      "status": "authored_not_placed"
+      "status": "built_not_placed",
+      "build": {
+        "yaw": -125.0,
+        "trigger": 18,
+        "leash": 26,
+        "appears_after": "gym8_cleared",
+        "message": "Among the bent trees, the Orchard Sleeper opens one eye.",
+        "sound": "minecraft:entity.polar_bear.ambient",
+        "dressing": [],
+        "why": "Sunset Isle's failed orchard west of the palm sapling (data/themed_saplings.json sapling_palm_sunset_east, 24 east): seven storm-bent trees leaning north-east, two overgrown rows, a windfall and a collapsed shed, the Slaking asleep between the rows",
+        "anchor": [
+          2816,
+          75,
+          7128
+        ],
+        "ground_y": 74,
+        "anchor_why": "x/z are Codex's location, measured and kept (dry land, outside every town, placement and Rift zone footprint, off the route line: docs/world-building/RESIDENT_ENCOUNTERS.md 2); feet one above the rounded heightmap ground",
+        "bbox": [
+          2786,
+          7115,
+          2817,
+          7149
+        ],
+        "bbox_why": "every block the dressing writes and the anchor, inclusive [x0, z0, x1, z1]; R18R force-loads exactly this box",
+        "keep_out": [
+          {
+            "box": [
+              2814,
+              7055,
+              2862,
+              7105
+            ],
+            "what": "the themed giant palm sapling_palm_sunset_east's template box (trunk 2840, 7080). Until 2026-10-02 the Orchard Sleeper's anchor stood inside it, under the crown; it moved to (2816, 7128), 23 blocks north of the box, out of the palm's nest range. The keep-out still holds for any dressing",
+            "source": "RELAYED by the orchard builder through the coordinator, 2026-10-02 (box x2814-2862 z7055-7105; no palm block within 4 of the anchor below y115); not measured here: the template is a kit this build does not read",
+            "rule": "no block is set inside it; only the standing space's plant clear (air replace #minecraft:replaceable, y67-68 on the anchor's 3x3) reaches in"
+          }
+        ],
+        "superseded_dressing": [
+          {
+            "kind": "strip",
+            "name": "overgrown row",
+            "from": [
+              -30,
+              -8
+            ],
+            "to": [
+              -4,
+              -8
+            ],
+            "half_width": 0,
+            "clear": 0,
+            "surface": [
+              [
+                "minecraft:rooted_dirt",
+                2
+              ],
+              [
+                "minecraft:coarse_dirt",
+                2
+              ],
+              [
+                "minecraft:moss_block",
+                1
+              ]
+            ]
+          },
+          {
+            "kind": "strip",
+            "name": "overgrown row",
+            "from": [
+              -30,
+              8
+            ],
+            "to": [
+              -4,
+              8
+            ],
+            "half_width": 0,
+            "clear": 0,
+            "surface": [
+              [
+                "minecraft:rooted_dirt",
+                2
+              ],
+              [
+                "minecraft:coarse_dirt",
+                2
+              ],
+              [
+                "minecraft:moss_block",
+                1
+              ]
+            ]
+          },
+          {
+            "kind": "tree",
+            "name": "storm-bent tree",
+            "at": [
+              -26,
+              -9
+            ],
+            "lean": [
+              1,
+              -1
+            ],
+            "height": 5,
+            "log": "minecraft:oak_log",
+            "leaves": "minecraft:oak_leaves[persistent=true]",
+            "radius": 2
+          },
+          {
+            "kind": "tree",
+            "name": "storm-bent tree",
+            "at": [
+              -18,
+              -9
+            ],
+            "lean": [
+              1,
+              -1
+            ],
+            "height": 6,
+            "log": "minecraft:oak_log",
+            "leaves": "minecraft:oak_leaves[persistent=true]",
+            "radius": 2
+          },
+          {
+            "kind": "tree",
+            "name": "storm-bent tree",
+            "at": [
+              -10,
+              -9
+            ],
+            "lean": [
+              1,
+              -1
+            ],
+            "height": 4,
+            "log": "minecraft:oak_log",
+            "leaves": "minecraft:oak_leaves[persistent=true]",
+            "radius": 2
+          },
+          {
+            "kind": "tree",
+            "name": "storm-bent tree",
+            "at": [
+              -28,
+              7
+            ],
+            "lean": [
+              1,
+              -1
+            ],
+            "height": 5,
+            "log": "minecraft:oak_log",
+            "leaves": "minecraft:oak_leaves[persistent=true]",
+            "radius": 2
+          },
+          {
+            "kind": "tree",
+            "name": "storm-bent tree",
+            "at": [
+              -20,
+              7
+            ],
+            "lean": [
+              1,
+              -1
+            ],
+            "height": 6,
+            "log": "minecraft:oak_log",
+            "leaves": "minecraft:oak_leaves[persistent=true]",
+            "radius": 2
+          },
+          {
+            "kind": "tree",
+            "name": "storm-bent tree",
+            "at": [
+              -12,
+              7
+            ],
+            "lean": [
+              1,
+              -1
+            ],
+            "height": 5,
+            "log": "minecraft:oak_log",
+            "leaves": "minecraft:oak_leaves[persistent=true]",
+            "radius": 2
+          },
+          {
+            "kind": "tree",
+            "name": "storm-bent tree",
+            "at": [
+              -6,
+              7
+            ],
+            "lean": [
+              1,
+              -1
+            ],
+            "height": 4,
+            "log": "minecraft:oak_log",
+            "leaves": "minecraft:oak_leaves[persistent=true]",
+            "radius": 2
+          },
+          {
+            "kind": "log",
+            "name": "windfall",
+            "from": [
+              -16,
+              1
+            ],
+            "dir": "x",
+            "length": 5,
+            "block": "minecraft:oak_log"
+          },
+          {
+            "kind": "blocks",
+            "name": "windfall leaves",
+            "at": [
+              -16,
+              1
+            ],
+            "blocks": [
+              [
+                -1,
+                1,
+                1,
+                "minecraft:oak_leaves[persistent=true]"
+              ],
+              [
+                0,
+                2,
+                0,
+                "minecraft:oak_leaves[persistent=true]"
+              ],
+              [
+                5,
+                1,
+                -1,
+                "minecraft:oak_leaves[persistent=true]"
+              ],
+              [
+                5,
+                1,
+                0,
+                "minecraft:oak_leaves[persistent=true]"
+              ]
+            ]
+          },
+          {
+            "kind": "blocks",
+            "name": "the collapsed shed",
+            "at": [
+              -22,
+              18
+            ],
+            "blocks": [
+              [
+                0,
+                1,
+                0,
+                "minecraft:oak_planks"
+              ],
+              [
+                1,
+                1,
+                0,
+                "minecraft:oak_planks"
+              ],
+              [
+                3,
+                1,
+                0,
+                "minecraft:oak_planks"
+              ],
+              [
+                0,
+                1,
+                1,
+                "minecraft:oak_planks"
+              ],
+              [
+                0,
+                1,
+                3,
+                "minecraft:oak_planks"
+              ],
+              [
+                0,
+                2,
+                0,
+                "minecraft:oak_planks"
+              ],
+              [
+                3,
+                1,
+                3,
+                "minecraft:oak_fence"
+              ],
+              [
+                3,
+                2,
+                3,
+                "minecraft:oak_fence"
+              ],
+              [
+                1,
+                1,
+                2,
+                "minecraft:oak_stairs[facing=north]"
+              ],
+              [
+                2,
+                1,
+                2,
+                "minecraft:oak_stairs[facing=north]"
+              ],
+              [
+                1,
+                2,
+                1,
+                "minecraft:oak_slab[type=bottom]"
+              ],
+              [
+                2,
+                1,
+                1,
+                "minecraft:oak_slab[type=bottom]"
+              ],
+              [
+                3,
+                1,
+                1,
+                "minecraft:oak_slab[type=bottom]"
+              ]
+            ]
+          }
+        ],
+        "superseded_dressing_why": "Integration, 2026-10-02: the Old Orchard (data/old_orchard.json, tools/old_orchard.py, R9SO) was built in the same batch as this resident's place, with its own rows, press-house and cart track over the same ground (its bbox x2734-2805 z7036-7110 overlaps this dressing's x2786-2817 z7067-7101). The dedicated place owns the ground; this dressing is kept here unbuilt, not deleted, so the owner can choose it instead.",
+        "dressing_by": "data/old_orchard.json",
+        "siting_rule": "Moved 2026-10-02 (the owner's review of #107). A resident stands at least 128 blocks from every route path (data/route_paths.json; ENCOUNTER_DESIGN.md section 10's clear_of_path_blocks) and, from every activated Habitat Block, at least that block's spawn_range plus this resident's leash, so its fight never overlaps a nest's spawns. The nearest such ground in the same sub-region, outside every focus heart, standable (at most 3 of relief within 6) and above sea, whose translated dressing tools/resident_encounters_audit.py passes. tests/test_resident_siting.py holds all of it."
+      },
+      "superseded_location": {
+        "x": 2816,
+        "z": 7080,
+        "measured_surface_or_bed_y": 65.8,
+        "anchor": [
+          2816,
+          67,
+          7080
+        ],
+        "why_moved": "within an activated Habitat Block's spawn range plus its own leash"
+      }
     },
     {
       "id": "split_bark",
       "name": "Split-Bark",
       "species": "cobblemon:kleavor",
-      "level": 62,
+      "level": 63,
       "location": {
-        "x": 7360,
+        "x": 7380,
         "z": 7376,
-        "measured_surface_or_bed_y": 138.3,
+        "measured_surface_or_bed_y": 139.0,
         "y_rule": "fit feet to final exported surface; x/z authoritative"
       },
       "cost": {
@@ -300,11 +1833,135 @@
       "catch_rule": "catchable_after_gate",
       "build_brief": "Use Long Isle South elder clearing; split logs and scored bark only; trigger 20, leash 28. Replaces drowned Jungle West anchor.",
       "reward": "capture itself; no defeat item",
-      "status": "authored_not_placed"
+      "status": "built_not_placed",
+      "build": {
+        "yaw": 150.0,
+        "trigger": 20,
+        "leash": 28,
+        "appears_after": "champion_cleared",
+        "message": "Fresh splinters fall. Split-Bark steps out from the elder's shade.",
+        "sound": "minecraft:entity.player.attack.sweep",
+        "dressing": [
+          {
+            "kind": "log",
+            "name": "split log, bark half",
+            "from": [
+              4,
+              -9
+            ],
+            "dir": "z",
+            "length": 6,
+            "block": "minecraft:jungle_log"
+          },
+          {
+            "kind": "log",
+            "name": "split log, heart half",
+            "from": [
+              5,
+              -9
+            ],
+            "dir": "z",
+            "length": 6,
+            "block": "minecraft:stripped_jungle_log"
+          },
+          {
+            "kind": "log",
+            "name": "split log",
+            "from": [
+              7,
+              6
+            ],
+            "dir": "x",
+            "length": 5,
+            "block": "minecraft:stripped_jungle_log"
+          },
+          {
+            "kind": "post",
+            "name": "scored stump",
+            "at": [
+              10,
+              -2
+            ],
+            "blocks": [
+              "minecraft:stripped_jungle_wood",
+              "minecraft:jungle_wood"
+            ]
+          },
+          {
+            "kind": "post",
+            "name": "scored stump",
+            "at": [
+              -4,
+              11
+            ],
+            "blocks": [
+              "minecraft:stripped_jungle_wood"
+            ]
+          }
+        ],
+        "why": "Long Isle South's elder clearing (data/elder_trees.json elder_long_isle_south_3, 24 west; root flare 13): split logs and scored bark only, east of the root flare. Codex moved it here from the drowned Jungle West anchor (4464, 7312), which this build re-measured: ground y53 there and y53-54 on every column within 16, against sea level y62",
+        "anchor": [
+          7380,
+          140,
+          7376
+        ],
+        "ground_y": 139,
+        "anchor_why": "x/z are Codex's location, measured and kept (dry land, outside every town, placement and Rift zone footprint, off the route line: docs/world-building/RESIDENT_ENCOUNTERS.md 2); feet one above the rounded heightmap ground",
+        "bbox": [
+          7376,
+          7367,
+          7391,
+          7387
+        ],
+        "bbox_why": "every block the dressing writes and the anchor, inclusive [x0, z0, x1, z1]; R18R force-loads exactly this box",
+        "siting_rule": "Moved 2026-10-02 (the owner's review of #107). A resident stands at least 128 blocks from every route path (data/route_paths.json; ENCOUNTER_DESIGN.md section 10's clear_of_path_blocks) and, from every activated Habitat Block, at least that block's spawn_range plus this resident's leash, so its fight never overlaps a nest's spawns. The nearest such ground in the same sub-region, outside every focus heart, standable (at most 3 of relief within 6) and above sea, whose translated dressing tools/resident_encounters_audit.py passes. tests/test_resident_siting.py holds all of it.",
+        "level_why": "63, the owner 2026-10-02: Codex's 62 equalled Champion Blue's strongest (58-62), so a player between the Elite Four and the Champion held a cap of 62 and could catch it, 'exactly the window I did not want'. At 63 the level-cap refusal closes that window; the audit now errs, rather than notes, on any level within it."
+      },
+      "superseded_location": {
+        "x": 7360,
+        "z": 7376,
+        "measured_surface_or_bed_y": 138.3,
+        "anchor": [
+          7360,
+          139,
+          7376
+        ],
+        "why_moved": "within an activated Habitat Block's spawn range plus its own leash"
+      }
     }
   ],
   "findings": [
     "Offline jar inventory found species, model and animation resources for all ten in Cobblemon 1.8.0+1.21.1 jar sha256 a6228f3291c70ed6348b9a47beadabc79cb241b6522312e7e2b56d428dc9ec31; not observed in these resident placements.",
     "The approved Jungle West Split-Bark anchor (4464,7312) is below sea level on the canonical water heightmap: sub-region median y56, maximum y61. Long Isle South is actual jungle land in the same sparse southeast sector, so Split-Bark moves to (7360,7376)."
-  ]
+  ],
+  "build": {
+    "status": "built_not_placed 2026-10-02: generated by tools/resident_encounters.py into build/datapacks/cobblers_residents, audited offline by tools/resident_encounters_audit.py; re-application step R18R. Not applied to any world; nothing here was observed in game",
+    "tool": "tools/resident_encounters.py",
+    "audit": "tools/resident_encounters_audit.py",
+    "doc": "docs/world-building/RESIDENT_ENCOUNTERS.md",
+    "pack": "cobblers_residents",
+    "step": "R18R",
+    "namespace": "cobblers",
+    "folder": "residents",
+    "tag": "cobblers.res",
+    "dormant_tag": "cobblers.res_dormant",
+    "guardian_tag": "cobblers.guardian",
+    "objective": "cobblers.res",
+    "keeper": {
+      "period_ticks": 40,
+      "spawn_radius": 96,
+      "spawn_clear": 48,
+      "settle_margin": 16,
+      "home_tolerance": 1.0,
+      "guardian_search_margin": 8,
+      "why": "the Ursaluna keeper's 40-tick schedule loop and the gulch Megas' respawn clock (tools/gulch_mine.py megas/keep_*), one keep function per resident run only while its anchor's chunk is loaded. The clock is the game time the resident was first seen gone on two passes in a row (entities load a moment after their chunk), and only the keeper writes it. A resident comes back respawn ticks later, only when a player (holding its appears_after flag, if it has one) is within spawn_radius of the anchor and NO player is within spawn_clear, so it is never conjured in front of anyone. Awake, it settles back onto its spot asleep when no player is within leash + settle_margin"
+    },
+    "trigger_rule": "a STATE CHECK on the keeper's loop, the sleeping Celebi's and the Ursaluna's mechanism, never an advancement: while DORMANT (tag cobblers.res_dormant: NoAI, held on its spot, facing its yaw) the first non-spectator player within `trigger` blocks of the anchor wakes it (NoAI off, the message, the sound). Awake it moves under its own AI and Fight or Flight's GLOBAL config, which this pack never touches (rules.aggression); the leash teleports it back to the anchor whenever it is more than `leash` blocks out. Cobblemon 1.8.0 has no command that starts a battle with a wild Pokemon (data/ursaluna_cave.json wake.start_why), so 'trigger' is the wake, not a forced battle",
+    "appears_after_rule": "the record's gate is a PRESENCE gate where the brief says the resident appears after it (Wiremother: 'the resident appears after gym3_cleared'), and for every resident whose intended_stage is at or after its gate. It is not one for Old Jaw (intended_stage pre_gym_1 with gate gym1_cleared: the gate is its CATCH gate, the level-cap refusal, and the brief makes it the danger a fresh player meets) or Whiteback (gate null). A shared world resident cannot be hidden per player: the first time a player holding the flag comes within spawn_radius it appears FOR THE SERVER, and stays, as the woken Celebi stays for everyone (docs/mechanics/CELEBI_WAKE.md 5)",
+    "catch_rule_mechanism": "permanently_uncatchable: the spawn property `uncatchable` (EXP-023: holds across a restart; it cannot be cleared on a spawned Pokemon, data/sapling_celebi.json). Every other resident is catchable, and its gate on catching is the existing level-cap refusal (data/level_cap.json: a catch strictly above the thrower's RCT cap is refused), per thrower, so it holds in a shared world: each resident's level is above every cap a player can have before its gate and within the cap bound after it (data/trainers.json gym_ace_levels and the league's teams; tools/resident_encounters_audit.py recomputes this). Those caps are UPPER bounds: a player still owing a route trainer after the gate has a lower cap and is refused until they beat it",
+    "blackout_decision": "a resident that beats or kills a player is an ordinary wild victor to the blackout system (data/blackout.json claims): it makes the item claim and becomes that claim's guardian (tag cobblers.guardian), and beating, catching or killing it returns the items. It is NOT exempt like the gulch Megas (claims.exempt_tag cobblers.gm): Codex's old_jaw_blackout_check plans exactly this ('returned by defeating or catching the same guardian') and rules.keeper says recovery belongs to that exact Pokemon. So this pack never adds cobblers.gm and, from the moment a resident carries cobblers.guardian, never touches it again: no leash, no wake or settle, no teleport, no NBT merge and never a kill (the duplicate rule kills only tag=!cobblers.guardian). The blackout's own leash (claims.guardian_leash 24, to the claim's site) and maintenance own it. It still counts as present, so no second resident spawns beside it; and a guardian the blackout REBUILT (recovery/rebuild_as, which does not carry our tag) counts too, found by tag cobblers.guardian and species within leash + guardian_search_margin of the anchor. When it is beaten, caught or killed the claim settles and the respawn clock starts",
+    "drops_rule": "no loot drops: nothing in this pack gives, loots or summons an item, and the residents carry no reward record. Cobblemon's own species drop table is not touched and whether it fires on a battle knock-out is NOT VERIFIED (a world probe in the doc)",
+    "lighting": "dark by design: wild sites with no settlement, lit by nothing but the day (one lantern on River Grip's observation post)",
+    "sound_and_message_why": "placeholders in plain words; the voice is Codex's"
+  }
 }

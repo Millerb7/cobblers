@@ -22,6 +22,7 @@ import re
 from pathlib import Path
 
 import numpy as np
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 
 ROOT = Path(__file__).resolve().parent.parent
 SID = "displaced_city"
@@ -126,7 +127,7 @@ def commands(chosen):
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"))
+    p.add_argument("--source-root", default=env_source_root())
     p.parse_args(argv)
     x0, z0, floor, r = fields()
     chosen = pick(x0, z0, floor, r)

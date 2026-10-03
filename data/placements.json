@@ -3786,6 +3786,7 @@
       ],
       "footprint_from": "data/towns.json",
       "status": "drafted and laid out on the disposable world 2026-09-21 without the owner's review (batch 3); not in the live world; no traders",
+      "retired": "2026-10-02, decision B15 ('jungle isle should be removed', the owner 2026-09-27; and 2026-10-02 in game: 'jungle isle stuff still intrudes pacifidlog'). The Jungle Isle is under the sea since the water export, four of the six ruins' seats overlap Pacifidlog's raft town by 496 columns, and the old y126 seat of ruin_great_hall stood in staging as a dirt column y56-128. tools/reapply.py places() and donors() skip a retired settlement; its records are kept here as they were. The built residue is cleared by tools/clear_jungle_residue.py.",
       "plan": {
         "reading": "An overgrown causeway comes up from the north shore into the jungle and ends in a ruined court. The ruins are what is left of a stone city the jungle has taken: broken walls either side of the causeway, half sunk, and the great ruin at the court's south side. Nothing is lit and nothing is kept.",
         "entries": [
@@ -28193,6 +28194,93 @@
       ],
       "set_commands_why": "The template's summit chain (template x11-19, y77, z22, read from COBBLEVERSE-DP-v31 2026-10-02: docs/research/notes/legendary-catalogue-reopened.md section 1) spawns a level-80 Necrozma for WHOEVER steps on the summit plate and then fills itself with deepslate bricks: one spawn, for the whole server. Level 80 is above every cap until the Champion falls (100 after Blue, docs/mechanics/LEAGUE_LEVEL_CAP.md), so as shipped a player before the League would burn the server's only spawn on a Pokemon that breaks free from every ball. Each link is rewritten to run only when a player holding cobblers:flag/champion_cleared (data/progression.json, OUR flag, not Cobbleverse's) is within 12 of the chain; anyone else is told so and the chain survives. The levitation lift at the foot stays open to all, so the tower can be climbed and looked at before it can be woken. The spawn line keeps the template's own species, form, level, IVs and moves.",
       "needs": "enable-command-block=true in server.properties. The live server has false (lumymon-altars.md section 3). With false the lift does not lift and the summit does nothing: the tower is a 90-block landmark with no way up but climbing. That setting is the owner's call and is NOT changed by this record."
+    },
+    {
+      "id": "legendary_zapdos_tower",
+      "pack_template": "cobbleverse:legendary/zapdos",
+      "template": "cobbleverse:legendary/zapdos",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/cobbleverse/structure/legendary/zapdos.nbt",
+        "licence": "Cobbleverse, no redistribution: never copied into the repository. The pack is installed on the server, so the structure is placed by resource id."
+      },
+      "cell": "C1",
+      "kind": "donor",
+      "position": {
+        "x": 562,
+        "y": 74,
+        "z": 2614
+      },
+      "size": [
+        31,
+        66,
+        29
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "adopted_site": "adopted_zapdos_tower",
+      "chosen_because": "measured and argued in data/adopted_legendary_sites.json adopted_zapdos_tower: the flattest 31x29 on the windward cliffs, a 66-block silhouette 45 blocks from the sea with the skerries in front of it; Shrew Station (data/research_station.json) stands 170 blocks south to study it; scheduled 2026-10-02 once EXP-048 showed a raw-pasted LumyMon altar answers a player (experiments/EXP-048-legendary-altar/README.md), re-measured that day off tools/ground.py, rounded: the same ground, seat, top and portal clearance the site record states."
+    },
+    {
+      "id": "legendary_mew_temple",
+      "pack_template": "cobbleverse:mythical/mew",
+      "template": "cobbleverse:mythical/mew",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/cobbleverse/structure/mythical/mew.nbt",
+        "licence": "Cobbleverse, no redistribution: never copied into the repository. The pack is installed on the server, so the structure is placed by resource id."
+      },
+      "cell": "G8",
+      "kind": "donor",
+      "position": {
+        "x": 7604,
+        "y": 142,
+        "z": 7082
+      },
+      "size": [
+        37,
+        25,
+        39
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "adopted_site": "adopted_mew_temple",
+      "chosen_because": "measured and argued in data/adopted_legendary_sites.json adopted_mew_temple: the one 37x39 shelf of the Long Isle's jungle summit with zero cut and zero fill, the only jungle above the sea since the water export drowned the Jungle Isle; scheduled 2026-10-02 once EXP-048 showed a raw-pasted LumyMon altar answers a player (experiments/EXP-048-legendary-altar/README.md), re-measured that day off tools/ground.py, rounded: the same ground, seat, top and portal clearance the site record states."
+    },
+    {
+      "id": "legendary_moltres_tower",
+      "pack_template": "cobbleverse:legendary/moltres",
+      "template": "cobbleverse:legendary/moltres",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/cobbleverse/structure/legendary/moltres.nbt",
+        "licence": "Cobbleverse, no redistribution: never copied into the repository. The pack is installed on the server, so the structure is placed by resource id."
+      },
+      "cell": "F7",
+      "kind": "donor",
+      "position": {
+        "x": 6252,
+        "y": 168,
+        "z": 5344
+      },
+      "size": [
+        31,
+        64,
+        34
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "adopted_site": "adopted_moltres_tower",
+      "chosen_because": "measured and argued in data/adopted_legendary_sites.json adopted_moltres_tower: the least-disturbing 31x34 on the Craters' upper flanks, 389 blocks from Blaine's gym, completing the birds' trio with Articuno on Frostpeak and Zapdos on the western cliffs; scheduled 2026-10-02 once EXP-048 showed a raw-pasted LumyMon altar answers a player (experiments/EXP-048-legendary-altar/README.md), re-measured that day off tools/ground.py, rounded: the same ground, seat, top and portal clearance the site record states."
     }
   ]
 }

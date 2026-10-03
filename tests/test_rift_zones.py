@@ -13,7 +13,8 @@ blocks that meet only at a corner when both orthogonal corners are solid -- and 
 call every gatehouse in this repository connected and report nothing.
 
 WHAT IS INERT, AND THEREFORE NOT ASSERTED HERE. `cobblers_rift_zones` is in tools/reapply.py's EXCLUDED, R9Z
-places 6 of the 10 shells, z4 and z5 are held because `rift_crisis_resolved` has no setter on any branch, and
+places 6 of the 10 shells, z4 and z5 are held because nothing invokes `rift_crisis_resolved`'s setter (declared 2026-10-02, its
+release beat unbuilt: tests/test_rift_crisis_resolved.py), and
 every guard is an armour-stand placeholder. Nothing here asserts the system is installed, enabled or reachable
 in game, and a held zone is not a failure. `build` is allowed to exit 1 on its OWED dependencies; this file
 does not treat that as a problem either.
@@ -172,6 +173,20 @@ def voxels(text):
     return vox
 
 
+def shell_voxels(gate, text):
+    """voxels(text) without the gate's APPROACH columns: the shell alone, which is what this file measures.
+
+    Added 2026-10-02 by the implementer of the approach (minecraft-systems-dev), not by this file's author, and
+    flagged for review. Since then each gatehouse function also lays a run of columns straight on from each
+    mouth, one block up or down per column, so the walkway meets the ground (data/rift_zones.json
+    gatehouse.approach_why). Those columns are unroofed by design and change height, so the checks here, which
+    read one level and expect a roof, would read them as walkway. The columns are taken from the DATA (the
+    gate record's `approach`), never from the generator, and tests/test_rift_zones_apply.py walks the approach
+    itself, over the heightmap."""
+    skip = {(c[0], c[1]) for side in ("outer", "inner") for c in gate[2].get("approach", {}).get(side, [])}
+    return {k: b for k, b in voxels(text).items() if (k[0], k[2]) not in skip}
+
+
 def standable(vox, fy, open_blocks=()):
     """{(x, z)} a player can stand on with feet at fy: a solid floor at fy-1, fy and fy+1 both passable.
 
@@ -267,7 +282,7 @@ def axial(gate, c):
 def walkway_problems(gate, text):
     """The walkway is one 4-connected piece once the barrier is open, and it spans the gate."""
     fy, knock, name = gate[6][1], gate[6], gate[0]
-    cols = standable(voxels(text), fy, open_blocks=(BARRIER,))
+    cols = standable(shell_voxels(gate, text), fy, open_blocks=(BARRIER,))
     bad = []
     if not cols:
         return ["%s: no standable column at the walkway's own level y%d" % (name, fy)]
@@ -289,7 +304,7 @@ def walkway_problems(gate, text):
 def barrier_problems(gate, text):
     """The barrier is the only break: two pieces, the guard on the outer one, and one column of difference."""
     fy, name, q = gate[6][1], gate[0], tuple(gate[2]["block"])
-    vox = voxels(text)
+    vox = shell_voxels(gate, text)
     closed = standable(vox, fy)
     opened = standable(vox, fy, open_blocks=(BARRIER,))
     bad = []
@@ -308,7 +323,7 @@ def barrier_problems(gate, text):
 def place_problems(gate, text):
     """The arrival and the exit box are standable columns of the walkway, at the walkway's own level."""
     fy, name, arrive, ebox = gate[6][1], gate[0], gate[3], gate[5]
-    cols = standable(voxels(text), fy)
+    cols = standable(shell_voxels(gate, text), fy)
     ac = (int(arrive[0] - 0.5), int(arrive[2] - 0.5))
     ec = (ebox[0], ebox[2])
     bad = []
@@ -379,7 +394,7 @@ def test_the_barrier_is_the_only_break_in_every_gatehouse_walkway(gate):
 # so "they are all alike" is the property that says a fix reached every gate and not only the one looked at.
 @pytest.mark.xfail(recorded_break() is not None, strict=True, reason=recorded_break() or "")
 def test_the_seven_gatehouses_break_in_the_same_number_of_places_as_each_other():
-    counts = {g[0]: len(pieces(standable(voxels(emitted(g[0])), g[6][1]))) for g in GATES}
+    counts = {g[0]: len(pieces(standable(shell_voxels(g, emitted(g[0])), g[6][1]))) for g in GATES}
     assert len(set(counts.values())) == 1, "the gatehouses are not alike: %s" % counts
 
 
@@ -397,7 +412,7 @@ def test_every_gates_arrival_and_exit_box_sit_on_the_walkway_the_shell_builds(ga
 @pytest.mark.parametrize("gate", param("knock"))
 def test_every_knock_box_has_a_standable_column_on_the_guards_side_of_the_barrier(gate):
     fy, knock, q = gate[6][1], gate[6], tuple(gate[2]["block"])
-    cols = standable(voxels(emitted(gate[0])), fy)
+    cols = standable(shell_voxels(gate, emitted(gate[0])), fy)
     inside = {c for c in cols if knock[0] <= c[0] <= knock[3] and knock[2] <= c[1] <= knock[5]}
     assert inside, "%s: no standable column in the knock box %s at y%d" % (gate[0], knock, fy)
     outer = next(p for p in pieces(cols) if q in p)
@@ -412,7 +427,7 @@ def test_every_knock_box_has_a_standable_column_on_the_guards_side_of_the_barrie
 @pytest.mark.parametrize("gate", GATES, ids=NAMES)
 def test_every_guard_stands_on_a_standable_column_of_its_own_gatehouse(gate):
     fy, q = gate[6][1], tuple(gate[2]["block"])
-    assert q in standable(voxels(emitted(gate[0])), fy), (
+    assert q in standable(shell_voxels(gate, emitted(gate[0])), fy), (
         "%s: the guard's block %s is not standable at y%d" % (gate[0], q, fy))
     assert gate[2]["ground_y"] + 1 == fy, (
         "%s: the guard's feet level y%d is not its ground_y %d + 1" % (gate[0], fy, gate[2]["ground_y"]))
@@ -423,7 +438,7 @@ def test_every_guard_stands_on_a_standable_column_of_its_own_gatehouse(gate):
 @pytest.mark.parametrize("gate", GATES, ids=NAMES)
 def test_every_standable_walkway_column_is_roofed_at_the_designs_height(gate):
     fy = gate[6][1]
-    vox = voxels(emitted(gate[0]))
+    vox = shell_voxels(gate, emitted(gate[0]))
     roof = fy + GH["roof_at"]
     open_cols = [c for c in standable(vox, fy)
                  if vox.get((c[0], roof, c[1])) in (None, AIR)]

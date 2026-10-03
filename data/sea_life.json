@@ -1,0 +1,222 @@
+{
+  "schema": "cobblers.sea-life/1",
+  "status": "authored 2026-10-02; generated and checked offline by tools/sea_life.py, not applied to any world, nothing seen in game",
+  "builder": "tools/sea_life.py",
+  "audit": "tools/sea_life_audit.py (another hand's, independent of this tool's model; not written by the builder)",
+  "spec": "docs/mechanics/WATER_LIFE.md sections 3 (the shallows and shore water), 4 (shipwrecks and Rift debris) and 5 (the surfacing cave), from docs/mechanics/WATER_BUILD_PLAN.md 5.2 (the S0 row), 6.2 (the 'Underwater caves' row) and 7.2",
+  "seed": 20261003,
+  "ground": "tools/ground.py (the canonical heightmap, which IS the applied water export d1bc68d3..., rounded) and data/world.json's sea level; never a world. The water a column holds is water_mask's rule: under the sea where its ground is below the sea level and it is in no lake basin",
+  "sea_water": "water blocks fill a sea column from its ground + 1 up to the sea level (y62 is the surface block). 'Depth' is sea level - ground",
+
+  "exclusions": {
+    "why": "WATER_LIFE.md 'Excluded everywhere': towns and their margins, route corridors, bridges, docks, ferry lanes, every gate crossing's clearance, dive portals, the legendaries' sites, Relic Island's islet, Driftmouth Isle and the Seaward Drift's cover, Pacifidlog, the First Cast hole, the Deep and Victory Road. Found through the existing helpers wherever one exists (listed per part); the margins below are this pack's own and are the only numbers it adds",
+    "protect": "tools/water_shape.py build_protect on the water export's own input heightmap (data/world.json heightmap.water_shaped_from, sha-checked): towns + data/water_shape.json protect.town_margin_blocks, every data/routes.json corridor at road_half_width_blocks, bridges + bridge_margin_blocks, the Rift region grown and every column its sculpt changed, Victory Road's guide band, the islet's outline and the event sites (First Cast jetty, Viltri's platforms). Exactly the columns the water export would not shape",
+    "gate_lines": "tools/water_shape.py crossing_endpoints / to_town_endpoints on that same input heightmap, then gate_mask at data/water_shape.json coasts.gate_line_clearance_blocks: the lines the coast pass kept rest ground off. Inside it nothing this pack writes reaches within top_gap_blocks of the surface",
+    "lakes": "tools/water_shape.py build_lake_mask: every landmark's basin polygons. The lake pack (cobblers_lake_life) owns those",
+    "dock_margin_blocks": 40,
+    "dock_sources": "data/ferries.json docks (landing.at, else near) and data/ferry_docks.json docks (near, shore.at)",
+    "ferry_lane_half_width_blocks": 32,
+    "ferry_lane_sources": "data/ferries.json lines: consecutive stops of every line not marked retired, between the docks' points",
+    "portal_margin_blocks": 16,
+    "legendary_margin_blocks": 24,
+    "legendary_sources": "data/legendaries.json encounters (spawn_free_zone, mouth) and data/adopted_legendary_sites.json sites (placement centre and size)",
+    "placement_margin_blocks": 24,
+    "placement_sources": "data/placements.json placements with a position",
+    "pacifidlog_margin_blocks": 48,
+    "pacifidlog_source": "tools/water_shape.py resited_town (the folded data/sea_town.json plan, or its resite block through tools/sea_town.py before the fold): its deck cells, and data/towns.json sea_town's old footprint",
+    "first_cast_hole_margin_blocks": 8,
+    "relic_corridors": "tools/water_shape.py relic_corridor_mask (data/water_shape.json coasts.relic_corridors): kelp and wrecks stay off both Relic swim lines",
+    "sea_drift": "data/sea_drift.json: Driftmouth Isle's square out to its farthest stack, and every route leg widened by the tube, its cover (tools/sea_drift.py cover_blocks) and drift_margin_blocks",
+    "drift_margin_blocks": 24,
+    "the_deep": "data/rift_regions.json regions.the_deep bbox, grown by deep_margin_blocks (inside the Rift's protected region in any case)",
+    "deep_margin_blocks": 32,
+    "top_gap_blocks": 3,
+    "top_gap_why": "'no structure top within 2 of the surface inside the gate clearance': a top at sea - 3 leaves two blocks of water over it. Everything this pack writes in the sea keeps to it everywhere, so no find, rim or mast is ever a rest point anywhere, gate or not; kelp too (shore.kelp.max_top_below_surface 3, the lake pack's reading of WATER_LIFE.md \"never within 2 of the surface\")"
+  },
+
+  "shore": {
+    "coasts": [
+      {"id": "pallet_flats", "from": "data/water_shape.json coasts.flats", "kelp": true, "seagrass": true},
+      {"id": "route1_west_coast_flats", "from": "data/water_shape.json coasts.flats", "kelp": true, "seagrass": true},
+      {"id": "south_strand_flats", "from": "data/water_shape.json coasts.flats", "kelp": true, "seagrass": true},
+      {"id": "windward_skerries", "from": "data/water_shape.json coasts.skerries", "kelp": true, "seagrass": false},
+      {"id": "north_west_skerries", "from": "data/water_shape.json coasts.skerries", "kelp": true, "seagrass": false}
+    ],
+    "coasts_why": "the coasts the water export shaped, by their own boxes in data/water_shape.json; seagrass only on the sandy flats and runnels (the three flats), kelp on all five",
+    "kelp": {
+      "depth": [3, 12],
+      "from_land_blocks": 40,
+      "max_top_below_surface": 3,
+      "patch_scale_blocks": 22,
+      "patch_over": 0.58,
+      "density": 0.6,
+      "why": "kelp beds just past the wade line: 3+ deep (WATER_BUILD_PLAN 5.2: the runnels and the kelp edge are where the first water Pokemon are seen), within 40 blocks of land so they are seen swaying from the beach, in patches. Never within 2 of the surface: a top at most at sea - 2, and at sea - 3 inside a gate's clearance"
+    },
+    "seagrass": {
+      "depth": [1, 2],
+      "patch_scale_blocks": 12,
+      "patch_over": 0.5,
+      "density": 0.55,
+      "tall_share_at_2": 0.3,
+      "why": "seagrass on the flats and the runnels between the bars (1-2 deep); some tall where it is 2 deep"
+    },
+    "reef": {
+      "from": "data/water_shape.json coasts.relic_reef, its footprint by tools/water_shape.py reef_footprint",
+      "depth": [3, 14],
+      "corals": ["tube", "brain", "bubble", "fire", "horn"],
+      "mound_scale_blocks": 6,
+      "mound_over": 0.6,
+      "mound_why": "coral blocks one high on the platform's own ground: a block under another coral block can have no water beside it, and a coral block with no water on any face dies (checked on every block)",
+      "plant_density": 0.35,
+      "fan_density": 0.15,
+      "pickle_density": 0.04,
+      "why": "coral blocks in low mounds, coral, fans and sea pickles on the reef platform only (3 deep at the sunlit edge seen from the islet, to 12 and the drop-off). Every coral block touches water (checked); plants and fans are waterlogged. Whether coral lives in a biome that is not warm_ocean is NOT verified (WATER_LIFE.md 'Not verified', proof P6)"
+    },
+    "rock_pools": {
+      "coasts": ["windward_skerries", "north_west_skerries"],
+      "per_coast": 4,
+      "min_spacing_blocks": 140,
+      "interior_radius": 2.3,
+      "interior_ground_above_sea": [0, 1],
+      "point_land_share_max": 0.5,
+      "point_radius_blocks": 10,
+      "mainland_share_min": 0.3,
+      "mainland_radius_blocks": 40,
+      "rim": ["minecraft:mossy_cobblestone", "minecraft:cobblestone", "minecraft:andesite", "minecraft:stone", "minecraft:mossy_cobblestone"],
+      "why": "rock pools on the rocky points of the windward and north-west coasts: a rim of boulders built on the ground at the tide line, water held inside it, never a cut (WATER_LIFE.md Departures). A point is a tide-line column with little land round it close in (a headland's tip) and the mainland behind it (not a skerry). The coast here is a gentle slope, not a cliff: measured, see sea_cave.why"
+    },
+    "beached_wreck": {
+      "coast": "south_strand_flats",
+      "length": 15,
+      "half_width": 3,
+      "height": 4,
+      "ground_above_sea": [0, 2],
+      "max_relief": 2,
+      "search_step_blocks": 6,
+      "why": "a procedural hull lying on its side on the south strand's sand, touching the waterline, a barrel in it (the cache). Procedural, not a template (WATER_LIFE.md Departures)"
+    },
+    "sea_cave": {
+      "coast_box": "windward_skerries",
+      "length": 34,
+      "r": 1,
+      "height": 3,
+      "chamber": {"half": 2, "height": 4},
+      "shell": 4,
+      "export_tolerance": 1,
+      "min_rise_in_12": 6,
+      "descent": {"start_cells": 3, "run": 2, "floor_below_sea": 3, "water_clearance": 2,
+                  "why": "past its first start_cells the floor steps down one block every run cells to floor_below_sea under the sea level, so the roof is reached sooner on a gentle coast. Measured 2026-10-02 with a level floor at sea + 1: 26 of 34 cells were open cleft. No opened cell at or under the sea level has sea water within water_clearance blocks (checked), and every roofed cell has the full cover from the sea as from the air"},
+      "mainland_share_min": 0.35,
+      "mainland_radius_blocks": 32,
+      "clear_of_surfacing_cave_blocks": 300,
+      "why": "the waterline sea cave on the windward coast: a mouth at the tide line (its column's ground at sea or sea + 1, beside the sea), walked into on foot at S0, a short carved cave with a 4-thick written rock shell (Victory Road's checks: shell, walk-out, every floor cell reachable), a barrel at its end. FINDING (measured 2026-10-02 with tools/ground.py): the windward and north-west coasts have NO cliffs. Their mainland tide line rises at most about 10 blocks in the first 12 inland; the 15-20 rises are sea stacks. So the cave is sited where the mainland rises fastest (the tool ranks every tide-line column of the box by its rise and builds the first that passes every check), and its mouth is an open cleft (an open cut from the beach, its floor stepping down: see descent) until the rock over the roof is the shell plus the tolerance. A real cliff for its mouth is a height: the water export's next revision (WATER_LIFE.md Export flags)"
+    }
+  },
+
+  "finds": {
+    "bands": {
+      "surf": {"depth": [6, 35], "why": "Surf reach: at most 35 deep (WATER_LIFE.md section 4), S2+"},
+      "dive": {"depth": [36, 60], "why": "the rest: Dive only"}
+    },
+    "depth_of_a_find": "sea level - the lowest ground under its footprint",
+    "region_order": ["frostwater_shelf", "eastern_reach", "southern_shallows", "windward_deep"],
+    "region_order_why": "data/regions.json marine_regions overlap at the corners (their extents predate the coastline and were never re-measured); a site belongs to the first region in this order whose polygons hold it",
+    "vessels": {
+      "frostwater_shelf": {"surf": 4, "dive": 6},
+      "windward_deep": {"surf": 2, "dive": 6},
+      "eastern_reach": {"surf": 2, "dive": 5},
+      "southern_shallows": {"surf": 4, "dive": 5}
+    },
+    "vessel_kits": {
+      "default": ["rowboat", "fishing_boat", "fishing_boat", "two_master_broken"],
+      "southern_shallows": ["rowboat", "fishing_boat", "log_raft", "log_raft", "two_master_broken"]
+    },
+    "vessels_why": "the density rule per band and marine region: these counts, min_spacing_blocks apart, sited in seeded order on a grid_step_blocks grid. Pacifidlog's log rafts drift only in the south",
+    "grid_step_blocks": 32,
+    "min_spacing_blocks": 96,
+    "max_relief": 3,
+    "debris_lines": [
+      {"id": "west", "bearing_deg": 268, "count": 4},
+      {"id": "south", "bearing_deg": 172, "count": 5},
+      {"id": "east", "bearing_deg": 85, "count": 3},
+      {"id": "north", "bearing_deg": 355, "count": 2}
+    ],
+    "debris_lines_why": "four rays, one to each sea. Measured 2026-10-02: the north ray first reaches 32 deep at z124, so only two fit before the map's edge; the south ray has over a thousand blocks of deep water and carries five",
+    "debris_kits": ["house_broken", "rail_cart", "lamppost", "centre_sign", "garden_gate_mailbox", "bench", "bus_shelter"],
+    "debris_line_spacing_blocks": [40, 64],
+    "debris_line_jitter_blocks": 4,
+    "debris_line_min_depth": 32,
+    "debris_bands": ["dive"],
+    "debris_why": "Rift debris, things that do not belong, in lines that point back toward the Rift: each line is a ray from the Rift's centre (the area centroid of data/regions.json the_rift's polygons, computed at run time) and its finds lie on it, every one facing the Rift. A line starts where its ray first reaches debris_line_min_depth in the sea and takes only sites in debris_bands, so the debris is the deep find and the vessels carry the Surf quarter. Measured 2026-10-02: starting at 10 deep all fourteen landed on the shelves in Surf reach (share 0.52); starting at 32 with either band, eight did (0.39)",
+    "total": [40, 60],
+    "surf_share": [0.2, 0.32],
+    "cache_every": 4,
+    "cache_share": [0.18, 0.32],
+    "cache_why": "a barrel in about one find in four: a find whose seeded hash is 0 modulo cache_every carries one; the share is checked",
+    "hooks": {
+      "on": "surf",
+      "mast_max_above_base": 14,
+      "why": "every find in Surf reach carries a hook seen from above: a mast or a chimney rising toward the surface (its top at most sea - top_gap_blocks, so never a rest point), or a lantern still burning (waterlogged)"
+    },
+    "spawns": "none here. Dhelmise and any wreck-bound species come from position boxes or Habitat Blocks at the wrecks (WATER_BUILD_PLAN 7.2), which is the encounter tables' work, not this pack's"
+  },
+
+  "surfacing_cave": {
+    "id": "windward_surfacing_cave",
+    "display_name": "The Windward Sink",
+    "site": "the windward headland south of Viltri Light",
+    "site_why": "measured 2026-10-02 with tools/ground.py, west of the headland at z4540-4650: the land rises from the tide line at about x540 by about 3 blocks in 10 (y69 at x560, y75 at x580, y81 at x600, y90 at x630), the shelf off it is flat at y45-46 from x350 to x470, and its edge falls to y28-35 between x300 and x330. So the mouth sits on that drop at 20-40 deep, the passage runs under the shelf with its cover, rises under the coast and comes up into a chamber under ground at y77-86, and the hillside is steep enough (1 in 3) that a crack reaches open air a few blocks from the gallery's end. The Frostwater Shelf alternative was not needed. The tool re-measures every number below and fails closed",
+    "mouth": [318, 4580],
+    "route": [[318, 4580], [480, 4580], [480, 4600], [615, 4600]],
+    "route_why": "a dog-leg, so the underwater length from the surface to the pool is well over a Surf breath (computed at run time from data/blackout.json); the last leg ends under the chamber, where the passage rises into the pool",
+    "tube": {"r": 1, "height": 3},
+    "pool_level": 62,
+    "pool_why": "the pool's surface at the sea level: the chamber's air starts at y63, the pool is the passage's riser top",
+    "end_depth_under_pool": 4,
+    "chamber": {"centre": [615, 4600], "half_x": 4, "half_z": 4, "height": 4},
+    "galleries": [
+      {"id": "cache", "path": [[619, 4600], [642, 4600], [642, 4612]], "r": 1, "height": 3, "end": "cache"},
+      {"id": "view", "path": [[612, 4596], [612, 4584], [560, 4584]], "r": 1, "height": 3, "end": "crack", "trim_to_cover": true}
+    ],
+    "crack": {"block": "minecraft:glass", "rise_per_block": 1, "height": 2, "max_length": 16},
+    "crack_why": "the sealed view out: a two-high slit of glass running up and out from the view gallery's end through the hillside until it meets open air, so the sea is seen and nothing gets in. Glass is solid: no void reaches the outside",
+    "shell": 4,
+    "export_tolerance": 1,
+    "natural_seabed": 1,
+    "cover_why": "as the Seaward Drift (data/sea_drift.json cover): shell + export tolerance + one block of untouched natural ground, in every direction, between every cell this cave opens and the outside, except the mouth",
+    "max_mouth_cells": 16,
+    "mouth_lantern_offset": 3,
+    "lantern_every": 6,
+    "air": {
+      "vanilla_air_ticks": 300,
+      "vanilla_air_basis": "vanilla's maximum air supply (data/blackout.json air_warning_why: '20% of vanilla's 300')",
+      "surf_swim_blocks_per_second": 5,
+      "dive_swim_blocks_per_second": 10,
+      "swim_speed_basis": "RELAYED, not measured here: EXP-042 and docs/STATE.md (Surf or sprint swim about 5 blocks a second, Dive about 10)",
+      "rule": "the underwater length from the open surface to the pool (down to the mouth, along the passage's centre line, up the riser) must exceed what a Surf player swims before the knockout: data/blackout.json water.surf_bonus_ticks + vanilla_air_ticks + one water.pulse_ticks (the second hit), at surf_swim_blocks_per_second. Read at run time, never restated"
+    }
+  },
+
+  "palette": {
+    "rock_upper": ["minecraft:stone", "minecraft:stone", "minecraft:andesite", "minecraft:tuff"],
+    "rock_lower": ["minecraft:deepslate", "minecraft:deepslate", "minecraft:tuff", "minecraft:cobbled_deepslate"],
+    "rock_split_y": 48,
+    "rock_why": "the Seaward Drift's two rock palettes (data/sea_drift.json palette), the same split",
+    "hull": ["minecraft:spruce_planks", "minecraft:spruce_planks", "minecraft:dark_oak_planks", "minecraft:oak_planks"],
+    "hull_why": "weathered planks; no sand anywhere (sand is a spawn condition: data/spawn_blocks.json sandygast, palossand)"
+  },
+
+  "caches": {
+    "surf_find": {"contents": [{"item": "cobblemon:great_ball", "count": 2}, {"item": "cobblemon:potion", "count": 2}],
+                  "message": "In the barrel in the wreck: two Great Balls and two Potions."},
+    "dive_find": {"contents": [{"item": "cobblemon:net_ball", "count": 3}, {"item": "cobblemon:super_potion", "count": 1}],
+                  "message": "In the barrel on the sea floor: three Net Balls and a Super Potion."},
+    "beached_wreck": {"contents": [{"item": "cobblemon:net_ball", "count": 2}, {"item": "cobblemon:oran_berry", "count": 3}],
+                      "message": "In the barrel in the beached hull: two Net Balls and three Oran Berries."},
+    "sea_cave": {"contents": [{"item": "cobblemon:great_ball", "count": 2}, {"item": "cobblemon:revive", "count": 1}],
+                 "message": "In the barrel at the back of the sea cave: two Great Balls and a Revive."},
+    "surfacing_cave": {"contents": [{"item": "cobblemon:water_stone", "count": 1}, {"item": "cobblemon:revive", "count": 2}],
+                       "message": "In the barrel at the end of the dry gallery: a Water Stone and two Revives."},
+    "why": "ADR-002 caches as the sea drift's: the barrel is scenery, the reward an advancement on reaching its trigger box, per player and once. Every item is one another record in data/rewards.json already verified against its jar (checked by records). The amounts are placeholders for trainer-balance-designer"
+  }
+}

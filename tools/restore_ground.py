@@ -28,6 +28,7 @@ from pathlib import Path
 import function_limits
 import ground as G
 import place_town
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -121,7 +122,7 @@ def cavern_commands(settlement, g, headroom):
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("settlement")
-    p.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"))
+    p.add_argument("--source-root", default=env_source_root())
     p.add_argument("--out", default=str(ROOT / "build" / "datapacks" / "cobblers_restore"))
     p.add_argument("--headroom", type=int, default=48,
                    help="blocks of air above the ground; the League stands 159 tall, so it needs about 170")

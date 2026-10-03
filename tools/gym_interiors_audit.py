@@ -47,6 +47,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 
 import place_donor  # noqa: E402
 import place_town  # noqa: E402
@@ -325,7 +326,7 @@ def audit(pack, source_root=None):
 
     # ---- each built gym -----------------------------------------------------------------------------------------
     import ground as G
-    ground = G.Ground(source_root or os.environ.get("COBBLERS_SOURCE_ROOT"))
+    ground = G.Ground(source_root or env_source_root())
 
     for gym in built:
         gid = gym["id"]
@@ -605,7 +606,7 @@ def cell_range(box):
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--pack", default=str(PACK))
-    p.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"))
+    p.add_argument("--source-root", default=env_source_root())
     a = p.parse_args(argv)
     problems, total = audit(Path(a.pack), a.source_root)
     for pr in problems:

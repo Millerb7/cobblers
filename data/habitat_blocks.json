@@ -5050,83 +5050,98 @@
     },
     {
       "id": "elder_jungle_west_1",
-      "place": "the jungle elder elder_jungle_west_1: inside its trunk, low, forest floor to the first storey",
+      "place": "the jungle elder (moved to Long Isle south 2026-10-02) elder_jungle_west_1: inside its trunk, low, forest floor to the first storey",
       "pool": "cobblers:elder_jungle_west_1",
       "style": "activated",
       "replace_spawns": false,
       "position": {
+        "x": 7576,
+        "y": 118,
+        "z": 7824
+      },
+      "mimic": "minecraft:jungle_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 5
+      },
+      "status": "placed",
+      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 5 of the tree's bird alive within 16 blocks of it (see below), refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md. Tropius keeps 5 per block, 20 in the tree: 32 of a Pokemon this large would crowd one trunk (SAPLING_BIRDS.md plan v2, balance review).",
+      "superseded_position": {
         "x": 4464,
         "y": 82,
         "z": 7312
-      },
-      "mimic": "minecraft:jungle_log",
-      "activated": {
-        "spawn_range": 16,
-        "chance": 1.0,
-        "trigger": "TICK",
-        "cancel_range": -1,
-        "max_spawns_per_activation": 2,
-        "max_spawns": 5
-      },
-      "status": "placed",
-      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 5 of the tree's bird alive within 16 blocks of it (see below), refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md. Tropius keeps 5 per block, 20 in the tree: 32 of a Pokemon this large would crowd one trunk (SAPLING_BIRDS.md plan v2, balance review)."
+      }
     },
     {
       "id": "elder_jungle_west_1_mid",
-      "place": "the jungle elder elder_jungle_west_1: inside its trunk, middle, the storeys",
+      "place": "the jungle elder (moved to Long Isle south 2026-10-02) elder_jungle_west_1: inside its trunk, middle, the storeys",
       "pool": "cobblers:elder_jungle_west_1",
       "style": "activated",
       "replace_spawns": false,
       "position": {
+        "x": 7576,
+        "y": 141,
+        "z": 7824
+      },
+      "mimic": "minecraft:jungle_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 5
+      },
+      "status": "placed",
+      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 5 of the tree's bird alive within 16 blocks of it (see below), refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md. Tropius keeps 5 per block, 20 in the tree: 32 of a Pokemon this large would crowd one trunk (SAPLING_BIRDS.md plan v2, balance review).",
+      "superseded_position": {
         "x": 4464,
         "y": 105,
         "z": 7312
-      },
-      "mimic": "minecraft:jungle_log",
-      "activated": {
-        "spawn_range": 16,
-        "chance": 1.0,
-        "trigger": "TICK",
-        "cancel_range": -1,
-        "max_spawns_per_activation": 2,
-        "max_spawns": 5
-      },
-      "status": "placed",
-      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 5 of the tree's bird alive within 16 blocks of it (see below), refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md. Tropius keeps 5 per block, 20 in the tree: 32 of a Pokemon this large would crowd one trunk (SAPLING_BIRDS.md plan v2, balance review)."
+      }
     },
     {
       "id": "elder_jungle_west_1_crown",
-      "place": "the jungle elder elder_jungle_west_1: inside its trunk, top, the upper limbs and crown",
+      "place": "the jungle elder (moved to Long Isle south 2026-10-02) elder_jungle_west_1: inside its trunk, top, the upper limbs and crown",
       "pool": "cobblers:elder_jungle_west_1",
       "style": "activated",
       "replace_spawns": false,
       "position": {
+        "x": 7576,
+        "y": 164,
+        "z": 7824
+      },
+      "mimic": "minecraft:jungle_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 5
+      },
+      "status": "placed",
+      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 5 of the tree's bird alive within 16 blocks of it (see below), refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md. Tropius keeps 5 per block, 20 in the tree: 32 of a Pokemon this large would crowd one trunk (SAPLING_BIRDS.md plan v2, balance review).",
+      "superseded_position": {
         "x": 4464,
         "y": 128,
         "z": 7312
-      },
-      "mimic": "minecraft:jungle_log",
-      "activated": {
-        "spawn_range": 16,
-        "chance": 1.0,
-        "trigger": "TICK",
-        "cancel_range": -1,
-        "max_spawns_per_activation": 2,
-        "max_spawns": 5
-      },
-      "status": "placed",
-      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 5 of the tree's bird alive within 16 blocks of it (see below), refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md. Tropius keeps 5 per block, 20 in the tree: 32 of a Pokemon this large would crowd one trunk (SAPLING_BIRDS.md plan v2, balance review)."
+      }
     },
     {
       "id": "elder_jungle_west_1_top",
-      "place": "the jungle elder elder_jungle_west_1: inside its crown's leaves, the crown top",
+      "place": "the jungle elder (moved to Long Isle south 2026-10-02) elder_jungle_west_1: inside its crown's leaves, the crown top",
       "pool": "cobblers:elder_jungle_west_1",
       "style": "activated",
       "replace_spawns": false,
       "position": {
-        "x": 4464,
-        "y": 144,
-        "z": 7312
+        "x": 7576,
+        "y": 180,
+        "z": 7824
       },
       "mimic": "minecraft:jungle_leaves",
       "activated": {
@@ -5138,248 +5153,303 @@
         "max_spawns": 5
       },
       "status": "placed",
-      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 5 of the tree's bird alive within 16 blocks of it (see below), refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md. Tropius keeps 5 per block, 20 in the tree: 32 of a Pokemon this large would crowd one trunk (SAPLING_BIRDS.md plan v2, balance review)."
+      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 5 of the tree's bird alive within 16 blocks of it (see below), refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md. Tropius keeps 5 per block, 20 in the tree: 32 of a Pokemon this large would crowd one trunk (SAPLING_BIRDS.md plan v2, balance review).",
+      "superseded_position": {
+        "x": 4464,
+        "y": 144,
+        "z": 7312
+      }
     },
     {
       "id": "elder_jungle_west_2",
-      "place": "the jungle elder elder_jungle_west_2: inside its trunk, low, forest floor to the first storey",
+      "place": "the jungle elder (moved to Long Isle south 2026-10-02) elder_jungle_west_2: inside its trunk, low, forest floor to the first storey",
       "pool": "cobblers:elder_jungle_west_2",
       "style": "activated",
       "replace_spawns": false,
       "position": {
+        "x": 6928,
+        "y": 91,
+        "z": 7576
+      },
+      "mimic": "minecraft:jungle_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 8
+      },
+      "status": "placed",
+      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md.",
+      "superseded_position": {
         "x": 4968,
         "y": 138,
         "z": 7416
-      },
-      "mimic": "minecraft:jungle_log",
-      "activated": {
-        "spawn_range": 16,
-        "chance": 1.0,
-        "trigger": "TICK",
-        "cancel_range": -1,
-        "max_spawns_per_activation": 2,
-        "max_spawns": 8
-      },
-      "status": "placed",
-      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md."
+      }
     },
     {
       "id": "elder_jungle_west_2_mid",
-      "place": "the jungle elder elder_jungle_west_2: inside its trunk, middle, the storeys",
+      "place": "the jungle elder (moved to Long Isle south 2026-10-02) elder_jungle_west_2: inside its trunk, middle, the storeys",
       "pool": "cobblers:elder_jungle_west_2",
       "style": "activated",
       "replace_spawns": false,
       "position": {
+        "x": 6928,
+        "y": 114,
+        "z": 7576
+      },
+      "mimic": "minecraft:jungle_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 8
+      },
+      "status": "placed",
+      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md.",
+      "superseded_position": {
         "x": 4968,
         "y": 161,
         "z": 7416
-      },
-      "mimic": "minecraft:jungle_log",
-      "activated": {
-        "spawn_range": 16,
-        "chance": 1.0,
-        "trigger": "TICK",
-        "cancel_range": -1,
-        "max_spawns_per_activation": 2,
-        "max_spawns": 8
-      },
-      "status": "placed",
-      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md."
+      }
     },
     {
       "id": "elder_jungle_west_2_crown",
-      "place": "the jungle elder elder_jungle_west_2: inside its trunk, top, the upper limbs and crown",
+      "place": "the jungle elder (moved to Long Isle south 2026-10-02) elder_jungle_west_2: inside its trunk, top, the upper limbs and crown",
       "pool": "cobblers:elder_jungle_west_2",
       "style": "activated",
       "replace_spawns": false,
       "position": {
+        "x": 6928,
+        "y": 137,
+        "z": 7576
+      },
+      "mimic": "minecraft:jungle_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 8
+      },
+      "status": "placed",
+      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md.",
+      "superseded_position": {
         "x": 4968,
         "y": 184,
         "z": 7416
-      },
-      "mimic": "minecraft:jungle_log",
-      "activated": {
-        "spawn_range": 16,
-        "chance": 1.0,
-        "trigger": "TICK",
-        "cancel_range": -1,
-        "max_spawns_per_activation": 2,
-        "max_spawns": 8
-      },
-      "status": "placed",
-      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md."
+      }
     },
     {
       "id": "elder_jungle_west_2_top",
-      "place": "the jungle elder elder_jungle_west_2: inside its crown's leaves, the crown top",
+      "place": "the jungle elder (moved to Long Isle south 2026-10-02) elder_jungle_west_2: inside its crown's leaves, the crown top",
       "pool": "cobblers:elder_jungle_west_2",
       "style": "activated",
       "replace_spawns": false,
       "position": {
+        "x": 6928,
+        "y": 153,
+        "z": 7576
+      },
+      "mimic": "minecraft:jungle_leaves",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 8
+      },
+      "status": "placed",
+      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md.",
+      "superseded_position": {
         "x": 4968,
         "y": 200,
         "z": 7416
-      },
-      "mimic": "minecraft:jungle_leaves",
-      "activated": {
-        "spawn_range": 16,
-        "chance": 1.0,
-        "trigger": "TICK",
-        "cancel_range": -1,
-        "max_spawns_per_activation": 2,
-        "max_spawns": 8
-      },
-      "status": "placed",
-      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md."
+      }
     },
     {
       "id": "elder_jungle_east_1",
-      "place": "the jungle elder elder_jungle_east_1: inside its trunk, low, forest floor to the first storey",
+      "place": "the jungle elder (moved to Long Isle south 2026-10-02) elder_jungle_east_1: inside its trunk, low, forest floor to the first storey",
       "pool": "cobblers:elder_jungle_east_1",
       "style": "activated",
       "replace_spawns": false,
       "position": {
+        "x": 8092,
+        "y": 96,
+        "z": 6724
+      },
+      "mimic": "minecraft:jungle_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 8
+      },
+      "status": "placed",
+      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md.",
+      "superseded_position": {
         "x": 5216,
         "y": 93,
         "z": 7904
-      },
-      "mimic": "minecraft:jungle_log",
-      "activated": {
-        "spawn_range": 16,
-        "chance": 1.0,
-        "trigger": "TICK",
-        "cancel_range": -1,
-        "max_spawns_per_activation": 2,
-        "max_spawns": 8
-      },
-      "status": "placed",
-      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md."
+      }
     },
     {
       "id": "elder_jungle_east_1_mid",
-      "place": "the jungle elder elder_jungle_east_1: inside its trunk, middle, the storeys",
+      "place": "the jungle elder (moved to Long Isle south 2026-10-02) elder_jungle_east_1: inside its trunk, middle, the storeys",
       "pool": "cobblers:elder_jungle_east_1",
       "style": "activated",
       "replace_spawns": false,
       "position": {
+        "x": 8092,
+        "y": 119,
+        "z": 6724
+      },
+      "mimic": "minecraft:jungle_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 8
+      },
+      "status": "placed",
+      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md.",
+      "superseded_position": {
         "x": 5216,
         "y": 116,
         "z": 7904
-      },
-      "mimic": "minecraft:jungle_log",
-      "activated": {
-        "spawn_range": 16,
-        "chance": 1.0,
-        "trigger": "TICK",
-        "cancel_range": -1,
-        "max_spawns_per_activation": 2,
-        "max_spawns": 8
-      },
-      "status": "placed",
-      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md."
+      }
     },
     {
       "id": "elder_jungle_east_1_crown",
-      "place": "the jungle elder elder_jungle_east_1: inside its trunk, top, the upper limbs and crown",
+      "place": "the jungle elder (moved to Long Isle south 2026-10-02) elder_jungle_east_1: inside its trunk, top, the upper limbs and crown",
       "pool": "cobblers:elder_jungle_east_1",
       "style": "activated",
       "replace_spawns": false,
       "position": {
+        "x": 8092,
+        "y": 142,
+        "z": 6724
+      },
+      "mimic": "minecraft:jungle_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 8
+      },
+      "status": "placed",
+      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md.",
+      "superseded_position": {
         "x": 5216,
         "y": 139,
         "z": 7904
-      },
-      "mimic": "minecraft:jungle_log",
-      "activated": {
-        "spawn_range": 16,
-        "chance": 1.0,
-        "trigger": "TICK",
-        "cancel_range": -1,
-        "max_spawns_per_activation": 2,
-        "max_spawns": 8
-      },
-      "status": "placed",
-      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md."
+      }
     },
     {
       "id": "elder_jungle_east_1_top",
-      "place": "the jungle elder elder_jungle_east_1: inside its crown's leaves, the crown top",
+      "place": "the jungle elder (moved to Long Isle south 2026-10-02) elder_jungle_east_1: inside its crown's leaves, the crown top",
       "pool": "cobblers:elder_jungle_east_1",
       "style": "activated",
       "replace_spawns": false,
       "position": {
+        "x": 8092,
+        "y": 158,
+        "z": 6724
+      },
+      "mimic": "minecraft:jungle_leaves",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 8
+      },
+      "status": "placed",
+      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md.",
+      "superseded_position": {
         "x": 5216,
         "y": 155,
         "z": 7904
-      },
-      "mimic": "minecraft:jungle_leaves",
-      "activated": {
-        "spawn_range": 16,
-        "chance": 1.0,
-        "trigger": "TICK",
-        "cancel_range": -1,
-        "max_spawns_per_activation": 2,
-        "max_spawns": 8
-      },
-      "status": "placed",
-      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md."
+      }
     },
     {
       "id": "elder_jungle_east_2",
-      "place": "the jungle elder elder_jungle_east_2: inside its trunk, low, forest floor to the first storey",
+      "place": "the jungle elder (moved to Long Isle south 2026-10-02) elder_jungle_east_2: inside its trunk, low, forest floor to the first storey",
       "pool": "cobblers:elder_jungle_east_2",
       "style": "activated",
       "replace_spawns": false,
       "position": {
+        "x": 7760,
+        "y": 146,
+        "z": 7072
+      },
+      "mimic": "minecraft:jungle_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 8
+      },
+      "status": "placed",
+      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md.",
+      "superseded_position": {
         "x": 5248,
         "y": 89,
         "z": 6976
-      },
-      "mimic": "minecraft:jungle_log",
-      "activated": {
-        "spawn_range": 16,
-        "chance": 1.0,
-        "trigger": "TICK",
-        "cancel_range": -1,
-        "max_spawns_per_activation": 2,
-        "max_spawns": 8
-      },
-      "status": "placed",
-      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md."
+      }
     },
     {
       "id": "elder_jungle_east_2_mid",
-      "place": "the jungle elder elder_jungle_east_2: inside its trunk, middle, the storeys",
+      "place": "the jungle elder (moved to Long Isle south 2026-10-02) elder_jungle_east_2: inside its trunk, middle, the storeys",
       "pool": "cobblers:elder_jungle_east_2",
       "style": "activated",
       "replace_spawns": false,
       "position": {
+        "x": 7760,
+        "y": 169,
+        "z": 7072
+      },
+      "mimic": "minecraft:jungle_log",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 8
+      },
+      "status": "placed",
+      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md.",
+      "superseded_position": {
         "x": 5248,
         "y": 112,
         "z": 6976
-      },
-      "mimic": "minecraft:jungle_log",
-      "activated": {
-        "spawn_range": 16,
-        "chance": 1.0,
-        "trigger": "TICK",
-        "cancel_range": -1,
-        "max_spawns_per_activation": 2,
-        "max_spawns": 8
-      },
-      "status": "placed",
-      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md."
+      }
     },
     {
       "id": "elder_jungle_east_2_crown",
-      "place": "the jungle elder elder_jungle_east_2: inside its trunk, top, the upper limbs and crown",
+      "place": "the jungle elder (moved to Long Isle south 2026-10-02) elder_jungle_east_2: inside its trunk, top, the upper limbs and crown",
       "pool": "cobblers:elder_jungle_east_2",
       "style": "activated",
       "replace_spawns": false,
       "position": {
-        "x": 5248,
-        "y": 135,
-        "z": 6976
+        "x": 7760,
+        "y": 192,
+        "z": 7072
       },
       "mimic": "minecraft:jungle_log",
       "activated": {
@@ -5391,18 +5461,23 @@
         "max_spawns": 8
       },
       "status": "placed",
-      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md."
+      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md.",
+      "superseded_position": {
+        "x": 5248,
+        "y": 135,
+        "z": 6976
+      }
     },
     {
       "id": "elder_jungle_east_2_top",
-      "place": "the jungle elder elder_jungle_east_2: inside its crown's leaves, the crown top",
+      "place": "the jungle elder (moved to Long Isle south 2026-10-02) elder_jungle_east_2: inside its crown's leaves, the crown top",
       "pool": "cobblers:elder_jungle_east_2",
       "style": "activated",
       "replace_spawns": false,
       "position": {
-        "x": 5248,
-        "y": 151,
-        "z": 6976
+        "x": 7760,
+        "y": 208,
+        "z": 7072
       },
       "mimic": "minecraft:jungle_leaves",
       "activated": {
@@ -5414,7 +5489,12 @@
         "max_spawns": 8
       },
       "status": "placed",
-      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md."
+      "why": "One of four activated blocks up this elder's centre column: ground + 12, + 35 and + 58 in the solid trunk core (log to ground + 59 in every elder prefab as seated) and + 74 inside the crown's leaves (leaves from + 63 to + 81 at every elder's centre, staging probe 2026-09-26; the crown's top surface is + 81/+ 82, which the top block's 16-block reach covers). A nest, not a share of the forest's spawns (the owner, 2026-09-26: 'a person [should] see and feel like a sapling belongs to a species'; 'at least 20 ... spread vertically along the tree'; 'increasing spawn rates could help, and making sure we have spawns at the top of the tree'). Each block keeps up to 8 of the tree's bird alive within 16 blocks of it, about 32 per tree, refilling up to 2 at a time as birds are caught or despawn: Cobblemon 1.8.0's activated style counts only its spawned entities that still exist. Activated blocks do not cancel each other, unlike overlapping natural ReplaceSpawns blocks (EXP-021). Staging, 2026-09-26: the three-block nest (7 each) held 23 Fletchling round the birch at (1730, 3960), most of them drifting to the forest floor within a minute; Cobblemon has no perching behaviour, and the owner kept the birds' own behaviour. Pool and bird: docs/world-building/SAPLING_BIRDS.md.",
+      "superseded_position": {
+        "x": 5248,
+        "y": 151,
+        "z": 6976
+      }
     },
     {
       "id": "elder_long_isle_north_1",
@@ -7030,16 +7110,25 @@
       "id": "ursaluna_den_outskirts_ward",
       "place": "the Ursaluna's den west of Highwire, the slope in front of the mouth (data/ursaluna_cave.json)",
       "pool": "cobblers:ursaluna_den_outskirts",
-      "style": "natural",
-      "replace_spawns": true,
-      "range_of_influence": 20,
+      "style": "activated",
+      "replace_spawns": false,
       "position": {
         "x": 1514,
         "y": 158,
         "z": 1424
       },
+      "mimic": "minecraft:stone",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 4
+      },
       "status": "planned",
-      "why": "Teddiursa on the den's outskirts (the owner, 2026-10-02). Set in the ground's own top block on the cave's axis 14 blocks out from the mouth (tools/ground.py: y158), so its range of 20 covers the slope a player climbs to the opening and the first few blocks of the passage, and stops well short of the hall and the den. The nearest other Habitat Block is 360 blocks away (the Mt Vessu sapling, activated), so nothing overlaps."
+      "why": "Teddiursa on the den's outskirts (the owner, 2026-10-02). ACTIVATED since the owner walked the slope the same day and 'didnt see ... many teddiursa spawns': as a natural ReplaceSpawns block (range 20) it only swapped the species natural spawning happened to pick, and staging measured 0 Pokemon within 32 of it. Activated, it keeps up to 4 Teddiursa (data/ursaluna_cave.json teddiursa.group) alive within 16 blocks, refilling 2 at a time as they are caught or despawn, the elder nests' and Driftmouth Isle's settings (spawn_range 16, chance 1.0, TICK). cancel_range -1, as on the elders: the tri-peaks' own spawns continue round it; the cubs are added, not substituted. Kept at the SAME position, in the ground's own top block on the cave's axis 14 blocks out from the mouth (tools/ground.py: y158), so the activated placement's first setblock (the mimic) overwrites the natural block already there on staging and no stale one is left. Its 16 reach the mouth (15.0 away, from the block centre to the mouth's standing block) and stop 39 blocks short of the hall (55.4 away, tools/ursaluna_cave_audit.py), far outside the bear's wake. Mimic: grass, the hill's own skin as data/ursaluna_cave.json describes it (keep_natural_top_why), NOT read from a world; if the slope there is another block, this one field changes. Activated blocks cancel nothing and are cancelled by nothing (EXP-021), and the nearest other Habitat Block is 360 blocks away.",
+      "mimic_why": "the den's rocky apron: probed in staging 2026-10-02, the 24 columns round this block at y158 are 10 stone, 8 cobblestone and 6 other; a grass_block disguise set the same day read as a lone grass tile there. Stone is also what this block was before (no mimic set, the default; MimicId minecraft:stone read off it that morning)."
     },
     {
       "id": "driftmouth_stack_ne_high",
@@ -7048,9 +7137,9 @@
       "style": "activated",
       "replace_spawns": false,
       "position": {
-        "x": 364,
+        "x": 372,
         "y": 58,
-        "z": 1558
+        "z": 1762
       },
       "mimic": "minecraft:andesite",
       "activated": {
@@ -7071,9 +7160,9 @@
       "style": "activated",
       "replace_spawns": false,
       "position": {
-        "x": 364,
-        "y": 36,
-        "z": 1558
+        "x": 372,
+        "y": 53,
+        "z": 1762
       },
       "mimic": "minecraft:andesite",
       "activated": {
@@ -7094,9 +7183,9 @@
       "style": "activated",
       "replace_spawns": false,
       "position": {
-        "x": 308,
+        "x": 300,
         "y": 58,
-        "z": 1558
+        "z": 1762
       },
       "mimic": "minecraft:andesite",
       "activated": {
@@ -7117,9 +7206,9 @@
       "style": "activated",
       "replace_spawns": false,
       "position": {
-        "x": 308,
-        "y": 35,
-        "z": 1558
+        "x": 300,
+        "y": 38,
+        "z": 1762
       },
       "mimic": "minecraft:andesite",
       "activated": {
@@ -7140,9 +7229,9 @@
       "style": "activated",
       "replace_spawns": false,
       "position": {
-        "x": 308,
+        "x": 300,
         "y": 58,
-        "z": 1614
+        "z": 1834
       },
       "mimic": "minecraft:andesite",
       "activated": {
@@ -7163,9 +7252,9 @@
       "style": "activated",
       "replace_spawns": false,
       "position": {
-        "x": 308,
-        "y": 36,
-        "z": 1614
+        "x": 300,
+        "y": 45,
+        "z": 1834
       },
       "mimic": "minecraft:andesite",
       "activated": {
@@ -7186,9 +7275,9 @@
       "style": "activated",
       "replace_spawns": false,
       "position": {
-        "x": 364,
+        "x": 372,
         "y": 58,
-        "z": 1614
+        "z": 1834
       },
       "mimic": "minecraft:andesite",
       "activated": {
@@ -7209,9 +7298,9 @@
       "style": "activated",
       "replace_spawns": false,
       "position": {
-        "x": 364,
-        "y": 37,
-        "z": 1614
+        "x": 372,
+        "y": 57,
+        "z": 1834
       },
       "mimic": "minecraft:andesite",
       "activated": {
@@ -7234,7 +7323,7 @@
       "position": {
         "x": 336,
         "y": 58,
-        "z": 1606
+        "z": 1820
       },
       "mimic": "minecraft:andesite",
       "activated": {
@@ -7257,7 +7346,7 @@
       "position": {
         "x": 336,
         "y": 58,
-        "z": 1566
+        "z": 1776
       },
       "mimic": "minecraft:andesite",
       "activated": {
@@ -7270,6 +7359,125 @@
       },
       "status": "planned",
       "why": "data/sea_drift.json waters: written by tools/sea_drift.py records --write from its model, in rock its island pass writes (the mimic is that rock). Keeps up to 3 of the isle's water roster alive within 16 and cancels the pack's natural spawns within 16 (the Magikarp). In-water activated spawning is not verified"
+    },
+    {
+      "id": "lopunny_superfan_cellar_ward",
+      "place": "the Lopunny superfan's Buneary cellar on the South Pine Isle (data/lopunny_house.json): the middle of the cellar floor",
+      "pool": "cobblers:lopunny_superfan_cellar",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6950,
+        "y": 112,
+        "z": 1360
+      },
+      "mimic": "minecraft:stone_bricks",
+      "activated": {
+        "spawn_range": 4,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 7,
+        "max_spawns_per_activation": 3,
+        "max_spawns": 12
+      },
+      "status": "planned",
+      "why": "A crowd of Buneary kept alive in Ellis Hopgood's cellar (the owner, 2026-10-02: 'a man who has a dungeon of buneary'). ACTIVATED, the den's pattern (ursaluna_den_outskirts_ward): up to 12 alive at once, refilled 3 at a time as they are caught or despawn, TICK at chance 1. The position is the cellar floor's centre as tools/lopunny_house.py seats it (house floor y117 = max heightmap ground under the walls 116 + 1; the cellar floor 5 below it), in a stone-brick floor that pack writes; the pack must run BEFORE R9E or it writes the floor back over this block. spawn_range 4: the activated spawner searches a box of spawn_range round the block (docs/research/notes/habitat-nest-perching.md 4, ActivatedHabitatSpawning.kt), and 4 makes that box the cellar exactly: x and z the 9 by 9 room, y from the stone under the floor (y108) to the ceiling (y116). The house floor is y117, so no place a player walks in the house, and none outside, is in it (tools/lopunny_house_audit.py checks every standing place in the box). cancel_range 7: the pack's natural spawns are cancelled in a sphere of 7 round the block, which takes in the whole room (its far corner is 6.4 away) and the house's floor above it (feet 6 above), and no ground outside the walls (a feet place at y117 outside the walls is at least 7.8 away). Activated blocks cancel nothing of one another; the nearest other Habitat Block is elder_south_pine_isle_2's nest, 237 blocks away (measured 2026-10-02 from this file's positions).",
+      "mimic_why": "the cellar's own floor block (data/lopunny_house.json blocks.cellar_floor), so the block is one more stone brick in the floor."
+    },
+    {
+      "id": "old_orchard_rows_ward",
+      "place": "the Old Orchard on Sunset Isle (data/old_orchard.json): the trunk of the living tree at (2754, 7088), its second log",
+      "pool": "cobblers:old_orchard_rows",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 2754,
+        "y": 72,
+        "z": 7088
+      },
+      "mimic": "minecraft:oak_log",
+      "activated": {
+        "spawn_range": 12,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 6
+      },
+      "status": "planned",
+      "why": "The orchard's fruit walks: up to 6 Pokemon of the orchard's own pool (Applin, Tropius, Flapple and Appletun rare) kept alive round one tree in the west half of the rows, refilled 2 at a time. ACTIVATED, the sapling nests' pattern (a block in a trunk, disguised as its log: tools/themed_saplings.py) and the den's (ursaluna_den_outskirts_ward). The position is the tree's second log as tools/old_orchard.py seats it (heightmap ground y70 + 2), in a trunk that pack writes; the pack must run BEFORE R9E (R9SO) or it writes the log back over this block. spawn_range 12: the box x2742-2766, z7076-7100 holds the west rows and the cart track, and its nearest point is 50 blocks from the Orchard Sleeper's anchor (2816, 7080), outside its leash (26), so nothing this block spawns crowds the resident. cancel_range -1: natural spawning is left alone, as the nests leave it; the nearest other Habitat Blocks are the palm sapling's nests at (2840, 7080), 86 blocks east (measured 2026-10-02 from this file's positions).",
+      "mimic_why": "the trunk's own log (data/old_orchard.json orchard: oak, axis y), so the block is one more log in the tree."
+    },
+    {
+      "id": "dune_ruin_undercroft_ward",
+      "place": "the Copperway Khan's master's store in the south-east dunes (data/dune_ruin.json): the middle of the vault floor",
+      "pool": "cobblers:dune_ruin_undercroft",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6734,
+        "y": 139,
+        "z": 6234
+      },
+      "mimic": "minecraft:smooth_sandstone",
+      "activated": {
+        "spawn_range": 4,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 7,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 4
+      },
+      "status": "planned",
+      "why": "Cofagrigus keeping the sealed master's store under the Copperway Khan (the owner, 2026-10-02: 'the south needs places, not just creatures. Somewhere to find, something in it'). ACTIVATED, the den's and the Lopunny cellar's pattern: up to 4 alive, refilled 2 at a time, TICK at chance 1. The position is the vault floor's centre as tools/dune_ruin.py seats it (sand line S y148 = max heightmap ground under the Khan's outer walls; floor F y144 = S - 4; the vault's ceiling at F, 4 of air under it, its floor y139), in a smooth sandstone floor that pack writes; the pack (R9DU) must run BEFORE R9E or it writes the floor back over this block. spawn_range 4: the activated spawner searches a box of spawn_range round the block (docs/research/notes/habitat-nest-perching.md 4, ActivatedHabitatSpawning.kt), and 4 makes that box the vault exactly: x and z its 9 by 9 interior, y from the sandstone under its floor (y135) to its top row of air (y143). tools/dune_ruin_audit.py checks every standing place in the box. cancel_range 7: the vault's far cell is 6.9 away, and the nearest ground outside the Khan's walls is more than 7 (the audit checks both). The nearest other Habitat Block is sapling_desert_south_east_dunes_low at (6192, 6112), 556 blocks west (measured 2026-10-02 from this file's positions).",
+      "mimic_why": "the vault's own floor block (data/dune_ruin.json blocks.vault_floor), so the block is one more slab of smooth sandstone in the floor."
+    },
+    {
+      "id": "drovers_hollow_fold_ward",
+      "place": "the Drovers' Hollow in the Rift Foot (data/drovers_hollow.json): the middle of the fold's floor",
+      "pool": "cobblers:drovers_hollow_fold",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3971,
+        "y": 98,
+        "z": 6041
+      },
+      "mimic": "minecraft:coarse_dirt",
+      "activated": {
+        "spawn_range": 6,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 11,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 6
+      },
+      "status": "planned",
+      "why": "The drovers' herd kept alive in the Hollow's fold (the owner, 2026-10-02: 'the south needs places, not just creatures. Somewhere to find, something in it'). ACTIVATED, the Lopunny cellar's and the Ursaluna den's pattern: up to 6 alive at once, refilled 2 at a time as they are caught or despawn, TICK at chance 1. The position is the fold floor's centre in the ground's own top block (tools/ground.py: y98), which tools/drovers_hollow.py writes as coarse dirt; that pack must run BEFORE R9E (step R9HF) or it writes the floor back over this block. spawn_range 6: the activated spawner searches a box of spawn_range round the block (docs/research/notes/habitat-nest-perching.md 4, ActivatedHabitatSpawning.kt), and 6 keeps that box (x3965-3977, z6035-6047) inside the fold's fence (interior x3963-3979, z6035-6047), so every place a Pokemon can be put is in the pen; nothing is under it (the old working runs at z6019-6027) and the barn's floor (z6016-6030) is outside it (tools/drovers_hollow_audit.py checks every standing place in the box). cancel_range 11: the pack's natural spawns are cancelled in a sphere of 11 round the block, which takes in the whole pen (its far interior corner is 10.7 away) and the lane, and not the barn's floor (12.3 away at the nearest). Nothing holds a Pokemon in afterwards but the fence (the same note: no tether exists for wild spawns). The nearest other Habitat Block is sapling_storm_rift_foot_low, 243 blocks away (measured 2026-10-02 from this file's positions).",
+      "mimic_why": "the fold's own floor block (tools/drovers_hollow.py writes coarse dirt in the ground's top block across the pen), so the block is one more patch of trodden earth."
+    },
+    {
+      "id": "station_study_pool",
+      "place": "Shrew Station's study pool off the west coast (data/research_station.json study_pool): in the post under the study deck's middle, mid-water",
+      "pool": "cobblers:station_study_pool",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 456,
+        "y": 60,
+        "z": 2828
+      },
+      "mimic": "minecraft:stripped_spruce_log",
+      "activated": {
+        "spawn_range": 8,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": 8,
+        "max_spawns_per_activation": 1,
+        "max_spawns": 4
+      },
+      "status": "planned",
+      "why": "A few Horsea kept in the station's study pool (docs/world-building/RESEARCH_STATION.md section 5.3, the Seaward Drift's precedent: a water Habitat Block). ACTIVATED, up to 4 alive at once, one at a time. The position is the middle of the post tools/research_station.py sets under the study deck's centre (456, 2828): the sea floor there is y57 (heightmap, rounded), 5 under the sea's y62, the post runs y58-61 and the block replaces its middle; the pack must run BEFORE R9E or it writes the post back over this block. spawn_range 8 reaches the water round the deck (its 17 by 17 box, x448-464, z2820-2836, is 289 water columns 3-8 deep, measured 2026-10-02); cancel_range 8 holds the shallows band's natural pool off it. The nearest other Habitat Block is elder_lake_viltri_hollow_1, 898 blocks away (measured from this file's positions). Moved 2026-10-02 from Shrew Lake's lagoon (2574, 103, 4114), where it kept Psyduck, when the owner moved the station to the coast; tools/research_station.py cleanup puts that cell back to lake water on staging. In-water activated spawning is not verified (the Drift's caveat)."
     }
   ]
 }

@@ -24,6 +24,27 @@ ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_WORLD = ROOT / "data" / "world.json"
 
 
+def env_source_root():
+    """COBBLERS_SOURCE_ROOT from the environment, else from the repository's own .claude/settings.json `env`.
+
+    The settings file is where the variable is configured, and the harness is meant to inject it into every shell
+    and agent. It does not always: on 2026-10-02 it was missing from one session's shell and from three of six
+    agents' worktrees, while present in the same session after a restart. Reading the committed setting directly
+    makes a tool's answer independent of whether the injection happened. settings.local.json overrides it, as the
+    harness's own precedence does. Returns None when neither says."""
+    v = os.environ.get("COBBLERS_SOURCE_ROOT")
+    if v:
+        return v
+    found = None
+    for name in ("settings.json", "settings.local.json"):
+        f = ROOT / ".claude" / name
+        try:
+            found = json.loads(f.read_text(encoding="utf-8")).get("env", {}).get("COBBLERS_SOURCE_ROOT") or found
+        except (OSError, ValueError):
+            continue
+    return found
+
+
 class TerrainUnavailable(RuntimeError):
     """The world config forbids using the heightmap, or it cannot be verified."""
 
@@ -55,7 +76,7 @@ def resolve_heightmap(world, world_path, source_root=None):
             "unverified heightmap" % world_path
         )
 
-    root = source_root or world.get("source_root") or os.environ.get("COBBLERS_SOURCE_ROOT")
+    root = source_root or world.get("source_root") or env_source_root()
     if not root:
         raise TerrainUnavailable(
             "source_root is unset; set COBBLERS_SOURCE_ROOT or pass --source-root"

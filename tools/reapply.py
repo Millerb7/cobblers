@@ -46,6 +46,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 TOOLS = ROOT / "tools"
 sys.path.insert(0, str(TOOLS))
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 import runtime_guard  # noqa: E402
 BUILD = ROOT / "build"
 PACKS = BUILD / "datapacks"
@@ -104,6 +105,35 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-02: the Seaward Drift, its strip mine and Driftmouth Isle (tools/sea_drift.py,
                 # data/sea_drift.json): 90 block functions run by R9SD, before the Habitat Blocks that sit in its rock
                 "cobblers_sea_drift",
+                # 2026-10-02: Frostpeak's summit dressing round Articuno's tower (tools/frostpeak_summit.py): wind-shaped
+                # tors, rime, lee plants and the old pilgrims' way to the north door. Block functions run by R18S
+                "cobblers_frostpeak_summit",
+                # 2026-10-02: the Lopunny superfan's house and its Buneary cellar (tools/lopunny_house.py), run by R9LH
+                "cobblers_lopunny_house",
+                # 2026-10-02: the Old Orchard on Sunset Isle round the Orchard Sleeper (tools/old_orchard.py), run by R9SO
+                "cobblers_old_orchard",
+                # 2026-10-02: the Copperway Khan in the south-east dunes and its milestones (tools/dune_ruin.py), run by R9DU
+                "cobblers_dune_ruin",
+                # 2026-10-02: Codex's ten named residents (tools/resident_encounters.py, data/resident_encounters.json):
+                # a keeper loop and respawn clock hold them, so world-local; dressed and the ungated ones summoned by R18R
+                "cobblers_residents",
+                # 2026-10-02: the relic site underground (tools/relic_underground.py, data/relic_underground.json): the
+                # old surface build taken off, then the hall, gallery and passage carved, by R9RU; its zone check acts on
+                # its own (an advancement), so world-local below
+                "cobblers_relic_underground",
+                # 2026-10-02: the Drovers' Hollow in the Rift Foot (tools/drovers_hollow.py): a longbarn, its fold and
+                # the old working under the bank, run by R9HF
+                "cobblers_drovers_hollow",
+                # 2026-10-02: Shrew Station on the west sea coast (tools/research_station.py), run by R9RS; every
+                # item it can give stays held behind data/research_station.json economy.issuing
+                "cobblers_research_station",
+                # 2026-10-02: the seven open-air Mega dens made visible (tools/mega_dens.py, data/mega_dens.json): scrape,
+                # boulders, bones and each species' sign round the gulch's den anchors. Block functions run by R9MD
+                "cobblers_mega_dens",
+                # 2026-10-02: water life (docs/mechanics/WATER_LIFE.md): the lake skin and the lake hooks
+                # (tools/lake_life.py), and the shore, the seabed's wrecks and Rift debris and the two sea caves
+                # (tools/sea_life.py). Pure block functions, no load or tick, run by R9LL and R9SL
+                "cobblers_lake_life", "cobblers_sea_life",
                 # 2026-09-29: the gym interiors (tools/gym_interiors.py, data/gym_interiors.json): the healing
                 # machines out of all eight placed gyms, and gym 1's works carved under its lot. Block functions run
                 # by R16E, after the donors (R9) that stamp the gyms whole and would erase anything written first
@@ -221,7 +251,12 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_sizes", "cobblers_blackout", "cobblers_rift_mines", "cobblers_gulch_mine",
                "cobblers_rift_zones", "cobblers_mega_recipes",
                "cobblers_ferries", "cobblers_ambient", "cobblers_levelcap", "cobblers_mines",
-               "cobblers_legendaries", "cobblers_spectrier_cap")
+               "cobblers_legendaries", "cobblers_spectrier_cap",
+               # 2026-10-02: the den keeper loop holds the bear on its own tick, so world-local as its own comment says
+               "cobblers_ursaluna_cave",
+               # 2026-10-02: the residents' keeper SPAWNS Pokemon on its own when a player comes near, so it must never
+               # load in the global folder, where the live world would run it too
+               "cobblers_residents", "cobblers_relic_underground")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -302,6 +337,8 @@ def places(doc=None):
     ids = []
     for sid, value in doc["settlements"].items():
         plan = value.get("plan") or {}
+        if value.get("retired"):
+            continue                              # data/placements.json settlements.<id>.retired says why
         if sid not in UNPLACED and (plan.get("streets") or plan.get("plaza") or plan.get("anchors")):
             ids.append(sid)
     late = [s for s in ("relic_island", "displaced_city") if s in ids]
@@ -310,7 +347,9 @@ def places(doc=None):
 
 def donors(doc=None):
     doc = doc or placements()
-    return [q["id"] for q in doc["placements"] if q.get("pack_template") and q.get("kind") != "vendor"]
+    retired = {s for s, v in doc["settlements"].items() if v.get("retired")}
+    return [q["id"] for q in doc["placements"] if q.get("pack_template") and q.get("kind") != "vendor"
+            and q.get("settlement") not in retired]
 
 
 def py(*args, cwd=ROOT):
@@ -423,6 +462,10 @@ def prepare_jobs(a):
     # against the ring model, Victory Road's mouth and the sealed volumes, and refuses to go on if anything is wrong
     add("deep_city:build", "deep_city.py", "build", *src)
     add("deep_city_audit", "deep_city_audit.py", *src)
+    # the relic site underground (2026-10-02): its own fail-closed report runs first and refuses on a problem; the
+    # undo is derived from the superseded surface generator minus the city build above. Its audit runs LATE (below),
+    # once every other block pack is built, because it sweeps them all for a cell the undo or the shell would touch
+    add("relic_underground:build", "relic_underground.py", *src, "build")
     add("habitat_blocks:function", "habitat_blocks.py", "function")
     add("rewards_pack", "rewards_pack.py")
     # every conversation that compiles, in one pack: the NPCs', the props' and the actors' (refusals are listed)
@@ -437,6 +480,9 @@ def prepare_jobs(a):
     # declared a gate still unswimmable under data/blackout.json's fatigue on the heightmap
     add("ferries:build", "ferries.py", "build")
     add("ferries:audit", "ferries.py", "audit", *src)
+    # the ferry docks' pack (a SERVER_PACKS member): until 2026-10-02 no job built it, and a build/ left over from an
+    # earlier hand run hid that; function_limits failed on a fresh checkout without it
+    add("ferry_docks:build", "ferry_docks.py", "build", *src)
     # Routes 1-3: the event sites (it fails when data/scenes.json or data/route_trainers.json disagree with the
     # build, or anything stands on the walked line), then the scene runtime and the trainers
     add("route_events", "route_events.py", *src)
@@ -482,7 +528,9 @@ def prepare_jobs(a):
     # keep clear of; then their offline audit, which recomputes every rule from other files' data and stops the prepare
     # on a face the build should not have written
     add("mines:build", "mines.py", "build", *src)
-    add("mines_audit", "mines_audit.py", *src)
+    # the lake-bed repair pack (R1R): until 2026-10-02 no prepare job built it, and only a build/ left over from
+    # 2026-09-30 hid that. mines_audit runs at the END (below): it lists reapply's steps, which index every pack
+    add("lakebed_repair:build", "lakebed_repair.py", "build", *src)
     # the wayside shrines, then their offline audit against the plans, the legs, the water and the other packs, which
     # fails the prepare on any write where a shrine may not stand. After every other block pack is built (the stone
     # faces included): the generator keeps clear of what they write
@@ -495,7 +543,32 @@ def prepare_jobs(a):
     add("frostpeak_camp:build", "frostpeak_camp.py", "build", *src)
     add("frostpeak_camp_audit", "frostpeak_camp_audit.py", "--inputs-root", str(ROOT), *src)
     add("sea_drift:build", "sea_drift.py", "build", *src)
+    add("frostpeak_summit:build", "frostpeak_summit.py", "build", *src)
+    add("frostpeak_summit_audit", "frostpeak_summit_audit.py", *src)
+    add("lopunny_house:build", "lopunny_house.py", "build", *src)
+    add("lopunny_house_audit", "lopunny_house_audit.py", *src)
+    add("old_orchard:build", "old_orchard.py", "build", *src)
+    add("old_orchard_audit", "old_orchard_audit.py", *src)
+    add("dune_ruin:build", "dune_ruin.py", "build", *src)
+    add("dune_ruin_audit", "dune_ruin_audit.py", *src)
+    # the ten named residents (2026-10-02), then their independent audit, which re-derives every site and write from
+    # the data and the heightmap and fails the prepare on a broken pack
+    add("resident_encounters", "resident_encounters.py", *src)
+    add("resident_encounters_audit", "resident_encounters_audit.py", *src)
+    add("drovers_hollow:build", "drovers_hollow.py", "build", *src)
+    add("drovers_hollow_audit", "drovers_hollow_audit.py", *src)
+    add("research_station:build", "research_station.py", "build", *src)
+    add("research_station_audit", "research_station_audit.py", *src)
+    add("mega_dens:build", "mega_dens.py", "build", *src)
+    add("mega_dens_audit", "mega_dens_audit.py", *src)
     add("sea_drift_audit", "sea_drift_audit.py", *src)
+    add("relic_underground_audit", "relic_underground_audit.py", *src)
+    # water life (docs/mechanics/WATER_LIFE.md): each pack, then its independent audit, which replays the written
+    # functions over a world built from the heightmap alone and never imports its builder
+    add("lake_life:build", "lake_life.py", "build", *src)
+    add("lake_life_audit", "lake_life_audit.py", *src)
+    add("sea_life:build", "sea_life.py", "build", *src)
+    add("sea_life_audit", "sea_life_audit.py", *src)
     # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
     # then the offline audit, which re-derives every shell box from data/placements.json, replays the written
     # functions into a voxel model and fails the prepare on a broken route, a trainer that can be walked round, a
@@ -542,6 +615,9 @@ def prepare_jobs(a):
     add("blackout_pack", "blackout_pack.py")
     # the loose functions (town prep, elders, grove, islet) in one pack
 
+    # the stone faces' audit LAST: it checks R9O through steps(), which indexes every pack built above, so on a fresh
+    # build/ it failed closed on whichever pack came after it in this list (found 2026-10-02 on a new worktree)
+    add("mines_audit", "mines_audit.py", *src)
     return J
 
 
@@ -938,15 +1014,49 @@ def held_functions():
     f = ROOT / "data" / "rift_zones.json"
     if not f.is_file():
         return out
-    z = json.loads(f.read_text(encoding="utf-8"))["zones"]
-    shut = {zid: [k for k in ("needs_progression", "needs_dialogue") if zz.get(k)]
-            for zid, zz in z.items() if zz.get("needs_progression") or zz.get("needs_dialogue")}
-    for zid, why in shut.items():
-        out["cobblers:rift_zones/gatehouse_%s" % zid] = "%s cannot grant its pass: %s" % (zid, ", ".join(why))
+    import rift_zones as RZ
+    spec = json.loads(f.read_text(encoding="utf-8"))
+    z = spec["zones"]
+    for zid, why in RZ.held_zones(spec).items():
+        reason = "%s cannot grant its pass: %s" % (zid, ", ".join(why))
+        # every gatehouse of the zone, posts included (gatehouse_<zid>_<post>), and its wall
+        for name, *_ in RZ.gates_of(zid, z[zid]):
+            out["cobblers:rift_zones/gatehouse_%s" % name] = reason
         w = z[zid].get("wall")
         if w:
-            out["cobblers:rift_zones/wall_%s" % w] = "%s cannot grant its pass: %s" % (zid, ", ".join(why))
+            out["cobblers:rift_zones/wall_%s" % w] = reason
+        # 2026-10-02: and the zone's own functions. `build` emits no advancement for a held zone -- its zone
+        # check alone would turn back every player, which for z5 is the League's precinct -- so the zone
+        # check, the knock and the exit are deliberately called by nothing until the zone can grant
+        for fn in RZ.zone_functions(zid, z[zid]):
+            out["cobblers:rift_zones/%s" % fn] = reason
     return out
+
+
+def rift_zone_steps(index, spec):
+    """(run, held): R9Z's build functions out of cobblers_rift_zones' index.txt, split by whether the zone they
+    belong to can grant its pass (tools/rift_zones.py held_zones, from the data). A wall names the zone it
+    closes in zones.<id>.wall; a gatehouse is gatehouse_<zone> or gatehouse_<zone>_<post>."""
+    import rift_zones as RZ
+    shut = set(RZ.held_zones(spec))
+    closes = {"wall_%s" % zz["wall"]: zid for zid, zz in spec["zones"].items() if zz.get("wall")}
+    gate = {}
+    for zid, zz in spec["zones"].items():
+        if str(zz.get("status", "")).startswith("SUPERSEDED") or not zz.get("guard"):
+            continue
+        for name, *_ in RZ.gates_of(zid, zz):
+            gate["gatehouse_%s" % name] = zid
+
+    def zone_of(fn):
+        if fn in gate:
+            return gate[fn]
+        if fn in closes:
+            return closes[fn]
+        raise SystemExit("cobblers_rift_zones index names %s, which is neither a gatehouse nor a wall of any zone "
+                         "in data/rift_zones.json: rebuild the pack" % fn)
+    run = [f for f in index if zone_of(f) not in shut]
+    held = [f for f in index if zone_of(f) in shut]
+    return run, held
 
 
 def steps(with_spawns=False):
@@ -1027,21 +1137,21 @@ def steps(with_spawns=False):
     # So a zone's wall and gatehouses go in only when that zone declares nothing owed, read from the DATA
     # (zones.<id>.needs_progression / needs_dialogue) and not from a list here: when Codex lands either half, the
     # field goes and the wall follows with no switch to remember.
+    # 2026-10-02: and since that day the PACK holds the rest. `build` emits no zone check, knock or exit
+    # advancement for a held zone, because the zone check acts on its own the moment the pack is installed and
+    # would turn every player back from the League's precinct whatever this step withholds. Each gatehouse
+    # also lays its approach (data/rift_zones.json gatehouse.approach_why) and replaces its own placeholder, so
+    # re-running this step over a world it already ran on (staging-2026-10-01) is what repairs it.
+    import rift_zones as RZ
     zspec = json.loads((ROOT / "data" / "rift_zones.json").read_text(encoding="utf-8"))
-    shut = {zid for zid, zz in zspec["zones"].items() if zz.get("needs_progression") or zz.get("needs_dialogue")}
-    # a zone names the cross-wall that closes it in zones.<id>.wall ("throat", "behind_league", ...)
-    closes = {"wall_%s" % zz["wall"]: zid for zid, zz in zspec["zones"].items() if zz.get("wall")}
-    def zone_of(fn):
-        # "gatehouse_z2_rim_post_descent" -> z2; a wall names the zone it closes in the spec
-        for zid in zspec["zones"]:
-            if fn.startswith("gatehouse_%s" % zid):
-                return zid
-        return closes.get(fn)
-    live = [f for f in indexed("cobblers_rift_zones", "rift_zones") if zone_of(f) not in shut]
-    heldb = [f for f in indexed("cobblers_rift_zones", "rift_zones") if zone_of(f) in shut]
+    shut = RZ.held_zones(zspec)
+    live, heldb = rift_zone_steps(indexed("cobblers_rift_zones", "rift_zones"), zspec)
     out.append(("R9Z", "the Rift's zone walls and gatehouse shells for the zones that can be passed (%d of %d; "
                        "held: %s)" % (len(live), len(live) + len(heldb), ", ".join(sorted(shut)) or "none"),
-                [("fn", "cobblers:rift_zones/%s" % f) for f in live]))
+                [("fn", "cobblers:rift_zones/%s" % f) for f in live]
+                # the guards' placeholders, one per gate it built, after the shells: force-load, 40 ticks for the
+                # stands already saved there, summon, 100 ticks on keep one per block (the Cutters' pattern)
+                + [("fn", "cobblers:rift_zones/guards"), ("wait", 8)]))
     # the evolution-stone faces (tools/mines.py, data/mines.json; STONE_ECONOMY.md 5.5 names the step): after the towns
     # (R8) and the donors (R9), whose cells they keep clear, and the Displaced City cavern (R2), whose shell two of the
     # sites cut into; before the Habitat Blocks (R9E) and the lights (R16). One build function a site, named from the
@@ -1055,6 +1165,12 @@ def steps(with_spawns=False):
     # R9D was the retired Victory Road regions step, and tests/test_reapply_vr_steps.py keeps that id retired
     out.append(("R9DC", "the Deep's city and the relic area's surface (tools/deep_city.py)",
                 [("fn", "cobblers:deep_city/%s" % f) for f in indexed("cobblers_deep_city", "deep_city")]))
+    # the relic site underground (2026-10-02, tools/relic_underground.py): AFTER R9DC, because its undo takes off the
+    # old surface build minus what the city now writes, and its passage meets the HQ's side of the pit; BEFORE R9E and
+    # before Codex's cradle, whose own shell would seal the passage. Hold the box, undo, carve (CAVERN pattern), release
+    import relic_underground
+    out.append(("R9RU", "the relic site underground: the old surface build off, the hall carved (data/relic_underground.json)",
+                relic_underground.placement_steps()))
     # the Habitat Blocks, after everything that builds the floors they sit in (R9C's shell pass overwrites them). A
     # block placed by command stays inert until its chunk loads from disk, and EXP-021 found only a restart does that
     # reliably: the audit runs with the server stopped, so the boot after it is that restart. Verify after it.
@@ -1064,6 +1180,46 @@ def steps(with_spawns=False):
     # every verified apply
     out.append(("R9SD", "the Seaward Drift, its strip mine and Driftmouth Isle (data/sea_drift.json)",
                 [("fn", "cobblers:sea_drift/%s" % f) for f in indexed("cobblers_sea_drift", "sea_drift")]))
+    # water life (2026-10-02, docs/mechanics/WATER_LIFE.md): pure block passes over the applied water export, after
+    # the drift (Driftmouth Isle's rock and cover are excluded from both) and before R9E and BEFORE the 2026-10-02 builds below, so a build that overlaps a wreck or
+    # shore dressing writes last and wins (merge, 2026-10-02); no Habitat Block placed
+    # there is written over. Every lake-skin write replaces only water, air or a natural bed block (the pack's own
+    # #cobblers:lake_bed tag), so it cannot overwrite a build it does not know about
+    out.append(("R9LL", "the lake skin and the lake hooks (data/lake_life.json)",
+                [("fn", "cobblers:lake_life/%s" % f) for f in indexed("cobblers_lake_life", "lake_life")]))
+    out.append(("R9SL", "the shore, the wrecks and Rift debris, and the sea caves (data/sea_life.json)",
+                [("fn", "cobblers:sea_life/%s" % f) for f in indexed("cobblers_sea_life", "sea_life")]))
+    # the Lopunny superfan's house (2026-10-02, tools/lopunny_house.py): BEFORE R9E, because its build writes the cellar
+    # floor - after R9E it would lay stone bricks over the Buneary Habitat Block set in that floor
+    import lopunny_house
+    out.append(("R9LH", "the Lopunny superfan's house and its Buneary cellar (data/lopunny_house.json)",
+                lopunny_house.placement_steps()))
+    # the Old Orchard on Sunset Isle (2026-10-02, tools/old_orchard.py): BEFORE R9E, because its build writes the trunk
+    # the Applin Habitat Block sits in - after R9E it would write the log back over the block
+    import old_orchard
+    out.append(("R9SO", "the Old Orchard on Sunset Isle: rows, press-house and cellar, garden (data/old_orchard.json)",
+                old_orchard.placement_steps()))
+    # the Copperway Khan (2026-10-02, tools/dune_ruin.py): BEFORE R9E, because its build writes the vault floor - after
+    # R9E it would lay smooth sandstone over the Cofagrigus Habitat Block set in that floor
+    import dune_ruin
+    out.append(("R9DU", "the Copperway Khan, its sealed store and the Copperway's milestones (data/dune_ruin.json)",
+                dune_ruin.placement_steps()))
+    # the Drovers' Hollow (2026-10-02, tools/drovers_hollow.py): BEFORE R9E, because its build writes the fold's floor -
+    # after R9E it would lay coarse dirt over the herd's Habitat Block set in that floor
+    import drovers_hollow
+    out.append(("R9HF", "the Drovers' Hollow: its barn, fold and old working (data/drovers_hollow.json)",
+                drovers_hollow.placement_steps()))
+    # Shrew Station (2026-10-02, tools/research_station.py): BEFORE R9E, because the study pool's Habitat Block sits in a
+    # post this pack writes; its four NPCs are placed by R9F
+    import research_station
+    out.append(("R9RS", "Shrew Station, the research station on the west sea coast (data/research_station.json)",
+                research_station.placement_steps()))
+    # the seven open-air Mega dens, dressed (2026-10-02, tools/mega_dens.py): a pure block pass round each den anchor of
+    # data/gulch_mine.json. AFTER R9S (the gulch's own block pass, whose keeper spawns the Megas at these anchors) and
+    # the Rift skin (R1), whose surface it rewrites; BEFORE R9E with the other block passes. Per den: hold, build, release
+    import mega_dens
+    out.append(("R9MD", "the seven open-air Mega dens: scrape, boulders, bones and each species' sign (data/mega_dens.json)",
+                mega_dens.placement_steps()))
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
@@ -1160,12 +1316,37 @@ def steps(with_spawns=False):
     import npc_seats
     out.append(("R17N", "the settlement NPCs (data/npc_seats.json)",
                 [("npc", n) for n in npc_seats.placements()]))
+    # the Old Orchard's keeper (2026-10-02, tools/old_orchard.py): an NPC like the settlement ones, placed over RCON
+    # after the restart that loaded cobblers_dialogue's classes, on the ground R9SO's orchard stands on
+    out.append(("R18SO", "the Old Orchard's keeper, Wenna Marlow (data/old_orchard.json npc)",
+                [("npc", n) for n in old_orchard.npc_placements()]))
+    # the Copperway Khan's salvager (2026-10-02): an NPC on the dug-out hall's floor R9DU wrote, her class loaded at boot
+    # from cobblers_dialogue, so placed over RCON after the restart like R17N's
+    out.append(("R18DU", "the Copperway Khan's salvager (data/dune_ruin.json npc)",
+                [("npc", n) for n in dune_ruin.npc_placements()]))
     # the Ursaluna's den (2026-10-02): carve, summon the sleeping bear over RCON (an entity the export erases, as the
     # Celebi and the legendaries are, and guarded on its tag AND species, not distance - R14C failed twice on a bare
     # distance guard), dress, then its keeper Hollis, whose class loads at boot from cobblers_dialogue
     import ursaluna_cave
     out.append(("R18U", "the Ursaluna's den west of Highwire (data/ursaluna_cave.json)",
                 ursaluna_cave.placement_steps() + [("npc", n) for n in ursaluna_cave.npc_placements()]))
+    # the Compact guards at the HQ's ring-0 door (2026-10-02, data/relic_underground.json geometry.hq.guard): the door
+    # stays shut and the guard's dialogue moves a player at rift_crisis_pending or later inside; the inside guard lets
+    # anyone out. NPCs, so after the restart that loaded cobblers_dialogue's classes, like R17N's, each turned to its yaw
+    import relic_underground
+    out.append(("R18RU", "the Compact guards at the HQ's ring-0 door (data/relic_underground.json geometry.hq.guard)",
+                [("npc", n) for n in relic_underground.npc_placements()]))
+    # Codex's ten named residents (2026-10-02, data/resident_encounters.json): each one's dressing inside a forceload of
+    # its recorded bbox, then - for the two with no presence gate (Old Jaw, Whiteback) - an RCON summon guarded on tag
+    # AND species, and its bind. The eight gated ones are left to the pack's keeper, which brings each in the first time
+    # a player holding its gate comes near. Entities, so an export erases them, as the den's bear
+    import resident_encounters
+    out.append(("R18R", "the ten named residents (data/resident_encounters.json)",
+                resident_encounters.placement_steps()))
+    # the Drovers' Hollow's drover (2026-10-02): after R17N, on the path R9HF wrote, his class loaded at boot from
+    # cobblers_dialogue
+    out.append(("R18HF", "the Drovers' Hollow's drover, Owen Cray (data/drovers_hollow.json npc)",
+                [("npc", n) for n in drovers_hollow.npc_placements()]))
     # the Frostpeak research camp (2026-10-02): its blocks and instruments, held in a forceload so no fill lands on an
     # unloaded chunk, then its three researchers
     import frostpeak_camp
@@ -1174,6 +1355,16 @@ def steps(with_spawns=False):
                  ("fn", "cobblers:frostpeak_camp/build"), ("fn", "cobblers:frostpeak_camp/instruments"),
                  ("cmd", "forceload remove 680 680 735 735")]
                 + [("npc", n) for n in frostpeak_camp.npc_placements()]))
+    # Articuno's tower on Frostpeak's summit (2026-10-02, tools/articuno_tower.py): the first adopted Cobbleverse site
+    # any step places. On the summit because the owner chose it once the build limit was measured at y575
+    # (cobblers_height), not the 320 that had pushed it onto the shoulder. After R18F, whose telescope aims at its crown
+    import articuno_tower
+    out.append(("R18A", "Articuno's tower on Frostpeak's summit (data/adopted_legendary_sites.json)",
+                articuno_tower.placement_steps()))
+    # the summit round it (2026-10-02, tools/frostpeak_summit.py): after the tower, whose box and north door it keeps clear
+    import frostpeak_summit
+    out.append(("R18S", "Frostpeak's summit: tors, rime, lee plants and the pilgrims' way (data/frostpeak_summit.json)",
+                frostpeak_summit.placement_steps()))
     trad = json.loads((ROOT / "data" / "traders.json").read_text(encoding="utf-8"))
     towns = sorted({t["settlement"] for t in trad.get("traders") or [] if t.get("settlement")})
     out.append(("R14", "town traders", [x for t in towns for x in (("fn", "cobblers:towns/vendors_%s" % t), ("wait", 8))]))
@@ -1556,14 +1747,14 @@ def main(argv=None):
     q.add_argument("--rehearsal", action="store_true",
                    help="staging only: allow a retained snapshot or an older copy as the source")
     q = sub.add_parser("prepare")
-    q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"), required=not os.environ.get("COBBLERS_SOURCE_ROOT"))
+    q.add_argument("--source-root", default=env_source_root(), required=not env_source_root())
     q.add_argument("--server-dir", required=True)
     q.add_argument("--only", help="run only these jobs (comma separated, shell patterns: town:*,mines*); see --list")
     q.add_argument("--from", dest="from_job", help="run from this job to the end, after a failure")
     q.add_argument("--list", action="store_true", help="print the job names in order and stop")
     q = sub.add_parser("hydrate", help="only the inputs a fresh checkout lacks (local kits, Rift plan, paint, water "
                        "shape); an agent's worktree runs this first. Needs the lock only with --server-dir")
-    q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"), required=not os.environ.get("COBBLERS_SOURCE_ROOT"))
+    q.add_argument("--source-root", default=env_source_root(), required=not env_source_root())
     q.add_argument("--server-dir", help="extract the jar-sourced kit files from this server's jars (takes the lock)")
     q.add_argument("--store", help="a folder holding the local-only kit files (default: COBBLERS_LOCAL_STORE)")
     q = sub.add_parser("install")
@@ -1585,7 +1776,7 @@ def main(argv=None):
     q = sub.add_parser("audit")
     q.add_argument("--server-dir", required=True)
     q.add_argument("--world", required=True)
-    q.add_argument("--source-root", default=os.environ.get("COBBLERS_SOURCE_ROOT"), help="heightmap root, for the light check")
+    q.add_argument("--source-root", default=env_source_root(), help="heightmap root, for the light check")
     q = sub.add_parser("plan", help="print the steps and their commands without running anything")
     a = p.parse_args(argv)
     if a.cmd == "plan":

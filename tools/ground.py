@@ -39,6 +39,7 @@ from pathlib import Path
 import numpy as np
 
 import terrain as T
+from terrain import env_source_root  # noqa: E402  (the env var, else .claude/settings.json)
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -48,7 +49,7 @@ class Ground:
 
     def __init__(self, source_root=None, world_path=None):
         world_path = world_path or str(ROOT / "data" / "world.json")
-        source_root = source_root or os.environ.get("COBBLERS_SOURCE_ROOT")
+        source_root = source_root or env_source_root()
         self.heights, self.world = T.load(world_path, source_root)
         self.ox = self.world["grid"]["origin_x"]
         self.oz = self.world["grid"]["origin_z"]

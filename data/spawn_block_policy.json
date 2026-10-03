@@ -430,6 +430,27 @@
       "why": "tools/place_town.py clears every fluid from two blocks under a building's floor up, over its footprint and two blocks round it, so a Centre seated on a raft leaves a dry layer between its raft and the sea; the earthwork puts the sea back (fill ... water replace air, never over a block). It restores the Sound the export painted, which was water there already, and adds no water anywhere the export had none. The town is built on water on purpose (docs/world-building/LONG_ISLE.md section 4): the Sound's water spawns round it are the point of a fishing town.",
       "consequence": "none beyond what the export's own sea already conditions: the same water, in the same cells, as before the Centre and the Mart were placed",
       "decided": "2026-09-26, by the implementing session under the owner's \"add the sea town from hoenn\" (LONG_ISLE.md: the town's water needs one deliberate entry, like gym2_town's); on the review list"
+    },
+    {
+      "blocks": [
+        "minecraft:tube_coral",
+        "minecraft:tube_coral_block",
+        "minecraft:tube_coral_fan",
+        "minecraft:brain_coral",
+        "minecraft:brain_coral_block",
+        "minecraft:brain_coral_fan",
+        "minecraft:bubble_coral",
+        "minecraft:bubble_coral_block",
+        "minecraft:bubble_coral_fan",
+        "minecraft:fire_coral",
+        "minecraft:fire_coral_block",
+        "minecraft:fire_coral_fan",
+        "minecraft:horn_coral",
+        "minecraft:horn_coral_block",
+        "minecraft:horn_coral_fan"
+      ],
+      "why": "live coral is a spawn condition for exactly one species, corsola and its herd (data/spawn_blocks.json: #minecraft:corals and #minecraft:coral_blocks, neededNearbyBlocks). cobblers_sea_life lays coral on the Relic reef (docs/mechanics/WATER_LIFE.md), where a reef Pokemon is the point; the level-cap refusal still stops a catch above a player's cap. Dead coral (galarian corsola, cursola) is NOT whitelisted and the pack places none. Whitelisted 2026-10-02 while the owner was out: docs/REVIEW_2026-10-02.md",
+      "scope": "cobblers_sea_life (the Relic reef) only"
     }
   ],
   "checked_paving": {

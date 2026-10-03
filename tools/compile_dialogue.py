@@ -28,6 +28,10 @@ The runtime pieces, each proven on the disposable world before this compiler rel
              (cobblers:flag/<id>, tools/progression_pack.py). Advancements are not in q.player.data(), so it is probed as
              the held items are: `execute as <uuid> if entity @s[advancements={...=true}] run tag @s add <tag>`, then
              q.player.has_tag, in the same action (first used by the ferry, tools/ferries.py, 2026-09-27).
+  player_tag a condition {"kind": "player_tag", "tag": "<tag>"} holds when the player carries that scoreboard tag,
+             read with q.player.has_tag like every probe here. Nothing in the dialogue sets it: another pack keeps it
+             (the first, tools/lopunny_house.py: a player_tick_pre callback tags a player with a Lopunny in the party,
+             the party read the water ladder proved, EXP-042). End to end it is experiments/EXP-052-lopunny-show.
   functions  an effect {"kind": "function", "function": "cobblers:<path>"} runs that function as and at the player, like
              scene_function but for a function a generated pack owns (the ferry's trips).
   opened by  a conversation with "npc_id": null has no NPC class: a prop or an actor opens it (the scene runtime runs
@@ -35,6 +39,12 @@ The runtime pieces, each proven on the disposable world before this compiler rel
   speakers   a conversation may name its speakers ("speakers": {"pip": "Pip", "narration": null}); a speaker mapped to
              null is narration and its page names no speaker. Without the map, the id is title-cased as before.
   initial    a condition on an enum field's declared initial value also matches the unset key (0), as the cursor's did.
+  model      every class names "resourceIdentifier": NPC_RESOURCE. The client renders an NPC by the entity's synced
+             resource identifier, which is the class's resourceIdentifier and, when the class gives none, THE CLASS ID
+             (Cobblemon 1.8.0 NPCClasses reload: path "dummy" -> id). No client variation is named cobblers:<npc id>, so
+             without the field every one of our NPCs fell to the green substitute doll (2026-10-02, Hollis).
+             cobblemon:standard is Cobblemon's own variation (bedrock/npcs/variations/standard/0_standard_base.json):
+             trainer.geo, textures/npcs/standard/trainer.png, poser standard. Checked by tools/npc_model_audit.py.
 
 Only the constructs listed here are supported; anything else stops compilation rather than guessing.
 
@@ -52,6 +62,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_OUT = ROOT / "build" / "datapacks" / "cobblers_dialogue"
 NS = "cobblers"
+# The client variation every NPC class renders as (see "model" above). Shipped in the Cobblemon jar itself, so the
+# fix is server-side data and no client needs a new pack.
+NPC_RESOURCE = "cobblemon:standard"
 
 
 class Unsupported(SystemExit):
@@ -155,6 +168,13 @@ class Compiler:
             tag = self.tag_for("flag", sel)
             probes.setdefault(("flag", sel), run(["tag ", UUID, " remove %s" % tag]) +
                               run(["execute as ", UUID, " if entity %s run tag @s add %s" % (sel, tag)]))
+            return "q.player.has_tag('%s')" % tag
+        if k == "player_tag":
+            # a tag another pack keeps on the player (the Lopunny house's party callback, tools/lopunny_house.py):
+            # read directly, as every probe above reads the tag it set. No probe: this compiler sets nothing here
+            tag = c.get("tag")
+            if not isinstance(tag, str) or not re.fullmatch(r"[a-z0-9_.]+", tag):
+                raise Unsupported("player_tag %r is not [a-z0-9_.]+" % (tag,))
             return "q.player.has_tag('%s')" % tag
         raise Unsupported("condition kind %s" % k)
 
@@ -355,7 +375,7 @@ def compile_conversation(conv, quests, fields):
         first = next((n.get("speaker") for n in conv["nodes"] if n.get("speaker")), None)
         name = conv.get("npc_name") or (c.speaker_name(first) if first else None) or npc
         files["data/%s/npcs/%s.json" % (NS, npc)] = {
-            "hitbox": "player", "names": [name],
+            "hitbox": "player", "names": [name], "resourceIdentifier": NPC_RESOURCE,
             "interaction": {"type": "dialogue", "dialogue": "%s:%s" % (NS, conv["id"])},
             "canDespawn": False, "isInvulnerable": True, "isMovable": False, "isLeashable": False,
             "allowProjectileHits": False,
