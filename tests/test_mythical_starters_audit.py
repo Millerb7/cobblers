@@ -33,9 +33,10 @@ A1, A2 = "cobblers_starter_1", "cobblers_starter_2"
 
 @pytest.fixture(scope="module")
 def jar():
+    import battle_sim
     try:
         path = AU.find_jar()
-    except Exception as exc:  # battle_sim.find_jar raises when no 1.8 jar is anywhere
+    except battle_sim.SimError as exc:  # battle_sim.find_jar raises SimError when no 1.8 jar is anywhere
         pytest.skip("no Cobblemon 1.8.0 jar: %s" % exc)
     if not Path(path).is_file():
         pytest.skip("no Cobblemon 1.8.0 jar")
