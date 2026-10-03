@@ -50,9 +50,10 @@ REAPPLY = (ROOT / "tools" / "reapply.py").read_text(encoding="utf-8")
 # guard, reads only x/z dicts and coordinate lists, never a min/max box, so it never saw them;
 # tools/southern_residents_audit.authored() reads such a box as a filled rectangle, the standard the southern six
 # were held to. When one is fixed (or the owner rules corridors out of the rule) the heightmap test fails and says so.
-KNOWN = [("siting", "stubborn_tree: (1631, 3265) is 73 blocks from an x/z authored in data/routes.json"),
-         ("siting", "wandering_stone: (5260, 2708) is 76 blocks from an x/z authored in data/routes.json"),
-         ("siting", "hide_and_seek: (6691, 3721) is 93 blocks from an x/z authored in data/routes.json")]
+# Resolved 2026-10-03 by the builder: the three sites (stubborn_tree 73, wandering_stone 76, hide_and_seek 93 from a
+# data/routes.json corridor box) were re-sited (data/northern_residents.json superseded_site) and the generator's guard
+# now counts the corridor boxes as filled rectangles (tools/southern_residents.py corridor_check). Entries removed.
+KNOWN = []
 
 
 class Ground:

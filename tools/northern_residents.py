@@ -167,6 +167,10 @@ def siting(doc, r, s, extra, pts):
     if best[0] < rules["authored_clearance"]:
         probs.append("%s: (%d, %d) is %.0f blocks from an x/z authored in data/%s (needs %d)"
                      % (r["id"], best[1][0], best[1][1], best[0], best[2], rules["authored_clearance"]))
+    # data/routes.json's corridor boxes ({min_x, max_x, min_z, max_z} dicts): authored_points() never reads them, so
+    # each is held here as a FILLED rectangle (2026-10-03: three sites stood 73, 76 and 93 from one and passed)
+    cprobs, cbest = SR.corridor_check(r["id"], cols, rules["authored_clearance"])
+    probs += cprobs
     m = rules["authored_clearance"]
     for t in jload("towns.json")["towns"]:
         f = t.get("footprint") or {}
@@ -211,7 +215,7 @@ def siting(doc, r, s, extra, pts):
     sub = SR._sub_of(cx, cz)[0]
     if sub != r["subregion"]:
         probs.append("%s: the centre is in %s, the record says %s" % (r["id"], sub, r["subregion"]))
-    return probs, {"nearest_authored": best, "path": dp}
+    return probs, {"nearest_authored": best, "path": dp, "corridor": cbest}
 
 
 # ------------------------------------------------------------------ the pack
@@ -357,9 +361,10 @@ def report(doc, g):
         na = m["nearest_authored"]
         sub = SR._sub_of(*r["site"]["centre"])
         lines.append("%-18s %-34s centre %s ground y%d sub %s tier %s; %d blocks, bbox %s; nearest authored %.0f "
-                     "(our column %s to data/%s); path %.0f"
+                     "(our column %s to data/%s); corridor box %.0f (%s); path %.0f"
                      % (r["id"], r["name"], r["site"]["centre"], g(*r["site"]["centre"]), sub[0], sub[1],
-                        len(s.solid) + len(s.hung), box, na[0], tuple(int(v) for v in na[1]), na[2], m["path"]))
+                        len(s.solid) + len(s.hung), box, na[0], tuple(int(v) for v in na[1]), na[2],
+                        m["corridor"][0], m["corridor"][2], m["path"]))
         for k, v in s.floors.items():
             lines.append("    floor %s: %s" % (k, v if not isinstance(v, list) else "%d posts" % len(v)))
         if r.get("npc"):

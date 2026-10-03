@@ -1682,9 +1682,9 @@
       "kind": "npc_grant",
       "place": "Tam Furrow's home base in the Tilpey east shore woods (data/northern_residents.json hide_and_seek), at the post",
       "npc_at": [
-        6696,
+        6700,
         98,
-        3718
+        3712
       ],
       "quest": "evt_hide_and_seek",
       "contents": [

@@ -6628,7 +6628,7 @@
     {
       "id": "evt_stubborn_tree",
       "source": "data/northern_residents.json stubborn_tree; the owner's brief of 2026-10-03 (data/northern_residents.json request)",
-      "place": "data/northern_residents.json stubborn_tree: Hesketh Fell and the last tree, (1616, 3280)",
+      "place": "data/northern_residents.json stubborn_tree: Hesketh Fell and the last tree, (1588, 3280)",
       "dialogue_id": "dlg_stubborn_tree",
       "scope": "player",
       "optional": true,
@@ -6639,8 +6639,8 @@
         "npc_remains_after_completion": true
       },
       "npc_at": [
-        1619,
-        133,
+        1591,
+        134,
         3283
       ],
       "objectives": [
@@ -7076,7 +7076,7 @@
       "id": "evt_hide_and_seek",
       "source": "data/northern_residents.json hide_and_seek; the owner's brief of 2026-10-03 (data/northern_residents.json request)",
       "reward_record": "data/rewards.json hide_and_seek_milk",
-      "place": "data/northern_residents.json hide_and_seek: Tam's home base, (6696, 3716)",
+      "place": "data/northern_residents.json hide_and_seek: Tam's home base, (6700, 3710)",
       "dialogue_id": "dlg_hide_and_seek",
       "scope": "player",
       "optional": true,
@@ -7087,9 +7087,9 @@
         "npc_remains_after_completion": true
       },
       "npc_at": [
-        6696,
+        6700,
         98,
-        3718
+        3712
       ],
       "objectives": [
         {
