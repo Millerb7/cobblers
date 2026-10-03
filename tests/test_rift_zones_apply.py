@@ -354,12 +354,27 @@ def walker(block):
     return feet, reach
 
 
+def start_heading(gd):
+    """The heading the walks' START POINTS are measured along: the gate's SURVEYED outward (data/rift_zones.json
+    <gate>.surveyed_outward -- the road's walked line on a route gate, the traced mask's axis otherwise), not
+    the built one.
+
+    Since 2026-10-03 the gatehouse is six wide on a cardinal axis (gatehouse.axis_why), snapped up to 34
+    degrees off the surveyed line. A start point on the SNAPPED axis lands wherever that axis happens to go:
+    at G2, twelve blocks in, on the cliff the Victory Road cut runs past (ground y126 at (3548, 5310) beside the
+    road's y111 at (3552, 5311)); at the wilds slip, eight out, on a bump that can be jumped down from and not
+    climbed. On the surveyed line they are the places they were before the snap -- on the road, on the ground
+    the gate was sited to join -- which is what this walk asks about: can a player get from there, through the
+    gatehouse, to there. Read from the data, not from the generator."""
+    return gd.get("surveyed_outward") or gd["outward"]
+
+
 def walk_problems(gate, block):
     """[] when a player can: walk from the approach outside into the knock box and back out again; walk from
-    the arrival into the zone; walk from the zone into the exit box. Start points are on the gate's own axis,
-    walkway_in + 6 blocks inside and knock_out + 6 outside, at the heightmap's ground there."""
+    the arrival into the zone; walk from the zone into the exit box. Start points are on the gate's surveyed
+    line (start_heading), walkway_in + 6 blocks inside and knock_out + 6 outside, at the heightmap's ground there."""
     name, _gid, gd, arr, _tb, eb, knock = gate
-    q, ow, fy = gd["block"], gd["outward"], gd["ground_y"] + 1
+    q, ow, fy = gd["block"], start_heading(gd), gd["ground_y"] + 1
     feet, reach = walker(block)
 
     def on_axis(t):
@@ -391,32 +406,34 @@ def straight_on_problems(gate, block):
     inner approach ended one column short of a column of league_gate, so a passed player walking out of the
     walkway walked into obsidian. The flood fill above still called G5 sound, because a player can sidestep
     onto the ground beside it; a doorway whose way out is a sidestep round a wall is the defect all the same.
-    The column the run came from is the approach column's 4-neighbour nearest the guard (the walkway's end);
-    the step is the movement model's: up one with headroom, or down by up to three."""
+    Since 2026-10-03 the walkway is six wide and each side's approach is one run per lane
+    (data/rift_zones.json gatehouse.width_why): every lane is checked. The heading is the record's own outward
+    (out of the outer mouth) or its reverse (out of the inner one), read from the data; the step is the movement
+    model's: up one with headroom, or down by up to three."""
     name, _gid, gd, *_ = gate
-    q = gd["block"]
+    ow = gd["outward"]
     bad = []
 
     def ok(x, y, z):
         return block(x, y, z) in PASSABLE and block(x, y + 1, z) in PASSABLE and block(x, y - 1, z) not in PASSABLE
-    for side in ("outer", "inner"):
-        run = gd["approach"][side]
-        if not run:
-            bad.append("%s: no %s approach in the data, so nothing says where its mouth is" % (name, side))
+    for side, (hx, hz) in (("outer", (ow[0], ow[1])), ("inner", (-ow[0], -ow[1]))):
+        runs = gd["approach"][side]
+        if len(runs) != GH["walkway"] or not all(runs):
+            bad.append("%s: the %s approach has %d lane run(s), %d of them empty; one per lane (%d) is what says "
+                       "where each lane's mouth is" % (name, side, len(runs), sum(1 for r in runs if not r),
+                                                        GH["walkway"]))
             continue
-        first = run[0]
-        prev = min(((first[0] + 1, first[1]), (first[0] - 1, first[1]), (first[0], first[1] + 1),
-                    (first[0], first[1] - 1)), key=lambda c: (c[0] - q[0]) ** 2 + (c[1] - q[1]) ** 2)
-        hx, hz = first[0] - prev[0], first[1] - prev[1]
-        lx, lz, ly = run[-1][0], run[-1][1], run[-1][2]
-        sx, sz = lx + hx, lz + hz
-        steps = [y for y in (ly, ly - 1, ly - 2, ly - 3) if ok(sx, y, sz)]
-        if ok(sx, ly + 1, sz) and block(lx, ly + 2, lz) in PASSABLE:
-            steps.append(ly + 1)
-        if not steps:
-            bad.append("%s: walking straight on off the %s approach at (%d, %d, %d), the column (%d, %d) is not "
-                       "ground a player can step onto: %s" % (name, side, lx, ly, lz, sx, sz,
-                                                             [block(sx, y, sz) for y in range(ly - 1, ly + 3)]))
+        for lane, run in enumerate(runs):
+            lx, lz, ly = run[-1][0], run[-1][1], run[-1][2]
+            sx, sz = lx + hx, lz + hz
+            steps = [y for y in (ly, ly - 1, ly - 2, ly - 3) if ok(sx, y, sz)]
+            if ok(sx, ly + 1, sz) and block(lx, ly + 2, lz) in PASSABLE:
+                steps.append(ly + 1)
+            if not steps:
+                bad.append("%s: walking straight on off the %s approach, lane %d, at (%d, %d, %d), the column "
+                           "(%d, %d) is not ground a player can step onto: %s"
+                           % (name, side, lane, lx, ly, lz, sx, sz,
+                              [block(sx, y, sz) for y in range(ly - 1, ly + 3)]))
     return bad
 
 
@@ -520,7 +537,7 @@ def gates_in_a_wall(fn):
 def bypassed(gate, block):
     """True when, barrier shut, a player outside walks round to inside within 28 of the guard."""
     _n, _gid, gd, *_ = gate
-    q, ow, fy = gd["block"], gd["outward"], gd["ground_y"] + 1
+    q, ow, fy = gd["block"], start_heading(gd), gd["ground_y"] + 1
     feet, reach = walker(block)
     o = (int(round(q[0] + ow[0] * (GH["knock_out"] + 6))), int(round(q[1] + ow[1] * (GH["knock_out"] + 6))))
     i = (int(round(q[0] - ow[0] * (GH["walkway_in"] + 6))), int(round(q[1] - ow[1] * (GH["walkway_in"] + 6))))
@@ -539,18 +556,41 @@ def test_the_barrier_is_the_only_way_past_a_gatehouse_in_a_wall():
     assert [x[0] for x in walled if bypassed(x, block)] == []
 
 
-# Without this the bypass check could pass for reasons of its own. Dropping the gatehouse's side walls from the
-# GENERATOR (walkway_shell returns nothing; data untouched) must open a way round both walled gates.
-@pytest.mark.slow
-def test_dropping_the_shell_from_build_opens_a_way_round_both_walled_gates():
+def _mutated_build(old, new, label):
     src = (ROOT / "tools" / "rift_zones.py").read_text(encoding="utf-8")
-    old = "    return sorted(walls, key=lambda p: (p[1], p[0]))"
-    assert src.count(old) == 1
-    mod = types.ModuleType("rift_zones_no_shell")
+    assert src.count(old) == 1, "the line to mutate is not in tools/rift_zones.py exactly once: %r" % old
+    mod = types.ModuleType(label)
     mod.__file__ = str(ROOT / "tools" / "rift_zones.py")
-    exec(compile(src.replace(old, "    return []"), mod.__file__, "exec"), mod.__dict__)
+    exec(compile(src.replace(old, new), mod.__file__, "exec"), mod.__dict__)
+    return build(module=mod, real_ground=True)
+
+
+# Without this the bypass check could pass for reasons of its own. Dropping the gatehouse's side walls from the
+# GENERATOR (walkway_shell returns nothing; data untouched) must open a way round G4.
+#
+# G4 ONLY since 2026-10-03, measured, and the reason is geometry rather than a weaker check: the six-wide G5
+# runs north-south (zones.z5.guard.axis) and league_gate crosses it AT the barrier row, its diagonal meeting the
+# barrier's two end lanes -- (3570, 2678) against (3571, 2679) at the west end, corner to corner, and (3577, 2679)
+# beside (3576, 2679) at the east -- so with no side walls at all the cross-wall and the barrier still close G5.
+# At G4 behind_league crosses the walkway's two OUTER rows, outside the barrier, and only the side walls stop a
+# player stepping sideways off the guard's row. The proof that the bypass check bites at G5 is the next test.
+@pytest.mark.slow
+def test_dropping_the_shell_from_build_opens_a_way_round_the_gate_its_wall_does_not_close():
     (fn, _adv), g = real()
-    mfn, _madv = build(module=mod, real_ground=True)
+    mfn, _madv = _mutated_build("    return sorted(walls, key=lambda p: (p[1], p[0]))", "    return []",
+                                "rift_zones_no_shell")
+    block = world_of(mfn, everything(fn), g)
+    assert {x[0] for x in gates_in_a_wall(fn) if bypassed(x, block)} == {"z4"}
+
+
+# Without this the bypass check could pass at G5 for reasons of its own. Narrowing the barrier to the guard's own
+# lane in the GENERATOR (gate_places; data untouched) leaves five lanes of walkway running past it, and the
+# bypass check must find the way round at BOTH walled gates.
+@pytest.mark.slow
+def test_narrowing_the_barrier_to_one_lane_opens_a_way_round_both_walled_gates():
+    (fn, _adv), g = real()
+    mfn, _madv = _mutated_build('            "barrier": rows[1],', '            "barrier": [rows[1][zero]],',
+                                "rift_zones_narrow_barrier")
     block = world_of(mfn, everything(fn), g)
     assert {x[0] for x in gates_in_a_wall(fn) if bypassed(x, block)} == {"z4", "z5"}
 
@@ -559,18 +599,22 @@ def test_dropping_the_shell_from_build_opens_a_way_round_both_walled_gates():
 # inner run without the league_gate column, the generator's own wall-awareness undone -- must break G5 by name.
 @pytest.mark.slow
 def test_an_approach_that_stops_short_of_the_wall_fails_straight_on():
+    # RE-POINTED 2026-10-03. The pre-fix case this was written for -- G5's inner run stopping one column short of
+    # league_gate at (3581, 2680) -- no longer exists: the six-wide G5 runs north-south (zones.z5.guard.axis) and
+    # crosses the wall at its barrier row, so no approach of it meets a wall column. The proof keeps its shape:
+    # put ONE wall column straight on past the end of one lane's inner run (the wall as it would stand had the
+    # generator's wall-awareness not opened it) and the straight-on check must name G5.
     (fn, _adv), g = real()
     z5 = json.loads(json.dumps(SPEC["zones"]["z5"]))
-    run = z5["guard"]["approach"]["inner"]
-    assert run[-1][:2] == [3581, 2680], run
-    z5["guard"]["approach"]["inner"] = run[:-1]
     gate = RZ.gates_of("z5", z5)[0]
-    # the wall as built without the opening: the emitted wall plus the one column it would have kept
+    ow = z5["guard"]["outward"]
+    run = z5["guard"]["approach"]["inner"][0]
+    wx, wz = run[-1][0] - ow[0], run[-1][1] - ow[1]
     over = {}
     for n in everything(fn):
         over.update(RZ.simulate_function((fn / (n + ".mcfunction")).read_text(encoding="utf-8").splitlines()))
-    for y in range(g(3581, 2680) + 1, g(3581, 2680) + 1 + SPEC["wall"]["rise_over_floor"]):
-        over[(3581, y, 2680)] = "minecraft:obsidian"
+    for y in range(g(wx, wz) + 1, g(wx, wz) + 1 + SPEC["wall"]["rise_over_floor"]):
+        over[(wx, y, wz)] = "minecraft:obsidian"
 
     def block(x, y, z):
         b = over.get((x, y, z))
@@ -595,7 +639,7 @@ def passless_reaches_knock(gate, z, knocks, block):
     """True when a player WITHOUT the pass walks from outside to the knock box and never stands in the zone's
     boxes outside a knock box -- where the zone check would turn them back before the guard could answer."""
     _n, _gid, gd, _a, _t, _e, knock = gate
-    q, ow, fy = gd["block"], gd["outward"], gd["ground_y"] + 1
+    q, ow, fy = gd["block"], start_heading(gd), gd["ground_y"] + 1
     feet, reach = walker(block)
 
     def turned_back(x, zz):
@@ -660,7 +704,7 @@ def test_the_trapped_gates_record_names_exactly_the_gates_that_fail():
 @pytest.mark.slow
 def test_dropping_the_approach_from_build_breaks_the_gates_that_need_it():
     src = (ROOT / "tools" / "rift_zones.py").read_text(encoding="utf-8")
-    old = '            ap = [c for side in ("outer", "inner") for c in gd["approach"][side]]'
+    old = '            ap = approach_columns(gd)'
     assert src.count(old) == 1
     mod = types.ModuleType("rift_zones_no_approach")
     mod.__file__ = str(ROOT / "tools" / "rift_zones.py")
