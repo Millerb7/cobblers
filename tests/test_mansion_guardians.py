@@ -651,6 +651,7 @@ def _drive_r17_trainer(monkeypatch, tmp_path, present):
     x, y, z = g["seat"]
     fake = _FakeRcon(present)
     monkeypatch.setattr(reapply, "Rcon", lambda server_dir: fake)
+    monkeypatch.setattr(reapply, "require_installed", lambda server_dir: {"prepare": "test"})
     monkeypatch.setattr(reapply, "OUT", tmp_path)
     monkeypatch.setattr(reapply, "steps", lambda *a, **k: [("R17", "trainer", [("trainer", (g["id"], (x, y, z), g["yaw"]))])])
     monkeypatch.setattr(reapply.time, "sleep", lambda s: None)

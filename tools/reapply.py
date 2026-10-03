@@ -30,6 +30,12 @@ Checkpoints that stop a run: a function that does not answer "Running function";
 missing after R3 (cobblers_height is not in the world folder); a floor verify with any gap; a trader verify with any
 problem. Everything else is found by `audit`, which reads the saved world and compares it with what each step
 should have built.
+
+Fail-closed between the phases (2026-10-03): `prepare` writes build/prepare_stamp.json, a ledger of every job's
+outcome on a fingerprint of data/ and tools/, exits non-zero and names every failed or stale job unless the build is a
+complete prepare of today's inputs; `install` refuses an incomplete build and records which prepare it installed in
+build/install_record.json; `run` refuses a server whose last install was not of the current complete prepare, and its
+last line names every step with a problem and says when the run was partial.
 """
 from __future__ import annotations
 
@@ -621,6 +627,165 @@ def prepare_jobs(a):
     return J
 
 
+# ------------------------------------------------------------------------------------------- the prepare stamp
+# 2026-10-03, the owner: "prepare RESUMES PAST A FAILED STEP." A failing job did stop the run (exit 1), but the way
+# back from one was `prepare --from <the next job>`, which skipped the failed job and still ended on "prepared ...
+# every function pack covered"; `--only` did the same; and install and run asked nothing about prepare at all. So a
+# job could fail, be resumed past, and every apply after it report 0 problems with that job's output never built
+# (the encounter rebuild sat uninstalled). Now every job's outcome is written to a ledger in build/ next to the build
+# it describes, keyed on a fingerprint of data/ and tools/, and the build is COMPLETE only when every job succeeded on
+# today's inputs with every job before it already good when it ran, and the whole-build checks passed after the last
+# of them. install refuses an incomplete build and records which prepare it installed; run refuses a server whose last
+# install was not of the current complete prepare. --from and --only still work for recovery: each pass adds to the
+# ledger, and the final line names every job that keeps the build from being complete.
+STAMP = BUILD / "prepare_stamp.json"
+INSTALLED = BUILD / "install_record.json"
+INPUT_DIRS = ("data", "tools")
+
+
+def input_fingerprint(root=None):
+    """(digest, {relative path: sha256}) over every file in data/ and tools/ (not __pycache__): what a prepare is
+    built from. Content, not mtimes or HEAD, so an uncommitted edit counts and a no-op checkout does not."""
+    import hashlib
+    root = Path(root) if root is not None else ROOT
+    files = {}
+    for d in INPUT_DIRS:
+        for p in sorted((root / d).rglob("*")):
+            if p.is_file() and "__pycache__" not in p.parts and p.suffix != ".pyc":
+                files[p.relative_to(root).as_posix()] = hashlib.sha256(p.read_bytes()).hexdigest()
+    h = hashlib.sha256()
+    for k in sorted(files):
+        h.update(("%s %s\n" % (k, files[k])).encode("utf-8"))
+    return h.hexdigest(), files
+
+
+def git_head():
+    r = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True)
+    return r.stdout.strip() if r.returncode == 0 else "unknown"
+
+
+def load_stamp(path=None):
+    path = Path(path) if path is not None else STAMP
+    if not path.is_file():
+        return {"jobs": {}}
+    try:
+        d = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {"jobs": {}, "unreadable": True}
+    d.setdefault("jobs", {})
+    return d
+
+
+def save_stamp(stamp, path=None):
+    path = Path(path) if path is not None else STAMP
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(stamp, indent=1, sort_keys=True), encoding="utf-8")
+
+
+def job_valid(rec, fingerprint):
+    """A job counts only if it succeeded, on these inputs, with every job before it already good when it ran."""
+    return bool(rec) and rec.get("status") == "ok" and rec.get("fingerprint") == fingerprint and rec.get("upstream_ok") is True
+
+
+def stamp_problems(stamp, names, fingerprint):
+    """Every reason the build is not a complete prepare of these inputs, one line each; [] when it is."""
+    out = []
+    if stamp.get("unreadable"):
+        out.append("the prepare stamp %s is unreadable" % STAMP)
+    jobs = stamp.get("jobs", {})
+    for n in names:
+        rec = jobs.get(n)
+        if not rec:
+            out.append("%s: never ran" % n)
+        elif rec.get("status") != "ok":
+            out.append("%s: FAILED (%s)" % (n, rec.get("error", "no error recorded")))
+        elif rec.get("fingerprint") != fingerprint:
+            out.append("%s: last ran before the latest change to data/ or tools/" % n)
+        elif rec.get("upstream_ok") is not True:
+            out.append("%s: ran while an earlier job had not succeeded (re-run it: --from the earliest such job)" % n)
+    chk = stamp.get("checks") or {}
+    last = max((jobs[n].get("at", 0) for n in names if n in jobs), default=0)
+    if not chk:
+        out.append("checks: the whole-build checks never ran")
+    elif not chk.get("ok"):
+        out.append("checks: FAILED (%s)" % chk.get("error", "no error recorded"))
+    elif chk.get("fingerprint") != fingerprint:
+        out.append("checks: last ran before the latest change to data/ or tools/")
+    elif chk.get("at", 0) < last:
+        out.append("checks: older than the last job")
+    return out
+
+
+def stamp_id(stamp):
+    chk = stamp.get("checks") or {}
+    return "%s@%s" % (str(chk.get("fingerprint"))[:16], chk.get("at"))
+
+
+def require_prepared(what, names=None):
+    """Refuse `what` unless build/ is a complete prepare of today's data/ and tools/; returns the stamp."""
+    stamp = load_stamp()
+    if names is None:
+        names = stamp.get("job_names") or []
+    fp, _ = input_fingerprint()
+    problems = stamp_problems(stamp, names, fp) if names else ["no complete prepare has been recorded in %s" % STAMP]
+    if problems:
+        raise SystemExit("%s refused: build/ is not a complete prepare of today's data/ and tools/ (%d problem(s)):\n  "
+                         "%s\nRun `reapply.py prepare` to the end first." % (what, len(problems), "\n  ".join(problems[:40])))
+    return stamp
+
+
+def require_installed(server_dir):
+    """Refuse a run unless this server's last install was of the current complete prepare."""
+    stamp = require_prepared("reapply run")
+    key = str(Path(server_dir).resolve())
+    rec = (json.loads(INSTALLED.read_text(encoding="utf-8")) if INSTALLED.is_file() else {}).get(key)
+    if not rec:
+        raise SystemExit("reapply run refused: no completed `reapply.py install` into %s is recorded in %s" % (key, INSTALLED))
+    if rec.get("prepare") != stamp_id(stamp):
+        raise SystemExit("reapply run refused: the last install into %s (%s) was of prepare %s, and build/ is now "
+                         "prepare %s: install it first" % (key, rec.get("at"), rec.get("prepare"), stamp_id(stamp)))
+    return rec
+
+
+def _record_install(server_dir, world_dir, stamp, done):
+    key = str(Path(server_dir).resolve())
+    rec = json.loads(INSTALLED.read_text(encoding="utf-8")) if INSTALLED.is_file() else {}
+    if done:
+        rec[key] = {"world_dir": str(world_dir), "prepare": stamp_id(stamp), "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
+    else:
+        rec.pop(key, None)                    # an install under way is not an install of anything
+    INSTALLED.parent.mkdir(parents=True, exist_ok=True)
+    INSTALLED.write_text(json.dumps(rec, indent=1), encoding="utf-8")
+
+
+def _run_jobs(jobs, run, stamp, fp):
+    """Run the selected jobs in order, writing each outcome to the stamp; stop at the first failure and raise a
+    SystemExit whose message names it and everything this pass did not reach."""
+    names = [n for n, _ in jobs]
+    recs = stamp.setdefault("jobs", {})
+    for i, (name, job) in enumerate(jobs):
+        if name not in run:
+            continue
+        print("[%s]" % name, flush=True)
+        upstream = all(job_valid(recs.get(n), fp) for n in names[:i])
+        try:
+            job()
+        except BaseException as e:            # SystemExit from py(), or anything a job raised
+            err = str(e.code if isinstance(e, SystemExit) else "%s: %s" % (type(e).__name__, e))[:500]
+            recs[name] = {"status": "failed", "at": time.time(), "fingerprint": fp, "error": err}
+            save_stamp(stamp)
+            if isinstance(e, KeyboardInterrupt):
+                raise
+            skipped = [n for n in names[i + 1:] if n in run]
+            raise SystemExit("PREPARE FAILED at job %s: %s\n  not reached in this pass: %d job(s)%s\n  build/ is NOT "
+                             "complete; install and run refuse it. Fix it, then `prepare --from %s`."
+                             % (name, err, len(skipped), (" (%s)" % ", ".join(skipped[:12])
+                                                          + (", ..." if len(skipped) > 12 else "")) if skipped else "",
+                                name))
+        recs[name] = {"status": "ok", "at": time.time(), "fingerprint": fp, "upstream_ok": upstream}
+        save_stamp(stamp)
+
+
 def prepare(a):
     t0 = time.time()
     jobs = prepare_jobs(a)
@@ -629,14 +794,54 @@ def prepare(a):
         print("\n".join(names))
         return 0
     run = select_jobs(names, a.only, a.from_job)
-    for name, job in jobs:
-        if name in run:
-            print("[%s]" % name, flush=True)
-            job()
-    if len(run) < len(names):
+    fp, files = input_fingerprint()
+    stamp = load_stamp()
+    stamp.pop("unreadable", None)
+    stamp.update({"job_names": names, "head": git_head(), "fingerprint": fp,
+                  "last_pass": {"started": time.strftime("%Y-%m-%dT%H:%M:%S"),
+                                "selection": "--only %s" % a.only if a.only else
+                                             "--from %s" % a.from_job if a.from_job else "all"}})
+    save_stamp(stamp)
+    _run_jobs(jobs, run, stamp, fp)
+    partial = len(run) < len(names)
+    if partial:
         print("partial prepare: %d of %d jobs ran (%s); every other pack is as the last run left it"
               % (len(run), len(names), ", ".join(n for n in names if n in run)))
-    # the checks below always run, on the whole build: a partial prepare is held to the same gate
+    try:
+        summary = _prepare_checks(t0)
+    except BaseException as e:
+        err = str(e.code if isinstance(e, SystemExit) else "%s: %s" % (type(e).__name__, e))
+        stamp["checks"] = {"ok": False, "at": time.time(), "fingerprint": fp, "error": err[:500]}
+        save_stamp(stamp)
+        if isinstance(e, KeyboardInterrupt):
+            raise
+        raise SystemExit("%s\nPREPARE FAILED at the whole-build checks: build/ is NOT complete; install and run refuse it."
+                         % err)
+    stamp["checks"] = {"ok": True, "at": time.time(), "fingerprint": fp}
+    # a job that rewrote data/ or tools/ means the jobs before it read other inputs: not a prepare of what is there now
+    fp_end, files_end = input_fingerprint()
+    if fp_end != fp:
+        changed = sorted(k for k in set(files) | set(files_end) if files.get(k) != files_end.get(k))
+        stamp["changed_during_pass"] = changed
+    else:
+        stamp.pop("changed_during_pass", None)
+    save_stamp(stamp)
+    problems = stamp_problems(stamp, names, fp_end)
+    print(summary)
+    if problems:
+        raise SystemExit("PREPARE INCOMPLETE (%s): %d problem(s) keep build/ from being a complete prepare of today's "
+                         "data/ and tools/; install and run refuse it:\n  %s%s"
+                         % (stamp["last_pass"]["selection"], len(problems), "\n  ".join(problems[:40]),
+                            "\n  data/ or tools/ changed during the pass: %s" % ", ".join(stamp["changed_during_pass"][:10])
+                            if stamp.get("changed_during_pass") else ""))
+    print("PREPARE COMPLETE: all %d jobs good on data/ and tools/ %s (head %s)%s; stamp %s"
+          % (len(names), fp_end[:16], stamp["head"][:12],
+             ", completed by a %s pass" % stamp["last_pass"]["selection"] if partial else "", STAMP))
+
+
+def _prepare_checks(t0):
+    """The whole-build checks, after the jobs: they always run on the whole build, so a partial prepare is held to the
+    same gate. Returns the summary line; raises SystemExit on any problem."""
     if REAPPLY.exists():
         shutil.rmtree(REAPPLY)
     fn = REAPPLY / "data" / "cobblers" / "function" / "reapply"
@@ -682,8 +887,8 @@ def prepare(a):
     for d in donors(doc):
         if "cobblers:structures/place_%s" % d not in ran:
             raise SystemExit("donor %r is placed in data/placements.json but no re-apply step stamps it" % d)
-    print("prepared in %.0f s: %d places, %d pack donors, %d steps, every function pack covered"
-          % (time.time() - t0, len(places()), len(donors()), len(steps())))
+    return ("checks passed in %.0f s: %d places, %d pack donors, %d steps, every function pack covered"
+            % (time.time() - t0, len(places()), len(donors()), len(steps())))
 
 
 def replace_pack(dest, src, retired_root):
@@ -721,6 +926,18 @@ def install(a):
     s.close()
     if busy:
         raise SystemExit("port 25565 is in use: install with the server stopped")
+    # a build that is not a complete prepare of today's data/ and tools/ is not installed (2026-10-03: a failed job was
+    # resumed past and its output never built, and every install after it reported success)
+    stamp = require_prepared("reapply install")
+    # and every pack this install copies must exist in that build: replace_pack with no build moves the installed
+    # copy aside and copies nothing, and the run would then go on without it
+    unbuilt = [str(p) for p in [PACKS / n for n in SERVER_PACKS] + list(WORLD_PACKS)
+               + [PACKS / n for n in SPAWN_PACKS if n != "cobblers_suppress"]       # suppress is generated below
+               if not (Path(p) / "pack.mcmeta").is_file()]
+    if unbuilt:
+        raise SystemExit("reapply install refused: %d pack(s) are not in build/, nothing was copied:\n  %s"
+                         % (len(unbuilt), "\n  ".join(unbuilt)))
+    _record_install(a.server_dir, a.world_dir, stamp, done=False)
     # the port says the server is down; only the lock says nobody else is using the runtime
     dp = runtime_guard.check(Path(a.server_dir) / "datapacks", "install packs into")
     runtime_guard.check(a.world_dir, "install world packs into")
@@ -795,7 +1012,8 @@ def install(a):
         raise SystemExit("the server does not hold what the repo builds (%d):\n  %s\nfix the install, or record a "
                          "deliberate server value with `tools/server_config_record.py record`"
                          % (len(problems), "\n  ".join(problems)))
-    print("install check: every pack and config the repo builds is installed and current")
+    _record_install(a.server_dir, a.world_dir, stamp, done=True)
+    print("install check: every pack and config the repo builds is installed and current (prepare %s)" % stamp_id(stamp))
 
 
 class Rcon:
@@ -1412,9 +1630,13 @@ def require_watchdog_off(server_dir):
 
 
 def run(a):
+    # before the first RCON command: the server must hold an install of the current complete prepare
+    inst = require_installed(a.server_dir)
     rc = Rcon(a.server_dir)
     OUT.mkdir(parents=True, exist_ok=True)
-    rec = {"started": time.strftime("%Y-%m-%dT%H:%M:%S"), "steps": []}
+    rec = {"started": time.strftime("%Y-%m-%dT%H:%M:%S"), "steps": [], "prepare": inst.get("prepare"),
+           "selection": "--only %s" % a.only if a.only else
+                        "--from %s" % a.from_step if getattr(a, "from_step", None) else "all"}
     path = OUT / ("run_%s.json" % time.strftime("%Y%m%d_%H%M%S"))
     todo = steps(a.with_spawns)
     ids = [s[0] for s in todo]
@@ -1429,7 +1651,10 @@ def run(a):
         todo = [s for s in todo if s[0] in want]
         print("run --only: %d step(s) selected in plan order: %s" % (len(todo), " ".join(s[0] for s in todo)))
     elif getattr(a, "from_step", None):
+        if a.from_step not in ids:
+            raise SystemExit("reapply run --from: no step named %s (have: %s)" % (a.from_step, " ".join(ids)))
         todo = todo[ids.index(a.from_step):]
+    rec["of_steps"] = len(ids)
     if not todo:
         raise SystemExit("reapply run: no steps selected; nothing would be applied")
     if getattr(a, "no_reload", False):
@@ -1445,8 +1670,23 @@ def run(a):
     for rule in DROP_RULES:
         drops[rule] = "true"
         rc("gamerule %s false" % rule)
+    live = {}
     try:
-        _run_steps(a, rc, todo, rec, path)
+        _run_steps(a, rc, todo, rec, path, live)
+    except BaseException as e:
+        # a step that raised (RCON dropped, a check crashed) is recorded with what it had found, never left out of
+        # the record; a step that stopped on its problems is already in it
+        if live.get("sid") and not any(s["step"] == live["sid"] for s in rec["steps"]):
+            why = str(e.code) if isinstance(e, SystemExit) else "%s: %s" % (type(e).__name__, e)
+            rec["steps"].append({"step": live["sid"], "title": live["title"], "seconds": None, "commands": None,
+                                 "problems": list(live["bad"]) + ["the step raised: %s" % why[:300]]})
+        rec.setdefault("stopped_at", live.get("sid"))
+        rec["finished"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+        path.write_text(json.dumps(rec, indent=1), encoding="utf-8")
+        if isinstance(e, KeyboardInterrupt):
+            raise
+        raise SystemExit(run_summary(rec, path) + "\n  Re-run that step alone (--only %s) once, then continue with "
+                         "--from the next step" % rec["stopped_at"])
     finally:
         for rule, value in drops.items():
             rc("gamerule %s %s" % (rule, value))
@@ -1455,17 +1695,35 @@ def run(a):
     getattr(rc, "close", lambda: None)()
     rec["finished"] = time.strftime("%Y-%m-%dT%H:%M:%S")
     path.write_text(json.dumps(rec, indent=1), encoding="utf-8")
-    print("run complete:", path)
+    print(run_summary(rec, path))
+
+
+def run_summary(rec, path):
+    """The run's last line, from its record: every step with a problem named, and a partial run called partial."""
+    bad = [(s["step"], s["problems"]) for s in rec["steps"] if s.get("problems")]
+    scope = ("ALL %d steps" % len(rec["steps"]) if rec.get("selection") == "all"
+             else "PARTIAL run (%s): %d of %d steps" % (rec.get("selection"), len(rec["steps"]), rec.get("of_steps", 0)))
+    if bad:
+        return ("RUN STOPPED at %s: %s, %d step(s) with problems:\n  %s\n  record: %s"
+                % (rec.get("stopped_at", bad[-1][0]), scope, len(bad),
+                   "\n  ".join("%s: %s" % (sid, "; ".join(p)) for sid, p in bad), path))
+    return "run complete, 0 problems: %s; record: %s" % (scope, path)
+
+
+# vanilla's reply to a command it could not parse (lang keys command.unknown.command and command.context.here)
+COMMAND_ERRORS = ("Unknown or incomplete command", "Incorrect argument for command", "<--[HERE]")
 
 
 DROP_RULES = ("doTileDrops", "doEntityDrops")
 
 
-def _run_steps(a, rc, todo, rec, path):
+def _run_steps(a, rc, todo, rec, path, live=None):
+    live = {} if live is None else live
     for sid, title, actions in todo:
         t0 = time.time()
         print("== %s %s" % (sid, title), flush=True)
         bad = []
+        live.update(sid=sid, title=title, bad=bad)           # what run() records if this step raises
         for kind, v in actions:
             if kind == "fn":
                 r = rc("function %s" % v)
@@ -1478,6 +1736,8 @@ def _run_steps(a, rc, todo, rec, path):
                 # a command a function cannot run for us (Cobblemon's spawn command does nothing inside one)
                 r = rc(v)
                 print("   %s -> %s" % (v[:100], r[:120] or "(no output)"), flush=True)
+                if any(m in r for m in COMMAND_ERRORS):
+                    bad.append("%s: %s" % (v[:100], r[:120]))
             elif kind == "check" and v == "ambient":
                 import ambient
                 problems = ambient.verify(rc)
@@ -1654,8 +1914,7 @@ def _run_steps(a, rc, todo, rec, path):
         if bad:
             rec["stopped_at"] = sid
             path.write_text(json.dumps(rec, indent=1), encoding="utf-8")
-            raise SystemExit("stopped at %s. Re-run that step alone (--only %s) once, then continue with --from the next step"
-                             % (sid, sid))
+            raise SystemExit("stopped at %s with %d problem(s)" % (sid, len(bad)))
 
 
 def audit(a):
