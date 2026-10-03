@@ -53,6 +53,24 @@ Two items, after the tour. Same rule as the overnight: record defects, do not ch
    a worse feature the owner would rather know about now. Results of the frame-rate and pose tests run during the
    tour are recorded below if they ran.
 
+3. **Heaven's Arena, redirected (the owner, on the tour, 2026-10-03, looking at the map):** "Heaven's Arena wasn't
+   supposed to be the hub of the city like this, it was meant to go in the slot next to it: the empty space in the
+   north of the Deep particularly. Heaven's Arena should be a battle zone where a player can go in and always find a
+   cool battle or gauntlet to match up against. Early levels will be single battles, then transition into more back to
+   back. It should be a small tower that becomes a large dome sort of place with several fighting venues inside the
+   main place; each player will have their own progress and their opponent will be spawned in front of them. We might
+   need to make a list of fights a player can get."
+   So, in order: (a) MEASURE the empty north of the Deep (what it is, its extent and floor y, what must stay clear:
+   the mouth plaza and the Victory Road tunnel are the known keep-clears, HEAVENS_ARENA.md site C); (b) RESEARCH the
+   mechanism -- an opponent spawned per player in front of them with per-player progress: rctmod cannot hold a
+   per-player opponent (docs/research/notes/rct-arena-capabilities.md); candidates are Cobblemon 1.8 NPCs with party
+   pools spawned per player, or the scene runtime's per-player trainers (EXP-034) -- a small proof before building
+   (principle 20); (c) DESIGN the fight list (trainer-balance-designer): single battles early, back-to-back gauntlets
+   later, banded to the level caps; the seven authored tier champions (data/arena_trainers.json) are its first
+   material; (d) the site design: a small tower opening into a dome with several venues. The schema-2 halls stand at
+   the city's hub (3609, 3249) in staging now; what the hub goes back to (the Core spire, build_spire_ring without
+   `arena`, is the precedent) is part of (d).
+
 **Pose test, in game 2026-10-03 (Eevee at (807, 177, 248) on Frostpeak, the owner watching):** NO control we have
 gives a sleeping or sitting pose. `spawnpokemonat ... status=sleep uncatchable no_ai`: the server holds
 `Pokemon.Status {StatusName: cobblemon:sleep, StatusTimer: 292}` but the timer never runs and nothing shows. The same
