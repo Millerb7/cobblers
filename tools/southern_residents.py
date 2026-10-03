@@ -207,10 +207,11 @@ def piece_surface(s, p, salt):
                 if abs(math.hypot(dx, dz) - r) <= w + 0.5:
                     cols.add((dx, dz))
     skip = {tuple(c) for c in p.get("except") or []}
+    ox, oz = p.get("at") or (0, 0)
     for dx, dz in sorted(cols):
         if (dx, dz) in skip:
             continue
-        x, z = s.cx + dx, s.cz + dz
+        x, z = s.cx + ox + dx, s.cz + oz + dz
         if not s.dry(x, z):
             continue
         gy = s.g(x, z)
@@ -234,9 +235,10 @@ def piece_ground_blocks(s, p, at=None):
 def piece_ring(s, p):
     """`count` copies of one small object on a circle of radius r round the centre, each on its own ground."""
     n, r = int(p["count"]), float(p["r"])
+    ox, oz = p.get("at") or (0, 0)
     for k in range(n):
         a = 2 * math.pi * (k + 0.5 * float(p.get("offset", 0))) / n
-        ax, az = int(round(r * math.sin(a))), int(round(-r * math.cos(a)))
+        ax, az = ox + int(round(r * math.sin(a))), oz + int(round(-r * math.cos(a)))
         obj = p["objects"][k % len(p["objects"])]
         piece_ground_blocks(s, {"name": p["name"], "blocks": obj}, at=(ax, az))
 

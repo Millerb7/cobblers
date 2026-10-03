@@ -40,7 +40,12 @@
     "rule": "vanilla 1.21.1 only, none a spawn condition in data/spawn_blocks.json (the generator refuses one), no chests (a Gimmighoul condition, tools/portals_audit.py) and no beds (a bed sets a respawn point, which the blackout's checkpoints own: data/frostpeak_camp.json blocks.rule)",
     "ids": [
       "minecraft:air", "minecraft:podzol", "minecraft:mushroom_stem", "minecraft:red_mushroom_block",
-      "minecraft:brown_mushroom", "minecraft:oak_sign"
+      "minecraft:brown_mushroom", "minecraft:oak_sign",
+      "minecraft:cobblestone", "minecraft:spruce_planks", "minecraft:stripped_spruce_log", "minecraft:spruce_slab",
+      "minecraft:spruce_door", "minecraft:glass_pane", "minecraft:hay_block", "minecraft:red_carpet",
+      "minecraft:brown_carpet", "minecraft:smoker", "minecraft:barrel", "minecraft:lantern", "minecraft:spruce_wall_sign",
+      "minecraft:spruce_sign", "minecraft:ladder", "minecraft:spruce_fence", "minecraft:dirt_path", "minecraft:coarse_dirt",
+      "minecraft:smooth_stone", "minecraft:polished_andesite", "minecraft:chain", "minecraft:iron_bars"
     ]
   },
   "residents": [
@@ -93,6 +98,107 @@
         "reward": "capture itself; no item (Codex's rule: no_loot_drops)"
       },
       "bbox": [598, 5878, 623, 5903]
+    },
+    {
+      "id": "post_fourteen",
+      "name": "Post Fourteen and Ash",
+      "kind": "a named Pokemon left behind, its story told by the place alone: signs, a worn track, an empty post",
+      "cell": "E8",
+      "subregion": "long_isle_north",
+      "situation": "On the flat top of Long Isle's north end stands a Haven Compact field post: a timber hut, a watchtower, and twenty blocks east of them a ring of smooth stone in the turf with a plank bar laid across it, the Compact's own field symbol (docs/story/FACTION.md: 'a plain open ring crossed by a short bridge'), and in its middle the stump of a field anchor (FACTION.md 'Method' 3: anchors define an exchange boundary). The crew went one night and did not come back. The sign by the door says relief was due in three days. The other says 'ASH: stay. guard. good dog. back soon.' Round the hut runs a perfect ring of bare trodden earth twenty-eight blocks across: Ash is a Houndoom and has walked that circuit every night since. Ash sleeps on the porch until someone comes within twenty blocks, and will not leave the post. Catching Ash is the only ending the place offers, and the only reward: somebody finally comes back.",
+      "story_rule": "nothing here says where the crew went, why, or what the anchor was for: the signs say only what a sergeant would write on a door. The arc's facts stay in docs/story/ (FACTION.md 'Method'); this place is consistent with them and reveals nothing they do not. Tier 7 and gated after gym 7, by when the player has met the Compact (docs/story/ARC.md, gym2_town)",
+      "site": {
+        "centre": [7856, 4704],
+        "measured": "2026-10-03 from tools/ground.py: y96 at the centre and 94..98 over a 97-block square, the flat top of Long Isle's north end (data/regions.json long_isle_north, tier 7). tools/water_mask.py: dry. The nearest route path is about 1,370 blocks away (the isle has none); the nearest x/z authored in another data file is reported by tools/southern_residents.py --report."
+      },
+      "pieces": [
+        {"kind": "surface", "name": "Ash's track", "ring": [14, 0], "palette": [["minecraft:dirt_path", 3], ["minecraft:coarse_dirt", 1]]},
+        {"kind": "surface", "name": "the field symbol's ring", "at": [20, 0], "ring": [4, 0], "palette": [["minecraft:smooth_stone", 1]]},
+        {"kind": "surface", "name": "the field symbol's bridge", "segments": [[[15, 0], [25, 0]]], "half_width": 0, "palette": [["minecraft:spruce_planks", 1]]},
+        {"kind": "ground_blocks", "name": "the anchor's stump", "at": [20, 0], "blocks": [
+          [0, 1, 0, "minecraft:polished_andesite"], [0, 2, 0, "minecraft:chain[axis=y,waterlogged=false]"],
+          [0, 3, 0, "minecraft:iron_bars[east=false,north=false,south=false,west=false,waterlogged=false]"],
+          [0, 1, 6, {"sign": {"wood": "spruce", "rotation": 0, "lines": ["FIELD ANCHOR", "14-B", "do not touch", "do not move"]}}]
+        ]},
+        {"kind": "structure", "name": "the hut", "footprint": [-3, -3, 5, 3], "foundation": "minecraft:cobblestone", "clear_up": 10,
+         "fills": [
+          [-3, 0, -3, 3, 0, 3, "minecraft:spruce_planks"],
+          [4, 0, -1, 5, 0, 1, "minecraft:spruce_planks"],
+          [-3, 1, -3, 3, 3, 3, "minecraft:spruce_planks"],
+          [-2, 1, -2, 2, 3, 2, "minecraft:air"],
+          [-3, 1, -3, -3, 3, -3, "minecraft:stripped_spruce_log[axis=y]"],
+          [3, 1, -3, 3, 3, -3, "minecraft:stripped_spruce_log[axis=y]"],
+          [-3, 1, 3, -3, 3, 3, "minecraft:stripped_spruce_log[axis=y]"],
+          [3, 1, 3, 3, 3, 3, "minecraft:stripped_spruce_log[axis=y]"],
+          [-4, 4, -4, 5, 4, 4, "minecraft:spruce_slab[type=bottom,waterlogged=false]"],
+          [4, 1, -1, 5, 3, 1, "minecraft:air"]
+         ],
+         "blocks": [
+          [3, 1, 0, "minecraft:spruce_door[facing=east,half=lower,hinge=left,open=false,powered=false]"],
+          [3, 2, 0, "minecraft:spruce_door[facing=east,half=upper,hinge=left,open=false,powered=false]"],
+          [0, 2, -3, "minecraft:glass_pane[east=true,west=true,north=false,south=false,waterlogged=false]"],
+          [0, 2, 3, "minecraft:glass_pane[east=true,west=true,north=false,south=false,waterlogged=false]"],
+          [-2, 1, -2, "minecraft:hay_block[axis=y]"], [-2, 1, -1, "minecraft:hay_block[axis=y]"],
+          [-2, 1, 1, "minecraft:hay_block[axis=y]"], [-2, 1, 2, "minecraft:hay_block[axis=y]"],
+          [2, 1, -2, "minecraft:smoker[facing=west,lit=false]"],
+          [2, 1, 2, "minecraft:barrel[facing=up,open=false]"],
+          [0, 1, -2, "minecraft:barrel[facing=up,open=false]"]
+         ],
+         "hung": [
+          [-2, 2, -2, "minecraft:red_carpet"], [-2, 2, 1, "minecraft:red_carpet"],
+          [0, 3, 0, "minecraft:lantern[hanging=true,waterlogged=false]"],
+          [5, 3, 0, "minecraft:lantern[hanging=true,waterlogged=false]"],
+          [0, 2, -2, {"sign": {"wood": "spruce", "wall": "south", "lines": ["ROSTER", "Rell, Okafor,", "Penn, Varga,", "and Ash"]}}],
+          [4, 2, -2, {"sign": {"wood": "spruce", "wall": "east", "lines": ["POST 14", "relief due", "in three days", "- Sgt. I. Rell"]}}],
+          [4, 2, 2, {"sign": {"wood": "spruce", "wall": "east", "lines": ["ASH:", "stay. guard.", "good dog.", "back soon."]}}],
+          [4, 1, 0, "minecraft:brown_carpet"]
+         ]},
+        {"kind": "structure", "name": "the watchtower", "footprint": [-8, -14, -6, -12], "foundation": "minecraft:cobblestone", "clear_up": 12,
+         "fills": [
+          [-8, 0, -14, -6, 0, -12, "minecraft:cobblestone"],
+          [-8, 1, -14, -6, 6, -12, "minecraft:air"],
+          [-8, 1, -14, -8, 7, -14, "minecraft:stripped_spruce_log[axis=y]"],
+          [-6, 1, -14, -6, 7, -14, "minecraft:stripped_spruce_log[axis=y]"],
+          [-8, 1, -12, -8, 7, -12, "minecraft:stripped_spruce_log[axis=y]"],
+          [-6, 1, -12, -6, 7, -12, "minecraft:stripped_spruce_log[axis=y]"],
+          [-7, 1, -14, -7, 6, -14, "minecraft:spruce_planks"],
+          [-8, 7, -14, -6, 7, -12, "minecraft:spruce_planks"],
+          [-8, 8, -14, -6, 8, -12, "minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=false]"],
+          [-7, 8, -13, -7, 8, -13, "minecraft:air"]
+         ],
+         "hung": [
+          [-7, 7, -13, "minecraft:ladder[facing=south,waterlogged=false]"],
+          [-7, 6, -13, "minecraft:ladder[facing=south,waterlogged=false]"],
+          [-7, 5, -13, "minecraft:ladder[facing=south,waterlogged=false]"],
+          [-7, 4, -13, "minecraft:ladder[facing=south,waterlogged=false]"],
+          [-7, 3, -13, "minecraft:ladder[facing=south,waterlogged=false]"],
+          [-7, 2, -13, "minecraft:ladder[facing=south,waterlogged=false]"],
+          [-7, 1, -13, "minecraft:ladder[facing=south,waterlogged=false]"],
+          [-6, 9, -12, "minecraft:lantern[hanging=false,waterlogged=false]"]
+         ]}
+      ],
+      "pokemon": {
+        "id": "ash",
+        "name": "Ash",
+        "species": "cobblemon:houndoom",
+        "level": 53,
+        "at": [5, 0],
+        "anchor": [7861, 97, 4704],
+        "yaw": -90.0,
+        "trigger": 20,
+        "leash": 26,
+        "appears_after": "gym7_cleared",
+        "gate": "gym7_cleared",
+        "intended_stage": "post_gym_7",
+        "catch_rule": "catchable_after_gate",
+        "message": "Ash gets up off the porch of Post Fourteen. Ash was told to stay.",
+        "sound": "minecraft:entity.wolf.howl",
+        "level_why": "the place's tier is 7 (data/encounter_design.json tables.long_isle_north), ceiling 55; L53 sits above the cap a player can hold before gym 7 (data/trainers.json gym_ace_levels[6] = 50) and within the cap after it (gym_ace_levels[7] = 55): the level-cap refusal is its catch gate, per thrower",
+        "gate_why": "a presence gate (data/resident_encounters.json build.appears_after_rule): the keeper brings Ash in the first time a player holding gym7_cleared comes within spawn_radius, and Ash then stays for everyone, as the woken Celebi does. Before that the post stands empty and the signs tell the story on their own",
+        "trigger_why": "Ash's track has a radius of 14 round the hut; the trigger of 20 from the porch wakes Ash as a visitor crosses it, and the leash of 26 keeps the fight on the post's ground",
+        "reward": "capture itself; no item (Codex's rule: no_loot_drops)"
+      },
+      "bbox": [7842, 4689, 7881, 4718]
     }
   ]
 }
