@@ -11380,6 +11380,151 @@
       "speakers": {
         "corran": "Corran Vey"
       }
+    },
+    {
+      "id": "dlg_prospector_claim",
+      "quest_id": "evt_prospector_claim",
+      "npc_id": "npc_prospector_claim",
+      "source": "data/southern_residents.json prospector_camp; the owner's brief of 2026-10-03 (data/southern_residents.json request)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_prospector_claim.dialogue_cursor",
+        "initial_node": "b001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_prospector_claim.started",
+            "value": true
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_prospector_claim.started",
+            "value": false
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ],
+          "node": "b001"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "b001",
+          "kind": "line",
+          "speaker": "bettany",
+          "text": "Sit by the fire, if your legs still bend. Mine don't. Not up hills.",
+          "next": "b002"
+        },
+        {
+          "id": "b002",
+          "kind": "line",
+          "speaker": "bettany",
+          "text": "Bettany Oake. Forty years I panned these creeks. Gold, a bit. Hard stones. Once a sheet of something that had been a Steelix's hide, polished up like a kettle.",
+          "next": "hub"
+        },
+        {
+          "id": "hub",
+          "kind": "choice",
+          "speaker": "bettany",
+          "text": "Well? You didn't walk all the way out here for my tea.",
+          "responses": [
+            {
+              "id": "r_creeks",
+              "text": "What happened to the creeks?",
+              "next": "k001"
+            },
+            {
+              "id": "r_claim",
+              "text": "Do you still have a claim?",
+              "next": "c001"
+            },
+            {
+              "id": "r_found",
+              "text": "I found your cairn.",
+              "visible_when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_prospector_claim.told",
+                "value": true
+              },
+              "next": "f001"
+            },
+            {
+              "id": "r_bye",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ],
+              "next": "hub"
+            }
+          ]
+        },
+        {
+          "id": "k001",
+          "kind": "line",
+          "speaker": "bettany",
+          "text": "Moved. One summer they ran where they'd always run. Next spring half of them came down the other side of the hill like they'd never heard of me.",
+          "next": "k002"
+        },
+        {
+          "id": "k002",
+          "kind": "line",
+          "speaker": "bettany",
+          "text": "A creek doesn't do that. Not in forty years, not in four hundred. But I'm an old woman with a pan, and nobody asked me.",
+          "next": "hub"
+        },
+        {
+          "id": "c001",
+          "kind": "line",
+          "speaker": "bettany",
+          "text": "Number Four. My best. Up where the old creek bed was, before it took itself off.",
+          "next": "c002"
+        },
+        {
+          "id": "c002",
+          "kind": "line",
+          "speaker": "bettany",
+          "text": "Walk into the sunset from here, uphill, till the ground stops rising. Couple of hundred paces. My cairn's on the top: three stones high, with my pick stood in it.",
+          "next": "c003",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "tell"
+            }
+          ]
+        },
+        {
+          "id": "c003",
+          "kind": "line",
+          "speaker": "bettany",
+          "text": "There's a barrel set in the ground at the foot of it. Whatever's in it, keep. I'd only sell it, and who'd I sell it to out here?",
+          "next": "hub"
+        },
+        {
+          "id": "f001",
+          "kind": "line",
+          "speaker": "bettany",
+          "text": "Did you. Is the pick still standing? Good. Leave it there. It's minding the place for me.",
+          "next": "hub"
+        }
+      ],
+      "speakers": {
+        "bettany": "Bettany Oake"
+      }
     }
   ]
 }

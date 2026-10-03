@@ -2541,6 +2541,44 @@
         "done01"
       ],
       "why": "the dialogue cursor of Corran Vey's conversation (dlg_surveyor_line)."
+    },
+    {
+      "id": "quest.evt_prospector_claim.started",
+      "quest_id": "evt_prospector_claim",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Bettany Oake (data/southern_residents.json prospector_camp); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_prospector_claim.told",
+      "quest_id": "evt_prospector_claim",
+      "field": "told",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Bettany has told the player the way to Claim Number Four (dlg_prospector_claim c002)."
+    },
+    {
+      "id": "quest.evt_prospector_claim.dialogue_cursor",
+      "quest_id": "evt_prospector_claim",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "b001",
+      "allowed_values": [
+        "b001",
+        "b002",
+        "hub",
+        "k001",
+        "k002",
+        "c001",
+        "c002",
+        "c003",
+        "f001"
+      ],
+      "why": "the dialogue cursor of Bettany Oake's conversation (dlg_prospector_claim)."
     }
   ],
   "gym_markers": {

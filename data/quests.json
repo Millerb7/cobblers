@@ -6249,6 +6249,106 @@
         "quest.evt_surveyor_line.reward_claimed",
         "quest.evt_surveyor_line.dialogue_cursor"
       ]
+    },
+    {
+      "id": "evt_prospector_claim",
+      "source": "data/southern_residents.json prospector_camp; the owner's brief of 2026-10-03 (data/southern_residents.json request)",
+      "reward_record": "data/rewards.json prospector_claim (a cache: given by tools/rewards_pack.py's advancement, not by this quest)",
+      "place": "data/southern_residents.json prospector_camp: Bettany Oake's lean-to on the Arrow Creeks upland, (2432, 5696); her cairn on the crest at (2250, 5640)",
+      "dialogue_id": "dlg_prospector_claim",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        2433,
+        138,
+        5698
+      ],
+      "objectives": [
+        {
+          "id": "find_claim_four",
+          "active_when": {
+            "field": "quest.evt_prospector_claim.told",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_prospector_claim.told",
+            "equals": true
+          },
+          "text": "Walk into the sunset, uphill, until the ground stops rising: Bettany Oake's cairn, and the barrel at its foot."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_prospector_claim.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_prospector_claim.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_prospector_claim.dialogue_cursor",
+              "value": "b001"
+            }
+          ]
+        },
+        {
+          "id": "tell",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_prospector_claim.told",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_prospector_claim.told",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_prospector_claim.dialogue_cursor",
+              "value": "c003"
+            }
+          ]
+        }
+      ],
+      "rewards": [],
+      "cache_note": "The find is data/rewards.json prospector_claim, a cache: an advancement for standing on the barrel at the cairn's foot gives it, once per player, whether or not the player has spoken to her (rewards_pack's mechanism; a dialogue cannot read a reward advancement, only a progression flag). Bettany is the way to it, not its gate. 'I found your cairn.' is the player's word; she cannot check it.",
+      "repeat_dialogue": {
+        "always": "hub"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; the cache is per player by its advancement"
+      },
+      "generation_blockers": [
+        "Place npc_prospector_claim at npc_at with spawnnpcat after the restart that loads cobblers_dialogue (tools/reapply.py R18SR, from data/southern_residents.json prospector_camp npc), by the camp R9SR builds."
+      ],
+      "progression_field_refs": [
+        "quest.evt_prospector_claim.started",
+        "quest.evt_prospector_claim.told",
+        "quest.evt_prospector_claim.dialogue_cursor"
+      ]
     }
   ]
 }
