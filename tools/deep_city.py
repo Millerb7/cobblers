@@ -278,6 +278,18 @@ def stair_plan(R):
     return steps, top, opened
 
 
+def climb_cells(R):
+    """The ring cells whose roof must be off so the stair can be WALKED, not only stood on: the two opened cells and the
+    cell of step R-3 (2026-10-03). A player stepping up from a step at height s to s+1 needs air three above s in the
+    column he is leaving (feet s+1, head s+2.8 while the stair lifts him); under a roof at R, step R-3 has two (R-2,
+    R-1) and the climber hits it. The descent is the same move backwards. stair_plan's `opened` is unchanged, because
+    place_tower sites the lifts by it and a moved tower is a moved city."""
+    cells = ring_cells()
+    _steps, top, opened = stair_plan(R)
+    extra = cells[(R - 4) % 16] if R >= 4 else None
+    return list(opened) + ([extra] if extra is not None and extra not in opened and extra != top else [])
+
+
 def place_tower(M, g, gu, L=None, U=None, claimed=None, want=None, max_try=None):
     """Site a 7x7 stair tower: the lower lift L inside it where the steps leave its rider headroom and the roof
     covers it, the upper lift U inside it too if it can be, the back against the riser, a door onto the street."""
@@ -378,7 +390,21 @@ def place_tower(M, g, gu, L=None, U=None, claimed=None, want=None, max_try=None)
 def build_tower(cv, P, M, t, name, palette, sign=None, pylon=4, walls_to=None, exits=(), roof=True, owner="tower"):
     w = frame(t["anchor"], t["back"])
     g, gu, R = t["g"], t["gu"], t["R"]
-    steps, top, opened = t["steps"], t["top"], t["opened"]
+    steps, top = t["steps"], t["top"]
+    # the roof comes off over climb_cells, not only stair_plan's `opened` (a climber needs three of head room on the
+    # step he leaves); where a lift stands under that roof its landing wins and the cell stays roofed, and is reported
+    opened = list(t["opened"])
+    lift_cols = {(p[0], p[2]) for p in (t.get("L"), t.get("U")) if p}
+    if roof and opened:
+        wf = frame(t["anchor"], t["back"])
+        for c in climb_cells(t["R"]):
+            if c in opened:
+                continue
+            if wf(*c) in lift_cols:
+                t["headroom_blocked_by_lift"] = list(wf(*c))
+                continue
+            opened.append(c)
+    t["climb_opened"] = [list(c) for c in opened]
     wall_b, roof_b, win_b = P(palette["wall"]), P("tread"), P("glass_conduit")
     stair_b = "minecraft:polished_deepslate_stairs"
     lifts = set()
@@ -423,7 +449,9 @@ def build_tower(cv, P, M, t, name, palette, sign=None, pylon=4, walls_to=None, e
                 cv.put(x, g + s, z, stair(stair_b, face), owner=owner)
             if roof and not upper:
                 if (i, j) in opened:
-                    pass
+                    # AIR, written, not merely left out: a world applied before 2026-10-03 holds the roof block here
+                    # (over step R-3), and an R9DC re-run that writes nothing would leave it
+                    cv.put(x, top_y, z, "minecraft:air", owner=owner)
                 elif (i, j) == top:
                     pass                                    # the last step is the landing, at roof height
                 else:
@@ -631,6 +659,25 @@ def build_lot(cv, P, spec, lot, roof_of, lot_of, M, rooms_out):
                    2, owner=lot.id)
             cv.put(x, g + 2, z, "minecraft:iron_door[facing=%s,half=upper,hinge=left,open=false,powered=false]" % face,
                    2, owner=lot.id)
+            # a sealed story room's own sign beside its door (data/deep_city.json rooms[].sign, 2026-10-03): on the
+            # facade one block to the named side of the door, at head height, facing the street. Fails closed when
+            # the facade there is not this building's wall or the street cell in front of it is taken
+            sg = (lot.room or {}).get("sign")
+            if sg:
+                sx_, sz_ = {"north": (0, -1), "south": (0, 1), "east": (1, 0), "west": (-1, 0)}[sg["side"]]
+                fx, fz = {v: k for k, v in FACE.items()}[face]
+                wall_c = (x + sx_, z + sz_)
+                sign_c = (x + sx_ + fx, z + sz_ + fz)
+                if wall_c not in cols or cv.get(wall_c[0], g + 2, wall_c[1]) in (None, "minecraft:air"):
+                    raise CityError("room %s: no wall at %s to hang its sign on" % (lot.room["id"], wall_c))
+                if sign_c in cols or cv.get(sign_c[0], g + 2, sign_c[1]) not in (None, "minecraft:air"):
+                    raise CityError("room %s: the sign's cell %s is taken" % (lot.room["id"], sign_c))
+                lines = ['{"text":"%s"}' % s.replace('"', "'") for s in (list(sg["lines"]) + ["", "", "", ""])[:4]]
+                cv.put(sign_c[0], g + 2, sign_c[1],
+                       "minecraft:warped_wall_sign[facing=%s,waterlogged=false]{front_text:{messages:['%s','%s','%s','%s']}}"
+                       % ((face,) + tuple(lines)), 2, owner=lot.id, exterior=True)
+                rooms_out_sign = [sign_c[0], g + 2, sign_c[1]]
+                lot.room = dict(lot.room, sign_at=rooms_out_sign)
     # furniture for the families' homes (not in a story room: those are the story's to dress)
     if d.get("furnish") and lot.room is None and interior:
         mx = sum(c[0] for c in interior) / len(interior)
@@ -650,6 +697,7 @@ def build_lot(cv, P, spec, lot, roof_of, lot_of, M, rooms_out):
         rooms_out.append({"id": lot.room["id"], "who": lot.room.get("who"), "note": lot.room.get("note"),
                           "district": lot.district, "level": g, "box": [min(xs), g + 1, min(zs), max(xs), max(tops.values()) - 1, max(zs)],
                           "door": [lot.door[0], g + 1, lot.door[1]] if lot.door else None, "sealed": lot.sealed,
+                          "sign": lot.room.get("sign_at"),
                           "storeys": storeys(g, min(tops.values()), storey)})
     return tops, facade
 
@@ -771,7 +819,11 @@ def build(source_root, server_dir=None):
         plan["towers"].append({"kind": "lift bank", "boundary": k, "lower_lift": list(lower[:3]), "upper_lift": list(upper[:3]),
                                "from": g, "to": gu, "door": list(w(*t["door"])), "door_out": door_out(t), "footprint": [list(c) for c in sorted(cols)][:1]
                                + [list(c) for c in sorted(cols)][-1:],
-                               "upper_lift_lands": "inside" if (t["u_cell"] or t["u_wall"]) else "NOT IN THE TOWER"})
+                               "upper_lift_lands": "inside" if (t["u_cell"] or t["u_wall"]) else "NOT IN THE TOWER",
+                               "roof_open_over": [list(w(*c)) for c in t["climb_opened"]],
+                               "headroom_blocked_by_lift": t.get("headroom_blocked_by_lift")})
+        if t.get("headroom_blocked_by_lift"):
+            count("stair towers whose top step is NOT walkable (a lift under the roof over step R-3)")
         checks.append((lower[0], gu, lower[2], [P("tread"), P("rib_teal"), P(spec["districts"][dnames[k + 1]]["wall"])], "lift landing roof"))
         checks.append((w(2, 2)[0], g + 2, w(2, 2)[1], [P("sea_lantern")], "tower core"))
         count("stair towers round lift banks")
@@ -829,7 +881,8 @@ def build(source_root, server_dir=None):
     w = frame(gate["anchor"], gate["back"])
     gate_bearing = bearing(*w(2, 2), cx, cz)
     plan["sink_gate"] = {"door": list(w(*gate["door"])), "door_out": door_out(gate), "from": gate["g"], "to": gate["gu"], "bearing": round(gate_bearing, 1),
-                         "exit": list(w(gate["top"][0], -2))}
+                         "exit": list(w(gate["top"][0], -2)),
+                         "roof_open_over": [list(w(*c)) for c in gate["climb_opened"]]}
     count("the Sink Gate")
 
     # ---- the Centre and Mart, by the Sink Gate
@@ -993,12 +1046,18 @@ def build(source_root, server_dir=None):
     build_tower(cv, P, M, spire_tower, "the spire", spec["districts"]["core"], pylon=0, walls_to=core_top,
                 exits=[d_ - g0 for d_ in decks], roof=False, owner="spire")
     if ar:
-        # the crown deck closes the stair well over every ring cell whose last step is three or more below it, so the
-        # climber's head and the step above it are never under a floor; the arrival stays open
+        # the crown deck closes the stair well over every ring cell whose last step is FOUR or more below it, so the
+        # climber's head and the step above it are never under a floor; the arrival stays open. It was three until
+        # 2026-10-03: a climber stepping up off step crown-3 needs air at the crown over that step (climb_cells), and
+        # the deck there made the crown unreachable on foot
         for c in cells:
-            if max(steps_[c]) + g0 > crown - 3:
-                continue
             x, z = frame(spire_tower["anchor"], spire_tower["back"])(*c)
+            if max(steps_[c]) + g0 == crown - 3:
+                # AIR, written: a world applied before 2026-10-03 holds the crown's tread over this step
+                cv.put(x, crown, z, "minecraft:air", owner="spire")
+                continue
+            if max(steps_[c]) + g0 > crown - 4:
+                continue
             cv.put(x, crown, z, P("tread"), owner="spire")
     # the beacon over the core: a gold base flush in the deck, nothing of iron (Meltan), the beam turned cyan
     beacon_base = crown if ar else core_top
@@ -1274,7 +1333,8 @@ def build(source_root, server_dir=None):
                                   "level": lot.level, "box": [min(xs), lo, min(zs), max(xs), hi, max(zs)],
                                   "door": [lot.door[0], lot.level + 1, lot.door[1]] if lot.door and si == 0 else None,
                                   "sealed": bool(room.get("sealed")), "storey": si,
-                                  "section_columns": len(lot.cols)})
+                                  "section_columns": len(lot.cols),
+                                  "sign": (lot.room or {}).get("sign_at") if si == 0 else None})
     # the shaft head is NOT the city's (2026-10-02). This build used to lay a reinforced-deepslate hatch on the ring-0
     # section's columns nearest the sited column (3427, 3308); the tower box and the pit's edge left only (3427, 3308)
     # and (3427, 3309), both boundary columns, so the hatch lay under the section's own west wall where no shaft can
