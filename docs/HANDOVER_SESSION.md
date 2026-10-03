@@ -82,6 +82,12 @@ spawned `uncatchable no_ai` in rings 5/8/11 blocks round the player, 18 mixed sp
 0 -> 120-130 FPS; 10 -> 90-100; 20 -> 100-110; 30 -> 85-100. The drop is in the first ten; 10 to 30 is inside the
 noise. The approved cap (2 carriers, 1-2 followers, ~10 idle, ~14 a town) is far under anything the client notices:
 "how busy a town looks" is the limit, not the draw. Sleepers and followers need AI on (server-side cost only).
+Then 50 in rings -> 65-70 FPS (the first real bend: everything close and in view at once), and **50 spread through
+the town the way a town would hold them** (groups of 1-3 at plaza corners, the Center and Mart doors, along the four
+streets, in yards; scratchpad town_spread.py) -> **100-110 standing in the plaza, 100-130 running round**, about the
+same as 10-20 in rings. Spread, not count, is what costs. **Cap to use: up to ~30 ambient Pokemon a town, spread in
+small groups** (2-3 carriers, 1-2 followers, the rest idle), comfortably inside what was measured; the limit is how
+the town looks. Test Pokemon cleared afterwards.
 
 ## 4. Do not rediscover
 
