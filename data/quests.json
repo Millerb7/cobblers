@@ -6796,6 +6796,168 @@
         "quest.evt_agnes_carving.reward_claimed",
         "quest.evt_agnes_carving.dialogue_cursor"
       ]
+    },
+    {
+      "id": "evt_pips_gym",
+      "source": "data/northern_residents.json pips_gym; the owner's brief of 2026-10-03 (data/northern_residents.json request)",
+      "reward_record": "data/rewards.json pip_twig_badge",
+      "place": "data/northern_residents.json pips_gym: Pip's gym, (4608, 1728)",
+      "dialogue_id": "dlg_pips_gym",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        4608,
+        116,
+        1718
+      ],
+      "objectives": [
+        {
+          "id": "bring_eight",
+          "active_when": {
+            "field": "quest.evt_pips_gym.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_pips_gym.shown",
+            "equals": true
+          },
+          "text": "Come back to Pip's gym with all eight badges. Tell her about each leader on the way."
+        },
+        {
+          "id": "take_the_twig_badge",
+          "active_when": {
+            "field": "quest.evt_pips_gym.shown",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_pips_gym.reward_claimed",
+            "equals": true
+          },
+          "text": "Hear Pip out."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_pips_gym.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_pips_gym.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_pips_gym.dialogue_cursor",
+              "value": "p001"
+            }
+          ]
+        },
+        {
+          "id": "show",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_pips_gym.shown",
+              "value": false
+            },
+            {
+              "kind": "flag",
+              "flag": "gym8_cleared"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_pips_gym.shown",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_pips_gym.dialogue_cursor",
+              "value": "g001"
+            }
+          ]
+        },
+        {
+          "id": "grant_reward",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_pips_gym.shown",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_pips_gym.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_pip_twig_badge",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_pips_gym.reward_claimed",
+              "idempotency_key": "evt_pips_gym:reward_pip_twig_badge:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_pips_gym.dialogue_cursor",
+              "value": "g004"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_pip_twig_badge",
+          "status": "item_ids_verified",
+          "record": "data/rewards.json pip_twig_badge (kind npc_grant); contents and verification string copied from it, which copies data/rewards.json vr_bloom's",
+          "contents": [
+            {
+              "item": "cobblemon:shiny_stone",
+              "count": 1,
+              "verification": "assets/cobblemon/models/item/shiny_stone.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ]
+        }
+      ],
+      "story_beat": "The meeting is several meetings: each of r_b4..r_b7 is visible only between one badge and the next (flag gymN_cleared and not gymN+1_cleared), so the player who comes back hears about the leader they just beat; r_b0 is visible until the fourth badge. The gift is only at eight. Nothing reads a badge item: the progression flags are the badges (data/progression.json flags).",
+      "badge_check": "Every badge option reads progression flags through compile_dialogue's flag probe (cobblers:flag/gymN_cleared advancements, tools/progression_pack.py), the gate watcher's proven shape; 'not' of a flag is compile_dialogue's not condition over the same probe. No badge item is read or taken. A player who skips from four badges to six between visits never hears the Koga line; that is the design (Pip hears about the gym you just beat). NOT verified in game.",
+      "repeat_dialogue": {
+        "before_eight": "hub",
+        "after_claim": "done01"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "generation_blockers": [
+        "Place npc_pips_gym at npc_at with spawnnpcat after the restart that loads cobblers_dialogue (tools/reapply.py R9F, from data/rewards.json pip_twig_badge), on the ground R9NR's site stands on."
+      ],
+      "progression_field_refs": [
+        "quest.evt_pips_gym.started",
+        "quest.evt_pips_gym.shown",
+        "quest.evt_pips_gym.reward_claimed",
+        "quest.evt_pips_gym.dialogue_cursor"
+      ]
     }
   ]
 }

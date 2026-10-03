@@ -2738,6 +2738,60 @@
         "done01"
       ],
       "why": "the dialogue cursor of Agnes Merrow's conversation (dlg_agnes_carving)."
+    },
+    {
+      "id": "quest.evt_pips_gym.started",
+      "quest_id": "evt_pips_gym",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Pip Arden (data/northern_residents.json pips_gym); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_pips_gym.shown",
+      "quest_id": "evt_pips_gym",
+      "field": "shown",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has shown Pip all eight badges (dlg_pips_gym r_b8, which reads the progression flag gym8_cleared)."
+    },
+    {
+      "id": "quest.evt_pips_gym.reward_claimed",
+      "quest_id": "evt_pips_gym",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for the Shiny Stone (data/rewards.json pip_twig_badge)."
+    },
+    {
+      "id": "quest.evt_pips_gym.dialogue_cursor",
+      "quest_id": "evt_pips_gym",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "p001",
+      "allowed_values": [
+        "p001",
+        "p002",
+        "hub",
+        "sp1",
+        "sp2",
+        "b001",
+        "e001",
+        "e002",
+        "k001",
+        "s001",
+        "l001",
+        "g001",
+        "g002",
+        "g003",
+        "g004",
+        "done01"
+      ],
+      "why": "the dialogue cursor of Pip Arden's conversation (dlg_pips_gym)."
     }
   ],
   "gym_markers": {

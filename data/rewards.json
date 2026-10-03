@@ -1644,6 +1644,26 @@
       ],
       "why": "Agnes's thanks for reading her the back of the oak: the stone Edwin gave her instead of a ring. One per player, by grant_reward_once. A Sun Stone evolves Gloom (Bellossom), Sunkern, Cottonee, Petilil and Helioptile; at tier 3 it is an early stone, as data/rewards.json's other evolution-stone finds are. The verification string is data/rewards.json vr_bloom's, copied, not re-checked against a jar here.",
       "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/northern_residents.py seats Agnes Merrow on, and it refuses to build when they differ"
+    },
+    {
+      "id": "pip_twig_badge",
+      "kind": "npc_grant",
+      "place": "Pip's gym on the downs east of Greenhollow (data/northern_residents.json pips_gym), on her end line",
+      "npc_at": [
+        4608,
+        116,
+        1718
+      ],
+      "quest": "evt_pips_gym",
+      "contents": [
+        {
+          "item": "cobblemon:shiny_stone",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/shiny_stone.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "why": "the Twig Badge: Pip's shiniest stone, given to the first challenger to come back with all eight badges. One per player, by grant_reward_once, after gym8_cleared. A Shiny Stone evolves Roselia into Roserade (Erika's grass type, which is why a child who worships Erika has kept it), Togetic, Minccino and Floette. Late, as it is gated. The verification string is data/rewards.json vr_bloom's, copied, not re-checked against a jar here.",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/northern_residents.py seats Pip Arden on, and it refuses to build when they differ"
     }
   ]
 }

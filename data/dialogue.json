@@ -12227,6 +12227,306 @@
       "speakers": {
         "agnes": "Agnes Merrow"
       }
+    },
+    {
+      "id": "dlg_pips_gym",
+      "quest_id": "evt_pips_gym",
+      "npc_id": "npc_pips_gym",
+      "source": "data/northern_residents.json pips_gym; the owner's brief of 2026-10-03 (data/northern_residents.json request)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_pips_gym.dialogue_cursor",
+        "initial_node": "p001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_pips_gym.started",
+            "value": true
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_pips_gym.started",
+            "value": false
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ],
+          "node": "p001"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "p001",
+          "kind": "line",
+          "speaker": "pip",
+          "text": "HALT! Challenger approaching! You have entered... PIP'S GYM!",
+          "next": "p002"
+        },
+        {
+          "id": "p002",
+          "kind": "line",
+          "speaker": "pip",
+          "text": "I'm Pip. I'm the leader. I haven't got any Pokemon yet, Mum says when I'm eleven, but I've got the gym and I'm practising the speeches.",
+          "next": "hub"
+        },
+        {
+          "id": "hub",
+          "kind": "choice",
+          "speaker": "pip",
+          "text": "Well? Are you challenging or not?",
+          "responses": [
+            {
+              "id": "r_speech",
+              "text": "Hear her leader speech.",
+              "next": "sp1"
+            },
+            {
+              "id": "r_b0",
+              "text": "Tell her about your badges.",
+              "visible_when": {
+                "kind": "not",
+                "condition": {
+                  "kind": "flag",
+                  "flag": "gym4_cleared"
+                }
+              },
+              "next": "b001"
+            },
+            {
+              "id": "r_b4",
+              "text": "Tell her about Erika.",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "flag",
+                    "flag": "gym4_cleared"
+                  },
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "flag",
+                      "flag": "gym5_cleared"
+                    }
+                  }
+                ]
+              },
+              "next": "e001"
+            },
+            {
+              "id": "r_b5",
+              "text": "Tell her about Koga.",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "flag",
+                    "flag": "gym5_cleared"
+                  },
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "flag",
+                      "flag": "gym6_cleared"
+                    }
+                  }
+                ]
+              },
+              "next": "k001"
+            },
+            {
+              "id": "r_b6",
+              "text": "Tell her about Sabrina.",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "flag",
+                    "flag": "gym6_cleared"
+                  },
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "flag",
+                      "flag": "gym7_cleared"
+                    }
+                  }
+                ]
+              },
+              "next": "s001"
+            },
+            {
+              "id": "r_b7",
+              "text": "Tell her about Blaine.",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "flag",
+                    "flag": "gym7_cleared"
+                  },
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "flag",
+                      "flag": "gym8_cleared"
+                    }
+                  }
+                ]
+              },
+              "next": "l001"
+            },
+            {
+              "id": "r_b8",
+              "text": "Show her all eight badges.",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "flag",
+                    "flag": "gym8_cleared"
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_pips_gym.shown",
+                    "value": false
+                  }
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "show"
+                }
+              ],
+              "next": "g001"
+            },
+            {
+              "id": "r_bye",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ],
+              "next": "hub"
+            }
+          ]
+        },
+        {
+          "id": "sp1",
+          "kind": "line",
+          "speaker": "pip",
+          "text": "'So! A challenger dares to enter my gym! My Pokemon are... going to be extremely strong! Prepare to battle for... the Twig Badge!'",
+          "next": "sp2"
+        },
+        {
+          "id": "sp2",
+          "kind": "line",
+          "speaker": "pip",
+          "text": "...The middle bit needs work. Erika does hers without even shouting. I don't know how you do a speech without shouting.",
+          "next": "hub"
+        },
+        {
+          "id": "b001",
+          "kind": "line",
+          "speaker": "pip",
+          "text": "How many have you got? Is Erika next? Erika's the best. She does flowers AND fighting. When you beat her you have to come and tell me everything.",
+          "next": "hub"
+        },
+        {
+          "id": "e001",
+          "kind": "line",
+          "speaker": "pip",
+          "text": "You BEAT ERIKA? ...Was she nice about it? I bet she was nice about it. Did her gym smell of flowers? I KNEW it.",
+          "next": "e002"
+        },
+        {
+          "id": "e002",
+          "kind": "line",
+          "speaker": "pip",
+          "text": "I'm going to have a flower bit in my gym. And tea. Hay tea. It's like tea but it's hay.",
+          "next": "hub"
+        },
+        {
+          "id": "k001",
+          "kind": "line",
+          "speaker": "pip",
+          "text": "Invisible walls? Invisible WALLS? ...Right. I'm putting invisible walls in. You can't see them, so they might be in already.",
+          "next": "hub"
+        },
+        {
+          "id": "s001",
+          "kind": "line",
+          "speaker": "pip",
+          "text": "Did she read your mind? Read mine. Go on. What am I thinking? ...Wrong. Lunch. I'm nearly always thinking about lunch.",
+          "next": "hub"
+        },
+        {
+          "id": "l001",
+          "kind": "line",
+          "speaker": "pip",
+          "text": "A QUIZ? At a GYM? ...Right. Question one: what is my name. Question two: what is my gym called. You'd win. That's the trouble with quizzes.",
+          "next": "hub"
+        },
+        {
+          "id": "g001",
+          "kind": "line",
+          "speaker": "pip",
+          "text": "...All eight. ALL eight. Can I hold them? I won't drop them. I'll drop them. I won't.",
+          "next": "g002"
+        },
+        {
+          "id": "g002",
+          "kind": "line",
+          "speaker": "pip",
+          "text": "Right. Stand on the line. 'Challenger! You have beaten every leader in the land, and now you have beaten... the leader of PIP'S GYM!'",
+          "next": "g003"
+        },
+        {
+          "id": "g003",
+          "kind": "line",
+          "speaker": "pip",
+          "text": "You didn't have to fight me. That's the rule. I just made it. Here. The Twig Badge.",
+          "next": "g004",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant_reward"
+            }
+          ]
+        },
+        {
+          "id": "g004",
+          "kind": "line",
+          "speaker": "pip",
+          "text": "It's not a twig, it's my shiniest stone. I was saving it to be the badge for when I had a real gym. You're the first one who's won it. Don't tell Erika it's better than hers.",
+          "next": "done01"
+        },
+        {
+          "id": "done01",
+          "kind": "line",
+          "speaker": "pip",
+          "text": "Twig Badge winners: you. Everyone else: not yet. Come back when I'm eleven and I'll battle you properly.",
+          "next": "done01"
+        }
+      ],
+      "speakers": {
+        "pip": "Pip"
+      }
     }
   ]
 }

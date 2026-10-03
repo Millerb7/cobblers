@@ -55,7 +55,8 @@
       "minecraft:birch_log", "minecraft:stripped_birch_log", "minecraft:spruce_fence", "minecraft:spruce_sign", "minecraft:spruce_wall_sign",
       "minecraft:grindstone", "minecraft:campfire", "minecraft:spruce_stairs",
       "minecraft:spruce_planks", "minecraft:red_wool", "minecraft:white_wool", "minecraft:spruce_door", "minecraft:spruce_trapdoor",
-      "minecraft:barrel", "minecraft:red_carpet", "minecraft:lantern", "minecraft:oak_log", "minecraft:oak_wall_sign"
+      "minecraft:barrel", "minecraft:red_carpet", "minecraft:lantern", "minecraft:oak_log", "minecraft:oak_wall_sign",
+      "minecraft:hay_block"
     ]
   },
   "residents": [
@@ -214,6 +215,64 @@
       },
       "records": {"quest": "evt_agnes_carving", "conversation": "dlg_agnes_carving", "reward": "agnes_sun_stone"},
       "bbox": [1687, 2164, 1708, 2233]
+    },
+    {
+      "id": "pips_gym",
+      "name": "Pip's gym",
+      "kind": "a character who grows with the player's badges: a different conversation at every visit from the fourth badge to the eighth, and a gift at the end",
+      "cell": "B5",
+      "subregion": "north_east_downs",
+      "situation": "Out on the open downs past Greenhollow, a ten-year-old has built a gym. The battlefield is scratched into the turf with a stick: the lines, the halfway line, the circle. There is a podium of hay bales, a row of hay for the crowd, a 'Geodude (pretend)' made of hay, and a gate for challengers. Pip has no Pokemon (her mum says when she is eleven), but she has a sign that says PIP'S GYM, a badge called the Twig Badge that nobody has won, and a leader's speech that is nearly finished. She worships Erika. Every time the player comes back with another badge she wants to know everything about that leader, and when the player comes back with all eight she makes them the first winner of the Twig Badge.",
+      "story_rule": "Pip's talk about each leader is about the gym the player just beat, as a child would hear it: Erika's grace, Koga's invisible walls, Sabrina's mind-reading, Blaine's quiz. Each option reads the progression flags gymN_cleared (compile_dialogue's flag probe, as data/southern_residents.json gate_watcher's does) and is visible only between that badge and the next, so the conversation changes on every visit. Tier 4, two hundred and fifty blocks from Greenhollow, Erika's town",
+      "site": {
+        "centre": [4608, 1728],
+        "moved_from": "the scored stretch's point (4528, 1680): a sub-region polygon vertex of data/regions.json stands 29 blocks from where the field would have written, which the scoring leaves out and the 96-block rule does not; (4608, 1728), 93 blocks south-east, clears every authored x/z by 96 over the whole site",
+        "measured": "2026-10-03 from tools/ground.py: y116 at the centre, 115..118 over a 65-block square (the open taiga downs east of Greenhollow, data/regions.json north_east_downs, paint taiga_sparse). tools/water_mask.py: dry. Route 5's walked path passes about 220 blocks away; the nearest x/z authored in another data file is reported by tools/northern_residents.py --report."
+      },
+      "pieces": [
+        {"kind": "clearing", "name": "the gym's ground", "r": 16, "up": 14},
+        {"kind": "surface", "name": "the lines", "segments": [
+          [[-5, -9], [5, -9]], [[5, -9], [5, 9]], [[5, 9], [-5, 9]], [[-5, 9], [-5, -9]], [[-5, 0], [5, 0]]
+         ], "half_width": 0, "palette": [["minecraft:dirt_path", 1]]},
+        {"kind": "surface", "name": "the circle", "ring": [3, 0], "palette": [["minecraft:dirt_path", 1]]},
+        {"kind": "ground_blocks", "name": "the podium", "at": [0, -12], "blocks": [
+          [-1, 1, 0, "minecraft:hay_block[axis=x]"], [0, 1, 0, "minecraft:hay_block[axis=x]"], [1, 1, 0, "minecraft:hay_block[axis=x]"],
+          [0, 2, 0, "minecraft:hay_block[axis=x]"],
+          [-3, 1, 0, "minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=false]"],
+          [-3, 2, 0, {"sign": {"wood": "spruce", "rotation": 0, "lines": ["PIP'S GYM", "leader: PIP", "type: all", "of them"]}}],
+          [3, 1, 0, "minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=false]"],
+          [3, 2, 0, {"sign": {"wood": "spruce", "rotation": 0, "lines": ["THE TWIG BADGE", "won by:", "", "nobody yet"]}}]
+         ],
+         "hung": [[0, 3, 0, "minecraft:red_carpet"]]},
+        {"kind": "ground_blocks", "name": "the crowd", "at": [8, 0], "blocks": [
+          [0, 1, -4, "minecraft:hay_block[axis=z]"], [0, 1, -3, "minecraft:hay_block[axis=z]"], [0, 1, -2, "minecraft:hay_block[axis=z]"],
+          [0, 1, -1, "minecraft:hay_block[axis=z]"], [0, 1, 0, "minecraft:hay_block[axis=z]"], [0, 1, 1, "minecraft:hay_block[axis=z]"],
+          [0, 1, 2, "minecraft:hay_block[axis=z]"], [0, 1, 3, "minecraft:hay_block[axis=z]"], [0, 1, 4, "minecraft:hay_block[axis=z]"]
+         ]},
+        {"kind": "ground_blocks", "name": "the pretend Geodude", "at": [-2, 5], "blocks": [
+          [0, 1, 0, "minecraft:hay_block[axis=y]"], [0, 2, 0, "minecraft:hay_block[axis=y]"],
+          [-1, 2, 0, "minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=false]"],
+          [1, 2, 0, "minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=false]"],
+          [0, 1, 1, {"sign": {"wood": "spruce", "rotation": 0, "lines": ["GEODUDE", "(pretend)", "", "fainted: 41"]}}]
+         ]},
+        {"kind": "ground_blocks", "name": "the challengers' gate", "at": [0, 12], "blocks": [
+          [-2, 1, 0, "minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=false]"],
+          [-2, 2, 0, "minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=false]"],
+          [2, 1, 0, "minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=false]"],
+          [2, 2, 0, "minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=false]"],
+          [3, 1, 0, {"sign": {"wood": "spruce", "rotation": 0, "lines": ["CHALLENGERS", "this way", "no grown-ups", "(except you)"]}}]
+         ]}
+      ],
+      "npc": {
+        "name": "Pip Arden",
+        "at": [0, -10, "ground"],
+        "feet": [4608, 116, 1718],
+        "yaw": 0.0,
+        "placed_by": "R9F",
+        "why": "on her own end line in front of the podium, facing south down the field at the challengers' gate. She gives the Shiny Stone through grant_reward_once, so data/rewards.json pip_twig_badge (npc_grant) records her and R9F places her; this tool refuses to build when that record's npc_at is not this spot"
+      },
+      "records": {"quest": "evt_pips_gym", "conversation": "dlg_pips_gym", "reward": "pip_twig_badge"},
+      "bbox": [4592, 1712, 4624, 1744]
     }
   ]
 }
