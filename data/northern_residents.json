@@ -56,7 +56,8 @@
       "minecraft:grindstone", "minecraft:campfire", "minecraft:spruce_stairs",
       "minecraft:spruce_planks", "minecraft:red_wool", "minecraft:white_wool", "minecraft:spruce_door", "minecraft:spruce_trapdoor",
       "minecraft:barrel", "minecraft:red_carpet", "minecraft:lantern", "minecraft:oak_log", "minecraft:oak_wall_sign",
-      "minecraft:hay_block"
+      "minecraft:hay_block", "minecraft:andesite", "minecraft:granite", "minecraft:tuff", "minecraft:mossy_cobblestone",
+      "minecraft:cobblestone", "minecraft:oak_sign"
     ]
   },
   "residents": [
@@ -273,6 +274,87 @@
       },
       "records": {"quest": "evt_pips_gym", "conversation": "dlg_pips_gym", "reward": "pip_twig_badge"},
       "bbox": [4592, 1712, 4624, 1744]
+    },
+    {
+      "id": "wandering_stone",
+      "name": "The Wandering Stone",
+      "kind": "a local mystery whose answer is a Pokemon: the place sets the question in five hands over five generations, and the answer is asleep behind the stone",
+      "cell": "C6",
+      "subregion": "glacier_foot_fields",
+      "situation": "On the dead-flat fields below the glacier lies one great boulder of a rock that is not from here, the way a glacier leaves one. Behind it, to the west, runs a furrow of torn earth forty blocks long, as if the stone had been dragged; in front of it, on the east, the turf is heaped up like a bow wave. Along the furrow stand five marker stones, each with a sign, each in a different hand, each saying the stone stood HERE: the oldest mossed over ('the year of the long frost'), a grandfather's ('the year the bridge went'), a child's ('grandad says it never moves - E.W. age 9'), the same family a generation later ('E.W. was right'), and the newest in capitals: 'LAST SPRING. WHO IS PUSHING IT.' In the furrow, with its shoulder to the stone, sleeps what looks like one more boulder. It is Heave, an old Golem, and every spring it pushes.",
+      "story_rule": "no NPC: the five signs are the whole story, and they never name the Golem. They are the people of the fields (the Wick family, by the initials) over about five generations; the glacier-foot fields have no town, and nothing here claims more about who they were. Tier 5, between Fenhide and Tilpey Cross",
+      "site": {
+        "centre": [5264, 2704],
+        "measured": "2026-10-03 from tools/ground.py: y137 at the stone and 136..139 over a 97-block square, the flattest ground in this part of the map (data/regions.json glacier_foot_fields, paint plains). tools/water_mask.py: dry. Route 6's walked path passes 157 blocks away; the nearest x/z authored in another data file is reported by tools/northern_residents.py --report."
+      },
+      "pieces": [
+        {"kind": "surface", "name": "the furrow", "segments": [[[-5, 0], [-44, 0]]], "half_width": 2,
+         "palette": [["minecraft:coarse_dirt", 2], ["minecraft:gravel", 1], ["minecraft:rooted_dirt", 1]]},
+        {"kind": "structure", "name": "the stone", "footprint": [-3, -3, 3, 3], "foundation": "minecraft:andesite", "clear_up": 8,
+         "fills": [
+          [-3, 0, -2, 3, 1, 2, "minecraft:andesite"],
+          [-2, 0, -3, 2, 1, 3, "minecraft:andesite"],
+          [-2, 2, -2, 2, 2, 2, "minecraft:andesite"],
+          [-2, 3, -1, 2, 3, 1, "minecraft:andesite"],
+          [-1, 3, -2, 1, 3, 2, "minecraft:andesite"],
+          [-1, 4, -1, 1, 4, 1, "minecraft:andesite"],
+          [-1, 5, 0, 0, 5, 0, "minecraft:andesite"]
+         ],
+         "blocks": [
+          [-3, 1, 0, "minecraft:granite"], [-2, 2, -1, "minecraft:granite"], [1, 2, 2, "minecraft:granite"], [2, 1, -2, "minecraft:granite"],
+          [0, 3, 1, "minecraft:granite"], [-1, 4, 0, "minecraft:granite"], [3, 0, 1, "minecraft:granite"], [-2, 1, 3, "minecraft:granite"],
+          [-1, 2, -2, "minecraft:mossy_cobblestone"], [0, 3, -2, "minecraft:mossy_cobblestone"], [1, 1, -3, "minecraft:mossy_cobblestone"],
+          [0, 4, -1, "minecraft:mossy_cobblestone"], [-2, 3, -1, "minecraft:mossy_cobblestone"], [2, 2, -2, "minecraft:tuff"],
+          [3, 1, 1, "minecraft:tuff"], [-3, 0, -1, "minecraft:tuff"]
+         ]},
+        {"kind": "ground_blocks", "name": "the bow wave", "at": [4, 0], "blocks": [
+          [0, 1, -2, "minecraft:coarse_dirt"], [0, 1, -1, "minecraft:rooted_dirt"], [0, 1, 0, "minecraft:coarse_dirt"],
+          [0, 1, 1, "minecraft:rooted_dirt"], [0, 1, 2, "minecraft:coarse_dirt"], [1, 1, -1, "minecraft:coarse_dirt"],
+          [1, 1, 0, "minecraft:rooted_dirt"], [1, 1, 1, "minecraft:coarse_dirt"]
+         ]},
+        {"kind": "ground_blocks", "name": "the oldest marker", "at": [-40, -4], "blocks": [
+          [0, 1, 0, "minecraft:mossy_cobblestone"],
+          [0, 2, 0, {"sign": {"wood": "oak", "rotation": 0, "lines": ["THE STONE", "STOOD HERE", "the year of", "the long frost"]}}]
+         ]},
+        {"kind": "ground_blocks", "name": "the grandfather's marker", "at": [-31, -4], "blocks": [
+          [0, 1, 0, "minecraft:mossy_cobblestone"],
+          [0, 2, 0, {"sign": {"wood": "oak", "rotation": 0, "lines": ["STONE HERE", "the year the", "bridge went", "- T. Wick"]}}]
+         ]},
+        {"kind": "ground_blocks", "name": "the child's marker", "at": [-23, -4], "blocks": [
+          [0, 1, 0, "minecraft:cobblestone"],
+          [0, 2, 0, {"sign": {"wood": "oak", "rotation": 0, "lines": ["STONE HERE", "grandad says", "it never moves", "- E.W. age 9"]}}]
+         ]},
+        {"kind": "ground_blocks", "name": "the next generation's marker", "at": [-15, -4], "blocks": [
+          [0, 1, 0, "minecraft:cobblestone"],
+          [0, 2, 0, {"sign": {"wood": "oak", "rotation": 0, "lines": ["STONE HERE", "it moves.", "E.W. was right", "- T. Wick jr."]}}]
+         ]},
+        {"kind": "ground_blocks", "name": "the newest marker", "at": [-9, -4], "blocks": [
+          [0, 1, 0, "minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=false]"],
+          [0, 2, 0, {"sign": {"wood": "spruce", "rotation": 0, "lines": ["STONE HERE", "LAST SPRING", "WHO IS", "PUSHING IT"]}}]
+         ]}
+      ],
+      "pokemon": {
+        "id": "heave",
+        "name": "Heave",
+        "species": "cobblemon:golem",
+        "level": 43,
+        "at": [-5, 0],
+        "anchor": [5259, 138, 2704],
+        "yaw": -90.0,
+        "trigger": 7,
+        "leash": 18,
+        "appears_after": null,
+        "gate": "gym5_cleared",
+        "intended_stage": "post_gym_5",
+        "catch_rule": "catchable_after_gate",
+        "message": "The boulder in the furrow stands up. It has had its shoulder to the stone.",
+        "sound": "minecraft:block.stone.break",
+        "level_why": "the place's tier is 5 (data/encounter_design.json tables.glacier_foot_fields), whose ceiling is 45; L43 sits above the cap a player holds before gym 5 (data/trainers.json generation_contract gym_ace_levels[4] = 40) and within the cap after it (gym_ace_levels[5] = 45): the level-cap refusal is its catch gate, per thrower",
+        "trigger_why": "it sleeps in the furrow behind the stone, so anyone who walks the markers in order ends up beside it: a trigger of 7 wakes it as a reader comes to the last sign, which stands 4 blocks from it; the leash of 18 keeps the fight on the furrow",
+        "reward": "capture itself; no item (Codex's rule: no_loot_drops)"
+      },
+      "records": {},
+      "bbox": [5218, 2700, 5269, 2708]
     }
   ]
 }
