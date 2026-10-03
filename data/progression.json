@@ -2290,6 +2290,15 @@
       "why": "grant_reward_once's claim for the ember feather (HELD: data/research_station.json economy.issuing)."
     },
     {
+      "id": "quest.evt_station_director.scroll_claimed",
+      "quest_id": "evt_station_director",
+      "field": "scroll_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's ONE claim for Kubfu's scroll, shared by grant_scroll_darkness and grant_scroll_waters, so either closes both (data/research_station.json economy.items kubfu_scroll)."
+    },
+    {
       "id": "quest.evt_station_director.dialogue_cursor",
       "quest_id": "evt_station_director",
       "field": "dialogue_cursor",
@@ -2311,7 +2320,14 @@
         "t001",
         "t002",
         "m001",
-        "m002"
+        "m002",
+        "k001",
+        "k002",
+        "k003",
+        "k010",
+        "k011",
+        "k020",
+        "k021"
       ],
       "why": "the dialogue cursor of Dr. Imogen Vale (dlg_station_director)."
     },

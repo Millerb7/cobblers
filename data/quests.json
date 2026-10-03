@@ -5325,6 +5325,18 @@
             "equals": true
           },
           "text": "Survey the fire tower in the Craters and tell the Director (held: no item is issued yet)."
+        },
+        {
+          "id": "kubfu_scroll",
+          "active_when": {
+            "field": "quest.evt_station_director.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_station_director.scroll_claimed",
+            "equals": true
+          },
+          "text": "With five badges and your starter Kubfu in the party, ask the Director for one scroll: Darkness or Waters."
         }
       ],
       "transitions": [
@@ -5423,9 +5435,109 @@
               "value": "m001"
             }
           ]
+        },
+        {
+          "id": "grant_scroll_darkness",
+          "conditions": [
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_station_issuing"
+            },
+            {
+              "kind": "flag",
+              "flag": "gym5_cleared"
+            },
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_station_kubfu"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_station_director.scroll_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_station_scroll_of_darkness",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_station_director.scroll_claimed",
+              "idempotency_key": "evt_station_director:reward_station_kubfu_scroll:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_station_director.dialogue_cursor",
+              "value": "k010"
+            }
+          ]
+        },
+        {
+          "id": "grant_scroll_waters",
+          "conditions": [
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_station_issuing"
+            },
+            {
+              "kind": "flag",
+              "flag": "gym5_cleared"
+            },
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_station_kubfu"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_station_director.scroll_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_station_scroll_of_waters",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_station_director.scroll_claimed",
+              "idempotency_key": "evt_station_director:reward_station_kubfu_scroll:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_station_director.dialogue_cursor",
+              "value": "k020"
+            }
+          ]
         }
       ],
       "rewards": [
+        {
+          "id": "reward_station_scroll_of_darkness",
+          "status": "item_ids_verified",
+          "record": "data/rewards.json station_director",
+          "one_of": "reward_station_scroll_of_waters: the two share the claim field quest.evt_station_director.scroll_claimed, so a player is given one or the other, once",
+          "contents": [
+            {
+              "item": "cobblemon:scroll_of_darkness",
+              "count": 1,
+              "verification": "assets/cobblemon/models/item/scroll_of_darkness.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ]
+        },
+        {
+          "id": "reward_station_scroll_of_waters",
+          "status": "item_ids_verified",
+          "record": "data/rewards.json station_director",
+          "one_of": "reward_station_scroll_of_darkness: the two share the claim field quest.evt_station_director.scroll_claimed, so a player is given one or the other, once",
+          "contents": [
+            {
+              "item": "cobblemon:scroll_of_waters",
+              "count": 1,
+              "verification": "assets/cobblemon/models/item/scroll_of_waters.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ]
+        },
         {
           "id": "reward_station_thunder_feather",
           "status": "item_ids_verified; HELD",
@@ -5466,6 +5578,7 @@
         "quest.evt_station_director.started",
         "quest.evt_station_director.thunder_claimed",
         "quest.evt_station_director.ember_claimed",
+        "quest.evt_station_director.scroll_claimed",
         "quest.evt_station_director.dialogue_cursor"
       ]
     },
