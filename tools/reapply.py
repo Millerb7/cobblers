@@ -1671,9 +1671,10 @@ def steps(with_spawns=False):
     # stays shut and the guard's dialogue moves a player at rift_crisis_pending or later inside; the inside guard lets
     # anyone out. NPCs, so after the restart that loaded cobblers_dialogue's classes, like R17N's, each turned to its yaw
     import relic_underground
-    # 2026-10-03: and the Compact binder at the relic ring in the hall (geometry.release), whose conversation releases
-    # Hoopa and grants rift_crisis_resolved (the owner: "set it ourselves at the quest stage that ends the Rift crisis")
-    out.append(("R18RU", "the Compact guards at the HQ's ring-0 door and the binder at the hall's relic ring "
+    # 2026-10-03: and the Compact binder in Hoopa's cradle (geometry.release; at the hall's relic ring until the cradle
+    # was carved), whose conversation releases Hoopa and grants rift_crisis_resolved (the owner: "set it ourselves at
+    # the quest stage that ends the Rift crisis")
+    out.append(("R18RU", "the Compact guards at the HQ's ring-0 door and the binder in Hoopa's cradle "
                          "(data/relic_underground.json geometry.hq.guard, geometry.release)",
                 [("npc", n) for n in relic_underground.npc_placements()]))
     # Codex's ten named residents (2026-10-02, data/resident_encounters.json): each one's dressing inside a forceload of

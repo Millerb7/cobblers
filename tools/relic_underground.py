@@ -921,17 +921,26 @@ def cmd_report(a):
             bad.append("a composition block at %s is outside the hall's air (floor %d, ceiling %d)"
                        % ((x, y, z), geo.hfloor, r[1]))
             break
-    # 4a the binder who releases Hoopa (geometry.release) stands in the hall's air, on a block the hall builds, with
-    #    two clear over its feet, and within the six-block circle the audit's route walk must reach
+    # 4a the binder who releases Hoopa (geometry.release). Since 2026-10-03, with the cradle carved, he stands on one of
+    #    the cradle's stands (checked clear with a floor under in 4b). Otherwise, as before: in the hall's air, on a
+    #    block the hall builds, with two clear over its feet, and within the six-block circle the audit's route reaches
     rel = spec["geometry"]["release"]
     sx, sy, sz = rel["at"]
     sr_ = geo.carved_range(sx, sz)
-    if sr_ is None or not geo.in_hall(sx, sz) or not (geo.hfloor < sy and sy + 2 <= sr_[1]):
+    if geo.cradle:
+        crs = spec["composition"]["cradle"]["stands"]
+        seats = [(_at(geo.cc, crs["orbit"], a)[0], geo.cfloor + 1, _at(geo.cc, crs["orbit"], a)[1])
+                 for a in crs["bearings"]]
+        if (sx, sy, sz) not in seats:
+            bad.append("the binder's seat %s is not one of the cradle's stands %s" % (rel["at"], seats))
+        if len(seats) - 1 < 4:
+            bad.append("the binder takes one of Codex's four player stands: the cradle needs a fifth")
+    elif sr_ is None or not geo.in_hall(sx, sz) or not (geo.hfloor < sy and sy + 2 <= sr_[1]):
         bad.append("the binder's seat %s is not in the hall's air" % (rel["at"],))
     elif (sx, sy - 1, sz) not in cells or any((sx, sy + d, sz) in cells for d in (0, 1, 2)):
         bad.append("the binder's seat %s does not stand on a block the hall builds with two clear over it "
                    "(below: %s)" % (rel["at"], cells.get((sx, sy - 1, sz))))
-    if math.hypot(sx - geo.hc[0], sz - geo.hc[1]) > 6:
+    if not geo.cradle and math.hypot(sx - geo.hc[0], sz - geo.hc[1]) > 6:
         bad.append("the binder's seat %s is more than 6 from the hall's centre, outside the circle the route reaches"
                    % (rel["at"],))
     # 4b the cradle (geometry.cradle, 2026-10-03): its dressing stands in its own air or in its floor, the actor marker
@@ -998,8 +1007,8 @@ def cmd_report(a):
         if have and adv not in have:
             owed.append("the pass names %s and data/progression.json has no such flag" % adv)
     if "cobblers:flag/rift_crisis_resolved" in spec["zone"]["pass"]["threshold_advancements"]:
-        bad.append("the pass names cobblers:flag/rift_crisis_resolved, which is EARNED INSIDE this zone (the binder at the "
-                   "relic ring, geometry.release): a zone keyed on it is shut to the only place it can be earned")
+        bad.append("the pass names cobblers:flag/rift_crisis_resolved, which is EARNED INSIDE this zone (the binder in the "
+                   "cradle, geometry.release): a zone keyed on it is shut to the only place it can be earned")
     # 7 the Deep and the city: nothing carved into the pit's air or into a cell the city writes, and the turn-back
     # lands on the Compact's front step in the open (measured: tools/rift_deep.py's treads, tools/deep_city.py's build)
     pit = pit_of(sr)
@@ -1427,8 +1436,9 @@ def hold_box(spec=None):
 
 def npc_placements(spec=None):
     """[(conversation id, (x, y, z), npc class, yaw)] for tools/reapply.py step R18RU's "npc" actions: the Compact guard
-    at the HQ's ring-0 door, the one inside it, and the binder at the hall's relic ring whose conversation releases
-    Hoopa (geometry.release, the Rift finale's one beat, 2026-10-03), from the committed data alone. Fails closed when
+    at the HQ's ring-0 door, the one inside it, and the binder whose conversation releases Hoopa (geometry.release,
+    the Rift finale's one beat, 2026-10-03; in the cradle at its fifth stand since the cradle was carved, the hall's
+    relic ring before), from the committed data alone. Fails closed when
     a conversation is not in data/dialogue.json with that NPC."""
     spec = spec or load()
     dl = json.loads((ROOT / "data" / "dialogue.json").read_text(encoding="utf-8"))
