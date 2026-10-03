@@ -61,6 +61,21 @@ with AI on it also has gravity (it fell into a trench). `freeze_frame=0.5` is ac
 `/freezepokemon` is not registered on this server. The one route left is Cobblemon's own resting behaviour (species
 `behaviour.resting`: Eevee `drowsyChance 0.0333`, `willSleepOnBed true`), which needs AI on and is probably night-only:
 untested unless the next lines say so.
+**Then, natural sleep WORKS** (same session, in game): Cobblemon 1.8's own `cobblemon:pokemon_sleeps` behaviour (the
+jar's data/cobblemon/behaviours/pokemon/pokemon_sleeps.json: find_resting_place, then sleep, wake_up) puts a Pokemon in
+the real sleep pose. It is in a species' default behaviour list only when its `behaviour.resting.canSleep` is true
+(482 species; NOT Eevee). Needs AI ON. A wild-spawned Pidgey (night sleeper, light 0-4) slept at night, the owner
+watching; a Snorlax slept in DAYLIGHT (time 6993), read from the server. **The server can measure it without anyone
+watching: entity NBT `PoseType` reads "SLEEP" / "STAND" / "WALK"** (writing PoseType by `data merge` does not hold:
+it is recalculated). Light/time gate per species: 270 sleep only at night in light 0-4, 99 any time in light 0-4,
+56 by day in light 0-4 (dark interiors); **19 can sleep in daylight outdoors**: snorlax (fastest, drowsy 0.0167),
+slowpoke, slakoth, slaking, purrloin (day), murkrow, litwick, lampent, pumpkaboo, gourgeist, bronzong, vanillite,
+honchkrow, lunatone, galvantula, chandelure, venipede, whirlipede, scolipede. They sleep and WAKE on their own
+(rouseChance), so a sleeper is a dozer, not a statue. Behaviour lists are writable: `data merge {BehavioursAreCustom:1b,
+Behaviours:[...]}` took effect live (dropping cobblemon:wanders stopped an Eevee wandering). Untested: the
+`cobblemon:stationary` behaviour (home_walk_task, variables home_x/y/z) to hold a sleeper on a roof, and
+`cobblemon:pokemon_follows_owner` for "following a kid". Test debris in staging: two snow blocks at (808-809, 175,
+247) now air (a test bed), and tagged test Pokemon `cobblers_fps` near (807, 177, 248) unless cleared.
 
 ## 4. Do not rediscover
 
