@@ -655,9 +655,12 @@ So delegate for the reading, and brief accordingly:
 
 ## A success report is not the work (the owner, 2026-10-03)
 
-**Five times now a report said work happened that did not.** The latest: `reapply.py prepare` resumed past a failed
-step (Z2, failing since 2026-10-01), and every apply after it reported 0 problems while the encounter rebuild sat
-uninstalled. Before that: spawn tables, five config overlays, the re-apply steps and the structures pack never reached
+**Five times now a report said work happened that did not.** The latest, as the owner reported it (2026-10-03): an
+apply reported 0 problems while the encounter rebuild sat uninstalled. Read from the code that day: a failed prepare
+job exited 1 but named the tool, not the job; the way back, `--from <next job>`, skipped the failed job and still
+ended "prepared ... every function pack covered"; `install` never checked prepare, and on a pack missing from build/
+moved the installed copy aside, copied nothing and printed "installed". (The owner's "Z2 failing since 10-01" could
+not be confirmed: nothing is named Z2 but the Rift zone, whose runs recorded no problem.) Before that: spawn tables, five config overlays, the re-apply steps and the structures pack never reached
 the running game while the repo said they were done. On 2026-10-02 a `reapply.py run` printed "done" for steps whose
 functions changed nothing, and only `presence_audit` against the world showed it.
 
