@@ -39,7 +39,9 @@ BY = {r["id"]: r for r in DOC["residents"]}
 
 # The fault this audit found in the committed build on 2026-10-03 (reported, not fixed: compile_dialogue is shared
 # tooling and the builder's caveat names it). When it is fixed the real-heightmap test below fails and says so.
-KNOWN = [("hand-in", "surveyor_line: option r_give takes the WHOLE main-hand stack of minecraft:compass")]
+# The compass hand-in that emptied the whole stack (found by this audit 2026-10-03) is fixed in
+# tools/compile_dialogue.py (`clear @s <item> 1`), so the committed build must have no known fault.
+KNOWN = []
 
 
 def SEA(x, z):
@@ -189,12 +191,11 @@ def test_the_ranging_poles_walk_into_the_synthetic_sea_as_computed_by_hand():
 
 
 # Without it every mutation test below could be catching the audit's own false positives.
-def test_the_unmutated_build_on_synthetic_ground_fails_only_its_recorded_ys_and_the_compass(baseline):
-    other = [e for e in baseline.errors if not e.startswith(("ys:", "hand-in:"))]
+def test_the_unmutated_build_on_synthetic_ground_fails_only_its_recorded_ys(baseline):
+    other = [e for e in baseline.errors if not e.startswith("ys:")]
     assert not other, other[:5]
     # the records were measured on the real heightmap, so on flat y100 they disagree: the ys check does read them
     assert any(e.startswith("ys: fairy_ring:") for e in baseline.errors)
-    assert any(e.startswith(KNOWN[0][0] + ":") and KNOWN[0][1] in e for e in baseline.errors)
 
 
 # ------------------------------------------------------------------ generator mutations
@@ -301,13 +302,14 @@ def test_an_npc_step_with_the_wrong_yaw_is_caught(monkeypatch, tmp_path, baselin
     assert any("half_house: the npc step" in e for e in caught(rep, baseline, "steps")), rep.errors[:5]
 
 
-# Without it the hand-in check could be a constant failure: a compiler that takes ONE compass must pass it.
-def test_a_hand_in_that_takes_one_item_passes(monkeypatch, tmp_path, baseline):
-    mutate(monkeypatch, CD.Compiler, "effect", "run item replace entity @s weapon.mainhand with minecraft:air",
-           "run item modify entity @s weapon.mainhand cobblers:take_one")
+# Without it the compass hand-in could go back to emptying the whole stack unseen: put the compiler's old line back
+# (the defect this audit found on 2026-10-03) and the hand-in check must catch it; the fixed compiler passes it.
+def test_a_hand_in_that_empties_the_stack_is_caught(monkeypatch, tmp_path, baseline):
+    assert not [e for e in baseline.errors if e.startswith("hand-in:")], baseline.errors[:5]
+    mutate(monkeypatch, CD.Compiler, "effect", 'run clear @s %s 1" % (pred, pred)',
+           'run item replace entity @s weapon.mainhand with minecraft:air" % (pred,)')
     rep = run(tmp_path)
-    assert not [e for e in rep.errors if e.startswith("hand-in:")], rep.errors[:5]
-    assert set(rep.errors) < set(baseline.errors)
+    assert [e for e in rep.errors if e.startswith("hand-in:")], rep.errors[:5]
 
 
 # Without it Hale's Leftovers option could compile with no gym8_cleared probe and show to anyone.
