@@ -138,6 +138,6 @@
       }
     ],
     "why_gym8_cleared_is_proposed": "each altar spawns its bird at 50, 55 or 60 (VERIFIED, LumyMon 0.6.6 class strings), and a Pokemon above a player's cap breaks free from every ball. The cap is 60 after gym 8 (docs/mechanics/LEAGUE_LEVEL_CAP.md), the first point at which every roll is catchable. A lower gate lets a 55 or 60 roll escape. Confirmed by the owner, 2026-10-02.",
-    "blocked_on": "EXP-048: none of the three bird altars has been shown to answer a pasted right-click."
+    "blocked_on": "nothing on the altar side: a pasted LumyMon altar answered a player in game (the owner, 2026-10-02; data/adopted_legendary_sites.json a_dead_altar_must_not_block.verified_in_game_2026_10_02). It waits on its own build: the researchers' dialogue."
   }
 }
