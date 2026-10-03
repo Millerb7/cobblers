@@ -3152,7 +3152,7 @@
     "leash_every_ticks": 40,
     "spawn_clear": 24,
     "respawn_ticks": 18000,
-    "why": "The Cutting Floor's two Megas (decision 8) and the seven open-air farm dens that now exist (farms[].dens, one den per farm, four outer and three deeper) share one keeper: spawned through the macro spawn_at (EXP-046: a plain spawnpokemonat line parsed at server start does nothing), uncatchable, claimed at once (tagged, PersistenceRequired), leashed like the recovery guardians (walked back by tp past the radius, every 2 s while a player is near). SOUTHERN_RIFT_MEGA.md 13 retires the faces' restore, so a Mega no longer comes back with a face: each den keeps a respawn clock, the game time its Mega was first seen gone, and spawns the next respawn_ticks later with nobody within spawn_clear of the anchor; nothing a player can repeat moves the clock. The mine's two drop nothing (the farms are the currency's source); their respawn_ticks is 15 minutes. A Mega that blacks a player out makes no item claim (decision 9: data/blackout.json claims.exempt_tag)",
+    "why": "The Cutting Floor's two Megas (decision 8) and the Mega field's open-air dens (farms[].dens, mega_field; the seven 2026-10-01 dens are superseded_farms) share one keeper: spawned through the macro spawn_at (EXP-046: a plain spawnpokemonat line parsed at server start does nothing), uncatchable, claimed at once (tagged, PersistenceRequired), leashed like the recovery guardians (walked back by tp past the radius, every 2 s while a player is near). SOUTHERN_RIFT_MEGA.md 13 retires the faces' restore, so a Mega no longer comes back with a face: each den keeps a respawn clock, the game time its Mega was first seen gone, and spawns the next respawn_ticks later with nobody within spawn_clear of the anchor; nothing a player can repeat moves the clock. The mine's two drop nothing (the farms are the currency's source); their respawn_ticks is 15 minutes. A Mega that blacks a player out makes no item claim (decision 9: data/blackout.json claims.exempt_tag)",
     "slots": [
       {
         "id": "steelix",
@@ -3226,10 +3226,37 @@
       "drop_percent": 30,
       "respawn_ticks": 18000
     },
-    "why": "SOUTHERN_RIFT_MEGA.md 13: outer about level 60 (the owner: a cap of 50 after gym 5, \"lvl 60 or so, so it takes a team\"), 15% a defeat; deeper 65-70 at 25-35% (ASSUMED: the owner said \"more frequently\"). respawn_ticks is the farm's rate limit per den: 10 minutes outer, 15 deeper, so four outer dens give at most 24 fights an hour between them, about 3.6 raw stones at 15%. All ASSUMED until a fight is timed"
+    "why": "SOUTHERN_RIFT_MEGA.md 13: outer about level 60 (the owner: a cap of 50 after gym 5, \"lvl 60 or so, so it takes a team\"), 15% a defeat; deeper 65-70 at 25-35% (ASSUMED: the owner said \"more frequently\"). respawn_ticks is the farm's rate limit per den: 10 minutes outer, 15 deeper, so four outer dens give at most 24 fights an hour between them, about 3.6 raw stones at 15%. All ASSUMED until a fight is timed",
+    "field_outer": {
+      "level": 70,
+      "drop_percent": 15,
+      "respawn_ticks": 12000
+    },
+    "field_deeper": {
+      "level": 77,
+      "drop_percent": 30,
+      "respawn_ticks": 18000
+    },
+    "field_why": "The Mega field (the owner, 2026-10-03; docs/world-building/MEGA_FIELD.md section 4). The owner's rule is relative: 'if cap after gym 5 is 50 ... lvl 60 or so, so it takes a team' (SOUTHERN_RIFT_MEGA.md:657), so the cap plus about 10 for the outer tier and plus 17 for the deeper (60 and 67 over a cap of 50). The field lies inside Z2 (8 badges, data/rift_zones.json), where the cap is 60 (docs/mechanics/LEAGUE_LEVEL_CAP.md section 2: after gym 8 and through the Elite Four), so the same rule gives 70 and 77. If the owner instead cuts a gym-6 zone out of Z2 for the field (SOUTHERN_RIFT_MEGA.md:706-709, still held), the same rule gives the old outer and deeper levels, 60 and 67: one line each here. A Mega is a Mega form (about 100 more base stats than its line) 10 to 17 levels over the party's cap, so one partner at the cap does not beat it alone (ASSUMED until EXP-054 A6 times a win). Drop rates and respawn are section 13's, unchanged (ASSUMED, untimed)."
   },
-  "farms_why": "The open-air Mega farms (the owner, 2026-10-01): 'Mega Pokemon walking in the OPEN, not only in caverns -- a player should see them before they reach them.' Seven dens across the Rift's two southern arms, four outer and three deeper, keeping the material chain and the Cutters exactly as designed: a den's Mega rolls the same raw-stone drop at its tier's rate, and the keyed stone is still cut at the Cutters inside the badge-gated gulch. What changes is that the fight is on open ground a player can see across, not in a hall they have to be let into. NO ZONE on any of the seven -- decision B4 (the owner, 2026-10-01): 'drop the zone on the open dens. A turn-back in open country reads as an invisible wall. Let the level band gate them; being seen and too strong is the point.' So no farm declares a `zone`: there is no polygon, no turn-back point, no zone advancement and no badge-flag check of its own anywhere in the farms. THE GATE IS THE LEVEL BAND ALONE -- outer level 60, deeper 67 (farm_tiers) against a level cap of 50 after gym 5 -- and the only thing that stops an underlevelled party is losing the fight. Nothing is hidden and nobody is bounced: a player at any badge count can walk up to a den, see what it is and try it. The badge flag still gates the GULCH itself (this file's own `zone`, the rockslide gate at gulch_mouth), which is a different thing and untouched: the Cutters who turn a raw stone into a keyed one are inside it, so a stone won in the open is worth nothing until that gate opens. The halls' two Megas (megas.slots) stay as they are: the owner said not ONLY in caverns. Sites measured off the canonical heightmap, never a world (CLAUDE.md): inside the arm polygons of data/regions.json, pad slope under 10 degrees, 24+ clear of every keep_clear box, 260+ apart so finding one is an event rather than a checklist. The sightline measurement that chose them saturated at its own 136-block ceiling for all twelve candidates, so it proves each has a long clear approach and did NOT rank them: spacing and arm coverage picked these seven. The east arm holds the gulch, its road and the Cutters, so it carries the outer tier; the west arm had nothing in it at all, so it carries the deeper tier and the longest walk.",
+  "farms_why": "The Mega field (the owner, 2026-10-03): 'everywhere in the red inside the rift should be the mega area ... an aggressive and hostile resource farm ... fight high level megas that in theory should require more than one mon to kill and get a reward to spend in the big town next to this area in the rift.' 11 dens in 6 farms across the south-west Rift basin (mega_field.polygon), laid out by `python tools/mega_field.py sites` from mega_field.layout on the canonical heightmap, never a world: inside the field and 38 off its edge, 155 off Victory Road's walked line, 59 off the gulch zone, on a pad level to within one block, 64 apart (each `why` in mega_field.layout). Tier by distance from the road: 4 field_outer (level 70), 7 field_deeper (level 77, 250 or more from the road: the inner arm and the far south, where SOUTHERN_RIFT_MEGA.md:650's (4090, 116, 5289) is). Every den is dressed as a lair (data/mega_dens.json, step R9MD; mega_field.dressing). The material chain is section 13's unchanged: a defeated Mega rolls its tier's drop of one raw mega_showdown:mega_stone, owner-only, spent at the Cutters in the Cutters' Gulch next door (2 raw and a diamond a keyed stone). NO ZONE on any farm, as decision B4 (2026-10-01): the level band is the gate inside the field. The field itself lies inside Z2 (8 badges, data/rift_zones.json), which is the gate onto it until the owner answers SOUTHERN_RIFT_MEGA.md:706-709. A farm is field_<col>_<row> of 192-block squares; its approach box is its dens' extent plus 64, clipped to farms_grid.",
+  "superseded_farms_why": "The open-air Mega farms (the owner, 2026-10-01): 'Mega Pokemon walking in the OPEN, not only in caverns -- a player should see them before they reach them.' Seven dens across the Rift's two southern arms, four outer and three deeper, keeping the material chain and the Cutters exactly as designed: a den's Mega rolls the same raw-stone drop at its tier's rate, and the keyed stone is still cut at the Cutters inside the badge-gated gulch. What changes is that the fight is on open ground a player can see across, not in a hall they have to be let into. NO ZONE on any of the seven -- decision B4 (the owner, 2026-10-01): 'drop the zone on the open dens. A turn-back in open country reads as an invisible wall. Let the level band gate them; being seen and too strong is the point.' So no farm declares a `zone`: there is no polygon, no turn-back point, no zone advancement and no badge-flag check of its own anywhere in the farms. THE GATE IS THE LEVEL BAND ALONE -- outer level 60, deeper 67 (farm_tiers) against a level cap of 50 after gym 5 -- and the only thing that stops an underlevelled party is losing the fight. Nothing is hidden and nobody is bounced: a player at any badge count can walk up to a den, see what it is and try it. The badge flag still gates the GULCH itself (this file's own `zone`, the rockslide gate at gulch_mouth), which is a different thing and untouched: the Cutters who turn a raw stone into a keyed one are inside it, so a stone won in the open is worth nothing until that gate opens. The halls' two Megas (megas.slots) stay as they are: the owner said not ONLY in caverns. Sites measured off the canonical heightmap, never a world (CLAUDE.md): inside the arm polygons of data/regions.json, pad slope under 10 degrees, 24+ clear of every keep_clear box, 260+ apart so finding one is an event rather than a checklist. The sightline measurement that chose them saturated at its own 136-block ceiling for all twelve candidates, so it proves each has a long clear approach and did NOT rank them: spacing and arm coverage picked these seven. The east arm holds the gulch, its road and the Cutters, so it carries the outer tier; the west arm had nothing in it at all, so it carries the deeper tier and the longest walk.",
   "farms_grid": {
+    "x": [
+      3541,
+      4354
+    ],
+    "y": [
+      60,
+      335
+    ],
+    "z": [
+      4377,
+      5401
+    ],
+    "why": "The box every farm coordinate (each den's anchor, each approach box corner) must sit in, checked by tools/gulch_mine_audit.py. Re-derived 2026-10-03 from the Mega field, not from the dens: x and z are mega_field.polygon's extent, y the field's ground range (round heightmap) + 1 less approach_below and plus approach_above (`python tools/mega_field.py sites` prints it). The farms write no blocks, so the block-write `grid` is untouched and still never looks at a den."
+  },
+  "superseded_farms_grid": {
     "x": [
       3828,
       4692
@@ -4168,9 +4195,392 @@
         ]
       ],
       "cut_blocks": 319.7
+    },
+    "layout": {
+      "seed": 20261003,
+      "road": "victory_road",
+      "candidate_step": 8,
+      "edge_clear": 38,
+      "road_clear": 155,
+      "gulch_clear": 59,
+      "keep_clear": [
+        {
+          "at": [
+            3738,
+            5082
+          ],
+          "r": 59,
+          "what": "z2's gatehouse post (data/rift_zones.json zones.z2.posts[0]), the sculpt's victory_road_descent entrance (data/rift_sculpt.json entrances[1].near) and the Victory Road surveyor's recorded position (data/quests.json main_worldshift_reveal actors[11])"
+        },
+        {
+          "at": [
+            3580,
+            5301
+          ],
+          "r": 59,
+          "what": "z2's guard: the line's crossing of the lip and its inside point (zones.z2.guard.edge_at, inside_at)"
+        }
+      ],
+      "pad_radius": 3,
+      "pad_relief": 1,
+      "spacing": 64,
+      "deeper_from_road": 250,
+      "outer_tier": "field_outer",
+      "deeper_tier": "field_deeper",
+      "farm_cell": 192,
+      "approach_margin": 64,
+      "approach_below": 24,
+      "approach_above": 32,
+      "leash": 32,
+      "roster": {
+        "field_outer": [
+          [
+            "houndoom",
+            "mega_evolution=mega"
+          ],
+          [
+            "absol",
+            "mega_evolution=mega"
+          ],
+          [
+            "banette",
+            "mega_evolution=mega"
+          ],
+          [
+            "camerupt",
+            "mega_evolution=mega"
+          ],
+          [
+            "scizor",
+            "mega_evolution=mega"
+          ],
+          [
+            "sableye",
+            "mega_evolution=mega"
+          ],
+          [
+            "heracross",
+            "mega_evolution=mega"
+          ],
+          [
+            "abomasnow",
+            "mega_evolution=mega"
+          ],
+          [
+            "ampharos",
+            "mega_evolution=mega"
+          ],
+          [
+            "medicham",
+            "mega_evolution=mega"
+          ]
+        ],
+        "field_deeper": [
+          [
+            "garchomp",
+            "mega_evolution=mega"
+          ],
+          [
+            "metagross",
+            "mega_evolution=mega"
+          ],
+          [
+            "charizard",
+            "mega_evolution=mega_x"
+          ],
+          [
+            "steelix",
+            "mega_evolution=mega"
+          ],
+          [
+            "gallade",
+            "mega_evolution=mega"
+          ],
+          [
+            "blaziken",
+            "mega_evolution=mega"
+          ],
+          [
+            "venusaur",
+            "mega_evolution=mega"
+          ]
+        ]
+      },
+      "why": {
+        "road_clear": "155 = 128 + 27: every den is dressed as a lair (data/mega_dens.json; the owner, 2026-10-02: 'see something from the air and go down to it'), a lair writes nothing within 128 of the critical path (tools/mega_dens_audit.py footprint rule; mega_dens.json approach_why) and its write box reaches 27 from its anchor. So Victory Road crosses the field as a road with no Mega within 155 - leash 32 = 123 blocks of its walked line, the Megas in sight across the floor on either side. If the owner wants the Megas ON the road, this and the lairs' 128 rule change together (docs/world-building/MEGA_FIELD.md section 4)",
+        "gulch_clear": "59 = the larger of the leash 32 + megas.spawn_clear 24 (56: a leashed Mega never comes within 24 of the gulch zone, so it never wanders into the Cutters' town) and 32 + 27 (a lair's write box keeps 32 from the gulch's zone, mega_dens_audit footprint rule)",
+        "keep_clear": "the same 59 round the two things inside the field that are not ours to crowd: z2's gate post (a lair keeps 32 from a Rift zone post, + its 27) and the descent the road comes down",
+        "edge_clear": "38 = 27 x sqrt 2, rounded up: a lair's whole write box (anchor +- 27) lies inside the field, whose edge runs 3 outside the lip (mega_field.trace.rim_outset), so no den stands at a cliff foot and farms_grid holds every box",
+        "pad": "every column within pad_radius 3 of the anchor within pad_relief 1 of the others on the heightmap (round(h), tools/ground.py): data/mega_dens.json anchor_pad's measured precedent, so the keeper spawns on level ground",
+        "spacing": "64 = 2 x leash 32: no two dens' leash discs overlap, so each Mega keeps its own ground, and 64 is more than a lair's write box (54 across), so no two lairs touch (mega_dens_audit record rule). The field's ground is the limit, not the spacing: with road_clear and edge_clear as derived, 546 pads are level and 18 fit (`mega_field.py sites` counts)",
+        "deeper_from_road": "250: a den 250 or more from Victory Road's walked line is deeper (the inner arm and the far west lobe, where section 13's two coordinates are); nearer is outer. ASSUMED, a design threshold, not a measurement",
+        "farm_cell": "the dens are grouped into farms by 192-block squares of the field so each farm's approach box (the dens' extent + approach_margin 64, the old dens' 64; y -24..+32 round the anchors as before, clipped to farms_grid, the field's own extent) drives only its own keepers",
+        "roster": "SOUTHERN_RIFT_MEGA.md 6.1's rule: a Mega whose line can be had here (its stone is on a Cutters bench, data cutters.benches) and not one of the client's broken Mega models (docs/research/CLIENT_MODEL_FIXES.md: Aggron, Altaria, Gengar, Manectric, Sceptile, Slowbro, Swampert; Pidgeot and Skarmory share a defect) nor a Legends Z-A Mega whose model is unverified. Outer: dark, ghost, fire, bug and the arm's ice; deeper: the heavy evolved lines section 13 asks for. Dealt in turn along the dens, north to south, ONE den per species: tools/mega_dens.py names each lair's function after its species, so a tier needs at least as many species as dens (sites refuses otherwise). Charizard is Mega X here; Blaziken and Venusaur are starter lines (modpack/config/cobblemon/starters.json), whose stones the first bench sells",
+        "lair": "lair_radius 27 is a lair's write box half-width (data/mega_dens.json bounds_why: anchor +- 27, ground - 8 .. + 14). Every column in it must have ground within its span: no lower than the anchor's ground - 6 (the box's 8, less a dig's 2: mega_dens.json dig depth) and no higher than + 7 (the box's 14, less layout.max_rise 7). Found 2026-10-03: without it tools/mega_dens.py refused a Houndoom den on a slope whose lair reached 22 below its anchor"
+      },
+      "lair_radius": 27,
+      "lair_below": 6,
+      "lair_above": 7
+    },
+    "dressing": {
+      "kit_of": {
+        "houndoom": "houndoom",
+        "absol": "tyranitar",
+        "banette": "houndoom",
+        "camerupt": "manectric",
+        "scizor": "aggron",
+        "sableye": "aggron",
+        "heracross": "pinsir",
+        "abomasnow": "abomasnow",
+        "ampharos": "manectric",
+        "medicham": "tyranitar",
+        "garchomp": "garchomp",
+        "metagross": "tyranitar",
+        "charizard": "houndoom",
+        "steelix": "aggron",
+        "gallade": "pinsir",
+        "blaziken": "houndoom",
+        "venusaur": "pinsir"
+      },
+      "why": "Every field den is dressed as a lair (data/mega_dens.json, step R9MD), because the owner asked on 2026-10-02 to 'see something from the air and go down to it' and section 13 describes the field as 'caves, Mega dens, broken houses half sunk, debris'. A field den takes the KIT of one of the seven 2026-10-02 lairs (their records are data/mega_dens.json superseded_dens): its sign, feature, palettes and signature, so nothing in the builder or its audit is new. Which kit: Houndoom's charred ash and bone heap for Houndoom, Banette, Charizard and Blaziken; Tyranitar's crater for Absol, Medicham and Metagross (a meteor's); Manectric's fused strike for Camerupt and Ampharos; Aggron's spoil heap of torn ore and iron for Scizor, Sableye and Steelix; Pinsir's felled trunks for Heracross, Gallade and Venusaur; Abomasnow and Garchomp keep their own. `python tools/mega_field.py dress` prints the records; only their geometry is per den."
     }
   },
   "farms": [
+    {
+      "id": "field_2_3",
+      "name": "the Mega field, cell 2 3",
+      "tier": "field_outer",
+      "approach": [
+        3905,
+        89,
+        4933,
+        4161,
+        149,
+        5141
+      ],
+      "dens": [
+        {
+          "id": "gm_field_2_3_1",
+          "species": "houndoom",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3969,
+            113,
+            4997
+          ],
+          "leash": 32,
+          "tier": "field_outer",
+          "road_blocks": 165
+        },
+        {
+          "id": "gm_field_2_3_2",
+          "species": "garchomp",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4097,
+            117,
+            5013
+          ],
+          "leash": 32,
+          "tier": "field_deeper",
+          "road_blocks": 269
+        },
+        {
+          "id": "gm_field_2_3_3",
+          "species": "absol",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4033,
+            116,
+            5029
+          ],
+          "leash": 32,
+          "tier": "field_outer",
+          "road_blocks": 233
+        },
+        {
+          "id": "gm_field_2_3_4",
+          "species": "charizard",
+          "aspect": "mega_evolution=mega_x",
+          "anchor": [
+            4089,
+            117,
+            5077
+          ],
+          "leash": 32,
+          "tier": "field_deeper",
+          "road_blocks": 307
+        }
+      ]
+    },
+    {
+      "id": "field_3_3",
+      "name": "the Mega field, cell 3 3",
+      "tier": "field_deeper",
+      "approach": [
+        4097,
+        94,
+        4973,
+        4225,
+        150,
+        5101
+      ],
+      "dens": [
+        {
+          "id": "gm_field_3_3_1",
+          "species": "metagross",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4161,
+            118,
+            5037
+          ],
+          "leash": 32,
+          "tier": "field_deeper",
+          "road_blocks": 332
+        }
+      ]
+    },
+    {
+      "id": "field_1_4",
+      "name": "the Mega field, cell 1 4",
+      "tier": "field_outer",
+      "approach": [
+        3833,
+        96,
+        5173,
+        3961,
+        152,
+        5301
+      ],
+      "dens": [
+        {
+          "id": "gm_field_1_4_1",
+          "species": "banette",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3897,
+            120,
+            5237
+          ],
+          "leash": 32,
+          "tier": "field_outer",
+          "road_blocks": 220
+        }
+      ]
+    },
+    {
+      "id": "field_2_4",
+      "name": "the Mega field, cell 2 4",
+      "tier": "field_deeper",
+      "approach": [
+        4009,
+        94,
+        5085,
+        4177,
+        151,
+        5389
+      ],
+      "dens": [
+        {
+          "id": "gm_field_2_4_1",
+          "species": "steelix",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4113,
+            119,
+            5149
+          ],
+          "leash": 32,
+          "tier": "field_deeper",
+          "road_blocks": 371
+        },
+        {
+          "id": "gm_field_2_4_2",
+          "species": "gallade",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4097,
+            118,
+            5221
+          ],
+          "leash": 32,
+          "tier": "field_deeper",
+          "road_blocks": 386
+        },
+        {
+          "id": "gm_field_2_4_3",
+          "species": "venusaur",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4073,
+            118,
+            5325
+          ],
+          "leash": 32,
+          "tier": "field_deeper",
+          "road_blocks": 413
+        }
+      ]
+    },
+    {
+      "id": "field_3_4",
+      "name": "the Mega field, cell 3 4",
+      "tier": "field_deeper",
+      "approach": [
+        4065,
+        95,
+        5213,
+        4193,
+        151,
+        5341
+      ],
+      "dens": [
+        {
+          "id": "gm_field_3_4_1",
+          "species": "blaziken",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4129,
+            119,
+            5277
+          ],
+          "leash": 32,
+          "tier": "field_deeper",
+          "road_blocks": 438
+        }
+      ]
+    },
+    {
+      "id": "field_1_5",
+      "name": "the Mega field, cell 1 5",
+      "tier": "field_outer",
+      "approach": [
+        3689,
+        91,
+        5277,
+        3817,
+        147,
+        5401
+      ],
+      "dens": [
+        {
+          "id": "gm_field_1_5_1",
+          "species": "camerupt",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3753,
+            115,
+            5341
+          ],
+          "leash": 32,
+          "tier": "field_outer",
+          "road_blocks": 184
+        }
+      ]
+    }
+  ],
+  "superseded_farms": [
     {
       "id": "east_arm_shoulder",
       "name": "the East Arm shoulder",
@@ -4381,5 +4791,6 @@
       ],
       "why": "One den per farm: the dens are 260+ blocks apart by construction, so each is its own walk rather than an item on a list. NO ZONE -- decision B4 (the owner, 2026-10-01): 'drop the zone on the open dens. A turn-back in open country reads as an invisible wall. Let the level band gate them; being seen and too strong is the point.' So this farm declares no polygon and no turn-back point, and nothing in it reads the badge flag. What gates it is its tier's level alone: deeper, level 67 (farm_tiers.deeper.level), against a level cap of 50 after gym 5. A player who comes early sees the Mega across open ground, walks up to it and loses; that is the gate."
     }
-  ]
+  ],
+  "superseded_farms_reason": "Superseded 2026-10-03 by the Mega field (mega_field; docs/world-building/MEGA_FIELD.md). The owner, on the map: 'everywhere in the red inside the rift should be the mega area, not just spawn one randomly in the world.' These seven were sited inside data/regions.json's rift_south_west_arm and rift_south_east_arm subregion polygons, which take in the plateau round the basin; all seven stand on high ground outside the basin (y121-148), 163 to 1,133 blocks from the nearest of the owner's coordinates, and none is inside the field. Kept, not deleted: the records hold the 2026-10-01 siting and the B4 reasoning, and staging has had them applied (R9S, R9MD), so their anchors say where a keeper may still have left a Mega and a lair stands."
 }
