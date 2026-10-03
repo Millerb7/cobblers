@@ -61,6 +61,19 @@ def can_grant(z):
     return all(a.startswith("cobblers:flag/") and a[len("cobblers:flag/"):] in grantable for a in p["advancements"])
 
 
+def wall_held(z):
+    """A zone that CAN grant its pass and is still held, because its wall would not let a passed player through:
+    the zone names the measured defect (zones.<id>.needs_walls.defect) and that defect is still open. Read from the
+    defect record, not from tools/rift_zones.py held_zones(). z5 since 2026-10-03, when rift_crisis_resolved's setter
+    got its invoker (the relic hall's binder)."""
+    return (z.get("needs_walls") or {}).get("defect") == HELD_WALLS and _held_record() is not None
+
+
+def enforced(z):
+    """Whether R9Z and `build` should put this zone in the world: it can grant its pass and no open defect holds it."""
+    return can_grant(z) and not wall_held(z)
+
+
 def _quiet_report(_a, quiet=False):
     return 0
 
@@ -106,7 +119,7 @@ def test_a_zone_that_cannot_grant_its_pass_has_no_advancement():
     names = {p.stem for p in adv.glob("*.json")}
     for zid, z in live_zones().items():
         mine = {n for n in names if n == "%s_zone" % zid or n.startswith("%s_" % zid)}
-        if can_grant(z):
+        if enforced(z):
             gates = [g[0] for g in RZ.gates_of(zid, z)]
             want = {"%s_zone" % zid} | {"%s_%s" % (g, k) for g in gates for k in ("knock", "exit")}
             assert want <= mine, "%s can grant its pass and is missing %s" % (zid, sorted(want - mine))
@@ -126,16 +139,17 @@ def test_removing_the_hold_from_build_ships_the_held_zones_checks_again():
     _fn, adv = build(module=mod)
     names = {p.stem for p in adv.glob("*.json")}
     for zid, z in live_zones().items():
-        if not can_grant(z):
+        if not enforced(z):
             assert "%s_zone" % zid in names, "the mutation did not bring back %s's zone check" % zid
 
 
 # Without it the data's own switch drifts from the truth: a needs_* field left on a zone that can now grant
-# keeps it shut for nothing, and one taken off a zone that cannot grant puts its walls up. When Codex declares
-# rift_crisis_resolved this fails until z5's needs_progression goes, which is the point.
+# keeps it shut for nothing, and one taken off a zone that cannot grant puts its walls up. A zone that can grant
+# is still held while an OPEN defect names it (wall_held: z5's needs_walls since 2026-10-03); when that defect is
+# marked fixed this fails until needs_walls goes, which is the point.
 def test_the_held_zones_are_exactly_the_zones_that_cannot_grant():
     held = set(RZ.held_zones(SPEC))
-    cannot = {zid for zid, z in live_zones().items() if not can_grant(z)}
+    cannot = {zid for zid, z in live_zones().items() if not enforced(z)}
     assert held == cannot, "held %s, cannot grant %s" % (sorted(held), sorted(cannot))
 
 
@@ -153,9 +167,9 @@ def test_r9z_runs_no_wall_and_no_gatehouse_of_a_zone_that_cannot_grant():
         if z.get("wall"):
             owner["wall_%s" % z["wall"]] = zid
     for f in run:
-        assert can_grant(zones[owner[f]]), "R9Z runs %s, but %s cannot grant its pass" % (f, owner[f])
+        assert enforced(zones[owner[f]]), "R9Z runs %s, but %s cannot grant its pass" % (f, owner[f])
     for f in held:
-        assert not can_grant(zones[owner[f]]), "R9Z holds %s, but %s can grant its pass" % (f, owner[f])
+        assert not enforced(zones[owner[f]]), "R9Z holds %s, but %s can grant its pass" % (f, owner[f])
     assert run, "R9Z runs nothing at all"
 
 
@@ -174,7 +188,7 @@ def test_one_placeholder_per_built_gate_and_the_old_ones_go():
         assert "summon" not in p.read_text(encoding="utf-8"), p.stem
     want = {}
     for zid, z in live_zones().items():
-        if can_grant(z):
+        if enforced(z):
             for g in RZ.gates_of(zid, z):
                 want[g[0]] = (g[2]["block"][0], g[2]["ground_y"] + 1, g[2]["block"][1])
     placed = {}

@@ -874,8 +874,9 @@ def cmd_report(a, quiet=False):
     """Returns 0 only when there is neither a problem nor an owed dependency.
 
     A PROBLEM is something wrong in this data. An OWED item is something another file must still supply --
-    today, the dialogue that invokes rift_crisis_resolved's setter (the flag and its setter transition are declared
-    since 2026-10-02; Hoopa's release beat is Codex's story data, data/rift_zones.json zones.z5.needs_progression). Both make `report` exit 1, because neither may be forgotten. Only a PROBLEM
+    today, z4's caught-count dialogue and z5's wall (zones.z5.needs_walls; z5's flag, rift_crisis_resolved, is set
+    since 2026-10-03 by the Compact binder's release in the relic hall). Both make `report` exit 1, because neither
+    may be forgotten. Only a PROBLEM
     stops `build`: an advancement that does not exist yet fails CLOSED, since a condition on a missing
     advancement never matches and nobody is granted the pass."""
     spec = load()
@@ -1174,9 +1175,26 @@ def cmd_report(a, quiet=False):
         # declared, with a setter (the transition that grants it), but no dialogue node invokes that transition yet:
         # nobody can hold the flag, so z5 is still shut to everyone
         owed("the invoker of rift_crisis_resolved's setter: data/progression.json declares it, set by %s, but "
-             "set_by.invoked_by is null -- Hoopa's release (NPCS_AND_RIFT_FINALE.md Scene 5) needs the cradle "
-             "carved and its scene. Until then z5 is shut to everyone, which is closed, not open."
+             "set_by.invoked_by is null -- Hoopa's release (the Compact binder in the relic hall, "
+             "data/relic_underground.json geometry.release, or NPCS_AND_RIFT_FINALE.md Scene 5). Until then z5 is shut "
+             "to everyone, which is closed, not open."
              % (crisis.get("set_by") or {}).get("transition"))
+    # 9a. a zone held for its WALLS (zones.<id>.needs_walls): it can grant its pass, but the wall it would put up does
+    #     not let a passed player through. Owed until the named defect is fixed, and named here so it is not forgotten;
+    #     a needs_walls naming a defect that is fixed or absent is a problem (the hold would outlive its reason)
+    defects = {d.get("id"): d for d in spec.get("measured_defects") or []}
+    for zid, z in sorted(live.items()):
+        nw = z.get("needs_walls")
+        if not nw:
+            continue
+        d = defects.get(nw.get("defect"))
+        if d is None or d.get("fixed"):
+            bad("%s is held by needs_walls on measured_defects[%s], which is %s: remove needs_walls"
+                % (zid, nw.get("defect"), "absent" if d is None else "fixed"))
+        else:
+            owed("%s's wall: %s can grant its pass but is held until measured_defects[%s] is fixed (its wall and "
+                 "gatehouse do not meet). Until then neither its wall nor its zone check is installed, so it is open."
+                 % (zid, zid, nw["defect"]))
     # 9b. a caught-count zone's knock box calls a qualify that can only refuse: no command or predicate reads
     #     species owned (docs/research/CAUGHT_COUNT_AND_NPC_GUARDS.md; the VERIFIED custom stat counts BALL
     #     CAPTURES, not species). Its guard's dialogue must call <zone>/grant itself. Owed, not a problem: the
@@ -1254,13 +1272,15 @@ def adv(conds, reward):
 def held_zones(spec):
     """{zone id: [what it owes]} for every live zone that cannot GRANT its pass yet.
 
-    Read from the data, zones.<id>.needs_progression / needs_dialogue, and nowhere else: `build` emits no
-    advancement for such a zone and tools/reapply.py's R9Z runs neither its wall nor its gatehouses. When the
-    owed half lands, the field goes and both follow."""
-    return {zid: [k for k in ("needs_progression", "needs_dialogue") if z.get(k)]
+    Read from the data, zones.<id>.needs_progression / needs_dialogue / needs_walls, and nowhere else: `build`
+    emits no advancement for such a zone and tools/reapply.py's R9Z runs neither its wall nor its gatehouses. When
+    the owed half lands, the field goes and both follow. needs_walls (2026-10-03) holds a zone that CAN grant its
+    pass but whose wall would not let a passed player through (it names the measured defect)."""
+    keys = ("needs_progression", "needs_dialogue", "needs_walls")
+    return {zid: [k for k in keys if z.get(k)]
             for zid, z in spec["zones"].items()
             if not str(z.get("status", "")).startswith("SUPERSEDED")
-            and (z.get("needs_progression") or z.get("needs_dialogue"))}
+            and any(z.get(k) for k in keys)}
 
 
 def zone_functions(zid, z):
