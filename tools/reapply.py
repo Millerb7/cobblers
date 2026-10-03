@@ -40,6 +40,7 @@ last line names every step with a problem and says when the run was partial.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -1757,12 +1758,74 @@ def require_watchdog_off(server_dir):
     print("watchdog: max-tick-time=-1 in server.properties (restore it after the run)")
 
 
+def _fn_files():
+    """function id -> its file under build/datapacks, for step_hash()."""
+    out = {}
+    for f in (BUILD / "datapacks").glob("*/data/*/function/**/*.mcfunction"):
+        parts = f.relative_to(BUILD / "datapacks").parts
+        out["%s:%s" % (parts[2], "/".join(parts[4:])[:-len(".mcfunction")])] = f
+    return out
+
+
+def step_hash(actions, files=None):
+    """What a step would write, as one hash: its actions in order and the CONTENT of every function it calls.
+
+    Added 2026-10-03 after the owner asked how many build steps exist but were never applied. Run records had kept
+    only a count of functions per step, and a function whose content changed after its step last ran -- the hearts,
+    Hoopa's hall -- has the same count, so nothing could see it. `reapply.py stale` compares this hash with the step's
+    last clean run."""
+    files = _fn_files() if files is None else files
+    h = hashlib.sha256()
+    for kind, v in actions:
+        h.update(("%s %r;" % (kind, v)).encode("utf-8"))
+        if kind == "fn":
+            f = files.get(str(v))
+            h.update(f.read_bytes() if f else b"<missing>")
+    return h.hexdigest()[:16]
+
+
+def stale(a):
+    """Every step whose content today differs from its last clean run into this server's world (exit 1 if any)."""
+    inst = {}
+    if INSTALLED.is_file():
+        inst = json.loads(INSTALLED.read_text(encoding="utf-8")).get(str(Path(a.server_dir).resolve()), {})
+    world = inst.get("world_dir")
+    last = {}
+    for f in sorted(OUT.glob("run_*.json")):
+        try:
+            rec = json.loads(f.read_text(encoding="utf-8"))
+        except ValueError:
+            continue
+        if world and rec.get("world_dir") not in (None, world):
+            continue
+        for s in rec.get("steps", []):
+            if not s.get("problems"):
+                last[s["step"]] = (f.name, s.get("hash"))
+    files = _fn_files()
+    changed, unknown, never = [], [], []
+    for sid, title, actions in steps():
+        now = step_hash(actions, files)
+        run_, was = last.get(sid, (None, None))
+        if run_ is None:
+            never.append(sid)
+        elif was is None:
+            unknown.append(sid)
+        elif was != now:
+            changed.append(sid)
+        print("%-6s %-9s %s" % (sid, "never" if run_ is None else "unknown" if was is None else
+                                 "CHANGED" if was != now else "current", title[:80]))
+    print("stale: %d changed since their last clean run, %d never run clean, %d run before hashes were recorded "
+          "(world %s)" % (len(changed), len(never), len(unknown), world))
+    return 1 if changed or never else 0
+
+
 def run(a):
     # before the first RCON command: the server must hold an install of the current complete prepare
     inst = require_installed(a.server_dir)
     rc = Rcon(a.server_dir)
     OUT.mkdir(parents=True, exist_ok=True)
     rec = {"started": time.strftime("%Y-%m-%dT%H:%M:%S"), "steps": [], "prepare": inst.get("prepare"),
+           "world_dir": inst.get("world_dir"),
            "selection": "--only %s" % a.only if a.only else
                         "--from %s" % a.from_step if getattr(a, "from_step", None) else "all"}
     path = OUT / ("run_%s.json" % time.strftime("%Y%m%d_%H%M%S"))
@@ -1847,6 +1910,7 @@ DROP_RULES = ("doTileDrops", "doEntityDrops")
 
 def _run_steps(a, rc, todo, rec, path, live=None):
     live = {} if live is None else live
+    fn_files = _fn_files()
     for sid, title, actions in todo:
         t0 = time.time()
         print("== %s %s" % (sid, title), flush=True)
@@ -2035,7 +2099,8 @@ def _run_steps(a, rc, todo, rec, path, live=None):
         # R15, R16 and the lamps) was gone from the world although the run had reported each one done
         rc("save-all")
         dt = time.time() - t0
-        rec["steps"].append({"step": sid, "title": title, "seconds": round(dt, 1), "commands": sum(1 for k, _ in actions if k == "fn"),
+        rec["steps"].append({"step": sid, "title": title, "seconds": round(dt, 1), "hash": step_hash(actions, fn_files),
+                             "commands": sum(1 for k, _ in actions if k == "fn"),
                              "problems": bad})
         path.write_text(json.dumps(rec, indent=1), encoding="utf-8")
         print("   %s done in %.0f s%s" % (sid, dt, "" if not bad else ", %d PROBLEM(S): stopping" % len(bad)), flush=True)
@@ -2165,7 +2230,11 @@ def main(argv=None):
     q.add_argument("--world", required=True)
     q.add_argument("--source-root", default=env_source_root(), help="heightmap root, for the light check")
     q = sub.add_parser("plan", help="print the steps and their commands without running anything")
+    q = sub.add_parser("stale", help="every step whose content changed since its last clean run into this world")
+    q.add_argument("--server-dir", required=True)
     a = p.parse_args(argv)
+    if a.cmd == "stale":
+        return stale(a)
     if a.cmd == "plan":
         for sid, title, actions in steps():
             print("%-4s %-60s %4d functions" % (sid, title, sum(1 for k, _ in actions if k == "fn")))
