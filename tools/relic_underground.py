@@ -536,6 +536,31 @@ def composition(geo, spec):
     return cells
 
 
+def way_lights(geo, spec):
+    """cells[(x, y, z)] = block: composition.way_lights, the lights FLUSH IN THE FLOOR of the passage and the gallery
+    (2026-10-03; until then the 70-block passage and the gallery were dark). Each is the floor block of a carved column,
+    so nothing stands in the walk and nothing is written outside the carve."""
+    wl = spec["composition"].get("way_lights")
+    if not wl:
+        return {}
+    cells = {}
+    p = wl["passage"]
+    for k, x in enumerate(range(p["from_x"], geo.px0 - 1, -p["every"])):
+        z = p["z"][k % len(p["z"])]
+        r = geo.carved_range(x, z)
+        if r is None or not geo.in_passage(x, z):
+            raise RelicError("way light at x%d z%d is not on the passage" % (x, z))
+        cells[(x, r[0], z)] = wl["block"]
+    ga = wl["gallery"]
+    for k, z in enumerate(range(ga["from_z"], geo.gz0 - 1, -ga["every"])):
+        x = ga["x"][k % len(ga["x"])]
+        r = geo.carved_range(x, z)
+        if r is None or not geo.in_gallery(x, z):
+            raise RelicError("way light at x%d z%d is not in the gallery" % (x, z))
+        cells[(x, r[0], z)] = wl["block"]
+    return cells
+
+
 # --------------------------------------------------------------- the HQ's way down (geometry.hq)
 
 # a run descending along `step` faces back up it: the stair's tall side is uphill
@@ -803,6 +828,13 @@ def cmd_report(a):
     if math.hypot(sx - geo.hc[0], sz - geo.hc[1]) > 6:
         bad.append("the binder's seat %s is more than 6 from the hall's centre, outside the circle the route reaches"
                    % (rel["at"],))
+    try:
+        wl = way_lights(geo, spec)
+        note.append("way lights %d, flush in the passage's and the gallery's floors" % len(wl))
+        if spec["composition"].get("way_lights") and not wl:
+            bad.append("composition.way_lights is declared and lays nothing")
+    except RelicError as e:
+        bad.append(str(e))
     apex = max(y for (_x, y, _z) in cells if y < geo.choke["from_y"]) if cells else 0
     note.append("composition blocks %d, highest non-choke block y%d, dome apex y%d"
                 % (len(cells), apex, geo.capex))
@@ -1023,6 +1055,11 @@ def guard_functions(spec):
             "execute unless entity @s[x=%d,y=%d,z=%d,distance=..%d] run return fail" % (ax, ay, az, mv["reach"]),
             "ride @s dismount",
             "tp @s %s %d %s %s %s" % (x, y, z, mv["yaw"], mv["pitch"])]
+        if act == "hq_admit" and spec["zone"]["pass"].get("admit"):
+            # the record that THIS player came in by the guard, i.e. at the finale's stage (zone.pass.admit): the
+            # knock box's qualify tests it, so a player who digs into the records room past the guard is refused
+            fn[act] += ["# the zone's second key: this player was admitted by the guard (zone.pass.admit, 2026-10-03)",
+                        "scoreboard players set @s %s 1" % spec["zone"]["pass"]["admit"]["objective"]]
     return fn
 
 
@@ -1050,8 +1087,12 @@ def cmd_build(a):
     files["data/%s/advancement/%s/relic_knock.json" % (NS, FOLDER)] = adv(
         [box_cond(kb[:3], kb[3:])], "%s/knock" % F)
 
+    admit = z["pass"].get("admit")
     fn["load"] = ["# one dummy objective, one value per player, never reset and never unset by this pack",
                   "scoreboard objectives add %s %s" % (obj, z["objective_criterion"])]
+    if admit:
+        fn["load"] += ["# and the guard's admit record (zone.pass.admit): set by hq_admit, never unset",
+                       "scoreboard objectives add %s dummy" % admit["objective"]]
     tb = z["turn_back"]
     tx, ty, tz = tb["at"]
     fn["zone"] = [
@@ -1076,13 +1117,25 @@ def cmd_build(a):
         "# the same shape at the gulch's grille; there is no guard and no grille here, so the alcove asks.",
         "advancement revoke @s only %s:%s/relic_knock" % (NS, FOLDER),
         "function %s/qualify" % F]
-    fn["qualify"] = [
-        "# the pass is 'you came through the Compact HQ', plus the eight badge flags so that reaching the",
-        "# basement early is still refused. ONE advancements={...} argument: a selector may not carry the key",
-        "# twice. The flags are tools/progression_pack.py's per-player advancements (EXP-027).",
-        "execute if entity @s[gamemode=!spectator,advancements={%s}] run function %s/grant" % (inner, F),
-        "execute unless entity @s[advancements={%s}] run title @s actionbar %s"
-        % (inner, text("The Compact's passage is closed to you.", color="gray"))]
+    closed = text("The Compact's passage is closed to you.", color="gray")
+    if admit:
+        # 2026-10-03: the pass also needs the guard's admit, so it is the finale's stage (which only the guard's
+        # dialogue can read) and not eight badges alone. An unset score fails `if score ... matches 1..`: CLOSED
+        fn["qualify"] = [
+            "# the pass is 'you came through the Compact HQ': the guard admitted THIS player (zone.pass.admit,",
+            "# which only a player at the finale's stage can be), plus the eight badge flags. An unset admit score",
+            "# fails `if score ... matches 1..`, so this fails closed. ONE advancements={...} argument.",
+            "execute if entity @s[gamemode=!spectator,advancements={%s}] if score @s %s matches 1.. run function %s/grant"
+            % (inner, admit["objective"], F),
+            "execute unless score @s %s matches 1.. run title @s actionbar %s" % (admit["objective"], closed),
+            "execute unless entity @s[advancements={%s}] run title @s actionbar %s" % (inner, closed)]
+    else:
+        fn["qualify"] = [
+            "# the pass is 'you came through the Compact HQ', plus the eight badge flags so that reaching the",
+            "# basement early is still refused. ONE advancements={...} argument: a selector may not carry the key",
+            "# twice. The flags are tools/progression_pack.py's per-player advancements (EXP-027).",
+            "execute if entity @s[gamemode=!spectator,advancements={%s}] run function %s/grant" % (inner, F),
+            "execute unless entity @s[advancements={%s}] run title @s actionbar %s" % (inner, closed)]
     fn["grant"] = [
         "# the pass. Nothing is teleported: the doorway is OPEN and the player walks (the owner, 2026-10-01:",
         "# 'turned back by the zone check rather than barriers'). Dialogue may call this function instead of",
@@ -1149,8 +1202,10 @@ def cmd_build(a):
     fn["carve/25_reshell"] = ["# the shell again, after the carve: one pass cannot see what the excavation",
                               "# opens (tools/cavern_plan.py). Must run BEFORE anything is dug through it."] + body
     comp = composition(geo, spec)
+    comp.update(way_lights(geo, spec))
     fn["carve/30_composition"] = ["# the relic site itself: DEEP_CITY.md section 5's platform, six arches,",
-                                  "# plinth, broken ring and standing stones, at their own numbers, in the hall"] + \
+                                  "# plinth, broken ring and standing stones, at their own numbers, in the hall;",
+                                  "# and the way lights flush in the passage's and the gallery's floors"] + \
         [fill(r[0], r[1], r[2], r[3], r[4]) for r in rows(comp)]
     # the HQ's way down (geometry.hq): after the reshell, so nothing seals it again. Its hull first (a void beside it
     # made rock, inside the reserved boxes only), then its cells: the records room, the stair, the dressing, the

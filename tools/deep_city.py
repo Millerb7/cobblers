@@ -657,6 +657,25 @@ def build_lot(cv, P, spec, lot, roof_of, lot_of, M, rooms_out):
                    2, owner=lot.id)
             cv.put(x, g + 2, z, "minecraft:iron_door[facing=%s,half=upper,hinge=left,open=false,powered=false]" % face,
                    2, owner=lot.id)
+            # a sealed story room's own sign beside its door (data/deep_city.json rooms[].sign, 2026-10-03): on the
+            # facade one block to the named side of the door, at head height, facing the street. Fails closed when
+            # the facade there is not this building's wall or the street cell in front of it is taken
+            sg = (lot.room or {}).get("sign")
+            if sg:
+                sx_, sz_ = {"north": (0, -1), "south": (0, 1), "east": (1, 0), "west": (-1, 0)}[sg["side"]]
+                fx, fz = {v: k for k, v in FACE.items()}[face]
+                wall_c = (x + sx_, z + sz_)
+                sign_c = (x + sx_ + fx, z + sz_ + fz)
+                if wall_c not in cols or cv.get(wall_c[0], g + 2, wall_c[1]) in (None, "minecraft:air"):
+                    raise CityError("room %s: no wall at %s to hang its sign on" % (lot.room["id"], wall_c))
+                if sign_c in cols or cv.get(sign_c[0], g + 2, sign_c[1]) not in (None, "minecraft:air"):
+                    raise CityError("room %s: the sign's cell %s is taken" % (lot.room["id"], sign_c))
+                lines = ['{"text":"%s"}' % s.replace('"', "'") for s in (list(sg["lines"]) + ["", "", "", ""])[:4]]
+                cv.put(sign_c[0], g + 2, sign_c[1],
+                       "minecraft:warped_wall_sign[facing=%s,waterlogged=false]{front_text:{messages:['%s','%s','%s','%s']}}"
+                       % ((face,) + tuple(lines)), 2, owner=lot.id, exterior=True)
+                rooms_out_sign = [sign_c[0], g + 2, sign_c[1]]
+                lot.room = dict(lot.room, sign_at=rooms_out_sign)
     # furniture for the families' homes (not in a story room: those are the story's to dress)
     if d.get("furnish") and lot.room is None and interior:
         mx = sum(c[0] for c in interior) / len(interior)
@@ -676,6 +695,7 @@ def build_lot(cv, P, spec, lot, roof_of, lot_of, M, rooms_out):
         rooms_out.append({"id": lot.room["id"], "who": lot.room.get("who"), "note": lot.room.get("note"),
                           "district": lot.district, "level": g, "box": [min(xs), g + 1, min(zs), max(xs), max(tops.values()) - 1, max(zs)],
                           "door": [lot.door[0], g + 1, lot.door[1]] if lot.door else None, "sealed": lot.sealed,
+                          "sign": lot.room.get("sign_at"),
                           "storeys": storeys(g, min(tops.values()), storey)})
     return tops, facade
 
@@ -1307,7 +1327,8 @@ def build(source_root, server_dir=None):
                                   "level": lot.level, "box": [min(xs), lo, min(zs), max(xs), hi, max(zs)],
                                   "door": [lot.door[0], lot.level + 1, lot.door[1]] if lot.door and si == 0 else None,
                                   "sealed": bool(room.get("sealed")), "storey": si,
-                                  "section_columns": len(lot.cols)})
+                                  "section_columns": len(lot.cols),
+                                  "sign": (lot.room or {}).get("sign_at") if si == 0 else None})
     # the shaft head is NOT the city's (2026-10-02). This build used to lay a reinforced-deepslate hatch on the ring-0
     # section's columns nearest the sited column (3427, 3308); the tower box and the pit's edge left only (3427, 3308)
     # and (3427, 3309), both boundary columns, so the hatch lay under the section's own west wall where no shaft can
