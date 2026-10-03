@@ -148,6 +148,53 @@ shelf would have to withhold a dozen kits too, and the boxes are storage the bac
 | Sunset West great/ultra balls | great balls at Highwire (badge 3), ultra at Tilpey Cross (badge 6); Sunset West keeps the scrolls and Pacifidlog sells the sea's balls | a port is not where a campaign's standard ball should first appear; the leader's town is |
 | iron/gold/silver shulker boxes at Sunset West | not sold | §2.5 |
 
+## 4. Independent audit checklist (for an agent that did not build it)
+
+The builder's own audit (`python tools/markets.py audit`) shares the builder's data; these are the checks it cannot
+make about itself. Offline items first, then the in-game ones, which are `MARKET_GATING.md` section 5's experiment.
+
+Offline:
+
+- **A-1 Ids.** Re-read every sold id from the jars yourself (not through `markets.py ids`): open each jar's
+  `assets/<ns>/lang/en_us.json` and confirm the 62 ids in `data/markets.json`. Spot-check §2.6's three "does not
+  exist" claims (`comforts:sleeping_bag`, `cobblecuisine:malasada`, `cobblemon:x_defense`).
+- **A-2 The overlay.** Diff `modpack/config/sophisticatedcore-common.toml` against the base: exactly the 26
+  `sophisticatedbackpacks:*` entries flipped to `|false`, nothing else. Confirm each flipped item is sold by a
+  `sited` counter, and that no sited counter sells a Sophisticated Backpacks item that is still `|true` except
+  `backpack` (declared in `left_craftable`).
+- **A-3 The gate in the jar.** Confirm from the recipe JSON that every recipe producing a flipped item carries the
+  `sophisticatedcore:item_enabled` condition on that item (including `iron_backpack_from_copper`,
+  `advanced_magnet_upgrade_from_basic`, `smoking_upgrade_from_smelting_upgrade`,
+  `stack_upgrade_tier_1_from_starter`), and that no OTHER recipe in any jar produces one of them.
+- **A-4 The curve, independently.** Recompute badge by badge from `PROGRESSION_LADDER.md` §0.2's model-B table and
+  the shelf prices, by hand or a fresh script, with the furnace group at its dearest and the crafting upgrade aside.
+  Expected 0.69 / 0.67 / 0.70 / 0.65 / 0.68 / 0.67 / 0.65 / 0.69. Then the question the tool cannot ask: is the 0.70
+  target still right now that the blackout is a flat $600 rather than the ~$1,500 the ladder budgeted (§0.4)?
+- **A-5 Bank floors.** For every sold item in `bank.json`, unit price above the sell-back (super potion 400 > 175,
+  max potion 900 > 625, full restore 1,500 > 750, max revive 2,500 > 1,000, vitamins 3,500 > 2,500).
+- **A-6 Mutation.** Mutate `tools/markets.py` `buy_lines` (give before the charge, the price +1, the gate dropped,
+  the verify dropped, the refund dropped, the cooldown last) and confirm `output_problems` names each; the builder
+  ran these once in a scratch script and saw 50-53 problems for each, 0 unchanged. Make it a test.
+- **A-7 Keepers' ground in a full checkout.** Run `python tools/markets.py audit --source-root <root>` WITHOUT
+  `--skip-dressing` after `reapply.py prepare`; the builder's worktree lacked `derived/signposts.json`, so the
+  town-dressing pieces were never checked against the eleven keeper cells.
+- **A-8 The tests that the builder could not run.** `tests/test_npc_seats.py` needs prepare's output; add the
+  keepers (`markets.npc_placements`) to its spacing sweep's source list beside the ferrymen.
+
+In game (staging, under the lock; never the live world):
+
+- **G-1** A keeper's menu shows the gated options only with the badge (`advancement grant/revoke ... only
+  cobblers:flag/gym3_cleared`).
+- **G-2** A purchase takes exactly the price; too little money takes nothing and says so.
+- **G-3** The item arrives once; a full inventory drops it at the player's feet rather than refunding (vanilla
+  `give`), which is acceptable but should be seen.
+- **G-4** After the overlay is installed and the server restarted, the crafting table and REI show no recipe for
+  `copper_backpack` or `crafting_upgrade`, and a bought one still works (opens, accepts upgrades).
+- **G-5** Two players at one keeper at once (blocked on a second account, `docs/STATE.md`).
+- **G-6** The refund branch: force a failing give (an invalid id in a throwaway build) and confirm the money returns.
+
+## 5. The diamond backpack's price
+
 Diamond backpack stays at **10,000** (revision 2), not revision 1's 20,000. The owner's brief of 2026-10-03 says
 "the ladder reaches 20,000"; that figure is revision 1's, quoted in `data/blackout.json` `charge_rule_why`.
 Revision 2 cut it after the 1.25 multiplier, as 0.55x of the badge-8 leg for +12 slots. It is one field in
