@@ -37,6 +37,22 @@ call made and every defect recorded and not chased; read it before reversing any
 - The standing list: the shared server config (review 20, 25), z5's binder grant (22), EXP-049/054/048 in-game
   checks, the Sinnoh pack, Mega field levels and night aggression, the diamond pack price, unsited markets.
 
+## 3a. The next session's job (the owner, 2026-10-03, approved: about 25-30M, a fresh session)
+
+Two items, after the tour. Same rule as the overnight: record defects, do not chase them.
+
+1. **Town squares and traders.** "Does it have a middle" is the MAIN question: the owner expects several towns to have
+   none (the character pass dressed them; the squares were never built). Survey every town first (read-only agent):
+   middle or not, stalls, traders, and somewhere to spend money. Then builders give each town a market square or civic
+   centre, extend trader stock per town the way the backpack ladder was built (reading as the place), and every town
+   gets somewhere a player spends money. Independent audit per unit; one batched apply.
+2. **More ambient Pokemon per town.** Cap approved in principle: 2 carriers, 1-2 followers, ~10 idle per town --
+   ADJUSTED TO THE FRAME-RATE TEST (the tick is not the constraint: docs/mechanics/TOWN_TICK_BUDGET.md 3.5, the old
+   2+4 cap is 0.12% of a tick). Most should be idle (sleeping on a roof, sitting by a door, following a kid), not
+   working. **Check the sleeping and sitting poses in game before building around them**: "lying still on a roof" is
+   a worse feature the owner would rather know about now. Results of the frame-rate and pose tests run during the
+   tour are recorded below if they ran.
+
 ## 4. Do not rediscover
 
 - `reapply.py prepare` needs `--server-dir` and the lock env (`COBBLERS_SERVER_LOCK`, `COBBLERS_LOCK_OWNER`); with them
