@@ -151,7 +151,9 @@ def test_r18ru_places_both_guards_after_the_settlement_npcs():
     hq = SPEC["geometry"]["hq"]
     assert [(c, xyz, cls) for c, xyz, cls, _yaw in got] == [
         ("dlg_main_relic_hq_guard", tuple(hq["guard"]["at"]), "cobblers:npc_main_relic_hq_guard"),
-        ("dlg_main_relic_hq_guard_inside", tuple(hq["inside_guard"]["at"]), "cobblers:npc_main_relic_hq_guard_inside")]
+        ("dlg_main_relic_hq_guard_inside", tuple(hq["inside_guard"]["at"]), "cobblers:npc_main_relic_hq_guard_inside"),
+        # the binder in the cradle who releases Hoopa (geometry.release, 2026-10-03)
+        ("dlg_main_relic_hall_release", tuple(SPEC["geometry"]["release"]["at"]), "cobblers:npc_main_relic_hall_binder")]
 
 
 # ------------------------------------------------------------------ the heightmap
@@ -241,6 +243,7 @@ def test_the_built_pack_is_clean(sr, inputs, tmp_path):
     assert st["undo_air"] > 0 and st["undo_ground"] > 0 and st["shell"] > 0
     assert st["route_from"].startswith("outside the HQ's front door")
     assert st["route_via"] == {"stair": True, "records room": True, "guard": True}
+    assert st["cradle_stands_reached"] == len(A.expected_cradle(SPEC)[2]) >= 4
 
 
 def test_the_city_no_longer_lays_the_hatch(sr, inputs):
@@ -273,6 +276,55 @@ def test_a_gallery_one_short_of_the_passage_fails_the_route(sr, inputs, tmp_path
     monkeypatch.setattr(R.Geo, "__init__", short)
     kinds, probs, _st = build_and_audit(sr, inputs, tmp_path / "pack")
     assert "route" in kinds, probs
+
+
+def test_the_cradle_is_carved_and_the_audit_expects_it():
+    # without this the cradle checks below could pass by checking nothing: the record must carve it, and the audit's own
+    # derivation must name its air, its floor, four stands and the marker
+    assert SPEC["geometry"]["cradle"]["carve"] is True
+    air, floor, stands, marker = A.expected_cradle(SPEC)
+    cx, cz = SPEC["geometry"]["cradle"]["centre"]
+    assert (cx, SPEC["geometry"]["cradle"]["floor_y"] + 1, cz) in air and len(floor) > 700
+    assert len(stands) >= 4 and marker == (cx, 13, cz)
+    assert all(s in air and (s[0], s[1] + 1, s[2]) in air for s in stands)
+
+
+@pytest.mark.parametrize("off", [1, -1])
+def test_a_cradle_radius_off_by_one_is_caught(sr, inputs, tmp_path, monkeypatch, off):
+    # the GENERATOR's geometry carves the cradle one block wider or narrower; data/relic_underground.json is untouched.
+    # The generator's own report is silenced so the audit is what bites
+    real = R.Geo.__init__
+
+    def wrong(self, spec):
+        real(self, spec)
+        if self.cradle:
+            self.cr += off
+    monkeypatch.setattr(R.Geo, "__init__", wrong)
+    monkeypatch.setattr(R, "cmd_report", lambda a: 0)
+    kinds, probs, _st = build_and_audit(sr, inputs, tmp_path / "pack")
+    assert "carve" in kinds, probs
+    word = "air cells outside" if off > 0 else "the data says are air are not"
+    assert any(word in m for k, m in probs if k == "carve"), probs
+
+
+def test_a_dressing_block_on_a_cradle_stand_is_caught(sr, inputs, tmp_path, monkeypatch):
+    # the GENERATOR's cradle dressing stands a console on the first stand (the data untouched): a block in the air is
+    # composition, which the carve check allows, so only the stand check can see the standing spot is gone
+    real = R.cradle_composition
+
+    def blocked(geo, spec):
+        cells = real(geo, spec)
+        st = spec["composition"]["cradle"]["stands"]
+        x, z = R._at(geo.cc, st["orbit"], st["bearings"][0])
+        cells[(x, geo.cfloor + 1, z)] = "minecraft:polished_blackstone"
+        return cells
+    monkeypatch.setattr(R, "cradle_composition", blocked)
+    with pytest.raises(R.RelicError):
+        R.cmd_build(argparse.Namespace(source_root=sr, out=str(tmp_path / "refused")))
+    monkeypatch.setattr(R, "cmd_report", lambda a: 0)
+    kinds, probs, _st = build_and_audit(sr, inputs, tmp_path / "pack")
+    assert "cradle" in kinds, probs
+    assert any("stand" in m and "two clear" in m for k, m in probs if k == "cradle"), probs
 
 
 def _tampered_hq(monkeypatch, change):

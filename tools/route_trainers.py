@@ -496,7 +496,23 @@ def cycle_lines(tid, seat, field):
             # The real fix is per-player trainers through the scene runtime (docs/STATE.md), gated on EXP-034.
             ] + ([] if seat.get("repeatable") else [
             "execute as %s at @s if entity @a[distance=..%s,tag=%s] run data merge entity @s {Cooldown:40}"
-            % (me, near, tag)])
+            % (me, near, tag)]) + gate_lines(tid, seat, tag)
+
+
+def gate_lines(tid, seat, tag):
+    """Heaven's Arena's climb (data/arena_trainers.json gate_why): a player in the stair shaft above this tier who
+    has not beaten its champion is told so and set back on this tier's floor beside the stair's exit. Creative and
+    spectator players pass. Down is never stopped: the shaft is above the floor the player is put on."""
+    g = seat.get("gate")
+    if not g:
+        return []
+    x, y, z, dx, dy, dz = g["box"]
+    lx, ly, lz, yaw = g["landing"]
+    who = "@a[x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d,tag=!%s,gamemode=!creative,gamemode=!spectator]" % (
+        x, y, z, dx, dy, dz, tag)
+    say = {"text": "Beat %s on this floor to climb to %s." % (seat.get("display_name", tid), g["to"]), "color": "gold"}
+    return ["title %s actionbar %s" % (who, json.dumps(say)),
+            "tp %s %s %s %s %s 0" % (who, lx, ly, lz, yaw)]
 
 
 def placements():

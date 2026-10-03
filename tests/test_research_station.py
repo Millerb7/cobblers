@@ -32,8 +32,12 @@ import research_station as R  # noqa: E402
 import research_station_audit as A  # noqa: E402
 
 REC = json.loads((ROOT / "data" / "research_station.json").read_text(encoding="utf-8"))
-JAR_DIR = Path(os.environ.get("COBBLERS_JAR_DIR", "C:/Users/wnd/Documents/github/cobblers/.claude/worktrees/"
+_LOCAL_JARS = ROOT / "experiments" / "EXP-000-cobblemon-1.8-compat" / "runtime" / "server" / "mods"
+JAR_DIR = Path(os.environ.get("COBBLERS_JAR_DIR") or (str(_LOCAL_JARS) if _LOCAL_JARS.is_dir() else
+                              "C:/Users/wnd/Documents/github/cobblers/.claude/worktrees/"
                               "cobblemon-campaign-setup-64929d/experiments/EXP-000-cobblemon-1.8-compat/runtime/server/mods"))
+COBBLEMON_JAR = JAR_DIR / "Cobblemon-fabric-1.8.0+1.21.1.jar"
+JAR = COBBLEMON_JAR if COBBLEMON_JAR.is_file() else None
 
 
 @pytest.fixture(scope="module")
@@ -50,7 +54,7 @@ def run(ground, out, doc=None, rec=None, data=A.DATA, steps=True):
     doc = doc or R.load()
     written, _p = R.files(doc, ground)
     R.write(written, out)
-    return A.audit(rec or REC, ground, out, R.placement_steps(doc, ground) if steps else None, data)
+    return A.audit(rec or REC, ground, out, R.placement_steps(doc, ground) if steps else None, data, jar=JAR)
 
 
 def checks(rep):
@@ -108,9 +112,164 @@ def test_the_station_is_near_the_owners_coordinate_and_clear_of_the_zapdos_tower
 
 
 # ------------------------------------------------------------------------------------------- the hold
-def test_every_item_is_held_today(ground, tmp_path):
-    assert REC["economy"]["issuing"] is False
-    written, _p = R.files(R.load(), ground)
+# Retargeted 2026-10-03 from "every item is held" (which pinned economy.issuing to false) to the properties that make
+# issuing safe: an item is open only where its altar stands, the feathers only behind the decided gate, and the crown and
+# the dews only behind their own switches. Stated here, not read from tools/research_station.py.
+FEATHERS = {"lumymon:thunder_feather", "lumymon:ember_feather", "lumymon:glacier_feather"}
+# the owner, 2026-10-02, verbatim: "the feathers handed out through the research station's dialogue, gated on gym8_cleared"
+DECIDED_FEATHER_GATE = "gym8_cleared"
+# an adopted site placed by its own tool rather than a data/placements.json record, and that tool's module
+PLACED_BY_TOOL = {"adopted_articuno_shrine": "articuno_tower"}
+
+
+def _open(rec, it):
+    """Whether the record lets this economy item be issued: the one switch, and the crown's and the dews' own."""
+    e = rec["economy"]
+    if not e["issuing"]:
+        return False
+    if it["id"] == "calyrex_crown":
+        return isinstance(e.get("post_champion_cap"), int) and e["post_champion_cap"] >= 70
+    if it["id"] == "eon_dews":
+        return e.get("eon_issuing") is True
+    return True
+
+
+NO_ALTAR = object()
+
+
+def _altar_site(it, sites_doc=None):
+    """The adopted site whose legendary the item's altar block names ('lumymon:zapdos_altar ...' -> Zapdos), None for
+    the Eon shrine, which is this station's own build, or NO_ALTAR for an item with `altar: null` (Kubfu's scrolls, held
+    out to the player's own Kubfu), which has no site to be placed and is skipped, not crashed on."""
+    import adopted_sites
+    if it["altar"] is None:
+        return NO_ALTAR
+    who = it["altar"].split()[0].split(":")[1].split("_")[0]
+    if who in ("latias", "latios"):
+        return None
+    hits = [s for s in adopted_sites.sites(sites_doc) if s["legendary"].split()[0].rstrip(",").lower() == who]
+    assert len(hits) == 1, (it["id"], who, [s["id"] for s in hits])
+    return hits[0]
+
+
+def _placed(s):
+    """Scheduled (its position authored by a data/placements.json record pasting its own template) or placed by its own
+    tool's step (a /place template of its template at its own corner). A site that is only SITED is neither."""
+    import adopted_sites
+    if "scheduled_as" in s:
+        w = adopted_sites.where(s)
+        q = next(q for q in json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))["placements"]
+                 if q["id"] == s["scheduled_as"])
+        return w["author"].startswith("data/placements.json") and q["template"] == s["template"]
+    mod = PLACED_BY_TOOL.get(s["id"])
+    if not mod:
+        return False
+    tool = __import__(mod)
+    (x, z), y = s["placement"]["corner"], s["placement"]["y"]
+    want = "place template %s %d %d %d" % (s["template"], x, y, z)
+    reapply = (ROOT / "tools" / "reapply.py").read_text(encoding="utf-8")
+    return (any(k == "cmd" and v.startswith(want) for k, v in tool.placement_steps(s))
+            and "%s.placement_steps()" % mod in reapply)
+
+
+def test_an_item_is_open_only_where_its_altar_is_placed(ground):
+    # without it: economy.issuing hands out a feather for an altar no world holds (the Zapdos and Moltres towers were
+    # SITED, not scheduled, until 2026-10-02), and the player carries an item that answers nowhere
+    for it in REC["economy"]["items"]:
+        s = _altar_site(it)          # every item's altar resolves to one site, open or not
+        if s is NO_ALTAR:
+            # an item with no altar must not be an altar item: a null altar cannot hide a feather, a crown or a dew
+            items = it["item"] if isinstance(it["item"], list) else [it["item"]]
+            assert not set(items) & A.ALTAR_ITEMS, (it["id"], items)
+            assert it.get("altar_why"), it["id"]
+            continue
+        if not _open(REC, it):
+            continue
+        if s is None:
+            steps = R.placement_steps(R.load(), ground)
+            assert any(z == "cobblers:research_station/build_platform" for k, z in steps if k == "fn")
+            continue
+        assert _placed(s), "%s is open but its altar site %s is not scheduled or placed" % (it["id"], s["id"])
+
+
+def test_an_unscheduled_altar_site_is_not_counted_placed():
+    # without it: _placed could pass everything, and the test above would prove nothing. The Zapdos tower with its
+    # scheduled_as removed is a sited-only record again
+    import adopted_sites
+    z = copy.deepcopy(adopted_sites.site("adopted_zapdos_tower"))
+    assert _placed(z)
+    z.pop("scheduled_as")
+    z["placement"] = {"corner": [562, 2614], "y": 74}
+    assert not _placed(z)
+
+
+def test_every_feather_is_gated_on_the_decided_gate():
+    # without it: the feathers could be granted before Gym 8 (or on another flag) and the owner's decision of
+    # 2026-10-02 would be silently replaced. Checked in the record AND in every quest transition that grants a feather,
+    # directly or through a progression field only a gated transition sets
+    feathers = [it for it in REC["economy"]["items"] if isinstance(it["item"], str) and it["item"] in FEATHERS]
+    assert {it["item"] for it in feathers} == FEATHERS
+    assert all(it["gate"] == DECIDED_FEATHER_GATE for it in feathers)
+    qs = [q for q in json.loads((ROOT / "data" / "quests.json").read_text(encoding="utf-8"))["quests"]
+          if q["id"].startswith("evt_station_")]
+
+    def gated(q, tr, seen=()):
+        if any(c.get("kind") == "flag" and c.get("flag") == DECIDED_FEATHER_GATE for c in tr["conditions"]):
+            return True
+        for c in tr["conditions"]:
+            if c.get("kind") != "progression_equals" or not c.get("value"):
+                continue
+            setters = [t for t in q["transitions"] if t["id"] not in seen and any(
+                e["kind"] == "set_progression" and e["field"] == c["field"] and e["value"] == c["value"]
+                for e in t["effects"])]
+            if setters and all(gated(q, t, seen + (tr["id"],)) for t in setters):
+                return True
+        return False
+    granting = 0
+    for q in qs:
+        rewards = {r["id"]: {c["item"] for c in r.get("contents") or []} for r in q.get("rewards") or []}
+        for tr in q["transitions"]:
+            items = {i for e in tr["effects"] if e["kind"] == "grant_reward_once" for i in rewards.get(e["reward"], ())}
+            if items & FEATHERS:
+                granting += 1
+                assert gated(q, tr), "%s.%s grants %s without %s" % (q["id"], tr["id"], items, DECIDED_FEATHER_GATE)
+    assert granting == 3, granting
+
+
+def test_the_crown_and_the_dews_keep_their_own_holds_under_the_one_switch(ground, tmp_path):
+    # without it: throwing economy.issuing for the feathers would also issue the dews (the owner's decision names the
+    # feathers only) or the crown before a post-Champion cap reaches Calyrex's fixed 70
+    doc = copy.deepcopy(R.load())
+    doc["economy"].update(issuing=True, eon_issuing=False, post_champion_cap=None)
+    written, _p = R.files(doc, ground)
+    tick = written["data/cobblers/function/research_station/tick.mcfunction"].splitlines()
+    t = doc["economy"]["tags"]
+    assert "tag @a[tag=!%s] add %s" % (t["issuing"], t["issuing"]) in tick
+    for key in ("issuing_crown", "issuing_eon"):
+        assert "tag @a[tag=%s] remove %s" % (t[key], t[key]) in tick
+        assert not any(l.endswith(" add %s" % t[key]) for l in tick)
+    R.write(written, tmp_path)
+    assert A.audit(doc, ground, tmp_path, R.placement_steps(doc, ground)).errors == []
+
+
+def test_the_committed_tick_follows_the_committed_switches(ground):
+    # without it: the record could say the crown or the dews are held while the shipped tick adds their tag
+    e, t = REC["economy"], REC["economy"]["tags"]
+    tick = R.tick_lines(R.load())
+    want = {"issuing": bool(e["issuing"]),
+            "issuing_crown": bool(e["issuing"]) and isinstance(e.get("post_champion_cap"), int) and e["post_champion_cap"] >= 70,
+            "issuing_eon": bool(e["issuing"]) and e.get("eon_issuing") is True}
+    for key, on in want.items():
+        line = ("tag @a[tag=!%s] add %s" if on else "tag @a[tag=%s] remove %s") % (t[key], t[key])
+        assert line in tick, (key, on)
+
+
+def test_held_ships_no_earning_and_no_give(ground):
+    # without it: the held state (economy.issuing false), which the record can return to, is no longer checked: an
+    # earning advancement or a give could ship while the station says it issues nothing
+    doc = copy.deepcopy(R.load())
+    doc["economy"]["issuing"] = False
+    written, _p = R.files(doc, ground)
     assert not [k for k in written if "/advancement/" in k], "an earning advancement ships while held"
     tick = written["data/cobblers/function/research_station/tick.mcfunction"]
     assert "remove cobblers_station_issuing" in tick and " add " not in tick
@@ -120,12 +279,14 @@ def test_every_item_is_held_today(ground, tmp_path):
 def test_issuing_ships_the_earning_and_adds_the_tags(ground, tmp_path):
     doc = copy.deepcopy(R.load())
     doc["economy"]["issuing"] = True
+    doc["economy"]["eon_issuing"] = True
     doc["economy"]["post_champion_cap"] = 70
     written, _p = R.files(doc, ground)
     advs = sorted(k for k in written if "/advancement/" in k)
     assert len(advs) == 4, advs
     tick = written["data/cobblers/function/research_station/tick.mcfunction"]
     assert "add cobblers_station_issuing" in tick and "add cobblers_station_issuing_crown" in tick
+    assert "add cobblers_station_issuing_eon" in tick
     storm = json.loads(written["data/cobblers/advancement/research_station/storm_log.json"])
     conds = storm["criteria"]["earned"]["conditions"]["player"]
     assert {"condition": "minecraft:weather_check", "thundering": True} in conds
@@ -147,7 +308,7 @@ def _data_copy(tmp_path):
     d.mkdir()
     for name in ("research_station.json", "landmarks.json", "habitat_blocks.json", "spawns.json", "rewards.json",
                  "quests.json", "dialogue.json", "spawn_blocks.json", "spawn_block_policy.json", "progression.json",
-                 "world.json"):
+                 "world.json", "mythical_starters.json", "trainers.json"):
         shutil.copy(ROOT / "data" / name, d / name)
     return d
 
@@ -255,10 +416,73 @@ def test_a_spawn_condition_slipped_in_is_caught(ground, tmp_path, monkeypatch):
     assert "blocks" in checks(rep)
 
 
+def _held_doc():
+    # the held state, whatever the committed record's switch says, so the held-side mutations keep biting once issuing
+    doc = copy.deepcopy(R.load())
+    doc["economy"]["issuing"] = False
+    return doc
+
+
 def test_the_switch_tag_added_while_held_is_caught(ground, tmp_path, monkeypatch):
     monkeypatch.setattr(R, "tick_lines", lambda doc: ["tag @a[tag=!cobblers_station_issuing] add cobblers_station_issuing"])
-    rep = run(ground, tmp_path)
+    held = _held_doc()
+    rep = run(ground, tmp_path, doc=held, rec=held)
     assert "hold" in checks(rep)
+
+
+def _issuing_doc():
+    doc = copy.deepcopy(R.load())
+    doc["economy"].update(issuing=True, eon_issuing=False, post_champion_cap=None)
+    return doc
+
+
+def test_a_generator_that_issues_the_dews_with_the_one_switch_is_caught(ground, tmp_path, monkeypatch):
+    # without it: the audit's tick check would not see the eon tag, and a generator that ties the dews back to the one
+    # switch (the bug economy.eon_issuing was split out to prevent) would ship the dews with the feathers unnoticed
+    doc = _issuing_doc()
+    monkeypatch.setattr(R, "eon_open", lambda d: bool(d["economy"]["issuing"]))
+    written, _p = R.files(doc, ground)
+    R.write(written, tmp_path)
+    rep = A.audit(doc, ground, tmp_path, R.placement_steps(doc, ground))
+    assert any("cobblers_station_issuing_eon" in e for e in rep.errors if e.startswith("hold")), rep.errors
+
+
+def test_a_generator_that_forgets_to_remove_the_eon_tag_is_caught(ground, tmp_path, monkeypatch):
+    # without it: a tick that never removes cobblers_station_issuing_eon leaves a hand-added (or once-issued) tag on a
+    # player, and the dews option stays open while the record says held
+    orig = R.tick_lines
+    monkeypatch.setattr(R, "tick_lines", lambda d: [l for l in orig(d) if "issuing_eon" not in l or l.startswith("#")])
+    doc = _issuing_doc()
+    written, _p = R.files(doc, ground)
+    R.write(written, tmp_path)
+    rep = A.audit(doc, ground, tmp_path, R.placement_steps(doc, ground))
+    assert any("cobblers_station_issuing_eon" in e for e in rep.errors if e.startswith("hold")), rep.errors
+
+
+def test_a_dews_transition_without_the_eon_tag_is_caught(ground, tmp_path):
+    # without it: grant_dews requiring only the one switch would pass the general check, and the dews would be issued
+    # server-side with the feathers whatever the tick does (record-side: this check is ABOUT the records)
+    d = _data_copy(tmp_path)
+    q = json.loads((d / "quests.json").read_text(encoding="utf-8"))
+    tr = next(t for x in q["quests"] if x["id"] == "evt_station_eon_shrine" for t in x["transitions"] if t["id"] == "grant_dews")
+    tr["conditions"] = [c for c in tr["conditions"] if c.get("tag") != "cobblers_station_issuing_eon"]
+    (d / "quests.json").write_text(json.dumps(q), encoding="utf-8")
+    rep = run(ground, tmp_path / "pack", data=d)
+    assert any("issuing_eon" in e for e in rep.errors if e.startswith("hold")), rep.errors
+
+
+def test_a_crown_transition_on_the_one_switch_alone_is_caught(ground, tmp_path):
+    # without it: the crown granted behind cobblers_station_issuing instead of its own tag would pass (the general
+    # check accepts either), and Calyrex's fixed level 70 would be summoned under a cap that cannot catch it
+    d = _data_copy(tmp_path)
+    q = json.loads((d / "quests.json").read_text(encoding="utf-8"))
+    tr = next(t for x in q["quests"] if x["id"] == "evt_station_archive" for t in x["transitions"] if t["id"] == "grant_crown")
+    for c in tr["conditions"]:
+        if c.get("tag") == "cobblers_station_issuing_crown":
+            c["tag"] = "cobblers_station_issuing"
+    (d / "quests.json").write_text(json.dumps(q), encoding="utf-8")
+    rep = run(ground, tmp_path / "pack", data=d)
+    assert any("issuing_crown" in e for e in rep.errors if e.startswith("hold")), rep.errors
 
 
 def test_an_earning_advancement_shipped_while_held_is_caught(ground, tmp_path, monkeypatch):
@@ -271,7 +495,8 @@ def test_an_earning_advancement_shipped_while_held_is_caught(ground, tmp_path, m
             out["data/cobblers/function/research_station/earned/%s.mcfunction" % name] = "\n".join(lines) + "\n"
         return out, p
     monkeypatch.setattr(R, "files", leaky)
-    rep = run(ground, tmp_path)
+    held = _held_doc()
+    rep = run(ground, tmp_path, doc=held, rec=held)
     assert "hold" in checks(rep)
 
 
@@ -284,6 +509,155 @@ def test_a_zone_step_that_holds_too_little_is_caught(ground, tmp_path, monkeypat
     monkeypatch.setattr(R, "zone_box", small)
     rep = run(ground, tmp_path)
     assert "steps" in checks(rep)
+
+
+# ------------------------------------------------------------------------------------------- Kubfu's scrolls
+# The scroll errand (edac917) was not written by this file's author. The expectation is derived by the audit from
+# data/mythical_starters.json, data/trainers.json and the 1.8.0 jar; the mutations below change the GENERATORS that emit
+# the runtime (tools/compile_dialogue.py, which compiles the transitions; tools/research_station.py, which writes the
+# partner callback) and leave every data file alone, except the two marked record-side, whose checks are ABOUT records.
+import compile_dialogue as CD  # noqa: E402
+
+STARTER_FORMS = {("cobblemon:kubfu", "Starter"), ("cobblemon:kubfu", "Starter-Grown")}
+
+
+def scroll_errors(rep):
+    return [e for e in rep.errors if e.startswith("scroll")]
+
+
+def test_the_scroll_expectation_derives_from_the_starter_and_the_cap_contract():
+    # without it: the audit's gate could be a constant that matches the data today and nothing tomorrow. Hand-computed:
+    # the stage-2 evolutions need level 45; gym_ace_levels [20,25,30,35,40,45,...] reaches 45 at index 5 -> gym5_cleared
+    X = A.kubfu_expect(REC, jar=JAR)
+    assert X["level"] == 45 and X["gate"] == "gym5_cleared"
+    assert X["items"] == set(A.SCROLLS)
+    assert X["forms"] == STARTER_FORMS
+    if JAR is not None:
+        assert "Normal" in X["wild"] and not {"Starter", "Starter-Grown"} & X["wild"] and X["jar_notes"] == []
+
+
+def test_the_scroll_gate_moves_with_the_evolution_level(tmp_path):
+    # without it: a gate that ignores its inputs would pass. A starter evolving at 50 opens at gym6 (ace[6] = 50), and
+    # the committed data, still on gym5_cleared, then fails (synthetic data copy, not the committed file)
+    d = _data_copy(tmp_path)
+    ms = json.loads((d / "mythical_starters.json").read_text(encoding="utf-8"))
+    line = next(ln for ln in ms["lines"] if ln["id"] == "starter_kubfu")
+    for st in line["stages"]:
+        for ev in st.get("evolutions") or []:
+            for r in ev.get("requirements") or []:
+                if ev["variant"] == "item_interact" and r.get("variant") == "level":
+                    r["minLevel"] = 50
+    (d / "mythical_starters.json").write_text(json.dumps(ms), encoding="utf-8")
+    assert A.kubfu_expect(REC, d)["gate"] == "gym6_cleared"
+
+
+def test_the_committed_scroll_errand_is_clean(ground, tmp_path):
+    # without it: the scroll checks could fail on the real errand and only the mutations would ever be looked at
+    rep = run(ground, tmp_path)
+    assert scroll_errors(rep) == [], scroll_errors(rep)
+    if JAR is None:
+        assert any(n.startswith("scroll: no Cobblemon jar") for n in rep.notes)
+
+
+def test_the_partner_callback_ships_while_held(ground, tmp_path):
+    # without it: the partner check would be audited only in one state of the switch
+    held = _held_doc()
+    rep = run(ground, tmp_path, doc=held, rec=held)
+    assert scroll_errors(rep) == [], scroll_errors(rep)
+
+
+def test_a_compiler_that_drops_the_scroll_gate_is_caught(ground, tmp_path, monkeypatch):
+    # without it: a scroll could be handed out before badge 5, when the starter cannot use it (GENERATOR mutation: the
+    # dialogue compiler drops the gym5_cleared condition; data/quests.json untouched)
+    orig = CD.Compiler.cond
+    monkeypatch.setattr(CD.Compiler, "cond", lambda self, c, probes: "1" if c.get("kind") == "flag" and
+                        c.get("flag") == "gym5_cleared" else orig(self, c, probes))
+    rep = run(ground, tmp_path)
+    assert any("without checking gym5_cleared" in e for e in scroll_errors(rep)), rep.errors
+
+
+def test_a_compiler_that_splits_the_scroll_claims_is_caught(ground, tmp_path, monkeypatch):
+    # without it: Darkness and Waters on two claims would let a player take both scrolls, one each (GENERATOR mutation:
+    # the compiler writes the Waters scroll under another declared field)
+    orig = CD.Compiler.effect
+
+    def split(self, e):
+        if e.get("kind") == "grant_reward_once" and e.get("reward") == "reward_station_scroll_of_waters":
+            e = dict(e, claim_field="quest.evt_station_director.thunder_claimed")
+        return orig(self, e)
+    monkeypatch.setattr(CD.Compiler, "effect", split)
+    rep = run(ground, tmp_path)
+    assert any("not ONE" in e for e in scroll_errors(rep)), rep.errors
+
+
+def test_a_partner_check_that_matches_a_wild_kubfu_form_is_caught(ground, tmp_path, monkeypatch):
+    # without it: a native Kubfu (form Normal) would earn the partner tag and its owner a scroll, and a wild Kubfu's
+    # scroll evolution has no level requirement (GENERATOR mutation: the callback's form list gains the native form)
+    orig = R.kubfu_forms
+    monkeypatch.setattr(R, "kubfu_forms", lambda doc, *a, **k: orig(doc, *a, **k) + [("cobblemon:kubfu", "Normal")])
+    rep = run(ground, tmp_path)
+    errs = scroll_errors(rep)
+    assert any("the starter's stages are" in e for e in errs), rep.errors
+    if JAR is not None:
+        assert any("wild form" in e for e in errs), errs
+
+
+def test_a_partner_check_on_the_species_alone_is_caught(ground, tmp_path, monkeypatch):
+    # without it: matching kubfu by species alone tags every Kubfu owner, wild ones included (GENERATOR mutation: the
+    # callback text loses its form clauses)
+    orig = R.kubfu_callback_text
+    monkeypatch.setattr(R, "kubfu_callback_text", lambda doc, *a, **k: orig(doc, *a, **k)
+                        .replace(" && t.fm == 'Starter-Grown'", "").replace(" && t.fm == 'Starter'", ""))
+    rep = run(ground, tmp_path)
+    assert any("not a species AND a form" in e for e in scroll_errors(rep)), rep.errors
+
+
+def test_a_partner_check_that_gives_is_caught(ground, tmp_path, monkeypatch):
+    # without it: the callback, shipped in both states of the switch, could give a scroll past the hold
+    orig = R.kubfu_callback_text
+    monkeypatch.setattr(R, "kubfu_callback_text", lambda doc, *a, **k: orig(doc, *a, **k).replace(
+        "t.has = 0;\n", "t.has = 0;\nq.run_command('give ' + q.player.username + ' cobblemon:scroll_of_waters');\n"))
+    rep = run(ground, tmp_path)
+    assert [e for e in scroll_errors(rep) if "not only the add and remove" in e] == scroll_errors(rep) != [], rep.errors
+
+
+def test_a_scroll_transition_without_its_gate_is_caught(ground, tmp_path):
+    # without it: the data-side gate check is unexercised (record-side: this check is ABOUT the quest records)
+    d = _data_copy(tmp_path)
+    q = json.loads((d / "quests.json").read_text(encoding="utf-8"))
+    tr = next(t for x in q["quests"] if x["id"] == "evt_station_director" for t in x["transitions"]
+              if t["id"] == "grant_scroll_waters")
+    tr["conditions"] = [c for c in tr["conditions"] if c.get("flag") != "gym5_cleared"]
+    (d / "quests.json").write_text(json.dumps(q), encoding="utf-8")
+    rep = run(ground, tmp_path / "pack", data=d)
+    assert any("grant_scroll_waters grants" in e and "flag gym5_cleared" in e for e in scroll_errors(rep)), rep.errors
+
+
+def test_scroll_transitions_on_two_claims_are_caught(ground, tmp_path):
+    # without it: the data-side one-claim check is unexercised (record-side: ABOUT the quest records)
+    d = _data_copy(tmp_path)
+    q = json.loads((d / "quests.json").read_text(encoding="utf-8"))
+    tr = next(t for x in q["quests"] if x["id"] == "evt_station_director" for t in x["transitions"]
+              if t["id"] == "grant_scroll_darkness")
+    for c in tr["conditions"]:
+        if c.get("field") == "quest.evt_station_director.scroll_claimed":
+            c["field"] = "quest.evt_station_director.thunder_claimed"
+    for e in tr["effects"]:
+        if e.get("claim_field"):
+            e["claim_field"] = "quest.evt_station_director.thunder_claimed"
+    (d / "quests.json").write_text(json.dumps(q), encoding="utf-8")
+    rep = run(ground, tmp_path / "pack", data=d)
+    assert any("claimed on 2 fields" in e for e in scroll_errors(rep)), rep.errors
+
+
+def test_a_scroll_without_the_partner_tag_is_caught(ground, tmp_path, monkeypatch):
+    # without it: the scroll's HELD_BY entry could lose the partner tag and every player be offered one (GENERATOR
+    # mutation: the compiler drops the player_tag condition for the partner tag)
+    orig = CD.Compiler.cond
+    monkeypatch.setattr(CD.Compiler, "cond", lambda self, c, probes: "1" if c.get("kind") == "player_tag" and
+                        c.get("tag") == "cobblers_station_kubfu" else orig(self, c, probes))
+    rep = run(ground, tmp_path)
+    assert any("before checking cobblers_station_kubfu" in e for e in rep.errors if e.startswith("hold")), rep.errors
 
 
 # ------------------------------------------------------------------------------------------- generator refusals

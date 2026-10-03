@@ -186,6 +186,9 @@ def fake_server(tmp_path, monkeypatch):
     monkeypatch.setattr(IC, "configs", lambda *a, **k: [])
     build = tmp_path / "build"
     monkeypatch.setattr(RA, "PACKS", build)
+    # the prepare gate has its own tests (tests/test_reapply_fail_closed.py); here a complete prepare is given
+    monkeypatch.setattr(RA, "require_prepared", lambda what, names=None: {"checks": {"fingerprint": "f", "at": 1}})
+    monkeypatch.setattr(RA, "INSTALLED", tmp_path / "install_record.json")
     for name in RA.SERVER_PACKS + RA.SPAWN_PACKS:
         make(build / name, dict(BUILD, **{"data/%s.txt" % name: name.encode()}))
     wp = tuple(make(tmp_path / "wp" / p.name, dict(BUILD)) for p in RA.WORLD_PACKS)

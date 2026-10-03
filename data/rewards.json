@@ -1327,6 +1327,126 @@
       }
     },
     {
+      "id": "challengers_cairn_cist",
+      "kind": "cache",
+      "place": "the Challengers' Cairn on the south strand (data/challengers_cairn.json): the barrel at the north end of the cist under the cairn, down the stair from the south",
+      "contents": [
+        {
+          "item": "cobblemon:revive",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/revive.json in Cobblemon-fabric-1.8.0+1.21.1.jar (relayed: checked for data/rewards.json r1_north_ring; the jar was not re-opened on 2026-10-03)"
+        },
+        {
+          "item": "cobblemon:super_potion",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/super_potion.json in Cobblemon-fabric-1.8.0+1.21.1.jar (relayed: checked for data/rewards.json r1_old_mine_stope; the jar was not re-opened on 2026-10-03)"
+        }
+      ],
+      "message": "Left in the cist for the next one up the road: two Revives and three Super Potions.",
+      "why": "data/challengers_cairn.json find: what one challenger leaves for the next at the foot of Victory Road. Supplies before the road's hardest stretch, not a curve-breaker; the critical path needs none of it.",
+      "built_by": "tools/challengers_cairn.py (the barrel, in cobblers_challengers_cairn's build, step R9CN)",
+      "trigger": {
+        "min": [
+          3554,
+          103,
+          6111
+        ],
+        "max": [
+          3558,
+          104,
+          6112
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          3556,
+          103,
+          6110
+        ]
+      }
+    },
+    {
+      "id": "dry_cistern_store",
+      "kind": "cache",
+      "place": "the Dry Cistern on the Scorched Plateau's west brow (data/dry_cistern.json): the barrel at the cistern's east end, down the keepers' stair or the draw-shaft",
+      "contents": [
+        {
+          "item": "cobblemon:water_stone",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/water_stone.json in Cobblemon-fabric-1.8.0+1.21.1.jar (relayed: checked for data/rewards.json vr_drowned_gallery; the jar was not re-opened on 2026-10-03)"
+        },
+        {
+          "item": "cobblemon:heavy_ball",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/heavy_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar (relayed: checked for data/rewards.json r1_old_mine; the jar was not re-opened on 2026-10-03)"
+        }
+      ],
+      "message": "In the keepers' barrel at the dry end of the cistern: a Water Stone, kept to keep the water sweet, and two Heavy Balls.",
+      "why": "data/dry_cistern.json find: on Route 8, before Giovanni. A Water Stone is an answer to a ground team findable in the region before the boss (docs/vision/GAME_VISION.md pillar 1); the Heavy Balls are rock country's situational ball (docs/research/notes/reward-item-inventory.md section 4). Optional: the critical path needs none of it.",
+      "built_by": "tools/dry_cistern.py (the barrel, in cobblers_dry_cistern's build, step R9CI)",
+      "trigger": {
+        "min": [
+          4533,
+          152,
+          5849
+        ],
+        "max": [
+          4533,
+          153,
+          5851
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          4534,
+          152,
+          5850
+        ]
+      }
+    },
+    {
+      "id": "survey_benchmark_store",
+      "kind": "cache",
+      "place": "the Surveyors' Benchmark in the Rift Foot (data/survey_benchmark.json): the party's barrel against the east wall of the survey hut",
+      "contents": [
+        {
+          "item": "cobblemon:everstone",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/everstone.json in Cobblemon-fabric-1.8.0+1.21.1.jar (relayed: checked for data/rewards.json r1_old_mine_stope; the jar was not re-opened on 2026-10-03)"
+        },
+        {
+          "item": "cobblemon:sitrus_berry",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/sitrus_berry.json in Cobblemon-fabric-1.8.0+1.21.1.jar (relayed: checked for data/rewards.json r3_world_tree_roots; the jar was not re-opened on 2026-10-03)"
+        }
+      ],
+      "message": "In the survey party's stores: an Everstone, the benchmark's reference stone, and two Sitrus Berries.",
+      "why": "data/survey_benchmark.json find: an Everstone (a stone that never changes, which is what a benchmark is; and a breeding tool) and two Sitrus Berries. Useful, not a curve-breaker.",
+      "built_by": "tools/survey_benchmark.py (the barrel, in cobblers_survey_benchmark's build, step R9BM)",
+      "trigger": {
+        "min": [
+          3716,
+          117,
+          5715
+        ],
+        "max": [
+          3716,
+          118,
+          5717
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          3717,
+          117,
+          5716
+        ]
+      }
+    },
+    {
       "id": "station_director",
       "kind": "npc_grant",
       "place": "Shrew Station's Institute, behind the reception desk",
@@ -1346,10 +1466,22 @@
           "item": "lumymon:ember_feather",
           "count": 1,
           "verification": "assets/lumymon/models/item/ember_feather.json in LumyMon-0.6.6.jar"
+        },
+        {
+          "item": "cobblemon:scroll_of_darkness",
+          "count": 1,
+          "one_of": "cobblemon:scroll_of_waters (one claim, quest.evt_station_director.scroll_claimed)",
+          "verification": "assets/cobblemon/models/item/scroll_of_darkness.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:scroll_of_waters",
+          "count": 1,
+          "one_of": "cobblemon:scroll_of_darkness (one claim, quest.evt_station_director.scroll_claimed)",
+          "verification": "assets/cobblemon/models/item/scroll_of_waters.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
         }
       ],
       "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
-      "why": "The thunder feather (a storm watched from the Zapdos tower's top, after eight badges) and the ember feather (the Craters' Moltres tower surveyed, after eight badges: the owner, 2026-10-02, 'Moltres yes', re-homed to the Craters the same day; data/research_station.json economy.ember_survey). The station is the one source of the three feathers (the owner, 2026-10-02; economy.the_one_source_2026_10_02).",
+      "why": "The thunder feather (a storm watched from the Zapdos tower's top, after eight badges) and the ember feather (the Craters' Moltres tower surveyed, after eight badges: the owner, 2026-10-02, 'Moltres yes', re-homed to the Craters the same day; data/research_station.json economy.ember_survey). The station is the one source of the three feathers (the owner, 2026-10-02; economy.the_one_source_2026_10_02). And ONE of Kubfu's two scrolls, the player's choice, once, to a player with their starter Kubfu in the party after five badges (the owner, 2026-10-02, docs/mechanics/NATIVE_STARTERS_COST.md 7.5; data/research_station.json economy.items kubfu_scroll).",
       "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/research_station.py seats it on, checked by tools/research_station_audit.py"
     },
     {
@@ -1419,6 +1551,151 @@
       "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
       "why": "The ruby and sapphire dews, for a player who has met Mesprit, Azelf and Uxie: they wake this station's own Latias and Latios altars. Held twice: the dews also need cobblers_station_issuing_eon, added only while economy.eon_issuing is true, so the switch thrown for the feathers does not issue them (data/research_station.json eon_issuing_why).",
       "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/research_station.py seats it on, checked by tools/research_station_audit.py"
+    },
+    {
+      "id": "surveyor_everstone",
+      "kind": "npc_grant",
+      "place": "Corran Vey's survey camp above Sunset Isle's north beach (data/southern_residents.json surveyor_line), beside the theodolite",
+      "npc_at": [
+        1741,
+        69,
+        6799
+      ],
+      "quest": "evt_surveyor_line",
+      "contents": [
+        {
+          "item": "cobblemon:everstone",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/everstone.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "why": "Corran's thanks for a compass made here: his datum stone, an Everstone, the one thing on his line that never changed. One per player, by grant_reward_once. The verification string is data/rewards.json r1_old_mine_stope's, copied, not re-checked against a jar here. An Everstone is already a Route 1 find; this is a second, not a first source.",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/southern_residents.py seats him on, and it refuses to build when they differ"
+    },
+    {
+      "id": "prospector_claim",
+      "kind": "cache",
+      "place": "Bettany Oake's Claim Number Four on the Arrow Creeks crest (data/southern_residents.json prospector_camp): the barrel set in the ground at the east foot of her cairn",
+      "contents": [
+        {
+          "item": "cobblemon:metal_coat",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/metal_coat.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:hard_stone",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/hard_stone.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:heavy_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/heavy_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In Bettany Oake's barrel at the foot of the cairn, wrapped in a flannel shirt: the polished sheet of Steelix hide she told you about (a Metal Coat), a Hard Stone, and three Heavy Balls.",
+      "why": "data/southern_residents.json prospector_camp: what an old prospector put by at her best claim. Late-game, as the place is (the Arrow Creeks are tier 8): a Metal Coat (Onix and Scyther evolve by trade holding one; held, it powers Steel moves), a Hard Stone and three Heavy Balls. Verification strings copied from data/rewards.json dune_ruin_strongroom (metal_coat) and r1_old_mine (hard_stone, heavy_ball), not re-checked against a jar here.",
+      "built_by": "tools/southern_residents.py (the barrel, in cobblers_southern_residents' prospector_camp build, step R9SR)",
+      "trigger": {
+        "min": [
+          2251,
+          150,
+          5639
+        ],
+        "max": [
+          2253,
+          151,
+          5641
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          2252,
+          149,
+          5640
+        ]
+      }
+    },
+    {
+      "id": "gate_watcher_leftovers",
+      "kind": "npc_grant",
+      "place": "Hale Brannock's bench on the plain east of Holdfast (data/southern_residents.json gate_watcher), in front of the bench",
+      "npc_at": [
+        4135,
+        110,
+        6336
+      ],
+      "quest": "evt_gate_watcher",
+      "contents": [
+        {
+          "item": "cobblemon:leftovers",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/leftovers.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "why": "Hale's thanks for being shown the eighth badge he never got: his Snorlax Burl's Leftovers, so that they go through the gate. After gym 8, on the way to the League, when a held item that heals every turn matters. One per player, by grant_reward_once. The verification string is data/rewards.json old_orchard_cellar's, copied, not re-checked against a jar here; Leftovers are also in the Old Orchard's cellar, so this is a second source.",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/southern_residents.py seats him on, and it refuses to build when they differ"
+    },
+    {
+      "id": "agnes_sun_stone",
+      "kind": "npc_grant",
+      "place": "Agnes Merrow's wagon in the foothill woods (data/northern_residents.json agnes_carving), at the foot of its shafts",
+      "npc_at": [
+        1694,
+        105,
+        2231
+      ],
+      "quest": "evt_agnes_carving",
+      "contents": [
+        {
+          "item": "cobblemon:sun_stone",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/sun_stone.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "why": "Agnes's thanks for reading her the back of the oak: the stone Edwin gave her instead of a ring. One per player, by grant_reward_once. A Sun Stone evolves Gloom (Bellossom), Sunkern, Cottonee, Petilil and Helioptile; at tier 3 it is an early stone, as data/rewards.json's other evolution-stone finds are. The verification string is data/rewards.json vr_bloom's, copied, not re-checked against a jar here.",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/northern_residents.py seats Agnes Merrow on, and it refuses to build when they differ"
+    },
+    {
+      "id": "pip_twig_badge",
+      "kind": "npc_grant",
+      "place": "Pip's gym on the downs east of Greenhollow (data/northern_residents.json pips_gym), on her end line",
+      "npc_at": [
+        4608,
+        116,
+        1718
+      ],
+      "quest": "evt_pips_gym",
+      "contents": [
+        {
+          "item": "cobblemon:shiny_stone",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/shiny_stone.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "why": "the Twig Badge: Pip's shiniest stone, given to the first challenger to come back with all eight badges. One per player, by grant_reward_once, after gym8_cleared. A Shiny Stone evolves Roselia into Roserade (Erika's grass type, which is why a child who worships Erika has kept it), Togetic, Minccino and Floette. Late, as it is gated. The verification string is data/rewards.json vr_bloom's, copied, not re-checked against a jar here.",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/northern_residents.py seats Pip Arden on, and it refuses to build when they differ"
+    },
+    {
+      "id": "hide_and_seek_milk",
+      "kind": "npc_grant",
+      "place": "Tam Furrow's home base in the Tilpey east shore woods (data/northern_residents.json hide_and_seek), at the post",
+      "npc_at": [
+        6700,
+        98,
+        3712
+      ],
+      "quest": "evt_hide_and_seek",
+      "contents": [
+        {
+          "item": "cobblemon:moomoo_milk",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/moomoo_milk.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "why": "Tam's thanks for finding his twin: two bottles of his mum's Moomoo Milk, one for each of them. One per player, by grant_reward_once, after the player has found Lettie. A modest reward for a modest errand at tier 6: Moomoo Milk restores HP. The verification string is data/rewards.json drovers_hollow_store's, copied, not re-checked against a jar here.",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/northern_residents.py seats Tam Furrow on, and it refuses to build when they differ"
     }
   ]
 }

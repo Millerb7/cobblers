@@ -187,7 +187,10 @@ class Compiler:
             if e.get("count", 1) != 1 or e.get("hand", "main") != "main":
                 raise Unsupported("consume_held_item supports one item from the main hand")
             pred = e.get("item_predicate") or e["item"]
-            return run(["execute as ", UUID, " if items entity @s weapon.mainhand %s run item replace entity @s weapon.mainhand with minecraft:air" % pred])
+            # ONE item, not the stack: `item replace ... with air` emptied the whole hand, so a player holding several
+            # lost them all (found by the southern residents' independent audit, 2026-10-03). The hand check still
+            # guards that the item is held; `clear ... 1` then takes exactly one matching item
+            return run(["execute as ", UUID, " if items entity @s weapon.mainhand %s run clear @s %s 1" % (pred, pred)])
         if k == "give_item":
             return self.give(e["item"], e["count"])
         if k == "grant_reward_once":
