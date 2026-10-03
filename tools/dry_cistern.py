@@ -150,10 +150,8 @@ def plan(doc, g):
     p.hang(x1 - 1, hf + 1, z0 + 1, K.wall_sign("acacia", "south", signs["house"]))
     roofed = [s for s in steps if not s["open"]]
     opened = [s for s in steps if s["open"]]
-    if len(roofed) > 1:
-        s = roofed[1]
-        mx, mz = s["cols"][len(s["cols"]) // 2]
-        p.hang(mx, s["floor"] + ps["height"], mz, K.lantern(True))
+    # no lantern under the stair roof: it hung in the third block over a step, where a player climbing onto the next
+    # step strikes it (the independent audit's headroom check, 2026-10-03); the roof is only the passage height tall
     if opened:
         last = opened[-1]
         for x, z in last["sides"]:

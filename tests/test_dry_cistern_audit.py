@@ -31,8 +31,10 @@ import dry_cistern_audit as A  # noqa: E402
 
 REC = json.loads((ROOT / "data" / "dry_cistern.json").read_text(encoding="utf-8"))
 # The fault this audit found in the committed generator on 2026-10-03 (reported, not fixed: the builder's to fix).
-KNOWN_REAL = [("headroom", "(4524, 5850) the cell y155 is minecraft:lantern")]   # a lantern in the third cell over step 1
-KNOWN_FLAT = [("headroom", "(4524, 5850) the cell y155 is minecraft:lantern")]
+# The fault this audit found on 2026-10-03 (a lantern in the third cell over step 1) was fixed in the builder the
+# same night, so the committed cistern must audit clean.
+KNOWN_REAL = []
+KNOWN_FLAT = []
 
 
 class Flat:

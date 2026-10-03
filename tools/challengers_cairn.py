@@ -114,8 +114,7 @@ def plan(doc, g):
         p.put(*k, "minecraft:air")
     barrel = (cx, F + 1, cz - h)
     p.put(*barrel, "minecraft:barrel[facing=south,open=false]")
-    for x, z in ((cx - h, cz - h), (cx + h, cz - h), (cx - h, cz + h), (cx + h, cz + h)):
-        p.put(x, F + 1, z, K.pick(x, F + 1, z, ["minecraft:mossy_cobblestone", "minecraft:cobblestone"]))
+    # (no field stones in the cist's corners: the record declares the cist empty but for the barrel - audit, 2026-10-03)
     # --- what hangs: lanterns, signs
     signs = doc["blocks"]["signs"]
     p.hang(cx, crown + 2, cz, K.lantern(False))
@@ -123,10 +122,8 @@ def plan(doc, g):
     p.hang(cx, F + 2, cz - h, K.wall_sign("spruce", "south", signs["cist"]))
     roofed = [s for s in steps if not s["open"]]
     opened = [s for s in steps if s["open"]]
-    if len(roofed) > 1:
-        s = roofed[1]
-        mx, mz = s["cols"][len(s["cols"]) // 2]
-        p.hang(mx, s["floor"] + ps["height"], mz, K.lantern(True))
+    # no lantern under the stair roof: it hung in the third block over a step, where a player climbing onto the next
+    # step strikes it (the independent audit's headroom check, 2026-10-03); the roof is only the passage height tall
     if opened:
         last = opened[-1]
         for x, z in last["sides"]:

@@ -31,10 +31,9 @@ import challengers_cairn_audit as A  # noqa: E402
 REC = json.loads((ROOT / "data" / "challengers_cairn.json").read_text(encoding="utf-8"))
 # The faults this audit found in the committed generator on 2026-10-03 (reported, not fixed: the builder's to fix).
 # When the builder is fixed this list empties and the tests that pin it say so.
-KNOWN = [
-    ("cist", "(3554, 103, 6110)"),        # four undeclared field stones in the cist's corners, in the declared void
-    ("headroom", "(3556, 6116) the cell y106 is minecraft:lantern"),   # a lantern in the third cell over step 1
-]
+# The faults this audit found on 2026-10-03 (four field stones in the cist's corners; a lantern in the third cell over
+# step 1) were fixed in the builder the same night, so the committed cairn must audit clean.
+KNOWN = []
 
 
 class Flat:
