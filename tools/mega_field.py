@@ -60,6 +60,9 @@ def point_in(poly, x, z):
     return res
 
 
+SQUARE_REACH = 3
+
+
 def trace(spec, source_root=None):
     """The field: the sculpt's lip ring from the gulch zone's south-west end, away from the gulch, round the south-west
     basin and up its west wall to the ring point nearest `cut_near`; then straight across the stem to the gulch zone's
@@ -80,17 +83,66 @@ def trace(spec, source_root=None):
     if not ((kW - kA) % T < (kE - kA) % T):
         raise FieldError("cut_near's ring point %d is not on the arc from the gulch's south-west end (%d) away from the "
                          "gulch before its north-east end (%d)" % (kW, kA, kE))
-    run = []
-    for i in range((kW - kA) % T + 1):
+    n = (kW - kA) % T + 1
+    zp = spec["zone"]["polygon"]
+    o = ft["rim_outset"]
+
+    def vertex(i, along_ring):
         k = (kA + i) % T
         x, z = ring[k]
-        # the normals point into the basin (gulch_mine.py trace): minus is outward
-        run.append([round(x - nrm[k][0] * ft["rim_outset"], 1), round(z - nrm[k][1] * ft["rim_outset"], 1)])
-    poly = GM.simplify(run, ft["tolerance"])
-    zp = spec["zone"]["polygon"]
-    poly = poly + [list(zp[0]), list(zp[-1])]
+        if not along_ring:
+            # the normals point into the basin (gulch_mine.py trace): minus is outward
+            return [round(x - nrm[k][0] * o, 1), round(z - nrm[k][1] * o, 1)]
+        # the sculpt's normals are smoothed, and where the lip turns sharply one can lie nearly ALONG the lip, so the
+        # outset slides down the ring instead of out of it: here the outward direction is taken square to the ring
+        # itself (the chord over two points either side), on the side the normal says is outward
+        a, b = ring[(k - 2) % T], ring[(k + 2) % T]
+        tx, tz = b[0] - a[0], b[1] - a[1]
+        L = math.hypot(tx, tz) or 1.0
+        px, pz = tz / L, -tx / L
+        if px * -nrm[k][0] + pz * -nrm[k][1] < 0:
+            px, pz = -px, -pz
+        return [round(x + px * o, 1), round(z + pz * o, 1)]
+
+    # no lip column is left out (the lip is the basin's edge, so a basin column the polygon misses is a lip column):
+    # where the simplification cuts one, its run vertex is kept (the run is simplified in pieces either side of it);
+    # where even the unsimplified outset misses one, that vertex is set square to the ring. Both only ever act where a
+    # lip column falls outside, so everywhere else the polygon is the plain simplified outset
+    keep, square = set(), set()
+    while True:
+        run = [vertex(i, i in square) for i in range(n)]
+        cuts = [0] + sorted(keep) + [n - 1]
+        poly = []
+        for c0, c1 in zip(cuts, cuts[1:]):
+            if c1 > c0:
+                piece = GM.simplify(run[c0:c1 + 1], ft["tolerance"])
+                poly += piece if not poly else piece[1:]
+        poly = poly + [list(zp[0]), list(zp[-1])]
+        # the last ring point is the stem cut's own end (the cut line, not the rim), so it is not a lip column to keep
+        miss = [i for i in range(n - 1) if not point_in(poly, ring[(kA + i) % T][0] + 0.5, ring[(kA + i) % T][1] + 0.5)
+                and not point_in(zp, ring[(kA + i) % T][0] + 0.5, ring[(kA + i) % T][1] + 0.5)]
+        if not miss:
+            break
+        grew = False
+        for i in miss:
+            if i not in keep:
+                keep.add(i)
+                grew = True
+                continue
+            # squared, with SQUARE_REACH ring points either side, so the outset does not fold back on its neighbours
+            for j in range(max(0, i - SQUARE_REACH), min(n - 1, i + SQUARE_REACH + 1)):
+                if j not in square:
+                    square.add(j)
+                    keep.add(j)
+                    grew = True
+        if not grew:
+            # nothing left to try: the polygon is returned as it is and the misses named (check reports them; the
+            # independent audit, tools/mega_field_audit.py, finds them on the basin itself)
+            break
     return {"ring_from": [kA, ring[kA]], "ring_cut": [kW, ring[kW]], "ring_to": [kE, ring[kE]],
-            "cut_blocks": round(math.dist(ring[kW], ring[kE]), 1), "polygon": poly}
+            "cut_blocks": round(math.dist(ring[kW], ring[kE]), 1), "lip_kept": sorted((kA + i) % T for i in keep),
+            "lip_squared": sorted((kA + i) % T for i in square), "lip_missed": sorted((kA + i) % T for i in miss),
+            "polygon": poly}
 
 
 def columns(poly):
@@ -212,6 +264,9 @@ def check(spec, source_root=None):
     independent audit (MEGA_FIELD.md section 5 lists what that must check, from other sources)."""
     probs = []
     t = trace(spec, source_root)
+    if t["lip_missed"]:
+        probs.append("%d lip column(s) outside the traced field even with their vertices kept and set square to the "
+                     "ring, e.g. ring %s" % (len(t["lip_missed"]), t["lip_missed"][:5]))
     if t["polygon"] != spec["mega_field"]["polygon"]:
         probs.append("mega_field.polygon differs from `mega_field.py trace` (%d vertices traced, %d committed)"
                      % (len(t["polygon"]), len(spec["mega_field"]["polygon"])))

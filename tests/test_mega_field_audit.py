@@ -159,9 +159,8 @@ def test_the_committed_field_passes_every_check_but_the_floor_coverage(ground, b
 
 
 # The finding this audit raised (2026-10-03): 14 basin columns at three corners, (4185, 4931), (4040, 5359) and
-# (4146, 5378), lie outside mega_field.polygon although mega_field.trace.why says no basin column at the cliff's foot is
-# left out. Strict: when the builder closes them this XPASSes and the marker must go.
-@pytest.mark.xfail(strict=True, reason="finding: 14 basin columns of the field's floor outside mega_field.polygon")
+# (4146, 5378), lay outside mega_field.polygon although mega_field.trace.why says no basin column at the cliff's foot is
+# left out. Closed in mega_field.py trace (lip vertices kept, and set square to the ring where the normal slid along it).
 def test_the_committed_field_holds_its_whole_floor(ground, basin, lairs):
     rep = run(SPEC, ground, basin, lairs)
     assert left_out(rep) == 0
