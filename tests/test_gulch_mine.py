@@ -757,7 +757,10 @@ def test_the_recipe_generator_refuses_an_unpinned_jar(tmp_path):
 # installed where every world loads it (it drives itself), or the staging-only refill is run. Decision 12 names R9S.
 def test_reapply_runs_r9s_after_r9m_and_the_cutters_wait_out_their_placement(monkeypatch):
     import reapply
-    listed = {"cobblers_gulch_mine": ["1earth_68_73", "2shell_68_73", "6faces_69_75"], "cobblers_rift_mines": ["1shell_48_48"]}
+    # cobblers_rift_zones' index is checked name by name against data/rift_zones.json (reapply.rift_zone_steps, since
+    # 21d938f), so the placeholder "x" every other pack gets is refused there; an empty index runs no zone function
+    listed = {"cobblers_gulch_mine": ["1earth_68_73", "2shell_68_73", "6faces_69_75"], "cobblers_rift_mines": ["1shell_48_48"],
+              "cobblers_rift_zones": []}
     monkeypatch.setattr(reapply, "indexed", lambda pack, folder: listed.get(pack, ["x"]))
     steps = reapply.steps()
     ids = [s[0] for s in steps]

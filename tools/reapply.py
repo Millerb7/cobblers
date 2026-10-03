@@ -586,6 +586,10 @@ def prepare_jobs(a):
     add("research_station_audit", "research_station_audit.py", *src)
     add("mega_dens:build", "mega_dens.py", "build", *src)
     add("mega_dens_audit", "mega_dens_audit.py", *src)
+    # the Mega field's independent audit (docs/world-building/MEGA_FIELD.md section 5): the polygon against the
+    # sculpt's basin and the owner's points, each den's ground, level (rctmod's cap for its zone's badges) and drops in
+    # the BUILT gulch pack, the retirement and the lairs; after both packs above are built
+    add("mega_field_audit", "mega_field_audit.py", *src)
     add("sea_drift_audit", "sea_drift_audit.py", *src)
     add("relic_underground_audit", "relic_underground_audit.py", *src)
     # water life (docs/mechanics/WATER_LIFE.md): each pack, then its independent audit, which replays the written
