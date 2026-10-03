@@ -504,6 +504,12 @@ def prepare_jobs(a):
     # every purchase reading, refusing, charging, verifying and only then giving
     add("markets:build", "markets.py", "build")
     add("markets:audit", "markets.py", "audit", *src)
+    # and the independent audit (tools/markets_audit.py, written by an agent that did not build the markets): ids
+    # against the server's jars (reads <server>/mods only), gates against the ladder and the gym flags, every built
+    # purchase EXECUTED in a command model (short, ungated, failed charge, failed give, double click), the overlay
+    # against the base and the jars' recipe conditions, tiers and the curve against PROGRESSION_LADDER, and every
+    # keeper R17M places off streets, buildings, walked lines and other NPCs, and in front of its Mart
+    add("markets:audit_independent", "markets_audit.py", "--server-dir", a.server_dir, *src)
     # the ferry docks' pack (a SERVER_PACKS member): until 2026-10-02 no job built it, and a build/ left over from an
     # earlier hand run hid that; function_limits failed on a fresh checkout without it
     add("ferry_docks:build", "ferry_docks.py", "build", *src)
