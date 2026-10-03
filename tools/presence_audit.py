@@ -98,7 +98,11 @@ def arena(rc):
     _hold(rc, cx, 64, cz)
     for t in a["tiers"]:
         sx, sy, sz = t["stand"]
+        # the drum's radius at this tier's walls: the halls layout steps in at its setbacks (data/deep_city.json taper)
         r = rec["radius"]
+        for ty, tr in sorted(rec.get("taper") or []):
+            if t["y"] + 4 > ty:
+                r = tr
         checks = [((sx, sy - 1, sz), "!air", "floor under the stand"),
                   ((sx, sy, sz), "minecraft:air", "air at the stand's feet"),
                   ((sx, sy + 1, sz), "minecraft:air", "air at the stand's head")]
@@ -111,8 +115,10 @@ def arena(rc):
             bad.append("%d trainers at the stand, expected 1" % n)
         out.append(("arena", "tier %d (y%d)" % (t["tier"], t["y"]), (sx, sy, sz), "; ".join(bad)))
     crown = rec["crown"]
-    ring = [(cx + 8, crown - 1, cz), (cx - 8, crown - 1, cz), (cx, crown - 1, cz + 8), (cx, crown - 1, cz - 8)]
-    out.append(("arena", "crown floor y%d" % (crown - 1), (cx, crown - 1, cz),
+    # the crown's own deck, at the crown's y (it read y crown-1 until 2026-10-03: the ring layout's tier-7 air, which
+    # is why one of its four points was always "open")
+    ring = [(cx + 8, crown, cz), (cx - 8, crown, cz), (cx, crown, cz + 8), (cx, crown, cz - 8)]
+    out.append(("arena", "crown floor y%d" % crown, (cx, crown, cz),
                 "" if all(_block(rc, *p, "!air") for p in ring) else "a crown floor point is air"))
     bx, by, bz = a["beacon"]
     out.append(("arena", "beacon", (bx, by, bz), "" if _block(rc, bx, by, bz, "minecraft:beacon") else "no beacon"))

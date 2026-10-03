@@ -86,6 +86,10 @@ def _classify(cycle):
         elif "{Cooldown:" in l:
             for t in _selector_ids(l):
                 cool.setdefault(t, []).append(l)
+        elif re.match(r"(title|tp) @a\[x=-?\d+,y=-?\d+,z=-?\d+,dx=\d+,dy=\d+,dz=\d+,tag=!cobblers_beat_arena_tier_\d_champion,", l):
+            # Heaven's Arena's climb gate (2026-10-03, data/arena_trainers.json gate_why): asserted on its own in
+            # test_every_arena_tier_gates_its_shaft_once, not a kind every trainer has
+            continue
         else:
             other.append(l)
     return home, tags, cool, other
@@ -252,3 +256,22 @@ def test_only_a_repeatable_seat_is_given_an_unlimited_defeat_count(files):
     assert {t for t, v in got.items() if v == -1} == REPEATABLE, sorted(
         {t for t, v in got.items() if v == -1} ^ REPEATABLE)
     assert {v for t, v in got.items() if t not in REPEATABLE} == {1}, sorted(set(got.values()))
+
+
+# Heaven's Arena (the owner, 2026-10-03: "a player fighting their way up"): each of the seven tiers turns a player in
+# the stair shaft above it back to its floor until they carry that tier's tag, in exactly one title and one tp line,
+# both on the record's own box and landing, and no other trainer has such a line.
+def test_every_arena_tier_gates_its_shaft_once(cycle):
+    import json
+    recs = {r["id"]: r for r in json.loads((ROOT / "data" / "arena_trainers.json").read_text(encoding="utf-8"))["trainers"]}
+    gates = [l for l in cycle if re.match(r"(title|tp) @a\[x=", l)]
+    assert len(gates) == 2 * len(recs) == 14, gates
+    for tid, r in recs.items():
+        x, y, z, dx, dy, dz = r["gate"]["box"]
+        sel = "@a[x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d,tag=!cobblers_beat_%s,gamemode=!creative,gamemode=!spectator]" % (
+            x, y, z, dx, dy, dz, tid)
+        mine = [l for l in gates if sel in l]
+        assert [l.split()[0] for l in mine] == ["title", "tp"], (tid, mine)
+        lx, ly, lz, yaw = r["gate"]["landing"]
+        assert mine[1] == "tp %s %s %s %s %s 0" % (sel, lx, ly, lz, yaw), mine[1]
+        assert ly < y, "%s: the landing (feet y%s) must be BELOW the gate box (from y%d): down is never stopped" % (tid, ly, y)

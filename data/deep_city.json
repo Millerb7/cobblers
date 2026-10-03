@@ -185,16 +185,29 @@
     "radius": 16,
     "tiers": [15, 32, 49, 66, 83, 100, 117],
     "crown": 128,
-    "core": 7,
-    "stand_orbit": 10,
-    "stand_clear": [3, 3],
-    "why": "HEAVENS_ARENA.md sections 3 and 4: the pit's own vertical grammar is 15 then 17, so seven tiers land exactly on the five street levels (y0-y66), the lip (y83) and two above it (y100, y117). Radius 16 (33 across) round the existing 7x7 light core and its spiral stair makes every tier an annulus r=4..15, 11 wide, which keeps the light column unbroken (L5 the spine, L6 the crown). The crown at y128 is the view and the beacon, 4 under the HQ tower's y132, so the Compact's tower stays the dominant building.",
+    "layout": "halls",
+    "layout_why": "The owner, 2026-10-03: \"Seven seats on flat ground is not what I asked for. It should be tiers climbing upward, champions at the top, a player fighting their way up -- Heaven's Arena from HxH. Design the geometry and build it, with the seats moved onto it.\" Schema 1 (superseded_ring) built seven annular decks round a light core with one reserved cell on each: in the world, seven trainers standing on empty floors. Schema 2 makes every tier a fight hall: a raised 11x11 ring in the middle with the tier's champion on its far side and the challenger's mark on its near side, stepped benches round the wall where the hall is wide enough, the stair moved into a 7x7 bay against the north wall (its light column goes with it), and the stair GATED per tier (data/arena_trainers.json gate) so a player climbs only by winning. Above the lip the drum steps in twice, so from the Rift floor the tower reads as tiers climbing to the crown. Radius and tiers are unchanged, so the city loses nothing (site A).",
+    "taper": [[100, 14], [117, 12]],
+    "taper_why": "a setback at tier 6's floor (y100, radius 16 to 14) and tier 7's (y117, 14 to 12): the drum narrows only ABOVE the lip (y83), where nothing of the city stands, so no lot is touched; each setback's floor runs out to the band below as a lit ledge with a glass balustrade. Two blocks a step, not more: tier 7's hall (r<11.5) must still hold the ring (corner r10.3) and the bay (corner r11.4).",
+    "bay": {"centre": [0, -8], "back": "south, toward the ring"},
+    "bay_why": "the 7x7 stair (build_tower, the same tower and climb rules as every stair in the city) on the drum's north side, its back row facing the ring: of the seven tier exits, three (tiers 2-4) open straight at the ring, tier 1's east and tiers 5-7's west, each one step from the ring's near side. Centre 8 north of the drum's is the furthest out that keeps the bay inside tier 7's hall (corner (3, 11): r11.4 < 11.5); the lobby door faces north into the lobby.",
+    "stage": {"centre": [0, 4], "size": 11, "stand": [0, 4], "mark": [0, -4]},
+    "stage_why": "the ring: 11x11, one block up, polished deepslate with a basalt border and a copper post and lantern at each corner -- HxH's square stone stage. Centred 4 south of the drum's centre so its near edge (z-1) leaves three rows of floor in front of the bay's landings. The champion stands one in from the far edge, the challenger's mark one in from the near edge: 8 apart, facing each other across the ring.",
+    "benches": 3,
+    "benches_why": "up to three stepped rows against the wall, the outermost highest, kept 1.5 clear of the ring's corners, with four aisles on the axes (which are also where the y15 bridges come in) and nothing within one of the bay: tiers 1-5 get all three, tier 6 one, tier 7 none -- the champions' floor is a private hall.",
     "lift": "nothing new below y66: the city is the lift. The nine stair towers and eight lift pairs reach every street, the existing y15 bridge from Relay Row is tier 1's door, and the spiral stair round the light core runs the lobby to the crown with an opening onto every tier.",
-    "stands_why": "One 3x3 cell per tier is reserved on the annulus, across the floor from that tier's stair door, and the build fails if anything is written into it. The cell is geometry only: it carries no trainer, no yaw, no faces, no eye_contact and no sight_distance.",
+    "superseded_ring": {
+      "note": "schema 1, built 2026-10-01 and superseded 2026-10-03 by layout halls (layout_why); kept so build_spire_ring can still build it for comparison and so the reasoning is not lost. Its annulus kept the light column unbroken; the owner's call is a tower to fight up, not a light column.",
+      "core": 7,
+      "stand_orbit": 10,
+      "stand_clear": [3, 3],
+      "why": "HEAVENS_ARENA.md sections 3 and 4: the pit's own vertical grammar is 15 then 17, so seven tiers land exactly on the five street levels (y0-y66), the lip (y83) and two above it (y100, y117). Radius 16 (33 across) round the existing 7x7 light core and its spiral stair makes every tier an annulus r=4..15, 11 wide, which keeps the light column unbroken (L5 the spine, L6 the crown). The crown at y128 is the view and the beacon, 4 under the HQ tower's y132, so the Compact's tower stays the dominant building.",
+      "stands_why": "One 3x3 cell per tier is reserved on the annulus, across the floor from that tier's stair door, and the build fails if anything is written into it. The cell is geometry only: it carries no trainer, no yaw, no faces, no eye_contact and no sight_distance."
+    },
     "not_built": [
       "the fights: no trainer, no ladder, no prize, no per-player tier state. Whether rctmod can hold an endless ladder rests on an unproven gate (docs/research/notes/rct-arena-capabilities.md, experiment A1: whether requiredDefeats gates a trainer with series []). Principle 20: the geometry and the fights are separable and stay separated.",
       "the tier-5 outside terrace at the lip (y83), the second bridge at y32 to the Quarter, and the lift's per-tier requiredAdvancement: each is an open question in HEAVENS_ARENA.md section 9.",
-      "seating, dressing and signage inside the drum: empty shells, as everywhere else in this build."
+      "signage inside the drum, and doors onto the setback ledges: the ledges are scenery."
     ]
   },
   "hq": {
