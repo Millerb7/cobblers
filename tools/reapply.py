@@ -570,11 +570,15 @@ def prepare_jobs(a):
     add("drovers_hollow:build", "drovers_hollow.py", "build", *src)
     add("drovers_hollow_audit", "drovers_hollow_audit.py", *src)
     # the three wayside places of 2026-10-03. Each generator refuses a spawn-condition palette and any block outside its
-    # record; their independent audits are OWED (each place's doc, 'What an audit must check') and are added here when
-    # written, after their builds
+    # record; then its independent audit (written by an agent that built none of them), which replays the written
+    # function over a world built from the heightmap alone, never imports its builder, and fails the prepare on a broken
+    # build (each place's doc, 'What an audit must check')
     add("challengers_cairn:build", "challengers_cairn.py", "build", *src)
+    add("challengers_cairn_audit", "challengers_cairn_audit.py", *src)
     add("dry_cistern:build", "dry_cistern.py", "build", *src)
+    add("dry_cistern_audit", "dry_cistern_audit.py", *src)
     add("survey_benchmark:build", "survey_benchmark.py", "build", *src)
+    add("survey_benchmark_audit", "survey_benchmark_audit.py", *src)
     add("research_station:build", "research_station.py", "build", *src)
     add("research_station_audit", "research_station_audit.py", *src)
     add("mega_dens:build", "mega_dens.py", "build", *src)
