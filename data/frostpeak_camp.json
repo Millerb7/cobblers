@@ -110,7 +110,7 @@
   "item_economy": {
     "status": "DECIDED IN PRINCIPLE, NOT BUILT (2026-10-02). Nothing here is emitted by tools/frostpeak_camp.py; the researchers are still talk-only.",
     "why_here": "the owner, 2026-10-02: the research station 'is the place that studies these things' (docs/mechanics/NATIVE_STARTERS_COST.md section 7.5) and 'the place that would produce' the feathers.",
-    "mechanism": "NOT CHOSEN. No recipe or loot table in the installed pack produces any of these items (docs/research/notes/legendary-catalogue-reopened.md section 2; lumymon-altars.md correction), so the camp must hand them out itself: a quest reward, a dialogue-stage give, or a trader stock. Which one is a design call for whoever builds it.",
+    "mechanism": "DECIDED, the owner 2026-10-02: THROUGH DIALOGUE, as a reward for work the researchers ask for, not a shop. 'They are studying the birds, so earning one should mean helping them study.' What the work is (observations, a sighting, samples) is for the dialogue author. No recipe or loot table in the installed pack produces these items (docs/research/notes/legendary-catalogue-reopened.md section 2), so the camp's dialogue is their only source.",
     "items": [
       {
         "item": "Kubfu's two scrolls",
@@ -122,22 +122,22 @@
         "item": "lumymon:glacier_feather",
         "for": "Articuno at adopted_articuno_shrine (904, 151, 320), the shrine this camp studies",
         "decided": "the owner, 2026-10-02",
-        "gate_proposed": "gym8_cleared"
+        "gate": "gym8_cleared (DECIDED, the owner 2026-10-02)"
       },
       {
         "item": "lumymon:thunder_feather",
         "for": "Zapdos at adopted_zapdos_tower (562, 74, 2614)",
         "decided": "the owner, 2026-10-02",
-        "gate_proposed": "gym8_cleared"
+        "gate": "gym8_cleared (DECIDED, the owner 2026-10-02)"
       },
       {
         "item": "lumymon:ember_feather",
-        "for": "Moltres, re-homed to the Craters with Blaine (site NOT measured; data/adopted_legendary_sites.json refused[].reopened_2026_10_02)",
+        "for": "Moltres, re-homed to the Craters with Blaine (data/adopted_legendary_sites.json adopted_moltres_tower, (6252, 168, 5344))",
         "decided": "the owner, 2026-10-02",
-        "gate_proposed": "gym8_cleared"
+        "gate": "gym8_cleared (DECIDED, the owner 2026-10-02)"
       }
     ],
-    "why_gym8_cleared_is_proposed": "each altar spawns its bird at 50, 55 or 60 (VERIFIED, LumyMon 0.6.6 class strings), and a Pokemon above a player's cap breaks free from every ball. The cap is 60 after gym 8 (docs/mechanics/LEAGUE_LEVEL_CAP.md), the first point at which every roll is catchable. A lower gate lets a 55 or 60 roll escape. Proposal, for trainer-balance-designer to confirm.",
+    "why_gym8_cleared_is_proposed": "each altar spawns its bird at 50, 55 or 60 (VERIFIED, LumyMon 0.6.6 class strings), and a Pokemon above a player's cap breaks free from every ball. The cap is 60 after gym 8 (docs/mechanics/LEAGUE_LEVEL_CAP.md), the first point at which every roll is catchable. A lower gate lets a 55 or 60 roll escape. Confirmed by the owner, 2026-10-02.",
     "blocked_on": "EXP-048: none of the three bird altars has been shown to answer a pasted right-click."
   }
 }

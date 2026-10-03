@@ -15,7 +15,7 @@
  "ceiling": {
   "max_y": 310,
   "source": "data/world.json vertical.max_y, and measured_ceiling_y 310",
-  "verdict": "all six clear it by 75 blocks or more; the tallest top is y235 (the Dusk tower). Every top_y here is the top OCCUPIED layer, y + height - 1, and every ceiling_margin is measured against this max_y; a scheduled site's top is stated in its placement_lives_in line."
+  "verdict": "all seven clear it by 75 blocks or more; the tallest top is y235 (the Dusk tower). Every top_y here is the top OCCUPIED layer, y + height - 1, and every ceiling_margin is measured against this max_y; a scheduled site's top is stated in its placement_lives_in line."
  },
  "what_never_travels": {
   "verified": "EXP-013 on a disposable world: `/place structure`, `/place jigsaw` and `/place template` all leave every chunk with empty `starts` and `References`, and `/locate`, `location_check` and the gym map ignore the build (docs/world-building/STRUCTURE_INVENTORY.md:271-274).",
@@ -220,7 +220,7 @@
    "gate": {
     "place": "none: a cemetery in the woods is found, not unlocked",
     "spectrier": "THE LEVEL CAP. A shaderoot carrot THROWN onto the trigger ring (not a right-click) spawns Spectrier at 50-59 or 70 (lumymon-altars.md section 1); above a player's RCT cap it breaks free from every ball (data/level_cap.json), so in practice it is caught after the cap reaches its level. Whether a player-thrown carrot fires the trigger at all is EXP-048's owner half, step 1.",
-    "calyrex": "nothing reachable: the statue wants a calyrex_crown, which no recipe or loot table makes. Scenery."
+    "calyrex": "THE ALTAR WORKS: the owner gave the pasted statue the crown in staging and Calyrex came (2026-10-02, experiments/EXP-048-legendary-altar/README.md). But nothing in the game makes a calyrex_crown, so in normal play Calyrex is unreachable until the campaign hands the crown out, as it will the feathers. Calyrex is 70: catchable only after the Champion (cap 100)."
    },
    "gate_why_null": "same as Mew's: the trigger is unreadable. Its class_reason in data/structures.json says 'awakened with a carrot crop grown on site', which is a plausible reading of a closed-source block and is not a source. Nothing is authored on it.",
    "scheduled_as": "legendary_crown_cemetery",
@@ -542,6 +542,85 @@
    ],
    "what_a_player_gets": "after the Champion: a 90-block climb by levitation to a summit where Necrozma (Dusk Mane) appears at level 80 with IVs of 30 and four set moves, catchable at the post-Blue cap of 100. ONE per tower for the WHOLE server: the chain fills itself in once it fires. Before the Champion: the tower, the climb and the view.",
    "one_per_server": "DECIDED, the owner, 2026-10-02: kept as Cobbleverse designed it. Whoever gets there first gets it."
+  },
+  {
+   "id": "adopted_moltres_tower",
+   "template": "cobbleverse:legendary/moltres",
+   "legendary": "Moltres",
+   "rank": 7,
+   "status": "SITED, NOT SCHEDULED. The owner, 2026-10-02: 'Measure the Moltres site in the Craters before anything else is built around it.' Its encounter is a right-click altar wanting an ember_feather, which the Frostpeak research camp will hand out (data/frostpeak_camp.json item_economy).",
+   "source_archive": "COBBLEVERSE-DP-v31.zip",
+   "size": [
+    31,
+    64,
+    34
+   ],
+   "size_source": "data/structures.json footprint \"31x64x34\"",
+   "template_biome": "minecraft:nether_wastes",
+   "site": {
+    "region": "the_craters",
+    "containing_polygons": [
+     "the_craters"
+    ],
+    "cell": "F7",
+    "paint": "the Craters' basalt and blackstone cones (data/regions.json the_craters). The template is a Nether build; a raw paste reads no biome, and a fire bird's tower on a volcano is the fit the Nether never gave it.",
+    "why": "the flank of a Craters cone at y168, below a summit that reaches y299 within 150 blocks: the third of the birds' trio, with Articuno on Frostpeak and Zapdos on the western cliffs. 389 blocks from Blaine's gym (data/placements.json gym7_gym_building, (6181, 4982)), so it belongs to Blaine's country without standing in his town, and 431 from Groudon's chamber portal (6672, 5508). The least-disturbing 31x34 on the Craters' upper flanks at least 200 blocks from anything authored.",
+    "findable_by_eye": "a 64-block tower topping out at y231 on the cone's flank, 126 blocks above Blaine's town (y105): seen from the town and the approach to it."
+   },
+   "placement": {
+    "corner": [
+     6252,
+     5344
+    ],
+    "y": 168,
+    "centre": [
+     6267,
+     5361
+    ],
+    "rotation": "none",
+    "mirror": "none",
+    "anchor_mode": "corner",
+    "y_mode": "absolute",
+    "command": "/place template cobbleverse:legendary/moltres 6252 168 5344 none none",
+    "top_y": 231,
+    "ceiling_margin": 79
+   },
+   "ground": {
+    "min": 167,
+    "max": 171,
+    "median": 168.0,
+    "mode": 168,
+    "columns": 1054,
+    "mode_columns": 843,
+    "spread": 4,
+    "transposed_34x31": {
+     "min": 167,
+     "max": 170,
+     "note": "rotation 90 or 270 is as flat"
+    },
+    "measured_by": "tools/ground.py over x6252..6282, z5344..5377, rounded"
+   },
+   "displaces": {
+    "cut_blocks": 197,
+    "cut_columns": 165,
+    "fill_blocks": 46,
+    "fill_columns": 46,
+    "terrain": "seated on y168, the modal ground and the unique cheapest seat: 197 blocks shaved off 165 columns, 46 filled.",
+    "built_content": "nothing within 200 blocks; nearest portal 699 from the footprint edge."
+   },
+   "carries_into_the_world": {
+    "blocks": [
+     "lumymon:moltres_altar"
+    ],
+    "read_from": "docs/research/notes/legendary-catalogue-reopened.md section 2: the altar at template [14,1,16], two barrels of blaze powder, fire gems and glass panes",
+    "expected_result": "a right-click with an ember_feather spawns Moltres at 50-60 (LumyMon 0.6.6 class strings). No recipe or loot table makes the feather; the research camp is to hand it out."
+   },
+   "gate": "gym8_cleared, through the feather: the camp hands it out by dialogue as a reward for the researchers' work, at gym8_cleared, the first gate at which every 50/55/60 roll is catchable (cap 60). DECIDED, the owner, 2026-10-02.",
+   "does_not_travel_here": [
+    "the LumyMon Moltres radar and `/locate`",
+    "nothing else: spawn_entries 0, advancements []"
+   ],
+   "re_homed_from": "the Nether, where it generates on nether_wastes with an altar nobody can feed. Its Nether copies still generate; if the feather ever reaches a player who goes to the Nether, those altars answer too (one per copy). A structure-set override would close that (the same unproven experiment as Blaine's Nether copies)."
   }
  ],
  "refused": [
@@ -681,7 +760,7 @@
   "enable_command_block": "TRUE, a server requirement. tools/install_check.py reports anything else as a PROPERTY problem; server/config/server.properties.example carries it.",
   "necrozma_one_per_tower_server_wide": "KEPT: 'a one-per-server legendary is a better story on a server for friends - whoever gets there first gets it.'",
   "spectrier": "ONCE PER PLAYER, PERMANENTLY: 'a regrowing carrot crop with a per-player cooldown lost on restart is a farm, not a reward.' Designed in adopted_crown_cemetery.spectrier_once_per_player; NOT BUILT.",
-  "the_three_feathers": "worth building toward: Moltres in the Craters with Blaine, Articuno on Frostpeak, Zapdos on the western cliffs, with the feathers handed out by the Frostpeak research camp (data/frostpeak_camp.json item_economy).",
+  "the_three_feathers": "worth building toward: Moltres in the Craters with Blaine, Articuno on Frostpeak, Zapdos on the western cliffs, with the feathers handed out by the Frostpeak research camp (data/frostpeak_camp.json item_economy). The feathers are handed out THROUGH DIALOGUE, as a reward for work the researchers ask for - not a shop: 'earning one should mean helping them study.' Gate gym8_cleared, DECIDED. The Moltres site is measured: adopted_moltres_tower.",
   "eternatus": "STAYS OUT until a Galar Particle supply is authored."
  }
 }
