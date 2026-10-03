@@ -8,10 +8,11 @@ The chain, each link read from its own file rather than from the generator that 
   tools/progression_pack  emits the grant function, whose one command grants exactly that advancement, and the
                           advancement's only criterion is minecraft:impossible (nothing but the function sets it)
   data/dialogue.json      the conversations that invoke the transition are exactly set_by.invoked_by: since
-                          2026-10-03 dlg_main_relic_hall_release, the Compact binder at the relic ring (the owner:
+                          2026-10-03 dlg_main_relic_hall_release, the Compact binder in Hoopa's cradle (the owner:
                           "set it ourselves at the quest stage that ends the Rift crisis"), at ONE node
   data/relic_underground  geometry.release seats that binder, tools/relic_underground.npc_placements() emits it and
-                          tools/reapply.py step R18RU places it, in the carved hall on a block the hall builds
+                          tools/reapply.py step R18RU places it, in the carved cradle on its fifth stand (at the
+                          hall's relic ring until the cradle was carved, 2026-10-03)
   per player              the conversation, the stage field and the grant are all the talking player's own
 
 Not covered: that the transition fires in game (nobody has released Hoopa on a server), that `advancement grant`
@@ -253,25 +254,34 @@ def test_the_stage_the_release_needs_is_set_in_play_and_admits_the_player_to_the
 
 
 def _seat_problems(seat, spec):
+    # since 2026-10-03 the binder stands in the carved cradle (geometry.cradle.carve true), on a stand of
+    # composition.cradle; the route to every stand is tools/relic_underground_audit.py's (its "cradle" and "release")
+    import math
     import relic_underground as R
     geo = R.Geo(spec)
-    cells = R.composition(geo, spec)
+    assert geo.cradle, "the cradle is not carved: the binder has no cradle to stand in"
+    cells = R.cradle_composition(geo, spec)
     x, y, z = seat
     out = []
     r = geo.carved_range(x, z)
-    if r is None or not geo.in_hall(x, z) or not (geo.hfloor < y and y + 2 <= r[1]):
-        out.append("not in the hall's air")
-    if (x, y - 1, z) not in cells:
-        out.append("nothing the hall builds under it")
+    if r is None or not geo.in_cradle(x, z) or not (geo.cfloor < y and y + 2 <= r[1]):
+        out.append("not in the cradle's air")
+    if y - 1 != geo.cfloor:
+        out.append("not on the cradle's floor")
     if any((x, y + d, z) in cells for d in (0, 1, 2)):
-        out.append("a block the hall builds in its feet or head")
-    cx, cz = geo.hc
-    if ((x - cx) ** 2 + (z - cz) ** 2) ** 0.5 > 6:
-        out.append("outside the 6-block circle relic_underground_audit's route must reach")
+        out.append("a block the cradle builds in its feet or head")
+    st = spec["composition"]["cradle"]["stands"]
+    cx, cz = spec["geometry"]["cradle"]["centre"]
+    stands = [(int(round(cx + st["orbit"] * math.cos(math.radians(b)))), geo.cfloor + 1,
+               int(round(cz + st["orbit"] * math.sin(math.radians(b))))) for b in st["bearings"]]
+    if tuple(seat) not in stands:
+        out.append("not one of the cradle's stands")
+    elif len(stands) - 1 < 4:
+        out.append("takes one of Codex's four player stands")
     return out
 
 
-def test_the_releasing_npc_is_placed_by_a_step_in_the_carved_hall():
+def test_the_releasing_npc_is_placed_by_a_step_in_the_carved_cradle():
     import relic_underground as R
     spec = R.load()
     rel = spec["geometry"]["release"]
@@ -284,18 +294,22 @@ def test_the_releasing_npc_is_placed_by_a_step_in_the_carved_hall():
     step = src[src.index('("R18RU"'):]
     step = step[:step.index("out.append", 1)]
     assert '[("npc", n) for n in relic_underground.npc_placements()]' in step
-    # standing on a block the hall's own composition writes, two clear over its feet, where the route reaches
+    # on one of the cradle's stands, on its floor, two clear over its feet, leaving Codex's four for players
     assert _seat_problems(tuple(rel["at"]), spec) == []
 
 
-def test_the_seat_check_refuses_a_seat_in_the_plinth_and_one_off_the_platform():
-    # without this the check above could pass by checking nothing: the hall's centre is the plinth, and a seat
-    # twelve blocks out is off the six-block circle
+def test_the_seat_check_refuses_a_seat_on_a_pylon_and_one_off_the_stands():
+    # without this the check above could pass by checking nothing: a pylon (composition.cradle.pylons, bearing 45,
+    # orbit 6) fills its cell, the cradle's centre is the actor marker and no stand, and the hall is no longer the seat
     import relic_underground as R
     spec = R.load()
-    cx, cz = spec["geometry"]["hall"]["centre"]
-    assert "a block the hall builds in its feet or head" in _seat_problems((cx, 8, cz), spec)
-    assert _seat_problems((cx, 8, cz + 12), spec)
+    geo = R.Geo(spec)
+    cx, cz = spec["geometry"]["cradle"]["centre"]
+    px, pz = R._at(geo.cc, spec["composition"]["cradle"]["pylons"]["orbit"], 45)
+    assert "a block the cradle builds in its feet or head" in _seat_problems((px, 13, pz), spec)
+    assert "not one of the cradle's stands" in _seat_problems((cx, 13, cz), spec)
+    hx, hz = spec["geometry"]["hall"]["centre"]
+    assert "not in the cradle's air" in _seat_problems((hx, 8, hz + 6), spec)
 
 
 def test_the_flag_is_per_player_as_built():

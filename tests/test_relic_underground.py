@@ -152,7 +152,7 @@ def test_r18ru_places_both_guards_after_the_settlement_npcs():
     assert [(c, xyz, cls) for c, xyz, cls, _yaw in got] == [
         ("dlg_main_relic_hq_guard", tuple(hq["guard"]["at"]), "cobblers:npc_main_relic_hq_guard"),
         ("dlg_main_relic_hq_guard_inside", tuple(hq["inside_guard"]["at"]), "cobblers:npc_main_relic_hq_guard_inside"),
-        # the binder at the relic ring who releases Hoopa (geometry.release, 2026-10-03)
+        # the binder in the cradle who releases Hoopa (geometry.release, 2026-10-03)
         ("dlg_main_relic_hall_release", tuple(SPEC["geometry"]["release"]["at"]), "cobblers:npc_main_relic_hall_binder")]
 
 

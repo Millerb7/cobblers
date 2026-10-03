@@ -1704,7 +1704,7 @@
         },
         {
           "id": "unlock_league_after_rift_resolution",
-          "external_trigger_contract": "THIS transition is rift_crisis_resolved's setter (data/progression.json flags, set_by quest_transition): its first effect grants the flag's advancement to the releasing player, then the stage and League cursor move. It is invoked by exactly one node: dlg_main_relic_hall_release line release_001, after the choice 'Release Hoopa.' (the Compact binder at the relic ring in the carved hall, (3390, 8, 3268), data/relic_underground.json geometry.release; a minimal port of docs/story/NPCS_AND_RIFT_FINALE.md Scene 5 from the uncarved cradle, the owner's decision of 2026-10-03).",
+          "external_trigger_contract": "THIS transition is rift_crisis_resolved's setter (data/progression.json flags, set_by quest_transition): its first effect grants the flag's advancement to the releasing player, then the stage and League cursor move. It is invoked by exactly one node: dlg_main_relic_hall_release line release_001, after the choice 'Release Hoopa.' (the Compact binder in Hoopa's carved cradle, (3363, 13, 3312), moved from the hall's relic ring (3390, 8, 3268) on 2026-10-03, data/relic_underground.json geometry.release; a minimal port of docs/story/NPCS_AND_RIFT_FINALE.md Scene 5 from the uncarved cradle, the owner's decision of 2026-10-03).",
           "conditions": [
             {
               "kind": "progression_equals",
