@@ -86,3 +86,47 @@ field declares no zone of its own (section 4).
 2. **Victory Road walks through the field.** `data/route_paths.json` `victory_road` crosses the lip at the south-west
    tip and runs north-east across the western lobe and up the stem (white line). Aggressive Megas beside the critical
    path change Victory Road. Section 4 keeps every den off the walked line; whether the owner wants that is his call.
+
+## 3. What is known, with sources
+
+**Can a wild Pokemon here be aggressive toward players? Yes, by configuration, with one open gate.**
+
+| Question | Answer | Source |
+| --- | --- | --- |
+| What makes a wild Mega aggressive | Fight or Flight 0.11.0 (the jar `modpack/manifest/overlay.json` pins, SHA-1 `d3031a63`, read 2026-10-03): any aspect in `always_aggro_aspects` makes a wild Pokemon aggressive; a player's own is excluded (`!isPlayerOwned()`) | `docs/research/notes/wild-mega-pokemon.md:118-138` (FoF source); `fightorflight.json5:97-104` |
+| Is it configured | Yes: `always_aggro_aspects` = `alpha, mega, mega_x, mega_y, mega_z` on the server since 2026-09-27 | `server/config/mods/fightorflight.json5:98-104`; `SOUTHERN_RIFT_MEGA.md:672-674` |
+| Does it pursue and hit the player | FoF's unprovoked attack: `do_pokemon_attack_unprovoked: true`, level >= `minimum_attack_unprovoked_level` 25 | `fightorflight.json5:5`, `:17` |
+| **In daylight, outdoors** | **Probably not.** `light_dependent_unprovoked_attack: true`: FoF's comment says aggressive Pokemon "will only attack unprovoked in the dark area"; the note reads the gate as applying to `always_aggro` too. In the installed jar both FoF classes that read the key call intermediary `method_5718` (a brightness read). The Rift's thunder is sounds and bolts, not weather (`data/rift_storm.json` `note`), so the sky is not darkened | `fightorflight.json5:6-7`; `wild-mega-pokemon.md:133-136` (cut-off ASSUMED ~light 12); jar read |
+| Forced battle | When a Mega and a player's sent-out Pokemon trade a hit a battle starts (`force_wild_battle_on_pokemon_hurt: true`); a Mega hitting the player only hurts (`force_wild_battle_on_player_hurt: false`) | `fightorflight.json5:231`, `:235` |
+| A command that starts a wild battle | **None in Cobblemon 1.8.0.** Its command classes (jar `ed0bbc67`, read 2026-10-03) include `StopBattleCommand` and `SpectateBattleCommand`, nothing that starts one. `RunMolangCommand` exists; whether MoLang can start a battle is unknown and is not used | jar read |
+| The 20-levels-above exemption | Not a FoF key | `SOUTHERN_RIFT_MEGA.md:677-680` (M-3b) |
+
+So the field is aggressive **at night** by today's config, and **by day only if** either the light gate does not apply
+to `always_aggro` aspects (unknown) or the owner turns `light_dependent_unprovoked_attack` off, a documented key whose
+effect is GLOBAL (every aggressive wild Pokemon on the map attacks by day). Neither is assumed:
+**`experiments/EXP-054-mega-field-hostility/README.md`** settles it in one staging session (noon, midnight, the aspect
+string, the forced battle, one timed win).
+
+**What the keeper already does (read in `tools/gulch_mine.py`, `keeper_files`, lines 1329-1531).**
+
+- Holds one Mega per den: spawned at the den's anchor through the macro `megas/spawn_at` (`spawnpokemonat ... <aspect>
+  uncatchable level=<L>`, EXP-046), tagged `cobblers.gm`, `cobblers.gm.<den>`, `cobblers.gm.farm`,
+  `PersistenceRequired`; a duplicate is killed.
+- Respawns: a per-den clock (`gm.gone`) starts the first time the Mega is seen gone on two passes in a row; it returns
+  `respawn_ticks` later and only with nobody within `spawn_clear` (24) of the anchor. Nothing a player repeats moves it.
+- Levels: a den's own `level`, else its farm tier's (`farm_tiers`), so a whole field can be re-levelled in one line.
+- Leash: every 40 ticks a Mega further than `leash` from its anchor is `tp`'d back (while a player is in the farm's
+  approach box). Driver: a farm's keeper runs every 100 ticks only while a player is inside its `approach` box.
+- Drop: a battle win (the `battle_fainted` callback, matched by the Pokemon UUID stored at bind) or a kill outside a
+  battle (the attacker watch) rolls the den's `drop_percent` once per Mega; a win drops one raw
+  `mega_showdown:mega_stone` at the victor's feet, owner-only. The callback rolls for the FIRST player in the battle.
+- Cost: `megas/watch` runs every tick as each loaded farm Mega; the keeper and the leash are one selector per farm per
+  pass. More dens means more `watch` runs only where Megas are loaded.
+
+**The reward and where it is spent: already designed, nothing new needed.** The raw `mega_showdown:mega_stone`
+(`gulch_mine.json` `drops`) is spent at the **Cutters' workshop in the Cutters' Gulch**, the town north-east of the
+field: three bench masters turn 2 raw stones and a diamond into a keyed Mega stone, unlimited, 60 stones offered
+(`cutters.offer`, `cutters.benches`; `SOUTHERN_RIFT_MEGA.md:664-667`). No CobbleDollars, token or trader is added: the
+section-13 design is a material chain, and `docs/vision/GAME_VISION.md` "Team building as the central skill" wants
+rewards placed, not a shop dump. The Mining Town's Exchange (`data/traders.json`) sells evolution stones and is not
+part of this.
