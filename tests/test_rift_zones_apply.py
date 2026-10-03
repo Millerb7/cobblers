@@ -365,7 +365,14 @@ def start_heading(gd):
     road's y111 at (3552, 5311)); at the wilds slip, eight out, on a bump that can be jumped down from and not
     climbed. On the surveyed line they are the places they were before the snap -- on the road, on the ground
     the gate was sited to join -- which is what this walk asks about: can a player get from there, through the
-    gatehouse, to there. Read from the data, not from the generator."""
+    gatehouse, to there. Read from the data, not from the generator.
+
+    EXCEPT where the record declares its own `axis` (G5): there the surveyed line is the traced mask's nearest
+    edge, 90 degrees off the way through, and the player arrives along the declared axis (north up
+    entrance_to_e4, axis.why). Starting on the surveyed line there put both walks' ends beside the gatehouse,
+    east and west of league_gate, and no walk came from the south at all (qa review of a450a05, 2026-10-03)."""
+    if gd.get("axis"):
+        return gd["axis"]["outward"]
     return gd.get("surveyed_outward") or gd["outward"]
 
 

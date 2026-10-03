@@ -175,7 +175,8 @@ like the cavern.
 
 ## 6. The guards
 
-At each guard site the only walkable way in is a one-wide walkway through a gatehouse in the wall, and a Cobblemon
+At each guard site the only walkable way in is a six-wide walkway through a gatehouse in the wall (one wide until
+2026-10-03; the owner: "Scenery that reads as a gate matters more than a one-block saving"), and a Cobblemon
 NPC stands in it.
 
 ```
@@ -188,8 +189,9 @@ section along the walkway, outside on the left      plan
   O  obsidian   x  the exit box   the passed player arrives 3 blocks in, facing in
 ```
 
-- **It blocks everyone physically.** The walkway is one wide between obsidian, roofed at y+2 so nothing jumps over
-  the guard, and closed by a two-high barrier column directly behind the guard. The barrier is what actually stops a
+- **It blocks everyone physically.** The walkway is six wide between obsidian, on a cardinal axis, roofed at y+2 so nothing jumps
+  over the guard, framed in blackstone at each mouth, and closed by a two-high barrier across all six lanes directly
+  behind the guard (data/rift_zones.json gatehouse.width_why). The barrier is what actually stops a
   player; it is invisible and unbreakable in survival, so the guard reads as what blocks the way.
 - **Talking is passing.** A shared entity cannot step aside for one player, so a qualified player talks to the guard
   and the dialogue sets their pass and sends them through with
