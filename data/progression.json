@@ -2439,6 +2439,206 @@
         "g003"
       ],
       "why": "the dialogue cursor of Mireille Sato (dlg_station_shrine_keeper)."
+    },
+    {
+      "id": "quest.evt_half_house.started",
+      "quest_id": "evt_half_house",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Tobiah Rusk (data/southern_residents.json half_house); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_half_house.heard_nell",
+      "quest_id": "evt_half_house",
+      "field": "heard_nell",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has heard who lived in the other half (dlg_half_house n003)."
+    },
+    {
+      "id": "quest.evt_half_house.promised",
+      "quest_id": "evt_half_house",
+      "field": "promised",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player told Tobiah 'I'll look for her.' (dlg_half_house ask); changes his options, gives nothing."
+    },
+    {
+      "id": "quest.evt_half_house.dialogue_cursor",
+      "quest_id": "evt_half_house",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "t001",
+      "allowed_values": [
+        "t001",
+        "t002",
+        "hub",
+        "w001",
+        "w002",
+        "w003",
+        "n001",
+        "n002",
+        "n003",
+        "s001",
+        "s002",
+        "ask",
+        "p001",
+        "p002",
+        "h001"
+      ],
+      "why": "the dialogue cursor of Tobiah Rusk's conversation (dlg_half_house)."
+    },
+    {
+      "id": "quest.evt_surveyor_line.started",
+      "quest_id": "evt_surveyor_line",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Corran Vey (data/southern_residents.json surveyor_line); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_surveyor_line.asked",
+      "quest_id": "evt_surveyor_line",
+      "field": "asked",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Corran has asked for a compass made here (dlg_surveyor_line k003)."
+    },
+    {
+      "id": "quest.evt_surveyor_line.compass_given",
+      "quest_id": "evt_surveyor_line",
+      "field": "compass_given",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player gave Corran a compass from the main hand (give_compass, which consumes it)."
+    },
+    {
+      "id": "quest.evt_surveyor_line.reward_claimed",
+      "quest_id": "evt_surveyor_line",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for the Everstone (data/rewards.json surveyor_everstone)."
+    },
+    {
+      "id": "quest.evt_surveyor_line.dialogue_cursor",
+      "quest_id": "evt_surveyor_line",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "c001",
+      "allowed_values": [
+        "c001",
+        "c002",
+        "c003",
+        "hub",
+        "l001",
+        "k001",
+        "k002",
+        "k003",
+        "g001",
+        "g002",
+        "g003",
+        "g004",
+        "done01"
+      ],
+      "why": "the dialogue cursor of Corran Vey's conversation (dlg_surveyor_line)."
+    },
+    {
+      "id": "quest.evt_prospector_claim.started",
+      "quest_id": "evt_prospector_claim",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Bettany Oake (data/southern_residents.json prospector_camp); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_prospector_claim.told",
+      "quest_id": "evt_prospector_claim",
+      "field": "told",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Bettany has told the player the way to Claim Number Four (dlg_prospector_claim c002)."
+    },
+    {
+      "id": "quest.evt_prospector_claim.dialogue_cursor",
+      "quest_id": "evt_prospector_claim",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "b001",
+      "allowed_values": [
+        "b001",
+        "b002",
+        "hub",
+        "k001",
+        "k002",
+        "c001",
+        "c002",
+        "c003",
+        "f001"
+      ],
+      "why": "the dialogue cursor of Bettany Oake's conversation (dlg_prospector_claim)."
+    },
+    {
+      "id": "quest.evt_gate_watcher.started",
+      "quest_id": "evt_gate_watcher",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Hale Brannock (data/southern_residents.json gate_watcher); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_gate_watcher.shown",
+      "quest_id": "evt_gate_watcher",
+      "field": "shown",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player, holding gym8_cleared, chose 'Show him your Earth Badge.' (show_badge)."
+    },
+    {
+      "id": "quest.evt_gate_watcher.reward_claimed",
+      "quest_id": "evt_gate_watcher",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for Burl's Leftovers (data/rewards.json gate_watcher_leftovers)."
+    },
+    {
+      "id": "quest.evt_gate_watcher.dialogue_cursor",
+      "quest_id": "evt_gate_watcher",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "h001",
+      "allowed_values": [
+        "h001",
+        "h002",
+        "hub",
+        "y001",
+        "y002",
+        "b001",
+        "s001",
+        "s002",
+        "s003",
+        "s004",
+        "done01"
+      ],
+      "why": "the dialogue cursor of Hale Brannock's conversation (dlg_gate_watcher)."
     }
   ],
   "gym_markers": {

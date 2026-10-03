@@ -1539,6 +1539,91 @@
       "held": "HELD: every route that gives an item requires the player tag cobblers_station_issuing (the crown cobblers_station_issuing_crown), which the station pack's tick function removes from every player while data/research_station.json economy.issuing is false - the owner's hold until EXP-048 shows an altar answering. The transitions check the tag server-side, not only the options' visibility. No item is given today.",
       "why": "The ruby and sapphire dews, for a player who has met Mesprit, Azelf and Uxie: they wake this station's own Latias and Latios altars. Held twice: the dews also need cobblers_station_issuing_eon, added only while economy.eon_issuing is true, so the switch thrown for the feathers does not issue them (data/research_station.json eon_issuing_why).",
       "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/research_station.py seats it on, checked by tools/research_station_audit.py"
+    },
+    {
+      "id": "surveyor_everstone",
+      "kind": "npc_grant",
+      "place": "Corran Vey's survey camp above Sunset Isle's north beach (data/southern_residents.json surveyor_line), beside the theodolite",
+      "npc_at": [
+        1741,
+        69,
+        6799
+      ],
+      "quest": "evt_surveyor_line",
+      "contents": [
+        {
+          "item": "cobblemon:everstone",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/everstone.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "why": "Corran's thanks for a compass made here: his datum stone, an Everstone, the one thing on his line that never changed. One per player, by grant_reward_once. The verification string is data/rewards.json r1_old_mine_stope's, copied, not re-checked against a jar here. An Everstone is already a Route 1 find; this is a second, not a first source.",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/southern_residents.py seats him on, and it refuses to build when they differ"
+    },
+    {
+      "id": "prospector_claim",
+      "kind": "cache",
+      "place": "Bettany Oake's Claim Number Four on the Arrow Creeks crest (data/southern_residents.json prospector_camp): the barrel set in the ground at the east foot of her cairn",
+      "contents": [
+        {
+          "item": "cobblemon:metal_coat",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/metal_coat.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:hard_stone",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/hard_stone.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:heavy_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/heavy_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In Bettany Oake's barrel at the foot of the cairn, wrapped in a flannel shirt: the polished sheet of Steelix hide she told you about (a Metal Coat), a Hard Stone, and three Heavy Balls.",
+      "why": "data/southern_residents.json prospector_camp: what an old prospector put by at her best claim. Late-game, as the place is (the Arrow Creeks are tier 8): a Metal Coat (Onix and Scyther evolve by trade holding one; held, it powers Steel moves), a Hard Stone and three Heavy Balls. Verification strings copied from data/rewards.json dune_ruin_strongroom (metal_coat) and r1_old_mine (hard_stone, heavy_ball), not re-checked against a jar here.",
+      "built_by": "tools/southern_residents.py (the barrel, in cobblers_southern_residents' prospector_camp build, step R9SR)",
+      "trigger": {
+        "min": [
+          2251,
+          150,
+          5639
+        ],
+        "max": [
+          2253,
+          151,
+          5641
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          2252,
+          149,
+          5640
+        ]
+      }
+    },
+    {
+      "id": "gate_watcher_leftovers",
+      "kind": "npc_grant",
+      "place": "Hale Brannock's bench on the plain east of Holdfast (data/southern_residents.json gate_watcher), in front of the bench",
+      "npc_at": [
+        4135,
+        110,
+        6336
+      ],
+      "quest": "evt_gate_watcher",
+      "contents": [
+        {
+          "item": "cobblemon:leftovers",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/leftovers.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "why": "Hale's thanks for being shown the eighth badge he never got: his Snorlax Burl's Leftovers, so that they go through the gate. After gym 8, on the way to the League, when a held item that heals every turn matters. One per player, by grant_reward_once. The verification string is data/rewards.json old_orchard_cellar's, copied, not re-checked against a jar here; Leftovers are also in the Old Orchard's cellar, so this is a second source.",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/southern_residents.py seats him on, and it refuses to build when they differ"
     }
   ]
 }

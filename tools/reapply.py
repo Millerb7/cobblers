@@ -123,6 +123,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-02: Codex's ten named residents (tools/resident_encounters.py, data/resident_encounters.json):
                 # a keeper loop and respawn clock hold them, so world-local; dressed and the ungated ones summoned by R18R
                 "cobblers_residents",
+                # 2026-10-03: the southern residents (tools/southern_residents.py, data/southern_residents.json): six
+                # sites with a character in each, built by R9SR; two named Pokemon on the residents' keeper, so
+                # world-local below; summoned and the NPCs R9F does not place stood by R18SR
+                "cobblers_southern_residents",
                 # 2026-10-02: the relic site underground (tools/relic_underground.py, data/relic_underground.json): the
                 # old surface build taken off, then the hall, gallery and passage carved, by R9RU; its zone check acts on
                 # its own (an advancement), so world-local below
@@ -275,7 +279,9 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                # load in the global folder, where the live world would run it too
                "cobblers_residents", "cobblers_relic_underground",
                # 2026-10-03: species forms for the starters; global would change the live world's species too
-               "cobblers_mythical_starters")
+               "cobblers_mythical_starters",
+               # 2026-10-03: the southern residents' keeper spawns its two Pokemon the same way
+               "cobblers_southern_residents")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -574,6 +580,9 @@ def prepare_jobs(a):
     # the data and the heightmap and fails the prepare on a broken pack
     add("resident_encounters", "resident_encounters.py", *src)
     add("resident_encounters_audit", "resident_encounters_audit.py", *src)
+    # the southern residents (2026-10-03): the generator fails closed on its own siting rules and on a record the
+    # heightmap disagrees with; its independent audit is not written yet (data/southern_residents.json status)
+    add("southern_residents", "southern_residents.py", *src)
     add("drovers_hollow:build", "drovers_hollow.py", "build", *src)
     add("drovers_hollow_audit", "drovers_hollow_audit.py", *src)
     # the three wayside places of 2026-10-03. Each generator refuses a spawn-condition palette and any block outside its
@@ -1494,6 +1503,12 @@ def steps(with_spawns=False):
     import survey_benchmark
     out.append(("R9BM", "the Surveyors' Benchmark in the Rift Foot: pillar, hut and sighting stakes "
                         "(data/survey_benchmark.json)", survey_benchmark.placement_steps()))
+    # the southern residents' sites (2026-10-03, tools/southern_residents.py): a pure block pass per site, held in a
+    # forceload of the site's box, with the other block passes BEFORE R9E (none sits on a Habitat Block; the order
+    # keeps a later block pass from writing over a nest). Their NPCs stand on these floors: R9F and R18SR, after
+    import southern_residents
+    out.append(("R9SR", "the southern residents' sites (data/southern_residents.json)",
+                southern_residents.placement_steps()))
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
@@ -1620,6 +1635,11 @@ def steps(with_spawns=False):
     import resident_encounters
     out.append(("R18R", "the ten named residents (data/resident_encounters.json)",
                 resident_encounters.placement_steps()))
+    # the southern residents (2026-10-03): each ungated Pokemon summoned over RCON (guarded on tag AND species) and
+    # bound inside a forceload of its site, the gated ones left to the keeper; then the NPCs who give nothing through
+    # grant_reward_once (R9F places the others), turned to their yaw. After R17N, like the residents above
+    out.append(("R18SR", "the southern residents: the ungated Pokemon and the NPCs R9F does not place (data/southern_residents.json)",
+                southern_residents.entity_steps()))
     # the Drovers' Hollow's drover (2026-10-02): after R17N, on the path R9HF wrote, his class loaded at boot from
     # cobblers_dialogue
     out.append(("R18HF", "the Drovers' Hollow's drover, Owen Cray (data/drovers_hollow.json npc)",
