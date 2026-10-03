@@ -48,7 +48,9 @@
       "minecraft:smooth_stone", "minecraft:polished_andesite", "minecraft:chain", "minecraft:iron_bars",
       "minecraft:oak_planks", "minecraft:stripped_oak_log", "minecraft:oak_stairs", "minecraft:oak_slab", "minecraft:oak_door",
       "minecraft:campfire", "minecraft:bookshelf", "minecraft:flower_pot", "minecraft:rooted_dirt", "minecraft:gravel",
-      "minecraft:oak_wall_sign"
+      "minecraft:oak_wall_sign",
+      "minecraft:white_wool", "minecraft:red_wool", "minecraft:cartography_table", "minecraft:lectern",
+      "minecraft:chiseled_stone_bricks", "minecraft:stone_bricks"
     ]
   },
   "residents": [
@@ -279,6 +281,59 @@
       },
       "records": {"quest": "evt_half_house", "conversation": "dlg_half_house"},
       "bbox": [2522, 7408, 2529, 7536]
+    },
+    {
+      "id": "surveyor_line",
+      "name": "Corran Vey's survey line",
+      "kind": "a fetch with a reason: something the player makes, for a man whose instrument stopped working",
+      "cell": "G2",
+      "subregion": "sunset_west",
+      "situation": "On the slope above Sunset Isle's north beach is a surveyor's camp: a canvas tent, a theodolite on its tripod, a cartography table, a field book on a lectern, a cut datum stone with his initials. From it a line of red-and-white ranging poles runs dead straight, one every eight paces, bearing thirty degrees east of north, down the meadow, across the sand, and on into the sea, the poles standing in the water as far as it is shallow enough to set one. Corran Vey has chained this line four hundred miles from somewhere else, and it walks into the strait. His compass came with him and will not settle. He wants one made here: a compass is four iron and a redstone at any crafting table, and he takes it, takes a bearing, and gives the player his datum stone, an Everstone, because nothing ever changed it and everything around it did.",
+      "story_rule": "Corran says what a surveyor would see (the land does not match his plan; his old compass will not settle) and believes a compass made here will. Nothing in Minecraft makes his old compass spin; he says it does, and the dialogue never claims more than that the new one points the same way twice. Sunset Isle west is tier 5 (sunset_west), reached by the Sunset strait ferry (data/ferry_docks.json sunset_isle_landing)",
+      "site": {
+        "centre": [1740, 6800],
+        "measured": "2026-10-03 from tools/ground.py: y68 at the camp, the meadow falling about one block in four to the north-east, where the beach meets the strait about fifty blocks out along the line (tools/water_mask.py sea, level 62). Cell G2 held only two authored things before (a Habitat Block and a themed sapling, both more than 96 away). The nearest route path is about 1,500 blocks away; the nearest x/z authored in another data file is reported by tools/southern_residents.py --report."
+      },
+      "pieces": [
+        {"kind": "posts", "name": "the ranging poles", "from": [0, 0], "bearing": 30, "spacing": 8, "count": 14, "skip": 1, "max_depth": 6,
+         "dry": ["minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=false]", "minecraft:red_wool", "minecraft:white_wool", "minecraft:red_wool"],
+         "wet_shaft": "minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=true]",
+         "wet_top": ["minecraft:red_wool", "minecraft:white_wool", "minecraft:red_wool"]},
+        {"kind": "ground_blocks", "name": "the tent", "at": [-4, 2], "blocks": [
+          [-1, 1, -2, "minecraft:white_wool"], [1, 1, -2, "minecraft:white_wool"], [0, 2, -2, "minecraft:white_wool"],
+          [-1, 1, -1, "minecraft:white_wool"], [1, 1, -1, "minecraft:white_wool"], [0, 2, -1, "minecraft:white_wool"],
+          [-1, 1, 0, "minecraft:white_wool"], [1, 1, 0, "minecraft:white_wool"], [0, 2, 0, "minecraft:white_wool"],
+          [-1, 1, 1, "minecraft:white_wool"], [1, 1, 1, "minecraft:white_wool"], [0, 2, 1, "minecraft:white_wool"],
+          [0, 1, -2, "minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=false]"]
+         ],
+         "hung": [[0, 1, 0, "minecraft:red_carpet"], [0, 1, 1, "minecraft:red_carpet"]]},
+        {"kind": "ground_blocks", "name": "the theodolite", "at": [2, -2], "blocks": [
+          [0, 1, 0, "minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=false]"],
+          [0, 2, 0, "minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=false]"]
+         ],
+         "hung": [[0, 3, 0, "minecraft:lantern[hanging=false,waterlogged=false]"]]},
+        {"kind": "ground_blocks", "name": "the work table", "at": [3, 1], "blocks": [
+          [0, 1, 0, "minecraft:cartography_table"],
+          [0, 1, 1, "minecraft:lectern[facing=west,has_book=false,powered=false]"],
+          [-1, 1, 3, "minecraft:barrel[facing=up,open=false]"], [0, 1, 3, "minecraft:barrel[facing=north,open=false]"],
+          [-3, 1, 4, "minecraft:campfire[facing=north,lit=true,signal_fire=false,waterlogged=false]"]
+         ]},
+        {"kind": "ground_blocks", "name": "the datum stone", "at": [0, 4], "blocks": [
+          [0, 0, 0, "minecraft:stone_bricks"],
+          [0, 1, 0, "minecraft:chiseled_stone_bricks"],
+          [0, 1, 1, {"sign": {"wood": "spruce", "rotation": 0, "lines": ["DATUM", "C. VEY", "every line", "starts here"]}}]
+         ]}
+      ],
+      "npc": {
+        "name": "Corran Vey",
+        "at": [1, -1, "ground"],
+        "feet": [1741, 69, 6799],
+        "yaw": -150.0,
+        "placed_by": "R9F",
+        "why": "beside his theodolite, facing along his line (bearing 30, yaw -150). He gives the Everstone through grant_reward_once, so data/rewards.json surveyor_everstone (npc_grant) records him and R9F places him; this tool refuses to build when that record's npc_at is not this spot"
+      },
+      "records": {"quest": "evt_surveyor_line", "conversation": "dlg_surveyor_line", "reward": "surveyor_everstone"},
+      "bbox": [1735, 6703, 1796, 6805]
     }
   ]
 }
