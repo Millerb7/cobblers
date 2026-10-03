@@ -11116,6 +11116,730 @@
           "next": "hub"
         }
       ]
+    },
+    {
+      "id": "dlg_half_house",
+      "quest_id": "evt_half_house",
+      "npc_id": "npc_half_house",
+      "source": "data/southern_residents.json half_house; the owner's brief of 2026-10-03 (data/southern_residents.json request)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_half_house.dialogue_cursor",
+        "initial_node": "t001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_half_house.started",
+            "value": true
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_half_house.started",
+            "value": false
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ],
+          "node": "t001"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "t001",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "Mind the edge. There's no floor past the table. There used to be.",
+          "next": "t002"
+        },
+        {
+          "id": "t002",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "Tobiah Rusk. This was a whole house once, nine paces by nine. You're standing in the five that stayed.",
+          "next": "hub"
+        },
+        {
+          "id": "hub",
+          "kind": "choice",
+          "speaker": "tobiah",
+          "text": "Sit, if you like. That chair's free. It's always free.",
+          "responses": [
+            {
+              "id": "r_what",
+              "text": "What happened to the house?",
+              "next": "w001"
+            },
+            {
+              "id": "r_who",
+              "text": "Who lived in the other half?",
+              "next": "n001"
+            },
+            {
+              "id": "r_stay",
+              "text": "Why do you stay?",
+              "next": "s001"
+            },
+            {
+              "id": "r_bye",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ],
+              "next": "hub"
+            }
+          ]
+        },
+        {
+          "id": "w001",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "One night the light went white. Not lightning. Lightning comes and goes. This came and stood there, along one line, about as long as it takes to say so.",
+          "next": "w002"
+        },
+        {
+          "id": "w002",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "Then it stopped, and the house stopped at the table. Look at the boards. Not broken. Cut. Like a loaf.",
+          "next": "w003"
+        },
+        {
+          "id": "w003",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "And the ground past the line isn't our ground. Ours had a well and a plum tree. That's somebody else's meadow. The line goes right on across it, both ways, as far as you care to walk.",
+          "next": "hub"
+        },
+        {
+          "id": "n001",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "Nell. My wife. She was in the kitchen, and the kitchen was on that side.",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "I don't believe she's dead. A cut that clean doesn't kill anybody. It moves them.",
+          "next": "n003"
+        },
+        {
+          "id": "n003",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "So somewhere there's half a house with a kettle and a stove and no chairs, and Nell in it, cross with me for having the chairs.",
+          "next": "hub",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "hear_nell"
+            }
+          ]
+        },
+        {
+          "id": "s001",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "Where would I go? If she ever finds her way back, she'll come to the line. This is the line.",
+          "next": "s002"
+        },
+        {
+          "id": "s002",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "I set her place every night. Cup on the table, chair pulled out. It's a small thing. It's the thing I can do.",
+          "next": "ask"
+        },
+        {
+          "id": "ask",
+          "kind": "choice",
+          "speaker": "tobiah",
+          "text": "You get about, you trainers. If you ever come on half a house with a kettle in it and no chairs, would you tell her?",
+          "responses": [
+            {
+              "id": "r_promise",
+              "text": "I'll look for her.",
+              "visible_when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_half_house.promised",
+                "value": false
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "promise"
+                }
+              ],
+              "next": "p001"
+            },
+            {
+              "id": "r_honest",
+              "text": "I can't promise that.",
+              "visible_when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_half_house.promised",
+                "value": false
+              },
+              "next": "h001"
+            },
+            {
+              "id": "r_still",
+              "text": "I'm still looking.",
+              "visible_when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_half_house.promised",
+                "value": true
+              },
+              "next": "p002"
+            }
+          ]
+        },
+        {
+          "id": "p001",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "Tell her I kept the chairs. She'll know what it means.",
+          "next": "p002"
+        },
+        {
+          "id": "p002",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "Thank you. Her place is set. Mind the edge on your way out.",
+          "next": "hub"
+        },
+        {
+          "id": "h001",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "No. Course not. Nobody could. Sit a minute anyway. The chair's free.",
+          "next": "hub"
+        }
+      ],
+      "speakers": {
+        "tobiah": "Tobiah Rusk"
+      }
+    },
+    {
+      "id": "dlg_surveyor_line",
+      "quest_id": "evt_surveyor_line",
+      "npc_id": "npc_surveyor_line",
+      "source": "data/southern_residents.json surveyor_line; the owner's brief of 2026-10-03 (data/southern_residents.json request)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_surveyor_line.dialogue_cursor",
+        "initial_node": "c001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_surveyor_line.started",
+            "value": true
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_surveyor_line.started",
+            "value": false
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ],
+          "node": "c001"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "c001",
+          "kind": "line",
+          "speaker": "corran",
+          "text": "Stand still. No, there. You're on my line.",
+          "next": "c002"
+        },
+        {
+          "id": "c002",
+          "kind": "line",
+          "speaker": "corran",
+          "text": "Corran Vey, Survey of the Meridian. I've chained this line four hundred miles, straight as a stretched string, a pole every eight paces.",
+          "next": "c003"
+        },
+        {
+          "id": "c003",
+          "kind": "line",
+          "speaker": "corran",
+          "text": "And then it walks into the sea. My chain says there's ground out there. The sea is of another opinion.",
+          "next": "hub"
+        },
+        {
+          "id": "hub",
+          "kind": "choice",
+          "speaker": "corran",
+          "text": "Bearing thirty. Eight paces a pole. What is it?",
+          "responses": [
+            {
+              "id": "r_line",
+              "text": "What's past the water?",
+              "next": "l001"
+            },
+            {
+              "id": "r_lost",
+              "text": "You look lost.",
+              "next": "k001"
+            },
+            {
+              "id": "r_give",
+              "text": "Give him the compass.",
+              "visible_when": {
+                "kind": "held_item",
+                "hand": "main",
+                "item": "minecraft:compass",
+                "item_predicate": "minecraft:compass"
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "give_compass"
+                }
+              ],
+              "next": "g001"
+            },
+            {
+              "id": "r_bye",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ],
+              "next": "hub"
+            }
+          ]
+        },
+        {
+          "id": "l001",
+          "kind": "line",
+          "speaker": "corran",
+          "text": "On my plan: a farm called Hollins, a ford, the Kestrel road. Out there: fish. I've rowed the bearing. Water to the mainland, and the mainland doesn't match my plan either.",
+          "next": "hub"
+        },
+        {
+          "id": "k001",
+          "kind": "line",
+          "speaker": "corran",
+          "text": "Lost? I am precisely located. It's the world that has wandered.",
+          "next": "k002"
+        },
+        {
+          "id": "k002",
+          "kind": "line",
+          "speaker": "corran",
+          "text": "Here is the trouble. My compass came with me, from wherever I was. Now it won't settle. It turns and turns, like it's looking for a north that isn't here.",
+          "next": "k003"
+        },
+        {
+          "id": "k003",
+          "kind": "line",
+          "speaker": "corran",
+          "text": "Bring me a new one. Four iron and a redstone, made here, from iron dug here. A compass made in a place knows where that place is. That one I'd trust.",
+          "next": "hub",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "ask"
+            }
+          ]
+        },
+        {
+          "id": "g001",
+          "kind": "line",
+          "speaker": "corran",
+          "text": "Give it here. Hold the lamp. Look at that. Steady as a church.",
+          "next": "g002"
+        },
+        {
+          "id": "g002",
+          "kind": "line",
+          "speaker": "corran",
+          "text": "It points that way. Not at anything I know. But it points the same way twice, and that is all a surveyor ever asks of anything.",
+          "next": "g003"
+        },
+        {
+          "id": "g003",
+          "kind": "line",
+          "speaker": "corran",
+          "text": "This is yours. My datum: the stone every measurement on this line was taken from. An Everstone. Nothing changes it. I set it in that block the morning I began.",
+          "next": "g004",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant_reward"
+            }
+          ]
+        },
+        {
+          "id": "g004",
+          "kind": "line",
+          "speaker": "corran",
+          "text": "It never moved an inch. Everything round it did. I'll start a new line from here, with a stone that knows less and a compass that knows more.",
+          "next": "done01"
+        },
+        {
+          "id": "done01",
+          "kind": "line",
+          "speaker": "corran",
+          "text": "New line, bearing thirty. First pole's in. Mind it on your way past.",
+          "next": "done01"
+        }
+      ],
+      "speakers": {
+        "corran": "Corran Vey"
+      }
+    },
+    {
+      "id": "dlg_prospector_claim",
+      "quest_id": "evt_prospector_claim",
+      "npc_id": "npc_prospector_claim",
+      "source": "data/southern_residents.json prospector_camp; the owner's brief of 2026-10-03 (data/southern_residents.json request)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_prospector_claim.dialogue_cursor",
+        "initial_node": "b001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_prospector_claim.started",
+            "value": true
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_prospector_claim.started",
+            "value": false
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ],
+          "node": "b001"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "b001",
+          "kind": "line",
+          "speaker": "bettany",
+          "text": "Sit by the fire, if your legs still bend. Mine don't. Not up hills.",
+          "next": "b002"
+        },
+        {
+          "id": "b002",
+          "kind": "line",
+          "speaker": "bettany",
+          "text": "Bettany Oake. Forty years I panned these creeks. Gold, a bit. Hard stones. Once a sheet of something that had been a Steelix's hide, polished up like a kettle.",
+          "next": "hub"
+        },
+        {
+          "id": "hub",
+          "kind": "choice",
+          "speaker": "bettany",
+          "text": "Well? You didn't walk all the way out here for my tea.",
+          "responses": [
+            {
+              "id": "r_creeks",
+              "text": "What happened to the creeks?",
+              "next": "k001"
+            },
+            {
+              "id": "r_claim",
+              "text": "Do you still have a claim?",
+              "next": "c001"
+            },
+            {
+              "id": "r_found",
+              "text": "I found your cairn.",
+              "visible_when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_prospector_claim.told",
+                "value": true
+              },
+              "next": "f001"
+            },
+            {
+              "id": "r_bye",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ],
+              "next": "hub"
+            }
+          ]
+        },
+        {
+          "id": "k001",
+          "kind": "line",
+          "speaker": "bettany",
+          "text": "Moved. One summer they ran where they'd always run. Next spring half of them came down the other side of the hill like they'd never heard of me.",
+          "next": "k002"
+        },
+        {
+          "id": "k002",
+          "kind": "line",
+          "speaker": "bettany",
+          "text": "A creek doesn't do that. Not in forty years, not in four hundred. But I'm an old woman with a pan, and nobody asked me.",
+          "next": "hub"
+        },
+        {
+          "id": "c001",
+          "kind": "line",
+          "speaker": "bettany",
+          "text": "Number Four. My best. Up where the old creek bed was, before it took itself off.",
+          "next": "c002"
+        },
+        {
+          "id": "c002",
+          "kind": "line",
+          "speaker": "bettany",
+          "text": "Walk into the sunset from here, uphill, till the ground stops rising. Couple of hundred paces. My cairn's on the top: three stones high, with my pick stood in it.",
+          "next": "c003",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "tell"
+            }
+          ]
+        },
+        {
+          "id": "c003",
+          "kind": "line",
+          "speaker": "bettany",
+          "text": "There's a barrel set in the ground at the foot of it. Whatever's in it, keep. I'd only sell it, and who'd I sell it to out here?",
+          "next": "hub"
+        },
+        {
+          "id": "f001",
+          "kind": "line",
+          "speaker": "bettany",
+          "text": "Did you. Is the pick still standing? Good. Leave it there. It's minding the place for me.",
+          "next": "hub"
+        }
+      ],
+      "speakers": {
+        "bettany": "Bettany Oake"
+      }
+    },
+    {
+      "id": "dlg_gate_watcher",
+      "quest_id": "evt_gate_watcher",
+      "npc_id": "npc_gate_watcher",
+      "source": "data/southern_residents.json gate_watcher; the owner's brief of 2026-10-03 (data/southern_residents.json request)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_gate_watcher.dialogue_cursor",
+        "initial_node": "h001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_gate_watcher.started",
+            "value": true
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_gate_watcher.started",
+            "value": false
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ],
+          "node": "h001"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "h001",
+          "kind": "line",
+          "speaker": "hale",
+          "text": "Sit down, sit down. Best seat on the plain. Look west. See the wall on the skyline, and the gate in it?",
+          "next": "h002"
+        },
+        {
+          "id": "h002",
+          "kind": "line",
+          "speaker": "hale",
+          "text": "Hale Brannock. Seven badges. Thirty-one years ago I walked up to that gate with my Golem and my Nidoking and old Burl, and came back down the same road.",
+          "next": "hub"
+        },
+        {
+          "id": "hub",
+          "kind": "choice",
+          "speaker": "hale",
+          "text": "Lovely evening for it. It's always a lovely evening for it.",
+          "responses": [
+            {
+              "id": "r_why",
+              "text": "Why didn't you try again?",
+              "next": "y001"
+            },
+            {
+              "id": "r_board",
+              "text": "What's the board?",
+              "next": "b001"
+            },
+            {
+              "id": "r_show",
+              "text": "Show him your Earth Badge.",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "flag",
+                    "flag": "gym8_cleared"
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_gate_watcher.shown",
+                    "value": false
+                  }
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "show_badge"
+                }
+              ],
+              "next": "s001"
+            },
+            {
+              "id": "r_bye",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ],
+              "next": "hub"
+            }
+          ]
+        },
+        {
+          "id": "y001",
+          "kind": "line",
+          "speaker": "hale",
+          "text": "I meant to. Next spring, I said. Then my knees, then Burl's knees. You'd be surprised how many springs there are, and how quick they go.",
+          "next": "y002"
+        },
+        {
+          "id": "y002",
+          "kind": "line",
+          "speaker": "hale",
+          "text": "So I sit here instead, where I can see it. Seven on the board and a hole where the eighth goes. I don't mind the hole. It's honest.",
+          "next": "hub"
+        },
+        {
+          "id": "b001",
+          "kind": "line",
+          "speaker": "hale",
+          "text": "Boulder, Cascade, Thunder, Rainbow, Soul, Marsh, Volcano. And the gap. I made that board the week I came back down. Thought I'd have it filled by the autumn.",
+          "next": "hub"
+        },
+        {
+          "id": "s001",
+          "kind": "line",
+          "speaker": "hale",
+          "text": "You've... let me see it. No, hold it up. To the light.",
+          "next": "s002"
+        },
+        {
+          "id": "s002",
+          "kind": "line",
+          "speaker": "hale",
+          "text": "Well. There it is. That's what it looks like up close. I always wondered if it'd be heavier.",
+          "next": "s003"
+        },
+        {
+          "id": "s003",
+          "kind": "line",
+          "speaker": "hale",
+          "text": "Here. These were Burl's Leftovers. My Snorlax. He held them through every fight we ever had, and the one we lost. They ought to go through that gate, and he can't take them.",
+          "next": "s004",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant_reward"
+            }
+          ]
+        },
+        {
+          "id": "s004",
+          "kind": "line",
+          "speaker": "hale",
+          "text": "Go on, then. You've been through it once. Go through it again for the both of us, on your way out to the League.",
+          "next": "done01"
+        },
+        {
+          "id": "done01",
+          "kind": "line",
+          "speaker": "hale",
+          "text": "The hole's still in the board. Funny. I find I don't mind it at all now.",
+          "next": "done01"
+        }
+      ],
+      "speakers": {
+        "hale": "Hale Brannock"
+      }
     }
   ]
 }

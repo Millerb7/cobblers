@@ -10,6 +10,9 @@ The owner, 2026-10-02, reviewing #107: a resident is a big Pokemon at a fixed sp
     the resident's own leash. Six of ten stood about 24 blocks from one.
 
 Every expectation is read from the data the rule lives in, never from data/resident_encounters.json itself.
+
+The southern residents' two Pokemon (data/southern_residents.json, 2026-10-03: Grandmother Cap, Ash) are held to the
+same three rules, at the site centre plus the record's `at`, with the record's leash.
 """
 import json
 import math
@@ -27,10 +30,24 @@ def load(name):
     return json.loads((ROOT / "data" / name).read_text(encoding="utf-8"))
 
 
-RES = load("resident_encounters.json")["encounters"]
+def _southern():
+    """data/southern_residents.json's named Pokemon (2026-10-03) in this file's shape: the anchor's x/z is the site's
+    centre plus the record's `at`, read from the record's geometry, not from its recorded anchor."""
+    out = []
+    for r in load("southern_residents.json")["residents"]:
+        pk = r.get("pokemon")
+        if pk:
+            cx, cz = r["site"]["centre"]
+            out.append({"id": pk["id"], "level": pk["level"], "build": {"leash": pk["leash"]},
+                        "location": {"x": cx + pk["at"][0], "z": cz + pk["at"][1]}})
+    return out
+
+
+RES = load("resident_encounters.json")["encounters"] + _southern()
 DESIGN = load("encounter_design.json")
 HEARTS = DESIGN["rules"]["hearts"]
 IDS = [e["id"] for e in RES]
+SOUTH_IDS = {e["id"] for e in _southern()}
 
 
 def _sub_of(x, z):
@@ -87,8 +104,9 @@ def test_a_residents_level_is_within_its_places_ceiling(rid):
     assert e["level"] <= ceiling, "%s is L%d in %s, tier %s, ceiling %d" % (rid, e["level"], subs[0], tier, ceiling)
 
 
-@pytest.mark.parametrize("rid", IDS)
+@pytest.mark.parametrize("rid", [i for i in IDS if i not in SOUTH_IDS])
 def test_a_residents_recorded_ground_is_the_heightmaps(rid):
+    # the southern residents' anchors are re-derived from the heightmap by tools/southern_residents_audit.py
     if not os.environ.get("COBBLERS_SOURCE_ROOT"):
         pytest.skip("NOT_EXECUTED: COBBLERS_SOURCE_ROOT is not set: the canonical heightmap is outside the repo")
     import sys
