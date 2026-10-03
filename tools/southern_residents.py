@@ -502,7 +502,17 @@ def merged_clears(clears):
             j += 1
         out.append((x, y0, z, cols[j][0], y1, z))
         i = j + 1
-    return out
+    # then runs of identical x-spans along z (a line running north-south is one fill per y range)
+    rows = sorted(out, key=lambda c: (c[0], c[3], c[1], c[4], c[2]))
+    merged = []
+    for c in rows:
+        if merged:
+            m = merged[-1]
+            if (m[0], m[3], m[1], m[4]) == (c[0], c[3], c[1], c[4]) and c[2] == m[5] + 1:
+                merged[-1] = (m[0], m[1], m[2], m[3], m[4], c[5])
+                continue
+        merged.append(c)
+    return merged
 
 
 def build_lines(doc, r, s, box):

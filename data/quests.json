@@ -5920,6 +5920,141 @@
         "quest.evt_station_eon_shrine.dews_claimed",
         "quest.evt_station_eon_shrine.dialogue_cursor"
       ]
+    },
+    {
+      "id": "evt_half_house",
+      "source": "data/southern_residents.json half_house; the owner's brief of 2026-10-03 (data/southern_residents.json request)",
+      "place": "data/southern_residents.json half_house: Tobiah Rusk's half-house in the middle of Sunset Isle, (2528, 7472)",
+      "dialogue_id": "dlg_half_house",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        2526,
+        96,
+        7470
+      ],
+      "objectives": [
+        {
+          "id": "hear_about_nell",
+          "active_when": {
+            "field": "quest.evt_half_house.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_half_house.heard_nell",
+            "equals": true
+          },
+          "text": "Ask Tobiah Rusk who lived in the other half of his house."
+        },
+        {
+          "id": "answer_him",
+          "active_when": {
+            "field": "quest.evt_half_house.heard_nell",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_half_house.promised",
+            "equals": true
+          },
+          "text": "Tobiah asked you to tell Nell, if you ever find her. You can say no."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_half_house.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_half_house.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_half_house.dialogue_cursor",
+              "value": "t001"
+            }
+          ]
+        },
+        {
+          "id": "hear_nell",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_half_house.heard_nell",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_half_house.heard_nell",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_half_house.dialogue_cursor",
+              "value": "hub"
+            }
+          ]
+        },
+        {
+          "id": "promise",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_half_house.promised",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_half_house.promised",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_half_house.dialogue_cursor",
+              "value": "p001"
+            }
+          ]
+        }
+      ],
+      "rewards": [],
+      "story_beat": "Nothing is fetched or given. The beat is the place and the question: the player decides whether to promise, and Tobiah's answer and the 'I'm still looking' option remember which. No Nell exists anywhere yet; whether one is ever found is an owner decision (data/southern_residents.json half_house), and nothing here depends on it.",
+      "repeat_dialogue": {
+        "before_promise": "hub",
+        "after_promise": "hub"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "generation_blockers": [
+        "Place npc_half_house at npc_at with spawnnpcat after the restart that loads cobblers_dialogue (tools/reapply.py R18SR, from data/southern_residents.json half_house npc), on the floor R9SR builds."
+      ],
+      "progression_field_refs": [
+        "quest.evt_half_house.started",
+        "quest.evt_half_house.heard_nell",
+        "quest.evt_half_house.promised",
+        "quest.evt_half_house.dialogue_cursor"
+      ]
     }
   ]
 }

@@ -10975,6 +10975,225 @@
           "next": "hub"
         }
       ]
+    },
+    {
+      "id": "dlg_half_house",
+      "quest_id": "evt_half_house",
+      "npc_id": "npc_half_house",
+      "source": "data/southern_residents.json half_house; the owner's brief of 2026-10-03 (data/southern_residents.json request)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_half_house.dialogue_cursor",
+        "initial_node": "t001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_half_house.started",
+            "value": true
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_half_house.started",
+            "value": false
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ],
+          "node": "t001"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "t001",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "Mind the edge. There's no floor past the table. There used to be.",
+          "next": "t002"
+        },
+        {
+          "id": "t002",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "Tobiah Rusk. This was a whole house once, nine paces by nine. You're standing in the five that stayed.",
+          "next": "hub"
+        },
+        {
+          "id": "hub",
+          "kind": "choice",
+          "speaker": "tobiah",
+          "text": "Sit, if you like. That chair's free. It's always free.",
+          "responses": [
+            {
+              "id": "r_what",
+              "text": "What happened to the house?",
+              "next": "w001"
+            },
+            {
+              "id": "r_who",
+              "text": "Who lived in the other half?",
+              "next": "n001"
+            },
+            {
+              "id": "r_stay",
+              "text": "Why do you stay?",
+              "next": "s001"
+            },
+            {
+              "id": "r_bye",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ],
+              "next": "hub"
+            }
+          ]
+        },
+        {
+          "id": "w001",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "One night the light went white. Not lightning. Lightning comes and goes. This came and stood there, along one line, about as long as it takes to say so.",
+          "next": "w002"
+        },
+        {
+          "id": "w002",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "Then it stopped, and the house stopped at the table. Look at the boards. Not broken. Cut. Like a loaf.",
+          "next": "w003"
+        },
+        {
+          "id": "w003",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "And the ground past the line isn't our ground. Ours had a well and a plum tree. That's somebody else's meadow. The line goes right on across it, both ways, as far as you care to walk.",
+          "next": "hub"
+        },
+        {
+          "id": "n001",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "Nell. My wife. She was in the kitchen, and the kitchen was on that side.",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "I don't believe she's dead. A cut that clean doesn't kill anybody. It moves them.",
+          "next": "n003"
+        },
+        {
+          "id": "n003",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "So somewhere there's half a house with a kettle and a stove and no chairs, and Nell in it, cross with me for having the chairs.",
+          "next": "hub",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "hear_nell"
+            }
+          ]
+        },
+        {
+          "id": "s001",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "Where would I go? If she ever finds her way back, she'll come to the line. This is the line.",
+          "next": "s002"
+        },
+        {
+          "id": "s002",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "I set her place every night. Cup on the table, chair pulled out. It's a small thing. It's the thing I can do.",
+          "next": "ask"
+        },
+        {
+          "id": "ask",
+          "kind": "choice",
+          "speaker": "tobiah",
+          "text": "You get about, you trainers. If you ever come on half a house with a kettle in it and no chairs, would you tell her?",
+          "responses": [
+            {
+              "id": "r_promise",
+              "text": "I'll look for her.",
+              "visible_when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_half_house.promised",
+                "value": false
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "promise"
+                }
+              ],
+              "next": "p001"
+            },
+            {
+              "id": "r_honest",
+              "text": "I can't promise that.",
+              "visible_when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_half_house.promised",
+                "value": false
+              },
+              "next": "h001"
+            },
+            {
+              "id": "r_still",
+              "text": "I'm still looking.",
+              "visible_when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_half_house.promised",
+                "value": true
+              },
+              "next": "p002"
+            }
+          ]
+        },
+        {
+          "id": "p001",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "Tell her I kept the chairs. She'll know what it means.",
+          "next": "p002"
+        },
+        {
+          "id": "p002",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "Thank you. Her place is set. Mind the edge on your way out.",
+          "next": "hub"
+        },
+        {
+          "id": "h001",
+          "kind": "line",
+          "speaker": "tobiah",
+          "text": "No. Course not. Nobody could. Sit a minute anyway. The chair's free.",
+          "next": "hub"
+        }
+      ],
+      "speakers": {
+        "tobiah": "Tobiah Rusk"
+      }
     }
   ]
 }

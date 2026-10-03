@@ -45,7 +45,10 @@
       "minecraft:spruce_door", "minecraft:glass_pane", "minecraft:hay_block", "minecraft:red_carpet",
       "minecraft:brown_carpet", "minecraft:smoker", "minecraft:barrel", "minecraft:lantern", "minecraft:spruce_wall_sign",
       "minecraft:spruce_sign", "minecraft:ladder", "minecraft:spruce_fence", "minecraft:dirt_path", "minecraft:coarse_dirt",
-      "minecraft:smooth_stone", "minecraft:polished_andesite", "minecraft:chain", "minecraft:iron_bars"
+      "minecraft:smooth_stone", "minecraft:polished_andesite", "minecraft:chain", "minecraft:iron_bars",
+      "minecraft:oak_planks", "minecraft:stripped_oak_log", "minecraft:oak_stairs", "minecraft:oak_slab", "minecraft:oak_door",
+      "minecraft:campfire", "minecraft:bookshelf", "minecraft:flower_pot", "minecraft:rooted_dirt", "minecraft:gravel",
+      "minecraft:oak_wall_sign"
     ]
   },
   "residents": [
@@ -199,6 +202,83 @@
         "reward": "capture itself; no item (Codex's rule: no_loot_drops)"
       },
       "bbox": [7842, 4689, 7881, 4718]
+    },
+    {
+      "id": "half_house",
+      "name": "Tobiah Rusk's half-house",
+      "kind": "a story beat with nothing to fetch: one man, one strange fact, one question he asks you",
+      "cell": "H3",
+      "subregion": "sunset_east",
+      "situation": "In the open middle of Sunset Isle stands half a cottage. The west half is all there: walls, a gable roof, a door with a nameplate for two, a cold hearth, a bedroll, a lantern on a chain. The east half is not, and never fell down: the floorboards, the table, the rug and the roof all stop on one straight line, and the line goes on out of the house, a scar of bare earth and gravel running due north and south across the meadow for a hundred and twenty-nine blocks. Tobiah Rusk lives in the half that stayed. His wife Nell was in the kitchen, and the kitchen was on the other side of the line. He sets her place every night, and he will ask you one thing.",
+      "story_rule": "Tobiah does not know what an exchange is and never says the word; he says what he saw (a white light that stood along one line) and what he believes (a cut that clean moves people). That is the evidence every exchanged edge shows (docs/story/ARC.md, Pallet's 'localized damage where the exchange boundary closed badly'; docs/story/FACTION.md 'Method'), and nothing more. Sunset Isle is tier 8 (sunset_east), reached by the ferry, long after the player has heard the native account of displacement at gym1_town",
+      "site": {
+        "centre": [2528, 7472],
+        "measured": "2026-10-03 from tools/ground.py: y95 at the centre and 93..99 over a 97-block square (the flat middle of Sunset Isle's east half, data/regions.json sunset_east, tier 8). tools/water_mask.py: dry, and dry along the whole line. The nearest route path is about 1,480 blocks away; the nearest x/z authored in another data file is reported by tools/southern_residents.py --report. Cell H3 had nothing authored in it at all (2026-10-03, every data/*.json scanned)."
+      },
+      "pieces": [
+        {"kind": "surface", "name": "the line", "segments": [[[1, -64], [1, 64]]], "half_width": 0,
+         "palette": [["minecraft:coarse_dirt", 2], ["minecraft:gravel", 1], ["minecraft:rooted_dirt", 1]]},
+        {"kind": "structure", "name": "the half-house", "footprint": [-5, -5, 0, 5], "foundation": "minecraft:cobblestone", "clear_up": 12,
+         "fills": [
+          [-4, 0, -4, 0, 0, 4, "minecraft:oak_planks"],
+          [-4, 1, -4, 0, 3, 4, "minecraft:oak_planks"],
+          [-3, 1, -3, 0, 3, 3, "minecraft:air"],
+          [-4, 1, -4, -4, 3, -4, "minecraft:stripped_oak_log[axis=y]"],
+          [-4, 1, 4, -4, 3, 4, "minecraft:stripped_oak_log[axis=y]"],
+          [-3, 3, -4, 0, 3, -4, "minecraft:stripped_oak_log[axis=x]"],
+          [-3, 3, 4, 0, 3, 4, "minecraft:stripped_oak_log[axis=x]"],
+          [-4, 3, -3, -4, 3, 3, "minecraft:stripped_oak_log[axis=z]"],
+          [-5, 4, -5, 0, 4, -5, "minecraft:oak_stairs[facing=south,half=bottom,shape=straight,waterlogged=false]"],
+          [-5, 4, 5, 0, 4, 5, "minecraft:oak_stairs[facing=north,half=bottom,shape=straight,waterlogged=false]"],
+          [-4, 4, -4, -4, 4, 4, "minecraft:oak_planks"],
+          [-5, 5, -4, 0, 5, -4, "minecraft:oak_stairs[facing=south,half=bottom,shape=straight,waterlogged=false]"],
+          [-5, 5, 4, 0, 5, 4, "minecraft:oak_stairs[facing=north,half=bottom,shape=straight,waterlogged=false]"],
+          [-4, 5, -3, -4, 5, 3, "minecraft:oak_planks"],
+          [-5, 6, -3, 0, 6, -3, "minecraft:oak_stairs[facing=south,half=bottom,shape=straight,waterlogged=false]"],
+          [-5, 6, 3, 0, 6, 3, "minecraft:oak_stairs[facing=north,half=bottom,shape=straight,waterlogged=false]"],
+          [-4, 6, -2, -4, 6, 2, "minecraft:oak_planks"],
+          [-5, 7, -2, 0, 7, -2, "minecraft:oak_stairs[facing=south,half=bottom,shape=straight,waterlogged=false]"],
+          [-5, 7, 2, 0, 7, 2, "minecraft:oak_stairs[facing=north,half=bottom,shape=straight,waterlogged=false]"],
+          [-4, 7, -1, -4, 7, 1, "minecraft:oak_planks"],
+          [-5, 8, -1, 0, 8, -1, "minecraft:oak_stairs[facing=south,half=bottom,shape=straight,waterlogged=false]"],
+          [-5, 8, 1, 0, 8, 1, "minecraft:oak_stairs[facing=north,half=bottom,shape=straight,waterlogged=false]"],
+          [-4, 8, 0, -4, 8, 0, "minecraft:oak_planks"],
+          [-5, 9, 0, 0, 9, 0, "minecraft:oak_planks"]
+         ],
+         "blocks": [
+          [-2, 1, 4, "minecraft:oak_door[facing=south,half=lower,hinge=left,open=false,powered=false]"],
+          [-2, 2, 4, "minecraft:oak_door[facing=south,half=upper,hinge=left,open=false,powered=false]"],
+          [-4, 2, -2, "minecraft:glass_pane[north=true,south=true,east=false,west=false,waterlogged=false]"],
+          [-4, 2, 2, "minecraft:glass_pane[north=true,south=true,east=false,west=false,waterlogged=false]"],
+          [-1, 1, 0, "minecraft:oak_slab[type=top,waterlogged=false]"],
+          [0, 1, 0, "minecraft:oak_slab[type=top,waterlogged=false]"],
+          [-1, 1, -1, "minecraft:oak_stairs[facing=north,half=bottom,shape=straight,waterlogged=false]"],
+          [-1, 1, 1, "minecraft:oak_stairs[facing=south,half=bottom,shape=straight,waterlogged=false]"],
+          [-3, 1, 0, "minecraft:campfire[facing=east,lit=false,signal_fire=false,waterlogged=false]"],
+          [-3, 1, 3, "minecraft:bookshelf"],
+          [-3, 1, 2, "minecraft:barrel[facing=up,open=false]"]
+         ],
+         "hung": [
+          [-1, 2, 0, "minecraft:flower_pot"], [0, 2, 0, "minecraft:flower_pot"],
+          [-3, 1, -3, "minecraft:red_carpet"], [-3, 1, -2, "minecraft:red_carpet"],
+          [-2, 1, 2, "minecraft:brown_carpet"], [-1, 1, 2, "minecraft:brown_carpet"], [0, 1, 2, "minecraft:brown_carpet"],
+          [-2, 1, 3, "minecraft:brown_carpet"], [-1, 1, 3, "minecraft:brown_carpet"], [0, 1, 3, "minecraft:brown_carpet"],
+          [-2, 8, 0, "minecraft:chain[axis=y,waterlogged=false]"], [-2, 7, 0, "minecraft:chain[axis=y,waterlogged=false]"],
+          [-2, 6, 0, "minecraft:chain[axis=y,waterlogged=false]"],
+          [-2, 5, 0, "minecraft:lantern[hanging=true,waterlogged=false]"],
+          [-1, 2, 5, {"sign": {"wood": "oak", "wall": "south", "lines": ["T. & N.", "RUSK", "", ""]}}]
+         ]}
+      ],
+      "npc": {
+        "name": "Tobiah Rusk",
+        "at": [-2, -2, "the half-house"],
+        "feet": [2526, 96, 7470],
+        "yaw": -90.0,
+        "placed_by": "R18SR",
+        "why": "inside, by the bedroll, facing east across the half table to the cut. He gives nothing through grant_reward_once, so no data/rewards.json record places him: this file's step R18SR does (npc_seats' shape, with his yaw)"
+      },
+      "records": {"quest": "evt_half_house", "conversation": "dlg_half_house"},
+      "bbox": [2522, 7408, 2529, 7536]
     }
   ]
 }

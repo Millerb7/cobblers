@@ -2428,6 +2428,59 @@
         "g003"
       ],
       "why": "the dialogue cursor of Mireille Sato (dlg_station_shrine_keeper)."
+    },
+    {
+      "id": "quest.evt_half_house.started",
+      "quest_id": "evt_half_house",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Tobiah Rusk (data/southern_residents.json half_house); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_half_house.heard_nell",
+      "quest_id": "evt_half_house",
+      "field": "heard_nell",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has heard who lived in the other half (dlg_half_house n003)."
+    },
+    {
+      "id": "quest.evt_half_house.promised",
+      "quest_id": "evt_half_house",
+      "field": "promised",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player told Tobiah 'I'll look for her.' (dlg_half_house ask); changes his options, gives nothing."
+    },
+    {
+      "id": "quest.evt_half_house.dialogue_cursor",
+      "quest_id": "evt_half_house",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "t001",
+      "allowed_values": [
+        "t001",
+        "t002",
+        "hub",
+        "w001",
+        "w002",
+        "w003",
+        "n001",
+        "n002",
+        "n003",
+        "s001",
+        "s002",
+        "ask",
+        "p001",
+        "p002",
+        "h001"
+      ],
+      "why": "the dialogue cursor of Tobiah Rusk's conversation (dlg_half_house)."
     }
   ],
   "gym_markers": {
