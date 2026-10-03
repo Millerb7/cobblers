@@ -156,7 +156,7 @@
     {"id": "shrine_keeper", "conversation": "dlg_station_shrine_keeper", "reward": "station_shrine_keeper", "in": "platform", "at": [422, 2819], "why": "Mireille Sato, the shrine's keeper, south of the dais"}
   ],
   "economy": {
-    "issuing": false,
+    "issuing": true,
     "eon_issuing": false,
     "eon_issuing_why": "the Eon dews' own hold under the one switch (tools/research_station.py eon_open): cobblers_station_issuing_eon is added only while issuing AND eon_issuing are both true, and the shrine keeper's dew option and grant_dews transition require it as well as cobblers_station_issuing. The owner's decision of 2026-10-02 names the three feathers only; until this split, throwing issuing for them would have issued the dews too. The crown keeps its own hold (post_champion_cap)",
     "the_one_source_2026_10_02": "DECIDED, the owner, 2026-10-02, verbatim: \"the feathers handed out through the research station's dialogue, gated on gym8_cleared\". This station is the ONE source of lumymon:thunder_feather, lumymon:ember_feather and lumymon:glacier_feather: the Director's dialogue gives the thunder and ember feathers, the field officer's the glacier feather, each behind gym8_cleared and an errand ('earning one should mean helping them study', data/adopted_legendary_sites.json owner_decisions_2026_10_02.the_three_feathers). data/frostpeak_camp.json item_economy is now a pointer here; the camp's part is Dr. Halvard's instrument deck in the glacier courier errand (economy.courier). Kubfu's scrolls are NOT this station's: the starter build owns them (data/frostpeak_camp.json superseded_item_economy keeps their record)",

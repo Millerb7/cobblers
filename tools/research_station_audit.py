@@ -43,10 +43,12 @@ What is checked, each from the data and the heightmap, never from the pack:
              study_pool.band_from names in data/spawns.json (a marine band or a sub-region), the pool record's
              level_band is that band, the species is already in that band's roster, and it spawns in water
   hold       THE SWITCH. The tick function removes the issuing tags while economy.issuing is false and adds them only
-             when it is true (the crown's only with post_champion_cap >= 70); no earning advancement and no `give` is
-             shipped while held; every station transition that gives an item or runs a function, and every option
-             that runs one, requires the issuing tag, in the data AND in the compiled dialogue; no other quest gives
-             an altar item
+             when it is true (the crown's only with post_champion_cap >= 70, the Eon dews' only with eon_issuing
+             true as well); no earning advancement and no `give` is shipped while held; every station transition
+             that gives an item or runs a function, and every option that runs one, requires the issuing tag, in the
+             data AND in the compiled dialogue; a transition or compiled option that gives a held item checks EVERY
+             tag that holds it (HELD_BY: the crown its own, the dews the one switch and their own); no other quest
+             gives an altar item
   steps      the re-application holds each zone's written chunks, runs its build, releases; each function passes
              tools/function_limits.py
 
@@ -84,6 +86,13 @@ WALK_THROUGH = {"minecraft:air", "minecraft:light_gray_carpet", "minecraft:cyan_
 ALTAR_ITEMS = {"lumymon:thunder_feather", "lumymon:glacier_feather", "lumymon:ember_feather", "lumymon:calyrex_crown",
                "lumymon:ruby_dew", "lumymon:sapphire_dew", "lumymon:origin_fossil"}
 QUESTS = ("evt_station_director", "evt_station_courier", "evt_station_archive", "evt_station_eon_shrine")
+# Which switch tags (economy.tags keys) hold each item, stated here and not read from the generator: the feathers sit
+# behind the one switch; the crown behind its own tag (added only with post_champion_cap >= 70); the Eon dews behind
+# BOTH the one switch and their own (economy.eon_issuing), because the owner's decision of 2026-10-02 names the three
+# feathers only and throwing the one switch must not issue the dews.
+HELD_BY = {"lumymon:thunder_feather": ("issuing",), "lumymon:ember_feather": ("issuing",),
+           "lumymon:glacier_feather": ("issuing",), "lumymon:calyrex_crown": ("issuing_crown",),
+           "lumymon:ruby_dew": ("issuing", "issuing_eon"), "lumymon:sapphire_dew": ("issuing", "issuing_eon")}
 
 
 class Report:
@@ -677,9 +686,10 @@ def check_hold(R, E, pack, data=DATA):
     issuing = bool(eco["issuing"])
     cap = eco.get("post_champion_cap")
     crown = issuing and isinstance(cap, int) and cap >= 70
+    eon = issuing and eco.get("eon_issuing") is True
     tick = (pack / FN_DIR / "tick.mcfunction")
     lines = [l.strip() for l in tick.read_text(encoding="utf-8").splitlines() if l.strip() and not l.startswith("#")] if tick.is_file() else []
-    for tag, on in ((t["issuing"], issuing), (t["issuing_crown"], crown)):
+    for tag, on in ((t["issuing"], issuing), (t["issuing_crown"], crown), (t["issuing_eon"], eon)):
         add = "tag @a[tag=!%s] add %s" % (tag, tag)
         rem = "tag @a[tag=%s] remove %s" % (tag, tag)
         if on and add not in lines:
@@ -718,6 +728,16 @@ def check_hold(R, E, pack, data=DATA):
             conds = [x for c in tr["conditions"] for x in _conds(c)]
             if gives and not _requires_tag(conds, tagset):
                 R.err("hold", "%s.%s gives or takes without requiring %s" % (qid, tr["id"], sorted(tagset)))
+            # per item: a transition that grants a held item requires EVERY tag that holds it (HELD_BY), so the crown
+            # cannot ride the one switch alone and the dews cannot be issued with the feathers
+            rewards = {r["id"]: [c["item"] for c in r.get("contents") or []] for r in q.get("rewards") or []}
+            items = [e["item"] for e in tr["effects"] if e["kind"] == "give_item"]
+            items += [i for e in tr["effects"] if e["kind"] == "grant_reward_once" for i in rewards.get(e["reward"], [])]
+            have = {c.get("tag") for c in conds if c.get("kind") == "player_tag"}
+            for item in items:
+                for key in HELD_BY.get(item, ()):
+                    if t[key] not in have:
+                        R.err("hold", "%s.%s grants %s without requiring %s" % (qid, tr["id"], item, t[key]))
     for c in load_json("dialogue.json", data)["conversations"]:
         if c["quest_id"] not in QUESTS:
             continue
@@ -763,6 +783,15 @@ def check_hold(R, E, pack, data=DATA):
                         R.err("hold", "compiled %s %s gives before any issuing check" % (c["id"], o.get("value")))
                     if "has_tag('cobblers_station_issuing" not in o.get("isVisible", "") and "cobblers_station_harvest_paid" not in o.get("isVisible", ""):
                         R.err("hold", "compiled %s %s is visible without the issuing tag" % (c["id"], o.get("value")))
+                    # per item, as in the data: every tag that holds a given item is checked before its give
+                    for item, keys in HELD_BY.items():
+                        g = act.find("give @s %s " % item)
+                        if g < 0:
+                            continue
+                        for key in keys:
+                            if "has_tag('%s')" % t[key] not in act[:g]:
+                                R.err("hold", "compiled %s %s gives %s before checking %s"
+                                      % (c["id"], o.get("value"), item, t[key]))
     except SystemExit as e:
         R.err("hold", "the station's conversations do not compile: %s" % e)
 
