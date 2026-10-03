@@ -797,7 +797,11 @@ def build(source_root, server_dir=None):
         plan["towers"].append({"kind": "lift bank", "boundary": k, "lower_lift": list(lower[:3]), "upper_lift": list(upper[:3]),
                                "from": g, "to": gu, "door": list(w(*t["door"])), "door_out": door_out(t), "footprint": [list(c) for c in sorted(cols)][:1]
                                + [list(c) for c in sorted(cols)][-1:],
-                               "upper_lift_lands": "inside" if (t["u_cell"] or t["u_wall"]) else "NOT IN THE TOWER"})
+                               "upper_lift_lands": "inside" if (t["u_cell"] or t["u_wall"]) else "NOT IN THE TOWER",
+                               "roof_open_over": [list(w(*c)) for c in t["climb_opened"]],
+                               "headroom_blocked_by_lift": t.get("headroom_blocked_by_lift")})
+        if t.get("headroom_blocked_by_lift"):
+            count("stair towers whose top step is NOT walkable (a lift under the roof over step R-3)")
         checks.append((lower[0], gu, lower[2], [P("tread"), P("rib_teal"), P(spec["districts"][dnames[k + 1]]["wall"])], "lift landing roof"))
         checks.append((w(2, 2)[0], g + 2, w(2, 2)[1], [P("sea_lantern")], "tower core"))
         count("stair towers round lift banks")
@@ -855,7 +859,8 @@ def build(source_root, server_dir=None):
     w = frame(gate["anchor"], gate["back"])
     gate_bearing = bearing(*w(2, 2), cx, cz)
     plan["sink_gate"] = {"door": list(w(*gate["door"])), "door_out": door_out(gate), "from": gate["g"], "to": gate["gu"], "bearing": round(gate_bearing, 1),
-                         "exit": list(w(gate["top"][0], -2))}
+                         "exit": list(w(gate["top"][0], -2)),
+                         "roof_open_over": [list(w(*c)) for c in gate["climb_opened"]]}
     count("the Sink Gate")
 
     # ---- the Centre and Mart, by the Sink Gate
