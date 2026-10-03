@@ -199,6 +199,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # the trips their dialogues run; the ferrymen are placed over RCON by R17F. It charges CobbleDollars and
                 # teleports players, so world-local below
                 "cobblers_ferries",
+                # 2026-10-03: the town markets (tools/markets.py, data/markets.json): the keepers' NPC classes and
+                # dialogues and the purchases their options run; the keepers are placed over RCON by R17M. It charges
+                # CobbleDollars and gives items, so world-local below
+                "cobblers_markets",
                 # 2026-09-28: the evolution-stone faces (tools/mines.py, data/mines.json, STONE_ECONOMY.md): blocks run by
                 # R9O; the faces' restore on approach acts on its own (a tick driver), so world-local below
                 "cobblers_mines",
@@ -269,6 +273,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_rift_zones", "cobblers_mega_recipes",
                "cobblers_ferries", "cobblers_ambient", "cobblers_levelcap", "cobblers_mines",
                "cobblers_legendaries", "cobblers_spectrier_cap",
+               # 2026-10-03: charges CobbleDollars and gives items, like the ferry
+               "cobblers_markets",
                # 2026-10-02: the den keeper loop holds the bear on its own tick, so world-local as its own comment says
                "cobblers_ursaluna_cave",
                # 2026-10-02: the residents' keeper SPAWNS Pokemon on its own when a player comes near, so it must never
@@ -499,6 +505,18 @@ def prepare_jobs(a):
     # declared a gate still unswimmable under data/blackout.json's fatigue on the heightmap
     add("ferries:build", "ferries.py", "build")
     add("ferries:audit", "ferries.py", "audit", *src)
+    # the town markets (2026-10-03): the keepers' classes and dialogues and the purchases (data/markets.json), then
+    # the offline audit: every gate a planned badge flag, every price above the bank's sell-back, the curve within its
+    # declared share of income, the recipe overlay exactly what the data writes, every keeper on free plan ground, and
+    # every purchase reading, refusing, charging, verifying and only then giving
+    add("markets:build", "markets.py", "build")
+    add("markets:audit", "markets.py", "audit", *src)
+    # and the independent audit (tools/markets_audit.py, written by an agent that did not build the markets): ids
+    # against the server's jars (reads <server>/mods only), gates against the ladder and the gym flags, every built
+    # purchase EXECUTED in a command model (short, ungated, failed charge, failed give, double click), the overlay
+    # against the base and the jars' recipe conditions, tiers and the curve against PROGRESSION_LADDER, and every
+    # keeper R17M places off streets, buildings, walked lines and other NPCs, and in front of its Mart
+    add("markets:audit_independent", "markets_audit.py", "--server-dir", a.server_dir, *src)
     # the ferry docks' pack (a SERVER_PACKS member): until 2026-10-02 no job built it, and a build/ left over from an
     # earlier hand run hid that; function_limits failed on a fresh checkout without it
     add("ferry_docks:build", "ferry_docks.py", "build", *src)
@@ -1584,6 +1602,12 @@ def steps(with_spawns=False):
     import ferries
     out.append(("R17F", "the ferrymen at the built docks (data/ferries.json)",
                 [("fn", "cobblers:ferries/load")] + [("npc", n) for n in ferries.npc_placements(ferries.load())]))
+    # the market keepers (data/markets.json, 2026-10-03): NPCs whose classes load at boot from cobblers_markets, placed
+    # over RCON after the restart like the ferrymen, each beside its town's Mart and turned to face its plaza; the load
+    # function first (the pack's scores). Listed from the committed data, not the build
+    import markets
+    out.append(("R17M", "the market keepers beside the Marts (data/markets.json)",
+                [("fn", "cobblers:markets/load")] + [("npc", n) for n in markets.npc_placements(markets.load())]))
     # the settlement NPCs (data/npc_seats.json): the main reveal's residents and the stone-tip speakers. NPCs like the
     # ferrymen, so placed over RCON after the restart that loaded cobblers_dialogue's classes, and after every town and
     # gym pass so the plaza, lot and lab floor they stand on exist. Each is turned to its authored yaw
