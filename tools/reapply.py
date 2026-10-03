@@ -630,6 +630,10 @@ def prepare_jobs(a):
     # the five mythical starters' stage forms (data/mythical_starters.json); `build` runs its own check against the
     # jar and modpack/config/cobblemon/starters.json first and writes nothing on a problem
     add("mythical_starters:build", "mythical_starters.py", "build")
+    # ... then its independent audit (expectations from NATIVE_STARTERS_COST.md 6a/7 and the jar, never the builder):
+    # each line walks 5 -> 30 -> 45 through two forms to its native final, the screen offers exactly the five, the
+    # 27 stay wild. Fail-closed; an unissued scroll is printed OPEN and does not stop prepare
+    add("mythical_starters_audit", "mythical_starters_audit.py")
     add("location_titles", "location_titles.py")
     # the badge flags: one advancement per gym leader and the Champion, set by rctmod on a won battle
     add("progression_pack", "progression_pack.py")

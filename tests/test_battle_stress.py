@@ -55,8 +55,16 @@ def sampler(monkeypatch):
     }
 
 
+def _traditional_starters():
+    """The 27 the sampler's 108 = 27 x 4 design was built on. They left starters.json on 2026-10-02/03 (the screen now
+    offers the five mythical lines, docs/mechanics/NATIVE_STARTERS_COST.md sections 6a/7) and live in
+    data/mythical_starters.json `wild_traditional_starters`; these tests exercise the allocation over that list."""
+    doc = json.loads((ROOT / "data" / "mythical_starters.json").read_text(encoding="utf-8"))
+    return [ST.B.key(name) for names in doc["wild_traditional_starters"]["regions"].values() for name in names]
+
+
 def _profiles(sampler):
-    starters = ST.B.config_starters()
+    starters = _traditional_starters()
     rows = [_row("catch_%d" % number, "route_%d" % number) for number in range(1, 8)]
     return ST.build_profiles(starters, rows, sampler["species"], sampler["moves"], sampler["chart"])
 
@@ -78,9 +86,20 @@ def test_sample_has_the_declared_total_archetype_distribution_and_starter_repres
     assert len(profiles) == ST.SAMPLE_SIZE == sum(ST.ARCHETYPE_COUNTS.values())
     assert Counter(profile.archetype for profile in profiles) == ST.ARCHETYPE_COUNTS
 
-    starters = ST.B.config_starters()
+    starters = _traditional_starters()
     assert len(starters) == 27
     assert Counter(profile.starter for profile in profiles) == {starter: 4 for starter in starters}
+
+
+# Without it the stress report would keep seating 27 starters the screen no longer offers and nobody would notice: the
+# real offer is the five mythical lines (NATIVE_STARTERS_COST.md section 5 lists this exact break: 108 % 5 = 3 at
+# tools/battle_stress.py:92-93, and run()'s `== 27` at :329-331). Strict, so it fails the day the model is fixed.
+@pytest.mark.xfail(strict=True, raises=ST.B.SimError,
+                   reason="battle_stress models 27 starters x 4; the screen offers 5 (NATIVE_STARTERS_COST.md s5)")
+def test_the_stress_sample_seats_the_starters_the_screen_offers(sampler):
+    offered = ST.B.config_starters()
+    profiles = ST.build_profiles(offered, [], sampler["species"], sampler["moves"], sampler["chart"])
+    assert {profile.starter for profile in profiles} == set(offered)
 
 
 # Without it a critical-path party can collapse to its starter or acquire optional encounters, losing the route-only

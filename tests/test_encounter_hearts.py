@@ -8,8 +8,8 @@ compiled route boxes.
 
 Independent sources: section 10's prose and its table of numbers (1/9, 11.2%, "cap + 5 ... and 62 at tier 9",
 128 blocks), its list of where the 28 hearts are and their summit lines; section 11's table of the 27 families and
-where each lives; section 2's caps and bands; modpack/config/cobblemon/starters.json for which 27 species are the
-mainline starters; the Cobblemon 1.8.0 jar for stages, types and the level each stage evolves at.
+where each lives; section 2's caps and bands; data/mythical_starters.json `wild_traditional_starters` for which 27
+species are the mainline starters (they left starters.json for the wild: NATIVE_STARTERS_COST.md sections 6a/7); the Cobblemon 1.8.0 jar for stages, types and the level each stage evolves at.
 
 Section 10's four numbers were proposed and are confirmed by the owner (2026-10-02). They are tested AS WRITTEN and parsed
 from the document (test_section_10s_numbers_are_still_the_documents), so they move only with it.
@@ -45,7 +45,12 @@ from test_encounter_design import jar, pack, world  # noqa: E402,F401  session f
 S10 = ED.flat(ED.section("10"))
 S11_RAW = ED.section("11")
 S2 = ED.section("2")
-STARTERS = json.loads((ROOT / "modpack" / "config" / "cobblemon" / "starters.json").read_text(encoding="utf-8"))
+# The 27 mainline starters left the starter screen on 2026-10-02/03 (docs/mechanics/NATIVE_STARTERS_COST.md sections
+# 6a and 7: the screen offers the five mythical lines; the 27 stay wild). starters.json therefore no longer names them;
+# the record that carries the decision does, and tools/mythical_starters_audit.py holds that list equal to the
+# upstream offer in base-pack/cobbleverse/config/cobblemon/starters.json.
+WILD_STARTERS = json.loads((ROOT / "data" / "mythical_starters.json").read_text(encoding="utf-8"))[
+    "wild_traditional_starters"]
 
 # Section 2's bands: tier -> (low, high).
 TIER_BAND = {int(t): (int(lo), int(hi)) for t, _c, lo, hi in
@@ -361,10 +366,11 @@ def test_every_off_path_find_is_in_the_base_table(world, jar):
 # ------------------------------------------------------------------ section 11: the mainline starters
 
 def mainline_starters():
-    """The 27 normal starters from starters.json's nine region categories (the Hisui set is forms, not families)."""
-    cats = [c for c in STARTERS["starters"] if c["name"].lower() != "hisui"]
-    assert len(cats) == 9, [c["name"] for c in cats]
-    out = [ED.BS.key(p.split()[0]) for c in cats for p in c["pokemon"]]
+    """The 27 mainline starters, by region, from data/mythical_starters.json `wild_traditional_starters` (the Hisui
+    set was forms of three of them, not families, and the record drops it the same way)."""
+    regions = WILD_STARTERS["regions"]
+    assert len(regions) == 9, sorted(regions)
+    out = [ED.BS.key(p) for names in regions.values() for p in names]
     assert len(out) == 27 == len(set(out)), out
     return out
 
