@@ -57,7 +57,8 @@
       "minecraft:spruce_planks", "minecraft:red_wool", "minecraft:white_wool", "minecraft:spruce_door", "minecraft:spruce_trapdoor",
       "minecraft:barrel", "minecraft:red_carpet", "minecraft:lantern", "minecraft:oak_log", "minecraft:oak_wall_sign",
       "minecraft:hay_block", "minecraft:andesite", "minecraft:granite", "minecraft:tuff", "minecraft:mossy_cobblestone",
-      "minecraft:cobblestone", "minecraft:oak_sign", "minecraft:spruce_leaves", "minecraft:spruce_log"
+      "minecraft:cobblestone", "minecraft:oak_sign", "minecraft:spruce_leaves", "minecraft:spruce_log",
+      "minecraft:spruce_slab", "minecraft:ladder"
     ]
   },
   "residents": [
@@ -438,6 +439,90 @@
       },
       "records": {"quest": "evt_hide_and_seek_den", "conversation": "dlg_hide_and_seek_den"},
       "bbox": [6749, 3657, 6755, 3663]
+    },
+    {
+      "id": "hunters_hide",
+      "name": "Cassius Rook's high seat",
+      "kind": "a choice made for someone else: the player decides whether to tell a hunter where the thing he has waited for is, and he lives with the answer",
+      "cell": "D6",
+      "subregion": "tilpey_north_shore",
+      "situation": "In the birch woods above the Tilpey north shore stands a hunter's high seat: four spruce legs, a ladder, a railed platform with a roof, a camp fire below and a tally board. Cassius Rook has sat up there every dawn for eleven seasons for the Tilpey Hart, as his father did and his grandfather. He has seen it four times and never close. Eighty blocks down the slope to the south-east, in a hollow under the birches, is the bed it sleeps in: flattened ground and a birch it has rubbed its antlers bare on. The Hart is a Sawsbuck, very old, and wakes if anyone comes within ten blocks. Cassius asks the player whether they saw it on the way up. The player can tell him about the hollow, or say they saw nothing. Either way he thanks them, and either way he is still sitting there on every later visit.",
+      "story_rule": "nothing changes in the world on either answer: the Hart stays in its hollow, and Cassius keeps his seat ('first light, I said. Tomorrow's first light'). The choice is recorded only in his conversation. The dialogue cannot tell whether the player has seen the hollow; a player who has not and says so anyway is telling him something true by accident, which the quest records note. Tier 6, the north shore of Lake Tilpey",
+      "site": {
+        "centre": [5480, 3196],
+        "moved_from": "the scored stretch's point (5424, 3120) lies 75 blocks north-west; the emptiest centres of that stretch are round (5496, 3232), and the seat stands between the two so the Hart's hollow, 74 blocks on, is the emptiest ground of all",
+        "measured": "2026-10-03 from tools/ground.py: y108 at the seat, the slope falling gently south-east to y104 in the hollow at (5532, 3248), 74 blocks away (data/regions.json tilpey_north_shore, paint birch_shore). tools/water_mask.py: dry at both. Route 6's walked path passes about 225 blocks from the seat; the nearest x/z authored in another data file is reported by tools/northern_residents.py --report."
+      },
+      "pieces": [
+        {"kind": "clearing", "name": "round the seat", "r": 5, "up": 16},
+        {"kind": "clearing", "name": "the hollow", "at": [52, 52], "r": 6, "up": 16},
+        {"kind": "structure", "name": "the high seat", "footprint": [-1, -1, 1, 2], "foundation": "minecraft:coarse_dirt", "clear_up": 10,
+         "fills": [
+          [-1, 0, -1, 1, 0, 2, "minecraft:coarse_dirt"],
+          [-1, 1, -1, -1, 3, -1, "minecraft:spruce_log[axis=y]"],
+          [1, 1, -1, 1, 3, -1, "minecraft:spruce_log[axis=y]"],
+          [-1, 1, 1, -1, 3, 1, "minecraft:spruce_log[axis=y]"],
+          [1, 1, 1, 1, 3, 1, "minecraft:spruce_log[axis=y]"],
+          [0, 1, 1, 0, 3, 1, "minecraft:spruce_planks"],
+          [-1, 4, -1, 1, 4, 1, "minecraft:spruce_planks"],
+          [-1, 5, -1, 1, 5, 1, "minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=false]"],
+          [0, 5, 0, 0, 5, 0, "minecraft:air"],
+          [0, 5, 1, 0, 5, 1, "minecraft:air"],
+          [-1, 6, -1, -1, 6, -1, "minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=false]"],
+          [1, 6, -1, 1, 6, -1, "minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=false]"],
+          [-1, 6, 1, -1, 6, 1, "minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=false]"],
+          [1, 6, 1, 1, 6, 1, "minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=false]"],
+          [-1, 7, -1, 1, 7, 1, "minecraft:spruce_slab[type=bottom,waterlogged=false]"]
+         ],
+         "hung": [
+          [0, 1, 2, "minecraft:ladder[facing=south,waterlogged=false]"], [0, 2, 2, "minecraft:ladder[facing=south,waterlogged=false]"],
+          [0, 3, 2, "minecraft:ladder[facing=south,waterlogged=false]"], [0, 4, 2, "minecraft:ladder[facing=south,waterlogged=false]"],
+          [0, 6, 0, "minecraft:lantern[hanging=true,waterlogged=false]"],
+          [-1, 2, 2, {"sign": {"wood": "spruce", "wall": "south", "lines": ["C. ROOK", "high seat", "keep off", "keep quiet"]}}]
+         ]},
+        {"kind": "ground_blocks", "name": "the camp", "at": [4, 3], "blocks": [
+          [0, 1, 0, "minecraft:campfire[facing=north,lit=false,signal_fire=false,waterlogged=false]"],
+          [-2, 1, 1, "minecraft:spruce_log[axis=x]"], [-1, 1, 1, "minecraft:spruce_log[axis=x]"],
+          [2, 1, -1, "minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=false]"],
+          [2, 2, -1, {"sign": {"wood": "spruce", "rotation": 4, "lines": ["SEASONS: 11", "SEEN: 4", "CLOSE: 0", ""]}}]
+         ]},
+        {"kind": "surface", "name": "the Hart's bed", "at": [52, 52], "ring": [1, 2], "palette": [["minecraft:podzol", 2], ["minecraft:coarse_dirt", 1]]},
+        {"kind": "ground_blocks", "name": "the fraying birch", "at": [57, 49], "blocks": [
+          [0, 1, 0, "minecraft:stripped_birch_log[axis=y]"], [0, 2, 0, "minecraft:stripped_birch_log[axis=y]"],
+          [0, 3, 0, "minecraft:birch_log[axis=y]"], [0, 4, 0, "minecraft:birch_log[axis=y]"], [0, 5, 0, "minecraft:birch_log[axis=y]"]
+         ]}
+      ],
+      "pokemon": {
+        "id": "tilpey_hart",
+        "name": "The Tilpey Hart",
+        "species": "cobblemon:sawsbuck",
+        "level": 48,
+        "at": [52, 52],
+        "anchor": [5532, 105, 3248],
+        "yaw": 135.0,
+        "trigger": 10,
+        "leash": 20,
+        "appears_after": null,
+        "gate": "gym6_cleared",
+        "intended_stage": "post_gym_6",
+        "catch_rule": "catchable_after_gate",
+        "message": "Something in the hollow lifts its head. Antlers like a winter tree.",
+        "sound": "minecraft:block.grass.break",
+        "level_why": "the place's tier is 6 (data/encounter_design.json tables.tilpey_north_shore), whose ceiling is 50; L48 sits above the cap a player holds before gym 6 (data/trainers.json generation_contract gym_ace_levels[5] = 45) and within the cap after it (gym_ace_levels[6] = 50): the level-cap refusal is its catch gate, per thrower",
+        "trigger_why": "it is a wary animal: a trigger of 10 wakes it as a walker reaches the edge of its hollow (the clearing's half-width is 6), and the leash of 20 keeps it among its own birches",
+        "species_source": "data/spawns.json names sawsbuck in its rosters (surface.northgate_east.sawsbuck), so the species is one the campaign already spawns; its season form is whatever Cobblemon gives a spawned one, and the 'winter tree' of the message is Cassius's words, not a form this pack sets",
+        "reward": "capture itself; no item (Codex's rule: no_loot_drops)"
+      },
+      "npc": {
+        "name": "Cassius Rook",
+        "at": [5, 5, "ground"],
+        "feet": [5485, 109, 3201],
+        "yaw": -45.0,
+        "placed_by": "R18NR",
+        "why": "at the foot of his high seat by the cold fire, facing south-east down the slope towards the hollow he has never looked in. He gives nothing through grant_reward_once, so this file's step R18NR places him"
+      },
+      "records": {"quest": "evt_hunters_hide", "conversation": "dlg_hunters_hide"},
+      "bbox": [5475, 3191, 5538, 3254]
     }
   ]
 }

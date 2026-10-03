@@ -12826,6 +12826,195 @@
       "speakers": {
         "lettie": "Lettie"
       }
+    },
+    {
+      "id": "dlg_hunters_hide",
+      "quest_id": "evt_hunters_hide",
+      "npc_id": "npc_hunters_hide",
+      "source": "data/northern_residents.json hunters_hide; the owner's brief of 2026-10-03 (data/northern_residents.json request)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_hunters_hide.dialogue_cursor",
+        "initial_node": "c001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_hunters_hide.started",
+            "value": true
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_hunters_hide.started",
+            "value": false
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ],
+          "node": "c001"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "c001",
+          "kind": "line",
+          "speaker": "cassius",
+          "text": "Quiet. Down. ...You came up through the birches. Walked soft, did you? Good.",
+          "next": "c002"
+        },
+        {
+          "id": "c002",
+          "kind": "line",
+          "speaker": "cassius",
+          "text": "Cassius Rook. Eleven seasons I've sat up there for the Tilpey Hart. My father sat for it before me, and his father. I've seen it four times. Never close.",
+          "next": "hub"
+        },
+        {
+          "id": "hub",
+          "kind": "choice",
+          "speaker": "cassius",
+          "text": "It beds down somewhere near. I can smell it, some mornings.",
+          "responses": [
+            {
+              "id": "r_hart",
+              "text": "What is it?",
+              "next": "h001"
+            },
+            {
+              "id": "r_why",
+              "text": "Why do you want it?",
+              "next": "w001"
+            },
+            {
+              "id": "r_tell",
+              "text": "Tell him about the hollow down the slope.",
+              "visible_when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_hunters_hide.decided",
+                "value": false
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "tell"
+                }
+              ],
+              "next": "t001"
+            },
+            {
+              "id": "r_lie",
+              "text": "Tell him you saw nothing.",
+              "visible_when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_hunters_hide.decided",
+                "value": false
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "keep_quiet"
+                }
+              ],
+              "next": "l001"
+            },
+            {
+              "id": "r_bye",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ],
+              "next": "hub"
+            }
+          ]
+        },
+        {
+          "id": "h001",
+          "kind": "line",
+          "speaker": "cassius",
+          "text": "A Sawsbuck. Old as the wood. Antlers like a winter tree with the leaves still on. My grandfather swore it was the same one he saw as a boy. I stopped arguing with him about it, and he's been dead twenty years.",
+          "next": "hub"
+        },
+        {
+          "id": "w001",
+          "kind": "line",
+          "speaker": "cassius",
+          "text": "Three Rooks have sat for it. If I bring it home in a ball, I'm the last. I can come down off that seat and do something else with my mornings.",
+          "next": "w002"
+        },
+        {
+          "id": "w002",
+          "kind": "line",
+          "speaker": "cassius",
+          "text": "...I don't know what, mind. That's the trouble with it.",
+          "next": "hub"
+        },
+        {
+          "id": "t001",
+          "kind": "line",
+          "speaker": "cassius",
+          "text": "...The hollow. Down the slope, south-east. Under the white birches.",
+          "next": "t002"
+        },
+        {
+          "id": "t002",
+          "kind": "line",
+          "speaker": "cassius",
+          "text": "I've walked past that hollow a hundred times. Too obvious. No Rook would ever look there.",
+          "next": "t003"
+        },
+        {
+          "id": "t003",
+          "kind": "line",
+          "speaker": "cassius",
+          "text": "Thank you. I'll go down at first light. ...Or the next. There's no hurry, after eleven seasons.",
+          "next": "done_t"
+        },
+        {
+          "id": "done_t",
+          "kind": "line",
+          "speaker": "cassius",
+          "text": "First light, I said. Tomorrow's first light. It'll keep.",
+          "next": "done_t"
+        },
+        {
+          "id": "l001",
+          "kind": "line",
+          "speaker": "cassius",
+          "text": "Nothing. Aye. Same as me, eleven seasons running.",
+          "next": "l002"
+        },
+        {
+          "id": "l002",
+          "kind": "line",
+          "speaker": "cassius",
+          "text": "Don't look sorry for me. A man wants a reason to be up early, and it's a good reason.",
+          "next": "done_l"
+        },
+        {
+          "id": "done_l",
+          "kind": "line",
+          "speaker": "cassius",
+          "text": "Nothing again this morning. Lovely morning for it, though.",
+          "next": "done_l"
+        }
+      ],
+      "speakers": {
+        "cassius": "Cassius Rook"
+      }
     }
   ]
 }

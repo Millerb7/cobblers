@@ -7246,6 +7246,135 @@
         "quest.evt_hide_and_seek_den.found",
         "quest.evt_hide_and_seek_den.dialogue_cursor"
       ]
+    },
+    {
+      "id": "evt_hunters_hide",
+      "source": "data/northern_residents.json hunters_hide; the owner's brief of 2026-10-03 (data/northern_residents.json request)",
+      "place": "data/northern_residents.json hunters_hide: Cassius Rook's high seat, (5480, 3196)",
+      "dialogue_id": "dlg_hunters_hide",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        5485,
+        109,
+        3201
+      ],
+      "objectives": [
+        {
+          "id": "answer_him",
+          "active_when": {
+            "field": "quest.evt_hunters_hide.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_hunters_hide.decided",
+            "equals": true
+          },
+          "text": "Cassius Rook asked whether you saw the Tilpey Hart on your way up. Tell him, or don't."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_hunters_hide.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hunters_hide.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hunters_hide.dialogue_cursor",
+              "value": "c001"
+            }
+          ]
+        },
+        {
+          "id": "tell",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_hunters_hide.decided",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hunters_hide.decided",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hunters_hide.told",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hunters_hide.dialogue_cursor",
+              "value": "t001"
+            }
+          ]
+        },
+        {
+          "id": "keep_quiet",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_hunters_hide.decided",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hunters_hide.decided",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hunters_hide.dialogue_cursor",
+              "value": "l001"
+            }
+          ]
+        }
+      ],
+      "rewards": [],
+      "story_beat": "A choice with no consequence in the world: the Hart (data/northern_residents.json hunters_hide pokemon) stays in its hollow on either answer, and the player can catch it themselves. The answer changes only what Cassius says ever after (done_t or done_l). No reward.",
+      "choice_note": "The dialogue cannot know whether the player has seen the hollow (the residents' keeper wakes the Hart but writes nothing a conversation reads). r_tell names the hollow, so a player who has not been there learns where it is by choosing it. Accepted: either answer is the player's to give.",
+      "repeat_dialogue": {
+        "after_tell": "done_t",
+        "after_keep_quiet": "done_l"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "generation_blockers": [
+        "Place npc_hunters_hide at npc_at with spawnnpcat after the restart that loads cobblers_dialogue (tools/reapply.py R18NR, from data/northern_residents.json hunters_hide npc), on the ground R9NR's site stands on."
+      ],
+      "progression_field_refs": [
+        "quest.evt_hunters_hide.started",
+        "quest.evt_hunters_hide.decided",
+        "quest.evt_hunters_hide.told",
+        "quest.evt_hunters_hide.dialogue_cursor"
+      ]
     }
   ]
 }

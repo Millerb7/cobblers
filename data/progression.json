@@ -2885,6 +2885,57 @@
         "k001"
       ],
       "why": "the dialogue cursor of Lettie Furrow's conversation (dlg_hide_and_seek_den)."
+    },
+    {
+      "id": "quest.evt_hunters_hide.started",
+      "quest_id": "evt_hunters_hide",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Cassius Rook (data/northern_residents.json hunters_hide); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_hunters_hide.decided",
+      "quest_id": "evt_hunters_hide",
+      "field": "decided",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has answered Cassius, either way (dlg_hunters_hide r_tell or r_lie); the two options close."
+    },
+    {
+      "id": "quest.evt_hunters_hide.told",
+      "quest_id": "evt_hunters_hide",
+      "field": "told",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player told Cassius where the Hart beds (r_tell); false with decided true means they said they saw nothing."
+    },
+    {
+      "id": "quest.evt_hunters_hide.dialogue_cursor",
+      "quest_id": "evt_hunters_hide",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "c001",
+      "allowed_values": [
+        "c001",
+        "c002",
+        "hub",
+        "h001",
+        "w001",
+        "w002",
+        "t001",
+        "t002",
+        "t003",
+        "done_t",
+        "l001",
+        "l002",
+        "done_l"
+      ],
+      "why": "the dialogue cursor of Cassius Rook's conversation (dlg_hunters_hide)."
     }
   ],
   "gym_markers": {
