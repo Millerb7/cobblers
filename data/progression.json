@@ -2639,6 +2639,44 @@
         "done01"
       ],
       "why": "the dialogue cursor of Hale Brannock's conversation (dlg_gate_watcher)."
+    },
+    {
+      "id": "quest.evt_stubborn_tree.started",
+      "quest_id": "evt_stubborn_tree",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Hesketh Fell (data/northern_residents.json stubborn_tree); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_stubborn_tree.told",
+      "quest_id": "evt_stubborn_tree",
+      "field": "told",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has told Hesketh his last tree is not a tree (dlg_stubborn_tree t002); he does not believe it."
+    },
+    {
+      "id": "quest.evt_stubborn_tree.dialogue_cursor",
+      "quest_id": "evt_stubborn_tree",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "h001",
+      "allowed_values": [
+        "h001",
+        "h002",
+        "hub",
+        "t001",
+        "t002",
+        "t003",
+        "w001",
+        "w002",
+        "y001"
+      ],
+      "why": "the dialogue cursor of Hesketh Fell's conversation (dlg_stubborn_tree)."
     }
   ],
   "gym_markers": {

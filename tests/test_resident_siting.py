@@ -12,7 +12,8 @@ The owner, 2026-10-02, reviewing #107: a resident is a big Pokemon at a fixed sp
 Every expectation is read from the data the rule lives in, never from data/resident_encounters.json itself.
 
 The southern residents' two Pokemon (data/southern_residents.json, 2026-10-03: Grandmother Cap, Ash) are held to the
-same three rules, at the site centre plus the record's `at`, with the record's leash.
+same three rules, at the site centre plus the record's `at`, with the record's leash. So are the northern residents'
+(data/northern_residents.json, 2026-10-03), read the same way.
 """
 import json
 import math
@@ -30,11 +31,12 @@ def load(name):
     return json.loads((ROOT / "data" / name).read_text(encoding="utf-8"))
 
 
-def _southern():
+def _southern(name="southern_residents.json"):
     """data/southern_residents.json's named Pokemon (2026-10-03) in this file's shape: the anchor's x/z is the site's
-    centre plus the record's `at`, read from the record's geometry, not from its recorded anchor."""
+    centre plus the record's `at`, read from the record's geometry, not from its recorded anchor. The northern
+    residents' file (data/northern_residents.json) has the same shape and is read by the same function."""
     out = []
-    for r in load("southern_residents.json")["residents"]:
+    for r in load(name)["residents"]:
         pk = r.get("pokemon")
         if pk:
             cx, cz = r["site"]["centre"]
@@ -43,11 +45,11 @@ def _southern():
     return out
 
 
-RES = load("resident_encounters.json")["encounters"] + _southern()
+RES = load("resident_encounters.json")["encounters"] + _southern() + _southern("northern_residents.json")
 DESIGN = load("encounter_design.json")
 HEARTS = DESIGN["rules"]["hearts"]
 IDS = [e["id"] for e in RES]
-SOUTH_IDS = {e["id"] for e in _southern()}
+SOUTH_IDS = {e["id"] for e in _southern()} | {e["id"] for e in _southern("northern_residents.json")}
 
 
 def _sub_of(x, z):
@@ -106,7 +108,8 @@ def test_a_residents_level_is_within_its_places_ceiling(rid):
 
 @pytest.mark.parametrize("rid", [i for i in IDS if i not in SOUTH_IDS])
 def test_a_residents_recorded_ground_is_the_heightmaps(rid):
-    # the southern residents' anchors are re-derived from the heightmap by tools/southern_residents_audit.py
+    # the southern residents' anchors are re-derived from the heightmap by tools/southern_residents_audit.py; the
+    # northern residents' by tools/northern_residents.py's own record check (an independent audit is owed)
     if not os.environ.get("COBBLERS_SOURCE_ROOT"):
         pytest.skip("NOT_EXECUTED: COBBLERS_SOURCE_ROOT is not set: the canonical heightmap is outside the repo")
     import sys

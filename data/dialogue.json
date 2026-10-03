@@ -11840,6 +11840,146 @@
       "speakers": {
         "hale": "Hale Brannock"
       }
+    },
+    {
+      "id": "dlg_stubborn_tree",
+      "quest_id": "evt_stubborn_tree",
+      "npc_id": "npc_stubborn_tree",
+      "source": "data/northern_residents.json stubborn_tree; the owner's brief of 2026-10-03 (data/northern_residents.json request)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_stubborn_tree.dialogue_cursor",
+        "initial_node": "h001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_stubborn_tree.started",
+            "value": true
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_stubborn_tree.started",
+            "value": false
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ],
+          "node": "h001"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "h001",
+          "kind": "line",
+          "speaker": "hesketh",
+          "text": "Mind the chips. Hesketh Fell. I've the felling order for this wood, every birch in it, and I've felled every birch in it.",
+          "next": "h002"
+        },
+        {
+          "id": "h002",
+          "kind": "line",
+          "speaker": "hesketh",
+          "text": "Bar that one. An oak, in a birch wood, bang in the middle. Six weeks I've been at it. Three axes. Bounced, bounced, bent.",
+          "next": "hub"
+        },
+        {
+          "id": "hub",
+          "kind": "choice",
+          "speaker": "hesketh",
+          "text": "It'll come down. They all come down in the end.",
+          "responses": [
+            {
+              "id": "r_tree",
+              "text": "That isn't a tree.",
+              "next": "t001"
+            },
+            {
+              "id": "r_water",
+              "text": "Have you tried watering it?",
+              "next": "w001"
+            },
+            {
+              "id": "r_why",
+              "text": "Why fell the whole wood?",
+              "next": "y001"
+            },
+            {
+              "id": "r_bye",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ],
+              "next": "hub"
+            }
+          ]
+        },
+        {
+          "id": "t001",
+          "kind": "line",
+          "speaker": "hesketh",
+          "text": "Not a tree. Forty years I've been felling. Bark, branches, green on top. That's a tree.",
+          "next": "t002"
+        },
+        {
+          "id": "t002",
+          "kind": "line",
+          "speaker": "hesketh",
+          "text": "Mind you, it's never dropped a leaf. And some mornings it's a yard nearer my fire than it was. Roots settling. They do that.",
+          "next": "t003",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "tell"
+            }
+          ]
+        },
+        {
+          "id": "t003",
+          "kind": "line",
+          "speaker": "hesketh",
+          "text": "Go and give it a kick if you don't believe me. Mind your foot. Mind my tree.",
+          "next": "hub"
+        },
+        {
+          "id": "w001",
+          "kind": "line",
+          "speaker": "hesketh",
+          "text": "Watering it? It's a tree. It gets rained on.",
+          "next": "w002"
+        },
+        {
+          "id": "w002",
+          "kind": "line",
+          "speaker": "hesketh",
+          "text": "...Funny you should say. It rained Tuesday, and I'd swear it went and stood under the birches till it stopped.",
+          "next": "hub"
+        },
+        {
+          "id": "y001",
+          "kind": "line",
+          "speaker": "hesketh",
+          "text": "The timber yard in Stoneford wants birch for the new houses, and birch is what this wood is. Was. Is, bar one.",
+          "next": "hub"
+        }
+      ],
+      "speakers": {
+        "hesketh": "Hesketh Fell"
+      }
     }
   ]
 }
