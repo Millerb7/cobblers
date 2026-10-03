@@ -337,10 +337,12 @@ def owned_ids(doc):
     return out
 
 
-def authored_points(doc):
+def authored_points(doc, own_file=None):
     """Every x/z any other data/*.json authors: dicts with x and z; [x, z], [x, y, z] (read both ways, so a
     [x, z, y] polyline counts too) and [x0, z0, x1, z1] boxes (corners and centre). Our own records in the shared
-    files are skipped by id, and this file is skipped whole."""
+    files are skipped by id, and this file is skipped whole. `own_file` names the residents file to skip when another
+    tool calls this one (tools/northern_residents.py, whose sites are checked against THIS file as any other)."""
+    own_path = Path(own_file) if own_file else DATA
     own = owned_ids(doc)
     pts = []
 
@@ -371,7 +373,7 @@ def authored_points(doc):
                 for v in o:
                     walk(v, f)
     for p in sorted((ROOT / "data").glob("*.json")):
-        if p.resolve() == DATA.resolve():
+        if p.resolve() == own_path.resolve():
             continue
         walk(json.loads(p.read_text(encoding="utf-8")), p.name)
     return pts
