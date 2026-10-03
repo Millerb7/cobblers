@@ -1636,6 +1636,66 @@
       ],
       "why": "Hale's thanks for being shown the eighth badge he never got: his Snorlax Burl's Leftovers, so that they go through the gate. After gym 8, on the way to the League, when a held item that heals every turn matters. One per player, by grant_reward_once. The verification string is data/rewards.json old_orchard_cellar's, copied, not re-checked against a jar here; Leftovers are also in the Old Orchard's cellar, so this is a second source.",
       "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/southern_residents.py seats him on, and it refuses to build when they differ"
+    },
+    {
+      "id": "agnes_sun_stone",
+      "kind": "npc_grant",
+      "place": "Agnes Merrow's wagon in the foothill woods (data/northern_residents.json agnes_carving), at the foot of its shafts",
+      "npc_at": [
+        1694,
+        105,
+        2231
+      ],
+      "quest": "evt_agnes_carving",
+      "contents": [
+        {
+          "item": "cobblemon:sun_stone",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/sun_stone.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "why": "Agnes's thanks for reading her the back of the oak: the stone Edwin gave her instead of a ring. One per player, by grant_reward_once. A Sun Stone evolves Gloom (Bellossom), Sunkern, Cottonee, Petilil and Helioptile; at tier 3 it is an early stone, as data/rewards.json's other evolution-stone finds are. The verification string is data/rewards.json vr_bloom's, copied, not re-checked against a jar here.",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/northern_residents.py seats Agnes Merrow on, and it refuses to build when they differ"
+    },
+    {
+      "id": "pip_twig_badge",
+      "kind": "npc_grant",
+      "place": "Pip's gym on the downs east of Greenhollow (data/northern_residents.json pips_gym), on her end line",
+      "npc_at": [
+        4608,
+        116,
+        1718
+      ],
+      "quest": "evt_pips_gym",
+      "contents": [
+        {
+          "item": "cobblemon:shiny_stone",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/shiny_stone.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "why": "the Twig Badge: Pip's shiniest stone, given to the first challenger to come back with all eight badges. One per player, by grant_reward_once, after gym8_cleared. A Shiny Stone evolves Roselia into Roserade (Erika's grass type, which is why a child who worships Erika has kept it), Togetic, Minccino and Floette. Late, as it is gated. The verification string is data/rewards.json vr_bloom's, copied, not re-checked against a jar here.",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/northern_residents.py seats Pip Arden on, and it refuses to build when they differ"
+    },
+    {
+      "id": "hide_and_seek_milk",
+      "kind": "npc_grant",
+      "place": "Tam Furrow's home base in the Tilpey east shore woods (data/northern_residents.json hide_and_seek), at the post",
+      "npc_at": [
+        6696,
+        98,
+        3718
+      ],
+      "quest": "evt_hide_and_seek",
+      "contents": [
+        {
+          "item": "cobblemon:moomoo_milk",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/moomoo_milk.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "why": "Tam's thanks for finding his twin: two bottles of his mum's Moomoo Milk, one for each of them. One per player, by grant_reward_once, after the player has found Lettie. A modest reward for a modest errand at tier 6: Moomoo Milk restores HP. The verification string is data/rewards.json drovers_hollow_store's, copied, not re-checked against a jar here.",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/northern_residents.py seats Tam Furrow on, and it refuses to build when they differ"
     }
   ]
 }

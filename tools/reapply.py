@@ -127,6 +127,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # sites with a character in each, built by R9SR; two named Pokemon on the residents' keeper, so
                 # world-local below; summoned and the NPCs R9F does not place stood by R18SR
                 "cobblers_southern_residents",
+                # 2026-10-03: the northern residents (tools/northern_residents.py, data/northern_residents.json): six
+                # more, in rows A-D, built by R9NR; three named Pokemon on the residents' keeper, so world-local below;
+                # summoned and the NPCs R9F does not place stood by R18NR
+                "cobblers_northern_residents",
                 # 2026-10-02: the relic site underground (tools/relic_underground.py, data/relic_underground.json): the
                 # old surface build taken off, then the hall, gallery and passage carved, by R9RU; its zone check acts on
                 # its own (an advancement), so world-local below
@@ -287,7 +291,9 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                # 2026-10-03: species forms for the starters; global would change the live world's species too
                "cobblers_mythical_starters",
                # 2026-10-03: the southern residents' keeper spawns its two Pokemon the same way
-               "cobblers_southern_residents")
+               "cobblers_southern_residents",
+               # 2026-10-03: the northern residents' keeper spawns its three Pokemon the same way
+               "cobblers_northern_residents")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -607,6 +613,9 @@ def prepare_jobs(a):
     # the steps, and the NPCs' dialogue, rewards and hand-in compiled by compile_dialogue above
     add("southern_residents", "southern_residents.py", *src)
     add("southern_residents_audit", "southern_residents_audit.py", *src)
+    # the northern residents (2026-10-03): the same generator's pieces and guards; its independent audit is owed
+    # (data/northern_residents.json audit_checklist)
+    add("northern_residents", "northern_residents.py", *src)
     add("drovers_hollow:build", "drovers_hollow.py", "build", *src)
     add("drovers_hollow_audit", "drovers_hollow_audit.py", *src)
     # the three wayside places of 2026-10-03. Each generator refuses a spawn-condition palette and any block outside its
@@ -1551,6 +1560,11 @@ def steps(with_spawns=False):
     import southern_residents
     out.append(("R9SR", "the southern residents' sites (data/southern_residents.json)",
                 southern_residents.placement_steps()))
+    # the northern residents' sites (2026-10-03, tools/northern_residents.py): the same pure block pass per site, held
+    # in a forceload of its box, before R9E; their NPCs stand on these floors (R9F and R18NR)
+    import northern_residents
+    out.append(("R9NR", "the northern residents' sites (data/northern_residents.json)",
+                northern_residents.placement_steps()))
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
@@ -1689,6 +1703,10 @@ def steps(with_spawns=False):
     # grant_reward_once (R9F places the others), turned to their yaw. After R17N, like the residents above
     out.append(("R18SR", "the southern residents: the ungated Pokemon and the NPCs R9F does not place (data/southern_residents.json)",
                 southern_residents.entity_steps()))
+    # the northern residents (2026-10-03): the ungated Pokemon summoned (guarded on tag AND species) and bound, then
+    # the NPCs who give nothing through grant_reward_once, turned to their yaw. After R18SR
+    out.append(("R18NR", "the northern residents: the ungated Pokemon and the NPCs R9F does not place (data/northern_residents.json)",
+                northern_residents.entity_steps()))
     # the Drovers' Hollow's drover (2026-10-02): after R17N, on the path R9HF wrote, his class loaded at boot from
     # cobblers_dialogue
     out.append(("R18HF", "the Drovers' Hollow's drover, Owen Cray (data/drovers_hollow.json npc)",
