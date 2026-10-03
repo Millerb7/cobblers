@@ -269,6 +269,43 @@ def walk_problems(gate, block):
         bad.append("%s: from the arrival %s no player walks into the zone at %s" % (name, a, in_c))
     if not any((c[0], c[2]) == (eb[0], eb[2]) and c[1] == eb[1] for c in reach(in_c, q)):
         bad.append("%s: from the zone at %s no player reaches the exit box %s" % (name, in_c, eb[:3]))
+    bad += straight_on_problems(gate, block)
+    return bad
+
+
+def straight_on_problems(gate, block):
+    """[] when, at each end, a player walking straight on off the last approach column steps onto ground.
+
+    Added 2026-10-03 (data/rift_zones.json measured_defects[held_walls_do_not_meet_their_gatehouses]): G5's
+    inner approach ended one column short of a column of league_gate, so a passed player walking out of the
+    walkway walked into obsidian. The flood fill above still called G5 sound, because a player can sidestep
+    onto the ground beside it; a doorway whose way out is a sidestep round a wall is the defect all the same.
+    The column the run came from is the approach column's 4-neighbour nearest the guard (the walkway's end);
+    the step is the movement model's: up one with headroom, or down by up to three."""
+    name, _gid, gd, *_ = gate
+    q = gd["block"]
+    bad = []
+
+    def ok(x, y, z):
+        return block(x, y, z) in PASSABLE and block(x, y + 1, z) in PASSABLE and block(x, y - 1, z) not in PASSABLE
+    for side in ("outer", "inner"):
+        run = gd["approach"][side]
+        if not run:
+            bad.append("%s: no %s approach in the data, so nothing says where its mouth is" % (name, side))
+            continue
+        first = run[0]
+        prev = min(((first[0] + 1, first[1]), (first[0] - 1, first[1]), (first[0], first[1] + 1),
+                    (first[0], first[1] - 1)), key=lambda c: (c[0] - q[0]) ** 2 + (c[1] - q[1]) ** 2)
+        hx, hz = first[0] - prev[0], first[1] - prev[1]
+        lx, lz, ly = run[-1][0], run[-1][1], run[-1][2]
+        sx, sz = lx + hx, lz + hz
+        steps = [y for y in (ly, ly - 1, ly - 2, ly - 3) if ok(sx, y, sz)]
+        if ok(sx, ly + 1, sz) and block(lx, ly + 2, lz) in PASSABLE:
+            steps.append(ly + 1)
+        if not steps:
+            bad.append("%s: walking straight on off the %s approach at (%d, %d, %d), the column (%d, %d) is not "
+                       "ground a player can step onto: %s" % (name, side, lx, ly, lz, sx, sz,
+                                                             [block(sx, y, sz) for y in range(ly - 1, ly + 3)]))
     return bad
 
 
@@ -315,25 +352,194 @@ def test_every_gatehouse_r9z_builds_can_be_walked_through():
     assert problems == [], "\n".join(problems)
 
 
-def _held_record():
-    return next((d for d in SPEC["measured_defects"] if d["id"] == HELD_WALLS and not d.get("fixed")), None)
+def _record(rid):
+    return next((d for d in SPEC["measured_defects"] if d["id"] == rid), None)
+
+
+def all_gates():
+    return [x for zid, z in live_zones().items() for x in RZ.gates_of(zid, z)]
+
+
+def everything(fn):
+    """Every wall and gatehouse function, built by R9Z today or held, in R9Z's order."""
+    index = [x for x in (fn / "index.txt").read_text(encoding="utf-8").split() if x]
+    run, held = r9z(index)
+    assert sorted(run + held) == sorted(index)
+    return run + held
 
 
 # Without it a held zone's needs_* field can be removed while its wall still seals its own gatehouse, and the
-# release puts up a wall nobody can pass. Strict xfail keyed on the record: fix the siting and it XPASSes, and
-# the record must then say `fixed`.
+# release puts up a wall nobody can pass (measured_defects[held_walls_do_not_meet_their_gatehouses], fixed
+# 2026-10-03 by moving G4 three blocks into behind_league and opening one column of league_gate at G5's inner
+# mouth). EVERY gatehouse the data defines, built or held, with EVERY wall up: a held zone is released by
+# deleting one field, and nothing else re-checks its geometry when that happens.
 @pytest.mark.slow
-@pytest.mark.xfail(_held_record() is not None, strict=True,
-                   reason="data/rift_zones.json measured_defects[%s]" % HELD_WALLS)
-def test_a_held_zones_gatehouse_can_be_walked_through_with_its_wall_up():
+def test_every_gatehouse_built_or_held_can_be_walked_through_with_every_wall_up():
+    rec = _record(HELD_WALLS)
+    assert rec is not None and rec.get("fixed"), "the record of the fix is gone or says unfixed"
     (fn, _adv), g = real()
-    index = [x for x in (fn / "index.txt").read_text(encoding="utf-8").split() if x]
-    run, held = r9z(index)
-    assert held, "nothing is held: this test's premise is gone, retire it with the record"
-    block = world_of(fn, run + held, g)
-    gates = [x for zid, z in live_zones().items() if zid in RZ.held_zones(SPEC) for x in RZ.gates_of(zid, z)]
+    gates = all_gates()
+    assert len(gates) == 7, "the data's gatehouses changed: %s" % [x[0] for x in gates]
+    block = world_of(fn, everything(fn), g)
     problems = [p for gate in gates for p in walk_problems(gate, block)]
     assert problems == [], "\n".join(problems)
+
+
+def gates_in_a_wall(fn):
+    """The gates whose emitted gatehouse touches a column of their own zone's emitted wall: those are the
+    gates the wall is meant to close on, so the barrier must be the only way past. Read off the two emitted
+    functions; which wall is the zone's comes from the data. G1 stands 141 blocks inside z1, nowhere near the
+    throat wall, and z2 has no wall, so their gatehouses touch none."""
+    out = []
+    for gate in all_gates():
+        zid = gate[0].split("_")[0]
+        w = SPEC["zones"][zid].get("wall")
+        if not w:
+            continue
+        wall = {(x, z) for (x, _y, z) in RZ.simulate_function(
+            (fn / ("wall_%s.mcfunction" % w)).read_text(encoding="utf-8").splitlines())}
+        house = {(x, z) for (x, _y, z) in RZ.simulate_function(
+            (fn / ("gatehouse_%s.mcfunction" % gate[0])).read_text(encoding="utf-8").splitlines())}
+        if any((x + dx, z + dz) in wall for (x, z) in house for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+            out.append(gate)
+    return out
+
+
+def bypassed(gate, block):
+    """True when, barrier shut, a player outside walks round to inside within 28 of the guard."""
+    _n, _gid, gd, *_ = gate
+    q, ow, fy = gd["block"], gd["outward"], gd["ground_y"] + 1
+    feet, reach = walker(block)
+    o = (int(round(q[0] + ow[0] * (GH["knock_out"] + 6))), int(round(q[1] + ow[1] * (GH["knock_out"] + 6))))
+    i = (int(round(q[0] - ow[0] * (GH["walkway_in"] + 6))), int(round(q[1] - ow[1] * (GH["walkway_in"] + 6))))
+    return feet(i[0], i[1], fy) in reach(feet(o[0], o[1], fy), q)
+
+
+# Without it a wall re-cut to meet its gatehouse could open a way round the barrier, and the walk above would
+# pass happily, because it asks only whether a player CAN get through. Opening league_gate's column at G5's inner
+# mouth is exactly such a re-cut.
+@pytest.mark.slow
+def test_the_barrier_is_the_only_way_past_a_gatehouse_in_a_wall():
+    (fn, _adv), g = real()
+    walled = gates_in_a_wall(fn)
+    assert {x[0] for x in walled} == {"z4", "z5"}, [x[0] for x in walled]
+    block = world_of(fn, everything(fn), g)
+    assert [x[0] for x in walled if bypassed(x, block)] == []
+
+
+# Without this the bypass check could pass for reasons of its own. Dropping the gatehouse's side walls from the
+# GENERATOR (walkway_shell returns nothing; data untouched) must open a way round both walled gates.
+@pytest.mark.slow
+def test_dropping_the_shell_from_build_opens_a_way_round_both_walled_gates():
+    src = (ROOT / "tools" / "rift_zones.py").read_text(encoding="utf-8")
+    old = "    return sorted(walls, key=lambda p: (p[1], p[0]))"
+    assert src.count(old) == 1
+    mod = types.ModuleType("rift_zones_no_shell")
+    mod.__file__ = str(ROOT / "tools" / "rift_zones.py")
+    exec(compile(src.replace(old, "    return []"), mod.__file__, "exec"), mod.__dict__)
+    (fn, _adv), g = real()
+    mfn, _madv = build(module=mod, real_ground=True)
+    block = world_of(mfn, everything(fn), g)
+    assert {x[0] for x in gates_in_a_wall(fn) if bypassed(x, block)} == {"z4", "z5"}
+
+
+# Without it the straight-on check could pass for reasons of its own: building from the PRE-FIX approach -- G5's
+# inner run without the league_gate column, the generator's own wall-awareness undone -- must break G5 by name.
+@pytest.mark.slow
+def test_an_approach_that_stops_short_of_the_wall_fails_straight_on():
+    (fn, _adv), g = real()
+    z5 = json.loads(json.dumps(SPEC["zones"]["z5"]))
+    run = z5["guard"]["approach"]["inner"]
+    assert run[-1][:2] == [3581, 2680], run
+    z5["guard"]["approach"]["inner"] = run[:-1]
+    gate = RZ.gates_of("z5", z5)[0]
+    # the wall as built without the opening: the emitted wall plus the one column it would have kept
+    over = {}
+    for n in everything(fn):
+        over.update(RZ.simulate_function((fn / (n + ".mcfunction")).read_text(encoding="utf-8").splitlines()))
+    for y in range(g(3581, 2680) + 1, g(3581, 2680) + 1 + SPEC["wall"]["rise_over_floor"]):
+        over[(3581, y, 2680)] = "minecraft:obsidian"
+
+    def block(x, y, z):
+        b = over.get((x, y, z))
+        return b if b is not None else ("terrain" if y <= g(x, z) else "minecraft:air")
+    assert straight_on_problems(gate, block), "a wall column straight on from G5's inner mouth went unseen"
+    assert walk_problems(gate, block) != []
+
+
+# mouth_cut is what put the wall column into the approach. Unit-level, flat ground, a wall two columns out.
+def test_mouth_cut_carries_the_run_through_its_own_wall():
+    flat = lambda x, z: 80  # noqa: E731
+    wall = frozenset({(12, 0), (13, 0)})
+    assert RZ.mouth_cut((9, 0), (10, 0), 81, flat, "t") == [[11, 0, 81, None]]
+    assert RZ.mouth_cut((9, 0), (10, 0), 81, flat, "t", wall) == [[11, 0, 81, None], [12, 0, 81, None],
+                                                                   [13, 0, 81, None]]
+
+
+TRAPPED = "gates_stand_deep_inside_their_own_zone"
+
+
+def passless_reaches_knock(gate, z, knocks, block):
+    """True when a player WITHOUT the pass walks from outside to the knock box and never stands in the zone's
+    boxes outside a knock box -- where the zone check would turn them back before the guard could answer."""
+    _n, _gid, gd, _a, _t, _e, knock = gate
+    q, ow, fy = gd["block"], gd["outward"], gd["ground_y"] + 1
+    feet, reach = walker(block)
+
+    def turned_back(x, zz):
+        return (any(b[0] <= x <= b[2] and b[1] <= zz <= b[3] for b in z["boxes"])
+                and not any(k[0] <= x <= k[3] and k[2] <= zz <= k[5] for k in knocks))
+    o = (int(round(q[0] + ow[0] * (GH["knock_out"] + 6))), int(round(q[1] + ow[1] * (GH["knock_out"] + 6))))
+    start = feet(o[0], o[1], fy)
+    if start is None or turned_back(start[0], start[2]):
+        return False
+    ok = {c for c in reach(start, q) if not turned_back(c[0], c[2])}
+    seen, dq = {start}, deque([start])
+    while dq:
+        x, y, zz = dq.popleft()
+        if knock[0] <= x <= knock[3] and knock[2] <= zz <= knock[5] and y == knock[1]:
+            return True
+        for nx, nz in ((x + 1, zz), (x - 1, zz), (x, zz + 1), (x, zz - 1)):
+            for ny in (y + 1, y, y - 1, y - 2, y - 3):
+                if (nx, ny, nz) in ok and (nx, ny, nz) not in seen:
+                    seen.add((nx, ny, nz))
+                    dq.append((nx, ny, nz))
+    return False
+
+
+# Without it a gatehouse can walk perfectly and still be one nobody without the pass ever reaches, because the
+# zone's own boxes surround it and the zone check turns them back first. G2 moved to the trailhead on 2026-10-01
+# for exactly this; G1 and the three z2 posts still stand 62-153 blocks inside their zones. Strict xfail keyed
+# on the record, which names the gates that fail: re-site them and it XPASSes.
+@pytest.mark.slow
+@pytest.mark.xfail(bool(_record(TRAPPED)) and not (_record(TRAPPED) or {}).get("fixed"), strict=True,
+                   reason="data/rift_zones.json measured_defects[%s]" % TRAPPED)
+def test_a_player_without_the_pass_can_walk_up_to_every_guard():
+    (fn, _adv), g = real()
+    block = world_of(fn, everything(fn), g)
+    bad = []
+    for zid, z in live_zones().items():
+        gates = RZ.gates_of(zid, z)
+        knocks = [x[6] for x in gates]
+        bad += [x[0] for x in gates if not passless_reaches_knock(x, z, knocks, block)]
+    assert bad == [], bad
+
+
+# The record names exactly the gates that fail today, so a new one cannot join the xfail silently.
+@pytest.mark.slow
+def test_the_trapped_gates_record_names_exactly_the_gates_that_fail():
+    rec = _record(TRAPPED)
+    assert rec is not None
+    if rec.get("fixed"):
+        return
+    (fn, _adv), g = real()
+    block = world_of(fn, everything(fn), g)
+    bad = set()
+    for zid, z in live_zones().items():
+        gates = RZ.gates_of(zid, z)
+        knocks = [x[6] for x in gates]
+        bad |= {x[0] for x in gates if not passless_reaches_knock(x, z, knocks, block)}
+    assert bad == set(rec["gates"]), sorted(bad)
 
 
 # Without this the walk could pass for reasons of its own. Dropping the approach from the GENERATOR -- data

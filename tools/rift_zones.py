@@ -776,8 +776,11 @@ def cmd_trace(a):
         kc = wlist[:gi + 1]
         knock = [min(p[0] for p in kc), fy, min(p[1] for p in kc),
                  max(p[0] for p in kc), fy + 1, max(p[1] for p in kc)]
-        approach = {"outer": mouth_cut(wlist[1], wlist[0], fy, g, "%s outer mouth" % zid),
-                    "inner": mouth_cut(wlist[-2], wlist[-1], fy, g, "%s inner mouth" % zid)}
+        # the zone's own cross-wall, as the line `build` lays it: an approach never ends facing it (mouth_cut)
+        wcut = spec["zones"][zid.split("/")[0]].get("wall")
+        wset = frozenset(tuple(p) for c in spec["cuts"] if c["id"] == wcut for p in c["line"])
+        approach = {"outer": mouth_cut(wlist[1], wlist[0], fy, g, "%s outer mouth" % zid, wset),
+                    "inner": mouth_cut(wlist[-2], wlist[-1], fy, g, "%s inner mouth" % zid, wset)}
         out = {
             "block": [bx, bz], "ground_y": int(g(bx, bz)),
             "side": side,
@@ -1390,7 +1393,7 @@ def walkway_shell(path):
 APPROACH_MAX = 16
 
 
-def mouth_cut(prev, end, fy, g, label):
+def mouth_cut(prev, end, fy, g, label, wall=frozenset()):
     """[[x, z, feet, fill_from]] -- the columns, straight on from one walkway mouth, that `build` cuts or
     bridges so the walkway meets the ground. Measured once by `trace` and kept in the gate's record as
     `approach`, so `build` reads no heightmap.
@@ -1408,7 +1411,15 @@ def mouth_cut(prev, end, fy, g, label):
       bridged, while it stands lower.
     Every column gets three blocks of air at its feet, so a jump up from it has headroom. A cut column's floor
     is the ground it was cut into (`fill_from` null); a bridged column's floor is filled from the ground up
-    (`fill_from` = the first block above the ground). No ground within APPROACH_MAX columns: ZoneError."""
+    (`fill_from` = the first block above the ground). No ground within APPROACH_MAX columns: ZoneError.
+
+    `wall` is the zone's own cross-wall line (cuts[].line), and the run never ENDS facing it (2026-10-03,
+    data/rift_zones.json measured_defects[held_walls_do_not_meet_their_gatehouses]): ground was the only
+    thing this measured, so at G5 the inner approach stopped one column short of a column of league_gate and
+    a passed player walking straight out of the walkway walked into obsidian. A wall column straight on from
+    the run is taken into it at its own ground, and `build` leaves every approach column out of the wall.
+    Opening a wall column can open a way round the barrier; tests/test_rift_zones_apply.py's bypass check is
+    what says it did not."""
     d = (end[0] - prev[0], end[1] - prev[1])
     if abs(d[0]) + abs(d[1]) != 1:
         raise ZoneError("%s: the walkway's last step %s is not one axis step" % (label, d))
@@ -1417,6 +1428,12 @@ def mouth_cut(prev, end, fy, g, label):
         m = (end[0] + d[0] * k, end[1] + d[1] * k)
         feet = g(*m) + 1
         top = h if k == 1 else h + 1            # the walkway's roof forbids a step up at the mouth itself
+        if h - 1 <= feet <= top and (tuple(m) in wall or (m[0] + d[0], m[1] + d[1]) in wall):
+            # the run would end here, but this column or the next is the wall: carry it on, at the ground
+            if k == 1 or tuple(m) in wall:
+                cols.append([m[0], m[1], feet, None])
+            h = feet
+            continue
         if h - 1 <= feet <= top:
             if k == 1:
                 # the mouth is always laid, at its own ground, even where nothing needs cutting: a world the
