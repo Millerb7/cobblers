@@ -28281,6 +28281,46 @@
       "status": "planned",
       "adopted_site": "adopted_moltres_tower",
       "chosen_because": "measured and argued in data/adopted_legendary_sites.json adopted_moltres_tower: the least-disturbing 31x34 on the Craters' upper flanks, 389 blocks from Blaine's gym, completing the birds' trio with Articuno on Frostpeak and Zapdos on the western cliffs; scheduled 2026-10-02 once EXP-048 showed a raw-pasted LumyMon altar answers a player (experiments/EXP-048-legendary-altar/README.md), re-measured that day off tools/ground.py, rounded: the same ground, seat, top and portal clearance the site record states."
+    },
+    {
+      "id": "legendary_crown_spire",
+      "pack_template": "cobbleverse:crown_spire",
+      "template": "cobbleverse:crown_spire",
+      "source": {
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/cobbleverse/structure/crown_spire.nbt",
+        "licence": "Cobbleverse, no redistribution: never copied into the repository. The pack is installed on the server, so the structure is placed by resource id."
+      },
+      "cell": "A6",
+      "kind": "donor",
+      "position": {
+        "x": 5348,
+        "y": 130,
+        "z": 484
+      },
+      "size": [
+        41,
+        38,
+        49
+      ],
+      "rotation": "none",
+      "mirror": "none",
+      "anchor_mode": "corner",
+      "y_mode": "absolute",
+      "status": "planned",
+      "adopted_site": "adopted_crown_spire",
+      "data_remove": [
+        {
+          "at": [
+            15,
+            1,
+            9
+          ],
+          "path": "storageWrapper.contents.inventory.Items[{id:\"lumymon:calyrex_crown\"}]",
+          "why": "the template's barrel at [15, 1, 9] (world (5363, 131, 493)) holds the one lumymon:calyrex_crown any client jar or datapack carries (read 2026-10-03 from COBBLEVERSE-DP-v31.zip crown_spire.nbt; no recipe or loot table makes one). Left in, the first finder holds a level-70 Calyrex at any cap and past the archivist's champion_cleared gate (data/research_station.json item calyrex_crown). Removed after the paste so that gate stays the only way to the crown; the barrel's ice stays. Delete this entry to make the crown the spire's own reward instead (an owner call, docs/world-building/HIDDEN_LEGENDARIES.md)."
+        }
+      ],
+      "chosen_because": "measured and argued in data/adopted_legendary_sites.json adopted_crown_spire, the first HIDDEN site (tools/hidden_sites.py check): a bench on Northgate Isle's eastern highland, an island no route, ferry or town reaches, 99 blocks from its elder spruce; 1,957 of the footprint's 2,009 columns already stand at y130, so the paste moves 52 blocks. Scheduled 2026-10-03, off tools/ground.py, rounded."
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
  "schema": "cobblers.adopted_legendary_sites/1",
- "status": "authored 2026-10-01, extended 2026-10-02 by three sessions. SEVEN sites measured off the canonical heightmap. SIX are SCHEDULED in data/placements.json, each named by `scheduled_as`: the Crown Cemetery and the two Necrozma towers (nothing they give depends on a right-click altar), and Zapdos, Mew and Moltres, scheduled 2026-10-02 once EXP-048 showed a pasted altar answers (the owner summoned from the pasted Calyrex statue). Their `placement` blocks are deleted here as placement_method.not_in_placements_json requires; this file keeps the measurement and the reasoning, and tools/adopted_sites.py resolves any site's position from whichever file authors it. ONE stays unscheduled here: Articuno, on Frostpeak's summit, placed by its own step (tools/articuno_tower.py placement_steps(), reapply R18A) from its `placement` block and never from data/placements.json - scheduling it too would paste it twice. The live world has none of the seven; the disposable staging world had the Crown Cemetery and Articuno's superseded shoulder copy pasted by hand for EXP-048. Of the eight Nether and End structures, the re-opening is recorded group by group in `refused`.",
+ "status": "authored 2026-10-01, extended 2026-10-02 by three sessions. SEVEN sites measured off the canonical heightmap. SIX are SCHEDULED in data/placements.json, each named by `scheduled_as`: the Crown Cemetery and the two Necrozma towers (nothing they give depends on a right-click altar), and Zapdos, Mew and Moltres, scheduled 2026-10-02 once EXP-048 showed a pasted altar answers (the owner summoned from the pasted Calyrex statue). Their `placement` blocks are deleted here as placement_method.not_in_placements_json requires; this file keeps the measurement and the reasoning, and tools/adopted_sites.py resolves any site's position from whichever file authors it. ONE stays unscheduled here: Articuno, on Frostpeak's summit, placed by its own step (tools/articuno_tower.py placement_steps(), reapply R18A) from its `placement` block and never from data/placements.json - scheduling it too would paste it twice. The live world has none of the seven; the disposable staging world had the Crown Cemetery and Articuno's superseded shoulder copy pasted by hand for EXP-048. Of the eight Nether and End structures, the re-opening is recorded group by group in `refused`. 2026-10-03: an EIGHTH, adopted_crown_spire (Glastrier, on Northgate Isle), scheduled as data/placements.json legendary_crown_spire: the first HIDDEN site, also held to tools/hidden_sites.py check; refused group 4 is superseded.",
  "why_a_sibling_of_legendaries_json": [
   "data/legendaries.json is OUR parametric chamber system, not a register of sites. tools/legendaries.py `load()` rejects any record whose `kind` is outside (lake_grotto, sealed_chamber, sapling_wake) and any record without a non-empty `gate.flags`, and `geometry()` derives every box of a sited record from `mouth`/`portal`, `approach` and `chamber`. A pasted third-party template has none of those: no bore, no shell margin, no carve, and - the load-bearing one - NO GATE WE MAY AUTHOR, because what triggers a `lumymon:*_altar` has never been read (LumyMon is closed source).",
   "Putting these three in that file would therefore mean mutating KINDS and the gate rule of a generator that emits six built chambers, to carry records it must never emit. That is the opposite of fail-closed, so they live here.",
@@ -641,6 +641,91 @@
    "re_homed_from": "the Nether, where it generates on nether_wastes with an altar nobody can feed. Its Nether copies still generate; if the feather ever reaches a player who goes to the Nether, those altars answer too (one per copy). A structure-set override would close that (the same unproven experiment as Blaine's Nether copies).",
    "scheduled_as": "legendary_moltres_tower",
    "placement_lives_in": "data/placements.json legendary_moltres_tower: corner (6252, 5344), y168, rotation none, mirror none, top occupied layer y231 (344 under the runtime ceiling y575; 79 under terrain max_y 310). Deleted here so one site has one author (placement_method.not_in_placements_json)."
+  },
+  {
+   "id": "adopted_crown_spire",
+   "template": "cobbleverse:crown_spire",
+   "legendary": "Glastrier",
+   "rank": 8,
+   "status": "SCHEDULED 2026-10-03 as data/placements.json legendary_crown_spire. The first HIDDEN site: held to tools/hidden_sites.py check (clearance, keep-out, portals, spread) as well as to this file's rules. Nothing placed, booted or clicked.",
+   "hidden": true,
+   "scheduled_as": "legendary_crown_spire",
+   "source_archive": "COBBLEVERSE-DP-v31.zip",
+   "size": [
+    41,
+    38,
+    49
+   ],
+   "size_source": "data/structures.json footprint \"41x38x49\"",
+   "template_biome": "minecraft:snowy_plains",
+   "template_read_2026_10_03": {
+    "how": "COBBLEVERSE-DP-v31.zip data/cobbleverse/structure/crown_spire.nbt from the CLIENT profile, read with zipfile and tools/nbt.py; nothing copied. Template-relative positions, then world positions for rotation none at corner (5348, 130, 484).",
+    "summon": "lumymon:summon_trigger x3 at [24, 2, 36..38] (world (5372, 132, 520..522)); lumymon:summon_anchor at [16, 6, 38] (world (5364, 136, 522)); ONE lumymon:iceroot_carrot_crop at age 7 at [13, 4, 30] (world (5361, 134, 514)) among eight vanilla carrots (ages 7, 0, 1, 7, 3, 7, 7, 0).",
+    "statue": "a SECOND lumymon:calyrex_statue, has_crown false, facing east, at [23, 21, 24] (world (5371, 151, 508)). The Crown Cemetery carries the other.",
+    "barrels": "seven sophisticatedstorage:barrel: [15,1,9] the lumymon:calyrex_crown with 7 ice and 6 packed ice; [18,14,22] tmcraft:tm_freezyfrost with packed and blue ice; [18,14,26] 17 mega_showdown:ice_tera_shard; [22,14,21] 12 cobblemon:relic_coin; [23,14,21] 2 cobblemon:azure_ball and an ice_heal; [24,14,26] a diamond_axe and packed ice; [24,15,26] 9 snowballs.",
+    "corrects": "data/structures.json carries.notable_blocks lists only lumymon:summon_trigger for this template, and refused group 4 called it a second Calyrex site. It is a Glastrier site (the iceroot crop and the trigger) that ALSO carries a Calyrex statue and the game's only crown."
+   },
+   "site": {
+    "region": "northgate_east",
+    "containing_polygons": [
+     "northgate_isle",
+     "northgate_east"
+    ],
+    "cell": "A6",
+    "paint": "preset `taiga_sparse` (data/regions.json subregions.northgate_east). NOT a biome match: the template wants `minecraft:snowy_plains`. A raw paste reads no biome, and the spire brings its own 3,760 packed ice and 1,157 snow blocks, so the mismatch is a ring of ice in cold spruce country, not a frozen build in a jungle.",
+    "why": "the owner, 2026-10-03: 'places you stumble on ... islands with no reason to visit'. Northgate Isle is a spruce island off the north coast with no town, no route, no ferry stop and no trainer: the nearest route vertex is 1,489 blocks off (tools/hidden_sites.py sightings), and the only authored things on it are three elder spruces and their habitat blocks. The bench is the island's eastern highland at y129-131, 99 blocks from elder_northgate_east_1 (5472, 432): someone who crosses the water to look at the giant spruce finds a spire of ice behind it.",
+    "findable_by_eye": "NOT from any road: 0 of 0 route vertices within 1,200 blocks see its top (there are none). From the water: Surf from the north coast, which is 150 to 500 blocks south of the island (tools/ground.py, sampled every 160 blocks of x). The finding is the rumour and the elder tree, not a sightline."
+   },
+   "placement_lives_in": "the position, rotation and mirror now live ONLY in data/placements.json legendary_crown_spire: corner (5348, 484), y130, rotation none, mirror none. The top occupied layer y167 (408 under the runtime ceiling y575).",
+   "ground": {
+    "min": 129,
+    "max": 131,
+    "median": 130.0,
+    "mode": 130,
+    "columns": 2009,
+    "mode_columns": 1957,
+    "spread": 2,
+    "transposed_49x41": {
+     "min": 129,
+     "max": 131,
+     "note": "rotation 90 or 270 costs 12 blocks of cut and 96 of fill at y130 instead of 12 and 40 - also usable"
+    },
+    "measured_by": "tools/ground.py over x5348..5388, z484..532; the least-disturbing 41x49 in x4900..5400, z200..800 with a unique cheapest seat that passes every tools/hidden_sites.py rule"
+   },
+   "displaces": {
+    "cut_blocks": 12,
+    "cut_columns": 12,
+    "fill_blocks": 40,
+    "fill_columns": 40,
+    "terrain": "1,957 of 2,009 columns already stand at y130: the paste shaves 12 single blocks and fills 40. y129 would cut 1,981; y131 would fill 2,037.",
+    "built_content": "nothing: the nearest authored record is elder_northgate_east_1 and its habitat blocks (data/elder_trees.json, data/habitat_blocks.json) at 99 blocks from the footprint edge, over the 96 the hidden-site clearance asks."
+   },
+   "spread": {
+    "rule": "tools/hidden_sites.py SPREAD 800, centre to centre, from every other adopted site and every data/legendaries.json encounter with a coordinate",
+    "nearest": "Azelf's lake grotto 1,671; the Crown Cemetery 1,936; Regice 2,129; the Dawn tower 2,142",
+    "portals": "the nearest portal is dive_peak_pond_floor, 1,593 blocks from the footprint edge (rule 120)"
+   },
+   "does_not_travel_here": [
+    "the LumyMon radar (`calyrex_ice_radar`, 'Locates the Crown Spire') and `/locate`: a paste writes no structure start (what_never_travels)",
+    "ONE spawn entry: data/structures.json depends_on_it names cobblemon:0037_vulpix spawning VIA cobbleverse:crown_spire. No Vulpix will spawn at the pasted spire."
+   ],
+   "carries_into_the_world": {
+    "from": "the template read in template_read_2026_10_03 (data/structures.json `carries` undercounts it)",
+    "blocks": [
+     "lumymon:summon_trigger",
+     "lumymon:summon_anchor",
+     "lumymon:iceroot_carrot_crop",
+     "lumymon:calyrex_statue"
+    ],
+    "removed_after_the_paste": "the calyrex_crown, by data/placements.json legendary_crown_spire data_remove (tools/place_donor.py data_removals); the barrel and its ice stay"
+   },
+   "gate": {
+    "place": "Surf, to cross to the island: Misty teaches it after gym2_cleared (docs/mechanics/WATER_MAP.md). Nothing locks the spire itself.",
+    "glastrier": "THE LEVEL CAP. An iceroot carrot thrown onto the trigger ring spawns Glastrier at 50-59 or 70 (LumyMon class strings, docs/research/notes/lumymon-altars.md section 1, which it shares with Spectrier); above the thrower's RCT cap it breaks free from every ball (data/level_cap.json). Every 50-59 roll is catchable from gym8_cleared (cap 60); the 70 roll only after champion_cleared (cap 100). Below that the throw wastes the carrot: an early finder can burn the server's one Glastrier. Owner call (HIDDEN_LEGENDARIES.md).",
+    "calyrex": "the spire's statue is a second place to set the archivist's crown (data/research_station.json, champion_cleared); its own crown is removed."
+   },
+   "what_a_player_gets": "Glastrier, ONCE FOR THE SERVER if the trigger consumes the thrown carrot (INFERRED from the shaderoot reading, shaderoot_supply_measured_2026_10_02 on the cemetery: the carrot is the crop's own seed, so one plant is a conserved stock of one; NOT read for iceroot). And the barrels: TM Freezy Frost, 17 ice Tera Shards, 12 relic coins, 2 Azure Balls and an Ice Heal, a diamond axe.",
+   "how_it_is_found": "a rumour after gym 8 from a person who would know: the Shrew Station archivist (data/research_station.json npc `archivist`), who already holds the crown errand, says the spire is 'on the spruce isle north of the downs, behind the big tree'. NOT AUTHORED: data/research_station.json and data/dialogue.json belong to their own sessions; the line is proposed in docs/world-building/HIDDEN_LEGENDARIES.md."
   }
  ],
  "refused": [
@@ -685,7 +770,8 @@
     "Glastrier",
     "Calyrex"
    ],
-   "why": "it ends at Calyrex, and so does `crown_cemetery`, which is adopted above. Two sites for one legendary is the checklist feeling the design is trying to avoid. If the owner prefers the spire (41x38x49, snowy_plains), it REPLACES the cemetery; it does not join it."
+   "why": "it ends at Calyrex, and so does `crown_cemetery`, which is adopted above. Two sites for one legendary is the checklist feeling the design is trying to avoid. If the owner prefers the spire (41x38x49, snowy_plains), it REPLACES the cemetery; it does not join it.",
+   "superseded_2026_10_03": "ADOPTED as adopted_crown_spire (Northgate Isle, a hidden site). This entry is kept as written. Its premise was half right: the spire does carry a second Calyrex statue, but its own encounter is GLASTRIER (an iceroot crop and the trigger), a different legendary from the cemetery's Spectrier, and its barrel holds the only crown in the game. So it joins the cemetery rather than replacing it: two steeds, one king, and the crown removed at paste so the archivist's gate holds."
   },
   {
    "ids": [
