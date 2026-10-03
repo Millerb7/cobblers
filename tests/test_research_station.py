@@ -108,9 +108,152 @@ def test_the_station_is_near_the_owners_coordinate_and_clear_of_the_zapdos_tower
 
 
 # ------------------------------------------------------------------------------------------- the hold
-def test_every_item_is_held_today(ground, tmp_path):
-    assert REC["economy"]["issuing"] is False
-    written, _p = R.files(R.load(), ground)
+# Retargeted 2026-10-03 from "every item is held" (which pinned economy.issuing to false) to the properties that make
+# issuing safe: an item is open only where its altar stands, the feathers only behind the decided gate, and the crown and
+# the dews only behind their own switches. Stated here, not read from tools/research_station.py.
+FEATHERS = {"lumymon:thunder_feather", "lumymon:ember_feather", "lumymon:glacier_feather"}
+# the owner, 2026-10-02, verbatim: "the feathers handed out through the research station's dialogue, gated on gym8_cleared"
+DECIDED_FEATHER_GATE = "gym8_cleared"
+# an adopted site placed by its own tool rather than a data/placements.json record, and that tool's module
+PLACED_BY_TOOL = {"adopted_articuno_shrine": "articuno_tower"}
+
+
+def _open(rec, it):
+    """Whether the record lets this economy item be issued: the one switch, and the crown's and the dews' own."""
+    e = rec["economy"]
+    if not e["issuing"]:
+        return False
+    if it["id"] == "calyrex_crown":
+        return isinstance(e.get("post_champion_cap"), int) and e["post_champion_cap"] >= 70
+    if it["id"] == "eon_dews":
+        return e.get("eon_issuing") is True
+    return True
+
+
+def _altar_site(it, sites_doc=None):
+    """The adopted site whose legendary the item's altar block names ('lumymon:zapdos_altar ...' -> Zapdos), or None for
+    the Eon shrine, which is this station's own build."""
+    import adopted_sites
+    who = it["altar"].split()[0].split(":")[1].split("_")[0]
+    if who in ("latias", "latios"):
+        return None
+    hits = [s for s in adopted_sites.sites(sites_doc) if s["legendary"].split()[0].rstrip(",").lower() == who]
+    assert len(hits) == 1, (it["id"], who, [s["id"] for s in hits])
+    return hits[0]
+
+
+def _placed(s):
+    """Scheduled (its position authored by a data/placements.json record pasting its own template) or placed by its own
+    tool's step (a /place template of its template at its own corner). A site that is only SITED is neither."""
+    import adopted_sites
+    if "scheduled_as" in s:
+        w = adopted_sites.where(s)
+        q = next(q for q in json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))["placements"]
+                 if q["id"] == s["scheduled_as"])
+        return w["author"].startswith("data/placements.json") and q["template"] == s["template"]
+    mod = PLACED_BY_TOOL.get(s["id"])
+    if not mod:
+        return False
+    tool = __import__(mod)
+    (x, z), y = s["placement"]["corner"], s["placement"]["y"]
+    want = "place template %s %d %d %d" % (s["template"], x, y, z)
+    reapply = (ROOT / "tools" / "reapply.py").read_text(encoding="utf-8")
+    return (any(k == "cmd" and v.startswith(want) for k, v in tool.placement_steps(s))
+            and "%s.placement_steps()" % mod in reapply)
+
+
+def test_an_item_is_open_only_where_its_altar_is_placed(ground):
+    # without it: economy.issuing hands out a feather for an altar no world holds (the Zapdos and Moltres towers were
+    # SITED, not scheduled, until 2026-10-02), and the player carries an item that answers nowhere
+    for it in REC["economy"]["items"]:
+        s = _altar_site(it)          # every item's altar resolves to one site, open or not
+        if not _open(REC, it):
+            continue
+        if s is None:
+            steps = R.placement_steps(R.load(), ground)
+            assert any(z == "cobblers:research_station/build_platform" for k, z in steps if k == "fn")
+            continue
+        assert _placed(s), "%s is open but its altar site %s is not scheduled or placed" % (it["id"], s["id"])
+
+
+def test_an_unscheduled_altar_site_is_not_counted_placed():
+    # without it: _placed could pass everything, and the test above would prove nothing. The Zapdos tower with its
+    # scheduled_as removed is a sited-only record again
+    import adopted_sites
+    z = copy.deepcopy(adopted_sites.site("adopted_zapdos_tower"))
+    assert _placed(z)
+    z.pop("scheduled_as")
+    z["placement"] = {"corner": [562, 2614], "y": 74}
+    assert not _placed(z)
+
+
+def test_every_feather_is_gated_on_the_decided_gate():
+    # without it: the feathers could be granted before Gym 8 (or on another flag) and the owner's decision of
+    # 2026-10-02 would be silently replaced. Checked in the record AND in every quest transition that grants a feather,
+    # directly or through a progression field only a gated transition sets
+    feathers = [it for it in REC["economy"]["items"] if isinstance(it["item"], str) and it["item"] in FEATHERS]
+    assert {it["item"] for it in feathers} == FEATHERS
+    assert all(it["gate"] == DECIDED_FEATHER_GATE for it in feathers)
+    qs = [q for q in json.loads((ROOT / "data" / "quests.json").read_text(encoding="utf-8"))["quests"]
+          if q["id"].startswith("evt_station_")]
+
+    def gated(q, tr, seen=()):
+        if any(c.get("kind") == "flag" and c.get("flag") == DECIDED_FEATHER_GATE for c in tr["conditions"]):
+            return True
+        for c in tr["conditions"]:
+            if c.get("kind") != "progression_equals" or not c.get("value"):
+                continue
+            setters = [t for t in q["transitions"] if t["id"] not in seen and any(
+                e["kind"] == "set_progression" and e["field"] == c["field"] and e["value"] == c["value"]
+                for e in t["effects"])]
+            if setters and all(gated(q, t, seen + (tr["id"],)) for t in setters):
+                return True
+        return False
+    granting = 0
+    for q in qs:
+        rewards = {r["id"]: {c["item"] for c in r.get("contents") or []} for r in q.get("rewards") or []}
+        for tr in q["transitions"]:
+            items = {i for e in tr["effects"] if e["kind"] == "grant_reward_once" for i in rewards.get(e["reward"], ())}
+            if items & FEATHERS:
+                granting += 1
+                assert gated(q, tr), "%s.%s grants %s without %s" % (q["id"], tr["id"], items, DECIDED_FEATHER_GATE)
+    assert granting == 3, granting
+
+
+def test_the_crown_and_the_dews_keep_their_own_holds_under_the_one_switch(ground, tmp_path):
+    # without it: throwing economy.issuing for the feathers would also issue the dews (the owner's decision names the
+    # feathers only) or the crown before a post-Champion cap reaches Calyrex's fixed 70
+    doc = copy.deepcopy(R.load())
+    doc["economy"].update(issuing=True, eon_issuing=False, post_champion_cap=None)
+    written, _p = R.files(doc, ground)
+    tick = written["data/cobblers/function/research_station/tick.mcfunction"].splitlines()
+    t = doc["economy"]["tags"]
+    assert "tag @a[tag=!%s] add %s" % (t["issuing"], t["issuing"]) in tick
+    for key in ("issuing_crown", "issuing_eon"):
+        assert "tag @a[tag=%s] remove %s" % (t[key], t[key]) in tick
+        assert not any(l.endswith(" add %s" % t[key]) for l in tick)
+    R.write(written, tmp_path)
+    assert A.audit(doc, ground, tmp_path, R.placement_steps(doc, ground)).errors == []
+
+
+def test_the_committed_tick_follows_the_committed_switches(ground):
+    # without it: the record could say the crown or the dews are held while the shipped tick adds their tag
+    e, t = REC["economy"], REC["economy"]["tags"]
+    tick = R.tick_lines(R.load())
+    want = {"issuing": bool(e["issuing"]),
+            "issuing_crown": bool(e["issuing"]) and isinstance(e.get("post_champion_cap"), int) and e["post_champion_cap"] >= 70,
+            "issuing_eon": bool(e["issuing"]) and e.get("eon_issuing") is True}
+    for key, on in want.items():
+        line = ("tag @a[tag=!%s] add %s" if on else "tag @a[tag=%s] remove %s") % (t[key], t[key])
+        assert line in tick, (key, on)
+
+
+def test_held_ships_no_earning_and_no_give(ground):
+    # without it: the held state (economy.issuing false), which the record can return to, is no longer checked: an
+    # earning advancement or a give could ship while the station says it issues nothing
+    doc = copy.deepcopy(R.load())
+    doc["economy"]["issuing"] = False
+    written, _p = R.files(doc, ground)
     assert not [k for k in written if "/advancement/" in k], "an earning advancement ships while held"
     tick = written["data/cobblers/function/research_station/tick.mcfunction"]
     assert "remove cobblers_station_issuing" in tick and " add " not in tick
@@ -120,12 +263,14 @@ def test_every_item_is_held_today(ground, tmp_path):
 def test_issuing_ships_the_earning_and_adds_the_tags(ground, tmp_path):
     doc = copy.deepcopy(R.load())
     doc["economy"]["issuing"] = True
+    doc["economy"]["eon_issuing"] = True
     doc["economy"]["post_champion_cap"] = 70
     written, _p = R.files(doc, ground)
     advs = sorted(k for k in written if "/advancement/" in k)
     assert len(advs) == 4, advs
     tick = written["data/cobblers/function/research_station/tick.mcfunction"]
     assert "add cobblers_station_issuing" in tick and "add cobblers_station_issuing_crown" in tick
+    assert "add cobblers_station_issuing_eon" in tick
     storm = json.loads(written["data/cobblers/advancement/research_station/storm_log.json"])
     conds = storm["criteria"]["earned"]["conditions"]["player"]
     assert {"condition": "minecraft:weather_check", "thundering": True} in conds
@@ -255,10 +400,73 @@ def test_a_spawn_condition_slipped_in_is_caught(ground, tmp_path, monkeypatch):
     assert "blocks" in checks(rep)
 
 
+def _held_doc():
+    # the held state, whatever the committed record's switch says, so the held-side mutations keep biting once issuing
+    doc = copy.deepcopy(R.load())
+    doc["economy"]["issuing"] = False
+    return doc
+
+
 def test_the_switch_tag_added_while_held_is_caught(ground, tmp_path, monkeypatch):
     monkeypatch.setattr(R, "tick_lines", lambda doc: ["tag @a[tag=!cobblers_station_issuing] add cobblers_station_issuing"])
-    rep = run(ground, tmp_path)
+    held = _held_doc()
+    rep = run(ground, tmp_path, doc=held, rec=held)
     assert "hold" in checks(rep)
+
+
+def _issuing_doc():
+    doc = copy.deepcopy(R.load())
+    doc["economy"].update(issuing=True, eon_issuing=False, post_champion_cap=None)
+    return doc
+
+
+def test_a_generator_that_issues_the_dews_with_the_one_switch_is_caught(ground, tmp_path, monkeypatch):
+    # without it: the audit's tick check would not see the eon tag, and a generator that ties the dews back to the one
+    # switch (the bug economy.eon_issuing was split out to prevent) would ship the dews with the feathers unnoticed
+    doc = _issuing_doc()
+    monkeypatch.setattr(R, "eon_open", lambda d: bool(d["economy"]["issuing"]))
+    written, _p = R.files(doc, ground)
+    R.write(written, tmp_path)
+    rep = A.audit(doc, ground, tmp_path, R.placement_steps(doc, ground))
+    assert any("cobblers_station_issuing_eon" in e for e in rep.errors if e.startswith("hold")), rep.errors
+
+
+def test_a_generator_that_forgets_to_remove_the_eon_tag_is_caught(ground, tmp_path, monkeypatch):
+    # without it: a tick that never removes cobblers_station_issuing_eon leaves a hand-added (or once-issued) tag on a
+    # player, and the dews option stays open while the record says held
+    orig = R.tick_lines
+    monkeypatch.setattr(R, "tick_lines", lambda d: [l for l in orig(d) if "issuing_eon" not in l or l.startswith("#")])
+    doc = _issuing_doc()
+    written, _p = R.files(doc, ground)
+    R.write(written, tmp_path)
+    rep = A.audit(doc, ground, tmp_path, R.placement_steps(doc, ground))
+    assert any("cobblers_station_issuing_eon" in e for e in rep.errors if e.startswith("hold")), rep.errors
+
+
+def test_a_dews_transition_without_the_eon_tag_is_caught(ground, tmp_path):
+    # without it: grant_dews requiring only the one switch would pass the general check, and the dews would be issued
+    # server-side with the feathers whatever the tick does (record-side: this check is ABOUT the records)
+    d = _data_copy(tmp_path)
+    q = json.loads((d / "quests.json").read_text(encoding="utf-8"))
+    tr = next(t for x in q["quests"] if x["id"] == "evt_station_eon_shrine" for t in x["transitions"] if t["id"] == "grant_dews")
+    tr["conditions"] = [c for c in tr["conditions"] if c.get("tag") != "cobblers_station_issuing_eon"]
+    (d / "quests.json").write_text(json.dumps(q), encoding="utf-8")
+    rep = run(ground, tmp_path / "pack", data=d)
+    assert any("issuing_eon" in e for e in rep.errors if e.startswith("hold")), rep.errors
+
+
+def test_a_crown_transition_on_the_one_switch_alone_is_caught(ground, tmp_path):
+    # without it: the crown granted behind cobblers_station_issuing instead of its own tag would pass (the general
+    # check accepts either), and Calyrex's fixed level 70 would be summoned under a cap that cannot catch it
+    d = _data_copy(tmp_path)
+    q = json.loads((d / "quests.json").read_text(encoding="utf-8"))
+    tr = next(t for x in q["quests"] if x["id"] == "evt_station_archive" for t in x["transitions"] if t["id"] == "grant_crown")
+    for c in tr["conditions"]:
+        if c.get("tag") == "cobblers_station_issuing_crown":
+            c["tag"] = "cobblers_station_issuing"
+    (d / "quests.json").write_text(json.dumps(q), encoding="utf-8")
+    rep = run(ground, tmp_path / "pack", data=d)
+    assert any("issuing_crown" in e for e in rep.errors if e.startswith("hold")), rep.errors
 
 
 def test_an_earning_advancement_shipped_while_held_is_caught(ground, tmp_path, monkeypatch):
@@ -271,7 +479,8 @@ def test_an_earning_advancement_shipped_while_held_is_caught(ground, tmp_path, m
             out["data/cobblers/function/research_station/earned/%s.mcfunction" % name] = "\n".join(lines) + "\n"
         return out, p
     monkeypatch.setattr(R, "files", leaky)
-    rep = run(ground, tmp_path)
+    held = _held_doc()
+    rep = run(ground, tmp_path, doc=held, rec=held)
     assert "hold" in checks(rep)
 
 
