@@ -130,6 +130,12 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-02: the Drovers' Hollow in the Rift Foot (tools/drovers_hollow.py): a longbarn, its fold and
                 # the old working under the bank, run by R9HF
                 "cobblers_drovers_hollow",
+                # 2026-10-03: three wayside places in the south's emptiest stretches (tools/wayside_kit.py): the
+                # Challengers' Cairn (tools/challengers_cairn.py, R9CN), the Dry Cistern (tools/dry_cistern.py, R9CI)
+                # and the Surveyors' Benchmark (tools/survey_benchmark.py, R9BM). Pure block functions
+                "cobblers_challengers_cairn",
+                "cobblers_dry_cistern",
+                "cobblers_survey_benchmark",
                 # 2026-10-02: Shrew Station on the west sea coast (tools/research_station.py), run by R9RS; every
                 # item it can give stays held behind data/research_station.json economy.issuing
                 "cobblers_research_station",
@@ -563,6 +569,16 @@ def prepare_jobs(a):
     add("resident_encounters_audit", "resident_encounters_audit.py", *src)
     add("drovers_hollow:build", "drovers_hollow.py", "build", *src)
     add("drovers_hollow_audit", "drovers_hollow_audit.py", *src)
+    # the three wayside places of 2026-10-03. Each generator refuses a spawn-condition palette and any block outside its
+    # record; then its independent audit (written by an agent that built none of them), which replays the written
+    # function over a world built from the heightmap alone, never imports its builder, and fails the prepare on a broken
+    # build (each place's doc, 'What an audit must check')
+    add("challengers_cairn:build", "challengers_cairn.py", "build", *src)
+    add("challengers_cairn_audit", "challengers_cairn_audit.py", *src)
+    add("dry_cistern:build", "dry_cistern.py", "build", *src)
+    add("dry_cistern_audit", "dry_cistern_audit.py", *src)
+    add("survey_benchmark:build", "survey_benchmark.py", "build", *src)
+    add("survey_benchmark_audit", "survey_benchmark_audit.py", *src)
     add("research_station:build", "research_station.py", "build", *src)
     add("research_station_audit", "research_station_audit.py", *src)
     add("mega_dens:build", "mega_dens.py", "build", *src)
@@ -1452,6 +1468,18 @@ def steps(with_spawns=False):
     import mega_dens
     out.append(("R9MD", "the seven open-air Mega dens: scrape, boulders, bones and each species' sign (data/mega_dens.json)",
                 mega_dens.placement_steps()))
+    # the three wayside places of 2026-10-03 (tools/wayside_kit.py): pure block passes, each hold, build, release.
+    # BEFORE R9E with the other block passes; none places or sits on a Habitat Block, and none overlaps another build
+    # (data/<place>.json bbox, for the integrator's check)
+    import challengers_cairn
+    out.append(("R9CN", "the Challengers' Cairn on the south strand: cairn, ring and cist (data/challengers_cairn.json)",
+                challengers_cairn.placement_steps()))
+    import dry_cistern
+    out.append(("R9CI", "the Dry Cistern on the Scorched Plateau's west brow: cistern, stair, well-head, house "
+                        "(data/dry_cistern.json)", dry_cistern.placement_steps()))
+    import survey_benchmark
+    out.append(("R9BM", "the Surveyors' Benchmark in the Rift Foot: pillar, hut and sighting stakes "
+                        "(data/survey_benchmark.json)", survey_benchmark.placement_steps()))
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
