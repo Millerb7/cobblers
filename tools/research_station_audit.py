@@ -48,12 +48,24 @@ What is checked, each from the data and the heightmap, never from the pack:
              that gives an item or runs a function, and every option that runs one, requires the issuing tag, in the
              data AND in the compiled dialogue; a transition or compiled option that gives a held item checks EVERY
              tag that holds it (HELD_BY: the crown its own, the dews the one switch and their own); no other quest
-             gives an altar item
-  steps      the re-application holds each zone's written chunks, runs its build, releases; each function passes
+             gives an altar item. Kubfu's two scrolls are in HELD_BY too: the one switch AND the partner tag
+  scroll     KUBFU'S SCROLLS, derived from data/mythical_starters.json (the starter line economy.kubfu_check names),
+             data/trainers.json gym_ace_levels and, when present, the Cobblemon 1.8.0 jar (--jar): the scrolls are the
+             line's item_interact requiredContexts; the gate is gymN_cleared for the first N whose ace reaches their
+             minLevel (45 -> gym5_cleared), and the record's kubfu_scroll gate and items agree; every transition that
+             grants a scroll requires that flag and its claim false, grants ONE scroll through grant_reward_once, and
+             every scroll grant shares ONE claim field (a declared player boolean), so a player gets one scroll once; the
+             compiled options probe and check the flag and guard and close that one claim around each give; the
+             shipped player_tick_pre partner callback reads each party member's species.identifier and form_name,
+             matches exactly the starter's (species, form) pairs and no form a native Kubfu carries (the jar's own
+             forms and FormData's default 'Normal'), and runs nothing but the add and remove of the partner tag
+  steps     the re-application holds each zone's written chunks, runs its build, releases; each function passes
              tools/function_limits.py
 
 NOT checked, and it needs a running server (data/research_station.json probes): that the fills land, that the altars
-render and answer, that the study pool's Horsea spawn, that the NPCs render, that the tick function removes a tag added by hand.
+render and answer, that the study pool's Horsea spawn, that the NPCs render, that the tick function removes a tag added by hand,
+that the partner callback fires and form_name returns 'Starter' / 'Starter-Grown' for a starter Kubfu and 'Normal' for a wild
+one (the names are read from the data and the jar's class constants, not observed), that a scroll evolves the starter at 45.
 
   python tools/research_station_audit.py [--pack build/datapacks/cobblers_research_station] [--source-root R]
 """
@@ -92,7 +104,14 @@ QUESTS = ("evt_station_director", "evt_station_courier", "evt_station_archive", 
 # feathers only and throwing the one switch must not issue the dews.
 HELD_BY = {"lumymon:thunder_feather": ("issuing",), "lumymon:ember_feather": ("issuing",),
            "lumymon:glacier_feather": ("issuing",), "lumymon:calyrex_crown": ("issuing_crown",),
-           "lumymon:ruby_dew": ("issuing", "issuing_eon"), "lumymon:sapphire_dew": ("issuing", "issuing_eon")}
+           "lumymon:ruby_dew": ("issuing", "issuing_eon"), "lumymon:sapphire_dew": ("issuing", "issuing_eon"),
+           # Kubfu's scrolls (the owner's 7.5, docs/mechanics/NATIVE_STARTERS_COST.md): the one switch, and the partner
+           # tag the station's party callback keeps on a player whose party holds their STARTER Kubfu; a wild Kubfu's
+           # native scroll evolution has no level requirement, so a scroll handed to anyone else skips the 45 point
+           "cobblemon:scroll_of_darkness": ("issuing", "kubfu_partner"),
+           "cobblemon:scroll_of_waters": ("issuing", "kubfu_partner")}
+SCROLLS = ("cobblemon:scroll_of_darkness", "cobblemon:scroll_of_waters")
+JAR = ROOT / "experiments" / "EXP-000-cobblemon-1.8-compat" / "runtime" / "server" / "mods" / "Cobblemon-fabric-1.8.0+1.21.1.jar"
 
 
 class Report:
@@ -796,6 +815,212 @@ def check_hold(R, E, pack, data=DATA):
         R.err("hold", "the station's conversations do not compile: %s" % e)
 
 
+# ------------------------------------------------------------------------------------------------ Kubfu's scrolls
+def kubfu_expect(rec, data=DATA, jar=None):
+    """What the scroll errand must be, derived here from data/mythical_starters.json (the starter line the record's
+    economy.kubfu_check names), data/trainers.json's cap contract and, when given, the Cobblemon 1.8.0 jar. Nothing is
+    read from tools/research_station.py.
+
+    items   the requiredContext of every item_interact evolution of the line (the scrolls its last Kubfu stage takes)
+    level   the highest minLevel those evolutions require (45)
+    gate    gymN_cleared for the first N whose next leader's ace, generation_contract.gym_ace_levels[N], reaches that
+            level: with relativeLevelCap 0 the cap after N badges is at most that ace, so before badge N it is below
+            the level and the scroll would sit in a bag (an upper bound, data/legendaries.json level_caps)
+    forms   {(species id, form name)} of every stage; the species id's namespace is the jar's species folder's
+    wild    the form names a NATIVE Kubfu can carry: the jar's own forms of the species and FormData's default 'Normal'
+            (the literal in FormData.class); None without a jar"""
+    import zipfile
+    k = rec["economy"]["kubfu_check"]
+    lines = [ln for ln in load_json("mythical_starters.json", data)["lines"] if ln.get("id") == k["starter"]]
+    if len(lines) != 1:
+        return {"error": "%d starter line(s) %s in data/mythical_starters.json" % (len(lines), k["starter"])}
+    stages = lines[0]["stages"]
+    evos = [e for s in stages for e in s.get("evolutions") or [] if e.get("variant") == "item_interact"]
+    items = {e["requiredContext"] for e in evos}
+    level = max(r["minLevel"] for e in evos for r in e.get("requirements") or [] if r.get("variant") == "level")
+    aces = load_json("trainers.json", data)["generation_contract"]["gym_ace_levels"]
+    n = next((i for i, a in enumerate(aces) if a >= level), None)
+    out = {"items": items, "level": level, "gate": None if not n else "gym%d_cleared" % n, "wild": None, "ns": "cobblemon",
+           "jar_notes": []}
+    species = {s["species"] for s in stages}
+    if jar and Path(jar).is_file():
+        z = zipfile.ZipFile(jar)
+        names = set(z.namelist())
+        wild = set()
+        for sp in species:
+            hit = [x for x in names if re.fullmatch(r"data/([a-z0-9_]+)/species/[^/]+/%s\.json" % re.escape(sp), x)]
+            if len(hit) != 1:
+                out["jar_notes"].append("species %s: %d species file(s) in the jar" % (sp, len(hit)))
+                continue
+            out["ns"] = hit[0].split("/")[1]
+            wild |= {f["name"] for f in json.loads(z.read(hit[0])).get("forms") or []}
+        if b"Normal" in z.read("com/cobblemon/mod/common/pokemon/FormData.class"):
+            wild.add("Normal")
+        else:
+            out["jar_notes"].append("FormData.class carries no 'Normal' literal: the default form name is not known")
+        fns = z.read("com/cobblemon/mod/common/api/molang/function/PokemonMoLangFunctions.class")
+        for fn in (b"form_name", b"species", b"identifier"):
+            if fn not in fns:
+                out["jar_notes"].append("PokemonMoLangFunctions.class has no %s" % fn.decode())
+        for it in items:
+            ns, name = it.split(":")
+            if "assets/%s/models/item/%s.json" % (ns, name) not in names:
+                out["jar_notes"].append("no item model for %s" % it)
+        out["wild"] = wild
+    out["forms"] = {("%s:%s" % (out["ns"], s["species"]), s["form"]) for s in stages}
+    return out
+
+
+MATCH = re.compile(r"^\(t\.sp == '([^']*)' && t\.fm == '([^']*)'\)$")
+
+
+def check_scrolls(R, E, pack, data=DATA, jar=None):
+    rec = E.rec
+    eco = rec["economy"]
+    t = eco["tags"]
+    X = kubfu_expect(rec, data, jar)
+    if "error" in X:
+        R.err("scroll", X["error"])
+        return
+    for n in X["jar_notes"]:
+        R.err("scroll", "the jar: %s" % n)
+    if X["wild"] is None:
+        R.notes.append("scroll: no Cobblemon jar given; the partner check's forms were not checked against the native forms")
+    if set(SCROLLS) != X["items"]:
+        R.err("scroll", "the starter's scroll evolutions take %s, the audit holds %s" % (sorted(X["items"]), list(SCROLLS)))
+    gate = X["gate"]
+    if gate is None:
+        R.err("scroll", "no gym's ace reaches level %d: no gate derives" % X["level"])
+        return
+    flags = {f["id"] for f in load_json("progression.json", data)["flags"]}
+    if gate not in flags:
+        R.err("scroll", "the derived gate %s is not a data/progression.json flag" % gate)
+    it = [i for i in eco["items"] if i["id"] == "kubfu_scroll"]
+    if len(it) != 1:
+        R.err("scroll", "%d economy item(s) kubfu_scroll" % len(it))
+    else:
+        if sorted(it[0]["item"] if isinstance(it[0]["item"], list) else [it[0]["item"]]) != sorted(X["items"]):
+            R.err("scroll", "economy kubfu_scroll gives %s, the starter's evolutions take %s" % (it[0]["item"], sorted(X["items"])))
+        if it[0]["gate"] != gate:
+            R.err("scroll", "economy kubfu_scroll is gated on %s; level %d first opens at %s" % (it[0]["gate"], X["level"], gate))
+    # the data: every transition that grants a scroll requires the gate, and every scroll is granted through ONE claim
+    qfields = {f["id"]: f for f in load_json("progression.json", data)["quest_fields"]}
+    qs = {q["id"]: q for q in load_json("quests.json", data)["quests"]}
+    claims, granted = set(), set()
+    for q in qs.values():
+        rewards = {r["id"]: r.get("contents") or [] for r in q.get("rewards") or []}
+        for tr in q["transitions"]:
+            conds = [x for c in tr["conditions"] for x in _conds(c)]
+            for e in tr["effects"]:
+                if e["kind"] == "give_item" and e.get("item") in SCROLLS:
+                    R.err("scroll", "%s.%s gives %s with give_item, which has no claim" % (q["id"], tr["id"], e["item"]))
+                if e["kind"] != "grant_reward_once":
+                    continue
+                cont = rewards.get(e["reward"], [])
+                got = [c["item"] for c in cont if c["item"] in SCROLLS]
+                if not got:
+                    continue
+                if q["id"] not in QUESTS:
+                    R.err("scroll", "quest %s grants %s: the station is the one source" % (q["id"], got))
+                granted |= set(got)
+                if len(cont) != 1 or cont[0].get("count", 1) != 1:
+                    R.err("scroll", "%s.%s's reward %s is not one scroll: %s" % (q["id"], tr["id"], e["reward"],
+                                                                             [(c["item"], c.get("count")) for c in cont]))
+                if not any(c.get("kind") == "flag" and c.get("flag") == gate for c in conds):
+                    R.err("scroll", "%s.%s grants %s without requiring the flag %s" % (q["id"], tr["id"], got, gate))
+                cf = e.get("claim_field")
+                claims.add(cf)
+                if not any(c.get("kind") == "progression_equals" and c.get("field") == cf and c.get("value") is False
+                           for c in conds):
+                    R.err("scroll", "%s.%s grants %s without requiring %s false" % (q["id"], tr["id"], got, cf))
+                f = qfields.get(cf)
+                if not f or f.get("scope") != "player" or f.get("type") != "boolean":
+                    R.err("scroll", "the claim %s is not a declared player boolean in data/progression.json" % cf)
+    if granted != set(SCROLLS):
+        R.err("scroll", "the quests grant %s, not both scrolls" % sorted(granted))
+    if len(claims) != 1:
+        R.err("scroll", "the scrolls are claimed on %d fields, not ONE: %s" % (len(claims), sorted(map(str, claims))))
+    # the compiled dialogue: before each give, the gate probed and checked, and one claim guarding and closing every give
+    try:
+        import compile_dialogue as CD
+        seen, cvars = set(), set()
+        probe = re.compile(r"if entity @s\[advancements=\{cobblers:flag/%s=true\}\] run tag @s add (\w+)" % re.escape(gate))
+        for c in load_json("dialogue.json", data)["conversations"]:
+            if c["quest_id"] not in QUESTS:
+                continue
+            page_doc = CD.build(c["id"], data)["data/cobblers/dialogues/%s.json" % c["id"]]
+            page_doc = json.loads(page_doc) if isinstance(page_doc, str) else page_doc
+            for page in page_doc["pages"]:
+                inp = page.get("input")
+                for o in (inp.get("options") or []) if isinstance(inp, dict) else []:
+                    act = o.get("action", "")
+                    for item in SCROLLS:
+                        g = act.find("give @s %s " % item)
+                        if g < 0:
+                            continue
+                        seen.add(item)
+                        who = "compiled %s %s" % (c["id"], o.get("value"))
+                        before = act[:g]
+                        if not any("has_tag('%s')" % m.group(1) in before[m.end():] for m in probe.finditer(before)):
+                            R.err("scroll", "%s gives %s without checking %s" % (who, item, gate))
+                        guard = re.findall(r"\((t\.d\.\w+) != 1\) \? \{", before)
+                        after = act[g:]
+                        closes = re.findall(r"(t\.d\.\w+) = 1;", after)
+                        if not guard or not closes or guard[-1] != closes[0]:
+                            R.err("scroll", "%s gives %s outside a claim it guards and closes (%s, %s)"
+                                  % (who, item, guard[-1:], closes[:1]))
+                            continue
+                        cvars.add(guard[-1])
+        if seen != set(SCROLLS):
+            R.err("scroll", "the compiled dialogue gives %s, not both scrolls" % sorted(seen))
+        if len(cvars) != 1:
+            R.err("scroll", "the compiled scroll gives close %d claims, not ONE: %s" % (len(cvars), sorted(cvars)))
+        elif len(claims) == 1 and not next(iter(cvars)).endswith("__" + str(next(iter(claims))).replace(".", "__")):
+            R.err("scroll", "the compiled claim %s is not the data's %s" % (next(iter(cvars)), next(iter(claims))))
+    except SystemExit as e:
+        R.err("scroll", "the station's conversations do not compile: %s" % e)
+    # the partner check, in both states of the switch: tags exactly the starter's forms, never a wild one, gives nothing
+    k = eco["kubfu_check"]
+    cb = pack / k["callback"]
+    if not cb.is_file():
+        R.err("scroll", "no partner callback at %s" % k["callback"])
+        return
+    body = [l.strip() for l in cb.read_text(encoding="utf-8").splitlines()
+            if l.strip() and not (l.strip().startswith("'") and l.strip().endswith("';"))]
+    tag = t["kubfu_partner"]
+    if "t.sp = t.p.species.identifier;" not in body or "t.fm = t.p.form_name;" not in body:
+        R.err("scroll", "the partner callback does not read species.identifier and form_name of each party member")
+    if not any(l.startswith("for_each(t.p, q.player.party.pokemon,") for l in body):
+        R.err("scroll", "the partner callback does not walk the party")
+    # what it runs, checked before the match is parsed so a malformed match cannot hide a give
+    cmds = re.findall(r"q\.run_command\((.*?)\);", "\n".join(body))
+    want = {"'tag ' + q.player.username + ' add %s'" % tag, "'tag ' + q.player.username + ' remove %s'" % tag}
+    if set(cmds) != want:
+        R.err("scroll", "the partner callback runs %s, not only the add and remove of %s" % (sorted(set(cmds)), tag))
+    last = body[-1] if body else ""
+    if not (last.startswith("t.has == 1 ?") and 0 <= last.find(" add %s'" % tag) < last.find(" remove %s'" % tag)):
+        R.err("scroll", "the partner callback does not add %s on a match and remove it otherwise" % tag)
+    tests = [l for l in body if l.endswith("? { t.has = 1; };")]
+    if len(tests) != 1:
+        R.err("scroll", "the partner callback has %d match line(s), not 1" % len(tests))
+        return
+    expr = tests[0][:-len(" ? { t.has = 1; };")].strip()
+    expr = expr[1:-1] if expr.startswith("((") else expr
+    pairs = set()
+    for d in expr.split(" || "):
+        m = MATCH.match(d.strip())
+        if not m:
+            R.err("scroll", "the partner callback matches %r, not a species AND a form" % d.strip())
+            continue
+        pairs.add(m.groups())
+    if pairs != X["forms"]:
+        R.err("scroll", "the partner callback matches %s; the starter's stages are %s" % (sorted(pairs), sorted(X["forms"])))
+    if X["wild"] is not None:
+        wild = sorted((sp, fm) for sp, fm in pairs | X["forms"] if fm in X["wild"])
+        if wild:
+            R.err("scroll", "the partner check matches a wild form, which a native Kubfu carries: %s" % wild)
+
+
 def check_steps(R, rec, W, pack, steps):
     import function_limits
     if steps is None:
@@ -824,7 +1049,7 @@ def check_steps(R, rec, W, pack, steps):
                 R.err("steps", "%s: %s" % (f.name, bad[:2]))
 
 
-def audit(rec, g, pack, steps=None, data=DATA):
+def audit(rec, g, pack, steps=None, data=DATA, jar=None):
     R = Report()
     pack = Path(pack)
     lake = Water(rec, g, data)
@@ -848,6 +1073,7 @@ def audit(rec, g, pack, steps=None, data=DATA):
     check_npcs(R, E, W, data)
     check_habitat(R, E, W, data)
     check_hold(R, E, pack, data)
+    check_scrolls(R, E, pack, data, jar)
     check_steps(R, rec, W, pack, steps)
     R.notes.append("replayed %d blocks in %d writes" % (len(W.blocks), W.n))
     return R
@@ -857,6 +1083,8 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("--pack", default=str(PACK))
     ap.add_argument("--source-root")
+    ap.add_argument("--jar", default=str(JAR), help="Cobblemon-fabric-1.8.0+1.21.1.jar (gitignored); absent = forms not "
+                    "checked against the native ones, and the run says so")
     ap.add_argument("--no-steps", action="store_true", help="skip the re-application step check (it imports the generator's step builder)")
     a = ap.parse_args(argv)
     import ground as G
@@ -866,7 +1094,7 @@ def main(argv=None):
     if not a.no_steps:
         import research_station as RS   # its OUTPUT (the step list) is what is checked, as tools/lopunny_house_audit.py does
         steps = RS.placement_steps(RS.load(), g)
-    rep = audit(rec, g, a.pack, steps)
+    rep = audit(rec, g, a.pack, steps, jar=a.jar)
     for n in rep.notes:
         print("note: " + n)
     for e in rep.errors:
