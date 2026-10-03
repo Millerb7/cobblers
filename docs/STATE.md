@@ -343,16 +343,24 @@
   validator. **So the shrine test's question is not whether a structure travels but whether an altar
   FUNCTIONS**, which narrows it to one in-game check. What does not travel: structure STARTS, so LumyMon
   radars, `gym_map`, `/locate` and `location_check` go dead, and jigsaw sites (the three lakes, Turnback,
-  Giratina) give only a start piece. The trigger mechanism is mostly ASSUMED: VERIFIED only that Mew runs
-  command blocks gated on `defeat_champion_blue` (which our progression never grants) and the Necrozma
-  towers run `pokespawnat ... level=80`; LumyMon is closed source and the pack's wiki omits the Kanto
-  birds, the Ruinous four, Calyrex, Necrozma and Eternatus. **Four are adopted, measured
-  and NOT placed** (`data/adopted_legendary_sites.json`, checked against the heightmap by
-  `tests/test_adopted_legendary_sites.py`, which also enforces their 120-block portal clearance): the Mew temple
-  at (7604, 142, 7082) on the Long Isle, `crown_cemetery` at (4118, 109, 1982), Zapdos at (562, 74, 2614) and
-  **Articuno at (904, 151, 320)** on Frostpeak's east shoulder, top y224 - its old refusal tested only the pressed
-  y310 summit, and 624 Frostpeak pads fit. Eight Nether/End structures stay generated where they are, by
-  decision. **EXP-048, the console half, ran 2026-10-02** (`experiments/EXP-048-legendary-altar/README.md`): both
+  Giratina) give only a start piece. **Six sites are adopted and measured** (`data/adopted_legendary_sites.json`,
+  `tests/test_adopted_legendary_sites.py`). **Three are SCHEDULED in `data/placements.json` (2026-10-02, status
+  planned, not yet run by `prepare`)** because nothing they give depends on a right-click altar: the Crown
+  Cemetery (4118, 109, 1982); and **both Necrozma towers, re-homed from the End, which no player can enter** (no
+  stronghold can generate and no portal room is authored): **Dawn** on the eastern Pine Isle (7480, 99, 316), **Dusk**
+  on the Sunset Isle's western heights (1156, 146, 7216). A tower's summit is a pressure plate driving a command
+  chain that spawns Necrozma at 80 once for the whole server and fills itself in; `tools/place_donor.py`
+  `set_commands` rewrites each link after the paste to fire only for a holder of `cobblers:flag/champion_cleared`.
+  **The towers need `enable-command-block=true`, which the server does not have - the owner's call; without it they
+  are landmarks with no way up.** Three stay sited, NOT scheduled, because their encounter is only a right-click
+  altar: Mew (7604, 142, 7082), Zapdos (562, 74, 2614), Articuno (904, 151, 320). Of the other six Nether/End
+  structures (`docs/research/notes/legendary-catalogue-reopened.md`): the **Ruinous four stay** (their stakes are a
+  Nether-only worldgen feature); **Moltres** (its ember feather, like the other two, has no producer anywhere) and
+  **Eternatus** (500 Galar Particles, whose ore is overworld-only and so absent from our export) have better homes
+  only once the campaign supplies what they want. **CORRECTED 2026-10-02:** "our progression never grants
+  `defeat_champion_blue`" was wrong in reasoning: our Champion IS `kanto_champion_blue` and
+  `upstream_neutralised` empties its reward so it grants cleanly, so Mew's door very probably opens for our Champion
+  once command blocks are on (not seen in game). **EXP-048, the console half, ran 2026-10-02** (`experiments/EXP-048-legendary-altar/README.md`): both
   the Crown Cemetery and the Articuno shrine place and now STAND in staging at their adopted corners, all eight
   LumyMon blocks are where the templates put them, and a shaderoot carrot dropped from the console onto the
   Spectrier trigger does nothing - not proof of silence, since the trigger may need a PLAYER's throw. **The

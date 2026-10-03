@@ -1,84 +1,89 @@
-"""`data/adopted_legendary_sites.json` held against the heightmap, `data/structures.json` and the portal rule.
+"""`data/adopted_legendary_sites.json` held against the heightmap, `data/structures.json`, `data/placements.json`
+and the portal rule.
 
-Written by the test author. Nothing in the repository read this file before: it is not in
-`tests/test_pinned_ground_is_the_heightmap.py`'s `SWEPT` list (that sweep finds records carrying `x`, `z`
-and `ground_y`; these carry `corner` and a `ground` block, so it never saw them), no generator emits it,
-and no entry in `data/placements.json` names any of its four sites.
+Written by the test author; reshaped by a second test author on 2026-10-02 when three of the six sites were
+SCHEDULED (commit dfad147). No generator emits this record.
 
-WHAT BREAKS WITHOUT IT. The record is four adopted Cobbleverse templates, each a measured coordinate plus
-the exact raw `/place template` line a human will copy. Every y, every min/max/median/mode and every
-cut/fill count in it was measured ONCE, by hand, off the canonical heightmap. That is the same closed
-loop that put four world trees in open air over the ocean on 2026-10-01: `data/elder_trees.json`, its doc
-table and its site file all agreed with each other, and none of them asked the terrain after the water
-pass drowned the Jungle Isle. This file already carries one scar from that pass -- Mew's temple was
-re-sited because its researched coordinate (5160, 7463) measures y61 against a sea level of y62 -- so the
-heightmap has moved under this record's subject matter once already.
+TWO KINDS OF SITE, ONE POSITION EACH. The record's own rule is `placement_method.not_in_placements_json`: a
+site has ONE author for its position.
+
+  unscheduled   (Mew, Zapdos, Articuno) carry a `placement` block here -- corner, y, rotation, mirror and
+                the raw `/place template` line -- and NO record in data/placements.json names their template.
+  scheduled     (Crown Cemetery, Dawn tower, Dusk tower) carry `scheduled_as: <placements id>` and NO
+                `placement` block. Their corner is that record's `position` x/z, their bottom layer its
+                `position` y, their rotation and mirror its own. The measurement and the reasoning stay here.
+
+`where()` resolves either kind to one (corner, y, rotation, mirror) and EVERY terrain, seat, ceiling and portal
+check below runs on all six against it. A scheduled site is therefore checked against the position the server
+will actually be given, not against a copy of it -- which is the only way the check could still see the
+terrain if someone moved the placements record and left this file alone.
+
+WHAT BREAKS WITHOUT IT. Every y, every min/max/median/mode and every cut/fill count in the record was
+measured ONCE, by hand, off the canonical heightmap. That is the same closed loop that put four world trees
+in open air over the ocean on 2026-10-01: `data/elder_trees.json`, its doc table and its site file all agreed
+with each other, and none of them asked the terrain after the water pass drowned the Jungle Isle. This file
+already carries one scar from that pass -- Mew's temple was re-sited because its researched coordinate
+(5160, 7463) measures y61 against a sea level of y62.
 
 THE INDEPENDENT SIDES, none of them this record:
 
   the terrain    `tools/ground.py`, the canonical heightmap, ROUNDED (CLAUDE.md "Ground comes from the
-                 heightmap, never from a world"). Every ground, cut and fill expectation here is
-                 re-measured over the footprint the record's own `corner` and `size` imply. No
-                 expectation is ever taken from the record's `ground` block.
+                 heightmap, never from a world"). Every ground, cut and fill expectation here is re-measured
+                 over the footprint the resolved corner, rotation and `size` imply. No expectation is ever
+                 taken from the record's `ground` block.
   the templates  `data/structures.json` `footprint`, for each template's x/height/z.
-  the ceilings   `data/world.json` `vertical.max_y` (310) and `sea_level` (62), and Minecraft 1.21.1's
-                 build limit of 320.
+  the ceilings   `data/world.json` `vertical.max_y` (310) and `sea_level` (62), and Minecraft 1.21.1's build
+                 limit of 320.
+  the cells      `data/cells.json` bounds, for the cell a scheduled record and a site name.
   the rule       `data/portals.json` `rules.min_from_legendary_mouth`.
 
 ON PROVING THESE BITE. The repository's standard is "mutate the GENERATOR, not the record", because a
-record-side mutation normally moves the expectation and the output together and so proves nothing. THERE
-IS NO GENERATOR HERE: the record IS the artifact, and the heightmap is the independent side. So a
-mutation that perturbs a COPY of the record in memory and asserts the check goes red is the right proof,
-and it is a real proof rather than a shared derivation precisely because the expectation comes from the
-heightmap, which a mutated record cannot move. The file on disk is never written: every mutation test
-works on `copy.deepcopy`.
+record-side mutation normally moves the expectation and the output together. THERE IS NO GENERATOR HERE: the
+record and the placements entry ARE the artifact, and the heightmap is the independent side. So a mutation
+that perturbs a COPY of the record -- or of the placements list -- in memory and asserts the check goes red
+is the right proof, and a real one, because the expectation comes from the heightmap, which a mutated record
+cannot move. No file on disk is ever written: every mutation works on `copy.deepcopy`.
 
-TWO RECORDING INCONSISTENCIES, found by these tests and NOT fixed here (a test author does not edit
-`data/`; see the report):
+TWO RECORDING INCONSISTENCIES in the unscheduled sites, found by the first author and NOT fixed here:
 
-  `top_y`           three sites record the topmost OCCUPIED layer (`y + height - 1`: Mew 142+25-1=166,
-                    Crown 109+24-1=132, Zapdos 74+66-1=139); `adopted_articuno_shrine` records
-                    `y + height` (151+74=225, where the top occupied layer is y224). Both are safe --
-                    Articuno's is the conservative direction -- so `test_top_y_is_the_templates_top`
-                    accepts either and asserts the direction that matters: `top_y` may never UNDERSTATE
-                    the occupied top, because an understated `top_y` is how a ceiling breach would hide.
-                    The hard clearance check uses `y + height - 1` computed here and allows no slack.
-  `ceiling_margin`  Mew, Crown and Zapdos measure it against `max_y` 310; Articuno measures it against
-                    320 and adds `max_y_margin` for 310. So the field means two different things in one
-                    file. `test_declared_margins_are_arithmetic` therefore asserts that each declared
-                    margin resolves EXACTLY onto one of the two real, externally defined ceilings -- not
-                    a tolerance, a disjunction over two constants that come from `data/world.json` and
-                    the game. A margin computed from any third number, or left stale when `y` or
-                    `max_y` moves, lands on neither and fails.
+  `top_y`           Mew and Zapdos record the topmost OCCUPIED layer (`y + height - 1`);
+                    `adopted_articuno_shrine` records `y + height` (151+74=225, top occupied layer y224). Both
+                    are safe, so `ceiling_problems` accepts either and asserts the direction that matters:
+                    `top_y` may never UNDERSTATE the occupied top. The hard clearance uses `y + height - 1`
+                    computed here, no slack.
+  `ceiling_margin`  Mew and Zapdos measure it against `max_y` 310; Articuno against 320 plus `max_y_margin`
+                    for 310. Each declared margin must resolve EXACTLY onto one of the two real ceilings.
 
-ALSO FIXED HERE, a cross-system hole the record asks for by name: `tools/portals.py` `clearances()` reads
-`data/legendaries.json` `encounters` for its `min_from_legendary_mouth` check (tools/portals.py:345-348)
-and CANNOT SEE this file, so a portal could be sited on top of an adopted site. The record says so and
-says the 120 blocks is "measured here, not enforced anywhere". `test_every_site_clears_the_portal_rule`
-enforces it, from the footprint EDGE (the conservative measure) rather than from the centre.
+A scheduled site has no `top_y`, `ceiling_margin`, `centre` or `command`: they went with the deleted block.
+What it has instead is a one-line pointer (`placement_lives_in` on every scheduled site)
+that QUOTES the corner, y, rotation and mirror, and on the towers the top layer and
+its margin. A quoted position is a second copy of the position, so `pointer_problems` holds every number it
+quotes to the placements record and the template height; it is to a scheduled site what `command_problems` is
+to an unscheduled one.
+
+ALSO CLOSED HERE, a cross-system hole: `tools/portals.py` `clearances()` reads `data/legendaries.json`
+`encounters` for `min_from_legendary_mouth` and CANNOT SEE this file, so a portal could be sited on an adopted
+site. `test_every_site_clears_the_portal_rule_that_nothing_enforces` enforces it from the footprint EDGE.
 
 NOT COVERED, by any of it. Validity is not behaviour (`.claude/rules/testing.md`):
 
-  * whether `/place template` puts these four templates down at all, or what they contain. No `.nbt` is
-    read anywhere here and none is in the repository (COBBLEVERSE-DP-v31.zip is gitignored,
-    no-redistribution). `size` is believed from `data/structures.json`; if that footprint string is
-    wrong, every y, top and margin here is wrong with it and these tests agree with the error.
-  * whether the `lumymon:*_altar` and the command chain inside a template do anything. That is
-    EXP-LEG-ALTAR, an experiment, not pytest.
-  * whether the terrain UNDER the paste is dressed. The tests re-derive how many blocks of cut and fill
-    each site needs; nothing here places one.
-  * the record's prose. Several of its distances are measured from the footprint CENTRE and read as if
-    they were clearances: "395" to the `sky_far_reach` portal is 397 centre-to-centre and 378 from the
-    footprint edge, and Zapdos' "63 blocks" to the nearest sub-sea-level column is 63.1 from the centre
-    and 45.1 from the edge. The conclusions hold either way; the numbers are not interchangeable and no
-    test asserts the prose.
-  * the `ceiling` and `why_a_sibling_of_legendaries_json` blocks still say THREE sites and name Zapdos as
-    the tallest top. Articuno joined later and is both the fourth and the tallest (y225 against y139).
-    `test_record_ceiling_max_y_is_world_json` pins the one number in that block; the stale counts are a
-    finding, not a thing to assert.
-  * anything about `data/placements.json`. These sites are deliberately absent from it until a paste is
-    approved, so no scheduling, demolition or audit tool sees them -- which is exactly why this file is
-    the kind of record that can rot unnoticed.
+  * whether `/place template` puts these templates down at all, or what they contain. No `.nbt` is read and
+    none is in the repository (COBBLEVERSE-DP-v31.zip is gitignored, no-redistribution). `size` is believed
+    from `data/structures.json`; if that footprint string is wrong, every y, top and margin is wrong with it
+    and these tests agree with the error.
+  * the footprint under a rotation other than `none`. `footprint()` turns the template the way Minecraft's
+    StructureTemplate.transform does about the placement corner (transcribed here, not imported), but every
+    site today is `rotation: none`, so the rotated branch has never met a real record.
+  * whether the altars, the towers' summit chain or the levitation lift do anything, and whether
+    `enable-command-block` is on. The towers' rewritten chain is tested as TEXT in
+    tests/test_donor_set_commands.py; that it gates anything is an experiment, not pytest.
+  * whether the terrain UNDER the paste is dressed. The tests re-derive how many blocks of cut and fill each
+    site needs; nothing here places one.
+  * the record's distance prose ("395 to sky_far_reach", "482 to Whiteback"). Several are centre-to-centre
+    and read as clearances; no test asserts them.
+  * the top-level `ceiling` block's verdict ("all four", "the tallest top is y224") predates the towers, whose
+    tops are y188 and y235. `test_record_ceiling_max_y_is_world_json` pins the one number in that block; the
+    stale counts are a finding, not a thing to assert.
 """
 from __future__ import annotations
 
@@ -98,6 +103,10 @@ sys.path.insert(0, str(ROOT / "tools"))
 RECORD = json.loads((ROOT / "data" / "adopted_legendary_sites.json").read_text(encoding="utf-8"))
 SITES = {s["id"]: s for s in RECORD["sites"]}
 IDS = tuple(sorted(SITES))
+SCHEDULED = tuple(i for i in IDS if "scheduled_as" in SITES[i])
+UNSCHEDULED = tuple(i for i in IDS if "scheduled_as" not in SITES[i])
+
+PLACEMENTS = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))["placements"]
 
 WORLD = json.loads((ROOT / "data" / "world.json").read_text(encoding="utf-8"))
 MAX_Y = WORLD["vertical"]["max_y"]
@@ -112,8 +121,19 @@ BUILD_CEILING = 320
 ROTATIONS = ("none", "clockwise_90", "180", "counterclockwise_90")
 MIRRORS = ("none", "left_right", "front_back")
 
+# A template offset (dx, dz) turned about the placement corner, as Minecraft's StructureTemplate.transform does
+# with a zero pivot. Transcribed here, NOT imported from tools/place_town.py or tools/place_donor.py, so the
+# footprint below is not the builder's own derivation.
+TURN = {"none": lambda dx, dz: (dx, dz), "clockwise_90": lambda dx, dz: (-dz, dx),
+        "180": lambda dx, dz: (-dx, -dz), "counterclockwise_90": lambda dx, dz: (dz, -dx)}
+
 STRUCTURES = {s["id"]: s for s in
               json.loads((ROOT / "data" / "structures.json").read_text(encoding="utf-8"))["structures"]}
+CELLS = json.loads((ROOT / "data" / "cells.json").read_text(encoding="utf-8"))["cells"]
+
+# The pointer a scheduled site leaves where its `placement` block was. The Crown's is named one way and the
+# towers' another; either is accepted, and a scheduled site with neither fails.
+POINTER_KEYS = ("placement_lives_in",)
 
 
 @pytest.fixture(scope="module")
@@ -130,14 +150,46 @@ def ground():
         pytest.skip("the canonical heightmap is not available here (%s)" % (str(e) or type(e).__name__)[:80])
 
 
+# ------------------------------------------------------------------------------------- where a site stands
+
+
+def records_named(site, placements):
+    """Every placements record whose id is the site's `scheduled_as`. Exactly one is the contract."""
+    return [q for q in placements if q.get("id") == site.get("scheduled_as")]
+
+
+def where(site, placements=None):
+    """{corner, y, rotation, mirror, anchor_mode, y_mode}: the site's ONE position, from whichever file authors it.
+
+    A scheduled site reads its data/placements.json record (position x/z = corner, position y = y) and never a
+    copy of it here; an unscheduled one reads its `placement` block. Nothing is defaulted: a missing rotation is
+    None, and the contract tests below fail on it rather than this function papering over it."""
+    placements = PLACEMENTS if placements is None else placements
+    if "scheduled_as" in site:
+        hits = records_named(site, placements)
+        assert len(hits) == 1, "%s: scheduled_as %r names %d records in data/placements.json" \
+            % (site["id"], site["scheduled_as"], len(hits))
+        q = hits[0]
+        pos = q["position"]
+        return {"corner": [pos["x"], pos["z"]], "y": pos["y"], "rotation": q.get("rotation"),
+                "mirror": q.get("mirror"), "anchor_mode": q.get("anchor_mode"), "y_mode": q.get("y_mode")}
+    p = site["placement"]
+    return {"corner": list(p["corner"]), "y": p["y"], "rotation": p.get("rotation"), "mirror": p.get("mirror"),
+            "anchor_mode": p.get("anchor_mode"), "y_mode": p.get("y_mode")}
+
+
 # ------------------------------------------------------------------------------------- the independent side
 
 
-def footprint(site):
-    """The inclusive (x0, z0, x1, z1) box the record's own `corner` and `size` imply."""
-    x0, z0 = site["placement"]["corner"]
+def footprint(site, placements=None):
+    """The inclusive (x0, z0, x1, z1) box the resolved corner, rotation and the record's `size` imply."""
+    w = where(site, placements)
+    x0, z0 = w["corner"]
     sx, _, sz = site["size"]
-    return x0, z0, x0 + sx - 1, z0 + sz - 1
+    turned = [TURN[w["rotation"]](dx, dz) for dx in (0, sx - 1) for dz in (0, sz - 1)]
+    xs = [x0 + a for a, _ in turned]
+    zs = [z0 + b for _, b in turned]
+    return min(xs), min(zs), max(xs), max(zs)
 
 
 def measure(g, x0, z0, x1, z1):
@@ -165,12 +217,21 @@ def template_size(site):
     return tuple(int(n) for n in re.match(r"^(\d+)x(\d+)x(\d+)", s["footprint"]).groups())
 
 
+def cell_of(x, z):
+    """The data/cells.json id whose bounds hold (x, z), or None."""
+    for c in CELLS:
+        b = c["bounds"]
+        if b["min_x"] <= x <= b["max_x"] and b["min_z"] <= z <= b["max_z"]:
+            return c["id"]
+    return None
+
+
 # ------------------------------------------------------------------- checks as functions, so they can be mutated
 
 
-def ground_problems(site, g):
+def ground_problems(site, g, placements=None):
     """[problem] where the record's `ground` and `displaces` blocks disagree with the heightmap."""
-    x0, z0, x1, z1 = footprint(site)
+    x0, z0, x1, z1 = footprint(site, placements)
     m = measure(g, x0, z0, x1, z1)
     rec = site["ground"]
     bad = []
@@ -179,7 +240,7 @@ def ground_problems(site, g):
             bad.append("ground.%s is %s, the heightmap says %s" % (key, rec[key], m[key]))
     if not {"min", "max", "columns"} <= set(rec):
         bad.append("ground declares no min/max/columns, so nothing about this footprint is pinned")
-    cut, cut_cols, fill, fill_cols = cut_and_fill(m["heights"], site["placement"]["y"])
+    cut, cut_cols, fill, fill_cols = cut_and_fill(m["heights"], where(site, placements)["y"])
     d = site["displaces"]
     for key, got in (("cut_blocks", cut), ("cut_columns", cut_cols),
                      ("fill_blocks", fill), ("fill_columns", fill_cols)):
@@ -191,21 +252,48 @@ def ground_problems(site, g):
     return bad
 
 
-def ceiling_problems(site):
-    """[problem] in the vertical arithmetic: the occupied top, both ceilings, and every declared margin."""
-    p = site["placement"]
+def seat_problems(site, g, placements=None):
+    """[problem] unless the bottom layer is the UNIQUE y in the measured range that moves the fewest blocks."""
+    x0, z0, x1, z1 = footprint(site, placements)
+    m = measure(g, x0, z0, x1, z1)
+    y = where(site, placements)["y"]
+    cost = {}
+    for h in range(m["min"], m["max"] + 1):
+        cut, _, fill, _ = cut_and_fill(m["heights"], h)
+        cost[h] = cut + fill
+    if not m["min"] <= y <= m["max"]:
+        return ["y%d is outside the measured ground y%d..y%d: the paste floats or is buried whole"
+                % (y, m["min"], m["max"])]
+    best = min(cost.values())
+    cheapest = [h for h, c in cost.items() if c == best]
+    if cheapest != [y]:
+        return ["y%d costs %d blocks of cut+fill; the cheapest seat is %s"
+                % (y, cost[y], {h: cost[h] for h in cheapest})]
+    return []
+
+
+def ceiling_problems(site, placements=None):
+    """[problem] in the vertical arithmetic: the occupied top, both ceilings, and every declared margin.
+
+    The occupied top comes from the resolved y and the template's height for EVERY site. `top_y` and the
+    margins exist only in an unscheduled site's `placement` block; a scheduled site's quoted top is held by
+    pointer_problems instead."""
+    y = where(site, placements)["y"]
     height = template_size(site)[1]
-    occupied_top = p["y"] + height - 1
+    occupied_top = y + height - 1
     bad = []
     if occupied_top > MAX_Y:
         bad.append("the top occupied layer is y%d, over the world's max_y %d" % (occupied_top, MAX_Y))
     if occupied_top > BUILD_CEILING:
         bad.append("the top occupied layer is y%d, over the %d build limit" % (occupied_top, BUILD_CEILING))
+    if "scheduled_as" in site:
+        return bad
+    p = site["placement"]
     if p["top_y"] < occupied_top:
         # The dangerous direction: a top_y below the real top is how a breach of the ceiling hides.
         bad.append("top_y %d understates the top occupied layer y%d" % (p["top_y"], occupied_top))
-    if p["top_y"] > p["y"] + height:
-        bad.append("top_y %d is above y + height (%d)" % (p["top_y"], p["y"] + height))
+    if p["top_y"] > y + height:
+        bad.append("top_y %d is above y + height (%d)" % (p["top_y"], y + height))
     for key in ("ceiling_margin", "max_y_margin"):
         if key in p and (p[key] + p["top_y"]) not in (MAX_Y, BUILD_CEILING):
             bad.append("%s %d implies a ceiling of y%d, which is neither max_y %d nor the %d limit"
@@ -216,7 +304,7 @@ def ceiling_problems(site):
 
 
 def command_problems(site):
-    """[problem] where placement.command disagrees with the fields a reader would trust instead."""
+    """[problem] where an unscheduled site's placement.command disagrees with the fields beside it."""
     p = site["placement"]
     want = "/place template %s %d %d %d %s %s" % (
         site["template"], p["corner"][0], p["y"], p["corner"][1], p["rotation"], p["mirror"])
@@ -234,6 +322,162 @@ def command_problems(site):
     return bad
 
 
+def schedule_problems(site, placements=None):
+    """[problem] in the contract between a scheduled site and its one data/placements.json record."""
+    placements = PLACEMENTS if placements is None else placements
+    bad = []
+    if "placement" in site:
+        bad.append("%s is scheduled but still carries a placement block: two authors for one position" % site["id"])
+    for stale in ("corner", "centre", "command", "top_y", "ceiling_margin"):
+        if stale in site:
+            bad.append("%s is scheduled but carries a top-level %r, a copy of the deleted block" % (site["id"], stale))
+    hits = records_named(site, placements)
+    if len(hits) != 1:
+        return bad + ["scheduled_as %r names %d records in data/placements.json, not one"
+                      % (site.get("scheduled_as"), len(hits))]
+    q = hits[0]
+    for key in ("template", "pack_template"):
+        if q.get(key) != site["template"]:
+            bad.append("%s.%s is %r; the site's template is %r" % (q["id"], key, q.get(key), site["template"]))
+    if list(q.get("size") or []) != list(site["size"]):
+        bad.append("%s.size is %r; the site's size is %r" % (q["id"], q.get("size"), site["size"]))
+    if q.get("anchor_mode") != "corner":
+        bad.append("%s.anchor_mode is %r, but /place template takes the minimum corner" % (q["id"], q.get("anchor_mode")))
+    if q.get("y_mode") != "absolute":
+        bad.append("%s.y_mode is %r, but position y is an absolute bottom layer" % (q["id"], q.get("y_mode")))
+    if q.get("rotation") not in ROTATIONS:
+        bad.append("%s.rotation %r is not a /place template rotation" % (q["id"], q.get("rotation")))
+    if q.get("mirror") not in MIRRORS:
+        bad.append("%s.mirror %r is not a /place template mirror" % (q["id"], q.get("mirror")))
+    if q.get("kind") != "donor":
+        bad.append("%s.kind is %r; a pack template placed by resource id is a donor" % (q["id"], q.get("kind")))
+    if not ((q.get("source") or {}).get("licence")):
+        bad.append("%s carries no source.licence line" % q["id"])
+    if q.get("adopted_site") != site["id"]:
+        bad.append("%s.adopted_site is %r, not %r: the two files do not point at each other"
+                   % (q["id"], q.get("adopted_site"), site["id"]))
+    pos = q.get("position") or {}
+    if "x" in pos and "z" in pos and q.get("cell") != cell_of(pos["x"], pos["z"]):
+        bad.append("%s.cell is %r; data/cells.json puts (%d, %d) in %r"
+                   % (q["id"], q.get("cell"), pos["x"], pos["z"], cell_of(pos["x"], pos["z"])))
+    others = [o["id"] for o in placements if o is not q
+              and site["template"] in (o.get("template"), o.get("pack_template"))]
+    if others:
+        bad.append("%s is also placed by %s: two positions for one template" % (site["template"], others))
+    return bad
+
+
+def unscheduled_problems(site, placements=None):
+    """[problem] unless an unscheduled site keeps its block and nothing in data/placements.json places it."""
+    placements = PLACEMENTS if placements is None else placements
+    bad = []
+    if "placement" not in site:
+        bad.append("%s is neither scheduled nor carries a placement block: it has no position at all" % site["id"])
+    for q in placements:
+        if site["template"] in (q.get("template"), q.get("pack_template")):
+            bad.append("%s is also placed by data/placements.json %s, so two files carry a position for it"
+                       % (site["template"], q.get("id")))
+        if q.get("adopted_site") == site["id"] or q.get("id") == site["id"]:
+            bad.append("data/placements.json %s claims %s, which is not scheduled" % (q.get("id"), site["id"]))
+    return bad
+
+
+def pointer_problems(site, placements=None):
+    """[problem] where a scheduled site's pointer prose quotes a position its placements record does not hold."""
+    keys = [k for k in POINTER_KEYS if k in site]
+    if len(keys) != 1:
+        return ["%s carries %d of %s; a scheduled site leaves exactly one pointer" % (site["id"], len(keys), POINTER_KEYS)]
+    text = site[keys[0]]
+    w = where(site, placements)
+    bad = []
+    if site["scheduled_as"] not in text:
+        bad.append("%s does not name %s" % (keys[0], site["scheduled_as"]))
+    m = re.search(r"corner \((\d+), (\d+)\)", text)
+    if not m or [int(v) for v in m.groups()] != w["corner"]:
+        bad.append("%s quotes corner %s; the record's is %s" % (keys[0], m and m.group(0), w["corner"]))
+    m = re.search(r"\by(\d+),", text)
+    if not m or int(m.group(1)) != w["y"]:
+        bad.append("%s quotes %s; the record's y is %d" % (keys[0], m and m.group(0), w["y"]))
+    for field in ("rotation", "mirror"):
+        m = re.search(r"\b%s (\S+?)[,.]" % field, text)
+        if not m or m.group(1) != w[field]:
+            bad.append("%s quotes %s %s; the record's is %s" % (keys[0], field, m and m.group(1), w[field]))
+    m = re.search(r"top occupied layer y(\d+) \((\d+) under max_y (\d+)\)", text)
+    if m:
+        top, margin, roof = (int(v) for v in m.groups())
+        want = w["y"] + template_size(site)[1] - 1
+        if top != want:
+            bad.append("%s quotes the top occupied layer y%d; y + height - 1 is y%d" % (keys[0], top, want))
+        if roof != MAX_Y or margin != MAX_Y - want:
+            bad.append("%s quotes %d under max_y %d; data/world.json max_y %d gives %d"
+                       % (keys[0], margin, roof, MAX_Y, MAX_Y - want))
+    return bad
+
+
+def intrusions(placements=None):
+    """[(site, placements id)] for every authored placement whose position stands inside an adopted footprint.
+
+    The ONE record excluded is the site's own scheduled record, whose position IS the footprint's corner."""
+    placements = PLACEMENTS if placements is None else placements
+    inside = []
+    for sid in IDS:
+        site = SITES[sid]
+        x0, z0, x1, z1 = footprint(site, placements)
+        for q in placements:
+            if "scheduled_as" in site and q.get("id") == site["scheduled_as"]:
+                continue
+            pos = q.get("position") or {}
+            if "x" in pos and x0 <= pos["x"] <= x1 and z0 <= pos["z"] <= z1:
+                inside.append((sid, q["id"]))
+    return inside
+
+
+# ------------------------------------------------------------------------------------------- one author each
+
+
+def test_both_kinds_of_site_are_present():
+    # Without it a regression that turns every site into one kind would leave half of the parametrised
+    # checks below running over nothing and still green.
+    assert SCHEDULED and UNSCHEDULED, (SCHEDULED, UNSCHEDULED)
+
+
+@pytest.mark.parametrize("sid", IDS)
+def test_every_site_is_positioned_by_exactly_one_author(sid):
+    # Without it a site can carry a placement block AND a scheduled_as, two positions in two files that git
+    # will never say disagree (CLAUDE.md "A clean merge is not a clean union"), or neither, and no position.
+    site = SITES[sid]
+    assert ("placement" in site) != ("scheduled_as" in site), \
+        "%s: placement block %s, scheduled_as %s" % (sid, "placement" in site, site.get("scheduled_as"))
+
+
+@pytest.mark.parametrize("sid", SCHEDULED)
+def test_a_scheduled_site_is_its_one_placements_record(sid):
+    # Without it the scheduled record can drift from the site that measured it -- another template, another
+    # size, a centre anchor, a relative y -- and every terrain check here would be measuring the wrong paste.
+    assert schedule_problems(SITES[sid]) == []
+
+
+@pytest.mark.parametrize("sid", SCHEDULED)
+def test_a_scheduled_sites_pointer_quotes_the_records_position(sid):
+    # Without it the one line a human reads here in place of the deleted block can quote a corner, y or top
+    # the server is not given: a second, stale copy of the position.
+    assert pointer_problems(SITES[sid]) == []
+
+
+@pytest.mark.parametrize("sid", UNSCHEDULED)
+def test_an_unscheduled_site_is_not_positioned_by_placements_json(sid):
+    # Without it the day a site is copied into data/placements.json its `placement` block here can survive,
+    # and one site has two positions in two files.
+    assert unscheduled_problems(SITES[sid]) == []
+
+
+def test_every_placements_record_claiming_an_adopted_site_is_that_sites_schedule():
+    # Without it a placements record can name an adopted site that does not point back at it -- a third
+    # author, or a schedule this file never agreed to.
+    claims = {q["id"]: q["adopted_site"] for q in PLACEMENTS if q.get("adopted_site")}
+    assert claims == {SITES[s]["scheduled_as"]: s for s in SCHEDULED}
+
+
 # ------------------------------------------------------------------------------------------------ the terrain
 
 
@@ -248,7 +492,7 @@ def test_ground_block_is_the_heightmap_over_the_named_footprint(sid, ground):
 @pytest.mark.slow
 @pytest.mark.parametrize("sid", IDS)
 def test_measured_by_names_the_footprint_the_fields_imply(sid, ground):
-    # Without it the prose can quote a box that is not the box `corner` + `size` describes, and the
+    # Without it the prose can quote a box that is not the box the resolved corner + `size` describe, and the
     # numbers would be right about terrain nobody is pasting on.
     site = SITES[sid]
     m = re.search(r"x(\d+)\.\.(\d+),\s*z(\d+)\.\.(\d+)", site["ground"]["measured_by"])
@@ -271,26 +515,10 @@ def test_every_footprint_column_stands_above_sea_level(sid, ground):
 @pytest.mark.slow
 @pytest.mark.parametrize("sid", IDS)
 def test_y_is_the_least_disturbing_seat_in_the_measured_range(sid, ground):
-    # Without it nothing connects `y` to the terrain at all. This is the rule the record argues for itself
-    # site by site ("zero cut and zero fill", "a cut of one layer disappears under the template's own
-    # floor", "the balance point of the whole column") stated once, and derived from the heightmap: the
-    # bottom layer sits at the y that moves the fewest blocks of ground. All four sites are at that y, and
-    # uniquely so -- a seat chosen for any other reason has to be argued for in the record, not assumed.
-    site = SITES[sid]
-    x0, z0, x1, z1 = footprint(site)
-    m = measure(ground, x0, z0, x1, z1)
-    cost = {}
-    for y in range(m["min"], m["max"] + 1):
-        cut, _, fill, _ = cut_and_fill(m["heights"], y)
-        cost[y] = cut + fill
-    best = min(cost.values())
-    assert m["min"] <= site["placement"]["y"] <= m["max"], \
-        "y%d is outside the measured ground y%d..y%d: the paste floats or is buried whole" \
-        % (site["placement"]["y"], m["min"], m["max"])
-    assert [y for y, c in cost.items() if c == best] == [site["placement"]["y"]], \
-        "y%d costs %d blocks of cut+fill; the cheapest seat is %s" \
-        % (site["placement"]["y"], cost[site["placement"]["y"]],
-           {y: c for y, c in cost.items() if c == best})
+    # Without it nothing connects `y` to the terrain at all. The record argues this site by site ("zero cut
+    # and zero fill", "the unique cheapest seat", "the balance point of the whole column"); stated once and
+    # derived from the heightmap, for a scheduled site from its placements record's position y.
+    assert seat_problems(SITES[sid], ground) == []
 
 
 @pytest.mark.slow
@@ -307,7 +535,7 @@ def test_transposed_footprint_notes_are_the_heightmaps(sid, ground):
             continue
         found += 1
         assert tuple(int(v) for v in m.groups()) == (sz, sx), "%s is not %dx%d transposed" % (key, sx, sz)
-        x0, z0 = site["placement"]["corner"]
+        x0, z0 = where(site)["corner"]
         t = measure(ground, x0, z0, x0 + sz - 1, z0 + sx - 1)
         assert (note["min"], note["max"]) == (t["min"], t["max"]), \
             "%s says %s..%s, the heightmap says %s..%s" % (key, note["min"], note["max"], t["min"], t["max"])
@@ -345,9 +573,19 @@ def test_size_is_the_structures_file_footprint(sid):
 
 
 @pytest.mark.parametrize("sid", IDS)
+def test_the_named_cell_holds_the_corner(sid):
+    # Without it a site can say B5 while standing in C5, and a reader who looks for it by cell never finds it.
+    site = SITES[sid]
+    x, z = where(site)["corner"]
+    assert site["site"]["cell"] == cell_of(x, z), \
+        "%s says cell %s; data/cells.json puts (%d, %d) in %s" % (sid, site["site"]["cell"], x, z, cell_of(x, z))
+
+
+@pytest.mark.parametrize("sid", UNSCHEDULED)
 def test_centre_is_the_corner_plus_half_the_size(sid):
     # Without it the centre -- the point every distance in the record is measured from -- can drift off the
-    # footprint it names.
+    # footprint it names. Only an unscheduled site has one; a scheduled site's went with its placement block,
+    # and test_a_scheduled_site_is_its_one_placements_record fails if a stale copy is left at the top level.
     site = SITES[sid]
     x0, z0 = site["placement"]["corner"]
     sx, _, sz = site["size"]
@@ -356,40 +594,26 @@ def test_centre_is_the_corner_plus_half_the_size(sid):
 
 @pytest.mark.parametrize("sid", IDS)
 def test_top_y_is_the_templates_top_and_clears_both_ceilings(sid):
-    # Without it a 74-block template seated high pokes through the build limit and the record still reads
-    # fine. See the module docstring: the file has two top_y conventions, so this asserts the direction
-    # that matters and computes the hard clearance itself.
+    # Without it a 90-block tower seated high pokes through the build limit and the record still reads fine.
+    # Every site: y + height - 1 from the resolved y. Unscheduled sites: top_y and margins as well.
     assert ceiling_problems(SITES[sid]) == []
 
 
-@pytest.mark.parametrize("sid", IDS)
+@pytest.mark.parametrize("sid", UNSCHEDULED)
 def test_declared_margins_are_arithmetic_against_a_declared_ceiling(sid):
-    # Without it `ceiling_margin` is a number from the day it was typed. It is covered by
-    # ceiling_problems(); this test names the property so a stale margin is not reported as "ceiling".
+    # Without it `ceiling_margin` is a number from the day it was typed. Covered by ceiling_problems(); this
+    # test names the property so a stale margin is not reported as "ceiling".
     p = SITES[sid]["placement"]
     for key in ("ceiling_margin", "max_y_margin"):
         if key in p:
             assert p[key] + p["top_y"] in (MAX_Y, BUILD_CEILING)
 
 
-@pytest.mark.parametrize("sid", IDS)
+@pytest.mark.parametrize("sid", UNSCHEDULED)
 def test_command_text_is_the_fields_beside_it(sid):
     # Without it the one string a human will copy can disagree with the corner, y, rotation and mirror the
     # rest of the record reasons about, and the fields become decoration.
     assert command_problems(SITES[sid]) == []
-
-
-@pytest.mark.parametrize("sid", IDS)
-def test_no_site_is_also_positioned_by_placements_json(sid):
-    # Without it the file's own id-authorship promise goes unchecked: the day a site is copied into
-    # data/placements.json its `placement` block here must be deleted, or one site has two positions in
-    # two files and git will never say so (CLAUDE.md "A clean merge is not a clean union").
-    site = SITES[sid]
-    placements = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))["placements"]
-    ids = {q["id"] for q in placements}
-    assert site["id"] not in ids
-    assert not any(q.get("template") == site["template"] for q in placements), \
-        "%s is also placed by data/placements.json, so two files carry a position for it" % site["template"]
 
 
 def test_record_ceiling_max_y_is_world_json():
@@ -401,13 +625,13 @@ def test_record_ceiling_max_y_is_world_json():
 # --------------------------------------------------------------------------------------- the cross-system hole
 
 
-def _portal_clearance():
+def _portal_clearance(placements=None):
     """(rule, [(site id, portal id, distance from the footprint EDGE)]) for every site/portal pair."""
     doc = json.loads((ROOT / "data" / "portals.json").read_text(encoding="utf-8"))
     rule = doc["rules"]["min_from_legendary_mouth"]
     out = []
     for sid in IDS:
-        x0, z0, x1, z1 = footprint(SITES[sid])
+        x0, z0, x1, z1 = footprint(SITES[sid], placements)
         for q in doc["portals"]:
             px, pz = q["at"]
             d = math.hypot(max(x0 - px, 0, px - x1), max(z0 - pz, 0, pz - z1))
@@ -418,9 +642,8 @@ def _portal_clearance():
 def test_every_site_clears_the_portal_rule_that_nothing_enforces():
     # Without it nothing in the repository holds these sites to `min_from_legendary_mouth`:
     # tools/portals.py reads data/legendaries.json `encounters` for that check and cannot see this file,
-    # so a portal moved east could be sited on top of an adopted site and both tools would pass. The
-    # record asks for exactly this ("teaches portals.py about this file or declares the clearance in a
-    # test"). Measured from the footprint edge, which is stricter than portals.py's point-to-point.
+    # so a portal could be sited on top of an adopted site and both tools would pass. Measured from the
+    # footprint edge, which is stricter than portals.py's point-to-point.
     rule, pairs = _portal_clearance()
     assert [(s, p, round(d)) for s, p, d in pairs if d < rule] == []
 
@@ -439,33 +662,39 @@ def test_no_adopted_site_shares_an_id_or_a_legendary_with_legendaries_json():
 
 
 def test_no_authored_placement_stands_inside_an_adopted_footprint():
-    # Without it a site can be measured onto ground something of ours is already built on, and because
-    # these sites are deliberately absent from data/placements.json no placement audit would ever look.
-    placements = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))["placements"]
-    inside = []
-    for sid in IDS:
-        x0, z0, x1, z1 = footprint(SITES[sid])
-        for q in placements:
-            pos = q.get("position") or {}
-            if "x" in pos and x0 <= pos["x"] <= x1 and z0 <= pos["z"] <= z1:
-                inside.append((sid, q["id"]))
-    assert inside == []
+    # Without it a site can be measured onto ground something of ours is already built on. A scheduled site's
+    # own record is excluded -- its position IS the corner -- and nothing else is.
+    assert intrusions() == []
 
 
 # ------------------------------------------------------------------------------------------------ mutations
 #
-# A mutated COPY of the record must be caught. See the module docstring on why a record-side mutation is
-# the right proof here and not the usual one: the expectations above come out of the heightmap,
-# data/structures.json, data/world.json and data/portals.json, none of which a mutated site dict can move.
-# data/adopted_legendary_sites.json is never written.
+# A mutated COPY of the record, or of data/placements.json, must be caught. See the module docstring on why a
+# record-side mutation is the right proof here: the expectations come out of the heightmap,
+# data/structures.json, data/world.json, data/cells.json and data/portals.json, none of which a mutated dict
+# can move. No file is written.
+
+
+def _placements_with(record_id, **changes):
+    """A deep copy of data/placements.json's list with one record's fields replaced (position keys merged)."""
+    out = copy.deepcopy(PLACEMENTS)
+    q = next(r for r in out if r.get("id") == record_id)
+    for k, v in changes.items():
+        if k == "position":
+            q["position"].update(v)
+        else:
+            q[k] = v
+    return out
 
 
 @pytest.mark.slow
 @pytest.mark.parametrize("field,delta", [("min", -1), ("max", 1), ("median", 1), ("mode", 1),
                                          ("columns", -1), ("mode_columns", 1), ("spread", 1)])
 def test_a_perturbed_ground_stat_is_caught(field, delta, ground):
-    # Proves test_ground_block_is_the_heightmap bites on each stat separately, not just on one of them.
+    # Proves test_ground_block_is_the_heightmap bites on each stat separately, on a SCHEDULED site whose
+    # footprint is resolved through data/placements.json.
     site = copy.deepcopy(SITES["adopted_crown_cemetery"])
+    assert "scheduled_as" in site, "the mutation target is meant to be a scheduled site"
     if field not in site["ground"]:
         pytest.skip("adopted_crown_cemetery declares no ground.%s" % field)
     site["ground"][field] += delta
@@ -473,18 +702,42 @@ def test_a_perturbed_ground_stat_is_caught(field, delta, ground):
 
 
 @pytest.mark.slow
+@pytest.mark.parametrize("sid", ["adopted_zapdos_tower", "adopted_dusk_tower"])
 @pytest.mark.parametrize("field", ["cut_blocks", "fill_blocks", "cut_columns", "fill_columns"])
-def test_a_perturbed_cut_or_fill_count_is_caught(field, ground):
-    # Proves the displacement counts are re-derived rather than read back out of the record.
-    site = copy.deepcopy(SITES["adopted_zapdos_tower"])
+def test_a_perturbed_cut_or_fill_count_is_caught(field, sid, ground):
+    # Proves the displacement counts are re-derived rather than read back, for one site of each kind.
+    site = copy.deepcopy(SITES[sid])
     site["displaces"][field] += 1
     assert any(("displaces.%s" % field) in p for p in ground_problems(site, ground))
 
 
 @pytest.mark.slow
+@pytest.mark.parametrize("record_id,sid", [("legendary_dawn_tower", "adopted_dawn_tower"),
+                                           ("legendary_dusk_tower", "adopted_dusk_tower"),
+                                           ("legendary_crown_cemetery", "adopted_crown_cemetery")])
+@pytest.mark.parametrize("dy", [1, -1])
+def test_a_scheduled_record_reseated_by_one_block_is_caught(record_id, sid, dy, ground):
+    # The input the scheduled checks read is the placements record, so THAT is what is moved: one block up
+    # or down, the site file untouched. Both the seat and the cut/fill counts must go red.
+    y = next(q for q in PLACEMENTS if q["id"] == record_id)["position"]["y"]
+    moved = _placements_with(record_id, position={"y": y + dy})
+    assert seat_problems(SITES[sid], ground, moved) != []
+    assert any(p.startswith("displaces.") for p in ground_problems(SITES[sid], ground, moved))
+
+
+@pytest.mark.slow
+def test_a_scheduled_record_moved_onto_different_terrain_is_caught(ground):
+    # The elder-tree failure in miniature, on the placements side: the site file stays perfect and only
+    # the record's corner moves.
+    q = next(r for r in PLACEMENTS if r["id"] == "legendary_crown_cemetery")
+    moved = _placements_with("legendary_crown_cemetery",
+                             position={"x": q["position"]["x"] + 60, "z": q["position"]["z"] + 60})
+    assert ground_problems(SITES["adopted_crown_cemetery"], ground, moved) != []
+
+
+@pytest.mark.slow
 def test_a_site_moved_onto_different_terrain_is_caught(ground):
-    # The elder-tree failure in miniature: the record stays internally perfect and only the terrain under
-    # it changes. A ground check that cannot see this is a check of the record against itself.
+    # The same for an unscheduled site, whose corner lives in its own placement block.
     site = copy.deepcopy(SITES["adopted_zapdos_tower"])
     site["placement"]["corner"] = [site["placement"]["corner"][0] + 60, site["placement"]["corner"][1] + 60]
     assert ground_problems(site, ground) != []
@@ -513,6 +766,15 @@ def test_a_structure_raised_through_the_build_limit_is_caught():
     assert any("max_y" in p for p in problems), problems
 
 
+def test_a_scheduled_tower_raised_through_the_ceilings_is_caught():
+    # The same for a scheduled site, moving only its placements record: the Dawn tower is 90 tall, so y231
+    # puts the top layer at y320 -- over max_y 310 but not the 320 limit -- and y232 over both.
+    at_limit = ceiling_problems(SITES["adopted_dawn_tower"], _placements_with("legendary_dawn_tower", position={"y": 231}))
+    assert any("max_y" in p for p in at_limit) and not any("build limit" in p for p in at_limit), at_limit
+    over = ceiling_problems(SITES["adopted_dawn_tower"], _placements_with("legendary_dawn_tower", position={"y": 232}))
+    assert any("build limit" in p for p in over), over
+
+
 def test_a_stale_ceiling_margin_is_caught():
     # The margin that was true when it was typed. One block off and it resolves onto no real ceiling.
     site = copy.deepcopy(SITES["adopted_mew_temple"])
@@ -538,14 +800,105 @@ def test_a_command_that_no_longer_matches_its_fields_is_caught(field, value):
     assert command_problems(site) != []
 
 
+@pytest.mark.parametrize("record_id,changes", [
+    ("legendary_crown_cemetery", {"size": [45, 24, 46]}),
+    ("legendary_crown_cemetery", {"template": "cobbleverse:dawn_tower"}),
+    ("legendary_crown_cemetery", {"pack_template": "cobbleverse:dawn_tower"}),
+    ("legendary_dawn_tower", {"anchor_mode": "centre"}),
+    ("legendary_dawn_tower", {"y_mode": "relative"}),
+    ("legendary_dawn_tower", {"rotation": "90"}),
+    ("legendary_dusk_tower", {"mirror": "sideways"}),
+    ("legendary_dusk_tower", {"kind": "town"}),
+    ("legendary_dusk_tower", {"adopted_site": "adopted_dawn_tower"}),
+    ("legendary_dusk_tower", {"cell": "H1"}),
+    ("legendary_crown_cemetery", {"id": "legendary_crown_cemetery_renamed"}),
+])
+def test_a_scheduled_record_that_parts_from_its_site_is_caught(record_id, changes):
+    # Proves schedule_problems reads each field of the contract, by breaking the PLACEMENTS side one field at
+    # a time with the site file untouched.
+    sid = next(q for q in PLACEMENTS if q["id"] == record_id)["adopted_site"]
+    assert schedule_problems(SITES[sid], _placements_with(record_id, **changes)) != []
+
+
+def test_a_second_record_placing_a_scheduled_template_is_caught():
+    # Two placements records, one template: the second is a second position however its id reads.
+    twin = copy.deepcopy(next(q for q in PLACEMENTS if q["id"] == "legendary_dusk_tower"))
+    twin["id"] = "some_other_dusk"
+    twin.pop("adopted_site")
+    assert any("also placed by" in p for p in schedule_problems(SITES["adopted_dusk_tower"], PLACEMENTS + [twin]))
+
+
+def test_a_duplicated_scheduled_id_is_caught():
+    # Two records under the scheduled id: `scheduled_as` no longer names one position.
+    twin = copy.deepcopy(next(q for q in PLACEMENTS if q["id"] == "legendary_dawn_tower"))
+    assert schedule_problems(SITES["adopted_dawn_tower"], PLACEMENTS + [twin]) != []
+
+
+def test_a_scheduled_site_that_keeps_its_placement_block_is_caught():
+    # The deletion the record's own rule demands, undone.
+    site = copy.deepcopy(SITES["adopted_crown_cemetery"])
+    site["placement"] = {"corner": [4118, 1982], "y": 109}
+    assert any("still carries a placement block" in p for p in schedule_problems(site))
+
+
+def test_an_unscheduled_template_turning_up_in_placements_is_caught():
+    # Mew's temple copied into data/placements.json while its placement block stays here.
+    rogue = {"id": "legendary_mew_temple", "template": SITES["adopted_mew_temple"]["template"],
+             "position": {"x": 7604, "y": 142, "z": 7082}}
+    assert unscheduled_problems(SITES["adopted_mew_temple"], PLACEMENTS + [rogue]) != []
+
+
+@pytest.mark.parametrize("sid,mutate", [
+    ("adopted_dawn_tower", lambda s: s.__setitem__("placement_lives_in", s["placement_lives_in"].replace("y99", "y98"))),
+    ("adopted_dawn_tower", lambda s: s.__setitem__("placement_lives_in", s["placement_lives_in"].replace("y188", "y189"))),
+    ("adopted_dawn_tower", lambda s: s.__setitem__("placement_lives_in", s["placement_lives_in"].replace("(122", "(121"))),
+    ("adopted_dusk_tower", lambda s: s.__setitem__("placement_lives_in", s["placement_lives_in"].replace("7216", "7217"))),
+    ("adopted_crown_cemetery", lambda s: s.__setitem__("placement_lives_in", s["placement_lives_in"].replace("rotation none", "rotation 180"))),
+    ("adopted_crown_cemetery", lambda s: s.pop("placement_lives_in")),
+])
+def test_a_stale_pointer_is_caught(sid, mutate):
+    # Proves pointer_problems reads every number it says it reads.
+    site = copy.deepcopy(SITES[sid])
+    mutate(site)
+    assert pointer_problems(site) != []
+
+
+def test_a_pointer_left_behind_by_a_moved_record_is_caught():
+    # The direction that matters: the RECORD moves and the prose does not.
+    moved = _placements_with("legendary_dusk_tower", position={"y": 147})
+    assert pointer_problems(SITES["adopted_dusk_tower"], moved) != []
+
+
+def test_a_placement_moved_into_an_adopted_footprint_is_caught():
+    # Proves the intrusion check measures something, and that its one exclusion is the site's own record
+    # and nothing else: the Dusk tower's record moved into the Crown's footprint, and a COPY of the Crown's
+    # own record under another id, must both be reported.
+    crown = next(q for q in PLACEMENTS if q["id"] == "legendary_crown_cemetery")
+    moved = _placements_with("legendary_dusk_tower",
+                             position={"x": crown["position"]["x"] + 5, "z": crown["position"]["z"] + 5})
+    assert ("adopted_crown_cemetery", "legendary_dusk_tower") in intrusions(moved)
+    twin = copy.deepcopy(crown)
+    twin["id"] = "not_the_crowns_own_record"
+    assert ("adopted_crown_cemetery", "not_the_crowns_own_record") in intrusions(PLACEMENTS + [twin])
+
+
 def test_a_site_sited_on_a_portal_is_caught():
     # Proves the clearance check measures something: the hole it closes is a portal and a site in the same
-    # place, which no other tool in the repository can see at once.
+    # place, which no other tool in the repository can see at once. Run through _portal_clearance itself,
+    # with a scheduled site's placements record moved onto the portal.
     doc = json.loads((ROOT / "data" / "portals.json").read_text(encoding="utf-8"))
-    rule = doc["rules"]["min_from_legendary_mouth"]
     px, pz = doc["portals"][0]["at"]
-    site = copy.deepcopy(SITES["adopted_mew_temple"])
-    site["placement"]["corner"] = [px - 5, pz - 5]
-    x0, z0, x1, z1 = footprint(site)
-    d = math.hypot(max(x0 - px, 0, px - x1), max(z0 - pz, 0, pz - z1))
-    assert d < rule
+    moved = _placements_with("legendary_dawn_tower", position={"x": px - 5, "z": pz - 5})
+    rule, pairs = _portal_clearance(moved)
+    assert any(s == "adopted_dawn_tower" and p == doc["portals"][0]["id"] and d < rule for s, p, d in pairs)
+
+
+def test_footprint_turns_with_the_rotation():
+    # Proves the footprint is not hard-wired to rotation none. Worked by hand for the 46 (x) by 45 (z) tower
+    # at (100, 200): clockwise_90 sends the x run along +z and the z run along -x, so x100-44..100 = 56..100
+    # and z200..200+45 = 200..245; 180 sends both negative, x100-45..100 = 55..100, z200-44..200 = 156..200.
+    site = copy.deepcopy(SITES["adopted_dawn_tower"])
+    moved = _placements_with("legendary_dawn_tower", position={"x": 100, "z": 200}, rotation="clockwise_90")
+    assert footprint(site, moved) == (56, 200, 100, 245)
+    moved = _placements_with("legendary_dawn_tower", position={"x": 100, "z": 200}, rotation="180")
+    assert footprint(site, moved) == (55, 156, 100, 200)
