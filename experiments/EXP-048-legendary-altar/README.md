@@ -173,3 +173,15 @@ Mew's `origin_fossil` has a recipe; the cemetery's Spectrier route has its own c
 
 Three test carrots tagged `exp048_carrot`, `exp048_carrot2` and `exp048_carrot3` were left by the ring with
 pickup disabled. They are evidence, harmless, and despawn on their own.
+
+## Result, the owner's half (reported by the owner in chat, 2026-10-02)
+
+- **Calyrex, at the pasted Crown Cemetery statue (4140, 112, 2005): given the crown, it WORKED** ("i gave the calyrex
+  the crown and it worked", the owner, 2026-10-02). So a raw-pasted LumyMon right-click altar functions on Cobblemon
+  1.8.0 / LumyMon 0.6.6 in staging. The owner also reports that pasted altars work in general, and that the earlier inert
+  results came from our own tooling: `/clone` dropping shrine blocks, a missing ritual block, and a shrine placed 71
+  blocks from its record. **Those three are not yet recorded in any file this session could read**; the chat line, the
+  item used and whether the crown was consumed should be written here by whoever ran it.
+- Still not recorded: the Spectrier thrown carrot (step 1), Articuno's feather (step 2).
+- **Consequence for play is unchanged:** the crown has no recipe or loot source, so in normal play Calyrex needs the
+  campaign to hand the crown out, as the feathers will be.

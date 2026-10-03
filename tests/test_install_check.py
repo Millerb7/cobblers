@@ -84,6 +84,9 @@ def inst(tmp_path, monkeypatch):
     (repo / "modpack/config/rctmod-server.toml").write_text("maxTrainers = 0\n", encoding="utf-8")
     (s.server / "config").mkdir()
     (s.server / "config/rctmod-server.toml").write_text("# rewritten\nmaxTrainers = 0\n", encoding="utf-8")
+    # a complete install carries every key IC.REQUIRED_PROPERTIES names, at its required value
+    (s.server / "server.properties").write_text(
+        "".join("%s=%s\n" % (k, v) for k, (v, _why) in IC.REQUIRED_PROPERTIES.items()), encoding="utf-8")
     monkeypatch.setattr(SCR, "ROOT", repo)
     monkeypatch.setattr(SCR, "OVERLAY", repo / "modpack/config")
     monkeypatch.setattr(SCR, "MIRROR", repo / "server/config/mods")
@@ -264,3 +267,38 @@ def test_packs_refuses_the_live_world_when_called_directly(tmp_path, monkeypatch
     server, world = live_runtime(tmp_path, monkeypatch)
     with pytest.raises(G.RuntimeAccessRefused):
         IC.packs(server, world)
+
+
+# ------------------------------------------------------------------ server.properties (the owner, 2026-10-02)
+# enable-command-block=true is a server requirement: the Necrozma towers and Mew's door are command blocks. The
+# check was first verified by hand; these make "someone turned it off" fail where it was only ever looked at.
+
+def _props(inst, body):
+    (inst.server / "server.properties").write_text(body, encoding="utf-8")
+    return IC.properties(inst.server)
+
+
+def test_command_blocks_are_a_required_property():
+    assert IC.REQUIRED_PROPERTIES["enable-command-block"][0] == "true"
+
+
+@pytest.mark.parametrize("body", ["enable-command-block=false\n", "motd=cobblers\n", "enable-command-block=\n",
+                                  "enable-command-block=TRUE\n", "#enable-command-block=true\n"])
+def test_a_wrong_or_missing_command_block_setting_is_a_problem(inst, body):
+    problems = _props(inst, body)
+    assert len(problems) == 1 and "enable-command-block" in problems[0], problems
+
+
+def test_the_wrong_setting_fails_the_whole_check(inst):
+    _props(inst, "enable-command-block=false\n")
+    assert IC.main(["--server-dir", str(inst.server), "--world-dir", str(inst.world)]) == 1
+
+
+@pytest.mark.parametrize("body", ["enable-command-block=true\n", "motd=x\nenable-command-block = true \nlevel-name=w\n"])
+def test_the_required_setting_is_clean(inst, body):
+    assert _props(inst, body) == []
+
+
+def test_a_missing_server_properties_is_a_problem(inst):
+    (inst.server / "server.properties").unlink()
+    assert IC.properties(inst.server) and "not found" in IC.properties(inst.server)[0]
