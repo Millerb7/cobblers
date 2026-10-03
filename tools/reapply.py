@@ -461,6 +461,9 @@ def prepare_jobs(a):
     add("rift_mines:build", "rift_mines.py", "build", *src)
     # the southern Rift's mega site, prototype slice (data/gulch_mine.json), then its offline audit: every write inside
     # the plan and the zone, the zone sealed except through the gate, cover over the halls, the faces and the Cutters
+    # the Mega field's committed polygon and farms (data/gulch_mine.json mega_field, farms) are what its authoring
+    # tool derives from the heightmap and the sculpt's ring: a drift check, before the gulch pack is built from them
+    add("mega_field:check", "mega_field.py", "check", *src)
     add("gulch_mine:build", "gulch_mine.py", "build", *src)
     add("gulch_mine_audit", "gulch_mine_audit.py", *src)
     # the Rift's zones (data/rift_zones.json): AFTER gulch_mine, because z2 is cut round the gulch's built zone
@@ -1366,6 +1369,13 @@ def steps(with_spawns=False):
                        "Cutting Floor, then the Cutters",
                 [("fn", "cobblers:gulch_mine/%s" % f) for f in indexed("cobblers_gulch_mine", "gulch_mine")]
                 + [("fn", "cobblers:gulch_mine/cutters"), ("wait", 8)]))
+    # 2026-10-03, the Mega field (docs/world-building/MEGA_FIELD.md): the field's dens are ordinary farms of the gulch
+    # pack and need no step (the keeper spawns each Mega when a player is in its farm's approach box). This removes the
+    # Megas a keeper may have left at the seven retired dens (data/gulch_mine.json superseded_farms), which nothing
+    # leashes or replaces any more: after R9S, whose pack carries megas/retire; with each den's ground held
+    import gulch_mine
+    out.append(("R9SX", "remove the Megas of the seven retired open-air dens (data/gulch_mine.json superseded_farms)",
+                gulch_mine.retire_steps()))
     # the Rift's zone walls and gatehouse shells (tools/rift_zones.py, data/rift_zones.json; docs/mechanics/
     # RIFT_ZONES.md sections 5 and 6). After the Rift skin (R1), whose surface the walls stand on, after the
     # Deep and Victory Road (R9B, R9C) and the gulch (R9S) whose zone z2 is cut around, and after the League's
@@ -1466,7 +1476,9 @@ def steps(with_spawns=False):
     # data/gulch_mine.json. AFTER R9S (the gulch's own block pass, whose keeper spawns the Megas at these anchors) and
     # the Rift skin (R1), whose surface it rewrites; BEFORE R9E with the other block passes. Per den: hold, build, release
     import mega_dens
-    out.append(("R9MD", "the seven open-air Mega dens: scrape, boulders, bones and each species' sign (data/mega_dens.json)",
+    # 2026-10-03: the seven are superseded with their farms (data/mega_dens.json superseded_dens), so the step has no
+    # actions until the Mega field's dens are dressed (an owner call, MEGA_FIELD.md section 4)
+    out.append(("R9MD", "the open-air Mega dens' dressing: scrape, boulders, bones and each species' sign (data/mega_dens.json)",
                 mega_dens.placement_steps()))
     # the three wayside places of 2026-10-03 (tools/wayside_kit.py): pure block passes, each hold, build, release.
     # BEFORE R9E with the other block passes; none places or sits on a Habitat Block, and none overlaps another build
