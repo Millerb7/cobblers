@@ -34,10 +34,12 @@ The audit is offline and fails closed (the implementer's audit; its tests belong
              items it never exceeds the income; backpack tiers unlock in tier order and cost more as they rise
   recipes    the committed overlay is exactly what `overlay` writes; every Sophisticated Backpacks item a built
              counter sells is off, unless left_craftable says why; nothing sold only by an unbuilt counter is off
-  sites      every built keeper stands one above its plan ground (tools/ambient.py Site: the street paving or the
-             heightmap), on a cell and its four neighbours that no lot, anchor, lamp, building (1-block margin),
-             earthwork or dressing piece takes, 3.5+ blocks from every other placed NPC and every trader clerk, 3+
-             from every walked route line, above the sea, facing away from its Mart's clerk
+  sites      every built keeper stands one above its plan ground (the plaza's graded paving inside the plaza, else
+             tools/ambient.py Site: the street paving or the heightmap), on a cell and its four neighbours that no
+             lot, anchor, lamp, building (1-block margin), earthwork or dressing piece takes, 3.5+ blocks from every
+             other placed NPC and every trader clerk, 3+ from every walked route line, above the sea; on its Mart's
+             DOOR side (the Mart anchor's `facing`), inside its town's footprint, off every street's paved width, and
+             facing its plaza's centre (R17M: "beside its town's Mart and turned to face its plaza")
   the output every purchase function checks the cooldown first, the gate before the balance, reads before it charges,
              refuses below exactly the price, charges once by the macro, verifies, and gives only after the verify;
              every function passes tools/function_limits.py; every dialogue offers exactly its counter's stock with a
@@ -447,6 +449,7 @@ def site_problems(doc, traders, source_root=None, skip_dressing=False):
     out, report = [], []
     placements = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
     dressing = json.loads((ROOT / "data" / "town_dressing.json").read_text(encoding="utf-8"))
+    towns = {t["id"]: t for t in json.loads((ROOT / "data" / "towns.json").read_text(encoding="utf-8"))["towns"]}
     if skip_dressing:
         report.append("NOT CHECKED: the dressing pieces (--skip-dressing); run the audit in a full checkout")
         dressing = {"towns": {}}
@@ -465,14 +468,17 @@ def site_problems(doc, traders, source_root=None, skip_dressing=False):
         if s not in sites:
             try:
                 sites[s] = A.Site(s, base, placements, dressing, None, rules)
-            except BaseException as e:  # a missing derived plan exits; it is a problem, not a crash
+            except SystemExit as e:  # town_dressing.town_plan exits when derived/towns/<s>_plan.json is missing
                 sites[s] = e
         site = sites[s]
-        if isinstance(site, BaseException):
+        if isinstance(site, SystemExit):
             out.append("%s: the town's site model cannot be built: %s" % (where, str(site)[:200]))
             continue
-        if y != site.y(x, z):
-            out.append("%s: stands at y%d, but the plan's ground there puts it at y%d" % (where, y, site.y(x, z)))
+        plan = (placements["settlements"].get(s) or {}).get("plan") or {}
+        want_y = stand_y(site, plan, x, z)
+        if y != want_y:
+            out.append("%s: stands at y%d, but the plan's ground there puts it at y%d" % (where, y, want_y))
+        out += frontage_problems(where, c, plan, towns.get(s), site)
         if y - 1 < sea:
             out.append("%s: its ground y%d is under the sea level y%d" % (where, y - 1, sea))
         for dx, dz in ((0, 0), (1, 0), (-1, 0), (0, 1), (0, -1)):
@@ -487,13 +493,65 @@ def site_problems(doc, traders, source_root=None, skip_dressing=False):
             if d < ROUTE_CLEAR:
                 out.append("%s: %.1f blocks from a walked route line" % (where, d))
         tr = traders[c["near_trader"]]["position"]
-        away = math.degrees(math.atan2(-(x - tr["x"]), z - tr["z"]))
-        diff = abs((c["yaw"] - away + 180) % 360 - 180)
-        if diff > YAW_SLACK:
-            out.append("%s: faces yaw %s, but away from its Mart's clerk is %.0f" % (where, c["yaw"], away))
         report.append("%s: ground y%d, cell and neighbours free, %.0f blocks from its clerk"
                       % (where, y - 1, math.dist((x, z), (tr["x"], tr["z"]))))
     return out, report
+
+
+def in_rect(rect, x, z):
+    return min(rect[0], rect[2]) <= x <= max(rect[0], rect[2]) and min(rect[1], rect[3]) <= z <= max(rect[1], rect[3])
+
+
+def stand_y(site, plan, x, z):
+    """The y a keeper stands at: one above the plaza's paving inside the plaza (the town plan grades it flat to
+    plan.plaza.y, so the heightmap is not its surface there), else one above the street paving or the heightmap."""
+    pz = plan.get("plaza") or {}
+    if pz.get("rect") and pz.get("y") is not None and in_rect(pz["rect"], x, z):
+        return int(pz["y"]) + 1
+    return site.y(x, z)
+
+
+def plaza_yaw(plan, x, z):
+    """The yaw (Minecraft's: 0 = +z, 90 = -x) from the centre of cell (x, z) to the centre of the town's plaza."""
+    r = plan["plaza"]["rect"]
+    cx = (min(r[0], r[2]) + max(r[0], r[2]) + 1) / 2.0
+    cz = (min(r[1], r[3]) + max(r[1], r[3]) + 1) / 2.0
+    return math.degrees(math.atan2(-(cx - x - 0.5), cz - z - 0.5))
+
+
+FACING = {"north": (0, -1), "south": (0, 1), "east": (1, 0), "west": (-1, 0)}
+
+
+def frontage_problems(where, c, plan, town, site):
+    """R17M's intent: each keeper 'beside its town's Mart and turned to face its plaza'. So: on the Mart's DOOR side
+    (the Mart anchor's `facing`, data/placements.json) and not past its far wall, inside the town's footprint
+    (data/towns.json), off every street's paved width (a keeper there stands in the road), and facing the plaza."""
+    out = []
+    x, _y, z = c["at"]
+    marts = [a for a in plan.get("anchors") or [] if a.get("role") == "pokemart"]
+    if len(marts) != 1:
+        return ["%s: its town plan has %d Mart anchors, not 1, so its door side is unknown" % (where, len(marts))]
+    a = marts[0]
+    f = FACING.get(a.get("facing"))
+    if f is None:
+        return ["%s: the Mart anchor %s has no facing" % (where, a["id"])]
+    x0, z0, x1, z1 = a["rect"]
+    x0, x1, z0, z1 = min(x0, x1), max(x0, x1), min(z0, z1), max(z0, z1)
+    front = {(-1, 0): x < x0, (1, 0): x > x1, (0, -1): z < z0, (0, 1): z > z1}[f]
+    if not front:
+        out.append("%s: not on its Mart %s's door side (%s of %s)" % (where, a["id"], a["facing"], a["rect"]))
+    fp = (town or {}).get("footprint")
+    if not fp or not (fp["min_x"] <= x <= fp["max_x"] and fp["min_z"] <= z <= fp["max_z"]):
+        out.append("%s: outside its town's footprint %s" % (where, fp))
+    if (x, z) in site.street_y:
+        out.append("%s: stands on a street's paved width" % where)
+    if not (plan.get("plaza") or {}).get("rect"):
+        out.append("%s: its town has no plaza to face" % where)
+    else:
+        want = plaza_yaw(plan, x, z)
+        if abs((c["yaw"] - want + 180) % 360 - 180) > YAW_SLACK:
+            out.append("%s: faces yaw %s, but its plaza's centre is at yaw %.0f" % (where, c["yaw"], want))
+    return out
 
 
 def output_problems(doc, files):

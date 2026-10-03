@@ -477,12 +477,9 @@ def test_a_generator_giving_a_missing_id_is_caught(monkeypatch, M, jars):
 
 
 # ================================================================================================ the keepers, real
-# A DEFECT this audit found (2026-10-03), recorded as a strict xfail so the day it is fixed the test says so: all
-# eleven keepers stand two blocks past the FAR wall of their Mart (the Mart anchor's door faces the plaza; the keeper
-# is on the other side) and ten of them face away from their plaza, 18-40 blocks from any street. R17M's own comment
-# says "each beside its town's Mart and turned to face its plaza". Remove the mark when the keepers are re-sited
-@pytest.mark.xfail(strict=True, reason="data/markets.json counters[].at: every sited keeper stands behind its Mart "
-                                       "(tools/markets_audit.py frontage); the builder's sites, not fixed here")
+# A defect this audit found (2026-10-03): all eleven keepers stood two blocks past the FAR wall of their Mart and ten
+# faced away from their plaza. Re-sited the same day on each Mart's door side, facing its plaza (data/markets.json
+# counters[].site_why); this now protects the fix
 def test_every_keeper_stands_in_front_of_its_mart_clear_of_roads_and_buildings(M):
     F, _w, _n = MA.run(files=M.build(M.load())[0], jar_dir=None)
     assert [f for f in F if f.startswith("keeper")] == [], [f for f in F if f.startswith("keeper")][:4]
