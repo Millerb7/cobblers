@@ -128,6 +128,21 @@ class Geo:
         self.gfloor, self.gh = ga["floor_y"], ga["height"]
         self.junction = tuple(g["junction"]["at"])
         self.choke = g["choked_shaft"]
+        # the cradle (geometry.cradle, 2026-10-03): carved only when its own `carve` is true
+        cr = g.get("cradle") or {}
+        self.cradle = bool(cr.get("carve"))
+        if self.cradle:
+            self.cc = tuple(cr["centre"])
+            self.cr = cr["radius"]
+            self.cfloor = cr["floor_y"]
+            self.crim_c, self.capex_c = cr["ceiling_rim_y"], cr["ceiling_apex_y"]
+
+    def in_cradle(self, x, z):
+        return self.cradle and math.hypot(x - self.cc[0], z - self.cc[1]) <= self.cr + 1e-9
+
+    def cradle_ceiling(self, x, z):
+        r = math.hypot(x - self.cc[0], z - self.cc[1])
+        return self.crim_c + int(round((self.capex_c - self.crim_c) * (1.0 - (r / self.cr) ** 2)))
 
     # the passage floor is DEEP_CITY.md section 5's own arithmetic, evaluated per column
     def pfloor(self, x):
@@ -160,6 +175,8 @@ class Geo:
         if self.in_passage(x, z):
             f = self.pfloor(x)
             rs.append((f, f + self.ph + 1))
+        if self.in_cradle(x, z):
+            rs.append((self.cfloor, self.cradle_ceiling(x, z) + 1))
         if not rs:
             return None
         return min(r[0] for r in rs), max(r[1] for r in rs)
@@ -178,11 +195,19 @@ class Geo:
         for x in range(self.px0, self.px1 + 1):
             for z in range(self.pz0, self.pz1 + 1):
                 out[(x, z)] = self.carved_range(x, z)
+        if self.cradle:
+            for x in range(self.cc[0] - self.cr, self.cc[0] + self.cr + 1):
+                for z in range(self.cc[1] - self.cr, self.cc[1] + self.cr + 1):
+                    r = self.carved_range(x, z)
+                    if r and self.in_cradle(x, z):
+                        out[(x, z)] = r
         return out
 
     def shell_distance(self, x, z):
         """Chebyshev-free distance from a column to the nearest carved volume, 0 inside."""
         d = math.hypot(x - self.hc[0], z - self.hc[1]) - self.hr
+        if self.cradle:
+            d = min(d, math.hypot(x - self.cc[0], z - self.cc[1]) - self.cr)
         for (x0, x1, z0, z1) in ((self.gx0, self.gx1, self.gz0, self.gz1),
                                  (self.px0, self.px1, self.pz0, self.pz1)):
             dx = max(x0 - x, 0, x - x1)
@@ -195,6 +220,13 @@ class Geo:
         best, bd = None, 1e9
         cands = [(self.hc[0], self.hc[1]), (min(max(x, self.gx0), self.gx1), min(max(z, self.gz0), self.gz1)),
                  (min(max(x, self.px0), self.px1), min(max(z, self.pz0), self.pz1))]
+        if self.cradle:
+            # the nearest point of the cradle's disc, not its centre: a column off the rim takes the rim's own range,
+            # so the passage (nearer to some of them than the centre is) does not lend the cradle a lower shell
+            vx, vz = x - self.cc[0], z - self.cc[1]
+            L = math.hypot(vx, vz)
+            k = 1.0 if L <= self.cr else (self.cr - 0.5) / L
+            cands.append((self.cc[0] + int(round(vx * k)), self.cc[1] + int(round(vz * k))))
         for cx, cz in cands:
             r = self.carved_range(cx, cz)
             if r is None:
@@ -536,6 +568,80 @@ def composition(geo, spec):
     return cells
 
 
+def _at(c, r, deg):
+    a = math.radians(deg)
+    return int(round(c[0] + r * math.cos(a))), int(round(c[1] + r * math.sin(a)))
+
+
+def cradle_composition(geo, spec):
+    """cells[(x, y, z)] = block: Hoopa's cradle dressed as composition.cradle reads Codex's contract (2026-10-03). Every
+    block stands in the cradle's air or is laid in its floor; the cut's three columns (the passage) are left alone, and
+    the actor marker and the four stands are left clear. {} when the cradle is not carved."""
+    if not geo.cradle:
+        return {}
+    P = spec["palette"]
+    cc = spec["composition"]["cradle"]
+    cx, cz = geo.cc
+    F = geo.cfloor
+    cells = {}
+
+    def blk(name):
+        return P.get(name, name)
+
+    def put(x, y, z, b):
+        cells[(int(x), int(y), int(z))] = b
+
+    def free_floor(x, z):
+        return geo.in_cradle(x, z) and not geo.in_passage(x, z)
+    d = cc["dais"]
+    for x in range(cx - d["radius"], cx + d["radius"] + 1):
+        for z in range(cz - d["radius"], cz + d["radius"] + 1):
+            r = math.hypot(x - cx, z - cz)
+            if r > d["radius"] + 0.3 or not free_floor(x, z) and (x, z) != (cx, cz):
+                continue
+            b = blk(d["rim"]) if r > d["radius"] - 0.7 else blk(d["block"])
+            put(x, F, z, b)
+    put(cx, F, cz, blk(d["centre"]))
+    py = cc["pylons"]
+    for a in py["bearings"]:
+        x, z = _at(geo.cc, py["orbit"], a)
+        for y in range(F + 1, F + 1 + py["height"]):
+            put(x, y, z, py["block"])
+    rg = cc["ring"]
+    ry = rg["y"]
+    for k in range(0, 360, 3):
+        x, z = _at(geo.cc, rg["radius"], k)
+        put(x, ry, z, rg["block"])
+    for a in rg["light_bearings"]:
+        x, z = _at(geo.cc, rg["radius"], a)
+        put(x, ry, z, blk(rg["lights"]))
+    ch = cc["chains"]
+    for a in ch["bearings"]:
+        x, z = _at(geo.cc, rg["radius"], a)
+        for y in range(ch["from_y"], ch["to_y"] + 1):
+            put(x, y, z, ch["block"])
+    co = cc["consoles"]
+    for a in co["bearings"]:
+        x, z = _at(geo.cc, co["orbit"], a)
+        for i, b in enumerate(co["blocks"]):
+            put(x, F + 1 + i, z, b)
+    pl = cc["pillars"]
+    for k in range(pl["count"]):
+        a = pl["first_bearing"] + 360.0 * k / pl["count"]
+        x, z = _at(geo.cc, pl["orbit"], a)
+        top = geo.cradle_ceiling(x, z)
+        for y in range(F + 1, top + 1):
+            put(x, y, z, blk(pl["every_third"]) if (y - F) % 3 == 0 else blk(pl["block"]))
+    fl = cc["floor_lights"]
+    for a in range(0, 360, fl["every_degrees"]):
+        if min(a, 360 - a) <= fl["skip_within_degrees_of_east"]:
+            continue
+        x, z = _at(geo.cc, fl["orbit"], a)
+        if free_floor(x, z):
+            put(x, F, z, blk(fl["block"]))
+    return cells
+
+
 def way_lights(geo, spec):
     """cells[(x, y, z)] = block: composition.way_lights, the lights FLUSH IN THE FLOOR of the passage and the gallery
     (2026-10-03; until then the 70-block passage and the gallery were dark). Each is the floor block of a carved column,
@@ -828,6 +934,33 @@ def cmd_report(a):
     if math.hypot(sx - geo.hc[0], sz - geo.hc[1]) > 6:
         bad.append("the binder's seat %s is more than 6 from the hall's centre, outside the circle the route reaches"
                    % (rel["at"],))
+    # 4b the cradle (geometry.cradle, 2026-10-03): its dressing stands in its own air or in its floor, the actor marker
+    #    and the four stands are clear with a floor under them, and it shares no rock with the hall
+    if geo.cradle:
+        ccells = cradle_composition(geo, spec)
+        for (x, y, z) in ccells:
+            r = geo.carved_range(x, z)
+            if r is None or not geo.in_cradle(x, z) or not (geo.cfloor <= y < r[1]):
+                bad.append("a cradle block at %s is outside the cradle's air or floor" % ((x, y, z),))
+                break
+        if any((x, y, z) in cells for (x, y, z) in ccells):
+            bad.append("the cradle's dressing and the hall's composition write the same cell")
+        crs = spec["composition"]["cradle"]
+        spots = [tuple(crs["actor_marker"]["at"])] + [
+            (_at(geo.cc, crs["stands"]["orbit"], a)[0], geo.cfloor + 1, _at(geo.cc, crs["stands"]["orbit"], a)[1])
+            for a in crs["stands"]["bearings"]]
+        for (x, y, z) in spots:
+            r = geo.carved_range(x, z)
+            if r is None or not geo.in_cradle(x, z) or y + 2 > r[1] or any((x, y + d, z) in ccells for d in (0, 1, 2)) \
+                    or y - 1 != geo.cfloor:
+                bad.append("the cradle's stand %s is not a floor cell with two clear over it" % ((x, y, z),))
+        if len(spots) < 5:
+            bad.append("the cradle has fewer than four stands and a marker")
+        gap = math.hypot(geo.cc[0] - geo.hc[0], geo.cc[1] - geo.hc[1]) - geo.hr - geo.cr
+        note.append("the cradle: radius %d, floor y%d, dome y%d-%d, %d dressing blocks, %d blocks of rock to the hall"
+                    % (geo.cr, geo.cfloor, geo.crim_c, geo.capex_c, len(ccells), int(gap)))
+        if gap < 8:
+            bad.append("the cradle is %d blocks from the hall: they would share rock" % gap)
     try:
         wl = way_lights(geo, spec)
         note.append("way lights %d, flush in the passage's and the gallery's floors" % len(wl))
@@ -1203,6 +1336,7 @@ def cmd_build(a):
                               "# opens (tools/cavern_plan.py). Must run BEFORE anything is dug through it."] + body
     comp = composition(geo, spec)
     comp.update(way_lights(geo, spec))
+    comp.update(cradle_composition(geo, spec))
     fn["carve/30_composition"] = ["# the relic site itself: DEEP_CITY.md section 5's platform, six arches,",
                                   "# plinth, broken ring and standing stones, at their own numbers, in the hall;",
                                   "# and the way lights flush in the passage's and the gallery's floors"] + \
