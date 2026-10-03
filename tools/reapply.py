@@ -581,8 +581,11 @@ def prepare_jobs(a):
     add("resident_encounters", "resident_encounters.py", *src)
     add("resident_encounters_audit", "resident_encounters_audit.py", *src)
     # the southern residents (2026-10-03): the generator fails closed on its own siting rules and on a record the
-    # heightmap disagrees with; its independent audit is not written yet (data/southern_residents.json status)
+    # heightmap disagrees with; then its independent audit (written by an agent that built none of it, never imports
+    # the generator to derive): the pack replayed against the data and the heightmap, the siting and resident rules,
+    # the steps, and the NPCs' dialogue, rewards and hand-in compiled by compile_dialogue above
     add("southern_residents", "southern_residents.py", *src)
+    add("southern_residents_audit", "southern_residents_audit.py", *src)
     add("drovers_hollow:build", "drovers_hollow.py", "build", *src)
     add("drovers_hollow_audit", "drovers_hollow_audit.py", *src)
     # the three wayside places of 2026-10-03. Each generator refuses a spawn-condition palette and any block outside its
