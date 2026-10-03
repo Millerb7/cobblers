@@ -53,6 +53,15 @@ Two items, after the tour. Same rule as the overnight: record defects, do not ch
    a worse feature the owner would rather know about now. Results of the frame-rate and pose tests run during the
    tour are recorded below if they ran.
 
+**Pose test, in game 2026-10-03 (Eevee at (807, 177, 248) on Frostpeak, the owner watching):** NO control we have
+gives a sleeping or sitting pose. `spawnpokemonat ... status=sleep uncatchable no_ai`: the server holds
+`Pokemon.Status {StatusName: cobblemon:sleep, StatusTimer: 292}` but the timer never runs and nothing shows. The same
+with AI on and `generic.movement_speed` 0: the timer runs down in SECONDS (292 -> 213 in ~80 s) and still no pose;
+with AI on it also has gravity (it fell into a trench). `freeze_frame=0.5` is accepted with no visible effect;
+`/freezepokemon` is not registered on this server. The one route left is Cobblemon's own resting behaviour (species
+`behaviour.resting`: Eevee `drowsyChance 0.0333`, `willSleepOnBed true`), which needs AI on and is probably night-only:
+untested unless the next lines say so.
+
 ## 4. Do not rediscover
 
 - `reapply.py prepare` needs `--server-dir` and the lock env (`COBBLERS_SERVER_LOCK`, `COBBLERS_LOCK_OWNER`); with them
