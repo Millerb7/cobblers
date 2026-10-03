@@ -653,6 +653,20 @@ So delegate for the reading, and brief accordingly:
   could not run its own audit at all (no `derived/`), said so, and was right to.
 - **Cost still matters** (see the rules above) -- but it is the second question, not the first.
 
+## A success report is not the work (the owner, 2026-10-03)
+
+**Five times now a report said work happened that did not.** The latest: `reapply.py prepare` resumed past a failed
+step (Z2, failing since 2026-10-01), and every apply after it reported 0 problems while the encounter rebuild sat
+uninstalled. Before that: spawn tables, five config overlays, the re-apply steps and the structures pack never reached
+the running game while the repo said they were done. On 2026-10-02 a `reapply.py run` printed "done" for steps whose
+functions changed nothing, and only `presence_audit` against the world showed it.
+
+- **A failed step stops the run**, or at minimum the final line of the report names it. A tool that prints a success
+  summary after a failure is a fault, not a style.
+- **Read the verdict from the world, not from the tool.** After every install and apply: `install_check`, then the
+  world probes (`presence_audit`, the per-system `verify` commands). Report probes present / probes total.
+- **A partial run is never reported as a whole one.** `--from`, `--only` and resumed runs say so in the report.
+
 ## Verify before claiming
 
 A generated config, datapack or manifest is not proof that a feature works. A
