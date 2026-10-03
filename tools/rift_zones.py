@@ -877,9 +877,9 @@ def cmd_report(a, quiet=False):
     """Returns 0 only when there is neither a problem nor an owed dependency.
 
     A PROBLEM is something wrong in this data. An OWED item is something another file must still supply --
-    today, z4's caught-count dialogue and z5's wall (zones.z5.needs_walls; z5's flag, rift_crisis_resolved, is set
-    since 2026-10-03 by the Compact binder's release in the relic hall). Both make `report` exit 1, because neither
-    may be forgotten. Only a PROBLEM
+    today, z4's caught-count dialogue, and a re-sited G1 (z1 fails open, unreachable_zones). z5 owes nothing since
+    2026-10-03: its flag is set by the Compact binder's release in the relic hall and its wall meets G5. Owed items
+    make `report` exit 1, because none may be forgotten. Only a PROBLEM
     stops `build`: an advancement that does not exist yet fails CLOSED, since a condition on a missing
     advancement never matches and nobody is granted the pass."""
     spec = load()
@@ -1198,6 +1198,13 @@ def cmd_report(a, quiet=False):
             owed("%s's wall: %s can grant its pass but is held until measured_defects[%s] is fixed (its wall and "
                  "gatehouse do not meet). Until then neither its wall nor its zone check is installed, so it is open."
                  % (zid, zid, nw["defect"]))
+    # 9a'. a zone none of whose guards a passless player can reach (unreachable_zones): `build` ships no check for it,
+    #     so it is OPEN, and stays so until a guard is re-sited where the zone begins -- the owner's decision
+    for zid, gates in sorted(unreachable_zones(spec).items()):
+        owed("%s's guards: none can be reached from outside (%s blocks inside), so %s ships no zone check, knock or "
+             "exit and is OPEN (measured_defects[gates_stand_deep_inside_their_own_zone]). Re-site a guard where the "
+             "zone begins (docs/world-building/GATEHOUSE_CHANGES.md) and the checks come back."
+             % (zid, ", ".join("%s %s" % (n, d) for n, d in sorted(gates.items())), zid))
     # 9b. a caught-count zone's knock box calls a qualify that can only refuse: no command or predicate reads
     #     species owned (docs/research/CAUGHT_COUNT_AND_NPC_GUARDS.md; the VERIFIED custom stat counts BALL
     #     CAPTURES, not species). Its guard's dialogue must call <zone>/grant itself. Owed, not a problem: the
@@ -1284,6 +1291,47 @@ def held_zones(spec):
             for zid, z in spec["zones"].items()
             if not str(z.get("status", "")).startswith("SUPERSEDED")
             and any(z.get(k) for k in keys)}
+
+
+def knock_reachable(z, knock):
+    """Whether a player WITHOUT the pass can step into this knock box from outside the zone: some column of the knock
+    box is itself outside every one of the zone's boxes, or 4-adjacent to a column outside them. The zone check turns
+    back a passless player anywhere in the boxes except a knock box, so a knock box wholly surrounded by the boxes
+    can be reached only by crossing ground where the check fires first. Columns only, from the data: whether the
+    ground lets a player walk there is tests/test_rift_zones_apply.py's walk, not this."""
+    boxes = z["boxes"]
+
+    def inside(x, zz):
+        return any(b[0] <= x <= b[2] and b[1] <= zz <= b[3] for b in boxes)
+    for x in range(knock[0], knock[3] + 1):
+        for zz in range(knock[2], knock[5] + 1):
+            if not inside(x, zz) or any(not inside(x + dx, zz + dz)
+                                        for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+                return True
+    return False
+
+
+def unreachable_zones(spec):
+    """{zone id: {gate name: the guard's edge_distance}} for every live zone that is NOT held (held_zones) and none
+    of whose gates a passless player can reach from outside (knock_reachable). Derived from the geometry, never a
+    hand list.
+
+    Such a zone ships NO advancement -- no zone check (so no turn-back), no knock, no exit -- and keeps everything
+    it builds: its gatehouses, its wall and its guards' placeholders. Its zone check would turn back every player
+    who has not been granted the pass, and nothing a passless player can reach grants it: no way through, which the
+    owner ruled the worse failure (2026-10-03). Open is the cheaper fault. data/rift_zones.json
+    measured_defects[gates_stand_deep_inside_their_own_zone] (G1 141 blocks inside z1); re-siting the guard is the
+    owner's decision (docs/world-building/GATEHOUSE_CHANGES.md), and the moment a gate's knock box touches the
+    zone's edge the zone ships its checks again, with nothing to remember."""
+    held = held_zones(spec)
+    out = {}
+    for zid, z in spec["zones"].items():
+        if str(z.get("status", "")).startswith("SUPERSEDED") or not z.get("guard") or zid in held:
+            continue
+        gates = gates_of(zid, z)
+        if not any(knock_reachable(z, g[6]) for g in gates):
+            out[zid] = {g[0]: g[2].get("edge_distance") for g in gates}
+    return out
 
 
 def zone_functions(zid, z):
@@ -1612,8 +1660,9 @@ def cmd_build(a):
     files, fn, index, guards = {}, {}, [], []
     live = {z: r for z, r in spec["zones"].items() if not str(r.get("status", "")).startswith("SUPERSEDED")}
     held = held_zones(spec)
+    unreachable = unreachable_zones(spec)
 
-    load_lines = ["# one dummy objective per zone; never reset, never unset by this pack"]
+    load_lines =["# one dummy objective per zone; never reset, never unset by this pack"]
     for zid, z in sorted(live.items(), key=lambda kv: kv[1]["order"]):
         obj = spec["pass"]["objective_prefix"] + zid
         load_lines.append("scoreboard objectives add %s %s" % (obj, spec["pass"]["criterion"]))
@@ -1629,6 +1678,9 @@ def cmd_build(a):
         # back every survival player. Its functions are still emitted, so Codex's dialogue has its grant to
         # call; when the zone's needs_* field goes, the advancements follow with nothing to remember.
         enforced = zid not in held
+        # and a zone none of whose guards a passless player can walk up to (unreachable_zones) fails OPEN: its
+        # check would turn everyone back before any guard could answer. Its blocks are still built (R9Z).
+        enforced = enforced and zid not in unreachable
         if enforced:
             files["data/%s/advancement/%s/%s_zone.json" % (NS, FOLDER, zid)] = adv(
                 [{"condition": "minecraft:any_of", "terms": boxes}], "%s/%s/zone" % (F, zid))

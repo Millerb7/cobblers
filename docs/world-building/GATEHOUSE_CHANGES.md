@@ -15,13 +15,13 @@ Centre = the guard's block; y = the walkway's floor feet level (guard ground + 1
 
 | Gatehouse | Guard | Centre (x, y, z) | Faces out | Built by R9Z today? | Changed shape on 2026-10-03 | Approach (cut/bridged columns) |
 |---|---|---|---|---|---|---|
-| `z1` | G1, Dig company foreman | (3100, 88, 3270) | WSW | **Built** | No | out: (3097, 3271) y88 / in: (3106, 3267) y88 |
+| `z1` | G1, Dig company foreman | (3100, 88, 3270) | WSW | **Built**, but z1 ships no zone check (fails open, see the open item below) | No | out: (3097, 3271) y88 / in: (3106, 3267) y88 |
 | `z2` | G2, Victory Road trailhead | (3548, 112, 5322) | S | **Built** | No | out: (3547, 5325) y112 / in: (3551, 5316) y112 |
 | `z2_victory_road_descent` | Victory Road descent post | (3738, 87, 5082) | W | **Built** | No | out: (3735, 5081) y87 / in: (3745, 5084) y87 |
 | `z2_rim_post_descent` | Rim post guard | (3877, 146, 3824) | S | **Built** | No | out: (3876, 3827) y146 / in: (3881, 3819) y145 |
 | `z2_wilds_slip` | Wilds ranger | (4200, 95, 4300) | W | **Built** | No (broken ground, but it walks; see below) | out: (4197, 4300) y95, (4196, 4300) y96, (4195, 4300) y97 / in: (4207, 4301) y95, (4208, 4301) y94 bridged from y91, (4209, 4301) y95, (4210, 4301) y96 |
 | `z4` | G4 | **(3600, 87, 2557)**, was (3600, 87, 2554) | S | Held (G4's caught-count dialogue) | **Yes: guard moved 3 blocks south.** The walkway now runs through behind_league's two rows (z2558-2559); outer mouth z2560 opens on the League's side. No wall column moves. Knock box z2557-2559, exit z2555, arrival z2554 (all x3600, y87). | out: (3600, 2560) y87 / in: (3600, 2550) y87 (were z2557 and z2547) |
-| `z5` | G5 | (3573, 85, 2680) | W | Held (`rift_crisis_resolved` has no invoker) | **Yes: wall re-cut, 1 column.** league_gate's column (3581, 2680) left open; the inner approach runs one column further, onto it. The guard does not move. | out: (3570, 2680) y85 / in: (3580, 2680) y85, **(3581, 2680) y86 (new)** |
+| `z5` | G5 | (3573, 85, 2680) | W | **Built** from the next apply (released 2026-10-03: `rift_crisis_resolved` is set by the relic hall's binder, and this re-cut fixed its wall; `zones.z5.superseded_needs_walls`) | **Yes: wall re-cut, 1 column.** league_gate's column (3581, 2680) left open; the inner approach runs one column further, onto it. The guard does not move. | out: (3570, 2680) y85 / in: (3580, 2680) y85, **(3581, 2680) y86 (new)** |
 
 ## Why these routes, and what each cost
 
@@ -55,20 +55,37 @@ function's own `fill`/`setblock` lines in R9Z's order, before and after.
   (no side walls) that opens a way round both.
 - `rift_zones.py walkable` 7/7, `tools/b12_independent_check.py` 7/7, `report` no problem (2 owed).
 
-## Not fixed, and not a shape: four guards nobody without the pass can reach
+## OPEN, the owner's decision: re-site the guards nobody without the pass can reach
 
-`measured_defects[gates_stand_deep_inside_their_own_zone]`, a strict xfail. G1 and the three z2 posts stand
-141, 144, 62 and 153 blocks inside their own zone's boxes. A player without the pass is turned back by the zone
-check long before reaching the knock box, so **no survival player can earn z1's pass by walking up to G1**
-(z1 opens only if something else calls `z1/grant`), and the posts serve only players who already hold z2's
-pass. G2 moved to the trailhead on 2026-10-01 for exactly this reason. Which way to fix it (move the guards to
-where their zones begin, or carve the zones' boxes back to the guards) is a siting decision for the owner.
+`measured_defects[gates_stand_deep_inside_their_own_zone]`, a strict xfail. These guards stand inside their own
+zone's boxes by the distance below (the record's `edge_distance`, measured from the traced mask), and every
+column of their knock box and its edge is inside the zone, so a player without the pass is turned back by the
+zone check long before reaching the guard:
+
+| Gate | Guard at (x, z) | Inside its zone by | Zone has another reachable guard? |
+|---|---|---|---|
+| `z1` | G1 (3100, 3270) | **141 blocks** | **No** |
+| `z2_victory_road_descent` | (3738, 5082) | 144 blocks | Yes, G2 at the trailhead |
+| `z2_rim_post_descent` | (3877, 3824) | 62 blocks | Yes, G2 |
+| `z2_wilds_slip` | (4200, 4300) | 153 blocks | Yes, G2 |
+
+**Until it is decided, a zone with no reachable guard fails OPEN** (the owner, 2026-10-03: a player turned back
+with no way through is the worse failure). `tools/rift_zones.py unreachable_zones()` finds such zones from the
+geometry alone (no knock box of the zone lies outside its boxes or on their edge) and `build` ships them no zone
+check, knock or exit advancement; their walls, gatehouses and placeholders are still built. **Today that is z1
+only: z1 is open to everyone.** z2 keeps its checks, because G2's knock box at the trailhead is outside z2 and a
+passless player can earn the pass there; the three posts let through only players who already hold it. The z1
+check installed on staging on 2026-10-02 goes when the next `install` replaces `cobblers_rift_zones`.
+
+Re-siting is the fix: move a guard to where its zone begins (G2's move on 2026-10-01 is the precedent), or carve
+the zone's boxes back to the guard. The moment G1's knock box touches z1's edge, z1 ships its checks again with
+nothing to flip, and the xfail XPASSes once all four are re-sited.
 
 ## Flying checklist
 
 1. Built today, look and walk: G1 (3100, 88, 3270), G2 (3548, 112, 5322), the descent post (3738, 87, 5082),
    the rim post (3877, 146, 3824), the wilds slip (4200, 95, 4300).
-2. Held, nothing built: G4's new site (3600, 87, 2557), on behind_league's line at z2558-2559; G5 (3573, 85,
-   2680) with league_gate's opened column at (3581, 2680).
+2. Built from the next apply (R9Z): G5 (3573, 85, 2680) with league_gate's opened column at (3581, 2680).
+   Held, nothing built: G4's new site (3600, 87, 2557), on behind_league's line at z2558-2559.
 3. Not verified anywhere: that the advancements fire, that `tp` lands where the data says, that the barrier
    cannot be jumped or pearled.

@@ -1224,7 +1224,8 @@ def held_functions():
     """{function: why} for output a step deliberately withholds, derived from the data that withholds it.
 
     Today: the Rift's zone walls and gatehouses for a zone that cannot GRANT its pass yet (z4 needs Codex's
-    dialogue to read caught_count; z5's flag is set since 2026-10-03, and it is held for its wall, zones.z5.needs_walls). Their blocks are correct and
+    dialogue to read caught_count; z5 is released since 2026-10-03, its flag set by the relic hall's binder and its
+    wall meeting G5's walkway). Their blocks are correct and
     built; installing them would wall off the apex and seal the League's precinct, which ends the game for
     anyone who reaches it. When Codex lands either half the `needs_*` field goes from data/rift_zones.json and
     the function stops being held here, with nothing to remember."""
@@ -1246,6 +1247,15 @@ def held_functions():
         # 2026-10-02: and the zone's own functions. `build` emits no advancement for a held zone -- its zone
         # check alone would turn back every player, which for z5 is the League's precinct -- so the zone
         # check, the knock and the exit are deliberately called by nothing until the zone can grant
+        for fn in RZ.zone_functions(zid, z[zid]):
+            out["cobblers:rift_zones/%s" % fn] = reason
+    # 2026-10-03: a zone none of whose guards a passless player can reach ships no advancement either (it fails open,
+    # RZ.unreachable_zones), so its zone check, knocks and exits are called by nothing. Its gatehouses and wall are NOT
+    # held: R9Z builds them (rift_zone_steps reads held_zones only)
+    for zid, gates in RZ.unreachable_zones(spec).items():
+        reason = ("%s fails open: no guard of it can be reached from outside (%s); "
+                  "measured_defects[gates_stand_deep_inside_their_own_zone]"
+                  % (zid, ", ".join("%s %s blocks in" % (n, d) for n, d in sorted(gates.items()))))
         for fn in RZ.zone_functions(zid, z[zid]):
             out["cobblers:rift_zones/%s" % fn] = reason
     return out
@@ -1349,10 +1359,12 @@ def steps(with_spawns=False):
     # cob_pass objectives act on their own (advancements and a load function) and need no step. The guards
     # themselves are armour-stand placeholders: Codex writes the NPCs (docs/HANDOVER_CODEX.md item 23)
     # ONLY THE HALF THAT CAN BE PASSED. Every guard calls its qualify now (2026-09-30), so the owner's condition
-    # for releasing this is met -- but z4 and z5 still cannot GRANT: z4's test needs Codex's dialogue to read
-    # caught_count; z5's flag is set since 2026-10-03 (the relic hall's binder) but its wall league_gate does not
-    # meet G5's walkway (rift_zones.json measured_defects[held_walls_do_not_meet_their_gatehouses], zones.z5.needs_walls).
-    # Installing their walls would wall off the apex and, worse, seal the
+    # for releasing this is met -- but z4 still cannot GRANT: its test needs Codex's dialogue to read caught_count.
+    # z5 is released since 2026-10-03: its flag is set by the relic hall's binder (R18RU seats him, so the League's
+    # precinct shuts only for a player who has not released Hoopa) and league_gate now meets G5's walkway
+    # (rift_zones.json measured_defects[held_walls_do_not_meet_their_gatehouses], fixed). z1 ships no zone check (its
+    # guard stands 141 inside, tools/rift_zones.py unreachable_zones) but its wall and gatehouse are still built here.
+    # Installing a held zone's walls would wall off the apex and, worse, seal the
     # LEAGUE'S PRECINCT, which ends the game for anyone who reaches it. A wall nobody can pass is not a gate.
     # So a zone's wall and gatehouses go in only when that zone declares nothing owed, read from the DATA
     # (zones.<id>.needs_progression / needs_dialogue / needs_walls) and not from a list here: when either half lands, the

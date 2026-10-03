@@ -66,12 +66,39 @@ def wall_held(z):
     the zone names the measured defect (zones.<id>.needs_walls.defect) and that defect is still open. Read from the
     defect record, not from tools/rift_zones.py held_zones(). z5 since 2026-10-03, when rift_crisis_resolved's setter
     got its invoker (the relic hall's binder)."""
-    return (z.get("needs_walls") or {}).get("defect") == HELD_WALLS and _held_record() is not None
+    rec = _record(HELD_WALLS)
+    return (z.get("needs_walls") or {}).get("defect") == HELD_WALLS and rec is not None and not rec.get("fixed")
+
+
+def built(z):
+    """Whether R9Z builds this zone's wall, gatehouses and placeholders: it can grant its pass and no open defect
+    holds it. A zone no passless player can reach is still BUILT (its blocks stay); it only ships no advancement."""
+    return can_grant(z) and not wall_held(z)
+
+
+def knock_touches_outside(z, knock):
+    """This file's own reading of 'a passless player can step into the knock box from outside': some column of the
+    box, or a 4-neighbour of one, lies in none of the zone's boxes. Written here, not imported from the generator."""
+    cols = {(x, zz) for x in range(knock[0], knock[3] + 1) for zz in range(knock[2], knock[5] + 1)}
+    ring = cols | {(x + dx, zz + dz) for (x, zz) in cols for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1))}
+    return any(not any(b[0] <= x <= b[2] and b[1] <= zz <= b[3] for b in z["boxes"]) for (x, zz) in ring)
+
+
+def knocks_of(z):
+    """Every knock box of a zone, read from the data: the zone's own, and each post's."""
+    return [z["knock"]] + [po["knock"] for po in z.get("posts", [])]
+
+
+def reachable(z):
+    """Whether a passless player can reach at least one of this zone's guards without being turned back first."""
+    return any(knock_touches_outside(z, k) for k in knocks_of(z))
 
 
 def enforced(z):
-    """Whether R9Z and `build` should put this zone in the world: it can grant its pass and no open defect holds it."""
-    return can_grant(z) and not wall_held(z)
+    """Whether `build` ships this zone's advancements: it is built, and some guard of it can be walked up to by a
+    player without the pass. Otherwise the zone check would turn everyone back with no way through (the owner,
+    2026-10-03: the worse failure), so it fails open."""
+    return built(z) and reachable(z)
 
 
 def _quiet_report(_a, quiet=False):
@@ -114,17 +141,87 @@ def r9z(index):
 # Without it the zone check of a zone nobody can be granted ships in the pack, and the pack acts on its own the
 # moment it is installed: on 2026-10-02 that was z5, the League's precinct, turning back every survival player
 # (data/rift_zones.json measured_defects[held_zone_checks_shut_the_league]).
-def test_a_zone_that_cannot_grant_its_pass_has_no_advancement():
-    _fn, adv = fast()
+def advancement_problems(adv, rule=lambda _zid, z: enforced(z)):
+    """[] when every zone `rule(zid, zone)` says is enforced ships its zone check, knocks and exits, and every other zone ships
+    no advancement at all."""
     names = {p.stem for p in adv.glob("*.json")}
+    bad = []
     for zid, z in live_zones().items():
         mine = {n for n in names if n == "%s_zone" % zid or n.startswith("%s_" % zid)}
-        if enforced(z):
+        if rule(zid, z):
             gates = [g[0] for g in RZ.gates_of(zid, z)]
             want = {"%s_zone" % zid} | {"%s_%s" % (g, k) for g in gates for k in ("knock", "exit")}
-            assert want <= mine, "%s can grant its pass and is missing %s" % (zid, sorted(want - mine))
-        else:
-            assert not mine, "%s cannot grant its pass and still ships %s" % (zid, sorted(mine))
+            if not want <= mine:
+                bad.append("%s is enforced and is missing %s" % (zid, sorted(want - mine)))
+        elif mine:
+            bad.append("%s is not enforced (cannot grant, or no guard reachable) and still ships %s"
+                       % (zid, sorted(mine)))
+    return bad
+
+
+def test_a_zone_that_cannot_grant_its_pass_has_no_advancement():
+    _fn, adv = fast()
+    assert advancement_problems(adv) == []
+
+
+# ------------------------------------------------------------------ a zone nobody can knock at fails open
+
+# Without it a zone check ships for a zone whose every guard stands deep inside it: a player without the pass is
+# turned back before reaching any guard, and nothing they can reach grants it -- no way through (the owner,
+# 2026-10-03: the worse failure). Installed and run on staging 2026-10-02 for z1, whose G1 stands 141 blocks in.
+# The zones this file's own column test calls unreachable are exactly the zones whose EVERY gate the defect record
+# names, so the record, the geometry and the shipped pack cannot drift apart.
+def test_a_zone_no_passless_player_can_reach_ships_no_advancement():
+    rec = _record(TRAPPED)
+    assert rec is not None and not rec.get("fixed"), "re-sited? then this pins nothing: update it with the record"
+    trapped = set(rec["gates"])
+    every_gate_trapped = {zid for zid, z in live_zones().items()
+                          if all(g[0] in trapped for g in RZ.gates_of(zid, z))}
+    unreachable = {zid for zid, z in live_zones().items() if not reachable(z)}
+    assert unreachable == every_gate_trapped == {"z1"}, (unreachable, every_gate_trapped)
+    # and the gates the record names, one by one, are the gates whose knock box is wholly inside the zone
+    inside = {g[0] for zid, z in live_zones().items() for g in RZ.gates_of(zid, z)
+              if not knock_touches_outside(z, g[6])}
+    assert inside == trapped, sorted(inside)
+    _fn, adv = fast()
+    names = {p.stem for p in adv.glob("*.json")}
+    assert not {n for n in names if n.startswith("z1_")}, sorted(names)
+    # its blocks stay: R9Z still builds z1's wall and gatehouse, and the guard's placeholder is still placed
+    fn, _adv = fast()
+    index = [x for x in (fn / "index.txt").read_text(encoding="utf-8").split() if x]
+    run, _held = r9z(index)
+    assert {"gatehouse_z1", "wall_throat"} <= set(run), run
+    assert any("\"z1\"" in ln for ln in _lines(fn, "guards_place"))
+
+
+# Without this the test above could pass because the column test is wrong, not because the generator holds the
+# zone: the GENERATOR's reachability hold is removed (data untouched) and the check must fail, naming z1.
+def test_shipping_the_checks_of_an_unreachable_zone_fails():
+    src = (ROOT / "tools" / "rift_zones.py").read_text(encoding="utf-8")
+    old = "        enforced = enforced and zid not in unreachable"
+    assert src.count(old) == 1
+    mod = types.ModuleType("rift_zones_unreachable_shipped")
+    mod.__file__ = str(ROOT / "tools" / "rift_zones.py")
+    exec(compile(src.replace(old, "        enforced = enforced"), mod.__file__, "exec"), mod.__dict__)
+    _fn, adv = build(module=mod)
+    bad = advancement_problems(adv)
+    assert bad and all(b.startswith("z1 ") for b in bad), bad
+    assert (adv / "z1_zone.json").is_file() and (adv / "z1_knock.json").is_file()
+
+
+# The same rule from a WALK, not from columns: over the heightmap, with every wall up, a zone ships its checks
+# exactly when at least one of its gates can be walked up to by a passless player (passless_reaches_knock below).
+@pytest.mark.slow
+def test_the_zones_that_ship_checks_are_the_zones_a_passless_player_can_knock_at():
+    (fn, adv), g = real()
+    block = world_of(fn, everything(fn), g)
+    walked = {}
+    for zid, z in live_zones().items():
+        gates = RZ.gates_of(zid, z)
+        knocks = [x[6] for x in gates]
+        walked[zid] = any(passless_reaches_knock(x, z, knocks, block) for x in gates)
+    assert walked["z2"] and walked["z5"] and not walked["z1"], walked
+    assert advancement_problems(adv, rule=lambda zid, z: built(z) and walked[zid]) == []
 
 
 # Without this the test above could pass because nothing ships, not because a held zone is skipped: the
@@ -139,17 +236,17 @@ def test_removing_the_hold_from_build_ships_the_held_zones_checks_again():
     _fn, adv = build(module=mod)
     names = {p.stem for p in adv.glob("*.json")}
     for zid, z in live_zones().items():
-        if not enforced(z):
+        if not built(z):
             assert "%s_zone" % zid in names, "the mutation did not bring back %s's zone check" % zid
 
 
 # Without it the data's own switch drifts from the truth: a needs_* field left on a zone that can now grant
 # keeps it shut for nothing, and one taken off a zone that cannot grant puts its walls up. A zone that can grant
-# is still held while an OPEN defect names it (wall_held: z5's needs_walls since 2026-10-03); when that defect is
-# marked fixed this fails until needs_walls goes, which is the point.
+# is still held while an OPEN defect names it (wall_held: z5's needs_walls on 2026-10-03, released the same day when
+# the defect it named was fixed); a needs_walls left on a fixed defect fails here, which is the point.
 def test_the_held_zones_are_exactly_the_zones_that_cannot_grant():
     held = set(RZ.held_zones(SPEC))
-    cannot = {zid for zid, z in live_zones().items() if not enforced(z)}
+    cannot = {zid for zid, z in live_zones().items() if not built(z)}
     assert held == cannot, "held %s, cannot grant %s" % (sorted(held), sorted(cannot))
 
 
@@ -167,9 +264,9 @@ def test_r9z_runs_no_wall_and_no_gatehouse_of_a_zone_that_cannot_grant():
         if z.get("wall"):
             owner["wall_%s" % z["wall"]] = zid
     for f in run:
-        assert enforced(zones[owner[f]]), "R9Z runs %s, but %s cannot grant its pass" % (f, owner[f])
+        assert built(zones[owner[f]]), "R9Z runs %s, but %s cannot grant its pass" % (f, owner[f])
     for f in held:
-        assert not enforced(zones[owner[f]]), "R9Z holds %s, but %s can grant its pass" % (f, owner[f])
+        assert not built(zones[owner[f]]), "R9Z holds %s, but %s can grant its pass" % (f, owner[f])
     assert run, "R9Z runs nothing at all"
 
 
@@ -188,7 +285,7 @@ def test_one_placeholder_per_built_gate_and_the_old_ones_go():
         assert "summon" not in p.read_text(encoding="utf-8"), p.stem
     want = {}
     for zid, z in live_zones().items():
-        if enforced(z):
+        if built(z):
             for g in RZ.gates_of(zid, z):
                 want[g[0]] = (g[2]["block"][0], g[2]["ground_y"] + 1, g[2]["block"][1])
     placed = {}
@@ -360,7 +457,8 @@ def real():
 def test_every_gatehouse_r9z_builds_can_be_walked_through():
     (fn, _adv), g = real()
     run, gates = gates_r9z_runs(fn)
-    assert len(gates) == 5, "R9Z's gatehouses changed: %s" % [x[0] for x in gates]
+    # six since 2026-10-03: z5 released (its flag is set by the relic hall's binder and its wall meets G5); z4 held
+    assert len(gates) == 6, "R9Z's gatehouses changed: %s" % [x[0] for x in gates]
     block = world_of(fn, run, g)
     problems = [p for gate in gates for p in walk_problems(gate, block)]
     assert problems == [], "\n".join(problems)
