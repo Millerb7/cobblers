@@ -57,7 +57,7 @@
       "minecraft:spruce_planks", "minecraft:red_wool", "minecraft:white_wool", "minecraft:spruce_door", "minecraft:spruce_trapdoor",
       "minecraft:barrel", "minecraft:red_carpet", "minecraft:lantern", "minecraft:oak_log", "minecraft:oak_wall_sign",
       "minecraft:hay_block", "minecraft:andesite", "minecraft:granite", "minecraft:tuff", "minecraft:mossy_cobblestone",
-      "minecraft:cobblestone", "minecraft:oak_sign"
+      "minecraft:cobblestone", "minecraft:oak_sign", "minecraft:spruce_leaves", "minecraft:spruce_log"
     ]
   },
   "residents": [
@@ -355,6 +355,89 @@
       },
       "records": {},
       "bbox": [5218, 2700, 5269, 2708]
+    },
+    {
+      "id": "hide_and_seek",
+      "name": "Tam's home base",
+      "kind": "a search: someone is lost on purpose, and the player is asked to find them. Two records, one meeting: Tam here, his twin Lettie in hide_and_seek_den",
+      "cell": "D7",
+      "subregion": "tilpey_east_shore",
+      "situation": "In the open woods of the Tilpey east shore, a boy of nine stands with his face to a post marked HOME BASE, counting. Tam Furrow and his twin sister Lettie started a game of hide and seek this morning. He has counted to a hundred eleven times. She has not been found and will not come out until she is found properly, and their mum will be calling them in for tea. He asks the player to help. Lettie is seventy blocks away up the bank, inside a hollow in a spruce thicket, with biscuits and a blanket, in no hurry at all. When the player has found her and come back, Tam gives them two bottles of his mum's Moomoo Milk, one for each twin.",
+      "story_rule": "Tam's hints are true and not enough: 'somewhere low, or somewhere high', and 'I don't like under things' (she is under something). The finding is Lettie's conversation, which sets a field Tam's conversation reads (data/quests.json evt_hide_and_seek_den found). Tier 6, an afternoon's walk from Tilpey Cross; nothing here is about the tier but the reward's size",
+      "site": {
+        "centre": [6696, 3716],
+        "moved_from": "the scored stretch's point (6608, 3664) has nothing authored within 96 of it on its own, but not with a site round it: the emptiest centres of that stretch are 90 blocks east, round (6704, 3708), and both of the twins' sites are there",
+        "measured": "2026-10-03 from tools/ground.py: y97 at the post, 95..99 within 24 (the open woods above the Tilpey east shore, data/regions.json tilpey_east_shore, paint forest_sparse). tools/water_mask.py: dry. Route 7's walked path passes about 165 blocks away; the nearest x/z authored in another data file is reported by tools/northern_residents.py --report."
+      },
+      "pieces": [
+        {"kind": "clearing", "name": "home base", "r": 5, "up": 14},
+        {"kind": "ground_blocks", "name": "the home base post", "at": [0, 0], "blocks": [
+          [0, 1, 0, "minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=false]"],
+          [0, 2, 0, "minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=false]"],
+          [0, 3, 0, "minecraft:lantern[hanging=false,waterlogged=false]"],
+          [0, 1, 1, {"sign": {"wood": "spruce", "rotation": 0, "lines": ["HOME BASE", "count to 100", "NO PEEKING", "(Tam peeks)"]}}],
+          [3, 1, -1, "minecraft:barrel[facing=up,open=false]"],
+          [-3, 1, 1, "minecraft:spruce_fence[east=false,west=false,north=false,south=false,waterlogged=false]"],
+          [-3, 2, 1, {"sign": {"wood": "spruce", "rotation": 4, "lines": ["TAM 11", "LETTIE 0", "(found)", ""]}}]
+         ]}
+      ],
+      "npc": {
+        "name": "Tam Furrow",
+        "at": [0, 2, "ground"],
+        "feet": [6696, 98, 3718],
+        "yaw": 180.0,
+        "placed_by": "R9F",
+        "why": "two steps south of the post, facing north into it, counting. He gives the Moomoo Milk through grant_reward_once, so data/rewards.json hide_and_seek_milk (npc_grant) records him and R9F places him; this tool refuses to build when that record's npc_at is not this spot"
+      },
+      "records": {"quest": "evt_hide_and_seek", "conversation": "dlg_hide_and_seek", "reward": "hide_and_seek_milk"},
+      "bbox": [6691, 3711, 6701, 3721]
+    },
+    {
+      "id": "hide_and_seek_den",
+      "name": "Lettie's hollow",
+      "kind": "the other half of hide_and_seek: the one being looked for",
+      "cell": "D7",
+      "subregion": "tilpey_east_shore",
+      "situation": "Up the bank north-east of Tam's post, a spruce thicket that is not quite a thicket: four old posts lashed with spruce boughs into a hollow three blocks across and two high, its way in on the far side, away from home base. Lettie Furrow is inside. She took her red hat off because that is how he found her last time.",
+      "site": {
+        "centre": [6752, 3660],
+        "measured": "2026-10-03 from tools/ground.py: y103..105 under the thicket, on the bank rising east from Tam's post 66 blocks south-west (tilpey_east_shore). tools/water_mask.py: dry."
+      },
+      "pieces": [
+        {"kind": "clearing", "name": "the thicket's ground", "r": 3, "up": 14},
+        {"kind": "structure", "name": "the hollow", "footprint": [-2, -2, 2, 2], "foundation": "minecraft:coarse_dirt", "clear_up": 8,
+         "fills": [
+          [-2, 0, -2, 2, 0, 2, "minecraft:podzol"],
+          [-2, 1, -2, 2, 3, 2, "minecraft:spruce_leaves[distance=1,persistent=true,waterlogged=false]"],
+          [-1, 4, -1, 1, 4, 1, "minecraft:spruce_leaves[distance=1,persistent=true,waterlogged=false]"],
+          [-1, 1, -1, 1, 2, 1, "minecraft:air"],
+          [-2, 1, -2, -2, 3, -2, "minecraft:spruce_log[axis=y]"],
+          [2, 1, -2, 2, 3, -2, "minecraft:spruce_log[axis=y]"],
+          [-2, 1, 2, -2, 3, 2, "minecraft:spruce_log[axis=y]"],
+          [2, 1, 2, 2, 3, 2, "minecraft:spruce_log[axis=y]"],
+          [2, 1, 0, 2, 2, 0, "minecraft:air"]
+         ],
+         "hung": [
+          [-1, 1, -1, "minecraft:red_carpet"], [-1, 1, 0, "minecraft:red_carpet"], [-1, 1, 1, "minecraft:red_carpet"],
+          [1, 1, -1, "minecraft:barrel[facing=up,open=false]"]
+         ]}
+      ],
+      "npc": {
+        "name": "Lettie Furrow",
+        "at": [0, 0, "the hollow"],
+        "feet": [6752, 103, 3660],
+        "yaw": 90.0,
+        "placed_by": "R18NR",
+        "why": "in the middle of the hollow, facing west towards home base through the boughs. She gives nothing through grant_reward_once (Tam does), so this file's step R18NR places her"
+      },
+      "player_tag": {
+        "tag": "cobblers.found_lettie",
+        "function": "found_lettie",
+        "why_short": "the player has found Lettie",
+        "why": "Tam's conversation must know Lettie has been found, and a quest may not read another quest's fields (tools/validate_data.py quest-dialogue: 'references field owned by'). So Lettie's found transition also runs cobblers:north_residents/found_lettie (compile_dialogue's function effect, the ferry's shape), which tags the player, and Tam's r_found and thank read the tag (compile_dialogue's player_tag condition, read with q.player.has_tag as every probe is). The pair is NOT proven in game: the function effect and the player_tag read are each used elsewhere (the ferry; the Lopunny house, itself EXP-052). The function lives in THIS pack, so without cobblers_northern_residents loaded Lettie can be found and Tam never hears of it"
+      },
+      "records": {"quest": "evt_hide_and_seek_den", "conversation": "dlg_hide_and_seek_den"},
+      "bbox": [6749, 3657, 6755, 3663]
     }
   ]
 }

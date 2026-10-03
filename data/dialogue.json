@@ -12527,6 +12527,305 @@
       "speakers": {
         "pip": "Pip"
       }
+    },
+    {
+      "id": "dlg_hide_and_seek",
+      "quest_id": "evt_hide_and_seek",
+      "npc_id": "npc_hide_and_seek",
+      "source": "data/northern_residents.json hide_and_seek; the owner's brief of 2026-10-03 (data/northern_residents.json request)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_hide_and_seek.dialogue_cursor",
+        "initial_node": "t001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_hide_and_seek.started",
+            "value": true
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_hide_and_seek.started",
+            "value": false
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ],
+          "node": "t001"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "t001",
+          "kind": "line",
+          "speaker": "tam",
+          "text": "...ninety-eight, ninety-nine, A HUNDRED. Coming, ready or not! ...Oh. You're not Lettie.",
+          "next": "t002"
+        },
+        {
+          "id": "t002",
+          "kind": "line",
+          "speaker": "tam",
+          "text": "I'm Tam. We're playing hide and seek. I counted to a hundred. That was this morning. I've counted to a hundred eleven times.",
+          "next": "hub"
+        },
+        {
+          "id": "hub",
+          "kind": "choice",
+          "speaker": "tam",
+          "text": "Have you seen my sister? She's got a red hat.",
+          "responses": [
+            {
+              "id": "r_help",
+              "text": "Do you want help looking?",
+              "visible_when": {
+                "kind": "progression_equals",
+                "field": "quest.evt_hide_and_seek.asked",
+                "value": false
+              },
+              "next": "h001"
+            },
+            {
+              "id": "r_where",
+              "text": "Where have you looked?",
+              "next": "w001"
+            },
+            {
+              "id": "r_found",
+              "text": "I found Lettie.",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers.found_lettie"
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_hide_and_seek.thanked",
+                    "value": false
+                  }
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "thank"
+                }
+              ],
+              "next": "f001"
+            },
+            {
+              "id": "r_bye",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ],
+              "next": "hub"
+            }
+          ]
+        },
+        {
+          "id": "h001",
+          "kind": "line",
+          "speaker": "tam",
+          "text": "Yes. No. Yes. It's not cheating if it's a grown-up. She always hides somewhere low. Or somewhere high. She's very good.",
+          "next": "h002",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "ask"
+            }
+          ]
+        },
+        {
+          "id": "h002",
+          "kind": "line",
+          "speaker": "tam",
+          "text": "Mum's calling us in for tea soon, and if we're not in for tea I'm in trouble, because I'm the oldest. By six minutes.",
+          "next": "hub"
+        },
+        {
+          "id": "w001",
+          "kind": "line",
+          "speaker": "tam",
+          "text": "Behind the trees. All the trees. Up the trees. Not under things. I don't like under things. She knows I don't like under things.",
+          "next": "hub"
+        },
+        {
+          "id": "f001",
+          "kind": "line",
+          "speaker": "tam",
+          "text": "In a BUSH? Up the bank? ...I walked past that bush eleven times.",
+          "next": "f002"
+        },
+        {
+          "id": "f002",
+          "kind": "line",
+          "speaker": "tam",
+          "text": "Did she say she won? She'll say she won. ...She won.",
+          "next": "f003"
+        },
+        {
+          "id": "f003",
+          "kind": "line",
+          "speaker": "tam",
+          "text": "Here. Mum's Moomoo Milk, for helping. Two, because there's two of us. Don't tell Lettie I gave you hers.",
+          "next": "f004",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "grant_reward"
+            }
+          ]
+        },
+        {
+          "id": "f004",
+          "kind": "line",
+          "speaker": "tam",
+          "text": "I'm going to count again. To a thousand. And this time I'm looking under things.",
+          "next": "done01"
+        },
+        {
+          "id": "done01",
+          "kind": "line",
+          "speaker": "tam",
+          "text": "...nine hundred and ninety-eight, nine hundred and ninety-nine...",
+          "next": "done01"
+        }
+      ],
+      "speakers": {
+        "tam": "Tam"
+      }
+    },
+    {
+      "id": "dlg_hide_and_seek_den",
+      "quest_id": "evt_hide_and_seek_den",
+      "npc_id": "npc_hide_and_seek_den",
+      "source": "data/northern_residents.json hide_and_seek_den; the owner's brief of 2026-10-03 (data/northern_residents.json request)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.evt_hide_and_seek_den.dialogue_cursor",
+        "initial_node": "l001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_hide_and_seek_den.started",
+            "value": true
+          },
+          "node": "$cursor"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.evt_hide_and_seek_den.started",
+            "value": false
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "start"
+            }
+          ],
+          "node": "l001"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "l001",
+          "kind": "line",
+          "speaker": "lettie",
+          "text": "SHH! ...Oh. You're not Tam.",
+          "next": "l002"
+        },
+        {
+          "id": "l002",
+          "kind": "line",
+          "speaker": "lettie",
+          "text": "You FOUND me? Nobody finds me. Tam's been looking since breakfast. I could hear him counting. He counted eleven times.",
+          "next": "l003"
+        },
+        {
+          "id": "l003",
+          "kind": "line",
+          "speaker": "lettie",
+          "text": "Fine. You can tell him. Tell him I won. No, tell him he won. No. Tell him I'm the champion of hiding and he's the champion of counting.",
+          "next": "hub",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "found"
+            }
+          ]
+        },
+        {
+          "id": "hub",
+          "kind": "choice",
+          "speaker": "lettie",
+          "text": "I'm not coming out till he finds me properly. That's the rule.",
+          "responses": [
+            {
+              "id": "r_hat",
+              "text": "Where's your red hat?",
+              "next": "c001"
+            },
+            {
+              "id": "r_cold",
+              "text": "Aren't you cold in here?",
+              "next": "k001"
+            },
+            {
+              "id": "r_bye",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ],
+              "next": "hub"
+            }
+          ]
+        },
+        {
+          "id": "c001",
+          "kind": "line",
+          "speaker": "lettie",
+          "text": "I took it off. It's a very red hat. That's how he found me last time.",
+          "next": "hub"
+        },
+        {
+          "id": "k001",
+          "kind": "line",
+          "speaker": "lettie",
+          "text": "I've got biscuits. I've got a blanket. I've got a bush. I could live here.",
+          "next": "hub"
+        }
+      ],
+      "speakers": {
+        "lettie": "Lettie"
+      }
     }
   ]
 }

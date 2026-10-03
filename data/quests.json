@@ -6958,6 +6958,294 @@
         "quest.evt_pips_gym.reward_claimed",
         "quest.evt_pips_gym.dialogue_cursor"
       ]
+    },
+    {
+      "id": "evt_hide_and_seek",
+      "source": "data/northern_residents.json hide_and_seek; the owner's brief of 2026-10-03 (data/northern_residents.json request)",
+      "reward_record": "data/rewards.json hide_and_seek_milk",
+      "place": "data/northern_residents.json hide_and_seek: Tam's home base, (6696, 3716)",
+      "dialogue_id": "dlg_hide_and_seek",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        6696,
+        98,
+        3718
+      ],
+      "objectives": [
+        {
+          "id": "find_lettie",
+          "active_when": {
+            "field": "quest.evt_hide_and_seek.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_hide_and_seek.thanked",
+            "equals": true
+          },
+          "text": "Find Lettie Furrow, and tell Tam. She hides somewhere low, or somewhere high, and Tam does not like under things."
+        },
+        {
+          "id": "hear_tam_out",
+          "active_when": {
+            "field": "quest.evt_hide_and_seek.thanked",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_hide_and_seek.reward_claimed",
+            "equals": true
+          },
+          "text": "Hear Tam out."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_hide_and_seek.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hide_and_seek.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hide_and_seek.dialogue_cursor",
+              "value": "t001"
+            }
+          ]
+        },
+        {
+          "id": "ask",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_hide_and_seek.asked",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hide_and_seek.asked",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hide_and_seek.dialogue_cursor",
+              "value": "h002"
+            }
+          ]
+        },
+        {
+          "id": "thank",
+          "conditions": [
+            {
+              "kind": "player_tag",
+              "tag": "cobblers.found_lettie"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_hide_and_seek.thanked",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hide_and_seek.thanked",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hide_and_seek.dialogue_cursor",
+              "value": "f001"
+            }
+          ]
+        },
+        {
+          "id": "grant_reward",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_hide_and_seek.thanked",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_hide_and_seek.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_hide_and_seek_milk",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_hide_and_seek.reward_claimed",
+              "idempotency_key": "evt_hide_and_seek:reward_hide_and_seek_milk:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hide_and_seek.dialogue_cursor",
+              "value": "f004"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_hide_and_seek_milk",
+          "status": "item_ids_verified",
+          "record": "data/rewards.json hide_and_seek_milk (kind npc_grant); contents and verification string copied from it, which copies data/rewards.json drovers_hollow_store's",
+          "contents": [
+            {
+              "item": "cobblemon:moomoo_milk",
+              "count": 2,
+              "verification": "assets/cobblemon/models/item/moomoo_milk.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ]
+        }
+      ],
+      "story_beat": "Finding Lettie is talking to her: her conversation (dlg_hide_and_seek_den, quest evt_hide_and_seek_den) tags the player cobblers.found_lettie (data/northern_residents.json hide_and_seek_den player_tag), and Tam's 'I found Lettie.' is visible only with the tag, so the player's word is checked. The player may find her before ever meeting Tam; the order does not matter.",
+      "found_check": "r_found and the thank transition read the player tag cobblers.found_lettie (compile_dialogue's player_tag condition), which only Lettie's conversation sets, through its found transition's function effect (cobblers:north_residents/found_lettie, shipped in cobblers_northern_residents). A quest may not read another quest's fields (tools/validate_data.py), so the shared fact is a tag. NOT verified in game.",
+      "repeat_dialogue": {
+        "before_found": "hub",
+        "after_claim": "done01"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "generation_blockers": [
+        "Place npc_hide_and_seek at npc_at with spawnnpcat after the restart that loads cobblers_dialogue (tools/reapply.py R9F, from data/rewards.json hide_and_seek_milk), on the ground R9NR's site stands on."
+      ],
+      "progression_field_refs": [
+        "quest.evt_hide_and_seek.started",
+        "quest.evt_hide_and_seek.asked",
+        "quest.evt_hide_and_seek.thanked",
+        "quest.evt_hide_and_seek.reward_claimed",
+        "quest.evt_hide_and_seek.dialogue_cursor"
+      ]
+    },
+    {
+      "id": "evt_hide_and_seek_den",
+      "source": "data/northern_residents.json hide_and_seek_den; the owner's brief of 2026-10-03 (data/northern_residents.json request)",
+      "place": "data/northern_residents.json hide_and_seek_den: Lettie's hollow, (6752, 3660)",
+      "dialogue_id": "dlg_hide_and_seek_den",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        6752,
+        103,
+        3660
+      ],
+      "objectives": [
+        {
+          "id": "found_her",
+          "active_when": {
+            "field": "quest.evt_hide_and_seek_den.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_hide_and_seek_den.found",
+            "equals": true
+          },
+          "text": "You found Lettie Furrow. Tell Tam."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_hide_and_seek_den.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hide_and_seek_den.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hide_and_seek_den.dialogue_cursor",
+              "value": "l001"
+            }
+          ]
+        },
+        {
+          "id": "found",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_hide_and_seek_den.found",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hide_and_seek_den.found",
+              "value": true
+            },
+            {
+              "kind": "function",
+              "function": "cobblers:north_residents/found_lettie"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hide_and_seek_den.dialogue_cursor",
+              "value": "hub"
+            }
+          ]
+        }
+      ],
+      "rewards": [],
+      "story_beat": "The other half of evt_hide_and_seek: Lettie's hollow (data/northern_residents.json hide_and_seek_den). Meeting her is finding her; she never comes out, by her own rule.",
+      "repeat_dialogue": {
+        "always": "hub"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "generation_blockers": [
+        "Place npc_hide_and_seek_den at npc_at with spawnnpcat after the restart that loads cobblers_dialogue (tools/reapply.py R18NR, from data/northern_residents.json hide_and_seek_den npc), on the ground R9NR's site stands on."
+      ],
+      "progression_field_refs": [
+        "quest.evt_hide_and_seek_den.started",
+        "quest.evt_hide_and_seek_den.found",
+        "quest.evt_hide_and_seek_den.dialogue_cursor"
+      ]
     }
   ]
 }

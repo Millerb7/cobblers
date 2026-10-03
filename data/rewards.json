@@ -1664,6 +1664,26 @@
       ],
       "why": "the Twig Badge: Pip's shiniest stone, given to the first challenger to come back with all eight badges. One per player, by grant_reward_once, after gym8_cleared. A Shiny Stone evolves Roselia into Roserade (Erika's grass type, which is why a child who worships Erika has kept it), Togetic, Minccino and Floette. Late, as it is gated. The verification string is data/rewards.json vr_bloom's, copied, not re-checked against a jar here.",
       "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/northern_residents.py seats Pip Arden on, and it refuses to build when they differ"
+    },
+    {
+      "id": "hide_and_seek_milk",
+      "kind": "npc_grant",
+      "place": "Tam Furrow's home base in the Tilpey east shore woods (data/northern_residents.json hide_and_seek), at the post",
+      "npc_at": [
+        6696,
+        98,
+        3718
+      ],
+      "quest": "evt_hide_and_seek",
+      "contents": [
+        {
+          "item": "cobblemon:moomoo_milk",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/moomoo_milk.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "why": "Tam's thanks for finding his twin: two bottles of his mum's Moomoo Milk, one for each of them. One per player, by grant_reward_once, after the player has found Lettie. A modest reward for a modest errand at tier 6: Moomoo Milk restores HP. The verification string is data/rewards.json drovers_hollow_store's, copied, not re-checked against a jar here.",
+      "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/northern_residents.py seats Tam Furrow on, and it refuses to build when they differ"
     }
   ]
 }

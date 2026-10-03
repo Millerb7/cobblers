@@ -2792,6 +2792,99 @@
         "done01"
       ],
       "why": "the dialogue cursor of Pip Arden's conversation (dlg_pips_gym)."
+    },
+    {
+      "id": "quest.evt_hide_and_seek.started",
+      "quest_id": "evt_hide_and_seek",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Tam Furrow (data/northern_residents.json hide_and_seek); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_hide_and_seek.asked",
+      "quest_id": "evt_hide_and_seek",
+      "field": "asked",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Tam has asked the player to help look (dlg_hide_and_seek h001)."
+    },
+    {
+      "id": "quest.evt_hide_and_seek.thanked",
+      "quest_id": "evt_hide_and_seek",
+      "field": "thanked",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player told Tam they found Lettie (dlg_hide_and_seek r_found, visible once Lettie's own conversation has tagged the player cobblers.found_lettie)."
+    },
+    {
+      "id": "quest.evt_hide_and_seek.reward_claimed",
+      "quest_id": "evt_hide_and_seek",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for the Moomoo Milk (data/rewards.json hide_and_seek_milk)."
+    },
+    {
+      "id": "quest.evt_hide_and_seek.dialogue_cursor",
+      "quest_id": "evt_hide_and_seek",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "t001",
+      "allowed_values": [
+        "t001",
+        "t002",
+        "hub",
+        "h001",
+        "h002",
+        "w001",
+        "f001",
+        "f002",
+        "f003",
+        "f004",
+        "done01"
+      ],
+      "why": "the dialogue cursor of Tam Furrow's conversation (dlg_hide_and_seek)."
+    },
+    {
+      "id": "quest.evt_hide_and_seek_den.started",
+      "quest_id": "evt_hide_and_seek_den",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Lettie Furrow (data/northern_residents.json hide_and_seek_den); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_hide_and_seek_den.found",
+      "quest_id": "evt_hide_and_seek_den",
+      "field": "found",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has found Lettie (dlg_hide_and_seek_den l003). Tam's conversation cannot read this field (one quest may not read another's); the same transition tags the player cobblers.found_lettie, which it reads."
+    },
+    {
+      "id": "quest.evt_hide_and_seek_den.dialogue_cursor",
+      "quest_id": "evt_hide_and_seek_den",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "l001",
+      "allowed_values": [
+        "l001",
+        "l002",
+        "l003",
+        "hub",
+        "c001",
+        "k001"
+      ],
+      "why": "the dialogue cursor of Lettie Furrow's conversation (dlg_hide_and_seek_den)."
     }
   ],
   "gym_markers": {
