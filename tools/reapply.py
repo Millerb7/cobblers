@@ -161,6 +161,11 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-09-28: no catching over the level cap (tools/levelcap_pack.py, data/level_cap.json): a Cobblemon
                 # callback acts on its own, so world-local below
                 "cobblers_levelcap",
+                # 2026-10-03: the five mythical starters, a-lite at 30/45 (tools/mythical_starters.py,
+                # data/mythical_starters.json): species_additions forms only, no functions and no step. World-local,
+                # so the live world's species never change; NOTE the starter config that offers these forms is
+                # server-wide (modpack/config/cobblemon/starters.json) and is only coherent where this pack is loaded
+                "cobblers_mythical_starters",
                 # 2026-10-02: one Spectrier per player at the Crown Cemetery (tools/spectrier_cap.py,
                 # data/spectrier_cap.json): its own tick tag judges each new wild Spectrier, so world-local below,
                 # the cobblers_sizes shape (self-driving, no blocks, no step)
@@ -268,7 +273,9 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_ursaluna_cave",
                # 2026-10-02: the residents' keeper SPAWNS Pokemon on its own when a player comes near, so it must never
                # load in the global folder, where the live world would run it too
-               "cobblers_residents", "cobblers_relic_underground")
+               "cobblers_residents", "cobblers_relic_underground",
+               # 2026-10-03: species forms for the starters; global would change the live world's species too
+               "cobblers_mythical_starters")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -620,6 +627,9 @@ def prepare_jobs(a):
     add("portals_audit", "portals_audit.py", *src)
     # no catching over the level cap: a callback and its check
     add("levelcap_pack", "levelcap_pack.py")
+    # the five mythical starters' stage forms (data/mythical_starters.json); `build` runs its own check against the
+    # jar and modpack/config/cobblemon/starters.json first and writes nothing on a problem
+    add("mythical_starters:build", "mythical_starters.py", "build")
     add("location_titles", "location_titles.py")
     # the badge flags: one advancement per gym leader and the Champion, set by rctmod on a won battle
     add("progression_pack", "progression_pack.py")

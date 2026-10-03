@@ -1,8 +1,8 @@
 # EXP-049: Native-evolving starters: forms, a same-species stage, the cap gate and the evolution veto
 
-**Status: DESIGNED, NOT RUN (2026-10-02).** Nothing has been built, loaded or observed. It decides which option in
-`docs/mechanics/NATIVE_STARTERS_COST.md` is buildable. The evidence behind each step is in
-`docs/research/NATIVE_STARTERS_1_8_0.md`.
+**Status: NOT RUN. The a-lite design is BUILT, NOT YET OBSERVED IN GAME (2026-10-03).** The owner chose to build
+a-lite before this experiment runs (overnight 2026-10-03). It now checks the built pack, not a throwaway one: see
+Results. The evidence behind each step is in `docs/research/NATIVE_STARTERS_1_8_0.md`.
 
 ## Objective
 
@@ -120,7 +120,102 @@ Commands used below (the names are VERIFIED):
 
 ## Results
 
-Not run.
+**Built, not yet observed in game (2026-10-03).** No step below has run. Nothing here was loaded by Minecraft; valid
+JSON and a clean `check` are the most that can be claimed.
+
+**What was built** (commit on `worktree-agent-a2cbd849e6c7fc06d`):
+- `data/mythical_starters.json`, the authored record: per line the stage-1 and stage-2 forms, their base stats, one
+  authored movepool, the evolutions, the native finals, the 27 traditional starters that stay wild, and the Kubfu
+  scroll hand-out (recorded, not built).
+- `tools/mythical_starters.py`: `check` (against the jar, the starter config and `data/spawns.json`), `build` (to
+  `build/datapacks/cobblers_mythical_starters`, six `data/cobblers/species_additions/mythical_starter_<species>.json`
+  and a `pack.mcmeta`), `measure` (battle_sim's own duel).
+- `modpack/config/cobblemon/starters.json`: one category, `cosmog|kubfu|typenull|poipole|meltan level=5
+  aspect=cobblers_starter_1`. The 27 are off the screen.
+- `tools/reapply.py`: the pack in `SERVER_PACKS` and `WORLD_LOCAL`, built by job `mythical_starters:build`.
+
+**So this experiment, when it runs, tests the built pack in place of `exp049`:** step 2 with
+`/pokegive <op> cosmog level=29 aspect=cobblers_starter_1` and one Rare Candy; step 3 with `kubfu level=29
+aspect=cobblers_starter_1`; step 6 is moot (offered is decided: `optional` is omitted). Step 5 (the veto) is no longer
+on the path.
+
+**The lines** (stage 1 at 5 → stage 2 at 30 → native final at 45; all `level_up` unless stated):
+
+| Line | Stage 1 (330 BST) | Stage 2 (430 BST) | Final at 45 | Shape |
+|---|---|---|---|---|
+| Cosmog | Cosmog `Starter` | Cosmoem `Starter` | Solgaleo (day) / Lunala (night), the native choice | Solgaleo |
+| Kubfu | Kubfu `Starter` | Kubfu `Starter-Grown` | Urshifu by `item_interact` with either scroll, plus level 45 | Kubfu |
+| Type: Null | Type: Null `Starter` | Type: Null `Starter-Grown` | Silvally (friendship dropped) | Type: Null |
+| Poipole | Poipole `Starter` | Poipole `Starter-Grown` | Naganadel (Dragon Pulse dropped; Shed Shell kept) | Poipole |
+| Meltan | Meltan `Starter` | Meltan `Starter-Grown` | Melmetal, no anvil | Melmetal |
+
+**Where each is potent, MEASURED** (`python tools/mythical_starters.py measure`: wins of the leader's Pokemon, 1v1
+from full health at each gym's cap, IVs 15, damaging level-up moves only; a lower bound, not a prediction):
+
+| Starter | g1@20 | g2@25 | g3@30 | g4@35 | g5@40 | g6@45 | g7@50 | g8@55 | Total | Peak (margin over the five's mean) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Cosmog | 0/3 | 1/3 | 0/4 | 2/4 | 2/5 | 5/5 | 5/5 | 5/6 | 20/35 | gym 7 (+0.40) |
+| Kubfu | 2/3 | 2/3 | 2/4 | 0/4 | 1/5 | 4/5 | 2/5 | 6/6 | 19/35 | gym 1 (+0.47); level-best at 2 and 3 |
+| Type: Null | 0/3 | 1/3 | 1/4 | 0/4 | 2/5 | 3/5 | 2/5 | 6/6 | 15/35 | gym 8 (+0.30) |
+| Poipole | 0/3 | 2/3 | 1/4 | 4/4 | 1/5 | 4/5 | 4/5 | 2/6 | 18/35 | gym 4 (+0.65) |
+| Meltan | 1/3 | 1/3 | 1/4 | 1/4 | 3/5 | 5/5 | 2/5 | 2/6 | 16/35 | gym 5 (+0.24) |
+
+- **Five different peaks: Kubfu early (gyms 1–3), Poipole at Erika, Meltan at Koga, Cosmog at Sabrina and Blaine,
+  Type: Null at Giovanni.** The band is 15–20 of 35, inside today's 27 starters' 9–27 (median 17). The reasons are in
+  each line's `potent_at.why`.
+- How it was reached: each pool was re-levelled until no two lines peaked at the same gym. Native finals carry the
+  late game, so the late peaks come from which coverage each line has learnt by 45 (Silvally's Surf and Ice Beam,
+  Lunala's Moongeist Beam).
+- **Meltan, an owner call:** the approved 12 moves are kept and **re-levelled** (Iron Head 26→36, High Horsepower
+  34→37, Ice Punch 22→40, Brick Break 14→28, Rock Slide 30→24). In the drafted order Meltan measures **20/35, peaking
+  at gym 4 with Poipole** (4/4, Steel walls Erika's team), which is "all at once". Re-levelled: 16/35, peak gym 5. The
+  cost note's "16" for the draft is RELAYED from a different scratch model; this tool measures the draft at 20.
+- **A battle_sim defect found:** Explosion and Self-Destruct never make the user faint (no self-KO handling in
+  `tools/battle_sim.py`), so `choose_moveset` takes them as free 250/200-power hits. Silvally measured 6/6 at gym 8 with
+  Explosion. `measure` leaves self-KO moves out of the finals (`SELF_KO`); battle_sim itself is unfixed (its owners).
+
+**Format evidence** (each is cited in `tools/mythical_starters.py`'s docstring):
+- `species_additions` in our own namespace load: `JsonDataRegistry` lists the path over every namespace and skips
+  only `pixelmon` (jar `JsonDataRegistry.class`).
+- Forms with `baseStats`, `moves` and `evolutions`: COBBLEVERSE-DP-v31 (Primal Dialga, Shadow Mewtwo); forms with
+  non-empty `evolutions` and a custom-property result: Mega Showdown's `pikachu.json`.
+- `unaspect=` is a registered property that removes a forced aspect (jar `UnaspectPropertyType.class`, registered in
+  `Cobblemon.class`); an evolution applies its result through `PokemonProperties.apply`, which applies custom
+  properties (`Evolution.applyTo`).
+- **Offered, not forced:** `LevelUpEvolution`'s no-argument constructor passes `optional = true` (bytecode); we omit
+  the key. No shipped JSON sets it.
+- `PokemonProperties.create()` applies the properties (the aspect, so the form) **before** `initialize()` builds the
+  moveset, so the level-5 moves are the form's (bytecode).
+
+**Still unproven, in order of risk:** a same-species evolution moving form to form (step 3); the aspect surviving the
+Cosmog → Cosmoem species change (step 2); the forms rendering (a custom aspect with no model variation is ASSUMED to
+fall back to the base model); the cap against Rare Candy (step 4); the pack applied by a `/reload` as against a restart.
+
+**What an independent audit must check** (another agent writes it; its expectations must not come from
+`tools/mythical_starters.py` or from the record it checks):
+1. Every stage's base stats total 330 / 430 and follow the declared shape, computed from the jar's own species file.
+2. Every pool move is in the 1.8.0 jar's learnset of some member of the line, and is a Showdown move.
+3. Each stage-1 form's only evolution is `level_up` at exactly 30 to stage 2's species with `unaspect=cobblers_starter_1
+   aspect=cobblers_starter_2`; each stage-2 evolution is at exactly 45 to a native final with only
+   `unaspect=cobblers_starter_2`; no evolution sets `optional`; Kubfu keeps both scrolls as `requiredContext`;
+   Cosmoem keeps day/night.
+4. 30 and 45 are still gym 3's and gym 6's ace levels in `data/trainers.json` with `relativeLevelCap` 0.
+5. The starter config offers exactly the five stage-1 forms and none of the 27; every one of the 27 families has a
+   weighted `data/spawns.json` record, walked from the jar's evolutions.
+6. No addition targets a final (Solgaleo, Lunala, Urshifu, Silvally, Naganadel, Melmetal), and no form name or aspect
+   collides with a native, Mega Showdown or COBBLEVERSE form on the same species.
+7. The pack is world-local and is built by a prepare job; the server-wide starter config is installed only where the
+   pack is (see below).
+8. A mutation of the GENERATOR (for example a stage-2 level of 31 in `files()`), with the record untouched, fails it.
+
+**Breaks today, by design:** `tests/test_battle_stress.py` (two tests: 5 starters, not 27; NATIVE_STARTERS_COST.md
+§5) and `tests/test_encounter_hearts.py::test_section_11_places_all_27_mainline_starters` read the 27 from
+`starters.json`. The 27 are now in `data/mythical_starters.json` `wild_traditional_starters`; repointing the tests is
+the test author's, and the stress test's starter model is its own unit (§5).
+
+**Integration hazard:** `starters.json` is server-wide, the pack world-local. Installed on a server whose world
+lacks the pack, a new player is handed a plain Cosmog with Splash. Install both together, and never the config alone
+on the live server.
 
 ## Limitations
 
@@ -130,7 +225,8 @@ Not run.
 
 ## Decision
 
-Pending. Steps 1–4 passing → a-lite. Step 3 failing → c with the veto (step 5).
+a-lite is built (the owner, 2026-10-03). Steps 1–4 passing confirm it. **Step 3 failing means the four same-species
+lines do not advance at 30:** the fallback is then c with the veto (step 5), and the built pack has to change.
 
 ## Follow-up
 
