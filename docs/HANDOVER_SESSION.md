@@ -77,6 +77,12 @@ Behaviours:[...]}` took effect live (dropping cobblemon:wanders stopped an Eevee
 `cobblemon:pokemon_follows_owner` for "following a kid". Test debris in staging: two snow blocks at (808-809, 175,
 247) now air (a test bed), and tagged test Pokemon `cobblers_fps` near (807, 177, 248) unless cleared.
 
+**Frame-rate test, in game 2026-10-03** (the owner's client, Brock's plaza (1756, 139, 3620), idle test Pokemon
+spawned `uncatchable no_ai` in rings 5/8/11 blocks round the player, 18 mixed species, the town's own ~7 within 48):
+0 -> 120-130 FPS; 10 -> 90-100; 20 -> 100-110; 30 -> 85-100. The drop is in the first ten; 10 to 30 is inside the
+noise. The approved cap (2 carriers, 1-2 followers, ~10 idle, ~14 a town) is far under anything the client notices:
+"how busy a town looks" is the limit, not the draw. Sleepers and followers need AI on (server-side cost only).
+
 ## 4. Do not rediscover
 
 - `reapply.py prepare` needs `--server-dir` and the lock env (`COBBLERS_SERVER_LOCK`, `COBBLERS_LOCK_OWNER`); with them
