@@ -502,6 +502,9 @@ def prepare_jobs(a):
     # the Deep's city and the relic area's surface, stood on the pit's ring model; the audit checks what it wrote
     # against the ring model, Victory Road's mouth and the sealed volumes, and refuses to go on if anything is wrong
     add("deep_city:build", "deep_city.py", "build", *src)
+    # Heaven's Arena (schema 2, the halls), audited independently of tools/deep_city.py's own arena checks: the
+    # drum fully overwritten, the rings, seats and gate boxes from the data, the climb walked with and without gates
+    add("arena_audit", "arena_audit.py", *src)
     add("deep_city_audit", "deep_city_audit.py", *src)
     # the relic site underground (2026-10-02): its own fail-closed report runs first and refuses on a problem; the
     # undo is derived from the superseded surface generator minus the city build above. Its audit runs LATE (below),
