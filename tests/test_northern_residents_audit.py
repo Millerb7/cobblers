@@ -135,10 +135,13 @@ def known(e):
 
 
 # Without it the audit's feet could drift from the record's geometry and still agree with the generator.
+# Re-pinned 2026-10-03 by the integrating session when three sites moved (da06d0f): each value is the old one
+# translated by its site centre's own move in data/northern_residents.json (stubborn_tree -28 x, wandering_stone
+# -24 z, hide_and_seek +4 x -6 z), hand arithmetic, not read from the generator.
 def test_the_audits_feet_on_flat_ground_are_one_above_it_everywhere():
-    want = {"stubborn_tree": {"anchor": (1616, 101, 3280), "npc": (1619, 101, 3283)},
+    want = {"stubborn_tree": {"anchor": (1588, 101, 3280), "npc": (1591, 101, 3283)},
             "agnes_carving": {"npc": (1694, 101, 2231)}, "pips_gym": {"npc": (4608, 101, 1718)},
-            "wandering_stone": {"anchor": (5259, 101, 2704)}, "hide_and_seek": {"npc": (6696, 101, 3718)},
+            "wandering_stone": {"anchor": (5259, 101, 2680)}, "hide_and_seek": {"npc": (6700, 101, 3712)},
             # Lettie stands on the hollow's podzol floor, laid at max ground (y100) under its footprint
             "hide_and_seek_den": {"npc": (6752, 101, 3660)},
             "hunters_hide": {"anchor": (5532, 101, 3248), "npc": (5485, 101, 3201)}}
@@ -158,7 +161,7 @@ class Slope:
 # Without it a clearing seated on the centre's ground (not the square's lowest and highest) would pass.
 def test_a_clearings_box_runs_from_min_ground_plus_one_to_max_ground_plus_up():
     E = A.expect(BY["stubborn_tree"], G, W)
-    assert [c[1] for c in E.clearings] == [(1601, 101, 3265, 1631, 116, 3295)]
+    assert [c[1] for c in E.clearings] == [(1573, 101, 3265, 1603, 116, 3295)]
     E = A.expect(BY["agnes_carving"], Slope(), lambda x, z: None)
     # the wagon's clearing r9 round (1696, 2224), up 14; the oak's glade r4 round (1704, 2168), up 14
     assert [c[1] for c in E.clearings] == [(1687, 101, 2215, 1705, 117, 2233), (1700, 101, 2164, 1708, 117, 2172)]
@@ -268,7 +271,7 @@ def test_the_player_tag_function_misspelt_is_caught(monkeypatch, tmp_path, basel
 
 # Without it a site's build run outside the forceload of its own box (the fills silently fail) would pass.
 def test_a_build_outside_its_forceload_is_caught(tmp_path, baseline):
-    steps = [s if not (s[0] == "cmd" and s[1].startswith("forceload add 1601 ")) else ("cmd", "forceload add 0 0 1 1")
+    steps = [s if not (s[0] == "cmd" and s[1].startswith("forceload add 1573 ")) else ("cmd", "forceload add 0 0 1 1")
              for s in steps_on(G, W)]
     rep = run(tmp_path, steps=steps)
     assert any("stubborn_tree: its build does not run inside a forceload" in e for e in caught(rep, baseline, "steps")), rep.errors[:5]
