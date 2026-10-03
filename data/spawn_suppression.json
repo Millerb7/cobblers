@@ -223,6 +223,18 @@
       "why": "the owner, 2026-10-02, as relic_hall: the passage (data/relic_underground.json zone box 3 [3357, 3302, 3419, 3310]) joined to the HQ's way down, the records room and the stair (cells x3421-3431, z3299-3312), snapped out to the 8-block grid. All y, so it also covers the Deep's HQ section over the stair and about 60 columns of ring 0's street; and x3352-3356 at the cradle's doorstep.",
       "mechanism": "as the League precinct's",
       "not_covered": "Pokemon a player sends out, and anything a scripted event puts there"
+    },
+    {
+      "id": "relic_cradle",
+      "box": [
+        3336,
+        3280,
+        3383,
+        3327
+      ],
+      "why": "2026-10-03, carried from the owner's 2026-10-02 decision for the hall ('nothing spawns there. It is the end of the story, not a cave'): Hoopa's cradle, carved (data/relic_underground.json geometry.cradle, zone box 4 [3338, 3287, 3376, 3325]), snapped out to the 8-block grid. All y, so the capped relic area's surface over it is spawn-free too, as over the hall.",
+      "mechanism": "as the League precinct's",
+      "not_covered": "Pokemon a player sends out, and anything a scripted event puts there (a Hoopa actor at the cradle is the scene runtime's)"
     }
   ]
 }

@@ -629,6 +629,11 @@ def prepare_jobs(a):
     add("mega_field_audit", "mega_field_audit.py", *src)
     add("sea_drift_audit", "sea_drift_audit.py", *src)
     add("relic_underground_audit", "relic_underground_audit.py", *src)
+    # the Deep walked as a player walks it (2026-10-03): the Rift skin, the pit, Victory Road, the city, the relic site,
+    # the Habitat Blocks and the signposts replayed over the heightmap, then every ring, the lip, every arena tier and
+    # the crown walked from the HQ's doorstep. After the city, relic and habitat builds above; independent of
+    # tools/deep_city.py, whose stair towers deep_city_audit never climbed
+    add("deep_walk_audit", "deep_walk_audit.py", *src)
     # water life (docs/mechanics/WATER_LIFE.md): each pack, then its independent audit, which replays the written
     # functions over a world built from the heightmap alone and never imports its builder
     add("lake_life:build", "lake_life.py", "build", *src)
