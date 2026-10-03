@@ -1704,7 +1704,7 @@
         },
         {
           "id": "unlock_league_after_rift_resolution",
-          "external_trigger_contract": "THIS transition is rift_crisis_resolved's setter (data/progression.json flags, set_by quest_transition): its first effect grants the flag's advancement to the releasing player, then the stage and League cursor move. It is meant to be invoked by Hoopa's release choice at the cradle (docs/story/NPCS_AND_RIFT_FINALE.md Scene 5, unmerged branch codex/trainer-modes); no current dialogue node invokes it, because the cradle is not carved and no scene seats the Hoopa actor.",
+          "external_trigger_contract": "THIS transition is rift_crisis_resolved's setter (data/progression.json flags, set_by quest_transition): its first effect grants the flag's advancement to the releasing player, then the stage and League cursor move. It is invoked by exactly one node: dlg_main_relic_hall_release line release_001, after the choice 'Release Hoopa.' (the Compact binder at the relic ring in the carved hall, (3390, 8, 3268), data/relic_underground.json geometry.release; a minimal port of docs/story/NPCS_AND_RIFT_FINALE.md Scene 5 from the uncarved cradle, the owner's decision of 2026-10-03).",
           "conditions": [
             {
               "kind": "progression_equals",
@@ -1862,7 +1862,7 @@
           "flag": "rift_crisis_resolved",
           "fires": "when unlock_league_after_rift_resolution runs (its first effect, cobblers:flag/rift_crisis_resolved/grant)",
           "result": "Should release Hoopa, stop the forced activation, and unlock the League steward and League access.",
-          "runtime_status": "declared in data/progression.json (2026-10-02) with its setter, the transition; NOTHING INVOKES the transition yet: Hoopa's release actor (NPCS_AND_RIFT_FINALE.md Scene 5) needs the cradle carved and a scene"
+          "runtime_status": "declared in data/progression.json (2026-10-02) with its setter, the transition; invoked since 2026-10-03 by dlg_main_relic_hall_release (the Compact binder at the relic ring, (3390, 8, 3268), R18RU). Not yet released in game"
         },
         {
           "beat": "league",
@@ -1890,7 +1890,7 @@
         "Blaine needs an occupied-destination model and acknowledged warning; crater_operation_stopped is approved in ARC.md but absent from the progression ledger.",
         "Giovanni needs an approved dissenter evidence carrier; the route packet is a content requirement, not a placed object.",
         "The containment cradle beneath the League plateau has no Y, entrance, footprint, structure ID, or build.",
-        "rift_crisis_resolved is declared in the progression ledger and unlock_league_after_rift_resolution grants it, but no dialogue node invokes that transition: Hoopa's release actor (NPCS_AND_RIFT_FINALE.md Scene 5) waits on the cradle chamber and its scene. The in-game League gate (RCT's chain after gym8) is unchanged.",
+        "rift_crisis_resolved is granted by unlock_league_after_rift_resolution, which the Compact binder's release (dlg_main_relic_hall_release, in the carved relic hall) invokes. Codex's Scenes 1-4 and a visible Hoopa actor are not built; the in-game League gate (RCT's chain after gym8) is unchanged.",
         "Physical evidence is visible corroboration only because no proven coordinate, proximity, block-interaction, or object-inspection predicate exists.",
         "The compiled mechanism remains single-player proven only; two-player independent cursors are not runtime verified."
       ],
@@ -1910,7 +1910,8 @@
         "quest.main_worldshift_reveal.rift_cursor",
         "quest.main_worldshift_reveal.league_cursor",
         "quest.main_worldshift_reveal.relic_guard_cursor",
-        "quest.main_worldshift_reveal.relic_inside_cursor"
+        "quest.main_worldshift_reveal.relic_inside_cursor",
+        "quest.main_worldshift_reveal.relic_release_cursor"
       ]
     },
     {

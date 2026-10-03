@@ -2377,7 +2377,12 @@
         ],
         "why": "data/rift_regions.json owner_intent[2]: 'The entrance to the Elite Four is sealed off unless you go through the town first.' RIFT_ZONES.md section 2a: releasing Hoopa (rift_crisis_resolved) is what opens the League."
       },
-      "needs_progression": {
+      "needs_walls": {
+        "defect": "held_walls_do_not_meet_their_gatehouses",
+        "why": "z5's pass can now be granted (rift_crisis_resolved is declared, and its setter is invoked by the Compact binder's release in the relic hall, data/progression.json set_by.invoked_by, 2026-10-03), so the flag no longer holds it. What still holds it is its wall: league_gate runs along G5's walkway and a passed player cannot walk from the arrival into the precinct (measured_defects[held_walls_do_not_meet_their_gatehouses], fixed null). Remove this field in the same change that fixes that defect; tests/test_rift_zones_apply.py fails if the two drift."
+      },
+      "superseded_needs_progression": {
+        "met": "2026-10-03: data/progression.json declares rift_crisis_resolved with its quest_transition setter (2026-10-02) and set_by.invoked_by = dlg_main_relic_hall_release (2026-10-03, the owner's decision to set it ourselves rather than wait for Codex's cradle). Kept as the record of what z5 waited on; tools/rift_zones.py held_zones() no longer reads it",
         "file": "data/progression.json",
         "not_changed_here": true,
         "add_flag": "rift_crisis_resolved",
