@@ -449,7 +449,9 @@ def build_tower(cv, P, M, t, name, palette, sign=None, pylon=4, walls_to=None, e
                 cv.put(x, g + s, z, stair(stair_b, face), owner=owner)
             if roof and not upper:
                 if (i, j) in opened:
-                    pass
+                    # AIR, written, not merely left out: a world applied before 2026-10-03 holds the roof block here
+                    # (over step R-3), and an R9DC re-run that writes nothing would leave it
+                    cv.put(x, top_y, z, "minecraft:air", owner=owner)
                 elif (i, j) == top:
                     pass                                    # the last step is the landing, at roof height
                 else:
@@ -1049,9 +1051,13 @@ def build(source_root, server_dir=None):
         # 2026-10-03: a climber stepping up off step crown-3 needs air at the crown over that step (climb_cells), and
         # the deck there made the crown unreachable on foot
         for c in cells:
+            x, z = frame(spire_tower["anchor"], spire_tower["back"])(*c)
+            if max(steps_[c]) + g0 == crown - 3:
+                # AIR, written: a world applied before 2026-10-03 holds the crown's tread over this step
+                cv.put(x, crown, z, "minecraft:air", owner="spire")
+                continue
             if max(steps_[c]) + g0 > crown - 4:
                 continue
-            x, z = frame(spire_tower["anchor"], spire_tower["back"])(*c)
             cv.put(x, crown, z, P("tread"), owner="spire")
     # the beacon over the core: a gold base flush in the deck, nothing of iron (Meltan), the beam turned cyan
     beacon_base = crown if ar else core_top
