@@ -278,6 +278,18 @@ def stair_plan(R):
     return steps, top, opened
 
 
+def climb_cells(R):
+    """The ring cells whose roof must be off so the stair can be WALKED, not only stood on: the two opened cells and the
+    cell of step R-3 (2026-10-03). A player stepping up from a step at height s to s+1 needs air three above s in the
+    column he is leaving (feet s+1, head s+2.8 while the stair lifts him); under a roof at R, step R-3 has two (R-2,
+    R-1) and the climber hits it. The descent is the same move backwards. stair_plan's `opened` is unchanged, because
+    place_tower sites the lifts by it and a moved tower is a moved city."""
+    cells = ring_cells()
+    _steps, top, opened = stair_plan(R)
+    extra = cells[(R - 4) % 16] if R >= 4 else None
+    return list(opened) + ([extra] if extra is not None and extra not in opened and extra != top else [])
+
+
 def place_tower(M, g, gu, L=None, U=None, claimed=None, want=None, max_try=None):
     """Site a 7x7 stair tower: the lower lift L inside it where the steps leave its rider headroom and the roof
     covers it, the upper lift U inside it too if it can be, the back against the riser, a door onto the street."""
@@ -378,7 +390,21 @@ def place_tower(M, g, gu, L=None, U=None, claimed=None, want=None, max_try=None)
 def build_tower(cv, P, M, t, name, palette, sign=None, pylon=4, walls_to=None, exits=(), roof=True, owner="tower"):
     w = frame(t["anchor"], t["back"])
     g, gu, R = t["g"], t["gu"], t["R"]
-    steps, top, opened = t["steps"], t["top"], t["opened"]
+    steps, top = t["steps"], t["top"]
+    # the roof comes off over climb_cells, not only stair_plan's `opened` (a climber needs three of head room on the
+    # step he leaves); where a lift stands under that roof its landing wins and the cell stays roofed, and is reported
+    opened = list(t["opened"])
+    lift_cols = {(p[0], p[2]) for p in (t.get("L"), t.get("U")) if p}
+    if roof and opened:
+        wf = frame(t["anchor"], t["back"])
+        for c in climb_cells(t["R"]):
+            if c in opened:
+                continue
+            if wf(*c) in lift_cols:
+                t["headroom_blocked_by_lift"] = list(wf(*c))
+                continue
+            opened.append(c)
+    t["climb_opened"] = [list(c) for c in opened]
     wall_b, roof_b, win_b = P(palette["wall"]), P("tread"), P("glass_conduit")
     stair_b = "minecraft:polished_deepslate_stairs"
     lifts = set()
@@ -993,10 +1019,12 @@ def build(source_root, server_dir=None):
     build_tower(cv, P, M, spire_tower, "the spire", spec["districts"]["core"], pylon=0, walls_to=core_top,
                 exits=[d_ - g0 for d_ in decks], roof=False, owner="spire")
     if ar:
-        # the crown deck closes the stair well over every ring cell whose last step is three or more below it, so the
-        # climber's head and the step above it are never under a floor; the arrival stays open
+        # the crown deck closes the stair well over every ring cell whose last step is FOUR or more below it, so the
+        # climber's head and the step above it are never under a floor; the arrival stays open. It was three until
+        # 2026-10-03: a climber stepping up off step crown-3 needs air at the crown over that step (climb_cells), and
+        # the deck there made the crown unreachable on foot
         for c in cells:
-            if max(steps_[c]) + g0 > crown - 3:
+            if max(steps_[c]) + g0 > crown - 4:
                 continue
             x, z = frame(spire_tower["anchor"], spire_tower["back"])(*c)
             cv.put(x, crown, z, P("tread"), owner="spire")
