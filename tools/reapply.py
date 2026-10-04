@@ -791,6 +791,10 @@ def prepare_jobs(a):
     # judged against the species' own natural spawn data in the Cobblemon jar and the place's paint, never against
     # data/encounter_design.json. Fails closed on an unjudged misfit or a stale ruling
     add("spawn_habitat_audit", "spawn_habitat_audit.py")
+    # ... and its independent tiers audit (the owner, 2026-10-05: "every area should have a rare, ultra rare, and boss
+    # table"): rare >= 2 and ultra-rare >= 1 species, a heart inside its area and clear of the path, a species floor,
+    # rarity that means something -- read from the compiled pack only. Fails closed; table in derived/spawn_tiers/
+    add("spawn_tiers_audit", "spawn_tiers_audit.py")
     # the structure templates the placement steps use, the spawn biome tags, and the size outliers: all three were
     # on the server only by hand, or not at all, until 2026-09-26 (install sweep)
     add("kit:pack", "kit.py", "pack")
