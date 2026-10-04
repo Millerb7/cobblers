@@ -2,12 +2,23 @@
 """Heaven's Arena as a dome on the Windward Deep's north floor (data/arena_dome.json).
 
 The owner, 2026-10-03: "a small tower that becomes a large dome sort of place with several fighting venues inside the
-main place". Site A of docs/world-building/ARENA_SITE_NORTH.md: centre (3584, 3171), radius 40, the floor at y0. A
-gatehouse tower on the south side, its door on the floor route from the lift-bank-3 stair, opens through the drum into
-the dome: a two-block drum to y70 under a glass half-ellipsoid to y120 and a cupola to y126 (the HQ's y132 stays the
-tallest), four 15x15 rings on the diagonals and a 19x19 grand stage in the middle. Each venue carries the contract the
-arena runtime reads (challenger_mark, opponent_spot, post), and the build refuses if any of them is not a floor block
-with two air above it in what this tool writes.
+main place". The site is data/arena_dome.json `site`: since the owner's "can we move the tower to the center, it's
+very close to the spire" (2026-10-03) the middle of the Deep's north floor, (3586, 3164) r34, the floor at y0; site A
+of docs/world-building/ARENA_SITE_NORTH.md ((3584, 3171) r40) is `superseded_site`. A gatehouse tower on the south
+side, its door on the floor route from the lift-bank-3 stair, opens through the drum into the dome: a two-block drum to
+y70 under a glass half-ellipsoid to y120 and a cupola to y126 (the HQ's y132 stays the tallest), four 15x15 rings and
+a 19x19 grand stage in the middle. Each venue carries the contract the arena runtime reads (challenger_mark,
+opponent_spot, post), and the build refuses if any of them is not a floor block with two air above it in what this
+tool writes.
+
+THE UNDO (STAGING ONLY). Staging was applied with site A on 2026-10-03 and nothing removes a build. `undo` regenerates
+the old dome from `superseded_site` with this same geometry(), subtracts every cell the current dome writes, and lays
+back what was there before: the city's own block (tools/deep_city.py build's canvas: the plaza paving at y0), the pit's
+tread light (tools/rift_deep.py, its L1 grid) where the city writes nothing at y0, and air above the floor (the pit is
+open to the sky and the city writes nothing above y0 on site A's columns; the build fails closed if that stops being
+true). The old venue posts (tools/arena_runtime.py's interaction and label, tag cobblers_arena_post) are killed where
+they stood. Written to build/staging/cobblers_arena_dome_undo, outside build/datapacks, so tools/reapply.py never sees
+it and no fresh build's apply runs it; the live world never had site A.
 
 Ground comes from the pit's ring model (tools/rift_deep.py model(), via tools/deep_city.py city_model()), never from a
 world. The build runs the city's own build once (tools/deep_city.py build(), about 10 s, nothing emitted) and refuses
@@ -19,6 +30,7 @@ removed here; nothing is said about the trainers, the NPCs or the challenge post
 the contract's coordinates.
 
     python tools/arena_dome.py build [--source-root <root>]
+    python tools/arena_dome.py undo [--out DIR] [--source-root <root>]     STAGING ONLY
 """
 from __future__ import annotations
 
@@ -43,6 +55,10 @@ TILE = 64
 PART = 3000
 AIR = "minecraft:air"
 PAVE = {"plaza", "sidewalk", "fill_light"}       # what the city lays flush at y0 on open floor (ARENA_SITE_NORTH.md)
+UNDO_OUT = ROOT / "build" / "staging" / "cobblers_arena_dome_undo"
+UNDO_FOLDER = "arena_dome_undo"
+POST_TAG = "cobblers_arena_post"                 # tools/arena_runtime.py POST: the venue posts' interaction and label
+GEOMETRY_KEYS = ("site", "drum", "dome", "tower", "lighting", "entrance", "venues")
 
 
 class DomeError(Exception):
@@ -439,6 +455,143 @@ def city_problems(spec, cv, source_root, city=None):
     return out, stats
 
 
+# ------------------------------------------------------------------ the undo of a superseded site (STAGING ONLY)
+
+def superseded_spec(spec):
+    """The spec as it was at the superseded site: every geometry key from `superseded_site`, the rest (limits,
+    materials' names) from the current spec."""
+    old = spec.get("superseded_site")
+    if not old:
+        raise DomeError("data/arena_dome.json has no superseded_site: there is nothing to undo")
+    missing = [k for k in GEOMETRY_KEYS if k not in old]
+    if missing:
+        raise DomeError("superseded_site lacks %s: the old dome cannot be regenerated" % missing)
+    s = dict(spec)
+    for k in GEOMETRY_KEYS:
+        s[k] = old[k]
+    return s
+
+
+def undo_box(old_cv):
+    xs = [x for (x, _y, _z) in old_cv.v]
+    ys = [y for (_x, y, _z) in old_cv.v]
+    zs = [z for (_x, _y, z) in old_cv.v]
+    return [min(xs), min(ys), min(zs), max(xs), max(ys), max(zs)]
+
+
+def undo_plan(spec, city):
+    """-> (cells {(x, y, z): block}, first {(x, y, z)}, stats). Every cell the superseded dome wrote that the current
+    dome does not, with what was there before it: the city's block, else the pit's tread light, else (above the floor)
+    air. `first` are the cells cleared before the rest: the old lanterns, which would drop as items if what they stand
+    on went first. Fails closed on a floor cell nothing accounts for, and on a city write above the floor in the old
+    footprint (the undo would then have to know which of the two came last)."""
+    import rift_deep as RD
+    ccv, _plan, M = city
+    olds = superseded_spec(spec)
+    old, new = geometry(olds), geometry(spec)
+    rd = M["rd"]["spec"]
+    light = RD.pick(rd["light"]["block"], rd["light"]["fallback"], None)   # what prepare's build (no server dir) lays
+    floor_y = olds["site"]["floor_y"]
+    cols = {(x, z) for (x, _y, z) in old.v}
+    over = sorted(c for c in ccv.v if c[1] > floor_y and (c[0], c[2]) in cols)
+    if over:
+        raise DomeError("the city writes %d cells above the floor in the old footprint, e.g. %s: not modelled"
+                        % (len(over), over[:3]))
+    cells, first = {}, set()
+    st = {"old_cells": len(old.v), "kept_by_new": 0, "city": 0, "tread_light": 0, "air": 0}
+    for c, (b, _ph) in old.v.items():
+        if c in new.v:
+            st["kept_by_new"] += 1
+            continue
+        if c in ccv.v:
+            cells[c] = ccv.v[c][0]
+            st["city"] += 1
+        elif c in M["L1"]:
+            cells[c] = light
+            st["tread_light"] += 1
+        elif c[1] > floor_y:
+            cells[c] = AIR
+            st["air"] += 1
+        else:
+            raise DomeError("the old dome's floor cell %s: neither the city nor the pit's tread lights say what was "
+                            "there" % (c,))
+        if b.startswith("minecraft:lantern"):
+            first.add(c)
+    st["box"] = undo_box(old)
+    st["restored"] = len(cells)
+    return cells, first, st
+
+
+def undo_posts(spec):
+    """[(x, y, z)] the superseded venues' posts, where tools/arena_runtime.py summoned them (the block's centre)."""
+    old = superseded_spec(spec)
+    now = [v["post"] for v in spec["venues"]]
+    out = []
+    for v in old["venues"]:
+        px, py, pz = v["post"]
+        p = (math.floor(px) + 0.5, py, math.floor(pz) + 0.5)
+        if any(math.dist(p, (math.floor(q[0]) + 0.5, q[1], math.floor(q[2]) + 0.5)) < 1.0 for q in now):
+            raise DomeError("the old post %s is within 1 of a current one: the undo, which kills within 0.5, would come too close to a live post" % (p,))
+        out.append(p)
+    return out
+
+
+def undo_functions(spec, city):
+    """-> ({name: lines}, order, stats). Each function holds the whole box force-loaded and never releases it; the
+    last one kills the old posts and any dropped item in the box and then releases it, so by the time it runs the
+    box's entities have had at least a tick to load."""
+    cells, first, st = undo_plan(spec, city)
+    x0, y0, z0, x1, y1, z1 = st["box"]
+    hold = "forceload add %d %d %d %d" % (x0, z0, x1, z1)
+    head = "# Generated by tools/arena_dome.py undo. STAGING ONLY: takes the superseded Heaven's Arena dome " \
+           "(data/arena_dome.json superseded_site) off a world that has it; box x%d..%d y%d..%d z%d..%d" % (
+               x0, x1, y0, y1, z0, z1)
+    fns, order = {}, []
+    for tag, part in (("a", {c: cells[c] for c in first}), ("b", {c: b for c, b in cells.items() if c not in first})):
+        tiles = {}
+        for (x, y, z), b in part.items():
+            tiles.setdefault((x // TILE, z // TILE), {})[(x, y, z)] = b
+        for t in sorted(tiles):
+            body = DC._compress(tiles[t])
+            for k in range(0, len(body), PART):
+                name = "%s_%d_%d%s" % (tag, t[0], t[1], "" if k == 0 else "_%d" % (k // PART + 1))
+                fns[name] = [head, hold] + body[k:k + PART]
+                order.append(name)
+    last = [head, hold]
+    for px, py, pz in undo_posts(spec):
+        last.append("kill @e[type=minecraft:interaction,tag=%s,x=%g,y=%g,z=%g,distance=..0.5]" % (POST_TAG, px, py, pz))
+        last.append("kill @e[type=minecraft:text_display,tag=%s,x=%g,y=%g,z=%g,distance=..0.5]"
+                    % (POST_TAG, px, py + 2.4, pz))
+    last.append("kill @e[type=minecraft:item,x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d]" % (x0, y0, z0, x1 - x0, y1 - y0, z1 - z0))
+    last.append("forceload remove %d %d %d %d" % (x0, z0, x1, z1))
+    fns["z_entities_release"] = last
+    order.append("z_entities_release")
+    for name, lines in fns.items():
+        probs = FL.check_lines(lines, name)
+        if probs:
+            raise DomeError("undo function %s would be refused: %s" % (name, probs[:3]))
+    return fns, order, st
+
+
+def write_undo(fns, order, out=UNDO_OUT):
+    out = Path(out)
+    if out.resolve().parent == (ROOT / "build" / "datapacks").resolve():
+        raise DomeError("refusing to write the undo into build/datapacks: tools/reapply.py would demand a step for a "
+                        "staging-only undo, and a fresh build's apply must never run it")
+    if out.exists():
+        shutil.rmtree(out)
+    fn = out / "data" / "cobblers" / "function" / UNDO_FOLDER
+    fn.mkdir(parents=True)
+    (out / "pack.mcmeta").write_text(json.dumps({"pack": {"pack_format": 48, "description":
+                                                          "Cobblers: STAGING ONLY one-off removal of Heaven's Arena's "
+                                                          "superseded site-A dome (tools/arena_dome.py undo)"}},
+                                                indent=2) + "\n", encoding="utf-8")
+    for name in order:
+        (fn / (name + ".mcfunction")).write_text("\n".join(fns[name]) + "\n", encoding="utf-8", newline="\n")
+    (fn / "index.txt").write_text("\n".join(order) + "\n", encoding="utf-8", newline="\n")
+    return fn
+
+
 # ------------------------------------------------------------------ the pack
 
 def emit(cv):
@@ -487,10 +640,25 @@ def build(source_root):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("cmd", nargs="?", default="build", choices=("build",))
+    ap.add_argument("cmd", nargs="?", default="build", choices=("build", "undo"))
     ap.add_argument("--source-root")
+    ap.add_argument("--out", default=str(UNDO_OUT), help="undo only: where the staging-only pack goes")
     a = ap.parse_args(argv)
     src = a.source_root or env_source_root()
+    if a.cmd == "undo":
+        try:
+            fns, order, st = undo_functions(load(), city_state(src))
+            fn = write_undo(fns, order, a.out)
+        except DomeError as e:
+            print("arena_dome undo: REFUSED: %s" % e)
+            return 1
+        b = st["box"]
+        print("  STAGING ONLY. box x%d..%d y%d..%d z%d..%d; old cells %d, left to the current dome %d, restored %d "
+              "(city %d, tread lights %d, air %d)" % (b[0], b[3], b[1], b[4], b[2], b[5], st["old_cells"],
+                                                      st["kept_by_new"], st["restored"], st["city"],
+                                                      st["tread_light"], st["air"]))
+        print("Heaven's Arena undo: %d functions in %s (run in index.txt order)" % (len(order), fn))
+        return 0
     try:
         cv, stats, order, ncmd = build(src)
     except DomeError as e:

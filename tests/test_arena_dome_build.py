@@ -37,7 +37,8 @@ def _cell(p):
 # ------------------------------------------------------------------ the contract
 
 def test_the_contract_fields_are_present():
-    assert SPEC["site"]["centre"] == [3584, 3171] and SPEC["site"]["radius"] == 40 and SPEC["site"]["floor_y"] == 0
+    # the owner, 2026-10-03: "can we move the tower to the center, it's very close to the spire"
+    assert SPEC["site"]["centre"] == [3586, 3164] and SPEC["site"]["radius"] == 34 and SPEC["site"]["floor_y"] == 0
     e = SPEC["entrance"]
     assert len(e["door"]) == 3 and isinstance(e["route"], str) and e["route"]
     assert len(SPEC["venues"]) >= 4
@@ -156,7 +157,10 @@ def test_the_shell_is_closed_except_at_the_door(cv):
                 continue
             seen.add(n)
             q.append(n)
-    assert len(seen) > 300000
+    # most of the volume under the shell: the drum's cylinder to its top and the inner half-ellipsoid above it
+    ri = SPEC["drum"]["wall"][0]
+    hi = SPEC["dome"]["rise"] - SPEC["dome"]["thickness"]
+    assert len(seen) > 0.8 * math.pi * ri * ri * (SPEC["drum"]["top"] + 2 * hi / 3)
 
 
 def test_every_mark_is_walkable_from_the_door(cv):
@@ -243,3 +247,77 @@ def test_the_door_is_reached_on_foot_from_the_lift_bank_3_stair(cv, city):
                 q.append(n)
     assert goal in dist
     assert dist[goal] < 80
+
+
+# ------------------------------------------------------------------ the move, and the staging-only undo of site A
+
+SPIRE = ((3609, 3249), 16)     # the city's Core spire (data/deep_city.json arena drum), which stays
+
+
+def _spire_gap(spec, cv):
+    (sx, sz), sr = SPIRE
+    cx, cz = spec["site"]["centre"]
+    R = spec["site"]["radius"]
+    drum = {(x, z) for (x, _y, z) in cv.v if math.hypot(x - cx, z - cz) <= R}
+    return min(math.hypot(x - sx, z - sz) for x, z in drum) - sr
+
+
+def test_the_dome_moved_away_from_the_spire_and_toward_the_middle(cv):
+    old = A.superseded_spec(SPEC)
+    assert old["site"]["centre"] == [3584, 3171] and old["site"]["radius"] == 40
+    new_gap, old_gap = _spire_gap(SPEC, cv), _spire_gap(old, A.geometry(old))
+    assert new_gap > old_gap + 10, (new_gap, old_gap)
+    middle = (3586, 3147)      # the owner's "middle" of the north floor (relayed in the move's brief)
+    d = lambda s: math.hypot(s["site"]["centre"][0] - middle[0], s["site"]["centre"][1] - middle[1])  # noqa: E731
+    assert d(SPEC) < d(old)
+    assert 30 <= SPEC["site"]["radius"] <= 34
+
+
+def test_the_superseded_site_keeps_what_the_undo_needs():
+    old = SPEC["superseded_site"]
+    assert "very close to the spire" in old["owner"] and old["why"]
+    for k in A.GEOMETRY_KEYS:
+        assert k in old, k
+    assert [v["id"] for v in old["venues"]] == [v["id"] for v in SPEC["venues"]]
+
+
+def test_the_undo_never_lands_in_build_datapacks():
+    assert A.UNDO_OUT.parent.name == "staging"
+    with pytest.raises(A.DomeError):
+        A.write_undo({}, [], ROOT / "build" / "datapacks" / "cobblers_arena_dome_undo")
+    src = (ROOT / "tools" / "reapply.py").read_text(encoding="utf-8")
+    assert "arena_dome_undo" not in src and '"arena_dome.py", "undo"' not in src
+
+
+def test_the_undo_kills_the_old_posts_by_the_runtime_s_tag_and_never_a_live_one():
+    import arena_runtime
+    assert A.POST_TAG == arena_runtime.POST
+    old = A.undo_posts(SPEC)
+    assert len(old) == len(SPEC["superseded_site"]["venues"])
+    for p in old:
+        for v in SPEC["venues"]:
+            q = v["post"]
+            assert math.dist(p, (math.floor(q[0]) + 0.5, q[1], math.floor(q[2]) + 0.5)) >= 1.0
+
+
+def test_the_undo_restores_the_city_and_leaves_the_new_dome_alone(cv, city):
+    _root, state = city
+    ccv, _plan, M = state
+    cells, first, st = A.undo_plan(SPEC, state)
+    old = A.geometry(A.superseded_spec(SPEC))
+    assert st["box"] == [3544, 0, 3131, 3624, 126, 3216]
+    # every cell the old dome wrote is either the new dome's or restored, never both, never neither
+    assert set(cells) | {c for c in old.v if c in cv.v} == set(old.v)
+    assert not set(cells) & set(cv.v)
+    for c, b in cells.items():
+        if c in ccv.v:
+            assert b == ccv.v[c][0], c
+        elif c[1] == 0:
+            assert c in M["L1"], c
+        else:
+            assert b == "minecraft:air", c
+    assert st["city"] > 0 and st["air"] > 0
+    assert all(old.v[c][0].startswith("minecraft:lantern") for c in first)
+    fns, order, _st = A.undo_functions(SPEC, state)
+    assert order[-1] == "z_entities_release" and order[0].startswith("a_")
+    assert fns[order[-1]][-1].startswith("forceload remove")
