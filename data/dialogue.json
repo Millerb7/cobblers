@@ -13999,6 +13999,76 @@
       "speakers": {
         "cassius": "Cassius Rook"
       }
+    },
+    {
+      "id": "dlg_pokemon_farm_farmer",
+      "quest_id": "ambient_pokemon_farm",
+      "npc_id": "npc_pokemon_farm_farmer",
+      "source": "data/pokemon_farm.json (the owner, 2026-10-05: a Pokemon farm at 3149 5714); every mechanic the farmer names is read from the Cobblemon 1.8.0 jar there (native_mechanics), NOT seen in game",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.ambient_pokemon_farm.farmer_cursor",
+        "initial_node": "greeting",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "greeting",
+          "kind": "line",
+          "speaker": "farmer",
+          "text": "Arrow Creeks Farm. Shut the gates behind you; the Wooloo think every open one was opened for them.",
+          "next": "dairy"
+        },
+        {
+          "id": "dairy",
+          "kind": "line",
+          "speaker": "farmer",
+          "text": "The Miltank give the milk, but a Miltank only lets the trainer it belongs to milk it. Bring your own and a bucket. These ones give to the farm and nobody else.",
+          "next": "wool"
+        },
+        {
+          "id": "wool",
+          "kind": "line",
+          "speaker": "farmer",
+          "text": "Shears work on the flock, if they'll stand for you. Leave them on the grass afterwards and the fleece comes back.",
+          "next": "bees"
+        },
+        {
+          "id": "bees",
+          "kind": "line",
+          "speaker": "farmer",
+          "text": "The hives were full when I looked this morning. A glass bottle and a steady hand. The Vespiquen keeps count, so take one from each and no more.",
+          "next": "stand"
+        },
+        {
+          "id": "stand",
+          "kind": "line",
+          "speaker": "farmer",
+          "text": "Milk, wool, leather, honey, eggs: the stand by the south gate sells what we don't use. The Bouffalant pulls the plough and the Ponyta pulls the cart. Neither will pull for you.",
+          "next": "repeat"
+        },
+        {
+          "id": "repeat",
+          "kind": "line",
+          "speaker": "farmer",
+          "text": "Shears for the flock, a bottle for the hives, coin at the stand. And the gates.",
+          "next": "repeat"
+        }
+      ],
+      "speakers": {
+        "farmer": "Farmer Wren"
+      }
     }
   ]
 }

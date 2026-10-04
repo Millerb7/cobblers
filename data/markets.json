@@ -844,10 +844,31 @@
         {"id": "mushroom_stew", "item": "minecraft:mushroom_stew", "name": "Mushroom Stew", "count": 1, "price": 150, "gate": null, "strand": "provision", "why": "150 against bank.json's 25", "verified": "minecraft 1.21.1 jar"},
         {"id": "bread", "item": "minecraft:bread", "name": "Bread", "count": 6, "price": 240, "gate": null, "strand": "provision", "why": "carried down", "verified": "minecraft 1.21.1 jar"}
       ]
+    },
+    {
+      "id": "arrow_creeks_farm_stand", "town": "pokemon_farm", "stall": "pokemon_farm_stall_1", "path": "off_path", "badge": null, "status": "sited",
+      "at": [3153, 88, 5764], "yaw": 90,
+      "site_why": "Arrow Creeks Farm's own stand (data/pokemon_farm.json stand_keeper; tools/pokemon_farm.py checks this seat is the spot its plan leaves open): under the awning outside the farm's south gate, on the heightmap's ground (round, y87) + 1, facing west to the lane a player walks in on. No town plan: markets.py's donor rule (ground from the heightmap) applies",
+      "keeper": {"name": "Farm Stand", "greeting": "Milk this morning, wool this week, honey when the Vespiquen allows."},
+      "theme": "a farm whose livestock are Pokemon sells what a farm makes: milk, wool, leather, honey, eggs",
+      "sells": "farm goods", "category": "Farm Goods",
+      "stall_why": "the owner, 2026-10-05: 'a pokemon based farm that is like a normal farm, milk, leather'. Every line is an ungated vanilla provision, so off the budget curve (stalls_basis.budget); each is something a player can also raise or gather, and the farm's own animals give none of it natively (data/pokemon_farm.json native_mechanics), which is why the stand sells it. Priced on the stalls' scale: above 2.5x the bank's sell-back where it has one, the honey at the tea front's $200",
+      "stock": [
+        {"id": "milk_bucket", "item": "minecraft:milk_bucket", "name": "Milk Bucket", "count": 1, "price": 200, "gate": null, "strand": "provision", "why": "the dairy's; the bucket comes with it (no bank price)", "verified": "minecraft 1.21.1 jar"},
+        {"id": "white_wool", "item": "minecraft:white_wool", "name": "White Wool", "count": 8, "price": 240, "gate": null, "strand": "provision", "why": "the flock's fleece, 30 each (no bank price); white wool is not a spawn condition, the coloured ones are", "verified": "minecraft 1.21.1 jar"},
+        {"id": "leather", "item": "minecraft:leather", "name": "Leather", "count": 4, "price": 240, "gate": null, "strand": "provision", "why": "the herd's, 60 each (no bank price)", "verified": "minecraft 1.21.1 jar"},
+        {"id": "honey_bottle", "item": "minecraft:honey_bottle", "name": "Honey Bottle", "count": 2, "price": 400, "gate": null, "strand": "provision", "why": "the apiary's, at the tea front's 200 each", "verified": "minecraft 1.21.1 jar"},
+        {"id": "honeycomb", "item": "minecraft:honeycomb", "name": "Honeycomb", "count": 2, "price": 240, "gate": null, "strand": "provision", "why": "the apiary's, 120 each (no bank price)", "verified": "minecraft 1.21.1 jar"},
+        {"id": "egg", "item": "minecraft:egg", "name": "Egg", "count": 6, "price": 120, "gate": null, "strand": "provision", "why": "the coop's, 20 each (no bank price)", "verified": "minecraft 1.21.1 jar"},
+        {"id": "feather", "item": "minecraft:feather", "name": "Feather", "count": 8, "price": 160, "gate": null, "strand": "provision", "why": "the coop's, 20 each (no bank price)", "verified": "minecraft 1.21.1 jar"},
+        {"id": "carrot", "item": "minecraft:carrot", "name": "Carrot", "count": 8, "price": 160, "gate": null, "strand": "provision", "why": "the fields', 20 each against bank.json's 5", "verified": "minecraft 1.21.1 jar"},
+        {"id": "potato", "item": "minecraft:potato", "name": "Potato", "count": 8, "price": 160, "gate": null, "strand": "provision", "why": "the fields', 20 each against bank.json's 5", "verified": "minecraft 1.21.1 jar"}
+      ]
     }
   ],
   "places_beyond_towns": [
-    {"town": "deep_city", "source": "data/deep_city.json", "why": "the Windward Deep's city has a Mart building and a built row of stalls but no data/towns.json record, so until 2026-10-03 the coverage rule never asked it for a counter or a reason (TOWN_SQUARES_SURVEY 2, CLAUDE.md 'Our list is not the world')"}
+    {"town": "deep_city", "source": "data/deep_city.json", "why": "the Windward Deep's city has a Mart building and a built row of stalls but no data/towns.json record, so until 2026-10-03 the coverage rule never asked it for a counter or a reason (TOWN_SQUARES_SURVEY 2, CLAUDE.md 'Our list is not the world')"},
+    {"town": "pokemon_farm", "source": "data/pokemon_farm.json", "why": "Arrow Creeks Farm (the owner, 2026-10-05) is a place a player arrives at and spends in, its stand selling the farm's goods, with no data/towns.json record: named here so the coverage rule sees it and its stall's place is known"}
   ],
   "no_counter": [
     {"town": "deep_city", "why": "the Compact's own counter is story-gated (TOWN_SQUARES_SURVEY 6, owner question 6: does the Compact sell, and to whom); Rimside's stalls are staffed under stalls (deep_rimside_*), unsited until its front row's positions are read. Its Mart clerk is NOT built: a data/traders.json record needs the league_mart template's shopkeeper jigsaw carried through the city's placement, which tools/deep_city.py does not record"},
@@ -865,6 +886,7 @@
     {"town": "great_oak_pallet", "why": "a landmark tree"},
     {"town": "sentinel_spruce_tarn", "why": "a landmark tree"},
     {"town": "patriarch_wedge", "why": "a landmark tree"},
-    {"town": "cherry_elder_shrew", "why": "a landmark tree"}
+    {"town": "cherry_elder_shrew", "why": "a landmark tree"},
+    {"town": "pokemon_farm", "why": "a farm, not a town: its one place to spend is the stand (stalls arrow_creeks_farm_stand), an ungated CobbleDollars merchant; no Mart and no badge shelf belong there"}
   ]
 }
