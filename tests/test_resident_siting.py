@@ -13,7 +13,8 @@ Every expectation is read from the data the rule lives in, never from data/resid
 
 The southern residents' two Pokemon (data/southern_residents.json, 2026-10-03: Grandmother Cap, Ash) are held to the
 same three rules, at the site centre plus the record's `at`, with the record's leash. So are the northern residents'
-(data/northern_residents.json, 2026-10-03), read the same way.
+(data/northern_residents.json, 2026-10-03), read the same way, and the far south's three (data/far_south.json,
+2026-10-04: Greymane, the Fifth Chimney, the Old Watcher), whose records have the same shape.
 """
 import json
 import math
@@ -45,11 +46,20 @@ def _southern(name="southern_residents.json"):
     return out
 
 
-RES = load("resident_encounters.json")["encounters"] + _southern() + _southern("northern_residents.json")
+RES = load("resident_encounters.json")["encounters"] + _southern() + _southern("northern_residents.json") \
+    + _southern("far_south.json")
 DESIGN = load("encounter_design.json")
 HEARTS = DESIGN["rules"]["hearts"]
 IDS = [e["id"] for e in RES]
-SOUTH_IDS = {e["id"] for e in _southern()} | {e["id"] for e in _southern("northern_residents.json")}
+SOUTH_IDS = {e["id"] for e in _southern()} | {e["id"] for e in _southern("northern_residents.json")} \
+    | {e["id"] for e in _southern("far_south.json")}
+FAR_SOUTH = {"greymane", "fifth_chimney", "old_watcher"}
+
+
+# Without it the far south's file could lose a resident (or this file stop reading it) and the three rules below would
+# silently stop holding those Pokemon.
+def test_the_far_south_residents_are_held_to_the_rules():
+    assert FAR_SOUTH <= set(IDS), sorted(FAR_SOUTH - set(IDS))
 
 
 def _sub_of(x, z):
