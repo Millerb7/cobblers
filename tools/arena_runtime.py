@@ -60,6 +60,7 @@ run in a server; see the report and tests/test_arena_runtime_build.py for what i
 import argparse
 import itertools
 import json
+import math
 import re
 import shutil
 from pathlib import Path
@@ -393,10 +394,13 @@ def files(dome_path=DOME):
         px, py, pz = v["post"]
         rs = sorted(v["ranks"])
         label = v.get("label") or ("Ranks %d-%d" % (rs[0], rs[-1]) if len(rs) > 1 else "Rank %d" % rs[0])
-        place += ['summon minecraft:interaction %s.5 %s %s.5 {width:1.0f,height:2.0f,response:1b,Tags:["%s","%s_%s"]}'
-                  % (fmt(px), fmt(py), fmt(pz), POST, POST, v["id"]),
-                  "summon minecraft:text_display %s.5 %s %s.5 {Tags:[\"%s\"],billboard:\"center\",text:%s}"
-                  % (fmt(px), fmt(py + 2.4), fmt(pz), POST,
+        # a post is a block CENTRE in data/arena_dome.json (n + 0.5) or a block corner in older fixtures: the
+        # summon goes to the centre of the block it names either way (qa audit b5e570a: "%s.5" of 3567.5 wrote 3567.5.5)
+        cx, cz = "%g" % (math.floor(px) + 0.5), "%g" % (math.floor(pz) + 0.5)
+        place += ['summon minecraft:interaction %s %s %s {width:1.0f,height:2.0f,response:1b,Tags:["%s","%s_%s"]}'
+                  % (cx, fmt(py), cz, POST, POST, v["id"]),
+                  "summon minecraft:text_display %s %s %s {Tags:[\"%s\"],billboard:\"center\",text:%s}"
+                  % (cx, fmt(py + 2.4), cz, POST,
                      snbt_string(json.dumps({"text": "Heaven's Arena - %s - click to challenge" % label,
                                              "color": "gold"})))]
     fn["posts/place"] = place

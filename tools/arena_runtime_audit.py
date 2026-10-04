@@ -69,11 +69,7 @@ NOT_MEGA = {"eviolite"}
 # the builder). They still FAIL the audit -- a post that cannot be summoned is an arena nobody can enter -- and are
 # labelled so the reader knows they are reported. tests/test_arena_runtime_audit.py fails when one stops reproducing,
 # so this list is pruned when the builder is fixed.
-KNOWN = {
-    "post_coords": "posts/place appends '.5' to the post's coordinate, so data/arena_dome.json's block-centred "
-                   "posts (n + 0.5) become '3567.5.5': the interaction and its label cannot be summoned "
-                   "(tools/arena_runtime.py posts/place; the builder's fixture used integer posts)",
-}
+KNOWN = {}   # post_coords: fixed in tools/arena_runtime.py posts/place (2026-10-03, the integrating session)
 
 
 class AuditError(Exception):
