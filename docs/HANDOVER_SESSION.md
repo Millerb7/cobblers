@@ -3,6 +3,31 @@
 A cold session reads CLAUDE.md, `docs/STATE.md` and this file. `docs/REVIEW_2026-10-02.md` (items 1-52) lists every
 call made and every defect recorded and not chased; read it before reversing anything.
 
+## 0. THE NIGHT OF 2026-10-04 (the owner asleep: "Build until done, do not stop for approval, record defects and keep going")
+
+Branch `build/2026-10-04-placement` (stacked on #117's `build/2026-10-03-towns`). Plan, in the owner's numbering:
+1. Wrong-country spawns: sweep every COMPILED roster (cobblers_spawns) for species that do not belong (Crabominable on
+   warm southern ground); fix by condition where a condition does it, by removal where not. Builder + independent audit.
+2. Mega area fills the southern Rift: expand the farms over the gulch and both southern arms; crowding legible
+   (overlapping ranges, scarred ground, broken rock at territory edges, kills). Builder + audit.
+3. Placement fault: DONE as diagnosis (Brock's spawners one block high in all 7 halls, fixed 281c0c9; the other three
+   are correct in data; no stray NPCs near current seats). Left: route_03_trainer_05 inside a signpost; the rotated-donor
+   keep-clear fault (town_dressing.building_footprints / markets.donor_footprints). Apply Brock's fix.
+4. Queue: tent stalls (agent running) then stall keepers -> cobbledollars:cobble_merchant with per-stall
+   CobbleMerchantShop (DEFAULT TAKEN: badge-gated counters stay dialogue clerks, the merchant screen cannot gate per
+   player); ambient Pokemon (cap ~30 spread, sleepers by cobblemon:pokemon_sleeps species, wake at 16 blocks; Buneary
+   round the snow house); water life next tranche; the southern map; "the three extra starters" (UNRESOLVED: config and
+   data offer five; ask what the screen shows); rift_crisis_resolved (its setter is invoked by the binder since
+   2026-10-03 -- check it fires at the finale stage).
+5. Walk the whole game, Oak's lab to the Champion, as a player: two research agents (lab..gym 4; gym 5..Champion).
+6. Finish the finale: the HQ interior (a factory-like tower for battles and exploration), the cradle chamber with Elara
+   and Brann and the release, the HQ door gated on the finale's quest stage. Codex's finale:
+   `git show codex/trainer-modes:docs/story/NPCS_AND_RIFT_FINALE.md` (local, unpushed).
+7. Giovanni: set the fight up so it waits for the owner; say where to stand.
+8. Obtainability sweep: every item a recipe/evolution/mechanic needs with no route in a pre-generated world; two
+   research agents; build only what is cheap and obviously right.
+Morning report: IN THE WORLD with coordinates, the review list, what is blocked on the owner.
+
 ## 1. The branch
 
 - **`build/2026-10-03-followups`**, stacked on #114 (merged into main 2026-10-03 08:21). One draft PR against main;
