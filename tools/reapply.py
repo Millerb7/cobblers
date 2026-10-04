@@ -144,6 +144,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-04: the far south's five places (tools/far_south.py, data/far_south.json) in rows F-H, built
                 # by R9FS; three named Pokemon on the residents' keeper, so world-local below; R18FS after R18NR
                 "cobblers_far_south",
+                # 2026-10-04: the jungle's three lost temples on the Long Isle's south (tools/jungle_temples.py,
+                # data/jungle_temples.json), built by R9JT; no load or tick and no Pokemon, so not world-local
+                "cobblers_jungle_temples",
                 # 2026-10-02: the relic site underground (tools/relic_underground.py, data/relic_underground.json): the
                 # old surface build taken off, then the hall, gallery and passage carved, by R9RU; its zone check acts on
                 # its own (an advancement), so world-local below
@@ -691,6 +694,10 @@ def prepare_jobs(a):
     # rule, the species' climate, the caches' rewards pack, the gym 7 gate, the steps and this wiring
     add("far_south", "far_south.py", *src)
     add("far_south_audit", "far_south_audit.py", *src)
+    # the jungle's lost temples (2026-10-04): the generator fails closed on its own siting rules (long_isle_south, the
+    # keep-clear list, the authored clearance, spawn blocks) and on a record the heightmap disagrees with. Its
+    # independent audit is owed (data/jungle_temples.json audit_checklist); add it here, after this job, when written
+    add("jungle_temples", "jungle_temples.py", *src)
     add("drovers_hollow:build", "drovers_hollow.py", "build", *src)
     add("drovers_hollow_audit", "drovers_hollow_audit.py", *src)
     # the three wayside places of 2026-10-03. Each generator refuses a spawn-condition palette and any block outside its
@@ -1706,6 +1713,11 @@ def steps(with_spawns=False):
     import far_south
     out.append(("R9FS", "the far south's places: kraal, chimneys, glass garden, glyph ring, folly (data/far_south.json)",
                 far_south.placement_steps()))
+    # the jungle's lost temples (2026-10-04, tools/jungle_temples.py): the same pure block pass per temple, held in a
+    # forceload of its box, before R9E (none sits on a Habitat Block); the caches' barrels are written here
+    import jungle_temples
+    out.append(("R9JT", "the jungle's lost temples: the Ring Court, the Harbour Mark, the Green Stair (data/jungle_temples.json)",
+                jungle_temples.placement_steps()))
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
