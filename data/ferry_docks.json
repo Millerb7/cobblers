@@ -320,6 +320,36 @@
       },
       "landward": "the lake's south shore at y77-78, walked south toward the outflow gorge and the southern coast road (data/towns.json: the route from Tilpey's south shore to Rift Foot)",
       "why": "the Tilpey launch's far shore. Never sited before (`near: null`); the launch is a convenience across the lake, not a gate, and this is the end a player leaves for the gorge from"
+    },
+    {
+      "id": "coldwater_station_jetty",
+      "name": "Coldwater Station",
+      "structure": "jetty",
+      "near": [
+        6075,
+        1833
+      ],
+      "out": "east",
+      "water": {
+        "kind": "sea"
+      },
+      "width": 3,
+      "length": 16,
+      "min_head_depth": 2,
+      "apron": 4,
+      "apron_width": 5,
+      "shore": {
+        "at": [
+          6075,
+          1833
+        ],
+        "search_radius": 16,
+        "min_reach": 12,
+        "min_dry": 6,
+        "why": "the dock's own `near`: the shore column below Coldwater Station's deck, dry at y62 with open water straight east (the shelf is shallow: 1 deep to x6089, 2 deep at the head, x6091)"
+      },
+      "landward": "marsh country's shore at y62-64, rising west up the slope to Coldwater Station (data/coldwater_station.json) at y64-70",
+      "why": "Coldwater Station's jetty, the mainland end of coldwater_crossing. It faces east across the sound to the Pine Isles"
     }
   ]
 }
