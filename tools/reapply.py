@@ -743,6 +743,10 @@ def prepare_jobs(a):
     # our wild spawns: the route and sub-region rosters from data/spawns.json (the suppression that makes them the
     # only thing spawning there is generated at install, against the server and world it will run on)
     add("compile_spawns", "compile_spawns.py")
+    # ... then its independent habitat audit (the owner, 2026-10-04: "wrong-country spawns"): every compiled entry
+    # judged against the species' own natural spawn data in the Cobblemon jar and the place's paint, never against
+    # data/encounter_design.json. Fails closed on an unjudged misfit or a stale ruling
+    add("spawn_habitat_audit", "spawn_habitat_audit.py")
     # the structure templates the placement steps use, the spawn biome tags, and the size outliers: all three were
     # on the server only by hand, or not at all, until 2026-09-26 (install sweep)
     add("kit:pack", "kit.py", "pack")
