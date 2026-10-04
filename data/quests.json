@@ -1124,6 +1124,32 @@
           "stand_marker": null,
           "status": "League and containment cradle are accepted but unbuilt",
           "stand_marker_blocked_by": "Left alone deliberately. Its recorded (3297, 2603) is 433 blocks from the League, inside no settlement, on heightmap ground y118 against the League's own 86.3-98.9: the retired FACTION.md cradle coordinate the Rift-zones unit already rejected. Authoring a marker here would seat the steward on the defect and hide the propagation. It is upstream and Codex's (docs/world-building/SETTLEMENT_NPCS.md section 3)."
+        },
+        {
+          "npc_id": "finale_brann_saye",
+          "role": "Captain Brann Saye, the Compact's guard captain: the first battle of the confrontation in Hoopa's cradle (rctmod trainer, battles on sight; data/finale_trainers.json)",
+          "placement_anchor": "hoopa_cradle",
+          "recorded_position_xyz": [
+            3363,
+            13,
+            3300
+          ],
+          "stand_marker": null,
+          "status": "seated by tools/reapply.py R17 (route_trainers placements) and R18RU; not seen in game",
+          "stand_marker_blocked_by": null
+        },
+        {
+          "npc_id": "finale_elara_venn",
+          "role": "Director Elara Venn: the second battle of the confrontation, at her console behind the restraint (rctmod trainer; data/finale_trainers.json)",
+          "placement_anchor": "hoopa_cradle",
+          "recorded_position_xyz": [
+            3347,
+            13,
+            3306
+          ],
+          "stand_marker": null,
+          "status": "seated by tools/reapply.py R17 (route_trainers placements) and R18RU; not seen in game",
+          "stand_marker_blocked_by": null
         }
       ],
       "physical_evidence": [
@@ -1704,12 +1730,22 @@
         },
         {
           "id": "unlock_league_after_rift_resolution",
-          "external_trigger_contract": "THIS transition is rift_crisis_resolved's setter (data/progression.json flags, set_by quest_transition): its first effect grants the flag's advancement to the releasing player, then the stage and League cursor move. It is invoked by exactly one node: dlg_main_relic_hall_release line release_001, after the choice 'Release Hoopa.' (the Compact binder in Hoopa's carved cradle, (3363, 13, 3312), moved from the hall's relic ring (3390, 8, 3268) on 2026-10-03, data/relic_underground.json geometry.release; a minimal port of docs/story/NPCS_AND_RIFT_FINALE.md Scene 5 from the uncarved cradle, the owner's decision of 2026-10-03).",
+          "external_trigger_contract": "THIS transition is rift_crisis_resolved's setter (data/progression.json flags, set_by quest_transition): its first effect grants the flag's advancement to the releasing player, then the stage and League cursor move, and last the restraint's light and sound play for that player (cobblers:relic_underground/release_fx, tools/relic_underground.py). It is invoked by exactly one node: dlg_main_relic_hall_release line release_001, after the choice 'Release Hoopa.' (the Compact binder in Hoopa's carved cradle, (3363, 13, 3312), data/relic_underground.json geometry.release). Since 2026-10-04 (the owner: 'FINISH THE FINALE ... the confrontation with Elara and Brann, the release') it requires, beside stage rift_crisis_pending, that THIS player has beaten Captain Brann Saye and Director Elara Venn in the cradle (brann_defeated, elara_defeated: data/finale_trainers.json, set by rctmod's defeat_count for the winning side only), so a player who reaches the binder first cannot release Hoopa past them.",
           "conditions": [
             {
               "kind": "progression_equals",
               "field": "quest.main_worldshift_reveal.stage",
               "value": "rift_crisis_pending"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.brann_defeated",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.elara_defeated",
+              "value": true
             }
           ],
           "effects": [
@@ -1726,6 +1762,10 @@
               "kind": "set_progression",
               "field": "quest.main_worldshift_reveal.league_cursor",
               "value": "league_001"
+            },
+            {
+              "kind": "function",
+              "function": "cobblers:relic_underground/release_fx"
             }
           ]
         },
@@ -1911,7 +1951,9 @@
         "quest.main_worldshift_reveal.league_cursor",
         "quest.main_worldshift_reveal.relic_guard_cursor",
         "quest.main_worldshift_reveal.relic_inside_cursor",
-        "quest.main_worldshift_reveal.relic_release_cursor"
+        "quest.main_worldshift_reveal.relic_release_cursor",
+        "quest.main_worldshift_reveal.brann_defeated",
+        "quest.main_worldshift_reveal.elara_defeated"
       ]
     },
     {
