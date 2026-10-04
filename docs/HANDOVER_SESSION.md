@@ -24,18 +24,27 @@ recorded and not chased; read it before reversing anything.
   fought him.
 - Next, in order: the owner's answers to the morning report's section 4; then 3a below.
 
-## 2a. 2026-10-05: branch `build/2026-10-05-p0` (stacked on #118), the owner's "finish all in parallel, ready for a play test"
+## 2a. 2026-10-05: branch `build/2026-10-05-p0` (stacked on #118), "finish all in parallel, ready for a play test"
 
-Merged here: P0-1 Oak gives the starter (allowStarterOnJoin false + `openstarterscreen` from Oak's dialogue) and its
-independent audit (tools/oak_starter_audit.py, last prepare job); Heaven's Arena spawn-free zone; contract fixes.
-In flight from 1d5f6fd (each in its own worktree; merge, then the independent audits where named): Mega dens as packs +
-west side of the southern tip + each den's evolution family (then re-point mega_field/mega_dens audits); spawn
-redesign rows A-D and rows E-H (every area rare/ultra-rare/heart, Tilpey teeming); tools/spawn_tiers_audit.py
-(independent, strict xfail until the redesign lands); east research station near (6050, 1843) + Pine Isles ferry;
-Jungle Isle lost temples; Elara confronting at the HQ door; tools/new_player_walk.py (the standing walk check). Then ONE
-prepare, install (the starter lock reaches the live world's shared config -- the owner asked for the play test
-build), apply, world probes. Open with the owner: P0-2 "the leader rejection" and P0-3 are named in no repo document;
-the Rift portal sheets (review 73).
+**Merged (head 6c2e6e5):** Oak gives the starter + `oak_starter_audit`; Heaven's Arena spawn-free zone; contract fixes;
+`spawn_tiers_audit` (fails all 76 areas until the redesign lands: prepare STOPS there by design); Elara at the HQ door
+(c2ef17c); Mega packs x3, 61 dens incl. the west floor, den evolution lines (3d70226); Coldwater Station + sealed Kyogre
+dive arch (6191, 1844) + Pine Isles ferry (806f641) and the Kyogre doc reconciliation; portal sheets re-sited in rock,
+own step R1S (f6d1840).
+
+**Still out, each on its own `worktree-agent-*` branch -- merge each on hand-back (`git branch --list "worktree-agent-*"`,
+newest first):** spawn redesign rows A-D; rows E-H (both told to merge 9fa1d2c first; routes get rare+ultra-rare but no
+heart -- my ruling, from "every area"); new_player_walk check; Long Isle south lost temples; apricorn farm ~(2068, 5570);
+Pokemon livestock farm ~(3149, 5714); independent re-points: HQ/finale audits (Elara), Mega audits (packs/west/lines),
+Coldwater audit. Then independent audits still to commission: temples, apricorn farm, livestock farm. Then ONE prepare
+(cheap audits first), install (includes the starter lock: reaches the live world's shared config), apply the new steps
+(R1S, R18CW, R16H/R17F, R9S/R9SX/R9MD/R9MB, R18HQ, the farms' and temples' steps, R17/R17N for Oak/Elara dialogue),
+restart, world probes: rift sheets enclosed (R1S checklist), Megas x3 uncatchable per den, Elara at (3439, 67, 3306),
+Coldwater NPCs and the arch, the farms, the temples, Oak's offer.
+
+**Owner decisions recorded tonight:** Megas on the road -> yes (clearance 54 = leash 36 + aggro 16 UNVERIFIED + 2);
+den lines catchable at 52-60 (default, to confirm); Kyogre placed as a lead; portal sheets kept, blended; boss = a heart.
+Open: P0-2 "the leader rejection" and P0-3 (no repo document names them); Cutters' stone supply ~7x with packs.
 
 ## 3. What waits on the owner
 
