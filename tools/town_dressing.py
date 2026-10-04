@@ -94,26 +94,21 @@ def grow(cells, margin):
 
 
 def building_footprints(settlement, doc):
-    """{placement id: (x0, z0, x1, z1)} of every building the settlement places, as tools/place_town.py seats it."""
-    import place_town as PT
+    """{placement id: (x0, z0, x1, z1)} of every building the settlement places, as its placer seats it: a town
+    building (tools/place_town.py) from its minimum corner, a pack donor (tools/place_donor.py) turned about its
+    position (place_donor.footprint, the one helper every keep-clear reads)."""
+    import place_donor as PD
     import town_character as TC
     templates = TC.Templates(TC.default_pack_dir(), TC.default_vanilla_jar())
     out = {}
     for q in doc["placements"]:
         if q.get("settlement") != settlement or q.get("kind") == "earthwork" or not q.get("position"):
             continue
-        x0, z0 = q["position"]["x"], q["position"]["z"]
-        rot = q.get("rotation") or "none"
-        if q.get("size"):
-            size = q["size"]
-        else:
-            tdoc, where = templates.get(q)
-            if tdoc is None:
-                raise SystemExit("%s: template %s cannot be read (%s), so its footprint is unknown; refusing to dress "
-                                 "round a building of unknown size" % (q["id"], q.get("template"), where))
-            size = [int(v) for v in tdoc["size"]]
-        _mx, _mz, w, d = PT.footprint(size, rot)
-        out[q["id"]] = (x0, z0, x0 + w - 1, z0 + d - 1)
+        size, where = PD.template_size(q, templates)
+        if size is None:
+            raise SystemExit("%s: template %s cannot be read (%s), so its footprint is unknown; refusing to dress "
+                             "round a building of unknown size" % (q["id"], q.get("template") or q.get("pack_template"), where))
+        out[q["id"]] = PD.footprint(q, size)
     return out
 
 

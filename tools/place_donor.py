@@ -45,20 +45,75 @@ def records(placements_doc):
     return [p for p in placements_doc.get("placements") or [] if isinstance(p, dict) and p.get("pack_template")]
 
 
+ROTATIONS = ("none", "clockwise_90", "180", "counterclockwise_90")
+MIRRORS = ("none", "left_right", "front_back")
+
+
+def transform(x, z, rot, mirror="none"):
+    """StructureTemplate.transform with the pivot at the origin, as `/place template` uses it: mirror (LEFT_RIGHT
+    negates z, FRONT_BACK negates x), then rotate about the placement position."""
+    if rot not in ROTATIONS:
+        raise SystemExit("unknown rotation %r" % rot)
+    if mirror not in MIRRORS:
+        raise SystemExit("unknown mirror %r" % mirror)
+    if mirror == "left_right":
+        z = -z
+    elif mirror == "front_back":
+        x = -x
+    return {"none": (x, z), "clockwise_90": (-z, x), "180": (-x, -z), "counterclockwise_90": (z, -x)}[rot]
+
+
+def turned_rect(x, z, size, rot, mirror="none"):
+    """(x0, z0, x1, z1), the inclusive columns a template of `size` covers when `/place template` puts it at (x, z)
+    with this rotation and mirror: turned ABOUT (x, z), so (x, z) is a min corner only when nothing turns."""
+    sx, _sy, sz = size
+    cells = [transform(tx, tz, rot, mirror) for tx in (0, sx - 1) for tz in (0, sz - 1)]
+    return (x + min(c[0] for c in cells), z + min(c[1] for c in cells),
+            x + max(c[0] for c in cells), z + max(c[1] for c in cells))
+
+
+def footprint(rec, size):
+    """(x0, z0, x1, z1), the inclusive columns a data/placements.json building occupies, as its placer seats it.
+
+    The two placers anchor differently, and a footprint computed the other way lands on the wrong side of the origin:
+      - a `pack_template` record (this tool) is `/place template` at its position, turned about that position;
+      - a `file` record (tools/place_town.py) has its position at the building's minimum corner: place_town offsets
+        the template's origin so the turned footprint starts there.
+    `size` is the template's [x, y, z] as stored, before any turn."""
+    import place_town
+    x, z = int(rec["position"]["x"]), int(rec["position"]["z"])
+    rot = rec.get("rotation") or "none"
+    mirror = rec.get("mirror") or "none"
+    if rec.get("pack_template"):
+        return turned_rect(x, z, size, rot, mirror)
+    if rec.get("file"):
+        if mirror != "none":
+            raise SystemExit("%s: place_town places no mirror, so a mirrored file record has no known footprint" % rec.get("id"))
+        _mx, _mz, w, d = place_town.footprint(size, rot)
+        return (x, z, x + w - 1, z + d - 1)
+    raise SystemExit("%s: neither a pack_template nor a file, so no placer seats it and its footprint is unknown"
+                     % rec.get("id"))
+
+
+def template_size(rec, templates):
+    """A placement's template size [x, y, z]: read from the template's NBT when `templates` (a
+    tools/town_character.Templates) can find it, else the record's own `size`; (None, why) when neither. Both read
+    and disagreeing is refused: the record's `size` would then be keeping a wrong area clear."""
+    doc, where = templates.get(rec) if templates is not None else (None, "no template reader")
+    read = [int(v) for v in doc["size"]] if doc is not None else None
+    stored = [int(v) for v in rec["size"]] if rec.get("size") else None
+    if read and stored and read != stored:
+        raise SystemExit("%s: data/placements.json says size %s, but the template %s is %s"
+                         % (rec.get("id"), stored, where, read))
+    return (read or stored), (None if (read or stored) else where)
+
+
 def box(rec):
-    """Inclusive world box the template occupies, for the given rotation about its placement corner."""
+    """Inclusive world box the template occupies, for the given rotation and mirror about its placement position."""
     x, y, z = (rec["position"][k] for k in "xyz")
-    sx, sy, sz = rec["size"]
-    rot = rec.get("rotation", "none")
-    if rot == "none":
-        return (x, y, z), (x + sx - 1, y + sy - 1, z + sz - 1)
-    if rot == "180":
-        return (x - sx + 1, y, z - sz + 1), (x, y + sy - 1, z)
-    if rot == "clockwise_90":
-        return (x - sz + 1, y, z), (x, y + sy - 1, z + sx - 1)
-    if rot == "counterclockwise_90":
-        return (x, y, z - sx + 1), (x + sz - 1, y + sy - 1, z)
-    raise SystemExit("unknown rotation %r" % rot)
+    sy = rec["size"][1]
+    x0, z0, x1, z1 = turned_rect(x, z, rec["size"], rec.get("rotation", "none"), rec.get("mirror", "none"))
+    return (x0, y, z0), (x1, y + sy - 1, z1)
 
 
 SETTLE = 20        # ticks between force-loading the box and placing, and between placing and checking

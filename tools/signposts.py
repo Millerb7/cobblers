@@ -87,8 +87,40 @@ def place_names():
     return names
 
 
-def posts(ground, wet):
+SEAT_CLEARANCE = 1           # columns a post keeps between itself and a seated NPC's feet
+SEAT_REACH_Y = 3             # a seat this far above or below the post's fence is on another level, not in its way
+
+
+def npc_seats():
+    """[(id, (x, y, z))] of every NPC whose seat a post must keep clear of: the route trainers (tools/route_trainers.py
+    placements: the route, late-route and mansion trainers, the NPCs that stand on the route verges a post is set
+    on) and data/npc_seats.json's dialogue NPCs.
+
+    The post yields, not the seat: a seat is chosen (a trainer at its bench, facing its lesson), a post is "four
+    blocks to the traveller's right, wherever that is dry" and moves along the road at no cost. Route 3's Vessu
+    Ranger stood INSIDE the transition_4 post at (1980, 134, 1602) until 2026-10-04.
+
+    What it does NOT cover: NPCs the area tools place (ferries, markets, orchard, ruins, caves, the scene NPCs) and
+    every gym spawner. They stand in towns and areas, where no post is set; tests/test_signposts_keep_clear.py's
+    replay check (tools/npc_spot_sweep.py over the built packs) is the sweep that would see one."""
+    import npc_seats as NS
+    import route_trainers as RT
+    out = [(tid, tuple(int(v) for v in at)) for tid, at, _yaw in RT.placements()]
+    out += [(cid, tuple(int(v) for v in at)) for cid, at, _cls, _yaw in NS.placements()]
+    return out
+
+
+def seat_clash(x, y, z, seats):
+    """The id of a seat a post at (x, y, z) would stand in or against, else None."""
+    for sid, (sx, sy, sz) in seats:
+        if abs(sx - x) <= SEAT_CLEARANCE and abs(sz - z) <= SEAT_CLEARANCE and abs(sy - y) <= SEAT_REACH_Y:
+            return sid
+    return None
+
+
+def posts(ground, wet, seats=None):
     """[{id, x, y, z, rotation, front, back, why}] for every post."""
+    seats = npc_seats() if seats is None else seats
     cfg = load("signposts.json")
     names = place_names()
     label = cfg["route_labels"]
@@ -107,6 +139,8 @@ def posts(ground, wet):
             dx, dz = dx / L, dz / L
             x, z = int(round(pts[k][0] - dz * off)), int(round(pts[k][1] + dx * off))
             if wet[z - ground.oz, x - ground.ox]:
+                continue
+            if seat_clash(x, ground(x, z) + 1, z, seats):
                 continue
             out.append({"id": pid, "x": x, "y": ground(x, z) + 1, "z": z, "rotation": rotation(-dx, -dz),
                         "front": lines(*front), "back": lines(*back), "why": why})

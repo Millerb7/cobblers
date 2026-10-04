@@ -761,22 +761,20 @@ def keepers(doc, plazas):
 
 def donor_footprints(settlement, placements):
     """{placement id: (x0, z0, x1, z1)} of every building placed in a town with no plan (a donor town: Pallet), from
-    its template's size and rotation; and the ids whose size could not be read."""
+    its template's size, rotation and placer (place_donor.footprint: a pack donor turns about its position); and the
+    ids whose size could not be read."""
+    import place_donor as PD
     import town_character as TC
     templates = TC.Templates(TC.default_pack_dir(), TC.default_vanilla_jar())
     out, unknown = {}, []
     for q in placements["placements"]:
         if q.get("settlement") != settlement or q.get("kind") == "earthwork" or not q.get("position"):
             continue
-        tdoc, _ = templates.get(q)
-        if tdoc is None:
+        size, _why = PD.template_size(q, templates)
+        if size is None:
             unknown.append(q["id"])
             continue
-        sx, _sy, sz = [int(v) for v in tdoc["size"]]
-        if (q.get("rotation") or "none") in ("clockwise_90", "counterclockwise_90"):
-            sx, sz = sz, sx
-        x0, z0 = int(q["position"]["x"]), int(q["position"]["z"])
-        out[q["id"]] = (x0, z0, x0 + sx - 1, z0 + sz - 1)
+        out[q["id"]] = PD.footprint(q, size)
     return out, unknown
 
 

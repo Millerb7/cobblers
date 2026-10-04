@@ -106,12 +106,10 @@ def tokens(line):
 
 
 def transform(x, z, rot, mirror="none"):
-    """StructureTemplate.transform with the pivot at the origin, as /place template uses it: mirror, then rotate."""
-    if mirror == "left_right":
-        z = -z
-    elif mirror == "front_back":
-        x = -x
-    return {"none": (x, z), "clockwise_90": (-z, x), "180": (-x, -z), "counterclockwise_90": (z, -x)}[rot]
+    """StructureTemplate.transform with the pivot at the origin, as /place template uses it: mirror, then rotate.
+    The one in tools/place_donor.py, which every building keep-clear also reads."""
+    import place_donor
+    return place_donor.transform(x, z, rot, mirror)
 
 
 class Templates:
