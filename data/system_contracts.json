@@ -470,6 +470,8 @@
         "southern_residents.py": "checker: the southern residents' builder (data/southern_residents.json, 2026-10-03): files() reads data/spawn_blocks.json and refuses to build a site that writes a block a spawn condition names. A builder's guard, not an audit; the audit is tools/southern_residents_audit.py",
         "southern_residents_audit.py": "checker: the built southern residents pack (tools/southern_residents.py), replayed over the heightmap by an agent that built none of it: no written block is a spawn condition unless a data/spawn_block_policy.json entry scoped to the place allows it",
         "northern_residents.py": "checker: the northern residents' builder (data/northern_residents.json, 2026-10-03): files() reads data/spawn_blocks.json and refuses to build a site that writes a block a spawn condition names. A builder's guard, not an audit; the audit is tools/northern_residents_audit.py",
+        "hq_tower.py": "not covered: the HQ tower's builder names data/spawn_blocks.json only in a comment (its relay masts are end rods because a lightning rod is a spawn condition); it reads no spawn list -- hq_tower_audit.py checks what it writes",
+        "hq_tower_audit.py": "checker: the HQ tower's independent audit (H2): every block the built cobblers_hq_tower writes against data/spawn_blocks.json",
         "far_south.py": "checker: the far south's builder (data/far_south.json, 2026-10-04): check_all() reads data/spawn_blocks.json and refuses to build a site that writes a block a spawn condition names. A builder's guard, not an audit; the independent audit (tools/far_south_audit.py) is owed, data/far_south.json audit_checklist",
         "northern_residents_audit.py": "checker: the built northern residents pack (tools/northern_residents.py), replayed over the heightmap by an agent that built none of it (commit 59147af): no written block is a spawn condition unless a data/spawn_block_policy.json entry scoped to northern_residents allows it"
       }
@@ -851,7 +853,7 @@
       "statement": "A resident's tags are never the blackout's exempt tag, so a resident that beats a player makes the item claim and becomes its guardian (tag cobblers.guardian, added by the blackout's recovery/bind); from then on the residents' generated keeper only counts it: no kill, hold, leash, wake, settle or merge selector of the pack reaches an entity tagged cobblers.guardian, and nothing in the pack adds or removes cobblers.guardian or the exempt tag.",
       "stated_in": [
         {
-          "at": "tools/blackout_pack.py:493",
+          "at": "tools/blackout_pack.py:498",
           "quote": "\"tag @s add cobblers.guardian\","
         },
         {
