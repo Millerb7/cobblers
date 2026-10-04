@@ -87,7 +87,19 @@ def is_air(b):
 def load():
     ar = json.loads(CITY.read_text(encoding="utf-8"))["arena"]
     tr = json.loads(TRAINERS.read_text(encoding="utf-8"))["trainers"]
-    return ar, sorted(tr, key=lambda t: t["tier"])
+    # 2026-10-03: the owner retired the spire's battles ("leave current spire, but remove the trainer battles, have
+    # the middle just be hubs"). A record with `seated: false` keeps its old stand and gate under `superseded_seat`;
+    # the SPIRE is unchanged, so the geometry checks below still read that stand and gate against it (they describe
+    # the built ring and shaft, which stay), and the record is marked `retired` so the cycle check expects NO gate
+    # line for it: nobody is turned back on a champion who no longer stands there.
+    out = []
+    for t in tr:
+        old = t.get("superseded_seat")
+        if t.get("seated") is False and old:
+            t = dict(t, **{k: v for k, v in old.items() if k != "why"})
+            t["retired"] = True
+        out.append(t)
+    return ar, sorted(out, key=lambda t: t["tier"])
 
 
 # ------------------------------------------------------------------ the arena as the data describes it
@@ -541,6 +553,11 @@ def audit(get, ar, trainers, centre, lobby, cycle=None, bridge_y=None):
         for tag, t in want_tags.items():
             lines = got.get(tag, [])
             kinds = sorted(k for k, _b, _r in lines)
+            if t.get("retired"):
+                if lines:
+                    bad("cycle", "%s is retired (seated false) but the cycle still has %s gate line(s) for it"
+                        % (t["id"], kinds))
+                continue
             if kinds != ["title", "tp"]:
                 bad("cycle", "%s: %s gate line(s), not one title and one tp" % (t["id"], kinds))
             for k, box, rest in lines:

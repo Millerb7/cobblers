@@ -1,0 +1,8 @@
+{
+  "fixture": "A TEST FIXTURE, not the dome. data/arena_dome.json is being authored in parallel by the dome's builder; tools/arena_runtime.py reads only these venue fields (id, ranks, challenger_mark [x,y,z,yaw], opponent_spot [x,y,z,yaw], post [x,y,z]), so this file carries exactly those. The positions are invented, laid out like three rings on one floor; nothing here was measured.",
+  "venues": [
+    {"id": "floor_ring", "ranks": [1, 2, 3], "challenger_mark": [3580, 20, 3200, 0], "opponent_spot": [3580, 20, 3208, 180], "post": [3577, 20, 3198]},
+    {"id": "door_ring", "ranks": [3, 4, 5, 6], "challenger_mark": [3620, 20, 3200, 0], "opponent_spot": [3620, 20, 3208, 180], "post": [3617, 20, 3198]},
+    {"id": "crown_ring", "ranks": [7, 8, 9], "challenger_mark": [3660, 20, 3200, 0], "opponent_spot": [3660, 20, 3208, 180], "post": [3657, 20, 3198]}
+  ]
+}

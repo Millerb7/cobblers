@@ -10,9 +10,10 @@ who have beaten it are near.
 
 What is asserted, on tools/route_trainers.files() and placements() over the real data: the tick and load function
 tags name cobblers:trainers/tick and /load; the load function creates the clock's objective; the clock, simulated
-from the generated lines, runs the cycle every 10 ticks; for every placed trainer (63 seats) the cycle has exactly
-one home line, one tag line, and one cooldown line unless the seat is `repeatable` (the arena's seven tiers, which
-get the home and tag lines and no cooldown, so they can be refought for ever), each keyed to that trainer's own
+from the generated lines, runs the cycle every 10 ticks; for every placed trainer (56 seats since the arena's seven
+were unseated on 2026-10-03; counted from the seat files) the cycle has exactly
+one home line, one tag line, and one cooldown line unless the seat is `repeatable` (none today; the arena's seven
+were, and would get the home and tag lines and no cooldown if re-seated), each keyed to that trainer's own
 TrainerId, seat and
 defeat field (a guardian's first `sets` field, a route trainer's quest.<id>.defeated); the tag is per trainer; the
 cooldown requires both a tagged player near and no untagged player near; the tag radius is past the trainer's sight
@@ -129,12 +130,23 @@ def test_the_cycle_runs_every_10_ticks(files):
 # Without it a trainer is not held home, not tagged for, or not cooled down (it rebattles its beaten players after a
 # restart), or is handled twice, or a line acts on some other trainer.
 def test_every_placed_trainer_has_exactly_one_line_of_each_kind(cycle):
-    # 13 route + 28 late route (seated 2026-09-30) + 5 mansion guardians + 10 Victory Road + the arena's 7 tiers
-    # (2026-10-01). Was 18, then 28, then 56, now 63. Every one still needs exactly one home and one tag line, and
-    # one cooldown line UNLESS its seat is `repeatable` (the arena's seven: REPEATABLE above, asserted absent below
-    # and in test_a_repeatable_seat_keeps_its_home_and_tag_and_has_no_cooldown).
-    assert len(IDS) == 63 and len(set(IDS)) == 63
-    assert len(REPEATABLE) == 7 and REPEATABLE <= set(IDS), sorted(REPEATABLE)
+    # 13 route + 28 late route (seated 2026-09-30) + 5 mansion guardians + 10 Victory Road + the arena's seated
+    # tiers. Was 18, then 28, then 56, then 63 with the arena's seven (2026-10-01), and 56 again since 2026-10-03:
+    # the owner retired the spire's battles ("leave current spire, but remove the trainer battles, have the middle
+    # just be hubs"), so every data/arena_trainers.json record carries `seated: false` and its old stand under
+    # `superseded_seat`, and its team became a rank-up exam spawned per player by tools/arena_runtime.py. The count
+    # is read from the seat files, not written down, so re-seating a champion moves it back without an edit here.
+    # Every seated one still needs exactly one home and one tag line, and one cooldown line UNLESS its seat is
+    # `repeatable` (asserted absent below and in test_a_repeatable_seat_keeps_its_home_and_tag_and_has_no_cooldown).
+    import json
+    n = lambda f: json.loads((ROOT / "data" / f).read_text(encoding="utf-8"))["trainers"]
+    arena = n("arena_trainers.json")
+    seated_arena = [t["id"] for t in arena if "seat" in t and t.get("seated", True)]
+    want = (len(n("route_trainers.json")) + len(n("late_route_trainers.json")) + len(n("mansion_guardians.json"))
+            + len(n("vr_trainers.json")) + len(seated_arena))
+    assert len(IDS) == want and len(set(IDS)) == want, (len(IDS), want)
+    assert not ({t["id"] for t in arena} - set(seated_arena)) & set(IDS), "an unseated arena champion is placed"
+    assert REPEATABLE == {s["id"] for s in SEATS if s.get("repeatable")} and REPEATABLE <= set(IDS), sorted(REPEATABLE)
     home, tags, cool, other = _classify(cycle)
     assert not other, other
     # The eight GYM LEADERS get a cooldown and nothing else, added 2026-09-30 after the owner beat Brock
@@ -263,9 +275,16 @@ def test_only_a_repeatable_seat_is_given_an_unlimited_defeat_count(files):
 # both on the record's own box and landing, and no other trainer has such a line.
 def test_every_arena_tier_gates_its_shaft_once(cycle):
     import json
-    recs = {r["id"]: r for r in json.loads((ROOT / "data" / "arena_trainers.json").read_text(encoding="utf-8"))["trainers"]}
+    every = json.loads((ROOT / "data" / "arena_trainers.json").read_text(encoding="utf-8"))["trainers"]
+    # 2026-10-03: the gates went with the seats (the owner: the spire's middle is "just hubs"); a record keeps its
+    # old gate under `superseded_seat`, and NO cycle line may still turn a player back on its behalf. Was 14 lines
+    # (7 x title + tp); it is now 2 x the records still seated, which the data says is none.
+    recs = {r["id"]: r for r in every if "seat" in r and r.get("seated", True)}
     gates = [l for l in cycle if re.match(r"(title|tp) @a\[x=", l)]
-    assert len(gates) == 2 * len(recs) == 14, gates
+    assert len(gates) == 2 * len(recs), gates
+    for r in every:
+        if r["id"] not in recs:
+            assert not [l for l in cycle if "cobblers_beat_%s" % r["id"] in l], r["id"]
     for tid, r in recs.items():
         x, y, z, dx, dy, dz = r["gate"]["box"]
         sel = "@a[x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d,tag=!cobblers_beat_%s,gamemode=!creative,gamemode=!spectator]" % (

@@ -1,0 +1,322 @@
+{
+  "schema": "cobblers.arena-fights/1",
+  "status": "DRAFT 2026-10-03. The fight list only: no mechanism is chosen, nothing is generated, nothing placed, nothing observed in game. Principle 20: the per-player spawn mechanism is unproven (research running in parallel), so this is a design a generator can consume once one is chosen.",
+  "generated_by": "hand (trainer-balance-designer), from the owner's brief of 2026-10-03 (docs/HANDOVER_SESSION.md item 3) and data/arena_trainers.json",
+  "doc": "docs/mechanics/HEAVENS_ARENA_FIGHTS.md",
+  "owner_brief": "\"Heaven's Arena should be a battle zone where a player can go in and always find a cool battle or gauntlet to match up against. I think early levels will be single battles then transition into more back to back. ... each player will have their own progress and their opponent will be spawned in front of them. We might need to make a list of fights a player can get.\" (the owner, 2026-10-03)",
+
+  "authorship": {
+    "champions_are_referenced_not_copied": "The seven tier champions are authored in data/arena_trainers.json (`trainers[].team`, `display_name`, `dialogue_text`, `strategy`). This file names them by id only and never re-authors a team, a name or a line, so data/id_authorship.json needs no new declaration: no id in this file is carried by any other file. Fields of arena_trainers.json that belong to the old hub tower (`seat`, `gate`, `yaw`, `faces`, `gate_why`) are NOT read here; the owner redirected the arena to the Deep's empty north on 2026-10-03 and those fields are the site design's to settle.",
+    "ids_owned_here": "rank ids (arena_rank_1..9), the relay id arena_relay_floor_wardens, set ids (arena_set_*), prize ids. All prefixed so they cannot collide with a trainer id."
+  },
+
+  "access": {
+    "today": "Eight badges. The arena belongs to the Deep, which is inside Rift zone Z2 (docs/mechanics/RIFT_ZONES.md section 2: Z2 'Victory Road', pass '8 badges', guard G2 at (3738, 5082)). No route reaches it earlier. Relayed, not measured here: that the Deep's north lies inside Z2 (the brief says so; RIFT_ZONES lists Z2's area as the south-west arm, stem, trunk, League precinct and Hoopa's cradle).",
+    "so_the_floor_is_cap_60": "A player who can stand in the arena has gym8_cleared, so their rctmod cap is at least 60 (docs/mechanics/LEAGUE_LEVEL_CAP.md section 2: after gym 8 the cap is 60, after Lance 62, after Blue 100). The ladder therefore starts at 60 and every rank's top level is at or under the lowest cap a player admitted to that rank can have.",
+    "if_the_door_moves_earlier": "Not authored. The set pool is level-free (levels are assigned per band), so a pre-badge-8 band is a matter of adding ranks with lower bands and a pool of earlier-stage species. Open question Q1."
+  },
+
+  "bands": [
+    {"id": "league_eve", "cap": 60, "requires": ["gym8_cleared"], "ranks": [1, 2, 3], "why": "Eight badges, Elite Four not yet through. Cap 60 = Lorelei's ace. Every bout here tops out at 60 or below, so the arena is a place to sharpen a team for the League without out-levelling it (the cap stops that anyway)."},
+    {"id": "champion_door", "cap": 62, "requires": ["gym8_cleared", "rct_defeated:kanto_league_lance OR champion_cleared"], "ranks": [4], "why": "Lance beaten, Blue not yet: the cap is 62 = Blue's ace (data/trainers.json champion_blue 58-62). One rank whose bouts are pitched exactly at the Champion, so a player stuck on Blue has a repeatable rehearsal. No flag for 'Lance beaten' exists in data/progression.json today: see mechanism_needs N9."},
+    {"id": "postgame", "cap": 100, "requires": ["champion_cleared"], "ranks": [5, 6, 7, 8, 9], "why": "After Blue rctmod's cap is 100 (LEAGUE_LEVEL_CAP.md section 1: no next trainer, maxLevel 100; VERIFIED in rctmod 0.19.0-beta source by that document). The ladder climbs past the campaign: 65, 68, 72, 76, then an endless streak to 100."}
+  ],
+
+  "formats": {
+    "single": "One opponent, one battle, GEN_9_SINGLES. The challenger's party is healed at the start of the bout.",
+    "gauntlet": "N opponents back to back, GEN_9_SINGLES. Healed at the start of the run only. Between legs the party carries HP, PP, status and fainted members unless the rank names an intermission. The next opponent appears when the previous battle ends in a win. A loss, a flee or a disconnect ends the run.",
+    "relay": "A gauntlet whose legs are named authored trainers rather than draws (used once, at rank 3).",
+    "streak": "Endless gauntlet: bouts continue until a loss; level and team size rise with the streak; healed every `heal_every` wins.",
+    "battle_rules_every_bout": {"maxItemUses": 0, "adjustPlayerLevels": false, "adjustNPCLevels": false, "why": "The same rules every authored boss and all seven champions carry (data/arena_trainers.json rct.battleRules). No bag items in a bout: attrition in a gauntlet is answered by team building, not potions."}
+  },
+
+  "ranks": [
+    {
+      "id": "arena_rank_1", "rank": 1, "name": "The Floor", "band": "league_eve",
+      "format": "single", "members": 3, "levels": {"floor": 54, "top": 57},
+      "pool": "draw", "advance": {"wins_at_rank": 3, "then": "arena_tier_1_champion", "wins_waived_by": ["champion_cleared"]},
+      "purse": {"per_win": "formula", "typical": 2200},
+      "first_clear_prize": "arena_prize_rank_1",
+      "why": "The door: three-member singles a League-ready team should win, just under Lorelei. Pit-Hand Odell (ace 56) is its exam: the first fight that punishes opening with a setup move."
+    },
+    {
+      "id": "arena_rank_2", "rank": 2, "name": "The Shaft", "band": "league_eve",
+      "format": "single", "members": 4, "levels": {"floor": 56, "top": 59},
+      "pool": "draw", "advance": {"wins_at_rank": 3, "then": "arena_tier_2_champion", "wins_waived_by": ["champion_cleared"]},
+      "purse": {"per_win": "formula", "typical": 3000},
+      "first_clear_prize": "arena_prize_rank_2",
+      "why": "Four members: the first bout where one counter cannot carry the fight. Shaftwalker Nessa (ace 59) is a stall exam."
+    },
+    {
+      "id": "arena_rank_3", "rank": 3, "name": "The Relay", "band": "league_eve",
+      "format": "gauntlet", "legs": 2, "members": 3, "levels": {"floor": 57, "top": 60}, "intermission_after_leg": null,
+      "pool": "draw", "advance": {"clears_at_rank": 2, "then": "arena_relay_floor_wardens", "wins_waived_by": ["champion_cleared"]},
+      "purse": {"per_leg": "formula", "typical_per_leg": 2300, "clear_bonus": 2000},
+      "first_clear_prize": "arena_prize_rank_3",
+      "why": "The owner's 'transition into back to back' starts here, at its gentlest: two three-member opponents, no heal between. Six opposing Pokemon is the Elite Four's own member count, so the rank teaches the League's real question (can your six survive six) at the League's own level."
+    },
+    {
+      "id": "arena_rank_4", "rank": 4, "name": "The Champion's Door", "band": "champion_door",
+      "format": "single", "members": 4, "levels": {"floor": 59, "top": 62},
+      "pool": "draw", "advance": {"wins_at_rank": 2, "then": "arena_tier_3_champion", "wins_waived_by": ["champion_cleared"]},
+      "purse": {"per_win": "formula", "typical": 3150},
+      "first_clear_prize": "arena_prize_rank_4",
+      "why": "Pitched exactly at Blue (ace 62). Conduit Chief Veyl's Trick Room (ace 62) is the one champion whose level needs cap 62, which is why this rank waits for Lance."
+    },
+    {
+      "id": "arena_rank_5", "rank": 5, "name": "The Sluice", "band": "postgame",
+      "format": "gauntlet", "legs": 3, "members": 2, "levels": {"floor": 61, "top": 65}, "intermission_after_leg": null,
+      "pool": "draw", "advance": {"clears_at_rank": 2, "then": "arena_tier_4_champion"},
+      "purse": {"per_leg": "formula", "typical_per_leg": 1700, "clear_bonus": 2500},
+      "first_clear_prize": "arena_prize_rank_5",
+      "why": "Three legs of two: more battles, fewer Pokemon each, so the new pressure is switching and leads, not raw attrition. Postgame sets (pseudo-legendaries, setup sweepers) enter the pool here."
+    },
+    {
+      "id": "arena_rank_6", "rank": 6, "name": "The Terrace", "band": "postgame",
+      "format": "gauntlet", "legs": 3, "members": 3, "levels": {"floor": 64, "top": 68}, "intermission_after_leg": null,
+      "pool": "draw", "advance": {"clears_at_rank": 2, "then": "arena_tier_5_champion"},
+      "purse": {"per_leg": "formula", "typical_per_leg": 2600, "clear_bonus": 3000},
+      "first_clear_prize": "arena_prize_rank_6",
+      "why": "Nine opposing Pokemon without a heal, half again the League's count."
+    },
+    {
+      "id": "arena_rank_7", "rank": 7, "name": "The Tear", "band": "postgame",
+      "format": "gauntlet", "legs": 5, "members": 2, "levels": {"floor": 67, "top": 72}, "intermission_after_leg": null,
+      "pool": "draw", "advance": {"clears_at_rank": 2, "then": "arena_tier_6_champion"},
+      "purse": {"per_leg": "formula", "typical_per_leg": 1850, "clear_bonus": 5000},
+      "first_clear_prize": "arena_prize_rank_7",
+      "why": "Five back to back, two each: ten Pokemon and five fresh leads. The owner's 'gauntlet of 5' arrives with small teams so it is long, not hopeless."
+    },
+    {
+      "id": "arena_rank_8", "rank": 8, "name": "The Crown", "band": "postgame",
+      "format": "gauntlet", "legs": 5, "members": 3, "levels": {"floor": 71, "top": 76}, "intermission_after_leg": 3,
+      "pool": "draw", "advance": {"clears_at_rank": 1, "then": "arena_tier_7_champion"},
+      "purse": {"per_leg": "formula", "typical_per_leg": 2900, "clear_bonus": 7500},
+      "first_clear_prize": "arena_prize_rank_8",
+      "why": "Fifteen Pokemon at Oryx's band. One full heal after leg 3, because fifteen against six with no heal is a wall no team-building answers; with it, the run is two halves of the League's size. Oryx (ace 76) is the hardest single fight authored in the campaign."
+    },
+    {
+      "id": "arena_rank_9", "rank": 9, "name": "Above the Crown", "band": "postgame",
+      "format": "streak", "requires_rank_cleared": 8,
+      "streak": {
+        "members_start": 3,
+        "level_start": 78,
+        "level_step": 2,
+        "level_step_every_wins": 3,
+        "level_max": 100,
+        "at_level_max": "members +1 every 6 wins, to 6",
+        "heal_every": 3
+      },
+      "pool": "draw",
+      "purse": {"per_win": "formula", "every_5th_win_bonus": 3000},
+      "milestones": [
+        {"streak": 10, "prize": "arena_prize_streak_10"},
+        {"streak": 25, "prize": "arena_prize_streak_25"},
+        {"streak": 50, "prize": "arena_prize_streak_50"}
+      ],
+      "record": "best streak per player (the arena's long-term score)",
+      "why": "The 'always find a fight' rank: no end, no cap but Cobblemon's 100. Level 100 arrives at win 33; after that the teams grow to six by win 51."
+    }
+  ],
+
+  "rank_up_fights": [
+    {"rank": 1, "trainer": "arena_tier_1_champion", "source": "data/arena_trainers.json", "format": "single", "ace": 56, "members": 3, "purse_typical": 2150},
+    {"rank": 2, "trainer": "arena_tier_2_champion", "source": "data/arena_trainers.json", "format": "single", "ace": 59, "members": 3, "purse_typical": 2250},
+    {"rank": 3, "id": "arena_relay_floor_wardens", "format": "relay", "legs": ["arena_tier_1_champion", "arena_tier_2_champion"], "heal_between": false, "ace": 59, "members": 6, "purse_typical": 4400, "why": "Odell then Nessa with no heal between: the two champions a player has already beaten, at their own levels (54-59, all under cap 60), now as one run. No new team is invented for the rank, and the exam asks exactly what the rank taught."},
+    {"rank": 4, "trainer": "arena_tier_3_champion", "source": "data/arena_trainers.json", "format": "single", "ace": 62, "members": 4, "purse_typical": 3150},
+    {"rank": 5, "trainer": "arena_tier_4_champion", "source": "data/arena_trainers.json", "format": "single", "ace": 65, "members": 4, "purse_typical": 3300},
+    {"rank": 6, "trainer": "arena_tier_5_champion", "source": "data/arena_trainers.json", "format": "single", "ace": 68, "members": 5, "purse_typical": 4300},
+    {"rank": 7, "trainer": "arena_tier_6_champion", "source": "data/arena_trainers.json", "format": "single", "ace": 72, "members": 5, "purse_typical": 4550},
+    {"rank": 8, "trainer": "arena_tier_7_champion", "source": "data/arena_trainers.json", "format": "single", "ace": 76, "members": 6, "purse_typical": 5800}
+  ],
+
+  "advancement_rule": {
+    "per_player": "A player holds one rank (starts at 1). At their rank: win `wins_at_rank` bouts (or `clears_at_rank` full gauntlet runs) drawn from the pool, which opens the rank-up fight; beat it to move to the next rank. Ranks never go down.",
+    "waiver": "Ranks 1-4 carry `wins_waived_by: [champion_cleared]`: a player who arrives after beating Blue may challenge each of the first four rank-up fights directly, so a postgame newcomer is not made to farm 56s with a 70 team. The rank-ups themselves are never waived.",
+    "band_gate": "A rank whose band's `requires` the player does not meet stays closed even if the rank below is cleared (a player at cap 60 who clears rank 3 waits there until Lance falls).",
+    "playing_down": "Any rank at or below the player's own is always open, repeatably. That is half of 'always find a fight'."
+  },
+
+  "repeatability": {
+    "pool_bouts": "endless, for every player; a fresh draw each time",
+    "rank_up_fights": "repeatable after the first win, paid each time; the first-clear prize is once per player",
+    "streak": "a new run starts at streak 0 whenever the last one ended",
+    "matches_existing_decision": "data/arena_trainers.json `repeatability.decision`: every champion endlessly repeatable, no Cooldown line."
+  },
+
+  "draw": {
+    "what": "A pool bout's opponent is drawn from `set_pool.sets`: `members` sets whose `min_rank` <= the rank, levels assigned by the band.",
+    "levels": "The last member (the ace) is the band's `top`; each earlier member is one level lower, never below `floor`. For a streak, `top` is the streak's current level.",
+    "constraints": [
+      "no species twice in one opponent, nor in one gauntlet run (the run is one draw of legs x members sets)",
+      "no more than two members of one opponent share a type",
+      "ranks 1-2: at most one set with role `setup` per opponent",
+      "if any drawn set has role `lead`, it is placed first",
+      "ranks 5+: one bout in four is a THEME draw: every member shares one type (only types with at least `members` eligible sets)",
+      "per player, the sets of their last two bouts are excluded from the next draw where the pool allows (needs mechanism N7; drop the rule if per-player history cannot be stored)"
+    ],
+    "identity": {
+      "names": "drawn from `identities.names`, prefixed with the rank's title, e.g. 'Floor Challenger Ada'",
+      "skins": "drawn from `identities.skins` (rctmod textures already referenced by seated trainers in data/vr_trainers.json and data/late_route_trainers.json; a non-rctmod mechanism needs its own list)",
+      "ai": "rctmod-style AI data per rank, from arena_trainers.json's own progression: rank 1 moveBias 1.05 ... rank 8 moveBias 1.4; streak uses rank 8's"
+    },
+    "prebake_fallback": {
+      "when": "if the chosen mechanism can only spawn trainers with static teams (rctmod: 'the team is a static array', docs/research/notes/rct-arena-capabilities.md section 0 item 2)",
+      "how": "the generator draws 24 bouts per rank (ranks 1-8) and 12 per streak level step with a recorded seed, applying every constraint above, and emits them as fixed trainer ids arena_r<rank>_b<nn>; at runtime a function picks one at random. 24 x 8 + 12 x 12 = 336 fixed fights.",
+      "cost": "loses the theme and recent-history rules' runtime freshness only; 24 per rank still means a player rarely meets the same opponent twice in a session"
+    },
+    "variety_estimate": "Unconstrained combinations of eligible sets: rank 1, 30 sets choose 3 = 4,060; ranks 5+, 47 sets choose 3 = 16,215. Constraints cut this by an unmeasured fraction; it remains in the thousands at every rank."
+  },
+
+  "identities": {
+    "names": ["Ada", "Bram", "Cass", "Dov", "Ena", "Fenn", "Gale", "Hollis", "Ines", "Jory", "Kesh", "Lune", "Mire", "Nell", "Orla", "Pike", "Quin", "Rook", "Sable", "Tamsin", "Ulm", "Vesk", "Wren", "Yara"],
+    "titles_by_rank": {"1": "Floor Challenger", "2": "Shaft Runner", "3": "Relay Hand", "4": "Door Warden", "5": "Sluice Diver", "6": "Terrace Duelist", "7": "Tear Seer", "8": "Crown Aspirant", "9": "Ascendant"},
+    "skins": [
+      "rctmod:textures/trainers/single/camper_liam_008e.png",
+      "rctmod:textures/trainers/single/hiker_nob_00b7.png",
+      "rctmod:textures/trainers/single/worker_braden_0460.png",
+      "rctmod:textures/trainers/single/engineer_bernie_00de.png",
+      "rctmod:textures/trainers/single/hiker_brice_00ba.png",
+      "rctmod:textures/trainers/single/aroma_lady_violet_022e.png",
+      "rctmod:textures/trainers/single/pokemon_ranger_taylor_0335.png",
+      "rctmod:textures/trainers/single/camper_jeff_0092.png",
+      "rctmod:textures/trainers/single/scientist_ted_014f.png",
+      "rctmod:textures/trainers/single/pokemon_ranger_jeffrey_0336.png",
+      "rctmod:textures/trainers/single/fisherman_andrew_00e9.png"
+    ]
+  },
+
+  "set_pool": {
+    "what": "Level-free competitive sets in data/trainers.json's team-member format (species, moveset, ability, heldItem, nature); `level` is added by the draw. `types` and `role` drive the constraints and theme draws.",
+    "vocabulary": "Every heldItem below is one already used by a team in data/trainers.json or data/arena_trainers.json. Species ids and move ids are Showdown-style lowercase, as the repo's teams use. Ability is given for every set; a generator may drop one Cobblemon rejects and fall back to the species default.",
+    "not_verified": "The Cobblemon 1.8.0 jar is not in this worktree, so no learnset was read: that each species learns each move is NOT verified. Moves were chosen from level-up and TM learnsets as I know them, avoiding egg-only moves where I was unsure; a learnset check against the jar is mechanism_needs N11 and must run before any of these is generated. Gen 9 species are avoided except those already in authored teams.",
+    "sets": [
+      {"id": "arena_set_arcanine", "min_rank": 1, "types": ["fire"], "role": "pivot", "member": {"species": "arcanine", "moveset": ["flareblitz", "wildcharge", "extremespeed", "willowisp"], "ability": "intimidate", "heldItem": "sitrus_berry", "nature": "adamant"}},
+      {"id": "arena_set_starmie", "min_rank": 1, "types": ["water", "psychic"], "role": "special", "member": {"species": "starmie", "moveset": ["surf", "psychic", "thunderbolt", "rapidspin"], "ability": "naturalcure", "heldItem": "life_orb", "nature": "timid"}},
+      {"id": "arena_set_gengar", "min_rank": 1, "types": ["ghost", "poison"], "role": "special", "member": {"species": "gengar", "moveset": ["shadowball", "sludgebomb", "focusblast", "willowisp"], "ability": "cursedbody", "heldItem": "life_orb", "nature": "timid"}},
+      {"id": "arena_set_lapras", "min_rank": 1, "types": ["water", "ice"], "role": "bulk", "member": {"species": "lapras", "moveset": ["icebeam", "hydropump", "thunderbolt", "sing"], "ability": "waterabsorb", "heldItem": "leftovers", "nature": "modest"}},
+      {"id": "arena_set_snorlax", "min_rank": 1, "types": ["normal"], "role": "setup", "member": {"species": "snorlax", "moveset": ["bodyslam", "crunch", "earthquake", "curse"], "ability": "thickfat", "heldItem": "leftovers", "nature": "adamant"}},
+      {"id": "arena_set_heracross", "min_rank": 1, "types": ["bug", "fighting"], "role": "physical", "member": {"species": "heracross", "moveset": ["megahorn", "closecombat", "stoneedge", "knockoff"], "ability": "guts", "heldItem": "choice_scarf", "nature": "jolly"}},
+      {"id": "arena_set_scizor", "min_rank": 1, "types": ["bug", "steel"], "role": "setup", "member": {"species": "scizor", "moveset": ["bulletpunch", "uturn", "swordsdance", "knockoff"], "ability": "technician", "heldItem": "muscle_band", "nature": "adamant"}},
+      {"id": "arena_set_skarmory", "min_rank": 1, "types": ["steel", "flying"], "role": "lead", "member": {"species": "skarmory", "moveset": ["spikes", "drillpeck", "roost", "whirlwind"], "ability": "sturdy", "heldItem": "rocky_helmet", "nature": "impish"}},
+      {"id": "arena_set_gyarados", "min_rank": 1, "types": ["water", "flying"], "role": "setup", "member": {"species": "gyarados", "moveset": ["dragondance", "waterfall", "earthquake", "icefang"], "ability": "intimidate", "heldItem": "lum_berry", "nature": "adamant"}},
+      {"id": "arena_set_jolteon", "min_rank": 1, "types": ["electric"], "role": "special", "member": {"species": "jolteon", "moveset": ["thunderbolt", "shadowball", "voltswitch", "thunderwave"], "ability": "voltabsorb", "heldItem": "magnet", "nature": "timid"}},
+      {"id": "arena_set_umbreon", "min_rank": 1, "types": ["dark"], "role": "bulk", "member": {"species": "umbreon", "moveset": ["foulplay", "moonlight", "toxic", "protect"], "ability": "synchronize", "heldItem": "leftovers", "nature": "calm"}},
+      {"id": "arena_set_espeon", "min_rank": 1, "types": ["psychic"], "role": "setup", "member": {"species": "espeon", "moveset": ["psychic", "dazzlinggleam", "shadowball", "calmmind"], "ability": "magicbounce", "heldItem": "life_orb", "nature": "timid"}},
+      {"id": "arena_set_chandelure", "min_rank": 1, "types": ["ghost", "fire"], "role": "special", "member": {"species": "chandelure", "moveset": ["shadowball", "flamethrower", "energyball", "willowisp"], "ability": "flashfire", "heldItem": "expert_belt", "nature": "timid"}},
+      {"id": "arena_set_rhyperior", "min_rank": 2, "types": ["ground", "rock"], "role": "setup", "member": {"species": "rhyperior", "moveset": ["earthquake", "stoneedge", "megahorn", "rockpolish"], "ability": "solidrock", "heldItem": "weakness_policy", "nature": "adamant"}},
+      {"id": "arena_set_togekiss", "min_rank": 1, "types": ["fairy", "flying"], "role": "bulk", "member": {"species": "togekiss", "moveset": ["airslash", "dazzlinggleam", "thunderwave", "roost"], "ability": "serenegrace", "heldItem": "leftovers", "nature": "timid"}},
+      {"id": "arena_set_ninetales", "min_rank": 1, "types": ["fire"], "role": "setup", "member": {"species": "ninetales", "moveset": ["flamethrower", "solarbeam", "nastyplot", "willowisp"], "ability": "drought", "heldItem": "heat_rock", "nature": "timid"}},
+      {"id": "arena_set_venusaur", "min_rank": 1, "types": ["grass", "poison"], "role": "bulk", "member": {"species": "venusaur", "moveset": ["gigadrain", "sludgebomb", "sleeppowder", "leechseed"], "ability": "overgrow", "heldItem": "black_sludge", "nature": "calm"}},
+      {"id": "arena_set_ampharos", "min_rank": 1, "types": ["electric"], "role": "special", "member": {"species": "ampharos", "moveset": ["thunderbolt", "dragonpulse", "focusblast", "voltswitch"], "ability": "static", "heldItem": "assault_vest", "nature": "modest"}},
+      {"id": "arena_set_aerodactyl", "min_rank": 1, "types": ["rock", "flying"], "role": "lead", "member": {"species": "aerodactyl", "moveset": ["stealthrock", "rockslide", "earthquake", "taunt"], "ability": "pressure", "heldItem": "focus_sash", "nature": "jolly"}},
+      {"id": "arena_set_absol", "min_rank": 1, "types": ["dark"], "role": "setup", "member": {"species": "absol", "moveset": ["suckerpunch", "knockoff", "swordsdance", "playrough"], "ability": "superluck", "heldItem": "life_orb", "nature": "adamant"}},
+      {"id": "arena_set_weavile", "min_rank": 1, "types": ["dark", "ice"], "role": "setup", "member": {"species": "weavile", "moveset": ["iceshard", "knockoff", "icepunch", "swordsdance"], "ability": "pressure", "heldItem": "muscle_band", "nature": "jolly"}},
+      {"id": "arena_set_mamoswine", "min_rank": 1, "types": ["ice", "ground"], "role": "lead", "member": {"species": "mamoswine", "moveset": ["earthquake", "icefang", "iceshard", "stealthrock"], "ability": "thickfat", "heldItem": "focus_sash", "nature": "adamant"}},
+      {"id": "arena_set_vaporeon", "min_rank": 1, "types": ["water"], "role": "bulk", "member": {"species": "vaporeon", "moveset": ["scald", "icebeam", "haze", "protect"], "ability": "waterabsorb", "heldItem": "leftovers", "nature": "bold"}},
+      {"id": "arena_set_hitmontop", "min_rank": 1, "types": ["fighting"], "role": "lead", "member": {"species": "hitmontop", "moveset": ["fakeout", "closecombat", "rapidspin", "stoneedge"], "ability": "intimidate", "heldItem": "sitrus_berry", "nature": "adamant"}},
+      {"id": "arena_set_tentacruel", "min_rank": 1, "types": ["water", "poison"], "role": "bulk", "member": {"species": "tentacruel", "moveset": ["scald", "sludgebomb", "rapidspin", "toxicspikes"], "ability": "clearbody", "heldItem": "black_sludge", "nature": "calm"}},
+      {"id": "arena_set_lucario", "min_rank": 1, "types": ["fighting", "steel"], "role": "setup", "member": {"species": "lucario", "moveset": ["aurasphere", "flashcannon", "nastyplot", "darkpulse"], "ability": "innerfocus", "heldItem": "life_orb", "nature": "timid"}},
+      {"id": "arena_set_slowbro", "min_rank": 1, "types": ["water", "psychic"], "role": "bulk", "member": {"species": "slowbro", "moveset": ["scald", "psychic", "slackoff", "thunderwave"], "ability": "regenerator", "heldItem": "rocky_helmet", "nature": "bold"}},
+      {"id": "arena_set_hippowdon", "min_rank": 1, "types": ["ground"], "role": "lead", "member": {"species": "hippowdon", "moveset": ["earthquake", "slackoff", "stealthrock", "whirlwind"], "ability": "sandstream", "heldItem": "leftovers", "nature": "impish"}},
+      {"id": "arena_set_staraptor", "min_rank": 1, "types": ["normal", "flying"], "role": "physical", "member": {"species": "staraptor", "moveset": ["bravebird", "closecombat", "uturn", "doubleedge"], "ability": "intimidate", "heldItem": "choice_scarf", "nature": "jolly"}},
+      {"id": "arena_set_dusknoir", "min_rank": 1, "types": ["ghost"], "role": "bulk", "member": {"species": "dusknoir", "moveset": ["shadowsneak", "earthquake", "icepunch", "willowisp"], "ability": "pressure", "heldItem": "leftovers", "nature": "adamant"}},
+      {"id": "arena_set_electivire", "min_rank": 1, "types": ["electric"], "role": "physical", "member": {"species": "electivire", "moveset": ["wildcharge", "icepunch", "crosschop", "earthquake"], "ability": "motordrive", "heldItem": "expert_belt", "nature": "jolly"}},
+      {"id": "arena_set_froslass", "min_rank": 2, "types": ["ice", "ghost"], "role": "lead", "member": {"species": "froslass", "moveset": ["spikes", "icebeam", "shadowball", "destinybond"], "ability": "cursedbody", "heldItem": "focus_sash", "nature": "timid"}},
+      {"id": "arena_set_krookodile", "min_rank": 2, "types": ["ground", "dark"], "role": "lead", "member": {"species": "krookodile", "moveset": ["earthquake", "knockoff", "stoneedge", "stealthrock"], "ability": "intimidate", "heldItem": "focus_sash", "nature": "jolly"}},
+      {"id": "arena_set_azumarill", "min_rank": 3, "types": ["water", "fairy"], "role": "physical", "member": {"species": "azumarill", "moveset": ["aquajet", "playrough", "liquidation", "knockoff"], "ability": "hugepower", "heldItem": "sitrus_berry", "nature": "adamant"}},
+      {"id": "arena_set_garchomp", "min_rank": 5, "types": ["dragon", "ground"], "role": "setup", "member": {"species": "garchomp", "moveset": ["swordsdance", "earthquake", "dragonclaw", "stoneedge"], "ability": "roughskin", "heldItem": "life_orb", "nature": "jolly"}},
+      {"id": "arena_set_hydreigon", "min_rank": 5, "types": ["dark", "dragon"], "role": "special", "member": {"species": "hydreigon", "moveset": ["darkpulse", "dracometeor", "flamethrower", "uturn"], "ability": "levitate", "heldItem": "choice_scarf", "nature": "timid"}},
+      {"id": "arena_set_dragonite", "min_rank": 5, "types": ["dragon", "flying"], "role": "setup", "member": {"species": "dragonite", "moveset": ["dragondance", "extremespeed", "earthquake", "firepunch"], "ability": "multiscale", "heldItem": "weakness_policy", "nature": "adamant"}},
+      {"id": "arena_set_kommoo", "min_rank": 5, "types": ["dragon", "fighting"], "role": "setup", "member": {"species": "kommoo", "moveset": ["dragondance", "closecombat", "poisonjab", "dragonclaw"], "ability": "bulletproof", "heldItem": "lum_berry", "nature": "jolly"}},
+      {"id": "arena_set_volcarona", "min_rank": 5, "types": ["bug", "fire"], "role": "setup", "member": {"species": "volcarona", "moveset": ["quiverdance", "flamethrower", "bugbuzz", "gigadrain"], "ability": "flamebody", "heldItem": "heavy_duty_boots", "nature": "timid"}},
+      {"id": "arena_set_gardevoir", "min_rank": 5, "types": ["psychic", "fairy"], "role": "setup", "member": {"species": "gardevoir", "moveset": ["moonblast", "psyshock", "calmmind", "shadowball"], "ability": "synchronize", "heldItem": "leftovers", "nature": "timid"}},
+      {"id": "arena_set_goodra", "min_rank": 5, "types": ["dragon"], "role": "special", "member": {"species": "goodra", "moveset": ["dracometeor", "sludgebomb", "fireblast", "thunderbolt"], "ability": "sapsipper", "heldItem": "assault_vest", "nature": "modest"}},
+      {"id": "arena_set_haxorus", "min_rank": 5, "types": ["dragon"], "role": "setup", "member": {"species": "haxorus", "moveset": ["dragondance", "outrage", "earthquake", "poisonjab"], "ability": "moldbreaker", "heldItem": "lum_berry", "nature": "jolly"}},
+      {"id": "arena_set_porygonz", "min_rank": 5, "types": ["normal"], "role": "setup", "member": {"species": "porygonz", "moveset": ["triattack", "thunderbolt", "icebeam", "nastyplot"], "ability": "adaptability", "heldItem": "life_orb", "nature": "modest"}},
+      {"id": "arena_set_chansey", "min_rank": 5, "types": ["normal"], "role": "bulk", "member": {"species": "chansey", "moveset": ["softboiled", "seismictoss", "toxic", "stealthrock"], "ability": "naturalcure", "heldItem": "eviolite", "nature": "bold"}},
+      {"id": "arena_set_honchkrow", "min_rank": 5, "types": ["dark", "flying"], "role": "physical", "member": {"species": "honchkrow", "moveset": ["bravebird", "suckerpunch", "heatwave", "roost"], "ability": "superluck", "heldItem": "life_orb", "nature": "adamant"}},
+      {"id": "arena_set_breloom", "min_rank": 5, "types": ["grass", "fighting"], "role": "lead", "member": {"species": "breloom", "moveset": ["spore", "machpunch", "bulletseed", "rocktomb"], "ability": "technician", "heldItem": "focus_sash", "nature": "jolly"}},
+      {"id": "arena_set_mimikyu", "min_rank": 5, "types": ["ghost", "fairy"], "role": "setup", "member": {"species": "mimikyu", "moveset": ["swordsdance", "shadowclaw", "playrough", "shadowsneak"], "ability": "disguise", "heldItem": "life_orb", "nature": "jolly"}}
+    ],
+    "counts": {"total": 47, "eligible_rank_1": 30, "eligible_rank_2": 33, "eligible_ranks_3_4": 34, "eligible_ranks_5_plus": 47}
+  },
+
+  "prizes": {
+    "purse_formula": "round to the nearest 50 of 13 x (sum of the defeated opponent's levels). 13 is docs/research/INCOME_MEASUREMENT.md's model B coefficient ($732 / 56, Brock's one measured payout over our gym_01_brock's level sum), the middle of that document's bracket and labelled ASSUMED there. The arena's money is therefore the same money a route or League trainer of that size pays, not a new rate. Typical figures in `ranks` are this formula with the ace at the band's top and each earlier member one lower, as the draw assigns; in `rank_up_fights` it is the champion's authored levels.",
+    "who_pays": "If the mechanism is an rctmod trainer, earnCobbleDollarsFromNPC already pays on every win (VERIFIED, data/arena_trainers.json repeatability.why_1), so the arena pays ONLY the bonuses below and not the formula, or a win pays twice. Any other mechanism pays the formula itself, with `cobbledollars give @s <n>` (the purse command tools/blackout_pack.py uses).",
+    "bonuses": "gauntlet `clear_bonus` on clearing the whole run; streak `every_5th_win_bonus`. Legs already won in a failed run keep their purse.",
+    "exhibition": "A bout at a rank two or more below the player's own pays 25% of purse and no bonus: playing down stays open, farming rank 1 with a rank 8 team is not the arena's best income.",
+    "losses": "The arena takes nothing. Whether an arena loss triggers the blackout charge (data/blackout.json, flat $600) is open question Q4; recommended no.",
+    "scale_against_the_shops": "At badge 8 the shelves sell Max Revive 2,500, Full Restore 2 for 3,000, Gold Bottle Cap 6,000, Diamond backpack 10,000 (data/markets.json). A rank 1 win buys a Max Revive; a rank 8 clear (about 22,000 with its bonus) buys a backpack and two bottle caps. That is 'real money' without dwarfing the League's own ~23,000 (INCOME_MEASUREMENT 2.4, model B).",
+    "items": [
+      {"id": "arena_prize_rank_1", "on": "first win over arena_tier_1_champion", "once": "per player", "contents": [{"item": "cobblemon:choice_band", "count": 1, "verification": "VERIFIED by data/rewards.json (assets/cobblemon/models/item/choice_band.json in Cobblemon-fabric-1.8.0+1.21.1.jar)"}]},
+      {"id": "arena_prize_rank_2", "on": "first win over arena_tier_2_champion", "once": "per player", "contents": [{"item": "cobblemon:leftovers", "count": 1, "verification": "VERIFIED by data/rewards.json"}]},
+      {"id": "arena_prize_rank_3", "on": "first clear of arena_relay_floor_wardens", "once": "per player", "contents": [{"item": "obc:bottle_cap_gold", "count": 1, "verification": "VERIFIED by data/rewards.json (Only Bottle Caps 1.5.0)"}]},
+      {"id": "arena_prize_rank_4", "on": "first win over arena_tier_3_champion", "once": "per player", "contents": [{"item": "cobblemon:choice_scarf", "count": 1, "verification": "NOT VERIFIED as an item id; choice_scarf is verified only as a heldItem name in authored teams"}]},
+      {"id": "arena_prize_rank_5", "on": "first win over arena_tier_4_champion", "once": "per player", "contents": [{"item": "obc:bottle_cap_gold", "count": 2, "verification": "VERIFIED by data/rewards.json"}]},
+      {"id": "arena_prize_rank_6", "on": "first win over arena_tier_5_champion", "once": "per player", "contents": [{"item": "cobblemon:life_orb", "count": 1, "verification": "NOT VERIFIED as an item id"}]},
+      {"id": "arena_prize_rank_7", "on": "first win over arena_tier_6_champion", "once": "per player", "contents": [{"item": "cobblemon:ability_patch", "count": 1, "verification": "NOT VERIFIED; Cobblemon ships an ability patch as far as I know, but no file in this repository records the id"}]},
+      {"id": "arena_prize_rank_8", "on": "first win over arena_tier_7_champion", "once": "per player", "contents": [{"item": "obc:bottle_cap_gold", "count": 3, "verification": "VERIFIED by data/rewards.json"}]},
+      {"id": "arena_prize_streak_10", "on": "first streak of 10", "once": "per player", "contents": [{"item": "obc:bottle_cap_gold", "count": 1, "verification": "VERIFIED by data/rewards.json"}]},
+      {"id": "arena_prize_streak_25", "on": "first streak of 25", "once": "per player", "contents": [{"item": "obc:bottle_cap_gold", "count": 3, "verification": "VERIFIED by data/rewards.json"}]},
+      {"id": "arena_prize_streak_50", "on": "first streak of 50", "once": "per player", "contents": [{"item": "cobblemon:ability_patch", "count": 2, "verification": "NOT VERIFIED (as rank 7)"}]}
+    ]
+  },
+
+  "multiplayer": {
+    "progress": "per player: rank, wins at rank, run state, streak, best streak, prize claims. No shared or server-wide state; no 'holder' of a rank.",
+    "caps": "per player through rctmod's series (each player's own next trainer), so two friends at different League stages see different bands open, which is the intent.",
+    "rewards": "every purse and every first-clear prize is per player. Nothing in the arena is once per server.",
+    "concurrency": "one bout per player at a time. Two players can fight at once only in two venues (the site design's 'several fighting venues'); the venue count bounds simultaneous bouts.",
+    "co_op": "Not designed: every bout is one player singles. A two-player doubles venue is open question Q5."
+  },
+
+  "mechanism_needs": [
+    {"id": "N1", "need": "Spawn an opponent for ONE player, in front of them, that no other player can battle or steal (rctmod cannot: one entity, shared state; rct-arena-capabilities.md section 0)."},
+    {"id": "N2", "need": "Give that opponent a team from data at bout time: either a runtime party (species, moveset, ability, heldItem, nature, level) or a pick among pre-baked fixed teams (`draw.prebake_fallback`)."},
+    {"id": "N3", "need": "Start the battle with the bout's rules (singles, player item uses 0, no level adjustment) without relying on right-click by the right player."},
+    {"id": "N4", "need": "Read the result per player: win, loss, flee, disconnect, and run a function for each."},
+    {"id": "N5", "need": "Heal the challenger's party on command (bout start, intermission) and NOT heal between gauntlet legs."},
+    {"id": "N6", "need": "Despawn the opponent after the bout, and clean up if the player logs out or leaves the venue mid-bout."},
+    {"id": "N7", "need": "Per-player persistent state: rank, wins, run leg, streak, best streak, claims, and (optional) the last two bouts' set ids."},
+    {"id": "N8", "need": "Pay money and give items per player (`cobbledollars give`; give)."},
+    {"id": "N9", "need": "Read gym8_cleared and champion_cleared (cobblers:flag/* advancements exist), and 'Lance beaten' for rank 4, which no flag records today: either a new advancement on rctmod:defeat_count for kanto_league_lance (the EXP-027 pattern) or reading rctmod's per-player defeats."},
+    {"id": "N10", "need": "Randomness at bout time, or the prebake fallback."},
+    {"id": "N11", "need": "A learnset/ability/item legality check of every set and champion member against the Cobblemon 1.8.0 jar, before generation (nothing in this worktree could run it)."},
+    {"id": "N12", "need": "An arena loss exempt from the blackout charge and teleport, if the owner agrees (Q4)."}
+  ],
+
+  "answer_checks": {
+    "basis": "At the arena a player has eight badges, so the whole region's spawn tables are open to them. Every species named below as an answer has its base form present in data/spawns.json (grepped 2026-10-03); which zone or habitat holds it was not checked per species. Each rank-up fight lists at least two strategies.",
+    "arena_tier_1_champion": ["Fairy or Flying: Togekiss (togepi), Staraptor (starly) whose Intimidate blunts Conkeldurr before Guts is lit", "Ghost: Chandelure (litwick) is immune to Fake Out, Revenge and Hammer Arm and burns Bisharp; Hatterene (hatenna) for Psychic/Fairy"],
+    "arena_tier_2_champion": ["Grass: Venusaur (bulbasaur), Torterra (turtwig) or Serperior (snivy); Gastrodon's Water Absorb and Toxicroak's Dry Skin do nothing to grass", "Taunt or a Psychic attacker: Absol or Sableye stop Recover/Toxic; Espeon (eevee) or Hatterene one-shot Toxicroak"],
+    "arena_relay_floor_wardens": ["A Flying/Fairy plus a Grass in one six: Togekiss for Odell's half, Venusaur for Nessa's, no heal needed between if neither is spent early", "Intimidate pivot (Arcanine from growlithe, Gyarados) across both halves: every one of the six is a physical attacker except Gastrodon"],
+    "arena_tier_3_champion": ["Fire or Ground into Steel: Arcanine (growlithe), Houndoom (houndour), Excadrill (drilbur) for Magnezone and Metagross; Bronzong levitates, so Fire is the answer to it, and Ferrothorn takes four times from Fire", "Use the room: slow heavy hitters Snorlax (snorlax), Rhydon (rhyhorn) move first under Trick Room; or Taunt the Bronzong lead; do not lead a Steel type into Magnet Pull"],
+    "arena_tier_4_champion": ["Electric: Ampharos (mareep), Raichu (pikachu), Magnezone (magnemite) against rain and Kingdra/Jellicent", "Priority and multi-hit through the sash: Scizor (scyther) Bullet Punch breaks Cloyster's sash before Shell Smash pays; Grass (Venusaur) for the water half"],
+    "arena_tier_5_champion": ["Fire in her own sun: Arcanine, Chandelure, Typhlosion (cyndaquil), Infernape (chimchar), Blaziken (torchic)", "Change the weather or bring Steel/Poison: Tyranitar (larvitar) sand, Pelipper (pelipper) rain, Hippowdon (hippopotas); Skarmory, Crobat (zubat), Toxicroak (croagunk)"],
+    "arena_tier_6_champion": ["Dark: Tyranitar, Hydreigon (deino), Weavile (sneasel), Honchkrow (murkrow), Absol; Knock Off strips the Leftovers", "Ghost and slow power: Gengar (gastly), Chandelure into Psychics; slow Tyranitar/Snorlax use Quell's own Trick Room. Status bounces off Hatterene, so bring damage"],
+    "arena_tier_7_champion": ["Fairy/Ice for the dragons: Togekiss, Hatterene, Mamoswine (swinub), Weavile; priority (Ice Shard, Sucker Punch from Absol) for Dragapult", "Water/Fighting for Tyranitar and Excadrill: Swampert (mudkip), Gyarados (Intimidate into Salamence), Lucario (riolu); do not rely on stat boosts while Milotic holds Haze"]
+  },
+
+  "open_questions": [
+    "Q1 Entry: the arena opens at eight badges because Z2 does. Should a lower rank (caps 25-55) exist somewhere reachable earlier, e.g. a small 'outer ring' at the tower's door outside Z2? Then the pool needs an earlier-stage species list.",
+    "Q2 Rank 4 needs 'Lance beaten'. Accept a new advancement flag for it, or fold rank 4 into the postgame band (simpler; loses the Blue rehearsal)?",
+    "Q3 Heal on bout start: the venue heals the party (fair, always available) or players arrive as they are (harder, more Minecraft)? Recommended: heal.",
+    "Q4 An arena loss: exempt from the $600 blackout charge and the teleport home? Recommended yes; it is sport.",
+    "Q5 Co-op: a doubles venue where two players fight two drawn opponents together, sharing the purse each in full?",
+    "Q6 Legendaries and Megas: postgame players may own Lugia, Mew, Groudon and a Mega Bracelet. Ban them from bouts (needs a party check), allow them, or allow them only from rank 9?",
+    "Q7 Money: is ~22,000 for a rank 8 clear and ~2,000 a rank 1 win the right size, given postgame has little left to buy?",
+    "Q8 Ranks are named for the old tower's floors (Floor, Shaft, ... Crown). Keep the fiction in the dome, or rename to venues once the site design (d) names them?"
+  ],
+  "decisions_pending": [
+    {"question": "Q2", "default": "Rank 4's band reads 'Lance beaten' as Cobbleverse's own advancement cobbleverse:trainer/kanto/defeat_elite_lance (the one the League's elevator requires, data/league_trainers.json order_enforced_by), OR cobblers:flag/champion_cleared. No new flag was minted.", "status": "default taken, the owner to confirm", "by": "tools/arena_runtime.py advancement_terms()"},
+    {"question": "Q3", "default": "Heal: yes. Single bouts and rank-up exams heal at their start; a gauntlet heals at the start of the run and at its intermission only (rank 8 before leg 4); the streak at its start and every heal_every wins. All by `healpokemon @s` before the opponent is spawned.", "status": "default taken, the owner to confirm", "by": "tools/arena_runtime.py bout/start, streak/start"},
+    {"question": "Q4", "default": "An arena loss is exempt from the blackout: no charge, no teleport home. data/blackout.json arena_exempt.player_tag is held from a bout's start until its opponent is cleared, and blackout/battle_loss_npc returns before the dedupe while it is held. The party is NOT healed after a loss; the next challenge heals it.", "status": "default taken, the owner to confirm", "by": "tools/arena_runtime.py, tools/blackout_pack.py"},
+    {"question": "Q6", "default": "No legendaries and no Megas in drawn sets or exams: the generator refuses any mega_showdown held item, and tests/test_arena_runtime_build.py checks every species against the 1.8.0 jar's legendary and mythical labels where the jar is present. The CHALLENGER's party is not checked: a player may bring Lugia.", "status": "default taken, the owner to confirm", "by": "tools/arena_runtime.py properties()"},
+    {"question": "Q7", "default": "Money as designed: 13 x the opponent's level sum to the nearest 50, a quarter for an exhibition, clear and streak bonuses as `ranks` lists, paid with `cobbledollars give @s <n>` (VERIFIED from the jar, EXP-040; not yet seen paying in game). NOT CHECKED: whether CobbleDollars also pays a cobblemon:npc win by itself (earnCobbleDollarsFromNPC is measured on rctmod trainers only); if it does, a win pays twice.", "status": "default taken, the owner to confirm", "by": "tools/arena_runtime.py purse, pay"},
+    {"question": "draw", "default": "Bouts are Cobblemon pool parties (isStatic false, re-rolled per challenge, proven in game 2026-10-03), so only 'no species twice in one opponent' holds (selectableTimes 1). Dropped: no repeat across a gauntlet run, at most two of one type, at most one setup set at ranks 1-2, the lead set first, theme draws from rank 5, and the last-two-bouts exclusion. Levels are each member drawn from top-(members-1)..top (levelVariation), not the ace at the top with each earlier one lower; never above the band's top.", "status": "default taken, the owner to confirm", "by": "tools/arena_runtime.py draw_dropped()"},
+    {"question": "exam_rematch", "default": "A rank-up fight is reached only at the player's own rank; once beaten it is not offered again (rank_up_fights says 'repeatable after the first win'). A venue post always offers the pool bout of the highest open rank.", "status": "default taken, the owner to confirm", "by": "tools/arena_runtime.py bout/kind"},
+    {"question": "battle_rules", "default": "`maxItemUses: 0` is NOT applied: start_battle with no rules argument runs an empty rule set (docs/research/notes/arena-per-player-opponents.md section 3), and the rules argument's form was not read. Players can use bag items in a bout.", "status": "known gap, the owner to decide", "by": "tools/arena_runtime.py bout/begin"}
+  ]
+}

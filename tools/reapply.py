@@ -67,6 +67,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # the Deep's city and the relic area's surface (tools/deep_city.py, 2026-09-27): stood on the pit R9B
                 # sinks, after Victory Road's caves (R9C) write round the mouth
                 "cobblers_deep_city",
+                # 2026-10-03: Heaven's Arena as a dome on the Deep's north floor (tools/arena_dome.py,
+                # data/arena_dome.json): pure block functions run by R9AD, after the city's paving it stands on
+                "cobblers_arena_dome",
                 # Victory Road as one cave network (2026-09-23; it replaced the spine and its regions), its Habitat
                 # Block tiles and its finds
                 "cobblers_vr_caves", "cobblers_habitats", "cobblers_rewards",
@@ -179,6 +182,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # data/spectrier_cap.json): its own tick tag judges each new wild Spectrier, so world-local below,
                 # the cobblers_sizes shape (self-driving, no blocks, no step)
                 "cobblers_spectrier_cap",
+                # 2026-10-03: Heaven's Arena's per-player opponents (tools/arena_runtime.py, data/arena_fights.json,
+                # data/arena_dome.json venues): NPC classes, a battle_victory callback and a tick driver that spawns
+                # and clears opponents on its own, so world-local below; R17A places the venues' posts
+                "cobblers_arena",
                 # 2026-09-27: the Rift dig camp's mines, quarries and the mega stone seam (tools/rift_mines.py): blocks
                 # run by R9M, and the seam crystal's ward and daily face that act on their own (an advancement, a tick
                 # driver), so world-local below. Its gated galleries went to the gulch the same day
@@ -294,7 +301,10 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                # 2026-10-03: the southern residents' keeper spawns its two Pokemon the same way
                "cobblers_southern_residents",
                # 2026-10-03: the northern residents' keeper spawns its three Pokemon the same way
-               "cobblers_northern_residents")
+               "cobblers_northern_residents",
+               # 2026-10-03: Heaven's Arena SPAWNS opponents and pays CobbleDollars on its own tick and callback; the
+               # global folder would run it in the live world too
+               "cobblers_arena")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -506,6 +516,15 @@ def prepare_jobs(a):
     # drum fully overwritten, the rings, seats and gate boxes from the data, the climb walked with and without gates
     add("arena_audit", "arena_audit.py", *src)
     add("deep_city_audit", "deep_city_audit.py", *src)
+    # Heaven's Arena as a dome on the Deep's north floor (2026-10-03): its build runs the city's build in memory and
+    # refuses any column the city writes more than paving on, the keep-clears, and anything under min_street from the
+    # city or a door; and the contract marks the arena runtime reads must stand on floor with two air above
+    add("arena_dome:build", "arena_dome.py", "build", *src)
+    # and its independent audit (tools/arena_dome_audit.py, written by an agent that did not build the dome): the
+    # emitted functions replayed, the shape and the shell against the data's declared numbers, the runtime contract,
+    # the city's plan and canvas (lots, towers, keep-clears, doors, 6 of street) and the walks from the stair and
+    # Victory Road to the door, every venue and every floor-level Stacks door
+    add("arena_dome_audit", "arena_dome_audit.py", *src)
     # the relic site underground (2026-10-02): its own fail-closed report runs first and refuses on a problem; the
     # undo is derived from the superseded surface generator minus the city build above. Its audit runs LATE (below),
     # once every other block pack is built, because it sweeps them all for a cell the undo or the shell would touch
@@ -549,6 +568,13 @@ def prepare_jobs(a):
     # route_events does, so a seat cannot quietly move when the ground under it changes.
     add("late_route_trainers", "late_route_trainers.py", *src)
     add("route_trainers", "route_trainers.py")
+    # Heaven's Arena's per-player opponents (2026-10-03): the ladder, the champions' exam teams and the dome's venues.
+    # It FAILS while data/arena_dome.json has no venues: an arena with nowhere to fight is not a pack to install
+    add("arena_runtime", "arena_runtime.py")
+    # and its independent audit (tools/arena_runtime_audit.py, written by an agent that did not build the runtime):
+    # every class, venue, post, purse, prize, gauntlet, the streak, two players and the blackout exemption, derived
+    # from the data and EXECUTED in its own command model over the emitted functions. Fail-closed
+    add("arena_runtime_audit", "arena_runtime_audit.py")
     add("rematerial", "rematerial.py")
     # the sea town's settlement, Centre, Mart, earthworks and clerk are generated into data/placements.json and
     # data/traders.json from data/sea_town.json and the heightmap; stop here if the committed records are stale. The
@@ -1490,6 +1516,11 @@ def steps(with_spawns=False):
     # R9D was the retired Victory Road regions step, and tests/test_reapply_vr_steps.py keeps that id retired
     out.append(("R9DC", "the Deep's city and the relic area's surface (tools/deep_city.py)",
                 [("fn", "cobblers:deep_city/%s" % f) for f in indexed("cobblers_deep_city", "deep_city")]))
+    # Heaven's Arena's dome on the Deep's north floor (2026-10-03, tools/arena_dome.py): AFTER R9DC, because it writes
+    # over the city's floor paving inside its own footprint and nothing else; before R9E and the lights. Phase 1 the
+    # structure, then phase 2 the ring lanterns that stand on its posts
+    out.append(("R9AD", "Heaven's Arena: the dome, its gatehouse tower and five fight venues (data/arena_dome.json)",
+                [("fn", "cobblers:arena_dome/%s" % f) for f in indexed("cobblers_arena_dome", "arena_dome")]))
     # the relic site underground (2026-10-02, tools/relic_underground.py): AFTER R9DC, because its undo takes off the
     # old surface build minus what the city now writes, and its passage meets the HQ's side of the pit; BEFORE R9E and
     # before Codex's cradle, whose own shell would seal the passage. Hold the box, undo, carve (CAVERN pattern), release
@@ -1654,6 +1685,18 @@ def steps(with_spawns=False):
     out.append(("R17", "scene props, scene NPCs and the route trainers",
                 [("props", p) for p in scene_props()] + [("npc", n) for n in scene_npcs()]
                 + [("trainer", t) for t in route_trainers.placements()]))
+    # Heaven's Arena (2026-10-03, tools/arena_runtime.py): each venue's post (an interaction box and its label), and
+    # the seven champions R17 used to summon in the spire killed where they stood (the owner: "have the middle just be
+    # hubs"). The opponents themselves are spawned per player by the pack, never here. Its NPC CLASSES LOAD ONLY AT
+    # SERVER START (EXP-022): an install that changed cobblers_arena needs the restart before a bout can spawn, and
+    # cobblers:arena/spawn_failed says so in game. Held in a forceload of the venues and the spire while it runs
+    import arena_runtime
+    hold = ["%d %d %d %d" % b for b in arena_runtime.forceload_boxes()]
+    out.append(("R17A", "Heaven's Arena's venue posts, and the spire's retired champions removed",
+                [("cmd", "forceload add " + h) for h in hold] + ([("wait", 3)] if hold else [])
+                + [("fn", "cobblers:arena/load"), ("fn", "cobblers:arena/retire_spire"),
+                   ("fn", "cobblers:arena/posts/place")]
+                + [("cmd", "forceload remove " + h) for h in hold]))
     # the ferrymen (data/ferries.json): NPCs, so an export erases them, and their classes load at boot from
     # cobblers_ferries, so they are placed over RCON after the restart, as R9F and R17 place theirs; the load function
     # first (the pack's scores, also created by its load tag). Listed from the committed data, not the build

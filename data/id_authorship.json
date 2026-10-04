@@ -50,7 +50,9 @@
     "after_win",
     "tier",
     "repeatable",
-    "cooldown"
+    "cooldown",
+    "seated",
+    "superseded_seat"
    ],
    "echo_fields": [
     "lesson",

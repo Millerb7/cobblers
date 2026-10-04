@@ -22,6 +22,10 @@
   "dedupe_ticks": 200,
   "dedupe_why": "one incident: a battle loss and a death from the same defeat are charged once. Measured from the first of the two, which is processed at the moment it happens (a death is charged while the player is still on the death screen)",
   "arrival_protection_seconds": 5,
+  "arena_exempt": {
+    "player_tag": "cobblers.arena_bout",
+    "why": "data/arena_fights.json open question Q4, the designer's recommendation taken as the default (the owner to confirm): a Heaven's Arena loss is sport, so it is not charged and does not send the player home. Measured 2026-10-03 (docs/research/notes/arena-per-player-opponents.md section 8): an arena loss DID fire this blackout. tools/arena_runtime.py tags the challenger with player_tag from the bout's start until its opponent is cleared after the result, and blackout/battle_loss_npc returns before the dedupe while the tag is held. A loss anywhere else is untouched."
+  },
   "pallet": {
     "name": "Hometown",
     "position": [1461, 118, 5306],
