@@ -1727,10 +1727,16 @@ def steps(with_spawns=False):
     # function first (the pack's scores). Listed from the committed data, not the build. 2026-10-03: and the stall
     # keepers on the town squares (data/markets.json `stalls`), same pack, same purchase; every keeper whose stall the
     # squares' contract (data/plaza_centres.json) seats stands at that stall instead
+    # 2026-10-04 (the owner: "the steve villagers aren't it, it should be the cobbleverse ones that have nice ui"): every
+    # stall keeper is a CobbleDollars merchant (cobbledollars:cobble_merchant with its stall's CobbleMerchantShop),
+    # summoned by the pack's function like R14's traders, which also removes the dialogue keeper it replaces; 8 s for
+    # the function's 40 + 100 ticks, then the merchants are read back from the world. The counters stay dialogue clerks
     import markets
-    out.append(("R17M", "the market and stall keepers (data/markets.json)",
+    out.append(("R17M", "the market keepers and the stall merchants (data/markets.json)",
                 [("fn", "cobblers:markets/load")] + [("npc", n) for n in markets.npc_placements(markets.load())]
-                + [("npc", n) for n in markets.stall_placements(markets.load())]))
+                + [("npc", n) for n in markets.stall_placements(markets.load())]
+                + ([("fn", markets.MERCHANTS_FN), ("wait", 8), ("check", "stall_merchants")]
+                   if markets.emitted_stalls(markets.load()) else [])))
     # the settlement NPCs (data/npc_seats.json): the main reveal's residents and the stone-tip speakers. NPCs like the
     # ferrymen, so placed over RCON after the restart that loaded cobblers_dialogue's classes, and after every town and
     # gym pass so the plaza, lot and lab floor they stand on exist. Each is turned to its authored yaw
@@ -2021,6 +2027,13 @@ def _run_steps(a, rc, todo, rec, path, live=None):
                 import ambient
                 problems = ambient.verify(rc)
                 bad += ["ambient: %s" % m for m in problems]
+            elif kind == "check" and v == "stall_merchants":
+                # each stall: one merchant with its tag on its seat, holding its stall's offers, no dialogue keeper left
+                import markets
+                problems = markets.verify(rc)
+                bad += ["stall merchants: %s" % m for m in problems]
+                print("   stall merchants: %d stalls, %d problems" % (len(markets.emitted_stalls(markets.load())),
+                                                                     len(problems)), flush=True)
             elif kind == "check" and v == "celebi":
                 import sapling_celebi
                 x, y, z = (int(q // 1) for q in sapling_celebi.load()["position"])
