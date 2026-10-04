@@ -36,7 +36,9 @@ one-counter-per-town rule, the backpack ladder and the clerk rule stay the count
   site       each keeper stands at its stall: the squares' contract, data/plaza_centres.json ("stalls": [{"id":
              "<town>_stall_<n>", "at", "facing", "keeper_at": [x, y, z, yaw], "sells"}]), wins when it names the
              record's `stall`; otherwise the record's own `at`/`yaw`, measured on the plaza from the data (the
-             fallback). A counter may name a `stall` too: its keeper then moves onto the square. When the contract
+             fallback). A contract seat is held to its stall: within STALL_REACH of the stall's `at` and facing it
+             across the counter (on Pacifidlog's deck too, where a fallback faces the raft's centre instead). A
+             counter may name a `stall` too: its keeper then moves onto the square. When the contract
              exists, every stall in it must be staffed by exactly one record (an empty stall is the complaint the
              owner made)
   places     data/markets.json `places_beyond_towns` names settlements that are not in data/towns.json (the
@@ -812,11 +814,17 @@ def earthwork_blocks(placements, settlement, positions):
     return {p: b for p, b in got.items() if not b.split("[")[0].endswith(":air")}
 
 
-def deck_problems(where, x, y, z, yaw, s, plan, placements, world):
+def facing_yaw(x, z, tx, tz):
+    """The Minecraft yaw from the cell (x, z) to the cell (tx, tz): 0 south, 90 west, -90 east, 180 north."""
+    return math.degrees(math.atan2(-(tx - x), tz - z))
+
+
+def deck_problems(where, x, y, z, yaw, s, plan, placements, world, face=None):
     """A keeper on a sea town's decks (data/placements.json `ground: sea_deck`): the town is one earthwork, so a plan
     Site would call every deck cell taken. On a deck cell with its four neighbours (tools/sea_town.py deck_ground),
     standing one above the deck, nothing the earthworks build in its two blocks or its neighbours', on the town's
-    square and facing its centre."""
+    square and facing its centre -- or, for a keeper the squares' contract seats behind a stall (`face`, the stall's
+    own (x, z)), facing across that stall's counter, as every contract keeper does."""
     import sea_town as ST
     out = []
     level, deck = ST.deck_ground(world)
@@ -832,6 +840,10 @@ def deck_problems(where, x, y, z, yaw, s, plan, placements, world):
     pz = (plan.get("plaza") or {}).get("rect")
     if not pz or not in_rect(pz, x, z):
         out.append("%s: not on its town's square %s" % (where, pz))
+    elif face is not None:
+        want = facing_yaw(x, z, face[0], face[1])
+        if abs((yaw - want + 180) % 360 - 180) > YAW_SLACK:
+            out.append("%s: faces yaw %s, but its stall at %s is at yaw %.0f" % (where, yaw, list(face), want))
     elif abs((yaw - plaza_yaw(plan, x, z) + 180) % 360 - 180) > YAW_SLACK:
         out.append("%s: faces yaw %s, but its square's centre is at yaw %.0f" % (where, yaw, plaza_yaw(plan, x, z)))
     return out
@@ -879,7 +891,11 @@ def site_problems(doc, traders, source_root=None, skip_dressing=False, plazas=No
             # Pacifidlog. NOT the frontage rule: besides the earthwork, data/towns.json's sea_town footprint (x7020-7280,
             # z6704-7238) is the pre-resite site, 2,000 blocks from the plan's (centre 5160, 7380), so a footprint
             # check would refuse every cell of the built town (reported 2026-10-03; towns.json is not this tool's)
-            out += deck_problems(where, x, y, z, yaw, s, plan, placements, world)
+            a = plazas[c["stall"]].get("at") if src == "contract" else None
+            face = (a[0], a[2]) if isinstance(a, list) and len(a) == 3 else None
+            out += deck_problems(where, x, y, z, yaw, s, plan, placements, world, face=face)
+            if face is not None and math.dist((x, z), face) > STALL_REACH:
+                out.append("%s: %.1f blocks from its stall at %s" % (where, math.dist((x, z), face), a))
             rule = "deck"
         else:
             if s not in sites:
@@ -900,6 +916,10 @@ def site_problems(doc, traders, source_root=None, skip_dressing=False, plazas=No
                 a = plazas[c["stall"]].get("at")
                 if isinstance(a, list) and len(a) == 3 and math.dist((x, z), (a[0], a[2])) > STALL_REACH:
                     out.append("%s: %.1f blocks from its stall at %s" % (where, math.dist((x, z), (a[0], a[2])), a))
+                if isinstance(a, list) and len(a) == 3 and (x, z) != (a[0], a[2]):
+                    want = facing_yaw(x, z, a[0], a[2])
+                    if abs((yaw - want + 180) % 360 - 180) > YAW_SLACK:
+                        out.append("%s: faces yaw %s, but its stall at %s is at yaw %.0f" % (where, yaw, a, want))
             else:
                 # a fallback stall site: on the square itself, turned to its centre (where the stall will stand)
                 pz = (plan.get("plaza") or {}).get("rect")
