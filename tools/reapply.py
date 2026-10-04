@@ -179,6 +179,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # data/spectrier_cap.json): its own tick tag judges each new wild Spectrier, so world-local below,
                 # the cobblers_sizes shape (self-driving, no blocks, no step)
                 "cobblers_spectrier_cap",
+                # 2026-10-03: Heaven's Arena's per-player opponents (tools/arena_runtime.py, data/arena_fights.json,
+                # data/arena_dome.json venues): NPC classes, a battle_victory callback and a tick driver that spawns
+                # and clears opponents on its own, so world-local below; R17A places the venues' posts
+                "cobblers_arena",
                 # 2026-09-27: the Rift dig camp's mines, quarries and the mega stone seam (tools/rift_mines.py): blocks
                 # run by R9M, and the seam crystal's ward and daily face that act on their own (an advancement, a tick
                 # driver), so world-local below. Its gated galleries went to the gulch the same day
@@ -294,7 +298,10 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                # 2026-10-03: the southern residents' keeper spawns its two Pokemon the same way
                "cobblers_southern_residents",
                # 2026-10-03: the northern residents' keeper spawns its three Pokemon the same way
-               "cobblers_northern_residents")
+               "cobblers_northern_residents",
+               # 2026-10-03: Heaven's Arena SPAWNS opponents and pays CobbleDollars on its own tick and callback; the
+               # global folder would run it in the live world too
+               "cobblers_arena")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -549,6 +556,9 @@ def prepare_jobs(a):
     # route_events does, so a seat cannot quietly move when the ground under it changes.
     add("late_route_trainers", "late_route_trainers.py", *src)
     add("route_trainers", "route_trainers.py")
+    # Heaven's Arena's per-player opponents (2026-10-03): the ladder, the champions' exam teams and the dome's venues.
+    # It FAILS while data/arena_dome.json has no venues: an arena with nowhere to fight is not a pack to install
+    add("arena_runtime", "arena_runtime.py")
     add("rematerial", "rematerial.py")
     # the sea town's settlement, Centre, Mart, earthworks and clerk are generated into data/placements.json and
     # data/traders.json from data/sea_town.json and the heightmap; stop here if the committed records are stale. The
@@ -1654,6 +1664,18 @@ def steps(with_spawns=False):
     out.append(("R17", "scene props, scene NPCs and the route trainers",
                 [("props", p) for p in scene_props()] + [("npc", n) for n in scene_npcs()]
                 + [("trainer", t) for t in route_trainers.placements()]))
+    # Heaven's Arena (2026-10-03, tools/arena_runtime.py): each venue's post (an interaction box and its label), and
+    # the seven champions R17 used to summon in the spire killed where they stood (the owner: "have the middle just be
+    # hubs"). The opponents themselves are spawned per player by the pack, never here. Its NPC CLASSES LOAD ONLY AT
+    # SERVER START (EXP-022): an install that changed cobblers_arena needs the restart before a bout can spawn, and
+    # cobblers:arena/spawn_failed says so in game. Held in a forceload of the venues and the spire while it runs
+    import arena_runtime
+    hold = ["%d %d %d %d" % b for b in arena_runtime.forceload_boxes()]
+    out.append(("R17A", "Heaven's Arena's venue posts, and the spire's retired champions removed",
+                [("cmd", "forceload add " + h) for h in hold] + ([("wait", 3)] if hold else [])
+                + [("fn", "cobblers:arena/load"), ("fn", "cobblers:arena/retire_spire"),
+                   ("fn", "cobblers:arena/posts/place")]
+                + [("cmd", "forceload remove " + h) for h in hold]))
     # the ferrymen (data/ferries.json): NPCs, so an export erases them, and their classes load at boot from
     # cobblers_ferries, so they are placed over RCON after the restart, as R9F and R17 place theirs; the load function
     # first (the pack's scores, also created by its load tag). Listed from the committed data, not the build
