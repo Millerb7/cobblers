@@ -138,6 +138,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # more, in rows A-D, built by R9NR; three named Pokemon on the residents' keeper, so world-local below;
                 # summoned and the NPCs R9F does not place stood by R18NR
                 "cobblers_northern_residents",
+                # 2026-10-04: the far south's five places (tools/far_south.py, data/far_south.json) in rows F-H, built
+                # by R9FS; three named Pokemon on the residents' keeper, so world-local below; R18FS after R18NR
+                "cobblers_far_south",
                 # 2026-10-02: the relic site underground (tools/relic_underground.py, data/relic_underground.json): the
                 # old surface build taken off, then the hall, gallery and passage carved, by R9RU; its zone check acts on
                 # its own (an advancement), so world-local below
@@ -305,6 +308,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_southern_residents",
                # 2026-10-03: the northern residents' keeper spawns its three Pokemon the same way
                "cobblers_northern_residents",
+               # 2026-10-04: the far south's keeper spawns its three Pokemon the same way
+               "cobblers_far_south",
                # 2026-10-03: Heaven's Arena SPAWNS opponents and pays CobbleDollars on its own tick and callback; the
                # global folder would run it in the live world too
                "cobblers_arena")
@@ -660,6 +665,10 @@ def prepare_jobs(a):
     # (tools/northern_residents_audit.py, another agent's), after the pack it reads
     add("northern_residents", "northern_residents.py", *src)
     add("northern_residents_audit", "northern_residents_audit.py", *src)
+    # the far south's five places (2026-10-04): the generator fails closed on its own siting rules and on a record the
+    # heightmap disagrees with. Its independent audit is owed (data/far_south.json audit_checklist) and joins here,
+    # after the generator, when another agent writes it
+    add("far_south", "far_south.py", *src)
     add("drovers_hollow:build", "drovers_hollow.py", "build", *src)
     add("drovers_hollow_audit", "drovers_hollow_audit.py", *src)
     # the three wayside places of 2026-10-03. Each generator refuses a spawn-condition palette and any block outside its
@@ -1614,6 +1623,11 @@ def steps(with_spawns=False):
     import northern_residents
     out.append(("R9NR", "the northern residents' sites (data/northern_residents.json)",
                 northern_residents.placement_steps()))
+    # the far south's five places (2026-10-04, tools/far_south.py): the same pure block pass per site, held in a
+    # forceload of its box, before R9E (none sits on a Habitat Block); its residents stand on these floors (R18FS)
+    import far_south
+    out.append(("R9FS", "the far south's places: kraal, chimneys, glass garden, glyph ring, folly (data/far_south.json)",
+                far_south.placement_steps()))
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
@@ -1777,6 +1791,11 @@ def steps(with_spawns=False):
     # the NPCs who give nothing through grant_reward_once, turned to their yaw. After R18SR
     out.append(("R18NR", "the northern residents: the ungated Pokemon and the NPCs R9F does not place (data/northern_residents.json)",
                 northern_residents.entity_steps()))
+    # the far south (2026-10-04): any ungated Pokemon summoned (guarded on tag AND species) and bound. All three are
+    # gated after gym 7 today, so the keeper brings each in and this step has no actions: the design, not a fault
+    import far_south
+    out.append(("R18FS", "the far south's residents: the ungated Pokemon (data/far_south.json)",
+                far_south.entity_steps()))
     # the Drovers' Hollow's drover (2026-10-02): after R17N, on the path R9HF wrote, his class loaded at boot from
     # cobblers_dialogue
     out.append(("R18HF", "the Drovers' Hollow's drover, Owen Cray (data/drovers_hollow.json npc)",

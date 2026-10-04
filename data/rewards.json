@@ -1696,6 +1696,72 @@
       ],
       "why": "Tam's thanks for finding his twin: two bottles of his mum's Moomoo Milk, one for each of them. One per player, by grant_reward_once, after the player has found Lettie. A modest reward for a modest errand at tier 6: Moomoo Milk restores HP. The verification string is data/rewards.json drovers_hollow_store's, copied, not re-checked against a jar here.",
       "built_by": "the NPC by spawnnpcat after a restart (reapply step R9F); npc_at is the spot tools/northern_residents.py seats Tam Furrow on, and it refuses to build when they differ"
+    },
+    {
+      "id": "far_south_hoodoo_tin",
+      "kind": "cache",
+      "place": "the Four Chimneys on the Scorched Plateau's eroded south (data/far_south.json four_chimneys): the fossil-hunter's tin set in the ground at the tall chimney's east foot",
+      "contents": [
+        {
+          "item": "cobblemon:smooth_rock",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/smooth_rock.json in Cobblemon-fabric-1.8.0+1.21.1.jar (opened 2026-10-04: experiments/EXP-000-cobblemon-1.8-compat/runtime/server/mods)"
+        },
+        {
+          "item": "cobblemon:dusk_ball",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/dusk_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar (opened 2026-10-04)"
+        }
+      ],
+      "message": "In the fossil-hunter's tin at the foot of the tallest chimney: a Smooth Rock, polished by the wash, and two Dusk Balls.",
+      "why": "data/far_south.json four_chimneys: a hunter's leftovers in rock country. A Smooth Rock (held: a sandstorm lasts longer) is a natural source of a held item otherwise bought or crafted (docs/STATE.md: every Cobblemon item obtainable without crafting); two Dusk Balls for the plateau's night hunting. Tier 8, optional; the critical path needs none of it. items_hook: data/far_south.json four_chimneys caches[0].",
+      "built_by": "tools/far_south.py (the barrel, in cobblers_far_south's four_chimneys build, step R9FS)",
+      "trigger": {"min": [5177, 159, 5957], "max": [5178, 160, 5959]},
+      "container": {"block": "minecraft:barrel", "at": [5177, 158, 5958]}
+    },
+    {
+      "id": "far_south_glass_cutters_box",
+      "kind": "cache",
+      "place": "the Glass Garden on the south-east dunes (data/far_south.json glass_garden): the box set in the floor of the glass-cutter's shade",
+      "contents": [
+        {
+          "item": "cobblemon:thunder_stone",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/thunder_stone.json in Cobblemon-fabric-1.8.0+1.21.1.jar (opened 2026-10-04: experiments/EXP-000-cobblemon-1.8-compat/runtime/server/mods)"
+        },
+        {
+          "item": "cobblemon:soft_sand",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/soft_sand.json in Cobblemon-fabric-1.8.0+1.21.1.jar (opened 2026-10-04)"
+        }
+      ],
+      "message": "In the glass-cutter's box: a Thunder Stone that still crackles, found at the foot of the great spire, and a twist of Soft Sand.",
+      "why": "data/far_south.json glass_garden: what lightning leaves in sand. Thunder is the stone in most demand (docs/mechanics/STONE_ECONOMY.md: 6 families) and this is one more, late and optional; Soft Sand is the dunes' held item, a natural source of something otherwise bought or crafted. items_hook: data/far_south.json glass_garden caches[0].",
+      "built_by": "tools/far_south.py (the barrel, in cobblers_far_south's glass_garden build, step R9FS)",
+      "trigger": {"min": [5987, 125, 6532], "max": [5988, 126, 6534]},
+      "container": {"block": "minecraft:barrel", "at": [5988, 124, 6533]}
+    },
+    {
+      "id": "far_south_folly_cellar",
+      "kind": "cache",
+      "place": "the Lady's Folly in Sunset East's meadows (data/far_south.json garden_folly): the stone of the folly's floor that is a box",
+      "contents": [
+        {
+          "item": "cobblemon:leaf_stone",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/leaf_stone.json in Cobblemon-fabric-1.8.0+1.21.1.jar (opened 2026-10-04: experiments/EXP-000-cobblemon-1.8-compat/runtime/server/mods)"
+        },
+        {
+          "item": "cobblemon:miracle_seed",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/miracle_seed.json in Cobblemon-fabric-1.8.0+1.21.1.jar (opened 2026-10-04)"
+        }
+      ],
+      "message": "Under the loose stone of the folly's floor: a Leaf Stone and a Miracle Seed, put by for a garden.",
+      "why": "data/far_south.json garden_folly: a gardener's keepsakes. A Leaf Stone (Grass evolutions) and a Miracle Seed (held: Grass moves), the second a natural source of a held item otherwise bought or crafted. On Sunset Isle, optional. items_hook: data/far_south.json garden_folly caches[0].",
+      "built_by": "tools/far_south.py (the barrel, in cobblers_far_south's garden_folly build, step R9FS)",
+      "trigger": {"min": [2902, 95, 7629], "max": [2903, 96, 7631]},
+      "container": {"block": "minecraft:barrel", "at": [2902, 94, 7630]}
     }
   ]
 }
