@@ -118,6 +118,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-02: the Frostpeak research camp (tools/frostpeak_camp.py, data/frostpeak_camp.json): block
                 # functions and the instruments' display entities, run by R18F
                 "cobblers_frostpeak_camp",
+                # 2026-10-05: Coldwater Station, the Kyurem research station on marsh country's east coast
+                # (tools/coldwater_station.py, data/coldwater_station.json): block functions, two instrument displays
+                # and three researchers, run by R18CW. Its jetty and boatman are the ferry's (R16H, R17F)
+                "cobblers_coldwater_station",
                 # 2026-10-02: the Seaward Drift, its strip mine and Driftmouth Isle (tools/sea_drift.py,
                 # data/sea_drift.json): 90 block functions run by R9SD, before the Habitat Blocks that sit in its rock
                 "cobblers_sea_drift",
@@ -662,6 +666,9 @@ def prepare_jobs(a):
     add("ursaluna_cave_audit", "ursaluna_cave_audit.py", *src)
     add("frostpeak_camp:build", "frostpeak_camp.py", "build", *src)
     add("frostpeak_camp_audit", "frostpeak_camp_audit.py", "--inputs-root", str(ROOT), *src)
+    # Coldwater Station (2026-10-05): its builder's siting guards fail the job; NO independent audit exists yet
+    # (data/coldwater_station.json audit_checklist is the brief for it, another agent's)
+    add("coldwater_station:build", "coldwater_station.py", "build", *src)
     add("sea_drift:build", "sea_drift.py", "build", *src)
     add("frostpeak_summit:build", "frostpeak_summit.py", "build", *src)
     add("frostpeak_summit_audit", "frostpeak_summit_audit.py", *src)
@@ -1917,6 +1924,12 @@ def steps(with_spawns=False):
     import frostpeak_summit
     out.append(("R18S", "Frostpeak's summit: tors, rime, lee plants and the pilgrims' way (data/frostpeak_summit.json)",
                 frostpeak_summit.placement_steps()))
+    # Coldwater Station (2026-10-05, tools/coldwater_station.py): its blocks and instruments held in a forceload, then
+    # its three researchers, whose classes load at boot from cobblers_coldwater_station. After R16H and R17F, whose
+    # jetty and boatman below it the station keeps clear of
+    import coldwater_station
+    out.append(("R18CW", "Coldwater Station, the Kyurem research station (data/coldwater_station.json)",
+                coldwater_station.placement_steps()))
     trad = json.loads((ROOT / "data" / "traders.json").read_text(encoding="utf-8"))
     towns = sorted({t["settlement"] for t in trad.get("traders") or [] if t.get("settlement")})
     out.append(("R14", "town traders", [x for t in towns for x in (("fn", "cobblers:towns/vendors_%s" % t), ("wait", 8))]))

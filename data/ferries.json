@@ -497,7 +497,7 @@
           1955
         ],
         "name": "Packet master",
-        "greeting": "The mainland's a long way south and the packet's the only way back. Four hundred. There's no other boat on this island.",
+        "greeting": "The mainland's a long way off and the packet's the only way back. Four hundred, to the marsh landing or to Coldwater Station. There's no other boat on this island.",
         "why": "on the forecourt boards five columns landward of the jetty's root, on South Pine Isle's shore at y62: heightmap ground, off the deck, between the isle and its one crossing"
       },
       "landing": {
@@ -547,6 +547,46 @@
       "near": null,
       "blocked_by": "not sited: Lugia's trench is Dive content (WATER_MAP.md), and what a player lands on out there is undesigned",
       "why": "a charter's far end, postgame"
+    },
+    {
+      "id": "coldwater_station_jetty",
+      "name": "Coldwater Station",
+      "status": "built",
+      "built_by": "tools/ferry_docks.py (data/ferry_docks.json), 2026-10-05; nothing here has run in a game: a 3 x 16 spruce jetty at x6076-6091, z1832-1834, deck y64, its step and stair at x6073-6075 and a boarded forecourt at x6069-6072, z1831-1835, below Coldwater Station (data/coldwater_station.json)",
+      "near": [
+        6075,
+        1833
+      ],
+      "near_basis": "the owner, 2026-10-05: a research station 'at 6050 1843 ish' with 'a ferry guy to take you to the snowy island across the water'. The shore column the dock rule finds nearest the station's deck with open water straight east (measured 2026-10-05: dry at y62, the head 2 deep at x6091)",
+      "ferryman": {
+        "at": [
+          6070,
+          63,
+          1833
+        ],
+        "name": "Station boatman",
+        "greeting": "The station's launch. I run it to Northlight, on South Pine Isle, and back. It's the packet company's crossing, so it's their price and their rule. Four hundred, and only with Koga's badge.",
+        "why": "on the forecourt boards five columns landward of the jetty's root, on marsh country's shore at y62: heightmap ground, off the deck, below the station's deck and in front of the crossing (the Northlight packet master's spot on that dock, mirrored)"
+      },
+      "landing": {
+        "at": [
+          6070,
+          63,
+          1836
+        ],
+        "yaw": 90,
+        "why": "three blocks south of the boatman, just off the forecourt on y62 ground, facing west inland up the slope to the station: an arrival from the isle lands looking at it"
+      },
+      "keep_clear": [
+        [
+          6073,
+          1832,
+          6091,
+          1834
+        ]
+      ],
+      "keep_clear_why": "the jetty's deck, its step and its stair, as tools/ferry_docks.py builds them",
+      "why": "Coldwater Station's boat (data/coldwater_station.json ferry): the mainland end of the coldwater_crossing to Northlight"
     }
   ],
   "lines": [
@@ -959,6 +999,74 @@
         "why": "Relic Island is swimmable from Pallet's beach (C3); the charter is travel, not a gate"
       },
       "why": "postgame, from the harbour to the reef's island (WATER_PROPOSAL 4.3)"
+    },
+    {
+      "id": "coldwater_crossing",
+      "name": "Coldwater launch",
+      "stops": [
+        "coldwater_station_jetty",
+        "northlight_landing"
+      ],
+      "fare": 400,
+      "fare_why": "$400 each way, the Northlight packet's fare (WATER_PROPOSAL decision 5): the same long crossing to the same island, so the same price; a cheaper boat would undercut the packet (data/coldwater_station.json open_questions)",
+      "gates": [
+        {
+          "kind": "flag",
+          "flag": "gym5_cleared",
+          "says": "Koga's badge",
+          "why": "WATER_PROPOSAL decision 6"
+        }
+      ],
+      "gate_why": "gym5_cleared, the Northlight packet's gate (WATER_PROPOSAL decision 6): a second boat to the Pine Isles must not open them earlier than the first",
+      "swim": {
+        "declared": "gate",
+        "island": [
+          7265,
+          1556
+        ],
+        "why": "the Pine Isles are behind water on every side (the Northlight packet's declaration). From the station's shore the straight line to Northlight's landing is the crossing this boat makes; the island's nearest other land is still the north coast west of it (shortest_gap), so that barrier is carried here too and the island check sees no shorter way over",
+        "barriers": [
+          {
+            "id": "station_to_pine",
+            "from": [
+              6075,
+              1833
+            ],
+            "to": [
+              6878,
+              1960
+            ],
+            "basis": "the station jetty's shore column to Northlight's (data/ferry_docks.json both), the line the boat runs"
+          },
+          {
+            "id": "shortest_gap",
+            "from": [
+              6073,
+              824
+            ],
+            "to": [
+              6420,
+              997
+            ],
+            "basis": "the nearest other land to the Pine Isles and Northgate together (tools/ferries.py audit, 2026-09-27: 388 blocks, from the north coast west of them onto the Pine Isles' west end); shorter than C3's 437 from marsh country"
+          }
+        ],
+        "hops": [
+          {
+            "id": "northgate_to_pine",
+            "from": [
+              7392,
+              900
+            ],
+            "to": [
+              7322,
+              981
+            ],
+            "basis": "the Pine Isles' nearest other land is Northgate Isle (tools/ferries.py measure, 2026-09-27): a hop inside the barriers, since Northgate is behind water too"
+          }
+        ]
+      },
+      "why": "the owner, 2026-10-05: 'a ferry guy to take you to the snowy island across the water', from Coldwater Station (data/coldwater_station.json)"
     }
   ]
 }

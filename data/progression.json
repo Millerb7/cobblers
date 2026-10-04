@@ -2263,6 +2263,36 @@
       "why": "the dialogue cursor of Bram Ostrow at the Frostpeak research camp (data/frostpeak_camp.json, tools/frostpeak_camp.py). Talk only: the conversation always opens at its hub, sets nothing else and gates nothing."
     },
     {
+      "id": "quest.coldwater_station.calder_cursor",
+      "quest_id": "coldwater_station",
+      "field": "calder_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "hub",
+      "allowed_values": "node ids from dlg_coldwater_station_calder",
+      "why": "the dialogue cursor of Dr. Ines Calder at Coldwater Station (data/coldwater_station.json, tools/coldwater_station.py). Talk only: the conversation always opens at its hub, sets nothing else and gates nothing."
+    },
+    {
+      "id": "quest.coldwater_station.rask_cursor",
+      "quest_id": "coldwater_station",
+      "field": "rask_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "hub",
+      "allowed_values": "node ids from dlg_coldwater_station_rask",
+      "why": "the dialogue cursor of Tobin Rask at Coldwater Station (data/coldwater_station.json, tools/coldwater_station.py). Talk only: the conversation always opens at its hub, sets nothing else and gates nothing."
+    },
+    {
+      "id": "quest.coldwater_station.moss_cursor",
+      "quest_id": "coldwater_station",
+      "field": "moss_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "hub",
+      "allowed_values": "node ids from dlg_coldwater_station_moss",
+      "why": "the dialogue cursor of Wren Moss at Coldwater Station (data/coldwater_station.json, tools/coldwater_station.py). Talk only: the conversation always opens at its hub, sets nothing else and gates nothing."
+    },
+    {
       "id": "quest.ambient_ursaluna_den.watcher_cursor",
       "quest_id": "ambient_ursaluna_den",
       "field": "watcher_cursor",
