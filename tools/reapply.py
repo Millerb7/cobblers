@@ -157,6 +157,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-02: the seven open-air Mega dens made visible (tools/mega_dens.py, data/mega_dens.json): scrape,
                 # boulders, bones and each species' sign round the gulch's den anchors. Block functions run by R9MD
                 "cobblers_mega_dens",
+                # 2026-10-04: the Mega field's contested borders (tools/mega_borders.py, data/mega_borders.json): scarred
+                # ground, broken rock and kills where two dens' ranges overlap. Block functions run by R9MB
+                "cobblers_mega_borders",
                 # 2026-10-02: water life (docs/mechanics/WATER_LIFE.md): the lake skin and the lake hooks
                 # (tools/lake_life.py), and the shore, the seabed's wrecks and Rift debris and the two sea caves
                 # (tools/sea_life.py). Pure block functions, no load or tick, run by R9LL and R9SL
@@ -676,6 +679,8 @@ def prepare_jobs(a):
     add("research_station_audit", "research_station_audit.py", *src)
     add("mega_dens:build", "mega_dens.py", "build", *src)
     add("mega_dens_audit", "mega_dens_audit.py", *src)
+    # the Mega field's contested borders (2026-10-04): after the lairs, whose written columns it keeps clear of
+    add("mega_borders:build", "mega_borders.py", "build", *src)
     # the Mega field's independent audit (docs/world-building/MEGA_FIELD.md section 5): the polygon against the
     # sculpt's basin and the owner's points, each den's ground, level (rctmod's cap for its zone's badges) and drops in
     # the BUILT gulch pack, the retirement and the lairs; after both packs above are built
@@ -1480,7 +1485,7 @@ def steps(with_spawns=False):
     # Megas a keeper may have left at the seven retired dens (data/gulch_mine.json superseded_farms), which nothing
     # leashes or replaces any more: after R9S, whose pack carries megas/retire; with each den's ground held
     import gulch_mine
-    out.append(("R9SX", "remove the Megas of the seven retired open-air dens (data/gulch_mine.json superseded_farms)",
+    out.append(("R9SX", "remove the Megas of the retired open-air dens (data/gulch_mine.json superseded_farms)",
                 gulch_mine.retire_steps()))
     # the Rift's zone walls and gatehouse shells (tools/rift_zones.py, data/rift_zones.json; docs/mechanics/
     # RIFT_ZONES.md sections 5 and 6). After the Rift skin (R1), whose surface the walls stand on, after the
@@ -1591,6 +1596,12 @@ def steps(with_spawns=False):
     # actions until the Mega field's dens are dressed (an owner call, MEGA_FIELD.md section 4)
     out.append(("R9MD", "the open-air Mega dens' dressing: scrape, boulders, bones and each species' sign (data/mega_dens.json)",
                 mega_dens.placement_steps()))
+    # the Mega field's contested borders (2026-10-04, tools/mega_borders.py): a pure block pass along every lens where two
+    # dens' ranges overlap -- scar, rubble, kill. AFTER R9MD, whose lairs' columns it keeps clear of and never rewrites;
+    # BEFORE R9E with the other block passes. Per border: hold, build, release
+    import mega_borders
+    out.append(("R9MB", "the Mega field's contested borders: scarred ground, broken rock and kills (data/mega_borders.json)",
+                mega_borders.placement_steps()))
     # the three wayside places of 2026-10-03 (tools/wayside_kit.py): pure block passes, each hold, build, release.
     # BEFORE R9E with the other block passes; none places or sits on a Habitat Block, and none overlaps another build
     # (data/<place>.json bbox, for the integrator's check)
