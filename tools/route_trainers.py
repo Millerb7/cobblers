@@ -9,7 +9,12 @@ From data/trainers.json (generated from docs/story/TRAINER_RULES.json) and four 
                                 that resolve nowhere, so their three lines are authored beside their seat,
                                 the way Victory Road's are (lines_of below)
   data/mansion_guardians.json   the Gastly mansion's five Channeler guardians, record and seat together
-  data/arena_trainers.json      Heaven's Arena's seven tier champions, record and seat together, on the stands
+  data/arena_trainers.json      Heaven's Arena's seven tier champions. UNSEATED since 2026-10-03 (the owner: "leave
+                                current spire, but remove the trainer battles, have the middle just be hubs"):
+                                each record says `seated: false` and keeps its old stand under `superseded_seat`;
+                                the record is read for its team only, which tools/arena_runtime.py turns into the
+                                rank-up exam it spawns per player. Nothing below is emitted for them now.
+                                Until then: record and seat together, on the stands
                                 tools/deep_city.py's arena_plan() reserves in derived/deep_city/plan.json
                                 ("arena".tiers[n].stand, y16 to y118). PLAIN STANDALONE FIGHTS, by the owner's
                                 decision of 2026-10-01: no series, no requiredDefeats, no tier gating at all,
