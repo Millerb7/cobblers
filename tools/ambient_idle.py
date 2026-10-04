@@ -930,7 +930,9 @@ def verify(rc):
                 continue
             r = rc("data get entity @e[type=cobblemon:pokemon,tag=%s,limit=1] NoAI" % t)
             want = "1b" if i["kind"] in STILL else "0b"
-            if want not in r:
+            # a mob saves NoAI only while it is true: with AI on the tag is absent (staging, 2026-10-04: every
+            # follower and sleeper read "Found no elements matching NoAI" with its custom behaviours set)
+            if want not in r and not (want == "0b" and "Found no elements" in r):
                 bad.append("%s (%s): NoAI is %r, wanted %s" % (i["id"], i["kind"], r, want))
         for b in boxes:
             rc("forceload remove %d %d %d %d" % b)
