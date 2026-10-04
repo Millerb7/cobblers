@@ -106,6 +106,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-09-28: working Pokemon in the towns (tools/ambient.py, data/ambient.json): a keeper and the work
                 # loops run on their own (a tick driver), so world-local below; placed again by R16C after an export
                 "cobblers_ambient",
+                # 2026-10-04: the idle Pokemon in the towns (tools/ambient_idle.py, data/ambient.json idle): a keeper
+                # SPAWNS them when a player is near, so world-local below; settled again by R16C after an export
+                "cobblers_ambient_idle",
                 # 2026-09-28: the wayside shrines on the approaches of towns people pass through (tools/shrines.py,
                 # data/shrines.json): block functions run by R16D after the dressing and the working Pokemon
                 "cobblers_shrines",
@@ -290,7 +293,7 @@ EXCLUDED = {
 WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", "cobblers_celebi", "cobblers_rift_storm",
                "cobblers_sizes", "cobblers_blackout", "cobblers_rift_mines", "cobblers_gulch_mine",
                "cobblers_rift_zones", "cobblers_mega_recipes",
-               "cobblers_ferries", "cobblers_ambient", "cobblers_levelcap", "cobblers_mines",
+               "cobblers_ferries", "cobblers_ambient", "cobblers_ambient_idle", "cobblers_levelcap", "cobblers_mines",
                "cobblers_legendaries", "cobblers_spectrier_cap",
                # 2026-10-03: charges CobbleDollars and gives items, like the ferry
                "cobblers_markets",
@@ -1642,8 +1645,11 @@ def steps(with_spawns=False):
     # the working Pokemon (tools/ambient.py): entities, so an export erases them; after the dressing they stand beside.
     # Each station's chunk is force-loaded and its worker placed (twice: a chunk's saved entities load a moment after
     # its blocks, and the keeper removes a second), then all are counted
+    # ambient.placement_steps() carries the idle Pokemon too (tools/ambient_idle.py): each town force-loaded and its
+    # keeper run twice; then every idler counted, before the workers' own check (which stays last)
     import ambient
-    out.append(("R16C", "working Pokemon in the towns (data/ambient.json)", ambient.placement_steps() + [("check", "ambient")]))
+    out.append(("R16C", "working and idle Pokemon in the towns (data/ambient.json)",
+                ambient.placement_steps() + [("check", "ambient_idle"), ("check", "ambient")]))
     # the wayside shrines (tools/shrines.py): blocks beside the roads into the towns, after the dressing (R16B) and the
     # working Pokemon (R16C) they keep clear of; each function holds its own chunks. Listed from the committed data,
     # not the build, so the step exists whether or not the pack is built here; the prepare's audit fails on a missing one
@@ -2021,6 +2027,10 @@ def _run_steps(a, rc, todo, rec, path, live=None):
                 import ambient
                 problems = ambient.verify(rc)
                 bad += ["ambient: %s" % m for m in problems]
+            elif kind == "check" and v == "ambient_idle":
+                import ambient_idle
+                problems = ambient_idle.verify(rc)
+                bad += ["ambient_idle: %s" % m for m in problems]
             elif kind == "check" and v == "celebi":
                 import sapling_celebi
                 x, y, z = (int(q // 1) for q in sapling_celebi.load()["position"])
