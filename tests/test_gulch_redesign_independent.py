@@ -1028,7 +1028,16 @@ def _data_farm_world(site, den_id, resp=400):
     ax, ay, az = den["anchor"]
     x0, y0, z0, x1, y1, z1 = farm["approach"]
     clear = spec["megas"]["spawn_clear"]
-    spots = [(ax + clear + 32.5, ay, az + 0.5), (ax + 0.5, ay, az + clear + 32.5)]
+    # Two places clear + 32 out from the anchor along an axis, the first two of east, south, west, north that lie in
+    # the approach box. East-and-south only was this test's own assumption, not a property of the data: a farm's box
+    # is clipped to farms_grid (the field's own extent), so a den near the field's south edge (blaziken at z5355,
+    # box to z5401) has no room 56 south though its whole leash disc is inside the box (mega_field_audit's keeper
+    # check). The two spots must still both be inside the box and clear of the anchor, as before.
+    r = clear + 32
+    ways = [(ax + r + 0.5, ay, az + 0.5), (ax + 0.5, ay, az + r + 0.5), (ax - r + 0.5, ay, az + 0.5),
+            (ax + 0.5, ay, az - r + 0.5)]
+    spots = [s for s in ways if x0 <= s[0] < x1 + 1 and z0 <= s[2] < z1 + 1][:2]
+    assert len(spots) == 2, (site, "fewer than two axis spots inside the approach box", farm["approach"])
     for sx, sy, sz in spots:                     # inside the approach box, outside spawn_clear: the spawn can happen
         assert x0 <= sx < x1 + 1 and y0 <= sy < y1 + 1 and z0 <= sz < z1 + 1, (site, (sx, sy, sz), farm["approach"])
         assert math.dist((sx, sy, sz), (ax + 0.5, ay, az + 0.5)) > clear, (site, (sx, sy, sz))

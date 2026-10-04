@@ -472,12 +472,18 @@ def den_megas(w, den_id):
     tag = SPEC["megas"]["tag"]
     live = {"%s.%s" % (tag, d["id"]) for _s, d in GM.dens(SPEC)}
     mine = "%s.%s" % (tag, den_id)
-    out = []
+    out, seen = [], {}
     for e in w.entities:
         if e["kind"] != "pokemon":
             continue
         own = {t for t in e["tags"] if t in live}
         assert len(own) == 1, ("a Mega carrying %d den tags" % len(own), e)
+        # (test owner, 2026-10-04) and no den has two Megas up at once, neighbour or not: before the field's ranges
+        # overlapped the world held one Mega and the caller's single unpack said so; with neighbours present only the
+        # den under test was unpacked, so a keeper double-spawning a NEIGHBOUR would have passed
+        (t,) = own
+        assert t not in seen, ("two live Megas carry %s" % t, seen[t], e)
+        seen[t] = e
         if mine in own:
             out.append(e)
     return out
