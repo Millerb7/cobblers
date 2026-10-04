@@ -128,6 +128,21 @@ class Geo:
         self.gfloor, self.gh = ga["floor_y"], ga["height"]
         self.junction = tuple(g["junction"]["at"])
         self.choke = g["choked_shaft"]
+        # the cradle (geometry.cradle, 2026-10-03): carved only when its own `carve` is true
+        cr = g.get("cradle") or {}
+        self.cradle = bool(cr.get("carve"))
+        if self.cradle:
+            self.cc = tuple(cr["centre"])
+            self.cr = cr["radius"]
+            self.cfloor = cr["floor_y"]
+            self.crim_c, self.capex_c = cr["ceiling_rim_y"], cr["ceiling_apex_y"]
+
+    def in_cradle(self, x, z):
+        return self.cradle and math.hypot(x - self.cc[0], z - self.cc[1]) <= self.cr + 1e-9
+
+    def cradle_ceiling(self, x, z):
+        r = math.hypot(x - self.cc[0], z - self.cc[1])
+        return self.crim_c + int(round((self.capex_c - self.crim_c) * (1.0 - (r / self.cr) ** 2)))
 
     # the passage floor is DEEP_CITY.md section 5's own arithmetic, evaluated per column
     def pfloor(self, x):
@@ -160,6 +175,8 @@ class Geo:
         if self.in_passage(x, z):
             f = self.pfloor(x)
             rs.append((f, f + self.ph + 1))
+        if self.in_cradle(x, z):
+            rs.append((self.cfloor, self.cradle_ceiling(x, z) + 1))
         if not rs:
             return None
         return min(r[0] for r in rs), max(r[1] for r in rs)
@@ -178,11 +195,19 @@ class Geo:
         for x in range(self.px0, self.px1 + 1):
             for z in range(self.pz0, self.pz1 + 1):
                 out[(x, z)] = self.carved_range(x, z)
+        if self.cradle:
+            for x in range(self.cc[0] - self.cr, self.cc[0] + self.cr + 1):
+                for z in range(self.cc[1] - self.cr, self.cc[1] + self.cr + 1):
+                    r = self.carved_range(x, z)
+                    if r and self.in_cradle(x, z):
+                        out[(x, z)] = r
         return out
 
     def shell_distance(self, x, z):
         """Chebyshev-free distance from a column to the nearest carved volume, 0 inside."""
         d = math.hypot(x - self.hc[0], z - self.hc[1]) - self.hr
+        if self.cradle:
+            d = min(d, math.hypot(x - self.cc[0], z - self.cc[1]) - self.cr)
         for (x0, x1, z0, z1) in ((self.gx0, self.gx1, self.gz0, self.gz1),
                                  (self.px0, self.px1, self.pz0, self.pz1)):
             dx = max(x0 - x, 0, x - x1)
@@ -195,6 +220,13 @@ class Geo:
         best, bd = None, 1e9
         cands = [(self.hc[0], self.hc[1]), (min(max(x, self.gx0), self.gx1), min(max(z, self.gz0), self.gz1)),
                  (min(max(x, self.px0), self.px1), min(max(z, self.pz0), self.pz1))]
+        if self.cradle:
+            # the nearest point of the cradle's disc, not its centre: a column off the rim takes the rim's own range,
+            # so the passage (nearer to some of them than the centre is) does not lend the cradle a lower shell
+            vx, vz = x - self.cc[0], z - self.cc[1]
+            L = math.hypot(vx, vz)
+            k = 1.0 if L <= self.cr else (self.cr - 0.5) / L
+            cands.append((self.cc[0] + int(round(vx * k)), self.cc[1] + int(round(vz * k))))
         for cx, cz in cands:
             r = self.carved_range(cx, cz)
             if r is None:
@@ -536,6 +568,105 @@ def composition(geo, spec):
     return cells
 
 
+def _at(c, r, deg):
+    a = math.radians(deg)
+    return int(round(c[0] + r * math.cos(a))), int(round(c[1] + r * math.sin(a)))
+
+
+def cradle_composition(geo, spec):
+    """cells[(x, y, z)] = block: Hoopa's cradle dressed as composition.cradle reads Codex's contract (2026-10-03). Every
+    block stands in the cradle's air or is laid in its floor; the cut's three columns (the passage) are left alone, and
+    the actor marker and the four stands are left clear. {} when the cradle is not carved."""
+    if not geo.cradle:
+        return {}
+    P = spec["palette"]
+    cc = spec["composition"]["cradle"]
+    cx, cz = geo.cc
+    F = geo.cfloor
+    cells = {}
+
+    def blk(name):
+        return P.get(name, name)
+
+    def put(x, y, z, b):
+        cells[(int(x), int(y), int(z))] = b
+
+    def free_floor(x, z):
+        return geo.in_cradle(x, z) and not geo.in_passage(x, z)
+    d = cc["dais"]
+    for x in range(cx - d["radius"], cx + d["radius"] + 1):
+        for z in range(cz - d["radius"], cz + d["radius"] + 1):
+            r = math.hypot(x - cx, z - cz)
+            if r > d["radius"] + 0.3 or not free_floor(x, z) and (x, z) != (cx, cz):
+                continue
+            b = blk(d["rim"]) if r > d["radius"] - 0.7 else blk(d["block"])
+            put(x, F, z, b)
+    put(cx, F, cz, blk(d["centre"]))
+    py = cc["pylons"]
+    for a in py["bearings"]:
+        x, z = _at(geo.cc, py["orbit"], a)
+        for y in range(F + 1, F + 1 + py["height"]):
+            put(x, y, z, py["block"])
+    rg = cc["ring"]
+    ry = rg["y"]
+    for k in range(0, 360, 3):
+        x, z = _at(geo.cc, rg["radius"], k)
+        put(x, ry, z, rg["block"])
+    for a in rg["light_bearings"]:
+        x, z = _at(geo.cc, rg["radius"], a)
+        put(x, ry, z, blk(rg["lights"]))
+    ch = cc["chains"]
+    for a in ch["bearings"]:
+        x, z = _at(geo.cc, rg["radius"], a)
+        for y in range(ch["from_y"], ch["to_y"] + 1):
+            put(x, y, z, ch["block"])
+    co = cc["consoles"]
+    for a in co["bearings"]:
+        x, z = _at(geo.cc, co["orbit"], a)
+        for i, b in enumerate(co["blocks"]):
+            put(x, F + 1 + i, z, b)
+    pl = cc["pillars"]
+    for k in range(pl["count"]):
+        a = pl["first_bearing"] + 360.0 * k / pl["count"]
+        x, z = _at(geo.cc, pl["orbit"], a)
+        top = geo.cradle_ceiling(x, z)
+        for y in range(F + 1, top + 1):
+            put(x, y, z, blk(pl["every_third"]) if (y - F) % 3 == 0 else blk(pl["block"]))
+    fl = cc["floor_lights"]
+    for a in range(0, 360, fl["every_degrees"]):
+        if min(a, 360 - a) <= fl["skip_within_degrees_of_east"]:
+            continue
+        x, z = _at(geo.cc, fl["orbit"], a)
+        if free_floor(x, z):
+            put(x, F, z, blk(fl["block"]))
+    return cells
+
+
+def way_lights(geo, spec):
+    """cells[(x, y, z)] = block: composition.way_lights, the lights FLUSH IN THE FLOOR of the passage and the gallery
+    (2026-10-03; until then the 70-block passage and the gallery were dark). Each is the floor block of a carved column,
+    so nothing stands in the walk and nothing is written outside the carve."""
+    wl = spec["composition"].get("way_lights")
+    if not wl:
+        return {}
+    cells = {}
+    p = wl["passage"]
+    for k, x in enumerate(range(p["from_x"], geo.px0 - 1, -p["every"])):
+        z = p["z"][k % len(p["z"])]
+        r = geo.carved_range(x, z)
+        if r is None or not geo.in_passage(x, z):
+            raise RelicError("way light at x%d z%d is not on the passage" % (x, z))
+        cells[(x, r[0], z)] = wl["block"]
+    ga = wl["gallery"]
+    for k, z in enumerate(range(ga["from_z"], geo.gz0 - 1, -ga["every"])):
+        x = ga["x"][k % len(ga["x"])]
+        r = geo.carved_range(x, z)
+        if r is None or not geo.in_gallery(x, z):
+            raise RelicError("way light at x%d z%d is not in the gallery" % (x, z))
+        cells[(x, r[0], z)] = wl["block"]
+    return cells
+
+
 # --------------------------------------------------------------- the HQ's way down (geometry.hq)
 
 # a run descending along `step` faces back up it: the stair's tall side is uphill
@@ -790,6 +921,62 @@ def cmd_report(a):
             bad.append("a composition block at %s is outside the hall's air (floor %d, ceiling %d)"
                        % ((x, y, z), geo.hfloor, r[1]))
             break
+    # 4a the binder who releases Hoopa (geometry.release). Since 2026-10-03, with the cradle carved, he stands on one of
+    #    the cradle's stands (checked clear with a floor under in 4b). Otherwise, as before: in the hall's air, on a
+    #    block the hall builds, with two clear over its feet, and within the six-block circle the audit's route reaches
+    rel = spec["geometry"]["release"]
+    sx, sy, sz = rel["at"]
+    sr_ = geo.carved_range(sx, sz)
+    if geo.cradle:
+        crs = spec["composition"]["cradle"]["stands"]
+        seats = [(_at(geo.cc, crs["orbit"], a)[0], geo.cfloor + 1, _at(geo.cc, crs["orbit"], a)[1])
+                 for a in crs["bearings"]]
+        if (sx, sy, sz) not in seats:
+            bad.append("the binder's seat %s is not one of the cradle's stands %s" % (rel["at"], seats))
+        if len(seats) - 1 < 4:
+            bad.append("the binder takes one of Codex's four player stands: the cradle needs a fifth")
+    elif sr_ is None or not geo.in_hall(sx, sz) or not (geo.hfloor < sy and sy + 2 <= sr_[1]):
+        bad.append("the binder's seat %s is not in the hall's air" % (rel["at"],))
+    elif (sx, sy - 1, sz) not in cells or any((sx, sy + d, sz) in cells for d in (0, 1, 2)):
+        bad.append("the binder's seat %s does not stand on a block the hall builds with two clear over it "
+                   "(below: %s)" % (rel["at"], cells.get((sx, sy - 1, sz))))
+    if not geo.cradle and math.hypot(sx - geo.hc[0], sz - geo.hc[1]) > 6:
+        bad.append("the binder's seat %s is more than 6 from the hall's centre, outside the circle the route reaches"
+                   % (rel["at"],))
+    # 4b the cradle (geometry.cradle, 2026-10-03): its dressing stands in its own air or in its floor, the actor marker
+    #    and the four stands are clear with a floor under them, and it shares no rock with the hall
+    if geo.cradle:
+        ccells = cradle_composition(geo, spec)
+        for (x, y, z) in ccells:
+            r = geo.carved_range(x, z)
+            if r is None or not geo.in_cradle(x, z) or not (geo.cfloor <= y < r[1]):
+                bad.append("a cradle block at %s is outside the cradle's air or floor" % ((x, y, z),))
+                break
+        if any((x, y, z) in cells for (x, y, z) in ccells):
+            bad.append("the cradle's dressing and the hall's composition write the same cell")
+        crs = spec["composition"]["cradle"]
+        spots = [tuple(crs["actor_marker"]["at"])] + [
+            (_at(geo.cc, crs["stands"]["orbit"], a)[0], geo.cfloor + 1, _at(geo.cc, crs["stands"]["orbit"], a)[1])
+            for a in crs["stands"]["bearings"]]
+        for (x, y, z) in spots:
+            r = geo.carved_range(x, z)
+            if r is None or not geo.in_cradle(x, z) or y + 2 > r[1] or any((x, y + d, z) in ccells for d in (0, 1, 2)) \
+                    or y - 1 != geo.cfloor:
+                bad.append("the cradle's stand %s is not a floor cell with two clear over it" % ((x, y, z),))
+        if len(spots) < 5:
+            bad.append("the cradle has fewer than four stands and a marker")
+        gap = math.hypot(geo.cc[0] - geo.hc[0], geo.cc[1] - geo.hc[1]) - geo.hr - geo.cr
+        note.append("the cradle: radius %d, floor y%d, dome y%d-%d, %d dressing blocks, %d blocks of rock to the hall"
+                    % (geo.cr, geo.cfloor, geo.crim_c, geo.capex_c, len(ccells), int(gap)))
+        if gap < 8:
+            bad.append("the cradle is %d blocks from the hall: they would share rock" % gap)
+    try:
+        wl = way_lights(geo, spec)
+        note.append("way lights %d, flush in the passage's and the gallery's floors" % len(wl))
+        if spec["composition"].get("way_lights") and not wl:
+            bad.append("composition.way_lights is declared and lays nothing")
+    except RelicError as e:
+        bad.append(str(e))
     apex = max(y for (_x, y, _z) in cells if y < geo.choke["from_y"]) if cells else 0
     note.append("composition blocks %d, highest non-choke block y%d, dome apex y%d"
                 % (len(cells), apex, geo.capex))
@@ -820,9 +1007,8 @@ def cmd_report(a):
         if have and adv not in have:
             owed.append("the pass names %s and data/progression.json has no such flag" % adv)
     if "cobblers:flag/rift_crisis_resolved" in spec["zone"]["pass"]["threshold_advancements"]:
-        bad.append("the pass names cobblers:flag/rift_crisis_resolved, whose setter NOTHING INVOKES (data/progression.json "
-                   "set_by.invoked_by is null): "
-                   "the zone would be shut forever (data/relic_underground.json needs.upgrade_path)")
+        bad.append("the pass names cobblers:flag/rift_crisis_resolved, which is EARNED INSIDE this zone (the binder in the "
+                   "cradle, geometry.release): a zone keyed on it is shut to the only place it can be earned")
     # 7 the Deep and the city: nothing carved into the pit's air or into a cell the city writes, and the turn-back
     # lands on the Compact's front step in the open (measured: tools/rift_deep.py's treads, tools/deep_city.py's build)
     pit = pit_of(sr)
@@ -1011,6 +1197,11 @@ def guard_functions(spec):
             "execute unless entity @s[x=%d,y=%d,z=%d,distance=..%d] run return fail" % (ax, ay, az, mv["reach"]),
             "ride @s dismount",
             "tp @s %s %d %s %s %s" % (x, y, z, mv["yaw"], mv["pitch"])]
+        if act == "hq_admit" and spec["zone"]["pass"].get("admit"):
+            # the record that THIS player came in by the guard, i.e. at the finale's stage (zone.pass.admit): the
+            # knock box's qualify tests it, so a player who digs into the records room past the guard is refused
+            fn[act] += ["# the zone's second key: this player was admitted by the guard (zone.pass.admit, 2026-10-03)",
+                        "scoreboard players set @s %s 1" % spec["zone"]["pass"]["admit"]["objective"]]
     return fn
 
 
@@ -1038,8 +1229,12 @@ def cmd_build(a):
     files["data/%s/advancement/%s/relic_knock.json" % (NS, FOLDER)] = adv(
         [box_cond(kb[:3], kb[3:])], "%s/knock" % F)
 
+    admit = z["pass"].get("admit")
     fn["load"] = ["# one dummy objective, one value per player, never reset and never unset by this pack",
                   "scoreboard objectives add %s %s" % (obj, z["objective_criterion"])]
+    if admit:
+        fn["load"] += ["# and the guard's admit record (zone.pass.admit): set by hq_admit, never unset",
+                       "scoreboard objectives add %s dummy" % admit["objective"]]
     tb = z["turn_back"]
     tx, ty, tz = tb["at"]
     fn["zone"] = [
@@ -1064,13 +1259,25 @@ def cmd_build(a):
         "# the same shape at the gulch's grille; there is no guard and no grille here, so the alcove asks.",
         "advancement revoke @s only %s:%s/relic_knock" % (NS, FOLDER),
         "function %s/qualify" % F]
-    fn["qualify"] = [
-        "# the pass is 'you came through the Compact HQ', plus the eight badge flags so that reaching the",
-        "# basement early is still refused. ONE advancements={...} argument: a selector may not carry the key",
-        "# twice. The flags are tools/progression_pack.py's per-player advancements (EXP-027).",
-        "execute if entity @s[gamemode=!spectator,advancements={%s}] run function %s/grant" % (inner, F),
-        "execute unless entity @s[advancements={%s}] run title @s actionbar %s"
-        % (inner, text("The Compact's passage is closed to you.", color="gray"))]
+    closed = text("The Compact's passage is closed to you.", color="gray")
+    if admit:
+        # 2026-10-03: the pass also needs the guard's admit, so it is the finale's stage (which only the guard's
+        # dialogue can read) and not eight badges alone. An unset score fails `if score ... matches 1..`: CLOSED
+        fn["qualify"] = [
+            "# the pass is 'you came through the Compact HQ': the guard admitted THIS player (zone.pass.admit,",
+            "# which only a player at the finale's stage can be), plus the eight badge flags. An unset admit score",
+            "# fails `if score ... matches 1..`, so this fails closed. ONE advancements={...} argument.",
+            "execute if entity @s[gamemode=!spectator,advancements={%s}] if score @s %s matches 1.. run function %s/grant"
+            % (inner, admit["objective"], F),
+            "execute unless score @s %s matches 1.. run title @s actionbar %s" % (admit["objective"], closed),
+            "execute unless entity @s[advancements={%s}] run title @s actionbar %s" % (inner, closed)]
+    else:
+        fn["qualify"] = [
+            "# the pass is 'you came through the Compact HQ', plus the eight badge flags so that reaching the",
+            "# basement early is still refused. ONE advancements={...} argument: a selector may not carry the key",
+            "# twice. The flags are tools/progression_pack.py's per-player advancements (EXP-027).",
+            "execute if entity @s[gamemode=!spectator,advancements={%s}] run function %s/grant" % (inner, F),
+            "execute unless entity @s[advancements={%s}] run title @s actionbar %s" % (inner, closed)]
     fn["grant"] = [
         "# the pass. Nothing is teleported: the doorway is OPEN and the player walks (the owner, 2026-10-01:",
         "# 'turned back by the zone check rather than barriers'). Dialogue may call this function instead of",
@@ -1137,8 +1344,11 @@ def cmd_build(a):
     fn["carve/25_reshell"] = ["# the shell again, after the carve: one pass cannot see what the excavation",
                               "# opens (tools/cavern_plan.py). Must run BEFORE anything is dug through it."] + body
     comp = composition(geo, spec)
+    comp.update(way_lights(geo, spec))
+    comp.update(cradle_composition(geo, spec))
     fn["carve/30_composition"] = ["# the relic site itself: DEEP_CITY.md section 5's platform, six arches,",
-                                  "# plinth, broken ring and standing stones, at their own numbers, in the hall"] + \
+                                  "# plinth, broken ring and standing stones, at their own numbers, in the hall;",
+                                  "# and the way lights flush in the passage's and the gallery's floors"] + \
         [fill(r[0], r[1], r[2], r[3], r[4]) for r in rows(comp)]
     # the HQ's way down (geometry.hq): after the reshell, so nothing seals it again. Its hull first (a void beside it
     # made rock, inside the reserved boxes only), then its cells: the records room, the stair, the dressing, the
@@ -1226,14 +1436,16 @@ def hold_box(spec=None):
 
 def npc_placements(spec=None):
     """[(conversation id, (x, y, z), npc class, yaw)] for tools/reapply.py step R18RU's "npc" actions: the Compact guard
-    at the HQ's ring-0 door and the one inside it, from the committed data alone. Fails closed when a conversation is
-    not in data/dialogue.json with that NPC."""
+    at the HQ's ring-0 door, the one inside it, and the binder whose conversation releases Hoopa (geometry.release,
+    the Rift finale's one beat, 2026-10-03; in the cradle at its fifth stand since the cradle was carved, the hall's
+    relic ring before), from the committed data alone. Fails closed when
+    a conversation is not in data/dialogue.json with that NPC."""
     spec = spec or load()
     dl = json.loads((ROOT / "data" / "dialogue.json").read_text(encoding="utf-8"))
     convs = {c["id"]: c for c in dl["conversations"]}
     out = []
-    for key in ("guard", "inside_guard"):
-        g = spec["geometry"]["hq"][key]
+    seats = [spec["geometry"]["hq"]["guard"], spec["geometry"]["hq"]["inside_guard"], spec["geometry"]["release"]]
+    for g in seats:
         conv = convs.get(g["conversation"])
         if conv is None or conv.get("npc_id") != g["npc"]:
             raise RelicError("%s is not a conversation with NPC %s in data/dialogue.json" % (g["conversation"], g["npc"]))

@@ -2315,6 +2315,28 @@
         ],
         "expect": true
       }
+    ],
+    "zapdos_tower": [
+      {
+        "what": "the Fungal Isle tower's altar (data/placements.json legendary_zapdos_tower corner (881, 67, 5569) + template [14,2,14]), after the donor step",
+        "block": [
+          895,
+          69,
+          5583,
+          "lumymon:zapdos_altar"
+        ],
+        "expect": true
+      },
+      {
+        "what": "the superseded coast tower's altar gone (corner (562, 74, 2614) + [14,2,14]); staging fails this until build/staging/cobblers_zapdos_cleanup (tools/zapdos_tower.py) has run",
+        "block": [
+          576,
+          76,
+          2628,
+          "lumymon:zapdos_altar"
+        ],
+        "expect": false
+      }
     ]
   }
 }

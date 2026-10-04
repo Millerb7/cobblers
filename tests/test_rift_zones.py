@@ -5,16 +5,19 @@ tools/rift_zones.py had no tests. This file is the first, written by the test au
 generator's geometry: every column it reasons about is PARSED OUT OF THE EMITTED .mcfunction, because an
 expectation derived from the code under test is not an expectation (CLAUDE.md, "Verify before claiming").
 
-THE PROPERTY. A gatehouse is "a one-wide roofed walkway ... closed by a two-high barrier column directly
-behind the guard" (data/rift_zones.json gatehouse.why). So the standable columns the shell emits must form ONE
+THE PROPERTY. A gatehouse is "a six-wide walkway on a cardinal axis ... walled and roofed ... and a two-high
+barrier across the full width directly behind the guard" (data/rift_zones.json gatehouse.why; six wide since the
+owner's call of 2026-10-03, gatehouse.width_why, and one wide before it, gatehouse.superseded_walkway). So the
+standable columns the shell emits must form ONE
 piece a player can walk, from the knock box outside the guard to the exit box inside, broken in exactly one
 place: the barrier. The flood fill is FOUR-CONNECTED, because a player cannot step diagonally between two
 blocks that meet only at a corner when both orthogonal corners are solid -- and an eight-connected fill would
 call every gatehouse in this repository connected and report nothing.
 
 WHAT IS INERT, AND THEREFORE NOT ASSERTED HERE. `cobblers_rift_zones` is in tools/reapply.py's EXCLUDED, R9Z
-places 6 of the 10 shells, z4 and z5 are held because nothing invokes `rift_crisis_resolved`'s setter (declared 2026-10-02, its
-release beat unbuilt: tests/test_rift_crisis_resolved.py), and
+places 8 of the 10 shells, z4 is held for its caught-count dialogue (z5 is released since 2026-10-03: its flag
+`rift_crisis_resolved` is set by the relic hall's binder, tests/test_rift_crisis_resolved.py, and its wall meets G5),
+z1 ships no zone check because no guard of it can be reached from outside (tools/rift_zones.py unreachable_zones), and
 every guard is an armour-stand placeholder. Nothing here asserts the system is installed, enabled or reachable
 in game, and a held zone is not a failure. `build` is allowed to exit 1 on its OWED dependencies; this file
 does not treat that as a problem either.
@@ -119,6 +122,8 @@ NAMES = [g[0] for g in GATES]
 # The two gates whose in/out axis is axis-aligned. data/rift_zones.json measured_defects calls them correct
 # ("the two axis-aligned gates, z4 (5 of 8) and z5 (3 of 8), break ONLY at their barrier and are correct"),
 # so they are not xfailed for the recorded break -- which is what makes these tests able to pass at all.
+# Since 2026-10-03 every gate's recorded outward is cardinal (gatehouse.axis_why), so this list is empty; it is
+# kept because the record's strict-xfail machinery is keyed on it, and a diagonal record would reappear here.
 DIAGONAL = [g[0] for g in GATES
             if abs(g[2]["outward"][0]) not in (0.0, 1.0) or abs(g[2]["outward"][1]) not in (0.0, 1.0)]
 
@@ -183,7 +188,9 @@ def shell_voxels(gate, text):
     read one level and expect a roof, would read them as walkway. The columns are taken from the DATA (the
     gate record's `approach`), never from the generator, and tests/test_rift_zones_apply.py walks the approach
     itself, over the heightmap."""
-    skip = {(c[0], c[1]) for side in ("outer", "inner") for c in gate[2].get("approach", {}).get(side, [])}
+    # one run per lane since the walkway went six wide (2026-10-03): approach[side] is a list of runs
+    skip = {(c[0], c[1]) for side in ("outer", "inner") for run in gate[2].get("approach", {}).get(side, [])
+            for c in run}
     return {k: b for k, b in voxels(text).items() if (k[0], k[2]) not in skip}
 
 
@@ -314,9 +321,11 @@ def barrier_problems(gate, text):
                    % (name, len(ps), [sorted(p) for p in ps]))
     if not any(q in p for p in ps):
         bad.append("%s: the guard's own block %s is not standable" % (name, q))
-    if len(opened) != len(closed) + 1:
-        bad.append("%s: opening the barrier changes %d columns, not the one barrier column"
-                   % (name, len(opened) - len(closed)))
+    # the barrier spans the walkway's full width (data/rift_zones.json gatehouse.walkway), so opening it frees
+    # exactly that many columns: one fewer is a lane the barrier does not close
+    if len(opened) != len(closed) + GH["walkway"]:
+        bad.append("%s: opening the barrier changes %d columns, not the %d of the barrier's row"
+                   % (name, len(opened) - len(closed), GH["walkway"]))
     return bad
 
 
@@ -325,12 +334,13 @@ def place_problems(gate, text):
     fy, name, arrive, ebox = gate[6][1], gate[0], gate[3], gate[5]
     cols = standable(shell_voxels(gate, text), fy)
     ac = (int(arrive[0] - 0.5), int(arrive[2] - 0.5))
-    ec = (ebox[0], ebox[2])
     bad = []
     if ac not in cols:
         bad.append("%s: the arrival column %s is not a standable walkway column" % (name, ac))
-    if ec not in cols:
-        bad.append("%s: the exit box column %s is not a standable walkway column" % (name, ec))
+    # the exit box is a whole row since the walkway went six wide: every column of it must be standable
+    for ec in [(x, z) for x in range(ebox[0], ebox[3] + 1) for z in range(ebox[2], ebox[5] + 1)]:
+        if ec not in cols:
+            bad.append("%s: the exit box column %s is not a standable walkway column" % (name, ec))
     if int(arrive[1]) != fy:
         bad.append("%s: the arrival is at y%s, the walkway at y%d" % (name, arrive[1], fy))
     if ebox[1] != fy:
@@ -511,52 +521,50 @@ def mutant(old, new):
     return mod
 
 
-# The two lines of walkway_shell() that B12 replaced the per-step perpendicular pair with. The old target,
-# `px, pz = (0, 1) if abs(dx) > abs(dz) else (1, 0)`, is the line the fix DELETED, so both proofs below were
-# re-pointed here by the integrating session -- the mutations still change the GENERATOR and still leave
-# data/rift_zones.json untouched, which is the property that matters.
-# B12 deleted the perpendicular pair AND reordered cmd_build to emit the walkway's air AFTER the walls, so
-# a mutation that merely walls over the walkway is now carved back out by the air pass and proves nothing.
-# Both proofs therefore target walkway_path(), which decides the SHAPE the air is laid over.
-CORNER_JOIN = "            path.append((ax + sx, az) if abs(dx) >= abs(dz) else (ax, az + sz))"
-PATH_RETURN = """                            % (block, x, z))
+# RE-POINTED 2026-10-03, when the walkway went six wide on a cardinal axis (data/rift_zones.json
+# gatehouse.width_why, axis_why). The B12 proof mutated the corner-joining column of a ONE-wide walkway on a
+# diagonal axis; there is no diagonal step and no corner join any more, so that line is gone from the generator.
+# The two proofs below keep their purpose and their discipline -- they change the GENERATOR (tools/rift_zones.py
+# walkway_rows / walkway_path) and leave data/rift_zones.json untouched -- and now apply to all seven gates,
+# because none is diagonal (DIAGONAL is empty: every recorded outward is cardinal).
+ROW_LINE = ("        rows.append((t, [(block[0] + ix * t + cx * k, block[1] + iz * t + cz * k) for k in lanes]))")
+PATH_RETURN = """    path = [c for _t, row in walkway_rows(block, outward, gh) for c in row]
     return path"""
-SOUND = [g for g in GATES if g[0] not in DIAGONAL]
 
 
 # Without this the walkway test could be one that always fails, for reasons of its own, and would prove
-# nothing when the fix lands. Swapping cmd_build's perpendicular -- the GENERATOR, with the data untouched --
-# makes the two gatehouses that are sound today wall over their own walkway, and the fill says so by name.
-def test_dropping_the_corner_join_reopens_the_defect_b12_fixed():
-    bent = [g for g in GATES if g[0] in DIAGONAL]
-    assert len(bent) == 5, "the diagonal gates changed: %s" % DIAGONAL
+# nothing. Shifting ONE row of the walkway a full width sideways in the GENERATOR -- data untouched -- leaves that
+# row meeting its neighbours only at a corner, which is the B12 defect's own shape (two blocks a player cannot
+# walk between), and the fill must say so for every gate by name.
+def test_a_row_that_meets_its_neighbours_only_at_a_corner_breaks_the_walkway():
+    assert DIAGONAL == [], "a gate's recorded outward is not cardinal: %s" % DIAGONAL
     for g in GATES:
         assert walkway_problems(g, emitted(g[0])) == [], "%s does not pass today: nothing to mutate" % g[0]
     texts = build_pack(ground=_fake_ground, module=mutant(
-        CORNER_JOIN, "            pass"), report=_quiet_report)
-    for g in bent:
+        ROW_LINE, "        rows.append((t, [(block[0] + ix * t + cx * (k + (len(lanes) if t == -1 else 0)), "
+                  "block[1] + iz * t + cz * (k + (len(lanes) if t == -1 else 0))) for k in lanes]))"),
+        report=_quiet_report)
+    for g in GATES:
         assert walkway_problems(g, texts[g[0]]), (
-            "%s: without the corner-joining column the walkway steps diagonally and a player cannot walk it, "
-            "yet the fill called it sound; the fill is not measuring the generator's geometry" % g[0])
-    for g in SOUND:
-        assert walkway_problems(g, texts[g[0]]) == [], (
-            "%s is axis-aligned and has no diagonal step, so this mutation must not touch it" % g[0])
+            "%s: with one row shifted a full width sideways the walkway meets itself only at corners, yet the "
+            "fill called it sound; the fill is not measuring the generator's geometry" % g[0])
 
 
-# Without this the barrier test could be passing because the walkway is narrow rather than because the barrier
-# closes it. Widening the shell by one column each side -- again the GENERATOR, not the data -- leaves a
-# walkway three wide, where a player walks straight round the barrier; the barrier check must catch that, and
-# the connectivity check must NOT, because a three-wide walkway is still connected. This pins which is which.
-def test_widening_the_shell_in_cmd_build_lets_a_player_walk_round_the_barrier():
+# Without this the barrier test could be passing because the walkway is exactly as wide as the barrier by
+# accident rather than because the barrier closes it. Widening the WALKWAY by a lane in the generator -- the
+# barrier still spanning the six lanes gate_places() gives it, data untouched -- leaves a lane past the
+# barrier's end where a player walks straight round it; the barrier check must catch that, and the
+# connectivity check must NOT, because a seven-wide walkway is still connected. This pins which is which.
+def test_widening_the_walkway_past_the_barrier_lets_a_player_walk_round_it():
     texts = build_pack(ground=_fake_ground, module=mutant(
-        PATH_RETURN, """                            % (block, x, z))
+        PATH_RETURN, """    path = [c for _t, row in walkway_rows(block, outward, gh) for c in row]
     return path + [(x + 1, z) for (x, z) in path] + [(x, z + 1) for (x, z) in path]"""), report=_quiet_report)
-    for g in SOUND:
+    for g in GATES:
         assert barrier_problems(g, texts[g[0]]), (
-            "%s: a three-wide walkway still reads as closed by its barrier" % g[0])
+            "%s: a walkway wider than its barrier still reads as closed by it" % g[0])
         assert walkway_problems(g, texts[g[0]]) == [], (
-            "%s: a three-wide walkway is wrong, but it is still one connected piece; the connectivity check "
-            "must not be the thing that rejects it" % g[0])
+            "%s: a walkway wider than its barrier is wrong, but it is still one connected piece; the "
+            "connectivity check must not be the thing that rejects it" % g[0])
 
 
 # ------------------------------------------------------------------ with the heightmap

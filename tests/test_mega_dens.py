@@ -51,10 +51,15 @@ def test_the_committed_dens_are_clean(ground, tmp_path):
     assert rep.errors == []
 
 
+# Without it a farm den could stand undressed (nothing to see from the air), a lair could dress a den that does not
+# exist, or a retired den (data/gulch_mine.json superseded_farms) could still be dressed. Repointed 2026-10-03 from the
+# seven plateau dens' count to the property: whatever the farms are, each has exactly one lair and no retired one has.
 def test_every_open_air_den_is_dressed_and_none_is_invented():
     gulch = {d["id"]: d["species"] for f in GULCH["farms"] for d in f["dens"]}
     mine = {d["den"]: d["species"] for d in REC["dens"]}
-    assert mine == gulch and len(mine) == 7
+    retired = {d["id"] for f in GULCH.get("superseded_farms", []) for d in f["dens"]} - set(gulch)
+    assert mine == gulch and mine
+    assert not set(mine) & retired
 
 
 def test_the_dens_are_dark_and_use_no_spawn_condition():
@@ -75,7 +80,8 @@ def _after(monkeypatch, name, after):
 
 
 def test_a_pad_without_its_head_room_is_caught(ground, tmp_path, monkeypatch):
-    # the pad levels the anchor's columns but no longer clears the air over them: Pinsir has a column a block higher
+    # the pad levels the anchor's columns but no longer clears the air over them. Repointed 2026-10-03: it named Pinsir,
+    # a retired den; now every den whose pad holds a column above the anchor's ground (on the heightmap) must be named
     def pad_only(self):
         for x in range(self.ax - self.clear, self.ax + self.clear + 1):
             for z in range(self.az - self.clear, self.az + self.clear + 1):
@@ -85,7 +91,14 @@ def test_a_pad_without_its_head_room_is_caught(ground, tmp_path, monkeypatch):
                     self.put(x, self.G0, z, self.rec["pad"])
     monkeypatch.setattr(M.Den, "pad", pad_only)
     rep = run(ground, tmp_path)
-    assert any(e.startswith("anchor: pinsir") and "spawn cylinder" in e for e in rep.errors)
+    cr = REC["anchor_pad"]["clear_radius"]
+    gd = {d["id"]: d["anchor"] for f in GULCH["farms"] for d in f["dens"]}
+    raised = sorted(r["species"] for r in REC["dens"] for (ax, ay, az) in [gd[r["den"]]]
+                    if any(round(ground(x, z)) > ay - 1 for x in range(ax - cr, ax + cr + 1)
+                           for z in range(az - cr, az + cr + 1) if (x - ax) ** 2 + (z - az) ** 2 <= cr * cr))
+    assert raised, "no den's pad holds a raised column: this mutation cannot bite on the current dens"
+    named = sorted({e.split(":")[1].strip() for e in rep.errors if e.startswith("anchor: ") and "spawn cylinder" in e})
+    assert named == raised
 
 
 def test_a_boulder_in_the_spawn_cylinder_is_caught(ground, tmp_path, monkeypatch):
@@ -129,8 +142,10 @@ def test_a_dig_deeper_than_declared_is_caught(ground, tmp_path, monkeypatch):
     orig = M.Den.lower
     monkeypatch.setattr(M.Den, "lower", lambda self, x, z, newtop, floor: orig(self, x, z, newtop - 1, floor))
     rep = run(ground, tmp_path)
-    assert any(e.startswith("ground: tyranitar") for e in rep.errors)
-    assert any(e.startswith("ground: garchomp") for e in rep.errors)
+    # repointed 2026-10-03 from Tyranitar and Garchomp (retired) to every den whose kit digs (a crater or a burrow)
+    digs = sorted(r["species"] for r in REC["dens"] if r.get("dig"))
+    assert digs, "no den digs: this mutation cannot bite on the current dens"
+    assert sorted({e.split(":")[1].strip() for e in rep.errors if e.startswith("ground: ")}) == digs
 
 
 def test_a_write_outside_the_box_is_caught(ground, tmp_path, monkeypatch):
@@ -140,11 +155,15 @@ def test_a_write_outside_the_box_is_caught(ground, tmp_path, monkeypatch):
 
 
 def test_a_sign_left_unbuilt_is_caught(ground, tmp_path, monkeypatch):
-    monkeypatch.setattr(M.Den, "frost", lambda self: None)
-    monkeypatch.setattr(M.Den, "frost_late", lambda self: None)
+    # repointed 2026-10-03: it unbuilt Abomasnow's frost, and no field den carries that kit. The bone heap is the sign
+    # of the most-used kit (Houndoom's); every den whose feature it is must be named, by its signature and its mark
+    monkeypatch.setattr(M.Den, "bone_pile", lambda self: None)
     rep = run(ground, tmp_path)
-    assert any(e.startswith("signature: abomasnow") for e in rep.errors)
-    assert any(e.startswith("visible: abomasnow") for e in rep.errors)
+    bones = sorted(r["species"] for r in REC["dens"] if r["feature"] == "bone_pile")
+    assert bones, "no den's sign is a bone heap: this mutation cannot bite on the current dens"
+    for check in ("signature", "visible"):
+        named = {e.split(": ", 1)[1].split()[0].rstrip(":") for e in rep.errors if e.startswith(check + ": ")}
+        assert sorted(named) == bones, check
 
 
 def test_a_scrape_in_the_skins_own_stone_does_not_read(ground, tmp_path, monkeypatch):

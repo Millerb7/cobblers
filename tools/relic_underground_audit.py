@@ -6,7 +6,8 @@ block functions in their index order, the zone advancements and functions -- and
 not decide:
 
   the carve      data/relic_underground.json's declared numbers (hall centre, radius, floor, the dome's rim and
-                 apex, the gallery's and the passage's boxes, DEEP_CITY.md's passage ramp), re-implemented HERE.
+                 apex, the gallery's and the passage's boxes, DEEP_CITY.md's passage ramp; since 2026-10-03 the
+                 cradle's geometry.cradle when its `carve` is true), re-implemented HERE.
                  This file does not import the generator or its geometry.
   the ground     tools/ground.py (the canonical heightmap) and tools/rift_deep.py's pit treads
   what else is   every OTHER built pack in build/datapacks, swept: the undo and the shell may not touch a cell any of
@@ -21,6 +22,12 @@ What must hold:
   carve      every cell the data says is the hall's, the gallery's or the passage's air is air when the functions have
              run, except what the composition stands on the floor; no air is written anywhere else; the floor under
              every carved column is written solid; the choked shaft holds no air
+  cradle     (2026-10-03, a new feature added to this audit, not a fault it found) when geometry.cradle.carve is true:
+             its dome's air and floor join `carve` above (the passage keeps its ramp floor inside it, the lower floor
+             wins); every stand and the actor marker composition.cradle names is two clear cells over a written floor,
+             and the route walk below reaches every stand
+  release    the releasing NPC (geometry.release) stands in two written air cells over a written block, and the route
+             walk reaches a place within talking range of it
   hq         the HQ's way down (data geometry.hq), re-derived HERE from the data's runs, records room, dressing and
              lights: every air cell air, every tread a stair facing uphill, every landing, wall, floor, ceiling and
              fixture solid, NOTHING beside the front door that opens it, the old hatch laid back to rock, and every
@@ -165,7 +172,42 @@ def expected_air(spec):
         for z in range(p["interior"]["z"][0], p["interior"]["z"][1] + 1):
             air.update((x, y, z) for y in range(f + 1, f + p["interior"]["height"] + 1))
             floor[(x, z)] = f
+    # the cradle (geometry.cradle, added to this audit 2026-10-03 as a NEW FEATURE, not a fault): only when the record
+    # says it is carved. Its dome is ceiling_shape's formula with its own numbers; where the passage runs into it the
+    # passage keeps its ramp floor (geometry.cradle.entered_from), so a column's floor is the LOWER of the two
+    ca, cf = expected_cradle(spec)[:2]
+    air |= ca
+    for k, f in cf.items():
+        floor[k] = min(f, floor.get(k, f))
     return air, floor
+
+
+def expected_cradle(spec):
+    """(air, floor {(x, z): y}, stands [(x, y, z)], marker (x, y, z) or None) for Hoopa's cradle, from
+    data/relic_underground.json geometry.cradle (centre, radius, floor_y, ceiling_rim_y, ceiling_apex_y; the formula is
+    its ceiling_shape, "24 + round(4 * (1 - (r / 16)^2))") and composition.cradle (stands: orbit and bearings, "degrees
+    from +x toward +z"; actor_marker). Empty when geometry.cradle.carve is not true. Nothing imported from the generator."""
+    c = spec["geometry"].get("cradle") or {}
+    if c.get("carve") is not True:
+        return set(), {}, [], None
+    cx, cz = c["centre"]
+    R, F = c["radius"], c["floor_y"]
+    rim, apex = c["ceiling_rim_y"], c["ceiling_apex_y"]
+    air, floor = set(), {}
+    for x in range(cx - R, cx + R + 1):
+        for z in range(cz - R, cz + R + 1):
+            r = math.hypot(x - cx, z - cz)
+            if r > R:
+                continue
+            top = rim + int(round((apex - rim) * (1.0 - (r / R) ** 2)))
+            air.update((x, y, z) for y in range(F + 1, top + 1))
+            floor[(x, z)] = F
+    cc = spec["composition"]["cradle"]
+    o = cc["stands"]["orbit"]
+    stands = [(int(round(cx + o * math.cos(math.radians(b)))), F + 1, int(round(cz + o * math.sin(math.radians(b)))))
+              for b in cc["stands"]["bearings"]]
+    marker = tuple(cc["actor_marker"]["at"]) if cc.get("actor_marker") else None
+    return air, floor, stands, marker
 
 
 # the stair's facing for a run descending along its step: uphill. Written here again, not imported
@@ -585,6 +627,32 @@ def audit(fns, order, zone, spec, ground, pit, others, old, city, city_blocks=No
     via = {"stair": head in seen, "records room": False}
     st["route_cells"] = len(seen)
     st["route_alone"] = len(alone)
+
+    # the cradle (2026-10-03): every stand and the actor marker the record names is two clear cells over a written
+    # floor, and the walk (with the guards) reaches every stand; the releasing NPC (geometry.release) is talked to from a
+    # place the walk reaches. A dressing block on a stand passes the carve check (composition is allowed in the air)
+    # and fails here
+    _ca, _cf, stands, marker = expected_cradle(spec)
+    for s in stands + ([marker] if marker else []):
+        x, y, z = s
+        if final.get((x, y, z)) != AIR or final.get((x, y + 1, z)) != AIR:
+            bad("cradle", "the cradle's %s %s is not two clear cells (%s, %s)" % (
+                "actor marker" if s == marker else "stand", s, full.get((x, y, z)), full.get((x, y + 1, z))))
+        elif final.get((x, y - 1, z)) in (None, AIR):
+            bad("cradle", "the cradle's %s %s has no floor written under it" % (
+                "actor marker" if s == marker else "stand", s))
+    unreached = [s for s in stands if s not in seen]
+    if stands and unreached:
+        bad("cradle", "%d of the cradle's %d stands cannot be walked to from %s, e.g. %s"
+            % (len(unreached), len(stands), st.get("route_from"), unreached[:2]))
+    st["cradle_stands_reached"] = len(stands) - len(unreached)
+    rel = spec["geometry"].get("release")
+    if rel:
+        sx, sy, sz = rel["at"]
+        if not any(math.dist((x + 0.5, y, z + 0.5), (sx + 0.5, sy, sz + 0.5)) <= TALK for (x, y, z) in seen):
+            bad("release", "nowhere the walk reaches is within %.0f blocks of the releasing NPC at %s" % (TALK, rel["at"]))
+        if final.get((sx, sy, sz)) != AIR or final.get((sx, sy + 1, sz)) != AIR or final.get((sx, sy - 1, sz)) in (None, AIR):
+            bad("release", "the releasing NPC's seat %s is not two written air cells over a written block" % (rel["at"],))
     kb = spec["zone"]["knock"]["box"]
     via["records room"] = any((x, kb[1], z) in seen for x in range(kb[0], kb[3] + 1) for z in range(kb[2], kb[5] + 1))
     via["guard"] = "guard" in fired
@@ -902,7 +970,9 @@ def main(argv=None):
     kinds = {}
     for k, msg in problems:
         kinds.setdefault(k, []).append(msg)
-    for k in ("carve", "hq", "route", "guard", "shell", "zone", "spawns", "undo", "cordon", "nonempty"):
+    print("cradle stands reached %d of %d" % (st.get("cradle_stands_reached", 0), len(expected_cradle(spec)[2])))
+    for k in ("carve", "cradle", "release", "hq", "route", "guard", "shell", "zone", "spawns", "undo", "cordon",
+              "nonempty"):
         got = kinds.get(k, [])
         print("%-9s %s" % (k, "clean" if not got else "%d PROBLEM(S): %s" % (len(got), "; ".join(got[:3]))))
     print("relic_underground audit: %s" % ("CLEAN" if not problems else "%d PROBLEMS" % len(problems)))

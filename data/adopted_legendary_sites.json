@@ -1,6 +1,6 @@
 {
  "schema": "cobblers.adopted_legendary_sites/1",
- "status": "authored 2026-10-01, extended 2026-10-02 by three sessions. SEVEN sites measured off the canonical heightmap. SIX are SCHEDULED in data/placements.json, each named by `scheduled_as`: the Crown Cemetery and the two Necrozma towers (nothing they give depends on a right-click altar), and Zapdos, Mew and Moltres, scheduled 2026-10-02 once EXP-048 showed a pasted altar answers (the owner summoned from the pasted Calyrex statue). Their `placement` blocks are deleted here as placement_method.not_in_placements_json requires; this file keeps the measurement and the reasoning, and tools/adopted_sites.py resolves any site's position from whichever file authors it. ONE stays unscheduled here: Articuno, on Frostpeak's summit, placed by its own step (tools/articuno_tower.py placement_steps(), reapply R18A) from its `placement` block and never from data/placements.json - scheduling it too would paste it twice. The live world has none of the seven; the disposable staging world had the Crown Cemetery and Articuno's superseded shoulder copy pasted by hand for EXP-048. Of the eight Nether and End structures, the re-opening is recorded group by group in `refused`.",
+ "status": "authored 2026-10-01, extended 2026-10-02 by three sessions. SEVEN sites measured off the canonical heightmap. SIX are SCHEDULED in data/placements.json, each named by `scheduled_as`: the Crown Cemetery and the two Necrozma towers (nothing they give depends on a right-click altar), and Zapdos, Mew and Moltres, scheduled 2026-10-02 once EXP-048 showed a pasted altar answers (the owner summoned from the pasted Calyrex statue). Their `placement` blocks are deleted here as placement_method.not_in_placements_json requires; this file keeps the measurement and the reasoning, and tools/adopted_sites.py resolves any site's position from whichever file authors it. ONE stays unscheduled here: Articuno, on Frostpeak's summit, placed by its own step (tools/articuno_tower.py placement_steps(), reapply R18A) from its `placement` block and never from data/placements.json - scheduling it too would paste it twice. The live world has none of the seven; the disposable staging world had the Crown Cemetery and Articuno's superseded shoulder copy pasted by hand for EXP-048. Of the eight Nether and End structures, the re-opening is recorded group by group in `refused`. 2026-10-03: an EIGHTH, adopted_crown_spire (Glastrier, on Northgate Isle), scheduled as data/placements.json legendary_crown_spire: the first HIDDEN site, also held to tools/hidden_sites.py check; refused group 4 is superseded.",
  "why_a_sibling_of_legendaries_json": [
   "data/legendaries.json is OUR parametric chamber system, not a register of sites. tools/legendaries.py `load()` rejects any record whose `kind` is outside (lake_grotto, sealed_chamber, sapling_wake) and any record without a non-empty `gate.flags`, and `geometry()` derives every box of a sited record from `mouth`/`portal`, `approach` and `chamber`. A pasted third-party template has none of those: no bore, no shell margin, no carve, and - the load-bearing one - NO GATE WE MAY AUTHOR, because what triggers a `lumymon:*_altar` has never been read (LumyMon is closed source).",
   "Putting these three in that file would therefore mean mutating KINDS and the gate rule of a generator that emits six built chambers, to carry records it must never emit. That is the opposite of fail-closed, so they live here.",
@@ -249,7 +249,7 @@
    "template": "cobbleverse:legendary/zapdos",
    "legendary": "Zapdos",
    "rank": 3,
-   "status": "SCHEDULED 2026-10-02 as data/placements.json legendary_zapdos_tower, once EXP-048 showed a pasted altar answers. Its altar wants a thunder_feather that nothing in the game makes, so the encounter waits on the campaign handing one out; the tower is worth standing without it.",
+   "status": "SCHEDULED 2026-10-02 as data/placements.json legendary_zapdos_tower, once EXP-048 showed a pasted altar answers. MOVED 2026-10-03 from the north-west coast cliff to the Fungal Isle's east coast (the owner: \"move zapdos tower to mooshroom island i think or its own off in the sea\"); the old site is kept under superseded_coast_site, and its staging paste is cleared by tools/zapdos_tower.py (STAGING ONLY). Its altar wants a thunder_feather that nothing in the game makes, so the encounter waits on the campaign handing one out; the tower is worth standing without it.",
    "scheduled_as": "legendary_zapdos_tower",
    "source_archive": "COBBLEVERSE-DP-v31.zip",
    "size": [
@@ -260,43 +260,65 @@
    "size_source": "data/structures.json footprint \"31x66x29\"",
    "template_biome": "minecraft:stony_shore",
    "site": {
-    "region": "north_west_coast",
+    "region": "fungal_isle",
     "containing_polygons": [
-     "viltri_woods",
-     "north_west_coast"
+     "fungal_isle",
+     "fungal_north"
     ],
-    "cell": "C1",
-    "paint": "preset `coast_scrub` (data/regions.json subregions.north_west_coast). NOT a biome match: the template wants `minecraft:stony_shore` and no region on the map is painted that. coast_scrub is the closest cover we have on a windward cliff, and the mismatch is VISUAL ONLY - a raw paste reads no biome. Recorded rather than papered over: the owner may want a small stony patch painted round it at the next export, or may not care.",
-    "why": "66 blocks tall on a cliff 45 blocks from the shoreline (footprint edge; 64 from its centre), inside the windward band (the Windward Sea is 'sea west of x4096 between z2600 and z5200', data/regions.json windward_deep; this site is z2614-2642, just inside it) and inside the windward skerries box x0..760 z2600..5200, so the sea stacks and skerries the water export placed offshore stand in front of it. The top is y139, 77 above the water: a silhouette seen from the sea long before it is reached, which is the distance cue the LEGENDARY placement rule asks for (STRUCTURE_INVENTORY.md:317).",
-    "findable_by_eye": "this is the one of the three that finds itself: a 66-block tower on an exposed cliff. Re-measured 2026-10-02: Shrew Station (data/research_station.json, re-sited to the west sea coast that day) is the nearest authored thing, its field officer 170 blocks from the footprint edge - sited there to study the tower, not in competition with it."
+    "cell": "F1",
+    "paint": "preset `mushroom` (data/regions.json subregions.fungal_north). NOT a biome match: the template wants `minecraft:stony_shore` and no region on the map is painted that; the mismatch is VISUAL ONLY - a raw paste reads no biome. A sandstone storm tower on a mycelium island is the owner's choice (2026-10-03), recorded rather than papered over.",
+    "why": "the owner, 2026-10-03: \"move zapdos tower to mooshroom island i think or its own off in the sea\". The sea alternative has no ground: measured 2026-10-03 off tools/ground.py over x0..1300, z5100..6400, the only land above y62 not joined to the Fungal Isle is the mainland and four specks of 29-195 columns (largest x491..505, z5119..5134), and none holds a 31x29 or a 29x31; an islet of its own would be new terrain (tools/islet.py builds Relic Island's), which this move does not author. On the isle the site is the east-coast shelf facing Relic Island across the strait, 30.4 blocks from the water (footprint edge; 49.3 from its centre). Measured by line of sight over the heightmap (terrain only; no buildings, no trees): the tower's layers y69-132 clear the ground from the hometown's coast point (1190, 5468; the data/visibility.json relic_island_from_hometown_coast observer) at 316 blocks and from the Relic Island ferry landing (1062, 63, 5349) at 287, and y90-132 from the hometown's centre (1462, 5293) at 636. The top is y132, 70 above the water: a silhouette the player sees across the sea from the first town long before it can be reached.",
+    "findable_by_eye": "a 66-block tower on the shore across the water from Relic Island and the hometown's coast. Shrew Station (data/research_station.json), sited 2026-10-02 on the north-west coast to study the tower at its old site, is now 2,777 blocks from it (the owner's station coordinate (552, 2812) to the footprint corner): the station's storm log follows the tower through tools/adopted_sites.py, but its siting argument (\"a walk down the coast\") no longer holds - recorded for the owner, not re-sited here."
    },
-   "placement_lives_in": "data/placements.json legendary_zapdos_tower: corner (562, 2614), y74, rotation none, mirror none, top occupied layer y139 (436 under the runtime ceiling y575; 171 under terrain max_y 310). Deleted here so one site has one author (placement_method.not_in_placements_json).",
+   "placement_lives_in": "data/placements.json legendary_zapdos_tower: corner (881, 5569), y67, rotation none, mirror none, top occupied layer y132 (443 under the runtime ceiling y575; 178 under terrain max_y 310). Deleted here so one site has one author (placement_method.not_in_placements_json).",
    "ground": {
-    "min": 71,
-    "max": 76,
-    "median": 74,
-    "mode": 74,
+    "min": 65,
+    "max": 69,
+    "median": 67,
+    "mode": 67,
     "columns": 899,
-    "mode_columns": 299,
-    "spread": 5,
+    "mode_columns": 376,
+    "spread": 4,
     "transposed_29x31": {
-     "min": 70,
-     "max": 76,
-     "note": "rotation 90 or 270 is slightly tidier at y74: 214 blocks of cut and 596 of fill against 297 and 533"
+     "min": 66,
+     "max": 69,
+     "note": "rotation 90 or 270 at y67: 320 blocks of cut and 189 of fill against 280 and 246. Not taken: tools/research_station.py storm_box knows only the unturned tower"
     },
-    "measured_by": "tools/ground.py over x562..592, z2614..2642; the flattest 31x29 in the windward coast_scrub band (x416..760, z2600..3183) within 110 blocks of the sea",
-    "y_choice": "y74 is the modal ground and the balance point of the whole column: y71 costs 2,461 blocks of cut and no fill, y76 costs 2,034 of fill and no cut, y74 costs 297 cut and 533 fill. The coast is rugged and there is no flatter 31x29 in the band - spread 5 is the floor, not a bad choice."
+    "measured_by": "tools/ground.py over x881..911, z5569..5597; ranked 2026-10-03 against every 31x29 and 29x31 wholly on land inside the fungal_north and fungal_south polygons (171,486 corners at step 2, refined at step 1 round the leaders), kept where the footprint edge is 20-130 blocks from a column at or below y62 and at least 30 from every authored point",
+    "y_choice": "y67 is the modal ground and the unique cheapest seat: y66 costs 934 cut and 1 fill, y68 costs 2 cut and 867 fill, y67 costs 280 cut and 246 fill.",
+    "alternatives_measured_2026_10_03": [
+     {"corner": [731, 6161], "y": 66, "cut": 201, "fill": 136, "void": 0, "coast_edge": 28.6, "where": "the south coast shelf, the cheapest seat on the isle; it faces the open southern sea and is seen from nowhere a player is known to stand (y95-131 from the hometown's coast point at 835 blocks). Not taken for that reason"},
+     {"corner": [663, 5306], "y": 67, "cut": 239, "fill": 249, "void": 15, "coast_edge": 26.9, "where": "the north coast shelf, facing the mainland strait and 300 blocks west of the fungal_bar_chain landing (985, 5233)"},
+     {"corner": [240, 5648], "y": 133, "cut": 13, "fill": 87, "void": 0, "coast_edge": 241.0, "where": "the heath plateau in the isle's west, almost no earthworks and a top at y198; 241 blocks inland and its nearest 'coast' is the heightmap's west edge at x0, so it does not read from the sea"}
+    ]
    },
    "displaces": {
-    "cut_blocks": 297,
-    "cut_columns": 248,
-    "fill_blocks": 533,
-    "fill_columns": 352,
-    "terrain": "at y74, 248 of 899 columns stand above the bottom layer (297 blocks shaved) and 352 stand below it (533 blocks of gap that want filling with the local stone, or the tower's base floats on its seaward side). THIS IS THE ONE SITE THAT NEEDS DRESSING, and the amount is named so nobody discovers it in the world: about 830 blocks of work in a 31x29 box.",
-    "foliage": "coast_scrub has no foliage assign of its own, so the cover is the region preset's scrub rather than trees: little to lose.",
-    "built_content": "nothing inside the footprint. Re-measured 2026-10-02 by a sweep of every [x, z] and {x, z} pair in data/*.json: the nearest authored record is Shrew Station (data/research_station.json npcs.field_officer), 170 blocks from the footprint edge, which that file measured as 133 blocks from its own nearest write; its storm-log advancement reads this tower's top storey through tools/adopted_sites.py. The 478 this line used to give (the viltris_path channel) pre-dates the station. The site is inside no landmark extent and no water basin; the nearest column at or below sea level y62, (518, 2652), is 45.1 blocks from the footprint edge (63.7 from the centre), so the tower stands on land, not in the surf.",
-    "not_on_a_skerry": "the skerries and stacks the water export placed in this box are OFFSHORE (top y63-65 and y72-86 on radius 4-9 rock, data/water_shape.json windward_skerries). A 31x29 footprint does not fit on any of them and none is used: this is a cliff-top site with the skerries in front of it.",
-    "void_under_the_base_2026_10_02": "read from the template itself (COBBLEVERSE-DP-v31.zip legendary/zapdos.nbt, by zipfile and tools/nbt.py, nothing copied): its bottom layer is 447 smooth_sandstone. Of the 352 columns whose ground is below y74, 167 lie under that solid base and leave 21 blocks of open air beneath it, the other 185 under template air, where the ground simply stays lower. fill_blocks above counts y - ground; with ground the top solid block (tools/place_town.py seats a waystone at surface + 1), a base at y74 on ground y73 has no gap, so the real void is y - 1 - ground. The dressing is therefore 21 blocks, not 533. None is authored: tools/place_donor.py's `plinth` fills air across the whole 31x29 rectangle and would raise a lip on the 185 open columns."
+    "cut_blocks": 280,
+    "cut_columns": 278,
+    "fill_blocks": 246,
+    "fill_columns": 245,
+    "terrain": "at y67, 278 of 899 columns stand above the bottom layer (280 blocks shaved, by the paste itself) and 245 stand below it. fill_blocks counts y - ground; the real void under a base at y67 is y - 1 - ground: ONE block, at the single column whose ground is y65. No dressing is authored.",
+    "foliage": "the mushroom preset's cover: the template's bottom layer replaces mycelium on 654 columns (ground y67-69); whatever giant mushroom the export grew inside the box is cut by the paste's air. Not counted: the foliage layer is not in the heightmap.",
+    "built_content": "nothing inside the footprint. Measured 2026-10-03 by a sweep of every [x, z], [x, y, z] and {x, z} in data/*.json (region polygons aside) over x600..1200, z5280..5900: the nearest authored point is the end of the relic_reef_west water line (960, 5532; data/water_shape.json sections), 61.4 blocks from the footprint edge; then data/placements.json's Relic Island record (1085, 5527) at 179.0, Relic Island's centre (1092, 5532) at 184.7, the ferry landings at 205.5 and 266.8. The Fungal Isle's resident (data/southern_residents.json fairy_ring, bbox x598..623 z5878..5903) is 381 blocks off, the fungal_north spawn heart (432, 5488) 456. Nearest portal 2,074 blocks (rule 120). The nearest column at or below sea level y62, (938, 5555), is 30.4 blocks from the footprint edge (49.3 from the centre), so the tower stands on land, not in the surf."
+   },
+   "superseded_coast_site": {
+    "superseded_2026_10_03": "The owner, 2026-10-03: \"move zapdos tower to mooshroom island i think or its own off in the sea\".",
+    "why_kept": "the site scheduled on 2026-10-02 is kept, not deleted: its measurements are still true of the cliff, it is the box the staging cleanup (tools/zapdos_tower.py, build/staging/cobblers_zapdos_cleanup) clears, and a later session must not re-derive it. The tower stood there in the disposable staging world after the 2026-10-02 donor pass; the live world never had it.",
+    "placement": {
+     "corner": [
+      562,
+      2614
+     ],
+     "y": 74,
+     "rotation": "none",
+     "mirror": "none",
+     "top_y": 139
+    },
+    "region": "north_west_coast (polygons viltri_woods, north_west_coast), cell C1, preset coast_scrub",
+    "why_when_taken": "66 blocks tall on a cliff 45 blocks from the shoreline (footprint edge; 64 from its centre), inside the windward band and the windward skerries box x0..760 z2600..5200, so the sea stacks and skerries the water export placed offshore stood in front of it. The top was y139, 77 above the water. Shrew Station (data/research_station.json) was re-sited 2026-10-02 to the west sea coast 170 blocks south of it to study it.",
+    "ground": {"min": 71, "max": 76, "median": 74, "mode": 74, "columns": 899, "mode_columns": 299, "spread": 5, "measured_by": "tools/ground.py over x562..592, z2614..2642"},
+    "displaces": {"cut_blocks": 297, "cut_columns": 248, "fill_blocks": 533, "fill_columns": 352, "void_blocks": 21, "void_note": "read from the template (COBBLEVERSE-DP-v31.zip legendary/zapdos.nbt): its bottom layer is 447 smooth_sandstone, and 167 of the 352 low columns lay under it, leaving 21 blocks of open air"},
+    "altar": "lumymon:zapdos_altar at template [14,2,14], world (576, 76, 2628)"
    },
    "does_not_travel_here": [
     "the LumyMon Zapdos radar and `/locate`",
@@ -308,7 +330,7 @@
      "lumymon:zapdos_altar"
     ],
     "expected_result": "UNKNOWN, and the least known of the three. The pack's own wiki does not mention Articuno, Zapdos or Moltres at all (checked 2026-10-01), so how a Kanto bird's altar is triggered is not documented anywhere we can read. Worth pasting precisely because the silhouette is the reward whether or not the altar answers.",
-    "read_2026_10_02": "the template's only LumyMon block is lumymon:zapdos_altar at template [14,2,14], world (576, 76, 2628); it carries NO lumymon:summon_anchor. The altar wants a thunder_feather in hand (docs/research/notes/lumymon-altars.md). Whether an anchorless altar answers is EXP-048's open step 2 (the Articuno altar, the same shape)."
+    "read_2026_10_02": "the template's only LumyMon block is lumymon:zapdos_altar at template [14,2,14], world (895, 69, 5583) at the Fungal Isle seat (it was (576, 76, 2628) at the superseded coast site); it carries NO lumymon:summon_anchor. The altar wants a thunder_feather in hand (docs/research/notes/lumymon-altars.md). Whether an anchorless altar answers is EXP-048's open step 2 (the Articuno altar, the same shape)."
    },
    "gate": null,
    "gate_why_null": "no gate of ours is authored on it. The altar wants a thunder_feather that no recipe or loot table makes; where the campaign hands one out (Shrew Station's storm log, data/research_station.json, issuing false; or the Frostpeak camp's dialogue) is the owner's open call. Zapdos rolls 50-60, catchable once a player's cap reaches the level rolled."
@@ -598,7 +620,7 @@
     ],
     "cell": "F7",
     "paint": "the Craters' basalt and blackstone cones (data/regions.json the_craters). The template is a Nether build; a raw paste reads no biome, and a fire bird's tower on a volcano is the fit the Nether never gave it.",
-    "why": "the flank of a Craters cone at y168, below a summit that reaches y299 within 150 blocks: the third of the birds' trio, with Articuno on Frostpeak and Zapdos on the western cliffs. 389 blocks from Blaine's gym (data/placements.json gym7_gym_building, (6181, 4982)), so it belongs to Blaine's country without standing in his town, and 431 from Groudon's chamber portal (6672, 5508). The least-disturbing 31x34 on the Craters' upper flanks at least 200 blocks from anything authored.",
+    "why": "the flank of a Craters cone at y168, below a summit that reaches y299 within 150 blocks: the third of the birds' trio, with Articuno on Frostpeak and Zapdos on the western cliffs (Zapdos moved to the Fungal Isle's east coast 2026-10-03). 389 blocks from Blaine's gym (data/placements.json gym7_gym_building, (6181, 4982)), so it belongs to Blaine's country without standing in his town, and 431 from Groudon's chamber portal (6672, 5508). The least-disturbing 31x34 on the Craters' upper flanks at least 200 blocks from anything authored.",
     "findable_by_eye": "a 64-block tower topping out at y231 on the cone's flank, 126 blocks above Blaine's town (y105): seen from the town and the approach to it."
    },
    "ground": {
@@ -641,6 +663,91 @@
    "re_homed_from": "the Nether, where it generates on nether_wastes with an altar nobody can feed. Its Nether copies still generate; if the feather ever reaches a player who goes to the Nether, those altars answer too (one per copy). A structure-set override would close that (the same unproven experiment as Blaine's Nether copies).",
    "scheduled_as": "legendary_moltres_tower",
    "placement_lives_in": "data/placements.json legendary_moltres_tower: corner (6252, 5344), y168, rotation none, mirror none, top occupied layer y231 (344 under the runtime ceiling y575; 79 under terrain max_y 310). Deleted here so one site has one author (placement_method.not_in_placements_json)."
+  },
+  {
+   "id": "adopted_crown_spire",
+   "template": "cobbleverse:crown_spire",
+   "legendary": "Glastrier",
+   "rank": 8,
+   "status": "SCHEDULED 2026-10-03 as data/placements.json legendary_crown_spire. The first HIDDEN site: held to tools/hidden_sites.py check (clearance, keep-out, portals, spread) as well as to this file's rules. Nothing placed, booted or clicked.",
+   "hidden": true,
+   "scheduled_as": "legendary_crown_spire",
+   "source_archive": "COBBLEVERSE-DP-v31.zip",
+   "size": [
+    41,
+    38,
+    49
+   ],
+   "size_source": "data/structures.json footprint \"41x38x49\"",
+   "template_biome": "minecraft:snowy_plains",
+   "template_read_2026_10_03": {
+    "how": "COBBLEVERSE-DP-v31.zip data/cobbleverse/structure/crown_spire.nbt from the CLIENT profile, read with zipfile and tools/nbt.py; nothing copied. Template-relative positions, then world positions for rotation none at corner (5348, 130, 484).",
+    "summon": "lumymon:summon_trigger x3 at [24, 2, 36..38] (world (5372, 132, 520..522)); lumymon:summon_anchor at [16, 6, 38] (world (5364, 136, 522)); ONE lumymon:iceroot_carrot_crop at age 7 at [13, 4, 30] (world (5361, 134, 514)) among eight vanilla carrots (ages 7, 0, 1, 7, 3, 7, 7, 0).",
+    "statue": "a SECOND lumymon:calyrex_statue, has_crown false, facing east, at [23, 21, 24] (world (5371, 151, 508)). The Crown Cemetery carries the other.",
+    "barrels": "seven sophisticatedstorage:barrel: [15,1,9] the lumymon:calyrex_crown with 7 ice and 6 packed ice; [18,14,22] tmcraft:tm_freezyfrost with packed and blue ice; [18,14,26] 17 mega_showdown:ice_tera_shard; [22,14,21] 12 cobblemon:relic_coin; [23,14,21] 2 cobblemon:azure_ball and an ice_heal; [24,14,26] a diamond_axe and packed ice; [24,15,26] 9 snowballs.",
+    "corrects": "data/structures.json carries.notable_blocks lists only lumymon:summon_trigger for this template, and refused group 4 called it a second Calyrex site. It is a Glastrier site (the iceroot crop and the trigger) that ALSO carries a Calyrex statue and the game's only crown."
+   },
+   "site": {
+    "region": "northgate_east",
+    "containing_polygons": [
+     "northgate_isle",
+     "northgate_east"
+    ],
+    "cell": "A6",
+    "paint": "preset `taiga_sparse` (data/regions.json subregions.northgate_east). NOT a biome match: the template wants `minecraft:snowy_plains`. A raw paste reads no biome, and the spire brings its own 3,760 packed ice and 1,157 snow blocks, so the mismatch is a ring of ice in cold spruce country, not a frozen build in a jungle.",
+    "why": "the owner, 2026-10-03: 'places you stumble on ... islands with no reason to visit'. Northgate Isle is a spruce island off the north coast with no town, no route, no ferry stop and no trainer: the nearest route vertex is 1,489 blocks off (tools/hidden_sites.py sightings), and the only authored things on it are three elder spruces and their habitat blocks. The bench is the island's eastern highland at y129-131, 99 blocks from elder_northgate_east_1 (5472, 432): someone who crosses the water to look at the giant spruce finds a spire of ice behind it.",
+    "findable_by_eye": "NOT from any road: 0 of 0 route vertices within 1,200 blocks see its top (there are none). From the water: Surf from the north coast, which is 150 to 500 blocks south of the island (tools/ground.py, sampled every 160 blocks of x). The finding is the rumour and the elder tree, not a sightline."
+   },
+   "placement_lives_in": "the position, rotation and mirror now live ONLY in data/placements.json legendary_crown_spire: corner (5348, 484), y130, rotation none, mirror none. The top occupied layer y167 (408 under the runtime ceiling y575).",
+   "ground": {
+    "min": 129,
+    "max": 131,
+    "median": 130.0,
+    "mode": 130,
+    "columns": 2009,
+    "mode_columns": 1957,
+    "spread": 2,
+    "transposed_49x41": {
+     "min": 129,
+     "max": 131,
+     "note": "rotation 90 or 270 costs 12 blocks of cut and 96 of fill at y130 instead of 12 and 40 - also usable"
+    },
+    "measured_by": "tools/ground.py over x5348..5388, z484..532; the least-disturbing 41x49 in x4900..5400, z200..800 with a unique cheapest seat that passes every tools/hidden_sites.py rule"
+   },
+   "displaces": {
+    "cut_blocks": 12,
+    "cut_columns": 12,
+    "fill_blocks": 40,
+    "fill_columns": 40,
+    "terrain": "1,957 of 2,009 columns already stand at y130: the paste shaves 12 single blocks and fills 40. y129 would cut 1,981; y131 would fill 2,037.",
+    "built_content": "nothing: the nearest authored record is elder_northgate_east_1 and its habitat blocks (data/elder_trees.json, data/habitat_blocks.json) at 99 blocks from the footprint edge, over the 96 the hidden-site clearance asks."
+   },
+   "spread": {
+    "rule": "tools/hidden_sites.py SPREAD 800, centre to centre, from every other adopted site and every data/legendaries.json encounter with a coordinate",
+    "nearest": "Azelf's lake grotto 1,671; the Crown Cemetery 1,936; Regice 2,129; the Dawn tower 2,142",
+    "portals": "the nearest portal is dive_peak_pond_floor, 1,593 blocks from the footprint edge (rule 120)"
+   },
+   "does_not_travel_here": [
+    "the LumyMon radar (`calyrex_ice_radar`, 'Locates the Crown Spire') and `/locate`: a paste writes no structure start (what_never_travels)",
+    "ONE spawn entry: data/structures.json depends_on_it names cobblemon:0037_vulpix spawning VIA cobbleverse:crown_spire. No Vulpix will spawn at the pasted spire."
+   ],
+   "carries_into_the_world": {
+    "from": "the template read in template_read_2026_10_03 (data/structures.json `carries` undercounts it)",
+    "blocks": [
+     "lumymon:summon_trigger",
+     "lumymon:summon_anchor",
+     "lumymon:iceroot_carrot_crop",
+     "lumymon:calyrex_statue"
+    ],
+    "removed_after_the_paste": "the calyrex_crown, by data/placements.json legendary_crown_spire data_remove (tools/place_donor.py data_removals); the barrel and its ice stay"
+   },
+   "gate": {
+    "place": "Surf, to cross to the island: Misty teaches it after gym2_cleared (docs/mechanics/WATER_MAP.md). Nothing locks the spire itself.",
+    "glastrier": "THE LEVEL CAP. An iceroot carrot thrown onto the trigger ring spawns Glastrier at 50-59 or 70 (LumyMon class strings, docs/research/notes/lumymon-altars.md section 1, which it shares with Spectrier); above the thrower's RCT cap it breaks free from every ball (data/level_cap.json). Every 50-59 roll is catchable from gym8_cleared (cap 60); the 70 roll only after champion_cleared (cap 100). Below that the throw wastes the carrot: an early finder can burn the server's one Glastrier. Owner call (HIDDEN_LEGENDARIES.md).",
+    "calyrex": "the spire's statue is a second place to set the archivist's crown (data/research_station.json, champion_cleared); its own crown is removed."
+   },
+   "what_a_player_gets": "Glastrier, ONCE FOR THE SERVER if the trigger consumes the thrown carrot (INFERRED from the shaderoot reading, shaderoot_supply_measured_2026_10_02 on the cemetery: the carrot is the crop's own seed, so one plant is a conserved stock of one; NOT read for iceroot). And the barrels: TM Freezy Frost, 17 ice Tera Shards, 12 relic coins, 2 Azure Balls and an Ice Heal, a diamond axe.",
+   "how_it_is_found": "a rumour after gym 8 from a person who would know: the Shrew Station archivist (data/research_station.json npc `archivist`), who already holds the crown errand, says the spire is 'on the spruce isle north of the downs, behind the big tree'. NOT AUTHORED: data/research_station.json and data/dialogue.json belong to their own sessions; the line is proposed in docs/world-building/HIDDEN_LEGENDARIES.md."
   }
  ],
  "refused": [
@@ -685,7 +792,8 @@
     "Glastrier",
     "Calyrex"
    ],
-   "why": "it ends at Calyrex, and so does `crown_cemetery`, which is adopted above. Two sites for one legendary is the checklist feeling the design is trying to avoid. If the owner prefers the spire (41x38x49, snowy_plains), it REPLACES the cemetery; it does not join it."
+   "why": "it ends at Calyrex, and so does `crown_cemetery`, which is adopted above. Two sites for one legendary is the checklist feeling the design is trying to avoid. If the owner prefers the spire (41x38x49, snowy_plains), it REPLACES the cemetery; it does not join it.",
+   "superseded_2026_10_03": "ADOPTED as adopted_crown_spire (Northgate Isle, a hidden site). This entry is kept as written. Its premise was half right: the spire does carry a second Calyrex statue, but its own encounter is GLASTRIER (an iceroot crop and the trigger), a different legendary from the cemetery's Spectrier, and its barrel holds the only crown in the game. So it joins the cemetery rather than replacing it: two steeds, one king, and the crown removed at paste so the archivist's gate holds."
   },
   {
    "ids": [
@@ -763,6 +871,7 @@
   {
    "id": "EXP-LEG-ZAPDOS-DRESS",
    "question": "how much dressing does the Zapdos cliff actually need?",
+   "moot_2026_10_03": "the tower moved to the Fungal Isle (adopted_zapdos_tower), where the void under a base at y67 is one block at one column. Kept as asked of the superseded coast site.",
    "method": "paste at 562 74 2614 and look at the seaward side: the measurement says 352 columns sit below the bottom layer (533 blocks of gap). Confirm whether the template's own base already covers it before anyone writes a fill.",
    "why_it_matters": "it decides whether this site costs one command or one command plus a terrain pass, and nothing in a measurement can answer it: no .nbt has been read.",
    "answered_in_part_2026_10_02": "from the template's NBT: 21 blocks of open air under its solid base, not 533 (adopted_zapdos_tower.displaces.void_under_the_base_2026_10_02). What is left for the paste is whether 21 blocks on the seaward side show."

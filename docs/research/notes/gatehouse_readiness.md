@@ -70,9 +70,11 @@ removes z4/z5's zone checks), then `run --only R9Z`. R9Z = `wall_throat`, `gateh
 - z5 needs `rift_crisis_resolved` declared in `data/progression.json` with a setter (another agent); z4 needs
   Codex's caught_count dialogue. When either lands, remove that zone's `needs_*` field;
   `test_the_held_zones_are_exactly_the_zones_that_cannot_grant` fails until you do.
-- **Before releasing either:** `measured_defects[held_walls_do_not_meet_their_gatehouses]`. behind_league runs
-  4-5 blocks outside G4's outer mouth, so G4 stands behind its own wall; league_gate runs lengthwise along G5's
-  walkway. A siting decision (move a guard or re-cut a wall).
+- **Fixed 2026-10-03** (the owner's call): `measured_defects[held_walls_do_not_meet_their_gatehouses]`. G4
+  moved 3 blocks south into behind_league; one column of league_gate opened at G5's inner mouth. See
+  `docs/world-building/GATEHOUSE_CHANGES.md`. Still open, and not a shape:
+  `measured_defects[gates_stand_deep_inside_their_own_zone]` (G1 and the three posts cannot be reached by a
+  player without the pass).
 - The throat wall has no gate in it by design (z1 and z2 each have their own); nobody crosses the throat.
 - The wilds slip sits on broken ground (a 3-column cut out, a 4-column cut/bridge in). Re-siting it is the
   owner's call.

@@ -210,6 +210,25 @@ def command_rewrites(rec):
     return out
 
 
+def data_removals(rec):
+    """`data remove block` for each block-entity path the record strips after the paste.
+
+    The Crown Spire's barrel ships the one lumymon:calyrex_crown in the game; left in, it hands a level-70 Calyrex to
+    whoever finds the barrel first, under any cap, past the archivist's champion_cleared gate
+    (data/research_station.json). `at` is template-relative and turned with the template, exactly as set_commands;
+    `path` is an NBT path authored in data/placements.json, never read from the template."""
+    import place_town
+    if rec.get("mirror", "none") != "none" and rec.get("data_remove"):
+        raise SystemExit("%s: data_remove under a mirror is not supported" % rec["id"])
+    out = []
+    for c in rec.get("data_remove") or []:
+        tx, ty, tz = c["at"]
+        rx, rz = place_town.rotate(tx, tz, rec.get("rotation", "none"))
+        out.append("data remove block %d %d %d %s" % (rec["position"]["x"] + rx, rec["position"]["y"] + ty,
+                                                       rec["position"]["z"] + rz, c["path"]))
+    return out
+
+
 def commands(rec, subs):
     x, y, z = (rec["position"][k] for k in "xyz")
     lo, hi = box(rec)
@@ -217,6 +236,7 @@ def commands(rec, subs):
            "forceload add %d %d %d %d" % load_box(rec),
            "place template %s %d %d %d %s %s 1.0 0" % (rec["pack_template"], x, y, z, rec.get("rotation", "none"), rec.get("mirror", "none"))]
     out += command_rewrites(rec)
+    out += data_removals(rec)
     # /fill refuses more than 32,768 blocks, and it refuses the whole command rather than part of it.
     # Brock's gym is 11,016 and fitted; Misty's is 46,080 and every substitution silently did nothing
     # until this was split (found 2026-09-20 by place_donor.py verify, 958 blocks left unsubstituted).

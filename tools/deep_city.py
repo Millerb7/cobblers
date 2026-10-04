@@ -278,6 +278,18 @@ def stair_plan(R):
     return steps, top, opened
 
 
+def climb_cells(R):
+    """The ring cells whose roof must be off so the stair can be WALKED, not only stood on: the two opened cells and the
+    cell of step R-3 (2026-10-03). A player stepping up from a step at height s to s+1 needs air three above s in the
+    column he is leaving (feet s+1, head s+2.8 while the stair lifts him); under a roof at R, step R-3 has two (R-2,
+    R-1) and the climber hits it. The descent is the same move backwards. stair_plan's `opened` is unchanged, because
+    place_tower sites the lifts by it and a moved tower is a moved city."""
+    cells = ring_cells()
+    _steps, top, opened = stair_plan(R)
+    extra = cells[(R - 4) % 16] if R >= 4 else None
+    return list(opened) + ([extra] if extra is not None and extra not in opened and extra != top else [])
+
+
 def place_tower(M, g, gu, L=None, U=None, claimed=None, want=None, max_try=None):
     """Site a 7x7 stair tower: the lower lift L inside it where the steps leave its rider headroom and the roof
     covers it, the upper lift U inside it too if it can be, the back against the riser, a door onto the street."""
@@ -378,7 +390,21 @@ def place_tower(M, g, gu, L=None, U=None, claimed=None, want=None, max_try=None)
 def build_tower(cv, P, M, t, name, palette, sign=None, pylon=4, walls_to=None, exits=(), roof=True, owner="tower"):
     w = frame(t["anchor"], t["back"])
     g, gu, R = t["g"], t["gu"], t["R"]
-    steps, top, opened = t["steps"], t["top"], t["opened"]
+    steps, top = t["steps"], t["top"]
+    # the roof comes off over climb_cells, not only stair_plan's `opened` (a climber needs three of head room on the
+    # step he leaves); where a lift stands under that roof its landing wins and the cell stays roofed, and is reported
+    opened = list(t["opened"])
+    lift_cols = {(p[0], p[2]) for p in (t.get("L"), t.get("U")) if p}
+    if roof and opened:
+        wf = frame(t["anchor"], t["back"])
+        for c in climb_cells(t["R"]):
+            if c in opened:
+                continue
+            if wf(*c) in lift_cols:
+                t["headroom_blocked_by_lift"] = list(wf(*c))
+                continue
+            opened.append(c)
+    t["climb_opened"] = [list(c) for c in opened]
     wall_b, roof_b, win_b = P(palette["wall"]), P("tread"), P("glass_conduit")
     stair_b = "minecraft:polished_deepslate_stairs"
     lifts = set()
@@ -423,7 +449,9 @@ def build_tower(cv, P, M, t, name, palette, sign=None, pylon=4, walls_to=None, e
                 cv.put(x, g + s, z, stair(stair_b, face), owner=owner)
             if roof and not upper:
                 if (i, j) in opened:
-                    pass
+                    # AIR, written, not merely left out: a world applied before 2026-10-03 holds the roof block here
+                    # (over step R-3), and an R9DC re-run that writes nothing would leave it
+                    cv.put(x, top_y, z, "minecraft:air", owner=owner)
                 elif (i, j) == top:
                     pass                                    # the last step is the landing, at roof height
                 else:
@@ -631,6 +659,25 @@ def build_lot(cv, P, spec, lot, roof_of, lot_of, M, rooms_out):
                    2, owner=lot.id)
             cv.put(x, g + 2, z, "minecraft:iron_door[facing=%s,half=upper,hinge=left,open=false,powered=false]" % face,
                    2, owner=lot.id)
+            # a sealed story room's own sign beside its door (data/deep_city.json rooms[].sign, 2026-10-03): on the
+            # facade one block to the named side of the door, at head height, facing the street. Fails closed when
+            # the facade there is not this building's wall or the street cell in front of it is taken
+            sg = (lot.room or {}).get("sign")
+            if sg:
+                sx_, sz_ = {"north": (0, -1), "south": (0, 1), "east": (1, 0), "west": (-1, 0)}[sg["side"]]
+                fx, fz = {v: k for k, v in FACE.items()}[face]
+                wall_c = (x + sx_, z + sz_)
+                sign_c = (x + sx_ + fx, z + sz_ + fz)
+                if wall_c not in cols or cv.get(wall_c[0], g + 2, wall_c[1]) in (None, "minecraft:air"):
+                    raise CityError("room %s: no wall at %s to hang its sign on" % (lot.room["id"], wall_c))
+                if sign_c in cols or cv.get(sign_c[0], g + 2, sign_c[1]) not in (None, "minecraft:air"):
+                    raise CityError("room %s: the sign's cell %s is taken" % (lot.room["id"], sign_c))
+                lines = ['{"text":"%s"}' % s.replace('"', "'") for s in (list(sg["lines"]) + ["", "", "", ""])[:4]]
+                cv.put(sign_c[0], g + 2, sign_c[1],
+                       "minecraft:warped_wall_sign[facing=%s,waterlogged=false]{front_text:{messages:['%s','%s','%s','%s']}}"
+                       % ((face,) + tuple(lines)), 2, owner=lot.id, exterior=True)
+                rooms_out_sign = [sign_c[0], g + 2, sign_c[1]]
+                lot.room = dict(lot.room, sign_at=rooms_out_sign)
     # furniture for the families' homes (not in a story room: those are the story's to dress)
     if d.get("furnish") and lot.room is None and interior:
         mx = sum(c[0] for c in interior) / len(interior)
@@ -650,6 +697,7 @@ def build_lot(cv, P, spec, lot, roof_of, lot_of, M, rooms_out):
         rooms_out.append({"id": lot.room["id"], "who": lot.room.get("who"), "note": lot.room.get("note"),
                           "district": lot.district, "level": g, "box": [min(xs), g + 1, min(zs), max(xs), max(tops.values()) - 1, max(zs)],
                           "door": [lot.door[0], g + 1, lot.door[1]] if lot.door else None, "sealed": lot.sealed,
+                          "sign": lot.room.get("sign_at"),
                           "storeys": storeys(g, min(tops.values()), storey)})
     return tops, facade
 
@@ -771,7 +819,11 @@ def build(source_root, server_dir=None):
         plan["towers"].append({"kind": "lift bank", "boundary": k, "lower_lift": list(lower[:3]), "upper_lift": list(upper[:3]),
                                "from": g, "to": gu, "door": list(w(*t["door"])), "door_out": door_out(t), "footprint": [list(c) for c in sorted(cols)][:1]
                                + [list(c) for c in sorted(cols)][-1:],
-                               "upper_lift_lands": "inside" if (t["u_cell"] or t["u_wall"]) else "NOT IN THE TOWER"})
+                               "upper_lift_lands": "inside" if (t["u_cell"] or t["u_wall"]) else "NOT IN THE TOWER",
+                               "roof_open_over": [list(w(*c)) for c in t["climb_opened"]],
+                               "headroom_blocked_by_lift": t.get("headroom_blocked_by_lift")})
+        if t.get("headroom_blocked_by_lift"):
+            count("stair towers whose top step is NOT walkable (a lift under the roof over step R-3)")
         checks.append((lower[0], gu, lower[2], [P("tread"), P("rib_teal"), P(spec["districts"][dnames[k + 1]]["wall"])], "lift landing roof"))
         checks.append((w(2, 2)[0], g + 2, w(2, 2)[1], [P("sea_lantern")], "tower core"))
         count("stair towers round lift banks")
@@ -829,7 +881,8 @@ def build(source_root, server_dir=None):
     w = frame(gate["anchor"], gate["back"])
     gate_bearing = bearing(*w(2, 2), cx, cz)
     plan["sink_gate"] = {"door": list(w(*gate["door"])), "door_out": door_out(gate), "from": gate["g"], "to": gate["gu"], "bearing": round(gate_bearing, 1),
-                         "exit": list(w(gate["top"][0], -2))}
+                         "exit": list(w(gate["top"][0], -2)),
+                         "roof_open_over": [list(w(*c)) for c in gate["climb_opened"]]}
     count("the Sink Gate")
 
     # ---- the Centre and Mart, by the Sink Gate
@@ -905,115 +958,22 @@ def build(source_root, server_dir=None):
         raise CityError("no room for the spire on the Core's floor")
     scx, scz = best[1]
     g0 = rings[-1]
-    if ar:
-        # the arena's tiers are the pit's own 15-then-17 grammar continued upward; the crown caps the drum
-        decks = [int(t) for t in ar["tiers"]]
-        top = int(ar["crown"])
-        if decks != sorted(set(decks)) or decks[0] != g0 + 15:
-            raise CityError("the arena's tiers must rise from y%d: %s" % (g0 + 15, decks))
-        if min(b_ - a_ for a_, b_ in zip(decks, decks[1:])) < 11 or top - decks[-1] < 11:
-            raise CityError("the arena leaves a tier under 11 of clear: %s, crown y%d" % (decks, top))
-        hq_top = spec["hq"]["tower"]["top"]
-        if top >= hq_top:
-            raise CityError("the arena's crown y%d would meet the HQ tower's y%d: the HQ stays the dominant building"
-                            % (top, hq_top))
-        if top + 2 >= 150:
-            raise CityError("the arena's beacon at y%d breaks the audit's y150 ceiling" % (top + 2))
-        shell_top, crown = top, top
-        lit_courses = set(decks) | {crown}                      # a lit course at every tier: the ladder, seen outside
-        dark_courses = {d_ + 8 for d_ in decks}
-        deck_ys = decks + [crown]
-        core_top = crown - 1                                    # the shaft's walls stop one under the crown deck
+    if ar and ar.get("layout") == "halls":
+        spire_tower, spire_cols, decks, crown, beacon_base, shell_top = build_arena_halls(
+            cv, P, M, spec, ar, scx, scz, g0, checks)
     else:
-        top = sp["top"]
-        decks = list(range(g0 + 15, top, sp["deck_every"]))
-        shell_top, crown = top, None
-        lit_courses = {y for y in range(g0 + 1, top + 1) if (y - g0) % 16 == 0}
-        dark_courses = {y for y in range(g0 + 1, top + 1) if (y - g0) % 8 == 4}
-        deck_ys = decks
-        core_top = decks[-1] + 2
-    spire_cols = set()
-    for dx in range(-rad - 1, rad + 2):
-        for dz in range(-rad - 1, rad + 2):
-            r = math.hypot(dx, dz)
-            x, z = scx + dx, scz + dz
-            if r >= rad + 0.5:
-                continue
-            spire_cols.add((x, z))
-            a = math.degrees(math.atan2(dx, -dz)) % 360
-            if r >= rad - 0.5:
-                rib = ang_diff(a, round(a / 45.0) * 45.0) < 360.0 / (2 * math.pi * rad) * 0.75
-                door = min(abs(dx), abs(dz)) <= 1
-                for y in range(g0 + 1, shell_top + 1):
-                    if door and y <= g0 + 4:
-                        continue
-                    if rib:
-                        b = P("rib_teal")
-                    elif y in lit_courses:
-                        b = P("sea_lantern")
-                    elif y in dark_courses:
-                        b = P("glass_dark")
-                    else:
-                        b = P("glass_conduit")
-                    cv.put(x, y, z, b, owner="spire", exterior=b == P("sea_lantern"))
-                if rib:
-                    cv.put(x, shell_top + 1, z, P("crystal"), 2, owner="spire")
-            elif max(abs(dx), abs(dz)) > 3:
-                for y in deck_ys:
-                    lit = (dx * 3 + dz) % 5 == 0
-                    cv.put(x, y, z, P("sea_lantern") if lit else P("tread"), owner="spire", exterior=True)
-            cv.put(x, g0, z, P("tread") if (dx + dz) % 4 else P("violet"), owner="spire", exterior=(dx + dz) % 4 == 0)
-    # the crown's balustrade on the shell's own ring (the arena), or the top deck's parapet (the spire): a glass
-    # railing at every edge where a walk surface drops two or more, L2's language. Never over a rib's crystal.
-    for dx in range(-rad - 1, rad + 2):
-        for dz in range(-rad - 1, rad + 2):
-            r = math.hypot(dx, dz)
-            if ar:
-                if not (rad - 0.5 <= r < rad + 0.5):
-                    continue
-                y_ = crown + 1
-            else:
-                if not (rad - 1.5 <= r < rad - 0.5):
-                    continue
-                y_ = decks[-1] + 1
-            x, z = scx + dx, scz + dz
-            if cv.get(x, y_, z) in (None, "minecraft:air"):
-                cv.put(x, y_, z, P("rail"), 2, owner="spire", exterior=True)
-    # the stair round the spire's core, from the floor to the top deck, a door onto every deck. With the back to the
-    # north, interior (0, 0) is the north-west inner corner
-    stair_top = crown if ar else decks[-1]
-    R = stair_top - g0
-    steps_ = {}
-    cells = ring_cells()
-    for s in range(1, R + 1):
-        steps_.setdefault(cells[(s - 1) % 16], []).append(s)
-    lv = {(i, j): g0 for i in range(-1, 6) for j in range(-1, 6)}
-    spire_tower = dict(anchor=(scx - 2, scz - 2), back=(0, -1), g=g0, gu=stair_top, R=R, steps=steps_,
-                       top=cells[(R - 1) % 16], opened=[], levels=lv, door=(2, 5), u_cell=None, u_wall=None)
-    build_tower(cv, P, M, spire_tower, "the spire", spec["districts"]["core"], pylon=0, walls_to=core_top,
-                exits=[d_ - g0 for d_ in decks], roof=False, owner="spire")
-    if ar:
-        # the crown deck closes the stair well over every ring cell whose last step is three or more below it, so the
-        # climber's head and the step above it are never under a floor; the arrival stays open
-        for c in cells:
-            if max(steps_[c]) + g0 > crown - 3:
-                continue
-            x, z = frame(spire_tower["anchor"], spire_tower["back"])(*c)
-            cv.put(x, crown, z, P("tread"), owner="spire")
-    # the beacon over the core: a gold base flush in the deck, nothing of iron (Meltan), the beam turned cyan
-    beacon_base = crown if ar else core_top
-    for dx in (-1, 0, 1):
-        for dz in (-1, 0, 1):
-            cv.put(scx + dx, beacon_base, scz + dz, "minecraft:gold_block", owner="spire")
-    cv.put(scx, beacon_base + 1, scz, "minecraft:beacon", 2, owner="spire")
-    cv.put(scx, beacon_base + 2, scz, P("glass_conduit"), 2, owner="spire")
+        spire_tower, spire_cols, decks, crown, beacon_base, shell_top = build_spire_ring(
+            cv, P, M, spec, sp, ar, scx, scz, g0, rad)
     claimed |= spire_cols
     plan["spire"] = {"centre": [scx, scz], "radius": rad, "top": shell_top, "decks": decks,
                      "beacon": [scx, beacon_base + 1, scz]}
     checks.append((scx, beacon_base + 1, scz, ["minecraft:beacon"], "spire beacon"))
-    checks.append((scx, g0 + 20, scz, [P("sea_lantern")], "spire core"))
+    cwx, cwz = frame(spire_tower["anchor"], spire_tower["back"])(2, 2)      # the stair's light column, wherever it is
+    checks.append((cwx, g0 + 20, cwz, [P("sea_lantern")], "spire core"))
     count("the spire")
-    if ar:
+    if ar and ar.get("layout") == "halls":
+        plan["arena"] = arena_plan_halls(cv, P, ar, scx, scz, g0, decks, crown, beacon_base, spire_tower, count, checks)
+    elif ar:
         plan["arena"] = arena_plan(cv, P, ar, spec, scx, scz, g0, rad, decks, crown, beacon_base, spire_tower, count,
                                    checks)
 
@@ -1274,7 +1234,8 @@ def build(source_root, server_dir=None):
                                   "level": lot.level, "box": [min(xs), lo, min(zs), max(xs), hi, max(zs)],
                                   "door": [lot.door[0], lot.level + 1, lot.door[1]] if lot.door and si == 0 else None,
                                   "sealed": bool(room.get("sealed")), "storey": si,
-                                  "section_columns": len(lot.cols)})
+                                  "section_columns": len(lot.cols),
+                                  "sign": (lot.room or {}).get("sign_at") if si == 0 else None})
     # the shaft head is NOT the city's (2026-10-02). This build used to lay a reinforced-deepslate hatch on the ring-0
     # section's columns nearest the sited column (3427, 3308); the tower box and the pit's edge left only (3427, 3308)
     # and (3427, 3309), both boundary columns, so the hatch lay under the section's own west wall where no shaft can
@@ -1582,6 +1543,354 @@ def _outward_wall(ci, cj, what):
     if cj == 4:
         return ci, 5
     raise CityError("%s: %s is not on the stair's ring" % (what, (ci, cj)))
+
+
+ARENA_BACK = (0, 1)     # the stair bay's back row faces the stage (south), so three of the seven exits open straight at it
+
+
+def arena_geometry(ar, spec, scx, scz, g0):
+    """Every number of Heaven's Arena's halls layout, derived from data/deep_city.json arena and checked: the build and
+    its plan record both read this, so the record cannot drift from what was written.
+
+    The owner, 2026-10-03: "Seven seats on flat ground is not what I asked for. It should be tiers climbing upward,
+    champions at the top, a player fighting their way up -- Heaven's Arena from HxH." Schema 1 (build_spire_ring) made
+    every tier an annulus round the light core with one reserved cell on it; this makes every tier a fight hall."""
+    rad = int(ar["radius"])
+    decks = [int(t) for t in ar["tiers"]]
+    crown = int(ar["crown"])
+    if decks != sorted(set(decks)) or decks[0] != g0 + 15:
+        raise CityError("the arena's tiers must rise from y%d: %s" % (g0 + 15, decks))
+    if min(b_ - a_ for a_, b_ in zip(decks, decks[1:])) < 11 or crown - decks[-1] < 11:
+        raise CityError("the arena leaves a tier under 11 of clear: %s, crown y%d" % (decks, crown))
+    hq_top = spec["hq"]["tower"]["top"]
+    if crown >= hq_top:
+        raise CityError("the arena's crown y%d would meet the HQ tower's y%d: the HQ stays the dominant building"
+                        % (crown, hq_top))
+    if crown + 2 >= 150:
+        raise CityError("the arena's beacon at y%d breaks the audit's y150 ceiling" % (crown + 2))
+    taper = sorted((int(y), int(r)) for y, r in ar["taper"])
+    if any(y not in decks for y, _r in taper) or [r for _y, r in taper] != sorted((r for _y, r in taper), reverse=True) \
+            or any(r >= rad for _y, r in taper):
+        raise CityError("the arena's setbacks must sit on tier floors and step inward: %s" % taper)
+
+    def shell_r(y):
+        """The drum's radius for the course at y: a setback at tier floor ty narrows every course ABOVE it."""
+        r = rad
+        for ty, tr in taper:
+            if y > ty:
+                r = tr
+        return r
+
+    bx, bz = (int(v) for v in ar["bay"]["centre"])
+    sx, sz = (int(v) for v in ar["stage"]["centre"])
+    half = int(ar["stage"]["size"]) // 2
+    on = [int(v) for v in ar["stage"]["stand"]]
+    mk = [int(v) for v in ar["stage"]["mark"]]
+    narrowest = shell_r(crown) - 0.5
+    if math.hypot(abs(bx) + 3, abs(bz) + 3) >= narrowest:
+        raise CityError("the arena's stair bay at %s leaves the crown's hall (r<%.1f)" % ((bx, bz), narrowest))
+    stage_r = math.hypot(abs(sx) + half, abs(sz) + half)
+    if stage_r >= shell_r(decks[-1] + 1) - 0.5:
+        raise CityError("the arena's ring (corner r=%.1f) leaves the top tier's hall" % stage_r)
+    if not (sz - half > bz + 4 or sz + half < bz - 4):
+        raise CityError("the arena's ring meets the stair bay's landing rows")
+    for p, what in ((on, "stand"), (mk, "mark")):
+        if max(abs(p[0]), abs(p[1])) >= half:
+            raise CityError("the arena's %s %s is not inside the ring" % (what, p))
+    # the stair: a 7x7 build_tower with its back row toward the stage. frame() for back (0, 1) is (ax - i, az - j),
+    # so the light column (2, 2) lands on the bay centre
+    anchor = (scx + bx + 2, scz + bz + 2)
+    return {"rad": rad, "decks": decks, "crown": crown, "taper": taper, "shell_r": shell_r, "bay": (bx, bz),
+            "stage": (sx, sz, half), "stage_r": stage_r, "stand": on, "mark": mk, "anchor": anchor,
+            "benches": int(ar["benches"]), "deck_set": set(decks) | {crown}}
+
+
+def build_arena_halls(cv, P, M, spec, ar, scx, scz, g0, checks):
+    """Heaven's Arena, schema 2: seven fight halls stacked in the drum, a raised ring on every floor with the tier's
+    champion on its far side, stepped benches round the wall, the stair in a 7x7 bay against the north wall, and the
+    drum stepping in at the setbacks so the tiers read from the Rift floor as a tower climbing. Every block inside the
+    drum that the halls do not write is written AIR, because a world applied before 2026-10-03 holds schema 1's core
+    and annular decks there and a re-run that left them out would leave them standing.
+
+    Climbing is earned: the stair is gated per tier by route_trainers' cycle (data/arena_trainers.json gate), never
+    by a block, so going DOWN is always open and a player put on any floor can always walk out."""
+    A = arena_geometry(ar, spec, scx, scz, g0)
+    rad, decks, crown, shell_r, deck_set = A["rad"], A["decks"], A["crown"], A["shell_r"], A["deck_set"]
+    bx, bz = A["bay"]
+    sx, sz, half = A["stage"]
+    foot = {(scx + bx + i, scz + bz + j) for i in range(-3, 4) for j in range(-3, 4)}
+    spire_cols = set()
+
+    def is_rib(dx, dz, r_):
+        a = math.degrees(math.atan2(dx, -dz)) % 360
+        return ang_diff(a, round(a / 45.0) * 45.0) < 360.0 / (2 * math.pi * r_) * 0.75
+
+    for dx in range(-rad - 1, rad + 2):
+        for dz in range(-rad - 1, rad + 2):
+            r = math.hypot(dx, dz)
+            if r >= rad + 0.5:
+                continue
+            x, z = scx + dx, scz + dz
+            spire_cols.add((x, z))
+            cv.put(x, g0, z, P("tread") if (dx + dz) % 4 else P("violet"), owner="spire", exterior=(dx + dz) % 4 == 0)
+            for y in range(g0 + 1, crown + 4):
+                sr = shell_r(y)
+                b = "minecraft:air"
+                ext = False
+                if y in deck_set:
+                    # a floor: the hall's own disc, and the course of the band below it round its edge, lit -- the
+                    # ladder seen from outside, and where the drum steps in, the ledge of the setback
+                    below = shell_r(y)
+                    if r < below - 0.5:
+                        if (x, z) not in foot:                    # the bay is air here; build_tower writes over it
+                            b = P("sea_lantern") if (dx * 3 + dz) % 5 == 0 else P("tread")
+                    elif r < below + 0.5:
+                        b = P("rib_teal") if is_rib(dx, dz, below) else P("sea_lantern")
+                        ext = b == P("sea_lantern")
+                elif y <= crown and sr - 0.5 <= r < sr + 0.5:
+                    door = min(abs(dx), abs(dz)) <= 1 and y <= g0 + 4
+                    if not door:
+                        if is_rib(dx, dz, sr):
+                            b = P("rib_teal")
+                        elif any(y == d_ + 8 for d_ in decks):
+                            b = P("glass_dark")
+                        else:
+                            b = P("glass_conduit")
+                cv.put(x, y, z, b, owner="spire", exterior=ext)
+    # the balustrades: on each setback's ledge (the band below's ring, one over the floor) and round the crown, glass
+    # rail, a crystal on every rib -- L5's accent where the old drum carried it at its top
+    for ty in [t for t, _r in A["taper"]] + [crown]:
+        ring = shell_r(ty)
+        for dx in range(-ring - 1, ring + 2):
+            for dz in range(-ring - 1, ring + 2):
+                r = math.hypot(dx, dz)
+                if ring - 0.5 <= r < ring + 0.5:
+                    if is_rib(dx, dz, ring):
+                        cv.put(scx + dx, ty + 1, scz + dz, P("crystal"), 2, owner="spire")
+                    else:
+                        cv.put(scx + dx, ty + 1, scz + dz, P("rail"), 2, owner="spire", exterior=True)
+    # every tier: the ring, its corner posts, and the benches
+    for y in decks:
+        for dx in range(-half, half + 1):
+            for dz in range(-half, half + 1):
+                edge = max(abs(dx), abs(dz)) == half
+                cv.put(scx + sx + dx, y + 1, scz + sz + dz, P("tread_edge") if edge else P("deep_stone"), owner="spire")
+        for dx in (-half, half):
+            for dz in (-half, half):
+                cv.put(scx + sx + dx, y + 2, scz + sz + dz, P("rib_teal"), owner="spire")
+                cv.put(scx + sx + dx, y + 3, scz + sz + dz, P("sea_lantern"), owner="spire", exterior=True)
+        hall = shell_r(y + 1) - 0.5
+        rows = [k for k in range(A["benches"]) if hall - (k + 1) >= A["stage_r"] + 1.5]
+        for dx in range(-rad, rad + 1):
+            for dz in range(-rad, rad + 1):
+                if min(abs(dx), abs(dz)) <= 1:
+                    continue                                       # the four aisles, and the y15 bridges' line
+                if abs(dx - bx) <= 4 and abs(dz - bz) <= 4:
+                    continue                                       # the bay, its walls and its landings
+                r = math.hypot(dx, dz)
+                for k in rows:                                     # k = 0 is the outermost row, the highest
+                    if hall - (k + 1) <= r < hall - k:
+                        h = len(rows) - k
+                        for yy in range(y + 1, y + h + 1):
+                            cv.put(scx + dx, yy, scz + dz, P("tread") if yy == y + h else P("deep_stone"),
+                                   owner="spire")
+    # the stair, round its light column, from the lobby to the crown with an exit onto every tier
+    R = crown - g0
+    cells = ring_cells()
+    steps_ = {}
+    for s in range(1, R + 1):
+        steps_.setdefault(cells[(s - 1) % 16], []).append(s)
+    lv = {(i, j): g0 for i in range(-1, 6) for j in range(-1, 6)}
+    tower = dict(anchor=A["anchor"], back=ARENA_BACK, g=g0, gu=crown, R=R, steps=steps_, top=cells[(R - 1) % 16],
+                 opened=[], levels=lv, door=(2, 5), u_cell=None, u_wall=None)
+    build_tower(cv, P, M, tower, "Heaven's Arena's stair", spec["districts"]["core"], pylon=0, walls_to=crown - 1,
+                exits=[d_ - g0 for d_ in decks], roof=False, owner="spire")
+    # the crown deck closes the stair well as schema 1's did (see build_spire_ring): never over a climber's head
+    w = frame(tower["anchor"], tower["back"])
+    for i in range(-1, 6):
+        for j in range(-1, 6):
+            x, z = w(i, j)
+            c = (i, j)
+            if c in steps_:
+                if max(steps_[c]) + g0 == crown - 3:
+                    cv.put(x, crown, z, "minecraft:air", owner="spire")
+                    continue
+                if max(steps_[c]) + g0 > crown - 4:
+                    continue
+            cv.put(x, crown, z, P("tread"), owner="spire")
+    for dx in (-1, 0, 1):
+        for dz in (-1, 0, 1):
+            cv.put(scx + dx, crown, scz + dz, "minecraft:gold_block", owner="spire")
+    cv.put(scx, crown + 1, scz, "minecraft:beacon", 2, owner="spire")
+    cv.put(scx, crown + 2, scz, P("glass_conduit"), 2, owner="spire")
+    return tower, spire_cols, decks, crown, crown, crown
+
+
+def arena_plan_halls(cv, P, ar, scx, scz, g0, decks, crown, beacon_base, tower, count, checks):
+    """Heaven's Arena's tiers as a record of geometry (derived/deep_city/plan.json arena): for every tier the stair's
+    exit and the landing outside it, the ring, the champion's stand on it and the challenger's mark, and the gate box
+    -- the stair shaft between this floor and the next, which route_trainers' cycle turns a player back out of until
+    they have beaten this tier (data/arena_trainers.json gate). Each stand is checked: ring under it, 3x3x3 of air."""
+    w = frame(tower["anchor"], tower["back"])
+    cells = ring_cells()
+    bx, bz = (int(v) for v in ar["bay"]["centre"])
+    sx, sz = (int(v) for v in ar["stage"]["centre"])
+    half = int(ar["stage"]["size"]) // 2
+    on = [int(v) for v in ar["stage"]["stand"]]
+    mk = [int(v) for v in ar["stage"]["mark"]]
+    nexts = decks[1:] + [crown]
+    tiers = []
+    for n, (y, nxt) in enumerate(zip(decks, nexts), 1):
+        ci, cj = cells[(y - g0 - 1) % 16]
+        oi, oj = _outward_wall(ci, cj, "the arena's tier %d" % n)
+        ex, ez = w(oi, oj)
+        ix, iz = w(ci, cj)
+        lx, lz = 2 * ex - ix, 2 * ez - iz                         # one step on through the exit, onto the floor
+        stx, stz = scx + sx + on[0], scz + sz + on[1]
+        mx, mz = scx + sx + mk[0], scz + sz + mk[1]
+        tx, tz = scx + sx, scz + sz
+        yaw = round(math.degrees(math.atan2(-(tx - lx), tz - lz)), 1)
+        if cv.get(lx, y, lz) in (None, "minecraft:air") or any(cv.get(lx, yy, lz) not in (None, "minecraft:air")
+                                                                for yy in (y + 1, y + 2)):
+            raise CityError("the arena's tier %d landing %s is not a floor with headroom" % (n, (lx, y + 1, lz)))
+        for dx in (-1, 0, 1):
+            for dz in (-1, 0, 1):
+                if cv.get(stx + dx, y + 1, stz + dz) not in (P("deep_stone"), P("tread_edge")):
+                    raise CityError("the arena's tier %d stand has no ring under %s" % (n, (stx + dx, y + 1, stz + dz)))
+                for yy in range(y + 2, y + 5):
+                    b = cv.get(stx + dx, yy, stz + dz)
+                    if b not in (None, "minecraft:air"):
+                        raise CityError("the arena's tier %d stand is not clear: %s at %s" % (n, b, (stx + dx, yy, stz + dz)))
+        gx, gz = w(4, 4)                                          # the shaft's interior, ring and core: i, j = 0..4
+        hx, hz = w(0, 0)
+        box = [min(gx, hx), y + 3, min(gz, hz), abs(gx - hx), nxt - y - 4, abs(gz - hz)]
+        tiers.append({"tier": n, "y": y, "exit": [ex, y + 1, ez], "landing": [lx + 0.5, y + 1, lz + 0.5, yaw],
+                      "ring": [tx - half, y + 1, tz - half, tx + half, y + 1, tz + half],
+                      "stand": [stx, y + 2, stz], "mark": [mx, y + 2, mz],
+                      "clear": [stx - 1, y + 2, stz - 1, stx + 1, y + 4, stz + 1],
+                      "stand_yaw": round(math.degrees(math.atan2(-(mx - stx), mz - stz)), 1),
+                      "gate": {"box": box, "to": "tier %d" % (n + 1) if n < len(decks) else "the crown"}})
+        checks.append((tx, y + 1, tz, [P("deep_stone")], "arena tier %d ring" % n))
+    count("Heaven's Arena: tiers", len(tiers))
+    return {"name": ar["name"], "design": ar["design"], "site": ar["site"], "layout": "halls", "centre": [scx, scz],
+            "radius": int(ar["radius"]), "taper": ar["taper"], "lobby": g0, "tiers": tiers, "crown": crown,
+            "beacon": [scx, beacon_base + 1, scz], "stair": {"centre": list(w(2, 2)), "door": list(w(2, 5))},
+            "lift": ar["lift"], "buildings_displaced": 0, "stair_towers_displaced": 0, "not_built": ar["not_built"]}
+
+
+def build_spire_ring(cv, P, M, spec, sp, ar, scx, scz, g0, rad):
+    """The spire round its 7x7 light core, and Heaven's Arena's schema 1 drum (layout "ring": seven annular decks
+    round that core, SUPERSEDED 2026-10-03 by build_arena_halls; kept so data/deep_city.json superseded_ring can still
+    be built and compared). Returns (spire_tower, spire_cols, decks, crown, beacon_base, shell_top)."""
+    if ar:
+        # the arena's tiers are the pit's own 15-then-17 grammar continued upward; the crown caps the drum
+        decks = [int(t) for t in ar["tiers"]]
+        top = int(ar["crown"])
+        if decks != sorted(set(decks)) or decks[0] != g0 + 15:
+            raise CityError("the arena's tiers must rise from y%d: %s" % (g0 + 15, decks))
+        if min(b_ - a_ for a_, b_ in zip(decks, decks[1:])) < 11 or top - decks[-1] < 11:
+            raise CityError("the arena leaves a tier under 11 of clear: %s, crown y%d" % (decks, top))
+        hq_top = spec["hq"]["tower"]["top"]
+        if top >= hq_top:
+            raise CityError("the arena's crown y%d would meet the HQ tower's y%d: the HQ stays the dominant building"
+                            % (top, hq_top))
+        if top + 2 >= 150:
+            raise CityError("the arena's beacon at y%d breaks the audit's y150 ceiling" % (top + 2))
+        shell_top, crown = top, top
+        lit_courses = set(decks) | {crown}                      # a lit course at every tier: the ladder, seen outside
+        dark_courses = {d_ + 8 for d_ in decks}
+        deck_ys = decks + [crown]
+        core_top = crown - 1                                    # the shaft's walls stop one under the crown deck
+    else:
+        top = sp["top"]
+        decks = list(range(g0 + 15, top, sp["deck_every"]))
+        shell_top, crown = top, None
+        lit_courses = {y for y in range(g0 + 1, top + 1) if (y - g0) % 16 == 0}
+        dark_courses = {y for y in range(g0 + 1, top + 1) if (y - g0) % 8 == 4}
+        deck_ys = decks
+        core_top = decks[-1] + 2
+    spire_cols = set()
+    for dx in range(-rad - 1, rad + 2):
+        for dz in range(-rad - 1, rad + 2):
+            r = math.hypot(dx, dz)
+            x, z = scx + dx, scz + dz
+            if r >= rad + 0.5:
+                continue
+            spire_cols.add((x, z))
+            a = math.degrees(math.atan2(dx, -dz)) % 360
+            if r >= rad - 0.5:
+                rib = ang_diff(a, round(a / 45.0) * 45.0) < 360.0 / (2 * math.pi * rad) * 0.75
+                door = min(abs(dx), abs(dz)) <= 1
+                for y in range(g0 + 1, shell_top + 1):
+                    if door and y <= g0 + 4:
+                        continue
+                    if rib:
+                        b = P("rib_teal")
+                    elif y in lit_courses:
+                        b = P("sea_lantern")
+                    elif y in dark_courses:
+                        b = P("glass_dark")
+                    else:
+                        b = P("glass_conduit")
+                    cv.put(x, y, z, b, owner="spire", exterior=b == P("sea_lantern"))
+                if rib:
+                    cv.put(x, shell_top + 1, z, P("crystal"), 2, owner="spire")
+            elif max(abs(dx), abs(dz)) > 3:
+                for y in deck_ys:
+                    lit = (dx * 3 + dz) % 5 == 0
+                    cv.put(x, y, z, P("sea_lantern") if lit else P("tread"), owner="spire", exterior=True)
+            cv.put(x, g0, z, P("tread") if (dx + dz) % 4 else P("violet"), owner="spire", exterior=(dx + dz) % 4 == 0)
+    # the crown's balustrade on the shell's own ring (the arena), or the top deck's parapet (the spire): a glass
+    # railing at every edge where a walk surface drops two or more, L2's language. Never over a rib's crystal.
+    for dx in range(-rad - 1, rad + 2):
+        for dz in range(-rad - 1, rad + 2):
+            r = math.hypot(dx, dz)
+            if ar:
+                if not (rad - 0.5 <= r < rad + 0.5):
+                    continue
+                y_ = crown + 1
+            else:
+                if not (rad - 1.5 <= r < rad - 0.5):
+                    continue
+                y_ = decks[-1] + 1
+            x, z = scx + dx, scz + dz
+            if cv.get(x, y_, z) in (None, "minecraft:air"):
+                cv.put(x, y_, z, P("rail"), 2, owner="spire", exterior=True)
+    # the stair round the spire's core, from the floor to the top deck, a door onto every deck. With the back to the
+    # north, interior (0, 0) is the north-west inner corner
+    stair_top = crown if ar else decks[-1]
+    R = stair_top - g0
+    steps_ = {}
+    cells = ring_cells()
+    for s in range(1, R + 1):
+        steps_.setdefault(cells[(s - 1) % 16], []).append(s)
+    lv = {(i, j): g0 for i in range(-1, 6) for j in range(-1, 6)}
+    spire_tower = dict(anchor=(scx - 2, scz - 2), back=(0, -1), g=g0, gu=stair_top, R=R, steps=steps_,
+                       top=cells[(R - 1) % 16], opened=[], levels=lv, door=(2, 5), u_cell=None, u_wall=None)
+    build_tower(cv, P, M, spire_tower, "the spire", spec["districts"]["core"], pylon=0, walls_to=core_top,
+                exits=[d_ - g0 for d_ in decks], roof=False, owner="spire")
+    if ar:
+        # the crown deck closes the stair well over every ring cell whose last step is FOUR or more below it, so the
+        # climber's head and the step above it are never under a floor; the arrival stays open. It was three until
+        # 2026-10-03: a climber stepping up off step crown-3 needs air at the crown over that step (climb_cells), and
+        # the deck there made the crown unreachable on foot
+        for c in cells:
+            x, z = frame(spire_tower["anchor"], spire_tower["back"])(*c)
+            if max(steps_[c]) + g0 == crown - 3:
+                # AIR, written: a world applied before 2026-10-03 holds the crown's tread over this step
+                cv.put(x, crown, z, "minecraft:air", owner="spire")
+                continue
+            if max(steps_[c]) + g0 > crown - 4:
+                continue
+            cv.put(x, crown, z, P("tread"), owner="spire")
+    # the beacon over the core: a gold base flush in the deck, nothing of iron (Meltan), the beam turned cyan
+    beacon_base = crown if ar else core_top
+    for dx in (-1, 0, 1):
+        for dz in (-1, 0, 1):
+            cv.put(scx + dx, beacon_base, scz + dz, "minecraft:gold_block", owner="spire")
+    cv.put(scx, beacon_base + 1, scz, "minecraft:beacon", 2, owner="spire")
+    cv.put(scx, beacon_base + 2, scz, P("glass_conduit"), 2, owner="spire")
+    return spire_tower, spire_cols, decks, crown, beacon_base, shell_top
 
 
 def arena_plan(cv, P, ar, spec, scx, scz, g0, rad, decks, crown, beacon_base, spire_tower, count, checks):

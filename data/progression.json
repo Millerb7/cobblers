@@ -309,8 +309,9 @@
         "kind": "quest_transition",
         "quest": "main_worldshift_reveal",
         "transition": "unlock_league_after_rift_resolution",
-        "invoked_by": null,
-        "invoked_by_owed": "Hoopa's release at the cradle: docs/story/NPCS_AND_RIFT_FINALE.md Scene 5 (Codex, commit 9cbfd213 on the local branch codex/trainer-modes, NOT merged), actor_finale_hoopa at the cradle centre (3357, 12, 3306), player choice 'Release Hoopa.'. It needs the cradle chamber carved (data/deep_city.json reserves its box, nothing carves it) and a data/scenes.json scene whose Hoopa actor opens that conversation. Until then nothing invokes the transition and nobody holds this flag. Set invoked_by to the conversation id when it lands; tests/test_rift_crisis_resolved.py holds the two in step."
+        "invoked_by": "dlg_main_relic_hall_release",
+        "invoked_at": "line release_001 ('The restraint opens.'), reached by the choice 'Release Hoopa.' at stage rift_crisis_pending; NPC npc_main_relic_hall_binder at (3363, 13, 3312) in Hoopa's carved cradle (the hall's relic ring at (3390, 8, 3268) until 2026-10-03), seated by tools/reapply.py step R18RU (data/relic_underground.json geometry.release). The owner, 2026-10-03: 'set it ourselves at the quest stage that ends the Rift crisis'",
+        "superseded_invoked_by_owed": "Kept as the plan the binder replaced (Scene 5 at the cradle still waits on the cradle and a verified Hoopa model). Hoopa's release at the cradle: docs/story/NPCS_AND_RIFT_FINALE.md Scene 5 (Codex, commit 9cbfd213 on the local branch codex/trainer-modes, NOT merged), actor_finale_hoopa at the cradle centre (3357, 12, 3306), player choice 'Release Hoopa.'. It needs the cradle chamber carved (data/deep_city.json reserves its box, nothing carves it) and a data/scenes.json scene whose Hoopa actor opens that conversation. Until then nothing invokes the transition and nobody holds this flag. Set invoked_by to the conversation id when it lands; tests/test_rift_crisis_resolved.py holds the two in step."
       },
       "why": "Approved in docs/story/ARC.md ('The final story confrontation ends the forced activation and releases Hoopa from the steering mechanism. It sets rift_crisis_resolved', and the League row 'Requires rift_crisis_resolved'). Per player, like every flag here: an advancement, granted by cobblers:flag/rift_crisis_resolved/grant, which the transition's first effect runs as and at the releasing player. It is the gate data/rift_zones.json z5 names.",
       "multiplayer": "per player. Each player releases Hoopa for themselves; a late joiner, a player who died or disconnected keeps or lacks it on their own record. Codex's 'one world transition that advances every eligible player' (Scene 5) is NOT built: it is world-scoped state the dialogue compiler refuses, and an owner call."
@@ -776,6 +777,16 @@
       "initial": "out",
       "allowed_values": "node ids from dlg_main_relic_hq_guard_inside",
       "why": "the dialogue cursor of the Compact guard inside the HQ's storey-0 room (data/relic_underground.json geometry.hq.inside_guard, 2026-10-02). One menu; gates nothing."
+    },
+    {
+      "id": "quest.main_worldshift_reveal.relic_release_cursor",
+      "quest_id": "main_worldshift_reveal",
+      "field": "relic_release_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "release_closed",
+      "allowed_values": "node ids from dlg_main_relic_hall_release",
+      "why": "the dialogue cursor of the Compact binder at the relic ring (data/relic_underground.json geometry.release, 2026-10-03), the conversation that releases Hoopa. Its entry rules always pick the node from quest.main_worldshift_reveal.stage, so the cursor gates nothing; the release itself is gated by the stage."
     },
     {
       "id": "quest.evt_vr_abandoned_cut.started",
@@ -2279,6 +2290,15 @@
       "why": "grant_reward_once's claim for the ember feather (HELD: data/research_station.json economy.issuing)."
     },
     {
+      "id": "quest.evt_station_director.scroll_claimed",
+      "quest_id": "evt_station_director",
+      "field": "scroll_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's ONE claim for Kubfu's scroll, shared by grant_scroll_darkness and grant_scroll_waters, so either closes both (data/research_station.json economy.items kubfu_scroll)."
+    },
+    {
       "id": "quest.evt_station_director.dialogue_cursor",
       "quest_id": "evt_station_director",
       "field": "dialogue_cursor",
@@ -2300,7 +2320,14 @@
         "t001",
         "t002",
         "m001",
-        "m002"
+        "m002",
+        "k001",
+        "k002",
+        "k003",
+        "k010",
+        "k011",
+        "k020",
+        "k021"
       ],
       "why": "the dialogue cursor of Dr. Imogen Vale (dlg_station_director)."
     },
@@ -2428,6 +2455,503 @@
         "g003"
       ],
       "why": "the dialogue cursor of Mireille Sato (dlg_station_shrine_keeper)."
+    },
+    {
+      "id": "quest.evt_half_house.started",
+      "quest_id": "evt_half_house",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Tobiah Rusk (data/southern_residents.json half_house); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_half_house.heard_nell",
+      "quest_id": "evt_half_house",
+      "field": "heard_nell",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has heard who lived in the other half (dlg_half_house n003)."
+    },
+    {
+      "id": "quest.evt_half_house.promised",
+      "quest_id": "evt_half_house",
+      "field": "promised",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player told Tobiah 'I'll look for her.' (dlg_half_house ask); changes his options, gives nothing."
+    },
+    {
+      "id": "quest.evt_half_house.dialogue_cursor",
+      "quest_id": "evt_half_house",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "t001",
+      "allowed_values": [
+        "t001",
+        "t002",
+        "hub",
+        "w001",
+        "w002",
+        "w003",
+        "n001",
+        "n002",
+        "n003",
+        "s001",
+        "s002",
+        "ask",
+        "p001",
+        "p002",
+        "h001"
+      ],
+      "why": "the dialogue cursor of Tobiah Rusk's conversation (dlg_half_house)."
+    },
+    {
+      "id": "quest.evt_surveyor_line.started",
+      "quest_id": "evt_surveyor_line",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Corran Vey (data/southern_residents.json surveyor_line); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_surveyor_line.asked",
+      "quest_id": "evt_surveyor_line",
+      "field": "asked",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Corran has asked for a compass made here (dlg_surveyor_line k003)."
+    },
+    {
+      "id": "quest.evt_surveyor_line.compass_given",
+      "quest_id": "evt_surveyor_line",
+      "field": "compass_given",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player gave Corran a compass from the main hand (give_compass, which consumes it)."
+    },
+    {
+      "id": "quest.evt_surveyor_line.reward_claimed",
+      "quest_id": "evt_surveyor_line",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for the Everstone (data/rewards.json surveyor_everstone)."
+    },
+    {
+      "id": "quest.evt_surveyor_line.dialogue_cursor",
+      "quest_id": "evt_surveyor_line",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "c001",
+      "allowed_values": [
+        "c001",
+        "c002",
+        "c003",
+        "hub",
+        "l001",
+        "k001",
+        "k002",
+        "k003",
+        "g001",
+        "g002",
+        "g003",
+        "g004",
+        "done01"
+      ],
+      "why": "the dialogue cursor of Corran Vey's conversation (dlg_surveyor_line)."
+    },
+    {
+      "id": "quest.evt_prospector_claim.started",
+      "quest_id": "evt_prospector_claim",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Bettany Oake (data/southern_residents.json prospector_camp); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_prospector_claim.told",
+      "quest_id": "evt_prospector_claim",
+      "field": "told",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Bettany has told the player the way to Claim Number Four (dlg_prospector_claim c002)."
+    },
+    {
+      "id": "quest.evt_prospector_claim.dialogue_cursor",
+      "quest_id": "evt_prospector_claim",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "b001",
+      "allowed_values": [
+        "b001",
+        "b002",
+        "hub",
+        "k001",
+        "k002",
+        "c001",
+        "c002",
+        "c003",
+        "f001"
+      ],
+      "why": "the dialogue cursor of Bettany Oake's conversation (dlg_prospector_claim)."
+    },
+    {
+      "id": "quest.evt_gate_watcher.started",
+      "quest_id": "evt_gate_watcher",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Hale Brannock (data/southern_residents.json gate_watcher); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_gate_watcher.shown",
+      "quest_id": "evt_gate_watcher",
+      "field": "shown",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player, holding gym8_cleared, chose 'Show him your Earth Badge.' (show_badge)."
+    },
+    {
+      "id": "quest.evt_gate_watcher.reward_claimed",
+      "quest_id": "evt_gate_watcher",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for Burl's Leftovers (data/rewards.json gate_watcher_leftovers)."
+    },
+    {
+      "id": "quest.evt_gate_watcher.dialogue_cursor",
+      "quest_id": "evt_gate_watcher",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "h001",
+      "allowed_values": [
+        "h001",
+        "h002",
+        "hub",
+        "y001",
+        "y002",
+        "b001",
+        "s001",
+        "s002",
+        "s003",
+        "s004",
+        "done01"
+      ],
+      "why": "the dialogue cursor of Hale Brannock's conversation (dlg_gate_watcher)."
+    },
+    {
+      "id": "quest.evt_stubborn_tree.started",
+      "quest_id": "evt_stubborn_tree",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Hesketh Fell (data/northern_residents.json stubborn_tree); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_stubborn_tree.told",
+      "quest_id": "evt_stubborn_tree",
+      "field": "told",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has told Hesketh his last tree is not a tree (dlg_stubborn_tree t002); he does not believe it."
+    },
+    {
+      "id": "quest.evt_stubborn_tree.dialogue_cursor",
+      "quest_id": "evt_stubborn_tree",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "h001",
+      "allowed_values": [
+        "h001",
+        "h002",
+        "hub",
+        "t001",
+        "t002",
+        "t003",
+        "w001",
+        "w002",
+        "y001"
+      ],
+      "why": "the dialogue cursor of Hesketh Fell's conversation (dlg_stubborn_tree)."
+    },
+    {
+      "id": "quest.evt_agnes_carving.started",
+      "quest_id": "evt_agnes_carving",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Agnes Merrow (data/northern_residents.json agnes_carving); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_agnes_carving.asked",
+      "quest_id": "evt_agnes_carving",
+      "field": "asked",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Agnes has asked the player to read the back of the oak (dlg_agnes_carving k003)."
+    },
+    {
+      "id": "quest.evt_agnes_carving.read",
+      "quest_id": "evt_agnes_carving",
+      "field": "read",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player gave Agnes the carving's true reading (dlg_agnes_carving r_back); the two wrong readings set nothing."
+    },
+    {
+      "id": "quest.evt_agnes_carving.reward_claimed",
+      "quest_id": "evt_agnes_carving",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for the Sun Stone (data/rewards.json agnes_sun_stone)."
+    },
+    {
+      "id": "quest.evt_agnes_carving.dialogue_cursor",
+      "quest_id": "evt_agnes_carving",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "a001",
+      "allowed_values": [
+        "a001",
+        "a002",
+        "hub",
+        "w001",
+        "k001",
+        "k002",
+        "k003",
+        "f001",
+        "x001",
+        "s001",
+        "s002",
+        "s003",
+        "s004",
+        "done01"
+      ],
+      "why": "the dialogue cursor of Agnes Merrow's conversation (dlg_agnes_carving)."
+    },
+    {
+      "id": "quest.evt_pips_gym.started",
+      "quest_id": "evt_pips_gym",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Pip Arden (data/northern_residents.json pips_gym); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_pips_gym.shown",
+      "quest_id": "evt_pips_gym",
+      "field": "shown",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has shown Pip all eight badges (dlg_pips_gym r_b8, which reads the progression flag gym8_cleared)."
+    },
+    {
+      "id": "quest.evt_pips_gym.reward_claimed",
+      "quest_id": "evt_pips_gym",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for the Shiny Stone (data/rewards.json pip_twig_badge)."
+    },
+    {
+      "id": "quest.evt_pips_gym.dialogue_cursor",
+      "quest_id": "evt_pips_gym",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "p001",
+      "allowed_values": [
+        "p001",
+        "p002",
+        "hub",
+        "sp1",
+        "sp2",
+        "b001",
+        "e001",
+        "e002",
+        "k001",
+        "s001",
+        "l001",
+        "g001",
+        "g002",
+        "g003",
+        "g004",
+        "done01"
+      ],
+      "why": "the dialogue cursor of Pip Arden's conversation (dlg_pips_gym)."
+    },
+    {
+      "id": "quest.evt_hide_and_seek.started",
+      "quest_id": "evt_hide_and_seek",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Tam Furrow (data/northern_residents.json hide_and_seek); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_hide_and_seek.asked",
+      "quest_id": "evt_hide_and_seek",
+      "field": "asked",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Tam has asked the player to help look (dlg_hide_and_seek h001)."
+    },
+    {
+      "id": "quest.evt_hide_and_seek.thanked",
+      "quest_id": "evt_hide_and_seek",
+      "field": "thanked",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player told Tam they found Lettie (dlg_hide_and_seek r_found, visible once Lettie's own conversation has tagged the player cobblers.found_lettie)."
+    },
+    {
+      "id": "quest.evt_hide_and_seek.reward_claimed",
+      "quest_id": "evt_hide_and_seek",
+      "field": "reward_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's claim for the Moomoo Milk (data/rewards.json hide_and_seek_milk)."
+    },
+    {
+      "id": "quest.evt_hide_and_seek.dialogue_cursor",
+      "quest_id": "evt_hide_and_seek",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "t001",
+      "allowed_values": [
+        "t001",
+        "t002",
+        "hub",
+        "h001",
+        "h002",
+        "w001",
+        "f001",
+        "f002",
+        "f003",
+        "f004",
+        "done01"
+      ],
+      "why": "the dialogue cursor of Tam Furrow's conversation (dlg_hide_and_seek)."
+    },
+    {
+      "id": "quest.evt_hide_and_seek_den.started",
+      "quest_id": "evt_hide_and_seek_den",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Lettie Furrow (data/northern_residents.json hide_and_seek_den); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_hide_and_seek_den.found",
+      "quest_id": "evt_hide_and_seek_den",
+      "field": "found",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has found Lettie (dlg_hide_and_seek_den l003). Tam's conversation cannot read this field (one quest may not read another's); the same transition tags the player cobblers.found_lettie, which it reads."
+    },
+    {
+      "id": "quest.evt_hide_and_seek_den.dialogue_cursor",
+      "quest_id": "evt_hide_and_seek_den",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "l001",
+      "allowed_values": [
+        "l001",
+        "l002",
+        "l003",
+        "hub",
+        "c001",
+        "k001"
+      ],
+      "why": "the dialogue cursor of Lettie Furrow's conversation (dlg_hide_and_seek_den)."
+    },
+    {
+      "id": "quest.evt_hunters_hide.started",
+      "quest_id": "evt_hunters_hide",
+      "field": "started",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has met Cassius Rook (data/northern_residents.json hunters_hide); set by the conversation's start transition."
+    },
+    {
+      "id": "quest.evt_hunters_hide.decided",
+      "quest_id": "evt_hunters_hide",
+      "field": "decided",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player has answered Cassius, either way (dlg_hunters_hide r_tell or r_lie); the two options close."
+    },
+    {
+      "id": "quest.evt_hunters_hide.told",
+      "quest_id": "evt_hunters_hide",
+      "field": "told",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player told Cassius where the Hart beds (r_tell); false with decided true means they said they saw nothing."
+    },
+    {
+      "id": "quest.evt_hunters_hide.dialogue_cursor",
+      "quest_id": "evt_hunters_hide",
+      "field": "dialogue_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "c001",
+      "allowed_values": [
+        "c001",
+        "c002",
+        "hub",
+        "h001",
+        "w001",
+        "w002",
+        "t001",
+        "t002",
+        "t003",
+        "done_t",
+        "l001",
+        "l002",
+        "done_l"
+      ],
+      "why": "the dialogue cursor of Cassius Rook's conversation (dlg_hunters_hide)."
     }
   ],
   "gym_markers": {

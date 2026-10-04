@@ -514,6 +514,10 @@ def _source_blocks():
                       + list((z.get("fallbacks") or {}).values())}, ["vr_caves"]),
         "rematerial": ({_base(b) for s in rem["house_sets"].values() for b in s["map"].values()}, []),
     }
+    # the three wayside places of 2026-10-03: each generator refuses any block outside its record's blocks.ids, so the
+    # list is the place's whole palette; a policy entry must name the place itself to cover one of them
+    for place in ("challengers_cairn", "dry_cistern", "survey_benchmark"):
+        out[place] = (set(_load("%s.json" % place)["blocks"]["ids"]), [place])
     for p in PLACEMENTS["placements"]:
         if p.get("kind") == "earthwork" and p.get("commands"):
             key = "earthworks:%s" % p["settlement"]

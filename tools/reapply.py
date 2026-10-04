@@ -30,10 +30,17 @@ Checkpoints that stop a run: a function that does not answer "Running function";
 missing after R3 (cobblers_height is not in the world folder); a floor verify with any gap; a trader verify with any
 problem. Everything else is found by `audit`, which reads the saved world and compares it with what each step
 should have built.
+
+Fail-closed between the phases (2026-10-03): `prepare` writes build/prepare_stamp.json, a ledger of every job's
+outcome on a fingerprint of data/ and tools/, exits non-zero and names every failed or stale job unless the build is a
+complete prepare of today's inputs; `install` refuses an incomplete build and records which prepare it installed in
+build/install_record.json; `run` refuses a server whose last install was not of the current complete prepare, and its
+last line names every step with a problem and says when the run was partial.
 """
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -117,6 +124,14 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-02: Codex's ten named residents (tools/resident_encounters.py, data/resident_encounters.json):
                 # a keeper loop and respawn clock hold them, so world-local; dressed and the ungated ones summoned by R18R
                 "cobblers_residents",
+                # 2026-10-03: the southern residents (tools/southern_residents.py, data/southern_residents.json): six
+                # sites with a character in each, built by R9SR; two named Pokemon on the residents' keeper, so
+                # world-local below; summoned and the NPCs R9F does not place stood by R18SR
+                "cobblers_southern_residents",
+                # 2026-10-03: the northern residents (tools/northern_residents.py, data/northern_residents.json): six
+                # more, in rows A-D, built by R9NR; three named Pokemon on the residents' keeper, so world-local below;
+                # summoned and the NPCs R9F does not place stood by R18NR
+                "cobblers_northern_residents",
                 # 2026-10-02: the relic site underground (tools/relic_underground.py, data/relic_underground.json): the
                 # old surface build taken off, then the hall, gallery and passage carved, by R9RU; its zone check acts on
                 # its own (an advancement), so world-local below
@@ -124,6 +139,12 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-02: the Drovers' Hollow in the Rift Foot (tools/drovers_hollow.py): a longbarn, its fold and
                 # the old working under the bank, run by R9HF
                 "cobblers_drovers_hollow",
+                # 2026-10-03: three wayside places in the south's emptiest stretches (tools/wayside_kit.py): the
+                # Challengers' Cairn (tools/challengers_cairn.py, R9CN), the Dry Cistern (tools/dry_cistern.py, R9CI)
+                # and the Surveyors' Benchmark (tools/survey_benchmark.py, R9BM). Pure block functions
+                "cobblers_challengers_cairn",
+                "cobblers_dry_cistern",
+                "cobblers_survey_benchmark",
                 # 2026-10-02: Shrew Station on the west sea coast (tools/research_station.py), run by R9RS; every
                 # item it can give stays held behind data/research_station.json economy.issuing
                 "cobblers_research_station",
@@ -149,6 +170,11 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-09-28: no catching over the level cap (tools/levelcap_pack.py, data/level_cap.json): a Cobblemon
                 # callback acts on its own, so world-local below
                 "cobblers_levelcap",
+                # 2026-10-03: the five mythical starters, a-lite at 30/45 (tools/mythical_starters.py,
+                # data/mythical_starters.json): species_additions forms only, no functions and no step. World-local,
+                # so the live world's species never change; NOTE the starter config that offers these forms is
+                # server-wide (modpack/config/cobblemon/starters.json) and is only coherent where this pack is loaded
+                "cobblers_mythical_starters",
                 # 2026-10-02: one Spectrier per player at the Crown Cemetery (tools/spectrier_cap.py,
                 # data/spectrier_cap.json): its own tick tag judges each new wild Spectrier, so world-local below,
                 # the cobblers_sizes shape (self-driving, no blocks, no step)
@@ -182,6 +208,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # the trips their dialogues run; the ferrymen are placed over RCON by R17F. It charges CobbleDollars and
                 # teleports players, so world-local below
                 "cobblers_ferries",
+                # 2026-10-03: the town markets (tools/markets.py, data/markets.json): the keepers' NPC classes and
+                # dialogues and the purchases their options run; the keepers are placed over RCON by R17M. It charges
+                # CobbleDollars and gives items, so world-local below
+                "cobblers_markets",
                 # 2026-09-28: the evolution-stone faces (tools/mines.py, data/mines.json, STONE_ECONOMY.md): blocks run by
                 # R9O; the faces' restore on approach acts on its own (a tick driver), so world-local below
                 "cobblers_mines",
@@ -252,11 +282,19 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_rift_zones", "cobblers_mega_recipes",
                "cobblers_ferries", "cobblers_ambient", "cobblers_levelcap", "cobblers_mines",
                "cobblers_legendaries", "cobblers_spectrier_cap",
+               # 2026-10-03: charges CobbleDollars and gives items, like the ferry
+               "cobblers_markets",
                # 2026-10-02: the den keeper loop holds the bear on its own tick, so world-local as its own comment says
                "cobblers_ursaluna_cave",
                # 2026-10-02: the residents' keeper SPAWNS Pokemon on its own when a player comes near, so it must never
                # load in the global folder, where the live world would run it too
-               "cobblers_residents", "cobblers_relic_underground")
+               "cobblers_residents", "cobblers_relic_underground",
+               # 2026-10-03: species forms for the starters; global would change the live world's species too
+               "cobblers_mythical_starters",
+               # 2026-10-03: the southern residents' keeper spawns its two Pokemon the same way
+               "cobblers_southern_residents",
+               # 2026-10-03: the northern residents' keeper spawns its three Pokemon the same way
+               "cobblers_northern_residents")
 # the wild spawns: our rosters (compile_spawns.py, at prepare) and the bounded suppression of inherited spawn files
 # (suppress_inherited_spawns.py, at install, against the server and world); world packs, never global
 SPAWN_PACKS = ("cobblers_spawns", "cobblers_suppress")
@@ -449,6 +487,9 @@ def prepare_jobs(a):
     add("rift_mines:build", "rift_mines.py", "build", *src)
     # the southern Rift's mega site, prototype slice (data/gulch_mine.json), then its offline audit: every write inside
     # the plan and the zone, the zone sealed except through the gate, cover over the halls, the faces and the Cutters
+    # the Mega field's committed polygon and farms (data/gulch_mine.json mega_field, farms) are what its authoring
+    # tool derives from the heightmap and the sculpt's ring: a drift check, before the gulch pack is built from them
+    add("mega_field:check", "mega_field.py", "check", *src)
     add("gulch_mine:build", "gulch_mine.py", "build", *src)
     add("gulch_mine_audit", "gulch_mine_audit.py", *src)
     # the Rift's zones (data/rift_zones.json): AFTER gulch_mine, because z2 is cut round the gulch's built zone
@@ -461,6 +502,9 @@ def prepare_jobs(a):
     # the Deep's city and the relic area's surface, stood on the pit's ring model; the audit checks what it wrote
     # against the ring model, Victory Road's mouth and the sealed volumes, and refuses to go on if anything is wrong
     add("deep_city:build", "deep_city.py", "build", *src)
+    # Heaven's Arena (schema 2, the halls), audited independently of tools/deep_city.py's own arena checks: the
+    # drum fully overwritten, the rings, seats and gate boxes from the data, the climb walked with and without gates
+    add("arena_audit", "arena_audit.py", *src)
     add("deep_city_audit", "deep_city_audit.py", *src)
     # the relic site underground (2026-10-02): its own fail-closed report runs first and refuses on a problem; the
     # undo is derived from the superseded surface generator minus the city build above. Its audit runs LATE (below),
@@ -480,6 +524,18 @@ def prepare_jobs(a):
     # declared a gate still unswimmable under data/blackout.json's fatigue on the heightmap
     add("ferries:build", "ferries.py", "build")
     add("ferries:audit", "ferries.py", "audit", *src)
+    # the town markets (2026-10-03): the keepers' classes and dialogues and the purchases (data/markets.json), then
+    # the offline audit: every gate a planned badge flag, every price above the bank's sell-back, the curve within its
+    # declared share of income, the recipe overlay exactly what the data writes, every keeper on free plan ground, and
+    # every purchase reading, refusing, charging, verifying and only then giving
+    add("markets:build", "markets.py", "build")
+    add("markets:audit", "markets.py", "audit", *src)
+    # and the independent audit (tools/markets_audit.py, written by an agent that did not build the markets): ids
+    # against the server's jars (reads <server>/mods only), gates against the ladder and the gym flags, every built
+    # purchase EXECUTED in a command model (short, ungated, failed charge, failed give, double click), the overlay
+    # against the base and the jars' recipe conditions, tiers and the curve against PROGRESSION_LADDER, and every
+    # keeper R17M places off streets, buildings, walked lines and other NPCs, and in front of its Mart
+    add("markets:audit_independent", "markets_audit.py", "--server-dir", a.server_dir, *src)
     # the ferry docks' pack (a SERVER_PACKS member): until 2026-10-02 no job built it, and a build/ left over from an
     # earlier hand run hid that; function_limits failed on a fresh checkout without it
     add("ferry_docks:build", "ferry_docks.py", "build", *src)
@@ -555,14 +611,43 @@ def prepare_jobs(a):
     # the data and the heightmap and fails the prepare on a broken pack
     add("resident_encounters", "resident_encounters.py", *src)
     add("resident_encounters_audit", "resident_encounters_audit.py", *src)
+    # the southern residents (2026-10-03): the generator fails closed on its own siting rules and on a record the
+    # heightmap disagrees with; then its independent audit (written by an agent that built none of it, never imports
+    # the generator to derive): the pack replayed against the data and the heightmap, the siting and resident rules,
+    # the steps, and the NPCs' dialogue, rewards and hand-in compiled by compile_dialogue above
+    add("southern_residents", "southern_residents.py", *src)
+    add("southern_residents_audit", "southern_residents_audit.py", *src)
+    # the northern residents (2026-10-03): the same generator's pieces and guards, then its independent audit
+    # (tools/northern_residents_audit.py, another agent's), after the pack it reads
+    add("northern_residents", "northern_residents.py", *src)
+    add("northern_residents_audit", "northern_residents_audit.py", *src)
     add("drovers_hollow:build", "drovers_hollow.py", "build", *src)
     add("drovers_hollow_audit", "drovers_hollow_audit.py", *src)
+    # the three wayside places of 2026-10-03. Each generator refuses a spawn-condition palette and any block outside its
+    # record; then its independent audit (written by an agent that built none of them), which replays the written
+    # function over a world built from the heightmap alone, never imports its builder, and fails the prepare on a broken
+    # build (each place's doc, 'What an audit must check')
+    add("challengers_cairn:build", "challengers_cairn.py", "build", *src)
+    add("challengers_cairn_audit", "challengers_cairn_audit.py", *src)
+    add("dry_cistern:build", "dry_cistern.py", "build", *src)
+    add("dry_cistern_audit", "dry_cistern_audit.py", *src)
+    add("survey_benchmark:build", "survey_benchmark.py", "build", *src)
+    add("survey_benchmark_audit", "survey_benchmark_audit.py", *src)
     add("research_station:build", "research_station.py", "build", *src)
     add("research_station_audit", "research_station_audit.py", *src)
     add("mega_dens:build", "mega_dens.py", "build", *src)
     add("mega_dens_audit", "mega_dens_audit.py", *src)
+    # the Mega field's independent audit (docs/world-building/MEGA_FIELD.md section 5): the polygon against the
+    # sculpt's basin and the owner's points, each den's ground, level (rctmod's cap for its zone's badges) and drops in
+    # the BUILT gulch pack, the retirement and the lairs; after both packs above are built
+    add("mega_field_audit", "mega_field_audit.py", *src)
     add("sea_drift_audit", "sea_drift_audit.py", *src)
     add("relic_underground_audit", "relic_underground_audit.py", *src)
+    # the Deep walked as a player walks it (2026-10-03): the Rift skin, the pit, Victory Road, the city, the relic site,
+    # the Habitat Blocks and the signposts replayed over the heightmap, then every ring, the lip, every arena tier and
+    # the crown walked from the HQ's doorstep. After the city, relic and habitat builds above; independent of
+    # tools/deep_city.py, whose stair towers deep_city_audit never climbed
+    add("deep_walk_audit", "deep_walk_audit.py", *src)
     # water life (docs/mechanics/WATER_LIFE.md): each pack, then its independent audit, which replays the written
     # functions over a world built from the heightmap alone and never imports its builder
     add("lake_life:build", "lake_life.py", "build", *src)
@@ -598,6 +683,13 @@ def prepare_jobs(a):
     add("portals_audit", "portals_audit.py", *src)
     # no catching over the level cap: a callback and its check
     add("levelcap_pack", "levelcap_pack.py")
+    # the five mythical starters' stage forms (data/mythical_starters.json); `build` runs its own check against the
+    # jar and modpack/config/cobblemon/starters.json first and writes nothing on a problem
+    add("mythical_starters:build", "mythical_starters.py", "build")
+    # ... then its independent audit (expectations from NATIVE_STARTERS_COST.md 6a/7 and the jar, never the builder):
+    # each line walks 5 -> 30 -> 45 through two forms to its native final, the screen offers exactly the five, the
+    # 27 stay wild. Fail-closed; an unissued scroll is printed OPEN and does not stop prepare
+    add("mythical_starters_audit", "mythical_starters_audit.py")
     add("location_titles", "location_titles.py")
     # the badge flags: one advancement per gym leader and the Champion, set by rctmod on a won battle
     add("progression_pack", "progression_pack.py")
@@ -621,6 +713,165 @@ def prepare_jobs(a):
     return J
 
 
+# ------------------------------------------------------------------------------------------- the prepare stamp
+# 2026-10-03, the owner: "prepare RESUMES PAST A FAILED STEP." A failing job did stop the run (exit 1), but the way
+# back from one was `prepare --from <the next job>`, which skipped the failed job and still ended on "prepared ...
+# every function pack covered"; `--only` did the same; and install and run asked nothing about prepare at all. So a
+# job could fail, be resumed past, and every apply after it report 0 problems with that job's output never built
+# (the encounter rebuild sat uninstalled). Now every job's outcome is written to a ledger in build/ next to the build
+# it describes, keyed on a fingerprint of data/ and tools/, and the build is COMPLETE only when every job succeeded on
+# today's inputs with every job before it already good when it ran, and the whole-build checks passed after the last
+# of them. install refuses an incomplete build and records which prepare it installed; run refuses a server whose last
+# install was not of the current complete prepare. --from and --only still work for recovery: each pass adds to the
+# ledger, and the final line names every job that keeps the build from being complete.
+STAMP = BUILD / "prepare_stamp.json"
+INSTALLED = BUILD / "install_record.json"
+INPUT_DIRS = ("data", "tools")
+
+
+def input_fingerprint(root=None):
+    """(digest, {relative path: sha256}) over every file in data/ and tools/ (not __pycache__): what a prepare is
+    built from. Content, not mtimes or HEAD, so an uncommitted edit counts and a no-op checkout does not."""
+    import hashlib
+    root = Path(root) if root is not None else ROOT
+    files = {}
+    for d in INPUT_DIRS:
+        for p in sorted((root / d).rglob("*")):
+            if p.is_file() and "__pycache__" not in p.parts and p.suffix != ".pyc":
+                files[p.relative_to(root).as_posix()] = hashlib.sha256(p.read_bytes()).hexdigest()
+    h = hashlib.sha256()
+    for k in sorted(files):
+        h.update(("%s %s\n" % (k, files[k])).encode("utf-8"))
+    return h.hexdigest(), files
+
+
+def git_head():
+    r = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True)
+    return r.stdout.strip() if r.returncode == 0 else "unknown"
+
+
+def load_stamp(path=None):
+    path = Path(path) if path is not None else STAMP
+    if not path.is_file():
+        return {"jobs": {}}
+    try:
+        d = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {"jobs": {}, "unreadable": True}
+    d.setdefault("jobs", {})
+    return d
+
+
+def save_stamp(stamp, path=None):
+    path = Path(path) if path is not None else STAMP
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(stamp, indent=1, sort_keys=True), encoding="utf-8")
+
+
+def job_valid(rec, fingerprint):
+    """A job counts only if it succeeded, on these inputs, with every job before it already good when it ran."""
+    return bool(rec) and rec.get("status") == "ok" and rec.get("fingerprint") == fingerprint and rec.get("upstream_ok") is True
+
+
+def stamp_problems(stamp, names, fingerprint):
+    """Every reason the build is not a complete prepare of these inputs, one line each; [] when it is."""
+    out = []
+    if stamp.get("unreadable"):
+        out.append("the prepare stamp %s is unreadable" % STAMP)
+    jobs = stamp.get("jobs", {})
+    for n in names:
+        rec = jobs.get(n)
+        if not rec:
+            out.append("%s: never ran" % n)
+        elif rec.get("status") != "ok":
+            out.append("%s: FAILED (%s)" % (n, rec.get("error", "no error recorded")))
+        elif rec.get("fingerprint") != fingerprint:
+            out.append("%s: last ran before the latest change to data/ or tools/" % n)
+        elif rec.get("upstream_ok") is not True:
+            out.append("%s: ran while an earlier job had not succeeded (re-run it: --from the earliest such job)" % n)
+    chk = stamp.get("checks") or {}
+    last = max((jobs[n].get("at", 0) for n in names if n in jobs), default=0)
+    if not chk:
+        out.append("checks: the whole-build checks never ran")
+    elif not chk.get("ok"):
+        out.append("checks: FAILED (%s)" % chk.get("error", "no error recorded"))
+    elif chk.get("fingerprint") != fingerprint:
+        out.append("checks: last ran before the latest change to data/ or tools/")
+    elif chk.get("at", 0) < last:
+        out.append("checks: older than the last job")
+    return out
+
+
+def stamp_id(stamp):
+    chk = stamp.get("checks") or {}
+    return "%s@%s" % (str(chk.get("fingerprint"))[:16], chk.get("at"))
+
+
+def require_prepared(what, names=None):
+    """Refuse `what` unless build/ is a complete prepare of today's data/ and tools/; returns the stamp."""
+    stamp = load_stamp()
+    if names is None:
+        names = stamp.get("job_names") or []
+    fp, _ = input_fingerprint()
+    problems = stamp_problems(stamp, names, fp) if names else ["no complete prepare has been recorded in %s" % STAMP]
+    if problems:
+        raise SystemExit("%s refused: build/ is not a complete prepare of today's data/ and tools/ (%d problem(s)):\n  "
+                         "%s\nRun `reapply.py prepare` to the end first." % (what, len(problems), "\n  ".join(problems[:40])))
+    return stamp
+
+
+def require_installed(server_dir):
+    """Refuse a run unless this server's last install was of the current complete prepare."""
+    stamp = require_prepared("reapply run")
+    key = str(Path(server_dir).resolve())
+    rec = (json.loads(INSTALLED.read_text(encoding="utf-8")) if INSTALLED.is_file() else {}).get(key)
+    if not rec:
+        raise SystemExit("reapply run refused: no completed `reapply.py install` into %s is recorded in %s" % (key, INSTALLED))
+    if rec.get("prepare") != stamp_id(stamp):
+        raise SystemExit("reapply run refused: the last install into %s (%s) was of prepare %s, and build/ is now "
+                         "prepare %s: install it first" % (key, rec.get("at"), rec.get("prepare"), stamp_id(stamp)))
+    return rec
+
+
+def _record_install(server_dir, world_dir, stamp, done):
+    key = str(Path(server_dir).resolve())
+    rec = json.loads(INSTALLED.read_text(encoding="utf-8")) if INSTALLED.is_file() else {}
+    if done:
+        rec[key] = {"world_dir": str(world_dir), "prepare": stamp_id(stamp), "at": time.strftime("%Y-%m-%dT%H:%M:%S")}
+    else:
+        rec.pop(key, None)                    # an install under way is not an install of anything
+    INSTALLED.parent.mkdir(parents=True, exist_ok=True)
+    INSTALLED.write_text(json.dumps(rec, indent=1), encoding="utf-8")
+
+
+def _run_jobs(jobs, run, stamp, fp):
+    """Run the selected jobs in order, writing each outcome to the stamp; stop at the first failure and raise a
+    SystemExit whose message names it and everything this pass did not reach."""
+    names = [n for n, _ in jobs]
+    recs = stamp.setdefault("jobs", {})
+    for i, (name, job) in enumerate(jobs):
+        if name not in run:
+            continue
+        print("[%s]" % name, flush=True)
+        upstream = all(job_valid(recs.get(n), fp) for n in names[:i])
+        try:
+            job()
+        except BaseException as e:            # SystemExit from py(), or anything a job raised
+            err = str(e.code if isinstance(e, SystemExit) else "%s: %s" % (type(e).__name__, e))[:500]
+            recs[name] = {"status": "failed", "at": time.time(), "fingerprint": fp, "error": err}
+            save_stamp(stamp)
+            if isinstance(e, KeyboardInterrupt):
+                raise
+            skipped = [n for n in names[i + 1:] if n in run]
+            raise SystemExit("PREPARE FAILED at job %s: %s\n  not reached in this pass: %d job(s)%s\n  build/ is NOT "
+                             "complete; install and run refuse it. Fix it, then `prepare --from %s`."
+                             % (name, err, len(skipped), (" (%s)" % ", ".join(skipped[:12])
+                                                          + (", ..." if len(skipped) > 12 else "")) if skipped else "",
+                                name))
+        recs[name] = {"status": "ok", "at": time.time(), "fingerprint": fp, "upstream_ok": upstream}
+        save_stamp(stamp)
+
+
 def prepare(a):
     t0 = time.time()
     jobs = prepare_jobs(a)
@@ -629,14 +880,54 @@ def prepare(a):
         print("\n".join(names))
         return 0
     run = select_jobs(names, a.only, a.from_job)
-    for name, job in jobs:
-        if name in run:
-            print("[%s]" % name, flush=True)
-            job()
-    if len(run) < len(names):
+    fp, files = input_fingerprint()
+    stamp = load_stamp()
+    stamp.pop("unreadable", None)
+    stamp.update({"job_names": names, "head": git_head(), "fingerprint": fp,
+                  "last_pass": {"started": time.strftime("%Y-%m-%dT%H:%M:%S"),
+                                "selection": "--only %s" % a.only if a.only else
+                                             "--from %s" % a.from_job if a.from_job else "all"}})
+    save_stamp(stamp)
+    _run_jobs(jobs, run, stamp, fp)
+    partial = len(run) < len(names)
+    if partial:
         print("partial prepare: %d of %d jobs ran (%s); every other pack is as the last run left it"
               % (len(run), len(names), ", ".join(n for n in names if n in run)))
-    # the checks below always run, on the whole build: a partial prepare is held to the same gate
+    try:
+        summary = _prepare_checks(t0)
+    except BaseException as e:
+        err = str(e.code if isinstance(e, SystemExit) else "%s: %s" % (type(e).__name__, e))
+        stamp["checks"] = {"ok": False, "at": time.time(), "fingerprint": fp, "error": err[:500]}
+        save_stamp(stamp)
+        if isinstance(e, KeyboardInterrupt):
+            raise
+        raise SystemExit("%s\nPREPARE FAILED at the whole-build checks: build/ is NOT complete; install and run refuse it."
+                         % err)
+    stamp["checks"] = {"ok": True, "at": time.time(), "fingerprint": fp}
+    # a job that rewrote data/ or tools/ means the jobs before it read other inputs: not a prepare of what is there now
+    fp_end, files_end = input_fingerprint()
+    if fp_end != fp:
+        changed = sorted(k for k in set(files) | set(files_end) if files.get(k) != files_end.get(k))
+        stamp["changed_during_pass"] = changed
+    else:
+        stamp.pop("changed_during_pass", None)
+    save_stamp(stamp)
+    problems = stamp_problems(stamp, names, fp_end)
+    print(summary)
+    if problems:
+        raise SystemExit("PREPARE INCOMPLETE (%s): %d problem(s) keep build/ from being a complete prepare of today's "
+                         "data/ and tools/; install and run refuse it:\n  %s%s"
+                         % (stamp["last_pass"]["selection"], len(problems), "\n  ".join(problems[:40]),
+                            "\n  data/ or tools/ changed during the pass: %s" % ", ".join(stamp["changed_during_pass"][:10])
+                            if stamp.get("changed_during_pass") else ""))
+    print("PREPARE COMPLETE: all %d jobs good on data/ and tools/ %s (head %s)%s; stamp %s"
+          % (len(names), fp_end[:16], stamp["head"][:12],
+             ", completed by a %s pass" % stamp["last_pass"]["selection"] if partial else "", STAMP))
+
+
+def _prepare_checks(t0):
+    """The whole-build checks, after the jobs: they always run on the whole build, so a partial prepare is held to the
+    same gate. Returns the summary line; raises SystemExit on any problem."""
     if REAPPLY.exists():
         shutil.rmtree(REAPPLY)
     fn = REAPPLY / "data" / "cobblers" / "function" / "reapply"
@@ -682,8 +973,8 @@ def prepare(a):
     for d in donors(doc):
         if "cobblers:structures/place_%s" % d not in ran:
             raise SystemExit("donor %r is placed in data/placements.json but no re-apply step stamps it" % d)
-    print("prepared in %.0f s: %d places, %d pack donors, %d steps, every function pack covered"
-          % (time.time() - t0, len(places()), len(donors()), len(steps())))
+    return ("checks passed in %.0f s: %d places, %d pack donors, %d steps, every function pack covered"
+            % (time.time() - t0, len(places()), len(donors()), len(steps())))
 
 
 def replace_pack(dest, src, retired_root):
@@ -721,6 +1012,18 @@ def install(a):
     s.close()
     if busy:
         raise SystemExit("port 25565 is in use: install with the server stopped")
+    # a build that is not a complete prepare of today's data/ and tools/ is not installed (2026-10-03: a failed job was
+    # resumed past and its output never built, and every install after it reported success)
+    stamp = require_prepared("reapply install")
+    # and every pack this install copies must exist in that build: replace_pack with no build moves the installed
+    # copy aside and copies nothing, and the run would then go on without it
+    unbuilt = [str(p) for p in [PACKS / n for n in SERVER_PACKS] + list(WORLD_PACKS)
+               + [PACKS / n for n in SPAWN_PACKS if n != "cobblers_suppress"]       # suppress is generated below
+               if not (Path(p) / "pack.mcmeta").is_file()]
+    if unbuilt:
+        raise SystemExit("reapply install refused: %d pack(s) are not in build/, nothing was copied:\n  %s"
+                         % (len(unbuilt), "\n  ".join(unbuilt)))
+    _record_install(a.server_dir, a.world_dir, stamp, done=False)
     # the port says the server is down; only the lock says nobody else is using the runtime
     dp = runtime_guard.check(Path(a.server_dir) / "datapacks", "install packs into")
     runtime_guard.check(a.world_dir, "install world packs into")
@@ -795,7 +1098,8 @@ def install(a):
         raise SystemExit("the server does not hold what the repo builds (%d):\n  %s\nfix the install, or record a "
                          "deliberate server value with `tools/server_config_record.py record`"
                          % (len(problems), "\n  ".join(problems)))
-    print("install check: every pack and config the repo builds is installed and current")
+    _record_install(a.server_dir, a.world_dir, stamp, done=True)
+    print("install check: every pack and config the repo builds is installed and current (prepare %s)" % stamp_id(stamp))
 
 
 class Rcon:
@@ -1006,7 +1310,8 @@ def held_functions():
     """{function: why} for output a step deliberately withholds, derived from the data that withholds it.
 
     Today: the Rift's zone walls and gatehouses for a zone that cannot GRANT its pass yet (z4 needs Codex's
-    dialogue to read caught_count, z5 needs the rift_crisis_resolved setter). Their blocks are correct and
+    dialogue to read caught_count; z5 is released since 2026-10-03, its flag set by the relic hall's binder and its
+    wall meeting G5's walkway). Their blocks are correct and
     built; installing them would wall off the apex and seal the League's precinct, which ends the game for
     anyone who reaches it. When Codex lands either half the `needs_*` field goes from data/rift_zones.json and
     the function stops being held here, with nothing to remember."""
@@ -1028,6 +1333,15 @@ def held_functions():
         # 2026-10-02: and the zone's own functions. `build` emits no advancement for a held zone -- its zone
         # check alone would turn back every player, which for z5 is the League's precinct -- so the zone
         # check, the knock and the exit are deliberately called by nothing until the zone can grant
+        for fn in RZ.zone_functions(zid, z[zid]):
+            out["cobblers:rift_zones/%s" % fn] = reason
+    # 2026-10-03: a zone none of whose guards a passless player can reach ships no advancement either (it fails open,
+    # RZ.unreachable_zones), so its zone check, knocks and exits are called by nothing. Its gatehouses and wall are NOT
+    # held: R9Z builds them (rift_zone_steps reads held_zones only)
+    for zid, gates in RZ.unreachable_zones(spec).items():
+        reason = ("%s fails open: no guard of it can be reached from outside (%s); "
+                  "measured_defects[gates_stand_deep_inside_their_own_zone]"
+                  % (zid, ", ".join("%s %s blocks in" % (n, d) for n, d in sorted(gates.items()))))
         for fn in RZ.zone_functions(zid, z[zid]):
             out["cobblers:rift_zones/%s" % fn] = reason
     return out
@@ -1122,6 +1436,13 @@ def steps(with_spawns=False):
                        "Cutting Floor, then the Cutters",
                 [("fn", "cobblers:gulch_mine/%s" % f) for f in indexed("cobblers_gulch_mine", "gulch_mine")]
                 + [("fn", "cobblers:gulch_mine/cutters"), ("wait", 8)]))
+    # 2026-10-03, the Mega field (docs/world-building/MEGA_FIELD.md): the field's dens are ordinary farms of the gulch
+    # pack and need no step (the keeper spawns each Mega when a player is in its farm's approach box). This removes the
+    # Megas a keeper may have left at the seven retired dens (data/gulch_mine.json superseded_farms), which nothing
+    # leashes or replaces any more: after R9S, whose pack carries megas/retire; with each den's ground held
+    import gulch_mine
+    out.append(("R9SX", "remove the Megas of the seven retired open-air dens (data/gulch_mine.json superseded_farms)",
+                gulch_mine.retire_steps()))
     # the Rift's zone walls and gatehouse shells (tools/rift_zones.py, data/rift_zones.json; docs/mechanics/
     # RIFT_ZONES.md sections 5 and 6). After the Rift skin (R1), whose surface the walls stand on, after the
     # Deep and Victory Road (R9B, R9C) and the gulch (R9S) whose zone z2 is cut around, and after the League's
@@ -1131,11 +1452,15 @@ def steps(with_spawns=False):
     # cob_pass objectives act on their own (advancements and a load function) and need no step. The guards
     # themselves are armour-stand placeholders: Codex writes the NPCs (docs/HANDOVER_CODEX.md item 23)
     # ONLY THE HALF THAT CAN BE PASSED. Every guard calls its qualify now (2026-09-30), so the owner's condition
-    # for releasing this is met -- but z4 and z5 still cannot GRANT: z4's test needs Codex's dialogue to read
-    # caught_count, z5's flag has no setter. Installing their walls would wall off the apex and, worse, seal the
+    # for releasing this is met -- but z4 still cannot GRANT: its test needs Codex's dialogue to read caught_count.
+    # z5 is released since 2026-10-03: its flag is set by the relic hall's binder (R18RU seats him, so the League's
+    # precinct shuts only for a player who has not released Hoopa) and league_gate now meets G5's walkway
+    # (rift_zones.json measured_defects[held_walls_do_not_meet_their_gatehouses], fixed). z1 ships no zone check (its
+    # guard stands 141 inside, tools/rift_zones.py unreachable_zones) but its wall and gatehouse are still built here.
+    # Installing a held zone's walls would wall off the apex and, worse, seal the
     # LEAGUE'S PRECINCT, which ends the game for anyone who reaches it. A wall nobody can pass is not a gate.
     # So a zone's wall and gatehouses go in only when that zone declares nothing owed, read from the DATA
-    # (zones.<id>.needs_progression / needs_dialogue) and not from a list here: when Codex lands either half, the
+    # (zones.<id>.needs_progression / needs_dialogue / needs_walls) and not from a list here: when either half lands, the
     # field goes and the wall follows with no switch to remember.
     # 2026-10-02: and since that day the PACK holds the rest. `build` emits no zone check, knock or exit
     # advancement for a held zone, because the zone check acts on its own the moment the pack is installed and
@@ -1218,8 +1543,33 @@ def steps(with_spawns=False):
     # data/gulch_mine.json. AFTER R9S (the gulch's own block pass, whose keeper spawns the Megas at these anchors) and
     # the Rift skin (R1), whose surface it rewrites; BEFORE R9E with the other block passes. Per den: hold, build, release
     import mega_dens
-    out.append(("R9MD", "the seven open-air Mega dens: scrape, boulders, bones and each species' sign (data/mega_dens.json)",
+    # 2026-10-03: the seven are superseded with their farms (data/mega_dens.json superseded_dens), so the step has no
+    # actions until the Mega field's dens are dressed (an owner call, MEGA_FIELD.md section 4)
+    out.append(("R9MD", "the open-air Mega dens' dressing: scrape, boulders, bones and each species' sign (data/mega_dens.json)",
                 mega_dens.placement_steps()))
+    # the three wayside places of 2026-10-03 (tools/wayside_kit.py): pure block passes, each hold, build, release.
+    # BEFORE R9E with the other block passes; none places or sits on a Habitat Block, and none overlaps another build
+    # (data/<place>.json bbox, for the integrator's check)
+    import challengers_cairn
+    out.append(("R9CN", "the Challengers' Cairn on the south strand: cairn, ring and cist (data/challengers_cairn.json)",
+                challengers_cairn.placement_steps()))
+    import dry_cistern
+    out.append(("R9CI", "the Dry Cistern on the Scorched Plateau's west brow: cistern, stair, well-head, house "
+                        "(data/dry_cistern.json)", dry_cistern.placement_steps()))
+    import survey_benchmark
+    out.append(("R9BM", "the Surveyors' Benchmark in the Rift Foot: pillar, hut and sighting stakes "
+                        "(data/survey_benchmark.json)", survey_benchmark.placement_steps()))
+    # the southern residents' sites (2026-10-03, tools/southern_residents.py): a pure block pass per site, held in a
+    # forceload of the site's box, with the other block passes BEFORE R9E (none sits on a Habitat Block; the order
+    # keeps a later block pass from writing over a nest). Their NPCs stand on these floors: R9F and R18SR, after
+    import southern_residents
+    out.append(("R9SR", "the southern residents' sites (data/southern_residents.json)",
+                southern_residents.placement_steps()))
+    # the northern residents' sites (2026-10-03, tools/northern_residents.py): the same pure block pass per site, held
+    # in a forceload of its box, before R9E; their NPCs stand on these floors (R9F and R18NR)
+    import northern_residents
+    out.append(("R9NR", "the northern residents' sites (data/northern_residents.json)",
+                northern_residents.placement_steps()))
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
@@ -1310,6 +1660,12 @@ def steps(with_spawns=False):
     import ferries
     out.append(("R17F", "the ferrymen at the built docks (data/ferries.json)",
                 [("fn", "cobblers:ferries/load")] + [("npc", n) for n in ferries.npc_placements(ferries.load())]))
+    # the market keepers (data/markets.json, 2026-10-03): NPCs whose classes load at boot from cobblers_markets, placed
+    # over RCON after the restart like the ferrymen, each beside its town's Mart and turned to face its plaza; the load
+    # function first (the pack's scores). Listed from the committed data, not the build
+    import markets
+    out.append(("R17M", "the market keepers beside the Marts (data/markets.json)",
+                [("fn", "cobblers:markets/load")] + [("npc", n) for n in markets.npc_placements(markets.load())]))
     # the settlement NPCs (data/npc_seats.json): the main reveal's residents and the stone-tip speakers. NPCs like the
     # ferrymen, so placed over RCON after the restart that loaded cobblers_dialogue's classes, and after every town and
     # gym pass so the plaza, lot and lab floor they stand on exist. Each is turned to its authored yaw
@@ -1334,7 +1690,11 @@ def steps(with_spawns=False):
     # stays shut and the guard's dialogue moves a player at rift_crisis_pending or later inside; the inside guard lets
     # anyone out. NPCs, so after the restart that loaded cobblers_dialogue's classes, like R17N's, each turned to its yaw
     import relic_underground
-    out.append(("R18RU", "the Compact guards at the HQ's ring-0 door (data/relic_underground.json geometry.hq.guard)",
+    # 2026-10-03: and the Compact binder in Hoopa's cradle (geometry.release; at the hall's relic ring until the cradle
+    # was carved), whose conversation releases Hoopa and grants rift_crisis_resolved (the owner: "set it ourselves at
+    # the quest stage that ends the Rift crisis")
+    out.append(("R18RU", "the Compact guards at the HQ's ring-0 door and the binder in Hoopa's cradle "
+                         "(data/relic_underground.json geometry.hq.guard, geometry.release)",
                 [("npc", n) for n in relic_underground.npc_placements()]))
     # Codex's ten named residents (2026-10-02, data/resident_encounters.json): each one's dressing inside a forceload of
     # its recorded bbox, then - for the two with no presence gate (Old Jaw, Whiteback) - an RCON summon guarded on tag
@@ -1343,6 +1703,15 @@ def steps(with_spawns=False):
     import resident_encounters
     out.append(("R18R", "the ten named residents (data/resident_encounters.json)",
                 resident_encounters.placement_steps()))
+    # the southern residents (2026-10-03): each ungated Pokemon summoned over RCON (guarded on tag AND species) and
+    # bound inside a forceload of its site, the gated ones left to the keeper; then the NPCs who give nothing through
+    # grant_reward_once (R9F places the others), turned to their yaw. After R17N, like the residents above
+    out.append(("R18SR", "the southern residents: the ungated Pokemon and the NPCs R9F does not place (data/southern_residents.json)",
+                southern_residents.entity_steps()))
+    # the northern residents (2026-10-03): the ungated Pokemon summoned (guarded on tag AND species) and bound, then
+    # the NPCs who give nothing through grant_reward_once, turned to their yaw. After R18SR
+    out.append(("R18NR", "the northern residents: the ungated Pokemon and the NPCs R9F does not place (data/northern_residents.json)",
+                northern_residents.entity_steps()))
     # the Drovers' Hollow's drover (2026-10-02): after R17N, on the path R9HF wrote, his class loaded at boot from
     # cobblers_dialogue
     out.append(("R18HF", "the Drovers' Hollow's drover, Owen Cray (data/drovers_hollow.json npc)",
@@ -1411,10 +1780,76 @@ def require_watchdog_off(server_dir):
     print("watchdog: max-tick-time=-1 in server.properties (restore it after the run)")
 
 
+def _fn_files():
+    """function id -> its file under build/datapacks, for step_hash()."""
+    out = {}
+    for f in (BUILD / "datapacks").glob("*/data/*/function/**/*.mcfunction"):
+        parts = f.relative_to(BUILD / "datapacks").parts
+        out["%s:%s" % (parts[2], "/".join(parts[4:])[:-len(".mcfunction")])] = f
+    return out
+
+
+def step_hash(actions, files=None):
+    """What a step would write, as one hash: its actions in order and the CONTENT of every function it calls.
+
+    Added 2026-10-03 after the owner asked how many build steps exist but were never applied. Run records had kept
+    only a count of functions per step, and a function whose content changed after its step last ran -- the hearts,
+    Hoopa's hall -- has the same count, so nothing could see it. `reapply.py stale` compares this hash with the step's
+    last clean run."""
+    files = _fn_files() if files is None else files
+    h = hashlib.sha256()
+    for kind, v in actions:
+        h.update(("%s %r;" % (kind, v)).encode("utf-8"))
+        if kind == "fn":
+            f = files.get(str(v))
+            h.update(f.read_bytes() if f else b"<missing>")
+    return h.hexdigest()[:16]
+
+
+def stale(a):
+    """Every step whose content today differs from its last clean run into this server's world (exit 1 if any)."""
+    inst = {}
+    if INSTALLED.is_file():
+        inst = json.loads(INSTALLED.read_text(encoding="utf-8")).get(str(Path(a.server_dir).resolve()), {})
+    world = inst.get("world_dir")
+    last = {}
+    for f in sorted(OUT.glob("run_*.json")):
+        try:
+            rec = json.loads(f.read_text(encoding="utf-8"))
+        except ValueError:
+            continue
+        if world and rec.get("world_dir") not in (None, world):
+            continue
+        for s in rec.get("steps", []):
+            if not s.get("problems"):
+                last[s["step"]] = (f.name, s.get("hash"))
+    files = _fn_files()
+    changed, unknown, never = [], [], []
+    for sid, title, actions in steps():
+        now = step_hash(actions, files)
+        run_, was = last.get(sid, (None, None))
+        if run_ is None:
+            never.append(sid)
+        elif was is None:
+            unknown.append(sid)
+        elif was != now:
+            changed.append(sid)
+        print("%-6s %-9s %s" % (sid, "never" if run_ is None else "unknown" if was is None else
+                                 "CHANGED" if was != now else "current", title[:80]))
+    print("stale: %d changed since their last clean run, %d never run clean, %d run before hashes were recorded "
+          "(world %s)" % (len(changed), len(never), len(unknown), world))
+    return 1 if changed or never else 0
+
+
 def run(a):
+    # before the first RCON command: the server must hold an install of the current complete prepare
+    inst = require_installed(a.server_dir)
     rc = Rcon(a.server_dir)
     OUT.mkdir(parents=True, exist_ok=True)
-    rec = {"started": time.strftime("%Y-%m-%dT%H:%M:%S"), "steps": []}
+    rec = {"started": time.strftime("%Y-%m-%dT%H:%M:%S"), "steps": [], "prepare": inst.get("prepare"),
+           "world_dir": inst.get("world_dir"),
+           "selection": "--only %s" % a.only if a.only else
+                        "--from %s" % a.from_step if getattr(a, "from_step", None) else "all"}
     path = OUT / ("run_%s.json" % time.strftime("%Y%m%d_%H%M%S"))
     todo = steps(a.with_spawns)
     ids = [s[0] for s in todo]
@@ -1429,7 +1864,10 @@ def run(a):
         todo = [s for s in todo if s[0] in want]
         print("run --only: %d step(s) selected in plan order: %s" % (len(todo), " ".join(s[0] for s in todo)))
     elif getattr(a, "from_step", None):
+        if a.from_step not in ids:
+            raise SystemExit("reapply run --from: no step named %s (have: %s)" % (a.from_step, " ".join(ids)))
         todo = todo[ids.index(a.from_step):]
+    rec["of_steps"] = len(ids)
     if not todo:
         raise SystemExit("reapply run: no steps selected; nothing would be applied")
     if getattr(a, "no_reload", False):
@@ -1445,8 +1883,23 @@ def run(a):
     for rule in DROP_RULES:
         drops[rule] = "true"
         rc("gamerule %s false" % rule)
+    live = {}
     try:
-        _run_steps(a, rc, todo, rec, path)
+        _run_steps(a, rc, todo, rec, path, live)
+    except BaseException as e:
+        # a step that raised (RCON dropped, a check crashed) is recorded with what it had found, never left out of
+        # the record; a step that stopped on its problems is already in it
+        if live.get("sid") and not any(s["step"] == live["sid"] for s in rec["steps"]):
+            why = str(e.code) if isinstance(e, SystemExit) else "%s: %s" % (type(e).__name__, e)
+            rec["steps"].append({"step": live["sid"], "title": live["title"], "seconds": None, "commands": None,
+                                 "problems": list(live["bad"]) + ["the step raised: %s" % why[:300]]})
+        rec.setdefault("stopped_at", live.get("sid"))
+        rec["finished"] = time.strftime("%Y-%m-%dT%H:%M:%S")
+        path.write_text(json.dumps(rec, indent=1), encoding="utf-8")
+        if isinstance(e, KeyboardInterrupt):
+            raise
+        raise SystemExit(run_summary(rec, path) + "\n  Re-run that step alone (--only %s) once, then continue with "
+                         "--from the next step" % rec["stopped_at"])
     finally:
         for rule, value in drops.items():
             rc("gamerule %s %s" % (rule, value))
@@ -1455,17 +1908,36 @@ def run(a):
     getattr(rc, "close", lambda: None)()
     rec["finished"] = time.strftime("%Y-%m-%dT%H:%M:%S")
     path.write_text(json.dumps(rec, indent=1), encoding="utf-8")
-    print("run complete:", path)
+    print(run_summary(rec, path))
+
+
+def run_summary(rec, path):
+    """The run's last line, from its record: every step with a problem named, and a partial run called partial."""
+    bad = [(s["step"], s["problems"]) for s in rec["steps"] if s.get("problems")]
+    scope = ("ALL %d steps" % len(rec["steps"]) if rec.get("selection") == "all"
+             else "PARTIAL run (%s): %d of %d steps" % (rec.get("selection"), len(rec["steps"]), rec.get("of_steps", 0)))
+    if bad:
+        return ("RUN STOPPED at %s: %s, %d step(s) with problems:\n  %s\n  record: %s"
+                % (rec.get("stopped_at", bad[-1][0]), scope, len(bad),
+                   "\n  ".join("%s: %s" % (sid, "; ".join(p)) for sid, p in bad), path))
+    return "run complete, 0 problems: %s; record: %s" % (scope, path)
+
+
+# vanilla's reply to a command it could not parse (lang keys command.unknown.command and command.context.here)
+COMMAND_ERRORS = ("Unknown or incomplete command", "Incorrect argument for command", "<--[HERE]")
 
 
 DROP_RULES = ("doTileDrops", "doEntityDrops")
 
 
-def _run_steps(a, rc, todo, rec, path):
+def _run_steps(a, rc, todo, rec, path, live=None):
+    live = {} if live is None else live
+    fn_files = _fn_files()
     for sid, title, actions in todo:
         t0 = time.time()
         print("== %s %s" % (sid, title), flush=True)
         bad = []
+        live.update(sid=sid, title=title, bad=bad)           # what run() records if this step raises
         for kind, v in actions:
             if kind == "fn":
                 r = rc("function %s" % v)
@@ -1478,6 +1950,8 @@ def _run_steps(a, rc, todo, rec, path):
                 # a command a function cannot run for us (Cobblemon's spawn command does nothing inside one)
                 r = rc(v)
                 print("   %s -> %s" % (v[:100], r[:120] or "(no output)"), flush=True)
+                if any(m in r for m in COMMAND_ERRORS):
+                    bad.append("%s: %s" % (v[:100], r[:120]))
             elif kind == "check" and v == "ambient":
                 import ambient
                 problems = ambient.verify(rc)
@@ -1647,15 +2121,15 @@ def _run_steps(a, rc, todo, rec, path):
         # R15, R16 and the lamps) was gone from the world although the run had reported each one done
         rc("save-all")
         dt = time.time() - t0
-        rec["steps"].append({"step": sid, "title": title, "seconds": round(dt, 1), "commands": sum(1 for k, _ in actions if k == "fn"),
+        rec["steps"].append({"step": sid, "title": title, "seconds": round(dt, 1), "hash": step_hash(actions, fn_files),
+                             "commands": sum(1 for k, _ in actions if k == "fn"),
                              "problems": bad})
         path.write_text(json.dumps(rec, indent=1), encoding="utf-8")
         print("   %s done in %.0f s%s" % (sid, dt, "" if not bad else ", %d PROBLEM(S): stopping" % len(bad)), flush=True)
         if bad:
             rec["stopped_at"] = sid
             path.write_text(json.dumps(rec, indent=1), encoding="utf-8")
-            raise SystemExit("stopped at %s. Re-run that step alone (--only %s) once, then continue with --from the next step"
-                             % (sid, sid))
+            raise SystemExit("stopped at %s with %d problem(s)" % (sid, len(bad)))
 
 
 def audit(a):
@@ -1778,7 +2252,11 @@ def main(argv=None):
     q.add_argument("--world", required=True)
     q.add_argument("--source-root", default=env_source_root(), help="heightmap root, for the light check")
     q = sub.add_parser("plan", help="print the steps and their commands without running anything")
+    q = sub.add_parser("stale", help="every step whose content changed since its last clean run into this world")
+    q.add_argument("--server-dir", required=True)
     a = p.parse_args(argv)
+    if a.cmd == "stale":
+        return stale(a)
     if a.cmd == "plan":
         for sid, title, actions in steps():
             print("%-4s %-60s %4d functions" % (sid, title, sum(1 for k, _ in actions if k == "fn")))

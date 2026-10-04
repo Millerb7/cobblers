@@ -1,0 +1,626 @@
+{
+  "schema": "cobblers.mythical_starters/1",
+  "generated_by": "hand",
+  "status": "built, not observed in game: EXP-049 has not run (experiments/EXP-049-native-starter-evolution/README.md)",
+  "decision": "docs/mechanics/NATIVE_STARTERS_COST.md sections 6a and 7 (the owner, 2026-10-02; confirmed overnight 2026-10-03): a-lite at 30 and 45; forms on stages 1 and 2 selected by a forced aspect, the native final species untouched; evolutions OFFERED (the `optional` key omitted, default true); Meltan at 45 with no anvil; Kubfu's scrolls from the research station; the 27 traditional starters stay wild and leave the starter screen.",
+  "consumed_by": "tools/mythical_starters.py (check, build -> build/datapacks/cobblers_mythical_starters, measure); modpack/config/cobblemon/starters.json must offer exactly config_entries() of this record",
+  "aspects": {
+    "stage_1": "cobblers_starter_1",
+    "stage_2": "cobblers_starter_2"
+  },
+  "levels": {
+    "start": 5,
+    "stage_2": 30,
+    "final": 45,
+    "why": "30 and 45 are the arrival caps for gyms 3 and 6 (gym aces 20/25/30/35/40/45/50/55, relativeLevelCap 0), so each point is reached on the leg to that gym and not before its previous badge. Depends on the cap holding against Rare Candy (EXP-049 step 4)."
+  },
+  "kubfu_scrolls": {
+    "status": "BUILT 2026-10-03, not observed in game: data/research_station.json economy.items kubfu_scroll. The Director (dlg_station_director r_scroll, k001-k021) gives ONE scroll of the player's choice, once (one claim, quest.evt_station_director.scroll_claimed), behind gym5_cleared, the one switch economy.issuing, and the tag cobblers_station_kubfu that the station pack's party callback keeps on a player whose party holds this line's Kubfu in either starter form (economy.kubfu_check). The fields below from here to what_it_needs are the record as it stood before the build, kept: the gate was PROPOSED there and is DECIDED in kubfu_scroll.gate_why (cap 45 arrives with the fifth badge, docs/mechanics/PROGRESSION_LADDER.md 4.1); why_both is superseded, one scroll of the player's choice being the choice itself (the orchestrator's brief, 2026-10-03, on the owner's 7.5); the owner's question 'every player or only a Kubfu player' was answered by that brief: only a Kubfu player.",
+    "built_as": "data/research_station.json economy.items kubfu_scroll and economy.kubfu_check; data/quests.json evt_station_director grant_scroll_darkness and grant_scroll_waters; data/dialogue.json dlg_station_director; data/rewards.json station_director; tools/research_station.py kubfu_callback_text",
+    "decision": "The owner, 2026-10-02 (docs/mechanics/NATIVE_STARTERS_COST.md section 7.5): Shrew Station hands out Kubfu's scrolls; the point is 45, when Kubfu's final evolution opens.",
+    "items": ["cobblemon:scroll_of_darkness", "cobblemon:scroll_of_waters"],
+    "why_both": "The scroll IS the Single Strike / Rapid Strike choice: the stage-2 form's two item_interact evolutions (this file, starter_kubfu) each take one scroll at level 45, so a player needs both in hand to have a choice.",
+    "where_it_would_go": "data/research_station.json economy.items, one record in the shape of the feather and dew records there (id, item, route, levels), given by the Director's dialogue through tools/research_station.py, behind that file's one switch economy.issuing (false today, held for the owner and the test author).",
+    "proposed_gate": "cobblers:flag/gym5_cleared (data/progression.json gym5_cleared): the cap reaches 45 only on the leg to gym 6, so a scroll given earlier does nothing for a starter Kubfu, and holding it back keeps it out of reach of a wild Kubfu, whose native scroll evolution has no level requirement. PROPOSED, not decided.",
+    "what_it_needs": ["the items record and its route text in data/research_station.json", "a Director dialogue option and a grant function emitted by tools/research_station.py, once per player", "tools/research_station_audit.py and tests/test_research_station.py updated by their owners (the test pins every item as held today)", "the owner's word on the gate and on whether every player or only a Kubfu player is given them"],
+    "already_true": "data/blackout.json excludes both scrolls from its consumables (docs/research/NATIVE_STARTERS_1_8_0.md section 3c)."
+  },
+  "starter_category": {
+    "name": "cobblers_mythical",
+    "displayName": "Cobblers"
+  },
+  "wild_traditional_starters": {
+    "why": "The owner, 2026-10-02/03: the 27 traditional starters leave the starter screen and stay wild (docs/mechanics/ENCOUNTER_DESIGN.md section 11). This is the list modpack/config/cobblemon/starters.json offered until this change, kept here because tools and tests that read the 27 from that config now have to read them from somewhere; `tools/mythical_starters.py check` requires every family to have a weighted record in data/spawns.json.",
+    "regions": {
+      "Kanto": [
+        "charmander",
+        "squirtle",
+        "bulbasaur"
+      ],
+      "Johto": [
+        "cyndaquil",
+        "totodile",
+        "chikorita"
+      ],
+      "Hoenn": [
+        "torchic",
+        "mudkip",
+        "treecko"
+      ],
+      "Sinnoh": [
+        "chimchar",
+        "piplup",
+        "turtwig"
+      ],
+      "Unova": [
+        "tepig",
+        "oshawott",
+        "snivy"
+      ],
+      "Kalos": [
+        "fennekin",
+        "froakie",
+        "chespin"
+      ],
+      "Alola": [
+        "litten",
+        "popplio",
+        "rowlet"
+      ],
+      "Galar": [
+        "scorbunny",
+        "sobble",
+        "grookey"
+      ],
+      "Paldea": [
+        "fuecoco",
+        "quaxly",
+        "sprigatito"
+      ]
+    },
+    "hisui_entries_dropped": [
+      "Cyndaquil region_bias=hisui level=5 pokeball=ancient_poke_ball",
+      "Oshawott region_bias=hisui level=5 pokeball=ancient_poke_ball",
+      "Rowlet region_bias=hisui level=5 pokeball=ancient_poke_ball"
+    ],
+    "hisui_note": "The Hisui category offered three regional forms of species already in the list (Cyndaquil, Oshawott, Rowlet), not three more families."
+  },
+  "lines": [
+    {
+      "id": "starter_cosmog",
+      "potent_at": {
+        "gyms": [
+          6,
+          7
+        ],
+        "peak_gym": 7,
+        "why": "The late one. Its only attack before the first badge is Swift (Normal, resisted by Brock's Rock types); Confusion comes at 21 and the Psychic and Steel moves through the 30s, so Cosmog trails the field until 45. Then the native final (680 BST) carries Sabrina and Blaine: Lunala's Moongeist Beam and Psychic, or Solgaleo's Sunsteel Strike."
+      },
+      "final": [
+        "solgaleo",
+        "lunala"
+      ],
+      "learnset_from": [
+        "cosmog",
+        "cosmoem",
+        "solgaleo",
+        "lunala"
+      ],
+      "moves": [
+        "1:teleport",
+        "1:swift",
+        "21:confusion",
+        "26:metalclaw",
+        "34:psychocut",
+        "37:ironhead",
+        "40:zenheadbutt",
+        "43:crunch",
+        "44:psychicfangs"
+      ],
+      "stages": [
+        {
+          "stage": 1,
+          "species": "cosmog",
+          "form": "Starter",
+          "aspect": "cobblers_starter_1",
+          "shape_from": "solgaleo",
+          "bst": 330,
+          "baseStats": {
+            "hp": 67,
+            "attack": 66,
+            "defence": 52,
+            "special_attack": 55,
+            "special_defence": 43,
+            "speed": 47
+          },
+          "evolutions": [
+            {
+              "id": "cobblers_starter_cosmog_stage2",
+              "variant": "level_up",
+              "result": "cosmoem unaspect=cobblers_starter_1 aspect=cobblers_starter_2",
+              "consumeHeldItem": false,
+              "learnableMoves": [],
+              "requirements": [
+                {
+                  "variant": "level",
+                  "minLevel": 30
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "species": "cosmoem",
+          "form": "Starter",
+          "aspect": "cobblers_starter_2",
+          "shape_from": "solgaleo",
+          "bst": 430,
+          "baseStats": {
+            "hp": 87,
+            "attack": 87,
+            "defence": 68,
+            "special_attack": 71,
+            "special_defence": 56,
+            "speed": 61
+          },
+          "evolutions": [
+            {
+              "id": "cobblers_starter_cosmog_solgaleo",
+              "variant": "level_up",
+              "result": "solgaleo unaspect=cobblers_starter_2",
+              "consumeHeldItem": false,
+              "learnableMoves": [
+                "sunsteelstrike"
+              ],
+              "requirements": [
+                {
+                  "variant": "level",
+                  "minLevel": 45
+                },
+                {
+                  "variant": "time_range",
+                  "range": "day"
+                }
+              ]
+            },
+            {
+              "id": "cobblers_starter_cosmog_lunala",
+              "variant": "level_up",
+              "result": "lunala unaspect=cobblers_starter_2",
+              "consumeHeldItem": false,
+              "learnableMoves": [
+                "moongeistbeam"
+              ],
+              "requirements": [
+                {
+                  "variant": "level",
+                  "minLevel": 45
+                },
+                {
+                  "variant": "time_range",
+                  "range": "night"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "starter_kubfu",
+      "potent_at": {
+        "gyms": [
+          1,
+          2,
+          3
+        ],
+        "peak_gym": 1,
+        "why": "The early one. Fighting moves arrive first (Low Sweep 6, Rock Tomb 14), so it leads Brock (Rock) and stays level-best through Misty and Surge, where Brick Break and Dig (26, 28) answer Magneton and the Electric types; after 30 it gains little until Urshifu at 45. Its scrolls are the station's to give."
+      },
+      "final": [
+        "urshifu"
+      ],
+      "learnset_from": [
+        "kubfu",
+        "urshifu"
+      ],
+      "moves": [
+        "1:rocksmash",
+        "1:leer",
+        "6:lowsweep",
+        "14:rocktomb",
+        "26:brickbreak",
+        "28:dig",
+        "33:thunderpunch",
+        "38:icepunch",
+        "42:poisonjab",
+        "44:closecombat"
+      ],
+      "stages": [
+        {
+          "stage": 1,
+          "species": "kubfu",
+          "form": "Starter",
+          "aspect": "cobblers_starter_1",
+          "shape_from": "kubfu",
+          "bst": 330,
+          "baseStats": {
+            "hp": 52,
+            "attack": 77,
+            "defence": 51,
+            "special_attack": 45,
+            "special_defence": 43,
+            "speed": 62
+          },
+          "evolutions": [
+            {
+              "id": "cobblers_starter_kubfu_stage2",
+              "variant": "level_up",
+              "result": "kubfu unaspect=cobblers_starter_1 aspect=cobblers_starter_2",
+              "consumeHeldItem": false,
+              "learnableMoves": [],
+              "requirements": [
+                {
+                  "variant": "level",
+                  "minLevel": 30
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "species": "kubfu",
+          "form": "Starter-Grown",
+          "aspect": "cobblers_starter_2",
+          "shape_from": "kubfu",
+          "bst": 430,
+          "baseStats": {
+            "hp": 67,
+            "attack": 101,
+            "defence": 67,
+            "special_attack": 59,
+            "special_defence": 56,
+            "speed": 80
+          },
+          "evolutions": [
+            {
+              "id": "cobblers_starter_kubfu_single_strike",
+              "variant": "item_interact",
+              "result": "urshifu wushu_style=single_strike unaspect=cobblers_starter_2",
+              "consumeHeldItem": false,
+              "learnableMoves": [
+                "wickedblow"
+              ],
+              "requirements": [
+                {
+                  "variant": "level",
+                  "minLevel": 45
+                }
+              ],
+              "requiredContext": "cobblemon:scroll_of_darkness"
+            },
+            {
+              "id": "cobblers_starter_kubfu_rapid_strike",
+              "variant": "item_interact",
+              "result": "urshifu wushu_style=rapid_strike unaspect=cobblers_starter_2",
+              "consumeHeldItem": false,
+              "learnableMoves": [
+                "surgingstrikes"
+              ],
+              "requirements": [
+                {
+                  "variant": "level",
+                  "minLevel": 45
+                }
+              ],
+              "requiredContext": "cobblemon:scroll_of_waters"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "starter_typenull",
+      "potent_at": {
+        "gyms": [
+          8
+        ],
+        "peak_gym": 8,
+        "why": "The closer. A Normal-type with even stats and only Normal, Fang and Zen Headbutt coverage before 42, it is the weakest of the five through the midgame; Surf (42) and Ice Beam (44), carried into Silvally, sweep Giovanni's Ground team."
+      },
+      "final": [
+        "silvally"
+      ],
+      "learnset_from": [
+        "typenull",
+        "silvally"
+      ],
+      "moves": [
+        "1:tackle",
+        "1:scaryface",
+        "8:bite",
+        "13:doublehit",
+        "18:thunderfang",
+        "22:firefang",
+        "26:crushclaw",
+        "30:takedown",
+        "34:icefang",
+        "37:zenheadbutt",
+        "40:ironhead",
+        "42:surf",
+        "44:icebeam"
+      ],
+      "stages": [
+        {
+          "stage": 1,
+          "species": "typenull",
+          "form": "Starter",
+          "aspect": "cobblers_starter_1",
+          "shape_from": "typenull",
+          "bst": 330,
+          "baseStats": {
+            "hp": 59,
+            "attack": 59,
+            "defence": 59,
+            "special_attack": 59,
+            "special_defence": 58,
+            "speed": 36
+          },
+          "evolutions": [
+            {
+              "id": "cobblers_starter_typenull_stage2",
+              "variant": "level_up",
+              "result": "typenull unaspect=cobblers_starter_1 aspect=cobblers_starter_2",
+              "consumeHeldItem": false,
+              "learnableMoves": [],
+              "requirements": [
+                {
+                  "variant": "level",
+                  "minLevel": 30
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "species": "typenull",
+          "form": "Starter-Grown",
+          "aspect": "cobblers_starter_2",
+          "shape_from": "typenull",
+          "bst": 430,
+          "baseStats": {
+            "hp": 77,
+            "attack": 77,
+            "defence": 76,
+            "special_attack": 76,
+            "special_defence": 76,
+            "speed": 48
+          },
+          "evolutions": [
+            {
+              "id": "cobblers_starter_typenull_silvally",
+              "variant": "level_up",
+              "result": "silvally unaspect=cobblers_starter_2",
+              "consumeHeldItem": false,
+              "learnableMoves": [
+                "multiattack"
+              ],
+              "requirements": [
+                {
+                  "variant": "level",
+                  "minLevel": 45
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "starter_poipole",
+      "potent_at": {
+        "gyms": [
+          4
+        ],
+        "peak_gym": 4,
+        "why": "The midgame one. Poison attacks from the start (Venoshock 6, Poison Jab 16) are resisted by Brock but super effective into Erika (Grass) and resisted by her team in return, so it sweeps gym 4 alone. Sludge Bomb waits until 36 so the Erika spike is the stage-2 form's, not a stronger move's."
+      },
+      "final": [
+        "naganadel"
+      ],
+      "learnset_from": [
+        "poipole",
+        "naganadel"
+      ],
+      "moves": [
+        "1:peck",
+        "1:acid",
+        "1:growl",
+        "6:venoshock",
+        "11:aircutter",
+        "16:poisonjab",
+        "21:darkpulse",
+        "30:assurance",
+        "36:sludgebomb",
+        "39:airslash",
+        "42:xscissor",
+        "44:dragonpulse"
+      ],
+      "stages": [
+        {
+          "stage": 1,
+          "species": "poipole",
+          "form": "Starter",
+          "aspect": "cobblers_starter_1",
+          "shape_from": "poipole",
+          "bst": 330,
+          "baseStats": {
+            "hp": 53,
+            "attack": 57,
+            "defence": 53,
+            "special_attack": 57,
+            "special_defence": 53,
+            "speed": 57
+          },
+          "evolutions": [
+            {
+              "id": "cobblers_starter_poipole_stage2",
+              "variant": "level_up",
+              "result": "poipole unaspect=cobblers_starter_1 aspect=cobblers_starter_2",
+              "consumeHeldItem": false,
+              "learnableMoves": [],
+              "requirements": [
+                {
+                  "variant": "level",
+                  "minLevel": 30
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "species": "poipole",
+          "form": "Starter-Grown",
+          "aspect": "cobblers_starter_2",
+          "shape_from": "poipole",
+          "bst": 430,
+          "baseStats": {
+            "hp": 69,
+            "attack": 75,
+            "defence": 68,
+            "special_attack": 75,
+            "special_defence": 68,
+            "speed": 75
+          },
+          "evolutions": [
+            {
+              "id": "cobblers_starter_poipole_naganadel",
+              "variant": "level_up",
+              "result": "naganadel unaspect=cobblers_starter_2",
+              "consumeHeldItem": false,
+              "learnableMoves": [
+                "aircutter"
+              ],
+              "requirements": [
+                {
+                  "variant": "level",
+                  "minLevel": 45
+                }
+              ],
+              "drops": {
+                "amount": 1,
+                "entries": [
+                  {
+                    "type": "evolution",
+                    "item": "cobblemon:shed_shell",
+                    "percentage": 100.0,
+                    "requirements": []
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "starter_meltan",
+      "potent_at": {
+        "gyms": [
+          5
+        ],
+        "peak_gym": 5,
+        "why": "The Koga answer. Steel is immune to Poison, and High Horsepower (37) is super effective into Toxtricity and Drapion. Iron Head waits until 36, as Meltan's own first Steel move waits until Flash Cannon at 40 natively, so Meltan does not also sweep Erika (it walls her but cannot break her). The owner's approved 12 moves, re-levelled (owner call: see EXP-049 Results)."
+      },
+      "final": [
+        "melmetal"
+      ],
+      "learnset_from": [
+        "meltan",
+        "melmetal"
+      ],
+      "moves": [
+        "1:headbutt",
+        "1:thundershock",
+        "1:harden",
+        "8:rocktomb",
+        "18:thunderpunch",
+        "24:rockslide",
+        "28:brickbreak",
+        "36:ironhead",
+        "37:highhorsepower",
+        "38:bodypress",
+        "40:icepunch",
+        "42:darkestlariat"
+      ],
+      "stages": [
+        {
+          "stage": 1,
+          "species": "meltan",
+          "form": "Starter",
+          "aspect": "cobblers_starter_1",
+          "shape_from": "melmetal",
+          "bst": 330,
+          "baseStats": {
+            "hp": 74,
+            "attack": 79,
+            "defence": 78,
+            "special_attack": 44,
+            "special_defence": 36,
+            "speed": 19
+          },
+          "evolutions": [
+            {
+              "id": "cobblers_starter_meltan_stage2",
+              "variant": "level_up",
+              "result": "meltan unaspect=cobblers_starter_1 aspect=cobblers_starter_2",
+              "consumeHeldItem": false,
+              "learnableMoves": [],
+              "requirements": [
+                {
+                  "variant": "level",
+                  "minLevel": 30
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "species": "meltan",
+          "form": "Starter-Grown",
+          "aspect": "cobblers_starter_2",
+          "shape_from": "melmetal",
+          "bst": 430,
+          "baseStats": {
+            "hp": 97,
+            "attack": 103,
+            "defence": 102,
+            "special_attack": 57,
+            "special_defence": 47,
+            "speed": 24
+          },
+          "evolutions": [
+            {
+              "id": "cobblers_starter_meltan_melmetal",
+              "variant": "level_up",
+              "result": "melmetal unaspect=cobblers_starter_2",
+              "consumeHeldItem": false,
+              "learnableMoves": [],
+              "requirements": [
+                {
+                  "variant": "level",
+                  "minLevel": 45
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

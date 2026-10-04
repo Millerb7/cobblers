@@ -1704,7 +1704,7 @@
         },
         {
           "id": "unlock_league_after_rift_resolution",
-          "external_trigger_contract": "THIS transition is rift_crisis_resolved's setter (data/progression.json flags, set_by quest_transition): its first effect grants the flag's advancement to the releasing player, then the stage and League cursor move. It is meant to be invoked by Hoopa's release choice at the cradle (docs/story/NPCS_AND_RIFT_FINALE.md Scene 5, unmerged branch codex/trainer-modes); no current dialogue node invokes it, because the cradle is not carved and no scene seats the Hoopa actor.",
+          "external_trigger_contract": "THIS transition is rift_crisis_resolved's setter (data/progression.json flags, set_by quest_transition): its first effect grants the flag's advancement to the releasing player, then the stage and League cursor move. It is invoked by exactly one node: dlg_main_relic_hall_release line release_001, after the choice 'Release Hoopa.' (the Compact binder in Hoopa's carved cradle, (3363, 13, 3312), moved from the hall's relic ring (3390, 8, 3268) on 2026-10-03, data/relic_underground.json geometry.release; a minimal port of docs/story/NPCS_AND_RIFT_FINALE.md Scene 5 from the uncarved cradle, the owner's decision of 2026-10-03).",
           "conditions": [
             {
               "kind": "progression_equals",
@@ -1862,7 +1862,7 @@
           "flag": "rift_crisis_resolved",
           "fires": "when unlock_league_after_rift_resolution runs (its first effect, cobblers:flag/rift_crisis_resolved/grant)",
           "result": "Should release Hoopa, stop the forced activation, and unlock the League steward and League access.",
-          "runtime_status": "declared in data/progression.json (2026-10-02) with its setter, the transition; NOTHING INVOKES the transition yet: Hoopa's release actor (NPCS_AND_RIFT_FINALE.md Scene 5) needs the cradle carved and a scene"
+          "runtime_status": "declared in data/progression.json (2026-10-02) with its setter, the transition; invoked since 2026-10-03 by dlg_main_relic_hall_release (the Compact binder at the relic ring, (3390, 8, 3268), R18RU). Not yet released in game"
         },
         {
           "beat": "league",
@@ -1890,7 +1890,7 @@
         "Blaine needs an occupied-destination model and acknowledged warning; crater_operation_stopped is approved in ARC.md but absent from the progression ledger.",
         "Giovanni needs an approved dissenter evidence carrier; the route packet is a content requirement, not a placed object.",
         "The containment cradle beneath the League plateau has no Y, entrance, footprint, structure ID, or build.",
-        "rift_crisis_resolved is declared in the progression ledger and unlock_league_after_rift_resolution grants it, but no dialogue node invokes that transition: Hoopa's release actor (NPCS_AND_RIFT_FINALE.md Scene 5) waits on the cradle chamber and its scene. The in-game League gate (RCT's chain after gym8) is unchanged.",
+        "rift_crisis_resolved is granted by unlock_league_after_rift_resolution, which the Compact binder's release (dlg_main_relic_hall_release, in the carved relic hall) invokes. Codex's Scenes 1-4 and a visible Hoopa actor are not built; the in-game League gate (RCT's chain after gym8) is unchanged.",
         "Physical evidence is visible corroboration only because no proven coordinate, proximity, block-interaction, or object-inspection predicate exists.",
         "The compiled mechanism remains single-player proven only; two-player independent cursors are not runtime verified."
       ],
@@ -1910,7 +1910,8 @@
         "quest.main_worldshift_reveal.rift_cursor",
         "quest.main_worldshift_reveal.league_cursor",
         "quest.main_worldshift_reveal.relic_guard_cursor",
-        "quest.main_worldshift_reveal.relic_inside_cursor"
+        "quest.main_worldshift_reveal.relic_inside_cursor",
+        "quest.main_worldshift_reveal.relic_release_cursor"
       ]
     },
     {
@@ -5324,6 +5325,18 @@
             "equals": true
           },
           "text": "Survey the fire tower in the Craters and tell the Director (held: no item is issued yet)."
+        },
+        {
+          "id": "kubfu_scroll",
+          "active_when": {
+            "field": "quest.evt_station_director.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_station_director.scroll_claimed",
+            "equals": true
+          },
+          "text": "With five badges and your starter Kubfu in the party, ask the Director for one scroll: Darkness or Waters."
         }
       ],
       "transitions": [
@@ -5422,9 +5435,109 @@
               "value": "m001"
             }
           ]
+        },
+        {
+          "id": "grant_scroll_darkness",
+          "conditions": [
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_station_issuing"
+            },
+            {
+              "kind": "flag",
+              "flag": "gym5_cleared"
+            },
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_station_kubfu"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_station_director.scroll_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_station_scroll_of_darkness",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_station_director.scroll_claimed",
+              "idempotency_key": "evt_station_director:reward_station_kubfu_scroll:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_station_director.dialogue_cursor",
+              "value": "k010"
+            }
+          ]
+        },
+        {
+          "id": "grant_scroll_waters",
+          "conditions": [
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_station_issuing"
+            },
+            {
+              "kind": "flag",
+              "flag": "gym5_cleared"
+            },
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_station_kubfu"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_station_director.scroll_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_station_scroll_of_waters",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_station_director.scroll_claimed",
+              "idempotency_key": "evt_station_director:reward_station_kubfu_scroll:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_station_director.dialogue_cursor",
+              "value": "k020"
+            }
+          ]
         }
       ],
       "rewards": [
+        {
+          "id": "reward_station_scroll_of_darkness",
+          "status": "item_ids_verified",
+          "record": "data/rewards.json station_director",
+          "one_of": "reward_station_scroll_of_waters: the two share the claim field quest.evt_station_director.scroll_claimed, so a player is given one or the other, once",
+          "contents": [
+            {
+              "item": "cobblemon:scroll_of_darkness",
+              "count": 1,
+              "verification": "assets/cobblemon/models/item/scroll_of_darkness.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ]
+        },
+        {
+          "id": "reward_station_scroll_of_waters",
+          "status": "item_ids_verified",
+          "record": "data/rewards.json station_director",
+          "one_of": "reward_station_scroll_of_darkness: the two share the claim field quest.evt_station_director.scroll_claimed, so a player is given one or the other, once",
+          "contents": [
+            {
+              "item": "cobblemon:scroll_of_waters",
+              "count": 1,
+              "verification": "assets/cobblemon/models/item/scroll_of_waters.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ]
+        },
         {
           "id": "reward_station_thunder_feather",
           "status": "item_ids_verified; HELD",
@@ -5465,6 +5578,7 @@
         "quest.evt_station_director.started",
         "quest.evt_station_director.thunder_claimed",
         "quest.evt_station_director.ember_claimed",
+        "quest.evt_station_director.scroll_claimed",
         "quest.evt_station_director.dialogue_cursor"
       ]
     },
@@ -5919,6 +6033,1460 @@
         "quest.evt_station_eon_shrine.started",
         "quest.evt_station_eon_shrine.dews_claimed",
         "quest.evt_station_eon_shrine.dialogue_cursor"
+      ]
+    },
+    {
+      "id": "evt_half_house",
+      "source": "data/southern_residents.json half_house; the owner's brief of 2026-10-03 (data/southern_residents.json request)",
+      "place": "data/southern_residents.json half_house: Tobiah Rusk's half-house in the middle of Sunset Isle, (2528, 7472)",
+      "dialogue_id": "dlg_half_house",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        2526,
+        96,
+        7470
+      ],
+      "objectives": [
+        {
+          "id": "hear_about_nell",
+          "active_when": {
+            "field": "quest.evt_half_house.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_half_house.heard_nell",
+            "equals": true
+          },
+          "text": "Ask Tobiah Rusk who lived in the other half of his house."
+        },
+        {
+          "id": "answer_him",
+          "active_when": {
+            "field": "quest.evt_half_house.heard_nell",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_half_house.promised",
+            "equals": true
+          },
+          "text": "Tobiah asked you to tell Nell, if you ever find her. You can say no."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_half_house.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_half_house.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_half_house.dialogue_cursor",
+              "value": "t001"
+            }
+          ]
+        },
+        {
+          "id": "hear_nell",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_half_house.heard_nell",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_half_house.heard_nell",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_half_house.dialogue_cursor",
+              "value": "hub"
+            }
+          ]
+        },
+        {
+          "id": "promise",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_half_house.promised",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_half_house.promised",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_half_house.dialogue_cursor",
+              "value": "p001"
+            }
+          ]
+        }
+      ],
+      "rewards": [],
+      "story_beat": "Nothing is fetched or given. The beat is the place and the question: the player decides whether to promise, and Tobiah's answer and the 'I'm still looking' option remember which. No Nell exists anywhere yet; whether one is ever found is an owner decision (data/southern_residents.json half_house), and nothing here depends on it.",
+      "repeat_dialogue": {
+        "before_promise": "hub",
+        "after_promise": "hub"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "generation_blockers": [
+        "Place npc_half_house at npc_at with spawnnpcat after the restart that loads cobblers_dialogue (tools/reapply.py R18SR, from data/southern_residents.json half_house npc), on the floor R9SR builds."
+      ],
+      "progression_field_refs": [
+        "quest.evt_half_house.started",
+        "quest.evt_half_house.heard_nell",
+        "quest.evt_half_house.promised",
+        "quest.evt_half_house.dialogue_cursor"
+      ]
+    },
+    {
+      "id": "evt_surveyor_line",
+      "source": "data/southern_residents.json surveyor_line; the owner's brief of 2026-10-03 (data/southern_residents.json request)",
+      "reward_record": "data/rewards.json surveyor_everstone",
+      "place": "data/southern_residents.json surveyor_line: Corran Vey's survey camp above Sunset Isle's north beach, (1740, 6800)",
+      "dialogue_id": "dlg_surveyor_line",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        1741,
+        69,
+        6799
+      ],
+      "objectives": [
+        {
+          "id": "bring_a_compass",
+          "active_when": {
+            "field": "quest.evt_surveyor_line.asked",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_surveyor_line.compass_given",
+            "equals": true
+          },
+          "text": "Make a compass (four iron ingots and a redstone) and bring it to Corran Vey."
+        },
+        {
+          "id": "take_the_datum",
+          "active_when": {
+            "field": "quest.evt_surveyor_line.compass_given",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_surveyor_line.reward_claimed",
+            "equals": true
+          },
+          "text": "Hear Corran Vey out."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_surveyor_line.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_surveyor_line.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_surveyor_line.dialogue_cursor",
+              "value": "c001"
+            }
+          ]
+        },
+        {
+          "id": "ask",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_surveyor_line.asked",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_surveyor_line.asked",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_surveyor_line.dialogue_cursor",
+              "value": "hub"
+            }
+          ]
+        },
+        {
+          "id": "give_compass",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_surveyor_line.compass_given",
+              "value": false
+            },
+            {
+              "kind": "held_item",
+              "hand": "main",
+              "item": "minecraft:compass",
+              "item_predicate": "minecraft:compass"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "consume_held_item",
+              "hand": "main",
+              "item": "minecraft:compass",
+              "item_predicate": "minecraft:compass",
+              "count": 1,
+              "target": "triggering_player"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_surveyor_line.compass_given",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_surveyor_line.dialogue_cursor",
+              "value": "g001"
+            }
+          ]
+        },
+        {
+          "id": "grant_reward",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_surveyor_line.compass_given",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_surveyor_line.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_surveyor_everstone",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_surveyor_line.reward_claimed",
+              "idempotency_key": "evt_surveyor_line:reward_surveyor_everstone:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_surveyor_line.dialogue_cursor",
+              "value": "g004"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_surveyor_everstone",
+          "status": "item_ids_verified",
+          "record": "data/rewards.json surveyor_everstone (kind npc_grant); contents and verification string copied from it, which copies data/rewards.json r1_old_mine_stope's",
+          "contents": [
+            {
+              "item": "cobblemon:everstone",
+              "count": 1,
+              "verification": "assets/cobblemon/models/item/everstone.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ]
+        }
+      ],
+      "compass_check": "The 'Give him the compass.' option and the give_compass transition read the main hand with the held_item probe (compile_dialogue: execute ... if items entity @s weapon.mainhand minecraft:compass), the thirsty stranger's proven shape (evt_route1_thirsty_stranger's water bucket); the compass is consumed in the same action. A lodestone compass is still minecraft:compass and is accepted. NOT verified in game. CAVEAT (found 2026-10-03, not fixed here): compile_dialogue consume_held_item writes item replace ... with minecraft:air, which empties the WHOLE main-hand stack; compasses stack to 64, so a player holding several gives them all. The water bucket it was built for does not stack.",
+      "repeat_dialogue": {
+        "before_give": "hub",
+        "after_claim": "done01"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; each player brings their own compass; no player may read or write another player's fields"
+      },
+      "generation_blockers": [
+        "Place npc_surveyor_line at npc_at with spawnnpcat after the restart that loads cobblers_dialogue (tools/reapply.py R9F, from data/rewards.json surveyor_everstone), on the ground R9SR's camp stands on."
+      ],
+      "progression_field_refs": [
+        "quest.evt_surveyor_line.started",
+        "quest.evt_surveyor_line.asked",
+        "quest.evt_surveyor_line.compass_given",
+        "quest.evt_surveyor_line.reward_claimed",
+        "quest.evt_surveyor_line.dialogue_cursor"
+      ]
+    },
+    {
+      "id": "evt_prospector_claim",
+      "source": "data/southern_residents.json prospector_camp; the owner's brief of 2026-10-03 (data/southern_residents.json request)",
+      "reward_record": "data/rewards.json prospector_claim (a cache: given by tools/rewards_pack.py's advancement, not by this quest)",
+      "place": "data/southern_residents.json prospector_camp: Bettany Oake's lean-to on the Arrow Creeks upland, (2432, 5696); her cairn on the crest at (2250, 5640)",
+      "dialogue_id": "dlg_prospector_claim",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        2433,
+        138,
+        5698
+      ],
+      "objectives": [
+        {
+          "id": "find_claim_four",
+          "active_when": {
+            "field": "quest.evt_prospector_claim.told",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_prospector_claim.told",
+            "equals": true
+          },
+          "text": "Walk into the sunset, uphill, until the ground stops rising: Bettany Oake's cairn, and the barrel at its foot."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_prospector_claim.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_prospector_claim.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_prospector_claim.dialogue_cursor",
+              "value": "b001"
+            }
+          ]
+        },
+        {
+          "id": "tell",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_prospector_claim.told",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_prospector_claim.told",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_prospector_claim.dialogue_cursor",
+              "value": "c003"
+            }
+          ]
+        }
+      ],
+      "rewards": [],
+      "cache_note": "The find is data/rewards.json prospector_claim, a cache: an advancement for standing on the barrel at the cairn's foot gives it, once per player, whether or not the player has spoken to her (rewards_pack's mechanism; a dialogue cannot read a reward advancement, only a progression flag). Bettany is the way to it, not its gate. 'I found your cairn.' is the player's word; she cannot check it.",
+      "repeat_dialogue": {
+        "always": "hub"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; the cache is per player by its advancement"
+      },
+      "generation_blockers": [
+        "Place npc_prospector_claim at npc_at with spawnnpcat after the restart that loads cobblers_dialogue (tools/reapply.py R18SR, from data/southern_residents.json prospector_camp npc), by the camp R9SR builds."
+      ],
+      "progression_field_refs": [
+        "quest.evt_prospector_claim.started",
+        "quest.evt_prospector_claim.told",
+        "quest.evt_prospector_claim.dialogue_cursor"
+      ]
+    },
+    {
+      "id": "evt_gate_watcher",
+      "source": "data/southern_residents.json gate_watcher; the owner's brief of 2026-10-03 (data/southern_residents.json request)",
+      "reward_record": "data/rewards.json gate_watcher_leftovers",
+      "place": "data/southern_residents.json gate_watcher: Hale Brannock's bench on the plain east of Holdfast, (4136, 6336)",
+      "dialogue_id": "dlg_gate_watcher",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        4135,
+        110,
+        6336
+      ],
+      "objectives": [
+        {
+          "id": "bring_the_eighth",
+          "active_when": {
+            "field": "quest.evt_gate_watcher.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_gate_watcher.shown",
+            "equals": true
+          },
+          "text": "Clear the Holdfast gym and show Hale Brannock the badge he never got."
+        },
+        {
+          "id": "take_burls_leftovers",
+          "active_when": {
+            "field": "quest.evt_gate_watcher.shown",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_gate_watcher.reward_claimed",
+            "equals": true
+          },
+          "text": "Hear Hale Brannock out."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_gate_watcher.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_gate_watcher.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_gate_watcher.dialogue_cursor",
+              "value": "h001"
+            }
+          ]
+        },
+        {
+          "id": "show_badge",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_gate_watcher.shown",
+              "value": false
+            },
+            {
+              "kind": "flag",
+              "flag": "gym8_cleared"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_gate_watcher.shown",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_gate_watcher.dialogue_cursor",
+              "value": "s001"
+            }
+          ]
+        },
+        {
+          "id": "grant_reward",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_gate_watcher.shown",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_gate_watcher.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_gate_watcher_leftovers",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_gate_watcher.reward_claimed",
+              "idempotency_key": "evt_gate_watcher:reward_gate_watcher_leftovers:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_gate_watcher.dialogue_cursor",
+              "value": "s004"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_gate_watcher_leftovers",
+          "status": "item_ids_verified",
+          "record": "data/rewards.json gate_watcher_leftovers (kind npc_grant); contents and verification string copied from it, which copies data/rewards.json old_orchard_cellar's",
+          "contents": [
+            {
+              "item": "cobblemon:leftovers",
+              "count": 1,
+              "verification": "assets/cobblemon/models/item/leftovers.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ]
+        }
+      ],
+      "badge_check": "The 'Show him your Earth Badge.' option and show_badge read the progression flag gym8_cleared through compile_dialogue's flag probe (an advancement, cobblers:flag/gym8_cleared, tools/progression_pack.py), the ferry's proven shape; no badge item is read or taken. NOT verified in game.",
+      "repeat_dialogue": {
+        "before_show": "hub",
+        "after_claim": "done01"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; the flag is each player's own advancement; no player may read or write another player's fields"
+      },
+      "generation_blockers": [
+        "Place npc_gate_watcher at npc_at with spawnnpcat after the restart that loads cobblers_dialogue (tools/reapply.py R9F, from data/rewards.json gate_watcher_leftovers), in front of the bench R9SR builds."
+      ],
+      "progression_field_refs": [
+        "quest.evt_gate_watcher.started",
+        "quest.evt_gate_watcher.shown",
+        "quest.evt_gate_watcher.reward_claimed",
+        "quest.evt_gate_watcher.dialogue_cursor"
+      ]
+    },
+    {
+      "id": "evt_stubborn_tree",
+      "source": "data/northern_residents.json stubborn_tree; the owner's brief of 2026-10-03 (data/northern_residents.json request)",
+      "place": "data/northern_residents.json stubborn_tree: Hesketh Fell and the last tree, (1588, 3280)",
+      "dialogue_id": "dlg_stubborn_tree",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        1591,
+        134,
+        3283
+      ],
+      "objectives": [
+        {
+          "id": "tell_him",
+          "active_when": {
+            "field": "quest.evt_stubborn_tree.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_stubborn_tree.told",
+            "equals": true
+          },
+          "text": "Tell Hesketh Fell what his last tree is. He will not believe you."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_stubborn_tree.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_stubborn_tree.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_stubborn_tree.dialogue_cursor",
+              "value": "h001"
+            }
+          ]
+        },
+        {
+          "id": "tell",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_stubborn_tree.told",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_stubborn_tree.told",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_stubborn_tree.dialogue_cursor",
+              "value": "t003"
+            }
+          ]
+        }
+      ],
+      "rewards": [],
+      "story_beat": "Nothing is fetched or given. The beat is the joke and the meeting: the last 'tree' in the clearing is Old Knot, a Sudowoodo (data/northern_residents.json stubborn_tree pokemon), and the man who has been at it with an axe for six weeks will not hear it. The resident wakes for a player who walks within 4 blocks of it, by the residents' keeper, not by this conversation; nothing in the conversation reads whether it was caught.",
+      "repeat_dialogue": {
+        "always": "hub"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "generation_blockers": [
+        "Place npc_stubborn_tree at npc_at with spawnnpcat after the restart that loads cobblers_dialogue (tools/reapply.py R18NR, from data/northern_residents.json stubborn_tree npc), on the ground R9NR's site stands on."
+      ],
+      "progression_field_refs": [
+        "quest.evt_stubborn_tree.started",
+        "quest.evt_stubborn_tree.told",
+        "quest.evt_stubborn_tree.dialogue_cursor"
+      ]
+    },
+    {
+      "id": "evt_agnes_carving",
+      "source": "data/northern_residents.json agnes_carving; the owner's brief of 2026-10-03 (data/northern_residents.json request)",
+      "reward_record": "data/rewards.json agnes_sun_stone",
+      "place": "data/northern_residents.json agnes_carving: Agnes Merrow's carving, (1696, 2224)",
+      "dialogue_id": "dlg_agnes_carving",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        1694,
+        105,
+        2231
+      ],
+      "objectives": [
+        {
+          "id": "read_the_back",
+          "active_when": {
+            "field": "quest.evt_agnes_carving.asked",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_agnes_carving.read",
+            "equals": true
+          },
+          "text": "Read what is carved on the back of the old oak sixty paces north of Agnes Merrow's wagon, and tell her."
+        },
+        {
+          "id": "take_the_stone",
+          "active_when": {
+            "field": "quest.evt_agnes_carving.read",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_agnes_carving.reward_claimed",
+            "equals": true
+          },
+          "text": "Hear Agnes Merrow out."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_agnes_carving.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_agnes_carving.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_agnes_carving.dialogue_cursor",
+              "value": "a001"
+            }
+          ]
+        },
+        {
+          "id": "ask",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_agnes_carving.asked",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_agnes_carving.asked",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_agnes_carving.dialogue_cursor",
+              "value": "hub"
+            }
+          ]
+        },
+        {
+          "id": "read",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_agnes_carving.asked",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_agnes_carving.read",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_agnes_carving.read",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_agnes_carving.dialogue_cursor",
+              "value": "s001"
+            }
+          ]
+        },
+        {
+          "id": "grant_reward",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_agnes_carving.read",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_agnes_carving.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_agnes_sun_stone",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_agnes_carving.reward_claimed",
+              "idempotency_key": "evt_agnes_carving:reward_agnes_sun_stone:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_agnes_carving.dialogue_cursor",
+              "value": "s004"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_agnes_sun_stone",
+          "status": "item_ids_verified",
+          "record": "data/rewards.json agnes_sun_stone (kind npc_grant); contents and verification string copied from it, which copies data/rewards.json vr_bloom's",
+          "contents": [
+            {
+              "item": "cobblemon:sun_stone",
+              "count": 1,
+              "verification": "assets/cobblemon/models/item/sun_stone.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ]
+        }
+      ],
+      "story_beat": "The answer is out in the wood: the back of the oak 56 blocks north of the wagon carries a sign whose four lines are the true reading (data/northern_residents.json agnes_carving, 'the old oak'). The front carries the reading she already knows, which sends the player back round.",
+      "answer_check": "The three readings are three responses visible while asked is true and read is false; only r_back runs the read transition. Nothing stops a player trying all three: a wrong one says so and returns to the hub. The puzzle is honest (the answer is written in the world) and not secure (a guess finds it in at most three tries). NOT verified in game.",
+      "repeat_dialogue": {
+        "before_read": "hub",
+        "after_claim": "done01"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "generation_blockers": [
+        "Place npc_agnes_carving at npc_at with spawnnpcat after the restart that loads cobblers_dialogue (tools/reapply.py R9F, from data/rewards.json agnes_sun_stone), on the ground R9NR's site stands on."
+      ],
+      "progression_field_refs": [
+        "quest.evt_agnes_carving.started",
+        "quest.evt_agnes_carving.asked",
+        "quest.evt_agnes_carving.read",
+        "quest.evt_agnes_carving.reward_claimed",
+        "quest.evt_agnes_carving.dialogue_cursor"
+      ]
+    },
+    {
+      "id": "evt_pips_gym",
+      "source": "data/northern_residents.json pips_gym; the owner's brief of 2026-10-03 (data/northern_residents.json request)",
+      "reward_record": "data/rewards.json pip_twig_badge",
+      "place": "data/northern_residents.json pips_gym: Pip's gym, (4608, 1728)",
+      "dialogue_id": "dlg_pips_gym",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        4608,
+        116,
+        1718
+      ],
+      "objectives": [
+        {
+          "id": "bring_eight",
+          "active_when": {
+            "field": "quest.evt_pips_gym.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_pips_gym.shown",
+            "equals": true
+          },
+          "text": "Come back to Pip's gym with all eight badges. Tell her about each leader on the way."
+        },
+        {
+          "id": "take_the_twig_badge",
+          "active_when": {
+            "field": "quest.evt_pips_gym.shown",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_pips_gym.reward_claimed",
+            "equals": true
+          },
+          "text": "Hear Pip out."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_pips_gym.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_pips_gym.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_pips_gym.dialogue_cursor",
+              "value": "p001"
+            }
+          ]
+        },
+        {
+          "id": "show",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_pips_gym.shown",
+              "value": false
+            },
+            {
+              "kind": "flag",
+              "flag": "gym8_cleared"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_pips_gym.shown",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_pips_gym.dialogue_cursor",
+              "value": "g001"
+            }
+          ]
+        },
+        {
+          "id": "grant_reward",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_pips_gym.shown",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_pips_gym.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_pip_twig_badge",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_pips_gym.reward_claimed",
+              "idempotency_key": "evt_pips_gym:reward_pip_twig_badge:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_pips_gym.dialogue_cursor",
+              "value": "g004"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_pip_twig_badge",
+          "status": "item_ids_verified",
+          "record": "data/rewards.json pip_twig_badge (kind npc_grant); contents and verification string copied from it, which copies data/rewards.json vr_bloom's",
+          "contents": [
+            {
+              "item": "cobblemon:shiny_stone",
+              "count": 1,
+              "verification": "assets/cobblemon/models/item/shiny_stone.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ]
+        }
+      ],
+      "story_beat": "The meeting is several meetings: each of r_b4..r_b7 is visible only between one badge and the next (flag gymN_cleared and not gymN+1_cleared), so the player who comes back hears about the leader they just beat; r_b0 is visible until the fourth badge. The gift is only at eight. Nothing reads a badge item: the progression flags are the badges (data/progression.json flags).",
+      "badge_check": "Every badge option reads progression flags through compile_dialogue's flag probe (cobblers:flag/gymN_cleared advancements, tools/progression_pack.py), the gate watcher's proven shape; 'not' of a flag is compile_dialogue's not condition over the same probe. No badge item is read or taken. A player who skips from four badges to six between visits never hears the Koga line; that is the design (Pip hears about the gym you just beat). NOT verified in game.",
+      "repeat_dialogue": {
+        "before_eight": "hub",
+        "after_claim": "done01"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "generation_blockers": [
+        "Place npc_pips_gym at npc_at with spawnnpcat after the restart that loads cobblers_dialogue (tools/reapply.py R9F, from data/rewards.json pip_twig_badge), on the ground R9NR's site stands on."
+      ],
+      "progression_field_refs": [
+        "quest.evt_pips_gym.started",
+        "quest.evt_pips_gym.shown",
+        "quest.evt_pips_gym.reward_claimed",
+        "quest.evt_pips_gym.dialogue_cursor"
+      ]
+    },
+    {
+      "id": "evt_hide_and_seek",
+      "source": "data/northern_residents.json hide_and_seek; the owner's brief of 2026-10-03 (data/northern_residents.json request)",
+      "reward_record": "data/rewards.json hide_and_seek_milk",
+      "place": "data/northern_residents.json hide_and_seek: Tam's home base, (6700, 3710)",
+      "dialogue_id": "dlg_hide_and_seek",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        6700,
+        98,
+        3712
+      ],
+      "objectives": [
+        {
+          "id": "find_lettie",
+          "active_when": {
+            "field": "quest.evt_hide_and_seek.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_hide_and_seek.thanked",
+            "equals": true
+          },
+          "text": "Find Lettie Furrow, and tell Tam. She hides somewhere low, or somewhere high, and Tam does not like under things."
+        },
+        {
+          "id": "hear_tam_out",
+          "active_when": {
+            "field": "quest.evt_hide_and_seek.thanked",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_hide_and_seek.reward_claimed",
+            "equals": true
+          },
+          "text": "Hear Tam out."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_hide_and_seek.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hide_and_seek.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hide_and_seek.dialogue_cursor",
+              "value": "t001"
+            }
+          ]
+        },
+        {
+          "id": "ask",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_hide_and_seek.asked",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hide_and_seek.asked",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hide_and_seek.dialogue_cursor",
+              "value": "h002"
+            }
+          ]
+        },
+        {
+          "id": "thank",
+          "conditions": [
+            {
+              "kind": "player_tag",
+              "tag": "cobblers.found_lettie"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_hide_and_seek.thanked",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hide_and_seek.thanked",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hide_and_seek.dialogue_cursor",
+              "value": "f001"
+            }
+          ]
+        },
+        {
+          "id": "grant_reward",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_hide_and_seek.thanked",
+              "value": true
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_hide_and_seek.reward_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_hide_and_seek_milk",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_hide_and_seek.reward_claimed",
+              "idempotency_key": "evt_hide_and_seek:reward_hide_and_seek_milk:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hide_and_seek.dialogue_cursor",
+              "value": "f004"
+            }
+          ]
+        }
+      ],
+      "rewards": [
+        {
+          "id": "reward_hide_and_seek_milk",
+          "status": "item_ids_verified",
+          "record": "data/rewards.json hide_and_seek_milk (kind npc_grant); contents and verification string copied from it, which copies data/rewards.json drovers_hollow_store's",
+          "contents": [
+            {
+              "item": "cobblemon:moomoo_milk",
+              "count": 2,
+              "verification": "assets/cobblemon/models/item/moomoo_milk.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+            }
+          ]
+        }
+      ],
+      "story_beat": "Finding Lettie is talking to her: her conversation (dlg_hide_and_seek_den, quest evt_hide_and_seek_den) tags the player cobblers.found_lettie (data/northern_residents.json hide_and_seek_den player_tag), and Tam's 'I found Lettie.' is visible only with the tag, so the player's word is checked. The player may find her before ever meeting Tam; the order does not matter.",
+      "found_check": "r_found and the thank transition read the player tag cobblers.found_lettie (compile_dialogue's player_tag condition), which only Lettie's conversation sets, through its found transition's function effect (cobblers:north_residents/found_lettie, shipped in cobblers_northern_residents). A quest may not read another quest's fields (tools/validate_data.py), so the shared fact is a tag. NOT verified in game.",
+      "repeat_dialogue": {
+        "before_found": "hub",
+        "after_claim": "done01"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "generation_blockers": [
+        "Place npc_hide_and_seek at npc_at with spawnnpcat after the restart that loads cobblers_dialogue (tools/reapply.py R9F, from data/rewards.json hide_and_seek_milk), on the ground R9NR's site stands on."
+      ],
+      "progression_field_refs": [
+        "quest.evt_hide_and_seek.started",
+        "quest.evt_hide_and_seek.asked",
+        "quest.evt_hide_and_seek.thanked",
+        "quest.evt_hide_and_seek.reward_claimed",
+        "quest.evt_hide_and_seek.dialogue_cursor"
+      ]
+    },
+    {
+      "id": "evt_hide_and_seek_den",
+      "source": "data/northern_residents.json hide_and_seek_den; the owner's brief of 2026-10-03 (data/northern_residents.json request)",
+      "place": "data/northern_residents.json hide_and_seek_den: Lettie's hollow, (6752, 3660)",
+      "dialogue_id": "dlg_hide_and_seek_den",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        6752,
+        103,
+        3660
+      ],
+      "objectives": [
+        {
+          "id": "found_her",
+          "active_when": {
+            "field": "quest.evt_hide_and_seek_den.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_hide_and_seek_den.found",
+            "equals": true
+          },
+          "text": "You found Lettie Furrow. Tell Tam."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_hide_and_seek_den.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hide_and_seek_den.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hide_and_seek_den.dialogue_cursor",
+              "value": "l001"
+            }
+          ]
+        },
+        {
+          "id": "found",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_hide_and_seek_den.found",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hide_and_seek_den.found",
+              "value": true
+            },
+            {
+              "kind": "function",
+              "function": "cobblers:north_residents/found_lettie"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hide_and_seek_den.dialogue_cursor",
+              "value": "hub"
+            }
+          ]
+        }
+      ],
+      "rewards": [],
+      "story_beat": "The other half of evt_hide_and_seek: Lettie's hollow (data/northern_residents.json hide_and_seek_den). Meeting her is finding her; she never comes out, by her own rule.",
+      "repeat_dialogue": {
+        "always": "hub"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "generation_blockers": [
+        "Place npc_hide_and_seek_den at npc_at with spawnnpcat after the restart that loads cobblers_dialogue (tools/reapply.py R18NR, from data/northern_residents.json hide_and_seek_den npc), on the ground R9NR's site stands on."
+      ],
+      "progression_field_refs": [
+        "quest.evt_hide_and_seek_den.started",
+        "quest.evt_hide_and_seek_den.found",
+        "quest.evt_hide_and_seek_den.dialogue_cursor"
+      ]
+    },
+    {
+      "id": "evt_hunters_hide",
+      "source": "data/northern_residents.json hunters_hide; the owner's brief of 2026-10-03 (data/northern_residents.json request)",
+      "place": "data/northern_residents.json hunters_hide: Cassius Rook's high seat, (5480, 3196)",
+      "dialogue_id": "dlg_hunters_hide",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": false,
+        "npc_remains_after_completion": true
+      },
+      "npc_at": [
+        5485,
+        109,
+        3201
+      ],
+      "objectives": [
+        {
+          "id": "answer_him",
+          "active_when": {
+            "field": "quest.evt_hunters_hide.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_hunters_hide.decided",
+            "equals": true
+          },
+          "text": "Cassius Rook asked whether you saw the Tilpey Hart on your way up. Tell him, or don't."
+        }
+      ],
+      "transitions": [
+        {
+          "id": "start",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_hunters_hide.started",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hunters_hide.started",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hunters_hide.dialogue_cursor",
+              "value": "c001"
+            }
+          ]
+        },
+        {
+          "id": "tell",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_hunters_hide.decided",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hunters_hide.decided",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hunters_hide.told",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hunters_hide.dialogue_cursor",
+              "value": "t001"
+            }
+          ]
+        },
+        {
+          "id": "keep_quiet",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_hunters_hide.decided",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hunters_hide.decided",
+              "value": true
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_hunters_hide.dialogue_cursor",
+              "value": "l001"
+            }
+          ]
+        }
+      ],
+      "rewards": [],
+      "story_beat": "A choice with no consequence in the world: the Hart (data/northern_residents.json hunters_hide pokemon) stays in its hollow on either answer, and the player can catch it themselves. The answer changes only what Cassius says ever after (done_t or done_l). No reward.",
+      "choice_note": "The dialogue cannot know whether the player has seen the hollow (the residents' keeper wakes the Hart but writes nothing a conversation reads). r_tell names the hollow, so a player who has not been there learns where it is by choosing it. Accepted: either answer is the player's to give.",
+      "repeat_dialogue": {
+        "after_tell": "done_t",
+        "after_keep_quiet": "done_l"
+      },
+      "multiplayer": {
+        "state": "per_player",
+        "inventory_target": "triggering_player",
+        "reward_target": "triggering_player",
+        "npc": "shared_static_actor",
+        "concurrent_players": "independent transitions; no player may read or write another player's fields"
+      },
+      "generation_blockers": [
+        "Place npc_hunters_hide at npc_at with spawnnpcat after the restart that loads cobblers_dialogue (tools/reapply.py R18NR, from data/northern_residents.json hunters_hide npc), on the ground R9NR's site stands on."
+      ],
+      "progression_field_refs": [
+        "quest.evt_hunters_hide.started",
+        "quest.evt_hunters_hide.decided",
+        "quest.evt_hunters_hide.told",
+        "quest.evt_hunters_hide.dialogue_cursor"
       ]
     }
   ]

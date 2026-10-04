@@ -1299,6 +1299,29 @@ def dens(spec):
     return out
 
 
+def retired_dens(spec):
+    """[(den id, anchor, leash)] of data superseded_farms (2026-10-03): dens no keeper names any more. An id that a
+    current farm reuses is not retired (its tag is live again)."""
+    live = {d["id"] for _s, d in dens(spec)}
+    return [(d["id"], d["anchor"], d.get("leash", 32)) for fa in spec.get("superseded_farms", []) for d in fa["dens"]
+            if d["id"] not in live]
+
+
+def retire_steps(spec=None):
+    """For tools/reapply.py step R9SX (after R9S): hold the ground round every retired den (its anchor +- its leash
+    and 16 more, where a leashed Mega can stand), let the entities load, run megas/retire once, release."""
+    spec = spec or load()
+    gone = retired_dens(spec)
+    if not gone:
+        return []
+    holds = []
+    for _i, (x, _y, z), leash in gone:
+        r = leash + 16
+        holds.append("%d %d %d %d" % (x - r, z - r, x + r, z + r))
+    return ([("cmd", "forceload add " + h) for h in holds] + [("wait", 5), ("fn", "%s:%s/megas/retire" % (NS, FOLDER))]
+            + [("cmd", "forceload remove " + h) for h in holds])
+
+
 def den_anchor(d):
     """A den's anchor [x, y, z]: the model's `_anchor` for a mine slot (its hall's floor), the data's own for a farm den."""
     return d["_anchor"] if "_anchor" in d else d["anchor"]
@@ -1403,6 +1426,18 @@ def keeper_files(m):
     # EXP-046: `spawnpokemonat` written in a function spawns nothing when the function was parsed at server start, and
     # works once a /reload has parsed it again; a macro line is parsed when it runs (.claude/rules/datapacks.md)
     fn["megas/spawn_at"] = ["$spawnpokemonat $(x) $(y) $(z) $(species) $(aspect) uncatchable level=$(level)"]
+    gone_dens = retired_dens(spec)
+    if gone_dens:
+        # 2026-10-03: the dens data superseded_farms retired (docs/world-building/MEGA_FIELD.md). No keeper names them any
+        # more, so a Mega a keeper left there would stand for good, persistent and leashed by nothing: this removes it
+        # where its chunk is loaded (step R9SX holds each one), and clears its den's drop-roll storage. Its scores are
+        # left alone: only the keeper writes a respawn clock (the audit's rule), and a score no function reads is inert
+        retire = ["# the retired dens' Megas (data/gulch_mine.json superseded_farms): run by tools/reapply.py step R9SX with "
+                  "each den's ground held"]
+        for i, _anchor, _leash in gone_dens:
+            retire += ["kill @e[type=cobblemon:pokemon,tag=%s.%s]" % (tag, i),
+                       "data remove storage %s dens[{id:\"%s\"}]" % (STORE, i)]
+        fn["megas/retire"] = retire
     for site, d in all_dens:
         x, y, z = den_anchor(d)
         i = d["id"]

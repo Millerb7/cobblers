@@ -31,6 +31,11 @@ half of the courier inside her own conversation. Latias and Latios verified: `la
 feather takes Zapdos's gate. **The name "Shrew Station" was kept** although it no longer stands on Shrew Lake; renaming it
 (signs, four conversations, quest and reward places) is the owner's call.
 
+**The Zapdos tower moved on 2026-10-03** to the Fungal Isle's east coast, corner (881, 67, 5569) (the owner: "move
+zapdos tower to mooshroom island i think or its own off in the sea"). The storm log reads the tower's position through
+`tools/adopted_sites.py` and follows it; the station was sited on the north-west coast to stand a walk from the old
+tower and is now 2,777 blocks from the new one. Whether it moves too is the owner's call.
+
 The proposal as written follows, unchanged. When it was written nothing was built, authored as data, or placed in
 any world; no file in `data/`, `tools/` or any world was changed to write it. Every ground and depth figure was measured on the
 post-export canonical heightmap through `tools/ground.py` (rounded; probe `ground(4528, 4416) = 122` and
@@ -157,7 +162,7 @@ is already decided in `data/adopted_legendary_sites.json`:
 |---|---|---|---|
 | `cobbleverse:mythical/mew` | jungle | **adopted**, Long Isle summit (7604, 142, 7082) | no |
 | `cobbleverse:crown_cemetery` | old-growth pine taiga | **adopted**, Peak Pond Hollow (4118, 109, 1982) | no |
-| `cobbleverse:legendary/zapdos` | **stony_shore** | **adopted**, windward cliff (562, 74, 2614) | water's edge, but a sea cliff, and adopted where it "finds itself" |
+| `cobbleverse:legendary/zapdos` | **stony_shore** | **adopted**, the Fungal Isle's east coast, corner (881, 67, 5569), since 2026-10-03 (the owner moved it off the windward cliff (562, 74, 2614); `data/adopted_legendary_sites.json` `superseded_coast_site`) | water's edge, but a sea cliff, and adopted where it "finds itself" |
 | `cobbleverse:legendary/articuno` | snowy plains | **adopted**, Frostpeak's summit, the owner's word of 2026-10-02 | no |
 | `legendarymonuments:lake_acuity`, `lake_valor`, `lake_verity` | lakes (Sinnoh pack tag) | **refused**: we author Uxie, Azelf and Mesprit ourselves; a paste yields only a 37x48x37 jigsaw start piece | **the only lake structures in the catalogue**, and each would give one of our legendaries a second author |
 | `legendarymonuments:stark_mountain` | — | **refused**: 120x90x137 region, ships Sinnoh RCT trainers | no |
