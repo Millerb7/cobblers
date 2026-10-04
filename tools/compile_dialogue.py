@@ -4,6 +4,7 @@
 Output (build/datapacks/cobblers_dialogue, generated, not committed):
   data/cobblers/dialogues/<conversation id>.json   one page per node
   data/cobblers/npcs/<npc id>.json                 an NPC class whose interaction opens that dialogue
+  data/cobblemon/callbacks/starter_chosen/...      only when a conversation offers the starter screen (see "starter")
   placement.txt                                    only with --place X Y Z: the spawnnpcat command for a test position (not
                                                    a decision). Not a function: NPC classes load only at server start and
                                                    functions are parsed first, so a function naming the class fails to load.
@@ -39,6 +40,18 @@ The runtime pieces, each proven on the disposable world before this compiler rel
              "npc_battle"} closes the dialogue and starts the NPC's battle against the talking player, as Cobblemon's own
              dialogues/npc-example.json does. The result is read elsewhere, by a battle_victory callback (the finale's:
              tools/hq_tower.py). First used 2026-10-04 by Brann and Elara in the HQ tower; NOT yet run in game.
+  starter    a response action {"kind": "open_starter_screen"} (its response's only action) runs Cobblemon's own
+             `openstarterscreen <player>` for the talking player (Oak's first conversation, the owner's priority zero,
+             2026-10-05). Read from OpenStarterScreenCommand.kt @1.8.0: permission level 2; a player who has already
+             chosen gets nothing and the command returns 0; anyone else is unlocked, marked prompted, saved and sent
+             the starter list, and it returns 1. The result goes to a score preset to -1 (so a command that never ran
+             cannot read as 0); 0 tags the player STARTER_TAG and shows the response's `next`, anything else closes
+             the dialogue so the screen stays up (the client's DialogueClosedHandler only closes a DialogueScreen).
+             One starter per player is Cobblemon's own guarantee (chooseStarter refuses a second pick,
+             docs/research/notes/starter-selection.md section 5); nothing here gives a Pokemon. A condition
+             {"kind": "starter_chosen"} reads STARTER_TAG, which the pack's starter_chosen callback
+             (CallbackHandler.kt @1.8.0: STARTER_CHOSEN -> cobblemon:starter_chosen, context `player`, the struct
+             player_tick_pre's proven callbacks read) adds the moment a pick is made. NOT yet run in game.
   opened by  a conversation with "npc_id": null has no NPC class: a prop or an actor opens it (the scene runtime runs
              /opendialogue for the player who clicked), never an NPC's interaction.
   speakers   a conversation may name its speakers ("speakers": {"pip": "Pip", "narration": null}); a speaker mapped to
@@ -114,6 +127,11 @@ def function_id(v):
     return v
 TX_SCORE = "cobblers_tx"
 GIVE_FAILED = "cobblers_give_failed"
+# the starter gate (see "starter" above): the tag a player carries once Cobblemon has given them their starter, the
+# score openstarterscreen's result is stored in, and the callback that tags a pick as it is made
+STARTER_TAG = "cobblers_starter_chosen"
+STARTER_SCORE = "cobblers_starter"
+STARTER_CALLBACK = "data/cobblemon/callbacks/starter_chosen/cobblers_starter_chosen.molang"
 
 
 class Compiler:
@@ -181,6 +199,9 @@ class Compiler:
             if not isinstance(tag, str) or not re.fullmatch(r"[a-z0-9_.]+", tag):
                 raise Unsupported("player_tag %r is not [a-z0-9_.]+" % (tag,))
             return "q.player.has_tag('%s')" % tag
+        if k == "starter_chosen":
+            # set by the starter_chosen callback, or by open_starter_screen when Cobblemon says the pick is made
+            return "q.player.has_tag('%s')" % STARTER_TAG
         raise Unsupported("condition kind %s" % k)
 
     # ---------------------------------------------------------------- effects
@@ -228,6 +249,20 @@ class Compiler:
         if a.get("format", "singles") != "singles":
             raise Unsupported("npc_battle format %r: only 'singles' has been run in game" % a.get("format"))
         return "q.player.save_data(); q.dialogue.close(); q.npc.start_battle(q.player, 'singles');"
+
+    def starter_action(self, r):
+        """The response that offers the native starter screen (see "starter" in the module docstring). A player who
+        has already chosen (the command returns 0) is tagged and shown the response's `next`; anyone else gets the
+        screen and the dialogue closes."""
+        nxt = r.get("next")
+        if nxt not in self.nodes:
+            raise Unsupported("response %s: open_starter_screen needs a next node for a player who has chosen" % r["id"])
+        return (run(["scoreboard objectives add %s dummy" % STARTER_SCORE]) +
+                run(["execute as ", UUID, " run scoreboard players set @s %s -1" % STARTER_SCORE]) +
+                run(["execute as ", UUID, " store result score @s %s run openstarterscreen @s" % STARTER_SCORE]) +
+                run(["execute as ", UUID, " if score @s %s matches 0 run tag @s add %s" % (STARTER_SCORE, STARTER_TAG)]) +
+                " q.player.has_tag('%s') ? { %s } : { q.player.save_data(); q.dialogue.close(); };"
+                % (STARTER_TAG, self.goto(nxt)))
 
     def give(self, item, count):
         """`give <uuid>` is refused (a uuid parses as an entity selector), so give runs as the player; its success
@@ -309,6 +344,14 @@ class Compiler:
         options = []
         for r in n["responses"]:
             act, closes, tids, battle = pre, False, [], None
+            if any(a["kind"] == "open_starter_screen" for a in r.get("actions") or []):
+                if len(r.get("actions") or []) != 1:
+                    raise Unsupported("response %s: open_starter_screen is a response's only action" % r["id"])
+                opt = {"text": r["text"], "value": r["id"], "action": act + self.starter_action(r)}
+                if r.get("visible_when"):
+                    opt["isVisible"] = "t.d = q.player.data(); return %s;" % self.cond(r["visible_when"], {})
+                options.append(opt)
+                continue
             for a in r.get("actions") or []:
                 if a["kind"] == "quest_transition":
                     act += self.transition(a["transition"])
@@ -440,6 +483,20 @@ def battle_class(nb, data_dir=None):
 PACK_META = {"pack": {"pack_format": 48, "description": "Cobblers compiled dialogue (generated)"}}
 
 
+def uses_starter_screen(conv):
+    """True when a response of the conversation offers the native starter screen."""
+    return any(a.get("kind") == "open_starter_screen" for n in conv["nodes"] if n.get("kind") == "choice"
+               for r in n["responses"] for a in r.get("actions") or [])
+
+
+def starter_callback():
+    """The starter_chosen callback: tags the player the moment Cobblemon posts STARTER_CHOSEN for their pick, so the
+    conversation that offered the screen knows on the next talk. Callbacks register only under the cobblemon
+    namespace (docs/research/notes/level-cap-catch-block.md:27-32); `q.player.username` in a server-sourced command is
+    the form tools/lopunny_house.py's player_tick_pre callback uses. Only a tag: harmless in any world it loads in."""
+    return "q.run_command('tag ' + q.player.username + ' add %s');\n" % STARTER_TAG
+
+
 def build(conv_id, data_dir, place=None):
     dialogue, quests, fields = load(data_dir)
     conv = next((c for c in dialogue["conversations"] if c["id"] == conv_id), None)
@@ -447,6 +504,8 @@ def build(conv_id, data_dir, place=None):
         raise SystemExit("no conversation %s" % conv_id)
     files = {"pack.mcmeta": PACK_META}
     files.update(compile_conversation(conv, quests, fields, data_dir))
+    if uses_starter_screen(conv):
+        files[STARTER_CALLBACK] = starter_callback()
     if place:
         if not conv.get("npc_id"):
             raise SystemExit("%s has no NPC: a prop or an actor opens it" % conv_id)
@@ -469,6 +528,8 @@ def build_all(data_dir):
             raise SystemExit("%s writes %s, which another conversation already wrote" % (conv["id"], clash))
         files.update(got)
         done.append(conv["id"])
+        if uses_starter_screen(conv):
+            files[STARTER_CALLBACK] = starter_callback()
     return files, done, refused
 
 

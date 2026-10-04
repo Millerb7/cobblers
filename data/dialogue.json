@@ -1558,12 +1558,33 @@
       "scope": "player",
       "cursor": {
         "progression_field": "quest.main_worldshift_reveal.pallet_oak_cursor",
-        "initial_node": "oak_001",
+        "initial_node": "oak_offer_001",
         "persist": "after_each_node",
         "restore": "on_every_interaction",
         "cursor_is": "next_unread_node"
       },
+      "starter_gate": "The owner's priority zero (2026-10-05): Oak gives the starter. modpack/config/cobblemon/starters.json sets allowStarterOnJoin false, so a new player joins starter-locked (Cobblemon 1.8.0 PlayerDataJsonBackend: starterLocked = !allowStarterOnJoin) and the native screen refuses them until Oak's oak_offer_choose runs `openstarterscreen` for them (tools/compile_dialogue.py open_starter_screen). That command unlocks, opens the config's five-way screen, and returns 0 without opening for a player who has already chosen; chooseStarter refuses a second pick (docs/research/notes/starter-selection.md section 5). oak_001 onward, and so record_oak_sendoff, is reached only by a player Cobblemon says has chosen: the starter_chosen entry rule, or the open action's own 0 result.",
       "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.pallet_oak_cursor",
+                "values": [
+                  "oak_offer_001",
+                  "oak_offer_002"
+                ]
+              }
+            ]
+          },
+          "node": "oak_001"
+        },
         {
           "priority": 10,
           "when": {
@@ -1573,6 +1594,40 @@
         }
       ],
       "nodes": [
+        {
+          "id": "oak_offer_001",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "There you are. Nobody walks out of Pallet without a partner, and you will not be the first.",
+          "next": "oak_offer_002"
+        },
+        {
+          "id": "oak_offer_002",
+          "kind": "choice",
+          "speaker": "professor_oak",
+          "text": "Five are waiting in the lab. Choose one, and look after it. You only get the one.",
+          "responses": [
+            {
+              "id": "oak_offer_choose",
+              "text": "Let me see them.",
+              "actions": [
+                {
+                  "kind": "open_starter_screen"
+                }
+              ],
+              "next": "oak_001"
+            },
+            {
+              "id": "oak_offer_wait",
+              "text": "Not yet.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
         {
           "id": "oak_001",
           "kind": "line",

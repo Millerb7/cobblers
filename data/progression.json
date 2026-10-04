@@ -652,7 +652,7 @@
       "field": "pallet_oak_cursor",
       "type": "enum",
       "scope": "player",
-      "initial": "oak_001",
+      "initial": "oak_offer_001",
       "allowed_values": "node ids from dlg_main_pallet_oak"
     },
     {
