@@ -18,6 +18,10 @@ takes no geometry from tools/gulch_mine.py or tools/mega_dens.py. Every expectat
   the critical path    data/route_paths.json, every point of every path (mega_dens_audit.py's 128 footprint rule)
   spawn conditions     data/spawn_blocks.json and data/spawn_block_policy.json
   broken Mega models   docs/research/CLIENT_MODEL_FIXES.md ("7 megas")
+  the borders          data/mega_borders.json's declared rules (blocks, palettes, kill threshold, keep, cap), each den's
+                       own palettes in data/mega_dens.json dens; the overlaps are measured here from data/gulch_mine.json
+                       homes and leashes. tools/mega_borders.py is never imported for geometry: its lens, its sides and
+                       its dressing floor are what is being checked
 
 What is checked is the generators' OUTPUT: the polygon and farms as committed (or as a test's mutated generator
 emits them), the built gulch functions and battle_fainted callback, the built lair functions, and the steps R9SX and
@@ -29,12 +33,41 @@ R9MD run (taken from the generators as output, as mega_dens_audit.py does).
             column inside it is that floor, and no column of it lies more than rim_outset + tolerance outside the floor
   den       each field den: anchor inside the polygon and on the basin; y = round(ground) + 1; dry (no painted water
             within the pad); standable (its 3x3 within 1 block); its leash reaches neither the gulch zone nor
-            any Rift zone's post or guard line;
-            at least 128 from every critical-path point; no two dens' leash discs overlap; one den per species; a
+            any Rift zone's post or guard line; its whole range (leash disc) inside the polygon (layout.why.edge_clear:
+            "a Mega's whole range is the field's floor");
+            at least 128 from every critical-path point; one den per species; a
             species whose stone (the aspect's, X or Y included) the Cutters sell; none on the broken-model list
+  crowding  THE OWNER, 2026-10-04: "Megas clashing over territory ... pressing against each other for space ...
+            overlapping ranges". (Until 2026-10-04 this audit REFUSED overlapping leash discs, the spacing-64 design's
+            rule; the owner's brief reverses it.) Measured here from the homes and leashes alone: every den's range
+            overlaps at least one other den's; no range reaches another den's home (layout.why.leash: "no Mega's range
+            reaches its neighbour's home"). A range is the keeper's own test, the built leash line `positioned <anchor>
+            unless entity @s[distance=..L]`: a Mega on column (x, z) stands at its centre, so it is in range when
+            hypot(x + 0.5 - ax, z + 0.5 - az) <= L
+  floor     the usable floor computed here from the heightmap and the polygon (never mega_field.floor): inside the
+            polygon, dry (tools/water_mask.py's sea and lake rule), no 4-neighbour step over one block. Reported: its
+            size, the fraction any range covers, the farthest usable column from every range. Not a pass/fail number:
+            the owner asked for "as much ... as the terrain allows" and gave no fraction
+  tiers     a den is the deeper tier exactly when its home is layout.deeper_from_town or more from town.square.centre;
+            the roster is dealt by distance (layout.why.roster: "BANDED by distance from the town, nearest first"); the
+            BUILT level is farm_tiers[tier].level as declared, and also the cap rule below
   level     the den's zone gate (data/rift_zones.json boxes) gives the badges; the rctmod cap for those badges plus
             the owner's offset (13.1's level less the owner's cap of 50) is the level in the BUILT spawn function;
             spawn_at spawns uncatchable
+  borders   the BUILT cobblers_mega_borders functions (tools/mega_borders.py, data/mega_borders.json): exactly one border
+            per pair of overlapping ranges measured above and none for any other pair; every column a border writes lies
+            inside BOTH dens' ranges (dressed AT the overlap); every block in blocks.ids, none a spawn condition
+            (data/spawn_blocks.json) that no data/spawn_block_policy.json entry scoped to mega_borders whitelists; every
+            block from round(ground) to round(ground) + max_rise; the scar (ground-level writes) only the shared scar
+            palette or the two dens' own scrape palettes (data/mega_dens.json dens), and never the OTHER den's own
+            scrape block on a den's side of the border (the radical line); rock above the scar from the two dens'
+            boulder blocks and rubble.loose_blocks; a carcass (one skeleton skull) on every border whose ranges overlap
+            by kill.min_overlap or more and on no other; no column written by two borders, within keep.anchor_clear of
+            any anchor or keep.lair_clear of any column a BUILT lair writes; no column outside the polygon, in the
+            gulch's zone or block box, under painted water, within 128 of the critical path, within 32 of a Rift zone
+            wall, post or guard point or a placement, or in a town's footprint; the written columns at most
+            coverage_cap of the usable floor inside any range (the floor above); R9MB holds each border's columns,
+            runs it once, and releases every hold
   drops     per field den, the built load sets gm.pct and gm.resp to 13.1's numbers for its tier (outer 15% 10 min,
             deeper 30% 15 min; within section 13's 25-35%); bind_ hit_ roll_ slain_ hitter_ exist; the battle_fainted
             callback calls drops/fainted, which rolls every field den; give drops the raw stone section 13 names,
@@ -46,15 +79,20 @@ R9MD run (taken from the generators as output, as mega_dens_audit.py does).
             every retired den (each hold under 256 chunks), runs megas/retire after a wait, and releases every hold
   lairs     one lair per field den and none for a retired one; no lair writes a spawn condition no mega_dens policy
             whitelists; every lair write is inside the field polygon and 128 or more from every critical-path point;
-            R9MD runs exactly the field dens' lairs
-  order     reapply.steps: R9S < R9SX < R9MD < R9E; prepare: mega_field:check < gulch_mine:build, and this audit after
-            gulch_mine:build and mega_dens:build
+            no two lairs write one column (their dens now stand as close as the lairs allow); R9MD runs exactly the
+            field dens' lairs
+  order     reapply.steps: R9S < R9SX < R9MD < R9MB < R9E; prepare: mega_field:check < gulch_mine:build,
+            mega_dens:build < mega_borders:build, and this audit after gulch_mine:build, mega_dens:build and
+            mega_borders:build; cobblers_mega_borders is a server pack
 
 NOT covered (needs the server, EXP-054): that a Mega spawns and stands at the anchor, that FoF makes it hostile, that
 the roll runs after a real win, that the item is refused to another player, that R9SX's forceload loads the retired
-Megas' entities in its wait, and the tick cost of megas/watch.
+Megas' entities in its wait, and the tick cost of megas/watch. Nor (needs the owner in game): whether the borders READ
+as contested ground from the air or on foot, which is the owner's actual ask; that two neighbours' Megas, both up,
+behave as rivals (nothing makes them fight: the crowding is dressing and geometry, not behaviour); that a player in an
+overlap is not pulled by two keepers at once in a way that feels wrong.
 
-  python tools/mega_field_audit.py [--source-root R] [--gulch-pack DIR] [--dens-pack DIR]
+  python tools/mega_field_audit.py [--source-root R] [--gulch-pack DIR] [--dens-pack DIR] [--borders-pack DIR]
 """
 from __future__ import annotations
 
@@ -76,6 +114,9 @@ GULCH_PACK = ROOT / "build" / "datapacks" / "cobblers_gulch_mine"
 DENS_PACK = ROOT / "build" / "datapacks" / "cobblers_mega_dens"
 GULCH_FN = "data/cobblers/function/gulch_mine"
 DENS_FN = "data/cobblers/function/mega_dens"
+BORDERS_PACK = ROOT / "build" / "datapacks" / "cobblers_mega_borders"
+BORDERS_FN = "data/cobblers/function/mega_borders"
+KILL_BLOCKS = ("minecraft:skeleton_skull", "minecraft:bone_block", "minecraft:chain", "minecraft:iron_bars")
 CALLBACK = "data/cobblemon/callbacks/battle_fainted/cobblers_gulch_drops.molang"
 SCULPT = ROOT / "derived" / "rift_sculpt"
 FILL = re.compile(r"^fill (-?\d+) (-?\d+) (-?\d+) (-?\d+) (-?\d+) (-?\d+) (\S+)(?: replace (\S+))?$")
@@ -168,22 +209,23 @@ def cap_table(data=DATA, toml=ROOT / "modpack" / "config" / "rctmod-server.toml"
 
 
 # ---------------------------------------------------------------------------------------------- geometry
-def raster(poly, x0, z0, x1, z1):
-    """(z, x) bool mask of the columns x0..x1, z0..z1 whose centre is inside poly (even-odd)."""
-    xs = np.arange(x0, x1 + 1) + 0.5
-    zs = np.arange(z0, z1 + 1) + 0.5
-    X, Z = np.meshgrid(xs, zs)
-    res = np.zeros(X.shape, bool)
+def raster(poly, x0, z0, x1, z1, off=0.5):
+    """(z, x) bool mask of the columns x0..x1, z0..z1 whose point (x + off, z + off) is inside poly (even-odd): the
+    centre by default; off=0 is tools/water_mask.py's own test, which casts from the column's integer corner."""
+    xs = np.arange(x0, x1 + 1) + off
+    zs = np.arange(z0, z1 + 1) + off
+    res = np.zeros((len(zs), len(xs)), bool)
     n = len(poly)
     for i in range(n):
         xa, za = poly[i]
         xb, zb = poly[(i + 1) % n]
         if za == zb:
             continue
-        c = (za > Z) != (zb > Z)
-        with np.errstate(divide="ignore", invalid="ignore"):
-            xi = xa + (Z - za) * (xb - xa) / (zb - za)
-        res ^= c & (X < xi)
+        rows = np.nonzero((za > zs) != (zb > zs))[0]      # only the rows this edge crosses
+        if not len(rows):
+            continue
+        xi = xa + (zs[rows] - za) * (xb - xa) / (zb - za)
+        res[rows] ^= xs[None, :] < xi[:, None]
     return res
 
 
@@ -391,6 +433,9 @@ def check_dens(spec, g, basin, D, R, sold, data=DATA):
         nb = [gr(x, z) for x in range(ax - 1, ax + 2) for z in range(az - 1, az + 2)]
         if max(nb) - min(nb) > 1:
             R.err("den", "%s: the anchor's 3x3 spans %d blocks: not standable" % (did, max(nb) - min(nb)))
+        if seg_dist(poly, ax, az) < d["leash"]:
+            R.err("den", "%s: its range (leash %d) crosses the field's edge (%.1f from it): the field's floor must hold "
+                         "a Mega's whole range" % (did, d["leash"], seg_dist(poly, ax, az)))
         if _in_poly_pt(zone, ax + 0.5, az + 0.5) or seg_dist(zone, ax + 0.5, az + 0.5) <= d["leash"]:
             R.err("den", "%s: its leash (%d) reaches the gulch zone (%.0f from it)"
                   % (did, d["leash"], seg_dist(zone, ax + 0.5, az + 0.5)))
@@ -414,10 +459,144 @@ def check_dens(spec, g, basin, D, R, sold, data=DATA):
                                                                    else not re.search(r"_[xy]$", s))]
             if not want:
                 R.err("den", "%s: no %s stone for %s on any Cutters bench: not a Mega the pack has" % (did, asp, sp))
-    for (fa, d), (fb, e) in [(p, q) for i, p in enumerate(dens) for q in dens[i + 1:]]:
-        s = math.hypot(d["anchor"][0] - e["anchor"][0], d["anchor"][2] - e["anchor"][2])
-        if s < d["leash"] + e["leash"]:
-            R.err("den", "%s and %s are %.0f apart: their leash discs overlap" % (d["id"], e["id"], s))
+
+
+# ---------------------------------------------------------------------------------------------- crowding and floor
+def in_range(d, x, z):
+    """Column (x, z) is in den d's range: the keeper's built leash test, from the anchor's block corner to a Mega
+    standing at the column's centre (see the module's `crowding`)."""
+    return math.hypot(x + 0.5 - d["anchor"][0], z + 0.5 - d["anchor"][2]) <= d["leash"]
+
+
+def overlaps(spec):
+    """[(a, b, homes apart, overlap)] for every two field dens whose ranges overlap, measured from the homes alone."""
+    ds = [d for _fa, d in field_dens(spec)]
+    out = []
+    for i, a in enumerate(ds):
+        for b in ds[i + 1:]:
+            s = math.hypot(a["anchor"][0] - b["anchor"][0], a["anchor"][2] - b["anchor"][2])
+            if s < a["leash"] + b["leash"]:
+                out.append((a, b, s, a["leash"] + b["leash"] - s))
+    return out
+
+
+def check_crowding(spec, R):
+    ds = [d for _fa, d in field_dens(spec)]
+    pairs = overlaps(spec)
+    for i, a in enumerate(ds):
+        for b in ds[i + 1:]:
+            s = math.hypot(a["anchor"][0] - b["anchor"][0], a["anchor"][2] - b["anchor"][2])
+            if s <= max(a["leash"], b["leash"]):
+                R.err("crowding", "%s and %s are %.1f apart: one's range (%d) reaches the other's home"
+                      % (a["id"], b["id"], s, max(a["leash"], b["leash"])))
+    touched = {d["id"] for a, b, _s, _o in pairs for d in (a, b)}
+    for d in ds:
+        if d["id"] in touched:
+            continue
+        near = min(((math.hypot(d["anchor"][0] - e["anchor"][0], d["anchor"][2] - e["anchor"][2]), e) for e in ds
+                    if e is not d), key=lambda t: t[0], default=(None, None))
+        R.err("crowding", "%s: its range overlaps no other den's: the nearest, %s, is %.1f away and the two ranges "
+                          "reach %d" % (d["id"], near[1]["id"] if near[1] else "none", near[0] or 0,
+                                        d["leash"] + (near[1]["leash"] if near[1] else 0)))
+    # the groups of dens whose ranges touch, for the report
+    grp = {d["id"]: d["id"] for d in ds}
+
+    def root(i):
+        while grp[i] != i:
+            i = grp[i]
+        return i
+    for a, b, _s, _o in pairs:
+        grp[root(a["id"])] = root(b["id"])
+    sizes = {}
+    for d in ds:
+        sizes[root(d["id"])] = sizes.get(root(d["id"]), 0) + 1
+    if pairs:
+        R.note("crowding: %d dens, %d overlapping pairs, overlaps %.1f..%.1f blocks, %d group(s) of touching ranges %s"
+               % (len(ds), len(pairs), min(p[3] for p in pairs), max(p[3] for p in pairs), len(sizes),
+                  sorted(sizes.values(), reverse=True)))
+    return pairs
+
+
+def usable_floor(spec, g):
+    """The field's usable floor, computed here: (box, floor mask, distance-past-every-range array). Inside the polygon,
+    dry by tools/water_mask.py's rule (under the sea level, or inside a lake body's basin ring below its level, the ring
+    cast from the column's integer corner as water_mask.in_polygons does), and no 4-neighbour step over one block on
+    the rounded heightmap."""
+    import water_mask
+    poly = spec["mega_field"]["polygon"]
+    x0, z0 = int(math.floor(min(p[0] for p in poly))), int(math.floor(min(p[1] for p in poly)))
+    x1, z1 = int(math.ceil(max(p[0] for p in poly))), int(math.ceil(max(p[1] for p in poly)))
+    F = raster(poly, x0, z0, x1, z1)
+    H = np.asarray(g.box(x0, z0, x1, z1))
+    wet = H < water_mask.sea_level()
+    for _bid, b in water_mask.bodies().items():
+        rings = [r for r in b["basin"] if r]
+        xs = [p[0] for r in rings for p in r]
+        zs = [p[1] for r in rings for p in r]
+        if not rings or max(xs) < x0 or min(xs) > x1 or max(zs) < z0 or min(zs) > z1:
+            continue
+        inb = np.zeros(F.shape, bool)
+        for r in rings:
+            inb |= raster(r, x0, z0, x1, z1, off=0.0)
+        wet |= inb & (H < b["level_y"])
+    step = np.zeros(F.shape, bool)
+    vz, vx = np.abs(np.diff(H, axis=0)) > 1, np.abs(np.diff(H, axis=1)) > 1
+    step[:-1, :] |= vz
+    step[1:, :] |= vz
+    step[:, :-1] |= vx
+    step[:, 1:] |= vx
+    floor = F & ~wet & ~step
+    gx, gz = np.meshgrid(np.arange(x0, x1 + 1) + 0.5, np.arange(z0, z1 + 1) + 0.5)
+    past = np.full(F.shape, np.inf)
+    for _fa, d in field_dens(spec):
+        past = np.minimum(past, np.hypot(gx - d["anchor"][0], gz - d["anchor"][2]) - d["leash"])
+    return (x0, z0, x1, z1), floor, past
+
+
+def check_floor(spec, g, R):
+    (x0, z0, _x1, _z1), floor, past = usable_floor(spec, g)
+    n = int(floor.sum())
+    cov = floor & (past <= 0)
+    if not n:
+        R.err("floor", "the field has no usable floor (inside the polygon, dry, no step over one block)")
+        return (x0, z0), floor, cov
+    far = np.where(floor, past, -np.inf)
+    i, j = np.unravel_index(int(np.argmax(far)), far.shape)
+    R.note("floor: %d usable columns (inside the polygon, dry, no step over one block); the %d dens' ranges cover %d "
+           "of them (%.1f%%); the usable column farthest from every range is %.0f past the nearest, at (%d, %d); "
+           "dens %d, roster %d" % (n, len(field_dens(spec)), int(cov.sum()), 100.0 * cov.sum() / n, far[i, j],
+                                   j + x0, i + z0, len(field_dens(spec)), len(spec["mega_field"]["layout"]["roster"])))
+    return (x0, z0), floor, cov
+
+
+def check_tiers(spec, fns, R):
+    lay = spec["mega_field"]["layout"]
+    tx, tz = spec["town"]["square"]["centre"]
+    ds = [d for _fa, d in field_dens(spec)]
+    for d in ds:
+        far = math.hypot(d["anchor"][0] - tx, d["anchor"][2] - tz)
+        want = lay["deeper_tier"] if far >= lay["deeper_from_town"] else lay["outer_tier"]
+        if d["tier"] != want:
+            R.err("tiers", "%s is %.0f from the Cutters' square: %s by deeper_from_town %d, but it is %s"
+                  % (d["id"], far, want, lay["deeper_from_town"], d["tier"]))
+        lvl = spec["farm_tiers"].get(d["tier"], {}).get("level")
+        m = re.search(r"spawn_at \{[^}]*species:\"%s\"[^}]*level:(\d+)\}" % re.escape(d["species"]),
+                      "\n".join(read_fn(fns, "megas/spawn_%s" % d["id"])))
+        if lvl is None or not m or int(m.group(1)) != lvl:
+            R.err("tiers", "%s: built level %s, farm_tiers.%s.level declares %s"
+                  % (d["id"], m and m.group(1), d["tier"], lvl))
+    # the roster dealt by distance, nearest first (ties: the roster order is the generator's own, so equal distances
+    # are not judged)
+    order = [sp for sp, _a in lay["roster"]]
+    by = sorted(ds, key=lambda d: math.hypot(d["anchor"][0] - tx, d["anchor"][2] - tz))
+    rank = [order.index(d["species"]) if d["species"] in order else -1 for d in by]
+    if -1 in rank:
+        R.err("tiers", "a field den's species is not in mega_field.layout.roster")
+    elif any(rank[k] > rank[k + 1] for k in range(len(rank) - 1)
+             if math.hypot(by[k]["anchor"][0] - tx, by[k]["anchor"][2] - tz) <
+             math.hypot(by[k + 1]["anchor"][0] - tx, by[k + 1]["anchor"][2] - tz)):
+        R.err("tiers", "the roster is not dealt by distance from the Cutters' square: nearest first is %s"
+              % [d["species"] for d in by])
 
 
 def read_fn(fns, name):
@@ -607,6 +786,7 @@ def check_lairs(spec, rec, lairs, r9md, R, data=DATA):
     policy = load_json(Path(data) / "spawn_block_policy.json")
     white = {b for w in policy.get("whitelist") or [] if "mega_dens" in (w.get("scope") or "") for b in w["blocks"]}
     route = [tuple(p) for pts in load_json(Path(data) / "route_paths.json")["paths"].values() for p in pts]
+    owner = {}
     for i, d in sorted(fd.items()):
         sp = d["species"]
         if i in have and have[i]["species"] != sp:
@@ -623,6 +803,12 @@ def check_lairs(spec, rec, lairs, r9md, R, data=DATA):
         if not cols:
             R.err("lairs", "%s's lair writes nothing" % sp)
             continue
+        shared = sorted(c for c in cols if c in owner)
+        if shared:
+            R.err("lairs", "%s's and %s's lairs both write %d column(s), e.g. %s"
+                  % (owner[shared[0]], sp, len(shared), shared[0]))
+        for c in cols:
+            owner.setdefault(c, sp)
         out = [c for c in sorted(cols) if not _in_poly_pt(poly, c[0] + 0.5, c[1] + 0.5)]
         if out:
             R.err("lairs", "%s's lair writes %d column(s) outside the field, e.g. %s" % (sp, len(out), out[0]))
@@ -638,16 +824,252 @@ def check_lairs(spec, rec, lairs, r9md, R, data=DATA):
     want = sorted(d["species"] for d in fd.values())
     if ran != want:
         R.err("lairs", "R9MD runs lairs %s, the field's dens are %s" % (ran, want))
+    return set(owner)
+
+
+# ---------------------------------------------------------------------------------------------- the borders
+def world_marks(spec, g, data=DATA):
+    """What a border must keep off, from the data (the lair audit's footprint rule, tools/mega_dens_audit.py): the
+    critical path's points, the Rift zones' wall columns, posts and guard points, placements, town footprints, and a
+    painted-water test on the rounded heightmap."""
+    import water_mask
+    bodies, sea = water_mask.bodies(), water_mask.sea_level()
+    rz = load_json(Path(data) / "rift_zones.json")
+    built = []
+    for cut in rz.get("cuts") or []:
+        built += [(c[0], c[1], "wall " + cut["id"]) for c in cut.get("line") or []]
+    for zid, zz in rz["zones"].items():
+        if str(zz.get("status", "")).startswith("SUPERSEDED"):
+            continue
+        built += [(p["at"][0], p["at"][1], "%s post %s" % (zid, p.get("id"))) for p in zz.get("posts") or []
+                  if isinstance(p.get("at"), list)]
+        gd = zz.get("guard") or {}
+        built += [(gd[k][0], gd[k][1], "%s guard %s" % (zid, k)) for k in ("edge_at", "inside_at")
+                  if isinstance(gd.get(k), list)]
+    built += [(p["position"]["x"], p["position"]["z"], "placement " + p["id"])
+              for p in load_json(Path(data) / "placements.json")["placements"] if isinstance(p.get("position"), dict)]
+    towns = [(t["id"], t["footprint"]) for t in load_json(Path(data) / "towns.json")["towns"]
+             if all(k in (t.get("footprint") or {}) for k in ("min_x", "min_z", "max_x", "max_z"))]
+
+    def gr(x, z):
+        return int(round(g(x, z)))
+    return {"route": [tuple(p) for pts in load_json(Path(data) / "route_paths.json")["paths"].values() for p in pts],
+            "built": built, "towns": towns,
+            "wet": lambda x, z: water_mask.level_at(x, z, gr, bodies, sea)[0] is not None,
+            "spawn": set(load_json(Path(data) / "spawn_blocks.json")["blocks"]),
+            "white": {b for w in load_json(Path(data) / "spawn_block_policy.json").get("whitelist") or []
+                      if "mega_borders" in (w.get("scope") or "") for b in w["blocks"]}}
+
+
+def base(state):
+    return state.split("[")[0].split("{")[0]
+
+
+def check_borders(spec, bdoc, bfns, dens_rec, lair_cols, g, floor, R, marks):
+    """bfns: {"<a>__<b>": lines} of the built border functions. floor: check_floor's ((x0, z0), floor, covered)."""
+    dens = {d["species"]: d for _fa, d in field_dens(spec)}
+    pal = {r["den"]: r for r in dens_rec["dens"]}
+    want = {frozenset((a["species"], b["species"])): (a, b, s, o) for a, b, s, o in overlaps(spec)}
+    have = {}
+    for name, lines in sorted(bfns.items()):
+        parts = name.split("__")
+        if len(parts) != 2 or not all(p in dens for p in parts):
+            R.err("borders", "border function %s names no two field dens" % name)
+            continue
+        have[frozenset(parts)] = (name, replay(lines))
+    for k in sorted(set(want) - set(have), key=sorted):
+        a, b, _s, o = want[k]
+        R.err("borders", "%s and %s overlap %.1f blocks and no border is built between them" % (a["id"], b["id"], o))
+    for k in sorted(set(have) - set(want), key=sorted):
+        R.err("borders", "border %s is built between two dens whose ranges do not overlap" % have[k][0])
+    ids = set(bdoc["blocks"]["ids"])
+    shared_scar = set(bdoc["scar"])
+    loose = set(bdoc["rubble"]["loose_blocks"])
+    kmin = bdoc["kill"]["min_overlap"]
+    keep = bdoc["keep"]
+    anchors = [(d["anchor"][0], d["anchor"][2]) for d in dens.values()]
+    poly, zone, grid = spec["mega_field"]["polygon"], spec["zone"]["polygon"], spec["grid"]
+    by_col, kills = {}, 0
+    for k in sorted(have, key=sorted):
+        if k not in want:
+            continue
+        name, st = have[k]
+        a, b, s, ov = want[k]
+        if not st:
+            R.err("borders", "%s writes nothing" % name)
+            continue
+        cols = sorted({(x, z) for (x, _y, z) in st})
+        for c in cols:
+            if c in by_col:
+                R.err("borders", "%s and %s both write column %s" % (by_col[c], name, c))
+            by_col.setdefault(c, name)
+        out = [c for c in cols if not (in_range(a, *c) and in_range(b, *c))]
+        if out:
+            R.err("borders", "%s: %d of its %d columns lie outside the overlap of the two ranges (not inside both), "
+                             "e.g. %s" % (name, len(out), len(cols), out[0]))
+        gy = {c: int(round(g(*c))) for c in cols}
+        high = [(x, y, z) for (x, y, z) in st if not gy[(x, z)] <= y <= gy[(x, z)] + bdoc["max_rise"]]
+        if high:
+            R.err("borders", "%s: %d block(s) off round(ground) .. +%d, e.g. %s (ground y%d)"
+                  % (name, len(high), bdoc["max_rise"], high[0], gy[(high[0][0], high[0][2])]))
+        bases = {base(v) for v in st.values()}
+        if bases - ids:
+            R.err("borders", "%s writes %s, not in data/mega_borders.json blocks.ids" % (name, sorted(bases - ids)))
+        bad = sorted(bases & marks["spawn"] - marks["white"])
+        if bad:
+            R.err("borders", "%s writes %s, a spawn condition (data/spawn_blocks.json) no mega_borders policy allows"
+                  % (name, bad))
+        # the scar: the ground itself, from the shared palette or the two dens' own; never the other side's own block
+        pa, pb = pal.get(a["id"]), pal.get(b["id"])
+        if not pa or not pb:
+            R.err("borders", "%s: no data/mega_dens.json lair record for %s" % (name, a["id"] if not pa else b["id"]))
+            continue
+        sa, sb = set(pa["scrape"]), set(pb["scrape"])
+        scar = {(x, z): base(v) for (x, y, z), v in st.items() if y == gy[(x, z)]}
+        if not scar:
+            R.err("borders", "%s scars no ground" % name)
+        stray = sorted({v for v in scar.values()} - shared_scar - sa - sb)
+        if stray:
+            R.err("borders", "%s's scar writes %s, in neither den's scrape palette nor the shared scar" % (name, stray))
+        wrong, own = [], {a["id"]: 0, b["id"]: 0}
+        for (x, z), v in scar.items():
+            # the radical line of the two ranges: the side whose range the column is deeper inside
+            pwr_a = (x + 0.5 - a["anchor"][0]) ** 2 + (z + 0.5 - a["anchor"][2]) ** 2 - a["leash"] ** 2
+            pwr_b = (x + 0.5 - b["anchor"][0]) ** 2 + (z + 0.5 - b["anchor"][2]) ** 2 - b["leash"] ** 2
+            if pwr_a == pwr_b:
+                continue
+            mine, theirs, who = (sa, sb, a["id"]) if pwr_a < pwr_b else (sb, sa, b["id"])
+            if v in theirs - mine - shared_scar:
+                wrong.append(((x, z), v))
+            if v in mine:
+                own[who] += 1
+        if wrong:
+            R.err("borders", "%s: %d scar column(s) take the OTHER den's own scrape block on this den's side, e.g. %s"
+                  % (name, len(wrong), wrong[0]))
+        for who, n in own.items():
+            if not n:
+                R.err("borders", "%s: no scar column on %s's side is from its own scrape palette" % (name, who))
+        rock = {(x, y, z): base(v) for (x, y, z), v in st.items() if y > gy[(x, z)] and base(v) not in KILL_BLOCKS}
+        stones = set(pa.get("boulder") or []) | set(pb.get("boulder") or []) | loose
+        if not rock:
+            R.err("borders", "%s: no broken rock above the scar" % name)
+        elif set(rock.values()) - stones:
+            R.err("borders", "%s: rock %s is neither den's boulder block nor rubble.loose_blocks"
+                  % (name, sorted(set(rock.values()) - stones)))
+        skulls = [p for p, v in st.items() if base(v) == "minecraft:skeleton_skull"]
+        bones = [p for p, v in st.items() if base(v) == "minecraft:bone_block"]
+        if ov >= kmin and len(skulls) != 1:
+            R.err("borders", "%s: ranges overlap %.1f (kill.min_overlap %s) and it carries %d carcass skull(s), not one"
+                  % (name, ov, kmin, len(skulls)))
+        if ov < kmin and (skulls or bones):
+            R.err("borders", "%s: ranges overlap only %.1f, under kill.min_overlap %s, and it carries a kill"
+                  % (name, ov, kmin))
+        kills += 1 if skulls else 0
+        # where it may not write
+        near_a = [c for c in cols if any(math.hypot(c[0] - x, c[1] - z) <= keep["anchor_clear"] for x, z in anchors)]
+        if near_a:
+            R.err("borders", "%s writes %d column(s) within anchor_clear %s of a den's anchor, e.g. %s"
+                  % (name, len(near_a), keep["anchor_clear"], near_a[0]))
+        r = keep["lair_clear"]
+        near_l = [c for c in cols if any((c[0] + i, c[1] + j) in lair_cols for i in range(-r, r + 1)
+                                         for j in range(-r, r + 1) if math.hypot(i, j) <= r)]
+        if near_l:
+            R.err("borders", "%s writes %d column(s) within lair_clear %s of a column a lair writes, e.g. %s"
+                  % (name, len(near_l), r, near_l[0]))
+        footprint(name, cols, poly, zone, grid, marks, R)
+    (fx0, fz0), F, cov = floor
+    n = int(cov.sum())
+    frac = len(by_col) / float(n or 1)
+    if frac > bdoc["coverage_cap"]:
+        R.err("borders", "the borders write %d columns, %.1f%% of the %d usable columns inside a range: over "
+                         "coverage_cap %.1f%%" % (len(by_col), 100 * frac, n, 100 * bdoc["coverage_cap"]))
+    R.note("borders: %d built, %d kills, %d columns written, %.1f%% of the %d usable columns inside a range (cap %.1f%%)"
+           % (len(have), kills, len(by_col), 100 * frac, n, 100 * bdoc["coverage_cap"]))
+    return {name: sorted({(x, z) for (x, _y, z) in st}) for name, st in have.values()}
+
+
+def footprint(name, cols, poly, zone, grid, marks, R):
+    out = [c for c in cols if not _in_poly_pt(poly, c[0] + 0.5, c[1] + 0.5)]
+    if out:
+        R.err("borders", "%s writes %d column(s) outside the field's polygon, e.g. %s" % (name, len(out), out[0]))
+    inz = [c for c in cols if _in_poly_pt(zone, c[0] + 0.5, c[1] + 0.5)]
+    if inz:
+        R.err("borders", "%s writes inside the gulch's zone, e.g. %s" % (name, inz[0]))
+    ing = [c for c in cols if grid["x"][0] <= c[0] <= grid["x"][1] and grid["z"][0] <= c[1] <= grid["z"][1]]
+    if ing:
+        R.err("borders", "%s writes inside the gulch's block box (gulch_mine.json grid), e.g. %s" % (name, ing[0]))
+    for tid, fp in marks["towns"]:
+        if any(fp["min_x"] <= c[0] <= fp["max_x"] and fp["min_z"] <= c[1] <= fp["max_z"] for c in cols):
+            R.err("borders", "%s writes inside %s's footprint" % (name, tid))
+    if marks["route"]:
+        dr = near_points(cols, marks["route"])
+        if dr < 128:
+            R.err("borders", "%s writes %.1f from the critical path (data/route_paths.json): under 128" % (name, dr))
+    xs, zs = [c[0] for c in cols], [c[1] for c in cols]
+    for px, pz, what in marks["built"]:
+        if min(xs) - 32 <= px <= max(xs) + 32 and min(zs) - 32 <= pz <= max(zs) + 32 and \
+                near_points(cols, [(px, pz)]) < 32:
+            R.err("borders", "%s writes within 32 of %s at (%d, %d)" % (name, what, px, pz))
+    wet = [c for c in cols if marks["wet"](*c)]
+    if wet:
+        R.err("borders", "%s writes %d column(s) under painted water, e.g. %s" % (name, len(wet), wet[0]))
+
+
+def check_border_steps(cols_by, r9mb, R):
+    """R9MB: each border run once, while a hold covering all its columns is in force, every hold released."""
+    held, adds, rems, ran = [], [], [], {}
+    waited = False
+    for s in (tuple(x) for x in r9mb):
+        if s[0] == "cmd" and s[1].startswith("forceload add"):
+            h = tuple(int(v) for v in s[1].split()[2:])
+            held.append(h)
+            adds.append(h)
+            waited = False
+        elif s[0] == "cmd" and s[1].startswith("forceload remove"):
+            h = tuple(int(v) for v in s[1].split()[2:])
+            rems.append(h)
+            if h in held:
+                held.remove(h)
+        elif s[0] == "wait":
+            waited = waited or s[1] >= 1
+        elif s[0] == "fn":
+            name = s[1].rsplit("/", 1)[-1]
+            ran[name] = ran.get(name, 0) + 1
+            cols = cols_by.get(name)
+            if cols is None:
+                R.err("order", "R9MB runs %s, which is no built border" % s[1])
+                continue
+            if not any(all(min(h[0], h[2]) <= x <= max(h[0], h[2]) and min(h[1], h[3]) <= z <= max(h[1], h[3])
+                           for x, z in cols) for h in held):
+                R.err("order", "R9MB runs %s with no hold covering every column it writes" % name)
+            if not waited:
+                R.err("order", "R9MB runs %s without a wait after its hold" % name)
+    for name in cols_by:
+        if ran.get(name, 0) != 1:
+            R.err("order", "R9MB runs border %s %d time(s), not once" % (name, ran.get(name, 0)))
+    if sorted(adds) != sorted(rems) or held:
+        R.err("order", "R9MB leaves %d hold(s) of %d unreleased" % (len(held), len(adds)))
+    for h in adds:
+        cx = abs((max(h[0], h[2]) >> 4) - (min(h[0], h[2]) >> 4)) + 1
+        cz = abs((max(h[1], h[3]) >> 4) - (min(h[1], h[3]) >> 4)) + 1
+        if cx * cz > 256:
+            R.err("order", "R9MB hold %s is %d chunks: the server refuses a forceload over 256" % (h, cx * cz))
 
 
 def check_order(reapply_src, prepare_names, R):
     body = reapply_src[reapply_src.index("def steps("):]
     pos = {}
-    for sid in ("R9S", "R9SX", "R9MD", "R9E"):
+    for sid in ("R9S", "R9SX", "R9MD", "R9MB", "R9E"):
         m = re.search(r'\(\s*"%s"\s*,' % sid, body)
         pos[sid] = m.start() if m else None
-    if None in pos.values() or not pos["R9S"] < pos["R9SX"] < pos["R9MD"] < pos["R9E"]:
-        R.err("order", "reapply.steps does not run R9S < R9SX < R9MD < R9E: %s" % pos)
+    if None in pos.values() or not pos["R9S"] < pos["R9SX"] < pos["R9MD"] < pos["R9MB"] < pos["R9E"]:
+        R.err("order", "reapply.steps does not run R9S < R9SX < R9MD < R9MB < R9E: %s" % pos)
+    if not re.search(r'\(\s*"R9MB"[^\n]*\n\s*mega_borders\.placement_steps\(\)\)', body):
+        R.err("order", "R9MB does not run mega_borders.placement_steps()")
+    m = re.search(r"^SERVER_PACKS = \(", reapply_src, re.M)
+    code = "\n".join(l.split("#", 1)[0] for l in reapply_src[m.end():].splitlines()) if m else ""
+    if '"cobblers_mega_borders"' not in code[:code.find(")")]:
+        R.err("order", "cobblers_mega_borders is not in reapply.SERVER_PACKS: the borders would never be installed")
     if not re.search(r'\(\s*"R9SX"[^\n]*\n\s*gulch_mine\.retire_steps\(\)\)', body):
         R.err("order", "R9SX does not run gulch_mine.retire_steps()")
     n = list(prepare_names)
@@ -655,22 +1077,38 @@ def check_order(reapply_src, prepare_names, R):
     def at(name):
         return n.index(name) if name in n else None
     a, b, c, d = at("mega_field:check"), at("gulch_mine:build"), at("mega_dens:build"), at("mega_field_audit")
+    e = at("mega_borders:build")
     if a is None or b is None or not a < b:
         R.err("order", "prepare does not run mega_field:check before gulch_mine:build")
-    if d is None or b is None or c is None or not (d > b and d > c):
-        R.err("order", "prepare does not run mega_field_audit after gulch_mine:build and mega_dens:build")
+    if c is None or e is None or not c < e:
+        R.err("order", "prepare does not run mega_borders:build after mega_dens:build (it keeps clear of the lairs)")
+    if d is None or b is None or c is None or e is None or not (d > b and d > c and d > e):
+        R.err("order", "prepare does not run mega_field_audit after gulch_mine:build, mega_dens:build and "
+                       "mega_borders:build")
 
 
-def audit(spec, g, basin, fns, callback, rec, lairs, r9sx, r9md, reapply_src=None, prepare_names=None, D=None, caps=None):
+def audit(spec, g, basin, fns, callback, rec, lairs, r9sx, r9md, reapply_src=None, prepare_names=None, D=None, caps=None,
+          borders=None):
+    """borders: (data/mega_borders.json, {"<a>__<b>": built lines}, R9MB's steps). Without it the borders are not
+    audited, and that is itself a problem: the field is not clean while its borders are unchecked."""
     R = Report()
     D = D or design()
     caps = caps or cap_table()
     sold = re.findall(r'sell:\{id:"mega_showdown:([a-z_]+)"', "\n".join(read_fn(fns, "cutters_place")))
     check_area(spec, basin, D, R)
     check_dens(spec, g, basin, D, R, sold)
+    check_crowding(spec, R)
+    floor = check_floor(spec, g, R)
+    check_tiers(spec, fns, R)
     check_keeper(spec, fns, callback, g, D, caps, R)
     check_retire(spec, fns, r9sx, R)
-    check_lairs(spec, rec, lairs, r9md, R)
+    lair_cols = check_lairs(spec, rec, lairs, r9md, R)
+    if borders is None:
+        R.err("borders", "not audited: no data/mega_borders.json, built border functions and R9MB steps were given")
+    else:
+        bdoc, bfns, r9mb = borders
+        cols_by = check_borders(spec, bdoc, bfns, rec, lair_cols, g, floor, R, world_marks(spec, g))
+        check_border_steps(cols_by, r9mb, R)
     if reapply_src is not None:
         check_order(reapply_src, prepare_names or [], R)
     for t, v in D["tiers"].items():
@@ -698,6 +1136,7 @@ def main(argv=None):
     ap.add_argument("--source-root")
     ap.add_argument("--gulch-pack", default=str(GULCH_PACK))
     ap.add_argument("--dens-pack", default=str(DENS_PACK))
+    ap.add_argument("--borders-pack", default=str(BORDERS_PACK))
     a = ap.parse_args(argv)
     import types
     import ground as G
@@ -710,13 +1149,17 @@ def main(argv=None):
     lairs = pack_functions(a.dens_pack, DENS_FN)
     # the re-application steps are the generators' OUTPUT, checked here, never their geometry
     import gulch_mine
+    import mega_borders
     import mega_dens
     import reapply
     r9sx = gulch_mine.retire_steps(spec)
     r9md = mega_dens.placement_steps(g=g)
+    r9mb = mega_borders.placement_steps()
+    bfns = pack_functions(a.borders_pack, BORDERS_FN)
     names = [n for n, _f in reapply.prepare_jobs(types.SimpleNamespace(source_root=a.source_root or "", server_dir=""))]
     R = audit(spec, g, load_basin(), fns, callback, rec, lairs, r9sx, r9md,
-              (ROOT / "tools" / "reapply.py").read_text(encoding="utf-8"), names)
+              (ROOT / "tools" / "reapply.py").read_text(encoding="utf-8"), names,
+              borders=(load_json(DATA / "mega_borders.json"), bfns, r9mb))
     for n in R.notes:
         print("note: %s" % n)
     for e in R.errors:

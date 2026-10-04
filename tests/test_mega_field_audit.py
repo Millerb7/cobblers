@@ -89,6 +89,148 @@ def test_the_design_is_read_from_section_13():
     assert {"aggron", "gengar", "swampert"} <= D["broken"]
 
 
+def _toy_dens(*homes, leash=36):
+    dens = [{"id": "d%d" % i, "species": "s%d" % i, "anchor": [x, 65, z], "leash": leash, "tier": "t"}
+            for i, (x, z) in enumerate(homes)]
+    return {"farms": [{"id": "field_toy", "dens": dens}]}
+
+
+# Without it a den standing alone would pass as crowded, or two dens could share a home. Homes at x 0, 50 and 150 with
+# ranges of 36: 0 and 50 overlap by 72 - 50 = 22; the den at 150 is 100 from its nearest and overlaps nothing. A fourth
+# home at x -20 is inside the first den's range (20 <= 36) and 70 from the second.
+def test_crowding_names_the_den_whose_range_overlaps_nothing_on_toy_homes():
+    R = A.Report()
+    pairs = A.check_crowding(_toy_dens((0, 0), (50, 0), (150, 0)), R)
+    assert [(a["id"], b["id"], s, o) for a, b, s, o in pairs] == [("d0", "d1", 50.0, 22.0)]
+    assert R.errors == ["crowding: d2: its range overlaps no other den's: the nearest, d1, is 100.0 away and the two "
+                        "ranges reach 72"]
+    R = A.Report()
+    A.check_crowding(_toy_dens((0, 0), (50, 0), (-20, 0)), R)
+    assert R.errors == ["crowding: d0 and d2 are 20.0 apart: one's range (36) reaches the other's home"]
+
+
+class _ToyGround:
+    """Ground y64 everywhere except one column at (5, 5), raised to y67."""
+
+    def __call__(self, x, z):
+        return 67 if (x, z) == (5, 5) else 64
+
+    def box(self, x0, z0, x1, z1):
+        H = np.full((z1 - z0 + 1, x1 - x0 + 1), 64)
+        if x0 <= 5 <= x1 and z0 <= 5 <= z1:
+            H[5 - z0, 5 - x0] = 67
+        return H
+
+
+# Without it the coverage would be counted on a floor that includes steps. The 10 x 10 polygon holds columns 0..9; the
+# 3-block step at (5, 5) takes it and its four neighbours, so 95 are usable. A den at (2, 2) with range 3 covers the
+# columns whose centres are within 3 of (2, 2): x and z 0..4 less (4, 4), at 2.5 and 2.5 (3.54), so 24.
+def test_the_usable_floor_and_its_coverage_on_a_toy_field():
+    spec = _toy_dens((2, 2), leash=3)
+    spec["mega_field"] = {"polygon": [[0, 0], [10, 0], [10, 10], [0, 10]], "layout": {"roster": [["s0", "m"]]}}
+    R = A.Report()
+    (_x0, _z0), floor, cov = A.check_floor(spec, _ToyGround(), R)
+    assert (int(floor.sum()), int(cov.sum())) == (95, 24)
+    assert R.notes[0].startswith("floor: 95 usable columns (inside the polygon, dry, no step over one block); the 1 "
+                                 "dens' ranges cover 24 of them (25.3%)"), R.notes
+
+
+def _toy_borders(kill_min=22):
+    """Two dens 50 apart on z 0 (ranges 36 overlap 22, the lens x 14..36), flat ground y64, one built border."""
+    spec = _toy_dens((0, 0), (50, 0))
+    spec["mega_field"] = {"polygon": [[-60, -60], [110, -60], [110, 60], [-60, 60]]}
+    spec["zone"] = {"polygon": [[500, 500], [510, 500], [510, 510], [500, 510]]}
+    spec["grid"] = {"x": [500, 510], "z": [500, 510]}
+    bdoc = {"blocks": {"ids": ["minecraft:gravel", "minecraft:podzol", "minecraft:snow_block", "minecraft:stone",
+                               "minecraft:skeleton_skull", "minecraft:bone_block"]},
+            "scar": {"minecraft:gravel": 1}, "rubble": {"loose_blocks": ["minecraft:stone"]},
+            "kill": {"min_overlap": kill_min}, "keep": {"anchor_clear": 9, "lair_clear": 2}, "coverage_cap": 0.5,
+            "max_rise": 2}
+    rec = {"dens": [{"den": "d0", "scrape": {"minecraft:podzol": 1}, "boulder": ["minecraft:stone"]},
+                    {"den": "d1", "scrape": {"minecraft:snow_block": 1}, "boulder": ["minecraft:stone"]}]}
+    lines = ["setblock 20 64 0 minecraft:podzol",            # a's side (20.5 from a, 29.5 from b), a's own scrape
+             "setblock 30 64 0 minecraft:snow_block",         # b's side, b's own
+             "setblock 25 64 1 minecraft:gravel",             # the shared scar
+             "setblock 25 65 2 minecraft:stone",              # broken rock above the scar
+             "setblock 26 65 0 minecraft:skeleton_skull"]     # the carcass: overlap 22 >= 22
+    floor = ((0, 0), np.ones((1, 1), bool), np.ones((1, 100), bool))     # 100 usable columns in range
+    marks = {"route": [], "built": [], "towns": [], "wet": lambda x, z: False, "spawn": {"minecraft:sand"},
+             "white": set()}
+    return spec, bdoc, {"s0__s1": lines}, rec, floor, marks
+
+
+def _toy_check(spec, bdoc, fns, rec, floor, marks, lair_cols=()):
+    R = A.Report()
+    A.check_borders(spec, bdoc, fns, rec, set(lair_cols), _ToyGround(), floor, R, marks)
+    return R.errors
+
+
+# Without it the border checks could pass anything. The toy border is clean as built; each change below breaks one
+# rule the owner's brief or data/mega_borders.json states, and the error names it: a scar column at x 12 is 37.5 from
+# b's home (outside b's range of 36); snow (b's own scrape) at x 20 is on a's side; a carcass on a border overlapping
+# 22 when the threshold is 23; sand, a spawn condition; a block 3 above ground (max_rise 2); a lair column 2 away.
+def test_the_border_rules_on_a_toy_border():
+    spec, bdoc, fns, rec, floor, marks = _toy_borders()
+    assert _toy_check(spec, bdoc, fns, rec, floor, marks) == []
+    f2 = {"s0__s1": fns["s0__s1"] + ["setblock 12 64 0 minecraft:gravel"]}
+    assert _toy_check(spec, bdoc, f2, rec, floor, marks) == [
+        "borders: s0__s1: 1 of its 6 columns lie outside the overlap of the two ranges (not inside both), e.g. (12, 0)"]
+    f3 = {"s0__s1": [l.replace("setblock 20 64 0 minecraft:podzol", "setblock 20 64 0 minecraft:snow_block")
+                     for l in fns["s0__s1"]]}
+    errs = _toy_check(spec, bdoc, f3, rec, floor, marks)
+    assert len(errs) == 2 and "take the OTHER den's own scrape block on this den's side, e.g. ((20, 0), " in errs[0]
+    assert errs[1] == "borders: s0__s1: no scar column on d0's side is from its own scrape palette"
+    _s, bdoc23, *_r = _toy_borders(kill_min=23)
+    assert _toy_check(spec, bdoc23, fns, rec, floor, marks) == [
+        "borders: s0__s1: ranges overlap only 22.0, under kill.min_overlap 23, and it carries a kill"]
+    nokill = {"s0__s1": fns["s0__s1"][:-1]}
+    assert _toy_check(spec, bdoc, nokill, rec, floor, marks) == [
+        "borders: s0__s1: ranges overlap 22.0 (kill.min_overlap 22) and it carries 0 carcass skull(s), not one"]
+    sand = dict(bdoc, blocks={"ids": bdoc["blocks"]["ids"] + ["minecraft:sand"]})
+    f4 = {"s0__s1": fns["s0__s1"] + ["setblock 24 65 0 minecraft:sand"]}
+    assert any("writes ['minecraft:sand'], a spawn condition" in e for e in _toy_check(spec, sand, f4, rec, floor, marks))
+    f5 = {"s0__s1": fns["s0__s1"] + ["setblock 24 67 0 minecraft:stone"]}
+    assert _toy_check(spec, bdoc, f5, rec, floor, marks) == [
+        "borders: s0__s1: 1 block(s) off round(ground) .. +2, e.g. (24, 67, 0) (ground y64)"]
+    assert _toy_check(spec, bdoc, fns, rec, floor, marks, lair_cols=[(27, 1)]) == [
+        "borders: s0__s1 writes 2 column(s) within lair_clear 2 of a column a lair writes, e.g. (25, 1)"]
+    # nothing built for an overlapping pair, and a border for a pair whose ranges do not meet
+    assert _toy_check(spec, bdoc, {}, rec, floor, marks) == [
+        "borders: d0 and d1 overlap 22.0 blocks and no border is built between them"]
+    far = _toy_dens((0, 0), (80, 0))
+    far.update({k: spec[k] for k in ("mega_field", "zone", "grid")})
+    assert _toy_check(far, bdoc, fns, rec, floor, marks) == [
+        "borders: border s0__s1 is built between two dens whose ranges do not overlap"]
+
+
+# Without it the borders could swallow the field: 5 written columns against 100 usable in range is 5%; a cap of 4%
+# refuses it, and the error carries both counts.
+def test_the_border_coverage_cap_on_a_toy_border():
+    spec, bdoc, fns, rec, floor, marks = _toy_borders()
+    errs = _toy_check(spec, dict(bdoc, coverage_cap=0.04), fns, rec, floor, marks)
+    assert errs == ["borders: the borders write 5 columns, 5.0% of the 100 usable columns inside a range: over "
+                    "coverage_cap 4.0%"]
+
+
+# Without it R9MB could skip a border, run one outside its hold, or leave a chunk loaded.
+def test_the_r9mb_steps_on_toy_borders():
+    cols = {"s0__s1": [(20, 0), (30, 0)]}
+    good = [("cmd", "forceload add 20 0 30 0"), ("wait", 3), ("fn", "cobblers:mega_borders/s0__s1"),
+            ("cmd", "forceload remove 20 0 30 0")]
+    R = A.Report()
+    A.check_border_steps(cols, good, R)
+    assert R.errors == []
+    R = A.Report()
+    A.check_border_steps(cols, [("cmd", "forceload add 20 0 29 0")] + good[1:3] + [("cmd", "forceload remove 20 0 29 0")], R)
+    assert R.errors == ["order: R9MB runs s0__s1 with no hold covering every column it writes"]
+    R = A.Report()
+    A.check_border_steps(cols, good[:3], R)
+    assert R.errors == ["order: R9MB leaves 1 hold(s) of 1 unreleased"]
+    R = A.Report()
+    A.check_border_steps(cols, [], R)
+    assert R.errors == ["order: R9MB runs border s0__s1 0 time(s), not once"]
+
+
 # ------------------------------------------------------------------------------------------- the real inputs
 @pytest.fixture(scope="module")
 def ground():
@@ -132,7 +274,31 @@ def lairs(ground):
     return lair_fns(ground)
 
 
-def run(spec, ground, basin, lairs, with_order=False):
+BDOC = json.loads((ROOT / "data" / "mega_borders.json").read_text(encoding="utf-8"))
+_COMMITTED_BORDERS = {}   # the unmutated generator's borders for the committed data, built once
+
+
+def border_fns(spec, ground):
+    """tools/mega_borders.py's OUTPUT for `spec`: the built functions {"<a>__<b>": lines} and R9MB's steps."""
+    import mega_borders as MB
+    bds, _cov = MB.plan(gm=spec, g=ground)
+    files = MB.files(bds)
+    fns = {Path(k).stem: v.splitlines() for k, v in files.items() if k.endswith(".mcfunction")}
+    return fns, MB.placement_steps(bds)
+
+
+def committed_borders(ground):
+    """The unmutated generator's borders for the committed data. A test whose subject is not the borders (the polygon's
+    trace, a den's site) passes these, so it pays for one plan, not two; the borders it is then audited with do not
+    match its mutated dens, which adds border errors its assertions do not look at. (Regenerating them is not just
+    slower: with road_clear read as 100, tools/mega_borders.py's placement_steps crashes in Border.box on a border that
+    found no column to write -- a generator defect, reported, not exercised by the committed layout.)"""
+    if "b" not in _COMMITTED_BORDERS:
+        _COMMITTED_BORDERS["b"] = border_fns(SPEC, ground)
+    return _COMMITTED_BORDERS["b"]
+
+
+def run(spec, ground, basin, lairs, with_order=False, borders=None):
     import gulch_mine as GM
     fns, cb = gulch_fns(spec)
     names = src = None
@@ -140,10 +306,29 @@ def run(spec, ground, basin, lairs, with_order=False):
         import reapply
         names = [n for n, _f in reapply.prepare_jobs(types.SimpleNamespace(source_root="", server_dir=""))]
         src = (ROOT / "tools" / "reapply.py").read_text(encoding="utf-8")
-    return A.audit(spec, ground, basin, fns, cb, REC, lairs[0], GM.retire_steps(spec), lairs[1], src, names)
+    if borders is None and spec is SPEC:
+        borders = committed_borders(ground)
+    bf, r9mb = borders or border_fns(spec, ground)
+    return A.audit(spec, ground, basin, fns, cb, REC, lairs[0], GM.retire_steps(spec), lairs[1], src, names,
+                   borders=(BDOC, bf, r9mb))
 
 
 FLOOR = "basin column(s) of the field's floor are outside mega_field.polygon"
+
+# The findings the 2026-10-04 re-pointed audit raised on the committed layout (KNOWN, reported, not fixed here: the
+# builder owns tools/mega_field.py and tools/mega_borders.py). Each has a strict xfail below that turns red when it is
+# fixed, so this list is shortened rather than left to hide a new fault of the same shape.
+#   1. gm_mf_steelix and gm_mf_charizard stand 73.0 apart with ranges of 36 + 36 = 72: neither range overlaps any
+#      other den's, against the owner's "overlapping ranges" (the commit message's "23 of 23 neighbouring pairs" counts
+#      pairs, not dens).
+#   2. 14 borders write 28 scar columns up to 0.75 block outside one of the two ranges, all at the lens's two tips:
+#      tools/mega_borders.py Border.scar adds the `ragged` term to a half-width that is already zero at the tips.
+KNOWN = (re.compile(r"^crowding: gm_mf_(steelix|charizard): its range overlaps no other den's"),
+         re.compile(r"^borders: \w+__\w+: \d+ of its \d+ columns lie outside the overlap of the two ranges"))
+
+
+def unknown(rep):
+    return [e for e in rep.errors if FLOOR not in e and not any(k.search(e) for k in KNOWN)]
 
 
 def left_out(rep):
@@ -151,19 +336,44 @@ def left_out(rep):
     return max([int(x.group(1)) for x in m if x] or [0])
 
 
-# Without it the field, keeper, retirement, lairs and step order would be unaudited: every check but the floor's
-# coverage is clean on the committed data and the generators' output.
-def test_the_committed_field_passes_every_check_but_the_floor_coverage(ground, basin, lairs):
-    rep = run(SPEC, ground, basin, lairs, with_order=True)
-    assert [e for e in rep.errors if FLOOR not in e] == []
+@pytest.fixture(scope="module")
+def committed(ground, basin, lairs):
+    return run(SPEC, ground, basin, lairs, with_order=True)
+
+
+# Without it the field, keeper, retirement, lairs, borders and step order would be unaudited: every check but the
+# KNOWN findings above is clean on the committed data and the generators' output.
+def test_the_committed_field_passes_every_check_but_the_known_findings(committed):
+    assert unknown(committed) == []
+
+
+# Finding 1 (KNOWN). Without it a den standing alone, with nothing pressing on its range, would pass as "crowded".
+@pytest.mark.xfail(strict=True, reason="KNOWN 2026-10-04: steelix and charizard are 73.0 apart, ranges 72; see KNOWN")
+def test_every_dens_range_overlaps_another_dens(committed):
+    assert not [e for e in committed.errors if "its range overlaps no other den's" in e]
+
+
+# Finding 2 (KNOWN). Without it a border could be dressed where only one Mega ranges, not where two meet.
+@pytest.mark.xfail(strict=True, reason="KNOWN 2026-10-04: 28 ragged scar tips up to 0.75 past a range; see KNOWN")
+def test_every_border_column_lies_inside_both_ranges(committed):
+    assert not [e for e in committed.errors if "lie outside the overlap of the two ranges" in e]
+
+
+# Without it the owner's "overlapping ranges" and the floor they cover would go unreported: the audit states the
+# overlapping pairs and their overlaps, the usable floor and the fraction inside a range, and the borders, kills and
+# their share of that floor (on 2026-10-04: 23 pairs 12.5..28.0, 16.3% of 449,577 usable columns, 23 borders, 13 kills).
+def test_the_committed_crowding_and_floor_are_reported(committed):
+    notes = "\n".join(committed.notes)
+    assert re.search(r"^crowding: \d+ dens, [1-9]\d* overlapping pairs, overlaps [\d.]+\.\.[\d.]+ blocks", notes, re.M)
+    assert re.search(r"^floor: [1-9]\d* usable columns .* cover \d+ of them \([\d.]+%\)", notes, re.M)
+    assert re.search(r"^borders: [1-9]\d* built, \d+ kills, \d+ columns written", notes, re.M)
 
 
 # The finding this audit raised (2026-10-03): 14 basin columns at three corners, (4185, 4931), (4040, 5359) and
 # (4146, 5378), lay outside mega_field.polygon although mega_field.trace.why says no basin column at the cliff's foot is
 # left out. Closed in mega_field.py trace (lip vertices kept, and set square to the ring where the normal slid along it).
-def test_the_committed_field_holds_its_whole_floor(ground, basin, lairs):
-    rep = run(SPEC, ground, basin, lairs)
-    assert left_out(rep) == 0
+def test_the_committed_field_holds_its_whole_floor(committed):
+    assert left_out(committed) == 0
 
 
 # ------------------------------------------------------------------------------------------- generator mutations
@@ -199,13 +409,13 @@ def _reading(monkeypatch, fn_name, path, value):
 
 # Without it the area check would pass a field traced on the lip itself: trace reading rim_outset as 0 leaves far more
 # of the floor outside than the committed polygon does.
-def test_trace_reading_rim_outset_as_zero_is_caught(ground, basin, lairs, monkeypatch):
+def test_trace_reading_rim_outset_as_zero_is_caught(ground, basin, lairs, committed, monkeypatch):
     import mega_field as MF
-    base = left_out(run(SPEC, ground, basin, lairs))
+    base = left_out(committed)
     _reading(monkeypatch, "trace", ["mega_field", "trace", "rim_outset"], 0)
     spec = copy.deepcopy(SPEC)
     spec["mega_field"]["polygon"] = MF.trace(SPEC)["polygon"]
-    assert left_out(run(spec, ground, basin, lairs)) > max(base, 100)
+    assert left_out(run(spec, ground, basin, lairs, borders=committed_borders(ground))) > max(base, 100)
 
 
 # Without it a den sited off the field passes: sites' polygon test reading the field 40 blocks west of where it is
@@ -217,7 +427,7 @@ def test_sites_misreading_the_polygon_is_caught(ground, basin, lairs, monkeypatc
     monkeypatch.setattr(MF, "point_in", lambda poly, x, z: orig(poly, np.asarray(x) + 40, z))
     spec = copy.deepcopy(SPEC)
     spec["farms"] = [f for f in spec["farms"] if not f["id"].startswith("field_")] + MF.sites(SPEC)["farms"]
-    rep = run(spec, ground, basin, lairs)
+    rep = run(spec, ground, basin, lairs, borders=committed_borders(ground))
     assert any(e.startswith("den: ") and ("outside mega_field.polygon" in e or "not on the basin floor" in e)
                for e in rep.errors), rep.errors
 
@@ -229,7 +439,7 @@ def test_sites_with_the_anchor_a_block_high_is_caught(ground, basin, lairs, monk
             for d in f["dens"]:
                 d["anchor"][1] += 1
     spec = _sites_with(monkeypatch, up)
-    rep = run(spec, ground, basin, lairs)
+    rep = run(spec, ground, basin, lairs, borders=committed_borders(ground))
     assert any(e.startswith("den: ") and "is not round(ground) + 1" in e for e in rep.errors)
 
 
@@ -240,7 +450,7 @@ def test_sites_reading_road_clear_as_100_is_caught(ground, basin, lairs, monkeyp
     _reading(monkeypatch, "sites", ["mega_field", "layout", "road_clear"], 100)
     spec = copy.deepcopy(SPEC)
     spec["farms"] = [f for f in spec["farms"] if not f["id"].startswith("field_")] + MF.sites(SPEC)["farms"]
-    rep = run(spec, ground, basin, lairs)
+    rep = run(spec, ground, basin, lairs, borders=committed_borders(ground))
     assert any(e.startswith("den: ") and "from the critical path" in e for e in rep.errors), rep.errors
 
 
@@ -252,7 +462,7 @@ def test_sites_dealing_one_species_twice_is_caught(ground, basin, lairs, monkeyp
                 if d["tier"] == "field_outer":
                     d["species"] = "houndoom"
     spec = _sites_with(monkeypatch, same)
-    rep = run(spec, ground, basin, lairs)
+    rep = run(spec, ground, basin, lairs, borders=committed_borders(ground))
     assert any("one den per species" in e for e in rep.errors)
 
 
@@ -337,3 +547,145 @@ def test_prepare_out_of_order_is_caught(monkeypatch):
     R = A.Report()
     A.check_order(src, moved, R)
     assert any("mega_field_audit after" in e for e in R.errors)
+    # the borders build after the lairs it keeps clear of, and the audit after the borders
+    moved = [n for n in names if n != "mega_borders:build"]
+    moved.insert(moved.index("mega_dens:build"), "mega_borders:build")
+    R = A.Report()
+    A.check_order(src, moved, R)
+    assert any("mega_borders:build after mega_dens:build" in e for e in R.errors), R.errors
+    # and R9MB runs between R9MD and R9E, from a pack the install carries
+    R = A.Report()
+    A.check_order(src.replace('"cobblers_mega_borders",', ""), names, R)
+    assert R.errors == ["order: cobblers_mega_borders is not in reapply.SERVER_PACKS: the borders would never be "
+                        "installed"]
+
+
+# ------------------------------------------------------------------------------------------- border generator mutations
+# Every mutation below changes tools/mega_borders.py's (or tools/mega_field.py's) CODE or how it reads a value, with
+# data/mega_borders.json and data/gulch_mine.json untouched; the audit sees the generator's output.
+def _borders_with(monkeypatch, ground, cls, name, wrap):
+    """mega_borders.<cls>.<name> replaced by wrap(orig); returns (border functions, R9MB steps) built through it."""
+    import mega_borders as MB
+    owner = getattr(MB, cls) if cls else MB
+    monkeypatch.setattr(owner, name, wrap(getattr(owner, name)))
+    return border_fns(SPEC, ground)
+
+
+def _border_errors(rep):
+    return [e for e in unknown(rep) if e.startswith(("borders: ", "order: "))]
+
+
+# Without it a border drawn beside the overlap rather than at it passes: the lens's centre moved 12 blocks toward the
+# second den (inside Border.__init__) puts most of every scar inside one range only.
+def test_borders_shifted_off_the_overlap_are_caught(ground, basin, lairs, monkeypatch):
+    def wrap(orig):
+        def init(self, *a, **k):
+            orig(self, *a, **k)
+            self.cx, self.cz = self.cx + 12 * self.ux, self.cz + 12 * self.uz
+        return init
+    rep = run(SPEC, ground, basin, lairs, borders=_borders_with(monkeypatch, ground, "Border", "__init__", wrap))
+    bad = [e for e in rep.errors if "lie outside the overlap of the two ranges" in e]
+    assert len(bad) >= 20, bad
+    assert max(int(re.search(r": (\d+) of its", e).group(1)) for e in bad) > 20, bad
+
+
+# Without it kills could be strewn on every border, not only where the ranges overlap most: Border.kill reading
+# kill.min_overlap as 12 puts a carcass on the borders overlapping 12.5 to 21.9.
+def test_borders_reading_the_kill_threshold_low_are_caught(ground, basin, lairs, monkeypatch):
+    def wrap(orig):
+        def kill(self):
+            saved = self.doc
+            self.doc = dict(saved, kill=dict(saved["kill"], min_overlap=12))
+            try:
+                orig(self)
+            finally:
+                self.doc = saved
+        return kill
+    rep = run(SPEC, ground, basin, lairs, borders=_borders_with(monkeypatch, ground, "Border", "kill", wrap))
+    assert any("under kill.min_overlap 22, and it carries a kill" in e for e in rep.errors), _border_errors(rep)
+
+
+# Without it a border could wear the wrong territory's colours: Border.side negated deals each side the other den's
+# scrape palette.
+def test_borders_with_the_sides_swapped_are_caught(ground, basin, lairs, monkeypatch):
+    def wrap(orig):
+        return lambda self, x, z: -orig(self, x, z)
+    rep = run(SPEC, ground, basin, lairs, borders=_borders_with(monkeypatch, ground, "Border", "side", wrap))
+    assert any("take the OTHER den's own scrape block on this den's side" in e for e in rep.errors), _border_errors(rep)
+
+
+# Without it a border could make the Rift floor spawn something: Border.scar leaving one scar column as sand (past its
+# own put() check, which refuses it).
+def test_borders_writing_a_spawn_condition_are_caught(ground, basin, lairs, monkeypatch):
+    def wrap(orig):
+        def scar(self):
+            orig(self)
+            k = min(self.w)
+            self.w[k] = "minecraft:sand"
+        return scar
+    rep = run(SPEC, ground, basin, lairs, borders=_borders_with(monkeypatch, ground, "Border", "scar", wrap))
+    assert any("writes ['minecraft:sand'], a spawn condition" in e for e in rep.errors), _border_errors(rep)
+
+
+# Without it the borders could rewrite the field: Border.scar reading half_width as 12 and cover as 1, with the
+# generator's own coverage() answering 0 so its refusal never fires; the audit's own count is over coverage_cap.
+def test_borders_over_the_coverage_cap_are_caught(ground, basin, lairs, monkeypatch):
+    import mega_borders as MB
+    monkeypatch.setattr(MB, "coverage", lambda ctx, gm, cols: {"range floor": 1, "written columns": 0, "fraction": 0.0})
+
+    def wrap(orig):
+        def scar(self):
+            saved = self.doc
+            self.doc = dict(saved, border=dict(saved["border"], half_width=12.0, cover=1.0))
+            try:
+                orig(self)
+            finally:
+                self.doc = saved
+        return scar
+    rep = run(SPEC, ground, basin, lairs, borders=_borders_with(monkeypatch, ground, "Border", "scar", wrap))
+    assert any(e.startswith("borders: the borders write") and "over coverage_cap 8.0%" in e for e in rep.errors), \
+        _border_errors(rep)
+
+
+# Without it a border could write over a lair: Context forgetting the lairs' columns (self.lair emptied).
+def test_borders_ignoring_the_lairs_are_caught(ground, basin, lairs, monkeypatch):
+    def wrap(orig):
+        def init(self, *a, **k):
+            orig(self, *a, **k)
+            self.lair = set()
+        return init
+    rep = run(SPEC, ground, basin, lairs, borders=_borders_with(monkeypatch, ground, "Context", "__init__", wrap))
+    assert any("within lair_clear 2 of a column a lair writes" in e for e in rep.errors), _border_errors(rep)
+
+
+# Without it R9MB could leave a border unbuilt on the world: placement_steps dropping the last border's four steps.
+def test_r9mb_dropping_a_border_is_caught(ground, basin, lairs, monkeypatch):
+    def wrap(orig):
+        return lambda bds=None: orig(bds)[:-4]
+    rep = run(SPEC, ground, basin, lairs, borders=_borders_with(monkeypatch, ground, None, "placement_steps", wrap))
+    assert any(e.startswith("order: R9MB runs border") and "0 time(s), not once" in e for e in rep.errors), \
+        _border_errors(rep)
+
+
+# Without it the field could go back to dens standing apart: mega_field.sites reading layout.leash as 21 lays out
+# ranges that touch nothing (homes 43 or more apart, ranges 42), and every den is named.
+def test_sites_reading_the_leash_short_is_caught(ground, basin, lairs, monkeypatch):
+    import mega_field as MF
+    _reading(monkeypatch, "sites", ["mega_field", "layout", "leash"], 21)
+    spec = copy.deepcopy(SPEC)
+    spec["farms"] = [f for f in spec["farms"] if not f["id"].startswith("field_")] + MF.sites(SPEC)["farms"]
+    rep = run(spec, ground, basin, lairs)
+    lonely = [e for e in rep.errors if "its range overlaps no other den's" in e]
+    assert len(lonely) == sum(len(f["dens"]) for f in spec["farms"] if f["id"].startswith("field_")), lonely
+
+
+# Without it the tiers could drift from the owner's "outer/deeper by distance from the town": sites reading
+# deeper_from_town as 300 makes dens 300 to 399 from the square deeper than the declared 400 allows.
+def test_sites_reading_the_tier_band_short_is_caught(ground, basin, lairs, monkeypatch):
+    import mega_field as MF
+    _reading(monkeypatch, "sites", ["mega_field", "layout", "deeper_from_town"], 300)
+    spec = copy.deepcopy(SPEC)
+    spec["farms"] = [f for f in spec["farms"] if not f["id"].startswith("field_")] + MF.sites(SPEC)["farms"]
+    rep = run(spec, ground, basin, lairs)
+    assert any(e.startswith("tiers: ") and "field_outer by deeper_from_town 400, but it is field_deeper" in e
+               for e in rep.errors), [e for e in rep.errors if e.startswith("tiers")]
