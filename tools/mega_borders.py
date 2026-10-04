@@ -122,7 +122,11 @@ class Context:
         import mega_dens as MD
         self.doc, self.gm, self.g = doc, gm, g
         (self.x0, self.z0, self.x1, self.z1), M, self.H = MF.floor(gm, source_root)
-        self.dress = M["field"] & M["dry"] & (M["crit"] >= 128) & ~M["in_grid"] & (M["gulch"] > 32) & (M["other"] >= 0)
+        # 2026-10-05: the 128 rule holds from every critical path but the field's own road (the owner's "Megas on the
+        # road"); from the road a border only stays off the walked line -- its half-width plus 2, the coarse 2-block
+        # grid's worst error (1.41) rounded up -- the same rule the dens' road_clear derives from (layout.why)
+        lay = gm["mega_field"]["layout"]
+        self.dress = M["field"] & M["dry"] & (M["crit_other"] >= 128) & (M["road"] > lay["road_margin"] + 2)             & ~M["in_grid"] & (M["gulch"] > 32) & (M["other"] >= 0)
         self.walk = M["field"] & M["dry"] & M["walk"]
         mdoc, mdens = MD.load()
         lair = set()

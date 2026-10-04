@@ -373,17 +373,16 @@ def road_rule(spec, data=DATA):
 #   2. four dens stand 53.74 from Victory Road's walked line against road_clear 54: tools/mega_field.py floor() measures
 #      `road` on a 2-block coarse grid (_coarse: "right to within step / sqrt 2 blocks") and then applies road_clear with no allowance for that error, so a site up to 1.41 under the
 #      clearance passes. Measured here column to column (anchor to every walked-line point).
-#   3. 41 of the 85 borders write nothing although their lenses hold free dressing columns (18,879 in all, every
-#      example within 128 of Victory Road): tools/mega_borders.py:125 still dresses only mega_field.floor's `crit >= 128`
-#      floor, the old 128 rule the owner relaxed for this road on 2026-10-05, while the lairs now stand inside it.
-#   4. border gm_mf_4076_5086__gm_mf_4118_5028: no scar column on gm_mf_4076_5086's side is from its own scrape palette
-#      (the 2026-10-05 re-dress of data/mega_dens.json).
+#   3. (FIXED 2026-10-05 by the integrator: tools/mega_borders.py dresses from every critical path but the field's own
+#      road at 128, and from the road off its half-width + 2; all 85 borders write. The KNOWN entry is retired.)
+#   4. borders gm_mf_4076_5086__gm_mf_4118_5028 and gm_mf_3852_4700__gm_mf_3838_4770 (the second exposed once its
+#      border began writing, same cause): no scar column on the first den's side is from its own scrape palette
+#      (the 2026-10-05 re-dress of data/mega_dens.json; a generator-side redraw did not change it, so not the draw).
 KNOWN_ROAD = (re.compile(r"^road: aggro_reach \S+ is ASSUMED"),
               re.compile(r"^den: gm_mf_(3704_5196|3748_5152|3996_4810|4072_4734): anchor 53\.74 from victory_road's "
                          r"walked line: under leash 36 \+ aggro_reach 16 \+ half-width 2 = 54$"),
-              re.compile(r"^borders: gm_mf_\d+_\d+__gm_mf_\d+_\d+ writes nothing, but its lens \(overlap [\d.]+\) has "
-                         r"\d+ free dressing column"),
-              re.compile(r"^borders: gm_mf_4076_5086__gm_mf_4118_5028: no scar column on gm_mf_4076_5086's side is "
+              re.compile(r"^borders: (gm_mf_4076_5086__gm_mf_4118_5028: no scar column on gm_mf_4076_5086|"
+                         r"gm_mf_3852_4700__gm_mf_3838_4770: no scar column on gm_mf_3852_4700)'s side is "
                          r"from its own scrape palette$"))
 
 

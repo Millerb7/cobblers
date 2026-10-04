@@ -427,19 +427,19 @@ def test_sites_leaving_the_west_floor_empty_is_caught(ground, basin, lairs, monk
     assert any(e.startswith("floor: no den stands within %d" % old) for e in rep.errors), rep.errors[:5]
 
 
-# KNOWN 3 (2026-10-05). Without it the contested ground of the west floor could stay bare unseen: 41 of 85 borders
-# write nothing while their lenses hold free dressing columns by this audit's rules (tools/mega_borders.py:125 keeps
-# the old 128-from-every-critical-path dressing floor the owner relaxed for Victory Road). Strict: red when dressed.
-@pytest.mark.xfail(strict=True, reason="KNOWN: 41 borders bare under mega_borders.py's old 128 dressing floor")
+# Formerly KNOWN 3, fixed 2026-10-05 by the integrator (tools/mega_borders.py: 128 from every critical path but the
+# field's own road, off the road's half-width + 2 from it). Without it the contested ground of the west floor could
+# stay bare unseen: a border writing nothing while its lens holds free dressing columns by this audit's rules.
 def test_no_border_is_bare_where_its_lens_has_free_ground(committed):
-    assert not [e for e in committed.errors if KNOWN[2].search(e)]
+    assert not [e for e in committed.errors if re.search(r"^borders: \S+ writes nothing, but its lens", e)]
 
 
 # KNOWN 4 (2026-10-05). Without it a border could read as one den's ground on both sides: gm_mf_4076_5086's side of its
-# border with gm_mf_4118_5028 carries none of its own scrape palette. Strict: red when the re-dress fixes it.
-@pytest.mark.xfail(strict=True, reason="KNOWN: gm_mf_4076_5086's side of its border carries none of its own scrape")
+# border with gm_mf_4118_5028, and gm_mf_3852_4700's with gm_mf_3838_4770 (exposed once that border began writing),
+# carry none of their own scrape palette. Strict: red when the re-dress fixes them.
+@pytest.mark.xfail(strict=True, reason="KNOWN: two border sides carry none of their own den's scrape")
 def test_every_border_side_carries_its_own_scrape(committed):
-    assert not [e for e in committed.errors if KNOWN[3].search(e)]
+    assert not [e for e in committed.errors if KNOWN[2].search(e)]
 
 
 def unknown(rep):
