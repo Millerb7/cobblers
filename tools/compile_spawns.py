@@ -14,7 +14,8 @@ Route files (spawn_pool_world/routes/<route>.json), per spawns.json compilation.
 
 Sub-region files (spawn_pool_world/subregions/<sub>.json): every ambient entry scoped to the sub-region over its
 polygon, corridor excluded; an entry carrying a "heart" (docs/mechanics/ENCOUNTER_DESIGN.md section 10) only over the
-heart's cells (heart_boxes), and never in a route file.
+heart's cells (heart_boxes), and never in a route file. A heart entry with "alpha" true compiles as a native alpha
+(heart_pokemon: "<species> alpha=true"), in sub-region, waterway and marine files alike.
 
 Habitat files (habitat_pools/<habitat>.json): every ambient entry scoped to the habitat.
 
@@ -85,6 +86,17 @@ def box_condition(min_x, max_x, min_z, max_z, entry):
         cond["biomes"] = list(entry["biomes"])
     cond.update(entry.get("conditions") or {})
     return cond
+
+
+def heart_pokemon(entry):
+    """The PokemonProperties string of a heart entry: the species, plus alpha=true when the entry carries "alpha"
+    (data/encounter_design.json rules.hearts.alpha; the owner, 2026-10-05: "the boss pokemon are alphas").
+
+    alpha is a PokemonProperties key in Cobblemon 1.8.0 (PokemonProperties$Companion registers "alpha" and
+    "is_alpha"), and the jar's own alpha spawns write it this way in the pokemon string, e.g.
+    data/cobblemon/spawn_pool_world/herds/0023_fearow_alpha.json "fearow held_item=cobblemon:flying_gem alpha=true"
+    (Cobblemon-fabric-1.8.0+1.21.1.jar). tools/build_encounters.py fails closed on a heart entry without the flag."""
+    return entry["species"] + (" alpha=true" if entry.get("alpha") is True else "")
 
 
 def position_type(entry):
@@ -359,7 +371,7 @@ def compile_subregion(sub, entries, exclude, grid, waterways=()):
         for n, b in enumerate(hboxes):
             for e in hearts:
                 cond = box_condition(b[0], b[1], b[2], b[3], e)
-                spawns.append({"id": "%s_h%04d_%s" % (sub["id"], n, e["species"].replace(" ", "_")), "pokemon": e["species"],
+                spawns.append({"id": "%s_h%04d_%s" % (sub["id"], n, e["species"].replace(" ", "_")), "pokemon": heart_pokemon(e),
                                "type": "pokemon", "spawnablePositionType": position_type(e),
                                "bucket": e["bucket"], "level": e["level"], "weight": e["weight"], "condition": cond})
     doc = {"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [], "spawns": spawns}
@@ -435,7 +447,7 @@ def build_waterways(spawns, waterways, grid=WATERWAY_GRID, routes=None):
             for n, b in enumerate(hboxes):
                 for e in hearts:
                     spawns_out.append({"id": "%s_h%04d_%s" % (w["id"], n, e["species"].replace(" ", "_")),
-                                       "pokemon": e["species"], "type": "pokemon",
+                                       "pokemon": heart_pokemon(e), "type": "pokemon",
                                        "spawnablePositionType": position_type(e),
                                        "bucket": e["bucket"], "level": e["level"], "weight": e["weight"],
                                        "condition": box_condition(b[0], b[1], b[2], b[3], e)})
@@ -711,7 +723,7 @@ def build_marine(spawns, regions, routes, waterways=()):
                 raise SystemExit("%s: its heart covers no cell of the band clear of the path" % bid)
             for n, b in enumerate(hboxes):
                 for e in hearts:
-                    spawns_out.append({"id": "%s_h%04d_%s" % (bid, n, e["species"].replace(" ", "_")), "pokemon": e["species"],
+                    spawns_out.append({"id": "%s_h%04d_%s" % (bid, n, e["species"].replace(" ", "_")), "pokemon": heart_pokemon(e),
                                        "type": "pokemon", "spawnablePositionType": position_type(e),
                                        "bucket": e["bucket"], "level": e["level"], "weight": e["weight"],
                                        "condition": marine_condition(b[0], b[1], b[2], b[3], e)})

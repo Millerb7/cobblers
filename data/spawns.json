@@ -281,6 +281,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -302,6 +303,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -323,6 +325,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -568,6 +571,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -589,6 +593,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -610,6 +615,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -855,6 +861,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -876,6 +883,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -897,6 +905,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -1184,6 +1193,7 @@
         "radius": 192,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -1205,6 +1215,7 @@
         "radius": 192,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -1226,6 +1237,7 @@
         "radius": 192,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -1531,6 +1543,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -1552,6 +1565,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -1573,6 +1587,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -1848,6 +1863,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -1869,6 +1885,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -1890,6 +1907,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "seafloor"
     },
@@ -2191,6 +2209,7 @@
         "radius": 208,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -2212,6 +2231,7 @@
         "radius": 208,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -2233,6 +2253,7 @@
         "radius": 208,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -2548,6 +2569,7 @@
         "radius": 192,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -2569,6 +2591,7 @@
         "radius": 192,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -2590,6 +2613,7 @@
         "radius": 192,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -2611,6 +2635,7 @@
         "radius": 192,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -2914,6 +2939,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -2935,6 +2961,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -2956,6 +2983,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -3173,6 +3201,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -3194,6 +3223,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -3215,6 +3245,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -3510,6 +3541,7 @@
         "radius": 144,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -3531,6 +3563,7 @@
         "radius": 144,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -3552,6 +3585,7 @@
         "radius": 144,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -3839,6 +3873,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -3860,6 +3895,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -4155,6 +4191,7 @@
         "radius": 208,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -4176,6 +4213,7 @@
         "radius": 208,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -4197,6 +4235,7 @@
         "radius": 208,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -4372,6 +4411,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -4393,6 +4433,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -4414,6 +4455,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -4435,6 +4477,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -4652,6 +4695,7 @@
         "minY": 171,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -4673,6 +4717,7 @@
         "minY": 171,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -4694,6 +4739,7 @@
         "minY": 171,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -4715,6 +4761,7 @@
         "minY": 171,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -4736,6 +4783,7 @@
         "minY": 171,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -4925,6 +4973,7 @@
         "radius": 144,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -4946,6 +4995,7 @@
         "radius": 144,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -4967,6 +5017,7 @@
         "radius": 144,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -5170,6 +5221,7 @@
         "radius": 304,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -5191,6 +5243,7 @@
         "radius": 304,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -5212,6 +5265,7 @@
         "radius": 304,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -5233,6 +5287,7 @@
         "radius": 304,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "submerged"
     },
@@ -5258,6 +5313,7 @@
         "radius": 304,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -5419,6 +5475,7 @@
         "minY": 195,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -5440,6 +5497,7 @@
         "minY": 195,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -5461,6 +5519,7 @@
         "minY": 195,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -5482,6 +5541,7 @@
         "minY": 195,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -5503,6 +5563,7 @@
         "minY": 195,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -5664,6 +5725,7 @@
         "radius": 144,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -5685,6 +5747,7 @@
         "radius": 144,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -5706,6 +5769,7 @@
         "radius": 144,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -5727,6 +5791,7 @@
         "radius": 144,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -5972,6 +6037,7 @@
         "minY": 212,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -5993,6 +6059,7 @@
         "minY": 212,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -6014,6 +6081,7 @@
         "minY": 212,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -6035,6 +6103,7 @@
         "minY": 212,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -6210,6 +6279,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -6231,6 +6301,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -6252,6 +6323,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -6469,6 +6541,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -6490,6 +6563,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -6511,6 +6585,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -6798,6 +6873,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -6819,6 +6895,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -7176,6 +7253,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -7197,6 +7275,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -7218,6 +7297,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -7505,6 +7585,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -7526,6 +7607,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -7547,6 +7629,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -7568,6 +7651,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -7841,6 +7925,7 @@
         "radius": 96,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -7862,6 +7947,7 @@
         "radius": 96,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -7883,6 +7969,7 @@
         "radius": 96,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -7904,6 +7991,7 @@
         "radius": 96,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -7925,6 +8013,7 @@
         "radius": 96,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -8198,6 +8287,7 @@
         "minY": 228,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -8219,6 +8309,7 @@
         "minY": 228,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -8240,6 +8331,7 @@
         "minY": 228,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -8527,6 +8619,7 @@
         "radius": 176,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -8548,6 +8641,7 @@
         "radius": 176,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -8569,6 +8663,7 @@
         "radius": 176,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -8870,6 +8965,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -8891,6 +8987,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -8912,6 +9009,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -9157,6 +9255,7 @@
         "radius": 64,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -9178,6 +9277,7 @@
         "radius": 64,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -9199,6 +9299,7 @@
         "radius": 64,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -9360,6 +9461,7 @@
         "minY": 180,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -9381,6 +9483,7 @@
         "minY": 180,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -9402,6 +9505,7 @@
         "minY": 180,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -9423,6 +9527,7 @@
         "minY": 180,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -9444,6 +9549,7 @@
         "minY": 180,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -9465,6 +9571,7 @@
         "minY": 180,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -9486,6 +9593,7 @@
         "minY": 180,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -9703,6 +9811,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -9724,6 +9833,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -9745,6 +9855,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -9766,6 +9877,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "submerged"
     },
@@ -10067,6 +10179,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -10088,6 +10201,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -10109,6 +10223,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "surface"
     },
@@ -10130,6 +10245,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "surface"
     },
@@ -10327,6 +10443,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "submerged"
     },
@@ -10348,6 +10465,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "submerged"
     },
@@ -10369,6 +10487,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "submerged"
     },
@@ -10736,6 +10855,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -10757,6 +10877,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -10778,6 +10899,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -11051,6 +11173,7 @@
         "radius": 80,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -11072,6 +11195,7 @@
         "radius": 80,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -11093,6 +11217,7 @@
         "radius": 80,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -11114,6 +11239,7 @@
         "radius": 80,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -11373,6 +11499,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -11394,6 +11521,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -11415,6 +11543,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -11646,6 +11775,7 @@
         "radius": 96,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -11667,6 +11797,7 @@
         "radius": 96,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -11688,6 +11819,7 @@
         "radius": 96,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -11709,6 +11841,7 @@
         "radius": 96,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -11730,6 +11863,7 @@
         "radius": 96,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -11947,6 +12081,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -11968,6 +12103,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -11989,6 +12125,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -12010,6 +12147,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -12031,6 +12169,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -12294,6 +12433,7 @@
         "radius": 224,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -12315,6 +12455,7 @@
         "radius": 224,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "submerged"
     },
@@ -12340,6 +12481,7 @@
         "radius": 224,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -12529,6 +12671,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -12550,6 +12693,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -12571,6 +12715,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -12592,6 +12737,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -12813,6 +12959,7 @@
         "radius": 96,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -12834,6 +12981,7 @@
         "radius": 96,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -12855,6 +13003,7 @@
         "radius": 96,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -12876,6 +13025,7 @@
         "radius": 96,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -13173,6 +13323,7 @@
         "radius": 176,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -13198,6 +13349,7 @@
         "radius": 176,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -13219,6 +13371,7 @@
         "radius": 176,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -13240,6 +13393,7 @@
         "radius": 176,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "submerged"
     },
@@ -13261,6 +13415,7 @@
         "radius": 176,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "submerged"
     },
@@ -13604,6 +13759,7 @@
         "radius": 144,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -13625,6 +13781,7 @@
         "radius": 144,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -13646,6 +13803,7 @@
         "radius": 144,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -13667,6 +13825,7 @@
         "radius": 144,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "surface"
     },
@@ -13968,6 +14127,7 @@
         "radius": 192,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -13989,6 +14149,7 @@
         "radius": 192,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -14010,6 +14171,7 @@
         "radius": 192,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -14031,6 +14193,7 @@
         "radius": 192,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -14276,6 +14439,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -14297,6 +14461,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -14318,6 +14483,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -14339,6 +14505,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -14628,6 +14795,7 @@
         "radius": 144,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -14649,6 +14817,7 @@
         "radius": 144,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -14670,6 +14839,7 @@
         "radius": 144,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -14915,6 +15085,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -14936,6 +15107,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -14957,6 +15129,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -14978,6 +15151,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -15251,6 +15425,7 @@
         "radius": 240,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -15272,6 +15447,7 @@
         "radius": 240,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -15293,6 +15469,7 @@
         "radius": 240,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -15510,6 +15687,7 @@
         "radius": 192,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -15531,6 +15709,7 @@
         "radius": 192,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "submerged"
     },
@@ -15552,6 +15731,7 @@
         "radius": 192,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "submerged"
     },
@@ -15741,6 +15921,7 @@
         "radius": 176,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -15762,6 +15943,7 @@
         "radius": 176,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -15783,6 +15965,29 @@
         "radius": 176,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.viltri_plateau.heart.pikachu",
+      "species": "pikachu",
+      "bucket": "uncommon",
+      "level": "12-14",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "viltri_plateau",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "heart: named uncommon family, tier 1: the family starts here",
+      "heart": {
+        "kind": "focus",
+        "x": 2192,
+        "z": 3344,
+        "radius": 176,
+        "clear_of_path_blocks": 128
+      },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -16044,6 +16249,7 @@
         "radius": 192,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -16065,6 +16271,7 @@
         "radius": 192,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -16086,6 +16293,7 @@
         "radius": 192,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "surface"
     },
@@ -16109,6 +16317,7 @@
         "radius": 192,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "submerged"
     },
@@ -16458,6 +16667,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -16479,6 +16689,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -16500,6 +16711,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "submerged"
     },
@@ -16759,6 +16971,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -16780,6 +16993,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -16801,6 +17015,29 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.river_of_shrews_vale.heart.minun",
+      "species": "minun",
+      "bucket": "uncommon",
+      "level": "11-13",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "river_of_shrews_vale",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "heart: named uncommon family, tier 1: the family starts here",
+      "heart": {
+        "kind": "focus",
+        "x": 2160,
+        "z": 4304,
+        "radius": 160,
+        "clear_of_path_blocks": 128
+      },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -16822,6 +17059,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "submerged"
     },
@@ -17053,6 +17291,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -17074,6 +17313,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -17095,6 +17335,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -17116,6 +17357,29 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.pallet_meadows.heart.fidough",
+      "species": "fidough",
+      "bucket": "uncommon",
+      "level": "6-8",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "pallet_meadows",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "heart: named uncommon family, tier 1: the family starts here",
+      "heart": {
+        "kind": "focus",
+        "x": 1904,
+        "z": 5328,
+        "radius": 128,
+        "clear_of_path_blocks": 128
+      },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -17377,6 +17641,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -17402,6 +17667,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -17423,8 +17689,31 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.west_shore.heart.staryu",
+      "species": "staryu",
+      "bucket": "uncommon",
+      "level": "9-12",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "west_shore",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "heart: named uncommon family, tier 1: the family starts here",
+      "heart": {
+        "kind": "focus",
+        "x": 848,
+        "z": 4400,
+        "radius": 128,
+        "clear_of_path_blocks": 128
+      },
+      "alpha": true,
+      "biomes": [],
+      "spawnable_position": "submerged"
     },
     {
       "id": "surface.route1_maze_forest.skwovet",
@@ -17674,6 +17963,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -17695,6 +17985,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -17716,6 +18007,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -17737,6 +18029,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -17758,6 +18051,29 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.route1_maze_forest.heart.oddish",
+      "species": "oddish",
+      "bucket": "uncommon",
+      "level": "9-11",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "route1_maze_forest",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "heart: named uncommon family, tier 1: the family starts here",
+      "heart": {
+        "kind": "focus",
+        "x": 1744,
+        "z": 4752,
+        "radius": 128,
+        "clear_of_path_blocks": 128
+      },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -17961,6 +18277,7 @@
         "radius": 80,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -17982,6 +18299,29 @@
         "radius": 80,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.south_west_fields.heart.growlithe",
+      "species": "growlithe",
+      "bucket": "uncommon",
+      "level": "10-14",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "south_west_fields",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "heart: named uncommon family, tier 1: the family starts here",
+      "heart": {
+        "kind": "focus",
+        "x": 1904,
+        "z": 5840,
+        "radius": 80,
+        "clear_of_path_blocks": 128
+      },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -18285,6 +18625,7 @@
         "radius": 256,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -18306,6 +18647,7 @@
         "radius": 256,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -18327,6 +18669,7 @@
         "radius": 256,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -18348,6 +18691,7 @@
         "radius": 256,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "submerged"
     },
@@ -18653,6 +18997,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -18674,6 +19019,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -18695,6 +19041,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "submerged"
     },
@@ -18716,6 +19063,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "seafloor"
     },
@@ -18989,6 +19337,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -19010,6 +19359,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -19031,6 +19381,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -19052,6 +19403,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -19395,6 +19747,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -19416,6 +19769,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -19437,6 +19791,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -19696,6 +20051,7 @@
         "radius": 224,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -19717,6 +20073,7 @@
         "radius": 224,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -19738,6 +20095,7 @@
         "radius": 224,
         "clear_of_path_blocks": 128
       },
+      "alpha": true,
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -21379,7 +21737,8 @@
         "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the outflow's heart, its segment box farthest from every route corridor at (712, 1880), radius 176: the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 761 blocks from a route corridor box (tools/compile_spawns.py focus_heart_boxes)"
       },
       "biomes": [],
-      "spawnable_position": "submerged"
+      "spawnable_position": "submerged",
+      "alpha": true
     },
     {
       "id": "surface.mt_clay_outflow.heart.seaking",
@@ -21401,7 +21760,8 @@
         "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the outflow's heart, its segment box farthest from every route corridor at (712, 1880), radius 176: the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 761 blocks from a route corridor box (tools/compile_spawns.py focus_heart_boxes)"
       },
       "biomes": [],
-      "spawnable_position": "submerged"
+      "spawnable_position": "submerged",
+      "alpha": true
     },
     {
       "id": "surface.mt_clay_outflow.heart.golduck",
@@ -21423,7 +21783,31 @@
         "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the outflow's heart, its segment box farthest from every route corridor at (712, 1880), radius 176: the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 761 blocks from a route corridor box (tools/compile_spawns.py focus_heart_boxes)"
       },
       "biomes": [],
-      "spawnable_position": "surface"
+      "spawnable_position": "surface",
+      "alpha": true
+    },
+    {
+      "id": "surface.mt_clay_outflow.heart.basculin",
+      "species": "basculin",
+      "bucket": "uncommon",
+      "level": "27-30",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "mt_clay_outflow",
+      "mechanism": "waterway_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "heart local alpha: the outflow's strongest local, alpha, from the base band's upper half (27-30), under its top; the owner, 2026-10-05: \"the boss pokemon are alphas, so it should sometimes be the pokemon in the area as well right?\"; rules.hearts.local_alpha: the highest base-stat total among the area's common and uncommon base species",
+      "heart": {
+        "kind": "focus",
+        "x": 712,
+        "z": 1880,
+        "radius": 176,
+        "clear_of_path_blocks": 128,
+        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the outflow's heart, its segment box farthest from every route corridor at (712, 1880), radius 176: the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 761 blocks from a route corridor box (tools/compile_spawns.py focus_heart_boxes)"
+      },
+      "biomes": [],
+      "spawnable_position": "submerged",
+      "alpha": true
     },
     {
       "id": "habitat.vrc_cave.crobat",
@@ -24554,7 +24938,8 @@
         "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the shallows' heart, the band cell farthest from every route corridor at (304, 3216), radius 176: the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 1057 blocks from a route corridor box (tools/compile_spawns.py focus_heart_boxes)"
       },
       "biomes": [],
-      "spawnable_position": "submerged"
+      "spawnable_position": "submerged",
+      "alpha": true
     },
     {
       "id": "marine.windward_shallows.heart.pelipper",
@@ -24579,7 +24964,8 @@
         "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the shallows' heart, the band cell farthest from every route corridor at (304, 3216), radius 176: the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 1057 blocks from a route corridor box (tools/compile_spawns.py focus_heart_boxes)"
       },
       "biomes": [],
-      "spawnable_position": "surface"
+      "spawnable_position": "surface",
+      "alpha": true
     },
     {
       "id": "marine.windward_shallows.heart.octillery",
@@ -24602,7 +24988,36 @@
         "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the shallows' heart, the band cell farthest from every route corridor at (304, 3216), radius 176: the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 1057 blocks from a route corridor box (tools/compile_spawns.py focus_heart_boxes)"
       },
       "biomes": [],
-      "spawnable_position": "seafloor"
+      "spawnable_position": "seafloor",
+      "alpha": true
+    },
+    {
+      "id": "marine.windward_shallows.heart.staryu",
+      "species": "staryu",
+      "bucket": "uncommon",
+      "level": "18-20",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "windward_shallows",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea (2026-10-05, rows A-D variety pass): heart local alpha: the shallows' strongest local, alpha",
+      "eligibility_reason": "heart local alpha: the shallows' strongest local, alpha, from the base band's upper half (18-20), under its top; the owner, 2026-10-05: \"the boss pokemon are alphas, so it should sometimes be the pokemon in the area as well right?\"; rules.hearts.local_alpha: the highest base-stat total among the area's common and uncommon base species",
+      "heart": {
+        "kind": "focus",
+        "x": 304,
+        "z": 3216,
+        "radius": 176,
+        "clear_of_path_blocks": 128,
+        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the shallows' heart, the band cell farthest from every route corridor at (304, 3216), radius 176: the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 1057 blocks from a route corridor box (tools/compile_spawns.py focus_heart_boxes)"
+      },
+      "biomes": [],
+      "spawnable_position": "submerged",
+      "alpha": true,
+      "spawnable_position_authored": {
+        "position": "submerged",
+        "why": "upstream one entry of several stands on a beach, so tools/position_types.py's rule would ground it; in the open sea there is no beach, and its other upstream entries are all in the water (submerged)"
+      }
     },
     {
       "id": "marine.windward_open.tentacool",
@@ -24914,7 +25329,8 @@
         "why": "open water's deepest reach: the cell farthest (101 blocks) from the edge of the band's cells over 128 blocks from every route box; radius 128 kept 9.0% of the band as rows E-H measured it (per-box cells); recompiled here on the rows A-D focus_heart_boxes grid"
       },
       "biomes": [],
-      "spawnable_position": "submerged"
+      "spawnable_position": "submerged",
+      "alpha": true
     },
     {
       "id": "marine.windward_open.heart.tentacruel",
@@ -24937,7 +25353,8 @@
         "why": "open water's deepest reach: the cell farthest (101 blocks) from the edge of the band's cells over 128 blocks from every route box; radius 128 kept 9.0% of the band as rows E-H measured it (per-box cells); recompiled here on the rows A-D focus_heart_boxes grid"
       },
       "biomes": [],
-      "spawnable_position": "submerged"
+      "spawnable_position": "submerged",
+      "alpha": true
     },
     {
       "id": "marine.windward_open.heart.lanturn",
@@ -24962,7 +25379,32 @@
         "why": "open water's deepest reach: the cell farthest (101 blocks) from the edge of the band's cells over 128 blocks from every route box; radius 128 kept 9.0% of the band as rows E-H measured it (per-box cells); recompiled here on the rows A-D focus_heart_boxes grid"
       },
       "biomes": [],
-      "spawnable_position": "submerged"
+      "spawnable_position": "submerged",
+      "alpha": true
+    },
+    {
+      "id": "marine.windward_open.heart.qwilfish",
+      "species": "qwilfish",
+      "bucket": "uncommon",
+      "level": "23-25",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "windward_open",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea (2026-10-05, rows E-H variety pass, ported onto the rows A-D heart mechanism): heart local alpha: the open band's strongest local, alpha",
+      "eligibility_reason": "heart local alpha: the open band's strongest local, alpha, from the base band's upper half (23-25), under its top; the owner, 2026-10-05: \"the boss pokemon are alphas, so it should sometimes be the pokemon in the area as well right?\"; rules.hearts.local_alpha: the highest base-stat total among the area's common and uncommon base species",
+      "heart": {
+        "kind": "focus",
+        "x": 560,
+        "z": 5008,
+        "radius": 128,
+        "clear_of_path_blocks": 128,
+        "why": "open water's deepest reach: the cell farthest (101 blocks) from the edge of the band's cells over 128 blocks from every route box; radius 128 kept 9.0% of the band as rows E-H measured it (per-box cells); recompiled here on the rows A-D focus_heart_boxes grid"
+      },
+      "biomes": [],
+      "spawnable_position": "submerged",
+      "alpha": true
     },
     {
       "id": "marine.windward_depths.wailmer",
@@ -25187,7 +25629,8 @@
         "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the deep's heart, the band cell farthest from every route corridor, at the sea's west edge at (-1008, 3344), radius 464: the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 1857 blocks from a route corridor box (tools/compile_spawns.py focus_heart_boxes)"
       },
       "biomes": [],
-      "spawnable_position": "submerged"
+      "spawnable_position": "submerged",
+      "alpha": true
     },
     {
       "id": "marine.windward_depths.heart.sharpedo",
@@ -25210,7 +25653,8 @@
         "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the deep's heart, the band cell farthest from every route corridor, at the sea's west edge at (-1008, 3344), radius 464: the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 1857 blocks from a route corridor box (tools/compile_spawns.py focus_heart_boxes)"
       },
       "biomes": [],
-      "spawnable_position": "submerged"
+      "spawnable_position": "submerged",
+      "alpha": true
     },
     {
       "id": "marine.windward_depths.heart.lanturn",
@@ -25235,7 +25679,32 @@
         "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the deep's heart, the band cell farthest from every route corridor, at the sea's west edge at (-1008, 3344), radius 464: the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 1857 blocks from a route corridor box (tools/compile_spawns.py focus_heart_boxes)"
       },
       "biomes": [],
-      "spawnable_position": "submerged"
+      "spawnable_position": "submerged",
+      "alpha": true
+    },
+    {
+      "id": "marine.windward_depths.heart.alomomola",
+      "species": "alomomola",
+      "bucket": "uncommon",
+      "level": "28-30",
+      "weight": 3.0,
+      "ambient": true,
+      "scope": "windward_depths",
+      "mechanism": "marine_coordinate_boxes",
+      "conditions": {},
+      "conditions_basis": "Windward Sea (2026-10-05, rows A-D variety pass): heart local alpha: the deep band's strongest local, alpha",
+      "eligibility_reason": "heart local alpha: the deep band's strongest local, alpha, from the base band's upper half (28-30), under its top; the owner, 2026-10-05: \"the boss pokemon are alphas, so it should sometimes be the pokemon in the area as well right?\"; rules.hearts.local_alpha: the highest base-stat total among the area's common and uncommon base species",
+      "heart": {
+        "kind": "focus",
+        "x": -1008,
+        "z": 3344,
+        "radius": 464,
+        "clear_of_path_blocks": 128,
+        "why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\": the deep's heart, the band cell farthest from every route corridor, at the sea's west edge at (-1008, 3344), radius 464: the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 1857 blocks from a route corridor box (tools/compile_spawns.py focus_heart_boxes)"
+      },
+      "biomes": [],
+      "spawnable_position": "submerged",
+      "alpha": true
     },
     {
       "id": "habitat.ursaluna_den_outskirts.teddiursa",
@@ -25844,6 +26313,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128,
         "why": "the middle of Northgate's old growth",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0268
         },
@@ -26171,6 +26641,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128,
         "why": "the owner, 2026-10-05: every area has a boss table. The place's deepest interior cell beyond 128 blocks of every corridor box, at (5712, 688); radius 128 is the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 1113 blocks from a corridor box",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0406
         },
@@ -26499,6 +26970,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128,
         "why": "the middle of the north Pine isle's forest",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0208
         },
@@ -26873,6 +27345,7 @@
         "radius": 192,
         "clear_of_path_blocks": 128,
         "why": "the middle of the south Pine isle",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0321
         },
@@ -27269,6 +27742,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128,
         "why": "the middle of the mushroom island, where the caps grow tallest",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0125
         },
@@ -27637,6 +28111,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128,
         "why": "the heart of the fungal pools",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.02,
           "water": 0.0635
@@ -28027,6 +28502,7 @@
         "radius": 208,
         "clear_of_path_blocks": 128,
         "why": "the middle of the Sunset savanna",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0231
         },
@@ -28430,6 +28906,7 @@
         "radius": 192,
         "clear_of_path_blocks": 128,
         "why": "the flower meadows' heart",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0144
         },
@@ -28840,6 +29317,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128,
         "why": "the canopy's heart (inert until decision B15, as the table)",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.017
         },
@@ -29137,6 +29615,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128,
         "why": "the sparse jungle's heart (inert until decision B15, as the table)",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0208
         },
@@ -29517,6 +29996,7 @@
         "radius": 144,
         "clear_of_path_blocks": 128,
         "why": "the middle of the desert isle",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0268
         },
@@ -29894,6 +30374,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128,
         "why": "the middle of the Long Isle's sandstone uplands",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0156
         },
@@ -30265,6 +30746,7 @@
         "radius": 208,
         "clear_of_path_blocks": 128,
         "why": "the deep jungle of the Long Isle",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0208
         },
@@ -30516,6 +30998,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128,
         "why": "the back wall of the cirque, away from Route 4",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0375
         },
@@ -30831,6 +31314,7 @@
         "minY": 171,
         "clear_of_path_blocks": 128,
         "why": "the top ninth of the Crags: 10.4% of the compiled area is at or above y171 (summit y216; y170 would be over a ninth), canonical heightmap, path band left out. Land only: the tarn lies below the line",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0185,
           "water": 0.0
@@ -31140,6 +31624,7 @@
         "radius": 144,
         "clear_of_path_blocks": 128,
         "why": "the owner, 2026-10-05: every area has a boss table. The place's deepest interior cell beyond 128 blocks of every corridor box, at (4016, 2512); radius 144 is the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 201 blocks from a corridor box",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.025
         },
@@ -31422,6 +31907,7 @@
         "radius": 304,
         "clear_of_path_blocks": 128,
         "why": "the Glacial Tear, the trough's glacier, 177 blocks from Route 5",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0298,
           "water": 0.0635
@@ -31693,6 +32179,7 @@
         "minY": 195,
         "clear_of_path_blocks": 128,
         "why": "the top ninth of the Tri Peaks: 11.1% of the compiled area is at or above y195 (summit y255), measured on the canonical heightmap, cells within 128 blocks of a corridor left out",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.06
         },
@@ -31973,6 +32460,7 @@
         "radius": 144,
         "clear_of_path_blocks": 128,
         "why": "the summit plateau at y280, the sky-watchers' table",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0406
         },
@@ -32312,6 +32800,7 @@
         "minY": 212,
         "clear_of_path_blocks": 128,
         "why": "the top ninth of Mt Clay: 11.1% of the compiled area is at or above y212 (summit y263), canonical heightmap, path band left out",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0141
         },
@@ -32587,6 +33076,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128,
         "why": "the trunk's far north end, away from Victory Road's mouths",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.04
         },
@@ -32889,6 +33379,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128,
         "why": "the middle of the west spur",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0286
         },
@@ -33267,6 +33758,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128,
         "why": "the south-west arm's far end",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0111
         },
@@ -33707,6 +34199,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128,
         "why": "the south-east arm's far end",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0154
         },
@@ -34087,6 +34580,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128,
         "why": "the rim's high shoulder above the crater, off Routes 7 and 8",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0208
         },
@@ -34463,6 +34957,7 @@
         "radius": 96,
         "clear_of_path_blocks": 128,
         "why": "the crater bowl and its rim, 4.8% of the place",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0205
         },
@@ -34858,6 +35353,7 @@
         "minY": 228,
         "clear_of_path_blocks": 128,
         "why": "the top ninth of the east cones: 11.0% of the compiled area is at or above y228 (summit y304, the Craters landmark's cone), canonical heightmap, path band left out",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0208
         },
@@ -35245,6 +35741,7 @@
         "radius": 176,
         "clear_of_path_blocks": 128,
         "why": "the plateau's north shoulder, away from Route 8 and Victory Road",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.017
         },
@@ -35640,6 +36137,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128,
         "why": "the plateau's middle, away from Route 8",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0208
         },
@@ -35969,6 +36467,7 @@
         "radius": 64,
         "clear_of_path_blocks": 128,
         "why": "the eroded plateau's top",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0208
         },
@@ -36204,6 +36703,7 @@
         "minY": 180,
         "clear_of_path_blocks": 128,
         "why": "the top ninth of Frostpeak: 11.1% of the compiled area is at or above y180 (summit y310 at (679, 313)), canonical heightmap; no corridor is within 941 blocks",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0337
         },
@@ -36580,6 +37080,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128,
         "why": "the owner, 2026-10-05: every area has a boss table. The place's deepest interior cell beyond 128 blocks of every corridor box, at (1296, 208); radius 112 is the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 945 blocks from a corridor box",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0208,
           "water": 0.0334
@@ -36991,6 +37492,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128,
         "why": "the owner, 2026-10-05: every area has a boss table. The place's deepest interior cell beyond 128 blocks of every corridor box, at (5872, 3600); radius 128 is the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 129 blocks from a corridor box",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0089,
           "water": 0.0635
@@ -37284,6 +37786,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128,
         "why": "Lake Tilpey's open middle, 305 blocks from Route 7: 94.5% of the heart's columns are lake bed under y62. The owner, 2026-10-05: the lake 'should feel like a pokemon lake deep in life', so the open water is layered by each species' own upstream position -- Pelipper, Bibarel and Araquanid on the islands and edges (grounded, beside water), Gyarados, Veluza, Golduck and the Kabuto line in the water, Clobbopus and Grapploct on the bed (seafloor) as the rare, Feebas and its Milotic the ultra-rare -- none of them the shores' (north: Ducklett, Flamigo; east: Lotad, Wattrel; west: Surskit, Inkay; south: Corphish, Sobble), and the heart the lake's giants. Every water family here is in at most one other water table, and an earlier one (section 5). The Slowpoke line was tried and left out: its water natives in the Cobblemon 1.8.0 jar are salt only (tools/spawn_habitat_audit.py MISFIT)",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0,
           "water": 0.0375
@@ -37753,6 +38256,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128,
         "why": "the south shore's old wood, away from Routes 7 and 8 (the lake's own heart is the open water)",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0144,
           "water": 0.0
@@ -38113,6 +38617,7 @@
         "radius": 80,
         "clear_of_path_blocks": 128,
         "why": "the owner, 2026-10-05: every area has a boss table. The place's deepest interior cell beyond 128 blocks of every corridor box, at (5072, 4176); radius 80 is the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 649 blocks from a corridor box",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0268,
           "water": 0.0
@@ -38478,6 +38983,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128,
         "why": "the owner, 2026-10-05: every area has a boss table. The place's deepest interior cell beyond 128 blocks of every corridor box, at (6928, 3824); radius 160 is the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 145 blocks from a corridor box",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0156,
           "water": 0.0
@@ -38792,6 +39298,7 @@
         "radius": 96,
         "clear_of_path_blocks": 128,
         "why": "the darkest middle of the Wedge",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0268
         },
@@ -39124,6 +39631,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128,
         "why": "the darkest middle of the south Wedge",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0375
         },
@@ -39494,6 +40002,7 @@
         "radius": 224,
         "clear_of_path_blocks": 128,
         "why": "the Ravine Head Tarn, 313 blocks from Route 4; Peak Pond itself is 113 blocks from Route 4, the path's, so it stays catchable",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0143,
           "water": 0.0208
@@ -39763,6 +40272,7 @@
         "radius": 112,
         "clear_of_path_blocks": 128,
         "why": "the owner, 2026-10-05: every area has a boss table. The place's deepest interior cell beyond 128 blocks of every corridor box, at (4464, 1168); radius 112 is the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 209 blocks from a corridor box",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0255
         },
@@ -40078,6 +40588,7 @@
         "radius": 96,
         "clear_of_path_blocks": 128,
         "why": "the owner, 2026-10-05: every area has a boss table. The place's deepest interior cell beyond 128 blocks of every corridor box, at (4816, 1360); radius 96 is the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 249 blocks from a corridor box",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0218
         },
@@ -40481,6 +40992,7 @@
         "radius": 176,
         "clear_of_path_blocks": 128,
         "why": "the marsh's middle, 321 blocks from Route 6",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0182,
           "water": 0.0635
@@ -40948,6 +41460,7 @@
         "radius": 144,
         "clear_of_path_blocks": 128,
         "why": "the owner, 2026-10-05: every area has a boss table. The place's deepest interior cell beyond 128 blocks of every corridor box, at (5808, 2544); radius 144 is the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 209 blocks from a corridor box",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0209,
           "water": 0.0208
@@ -41353,6 +41866,7 @@
         "radius": 192,
         "clear_of_path_blocks": 128,
         "why": "the owner, 2026-10-05: every area has a boss table. The place's deepest interior cell beyond 128 blocks of every corridor box, at (6672, 3056); radius 192 is the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 225 blocks from a corridor box",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0268
         },
@@ -41694,6 +42208,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128,
         "why": "the owner, 2026-10-05: every area has a boss table. The place's deepest interior cell beyond 128 blocks of every corridor box, at (5264, 2608); radius 128 is the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 129 blocks from a corridor box",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.017
         },
@@ -42083,6 +42598,7 @@
         "radius": 144,
         "clear_of_path_blocks": 128,
         "why": "the far woods of the hollow, west of the lake and away from Route 2",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0087,
           "water": 0.0
@@ -42410,6 +42926,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128,
         "why": "the owner, 2026-10-05: every area has a boss table. The place's deepest interior cell beyond 128 blocks of every corridor box, at (816, 3536); radius 160 is the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 537 blocks from a corridor box",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0185
         },
@@ -42785,6 +43302,7 @@
         "radius": 240,
         "clear_of_path_blocks": 128,
         "why": "the owner, 2026-10-05: every area has a boss table. The place's deepest interior cell beyond 128 blocks of every corridor box, at (2736, 2384); radius 240 is the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 361 blocks from a corridor box",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.015,
           "water": 0.0
@@ -43083,6 +43601,7 @@
         "radius": 192,
         "clear_of_path_blocks": 128,
         "why": "the owner, 2026-10-05: every area has a boss table. The place's deepest interior cell beyond 128 blocks of every corridor box, at (784, 2384); radius 192 is the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 553 blocks from a corridor box",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0,
           "water": 0.05
@@ -43348,8 +43867,9 @@
         "radius": 176,
         "clear_of_path_blocks": 128,
         "why": "the owner, 2026-10-05: every area has a boss table. The place's deepest interior cell beyond 128 blocks of every corridor box, at (2192, 3344); radius 176 is the largest multiple of 16 at or under 1/9 of the compiled area; its nearest heart cell is 177 blocks from a corridor box",
+        "alpha": true,
         "above_cap_share": {
-          "land": 0.0167
+          "land": 0.0152
         },
         "entries": [
           {
@@ -43394,6 +43914,21 @@
             "ambient": true,
             "eligibility_reason": "a presence, from the level it evolves at (20), 20-25 against the tier 1 cap 20: seen on this leg, caught on the next (next cap 25)",
             "level": "20-25",
+            "bucket": "uncommon",
+            "weight": 3.0,
+            "conditions": {}
+          },
+          {
+            "species": "Pikachu",
+            "pokemon": "pikachu",
+            "types": [
+              "electric"
+            ],
+            "family": "pichu",
+            "family_priority": "uncommon",
+            "ambient": true,
+            "eligibility_reason": "heart: named uncommon family, tier 1: the family starts here",
+            "level": "12-14",
             "bucket": "uncommon",
             "weight": 3.0,
             "conditions": {}
@@ -43691,6 +44226,7 @@
         "radius": 192,
         "clear_of_path_blocks": 128,
         "why": "the lake's middle, 705 blocks from any corridor: the grown forms of its own shores and water",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0243,
           "water": 0.0389
@@ -44151,6 +44687,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128,
         "why": "the lake's middle, 689 blocks from any corridor",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0119,
           "water": 0.0125
@@ -44492,8 +45029,9 @@
         "radius": 160,
         "clear_of_path_blocks": 128,
         "why": "the upper river, away from Route 1",
+        "alpha": true,
         "above_cap_share": {
-          "land": 0.0158,
+          "land": 0.0145,
           "water": 0.0143
         },
         "entries": [
@@ -44539,6 +45077,21 @@
             "ambient": true,
             "eligibility_reason": "a presence, from the level it evolves at (15), 15-25 against the tier 1 cap 20: seen on this leg, caught on the next (next cap 25)",
             "level": "15-25",
+            "bucket": "uncommon",
+            "weight": 3.0,
+            "conditions": {}
+          },
+          {
+            "species": "Minun",
+            "pokemon": "minun",
+            "types": [
+              "electric"
+            ],
+            "family": "minun",
+            "family_priority": "uncommon",
+            "ambient": true,
+            "eligibility_reason": "heart: named uncommon family, tier 1: the family starts here",
+            "level": "11-13",
             "bucket": "uncommon",
             "weight": 3.0,
             "conditions": {}
@@ -44818,8 +45371,9 @@
         "radius": 128,
         "clear_of_path_blocks": 128,
         "why": "the middle of Pallet's meadows, away from Route 1: grown birds and sheep a new player sees before they can hold one (the owner, 2026-10-05: a boss table in every area)",
+        "alpha": true,
         "above_cap_share": {
-          "land": 0.0139
+          "land": 0.013
         },
         "entries": [
           {
@@ -44879,6 +45433,21 @@
             "ambient": true,
             "eligibility_reason": "a presence, from the level it evolves at (24), 24-25 against the tier 1 cap 20: seen on this leg, caught on the next (next cap 25)",
             "level": "24-25",
+            "bucket": "uncommon",
+            "weight": 3.0,
+            "conditions": {}
+          },
+          {
+            "species": "Fidough",
+            "pokemon": "fidough",
+            "types": [
+              "fairy"
+            ],
+            "family": "fidough",
+            "family_priority": "uncommon",
+            "ambient": true,
+            "eligibility_reason": "heart: named uncommon family, tier 1: the family starts here",
+            "level": "6-8",
             "bucket": "uncommon",
             "weight": 3.0,
             "conditions": {}
@@ -45174,6 +45743,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128,
         "why": "the west shore's open middle, away from Route 1",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0233,
           "water": 0.0
@@ -45226,6 +45796,21 @@
             "ambient": true,
             "eligibility_reason": "a presence, from the level it evolves at (25), 25-25 against the tier 1 cap 20: seen on this leg, caught on the next (next cap 25)",
             "level": "25-25",
+            "bucket": "uncommon",
+            "weight": 3.0,
+            "conditions": {}
+          },
+          {
+            "species": "Staryu",
+            "pokemon": "staryu",
+            "types": [
+              "water"
+            ],
+            "family": "staryu",
+            "family_priority": "uncommon",
+            "ambient": true,
+            "eligibility_reason": "heart: named uncommon family, tier 1: the family starts here",
+            "level": "9-12",
             "bucket": "uncommon",
             "weight": 3.0,
             "conditions": {}
@@ -45514,8 +46099,9 @@
         "radius": 128,
         "clear_of_path_blocks": 128,
         "why": "the maze's inner wood, off Route 1",
+        "alpha": true,
         "above_cap_share": {
-          "land": 0.0154
+          "land": 0.0143
         },
         "entries": [
           {
@@ -45593,6 +46179,22 @@
             "ambient": true,
             "eligibility_reason": "a presence, from the level it evolves at (20), 20-25 against the tier 1 cap 20: seen on this leg, caught on the next (next cap 25)",
             "level": "20-25",
+            "bucket": "uncommon",
+            "weight": 3.0,
+            "conditions": {}
+          },
+          {
+            "species": "Oddish",
+            "pokemon": "oddish",
+            "types": [
+              "grass",
+              "poison"
+            ],
+            "family": "oddish",
+            "family_priority": "uncommon",
+            "ambient": true,
+            "eligibility_reason": "heart: named uncommon family, tier 1: the family starts here",
+            "level": "9-11",
             "bucket": "uncommon",
             "weight": 3.0,
             "conditions": {}
@@ -45823,8 +46425,9 @@
         "radius": 80,
         "clear_of_path_blocks": 128,
         "why": "the middle of the meadows, 485 blocks from Route 1: the grown Nidoran a new player sees before they can hold one",
+        "alpha": true,
         "above_cap_share": {
-          "land": 0.01
+          "land": 0.0091
         },
         "entries": [
           {
@@ -45853,6 +46456,21 @@
             "ambient": true,
             "eligibility_reason": "a presence, from the level it evolves at (16), 16-25 against the tier 1 cap 20: seen on this leg, caught on the next (next cap 25)",
             "level": "16-25",
+            "bucket": "uncommon",
+            "weight": 3.0,
+            "conditions": {}
+          },
+          {
+            "species": "Growlithe",
+            "pokemon": "growlithe",
+            "types": [
+              "fire"
+            ],
+            "family": "growlithe",
+            "family_priority": "uncommon",
+            "ambient": true,
+            "eligibility_reason": "heart: named uncommon family, tier 1: the family starts here",
+            "level": "10-14",
             "bucket": "uncommon",
             "weight": 3.0,
             "conditions": {}
@@ -46201,6 +46819,7 @@
         "radius": 256,
         "clear_of_path_blocks": 128,
         "why": "the deep pools of the creek country, where the big fish lie",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0179,
           "water": 0.0125
@@ -46613,6 +47232,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128,
         "why": "the strand's far reach, away from Route 8 and Victory Road",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0157,
           "water": 0.0156
@@ -46988,6 +47608,7 @@
         "radius": 128,
         "clear_of_path_blocks": 128,
         "why": "the savanna below the Rift's mouth, away from Route 8 and Victory Road",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0208
         },
@@ -47442,6 +48063,7 @@
         "radius": 160,
         "clear_of_path_blocks": 128,
         "why": "the high dune field, away from Route 7",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.017
         },
@@ -47789,6 +48411,7 @@
         "radius": 224,
         "clear_of_path_blocks": 128,
         "why": "the deep sand sea of the south-east",
+        "alpha": true,
         "above_cap_share": {
           "land": 0.0208
         },
