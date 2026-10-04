@@ -1969,10 +1969,10 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.the_crags.heart.crustle",
-      "species": "crustle",
+      "id": "surface.the_crags.heart.druddigon",
+      "species": "druddigon",
       "bucket": "uncommon",
-      "level": "34-40",
+      "level": "32-40",
       "weight": 3.0,
       "ambient": true,
       "scope": "the_crags",
@@ -1980,7 +1980,7 @@
       "conditions": {
         "minY": 171
       },
-      "eligibility_reason": "a presence, from the level it evolves at (34), 34-40 against the tier 4 cap 35: seen on this leg, caught on the next (next cap 40)",
+      "eligibility_reason": "a presence, from the band's top, 32-40 against the tier 4 cap 35: seen on this leg, caught on the next (next cap 40)",
       "heart": {
         "kind": "summit",
         "minY": 171,
@@ -2652,30 +2652,16 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.mt_clay.sandshrew",
-      "species": "sandshrew",
+      "id": "surface.mt_clay.rhyhorn",
+      "species": "rhyhorn",
       "bucket": "uncommon",
       "level": "20-26",
-      "weight": 4.8,
+      "weight": 6.0,
       "ambient": true,
       "scope": "mt_clay",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
       "eligibility_reason": "named uncommon family, tier 3: the family starts here",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.mt_clay.sandslash",
-      "species": "sandslash",
-      "bucket": "uncommon",
-      "level": "22-26",
-      "weight": 1.2,
-      "ambient": true,
-      "scope": "mt_clay",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Sandshrew at level 22: spawns 22-26, inside the tier 3 band 20-26",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -2715,10 +2701,10 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.mt_clay.heart.sandslash",
-      "species": "sandslash",
+      "id": "surface.mt_clay.heart.graveler",
+      "species": "graveler",
       "bucket": "common",
-      "level": "23-26",
+      "level": "25-26",
       "weight": 12.0,
       "ambient": true,
       "scope": "mt_clay",
@@ -4633,8 +4619,8 @@
       "spawnable_position": "submerged"
     },
     {
-      "id": "surface.tilpey_waters.heart.wailord",
-      "species": "wailord",
+      "id": "surface.tilpey_waters.heart.basculegion",
+      "species": "basculegion",
       "bucket": "uncommon",
       "level": "48-55",
       "weight": 3.0,
@@ -4724,8 +4710,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.tilpey_south_shore.gastrodon",
-      "species": "gastrodon",
+      "id": "surface.tilpey_south_shore.crawdaunt",
+      "species": "crawdaunt",
       "bucket": "common",
       "level": "38-48",
       "weight": 24.0,
@@ -4733,7 +4719,7 @@
       "scope": "tilpey_south_shore",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
-      "eligibility_reason": "evolves from Shellos at level 30: spawns 38-48, inside the tier 7 band 38-48",
+      "eligibility_reason": "evolves from Corphish at level 30: spawns 38-48, inside the tier 7 band 38-48",
       "biomes": [],
       "spawnable_position": "seafloor"
     },
@@ -8180,26 +8166,12 @@
       "species": "crabrawler",
       "bucket": "common",
       "level": "43-53",
-      "weight": 7.2,
+      "weight": 24.0,
       "ambient": true,
       "scope": "south_strand",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
-      "eligibility_reason": "named anchor family, tier 8: the family starts here",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.south_strand.crabominable",
-      "species": "crabominable",
-      "bucket": "common",
-      "level": "48-53",
-      "weight": 16.8,
-      "ambient": true,
-      "scope": "south_strand",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Crabrawler using ice stone, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
+      "eligibility_reason": "named anchor family, tier 8: the family starts here; takes the weight of crabominable, dropped here: the owner, 2026-10-04: an alpine ice Pokemon on warm ground. Crabrawler fits the strand (native to is_coast in the Cobblemon 1.8.0 jar), but the family walk hands a tier-8 table its ice-stone evolution, and Crabominable is native only to is_peak; the strand is warm southern coast beside the savanna, with no snow for a condition to name. Crabrawler keeps the anchor's whole weight",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -16233,7 +16205,7 @@
         "clear_of_path_blocks": 128,
         "why": "the top ninth of the Crags: 10.4% of the compiled area is at or above y171 (summit y216; y170 would be over a ninth), canonical heightmap, path band left out. Land only: the tarn lies below the line",
         "above_cap_share": {
-          "land": 0.0262,
+          "land": 0.0239,
           "water": 0.0
         },
         "entries": [
@@ -16309,17 +16281,16 @@
             }
           },
           {
-            "species": "Crustle",
-            "pokemon": "crustle",
+            "species": "Druddigon",
+            "pokemon": "druddigon",
             "types": [
-              "bug",
-              "rock"
+              "dragon"
             ],
-            "family": "dwebble",
+            "family": "druddigon",
             "family_priority": "presence",
             "ambient": true,
-            "eligibility_reason": "a presence, from the level it evolves at (34), 34-40 against the tier 4 cap 35: seen on this leg, caught on the next (next cap 40)",
-            "level": "34-40",
+            "eligibility_reason": "a presence, from the band's top, 32-40 against the tier 4 cap 35: seen on this leg, caught on the next (next cap 40)",
+            "level": "32-40",
             "bucket": "uncommon",
             "weight": 3.0,
             "conditions": {
@@ -17101,33 +17072,19 @@
           "conditions": {}
         },
         {
-          "species": "Sandshrew",
-          "pokemon": "sandshrew",
+          "species": "Rhyhorn",
+          "pokemon": "rhyhorn",
           "types": [
-            "ground"
+            "ground",
+            "rock"
           ],
-          "family": "sandshrew",
+          "family": "rhyhorn",
           "family_priority": "uncommon",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 3: the family starts here",
           "level": "20-26",
           "bucket": "uncommon",
-          "weight": 4.8,
-          "conditions": {}
-        },
-        {
-          "species": "Sandslash",
-          "pokemon": "sandslash",
-          "types": [
-            "ground"
-          ],
-          "family": "sandshrew",
-          "family_priority": "uncommon",
-          "ambient": true,
-          "eligibility_reason": "evolves from Sandshrew at level 22: spawns 22-26, inside the tier 3 band 20-26",
-          "level": "22-26",
-          "bucket": "uncommon",
-          "weight": 1.2,
+          "weight": 6.0,
           "conditions": {}
         },
         {
@@ -17180,16 +17137,17 @@
             }
           },
           {
-            "species": "Sandslash",
-            "pokemon": "sandslash",
+            "species": "Graveler",
+            "pokemon": "graveler",
             "types": [
+              "rock",
               "ground"
             ],
-            "family": "sandshrew",
+            "family": "geodude",
             "family_priority": "common",
             "ambient": true,
             "eligibility_reason": "heart: named common family, tier 3: the family starts here",
-            "level": "23-26",
+            "level": "25-26",
             "bucket": "common",
             "weight": 12.0,
             "conditions": {
@@ -19504,12 +19462,13 @@
             "conditions": {}
           },
           {
-            "species": "Wailord",
-            "pokemon": "wailord",
+            "species": "Basculegion",
+            "pokemon": "basculegion",
             "types": [
-              "water"
+              "water",
+              "ghost"
             ],
-            "family": "wailmer",
+            "family": "basculegion",
             "family_priority": "presence",
             "ambient": true,
             "eligibility_reason": "a presence, from the band's top, 48-55 against the tier 7 cap 50: seen on this leg, caught on the next (next cap 55)",
@@ -19616,16 +19575,16 @@
           "conditions": {}
         },
         {
-          "species": "Gastrodon",
-          "pokemon": "gastrodon",
+          "species": "Crawdaunt",
+          "pokemon": "crawdaunt",
           "types": [
             "water",
-            "ground"
+            "dark"
           ],
-          "family": "shellos",
+          "family": "corphish",
           "family_priority": "anchor",
           "ambient": true,
-          "eligibility_reason": "evolves from Shellos at level 30: spawns 38-48, inside the tier 7 band 38-48",
+          "eligibility_reason": "evolves from Corphish at level 30: spawns 38-48, inside the tier 7 band 38-48",
           "level": "38-48",
           "bucket": "common",
           "weight": 24.0,
@@ -23801,26 +23760,10 @@
           "family": "crabrawler",
           "family_priority": "anchor",
           "ambient": true,
-          "eligibility_reason": "named anchor family, tier 8: the family starts here",
+          "eligibility_reason": "named anchor family, tier 8: the family starts here; takes the weight of crabominable, dropped here: the owner, 2026-10-04: an alpine ice Pokemon on warm ground. Crabrawler fits the strand (native to is_coast in the Cobblemon 1.8.0 jar), but the family walk hands a tier-8 table its ice-stone evolution, and Crabominable is native only to is_peak; the strand is warm southern coast beside the savanna, with no snow for a condition to name. Crabrawler keeps the anchor's whole weight",
           "level": "43-53",
           "bucket": "common",
-          "weight": 7.2,
-          "conditions": {}
-        },
-        {
-          "species": "Crabominable",
-          "pokemon": "crabominable",
-          "types": [
-            "fighting",
-            "ice"
-          ],
-          "family": "crabrawler",
-          "family_priority": "anchor",
-          "ambient": true,
-          "eligibility_reason": "evolves from Crabrawler using ice stone, not by level: in the wild from tier 6, in the upper half of the band (48-53)",
-          "level": "48-53",
-          "bucket": "common",
-          "weight": 16.8,
+          "weight": 24.0,
           "conditions": {}
         },
         {
@@ -32103,11 +32046,11 @@
       "species": [
         "beedrill",
         "butterfree",
+        "crawdaunt",
         "drizzile",
         "ducklett",
         "dudunsparce",
         "dunsparce",
-        "gastrodon",
         "inteleon",
         "leavanny",
         "lombre",
@@ -32130,10 +32073,10 @@
         "cacturne",
         "centiskorch",
         "clawitzer",
-        "crabominable",
+        "crabrawler",
+        "crawdaunt",
         "drapion",
         "drizzile",
-        "gastrodon",
         "inteleon",
         "kilowattrel",
         "maractus",
@@ -32152,7 +32095,6 @@
         "cinderace",
         "clawitzer",
         "claydol",
-        "crabominable",
         "crabrawler",
         "garganacl",
         "gigalith",
@@ -32168,7 +32110,8 @@
         "scrafty",
         "scraggy",
         "tinkaton",
-        "toxapex"
+        "toxapex",
+        "zebstrika"
       ]
     }
   },
