@@ -770,11 +770,17 @@ def prepare_jobs(a):
     # the badge flags: one advancement per gym leader and the Champion, set by rctmod on a won battle
     add("progression_pack", "progression_pack.py")
     # the Rift finale's independent audit (tools/finale_audit.py, written by an agent that did not build it): HERE,
-    # after every pack it reads is built -- compile_dialogue, route_trainers, relic_underground:build, rift_zones:build
-    # and progression_pack above. The binder's compiled conversation EXECUTED from every start state (the flag only at
-    # rift_crisis_pending with both defeats), both trainers' emitted files against the jar and the post-gym-8 cap, the
-    # cradle replayed for the seats and Brann's sight, z5 run on the flag, and every pack swept for another setter
+    # after every pack it reads is built -- compile_dialogue, route_trainers, relic_underground:build, rift_zones:build,
+    # hq_tower:build and progression_pack above. The chain's five compiled conversations EXECUTED from every start
+    # state with both outcomes of each fight (the hq_tower battle_victory callback run for the winner), the story walked
+    # end to end (the flag only at cradle_open with both defeats), the parties against data/finale_trainers.json, the
+    # jar and the post-gym-8 cap, the gate cycle run per stage, z5 run on the flag, and every pack swept for another
+    # setter of the flag, a defeat field, a won function or a chain stage
     add("finale_audit", "finale_audit.py")
+    # and the HQ tower as built (tools/hq_tower_audit.py, the same author): the city's, the relic site's and the
+    # tower's block functions replayed over the Deep's tread, the walk from the doorway to anchor control and back
+    # out, every seat and NPC on a floor, the caches, the gate set-backs, nothing outside the interior, no spawn block
+    add("hq_tower_audit", "hq_tower_audit.py", *src)
     # our wild spawns: the route and sub-region rosters from data/spawns.json (the suppression that makes them the
     # only thing spawning there is generated at install, against the server and world it will run on)
     add("compile_spawns", "compile_spawns.py")

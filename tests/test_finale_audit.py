@@ -1,18 +1,21 @@
-"""tools/finale_audit.py: the independent audit of the Rift finale's confrontation and release.
+"""tools/finale_audit.py: the independent audit of the Rift finale -- the HQ chain, the two fights, the release.
 
-Written by test-author, 2026-10-04; the finale (3e0f5ad, d968d79) and the z5 admit (33c277c) were built by another
-agent. Three kinds of test:
+Written by test-author, 2026-10-04; re-pointed the same day to the reconciled finale (62b953c at 9c51444: ONE Brann
+and ONE Elara, Cobblemon NPCs in the HQ tower who talk and fight; the release at cradle_open). The finale was built
+by other agents. Three kinds of test:
 
-  synthetic   the audit's own machinery (Molang interpreter, command model, cell replay and walk, jar legality, the
-              cap rule) on hand-written fixtures whose answers are computed by hand in the comments
-  real        the REAL generators emit into tmp (compile_dialogue --all, route_trainers, progression_pack, release_fx),
-              and the audit reads what they wrote; the relic and z5 packs only when build/datapacks holds them
-  mutation    a GENERATOR is changed in memory (data untouched) and the audit must fail: the elara condition dropped
-              in compile_dialogue, the won function writing the wrong key in route_trainers, the flag made earnable in
-              progression_pack, release_fx shown to everyone, Brann's home moved in the cycle
+  synthetic   the audit's own machinery (Molang interpreter with for_each and members, the multi-entity command
+              model, a hand-written battle_victory callback, the properties reader, cell replay and walk, jar
+              legality, the cap rule) on fixtures whose answers are computed by hand in the comments
+  real        the REAL generators emit into tmp (compile_dialogue --all, route_trainers, progression_pack,
+              hq_tower's callback, won functions and gate cycle, release_fx) and the audit reads what they wrote
+  mutation    a GENERATOR is changed in memory (data untouched) and the audit must fail: compile_dialogue dropping
+              brann_defeated from record_hq_crossed's guard, or elara_defeated everywhere, or levelling a party
+              member; hq_tower moving the callback's position match, widening it, or opening the climb a stage early;
+              progression_pack making the flag earnable; release_fx shown to everyone
 
-Not covered: anything in game (see the tool's docstring). The cradle and z5 tests skip when the packs are not built,
-because building them needs the Rift skin's pack (derived/rift_sculpt); prepare runs the audit after both.
+Not covered: anything in game (see the tool's docstring). The cradle and z5 tests read build/datapacks and skip when
+those packs are not built (the relic pack needs the Rift skin's pack).
 """
 import json
 import shutil
@@ -36,18 +39,18 @@ K_STAGE, K_B, K_E = A.key(A.STAGE), A.key(A.BRANN_FIELD), A.key(A.ELARA_FIELD)
 # ====================================================================== synthetic fixtures
 
 def gate(*fields):
-    return " && ".join(["(t.d.%s == 'rift_crisis_pending')" % K_STAGE] + ["(t.d.%s == 1)" % f for f in fields])
+    return " && ".join(["(t.d.%s == '%s')" % (K_STAGE, A.RELEASE_STAGE)] + ["(t.d.%s == 1)" % f for f in fields])
 
 
 def tiny_dialogue(visible_fields, guard_fields):
     """A three-page conversation in the compiler's emitted shape: open -> ask (choice) -> release (grants on ack).
-    `visible_fields` gate the choice, `guard_fields` gate the grant."""
+    `visible_fields` gate the choice, `guard_fields` gate the grant and the stage write."""
     grant = ("(%s) ? { q.run_command('execute as ' + q.player.uuid + ' at @s run function %s'); t.d.%s = '%s'; "
              "q.player.save_data(); };" % (gate(*guard_fields), A.FLAG_GRANT_FN, K_STAGE, A.RELEASED))
     return {
-        "initializationAction": "t.d = q.player.data(); v.e = 0; (v.e == 0 && t.d.%s == 'rift_crisis_pending') ? "
+        "initializationAction": "t.d = q.player.data(); v.e = 0; (v.e == 0 && t.d.%s == '%s') ? "
                                 "{ v.e = 'ask'; }; v.e == 0 ? { q.dialogue.close(); } : { q.dialogue.set_page(v.e); };"
-                                % K_STAGE,
+                                % (K_STAGE, A.RELEASE_STAGE),
         "pages": [
             {"id": "ask", "input": {"type": "option", "options": [
                 {"text": A.CHOICE, "value": "r", "action": "t.d = q.player.data(); q.dialogue.set_page('release');",
@@ -60,19 +63,25 @@ def tiny_dialogue(visible_fields, guard_fields):
 GRANT_FN = {A.FLAG_GRANT_FN: ["advancement grant @s only %s" % A.FLAG_ADV]}
 
 
-# Protects: the walk finds the grant from the rule's state and from no other; if removed, a leak in the walker
-# itself (e.g. never taking an option) would let every real conversation pass.
+# Protects: the walk finds the grant from the rule's state (cradle_open, both) and from no other; if removed, a leak
+# in the walker itself (e.g. never taking an option) would let every real conversation pass.
 def test_walk_grants_only_at_the_rule_on_a_correct_fixture():
     dlg = tiny_dialogue([K_B, K_E], [K_B, K_E])
-    # hand: (pending, 1, 1) opens 'ask', the choice is visible, 'release' runs the grant once
-    g, _n, offered = A.walk(dlg, GRANT_FN, ({K_STAGE: A.PENDING, K_B: 1, K_E: 1}, set()))
+    # hand: (cradle_open, 1, 1) opens 'ask', the choice is visible, 'release' runs the grant once
+    g, _n, offered = A.walk(dlg, GRANT_FN, ({K_STAGE: A.RELEASE_STAGE, K_B: 1, K_E: 1}, set()))
     assert offered and len(g) == 1 and A.contract(g[0][0])
-    # hand: (pending, 1, unset) opens 'ask' but the choice is hidden; no grant
-    g, _n, offered = A.walk(dlg, GRANT_FN, ({K_STAGE: A.PENDING, K_B: 1}, set()))
+    # hand: (cradle_open, 1, unset) opens 'ask' but the choice is hidden; no grant
+    g, _n, offered = A.walk(dlg, GRANT_FN, ({K_STAGE: A.RELEASE_STAGE, K_B: 1}, set()))
     assert not offered and g == []
-    # hand: wrong stage closes at once
-    g, _n, offered = A.walk(dlg, GRANT_FN, ({K_STAGE: A.RELEASED, K_B: 1, K_E: 1}, set()))
+    # hand: the pre-merge release stage closes at once
+    g, _n, offered = A.walk(dlg, GRANT_FN, ({K_STAGE: A.PENDING, K_B: 1, K_E: 1}, set()))
     assert not offered and g == []
+
+
+def write_conv(root, conv, dlg):
+    f = root / "cobblers_dialogue" / "data" / "cobblers" / "dialogues" / ("%s.json" % conv)
+    f.parent.mkdir(parents=True, exist_ok=True)
+    f.write_text(json.dumps(dlg), encoding="utf-8")
 
 
 # Protects: a gate missing one field is caught by check_conversation; if removed, the audit could pass a release
@@ -80,30 +89,28 @@ def test_walk_grants_only_at_the_rule_on_a_correct_fixture():
 def test_check_conversation_flags_a_gate_that_forgets_elara(tmp_path):
     for dlg, leaky in ((tiny_dialogue([K_B, K_E], [K_B, K_E]), False), (tiny_dialogue([K_B], [K_B]), True)):
         p = tmp_path / ("leaky" if leaky else "ok")
-        f = p / "cobblers_dialogue" / "data" / "cobblers" / "dialogues" / ("%s.json" % A.CONV)
-        f.parent.mkdir(parents=True)
-        f.write_text(json.dumps(dlg), encoding="utf-8")
-        bad, _ = A.check_conversation(p, GRANT_FN, DATA)
+        write_conv(p, A.CONV, dlg)
+        bad, _ = A.check_conversation(p, GRANT_FN, DATA, only=["binder"])
         if leaky:
-            # hand: from (pending, brann 1, elara unset/0) the choice shows and the grant runs
+            # hand: from (cradle_open, brann 1, elara unset/0) the choice shows, the grant runs, the stage moves
             assert any("fails the rule" in b for b in bad) and any("is shown from" in b for b in bad)
+            assert any("writes rift_released without" in b for b in bad)
         else:
-            assert bad == []
+            assert bad == [], bad[:3]
 
 
 # Protects: a visible choice whose TRANSITION still guards both is reported (shown where the rule fails) even
 # though no grant leaks; if removed, a player could be offered a release that silently does nothing.
 def test_check_conversation_reports_a_choice_shown_but_guarded(tmp_path):
-    f = tmp_path / "cobblers_dialogue" / "data" / "cobblers" / "dialogues" / ("%s.json" % A.CONV)
-    f.parent.mkdir(parents=True)
-    f.write_text(json.dumps(tiny_dialogue([K_B], [K_B, K_E])), encoding="utf-8")
-    bad, _ = A.check_conversation(tmp_path, GRANT_FN, DATA)
+    write_conv(tmp_path, A.CONV, tiny_dialogue([K_B], [K_B, K_E]))
+    bad, _ = A.check_conversation(tmp_path, GRANT_FN, DATA, only=["binder"])
     assert any("is shown from" in b for b in bad)
     assert not any("fails the rule" in b for b in bad)
 
 
 # Protects: the Molang interpreter's semantics the walk rests on: an unset key reads 0, strings never equal
-# numbers, `+` concatenates, ternary blocks; if removed, a wrong interpreter could agree with a wrong compiler.
+# numbers, `+` concatenates, ternary blocks, for_each over a context list with member access; if removed, a wrong
+# interpreter could agree with a wrong compiler or callback.
 def test_molang_semantics_by_hand():
     w, p = A.World({}), A.Player(uuid="U")
     m = A.Molang(w, p)
@@ -112,6 +119,10 @@ def test_molang_semantics_by_hand():
     assert m.run("return ('x' + q.player.uuid);") == "xU"
     m.run("t.d = q.player.data(); (t.d.k == 0) ? { t.d.k = 2; } : { t.d.k = 3; }; t.d.j = !(t.d.k == 2);")
     assert p.data == {"k": 2, "j": 0}
+    # hand: two items, only the second has is_npc, so v.s = '' + 'B' = 'B' and v.n = 1
+    m = A.Molang(w, p, ctx={"c.xs": [{"is_npc": 0, "uuid": "A"}, {"is_npc": 1, "uuid": "B"}]})
+    m.run("v.s = ''; v.n = 0; for_each(t.l, c.xs, { t.l.is_npc ? { v.s = v.s + t.l.uuid; v.n = v.n + 1; }; });")
+    assert m.vars == {"s": "B", "n": 1}
 
 
 # Protects: the command model's execute chain (if/unless entity, score matches, unset scores match nothing,
@@ -135,6 +146,59 @@ def test_command_model_by_hand():
     assert any(k == "say" for k, *_ in w.log)
 
 
+# Protects: the multi-entity model the gates and the callback run on: `execute as @a[box]` forks per player,
+# `tp @a[...,tag=!x]` moves only the untagged, `execute as <uuid> if entity @s[type=..,distance=..]` picks an NPC by
+# type and place; if removed, the gate and defeat checks would run on an untested model.
+def test_multi_entity_model_by_hand():
+    fns = {"t:c": ["execute as @a[x=0,y=0,z=0,dx=9,dy=9,dz=9] run tag @s add seen",
+                   "tp @a[x=0,y=0,z=0,dx=9,dy=9,dz=9,tag=!ok] 20 0 0 0 0",
+                   "execute as N1 if entity @s[type=cobblemon:npc,x=5.5,y=0,z=5.5,distance=..2] as P1 run tag @s add won"]}
+    inside_ok, inside, out = (A.Player(uuid="P1", pos=(5.5, 0.0, 5.5)), A.Player(uuid="P2", pos=(2.5, 0.0, 2.5)),
+                              A.Player(uuid="P3", pos=(50.5, 0.0, 0.5)))
+    inside_ok.tags.add("ok")
+    npc = A.Entity("N1", (6.5, 0.0, 5.5))                       # 1 block from (5.5, 0, 5.5): within ..2
+    w = A.World(fns, [inside_ok, inside, out, npc])
+    w.function("t:c", None)
+    # hand: P1 and P2 are in the 10-cube and get 'seen'; P3 is not; only P2 (untagged ok) is moved to x=20;
+    # N1 is a cobblemon:npc within 2 of the spot, so P1 gets 'won'
+    assert "seen" in inside_ok.tags and "seen" in inside.tags and "seen" not in out.tags
+    assert inside.pos == (20.0, 0.0, 0.0) and inside_ok.pos == (5.5, 0.0, 5.5) and out.pos == (50.5, 0.0, 0.5)
+    assert "won" in inside_ok.tags and "won" not in inside.tags
+    npc.pos = (8.5, 0.0, 5.5)                                    # 3 away: outside ..2
+    inside_ok.tags.discard("won")
+    A.World(fns, [inside_ok, inside, out, npc]).function("t:c", None)
+    assert "won" not in inside_ok.tags
+
+
+# Protects: the defeat check's machinery on a hand-written callback in the emitted shape: the winner gets the field,
+# the loser and a bystander do not; if removed, check_defeat_fields could pass on a model that never runs a callback.
+def test_victory_model_by_hand(tmp_path):
+    fn = {"cobblers:hq_tower/won_brann": ['runmolang "t.d = q.player.data(); t.d.%s = 1; q.player.save_data();" @s'
+                                          % K_B]}
+    cb = tmp_path / A.CALLBACK
+    cb.parent.mkdir(parents=True)
+    cb.write_text("for_each(t.l, c.scriptable_losers, { t.l.is_npc ? { for_each(t.w, c.player_winners, { "
+                  "q.run_command('execute as ' + t.l.uuid + ' if entity @s[type=cobblemon:npc,x=10.5,y=64,z=10.5,"
+                  "distance=..2] as ' + t.w.player.uuid + ' run function cobblers:hq_tower/won_brann'); }); }; });")
+    npc = A.Entity("00000000-0000-0000-0000-000000000001", (10.5, 64.0, 10.5))
+    p, q = A.Player(uuid="00000000-0000-0000-0000-0000000000a1"), A.Player(uuid="00000000-0000-0000-0000-0000000000b2")
+    A.victory(tmp_path, fn, [npc], [p], [q])
+    assert p.data == {K_B: 1} and q.data == {}
+    p.data = {}
+    A.victory(tmp_path, fn, [p], [npc], [q])                   # hand: the player lost; no player winner
+    assert p.data == {}
+
+
+# Protects: a party member read back from its properties string, hand-written; if removed, the party-equals-team
+# check could compare two wrong readings.
+def test_parse_properties_by_hand():
+    got = A.parse_properties("hariyama level=56 moves=fakeout,closecombat ability=thickfat "
+                             "held_item=cobblemon:assault_vest nature=adamant")
+    assert got == {"species": "hariyama", "level": 56, "moveset": ["fakeout", "closecombat"], "ability": "thickfat",
+                   "heldItem": "assault_vest", "nature": "adamant"}
+    assert A.parse_properties("ditto level=5 moves=transform shiny=yes")["shiny"] == "yes"
+
+
 def corridor_pack(tmp_path, extra=()):
     """A 10-long corridor along x at z=0: floor y0 stone, air y1-y2, ceiling y3, walls rock (unknown).
     The relic pack's layout: index.txt, one function, and a void tag."""
@@ -149,16 +213,15 @@ def corridor_pack(tmp_path, extra=()):
     return pack
 
 
-# Protects: the replay's fill semantics and the stand/sight walk; hand: stands are (x, 1, 0) for x 0..9, a trainer
-# at (5.5, 1, 0.5) with sight 2 sees x 3..7, so from x=0 only x 0..2 are reached without entering it.
-def test_replay_and_sight_walk_by_hand(tmp_path):
+# Protects: the replay's fill semantics and the walk; hand: stands are (x, 1, 0) for x 0..9; with x 3..7 forbidden
+# only x 0..2 are reached from x=0.
+def test_replay_and_walk_by_hand(tmp_path):
     box = (-2, -2, -2, 12, 6, 2)
     cells = A.replay(corridor_pack(tmp_path), box)
     ss = A.stands(cells, box)
     assert ss == {(x, 1, 0) for x in range(10)}
-    sight = {c for c in ss if abs(c[0] + 0.5 - 5.5) <= 2}
-    assert sight == {(x, 1, 0) for x in range(3, 8)}
-    assert A.reach(cells, ss, {(0, 1, 0)}, frozenset(sight)) == {(0, 1, 0), (1, 1, 0), (2, 1, 0)}
+    block = {(x, 1, 0) for x in range(3, 8)}
+    assert A.reach(cells, ss, {(0, 1, 0)}, frozenset(block)) == {(0, 1, 0), (1, 1, 0), (2, 1, 0)}
     assert A.reach(cells, ss, {(0, 1, 0)}) == ss
 
 
@@ -182,11 +245,14 @@ def fake_jar(tmp_path):
         z.writestr("data/cobblemon/species/generation1/testmon.json",
                    json.dumps({"abilities": ["guts", "h:sturdy"], "preEvolution": "babymon",
                                "moves": ["1:tackle", "30:slam", "tm:surf"]}))
+        z.writestr("assets/cobblemon/lang/en_us.json", json.dumps({"item.cobblemon.leftovers": "Leftovers",
+                                                                   "item.cobblemon.leftovers.tooltip": "x"}))
     return j
 
 
 # Protects: legality reads level, TM/egg and the pre-evolution line; hand: at level 25 tackle (1), bite (baby 20),
-# surf (tm), wish (baby egg) are legal; slam (30) is not; sturdy (hidden) is a legal ability, blaze is not.
+# surf (tm), wish (baby egg) are legal; slam (30) is not; sturdy (hidden) is a legal ability, blaze is not; the jar
+# names one item, leftovers (the tooltip key is not an item).
 def test_legality_by_hand(tmp_path):
     sp = A.jar_species(fake_jar(tmp_path))
     ok = {"species": "testmon", "level": 25, "moveset": ["tackle", "bite", "surf", "wish"], "ability": "sturdy"}
@@ -195,6 +261,7 @@ def test_legality_by_hand(tmp_path):
     assert len(bad) == 2 and "slam" in bad[0] and "blaze" in bad[1]
     assert A.legality(sp, dict(ok, level=30, moveset=["slam"])) == []
     assert A.legality(sp, dict(ok, species="nomon")) == ["species nomon is not in the jar"]
+    assert A.jar_items(fake_jar(tmp_path)) == {"leftovers"}
 
 
 # Protects: the cap is RCT's rule over the first Elite Four member, not a number copied from the finale's data;
@@ -216,10 +283,11 @@ def emit(out, mutate=None):
     """The real generators write into `out`; `mutate(ns)` may change a generator in memory first. Returns (packs,
     functions)."""
     import compile_dialogue as CD
+    import hq_tower as HQ
     import progression_pack as PP
     import relic_underground as RU
     import route_trainers as RT
-    ns = types.SimpleNamespace(CD=CD, PP=PP, RU=RU, RT=RT)
+    ns = types.SimpleNamespace(CD=CD, PP=PP, RU=RU, RT=RT, HQ=HQ)
     undo = mutate(ns) if mutate else None
     try:
         files, _done, _ref = CD.build_all(DATA)
@@ -233,6 +301,16 @@ def emit(out, mutate=None):
         f = out / "cobblers_relic_underground" / "data" / "cobblers" / "function" / "relic_underground" / "release_fx.mcfunction"
         f.parent.mkdir(parents=True, exist_ok=True)
         f.write_text("\n".join(fx) + "\n", encoding="utf-8")
+        # the tower pack's non-block part, as tools/hq_tower.py emit() writes it: the callback, the won functions,
+        # the gate cycle (its block functions need the city and are tools/hq_tower_audit.py's)
+        spec = HQ.load()
+        hq = out / "cobblers_hq_tower"
+        for rel, text in HQ.fight_files(spec).items():
+            g = hq / rel
+            g.parent.mkdir(parents=True, exist_ok=True)
+            g.write_text(text, encoding="utf-8")
+        g = hq / "data" / "cobblers" / "function" / "hq_tower" / "cycle.mcfunction"
+        g.write_text("\n".join(HQ.gate_lines(spec)) + "\n", encoding="utf-8")
     finally:
         if undo:
             undo()
@@ -244,75 +322,75 @@ def real(tmp_path_factory):
     return emit(tmp_path_factory.mktemp("finale_packs"))
 
 
-IDS = A.finale_ids()
+RECS = A.finale_ids()
 
 
-# Protects: both trainers are found by the finale doc's names and both fields are declared per-player booleans; if
-# removed, a renamed trainer would leave every later check auditing nothing.
-def test_doc_names_and_fields():
-    assert sorted(IDS) == ["brann", "elara"]
+# Protects: both fighters are found by the finale doc's names, both fields are declared per-player booleans, and
+# the stage enum holds the chain in its order; if removed, a renamed trainer or a reordered enum goes unseen.
+def test_doc_names_fields_and_order():
+    assert sorted(RECS) == ["brann", "elara"]
     assert A.check_fields() == []
 
 
+# Protects: the builder's own record of the order (data/hq_tower.json finale_order) agrees with the brief's chain;
+# if removed, the two could drift and each look right alone.
+def test_finale_order_matches_the_chain():
+    assert A.check_finale_order() == []
+
+
 # Protects: the post-gym-8 cap is 60 (docs/mechanics/LEAGUE_LEVEL_CAP.md: "After gym 8 the cap stays at 60"),
-# derived from RCT's rule and the Elite Four data; if removed, a cap change would go unnoticed by the team check.
+# derived from RCT's rule and the Elite Four data; if removed, a cap change would go unnoticed by the party check.
 def test_the_cap_after_gym_8_is_60():
     assert A.level_cap_after_gym8() == 60
 
 
-# Protects: the emitted rctmod teams are under the cap, beaten once, outside any series, and (with the jar) legal;
-# if removed, an over-cap or illegal team ships.
-def test_emitted_trainers(real):
+# Protects: each fighting NPC's class carries exactly data/finale_trainers.json's team, under the cap, legal in the
+# jar (when found), never challengeable by a click; if removed, an over-cap, illegal or drifted party ships.
+def test_emitted_parties(real):
     packs, _f = real
     jar = A.find_jar()
-    bad, notes = A.check_trainers(packs, IDS, 60, jar)
+    bad, notes = A.check_parties(packs, RECS, 60, jar)
     if jar is None:
         bad = [b for b in bad if not b.startswith("no Cobblemon 1.8 jar")]
     assert bad == [], bad
     assert len(notes) == 2
 
 
-# Protects: beating one trainer sets exactly its own field through the emitted advancement and won function; if
-# removed, a won function writing the other trainer's field would let one win open the release.
+# Protects: THE CALLBACK RULE. Beating Brann (Elara) at the spot R18HQ places them writes brann_defeated
+# (elara_defeated) for every winning player and for nobody else; a loss, another NPC and an NPC elsewhere write
+# nothing; if removed, one fight could count for another or for a bystander.
 def test_each_defeat_sets_only_its_own_field(real):
     packs, fns = real
-    assert A.check_defeat_fields(packs, fns, IDS) == []
+    assert A.check_defeat_fields(packs, fns) == []
 
 
-# Protects: THE RULE. Every start state walked through the compiled conversation: the grant only at
-# rift_crisis_pending with both fields, and reachable from every such state; if removed, nothing executes the
-# compiled gate.
-def test_compiled_conversation_grants_only_under_the_rule(real):
+# Protects: THE CHAIN. Every chain conversation from every start state: each stage written only by its scene, only
+# from its stage and with its fight won; fights only at their stage; the grant only at cradle_open with both, and
+# reachable there; if removed, nothing executes the compiled gates.
+def test_compiled_conversations_follow_the_chain(real):
     packs, fns = real
     bad, notes = A.check_conversation(packs, fns)
     assert bad == [], bad[:5]
-    assert "the grant reachable from 6" in notes[0]          # 3 cursors x flag held or not, at (pending, 1, 1)
+    # hand: nia/oren 1 stage x 9 field pairs x 2 flag x 3 cursors = 54; brann/elara 4 cursors -> 72; the binder's
+    # rule needs both fields 1: 1 x 1 x 2 x 3 = 6
+    assert "{'nia': 54, 'brann': 72, 'oren': 54, 'elara': 72, 'binder': 6}" in notes[0], notes
 
 
-# Protects: the story path in order, on emitted artifacts only: briefing, Brann, still closed, Elara, release once,
-# then the repeat; if removed, the per-path guarantees above could hold while the sequence a player walks does not.
-def test_the_story_path_end_to_end(real):
+# Protects: each write carries its own guard (a page run directly, as a restored cursor would); if removed, a
+# transition guarded only by the entry route could ship without its condition.
+def test_every_write_carries_its_own_guard(real):
     packs, fns = real
-    dlg = A.dialogue_of(packs)
-    p = A.Player()
-    p.data = {K_STAGE: A.PENDING}
+    assert A.check_guards(packs, fns) == []
 
-    def talk():
-        g, _n, offered = A.walk(dlg, fns, (dict(p.data), set(p.adv)))
-        return g, offered
 
-    assert talk() == ([], False)                                         # the briefing, no release
-    A.defeat_events(packs, fns, IDS["brann"], p, A.World(fns))
-    assert p.data[K_B] == 1 and talk() == ([], False)                    # one win is not enough
-    A.defeat_events(packs, fns, IDS["elara"], p, A.World(fns))
-    g, offered = talk()
-    # both: the release is offered and every grant on every path runs under the rule (the walk counts each path)
-    assert offered and g and all(A.contract(d) for d, _a in g)
-    w = A.World(fns)
-    page = next(x for x in dlg["pages"] if x["id"] == "release_001")
-    A.Molang(w, p).run(page["input"])
-    assert A.FLAG_ADV in p.adv and p.data[K_STAGE] == A.RELEASED
-    assert talk() == ([], False)                                         # after the flag: never again
+# Protects: the story end to end, all five in any order with both battle outcomes: the flag is reachable from
+# rift_crisis_pending and no state breaks the order; if removed, per-conversation rules could hold while the
+# sequence a player walks does not.
+def test_the_story_reaches_the_release_in_order(real):
+    packs, fns = real
+    bad, notes = A.check_story(packs, fns)
+    assert bad == [], bad[:5]
+    assert "rift_released" in notes[0]
 
 
 # Protects: the release writes the doc's stage and League cursor and runs release_fx after the grant, @s only,
@@ -329,30 +407,69 @@ def test_flag_advancement_is_impossible(real):
     assert A.check_progression(packs) == []
 
 
-# Protects: no other emitted file grants the flag or writes a defeat field; if removed, a second setter anywhere
-# would open z5 behind the confrontation's back.
-def test_sweep_finds_one_setter(real):
+# Protects: the door and climb gates per stage, per player, in one cycle: open from deep_handoff_received and
+# hq_crossed, set-backs outside their gates, creative passes; if removed, a gate open a stage early or trapping a
+# player goes unseen.
+def test_gates_per_stage(real):
+    _packs, fns = real
+    bad, notes = A.check_gates(fns)
+    assert bad == [], bad[:5]
+    assert "126 players" in notes[0]                     # hand: 21 stage values x 3 places x 2 modes
+
+
+# Protects: no other emitted file grants the flag, writes a defeat field, calls a won function or writes a chain
+# stage; if removed, a second setter anywhere would open z5 or the tower behind the chain's back.
+def test_sweep_finds_one_setter_each(real):
     packs, _f = real
-    bad, seen = A.check_sweep(packs, IDS)
+    bad, seen = A.check_sweep(packs)
     assert bad == [], bad
     assert seen["grant_callers"] == ["cobblers_dialogue/data/cobblers/dialogues/%s.json" % A.CONV]
 
 
-# Protects: the sweep's detector, by planting a second setter; hand: one extra function calling the grant must be
-# named, and `advancement grant @a everything` must be named.
-def test_sweep_names_a_planted_setter(real, tmp_path):
+# Protects: the sweep's detector, by planting setters; hand: one extra function calling the grant, `advancement
+# grant @a everything`, and a molang writing elara_defeated must each be named.
+def test_sweep_names_planted_setters(real, tmp_path):
     packs, _f = real
     planted = tmp_path / "packs"
     shutil.copytree(packs, planted)
     f = planted / "rogue" / "data" / "cobblers" / "function" / "x.mcfunction"
     f.parent.mkdir(parents=True)
     f.write_text("function %s\nadvancement grant @a everything\n" % A.FLAG_GRANT_FN)
-    bad, _ = A.check_sweep(planted, IDS)
+    g = planted / "rogue" / "data" / "cobblemon" / "callbacks" / "battle_victory" / "y.molang"
+    g.parent.mkdir(parents=True)
+    g.write_text("t.d = q.player.data(); t.d.%s = 1;" % K_E)
+    bad, _ = A.check_sweep(planted)
     assert any("rogue/data/cobblers/function/x.mcfunction" in b and "only" in b for b in bad)
     assert any("everything" in b for b in bad)
+    assert any("rogue/data/cobblemon/callbacks/battle_victory/y.molang" in b for b in bad)
 
 
 # ====================================================================== mutations: the GENERATOR changed, data not
+
+def drop_brann_from_hq_crossed(ns):
+    real_t = ns.CD.Compiler.transition
+
+    def transition(self, tid):
+        if tid != "record_hq_crossed":
+            return real_t(self, tid)
+        real_cond = self.cond
+        self.cond = lambda c, probes: "1" if c.get("field") == A.BRANN_FIELD else real_cond(c, probes)
+        try:
+            return real_t(self, tid)
+        finally:
+            del self.cond
+    ns.CD.Compiler.transition = transition
+    return lambda: setattr(ns.CD.Compiler, "transition", real_t)
+
+
+# Protects: INDEPENDENCE. compile_dialogue emitting record_hq_crossed without its brann_defeated guard
+# (data/quests.json untouched) must fail the guard check; if removed, the transition's own condition is unaudited
+# (the entry route alone hides it from the walk -- which is why check_guards exists).
+def test_mutation_hq_crossed_loses_its_brann_guard(tmp_path):
+    packs, fns = emit(tmp_path, drop_brann_from_hq_crossed)
+    bad = A.check_guards(packs, fns)
+    assert any("writes hq_crossed without" in b for b in bad), bad[:3]
+
 
 def drop_elara(ns):
     real_cond = ns.CD.Compiler.cond
@@ -366,29 +483,88 @@ def drop_elara(ns):
 
 
 # Protects: INDEPENDENCE. compile_dialogue compiling every elara_defeated condition to "1" (data/dialogue.json and
-# data/quests.json untouched) must fail the audit; if removed, the audit could share the compiler's blind spot.
+# data/quests.json untouched) must fail the chain walk; if removed, the audit could share the compiler's blind spot.
 def test_mutation_compiler_drops_elara(tmp_path):
     packs, fns = emit(tmp_path, drop_elara)
     bad, _ = A.check_conversation(packs, fns)
-    assert any("fails the rule" in b for b in bad), bad[:3]
-    assert any("is shown from" in b for b in bad)
+    assert any("fails the rule" in b or "without" in b for b in bad), bad[:3]
 
 
-def swap_key(ns):
-    real_key = ns.RT.key
+def move_callback_spot(ns):
+    real_spot = ns.HQ._fight_spot
 
-    def key(field):
-        return real_key(A.BRANN_FIELD if field == A.ELARA_FIELD else field)
-    ns.RT.key = key
-    return lambda: setattr(ns.RT, "key", real_key)
+    def spot(spec, f):
+        x, y, z = real_spot(spec, f)
+        return [x + 3, y, z] if f["npc"] == "npc_finale_brann_saye" else [x, y, z]
+    ns.HQ._fight_spot = spot
+    return lambda: setattr(ns.HQ, "_fight_spot", real_spot)
 
 
-# Protects: route_trainers' won function writing Brann's key for Elara (data untouched) fails the defeat check;
-# if removed, one win could count as two.
-def test_mutation_won_function_writes_the_wrong_field(tmp_path):
-    packs, fns = emit(tmp_path, swap_key)
-    bad = A.check_defeat_fields(packs, fns, IDS)
-    assert any(IDS["elara"] in b for b in bad), bad
+# Protects: INDEPENDENCE of the callback check. hq_tower matching Brann three blocks east of where R18HQ places him
+# (data/hq_tower.json untouched) must fail: beating him records nothing, and the story never reaches the release;
+# if removed, the callback's selector could drift from the placement unseen.
+def test_mutation_callback_matches_the_wrong_spot(tmp_path):
+    packs, fns = emit(tmp_path, move_callback_spot)
+    bad = A.check_defeat_fields(packs, fns)
+    assert any("one player beats brann" in b for b in bad), bad
+    sbad, _ = A.check_story(packs, fns)
+    assert any("never reaches" in b for b in sbad), sbad
+
+
+def widen_callback(ns):
+    real_ff = ns.HQ.fight_files
+
+    def ff(spec=None):
+        return {k: v.replace("distance=..2]", "distance=..64]") for k, v in real_ff(spec).items()}
+    ns.HQ.fight_files = ff
+    return lambda: setattr(ns.HQ, "fight_files", real_ff)
+
+
+# Protects: INDEPENDENCE. hq_tower's callback matching any NPC within 64 of the spot must fail: beating Oren (6 above
+# Elara) or a far NPC would count as beating Elara; if removed, "only when the loser is that NPC" is unaudited.
+def test_mutation_callback_matches_any_nearby_npc(tmp_path):
+    packs, fns = emit(tmp_path, widen_callback)
+    bad = A.check_defeat_fields(packs, fns)
+    assert any("is beaten: player" in b for b in bad), bad
+
+
+def climb_early(ns):
+    real_sf = ns.HQ.stages_from
+
+    def sf(stage):
+        return real_sf("deep_handoff_received" if stage == "hq_crossed" else stage)
+    ns.HQ.stages_from = sf
+    return lambda: setattr(ns.HQ, "stages_from", real_sf)
+
+
+# Protects: INDEPENDENCE of the gate check. hq_tower opening the climb at deep_handoff_received (data untouched)
+# must fail: a player who has not crossed Brann stays above the hall; if removed, the climb gate is unaudited.
+def test_mutation_climb_opens_a_stage_early(tmp_path):
+    _packs, fns = emit(tmp_path, climb_early)
+    bad, _ = A.check_gates(fns)
+    # hand: that player should be set onto the hall's floor; with the climb open they stay on the top storey
+    assert any("stage deep_handoff_received on the top storey is moved to (3433.5, 128.0, 3308.5)" in b for b in bad), bad
+
+
+def level_up_ace(ns):
+    real_bc = ns.CD.battle_class
+
+    def bc(nb, data_dir=None):
+        out = real_bc(nb, data_dir)
+        mons = out["party"]["pokemon"]
+        mons[-1] = mons[-1].replace("level=60", "level=61").replace("level=58", "level=59")
+        return out
+    ns.CD.battle_class = bc
+    return lambda: setattr(ns.CD, "battle_class", real_bc)
+
+
+# Protects: INDEPENDENCE of the party check. compile_dialogue raising each ace a level (data untouched) must fail:
+# the party no longer equals the team, and Elara's ace is over the cap; if removed, a drifted party ships.
+def test_mutation_party_drifts_from_the_team(tmp_path):
+    packs, _f = emit(tmp_path, level_up_ace)
+    bad, _ = A.check_parties(packs, RECS, 60, None)
+    assert any("is not data/finale_trainers.json's team" in b for b in bad), bad
+    assert any("over the post-gym-8 cap" in b for b in bad), bad
 
 
 def earnable_flag(ns):
@@ -431,44 +607,19 @@ def test_mutation_release_fx_for_everyone(tmp_path):
 # ====================================================================== the built packs, when prepare made them
 
 RELIC = BUILT / "cobblers_relic_underground" / "data" / "cobblers" / "function" / "relic_underground" / "index.txt"
-needs_relic = pytest.mark.skipif(not RELIC.is_file(), reason="build/datapacks/cobblers_relic_underground not built "
-                                                             "(needs the Rift skin's pack); prepare runs the audit")
 
 
-def with_relic(packs):
+# Protects: the binder's stand is reachable from the passage in the cradle AS BUILT; if removed, a dressing block
+# or a sealed cut could leave the release unspeakable.
+@pytest.mark.skipif(not RELIC.is_file(), reason="build/datapacks/cobblers_relic_underground not built (needs the "
+                                                "Rift skin's pack); prepare runs the audit")
+def test_cradle_binder_reachable_as_built(tmp_path):
+    packs = emit(tmp_path)[0]
     shutil.rmtree(packs / "cobblers_relic_underground")
     shutil.copytree(BUILT / "cobblers_relic_underground", packs / "cobblers_relic_underground")
-    return packs, A.LazyFunctions(A.function_index(packs))
-
-
-# Protects: both seats are a floor with two air in the cradle AS BUILT, and Brann's sight covers every way off the
-# passage onto the cradle floor; if removed, a dressing block on a seat or a side way past him goes unseen.
-@needs_relic
-def test_cradle_as_built(tmp_path):
-    packs, fns = with_relic(emit(tmp_path)[0])
-    bad, notes = A.check_cradle(packs, fns, IDS)
+    bad, notes = A.check_cradle(packs, A.LazyFunctions(A.function_index(packs)))
     assert bad == [], bad
-    assert "none on the cradle floor" in notes[0]
-
-
-def move_brann_home(ns):
-    real_cycle = ns.RT.cycle_lines
-
-    def cycle(tid, seat, field):
-        if tid == IDS["brann"]:
-            seat = dict(seat, seat=[seat["seat"][0] - 10, seat["seat"][1], seat["seat"][2]])
-        return real_cycle(tid, seat, field)
-    ns.RT.cycle_lines = cycle
-    return lambda: setattr(ns.RT, "cycle_lines", real_cycle)
-
-
-# Protects: INDEPENDENCE of the sight check. route_trainers holding Brann ten blocks west (data untouched) must
-# fail: his sight no longer covers the cut; if removed, the sight check could pass any seat.
-@needs_relic
-def test_mutation_brann_held_elsewhere(tmp_path):
-    packs, fns = with_relic(emit(tmp_path, move_brann_home)[0])
-    bad, _ = A.check_cradle(packs, fns, IDS)
-    assert any("does not cover the way in" in b or "binder is reached" in b for b in bad), bad
+    assert "among them" in notes[0]
 
 
 Z5 = BUILT / "cobblers_rift_zones" / "data" / "cobblers" / "function" / "rift_zones" / "z5" / "zone.mcfunction"
@@ -481,12 +632,15 @@ def test_z5_opens_on_the_flag():
     assert A.check_z5(BUILT, A.LazyFunctions(A.function_index(BUILT))) == []
 
 
-# Protects: the audit runs in prepare after every pack it reads is built; if removed, it would read a stale or
+# Protects: the audits run in prepare after every pack they read is built; if removed, they would read a stale or
 # missing pack, or never run.
-def test_prepare_runs_the_audit_after_its_inputs():
+def test_prepare_runs_the_audits_after_their_inputs():
     import reapply
     names = [n for n, _f in reapply.prepare_jobs(types.SimpleNamespace(source_root="", server_dir=""))]
     at = names.index("finale_audit")
     for before in ("compile_dialogue", "route_trainers", "progression_pack", "relic_underground:build",
-                   "rift_zones:build"):
+                   "rift_zones:build", "hq_tower:build"):
+        assert names.index(before) < at, before
+    at = names.index("hq_tower_audit")
+    for before in ("deep_city:build", "relic_underground:build", "hq_tower:build", "route_trainers"):
         assert names.index(before) < at, before
