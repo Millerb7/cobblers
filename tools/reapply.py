@@ -118,7 +118,7 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-02: the Frostpeak research camp (tools/frostpeak_camp.py, data/frostpeak_camp.json): block
                 # functions and the instruments' display entities, run by R18F
                 "cobblers_frostpeak_camp",
-                # 2026-10-05: Coldwater Station, the Kyurem research station on marsh country's east coast
+                # 2026-10-05: Coldwater Station, the Kyogre research station on marsh country's east coast
                 # (tools/coldwater_station.py, data/coldwater_station.json): block functions, two instrument displays
                 # and three researchers, run by R18CW. Its jetty and boatman are the ferry's (R16H, R17F)
                 "cobblers_coldwater_station",
@@ -1973,7 +1973,7 @@ def steps(with_spawns=False):
     # its three researchers, whose classes load at boot from cobblers_coldwater_station. After R16H and R17F, whose
     # jetty and boatman below it the station keeps clear of
     import coldwater_station
-    out.append(("R18CW", "Coldwater Station, the Kyurem research station (data/coldwater_station.json)",
+    out.append(("R18CW", "Coldwater Station, the Kyogre research station (data/coldwater_station.json)",
                 coldwater_station.placement_steps()))
     trad = json.loads((ROOT / "data" / "traders.json").read_text(encoding="utf-8"))
     towns = sorted({t["settlement"] for t in trad.get("traders") or [] if t.get("settlement")})
