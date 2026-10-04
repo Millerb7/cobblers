@@ -148,16 +148,6 @@ def test_the_tower_as_built(city):
     assert "10 seats, 4 caches, 2 set-backs" in notes[-1], notes
 
 
-# Protects: H2 is live: the relay hall's lightning rods are a spawn-condition block (data/spawn_blocks.json:
-# electrode, magnemite, joltik ... neededNearbyBlocks), KNOWN and reported, not fixed here. If the builder removes
-# them this test fails and should be deleted with the finding; if removed while they stand, the finding is lost.
-@needs_heightmap
-def test_known_finding_lightning_rods(city):
-    base, tread = city
-    probs, _ = H.audit(tower(base), SRC, tread=tread)
-    assert any(p.startswith("H2 ") and "minecraft:lightning_rod" in p for p in probs), probs
-
-
 def shut_stair(HQ):
     real = HQ.stair_cells
 

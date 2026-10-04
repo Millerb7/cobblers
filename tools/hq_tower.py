@@ -65,7 +65,9 @@ BARREL = "minecraft:barrel[facing=up,open=false]"
 BULB = "minecraft:waxed_copper_bulb[lit=true,powered=false]"
 LANTERN = "minecraft:lantern[hanging=true,waterlogged=false]"
 CHAIN = "minecraft:chain[axis=y,waterlogged=false]"
-ROD = "minecraft:lightning_rod[facing=up,powered=false,waterlogged=false]"
+# the relay masts' tips: an end rod, not a lightning rod -- a lightning rod is a spawn condition (data/spawn_blocks.json:
+# electrode, magnemite, joltik ... neededNearbyBlocks); hq_tower_audit H2 found it, 2026-10-04
+ROD = "minecraft:end_rod[facing=up]"
 BARS = "minecraft:iron_bars"
 
 # one flight a storey (data/hq_tower.json stairs_why): the cell a player starts from, the steps in climbing order and
