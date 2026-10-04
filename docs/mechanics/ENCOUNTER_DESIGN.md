@@ -124,6 +124,13 @@ the band. **A route corridor never carries a find**, even where it crosses the f
 to the player who leaves the path. The corridor otherwise takes a sub-region's anchor, common and uncommon families
 (at most 20 species per route, `route_species_selection`), and keeps the water families where the route crosses water.
 
+**A route has a rare and an ultra-rare table (the owner, 2026-10-05: "every area should have a rare, ultra rare, and
+boss table"; ruled the same day that a corridor is an area for the rare and ultra-rare tables but carries no heart --
+section 10, the path stays catchable).** Before the corridor is filled by score, `rules.corridor_rare_min` (2 rare, 1
+ultra-rare) of the best-scoring rare- and ultra-role families of the crossed **on-path** tables are reserved. An
+off-path table's rare families never reach a corridor: they may be its find. The `ultra` role (ultra-rare bucket,
+weight 1, the upper half of the band like a find) is the place's rarest family; every table carries one.
+
 A detour should also be *stronger*, not only rarer: at the same tier, the off-path tables' mean base-stat total is at
 least the on-path tables'. So an off-path table is **matured one tier further** than its tier (`off_path_maturity_step`):
 its families show the evolved share of the next leg, inside its own catchable band.
@@ -285,6 +292,16 @@ and **Viltri's Path valley** (each already holds two finds); the **foothill wood
 **Arrow creeks** (left without a heart in this pass, a candidate for the next: its Dondozo find already sits in the
 deep pools); and the **Jungle Isle** (under the sea, decision B15).
 Untouched as section 9 says: the bird nests, the mansion, the marine bands, the waterway, Victory Road's pools.
+
+**Every area has a heart (the owner, 2026-10-05: "every area should have a rare, ultra rare, and boss table"; boss =
+a heart, approved).** The "No heart" list above is superseded for map rows A-D: Viltri's plateau, Viltri's Path valley,
+the foothill woods, the north-east and north-shore downs, the upper trough, the glacier-foot fields, the Frostpeak
+strand, the north-west coast, Marsh creek, the eastern moor, the Tilpey north, east and west shores and Northgate east
+now carry a focus heart at their deepest interior cell beyond 128 blocks of every corridor (each heart's `why` gives
+its point, radius and nearest gap; 129 to 1,113 blocks). The 128-block and 1/9 rules stand for every one of them. The
+Windward shallows and deep and the Mt Clay outflow carry a focus heart too (`tools/compile_spawns.py`
+`focus_heart_boxes`). The count and list above, and `tests/test_encounter_hearts.py`, still name the 28; updating them
+is a test author's change.
 
 ### What the tests make of it
 
