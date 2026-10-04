@@ -117,6 +117,40 @@ COOLDOWN_LINE = {"guardian": "Leave me be a moment.", "route": "Let me catch my 
                  # the arena's tiers are repeatable, so this is never OUR hold-off talking: it is rctmod's own
                  # battleCooldownTicks (240, twelve seconds) in the moment after a fight either way
                  "arena": "Breathe. The stand is still here when you are ready."}
+REFUSALS = ROOT / "data" / "trainer_refusals.json"
+HOLDOFF_TOLD = "cobblers_holdoff_told"
+
+
+def refusals():
+    return json.loads(REFUSALS.read_text(encoding="utf-8"))
+
+
+def with_refusals(own):
+    """A dialog file we write REPLACES rctmod's default whole (data/trainer_refusals.json `why`): every refusal context
+    TrainerMob.replyTo can ask for goes in, or that refusal is silent. The file's own lines win."""
+    out = {k: [{"text": v}] for k, v in refusals()["lines"].items()}
+    out.update(own)
+    return out
+
+
+def holdoff_notice(me, near, beaten, unbeaten):
+    """Two lines beside a hold-off: tell each unbeaten player in range, once per approach, why the trainer refuses
+    them (data/trainer_refusals.json hold_off_notice). `beaten`/`unbeaten` are selector arguments for the two."""
+    n = refusals()["hold_off_notice"]
+    msg = json.dumps({"text": n["text"], "color": n.get("color", "yellow")})
+    return ["execute as %s at @s if entity @a[distance=..%s,%s] as @a[distance=..%s,%s,tag=!%s] run tellraw @s %s"
+            % (me, near, beaten, near, unbeaten, HOLDOFF_TOLD, msg),
+            "execute as %s at @s if entity @a[distance=..%s,%s] run tag @a[distance=..%s,%s] add %s"
+            % (me, near, beaten, near, unbeaten, HOLDOFF_TOLD)]
+
+
+def holdoff_rearm():
+    r = int(refusals()["hold_off_notice"].get("clear_radius", 24))
+    return ["# a player told about a hold-off is told again on the next approach, once away from every trainer",
+            "execute as @a[tag=%s] at @s unless entity @e[type=rctmod:trainer,distance=..%d] run tag @s remove %s"
+            % (HOLDOFF_TOLD, r, HOLDOFF_TOLD)]
+
+
 EXTRA_FIELDS = {"route_02_shore_trainer_01": ["quest.evt_viltri_north_bank.trainer_defeated"]}
 AFTER_WIN = {"route_02_shore_trainer_01": "The angler nods at the tackle box on the bank."}
 
@@ -346,11 +380,11 @@ def files():
         out["data/rctmod/mobs/trainers/single/%s.json" % tid] = mob
         d = lines_of(r, s)
         line = lambda text: [{"text": text}]
-        out["data/rctmod/dialogs/trainers/single/%s.json" % tid] = {
+        out["data/rctmod/dialogs/trainers/single/%s.json" % tid] = with_refusals({
             "on_battle_start": line(d["pre"]), "on_battle_lost": line(d["player_win"]), "trainer_lost": line(d["player_win"]),
             "on_battle_won": line(d["player_loss"]), "trainer_won": line(d["player_loss"]),
             # what it says while on cooldown: after a battle either way, and to a player who has beaten it (cycle)
-            "on_cooldown": line(COOLDOWN_LINE[s.get("cooldown") or ("guardian" if "sets" in r else "route")])}
+            "on_cooldown": line(COOLDOWN_LINE[s.get("cooldown") or ("guardian" if "sets" in r else "route")])})
         out["data/rctmod/loot_table/trainers/single/%s.json" % tid] = {"pools": []}
         setf = r["sets"] if "sets" in r else ["quest.%s.defeated" % tid] + EXTRA_FIELDS.get(tid, [])
         undeclared += [(tid, f) for f in setf if f not in fields]
@@ -388,13 +422,21 @@ def files():
             continue
         d = lines_of(rec, entry)
         ln = lambda text: [{"text": text}]
-        out["data/rctmod/dialogs/trainers/single/%s.json" % upstream] = {
+        # with_refusals: this file replaces upstream's whole dialog, and upstream's carried every refusal context;
+        # without them an Elite Four member refuses a player who has not beaten the one before in silence
+        out["data/rctmod/dialogs/trainers/single/%s.json" % upstream] = with_refusals({
             "on_battle_start": ln(d["pre"]), "on_battle_lost": ln(d["player_win"]), "trainer_lost": ln(d["player_win"]),
             "on_battle_won": ln(d["player_loss"]), "trainer_won": ln(d["player_loss"]),
-            "on_cooldown": ln(COOLDOWN_LINE[entry.get("cooldown", "league")])}
+            "on_cooldown": ln(COOLDOWN_LINE[entry.get("cooldown", "league")])})
+    # the hold-off NOTICE lines were generated beside each hold-off; they run as their own function, on the same
+    # clock just before the cycle, so the cycle keeps exactly its home / tag / cooldown lines per trainer
+    notice = holdoff_rearm() + [ln_ for ln_ in cycle if HOLDOFF_TOLD in ln_]
+    cycle = [ln_ for ln_ in cycle if HOLDOFF_TOLD not in ln_]
     out["data/%s/function/trainers/cycle.mcfunction" % NS] = cycle
+    out["data/%s/function/trainers/holdoff_notice.mcfunction" % NS] = notice
     out["data/%s/function/trainers/tick.mcfunction" % NS] = [
         "scoreboard players add #clock cobblers_trainers 1",
+        "execute if score #clock cobblers_trainers matches %d.. run function %s:trainers/holdoff_notice" % (PERIOD, NS),
         "execute if score #clock cobblers_trainers matches %d.. run function %s:trainers/cycle" % (PERIOD, NS)]
     out["data/%s/function/trainers/load.mcfunction" % NS] = ["scoreboard objectives add cobblers_trainers dummy"]
     out["data/minecraft/tags/function/tick.json"] = {"values": ["%s:trainers/tick" % NS]}
@@ -424,7 +466,9 @@ def leader_cycle_lines():
 
     The same INTERIM caveat as the seated trainers (see cycle_lines): Cooldown is entity NBT on a
     shared trainer, so it cannot be held per player. A player holding the badge is protected; an
-    unbeaten partner beside them may have to start the fight by interacting.
+    unbeaten partner within 9 blocks of the leader CANNOT start the fight, by interacting or otherwise
+    (canBattleAgainst requires Cooldown 0; see cycle_lines), until the badge holder steps back. A FRESH
+    player is refused by Brock this way in co-op; holdoff_notice tells them why.
     """
     seats = []
     for f in sorted((ROOT / "data" / "gym_buildings").glob("gym*.json")):
@@ -452,6 +496,9 @@ def leader_cycle_lines():
         out += ["# %s (%s), the leader: no rematch once the badge is held" % (tid, doc["id"]),
                 "execute as %s at @s if entity @a[distance=..9.0,advancements={%s:flag/%s=true}] "
                 "run data merge entity @s {Cooldown:40}" % (me, NS, flag)]
+        # the hold-off refuses a badge-less partner too (Cooldown is the trainer's, not per player): say so
+        out += holdoff_notice(me, "9.0", "advancements={%s:flag/%s=true}" % (NS, flag),
+                              "advancements={%s:flag/%s=false}" % (NS, flag))
 
     # THE SAME GAP, FIVE MORE TRAINERS. Found by the 2026-09-30 sweep the owner asked for, straight after
     # the leaders: the Elite Four and the Champion are overrides at the `kanto_league` template's OWN
@@ -486,6 +533,7 @@ def leader_cycle_lines():
             out += ["# %s, the League: no rematch once upstream's defeat advancement is held" % tid,
                     "execute as %s at @s if entity @a[distance=..9.0,advancements={%s=true}] "
                     "run data merge entity @s {Cooldown:40}" % (me, adv)]
+            out += holdoff_notice(me, "9.0", "advancements={%s=true}" % adv, "advancements={%s=false}" % adv)
     return out
 
 
@@ -515,10 +563,14 @@ def cycle_lines(tid, seat, field):
             # per player: one of the two has to give. The owner's call is that being dragged into a fight you already
             # won is worse than having to right-click one you have not, so the beaten player is protected and the
             # unbeaten partner may have to start the fight by interacting while their friend stands there.
+            # CORRECTION (rctmod v0.19.0-beta source, 2026-10-04): interacting does not get past it.
+            # mobInteract -> startBattleWith -> canBattleAgainst requires getCooldown() == 0 (TrainerMob.java
+            # 159-176, 190-201, 594-607), so the unbeaten partner is refused with on_cooldown for as long as the
+            # beaten one stays in range. holdoff_notice tells them so; the rule itself is the owner's to revisit.
             # The real fix is per-player trainers through the scene runtime (docs/STATE.md), gated on EXP-034.
             ] + ([] if seat.get("repeatable") else [
             "execute as %s at @s if entity @a[distance=..%s,tag=%s] run data merge entity @s {Cooldown:40}"
-            % (me, near, tag)]) + gate_lines(tid, seat, tag)
+            % (me, near, tag)] + holdoff_notice(me, near, "tag=%s" % tag, "tag=!%s" % tag)) + gate_lines(tid, seat, tag)
 
 
 def gate_lines(tid, seat, tag):
