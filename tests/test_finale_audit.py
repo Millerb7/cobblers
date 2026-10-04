@@ -311,6 +311,9 @@ def emit(out, mutate=None):
             g.write_text(text, encoding="utf-8")
         g = hq / "data" / "cobblers" / "function" / "hq_tower" / "cycle.mcfunction"
         g.write_text("\n".join(HQ.gate_lines(spec)) + "\n", encoding="utf-8")
+        # and Elara's door_admit (2026-10-05), as emit() writes it: her conversation's "Let me through." runs it
+        for name, lines in HQ.door_keeper_files(spec).items():
+            (g.parent / (name + ".mcfunction")).write_text("\n".join(lines) + "\n", encoding="utf-8")
     finally:
         if undo:
             undo()
@@ -602,6 +605,108 @@ def test_mutation_release_fx_for_everyone(tmp_path):
     bad = A.check_release_effects(packs, fns)
     assert any("particle to more than the releasing player" in b for b in bad), bad
     assert any("sound to more than the releasing player" in b for b in bad), bad
+
+
+# ====================================================================== Elara at the door (c2ef17c, 2026-10-05)
+# Re-pointed by a second test-author who did not build the door keeper. Expectations come from the door GATE's stage
+# (data/hq_tower.json gates.door.from_stage, which must equal the brief's DOOR_OPEN) and the tower's interior, from
+# where R18HQ places her and her yaw, and from the EMITTED conversation and cycle -- never from door_keeper or
+# tools/hq_tower.py check_door_keeper(). Not covered: anything in game (her body as a blocker, two players at once).
+
+# Protects: Elara lets a player into the tower only at a door stage, from every action of her conversation run
+# directly; every door stage gets in (anchor_shutdown only after her fight); her admit lands where the cycle leaves a
+# door-stage player alone; behind her a player of any stage is set out in front of her; the threshold just inside is
+# not ejected. If removed, a door keeper who admits early, strands a player inside or traps one behind her ships.
+def test_door_keeper_admits_at_the_door_stages_and_strands_nobody(real):
+    packs, fns = real
+    bad, notes = A.check_door_keeper(packs, fns)
+    assert bad == [], bad[:5]
+    vals = A.stage_values()
+    door_from = json.loads((DATA / "hq_tower.json").read_text(encoding="utf-8"))["gates"]["door"]["from_stage"]
+    assert "admitted at %s" % vals[vals.index(door_from):] in notes[0], notes
+
+
+# Protects: the battle precedes cradle_open and is Elara's only fight: in the story walk every state at cradle_open
+# or later holds elara_defeated, and her conversation starts a battle only at anchor_shutdown (rule_events); if
+# removed, the door's new pages could write the release stage without the fight.
+def test_elara_fights_once_before_cradle_open(real):
+    packs, fns = real
+    bad, _ = A.check_conversation(packs, fns, only={"elara"})
+    assert bad == [], bad[:5]
+    sbad, notes = A.check_story(packs, fns)
+    assert not [b for b in sbad if "elara" in b or "cradle_open" in b], sbad
+    assert notes[0].endswith("'cradle_open', 'rift_released']"), notes
+
+
+def admit_early(ns):
+    real_t = ns.CD.Compiler.transition
+
+    def transition(self, tid):
+        if tid != "elara_door_admit":
+            return real_t(self, tid)
+        real_cond = self.cond
+        self.cond = lambda c, probes: "1" if c.get("field") == A.STAGE else real_cond(c, probes)
+        try:
+            return real_t(self, tid)
+        finally:
+            del self.cond
+    ns.CD.Compiler.transition = transition
+    return lambda: setattr(ns.CD.Compiler, "transition", real_t)
+
+
+# Protects: INDEPENDENCE of the admit's stage rule. compile_dialogue emitting elara_door_admit with its stage
+# condition compiled to "1" (data/quests.json untouched) must fail: a player before Nia's packet gets in past her.
+def test_mutation_admit_at_a_wrong_stage(tmp_path):
+    packs, fns = emit(tmp_path, admit_early)
+    bad, _ = A.check_door_keeper(packs, fns)
+    assert any("lets a player at stage rift_crisis_pending into the tower" in b for b in bad), bad[:3]
+
+
+def admit_into_the_hole(ns):
+    real_dk = ns.HQ.door_keeper_files
+
+    def dk(spec):
+        return {k: [l.replace("tp @s 3436.5 ", "tp @s 3438.5 ") for l in v] for k, v in real_dk(spec).items()}
+    ns.HQ.door_keeper_files = dk
+    return lambda: setattr(ns.HQ, "door_keeper_files", real_dk)
+
+
+# Protects: INDEPENDENCE of the landing. hq_tower's door_admit moving the player into the cell behind Elara (data
+# untouched) must fail: the cycle sends them straight back out, so nobody ever gets in.
+def test_mutation_admit_lands_behind_her(tmp_path):
+    packs, fns = emit(tmp_path, admit_into_the_hole)
+    bad, _ = A.check_door_keeper(packs, fns)
+    assert any("is never let in" in b for b in bad), bad[:3]
+
+
+def exit_widened_inward(ns):
+    real_gl = ns.HQ.gate_lines
+
+    def gl(spec):
+        return [l.replace("x=3438,y=67,z=3306,dx=0,", "x=3437,y=67,z=3306,dx=1,") for l in real_gl(spec)]
+    ns.HQ.gate_lines = gl
+    return lambda: setattr(ns.HQ, "gate_lines", real_gl)
+
+
+# Protects: INDEPENDENCE of "the exit cannot strand". hq_tower's step-out selector reaching one cell inward (data
+# untouched) must fail: a door-stage player on the threshold inside is ejected.
+def test_mutation_exit_ejects_the_threshold(tmp_path):
+    packs, fns = emit(tmp_path, exit_widened_inward)
+    bad, _ = A.check_door_keeper(packs, fns)
+    assert any("legitimately inside" in b for b in bad), bad[:3]
+
+
+# Protects: INDEPENDENCE of her stand. tools/hq_tower.py npc_placements() (R18HQ's spawn list) putting Elara one cell
+# in, at the doorway's inner cell (data untouched), must fail: she no longer faces the corridor from the doorway.
+def test_mutation_elara_at_the_inner_cell(real, monkeypatch):
+    import hq_tower as HQ
+    packs, fns = real
+    real_np = HQ.npc_placements
+    monkeypatch.setattr(HQ, "npc_placements", lambda spec=None: [
+        (c, (at[0] - 1, at[1], at[2]) if cls.endswith("npc_finale_elara_venn") else at, cls, yaw)
+        for c, at, cls, yaw in real_np(spec)])
+    bad, _ = A.check_door_keeper(packs, fns)
+    assert any("does not stand in the doorway facing out" in b for b in bad), bad[:3]
 
 
 # ====================================================================== the built packs, when prepare made them
