@@ -702,9 +702,12 @@ def prepare_jobs(a):
     add("far_south", "far_south.py", *src)
     add("far_south_audit", "far_south_audit.py", *src)
     # the jungle's lost temples (2026-10-04): the generator fails closed on its own siting rules (long_isle_south, the
-    # keep-clear list, the authored clearance, spawn blocks) and on a record the heightmap disagrees with. Its
-    # independent audit is owed (data/jungle_temples.json audit_checklist); add it here, after this job, when written
+    # keep-clear list, the authored clearance, spawn blocks) and on a record the heightmap disagrees with; then its
+    # independent audit (tools/jungle_temples_audit.py, another agent's), after the pack it reads: the pack replayed
+    # against the heightmap and water, a walker to each cache, the siting and a keep-clear list of its own, the
+    # Harbour Mark's bearing, the caches against the economy curve, the steps and this wiring
     add("jungle_temples", "jungle_temples.py", *src)
+    add("jungle_temples_audit", "jungle_temples_audit.py", *src)
     add("drovers_hollow:build", "drovers_hollow.py", "build", *src)
     add("drovers_hollow_audit", "drovers_hollow_audit.py", *src)
     # the three wayside places of 2026-10-03. Each generator refuses a spawn-condition palette and any block outside its
