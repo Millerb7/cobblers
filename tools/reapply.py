@@ -716,9 +716,12 @@ def prepare_jobs(a):
     add("jungle_temples", "jungle_temples.py", *src)
     add("jungle_temples_audit", "jungle_temples_audit.py", *src)
     # Hollin's Apricorn Farm (2026-10-05): the generator fails closed on its own guards (allow-list, spawn blocks, wet
-    # columns, overlaps, fruit attachment, gates, spots, siting). Its independent audit is OWED (data/apricorn_farm.json
-    # audit_checklist); add its job here, after this one, when it exists
+    # columns, overlaps, fruit attachment, gates, spots, siting). Then its independent audit (tools/apricorn_farm_audit.py,
+    # another agent's, never imports the generator to derive): the built pack replayed over the heightmap, fruit
+    # attachment in the final world, terraces and floors re-derived, walking, light, siting, the merchant, the farmer's
+    # dialogue (compiled by compile_dialogue above) and this wiring; KNOWN defects print and do not fail it
     add("apricorn_farm:build", "apricorn_farm.py", "build", *src)
+    add("apricorn_farm_audit", "apricorn_farm_audit.py", *src)
     # Arrow Creeks Farm (2026-10-05): the generator fails closed on its siting rules, on a seat (the farmer's in
     # data/npc_seats.json, the stand's in data/markets.json) the plan does not leave open and on a spawn-condition
     # block. Before ambient_idle:build, whose plan takes the farm's animals from it (tools/pokemon_farm.py idlers).
