@@ -1,0 +1,712 @@
+{
+  "schema": "cobblers.hq_trainers/1",
+  "status": "authored 2026-10-04 with the HQ tower's interior (data/hq_tower.json, tools/hq_tower.py); not run in game",
+  "generated_by": "hand: tools/hq_tower.py checks every seat stands on a floor it builds, with two air above, inside the tower",
+  "consumed_by": "tools/route_trainers.py (the team, the mob, the lines, the defeat advancement and the cycle) and tools/reapply.py R17 (the summon)",
+  "band": {
+    "levels": [
+      55,
+      59
+    ],
+    "why": "the HQ is climbed after the eighth badge (Giovanni's ace 55) and before or beside Victory Road (56-60, data/vr_trainers.json); the League's aces are 60 (docs/story/TRAINER_RULES.json difficulty.league_ace_levels, RELAYED, not measured in game), which is where rctmod's level cap stands while the next required trainer is the League (relative_level_cap 0). So every member is at or under 59: under the cap, at Victory Road's weight. Species and movesets are reused verbatim from records already in data/trainers.json at 55-60, so no species or move id is new here"
+  },
+  "trainers": [
+    {
+      "id": "hq_tower_trainer_01",
+      "display_name": "Compact Loyalist Dace",
+      "storey": "hq_s0",
+      "seat": [
+        3432,
+        67,
+        3310
+      ],
+      "local": [
+        3,
+        6
+      ],
+      "yaw": 90,
+      "faces": "west, across the intake floor the door opens onto",
+      "skin": "rctmod:textures/trainers/single/worker_braden_0460.png",
+      "eye_contact": true,
+      "sight_distance": 4.5,
+      "unavoidable": "the intake floor's first fight: the stair's foot (0,8) is past him whichever way the floor is crossed",
+      "team": [
+        {
+          "species": "weezing",
+          "level": 55,
+          "moveset": [
+            "willowisp",
+            "sludgebomb",
+            "flamethrower",
+            "painsplit"
+          ]
+        },
+        {
+          "species": "drapion",
+          "level": 55,
+          "moveset": [
+            "toxic",
+            "knockoff",
+            "poisonjab",
+            "bulldoze"
+          ]
+        }
+      ],
+      "dialogue_text": {
+        "pre": "Intake is closed. Whatever the clinic told you, the cycle runs on Elara's word, not Nia's.",
+        "player_win": "Fine. Go up. The Captain will turn you round himself.",
+        "player_loss": "Back out the door. The street is that way."
+      },
+      "rct": {
+        "name": {
+          "literal": "Compact Loyalist Dace"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.1,
+            "switchBias": 0.6,
+            "statusMoveBias": 0.95,
+            "itemBias": 0.9,
+            "maxSelectMargin": 0.18
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "weezing",
+            "level": 55,
+            "moveset": [
+              "willowisp",
+              "sludgebomb",
+              "flamethrower",
+              "painsplit"
+            ]
+          },
+          {
+            "species": "drapion",
+            "level": 55,
+            "moveset": [
+              "toxic",
+              "knockoff",
+              "poisonjab",
+              "bulldoze"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "hq_tower_trainer_02",
+      "display_name": "Compact Loyalist Rhee",
+      "storey": "hq_s2",
+      "seat": [
+        3436,
+        80,
+        3306
+      ],
+      "local": [
+        7,
+        2
+      ],
+      "yaw": 180,
+      "faces": "north, at the stair's head and the east stair's foot",
+      "skin": "rctmod:textures/trainers/single/worker_braden_0460.png",
+      "eye_contact": true,
+      "sight_distance": 4.5,
+      "unavoidable": "the foundry floor: the walk from the briefing stair's head (6,0) to the east stair's foot (8,0) passes beside him",
+      "team": [
+        {
+          "species": "excadrill",
+          "level": 56,
+          "moveset": [
+            "earthquake",
+            "ironhead",
+            "rockslide",
+            "rapidspin"
+          ]
+        },
+        {
+          "species": "crobat",
+          "level": 55,
+          "moveset": [
+            "toxic",
+            "airslash",
+            "bite",
+            "roost"
+          ]
+        }
+      ],
+      "dialogue_text": {
+        "pre": "Brann stood his hall down. The foundry did not.",
+        "player_win": "The press keeps running whether I win or not. That was always the point of it.",
+        "player_loss": "Down the stair. The foundry is no place to lose a fight."
+      },
+      "rct": {
+        "name": {
+          "literal": "Compact Loyalist Rhee"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.1,
+            "switchBias": 0.6,
+            "statusMoveBias": 0.95,
+            "itemBias": 0.9,
+            "maxSelectMargin": 0.18
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "excadrill",
+            "level": 56,
+            "moveset": [
+              "earthquake",
+              "ironhead",
+              "rockslide",
+              "rapidspin"
+            ]
+          },
+          {
+            "species": "crobat",
+            "level": 55,
+            "moveset": [
+              "toxic",
+              "airslash",
+              "bite",
+              "roost"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "hq_tower_trainer_03",
+      "display_name": "Compact Scientist Ilse",
+      "storey": "hq_s3",
+      "seat": [
+        3430,
+        86,
+        3311
+      ],
+      "local": [
+        1,
+        7
+      ],
+      "yaw": -90,
+      "faces": "east, along the south catwalk",
+      "skin": "rctmod:textures/trainers/single/scientist_ted_014f.png",
+      "eye_contact": true,
+      "sight_distance": 4.5,
+      "unavoidable": "the catwalk's south-west corner: the walk from the east stair's head round to the north stair's foot turns at her",
+      "team": [
+        {
+          "species": "klinklang",
+          "level": 56,
+          "moveset": [
+            "shiftgear",
+            "geargrind",
+            "chargebeam",
+            "thunderwave"
+          ]
+        },
+        {
+          "species": "bronzong",
+          "level": 56,
+          "moveset": [
+            "trickroom",
+            "gyroball",
+            "bodypress",
+            "hypnosis"
+          ]
+        }
+      ],
+      "dialogue_text": {
+        "pre": "Mind the rail. The press does not stop for anyone who falls.",
+        "player_win": "The readings were never wrong. We just stopped asking whose home they measured.",
+        "player_loss": "Hold the rail on your way down."
+      },
+      "rct": {
+        "name": {
+          "literal": "Compact Scientist Ilse"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.1,
+            "switchBias": 0.6,
+            "statusMoveBias": 0.95,
+            "itemBias": 0.9,
+            "maxSelectMargin": 0.18
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "klinklang",
+            "level": 56,
+            "moveset": [
+              "shiftgear",
+              "geargrind",
+              "chargebeam",
+              "thunderwave"
+            ]
+          },
+          {
+            "species": "bronzong",
+            "level": 56,
+            "moveset": [
+              "trickroom",
+              "gyroball",
+              "bodypress",
+              "hypnosis"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "hq_tower_trainer_04",
+      "display_name": "Compact Scientist Okon",
+      "storey": "hq_s4",
+      "seat": [
+        3435,
+        92,
+        3306
+      ],
+      "local": [
+        6,
+        2
+      ],
+      "yaw": 180,
+      "faces": "north, at the stair's head",
+      "skin": "rctmod:textures/trainers/single/scientist_ted_014f.png",
+      "eye_contact": true,
+      "sight_distance": 4.5,
+      "unavoidable": "the lab: between the north stair's head (6,0) and the east stair's foot (8,0)",
+      "team": [
+        {
+          "species": "lanturn",
+          "level": 56,
+          "moveset": [
+            "discharge",
+            "surf",
+            "icebeam",
+            "confuseray"
+          ]
+        },
+        {
+          "species": "toxapex",
+          "level": 57,
+          "moveset": [
+            "venoshock",
+            "recover",
+            "liquidation",
+            "haze"
+          ]
+        }
+      ],
+      "dialogue_text": {
+        "pre": "Do not touch the benches. Half these samples came through the Rift and nobody knows what they were.",
+        "player_win": "Take the stair, then. I will finish logging this before anyone shuts the power off.",
+        "player_loss": "Out of the lab. I have work that cannot wait on you."
+      },
+      "rct": {
+        "name": {
+          "literal": "Compact Scientist Okon"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.1,
+            "switchBias": 0.6,
+            "statusMoveBias": 0.95,
+            "itemBias": 0.9,
+            "maxSelectMargin": 0.18
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "lanturn",
+            "level": 56,
+            "moveset": [
+              "discharge",
+              "surf",
+              "icebeam",
+              "confuseray"
+            ]
+          },
+          {
+            "species": "toxapex",
+            "level": 57,
+            "moveset": [
+              "venoshock",
+              "recover",
+              "liquidation",
+              "haze"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "hq_tower_trainer_05",
+      "display_name": "Compact Archivist Marne",
+      "storey": "hq_s5",
+      "seat": [
+        3435,
+        98,
+        3310
+      ],
+      "local": [
+        6,
+        6
+      ],
+      "yaw": -90,
+      "faces": "east, at the south stair's foot",
+      "skin": "rctmod:textures/trainers/single/scientist_ted_014f.png",
+      "eye_contact": true,
+      "sight_distance": 4.5,
+      "unavoidable": "the records floor: beside the walk from the east stair's head (8,6) to the south stair's foot (8,8)",
+      "team": [
+        {
+          "species": "starmie",
+          "level": 57,
+          "moveset": [
+            "surf",
+            "psychic",
+            "icywind",
+            "recover"
+          ]
+        },
+        {
+          "species": "mudsdale",
+          "level": 57,
+          "moveset": [
+            "highhorsepower",
+            "rockslide",
+            "bodypress",
+            "heavyslam"
+          ]
+        }
+      ],
+      "dialogue_text": {
+        "pre": "Every exchange we ever ran is on these shelves. You do not get to read them.",
+        "player_win": "Read them, then. Tomas's trace is the last page and the worst one.",
+        "player_loss": "The records stay closed."
+      },
+      "rct": {
+        "name": {
+          "literal": "Compact Archivist Marne"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.1,
+            "switchBias": 0.6,
+            "statusMoveBias": 0.95,
+            "itemBias": 0.9,
+            "maxSelectMargin": 0.18
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "starmie",
+            "level": 57,
+            "moveset": [
+              "surf",
+              "psychic",
+              "icywind",
+              "recover"
+            ]
+          },
+          {
+            "species": "mudsdale",
+            "level": 57,
+            "moveset": [
+              "highhorsepower",
+              "rockslide",
+              "bodypress",
+              "heavyslam"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "hq_tower_trainer_06",
+      "display_name": "Relay Technician Sorrel",
+      "storey": "hq_s7",
+      "seat": [
+        3436,
+        110,
+        3305
+      ],
+      "local": [
+        7,
+        1
+      ],
+      "yaw": 180,
+      "faces": "north, along the relay hall's north catwalk",
+      "skin": "rctmod:textures/trainers/single/engineer_bernie_00de.png",
+      "eye_contact": true,
+      "sight_distance": 4.5,
+      "unavoidable": "the relay hall's upper catwalk: the walk from the west stair's head round to the south stair's foot passes her nook",
+      "team": [
+        {
+          "species": "aggron",
+          "level": 57,
+          "moveset": [
+            "stealthrock",
+            "heavyslam",
+            "rockslide",
+            "bodypress"
+          ]
+        },
+        {
+          "species": "coalossal",
+          "level": 57,
+          "moveset": [
+            "flamethrower",
+            "rockslide",
+            "bodypress",
+            "rapidspin"
+          ]
+        },
+        {
+          "species": "kilowattrel",
+          "level": 56,
+          "moveset": [
+            "spark",
+            "airslash",
+            "tailwind"
+          ]
+        }
+      ],
+      "dialogue_text": {
+        "pre": "The relays are singing. If you go up there and Oren gets the order wrong, this whole hall goes with them.",
+        "player_win": "Then go. Tell Oren the second relay runs hot.",
+        "player_loss": "Stay off the catwalk while the relays are live."
+      },
+      "rct": {
+        "name": {
+          "literal": "Relay Technician Sorrel"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.1,
+            "switchBias": 0.6,
+            "statusMoveBias": 0.95,
+            "itemBias": 0.9,
+            "maxSelectMargin": 0.18
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "aggron",
+            "level": 57,
+            "moveset": [
+              "stealthrock",
+              "heavyslam",
+              "rockslide",
+              "bodypress"
+            ]
+          },
+          {
+            "species": "coalossal",
+            "level": 57,
+            "moveset": [
+              "flamethrower",
+              "rockslide",
+              "bodypress",
+              "rapidspin"
+            ]
+          },
+          {
+            "species": "kilowattrel",
+            "level": 56,
+            "moveset": [
+              "spark",
+              "airslash",
+              "tailwind"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "hq_tower_trainer_07",
+      "display_name": "Compact Lieutenant Varga",
+      "storey": "hq_s8",
+      "seat": [
+        3431,
+        116,
+        3310
+      ],
+      "local": [
+        2,
+        6
+      ],
+      "yaw": 0,
+      "faces": "south, at the barracks' stair head",
+      "skin": "rctmod:textures/trainers/single/worker_braden_0460.png",
+      "eye_contact": true,
+      "sight_distance": 4.5,
+      "unavoidable": "the barracks: the last fight before the director's office and anchor control, beside the walk from the south stair's head (2,8) to the west stair's foot (0,8)",
+      "team": [
+        {
+          "species": "drapion",
+          "level": 58,
+          "moveset": [
+            "toxic",
+            "knockoff",
+            "poisonjab",
+            "bulldoze"
+          ]
+        },
+        {
+          "species": "excadrill",
+          "level": 58,
+          "moveset": [
+            "earthquake",
+            "ironhead",
+            "rockslide",
+            "rapidspin"
+          ]
+        },
+        {
+          "species": "gigalith",
+          "level": 58,
+          "moveset": [
+            "rockslide",
+            "bodypress",
+            "protect",
+            "stealthrock"
+          ],
+          "ability": "sandstream"
+        },
+        {
+          "species": "crobat",
+          "level": 59,
+          "moveset": [
+            "toxic",
+            "airslash",
+            "bite",
+            "roost"
+          ]
+        }
+      ],
+      "dialogue_text": {
+        "pre": "Above me is the Director and the board. Nobody reaches either through this room.",
+        "player_win": "Elara is one floor up. Say to her what you said to my team.",
+        "player_loss": "The barracks hold. Go back down."
+      },
+      "rct": {
+        "name": {
+          "literal": "Compact Lieutenant Varga"
+        },
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.25,
+            "switchBias": 0.8,
+            "statusMoveBias": 1.05,
+            "itemBias": 1.0,
+            "maxSelectMargin": 0.12
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "drapion",
+            "level": 58,
+            "moveset": [
+              "toxic",
+              "knockoff",
+              "poisonjab",
+              "bulldoze"
+            ]
+          },
+          {
+            "species": "excadrill",
+            "level": 58,
+            "moveset": [
+              "earthquake",
+              "ironhead",
+              "rockslide",
+              "rapidspin"
+            ]
+          },
+          {
+            "species": "gigalith",
+            "level": 58,
+            "moveset": [
+              "rockslide",
+              "bodypress",
+              "protect",
+              "stealthrock"
+            ],
+            "ability": "sandstream"
+          },
+          {
+            "species": "crobat",
+            "level": 59,
+            "moveset": [
+              "toxic",
+              "airslash",
+              "bite",
+              "roost"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
