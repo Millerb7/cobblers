@@ -752,6 +752,12 @@ def prepare_jobs(a):
     # the stone faces' audit LAST: it checks R9O through steps(), which indexes every pack built above, so on a fresh
     # build/ it failed closed on whichever pack came after it in this list (found 2026-10-02 on a new worktree)
     add("mines_audit", "mines_audit.py", *src)
+    # the idle Pokemon's independent audit (tools/ambient_idle_audit.py, written by an agent that did not build them):
+    # after ambient:build, and LAST for the same reason as mines_audit -- it replays the town from steps(), which
+    # indexes every pack built above. The cap, groups of 1-3, every spot on the built town's floor, the jar's sleepers,
+    # the wake at 16, no brain-remaking merge, the workers' flags, the snow house's Buneary. Fail-closed; KNOWN
+    # defects are listed in the tool and a fixed one fails until it is removed there
+    add("ambient_idle_audit", "ambient_idle_audit.py", *src)
     return J
 
 
