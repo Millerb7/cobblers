@@ -470,7 +470,9 @@ def check_route_trainers(E, problems):
     retired = {t for t, r in E.trainers.items() if r.get("seated") is False}
     seats = [p[0] for p in route_trainers.placements()]
     expected = 0
-    for f in ("route_trainers", "late_route_trainers", "mansion_guardians", "vr_trainers", "arena_trainers"):
+    # finale_trainers: Brann and Elara in Hoopa's cradle (2026-10-04), the sixth seat file route_trainers reads
+    for f in ("route_trainers", "late_route_trainers", "mansion_guardians", "vr_trainers", "arena_trainers",
+              "finale_trainers"):
         expected += sum(1 for e in doc(DATA / ("%s.json" % f))["trainers"] if "seat" in e and e.get("seated") is not False)
     if len(seats) != expected:
         problems.append("route_trainers: %d seats placed, the seat files carry %d" % (len(seats), expected))

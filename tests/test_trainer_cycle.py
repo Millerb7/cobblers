@@ -143,7 +143,9 @@ def test_every_placed_trainer_has_exactly_one_line_of_each_kind(cycle):
     arena = n("arena_trainers.json")
     seated_arena = [t["id"] for t in arena if "seat" in t and t.get("seated", True)]
     want = (len(n("route_trainers.json")) + len(n("late_route_trainers.json")) + len(n("mansion_guardians.json"))
-            + len(n("vr_trainers.json")) + len(seated_arena))
+            + len(n("vr_trainers.json")) + len(seated_arena)
+            # Brann and Elara in Hoopa's cradle (data/finale_trainers.json, 2026-10-04)
+            + len(n("finale_trainers.json")))
     assert len(IDS) == want and len(set(IDS)) == want, (len(IDS), want)
     assert not ({t["id"] for t in arena} - set(seated_arena)) & set(IDS), "an unseated arena champion is placed"
     assert REPEATABLE == {s["id"] for s in SEATS if s.get("repeatable")} and REPEATABLE <= set(IDS), sorted(REPEATABLE)

@@ -310,7 +310,7 @@
         "quest": "main_worldshift_reveal",
         "transition": "unlock_league_after_rift_resolution",
         "invoked_by": "dlg_main_relic_hall_release",
-        "invoked_at": "line release_001 ('The restraint opens.'), reached by the choice 'Release Hoopa.' at stage rift_crisis_pending; NPC npc_main_relic_hall_binder at (3363, 13, 3312) in Hoopa's carved cradle (the hall's relic ring at (3390, 8, 3268) until 2026-10-03), seated by tools/reapply.py step R18RU (data/relic_underground.json geometry.release). The owner, 2026-10-03: 'set it ourselves at the quest stage that ends the Rift crisis'",
+        "invoked_at": "line release_001 ('The restraint opens.'), reached by the choice 'Release Hoopa.', shown only at stage rift_crisis_pending to a player who has beaten both Captain Brann Saye and Director Elara Venn in the cradle (quest.main_worldshift_reveal.brann_defeated and elara_defeated, data/finale_trainers.json, 2026-10-04; the transition requires the same three); NPC npc_main_relic_hall_binder at (3363, 13, 3312) in Hoopa's carved cradle (the hall's relic ring at (3390, 8, 3268) until 2026-10-03), seated by tools/reapply.py step R18RU (data/relic_underground.json geometry.release). The owner, 2026-10-03: 'set it ourselves at the quest stage that ends the Rift crisis'",
         "superseded_invoked_by_owed": "Kept as the plan the binder replaced (Scene 5 at the cradle still waits on the cradle and a verified Hoopa model). Hoopa's release at the cradle: docs/story/NPCS_AND_RIFT_FINALE.md Scene 5 (Codex, commit 9cbfd213 on the local branch codex/trainer-modes, NOT merged), actor_finale_hoopa at the cradle centre (3357, 12, 3306), player choice 'Release Hoopa.'. It needs the cradle chamber carved (data/deep_city.json reserves its box, nothing carves it) and a data/scenes.json scene whose Hoopa actor opens that conversation. Until then nothing invokes the transition and nobody holds this flag. Set invoked_by to the conversation id when it lands; tests/test_rift_crisis_resolved.py holds the two in step."
       },
       "why": "Approved in docs/story/ARC.md ('The final story confrontation ends the forced activation and releases Hoopa from the steering mechanism. It sets rift_crisis_resolved', and the League row 'Requires rift_crisis_resolved'). Per player, like every flag here: an advancement, granted by cobblers:flag/rift_crisis_resolved/grant, which the transition's first effect runs as and at the releasing player. It is the gate data/rift_zones.json z5 names.",
@@ -787,6 +787,24 @@
       "initial": "release_closed",
       "allowed_values": "node ids from dlg_main_relic_hall_release",
       "why": "the dialogue cursor of the Compact binder at the relic ring (data/relic_underground.json geometry.release, 2026-10-03), the conversation that releases Hoopa. Its entry rules always pick the node from quest.main_worldshift_reveal.stage, so the cursor gates nothing; the release itself is gated by the stage."
+    },
+    {
+      "id": "quest.main_worldshift_reveal.brann_defeated",
+      "quest_id": "main_worldshift_reveal",
+      "field": "brann_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player beat Captain Brann Saye in Hoopa's cradle (data/finale_trainers.json finale_brann_saye, 2026-10-04). Set only by tools/route_trainers.py's won function, from rctmod's defeat_count advancement, which fires for the winning side of a finished battle only. The binder's 'Release Hoopa.' and its transition unlock_league_after_rift_resolution (rift_crisis_resolved's setter) both require it."
+    },
+    {
+      "id": "quest.main_worldshift_reveal.elara_defeated",
+      "quest_id": "main_worldshift_reveal",
+      "field": "elara_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player beat Director Elara Venn in Hoopa's cradle (data/finale_trainers.json finale_elara_venn, 2026-10-04). Set only by tools/route_trainers.py's won function, from rctmod's defeat_count advancement. The binder's 'Release Hoopa.' and its transition unlock_league_after_rift_resolution (rift_crisis_resolved's setter) both require it."
     },
     {
       "id": "quest.evt_vr_abandoned_cut.started",
