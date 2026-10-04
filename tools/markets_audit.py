@@ -655,11 +655,6 @@ def poly_dist(px, pz, pts):
     return min(seg_dist(px, pz, a, b) for a, b in zip(pts, pts[1:]))
 
 
-def turned(size, rotation):
-    sx, _sy, sz = size
-    return (sz, sx) if rotation in ("clockwise_90", "counterclockwise_90", "90", "270") else (sx, sz)
-
-
 def keeper_problems(cid, at, plan, footprints, walked, others, min_route):
     """A keeper's cell (x, z) must lie in no street (centre within half its width of the polyline), no anchor lot, no
     building footprint, not within min_route of a walked line, and no other NPC within reapply's 2-block dedupe."""
@@ -727,20 +722,19 @@ def frontage_problems(cid, at, yaw, plan):
 
 
 def building_footprints(settlement, placements, templates):
+    """{placement id: (x0, z0, x1, z1)} as each building's placer seats it (place_donor.footprint: a pack donor turns
+    about its position, a town building starts at its minimum corner), and the ids whose size could not be read."""
+    sys.path.insert(0, str(TOOLS))
+    import place_donor as PD
     out, unknown = {}, []
     for q in placements["placements"]:
         if q.get("settlement") != settlement or q.get("kind") == "earthwork" or not q.get("position"):
             continue
-        size = q.get("size")
-        if not size:
-            doc, _ = templates.get(q) if templates is not None else (None, None)
-            if doc is None:
-                unknown.append(q["id"])
-                continue
-            size = [int(v) for v in doc["size"]]
-        w, d = turned(size, q.get("rotation") or "none")
-        x0, z0 = int(q["position"]["x"]), int(q["position"]["z"])
-        out[q["id"]] = (x0, z0, x0 + w - 1, z0 + d - 1)
+        size, _why = PD.template_size(q, templates)
+        if size is None:
+            unknown.append(q["id"])
+            continue
+        out[q["id"]] = PD.footprint(q, size)
     return out, unknown
 
 
