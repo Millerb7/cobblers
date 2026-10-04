@@ -42,7 +42,14 @@ Written by an agent that did not build the idle Pokemon (2026-10-04). Where each
            block plan (tools/lopunny_house.plan): inside its clear box, feet and head not its blocks, not on its path
            or door, and the night sleeper's block light (a flood from the plan's and replay's light sources) <= 4.
   follower its home (ScriptingConfig) is its spot, and an NPC lies within home_radius + 1 of it (the disc it potters
-           in touches the NPC): "following a kid around".
+           in touches the NPC): "following a kid around". OR it is penned (2026-10-05, for Arrow Creeks Farm's grazing
+           livestock, by an agent that built none of it): a walker's flood from its home over the replayed blocks never
+           leaves a box PEN_REACH round it, every column of the region's outer wall is a fence, fence gate or wall, and
+           its home disc lies inside. A fence does the handler's job; a follower that has neither is a stray.
+  places   beyond the towns: data/markets.json places_beyond_towns whose source record declares a bbox (the farm) are
+           places like towns for the cap, the groups and "in no place"; they have no town plan, so the street,
+           footprint, stall and NPC rules are not asked of them. A STILL idler indoors is accepted only in a building
+           of its place's own record that the record's animal on that column names (housed()): livestock in a byre.
   cost     the per-tick command lines counted from the emitted functions here, not from the builder's report.
 
 Independence, proved by MUTATING THE GENERATOR with data/ambient.json untouched (tests/test_ambient_idle_audit.py):
@@ -401,7 +408,12 @@ def check_sleepers(idlers, rest, night_light):
     return P
 
 
-def check_followers(idlers, npcs):
+def check_followers(idlers, npcs, at=None):
+    """A follower is "following a kid around": an NPC within home_radius + 1 of its home. OR it is penned (2026-10-05,
+    Arrow Creeks Farm's grazing livestock): `at(x, y, z)` -> block state of the replayed world, and the walk from its
+    home (pen() below) stays inside a region whose every outer wall is a fence, a fence gate or a wall and which holds
+    the whole disc it potters in. A pen needs no handler -- the fence does the NPC's job of keeping it in view and in
+    place -- but a follower that is neither beside an NPC nor fenced in is a stray. Without `at` only the NPC rule."""
     P = []
     for i in idlers.values():
         if i["kind"] != "follower" or i["town"] == "lopunny_house":   # the yard's Buneary wanders by design
@@ -412,11 +424,147 @@ def check_followers(idlers, npcs):
             continue
         reach = (i["home_radius"] or 0) + 1
         near = [n for n in npcs if math.dist((n[1], n[3]), (x, z)) <= reach]
-        if not near:
-            d = min((math.dist((n[1], n[3]), (x, z)), n[0]) for n in npcs) if npcs else (None, None)
-            P.append(("follower", i["id"], "%s follows nobody: no NPC within %.0f of its home %s (nearest %s at %s)"
-                      % (i["id"], reach, i["at"], d[1], "%.1f" % d[0] if d[0] is not None else "-")))
+        if near:
+            continue
+        why = None
+        if at is not None:
+            ok, why = penned(at, (math.floor(x), math.floor(y), math.floor(z)), i["home_radius"] or 0)
+            if ok:
+                continue
+        d = min((math.dist((n[1], n[3]), (x, z)), n[0]) for n in npcs) if npcs else (None, None)
+        P.append(("follower", i["id"], "%s follows nobody: no NPC within %.0f of its home %s (nearest %s at %s)%s"
+                  % (i["id"], reach, i["at"], d[1], "%.1f" % d[0] if d[0] is not None else "-",
+                     ", and it is not penned: %s" % why if why else "")))
     return P
+
+
+# ------------------------------------------------------------------------------------------------ a pen, from blocks
+# Shared with tools/pokemon_farm_audit.py (its pens). What a walker can do, read from vanilla's movement, not from any
+# builder: a fence, a fence gate (closed) or a wall stands 1.5 high (FenceBlock/WallBlock collision), so nothing jumps
+# it, and nothing stands on one (vanilla's walk evaluator marks FENCE blocked); a mob jumps one full block and falls
+# up to three; it needs its feet cell free of collision. Plants, crops, carpets, signs and plates have no collision.
+PEN_REACH = 48           # the flood's box round a home: a pen wider than 2 x 48 blocks is a field, not a pen
+FALL = 3                 # vanilla's safe fall (maxFallDistance 3)
+NO_COLLISION = ("air", "cave_air", "void_air", "short_grass", "tall_grass", "grass", "fern", "large_fern", "dead_bush",
+                "carrots", "potatoes", "beetroots", "wheat", "melon_stem", "pumpkin_stem", "torch", "wall_torch",
+                "soul_torch", "soul_wall_torch", "redstone_wire", "rail", "powered_rail", "detector_rail",
+                "activator_rail", "tripwire", "string", "vine", "glow_lichen", "snow", "light", "structure_void",
+                "dandelion", "poppy", "blue_orchid", "allium", "azure_bluet", "red_tulip", "orange_tulip", "white_tulip",
+                "pink_tulip", "oxeye_daisy", "cornflower", "lily_of_the_valley", "torchflower", "sunflower", "lilac",
+                "rose_bush", "peony", "pink_petals", "sugar_cane", "sweet_berry_bush", "lever", "ladder")
+NO_COLLISION_SUFFIX = ("_carpet", "_sign", "_wall_sign", "_hanging_sign", "_pressure_plate", "_button", "_sapling",
+                       "_banner", "_wall_banner", "_mushroom", "_coral_fan", "_coral_wall_fan")
+
+
+def _short(state):
+    s = state.split("[")[0].split("{")[0]
+    return s.split(":", 1)[1] if ":" in s else s
+
+
+def is_tall(state):
+    """A 1.5-high barrier: fence, closed fence gate, wall."""
+    n = _short(state)
+    if n.endswith("_fence_gate"):
+        return "open=true" not in state
+    return n.endswith("_fence") or (n.endswith("_wall") and not n.endswith(("_wall_sign", "_wall_banner", "_wall_torch")))
+
+
+def collides(state):
+    n = _short(state)
+    if n.endswith("_fence_gate") and "open=true" in state:
+        return False
+    if n.endswith(("_door", "_trapdoor")) and "open=true" in state:
+        return not n.endswith("_trapdoor")      # an open door is a thin panel at one side; a walker still meets it
+    return not (n in NO_COLLISION or n.endswith(NO_COLLISION_SUFFIX))
+
+
+def _standable(at, x, y, z):
+    under = at(x, y - 1, z)
+    return not collides(at(x, y, z)) and collides(under) and not is_tall(under)
+
+
+def enclosure(at, start, inside):
+    """Where a walker starting with its feet in cell `start` can get to: ({(x, z): [feet y, ...]}, escape) where
+    `escape` is the first column reached for which inside(x, z) is false, or None. A step to a neighbour column goes
+    up one (headroom over the start), level, or down up to FALL with the fall column clear."""
+    sx, sy, sz = start
+    if not _standable(at, sx, sy, sz):
+        return {}, None
+    seen = {(sx, sy, sz)}
+    todo = [(sx, sy, sz)]
+    region = defaultdict(list)
+    while todo:
+        x, y, z = todo.pop()
+        region[(x, z)].append(y)
+        if not inside(x, z):
+            return dict(region), (x, z)
+        for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            nx, nz = x + dx, z + dz
+            for dy in (0, 1) + tuple(-k for k in range(1, FALL + 1)):
+                ny = y + dy
+                if (nx, ny, nz) in seen or not _standable(at, nx, ny, nz):
+                    continue
+                if dy == 1 and collides(at(x, y + 1, z)):
+                    continue
+                if dy < 0 and any(collides(at(nx, yy, nz)) for yy in range(ny, y + 1)):
+                    continue
+                seen.add((nx, ny, nz))
+                todo.append((nx, ny, nz))
+    return dict(region), None
+
+
+def walls_of(at, region, box, outside=None):
+    """The region's OUTER wall: columns reachable from the box's edge without entering the region (an obstacle inside
+    the pen -- a trough, a rock -- is not reachable that way) that touch it. {(x, z): [states at the region's feet
+    y-1..y+1]}. `outside`, a set, receives every column so reached (the wall included)."""
+    x0, z0, x1, z1 = box
+    out = set()
+    todo = [(x, z) for x in range(x0, x1 + 1) for z in (z0, z1)] + [(x, z) for z in range(z0, z1 + 1) for x in (x0, x1)]
+    todo = [c for c in todo if c not in region]
+    seen = set(todo)
+    while todo:
+        x, z = todo.pop()
+        for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            c = (x + dx, z + dz)
+            if c in region:
+                out.add((x, z))
+            elif x0 <= c[0] <= x1 and z0 <= c[1] <= z1 and c not in seen:
+                seen.add(c)
+                todo.append(c)
+    if outside is not None:
+        outside |= seen
+    walls = {}
+    for (x, z) in out:
+        ys = set()
+        for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            ys |= set(region.get((x + dx, z + dz), []))
+        walls[(x, z)] = [at(x, y, z) for y in sorted({y + d for y in ys for d in (-1, 0, 1)})]
+    return walls
+
+
+def penned(at, home, radius, reach=PEN_REACH):
+    """(True, None) when a walker from `home` is fenced in: its region stays inside the box `reach` round it, every
+    column of its outer wall holds a fence, fence gate or wall at the region's feet level (+-1), and every column within
+    `radius` of the home is in the region. Else (False, why)."""
+    hx, hy, hz = home
+    box = (hx - reach, hz - reach, hx + reach, hz + reach)
+    region, esc = enclosure(at, home, lambda x, z: box[0] < x < box[2] and box[1] < z < box[3])
+    if not region:
+        return False, "no floor to stand on at its home %s" % (home,)
+    if esc is not None:
+        return False, "it can walk out to %s, %d blocks from its home" % (esc, max(abs(esc[0] - hx), abs(esc[1] - hz)))
+    outside = set()
+    unfenced = sorted(c for c, sts in walls_of(at, region, box, outside).items() if not any(is_tall(s) for s in sts))
+    if unfenced:
+        return False, "%d column(s) of what holds it in are not fence, gate or wall, e.g. %s (%s)" % (
+            len(unfenced), unfenced[0], _short(at(unfenced[0][0], hy, unfenced[0][1])))
+    # an obstacle inside the pen (a trough) is not "out"; the fence and what lies beyond it are
+    r = int(math.floor(radius))
+    out = [(hx + dx, hz + dz) for dx in range(-r, r + 1) for dz in range(-r, r + 1)
+           if dx * dx + dz * dz <= radius * radius and (hx + dx, hz + dz) in outside]
+    if out:
+        return False, "%d column(s) of its home disc (radius %s) are outside its pen, e.g. %s" % (len(out), radius, out[0])
+    return True, None
 
 
 def cost(k, fns):
@@ -462,6 +610,48 @@ def town_extents():
 
 def inside(r, x, z):
     return r[0] <= x <= r[2] and r[1] <= z <= r[3]
+
+
+def places_beyond_towns(data=None):
+    """{place: (bbox (x0, z0, x1, z1), its source record)} for every data/markets.json places_beyond_towns entry whose
+    source record declares a `bbox`: a place a player arrives at that is not a data/towns.json town (2026-10-05, Arrow
+    Creeks Farm). Its idlers are counted, grouped and capped there by position like a town's; it has no town plan, so
+    the street, footprint and stall rules do not apply to it."""
+    data = Path(data) if data else ROOT / "data"
+    out = {}
+    m = json.loads((data / "markets.json").read_text(encoding="utf-8"))
+    for b in m.get("places_beyond_towns") or []:
+        src = ROOT / (b.get("source") or "")
+        if not b.get("town") or not src.is_file():
+            continue
+        doc = json.loads(src.read_text(encoding="utf-8"))
+        bb = doc.get("bbox")
+        if isinstance(bb, list) and len(bb) == 4 and all(isinstance(v, (int, float)) for v in bb):
+            out[b["town"]] = (tuple(bb), doc)
+    return out
+
+
+def housed(src, x, z):
+    """The building of a beyond-town place's record that houses an idler at (x, z), or None: a building or silo piece
+    whose footprint (relative to the record's site centre) holds the column AND an animal of the record standing on
+    that column whose `at` names that building. Livestock in a byre is the place working; a town's idler under a roof
+    is a misplacement, which is why this is asked only of a place's own record."""
+    cx, cz = (src.get("site") or {}).get("centre") or (None, None)
+    if cx is None:
+        return None
+    names = set()
+    for p in src.get("pieces") or []:
+        fp = p.get("footprint")
+        if p.get("kind") == "silo" and p.get("centre"):
+            r = p.get("r", 0)
+            fp = [p["centre"][0] - r, p["centre"][1] - r, p["centre"][0] + r, p["centre"][1] + r]
+        if p.get("kind") in ("building", "silo") and fp and cx + fp[0] <= x <= cx + fp[2] and cz + fp[1] <= z <= cz + fp[3]:
+            names.add(p["name"])
+    for a in src.get("animals") or []:
+        at = a.get("at") or []
+        if len(at) == 3 and (cx + at[0], cz + at[1]) == (x, z) and at[2] in names:
+            return at[2]
+    return None
 
 
 @functools.lru_cache(maxsize=None)
@@ -548,7 +738,8 @@ def feet_cell(m, SW, x, y, z):
     return fy, None, None
 
 
-def check_spots(idlers, m, SW, rest, town_data):
+def check_spots(idlers, m, SW, rest, town_data, beyond=None):
+    beyond = beyond or {}
     P = []
     for i in sorted(idlers.values(), key=lambda r: r["id"]):
         if "at" not in i:
@@ -563,6 +754,9 @@ def check_spots(idlers, m, SW, rest, town_data):
         cls, detail = SW.classify(m, bx, fy, bz)
         if seat and cls == "pedestal":
             cls = "outside"               # a bench seat stands one above the paving round it: that is a bench
+        if cls == "indoors" and i["kind"] == "still" and any(inside(bb, bx, bz) and housed(src, bx, bz)
+                                                              for bb, src in beyond.values()):
+            cls = "outside"               # a still animal in the byre its place's record puts it in (housed())
         if cls != "outside":
             P.append(("spot", i["id"], "%s (%s, %s) at %s: %s -- %s" % (i["id"], i["kind"], i["species"], i["at"], cls,
                                                                       detail)))
@@ -695,6 +889,9 @@ def model_for(idlers, packs, source_root=None):
             continue
         x, y, z = (math.floor(c) for c in i["at"])
         r = 16 if (i["town"] == "lopunny_house" and i["kind"] == "sleeper") else 6
+        if i["kind"] == "follower":
+            # a follower with no NPC beside it is judged as penned or not: the flood needs the whole box round it
+            boxes.append((x - PEN_REACH - 1, y - 8, z - PEN_REACH - 1, x + PEN_REACH + 1, y + 8, z + PEN_REACH + 1))
         boxes.append((x - r, y - max(r, 4), z - r, x + r, y + max(r, 8), z + r))
     m = SW.Model(g, boxes)
     SW.replay(m, SW.Function(packs), SW.Templates(packs), steps)
@@ -713,7 +910,10 @@ def audit(packs=PACKS, source_root=None, jar=None):
     P += check_wake(k, idlers)
     P += check_merges(packs, fns)
     # cap and groups, by position over every pack's Pokemon
-    feet = town_extents()
+    town_feet = town_extents()
+    beyond = places_beyond_towns()
+    feet = dict(town_feet)
+    feet.update({t: bb for t, (bb, _src) in beyond.items() if t not in feet})
     pts, counts = defaultdict(list), {}
     others = other_spawns(packs)
     for t, r in feet.items():
@@ -741,12 +941,12 @@ def audit(packs=PACKS, source_root=None, jar=None):
     npcs = npcs_placed(steps)
     town_data = {t: {"buildings": buildings(t), "streets": streets(t), "stalls": stalls(t),
                      "npcs": [n for n in npcs if inside(feet[t], n[1], n[3])]}
-                 for t in doc["towns"] if t in feet}
-    P += check_spots(idlers, m, SW, rest, town_data)
+                 for t in doc["towns"] if t in town_feet}
+    P += check_spots(idlers, m, SW, rest, town_data, beyond)
     bp, night = check_buneary(idlers, m, SW, g)
     P += bp
     P += check_sleepers(idlers, rest, night)
-    P += check_followers(idlers, npcs)
+    P += check_followers(idlers, npcs, m.at)
     known = [p for p in P if (p[0], p[1]) in KNOWN]
     problems = [p for p in P if (p[0], p[1]) not in KNOWN]
     fixed = sorted(set(KNOWN) - {(p[0], p[1]) for p in known})

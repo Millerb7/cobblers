@@ -719,8 +719,11 @@ def prepare_jobs(a):
     # Arrow Creeks Farm (2026-10-05): the generator fails closed on its siting rules, on a seat (the farmer's in
     # data/npc_seats.json, the stand's in data/markets.json) the plan does not leave open and on a spawn-condition
     # block. Before ambient_idle:build, whose plan takes the farm's animals from it (tools/pokemon_farm.py idlers).
-    # Its independent audit is another agent's (data/pokemon_farm.json audit_checklist) and is not written yet
+    # Its independent audit (tools/pokemon_farm_audit.py, written by an agent that built none of it) replays the pack
+    # over the heightmap: writes, floors, fence links, closed pens, doors, roofs, the record's animals against the jar,
+    # seats, siting from the other data files, the stand, this wiring. Its claims half runs after ambient_idle:build
     add("pokemon_farm", "pokemon_farm.py", *src)
+    add("pokemon_farm_audit", "pokemon_farm_audit.py", *src)
     add("drovers_hollow:build", "drovers_hollow.py", "build", *src)
     add("drovers_hollow_audit", "drovers_hollow_audit.py", *src)
     # the three wayside places of 2026-10-03. Each generator refuses a spawn-condition palette and any block outside its
@@ -846,6 +849,10 @@ def prepare_jobs(a):
     # replays every pack's block writes through steps() (tools/npc_spot_sweep.py) and refuses a spot a signpost, a
     # waystone, a porch or a roof holds -- and steps() indexes every pack built above
     add("ambient_idle:build", "ambient_idle.py", "build", *src)
+    # Arrow Creeks Farm's animals as the idle pack claims them (tools/pokemon_farm_audit.py --animals): each record
+    # animal spawned once at its spot, NoAI as its kind, the AI ones penned with the home walk, eats-grass only where
+    # the species' own jar ai lists it, the workers' flags, the cap. After the idle pack it reads
+    add("pokemon_farm_audit:animals", "pokemon_farm_audit.py", "--animals", *src)
     # the idle Pokemon's independent audit (tools/ambient_idle_audit.py, written by an agent that did not build them):
     # after ambient:build, and LAST for the same reason as mines_audit -- it replays the town from steps(), which
     # indexes every pack built above. The cap, groups of 1-3, every spot on the built town's floor, the jar's sleepers,
