@@ -3183,7 +3183,8 @@
         "why": "Mega Excadrill, excadrite (a Legends Z-A Mega Mega Showdown adds; its client model is NOT VERIFIED, M-7); Drilbur at the fossil levels 42-50. Anchored toward face B"
       }
     ],
-    "aggression_proposal": "applied on staging 2026-09-27 (SOUTHERN_RIFT_MEGA.md 13): Fight or Flight's always_aggro_aspects [\"alpha\", \"mega\", \"mega_x\", \"mega_y\", \"mega_z\"]. Whether an always-aggressive aspect overrides light_dependent_unprovoked_attack is proof M-3"
+    "aggression_proposal": "applied on staging 2026-09-27 (SOUTHERN_RIFT_MEGA.md 13): Fight or Flight's always_aggro_aspects [\"alpha\", \"mega\", \"mega_x\", \"mega_y\", \"mega_z\"]. Whether an always-aggressive aspect overrides light_dependent_unprovoked_attack is proof M-3",
+    "pack_tag": "cobblers.gm.pack"
   },
   "driver": {
     "every_ticks": 100,
@@ -4392,7 +4393,9 @@
         "leash": "36, each Mega's RANGE (the keeper walks it back past it). The owner, 2026-10-04: 'Megas clashing over territory ... overlapping ranges'. With homes 43 to 60 apart a neighbour's range reaches 12 to 29 blocks into this one's, so the borders are shared ground; 36 is short of 43, so no Mega's range reaches its neighbour's home. Raised from 32, where homes 64 apart never overlapped",
         "packing": "`sites` lays candidates every candidate_step 2 blocks, packs them greedily in seven sweep orders (rows, columns, both reversed, two diagonals, hashed) at lair_spacing, improves each by 1-for-2 swaps, and keeps the order that places most (then most usable floor in a range). It then works the winner for REACH, the owner's 'everywhere' (up to reach_rounds rounds): each den moves to the candidate that adds most usable floor (inside the polygon, dry, no step over one block: the audit's floor) to the ranges if that beats where it stands, keeping a neighbour within 2 x leash - min_overlap; every candidate that still fits is added; 1-for-2 swaps that lose no floor are taken. A den whose range overlaps no other by min_overlap is given a neighbour if one fits, else dropped. The limit is the floor under the lairs' rules (road_clear, edge_clear, the pad, the lair's ground span), no longer the roster: `mega_field.py floor` and `sites` print both",
         "deeper_from_town": "tier by distance from the Cutters' square (town.square.centre), the reward sink: a den this far or farther is the deeper tier. The owner, 2026-10-04: 'outer/deeper by distance from the town'. ASSUMED, a design threshold set so the inner arm's near half is outer and its far end and the south-west lobe are deeper",
-        "min_overlap": "8: every den's range overlaps another's by at least this many blocks (homes at most 2 x 36 - 8 = 64 apart), the owner's 'pressing against each other for space' (2026-10-04). Below it a lens is a sliver the border dressing cannot use: its scar's half-width is 3 either side (data/mega_borders.json border.half_width) and nothing is written within 9 of an anchor. It fixes the 2026-10-04 layout's two dens (Steelix, Charizard) whose ranges overlapped nobody (73 apart against 72)"
+        "min_overlap": "8: every den's range overlaps another's by at least this many blocks (homes at most 2 x 36 - 8 = 64 apart), the owner's 'pressing against each other for space' (2026-10-04). Below it a lens is a sliver the border dressing cannot use: its scar's half-width is 3 either side (data/mega_borders.json border.half_width) and nothing is written within 9 of an anchor. It fixes the 2026-10-04 layout's two dens (Steelix, Charizard) whose ranges overlapped nobody (73 apart against 72)",
+        "pack": "pack_size 3: the owner, 2026-10-05: 'for the megas in the rift, make more than one mega per zone, like a few of each mon, and make sure they are uncatchable'. A few is three, and three is what the frame rate allows: at most 7 dens' homes lie within 64 blocks of any point of the field (median 2; measured 2026-10-05 on a 4-block grid over the 61 anchors), so 7 x 3 = 21 keeper-held Megas at the worst place, inside the ~30 spread Pokemon a town held with no frame-rate cost (docs/HANDOVER_SESSION.md, the frame-rate test of 2026-10-03; those were no_ai, these walk, which is a server cost); 4 would be 28, at the ceiling. A den may state its own pack_size. Every member is the den's species, level and tier, spawned `uncatchable` like the single Mega was (EXP-023: the Poke Ball is refused), bound, leashed to the den's range and dropping as one Mega did, each with its own respawn clock (absent twice, nobody within megas.spawn_clear of where it stands, its tier's respawn_ticks): the pack thins as it is fought and comes back one by one. Each member's home is on the den's pad (data/mega_dens.json anchor_pad: every column within clear_radius 3 of the anchor levelled to the anchor's ground, 6 blocks of air over it): member k of n at angle 360k/n degrees round the anchor at pad_radius, drawn in by half blocks until its rounded column is within pad_radius, so three stand 4 to 4.5 blocks apart and none in another's column; its y is the anchor's, or the heightmap's round(ground) + 1 where that is higher (tools/ground.py, never a world), so it never spawns in a block before the lair is written",
+        "pack_aspects": "A species with two Megas mixes them in its pack, member k taking the k-th aspect in turn (the owner, 2026-10-05: 'a charizard den with a few megas'). Charizard is the roster's only one: both its stones are on a Cutters bench (charizardite_x, charizardite_y) and neither model is on docs/research/CLIENT_MODEL_FIXES.md's broken list; mega_y is in Fight or Flight's always_aggro_aspects with mega_x (megas.aggression_proposal). Mega Charizard Y as a wild spawn is NOT VERIFIED in game (EXP-036 ran mega_x)"
       },
       "lair_radius": 21,
       "lair_below": 6,
@@ -4402,7 +4405,14 @@
       "min_overlap": 8,
       "reach_rounds": 12,
       "aggro_reach": 16,
-      "road_margin": 2
+      "road_margin": 2,
+      "pack_size": 3,
+      "pack_aspects": {
+        "charizard": [
+          "mega_evolution=mega_x",
+          "mega_evolution=mega_y"
+        ]
+      }
     },
     "dressing": {
       "kit_of": {

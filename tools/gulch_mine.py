@@ -19,7 +19,8 @@ What it builds, all from the data file and the canonical heightmap (tools/ground
                a drift; a shell of rock round everything carved, so nothing this build opens meets a natural void
   the faces    two crystal faces in the Cutting Floor, each a 7 x 5 x 7 box of meteorid holding 3 mega_stone_crystal:
                scenery, written once by the build and warded for good every tick (the restore cycle is retired)
-  the Megas    the Cutting Floor's two roaming Megas and the seven open-air farm dens (data `farms`), spawned by the
+  the Megas    the Cutting Floor's two roaming Megas and the Mega field's open-air dens (data `farms`), each den a
+               PACK of its species (mega_field.layout.pack_size, 2026-10-05), every member kept as one Mega was, spawned by the
                keeper through the macro megas/spawn_at (EXP-046), uncatchable, claimed at once, tagged, leashed like
                the recovery guardians; each den's respawn clock is the game time its Mega was first seen gone, and it
                spawns respawn_ticks later with nobody near. A farm den's Mega also rolls a raw-stone drop when beaten
@@ -1334,6 +1335,50 @@ def den_anchor(d):
     return d["_anchor"] if "_anchor" in d else d["anchor"]
 
 
+def pack_homes(spec, d, ground):
+    """A farm den's pack (data mega_field.layout.pack_size, or the den's own pack_size): [{id, at, aspect}], one per
+    member. Member k of n stands on the den's pad at angle 360k/n degrees round the anchor at layout.pad_radius, drawn in
+    by half blocks until its rounded column is within pad_radius (data/mega_dens.json anchor_pad levels exactly that
+    disc); y is the anchor's, or round(ground) + 1 where the heightmap stands higher (`ground` is tools/ground.py's,
+    never a world). A species with two Megas mixes them (layout.pack_aspects, member k the k-th in turn). A member's id
+    is <den>_m<k>: its tag, scores, clock, drop storage and functions are named by it, as a single Mega's were by the
+    den's (layout.why.pack)."""
+    lay = (spec.get("mega_field") or {}).get("layout") or {}
+    n = d.get("pack_size", lay.get("pack_size", 1))
+    R = lay.get("pad_radius", 3)
+    relief = lay.get("pad_relief", 1)
+    ax, ay, az = d["anchor"]
+    aspects = (lay.get("pack_aspects") or {}).get(d["species"]) or [d["aspect"]]
+    out, cols = [], set()
+    for k in range(n):
+        dx = dz = 0
+        if n > 1:
+            a, r = 2 * math.pi * k / n, float(R)
+            while True:
+                dx, dz = int(round(r * math.cos(a))), int(round(r * math.sin(a)))
+                if math.hypot(dx, dz) <= R:
+                    break
+                r -= 0.5
+        x, z = ax + dx, az + dz
+        gy = int(round(ground(x, z)))
+        if abs(gy - (ay - 1)) > relief:
+            raise GulchError("%s member %d: ground y%d at (%d, %d) is more than pad_relief %d from the pad's y%d"
+                             % (d["id"], k + 1, gy, x, z, relief, ay - 1))
+        if (x, z) in cols:
+            raise GulchError("%s: two pack members in column (%d, %d)" % (d["id"], x, z))
+        cols.add((x, z))
+        out.append({"id": "%s_m%d" % (d["id"], k + 1), "at": [x, max(ay, gy + 1), z], "aspect": aspects[k % len(aspects)]})
+    return out
+
+
+def members(site, d):
+    """[(member id, [x, y, z], aspect)] of a den: a mine slot is its own single member, named by the slot's id; a farm
+    den its pack (`_members`, set by model() from pack_homes), else (no model) one member named by the den."""
+    if site == "mine" or "_members" not in d:
+        return [(d["id"], den_anchor(d), d["aspect"])]
+    return [(mb["id"], mb["at"], mb["aspect"]) for mb in d["_members"]]
+
+
 def den_rules(spec, site, d):
     """(respawn ticks, drop percent) for a den: a mine slot has the data's megas.respawn_ticks and no drop; a farm den
     its tier's (data farm_tiers), unless the den states its own."""
@@ -1383,14 +1428,19 @@ def keeper_files(m):
                  "execute unless data storage %s dens run data modify storage %s dens set value []" % (STORE, STORE)]
     for site, d in all_dens:
         resp, pct = den_rules(spec, site, d)
-        i = d["id"]
-        load += ["scoreboard players set #%s gm.resp %d" % (i, resp),
-                 "execute unless score #%s gm.gone matches -2147483648.. run scoreboard players set #%s gm.gone 0" % (i, i),
-                 "execute unless score #%s gm.abs matches -2147483648.. run scoreboard players set #%s gm.abs 0" % (i, i)]
-        if site != "mine":
-            load += ["scoreboard players set #%s gm.pct %d" % (i, pct),
-                     "execute unless score #%s gm.alive matches -2147483648.. run scoreboard players set #%s gm.alive 0" % (i, i),
-                     "execute unless score #%s gm.hit matches -2147483648.. run scoreboard players set #%s gm.hit -1" % (i, i)]
+        mbs = members(site, d)
+        if site != "mine" and [mb[0] for mb in mbs] != [d["id"]]:
+            # the den's single Mega of before the packs (2026-10-05) kept its drop entry under the den's id: no roll
+            # names it any more
+            load.append("data remove storage %s dens[{id:\"%s\"}]" % (STORE, d["id"]))
+        for i, _at, _asp in mbs:
+            load += ["scoreboard players set #%s gm.resp %d" % (i, resp),
+                     "execute unless score #%s gm.gone matches -2147483648.. run scoreboard players set #%s gm.gone 0" % (i, i),
+                     "execute unless score #%s gm.abs matches -2147483648.. run scoreboard players set #%s gm.abs 0" % (i, i)]
+            if site != "mine":
+                load += ["scoreboard players set #%s gm.pct %d" % (i, pct),
+                         "execute unless score #%s gm.alive matches -2147483648.. run scoreboard players set #%s gm.alive 0" % (i, i),
+                         "execute unless score #%s gm.hit matches -2147483648.. run scoreboard players set #%s gm.hit -1" % (i, i)]
     fn["load"] = load
     wd = spec["gate"]["ward"]
     tick = ["# the gate's ward every tick, not only when its location trigger fires (every 20 ticks): milk clears Mining",
@@ -1419,15 +1469,25 @@ def keeper_files(m):
     for site in sites:
         drive.append("execute if entity %s run function %s/drive_%s" % (site_near(spec, site), F, site))
         leash.append("execute if entity %s run function %s/leash_%s" % (site_near(spec, site), F, site))
-        fn["drive_%s" % site] = ["function %s/megas/keep_%s" % (F, d["id"]) for s_, d in all_dens if s_ == site]
+        fn["drive_%s" % site] = []
+        for s_, d in all_dens:
+            if s_ != site:
+                continue
+            # each member's own keeper (its own duplicate guard and clock), then for a pack the den-wide guard, which
+            # with the members' guards already run only ever meets an anomaly (layout.why.pack)
+            fn["drive_%s" % site] += ["function %s/megas/keep_%s" % (F, i) for i, _at, _asp in members(s_, d)]
+            if s_ != "mine" and "_members" in d:
+                fn["drive_%s" % site].append("function %s/megas/pack_%s" % (F, d["id"]))
         fn["leash_%s" % site] = []
         for s_, d in all_dens:
             if s_ != site:
                 continue
             x, y, z = den_anchor(d)
-            fn["leash_%s" % site].append(
-                "execute as @e[type=cobblemon:pokemon,tag=%s.%s] positioned %d %d %d unless entity @s[distance=..%d] "
-                "run tp @s %d %d %d" % (tag, d["id"], x, y, z, d["leash"], x, y, z))
+            # each member walked back to its own home when it is past the den's range (measured from the anchor)
+            for i, (hx, hy, hz), _asp in members(s_, d):
+                fn["leash_%s" % site].append(
+                    "execute as @e[type=cobblemon:pokemon,tag=%s.%s] positioned %d %d %d unless entity @s[distance=..%d] "
+                    "run tp @s %d %d %d" % (tag, i, x, y, z, d["leash"], hx, hy, hz))
     fn["drive"] = drive
     fn["leash"] = leash
     # EXP-046: `spawnpokemonat` written in a function spawns nothing when the function was parsed at server start, and
@@ -1445,14 +1505,33 @@ def keeper_files(m):
             retire += ["kill @e[type=cobblemon:pokemon,tag=%s.%s]" % (tag, i),
                        "data remove storage %s dens[{id:\"%s\"}]" % (STORE, i)]
         fn["megas/retire"] = retire
+    pack_tag = mg.get("pack_tag", "%s.pack" % tag)
+    slots = []
     for site, d in all_dens:
-        x, y, z = den_anchor(d)
-        i = d["id"]
+        mbs = members(site, d)
+        packed = site != "mine" and "_members" in d
+        if packed:
+            ax, ay, az = den_anchor(d)
+            dt = "%s.%s" % (tag, d["id"])
+            fn["megas/pack_%s" % d["id"]] = [
+                "# den %s (%s): a pack of %d (data/gulch_mine.json mega_field.layout.why.pack), each member kept by its own"
+                % (d["id"], site, len(mbs)),
+                "# keeper (megas/keep_<den>_m<k>). Here the den as a whole: the Mega a keeper bound before the packs",
+                "# (2026-10-05: the den's tag, no pack tag) goes, and never more than the pack stands in the den",
+                "execute unless loaded %d %d %d run return 0" % (ax, ay, az),
+                "kill @e[type=cobblemon:pokemon,tag=%s,tag=!%s]" % (dt, pack_tag),
+                "execute store result score #n gm.t if entity @e[type=cobblemon:pokemon,tag=%s]" % dt,
+                "execute if score #n gm.t matches %d.. positioned %d %d %d run kill @e[type=cobblemon:pokemon,tag=%s,limit=1,sort=furthest]"
+                % (len(mbs) + 1, ax, ay, az, dt)]
+        for i, at, asp in mbs:
+            slots.append((site, d, i, at, asp, packed))
+    for site, d, i, (x, y, z), aspect, packed in slots:
         t = "%s.%s" % (tag, i)
         farm = site != "mine"
         fn["megas/keep_%s" % i] = [
-            "# den %s (%s): one Mega, kept; when it is gone, the respawn clock (SOUTHERN_RIFT_MEGA.md 13): it comes back" % (i, site),
-            "# gm.resp ticks after it was first seen gone, with nobody within %d of its anchor. Nothing a player can" % mg["spawn_clear"],
+            "# %s %s (%s): one Mega, kept; when it is gone, the respawn clock (SOUTHERN_RIFT_MEGA.md 13): it comes back"
+            % ("pack member" if packed else "den", i, site),
+            "# gm.resp ticks after it was first seen gone, with nobody within %d of its home. Nothing a player can" % mg["spawn_clear"],
             "# repeat moves the clock: only a Mega seen in the den clears it, and only this keeper starts it",
             "execute unless loaded %d %d %d run scoreboard players set #%s gm.abs 0" % (x, y, z, i),
             "execute unless loaded %d %d %d run return 0" % (x, y, z),
@@ -1482,12 +1561,16 @@ def keeper_files(m):
         fn["megas/spawn_%s" % i] = [
             "# a wild Mega: its species, the Mega aspect, uncatchable, through the macro (EXP-046), claimed at once",
             "function %s/megas/spawn_at {x:%d,y:%d,z:%d,species:\"%s\",aspect:\"%s\",level:%d}"
-            % (F, x, y, z, d["species"], d["aspect"], den_level(spec, site, d)),
+            % (F, x, y, z, d["species"], aspect, den_level(spec, site, d)),
             "execute positioned %d %d %d as @e[type=cobblemon:pokemon,tag=!%s,distance=..2,limit=1,sort=nearest] run function %s/megas/bind_%s"
             % (x, y, z, tag, F, i),
             "scoreboard players set #%s gm.gone -1" % i,
             "scoreboard players set #%s gm.abs 0" % i]
         bind = ["tag @s add %s" % tag, "tag @s add %s" % t]
+        if packed:
+            # the den's tag too (megas/pack_<den> counts the pack by it) and the pack tag (a den-tagged Mega without it
+            # is one a keeper bound before the packs)
+            bind += ["tag @s add %s.%s" % (tag, d["id"]), "tag @s add %s" % pack_tag]
         if farm:
             bind.append("tag @s add %s" % farm_tag)
         bind.append("data merge entity @s {PersistenceRequired:1b}")
@@ -1536,14 +1619,25 @@ def keeper_files(m):
         "tag @a remove cobblers.gm_slayer",
         "execute on attacker if entity @s[type=player] run tag @s add cobblers.gm_slayer",
         "execute on attacker if entity @s[type=cobblemon:pokemon] on owner if entity @s[type=player] run tag @s add cobblers.gm_slayer",
-        "execute unless entity @a[tag=cobblers.gm_slayer] run return 0"] + [
-        "execute if entity @s[tag=%s.%s] run function %s/megas/hit_%s" % (tag, d["id"], F, d["id"]) for d in farm_dens] + [
-        "tag @a remove cobblers.gm_slayer"]
+        "execute unless entity @a[tag=cobblers.gm_slayer] run return 0"]
+    for s_, d in all_dens:
+        if s_ == "mine":
+            continue
+        mbs = members(s_, d)
+        if "_members" not in d:
+            fn["megas/watch"].append("execute if entity @s[tag=%s.%s] run function %s/megas/hit_%s" % (tag, d["id"], F, d["id"]))
+            continue
+        # a pack: the den first, then its member (two levels, so a Mega is not tested against every member in the field)
+        fn["megas/watch"].append("execute if entity @s[tag=%s.%s] run function %s/megas/watch_%s" % (tag, d["id"], F, d["id"]))
+        fn["megas/watch_%s" % d["id"]] = ["execute if entity @s[tag=%s.%s] run return run function %s/megas/hit_%s"
+                                          % (tag, i, F, i) for i, _at, _asp in mbs]
+    fn["megas/watch"].append("tag @a remove cobblers.gm_slayer")
     fn["drops/fainted"] = [
         "# from data/cobblemon/callbacks/battle_fainted/cobblers_gulch_drops.molang: $(pid) the fainted wild Pokemon's UUID",
-        "# as text, $(who) the first player in the battle. A farm den's Mega, matched by the UUID its bind stored, rolls"] + [
+        "# as text, $(who) the first player in the battle. A farm Mega (a pack member), matched by the UUID its bind stored,",
+        "# rolls"] + [
         "$execute if data storage %s dens[{id:\"%s\",pid:\"$(pid)\"}] run return run function %s/drops/roll_%s {who:\"$(who)\"}"
-        % (STORE, d["id"], F, d["id"]) for d in farm_dens]
+        % (STORE, i, F, i) for site, _d, i, _at, _asp, _p in slots if site != "mine"]
     dr = spec["drops"]
     fn["drops/give"] = [
         "# as the victor, at their feet: one raw stone only they can pick up (vanilla 1.21.1 ItemEntity: Owner)",
@@ -1735,6 +1829,11 @@ def model(source_root=None, spec=None):
         x, z = s["anchor"]
         hall = next(h for h in spec["mine"]["halls"] if h["id"] == s["hall"])
         s["_anchor"] = [x, feet_at(m, x, z, hall["feet"] - 1, hall["feet"] + hall["bowl"] + 2), z]
+    # each farm den's pack, its members' homes on the den's pad from the heightmap (never a world)
+    for fa in spec.get("farms", []):
+        for d in fa["dens"]:
+            d["_members"] = pack_homes(spec, d, g)
+    m.counts["farm Megas (pack members)"] = sum(len(d["_members"]) for fa in spec.get("farms", []) for d in fa["dens"])
     m.counts.update({"carved cells": int(m.carve.sum()), "shell cells": len(m.blocks), "earthwork cells": len(m.earth),
                      "fittings": len(m.fit), "surface blocks": len(m.surf), "face cells": len(m.faces),
                      "crystals in the faces": sum(f["crystals"] for f in spec["mine"]["faces"])})
@@ -1825,6 +1924,7 @@ def main(argv=None):
     plan = {"schema": "cobblers.derived.gulch_mine/1", "counts": m.counts, "functions": order,
             "commands": {k: len(v) for k, v in lns.items()}, "zone_boxes": boxes,
             "anchors": {s["id"]: s["_anchor"] for s in spec["megas"]["slots"]},
+            "packs": {d["id"]: d["_members"] for fa in spec.get("farms", []) for d in fa["dens"]},
             "faces": {f["id"]: f["box"] for f in spec["mine"]["faces"]},
             "halls": {h["id"]: {"centre": h["centre"], "columns": len(m.hall_cols[h["id"]])} for h in spec["mine"]["halls"]}}
     PLAN.write_text(json.dumps(plan, indent=1) + "\n", encoding="utf-8")
