@@ -171,35 +171,7 @@ REGIONAL = [("alolan", ("alolan", "alola")), ("galarian", ("galarian", "galar"))
 # (place, species) -> this audit's ruling on a misfit no owner placement covers. Each is a defect for the content
 # side (data/encounter_design.json), recorded rather than fixed (the auditor does not edit data). Filled from the
 # 2026-10-04 run; a ruling whose entry now fits is STALE and fails.
-_SEALS = ("defect (data/encounter_design.json lower_trough water + heart): Spheal's line is native in the jar only to "
-          "is_frozen_ocean / is_cold_ocean, a SEA species, and the Lower Trough's lake is fresh -- the trough's "
-          "sub-region lies 1,193 blocks from the nearest marine region polygon and drains to Lake Tilpey. The builder "
-          "kept it for judgement; it is not an owner placement (section 5's table is the design's, not the owner's). "
-          "Piplup's line, beside it, FITS: its own natives include fresh cold water")
-_RIFT = ("defect (data/encounter_design.json, the Rift tables): native only to is_desert / is_badlands (arid) in the "
-         "jar, and the Rift floor is painted rift_floor = windswept_gravelly_hills, a cool gravel country two steps "
-         "from arid. The builder kept it for judgement; no owner placement covers it")
-_SKARMORY = ("defect (data/encounter_design.json): Skarmory is native in the jar only to is_badlands / is_desert / "
-             "is_sky -- arid -- and stands here on a cold alpine summit, three steps away. Not in the builder's sweep; "
-             "a mountain bird by the games' lore, but this audit's standard is the jar, and an exception is the "
-             "owner's to declare")
-_CREEK = ("defect (data/spawns.json, the hand-authored mt_clay_outflow waterway entries, which build_encounters copies "
-          "through untouched): Paldean Wooper and Clodsire are native in the jar only to is_savanna / is_arid / "
-          "has_block/mud -- hot -- and the creek runs through foothill_woods (mixed_woods, cool), two steps away, as "
-          "well as north_west_coast (temperate, which alone would fit). Not in the builder's sweep")
 KNOWN = {
-    ("lower_trough", "spheal"): _SEALS,
-    ("lower_trough", "sealeo"): _SEALS,
-    ("lower_trough", "walrein"): _SEALS,
-    ("rift_south_west_arm", "cubone"): _RIFT,
-    ("rift_south_west_arm", "marowak"): _RIFT,
-    ("rift_south_west_arm", "hippowdon"): _RIFT + " (Hippowdon, the arm's heart presence, was not on the builder's list)",
-    ("rift_south_east_arm", "flygon"): _RIFT,
-    ("rift_trunk", "garganacl"): _RIFT,
-    ("the_crags", "skarmory"): _SKARMORY,
-    ("the_tri_peaks", "skarmory"): _SKARMORY,
-    ("mt_clay_outflow", "clodsire"): _CREEK,
-    ("mt_clay_outflow", "wooper paldean"): _CREEK,
 }
 
 
