@@ -13,6 +13,7 @@ Written by test-author, 2026-10-04; the tower (tools/hq_tower.py) was built by a
 The real and mutation tests need the canonical heightmap (terrain.env_source_root()); they skip without it. Not
 covered: anything in game (see the tool's docstring); R9RU's writes unless its pack is built.
 """
+import json
 import sys
 import types
 from pathlib import Path
@@ -144,8 +145,18 @@ def test_the_tower_as_built(city):
     base, tread = city
     probs, notes = H.audit(tower(base), SRC, tread=tread)
     assert [p for p in probs if not p.startswith("H2 ")] == [], probs
-    # hand: 7 trainers (data/hq_trainers.json) + Brann, Elara, Oren in the tower = 10 seats; 4 caches; 2 gates
-    assert "10 seats, 4 caches, 2 set-backs" in notes[-1], notes
+    # derived, not pasted (re-pointed 2026-10-05, c2ef17c): the trainers of data/hq_trainers.json plus the NPCs on a
+    # storey (Brann, Oren; Elara keeps the door since 2026-10-05 and is H8's); every cache; one set-back per gate and
+    # one step out past the door keeper (9, 4 and 3 on 2026-10-05)
+    spec = json.loads((ROOT / "data" / "hq_tower.json").read_text(encoding="utf-8"))
+    seats = len(json.loads((ROOT / "data" / "hq_trainers.json").read_text(encoding="utf-8"))["trainers"]) \
+        + sum(1 for n in spec["npcs"] if n.get("storey"))
+    gates = sum(1 for g in spec["gates"].values() if isinstance(g, dict) and "set_back" in g)
+    want = "%d seats, %d caches, %d set-backs" % (seats, len(spec["hq_caches"]), gates + (1 if spec.get("door_keeper") else 0))
+    tower_note = next(n for n in notes if n.startswith("tower: "))
+    assert want in tower_note, (want, notes)
+    dk = next(n for n in notes if n.startswith("door keeper: "))
+    assert "1 R18HQ placement(s)" in dk and "door_admit" in dk, dk          # H8 ran and found her admit
 
 
 def shut_stair(HQ):
@@ -225,3 +236,109 @@ def test_mutation_set_back_inside_its_gate(city):
     base, tread = city
     probs, _ = H.audit(tower(base, climb_set_back_inside), SRC, tread=tread)
     assert any(p.startswith("H7 ") and "inside the box" in p for p in probs), probs
+
+
+# ====================================================================== H8, Elara at the door (c2ef17c, 2026-10-05)
+# Re-pointed by a second test-author who did not build the door keeper: each mutation changes tools/hq_tower.py (its
+# R18HQ spawn list, its gate cycle, its door_admit), never data/hq_tower.json, and H8 must name it.
+
+# Protects: INDEPENDENCE of H8's stand. R18HQ placing Elara at the doorway's inner cell (data untouched) must fail:
+# the cell in front of her is the doorway, and a tagged player behind her is no longer set out; if removed, she could
+# stand inside the tower with the corridor open past her.
+@needs_heightmap
+def test_mutation_elara_at_the_inner_cell(city, monkeypatch):
+    import hq_tower as HQ
+    base, tread = city
+    out = tower(base)
+    real = HQ.npc_placements
+    monkeypatch.setattr(HQ, "npc_placements", lambda spec=None: [
+        (c, (at[0] - 1, at[1], at[2]) if cls.endswith("npc_finale_elara_venn") else at, cls, yaw)
+        for c, at, cls, yaw in real(spec)])
+    probs, _ = H.audit(out, SRC, tread=tread)
+    assert any(p.startswith("H8 ") and "in front of her" in p for p in probs), probs
+
+
+# Protects: INDEPENDENCE of "exactly one Elara". R18HQ spawning her twice (data untouched) must fail; if removed, a
+# second Elara -- the old office stand, say -- could come back unseen.
+@needs_heightmap
+def test_mutation_a_second_elara(city, monkeypatch):
+    import hq_tower as HQ
+    base, tread = city
+    out = tower(base)
+    real = HQ.npc_placements
+    monkeypatch.setattr(HQ, "npc_placements", lambda spec=None: real(spec) + [
+        e for e in real(spec) if e[2].endswith("npc_finale_elara_venn")])
+    probs, _ = H.audit(out, SRC, tread=tread)
+    assert any(p.startswith("H8 R18HQ places 2 ") for p in probs), probs
+
+
+def door_gate_untagged(HQ):
+    real = HQ.gate_lines
+
+    def gl(spec):
+        return [l.replace(",tag=!cobblers_hq_door", "") for l in real(spec)]
+    HQ.gate_lines = gl
+    return lambda: setattr(HQ, "gate_lines", real)
+
+
+# Protects: INDEPENDENCE of H8's inside sweep. hq_tower's door set-back losing its tag filter must fail: every player
+# legitimately inside is set back out; if removed, a door that strands its own holders goes unseen.
+@needs_heightmap
+def test_mutation_door_gate_without_its_tag(city):
+    base, tread = city
+    probs, _ = H.audit(tower(base, door_gate_untagged), SRC, tread=tread)
+    assert any(p.startswith("H8 ") and "legitimately-inside" in p for p in probs), probs
+
+
+def exit_widened_inward(HQ):
+    real = HQ.gate_lines
+
+    def gl(spec):
+        return [l.replace("x=3438,y=67,z=3306,dx=0,", "x=3437,y=67,z=3306,dx=1,") for l in real(spec)]
+    HQ.gate_lines = gl
+    return lambda: setattr(HQ, "gate_lines", real)
+
+
+# Protects: INDEPENDENCE of "the exit cannot strand". hq_tower's step-out past Elara reaching one cell into the tower
+# must fail: a tagged player on the threshold is ejected; if removed, the way out could swallow the way in.
+@needs_heightmap
+def test_mutation_exit_reaches_inside(city):
+    base, tread = city
+    probs, _ = H.audit(tower(base, exit_widened_inward), SRC, tread=tread)
+    assert any(p.startswith("H8 ") and "legitimately-inside" in p and "3437, 67, 3306" in p for p in probs), probs
+
+
+def set_out_facing_away(HQ):
+    real = HQ.gate_lines
+
+    def gl(spec):
+        return [l.replace(" 3441.5 67 3306.5 90 0", " 3441.5 67 3306.5 -90 0") for l in real(spec)]
+    HQ.gate_lines = gl
+    return lambda: setattr(HQ, "gate_lines", real)
+
+
+# Protects: INDEPENDENCE of "facing her". hq_tower setting players out facing down the corridor, away from Elara,
+# must fail; if removed, a turned-back player could be turned back by nobody they can see.
+@needs_heightmap
+def test_mutation_set_out_facing_away(city):
+    base, tread = city
+    probs, _ = H.audit(tower(base, set_out_facing_away), SRC, tread=tread)
+    assert any(p.startswith("H8 ") and "not facing her" in p for p in probs), probs
+
+
+def admit_into_the_wall(HQ):
+    real = HQ.door_keeper_files
+
+    def dk(spec):
+        return {k: [l.replace("tp @s 3436.5 ", "tp @s 3438.5 ") for l in v] for k, v in real(spec).items()}
+    HQ.door_keeper_files = dk
+    return lambda: setattr(HQ, "door_keeper_files", real)
+
+
+# Protects: INDEPENDENCE of the admit's landing. hq_tower's door_admit moving the player into the cell behind Elara
+# (not inside the tower) must fail; if removed, an admit the cycle immediately undoes goes unseen.
+@needs_heightmap
+def test_mutation_admit_lands_behind_her(city):
+    base, tread = city
+    probs, _ = H.audit(tower(base, admit_into_the_wall), SRC, tread=tread)
+    assert any(p.startswith("H8 door_admit moves a player to (3438, 67, 3306)") for p in probs), probs

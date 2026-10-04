@@ -30,10 +30,19 @@ WHAT IT CHECKS.
   H6  walk-out: from every cell the walk reaches inside the tower, the doorway's outside cell is reached back
   H7  the gate cycle's set-backs: each tp target is a standable cell the walk reaches and lies outside the box of
       the selector that sends a player there (so the gate never traps)
+  H8  the door keeper (re-pointed 2026-10-05 by a second test-author for "Elara at the HQ door", c2ef17c, which
+      moved Elara out of hq_s9 and so out of H4): exactly one R18HQ placement of her and no rctmod seat; her cell a
+      standable doorway cell walled on both sides, facing a standable corridor cell on the walk, the doorway or the
+      interior behind her; the cycle moves an unqualified player in her cell, behind her or on the threshold, and a
+      fully tagged one behind her, onto the line in front of her facing her, once; no line moves a legitimately
+      tagged player on any reached inside cell; every emitted `tp @s` (her admit) lands on one. See door_keeper()
 
 WHAT IT DOES NOT COVER. Nothing ran in Minecraft: stairs climbed as a one-block step, slabs and furniture as full
 blocks, ladders and doors not modelled (none is written in the tower), entities not modelled (a trainer stands where
-it is held; that it is held there is R17's). The relic pack's writes only when it is built.
+it is held; that it is held there is R17's). The relic pack's writes only when it is built. H8 walks THROUGH Elara's
+cell (her body is not a block): whether a player can squeeze past her in game, whether her dialogue opens and her
+battle runs in the corridor, and two players at different stages at her at once, are not covered; the admit's stage
+rule is tools/finale_audit.py's check_door_keeper (it runs her compiled conversation).
 
   python tools/hq_tower_audit.py [--packs build/datapacks] [--source-root DIR] [--json OUT]
 Exit 0 clean, 1 problems.
@@ -422,6 +431,143 @@ def audit(packs=PACKS, source_root=None, data=DATA, tread=None):
                  "%d set-backs, the tower writes %d blocks kinds"
                  % (len(cells), len(reach), start, len(in_tower), len(seats), len(spec.get("hq_caches") or []),
                     len(sbs), len(written)))
+
+    # H8: the door keeper
+    p8, n8 = door_keeper(packs, spec, m, reach, in_tower, data)
+    probs += p8
+    notes += n8
+    return probs, notes
+
+
+TP = re.compile(r"^tp (@a\[[^\]]*\]) (\S+) (\S+) (\S+)(?: (\S+))?")
+TAGS = re.compile(r"tag=!([^,\]]+)")
+
+
+def cycle_tps(packs):
+    """[(selector, target, yaw)] from the emitted gate cycle's tp lines, in the order the cycle runs them."""
+    f = Path(packs) / "cobblers_hq_tower" / "data" / "cobblers" / "function" / "hq_tower" / "cycle.mcfunction"
+    out = []
+    if f.is_file():
+        for line in f.read_text(encoding="utf-8").splitlines():
+            m = TP.match(line.strip())
+            if m:
+                out.append((m.group(1), tuple(float(v) for v in m.group(2, 3, 4)),
+                            float(m.group(5)) if m.group(5) else None))
+    return out
+
+
+def facing(yaw):
+    """Minecraft's yaw as a grid step: 0 faces +z (south), 90 -x (west), -90 +x (east), 180 -z (north)."""
+    r = math.radians(yaw)
+    return (int(round(-math.sin(r))), int(round(math.cos(r))))
+
+
+def run_cycle(tps, pos, tags, FA):
+    """One pass of the cycle's tp lines, in order, for a survival player at pos holding tags: (pos, last yaw)."""
+    pl = FA.Player(pos=pos)
+    pl.tags = set(tags)
+    yaw = None
+    for sel, target, y in tps:
+        if FA.select(pl, sel[2:], pl.pos):
+            pl.pos, yaw = target, y
+    return pl.pos, yaw
+
+
+def door_keeper(packs, spec, m, reach, in_tower, data=DATA):
+    """H8, Elara in the doorway (the owner, 2026-10-05). Expectations from where R18HQ places her and which way she
+    faces (tools/hq_tower.py npc_placements(), the spawn list), the replayed blocks, the declared door cells and gate
+    tags, and the EMITTED cycle and functions -- never the door_keeper block or check_door_keeper():
+      one     exactly one R18HQ placement of Elara's class, and no rctmod seat of her trainer id
+      stand   her cell is a declared door cell a body stands in, walled on both sides (one wide: nobody walks round
+              her); the cell in front of her (her yaw) is outside the tower, standable and on the walk; the one behind
+              her is the doorway or the interior
+      out     an unqualified player squeezed into her cell, behind her, or on the threshold inside is moved by the
+              cycle onto the line in front of her, every cell from her to the target standable, facing her, and a
+              second pass moves them no further; a player with every gate's tag behind her is moved out the same way
+      inside  a player holding every gate's tag on any reached cell inside the tower, and one holding only the door
+              tag on any such cell below the climb gate's box, is moved by no line (nobody legitimately inside is
+              ejected); every `tp @s` an emitted tower function makes (an admit) lands on such a cell"""
+    import finale_audit as FA
+    import hq_tower
+    probs, notes = [], []
+    rec = FA.finale_ids(data).get("elara")
+    if rec is None:
+        return ["H8 data/finale_trainers.json names no Director Elara Venn"], notes
+    npc_id = rec.get("npc") or rec.get("npc_of_the_finale_doc")
+    mine = [(at, cls, yaw) for _c, at, cls, yaw in hq_tower.npc_placements() if cls.split(":", 1)[-1] == npc_id]
+    if len(mine) != 1:
+        probs.append("H8 R18HQ places %d of Elara's NPC %s, not one: %s" % (len(mine), npc_id, mine))
+    if not mine:
+        return probs, notes
+    tc = Path(packs) / "cobblers_trainers" / "data" / "cobblers" / "function" / "trainers" / "cycle.mcfunction"
+    if tc.is_file() and 'TrainerId:"%s"' % rec["id"] in tc.read_text(encoding="utf-8"):
+        probs.append("H8 the trainers pack seats an rctmod %s as well as the NPC: two Elaras" % rec["id"])
+    (x, y, z), _cls, yaw = mine[0]
+    c = (x, y, z)
+    fx, fz = facing(yaw)
+    px, pz = fz, fx                                   # the axis across her
+    door = {tuple(d) for d in spec["door"]["cells"]}
+    t = spec["tower"]
+    bx0, bz0, bx1, bz1 = t["box"]
+    ix0, iz0, ix1, iz1 = t["interior"]
+    in_box = lambda q: bx0 <= q[0] <= bx1 and bz0 <= q[2] <= bz1
+    front, back = (x + fx, y, z + fz), (x - fx, y, z - fz)
+    threshold = (x - 2 * fx, y, z - 2 * fz)
+    if c not in door or not m.stand(c):
+        probs.append("H8 Elara at %s: not a standable cell of the doorway %s" % (c, sorted(door)))
+    sides = [(x + s * px, y + k, z + s * pz) for s in (1, -1) for k in (0, 1)]
+    if any(m.clear(q) for q in sides):
+        probs.append("H8 Elara at %s does not fill the doorway: open beside her at %s" % (c, [q for q in sides if m.clear(q)]))
+    if in_box(front) or front in door or not m.stand(front) or front not in reach:
+        probs.append("H8 Elara at %s faces %s (yaw %s): the cell in front of her %s is not a standable corridor cell "
+                     "outside the tower on the walk" % (c, (fx, fz), yaw, front))
+    if back not in door and not (ix0 <= back[0] <= ix1 and iz0 <= back[2] <= iz1):
+        probs.append("H8 behind Elara %s is neither the doorway nor the tower: she does not face out of it" % (back,))
+    tps = cycle_tps(packs)
+    alltags = sorted({tg for sel, _t, _y in tps for tg in TAGS.findall(sel)})
+    ctr = lambda q: (q[0] + 0.5, float(q[1]), q[2] + 0.5)
+
+    def on_line(p):
+        q = cell(p)
+        k = (q[0] - x) * fx + (q[2] - z) * fz
+        if q[1] != y or (q[0] - x) * fz - (q[2] - z) * fx != 0 or k < 1:
+            return False
+        return all(m.stand((x + i * fx, y, z + i * fz)) for i in range(1, k + 1)) and q in reach
+
+    cases = [("an unqualified player in her cell", c, ()), ("an unqualified player behind her", back, ()),
+             ("a player with every gate's tag behind her", back, alltags)]
+    if ix0 <= threshold[0] <= ix1 and iz0 <= threshold[2] <= iz1:
+        cases.append(("an unqualified player on the threshold inside", threshold, ()))
+    for what, q, tags in cases:
+        pos, ly = run_cycle(tps, ctr(q), tags, FA)
+        if not on_line(pos):
+            probs.append("H8 %s %s is moved to %s, not onto the corridor line in front of her" % (what, q, pos))
+            continue
+        if ly is None or facing(ly) != (-fx, -fz):
+            probs.append("H8 %s %s lands at %s facing yaw %s, not facing her" % (what, q, pos, ly))
+        again, _ = run_cycle(tps, pos, tags, FA)
+        if again != pos:
+            probs.append("H8 %s, set out at %s, is moved again to %s" % (what, pos, again))
+    gd = spec["gates"]["door"]["tag"]
+    cb = spec["gates"]["climb"]["box"]
+    # below the climb gate: the player's 1.8-high hitbox does not reach its box (the briefing stair's top steps do,
+    # by design: data/hq_tower.json gates.climb.why)
+    below = lambda q: not (cb[0] <= q[0] <= cb[3] and cb[2] <= q[2] <= cb[5] and q[1] + 1.8 > cb[1] and q[1] < cb[4] + 1)
+    moved = [(q, tags) for q in sorted(in_tower) for tags in (alltags, [gd]) if (tags is alltags or below(q))
+             and run_cycle(tps, ctr(q), tags, FA)[0] != ctr(q)]
+    if moved:
+        probs.append("H8 %d legitimately-inside players are moved by the cycle, e.g. %s" % (len(moved), moved[:3]))
+    fdir = Path(packs) / "cobblers_hq_tower" / "data" / "cobblers" / "function" / "hq_tower"
+    admits = []
+    for f in sorted(fdir.glob("*.mcfunction")) if fdir.is_dir() else []:
+        for line in f.read_text(encoding="utf-8").splitlines():
+            if line.startswith("tp @s "):
+                admits.append((f.stem, cell(tuple(float(v) for v in line.split()[2:5]))))
+    for name, q in admits:
+        if q not in in_tower:
+            probs.append("H8 %s moves a player to %s, not a reached cell inside the tower" % (name, q))
+    notes.append("door keeper: Elara at %s facing %s, %d R18HQ placement(s), %d cycle lines, tags %s, %d inside cells "
+                 "swept, admits %s" % (c, (fx, fz), len(mine), len(tps), alltags, len(in_tower), admits))
     return probs, notes
 
 
