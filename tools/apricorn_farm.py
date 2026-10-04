@@ -767,7 +767,11 @@ def check(doc, p):
     x0, z0 = C.min(axis=0)
     x1, z1 = C.max(axis=0)
     rules = doc["rules"]
-    pts = [(a, b, f) for a, b, f in SR.authored_points({"residents": []}, own_file=DATA) if f != "regions.json"]
+    # a box another file centres on this farm's own site is that file's keep-out of this farm, not a place here
+    # (2026-10-05: data/pokemon_farm.json rules.keep_out holds such a box, and its centre is (2068, 5570) itself)
+    cx, cz = doc["site"]["centre"]
+    pts = [(a, b, f) for a, b, f in SR.authored_points({"residents": []}, own_file=DATA)
+           if f != "regions.json" and math.hypot(a - cx, b - cz) > 1]
     near = [(a, b, f) for a, b, f in pts if x0 - 400 <= a <= x1 + 400 and z0 - 400 <= b <= z1 + 400]
     best = (1e9, None)
     for a, b, f in near:
