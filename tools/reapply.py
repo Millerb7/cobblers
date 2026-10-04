@@ -520,6 +520,11 @@ def prepare_jobs(a):
     # refuses any column the city writes more than paving on, the keep-clears, and anything under min_street from the
     # city or a door; and the contract marks the arena runtime reads must stand on floor with two air above
     add("arena_dome:build", "arena_dome.py", "build", *src)
+    # and its independent audit (tools/arena_dome_audit.py, written by an agent that did not build the dome): the
+    # emitted functions replayed, the shape and the shell against the data's declared numbers, the runtime contract,
+    # the city's plan and canvas (lots, towers, keep-clears, doors, 6 of street) and the walks from the stair and
+    # Victory Road to the door, every venue and every floor-level Stacks door
+    add("arena_dome_audit", "arena_dome_audit.py", *src)
     # the relic site underground (2026-10-02): its own fail-closed report runs first and refuses on a problem; the
     # undo is derived from the superseded surface generator minus the city build above. Its audit runs LATE (below),
     # once every other block pack is built, because it sweeps them all for a cell the undo or the shell would touch
