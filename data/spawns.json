@@ -1801,8 +1801,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.the_crags.skarmory",
-      "species": "skarmory",
+      "id": "surface.the_crags.corvisquire",
+      "species": "corvisquire",
       "bucket": "uncommon",
       "level": "25-32",
       "weight": 6.0,
@@ -2102,39 +2102,11 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.lower_trough.spheal",
-      "species": "spheal",
-      "bucket": "common",
-      "level": "28-36",
-      "weight": 14.4,
-      "ambient": true,
-      "scope": "lower_trough",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "named anchor family, tier 5: the family starts here",
-      "biomes": [],
-      "spawnable_position": "submerged"
-    },
-    {
-      "id": "surface.lower_trough.sealeo",
-      "species": "sealeo",
-      "bucket": "common",
-      "level": "32-38",
-      "weight": 9.6,
-      "ambient": true,
-      "scope": "lower_trough",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Spheal at level 32: spawns 32-38, inside the tier 5 band 28-38",
-      "biomes": [],
-      "spawnable_position": "submerged"
-    },
-    {
       "id": "surface.lower_trough.prinplup",
       "species": "prinplup",
       "bucket": "common",
       "level": "28-38",
-      "weight": 8.0,
+      "weight": 16.0,
       "ambient": true,
       "scope": "lower_trough",
       "mechanism": "spawn_json_coordinate_boxes",
@@ -2148,12 +2120,40 @@
       "species": "empoleon",
       "bucket": "common",
       "level": "36-38",
-      "weight": 4.0,
+      "weight": 8.0,
       "ambient": true,
       "scope": "lower_trough",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
       "eligibility_reason": "evolves from Prinplup at level 36: spawns 36-38, inside the tier 5 band 28-38",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.lower_trough.goldeen",
+      "species": "goldeen",
+      "bucket": "common",
+      "level": "28-37",
+      "weight": 7.2,
+      "ambient": true,
+      "scope": "lower_trough",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "named common family, tier 5: the family starts here",
+      "biomes": [],
+      "spawnable_position": "submerged"
+    },
+    {
+      "id": "surface.lower_trough.seaking",
+      "species": "seaking",
+      "bucket": "common",
+      "level": "33-38",
+      "weight": 4.8,
+      "ambient": true,
+      "scope": "lower_trough",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "evolves from Goldeen at level 33: spawns 33-38, inside the tier 5 band 28-38",
       "biomes": [],
       "spawnable_position": "submerged"
     },
@@ -2221,16 +2221,16 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.lower_trough.heart.walrein",
-      "species": "walrein",
+      "id": "surface.lower_trough.heart.seaking",
+      "species": "seaking",
       "bucket": "uncommon",
-      "level": "44-45",
+      "level": "38-45",
       "weight": 3.0,
       "ambient": true,
       "scope": "lower_trough",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
-      "eligibility_reason": "a presence, from the level it evolves at (44), 44-45 against the tier 5 cap 40: seen on this leg, caught on the next (next cap 45)",
+      "eligibility_reason": "a presence, from the band's top, 38-45 against the tier 5 cap 40: seen on this leg, caught on the next (next cap 45)",
       "heart": {
         "kind": "focus",
         "x": 4380,
@@ -2358,8 +2358,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.the_tri_peaks.heart.skarmory",
-      "species": "skarmory",
+      "id": "surface.the_tri_peaks.heart.duraludon",
+      "species": "duraludon",
       "bucket": "common",
       "level": "24-28",
       "weight": 12.0,
@@ -2764,16 +2764,30 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.rift_trunk.garganacl",
-      "species": "garganacl",
+      "id": "surface.rift_trunk.rhydon",
+      "species": "rhydon",
       "bucket": "common",
       "level": "52-60",
-      "weight": 24.0,
+      "weight": 2.4,
       "ambient": true,
       "scope": "rift_trunk",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
-      "eligibility_reason": "evolves from Naclstack at level 38: spawns 52-60, inside the tier 9 band 52-60",
+      "eligibility_reason": "evolves from Rhyhorn at level 42: spawns 52-60, inside the tier 9 band 52-60",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "surface.rift_trunk.rhyperior",
+      "species": "rhyperior",
+      "bucket": "common",
+      "level": "56-60",
+      "weight": 21.6,
+      "ambient": true,
+      "scope": "rift_trunk",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "evolves from Rhydon by trade holding protector, not by level: in the wild from tier 7, in the upper half of the band (56-60)",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -3086,30 +3100,16 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.rift_south_west_arm.cubone",
-      "species": "cubone",
+      "id": "surface.rift_south_west_arm.excadrill",
+      "species": "excadrill",
       "bucket": "common",
       "level": "52-60",
-      "weight": 1.8,
+      "weight": 12.0,
       "ambient": true,
       "scope": "rift_south_west_arm",
       "mechanism": "spawn_json_coordinate_boxes",
       "conditions": {},
-      "eligibility_reason": "named common family, tier 9: the family starts here",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.rift_south_west_arm.marowak",
-      "species": "marowak",
-      "bucket": "common",
-      "level": "56-60",
-      "weight": 10.2,
-      "ambient": true,
-      "scope": "rift_south_west_arm",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "evolves from Cubone by biome, level, not by level: in the wild from tier 6, in the upper half of the band (56-60)",
+      "eligibility_reason": "evolves from Drilbur at level 31: spawns 52-60, inside the tier 9 band 52-60",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -3177,8 +3177,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.rift_south_west_arm.heart.hippowdon",
-      "species": "hippowdon",
+      "id": "surface.rift_south_west_arm.heart.excadrill",
+      "species": "excadrill",
       "bucket": "uncommon",
       "level": "60-62",
       "weight": 3.0,
@@ -3303,8 +3303,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.rift_south_east_arm.heart.flygon",
-      "species": "flygon",
+      "id": "surface.rift_south_east_arm.heart.archaludon",
+      "species": "archaludon",
       "bucket": "uncommon",
       "level": "60-62",
       "weight": 3.0,
@@ -10014,24 +10014,6 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "surface.mt_clay_outflow.wooper_paldean",
-      "species": "wooper paldean",
-      "bucket": "common",
-      "level": "24-30",
-      "weight": 24.0,
-      "ambient": true,
-      "scope": "mt_clay_outflow",
-      "mechanism": "waterway_coordinate_boxes",
-      "conditions": {
-        "neededNearbyBlocks": [
-          "minecraft:water"
-        ]
-      },
-      "eligibility_reason": "base stage; a regional form is a plain aspect on a spawn_pool_world entry (Cobblemon 1.8 ships 12 of them), unlike a habitat pool, whose species field takes a bare id and throws on a space",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
       "id": "surface.mt_clay_outflow.quagsire",
       "species": "quagsire",
       "bucket": "uncommon",
@@ -10046,24 +10028,6 @@
         ]
       },
       "eligibility_reason": "evolves from Wooper at 20; the band begins at 24",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.mt_clay_outflow.clodsire",
-      "species": "clodsire",
-      "bucket": "rare",
-      "level": "24-30",
-      "weight": 2.0,
-      "ambient": true,
-      "scope": "mt_clay_outflow",
-      "mechanism": "waterway_coordinate_boxes",
-      "conditions": {
-        "neededNearbyBlocks": [
-          "minecraft:water"
-        ]
-      },
-      "eligibility_reason": "evolves from Paldean Wooper at 20; the band begins at 24",
       "biomes": [],
       "spawnable_position": "grounded"
     },
@@ -16098,13 +16062,12 @@
           "conditions": {}
         },
         {
-          "species": "Skarmory",
-          "pokemon": "skarmory",
+          "species": "Corvisquire",
+          "pokemon": "corvisquire",
           "types": [
-            "steel",
             "flying"
           ],
-          "family": "skarmory",
+          "family": "rookidee",
           "family_priority": "uncommon",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 4: the family starts here",
@@ -16460,50 +16423,18 @@
           "conditions": {}
         },
         {
-          "species": "Spheal",
-          "pokemon": "spheal",
-          "types": [
-            "ice",
-            "water"
-          ],
-          "family": "spheal",
-          "family_priority": "anchor",
-          "ambient": true,
-          "eligibility_reason": "named anchor family, tier 5: the family starts here",
-          "level": "28-36",
-          "bucket": "common",
-          "weight": 14.4,
-          "conditions": {}
-        },
-        {
-          "species": "Sealeo",
-          "pokemon": "sealeo",
-          "types": [
-            "ice",
-            "water"
-          ],
-          "family": "spheal",
-          "family_priority": "anchor",
-          "ambient": true,
-          "eligibility_reason": "evolves from Spheal at level 32: spawns 32-38, inside the tier 5 band 28-38",
-          "level": "32-38",
-          "bucket": "common",
-          "weight": 9.6,
-          "conditions": {}
-        },
-        {
           "species": "Prinplup",
           "pokemon": "prinplup",
           "types": [
             "water"
           ],
           "family": "piplup",
-          "family_priority": "common",
+          "family_priority": "anchor",
           "ambient": true,
           "eligibility_reason": "evolves from Piplup at level 16: spawns 28-38, inside the tier 5 band 28-38",
           "level": "28-38",
           "bucket": "common",
-          "weight": 8.0,
+          "weight": 16.0,
           "conditions": {}
         },
         {
@@ -16514,12 +16445,42 @@
             "steel"
           ],
           "family": "piplup",
-          "family_priority": "common",
+          "family_priority": "anchor",
           "ambient": true,
           "eligibility_reason": "evolves from Prinplup at level 36: spawns 36-38, inside the tier 5 band 28-38",
           "level": "36-38",
           "bucket": "common",
-          "weight": 4.0,
+          "weight": 8.0,
+          "conditions": {}
+        },
+        {
+          "species": "Goldeen",
+          "pokemon": "goldeen",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 5: the family starts here",
+          "level": "28-37",
+          "bucket": "common",
+          "weight": 7.2,
+          "conditions": {}
+        },
+        {
+          "species": "Seaking",
+          "pokemon": "seaking",
+          "types": [
+            "water"
+          ],
+          "family": "goldeen",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "evolves from Goldeen at level 33: spawns 33-38, inside the tier 5 band 28-38",
+          "level": "33-38",
+          "bucket": "common",
+          "weight": 4.8,
           "conditions": {}
         }
       ],
@@ -16536,7 +16497,7 @@
         "why": "the Glacial Tear, the trough's glacier, 177 blocks from Route 5",
         "above_cap_share": {
           "land": 0.0423,
-          "water": 0.1015
+          "water": 0.0635
         },
         "entries": [
           {
@@ -16587,17 +16548,16 @@
             "conditions": {}
           },
           {
-            "species": "Walrein",
-            "pokemon": "walrein",
+            "species": "Seaking",
+            "pokemon": "seaking",
             "types": [
-              "ice",
               "water"
             ],
-            "family": "spheal",
+            "family": "goldeen",
             "family_priority": "presence",
             "ambient": true,
-            "eligibility_reason": "a presence, from the level it evolves at (44), 44-45 against the tier 5 cap 40: seen on this leg, caught on the next (next cap 45)",
-            "level": "44-45",
+            "eligibility_reason": "a presence, from the band's top, 38-45 against the tier 5 cap 40: seen on this leg, caught on the next (next cap 45)",
+            "level": "38-45",
             "bucket": "uncommon",
             "weight": 3.0,
             "conditions": {}
@@ -16749,13 +16709,13 @@
             }
           },
           {
-            "species": "Skarmory",
-            "pokemon": "skarmory",
+            "species": "Duraludon",
+            "pokemon": "duraludon",
             "types": [
               "steel",
-              "flying"
+              "dragon"
             ],
-            "family": "skarmory",
+            "family": "duraludon",
             "family_priority": "common",
             "ambient": true,
             "eligibility_reason": "heart: named common family, tier 3: the family starts here",
@@ -17206,18 +17166,35 @@
       },
       "entries": [
         {
-          "species": "Garganacl",
-          "pokemon": "garganacl",
+          "species": "Rhydon",
+          "pokemon": "rhydon",
           "types": [
+            "ground",
             "rock"
           ],
-          "family": "nacli",
+          "family": "rhyhorn",
           "family_priority": "anchor",
           "ambient": true,
-          "eligibility_reason": "evolves from Naclstack at level 38: spawns 52-60, inside the tier 9 band 52-60",
+          "eligibility_reason": "evolves from Rhyhorn at level 42: spawns 52-60, inside the tier 9 band 52-60",
           "level": "52-60",
           "bucket": "common",
-          "weight": 24.0,
+          "weight": 2.4,
+          "conditions": {}
+        },
+        {
+          "species": "Rhyperior",
+          "pokemon": "rhyperior",
+          "types": [
+            "ground",
+            "rock"
+          ],
+          "family": "rhyhorn",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "evolves from Rhydon by trade holding protector, not by level: in the wild from tier 7, in the upper half of the band (56-60)",
+          "level": "56-60",
+          "bucket": "common",
+          "weight": 21.6,
           "conditions": {}
         },
         {
@@ -17585,33 +17562,19 @@
           "conditions": {}
         },
         {
-          "species": "Cubone",
-          "pokemon": "cubone",
+          "species": "Excadrill",
+          "pokemon": "excadrill",
           "types": [
-            "ground"
+            "ground",
+            "steel"
           ],
-          "family": "cubone",
+          "family": "drilbur",
           "family_priority": "common",
           "ambient": true,
-          "eligibility_reason": "named common family, tier 9: the family starts here",
+          "eligibility_reason": "evolves from Drilbur at level 31: spawns 52-60, inside the tier 9 band 52-60",
           "level": "52-60",
           "bucket": "common",
-          "weight": 1.8,
-          "conditions": {}
-        },
-        {
-          "species": "Marowak",
-          "pokemon": "marowak",
-          "types": [
-            "ground"
-          ],
-          "family": "cubone",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "evolves from Cubone by biome, level, not by level: in the wild from tier 6, in the upper half of the band (56-60)",
-          "level": "56-60",
-          "bucket": "common",
-          "weight": 10.2,
+          "weight": 12.0,
           "conditions": {}
         },
         {
@@ -17695,12 +17658,13 @@
             "conditions": {}
           },
           {
-            "species": "Hippowdon",
-            "pokemon": "hippowdon",
+            "species": "Excadrill",
+            "pokemon": "excadrill",
             "types": [
-              "ground"
+              "ground",
+              "steel"
             ],
-            "family": "hippopotas",
+            "family": "drilbur",
             "family_priority": "presence",
             "ambient": true,
             "eligibility_reason": "a presence, from the band's top, 60-62 against the tier 9 cap 60: seen on this leg, caught on the next (next cap 62)",
@@ -17854,13 +17818,13 @@
             "conditions": {}
           },
           {
-            "species": "Flygon",
-            "pokemon": "flygon",
+            "species": "Archaludon",
+            "pokemon": "archaludon",
             "types": [
-              "ground",
+              "steel",
               "dragon"
             ],
-            "family": "trapinch",
+            "family": "duraludon",
             "family_priority": "presence",
             "ambient": true,
             "eligibility_reason": "a presence, from the band's top, 60-62 against the tier 9 cap 60: seen on this leg, caught on the next (next cap 62)",
@@ -32096,22 +32060,22 @@
         "clawitzer",
         "claydol",
         "crabrawler",
-        "garganacl",
+        "excadrill",
         "gigalith",
         "glimmora",
         "gliscor",
         "golurk",
         "kilowattrel",
-        "marowak",
         "nidoking",
         "nidoqueen",
         "pincurchin",
+        "rhydon",
+        "rhyperior",
         "sableye",
         "scrafty",
         "scraggy",
         "tinkaton",
-        "toxapex",
-        "zebstrika"
+        "toxapex"
       ]
     }
   },

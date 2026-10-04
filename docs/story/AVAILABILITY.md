@@ -118,9 +118,9 @@ Absent: dark, fire, ghost, ice, psychic, rock, steel.
 
 ## Gym 3: kanto_ltsurge (Electric)
 
-87 species catchable before this gym; 41 of them are new since the last.
+86 species catchable before this gym; 40 of them are new since the last.
 
-Types available at the cap (L30), on the form a player would have evolved to: bug (12), dark (2), dragon (3), electric (6), fairy (1), fighting (5), flying (17), grass (15), ground (5), normal (13), poison (7), psychic (6), rock (5), steel (1), water (17).
+Types available at the cap (L30), on the form a player would have evolved to: bug (12), dark (2), dragon (4), electric (6), fairy (1), fighting (5), flying (16), grass (15), ground (5), normal (13), poison (6), psychic (6), rock (7), steel (1), water (17).
 Absent: fire, ghost, ice.
 
 | Species | Types | First wild levels | Bucket | Pool | Kind | Off corridor | New here |
@@ -185,22 +185,21 @@ Absent: fire, ghost, ice.
 | corvisquire | flying | 20-28 | common | the_tri_peaks | subregion | 9 blocks | yes |
 | machop | fighting | 20-26 | common | route_03_misty_to_surge | route | on it | yes |
 | makuhita | fighting | 20-26 | common | mt_clay | subregion | 9 blocks | yes |
+| rhyhorn | ground/rock | 20-26 | uncommon | mt_clay | subregion | 9 blocks | yes |
 | rockruff | rock | 20-26 | common | mt_clay | subregion | 9 blocks | yes |
 | rookidee | flying | 20-22 | common | route_03_misty_to_surge | route | on it | yes |
 | rufflet | normal/flying | 20-26 | uncommon | mt_clay | subregion | 9 blocks | yes |
-| sandshrew | ground | 20-26 | uncommon | mt_clay | subregion | 9 blocks | yes |
 | skiddo | grass | 20-28 | common | route_03_misty_to_surge | route | on it | yes |
 | swablu | normal/flying | 20-28 | common | route_03_misty_to_surge | route | on it | yes |
 | drampa | normal/dragon | 22-28 | rare | mt_vessu | subregion | 1 blocks | yes |
 | meditite | fighting/psychic | 22-28 | common | mt_vessu | subregion | 1 blocks | yes |
 | nosepass | rock | 22-28 | common | mt_vessu | subregion | 1 blocks | yes |
-| sandslash | ground | 22-26 | uncommon | mt_clay | subregion | 9 blocks | yes |
 | spoink | psychic | 22-28 | common | mt_vessu | subregion | 1 blocks | yes |
-| clodsire | poison/ground | 24-30 | rare | mt_clay_outflow | waterway | 57 blocks | yes |
+| duraludon | steel/dragon | 24-28 | common | the_tri_peaks | subregion | 9 blocks | yes |
 | hariyama | fighting | 24-26 | common | mt_clay | subregion | 9 blocks | yes |
 | quagsire | water/ground | 24-30 | uncommon | mt_clay_outflow | waterway | 57 blocks | yes |
-| skarmory | steel/flying | 24-28 | common | the_tri_peaks | subregion | 9 blocks | yes |
 | wooper | water/ground | 24-30 | common | mt_clay_outflow | waterway | 57 blocks | yes |
+| graveler | rock/ground | 25-26 | common | mt_clay | subregion | 9 blocks | yes |
 | lunatone | rock/psychic | 25-28 | common | mt_vessu | subregion | 1 blocks | yes |
 | lycanroc | rock | 25-26 | common | mt_clay | subregion | 9 blocks | yes |
 | poliwhirl | water | 25-26 | common | route_03_misty_to_surge | route | on it | yes |
@@ -215,9 +214,9 @@ Absent: fire, ghost, ice.
 
 ## Gym 4: kanto_erika (Grass)
 
-133 species catchable before this gym; 46 of them are new since the last.
+131 species catchable before this gym; 45 of them are new since the last.
 
-Types available at the cap (L35), on the form a player would have evolved to: bug (14), dark (6), dragon (3), electric (7), fairy (3), fighting (6), fire (6), flying (19), grass (15), ground (10), ice (10), normal (16), poison (8), psychic (6), rock (11), steel (2), water (23).
+Types available at the cap (L35), on the form a player would have evolved to: bug (13), dark (6), dragon (5), electric (7), fairy (3), fighting (6), fire (6), flying (18), grass (15), ground (9), ice (10), normal (16), poison (7), psychic (6), rock (11), steel (2), water (23).
 Absent: ghost.
 
 | Species | Types | First wild levels | Bucket | Pool | Kind | Off corridor | New here |
@@ -282,22 +281,21 @@ Absent: ghost.
 | corvisquire | flying | 20-28 | common | the_tri_peaks | subregion | 9 blocks |  |
 | machop | fighting | 20-26 | common | route_03_misty_to_surge | route | on it |  |
 | makuhita | fighting | 20-26 | common | mt_clay | subregion | 9 blocks |  |
+| rhyhorn | ground/rock | 20-26 | uncommon | mt_clay | subregion | 9 blocks |  |
 | rockruff | rock | 20-26 | common | mt_clay | subregion | 9 blocks |  |
 | rookidee | flying | 20-22 | common | route_03_misty_to_surge | route | on it |  |
 | rufflet | normal/flying | 20-26 | uncommon | mt_clay | subregion | 9 blocks |  |
-| sandshrew | ground | 20-26 | uncommon | mt_clay | subregion | 9 blocks |  |
 | skiddo | grass | 20-28 | common | route_03_misty_to_surge | route | on it |  |
 | swablu | normal/flying | 20-28 | common | route_03_misty_to_surge | route | on it |  |
 | drampa | normal/dragon | 22-28 | rare | mt_vessu | subregion | 1 blocks |  |
 | meditite | fighting/psychic | 22-28 | common | mt_vessu | subregion | 1 blocks |  |
 | nosepass | rock | 22-28 | common | mt_vessu | subregion | 1 blocks |  |
-| sandslash | ground | 22-26 | uncommon | mt_clay | subregion | 9 blocks |  |
 | spoink | psychic | 22-28 | common | mt_vessu | subregion | 1 blocks |  |
-| clodsire | poison/ground | 24-30 | rare | mt_clay_outflow | waterway | 57 blocks |  |
+| duraludon | steel/dragon | 24-28 | common | the_tri_peaks | subregion | 9 blocks |  |
 | hariyama | fighting | 24-26 | common | mt_clay | subregion | 9 blocks |  |
 | quagsire | water/ground | 24-30 | uncommon | mt_clay_outflow | waterway | 57 blocks |  |
-| skarmory | steel/flying | 24-28 | common | the_tri_peaks | subregion | 9 blocks |  |
 | wooper | water/ground | 24-30 | common | mt_clay_outflow | waterway | 57 blocks |  |
+| graveler | rock/ground | 25-26 | common | mt_clay | subregion | 9 blocks |  |
 | lunatone | rock/psychic | 25-28 | common | mt_vessu | subregion | 1 blocks |  |
 | lycanroc | rock | 25-26 | common | mt_clay | subregion | 9 blocks |  |
 | poliwhirl | water | 25-26 | common | route_03_misty_to_surge | route | on it |  |
@@ -321,7 +319,6 @@ Absent: ghost.
 | carvanha | water/dark | 25-32 | common | route_04_surge_to_erika | route | on it | yes |
 | cryogonal | ice | 25-31 | rare | merian_cirque | subregion | on it | yes |
 | geodude | rock/ground | 25-29 | common | the_crags | subregion | on it | yes |
-| graveler | rock/ground | 25-32 | common | the_crags | subregion | on it | yes |
 | smoochum | ice/psychic | 25-31 | common | route_04_surge_to_erika | route | on it | yes |
 | swinub | ice/ground | 25-31 | common | route_04_surge_to_erika | route | on it | yes |
 | basculin | water | 26-33 | common | route_04_surge_to_erika | route | on it | yes |
@@ -349,18 +346,18 @@ Absent: ghost.
 | ursaring | normal | 30-33 | common | peak_pond_hollow | subregion | on it | yes |
 | whiscash | water/ground | 30-32 | common | route_04_surge_to_erika | route | on it | yes |
 | boldore | rock | 32-40 | uncommon | the_crags | subregion | on it | yes |
+| druddigon | dragon | 32-40 | uncommon | the_crags | subregion | on it | yes |
 | lairon | steel/rock | 32-32 | common | the_crags | subregion | on it | yes |
 | piloswine | ice/ground | 33-40 | uncommon | merian_cirque | subregion | on it | yes |
-| crustle | bug/rock | 34-40 | uncommon | the_crags | subregion | on it | yes |
 | samurott | water | 36-40 | uncommon | peak_pond_hollow | subregion | on it | yes |
 | avalugg | ice | 37-40 | uncommon | merian_cirque | subregion | on it | yes |
 | beartic | ice | 37-40 | uncommon | merian_cirque | subregion | on it | yes |
 
 ## Gym 5: kanto_koga (Poison)
 
-164 species catchable before this gym; 31 of them are new since the last.
+160 species catchable before this gym; 29 of them are new since the last.
 
-Types available at the cap (L40), on the form a player would have evolved to: bug (15), dark (6), dragon (4), electric (10), fairy (3), fighting (7), fire (7), flying (19), grass (17), ground (14), ice (13), normal (16), poison (11), psychic (8), rock (11), steel (5), water (28).
+Types available at the cap (L40), on the form a player would have evolved to: bug (14), dark (6), dragon (6), electric (10), fairy (3), fighting (7), fire (7), flying (18), grass (17), ground (13), ice (11), normal (16), poison (10), psychic (8), rock (11), steel (5), water (26).
 Absent: ghost.
 
 | Species | Types | First wild levels | Bucket | Pool | Kind | Off corridor | New here |
@@ -425,22 +422,21 @@ Absent: ghost.
 | corvisquire | flying | 20-28 | common | the_tri_peaks | subregion | 9 blocks |  |
 | machop | fighting | 20-26 | common | route_03_misty_to_surge | route | on it |  |
 | makuhita | fighting | 20-26 | common | mt_clay | subregion | 9 blocks |  |
+| rhyhorn | ground/rock | 20-26 | uncommon | mt_clay | subregion | 9 blocks |  |
 | rockruff | rock | 20-26 | common | mt_clay | subregion | 9 blocks |  |
 | rookidee | flying | 20-22 | common | route_03_misty_to_surge | route | on it |  |
 | rufflet | normal/flying | 20-26 | uncommon | mt_clay | subregion | 9 blocks |  |
-| sandshrew | ground | 20-26 | uncommon | mt_clay | subregion | 9 blocks |  |
 | skiddo | grass | 20-28 | common | route_03_misty_to_surge | route | on it |  |
 | swablu | normal/flying | 20-28 | common | route_03_misty_to_surge | route | on it |  |
 | drampa | normal/dragon | 22-28 | rare | mt_vessu | subregion | 1 blocks |  |
 | meditite | fighting/psychic | 22-28 | common | mt_vessu | subregion | 1 blocks |  |
 | nosepass | rock | 22-28 | common | mt_vessu | subregion | 1 blocks |  |
-| sandslash | ground | 22-26 | uncommon | mt_clay | subregion | 9 blocks |  |
 | spoink | psychic | 22-28 | common | mt_vessu | subregion | 1 blocks |  |
-| clodsire | poison/ground | 24-30 | rare | mt_clay_outflow | waterway | 57 blocks |  |
+| duraludon | steel/dragon | 24-28 | common | the_tri_peaks | subregion | 9 blocks |  |
 | hariyama | fighting | 24-26 | common | mt_clay | subregion | 9 blocks |  |
 | quagsire | water/ground | 24-30 | uncommon | mt_clay_outflow | waterway | 57 blocks |  |
-| skarmory | steel/flying | 24-28 | common | the_tri_peaks | subregion | 9 blocks |  |
 | wooper | water/ground | 24-30 | common | mt_clay_outflow | waterway | 57 blocks |  |
+| graveler | rock/ground | 25-26 | common | mt_clay | subregion | 9 blocks |  |
 | lunatone | rock/psychic | 25-28 | common | mt_vessu | subregion | 1 blocks |  |
 | lycanroc | rock | 25-26 | common | mt_clay | subregion | 9 blocks |  |
 | poliwhirl | water | 25-26 | common | route_03_misty_to_surge | route | on it |  |
@@ -464,7 +460,6 @@ Absent: ghost.
 | carvanha | water/dark | 25-32 | common | route_04_surge_to_erika | route | on it |  |
 | cryogonal | ice | 25-31 | rare | merian_cirque | subregion | on it |  |
 | geodude | rock/ground | 25-29 | common | the_crags | subregion | on it |  |
-| graveler | rock/ground | 25-32 | common | the_crags | subregion | on it |  |
 | smoochum | ice/psychic | 25-31 | common | route_04_surge_to_erika | route | on it |  |
 | swinub | ice/ground | 25-31 | common | route_04_surge_to_erika | route | on it |  |
 | basculin | water | 26-33 | common | route_04_surge_to_erika | route | on it |  |
@@ -492,9 +487,9 @@ Absent: ghost.
 | ursaring | normal | 30-33 | common | peak_pond_hollow | subregion | on it |  |
 | whiscash | water/ground | 30-32 | common | route_04_surge_to_erika | route | on it |  |
 | boldore | rock | 32-40 | uncommon | the_crags | subregion | on it |  |
+| druddigon | dragon | 32-40 | uncommon | the_crags | subregion | on it |  |
 | lairon | steel/rock | 32-32 | common | the_crags | subregion | on it |  |
 | piloswine | ice/ground | 33-40 | uncommon | merian_cirque | subregion | on it |  |
-| crustle | bug/rock | 34-40 | uncommon | the_crags | subregion | on it |  |
 | samurott | water | 36-40 | uncommon | peak_pond_hollow | subregion | on it |  |
 | avalugg | ice | 37-40 | uncommon | merian_cirque | subregion | on it |  |
 | beartic | ice | 37-40 | uncommon | merian_cirque | subregion | on it |  |
@@ -507,7 +502,6 @@ Absent: ghost.
 | palpitoad | water/ground | 28-38 | common | marshy_marsh | subregion | 121 blocks | yes |
 | prinplup | water | 28-38 | common | lower_trough | subregion | 81 blocks | yes |
 | snover | grass/ice | 28-38 | uncommon | lower_trough | subregion | 81 blocks | yes |
-| spheal | ice/water | 28-36 | common | lower_trough | subregion | 81 blocks | yes |
 | stunfisk | ground/electric | 28-38 | common | marshy_marsh | subregion | 121 blocks | yes |
 | tympole | water | 28-29 | common | marshy_marsh | subregion | 121 blocks | yes |
 | braixen | fire | 30-38 | uncommon | route_05_erika_to_koga | route | on it | yes |
@@ -519,7 +513,7 @@ Absent: ghost.
 | toxtricity | electric/poison | 30-38 | uncommon | glacier_foot_fields | subregion | on it | yes |
 | excadrill | ground/steel | 31-38 | common | route_05_erika_to_koga | route | on it | yes |
 | hattrem | psychic | 32-38 | common | route_05_erika_to_koga | route | on it | yes |
-| sealeo | ice/water | 32-38 | common | lower_trough | subregion | 81 blocks | yes |
+| seaking | water | 33-38 | common | lower_trough | subregion | 81 blocks | yes |
 | delphox | fire/psychic | 36-38 | uncommon | glacier_foot_fields | subregion | on it | yes |
 | empoleon | water/steel | 36-38 | common | lower_trough | subregion | 81 blocks | yes |
 | seismitoad | water/ground | 36-38 | common | marshy_marsh | subregion | 121 blocks | yes |
@@ -528,13 +522,12 @@ Absent: ghost.
 | cetitan | ice | 38-45 | uncommon | lower_trough | subregion | 81 blocks | yes |
 | abomasnow | grass/ice | 40-45 | uncommon | lower_trough | subregion | 81 blocks | yes |
 | sliggoo | dragon | 40-45 | uncommon | marshy_marsh | subregion | 121 blocks | yes |
-| walrein | ice/water | 44-45 | uncommon | lower_trough | subregion | 81 blocks | yes |
 
 ## Gym 6: kanto_sabrina (Psychic)
 
-190 species catchable before this gym; 26 of them are new since the last.
+186 species catchable before this gym; 26 of them are new since the last.
 
-Types available at the cap (L45), on the form a player would have evolved to: bug (20), dark (10), dragon (4), electric (10), fairy (4), fighting (10), fire (8), flying (24), ghost (1), grass (22), ground (14), ice (12), normal (18), poison (14), psychic (8), rock (11), steel (5), water (30).
+Types available at the cap (L45), on the form a player would have evolved to: bug (19), dark (10), dragon (6), electric (10), fairy (4), fighting (10), fire (8), flying (23), ghost (1), grass (22), ground (13), ice (11), normal (18), poison (13), psychic (8), rock (11), steel (5), water (29).
 Absent: none.
 
 | Species | Types | First wild levels | Bucket | Pool | Kind | Off corridor | New here |
@@ -599,22 +592,21 @@ Absent: none.
 | corvisquire | flying | 20-28 | common | the_tri_peaks | subregion | 9 blocks |  |
 | machop | fighting | 20-26 | common | route_03_misty_to_surge | route | on it |  |
 | makuhita | fighting | 20-26 | common | mt_clay | subregion | 9 blocks |  |
+| rhyhorn | ground/rock | 20-26 | uncommon | mt_clay | subregion | 9 blocks |  |
 | rockruff | rock | 20-26 | common | mt_clay | subregion | 9 blocks |  |
 | rookidee | flying | 20-22 | common | route_03_misty_to_surge | route | on it |  |
 | rufflet | normal/flying | 20-26 | uncommon | mt_clay | subregion | 9 blocks |  |
-| sandshrew | ground | 20-26 | uncommon | mt_clay | subregion | 9 blocks |  |
 | skiddo | grass | 20-28 | common | route_03_misty_to_surge | route | on it |  |
 | swablu | normal/flying | 20-28 | common | route_03_misty_to_surge | route | on it |  |
 | drampa | normal/dragon | 22-28 | rare | mt_vessu | subregion | 1 blocks |  |
 | meditite | fighting/psychic | 22-28 | common | mt_vessu | subregion | 1 blocks |  |
 | nosepass | rock | 22-28 | common | mt_vessu | subregion | 1 blocks |  |
-| sandslash | ground | 22-26 | uncommon | mt_clay | subregion | 9 blocks |  |
 | spoink | psychic | 22-28 | common | mt_vessu | subregion | 1 blocks |  |
-| clodsire | poison/ground | 24-30 | rare | mt_clay_outflow | waterway | 57 blocks |  |
+| duraludon | steel/dragon | 24-28 | common | the_tri_peaks | subregion | 9 blocks |  |
 | hariyama | fighting | 24-26 | common | mt_clay | subregion | 9 blocks |  |
 | quagsire | water/ground | 24-30 | uncommon | mt_clay_outflow | waterway | 57 blocks |  |
-| skarmory | steel/flying | 24-28 | common | the_tri_peaks | subregion | 9 blocks |  |
 | wooper | water/ground | 24-30 | common | mt_clay_outflow | waterway | 57 blocks |  |
+| graveler | rock/ground | 25-26 | common | mt_clay | subregion | 9 blocks |  |
 | lunatone | rock/psychic | 25-28 | common | mt_vessu | subregion | 1 blocks |  |
 | lycanroc | rock | 25-26 | common | mt_clay | subregion | 9 blocks |  |
 | poliwhirl | water | 25-26 | common | route_03_misty_to_surge | route | on it |  |
@@ -638,7 +630,6 @@ Absent: none.
 | carvanha | water/dark | 25-32 | common | route_04_surge_to_erika | route | on it |  |
 | cryogonal | ice | 25-31 | rare | merian_cirque | subregion | on it |  |
 | geodude | rock/ground | 25-29 | common | the_crags | subregion | on it |  |
-| graveler | rock/ground | 25-32 | common | the_crags | subregion | on it |  |
 | smoochum | ice/psychic | 25-31 | common | route_04_surge_to_erika | route | on it |  |
 | swinub | ice/ground | 25-31 | common | route_04_surge_to_erika | route | on it |  |
 | basculin | water | 26-33 | common | route_04_surge_to_erika | route | on it |  |
@@ -666,9 +657,9 @@ Absent: none.
 | ursaring | normal | 30-33 | common | peak_pond_hollow | subregion | on it |  |
 | whiscash | water/ground | 30-32 | common | route_04_surge_to_erika | route | on it |  |
 | boldore | rock | 32-40 | uncommon | the_crags | subregion | on it |  |
+| druddigon | dragon | 32-40 | uncommon | the_crags | subregion | on it |  |
 | lairon | steel/rock | 32-32 | common | the_crags | subregion | on it |  |
 | piloswine | ice/ground | 33-40 | uncommon | merian_cirque | subregion | on it |  |
-| crustle | bug/rock | 34-40 | uncommon | the_crags | subregion | on it |  |
 | samurott | water | 36-40 | uncommon | peak_pond_hollow | subregion | on it |  |
 | avalugg | ice | 37-40 | uncommon | merian_cirque | subregion | on it |  |
 | beartic | ice | 37-40 | uncommon | merian_cirque | subregion | on it |  |
@@ -681,7 +672,6 @@ Absent: none.
 | palpitoad | water/ground | 28-38 | common | marshy_marsh | subregion | 121 blocks |  |
 | prinplup | water | 28-38 | common | lower_trough | subregion | 81 blocks |  |
 | snover | grass/ice | 28-38 | uncommon | lower_trough | subregion | 81 blocks |  |
-| spheal | ice/water | 28-36 | common | lower_trough | subregion | 81 blocks |  |
 | stunfisk | ground/electric | 28-38 | common | marshy_marsh | subregion | 121 blocks |  |
 | tympole | water | 28-29 | common | marshy_marsh | subregion | 121 blocks |  |
 | braixen | fire | 30-38 | uncommon | route_05_erika_to_koga | route | on it |  |
@@ -693,7 +683,7 @@ Absent: none.
 | toxtricity | electric/poison | 30-38 | uncommon | glacier_foot_fields | subregion | on it |  |
 | excadrill | ground/steel | 31-38 | common | route_05_erika_to_koga | route | on it |  |
 | hattrem | psychic | 32-38 | common | route_05_erika_to_koga | route | on it |  |
-| sealeo | ice/water | 32-38 | common | lower_trough | subregion | 81 blocks |  |
+| seaking | water | 33-38 | common | lower_trough | subregion | 81 blocks |  |
 | delphox | fire/psychic | 36-38 | uncommon | glacier_foot_fields | subregion | on it |  |
 | empoleon | water/steel | 36-38 | common | lower_trough | subregion | 81 blocks |  |
 | seismitoad | water/ground | 36-38 | common | marshy_marsh | subregion | 121 blocks |  |
@@ -702,7 +692,6 @@ Absent: none.
 | cetitan | ice | 38-45 | uncommon | lower_trough | subregion | 81 blocks |  |
 | abomasnow | grass/ice | 40-45 | uncommon | lower_trough | subregion | 81 blocks |  |
 | sliggoo | dragon | 40-45 | uncommon | marshy_marsh | subregion | 121 blocks |  |
-| walrein | ice/water | 44-45 | uncommon | lower_trough | subregion | 81 blocks |  |
 | arbok | poison | 33-43 | common | route_06_koga_to_sabrina | route | on it | yes |
 | ducklett | water/flying | 33-39 | common | route_06_koga_to_sabrina | route | on it | yes |
 | dunsparce | normal | 33-43 | common | route_06_koga_to_sabrina | route | on it | yes |
@@ -732,9 +721,9 @@ Absent: none.
 
 ## Gym 7: kanto_blaine (Fire)
 
-233 species catchable before this gym; 43 of them are new since the last.
+228 species catchable before this gym; 42 of them are new since the last.
 
-Types available at the cap (L50), on the form a player would have evolved to: bug (27), dark (11), dragon (6), electric (10), fairy (4), fighting (11), fire (16), flying (26), ghost (1), grass (23), ground (22), ice (12), normal (18), poison (17), psychic (9), rock (15), steel (6), water (35).
+Types available at the cap (L50), on the form a player would have evolved to: bug (26), dark (11), dragon (8), electric (10), fairy (4), fighting (11), fire (16), flying (25), ghost (2), grass (23), ground (19), ice (11), normal (18), poison (16), psychic (9), rock (14), steel (6), water (33).
 Absent: none.
 
 | Species | Types | First wild levels | Bucket | Pool | Kind | Off corridor | New here |
@@ -799,22 +788,21 @@ Absent: none.
 | corvisquire | flying | 20-28 | common | the_tri_peaks | subregion | 9 blocks |  |
 | machop | fighting | 20-26 | common | route_03_misty_to_surge | route | on it |  |
 | makuhita | fighting | 20-26 | common | mt_clay | subregion | 9 blocks |  |
+| rhyhorn | ground/rock | 20-26 | uncommon | mt_clay | subregion | 9 blocks |  |
 | rockruff | rock | 20-26 | common | mt_clay | subregion | 9 blocks |  |
 | rookidee | flying | 20-22 | common | route_03_misty_to_surge | route | on it |  |
 | rufflet | normal/flying | 20-26 | uncommon | mt_clay | subregion | 9 blocks |  |
-| sandshrew | ground | 20-26 | uncommon | mt_clay | subregion | 9 blocks |  |
 | skiddo | grass | 20-28 | common | route_03_misty_to_surge | route | on it |  |
 | swablu | normal/flying | 20-28 | common | route_03_misty_to_surge | route | on it |  |
 | drampa | normal/dragon | 22-28 | rare | mt_vessu | subregion | 1 blocks |  |
 | meditite | fighting/psychic | 22-28 | common | mt_vessu | subregion | 1 blocks |  |
 | nosepass | rock | 22-28 | common | mt_vessu | subregion | 1 blocks |  |
-| sandslash | ground | 22-26 | uncommon | mt_clay | subregion | 9 blocks |  |
 | spoink | psychic | 22-28 | common | mt_vessu | subregion | 1 blocks |  |
-| clodsire | poison/ground | 24-30 | rare | mt_clay_outflow | waterway | 57 blocks |  |
+| duraludon | steel/dragon | 24-28 | common | the_tri_peaks | subregion | 9 blocks |  |
 | hariyama | fighting | 24-26 | common | mt_clay | subregion | 9 blocks |  |
 | quagsire | water/ground | 24-30 | uncommon | mt_clay_outflow | waterway | 57 blocks |  |
-| skarmory | steel/flying | 24-28 | common | the_tri_peaks | subregion | 9 blocks |  |
 | wooper | water/ground | 24-30 | common | mt_clay_outflow | waterway | 57 blocks |  |
+| graveler | rock/ground | 25-26 | common | mt_clay | subregion | 9 blocks |  |
 | lunatone | rock/psychic | 25-28 | common | mt_vessu | subregion | 1 blocks |  |
 | lycanroc | rock | 25-26 | common | mt_clay | subregion | 9 blocks |  |
 | poliwhirl | water | 25-26 | common | route_03_misty_to_surge | route | on it |  |
@@ -838,7 +826,6 @@ Absent: none.
 | carvanha | water/dark | 25-32 | common | route_04_surge_to_erika | route | on it |  |
 | cryogonal | ice | 25-31 | rare | merian_cirque | subregion | on it |  |
 | geodude | rock/ground | 25-29 | common | the_crags | subregion | on it |  |
-| graveler | rock/ground | 25-32 | common | the_crags | subregion | on it |  |
 | smoochum | ice/psychic | 25-31 | common | route_04_surge_to_erika | route | on it |  |
 | swinub | ice/ground | 25-31 | common | route_04_surge_to_erika | route | on it |  |
 | basculin | water | 26-33 | common | route_04_surge_to_erika | route | on it |  |
@@ -866,9 +853,9 @@ Absent: none.
 | ursaring | normal | 30-33 | common | peak_pond_hollow | subregion | on it |  |
 | whiscash | water/ground | 30-32 | common | route_04_surge_to_erika | route | on it |  |
 | boldore | rock | 32-40 | uncommon | the_crags | subregion | on it |  |
+| druddigon | dragon | 32-40 | uncommon | the_crags | subregion | on it |  |
 | lairon | steel/rock | 32-32 | common | the_crags | subregion | on it |  |
 | piloswine | ice/ground | 33-40 | uncommon | merian_cirque | subregion | on it |  |
-| crustle | bug/rock | 34-40 | uncommon | the_crags | subregion | on it |  |
 | samurott | water | 36-40 | uncommon | peak_pond_hollow | subregion | on it |  |
 | avalugg | ice | 37-40 | uncommon | merian_cirque | subregion | on it |  |
 | beartic | ice | 37-40 | uncommon | merian_cirque | subregion | on it |  |
@@ -881,7 +868,6 @@ Absent: none.
 | palpitoad | water/ground | 28-38 | common | marshy_marsh | subregion | 121 blocks |  |
 | prinplup | water | 28-38 | common | lower_trough | subregion | 81 blocks |  |
 | snover | grass/ice | 28-38 | uncommon | lower_trough | subregion | 81 blocks |  |
-| spheal | ice/water | 28-36 | common | lower_trough | subregion | 81 blocks |  |
 | stunfisk | ground/electric | 28-38 | common | marshy_marsh | subregion | 121 blocks |  |
 | tympole | water | 28-29 | common | marshy_marsh | subregion | 121 blocks |  |
 | braixen | fire | 30-38 | uncommon | route_05_erika_to_koga | route | on it |  |
@@ -893,7 +879,7 @@ Absent: none.
 | toxtricity | electric/poison | 30-38 | uncommon | glacier_foot_fields | subregion | on it |  |
 | excadrill | ground/steel | 31-38 | common | route_05_erika_to_koga | route | on it |  |
 | hattrem | psychic | 32-38 | common | route_05_erika_to_koga | route | on it |  |
-| sealeo | ice/water | 32-38 | common | lower_trough | subregion | 81 blocks |  |
+| seaking | water | 33-38 | common | lower_trough | subregion | 81 blocks |  |
 | delphox | fire/psychic | 36-38 | uncommon | glacier_foot_fields | subregion | on it |  |
 | empoleon | water/steel | 36-38 | common | lower_trough | subregion | 81 blocks |  |
 | seismitoad | water/ground | 36-38 | common | marshy_marsh | subregion | 121 blocks |  |
@@ -902,7 +888,6 @@ Absent: none.
 | cetitan | ice | 38-45 | uncommon | lower_trough | subregion | 81 blocks |  |
 | abomasnow | grass/ice | 40-45 | uncommon | lower_trough | subregion | 81 blocks |  |
 | sliggoo | dragon | 40-45 | uncommon | marshy_marsh | subregion | 121 blocks |  |
-| walrein | ice/water | 44-45 | uncommon | lower_trough | subregion | 81 blocks |  |
 | arbok | poison | 33-43 | common | route_06_koga_to_sabrina | route | on it |  |
 | ducklett | water/flying | 33-39 | common | route_06_koga_to_sabrina | route | on it |  |
 | dunsparce | normal | 33-43 | common | route_06_koga_to_sabrina | route | on it |  |
@@ -936,9 +921,9 @@ Absent: none.
 | centiskorch | fire/bug | 38-48 | common | crater_rim_north_west | subregion | 9 blocks | yes |
 | coalossal | rock/fire | 38-48 | common | east_cones | subregion | 97 blocks | yes |
 | combusken | fire/fighting | 38-40 | uncommon | crater_rim_north_west | subregion | 9 blocks | yes |
+| crawdaunt | water/dark | 38-48 | common | route_07_sabrina_to_blaine | route | on it | yes |
 | drizzile | water | 38-39 | uncommon | route_07_sabrina_to_blaine | route | on it | yes |
 | foongus | grass/poison | 38-43 | common | eastern_moor | subregion | 105 blocks | yes |
-| gastrodon | water/ground | 38-48 | common | route_07_sabrina_to_blaine | route | on it | yes |
 | golduck | water | 38-48 | uncommon | tilpey_waters | subregion | 1 blocks | yes |
 | grimer | poison | 38-42 | common | eastern_moor | subregion | 105 blocks | yes |
 | gyarados | water/flying | 38-48 | common | tilpey_waters | subregion | 1 blocks | yes |
@@ -952,7 +937,6 @@ Absent: none.
 | pelipper | water/flying | 38-48 | common | tilpey_waters | subregion | 1 blocks | yes |
 | pidgeot | normal/flying | 38-48 | common | tilpey_south_shore | subregion | on it | yes |
 | pidgeotto | normal/flying | 38-40 | common | tilpey_south_shore | subregion | on it | yes |
-| rhyhorn | ground/rock | 38-46 | common | crater_rim_north_west | subregion | 9 blocks | yes |
 | salazzle | poison/fire | 38-48 | common | crater_rim_north_west | subregion | 9 blocks | yes |
 | sandaconda | ground | 38-48 | common | east_coast_dunes | subregion | 33 blocks | yes |
 | shelmet | bug | 38-48 | common | eastern_moor | subregion | 105 blocks | yes |
@@ -971,13 +955,13 @@ Absent: none.
 | escavalier | bug/steel | 43-48 | common | eastern_moor | subregion | 105 blocks | yes |
 | rhyperior | ground/rock | 43-48 | common | crater_rim_north_west | subregion | 9 blocks | yes |
 | flygon | ground/dragon | 45-48 | common | east_coast_dunes | subregion | 33 blocks | yes |
-| wailord | water | 48-55 | uncommon | tilpey_waters | subregion | 1 blocks | yes |
+| basculegion | water/ghost | 48-55 | uncommon | tilpey_waters | subregion | 1 blocks | yes |
 
 ## Gym 8: kanto_giovanni (Ground)
 
-267 species catchable before this gym; 34 of them are new since the last.
+261 species catchable before this gym; 33 of them are new since the last.
 
-Types available at the cap (L55), on the form a player would have evolved to: bug (29), dark (16), dragon (6), electric (12), fairy (4), fighting (14), fire (24), flying (27), ghost (5), grass (27), ground (26), ice (13), normal (18), poison (23), psychic (9), rock (16), steel (8), water (37).
+Types available at the cap (L55), on the form a player would have evolved to: bug (28), dark (16), dragon (8), electric (12), fairy (4), fighting (13), fire (24), flying (26), ghost (6), grass (27), ground (23), ice (11), normal (18), poison (22), psychic (9), rock (15), steel (8), water (35).
 Absent: none.
 
 | Species | Types | First wild levels | Bucket | Pool | Kind | Off corridor | New here |
@@ -1042,22 +1026,21 @@ Absent: none.
 | corvisquire | flying | 20-28 | common | the_tri_peaks | subregion | 9 blocks |  |
 | machop | fighting | 20-26 | common | route_03_misty_to_surge | route | on it |  |
 | makuhita | fighting | 20-26 | common | mt_clay | subregion | 9 blocks |  |
+| rhyhorn | ground/rock | 20-26 | uncommon | mt_clay | subregion | 9 blocks |  |
 | rockruff | rock | 20-26 | common | mt_clay | subregion | 9 blocks |  |
 | rookidee | flying | 20-22 | common | route_03_misty_to_surge | route | on it |  |
 | rufflet | normal/flying | 20-26 | uncommon | mt_clay | subregion | 9 blocks |  |
-| sandshrew | ground | 20-26 | uncommon | mt_clay | subregion | 9 blocks |  |
 | skiddo | grass | 20-28 | common | route_03_misty_to_surge | route | on it |  |
 | swablu | normal/flying | 20-28 | common | route_03_misty_to_surge | route | on it |  |
 | drampa | normal/dragon | 22-28 | rare | mt_vessu | subregion | 1 blocks |  |
 | meditite | fighting/psychic | 22-28 | common | mt_vessu | subregion | 1 blocks |  |
 | nosepass | rock | 22-28 | common | mt_vessu | subregion | 1 blocks |  |
-| sandslash | ground | 22-26 | uncommon | mt_clay | subregion | 9 blocks |  |
 | spoink | psychic | 22-28 | common | mt_vessu | subregion | 1 blocks |  |
-| clodsire | poison/ground | 24-30 | rare | mt_clay_outflow | waterway | 57 blocks |  |
+| duraludon | steel/dragon | 24-28 | common | the_tri_peaks | subregion | 9 blocks |  |
 | hariyama | fighting | 24-26 | common | mt_clay | subregion | 9 blocks |  |
 | quagsire | water/ground | 24-30 | uncommon | mt_clay_outflow | waterway | 57 blocks |  |
-| skarmory | steel/flying | 24-28 | common | the_tri_peaks | subregion | 9 blocks |  |
 | wooper | water/ground | 24-30 | common | mt_clay_outflow | waterway | 57 blocks |  |
+| graveler | rock/ground | 25-26 | common | mt_clay | subregion | 9 blocks |  |
 | lunatone | rock/psychic | 25-28 | common | mt_vessu | subregion | 1 blocks |  |
 | lycanroc | rock | 25-26 | common | mt_clay | subregion | 9 blocks |  |
 | poliwhirl | water | 25-26 | common | route_03_misty_to_surge | route | on it |  |
@@ -1081,7 +1064,6 @@ Absent: none.
 | carvanha | water/dark | 25-32 | common | route_04_surge_to_erika | route | on it |  |
 | cryogonal | ice | 25-31 | rare | merian_cirque | subregion | on it |  |
 | geodude | rock/ground | 25-29 | common | the_crags | subregion | on it |  |
-| graveler | rock/ground | 25-32 | common | the_crags | subregion | on it |  |
 | smoochum | ice/psychic | 25-31 | common | route_04_surge_to_erika | route | on it |  |
 | swinub | ice/ground | 25-31 | common | route_04_surge_to_erika | route | on it |  |
 | basculin | water | 26-33 | common | route_04_surge_to_erika | route | on it |  |
@@ -1109,9 +1091,9 @@ Absent: none.
 | ursaring | normal | 30-33 | common | peak_pond_hollow | subregion | on it |  |
 | whiscash | water/ground | 30-32 | common | route_04_surge_to_erika | route | on it |  |
 | boldore | rock | 32-40 | uncommon | the_crags | subregion | on it |  |
+| druddigon | dragon | 32-40 | uncommon | the_crags | subregion | on it |  |
 | lairon | steel/rock | 32-32 | common | the_crags | subregion | on it |  |
 | piloswine | ice/ground | 33-40 | uncommon | merian_cirque | subregion | on it |  |
-| crustle | bug/rock | 34-40 | uncommon | the_crags | subregion | on it |  |
 | samurott | water | 36-40 | uncommon | peak_pond_hollow | subregion | on it |  |
 | avalugg | ice | 37-40 | uncommon | merian_cirque | subregion | on it |  |
 | beartic | ice | 37-40 | uncommon | merian_cirque | subregion | on it |  |
@@ -1124,7 +1106,6 @@ Absent: none.
 | palpitoad | water/ground | 28-38 | common | marshy_marsh | subregion | 121 blocks |  |
 | prinplup | water | 28-38 | common | lower_trough | subregion | 81 blocks |  |
 | snover | grass/ice | 28-38 | uncommon | lower_trough | subregion | 81 blocks |  |
-| spheal | ice/water | 28-36 | common | lower_trough | subregion | 81 blocks |  |
 | stunfisk | ground/electric | 28-38 | common | marshy_marsh | subregion | 121 blocks |  |
 | tympole | water | 28-29 | common | marshy_marsh | subregion | 121 blocks |  |
 | braixen | fire | 30-38 | uncommon | route_05_erika_to_koga | route | on it |  |
@@ -1136,7 +1117,7 @@ Absent: none.
 | toxtricity | electric/poison | 30-38 | uncommon | glacier_foot_fields | subregion | on it |  |
 | excadrill | ground/steel | 31-38 | common | route_05_erika_to_koga | route | on it |  |
 | hattrem | psychic | 32-38 | common | route_05_erika_to_koga | route | on it |  |
-| sealeo | ice/water | 32-38 | common | lower_trough | subregion | 81 blocks |  |
+| seaking | water | 33-38 | common | lower_trough | subregion | 81 blocks |  |
 | delphox | fire/psychic | 36-38 | uncommon | glacier_foot_fields | subregion | on it |  |
 | empoleon | water/steel | 36-38 | common | lower_trough | subregion | 81 blocks |  |
 | seismitoad | water/ground | 36-38 | common | marshy_marsh | subregion | 121 blocks |  |
@@ -1145,7 +1126,6 @@ Absent: none.
 | cetitan | ice | 38-45 | uncommon | lower_trough | subregion | 81 blocks |  |
 | abomasnow | grass/ice | 40-45 | uncommon | lower_trough | subregion | 81 blocks |  |
 | sliggoo | dragon | 40-45 | uncommon | marshy_marsh | subregion | 121 blocks |  |
-| walrein | ice/water | 44-45 | uncommon | lower_trough | subregion | 81 blocks |  |
 | arbok | poison | 33-43 | common | route_06_koga_to_sabrina | route | on it |  |
 | ducklett | water/flying | 33-39 | common | route_06_koga_to_sabrina | route | on it |  |
 | dunsparce | normal | 33-43 | common | route_06_koga_to_sabrina | route | on it |  |
@@ -1179,9 +1159,9 @@ Absent: none.
 | centiskorch | fire/bug | 38-48 | common | crater_rim_north_west | subregion | 9 blocks |  |
 | coalossal | rock/fire | 38-48 | common | east_cones | subregion | 97 blocks |  |
 | combusken | fire/fighting | 38-40 | uncommon | crater_rim_north_west | subregion | 9 blocks |  |
+| crawdaunt | water/dark | 38-48 | common | route_07_sabrina_to_blaine | route | on it |  |
 | drizzile | water | 38-39 | uncommon | route_07_sabrina_to_blaine | route | on it |  |
 | foongus | grass/poison | 38-43 | common | eastern_moor | subregion | 105 blocks |  |
-| gastrodon | water/ground | 38-48 | common | route_07_sabrina_to_blaine | route | on it |  |
 | golduck | water | 38-48 | uncommon | tilpey_waters | subregion | 1 blocks |  |
 | grimer | poison | 38-42 | common | eastern_moor | subregion | 105 blocks |  |
 | gyarados | water/flying | 38-48 | common | tilpey_waters | subregion | 1 blocks |  |
@@ -1195,7 +1175,6 @@ Absent: none.
 | pelipper | water/flying | 38-48 | common | tilpey_waters | subregion | 1 blocks |  |
 | pidgeot | normal/flying | 38-48 | common | tilpey_south_shore | subregion | on it |  |
 | pidgeotto | normal/flying | 38-40 | common | tilpey_south_shore | subregion | on it |  |
-| rhyhorn | ground/rock | 38-46 | common | crater_rim_north_west | subregion | 9 blocks |  |
 | salazzle | poison/fire | 38-48 | common | crater_rim_north_west | subregion | 9 blocks |  |
 | sandaconda | ground | 38-48 | common | east_coast_dunes | subregion | 33 blocks |  |
 | shelmet | bug | 38-48 | common | eastern_moor | subregion | 105 blocks |  |
@@ -1214,13 +1193,13 @@ Absent: none.
 | escavalier | bug/steel | 43-48 | common | eastern_moor | subregion | 105 blocks |  |
 | rhyperior | ground/rock | 43-48 | common | crater_rim_north_west | subregion | 9 blocks |  |
 | flygon | ground/dragon | 45-48 | common | east_coast_dunes | subregion | 33 blocks |  |
-| wailord | water | 48-55 | uncommon | tilpey_waters | subregion | 1 blocks |  |
+| basculegion | water/ghost | 48-55 | uncommon | tilpey_waters | subregion | 1 blocks |  |
 | bramblin | grass/ghost | 43-53 | uncommon | plateau_south | subregion | on it | yes |
 | cacturne | grass/dark | 43-53 | common | route_08_blaine_to_giovanni | route | on it | yes |
 | charizard | fire/flying | 43-53 | uncommon | great_crater | subregion | 65 blocks | yes |
 | cinderace | fire | 43-53 | uncommon | rift_foot | subregion | on it | yes |
 | clawitzer | water | 43-53 | common | route_08_blaine_to_giovanni | route | on it | yes |
-| crabrawler | fighting | 43-53 | common | south_strand | subregion | on it | yes |
+| crabrawler | fighting | 43-53 | common | route_08_blaine_to_giovanni | route | on it | yes |
 | donphan | ground | 43-53 | common | plateau_south | subregion | on it | yes |
 | drapion | poison/dark | 43-53 | common | route_08_blaine_to_giovanni | route | on it | yes |
 | kilowattrel | electric/flying | 43-53 | common | route_08_blaine_to_giovanni | route | on it | yes |
@@ -1242,7 +1221,6 @@ Absent: none.
 | zebstrika | electric | 43-53 | uncommon | rift_foot | subregion | on it | yes |
 | brambleghast | grass/ghost | 48-53 | uncommon | plateau_south | subregion | on it | yes |
 | chandelure | ghost/fire | 48-53 | common | great_crater | subregion | 65 blocks | yes |
-| crabominable | fighting/ice | 48-53 | common | route_08_blaine_to_giovanni | route | on it | yes |
 | kingambit | dark/steel | 48-53 | uncommon | plateau_west | subregion | on it | yes |
 | magmortar | fire | 48-53 | common | great_crater | subregion | 65 blocks | yes |
 | nidoking | poison/ground | 48-53 | common | route_08_blaine_to_giovanni | route | on it | yes |
@@ -1257,10 +1235,10 @@ Reachable by walking, but nothing gates when, so they are not assigned to a gym.
 | Pool | Kind | Nearest route | Gap (blocks) | Species |
 | --- | --- | --- | --- | --- |
 | viltris_path_valley | subregion | route_01_pallet_to_brock | 153 | exeggcute, fearow, fletchinder, fletchling, floragato, patrat, riolu, spearow, sprigatito, watchog |
-| rift_south_east_arm | subregion | route_08_blaine_to_giovanni | 209 | claydol, druddigon, flygon, gligar, gliscor, golurk, haxorus, salamence |
-| rift_south_west_arm | subregion | route_08_blaine_to_giovanni | 225 | cubone, glimmora, hippowdon, marowak, pupitar, sableye, tyranitar |
+| rift_south_east_arm | subregion | route_08_blaine_to_giovanni | 209 | archaludon, claydol, druddigon, gligar, gliscor, golurk, haxorus, salamence |
+| rift_south_west_arm | subregion | route_08_blaine_to_giovanni | 225 | excadrill, glimmora, pupitar, sableye, tyranitar |
 | north_west_coast | subregion | route_03_misty_to_surge | 281 | corsola, finneon, frogadier, horsea, inkay, skrelp, slowpoke |
-| rift_trunk | subregion | route_04_surge_to_erika | 313 | aggron, boldore, garganacl, gigalith, orthworm, probopass, rhyperior, tinkaton |
+| rift_trunk | subregion | route_04_surge_to_erika | 313 | aggron, boldore, gigalith, orthworm, probopass, rhydon, rhyperior, tinkaton |
 | south_west_fields | subregion | route_01_pallet_to_brock | 337 | cottonee, eevee, growlithe, nidoranf, nidoranm, nidorina, nidorino, pikachu |
 | arrow_creeks | subregion | route_08_blaine_to_giovanni | 377 | dodrio, dondozo, farigiraf, flamigo, girafarig, tatsugiri |
 | shrew_lake_shores | subregion | route_02_brock_to_misty | 385 | azumarill, cherrim, cherubi, dragonair, dratini, granbull, poltchageist, psyduck, snubbull, togepi |
