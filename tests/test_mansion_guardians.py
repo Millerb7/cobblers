@@ -245,6 +245,9 @@ def test_guardian_dialog_keys_carry_the_records_lines(files, g):
     want = {"on_battle_start": text["pre"], "on_battle_lost": text["player_win"], "trainer_lost": text["player_win"],
             "on_battle_won": text["player_loss"], "trainer_won": text["player_loss"],
             "on_cooldown": "Leave me be a moment."}
+    # plus every refusal context rctmod can ask for, as data/trainer_refusals.json records them (the file replaces
+    # rctmod's default whole, so a missing one refuses in silence); the guardian's own lines win
+    want = {**_load("trainer_refusals.json")["lines"], **want}
     assert d == {k: [{"text": v}] for k, v in want.items()}
 
 

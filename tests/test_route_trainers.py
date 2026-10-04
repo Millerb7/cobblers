@@ -34,6 +34,8 @@ SEATS = json.loads((ROOT / "data" / "route_trainers.json").read_text(encoding="u
 FIELDS = {f["id"] for f in json.loads((ROOT / "data" / "progression.json").read_text(encoding="utf-8"))["quest_fields"]}
 ROUTE_IDS = sorted(t for t in TRAINERS if re.match(r"route_0[123]_", t))
 ALLOWED_TRAINER_KEYS = {"name", "ai", "bag", "team", "battleRules"}
+# rctmod's refusal contexts and their lines, read from the data, not from tools/route_trainers.py
+REFUSAL_LINES = json.loads((ROOT / "data" / "trainer_refusals.json").read_text(encoding="utf-8"))["lines"]
 
 
 @pytest.fixture(scope="module")
@@ -92,6 +94,9 @@ def test_dialog_keys_carry_the_records_own_lines(files, tid):
             "on_battle_won": text["player_loss"], "trainer_won": text["player_loss"],
             # said while on cooldown, including the cycle's cooldown for a player who has beaten it
             "on_cooldown": "Let me catch my breath."}
+    # plus every refusal context rctmod can ask for, as data/trainer_refusals.json records them: the file replaces
+    # rctmod's default whole, so a missing one is a silent refusal. The record's own lines win over a refusal line.
+    want = {**REFUSAL_LINES, **want}
     assert set(d) == set(want)
     for k, line in want.items():
         assert d[k] == [{"text": line}], k

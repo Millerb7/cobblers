@@ -32,6 +32,16 @@ NS = "cobblers"
 # `loot` is here for the leaders' first-win rewards only, and in exactly one form: `loot give @s loot <ns>:first_win/<id>`
 # (test_loot_commands_are_only_first_win_gives_to_the_winner pins the form)
 KNOWN_COMMANDS = {"execute", "function", "advancement", "tag", "schedule", "scoreboard", "waystones", "tellraw", "loot"}
+# `runmolang` (Cobblemon's command) is known in exactly one place, derived from the data rather than listed: the carry
+# function of a flag that declares carries_stage (data/progression.json flags[].carries_stage, the badge carry). Any
+# other file that grows a runmolang line fails test_every_mcfunction_line_starts_with_a_known_command.
+CARRY_ONLY_COMMANDS = {"runmolang"}
+
+
+def _carry_files(doc, ns=NS):
+    """The function files where CARRY_ONLY_COMMANDS are known: one per flag that declares carries_stage."""
+    return {"data/%s/function/flag/%s/carry.mcfunction" % (ns, f["id"])
+            for f in doc.get("flags") or [] if f.get("carries_stage")}
 
 
 def _doc(**over):
@@ -450,15 +460,24 @@ def _all_packs():
 
 
 def test_every_mcfunction_line_starts_with_a_known_command():
-    # Without this a typo'd command word would only surface as a load error on the server.
-    for out in _all_packs():
+    # Without this a typo'd command word would only surface as a load error on the server, and a runmolang could
+    # spread from the badge carry into any other function unseen.
+    real_doc = PP.load(REAL_DATA)
+    docs = [_doc(), _doc(), real_doc]
+    carries = 0
+    for doc, out in zip(docs, _all_packs()):
+        carry_files = _carry_files(doc)
         for rel, text in out.items():
             if not rel.endswith(".mcfunction"):
                 continue
+            known = KNOWN_COMMANDS | (CARRY_ONLY_COMMANDS if rel in carry_files else set())
             for n, line in enumerate(_lines(text), 1):
                 if not line.strip() or line.startswith("#"):
                     continue
-                assert line.split(" ", 1)[0] in KNOWN_COMMANDS, "%s:%d: %r" % (rel, n, line)
+                assert line.split(" ", 1)[0] in known, "%s:%d: %r" % (rel, n, line)
+        carries += len(carry_files & set(out))
+    # the carry-only allowance is exercised, not vacuous: the real data's badge carries are generated
+    assert carries == len(_carry_files(real_doc)) > 0
 
 
 def test_every_json_file_parses():

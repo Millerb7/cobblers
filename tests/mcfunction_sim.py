@@ -493,13 +493,20 @@ class World:
         raise Return(int(rest))
 
     def c_function(self, rest, ctx):
-        m = re.match(r"(\S+)(?:\s+with\s+storage\s+(\S+)\s+(\S+)|\s+(\{.*\}))?\s*$", rest)
+        # `with storage <id> [<path>]`: the path is optional (FunctionCommand: no path takes the whole compound)
+        m = re.match(r"(\S+)(?:\s+with\s+storage\s+(\S+)(?:\s+(\S+))?|\s+(\{.*\}))?\s*$", rest)
         if not m:
             raise Unsupported("function %r" % rest)
         name, sid, path, inline = m.groups()
         args = None
         if sid:
-            args = self.storage_get(sid, path)
+            if path is None:
+                if sid not in self.storage:
+                    self.errors.append("no data at %s" % sid)
+                    raise Failed("no data")
+                args = self.storage[sid]
+            else:
+                args = self.storage_get(sid, path)
             if not isinstance(args, dict):
                 raise Failed("macro arguments not a compound")
         elif inline:
