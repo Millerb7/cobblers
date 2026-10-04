@@ -1,0 +1,95 @@
+{
+ "schema": 1,
+ "generated_by": "hand. The cobbleverse_mrpack block was measured 2026-10-04 from the Modrinth API (GET /v2/version/4SKGla61) and from the .mrpack's own zip central directory and modrinth.index.json, read by HTTP range requests (nothing downloaded whole). The optional ATM x MSD v4.0 entry is copied from docs/research/CLIENT_MODEL_FIXES.md 'The file (VERIFIED, Modrinth API, fetched 2026-09-28)'.",
+ "read_by": "tools/client_pack.py",
+ "pack": {
+  "name": "Cobblers",
+  "version": "0.1.0",
+  "summary": "Cobblers campaign client: COBBLEVERSE 1.7.42 moved to Cobblemon 1.8.0, with our overlay and configs. For joining the Cobblers server."
+ },
+ "fabric_loader_from": {
+  "file": "docs/STATE.md",
+  "pattern": "\\*\\*Runtime:\\*\\*[^\\n]*?Fabric Loader (\\d+\\.\\d+\\.\\d+)",
+  "why": "The pack must run the loader the server runs. STATE's Runtime line is the operational record of it; the overlay's loader_min 0.18.4 is only a floor."
+ },
+ "exclude_kinds": {
+  "datapack": "World data. A client joining a dedicated server receives the server's data; the client's own datapacks/ folder only matters to singleplayer worlds (Global Packs, config/global_packs.toml). Eight of the ten are COBBLEVERSE's own no-redistribution zips. NOT VERIFIED: that Global Packs starts cleanly with an empty datapacks/ folder."
+ },
+ "optional_files": [
+  {
+   "path": "resourcepacks/ATM x MSD [v4.0].zip",
+   "label": "OPTIONAL, NOT ADOPTED: AllTheMons x Mega Showdown v4.0, the owner's chosen route for the 43 substitute-doll species (2026-09-28). Installed but NOT enabled: no pack-order config lists it, so it does nothing until a player turns it on. Adoption waits on an in-game look (docs/STATE.md 'Client models').",
+   "kind": "resourcepack",
+   "mod_id": "allthemons-x-mega-showdown-legacy",
+   "source": "docs/research/CLIENT_MODEL_FIXES.md",
+   "modrinth": {
+    "project_id": "odZZdRCE",
+    "version_id": "2JPClXSG",
+    "url": "https://cdn.modrinth.com/data/odZZdRCE/versions/2JPClXSG/ATM%20x%20MSD%20%5Bv4.0%5D.zip"
+   },
+   "sha1": "05d411776564ec96934a3e5b7ed8aca8e3df780a",
+   "sha512": "96e4b45e57c5183ff59cbe2d7ad2b743b4384ac393f4ed9c6a02e636af3b7c1f24d8fdcd99ac8a8769c1712f917ada936f7a92a0d91df47b3b0ddf498632f682",
+   "size": 8115647
+  }
+ ],
+ "cobbleverse_mrpack": {
+  "why": "Files the base manifest records as source 'unresolved' have no download URL of their own: COBBLEVERSE ships them inside its .mrpack's overrides/. They are no-redistribution, so our .mrpack never embeds them; each player takes them from the COBBLEVERSE .mrpack they download from Modrinth themselves.",
+  "page": "https://modrinth.com/modpack/cobbleverse/version/1.7.42",
+  "project_id": "Jkb29YJU",
+  "version_id": "4SKGla61",
+  "filename": "COBBLEVERSE 1.7.42.mrpack",
+  "url": "https://cdn.modrinth.com/data/Jkb29YJU/versions/4SKGla61/COBBLEVERSE%201.7.42.mrpack",
+  "sha1": "cb8aa247d5badacf84f7d40a65681440f0428128",
+  "size": 238975006,
+  "index_dependencies": {"minecraft": "1.21.1", "fabric-loader": "0.18.4"},
+  "measured": "2026-10-04: its modrinth.index.json lists 168 files; all 168 match modpack/manifest/base-cobbleverse-1.7.42.json exactly (path, sha1, sha512, size, URL). The base manifest has two Modrinth files the index does not: mods/IronChests-2.0.4.jar and datapacks/extra/Terralith-DP.zip (the latter is in the .mrpack's overrides).",
+  "overrides_prefix": "overrides/",
+  "override_files": {
+   "mods/cobblemon-battle-positions-1.1.3.jar": 58572,
+   "resourcepacks/ATMxMSD RP.zip": 4301923,
+   "resourcepacks/COBBLEVERSE RCTmod RP.zip": 5214902,
+   "resourcepacks/COBBLEVERSE RP.zip": 2020859,
+   "resourcepacks/COBBLEVERSE Soundtrack.zip": 179498515,
+   "resourcepacks/CavsCobbleMons RP.zip": 194006,
+   "resourcepacks/CobbleMotion RP.zip": 2754045,
+   "resourcepacks/E19 Cobblemon Minimap Icons.zip": 10674276,
+   "resourcepacks/GlitchDex RP.zip": 196701,
+   "resourcepacks/HydroReanimodel RP.zip": 1221200,
+   "resourcepacks/LackingMons RP.zip": 51067,
+   "resourcepacks/MissingMons RP.zip": 201678,
+   "resourcepacks/MundialMons RP.zip": 1041048,
+   "resourcepacks/MysticMons RP.zip": 59975,
+   "resourcepacks/OJsAnimations RP.zip": 88853,
+   "resourcepacks/PlanetaCobblemon RP.zip": 138557,
+   "resourcepacks/Pokemans RP.zip": 562340,
+   "resourcepacks/TDmon RP.zip": 227765
+  },
+  "cosmetic_prefixes": {
+   "config/fancymenu/assets/": "9 files, 4.4 MB: title-menu art. Gitignored here (COBBLEVERSE's own art).",
+   "config/fancymenu/slideshows/": "39 files, 13.6 MB: title-menu slideshow. Gitignored here.",
+   "config/customsplashscreen/": "5 PNGs, 4.0 MB: loading-screen art. Gitignored here.",
+   "shaderpacks/COBBLEVERSE - Shaders/": "616 files, 9.0 MB: the pack's shader (toggle with K). Not tracked here.",
+   "shaderpacks/COBBLEVERSE - Shaders (High Quality)/": "616 files, 9.0 MB. Not tracked here."
+  }
+ },
+ "manual_optional": {
+  "resourcepacks/ATMxMSD RP.zip": "Disabled by our modpack/config/resourcepackoverrides.json (its 3.6.1 Mega Mewtwo resolver breaks the first resource reload under Cobblemon 1.8). Licence v3.2 s1.3: never host or bundle it."
+ },
+ "embed": {
+  "why": "Only plain-text config and licence notices are embedded: our own files and COBBLEVERSE's tracked config. Never a jar, a zip, an image or a no-redistribution file; the tool fails if one would be.",
+  "sources": [
+   {"from": "base-pack/cobbleverse/config", "to": "config"},
+   {"from": "modpack/config", "to": "config"},
+   {"from": "base-pack/cobbleverse/shaderpacks", "to": "shaderpacks", "suffixes": [".txt"]},
+   {"from": "base-pack/cobbleverse/resourcepacks", "to": "resourcepacks", "suffixes": [".rpo"]},
+   {"from": "base-pack/cobbleverse/licenses", "to": "licenses", "suffixes": [".txt", ".md"]},
+   {"from": "modpack/overrides", "to": ""}
+  ],
+  "later_sources_win": true,
+  "skip_names": ["README.md"],
+  "exclude": {
+   "config/defaultoptions/servers.dat": "A server list. We never ship an address; players add the one the owner gives them.",
+   "config/cobblemonraiddens/": "Cobblemon Raid Dens is removed by the overlay (runtime-incompatible with Cobblemon 1.8)."
+  }
+ }
+}
