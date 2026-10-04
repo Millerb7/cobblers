@@ -1296,6 +1296,13 @@ def dens(spec):
     out = [("mine", s) for s in spec["megas"]["slots"]]
     for fa in spec.get("farms", []):
         out += [(fa["id"], d) for d in fa["dens"]]
+    # every keeper function, score and tag is named by the den's id (never its species: a species may hold several
+    # dens), so two dens with one id would share one Mega's tag, clock and drop storage
+    seen = set()
+    for _s, d in out:
+        if d["id"] in seen:
+            raise GulchError("den id %s is used twice: a den's tag, scores and functions are named by its id" % d["id"])
+        seen.add(d["id"])
     return out
 
 

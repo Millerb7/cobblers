@@ -92,9 +92,14 @@ def field_dens(gm):
 
 
 def kits(gm, md):
-    """{species: the hand-authored lair kit record it is dressed with} (mega_field.dressing.kit_of)."""
-    by = {r["species"]: r for r in md["superseded_dens"]}
-    return {sp: by[k] for sp, k in gm["mega_field"]["dressing"]["kit_of"].items()}
+    """{den id: that den's own lair record} (data/mega_dens.json dens, keyed by `den`): its scrape and boulder palettes
+    are the border's two sides. Keyed by the den, never its species (2026-10-04: a species may hold several dens).
+    Every field den must have one."""
+    by = {r["den"]: r for r in md["dens"]}
+    miss = sorted(d["id"] for d in field_dens(gm) if d["id"] not in by)
+    if miss:
+        raise BorderError("field den(s) with no lair record in data/mega_dens.json dens: %s" % miss[:5])
+    return by
 
 
 def borders(gm):
@@ -155,7 +160,8 @@ class Border:
     def __init__(self, ctx, a, b, s, overlap, index):
         self.ctx, self.doc = ctx, ctx.doc
         self.a, self.b, self.s, self.overlap = a, b, s, overlap
-        self.name = "%s__%s" % (a["species"], b["species"])
+        # named after the two DENS, never their species: two dens of one species may share a border (2026-10-04)
+        self.name = "%s__%s" % (a["id"], b["id"])
         ax, _ay, az = a["anchor"]
         bx, _by, bz = b["anchor"]
         self.mx, self.mz = (ax + bx) / 2.0, (az + bz) / 2.0
@@ -171,10 +177,20 @@ class Border:
         self.w, self.top, self.used = {}, {}, set()
 
     # --- primitives
+    def inside(self, x, z):
+        """The column is in BOTH dens' ranges by the keeper's own leash test (a Mega on column (x, z) stands at its
+        centre: hypot(x + 0.5 - ax, z + 0.5 - az) <= leash). A border is dressed AT the overlap, and the scar's
+        ragged band, an ellipse along the lens, reached up to 0.75 past a range at the lens's tips without it."""
+        for d in (self.a, self.b):
+            ax, _ay, az = d["anchor"]
+            if math.hypot(x + 0.5 - ax, z + 0.5 - az) > d["leash"]:
+                return False
+        return True
+
     def free(self, x, z):
-        """On the dressing floor, off every lair and anchor, and not a column an earlier border wrote (where three
-        ranges meet, two lenses cross: the nearer pair's border, built first, keeps the ground)."""
-        return (x, z) not in self.ctx.taken and self.ctx.writable(x, z)
+        """In both ranges, on the dressing floor, off every lair and anchor, and not a column an earlier border wrote
+        (where three ranges meet, two lenses cross: the nearer pair's border, built first, keeps the ground)."""
+        return (x, z) not in self.ctx.taken and self.inside(x, z) and self.ctx.writable(x, z)
 
     def put(self, x, y, z, state):
         if _base(state) not in self.allowed:
@@ -214,7 +230,7 @@ class Border:
         hw0, rag = B["half_width"], B["ragged"]
         p1, p2 = self.rng.uniform(0, 6.28), self.rng.uniform(0, 6.28)
         n = int(math.ceil(max(self.h, hw0 + rag))) + 2
-        ka, kb = self.ctx.kit[self.a["species"]]["scrape"], self.ctx.kit[self.b["species"]]["scrape"]
+        ka, kb = self.ctx.kit[self.a["id"]]["scrape"], self.ctx.kit[self.b["id"]]["scrape"]
         icx, icz = int(round(self.cx)), int(round(self.cz))
         for x in range(icx - n, icx + n + 1):
             for z in range(icz - n, icz + n + 1):
@@ -238,7 +254,7 @@ class Border:
 
     def rubble(self):
         R = self.doc["rubble"]
-        stones = sorted(set(self.ctx.kit[self.a["species"]]["boulder"]) | set(self.ctx.kit[self.b["species"]]["boulder"]))
+        stones = sorted(set(self.ctx.kit[self.a["id"]]["boulder"]) | set(self.ctx.kit[self.b["id"]]["boulder"]))
         placed = []
         for i in range(self.rng.randint(*R["boulders"])):
             for _try in range(16):
@@ -330,6 +346,10 @@ class Border:
         return {(x, z) for (x, _y, z) in self.w}
 
     def box(self):
+        """(x0, z0, x1, z1) of what the border writes, or None when it writes nothing: a lens whose every column is a
+        lair's, an anchor's, off the dressing floor or an earlier border's (it used to crash here on min of nothing)."""
+        if not self.w:
+            return None
         xs = [k[0] for k in self.w]
         zs = [k[2] for k in self.w]
         return min(xs), min(zs), max(xs), max(zs)
@@ -393,6 +413,9 @@ def build_lines(bd):
            % (bd.a["species"], bd.a["id"], bd.b["species"], bd.b["id"], bd.s, bd.overlap),
            "# Scarred ground along it, broken rock at its middle%s. Dark by design: no light source."
            % (", a kill a third of the way along" if bd.carcass else "")]
+    if not bd.w:
+        out.append("# This lens has no ground to dress: every column of it is a lair's, an anchor's, off the dressing "
+                   "floor or an earlier border's. It writes nothing.")
     return out + _runs(bd.w)
 
 
@@ -415,6 +438,11 @@ def placement_steps(bds=None):
         bds, _cov = plan()
     steps = []
     for bd in bds:
+        if bd.box() is None:
+            # a border with no ground to dress is still the pair's border (its function says why) and writes nothing,
+            # so it is run with nothing held
+            steps.append(("fn", "%s:%s/%s" % (NS, FN, bd.name)))
+            continue
         x0, z0, x1, z1 = bd.box()
         hold = "%d %d %d %d" % (x0, z0, x1, z1)
         steps += [("cmd", "forceload add " + hold), ("wait", 3), ("fn", "%s:%s/%s" % (NS, FN, bd.name)),
