@@ -121,8 +121,9 @@ def ops(lines, name=""):
         raise Unmodelled("%s: %s" % (name, s))
 
 
-def replay_into(cells, funcs, box, tags=None, place_margin=64):
-    """Apply funcs ([(name, lines)]) to cells {(x, y, z): block} inside box (x0, y0, z0, x1, y1, z1)."""
+def replay_into(cells, funcs, box, tags=None, place_margin=64, ground=None):
+    """Apply funcs ([(name, lines)]) to cells {(x, y, z): block} inside box (x0, y0, z0, x1, y1, z1). ground(p): the
+    block of a cell no pack wrote (Model.at over the tread), read only by a replace-by-tag."""
     X0, Y0, Z0, X1, Y1, Z1 = box
     for name, lines in funcs:
         for op in ops(lines, name):
@@ -148,8 +149,15 @@ def replay_into(cells, funcs, box, tags=None, place_margin=64):
                             continue
                         if mode == "replace" and filt:
                             if filt.startswith("#"):
-                                raise Unmodelled("%s: replace by tag %s inside the tower's box" % (name, filt))
-                            if cur is None or norm(cur) != norm(filt):
+                                # a tag the packs define (tags: {"#ns:name": {block, ...}}); over a cell no pack wrote
+                                # the ground's block is not known, so that stays unmodelled
+                                if cur is None and ground is not None:
+                                    cur = ground((x, y, z))
+                                if filt not in (tags or {}) or cur is None:
+                                    raise Unmodelled("%s: replace by tag %s inside the tower's box" % (name, filt))
+                                if norm(cur) not in tags[filt]:
+                                    continue
+                            elif cur is None or norm(cur) != norm(filt):
                                 continue
                         cells[(x, y, z)] = b
     return cells
@@ -319,18 +327,21 @@ def audit(packs=PACKS, source_root=None, data=DATA, tread=None):
     # the model
     box = (bx0 - 6, t["base"] - 3, bz0 - 6, bx1 + 6, t["top"] + 4, bz1 + 6)
     cells = {}
-    try:
-        replay_into(cells, city, box)
-        if relic is not None:
-            replay_into(cells, relic, box)
-        replay_into(cells, hq, box)
-    except Unmodelled as e:
-        return probs + ["the replay cannot model a line: %s" % e], notes
     if tread is None:
         if source_root is None:
             from terrain import env_source_root
             source_root = env_source_root()
         tread = tread_of(source_root)
+    try:
+        replay_into(cells, city, box)
+        if relic is not None:
+            tf = packs / "cobblers_relic_underground" / "data" / "cobblers" / "tags" / "block" / "relic_void.json"
+            tags = {"#cobblers:relic_void": {norm(v) for v in json.loads(tf.read_text(encoding="utf-8"))["values"]}} \
+                if tf.is_file() else {}
+            replay_into(cells, relic, box, tags, ground=Model({}, tread).at)
+        replay_into(cells, hq, box)
+    except Unmodelled as e:
+        return probs + ["the replay cannot model a line: %s" % e], notes
     m = Model(cells, tread)
     dx = max(c[0] for c in door)
     dz = min(c[2] for c in door)
