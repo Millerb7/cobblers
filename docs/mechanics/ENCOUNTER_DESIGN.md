@@ -303,6 +303,67 @@ Windward shallows and deep and the Mt Clay outflow carry a focus heart too (`too
 `focus_heart_boxes`). The count and list above, and `tests/test_encounter_hearts.py`, still name the 28; updating them
 is a test author's change.
 
+### The bosses are alphas, and every boss table holds a local (the owner, 2026-10-05)
+
+**"For the pokemon species overhaul running, the boss pokemon are alphas, so it should sometimes be the pokemon in
+the area as well right?"** Built 2026-10-05: valid data and a measured compiled pack only, not seen in game.
+
+- **Every heart entry is a native alpha** (`rules.hearts.alpha`). The compiled spawn's `pokemon` string is
+  `"<species> alpha=true"`. That is a PokemonProperties key in Cobblemon 1.8.0 (`PokemonProperties$Companion` registers
+  `alpha` and `is_alpha`). It is also the form every one of the jar's own 1,082 alpha spawns uses: each is a herd
+  leader in bucket `boss`, e.g. `spawn_pool_world/herds/0023_fearow_alpha.json`,
+  `"fearow held_item=cobblemon:flying_gem alpha=true"`. `tools/build_encounters.py` stamps the flag on generated heart
+  entries and fails closed on a copied-through one (marine band, waterway) that lacks it, and on a flag outside a
+  heart. The other rules of this section are unchanged: focal site, 1/9 of the area, 128 blocks from a corridor,
+  above-cap share and the level band, at spawn.
+- **What the jar makes an alpha do** (read from Cobblemon-fabric-1.8.0+1.21.1.jar, not observed):
+  - `behaviours/pokemon/auto/pokemon_non_party.json` makes a wild alpha retaliate.
+  - It gains the `cobblemon:alpha_level_matching` sensor.
+  - On faint, `callbacks/battle_fainted/pokemon_alpha_drops.molang` drops `loot_table/alpha/alpha_rewards_tier1-4`
+    by level (31, 51 and 66 are the steps), plus type rewards.
+  - Its size scales with its hitbox (`Pokemon.getAlphaScaleMultiplier`), and it carries the alpha mark.
+  - A battle against it adds the Showdown rule "Wild Alpha" (`BattleBuilder`).
+  - Catches count towards `cobblemon:catch_alpha_pokemon`.
+- **The authored level is not the level fought.** `AlphaLevelMatchingSensor$Companion.getTargetLevel` works as
+  follows. While a player is within 32 blocks and the alpha is not battling, it re-levels to that player's highest
+  party level plus a step:
+  - +4 below 21;
+  - +8 for 21-30;
+  - +12 for 31-45;
+  - +16 for 46-65;
+  - +20 above that.
+
+  The result is held to at most 100 and at least the level its species evolves at. So in game every boss stands
+  above the party, which overrides this section's band, its "under the cap" families and its next-cap ceiling for
+  presences. Two ways forward, and the choice is **the owner's**:
+  - keep the jar's behaviour, which suits a hard boss;
+  - overlay `pokemon_non_party.json` at the same path without the sensor, which keeps the band but replaces a whole
+    upstream behaviour file.
+
+  Nothing here does either. The record is `rules.hearts.alpha_level_matching`.
+- **Every heart holds one of its own place's Pokemon** (`rules.hearts.local_alpha`). Before this, 57 of 67 hearts named
+  a species from their own compiled base table: 138 of 238 heart species, 58%. By family (a heart naming the evolved
+  stage of a local), all 67 did: 202 of 238, 85%. The ten with no exact local each gain the place's strongest local
+  stage, chosen as follows:
+  - the highest base-stat total among its common and uncommon base species;
+  - mainline starters excluded (section 11);
+  - ties go to the higher weight, then the name;
+  - role uncommon, at the presences' weight 3.
+
+  The ten are:
+  - Pallet's meadows: Fidough;
+  - the Route 1 forest: Oddish;
+  - Viltri's plateau: Pikachu;
+  - the River of Shrews: Minun;
+  - the west shore: Staryu (water);
+  - the south-west fields: Growlithe;
+  - the Windward depths, open sea and shallows: Alomomola, Qwilfish and Staryu;
+  - the Mt Clay outflow: Basculin.
+
+  The marine and waterway levels are the upper half of their base band. After the change all 67 hearts hold an exact
+  local: 148 of 248 heart species, 60%. The non-local signature bosses stay as authored (Frostpeak's Avalugg and
+  Mamoswine, Arrow creeks' Braviary and the rest).
+
 ### What the tests make of it
 
 `tests/test_encounter_design.py` reads a sub-region file as one table, so heart rows count as if they covered the
