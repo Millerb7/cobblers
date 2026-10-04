@@ -815,6 +815,11 @@ def prepare_jobs(a):
     # the wake at 16, no brain-remaking merge, the workers' flags, the snow house's Buneary. Fail-closed; KNOWN
     # defects are listed in the tool and a fixed one fails until it is removed there
     add("ambient_idle_audit", "ambient_idle_audit.py", *src)
+    # Oak gives the starter: its independent audit (tools/oak_starter_audit.py, written by an agent that did not build
+    # it). LAST, so it runs after compile_dialogue and after every other pack is built: it reads the compiled dialogue,
+    # explores Oak's offer from a fresh player, and sweeps every pack under build/datapacks for a second
+    # openstarterscreen, a starter species given, or a data/*/starters/ folder. Fail-closed; KNOWN listed in the tool
+    add("oak_starter_audit", "oak_starter_audit.py")
     return J
 
 
