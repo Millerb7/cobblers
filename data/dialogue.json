@@ -1873,6 +1873,71 @@
       },
       "entry_rules": [
         {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.brock_cursor",
+                "value": "brock_locked"
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "pallet_complete",
+                  "brock_account_heard",
+                  "misty_reveal_complete",
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              }
+            ]
+          },
+          "node": "brock_001",
+          "why": "at pallet_complete or later but never unlocked (an actor before it was skipped, or a badge carried the stage): open the account. Its completion reads pallet_complete only, so a stage already past it does not move."
+        },
+        {
+          "priority": 6,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.brock_cursor",
+                "value": "brock_locked"
+              },
+              {
+                "kind": "flag",
+                "flag": "gym1_cleared"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "carry_by_gym1_cleared_to_pallet_complete"
+            }
+          ],
+          "node": "brock_001",
+          "why": "holding gym1_cleared with an earlier stage: carry_by_gym1_cleared_to_pallet_complete lifts the stage to pallet_complete, then the account opens"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "always"
@@ -1885,7 +1950,7 @@
           "id": "brock_locked",
           "kind": "line",
           "speaker": "brock",
-          "text": "Compare Pallet's maps with the ground before we speak. You need the first half of this account.",
+          "text": "Compare Pallet's maps with the ground before we speak. Professor Oak and Maren in Pallet hold the first half of this account. Or earn the Boulder Badge from me, and I will tell you anyway.",
           "next": "brock_locked"
         },
         {
@@ -1988,6 +2053,70 @@
       },
       "entry_rules": [
         {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.misty_cursor",
+                "value": "misty_locked"
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "brock_account_heard",
+                  "misty_reveal_complete",
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              }
+            ]
+          },
+          "node": "misty_001",
+          "why": "at brock_account_heard or later but never unlocked (an actor before it was skipped, or a badge carried the stage): open the account. Its completion reads brock_account_heard only, so a stage already past it does not move."
+        },
+        {
+          "priority": 6,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.misty_cursor",
+                "value": "misty_locked"
+              },
+              {
+                "kind": "flag",
+                "flag": "gym1_cleared"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "carry_by_gym1_cleared_to_brock_account_heard"
+            }
+          ],
+          "node": "misty_001",
+          "why": "holding gym1_cleared with an earlier stage: carry_by_gym1_cleared_to_brock_account_heard lifts the stage to brock_account_heard, then the account opens"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "always"
@@ -2000,7 +2129,7 @@
           "id": "misty_locked",
           "kind": "line",
           "speaker": "relief clerk",
-          "text": "The lake office is still sorting arrivals. Brock's account comes first.",
+          "text": "The lake office is still sorting arrivals. Bring the Boulder Badge from Brock, or his account of Pallet's arrival from Viltri Plateau, and I will open the ledger.",
           "next": "misty_locked"
         },
         {
@@ -2082,6 +2211,69 @@
       },
       "entry_rules": [
         {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.surge_cursor",
+                "value": "surge_locked"
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "misty_reveal_complete",
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              }
+            ]
+          },
+          "node": "surge_001",
+          "why": "at misty_reveal_complete or later but never unlocked (an actor before it was skipped, or a badge carried the stage): open the account. Its completion reads misty_reveal_complete only, so a stage already past it does not move."
+        },
+        {
+          "priority": 6,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.surge_cursor",
+                "value": "surge_locked"
+              },
+              {
+                "kind": "flag",
+                "flag": "gym2_cleared"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "carry_by_gym2_cleared_to_misty_reveal_complete"
+            }
+          ],
+          "node": "surge_001",
+          "why": "holding gym2_cleared with an earlier stage: carry_by_gym2_cleared_to_misty_reveal_complete lifts the stage to misty_reveal_complete, then the account opens"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "always"
@@ -2094,7 +2286,7 @@
           "id": "surge_locked",
           "kind": "line",
           "speaker": "signal technician",
-          "text": "I cannot compare an unlogged sample. The Viltri office has the file we need.",
+          "text": "I cannot compare an unlogged sample. Bring the Cascade Badge from Misty, or the relief clerk's file from the Lake Viltri office.",
           "next": "surge_locked"
         },
         {
@@ -2176,6 +2368,68 @@
       },
       "entry_rules": [
         {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.erika_cursor",
+                "value": "erika_locked"
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              }
+            ]
+          },
+          "node": "erika_001",
+          "why": "at surge_reveal_complete or later but never unlocked (an actor before it was skipped, or a badge carried the stage): open the account. Its completion reads surge_reveal_complete only, so a stage already past it does not move."
+        },
+        {
+          "priority": 6,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.erika_cursor",
+                "value": "erika_locked"
+              },
+              {
+                "kind": "flag",
+                "flag": "gym3_cleared"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "carry_by_gym3_cleared_to_surge_reveal_complete"
+            }
+          ],
+          "node": "erika_001",
+          "why": "holding gym3_cleared with an earlier stage: carry_by_gym3_cleared_to_surge_reveal_complete lifts the stage to surge_reveal_complete, then the account opens"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "always"
@@ -2188,7 +2442,7 @@
           "id": "erika_locked",
           "kind": "line",
           "speaker": "survey archivist",
-          "text": "The survey ledger is sealed until the signal comparison from Mt Vessu arrives.",
+          "text": "The survey ledger is sealed until the signal comparison from Mt Vessu arrives. Bring the Thunder Badge from Surge, or his signal technician's comparison.",
           "next": "erika_locked"
         },
         {
@@ -2284,6 +2538,67 @@
       },
       "entry_rules": [
         {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.koga_cursor",
+                "value": "koga_locked"
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              }
+            ]
+          },
+          "node": "koga_001",
+          "why": "at erika_reveal_complete or later but never unlocked (an actor before it was skipped, or a badge carried the stage): open the account. Its completion reads erika_reveal_complete only, so a stage already past it does not move."
+        },
+        {
+          "priority": 6,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.koga_cursor",
+                "value": "koga_locked"
+              },
+              {
+                "kind": "flag",
+                "flag": "gym4_cleared"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "carry_by_gym4_cleared_to_erika_reveal_complete"
+            }
+          ],
+          "node": "koga_001",
+          "why": "holding gym4_cleared with an earlier stage: carry_by_gym4_cleared_to_erika_reveal_complete lifts the stage to erika_reveal_complete, then the account opens"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "always"
@@ -2296,7 +2611,7 @@
           "id": "koga_locked",
           "kind": "line",
           "speaker": "marsh tracker",
-          "text": "The marsh marks mean little without the Peak Pond survey. Bring the exchange record south.",
+          "text": "The marsh marks mean little without the Peak Pond survey. Bring the Rainbow Badge from Erika, or her survey archivist's record, south.",
           "next": "koga_locked"
         },
         {
@@ -2378,6 +2693,66 @@
       },
       "entry_rules": [
         {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.sabrina_cursor",
+                "value": "sabrina_locked"
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              }
+            ]
+          },
+          "node": "sabrina_001",
+          "why": "at koga_reveal_complete or later but never unlocked (an actor before it was skipped, or a badge carried the stage): open the account. Its completion reads koga_reveal_complete only, so a stage already past it does not move."
+        },
+        {
+          "priority": 6,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.sabrina_cursor",
+                "value": "sabrina_locked"
+              },
+              {
+                "kind": "flag",
+                "flag": "gym5_cleared"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "carry_by_gym5_cleared_to_koga_reveal_complete"
+            }
+          ],
+          "node": "sabrina_001",
+          "why": "holding gym5_cleared with an earlier stage: carry_by_gym5_cleared_to_koga_reveal_complete lifts the stage to koga_reveal_complete, then the account opens"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "always"
@@ -2390,7 +2765,7 @@
           "id": "sabrina_locked",
           "kind": "line",
           "speaker": "Sabrina",
-          "text": "The reports do not form a pattern until Koga's anchor record joins them.",
+          "text": "The reports do not form a pattern until Koga's anchor record joins them. Bring the Soul Badge from Koga, or his marsh tracker's record.",
           "next": "sabrina_locked"
         },
         {
@@ -2479,6 +2854,65 @@
       },
       "entry_rules": [
         {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.blaine_cursor",
+                "value": "blaine_locked"
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              }
+            ]
+          },
+          "node": "blaine_001",
+          "why": "at sabrina_reveal_complete or later but never unlocked (an actor before it was skipped, or a badge carried the stage): open the account. Its completion reads sabrina_reveal_complete only, so a stage already past it does not move."
+        },
+        {
+          "priority": 6,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.blaine_cursor",
+                "value": "blaine_locked"
+              },
+              {
+                "kind": "flag",
+                "flag": "gym6_cleared"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "carry_by_gym6_cleared_to_sabrina_reveal_complete"
+            }
+          ],
+          "node": "blaine_001",
+          "why": "holding gym6_cleared with an earlier stage: carry_by_gym6_cleared_to_sabrina_reveal_complete lifts the stage to sabrina_reveal_complete, then the account opens"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "always"
@@ -2491,7 +2925,7 @@
           "id": "blaine_locked",
           "kind": "line",
           "speaker": "crater analyst",
-          "text": "The destination model means nothing without Sabrina's convergence record.",
+          "text": "The destination model means nothing without Sabrina's convergence record. Bring the Marsh Badge from Sabrina, or her record from the Tilpey north shore.",
           "next": "blaine_locked"
         },
         {
@@ -2580,6 +3014,64 @@
       },
       "entry_rules": [
         {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.giovanni_cursor",
+                "value": "giovanni_locked"
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              }
+            ]
+          },
+          "node": "giovanni_001",
+          "why": "at blaine_reveal_complete or later but never unlocked (an actor before it was skipped, or a badge carried the stage): open the account. Its completion reads blaine_reveal_complete only, so a stage already past it does not move."
+        },
+        {
+          "priority": 6,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.giovanni_cursor",
+                "value": "giovanni_locked"
+              },
+              {
+                "kind": "flag",
+                "flag": "gym7_cleared"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "carry_by_gym7_cleared_to_blaine_reveal_complete"
+            }
+          ],
+          "node": "giovanni_001",
+          "why": "holding gym7_cleared with an earlier stage: carry_by_gym7_cleared_to_blaine_reveal_complete lifts the stage to blaine_reveal_complete, then the account opens"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "always"
@@ -2592,7 +3084,7 @@
           "id": "giovanni_locked",
           "kind": "line",
           "speaker": "southern watch officer",
-          "text": "The southern watch has no reason to open its Rift file before the crater evidence arrives.",
+          "text": "The southern watch has no reason to open its Rift file before the crater evidence arrives. Bring the Volcano Badge from Blaine, or his crater analyst's findings.",
           "next": "giovanni_locked"
         },
         {
@@ -2674,6 +3166,63 @@
       },
       "entry_rules": [
         {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.rift_cursor",
+                "value": "rift_locked"
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "giovanni_reveal_complete",
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              }
+            ]
+          },
+          "node": "rift_001",
+          "why": "at giovanni_reveal_complete or later but never unlocked (an actor before it was skipped, or a badge carried the stage): open the account. Its completion reads giovanni_reveal_complete only, so a stage already past it does not move."
+        },
+        {
+          "priority": 6,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.rift_cursor",
+                "value": "rift_locked"
+              },
+              {
+                "kind": "flag",
+                "flag": "gym8_cleared"
+              }
+            ]
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "carry_by_gym8_cleared_to_giovanni_reveal_complete"
+            }
+          ],
+          "node": "rift_001",
+          "why": "holding gym8_cleared with an earlier stage: carry_by_gym8_cleared_to_giovanni_reveal_complete lifts the stage to giovanni_reveal_complete, then the account opens"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "always"
@@ -2686,7 +3235,7 @@
           "id": "rift_locked",
           "kind": "line",
           "speaker": "Rift surveyor",
-          "text": "Victory Road remains sealed until Giovanni clears the regional approach.",
+          "text": "Victory Road stays sealed to anyone Giovanni has not passed. Bring the Earth Badge from his gym on South Strand, or the southern watch officer's report.",
           "next": "rift_locked"
         },
         {
@@ -2780,7 +3329,7 @@
           "id": "league_locked",
           "kind": "line",
           "speaker": "League steward",
-          "text": "The League remains closed while the forced activation is unresolved.",
+          "text": "The League remains closed while the forced activation is unresolved. Hoopa is still bound in the cradle beneath the Compact's headquarters in the Deep.",
           "next": "league_locked"
         },
         {
@@ -10022,6 +10571,48 @@
       },
       "entry_rules": [
         {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "flag",
+                "flag": "gym8_cleared"
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "not_started",
+                  "oak_sendoff",
+                  "mismatch_seen",
+                  "oak_admitted",
+                  "pallet_complete",
+                  "brock_account_heard",
+                  "misty_reveal_complete",
+                  "surge_reveal_complete",
+                  "erika_reveal_complete",
+                  "koga_reveal_complete",
+                  "sabrina_reveal_complete",
+                  "blaine_reveal_complete",
+                  "giovanni_reveal_complete"
+                ]
+              }
+            ]
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "carry_by_gym8_cleared_to_rift_crisis_pending"
+            }
+          ],
+          "node": "nia_001",
+          "why": "the Earth Badge, and the Rift surveyor never met: carried to rift_crisis_pending, then her account opens"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "progression_equals",
@@ -10069,7 +10660,7 @@
           "id": "nia_before",
           "kind": "line",
           "speaker": "nia",
-          "text": "The clinic is for people the Rift has already hurt. If the Compact sent you, you are early.",
+          "text": "The clinic is for people the Rift has already hurt. If the Compact sent you, you are early. Nobody comes down here without Giovanni's Earth Badge.",
           "next": "nia_before"
         },
         {
@@ -10993,7 +11584,7 @@
           "id": "turned_away_2",
           "kind": "line",
           "speaker": "guard",
-          "text": "When the operation needs you, they'll tell me. Move along.",
+          "text": "When the operation needs you, they'll tell me. The Rift surveyor at the Victory Road trailhead signs the orders, or Nia Calder at the clinic. Move along.",
           "next": "turned_away_2"
         },
         {

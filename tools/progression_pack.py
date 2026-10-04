@@ -15,7 +15,11 @@ the unlock for its town's waystone, so both read the same data. The pack:
                                        is exposed for it, so no player can set it by typing.
   function/flag/<id>/granted           reward: re-sync this player's waystones, offer that player a
                                        Xaero's waypoint to the next gym (gym_markers, one gym ahead), and
-                                       give the leader's rewards once (loot_table/first_win/<trainer>)
+                                       give the leader's rewards once (loot_table/first_win/<trainer>), and
+                                       call carry when the flag declares one
+  function/flag/<id>/carry             carries_stage flags only (the gym badges): `runmolang` on THIS player's
+                                       q.player.data() moves the reveal's stage up to the badge's stage, never
+                                       down (the owner, 2026-10-05: playable end to end). NOT yet run in game
   rctmod leader loot tables            emptied: upstream drops them on every win, rematches included
   cobbleverse loot tables, functions   upstream_neutralised: Cobbleverse's gym maps emptied (they point at
                                        naturally generated gyms), its missing leader reward functions defined empty
@@ -144,6 +148,8 @@ def plan(doc: dict, series: str | None = None, placements: dict | None = None) -
             waystones[town] = {"flag": fid, "position": pos, "dimension": dim}
         if fl.get("offers_marker") is not None:
             entry["offers_marker"] = fl["offers_marker"]
+        if fl.get("carries_stage") is not None:
+            entry["carries_stage"] = _carry(fid, fl["carries_stage"], doc)
         flags.append(entry)
     markers = _markers(doc.get("gym_markers"), placements)
     for f in flags:
@@ -176,6 +182,43 @@ def plan(doc: dict, series: str | None = None, placements: dict | None = None) -
     return {"namespace": ns, "series": active, "flags": flags,
             "waystones": waystones, "unplaced": sorted(unplaced), "markers": markers,
             "empty_loot_tables": empty_loot, "empty_functions": empty_fn, "first_win": first_win}
+
+
+def _carry(fid: str, spec, doc: dict) -> dict:
+    """A flag's carries_stage ({"field": <enum quest field>, "to": <value>}): validated against the field's declared
+    allowed_values in this same document, which are in story order. Returns {field, key, to, earlier}, where
+    `earlier` is every value before `to`: the carry moves a stage up to `to` from one of those, and never down."""
+    spec = _obj(spec, "flag %r carries_stage" % fid)
+    field, to = spec.get("field"), spec.get("to")
+    fdef = next((f for f in doc.get("quest_fields") or [] if isinstance(f, dict) and f.get("id") == field), None)
+    if fdef is None:
+        raise ProgressionError("flag %r carries_stage: %r is not a quest_fields id" % (fid, field))
+    vals = fdef.get("allowed_values")
+    if fdef.get("type") != "enum" or fdef.get("scope") != "player" or not isinstance(vals, list):
+        raise ProgressionError("flag %r carries_stage: %r must be a player enum with listed allowed_values" % (fid, field))
+    if to not in vals:
+        raise ProgressionError("flag %r carries_stage: %r is not a value of %s" % (fid, to, field))
+    for v in vals:
+        if not isinstance(v, str) or not re.fullmatch(r"[A-Za-z0-9_]+", v):
+            raise ProgressionError("flag %r carries_stage: value %r of %s needs quoting this tool does not do"
+                                   % (fid, v, field))
+    tag = spec.get("requires_tag")
+    if tag is not None and (not isinstance(tag, str) or not re.fullmatch(r"[a-z0-9_.]+", tag)):
+        raise ProgressionError("flag %r carries_stage: requires_tag %r is not [a-z0-9_.]+" % (fid, tag))
+    return {"field": field, "key": "cobblers__" + field.replace(".", "__"), "to": to,
+            "earlier": vals[:vals.index(to)], "requires_tag": tag}
+
+
+def carry_molang(c: dict) -> str:
+    """The Molang that moves THIS player's stage up to c["to"]: the store tools/compile_dialogue.py's conversations
+    read and write (q.player.data(), key cobblers__<field with . as __>). An unset key reads 0, which is the field's
+    initial value, so 0 counts as earlier. A stage at or past `to` is left alone. With requires_tag, a player without
+    that tag (the starter gate's, tools/compile_dialogue.py STARTER_TAG) is left alone too."""
+    k = "t.d.%s" % c["key"]
+    cond = " || ".join(["%s == 0" % k] + ["%s == '%s'" % (k, v) for v in c["earlier"]])
+    if c.get("requires_tag"):
+        cond = "q.player.has_tag('%s') && (%s)" % (c["requires_tag"], cond)
+    return "t.d = q.player.data(); (%s) ? { %s = '%s'; q.player.save_data(); };" % (cond, k, c["to"])
 
 
 MARKER_NAME = re.compile(r"^[A-Za-z0-9 ]{1,32}$")      # Xaero's share: 1-32 characters, and no ':', '-' or '_'
@@ -272,6 +315,18 @@ def files(p: dict) -> dict:
             if fw["one_of"]:
                 pools.append({"rolls": 1, "entries": [{"type": "minecraft:item", "name": i} for i in fw["one_of"]]})
             out["data/%s/loot_table/first_win/%s.json" % (ns, tid)] = json.dumps({"pools": pools}, indent=2) + "\n"
+        if flag.get("carries_stage"):
+            # the badge carries the reveal forward (data/progression.json flags[].carries_stage): runs once, as the
+            # winner, because a held advancement never re-runs its reward. Its own function, so the reward reads as
+            # one line per effect; runmolang + q.player.save_data() is the store tools/hq_tower.py's won functions write
+            c = flag["carries_stage"]
+            out["data/%s/function/flag/%s/carry.mcfunction" % (ns, flag["id"])] = "\n".join([
+                "# Generated by tools/progression_pack.py. Runs as the player who earned %s: moves their %s up to %s,"
+                % (flag["id"], c["field"], c["to"]),
+                "# never down (data/progression.json flags[].carries_stage).",
+                'runmolang "%s" @s' % carry_molang(c),
+            ]) + "\n"
+            granted.append("function %s:flag/%s/carry" % (ns, flag["id"]))
         out["data/%s/function/flag/%s/granted.mcfunction" % (ns, flag["id"])] = "\n".join(granted) + "\n"
         if flag["kind"] == "quest_transition":
             # run as the player by the transition's `function` effect (tools/compile_dialogue.py). Granting a held
