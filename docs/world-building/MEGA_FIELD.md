@@ -137,6 +137,10 @@ part of this.
 Rung: **datapack + functions** through the existing keeper (Cobblemon's `spawnpokemonat`, the gulch pack's tick) and
 **configuration** for aggression (FoF, already set). No new mechanism, mod or dependency.
 
+**Superseded twice (2026-10-04): the field now holds 27 dens in 8 farms, each den with its own id `gm_mf_<x>_<z>` (a
+species may hold several), 18.4% of 449,577 usable columns covered, 45 borders and 19 kills (6.7% of floor, cap 8%);
+`python tools/mega_field_audit.py` is the current count. What follows is the 2026-10-03 layout as built then.**
+
 **11 dens in 6 farms**, all in the field, laid out by `python tools/mega_field.py sites` from
 `data/gulch_mine.json` `mega_field.layout` (every threshold has its derivation in `layout.why`):
 
@@ -212,12 +216,13 @@ Not written here, by rule. Each item names its independent source; none may impo
 4. **Levels against the real cap**: compute the cap for 8 badges from rctmod's rule and the trainer data
    (`LEAGUE_LEVEL_CAP.md` section 1), not from `farm_tiers.field_why`; every field den's level in the BUILT
    `megas/spawn_<den>.mcfunction` is cap + 10 (outer) or cap + 17 (deeper).
-5. **One den per species** across the farms (the lair file names collide otherwise) and every species/aspect a real
+5. **One record per den id** across the farms (lairs are `mega_dens/<den id>` since 2026-10-04; one species may hold
+   several dens) and every species/aspect a real
    Mega in the pinned Mega Showdown jar (`species_feature_assignments`), none on `CLIENT_MODEL_FIXES.md`'s broken list.
 6. **The drop chain end to end in the built pack**: each field den has `bind_`, `hit_`, `roll_`, `slain_`,
    `hitter_` functions, the `battle_fainted` callback names `drops/fainted`, the dropped item is
    `cutters.offer.raw`, and that item is what every Cutters bench trade buys.
-7. **Retirement**: `megas/retire` kills exactly the seven `superseded_farms` den tags and no live one; R9SX's forceloads
+7. **Retirement**: `megas/retire` kills exactly the `superseded_farms` den tags and no live one; R9SX's forceloads
    cover each retired anchor +- (leash + 16); no keeper, leash or `drops/fainted` line names a retired den.
 8. **Re-application order**: R9S < R9SX < R9MD < R9E; R9MD runs one lair per field den; prepare runs
    `mega_field:check` before `gulch_mine:build`.
