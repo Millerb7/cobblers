@@ -696,7 +696,11 @@
         "dlg_main_rift_surveyor",
         "dlg_main_league_steward",
         "dlg_main_relic_hq_guard",
-        "dlg_main_relic_hq_guard_inside"
+        "dlg_main_relic_hq_guard_inside",
+        "dlg_main_finale_nia",
+        "dlg_main_finale_brann",
+        "dlg_main_finale_oren",
+        "dlg_main_finale_elara"
       ],
       "beats": [
         {
@@ -1747,6 +1751,88 @@
           ]
         },
         {
+          "id": "record_deep_handoff_received",
+          "source": "docs/story/NPCS_AND_RIFT_FINALE.md (Codex, branch codex/trainer-modes) Scene 1: Nia Calder's handoff at the Deep's clinic, invoked after line nia_006 of dlg_main_finale_nia",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "rift_crisis_pending"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "deep_handoff_received"
+            }
+          ]
+        },
+        {
+          "id": "record_hq_crossed",
+          "source": "docs/story/NPCS_AND_RIFT_FINALE.md (Codex, branch codex/trainer-modes) Scene 2: Captain Brann Saye's threshold in the HQ tower's briefing hall, invoked by the choice 'I'm not leaving.' (dlg_main_finale_brann brann_choice); stands the hall guard down, which is the HQ tower's climb gate (data/hq_tower.json gates.climb)",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "deep_handoff_received"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "hq_crossed"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.finale_brann_cursor",
+              "value": "brann_004"
+            }
+          ]
+        },
+        {
+          "id": "record_anchor_shutdown",
+          "source": "docs/story/NPCS_AND_RIFT_FINALE.md (Codex, branch codex/trainer-modes) Scene 3: Oren Pell's shutdown in the HQ tower's anchor control room, invoked by the choice 'Run the marked sequence.' (dlg_main_finale_oren oren_board). The doc allows one proven interaction in place of a four-step console; this is that one interaction",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "hq_crossed"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "anchor_shutdown"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.finale_oren_cursor",
+              "value": "oren_after_1"
+            }
+          ]
+        },
+        {
+          "id": "record_cradle_open",
+          "source": "docs/story/NPCS_AND_RIFT_FINALE.md (Codex, branch codex/trainer-modes) Scene 4: Director Elara Venn's decision in the HQ tower's director's office, invoked after line elara_006 of dlg_main_finale_elara",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "anchor_shutdown"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "cradle_open"
+            }
+          ]
+        },
+        {
           "id": "relic_hq_admit",
           "source": "data/relic_underground.json geometry.hq.guard; the owner, 2026-10-02: 'the HQ door should need the finale's quest stage, not a plate anyone can stand on', at rift_crisis_pending or later",
           "conditions": [
@@ -1755,6 +1841,10 @@
               "field": "quest.main_worldshift_reveal.stage",
               "values": [
                 "rift_crisis_pending",
+                "deep_handoff_received",
+                "hq_crossed",
+                "anchor_shutdown",
+                "cradle_open",
                 "rift_released",
                 "league_recognized"
               ]
@@ -1911,7 +2001,11 @@
         "quest.main_worldshift_reveal.league_cursor",
         "quest.main_worldshift_reveal.relic_guard_cursor",
         "quest.main_worldshift_reveal.relic_inside_cursor",
-        "quest.main_worldshift_reveal.relic_release_cursor"
+        "quest.main_worldshift_reveal.relic_release_cursor",
+        "quest.main_worldshift_reveal.finale_nia_cursor",
+        "quest.main_worldshift_reveal.finale_brann_cursor",
+        "quest.main_worldshift_reveal.finale_oren_cursor",
+        "quest.main_worldshift_reveal.finale_elara_cursor"
       ]
     },
     {
