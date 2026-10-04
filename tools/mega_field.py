@@ -758,6 +758,11 @@ def sites(spec, source_root=None):
     `farms` holds, ready to paste."""
     mf = spec["mega_field"]
     lay = mf["layout"]
+    # road_clear is derived, not tuned (layout.why.road_clear, 2026-10-05): a range's edge plus a Mega's notice plus
+    # half the road, so the walked line runs between territories
+    if "aggro_reach" in lay and lay["road_clear"] != lay["leash"] + lay["aggro_reach"] + lay["road_margin"]:
+        raise FieldError("layout.road_clear %d is not leash + aggro_reach + road_margin = %d" % (
+            lay["road_clear"], lay["leash"] + lay["aggro_reach"] + lay["road_margin"]))
     poly = mf["polygon"]
     g = G.Ground(source_root)
     vr = json.loads((ROOT / "data" / "route_paths.json").read_text(encoding="utf-8"))["paths"][lay["road"]]
