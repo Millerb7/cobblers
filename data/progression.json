@@ -2297,6 +2297,26 @@
       ]
     },
     {
+      "id": "quest.ambient_apricorn_farm.farmer_cursor",
+      "quest_id": "ambient_apricorn_farm",
+      "field": "farmer_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "greeting",
+      "allowed_values": [
+        "greeting",
+        "who",
+        "ripe",
+        "regrow",
+        "leaves",
+        "sprout",
+        "balls",
+        "round_ones",
+        "stall",
+        "repeat"
+      ]
+    },
+    {
       "id": "quest.evt_lopunny_superfan.started",
       "quest_id": "evt_lopunny_superfan",
       "field": "started",

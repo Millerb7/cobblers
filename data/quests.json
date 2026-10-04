@@ -7634,6 +7634,32 @@
         "quest.evt_hunters_hide.told",
         "quest.evt_hunters_hide.dialogue_cursor"
       ]
+    },
+    {
+      "id": "ambient_apricorn_farm",
+      "source": "data/apricorn_farm.json; the owner's request of 2026-10-05 (data/apricorn_farm.json request)",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": true,
+        "npcs_remain_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_apricorn_farmer"
+      ],
+      "objectives": [],
+      "transitions": [],
+      "writer": "dialogue cursor persistence only; the conversation sets no story, reward, or completion state (the farm's apricorns are picked from the trees, and the stall is a CobbleDollars merchant)",
+      "readers": "the farmer's conversation only",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player advances and restores their own cursor"
+      },
+      "progression_field_refs": [
+        "quest.ambient_apricorn_farm.farmer_cursor"
+      ]
     }
   ]
 }

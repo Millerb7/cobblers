@@ -13999,6 +13999,104 @@
       "speakers": {
         "cassius": "Cassius Rook"
       }
+    },
+    {
+      "id": "dlg_apricorn_farmer",
+      "quest_id": "ambient_apricorn_farm",
+      "npc_id": "npc_apricorn_farmer",
+      "source": "data/apricorn_farm.json npc; every fact she states is read from the Cobblemon 1.8.0 jar (data/apricorn_farm.json apricorn_facts)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.ambient_apricorn_farm.farmer_cursor",
+        "initial_node": "greeting",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "greeting",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "Mind the fences, they're new. Well, newer than the trees.",
+          "next": "who"
+        },
+        {
+          "id": "who",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "Tamsin Hollin. My mother put in the first row, red, because red is what a Poke Ball wants. Then somebody asked for blue, and somebody else for black, and now there are seven.",
+          "next": "ripe"
+        },
+        {
+          "id": "ripe",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "Pick them once they've coloured all the way through. A green one gives you nothing for the trouble.",
+          "next": "regrow"
+        },
+        {
+          "id": "regrow",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "And don't pull the branch about. Take the fruit and it grows back where it hung, a quarter of an hour or so, as long as somebody's about to keep it company. Trees don't grow when nobody's looking. Mother swore to that.",
+          "next": "leaves"
+        },
+        {
+          "id": "leaves",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "Leave the leaves, too. Every apricorn hangs off one leaf, and if the leaf goes, the fruit goes with it.",
+          "next": "sprout"
+        },
+        {
+          "id": "sprout",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "One pick in ten or so you'll find a sprout in with the fruit. Plant it where you like. Not in my rows.",
+          "next": "balls"
+        },
+        {
+          "id": "balls",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "Four reds round a bit of copper makes four Poke Balls. Blue and red round iron for Great Balls, black and yellow round gold for Ultras. It's on the wall inside if you forget.",
+          "next": "round_ones"
+        },
+        {
+          "id": "round_ones",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "If an apricorn looks back at you, it isn't one. The round ones come for the trees. They mostly just sit there. Mostly.",
+          "next": "stall"
+        },
+        {
+          "id": "stall",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "The stall on the avenue sells the wood. The fruit's free: there's more on those trees than I'll ever get to.",
+          "next": "repeat"
+        },
+        {
+          "id": "repeat",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "Pick what's ripe and shut the gates behind you.",
+          "next": "repeat"
+        }
+      ],
+      "speakers": {
+        "tamsin": "Tamsin Hollin"
+      }
     }
   ]
 }
