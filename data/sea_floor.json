@@ -1,0 +1,87 @@
+{
+ "schema": "cobblers.sea-floor/1",
+ "status": "built offline 2026-10-04 by tools/sea_floor.py; not installed in any world, not seen in game",
+ "builder": "tools/sea_floor.py",
+ "audit": "not yet written: an independent audit by another hand comes after the builder (CLAUDE.md 'Content implementation and its test/review use different agents')",
+ "spec": "docs/world-building/WATER_LIFE_GAP.md, from docs/world-building/OCEAN.md section 4 'Kelp, seagrass, coral' and data/regions.json marine_regions[].flora and .biomes.rules",
+ "seed": 61004,
+ "ground": "tools/ground.py, rounded: the canonical heightmap IS the applied water export, so the shelf, break and slope are ground. Never a world",
+ "sea_water": "a column is sea if its ground is below data/world.json vertical.sea_level and it is not in a lake basin (tools/water_mask.py's rule; the lake mask is tools/water_shape.py's, through tools/sea_life.py's Exclusions)",
+ "regions": {
+  "from": "data/regions.json marine_regions[].polygons, each region's own flora list and biome rules; reach is its seabed_plan.shelf_width_blocks, read at run time, never restated",
+  "unassigned_why": "the marine polygons were drawn against the 2026-09-13 coastline (regions.json marine_regions_note), so about 0.95M sea columns along today's coast fall in none; each takes the nearest region's rules (a label spread on the 4-block distance grid)",
+  "frostwater_shelf": {
+   "kelp": true,
+   "seagrass": true,
+   "frozen": {
+    "north_of_z": 1300,
+    "from_land_blocks": 120
+   },
+   "why": "'kelp forests on cold_ocean shelf and slope (y28-58)', 'seagrass on cold_ocean shelf; none under frozen_ocean'; frozen_ocean is 'north of z1300, 120 or more blocks from land', and nothing grows there"
+  },
+  "windward_deep": {
+   "kelp": true,
+   "seagrass": true,
+   "why": "'kelp on the shelf and upper slope', 'seagrass on the shelf', 'no coral'"
+  },
+  "eastern_reach": {
+   "kelp": true,
+   "seagrass": true,
+   "why": "'kelp and seagrass on the shelf', 'no coral (lukewarm_ocean does not grow it in vanilla)'"
+  },
+  "southern_shallows": {
+   "kelp": true,
+   "kelp_beyond_land_blocks": 220,
+   "seagrass": true,
+   "coral": false,
+   "why": "'seagrass across the shelf; no kelp in warm_ocean', and warm_ocean is 'shelf within 220 blocks of land', so kelp only on the lukewarm outer shelf beyond it (OCEAN.md: kelp grows in lukewarm). The coral reefs this region's flora names are NOT built: data/spawn_block_policy.json whitelists live coral for cobblers_sea_life's Relic reef only, and widening that is the owner's decision (WATER_LIFE_GAP.md)"
+  }
+ },
+ "land_distance": {
+  "coarse_blocks": 4,
+  "max_blocks": 420,
+  "why": "distance from land on a 4-block grid (a coarse cell is land if any column in it is), chamfer, so it errs toward land by up to about 5 blocks; enough for a 120-400 block reach rule"
+ },
+ "ownership": {
+  "sea_life_shore_from": "data/sea_life.json shore.kelp.from_land_blocks",
+  "sea_life_coast_boxes_from": "data/water_shape.json coasts.flats and coasts.skerries, the coasts data/sea_life.json shore.coasts names",
+  "sea_life_margin_blocks": 3,
+  "reef_margin_blocks": 10,
+  "why": "cobblers_sea_life owns the five shaped coasts out to its kelp reach and the Relic reef; this pack writes nowhere in a coast box within that reach (plus the coarse grid's error), nowhere within the reef's outer radius plus the drop plus this margin, and in no column within sea_life_margin_blocks of any cell that pack writes. So the two packs share no column"
+ },
+ "kelp": {
+  "ground_y": [
+   28,
+   58
+  ],
+  "max_top_below_surface": 3,
+  "patch_scale_blocks": 64,
+  "patch_over": 0.84,
+  "density": 0.6,
+  "height_share": [
+   0.35,
+   1.0
+  ],
+  "age": 25,
+  "why": "kelp forests on the seabed from y28 to y58 (OCEAN.md section 4's kelp row) in patches seen from a boat. A top never within 2 of the surface (at most sea - 3, the threshold both water-life audits hold), so kelp is never a rest point on any crossing; age 25 so it never grows past that. Height is a share of the room between the seabed and that top"
+ },
+ "seagrass": {
+  "ground_y": [
+   40,
+   60
+  ],
+  "patch_scale_blocks": 30,
+  "patch_over": 0.72,
+  "hole_share": 0.05,
+  "tall_share": 0.04,
+  "why": "seagrass meadows on the seabed from y40 to y60 (OCEAN.md's seagrass row), dense inside a meadow with a few holes; some tall where there are at least two blocks of water. Never inside a gate line's clearance (tools/sea_life.py's rule for its own seagrass)"
+ },
+ "writes": {
+  "filter": "minecraft:water",
+  "why": "every write is a `fill ... replace minecraft:water`: it can only turn sea water into a plant, never overwrite a block another pack or an earlier pass put there that no data file lists (CLAUDE.md 'Our list is not the world')"
+ },
+ "budget": {
+  "max_commands": 900000,
+  "why": "a ceiling the build fails closed on: about two and a half times the lake skin's 337,275 commands, because every dressed chunk is loaded once by the step that runs it"
+ }
+}

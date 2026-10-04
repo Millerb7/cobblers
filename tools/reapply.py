@@ -161,6 +161,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # (tools/lake_life.py), and the shore, the seabed's wrecks and Rift debris and the two sea caves
                 # (tools/sea_life.py). Pure block functions, no load or tick, run by R9LL and R9SL
                 "cobblers_lake_life", "cobblers_sea_life",
+                # 2026-10-04: the open sea's floor (tools/sea_floor.py, data/sea_floor.json): kelp forests and seagrass
+                # meadows on the marine regions' shelves. Pure block functions, every write `replace minecraft:water`,
+                # run by R9SF after R9SL
+                "cobblers_sea_floor",
                 # 2026-09-29: the gym interiors (tools/gym_interiors.py, data/gym_interiors.json): the healing
                 # machines out of all eight placed gyms, and gym 1's works carved under its lot. Block functions run
                 # by R16E, after the donors (R9) that stamp the gyms whole and would erase anything written first
@@ -693,6 +697,10 @@ def prepare_jobs(a):
     add("lake_life_audit", "lake_life_audit.py", *src)
     add("sea_life:build", "sea_life.py", "build", *src)
     add("sea_life_audit", "sea_life_audit.py", *src)
+    # the open sea's floor (2026-10-04, tools/sea_floor.py, docs/world-building/WATER_LIFE_GAP.md): kelp forests and
+    # seagrass meadows on every marine region's shelf, outside everything cobblers_sea_life writes. Its independent
+    # audit is not written yet (another hand's)
+    add("sea_floor:build", "sea_floor.py", "build", *src)
     # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
     # then the offline audit, which re-derives every shell box from data/placements.json, replays the written
     # functions into a voxel model and fails the prepare on a broken route, a trainer that can be walked round, a
@@ -1558,6 +1566,10 @@ def steps(with_spawns=False):
                 [("fn", "cobblers:lake_life/%s" % f) for f in indexed("cobblers_lake_life", "lake_life")]))
     out.append(("R9SL", "the shore, the wrecks and Rift debris, and the sea caves (data/sea_life.json)",
                 [("fn", "cobblers:sea_life/%s" % f) for f in indexed("cobblers_sea_life", "sea_life")]))
+    # the open sea's floor (2026-10-04, tools/sea_floor.py): AFTER R9SL, whose every written cell (and 3 round it) it
+    # keeps clear of; every write replaces only water, so a build that lands later or earlier is never overwritten
+    out.append(("R9SF", "the open sea's floor: kelp forests and seagrass meadows (data/sea_floor.json)",
+                [("fn", "cobblers:sea_floor/%s" % f) for f in indexed("cobblers_sea_floor", "sea_floor")]))
     # the Lopunny superfan's house (2026-10-02, tools/lopunny_house.py): BEFORE R9E, because its build writes the cellar
     # floor - after R9E it would lay stone bricks over the Buneary Habitat Block set in that floor
     import lopunny_house
