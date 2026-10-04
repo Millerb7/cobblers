@@ -61,7 +61,10 @@ def test_a_contract_seat_wins_and_the_rest_fall_back():
     doc, p = M.load(), M.load_plazas(FIXTURE)
     keep = {k[0]: k for k in M.npc_placements(doc, p) + M.stall_placements(doc, p)}
     assert keep["dlg_market_stoneford"][1] == (1745, 139, 3622) and keep["dlg_market_stoneford"][3] == 180
-    assert keep["dlg_stall_stoneford_masons_yard"][1] == (1755, 139, 3632)
+    # the fixture's stall 2 is staffed by whichever record names it (2026-10-03: the terrace seedsman; the masons' yard
+    # moved to stall 6, which the fixture does not have, so it falls back)
+    assert keep["dlg_stall_stoneford_terrace_seedsman"][1] == (1755, 139, 3632)
+    assert keep["dlg_stall_stoneford_masons_yard"][1] == tuple(_stall(doc, "stoneford_masons_yard")["at"])
     assert keep["dlg_market_redbrow"][1] == (4838, 162, 5690)
     # not in the contract: the record's own fallback site
     assert keep["dlg_market_viltri_quay"][1] == tuple(next(c for c in doc["counters"] if c["id"] == "viltri_quay")["at"])
@@ -74,8 +77,28 @@ def test_the_fixture_contract_is_fully_staffed_and_its_themes_reported():
     doc, p = M.load(), M.load_plazas(FIXTURE)
     assert M.stall_problems(doc, _towns(), p) == []
     rep = M.contract_report(doc, p)
-    assert any("stoneford_bakehouse" in r and "'fish'" in r for r in rep)
-    assert any("viltri_boatwright: stall gym2_town_stall_2 is not seated" in r for r in rep)
+    assert any("stoneford_herbalist" in r and "'fish'" in r for r in rep)
+    assert any("viltri_boatwright: stall gym2_town_stall_4 is not seated" in r for r in rep)
+
+
+def test_the_real_contract_is_fully_staffed_with_matching_themes():
+    """data/plaza_centres.json (the squares' builder's, merged 2026-10-03): every stall staffed once, and every record
+    that names a contract stall carries that stall's theme word."""
+    doc, p = M.load(), M.load_plazas()
+    if not p:
+        pytest.skip("data/plaza_centres.json is absent")
+    assert M.stall_problems(doc, _towns(), p) == []
+    assert [r for r in M.contract_report(doc, p) if "the contract's stall" in r] == []
+
+
+def test_a_contract_keeper_on_the_deck_faces_its_stall():
+    pl = _placements()
+    plan = pl["settlements"]["sea_town"]["plan"]
+    # sea_town_stall_1: the stall at (5154, 7383), its keeper behind it at (5153, 7383) facing east (yaw -90)
+    ok = M.deck_problems("k", 5153, 63, 7383, -90, "sea_town", plan, pl, _world(), face=(5154, 7383))
+    assert not [e for e in ok if "faces yaw" in e], ok
+    away = M.deck_problems("k", 5153, 63, 7383, 90, "sea_town", plan, pl, _world(), face=(5154, 7383))
+    assert any("but its stall at [5154, 7383] is at yaw -90" in e for e in away), away
 
 
 def test_an_empty_contract_stall_and_a_far_keeper_are_refused(tmp_path):
