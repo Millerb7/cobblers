@@ -27,9 +27,10 @@ spawn within the bucket by its weight. A table is the union of its entries over 
 timeRange counts as present at all times. Base-stat means are spawn-chance weighted within a table's land context,
 then averaged over tables with equal weight per table.
 
-Hearts (section 10, 2026-10-02): a sub-region file holds its base table and, for 28 places, a heart's added rows.
-split_heart() tells them apart from the compiled condition alone (a `minY`, or a box set other than the base's).
-Targets 1, 4 (strength) and 5 read the BASE rows, the table a player meets across the place; the other targets
+Hearts (section 10, 2026-10-02; every area since 2026-10-05): a sub-region file holds its base table, a heart's added
+rows and, in the Rift's arms, the Mega field's den lines -- a third kind, neither base nor heart. split_den_lines()
+takes the den lines out first (by species and den range, from data/gulch_mine.json), then split_heart() tells base
+from heart by section 10's id contract `<sub>_h<n>_`, never by a heart being boxed or above the cap. Targets 1, 4 (strength) and 5 read the BASE rows, the table a player meets across the place; the other targets
 read the file's union, as before. Section 10's own limits on the heart are in tests/test_encounter_hearts.py.
 
 Not covered, and it needs a running server or a world: real spawn rates (Cobblemon's per-position weights, the
@@ -295,26 +296,28 @@ def split_den_lines(spawns, dens=None):
     return rest, den
 
 
-def split_heart(spawns):
-    """(base details, heart details) of one compiled sub-region file, told apart by the compiled condition alone.
+def heart_id(area):
+    """The compiled id of a heart entry, as section 10 states it: `<sub>_h<n>_<species>`."""
+    return re.compile(r"^%s_h\d+_" % re.escape(area))
 
-    Section 10: a table may carry one heart; its entries ADD to the base inside the heart, a summit heart's
-    entries carry `minY` (section 9: the only entries that do), and a focus heart's cover a circle of the
-    sub-region's cells. So in the compiled file every base spawn spans the same box set -- the whole place, the
-    largest -- and a heart spawn either carries `minY` or spans a different (smaller) box set. Nothing here reads
-    the id or the generator; test_the_condition_split_agrees_with_the_documented_heart_ids checks it against the
-    id convention section 10 states.
+
+def split_heart(spawns, area):
+    """(base details, heart details) of one compiled sub-region file, told apart by section 10's id contract.
+
+    Until 2026-10-05 this split by condition (a heart spawn carries `minY` or spans a smaller box set than the base).
+    The Mega field's den lines (tools/compile_spawns.py mega_den_spawns, 2026-10-05) are natural spawns over a den's
+    own box -- smaller than the place, not hearts -- and the condition split filed them as a heart (the Rift's arms
+    read 32% heart). So a heart is now named by its id, never by being boxed or above the cap. Callers take the den
+    lines out FIRST with split_den_lines (by species and range, never by id), then split the rest here by id; so a
+    den line compiled under a heart id lands in the den lines, not the heart, and is caught there.
+    test_heart_ids_and_conditions_agree (test_encounter_hearts.py) holds the readings against each other: a heart id
+    is always restricted, a den line never carries one, and a restricted non-heart is a named den;
+    test_the_den_line_split_agrees_with_the_den_ids holds the species-and-range split against the den ids.
     """
-    spans = {}
-    for e in spawns:
-        spans.setdefault(detail_signature(e), set()).add(box_of(e))
-    if not spans:
-        return [], []
-    base_set = max({frozenset(v) for v in spans.values()}, key=lambda s: (columns_of(s), len(s)))
+    pat = heart_id(area)
     base, heart = [], []
     for e in spawns:
-        in_base = frozenset(spans[detail_signature(e)]) == base_set and "minY" not in (e.get("condition") or {})
-        (base if in_base else heart).append(e)
+        (heart if pat.match(str(e.get("id", ""))) else base).append(e)
     return base, heart
 
 
@@ -373,8 +376,8 @@ def world(pack):
         nearest = min((g, route_leg[r], r) for r, g in gaps.items() if g is not None)
         authored = (DESIGN["tables"].get(p.stem) or {}).get("tier")
         spawns = details(p)
-        rest, den = split_den_lines(spawns, dens_of)
-        base, heart = split_heart(rest)
+        rest, den = split_den_lines(spawns, dens_of)   # den lines out first, by species and range
+        base, heart = split_heart(rest, p.stem)         # then the hearts, by section 10's id
         subs[p.stem] = {"rows": rows_of(spawns), "base_rows": rows_of(base), "heart_rows": rows_of(heart),
                         "base": base, "heart": heart, "den": den,
                         "on_path": bool(near), "leg": min(near) if near else None,
