@@ -451,6 +451,13 @@ def plan_audit(settlement, world, server_dir=None):
             for (x, y, z) in solid:
                 covered[(x, z)] = max(covered.get((x, z), y), y)
     exempt = {c for c, (y, _, _) in paving.items() if any(covered.get(c, -10 ** 6) >= y + d for d in (0, 1))}
+    # The town's square (tools/plaza_centre.py, R13, 2026-10-03: the owner asked for squares with a middle): its
+    # centrepiece, stalls, benches and lamps stand on the plaza paving by design, as an earthwork does. Their columns
+    # come from the generator's own model; a town with no built square has no file and nothing is exempted
+    square = ROOT / "derived" / "plaza_centres" / ("%s.json" % settlement)
+    if square.is_file():
+        for piece in json.loads(square.read_text(encoding="utf-8")).get("pieces", []):
+            exempt |= {tuple(c) for c in piece.get("columns", [])}
     roads = {}
     for (x, z), (y, block, what) in paving.items():
         if (x, z) in lamp_cells or (x, z) in exempt:
