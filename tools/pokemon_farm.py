@@ -36,10 +36,15 @@ What Cobblemon 1.8.0 does natively here (read from Cobblemon-fabric-1.8.0+1.21.1
              moomoo_milk), gogoat.json / skiddo.json / bouffalant.json (female, bucket) all require
              `owner_held_item`, whose OwnerQueryRequirement returns false when getOwnerEntity is null. A player milks
              their OWN Miltank; the farm's are dressing, and the farmer says so.
-  honey      vanilla: the beehives are written at honey_level=5, so a glass bottle takes one honey bottle each (no
-             bees refill them). Cobblemon's cobblemon:pokemon_bee behaviour (pollinate, place honey in a hive) exists
-             in the jar but is NOT used: the farm's Combee and Vespiquen are still loafers. Vespiquen's own honey
-             interaction is owner-only like the milk.
+  honey      native refill (the owner, 2026-10-05, "yeah combee refills"): the hives start at honey_level=5 and the
+             four apiary Combee are followers whose list adds cobblemon:pokemon_bee (combee.json's own `ai` applies
+             it; behaviours/pokemon/pokemon_bee.json: pollinate a flower, path to a hive, place honey in it when
+             is_wild, i.e. no owner). The Pokemon enters the hive as a vanilla occupant and its release raises
+             honey_level. Dandelions and cornflowers within FlowerSensor's 5-block box feed them (policy entry scoped
+             to pokemon_farm). Vespiquen has no bee behaviour in the jar and stays a loafer; her own honey
+             interaction is owner-only like the milk. NOT seen in game.
+  wheat      the wheat field (the owner, 2026-10-05, "make wheat field"): mature and late-sown wheat on farmland
+             with no water (a spawn condition); a crop on every farmland block keeps it farmland.
   eggs, leather, feathers  dressing and the stand's stock: nothing native gives them from an unowned Pokemon
              (Torchic's brush -> feather interaction is owner-only; drops need a death the claim's flags prevent).
 
@@ -371,7 +376,8 @@ FENCE_LIKE = ("_fence",)
 PANE_LIKE = ("glass_pane", "iron_bars")
 NOT_FULL = ("stairs", "slab", "fence", "wall", "pane", "bars", "door", "sign", "lantern", "carpet", "farmland",
             "dirt_path", "torch", "button", "pressure_plate", "chain", "cauldron", "air", "carrots", "potatoes",
-            "beetroots", "campfire", "azalea", "moss_carpet", "flower_pot", "grindstone", "anvil", "ladder")
+            "beetroots", "campfire", "azalea", "moss_carpet", "flower_pot", "grindstone", "anvil", "ladder", "wheat",
+            "dandelion", "cornflower")
 
 
 def _is_fence(b):
@@ -656,9 +662,25 @@ def check_records(doc, s, extra, box):
 
 
 def check_blocks(doc, s):
+    """No spawn condition (data/spawn_blocks.json) unless the record allows it (blocks.spawn_conditions_allowed) AND a
+    data/spawn_block_policy.json whitelist entry whose scope names this place lists it (the scope rule,
+    tests/test_system_contracts.py C4; tools/apricorn_farm.py's form)."""
     spawn = set(jload("spawn_blocks.json")["blocks"])
-    bad = sorted({base(v) for v in list(s.solid.values()) + list(s.hung.values())} & spawn)
-    return ["writes spawn-condition blocks %s (data/spawn_blocks.json)" % bad] if bad else []
+    written = {base(v) for v in list(s.solid.values()) + list(s.hung.values())}
+    allowed = set(doc["blocks"].get("spawn_conditions_allowed") or [])
+    probs = []
+    bad = sorted((written & spawn) - allowed)
+    if bad:
+        probs.append("writes spawn-condition blocks %s (data/spawn_blocks.json)" % bad)
+    white = {b for w in jload("spawn_block_policy.json")["whitelist"] if TOWN in (w.get("scope") or "")
+             for b in w.get("blocks") or []}
+    unscoped = sorted((written & spawn & allowed) - white)
+    if unscoped:
+        probs.append("%s: no data/spawn_block_policy.json entry scoped to %s whitelists them" % (unscoped, TOWN))
+    for bad_id in ("minecraft:water", "minecraft:chest"):
+        if bad_id in written:
+            probs.append("writes %s" % bad_id)
+    return probs
 
 
 def check_all(doc, s, extra, box, animals):
