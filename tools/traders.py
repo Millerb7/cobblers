@@ -127,6 +127,15 @@ ENGINE_OWNED = ("UUID", "Pos", "Motion", "Rotation", "Brain", "attributes", "Att
                 "WorldUUIDLeast", "WorldUUIDMost", "Tags")
 
 
+MERCHANT = "cobbledollars:cobble_merchant"
+
+
+def summon_line(kind, x, y, z, data):
+    """The summon command for a trader standing on block (x, y, z): centred on the block, feet at y. Shared with
+    tools/markets.py, whose stall merchants are authored rather than read from a template."""
+    return "summon %s %d.5 %d %d.5 %s" % (kind, x, y, z, to_snbt(data))
+
+
 def entity_of(server_dir, template_id):
     """(entity id, nbt dict without engine-owned fields) of the trader in a shopkeeper template."""
     _, root = nbt.loads(find_template(server_dir, template_id))
@@ -306,7 +315,7 @@ def town_functions(town, recs, entity, policy=None):
                   # a jigsaw left by the earlier attempt that placed traders as structures
                   "execute if block %d %d %d minecraft:jigsaw run setblock %d %d %d minecraft:air" % (x, y, z, x, y, z),
                   "execute if block %d %d %d minecraft:jigsaw run setblock %d %d %d minecraft:air" % (x, y + 1, z, x, y + 1, z),
-                  "summon %s %d.5 %d %d.5 %s" % (kind, x, y, z, to_snbt(data))]
+                  summon_line(kind, x, y, z, data)]
         done += ["# %s" % rec["id"],
                  "execute if entity @e[tag=%s,tag=%s] run kill @e[tag=%s,tag=!%s]" % (tag, TAG_NEW, tag, TAG_NEW),
                  # untagged copies of this trader, left by structure placement or by hand: same type and name,

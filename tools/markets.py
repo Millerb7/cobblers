@@ -24,8 +24,14 @@ game: it is the ferry (tools/ferries.py) with the teleport replaced by a give.
 Only counters whose status is "sited" are emitted; the rest of the region's shelves live in the data, each with why.
 
 The stalls (2026-10-03, the owner: "more traders, and new ones ... per town, reading as the place"): data/markets.json
-`stalls` is a second kind of keeper on the same machinery -- a dialogue menu, the same purchase function (the same
-proven charge macro), placed by the same R17M step -- for the town squares' stalls. A stall is not a counter: the
+`stalls`, the town squares' stalls. Since 2026-10-04 (the owner: "the steve villagers aren't it, it should be the
+cobbleverse ones that have nice ui") each stall's keeper is a CobbleDollars merchant, `cobbledollars:cobble_merchant`
+(docs/research/notes/cobbleverse-merchants.md), summoned by stalls/merchants/<town> with a CobbleMerchantShop built
+from the stall's lines (data/markets.json `stall_merchant`): one category, one offer per line at the line's unit
+price, Item count 1. The merchant's own screen takes the money, so a stall has no dialogue, NPC class or purchase
+function; the summon step removes the Cobblemon dialogue keeper it replaces once the merchant stands, and R17M reads
+every merchant back from the world (verify). A merchant shows one list to every player, so a stall line may not be
+gated: the badge-gated shelves stay the counters' dialogue menus (`decisions_pending`). A stall is not a counter: the
 one-counter-per-town rule, the backpack ladder and the clerk rule stay the counters'. Its own rules:
   stock      what the place makes: every line names the jar it was verified in (`verified`); an id not verified is
              listed under `unverified` and never emitted; no Sophisticated Backpacks item (the ladder is the
@@ -145,10 +151,6 @@ def buy_fn(counter, item):
     return "%s:markets/%s/%s" % (NS, counter["id"], item["id"])
 
 
-def stall_fn(stall, item):
-    return "%s:stalls/%s/%s" % (NS, stall["id"], item["id"])
-
-
 def load_plazas(path=None):
     """{stall id: the stall's contract record, with '_town'} from data/plaza_centres.json, the squares' builder's
     contract: per town, "stalls": [{"id": "<town>_stall_<n>", "at", "facing", "keeper_at": [x, y, z, yaw], "sells"}].
@@ -225,11 +227,6 @@ def conversation(doc, counter):
     """(conversation, quest) for one keeper, in data/dialogue.json's and data/quests.json's shape, compiled by
     tools/compile_dialogue.py as it compiles every other conversation. A menu: no cursor, no field."""
     return menu(doc, counter, "market", buy_fn)
-
-
-def stall_conversation(doc, stall):
-    """The same menu for a stall keeper, under its own ids (dlg_stall_<id>, npc_stall_<id>, quest stall_<id>)."""
-    return menu(doc, stall, "stall", stall_fn)
 
 
 def menu(doc, counter, kind, fn_of):
@@ -324,18 +321,14 @@ def build(doc, plazas=None):
         files.update(got)
         at, yaw, _src = position(c, plazas)
         npcs.append((conv["id"], tuple(at), "%s:%s" % (NS, conv["npc_id"]), yaw))
-    sfn = lambda rel: "data/%s/function/stalls/%s.mcfunction" % (NS, rel)
-    for s in emitted_stalls(doc):
-        for it in s["stock"]:
-            files[sfn("%s/%s" % (s["id"], it["id"]))] = buy_lines(doc, s, it)
-        conv, quest = stall_conversation(doc, s)
-        got = CD.compile_conversation(conv, {quest["id"]: quest}, fields)
+    # the stalls (since 2026-10-04): CobbleDollars merchants, no dialogue, no NPC class and no purchase function; the
+    # merchant's own screen takes the money (data/markets.json stall_merchant)
+    if emitted_stalls(doc):
+        got = merchant_functions(doc, plazas)
         clash = [k for k in got if k in files]
         if clash:
-            raise MarketError("stall %s writes %s twice" % (s["id"], clash))
+            raise MarketError("the stall merchants write %s twice" % clash)
         files.update(got)
-        at, yaw, _src = position(s, plazas)
-        npcs.append((conv["id"], tuple(at), "%s:%s" % (NS, conv["npc_id"]), yaw))
     return files, npcs
 
 
@@ -352,13 +345,162 @@ def npc_placements(doc=None, plazas=None):
 
 
 def stall_placements(doc=None, plazas=None):
-    """The stall keepers, in npc_placements' shape, for the same R17M step."""
+    """The stall keepers that are Cobblemon dialogue NPCs, in npc_placements' shape: since 2026-10-04 none (every
+    stall keeper is a CobbleDollars merchant, stall_merchants below, placed by R17M through MERCHANTS_FN). Kept, and
+    kept empty, so a caller that still counts dialogue stall keepers gets none rather than an error."""
+    return []
+
+
+# ---------------------------------------------------------------------------------------------------- the merchants
+MERCHANTS_DIR = "stalls/merchants"
+MERCHANTS_FN = "%s:%s/all" % (NS, MERCHANTS_DIR)
+MERCHANT_LOAD_WAIT = 40     # ticks from forceload to summon (tools/traders.py LOAD_WAIT, measured 2026-09-21)
+MERCHANT_DEDUPE_WAIT = 100  # ticks from summon to the removals (tools/traders.py DEDUPE_WAIT)
+MERCHANT_MARGIN = 8         # force-loaded round a town's stalls: every old keeper stood within remove_radius of a seat
+
+
+def merchant_cfg(doc):
+    cfg = doc.get("stall_merchant")
+    if not isinstance(cfg, dict):
+        raise MarketError("data/markets.json has no stall_merchant block: the stall keepers cannot be summoned")
+    return cfg
+
+
+def merchant_tag(doc, stall):
+    return "%s_%s" % (merchant_cfg(doc)["tag"], stall["id"])
+
+
+def merchant_shop(stall):
+    """The stall's CobbleMerchantShop: one category, one offer per stock line at the line's unit price (count 1, the
+    only Item.count verified in a merchant offer; data/markets.json stall_merchant.offers)."""
+    return [{"Category": stall["category"],
+             "Offers": [{"Item": {"count": 1, "id": it["item"]}, "Price": str(int(it["price"]) // int(it["count"]))}
+                        for it in stall["stock"]]}]
+
+
+def stall_merchants(doc=None, plazas=None):
+    """[{stall, town, at (x, y, z), yaw, tag, name, data}] for every sited stall: the merchant R17M summons."""
     doc = doc or load()
     plazas = load_plazas() if plazas is None else plazas
+    cfg = merchant_cfg(doc)
     out = []
     for s in emitted_stalls(doc):
         at, yaw, _src = position(s, plazas)
-        out.append(("dlg_stall_%s" % s["id"], tuple(at), "%s:npc_stall_%s" % (NS, s["id"]), yaw))
+        tag = merchant_tag(doc, s)
+        data = {"CustomName": json.dumps({"text": s["keeper"]["name"]}, ensure_ascii=False),
+                "VillagerData": dict(cfg["villager_data"]),
+                "CobbleMerchantShop": merchant_shop(s),
+                # NoAI: a merchant with AI walked 2-40 blocks off its stall (tools/traders.py); NoAI never turns its
+                # head, so the rotation is the seat's yaw, facing the customers
+                "NoAI": True, "PersistenceRequired": True, "Invulnerable": True, "Silent": True,
+                "Rotation": [float(yaw), 0.0],
+                "Tags": [cfg["tag"], tag, cfg["tag"] + "_new"]}
+        out.append({"stall": s["id"], "town": s["town"], "at": tuple(int(v) for v in at), "yaw": yaw, "tag": tag,
+                    "name": s["keeper"]["name"], "data": data})
+    return out
+
+
+def merchant_box(ms):
+    xs, zs = [m["at"][0] for m in ms], [m["at"][2] for m in ms]
+    return min(xs) - MERCHANT_MARGIN, min(zs) - MERCHANT_MARGIN, max(xs) + MERCHANT_MARGIN, max(zs) + MERCHANT_MARGIN
+
+
+def merchant_functions(doc, plazas):
+    """{pack path: lines}: per town, tools/traders.py's three steps (force-load and wait; summon with a "new" tag; 100
+    ticks later, where the new merchant stands, kill the older copies of it and the dialogue keeper it replaces, drop
+    the tag, release), and `all`, which starts every town's at once."""
+    import traders as TR
+    cfg = merchant_cfg(doc)
+    new, radius = cfg["tag"] + "_new", float(cfg["remove_radius"])
+    rel = lambda name: "data/%s/function/%s/%s.mcfunction" % (NS, MERCHANTS_DIR, name)
+    ref = lambda name: "%s:%s/%s" % (NS, MERCHANTS_DIR, name)
+    by_town = {}
+    for m in stall_merchants(doc, plazas):
+        by_town.setdefault(m["town"], []).append(m)
+    files = {rel("all"): ["# Generated by tools/markets.py from data/markets.json: every town's stall merchants (R17M)"]
+             + ["function %s" % ref(t) for t in sorted(by_town)]}
+    for town, ms in sorted(by_town.items()):
+        box = "%d %d %d %d" % merchant_box(ms)
+        files[rel(town)] = ["# Generated by tools/markets.py: the stall merchants of %s" % town,
+                            "# force-load the stalls and give their saved entities time to load before anything is summoned",
+                            "forceload add %s" % box,
+                            "schedule function %s %dt replace" % (ref(town + "_place"), MERCHANT_LOAD_WAIT)]
+        place = ["# Generated by tools/markets.py; called by %s" % ref(town), "# chunks-loaded-by: %s" % ref(town)]
+        done = ["# Generated by tools/markets.py; %d ticks after the summons: one merchant per stall and no dialogue "
+                "keeper beside it, then release" % MERCHANT_DEDUPE_WAIT]
+        for m in sorted(ms, key=lambda q: q["stall"]):
+            x, y, z = m["at"]
+            place += ["# %s: %s, yaw %s" % (m["stall"], m["name"], m["yaw"]), TR.summon_line(cfg["kind"], x, y, z, m["data"])]
+            here = "execute if entity @e[tag=%s,tag=%s] run " % (m["tag"], new)
+            done += ["# %s" % m["stall"],
+                     here + "kill @e[tag=%s,tag=!%s]" % (m["tag"], new),
+                     # the Cobblemon dialogue keeper this merchant replaces (R17M's spawnnpcat until 2026-10-04)
+                     here + "kill @e[type=cobblemon:npc,x=%d.5,y=%d,z=%d.5,distance=..%s]" % (x, y, z, radius),
+                     "tag @e[tag=%s,tag=%s] remove %s" % (m["tag"], new, new)]
+        place.append("schedule function %s %dt replace" % (ref(town + "_done"), MERCHANT_DEDUPE_WAIT))
+        done.append("forceload remove %s" % box)
+        files[rel(town + "_place")] = place
+        files[rel(town + "_done")] = done
+    return files
+
+
+def shop_offers(snbt):
+    """[(item id, price string)] from CobbleMerchantShop SNBT, a summon's or a `data get`'s (spaces allowed, either key
+    order: the game may write an item's id before its count). An offer is an object holding exactly one object."""
+    out = []
+    for o in re.findall(r"\{[^{}]*\{[^{}]*\}[^{}]*\}", snbt):
+        i, p = re.search(r'\bid:\s*"([^"]+)"', o), re.search(r'\bPrice:\s*"([^"]*)"', o)
+        if i and p:
+            out.append((i.group(1), p.group(1)))
+    return out
+
+
+def verify(rc, doc=None, plazas=None):
+    """Problems, read from a running server over RCON (tools/reapply.py R17M's check, after MERCHANTS_FN and its wait):
+    each stall has exactly one merchant with its tag, standing on its seat, holding exactly its stall's offers, and no
+    Cobblemon NPC within remove_radius. Force-loads each town's stalls while it reads."""
+    import time
+    doc = doc or load()
+    cfg = merchant_cfg(doc)
+    radius = float(cfg["remove_radius"])
+    stalls = {s["id"]: s for s in emitted_stalls(doc)}
+    by_town = {}
+    for m in stall_merchants(doc, plazas):
+        by_town.setdefault(m["town"], []).append(m)
+    count = lambda reply: int(re.search(r"count: (\d+)", reply).group(1)) if re.search(r"count: (\d+)", reply) else 0
+    out = []
+    for town, ms in sorted(by_town.items()):
+        box = "%d %d %d %d" % merchant_box(ms)
+        rc("forceload add %s" % box)
+        x0, y0, z0 = ms[0]["at"]
+        for _ in range(30):
+            if "passed" in rc("execute if loaded %d %d %d" % (x0, y0, z0)):
+                break
+            time.sleep(1)
+        for m in ms:
+            x, y, z = m["at"]
+            sel = "@e[type=%s,tag=%s]" % (cfg["kind"], m["tag"])
+            n = 0
+            for _ in range(12):            # a chunk's entities load after its blocks (reapply's npc action)
+                n = count(rc("execute if entity %s" % sel))
+                if n:
+                    break
+                time.sleep(0.5)
+            if n != 1:
+                out.append("%s: %d merchants tagged %s, not 1" % (m["stall"], n, m["tag"]))
+                continue
+            npcs = count(rc("execute if entity @e[type=cobblemon:npc,x=%d.5,y=%d,z=%d.5,distance=..%s]" % (x, y, z, radius)))
+            if npcs:
+                out.append("%s: %d Cobblemon NPC(s) still within %s of its merchant" % (m["stall"], npcs, radius))
+            if "passed" not in rc("execute if entity @e[type=%s,tag=%s,x=%d.5,y=%d,z=%d.5,distance=..0.6]"
+                                  % (cfg["kind"], m["tag"], x, y, z)):
+                out.append("%s: its merchant is not on its seat (%d, %d, %d)" % (m["stall"], x, y, z))
+            shop = rc("data get entity %s CobbleMerchantShop" % sel.replace("]", ",limit=1]"))
+            got = shop_offers(shop)
+            want = [(it["item"], str(int(it["price"]) // int(it["count"]))) for it in stalls[m["stall"]]["stock"]]
+            if sorted(got) != sorted(want):
+                out.append("%s: its shop reads %s, the stall's lines %s" % (m["stall"], sorted(got), sorted(want)))
+        rc("forceload remove %s" % box)
     return out
 
 
@@ -529,6 +671,21 @@ def stall_problems(doc, towns, plazas):
     badges = doc.get("badges") or {}
     crit = {c["town"]: c.get("badge") for c in doc["counters"] if c.get("path") == "critical"}
     bank, spawn = bank_prices(), spawn_block_ids()
+    cfg = doc.get("stall_merchant")
+    if not isinstance(cfg, dict):
+        out.append("stall_merchant: missing (every stall keeper is a CobbleDollars merchant)")
+    else:
+        vd = cfg.get("villager_data") or {}
+        if cfg.get("kind") != "cobbledollars:cobble_merchant" or vd.get("profession") != cfg.get("kind") \
+                or vd.get("level") != 99 or not vd.get("type"):
+            out.append("stall_merchant: kind and villager_data are not the BCA templates' cobble_merchant, level 99 "
+                       "(docs/research/notes/cobbleverse-merchants.md 1)")
+        if not ID.fullmatch(cfg.get("tag") or ""):
+            out.append("stall_merchant: tag %r" % cfg.get("tag"))
+        r = cfg.get("remove_radius")
+        if not (isinstance(r, (int, float)) and 1.0 <= r <= NPC_CLEAR - 0.5):
+            out.append("stall_merchant: remove_radius %r is not 1 to %.1f (every other NPC stands %.1f+ away)"
+                       % (r, NPC_CLEAR - 0.5, NPC_CLEAR))
     staffed = {}
     for c in doc["counters"]:
         if c.get("stall"):
@@ -567,6 +724,11 @@ def stall_problems(doc, towns, plazas):
         k = s.get("keeper") or {}
         if not k.get("name") or not k.get("greeting"):
             out.append("%s: keeper without name or greeting" % where)
+        if '"' in (k.get("name") or "") or "\\" in (k.get("name") or ""):
+            out.append("%s: keeper name %r carries a quote or backslash (it is the merchant's CustomName)" % (where, k.get("name")))
+        cat = s.get("category")
+        if not isinstance(cat, str) or not cat.strip() or len(cat) > 32 or '"' in cat or "\\" in cat:
+            out.append("%s: category %r is not 1-32 characters without quotes (the merchant screen's category)" % (where, cat))
         if not s.get("theme") or not s.get("sells"):
             out.append("%s: no theme or sells" % where)
         if not s.get("stock"):
@@ -609,9 +771,15 @@ def stall_problems(doc, towns, plazas):
             sell = bank.get(item)
             if sell is not None and price / cnt <= sell:
                 out.append("%s: $%s each is not above the bank's sell-back of $%d" % (w, money(price / cnt), sell))
+            if price % cnt:
+                out.append("%s: $%d for %d does not divide: the merchant sells singly, at the line's unit price "
+                           "(stall_merchant.offers)" % (w, price, cnt))
             g = it.get("gate")
             if g is not None and g not in badges:
                 out.append("%s: gate %r is not a declared badge" % (w, g))
+            if g is not None:
+                out.append("%s: gated on %r, but a stall's merchant shows every line to every player "
+                           "(stall_merchant.gated_lines): a gated line belongs on a counter" % (w, g))
             strand = it.get("strand")
             if strand not in STRANDS:
                 out.append("%s: strand %r" % (w, strand))
@@ -1015,15 +1183,15 @@ def frontage_problems(where, c, plan, town, site):
     return out
 
 
-def output_problems(doc, files):
+def output_problems(doc, files, plazas=None):
     out = []
     fn = lambda rel: "data/%s/function/markets/%s.mcfunction" % (NS, rel)
     if files.get(fn("charge")) != ["$cobbledollars remove @s $(amount)"]:
         out.append("the charge macro is not the blackout's proven form")
     if files.get(fn("refund")) != ["$cobbledollars add @s $(amount)"]:
         out.append("the refund macro is not the documented add")
-    # the stalls' purchases are the same function under stalls/, held to every rule below
-    shelves = [(c, "markets") for c in emitted(doc)] + [(s, "stalls") for s in emitted_stalls(doc)]
+    # the counters' purchases; a stall has none since 2026-10-04 (its merchant's own screen charges: merchant_problems)
+    shelves = [(c, "markets") for c in emitted(doc)]
     for c, kind in shelves:
         for it in c["stock"]:
             path = "data/%s/function/%s/%s/%s.mcfunction" % (NS, kind, c["id"], it["id"])
@@ -1087,6 +1255,91 @@ def output_problems(doc, files):
         want = {(c["id"], it["id"], bool(it.get("gate"))) for it in c["stock"]}
         if got != want:
             out.append("%s %s: its dialogue offers %s, the data %s" % (label, c["id"], sorted(got), sorted(want)))
+    return out + merchant_problems(doc, files, plazas)
+
+
+def merchant_problems(doc, files, plazas=None):
+    """The stall merchants as emitted, read back from the generated text and held to the data: one summon per stall,
+    of the merchant entity, with its keeper's name, the four flags and the profession; a single category named by the
+    stall's `category`; exactly its stock lines in order, each Item count 1 at a price that times the line's count is
+    the line's price; replaced keepers removed only where the new merchant stands; no dialogue, NPC class or purchase
+    function left for a stall (nothing charges twice). With `plazas`, also each summon's block and rotation against
+    the seat, and no counter keeper within the removal radius of a merchant."""
+    out = []
+    cfg = merchant_cfg(doc)
+    kind, new, radius = cfg["kind"], cfg["tag"] + "_new", float(cfg["remove_radius"])
+    mdir = "data/%s/function/%s/" % (NS, MERCHANTS_DIR)
+    mfiles = {k: v for k, v in files.items() if k.startswith(mdir)}
+    for k in files:
+        if (k.startswith("data/%s/function/stalls/" % NS) and not k.startswith(mdir)) or \
+                re.match(r"data/%s/(dialogues/dlg|npcs/npc)_stall_" % NS, k):
+            out.append("%s: a stall dialogue, NPC class or purchase function is emitted beside its merchant" % k)
+    for k, body in mfiles.items():
+        if any(re.search(r"(?:^|\brun )(?:cobbledollars|give|function \S+markets/(?:charge|refund)) ", x)
+               for x in body if not x.startswith("#")):
+            out.append("%s: a merchant function charges or gives (the merchant's screen does both)" % k)
+    summons = [x for body in mfiles.values() for x in body if x.startswith("summon ")]
+    seats = {}
+    if plazas is not None:
+        for s in emitted_stalls(doc):
+            at, yaw, _src = position(s, plazas)
+            seats[s["id"]] = (tuple(int(v) for v in at), yaw)
+    all_fn = mfiles.get(mdir + "all.mcfunction") or []
+    for s in emitted_stalls(doc):
+        w = "stall %s merchant" % s["id"]
+        tag = '"%s_%s"' % (cfg["tag"], s["id"])
+        mine = [x for x in summons if tag in x]
+        if len(mine) != 1:
+            out.append("%s: %d summons carry its tag, not 1" % (w, len(mine)))
+            continue
+        line = mine[0]
+        parts = line.split(" ", 5)
+        if parts[1] != kind:
+            out.append("%s: summons %s, not %s" % (w, parts[1], kind))
+        for flag in ("NoAI:1b", "PersistenceRequired:1b", "Invulnerable:1b", "Silent:1b"):
+            if flag not in line:
+                out.append("%s: no %s" % (w, flag))
+        if 'profession:"%s"' % cfg["villager_data"]["profession"] not in line or "level:99" not in line:
+            out.append("%s: not a level-99 %s" % (w, cfg["villager_data"]["profession"]))
+        if '\\"%s\\"' % s["keeper"]["name"] not in line:
+            out.append("%s: not named %r" % (w, s["keeper"]["name"]))
+        cats = re.findall(r'Category:"([^"]*)"', line)
+        if cats != [s.get("category")]:
+            out.append("%s: categories %s, not [%r]" % (w, cats, s.get("category")))
+        got = shop_offers(line)
+        want = [(it["item"], it["price"], it["count"]) for it in s["stock"]]
+        if [g[0] for g in got] != [x[0] for x in want]:
+            out.append("%s: offers %s, the stall's lines %s" % (w, [g[0] for g in got], [x[0] for x in want]))
+        else:
+            for (iid, p), (_i, price, cnt) in zip(got, want):
+                if not p.isdigit() or int(p) * cnt != price:
+                    out.append("%s: %s at %r each, but the line is %d for $%d" % (w, iid, p, cnt, price))
+        counts = re.findall(r"Item:\{count:(\d+)", line)
+        if counts != ["1"] * len(s["stock"]):
+            out.append("%s: Item counts %s, not 1 each" % (w, counts))
+        town_fn = "function %s:%s/%s" % (NS, MERCHANTS_DIR, s["town"])
+        if town_fn not in all_fn:
+            out.append("%s: %s/all does not start %s" % (w, MERCHANTS_DIR, s["town"]))
+        x, y, z = (int(float(v)) for v in parts[2:5])
+        done = mfiles.get(mdir + "%s_done.mcfunction" % s["town"]) or []
+        guard = "execute if entity @e[tag=%s_%s,tag=%s] run " % (cfg["tag"], s["id"], new)
+        npc_kill = guard + "kill @e[type=cobblemon:npc,x=%d.5,y=%d,z=%d.5,distance=..%s]" % (x, y, z, radius)
+        if npc_kill not in done:
+            out.append("%s: its _done step does not remove the dialogue keeper at its spot, guarded on the new merchant"
+                       % w)
+        if any("kill @e[type=cobblemon:npc" in d and not re.match(r"execute if entity @e\[tag=[a-z0-9_]+,tag=%s\] run kill "
+                                                                 % new, d) for d in done):
+            out.append("%s: its town's _done step kills a Cobblemon NPC without a new merchant standing" % w)
+        if s["id"] in seats:
+            (sx, sy, sz), yaw = seats[s["id"]]
+            if (x, y, z) != (sx, sy, sz) or parts[2:5] != ["%d.5" % sx, str(sy), "%d.5" % sz]:
+                out.append("%s: summoned at %s, its seat is %s" % (w, parts[2:5], [sx, sy, sz]))
+            rot = re.search(r"Rotation:\[(-?[0-9.]+)f,", line)
+            if not rot or abs(float(rot.group(1)) - float(yaw)) > 1e-6:
+                out.append("%s: rotation %s, the seat's yaw %s" % (w, rot and rot.group(1), yaw))
+            for c in npc_placements(doc, plazas):
+                if math.dist(c[1], (sx, sy, sz)) <= radius + 0.5:
+                    out.append("%s: counter keeper %s stands within its removal radius" % (w, c[0]))
     return out
 
 
@@ -1117,7 +1370,7 @@ def audit(doc, source_root=None, skip_dressing=False, plazas=None):
         return problems, contract_report(doc, plazas)
     problems += curve_problems(doc) + overlay_problems(doc)
     files, _ = build(doc, plazas)
-    problems += output_problems(doc, files)
+    problems += output_problems(doc, files, plazas)
     p, report = site_problems(doc, traders, source_root, skip_dressing, plazas)
     return problems + p, contract_report(doc, plazas) + report
 
@@ -1169,9 +1422,10 @@ def main(argv=None):
     if args.cmd == "build":
         files, npcs = build(doc)
         write(files, args.out)
-        print("wrote %d files to %s: %d counters built of %d, %d stalls built of %d, %d keepers"
-              % (len(files), args.out, len(emitted(doc)), len(doc["counters"]), len(emitted_stalls(doc)),
-                 len(doc.get("stalls") or []), len(npcs)))
+        print("wrote %d files to %s: %d counters built of %d (%d dialogue keepers), %d stalls built of %d (%d merchants)"
+              % (len(files), args.out, len(emitted(doc)), len(doc["counters"]), len(npcs), len(emitted_stalls(doc)),
+                 len(doc.get("stalls") or []),
+                 sum(1 for body in files.values() if isinstance(body, list) for x in body if x.startswith("summon "))))
         return 0
     if args.cmd == "overlay":
         path = ROOT / doc["recipe_overlay"]["file"]

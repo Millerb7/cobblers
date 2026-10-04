@@ -59,16 +59,20 @@ def test_the_contract_is_read_with_its_towns():
 
 def test_a_contract_seat_wins_and_the_rest_fall_back():
     doc, p = M.load(), M.load_plazas(FIXTURE)
-    keep = {k[0]: k for k in M.npc_placements(doc, p) + M.stall_placements(doc, p)}
+    keep = {k[0]: k for k in M.npc_placements(doc, p)}
+    merch = {m["stall"]: m for m in M.stall_merchants(doc, p)}
     assert keep["dlg_market_stoneford"][1] == (1745, 139, 3622) and keep["dlg_market_stoneford"][3] == 180
     # the fixture's stall 2 is staffed by whichever record names it (2026-10-03: the terrace seedsman; the masons' yard
-    # moved to stall 6, which the fixture does not have, so it falls back)
-    assert keep["dlg_stall_stoneford_terrace_seedsman"][1] == (1755, 139, 3632)
-    assert keep["dlg_stall_stoneford_masons_yard"][1] == tuple(_stall(doc, "stoneford_masons_yard")["at"])
+    # moved to stall 6, which the fixture does not have, so it falls back); since 2026-10-04 a stall's keeper is a
+    # merchant, seated by the same rule
+    assert merch["stoneford_terrace_seedsman"]["at"] == (1755, 139, 3632)
+    assert merch["stoneford_masons_yard"]["at"] == tuple(_stall(doc, "stoneford_masons_yard")["at"])
     assert keep["dlg_market_redbrow"][1] == (4838, 162, 5690)
     # not in the contract: the record's own fallback site
     assert keep["dlg_market_viltri_quay"][1] == tuple(next(c for c in doc["counters"] if c["id"] == "viltri_quay")["at"])
-    assert keep["dlg_stall_fenhide_trapper"][1] == tuple(_stall(doc, "fenhide_trapper")["at"])
+    assert merch["fenhide_trapper"]["at"] == tuple(_stall(doc, "fenhide_trapper")["at"])
+    assert merch["fenhide_trapper"]["yaw"] == _stall(doc, "fenhide_trapper")["yaw"]
+    assert M.stall_placements(doc, p) == []
     # the independent audit reads the same contract by its own route
     assert MA.contract_seats(FIXTURE)["gym1_town_stall_1"] == [1745, 139, 3622, 180]
 
@@ -125,7 +129,10 @@ def test_the_committed_markets_and_stalls_pass_every_offline_rule():
     assert M.curve_problems(doc) == []
     files, npcs = M.build(doc, {})
     assert M.output_problems(doc, files) == []
-    assert len(npcs) == len(M.emitted(doc)) + len(M.emitted_stalls(doc))
+    assert M.output_problems(doc, files, {}) == []          # with the seats: every summon on its seat, turned to its yaw
+    assert len(npcs) == len(M.emitted(doc))
+    summons = [x for body in files.values() if isinstance(body, list) for x in body if x.startswith("summon ")]
+    assert len(summons) == len(M.emitted_stalls(doc)) == 33
 
 
 def test_every_town_with_a_square_or_a_clerk_now_has_a_keeper_or_says_why():
@@ -201,29 +208,127 @@ def test_a_counter_with_neither_clerk_nor_stall_cannot_be_sited():
 
 
 # ------------------------------------------------------------------------------------------------ generator mutation
-def test_a_mutated_purchase_generator_is_caught_at_every_stall_purchase(monkeypatch):
-    real = M.buy_lines
-    monkeypatch.setattr(M, "buy_lines", lambda doc, c, it: [l for l in real(doc, c, it) if "markets/refund" not in l])
+def _merchant_named(doc, files, needle, plazas=None):
+    return {p.split(" merchant:")[0] for p in M.output_problems(doc, files, plazas) if needle in p}
+
+
+def _every_stall(doc):
+    return {"stall %s" % s["id"] for s in M.emitted_stalls(doc)}
+
+
+def test_a_mutated_shop_generator_is_caught_at_every_stall(monkeypatch):
+    # the generator, not the data: drop each shop's last offer, then double every price
+    real = M.merchant_shop
+    monkeypatch.setattr(M, "merchant_shop", lambda s: [dict(real(s)[0], Offers=real(s)[0]["Offers"][:-1])])
     doc = M.load()
     files, _ = M.build(doc, {})
-    hit = {p.split(":")[0] for p in M.output_problems(doc, files) if "no refund after a failed give" in p}
-    want = {"data/cobblers/function/stalls/%s/%s.mcfunction" % (s["id"], it["id"])
-            for s in M.emitted_stalls(doc) for it in s["stock"]}
-    assert want and want <= hit
+    assert _merchant_named(doc, files, ": offers ") == _every_stall(doc)
+
+    def dear(s):
+        cat = real(s)[0]
+        return [dict(cat, Offers=[dict(o, Price=str(int(o["Price"]) * 2)) for o in cat["Offers"]])]
+    monkeypatch.setattr(M, "merchant_shop", dear)
+    files, _ = M.build(doc, {})
+    assert _merchant_named(doc, files, "each, but the line is") == _every_stall(doc)
 
 
-def test_a_mutated_menu_generator_is_caught_at_every_stall(monkeypatch):
-    real = M.menu
-
-    def drop_last(doc, c, kind, fn_of):
-        conv, quest = real(doc, c, kind, fn_of)
-        conv["nodes"][0]["responses"] = conv["nodes"][0]["responses"][1:]
-        return conv, quest
-    monkeypatch.setattr(M, "menu", drop_last)
+def test_a_mutated_summon_is_caught_at_every_stall(monkeypatch):
+    import traders as TR
+    real = TR.summon_line
+    monkeypatch.setattr(TR, "summon_line", lambda kind, x, y, z, data: real(
+        kind, x + 1, y, z, {k: v for k, v in data.items() if k not in ("NoAI", "Rotation")}))
     doc = M.load()
     files, _ = M.build(doc, {})
-    named = {p.split(":")[0] for p in M.output_problems(doc, files) if "its dialogue offers" in p}
-    assert {"stall %s" % s["id"] for s in M.emitted_stalls(doc)} <= named
+    assert _merchant_named(doc, files, "no NoAI:1b") == _every_stall(doc)
+    assert _merchant_named(doc, files, "summoned at", {}) == _every_stall(doc)
+    assert _merchant_named(doc, files, "rotation None", {}) == _every_stall(doc)
+
+
+def test_a_dialogue_keeper_removal_without_the_guard_is_caught(monkeypatch):
+    real = M.merchant_functions
+
+    def unguarded(doc, plazas):
+        files = real(doc, plazas)
+        return {k: [x.split(" run ", 1)[1] if "type=cobblemon:npc" in x else x for x in v] for k, v in files.items()}
+    monkeypatch.setattr(M, "merchant_functions", unguarded)
+    doc = M.load()
+    files, _ = M.build(doc, {})
+    assert _merchant_named(doc, files, "does not remove the dialogue keeper") == _every_stall(doc)
+    assert _merchant_named(doc, files, "without a new merchant standing") == _every_stall(doc)
+
+
+def test_a_stall_dialogue_or_purchase_left_beside_a_merchant_is_caught():
+    # the money path is the merchant's own screen: a purchase function or a menu left for a stall could charge twice
+    doc = M.load()
+    files, _ = M.build(doc, {})
+    s = M.emitted_stalls(doc)[0]
+    files["data/cobblers/function/stalls/%s/x.mcfunction" % s["id"]] = ["say x"]
+    files["data/cobblers/dialogues/dlg_stall_%s.json" % s["id"]] = {}
+    files["data/cobblers/function/stalls/merchants/extra.mcfunction"] = ["execute as @p run cobbledollars remove @s 5"]
+    probs = M.output_problems(doc, files)
+    assert sum("beside its merchant" in p for p in probs) == 2
+    assert any("extra.mcfunction: a merchant function charges" in p for p in probs)
+
+
+def test_a_gated_stall_line_an_indivisible_price_and_a_missing_category_are_refused():
+    doc = _doc()
+    s = _stall(doc, "fossick_pit_tools")
+    s["stock"][0]["gate"] = "gym1_cleared"
+    s["stock"][0]["strand"] = "convenience"
+    s["stock"][3]["price"] = 481          # 4 lanterns: does not divide
+    s["category"] = ""
+    probs = M.stall_problems(doc, _towns(), {})
+    assert any("fossick_pit_tools item iron_pickaxe: gated on 'gym1_cleared'" in p for p in probs)
+    assert any("fossick_pit_tools item lantern: $481 for 4 does not divide" in p for p in probs)
+    assert any("fossick_pit_tools: category ''" in p for p in probs)
+    doc = _doc()
+    doc["stall_merchant"]["remove_radius"] = 4
+    assert any("remove_radius 4" in p for p in M.stall_problems(doc, _towns(), {}))
+
+
+def test_the_world_check_reads_every_merchant_back(monkeypatch):
+    """verify() against a fake server: a right world passes; a missing merchant, a dialogue keeper left beside one, a
+    merchant off its seat and a shop that differs are each named. The shop reply puts each item's id BEFORE its count,
+    as the game may write it, so the read does not depend on the summon's key order."""
+    import time
+    monkeypatch.setattr(time, "sleep", lambda s: None)
+    doc = M.load()
+    ms = M.stall_merchants(doc)
+    stalls = {s["id"]: s for s in M.emitted_stalls(doc)}
+    by_tag = {m["tag"]: m for m in ms}
+
+    def world(missing=(), npc_left=(), off_seat=(), cheap=()):
+        def rc(cmd):
+            import re as _re
+            if cmd.startswith(("forceload", "execute if loaded")):
+                return "Test passed"
+            tag = _re.search(r"tag=(cobblers_stall_[a-z0-9_]+)", cmd)
+            m = by_tag.get(tag.group(1)) if tag else None
+            if cmd.startswith("execute if entity @e[type=cobblemon:npc"):
+                at = tuple(int(float(v)) for v in _re.search(r"x=([-0-9.]+),y=([-0-9.]+),z=([-0-9.]+)", cmd).groups())
+                hit = [k for k in npc_left if by_tag["cobblers_stall_" + k]["at"] == at]
+                return "Test passed, count: 1" if hit else "Test failed"
+            if m is None or m["stall"] in missing:
+                return "Test failed" if cmd.startswith("execute") else "No entity was found"
+            if cmd.startswith("execute if entity") and "distance=..0.6" in cmd:
+                return "Test failed" if m["stall"] in off_seat else "Test passed, count: 1"
+            if cmd.startswith("execute if entity"):
+                return "Test passed, count: 1"
+            if cmd.startswith("data get entity"):
+                offers = ", ".join('{Item: {id: "%s", count: 1}, Price: "%d"}' % (
+                    it["item"], it["price"] // it["count"] - (1 if m["stall"] in cheap else 0))
+                    for it in stalls[m["stall"]]["stock"])
+                return "Villager has the following entity data: [{Category: \"x\", Offers: [%s]}]" % offers
+            return ""
+        return rc
+    assert M.verify(world(), doc) == []
+    got = M.verify(world(missing=["viltri_fishmonger"], npc_left=["sunset_net_loft"], off_seat=["tilpey_stationer"],
+                         cheap=["fenhide_trapper"]), doc)
+    assert any(p.startswith("viltri_fishmonger: 0 merchants") for p in got)
+    assert any(p.startswith("sunset_net_loft: 1 Cobblemon NPC(s) still within") for p in got)
+    assert any(p.startswith("tilpey_stationer: its merchant is not on its seat") for p in got)
+    assert any(p.startswith("fenhide_trapper: its shop reads") for p in got)
+    assert len(got) == 4
 
 
 # ------------------------------------------------------------------------------------------------ sites without derived/
@@ -271,16 +376,25 @@ def test_pallets_keeper_stands_outside_every_donor_building_on_its_ground():
 
 
 # ------------------------------------------------------------------------------------------------ the apply step
-def test_r17m_places_every_built_stall_keeper():
+def test_r17m_places_every_counter_keeper_and_every_stall_merchant_then_reads_them_back():
     src = (ROOT / "tools" / "reapply.py").read_text(encoding="utf-8")
     i = src.index('out.append(("R17M", ')
     block = src[i:src.index("out.append(", i + 10)]
-    assert "markets.npc_placements(markets.load())" in block and "markets.stall_placements(markets.load())" in block
+    assert "markets.npc_placements(markets.load())" in block
+    assert '("fn", markets.MERCHANTS_FN), ("wait", 8), ("check", "stall_merchants")' in block
+    assert 'kind == "check" and v == "stall_merchants"' in src and "markets.verify(rc)" in src
     doc = M.load()
-    got = {k[2] for k in M.stall_placements(doc)}
-    assert got == {"cobblers:npc_stall_%s" % s["id"] for s in M.emitted_stalls(doc)}
-    # 3.5+ blocks between every two keepers the step places (reapply's npc step dedupes within 2)
-    ks = M.npc_placements(doc) + M.stall_placements(doc)
+    files, _ = M.build(doc)
+    assert "data/cobblers/function/stalls/merchants/all.mcfunction" in files
+    assert M.MERCHANTS_FN == "cobblers:stalls/merchants/all"
+    # no dialogue stall keeper is placed any more: the merchant replaces it (and removes it)
+    assert M.stall_placements(doc) == []
+    ms = M.stall_merchants(doc)
+    assert sorted(m["stall"] for m in ms) == sorted(s["id"] for s in M.emitted_stalls(doc))
+    assert len({m["tag"] for m in ms}) == len(ms)
+    # 3.5+ blocks between every two keepers the step places, merchants included; so the removal radius (2.5) round a
+    # merchant reaches no other keeper
+    ks = [(k[0], k[1]) for k in M.npc_placements(doc)] + [(m["stall"], m["at"]) for m in ms]
     for a in range(len(ks)):
         for b in range(a + 1, len(ks)):
             assert math.dist(ks[a][1], ks[b][1]) >= M.NPC_CLEAR, (ks[a][0], ks[b][0])
