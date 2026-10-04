@@ -1,0 +1,95 @@
+{
+  "schema": "cobblers.hq_tower/1",
+  "status": "authored and generated 2026-10-04; built into build/datapacks/cobblers_hq_tower by tools/hq_tower.py; not applied to any world, not seen in game",
+  "builder": "tools/hq_tower.py",
+  "pack": "cobblers_hq_tower",
+  "steps": {
+    "blocks": "R9HQ, after R9RU (tools/reapply.py): the interior's block functions, inside a forceload of the tower",
+    "npcs": "R18HQ, after R18RU: Nia Calder, Captain Brann Saye, Director Elara Venn and Oren Pell",
+    "trainers": "R17 with every other seat (tools/route_trainers.py reads data/hq_trainers.json)"
+  },
+  "design": "docs/story/NPCS_AND_RIFT_FINALE.md (Codex, branch codex/trainer-modes) Scenes 1-4, and the owner, 2026-10-04: 'Build the HQ interior: a factory-like tower for battles and exploration, not a sealed shell. The HQ door gated on the finale's quest stage, not a pressure plate.'",
+  "ground": "Every position comes from the city plan: tools/deep_city.py build() run in memory (its plan's hq.tower box, its top and its storeys every 6), never a world. tools/hq_tower.py fails closed when the city's tower is not the one recorded here.",
+  "tower": {
+    "box": [3428, 3303, 3438, 3313],
+    "top": 132,
+    "base": 67,
+    "storey_pitch": 6,
+    "interior": [3429, 3304, 3437, 3312],
+    "why": "tools/deep_city.py lays the tower's walls on the box's edge (x3428/x3438, z3303/z3313) from y67 to the top, a deep_stone floor every 6 from y73 to y127 and the roof at y133; the interior is 9 by 9. The storey-0 floor is the Deep's ring-0 tread (y66, tools/rift_deep.py, R9B), which nothing here writes: the relic site's secure shaft (data/deep_city.json reserved hq_secure_shaft, y0-65) is under it."
+  },
+  "local_frame": "storeys' cells are written (i, k) = (x - 3429, z - 3304), i and k 0..8 inside the walls",
+  "storeys": [
+    {"id": "hq_s0", "floor": 66, "room": "intake hall: the loading dock, a conveyor to a furnace, crates, a desk", "stair": "W6", "codex_room": null},
+    {"id": "hq_s1", "floor": 73, "room": "briefing hall: Captain Brann Saye at the table; his hall guard holds the stair above (gates.climb)", "stair": "N", "codex_room": "hq_briefing_hall"},
+    {"id": "hq_s2", "floor": 79, "room": "the foundry: a press core of copper grate round a lit column, belts round it, double height with hq_s3", "stair": "E", "codex_room": null},
+    {"id": "hq_s3", "floor": 85, "room": "the foundry's catwalk: a railed ring round the press core's open well", "stair": "N", "void": true, "codex_room": null},
+    {"id": "hq_s4", "floor": 91, "room": "the labs: benches, brewing stands, and a closed store room in the south-west corner", "stair": "E", "codex_room": null},
+    {"id": "hq_s5", "floor": 97, "room": "the records: two rows of shelves of every exchange the Compact ran", "stair": "S", "codex_room": "hq_archive"},
+    {"id": "hq_s6", "floor": 103, "room": "the relay hall: four relay pylons and the resonator column, double height with hq_s7", "stair": "W", "codex_room": null},
+    {"id": "hq_s7", "floor": 109, "room": "the relay hall's catwalk", "stair": "S", "void": true, "codex_room": null},
+    {"id": "hq_s8", "floor": 115, "room": "the barracks: lockers and bunks", "stair": "W", "codex_room": null},
+    {"id": "hq_s9", "floor": 121, "room": "the director's office: Director Elara Venn's desk and shelves; the shaft interlock is hers", "stair": "N", "codex_room": "hq_director_office"},
+    {"id": "hq_s10", "floor": 127, "room": "anchor control, the control room at the top: desks on three walls, the four relay lamps and the core lamp, Tomas's trace on a lectern, Oren Pell at the board", "stair": null, "codex_room": "hq_anchor_control"}
+  ],
+  "stairs_why": "one flight a storey along the inside of a wall, turning clockwise so each flight's head is a step or two from the next one's foot; polished deepslate stairs, the city's own stair material (tools/deep_city.py towers), with the floor above opened over the top three steps and railed on its inner side. The two catwalk storeys (hq_s3, hq_s7) keep a two-wide ring of their floor and open its middle 5 by 5, so the foundry and the relay hall each read as one tall hall.",
+  "codex_rooms_why": "Codex's room labels (data/deep_city.json rooms: hq_briefing_hall on ring 1, hq_archive ring 2, hq_anchor_control ring 3, hq_director_office ring 0 storey -1) name HQ sections spread over four rings, which are empty sealed shells. The owner asked for the HQ as one tower with a control room at the top, so the scenes play here and these storeys carry the labels. data/deep_city.json is NOT edited: its rooms still label the sections, which tools/deep_city.py reads to build them.",
+  "door": {
+    "at": [3438, 67, 3306],
+    "cells": [[3438, 67, 3306], [3438, 68, 3306], [3438, 69, 3306], [3439, 67, 3306], [3439, 68, 3306], [3439, 69, 3306]],
+    "opens_from": "the ring-0 section's storey-0 room (data/deep_city.json hq_secure_shaft_head), on its corridor x3440-3442 between the tower's east wall and the section's facade, which tools/deep_city.py builds open to the room at z3302",
+    "why": "the tower stands inside the ring-0 section with no street face: the section wraps it north, east and south and the pit's lip is its west. The only room it touches is the one the Compact guard at the ring-0 iron door (3443, 67, 3282) admits to (data/relic_underground.json geometry.hq.guard, rift_crisis_pending or later, R18RU), so the tower's door is cut through its east wall and the section's wall beside it (x3438 and x3439) at z3306, three high. Nothing of the relic site's is touched: its stair, partition and records room are below y67 or north of z3279."
+  },
+  "gates": {
+    "field": "quest.main_worldshift_reveal.stage",
+    "mechanism": "one tick function, every 10 ticks (the shape of tools/route_trainers.py's cycle): each player near the tower is tagged from their own stage by runmolang (q.player.data(), the store tools/compile_dialogue.py's conversations write), then a player inside a gated box without the tag is set back where the gate stands, with one actionbar line. Per player: one player's stage moves nobody else. No block is ever opened or shut, so a player inside walks out through the open doorway whenever they like; creative and spectator pass.",
+    "tag_box": [3418, 60, 3293, 3452, 140, 3323],
+    "door": {
+      "from_stage": "deep_handoff_received",
+      "tag": "cobblers_hq_door",
+      "box": [3428, 67, 3303, 3439, 133, 3313],
+      "set_back": [3441.5, 67, 3306.5, 180],
+      "say": "The tower door is barred to you. Nia Calder holds the packet that opens it: the clinic on the second ring.",
+      "why": "Codex's Scene 1: 'Hear her before you enter Compact headquarters.' Nia Calder writes deep_handoff_received (dlg_main_finale_nia line nia_006), so the door is the player's from that stage on. The box is the tower, walls and doorway included, from y67 (a player on the relic site's stair under the tower is below it) to the roof's top; the set-back is the corridor cell outside the doorway, on the Deep's ring-0 tread (the city writes nothing at x3441 z3306 y66-70)."
+    },
+    "climb": {
+      "from_stage": "hq_crossed",
+      "tag": "cobblers_hq_climb",
+      "box": [3429, 79, 3304, 3437, 133, 3312],
+      "set_back": [3430.5, 74, 3305.5, -90],
+      "say": "Hall guard: The stair is shut until Captain Saye stands us down.",
+      "why": "Codex's Scene 2: Brann stands the hall guard down when the player refuses to leave (record_hq_crossed). The hall is storey hq_s1; every storey above it is in the box, from the foundry's floor (y79) to the roof, so the briefing stair's top steps already set an unqualified player back onto the hall's floor at (1, 1)."
+    }
+  },
+  "npcs": [
+    {"id": "npc_finale_nia_calder", "conversation": "dlg_main_finale_nia", "at": [3536, 33, 3344], "yaw": 180, "where": "outside her clinic on ring 2 (data/deep_city.json rooms nia_clinic, the lot tools/deep_city.py picks at bearing 205; its door (3535, 33, 3345) faces north)", "at_why": "one block east of the doorstep (3535, 33, 3344), so the doorway stays clear: on the ring-2 sidewalk the city writes (polished tuff at y32) with nothing it writes at y33-34, facing north over the street. Codex's stand is the clinic's interior, 'final XYZ blocked on interior furnishing'; the interior is still an empty shell, so she waits at its door until it is furnished"},
+    {"id": "npc_finale_brann_saye", "conversation": "dlg_main_finale_brann", "storey": "hq_s1", "at": [3431, 74, 3305], "yaw": 90, "at_why": "local (2, 1): beside the hall's landing (0, 1) and the briefing stair's foot (0, 0), facing west to meet a player coming up; off the walk"},
+    {"id": "npc_finale_elara_venn", "conversation": "dlg_main_finale_elara", "storey": "hq_s9", "at": [3433, 122, 3309], "yaw": 180, "at_why": "local (4, 5), behind her desk (3..5, 4), facing north across it to the office's landing (0, 2)"},
+    {"id": "npc_finale_oren_pell", "conversation": "dlg_main_finale_oren", "storey": "hq_s10", "at": [3433, 128, 3307], "yaw": 180, "at_why": "local (4, 3), in the middle of the control room between its desks, facing north to the stair's head (6, 0)"}
+  ],
+  "fights": [
+    {"npc": "npc_finale_brann_saye", "trainer": "finale_brann_saye", "sets": "quest.main_worldshift_reveal.brann_defeated", "function": "won_brann", "radius": 2, "won_say": "Captain Brann Saye is beaten. Talk to him again."},
+    {"npc": "npc_finale_elara_venn", "trainer": "finale_elara_venn", "sets": "quest.main_worldshift_reveal.elara_defeated", "function": "won_elara", "radius": 2, "won_say": "Director Elara Venn is beaten. Talk to her again."}
+  ],
+  "fights_why": "the integration of 2026-10-04: ONE Brann and ONE Elara, the NPCs above, who talk AND fight. Each NPC's class carries its data/finale_trainers.json team as a `simple` party (the conversation's npc_battle, tools/compile_dialogue.py), a choice in its conversation starts Cobblemon's own NPC battle (q.npc.start_battle(q.player, 'singles'), as the jar's dialogues/npc-example.json does), and this pack's battle_victory callback (data/cobblemon/callbacks/battle_victory/cobblers_hq_tower.molang) runs cobblers:hq_tower/<function> as each WINNING player when the losing NPC stands within `radius` of that NPC's `at` -- the arena's proven callback shape (docs/research/notes/arena-per-player-opponents.md section 8) keyed on the NPC's fixed spot instead of a tag, because R18HQ's placement tags nothing. The function writes `sets` into that player's Cobblemon data by runmolang, as tools/route_trainers.py's won functions do. A loss runs nothing here (the blackout pack's own battle_victory callback handles a loss to an NPC, as for any trainer)",
+  "finale_order": [
+    {"scene": 1, "who": "npc_finale_nia_calder", "reads": "rift_crisis_pending", "writes": "deep_handoff_received", "fight": null, "transition": "record_deep_handoff_received", "opens": "the tower door (gates.door)"},
+    {"scene": 2, "who": "npc_finale_brann_saye", "reads": "deep_handoff_received", "fight": "finale_brann_saye", "then": "brann_defeated", "writes": "hq_crossed", "transition": "record_hq_crossed", "opens": "the climb above the briefing hall (gates.climb)"},
+    {"scene": 3, "who": "npc_finale_oren_pell", "reads": "hq_crossed", "writes": "anchor_shutdown", "fight": null, "transition": "record_anchor_shutdown", "opens": "Elara's conversation"},
+    {"scene": 4, "who": "npc_finale_elara_venn", "reads": "anchor_shutdown", "fight": "finale_elara_venn", "then": "elara_defeated", "writes": "cradle_open", "transition": "record_cradle_open", "opens": "the release"},
+    {"scene": 5, "who": "npc_main_relic_hall_binder", "reads": "cradle_open AND brann_defeated AND elara_defeated", "writes": "rift_released (and rift_crisis_resolved, granted to the releasing player)", "fight": null, "transition": "unlock_league_after_rift_resolution", "opens": "the League (rift_crisis_resolved)"}
+  ],
+  "finale_order_why": "docs/story/NPCS_AND_RIFT_FINALE.md (Codex, branch codex/trainer-modes) Scenes 1-5, each scene's 'Reads' and 'Writes' as the doc gives them, with the owner's two fights (2026-10-04: 'the confrontation with Elara and Brann') placed inside Scenes 2 and 4: each fight happens at the scene's 'Reads' stage and its win is a condition of the scene's 'Writes'. Per player throughout: the stage and both defeat fields are the player's own Cobblemon data.",
+  "hq_caches": [
+    {"id": "hq_cache_foundry", "storey": "hq_s2", "at": [3429, 80, 3312], "reward_id": "hq_tower_foundry_cache", "trigger": {"min": [3429, 80, 3311], "max": [3430, 81, 3312]}, "place": "the foundry floor's south-west corner, under the catwalk"},
+    {"id": "hq_cache_lab_store", "storey": "hq_s4", "at": [3429, 92, 3312], "reward_id": "hq_tower_lab_store_cache", "trigger": {"min": [3429, 92, 3310], "max": [3430, 93, 3312]}, "place": "inside the labs' store room, south-west"},
+    {"id": "hq_cache_records", "storey": "hq_s5", "at": [3429, 98, 3304], "reward_id": "hq_tower_records_cache", "trigger": {"min": [3429, 98, 3304], "max": [3430, 99, 3305]}, "place": "behind the records shelves, north-west"},
+    {"id": "hq_cache_relay", "storey": "hq_s6", "at": [3437, 104, 3304], "reward_id": "hq_tower_relay_cache", "trigger": {"min": [3436, 104, 3304], "max": [3437, 105, 3305]}, "place": "the relay hall floor's north-east corner, under the catwalk"}
+  ],
+  "hq_caches_why": "THE HOOK for the obtainability sweep (docs/HANDOVER_SESSION.md item 8): four barrels this build places as scenery, each with a trigger box a player stands in beside it. The sweep decides what each holds and adds a data/rewards.json record of kind 'cache' with id = reward_id, container {block: minecraft:barrel, at} and this trigger (the ADR-002 shape tools/rewards_pack.py builds; built_by 'tools/hq_tower.py, R9HQ'). Until it does, nothing is granted and the barrels are empty. tools/hq_tower.py fails when such a record exists and its container or trigger disagrees with this list.",
+  "needs": [
+    "in game: the door gate and the climb gate against two players at different stages; Nia, Brann, Oren and Elara each moving the stage once; the seven fights",
+    "in game: Brann's and Elara's fights (fights): that the choice opens the battle from the dialogue (Cobblemon's own example does it; not run here), that the class's simple party fights at its authored levels, that a win runs won_brann / won_elara for the winner only and a loss runs nothing here, and that the binder then offers 'Release Hoopa.' at cradle_open",
+    "the obtainability sweep's contents for hq_caches"
+  ]
+}

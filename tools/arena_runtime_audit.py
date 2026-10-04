@@ -470,9 +470,11 @@ def check_route_trainers(E, problems):
     retired = {t for t, r in E.trainers.items() if r.get("seated") is False}
     seats = [p[0] for p in route_trainers.placements()]
     expected = 0
-    # finale_trainers: Brann and Elara in Hoopa's cradle (2026-10-04), the sixth seat file route_trainers reads
+    # hq_trainers: the Compact HQ tower's seven (2026-10-04), the sixth seat file route_trainers reads. Brann and Elara
+    # (data/finale_trainers.json) are NOT seats since the integration of 2026-10-04: they fight as Cobblemon NPCs in
+    # the tower (tools/compile_dialogue.py, tools/hq_tower.py), so that file is not read here
     for f in ("route_trainers", "late_route_trainers", "mansion_guardians", "vr_trainers", "arena_trainers",
-              "finale_trainers"):
+              "hq_trainers"):
         expected += sum(1 for e in doc(DATA / ("%s.json" % f))["trainers"] if "seat" in e and e.get("seated") is not False)
     if len(seats) != expected:
         problems.append("route_trainers: %d seats placed, the seat files carry %d" % (len(seats), expected))
