@@ -80,7 +80,8 @@ def regions_doc():
 # ------------------------------------------------------------------ inputs
 
 def land_distance(H, sea, spec):
-    """Coarse distance from land, in blocks, on a grid `coarse_blocks` wide: (N/c, N/c) float32."""
+    """Coarse distance from land, in blocks, on a grid `coarse_blocks` wide: (N/c, N/c) float32. Only a first guess:
+    every rule is decided on the EXACT distance wherever the guess's error bound (bounds()) straddles its threshold."""
     ld = spec["land_distance"]
     c = int(ld["coarse_blocks"])
     N = H.shape[0]
@@ -88,6 +89,96 @@ def land_distance(H, sea, spec):
     land = (H >= sea).reshape(n, c, n, c).any(axis=(1, 3))
     d = WS.distance(land, None, max_iter=int(math.ceil(ld["max_blocks"] / c)) + 2) * c
     return d
+
+
+def column_distance(land, cap):
+    """Per column, the distance along z to the nearest land column in the same x, capped: (N, N) int16. The first
+    pass of a separable exact Euclidean distance; exact_distance() does the second, only where it is needed."""
+    N = land.shape[0]
+    g = np.empty(land.shape, np.int16)
+    prev = np.full(land.shape[1], cap, np.int16)
+    for z in range(N):
+        prev = np.where(land[z], 0, np.minimum(prev + 1, cap)).astype(np.int16)
+        g[z] = prev
+    prev = np.full(land.shape[1], cap, np.int16)
+    for z in range(N - 1, -1, -1):
+        prev = np.where(land[z], 0, np.minimum(prev + 1, cap)).astype(np.int16)
+        np.minimum(g[z], prev, out=g[z])
+    return g
+
+
+def exact_distance(gz, xs, zs, R):
+    """The exact Euclidean distance from each column (xs, zs) to the nearest land column, searched |dx| <= R: the
+    minimum over dx of dx^2 + gz[z, x + dx]^2. Exact whenever the true distance is at most R and gz's cap exceeds R."""
+    N = gz.shape[1]
+    xs = np.asarray(xs, np.int64)
+    zs = np.asarray(zs, np.int64)
+    best = gz[zs, xs].astype(np.int64) ** 2
+    for dx in range(1, int(R) + 1):
+        if not len(best) or dx * dx > best.max():
+            break
+        for xx in (xs - dx, xs + dx):
+            ok = (xx >= 0) & (xx < N)
+            v = gz[zs, np.clip(xx, 0, N - 1)].astype(np.int64) ** 2 + dx * dx
+            best = np.where(ok, np.minimum(best, v), best)
+    return np.sqrt(best.astype(np.float64))
+
+
+def bounds(dl, spec):
+    """(lo, hi): the true distance to land lies in [lo, hi] for a coarse distance dl. A coarse cell is land if any of
+    its columns is, so a column and its land are each up to (c-1)*sqrt2 from the cell grid (hi); the chamfer is at
+    most `chamfer_ratio` times Euclidean, and exact (converged) at and under max_blocks, so beyond it the truth is at
+    least max_blocks / ratio (lo)."""
+    ld = spec["land_distance"]
+    c = int(ld["coarse_blocks"])
+    k = float(ld["chamfer_ratio"])
+    e = (c - 1) * math.sqrt(2.0) + 1e-6
+    maxb = float(ld["max_blocks"])
+    dl = np.asarray(dl, np.float64)
+    lo = np.where(dl > maxb, maxb / k - e, dl / k - e)
+    hi = dl + e
+    return lo, hi
+
+
+def coarse_window(m, z0, z1, x0, x1):
+    """The coarse distance, at full resolution, for rows [z0, z1) and columns [x0, x1)."""
+    c = int(m.spec["land_distance"]["coarse_blocks"])
+    return m.DL[np.ix_(np.arange(z0, z1) // c, np.arange(x0, x1) // c)]
+
+
+def refine(m, dl, z0, x0, unc, R=None):
+    """dl (a window at (z0, x0)) as float64 with its `unc` columns replaced by their exact distance."""
+    D = np.asarray(dl, np.float64).copy()
+    if unc.any():
+        zz, xx = np.nonzero(unc)
+        _lo, hi = bounds(dl[unc], m.spec)
+        r = int(math.ceil(float(hi.max()))) + 1 if R is None else int(R)
+        if r >= int(m.spec["land_distance"]["column_cap_blocks"]):
+            raise FloorError("an exact distance search of %d reaches the column cap" % r)
+        D[zz, xx] = exact_distance(m.GZ, xx + x0, zz + z0, r)
+        m.exact_columns = getattr(m, "exact_columns", 0) + int(len(zz))
+    return D
+
+
+def straddles(lo, hi, T):
+    """bool: the threshold T (an array, NaN where no rule applies) lies inside [lo, hi], so the coarse guess cannot
+    settle which side of T a column is on."""
+    with np.errstate(invalid="ignore"):
+        return (lo <= T) & (T <= hi)
+
+
+def rects(o, out):
+    """Every `rect` [x0, z0, x1, z1] anywhere in a document: Pacifidlog's walks, rafts, bridges and districts."""
+    if isinstance(o, dict):
+        for k, v in o.items():
+            if k == "rect" and isinstance(v, list) and len(v) == 4 and all(isinstance(q, (int, float)) for q in v):
+                out.append(tuple(int(q) for q in v))
+            else:
+                rects(v, out)
+    elif isinstance(o, list):
+        for v in o:
+            rects(v, out)
+    return out
 
 
 def region_labels(N, spec, coarse):
@@ -177,22 +268,35 @@ def exclusion(m):
     near = dilate(cols, int(own["sea_life_margin_blocks"]))
     why["within %d of a cell cobblers_sea_life writes" % own["sea_life_margin_blocks"]] = int((near & ~X).sum())
     X = X | near
-    # the coasts cobblers_sea_life owns, out to its kelp reach plus the coarse grid's error
+    # the coasts cobblers_sea_life owns, out to its kelp reach plus a margin, on the EXACT distance to land. A box's
+    # far edge is inside it (tools/water_shape.py's reading: x0 <= x <= x1)
     slspec = sl.spec
-    reach = int(slspec["shore"]["kelp"]["from_land_blocks"]) + 2 * int(spec["land_distance"]["coarse_blocks"])
+    reach = int(slspec["shore"]["kelp"]["from_land_blocks"]) + int(own["coast_margin_blocks"])
     boxes = {f["id"]: f["box"] for f in sl.wspec["coasts"]["flats"]}
     boxes.update({s["id"]: s["box"] for s in sl.wspec["coasts"]["skerries"]})
-    c = int(spec["land_distance"]["coarse_blocks"])
     coast = np.zeros((N, N), bool)
     for co in slspec["shore"]["coasts"]:
         x0, z0, x1, z1 = boxes[co["id"]]
-        x0, z0, x1, z1 = max(0, x0), max(0, z0), min(N, x1), min(N, z1)
-        dl = m.DL[z0 // c:(z1 + c - 1) // c, x0 // c:(x1 + c - 1) // c].repeat(c, 0).repeat(c, 1)
-        oz, ox = z0 - (z0 // c) * c, x0 - (x0 // c) * c
-        dl = dl[oz:oz + (z1 - z0), ox:ox + (x1 - x0)]
-        coast[z0:z1, x0:x1] |= dl <= reach
-    why["a shaped coast cobblers_sea_life dresses, within %d of land" % reach] = int((coast & ~X).sum())
+        x0, z0, x1, z1 = max(0, x0), max(0, z0), min(N, x1 + 1), min(N, z1 + 1)
+        dl = coarse_window(m, z0, z1, x0, x1)
+        lo, hi = bounds(dl, spec)
+        wet = m.H[z0:z1, x0:x1] < m.sea
+        D = refine(m, dl, z0, x0, wet & straddles(lo, hi, np.float64(reach)))
+        coast[z0:z1, x0:x1] |= D <= reach
+    why["a shaped coast cobblers_sea_life dresses (box edges inclusive), within %d of land" % reach] = \
+        int((coast & ~X).sum())
     X = X | coast
+    # Pacifidlog: every rect data/sea_town.json carries (its walks and jetties reach well past the deck that
+    # sea_life's exclusion boxes), grown by sea_life's own Pacifidlog margin, edges inclusive
+    pm = int(slspec["exclusions"]["pacifidlog_margin_blocks"])
+    pac = np.zeros((N, N), bool)
+    for r in rects(json.loads((ROOT / "data" / "sea_town.json").read_text(encoding="utf-8")), []):
+        x0, x1 = min(r[0], r[2]) - pm, max(r[0], r[2]) + pm
+        z0, z1 = min(r[1], r[3]) - pm, max(r[1], r[3]) + pm
+        pac[max(0, z0):min(N, z1 + 1), max(0, x0):min(N, x1 + 1)] = True
+    why["Pacifidlog: every rect of data/sea_town.json (walks, jetties, rafts) and %d round it" % pm] = \
+        int((pac & ~X).sum())
+    X = X | pac
     # the Relic reef
     rr = sl.wspec["coasts"]["relic_reef"]
     R = float(rr["outer_radius"][1] + rr["drop_width_blocks"] + own["reef_margin_blocks"])
@@ -213,6 +317,8 @@ def plan(m):
     seed = int(spec["seed"])
     c = int(spec["land_distance"]["coarse_blocks"])
     m.DL = land_distance(m.H, sea, spec)
+    m.GZ = column_distance(m.H >= sea, int(spec["land_distance"]["column_cap_blocks"]))
+    m.exact_columns = 0
     lab, cl, names = region_labels(N, spec, c)
     m.names = names
     X, why = exclusion(m)
@@ -229,9 +335,9 @@ def plan(m):
             "id": rid,
             "reach": float(rdoc[rid]["seabed_plan"]["shelf_width_blocks"]),
             "kelp": bool(r.get("kelp")), "kelp_beyond": float(r.get("kelp_beyond_land_blocks") or 0),
-            "seagrass": bool(r.get("seagrass")), "frozen": r.get("frozen"),
+            "seagrass": bool(r.get("seagrass")), "frozen": r.get("frozen"), "deep_frozen": r.get("deep_frozen"),
         }
-    st = {rid: {"sea_columns": 0, "excluded": 0, "outside_reach": 0, "frozen": 0, "kelp_columns": 0,
+    st = {rid: {"sea_columns": 0, "excluded": 0, "outside_reach": 0, "frozen": 0, "deep_frozen": 0, "kelp_columns": 0,
                 "seagrass_columns": 0, "tall_seagrass": 0, "sea_life_flora_columns": 0, "assigned_by_nearest": 0}
           for rid in names}
     st["none"] = {"sea_columns": 0}
@@ -256,6 +362,25 @@ def plan(m):
             dl = m.DL[z0 // c:z1 // c, x0 // c:x1 // c].repeat(c, 0).repeat(c, 1)
             Xt = X[z0:z1, x0:x1]
             ZZ, XX = np.mgrid[z0:z1, x0:x1]
+            # every distance rule this tile's columns answer to: the shelf width, the frozen line, the warm line
+            Tr = np.full(L.shape, np.nan)
+            Tf = np.full(L.shape, np.nan)
+            Tk = np.full(L.shape, np.nan)
+            for li in np.unique(L[wet]):
+                li = int(li)
+                if li == 0:
+                    continue
+                ru = rules[li]
+                at = L == li
+                Tr[at] = ru["reach"]
+                if ru["frozen"]:
+                    Tf[at & (ZZ < ru["frozen"]["north_of_z"])] = ru["frozen"]["from_land_blocks"]
+                if ru["kelp"] and ru["kelp_beyond"]:
+                    Tk[at] = ru["kelp_beyond"]
+            lo, hi = bounds(dl, spec)
+            cand = wet & (L > 0) & ~Xt
+            unc = cand & (straddles(lo, hi, Tr) | straddles(lo, hi, Tf) | straddles(lo, hi, Tk))
+            dl = refine(m, dl, z0, x0, unc)
             for li in np.unique(L[wet]):
                 li = int(li)
                 if li == 0:
@@ -275,6 +400,10 @@ def plan(m):
                     fz = (ZZ < ru["frozen"]["north_of_z"]) & (dl >= ru["frozen"]["from_land_blocks"])
                     s["frozen"] += int((within & fz).sum())
                     within &= ~fz
+                if ru["deep_frozen"]:
+                    dz_ = (ZZ < ru["deep_frozen"]["north_of_z"]) & (G <= ru["deep_frozen"]["at_or_below_y"])
+                    s["deep_frozen"] += int((within & dz_).sum())
+                    within &= ~dz_
                 kelp = np.zeros_like(within)
                 if ru["kelp"]:
                     nz = WS.value_noise(XX, ZZ, kp["patch_scale_blocks"], seed + 1)
@@ -379,9 +508,10 @@ def model(source_root=None, spec=None, sl=None):
 
 def summary(m):
     tot = {k: sum(m.stats[r][k] for r in m.names) for k in ("sea_columns", "excluded", "outside_reach", "frozen",
-                                                            "kelp_columns", "seagrass_columns", "tall_seagrass",
-                                                            "sea_life_flora_columns")}
+                                                            "deep_frozen", "kelp_columns", "seagrass_columns",
+                                                            "tall_seagrass", "sea_life_flora_columns")}
     tot["sea_columns"] += m.stats["none"]["sea_columns"]
+    tot["exact_distance_columns"] = int(getattr(m, "exact_columns", 0))
     return {
         "sea_level": m.sea,
         "regions": m.stats,

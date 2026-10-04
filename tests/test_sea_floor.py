@@ -163,6 +163,60 @@ def test_dilate_matches_a_brute_force_square():
     assert (got == want).all()
 
 
+def _brute_distance(land, x, z):
+    zz, xx = np.nonzero(land)
+    return float(np.sqrt(((xx - x) ** 2 + (zz - z) ** 2).min()))
+
+
+def test_exact_distance_matches_a_brute_force_search():
+    rng = np.random.default_rng(7)
+    land = rng.random((96, 96)) < 0.004
+    land[40, 3] = True
+    gz = SF.column_distance(land, 1000)
+    pts = rng.integers(0, 96, size=(300, 2))
+    got = SF.exact_distance(gz, pts[:, 0], pts[:, 1], 140)
+    want = [_brute_distance(land, x, z) for x, z in pts]
+    assert np.allclose(got, want)
+
+
+def test_the_coarse_bounds_hold_the_exact_distance():
+    """the interval bounds() gives round the 4-block chamfer guess always holds the exact distance: the property the
+    builder relies on to skip the exact search where no rule's threshold falls inside it."""
+    s = spec()
+    c = int(s["land_distance"]["coarse_blocks"])
+    rng = np.random.default_rng(11)
+    N = 160
+    land = np.zeros((N, N), bool)
+    for _ in range(6):
+        z, x = rng.integers(0, N, 2)
+        land[z:z + 3, x:x + 2] = True
+    H = np.where(land, 70, 40).astype(np.int16)
+    DL = SF.land_distance(H, SEA, s)
+    gz = SF.column_distance(land, 1000)
+    zz, xx = np.mgrid[0:N, 0:N]
+    exact = SF.exact_distance(gz, xx.ravel(), zz.ravel(), 400).reshape(N, N)
+    dl = DL[np.ix_(np.arange(N) // c, np.arange(N) // c)]
+    lo, hi = SF.bounds(dl, s)
+    assert (lo <= exact + 1e-9).all() and (exact <= hi + 1e-9).all()
+
+
+def test_rects_finds_every_pacifidlog_walk():
+    doc = json.loads((ROOT / "data" / "sea_town.json").read_text(encoding="utf-8"))
+    got = set(SF.rects(doc, []))
+    for w in doc["walks"]:
+        assert tuple(w["rect"]) in got, w["id"]
+
+
+def test_data_frostwater_carries_both_frozen_rules_from_regions_json():
+    s = spec()["regions"]["frostwater_shelf"]
+    doc = json.loads((ROOT / "data" / "regions.json").read_text(encoding="utf-8"))
+    rules = " | ".join(next(r for r in doc["marine_regions"] if r["id"] == "frostwater_shelf")["biomes"]["rules"])
+    assert "deep_frozen_ocean: north of z%d" % s["deep_frozen"]["north_of_z"] in rules
+    assert "at or below y%d" % s["deep_frozen"]["at_or_below_y"] in rules
+    assert "frozen_ocean: north of z%d, %d or more blocks from land" % (s["frozen"]["north_of_z"],
+                                                                      s["frozen"]["from_land_blocks"]) in rules
+
+
 def test_write_tiles_functions_by_128_and_each_passes_the_limits(tmp_path):
     grass = [(x, z, 50, False) for z in (5, 130) for x in range(0, 300)]
     m = fake_model(grass=grass, N=512)

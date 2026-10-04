@@ -2,7 +2,7 @@
  "schema": "cobblers.sea-floor/1",
  "status": "built offline 2026-10-04 by tools/sea_floor.py; not installed in any world, not seen in game",
  "builder": "tools/sea_floor.py",
- "audit": "not yet written: an independent audit by another hand comes after the builder (CLAUDE.md 'Content implementation and its test/review use different agents')",
+ "audit": "tools/sea_floor_audit.py (independent, another agent's; never imports this builder): `python tools/sea_floor_audit.py`, a prepare job after sea_floor:build",
  "spec": "docs/world-building/WATER_LIFE_GAP.md, from docs/world-building/OCEAN.md section 4 'Kelp, seagrass, coral' and data/regions.json marine_regions[].flora and .biomes.rules",
  "seed": 61004,
  "ground": "tools/ground.py, rounded: the canonical heightmap IS the applied water export, so the shelf, break and slope are ground. Never a world",
@@ -17,7 +17,11 @@
     "north_of_z": 1300,
     "from_land_blocks": 120
    },
-   "why": "'kelp forests on cold_ocean shelf and slope (y28-58)', 'seagrass on cold_ocean shelf; none under frozen_ocean'; frozen_ocean is 'north of z1300, 120 or more blocks from land', and nothing grows there"
+   "deep_frozen": {
+    "north_of_z": 1300,
+    "at_or_below_y": 36
+   },
+   "why": "'kelp forests on cold_ocean shelf and slope (y28-58)', 'seagrass on cold_ocean shelf; none under frozen_ocean'; frozen_ocean is 'north of z1300, 120 or more blocks from land' and deep_frozen_ocean 'north of z1300 where the planned seabed is at or below y36' (data/regions.json biomes.rules), and nothing grows under either (OCEAN.md: kelp 'not warm or frozen', seagrass 'every ocean except frozen')"
   },
   "windward_deep": {
    "kelp": true,
@@ -39,15 +43,20 @@
  },
  "land_distance": {
   "coarse_blocks": 4,
-  "max_blocks": 420,
-  "why": "distance from land on a 4-block grid (a coarse cell is land if any column in it is), chamfer, so it errs toward land by up to about 5 blocks; enough for a 120-400 block reach rule"
+  "max_blocks": 480,
+  "chamfer_ratio": 1.05,
+  "column_cap_blocks": 1000,
+  "why": "every distance rule (shelf width, the frozen line, the warm line, a shaped coast's reach) is decided on the EXACT Euclidean distance to the nearest land column wherever a cheap first guess cannot settle it. The guess: distance on a 4-block grid (a coarse cell is land if any column in it is), chamfer, converged out to max_blocks; the truth lies in [guess / chamfer_ratio - 3*sqrt2, guess + 3*sqrt2] (beyond max_blocks: at least max_blocks / chamfer_ratio - 3*sqrt2, past every rule). Where a rule's threshold falls inside that interval the column's exact distance is computed: a per-x pass (distance along z to land, capped at column_cap_blocks), then the minimum over dx of dx^2 + that^2. On 2026-10-04 the guess alone overshot (tools/sea_floor_audit.py): 1,149 columns in frozen water (to 123.2 against 120), 460 kelp columns inside the warm line (to 214.2 against 220), 811 beyond a shelf width by up to 3"
  },
  "ownership": {
   "sea_life_shore_from": "data/sea_life.json shore.kelp.from_land_blocks",
   "sea_life_coast_boxes_from": "data/water_shape.json coasts.flats and coasts.skerries, the coasts data/sea_life.json shore.coasts names",
+  "sea_life_coast_boxes_edges": "inclusive, x0 <= x <= x1 and z0 <= z <= z1, as tools/water_shape.py reads a box",
+  "coast_margin_blocks": 2,
   "sea_life_margin_blocks": 3,
   "reef_margin_blocks": 10,
-  "why": "cobblers_sea_life owns the five shaped coasts out to its kelp reach and the Relic reef; this pack writes nowhere in a coast box within that reach (plus the coarse grid's error), nowhere within the reef's outer radius plus the drop plus this margin, and in no column within sea_life_margin_blocks of any cell that pack writes. So the two packs share no column"
+  "pacifidlog_from": "every `rect` in data/sea_town.json (districts, rafts, bridges, walks, jetties), grown by data/sea_life.json exclusions.pacifidlog_margin_blocks, edges inclusive: sea_life's exclusion boxes only the deck, and the walks and jetties reach past it",
+  "why": "cobblers_sea_life owns the five shaped coasts out to its kelp reach and the Relic reef; this pack writes nowhere in a coast box (edges inclusive) within that reach plus coast_margin_blocks of land (exact distance), nowhere within the reef's outer radius plus the drop plus this margin, and in no column within sea_life_margin_blocks of any cell that pack writes. So the two packs share no column. Pacifidlog's every rect and its margin are kept clear too"
  },
  "kelp": {
   "ground_y": [
