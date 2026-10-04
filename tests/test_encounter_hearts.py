@@ -195,10 +195,26 @@ def test_the_condition_split_agrees_with_the_documented_heart_ids(world):
     wrong = {}
     for k, t in world["subs"].items():
         pat = re.compile(r"^%s_h\d+_" % re.escape(k))
-        bad = [e["id"] for e in t["heart"] if not pat.match(e["id"])] + [e["id"] for e in t["base"] if pat.match(e["id"])]
+        # 2026-10-05: the Mega field's den lines (test_encounter_design.split_den_lines, by species and range) are a third
+        # kind, neither heart nor base: none may carry a heart id, and none of them may hide a heart
+        bad = [e["id"] for e in t["heart"] if not pat.match(e["id"])] + \
+            [e["id"] for e in t["base"] + t.get("den", []) if pat.match(e["id"])]
         if bad:
             wrong[k] = bad[:3]
     assert not wrong, wrong
+
+
+# Without it a den line could be read as base texture or a heart, or a heart taken for a den line: the den-line split
+# (by species and range, from data/gulch_mine.json) holds exactly the compiled details whose ids name a field den
+# (`<sub>_gm_mf_<x>_<z>_b<k>_<species>`), and only in the Rift arms' files.
+def test_the_den_line_split_agrees_with_the_den_ids(world):
+    den_id = re.compile(r"_gm_mf_\d+_\d+_b\d+_[a-z_]+$")
+    split = {k: sorted(e["id"] for e in t.get("den", [])) for k, t in world["subs"].items() if t.get("den")}
+    named = {k: sorted(e["id"] for e in t["base"] + t["heart"] + t.get("den", []) if den_id.search(e["id"]))
+             for k, t in world["subs"].items()}
+    named = {k: v for k, v in named.items() if v}
+    assert split == named, {k: (len(split.get(k, [])), len(named.get(k, []))) for k in set(split) | set(named)}
+    assert split, "no den line compiled: this split is not exercised by the pack"
 
 
 def test_the_hearts_are_the_places_section_10_names(world):
