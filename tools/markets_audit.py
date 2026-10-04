@@ -137,6 +137,35 @@ class AuditError(Exception):
 
 
 # ------------------------------------------------------------------------------------------------ inputs
+PLAZA_CONTRACT = ROOT / "data" / "plaza_centres.json"
+
+
+def contract_seats(path=None):
+    """{stall id: keeper_at [x, y, z, yaw]} from the squares' contract (2026-10-03: the owner moved the market keepers
+    onto the town squares' stalls; the squares' builder writes data/plaza_centres.json, "stalls": [{"id", "keeper_at",
+    ...}] per town). Read here on its own, not through tools/markets.py, so a keeper the builder moves wrongly is
+    still caught. {} when the file is absent: every keeper then stands where data/markets.json sites it."""
+    p = Path(path) if path is not None else PLAZA_CONTRACT
+    out = {}
+    if not p.is_file():
+        return out
+    stack = [read_json(p)]
+    while stack:
+        o = stack.pop()
+        if isinstance(o, dict):
+            for k, v in o.items():
+                if k == "stalls" and isinstance(v, list):
+                    for s in v:
+                        kp = s.get("keeper_at") if isinstance(s, dict) else None
+                        if isinstance(kp, list) and len(kp) == 4:
+                            out[s["id"]] = kp
+                elif isinstance(v, (dict, list)):
+                    stack.append(v)
+        elif isinstance(o, list):
+            stack.extend(o)
+    return out
+
+
 def read_json(p):
     return json.loads(Path(p).read_text(encoding="utf-8"))
 
@@ -809,8 +838,11 @@ def audit(doc, pack, overlay_text, base_text, progression, towns, bank, income, 
             others_flags = {f for f in fb if f != gate_of(it)}
             F += ["payment: %s" % s for s in purchase_problems(pack, ref, it["item"], int(it["price"]), int(it["count"]),
                                                               gate_of(it), loaded, others_flags)]
+    # the stalls (2026-10-03, data/markets.json `stalls`) share this pack under function/stalls/: their purchases are
+    # not the counters' shelves, so they are left out of this comparison (tools/markets.py audits them; the
+    # independent audit of the stalls is a separate unit)
     gives = set(re.findall(r"\bgive @s ([a-z0-9_.\-]+:[a-z0-9_/.\-]+)", "\n".join(
-        v for k, v in pack.items() if k.endswith(".mcfunction"))))
+        v for k, v in pack.items() if k.endswith(".mcfunction") and not k.startswith("data/cobblers/function/stalls/"))))
     sold_built = {it["item"] for c in built for it in c["stock"]}
     if gives != sold_built:
         F.append("pack: functions give %s, but the built shelves sell %s"
@@ -978,6 +1010,11 @@ def audit(doc, pack, overlay_text, base_text, progression, towns, bank, income, 
 
     # --- the keepers R17M places
     if keepers is not None:
+        # where each built keeper should stand: its stall's keeper_at when the squares' contract seats it (the owner,
+        # 2026-10-03: keepers onto the squares), else data/markets.json's own `at`
+        seats = contract_seats()
+        want_at = {c["id"]: [int(v) for v in seats[c["stall"]][:3]] if c.get("stall") in seats else list(c["at"])
+                   for c in built}
         byid = {}
         for k in keepers:
             m = re.fullmatch(r"dlg_market_([a-z0-9_]+)", k[0])
@@ -988,8 +1025,8 @@ def audit(doc, pack, overlay_text, base_text, progression, towns, bank, income, 
                 F.append("keeper: R17M places %d keepers for %s" % (len(ks), c["id"]))
                 continue
             k = ks[0]
-            if tuple(k[1]) != tuple(c["at"]) or k[2] != "cobblers:npc_market_%s" % c["id"]:
-                F.append("keeper: R17M places %s at %s; the data sites it at %s" % (k[2], list(k[1]), c["at"]))
+            if tuple(k[1]) != tuple(want_at[c["id"]]) or k[2] != "cobblers:npc_market_%s" % c["id"]:
+                F.append("keeper: R17M places %s at %s; the data sites it at %s" % (k[2], list(k[1]), want_at[c["id"]]))
             if "data/cobblers/npcs/npc_market_%s.json" % c["id"] not in pack:
                 F.append("keeper: R17M places class %s, which the pack does not ship" % k[2])
         for cid in byid:
@@ -1006,13 +1043,18 @@ def audit(doc, pack, overlay_text, base_text, progression, towns, bank, income, 
                     N.append("keeper %s: town %s has no street plan; checked against buildings and walked lines only"
                              % (c["id"], c["town"]))
                 mine = [k for k in keepers if not k[0].endswith("_" + c["id"])]
-                F += keeper_problems(c["id"], tuple(c["at"]), plan, fps, walked or {},
+                at = tuple(want_at[c["id"]])
+                F += keeper_problems(c["id"], at, plan, fps, walked or {},
                                      (others or []) + [("keeper %s" % k[0], tuple(k[1])) for k in mine], min_route)
-                F += frontage_problems(c["id"], tuple(c["at"]), c.get("yaw"), plan)
+                fr = frontage_problems(c["id"], at, seats[c["stall"]][3] if c.get("stall") in seats else c.get("yaw"), plan)
+                if c.get("stall") in seats:
+                    # a keeper moved onto its square's stall is no longer "beside its Mart": only its facing is held
+                    fr = [f for f in fr if "behind its Mart" not in f]
+                F += fr
                 if plan.get("plaza"):
                     x0, z0, x1, z1 = plan["plaza"]["rect"]
-                    dx = max(x0 - c["at"][0], 0, c["at"][0] - x1)
-                    dz = max(z0 - c["at"][2], 0, c["at"][2] - z1)
+                    dx = max(x0 - at[0], 0, at[0] - x1)
+                    dz = max(z0 - at[2], 0, at[2] - z1)
                     N.append("keeper %s: %.0f blocks from its plaza" % (c["id"], math.hypot(dx, dz)))
     else:
         N.append("NOT CHECKED: the keepers' placements (none given)")

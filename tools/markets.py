@@ -23,6 +23,25 @@ game: it is the ferry (tools/ferries.py) with the teleport replaced by a give.
 
 Only counters whose status is "sited" are emitted; the rest of the region's shelves live in the data, each with why.
 
+The stalls (2026-10-03, the owner: "more traders, and new ones ... per town, reading as the place"): data/markets.json
+`stalls` is a second kind of keeper on the same machinery -- a dialogue menu, the same purchase function (the same
+proven charge macro), placed by the same R17M step -- for the town squares' stalls. A stall is not a counter: the
+one-counter-per-town rule, the backpack ladder and the clerk rule stay the counters'. Its own rules:
+  stock      what the place makes: every line names the jar it was verified in (`verified`); an id not verified is
+             listed under `unverified` and never emitted; no Sophisticated Backpacks item (the ladder is the
+             counters'); no item that is, or places, a block a spawn condition names (data/spawn_blocks.json: a
+             player who buys it could decide encounters); a `provision` line is ungated, vanilla, and none of the
+             vanilla items that win fights or print money (NOT_PROVISION); any gated line gates on its town's own
+             badge on the critical path and is counted on the curve like a counter's
+  site       each keeper stands at its stall: the squares' contract, data/plaza_centres.json ("stalls": [{"id":
+             "<town>_stall_<n>", "at", "facing", "keeper_at": [x, y, z, yaw], "sells"}]), wins when it names the
+             record's `stall`; otherwise the record's own `at`/`yaw`, measured on the plaza from the data (the
+             fallback). A counter may name a `stall` too: its keeper then moves onto the square. When the contract
+             exists, every stall in it must be staffed by exactly one record (an empty stall is the complaint the
+             owner made)
+  places     data/markets.json `places_beyond_towns` names settlements that are not in data/towns.json (the
+             Windward Deep's city) so the coverage rule sees them (CLAUDE.md "Our list is not the world")
+
 The audit is offline and fails closed (the implementer's audit; its tests belong to the test author):
 
   data       every town in data/towns.json has a counter or a no_counter reason; every gate is a badge flag that
@@ -83,6 +102,22 @@ BACKPACK_TIERS = ["backpack", "copper_backpack", "iron_backpack", "gold_backpack
 NPC_CLEAR = 3.5        # reapply's npc action counts cobblemon:npc within 2 blocks; the ferry audit uses 2.5 + 0.5
 ROUTE_CLEAR = 3.0      # tools/npc_seats.py MIN_ROUTE: an immovable NPC this close to a walked line stands in the road
 YAW_SLACK = 15.0
+PLAZAS = ROOT / "data" / "plaza_centres.json"      # the squares' contract (another builder's); absent is allowed
+SPAWN_BLOCKS = ROOT / "data" / "spawn_blocks.json"
+STALL_ID = re.compile(r"([a-z0-9_]+)_stall_([0-9]+)")
+STALL_REACH = 4.0      # a keeper at a contract stall stands within this of the stall's own `at` (it serves across it)
+STRANDS = ("convenience", "power", "provision")
+# vanilla items that win fights, skip the game's gates, or that the bank buys back as currency: never a provision
+NOT_PROVISION = re.compile(r"minecraft:(?:diamond_.*|netherite_.*|enchanted_.*|totem_of_undying|elytra|experience_bottle|"
+                           r"ender_pearl|ender_eye|emerald.*|golden_apple|.*_spawn_egg|.*shulker_box|beacon|spawner|"
+                           r"trial_key|ominous_.*|name_tag|saddle|.*_horse_armor)")
+# an item that places a different block than its own id: the spawn check reads the block it puts down
+PLACES = {"minecraft:wheat_seeds": "minecraft:wheat", "minecraft:beetroot_seeds": "minecraft:beetroots",
+          "minecraft:sweet_berries": "minecraft:sweet_berry_bush", "minecraft:glow_berries": "minecraft:cave_vines",
+          "minecraft:torch": "minecraft:wall_torch", "minecraft:redstone": "minecraft:redstone_wire",
+          "minecraft:potato": "minecraft:potatoes", "minecraft:carrot": "minecraft:carrots",
+          "minecraft:melon_seeds": "minecraft:melon_stem", "minecraft:pumpkin_seeds": "minecraft:pumpkin_stem",
+          "minecraft:water_bucket": "minecraft:water", "minecraft:lava_bucket": "minecraft:lava"}
 # The ground rule (tools/ground_rule.py): nothing here reads a world; every position comes from the plan and the heightmap.
 WORLD_READS: set = set()
 
@@ -99,8 +134,64 @@ def emitted(doc):
     return [c for c in doc["counters"] if c.get("status") == "sited"]
 
 
+def emitted_stalls(doc):
+    return [s for s in doc.get("stalls") or [] if s.get("status") == "sited"]
+
+
 def buy_fn(counter, item):
     return "%s:markets/%s/%s" % (NS, counter["id"], item["id"])
+
+
+def stall_fn(stall, item):
+    return "%s:stalls/%s/%s" % (NS, stall["id"], item["id"])
+
+
+def load_plazas(path=None):
+    """{stall id: the stall's contract record, with '_town'} from data/plaza_centres.json, the squares' builder's
+    contract: per town, "stalls": [{"id": "<town>_stall_<n>", "at", "facing", "keeper_at": [x, y, z, yaw], "sells"}].
+    The file's outer shape is the other builder's, so every "stalls" list anywhere in it is read, and its town is the
+    nearest enclosing "town" field or dict key. {} when the file does not exist: every keeper then stands at its own
+    record's fallback position."""
+    p = Path(path) if path is not None else PLAZAS
+    if not p.is_file():
+        return {}
+    out = {}
+
+    def walk(o, town):
+        if isinstance(o, dict):
+            town = o.get("town") if isinstance(o.get("town"), str) else town
+            for k, v in o.items():
+                if k == "stalls" and isinstance(v, list):
+                    for s in v:
+                        if isinstance(s, dict) and s.get("id"):
+                            if s["id"] in out:
+                                raise MarketError("%s: stall %s appears twice" % (p.name, s["id"]))
+                            out[s["id"]] = dict(s, _town=town)
+                elif isinstance(v, (dict, list)):
+                    walk(v, k if isinstance(v, dict) and k not in ("towns", "plazas") else town)
+        elif isinstance(o, list):
+            for v in o:
+                walk(v, town)
+
+    walk(json.loads(p.read_text(encoding="utf-8")), None)
+    return out
+
+
+def contract_keeper(rec, plazas):
+    """The contract's keeper_at [x, y, z, yaw] for this record's stall, or None."""
+    s = plazas.get(rec.get("stall")) if rec.get("stall") else None
+    k = (s or {}).get("keeper_at")
+    if isinstance(k, list) and len(k) == 4 and all(isinstance(v, (int, float)) for v in k):
+        return k
+    return None
+
+
+def position(rec, plazas):
+    """(at [x, y, z], yaw, source): the squares' contract when it seats this record's stall, else the record's own."""
+    k = contract_keeper(rec, plazas)
+    if k is not None:
+        return [int(k[0]), int(k[1]), int(k[2])], k[3], "contract"
+    return rec.get("at"), rec.get("yaw"), "record"
 
 
 def text(s, color="gray"):
@@ -130,13 +221,22 @@ def option_text(doc, item):
 def conversation(doc, counter):
     """(conversation, quest) for one keeper, in data/dialogue.json's and data/quests.json's shape, compiled by
     tools/compile_dialogue.py as it compiles every other conversation. A menu: no cursor, no field."""
-    qid = "market_%s" % counter["id"]
+    return menu(doc, counter, "market", buy_fn)
+
+
+def stall_conversation(doc, stall):
+    """The same menu for a stall keeper, under its own ids (dlg_stall_<id>, npc_stall_<id>, quest stall_<id>)."""
+    return menu(doc, stall, "stall", stall_fn)
+
+
+def menu(doc, counter, kind, fn_of):
+    qid = "%s_%s" % (kind, counter["id"])
     responses, transitions = [], []
     for it in counter["stock"]:
         tid = "buy_%s" % it["id"]
         conds = [{"kind": "flag", "flag": it["gate"]}] if it.get("gate") else []
         transitions.append({"id": tid, "conditions": conds,
-                            "effects": [{"kind": "function", "function": buy_fn(counter, it)}]})
+                            "effects": [{"kind": "function", "function": fn_of(counter, it)}]})
         r = {"id": "r_%s" % it["id"], "text": option_text(doc, it),
              "actions": [{"kind": "quest_transition", "transition": tid}, {"kind": "close_dialogue"}]}
         if conds:
@@ -144,7 +244,7 @@ def conversation(doc, counter):
         responses.append(r)
     responses.append({"id": "r_leave", "text": doc["messages"]["leave"], "actions": [{"kind": "close_dialogue"}]})
     keeper = counter["keeper"]
-    conv = {"id": "dlg_market_%s" % counter["id"], "quest_id": qid, "npc_id": "npc_market_%s" % counter["id"],
+    conv = {"id": "dlg_%s_%s" % (kind, counter["id"]), "quest_id": qid, "npc_id": "npc_%s_%s" % (kind, counter["id"]),
             "npc_name": keeper["name"], "scope": "player", "speakers": {"keeper": keeper["name"]},
             "cursor": {"progression_field": None, "initial_node": "menu"},
             "entry_rules": [{"priority": 10, "when": {"kind": "always"}, "node": "menu"}],
@@ -195,8 +295,9 @@ def buy_lines(doc, counter, it):
     return out
 
 
-def build(doc):
+def build(doc, plazas=None):
     """{relative path in the pack: content (list of lines, or a JSON object)} and the NPCs to place."""
+    plazas = load_plazas() if plazas is None else plazas
     files = {"pack.mcmeta": {"pack": {"pack_format": 48, "description": "Cobblers town markets (generated by tools/markets.py)"}},
              "data/minecraft/tags/function/load.json": {"values": ["%s:markets/load" % NS]}}
     fn = lambda rel: "data/%s/function/markets/%s.mcfunction" % (NS, rel)
@@ -218,14 +319,44 @@ def build(doc):
         if clash:
             raise MarketError("%s writes %s twice" % (c["id"], clash))
         files.update(got)
-        npcs.append((conv["id"], tuple(c["at"]), "%s:%s" % (NS, conv["npc_id"]), c["yaw"]))
+        at, yaw, _src = position(c, plazas)
+        npcs.append((conv["id"], tuple(at), "%s:%s" % (NS, conv["npc_id"]), yaw))
+    sfn = lambda rel: "data/%s/function/stalls/%s.mcfunction" % (NS, rel)
+    for s in emitted_stalls(doc):
+        for it in s["stock"]:
+            files[sfn("%s/%s" % (s["id"], it["id"]))] = buy_lines(doc, s, it)
+        conv, quest = stall_conversation(doc, s)
+        got = CD.compile_conversation(conv, {quest["id"]: quest}, fields)
+        clash = [k for k in got if k in files]
+        if clash:
+            raise MarketError("stall %s writes %s twice" % (s["id"], clash))
+        files.update(got)
+        at, yaw, _src = position(s, plazas)
+        npcs.append((conv["id"], tuple(at), "%s:%s" % (NS, conv["npc_id"]), yaw))
     return files, npcs
 
 
-def npc_placements(doc=None):
-    """[(conversation id, (x, y, z), npc class, yaw)] for tools/reapply.py's "npc" action, from the committed data."""
+def npc_placements(doc=None, plazas=None):
+    """[(conversation id, (x, y, z), npc class, yaw)] for tools/reapply.py's "npc" action, from the committed data:
+    the counters' keepers, each at its stall when the squares' contract seats it, else at its record's site."""
     doc = doc or load()
-    return [("dlg_market_%s" % c["id"], tuple(c["at"]), "%s:npc_market_%s" % (NS, c["id"]), c["yaw"]) for c in emitted(doc)]
+    plazas = load_plazas() if plazas is None else plazas
+    out = []
+    for c in emitted(doc):
+        at, yaw, _src = position(c, plazas)
+        out.append(("dlg_market_%s" % c["id"], tuple(at), "%s:npc_market_%s" % (NS, c["id"]), yaw))
+    return out
+
+
+def stall_placements(doc=None, plazas=None):
+    """The stall keepers, in npc_placements' shape, for the same R17M step."""
+    doc = doc or load()
+    plazas = load_plazas() if plazas is None else plazas
+    out = []
+    for s in emitted_stalls(doc):
+        at, yaw, _src = position(s, plazas)
+        out.append(("dlg_stall_%s" % s["id"], tuple(at), "%s:npc_stall_%s" % (NS, s["id"]), yaw))
+    return out
 
 
 def write(files, out):
@@ -273,7 +404,18 @@ def bank_prices():
 def static_problems(doc, planned_flags, towns, traders):
     out = []
     town_ids = [t["id"] for t in towns]
-    covered = [c.get("town") for c in doc["counters"]] + [n.get("town") for n in doc.get("no_counter") or []]
+    # settlements that are not in data/towns.json but are places a player arrives and could spend (the Deep's city):
+    # each names the file that authors it, which must exist, and is then held to the same coverage rule
+    for b in doc.get("places_beyond_towns") or []:
+        if not b.get("town") or not b.get("source") or not b.get("why"):
+            out.append("places_beyond_towns: %r needs town, source and why" % b)
+            continue
+        if not (ROOT / b["source"]).is_file():
+            out.append("places_beyond_towns %s: its source %s does not exist" % (b["town"], b["source"]))
+        if b["town"] in town_ids:
+            out.append("places_beyond_towns %s is already a town in data/towns.json" % b["town"])
+        town_ids.append(b["town"])
+    covered =[c.get("town") for c in doc["counters"]] + [n.get("town") for n in doc.get("no_counter") or []]
     for t in town_ids:
         if covered.count(t) != 1:
             out.append("town %s: %d entries across counters and no_counter, not 1" % (t, covered.count(t)))
@@ -304,8 +446,10 @@ def static_problems(doc, planned_flags, towns, traders):
         if tr is not None and (tr not in traders or traders[tr]["settlement"] != c["town"]):
             out.append("counter %s: near_trader %r is not a trader in %s" % (cid, tr, c["town"]))
         if c.get("status") == "sited":
-            if tr is None:
-                out.append("counter %s: sited with no near_trader to stand beside" % cid)
+            # a keeper stands beside its Mart's clerk, or at a stall on its square (Redbrow has no Mart: its
+            # Prospector keeps a stall on the yard instead, 2026-10-03)
+            if tr is None and not c.get("stall"):
+                out.append("counter %s: sited with no near_trader to stand beside and no stall" % cid)
             if not (isinstance(c.get("at"), list) and len(c["at"]) == 3 and isinstance(c.get("yaw"), (int, float))):
                 out.append("counter %s: sited without at [x, y, z] and yaw" % cid)
         k = c.get("keeper") or {}
@@ -369,17 +513,172 @@ def static_problems(doc, planned_flags, towns, traders):
     return out
 
 
+def spawn_block_ids():
+    if not SPAWN_BLOCKS.is_file():
+        raise MarketError("%s is missing: the stalls' spawn-block check cannot run" % SPAWN_BLOCKS)
+    return set(json.loads(SPAWN_BLOCKS.read_text(encoding="utf-8"))["blocks"])
+
+
+def stall_problems(doc, towns, plazas):
+    """The stalls' static rules (module docstring, 'The stalls') and the squares' contract against the data."""
+    out = []
+    town_ids = {t["id"] for t in towns} | {b.get("town") for b in doc.get("places_beyond_towns") or []}
+    badges = doc.get("badges") or {}
+    crit = {c["town"]: c.get("badge") for c in doc["counters"] if c.get("path") == "critical"}
+    bank, spawn = bank_prices(), spawn_block_ids()
+    staffed = {}
+    for c in doc["counters"]:
+        if c.get("stall"):
+            m = STALL_ID.fullmatch(c["stall"])
+            if not m or m.group(1) != c["town"]:
+                out.append("counter %s: stall %r is not %s_stall_<n>" % (c["id"], c["stall"], c["town"]))
+            if c.get("status") == "sited":
+                staffed.setdefault(c["stall"], []).append("counter %s" % c["id"])
+    seen = set()
+    for s in doc.get("stalls") or []:
+        sid = s.get("id") or ""
+        where = "stall %s" % sid
+        if not ID.fullmatch(sid) or sid in seen:
+            out.append("stall id %r is malformed or repeated" % sid)
+        seen.add(sid)
+        town = s.get("town")
+        if town not in town_ids:
+            out.append("%s: town %r is neither in data/towns.json nor in places_beyond_towns" % (where, town))
+        m = STALL_ID.fullmatch(s.get("stall") or "")
+        if not m or m.group(1) != town:
+            out.append("%s: stall %r is not %s_stall_<n>" % (where, s.get("stall"), town))
+        if s.get("status") not in ("sited", "unsited"):
+            out.append("%s: status %r" % (where, s.get("status")))
+        if s.get("status") == "unsited" and not s.get("unsited_why"):
+            out.append("%s: unsited with no unsited_why" % where)
+        if s.get("status") == "sited":
+            staffed.setdefault(s.get("stall"), []).append(where)
+            if contract_keeper(s, plazas) is None and not (
+                    isinstance(s.get("at"), list) and len(s["at"]) == 3 and isinstance(s.get("yaw"), (int, float))):
+                out.append("%s: sited, but neither the squares' contract nor its record gives at [x, y, z] and yaw" % where)
+        if s.get("path") not in ("critical", "off_path"):
+            out.append("%s: path %r" % (where, s.get("path")))
+        if s.get("path") == "critical" and (town not in crit or s.get("badge") != crit[town]):
+            out.append("%s: on the critical path, but its badge %r is not its town's counter's %r"
+                       % (where, s.get("badge"), crit.get(town)))
+        k = s.get("keeper") or {}
+        if not k.get("name") or not k.get("greeting"):
+            out.append("%s: keeper without name or greeting" % where)
+        if not s.get("theme") or not s.get("sells"):
+            out.append("%s: no theme or sells" % where)
+        if not s.get("stock"):
+            out.append("%s: no stock" % where)
+        held = set()
+        for u in s.get("unverified") or []:
+            if not u.get("item") or not u.get("why"):
+                out.append("%s: an unverified entry needs item and why: %r" % (where, u))
+            held.add(u.get("item"))
+        own = "gym%d_cleared" % s["badge"] if s.get("path") == "critical" and s.get("badge") else None
+        ids = set()
+        for it in s.get("stock") or []:
+            w = "%s item %s" % (where, it.get("id"))
+            if not ID.fullmatch(it.get("id") or "") or it["id"] in ids:
+                out.append("%s: id malformed or repeated" % w)
+            ids.add(it.get("id"))
+            item = it.get("item") or ""
+            if not ITEM.fullmatch(item):
+                out.append("%s: item %r is not ns:path" % (w, item))
+            if not it.get("name") or not it.get("why"):
+                out.append("%s: no name or why" % w)
+            if not it.get("verified"):
+                out.append("%s: no `verified` (the jar its id was read from): an unverified id is listed under "
+                           "unverified and never emitted" % w)
+            if item in held:
+                out.append("%s: %s is listed unverified and stocked" % (w, item))
+            if item.startswith(SB):
+                out.append("%s: a Sophisticated Backpacks item: the ladder is the counters'" % w)
+            placed = PLACES.get(item, item)
+            if item in spawn or placed in spawn:
+                out.append("%s: %s%s is a block a spawn condition names (data/spawn_blocks.json): a player who buys it "
+                           "decides encounters" % (w, item, "" if placed == item else " (it places %s)" % placed))
+            cnt, price = it.get("count"), it.get("price")
+            if not (isinstance(cnt, int) and 1 <= cnt <= 64):
+                out.append("%s: count %r" % (w, cnt))
+                continue
+            if not (isinstance(price, int) and price > 0):
+                out.append("%s: price %r is not a positive whole number" % (w, price))
+                continue
+            sell = bank.get(item)
+            if sell is not None and price / cnt <= sell:
+                out.append("%s: $%s each is not above the bank's sell-back of $%d" % (w, money(price / cnt), sell))
+            g = it.get("gate")
+            if g is not None and g not in badges:
+                out.append("%s: gate %r is not a declared badge" % (w, g))
+            strand = it.get("strand")
+            if strand not in STRANDS:
+                out.append("%s: strand %r" % (w, strand))
+            elif strand == "provision":
+                if g is not None:
+                    out.append("%s: a provision is ungated (a gated line is convenience or power, and on the curve)" % w)
+                if not item.startswith("minecraft:") or NOT_PROVISION.fullmatch(item):
+                    out.append("%s: %s is not a provision (vanilla, and none of NOT_PROVISION)" % (w, item))
+            elif own and g != own:
+                out.append("%s: a %s line on the critical path gates on %r, not its town's own %s" % (w, strand, g, own))
+    for sid, who in sorted(staffed.items()):
+        if len(who) > 1:
+            out.append("stall %s is staffed by %s: one keeper per stall" % (sid, " and ".join(who)))
+    for sid, st in sorted(plazas.items()):
+        m = STALL_ID.fullmatch(sid)
+        if not m:
+            out.append("plaza contract: stall id %r is not <town>_stall_<n>" % sid)
+            continue
+        if st.get("_town") and st["_town"] != m.group(1):
+            out.append("plaza contract: stall %s is listed under town %s" % (sid, st["_town"]))
+        if len(staffed.get(sid, [])) != 1:
+            out.append("plaza contract: stall %s is staffed by %d built keepers, not 1 (an empty stall is what the owner "
+                       "asked to end)" % (sid, len(staffed.get(sid, []))))
+        k, a = st.get("keeper_at"), st.get("at")
+        if not (isinstance(k, list) and len(k) == 4 and all(isinstance(v, (int, float)) for v in k)):
+            out.append("plaza contract: stall %s has no keeper_at [x, y, z, yaw]" % sid)
+        elif isinstance(a, list) and len(a) == 3 and math.dist((k[0], k[2]), (a[0], a[2])) > STALL_REACH:
+            out.append("plaza contract: stall %s's keeper_at is %.1f blocks from its stall, over %.1f"
+                       % (sid, math.dist((k[0], k[2]), (a[0], a[2])), STALL_REACH))
+    return out
+
+
+def contract_report(doc, plazas):
+    """Lines, not problems: where each keeper that names a stall stands, and any theme the two builders disagree on."""
+    if not plazas:
+        return ["NOT PRESENT: data/plaza_centres.json (the squares' contract): every keeper stands at its record's "
+                "fallback site"]
+    out = []
+    for rec in [c for c in doc["counters"] if c.get("stall")] + list(doc.get("stalls") or []):
+        st = plazas.get(rec["stall"])
+        if contract_keeper(rec, plazas) is None:
+            out.append("%s: stall %s is not seated by the contract: fallback site %s" % (rec["id"], rec["stall"], rec.get("at")))
+        elif st.get("sells") and rec.get("sells") and st["sells"] != rec["sells"]:
+            out.append("%s: the contract's stall %s sells %r, the record %r" % (rec["id"], rec["stall"], st["sells"], rec["sells"]))
+    return out
+
+
+def priced(doc):
+    """The critical path's priced records: every counter, and each stall's gated lines (an ungated provision is not a
+    rung on the ladder; a gated stall line is, and counts exactly as a counter's would)."""
+    recs = [c for c in doc["counters"] if c.get("path") == "critical"]
+    for s in doc.get("stalls") or []:
+        gated = [it for it in s.get("stock") or [] if it.get("gate")]
+        if s.get("path") == "critical" and gated:
+            recs.append(dict(s, stock=gated))
+    return recs
+
+
 def curve(doc):
     """[(badge, cumulative ask without stretch, with every stretch item due by then, cumulative income, ratio)] on
     the critical path. A stretch item counts from its affordable_by badge: before that it is meant to be out of reach
     (decision B7, 'price as the gate')."""
     basis = doc["income_basis"]
     rows, cum, cum_s = [], 0, 0
-    stretch = [it for c in doc["counters"] if c.get("path") == "critical" for it in c["stock"] if it.get("stretch")]
+    recs = priced(doc)
+    stretch = [it for c in recs for it in c["stock"] if it.get("stretch")]
     for b in range(0, 9):
         cum_s += sum(it["price"] for it in stretch if it.get("affordable_by") == b)
-        for c in doc["counters"]:
-            if c.get("path") != "critical" or c.get("badge") != b:
+        for c in recs:
+            if c.get("badge") != b:
                 continue
             groups = {}
             for it in c["stock"]:
@@ -405,7 +704,7 @@ def curve_problems(doc):
         if ask_s > inc:
             out.append("badge %d: with the stretch items due by then the critical path asks $%s, more than the $%s "
                        "earned" % (b, money(ask_s), money(inc)))
-    for c in doc["counters"]:
+    for c in doc["counters"] + list(doc.get("stalls") or []):
         for it in c["stock"]:
             if it.get("stretch") and not (isinstance(it.get("affordable_by"), int) and
                                           c.get("badge") is not None and c["badge"] < it["affordable_by"] <= 8):
@@ -442,10 +741,107 @@ def other_npcs(doc, traders):
     return out
 
 
-def site_problems(doc, traders, source_root=None, skip_dressing=False):
+def keepers(doc, plazas):
+    """[(label, record, at, yaw, source, rule)] for every keeper built: rule 'frontage' (beside its Mart, facing its
+    plaza: R17M's original claim) for a counter at its own site with a clerk; 'stall' for a stall keeper, and for a
+    counter seated at a stall by the contract or standing at its square's stall with no clerk (Redbrow)."""
+    out = []
+    for c in emitted(doc):
+        at, yaw, src = position(c, plazas)
+        rule = "stall" if src == "contract" or (c.get("stall") and not c.get("near_trader")) else "frontage"
+        out.append(("counter %s" % c["id"], c, at, yaw, src, rule))
+    for s in emitted_stalls(doc):
+        at, yaw, src = position(s, plazas)
+        out.append(("stall %s" % s["id"], s, at, yaw, src, "stall"))
+    return out
+
+
+def donor_footprints(settlement, placements):
+    """{placement id: (x0, z0, x1, z1)} of every building placed in a town with no plan (a donor town: Pallet), from
+    its template's size and rotation; and the ids whose size could not be read."""
+    import town_character as TC
+    templates = TC.Templates(TC.default_pack_dir(), TC.default_vanilla_jar())
+    out, unknown = {}, []
+    for q in placements["placements"]:
+        if q.get("settlement") != settlement or q.get("kind") == "earthwork" or not q.get("position"):
+            continue
+        tdoc, _ = templates.get(q)
+        if tdoc is None:
+            unknown.append(q["id"])
+            continue
+        sx, _sy, sz = [int(v) for v in tdoc["size"]]
+        if (q.get("rotation") or "none") in ("clockwise_90", "counterclockwise_90"):
+            sx, sz = sz, sx
+        x0, z0 = int(q["position"]["x"]), int(q["position"]["z"])
+        out[q["id"]] = (x0, z0, x0 + sx - 1, z0 + sz - 1)
+    return out, unknown
+
+
+def earthwork_blocks(placements, settlement, positions):
+    """{(x, y, z): block} that the settlement's earthworks leave at the given positions, replaying their fill and
+    setblock commands in order (air removes). A `fill ... replace <filter>` or `keep` is applied as written for the
+    filters it can read and conservatively (as placed) otherwise: an over-report is a refusal, never a pass."""
+    want = set(positions)
+    got = {}
+    for q in placements["placements"]:
+        if q.get("settlement") != settlement or q.get("kind") != "earthwork":
+            continue
+        for cmd in q.get("commands") or []:
+            t = cmd.split()
+            try:
+                if t and t[0] == "fill" and len(t) >= 8:
+                    a = [int(v) for v in t[1:7]]
+                    lo, hi = [min(a[i], a[i + 3]) for i in range(3)], [max(a[i], a[i + 3]) for i in range(3)]
+                    hit = [p for p in want if all(lo[i] <= p[i] <= hi[i] for i in range(3))]
+                    block, mode = t[7], t[8:]
+                elif t and t[0] == "setblock" and len(t) >= 5:
+                    p = tuple(int(v) for v in t[1:4])
+                    hit, block, mode = ([p] if p in want else []), t[4], t[5:]
+                else:
+                    continue
+            except ValueError:
+                continue
+            for p in hit:
+                cur = got.get(p, "minecraft:air")
+                if mode[:1] == ["keep"] and not cur.startswith("minecraft:air"):
+                    continue
+                if mode[:1] == ["replace"] and len(mode) > 1 and not mode[1].startswith("#") \
+                        and cur.split("[")[0] != mode[1].split("[")[0]:
+                    continue
+                got[p] = block
+    return {p: b for p, b in got.items() if not b.split("[")[0].endswith(":air")}
+
+
+def deck_problems(where, x, y, z, yaw, s, plan, placements, world):
+    """A keeper on a sea town's decks (data/placements.json `ground: sea_deck`): the town is one earthwork, so a plan
+    Site would call every deck cell taken. On a deck cell with its four neighbours (tools/sea_town.py deck_ground),
+    standing one above the deck, nothing the earthworks build in its two blocks or its neighbours', on the town's
+    square and facing its centre."""
+    import sea_town as ST
+    out = []
+    level, deck = ST.deck_ground(world)
+    if y != level + 1:
+        out.append("%s: stands at y%d, but the deck is y%d" % (where, y, level))
+    cells = [(x + dx, z + dz) for dx, dz in ((0, 0), (1, 0), (-1, 0), (0, 1), (0, -1))]
+    for c in cells:
+        if c not in deck:
+            out.append("%s: the cell %s is not a deck cell" % (where, c))
+    occ = earthwork_blocks(placements, s, [(cx, y + h, cz) for cx, cz in cells for h in (0, 1)])
+    for p, b in sorted(occ.items()):
+        out.append("%s: %s stands at %s" % (where, b, p))
+    pz = (plan.get("plaza") or {}).get("rect")
+    if not pz or not in_rect(pz, x, z):
+        out.append("%s: not on its town's square %s" % (where, pz))
+    elif abs((yaw - plaza_yaw(plan, x, z) + 180) % 360 - 180) > YAW_SLACK:
+        out.append("%s: faces yaw %s, but its square's centre is at yaw %.0f" % (where, yaw, plaza_yaw(plan, x, z)))
+    return out
+
+
+def site_problems(doc, traders, source_root=None, skip_dressing=False, plazas=None):
     import ambient as A
     import ground as G
     import npc_seats as NS_
+    plazas = load_plazas() if plazas is None else plazas
     out, report = [], []
     placements = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
     dressing = json.loads((ROOT / "data" / "town_dressing.json").read_text(encoding="utf-8"))
@@ -459,42 +855,74 @@ def site_problems(doc, traders, source_root=None, skip_dressing=False):
     base = G.Ground(source_root)
     route = NS_._route_points()
     others = other_npcs(doc, traders)
-    built = emitted(doc)
+    built = keepers(doc, plazas)
     sites = {}
-    for c in built:
-        where = "counter %s at %s" % (c["id"], c["at"])
-        x, y, z = c["at"]
+    for label, c, at, yaw, src, rule in built:
+        where = "%s at %s" % (label, at)
+        x, y, z = at
         s = c["town"]
-        if s not in sites:
-            try:
-                sites[s] = A.Site(s, base, placements, dressing, None, rules)
-            except SystemExit as e:  # town_dressing.town_plan exits when derived/towns/<s>_plan.json is missing
-                sites[s] = e
-        site = sites[s]
-        if isinstance(site, SystemExit):
-            out.append("%s: the town's site model cannot be built: %s" % (where, str(site)[:200]))
-            continue
         plan = (placements["settlements"].get(s) or {}).get("plan") or {}
-        want_y = stand_y(site, plan, x, z)
-        if y != want_y:
-            out.append("%s: stands at y%d, but the plan's ground there puts it at y%d" % (where, y, want_y))
-        out += frontage_problems(where, c, plan, towns.get(s), site)
+        if not plan:
+            # a donor town (Pallet): no plan, so no Site model; ground from the heightmap, rounded (CLAUDE.md "Ground
+            # comes from the heightmap"), and the cell outside every placed building's footprint
+            want_y = int(round(base(x, z))) + 1
+            if y != want_y:
+                out.append("%s: stands at y%d, but the heightmap's ground there puts it at y%d" % (where, y, want_y))
+            fps, unknown = donor_footprints(s, placements)
+            if unknown:
+                out.append("%s: buildings whose size cannot be read: %s" % (where, unknown[:6]))
+            for pid, (x0, z0, x1, z1) in sorted(fps.items()):
+                if x0 - 1 <= x <= x1 + 1 and z0 - 1 <= z <= z1 + 1:
+                    out.append("%s: inside building %s or its 1-block margin" % (where, pid))
+            site, rule = None, "donor"
+        elif (placements["settlements"].get(s) or {}).get("ground") == "sea_deck":
+            # Pacifidlog. NOT the frontage rule: besides the earthwork, data/towns.json's sea_town footprint (x7020-7280,
+            # z6704-7238) is the pre-resite site, 2,000 blocks from the plan's (centre 5160, 7380), so a footprint
+            # check would refuse every cell of the built town (reported 2026-10-03; towns.json is not this tool's)
+            out += deck_problems(where, x, y, z, yaw, s, plan, placements, world)
+            rule = "deck"
+        else:
+            if s not in sites:
+                try:
+                    sites[s] = A.Site(s, base, placements, dressing, None, rules)
+                except SystemExit as e:  # town_dressing.town_plan exits when derived/towns/<s>_plan.json is missing
+                    sites[s] = e
+            site = sites[s]
+            if isinstance(site, SystemExit):
+                out.append("%s: the town's site model cannot be built: %s" % (where, str(site)[:200]))
+                continue
+            want_y = stand_y(site, plan, x, z)
+            if y != want_y:
+                out.append("%s: stands at y%d, but the plan's ground there puts it at y%d" % (where, y, want_y))
+            if rule == "frontage":
+                out += frontage_problems(where, dict(c, at=at, yaw=yaw), plan, towns.get(s), site)
+            elif src == "contract":
+                a = plazas[c["stall"]].get("at")
+                if isinstance(a, list) and len(a) == 3 and math.dist((x, z), (a[0], a[2])) > STALL_REACH:
+                    out.append("%s: %.1f blocks from its stall at %s" % (where, math.dist((x, z), (a[0], a[2])), a))
+            else:
+                # a fallback stall site: on the square itself, turned to its centre (where the stall will stand)
+                pz = (plan.get("plaza") or {}).get("rect")
+                if not pz or not in_rect(pz, x, z):
+                    out.append("%s: a stall keeper off its town's plaza %s" % (where, pz))
+                elif abs((yaw - plaza_yaw(plan, x, z) + 180) % 360 - 180) > YAW_SLACK:
+                    out.append("%s: faces yaw %s, but its plaza's centre is at yaw %.0f" % (where, yaw, plaza_yaw(plan, x, z)))
+            for dx, dz in ((0, 0), (1, 0), (-1, 0), (0, 1), (0, -1)):
+                why = site.blocked(x + dx, z + dz)
+                if why:
+                    out.append("%s: the cell (%d, %d) is taken by %s" % (where, x + dx, z + dz, why))
         if y - 1 < sea:
             out.append("%s: its ground y%d is under the sea level y%d" % (where, y - 1, sea))
-        for dx, dz in ((0, 0), (1, 0), (-1, 0), (0, 1), (0, -1)):
-            why = site.blocked(x + dx, z + dz)
-            if why:
-                out.append("%s: the cell (%d, %d) is taken by %s" % (where, x + dx, z + dz, why))
-        for what, q in others + [("keeper %s" % o["id"], tuple(o["at"])) for o in built if o is not c]:
+        for what, q in others + [(o[0], tuple(o[2])) for o in built if o[1] is not c]:
             if math.dist((x, y, z), q) < NPC_CLEAR:
                 out.append("%s: %.1f blocks from %s at %s" % (where, math.dist((x, y, z), q), what, q))
         if len(route):
             d = float(min(((route[:, 0] - x) ** 2 + (route[:, 1] - z) ** 2) ** 0.5))
             if d < ROUTE_CLEAR:
                 out.append("%s: %.1f blocks from a walked route line" % (where, d))
-        tr = traders[c["near_trader"]]["position"]
-        report.append("%s: ground y%d, cell and neighbours free, %.0f blocks from its clerk"
-                      % (where, y - 1, math.dist((x, z), (tr["x"], tr["z"]))))
+        tr = traders.get(c.get("near_trader") or "", {}).get("position")
+        report.append("%s: ground y%d, %s rule, from the %s%s" % (
+            where, y - 1, rule, src, "" if not tr else ", %.0f blocks from its clerk" % math.dist((x, z), (tr["x"], tr["z"]))))
     return out, report
 
 
@@ -561,9 +989,11 @@ def output_problems(doc, files):
         out.append("the charge macro is not the blackout's proven form")
     if files.get(fn("refund")) != ["$cobbledollars add @s $(amount)"]:
         out.append("the refund macro is not the documented add")
-    for c in emitted(doc):
+    # the stalls' purchases are the same function under stalls/, held to every rule below
+    shelves = [(c, "markets") for c in emitted(doc)] + [(s, "stalls") for s in emitted_stalls(doc)]
+    for c, kind in shelves:
         for it in c["stock"]:
-            path = fn("%s/%s" % (c["id"], it["id"]))
+            path = "data/%s/function/%s/%s/%s.mcfunction" % (NS, kind, c["id"], it["id"])
             body = files.get(path)
             if body is None:
                 out.append("%s: no purchase function" % path)
@@ -608,20 +1038,22 @@ def output_problems(doc, files):
             refused = function_limits.check_lines(body, rel)
             if refused:
                 out.append("%s: %d command(s) the server would refuse" % (rel, len(refused)))
-    for c in emitted(doc):
-        dlg = files.get("data/%s/dialogues/dlg_market_%s.json" % (NS, c["id"]))
-        npc = files.get("data/%s/npcs/npc_market_%s.json" % (NS, c["id"]))
+    for c, kind in shelves:
+        pre = "market" if kind == "markets" else "stall"
+        label = "counter" if kind == "markets" else "stall"
+        dlg = files.get("data/%s/dialogues/dlg_%s_%s.json" % (NS, pre, c["id"]))
+        npc = files.get("data/%s/npcs/npc_%s_%s.json" % (NS, pre, c["id"]))
         if dlg is None or npc is None:
-            out.append("counter %s: no compiled dialogue or NPC class" % c["id"])
+            out.append("%s %s: no compiled dialogue or NPC class" % (label, c["id"]))
             continue
         got = set()
         for o in dlg["pages"][0]["input"]["options"]:
-            m = re.search(r"function %s:markets/([a-z0-9_]+)/([a-z0-9_]+)'" % NS, o["action"])
+            m = re.search(r"function %s:%s/([a-z0-9_]+)/([a-z0-9_]+)'" % (NS, kind), o["action"])
             if m:
                 got.add((m.group(1), m.group(2), "isVisible" in o))
         want = {(c["id"], it["id"], bool(it.get("gate"))) for it in c["stock"]}
         if got != want:
-            out.append("counter %s: its dialogue offers %s, the data %s" % (c["id"], sorted(got), sorted(want)))
+            out.append("%s %s: its dialogue offers %s, the data %s" % (label, c["id"], sorted(got), sorted(want)))
     return out
 
 
@@ -631,35 +1063,41 @@ def collision_problems(doc):
     out = []
     dlg = json.loads((ROOT / "data" / "dialogue.json").read_text(encoding="utf-8"))
     taken = {c["id"] for c in dlg.get("conversations") or []} | {c.get("npc_id") for c in dlg.get("conversations") or []}
-    for c in doc["counters"]:
-        for k in ("dlg_market_%s" % c["id"], "npc_market_%s" % c["id"]):
-            if k in taken:
-                out.append("%s is also authored in data/dialogue.json" % k)
+    for pre, recs in (("market", doc["counters"]), ("stall", doc.get("stalls") or [])):
+        for c in recs:
+            for k in ("dlg_%s_%s" % (pre, c["id"]), "npc_%s_%s" % (pre, c["id"])):
+                if k in taken:
+                    out.append("%s is also authored in data/dialogue.json" % k)
     return out
 
 
-def audit(doc, source_root=None, skip_dressing=False):
+def audit(doc, source_root=None, skip_dressing=False, plazas=None):
     import progression_pack as PP
     prog = json.loads((ROOT / "data" / "progression.json").read_text(encoding="utf-8"))
     placements = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
     planned = {f["id"] for f in PP.plan(prog, placements=placements)["flags"]}
     towns = json.loads((ROOT / "data" / "towns.json").read_text(encoding="utf-8"))["towns"]
     traders = {t["id"]: t for t in json.loads((ROOT / "data" / "traders.json").read_text(encoding="utf-8"))["traders"]}
-    problems = static_problems(doc, planned, towns, traders) + collision_problems(doc)
+    plazas = load_plazas() if plazas is None else plazas
+    problems = static_problems(doc, planned, towns, traders) + stall_problems(doc, towns, plazas) + collision_problems(doc)
     if problems:
-        return problems, []
+        return problems, contract_report(doc, plazas)
     problems += curve_problems(doc) + overlay_problems(doc)
-    files, _ = build(doc)
+    files, _ = build(doc, plazas)
     problems += output_problems(doc, files)
-    p, report = site_problems(doc, traders, source_root, skip_dressing)
-    return problems + p, report
+    p, report = site_problems(doc, traders, source_root, skip_dressing, plazas)
+    return problems + p, contract_report(doc, plazas) + report
 
 
 # ---------------------------------------------------------------------------------------------------- the jars
 def jar_items(jar_dir):
     """{item id} from every jar's lang files: item.<ns>.<path> and block.<ns>.<path> keys. Read only."""
+    return jar_items_of(sorted(Path(jar_dir).glob("*.jar")))
+
+
+def jar_items_of(jars):
     ids = set()
-    for jp in sorted(Path(jar_dir).glob("*.jar")):
+    for jp in jars:
         with zipfile.ZipFile(jp) as z:
             for n in z.namelist():
                 if re.fullmatch(r"assets/[^/]+/lang/en_us\.json", n):
@@ -689,14 +1127,18 @@ def main(argv=None):
     o.add_argument("--check", action="store_true")
     j = sub.add_parser("ids")
     j.add_argument("--jar-dir", required=True)
+    j.add_argument("--jar", action="append", default=[],
+                   help="a further jar to read (repeatable): the Minecraft 1.21.1 jar for the stalls' minecraft: ids; "
+                        "without one, every minecraft: id is reported NOT CHECKED")
     sub.add_parser("report")
     args = p.parse_args(argv)
     doc = load(args.data)
     if args.cmd == "build":
         files, npcs = build(doc)
         write(files, args.out)
-        print("wrote %d files to %s: %d counters built of %d, %d keepers"
-              % (len(files), args.out, len(emitted(doc)), len(doc["counters"]), len(npcs)))
+        print("wrote %d files to %s: %d counters built of %d, %d stalls built of %d, %d keepers"
+              % (len(files), args.out, len(emitted(doc)), len(doc["counters"]), len(emitted_stalls(doc)),
+                 len(doc.get("stalls") or []), len(npcs)))
         return 0
     if args.cmd == "overlay":
         path = ROOT / doc["recipe_overlay"]["file"]
@@ -711,11 +1153,18 @@ def main(argv=None):
         return 0
     if args.cmd == "ids":
         have = jar_items(args.jar_dir)
-        sold = sorted({it["item"] for c in doc["counters"] for it in c["stock"]})
-        missing = [i for i in sold if i not in have]
+        for jp in args.jar:
+            have |= jar_items_of([Path(jp)])
+        sold = sorted({it["item"] for c in doc["counters"] + list(doc.get("stalls") or []) for it in c["stock"]})
+        vanilla_read = any(i.startswith("minecraft:") for i in have)
+        unchecked = [i for i in sold if i.startswith("minecraft:") and not vanilla_read]
+        missing = [i for i in sold if i not in have and i not in unchecked]
+        for i in unchecked:
+            print("NOT CHECKED %s: no Minecraft jar given (--jar)" % i)
         for i in missing:
-            print("PROBLEM %s is not an item in any jar in %s" % (i, args.jar_dir))
-        print("ids: %d sold, %d found, %d missing" % (len(sold), len(sold) - len(missing), len(missing)))
+            print("PROBLEM %s is not an item in any jar read" % i)
+        print("ids: %d sold, %d found, %d missing, %d not checked"
+              % (len(sold), len(sold) - len(missing) - len(unchecked), len(missing), len(unchecked)))
         return 1 if missing else 0
     if args.cmd == "report":
         for bdg, ask, ask_s, inc, ratio in curve(doc):
@@ -723,6 +1172,12 @@ def main(argv=None):
         for c in doc["counters"]:
             if c.get("path") == "off_path":
                 print("off path %s (%s, %s): $%s" % (c["id"], c["town"], c["status"], money(sum(it["price"] for it in c["stock"]))))
+        for s in doc.get("stalls") or []:
+            gated = sum(it["price"] for it in s["stock"] if it.get("gate"))
+            print("stall %s (%s, %s, %s): $%s of provisions, $%s gated%s" % (
+                s["id"], s["town"], s["path"], s["status"],
+                money(sum(it["price"] for it in s["stock"] if it.get("strand") == "provision")), money(gated),
+                " (on the curve)" if gated and s["path"] == "critical" else ""))
         return 0
     problems, report = audit(doc, args.source_root, args.skip_dressing)
     for line in report:
