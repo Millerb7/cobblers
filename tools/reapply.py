@@ -676,9 +676,11 @@ def prepare_jobs(a):
     add("northern_residents", "northern_residents.py", *src)
     add("northern_residents_audit", "northern_residents_audit.py", *src)
     # the far south's five places (2026-10-04): the generator fails closed on its own siting rules and on a record the
-    # heightmap disagrees with. Its independent audit is owed (data/far_south.json audit_checklist) and joins here,
-    # after the generator, when another agent writes it
+    # heightmap disagrees with; then its independent audit (tools/far_south_audit.py, another agent's), after the pack
+    # it reads: the pack replayed against the data and the heightmap, rows F-H, the keep-out and Mega field, the path
+    # rule, the species' climate, the caches' rewards pack, the gym 7 gate, the steps and this wiring
     add("far_south", "far_south.py", *src)
+    add("far_south_audit", "far_south_audit.py", *src)
     add("drovers_hollow:build", "drovers_hollow.py", "build", *src)
     add("drovers_hollow_audit", "drovers_hollow_audit.py", *src)
     # the three wayside places of 2026-10-03. Each generator refuses a spawn-condition palette and any block outside its
