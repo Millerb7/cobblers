@@ -37,6 +37,14 @@ nothing else, so a disabled tier or upgrade can still be bought, given and used,
 from the base file and `data/markets.json`, and `tools/markets.py audit` fails if the committed file differs from
 what the data writes. That the recipes vanish in game is not run.
 
+`cobbledollars/bank.json` is CobbleDollars' sell-back list, the Bank every CobbleDollars merchant opens on shift +
+right-click (2026-10-05, the owner: a way to earn money from the Minecraft loop). It is Cobbleverse's 80 entries
+unchanged, followed by ours: ores and ingots, apricorns, common berries and Pokemon drops. It is WRITTEN, not
+hand-edited: `python tools/bank.py write` builds it from `data/bank.json`, and `tools/bank.py check` fails if the file
+differs from the data or if any authored shop sells a bought item at or below the bank's price. The list is one
+server-wide file (read in the jar: `data/bank.json` `mechanism.verified`); `cobbledollars reload` re-reads it without
+a restart. That a sale pays in game is not run (`data/bank.json` `experiment`).
+
 **Getting this folder onto the server.** `tools/reapply.py install` copies it onto `<server>/config/` and then fails
 unless `tools/server_config_record.py check` finds the server's config recorded exactly. The same copy can be run on
 its own with `python tools/server_config_record.py install --server-dir <server>`. Until 2026-09-26 nothing did this

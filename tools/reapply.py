@@ -597,6 +597,11 @@ def prepare_jobs(a):
     # against the base and the jars' recipe conditions, tiers and the curve against PROGRESSION_LADDER, and every
     # keeper R17M places off streets, buildings, walked lines and other NPCs, and in front of its Mart
     add("markets:audit_independent", "markets_audit.py", "--server-dir", a.server_dir, *src)
+    # the CobbleDollars Bank's buy list (2026-10-05, data/bank.json): no pack -- a config overlay that `install` copies
+    # (modpack/config/cobbledollars/bank.json). Refuses an overlay the data does not write, a bought item any authored
+    # shop sells at or below the bank's price (the shopkeeper templates read from <server>/mods and datapacks only),
+    # a never_buy item, a spawn-condition block not harvested in place, and a buyer town with no merchant
+    add("bank:check", "bank.py", "check", "--server-dir", a.server_dir)
     # the ferry docks' pack (a SERVER_PACKS member): until 2026-10-02 no job built it, and a build/ left over from an
     # earlier hand run hid that; function_limits failed on a fresh checkout without it
     add("ferry_docks:build", "ferry_docks.py", "build", *src)
