@@ -757,6 +757,12 @@ def prepare_jobs(a):
     add("location_titles", "location_titles.py")
     # the badge flags: one advancement per gym leader and the Champion, set by rctmod on a won battle
     add("progression_pack", "progression_pack.py")
+    # the Rift finale's independent audit (tools/finale_audit.py, written by an agent that did not build it): HERE,
+    # after every pack it reads is built -- compile_dialogue, route_trainers, relic_underground:build, rift_zones:build
+    # and progression_pack above. The binder's compiled conversation EXECUTED from every start state (the flag only at
+    # rift_crisis_pending with both defeats), both trainers' emitted files against the jar and the post-gym-8 cap, the
+    # cradle replayed for the seats and Brann's sight, z5 run on the flag, and every pack swept for another setter
+    add("finale_audit", "finale_audit.py")
     # our wild spawns: the route and sub-region rosters from data/spawns.json (the suppression that makes them the
     # only thing spawning there is generated at install, against the server and world it will run on)
     add("compile_spawns", "compile_spawns.py")
