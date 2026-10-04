@@ -101,38 +101,9 @@ CLEAR_LIGHT = ("glass", "pane", "fence", "lantern", "chain", "leaves", "slab", "
 # KNOWN defects: the problem list must equal this set exactly (a new one fails; a fixed one fails until removed).
 # (check, key) -> why it is recorded rather than fixed. Filled from the first run, 2026-10-04 (the auditor does not fix
 # the builder; each is a defect in tools/ambient_idle.py's siting or data/ambient.json's species, for its owner).
-_ROAD = ("the door anchor (building_margin + 1 out from the facing edge) lands on the street the door faces: "
-         "tools/ambient_idle.py's TownSite never closes street cells (it inherits tools/ambient.py's worker site, "
-         "where a worker may stand on a street)")
-_FOLLOW = ("no townsperson or keeper within home_radius + 1: the follower fell back to a square or yard anchor "
-           "(rules.prefer.follower) and potters round nobody -- not 'following a kid around'")
-KNOWN: dict = {
-    **{("road", "idle_%s" % k): _ROAD for k in (
-        "gym2_town_06", "gym3_town_03", "gym3_town_19", "gym3_town_20", "gym4_town_04", "gym4_town_05",
-        "gym4_town_06", "gym6_town_04", "gym6_town_05", "gym6_town_06", "gym6_town_07", "gym6_town_08",
-        "gym6_town_09", "gym7_town_04", "gym7_town_05", "gym7_town_06", "gym8_town_03", "gym8_town_05",
-        "gym8_town_09", "gym8_town_23", "mining_town_05", "mining_town_06", "northlight_02", "northlight_22",
-        "tea_town_03")},
-    ("spot", "idle_gym3_town_09"): "a signpost (R15 cobblers:signs/place: spruce fence + sign) at its feet and head; "
-                                   "the idle site does not model derived/signposts.json",
-    ("spot", "idle_gym3_town_17"): "as above, the other signpost",
-    ("spot", "idle_gym7_town_15"): "a waystone (R8 cobblers:towns/gym7_town) in its head cell; the idle site does not "
-                                   "model the town's waystone",
-    ("npc", "idle_mining_town_11"): "in the cell beside the fossick_pit_tools keeper (data/markets.json): the stall's "
-                                    "keeper is not a plaza piece, so the site's keeper/customer cells miss it",
-    **{("follower", "idle_%s" % k): _FOLLOW for k in (
-        "gym1_town_10", "gym3_town_10", "gym6_town_11", "northlight_10", "sunset_west_09", "tea_town_09")},
-    ("sleeper", "slakoth:brightness"): "jar light 0-14: if canSleepAt reads total brightness, open sky by day (15) "
-                                       "is out of range and it never sleeps where it is put (by night only)",
-    ("sleeper", "bronzong:brightness"): "as slakoth: jar light 0-14",
-    ("sleeper", "litwick:emission"): "jar light 12-15: if canSleepAt's method_8317 is the block's own light "
-                                     "emission (air 0), it never sleeps in air. Which reading holds is UNPROVEN "
-                                     "(no mappings here): an in-game PoseType read settles it",
-    ("sleeper", "lampent:emission"): "as litwick: jar light 12-15",
-    ("sleeper", "pumpkaboo:emission"): "as litwick: jar light 11-15",
-    ("sleeper", "venipede:emission"): "as litwick: jar light 11-15",
-    ("sleeper", "whirlipede:emission"): "as litwick: jar light 11-15",
-}
+# 2026-10-04: all 42 first-run entries (25 road, 3 spot, 1 npc, 6 follower, 7 sleeper) were fixed in the generator
+# and data/ambient.json and removed here; the list is empty until a new defect is recorded rather than fixed.
+KNOWN: dict = {}
 
 
 class AuditError(SystemExit):

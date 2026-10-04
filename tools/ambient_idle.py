@@ -49,21 +49,40 @@ game. Because any `data merge` remakes the brain, the keeper never merges a slee
 Where they stand: the town plan and the build model, never a world (CLAUDE.md). The ground is tools/ground.py
 (rounded), a street's or the plaza's own paved y where the plan grades one. A spot is refused inside a building grown
 by building_margin, on a lamp, under a dressing piece, a plaza piece (and its stall's keeper and customer cells), an
-earthwork, a shrine, a townsperson or a working Pokemon's cells (grown), or near ground the water export changes.
+earthwork, a shrine, a working Pokemon's cells (grown), or near ground the water export changes; on a STREET (the
+town plan's paved cells and data/placements.json's street polylines brushed at their width, or a planless town's
+roads), on a walked route line, or on one of the square's walking lines (tools/plaza_centre.py's street mouths, door
+aprons and desire lines); within one cell of ANY NPC the apply places (data/npc_seats.json, data/markets.json's
+counters and stalls, and every npc and trainer item of tools/reapply.py's steps) -- so at least 2 from each; and on
+any cell the BUILT town does not leave open: tools/npc_spot_sweep.py's replay (another agent's tool) of every fill,
+setblock and `place template` every built pack runs (signposts, waystones, fences, porches, stalls, roofs) must
+classify the feet cell `outside` (a bench seat: `pedestal` too), with no door in or orthogonally beside it, and a
+still idler's body (the jar's hitbox x baseScale) clear of every solid cell. A door anchor whose own cell is refused
+(the spot building_margin + 1 out from the door usually lands on the street the door faces) is not dropped: the nearest
+open cell beside it is taken. So the build needs every other pack built first (reapply.py prepare runs it after them).
 Unlike a worker, an idler may stand in a yard (a house lot outside its building). Groups of 1-3 (rules.group_sizes)
 at spots at least group_gap apart: the frame-rate test found spread, not count, is what a client pays for.
 
-Not covered: what the plan does not model -- a fence, a sign, a tree or a bush in a yard (the export's foliage), NPCs
-seated by other files (scene NPCs, gate guards, trader clerks inside their shops), anything a player built. Roofs:
-NO roof sleepers -- no file in data/ or derived/towns/ models a building's roof, and a ridge of stairs is not a place
-to sleep; a roof cell would need the donor template's blocks (tools/npc_spot_sweep.py replays them) -- a follow-up.
+Sleepers by day: canSleepAt compares the spot's light (PokemonEntity.canSleepAt, method_8317 in the 1.8.0 jar; which
+light that is -- total brightness or the block's own emission -- is not settled here) with the species' range, so a day
+sleeper is a species whose range holds BOTH open sky by day (15) and a block that emits nothing (0), with times day or
+any: rules.sleeps_by_day.species filtered here, never by hand. A species in that table that fails either reading is
+refused as a sleeper.
+
+Followers stand only beside a placed NPC (rules.prefer.follower is ["npc"]): within follower_home_radius + 1 of it
+(the disc it potters in touches the NPC) and at least 2 cells from it.
+
+Not covered: a tree or a bush in a yard (the export's foliage: the replay has no trees), blocks a function writes by
+relative coordinates (the replay skips them), NPCs spawned at runtime or by relative coordinates, anything a player
+built. Roofs: NO roof sleepers -- a ridge of stairs is not a place to sleep.
 
   python tools/ambient_idle.py build [--source-root <root>]   # the pack and derived/ambient/idle_plan.json
   python tools/ambient_idle.py report                          # per-town counts and the keeper cost, from the plan
   python tools/ambient_idle.py verify --rcon --server-dir <server>
 
-tools/ambient.py build builds this pack too. The re-application: reapply.py R16C settles each town (force-loads it,
-runs its keeper twice) and checks every idler with verify.
+reapply.py prepare builds this pack in its own job (ambient_idle:build), after every pack it replays. The
+re-application: reapply.py R16C settles each town (force-loads it, runs its keeper twice) and checks every idler with
+verify.
 """
 from __future__ import annotations
 
@@ -95,6 +114,10 @@ STILL = ("sitter", "loafer")
 YAW = {"south": 0.0, "west": 90.0, "north": 180.0, "east": 270.0}
 NORMAL = {"south": (0, 1), "north": (0, -1), "east": (1, 0), "west": (-1, 0)}
 BUNEARY_TOWN = "lopunny_house"
+PACKS = ROOT / "build" / "datapacks"
+NPC_CLEAR = 1                     # an idler is never within this many cells (Chebyshev) of an NPC: at least 2 from it
+WALK_SOFT = ("street mouth", "door apron", "desire line", "street verge")   # the square's walking lines
+SKIP_STEPS = False                # set while this build reads reapply.steps(): its own R16C steps need the plan it makes
 
 
 class IdleError(SystemExit):
@@ -127,6 +150,138 @@ def rect_cells(r, m=0):
 
 def grow(cells, m):
     return {(x + dx, z + dz) for x, z in cells for dx in range(-m, m + 1) for dz in range(-m, m + 1)}
+
+
+def day_sleepers(rules):
+    """The species that sleep in a lit town by day under BOTH readings of canSleepAt's light: from the jar's table in
+    rules.sleeps_by_day.species ("lo-hi times"), those whose range holds 0 and 15 and whose times are day or any."""
+    out = set()
+    for sp, v in rules["sleeps_by_day"]["species"].items():
+        rng, _, times = v.partition(" ")
+        lo, hi = (int(n) for n in rng.split("-"))
+        if lo <= 0 and hi >= 15 and times.strip() in ("day", "any"):
+            out.add(sp)
+    return out
+
+
+def street_cells(settlement, doc):
+    """data/placements.json's street polylines for one settlement, brushed at width // 2 each side."""
+    cells = set()
+    pdata = (doc["settlements"].get(settlement) or {}).get("plan") or {}
+    for st in pdata.get("streets") or []:
+        half = int(st.get("width", 1)) // 2
+        pts = st.get("polyline") or []
+        for (ax, az), (bx, bz) in zip(pts, pts[1:]):
+            n = int(max(abs(bx - ax), abs(bz - az))) + 1
+            for i in range(n + 1):
+                cx, cz = round(ax + (bx - ax) * i / n), round(az + (bz - az) * i / n)
+                cells |= {(cx + dx, cz + dz) for dx in range(-half, half + 1) for dz in range(-half, half + 1)}
+    return cells
+
+
+_CACHE = {}
+
+
+def walked_lines():
+    """{route id: [(x, z)]} data/route_paths.json, the walked route lines."""
+    if "walked" not in _CACHE:
+        d = json.loads((ROOT / "data" / "route_paths.json").read_text(encoding="utf-8"))
+        _CACHE["walked"] = {k: [tuple(p[:2]) for p in v] for k, v in d["paths"].items()}
+    return _CACHE["walked"]
+
+
+def plaza_walkways(settlement, doc, ground):
+    """{(x, z): why} the square's walking lines as tools/plaza_centre.py marks them for its pieces (street mouths, door
+    aprons, desire lines, a street's verge over the square), for a settlement data/plaza_centres.json dresses."""
+    import plaza_centre as PC
+    if "plaza" not in _CACHE:
+        _CACHE["plaza"] = (json.loads((ROOT / "data" / "plaza_centres.json").read_text(encoding="utf-8"))["towns"],
+                           PC.refs_of())
+    recs, refs = _CACHE["plaza"]
+    if settlement not in recs:
+        return {}
+    town = PC.Town(settlement, dict(recs[settlement], _town=settlement), doc,
+                   PC.ground_for(settlement, ground, doc, None), refs)
+    out = {c: w for c, w in town.soft.items() if w.startswith(WALK_SOFT)}
+    out.update({c: w for c, w in town.why.items() if w in ("street", "street verge") and c in set(PC.rect_cells(town.rect))})
+    return out
+
+
+class Built:
+    """The towns as the apply builds them: tools/npc_spot_sweep.py's replay (another agent's tool) of every fill,
+    setblock and `place template` in tools/reapply.py's step order, from the built packs, on the canonical heightmap,
+    over boxes round the cells an idler could be given."""
+
+    def __init__(self, packs, ground, cells, steps):
+        import npc_spot_sweep as SW
+        self.SW = SW
+        tiles = {}
+        for (x, z), ys in cells.items():
+            k = (x >> 4, z >> 4)
+            lo, hi = tiles.get(k, (10 ** 9, -10 ** 9))
+            tiles[k] = (min(lo, min(ys)), max(hi, max(ys)))
+        boxes = [(tx * 16 - 2, lo - SW.BOX_DOWN, tz * 16 - 2, tx * 16 + 17, hi + SW.BOX_UP, tz * 16 + 17)
+                 for (tx, tz), (lo, hi) in sorted(tiles.items())]
+        self.m = SW.Model(ground, boxes)
+        self.lines = SW.replay(self.m, SW.Function(packs), SW.Templates(packs), steps)
+        self.sizes = species_sizes()
+
+    def refuses(self, x, y, z, species=None, seat=False):
+        SW, m = self.SW, self.m
+        fy = int(math.floor(y)) + (1 if seat else 0)
+        cls, detail = SW.classify(m, x, fy, z)
+        if seat and cls == "pedestal":
+            cls = "outside"
+        if cls != "outside":
+            return "%s: %s" % (cls, detail)
+        for dx, dz in ((0, 0), (1, 0), (-1, 0), (0, 1), (0, -1)):
+            for dy in (-1, 0, 1):
+                n = SW.short(m.at(x + dx, fy + dy, z + dz))
+                if "_door" in n and "trapdoor" not in n:
+                    return "in or beside a door"
+        if species and self.sizes is not None:
+            w, h = self.sizes.get(species, (1.0, 2.0))
+            hw, px, pz = w / 2.0, x + 0.5, z + 0.5
+            for cx in range(math.floor(px - hw + 1e-6), math.floor(px + hw - 1e-6) + 1):
+                for cz in range(math.floor(pz - hw + 1e-6), math.floor(pz + hw - 1e-6) + 1):
+                    for cy in range(math.floor(y), math.floor(y + h - 1e-6) + 1):
+                        if seat and cy == fy - 1:
+                            continue
+                        st = m.at(cx, cy, cz)
+                        if SW.solid(st):
+                            return "its body (%.1f x %.2f) meets %s at %s" % (w, h, SW.short(st), (cx, cy, cz))
+        return None
+
+
+def species_sizes():
+    """{species: (width, height)} the jar's hitbox x baseScale, or None with no Cobblemon jar here (the body check is
+    then skipped and the build says so)."""
+    import zipfile
+    try:
+        import battle_sim
+        jar = battle_sim.find_jar()
+    except (SystemExit, ImportError):
+        return None
+    out = {}
+    with zipfile.ZipFile(jar) as z:
+        for n in z.namelist():
+            if n.startswith("data/cobblemon/species/") and n.endswith(".json"):
+                d = json.loads(z.read(n))
+                hb = d.get("hitbox") or {"width": 1.0, "height": 1.0}
+                s = float(d.get("baseScale", 1))
+                out[n.rsplit("/", 1)[1][:-5]] = (float(hb["width"]) * s, float(hb["height"]) * s)
+    return out
+
+
+def load_steps(packs):
+    """tools/reapply.py's steps over `packs`, with this pack's own R16C steps left out (they need the plan being made)."""
+    import npc_spot_sweep as SW
+    import ambient_idle as me
+    me.SKIP_STEPS = True
+    try:
+        return SW.load_steps(packs)
+    finally:
+        me.SKIP_STEPS = False
 
 
 # ------------------------------------------------------------------------------------------------ the site of a town
@@ -187,10 +342,49 @@ class TownSite:
                     self.why.setdefault(c, "plaza light")
         elif plan.get("plaza"):
             self.square, self.square_y = tuple(plan["plaza"]["rect"]), int(plan["plaza"]["y"])
-        self.npcs = [(nid, (x, z)) for nid, s, (x, _y, z) in npcs if s == settlement]
-        for nid, c in self.npcs:
-            for g in grow({c}, 1):
+        # the town's box: its plan's footprint, plaza, lots and every building
+        xs, zs = [], []
+        for q in [plan.get("footprint"), self.square] + self.lots + list(rects.values()):
+            if q:
+                xs += [q[0], q[2]]
+                zs += [q[1], q[3]]
+        self.box = (min(xs) - 16, min(zs) - 16, max(xs) + 16, max(zs) + 16) if xs else None
+        # streets: the plan's paved cells and data/placements.json's street polylines brushed at their width, or a
+        # planless town's roads; the square's own cells are judged by its walking lines below
+        streets = set(self.base.street_y) | street_cells(settlement, doc)
+        if not plan:
+            import plaza_centre as PC
+            streets |= set(PC.road_cells(settlement, doc))
+        for c in streets:
+            if not self.on_square(*c):
+                self.why.setdefault(c, "street")
+        if self.box:
+            for rid, pts in walked_lines().items():
+                for x, z in pts:
+                    if self.box[0] <= x <= self.box[2] and self.box[1] <= z <= self.box[3]:
+                        self.why.setdefault((x, z), "walked route line %s" % rid)
+        for c, w in plaza_walkways(settlement, doc, ground).items():
+            self.why.setdefault(c, "the square's %s" % w)
+        # every NPC the apply places, wherever its record says it belongs (a cell is a cell): never within NPC_CLEAR;
+        # the town's own are the followers' anchors
+        self.npcs = []
+        self.npc_cells = {}
+        for _pid, k in self.keepers:
+            for g in grow({k}, NPC_CLEAR):
+                self.npc_cells.setdefault(g, "stall keeper")
+        if pc.is_file():
+            for p in pz["pieces"]:
+                if p.get("customer"):
+                    self.npc_cells.setdefault((p["customer"][0], p["customer"][-1]), "stall customer %s" % p["id"])
+        for nid, s, (x, _y, z) in npcs:
+            fx, fz = float(x), float(z)
+            c = (int(math.floor(fx)), int(math.floor(fz)))
+            for g in grow({c}, NPC_CLEAR):
                 self.why.setdefault(g, "townsperson %s" % nid)
+                self.npc_cells.setdefault(g, "townsperson %s" % nid)
+            if s == settlement or (self.box and self.box[0] <= fx <= self.box[2] and self.box[1] <= fz <= self.box[3]):
+                self.npcs.append((nid, (fx, fz)))
+        self.built = None                                   # a Built, set by plan() once every site is known
         for sid, c in shrines:
             for g in grow({c}, 4):
                 self.why.setdefault(g, "shrine %s" % sid)
@@ -220,6 +414,36 @@ class TownSite:
             if self.water[max(0, z - m):z + m + 1, max(0, x - m):x + m + 1].any():
                 return "on or within %d of a column the water export changes" % m
         return None
+
+    def npc_close(self, x, z):
+        """An NPC (or a stall's keeper or customer cell) on or beside (x, z): a bench seat is judged by this alone,
+        since its cells are a plaza piece's."""
+        return self.npc_cells.get((x, z))
+
+    def refused(self, c, y, species, kind, seat=False):
+        """Why the BUILT town refuses an idler of `species` standing at cell c with y (a seat's y ends .5), or None.
+        Without a Built (a test building one town) nothing is refused here."""
+        if self.built is None:
+            return None
+        return self.built.refuses(c[0], y, c[1], species if kind in STILL else None, seat)
+
+    def candidates(self):
+        """{(x, z): {feet y}} every cell place_town could try: the input to the replay's boxes."""
+        out = {}
+        an = self.anchors()
+        for cat, lst in an.items():
+            if cat == "bench":
+                continue
+            ring = NPC_RING if cat == "npc" else OFFSETS
+            for _aid, (ax, az), _yaw in lst:
+                for dx, dz in ring:
+                    c = (ax + dx, az + dz)
+                    if not self.blocked(*c):
+                        out.setdefault(c, set()).add(self.y(*c))
+        for _bid, seats, fy, _f in self.benches:
+            for c in seats:
+                out.setdefault(tuple(c), set()).add(fy + 1)
+        return out
 
     # -------------------------------------------------------------------------------------------- the anchors
     def anchors(self):
@@ -252,9 +476,13 @@ class TownSite:
             for x in range(min(x0, x1) + 1, max(x0, x1)):
                 for z in range(min(z0, z1) + 1, max(z0, z1)):
                     out["yard"].append(("yard", (x, z), yaw_to(hx, hz, x + .5, z + .5)))
-        for nid, (x, z) in self.npcs + self.keepers:
-            for dx, dz in ((3, 0), (-3, 0), (0, 3), (0, -3)):
-                out["npc"].append((nid, (x + dx, z + dz), None))
+        # a follower's anchor is an NPC the apply places: place_town seats it in the ring round it (NPC_CLEAR < d <=
+        # reach). A plaza stall's keeper_at is where a keeper WOULD stand, not an NPC anything spawns: kept clear of,
+        # never an anchor
+        self.npc_at = {}
+        for nid, (x, z) in self.npcs:
+            self.npc_at[nid] = (x, z)
+            out["npc"].append((nid, (int(math.floor(x)), int(math.floor(z))), None))
         for k in out:
             out[k].sort(key=lambda a: h32(self.settlement, k, a[1][0], a[1][1]))
         return out
@@ -262,6 +490,9 @@ class TownSite:
 
 OFFSETS = [(0, 0)] + sorted({(dx, dz) for dx in range(-3, 4) for dz in range(-3, 4) if (dx, dz) != (0, 0)},
                             key=lambda d: (abs(d[0]) + abs(d[1]), d))
+# round an NPC: at least NPC_CLEAR + 1 cells off it (Chebyshev), nearest first; place_town keeps those within reach
+NPC_RING = sorted({(dx, dz) for dx in range(-4, 5) for dz in range(-4, 5) if max(abs(dx), abs(dz)) > NPC_CLEAR},
+                  key=lambda d: (math.hypot(*d), d))
 
 
 def place_town(settlement, spec, site, rules, kinds_on):
@@ -278,11 +509,12 @@ def place_town(settlement, spec, site, rules, kinds_on):
             continue
         species = list(spec.get(kind) or [])
         if kind == "sleeper":
-            day = rules["sleeps_by_day"]["species"]
+            day = day_sleepers(rules)
             bad = [s for s in species if s not in day]
             if bad:
-                raise IdleError("ambient_idle/%s: %s cannot sleep in a lit town by day (rules.sleeps_by_day): %s"
-                                % (settlement, kind, bad))
+                raise IdleError("ambient_idle/%s: %s may never sleep in a lit town by day under one of the two readings "
+                                "of canSleepAt's light (rules.sleeps_by_day: open sky 15 and a block's own light 0 must "
+                                "both be in range): %s" % (settlement, kind, bad))
         groups = []
         while species:
             k = next(sizes)
@@ -298,22 +530,44 @@ def place_town(settlement, spec, site, rules, kinds_on):
                         continue
                     if cat == "bench":
                         seats = [b for b in site.benches if b[0] == aid][0]
-                        cells = [c for c in seats[1] if c not in used_cells][:min(2, len(grp))]
+                        cells = []
+                        for c in seats[1]:
+                            if c in used_cells:
+                                continue
+                            if site.npc_close(*c) or site.refused(c, seats[2] + 0.5, grp[len(cells)], kind, seat=True):
+                                continue
+                            cells.append(c)
+                            if len(cells) == min(2, len(grp)):
+                                break
                         if len(cells) < len(grp):
                             continue
                         placed = [(c, seats[2] + 0.5, YAW[seats[3]], cat, aid) for c in cells]
                         break
-                    if site.blocked(ax, az):
+                    if cat == "npc":
+                        # beside the NPC itself: within follower_home_radius + 1 of where it stands, never next to it
+                        npc = site.npc_at[aid]
+                        reach = float(rules["follower_home_radius"]) + 1
+                        ring = [d for d in NPC_RING if math.dist((ax + d[0] + .5, az + d[1] + .5), npc) <= reach - 0.05]
+                    elif cat == "door":
+                        ring = OFFSETS        # the door spot itself is often the street: the nearest open cell beside it
+                    elif site.blocked(ax, az):
                         continue
+                    else:
+                        ring = OFFSETS
                     ay = site.y(ax, az)
                     cells = []
-                    for dx, dz in OFFSETS:
+                    for dx, dz in ring:
                         c = (ax + dx, az + dz)
                         if c in used_cells or site.blocked(*c) or abs(site.y(*c) - ay) > 1:
                             continue
                         if any(math.dist(c, p[0]) < mgap for p in cells):
                             continue
-                        face = yaw if yaw is not None else yaw_to(c[0] + .5, c[1] + .5, ax + .5, az + .5)
+                        if site.refused(c, site.y(*c), grp[len(cells)], kind):
+                            continue
+                        if cat == "npc":
+                            face = yaw_to(c[0] + .5, c[1] + .5, *site.npc_at[aid])
+                        else:
+                            face = yaw if yaw is not None else yaw_to(c[0] + .5, c[1] + .5, ax + .5, az + .5)
                         cells.append((c, float(site.y(*c)), face, cat, aid))
                         if len(cells) == len(grp):
                             break
@@ -383,9 +637,20 @@ def worker_cells():
     return out
 
 
-def npc_spots():
+def npc_spots(steps=None):
+    """[(id, settlement or None, (x, y, z))] every NPC the apply places: data/npc_seats.json, data/markets.json's
+    counters and stalls, and, given tools/reapply.py's steps, every npc and trainer item in them."""
     d = json.loads((ROOT / "data" / "npc_seats.json").read_text(encoding="utf-8"))
-    return [(s["id"], s.get("settlement"), tuple(s["at"])) for s in d["seats"] if s.get("at")]
+    out = [(s["id"], s.get("settlement"), tuple(s["at"])) for s in d["seats"] if s.get("at")]
+    mk = json.loads((ROOT / "data" / "markets.json").read_text(encoding="utf-8"))
+    for r in (mk.get("counters") or []) + (mk.get("stalls") or []):
+        if r.get("at"):
+            out.append((r["id"], r.get("town"), tuple(r["at"])))
+    for _sid, _d, items in steps or []:
+        for it in items:
+            if it[0] in ("npc", "trainer"):
+                out.append((it[1][0], None, tuple(it[1][1])))
+    return out
 
 
 def shrine_spots():
@@ -393,7 +658,7 @@ def shrine_spots():
     return [(s["id"], tuple(s["at"])) for s in d.get("shrines") or [] if s.get("at")]
 
 
-def plan(source_root=None):
+def plan(source_root=None, packs=None):
     import ground as G
     data = load()
     idle = data["idle"]
@@ -407,18 +672,29 @@ def plan(source_root=None):
     if A.WATER_CHANGED.is_file():
         import numpy as np
         water = np.load(A.WATER_CHANGED)
-    wc, npcs, shrines = worker_cells(), npc_spots(), shrine_spots()
+    # the built town: every pack's block writes replayed (the apply's own steps; this pack's are left out)
+    steps = load_steps(packs or PACKS)
+    wc, npcs, shrines = worker_cells(), npc_spots(steps), shrine_spots()
     n_workers = {}
     for w in data["workers"]:
         n_workers[w["settlement"]] = n_workers.get(w["settlement"], 0) + 1
-    towns, everyone, shortfalls = {}, [], []
+    sites = {}
     for s, spec in idle["towns"].items():
         if s not in doc["settlements"]:
             raise IdleError("ambient_idle: %s has no settlement in data/placements.json" % s)
         for k in spec:
             if k not in KINDS and not k.endswith("why"):
                 raise IdleError("ambient_idle/%s: unknown kind %r" % (s, k))
-        site = TownSite(s, g, doc, dressing, water, rules, wc, npcs, shrines)
+        sites[s] = TownSite(s, g, doc, dressing, water, rules, wc, npcs, shrines)
+    cells = {}
+    for site in sites.values():
+        for c, ys in site.candidates().items():
+            cells.setdefault(c, set()).update(ys)
+    built = Built(packs or PACKS, g, cells, steps)
+    towns, everyone, shortfalls = {}, [], []
+    for s, spec in idle["towns"].items():
+        site = sites[s]
+        site.built = built
         idlers, short = place_town(s, spec, site, rules, kinds_on)
         if short:
             shortfalls.append("%s: no room for %s" % (s, short))
@@ -453,7 +729,8 @@ def plan(source_root=None):
         r = max(math.dist((cx, cz), (i["at"][0], i["at"][2])) for i in idlers) + rules["keep_margin"]
         gates[s] = {"centre": [round(cx, 1), cy, round(cz, 1)], "radius": int(math.ceil(r))}
     return {"rules": rules, "kinds_on": kinds_on, "towns": towns, "gates": gates, "workers_per_town": n_workers,
-            "water_changed_checked": water is not None}
+            "water_changed_checked": water is not None, "replayed_lines": built.lines,
+            "body_checked": built.sizes is not None}
 
 
 # ------------------------------------------------------------------------------------------------ the functions
@@ -573,11 +850,14 @@ def cost(pl):
     """Command lines per tick, from the functions as written: always (nobody near), and per occupied town."""
     rules = pl["rules"]
     fns = functions(pl)
-    always = 4 + len(fns["keep_all"]) / rules["keep_every"] + len(fns["wakes"]) / rules["wake_every"]
+
+    def run(name):                       # the command lines a function runs: its comments cost nothing
+        return len([l for l in fns[name] if l.strip() and not l.lstrip().startswith("#")])
+    always = run("tick") + run("keep_all") / rules["keep_every"] + run("wakes") / rules["wake_every"]
     per = {}
     for s, idlers in pl["towns"].items():
         if idlers:
-            lines = len([l for l in fns["t/%s/keep" % s] if not l.startswith("#")])
+            lines = run("t/%s/keep" % s)
             ai = sum(1 for i in idlers if i["kind"] not in STILL)
             per[s] = {"idle": len(idlers), "ai_on": ai, "keep_lines_per_tick": round(lines / rules["keep_every"], 2)}
     return {"always_lines_per_tick": round(always, 2), "towns": per}
@@ -616,7 +896,10 @@ def forceload_boxes(idlers, pad=2, tile=240):
 
 def placement_steps():
     """reapply.py R16C: each town's idlers settled -- its area force-loaded, its keeper run twice (a chunk's saved
-    entities load a moment after its blocks; the keeper removes a second), the area let go."""
+    entities load a moment after its blocks; the keeper removes a second), the area let go. None while this build
+    reads the steps (SKIP_STEPS): they write no block, and they need the plan the build is making."""
+    if SKIP_STEPS:
+        return []
     out = []
     for s, idlers in sorted(plan_doc()["towns"].items()):
         if not idlers:
@@ -672,9 +955,10 @@ def main(argv=None):
         for line in report(pl):
             print(line)
         n = sum(len(v) for v in pl["towns"].values())
-        print("wrote %s: %d idle Pokemon in %d places, %d functions%s" % (
-            OUT, n, sum(1 for v in pl["towns"].values() if v), len(fns),
-            "" if pl["water_changed_checked"] else " (WARNING: no derived/water_shape/changed.npy; the water rule was not checked)"))
+        print("wrote %s: %d idle Pokemon in %d places, %d functions; %d block-writing lines of every pack replayed%s%s" % (
+            OUT, n, sum(1 for v in pl["towns"].values() if v), len(fns), pl["replayed_lines"],
+            "" if pl["water_changed_checked"] else " (WARNING: no derived/water_shape/changed.npy; the water rule was not checked)",
+            "" if pl["body_checked"] else " (WARNING: no Cobblemon jar here; the still idlers' bodies were not checked)"))
         return 0
     if a.cmd == "report":
         for line in report(plan_doc()):
