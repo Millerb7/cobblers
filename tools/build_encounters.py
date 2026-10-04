@@ -342,6 +342,41 @@ def expand_family(dex, rules, tier, band, species, role, weight, where, mtier=No
     return out
 
 
+def drop_stages(stages, t, tid, used):
+    """A family's stages with the table's `drop_stages` taken out (the owner, 2026-10-04: wrong-country spawns).
+
+    A family is walked forward through the jar's evolutions, so a place that fits the first stage can be handed a
+    later one that does not -- Crabrawler belongs on a southern strand, Crabominable (its ice-stone evolution, native
+    only to Cobblemon's is_peak) does not. `drop_stages` maps such a stage to the reason it is out; its weight goes
+    to the family's last kept stage, so the family keeps the weight its role gives it and the table's tier and
+    shape stay whole. A dropped stage that no family in the table produces is stale and fails closed (see the
+    check after the table is built). It applies to the table's base families only: a heart names its species
+    itself, so a heart that does not want one leaves it out."""
+    drops = t.get("drop_stages") or {}
+    if not drops:
+        return stages
+    kept = [s for s in stages if s[0] not in drops]
+    gone = [s for s in stages if s[0] in drops]
+    if not gone:
+        return stages
+    if not kept:
+        raise DesignError("%s: drop_stages takes every stage of a family (%s); drop the family instead"
+                          % (tid, ", ".join(s[0] for s in gone)))
+    used.update(s[0] for s in gone)
+    name, lo, hi, w, reason = kept[-1]
+    lost = round(sum(s[3] for s in gone), 1)
+    kept[-1] = (name, lo, hi, round(w + lost, 1), "%s; takes the weight of %s, dropped here: %s" % (
+        reason, ", ".join(s[0] for s in gone), "; ".join(drops[s[0]] for s in gone)))
+    return kept
+
+
+def check_drops_used(t, tid, used):
+    stale = sorted(set(t.get("drop_stages") or {}) - used)
+    if stale:
+        raise DesignError("%s: drop_stages names %s, which no family in the table produces; remove the stale entry"
+                          % (tid, ", ".join(stale)))
+
+
 def build_table(dex, rules, tid, t, kind, extra_families=()):
     """[(row dict)] for one table: the generic fields of both an entry and its mirror."""
     tier = t["tier"]
@@ -353,6 +388,7 @@ def build_table(dex, rules, tid, t, kind, extra_families=()):
     fams = [(item, "land") for item in t.get("land") or []] + [(item, "water") for item in t.get("water") or []]
     fams += list(extra_families)
     rows = []
+    used = set()
     for item, half, *prio in [(f[0], f[1]) + tuple(f[2:]) for f in fams]:
         species, role, weight, cond = parse_family(item, rules, tid)
         if role == "presence":
@@ -361,7 +397,8 @@ def build_table(dex, rules, tid, t, kind, extra_families=()):
         if kind == HABITAT and " " in species:
             raise DesignError("%s: %s has a space; a habitat pool species is a bare id" % (tid, species))
         nearby_water = "minecraft:water" in (cond.get("neededNearbyBlocks") or [])
-        for name, lo, hi, w, reason in expand_family(dex, rules, tier, band, species, role, weight, tid, mtier):
+        stages = drop_stages(expand_family(dex, rules, tier, band, species, role, weight, tid, mtier), t, tid, used)
+        for name, lo, hi, w, reason in stages:
             if " " in name and kind == HABITAT:
                 raise DesignError("%s: stage %s has a space; a habitat pool species is a bare id" % (tid, name))
             if hi > cap or lo < band[0] or hi > band[1]:
@@ -388,6 +425,7 @@ def build_table(dex, rules, tid, t, kind, extra_families=()):
         a["level"] = "%d-%d" % (min(alo, blo), max(ahi, bhi))
         a["weight"] = round(a["weight"] + r["weight"], 1)
         a["reason"] += "; also " + r["reason"]
+    check_drops_used(t, tid, used)
     return [merged[k] for k in order], band
 
 

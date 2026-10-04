@@ -93,7 +93,7 @@ def test_a_pad_without_its_head_room_is_caught(ground, tmp_path, monkeypatch):
     rep = run(ground, tmp_path)
     cr = REC["anchor_pad"]["clear_radius"]
     gd = {d["id"]: d["anchor"] for f in GULCH["farms"] for d in f["dens"]}
-    raised = sorted(r["species"] for r in REC["dens"] for (ax, ay, az) in [gd[r["den"]]]
+    raised = sorted(r["den"] for r in REC["dens"] for (ax, ay, az) in [gd[r["den"]]]
                     if any(round(ground(x, z)) > ay - 1 for x in range(ax - cr, ax + cr + 1)
                            for z in range(az - cr, az + cr + 1) if (x - ax) ** 2 + (z - az) ** 2 <= cr * cr))
     assert raised, "no den's pad holds a raised column: this mutation cannot bite on the current dens"
@@ -108,14 +108,17 @@ def test_a_boulder_in_the_spawn_cylinder_is_caught(ground, tmp_path, monkeypatch
 
 
 def test_a_spawn_condition_slipped_past_the_palette_is_caught(ground, tmp_path, monkeypatch):
+    # repointed 2026-10-04 to the den's id: errors name the den, not its species (a species may hold several dens)
+    den = next(r["den"] for r in REC["dens"] if r["species"] == "garchomp")
+
     def sand(d):
-        if d.species == "garchomp":
+        if d.rec["den"] == den:
             for k, s in list(d.w.items()):
                 if s == "minecraft:smooth_sandstone":
                     d.w[k] = "minecraft:sand"
     _after(monkeypatch, "build", sand)
     rep = run(ground, tmp_path)
-    assert any(e.startswith("blocks: garchomp writes minecraft:sand, a spawn condition") for e in rep.errors)
+    assert any(e.startswith("blocks: %s writes minecraft:sand, a spawn condition" % den) for e in rep.errors), rep.errors
 
 
 def test_a_light_in_a_lair_is_caught(ground, tmp_path, monkeypatch):
@@ -143,7 +146,7 @@ def test_a_dig_deeper_than_declared_is_caught(ground, tmp_path, monkeypatch):
     monkeypatch.setattr(M.Den, "lower", lambda self, x, z, newtop, floor: orig(self, x, z, newtop - 1, floor))
     rep = run(ground, tmp_path)
     # repointed 2026-10-03 from Tyranitar and Garchomp (retired) to every den whose kit digs (a crater or a burrow)
-    digs = sorted(r["species"] for r in REC["dens"] if r.get("dig"))
+    digs = sorted(r["den"] for r in REC["dens"] if r.get("dig"))
     assert digs, "no den digs: this mutation cannot bite on the current dens"
     assert sorted({e.split(":")[1].strip() for e in rep.errors if e.startswith("ground: ")}) == digs
 
@@ -159,7 +162,7 @@ def test_a_sign_left_unbuilt_is_caught(ground, tmp_path, monkeypatch):
     # of the most-used kit (Houndoom's); every den whose feature it is must be named, by its signature and its mark
     monkeypatch.setattr(M.Den, "bone_pile", lambda self: None)
     rep = run(ground, tmp_path)
-    bones = sorted(r["species"] for r in REC["dens"] if r["feature"] == "bone_pile")
+    bones = sorted(r["den"] for r in REC["dens"] if r["feature"] == "bone_pile")
     assert bones, "no den's sign is a bone heap: this mutation cannot bite on the current dens"
     for check in ("signature", "visible"):
         named = {e.split(": ", 1)[1].split()[0].rstrip(":") for e in rep.errors if e.startswith(check + ": ")}
@@ -168,15 +171,57 @@ def test_a_sign_left_unbuilt_is_caught(ground, tmp_path, monkeypatch):
 
 def test_a_scrape_in_the_skins_own_stone_does_not_read(ground, tmp_path, monkeypatch):
     orig = M.Den.scrape
+    den = next(r["den"] for r in REC["dens"] if r["species"] == "houndoom")
 
     def grey(self):
         orig(self)
         for k, s in list(self.w.items()):
-            if self.species == "houndoom" and k[1] == self.ground(k[0], k[2]):
+            if self.rec["den"] == den and k[1] == self.ground(k[0], k[2]):
                 self.w[k] = "minecraft:cobblestone"
     monkeypatch.setattr(M.Den, "scrape", grey)
     rep = run(ground, tmp_path)
-    assert any(e.startswith("visible: houndoom") and "skin" in e for e in rep.errors)
+    assert any(e.startswith("visible: %s" % den) and "skin" in e for e in rep.errors), rep.errors
+
+
+# Without it a species holding two dens could be dressed once, its second den left bare or its two lairs written to one
+# file: every den id has its own lair function, a species with several dens has as many distinct lairs, and no lair is
+# named after a species.
+def test_each_den_of_a_species_has_its_own_lair(ground, tmp_path):
+    rep = run(ground, tmp_path)
+    by_sp = {}
+    for r in REC["dens"]:
+        by_sp.setdefault(r["species"], []).append(r["den"])
+    multi = {sp: ids for sp, ids in by_sp.items() if len(ids) > 1}
+    assert multi, "no species holds two dens: this property is not exercised by the current field"
+    for sp, ids in multi.items():
+        bodies = [(tmp_path / A.FUNCTIONS / ("%s.mcfunction" % i)).read_text(encoding="utf-8") for i in ids]
+        assert len(set(bodies)) == len(ids), sp
+        assert not (tmp_path / A.FUNCTIONS / ("%s.mcfunction" % sp)).exists(), sp
+    assert rep.errors == []
+
+
+# Without it two records for one den would pass, and the second lair would overwrite the first's file.
+def test_two_records_for_one_den_are_caught():
+    rec = dict(REC, dens=REC["dens"] + [dict(REC["dens"][0])])
+    R = A.Report()
+    A.check_record(rec, GULCH, R)
+    assert "record: %s has 2 dressing records: one lair per den" % REC["dens"][0]["den"] in R.errors, R.errors
+
+
+# Without it R9MD could run lairs named after their species (the pre-2026-10-04 scheme), which no den owns:
+# mega_dens.placement_steps made to name each step by the den's species is caught for every den.
+def test_steps_naming_lairs_by_species_are_caught(ground, tmp_path, monkeypatch):
+    orig = M.placement_steps
+    sp_of = {r["den"]: r["species"] for r in REC["dens"]}
+
+    def by_species(*a, **k):
+        return [(s[0], s[1].rsplit("/", 1)[0] + "/" + sp_of[s[1].rsplit("/", 1)[-1]]) if s[0] == "fn" else s
+                for s in orig(*a, **k)]
+    monkeypatch.setattr(M, "placement_steps", by_species)
+    rep = run(ground, tmp_path)
+    missing = [e for e in rep.errors if e.startswith("steps: the re-application does not run cobblers:mega_dens/gm_mf_")]
+    assert len(missing) == len(REC["dens"]), rep.errors
+    assert "steps: the re-application runs cobblers:mega_dens/lopunny, which is no den's lair" in rep.errors
 
 
 def test_steps_that_do_not_hold_the_chunks_are_caught(ground, tmp_path):

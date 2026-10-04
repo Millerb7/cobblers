@@ -106,6 +106,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-09-28: working Pokemon in the towns (tools/ambient.py, data/ambient.json): a keeper and the work
                 # loops run on their own (a tick driver), so world-local below; placed again by R16C after an export
                 "cobblers_ambient",
+                # 2026-10-04: the idle Pokemon in the towns (tools/ambient_idle.py, data/ambient.json idle): a keeper
+                # SPAWNS them when a player is near, so world-local below; settled again by R16C after an export
+                "cobblers_ambient_idle",
                 # 2026-09-28: the wayside shrines on the approaches of towns people pass through (tools/shrines.py,
                 # data/shrines.json): block functions run by R16D after the dressing and the working Pokemon
                 "cobblers_shrines",
@@ -138,10 +141,17 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # more, in rows A-D, built by R9NR; three named Pokemon on the residents' keeper, so world-local below;
                 # summoned and the NPCs R9F does not place stood by R18NR
                 "cobblers_northern_residents",
+                # 2026-10-04: the far south's five places (tools/far_south.py, data/far_south.json) in rows F-H, built
+                # by R9FS; three named Pokemon on the residents' keeper, so world-local below; R18FS after R18NR
+                "cobblers_far_south",
                 # 2026-10-02: the relic site underground (tools/relic_underground.py, data/relic_underground.json): the
                 # old surface build taken off, then the hall, gallery and passage carved, by R9RU; its zone check acts on
                 # its own (an advancement), so world-local below
                 "cobblers_relic_underground",
+                # 2026-10-04: the Compact HQ tower's interior and its two per-player gates (tools/hq_tower.py,
+                # data/hq_tower.json): block functions run by R9HQ after R9RU; its gate cycle acts on its own (a tick
+                # driver that moves players), so world-local below
+                "cobblers_hq_tower",
                 # 2026-10-02: the Drovers' Hollow in the Rift Foot (tools/drovers_hollow.py): a longbarn, its fold and
                 # the old working under the bank, run by R9HF
                 "cobblers_drovers_hollow",
@@ -157,10 +167,17 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-02: the seven open-air Mega dens made visible (tools/mega_dens.py, data/mega_dens.json): scrape,
                 # boulders, bones and each species' sign round the gulch's den anchors. Block functions run by R9MD
                 "cobblers_mega_dens",
+                # 2026-10-04: the Mega field's contested borders (tools/mega_borders.py, data/mega_borders.json): scarred
+                # ground, broken rock and kills where two dens' ranges overlap. Block functions run by R9MB
+                "cobblers_mega_borders",
                 # 2026-10-02: water life (docs/mechanics/WATER_LIFE.md): the lake skin and the lake hooks
                 # (tools/lake_life.py), and the shore, the seabed's wrecks and Rift debris and the two sea caves
                 # (tools/sea_life.py). Pure block functions, no load or tick, run by R9LL and R9SL
                 "cobblers_lake_life", "cobblers_sea_life",
+                # 2026-10-04: the open sea's floor (tools/sea_floor.py, data/sea_floor.json): kelp forests and seagrass
+                # meadows on the marine regions' shelves. Pure block functions, every write `replace minecraft:water`,
+                # run by R9SF after R9SL
+                "cobblers_sea_floor",
                 # 2026-09-29: the gym interiors (tools/gym_interiors.py, data/gym_interiors.json): the healing
                 # machines out of all eight placed gyms, and gym 1's works carved under its lot. Block functions run
                 # by R16E, after the donors (R9) that stamp the gyms whole and would erase anything written first
@@ -290,7 +307,7 @@ EXCLUDED = {
 WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", "cobblers_celebi", "cobblers_rift_storm",
                "cobblers_sizes", "cobblers_blackout", "cobblers_rift_mines", "cobblers_gulch_mine",
                "cobblers_rift_zones", "cobblers_mega_recipes",
-               "cobblers_ferries", "cobblers_ambient", "cobblers_levelcap", "cobblers_mines",
+               "cobblers_ferries", "cobblers_ambient", "cobblers_ambient_idle", "cobblers_levelcap", "cobblers_mines",
                "cobblers_legendaries", "cobblers_spectrier_cap",
                # 2026-10-03: charges CobbleDollars and gives items, like the ferry
                "cobblers_markets",
@@ -299,12 +316,16 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                # 2026-10-02: the residents' keeper SPAWNS Pokemon on its own when a player comes near, so it must never
                # load in the global folder, where the live world would run it too
                "cobblers_residents", "cobblers_relic_underground",
+               # 2026-10-04: the HQ tower's gate cycle tags and moves players near the tower on its own tick
+               "cobblers_hq_tower",
                # 2026-10-03: species forms for the starters; global would change the live world's species too
                "cobblers_mythical_starters",
                # 2026-10-03: the southern residents' keeper spawns its two Pokemon the same way
                "cobblers_southern_residents",
                # 2026-10-03: the northern residents' keeper spawns its three Pokemon the same way
                "cobblers_northern_residents",
+               # 2026-10-04: the far south's keeper spawns its three Pokemon the same way
+               "cobblers_far_south",
                # 2026-10-03: Heaven's Arena SPAWNS opponents and pays CobbleDollars on its own tick and callback; the
                # global folder would run it in the live world too
                "cobblers_arena")
@@ -532,6 +553,10 @@ def prepare_jobs(a):
     # undo is derived from the superseded surface generator minus the city build above. Its audit runs LATE (below),
     # once every other block pack is built, because it sweeps them all for a cell the undo or the shell would touch
     add("relic_underground:build", "relic_underground.py", *src, "build")
+    # the Compact HQ tower's interior (2026-10-04): runs the city's build in memory, refuses a tower that is not the one
+    # data/hq_tower.json records, any write outside its interior, and a walk from the doorway that misses a seat, a
+    # cache or the top
+    add("hq_tower:build", "hq_tower.py", "build", *src)
     add("habitat_blocks:function", "habitat_blocks.py", "function")
     add("rewards_pack", "rewards_pack.py")
     # every conversation that compiles, in one pack: the NPCs', the props' and the actors' (refusals are listed)
@@ -660,6 +685,12 @@ def prepare_jobs(a):
     # (tools/northern_residents_audit.py, another agent's), after the pack it reads
     add("northern_residents", "northern_residents.py", *src)
     add("northern_residents_audit", "northern_residents_audit.py", *src)
+    # the far south's five places (2026-10-04): the generator fails closed on its own siting rules and on a record the
+    # heightmap disagrees with; then its independent audit (tools/far_south_audit.py, another agent's), after the pack
+    # it reads: the pack replayed against the data and the heightmap, rows F-H, the keep-out and Mega field, the path
+    # rule, the species' climate, the caches' rewards pack, the gym 7 gate, the steps and this wiring
+    add("far_south", "far_south.py", *src)
+    add("far_south_audit", "far_south_audit.py", *src)
     add("drovers_hollow:build", "drovers_hollow.py", "build", *src)
     add("drovers_hollow_audit", "drovers_hollow_audit.py", *src)
     # the three wayside places of 2026-10-03. Each generator refuses a spawn-condition palette and any block outside its
@@ -676,6 +707,8 @@ def prepare_jobs(a):
     add("research_station_audit", "research_station_audit.py", *src)
     add("mega_dens:build", "mega_dens.py", "build", *src)
     add("mega_dens_audit", "mega_dens_audit.py", *src)
+    # the Mega field's contested borders (2026-10-04): after the lairs, whose written columns it keeps clear of
+    add("mega_borders:build", "mega_borders.py", "build", *src)
     # the Mega field's independent audit (docs/world-building/MEGA_FIELD.md section 5): the polygon against the
     # sculpt's basin and the owner's points, each den's ground, level (rctmod's cap for its zone's badges) and drops in
     # the BUILT gulch pack, the retirement and the lairs; after both packs above are built
@@ -693,6 +726,13 @@ def prepare_jobs(a):
     add("lake_life_audit", "lake_life_audit.py", *src)
     add("sea_life:build", "sea_life.py", "build", *src)
     add("sea_life_audit", "sea_life_audit.py", *src)
+    # the open sea's floor (2026-10-04, tools/sea_floor.py, docs/world-building/WATER_LIFE_GAP.md): kelp forests and
+    # seagrass meadows on every marine region's shelf, outside everything cobblers_sea_life writes. Then its
+    # independent audit (tools/sea_floor_audit.py, another agent's; never imports the builder): every fill parsed and
+    # checked against the heightmap, OCEAN.md's bands, data/regions.json's biome rules at exact distances, the
+    # exclusions and the EMITTED sea_life pack; after both packs are built
+    add("sea_floor:build", "sea_floor.py", "build", *src)
+    add("sea_floor_audit", "sea_floor_audit.py", *src)
     # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
     # then the offline audit, which re-derives every shell box from data/placements.json, replays the written
     # functions into a voxel model and fails the prepare on a broken route, a trainer that can be walked round, a
@@ -732,9 +772,25 @@ def prepare_jobs(a):
     add("location_titles", "location_titles.py")
     # the badge flags: one advancement per gym leader and the Champion, set by rctmod on a won battle
     add("progression_pack", "progression_pack.py")
+    # the Rift finale's independent audit (tools/finale_audit.py, written by an agent that did not build it): HERE,
+    # after every pack it reads is built -- compile_dialogue, route_trainers, relic_underground:build, rift_zones:build,
+    # hq_tower:build and progression_pack above. The chain's five compiled conversations EXECUTED from every start
+    # state with both outcomes of each fight (the hq_tower battle_victory callback run for the winner), the story walked
+    # end to end (the flag only at cradle_open with both defeats), the parties against data/finale_trainers.json, the
+    # jar and the post-gym-8 cap, the gate cycle run per stage, z5 run on the flag, and every pack swept for another
+    # setter of the flag, a defeat field, a won function or a chain stage
+    add("finale_audit", "finale_audit.py")
+    # and the HQ tower as built (tools/hq_tower_audit.py, the same author): the city's, the relic site's and the
+    # tower's block functions replayed over the Deep's tread, the walk from the doorway to anchor control and back
+    # out, every seat and NPC on a floor, the caches, the gate set-backs, nothing outside the interior, no spawn block
+    add("hq_tower_audit", "hq_tower_audit.py", *src)
     # our wild spawns: the route and sub-region rosters from data/spawns.json (the suppression that makes them the
     # only thing spawning there is generated at install, against the server and world it will run on)
     add("compile_spawns", "compile_spawns.py")
+    # ... then its independent habitat audit (the owner, 2026-10-04: "wrong-country spawns"): every compiled entry
+    # judged against the species' own natural spawn data in the Cobblemon jar and the place's paint, never against
+    # data/encounter_design.json. Fails closed on an unjudged misfit or a stale ruling
+    add("spawn_habitat_audit", "spawn_habitat_audit.py")
     # the structure templates the placement steps use, the spawn biome tags, and the size outliers: all three were
     # on the server only by hand, or not at all, until 2026-09-26 (install sweep)
     add("kit:pack", "kit.py", "pack")
@@ -749,6 +805,16 @@ def prepare_jobs(a):
     # the stone faces' audit LAST: it checks R9O through steps(), which indexes every pack built above, so on a fresh
     # build/ it failed closed on whichever pack came after it in this list (found 2026-10-02 on a new worktree)
     add("mines_audit", "mines_audit.py", *src)
+    # the idle Pokemon (tools/ambient_idle.py): LAST of the builds, because it seats them on the BUILT town -- it
+    # replays every pack's block writes through steps() (tools/npc_spot_sweep.py) and refuses a spot a signpost, a
+    # waystone, a porch or a roof holds -- and steps() indexes every pack built above
+    add("ambient_idle:build", "ambient_idle.py", "build", *src)
+    # the idle Pokemon's independent audit (tools/ambient_idle_audit.py, written by an agent that did not build them):
+    # after ambient:build, and LAST for the same reason as mines_audit -- it replays the town from steps(), which
+    # indexes every pack built above. The cap, groups of 1-3, every spot on the built town's floor, the jar's sleepers,
+    # the wake at 16, no brain-remaking merge, the workers' flags, the snow house's Buneary. Fail-closed; KNOWN
+    # defects are listed in the tool and a fixed one fails until it is removed there
+    add("ambient_idle_audit", "ambient_idle_audit.py", *src)
     return J
 
 
@@ -1480,7 +1546,7 @@ def steps(with_spawns=False):
     # Megas a keeper may have left at the seven retired dens (data/gulch_mine.json superseded_farms), which nothing
     # leashes or replaces any more: after R9S, whose pack carries megas/retire; with each den's ground held
     import gulch_mine
-    out.append(("R9SX", "remove the Megas of the seven retired open-air dens (data/gulch_mine.json superseded_farms)",
+    out.append(("R9SX", "remove the Megas of the retired open-air dens (data/gulch_mine.json superseded_farms)",
                 gulch_mine.retire_steps()))
     # the Rift's zone walls and gatehouse shells (tools/rift_zones.py, data/rift_zones.json; docs/mechanics/
     # RIFT_ZONES.md sections 5 and 6). After the Rift skin (R1), whose surface the walls stand on, after the
@@ -1540,6 +1606,12 @@ def steps(with_spawns=False):
     import relic_underground
     out.append(("R9RU", "the relic site underground: the old surface build off, the hall carved (data/relic_underground.json)",
                 relic_underground.placement_steps()))
+    # the Compact HQ tower's interior (2026-10-04, tools/hq_tower.py): AFTER R9DC, whose shell and floors it opens and
+    # furnishes, and after R9RU, whose room its door opens into; before R9E and the lights. Its trainers are R17's, its
+    # four story NPCs R18HQ's
+    import hq_tower
+    out.append(("R9HQ", "the Compact HQ tower's interior: eleven storeys, the stair, the door and the caches (data/hq_tower.json)",
+                hq_tower.placement_steps()))
     # the Habitat Blocks, after everything that builds the floors they sit in (R9C's shell pass overwrites them). A
     # block placed by command stays inert until its chunk loads from disk, and EXP-021 found only a restart does that
     # reliably: the audit runs with the server stopped, so the boot after it is that restart. Verify after it.
@@ -1558,6 +1630,10 @@ def steps(with_spawns=False):
                 [("fn", "cobblers:lake_life/%s" % f) for f in indexed("cobblers_lake_life", "lake_life")]))
     out.append(("R9SL", "the shore, the wrecks and Rift debris, and the sea caves (data/sea_life.json)",
                 [("fn", "cobblers:sea_life/%s" % f) for f in indexed("cobblers_sea_life", "sea_life")]))
+    # the open sea's floor (2026-10-04, tools/sea_floor.py): AFTER R9SL, whose every written cell (and 3 round it) it
+    # keeps clear of; every write replaces only water, so a build that lands later or earlier is never overwritten
+    out.append(("R9SF", "the open sea's floor: kelp forests and seagrass meadows (data/sea_floor.json)",
+                [("fn", "cobblers:sea_floor/%s" % f) for f in indexed("cobblers_sea_floor", "sea_floor")]))
     # the Lopunny superfan's house (2026-10-02, tools/lopunny_house.py): BEFORE R9E, because its build writes the cellar
     # floor - after R9E it would lay stone bricks over the Buneary Habitat Block set in that floor
     import lopunny_house
@@ -1591,6 +1667,12 @@ def steps(with_spawns=False):
     # actions until the Mega field's dens are dressed (an owner call, MEGA_FIELD.md section 4)
     out.append(("R9MD", "the open-air Mega dens' dressing: scrape, boulders, bones and each species' sign (data/mega_dens.json)",
                 mega_dens.placement_steps()))
+    # the Mega field's contested borders (2026-10-04, tools/mega_borders.py): a pure block pass along every lens where two
+    # dens' ranges overlap -- scar, rubble, kill. AFTER R9MD, whose lairs' columns it keeps clear of and never rewrites;
+    # BEFORE R9E with the other block passes. Per border: hold, build, release
+    import mega_borders
+    out.append(("R9MB", "the Mega field's contested borders: scarred ground, broken rock and kills (data/mega_borders.json)",
+                mega_borders.placement_steps()))
     # the three wayside places of 2026-10-03 (tools/wayside_kit.py): pure block passes, each hold, build, release.
     # BEFORE R9E with the other block passes; none places or sits on a Habitat Block, and none overlaps another build
     # (data/<place>.json bbox, for the integrator's check)
@@ -1614,6 +1696,11 @@ def steps(with_spawns=False):
     import northern_residents
     out.append(("R9NR", "the northern residents' sites (data/northern_residents.json)",
                 northern_residents.placement_steps()))
+    # the far south's five places (2026-10-04, tools/far_south.py): the same pure block pass per site, held in a
+    # forceload of its box, before R9E (none sits on a Habitat Block); its residents stand on these floors (R18FS)
+    import far_south
+    out.append(("R9FS", "the far south's places: kraal, chimneys, glass garden, glyph ring, folly (data/far_south.json)",
+                far_south.placement_steps()))
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
@@ -1642,8 +1729,11 @@ def steps(with_spawns=False):
     # the working Pokemon (tools/ambient.py): entities, so an export erases them; after the dressing they stand beside.
     # Each station's chunk is force-loaded and its worker placed (twice: a chunk's saved entities load a moment after
     # its blocks, and the keeper removes a second), then all are counted
+    # ambient.placement_steps() carries the idle Pokemon too (tools/ambient_idle.py): each town force-loaded and its
+    # keeper run twice; then every idler counted, before the workers' own check (which stays last)
     import ambient
-    out.append(("R16C", "working Pokemon in the towns (data/ambient.json)", ambient.placement_steps() + [("check", "ambient")]))
+    out.append(("R16C", "working and idle Pokemon in the towns (data/ambient.json)",
+                ambient.placement_steps() + [("check", "ambient_idle"), ("check", "ambient")]))
     # the wayside shrines (tools/shrines.py): blocks beside the roads into the towns, after the dressing (R16B) and the
     # working Pokemon (R16C) they keep clear of; each function holds its own chunks. Listed from the committed data,
     # not the build, so the step exists whether or not the pack is built here; the prepare's audit fails on a missing one
@@ -1727,10 +1817,16 @@ def steps(with_spawns=False):
     # function first (the pack's scores). Listed from the committed data, not the build. 2026-10-03: and the stall
     # keepers on the town squares (data/markets.json `stalls`), same pack, same purchase; every keeper whose stall the
     # squares' contract (data/plaza_centres.json) seats stands at that stall instead
+    # 2026-10-04 (the owner: "the steve villagers aren't it, it should be the cobbleverse ones that have nice ui"): every
+    # stall keeper is a CobbleDollars merchant (cobbledollars:cobble_merchant with its stall's CobbleMerchantShop),
+    # summoned by the pack's function like R14's traders, which also removes the dialogue keeper it replaces; 8 s for
+    # the function's 40 + 100 ticks, then the merchants are read back from the world. The counters stay dialogue clerks
     import markets
-    out.append(("R17M", "the market and stall keepers (data/markets.json)",
+    out.append(("R17M", "the market keepers and the stall merchants (data/markets.json)",
                 [("fn", "cobblers:markets/load")] + [("npc", n) for n in markets.npc_placements(markets.load())]
-                + [("npc", n) for n in markets.stall_placements(markets.load())]))
+                + [("npc", n) for n in markets.stall_placements(markets.load())]
+                + ([("fn", markets.MERCHANTS_FN), ("wait", 8), ("check", "stall_merchants")]
+                   if markets.emitted_stalls(markets.load()) else [])))
     # the settlement NPCs (data/npc_seats.json): the main reveal's residents and the stone-tip speakers. NPCs like the
     # ferrymen, so placed over RCON after the restart that loaded cobblers_dialogue's classes, and after every town and
     # gym pass so the plaza, lot and lab floor they stand on exist. Each is turned to its authored yaw
@@ -1761,6 +1857,14 @@ def steps(with_spawns=False):
     out.append(("R18RU", "the Compact guards at the HQ's ring-0 door and the binder in Hoopa's cradle "
                          "(data/relic_underground.json geometry.hq.guard, geometry.release)",
                 [("npc", n) for n in relic_underground.npc_placements()]))
+    # the finale's four (2026-10-04, data/hq_tower.json npcs): Nia Calder at her clinic's door, Captain Brann Saye, Director
+    # Elara Venn and Oren Pell in the HQ tower R9HQ furnished. NPCs, so after the restart that loaded cobblers_dialogue's
+    # classes, like R18RU's, each turned to its yaw. Brann and Elara are also the finale's two fights (the integration of
+    # 2026-10-04: ONE of each, here, not rctmod seats in the cradle): their classes carry a party (data/finale_trainers.json
+    # teams, compiled by tools/compile_dialogue.py) and their conversations start Cobblemon's own NPC battle; the win is
+    # read by the cobblers_hq_tower pack's battle_victory callback
+    out.append(("R18HQ", "the finale's NPCs: Nia Calder, Brann Saye, Elara Venn and Oren Pell (data/hq_tower.json npcs)",
+                [("npc", n) for n in hq_tower.npc_placements()]))
     # Codex's ten named residents (2026-10-02, data/resident_encounters.json): each one's dressing inside a forceload of
     # its recorded bbox, then - for the two with no presence gate (Old Jaw, Whiteback) - an RCON summon guarded on tag
     # AND species, and its bind. The eight gated ones are left to the pack's keeper, which brings each in the first time
@@ -1777,6 +1881,11 @@ def steps(with_spawns=False):
     # the NPCs who give nothing through grant_reward_once, turned to their yaw. After R18SR
     out.append(("R18NR", "the northern residents: the ungated Pokemon and the NPCs R9F does not place (data/northern_residents.json)",
                 northern_residents.entity_steps()))
+    # the far south (2026-10-04): any ungated Pokemon summoned (guarded on tag AND species) and bound. All three are
+    # gated after gym 7 today, so the keeper brings each in and this step has no actions: the design, not a fault
+    import far_south
+    out.append(("R18FS", "the far south's residents: the ungated Pokemon (data/far_south.json)",
+                far_south.entity_steps()))
     # the Drovers' Hollow's drover (2026-10-02): after R17N, on the path R9HF wrote, his class loaded at boot from
     # cobblers_dialogue
     out.append(("R18HF", "the Drovers' Hollow's drover, Owen Cray (data/drovers_hollow.json npc)",
@@ -2021,6 +2130,17 @@ def _run_steps(a, rc, todo, rec, path, live=None):
                 import ambient
                 problems = ambient.verify(rc)
                 bad += ["ambient: %s" % m for m in problems]
+            elif kind == "check" and v == "stall_merchants":
+                # each stall: one merchant with its tag on its seat, holding its stall's offers, no dialogue keeper left
+                import markets
+                problems = markets.verify(rc)
+                bad += ["stall merchants: %s" % m for m in problems]
+                print("   stall merchants: %d stalls, %d problems" % (len(markets.emitted_stalls(markets.load())),
+                                                                     len(problems)), flush=True)
+            elif kind == "check" and v == "ambient_idle":
+                import ambient_idle
+                problems = ambient_idle.verify(rc)
+                bad += ["ambient_idle: %s" % m for m in problems]
             elif kind == "check" and v == "celebi":
                 import sapling_celebi
                 x, y, z = (int(q // 1) for q in sapling_celebi.load()["position"])

@@ -310,7 +310,7 @@
         "quest": "main_worldshift_reveal",
         "transition": "unlock_league_after_rift_resolution",
         "invoked_by": "dlg_main_relic_hall_release",
-        "invoked_at": "line release_001 ('The restraint opens.'), reached by the choice 'Release Hoopa.' at stage rift_crisis_pending; NPC npc_main_relic_hall_binder at (3363, 13, 3312) in Hoopa's carved cradle (the hall's relic ring at (3390, 8, 3268) until 2026-10-03), seated by tools/reapply.py step R18RU (data/relic_underground.json geometry.release). The owner, 2026-10-03: 'set it ourselves at the quest stage that ends the Rift crisis'",
+        "invoked_at": "line release_001 ('The restraint opens.'), reached by the choice 'Release Hoopa.', shown only at stage rift_crisis_pending to a player who has beaten both Captain Brann Saye and Director Elara Venn in the cradle (quest.main_worldshift_reveal.brann_defeated and elara_defeated, data/finale_trainers.json, 2026-10-04; the transition requires the same three); NPC npc_main_relic_hall_binder at (3363, 13, 3312) in Hoopa's carved cradle (the hall's relic ring at (3390, 8, 3268) until 2026-10-03), seated by tools/reapply.py step R18RU (data/relic_underground.json geometry.release). The owner, 2026-10-03: 'set it ourselves at the quest stage that ends the Rift crisis'",
         "superseded_invoked_by_owed": "Kept as the plan the binder replaced (Scene 5 at the cradle still waits on the cradle and a verified Hoopa model). Hoopa's release at the cradle: docs/story/NPCS_AND_RIFT_FINALE.md Scene 5 (Codex, commit 9cbfd213 on the local branch codex/trainer-modes, NOT merged), actor_finale_hoopa at the cradle centre (3357, 12, 3306), player choice 'Release Hoopa.'. It needs the cradle chamber carved (data/deep_city.json reserves its box, nothing carves it) and a data/scenes.json scene whose Hoopa actor opens that conversation. Until then nothing invokes the transition and nobody holds this flag. Set invoked_by to the conversation id when it lands; tests/test_rift_crisis_resolved.py holds the two in step."
       },
       "why": "Approved in docs/story/ARC.md ('The final story confrontation ends the forced activation and releases Hoopa from the steering mechanism. It sets rift_crisis_resolved', and the League row 'Requires rift_crisis_resolved'). Per player, like every flag here: an advancement, granted by cobblers:flag/rift_crisis_resolved/grant, which the transition's first effect runs as and at the releasing player. It is the gate data/rift_zones.json z5 names.",
@@ -637,9 +637,14 @@
         "blaine_reveal_complete",
         "giovanni_reveal_complete",
         "rift_crisis_pending",
+        "deep_handoff_received",
+        "hq_crossed",
+        "anchor_shutdown",
+        "cradle_open",
         "rift_released",
         "league_recognized"
-      ]
+      ],
+      "finale_stages_why": "deep_handoff_received, hq_crossed, anchor_shutdown and cradle_open are docs/story/NPCS_AND_RIFT_FINALE.md's 'authoritative stage sequence' (Codex, branch codex/trainer-modes), inserted in its order between rift_crisis_pending and rift_released on 2026-10-04 for the HQ tower (data/hq_tower.json): Nia Calder writes deep_handoff_received, Captain Brann Saye hq_crossed, Oren Pell anchor_shutdown, Director Elara Venn cradle_open. The order of this list IS the order of the story: every 'X or later' gate reads it."
     },
     {
       "id": "quest.main_worldshift_reveal.pallet_oak_cursor",
@@ -787,6 +792,64 @@
       "initial": "release_closed",
       "allowed_values": "node ids from dlg_main_relic_hall_release",
       "why": "the dialogue cursor of the Compact binder at the relic ring (data/relic_underground.json geometry.release, 2026-10-03), the conversation that releases Hoopa. Its entry rules always pick the node from quest.main_worldshift_reveal.stage, so the cursor gates nothing; the release itself is gated by the stage."
+    },
+    {
+      "id": "quest.main_worldshift_reveal.brann_defeated",
+      "quest_id": "main_worldshift_reveal",
+      "field": "brann_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player beat Captain Brann Saye, the ONE Brann: a Cobblemon NPC in the HQ tower's briefing hall who talks and fights (data/hq_tower.json npcs and fights; team data/finale_trainers.json finale_brann_saye; the integration of 2026-10-04). Set only by cobblers:hq_tower/won_brann, run as the WINNING player by the cobblers_hq_tower pack's battle_victory callback (tools/hq_tower.py) when the losing NPC stands at Brann's spot. record_hq_crossed (the climb) and the release (unlock_league_after_rift_resolution, rift_crisis_resolved's setter, and the binder's 'Release Hoopa.') require it."
+    },
+    {
+      "id": "quest.main_worldshift_reveal.elara_defeated",
+      "quest_id": "main_worldshift_reveal",
+      "field": "elara_defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the player beat Director Elara Venn, the ONE Elara: a Cobblemon NPC in the HQ tower's director's office who talks and fights (data/hq_tower.json npcs and fights; team data/finale_trainers.json finale_elara_venn; the integration of 2026-10-04). Set only by cobblers:hq_tower/won_elara, run as the WINNING player by the cobblers_hq_tower pack's battle_victory callback when the losing NPC stands at Elara's spot. record_cradle_open and the release (unlock_league_after_rift_resolution and the binder's 'Release Hoopa.') require it."
+    },
+    {
+      "id": "quest.main_worldshift_reveal.finale_nia_cursor",
+      "quest_id": "main_worldshift_reveal",
+      "field": "finale_nia_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "nia_before",
+      "allowed_values": "node ids from dlg_main_finale_nia",
+      "why": "the dialogue cursor of Nia Calder at the Deep's clinic (data/hq_tower.json npcs, 2026-10-04). Entry rules pick the node from quest.main_worldshift_reveal.stage; the cursor gates nothing."
+    },
+    {
+      "id": "quest.main_worldshift_reveal.finale_brann_cursor",
+      "quest_id": "main_worldshift_reveal",
+      "field": "finale_brann_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "brann_before",
+      "allowed_values": "node ids from dlg_main_finale_brann",
+      "why": "the dialogue cursor of Captain Brann Saye in the HQ tower's briefing hall (data/hq_tower.json npcs, 2026-10-04). Entry rules pick the node from the stage; the choice 'I'm not leaving.' moves it to brann_004 with the stage."
+    },
+    {
+      "id": "quest.main_worldshift_reveal.finale_oren_cursor",
+      "quest_id": "main_worldshift_reveal",
+      "field": "finale_oren_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "oren_before",
+      "allowed_values": "node ids from dlg_main_finale_oren",
+      "why": "the dialogue cursor of Oren Pell in the HQ tower's anchor control room (data/hq_tower.json npcs, 2026-10-04). The choice 'Run the marked sequence.' moves it to oren_after_1 with the stage."
+    },
+    {
+      "id": "quest.main_worldshift_reveal.finale_elara_cursor",
+      "quest_id": "main_worldshift_reveal",
+      "field": "finale_elara_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "elara_before",
+      "allowed_values": "node ids from dlg_main_finale_elara",
+      "why": "the dialogue cursor of Director Elara Venn in the HQ tower's director's office (data/hq_tower.json npcs, 2026-10-04). Entry rules pick the node from the stage; the cursor gates nothing."
     },
     {
       "id": "quest.evt_vr_abandoned_cut.started",
@@ -1682,6 +1745,69 @@
       "scope": "player",
       "initial": false,
       "why": "Victory Road fight 10 of 10, seated 2026-09-30 by tools/route_trainers.py on the stand tools/vr_caves.py already carved (data/vr_trainers.json). Numbered route_09_* because Victory Road is the ninth leg in data/routes.json, after route_08_blaine_to_giovanni."
+    },
+    {
+      "id": "quest.hq_tower_trainer_01.defeated",
+      "quest_id": "hq_tower_trainer_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the Compact HQ tower's fight 1 of 7 (data/hq_trainers.json, 2026-10-04), set by its rctmod defeat_count advancement (tools/route_trainers.py)"
+    },
+    {
+      "id": "quest.hq_tower_trainer_02.defeated",
+      "quest_id": "hq_tower_trainer_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the Compact HQ tower's fight 2 of 7 (data/hq_trainers.json, 2026-10-04), set by its rctmod defeat_count advancement (tools/route_trainers.py)"
+    },
+    {
+      "id": "quest.hq_tower_trainer_03.defeated",
+      "quest_id": "hq_tower_trainer_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the Compact HQ tower's fight 3 of 7 (data/hq_trainers.json, 2026-10-04), set by its rctmod defeat_count advancement (tools/route_trainers.py)"
+    },
+    {
+      "id": "quest.hq_tower_trainer_04.defeated",
+      "quest_id": "hq_tower_trainer_04",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the Compact HQ tower's fight 4 of 7 (data/hq_trainers.json, 2026-10-04), set by its rctmod defeat_count advancement (tools/route_trainers.py)"
+    },
+    {
+      "id": "quest.hq_tower_trainer_05.defeated",
+      "quest_id": "hq_tower_trainer_05",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the Compact HQ tower's fight 5 of 7 (data/hq_trainers.json, 2026-10-04), set by its rctmod defeat_count advancement (tools/route_trainers.py)"
+    },
+    {
+      "id": "quest.hq_tower_trainer_06.defeated",
+      "quest_id": "hq_tower_trainer_06",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the Compact HQ tower's fight 6 of 7 (data/hq_trainers.json, 2026-10-04), set by its rctmod defeat_count advancement (tools/route_trainers.py)"
+    },
+    {
+      "id": "quest.hq_tower_trainer_07.defeated",
+      "quest_id": "hq_tower_trainer_07",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "the Compact HQ tower's fight 7 of 7 (data/hq_trainers.json, 2026-10-04), set by its rctmod defeat_count advancement (tools/route_trainers.py)"
     },
     {
       "id": "quest.route_04_trainer_01.defeated",

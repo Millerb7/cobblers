@@ -75,6 +75,7 @@ REPLAY = (("R1", "cobblers_rift", "rift"),
           ("R9DC", "cobblers_deep_city", "deep_city"),
           ("R9AD", "cobblers_arena_dome", "arena_dome"),      # Heaven's Arena's dome on the north floor, 2026-10-03
           ("R9RU", "cobblers_relic_underground", "relic_underground"),
+          ("R9HQ", "cobblers_hq_tower", "hq_tower"),          # the Compact HQ tower's interior, after R9RU, 2026-10-04
           ("R9E", "cobblers_habitats", "habitats"),
           ("R15", "cobblers_signs", "signs"))
 # the box walked: the Deep's pit (tools/rift_deep.py model box 3341..3866, 2935..3509) and the relic site west of it,

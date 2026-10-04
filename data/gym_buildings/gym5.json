@@ -48,12 +48,12 @@
     "name": "Koga",
     "spawner": [
       4594,
-      132,
+      131,
       2487
     ],
     "powered_by": [
       4594,
-      131,
+      130,
       2487
     ],
     "why": "EXP-013 E2 (VERIFIED, on staging): a bare rctmod:trainer_spawner set by command with TrainerIds on a redstone block spawned the leader and he battled. Taking the donor shell down removes the template's own spawner at [4597, 116, 2478] (data/gym_interiors.json gym5.shell), so this is the only kanto_koga in the town and the badge cannot be won without reaching the watch floor (a persistent leader trainer anywhere awards the badge: verified on staging 2026-09-24, docs/STATE.md).",
@@ -1821,21 +1821,21 @@
       "op": "setblock",
       "pos": [
         4594,
-        131,
+        130,
         2487
       ],
       "block": "minecraft:redstone_block",
-      "why": "-- Koga. The power under the spawner, set into the watch floor as the donor template sets its own"
+      "why": "-- Koga. The power under the spawner, in the course UNDER the watch floor, as the donor template sets its own"
     },
     {
       "op": "setblock",
       "pos": [
         4594,
-        132,
+        131,
         2487
       ],
       "block": "rctmod:trainer_spawner{TrainerIds:[\"kanto_koga\"]}",
-      "why": "the only trainer spawner in the town once the shell is down, with two air cells over it"
+      "why": "the only trainer spawner in the town once the shell is down, set INTO the watch floor so the leader (spawned at its pos.above()) stands at the floor's level, not on a plinth (2026-10-04); two air cells over it"
     },
     {
       "op": "setblock",

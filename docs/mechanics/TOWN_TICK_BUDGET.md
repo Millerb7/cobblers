@@ -713,3 +713,29 @@ are not the constraint.
 counted 0 present and stopped rather than report a number from an empty pen. It needs rctmod's own placement path
 (`summon_persistent`, as `reapply.py` uses). That is the one number still standing between the inventory and a firm
 ceiling, and the inventory's arithmetic is ready for it: `n_t x T + n_v x V = 4400 us`.
+
+## The idle Pokemon, 2026-10-04 (COMPUTED from the pack as written; NOT measured)
+
+`tools/ambient_idle.py`, pack `cobblers_ambient_idle`: 287 idle Pokemon in 16 towns and round the Lopunny house, at
+most 26 idle (28 with the workers) in a town, against the frame-rate test's cap of ~30 (docs/HANDOVER_SESSION.md).
+`python tools/ambient_idle.py report` prints these figures from the built plan.
+
+| source | runs | lines | cost (CALIBRATED at 1-4 us a line) |
+| --- | --- | ---: | ---: |
+| the driver (`tick`) | every tick, always | 4 | 4-16 us |
+| `keep_all` (one gated line per town) | every 40 ticks, always | 17 / 40 = 0.43 a tick | 0.4-1.7 us |
+| `wakes` (two global scans of the sleepers) | every 10 ticks, always | 3 / 10 = 0.3 a tick | 0.3-1.2 us |
+| a town's keeper (4 lines an idler) | every 40 ticks, only with a player within its gate | 2.0-2.6 a tick (largest gym6_town, 26 idle) | 2-10 us |
+
+**With nobody near: 4.85 lines a tick, 5-19 us** -- flat in the count of idlers, unlike the workers' driver (2.4,
+"+1 line/tick per worker forever"). **One occupied town: about 2.6 lines a tick more, 3-10 us.** No line merges an
+idler's NBT in the keep (a merge remakes a Pokemon's brain, which would wake a sleeper; it also serialises the
+entity): the merges are in the claim, the wake and the settle only.
+
+**The entities.** The still kinds (sitters and loafers, 202 of the 287) are `NoAI`, the workers' entity, which the
+3 us stationary-worker figure bounds from above (it includes that worker's per-tick step). The AI-on kinds (sleepers
+and followers, 85 of the 287: **at most 8 a town**, gym6_town; 6-7 in most) are UNMEASURED. Using the villager's measured V = 20 us as
+a stand-in -- EXTRAPOLATED, a Cobblemon brain is not a villager's -- a town's AI-on idlers cost about 120-160 us, and
+the whole populated, occupied town about **0.2 ms, 0.4% of a tick**. The measurement that replaces the stand-in:
+`/tick query` with 0 and with 32 sleepers spawned and claimed as the pack claims them, in the EXP-047 pocket, as the
+villager sweep above was run.

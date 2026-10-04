@@ -305,7 +305,11 @@ def test_the_wiring_is_clean_and_bites_on_a_dropped_or_misplaced_step():
     for old, new, want in (('out.append(("R18NR"', 'out.append(("R18XX"', "appends step R18NR 0 times"),
                            ("northern_residents.placement_steps()))", "southern_residents.placement_steps()))", "not northern_residents.placement_steps"),
                            ('add("northern_residents_audit"', 'add("northern_residents_check"', "no prepare job northern_residents_audit"),
-                           ('"cobblers_northern_residents")', '"cobblers_other")', "WORLD_LOCAL")):
+                           # the WORLD_LOCAL entry, anchored on its own comment: since 2026-10-04 it is no longer the
+                           # tuple's last (cobblers_far_south follows it), so '"...")' matched nothing
+                           ('northern residents\' keeper spawns its three Pokemon the same way\n               "cobblers_northern_residents",',
+                            'northern residents\' keeper spawns its three Pokemon the same way\n               "cobblers_other",',
+                            "WORLD_LOCAL")):
         assert old in REAPPLY, old
         rep = A.Report()
         A.check_wiring(DOC, rep, REAPPLY.replace(old, new, 1))

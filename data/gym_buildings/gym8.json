@@ -44,12 +44,12 @@
     "name": "Giovanni",
     "spawner": [
       3565,
-      121,
+      120,
       6416
     ],
     "powered_by": [
       3565,
-      120,
+      119,
       6416
     ],
     "why": "kanto_giovanni is the upstream Radical Cobblemon Trainers id and it is load-bearing: a persistent leader trainer anywhere awards the badge (verified on staging 2026-09-24, docs/STATE.md). EXP-013 E2 (VERIFIED, on staging): a bare rctmod:trainer_spawner set by command with TrainerIds on a redstone block spawned the leader and he battled. The donor shell's own spawner goes with the shell in this function's clearing fill, so this is the only kanto_giovanni in the town and the eighth badge cannot be won without going under the gate and coming up inside it.",
@@ -1079,21 +1079,21 @@
       "op": "setblock",
       "pos": [
         3565,
-        120,
+        119,
         6416
       ],
       "block": "minecraft:redstone_block",
-      "why": "the redstone block set into the gate walk's own course. EXP-013 E2 (VERIFIED, on staging): an unpowered rctmod:trainer_spawner spawns nobody; on a redstone block the leader spawned and battled"
+      "why": "the redstone block in the course UNDER the gate walk, as the donor gyms set theirs (2026-10-04). EXP-013 E2 (VERIFIED, on staging): an unpowered rctmod:trainer_spawner spawns nobody; on a redstone block the leader spawned and battled"
     },
     {
       "op": "setblock",
       "pos": [
         3565,
-        121,
+        120,
         6416
       ],
       "block": "rctmod:trainer_spawner{TrainerIds:[\"kanto_giovanni\"]}",
-      "why": "Giovanni, on the gate walk facing the road out. kanto_giovanni is the upstream Radical Cobblemon Trainers id. The donor shell's own spawner goes with the shell in this function's clearing fill, so this is the only kanto_giovanni in the town. Two air cells stand over him at y122 and y123 and nothing is written there"
+      "why": "Giovanni, on the gate walk facing the road out. kanto_giovanni is the upstream Radical Cobblemon Trainers id. The donor shell's own spawner goes with the shell in this function's clearing fill, so this is the only kanto_giovanni in the town. Set INTO the gate walk's course so he (spawned at its pos.above()) stands at the walk's level, not on a plinth (2026-10-04). Two air cells stand over it at y121 and y122"
     },
     {
       "op": "setblock",

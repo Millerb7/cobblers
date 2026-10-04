@@ -1,0 +1,68 @@
+{
+  "schema": "cobblers.mega-borders/1",
+  "status": "authored 2026-10-04; built offline by tools/mega_borders.py into cobblers_mega_borders, run by the re-application's step R9MB (after R9MD). NOT installed, NOT applied, NOT flown: whether the borders read from the air as contested ground is the owner's call in game",
+  "owner": "The owner, 2026-10-04: \"I want the southern Rift to feel like Megas are clashing over territory -- not seven dens in a field but a region where they are everywhere, pressing against each other for space ... make the crowding legible: overlapping ranges, scarred ground, broken rock where two territories meet, kills; a player should understand what is happening there without being told.\"",
+  "builder": "tools/mega_borders.py",
+  "pack": "cobblers_mega_borders",
+  "step": "R9MB",
+  "source": "The dens -- anchor, leash (the Mega's range), species -- are data/gulch_mine.json farms[].dens[] of the Mega field (farm ids field_*), read and never copied. Each den's lair kit is mega_field.dressing.kit_of, its palettes data/mega_dens.json superseded_dens (the seven hand-authored kits). Where the lairs write is taken from tools/mega_dens.py's own plan and kept clear. Ground from tools/ground.py (the canonical heightmap, rounded), never a world. The floor a border may write on is tools/mega_field.py floor()'s: dry, inside the field, 128 or more from every critical path, off the gulch's block box and 32 off its zone, 32 off every Rift zone wall and post and off keep_clear.",
+  "lighting": "dark",
+  "lighting_why": "As the lairs (data/mega_dens.json lighting): wild ground nobody keeps, no light source of any kind.",
+  "seed": 20261004,
+  "border": {
+    "half_width": 3.0,
+    "ragged": 1.2,
+    "cover": 0.62,
+    "own_side": 0.55,
+    "why": "A border is where two dens' ranges (leash discs) overlap: the lens between them. Its scar runs along the lens's long axis, the line square to the two homes through the point midway between them, as long as the lens and half_width either side at its middle, thinning to nothing at its two ends, its edge ragged by up to `ragged`. `cover` of the columns inside it are rewritten AT their ground surface: a scar with gaps reads as trampled, a solid band as a road. Each column takes from the side it lies on: `own_side` of the time that den's lair scrape palette (its kit's), otherwise the shared scar palette, so a border is two colours of ground ground into each other with broken rock between."
+  },
+  "scar": {
+    "minecraft:coarse_dirt": 4,
+    "minecraft:gravel": 3,
+    "minecraft:cobbled_deepslate": 2,
+    "minecraft:cracked_deepslate_tiles": 2,
+    "minecraft:blackstone": 2,
+    "minecraft:rooted_dirt": 1
+  },
+  "scar_why": "The shared scar, not any one species': churned dirt and gravel, cracked and broken deepslate, scorched blackstone. Every block here and in every kit palette a border takes is a full block written at the ground surface, on natural ground.",
+  "rubble": {
+    "boulders": [2, 3],
+    "boulder_radius": [1.0, 1.8],
+    "boulder_height": [1, 2],
+    "split_every": 2,
+    "loose": [5, 9],
+    "spread": 6,
+    "loose_blocks": ["minecraft:cobblestone", "minecraft:gravel", "minecraft:cobbled_deepslate", "minecraft:andesite"],
+    "why": "Broken rock where two territories meet: at each border's middle, `boulders` toppled boulders (the two kits' boulder blocks, mixed), every `split_every`th split through with a one-block crack between its halves, and `loose` single blocks of rubble thrown within `spread` of the middle. Nothing over 2 high: rubble, not a wall."
+  },
+  "kill": {
+    "min_overlap": 22,
+    "spine": 5,
+    "ribs": 2,
+    "bones": [3, 5],
+    "gear": ["minecraft:chain", "minecraft:iron_bars"],
+    "gear_count": [1, 2],
+    "why": "A kill where the fighting is hardest: every border whose ranges overlap by `min_overlap` blocks or more (2 x leash - the homes' distance) carries one carcass a third of the way along it, on the side away from the rubble: a bone spine `spine` long lying along the border, `ribs` pairs of rib bones, a skull at its head, `bones` loose bones near it, and broken gear dropped beside it (a length of chain, a twisted bar). One carcass a border: remains, not a boneyard. 22 marks the hardest-fought half: on the 2026-10-04 layout 13 of the 23 borders (overlaps 23.7 to 28 blocks; at 18 it was 19 of 23, a kill nearly everywhere and so no longer a sign of anything)."
+  },
+  "keep": {
+    "anchor_clear": 9,
+    "lair_clear": 2,
+    "flat": 1,
+    "why": "Nothing within anchor_clear of any den's anchor (a lair's pad and spawn cylinder are 3, its carcass 7: a border never reaches a lair's heart) nor within lair_clear of any column a lair writes (tools/mega_dens.py's own plan), so the two passes never write one column. An object (a boulder, the carcass, the gear) stands only where its column's ground is within `flat` of each 4-neighbour's: nothing is set on a step."
+  },
+  "coverage_cap": 0.08,
+  "coverage_why": "The field must still read as Rift: the borders together rewrite at most this fraction of the floor the ranges cover (mega_field.py floor's walkable floor inside any den's leash disc). The generator refuses past it; `plan` prints the fraction.",
+  "max_rise": 2,
+  "blocks": {
+    "ids": [
+      "minecraft:coarse_dirt", "minecraft:gravel", "minecraft:cobbled_deepslate", "minecraft:cracked_deepslate_tiles",
+      "minecraft:blackstone", "minecraft:rooted_dirt", "minecraft:podzol", "minecraft:cobblestone",
+      "minecraft:mossy_cobblestone", "minecraft:andesite", "minecraft:tuff", "minecraft:stone", "minecraft:calcite",
+      "minecraft:smooth_basalt", "minecraft:raw_iron_block", "minecraft:gray_concrete_powder",
+      "minecraft:light_gray_concrete_powder", "minecraft:coal_block", "minecraft:soul_soil", "minecraft:snow_block",
+      "minecraft:packed_ice", "minecraft:smooth_sandstone", "minecraft:sandstone", "minecraft:cut_sandstone",
+      "minecraft:bone_block", "minecraft:skeleton_skull", "minecraft:chain", "minecraft:iron_bars"
+    ],
+    "why": "Every block a border may write. The generator refuses any other, and any that data/spawn_blocks.json lists as a spawn condition (no data/spawn_block_policy.json entry is scoped to mega_borders). No light source, no container, no bed."
+  }
+}

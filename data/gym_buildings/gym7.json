@@ -50,12 +50,12 @@
     "name": "Blaine",
     "spawner": [
       6178,
-      107,
+      106,
       5001
     ],
     "powered_by": [
       6178,
-      106,
+      105,
       5001
     ],
     "why": "EXP-013 E2 (VERIFIED, on staging): a bare rctmod:trainer_spawner set by command with TrainerIds on a redstone block spawned the leader and he battled. The donor template does the same thing. Taking the shell down removes the template's own spawner at [6169,106,4988], so this one is the only kanto_blaine in the town and the badge cannot be won without reaching the assay vault (a persistent leader spawner anywhere awards the badge: verified on staging 2026-09-24, docs/STATE.md).",
@@ -1716,21 +1716,21 @@
       "op": "setblock",
       "pos": [
         6178,
-        106,
+        105,
         5001
       ],
       "block": "minecraft:redstone_block",
-      "why": "-- Blaine. The power under the spawner, set into the vault's floor as the donor template sets its own"
+      "why": "-- Blaine. The power under the spawner, in the course UNDER the vault's floor, as the donor template sets its own"
     },
     {
       "op": "setblock",
       "pos": [
         6178,
-        107,
+        106,
         5001
       ],
       "block": "rctmod:trainer_spawner{TrainerIds:[\"kanto_blaine\"]}",
-      "why": "the only trainer spawner in the town once the shell is down, with two air cells over it"
+      "why": "the only trainer spawner in the town once the shell is down, set INTO the vault's floor so the leader (spawned at its pos.above()) stands at the floor's level, not on a plinth (2026-10-04); two air cells over it"
     },
     {
       "op": "setblock",

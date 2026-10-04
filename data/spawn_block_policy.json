@@ -451,6 +451,16 @@
       ],
       "why": "live coral is a spawn condition for exactly one species, corsola and its herd (data/spawn_blocks.json: #minecraft:corals and #minecraft:coral_blocks, neededNearbyBlocks). cobblers_sea_life lays coral on the Relic reef (docs/mechanics/WATER_LIFE.md), where a reef Pokemon is the point; the level-cap refusal still stops a catch above a player's cap. Dead coral (galarian corsola, cursola) is NOT whitelisted and the pack places none. Whitelisted 2026-10-02 while the owner was out: docs/REVIEW_2026-10-02.md",
       "scope": "cobblers_sea_life (the Relic reef) only"
+    },
+    {
+      "blocks": [
+        "minecraft:kelp_plant",
+        "minecraft:seagrass"
+      ],
+      "scope": "cobblers_sea_floor (the open sea's shelf: tools/sea_floor.py, data/sea_floor.json) only",
+      "why": "kelp_plant and seagrass are spawn conditions (data/spawn_blocks.json, neededNearbyBlocks) for dragalge, skrelp and pincurchin and their herd; cobblers_sea_floor lays kelp forests and seagrass meadows on the marine regions' shelf, which is these species' native habitat, so their spawning there is the floor doing its job. The level-cap refusal still stops a catch above a player's cap. kelp (the head) and tall_seagrass are not spawn conditions and need no entry",
+      "consequence": "dragalge, skrelp and pincurchin can spawn over the dressed shelf wherever their other spawn conditions hold; before this pack the bare sand of the open sea held none of them",
+      "decided": "the integrating session's default 2026-10-04 while the owner was out (ALLOW: the sea floor is these species' native habitat); the owner to confirm"
     }
   ],
   "checked_paving": {

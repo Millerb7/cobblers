@@ -949,7 +949,10 @@ def test_contract_c12_a_gulch_mega_makes_no_claim_on_the_player_it_blacks_out():
     for site, den_id in TG.FARM_DENS:
         # 2. hurt it, lose to it, walk away: no drop, then or later
         fspec, den, fw, (victim, bystander) = TG._farm_world(site, den_id)
-        (mega,) = [e for e in fw.entities if e["kind"] == "pokemon"]
+        # the Mega field's ranges overlap (the owner, 2026-10-04), so a player in one den's approach box is in its
+        # neighbours' too and their Megas come up as well: the den under test is the ONE Mega carrying its den tag, and
+        # every other Mega in the world is another live den's own
+        (mega,) = TG.den_megas(fw, den_id)
         pid = fw.sget(TG.STORE, 'dens[{id:"%s"}].pid' % den_id)
         assert pid, (site, "the den's Mega was never claimed: nothing to spend")
         mega["attacker"] = victim

@@ -65,7 +65,13 @@ def load(path=DATA, gulch=GULCH):
         raise DenError("the dens are dark by design: lighting must be 'dark'")
     gm = json.loads(Path(gulch).read_text(encoding="utf-8"))
     dens = {d["id"]: (f, d) for f in gm["farms"] for d in f["dens"]}
+    seen = set()
     for rec in doc["dens"]:
+        # a lair is keyed by its den's id (its function is mega_dens/<den>), so two records for one den would write one
+        # file; a species may hold several dens, a den one lair
+        if rec["den"] in seen:
+            raise DenError("%s has two lair records: one lair per den" % rec["den"])
+        seen.add(rec["den"])
         if rec["den"] not in dens:
             raise DenError("%s is not a den in data/gulch_mine.json farms[].dens[]" % rec["den"])
         if dens[rec["den"]][1]["species"] != rec["species"]:
@@ -96,6 +102,10 @@ class Den:
     def __init__(self, doc, rec, gden, g, index):
         self.doc, self.rec, self.g = doc, rec, g
         self.species = rec["species"]
+        # the lair kit's own species decides the kit's behaviour (tyranitar's split boulders, abomasnow's snow): a field
+        # den takes a kit by data/gulch_mine.json mega_field.dressing.kit_of, and its record names the kit's den
+        kits = {r["den"]: r["species"] for r in doc.get("superseded_dens") or []}
+        self.kit_species = kits.get(rec.get("kit"), self.species)
         self.ax, self.ay, self.az = gden["anchor"]
         self.G0 = self.ay - 1
         pad = doc["anchor_pad"]
@@ -131,7 +141,7 @@ class Den:
             raise DenError("%s is not in data/mega_dens.json blocks.ids" % _base(state))
         b = self.box
         if not (b[0] <= x <= b[3] and b[1] <= y <= b[4] and b[2] <= z <= b[5]):
-            raise DenError("%s: (%d, %d, %d) is outside its write_box %s" % (self.species, x, y, z, b))
+            raise DenError("%s: (%d, %d, %d) is outside its write_box %s" % (self.rec["den"], x, y, z, b))
         self.w[(x, y, z)] = state
 
     def surface(self, x, z, state):
@@ -189,7 +199,7 @@ class Den:
     def boulders(self):
         L = self.L
         n = L["boulders"]
-        tyr = self.species == "tyranitar"
+        tyr = self.kit_species == "tyranitar"
         for i in range(n):
             a = 2 * math.pi * i / n + self.theta + self.rng.uniform(-0.2, 0.2)
             if self.angle_off(a) < math.radians(L["ring_gap_degrees"]) / 2:
@@ -210,7 +220,7 @@ class Den:
                     h = max(1, int(round(hb * (1 - (d / (br + 0.8)) ** 2))))
                     for _ in range(h):
                         self.stack(x, z, self.rng.choice(self.rec["boulder"]))
-                    if self.species == "abomasnow":
+                    if self.kit_species == "abomasnow":
                         self.stack(x, z, "minecraft:snow[layers=%d]" % self.rng.randint(1, 3))
             if tyr:                         # the pieces knocked off it
                 for _ in range(4):
@@ -509,7 +519,7 @@ class Den:
         feature()
         self.boulders()
         self.carcass()
-        if self.species == "abomasnow":
+        if self.kit_species == "abomasnow":
             self.frost_late()
         self.pad()
         return self
@@ -564,14 +574,15 @@ def build_lines(d):
 def files(doc, dens, g):
     ds = plan(doc, dens, g)
     out = {"pack.mcmeta": json.dumps({"pack": {"pack_format": PACK_FORMAT, "description":
-                                               "Cobblers: the seven open-air Mega dens, dressed (tools/mega_dens.py)"}},
+                                               "Cobblers: the Mega field's lairs, one per den (tools/mega_dens.py)"}},
                                      indent=2) + "\n"}
     for d in ds:
         lines = function_limits.ensure_loaded(build_lines(d))
-        bad = function_limits.check_lines(lines, d.species)
+        bad = function_limits.check_lines(lines, d.rec["den"])
         if bad:
-            raise DenError("%s: %d command(s) the server would refuse: %s" % (d.species, len(bad), bad[:3]))
-        out["data/%s/function/%s/%s.mcfunction" % (NS, FN, d.species)] = "\n".join(lines) + "\n"
+            raise DenError("%s: %d command(s) the server would refuse: %s" % (d.rec["den"], len(bad), bad[:3]))
+        # named after the DEN, never its species: one species may hold several dens (2026-10-04)
+        out["data/%s/function/%s/%s.mcfunction" % (NS, FN, d.rec["den"])] = "\n".join(lines) + "\n"
     return out, ds
 
 
@@ -585,7 +596,7 @@ def placement_steps(doc=None, dens=None, g=None):
     for rec in doc["dens"]:
         b = rec["write_box"]
         hold = "%d %d %d %d" % (b[0], b[2], b[3], b[5])
-        steps += [("cmd", "forceload add " + hold), ("wait", 3), ("fn", "%s:%s/%s" % (NS, FN, rec["species"])),
+        steps += [("cmd", "forceload add " + hold), ("wait", 3), ("fn", "%s:%s/%s" % (NS, FN, rec["den"])),
                   ("cmd", "forceload remove " + hold)]
     return steps
 
@@ -608,7 +619,7 @@ def report(ds):
         zs = [k[2] for k in d.w]
         mv = most_visible(d)
         lines.append("%-9s anchor (%d, %d, %d) ground y%d: %d blocks (air %d), x%d..%d y%d..%d z%d..%d; most visible "
-                     "(%d, %d, %d); tallest %d over its ground" % (d.species, d.ax, d.ay, d.az, d.G0, len(d.w),
+                     "(%d, %d, %d); tallest %d over its ground" % (d.rec["den"] + " " + d.species, d.ax, d.ay, d.az, d.G0, len(d.w),
                                        sum(1 for s in d.w.values() if s == AIR), min(xs), max(xs), min(ys), max(ys),
                                        min(zs), max(zs), mv[0], mv[1], mv[2], max_rise(d)))
     return lines

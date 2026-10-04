@@ -39,7 +39,8 @@ block between neighbouring cells.
   python tools/ambient.py verify --rcon --server-dir <server>   # a running staging server: one of each, flags held
 
 The re-application: reapply.py R16C places each worker (force-loads its station, runs its place function) and checks
-them with verify.
+them with verify. The idle Pokemon (tools/ambient_idle.py, pack cobblers_ambient_idle) are built by their own
+prepare job after every other pack, and placement_steps() ends with theirs.
 """
 from __future__ import annotations
 
@@ -557,7 +558,10 @@ def placement_steps():
             out.append(("fn", "%s/w/%s/tread" % (F, w["id"])))
         out += [("cmd", "forceload add %d %d" % (x, z)), ("wait", 3), ("fn", "%s/w/%s/place" % (F, w["id"])), ("wait", 2),
                 ("fn", "%s/w/%s/place" % (F, w["id"])), ("cmd", "forceload remove %d %d" % (x, z))]
-    return out
+    # then the idle Pokemon (tools/ambient_idle.py), settled town by town after the workers whose cells they keep
+    # clear of; built by the same job (main() build)
+    import ambient_idle
+    return out + ambient_idle.placement_steps()
 
 
 def plan_workers():
@@ -616,6 +620,8 @@ def main(argv=None):
         print("wrote %s: %d workers, %d functions%s" % (OUT, len(pl["workers"]), len(fns),
                                                         "" if pl["water_changed_checked"] else
                                                         " (WARNING: no derived/water_shape/changed.npy; the water rule was not checked)"))
+        # the idle Pokemon (tools/ambient_idle.py) are NOT built here: they seat themselves on the built town, replaying
+        # every pack, so reapply.py prepare builds them in their own job after every other pack (ambient_idle:build)
         return 0
     import reapply
     bad = verify(reapply.Rcon(a.server_dir))

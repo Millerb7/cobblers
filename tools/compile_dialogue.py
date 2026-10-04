@@ -34,6 +34,11 @@ The runtime pieces, each proven on the disposable world before this compiler rel
              the party read the water ladder proved, EXP-042). End to end it is experiments/EXP-052-lopunny-show.
   functions  an effect {"kind": "function", "function": "cobblers:<path>"} runs that function as and at the player, like
              scene_function but for a function a generated pack owns (the ferry's trips).
+  battles    a conversation with "npc_battle": {"trainers": <data file>, "trainer": <id>, "skill": n} gives its NPC's
+             class a `simple` party of that record's team (battle_class()), and a response action {"kind":
+             "npc_battle"} closes the dialogue and starts the NPC's battle against the talking player, as Cobblemon's own
+             dialogues/npc-example.json does. The result is read elsewhere, by a battle_victory callback (the finale's:
+             tools/hq_tower.py). First used 2026-10-04 by Brann and Elara in the HQ tower; NOT yet run in game.
   opened by  a conversation with "npc_id": null has no NPC class: a prop or an actor opens it (the scene runtime runs
              /opendialogue for the player who clicked), never an NPC's interaction.
   speakers   a conversation may name its speakers ("speakers": {"pip": "Pip", "narration": null}); a speaker mapped to
@@ -212,6 +217,18 @@ class Compiler:
             return run(["execute as ", UUID, " at @s run function %s" % function_id(e["function"])])
         raise Unsupported("effect kind %s" % k)
 
+    def battle_action(self, a):
+        """The response that starts this conversation's NPC's battle against the talking player. Cobblemon's own
+        dialogues/npc-example.json (in the 1.8.0 jar) does exactly this from an option: `q.dialogue.close();` then
+        `q.npc.start_battle(q.player, 'double');`. 'singles' is the format the arena probe ran in game on 2026-10-03
+        (docs/research/notes/arena-per-player-opponents.md section 8), the only one allowed here. The NPC's class must
+        carry a party (the conversation's npc_battle), or there is nothing to fight with."""
+        if not self.conv.get("npc_battle"):
+            raise Unsupported("an npc_battle response needs the conversation's npc_battle (the NPC's party)")
+        if a.get("format", "singles") != "singles":
+            raise Unsupported("npc_battle format %r: only 'singles' has been run in game" % a.get("format"))
+        return "q.player.save_data(); q.dialogue.close(); q.npc.start_battle(q.player, 'singles');"
+
     def give(self, item, count):
         """`give <uuid>` is refused (a uuid parses as an entity selector), so give runs as the player; its success
         count goes to a score, and a failure leaves a tag the Molang side reads in the same action."""
@@ -291,7 +308,7 @@ class Compiler:
             raise Unsupported("node kind %s" % n["kind"])
         options = []
         for r in n["responses"]:
-            act, closes, tids = pre, False, []
+            act, closes, tids, battle = pre, False, [], None
             for a in r.get("actions") or []:
                 if a["kind"] == "quest_transition":
                     act += self.transition(a["transition"])
@@ -300,9 +317,15 @@ class Compiler:
                     act += "%s = %s; " % (self.field(self.cursor), lit(a["node"]))
                 elif a["kind"] == "close_dialogue":
                     closes = True
+                elif a["kind"] == "npc_battle":
+                    battle = self.battle_action(a)
                 else:
                     raise Unsupported("response action %s" % a["kind"])
-            if closes:
+            if battle is not None:
+                if tids or closes or len(r.get("actions") or []) != 1:
+                    raise Unsupported("response %s: npc_battle is a response's only action" % r["id"])
+                act += battle
+            elif closes:
                 act += "q.player.save_data(); q.dialogue.close();"
             elif tids:
                 nxt = r["next"]
@@ -365,7 +388,7 @@ def check_fields(quest, fields):
             raise Unsupported("integer field %s (0 would be ambiguous with unset)" % fid)
 
 
-def compile_conversation(conv, quests, fields):
+def compile_conversation(conv, quests, fields, data_dir=None):
     """{relative path: content} for one conversation: its dialogue, and its NPC class when an NPC opens it."""
     quest = quests.get(conv["quest_id"])
     if quest is None:
@@ -383,7 +406,35 @@ def compile_conversation(conv, quests, fields):
             "canDespawn": False, "isInvulnerable": True, "isMovable": False, "isLeashable": False,
             "allowProjectileHits": False,
         }
+        if conv.get("npc_battle"):
+            files["data/%s/npcs/%s.json" % (NS, npc)].update(battle_class(conv["npc_battle"], data_dir))
+    elif conv.get("npc_battle"):
+        raise Unsupported("npc_battle with no NPC: only an NPC has a party")
     return files
+
+
+def battle_class(nb, data_dir=None):
+    """The fields an NPC that also fights adds to its class (a conversation's npc_battle: {"trainers": <file in
+    data/>, "trainer": <id>, "skill": 0-5}): a `simple` party of the trainer record's authored `team`, each member a
+    properties string at its own level (tools/arena_runtime.py properties(), the form its exam classes use), and the
+    rest of the shape of the arena probe class that battled in game on 2026-10-03 (docs/research/notes/
+    arena-per-player-opponents.md sections 7-8): canChallenge false (a click opens the dialogue, never a battle), the
+    battler and looks_at_players presets, autoHealParty (every challenge meets the full team). Every key is one
+    NPCClass.kt @1.8.0 lists (same note, section 1)."""
+    import sys
+    sys.path.insert(0, str(Path(__file__).resolve().parent))
+    from arena_runtime import properties
+    src = (Path(data_dir) if data_dir else ROOT / "data") / nb["trainers"]
+    recs = {t["id"]: t for t in json.loads(src.read_text(encoding="utf-8"))["trainers"]}
+    rec = recs.get(nb["trainer"])
+    if rec is None or not rec.get("team"):
+        raise Unsupported("npc_battle: %s has no trainer %s with a team" % (nb["trainers"], nb["trainer"]))
+    skill = nb.get("skill")
+    if not isinstance(skill, int) or not 0 <= skill <= 5:
+        raise Unsupported("npc_battle skill %r is not 0-5" % (skill,))
+    return {"battleConfiguration": {"canChallenge": False}, "skill": skill, "autoHealParty": True,
+            "ai": [{"type": "apply_behaviours", "presets": ["cobblemon:battler", "cobblemon:looks_at_players"]}],
+            "party": {"type": "simple", "pokemon": [properties(m, m["level"]) for m in rec["team"]]}}
 
 
 PACK_META = {"pack": {"pack_format": 48, "description": "Cobblers compiled dialogue (generated)"}}
@@ -395,7 +446,7 @@ def build(conv_id, data_dir, place=None):
     if not conv:
         raise SystemExit("no conversation %s" % conv_id)
     files = {"pack.mcmeta": PACK_META}
-    files.update(compile_conversation(conv, quests, fields))
+    files.update(compile_conversation(conv, quests, fields, data_dir))
     if place:
         if not conv.get("npc_id"):
             raise SystemExit("%s has no NPC: a prop or an actor opens it" % conv_id)
@@ -409,7 +460,7 @@ def build_all(data_dir):
     files, done, refused = {"pack.mcmeta": PACK_META}, [], {}
     for conv in dialogue["conversations"]:
         try:
-            got = compile_conversation(conv, quests, fields)
+            got = compile_conversation(conv, quests, fields, data_dir)
         except Unsupported as e:
             refused[conv["id"]] = str(e)
             continue

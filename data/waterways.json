@@ -9,6 +9,10 @@
       "id": "mt_clay_outflow",
       "display_name": "The Wooper creek",
       "character": "The creek that leaves the pond west of Mt Clay at its south-west corner and runs 1,300 blocks down to the western lake, losing fifty blocks of height on the way. Wooper country: thick where it leaves the pond, thinning as the water widens and cools downstream.",
+      "habitat_fixes": {
+        "wooper paldean": "removed from data/spawns.json's hand-authored waterway entries (2026-10-04, the owner's wrong-country sweep; tools/spawn_habitat_audit.py KNOWN): Paldean Wooper is native in the Cobblemon 1.8.0 jar only to is_savanna / is_arid and mud (badlands, desert, savanna, mangrove), and the creek runs mostly through foothill_woods (mixed_woods = windswept_forest, cool), two steps away. A biomes condition could hold it to the creek's lower course in north_west_coast (coast_scrub = plains, temperate), but that is still a hot-country frog on a cool coast, one step short of wrong and not right. Removed, not replaced: plain Wooper, native everywhere in the jar, already holds the common bucket at the same weight and levels, so the creek stays Wooper country and Route 3's Electric-immune Ground answer is unchanged",
+        "clodsire": "removed with Paldean Wooper, its only source, for the same reason (native only to is_savanna / is_arid and mud). Its rare bucket goes empty; Quagsire, uncommon, is the creek's grown Ground/Water answer as before"
+      },
       "half_width": 8,
       "half_width_basis": "a 16-block strip, nearly all of which is water-adjacent, so cutting it out of the sub-region rosters leaves no dead forest behind. At the 24 it was first authored with, the strip was 48 wide and its outer thirds carried nothing.",
       "weight_ramp": {

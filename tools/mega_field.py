@@ -203,6 +203,9 @@ def draw_map(spec, out, source_root=None, sites=None):
     for fa in spec.get("farms", []):
         for den in fa["dens"]:
             x, _y, z = den["anchor"]
+            L = den.get("leash", 0)
+            if fa["id"].startswith("field_") and L:
+                d.ellipse([P(x - L, z - L), P(x + L, z + L)], outline=(255, 190, 90), width=1)
             d.ellipse([P(x - 6, z - 6), P(x + 6, z + 6)], fill=(255, 140, 0))
     for fa in spec.get("superseded_farms", []):
         for den in fa["dens"]:
@@ -223,7 +226,7 @@ def draw_map(spec, out, source_root=None, sites=None):
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("mode", choices=("trace", "map", "sites", "dress", "check"))
+    p.add_argument("mode", choices=("trace", "map", "sites", "dress", "check", "floor"))
     p.add_argument("--source-root")
     p.add_argument("--out")
     p.add_argument("--server-dir", help="accepted for tools/reapply.py prepare's sake; not read")
@@ -254,6 +257,13 @@ def main(argv=None):
         return 0
     if a.mode == "dress":
         print(json.dumps(dress(spec, a.source_root), indent=1))
+        return 0
+    if a.mode == "floor":
+        rows, _M = floor_counts(spec, a.source_root)
+        for k, v in rows:
+            print("%-72s %8d" % (k, v))
+        r = ranges(spec, a.source_root)
+        print(json.dumps({k: v for k, v in r.items() if k != "pairs"}))
         return 0
     return 1
 
@@ -324,9 +334,171 @@ def dress(spec, source_root=None):
                     rec[c] = kit[c]
             rec["feature_at"] = [fx, fz]
             rec["approach_toward"] = [tx, tz]
-            rec["write_box"] = [ax - 27, gy - 8, az - 27, ax + 27, gy + 14, az + 27]
+            lr = spec["mega_field"]["layout"]["lair_radius"]
+            rec["write_box"] = [ax - lr, gy - 8, az - lr, ax + lr, gy + 14, az + lr]
             out.append(rec)
     return out
+
+
+def point_dist(px, pz, pts, chunk=16384):
+    """Distance from each (px, pz) to the nearest of pts, chunked over both so no matrix outgrows memory."""
+    px = np.asarray(px, dtype=float).ravel()
+    pz = np.asarray(pz, dtype=float).ravel()
+    p = np.asarray(pts, dtype=float).reshape(-1, 2)
+    d = np.full(px.shape, np.inf)
+    if not len(p):
+        return d
+    for i in range(0, len(px), chunk):
+        a, b = px[i:i + chunk, None], pz[i:i + chunk, None]
+        for j in range(0, len(p), 256):
+            q = p[j:j + 256]
+            d[i:i + chunk] = np.minimum(d[i:i + chunk], np.sqrt((a - q[:, 0]) ** 2 + (b - q[:, 1]) ** 2).min(-1))
+    return d
+
+
+def _coarse(x0, z0, x1, z1, fn, step=2):
+    """fn(px, pz) evaluated on a `step` grid over the inclusive box and spread back to every column (nearest cell), so a
+    distance is right to within step / sqrt 2 blocks; returns a (z, x) array the shape of the box."""
+    xs = np.arange(x0, x1 + 1, step) + step / 2.0
+    zs = np.arange(z0, z1 + 1, step) + step / 2.0
+    cx, cz = np.meshgrid(xs, zs)
+    v = np.asarray(fn(cx.ravel(), cz.ravel())).reshape(cx.shape)
+    v = np.repeat(np.repeat(v, step, axis=0), step, axis=1)
+    return v[:z1 - z0 + 1, :x1 - x0 + 1]
+
+
+def others(spec):
+    """What inside or beside the field is another system's, as (what, x, z, reach) discs: the Rift zones' walls and
+    posts (data/rift_zones.json; 32, the lairs' footprint rule) and the layout's keep_clear. The gulch's zone and block
+    box, Victory Road and the critical path are measured as lines and areas in floor()."""
+    rz = json.loads((ROOT / "data" / "rift_zones.json").read_text(encoding="utf-8"))
+    out = []
+    for cut in rz.get("cuts") or []:
+        out += [("wall " + cut["id"], c[0], c[1], 32) for c in cut.get("line") or []]
+    for zid, zz in rz["zones"].items():
+        for post in zz.get("posts") or []:
+            if isinstance(post.get("at"), list):
+                out.append(("%s post %s" % (zid, post.get("id")), post["at"][0], post["at"][1], 32))
+    for kc in spec["mega_field"]["layout"]["keep_clear"]:
+        out.append(("keep_clear", kc["at"][0], kc["at"][1], kc["r"]))
+    return out
+
+
+def floor(spec, source_root=None):
+    """The field's floor, measured on the canonical heightmap (never a world), column by column, as (z, x) masks over
+    the polygon's box: `field` (inside the polygon), `dry` (no painted water: tools/water_mask.py's rule, the sea and
+    every lake basin, vectorised), `walk` (no 4-neighbour step over one block), and the distances every rule needs:
+    `road` (Victory Road's walked line), `crit` (every critical path), `gulch` (the gulch zone's edge; negative inside),
+    `other` (the nearest wall, post or keep_clear disc, less its reach). Returns (box, masks, ground)."""
+    import water_mask as WM
+    mf = spec["mega_field"]
+    lay = mf["layout"]
+    poly = mf["polygon"]
+    g = G.Ground(source_root)
+    x0, z0, x1, z1, field = columns(poly)
+    H = g.box(x0, z0, x1, z1)
+    gx, gz = np.meshgrid(np.arange(x0, x1 + 1) + 0.5, np.arange(z0, z1 + 1) + 0.5)
+    wet = H < WM.sea_level()
+    for _bid, b in WM.bodies().items():
+        rings = [r for r in b["basin"] if r]
+        if not rings:
+            continue
+        bx = [p[0] for r in rings for p in r]
+        bz = [p[1] for r in rings for p in r]
+        if max(bx) < x0 or min(bx) > x1 or max(bz) < z0 or min(bz) > z1:
+            continue
+        inb = np.zeros(field.shape, dtype=bool)
+        for r in rings:
+            inb |= point_in(r, gx, gz)
+        wet |= inb & (H < b["level_y"])
+    steep = np.zeros(field.shape, dtype=bool)
+    dz, dx = np.abs(np.diff(H, axis=0)) > 1, np.abs(np.diff(H, axis=1)) > 1
+    steep[:-1, :] |= dz
+    steep[1:, :] |= dz
+    steep[:, :-1] |= dx
+    steep[:, 1:] |= dx
+    paths = json.loads((ROOT / "data" / "route_paths.json").read_text(encoding="utf-8"))["paths"]
+    reach = 400
+
+    def near(pts):
+        return [p for p in pts if x0 - reach <= p[0] <= x1 + reach and z0 - reach <= p[1] <= z1 + reach]
+    vr = near(paths[lay["road"]])
+    crit = near([p for pts in paths.values() for p in pts])
+    zp = spec["zone"]["polygon"]
+    road = _coarse(x0, z0, x1, z1, lambda a, b: point_dist(a, b, vr))
+    critd = _coarse(x0, z0, x1, z1, lambda a, b: point_dist(a, b, crit))
+    gul = _coarse(x0, z0, x1, z1, lambda a, b: edge_dist(zp, a, b) * np.where(point_in(zp, a, b), -1, 1))
+    oth = np.full(field.shape, np.inf)
+    for _w, ox, oz, r in others(spec):
+        if x0 - r - 64 <= ox <= x1 + r + 64 and z0 - r - 64 <= oz <= z1 + r + 64:
+            oth = np.minimum(oth, np.hypot(gx - ox, gz - oz) - r)
+    bx, bz = spec["grid"]["x"], spec["grid"]["z"]
+    in_grid = (gx >= bx[0]) & (gx <= bx[1] + 1) & (gz >= bz[0]) & (gz <= bz[1] + 1)
+    return (x0, z0, x1, z1), {"field": field, "dry": ~wet, "walk": ~steep, "road": road, "crit": critd, "gulch": gul,
+                              "other": oth, "in_grid": in_grid}, H
+
+
+def floor_counts(spec, source_root=None):
+    """The floor in columns (one column = one square block of floor), each line a subset of the one before it, and
+    what each removes. `mega floor` is where a field Mega may stand: dry, walkable, outside the gulch's zone by
+    megas.spawn_clear, off every other system's disc and further from Victory Road's walked line than road_clear less
+    the leash (no Mega comes nearer). `dressing floor` is where this field's blocks may be written: the lairs' footprint
+    rule (tools/mega_dens_audit.py), 128 from every critical path, off the gulch's block box and zone, 32 off a wall or
+    post."""
+    lay = spec["mega_field"]["layout"]
+    _box, M, _H = floor(spec, source_root)
+    f = M["field"]
+    rows = [("field (inside mega_field.polygon)", f)]
+    rows.append(("  dry (no painted water)", rows[-1][1] & M["dry"]))
+    rows.append(("  walkable (no step over one block)", rows[-1][1] & M["walk"]))
+    walk = rows[-1][1]
+    mega = walk & (M["gulch"] >= spec["megas"]["spawn_clear"]) & (M["other"] >= 0) & \
+        (M["road"] >= lay["road_clear"] - lay["leash"])
+    rows.append(("  mega floor (off the road band, the gulch, the posts and keep_clear)", mega))
+    dress = walk & (M["crit"] >= 128) & ~M["in_grid"] & (M["gulch"] > 32) & (M["other"] >= 0)
+    rows.append(("  dressing floor (the lairs' footprint rule)", dress))
+    out = [(k, int(v.sum())) for k, v in rows]
+    # the gulch's own floor, for the record: it is the Cutters' town, the mine and the gate, and holds no field den
+    g = G.Ground(source_root)
+    zx0, zz0, zx1, zz1, zm = columns(spec["zone"]["polygon"])
+    zH = g.box(zx0, zz0, zx1, zz1)
+    st = np.zeros(zm.shape, dtype=bool)
+    dz, dx = np.abs(np.diff(zH, axis=0)) > 1, np.abs(np.diff(zH, axis=1)) > 1
+    st[:-1, :] |= dz
+    st[1:, :] |= dz
+    st[:, :-1] |= dx
+    st[:, 1:] |= dx
+    out.append(("the gulch zone (the town, the mine, the gate: no field den)", int(zm.sum())))
+    out.append(("  walkable", int((zm & ~st).sum())))
+    return out, M
+
+
+def ranges(spec, source_root=None, M=None):
+    """How the dens' ranges (leash discs) lie on the mega floor: covered columns, columns in two or more ranges, and
+    every overlapping pair with its overlap depth (2 x leash - distance, blocks along the line between the homes)."""
+    lay = spec["mega_field"]["layout"]
+    (x0, z0, x1, z1), M2, _H = floor(spec, source_root) if M is None else M
+    walk = M2["field"] & M2["dry"] & M2["walk"]
+    mega = walk & (M2["gulch"] >= spec["megas"]["spawn_clear"]) & (M2["other"] >= 0) & \
+        (M2["road"] >= lay["road_clear"] - lay["leash"])
+    gx, gz = np.meshgrid(np.arange(x0, x1 + 1), np.arange(z0, z1 + 1))
+    n = np.zeros(mega.shape, dtype=int)
+    dens = [d for fa in spec["farms"] if fa["id"].startswith("field_") for d in fa["dens"]]
+    for d in dens:
+        n += (np.hypot(gx - d["anchor"][0], gz - d["anchor"][2]) <= d["leash"]).astype(int)
+    pairs = []
+    for i, a in enumerate(dens):
+        for b in dens[i + 1:]:
+            s = math.hypot(a["anchor"][0] - b["anchor"][0], a["anchor"][2] - b["anchor"][2])
+            if s < a["leash"] + b["leash"]:
+                pairs.append((a["id"], b["id"], round(s, 1), round(a["leash"] + b["leash"] - s, 1)))
+    nb = {d["id"]: sum(1 for p in pairs if d["id"] in p[:2]) for d in dens}
+    return {"mega floor": int(mega.sum()), "in a range": int((mega & (n >= 1)).sum()),
+            "in two or more": int((mega & (n >= 2)).sum()), "in three or more": int((mega & (n >= 3)).sum()),
+            "overlapping pairs": len(pairs), "dens": len(dens),
+            "neighbours per den": [min(nb.values()) if nb else 0, max(nb.values()) if nb else 0],
+            "overlap depth": [min(p[3] for p in pairs), max(p[3] for p in pairs)] if pairs else None,
+            "pairs": pairs}
 
 
 def _h(x, z, salt):
@@ -362,6 +534,224 @@ def edge_dist(poly, px, pz):
     return np.sqrt((px - cx) ** 2 + (pz - cz) ** 2).min(-1)
 
 
+def _clash(a, b, s):
+    """Two anchors whose lairs' write boxes would touch: nearer than lair_spacing along BOTH axes (Chebyshev)."""
+    return abs(a[0] - b[0]) < s and abs(a[1] - b[1]) < s
+
+
+def _improve(chosen, cand, s, reach=None, floor=0):
+    """Local search on a greedy packing: while some den can be swapped for TWO candidates that clash with nothing else
+    chosen nor with each other, swap it (a 1-for-2 exchange; each one adds a den, so it ends). With `reach`, a swap is
+    taken only if the dens still cover `floor` usable columns or more. Deterministic: dens and candidates are tried in
+    (z, x) order. Returns (chosen, swaps made)."""
+    cell = max(1, s)
+    chosen = sorted(chosen, key=lambda c: (c[1], c[0]))
+    swaps = 0
+
+    def bucket(pts):
+        b = {}
+        for p in pts:
+            b.setdefault((p[0] // cell, p[1] // cell), []).append(p)
+        return b
+
+    cb = bucket(cand)
+
+    def near(b, p):
+        i, j = p[0] // cell, p[1] // cell
+        return [q for di in (-1, 0, 1) for dj in (-1, 0, 1) for q in b.get((i + di, j + dj), [])]
+
+    while True:
+        chb = bucket(chosen)
+        done = False
+        for d in chosen:
+            # the candidates that clash with d and with no other chosen den
+            only = [c for c in near(cb, d) if _clash(c, d, s)
+                    and not any(o is not d and _clash(c, o, s) for o in near(chb, c))]
+            only.sort(key=lambda c: (c[1], c[0]))
+            rest = [o for o in chosen if o is not d]
+            pairs = [(a, b) for i, a in enumerate(only) for b in only[i + 1:] if not _clash(a, b, s)]
+            if pairs and reach is not None:
+                need = floor - reach.covered(rest)
+                pairs = [p for p in pairs if need <= 0 or reach.pair_gain(p[0], p[1]) >= need]
+            pair = pairs[0] if pairs else None
+            if pair:
+                chosen = sorted(rest + list(pair), key=lambda c: (c[1], c[0]))
+                swaps += 1
+                done = True
+                break
+        if not done:
+            return chosen, swaps
+
+
+class Reach:
+    """The usable floor (inside the polygon, dry, no step over one block: the audit's floor) and which of it the chosen
+    dens' ranges cover, as the keeper's own leash test: a column (x, z) is in a range when
+    hypot(x + 0.5 - ax, z + 0.5 - az) <= leash."""
+
+    def __init__(self, box, usable, leash):
+        self.x0, self.z0, self.x1, self.z1 = box
+        self.usable = usable
+        self.L = leash
+        self.cov = np.zeros(usable.shape, dtype=bool)
+        r = int(math.ceil(leash)) + 1
+        oz, ox = np.mgrid[-r:r + 1, -r:r + 1]
+        self.r = r
+        self.disc = np.hypot(ox + 0.5, oz + 0.5) <= leash
+
+    def _win(self, x, z):
+        i0, j0 = z - self.r - self.z0, x - self.r - self.x0
+        n = 2 * self.r + 1
+        a0, b0 = max(0, i0), max(0, j0)
+        a1, b1 = min(self.usable.shape[0], i0 + n), min(self.usable.shape[1], j0 + n)
+        if a1 <= a0 or b1 <= b0:
+            return None
+        return (slice(a0, a1), slice(b0, b1)), self.disc[a0 - i0:a1 - i0, b0 - j0:b1 - j0]
+
+    def gain(self, x, z):
+        w = self._win(x, z)
+        if w is None:
+            return 0
+        sl, d = w
+        return int((d & self.usable[sl] & ~self.cov[sl]).sum())
+
+    def add(self, x, z):
+        w = self._win(x, z)
+        if w is not None:
+            sl, d = w
+            self.cov[sl] |= d
+
+    def pair_gain(self, a, b):
+        """What two more dens would add together to what is covered now, leaving it unchanged."""
+        ga = self.gain(a[0], a[1])
+        gb = self.gain(b[0], b[1])
+        if abs(a[0] - b[0]) > 2 * self.r or abs(a[1] - b[1]) > 2 * self.r:
+            return ga + gb
+        keep = self.cov.copy()
+        self.add(a[0], a[1])
+        gb = self.gain(b[0], b[1])
+        self.cov = keep
+        return ga + gb
+
+    def covered(self, pts):
+        self.cov[:] = False
+        for p in pts:
+            self.add(p[0], p[1])
+        return int((self.cov & self.usable).sum())
+
+
+def pack(cand, lay, reach=None):
+    """The candidate anchors packed, two dens never nearer than lair_spacing along BOTH axes at once (Chebyshev): a
+    lair's write box is its anchor +- lair_radius and no two boxes may touch (tools/mega_dens_audit.py record rule), so
+    2 x 21 + 1 = 43 is the closest two dens can stand.
+
+    Greedy in a sweep order lays a near-lattice; each order is tried and improved by 1-for-2 swaps (_improve), and the
+    one placing most dens wins (ties: the most usable floor in a range, then the first). With `reach` (the usable floor)
+    the winner is then worked for REACH, the owner's 'everywhere': each den in turn is moved to the candidate that adds
+    most usable floor to the ranges if that beats what it covers where it stands (_relocate), every candidate that still
+    fits is added, and 1-for-2 swaps that lose no floor are taken, until a round changes nothing. Returns (chosen,
+    notes)."""
+    s = lay["lair_spacing"]
+    orders = [("rows", lambda c: (c[1], c[0])), ("columns", lambda c: (c[0], c[1])),
+              ("rows from the south", lambda c: (-c[1], c[0])), ("columns from the east", lambda c: (-c[0], c[1])),
+              ("diagonal", lambda c: (c[0] + c[1], c[0])), ("anti-diagonal", lambda c: (c[0] - c[1], c[1])),
+              ("hashed", lambda c: _h(c[0], c[1], lay["seed"]))]
+    best, best_key, tried = None, None, []
+    for name, key in orders:
+        chosen = []
+        for c in sorted(cand, key=key):
+            if not any(_clash(c, o, s) for o in chosen):
+                chosen.append(c)
+        n0 = len(chosen)
+        chosen, _sw = _improve(chosen, cand, s)
+        cov = reach.covered(chosen) if reach is not None else 0
+        tried.append("%s: %d -> %d dens, %d columns in a range" % (name, n0, len(chosen), cov))
+        if best is None or (len(chosen), cov) > best_key:
+            best, best_key = chosen, (len(chosen), cov)
+    if reach is None:
+        return best, tried
+    chosen = sorted(best, key=lambda c: (c[1], c[0]))
+    for rnd in range(lay.get("reach_rounds", 12)):
+        cov0 = reach.covered(chosen)
+        chosen, moves = _relocate(chosen, cand, s, reach, 2 * lay["leash"] - lay["min_overlap"])
+        added = 0
+        for c in sorted(cand, key=lambda c: (c[1], c[0])):
+            if not any(_clash(c, o, s) for o in chosen):
+                chosen.append(c)
+                added += 1
+        floor0 = reach.covered(chosen)
+        chosen, swaps = _improve(chosen, cand, s, reach, floor0)
+        cov1 = reach.covered(chosen)
+        tried.append("reach round %d: %d moved, %d added, %d swapped: %d dens, %d -> %d columns in a range"
+                     % (rnd + 1, moves, added, swaps, len(chosen), cov0, cov1))
+        if not (moves or added or swaps):
+            break
+    return chosen, tried
+
+
+def _relocate(chosen, cand, s, reach, near):
+    """One pass of moves for reach: each den in (z, x) order is moved to the candidate (fitting beside every other den)
+    whose range would add the most usable floor not in another range, when that is more than the den's own range adds
+    where it stands, and only where the moved den and every den that was its neighbour still has a den within `near`
+    (each range overlaps another by layout.min_overlap). Returns (chosen, moves)."""
+    chosen = sorted(chosen, key=lambda c: (c[1], c[0]))
+    moves = 0
+    for i in range(len(chosen)):
+        d = chosen[i]
+        rest = chosen[:i] + chosen[i + 1:]
+        reach.covered(rest)
+        here = reach.gain(d[0], d[1])
+        top, at = here, None
+        mates = [o for o in rest if math.hypot(o[0] - d[0], o[1] - d[1]) <= near]
+        for c in cand:
+            if c is d or any(_clash(c, o, s) for o in rest):
+                continue
+            g = reach.gain(c[0], c[1])
+            if g <= top or not any(math.hypot(o[0] - c[0], o[1] - c[1]) <= near for o in rest):
+                continue
+            after = rest + [c]
+            if any(not any(q is not m and math.hypot(q[0] - m[0], q[1] - m[1]) <= near for q in after) for m in mates):
+                continue
+            top, at = g, c
+        if at is not None:
+            chosen[i] = at
+            moves += 1
+    return sorted(chosen, key=lambda c: (c[1], c[0])), moves
+
+
+def drop_lonely(chosen, lay, cand=()):
+    """The owner's rule that every Mega's range presses on a neighbour's (2026-10-04, 'overlapping ranges'): a den whose
+    range overlaps no other den's by layout.min_overlap or more is first given a neighbour (the nearest candidate that
+    fits beside every chosen den and overlaps it so), and only if none fits is it dropped, and again until no den is
+    alone (dropping one can leave another alone). Returns (kept, dropped, added)."""
+    near = 2 * lay["leash"] - lay["min_overlap"]
+    s = lay["lair_spacing"]
+    kept, dropped, added = list(chosen), [], []
+
+    def alone(c):
+        return not any(o is not c and math.hypot(c[0] - o[0], c[1] - o[1]) <= near for o in kept)
+    while True:
+        lone = sorted((c for c in kept if alone(c)), key=lambda c: (c[1], c[0]))
+        if not lone:
+            return kept, dropped, added
+        c = lone[0]
+        fit = sorted((q for q in cand if math.hypot(q[0] - c[0], q[1] - c[1]) <= near
+                      and not any(_clash(q, o, s) for o in kept)),
+                     key=lambda q: (math.hypot(q[0] - c[0], q[1] - c[1]), q[1], q[0]))
+        if fit:
+            kept.append(fit[0])
+            added.append(fit[0])
+        else:
+            kept.remove(c)
+            dropped.append(c)
+
+
+def den_id(x, z):
+    """A field den's id: its anchor's column, so it is unique (two anchors are 43 or more apart) and says nothing about
+    its species. Every system keys the den by this: the keeper's tag cobblers.gm.<id> and its scores, its lair's
+    function mega_dens/<id>, its borders <id>__<id>, its retirement."""
+    return "gm_mf_%d_%d" % (x, z)
+
+
 def sites(spec, source_root=None):
     """The field's dens, laid out on the canonical heightmap (never a world) by mega_field.layout's rules, and grouped
     into farms. Returns {"dens": [...], "farms": [...], "counts": {...}}: the farms are what data/gulch_mine.json
@@ -380,14 +770,30 @@ def sites(spec, source_root=None):
     inside = point_in(poly, cx + 0.5, cz + 0.5)
     cx, cz = cx[inside], cz[inside]
     counts = {"candidates": int(len(cx))}
-    e = edge_dist(poly, cx + 0.5, cz + 0.5)
+    # the edge measured from the anchor's corner AND its column's centre, the nearer of the two: a range is a disc round
+    # the anchor (the leash line's `positioned <anchor>`), and on a 2-block candidate grid half a block decides it
+    e = np.minimum(edge_dist(poly, cx + 0.5, cz + 0.5), edge_dist(poly, cx, cz))
     r = seg_dist(cx + 0.5, cz + 0.5, vr)
-    ok = (e >= lay["edge_clear"]) & (r >= lay["road_clear"])
+    # the lair's whole box inside the field (edge_clear), and the Mega's whole leash disc on the field's floor too
+    ok = (e >= max(lay["edge_clear"], lay["leash"])) & (r >= lay["road_clear"])
     counts["after edge and road"] = int(ok.sum())
     gz = spec["zone"]["polygon"]
-    ok &= edge_dist(gz, cx + 0.5, cz + 0.5) >= lay["gulch_clear"]
-    for kc in lay["keep_clear"]:
-        ok &= np.hypot(cx - kc["at"][0], cz - kc["at"][1]) >= kc["r"]
+    # the gulch: a lair's write box keeps 32 off its zone, and a leashed Mega keeps megas.spawn_clear off it
+    gclear = max(lay["gulch_clear"], lay["leash"] + spec["megas"]["spawn_clear"])
+    ok &= edge_dist(gz, cx + 0.5, cz + 0.5) >= gclear
+    # another system's wall, post or keep_clear disc: neither a lair's box nor the Mega's leash reaches it
+    for _w, ox, oz, rr in others(spec):
+        ok &= np.hypot(cx - ox, cz - oz) >= max(rr, lay["leash"] + 1) + (0 if _w == "keep_clear" else lay["lair_radius"])
+    # a den's level is its Rift zone's badge cap plus its tier's offset (farm_tiers.field_why), so its anchor must
+    # stand in a live zone's boxes (data/rift_zones.json): a den in no zone has no gate and no cap to be levelled by
+    rz = json.loads((ROOT / "data" / "rift_zones.json").read_text(encoding="utf-8"))
+    zoned = np.zeros(ok.shape, dtype=bool)
+    for zz in rz["zones"].values():
+        if str(zz.get("status", "")).startswith("SUPERSEDED"):
+            continue
+        for b in zz.get("boxes") or []:
+            zoned |= (cx >= b[0]) & (cx <= b[2]) & (cz >= b[1]) & (cz <= b[3])
+    ok &= zoned
     counts["after keep_clear"] = int(ok.sum())
     pr = lay["pad_radius"]
     cand = []
@@ -408,31 +814,43 @@ def sites(spec, source_root=None):
             continue
         cand.append((int(x), int(z), float(rd)))
     counts["after pad"] = len(cand)
-    cand.sort(key=lambda c: _h(c[0], c[1], lay["seed"]))
-    chosen = []
-    for x, z, rd in cand:
-        if all((x - a) ** 2 + (z - b) ** 2 >= lay["spacing"] ** 2 for a, b, _r in chosen):
-            chosen.append((x, z, rd))
+    (fx0, fz0, fx1, fz1), M, _H = floor(spec, source_root)
+    reach = Reach((fx0, fz0, fx1, fz1), M["field"] & M["dry"] & M["walk"], lay["leash"])
+    chosen, counts["packing"] = pack(cand, lay, reach)
+    counts["packed"] = len(chosen)
+    chosen, lonely, partners = drop_lonely(chosen, lay, cand)
+    counts["dropped, no neighbour"] = [[c[0], c[1]] for c in lonely]
+    counts["added as a neighbour"] = [[c[0], c[1]] for c in partners]
+    counts["usable floor"] = int(reach.usable.sum())
+    counts["usable floor in a range"] = reach.covered(chosen)
+    # no Mega's range reaches another den's home (layout.why.leash): lair_spacing > leash makes it so; refused if not
+    for i, a in enumerate(chosen):
+        for b in chosen[i + 1:]:
+            if math.hypot(a[0] - b[0], a[1] - b[1]) <= lay["leash"]:
+                raise FieldError("dens (%d, %d) and (%d, %d): one's range reaches the other's home" % (a[0], a[1], b[0], b[1]))
     counts["dens"] = len(chosen)
-    # tier by distance from the road: the further from Victory Road's walked line, the deeper
+    # tier and species, both banded by distance from the Cutters' town (the reward sink): the nearest dens are the
+    # outer tier and take the roster's first species, the farthest the deeper tier and its last
+    tx, tz = spec["town"]["square"]["centre"]
     dens = []
-    for x, z, rd in sorted(chosen, key=lambda c: (c[1], c[0])):
-        tier = lay["deeper_tier"] if rd >= lay["deeper_from_road"] else lay["outer_tier"]
-        dens.append({"x": x, "z": z, "y": g(x, z) + 1, "tier": tier, "road": round(rd)})
-    # species: each tier's roster dealt in turn along the dens sorted north to south, so neighbours differ
-    # ONE den per species: tools/mega_dens.py names a lair's function after its species (mega_dens/<species>), so two
-    # dens of one species would write one file; a tier with more dens than roster entries is refused, not wrapped
-    deal = {t: 0 for t in lay["roster"]}
-    for d in dens:
-        ros = lay["roster"][d["tier"]]
-        if deal[d["tier"]] >= len(ros):
-            raise FieldError("%s has more dens than species in mega_field.layout.roster.%s (%d): one den per species"
-                             % (d["tier"], d["tier"], len(ros)))
-        d["species"], d["aspect"] = ros[deal[d["tier"]]]
-        deal[d["tier"]] += 1
-    every = [sp for t in lay["roster"] for sp, _a in lay["roster"][t]]
+    for x, z, rd in sorted(chosen, key=lambda c: (math.hypot(c[0] - tx, c[1] - tz), c[1], c[0])):
+        town = math.hypot(x - tx, z - tz)
+        tier = lay["deeper_tier"] if town >= lay["deeper_from_town"] else lay["outer_tier"]
+        dens.append({"x": x, "z": z, "y": g(x, z) + 1, "tier": tier, "road": round(rd), "town": round(town)})
+    # the roster DEALT in bands by distance (layout.why.roster), nearest first: den k of n (by distance from the town)
+    # takes species floor(k x species / n), so with more dens than species a species holds several neighbouring
+    # territories and the order along the distance never goes back. A den is keyed by its own id (gm_mf_<x>_<z>, its
+    # anchor's column), never by its species: the keeper's tag, its lair's function, its borders and its retirement
+    # all name the den, so one species may hold any number of dens
+    ros = lay["roster"]
+    every = [sp for sp, _a in ros]
     if len(every) != len(set(every)):
-        raise FieldError("a species appears twice in mega_field.layout.roster: one den per species")
+        raise FieldError("a species appears twice in mega_field.layout.roster: the bands would split")
+    if len(dens) < len(ros):
+        raise FieldError("%d dens and %d species in mega_field.layout.roster: every species holds a den" % (len(dens), len(ros)))
+    for k, d in enumerate(dens):
+        d["species"], d["aspect"] = ros[k * len(ros) // len(dens)]
+    dens.sort(key=lambda d: (d["z"], d["x"]))
     # farms: one per `farm_cell` square of the field the dens fall in, its approach box the dens' bbox plus
     # approach_margin (the old dens' 64 round each anchor) and anchor y - approach_below .. + approach_above
     # the bound every farm coordinate must sit in (data farms_grid, checked by tools/gulch_mine_audit.py): the field's
@@ -450,18 +868,24 @@ def sites(spec, source_root=None):
         fid = "field_%d_%d" % (i, j)
         tiers = sorted({d["tier"] for d in ds})
         mg = lay["approach_margin"]
-        ap = [max(grid["x"][0], min(d["x"] for d in ds) - mg), min(d["y"] for d in ds) - lay["approach_below"],
+        # y: the anchors' less approach_below and plus approach_above, widened to hold the ground of every den's whole
+        # leash disc (a player fighting the Mega at its leash's edge keeps the keeper running), clipped to farms_grid
+        L = lay["leash"]
+        disc = [g.box(d["x"] - L, d["z"] - L, d["x"] + L, d["z"] + L) for d in ds]
+        ap = [max(grid["x"][0], min(d["x"] for d in ds) - mg),
+              max(grid["y"][0], min(min(d["y"] for d in ds) - lay["approach_below"], min(int(b.min()) for b in disc) - 2)),
               max(grid["z"][0], min(d["z"] for d in ds) - mg), min(grid["x"][1], max(d["x"] for d in ds) + mg),
-              max(d["y"] for d in ds) + lay["approach_above"], min(grid["z"][1], max(d["z"] for d in ds) + mg)]
+              min(grid["y"][1], max(max(d["y"] for d in ds) + lay["approach_above"], max(int(b.max()) for b in disc) + 4)),
+              min(grid["z"][1], max(d["z"] for d in ds) + mg)]
         out = []
-        for k, d in enumerate(ds):
-            out.append({"id": "gm_%s_%d" % (fid, k + 1), "species": d["species"], "aspect": d["aspect"],
-                        "anchor": [d["x"], d["y"], d["z"]], "leash": lay["leash"], "tier": d["tier"],
-                        "road_blocks": d["road"]})
+        for d in ds:
+            out.append({"id": den_id(d["x"], d["z"]), "species": d["species"], "aspect": d["aspect"],
+                        "anchor": [d["x"], d["y"], d["z"]], "leash": L, "tier": d["tier"],
+                        "road_blocks": d["road"], "town_blocks": d["town"]})
         farms.append({"id": fid, "name": "the Mega field, cell %d %d" % (i, j), "tier": tiers[-1] if len(tiers) == 1 else
                       lay["outer_tier"], "approach": ap, "dens": out})
     counts["farms"] = len(farms)
-    counts["by tier"] = {t: sum(1 for d in dens if d["tier"] == t) for t in lay["roster"]}
+    counts["by tier"] = {t: sum(1 for d in dens if d["tier"] == t) for t in (lay["outer_tier"], lay["deeper_tier"])}
     return {"counts": counts, "farms_grid": grid, "farms": farms}
 
 

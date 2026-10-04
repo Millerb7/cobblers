@@ -131,9 +131,30 @@
       "was_at_why": "on the platform's top disc (polished_tuff at y7, the third step, radius 12), six blocks south of the hall's centre on the gallery's axis x3390: two clear of the plinth (radius 4), under the ring (whose lowest block in that column is raw_gold_block at y13), and inside the six-block circle tools/relic_underground_audit.py's route walk must reach. Measured 2026-10-03 off tools/relic_underground.py composition(), the cells it writes: (3390, 7, 3268) polished_tuff, (3390, 8..12, 3268) nothing. tools/relic_underground.py report refuses a seat that stops being air over a block the hall builds",
       "why_an_npc_not_the_hoopa_actor": "Codex's Scene 5 opens on actor_finale_hoopa, a scene-runtime Pokemon actor, and Codex itself gates it: 'model/form must be verified in the installed pack before placement'. Hoopa's model is NOT verified on the client (unverified[] below), and a scene actor's click has not been seen in game (experiments/EXP-034-scene-runtime: 'Not yet seen: a player clicking'). A Cobblemon NPC opening a compiled dialogue is the mechanism the two HQ guards use (R18RU), and an NPC dialogue ran on a disposable world (EXP-022). The binder stands for the cradle staff Codex's Scene 1 names ('my authorization to evacuate the cradle staff'); the lines are Codex's Scene 4 and 5 where they still hold, flagged in the conversation's source",
       "why_here_not_the_cradle": "SUPERSEDED 2026-10-03 (moved_why): the binder now stands in the cradle. Was: the cradle (3357, 12, 3306) is reserved and NOT carved (geometry.passage.stops_why); the hall is carved and in staging (R9RU). Codex's Scene 4 puts Hoopa 'below the relic that first taught this place how to bind it', and the relic ring is in this hall",
-      "stage_gate": "the release reads stage == rift_crisis_pending, not Codex's cradle_open: Scenes 1-4 (Nia, Brann, Oren, Elara) are not built and their stages are not in the enum, so cradle_open is unreachable. The owner chose the finale firing over waiting",
-      "placed_by": "tools/reapply.py step R18RU, with the two HQ guards (npc_placements)",
-      "not_built": "a visible Hoopa (Codex's restrained and then freed actor), the post-release 'restrained actor disappears' world change, and Codex's 'one release advances every eligible player'. Each player releases for themselves"
+      "stage_gate": "since the integration of 2026-10-04 the release reads stage == cradle_open (Codex's Scene 5 'Reads', the LAST HQ stage, written by Director Elara Venn) AND brann_defeated AND elara_defeated, and nothing earlier: a player at rift_crisis_pending or any HQ stage before cradle_open gets the binder's briefing (confront_*). The order of the stages and fights is data/hq_tower.json finale_order",
+      "stage_gate_was": "until 2026-10-04: stage == rift_crisis_pending alone, so a player admitted by the HQ guard could release Hoopa with no confrontation; then, for one commit (d968d79), rift_crisis_pending AND both defeat fields, which the HQ tower's stages (deep_handoff_received -> hq_crossed -> anchor_shutdown -> cradle_open) made unreachable: a player who climbed the tower had left rift_crisis_pending",
+      "confrontation": {
+        "added": "2026-10-04",
+        "why": "the owner, 2026-10-04: 'FINISH THE FINALE ... the cradle chamber, the confrontation with Elara and Brann, the release.' Codex's Brann (Scene 2) and Elara (Scene 4)",
+        "where": "NOT in the cradle since the integration of 2026-10-04: ONE Brann and ONE Elara, each a single Cobblemon NPC in their HQ tower room (data/hq_tower.json npcs: Brann in the briefing hall hq_s1, Elara in the director's office hq_s9) who both talks and fights. The cradle keeps the binder alone",
+        "trainers": "data/finale_trainers.json (their teams; the cradle seats are recorded there under superseded_seat)",
+        "order": "data/hq_tower.json finale_order: Nia (Scene 1) -> Brann, fought, then hq_crossed (Scene 2) -> Oren (Scene 3) -> Elara, fought, then cradle_open (Scene 4) -> the binder's 'Release Hoopa.' (Scene 5)",
+        "per_player": "each defeat field is the winning player's own: the cobblers_hq_tower pack's battle_victory callback (tools/hq_tower.py) runs the setter as the player on the winning side whose losing NPC stands at Brann's or Elara's spot. The NPC is shared; Cobblemon builds each battle for the one player whose conversation started it"
+      },
+      "fx": {
+        "added": "2026-10-04",
+        "function": "cobblers:relic_underground/release_fx",
+        "run_by": "the last effect of data/quests.json unlock_league_after_rift_resolution, after the grant and the stage: as and at the releasing player",
+        "at": [3357.5, 17, 3306.5],
+        "reach": 20,
+        "particles": [["minecraft:reverse_portal", 1.5, 3, 1.5, 0.05, 300], ["minecraft:portal", 2, 2, 2, 0.6, 200], ["minecraft:end_rod", 3, 2, 3, 0.02, 40]],
+        "sounds": [["minecraft:block.beacon.deactivate", 1.0, 0.8], ["minecraft:entity.enderman.teleport", 1.0, 0.6]],
+        "actionbar": "The restraint ring goes dark.",
+        "why": "Codex's Scene 5 world change ('restrained actor disappears; a free Hoopa actor appears briefly, then leaves') without the actor: light and sound at the restraint's centre over the actor marker, shown to the releasing player only (`@s` viewers), so a partner who has not released sees nothing change. Vanilla particle and sound ids. Nothing is spawned and nothing changes in the world",
+        "why_no_hoopa": "Hoopa's model on the client is NOT verified (unverified[] below; docs/STATE.md 'Hoopa exists in Cobblemon 1.8.0 ... whether its model renders ... is NOT answered'), and Codex itself gates its actor on that ('model/form must be verified in the installed pack before placement'). Codex says no capture happens here, so Hoopa is not an encounter either"
+      },
+      "placed_by": "tools/reapply.py step R18RU, with the two HQ guards (npc_placements). Brann and Elara are R18HQ's (data/hq_tower.json npcs), not this step's",
+      "not_built": "a visible Hoopa (Codex's restrained and then freed actor; fx above stands in for it), the post-release 'restrained actor disappears' world change, and Codex's 'one release advances every eligible player'. Each player confronts and releases for themselves"
     },
     "hq": {
       "what": "the way down from the Compact HQ to the passage: the HQ's ring-0 front door, its storey-0 room, a lit switchback stair through the reserved secure shaft, and a records room (the basement) at y0 whose open west doorway is the passage's east end. Built 2026-10-02 by this file and tools/relic_underground.py (carve/40_hq), the owner's 'reachable only through the Compact HQ'.",
@@ -167,7 +188,7 @@
         "front_step": [3444, 67, 3282],
         "front_step_why": "the doorstep: the cell east of the door's lower half along its facing (the city's sidewalk), where a player stands to talk to the guard. tools/relic_underground_audit.py starts its walk here",
         "stage_field": "quest.main_worldshift_reveal.stage",
-        "stages": ["rift_crisis_pending", "rift_released", "league_recognized"],
+        "stages": ["rift_crisis_pending", "deep_handoff_received", "hq_crossed", "anchor_shutdown", "cradle_open", "rift_released", "league_recognized"],
         "stages_why": "rift_crisis_pending and every later value of the field's enum (data/progression.json), the owner's choice. A per-player enum in Cobblemon player data, readable by dialogue (tools/compile_dialogue.py) and by no command, so the gate is a dialogue option and not a door, an advancement or a function test",
         "admit": {
           "function": "cobblers:relic_underground/hq_admit",
@@ -506,6 +527,8 @@
     "the light level in the hall is NOT MEASURED (tools/light_plan.py's emitter table is known incomplete).",
     "the shell's block count and the carve's block count are the generator's arithmetic, not a world's.",
     "the cradle's eventual radius is unknown, so 'the cradle may be up to 22 across before the two rooms share rock' is a bound, not an agreement with Codex.",
-    "the spawn-block check in palette.spawn_block_check is carried from DEEP_CITY.md's check of the same list and has NOT been re-run by this file's generator against data/spawn_blocks.json."
+    "the spawn-block check in palette.spawn_block_check is carried from DEEP_CITY.md's check of the same list and has NOT been re-run by this file's generator against data/spawn_blocks.json.",
+    "the confrontation (geometry.release.confrontation, 2026-10-04) has NOT been fought: that Brann's sight pulls a player in on the cut, that each win sets its field through defeat_count, and that the binder's choice then appears are each proven for other seats and other conversations, not for these. The finale teams' move legality is not checked against the jar.",
+    "release_fx's particles and sounds are vanilla ids written by hand; that they show, and only to the releasing player, is not seen."
   ]
 }
