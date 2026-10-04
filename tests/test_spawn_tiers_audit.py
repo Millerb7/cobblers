@@ -8,8 +8,11 @@ every threshold in the tool's header and fails each property alone (rare < 2, ul
 outside the area's base boxes, a heart 128 blocks from a route, a heart in a route, a land or water floor short by one,
 a species rare-only in more than half the areas, an unknown area kind); the CLI's exit codes and table. Independence:
 the real generator (tools/compile_spawns.py build_subregions) is run on a fixture-sized input and then MUTATED --
-the ultra-rare bucket dropped from its source, its heart_boxes emptied, its heart boxes moved -- with the input data
-untouched, and the audit must catch each. Against the real build the audit is a strict xfail until the redesign lands.
+the ultra-rare bucket dropped from its source, its heart_boxes emptied, its heart boxes moved, heart_pokemon's alpha
+dropped, alpha stamped on the base rows, a heart's locals dropped, a Mega den line laid under heart ids -- with the input
+data untouched, and the audit must catch each. The fixture input carries one Mega den (a fixture gulch file) so the den
+lines, boxed and non-heart, are exercised. Against the real data (compiled now from data/ into a scratch dir) the audit
+must report 0 failures: the redesign landed 2026-10-05 and the former strict xfail was removed.
 
 Not covered (validity is not runtime behaviour): that Cobblemon draws the buckets at their rates in game, that a heart
 is felt as a boss, and anything about the habitat pools; those need a running server and an experiment.
@@ -39,7 +42,8 @@ def sp(area, tag, pokemon, bucket="common", pos="grounded", box=(0, 63, 0, 63)):
 def area(name, land=0, water=0, rare=2, ultra=1, heart=True, base_boxes=((0, 63, 0, 63), (64, 127, 0, 63)),
          heart_box=(64, 95, 0, 31)):
     """One area's spawns: `land` grounded and `water` surface species on every base box, `rare` rare and `ultra`
-    ultra-rare species (all named after the area, so no species is shared), and one heart species on heart_box."""
+    ultra-rare species (all named after the area, so no species is shared), and a heart on heart_box: a signature
+    boss of its own plus one exact local (the area's first base species), both alpha=true (section 10, 2026-10-05)."""
     out = []
     for n, b in enumerate(base_boxes):
         t = "b%04d" % n
@@ -48,7 +52,10 @@ def area(name, land=0, water=0, rare=2, ultra=1, heart=True, base_boxes=((0, 63,
         out += [sp(name, t, "%s_rare%d" % (name, i), "rare", box=b) for i in range(rare)]
         out += [sp(name, t, "%s_ultra%d" % (name, i), "ultra-rare", box=b) for i in range(ultra)]
     if heart:
-        out.append(sp(name, "h0000", "%s_boss" % name, "uncommon", box=heart_box))
+        out.append(sp(name, "h0000", "%s_boss alpha=true" % name, "uncommon", box=heart_box))
+        local = out[0]
+        out.append(sp(name, "h0000", "%s alpha=true" % local["pokemon"], "uncommon", local["spawnablePositionType"],
+                      box=heart_box))
     return out
 
 
@@ -75,7 +82,8 @@ def test_a_pack_meeting_every_threshold_passes():
     rows, failures = A.audit(good())
     assert failures == []
     lake = next(r for r in rows if r["area"] == "subregions/oak_lake")
-    assert (lake["species"], lake["water_species"], lake["rare"], lake["ultra_rare"], lake["heart_species"]) == (24, 8, 2, 1, 1)  # 12 + 8 + 2 + 1 + the heart's 1
+    # 12 + 8 + 2 + 1 + the heart's boss; the heart's second species is a local, already counted among the 12
+    assert (lake["species"], lake["water_species"], lake["rare"], lake["ultra_rare"], lake["heart_species"]) == (24, 8, 2, 1, 2)
 
 
 # Without this an area with no ultra-rare table passes, the owner's first complaint.
@@ -96,7 +104,7 @@ def test_a_rare_table_of_one_species_fails():
 def test_a_rare_species_only_in_the_heart_does_not_make_a_rare_table():
     a = good()
     lake = area("oak_lake", land=12, water=8, rare=1)
-    lake.append(sp("oak_lake", "h0000", "oak_lake_heartrare", "rare", box=(64, 95, 0, 31)))
+    lake.append(sp("oak_lake", "h0000", "oak_lake_heartrare alpha=true", "rare", box=(64, 95, 0, 31)))
     a[("subregions", "oak_lake")] = lake
     assert fails_of(a) == ["subregions/oak_lake: rare table holds 1 species, needs >= 2"]
 
@@ -141,7 +149,7 @@ def test_a_heart_128_blocks_from_a_route_fails_and_129_passes():
 def test_a_route_carrying_a_heart_fails():
     a = good()
     a[("routes", "route_x")] = area("route_x", land=12, base_boxes=((1000, 1031, 0, 31),), heart_box=(1000, 1031, 0, 31))
-    assert fails_of(a) == ["routes/route_x: a route carries 1 heart entries (section 10: never)"]
+    assert fails_of(a) == ["routes/route_x: a route carries 2 heart entries (section 10: never)"]
 
 
 # Without this a thin land table passes; 11 is one short of section 4's 6 families x 2 stages.
@@ -202,6 +210,53 @@ def test_coverage_needs_every_block():
     assert not A.covered((0, 9, 0, 9), [(0, 9, 0, 8)])
 
 
+# Without this a heart compiled as a plain spawn passes, and the owner's "the boss pokemon are alphas" is lost.
+@pytest.mark.parametrize("key", [("subregions", "elm_woods"), ("marine", "deep_band"), ("waterways", "creek_one")])
+def test_a_heart_entry_without_alpha_true_fails(key):
+    a = good()
+    for s in a[key]:
+        if "_h0000_" in s["id"] and s["pokemon"].endswith("_boss alpha=true"):
+            s["pokemon"] = s["pokemon"].replace(" alpha=true", "")
+    f = fails_of(a)
+    assert len(f) == 1 and f[0].startswith("%s/%s: 1 heart species not alpha=true" % key), f
+    # alpha=false is not an alpha either
+    for s in a[key]:
+        if s["pokemon"].endswith("_boss"):
+            s["pokemon"] += " alpha=false"
+    assert len(fails_of(a)) == 1
+
+
+# Without this an alpha could leak onto a base row, a Mega den line or a corridor, where a boss was never meant to be.
+@pytest.mark.parametrize("key", [("subregions", "oak_lake"), ("routes", "route_x"), ("waterways", "creek_one")])
+def test_an_alpha_outside_a_heart_fails(key):
+    a = good()
+    a[key][0]["pokemon"] += " alpha=true"
+    f = fails_of(a)
+    # the local the heart named was the area's first base species; it is no longer an exact match, so only the
+    # alpha failure is asked for here, and the local one is allowed alongside it
+    assert any(x.startswith("%s/%s: 1 non-heart species carry an alpha key" % key) for x in f), f
+    assert all(x.startswith("%s/%s: " % key) for x in f), f
+
+
+# Without this a heart made only of outsiders passes ("it should sometimes be the pokemon in the area as well").
+@pytest.mark.parametrize("key", [("subregions", "elm_woods"), ("marine", "deep_band"), ("waterways", "creek_one")])
+def test_a_heart_without_an_exact_local_fails(key):
+    a = good()
+    a[key] = [s for s in a[key] if not ("_h0000_" in s["id"] and not s["pokemon"].endswith("_boss alpha=true"))]
+    assert fails_of(a) == ["%s/%s: heart holds no exact local (none of its species is in the area's own non-heart "
+                           "entries; section 10: every heart holds one of its own place's Pokemon)" % key]
+
+
+# Without this a regional form would pass as its plain species' local (the Alolan Vulpix is not the meadow's Vulpix).
+def test_a_different_form_is_not_an_exact_local():
+    a = good()
+    for s in a[("subregions", "elm_woods")]:
+        if "_h0000_" in s["id"] and not s["pokemon"].endswith("_boss alpha=true"):
+            s["pokemon"] = s["pokemon"].replace(" alpha=true", " alolan alpha=true")
+    assert len(fails_of(a)) == 1 and "heart holds no exact local" in fails_of(a)[0]
+    assert A.without_alpha("Vulpix alolan alpha=true") == "vulpix alolan" and A.without_alpha("ditto is_alpha") == "ditto"
+
+
 def write_pack(root, areas):
     for (kind, name), spawns in areas.items():
         f = root / "data" / "cobblers" / "spawn_pool_world" / kind / ("%s.json" % name)
@@ -228,14 +283,24 @@ def test_cli_exit_codes_and_table(tmp_path, capsys):
     assert len((out / "failures.txt").read_text(encoding="utf-8").splitlines()) == 2
 
 
-# The real build: expected to fail until the redesign lands. strict, so the day it passes this test fails and the
-# marker must be removed rather than left hiding a regression.
-@pytest.mark.xfail(strict=True, reason="spawn redesign in progress (2026-10-05)")
-def test_the_real_compiled_pack_meets_every_tier():
-    pack = A.DEFAULT_PACK
-    if not any(pack.glob("data/*/spawn_pool_world")):
-        pytest.skip("no compiled pack in build/ (run tools/compile_spawns.py)")
-    assert A.audit(A.load(pack))[1] == []
+@pytest.fixture(scope="module")
+def real_pack(tmp_path_factory):
+    """The pack compiled now from data/ (tools/compile_spawns.py main, unmutated) into a scratch dir: build/ is
+    disposable and absent from a fresh checkout, and a stale one would grade yesterday's data."""
+    import compile_spawns
+    out = tmp_path_factory.mktemp("tiers_real") / "cobblers_spawns"
+    assert compile_spawns.main(["--out", str(out)]) == 0
+    return out
+
+
+# The real data: the redesign landed (rows A-D, E-H, alphas; 2026-10-05), so every area meets every check. Without it a
+# regenerated table could drop an area's ultra-rare, its heart, its alphas or its local, and prepare would install it.
+def test_the_real_compiled_pack_meets_every_tier(real_pack):
+    areas = A.load(real_pack)
+    kinds = [k for k, _ in areas]
+    # ENCOUNTER_DESIGN.md section 1 counts 63 sub-region tables; the marine bands and the waterway carry hearts too
+    assert kinds.count("subregions") == 63 and "marine" in kinds and "waterways" in kinds, sorted(set(kinds))
+    assert A.audit(areas)[1] == []
 
 
 # Without this the audit exists and never runs (the owner's "a success report is not the work").
@@ -252,6 +317,9 @@ FAR = -200000  # far from every spawn-free zone in data/spawn_suppression.json, 
 
 
 def gen_input():
+    """Two sub-regions, each: 10 common, 2 rare, 1 ultra-rare; a heart (alpha, as data/encounter_design.json
+    rules.hearts.alpha makes every generated heart entry) holding a signature boss and one local, land00. The
+    sub-region records carry the level_band the Mega den lines read (tools/compile_spawns.py mega_den_spawns)."""
     def square(x0):
         return [[[x0, FAR], [x0 + 256, FAR], [x0 + 256, FAR + 256], [x0, FAR + 256]]]
 
@@ -268,13 +336,36 @@ def gen_input():
         entries += [e("%s_land%02d" % (s["id"], i), "common") for i in range(10)]
         entries += [e("%s_rare%d" % (s["id"], i), "rare") for i in range(2)]
         entries.append(e("%s_ultra" % s["id"], "ultra-rare"))
-        entries.append(e("%s_boss" % s["id"], "uncommon", heart=heart))
-    return {"entries": entries}, {"routes": []}, {"subregions": subs}
+        entries.append(e("%s_boss" % s["id"], "uncommon", heart=heart, alpha=True))
+        entries.append(e("%s_land00" % s["id"], "uncommon", heart=heart, alpha=True))
+    spawn_subs = [{"id": s["id"], "level_band": {"minimum": 5, "maximum": 10}} for s in subs]
+    return {"entries": entries, "subregions": spawn_subs}, {"routes": []}, {"subregions": subs}
 
 
-def compiled(cs):
+# One Mega field den in gen_meadow (the data/gulch_mine.json shape mega_den_spawns reads): its line compiles as boxed,
+# natural, non-heart spawns inside the area -- the case the old condition split misread as a heart.
+GULCH_FIXTURE = {"mega_field": {"families": {"box_half": 25, "band": 2, "family_weight": 2.0, "bucket": "common",
+                                             "held": {}, "lines": {"denmon": ["denmon", "denmon2"]}}},
+                 "farms": [{"dens": [{"id": "gm_fixture_den", "species": "denmon", "anchor": [FAR + 64, 70, FAR + 64]}]}]}
+
+
+@pytest.fixture
+def gulch(tmp_path):
+    f = tmp_path / "gulch_fixture.json"
+    f.write_text(json.dumps(GULCH_FIXTURE), encoding="utf-8")
+    return f
+
+
+def compiled(cs, gulch):
+    """The generator's sub-region half on gen_input(), reading the fixture gulch instead of the real one (whose den
+    anchors lie in no fixture sub-region, and which the generator then rightly refuses)."""
     spawns, routes, regions = gen_input()
-    files, _ = cs.build_subregions(spawns, routes, regions, 32, ())
+    real = cs.GULCH
+    cs.GULCH = gulch
+    try:
+        files, _ = cs.build_subregions(spawns, routes, regions, 32, ())
+    finally:
+        cs.GULCH = real
     return {("subregions", Path(rel).stem): json.loads(text)["spawns"] for rel, text in files.items()}
 
 
@@ -288,35 +379,79 @@ def mutated_compile_spawns(old, new):
     return mod
 
 
-# Without this the audit could agree with the generator by construction; the unmutated generator must pass.
-def test_the_unmutated_generator_passes_on_the_fixture_input():
+# Without this the audit could agree with the generator by construction; the unmutated generator must pass, Mega den
+# line and alpha hearts included.
+def test_the_unmutated_generator_passes_on_the_fixture_input(gulch):
     import compile_spawns
-    areas = compiled(compile_spawns)
+    areas = compiled(compile_spawns, gulch)
     assert len(areas) == 2 and fails_of(areas) == []
+    den = [s for s in areas[("subregions", "gen_meadow")] if "_gm_fixture_den_" in s["id"]]
+    hearts = [s for s in areas[("subregions", "gen_meadow")] if "_h0000_" in s["id"]]
+    assert {s["pokemon"] for s in den} == {"denmon", "denmon2"}, "the fixture den laid nothing; it exercises nothing"
+    assert {s["pokemon"] for s in hearts} == {"gen_meadow_boss alpha=true", "gen_meadow_land00 alpha=true"}
 
 
 # Without this a generator that silently drops the ultra-rare bucket would pass the audit.
-def test_a_generator_dropping_the_ultra_rare_bucket_is_caught():
+def test_a_generator_dropping_the_ultra_rare_bucket_is_caught(gulch):
     cs = mutated_compile_spawns("        for e in base:\n",
                                 "        for e in [q for q in base if q[\"bucket\"] != \"ultra-rare\"]:\n")
-    assert sorted(fails_of(compiled(cs))) == [
+    assert sorted(fails_of(compiled(cs, gulch))) == [
         "subregions/gen_grove: ultra-rare table holds 0 species, needs >= 1",
         "subregions/gen_meadow: ultra-rare table holds 0 species, needs >= 1"]
 
 
 # Without this a generator that stops laying hearts would pass the audit.
-def test_a_generator_dropping_hearts_is_caught(monkeypatch):
+def test_a_generator_dropping_hearts_is_caught(monkeypatch, gulch):
     import compile_spawns
     monkeypatch.setattr(compile_spawns, "heart_boxes", lambda *a, **k: [])
-    assert sorted(fails_of(compiled(compile_spawns))) == ["subregions/gen_grove: no heart (boss) entries",
+    assert sorted(fails_of(compiled(compile_spawns, gulch))) == ["subregions/gen_grove: no heart (boss) entries",
                                                           "subregions/gen_meadow: no heart (boss) entries"]
 
 
 # Without this a generator laying a heart outside its place would pass the audit.
-def test_a_generator_moving_hearts_out_of_their_area_is_caught(monkeypatch):
+def test_a_generator_moving_hearts_out_of_their_area_is_caught(monkeypatch, gulch):
     import compile_spawns
     real = compile_spawns.heart_boxes
     monkeypatch.setattr(compile_spawns, "heart_boxes",
                         lambda *a, **k: [(b[0] + 4096, b[1] + 4096, b[2], b[3]) for b in real(*a, **k)])
-    f = fails_of(compiled(compile_spawns))
+    f = fails_of(compiled(compile_spawns, gulch))
     assert len(f) == 2 and all("heart boxes outside the area's base boxes" in x for x in f)
+
+
+# Without this a generator that stops writing alpha=true (heart_pokemon) would ship the bosses as ordinary spawns.
+def test_a_generator_dropping_the_alpha_flag_is_caught(gulch):
+    cs = mutated_compile_spawns(
+        '    return entry["species"] + (" alpha=true" if entry.get("alpha") is True else "")\n',
+        '    return entry["species"]\n')
+    f = sorted(fails_of(compiled(cs, gulch)))
+    assert [x.split(" (")[0] for x in f] == ["subregions/gen_grove: 2 heart species not alpha=true",
+                                            "subregions/gen_meadow: 2 heart species not alpha=true"], f
+
+
+# Without this a generator stamping alpha on the base roster would make every spawn a boss and pass.
+def test_a_generator_putting_alpha_on_base_rows_is_caught(gulch):
+    cs = mutated_compile_spawns('% (sub["id"], n, e["species"].replace(" ", "_")), "pokemon": e["species"],',
+                                '% (sub["id"], n, e["species"].replace(" ", "_")), "pokemon": heart_pokemon(dict(e, alpha=True)),')
+    f = sorted(fails_of(compiled(cs, gulch)))
+    # the base land00 now reads "land00 alpha=true", so the heart's local no longer matches a plain base row either
+    assert [x.split(" (")[0] for x in f] == ["subregions/gen_grove: 13 non-heart species carry an alpha key",
+                                            "subregions/gen_grove: heart holds no exact local",
+                                            "subregions/gen_meadow: 13 non-heart species carry an alpha key",
+                                            "subregions/gen_meadow: heart holds no exact local"], f
+
+
+# Without this a generator that lays only the outsiders of a heart (its locals dropped) would pass the audit.
+def test_a_generator_dropping_the_hearts_locals_is_caught(gulch):
+    anchor = '        hboxes = heart_boxes(sub, hearts[0]["heart"], grid, exclude, waterways)\n'
+    cs = mutated_compile_spawns(anchor, anchor + '        hearts = [q for q in hearts if q["species"] not in {x["species"] for x in base}]\n')
+    f = sorted(fails_of(compiled(cs, gulch)))
+    assert [x.split(" (")[0] for x in f] == ["subregions/gen_grove: heart holds no exact local",
+                                            "subregions/gen_meadow: heart holds no exact local"], f
+
+
+# Without this the Mega den lines, laid under heart ids, would read as a boss table; the alpha check names them.
+def test_a_generator_laying_den_lines_as_hearts_is_caught(gulch):
+    cs = mutated_compile_spawns('rows.append({"id": "%s_%s_b%d_%s" % (sub, d["id"], bi, sp),',
+                                'rows.append({"id": "%s_h%04d_%s" % (sub, 9000 + bi, sp),')
+    f = fails_of(compiled(cs, gulch))
+    assert [x.split(" (")[0] for x in f] == ["subregions/gen_meadow: 2 heart species not alpha=true"], f

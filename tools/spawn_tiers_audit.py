@@ -45,6 +45,15 @@ THE CHECKS, and where each number comes from (none was tuned to the data):
   4. rarity     no species is rare-or-ultra-rare-ONLY (every compiled entry of it in that area is rare or ultra-rare)
                 in more than half of all areas. Derivation: a majority is the smallest share at which "rare" is what a
                 player meets in most places; past it, rarity means nothing (the brief's "rarity must mean something").
+  6. alpha      every heart entry's `pokemon` carries the PokemonProperties token alpha=true, and no other entry in any
+                area (base, Mega den line, route) carries an alpha key at all. Source: section 10, "The bosses are
+                alphas" (the owner, 2026-10-05: "the boss pokemon are alphas"; "Every heart entry is a native alpha ...
+                `"<species> alpha=true"`"). Exact token, no threshold.
+  7. local      every area holding a heart holds at least one EXACT local in it: a heart `pokemon` string, its alpha
+                token removed, equal to the `pokemon` string of one of the same area's non-heart entries (so a
+                regional form is not a local of its plain species). Source: section 10, "Every heart holds one of its
+                own place's Pokemon" (the owner, 2026-10-05: "it should sometimes be the pokemon in the area as well").
+                Routes are skipped: a route carrying a heart already fails check 2.
   5. report     derived/spawn_tiers/areas.tsv (one row per area, its counts and failures) and failures.txt; stdout is
                 one summary line plus one line per failing area and per rarity failure.
                 Measured on the 2026-10-04 pack (compiled in the main session's checkout, 76 areas): 76 failing,
@@ -56,7 +65,10 @@ NOT COVERED (validity is not runtime behaviour): whether Cobblemon draws these b
 authored; the heart's 1/9 area share and above-cap share (section 10; a summit heart covers its whole sub-region in
 plan and is narrowed by minY, which a box check cannot weigh); the habitat pools (Victory Road's eleven, not compiled
 as spawn_pool_world areas); and whether a heart box lies inside the sub-region POLYGON (data/regions.json) -- only that
-it lies inside the area's own compiled base boxes.
+it lies inside the area's own compiled base boxes. Checks 6-7 prove the compiled STRING, not the alpha: that Cobblemon
+spawns an alpha from it, and at what level (the jar's AlphaLevelMatchingSensor re-levels a wild alpha near a player,
+section 10), need a running server. A local counts by being anywhere in the area's non-heart entries, Mega den lines
+included.
 
   python tools/spawn_tiers_audit.py                       # audit build/datapacks/cobblers_spawns
   python tools/spawn_tiers_audit.py --pack <dir> --out <dir>
@@ -92,6 +104,20 @@ WATER_WORDS = ("lake", "waters", "river", "pond", "creek", "creeks", "tarn")
 
 def species_of(pokemon):
     return str(pokemon).strip().split()[0].lower()
+
+
+ALPHA_KEYS = ("alpha", "is_alpha")   # PokemonProperties$Companion registers both (section 10)
+
+
+def alpha_tokens(pokemon):
+    """The tokens of a pokemon string that set an alpha key, with or without a value ("alpha=true", "is_alpha")."""
+    return [t for t in str(pokemon).split()[1:] if t.split("=", 1)[0].lower() in ALPHA_KEYS]
+
+
+def without_alpha(pokemon):
+    """The pokemon string less its alpha tokens: "druddigon alpha=true" -> "druddigon"."""
+    toks = str(pokemon).split()
+    return " ".join(toks[:1] + [t for t in toks[1:] if t.split("=", 1)[0].lower() not in ALPHA_KEYS]).lower()
 
 
 def box_of(spawn):
@@ -186,6 +212,21 @@ def audit(areas):
                 fails.append("%d of %d heart boxes outside the area's base boxes, e.g. %s" % (len(outside), len(hboxes), outside[0]))
             if min_gap is not None and min_gap <= HEART_PATH_GAP:
                 fails.append("heart box %d blocks from a route box, needs > %d" % (min_gap, HEART_PATH_GAP))
+        # 6. alpha: every heart entry, and nothing else
+        not_alpha = sorted({str(s["pokemon"]) for s in hearts
+                            if [t.lower() for t in alpha_tokens(s["pokemon"])] != ["alpha=true"]})
+        if not_alpha:
+            fails.append("%d heart species not alpha=true (section 10: every heart entry is a native alpha), e.g. %r"
+                         % (len(not_alpha), not_alpha[0]))
+        stray = sorted({str(s["pokemon"]) for s in base if alpha_tokens(s["pokemon"])})
+        if stray:
+            fails.append("%d non-heart species carry an alpha key (section 10: only a heart's), e.g. %r" % (len(stray), stray[0]))
+        # 7. local: a heart holds one of its own place's Pokemon
+        if hearts and kind != "routes":
+            local = {without_alpha(s["pokemon"]) for s in hearts} & {str(s["pokemon"]).lower() for s in base}
+            if not local:
+                fails.append("heart holds no exact local (none of its species is in the area's own non-heart "
+                             "entries; section 10: every heart holds one of its own place's Pokemon)")
         # 3. floor
         water = is_water_body(kind, area)
         if kind in ("subregions", "routes") and len(sp_all) < LAND_FLOOR:

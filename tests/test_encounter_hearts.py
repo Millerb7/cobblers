@@ -1,13 +1,15 @@
 """Hearts and the mainline starters (docs/mechanics/ENCOUNTER_DESIGN.md sections 10 and 11), measured on the COMPILED pack.
 
-Written by a test author, not by the session that designed or built the hearts. Nothing here reads or imports
-tools/build_encounters.py or tools/encounter_audit.py, and nothing uses compile_spawns.heart_boxes: a heart is found
-in the compiled files by its condition (test_encounter_design.split_heart), its area is measured from the compiled
+Written by a test author, not by the session that designed or built the hearts. The checks read neither
+tools/build_encounters.py nor tools/encounter_audit.py, and nothing uses compile_spawns.heart_boxes: a heart is found
+in the compiled files by section 10's id contract `<sub>_h<n>_` (test_encounter_design.split_heart; never by being
+boxed or above the cap -- the Mega den lines are boxed and are not hearts), its area is measured from the compiled
 boxes (and, for a summit, the canonical heightmap through tools/ground.py), and its distance to the path from the
-compiled route boxes.
+compiled route boxes. The generators are imported only to be MUTATED (data untouched) and show the checks bite.
 
 Independent sources: section 10's prose and its table of numbers (1/9, 11.2%, "cap + 5 ... and 62 at tier 9",
-128 blocks), its list of where the 28 hearts are and their summit lines; section 11's table of the 27 families and
+128 blocks), its list of where the first 28 hearts are and their summit lines, its 2026-10-05 rulings (every area has
+a heart; the bosses are alphas; every heart holds a local; the count of hearts holding one); section 11's table of the 27 families and
 where each lives; section 2's caps and bands; data/mythical_starters.json `wild_traditional_starters` for which 27
 species are the mainline starters (they left starters.json for the wild: NATIVE_STARTERS_COST.md sections 6a/7); the Cobblemon 1.8.0 jar for stages, types and the level each stage evolves at.
 
@@ -22,7 +24,10 @@ assumption). A base row whose `maxY` is under a summit's `minY` is not present a
 Not covered, and it needs a running server: whether `minY` behaves as the jar's key suggests (section 10: "That
 verifies the key, not its behaviour"), real spawn rates in the heart against the rest of the place, whether a player
 actually sees the above-cap presences "first" and catches them "on a return", and whether a summit's area above its
-line is where Pokemon can stand (caves and overhangs are not modelled: the heightmap's surface is).
+line is where Pokemon can stand (caves and overhangs are not modelled: the heightmap's surface is). The alpha checks
+prove the compiled `pokemon` string only: that Cobblemon spawns an alpha from it, and the level it is FOUGHT at, are
+runtime -- the jar's AlphaLevelMatchingSensor re-levels a wild alpha within 32 blocks of a player to that player's
+highest party level plus 4-20 (section 10), so every level limit tested here is the level at SPAWN.
 """
 from __future__ import annotations
 
@@ -72,6 +77,18 @@ NEAR_PATH = int(_m.group(1))
 _m = re.search(r"Where the hearts are \((\d+)\)", S10)
 assert _m, "section 10 no longer counts its hearts"
 HEART_COUNT = int(_m.group(1))
+# The 2026-10-05 rulings: every area has a heart, and the count of hearts that hold a local ("all 67 hearts").
+EVERY_AREA = "**Every area has a heart (the owner, 2026-10-05"
+_m = re.search(r"After the change all (\d+) hearts hold an exact local", S10)
+assert _m, "section 10 no longer counts the hearts that hold an exact local"
+HEARTED_AREAS = int(_m.group(1))
+DATA = ROOT / "data"
+# The Mega field's dens (data/gulch_mine.json): boxed natural spawns in the Rift's arms, not hearts (3d70226).
+DEN_IDS = [d["id"] for fa in json.loads((DATA / "gulch_mine.json").read_text(encoding="utf-8"))["farms"]
+           for d in fa["dens"]]
+ALPHA_KEYS = ("alpha", "is_alpha")
+WATER_POSITIONS = ("surface", "submerged", "seafloor")
+TILPEY_WATER_MIN = 12   # the brief (2026-10-05) from the owner's "a pokemon lake deep in life"; relayed, not derived
 
 # Section 10, "Where the hearts are": each place it names, as the sub-region file it is. Merian's cirque is named in
 # the paragraph on the three focal points that belong to the path ("the cirque's interior away from Route 4").
@@ -189,24 +206,201 @@ def test_section_10s_numbers_are_still_the_documents():
     assert "ids `<sub>_h<n>_<species>`" in S10
 
 
-def test_the_condition_split_agrees_with_the_documented_heart_ids(world):
-    # Without it the split every heart test stands on could misfile a base spawn as heart (or the reverse) and the
-    # targets would be measured on the wrong rows. Two independent readings: the condition and section 10's ids.
-    wrong = {}
+def test_heart_ids_and_conditions_agree(world):
+    # Without it the id split every heart test stands on could file a whole-place row under a heart id, or a boxed
+    # row nobody can name as the base, and the targets would be measured on the wrong rows. Two readings held
+    # against each other: a heart id is always restricted (minY, or a box set smaller than the roster's), and a
+    # non-heart row is either the roster (its whole box set, no minY) or a Mega den line named in data/gulch_mine.json.
+    wrong, dens = {}, 0
     for k, t in world["subs"].items():
-        pat = re.compile(r"^%s_h\d+_" % re.escape(k))
-        bad = [e["id"] for e in t["heart"] if not pat.match(e["id"])] + [e["id"] for e in t["base"] if pat.match(e["id"])]
+        spans = {}
+        for e in t["base"] + t["heart"]:
+            spans.setdefault(("h" if e in t["heart"] else "b", ED.detail_signature(e)), set()).add(ED.box_of(e))
+        roster = [frozenset(v) for (side, _s), v in spans.items() if side == "b"]
+        base_set = max(roster, key=lambda s: (ED.columns_of(s), len(s))) if roster else frozenset()
+        bad = []
+        for e in t["heart"]:
+            if "minY" not in (e.get("condition") or {}) and \
+                    ED.columns_of(spans[("h", ED.detail_signature(e))]) >= ED.columns_of(base_set):
+                bad.append(("heart id spanning the whole place", e["id"]))
+        for e in t["base"]:
+            if "minY" in (e.get("condition") or {}):
+                bad.append(("non-heart row with minY", e["id"]))
+            elif frozenset(spans[("b", ED.detail_signature(e))]) != base_set:
+                if any("_%s_" % d in e["id"] for d in DEN_IDS):
+                    dens += 1
+                else:
+                    bad.append(("boxed non-heart row naming no den", e["id"]))
         if bad:
             wrong[k] = bad[:3]
     assert not wrong, wrong
+    assert dens, "no Mega den line was read; the den branch exercised nothing"
 
 
-def test_the_hearts_are_the_places_section_10_names(world):
-    # Without it a heart could appear somewhere the document keeps wholly catchable (Pallet's meadows, the first
-    # leg's path) or vanish from a place it names.
+def test_every_place_section_10_names_has_a_heart_and_so_does_every_area(world, pack):
+    # Without it a heart could vanish from a place section 10 names, or from any area after the owner's 2026-10-05
+    # ruling ("every area should have a rare, ultra rare, and boss table"), and the count the document gives for the
+    # hearts holding a local would stop being the hearts there are.
     have = set(hearts(world))
-    assert have == doc_hearts(), "compiled, not in the doc: %s; in the doc, not compiled: %s" % (
-        sorted(have - doc_hearts()), sorted(doc_hearts() - have))
+    assert doc_hearts() <= have, "named in section 10, not compiled: %s" % sorted(doc_hearts() - have)
+    assert EVERY_AREA in S10, "section 10 no longer rules that every area has a heart"
+    assert have == set(world["subs"]), "sub-regions with no heart: %s" % sorted(set(world["subs"]) - have)
+    others = {"%s/%s" % (kind, k) for kind, k, spawns in compiled_files(pack, ("marine", "waterways"))
+              if any(ED.heart_id(k).match(str(e.get("id", ""))) for e in spawns)}
+    assert others, "no marine band or waterway carries a heart; section 10 names the Windward bands and the outflow"
+    assert len(have) + len(others) == HEARTED_AREAS, (len(have), sorted(others), HEARTED_AREAS)
+
+
+# ------------------------------------------------------------------ section 10: the bosses are alphas (2026-10-05)
+
+def compiled_files(pack, kinds=None):
+    """[(kind, stem, spawns)] for every compiled file with a `spawns` list under the pack (data/cobblers): the
+    spawn_pool_world kinds and the habitat pools."""
+    out = []
+    for p in sorted(pack.rglob("*.json")):
+        rel = p.relative_to(pack).parts
+        kind = rel[1] if rel[0] == "spawn_pool_world" and len(rel) > 2 else rel[0]
+        if kinds is not None and kind not in kinds:
+            continue
+        doc = json.loads(p.read_text(encoding="utf-8"))
+        if isinstance(doc, dict) and isinstance(doc.get("spawns"), list):
+            out.append((kind, p.stem, doc["spawns"]))
+    return out
+
+
+def alpha_tokens(pokemon):
+    return [t.lower() for t in str(pokemon).split()[1:] if t.split("=", 1)[0].lower() in ALPHA_KEYS]
+
+
+def alpha_faults(pack):
+    """(faults, hearts read): a heart entry whose pokemon is not exactly one alpha=true token, and any other entry in
+    the pack carrying an alpha key."""
+    faults, read = [], 0
+    for kind, k, spawns in compiled_files(pack):
+        pat = ED.heart_id(k)
+        for e in spawns:
+            is_heart = kind != "routes" and pat.match(str(e.get("id", "")))
+            for who in [e.get("pokemon")] + [h.get("pokemon") for h in e.get("herdablePokemon") or []]:
+                if who is None:
+                    continue
+                if is_heart:
+                    read += 1
+                    if alpha_tokens(who) != ["alpha=true"]:
+                        faults.append("heart not alpha: %s/%s %s" % (kind, k, e.get("id")))
+                elif alpha_tokens(who):
+                    faults.append("alpha outside a heart: %s/%s %s" % (kind, k, e.get("id")))
+    return faults, read
+
+
+def without_alpha(pokemon):
+    toks = str(pokemon).lower().split()
+    return " ".join(toks[:1] + [t for t in toks[1:] if t.split("=", 1)[0] not in ALPHA_KEYS])
+
+
+def local_faults(pack):
+    """(areas whose heart names no exact local, hearted areas read), both as "<kind>/<area>". Exact: the heart's
+    pokemon string less its alpha token equals the pokemon string of one of the same file's non-heart entries (a
+    regional form is not its plain species' local)."""
+    faults, read = [], []
+    for kind, k, spawns in compiled_files(pack, ("subregions", "marine", "waterways")):
+        pat = ED.heart_id(k)
+        heart = {without_alpha(e["pokemon"]) for e in spawns if pat.match(str(e.get("id", "")))}
+        if not heart:
+            continue
+        read.append("%s/%s" % (kind, k))
+        base = {str(e["pokemon"]).lower() for e in spawns if not pat.match(str(e.get("id", "")))}
+        if not heart & base:
+            faults.append("%s/%s" % (kind, k))
+    return faults, read
+
+
+def tilpey_water_species(pack):
+    """({tilpey file stems}, {species in water positions over them}): Lake Tilpey is its open water and its shores,
+    every sub-region file named tilpey_*."""
+    files = [(k, s) for _kind, k, s in compiled_files(pack, ("subregions",)) if k.startswith("tilpey_")]
+    return ({k for k, _ in files},
+            {str(e["pokemon"]).split()[0].lower() for _k, s in files for e in s
+             if e.get("spawnablePositionType") in WATER_POSITIONS})
+
+
+def test_every_heart_entry_is_an_alpha_and_no_other_entry_is(pack):
+    # Without it a heart could compile as an ordinary spawn, or an alpha leak onto a base row, a Mega den line, a
+    # corridor or a habitat pool (section 10: "Every heart entry is a native alpha").
+    faults, read = alpha_faults(pack)
+    assert read, "no heart entry was read; the check measured nothing"
+    assert not faults, "%d faults, e.g. %s" % (len(faults), faults[:5])
+
+
+def test_every_hearted_area_holds_an_exact_local_in_its_heart(pack):
+    # Without it a boss table could be all outsiders (the owner: "it should sometimes be the pokemon in the area as
+    # well"; section 10: "Every heart holds one of its own place's Pokemon").
+    faults, read = local_faults(pack)
+    assert len(read) == HEARTED_AREAS, (len(read), HEARTED_AREAS)
+    assert not faults, faults
+
+
+def test_lake_tilpey_holds_at_least_twelve_water_species(pack):
+    # Without it the lake could thin back to a few fish (the owner, 2026-10-05: Lake Tilpey "should feel like a pokemon
+    # lake deep in life"). Counted in WATER positions, the lake's own life, over the open water and its shores.
+    files, water = tilpey_water_species(pack)
+    assert "tilpey_waters" in files and len(files) >= 2, files
+    assert len(water) >= TILPEY_WATER_MIN, sorted(water)
+
+
+# ---- independence: the generators MUTATED, the data untouched; each check above must catch its mutation ----
+
+def mutant(name, *edits):
+    """tools/<name>.py loaded from its own source with exact edits; fails if an anchor moved or is not unique."""
+    import types
+    path = ROOT / "tools" / ("%s.py" % name)
+    src = path.read_text(encoding="utf-8")
+    for old, new in edits:
+        assert src.count(old) == 1, "mutation anchor moved: %r" % old
+        src = src.replace(old, new)
+    mod = types.ModuleType("%s_mutant" % name)
+    mod.__file__ = str(path)
+    exec(compile(src, mod.__file__, "exec"), mod.__dict__)
+    return mod
+
+
+def mutant_pack(cs, out, spawns=None):
+    args = ["--out", str(out)] + (["--spawns", str(spawns)] if spawns else [])
+    assert cs.main(args) == 0
+    return out / "data" / "cobblers"
+
+
+def test_a_compiler_dropping_the_alpha_flag_is_caught(tmp_path):
+    # Without it the alpha check could pass a pack whose compiler never writes the flag (heart_pokemon mutated).
+    cs = mutant("compile_spawns", ('    return entry["species"] + (" alpha=true" if entry.get("alpha") is True else "")\n',
+                                   '    return entry["species"]\n'))
+    faults, read = alpha_faults(mutant_pack(cs, tmp_path / "p"))
+    assert read and len(faults) == read and all(f.startswith("heart not alpha") for f in faults), (read, faults[:3])
+
+
+def test_a_compiler_losing_the_water_positions_is_caught(tmp_path):
+    # Without it the Tilpey check could pass a pack in which nothing swims (position_type mutated to "grounded").
+    cs = mutant("compile_spawns", ('    return entry.get("spawnable_position") or "grounded"\n', '    return "grounded"\n'))
+    files, water = tilpey_water_species(mutant_pack(cs, tmp_path / "p"))
+    assert "tilpey_waters" in files and len(water) < TILPEY_WATER_MIN, sorted(water)
+
+
+def test_a_generator_dropping_every_hearts_locals_is_caught(jar, tmp_path):
+    # Without it the local check could pass a design generator that lays only outsiders in a heart
+    # (tools/build_encounters.py generate mutated to drop each heart row naming a base species; data/ untouched).
+    import shutil
+    anchor = "            heart_rows[tid] = build_heart(dex, rules, tid, t, bands[tid], mtier)\n"
+    be = mutant("build_encounters", (anchor, anchor + "            heart_rows[tid] = [r for r in heart_rows[tid] "
+                                     "if r['name'] not in {g['name'] for g in gen_rows[tid]}]\n"))
+    scratch = tmp_path / "spawns.json"
+    shutil.copyfile(DATA / "spawns.json", scratch)
+    assert be.main(["--spawns", str(scratch), "--jar", str(ED.BS.find_jar())]) == 0
+    import compile_spawns
+    faults, read = local_faults(mutant_pack(compile_spawns, tmp_path / "p", scratch))
+    # Every sub-region heart left standing names no local (a heart that held only locals is gone, which the
+    # every-area test catches); the marine bands' and waterway's hearts are authored in data/spawns.json, which the
+    # design generator copies through, so they keep theirs. Measured 2026-10-05: 41 of the 45 surviving hearts.
+    hearted_subs = [a for a in read if a.startswith("subregions/")]
+    assert hearted_subs and sorted(faults) == sorted(hearted_subs), (len(faults), len(read))
 
 
 def test_a_summit_heart_is_cut_at_the_documents_line(world):
