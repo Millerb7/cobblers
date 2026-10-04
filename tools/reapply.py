@@ -727,9 +727,12 @@ def prepare_jobs(a):
     add("sea_life:build", "sea_life.py", "build", *src)
     add("sea_life_audit", "sea_life_audit.py", *src)
     # the open sea's floor (2026-10-04, tools/sea_floor.py, docs/world-building/WATER_LIFE_GAP.md): kelp forests and
-    # seagrass meadows on every marine region's shelf, outside everything cobblers_sea_life writes. Its independent
-    # audit is not written yet (another hand's)
+    # seagrass meadows on every marine region's shelf, outside everything cobblers_sea_life writes. Then its
+    # independent audit (tools/sea_floor_audit.py, another agent's; never imports the builder): every fill parsed and
+    # checked against the heightmap, OCEAN.md's bands, data/regions.json's biome rules at exact distances, the
+    # exclusions and the EMITTED sea_life pack; after both packs are built
     add("sea_floor:build", "sea_floor.py", "build", *src)
+    add("sea_floor_audit", "sea_floor_audit.py", *src)
     # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
     # then the offline audit, which re-derives every shell box from data/placements.json, replays the written
     # functions into a voxel model and fails the prepare on a broken route, a trainer that can be walked round, a
