@@ -1,0 +1,3003 @@
+{
+ "schema": "cobblers.plaza-centres/1",
+ "generated_by": "hand: the towns, their centrepieces, stalls and themes chosen from docs/world-building/TOWN_SQUARES_SURVEY.md section 4 and TOWN_CENTERS.md section 2; positions placed with `python tools/plaza_centre.py resolve` from each piece's `near` and then checked by `build`",
+ "status": "built offline by tools/plaza_centre.py (R13); not run in game",
+ "owner_brief": "2026-10-03: \"TOWN SQUARES AND TRADERS. Finish them properly. Market squares, stalls, the civic centre of each town. Several still read as streets with buildings rather than places with a middle ... every town should have somewhere a player goes to spend money.\"",
+ "contract": {
+  "with": "the trader builder (data/traders.json, data/markets.json): it stands a keeper at each stall's keeper_at",
+  "square": "{rect: [x0, z0, x1, z1], y: <the floor block's y>, centrepiece: [x, y, z]}: on a plaza the rect and y ARE the plan's plaza (data/placements.json plan.plaza; the build refuses otherwise); the centrepiece is the piece's origin, y its first block above the floor",
+  "stalls": "[{id: <town>_stall_<n>, at: [x, y, z], facing, keeper_at: [x, y, z, yaw], sells}]: `at` is the counter's middle block; `facing` is the side the customers stand on; `keeper_at` is where the keeper's FEET go, behind the counter: the block below it is the floor, it and the block above it are air; yaw faces the customers (Minecraft yaw: 0 south, 90 west, 180 north, -90 east); `sells` is the stall's theme word, a key of `goods`",
+  "checked_by": "tools/plaza_centre.py build recomputes every at, keeper_at and centrepiece from the piece it builds and refuses on any difference"
+ },
+ "rules": "every piece inside its square, off every street, lot, anchor, building, earthwork, lamp, waystone pad, street mouth, door apron, desire line, NPC, walked route line, signpost and dressing piece of its town (tools/plaza_centre.py docstring); furniture over at most coverage_max of the square; no block data/spawn_blocks.json lists; every cell of the square lit in the model; every stall, the centrepiece and every bench reachable on foot from the Centre's and the Mart's doors",
+ "goods": {
+  "workstations": {
+   "counter": [
+    "minecraft:stonecutter[facing=north]"
+   ],
+   "stock": [
+    "minecraft:smithing_table",
+    "minecraft:grindstone[face=floor,facing=north]",
+    "minecraft:anvil[facing=west]"
+   ]
+  },
+  "tools": {
+   "counter": [
+    "minecraft:grindstone[face=floor,facing=north]"
+   ],
+   "stock": [
+    "minecraft:anvil[facing=west]",
+    "minecraft:barrel[facing=up]",
+    "minecraft:smithing_table"
+   ]
+  },
+  "seeds": {
+   "counter": [
+    "minecraft:composter"
+   ],
+   "stock": [
+    "minecraft:barrel[facing=up]",
+    "minecraft:hay_block[axis=y]",
+    "minecraft:composter"
+   ]
+  },
+  "herbs": {
+   "counter": [
+    "minecraft:potted_fern"
+   ],
+   "stock": [
+    "minecraft:composter",
+    "minecraft:barrel[facing=up]",
+    "minecraft:flower_pot"
+   ]
+  },
+  "mulch": {
+   "counter": [
+    "minecraft:composter"
+   ],
+   "stock": [
+    "minecraft:coarse_dirt",
+    "minecraft:composter",
+    "minecraft:barrel[facing=up]"
+   ]
+  },
+  "game": {
+   "counter": [
+    "minecraft:smoker[facing=north]"
+   ],
+   "stock": [
+    "minecraft:hay_block[axis=y]",
+    "minecraft:barrel[facing=up]",
+    "minecraft:barrel[facing=up]"
+   ]
+  },
+  "produce": {
+   "counter": [
+    "minecraft:melon"
+   ],
+   "stock": [
+    "minecraft:hay_block[axis=y]",
+    "minecraft:barrel[facing=up]",
+    "minecraft:composter"
+   ]
+  },
+  "fish": {
+   "counter": [
+    "minecraft:barrel[facing=up]"
+   ],
+   "stock": [
+    "minecraft:dried_kelp_block",
+    "minecraft:barrel[facing=up]",
+    "minecraft:dried_kelp_block"
+   ]
+  },
+  "exotic_fish": {
+   "counter": [
+    "minecraft:barrel[facing=up]"
+   ],
+   "stock": [
+    "minecraft:packed_ice",
+    "minecraft:dried_kelp_block",
+    "minecraft:packed_ice"
+   ]
+  },
+  "galley": {
+   "counter": [
+    "minecraft:smoker[facing=north]"
+   ],
+   "stock": [
+    "minecraft:barrel[facing=up]",
+    "minecraft:hay_block[axis=y]",
+    "minecraft:barrel[facing=up]"
+   ]
+  },
+  "provisions": {
+   "like": "galley"
+  },
+  "field_kitchen": {
+   "like": "galley"
+  },
+  "rescue_gear": {
+   "counter": [
+    "minecraft:target"
+   ],
+   "stock": [
+    "minecraft:barrel[facing=up]",
+    "minecraft:chain[axis=y]",
+    "minecraft:barrel[facing=up]"
+   ]
+  },
+  "relay_parts": {
+   "counter": [
+    "minecraft:waxed_copper_grate"
+   ],
+   "stock": [
+    "minecraft:waxed_cut_copper",
+    "minecraft:barrel[facing=up]",
+    "minecraft:target"
+   ]
+  },
+  "storm_gear": {
+   "counter": [
+    "minecraft:loom[facing=north]"
+   ],
+   "stock": [
+    "minecraft:barrel[facing=up]",
+    "minecraft:chain[axis=y]",
+    "minecraft:waxed_copper_grate"
+   ]
+  },
+  "tracking": {
+   "counter": [
+    "minecraft:fletching_table"
+   ],
+   "stock": [
+    "minecraft:barrel[facing=up]",
+    "minecraft:hay_block[axis=y]",
+    "minecraft:target"
+   ]
+  },
+  "reeds": {
+   "counter": [
+    "minecraft:potted_fern"
+   ],
+   "stock": [
+    "minecraft:bamboo_block[axis=y]",
+    "minecraft:hay_block[axis=y]",
+    "minecraft:composter"
+   ]
+  },
+  "balls": {
+   "counter": [
+    "minecraft:decorated_pot"
+   ],
+   "stock": [
+    "minecraft:barrel[facing=up]",
+    "minecraft:decorated_pot",
+    "minecraft:barrel[facing=up]"
+   ]
+  },
+  "archive": {
+   "counter": [
+    "minecraft:lectern[facing=north]"
+   ],
+   "stock": [
+    "minecraft:bookshelf",
+    "minecraft:chiseled_bookshelf[facing=north]",
+    "minecraft:cartography_table"
+   ]
+  },
+  "scrolls": {
+   "like": "archive"
+  },
+  "battle_items": {
+   "counter": [
+    "minecraft:brewing_stand"
+   ],
+   "stock": [
+    "minecraft:barrel[facing=up]",
+    "minecraft:decorated_pot",
+    "minecraft:bookshelf"
+   ]
+  },
+  "ironmongery": {
+   "counter": [
+    "minecraft:anvil[facing=west]"
+   ],
+   "stock": [
+    "minecraft:smithing_table",
+    "minecraft:blast_furnace[facing=north]",
+    "minecraft:coal_block"
+   ]
+  },
+  "core_samples": {
+   "counter": [
+    "minecraft:raw_copper_block"
+   ],
+   "stock": [
+    "minecraft:raw_gold_block",
+    "minecraft:smooth_basalt",
+    "minecraft:tuff"
+   ]
+  },
+  "quartermaster": {
+   "counter": [
+    "minecraft:loom[facing=north]"
+   ],
+   "stock": [
+    "minecraft:barrel[facing=up]",
+    "minecraft:barrel[facing=up]",
+    "minecraft:hay_block[axis=y]"
+   ]
+  },
+  "packs": {
+   "like": "quartermaster"
+  },
+  "smithy": {
+   "like": "ironmongery"
+  },
+  "rods": {
+   "counter": [
+    "minecraft:barrel[facing=up]"
+   ],
+   "stock": [
+    "minecraft:bamboo_block[axis=y]",
+    "minecraft:chain[axis=y]",
+    "minecraft:barrel[facing=up]"
+   ]
+  },
+  "chandlery": {
+   "counter": [
+    "minecraft:barrel[facing=up]"
+   ],
+   "stock": [
+    "minecraft:chain[axis=y]",
+    "minecraft:barrel[facing=up]",
+    "minecraft:target"
+   ]
+  },
+  "tea": {
+   "counter": [
+    "minecraft:decorated_pot"
+   ],
+   "stock": [
+    "minecraft:barrel[facing=up]",
+    "minecraft:flower_pot",
+    "minecraft:decorated_pot"
+   ]
+  },
+  "sweets": {
+   "counter": [
+    "minecraft:decorated_pot"
+   ],
+   "stock": [
+    "minecraft:barrel[facing=up]",
+    "minecraft:decorated_pot",
+    "minecraft:barrel[facing=up]"
+   ]
+  }
+ },
+ "blocks": {
+  "note": "Every block a piece may write. Vanilla 1.21.1 ids only, each checked against the client jar's blockstates by `python tools/plaza_centre.py check-ids`; none is a spawn condition in data/spawn_blocks.json (the build refuses one)",
+  "ids": [
+   "minecraft:andesite",
+   "minecraft:anvil",
+   "minecraft:azalea",
+   "minecraft:bamboo_block",
+   "minecraft:barrel",
+   "minecraft:birch_fence",
+   "minecraft:birch_planks",
+   "minecraft:birch_slab",
+   "minecraft:birch_stairs",
+   "minecraft:birch_wall_sign",
+   "minecraft:black_carpet",
+   "minecraft:blackstone",
+   "minecraft:blast_furnace",
+   "minecraft:blue_carpet",
+   "minecraft:bookshelf",
+   "minecraft:brewing_stand",
+   "minecraft:brown_carpet",
+   "minecraft:campfire",
+   "minecraft:cartography_table",
+   "minecraft:chain",
+   "minecraft:cherry_fence",
+   "minecraft:cherry_planks",
+   "minecraft:cherry_slab",
+   "minecraft:cherry_stairs",
+   "minecraft:cherry_trapdoor",
+   "minecraft:cherry_wall_sign",
+   "minecraft:chiseled_bookshelf",
+   "minecraft:chiseled_stone_bricks",
+   "minecraft:coal_block",
+   "minecraft:coarse_dirt",
+   "minecraft:cobblestone",
+   "minecraft:composter",
+   "minecraft:cyan_carpet",
+   "minecraft:dark_oak_fence",
+   "minecraft:dark_oak_planks",
+   "minecraft:dark_oak_slab",
+   "minecraft:dark_oak_stairs",
+   "minecraft:dark_oak_wall_sign",
+   "minecraft:decorated_pot",
+   "minecraft:dried_kelp_block",
+   "minecraft:end_rod",
+   "minecraft:fern",
+   "minecraft:fletching_table",
+   "minecraft:flower_pot",
+   "minecraft:gilded_blackstone",
+   "minecraft:gray_carpet",
+   "minecraft:green_carpet",
+   "minecraft:grindstone",
+   "minecraft:hay_block",
+   "minecraft:iron_bars",
+   "minecraft:jungle_fence",
+   "minecraft:jungle_planks",
+   "minecraft:jungle_slab",
+   "minecraft:jungle_stairs",
+   "minecraft:jungle_wall_sign",
+   "minecraft:lantern",
+   "minecraft:lectern",
+   "minecraft:light_blue_carpet",
+   "minecraft:light_gray_carpet",
+   "minecraft:loom",
+   "minecraft:mangrove_fence",
+   "minecraft:mangrove_planks",
+   "minecraft:mangrove_slab",
+   "minecraft:mangrove_stairs",
+   "minecraft:mangrove_wall_sign",
+   "minecraft:melon",
+   "minecraft:moss_block",
+   "minecraft:mossy_cobblestone",
+   "minecraft:mossy_stone_brick_wall",
+   "minecraft:mossy_stone_bricks",
+   "minecraft:mud_brick_wall",
+   "minecraft:mud_bricks",
+   "minecraft:oak_fence",
+   "minecraft:oak_planks",
+   "minecraft:oak_slab",
+   "minecraft:oak_stairs",
+   "minecraft:oak_wall_sign",
+   "minecraft:orange_carpet",
+   "minecraft:packed_ice",
+   "minecraft:packed_mud",
+   "minecraft:pink_carpet",
+   "minecraft:polished_andesite",
+   "minecraft:polished_basalt",
+   "minecraft:polished_blackstone_bricks",
+   "minecraft:polished_blackstone_slab",
+   "minecraft:polished_blackstone_wall",
+   "minecraft:polished_diorite",
+   "minecraft:potted_fern",
+   "minecraft:prismarine_bricks",
+   "minecraft:prismarine_wall",
+   "minecraft:purple_carpet",
+   "minecraft:quartz_bricks",
+   "minecraft:quartz_pillar",
+   "minecraft:raw_copper_block",
+   "minecraft:raw_gold_block",
+   "minecraft:red_carpet",
+   "minecraft:sea_lantern",
+   "minecraft:smithing_table",
+   "minecraft:smoker",
+   "minecraft:smooth_basalt",
+   "minecraft:spruce_fence",
+   "minecraft:spruce_planks",
+   "minecraft:spruce_slab",
+   "minecraft:spruce_stairs",
+   "minecraft:spruce_wall_sign",
+   "minecraft:stone",
+   "minecraft:stone_brick_slab",
+   "minecraft:stone_brick_wall",
+   "minecraft:stone_bricks",
+   "minecraft:stonecutter",
+   "minecraft:stripped_birch_log",
+   "minecraft:stripped_cherry_log",
+   "minecraft:stripped_dark_oak_log",
+   "minecraft:stripped_jungle_log",
+   "minecraft:stripped_mangrove_log",
+   "minecraft:stripped_oak_log",
+   "minecraft:stripped_spruce_log",
+   "minecraft:target",
+   "minecraft:terracotta",
+   "minecraft:tuff",
+   "minecraft:waxed_copper_grate",
+   "minecraft:waxed_cut_copper"
+  ]
+ },
+ "towns": {
+  "hometown": {
+   "name": "Pallet",
+   "class": "small",
+   "on_plaza": false,
+   "coverage_max": 0.15,
+   "why": "Pallet has no plaza and stays intact (the owner's rule, STATE.md): its centre is the CobbleTowns sign at the crossroads, which this square does not touch. A small green on the open ground south of the Mart, north of the cross street and east of the walked line (heightmap 117-118, off every building, road and lot), with one stall for the Packmaker so the town has a counter, a bench pair and the first-step stone.",
+   "palette": {
+    "wood": "oak",
+    "awning": "minecraft:red_carpet"
+   },
+   "square": {
+    "rect": [
+     1467,
+     5264,
+     1481,
+     5278
+    ],
+    "y": 117,
+    "centrepiece": [
+     1474,
+     118,
+     5271
+    ]
+   },
+   "centrepiece": {
+    "id": "hometown_first_step",
+    "kind": "first_step",
+    "near": [
+     1474,
+     5271
+    ],
+    "facing": "west",
+    "lines": [
+     "Pallet Town",
+     "Every journey",
+     "starts with",
+     "one step."
+    ],
+    "why": "TOWN_CENTERS: the first-step stone; Pallet gets no signature piece by the owner's intact rule",
+    "at": [
+     1474,
+     5271
+    ]
+   },
+   "stalls": [
+    {
+     "id": "hometown_stall_1",
+     "near": [
+      1470,
+      5266
+     ],
+     "facing": "south",
+     "sells": "packs",
+     "why": "the Packmaker (data/markets.json, unsited until now): leather pack and bedroll, by the Mart",
+     "at": [
+      1470,
+      118,
+      5266
+     ],
+     "keeper_at": [
+      1470,
+      118,
+      5265,
+      0
+     ]
+    }
+   ],
+   "pieces": [
+    {
+     "id": "hometown_bench_1",
+     "kind": "bench",
+     "near": [
+      1474,
+      5276
+     ],
+     "facing": "north",
+     "why": "facing the stone",
+     "at": [
+      1474,
+      5276
+     ]
+    },
+    {
+     "id": "hometown_bench_2",
+     "kind": "bench",
+     "near": [
+      1479,
+      5271
+     ],
+     "facing": "west",
+     "why": "facing the stone",
+     "at": [
+      1479,
+      5271
+     ]
+    },
+    {
+     "id": "hometown_planter_1",
+     "kind": "planter",
+     "near": [
+      1479,
+      5266
+     ],
+     "facing": "south",
+     "at": [
+      1479,
+      5266
+     ]
+    },
+    {
+     "id": "hometown_lamp_1",
+     "kind": "lamp_post",
+     "at": [
+      1474,
+      5273
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "hometown_lamp_2",
+     "kind": "lamp_post",
+     "at": [
+      1473,
+      5264
+     ],
+     "why": "lights a part of the square no other light reaches"
+    }
+   ]
+  },
+  "gym1_town": {
+   "name": "Stoneford",
+   "class": "large",
+   "coverage_max": 0.15,
+   "why": "The plateau's builders' town (TOWN_CHARACTER): masons. The first gym square and the largest empty one, with six traders standing in a row on bare paving. The Onix run curls across the south-east quarter, its head toward the gym lane; six stalls put the masons' workstations, the four farmers'-market vendors and the tool belt under awnings.",
+   "palette": {
+    "wood": "birch",
+    "awning": "minecraft:brown_carpet",
+    "post": "minecraft:stone_brick_wall",
+    "foundation": "minecraft:stone_bricks"
+   },
+   "square": {
+    "rect": [
+     1736,
+     3600,
+     1776,
+     3640
+    ],
+    "y": 138,
+    "centrepiece": [
+     1740,
+     139,
+     3609
+    ]
+   },
+   "centrepiece": {
+    "id": "gym1_onix_run",
+    "kind": "onix_run",
+    "near": [
+     1740,
+     3609
+    ],
+    "facing": "east",
+    "why": "Brock's Onix as a low stone serpent, humps no higher than 3, curled in the north-west bay with its head toward the square: the south-east quarter the survey proposed is all walking lines (the walked route, the gym lane and the south-west approach)",
+    "segments": 4,
+    "at": [
+     1740,
+     3609
+    ]
+   },
+   "centre_extras": [
+    {
+     "id": "gym1_notice",
+     "kind": "notice_board",
+     "near": [
+      1747,
+      3609
+     ],
+     "facing": "south",
+     "lines": [
+      "Stoneford",
+      "Market Square",
+      "Leader Brock",
+      "Rock"
+     ],
+     "at": [
+      1743,
+      3611
+     ]
+    }
+   ],
+   "stalls": [
+    {
+     "id": "gym1_town_stall_1",
+     "near": [
+      1770,
+      3603
+     ],
+     "facing": "south",
+     "sells": "workstations",
+     "awning": "minecraft:brown_carpet",
+     "why": "the Yard Steward's shelf: stonecutter, anvil and crafting fittings",
+     "at": [
+      1770,
+      139,
+      3603
+     ],
+     "keeper_at": [
+      1770,
+      139,
+      3602,
+      0
+     ]
+    },
+    {
+     "id": "gym1_town_stall_2",
+     "near": [
+      1739,
+      3620
+     ],
+     "facing": "east",
+     "sells": "seeds",
+     "awning": "minecraft:green_carpet",
+     "why": "apricorn seeds (gym1_vendor_01)",
+     "at": [
+      1738,
+      139,
+      3616
+     ],
+     "keeper_at": [
+      1737,
+      139,
+      3616,
+      -90
+     ]
+    },
+    {
+     "id": "gym1_town_stall_3",
+     "near": [
+      1739,
+      3627
+     ],
+     "facing": "east",
+     "sells": "herbs",
+     "awning": "minecraft:green_carpet",
+     "why": "the herbalist",
+     "at": [
+      1752,
+      139,
+      3634
+     ],
+     "keeper_at": [
+      1751,
+      139,
+      3634,
+      -90
+     ]
+    },
+    {
+     "id": "gym1_town_stall_4",
+     "near": [
+      1754,
+      3638
+     ],
+     "facing": "north",
+     "sells": "mulch",
+     "awning": "minecraft:brown_carpet",
+     "why": "mulch for the terraces",
+     "at": [
+      1759,
+      139,
+      3638
+     ],
+     "keeper_at": [
+      1759,
+      139,
+      3639,
+      180
+     ]
+    },
+    {
+     "id": "gym1_town_stall_5",
+     "near": [
+      1766,
+      3638
+     ],
+     "facing": "north",
+     "sells": "game",
+     "awning": "minecraft:red_carpet",
+     "why": "small game",
+     "at": [
+      1766,
+      139,
+      3638
+     ],
+     "keeper_at": [
+      1766,
+      139,
+      3639,
+      180
+     ]
+    },
+    {
+     "id": "gym1_town_stall_6",
+     "near": [
+      1771,
+      3611
+     ],
+     "facing": "west",
+     "sells": "tools",
+     "awning": "minecraft:gray_carpet",
+     "why": "a mason's tool belt",
+     "at": [
+      1771,
+      139,
+      3618
+     ],
+     "keeper_at": [
+      1772,
+      139,
+      3618,
+      90
+     ]
+    }
+   ],
+   "pieces": [
+    {
+     "id": "gym1_bench_1",
+     "kind": "bench",
+     "near": [
+      1760,
+      3636
+     ],
+     "facing": "north",
+     "at": [
+      1760,
+      3634
+     ]
+    },
+    {
+     "id": "gym1_bench_2",
+     "kind": "bench",
+     "near": [
+      1768,
+      3628
+     ],
+     "facing": "south",
+     "at": [
+      1768,
+      3628
+     ]
+    },
+    {
+     "id": "gym1_bench_3",
+     "kind": "bench",
+     "near": [
+      1772,
+      3632
+     ],
+     "facing": "west",
+     "at": [
+      1769,
+      3637
+     ]
+    },
+    {
+     "id": "gym1_planter_1",
+     "kind": "planter",
+     "near": [
+      1774,
+      3606
+     ],
+     "facing": "west",
+     "at": [
+      1773,
+      3606
+     ]
+    },
+    {
+     "id": "gym1_planter_2",
+     "kind": "planter",
+     "near": [
+      1738,
+      3603
+     ],
+     "facing": "south",
+     "at": [
+      1737,
+      3603
+     ]
+    },
+    {
+     "id": "gym1_town_lamp_1",
+     "kind": "lamp_post",
+     "at": [
+      1755,
+      3612
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "gym1_town_lamp_2",
+     "kind": "lamp_post",
+     "at": [
+      1745,
+      3618
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "gym1_town_lamp_3",
+     "kind": "lamp_post",
+     "at": [
+      1746,
+      3636
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "gym1_town_lamp_4",
+     "kind": "lamp_post",
+     "at": [
+      1736,
+      3606
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "gym1_town_lamp_5",
+     "kind": "lamp_post",
+     "at": [
+      1765,
+      3610
+     ],
+     "why": "lights a part of the square no other light reaches"
+    }
+   ]
+  },
+  "gym2_town": {
+   "name": "Viltri Quay",
+   "class": "medium",
+   "coverage_max": 0.15,
+   "why": "The lake town that takes in whoever the water brings. No water on the square (a spawn condition; the fountain waits for the owner's whitelist, TOWN_CENTERS decision 2), so the centrepiece is a rescue boat's hull on trestles with the arrivals ledger beside it; four stalls for the rescue stores, the two fishmongers and the galley.",
+   "palette": {
+    "wood": "oak",
+    "awning": "minecraft:light_blue_carpet",
+    "post": "minecraft:prismarine_wall",
+    "foundation": "minecraft:prismarine_bricks"
+   },
+   "square": {
+    "rect": [
+     1604,
+     2796,
+     1636,
+     2828
+    ],
+    "y": 107,
+    "centrepiece": [
+     1633,
+     108,
+     2807
+    ]
+   },
+   "centrepiece": {
+    "id": "gym2_rescue_hull",
+    "kind": "boat_hull",
+    "near": [
+     1631,
+     2811
+    ],
+    "facing": "north",
+    "why": "the rescue boat, upturned for caulking: the town's work",
+    "at": [
+     1633,
+     2807
+    ]
+   },
+   "centre_extras": [
+    {
+     "id": "gym2_ledger",
+     "kind": "notice_board",
+     "near": [
+      1631,
+      2817
+     ],
+     "facing": "west",
+     "lines": [
+      "Viltri Quay",
+      "Arrivals Ledger",
+      "Leader Misty",
+      "Water"
+     ],
+     "at": [
+      1629,
+      2817
+     ]
+    }
+   ],
+   "stalls": [
+    {
+     "id": "gym2_town_stall_1",
+     "near": [
+      1631,
+      2805
+     ],
+     "facing": "west",
+     "sells": "rescue_gear",
+     "awning": "minecraft:red_carpet",
+     "why": "the Rescue Quartermaster's shelf: filters, tanks, Super Potions",
+     "at": [
+      1632,
+      108,
+      2811
+     ],
+     "keeper_at": [
+      1633,
+      108,
+      2811,
+      90
+     ]
+    },
+    {
+     "id": "gym2_town_stall_2",
+     "near": [
+      1607,
+      2824
+     ],
+     "facing": "north",
+     "sells": "fish",
+     "awning": "minecraft:light_blue_carpet",
+     "why": "the common-fish monger",
+     "at": [
+      1607,
+      108,
+      2824
+     ],
+     "keeper_at": [
+      1607,
+      108,
+      2825,
+      180
+     ]
+    },
+    {
+     "id": "gym2_town_stall_3",
+     "near": [
+      1627,
+      2826
+     ],
+     "facing": "north",
+     "sells": "exotic_fish",
+     "awning": "minecraft:cyan_carpet",
+     "why": "the exotic-fish monger",
+     "at": [
+      1628,
+      108,
+      2826
+     ],
+     "keeper_at": [
+      1628,
+      108,
+      2827,
+      180
+     ]
+    },
+    {
+     "id": "gym2_town_stall_4",
+     "near": [
+      1633,
+      2826
+     ],
+     "facing": "north",
+     "sells": "galley",
+     "awning": "minecraft:blue_carpet",
+     "why": "the chef's galley",
+     "at": [
+      1623,
+      108,
+      2821
+     ],
+     "keeper_at": [
+      1623,
+      108,
+      2822,
+      180
+     ]
+    }
+   ],
+   "pieces": [
+    {
+     "id": "gym2_bench_1",
+     "kind": "bench",
+     "near": [
+      1626,
+      2811
+     ],
+     "facing": "east",
+     "at": [
+      1626,
+      2811
+     ]
+    },
+    {
+     "id": "gym2_bench_2",
+     "kind": "bench",
+     "near": [
+      1621,
+      2827
+     ],
+     "facing": "north",
+     "at": [
+      1621,
+      2828
+     ]
+    },
+    {
+     "id": "gym2_planter_1",
+     "kind": "planter",
+     "near": [
+      1606,
+      2806
+     ],
+     "facing": "east",
+     "at": [
+      1606,
+      2806
+     ]
+    },
+    {
+     "id": "gym2_town_lamp_1",
+     "kind": "lamp_post",
+     "at": [
+      1614,
+      2805
+     ],
+     "why": "lights a part of the square no other light reaches"
+    }
+   ]
+  },
+  "gym3_town": {
+   "name": "Highwire",
+   "class": "small",
+   "coverage_max": 0.15,
+   "why": "The signal town under Mt Vessu. The belvedere is a view; the relay pylon at its east end and a sighting post aimed at the array give it a middle, and two stalls bring the relay stores up from beside the Mart, 40 blocks down the walk. End rods crown the mast, never a lightning rod (a spawn condition).",
+   "palette": {
+    "wood": "dark_oak",
+    "awning": "minecraft:orange_carpet",
+    "post": "minecraft:dark_oak_fence",
+    "foundation": "minecraft:polished_andesite"
+   },
+   "square": {
+    "rect": [
+     1660,
+     1386,
+     1692,
+     1400
+    ],
+    "y": 174,
+    "centrepiece": [
+     1689,
+     175,
+     1397
+    ]
+   },
+   "centrepiece": {
+    "id": "gym3_relay_pylon",
+    "kind": "pylon",
+    "near": [
+     1689,
+     1397
+    ],
+    "facing": "north",
+    "height": 7,
+    "why": "the relay pylon: a copper lattice mast crowned with end rods",
+    "at": [
+     1689,
+     1397
+    ]
+   },
+   "centre_extras": [
+    {
+     "id": "gym3_sighting_post",
+     "kind": "sighting_post",
+     "near": [
+      1686,
+      1393
+     ],
+     "facing": "east",
+     "why": "the brass pointer aimed east at the signal array (1928, 1248)",
+     "at": [
+      1685,
+      1393
+     ]
+    }
+   ],
+   "stalls": [
+    {
+     "id": "gym3_town_stall_1",
+     "near": [
+      1664,
+      1398
+     ],
+     "facing": "north",
+     "sells": "relay_parts",
+     "awning": "minecraft:orange_carpet",
+     "why": "the Relay Storekeeper's shelf: iron pack, battery, Magnet",
+     "at": [
+      1664,
+      175,
+      1398
+     ],
+     "keeper_at": [
+      1664,
+      175,
+      1399,
+      180
+     ]
+    },
+    {
+     "id": "gym3_town_stall_2",
+     "near": [
+      1669,
+      1399
+     ],
+     "facing": "north",
+     "sells": "storm_gear",
+     "awning": "minecraft:gray_carpet",
+     "why": "storm gear and the relay's radio",
+     "at": [
+      1668,
+      175,
+      1398
+     ],
+     "keeper_at": [
+      1668,
+      175,
+      1399,
+      180
+     ]
+    }
+   ],
+   "pieces": [
+    {
+     "id": "gym3_bench_1",
+     "kind": "bench",
+     "near": [
+      1661,
+      1394
+     ],
+     "facing": "west",
+     "why": "on the west rail, facing the drop",
+     "at": [
+      1661,
+      1394
+     ]
+    }
+   ]
+  },
+  "gym4_town": {
+   "name": "Greenhollow",
+   "class": "large",
+   "coverage_max": 0.15,
+   "why": "Erika's garden town, where every building already faces the green. The green gets its garden: four hedged parterres round a pergola in the north half, clear of the walked lines across the south; six stalls on the green's inner edge. No leaf and no flower (spawn conditions): moss, azalea and fern.",
+   "palette": {
+    "wood": "dark_oak",
+    "awning": "minecraft:green_carpet",
+    "post": "minecraft:dark_oak_fence",
+    "foundation": "minecraft:mossy_stone_bricks"
+   },
+   "square": {
+    "rect": [
+     4284,
+     1526,
+     4336,
+     1586
+    ],
+    "y": 110,
+    "centrepiece": [
+     4320,
+     111,
+     1538
+    ]
+   },
+   "centrepiece": {
+    "id": "gym4_pergola",
+    "kind": "pergola",
+    "near": [
+     4320,
+     1538
+    ],
+    "facing": "south",
+    "why": "the central pergola with seats and shade",
+    "at": [
+     4320,
+     1538
+    ]
+   },
+   "centre_extras": [
+    {
+     "id": "gym4_parterre_1",
+     "kind": "parterre",
+     "near": [
+      4320,
+      1531
+     ],
+     "facing": "north",
+     "at": [
+      4320,
+      1531
+     ]
+    },
+    {
+     "id": "gym4_parterre_2",
+     "kind": "parterre",
+     "near": [
+      4320,
+      1545
+     ],
+     "facing": "north",
+     "at": [
+      4320,
+      1545
+     ]
+    },
+    {
+     "id": "gym4_parterre_3",
+     "kind": "parterre",
+     "near": [
+      4311,
+      1535
+     ],
+     "facing": "east",
+     "at": [
+      4311,
+      1535
+     ]
+    },
+    {
+     "id": "gym4_parterre_4",
+     "kind": "parterre",
+     "near": [
+      4329,
+      1538
+     ],
+     "facing": "east",
+     "at": [
+      4329,
+      1538
+     ]
+    },
+    {
+     "id": "gym4_notice",
+     "kind": "notice_board",
+     "near": [
+      4290,
+      1556
+     ],
+     "facing": "east",
+     "lines": [
+      "Greenhollow",
+      "The Green",
+      "Leader Erika",
+      "Grass"
+     ],
+     "at": [
+      4290,
+      1556
+     ]
+    }
+   ],
+   "stalls": [
+    {
+     "id": "gym4_town_stall_1",
+     "near": [
+      4290,
+      1528
+     ],
+     "facing": "south",
+     "sells": "produce",
+     "awning": "minecraft:green_carpet",
+     "why": "the Green Grocer's shelf: feeding upgrades, sweets, Miracle Seed",
+     "at": [
+      4290,
+      111,
+      1528
+     ],
+     "keeper_at": [
+      4290,
+      111,
+      1527,
+      0
+     ]
+    },
+    {
+     "id": "gym4_town_stall_2",
+     "near": [
+      4297,
+      1528
+     ],
+     "facing": "south",
+     "sells": "seeds",
+     "awning": "minecraft:pink_carpet",
+     "why": "the flower and seed cart (apricorn seeds)",
+     "at": [
+      4297,
+      111,
+      1528
+     ],
+     "keeper_at": [
+      4297,
+      111,
+      1527,
+      0
+     ]
+    },
+    {
+     "id": "gym4_town_stall_3",
+     "near": [
+      4304,
+      1528
+     ],
+     "facing": "south",
+     "sells": "herbs",
+     "awning": "minecraft:green_carpet",
+     "why": "the herbalist",
+     "at": [
+      4304,
+      111,
+      1528
+     ],
+     "keeper_at": [
+      4304,
+      111,
+      1527,
+      0
+     ]
+    },
+    {
+     "id": "gym4_town_stall_4",
+     "near": [
+      4334,
+      1552
+     ],
+     "facing": "west",
+     "sells": "sweets",
+     "awning": "minecraft:pink_carpet",
+     "why": "sweets for the garden's visitors",
+     "at": [
+      4334,
+      111,
+      1552
+     ],
+     "keeper_at": [
+      4335,
+      111,
+      1552,
+      90
+     ]
+    },
+    {
+     "id": "gym4_town_stall_5",
+     "near": [
+      4334,
+      1559
+     ],
+     "facing": "west",
+     "sells": "produce",
+     "awning": "minecraft:brown_carpet",
+     "why": "the orchard's produce",
+     "at": [
+      4334,
+      111,
+      1559
+     ],
+     "keeper_at": [
+      4335,
+      111,
+      1559,
+      90
+     ]
+    },
+    {
+     "id": "gym4_town_stall_6",
+     "near": [
+      4286,
+      1545
+     ],
+     "facing": "east",
+     "sells": "mulch",
+     "awning": "minecraft:brown_carpet",
+     "why": "the garden's compost and mulch",
+     "at": [
+      4286,
+      111,
+      1545
+     ],
+     "keeper_at": [
+      4285,
+      111,
+      1545,
+      -90
+     ]
+    }
+   ],
+   "pieces": [
+    {
+     "id": "gym4_bench_1",
+     "kind": "bench",
+     "near": [
+      4312,
+      1543
+     ],
+     "facing": "east",
+     "at": [
+      4312,
+      1543
+     ]
+    },
+    {
+     "id": "gym4_bench_2",
+     "kind": "bench",
+     "near": [
+      4328,
+      1546
+     ],
+     "facing": "west",
+     "at": [
+      4328,
+      1546
+     ]
+    },
+    {
+     "id": "gym4_bench_3",
+     "kind": "bench",
+     "near": [
+      4300,
+      1535
+     ],
+     "facing": "east",
+     "at": [
+      4300,
+      1535
+     ]
+    },
+    {
+     "id": "gym4_bench_4",
+     "kind": "bench",
+     "near": [
+      4310,
+      1584
+     ],
+     "facing": "north",
+     "at": [
+      4310,
+      1584
+     ]
+    },
+    {
+     "id": "gym4_planter_1",
+     "kind": "planter",
+     "near": [
+      4296,
+      1548
+     ],
+     "facing": "east",
+     "at": [
+      4296,
+      1548
+     ]
+    },
+    {
+     "id": "gym4_planter_2",
+     "kind": "planter",
+     "near": [
+      4324,
+      1576
+     ],
+     "facing": "north",
+     "at": [
+      4324,
+      1576
+     ]
+    },
+    {
+     "id": "gym4_town_lamp_1",
+     "kind": "lamp_post",
+     "at": [
+      4300,
+      1569
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "gym4_town_lamp_2",
+     "kind": "lamp_post",
+     "at": [
+      4321,
+      1572
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "gym4_town_lamp_3",
+     "kind": "lamp_post",
+     "at": [
+      4300,
+      1543
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "gym4_town_lamp_4",
+     "kind": "lamp_post",
+     "at": [
+      4329,
+      1534
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "gym4_town_lamp_5",
+     "kind": "lamp_post",
+     "at": [
+      4328,
+      1582
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "gym4_town_lamp_6",
+     "kind": "lamp_post",
+     "at": [
+      4295,
+      1563
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "gym4_town_lamp_7",
+     "kind": "lamp_post",
+     "at": [
+      4324,
+      1565
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "gym4_town_lamp_8",
+     "kind": "lamp_post",
+     "at": [
+      4325,
+      1541
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "gym4_town_lamp_9",
+     "kind": "lamp_post",
+     "at": [
+      4288,
+      1581
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "gym4_town_lamp_10",
+     "kind": "lamp_post",
+     "at": [
+      4303,
+      1566
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "gym4_town_lamp_11",
+     "kind": "lamp_post",
+     "at": [
+      4284,
+      1560
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "gym4_town_lamp_12",
+     "kind": "lamp_post",
+     "at": [
+      4296,
+      1537
+     ],
+     "why": "lights a part of the square no other light reaches"
+    }
+   ]
+  },
+  "gym5_town": {
+   "name": "Fenhide",
+   "class": "medium",
+   "coverage_max": 0.15,
+   "why": "The fen-edge watch town. Its plan calls this the market yard, and nothing was on it; it lies between the Centre (north-west) and the Mart (south-east), so it is the town's middle by position. The dry well (\"the fen water is not for drinking\") in mud brick under a mangrove roof, three stone lanterns on the west edge in line with the way to the boardwalk, and four stalls on the east band for the trackers' outfitting, smoked game, reeds and the watchers' balls.",
+   "palette": {
+    "wood": "mangrove",
+    "awning": "minecraft:purple_carpet",
+    "post": "minecraft:mangrove_fence",
+    "lantern_post": "minecraft:mud_brick_wall",
+    "foundation": "minecraft:mud_bricks"
+   },
+   "square": {
+    "rect": [
+     4652,
+     2420,
+     4684,
+     2444
+    ],
+    "y": 117,
+    "centrepiece": [
+     4668,
+     118,
+     2434
+    ]
+   },
+   "centrepiece": {
+    "id": "gym5_dry_well",
+    "kind": "well",
+    "near": [
+     4668,
+     2434
+    ],
+    "facing": "west",
+    "why": "the dry well: mud-brick rim, capped, under a mangrove roof",
+    "at": [
+     4668,
+     2434
+    ]
+   },
+   "centre_extras": [
+    {
+     "id": "gym5_stone_lantern_1",
+     "kind": "stone_lantern",
+     "near": [
+      4654,
+      2428
+     ],
+     "facing": "west",
+     "at": [
+      4654,
+      2428
+     ]
+    },
+    {
+     "id": "gym5_stone_lantern_2",
+     "kind": "stone_lantern",
+     "near": [
+      4654,
+      2434
+     ],
+     "facing": "west",
+     "at": [
+      4654,
+      2434
+     ]
+    },
+    {
+     "id": "gym5_stone_lantern_3",
+     "kind": "stone_lantern",
+     "near": [
+      4654,
+      2440
+     ],
+     "facing": "west",
+     "at": [
+      4654,
+      2440
+     ]
+    },
+    {
+     "id": "gym5_notice",
+     "kind": "notice_board",
+     "near": [
+      4662,
+      2428
+     ],
+     "facing": "south",
+     "lines": [
+      "Fenhide",
+      "Market Yard",
+      "Leader Koga",
+      "Poison"
+     ],
+     "at": [
+      4662,
+      2428
+     ]
+    }
+   ],
+   "stalls": [
+    {
+     "id": "gym5_town_stall_1",
+     "near": [
+      4682,
+      2425
+     ],
+     "facing": "west",
+     "sells": "tracking",
+     "awning": "minecraft:purple_carpet",
+     "why": "the Tracker's Outfitter: pickup and magnet upgrades, the Mega Bracelet",
+     "at": [
+      4682,
+      118,
+      2425
+     ],
+     "keeper_at": [
+      4683,
+      118,
+      2425,
+      90
+     ]
+    },
+    {
+     "id": "gym5_town_stall_2",
+     "near": [
+      4682,
+      2432
+     ],
+     "facing": "west",
+     "sells": "game",
+     "awning": "minecraft:brown_carpet",
+     "why": "smoked game",
+     "at": [
+      4682,
+      118,
+      2432
+     ],
+     "keeper_at": [
+      4683,
+      118,
+      2432,
+      90
+     ]
+    },
+    {
+     "id": "gym5_town_stall_3",
+     "near": [
+      4682,
+      2439
+     ],
+     "facing": "west",
+     "sells": "reeds",
+     "awning": "minecraft:green_carpet",
+     "why": "the herbalist's reeds",
+     "at": [
+      4682,
+      118,
+      2439
+     ],
+     "keeper_at": [
+      4683,
+      118,
+      2439,
+      90
+     ]
+    },
+    {
+     "id": "gym5_town_stall_4",
+     "near": [
+      4672,
+      2442
+     ],
+     "facing": "north",
+     "sells": "balls",
+     "awning": "minecraft:purple_carpet",
+     "why": "balls for watchers in the reeds",
+     "at": [
+      4672,
+      118,
+      2442
+     ],
+     "keeper_at": [
+      4672,
+      118,
+      2443,
+      180
+     ]
+    }
+   ],
+   "pieces": [
+    {
+     "id": "gym5_bench_1",
+     "kind": "bench",
+     "near": [
+      4668,
+      2428
+     ],
+     "facing": "south",
+     "at": [
+      4668,
+      2428
+     ]
+    },
+    {
+     "id": "gym5_bench_2",
+     "kind": "bench",
+     "near": [
+      4662,
+      2438
+     ],
+     "facing": "east",
+     "at": [
+      4662,
+      2438
+     ]
+    },
+    {
+     "id": "gym5_planter_1",
+     "kind": "planter",
+     "near": [
+      4676,
+      2422
+     ],
+     "facing": "south",
+     "at": [
+      4676,
+      2422
+     ]
+    },
+    {
+     "id": "gym5_town_lamp_1",
+     "kind": "lamp_post",
+     "at": [
+      4655,
+      2422
+     ],
+     "why": "lights a part of the square no other light reaches"
+    }
+   ],
+   "links": [
+    {
+     "id": "gym5_yard_link",
+     "from": [
+      4653,
+      2446
+     ],
+     "to": [
+      4653,
+      2446
+     ],
+     "width": 3,
+     "surface": "minecraft:mossy_cobblestone",
+     "why": "the high street passes the yard's south-west corner three blocks off: three blocks of the yard's own cobble join them, so the walk from the street, the Centre and the Mart reaches the yard on paving"
+    }
+   ]
+  },
+  "gym6_town": {
+   "name": "Tilpey Cross",
+   "class": "medium",
+   "coverage_max": 0.15,
+   "why": "The region's place of study, and the only true square in the region. The crossing stays flat: the eye is laid in carpet on the paving of the north-east bay, quartz plinths stand in the corner bays, and four stalls stand in the bays for the archive's stores, produce, herbs and battle items.",
+   "palette": {
+    "wood": "birch",
+    "awning": "minecraft:purple_carpet",
+    "post": "minecraft:birch_fence",
+    "foundation": "minecraft:polished_diorite"
+   },
+   "square": {
+    "rect": [
+     6180,
+     3382,
+     6212,
+     3414
+    ],
+    "y": 94,
+    "centrepiece": [
+     6206,
+     95,
+     3388
+    ]
+   },
+   "centrepiece": {
+    "id": "gym6_eye",
+    "kind": "carpet_eye",
+    "near": [
+     6206,
+     3388
+    ],
+    "facing": "north",
+    "rx": 4,
+    "rz": 2,
+    "why": "the eye, flush on the paving: memory and perception",
+    "at": [
+     6206,
+     3388
+    ]
+   },
+   "centre_extras": [
+    {
+     "id": "gym6_plinth_ne",
+     "kind": "plinth",
+     "near": [
+      6211,
+      3383
+     ],
+     "facing": "north",
+     "at": [
+      6211,
+      3383
+     ]
+    },
+    {
+     "id": "gym6_plinth_sw",
+     "kind": "plinth",
+     "near": [
+      6181,
+      3413
+     ],
+     "facing": "north",
+     "at": [
+      6181,
+      3413
+     ]
+    },
+    {
+     "id": "gym6_plinth_se",
+     "kind": "plinth",
+     "near": [
+      6211,
+      3413
+     ],
+     "facing": "north",
+     "at": [
+      6211,
+      3413
+     ]
+    },
+    {
+     "id": "gym6_notice",
+     "kind": "notice_board",
+     "near": [
+      6184,
+      3392
+     ],
+     "facing": "east",
+     "lines": [
+      "Tilpey Cross",
+      "The Square",
+      "Leader Sabrina",
+      "Psychic"
+     ],
+     "at": [
+      6181,
+      3390
+     ]
+    }
+   ],
+   "stalls": [
+    {
+     "id": "gym6_town_stall_1",
+     "near": [
+      6185,
+      3410
+     ],
+     "facing": "north",
+     "sells": "archive",
+     "awning": "minecraft:purple_carpet",
+     "why": "the Archive Stores: smithing and stack upgrades, Twisted Spoon, Ultra Balls",
+     "at": [
+      6185,
+      95,
+      3410
+     ],
+     "keeper_at": [
+      6185,
+      95,
+      3411,
+      180
+     ]
+    },
+    {
+     "id": "gym6_town_stall_2",
+     "near": [
+      6191,
+      3412
+     ],
+     "facing": "north",
+     "sells": "produce",
+     "awning": "minecraft:green_carpet",
+     "why": "the farmers' market",
+     "at": [
+      6190,
+      95,
+      3412
+     ],
+     "keeper_at": [
+      6190,
+      95,
+      3413,
+      180
+     ]
+    },
+    {
+     "id": "gym6_town_stall_3",
+     "near": [
+      6207,
+      3412
+     ],
+     "facing": "north",
+     "sells": "herbs",
+     "awning": "minecraft:green_carpet",
+     "why": "the herbalist",
+     "at": [
+      6207,
+      95,
+      3412
+     ],
+     "keeper_at": [
+      6207,
+      95,
+      3413,
+      180
+     ]
+    },
+    {
+     "id": "gym6_town_stall_4",
+     "near": [
+      6208,
+      3384
+     ],
+     "facing": "south",
+     "sells": "battle_items",
+     "awning": "minecraft:blue_carpet",
+     "why": "the X items",
+     "at": [
+      6208,
+      95,
+      3386
+     ],
+     "keeper_at": [
+      6208,
+      95,
+      3385,
+      0
+     ]
+    }
+   ],
+   "pieces": [
+    {
+     "id": "gym6_bench_1",
+     "kind": "bench",
+     "near": [
+      6204,
+      3392
+     ],
+     "facing": "north",
+     "at": [
+      6207,
+      3389
+     ]
+    },
+    {
+     "id": "gym6_bench_2",
+     "kind": "bench",
+     "near": [
+      6186,
+      3404
+     ],
+     "facing": "north",
+     "at": [
+      6184,
+      3406
+     ]
+    },
+    {
+     "id": "gym6_town_lamp_1",
+     "kind": "lamp_post",
+     "at": [
+      6181,
+      3386
+     ],
+     "why": "lights a part of the square no other light reaches"
+    }
+   ]
+  },
+  "gym7_town": {
+   "name": "Cinderlee",
+   "class": "medium",
+   "coverage_max": 0.15,
+   "why": "The research town on the crater rim, whose ash square is a crossing between the Centre (north) and the Mart (south). The ember brazier stands in the south-east bay, south of the causeway line so the view east to the gym stays open; Blaine's quiz board, and four stalls for the ironmonger, the core samples, the field kitchen and the smithy. No magma, no lava (spawn conditions).",
+   "palette": {
+    "wood": "dark_oak",
+    "awning": "minecraft:orange_carpet",
+    "counter": "minecraft:polished_blackstone_bricks",
+    "post": "minecraft:polished_blackstone_wall",
+    "foundation": "minecraft:polished_blackstone_bricks"
+   },
+   "square": {
+    "rect": [
+     6060,
+     4981,
+     6088,
+     5009
+    ],
+    "y": 107,
+    "centrepiece": [
+     6081,
+     108,
+     5004
+    ]
+   },
+   "centrepiece": {
+    "id": "gym7_ember_brazier",
+    "kind": "brazier",
+    "near": [
+     6080,
+     5003
+    ],
+    "facing": "north",
+    "why": "the ember brazier: a raised blackstone basin, the fire two blocks up",
+    "at": [
+     6081,
+     5004
+    ]
+   },
+   "centre_extras": [
+    {
+     "id": "gym7_quiz_board",
+     "kind": "notice_board",
+     "near": [
+      6072,
+      4986
+     ],
+     "facing": "south",
+     "lines": [
+      "Cinderlee",
+      "Blaine's Quiz:",
+      "What burns",
+      "but never ash?"
+     ],
+     "at": [
+      6068,
+      4989
+     ]
+    }
+   ],
+   "stalls": [
+    {
+     "id": "gym7_town_stall_1",
+     "near": [
+      6086,
+      5000
+     ],
+     "facing": "west",
+     "sells": "ironmongery",
+     "awning": "minecraft:orange_carpet",
+     "why": "the Rim Ironmonger: gold pack, furnace upgrades, Charcoal",
+     "at": [
+      6086,
+      108,
+      5000
+     ],
+     "keeper_at": [
+      6087,
+      108,
+      5000,
+      90
+     ]
+    },
+    {
+     "id": "gym7_town_stall_2",
+     "near": [
+      6074,
+      5007
+     ],
+     "facing": "north",
+     "sells": "core_samples",
+     "awning": "minecraft:black_carpet",
+     "why": "Blaine's core samples, as flavour",
+     "at": [
+      6074,
+      108,
+      5007
+     ],
+     "keeper_at": [
+      6074,
+      108,
+      5008,
+      180
+     ]
+    },
+    {
+     "id": "gym7_town_stall_3",
+     "near": [
+      6081,
+      5008
+     ],
+     "facing": "north",
+     "sells": "field_kitchen",
+     "awning": "minecraft:red_carpet",
+     "why": "the field kitchen",
+     "at": [
+      6086,
+      108,
+      5004
+     ],
+     "keeper_at": [
+      6086,
+      108,
+      5005,
+      180
+     ]
+    },
+    {
+     "id": "gym7_town_stall_4",
+     "near": [
+      6066,
+      4995
+     ],
+     "facing": "east",
+     "sells": "smithy",
+     "awning": "minecraft:orange_carpet",
+     "why": "the rim smithy",
+     "at": [
+      6067,
+      108,
+      4994
+     ],
+     "keeper_at": [
+      6066,
+      108,
+      4994,
+      -90
+     ]
+    }
+   ],
+   "pieces": [
+    {
+     "id": "gym7_bench_1",
+     "kind": "bench",
+     "near": [
+      6076,
+      5002
+     ],
+     "facing": "east",
+     "at": [
+      6077,
+      5004
+     ]
+    },
+    {
+     "id": "gym7_bench_2",
+     "kind": "bench",
+     "near": [
+      6080,
+      4998
+     ],
+     "facing": "south",
+     "at": [
+      6080,
+      5008
+     ]
+    },
+    {
+     "id": "gym7_town_lamp_1",
+     "kind": "lamp_post",
+     "at": [
+      6073,
+      4986
+     ],
+     "why": "lights a part of the square no other light reaches"
+    }
+   ]
+  },
+  "gym8_town": {
+   "name": "Holdfast",
+   "class": "medium",
+   "coverage_max": 0.15,
+   "why": "The southern garrison and the last stores before Victory Road. The Gate of Eight: an arc of standing stones, each in one gym town's stone, Victory Road's badge check as flavour; four stalls for the Garrison Quartermaster, provisions, packs and the smithy.",
+   "palette": {
+    "wood": "spruce",
+    "awning": "minecraft:red_carpet",
+    "counter": "minecraft:terracotta",
+    "post": "minecraft:spruce_fence",
+    "foundation": "minecraft:terracotta"
+   },
+   "square": {
+    "rect": [
+     3590,
+     6440,
+     3620,
+     6462
+    ],
+    "y": 112,
+    "centrepiece": [
+     3602,
+     113,
+     6456
+    ]
+   },
+   "centrepiece": {
+    "id": "gym8_gate_of_eight",
+    "kind": "standing_stones",
+    "near": [
+     3602,
+     6456
+    ],
+    "facing": "north",
+    "stones": [
+     "minecraft:stone_bricks",
+     "minecraft:prismarine_bricks",
+     "minecraft:waxed_cut_copper",
+     "minecraft:mossy_stone_bricks",
+     "minecraft:mud_bricks",
+     "minecraft:polished_diorite",
+     "minecraft:polished_basalt",
+     "minecraft:terracotta"
+    ],
+    "why": "eight standing stones: Stoneford, Viltri Quay, Highwire, Greenhollow, Fenhide, Tilpey Cross, Cinderlee, Holdfast",
+    "at": [
+     3602,
+     6456
+    ]
+   },
+   "centre_extras": [
+    {
+     "id": "gym8_notice",
+     "kind": "notice_board",
+     "near": [
+      3598,
+      6449
+     ],
+     "facing": "south",
+     "lines": [
+      "Holdfast",
+      "The Gate Square",
+      "Leader Giovanni",
+      "Ground"
+     ],
+     "at": [
+      3598,
+      6449
+     ]
+    }
+   ],
+   "stalls": [
+    {
+     "id": "gym8_town_stall_1",
+     "near": [
+      3593,
+      6460
+     ],
+     "facing": "east",
+     "sells": "quartermaster",
+     "awning": "minecraft:red_carpet",
+     "why": "the Garrison Quartermaster: diamond pack, inception upgrade, Max Revive",
+     "at": [
+      3593,
+      113,
+      6460
+     ],
+     "keeper_at": [
+      3592,
+      113,
+      6460,
+      -90
+     ]
+    },
+    {
+     "id": "gym8_town_stall_2",
+     "near": [
+      3612,
+      6460
+     ],
+     "facing": "north",
+     "sells": "provisions",
+     "awning": "minecraft:brown_carpet",
+     "why": "rations for Victory Road",
+     "at": [
+      3612,
+      113,
+      6460
+     ],
+     "keeper_at": [
+      3612,
+      113,
+      6461,
+      180
+     ]
+    },
+    {
+     "id": "gym8_town_stall_3",
+     "near": [
+      3618,
+      6458
+     ],
+     "facing": "west",
+     "sells": "packs",
+     "awning": "minecraft:red_carpet",
+     "why": "packs and upgrades",
+     "at": [
+      3618,
+      113,
+      6458
+     ],
+     "keeper_at": [
+      3619,
+      113,
+      6458,
+      90
+     ]
+    },
+    {
+     "id": "gym8_town_stall_4",
+     "near": [
+      3593,
+      6452
+     ],
+     "facing": "east",
+     "sells": "smithy",
+     "awning": "minecraft:gray_carpet",
+     "why": "the garrison smithy",
+     "at": [
+      3593,
+      113,
+      6452
+     ],
+     "keeper_at": [
+      3592,
+      113,
+      6452,
+      -90
+     ]
+    }
+   ],
+   "pieces": [
+    {
+     "id": "gym8_bench_1",
+     "kind": "bench",
+     "near": [
+      3605,
+      6450
+     ],
+     "facing": "south",
+     "at": [
+      3605,
+      6450
+     ]
+    },
+    {
+     "id": "gym8_bench_2",
+     "kind": "bench",
+     "near": [
+      3610,
+      6454
+     ],
+     "facing": "west",
+     "at": [
+      3610,
+      6453
+     ]
+    },
+    {
+     "id": "gym8_town_lamp_1",
+     "kind": "lamp_post",
+     "at": [
+      3597,
+      6453
+     ],
+     "why": "lights a part of the square no other light reaches"
+    }
+   ]
+  },
+  "sunset_west": {
+   "name": "Sunset West",
+   "class": "medium",
+   "coverage_max": 0.15,
+   "why": "The region's harbour, and a port square with nothing on it. An upturned hull on trestles in oak, net racks and the tide-and-charter board; four stalls for the Harbour Scrivener's scrolls, the two fishmongers and the rods.",
+   "palette": {
+    "wood": "oak",
+    "awning": "minecraft:blue_carpet",
+    "post": "minecraft:oak_fence",
+    "foundation": "minecraft:polished_andesite"
+   },
+   "square": {
+    "rect": [
+     2642,
+     6480,
+     2666,
+     6508
+    ],
+    "y": 64,
+    "centrepiece": [
+     2652,
+     65,
+     6494
+    ]
+   },
+   "centrepiece": {
+    "id": "sunset_hull",
+    "kind": "boat_hull",
+    "near": [
+     2652,
+     6494
+    ],
+    "facing": "north",
+    "why": "a hull on trestles: the boatwrights' town",
+    "at": [
+     2652,
+     6494
+    ]
+   },
+   "centre_extras": [
+    {
+     "id": "sunset_net_rack_1",
+     "kind": "net_rack",
+     "near": [
+      2652,
+      6488
+     ],
+     "facing": "south",
+     "at": [
+      2652,
+      6488
+     ]
+    },
+    {
+     "id": "sunset_net_rack_2",
+     "kind": "net_rack",
+     "near": [
+      2652,
+      6500
+     ],
+     "facing": "north",
+     "at": [
+      2652,
+      6500
+     ]
+    },
+    {
+     "id": "sunset_charter_board",
+     "kind": "notice_board",
+     "near": [
+      2658,
+      6484
+     ],
+     "facing": "south",
+     "lines": [
+      "Sunset West",
+      "Tide & Charter",
+      "Strait ferry",
+      "from the quay"
+     ],
+     "at": [
+      2660,
+      6482
+     ]
+    }
+   ],
+   "stalls": [
+    {
+     "id": "sunset_west_stall_1",
+     "near": [
+      2645,
+      6485
+     ],
+     "facing": "east",
+     "sells": "scrolls",
+     "awning": "minecraft:red_carpet",
+     "why": "the Harbour Scrivener: blank, return, warp and bound scrolls",
+     "at": [
+      2645,
+      65,
+      6485
+     ],
+     "keeper_at": [
+      2644,
+      65,
+      6485,
+      -90
+     ]
+    },
+    {
+     "id": "sunset_west_stall_2",
+     "near": [
+      2645,
+      6493
+     ],
+     "facing": "east",
+     "sells": "fish",
+     "awning": "minecraft:blue_carpet",
+     "why": "the fish market",
+     "at": [
+      2645,
+      65,
+      6493
+     ],
+     "keeper_at": [
+      2644,
+      65,
+      6493,
+      -90
+     ]
+    },
+    {
+     "id": "sunset_west_stall_3",
+     "near": [
+      2645,
+      6501
+     ],
+     "facing": "east",
+     "sells": "exotic_fish",
+     "awning": "minecraft:cyan_carpet",
+     "why": "the far-water catch",
+     "at": [
+      2645,
+      65,
+      6501
+     ],
+     "keeper_at": [
+      2644,
+      65,
+      6501,
+      -90
+     ]
+    },
+    {
+     "id": "sunset_west_stall_4",
+     "near": [
+      2653,
+      6506
+     ],
+     "facing": "north",
+     "sells": "rods",
+     "awning": "minecraft:blue_carpet",
+     "why": "rods for a harbour town",
+     "at": [
+      2653,
+      65,
+      6506
+     ],
+     "keeper_at": [
+      2653,
+      65,
+      6507,
+      180
+     ]
+    }
+   ],
+   "pieces": [
+    {
+     "id": "sunset_bench_1",
+     "kind": "bench",
+     "near": [
+      2659,
+      6493
+     ],
+     "facing": "west",
+     "at": [
+      2657,
+      6493
+     ]
+    },
+    {
+     "id": "sunset_planter_1",
+     "kind": "planter",
+     "near": [
+      2648,
+      6481
+     ],
+     "facing": "south",
+     "at": [
+      2648,
+      6481
+     ]
+    },
+    {
+     "id": "sunset_west_lamp_1",
+     "kind": "lamp_post",
+     "at": [
+      2663,
+      6492
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "sunset_west_lamp_2",
+     "kind": "lamp_post",
+     "at": [
+      2657,
+      6480
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "sunset_west_lamp_3",
+     "kind": "lamp_post",
+     "at": [
+      2657,
+      6505
+     ],
+     "why": "lights a part of the square no other light reaches"
+    }
+   ]
+  },
+  "sea_town": {
+   "name": "Pacifidlog",
+   "class": "small",
+   "coverage_max": 0.15,
+   "why": "The floating town's square is its raft. Small class, so no core piece: a net-mending frame and a chandler's barrel stack at its edge (the bell stays out: a spawn condition, the owner's call), and two stalls for the Deck Chandler and the fishing trader.",
+   "palette": {
+    "wood": "jungle",
+    "awning": "minecraft:orange_carpet",
+    "post": "minecraft:jungle_fence",
+    "foundation": "minecraft:jungle_planks"
+   },
+   "square": {
+    "rect": [
+     5152,
+     7372,
+     5168,
+     7388
+    ],
+    "y": 62,
+    "centrepiece": [
+     5158,
+     63,
+     7375
+    ]
+   },
+   "centrepiece": {
+    "id": "sea_net_frame",
+    "kind": "net_rack",
+    "near": [
+     5158,
+     7375
+    ],
+    "facing": "south",
+    "why": "the net-mending frame",
+    "at": [
+     5158,
+     7375
+    ]
+   },
+   "centre_extras": [
+    {
+     "id": "sea_barrel_stack",
+     "kind": "barrel_stack",
+     "near": [
+      5153,
+      7377
+     ],
+     "facing": "south",
+     "at": [
+      5153,
+      7377
+     ]
+    }
+   ],
+   "stalls": [
+    {
+     "id": "sea_town_stall_1",
+     "near": [
+      5154,
+      7383
+     ],
+     "facing": "east",
+     "sells": "chandlery",
+     "awning": "minecraft:orange_carpet",
+     "why": "the Deck Chandler: Dive, Net and Lure Balls",
+     "at": [
+      5154,
+      63,
+      7383
+     ],
+     "keeper_at": [
+      5153,
+      63,
+      7383,
+      -90
+     ]
+    },
+    {
+     "id": "sea_town_stall_2",
+     "near": [
+      5166,
+      7383
+     ],
+     "facing": "west",
+     "sells": "fish",
+     "awning": "minecraft:light_blue_carpet",
+     "why": "the fishing trader",
+     "at": [
+      5166,
+      63,
+      7383
+     ],
+     "keeper_at": [
+      5167,
+      63,
+      7383,
+      90
+     ]
+    }
+   ],
+   "pieces": [
+    {
+     "id": "sea_bench_1",
+     "kind": "bench",
+     "near": [
+      5163,
+      7375
+     ],
+     "facing": "south",
+     "at": [
+      5163,
+      7375
+     ]
+    }
+   ]
+  },
+  "tea_town": {
+   "name": "Steepside",
+   "class": "medium",
+   "coverage_max": 0.15,
+   "why": "A town built on tea. The tea house fronts the square; the square gets a tea pavilion with a low table and stone lanterns, and two stalls for the tea house kitchen's sweets and the tea itself.",
+   "palette": {
+    "wood": "cherry",
+    "awning": "minecraft:pink_carpet",
+    "post": "minecraft:cherry_fence",
+    "lantern_post": "minecraft:mossy_stone_brick_wall",
+    "foundation": "minecraft:mossy_stone_bricks"
+   },
+   "square": {
+    "rect": [
+     2604,
+     3570,
+     2632,
+     3596
+    ],
+    "y": 114,
+    "centrepiece": [
+     2618,
+     115,
+     3583
+    ]
+   },
+   "centrepiece": {
+    "id": "tea_pavilion",
+    "kind": "pavilion",
+    "near": [
+     2618,
+     3583
+    ],
+    "facing": "east",
+    "why": "the tea pavilion: low table, seats, a teapot",
+    "at": [
+     2618,
+     3583
+    ]
+   },
+   "centre_extras": [
+    {
+     "id": "tea_stone_lantern_1",
+     "kind": "stone_lantern",
+     "near": [
+      2614,
+      3578
+     ],
+     "facing": "east",
+     "at": [
+      2614,
+      3578
+     ]
+    },
+    {
+     "id": "tea_stone_lantern_2",
+     "kind": "stone_lantern",
+     "near": [
+      2622,
+      3588
+     ],
+     "facing": "east",
+     "at": [
+      2622,
+      3588
+     ]
+    },
+    {
+     "id": "tea_notice",
+     "kind": "notice_board",
+     "near": [
+      2610,
+      3590
+     ],
+     "facing": "east",
+     "lines": [
+      "Steepside",
+      "The Tea Square",
+      "Shrew Lake",
+      "below"
+     ],
+     "at": [
+      2610,
+      3590
+     ]
+    }
+   ],
+   "stalls": [
+    {
+     "id": "tea_town_stall_1",
+     "near": [
+      2612,
+      3573
+     ],
+     "facing": "south",
+     "sells": "tea",
+     "awning": "minecraft:pink_carpet",
+     "why": "the tea itself",
+     "at": [
+      2612,
+      115,
+      3573
+     ],
+     "keeper_at": [
+      2612,
+      115,
+      3572,
+      0
+     ]
+    },
+    {
+     "id": "tea_town_stall_2",
+     "near": [
+      2624,
+      3573
+     ],
+     "facing": "south",
+     "sells": "sweets",
+     "awning": "minecraft:pink_carpet",
+     "why": "the Tea House Kitchen: malasadas and pokepuffs",
+     "at": [
+      2624,
+      115,
+      3573
+     ],
+     "keeper_at": [
+      2624,
+      115,
+      3572,
+      0
+     ]
+    }
+   ],
+   "pieces": [
+    {
+     "id": "tea_bench_1",
+     "kind": "bench",
+     "near": [
+      2618,
+      3591
+     ],
+     "facing": "north",
+     "at": [
+      2618,
+      3591
+     ]
+    },
+    {
+     "id": "tea_planter_1",
+     "kind": "planter",
+     "near": [
+      2628,
+      3591
+     ],
+     "facing": "north",
+     "at": [
+      2628,
+      3591
+     ]
+    },
+    {
+     "id": "tea_town_lamp_1",
+     "kind": "lamp_post",
+     "at": [
+      2607,
+      3593
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "tea_town_lamp_2",
+     "kind": "lamp_post",
+     "at": [
+      2627,
+      3589
+     ],
+     "why": "lights a part of the square no other light reaches"
+    }
+   ]
+  }
+ }
+}

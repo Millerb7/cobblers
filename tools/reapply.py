@@ -100,6 +100,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-09-27: each dressed town's landmark and set dressing (tools/town_dressing.py,
                 # data/town_dressing.json), run by R16B after the donors and the lights
                 "cobblers_town_dressing",
+                # 2026-10-03: each town's middle - centrepiece, market stalls, benches, planters, lamps - on its plaza
+                # (tools/plaza_centre.py, data/plaza_centres.json), run by R13 after the towns and donors, before R16
+                "cobblers_plaza_centres",
                 # 2026-09-28: working Pokemon in the towns (tools/ambient.py, data/ambient.json): a keeper and the work
                 # loops run on their own (a tick driver), so world-local below; placed again by R16C after an export
                 "cobblers_ambient",
@@ -604,6 +607,16 @@ def prepare_jobs(a):
     # keeps clear of; then the plan audit, which fails the prepare on any write on a lot, a road or a building
     add("town_dressing:build", "town_dressing.py", "build", *src)
     add("town_dressing_audit", "town_dressing_audit.py", *src)
+    # the towns' middles (tools/plaza_centre.py): after the town plans, the signposts and the dressing, which it keeps
+    # clear of; fail-closed on any piece off its square's free cells, a spawn-condition block, a dark cell, a stall
+    # record that is not what it builds, or a stall the Centre's and Mart's doors cannot walk to
+    add("plaza_centre:build", "plaza_centre.py", "build", *src)
+    # and the squares' independent audit (tools/town_squares_audit.py, written by an agent that built neither the
+    # squares nor the stalls): the R13 functions voxelised against the plans, footprints, heightmap and spawn blocks;
+    # every stall's counter and keeper; light at its own rule; reach from the Centre's and Mart's doors; every contract
+    # stall staffed once by R17M; the stalls' goods (jars, spawn blocks, power, theme); the survey's no-spend towns;
+    # and the budget curve recomputed and pinned. After the markets jobs (above) and the squares' build
+    add("town_squares_audit", "town_squares_audit.py", "--server-dir", a.server_dir, *src)
     # the working Pokemon: after the dressing, whose pieces they stand beside and keep clear of
     add("ambient:build", "ambient.py", "build", *src)
     # the evolution-stone faces: after the town plans, the signposts, the dressing and the working Pokemon, which they
@@ -1611,6 +1624,12 @@ def steps(with_spawns=False):
     # pack's index, so a checkout without the built pack still lists the step
     out.append(("R9G", "bridges (data/bridges.json)",
                 [("fn", "cobblers:bridges/%s" % b["id"]) for b in bridges()]))
+    # the towns' middles (tools/plaza_centre.py, TOWN_CENTERS.md section 3): after the towns (R8), the donors (R9), which
+    # are placed whole and would erase a piece inside them, and the bridges; before the lights (R16) and the dressing
+    # (R16B), which keeps off the plaza. Listed from the committed data, not the build; each function holds its chunks
+    import plaza_centre
+    out.append(("R13", "town squares: centrepieces, market stalls, benches and lamps (data/plaza_centres.json)",
+                plaza_centre.placement_steps()))
     # what must stand after the donors, which are placed whole and erase what was inside them: the lights
     late = sorted({q["settlement"] for q in doc["placements"] if q.get("kind") == "earthwork" and q.get("after") == "donors"})
     out.append(("R16", "lights, after the donors (%d places)" % len(late), [("fn", "cobblers:towns/%s_after_donors" % s) for s in late]))
@@ -1705,10 +1724,13 @@ def steps(with_spawns=False):
                 [("fn", "cobblers:ferries/load")] + [("npc", n) for n in ferries.npc_placements(ferries.load())]))
     # the market keepers (data/markets.json, 2026-10-03): NPCs whose classes load at boot from cobblers_markets, placed
     # over RCON after the restart like the ferrymen, each beside its town's Mart and turned to face its plaza; the load
-    # function first (the pack's scores). Listed from the committed data, not the build
+    # function first (the pack's scores). Listed from the committed data, not the build. 2026-10-03: and the stall
+    # keepers on the town squares (data/markets.json `stalls`), same pack, same purchase; every keeper whose stall the
+    # squares' contract (data/plaza_centres.json) seats stands at that stall instead
     import markets
-    out.append(("R17M", "the market keepers beside the Marts (data/markets.json)",
-                [("fn", "cobblers:markets/load")] + [("npc", n) for n in markets.npc_placements(markets.load())]))
+    out.append(("R17M", "the market and stall keepers (data/markets.json)",
+                [("fn", "cobblers:markets/load")] + [("npc", n) for n in markets.npc_placements(markets.load())]
+                + [("npc", n) for n in markets.stall_placements(markets.load())]))
     # the settlement NPCs (data/npc_seats.json): the main reveal's residents and the stone-tip speakers. NPCs like the
     # ferrymen, so placed over RCON after the restart that loaded cobblers_dialogue's classes, and after every town and
     # gym pass so the plaza, lot and lab floor they stand on exist. Each is turned to its authored yaw

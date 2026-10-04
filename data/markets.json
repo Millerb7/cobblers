@@ -65,8 +65,13 @@
       "town": "hometown",
       "path": "critical",
       "badge": 0,
-      "status": "unsited",
-      "unsited_why": "Pallet is a donor town with no plan anchors (tools/town_plan.py hometown stops at KeyError 'plan'), so nothing offline can say which cell outside its Mart is open. The clerk stands inside, behind the counter (data/traders.json hometown_mart). Site it in a full checkout or by a world probe, then set status sited",
+      "status": "sited",
+      "at": [1465, 118, 5249],
+      "yaw": 90,
+      "site_why": "sited 2026-10-03 from the Mart's own template, not a town plan (Pallet is a donor town with none): cobblers:f4/services/structure_pokemart is 23x12x22 (kits), placed at (1467, 5239) rotated 180, so its footprint is x1467-1489 z5239-5260 and its street jigsaw (template (22, 0, 15)) is the doorway at (1467, 5245) on the west face, toward main_street (x1460-1462, the walked line north). The clerk's jigsaw (7, 1, 17) turns to (1482, 5243), where data/traders.json stands hometown_mart, which checks the turning. The keeper stands on the 4-block verge between the street and the Mart, 4 south of the doorway, facing the street (yaw 90 = west); ground 117 from tools/ground.py (round), so y118",
+      "sited_by": "measured 2026-10-03 offline: template size and jigsaws read from kits, ground from the heightmap; 3+ from the walked line (x1461), 17 from the clerk. The donor footprints are checked by tools/markets.py audit's donor rule; not seen in a world",
+      "stall": "hometown_stall_1",
+      "stall_why": "the squares' contract's one Pallet stall is `packs`, 'the Packmaker ... leather pack and bedroll, by the Mart': this counter's own stock, word for word",
       "near_trader": "hometown_mart",
       "keeper": {"name": "Packmaker", "greeting": "First time out? Everyone leaves Pallet with a pack and a bedroll. The rest you'll buy on the road."},
       "theme": "the one town that is a house: the last thing home gives you is the means never to come back (PROGRESSION_LADDER 1.1)",
@@ -84,6 +89,7 @@
       "at": [1776, 139, 3608],
       "yaw": 59,
       "site_why": "re-sited 2026-10-03 from the town plan (data/placements.json anchors and plaza, derived/towns street cells, lots, lamps and dressing, never a world): on the Mart anchor's door side, outside its lot, off every street's paved width, 3+ from every walked line, 3+ blocks to the side of the doorway (the CobbleTowns Mart's door, template cell (9, 11), turned by the placement's rotation), facing the plaza's centre; on the plaza's east edge, 9 blocks out from the Mart door (1785, 3611) across the 2-block verge, 3 north of its line",
+      "stall": "gym1_town_stall_1",
       "near_trader": "gym1_mart",
       "sited_by": "measured 2026-10-03: the nearest cell to the Mart clerk that tools/ambient.py's Site marks free (lots, anchors, lamps, building footprints with a 1-block margin, earthworks) on all 3x3 round it, level with its neighbours, 3.5+ blocks from every placed NPC and 3+ from every walked route line; y = the plan's ground + 1. The dressing pieces were not in that measurement (derived/signposts.json absent in the agent worktree): tools/markets.py audit checks them in a full checkout",
       "keeper": {"name": "Yard Steward", "greeting": "Masons' yard. Boulder Badge holders can buy from the back shelf: copper packs, the stonecutter and anvil fittings, and, if you can stand the price, the crafting kit."},
@@ -105,6 +111,7 @@
       "at": [1624, 108, 2772],
       "yaw": 6,
       "site_why": "re-sited 2026-10-03 from the town plan (data/placements.json anchors and plaza, derived/towns street cells, lots, lamps and dressing, never a world): on the Mart anchor's door side, outside its lot, off every street's paved width, 3+ from every walked line, 3+ blocks to the side of the doorway (the CobbleTowns Mart's door, template cell (9, 11), turned by the placement's rotation), facing the plaza's centre; on the verge between north_avenue's paving and the Mart lot, 3 north of the door's line (1633, 2775), facing south to the plaza",
+      "stall": "gym2_town_stall_1",
       "near_trader": "gym2_mart",
       "sited_by": "as stoneford",
       "keeper": {"name": "Rescue Quartermaster", "greeting": "We kit out the rescue crews. Cascade Badge holders can have what the crews carry: water tanks, filters, and the stronger medicine."},
@@ -125,6 +132,7 @@
       "at": [1678, 175, 1437],
       "yaw": 177,
       "site_why": "re-sited 2026-10-03 from the town plan (data/placements.json anchors and plaza, derived/towns street cells, lots, lamps and dressing, never a world): on the Mart anchor's door side, outside its lot, off every street's paved width, 3+ from every walked line, 3+ blocks to the side of the doorway (the CobbleTowns Mart's door, template cell (9, 11), turned by the placement's rotation), facing the plaza's centre; at the foot of lip_walk beside its paving, on the town footprint's south edge (z 1437): the Mart lot itself (z 1442+) lies outside the footprint, so nothing nearer its door (1687, 1450) is inside the town",
+      "stall": "gym3_town_stall_1",
       "near_trader": "gym3_mart",
       "sited_by": "as stoneford",
       "keeper": {"name": "Relay Storekeeper", "greeting": "Relay stores. Thunder Badge holders can have the iron pack, a battery, a magnet, and Great Balls by the five."},
@@ -145,6 +153,7 @@
       "at": [4306, 112, 1598],
       "yaw": -175,
       "site_why": "re-sited 2026-10-03 from the town plan (data/placements.json anchors and plaza, derived/towns street cells, lots, lamps and dressing, never a world): on the Mart anchor's door side, outside its lot, off every street's paved width, 3+ from every walked line, 3+ blocks to the side of the doorway (the CobbleTowns Mart's door, template cell (9, 11), turned by the placement's rotation), facing the plaza's centre; on the verge between ring_south's paving and the Mart lot, 3 west of the door's line (4309, 1609), facing north to the plaza",
+      "stall": "gym4_town_stall_1",
       "near_trader": "gym4_mart",
       "sited_by": "as stoneford",
       "keeper": {"name": "Green Grocer", "greeting": "From the green. Rainbow Badge holders can buy the feeding fittings, malasadas and puffs your partners will love you for, and a Miracle Seed."},
@@ -167,6 +176,7 @@
       "at": [4697, 119, 2491],
       "yaw": 154,
       "site_why": "re-sited 2026-10-03 from the town plan (data/placements.json anchors and plaza, derived/towns street cells, lots, lamps and dressing, never a world): on the Mart anchor's door side, outside its lot, off every street's paved width, 3+ from every walked line, 3+ blocks to the side of the doorway (the CobbleTowns Mart's door, template cell (9, 11), turned by the placement's rotation), facing the plaza's centre; beside post_road at the mouth of the gap between the Mart and lot post_road_lot_09, which is the way to the door (4713, 2476): the lot stands directly in front of the door, so the nearest cell beside a street is here, 22 blocks from it",
+      "stall": "gym5_town_stall_1",
       "near_trader": "gym5_mart",
       "sited_by": "as stoneford",
       "keeper": {"name": "Tracker's Outfitter", "greeting": "Trappers' gear. Soul Badge holders can buy pickup and magnet fittings, a Poison Barb, and the Mega Bracelet, if they've saved for it."},
@@ -187,6 +197,8 @@
       "at": [6224, 95, 3395],
       "yaw": 84,
       "site_why": "re-sited 2026-10-03 from the town plan (data/placements.json anchors and plaza, derived/towns street cells, lots, lamps and dressing, never a world): on the Mart anchor's door side, outside its lot, off every street's paved width, 3+ from every walked line, 3+ blocks to the side of the doorway (the CobbleTowns Mart's door, template cell (9, 11), turned by the placement's rotation), facing the plaza's centre; on the verge between cross_street's paving and the Mart lot, 3 west of the door's line (6227, 3384), facing west along the street to the plaza",
+      "stall": "gym6_town_stall_4",
+      "stall_why": "stall 4 is `battle_items` (dressed with a brewing stand): the one shelf in Tilpey that sells power is the badge-gated counter's (the Twisted Spoon is a held battle item, the Ultra Balls a catch item), so the power stays behind gym6_cleared and on the curve, and stall 1 `archive` (lectern, bookshelves, cartography table) goes to the stationer, whose paper, books and maps it is dressed for",
       "near_trader": "gym6_mart",
       "sited_by": "as stoneford",
       "keeper": {"name": "Archive Stores", "greeting": "The archive keeps what it records, and packs it tight. Marsh Badge holders can buy the smithing and stacking fittings, a Twisted Spoon, and Ultra Balls by the five."},
@@ -208,6 +220,7 @@
       "at": [6039, 109, 5036],
       "yaw": -140,
       "site_why": "re-sited 2026-10-03 from the town plan (data/placements.json anchors and plaza, derived/towns street cells, lots, lamps and dressing, never a world): on the Mart anchor's door side, outside its lot, off every street's paved width, 3+ from every walked line, 3+ blocks to the side of the doorway (the CobbleTowns Mart's door, template cell (9, 11), turned by the placement's rotation), facing the plaza's centre; beside rim_road where the open forecourt to the Mart door (6055, 5051) leaves it: the door is 26 blocks from the road, and this is the nearest cell to both that is clear of the road's walked line",
+      "stall": "gym7_town_stall_1",
       "near_trader": "gym7_mart",
       "sited_by": "as stoneford",
       "keeper": {"name": "Rim Ironmonger", "greeting": "Heat's our trade. Volcano Badge holders can buy the gold pack, one cooking fitting of their choice, a Charcoal Stick, and Max Potions."},
@@ -231,6 +244,7 @@
       "at": [3634, 113, 6462],
       "yaw": 111,
       "site_why": "re-sited 2026-10-03 from the town plan (data/placements.json anchors and plaza, derived/towns street cells, lots, lamps and dressing, never a world): on the Mart anchor's door side, outside its lot, off every street's paved width, 3+ from every walked line, 3+ blocks to the side of the doorway (the CobbleTowns Mart's door, template cell (9, 11), turned by the placement's rotation), facing the plaza's centre; on the verge between foot_street's paving and the Mart lot, 3 west of the door's line (3637, 6475), facing the plaza west along the street",
+      "stall": "gym8_town_stall_1",
       "near_trader": "gym8_mart",
       "sited_by": "as stoneford",
       "keeper": {"name": "Garrison Quartermaster", "greeting": "Last stores before the Road. Earth Badge holders draw the diamond pack, the inception fitting, gold caps, and what the League will cost you in medicine."},
@@ -252,6 +266,7 @@
       "at": [6653, 139, 5714],
       "yaw": 114,
       "site_why": "re-sited 2026-10-03 from the town plan (data/placements.json anchors and plaza, derived/towns street cells, lots, lamps and dressing, never a world): on the Mart anchor's door side, outside its lot, off every street's paved width, 3+ from every walked line, 3+ blocks to the side of the doorway (the CobbleTowns Mart's door, template cell (9, 11), turned by the placement's rotation), facing the plaza's centre; on the verge between the Mart lot and ore_road's paving, 3 west of the door's line (6656, 5703), facing the plaza west",
+      "stall": "mining_town_stall_1",
       "near_trader": "mining_mart",
       "sited_by": "as stoneford",
       "keeper": {"name": "Mine Stores", "greeting": "Mine stores. Thunder Badge holders can buy the compacting and voiding fittings every digger swears by. The Assayer next door has the stones."},
@@ -272,6 +287,7 @@
       "at": [7277, 117, 1540],
       "yaw": 39,
       "site_why": "re-sited 2026-10-03 from the town plan (data/placements.json anchors and plaza, derived/towns street cells, lots, lamps and dressing, never a world): on the Mart anchor's door side, outside its lot, off every street's paved width, 3+ from every walked line, 3+ blocks to the side of the doorway (the CobbleTowns Mart's door, template cell (9, 11), turned by the placement's rotation), facing the plaza's centre; on the plaza's north edge (paving y116), 9 blocks out from the Mart door (7280, 1531), 3 west of its line",
+      "stall": "northlight_stall_1",
       "near_trader": "northlight_mart",
       "sited_by": "as stoneford",
       "keeper": {"name": "Station Supply", "greeting": "Station supply. Hammocks for anyone; Marsh Badge holders can buy the supplements the station feeds its own team."},
@@ -295,13 +311,18 @@
       "at": [2604, 115, 3596],
       "yaw": -133,
       "site_why": "re-sited 2026-10-03 from the town plan (data/placements.json anchors and plaza, derived/towns street cells, lots, lamps and dressing, never a world): on the Mart anchor's door side, outside its lot, off every street's paved width, 3+ from every walked line, 3+ blocks to the side of the doorway (the CobbleTowns Mart's door, template cell (9, 11), turned by the placement's rotation), facing the plaza's centre; on the plaza's south-west corner (paving y114), across terrace_road from the Mart door (2589, 3604); the Mart lot meets the road's paving, so there is no cell between them",
+      "stall": "tea_town_stall_2",
+      "stall_why": "the squares' contract names stall 2 (`sweets`) 'the Tea House Kitchen: malasadas and pokepuffs', this counter's stock; stall 1 (`tea`) goes to the tea front, which sells what is taken with the tea",
       "near_trader": "tea_mart",
       "sited_by": "as stoneford",
       "keeper": {"name": "Tea House Kitchen", "greeting": "From the tea house kitchen. Cheaper than Greenhollow, and we don't ask for badges."},
       "theme": "the tea town stepping down the slope below the tea house: its kitchen's sweets, cheaper than the garden town's, the region's cheapest route to a friendship evolution",
       "stock": [
         {"id": "sweet_malasada", "item": "cobblecuisine:sweet_malasada", "name": "Sweet Malasada", "count": 1, "price": 700, "gate": null, "strand": "power", "why": "Greenhollow's 900 less a margin (PROGRESSION_LADDER 1.2)"},
-        {"id": "sweet_pokepuff", "item": "cobblecuisine:sweet_pokepuff", "name": "Sweet Pokepuff", "count": 1, "price": 400, "gate": null, "strand": "power", "why": "Greenhollow's 500 less a margin"}
+        {"id": "sweet_pokepuff", "item": "cobblecuisine:sweet_pokepuff", "name": "Sweet Pokepuff", "count": 1, "price": 400, "gate": null, "strand": "power", "why": "Greenhollow's 500 less a margin"},
+        {"id": "mint_pokepuff", "item": "cobblecuisine:mint_pokepuff", "name": "Mint Pokepuff", "count": 1, "price": 400, "gate": null, "strand": "power", "why": "2026-10-03, the shelf widened from two lines to the kitchen's flavours (TOWN_SQUARES_SURVEY 4): friendship +6 like the sweet one (cobblecuisine.json pokepuffFriendship; whether flavour changes the gain is NOT VERIFIED, TIERED_GOODS 2.6). Id read from cobblecuisine-2.0.1-1.7.rc1.jar's lang 2026-10-03; Greenhollow sells no mint puff, so no discount rule binds"},
+        {"id": "citrus_pokepuff", "item": "cobblecuisine:citrus_pokepuff", "name": "Citrus Pokepuff", "count": 1, "price": 400, "gate": null, "strand": "power", "why": "as mint_pokepuff"},
+        {"id": "mocha_pokepuff", "item": "cobblecuisine:mocha_pokepuff", "name": "Mocha Pokepuff", "count": 1, "price": 400, "gate": null, "strand": "power", "why": "as mint_pokepuff: the tea house's own, a coffee-house puff"}
       ]
     },
     {
@@ -309,8 +330,12 @@
       "town": "sunset_west",
       "path": "off_path",
       "badge": null,
-      "status": "unsited",
-      "unsited_why": "tools/town_plan.py sunset_west needs build/paint/manifest.json, absent in the agent worktree, so its plan could not be measured here. Site it in a full checkout with the same measurement as stoneford",
+      "status": "sited",
+      "at": [2664, 65, 6483],
+      "yaw": 42,
+      "site_why": "sited 2026-10-03 on the chandlers' square itself, which the plan already grades (data/placements.json sunset_west plan.plaza [2642, 6480, 2666, 6508] y64), so no street-cell measurement is needed: the square's north-east inner corner, nearest the Mart, whose door faces west onto the square (Mart lot x2669-2687), so the keeper is on the door side; off the flush-lamp grid (every 27 from the plaza's corner), 4.5+ from the waystone (2664, 6504), 3.5+ from every walked route point, facing the square's centre",
+      "sited_by": "measured 2026-10-03 from the data only (plan plaza, waystone, data/route_paths.json, every placed NPC); lamps, lots and dressing are checked by tools/markets.py audit in a full checkout (derived/towns absent here)",
+      "stall": "sunset_west_stall_1",
       "near_trader": "sunset_west_mart",
       "keeper": {"name": "Harbour Scrivener", "greeting": "Scrolls for travellers. Anyone can have a blank or a return scroll; warp and bound scrolls are for Soul Badge holders."},
       "theme": "the port where the boats go: a port sells the way home and the way onward",
@@ -326,8 +351,12 @@
       "town": "sea_town",
       "path": "off_path",
       "badge": null,
-      "status": "unsited",
-      "unsited_why": "the town stands on log decks at the sea level; the heightmap there is seabed (data/towns.json sea_town ground_note), and no cell beside its Mart reads as ground offline. Site it on a deck cell from tools/sea_town.py's plan",
+      "status": "sited",
+      "at": [5166, 63, 7378],
+      "yaw": 72,
+      "site_why": "the FALLBACK only: the squares' contract seats this keeper at sea_town_stall_1's keeper_at, which wins. Sited 2026-10-03 on the square raft, the one deck the plan grades to a known y (data/placements.json sea_town plan.plaza [5152, 7372, 5168, 7388] y62, jungle planks), so the seabed heightmap does not matter: the raft's east side, nearest the Mart across its bridge (Mart lot x5177-5192, door facing west onto the raft), 2 in from the fence-and-lantern edge, 8.5 from the waystone (5160, 7384), facing the raft's centre (yaw 72). Moved 2026-10-03 from (5166, 7374), where tools/plaza_centre.py, which keeps every counter's record `at` and its 2-block margin clear of the square's pieces, refused the bench sea_bench_1; this cell's 5 by 5 touches no piece of the square (measured from data/plaza_centres.json through plaza_centre's own seat()), and passes markets.py's deck rule. y63 stands on the deck, one above sea level",
+      "sited_by": "as sunset_harbour",
+      "stall": "sea_town_stall_1",
       "near_trader": "sea_town_mart",
       "keeper": {"name": "Deck Chandler", "greeting": "Balls for the water. The ferry's the badge out here, so no badges asked."},
       "theme": "the town on the sea: the balls that work on water",
@@ -342,8 +371,12 @@
       "town": "tableland_stop",
       "path": "off_path",
       "badge": null,
-      "status": "unsited",
-      "unsited_why": "PROGRESSION_LADDER open question Q-4 (does the stop get a counter at all) is the owner's; and the stop has no Mart clerk to stand beside. Designed, not emitted",
+      "status": "sited",
+      "at": [4832, 162, 5687],
+      "yaw": -75,
+      "site_why": "sited 2026-10-03 (the owner: 'every town should have somewhere a player goes to spend money'; this answers Q-4 as yes, a small one). The stop has no Mart and so no clerk to stand beside, so the Prospector keeps a stall on the yard instead (markets.py: a counter with a `stall` and no clerk is held to the stall rule): data/placements.json tableland_stop plan.plaza [4830, 5680, 4856, 5700] y161, the yard's west inner edge by the waystation door, 4.5+ from the waystone (4832, 5682), off the lamp grid, facing the yard's centre",
+      "sited_by": "as sunset_harbour",
+      "stall": "tableland_stop_stall_1",
       "near_trader": null,
       "keeper": {"name": "Prospector", "greeting": "Sieve's been kind this week."},
       "theme": "the prospector's waystation on the red tableland, dressed with sample piles, a sieve and ore crates",
@@ -353,8 +386,439 @@
       ]
     }
   ],
+  "stalls_basis": {
+    "brief": "the owner, 2026-10-03: 'More traders, and new ones. The backpack ladder landed last night -- build out the rest of the stock the same way, per town, reading as the place. Every town should have somewhere a player goes to spend money.' The survey is docs/world-building/TOWN_SQUARES_SURVEY.md",
+    "why_this_pattern": "a stall is a keeper on tools/markets.py's machinery (a dialogue menu and the purchase function whose charge macro EXP-042 proved), not a data/traders.json shopkeeper: a traders.json trader sells its BCA template's own trade list, filtered, so it cannot be told to sell a fishing town's rods or a stationer's paper without an authored CobbleMerchantShop, and that path (the Exchange's) is proof P-7, not run; it is also generated from the installed template, so it cannot be built or tested without a server. The keeper pattern can say exactly what each stall sells, gate a line if one ever needs it, and is placed by R17M with the counters",
+    "budget": "every line is an ungated `provision` (vanilla food, tools, rope, paper, fuel): not a rung on the ladder, so not counted by the curve, which stays the counters' (markets.py priced: a gated stall line on the critical path WOULD count). The money they take comes out of the 30-35% the curve leaves for the Mart, ferries, stones and the blackout (income_basis.target_source); each is something a player can also gather or craft, so it is a convenience bought with spare money, never a gate",
+    "prices": "above 2.5x data's bank sell-back for every food line (bank.json pays 5-20 for vanilla food; PROGRESSION_LADDER 0.5's multiplier reading), and set against the Mart's own scale (Poke Ball 200, Potion 200): a meal or a bundle of fuel for about one ball, a tool or instrument for two to five",
+    "verified": "every id was read on 2026-10-03 from a jar's lang file (item.<ns>.<path> or block.<ns>.<path>): minecraft: ids from the Minecraft 1.21.1 jar (ModrinthApp meta versions 1.21.1-0.19.5), cobblecuisine: from cobblecuisine-2.0.1-1.7.rc1.jar (the Cobbleverse profile, the version TIERED_GOODS names). Re-check on the server with: python tools/markets.py ids --jar-dir <server>/mods --jar <minecraft 1.21.1 jar>",
+    "left_out": "ids considered and left out of every stall: minecraft:cake (alcremie's neededNearbyBlocks), minecraft:rail (carkol and coalossal), minecraft:wheat_seeds (it places minecraft:wheat, beheeyem's): data/spawn_blocks.json names each, so a player who buys one decides encounters where they put it. cobblemon:poke_rod (verified in Cobblemon-fabric-1.8.0+1.21.1.jar) is withheld: it catches Pokemon, which stock_policy keeps off ungated stalls. Cobblecuisine teas and shakes are withheld: their boosts (shiny, catch rate, EVs; cobblecuisine.json boostSettings) are power, not provisions. Added 2026-10-03 with the sixteen new stalls: apricorns and apricorn seeds (spawn blocks; Stoneford's seed stall), minecraft:pumpkin_seeds (its stem grows minecraft:pumpkin, a spawn block, which the PLACES map cannot see), minecraft:torchflower_seeds and minecraft:pitcher_pod (they grow spawn blocks), minecraft:moss_block and minecraft:bone_meal on the new mulch stalls (bone meal on grass grows flowers and on moss grows flowering azalea, both spawn blocks; the seed cart's existing bone meal is left as it was), minecraft:magma_block (Cinderlee's core samples), minecraft:white_bed (Holdfast's cot is red), minecraft:bundle (experimental in 1.21.1), minecraft:iron_ingot at Fenhide's ball bench (the Great Ball core: Highwire's gated line), every Poke Ball and every X item on an ungated stall (power: Tilpey's `battle_items` stall holds the badge counter instead)",
+    "sites": "a stall keeper stands where data/plaza_centres.json (the squares' contract, built in parallel) seats its `stall`; until that file exists, at the fallback measured from the data alone: inside the plan's plaza rect, 2-3 in from its edge (the middle is the centrepiece's), off the plaza's flush-lamp grid (tools/town_plan.py: every 27 from the corner) and its neighbours, 4.5+ from the waystone and every placed NPC and keeper, 3.5+ from every walked route point, turned to the square's centre. Integrated 2026-10-03 against the merged contract: every record names the contract stall whose theme fits its goods and carries that stall's theme word as `sells` (its own `stall_why` says why), and every contract stall is staffed once, by an existing keeper or one authored for it. The counter stands at stall 1 except at Tilpey (stall 4, `battle_items`: the counter's power stays behind its badge) and Steepside (stall 2, the contract's 'Tea House Kitchen'); Pallet's counter is on its one stall, `packs`. A new trader's fallback `at` is its contract seat, copied"
+  },
+  "stalls": [
+    {
+      "id": "stoneford_masons_yard", "town": "gym1_town", "stall": "gym1_town_stall_6", "path": "critical", "badge": 1, "status": "sited",
+      "at": [1748, 139, 3638], "yaw": -156, "site_why": "fallback (stalls_basis.sites): the square's south band, away from the vendors' row on its north edge",
+      "keeper": {"name": "Yard Mason", "greeting": "Cut stone and the tools to cut it. The Steward by the Mart sells the fittings; I sell the rest."},
+      "theme": "the plateau's builders' town: a masons' yard sells cut stone and the tools that cut it", "sells": "tools", "stall_why": "stall 6 is the contract's `tools`, 'a mason's tool belt', dressed with a grindstone and an anvil",
+      "stock": [
+        {"id": "stone_bricks", "item": "minecraft:stone_bricks", "name": "Stone Bricks", "count": 16, "price": 320, "gate": null, "strand": "provision", "why": "the town's own stone, dressed", "verified": "minecraft 1.21.1 jar"},
+        {"id": "stonecutter", "item": "minecraft:stonecutter", "name": "Stonecutter", "count": 1, "price": 700, "gate": null, "strand": "provision", "why": "the block a mason works at (the Steward sells the backpack fitting)", "verified": "minecraft 1.21.1 jar"},
+        {"id": "iron_pickaxe", "item": "minecraft:iron_pickaxe", "name": "Iron Pickaxe", "count": 1, "price": 900, "gate": null, "strand": "provision", "why": "a quarry tool", "verified": "minecraft 1.21.1 jar"},
+        {"id": "torch", "item": "minecraft:torch", "name": "Torch", "count": 16, "price": 160, "gate": null, "strand": "provision", "why": "for the cuttings", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "stoneford_bakehouse", "town": "gym1_town", "stall": "gym1_town_stall_5", "path": "critical", "badge": 1, "status": "sited",
+      "at": [1774, 139, 3635], "yaw": 130, "site_why": "fallback (stalls_basis.sites): the square's south-east corner, nearest the Mart side",
+      "keeper": {"name": "Baker", "greeting": "Bread for the yard, pies for the road."},
+      "theme": "a working town eats on its feet: the masons' bakehouse", "sells": "game", "stall_why": "no Stoneford stall is a bakery; stall 5 (`game`) is the one dressed with a smoker on its counter, which reads as the bake oven, over hay and barrels: the nearest fit, and the theme word is the contract's",
+      "stock": [
+        {"id": "bread", "item": "minecraft:bread", "name": "Bread", "count": 6, "price": 240, "gate": null, "strand": "provision", "why": "40 each against bank.json's 5", "verified": "minecraft 1.21.1 jar"},
+        {"id": "baked_potato", "item": "minecraft:baked_potato", "name": "Baked Potato", "count": 6, "price": 240, "gate": null, "strand": "provision", "why": "40 each against 10", "verified": "minecraft 1.21.1 jar"},
+        {"id": "pumpkin_pie", "item": "minecraft:pumpkin_pie", "name": "Pumpkin Pie", "count": 2, "price": 200, "gate": null, "strand": "provision", "why": "100 each against 20", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "viltri_boatwright", "town": "gym2_town", "stall": "gym2_town_stall_4", "path": "critical", "badge": 2, "status": "sited",
+      "at": [1634, 108, 2826], "yaw": 135, "site_why": "fallback (stalls_basis.sites): the square's south-east corner, toward the waterfront and away from the fishmongers' row at z2799",
+      "keeper": {"name": "Boatwright", "greeting": "Whoever the water brings, we row out for. Boats, rods and line."},
+      "theme": "the lake town that takes in whoever the water brings: the rescue boats' yard", "sells": "galley", "stall_why": "stall 1 (`rescue_gear`) is the Rescue Quartermaster's, the badge counter's, which the contract names; of the rest, stall 4 (`galley`, a smoker over barrels and hay) is the boat yard's galley, where the rescue crews eat by the boats they build: it keeps the yard's boat, rod and lead and its hot salmon, and leaves stalls 2 and 3 to two fishmongers",
+      "stock": [
+        {"id": "oak_boat", "item": "minecraft:oak_boat", "name": "Boat", "count": 1, "price": 400, "gate": null, "strand": "provision", "why": "the rescue crews' craft", "verified": "minecraft 1.21.1 jar"},
+        {"id": "fishing_rod", "item": "minecraft:fishing_rod", "name": "Fishing Rod", "count": 1, "price": 350, "gate": null, "strand": "provision", "why": "a plain rod (the Poke Rod is withheld: stalls_basis.left_out)", "verified": "minecraft 1.21.1 jar"},
+        {"id": "lead", "item": "minecraft:lead", "name": "Lead", "count": 2, "price": 500, "gate": null, "strand": "provision", "why": "line for a tow", "verified": "minecraft 1.21.1 jar"},
+        {"id": "cooked_salmon", "item": "minecraft:cooked_salmon", "name": "Cooked Salmon", "count": 4, "price": 320, "gate": null, "strand": "provision", "why": "80 each against 20", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "highwire_relay_spares", "town": "gym3_town", "stall": "gym3_town_stall_2", "path": "critical", "badge": 3, "status": "sited",
+      "at": [1667, 175, 1388], "yaw": -61, "site_why": "fallback (stalls_basis.sites): the belvedere's west end, past the waystone, looking out with the view",
+      "keeper": {"name": "Lineman", "greeting": "Spares for the relays. A glass for the view, lamps for the walk down."},
+      "theme": "the signal town under Mt Vessu that keeps the relays running, on its viewpoint", "sells": "storm_gear", "stall_why": "stall 2 is the contract's `storm_gear`, 'storm gear and the relay's radio': a spyglass, storm lanterns and the relay's redstone",
+      "stock": [
+        {"id": "spyglass", "item": "minecraft:spyglass", "name": "Spyglass", "count": 1, "price": 900, "gate": null, "strand": "provision", "why": "the belvedere is a view; the linemen read the relays by eye", "verified": "minecraft 1.21.1 jar"},
+        {"id": "lantern", "item": "minecraft:lantern", "name": "Lantern", "count": 4, "price": 480, "gate": null, "strand": "provision", "why": "storm lamps", "verified": "minecraft 1.21.1 jar"},
+        {"id": "redstone", "item": "minecraft:redstone", "name": "Redstone Dust", "count": 16, "price": 480, "gate": null, "strand": "provision", "why": "wire, for a town that keeps the power on", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "greenhollow_seed_cart", "town": "gym4_town", "stall": "gym4_town_stall_2", "path": "critical", "badge": 4, "status": "sited",
+      "at": [4334, 111, 1576], "yaw": 130, "site_why": "fallback (stalls_basis.sites): the green's east inner edge, on the ring the Centre, Mart and gym all face",
+      "keeper": {"name": "Seed Seller", "greeting": "For your own patch of green. Saplings, meal, pots."},
+      "theme": "the garden town built round a green: what makes a garden", "sells": "seeds", "stall_why": "stall 2 is the contract's `seeds`, 'the flower and seed cart'",
+      "stock": [
+        {"id": "bone_meal", "item": "minecraft:bone_meal", "name": "Bone Meal", "count": 16, "price": 320, "gate": null, "strand": "provision", "why": "the gardeners' feed", "verified": "minecraft 1.21.1 jar"},
+        {"id": "cherry_sapling", "item": "minecraft:cherry_sapling", "name": "Cherry Sapling", "count": 1, "price": 400, "gate": null, "strand": "provision", "why": "the green's own tree (the survey's cherry for the pergola)", "verified": "minecraft 1.21.1 jar"},
+        {"id": "flower_pot", "item": "minecraft:flower_pot", "name": "Flower Pot", "count": 2, "price": 200, "gate": null, "strand": "provision", "why": "a garden carried home", "verified": "minecraft 1.21.1 jar"},
+        {"id": "shears", "item": "minecraft:shears", "name": "Shears", "count": 1, "price": 300, "gate": null, "strand": "provision", "why": "for the hedges", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "fenhide_apothecary", "town": "gym5_town", "stall": "gym5_town_stall_3", "path": "critical", "badge": 5, "status": "sited",
+      "at": [4682, 118, 2422], "yaw": 54, "site_why": "fallback (stalls_basis.sites): the market yard's north-east corner",
+      "keeper": {"name": "Fen Apothecary", "greeting": "Fen remedies. Honey for the bite, milk for what lingers."},
+      "theme": "the fen-edge watch town: a fen town's remedies, for the trapper and not the battle", "sells": "reeds", "stall_why": "stall 3 is the contract's `reeds`, 'the herbalist's reeds' (a potted fern over bamboo and hay): the fen's herbalist is its apothecary",
+      "stock": [
+        {"id": "honey_bottle", "item": "minecraft:honey_bottle", "name": "Honey Bottle", "count": 2, "price": 400, "gate": null, "strand": "provision", "why": "clears poison (vanilla): the fen's bite. A player's remedy, not a Pokemon's: the battle Remedies stay withheld", "verified": "minecraft 1.21.1 jar"},
+        {"id": "milk_bucket", "item": "minecraft:milk_bucket", "name": "Milk Bucket", "count": 1, "price": 300, "gate": null, "strand": "provision", "why": "clears every effect", "verified": "minecraft 1.21.1 jar"},
+        {"id": "golden_carrot", "item": "minecraft:golden_carrot", "name": "Golden Carrot", "count": 3, "price": 450, "gate": null, "strand": "provision", "why": "a watcher's food (sharp eyes in the reeds): 150 each against 20", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "fenhide_trapper", "town": "gym5_town", "stall": "gym5_town_stall_2", "path": "critical", "badge": 5, "status": "sited",
+      "at": [4654, 118, 2423], "yaw": -57, "site_why": "fallback (stalls_basis.sites): the market yard's north-west corner, across from the apothecary",
+      "keeper": {"name": "Trapper", "greeting": "Hides off the fen, and the game they came off."},
+      "theme": "a town of trackers and trappers: game and hides", "sells": "game", "stall_why": "stall 2 is the contract's `game`, 'smoked game' (a smoker over hay and barrels)",
+      "stock": [
+        {"id": "leather", "item": "minecraft:leather", "name": "Leather", "count": 4, "price": 1200, "gate": null, "strand": "provision", "why": "300 each: under defaultShop's 700, the trappers' own", "verified": "minecraft 1.21.1 jar"},
+        {"id": "lead", "item": "minecraft:lead", "name": "Lead", "count": 1, "price": 300, "gate": null, "strand": "provision", "why": "a trapper's line", "verified": "minecraft 1.21.1 jar"},
+        {"id": "cooked_rabbit", "item": "minecraft:cooked_rabbit", "name": "Cooked Rabbit", "count": 4, "price": 320, "gate": null, "strand": "provision", "why": "80 each against 20", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "tilpey_stationer", "town": "gym6_town", "stall": "gym6_town_stall_1", "path": "critical", "badge": 6, "status": "sited",
+      "at": [6207, 95, 3412], "yaw": 142, "site_why": "fallback (stalls_basis.sites): the square's south-east corner, toward the reserved market block gym6_market (TOWN_SQUARES_SURVEY 4)",
+      "keeper": {"name": "Stationer", "greeting": "The archive's paper, sold on. Everything here was written in, eventually."},
+      "theme": "the region's place of study, a town of record-keepers: paper, books and the instruments that find a way", "sells": "archive", "stall_why": "stall 1 is the contract's `archive`, dressed with a lectern, bookshelves and a cartography table: the stationer's paper, books and maps; the badge counter moved to stall 4 (`battle_items`), see its stall_why",
+      "stock": [
+        {"id": "paper", "item": "minecraft:paper", "name": "Paper", "count": 16, "price": 320, "gate": null, "strand": "provision", "why": "the archive's stock", "verified": "minecraft 1.21.1 jar"},
+        {"id": "book", "item": "minecraft:book", "name": "Book", "count": 3, "price": 450, "gate": null, "strand": "provision", "why": "bound", "verified": "minecraft 1.21.1 jar"},
+        {"id": "writable_book", "item": "minecraft:writable_book", "name": "Book and Quill", "count": 1, "price": 350, "gate": null, "strand": "provision", "why": "a journal, for a town that records", "verified": "minecraft 1.21.1 jar"},
+        {"id": "map", "item": "minecraft:map", "name": "Empty Map", "count": 1, "price": 500, "gate": null, "strand": "provision", "why": "the surveyors' blank", "verified": "minecraft 1.21.1 jar"},
+        {"id": "compass", "item": "minecraft:compass", "name": "Compass", "count": 1, "price": 600, "gate": null, "strand": "provision", "why": "the hub of the region's roads", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "tilpey_market_kitchen", "town": "gym6_town", "stall": "gym6_town_stall_2", "path": "critical", "badge": 6, "status": "sited",
+      "at": [6182, 95, 3412], "yaw": -135, "site_why": "fallback (stalls_basis.sites): the square's south-west corner",
+      "keeper": {"name": "Market Cook", "greeting": "Hot food at the crossroads. Everyone passes through Tilpey; everyone eats."},
+      "theme": "the region's market square, where every road meets: the crossroads' kitchen", "sells": "produce", "stall_why": "stall 2 is the contract's `produce`, 'the farmers' market' (a melon over hay): the crossroads' kitchen cooks what the farmers bring",
+      "stock": [
+        {"id": "bread", "item": "minecraft:bread", "name": "Bread", "count": 6, "price": 240, "gate": null, "strand": "provision", "why": "as Stoneford's bakehouse", "verified": "minecraft 1.21.1 jar"},
+        {"id": "cooked_beef", "item": "minecraft:cooked_beef", "name": "Steak", "count": 4, "price": 360, "gate": null, "strand": "provision", "why": "90 each against 20", "verified": "minecraft 1.21.1 jar"},
+        {"id": "pumpkin_pie", "item": "minecraft:pumpkin_pie", "name": "Pumpkin Pie", "count": 2, "price": 200, "gate": null, "strand": "provision", "why": "as Stoneford's", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "cinderlee_rim_provisions", "town": "gym7_town", "stall": "gym7_town_stall_4", "path": "critical", "badge": 7, "status": "sited",
+      "at": [6084, 108, 5007], "yaw": 140, "site_why": "fallback (stalls_basis.sites): the ash square's south-east corner, clear of the view east to the gym and two west of the plaza lamp at (6087, 5008)",
+      "keeper": {"name": "Rim Chandler", "greeting": "Fuel and fire. Up here we sell what keeps a camp warm and nothing that would light the hill."},
+      "theme": "the research town on the crater rim: fuel and fire for the field crews, and nothing spawn-relevant (the survey's rule for this square)", "sells": "smithy", "stall_why": "stall 4 is the contract's `smithy`, 'the rim smithy' (an anvil, a blast furnace and a coal block): coal and the striker are a smith's fuel and fire; the field kitchen (stall 3) is a new trader's",
+      "stock": [
+        {"id": "coal", "item": "minecraft:coal", "name": "Coal", "count": 16, "price": 480, "gate": null, "strand": "provision", "why": "the crews' fuel", "verified": "minecraft 1.21.1 jar"},
+        {"id": "flint_and_steel", "item": "minecraft:flint_and_steel", "name": "Flint and Steel", "count": 1, "price": 300, "gate": null, "strand": "provision", "why": "a camp's light", "verified": "minecraft 1.21.1 jar"},
+        {"id": "cooked_mutton", "item": "minecraft:cooked_mutton", "name": "Cooked Mutton", "count": 4, "price": 320, "gate": null, "strand": "provision", "why": "80 each against 20", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "holdfast_garrison_provisions", "town": "gym8_town", "stall": "gym8_town_stall_2", "path": "critical", "badge": 8, "status": "sited",
+      "at": [3592, 113, 6449], "yaw": -81, "site_why": "fallback (stalls_basis.sites): the gate square's west edge, beside the way to the gym",
+      "keeper": {"name": "Garrison Cook", "greeting": "Rations for the Road. Nobody walks to the League hungry from this gate."},
+      "theme": "the southern garrison at the last gate before Victory Road: rations and the kit a soldier carries", "sells": "provisions", "stall_why": "stall 2 is the contract's `provisions`, 'rations for Victory Road'",
+      "stock": [
+        {"id": "cooked_beef", "item": "minecraft:cooked_beef", "name": "Steak", "count": 8, "price": 640, "gate": null, "strand": "provision", "why": "80 each: the garrison buys in bulk", "verified": "minecraft 1.21.1 jar"},
+        {"id": "bread", "item": "minecraft:bread", "name": "Bread", "count": 8, "price": 320, "gate": null, "strand": "provision", "why": "40 each", "verified": "minecraft 1.21.1 jar"},
+        {"id": "torch", "item": "minecraft:torch", "name": "Torch", "count": 16, "price": 160, "gate": null, "strand": "provision", "why": "Victory Road is caves", "verified": "minecraft 1.21.1 jar"},
+        {"id": "shield", "item": "minecraft:shield", "name": "Shield", "count": 1, "price": 800, "gate": null, "strand": "provision", "why": "a garrison's issue; against the caves' monsters, not Pokemon", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "sunset_fish_market", "town": "sunset_west", "stall": "sunset_west_stall_2", "path": "off_path", "badge": null, "status": "sited",
+      "at": [2644, 65, 6482], "yaw": -40, "site_why": "fallback (stalls_basis.sites): the chandlers' square's north-west corner",
+      "keeper": {"name": "Fishmonger", "greeting": "Off the boats this morning. Cod, salmon, kelp for the road."},
+      "theme": "the region's harbour: the catch, sold where it lands", "sells": "fish",
+      "stock": [
+        {"id": "cooked_cod", "item": "minecraft:cooked_cod", "name": "Cooked Cod", "count": 4, "price": 300, "gate": null, "strand": "provision", "why": "75 each against 20", "verified": "minecraft 1.21.1 jar"},
+        {"id": "cooked_salmon", "item": "minecraft:cooked_salmon", "name": "Cooked Salmon", "count": 4, "price": 320, "gate": null, "strand": "provision", "why": "80 each against 20", "verified": "minecraft 1.21.1 jar"},
+        {"id": "dried_kelp", "item": "minecraft:dried_kelp", "name": "Dried Kelp", "count": 8, "price": 240, "gate": null, "strand": "provision", "why": "30 each against 10", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "sunset_net_loft", "town": "sunset_west", "stall": "sunset_west_stall_4", "path": "off_path", "badge": null, "status": "sited",
+      "at": [2658, 65, 6506], "yaw": 162, "site_why": "fallback (stalls_basis.sites): the square's south edge, toward the quay",
+      "keeper": {"name": "Netmaker", "greeting": "Rods, line and a boat if the ferry's too slow for you."},
+      "theme": "fishers and boatwrights: the net loft", "sells": "rods", "stall_why": "stall 4 is the contract's `rods`, 'rods for a harbour town' (bamboo and chain over a barrel)",
+      "stock": [
+        {"id": "fishing_rod", "item": "minecraft:fishing_rod", "name": "Fishing Rod", "count": 1, "price": 350, "gate": null, "strand": "provision", "why": "as Viltri's", "verified": "minecraft 1.21.1 jar"},
+        {"id": "oak_boat", "item": "minecraft:oak_boat", "name": "Boat", "count": 1, "price": 400, "gate": null, "strand": "provision", "why": "a harbour's boat", "verified": "minecraft 1.21.1 jar"},
+        {"id": "string", "item": "minecraft:string", "name": "String", "count": 8, "price": 240, "gate": null, "strand": "provision", "why": "net twine", "verified": "minecraft 1.21.1 jar"},
+        {"id": "lead", "item": "minecraft:lead", "name": "Lead", "count": 1, "price": 300, "gate": null, "strand": "provision", "why": "a mooring line", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "pacifidlog_fishers_row", "town": "sea_town", "stall": "sea_town_stall_2", "path": "off_path", "badge": null, "status": "sited",
+      "at": [5154, 63, 7386], "yaw": -135, "site_why": "fallback (stalls_basis.sites): the square raft's south-west corner, across the raft from the Deck Chandler",
+      "keeper": {"name": "Fisher", "greeting": "Everything out here floats or swims. I sell both kinds."},
+      "theme": "the fishing town on the sea: the fishers' row STATE names as not built", "sells": "fish", "stall_why": "stall 2 is the contract's `fish`, 'the fishing trader'",
+      "stock": [
+        {"id": "cooked_cod", "item": "minecraft:cooked_cod", "name": "Cooked Cod", "count": 4, "price": 300, "gate": null, "strand": "provision", "why": "as Sunset West's", "verified": "minecraft 1.21.1 jar"},
+        {"id": "fishing_rod", "item": "minecraft:fishing_rod", "name": "Fishing Rod", "count": 1, "price": 350, "gate": null, "strand": "provision", "why": "a plain rod", "verified": "minecraft 1.21.1 jar"},
+        {"id": "jungle_boat", "item": "minecraft:jungle_boat", "name": "Jungle Boat", "count": 1, "price": 400, "gate": null, "strand": "provision", "why": "the town is jungle planks on the sea", "verified": "minecraft 1.21.1 jar"},
+        {"id": "turtle_helmet", "item": "minecraft:turtle_helmet", "name": "Turtle Shell", "count": 1, "price": 2500, "gate": null, "strand": "provision", "why": "a diver's breath: the dearest thing on the raft, and travel already gates the town (PROGRESSION_LADDER 5.4)", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "steepside_tea_front", "town": "tea_town", "stall": "tea_town_stall_1", "path": "off_path", "badge": null, "status": "sited",
+      "at": [2608, 115, 3572], "yaw": -42, "site_why": "fallback (stalls_basis.sites): the tea square's north-west corner, across from the Kitchen keeper",
+      "keeper": {"name": "Tea Server", "greeting": "Honey for the tea, biscuits beside it."},
+      "theme": "a town built on one industry, the tea house: what goes with the tea", "sells": "tea", "stall_why": "stall 1 is the contract's `tea`, 'the tea itself'. The tea itself is not sold: Cobblecuisine's teas carry boosts (stalls_basis.left_out) and no vanilla tea exists, so the tea front sells what is taken with it, the honey and the biscuits; stall 2, the Tea House Kitchen, is the counter's",
+      "stock": [
+        {"id": "honey_bottle", "item": "minecraft:honey_bottle", "name": "Honey Bottle", "count": 2, "price": 400, "gate": null, "strand": "provision", "why": "for the tea", "verified": "minecraft 1.21.1 jar"},
+        {"id": "cookie", "item": "minecraft:cookie", "name": "Cookie", "count": 8, "price": 240, "gate": null, "strand": "provision", "why": "30 each against 5", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "fossick_pit_tools", "town": "mining_town", "stall": "mining_town_stall_2", "path": "off_path", "badge": null, "status": "sited",
+      "at": [6612, 138, 5690], "yaw": -40, "site_why": "fallback measured by hand: the pithead yard's north edge between the coal pile (6604, 5692) and the headframe (6620, 5699) (tools/mining_works.py PILES, HEADFRAME), 8+ from each, since the yard's corners are its ore piles",
+      "keeper": {"name": "Pit Toolman", "greeting": "Picks, shovels, light. The Assayer's got the stones; I've got what digs them."},
+      "theme": "a mining town sells tools, and its Assayer sells the stones", "sells": "tools",
+      "stock": [
+        {"id": "iron_pickaxe", "item": "minecraft:iron_pickaxe", "name": "Iron Pickaxe", "count": 1, "price": 900, "gate": null, "strand": "provision", "why": "the digger's tool", "verified": "minecraft 1.21.1 jar"},
+        {"id": "iron_shovel", "item": "minecraft:iron_shovel", "name": "Iron Shovel", "count": 1, "price": 500, "gate": null, "strand": "provision", "why": "for the spoil", "verified": "minecraft 1.21.1 jar"},
+        {"id": "torch", "item": "minecraft:torch", "name": "Torch", "count": 16, "price": 160, "gate": null, "strand": "provision", "why": "for the adit", "verified": "minecraft 1.21.1 jar"},
+        {"id": "lantern", "item": "minecraft:lantern", "name": "Lantern", "count": 4, "price": 480, "gate": null, "strand": "provision", "why": "a miner's lamp", "verified": "minecraft 1.21.1 jar"},
+        {"id": "minecart", "item": "minecraft:minecart", "name": "Minecart", "count": 1, "price": 500, "gate": null, "strand": "provision", "why": "the ore rail's cart (rails are not sold: carkol's neededNearbyBlocks, stalls_basis.left_out)", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "northlight_field_kit", "town": "northlight", "stall": "northlight_stall_2", "path": "off_path", "badge": null, "status": "sited",
+      "at": [7283, 117, 1568], "yaw": 126, "site_why": "fallback (stalls_basis.sites): the square's south-east corner, toward the bonfire",
+      "keeper": {"name": "Field Quartermaster", "greeting": "Cold-water kit. A glass for the aurora, a compass for the way back, boots for the snow."},
+      "theme": "the cold-water research town and aurora observatory: a field station's kit", "sells": "cold-weather kit",
+      "stock": [
+        {"id": "spyglass", "item": "minecraft:spyglass", "name": "Spyglass", "count": 1, "price": 900, "gate": null, "strand": "provision", "why": "the observatory's instrument", "verified": "minecraft 1.21.1 jar"},
+        {"id": "compass", "item": "minecraft:compass", "name": "Compass", "count": 1, "price": 600, "gate": null, "strand": "provision", "why": "the way back across the water", "verified": "minecraft 1.21.1 jar"},
+        {"id": "leather_boots", "item": "minecraft:leather_boots", "name": "Leather Boots", "count": 1, "price": 400, "gate": null, "strand": "provision", "why": "walk on powder snow without sinking (vanilla)", "verified": "minecraft 1.21.1 jar"},
+        {"id": "cooked_salmon", "item": "minecraft:cooked_salmon", "name": "Cooked Salmon", "count": 4, "price": 320, "gate": null, "strand": "provision", "why": "cold-water fish", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "stoneford_terrace_seedsman", "town": "gym1_town", "stall": "gym1_town_stall_2", "path": "critical", "badge": 1, "status": "sited",
+      "at": [1737, 139, 3616], "yaw": -90, "site_why": "the squares' contract seats it (gym1_town_stall_2 keeper_at), which wins; the fallback is that same seat, copied 2026-10-03",
+      "keeper": {"name": "Terrace Seedsman", "greeting": "The plateau grows what the wind lets it. Roots and beet, mostly."},
+      "theme": "the plateau's terraces between the quarry cuts: what grows in thin soil and wind", "sells": "seeds",
+      "stall_why": "new 2026-10-03: the contract's stall 2 (`seeds`, a composter over hay) had no keeper. The contract's own note names apricorn seeds; they are left out (an apricorn is a block a spawn condition names), so the cart sells the terrace crops",
+      "stock": [
+        {"id": "beetroot_seeds", "item": "minecraft:beetroot_seeds", "name": "Beetroot Seeds", "count": 8, "price": 160, "gate": null, "strand": "provision", "why": "the terraces' hardiest crop; places minecraft:beetroots, which no spawn condition names", "verified": "minecraft 1.21.1 jar"},
+        {"id": "potato", "item": "minecraft:potato", "name": "Seed Potatoes", "count": 8, "price": 200, "gate": null, "strand": "provision", "why": "25 each against bank.json's 5; places minecraft:potatoes", "verified": "minecraft 1.21.1 jar"},
+        {"id": "carrot", "item": "minecraft:carrot", "name": "Carrots", "count": 8, "price": 200, "gate": null, "strand": "provision", "why": "25 each against 5; places minecraft:carrots", "verified": "minecraft 1.21.1 jar"},
+        {"id": "melon_seeds", "item": "minecraft:melon_seeds", "name": "Melon Seeds", "count": 4, "price": 200, "gate": null, "strand": "provision", "why": "for the sheltered terraces; places a stem that grows minecraft:melon, which no spawn condition names", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "stoneford_herbalist", "town": "gym1_town", "stall": "gym1_town_stall_3", "path": "critical", "badge": 1, "status": "sited",
+      "at": [1751, 139, 3634], "yaw": -90, "site_why": "the squares' contract seats it (gym1_town_stall_3 keeper_at), which wins; the fallback is that same seat, copied 2026-10-03",
+      "keeper": {"name": "Yard Herbalist", "greeting": "Quarry hands cut themselves. I keep the yard fed and mended."},
+      "theme": "a working town's herbalist: what grows wild along the quarry cuts", "sells": "herbs",
+      "stall_why": "new 2026-10-03: the contract's stall 3 (`herbs`, 'the herbalist', a potted fern) had no keeper",
+      "stock": [
+        {"id": "sweet_berries", "item": "minecraft:sweet_berries", "name": "Sweet Berries", "count": 8, "price": 160, "gate": null, "strand": "provision", "why": "20 each against bank.json's 5; places minecraft:sweet_berry_bush, which no spawn condition names", "verified": "minecraft 1.21.1 jar"},
+        {"id": "brown_mushroom", "item": "minecraft:brown_mushroom", "name": "Brown Mushroom", "count": 4, "price": 160, "gate": null, "strand": "provision", "why": "from the cuttings' shade", "verified": "minecraft 1.21.1 jar"},
+        {"id": "red_mushroom", "item": "minecraft:red_mushroom", "name": "Red Mushroom", "count": 4, "price": 160, "gate": null, "strand": "provision", "why": "with the brown, a stew", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "stoneford_mulch_carter", "town": "gym1_town", "stall": "gym1_town_stall_4", "path": "critical", "badge": 1, "status": "sited",
+      "at": [1759, 139, 3639], "yaw": 180, "site_why": "the squares' contract seats it (gym1_town_stall_4 keeper_at), which wins; the fallback is that same seat, copied 2026-10-03",
+      "keeper": {"name": "Mulch Carter", "greeting": "Stone town, thin soil. Every terrace up here was carted in by the barrow."},
+      "theme": "the terraces are made ground: soil carted up to the plateau", "sells": "mulch",
+      "stall_why": "new 2026-10-03: the contract's stall 4 (`mulch`, 'mulch for the terraces', a composter over coarse dirt) had no keeper",
+      "stock": [
+        {"id": "coarse_dirt", "item": "minecraft:coarse_dirt", "name": "Coarse Dirt", "count": 16, "price": 240, "gate": null, "strand": "provision", "why": "terrace fill: it grows no grass and so no flowers (several flowers are blocks a spawn condition names)", "verified": "minecraft 1.21.1 jar"},
+        {"id": "rooted_dirt", "item": "minecraft:rooted_dirt", "name": "Rooted Dirt", "count": 8, "price": 240, "gate": null, "strand": "provision", "why": "the terrace's under-layer", "verified": "minecraft 1.21.1 jar"},
+        {"id": "composter", "item": "minecraft:composter", "name": "Composter", "count": 1, "price": 200, "gate": null, "strand": "provision", "why": "the carter's own bin", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "viltri_fishmonger", "town": "gym2_town", "stall": "gym2_town_stall_2", "path": "critical", "badge": 2, "status": "sited",
+      "at": [1607, 108, 2825], "yaw": 180, "site_why": "the squares' contract seats it (gym2_town_stall_2 keeper_at), which wins; the fallback is that same seat, copied 2026-10-03",
+      "keeper": {"name": "Quay Fishmonger", "greeting": "Lake cod, this morning's. Dried kelp if you're walking far."},
+      "theme": "the lake town's quay: the common catch", "sells": "fish",
+      "stall_why": "new 2026-10-03: the contract's stall 2 (`fish`, 'the common-fish monger') had no keeper",
+      "stock": [
+        {"id": "cod", "item": "minecraft:cod", "name": "Raw Cod", "count": 6, "price": 240, "gate": null, "strand": "provision", "why": "40 each against bank.json's 10", "verified": "minecraft 1.21.1 jar"},
+        {"id": "cooked_cod", "item": "minecraft:cooked_cod", "name": "Cooked Cod", "count": 4, "price": 300, "gate": null, "strand": "provision", "why": "75 each against 20", "verified": "minecraft 1.21.1 jar"},
+        {"id": "dried_kelp", "item": "minecraft:dried_kelp", "name": "Dried Kelp", "count": 8, "price": 240, "gate": null, "strand": "provision", "why": "30 each against 10", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "viltri_strange_catch", "town": "gym2_town", "stall": "gym2_town_stall_3", "path": "critical", "badge": 2, "status": "sited",
+      "at": [1628, 108, 2827], "yaw": 180, "site_why": "the squares' contract seats it (gym2_town_stall_3 keeper_at), which wins; the fallback is that same seat, copied 2026-10-03",
+      "keeper": {"name": "Strange-Catch Monger", "greeting": "The lake takes in whatever the water brings. So do I. Mind the puffer."},
+      "theme": "the town that takes in whoever the water brings: what came in with them", "sells": "exotic_fish",
+      "stall_why": "new 2026-10-03: the contract's stall 3 (`exotic_fish`, 'the exotic-fish monger', on packed ice) had no keeper",
+      "stock": [
+        {"id": "tropical_fish", "item": "minecraft:tropical_fish", "name": "Tropical Fish", "count": 2, "price": 160, "gate": null, "strand": "provision", "why": "80 each against bank.json's 10: warm-water fish, a long way from home", "verified": "minecraft 1.21.1 jar"},
+        {"id": "pufferfish", "item": "minecraft:pufferfish", "name": "Pufferfish", "count": 1, "price": 120, "gate": null, "strand": "provision", "why": "120 against 20; a brewer's curiosity, not a meal", "verified": "minecraft 1.21.1 jar"},
+        {"id": "salmon", "item": "minecraft:salmon", "name": "Raw Salmon", "count": 4, "price": 200, "gate": null, "strand": "provision", "why": "50 each against 10", "verified": "minecraft 1.21.1 jar"},
+        {"id": "glow_ink_sac", "item": "minecraft:glow_ink_sac", "name": "Glow Ink Sac", "count": 2, "price": 200, "gate": null, "strand": "provision", "why": "from the deep water's glowing squid", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "greenhollow_herbalist", "town": "gym4_town", "stall": "gym4_town_stall_3", "path": "critical", "badge": 4, "status": "sited",
+      "at": [4304, 111, 1527], "yaw": 0, "site_why": "the squares' contract seats it (gym4_town_stall_3 keeper_at), which wins; the fallback is that same seat, copied 2026-10-03",
+      "keeper": {"name": "Green Herbalist", "greeting": "Berries from the hedges, beans from the warm beds. Nothing that flowers -- the green keeps those."},
+      "theme": "the garden town's herb beds", "sells": "herbs",
+      "stall_why": "new 2026-10-03: the contract's stall 3 (`herbs`, 'the herbalist') had no keeper",
+      "stock": [
+        {"id": "sweet_berries", "item": "minecraft:sweet_berries", "name": "Sweet Berries", "count": 8, "price": 160, "gate": null, "strand": "provision", "why": "20 each against bank.json's 5", "verified": "minecraft 1.21.1 jar"},
+        {"id": "glow_berries", "item": "minecraft:glow_berries", "name": "Glow Berries", "count": 4, "price": 240, "gate": null, "strand": "provision", "why": "60 each against 20; places minecraft:cave_vines, which no spawn condition names", "verified": "minecraft 1.21.1 jar"},
+        {"id": "cocoa_beans", "item": "minecraft:cocoa_beans", "name": "Cocoa Beans", "count": 4, "price": 200, "gate": null, "strand": "provision", "why": "from the warm beds, for the sweet stall's biscuits", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "greenhollow_sweet_stall", "town": "gym4_town", "stall": "gym4_town_stall_4", "path": "critical", "badge": 4, "status": "sited",
+      "at": [4335, 111, 1552], "yaw": 90, "site_why": "the squares' contract seats it (gym4_town_stall_4 keeper_at), which wins; the fallback is that same seat, copied 2026-10-03",
+      "keeper": {"name": "Garden Confectioner", "greeting": "Something sweet for the walk round the green?"},
+      "theme": "sweets for the garden's visitors", "sells": "sweets",
+      "stall_why": "new 2026-10-03: the contract's stall 4 (`sweets`) had no keeper. The Pokemon sweets (malasadas, pokepuffs) stay the badge counter's; this stall sells the vanilla ones",
+      "stock": [
+        {"id": "cookie", "item": "minecraft:cookie", "name": "Cookies", "count": 8, "price": 240, "gate": null, "strand": "provision", "why": "30 each against bank.json's 5", "verified": "minecraft 1.21.1 jar"},
+        {"id": "pumpkin_pie", "item": "minecraft:pumpkin_pie", "name": "Pumpkin Pie", "count": 2, "price": 200, "gate": null, "strand": "provision", "why": "100 each against 20", "verified": "minecraft 1.21.1 jar"},
+        {"id": "honey_bottle", "item": "minecraft:honey_bottle", "name": "Honey Bottle", "count": 2, "price": 400, "gate": null, "strand": "provision", "why": "the garden's own bees", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "greenhollow_orchard", "town": "gym4_town", "stall": "gym4_town_stall_5", "path": "critical", "badge": 4, "status": "sited",
+      "at": [4335, 111, 1559], "yaw": 90, "site_why": "the squares' contract seats it (gym4_town_stall_5 keeper_at), which wins; the fallback is that same seat, copied 2026-10-03",
+      "keeper": {"name": "Orchard Keeper", "greeting": "Picked at dawn. Apples keep; melon doesn't, so eat it here."},
+      "theme": "the orchard's produce", "sells": "produce",
+      "stall_why": "new 2026-10-03: the contract's stall 5 (`produce`, 'the orchard's produce', a melon over hay) had no keeper",
+      "stock": [
+        {"id": "apple", "item": "minecraft:apple", "name": "Apples", "count": 6, "price": 180, "gate": null, "strand": "provision", "why": "30 each against bank.json's 5", "verified": "minecraft 1.21.1 jar"},
+        {"id": "melon_slice", "item": "minecraft:melon_slice", "name": "Melon Slices", "count": 8, "price": 200, "gate": null, "strand": "provision", "why": "25 each against 5", "verified": "minecraft 1.21.1 jar"},
+        {"id": "beetroot", "item": "minecraft:beetroot", "name": "Beetroot", "count": 8, "price": 160, "gate": null, "strand": "provision", "why": "from the kitchen beds", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "greenhollow_compost_keeper", "town": "gym4_town", "stall": "gym4_town_stall_6", "path": "critical", "badge": 4, "status": "sited",
+      "at": [4285, 111, 1545], "yaw": -90, "site_why": "the squares' contract seats it (gym4_town_stall_6 keeper_at), which wins; the fallback is that same seat, copied 2026-10-03",
+      "keeper": {"name": "Compost Keeper", "greeting": "Everything the green drops comes back to me, and goes back out as this."},
+      "theme": "the garden's compost and mulch", "sells": "mulch",
+      "stall_why": "new 2026-10-03: the contract's stall 6 (`mulch`, 'the garden's compost and mulch') had no keeper. No bone meal and no moss here: bone meal on grass grows flowers and moss grows azalea, both blocks a spawn condition names (the seed cart's existing bone meal is the earlier builder's line, not repeated)",
+      "stock": [
+        {"id": "composter", "item": "minecraft:composter", "name": "Composter", "count": 1, "price": 200, "gate": null, "strand": "provision", "why": "the keeper's own bin", "verified": "minecraft 1.21.1 jar"},
+        {"id": "podzol", "item": "minecraft:podzol", "name": "Podzol", "count": 8, "price": 240, "gate": null, "strand": "provision", "why": "leaf mould for the beds", "verified": "minecraft 1.21.1 jar"},
+        {"id": "coarse_dirt", "item": "minecraft:coarse_dirt", "name": "Coarse Dirt", "count": 16, "price": 240, "gate": null, "strand": "provision", "why": "path and bed edging that grows nothing", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "fenhide_ball_bench", "town": "gym5_town", "stall": "gym5_town_stall_4", "path": "critical", "badge": 5, "status": "sited",
+      "at": [4672, 118, 2443], "yaw": 180, "site_why": "the squares' contract seats it (gym5_town_stall_4 keeper_at), which wins; the fallback is that same seat, copied 2026-10-03",
+      "keeper": {"name": "Ball-Bench Tinker", "greeting": "Watchers in the reeds make their own. Bring apricorns; I've the copper and the glass."},
+      "theme": "balls for watchers in the reeds: the fen watch makes its own", "sells": "balls",
+      "stall_why": "new 2026-10-03: the contract's stall 4 (`balls`) had no keeper. A ball is power, and an ungated stall line must be a vanilla provision, so no ball is sold here (the Mart sells Poke Balls; Highwire, Tilpey and Pacifidlog's counters sell the better ones behind their gates): the bench sells the vanilla half of a Poke Ball, the copper core (Cobblemon 1.8's poke_ball recipe: four red apricorns round #cobblemon:tier_1_poke_ball_materials = #c:ingots/copper, read from the jar), and the watcher's glass. The curve is untouched",
+      "stock": [
+        {"id": "copper_ingot", "item": "minecraft:copper_ingot", "name": "Copper Ingots (ball cores)", "count": 4, "price": 320, "gate": null, "strand": "provision", "why": "the tier-1 ball core: four apricorns and one ingot make four Poke Balls, the Mart's own item, so it buys nothing the Mart does not sell. Iron (tier 2, Great Balls) is left out: the Great Ball is Highwire's gated line", "verified": "minecraft 1.21.1 jar"},
+        {"id": "spyglass", "item": "minecraft:spyglass", "name": "Spyglass", "count": 1, "price": 900, "gate": null, "strand": "provision", "why": "the watcher's glass, at Highwire's price", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "tilpey_physic_garden", "town": "gym6_town", "stall": "gym6_town_stall_3", "path": "critical", "badge": 6, "status": "sited",
+      "at": [6207, 95, 3413], "yaw": 180, "site_why": "the squares' contract seats it (gym6_town_stall_3 keeper_at), which wins; the fallback is that same seat, copied 2026-10-03",
+      "keeper": {"name": "Physic Gardener", "greeting": "The scholars' garden. Everything here has been written about, at length."},
+      "theme": "a place of study keeps a physic garden: herbs grown to be catalogued", "sells": "herbs",
+      "stall_why": "new 2026-10-03: the contract's stall 3 (`herbs`, 'the herbalist') had no keeper",
+      "stock": [
+        {"id": "glow_berries", "item": "minecraft:glow_berries", "name": "Glow Berries", "count": 4, "price": 240, "gate": null, "strand": "provision", "why": "60 each against bank.json's 20", "verified": "minecraft 1.21.1 jar"},
+        {"id": "brown_mushroom", "item": "minecraft:brown_mushroom", "name": "Brown Mushroom", "count": 4, "price": 160, "gate": null, "strand": "provision", "why": "a specimen and a supper", "verified": "minecraft 1.21.1 jar"},
+        {"id": "red_mushroom", "item": "minecraft:red_mushroom", "name": "Red Mushroom", "count": 4, "price": 160, "gate": null, "strand": "provision", "why": "a specimen and a supper", "verified": "minecraft 1.21.1 jar"},
+        {"id": "glistering_melon_slice", "item": "minecraft:glistering_melon_slice", "name": "Glistering Melon", "count": 1, "price": 400, "gate": null, "strand": "provision", "why": "the physic garden's prize, for a brewer's healing draught (a player's, not a Pokemon's)", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "cinderlee_core_shed", "town": "gym7_town", "stall": "gym7_town_stall_2", "path": "critical", "badge": 7, "status": "sited",
+      "at": [6074, 108, 5008], "yaw": 180, "site_why": "the squares' contract seats it (gym7_town_stall_2 keeper_at), which wins; the fallback is that same seat, copied 2026-10-03",
+      "keeper": {"name": "Core Sampler", "greeting": "Rock from the crater wall, labelled by depth. Blaine says it's flavour. I say it's science."},
+      "theme": "the research town on the crater rim: the drill crews' core samples, as flavour", "sells": "core_samples",
+      "stall_why": "new 2026-10-03: the contract's stall 2 (`core_samples`, 'Blaine's core samples, as flavour', raw copper, raw gold, basalt and tuff) had no keeper. No magma block (a spawn condition names it) and no raw ore (the bank's currency metals are not sold as samples)",
+      "stock": [
+        {"id": "tuff", "item": "minecraft:tuff", "name": "Tuff", "count": 16, "price": 240, "gate": null, "strand": "provision", "why": "the crater's ash, set", "verified": "minecraft 1.21.1 jar"},
+        {"id": "smooth_basalt", "item": "minecraft:smooth_basalt", "name": "Smooth Basalt", "count": 16, "price": 240, "gate": null, "strand": "provision", "why": "the deep core", "verified": "minecraft 1.21.1 jar"},
+        {"id": "calcite", "item": "minecraft:calcite", "name": "Calcite", "count": 8, "price": 240, "gate": null, "strand": "provision", "why": "the vein's white rind", "verified": "minecraft 1.21.1 jar"},
+        {"id": "brush", "item": "minecraft:brush", "name": "Brush", "count": 1, "price": 300, "gate": null, "strand": "provision", "why": "a field researcher's tool", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "cinderlee_field_kitchen", "town": "gym7_town", "stall": "gym7_town_stall_3", "path": "critical", "badge": 7, "status": "sited",
+      "at": [6086, 108, 5005], "yaw": 180, "site_why": "the squares' contract seats it (gym7_town_stall_3 keeper_at), which wins; the fallback is that same seat, copied 2026-10-03",
+      "keeper": {"name": "Field Cook", "greeting": "Crews eat in shifts up here. Hot and quick, that's the rim's whole menu."},
+      "theme": "the field crews' kitchen on the rim", "sells": "field_kitchen",
+      "stall_why": "new 2026-10-03: the contract's stall 3 (`field_kitchen`, a smoker over barrels) had no keeper",
+      "stock": [
+        {"id": "baked_potato", "item": "minecraft:baked_potato", "name": "Baked Potato", "count": 6, "price": 240, "gate": null, "strand": "provision", "why": "40 each against bank.json's 10", "verified": "minecraft 1.21.1 jar"},
+        {"id": "cooked_chicken", "item": "minecraft:cooked_chicken", "name": "Cooked Chicken", "count": 4, "price": 320, "gate": null, "strand": "provision", "why": "80 each against 20", "verified": "minecraft 1.21.1 jar"},
+        {"id": "rabbit_stew", "item": "minecraft:rabbit_stew", "name": "Rabbit Stew", "count": 1, "price": 120, "gate": null, "strand": "provision", "why": "120 against 30", "verified": "minecraft 1.21.1 jar"},
+        {"id": "mushroom_stew", "item": "minecraft:mushroom_stew", "name": "Mushroom Stew", "count": 1, "price": 100, "gate": null, "strand": "provision", "why": "100 against 25", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "holdfast_pack_store", "town": "gym8_town", "stall": "gym8_town_stall_3", "path": "critical", "badge": 8, "status": "sited",
+      "at": [3619, 113, 6458], "yaw": 90, "site_why": "the squares' contract seats it (gym8_town_stall_3 keeper_at), which wins; the fallback is that same seat, copied 2026-10-03",
+      "keeper": {"name": "Pack Sergeant", "greeting": "Nobody goes up Victory Road without a camp on their back. Strap, hide, cot."},
+      "theme": "the garrison's packs: a camp carried to the last gate", "sells": "packs",
+      "stall_why": "new 2026-10-03: the contract's stall 3 (`packs`, 'packs and upgrades', a loom over barrels) had no keeper. The Sophisticated Backpacks ladder is the counters' (stall 1, the Quartermaster, sells the diamond pack and the inception upgrade), so this stall sells the vanilla camp: no backpack item, and no bundle (an experimental item in 1.21.1)",
+      "stock": [
+        {"id": "chest", "item": "minecraft:chest", "name": "Camp Chest", "count": 1, "price": 200, "gate": null, "strand": "provision", "why": "a cache at the last camp", "verified": "minecraft 1.21.1 jar"},
+        {"id": "leather", "item": "minecraft:leather", "name": "Leather", "count": 4, "price": 1200, "gate": null, "strand": "provision", "why": "strap hide, at Fenhide's trapper's price", "verified": "minecraft 1.21.1 jar"},
+        {"id": "string", "item": "minecraft:string", "name": "String", "count": 8, "price": 240, "gate": null, "strand": "provision", "why": "lashing", "verified": "minecraft 1.21.1 jar"},
+        {"id": "red_bed", "item": "minecraft:red_bed", "name": "Garrison Cot", "count": 1, "price": 600, "gate": null, "strand": "provision", "why": "a cot to sleep at the gate; red, the garrison's colour (minecraft:white_bed is a block a spawn condition names, a red bed is not)", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "holdfast_garrison_smithy", "town": "gym8_town", "stall": "gym8_town_stall_4", "path": "critical", "badge": 8, "status": "sited",
+      "at": [3592, 113, 6452], "yaw": -90, "site_why": "the squares' contract seats it (gym8_town_stall_4 keeper_at), which wins; the fallback is that same seat, copied 2026-10-03",
+      "keeper": {"name": "Garrison Smith", "greeting": "Iron for the gate and the people who hold it. Nothing here that helps a Pokemon -- that's the Quartermaster's."},
+      "theme": "the garrison smithy", "sells": "smithy",
+      "stall_why": "new 2026-10-03: the contract's stall 4 (`smithy`, 'the garrison smithy', an anvil, a blast furnace and a coal block) had no keeper",
+      "stock": [
+        {"id": "anvil", "item": "minecraft:anvil", "name": "Anvil", "count": 1, "price": 1200, "gate": null, "strand": "provision", "why": "the smith's own block", "verified": "minecraft 1.21.1 jar"},
+        {"id": "grindstone", "item": "minecraft:grindstone", "name": "Grindstone", "count": 1, "price": 300, "gate": null, "strand": "provision", "why": "edges for the watch", "verified": "minecraft 1.21.1 jar"},
+        {"id": "chain", "item": "minecraft:chain", "name": "Chain", "count": 8, "price": 320, "gate": null, "strand": "provision", "why": "the gate's own", "verified": "minecraft 1.21.1 jar"},
+        {"id": "iron_boots", "item": "minecraft:iron_boots", "name": "Iron Boots", "count": 1, "price": 500, "gate": null, "strand": "provision", "why": "for the road, against its falls", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "sunset_far_water_catch", "town": "sunset_west", "stall": "sunset_west_stall_3", "path": "off_path", "badge": null, "status": "sited",
+      "at": [2644, 65, 6501], "yaw": -90, "site_why": "the squares' contract seats it (sunset_west_stall_3 keeper_at), which wins; the fallback is that same seat, copied 2026-10-03",
+      "keeper": {"name": "Far-Water Monger", "greeting": "Off the long boats, from water you've not seen. Warm-sea fish and squid ink."},
+      "theme": "the region's harbour: the far-water catch the long boats bring in", "sells": "exotic_fish",
+      "stall_why": "new 2026-10-03: the contract's stall 3 (`exotic_fish`, 'the far-water catch', on packed ice) had no keeper",
+      "stock": [
+        {"id": "tropical_fish", "item": "minecraft:tropical_fish", "name": "Tropical Fish", "count": 2, "price": 160, "gate": null, "strand": "provision", "why": "80 each against bank.json's 10", "verified": "minecraft 1.21.1 jar"},
+        {"id": "pufferfish", "item": "minecraft:pufferfish", "name": "Pufferfish", "count": 1, "price": 120, "gate": null, "strand": "provision", "why": "120 against 20", "verified": "minecraft 1.21.1 jar"},
+        {"id": "ink_sac", "item": "minecraft:ink_sac", "name": "Ink Sac", "count": 4, "price": 160, "gate": null, "strand": "provision", "why": "squid off the long boats; the Scrivener's ink", "verified": "minecraft 1.21.1 jar"},
+        {"id": "nautilus_shell", "item": "minecraft:nautilus_shell", "name": "Nautilus Shell", "count": 1, "price": 600, "gate": null, "strand": "provision", "why": "a far-water curio", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "deep_rimside_chandler", "town": "deep_city", "stall": "deep_city_stall_1", "path": "off_path", "badge": null, "status": "unsited",
+      "unsited_why": "Rimside's front-row stalls are built as blocks by tools/deep_city.py, which until 2026-10-03 kept only their count; it now records each piece's centre in derived/deep_city/plan.json front_row. Site this keeper from that record in a full checkout (one side of a 'stall' entry, on its street y + 1), then set status sited. path off_path: its stock is provisions, so the curve is the same either way",
+      "keeper": {"name": "Rimside Chandler", "greeting": "Light, down here. Everything else follows from it."},
+      "theme": "the pit city's arrival ring, where the light runs out: lamps and fuel", "sells": "light",
+      "stock": [
+        {"id": "lantern", "item": "minecraft:lantern", "name": "Lantern", "count": 4, "price": 480, "gate": null, "strand": "provision", "why": "the city's first need", "verified": "minecraft 1.21.1 jar"},
+        {"id": "torch", "item": "minecraft:torch", "name": "Torch", "count": 16, "price": 160, "gate": null, "strand": "provision", "why": "as Holdfast's", "verified": "minecraft 1.21.1 jar"}
+      ]
+    },
+    {
+      "id": "deep_rimside_cook", "town": "deep_city", "stall": "deep_city_stall_2", "path": "off_path", "badge": null, "status": "unsited",
+      "unsited_why": "as deep_rimside_chandler",
+      "keeper": {"name": "Rimside Cook", "greeting": "Mushroom stew. It's what grows down here."},
+      "theme": "the pit city grows what grows without sun", "sells": "food",
+      "stock": [
+        {"id": "mushroom_stew", "item": "minecraft:mushroom_stew", "name": "Mushroom Stew", "count": 1, "price": 150, "gate": null, "strand": "provision", "why": "150 against bank.json's 25", "verified": "minecraft 1.21.1 jar"},
+        {"id": "bread", "item": "minecraft:bread", "name": "Bread", "count": 6, "price": 240, "gate": null, "strand": "provision", "why": "carried down", "verified": "minecraft 1.21.1 jar"}
+      ]
+    }
+  ],
+  "places_beyond_towns": [
+    {"town": "deep_city", "source": "data/deep_city.json", "why": "the Windward Deep's city has a Mart building and a built row of stalls but no data/towns.json record, so until 2026-10-03 the coverage rule never asked it for a counter or a reason (TOWN_SQUARES_SURVEY 2, CLAUDE.md 'Our list is not the world')"}
+  ],
   "no_counter": [
-    {"town": "league", "why": "the League sells nothing (PROGRESSION_LADDER 1.1 row 9); netherite and TMCraft grade 6 are rewards, owner Q-5"},
+    {"town": "deep_city", "why": "the Compact's own counter is story-gated (TOWN_SQUARES_SURVEY 6, owner question 6: does the Compact sell, and to whom); Rimside's stalls are staffed under stalls (deep_rimside_*), unsited until its front row's positions are read. Its Mart clerk is NOT built: a data/traders.json record needs the league_mart template's shopkeeper jigsaw carried through the city's placement, which tools/deep_city.py does not record"},
+    {"town": "league","why": "the League sells nothing (PROGRESSION_LADDER 1.1 row 9); netherite and TMCraft grade 6 are rewards, owner Q-5"},
     {"town": "displaced_city", "why": "a summit town of displaced people, no trader record, and its residents' own name is still unwritten; a market would decide a story question"},
     {"town": "merian_hut", "why": "a bed at the end of a walk (PROGRESSION_LADDER 1.2)"},
     {"town": "gorge_hamlet", "why": "the bridge-keepers' hamlet has no trade to sell; a candidate if the owner wants one (rope, not stock)"},

@@ -1,0 +1,18 @@
+{
+  "schema": "fixture",
+  "note": "A stand-in for data/plaza_centres.json, the town squares' contract another builder writes (2026-10-03): per town, \"stalls\": [{\"id\": \"<town>_stall_<n>\", \"at\", \"facing\", \"keeper_at\": [x, y, z, yaw], \"sells\"}]. Used by tests/test_town_traders_build.py only. Positions are made up but consistent: each keeper_at within 4 blocks of its stall's at",
+  "towns": {
+    "gym1_town": {
+      "stalls": [
+        {"id": "gym1_town_stall_1", "at": [1745, 139, 3620], "facing": "south", "keeper_at": [1745, 139, 3622, 180], "sells": "market"},
+        {"id": "gym1_town_stall_2", "at": [1755, 139, 3630], "facing": "south", "keeper_at": [1755, 139, 3632, 180], "sells": "tools and stone"},
+        {"id": "gym1_town_stall_3", "at": [1765, 139, 3630], "facing": "south", "keeper_at": [1765, 139, 3632, 180], "sells": "fish"}
+      ]
+    },
+    "tableland_stop": {
+      "stalls": [
+        {"id": "tableland_stop_stall_1", "at": [4840, 162, 5690], "facing": "west", "keeper_at": [4838, 162, 5690, 90], "sells": "prospector"}
+      ]
+    }
+  }
+}

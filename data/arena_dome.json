@@ -6,10 +6,28 @@
   "measurement": "docs/world-building/ARENA_SITE_NORTH.md",
   "coordinates": "challenger_mark, opponent_spot and post are [x, y, z(, yaw)] with x and z at block centres (n + 0.5) and y the FEET y: the block at y-1 is the floor, y and y+1 are air in this build. Yaw is Minecraft's: 0 faces south (+z), 180 faces north (-z).",
   "site": {
-    "centre": [3584, 3171],
-    "radius": 40,
+    "centre": [3586, 3164],
+    "radius": 34,
     "floor_y": 0,
-    "why": "ARENA_SITE_NORTH.md section 4, option A: the largest usable disc on the sheer floor, r40 (81 across, 5,025 columns), at least 6 of street left to every Stacks home and 7 to the mouth plaza keep-clear. The model's tread there is y0 and the city writes only paving on it."
+    "why": "The owner, 2026-10-03, flying over the Deep: \"can we move the tower to the center, it's very close to the spire\". Moved from site A (superseded_site) to the middle of the free north floor, as far as a radius of 30-34 allows: on every central centre the binding limit is the mouth plaza keep-clear (x3528-3592, z3064-3124) kept 6 off, so each block of radius costs a block of northing. Measured 2026-10-03 the generator's way (deep_city.build in memory; 6 of street to anything the city builds, to every lot door and to the keep-clears): (3586, 3160) r30 is the most central r30 (13 from the owner's middle (3586, 3147)) but four venues only; (3586, 3162) r32 fits five with a 17-wide grand stage and one-block walks; (3586, 3164) r34 keeps the 19-wide grand stage and all five venues, 17 from the owner's middle and 12.2 from the free floor's centroid outside the plaza (3590, 3152), against site A's 24 and 19.5. Street left: 6.0 to the plaza keep-clear; nothing the city builds and no lot door within 12 of any written column (the generator's own search radius), the drum about 17 from the nearest. Drum to the city's Core spire (3609, 3249, r16): 38.1 between walls (site A 26.1); the tower's nearest corner 33.8 (site A 23.1)."
+  },
+  "superseded_site": {
+    "owner": "The owner, 2026-10-03, flying over the Windward Deep in staging: \"can we move the tower to the center, it's very close to the spire\" -- \"the Heaven's Arena\".",
+    "why": "Site A (ARENA_SITE_NORTH.md section 4, option A) stood at the floor's south end, its drum about 26 from the city's Core spire (3609, 3249, r16) and its tower about 23. It was applied to staging on 2026-10-03 (R9AD) and nothing removes a build: tools/arena_dome.py undo regenerates these old writes from this record, subtracts the current dome's, and lays back what the city (tools/deep_city.py build) and the pit's tread lights (tools/rift_deep.py) wrote there. Kept here, not deleted, because the undo is computed from it.",
+    "undo": "python tools/arena_dome.py undo: build/staging/cobblers_arena_dome_undo, STAGING ONLY, never part of a fresh build's apply",
+    "site": {"centre": [3584, 3171], "radius": 40, "floor_y": 0, "why": "ARENA_SITE_NORTH.md section 4, option A: the largest usable disc on the sheer floor, r40 (81 across, 5,025 columns), at least 6 of street left to every Stacks home and 7 to the mouth plaza keep-clear. The model's tread there is y0 and the city writes only paving on it."},
+    "drum": {"wall": [38, 40], "top": 70, "plinth_to": 3, "windows": [[18, 26], [40, 48]], "cornice": [67, 70], "rib_every_deg": 15, "rib_width_deg": 3, "materials": {"plinth": "panel_black", "wall": "panel_white", "rib": "rib_teal", "window": "glass_window", "cornice": "rib_teal_cut", "floor": "deep_stone", "inlay": "tread_edge"}, "inlay_r": [33.5, 34.5], "why": "A two-block wall (38 < r <= 40) to y70, with two window bands and copper ribs every 15 degrees: the city's own palette (data/deep_city.json materials). y70 is below the lip, so the drum reads from the floor and the dome above it from the Rift."},
+    "dome": {"base": 70, "rise": 50, "thickness": 2, "rib_every_deg": 30, "parallels": [80, 90, 100, 110], "materials": {"glass": "glass_band", "rib": "rib_teal", "parallel": "rib_teal_cut"}, "cupola": {"top": 126, "lamp": "sea_lantern", "frame": "rib_teal", "cap": "rib_teal_cut", "glass": "glass_conduit", "rod": "end_rod"}, "chandelier": {"ring_y": 79, "ring": [2.5, 3.5], "chain": "chain", "lamp": "violet"}, "why": "A half-ellipsoid of glass on the drum, semi-axes 40 across and 50 up: outer crown y120, the cupola to y126 (under the HQ's y132), so 43 blocks of it show above the lip. Glass in the Rift's purple between copper meridians and four copper parallels. A chandelier on a chain from the crown over the grand venue."},
+    "tower": {"box": [3580, 3206, 3588, 3216], "top": 44, "lobby_to": 7, "door": {"x": [3583, 3585], "z": 3216, "to_y": 4}, "passage": {"x": [3582, 3586], "to_y": 5}, "windows": [[10, 13], [24, 27], [36, 39]], "materials": {"wall": "panel_white", "corner": "rib_teal", "window": "glass_window", "lit": "sea_lantern", "lintel": "rib_teal_cut", "ceiling": "deep_stone", "roof": "tread", "rim": "tread_edge", "lamp": "sea_lantern", "rod": "end_rod", "floor": "deep_stone", "floor_light": "sea_lantern"}, "why": "The small tower the owner asked for: a 9-wide gatehouse on the dome's south side, its door facing the apex where the floor route from the lift-bank-3 stair arrives (ARENA_SITE_NORTH.md section 5, route 1). A lobby seven high opens north through a five-wide passage cut in the drum; above the lobby ceiling the tower is solid, its windows lit from behind, so no dark room is left inside it. Top y44, roof lamp to y48."},
+    "lighting": {"floor_grid": 6, "floor_r": 36, "floor": "warm", "venue_centre": "sea_lantern", "venue_post": "rib_teal", "venue_lamp": "lantern", "venue_stair": "minecraft:polished_deepslate_stairs", "why": "No minecraft:light (the city's rule). Ochre froglights flush in the floor every 6 blocks, a sea lantern flush at each ring's centre, and a copper post with a lantern at each ring's corners."},
+    "entrance": {"door": [3584, 1, 3216], "outside": [3584, 1, 3217], "route": "On foot from Relay Row (ring 3, y15): down the west lift-bank-3 stair tower to its floor door at (3580, 1, 3241); east to x3593 and north through the 3-wide gap at x3593-3595 z3236-3240 beside the old arena drum (3609, 3249); north across the apex to the tower door at (3584, 1, 3216), 45 blocks of 4-connected walk over y0 floor with nothing at y1-2 (measured 2026-10-03 against the city build and this dome; ARENA_SITE_NORTH.md section 5 had 43 to the wall). From Victory Road's mouth (3560, 1, 3064): south across the mouth plaza and round the dome to the same door, 210 blocks the same way. Not walked in a game."},
+    "venues": [
+      {"id": "venue_1", "name": "The Gate Ring", "ranks": [1, 2, 3], "centre": [3565, 3190], "half": 7, "top": 1, "steps": 1, "challenger_mark": [3565.5, 2, 3194.5, 180], "opponent_spot": [3565.5, 2, 3186.5, 0], "post": [3567.5, 2, 3194.5], "why": "South-west, the first ring a player passes on the way in from the tower: The Floor, The Shaft and The Relay (data/arena_fights.json ranks 1-3)."},
+      {"id": "venue_2", "name": "The Sluice Ring", "ranks": [4, 5], "centre": [3603, 3190], "half": 7, "top": 1, "steps": 1, "challenger_mark": [3603.5, 2, 3194.5, 180], "opponent_spot": [3603.5, 2, 3186.5, 0], "post": [3605.5, 2, 3194.5], "why": "South-east, across the way from the first: The Champion's Door and The Sluice."},
+      {"id": "venue_3", "name": "The Terrace Ring", "ranks": [6, 7], "centre": [3603, 3152], "half": 7, "top": 1, "steps": 1, "challenger_mark": [3603.5, 2, 3156.5, 180], "opponent_spot": [3603.5, 2, 3148.5, 0], "post": [3605.5, 2, 3156.5], "why": "North-east, deeper in: The Terrace and The Tear."},
+      {"id": "venue_4", "name": "The Crown Ring", "ranks": [8], "centre": [3565, 3152], "half": 7, "top": 1, "steps": 1, "challenger_mark": [3565.5, 2, 3156.5, 180], "opponent_spot": [3565.5, 2, 3148.5, 0], "post": [3567.5, 2, 3156.5], "why": "North-west, the last of the four: The Crown."},
+      {"id": "venue_5", "name": "Above the Crown", "ranks": [9], "centre": [3584, 3171], "half": 9, "top": 2, "steps": 2, "challenger_mark": [3584.5, 3, 3175.5, 180], "opponent_spot": [3584.5, 3, 3167.5, 0], "post": [3586.5, 3, 3175.5], "why": "The grand stage under the crown and the chandelier: 19 across, two steps up, the endless streak (rank 9)."}
+    ]
   },
   "limits": {
     "crown_max": 131,
@@ -18,7 +36,7 @@
     "why": "crown_max: the Compact HQ tower's top is y132 (data/deep_city.json hq) and stays the tallest. crown_must_clear: the pit's lip is y83, and the owner wants the dome to show above it. min_street: the street the measurement found left round option A (\"at least 6\"); the build refuses if any written column comes nearer than this to anything the city builds, or to any lot's door."
   },
   "drum": {
-    "wall": [38, 40],
+    "wall": [32, 34],
     "top": 70,
     "plinth_to": 3,
     "windows": [[18, 26], [40, 48]],
@@ -26,8 +44,8 @@
     "rib_every_deg": 15,
     "rib_width_deg": 3,
     "materials": {"plinth": "panel_black", "wall": "panel_white", "rib": "rib_teal", "window": "glass_window", "cornice": "rib_teal_cut", "floor": "deep_stone", "inlay": "tread_edge"},
-    "inlay_r": [33.5, 34.5],
-    "why": "A two-block wall (38 < r <= 40) to y70, with two window bands and copper ribs every 15 degrees: the city's own palette (data/deep_city.json materials). y70 is below the lip, so the drum reads from the floor and the dome above it from the Rift."
+    "inlay_r": [29.5, 30.5],
+    "why": "A two-block wall (32 < r <= 34) to y70, with two window bands and copper ribs every 15 degrees: the city's own palette (data/deep_city.json materials). y70 is below the lip, so the drum reads from the floor and the dome above it from the Rift."
   },
   "dome": {
     "base": 70,
@@ -38,21 +56,21 @@
     "materials": {"glass": "glass_band", "rib": "rib_teal", "parallel": "rib_teal_cut"},
     "cupola": {"top": 126, "lamp": "sea_lantern", "frame": "rib_teal", "cap": "rib_teal_cut", "glass": "glass_conduit", "rod": "end_rod"},
     "chandelier": {"ring_y": 79, "ring": [2.5, 3.5], "chain": "chain", "lamp": "violet"},
-    "why": "A half-ellipsoid of glass on the drum, semi-axes 40 across and 50 up: outer crown y120, the cupola to y126 (under the HQ's y132), so 43 blocks of it show above the lip. Glass in the Rift's purple between copper meridians and four copper parallels. A chandelier on a chain from the crown over the grand venue."
+    "why": "A half-ellipsoid of glass on the drum, semi-axes 34 across and 50 up: outer crown y120, the cupola to y126 (under the HQ's y132), so 43 blocks of it show above the lip. Glass in the Rift's purple between copper meridians and four copper parallels. A chandelier on a chain from the crown over the grand venue."
   },
   "tower": {
-    "box": [3580, 3206, 3588, 3216],
+    "box": [3582, 3193, 3590, 3203],
     "top": 44,
     "lobby_to": 7,
-    "door": {"x": [3583, 3585], "z": 3216, "to_y": 4},
-    "passage": {"x": [3582, 3586], "to_y": 5},
+    "door": {"x": [3585, 3587], "z": 3203, "to_y": 4},
+    "passage": {"x": [3584, 3588], "to_y": 5},
     "windows": [[10, 13], [24, 27], [36, 39]],
     "materials": {"wall": "panel_white", "corner": "rib_teal", "window": "glass_window", "lit": "sea_lantern", "lintel": "rib_teal_cut", "ceiling": "deep_stone", "roof": "tread", "rim": "tread_edge", "lamp": "sea_lantern", "rod": "end_rod", "floor": "deep_stone", "floor_light": "sea_lantern"},
     "why": "The small tower the owner asked for: a 9-wide gatehouse on the dome's south side, its door facing the apex where the floor route from the lift-bank-3 stair arrives (ARENA_SITE_NORTH.md section 5, route 1). A lobby seven high opens north through a five-wide passage cut in the drum; above the lobby ceiling the tower is solid, its windows lit from behind, so no dark room is left inside it. Top y44, roof lamp to y48."
   },
   "lighting": {
     "floor_grid": 6,
-    "floor_r": 36,
+    "floor_r": 30,
     "floor": "warm",
     "venue_centre": "sea_lantern",
     "venue_post": "rib_teal",
@@ -61,76 +79,76 @@
     "why": "No minecraft:light (the city's rule). Ochre froglights flush in the floor every 6 blocks, a sea lantern flush at each ring's centre, and a copper post with a lantern at each ring's corners."
   },
   "entrance": {
-    "door": [3584, 1, 3216],
-    "outside": [3584, 1, 3217],
-    "route": "On foot from Relay Row (ring 3, y15): down the west lift-bank-3 stair tower to its floor door at (3580, 1, 3241); east to x3593 and north through the 3-wide gap at x3593-3595 z3236-3240 beside the old arena drum (3609, 3249); north across the apex to the tower door at (3584, 1, 3216), 45 blocks of 4-connected walk over y0 floor with nothing at y1-2 (measured 2026-10-03 against the city build and this dome; ARENA_SITE_NORTH.md section 5 had 43 to the wall). From Victory Road's mouth (3560, 1, 3064): south across the mouth plaza and round the dome to the same door, 210 blocks the same way. Not walked in a game."
+    "door": [3586, 1, 3203],
+    "outside": [3586, 1, 3204],
+    "route": "On foot from Relay Row (ring 3, y15): down the west lift-bank-3 stair tower to its floor door at (3580, 1, 3241); east to x3593 and north through the 3-wide gap at x3593-3595 z3236-3240 beside the Core spire (3609, 3249); north across the apex and the open floor to the tower door at (3586, 1, 3203), 56 blocks of 4-connected walk from the column beside the stair door (3581, 3241) over y0 floor with nothing at y1-2 (measured 2026-10-03 against the city build and this dome; site A's door was 45). From Victory Road's mouth (3560, 1, 3064): south across the mouth plaza and round the dome to the same door, 184 blocks the same way (site A: 211). Not walked in a game."
   },
   "venues": [
     {
       "id": "venue_1",
       "name": "The Gate Ring",
       "ranks": [1, 2, 3],
-      "centre": [3565, 3190],
+      "centre": [3568, 3171],
       "half": 7,
       "top": 1,
       "steps": 1,
-      "challenger_mark": [3565.5, 2, 3194.5, 180],
-      "opponent_spot": [3565.5, 2, 3186.5, 0],
-      "post": [3567.5, 2, 3194.5],
+      "challenger_mark": [3568.5, 2, 3175.5, 180],
+      "opponent_spot": [3568.5, 2, 3167.5, 0],
+      "post": [3570.5, 2, 3175.5],
       "why": "South-west, the first ring a player passes on the way in from the tower: The Floor, The Shaft and The Relay (data/arena_fights.json ranks 1-3)."
     },
     {
       "id": "venue_2",
       "name": "The Sluice Ring",
       "ranks": [4, 5],
-      "centre": [3603, 3190],
+      "centre": [3604, 3171],
       "half": 7,
       "top": 1,
       "steps": 1,
-      "challenger_mark": [3603.5, 2, 3194.5, 180],
-      "opponent_spot": [3603.5, 2, 3186.5, 0],
-      "post": [3605.5, 2, 3194.5],
+      "challenger_mark": [3604.5, 2, 3175.5, 180],
+      "opponent_spot": [3604.5, 2, 3167.5, 0],
+      "post": [3606.5, 2, 3175.5],
       "why": "South-east, across the way from the first: The Champion's Door and The Sluice."
     },
     {
       "id": "venue_3",
       "name": "The Terrace Ring",
       "ranks": [6, 7],
-      "centre": [3603, 3152],
+      "centre": [3604, 3153],
       "half": 7,
       "top": 1,
       "steps": 1,
-      "challenger_mark": [3603.5, 2, 3156.5, 180],
-      "opponent_spot": [3603.5, 2, 3148.5, 0],
-      "post": [3605.5, 2, 3156.5],
+      "challenger_mark": [3604.5, 2, 3157.5, 180],
+      "opponent_spot": [3604.5, 2, 3149.5, 0],
+      "post": [3606.5, 2, 3157.5],
       "why": "North-east, deeper in: The Terrace and The Tear."
     },
     {
       "id": "venue_4",
       "name": "The Crown Ring",
       "ranks": [8],
-      "centre": [3565, 3152],
+      "centre": [3568, 3153],
       "half": 7,
       "top": 1,
       "steps": 1,
-      "challenger_mark": [3565.5, 2, 3156.5, 180],
-      "opponent_spot": [3565.5, 2, 3148.5, 0],
-      "post": [3567.5, 2, 3156.5],
+      "challenger_mark": [3568.5, 2, 3157.5, 180],
+      "opponent_spot": [3568.5, 2, 3149.5, 0],
+      "post": [3570.5, 2, 3157.5],
       "why": "North-west, the last of the four: The Crown."
     },
     {
       "id": "venue_5",
       "name": "Above the Crown",
       "ranks": [9],
-      "centre": [3584, 3171],
+      "centre": [3586, 3164],
       "half": 9,
       "top": 2,
       "steps": 2,
-      "challenger_mark": [3584.5, 3, 3175.5, 180],
-      "opponent_spot": [3584.5, 3, 3167.5, 0],
-      "post": [3586.5, 3, 3175.5],
+      "challenger_mark": [3586.5, 3, 3168.5, 180],
+      "opponent_spot": [3586.5, 3, 3160.5, 0],
+      "post": [3588.5, 3, 3168.5],
       "why": "The grand stage under the crown and the chandelier: 19 across, two steps up, the endless streak (rank 9)."
     }
   ],
-  "venue_why": "Four 15x15 rings (13x13 clear floor inside a basalt border, one block up, a copper post and lantern at each corner) on the diagonals, 19 off the centre each way, and the 19x19 grand stage in the middle. The mark is 4 south of a ring's centre and the opponent's spot 4 north, 8 apart, facing each other; the post is 2 east of the mark. Steps up to every ring are on its south side, the side the mark is on. The way in from the tower runs north between the two southern rings (23 wide) to the grand stage's steps. Every ring keeps at least 9 of headroom; the dome's lowest interior ceiling over a ring is far above that."
+  "venue_why": "Scaled to the r34 drum (2026-10-03, the move to the middle): the same five venues and the same ranks. Four 15x15 rings (13x13 clear floor inside a basalt border, one block up, a copper post and lantern at each corner), 18 east and west of the centre, one pair 11 north and one 7 south, and the 19x19 grand stage in the middle. On the r40 site the rings stood on the diagonals 19 off each way; inside r34 that puts a ring's outer corner through the drum, so they moved onto the east and west flanks, where an outer corner is 30.8 from the centre (the inner face is 32), with one block of walk between a ring and the stage and two between the north and south rings. The mark is 4 south of a ring's centre and the opponent's spot 4 north, 8 apart, facing each other; the post is 2 east of the mark. Steps up to every ring are on its south side, the side the mark is on. The way in from the tower runs north up the middle, between the two southern rings (21 wide), to the grand stage's steps. Every ring keeps at least 9 of headroom; the dome's lowest interior ceiling over a ring is far above that."
 }

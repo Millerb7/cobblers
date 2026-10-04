@@ -401,6 +401,10 @@
         "tests/test_system_contracts.py::test_contract_c4_built_world_packs_place_no_spawn_condition_the_policy_never_allows"
       ],
       "tools": {
+        "arena_dome_audit.py": "checker: the built cobblers_arena_dome functions (Heaven's Arena's dome), forbidden blocks against data/spawn_blocks.json",
+        "markets.py": "checker: refuses a counter or stall line whose item places a block a spawn condition names (data/spawn_blocks.json)",
+        "plaza_centre.py": "checker: refuses spawn-condition blocks in the town squares it builds (R13); its built pack is checked by town_squares_audit.py",
+        "town_squares_audit.py": "checker: the built plaza_centres functions and the stalls' goods, against data/spawn_blocks.json",
         "town_dressing.py": "source: town_dressing",
         "town_dressing_audit.py": "checker: the built town_dressing functions",
         "shrines.py": "not covered: a block source (data/shrines.json blocks) that names the spawn conditions file only in its docstring and does not read it; not yet one of this contract's sources (the test author's to add), and its built functions are checked by shrines_audit.py and by the built-packs test here",
