@@ -52,7 +52,7 @@
     "follower_pen_margin_why": "a grazing animal's home is at least 4 inside its pen's fence, so the home walk's radius (data/ambient.json idle.rules.follower_home_radius, 3) never presses it against the rails",
     "npc_gap": 6,
     "keep_out": [
-      {"box": [1768, 5270, 2368, 5870], "why": "the apricorn orchard another builder is placing round (2068, 5570) tonight (the brief of 2026-10-05, relayed, not measured here), held 300 blocks on every side"}
+      {"box": [1984, 5437, 2152, 5703], "why": "Hollin's Apricorn Farm as built (its blocks span x2002-2134 z5482-5621, measured 2026-10-05 by the integrator), the box centred on its site centre (2068, 5570), every corner at least 48 from an orchard block (the orchard's siting rule) and its east edge 97 from the Prospector's Camp (2249, 5639) (the residents' 96). It replaces a relayed box held 300 round the brief's point, which swallowed the Prospector's Camp resident (2249, 5639); the camp is 116 from this one"}
     ]
   },
   "build": {
