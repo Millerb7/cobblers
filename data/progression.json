@@ -3128,6 +3128,22 @@
         "done_l"
       ],
       "why": "the dialogue cursor of Cassius Rook's conversation (dlg_hunters_hide)."
+    },
+    {
+      "id": "quest.ambient_pokemon_farm.farmer_cursor",
+      "quest_id": "ambient_pokemon_farm",
+      "field": "farmer_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "greeting",
+      "allowed_values": [
+        "greeting",
+        "dairy",
+        "wool",
+        "bees",
+        "stand",
+        "repeat"
+      ]
     }
   ],
   "gym_markers": {

@@ -155,6 +155,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # seven terraced groves, the yard and lanes, built by R9AF; block functions and the stall merchant's
                 # summon, nothing that runs on its own; the farmer and the merchant stood by R18AF
                 "cobblers_apricorn_farm",
+                # 2026-10-05: Arrow Creeks Farm (tools/pokemon_farm.py, data/pokemon_farm.json): pure block functions
+                # run by R9PF; no tick or load, so not world-local. Its animals are cobblers_ambient_idle's (R16C)
+                "cobblers_pokemon_farm",
                 # 2026-10-02: the relic site underground (tools/relic_underground.py, data/relic_underground.json): the
                 # old surface build taken off, then the hall, gallery and passage carved, by R9RU; its zone check acts on
                 # its own (an advancement), so world-local below
@@ -713,6 +716,11 @@ def prepare_jobs(a):
     # columns, overlaps, fruit attachment, gates, spots, siting). Its independent audit is OWED (data/apricorn_farm.json
     # audit_checklist); add its job here, after this one, when it exists
     add("apricorn_farm:build", "apricorn_farm.py", "build", *src)
+    # Arrow Creeks Farm (2026-10-05): the generator fails closed on its siting rules, on a seat (the farmer's in
+    # data/npc_seats.json, the stand's in data/markets.json) the plan does not leave open and on a spawn-condition
+    # block. Before ambient_idle:build, whose plan takes the farm's animals from it (tools/pokemon_farm.py idlers).
+    # Its independent audit is another agent's (data/pokemon_farm.json audit_checklist) and is not written yet
+    add("pokemon_farm", "pokemon_farm.py", *src)
     add("drovers_hollow:build", "drovers_hollow.py", "build", *src)
     add("drovers_hollow_audit", "drovers_hollow_audit.py", *src)
     # the three wayside places of 2026-10-03. Each generator refuses a spawn-condition palette and any block outside its
@@ -1757,6 +1765,12 @@ def steps(with_spawns=False):
     import apricorn_farm
     out.append(("R9AF", "Hollin's Apricorn Farm: seven terraced groves, the farmyard and lanes (data/apricorn_farm.json)",
                 apricorn_farm.placement_steps()))
+    # Arrow Creeks Farm (2026-10-05, tools/pokemon_farm.py): one pure block pass in a forceload of its box, before
+    # R9E (no Habitat Block near it); its animals stand on these floors and in these pens (R16C), its farmer (R17N)
+    # and its stand's merchant (R17M) on the ground it leaves open
+    import pokemon_farm
+    out.append(("R9PF", "Arrow Creeks Farm: farmhouse, barns, silo, pens, fields, apiary, stand (data/pokemon_farm.json)",
+                pokemon_farm.placement_steps()))
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue

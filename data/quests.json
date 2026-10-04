@@ -7684,6 +7684,32 @@
       "progression_field_refs": [
         "quest.ambient_apricorn_farm.farmer_cursor"
       ]
+    },
+    {
+      "id": "ambient_pokemon_farm",
+      "source": "data/pokemon_farm.json",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": true,
+        "npcs_remain_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_pokemon_farm_farmer"
+      ],
+      "objectives": [],
+      "transitions": [],
+      "writer": "dialogue cursor persistence only; the conversation sets no story, reward, or completion state",
+      "readers": "the Arrow Creeks farmer's conversation only",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player advances and restores their own cursor"
+      },
+      "progression_field_refs": [
+        "quest.ambient_pokemon_farm.farmer_cursor"
+      ]
     }
   ]
 }
