@@ -286,6 +286,49 @@ def heart_boxes(sub, heart, grid, exclude, waterways=()):
                   for ix0, ix1, iz0, iz1 in subregion_boxes.merge_rectangles(keep))
 
 
+def focus_heart_boxes(boxes, heart, grid, corridor, whole_boxes=False):
+    """The heart of a marine band or a waterway (the owner, 2026-10-05: "every area should have a rare, ultra rare,
+    and boss table"; docs/mechanics/ENCOUNTER_DESIGN.md section 10): a subset of the area's own base boxes, so a
+    heart's entries ADD to the base roster there. A focus heart keeps the grid cells (whole_boxes: the boxes) whose
+    centre lies within heart["radius"] of (heart["x"], heart["z"]) and whose Chebyshev gap to every route corridor box
+    exceeds heart["clear_of_path_blocks"] -- section 10's 128 blocks, so the band beside the path stays the base
+    table. Only a focus heart is defined here; a summit line has no meaning at sea or along a creek."""
+    import numpy as np
+    if heart.get("kind") != "focus":
+        raise SystemExit("a marine or waterway heart is kind focus, not %r" % heart.get("kind"))
+    clear = heart.get("clear_of_path_blocks") or 0
+    b = np.array([c[:4] for c in corridor], dtype=np.int64) if corridor else np.zeros((0, 4), dtype=np.int64)
+
+    def clear_of_path(x0, x1, z0, z1):
+        if not len(b):
+            return True
+        dx = np.maximum(0, np.maximum(x0 - b[:, 1], b[:, 0] - x1))
+        dz = np.maximum(0, np.maximum(z0 - b[:, 3], b[:, 2] - z1))
+        return bool((np.maximum(dx, dz) > clear).all())
+
+    def near_focus(x0, x1, z0, z1):
+        return math.hypot((x0 + x1 + 1) / 2.0 - heart["x"], (z0 + z1 + 1) / 2.0 - heart["z"]) <= heart["radius"]
+
+    if whole_boxes:
+        return [bx for bx in boxes if near_focus(*bx[:4]) and clear_of_path(*bx[:4])]
+    cells = set()
+    for x0, x1, z0, z1 in boxes:
+        for cx in range(x0, x1 + 1, grid):
+            for cz in range(z0, z1 + 1, grid):
+                cell = (cx, min(cx + grid - 1, x1), cz, min(cz + grid - 1, z1))
+                if near_focus(*cell) and clear_of_path(*cell):
+                    cells.add((cx // grid, cz // grid))
+    return sorted((int(ix0 * grid), int((ix1 + 1) * grid - 1), int(iz0 * grid), int((iz1 + 1) * grid - 1))
+                  for ix0, ix1, iz0, iz1 in subregion_boxes.merge_rectangles(cells))
+
+
+def one_heart(area, hearts):
+    geoms = {json.dumps(e["heart"], sort_keys=True) for e in hearts}
+    if len(geoms) != 1:
+        raise SystemExit("%s: heart entries disagree on the heart's geometry: %s" % (area, sorted(geoms)))
+    return hearts[0]["heart"]
+
+
 def compile_subregion(sub, entries, exclude, grid, waterways=()):
     """A sub-region's roster over its own polygon, minus the route corridor boxes.
 
@@ -352,32 +395,49 @@ def compile_habitat(h, entries):
     return doc, summary
 
 
-def build_waterways(spawns, waterways, grid=WATERWAY_GRID):
+def build_waterways(spawns, waterways, grid=WATERWAY_GRID, routes=None):
     """A named river's roster along its centreline, thinning by the authored weight ramp.
 
     Boxes come from tools/waterways.py, which gives each segment its own disjoint rectangles, so a
-    block is never covered twice and a weight is never doubled.
+    block is never covered twice and a weight is never doubled. An entry carrying a "heart" (focus_heart_boxes) is laid
+    only over the boxes of the heart, at its authored weight (no ramp), with ids <waterway>_h<n>_<species>.
     """
     by_scope = {}
     for e in spawns["entries"]:
         if e["mechanism"] == "waterway_coordinate_boxes" and e["ambient"] and e["weight"] > 0:
             by_scope.setdefault(e["scope"], []).append(e)
+    corridor = subregion_boxes.route_boxes(routes) if routes else []
     files, summaries = {}, []
     for w in waterways["waterways"]:
-        ents = by_scope.get(w["id"], [])
+        allents = by_scope.get(w["id"], [])
+        ents = [e for e in allents if not e.get("heart")]
+        hearts = [e for e in allents if e.get("heart")]
         if not ents:
             continue
-        spawns_out, boxes = [], 0
+        spawns_out, boxes, all_boxes = [], 0, []
         for i, frac, bs in waterways_mod.boxes_by_segment(w["polyline"], w["half_width"], grid):
             mult = waterways_mod.ramp(w["weight_ramp"], frac)
             for n, b in enumerate(bs):
                 boxes += 1
+                all_boxes.append(tuple(b[:4]))
                 for e in ents:
                     spawns_out.append({"id": "%s_s%03d_b%02d_%s" % (w["id"], i, n, e["species"].replace(" ", "_")),
                                        "pokemon": e["species"], "type": "pokemon",
                                        "spawnablePositionType": position_type(e),
                                        "bucket": e["bucket"], "level": e["level"],
                                        "weight": round(e["weight"] * mult, 3),
+                                       "condition": box_condition(b[0], b[1], b[2], b[3], e)})
+        hboxes = []
+        if hearts:
+            hboxes = focus_heart_boxes(all_boxes, one_heart(w["id"], hearts), grid, corridor, whole_boxes=True)
+            if not hboxes:
+                raise SystemExit("%s: its heart covers no box clear of the path" % w["id"])
+            for n, b in enumerate(hboxes):
+                for e in hearts:
+                    spawns_out.append({"id": "%s_h%04d_%s" % (w["id"], n, e["species"].replace(" ", "_")),
+                                       "pokemon": e["species"], "type": "pokemon",
+                                       "spawnablePositionType": position_type(e),
+                                       "bucket": e["bucket"], "level": e["level"], "weight": e["weight"],
                                        "condition": box_condition(b[0], b[1], b[2], b[3], e)})
         doc = {"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [], "spawns": spawns_out}
         files["data/cobblers/spawn_pool_world/waterways/%s.json" % w["id"]] = dumps(doc)
@@ -386,6 +446,9 @@ def build_waterways(spawns, waterways, grid=WATERWAY_GRID):
                           "weight_multiplier": [round(waterways_mod.ramp(w["weight_ramp"], 0.0), 3),
                                                 round(waterways_mod.ramp(w["weight_ramp"], 1.0), 3)],
                           "output": "spawn_pool_world/waterways/%s.json" % w["id"]})
+        if hearts:
+            summaries[-1]["heart"] = dict(hearts[0]["heart"], box_count=len(hboxes), covered_blocks=subregion_boxes.area(hboxes),
+                                          species=sorted({e["species"] for e in hearts}))
     return files, summaries
 
 
@@ -616,8 +679,10 @@ def marine_condition(min_x, max_x, min_z, max_z, entry):
 
 
 def build_marine(spawns, regions, routes, waterways=()):
-    """The marine half of the pack: each marine band's roster over its own boxes."""
+    """The marine half of the pack: each marine band's roster over its own boxes; an entry carrying a "heart"
+    (focus_heart_boxes) only over the heart's cells of the band, with ids <band>_h<n>_<species>."""
     bands = marine_bands(spawns, regions, routes, waterways)
+    corridor = subregion_boxes.route_boxes(routes)
     by_scope = {}
     for e in spawns["entries"]:
         if e["mechanism"] == "marine_coordinate_boxes" and e["ambient"] and e["weight"] > 0:
@@ -627,7 +692,9 @@ def build_marine(spawns, regions, routes, waterways=()):
         raise SystemExit("marine entries name bands no marine zone defines: %s" % unknown)
     files, summaries = {}, []
     for bid, boxes in sorted(bands.items()):
-        ents = by_scope.get(bid, [])
+        allents = by_scope.get(bid, [])
+        ents = [e for e in allents if not e.get("heart")]
+        hearts = [e for e in allents if e.get("heart")]
         if not ents or not boxes:
             continue
         spawns_out = []
@@ -637,11 +704,25 @@ def build_marine(spawns, regions, routes, waterways=()):
                                    "type": "pokemon", "spawnablePositionType": position_type(e),
                                    "bucket": e["bucket"], "level": e["level"], "weight": e["weight"],
                                    "condition": marine_condition(b[0], b[1], b[2], b[3], e)})
+        hboxes = []
+        if hearts:
+            hboxes = focus_heart_boxes(boxes, one_heart(bid, hearts), MARINE_GRID, corridor)
+            if not hboxes:
+                raise SystemExit("%s: its heart covers no cell of the band clear of the path" % bid)
+            for n, b in enumerate(hboxes):
+                for e in hearts:
+                    spawns_out.append({"id": "%s_h%04d_%s" % (bid, n, e["species"].replace(" ", "_")), "pokemon": e["species"],
+                                       "type": "pokemon", "spawnablePositionType": position_type(e),
+                                       "bucket": e["bucket"], "level": e["level"], "weight": e["weight"],
+                                       "condition": marine_condition(b[0], b[1], b[2], b[3], e)})
         doc = {"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [], "spawns": spawns_out}
         files["data/cobblers/spawn_pool_world/marine/%s.json" % bid] = dumps(doc)
         summaries.append({"band_id": bid, "box_count": len(boxes), "compiled_entry_count": len(spawns_out),
                           "species": sorted({e["species"] for e in ents}), "covered_blocks": subregion_boxes.area(boxes),
                           "output": "spawn_pool_world/marine/%s.json" % bid})
+        if hearts:
+            summaries[-1]["heart"] = dict(hearts[0]["heart"], box_count=len(hboxes), covered_blocks=subregion_boxes.area(hboxes),
+                                          species=sorted({e["species"] for e in hearts}))
     return files, summaries
 
 
@@ -664,7 +745,7 @@ def main(argv=None):
     ws, water_boxes = [], []
     if Path(a.waterways).is_file():
         waterdoc = json.loads(Path(a.waterways).read_text(encoding="utf-8"))
-        waterfiles, ws = build_waterways(spawns, waterdoc)
+        waterfiles, ws = build_waterways(spawns, waterdoc, routes=routes)
         files.update(waterfiles)
         for wdef in waterdoc["waterways"]:
             for _, _, bs in waterways_mod.boxes_by_segment(wdef["polyline"], wdef["half_width"], WATERWAY_GRID):

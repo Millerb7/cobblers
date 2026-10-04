@@ -48,7 +48,8 @@ presence in the common bucket, a presence past the next cap, a find in a heart, 
 chance above the cap (base and heart rows together, the audit's chance rule) exceeds rules.hearts.above_cap_max_share.
 
 route_species_selection: per route, the sub-regions data/routes.json's geography transitions cross; from each such
-table only families in rules.corridor_roles (never rare, never a find). Each species is scored by its chance in the
+table only families in rules.corridor_roles (never a find), plus rules.corridor_rare_min of the crossed on-path
+tables' rare- and ultra-role species, reserved first (the owner, 2026-10-05: every area has a rare and an ultra-rare). Each species is scored by its chance in the
 table (the audit's rule: bucket share renormalised over the buckets its context holds, times weight over the bucket's
 weight) times the corridor length in that table; every crossed table's water species are kept, then the rest by
 score until corridor_species_limit. tools/compile_spawns.py then compiles a corridor species only if it is listed.
@@ -280,7 +281,8 @@ def expand_family(dex, rules, tier, band, species, role, weight, where, mtier=No
     half = (lo_b + hi_b + 1) // 2
     overlap = rules["stage_overlap_levels"]
     min_tier = rules["non_level_evolution_min_tier"]
-    find = role == "find"
+    # a find and an ultra-rare family both spawn on the upper half of the band: the reward for looking (section 4)
+    find = role in ("find", "ultra")
     w = weight if weight is not None else float(rules["roles"][role]["weight"])
     # walk forward: node = (name, depth, floor, lo, parent, reason)
     nodes, frontier = [], [(species, 0, half if find else lo_b, half if find else lo_b, None, None)]
@@ -328,7 +330,9 @@ def expand_family(dex, rules, tier, band, species, role, weight, where, mtier=No
             continue
         if n["parent"] is None:
             reason = ("find: the reason to leave the path, rare bucket, top half of the band (%d-%d)" % (n["lo"], n["hi"])
-                      if find else "named %s family, tier %d: the family starts here" % (role, tier))
+                      if role == "find" else
+                      "ultra-rare: the place's rarest family, ultra-rare bucket, top half of the band (%d-%d)" % (n["lo"], n["hi"])
+                      if role == "ultra" else "named %s family, tier %d: the family starts here" % (role, tier))
         else:
             meth, lv, how = n["how"]
             parent = dex.display(n["parent"])
@@ -602,9 +606,16 @@ def table_chances(rows):
     return out
 
 
-def route_selection(routes, generated, rules):
-    """{route id: {"species": [...]}} from the crossed tables' corridor-role families."""
+def route_selection(routes, generated, rules, placement=None):
+    """{route id: {"species": [...]}} from the crossed tables' corridor-role families.
+
+    rules.corridor_rare_min (the owner, 2026-10-05: "every area should have a rare, ultra rare") reserves, per role,
+    that many of the best-scoring rare-role and ultra-role species of the crossed ON-PATH tables (placement "path")
+    before the rest is filled by score. An off-path table's rare families never reach a corridor: they may be its
+    find (section 6), and a find belongs to whoever leaves the path."""
     allowed_roles = set(rules["corridor_roles"])
+    rare_min = dict(rules.get("corridor_rare_min") or {})
+    placement = placement or {}
     limit = rules["corridor_species_limit"]
     out = {}
     for rt in routes["routes"]:
@@ -615,18 +626,26 @@ def route_selection(routes, generated, rules):
             end = tr[i + 1]["at_distance_blocks"] if i + 1 < len(tr) else total
             for s in t["subregions"]:
                 length[s] = length.get(s, 0.0) + max(0.0, end - t["at_distance_blocks"])
-        score, keep = {}, set()
+        score, keep, rscore = {}, set(), {k: {} for k in rare_min}
         for sub in sorted(length):
             rows = generated[sub]
             chance = table_chances(rows)
             for r in rows:
+                if r["role"] in rare_min:
+                    if placement.get(sub) == "path":
+                        rs = rscore[r["role"]]
+                        rs[r["name"]] = rs.get(r["name"], 0.0) + chance[r["name"]] * max(length[sub], 1.0)
+                    continue
                 if r["role"] not in allowed_roles:
                     continue
                 score[r["name"]] = score.get(r["name"], 0.0) + chance[r["name"]] * max(length[sub], 1.0)
                 if r["half"] == "water":
                     keep.add(r["name"])
+        for role, n in sorted(rare_min.items()):
+            cands = sorted((s for s in rscore[role] if s not in keep), key=lambda s: (-rscore[role][s], s))
+            keep.update(cands[:n])
         if len(keep) > limit:
-            raise DesignError("%s: %d water species to keep, over the corridor limit %d: %s"
+            raise DesignError("%s: %d water and reserved rare species to keep, over the corridor limit %d: %s"
                               % (rt["id"], len(keep), limit, sorted(keep)))
         rest = sorted((s for s in score if s not in keep), key=lambda s: (-score[s], s))
         chosen = set(keep) | set(rest[:max(0, limit - len(keep))])
@@ -654,10 +673,12 @@ EVOLUTION_POLICY = {
 }
 
 ROUTE_NOTE = ("Generated by tools/build_encounters.py from data/encounter_design.json (docs/mechanics/"
-              "ENCOUNTER_DESIGN.md section 6): per route, the families in rules.corridor_roles (never rare, never a "
-              "find) of every sub-region its corridor crosses (data/routes.json geography transitions), at most "
-              "corridor_species_limit, every crossed table's water species kept and the rest by chance times corridor "
-              "length. tools/compile_spawns.py reads this list and does not choose. Do not edit by hand.")
+              "ENCOUNTER_DESIGN.md section 6): per route, the families in rules.corridor_roles (never a find) of every "
+              "sub-region its corridor crosses (data/routes.json geography transitions), at most "
+              "corridor_species_limit: every crossed table's water species kept, rules.corridor_rare_min of the "
+              "crossed on-path tables' rare- and ultra-role species reserved (the owner, 2026-10-05), and the rest by "
+              "chance times corridor length. tools/compile_spawns.py reads this list and does not choose. Do not edit "
+              "by hand.")
 
 
 def generate(design, spawns, regions, routes, dex, dolls, landmarks=None):
@@ -790,7 +811,8 @@ def generate(design, spawns, regions, routes, dex, dolls, landmarks=None):
             rec["entries"] = [mirror_of(dex, r) for r in gen_rows[rec["id"]]]
     out["evolution_policy"] = EVOLUTION_POLICY
     out["route_species_selection_note"] = ROUTE_NOTE
-    out["route_species_selection"] = route_selection(routes, gen_rows, rules)
+    out["route_species_selection"] = route_selection(routes, gen_rows, rules,
+                                                     {k: v.get("placement") for k, v in tables.items()})
     return out, gen_rows
 
 
