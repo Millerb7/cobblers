@@ -1408,6 +1408,9 @@ def build(source_root, server_dir=None):
         taken.setdefault(gk, []).append((x, z, y))
         _feature(cv, P, kind, x, y, z)
         feats.append(kind)
+        # where each front-row piece stands (its centre column and the street y), so a later step can staff the
+        # stalls: until 2026-10-03 only their count was kept, and data/markets.json's Rimside stalls could not be sited
+        plan.setdefault("front_row", []).append({"kind": kind, "at": [x, y, z]})
     for k_ in sorted(set(feats)):       # sorted: a set of strings iterates in PYTHONHASHSEED order, and this is the
         count("front row: %s" % k_, feats.count(k_))     # only thing that made derived/deep_city/plan.json vary
 

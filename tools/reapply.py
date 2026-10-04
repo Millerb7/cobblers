@@ -1705,10 +1705,13 @@ def steps(with_spawns=False):
                 [("fn", "cobblers:ferries/load")] + [("npc", n) for n in ferries.npc_placements(ferries.load())]))
     # the market keepers (data/markets.json, 2026-10-03): NPCs whose classes load at boot from cobblers_markets, placed
     # over RCON after the restart like the ferrymen, each beside its town's Mart and turned to face its plaza; the load
-    # function first (the pack's scores). Listed from the committed data, not the build
+    # function first (the pack's scores). Listed from the committed data, not the build. 2026-10-03: and the stall
+    # keepers on the town squares (data/markets.json `stalls`), same pack, same purchase; every keeper whose stall the
+    # squares' contract (data/plaza_centres.json) seats stands at that stall instead
     import markets
-    out.append(("R17M", "the market keepers beside the Marts (data/markets.json)",
-                [("fn", "cobblers:markets/load")] + [("npc", n) for n in markets.npc_placements(markets.load())]))
+    out.append(("R17M", "the market and stall keepers (data/markets.json)",
+                [("fn", "cobblers:markets/load")] + [("npc", n) for n in markets.npc_placements(markets.load())]
+                + [("npc", n) for n in markets.stall_placements(markets.load())]))
     # the settlement NPCs (data/npc_seats.json): the main reveal's residents and the stone-tip speakers. NPCs like the
     # ferrymen, so placed over RCON after the restart that loaded cobblers_dialogue's classes, and after every town and
     # gym pass so the plaza, lot and lab floor they stand on exist. Each is turned to its authored yaw

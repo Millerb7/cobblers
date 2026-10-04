@@ -379,19 +379,27 @@ def test_a_mutated_overlay_generator_is_caught(monkeypatch, M):
 def test_a_mutated_keeper_placement_is_caught(monkeypatch, M):
     doc = M.load()
     pl = MA.read_json(ROOT / "data" / "placements.json")
-    marts = {c["id"]: next(a for a in pl["settlements"][c["town"]]["plan"]["anchors"] if a["role"] == "pokemart")
-             for c in doc["counters"] if c.get("status") == "sited"}
+    sited = [c for c in doc["counters"] if c.get("status") == "sited"]
+    # 2026-10-03: Pallet (a donor town, no plan) and Redbrow (no Mart: its keeper stands at a stall on the yard) are
+    # sited too, and have no Mart anchor to move into; their keepers are moved ten blocks instead, which the same
+    # placement check must still name
+    marts = {c["id"]: next((a for a in ((pl["settlements"][c["town"]].get("plan") or {}).get("anchors") or [])
+                            if a["role"] == "pokemart"), None) for c in sited}
     real = M.npc_placements
 
     def inside(d=None):
         out = []
         for dlg, at, cls, yaw in real(d):
-            r = marts[dlg[len("dlg_market_"):]]["rect"]
+            a = marts[dlg[len("dlg_market_"):]]
+            if a is None:
+                out.append((dlg, (at[0] + 10, at[1], at[2]), cls, yaw))
+                continue
+            r = a["rect"]
             out.append((dlg, ((r[0] + r[2]) // 2, at[1], (r[1] + r[3]) // 2), cls, yaw))
         return out
     monkeypatch.setattr(M, "npc_placements", inside)
     F, _w, _n = _audit(M, keepers=M.npc_placements(doc), placements=pl, templates=None, walked={}, others=[])
-    assert sum(1 for f in F if "the data sites it at" in f) == len(marts)
+    assert sum(1 for f in F if "the data sites it at" in f) == len(sited)
 
 
 # --------------------------------------------------------------------------------- data rules against the design
