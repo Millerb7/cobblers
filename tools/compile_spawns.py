@@ -18,6 +18,9 @@ heart's cells (heart_boxes), and never in a route file.
 
 Habitat files (habitat_pools/<habitat>.json): every ambient entry scoped to the habitat.
 
+The Mega field's dens (data/gulch_mine.json mega_field.families, 2026-10-05): each den's evolution line, plain and
+catchable, over a box round its anchor, appended to the file of the sub-region holding the anchor (mega_den_spawns).
+
 Marine files (spawn_pool_world/marine/<band>.json), from spawns.json marine_zones: open sea no sub-region, route or
 waterway covers, split into bands by distance from land (marine_bands below); every ambient entry scoped to a band
 (mechanism marine_coordinate_boxes). The first is the Windward Sea off Route 1 (2026-09-26).
@@ -430,16 +433,103 @@ def build_subregions(spawns, routes, regions, grid=SUBREGION_GRID, waterways=())
     # overlapping the League zone's edge by 8 blocks kept its roster (80 details on the first compile)
     waterways = list(waterways) + spawn_free_zones()
     files, summaries = {}, []
+    subs = {s["id"]: s for s in regions["subregions"]}
+    dens, den_summ = mega_den_spawns(regions, corridor, spawns,
+                                     base_boxes=lambda sid: subregion_boxes.boxes_for(subs[sid]["polygons"], grid, corridor, waterways))
     for sub in regions["subregions"]:
         ents = by_scope.get(sub["id"], [])
-        if not ents:
+        extra = dens.get(sub["id"], [])
+        if not ents and not extra:
             continue
-        doc, summ = compile_subregion(sub, ents, corridor, grid, waterways)
+        if ents:
+            doc, summ = compile_subregion(sub, ents, corridor, grid, waterways)
+        else:
+            doc = {"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [], "spawns": []}
+            summ = {"subregion_id": sub["id"], "box_count": 0, "compiled_entry_count": 0, "species": [],
+                    "covered_blocks": 0, "corridor_blocks_excluded": 0,
+                    "output": "spawn_pool_world/subregions/%s.json" % sub["id"]}
+        if extra:
+            # the Mega field's dens' lines (mega_den_spawns), over each den's own box, on top of the roster there
+            doc["spawns"] += extra
+            summ["compiled_entry_count"] += len(extra)
+            summ["mega_dens"] = den_summ[sub["id"]]
         if not doc["spawns"]:
             continue
         files["data/cobblers/spawn_pool_world/subregions/%s.json" % sub["id"]] = dumps(doc)
         summaries.append(summ)
     return files, summaries
+
+
+GULCH = ROOT / "data" / "gulch_mine.json"
+
+
+def mega_den_spawns(regions, corridor, spawns, gulch=None, base_boxes=None):
+    """({sub-region id: [spawn details]}, {sub-region id: summary}): each Mega field den's evolution line, in plain
+    form and catchable, over a box round the den's anchor (data/gulch_mine.json mega_field.families, its why: the
+    owner, 2026-10-05). The box is the anchor +- families.box_half, less the route corridor boxes and the spawn-free
+    zones (as every sub-region roster is); the details go into the file of the sub-region whose polygon holds the
+    anchor, after its own roster. A species in families.held is not compiled. Levels: inside that sub-region's
+    level_band (data/spawns.json; the line is catchable, so never past the cap), the final stage its top
+    families.band, each stage below (maximum - minimum - band) // (n - 1) lower; weights:
+    families.family_weight split from the bottom stage up (stage k of n weighs n - k shares). Translation only: every
+    number is the data's."""
+    if gulch is None:
+        if not GULCH.is_file():
+            return {}, {}
+        gulch = json.loads(GULCH.read_text(encoding="utf-8"))
+    fam = (gulch.get("mega_field") or {}).get("families")
+    if not fam:
+        return {}, {}
+    held = fam.get("held") or {}
+    bands = {s["id"]: s.get("level_band") for s in spawns.get("subregions") or []}
+    zones = spawn_free_zones()
+    cut = list(zones) + [tuple(b[:4]) for b in corridor]
+    out, summ, base_cache = {}, {}, {}
+    for fa in gulch.get("farms", []):
+        for d in fa["dens"]:
+            ax, _ay, az = d["anchor"]
+            home = [s for s in regions["subregions"]
+                    if any(subregion_boxes.point_in_polygon(ax + 0.5, az + 0.5, poly) for poly in s["polygons"])]
+            if not home:
+                raise SystemExit("mega den %s: its anchor (%d, %d) is in no data/regions.json sub-region" % (d["id"], ax, az))
+            sub = sorted(home, key=lambda s: s["id"])[0]["id"]
+            h = fam["box_half"]
+            boxes = subtract((ax - h, ax + h, az - h, az + h), cut)
+            if base_boxes is not None:
+                # only on top of the sub-region's own roster boxes (its corridor and water cells excluded whole, as
+                # compile_subregion lays them): a den line never spawns where the base roster does not
+                if sub not in base_cache:
+                    base_cache[sub] = base_boxes(sub)
+                boxes = [(max(b[0], c[0]), min(b[1], c[1]), max(b[2], c[2]), min(b[3], c[3]))
+                         for b in boxes for c in base_cache[sub]
+                         if max(b[0], c[0]) <= min(b[1], c[1]) and max(b[2], c[2]) <= min(b[3], c[3])]
+            line = [sp for sp in fam["lines"][d["species"]] if sp not in held]
+            n = len(fam["lines"][d["species"]])
+            band = bands.get(sub)
+            if not band:
+                raise SystemExit("mega den %s: sub-region %s has no level_band in data/spawns.json" % (d["id"], sub))
+            lo, hi = band["minimum"], band["maximum"]
+            step = (hi - lo - fam["band"]) // (n - 1) if n > 1 else 0
+            shares = n * (n + 1) / 2.0
+            rows = []
+            for k, sp in enumerate(fam["lines"][d["species"]]):
+                if sp in held:
+                    continue
+                top = hi - (n - 1 - k) * step
+                lv = "%d-%d" % (top - fam["band"], top)
+                w = round(fam["family_weight"] * (n - k) / shares, 3)
+                for bi, b in enumerate(boxes):
+                    rows.append({"id": "%s_%s_b%d_%s" % (sub, d["id"], bi, sp), "pokemon": sp, "type": "pokemon",
+                                 "spawnablePositionType": "grounded", "bucket": fam["bucket"], "level": lv, "weight": w,
+                                 "condition": box_condition(b[0], b[1], b[2], b[3], {})})
+            out.setdefault(sub, []).extend(rows)
+            s = summ.setdefault(sub, {"dens": 0, "entries": 0, "species": set()})
+            s["dens"] += 1
+            s["entries"] += len(rows)
+            s["species"] |= set(line)
+    for s in summ.values():
+        s["species"] = sorted(s["species"])
+    return out, summ
 
 
 def _grid_cells_of(sub, grid):
@@ -625,7 +715,8 @@ def main(argv=None):
         f.parent.mkdir(parents=True, exist_ok=True)
         f.write_text(text, encoding="utf-8", newline="\n")
     manifest = {"generator": "tools/compile_spawns.py",
-                "inputs": {k: hashlib.sha256(Path(v).read_bytes()).hexdigest() for k, v in (("data/spawns.json", a.spawns), ("data/routes.json", a.routes))},
+                "inputs": {k: hashlib.sha256(Path(v).read_bytes()).hexdigest() for k, v in (("data/spawns.json", a.spawns), ("data/routes.json", a.routes))
+                           + ((("data/gulch_mine.json", GULCH),) if GULCH.is_file() and not a.no_subregions else ())},
                 "files": {rel: hashlib.sha256(text.encode("utf-8")).hexdigest() for rel, text in sorted(files.items())},
                 "route_files": rs, "habitat_files": hs, "subregion_files": ss, "waterway_files": ws,
                 "marine_files": ms,

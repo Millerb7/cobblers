@@ -4441,6 +4441,122 @@
         "blastoise": "aggron"
       },
       "why": "Every field den is dressed as a lair (data/mega_dens.json, step R9MD), because the owner asked on 2026-10-02 to 'see something from the air and go down to it' and section 13 describes the field as 'caves, Mega dens, broken houses half sunk, debris'. A field den takes the KIT of one of the seven 2026-10-02 lairs (their records are data/mega_dens.json superseded_dens): its sign, feature, palettes and signature, so nothing in the builder or its audit is new. Which kit: Houndoom's charred ash and bone heap for Houndoom, Banette, Charizard and Blaziken; Tyranitar's crater for Absol, Medicham and Metagross (a meteor's); Manectric's fused strike for Camerupt and Ampharos; Aggron's spoil heap of torn ore and iron for Scizor, Sableye and Steelix; Pinsir's felled trunks for Heracross, Gallade and Venusaur; Abomasnow and Garchomp keep their own. `python tools/mega_field.py dress` prints the records; only their geometry is per den. 2026-10-04: the six species the field's 23 dens added take Pinsir's felled trunks (Lopunny, Audino, Beedrill), Abomasnow's frost (Glalie), Tyranitar's crater (Gardevoir) and Aggron's spoil heap (Blastoise); tools/mega_dens.py now runs a kit's own behaviour (Tyranitar's split boulders, Abomasnow's snow) for every den dressed with it, where before it keyed them on the den's own species. 2026-10-04 (later): a lair is keyed by its DEN (data/mega_dens.json dens[].den, its function mega_dens/<den>), and a border's two palettes are its two dens' own records, so two dens of one species are two lairs dressed with one kit."
+    },
+    "families": {
+      "lines": {
+        "sableye": [
+          "sableye"
+        ],
+        "banette": [
+          "shuppet",
+          "banette"
+        ],
+        "absol": [
+          "absol"
+        ],
+        "houndoom": [
+          "houndour",
+          "houndoom"
+        ],
+        "medicham": [
+          "meditite",
+          "medicham"
+        ],
+        "lopunny": [
+          "buneary",
+          "lopunny"
+        ],
+        "audino": [
+          "audino"
+        ],
+        "beedrill": [
+          "weedle",
+          "kakuna",
+          "beedrill"
+        ],
+        "ampharos": [
+          "mareep",
+          "flaaffy",
+          "ampharos"
+        ],
+        "camerupt": [
+          "numel",
+          "camerupt"
+        ],
+        "heracross": [
+          "heracross"
+        ],
+        "glalie": [
+          "snorunt",
+          "glalie"
+        ],
+        "abomasnow": [
+          "snover",
+          "abomasnow"
+        ],
+        "scizor": [
+          "scyther",
+          "scizor"
+        ],
+        "gardevoir": [
+          "ralts",
+          "kirlia",
+          "gardevoir"
+        ],
+        "gallade": [
+          "ralts",
+          "kirlia",
+          "gallade"
+        ],
+        "blastoise": [
+          "squirtle",
+          "wartortle",
+          "blastoise"
+        ],
+        "venusaur": [
+          "bulbasaur",
+          "ivysaur",
+          "venusaur"
+        ],
+        "blaziken": [
+          "torchic",
+          "combusken",
+          "blaziken"
+        ],
+        "charizard": [
+          "charmander",
+          "charmeleon",
+          "charizard"
+        ],
+        "steelix": [
+          "onix",
+          "steelix"
+        ],
+        "metagross": [
+          "beldum",
+          "metang",
+          "metagross"
+        ],
+        "garchomp": [
+          "gible",
+          "gabite",
+          "garchomp"
+        ]
+      },
+      "catchable": true,
+      "bucket": "common",
+      "family_weight": 24.0,
+      "band": 4,
+      "box_half": 25,
+      "held": {
+        "numel": "tools/spawn_habitat_audit.py, 2026-10-05: MISFIT at rift_south_west_arm (rift_floor, cool), 2 steps from its nearest native climate. Held until the owner places it where that audit reads a placement (docs/mechanics/ENCOUNTER_DESIGN.md section 11); his 2026-10-05 words are the placement if he says so",
+        "camerupt": "tools/spawn_habitat_audit.py, 2026-10-05: MISFIT at rift_south_west_arm (rift_floor, cool), 2 steps from its nearest native climate. Held until the owner places it where that audit reads a placement (docs/mechanics/ENCOUNTER_DESIGN.md section 11); his 2026-10-05 words are the placement if he says so",
+        "scizor": "tools/spawn_habitat_audit.py, 2026-10-05: MISFIT at rift_south_west_arm (rift_floor, cool), 2 steps from its nearest native climate. Held until the owner places it where that audit reads a placement (docs/mechanics/ENCOUNTER_DESIGN.md section 11); his 2026-10-05 words are the placement if he says so",
+        "squirtle": "tests/test_encounter_hearts.py, the Water starters rule (docs/mechanics/ENCOUNTER_DESIGN.md section 11, the owner's starter placements): every detail of a Water starter's family needs water nearby, and the Mega field is dry (mega_field.py floor: every field column dry). Held until the owner says whether his 2026-10-05 words put the Squirtle line on dry ground here",
+        "wartortle": "tests/test_encounter_hearts.py, the Water starters rule (docs/mechanics/ENCOUNTER_DESIGN.md section 11, the owner's starter placements): every detail of a Water starter's family needs water nearby, and the Mega field is dry (mega_field.py floor: every field column dry). Held until the owner says whether his 2026-10-05 words put the Squirtle line on dry ground here",
+        "blastoise": "tests/test_encounter_hearts.py, the Water starters rule (docs/mechanics/ENCOUNTER_DESIGN.md section 11, the owner's starter placements): every detail of a Water starter's family needs water nearby, and the Mega field is dry (mega_field.py floor: every field column dry). Held until the owner says whether his 2026-10-05 words put the Squirtle line on dry ground here"
+      },
+      "why": "The owner, 2026-10-05: 'have some base mons of each version running around in the area as well as the megas, like a charizard den with a few megas and some charmeleon, charizards and charmanders'. Each den's range holds its Mega's line in plain form, every stage (lines: the Mega's own evolution line only, so Glalie's den has Snorunt and not Froslass, Gallade's Ralts and Kirlia and not Gardevoir; a Mega with no pre-evolution, Sableye, Absol, Audino, Heracross, has its base form alone). They are NATURAL spawns, not keeper-held: tools/compile_spawns.py lays each den's line over a box round its anchor, anchor +- box_half 25 (the square inscribed in the den's leash-36 range, 36 / sqrt 2 = 25.5, floored, so no family entry reaches past the range), less the route corridor boxes and the spawn-free zones as every sub-region roster is, inside the sub-region file whose polygon holds the anchor; Cobblemon's own spawner budget bounds how many stand, so the lines add no entity load the field did not already have, they change what the ordinary spawns there are. CATCHABLE (catchable true): the owner said the Megas must be uncatchable and said nothing of the family; a default taken, flagged for him. Bucket common and family_weight 24, spawns.json rarity.anchor's (a place's signature family), split over the stages from the bottom up (stage k of n weighs n - k shares: 12/8/4, 16/8, 24), laid on top of the Rift roster in the box (36-48 of common weight there), so about a third to two fifths of a den's common spawns are its line. Levels: inside the den's sub-region's own level_band (data/spawns.json subregions[].level_band, 52-60 for both Rift arms at tier 9), NOT the Megas' tier: the line is catchable, and a catchable wild over the next leg's cap breaks docs/mechanics/ENCOUNTER_DESIGN.md (tests/test_encounter_hearts.py, starter levels); the Megas, uncatchable, keep 70/77. The final stage spans the band's top `band` 4 levels (56-60), each stage below (maximum - minimum - band) / (n - 1) lower, floored, so the bottom stage starts at the band's minimum (3 stages 56-60, 54-58, 52-56; 2 stages 56-60, 52-56). The 2026-10-05 brief asked for the den's tier band; the cap rule wins, flagged. `held` names a species not compiled, with why: one tools/spawn_habitat_audit.py would call a misfit for the Rift floor's paint (rift_floor, cool) needs the owner's placement where that audit reads one (docs/mechanics/ENCOUNTER_DESIGN.md section 11) before it is compiled"
     }
   },
   "farms": [
