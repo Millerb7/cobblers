@@ -340,7 +340,8 @@ the area as well right?"** Built 2026-10-05: valid data and a measured compiled 
   - overlay `pokemon_non_party.json` at the same path without the sensor, which keeps the band but replaces a whole
     upstream behaviour file.
 
-  Nothing here does either. The record is `rules.hearts.alpha_level_matching`.
+  **Decided (the owner, 2026-10-05): "keep the alpha scaling".** The jar's behaviour stays; nothing is overlaid. A boss
+  is always fought above the party. The record is `rules.hearts.alpha_level_matching`.
 - **Every heart holds one of its own place's Pokemon** (`rules.hearts.local_alpha`). Before this, 57 of 67 hearts named
   a species from their own compiled base table: 138 of 238 heart species, 58%. By family (a heart naming the evolved
   stage of a local), all 67 did: 202 of 238, 85%. The ten with no exact local each gain the place's strongest local
