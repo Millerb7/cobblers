@@ -566,6 +566,10 @@ def prepare_jobs(a):
     # Heaven's Arena's per-player opponents (2026-10-03): the ladder, the champions' exam teams and the dome's venues.
     # It FAILS while data/arena_dome.json has no venues: an arena with nowhere to fight is not a pack to install
     add("arena_runtime", "arena_runtime.py")
+    # and its independent audit (tools/arena_runtime_audit.py, written by an agent that did not build the runtime):
+    # every class, venue, post, purse, prize, gauntlet, the streak, two players and the blackout exemption, derived
+    # from the data and EXECUTED in its own command model over the emitted functions. Fail-closed
+    add("arena_runtime_audit", "arena_runtime_audit.py")
     add("rematerial", "rematerial.py")
     # the sea town's settlement, Centre, Mart, earthworks and clerk are generated into data/placements.json and
     # data/traders.json from data/sea_town.json and the heightmap; stop here if the committed records are stale. The
