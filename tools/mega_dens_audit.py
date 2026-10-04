@@ -9,8 +9,11 @@ data/resident_encounters.json, data/route_paths.json, data/rift_zones.json, tool
 palette (data/rift_skin.json), then REPLAYS the generated functions and checks the result. Only the re-application steps
 are taken from the generator, as its OUTPUT, to check they hold the chunks they write.
 
-  record     every open-air den in data/gulch_mine.json has one record of the same species; its anchor is the gulch's;
-             write_box holds the anchor, sits inside farms_grid and touches no other den's box; lighting is 'dark'
+  record     every open-air den in data/gulch_mine.json has exactly one record, keyed by the DEN's id (`den`), of the
+             same species; a species may hold several dens (2026-10-04), so a lair, its function mega_dens/<den id>,
+             its re-application step and every message are named by the den, never its species; its anchor is the
+             gulch's; write_box holds the anchor, sits inside farms_grid and touches no other den's box; lighting is
+             'dark'
   blocks     every written block is in blocks.ids; none is a spawn condition (data/spawn_blocks.json) unless a policy
              entry scoped to mega_dens allows it; no chest, no bed, no light source of any kind
   box        every written cell is inside its den's write_box
@@ -150,6 +153,12 @@ def gulch_dens(gm):
 def check_record(rec, gm, R):
     dens = gulch_dens(gm)
     mine = {d["den"]: d for d in rec["dens"]}
+    # two records for one den would build one file (mega_dens/<den id>) twice, the second over the first
+    counts = {}
+    for d in rec["dens"]:
+        counts[d["den"]] = counts.get(d["den"], 0) + 1
+    for did in sorted(k for k, n in counts.items() if n > 1):
+        R.err("record", "%s has %d dressing records: one lair per den" % (did, counts[did]))
     if rec.get("lighting") != "dark":
         R.err("record", "lighting must be 'dark': these are wild lairs")
     for did, (_f, d) in sorted(dens.items()):
@@ -167,14 +176,14 @@ def check_record(rec, gm, R):
             continue
         ax, ay, az = did_anchor(d, dens)
         if not (b[0] <= ax <= b[3] and b[1] <= ay <= b[4] and b[2] <= az <= b[5]):
-            R.err("record", "%s: write_box %s does not hold the anchor" % (d["species"], b))
+            R.err("record", "%s: write_box %s does not hold the anchor" % (d["den"], b))
         if not (fg["x"][0] <= b[0] and b[3] <= fg["x"][1] and fg["y"][0] <= b[1] and b[4] <= fg["y"][1]
                 and fg["z"][0] <= b[2] and b[5] <= fg["z"][1]):
-            R.err("record", "%s: write_box %s is not inside data/gulch_mine.json farms_grid" % (d["species"], b))
+            R.err("record", "%s: write_box %s is not inside data/gulch_mine.json farms_grid" % (d["den"], b))
         for other, ob in boxes:
             if b[0] <= ob[3] and ob[0] <= b[3] and b[2] <= ob[5] and ob[2] <= b[5]:
-                R.err("record", "%s's write_box overlaps %s's" % (d["species"], other))
-        boxes.append((d["species"], b))
+                R.err("record", "%s's write_box overlaps %s's" % (d["den"], other))
+        boxes.append((d["den"], b))
 
 
 def did_anchor(d, dens):
@@ -187,7 +196,7 @@ def check_blocks(rep, d, rec, R):
     policy = load_json("spawn_block_policy.json")
     white = {bk for w in policy.get("whitelist") or [] if "mega_dens" in (w.get("scope") or "") for bk in w["blocks"]}
     seen = {base(s) for s in rep.state.values()}
-    sp = d["species"]
+    sp = d["den"]
     for bk in sorted(seen - allowed):
         R.err("blocks", "%s writes %s, which is not in data/mega_dens.json blocks.ids" % (sp, bk))
     for bk in sorted((seen & spawn) - white):
@@ -208,11 +217,11 @@ def check_box(rep, d, R):
     b = d["write_box"]
     out = [k for k in rep.state if not (b[0] <= k[0] <= b[3] and b[1] <= k[1] <= b[4] and b[2] <= k[2] <= b[5])]
     if out:
-        R.err("box", "%s writes %d cell(s) outside its write_box %s, e.g. %s" % (d["species"], len(out), b, out[0]))
+        R.err("box", "%s writes %d cell(s) outside its write_box %s, e.g. %s" % (d["den"], len(out), b, out[0]))
 
 
 def check_anchor(rep, W, d, anchor, rec, R):
-    sp = d["species"]
+    sp = d["den"]
     ax, ay, az = anchor
     if ay != W.ground(ax, az) + 1:
         R.err("anchor", "%s: the anchor y%d is not its ground + 1 (ground y%d)" % (sp, ay, W.ground(ax, az)))
@@ -240,7 +249,7 @@ def check_anchor(rep, W, d, anchor, rec, R):
 
 
 def check_ground(rep, W, d, anchor, rec, R):
-    sp = d["species"]
+    sp = d["den"]
     ax, ay, az = anchor
     G0 = ay - 1
     cr = rec["anchor_pad"]["clear_radius"]
@@ -267,7 +276,7 @@ def check_ground(rep, W, d, anchor, rec, R):
 
 
 def check_support(rep, W, d, R):
-    sp = d["species"]
+    sp = d["den"]
     floating, falling, snow, path = [], [], [], []
     for (x, y, z), s in rep.state.items():
         if s == AIR:
@@ -291,7 +300,7 @@ def check_support(rep, W, d, R):
 
 
 def check_visible(rep, W, d, anchor, rec, R):
-    sp = d["species"]
+    sp = d["den"]
     ax, _ay, az = anchor
     L = rec["layout"]
     inner = L["scrape_radius"] - L["scrape_ragged"]
@@ -349,11 +358,11 @@ def check_signature(rep, d, R):
     for bk, n in sorted(d.get("signature", {}).items()):
         if counts.get(bk, 0) < n:
             R.err("signature", "%s writes %s %d time(s), under the %d its sign declares"
-                  % (d["species"], bk, counts.get(bk, 0), n))
+                  % (d["den"], bk, counts.get(bk, 0), n))
 
 
 def check_footprint(cols, d, gm, W, R):
-    sp = d["species"]
+    sp = d["den"]
     if not cols:
         return
     for t in load_json("towns.json")["towns"]:
@@ -422,8 +431,12 @@ def check_steps(reps, lines_by, rec, steps, R):
     if steps is None:
         return
     steps = [tuple(s) for s in steps]
+    named = {d["den"] for d in rec["dens"]}
+    for s in steps:
+        if s[0] == "fn" and s[1].startswith("cobblers:mega_dens/") and s[1].rsplit("/", 1)[-1] not in named:
+            R.err("steps", "the re-application runs %s, which is no den's lair" % s[1])
     for d in rec["dens"]:
-        sp = d["species"]
+        sp = d["den"]
         fn = ("fn", "cobblers:mega_dens/%s" % sp)
         if fn not in steps:
             R.err("steps", "the re-application does not run cobblers:mega_dens/%s" % sp)
@@ -454,7 +467,7 @@ def audit(rec, g, pack, steps=None, gm=None):
     dens = gulch_dens(gm)
     reps, lines_by = {}, {}
     for d in rec["dens"]:
-        sp = d["species"]
+        sp = d["den"]
         fn = pack / FUNCTIONS / ("%s.mcfunction" % sp)
         if not fn.exists():
             R.err("steps", "no %s in %s: build the pack first" % (fn.name, pack))
