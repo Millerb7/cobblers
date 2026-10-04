@@ -26,8 +26,13 @@ WHAT IT READS (the built result):
   build/datapacks/cobblers_plaza_centres/.../plaza_centres/<town>.mcfunction, VOXELISED in index.txt order: every
   `fill` and `setblock` applied to a block model; any other command is a problem (it would be unmodelled). The derived
   report (derived/plaza_centres/*.json) is NOT read: the function is what the server runs.
-  The R17M keeper list: tools/reapply.steps()'s R17M step when it can be built (a full checkout after prepare); else
-  the same two calls R17M composes (markets.npc_placements + markets.stall_placements), and the report says which.
+  The R17M step: tools/reapply.steps()'s R17M when it can be built (a full checkout after prepare); else what R17M
+  composes (markets.npc_placements + markets.stall_placements for the `npc` actions, cobblers:markets/load and
+  markets.MERCHANTS_FN for the `fn` ones), and the report says which. Its `npc` actions are the counters' dialogue
+  clerks; its `fn` ids are FOLLOWED through the markets pack (build/datapacks/cobblers_markets, else markets.build()
+  in memory, said so) via `function`, `schedule function` and `execute ... run function`, and every `summon` and
+  `kill @e[type=cobblemon:npc,...]` in them is read with MY OWN parser (snbt() below; not traders.to_snbt, not
+  markets.shop_offers). A stall's merchant is known by its tag <stall_merchant.tag>_<stall id>.
   That is reading the artifact under test, not computing an expectation from it.
 
 THE CHECKS (each named in the output; P = problem, K = known defect, recorded in KNOWN below):
@@ -41,10 +46,14 @@ THE CHECKS (each named in the output; P = problem, K = known defect, recorded in
             square's y on the square, a plan street cell's y, else round(heightmap); below sea level is water and not
             walked; a step changes the floor by at most 1; building footprints and every column with a non-carpet
             block written at standing height are walls
-  stall     the counter is written at `at`; the keeper stands at at - step(facing) on the counter's y; feet and head
-            are air in the model (written or cleared by the function); the block under the feet is floor (written,
-            the square's y on the square, a street's y, or round(heightmap) off it); the yaw faces the counter
-            (Minecraft yaw: x = -sin, z = cos, within 22.5 degrees)
+  stall     MY reading of the tent (the owner, 2026-10-04: "the stalls all block the villager from access ... more
+            like pokemon ... slateport where there is a tent with wares"): a solid table is written at `at`; the
+            keeper stands IN FRONT of it, at at + step(facing), on the table's y; feet and head are air in the model
+            (written or cleared by the function); the block under the feet is floor (written, the square's y on the
+            square, a street's y, or round(heightmap) off it); the yaw faces the CUSTOMERS, step(facing) (Minecraft
+            yaw: x = -sin, z = cos, within 22.5 degrees); the customer's cell, at + 2 step(facing), has nothing solid
+            at feet or head (a carpet is walked over) and is on the keeper's floor: nothing between player and keeper.
+            The customer cell is the one `reach` walks to
   spawn     no written block is in data/spawn_blocks.json, is water or waterlogged, or is a `from` of
             data/spawn_block_policy.json's substitutions
   light     MY rule, not the generator's: real emission (lantern, sea lantern, froglight, campfire, glowstone 15;
@@ -53,9 +62,20 @@ THE CHECKS (each named in the output; P = problem, K = known defect, recorded in
             functions write, the plan's lamps (the lamp_block one below the plan's `at`) and earthwork lanterns.
             Cells: every square cell no standing piece covers, street cells over the square INCLUDED (the generator
             leaves those to the street lamps; I do not)
-  staff     every contract stall has exactly one R17M keeper, at its keeper_at with its yaw; every R17M keeper
-            stands at a contract keeper_at, or is in a declared fallback town (Fossick mining_town, Northlight,
-            Redbrow tableland_stop, the Deep's city deep_city); a record's `sells` is its stall's theme word
+  staff     every contract stall has exactly one R17M keeper -- a counter's dialogue clerk (`npc` action) or a stall's
+            merchant (a summon in the functions R17M runs) -- at its keeper_at with its yaw (the merchant's
+            Rotation[0]); every keeper stands at a contract keeper_at, or is in a declared fallback town (Fossick
+            mining_town, Northlight, Redbrow tableland_stop, the Deep's city deep_city); a record's `sells` is its
+            stall's theme word; every sited stall has exactly one merchant summon with its tag, an unsited one none;
+            no R17M `npc` action is a cobblers:npc_stall_* dialogue keeper and no followed function summons a
+            cobblemon:npc; each merchant's functions kill type=cobblemon:npc centred on its own block (the dialogue
+            keeper it replaces), with a radius that reaches no counter clerk
+  merchant  each merchant summon is cobbledollars:cobble_merchant, centred on its block (x.5, whole y, z.5), NoAI and
+            PersistenceRequired 1b, named its keeper's name
+  shop      each merchant's CobbleMerchantShop is ONE category equal to its stall's non-empty `category`; one offer per
+            stall line (data/markets.json stock), Item count 1, Price a whole-number string with Price x the line's
+            count = the line's price; no offer without a line; and no sited stall line gated (a merchant shows one
+            list to every player: a gated line belongs on a counter)
   items     every item on an emitted stall or counter exists in a jar (NOT CHECKED, said so, without the jar); none
             places a spawn-condition block (my own item -> block map, PLACES_BLOCK); none is a ball, a battle item or
             a boost unless gated on a badge (my own vocabulary: any non-vanilla id outside the convenience namespaces,
@@ -73,11 +93,22 @@ INDEPENDENCE, PROVEN BY MUTATING THE GENERATORS (tests/test_town_squares_audit.p
     record with the piece's position, not with the blocks), and this audit names every stall's missing counter
   - tools/plaza_centre.py piece_lamp_post's lantern swapped for a chain AND lights_of taught that a chain is a light
     (a shared derivation): the builder still reports every cell lit; this audit names the dark cells
-  - tools/markets.py position() shifted one block east: markets builds and places, and this audit names every keeper
-    that no longer stands at its contract seat
-  Run 2026-10-04 at 7a7272d: all three caught (see the tests).
+  Run 2026-10-04 at 7a7272d: both caught (see the tests). Re-run at 06e22fb (the tent and the merchants): still caught,
+  and three more:
+  - tools/plaza_centre.py plan_town made to drop each tent's footprint clear (`fill ... minecraft:air`): the builder's
+    checks pass (they read the piece, not the function), and this audit names the keeper's feet "never written or
+    cleared" at all 43 stalls -- in the world, the old booth's counter log left where the keeper now stands
+  - tools/markets.py position() made to seat each contract keeper on its table, turned to face it (the old booth's
+    convention): markets.merchant_problems PASSES it (it reads the seat through position()), and this audit names all
+    43 stalls unstaffed
+  - tools/markets.py merchant_shop() made to double every Price: this audit names every sited stall line's price, and
+    nothing else (markets.merchant_problems catches this one too; the mutation proves this reader reads the text)
+  Not mutable on the plaza side: shifting the tent's keeper inside piece_stall, or putting a block in its or the
+  customer's cell, is refused by plaza_centre's own build (its record-drift and face-to-face checks), so no such
+  function can be emitted to audit.
 
-NOT COVERED: anything at runtime -- that an NPC spawns, stays, faces, or sells; that a dialogue option charges; real
+NOT COVERED: anything at runtime -- that a merchant or NPC spawns, stays, faces, or sells; that the merchant's screen
+charges its Price (docs: not yet observed); that the _done step's kill actually removes the old keeper; that a dialogue option charges; real
 light with occlusion and skylight; real pathfinding (doors, stairs, slabs, fences: a fence is treated as a wall only
 when written at standing height); what the world already holds round the square (other packs' blocks, donors); the
 Deep's city's stalls (unsited, declared no_counter).
@@ -530,8 +561,7 @@ def reach_checks(settlement, rec, geo, standing):
             continue
         info[role] = min(on)
         for st in rec["stalls"]:
-            dx, dz = STEP[st["facing"]]
-            cust = (st["at"][0] + dx, st["at"][2] + dz)
+            cust = customer_cell(st)
             if cust not in seen:
                 P.append(("reach", "%s:%s:%s" % (settlement, st["id"], role), "%s: %s's customer cell %s is not reached "
                           "on foot from %s" % (settlement, st["id"], cust, bid)))
@@ -543,19 +573,30 @@ def yaw_vec(yaw):
     return -math.sin(a), math.cos(a)
 
 
+def customer_cell(st):
+    """The tent rule (the owner, 2026-10-04, "a tent with wares", Slateport): the table at `at`, the keeper one step
+    out on the customers' side, the customer one step further: (x, z) of at + 2 step(facing)."""
+    dx, dz = STEP[st["facing"]]
+    return st["at"][0] + 2 * dx, st["at"][2] + 2 * dz
+
+
 def stall_checks(settlement, rec, geo, model):
+    """The tent, read from the voxel model against MY rule: a solid table at `at`; the keeper at at + step(facing),
+    in the open front, feet and head air (written or cleared), on a floor, turned to the customers (the yaw within
+    22.5 degrees of step(facing)); the customer at at + 2 step(facing), feet and head not solid, on the keeper's own
+    floor, so nothing stands between them."""
     P = []
     for st in rec["stalls"]:
         sid = st["id"]
         ax, ay, az = st["at"]
         if not solid(model.get((ax, ay, az))):
-            P.append(("stall", sid + ":counter", "%s: no counter block at its `at` %s in the function (found %s)"
+            P.append(("stall", sid + ":counter", "%s: no table block at its `at` %s in the function (found %s)"
                       % (sid, st["at"], model.get((ax, ay, az)))))
         dx, dz = STEP[st["facing"]]
         kx, ky, kz, yaw = st["keeper_at"]
-        if (kx, ky, kz) != (ax - dx, ay, az - dz):
-            P.append(("stall", sid + ":behind", "%s: keeper_at %s is not behind the counter (expected %s)"
-                      % (sid, st["keeper_at"][:3], [ax - dx, ay, az - dz])))
+        if (kx, ky, kz) != (ax + dx, ay, az + dz):
+            P.append(("stall", sid + ":front", "%s: keeper_at %s is not in the tent's open front, at the table's %s "
+                      "(expected %s)" % (sid, st["keeper_at"][:3], st["facing"], [ax + dx, ay, az + dz])))
         for y in (ky, ky + 1):
             s = model.get((kx, y, kz))
             if s is None or name_of(s) != "minecraft:air":
@@ -570,10 +611,21 @@ def stall_checks(settlement, rec, geo, model):
             P.append(("stall", sid + ":floor", "%s: no floor under the keeper at (%d, %d, %d): function %s, plan/ground %d"
                       % (sid, kx, ky - 1, kz, under, geo.floor(kx, kz))))
         vx, vz = yaw_vec(yaw)
-        tx, tz = ax - kx, az - kz
-        n = math.hypot(tx, tz) or 1.0
-        if (vx * tx + vz * tz) / n < math.cos(math.radians(22.5)):
-            P.append(("stall", sid + ":yaw", "%s: yaw %s does not face the counter (direction %s)" % (sid, yaw, (tx, tz))))
+        if vx * dx + vz * dz < math.cos(math.radians(22.5)):
+            P.append(("stall", sid + ":yaw", "%s: yaw %s does not face its customers (to the %s)"
+                      % (sid, yaw, st["facing"])))
+        # the customer, face to face with the keeper: an open cell on the same floor (a carpet is walked over)
+        cx, cz = kx + dx, kz + dz
+        for y in (ky, ky + 1):
+            s = model.get((cx, y, cz))
+            if solid(s):
+                P.append(("stall", sid + ":customer%d" % (y - ky), "%s: %s stands at the customer's %s (%d, %d, %d), "
+                          "between player and keeper" % (sid, s, "feet" if y == ky else "head", cx, y, cz)))
+        cu = model.get((cx, ky - 1, cz))
+        cfloor_ok = solid(cu) if cu is not None else geo.floor(cx, cz) == ky - 1
+        if not cfloor_ok:
+            P.append(("stall", sid + ":customer_floor", "%s: the customer's cell (%d, %d) is not on the keeper's floor "
+                      "y%d: function %s, plan/ground %d" % (sid, cx, cz, ky - 1, cu, geo.floor(cx, cz))))
     return P
 
 
@@ -583,56 +635,338 @@ def contract_stalls(plazas):
 
 
 def r17m_list():
-    """[(npc class, (x, y, z), yaw)] and where it came from."""
+    """([(npc class, (x, y, z), yaw)], [function ids R17M runs], where they came from)."""
     why = "no R17M step"
     try:
         import reapply
         for sid, _what, acts in reapply.steps():
             if sid == "R17M":
-                return [(a[1][2], tuple(a[1][1]), a[1][3]) for a in acts if a[0] == "npc"], "tools/reapply.steps() R17M"
+                return ([(a[1][2], tuple(a[1][1]), a[1][3]) for a in acts if a[0] == "npc"],
+                        [a[1] for a in acts if a[0] == "fn"], "tools/reapply.steps() R17M")
     except (SystemExit, Exception) as e:         # reapply.steps() needs a prepared build/ (the Rift's index)
         why = str(e)[:120]
     import markets
     doc = markets.load()
     acts = markets.npc_placements(doc) + markets.stall_placements(doc)
-    return [(a[2], tuple(a[1]), a[3]) for a in acts], ("markets.npc_placements + markets.stall_placements, as R17M "
-                                                          "composes them (reapply.steps() unavailable: %s)" % why)
+    fns = ["cobblers:markets/load"]
+    if any(s.get("status") == "sited" for s in doc.get("stalls") or []):
+        fns.append(markets.MERCHANTS_FN)
+    return ([(a[2], tuple(a[1]), a[3]) for a in acts], fns,
+            "markets.npc_placements + markets.stall_placements + markets/load + MERCHANTS_FN, as R17M composes them "
+            "(reapply.steps() unavailable: %s)" % why)
 
 
-def staff_checks(plazas, markets_doc, npcs):
+# ------------------------------------------------------------------- the merchants, read from the emitted functions
+MERCHANT_KIND = "cobbledollars:cobble_merchant"      # the owner, 2026-10-04: "the cobbleverse ones that have nice ui"
+MARKETS_PACK = ROOT / "build" / "datapacks" / "cobblers_markets"
+_TOKEN = re.compile(r"[A-Za-z0-9_.+\-]+")
+
+
+def snbt(text):
+    """My own SNBT reader (not tools/traders.py's writer, not markets.shop_offers): compounds, lists (typed arrays
+    too), quoted strings with backslash escapes, numbers with their b/s/l/f/d suffix (bytes and ints to int, the rest
+    to float), anything else a bare string. Raises ValueError on text it cannot read."""
+    try:
+        v, i = _snbt(text, 0)
+    except IndexError:
+        raise ValueError("SNBT ends early")
+    if text[i:].strip():
+        raise ValueError("SNBT has trailing text at %d" % i)
+    return v
+
+
+def _skip(s, i):
+    while i < len(s) and s[i] in " \t":
+        i += 1
+    return i
+
+
+def _quoted(s, i):
+    q, i, out = s[i], i + 1, []
+    while s[i] != q:
+        if s[i] == "\\":
+            i += 1
+        out.append(s[i])
+        i += 1
+    return "".join(out), i + 1
+
+
+def _snbt(s, i):
+    i = _skip(s, i)
+    c = s[i]
+    if c == "{":
+        out, i = {}, _skip(s, i + 1)
+        if s[i] == "}":
+            return out, i + 1
+        while True:
+            i = _skip(s, i)
+            if s[i] in "\"'":
+                k, i = _quoted(s, i)
+            else:
+                m = _TOKEN.match(s, i)
+                if not m:
+                    raise ValueError("no key at %d" % i)
+                k, i = m.group(0), m.end()
+            i = _skip(s, i)
+            if s[i] != ":":
+                raise ValueError("no ':' after %r" % k)
+            out[k], i = _snbt(s, i + 1)
+            i = _skip(s, i)
+            if s[i] == ",":
+                i += 1
+            elif s[i] == "}":
+                return out, i + 1
+            else:
+                raise ValueError("unexpected %r at %d" % (s[i], i))
+    if c == "[":
+        i += 1
+        m = re.compile(r"[BIL];").match(s, i)
+        if m:
+            i = m.end()
+        out, i = [], _skip(s, i)
+        if s[i] == "]":
+            return out, i + 1
+        while True:
+            v, i = _snbt(s, i)
+            out.append(v)
+            i = _skip(s, i)
+            if s[i] == ",":
+                i += 1
+            elif s[i] == "]":
+                return out, i + 1
+            else:
+                raise ValueError("unexpected %r at %d" % (s[i], i))
+    if c in "\"'":
+        return _quoted(s, i)
+    m = _TOKEN.match(s, i)
+    if not m:
+        raise ValueError("unexpected %r at %d" % (c, i))
+    tok = m.group(0)
+    if re.fullmatch(r"-?\d+[bBsSlL]?", tok):
+        return int(tok.rstrip("bBsSlL")), m.end()
+    if re.fullmatch(r"-?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?[fFdD]?", tok):
+        return float(tok.rstrip("fFdD")), m.end()
+    if tok in ("true", "false"):
+        return int(tok == "true"), m.end()
+    return tok, m.end()
+
+
+def pack_files(pack=None):
+    """{relative path: lines} of a datapack folder's functions, or None when it holds none."""
+    pack = Path(pack or MARKETS_PACK)
+    root = pack / "data"
+    if not root.is_dir():
+        return None
+    return {p.relative_to(pack).as_posix(): p.read_text(encoding="utf-8").splitlines()
+            for p in root.rglob("*.mcfunction")}
+
+
+def fn_path(fid):
+    ns, path = fid.split(":", 1)
+    return "data/%s/function/%s.mcfunction" % (ns, path)
+
+
+SUMMON = re.compile(r"(?:^|\brun )summon (\S+) (-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?)(?: (.+))?$")
+CALLS = re.compile(r"(?:^|\brun |^schedule )function ([a-z0-9_.\-]+:[a-z0-9_./\-]+)")
+
+
+def r17m_merchants(files, fns):
+    """(summons, kills, problems) from the functions R17M runs, followed through `function`, `schedule function` and
+    `execute ... run function` inside the pack. A summon: {kind, pos (x, y, z floats), block, nbt, file}; a kill of
+    type=cobblemon:npc: (file, centre (x, y, z), radius)."""
+    summons, kills, P, seen = [], [], [], set()
+    todo = list(fns)
+    while todo:
+        fid = todo.pop(0)
+        if fid in seen:
+            continue
+        seen.add(fid)
+        rel = fn_path(fid)
+        if rel not in files:
+            P.append(("staff", "fn:" + fid, "R17M runs %s, which the markets pack does not hold (%s)" % (fid, rel)))
+            continue
+        for n, raw in enumerate(files[rel], 1):
+            s = raw.strip()
+            if not s or s.startswith("#"):
+                continue
+            todo += [m.group(1) for m in CALLS.finditer(s)]
+            m = SUMMON.search(s)
+            if m:
+                x, y, z = (float(m.group(k)) for k in (2, 3, 4))
+                try:
+                    data = snbt(m.group(5)) if m.group(5) else {}
+                except ValueError as e:
+                    P.append(("merchant", "%s:%d:snbt" % (rel, n), "%s line %d: unreadable SNBT (%s)" % (rel, n, e)))
+                    data = {}
+                summons.append({"kind": m.group(1), "pos": (x, y, z), "block": (math.floor(x), math.floor(y),
+                                math.floor(z)), "nbt": data, "file": rel})
+            for sel in re.findall(r"kill @e\[([^\]]*)\]", s):
+                args = dict(a.split("=", 1) for a in sel.split(",") if "=" in a)
+                if args.get("type") == "cobblemon:npc" and all(k in args for k in ("x", "y", "z", "distance")):
+                    r = re.fullmatch(r"\.\.(\d+(?:\.\d+)?)", args["distance"])
+                    if r:
+                        kills.append((rel, (float(args["x"]), float(args["y"]), float(args["z"])), float(r.group(1))))
+    return summons, kills, P
+
+
+def merchant_stall(m, stall_ids, prefix):
+    """The stall id a summon's tags name (prefix_<id>), or None."""
+    tags = m["nbt"].get("Tags") if isinstance(m["nbt"].get("Tags"), list) else []
+    named = [t[len(prefix) + 1:] for t in tags if isinstance(t, str) and t.startswith(prefix + "_")
+             and t[len(prefix) + 1:] in stall_ids]
+    return named[0] if len(named) == 1 else None
+
+
+def same_yaw(a, b):
+    return abs((float(a) - float(b) + 180.0) % 360.0 - 180.0) < 0.01
+
+
+def staff_checks(plazas, markets_doc, npcs, summons=(), kills=()):
+    """Every contract stall staffed exactly once at its keeper_at with its yaw, by a counter's dialogue clerk (an R17M
+    `npc` action) or a stall's merchant (a summon in the functions R17M runs, known by its tag); no stall keeper is a
+    Cobblemon dialogue NPC any more; every keeper stands at a seat or in a declared fallback town; each merchant
+    removes the dialogue keeper it replaces, and that removal reaches no counter clerk."""
     P = []
     cs = contract_stalls(plazas)
-    by_pos = {}
-    for cls, pos, yaw in npcs:
-        by_pos.setdefault(pos, []).append((cls, yaw))
+    prefix = (markets_doc.get("stall_merchant") or {}).get("tag") or "cobblers_stall"
+    stalls = {s["id"]: s for s in markets_doc.get("stalls") or []}
     recs = {}
     for c in markets_doc["counters"]:
         recs["cobblers:npc_market_%s" % c["id"]] = c
-    for s in markets_doc.get("stalls") or []:
+    for s in stalls.values():
         recs["cobblers:npc_stall_%s" % s["id"]] = s
+    keepers = []              # (label, block, yaw, markets record or None, kind)
+    for cls, pos, yaw in npcs:
+        if re.fullmatch(r"cobblers:npc_stall_.+", cls):
+            P.append(("staff", cls + ":dialogue", "R17M still places %s, a Cobblemon dialogue stall keeper (every stall "
+                      "keeper is a CobbleDollars merchant since 2026-10-04)" % cls))
+        keepers.append((cls, tuple(pos), yaw, recs.get(cls), "npc"))
+    per_stall = {}
+    for m in summons:
+        if m["kind"] == "cobblemon:npc":
+            P.append(("staff", "%s:%d,%d,%d:dialogue" % ((m["file"],) + m["block"]), "%s summons a cobblemon:npc at "
+                      "%s" % (m["file"], list(m["block"]))))
+            continue
+        sid = merchant_stall(m, stalls, prefix)
+        label = "merchant %s" % (sid or "%s@%s" % (m["kind"], list(m["block"])))
+        rot = m["nbt"].get("Rotation")
+        yaw = rot[0] if isinstance(rot, list) and rot and isinstance(rot[0], (int, float)) else None
+        keepers.append((label, m["block"], yaw, stalls.get(sid), "merchant"))
+        if sid is None:
+            P.append(("staff", label + ":tag", "%s in %s carries no tag %s_<stall id> naming one stall: %s"
+                      % (label, m["file"], prefix, m["nbt"].get("Tags"))))
+            continue
+        per_stall.setdefault(sid, []).append(m)
+    for sid, s in sorted(stalls.items()):
+        want = 1 if s.get("status") == "sited" else 0
+        got = len(per_stall.get(sid, []))
+        if got != want:
+            P.append(("staff", sid + ":merchants", "stall %s (%s): %d merchant summon(s) carry its tag, not %d"
+                      % (sid, s.get("status"), got, want)))
+    by_pos = {}
+    for k in keepers:
+        by_pos.setdefault(k[1], []).append(k)
     for sid, st in sorted(cs.items()):
         k = tuple(st["keeper_at"][:3])
         here = by_pos.get(k, [])
         if len(here) != 1:
             P.append(("staff", sid, "%s: %d R17M keeper(s) at its keeper_at %s (%s)" % (sid, len(here), list(k),
                                                                                          [h[0] for h in here])))
-        elif here[0][1] != st["keeper_at"][3]:
+        elif here[0][2] is None or not same_yaw(here[0][2], st["keeper_at"][3]):
             P.append(("staff", sid + ":yaw", "%s: its keeper's yaw %s is not the contract's %s"
-                      % (sid, here[0][1], st["keeper_at"][3])))
+                      % (sid, here[0][2], st["keeper_at"][3])))
         else:
-            rec = recs.get(here[0][0])
+            rec = here[0][3]
             if rec is not None and rec.get("sells") is not None and rec.get("sells") != st["sells"]:
                 P.append(("staff", sid + ":sells", "%s: its keeper %s sells %r, the stall's theme is %r"
                           % (sid, rec["id"], rec.get("sells"), st["sells"])))
     seats = {tuple(s["keeper_at"][:3]) for s in cs.values()}
-    for cls, pos, _yaw in npcs:
-        rec = recs.get(cls)
+    for label, pos, _yaw, rec, kind in keepers:
         if rec is None:
-            P.append(("staff", cls, "R17M places %s, which no markets record describes" % cls))
+            if kind == "npc":
+                P.append(("staff", label, "R17M places %s, which no markets record describes" % label))
             continue
         if pos not in seats and rec["town"] not in FALLBACK_TOWNS:
-            P.append(("staff", cls + ":seat", "%s (%s) stands at %s, no contract keeper_at, in %s, not a declared "
-                      "fallback town" % (rec["id"], cls, list(pos), rec["town"])))
+            P.append(("staff", label + ":seat", "%s (%s) stands at %s, no contract keeper_at, in %s, not a declared "
+                      "fallback town" % (rec["id"], label, list(pos), rec["town"])))
+    # the removal is MEANT to take a dialogue stall keeper; it must take no counter clerk
+    clerks = [(cls, pos) for cls, pos, _y in npcs if not re.fullmatch(r"cobblers:npc_stall_.+", cls)]
+    for sid, ms in sorted(per_stall.items()):
+        bx, by, bz = ms[0]["block"]
+        centre = (bx + 0.5, by, bz + 0.5)
+        mine = [(c, r) for _f, c, r in kills if math.dist(c, centre) < 0.01]
+        if not mine:
+            P.append(("staff", sid + ":replaces", "stall %s: no `kill @e[type=cobblemon:npc,...]` centred on its "
+                      "merchant at %s, so the dialogue keeper it replaces stays in the world" % (sid, list(centre))))
+        for c, r in mine:
+            for cls, (nx, ny, nz) in clerks:
+                if math.dist(c, (nx + 0.5, ny, nz + 0.5)) <= r:
+                    P.append(("staff", "%s:kills:%s" % (sid, cls), "stall %s: its removal (radius %s round %s) "
+                              "reaches the counter clerk %s at %s" % (sid, r, list(c), cls, [nx, ny, nz])))
+    return P
+
+
+def merchant_checks(markets_doc, summons):
+    """Each stall merchant as summoned: the CobbleDollars entity, centred on its block, NoAI and PersistenceRequired
+    (a merchant with AI walks off its stall), named as its keeper; and its CobbleMerchantShop equal to its stall's
+    lines: one category, the stall's `category`; one offer per line, Item count 1, Price a whole number that times the
+    line's count is the line's price; no other offer. And no stall line gated (a merchant shows one list to everyone)."""
+    P = []
+    prefix = (markets_doc.get("stall_merchant") or {}).get("tag") or "cobblers_stall"
+    stalls = {s["id"]: s for s in markets_doc.get("stalls") or []}
+    for s in stalls.values():
+        if s.get("status") != "sited":
+            continue
+        for it in s.get("stock") or []:
+            if it.get("gate"):
+                P.append(("shop", "%s:%s:gated" % (s["id"], it["item"]), "stall %s: %s is gated on %r, but its "
+                          "merchant shows every line to every player" % (s["id"], it["item"], it["gate"])))
+    for m in summons:
+        sid = merchant_stall(m, stalls, prefix)
+        if sid is None or m["kind"] == "cobblemon:npc":
+            continue                                   # staff_checks names it
+        s, d, w = stalls[sid], m["nbt"], "merchant " + sid
+        if m["kind"] != MERCHANT_KIND:
+            P.append(("merchant", sid + ":kind", "%s summons %s, not %s" % (w, m["kind"], MERCHANT_KIND)))
+        x, y, z = m["pos"]
+        if x - math.floor(x) != 0.5 or z - math.floor(z) != 0.5 or y != math.floor(y):
+            P.append(("merchant", sid + ":centre", "%s at %s is not centred on its block, feet on a whole y" % (w, [x, y, z])))
+        for flag in ("NoAI", "PersistenceRequired"):
+            if d.get(flag) != 1:
+                P.append(("merchant", "%s:%s" % (sid, flag), "%s: %s is %r, not 1b" % (w, flag, d.get(flag))))
+        try:
+            name = json.loads(d.get("CustomName") or "null")
+            name = name.get("text") if isinstance(name, dict) else name
+        except ValueError:
+            name = d.get("CustomName")
+        if name != (s.get("keeper") or {}).get("name"):
+            P.append(("merchant", sid + ":name", "%s is named %r, its keeper %r" % (w, name, (s.get("keeper") or {}).get("name"))))
+        shop = d.get("CobbleMerchantShop")
+        if not isinstance(shop, list) or len(shop) != 1 or not isinstance(shop[0], dict):
+            P.append(("shop", sid + ":categories", "%s: CobbleMerchantShop is not one category: %r" % (w, shop)))
+            continue
+        cat = shop[0].get("Category")
+        if not s.get("category") or cat != s.get("category"):
+            P.append(("shop", sid + ":category", "%s: category %r, the stall's %r" % (w, cat, s.get("category"))))
+        offers = list(shop[0].get("Offers") or [])
+        for it in s.get("stock") or []:
+            hit = [o for o in offers if isinstance(o, dict) and isinstance(o.get("Item"), dict)
+                   and o["Item"].get("id") == it["item"]]
+            if not hit:
+                P.append(("shop", "%s:%s:missing" % (sid, it["item"]), "%s: no offer for %s" % (w, it["item"])))
+                continue
+            o = hit[0]
+            offers.remove(o)
+            if o["Item"].get("count") != 1:
+                P.append(("shop", "%s:%s:count" % (sid, it["item"]), "%s: %s offered %r at a time, not 1"
+                          % (w, it["item"], o["Item"].get("count"))))
+            p = o.get("Price")
+            if not (isinstance(p, str) and p.isdigit()) or int(p) * int(it["count"]) != int(it["price"]):
+                P.append(("shop", "%s:%s:price" % (sid, it["item"]), "%s: %s at %r each; the line is %s for $%s"
+                          % (w, it["item"], p, it["count"], it["price"])))
+        for o in offers:
+            P.append(("shop", "%s:%s:extra" % (sid, ((o or {}).get("Item") or {}).get("id")), "%s: an offer no stall "
+                      "line has: %r" % (w, o)))
     return P
 
 
@@ -781,7 +1115,9 @@ def curve_checks(markets_doc, towns):
 
 
 # --------------------------------------------------------------------------------------------------------- the run
-def audit(source_root=None, jar_dir=None, vanilla=None, npcs=None):
+def audit(source_root=None, jar_dir=None, vanilla=None, npcs=None, r17m_fns=None, markets_files=None):
+    """npcs/r17m_fns: R17M's `npc` actions and `fn` ids (default: read from R17M); markets_files: {pack path: lines}
+    of the markets pack (default: build/datapacks/cobblers_markets, else markets.build() in memory)."""
     import ground as G
     import terrain as T
     plazas = load(ROOT / "data" / "plaza_centres.json")
@@ -823,11 +1159,22 @@ def audit(source_root=None, jar_dir=None, vanilla=None, npcs=None):
                                          "anchors": len(geo.anchors), "buildings": len(geo.footprints),
                                          "sign": bool(geo.sign)}}
     if npcs is None:
-        npcs, src = r17m_list()
+        npcs, fns, src = r17m_list()
     else:
-        src = "given"
-    notes.append("R17M keepers (%d) from %s" % (len(npcs), src))
-    P += staff_checks(plazas, mk, npcs)
+        fns, src = (r17m_fns or []), "given"
+    if markets_files is None:
+        markets_files, msrc = pack_files(), str(MARKETS_PACK)
+        if markets_files is None:
+            import markets
+            built, _n = markets.build(markets.load())
+            markets_files = {k: v for k, v in built.items() if isinstance(v, list)}
+            msrc = "markets.build() in memory (no %s: python tools/markets.py build)" % MARKETS_PACK
+    else:
+        msrc = "given"
+    summons, kills, fp = r17m_merchants(markets_files, fns)
+    notes.append("R17M dialogue clerks (%d) from %s; merchant summons (%d) from %s, following %s"
+                 % (len(npcs), src, len(summons), msrc, fns))
+    P += fp + staff_checks(plazas, mk, npcs, summons, kills) + merchant_checks(mk, summons)
     ids, jn = jar_index(vanilla, jar_dir)
     notes += jn
     ip, unchecked = item_checks(mk, spawn, ids)

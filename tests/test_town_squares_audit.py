@@ -7,7 +7,8 @@ built R13 functions; they skip, naming the command, when build/ or derived/ has 
 tests change the GENERATORS (tools/plaza_centre.py, tools/markets.py) with the data untouched, and require the audit
 to see what the builders' own checks do not.
 
-Not covered here (runtime): an NPC spawning, staying and facing; a purchase; real light and pathfinding.
+Not covered here (runtime): an NPC or merchant spawning, staying and facing; a purchase through the merchant's
+screen; the old dialogue keeper actually being removed; real light and pathfinding.
 """
 from __future__ import annotations
 
@@ -98,27 +99,46 @@ def test_light_rule_one_lantern_on_a_row_of_31_cells_leaves_16_dark():
 
 # ------------------------------------------------------------------------------------------------- stalls, by hand
 def _stall_model():
-    # a counter at (5, 1, 5), customers to the south, the keeper at (5, 1, 4): feet and head cleared, floor at y0
-    return {(5, 1, 5): "minecraft:stripped_oak_log[axis=x]", (5, 1, 4): "minecraft:air", (5, 2, 4): "minecraft:air"}
+    # a tent's table at (5, 1, 5), customers to the south: the keeper in the open front at (5, 1, 6), feet and head
+    # cleared, a lantern over the head at y3; the customer at (5, 1, 7); floor at y0
+    return {(5, 1, 5): "minecraft:spruce_slab[type=top]", (5, 1, 6): "minecraft:air", (5, 2, 6): "minecraft:air",
+            (5, 3, 6): "minecraft:lantern[hanging=true]"}
 
 
-STALL = {"id": "t_stall_1", "at": [5, 1, 5], "facing": "south", "keeper_at": [5, 1, 4, 0], "sells": "fish"}
+STALL = {"id": "t_stall_1", "at": [5, 1, 5], "facing": "south", "keeper_at": [5, 1, 6, 0], "sells": "fish"}
 
 
-def test_stall_checks_pass_a_good_stall_and_name_each_fault():
-    # Without it a keeper inside a post, on no floor, or with its back to the counter would pass.
+def test_stall_checks_pass_an_open_tent_and_name_each_fault():
+    # Without it a keeper behind the table, inside a post, on no floor, turned to the table, or with a block between
+    # it and the customer would pass (the owner, 2026-10-04: "the stalls all block the villager from access").
     geo = FlatGeo((0, 0, 10, 10))
-    assert A.stall_checks("t", {"stalls": [STALL]}, geo, _stall_model()) == []
+    keys = lambda st, m, g=geo: [p[1] for p in A.stall_checks("t", {"stalls": [st]}, g, m)]
+    assert keys(STALL, _stall_model()) == []
     m = _stall_model()
     del m[(5, 1, 5)]
-    assert [p[1] for p in A.stall_checks("t", {"stalls": [STALL]}, geo, m)] == ["t_stall_1:counter"]
+    assert keys(STALL, m) == ["t_stall_1:counter"]
     m = _stall_model()
-    m[(5, 2, 4)] = "minecraft:oak_slab[type=bottom]"
-    assert [p[1] for p in A.stall_checks("t", {"stalls": [STALL]}, geo, m)] == ["t_stall_1:air1"]
-    bad_yaw = dict(STALL, keeper_at=[5, 1, 4, 180])          # yaw 180 looks north, away from the counter
-    assert [p[1] for p in A.stall_checks("t", {"stalls": [bad_yaw]}, geo, _stall_model())] == ["t_stall_1:yaw"]
-    assert [p[1] for p in A.stall_checks("t", {"stalls": [STALL]}, FlatGeo((0, 0, 10, 10), y=-3), _stall_model())] \
-        == ["t_stall_1:floor"]
+    m[(5, 2, 6)] = "minecraft:oak_slab[type=bottom]"
+    assert keys(STALL, m) == ["t_stall_1:air1"]
+    # yaw 180 looks north, at the table and away from the customers
+    assert keys(dict(STALL, keeper_at=[5, 1, 6, 180]), _stall_model()) == ["t_stall_1:yaw"]
+    assert keys(STALL, _stall_model(), FlatGeo((0, 0, 10, 10), y=-3)) == ["t_stall_1:floor", "t_stall_1:customer_floor"]
+    # the old booth: keeper behind the table, facing it -- wrong side AND wrong way; its customer cell is the table
+    m = _stall_model()
+    m.update({(5, 1, 4): "minecraft:air", (5, 2, 4): "minecraft:air"})
+    assert keys(dict(STALL, keeper_at=[5, 1, 4, 0]), m) == ["t_stall_1:front", "t_stall_1:customer0"]
+    m = _stall_model()
+    m[(5, 1, 7)] = "minecraft:spruce_fence"                   # a post between the customer and the keeper
+    assert keys(STALL, m) == ["t_stall_1:customer0"]
+    m = _stall_model()
+    m[(5, 1, 7)] = "minecraft:red_carpet"                     # a carpet is walked over
+    assert keys(STALL, m) == []
+
+
+def test_the_customer_cell_is_two_steps_out_on_the_customers_side():
+    # Without it the reach check would walk to the keeper's cell and call the stall served.
+    for facing, want in (("south", (5, 7)), ("north", (5, 3)), ("east", (7, 5)), ("west", (3, 5))):
+        assert A.customer_cell(dict(STALL, facing=facing)) == want
 
 
 def test_yaw_convention_is_minecrafts():
@@ -193,15 +213,106 @@ def test_item_rule_reads_the_block_an_item_puts_down_and_what_it_grows():
     assert [p[1] for p in P] == ["s:minecraft:pumpkin_seeds:exists"]
 
 
-def test_staffing_names_an_unstaffed_stall_a_double_and_a_stray_keeper():
-    # Without it a stall could stand empty, or two keepers share one spot, or a keeper stand off every stall.
-    plazas = {"towns": {"t": {"stalls": [dict(STALL), dict(STALL, id="t_stall_2", keeper_at=[9, 1, 9, 0])]}}}
-    mk = {"counters": [{"id": "a", "town": "t"}, {"id": "b", "town": "t"}],
-          "stalls": [{"id": "c", "town": "t", "sells": "fish"}, {"id": "d", "town": "northlight"}]}
-    npcs = [("cobblers:npc_market_a", (5, 1, 4), 0), ("cobblers:npc_market_b", (5, 1, 4), 0),
-            ("cobblers:npc_stall_c", (1, 1, 1), 0), ("cobblers:npc_stall_d", (2, 2, 2), 0)]
-    keys = sorted(p[1] for p in A.staff_checks(plazas, mk, npcs))
-    assert keys == ["cobblers:npc_stall_c:seat", "t_stall_1", "t_stall_2"]
+def _summon(stall_id, x, y, z, yaw=0.0, kind="cobbledollars:cobble_merchant", name="Fisher", shop=None):
+    shop = shop or '[{Category:"Fish",Offers:[{Item:{count:1,id:"minecraft:cod"},Price:"20"}]}]'
+    return ('summon %s %s.5 %s %s.5 {CustomName:"{\\"text\\": \\"%s\\"}",CobbleMerchantShop:%s,NoAI:1b,'
+            'PersistenceRequired:1b,Rotation:[%sf,0.0f],Tags:["cobblers_stall","cobblers_stall_%s","cobblers_stall_new"]}'
+            % (kind, x, y, z, name, shop, yaw, stall_id))
+
+
+def _kill(x, y, z, r=2.5):
+    return "execute if entity @e[tag=a] run kill @e[type=cobblemon:npc,x=%d.5,y=%d,z=%d.5,distance=..%s]" % (x, y, z, r)
+
+
+MK = {"counters": [{"id": "a", "town": "t"}, {"id": "b", "town": "t"}],
+      "stall_merchant": {"tag": "cobblers_stall"},
+      "stalls": [{"id": "c", "town": "t", "sells": "fish", "status": "sited", "category": "Fish",
+                  "keeper": {"name": "Fisher"},
+                  "stock": [{"item": "minecraft:cod", "count": 4, "price": 80, "gate": None}]},
+                 {"id": "d", "town": "northlight", "sells": "fish", "status": "sited", "category": "Fish",
+                  "keeper": {"name": "Fisher"},
+                  "stock": [{"item": "minecraft:cod", "count": 4, "price": 80, "gate": None}]}]}
+
+
+def _staff(npcs, lines, plazas=None):
+    plazas = plazas or {"towns": {"t": {"stalls": [dict(STALL), dict(STALL, id="t_stall_2", keeper_at=[9, 1, 9, 0])]}}}
+    files = {"data/cobblers/function/stalls/merchants/all.mcfunction": ["function cobblers:stalls/merchants/t"],
+             "data/cobblers/function/stalls/merchants/t.mcfunction":
+                 ["schedule function cobblers:stalls/merchants/t_place 40t replace"],
+             "data/cobblers/function/stalls/merchants/t_place.mcfunction": lines}
+    summons, kills, fp = A.r17m_merchants(files, ["cobblers:stalls/merchants/all"])
+    assert fp == []
+    return sorted(p[1] for p in A.staff_checks(plazas, MK, npcs, summons, kills)), summons
+
+
+def test_staffing_counts_clerks_and_merchants_and_names_each_fault():
+    # Without it a stall could stand empty, two keepers share one spot, a keeper stand off every stall, a dialogue
+    # stall keeper survive the merchants, or a merchant's removal of the old keeper miss it or take a counter clerk.
+    good = [_summon("c", 9, 1, 9), _kill(9, 1, 9), _summon("d", 2, 2, 2), _kill(2, 2, 2)]
+    clerk = [("cobblers:npc_market_a", (5, 1, 6), 0)]
+    assert _staff(clerk, good)[0] == []
+    # two clerks on one seat, the second merchant nowhere
+    keys, _s = _staff(clerk + [("cobblers:npc_market_b", (5, 1, 6), 0)], good[2:])
+    assert keys == ["c:merchants", "t_stall_1", "t_stall_2"]
+    # a Cobblemon dialogue stall keeper still placed by R17M, beside the merchant on its seat
+    keys, _s = _staff(clerk + [("cobblers:npc_stall_c", (9, 1, 9), 0)], good)
+    assert keys == ["cobblers:npc_stall_c:dialogue", "t_stall_2"]
+    # a merchant off every seat in a town that is not a declared fallback; and one with no removal of the old keeper
+    keys, _s = _staff(clerk, [_summon("c", 1, 1, 1), _summon("d", 2, 2, 2), _kill(2, 2, 2)])
+    assert keys == ["c:replaces", "merchant c:seat", "t_stall_2"]
+    # a removal wide enough to reach the clerk at (5, 1, 6) from (9, 1, 9): 5.0 blocks centre to centre
+    keys, _s = _staff(clerk, [_summon("c", 9, 1, 9), _kill(9, 1, 9, 5), _summon("d", 2, 2, 2), _kill(2, 2, 2)])
+    assert keys == ["c:kills:cobblers:npc_market_a"]
+    # turned the wrong way on its seat
+    keys, _s = _staff(clerk, [_summon("c", 9, 1, 9, yaw=90.0), _kill(9, 1, 9), _summon("d", 2, 2, 2), _kill(2, 2, 2)])
+    assert keys == ["t_stall_2:yaw"]
+
+
+def test_snbt_reader_by_hand():
+    # Without it the merchant's shop could be misread and every shop check would compare the wrong numbers.
+    v = A.snbt('{a:1b, "b k":[1.5f,-2],c:"x\\"y",d:{e:[]},f:[I;1,2],g:bare,h:\'q\'}')
+    assert v == {"a": 1, "b k": [1.5, -2], "c": 'x"y', "d": {"e": []}, "f": [1, 2], "g": "bare", "h": "q"}
+    for bad in ('{a:1', '{a 1}', '[1,2', '{a:1}}'):
+        with pytest.raises(ValueError):
+            A.snbt(bad)
+
+
+def test_merchant_shop_must_equal_its_stalls_lines():
+    # Without it a merchant could sell at the wrong price, the wrong item, a bulk count, a gated line to everyone, or
+    # under no category, and nothing would compare its shop with data/markets.json.
+    def run(line, mk=MK):
+        summons, _k, _p = A.r17m_merchants({"data/x/function/f.mcfunction": [line]}, ["x:f"])
+        return sorted(p[1] for p in A.merchant_checks(mk, summons))
+    assert run(_summon("c", 9, 1, 9)) == []
+    # $80 for 4 cod is 20 each: 40 each is wrong
+    assert run(_summon("c", 9, 1, 9, shop='[{Category:"Fish",Offers:[{Item:{count:1,id:"minecraft:cod"},Price:"40"}]}]')) \
+        == ["c:minecraft:cod:price"]
+    assert run(_summon("c", 9, 1, 9, shop='[{Category:"Fish",Offers:[{Item:{count:4,id:"minecraft:cod"},Price:"20"}]}]')) \
+        == ["c:minecraft:cod:count"]
+    assert run(_summon("c", 9, 1, 9, shop='[{Category:"Fish",Offers:[{Item:{count:1,id:"minecraft:salmon"},Price:"20"}]}]')) \
+        == ["c:minecraft:cod:missing", "c:minecraft:salmon:extra"]
+    assert run(_summon("c", 9, 1, 9, shop='[{Category:"Fowl",Offers:[{Item:{count:1,id:"minecraft:cod"},Price:"20"}]}]')) \
+        == ["c:category"]
+    assert run(_summon("c", 9, 1, 9, shop='[]')) == ["c:categories"]
+    assert run(_summon("c", 9, 1, 9, kind="minecraft:villager", name="Bob")) == ["c:kind", "c:name"]
+    assert run(_summon("c", 9, 1, 9).replace("NoAI:1b", "NoAI:0b")) == ["c:NoAI"]
+    gated = json.loads(json.dumps(MK))
+    gated["stalls"][0]["stock"][0]["gate"] = "badge_1"
+    assert run(_summon("c", 9, 1, 9), gated) == ["c:minecraft:cod:gated"]
+    gated["stalls"][0]["category"] = ""
+    assert "c:category" in run(_summon("c", 9, 1, 9), gated)
+
+
+def test_r17m_merchants_follows_calls_and_names_a_missing_function():
+    # Without it a merchant summoned from a scheduled function would be invisible, or a function R17M names but the
+    # pack lacks would read as "no merchants" rather than a fault.
+    files = {"data/a/function/x.mcfunction": ["execute if score s o matches 1 run function a:y", "function a:x"],
+             "data/a/function/y.mcfunction": ["schedule function a:z 10t append", _summon("c", 1, 2, 3)],
+             "data/a/function/z.mcfunction": [_kill(1, 2, 3), "function a:gone"]}
+    summons, kills, P = A.r17m_merchants(files, ["a:x"])
+    assert [m["block"] for m in summons] == [(1, 2, 3)] and summons[0]["nbt"]["Rotation"] == [0.0, 0.0]
+    assert kills == [("data/a/function/z.mcfunction", (1.5, 2.0, 3.5), 2.5)]
+    assert [p[1] for p in P] == ["fn:a:gone"]
 
 
 def test_every_stall_keepers_theme_word_has_a_vocabulary():
@@ -298,6 +409,18 @@ def _npcs():
     return [(a[2], tuple(a[1]), a[3]) for a in markets.npc_placements(doc) + markets.stall_placements(doc)]
 
 
+def _markets_files():
+    """The markets pack as tools/markets.py emits it now (with whatever mutation is patched in): {path: lines}."""
+    import markets
+    built, _n = markets.build(markets.load())
+    return {k: v for k, v in built.items() if isinstance(v, list)}
+
+
+def _r17m_fns():
+    import markets
+    return ["cobblers:markets/load", markets.MERCHANTS_FN]
+
+
 @need_build
 def test_mutation_a_stall_built_without_its_counter_is_caught(tmp_path, monkeypatch, capsys):
     # Without it the audit could be reading the record instead of the blocks, and agree with a stall that has no front.
@@ -310,7 +433,7 @@ def test_mutation_a_stall_built_without_its_counter_is_caught(tmp_path, monkeypa
         return p
     monkeypatch.setitem(P.PIECES, "stall", no_counter)
     _build_into(tmp_path, monkeypatch)
-    res = A.audit(None, None, None, npcs=_npcs())
+    res = A.audit(None, None, None, npcs=_npcs(), r17m_fns=_r17m_fns(), markets_files=_markets_files())
     caught = {k for c, k, _m in res["problems"] if c == "stall" and k.endswith(":counter")}
     n = sum(len(t["stalls"]) for t in A.load(ROOT / "data" / "plaza_centres.json")["towns"].values())
     assert len(caught) == n == 43
@@ -333,21 +456,78 @@ def test_mutation_lanterns_swapped_for_chains_that_the_builder_counts_as_light_i
     monkeypatch.setattr(P, "lights_of", lambda blocks: orig_lights(blocks) + [
         (x, y, z) for x, y, z, s in blocks if s.startswith("minecraft:chain")])
     _build_into(tmp_path, monkeypatch)
-    res = A.audit(None, None, None, npcs=_npcs())
+    res = A.audit(None, None, None, npcs=_npcs(), r17m_fns=_r17m_fns(), markets_files=_markets_files())
     dark = {k for c, k, _m in res["problems"] if c == "light"}
     assert len(dark) >= 3, dark
 
 
-@need_build
-def test_mutation_markets_seating_shifted_one_block_is_caught(monkeypatch):
-    # Without it a keeper standing inside a stall's post, or in front of the counter, would be reported as staffed.
+def _staffing(markets_files):
+    plazas, mk = A.load(ROOT / "data" / "plaza_centres.json"), A.load(ROOT / "data" / "markets.json")
+    summons, kills, fp = A.r17m_merchants(markets_files, _r17m_fns())
+    return fp + A.staff_checks(plazas, mk, _npcs(), summons, kills) + A.merchant_checks(mk, summons)
+
+
+def test_the_committed_markets_staff_every_stall_once_and_every_shop_matches():
+    # Without it the mutations below could be "caught" by an audit that fails on the unmutated generator too.
+    # Needs no build/: the markets pack is emitted in memory, the expectations are data/.
+    assert _staffing(_markets_files()) == []
+
+
+def test_mutation_merchant_seated_at_the_table_facing_it_is_caught(monkeypatch):
+    # Without it a merchant standing in the tent's table, turned from its customers (the old booth's convention), would
+    # be reported as staffed: tools/markets.py's own merchant_problems reads the seat through position(), so it passes.
     import markets
     orig = markets.position
 
-    def shifted(rec, plazas):
+    def at_the_table(rec, plazas):
         at, yaw, src = orig(rec, plazas)
-        return ([at[0] + 1, at[1], at[2]] if at else at), yaw, src
-    monkeypatch.setattr(markets, "position", shifted)
-    P = A.staff_checks(A.load(ROOT / "data" / "plaza_centres.json"), A.load(ROOT / "data" / "markets.json"), _npcs())
+        if src != "contract":
+            return at, yaw, src
+        st = plazas[rec["stall"]]
+        return [int(v) for v in st["at"]], (yaw + 180 if yaw <= 0 else yaw - 180), src     # turned to face the table
+    monkeypatch.setattr(markets, "position", at_the_table)
+    files = _markets_files()
+    doc = markets.load()
+    assert markets.merchant_problems(doc, files, markets.load_plazas()) == []      # the builder's check passes it
+    P = _staffing(files)
     unstaffed = {k for _c, k, _m in P if k.count("_stall_") == 1 and ":" not in k}
     assert len(unstaffed) == 43
+
+
+def test_mutation_merchant_price_doubled_is_caught(monkeypatch):
+    # Without it a merchant could charge twice its stall's price and the squares' audit would not read its shop.
+    # (tools/markets.py's own merchant_problems catches this one too; this proves MY reader reads the summon's text.)
+    import markets
+    orig = markets.merchant_shop
+
+    def doubled(stall):
+        shop = orig(stall)
+        for cat in shop:
+            for o in cat["Offers"]:
+                o["Price"] = str(2 * int(o["Price"]))
+        return shop
+    monkeypatch.setattr(markets, "merchant_shop", doubled)
+    P = _staffing(_markets_files())
+    mk = A.load(ROOT / "data" / "markets.json")
+    lines = sum(len(s["stock"]) for s in mk["stalls"] if s.get("status") == "sited")
+    assert {k for c, k, _m in P} == {k for c, k, _m in P if c == "shop" and k.endswith(":price")}
+    assert len(P) == lines > 0
+
+
+@need_build
+def test_mutation_tent_built_without_clearing_its_footprint_is_caught(tmp_path, monkeypatch):
+    # Without it a tent built over the old booth would leave the booth's counter log in the keeper's cell (the reason
+    # eb71af2 clears the footprint) and the audit would not see it: the builder checks its piece, not the function.
+    import re
+    import plaza_centre as P
+    orig = P.plan_town
+
+    def no_clear(*a, **k):
+        cmds, report = orig(*a, **k)
+        return [c for c in cmds if not re.fullmatch(r"fill(?: -?\d+){6} minecraft:air", c)], report
+    monkeypatch.setattr(P, "plan_town", no_clear)
+    _build_into(tmp_path, monkeypatch)
+    res = A.audit(None, None, None, npcs=_npcs(), r17m_fns=_r17m_fns(), markets_files=_markets_files())
+    caught = {k.rsplit(":", 1)[0] for c, k, _m in res["problems"] if c == "stall" and k.endswith(":air0")}
+    n = sum(len(t["stalls"]) for t in A.load(ROOT / "data" / "plaza_centres.json")["towns"].values())
+    assert len(caught) == n == 43
