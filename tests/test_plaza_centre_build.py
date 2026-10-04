@@ -71,12 +71,14 @@ def test_square_is_the_plans_plaza(town):
 
 
 @pytest.mark.parametrize("town", sorted(DATA["towns"]))
-def test_keeper_behind_the_counter_facing_the_customers(town):
+def test_keeper_in_front_of_the_table_facing_the_customers(town):
+    """2026-10-04, the owner: "the stalls all block the villager from access". The keeper stands at the tent's open
+    front, in front of the table on the customers' side, not behind a counter."""
     for s in DATA["towns"][town]["stalls"]:
         dx, dz = STEP[s["facing"]]
         kx, ky, kz, yaw = s["keeper_at"]
-        assert (kx, kz) == (s["at"][0] - dx, s["at"][2] - dz), "%s: keeper not behind the counter" % s["id"]
-        assert ky == s["at"][1], "%s: keeper's feet not level with the counter" % s["id"]
+        assert (kx, kz) == (s["at"][0] + dx, s["at"][2] + dz), "%s: keeper not in front of the table" % s["id"]
+        assert ky == s["at"][1], "%s: keeper's feet not level with the table" % s["id"]
         assert yaw == YAW[s["facing"]], "%s: keeper does not face the customers" % s["id"]
         if DATA["towns"][town].get("on_plaza", True):
             assert ky == DATA["towns"][town]["square"]["y"] + 1, "%s: keeper not standing on the square" % s["id"]
@@ -230,6 +232,65 @@ def test_square_reachable_from_the_centre_and_mart_doors(built, town):
                 assert ring & seen, "%s: %s not reached from the %s" % (town, p["id"], role)
 
 
+def _voxels(cmds):
+    """{(x, y, z): state} the function leaves, from its own lines: every setblock and every unfiltered fill applied in
+    order. A `replace #minecraft:replaceable` fill clears only plants, which this model does not hold, so it is skipped."""
+    model = {}
+    for c in cmds:
+        m = re.match(r"setblock (-?\d+) (-?\d+) (-?\d+) (\S+)$", c)
+        if m:
+            model[(int(m.group(1)), int(m.group(2)), int(m.group(3)))] = m.group(4)
+            continue
+        m = re.match(r"fill (-?\d+) (-?\d+) (-?\d+) (-?\d+) (-?\d+) (-?\d+) (\S+)(.*)$", c)
+        if m and not m.group(8).strip():
+            v = [int(m.group(i)) for i in range(1, 7)]
+            for x in range(min(v[0], v[3]), max(v[0], v[3]) + 1):
+                for y in range(min(v[1], v[4]), max(v[1], v[4]) + 1):
+                    for z in range(min(v[2], v[5]), max(v[2], v[5]) + 1):
+                        model[(x, y, z)] = m.group(7)
+    return model
+
+
+def _clear(state):
+    return state is None or P.block_name(state) == "minecraft:air"
+
+
+@needs_inputs
+@pytest.mark.parametrize("town", sorted(DATA["towns"]))
+def test_every_keeper_reached_face_to_face_from_the_aisle(built, town):
+    """The owner, 2026-10-04: "the stalls all block the villager from access". For every stall, from the function's
+    own blocks (not the builder's columns): the customer's cell is the keeper's next cell towards the customers'
+    side, on the keeper's floor; neither cell holds a block at feet or head height (a carpet underfoot is allowed the
+    customer, never the keeper); and the customer's cell is walked to from the Centre's door over the square, through
+    every column the function leaves clear at standing height. So a player stands adjacent to the keeper, face to face,
+    with no block between."""
+    cmds, report, t = built[town]
+    model = _voxels(cmds)
+    walls = set()
+    for (x, y, z), s in model.items():
+        if _clear(s) or P.block_name(s).endswith("_carpet"):
+            continue
+        if t.floor_at(x, z) < y <= t.floor_at(x, z) + 2:
+            walls.add((x, z))
+    front = next(d["front"] for d in t.doors.values() if d["role"] == "pokecenter")
+    seen = _walk(t, front, walls)
+    for p in report["pieces"]:
+        if p["kind"] != "stall":
+            continue
+        kx, ky, kz, yaw = p["keeper_at"]
+        dx, dz = STEP[p["facing"]]
+        cx, cz = kx + dx, kz + dz
+        assert (kx, kz) not in walls, "%s: the keeper's own cell is walled" % p["id"]
+        assert t.floor_at(cx, cz) + 1 == ky, "%s: the customer's cell %s is not on the keeper's floor" % (p["id"], (cx, cz))
+        for y in (ky, ky + 1):
+            assert _clear(model.get((kx, y, kz))), "%s: %s at the keeper's %s" % (p["id"], model.get((kx, y, kz)), y - ky)
+            s = model.get((cx, y, cz))
+            assert _clear(s) or P.block_name(s).endswith("_carpet"), \
+                "%s: %s between the keeper and the customer at %s" % (p["id"], s, (cx, y, cz))
+        assert (cx, cz) in seen, "%s: the customer's cell %s is not walked to from the Centre's door" % (p["id"], (cx, cz))
+        assert yaw == YAW[p["facing"]], "%s: the keeper does not face the customer" % p["id"]
+
+
 @needs_inputs
 @pytest.mark.parametrize("town", sorted(DATA["towns"]))
 def test_function_writes_exactly_the_model(built, town):
@@ -275,6 +336,25 @@ def test_mutation_keeper_moved_in_the_piece_is_refused(monkeypatch):
 
 
 @needs_inputs
+@pytest.mark.parametrize("cell, why", [((0, -1), "open cell"), ((0, -2), "between keeper and customer")])
+def test_mutation_a_ware_in_the_keepers_face_is_refused(monkeypatch, cell, why):
+    """The old booth's fault, put back in the GENERATOR (data untouched): a ware at head height in the keeper's own
+    cell, or in the customer's cell in front of it. The build must refuse both. The mask is switched off so that it is
+    the face-to-face rule that refuses, not a desire line the customer's cell happens to lie on."""
+    import ground as G
+    real = P.piece_stall
+    monkeypatch.setattr(P.Town, "blocked", lambda self, x, z, flush=False: None)
+
+    def blocked(town, spec, goods):
+        p = real(town, spec, goods)
+        p.put(cell[0], 1, cell[1], "minecraft:barrel[facing=up]")
+        return p
+    monkeypatch.setitem(P.PIECES, "stall", blocked)
+    with pytest.raises(SystemExit, match=why):
+        P.plan_town("gym1_town", DATA["towns"]["gym1_town"], DOC, G.Ground(), P.refs_of(), DATA)
+
+
+@needs_inputs
 def test_mutation_mask_off_is_caught_here(monkeypatch):
     """Switch the builder's mask off and seat a stall on a street: the build cannot see it, and the plan check here
     (which shares nothing with the mask) does."""
@@ -286,7 +366,7 @@ def test_mutation_mask_off_is_caught_here(monkeypatch):
     sx, sz = sorted(c for c in streets if 6181 <= c[0] <= 6211 and 3390 <= c[1] <= 3400)[0]
     st = rec["stalls"][0]
     y = rec["square"]["y"] + 1
-    st.update(at=[sx, y, sz + 1], facing="south", keeper_at=[sx, y, sz, 0])
+    st.update(at=[sx, y, sz + 1], facing="south", keeper_at=[sx, y, sz + 2, 0])
     try:
         _cmds, report = P.plan_town(town, rec, DOC, G.Ground(), P.refs_of(), DATA)
     except SystemExit as e:

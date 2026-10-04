@@ -31,9 +31,12 @@ THE CONTRACT (with the trader builder; do not rename):
   data/plaza_centres.json towns.<town>.square = {"rect": [x0, z0, x1, z1], "y": <floor>, "centrepiece": [x, y, z]}
   towns.<town>.stalls = [{"id": "<town>_stall_<n>", "at": [x, y, z], "facing": "north|south|east|west",
                           "keeper_at": [x, y, z, yaw], "sells": "<theme word>"}]
-  `at` is the counter's middle block; `facing` is the side the customers stand on; `keeper_at` is where the keeper's
-  FEET go: the block under it is the square's floor, it and the block above it are air, it is behind the counter and
-  the yaw faces the customers (Minecraft yaw: 0 south, 90 west, 180 north, -90 east). `y` in `at` is the counter
+  `at` is the tent's table, its middle block; `facing` is the side the customers stand on; `keeper_at` is where the
+  keeper's FEET go: the block under it is the square's floor, it and the block above it are air, it is IN FRONT of the
+  table on the customers' side (at + step(facing), the tent's open front: 2026-10-04, the owner, "the stalls all block
+  the villager from access"; until then it was behind a counter) and the yaw faces the customers (Minecraft yaw: 0
+  south, 90 west, 180 north, -90 east). The customer's cell is the next one out (at + 2 step(facing)), face to face
+  with the keeper with nothing between, and the build refuses a stall where it is not. `y` in `at` is the table
   block's y, which is the keeper's feet y. The build recomputes all of it from the piece and REFUSES on any drift, so
   the record cannot say one thing while the function builds another.
 
@@ -423,6 +426,7 @@ class Piece:
         self.flush = flush
         self.keeper = None
         self.customer = None
+        self.open = set()          # local cells under the piece a player walks through (nothing at feet or head)
 
     def put(self, x, dy, z, state):
         self.blocks.append((x, dy, z, state))
@@ -437,30 +441,53 @@ def pal(town, spec, key, default):
 
 
 def piece_stall(town, spec, goods):
-    """A market stall, 3 by 3: the counter at the front with the goods on it, a keeper's cell behind it between the back
-    posts, the stock stacked at the back, a slab roof under an awning, and a lantern hanging over the counter."""
+    """A market tent, 3 by 3, after Slateport's market (the owner, 2026-10-04: "the stalls all block the villager from
+    access ... more like pokemon ... slateport where there is a tent with wares"). Local frame, the customers' side to
+    the front (-z), the origin the table's middle (`at`):
+
+        front row  z=-1   post  KEEPER  post     the keeper stands in the open front, in front of the table
+        table row  z= 0   ware  WARE    ware     a low table (top slabs, or the palette's `counter`), a ware on each
+        back row   z=+1   post  crate   post
+
+    Four slim fence posts at the corners, three blocks high; a lantern on a chain from the ridge over the keeper's
+    head (the old booth's lantern cell exactly, so the squares' light plan and their lamp posts hold unchanged; a lantern
+    on each front post doubled Pallet's lamp post); a peaked canopy over the posts: eaves of the
+    stall's colour (the `awning` carpet's terracotta, the carpet laid on top) on the two sides and a canvas ridge
+    (`canvas`, default white terracotta) one block higher down the middle. Wool, concrete and
+    white carpet would read brighter and are spawn-condition blocks (data/spawn_blocks.json), so the canvas is
+    terracotta. Nothing stands between the keeper and the customer: the customer's cell is the one in front of the
+    keeper, both clear at feet and head, and the keeper's own cell is open under the canopy (`open`), so the walk
+    reaches it."""
     p = Piece()
     wood = pal(town, spec, "wood", "spruce")
-    counter = pal(town, spec, "counter", "minecraft:stripped_%s_log[axis=x]" % wood)
+    table = pal(town, spec, "counter", "minecraft:%s_slab[type=top]" % wood)
     post = "minecraft:%s_fence" % wood
-    roof = "minecraft:%s_slab[type=bottom]" % wood
     awning = spec.get("awning") or pal(town, spec, "awning", "minecraft:red_carpet")
+    m = re.fullmatch(r"minecraft:([a-z_]+)_carpet", block_name(awning))
+    if not m:
+        raise SystemExit("%s: awning %r is not a carpet (the tent's eaves take the carpet's colour)" % (spec["id"], awning))
+    eave = spec.get("eave") or pal(town, spec, "eave", "minecraft:%s_terracotta" % m.group(1))
+    canvas = spec.get("canvas") or pal(town, spec, "canvas", "minecraft:white_terracotta")
     g = goods[spec["sells"]]
-    for x in (-1, 0, 1):
-        p.put(x, 0, 0, counter)
-        for z in (0, 1, 2):
-            p.put(x, 3, z, roof)
-            p.put(x, 4, z, awning)
-    p.put(0, 1, 0, g["counter"][0])
-    p.put(0, 2, 0, "minecraft:lantern[hanging=true]")
     for x in (-1, 1):
-        p.column(x, 0, 1, 2, post)                     # the front posts stand on the counter's ends
-        p.column(x, 1, 0, 2, post)                     # the back posts from the floor, either side of the keeper
-    for i, x in enumerate((-1, 0, 1)):
-        p.put(x, 0, 2, g["stock"][i % len(g["stock"])])
-    p.put(-1, 1, 2, g["stock"][-1])
-    p.keeper = (0, 1)
-    p.customer = (0, -1)
+        for z in (-1, 1):
+            p.column(x, z, 0, 2, post)                 # the four posts, slim, from the floor
+        for z in (-1, 0, 1):
+            p.put(x, 3, z, eave)                       # the eaves on the posts, the stall's colour
+            p.put(x, 4, z, awning)
+    for z in (-1, 0, 1):
+        p.put(0, 4, z, canvas)                         # the ridge, a block above the eaves: the peak
+    for x in (-1, 0, 1):
+        p.put(x, 0, 0, table)                          # the low table across the middle
+    p.put(0, 1, 0, g["counter"][0])                    # the stall's own ware in the middle of the table
+    p.put(-1, 1, 0, g["stock"][0])
+    p.put(1, 1, 0, g["stock"][1 % len(g["stock"])])
+    p.put(0, 0, 1, g["stock"][-1])                     # a crate of stock behind the table, between the back posts
+    p.put(0, 3, -1, "minecraft:chain[axis=y]")         # the lantern on a chain from the ridge at the open front,
+    p.put(0, 2, -1, "minecraft:lantern[hanging=true]") # over the keeper's head: the old booth's lantern cell exactly
+    p.keeper = (0, -1)
+    p.customer = (0, -2)
+    p.open = {(0, -1)}
     return p
 
 
@@ -820,6 +847,14 @@ def seat(town, rec, spec, goods):
         if loc is not None:
             tx, tz = turn_xz(loc[0], loc[1], facing)
             out[key] = (ox + tx, oz + tz)
+    # an open cell is walked through: the piece must leave its feet and head clear (a canopy above is allowed)
+    out["open"] = set()
+    for lx, lz in piece.open:
+        tx, tz = turn_xz(lx, lz, facing)
+        c = (ox + tx, oz + tz)
+        if any((x, z) == c and dy in (0, 1) and not block_name(s).endswith("_carpet") for x, dy, z, s in world):
+            raise SystemExit("%s/%s: its open cell %s has a block at feet or head height" % (town.settlement, spec["id"], c))
+        out["open"].add(c)
     return out
 
 
@@ -995,7 +1030,10 @@ def plan_town(settlement, rec, doc, ground, refs, data):
         if spawny:
             raise SystemExit("%s/%s: spawn-condition blocks (data/spawn_blocks.json): %s" % (settlement, spec["id"], spawny))
         seated.append((spec, st))
-    occupied = {c for c, (_pid, flush) in taken.items() if not flush}
+    opened = set()
+    for _spec, st in seated:
+        opened |= st.get("open") or set()
+    occupied = {c for c, (_pid, flush) in taken.items() if not flush} - opened
     rect_n = (town.rect[2] - town.rect[0] + 1) * (town.rect[3] - town.rect[1] + 1)
     cover = len(occupied) / rect_n
     cap = float(rec.get("coverage_max", 0.15))
@@ -1013,6 +1051,24 @@ def plan_town(settlement, rec, doc, ground, refs, data):
                              % (settlement, spec["id"], spec["at"], spec.get("keeper_at"), want_at, want_keeper))
         if not re.fullmatch(r"%s_stall_\d+" % re.escape(settlement), spec["id"]):
             raise SystemExit("%s: stall id %r is not <town>_stall_<n>" % (settlement, spec["id"]))
+        # face to face: the customer's cell is the keeper's next cell towards the customers' side, on the same floor,
+        # and no piece's block stands at feet or head height in either (the owner, 2026-10-04: the old booth's counter
+        # goods and lantern stood between them)
+        sx, sz = STEP[st["facing"]]
+        if tuple(st["customer"]) != (kx + sx, kz + sz):
+            raise SystemExit("%s/%s: the customer's cell %s is not the keeper's next cell to the %s"
+                             % (settlement, spec["id"], st["customer"], st["facing"]))
+        for c in ((kx, kz), tuple(st["customer"])):
+            if c in occupied:
+                raise SystemExit("%s/%s: cell %s between keeper and customer is built on" % (settlement, spec["id"], c))
+            if town.floor_at(*c) + 1 != st["floor"]:
+                raise SystemExit("%s/%s: cell %s is not on the stall's floor y%d" % (settlement, spec["id"], c, st["floor"]))
+            for _sp, other in seated:
+                hit = [b for b in other["blocks"] if (b[0], b[2]) == c and b[1] in (st["floor"], st["floor"] + 1)
+                       and not block_name(b[3]).endswith("_carpet")]
+                if hit:
+                    raise SystemExit("%s/%s: %s stands at feet or head height in cell %s, between keeper and customer"
+                                     % (settlement, spec["id"], hit[0][3], c))
     cp = seated[0][1]
     want_cp = [cp["origin"][0], cp["floor"], cp["origin"][1]]
     if list(rec["square"].get("centrepiece") or []) != want_cp:
@@ -1079,7 +1135,12 @@ def plan_town(settlement, rec, doc, ground, refs, data):
             # plants off the link first, so none is left standing on paving
             for x, y, z, _s in st["blocks"]:
                 cmds.append("fill %d %d %d %d %d %d minecraft:air replace #minecraft:replaceable" % (x, y + 1, z, x, y + 2, z))
-        if not st["flush"]:
+        if spec["kind"] == "stall":
+            # a stall clears its whole footprint first, not only plants: the 2026-10-04 tent stands on the cells of the
+            # booth before it, whose counter log stood where the keeper now stands. Every cell is one the mask cleared.
+            xs, zs = [c[0] for c in cols], [c[1] for c in cols]
+            cmds.append("fill %d %d %d %d %d %d minecraft:air" % (min(xs), st["floor"], min(zs), max(xs), max(ys), max(zs)))
+        elif not st["flush"]:
             # plants and snow out of the piece's columns first (the plan cleared the plaza; a rebuild may not have)
             for x, z in cols:
                 cmds.append("fill %d %d %d %d %d %d minecraft:air replace #minecraft:replaceable"

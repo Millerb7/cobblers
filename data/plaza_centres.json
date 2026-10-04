@@ -6,7 +6,7 @@
  "contract": {
   "with": "the trader builder (data/traders.json, data/markets.json): it stands a keeper at each stall's keeper_at",
   "square": "{rect: [x0, z0, x1, z1], y: <the floor block's y>, centrepiece: [x, y, z]}: on a plaza the rect and y ARE the plan's plaza (data/placements.json plan.plaza; the build refuses otherwise); the centrepiece is the piece's origin, y its first block above the floor",
-  "stalls": "[{id: <town>_stall_<n>, at: [x, y, z], facing, keeper_at: [x, y, z, yaw], sells}]: `at` is the counter's middle block; `facing` is the side the customers stand on; `keeper_at` is where the keeper's FEET go, behind the counter: the block below it is the floor, it and the block above it are air; yaw faces the customers (Minecraft yaw: 0 south, 90 west, 180 north, -90 east); `sells` is the stall's theme word, a key of `goods`",
+  "stalls": "[{id: <town>_stall_<n>, at: [x, y, z], facing, keeper_at: [x, y, z, yaw], sells}]: `at` is the tent's table, its middle block; `facing` is the side the customers stand on; `keeper_at` is where the keeper's FEET go, IN FRONT of the table, at at + step(facing), the tent's open front (2026-10-04, the owner: the old booth's counter kept the keeper out of reach); the customer stands at at + 2 step(facing), face to face, nothing between: the block below it is the floor, it and the block above it are air; yaw faces the customers (Minecraft yaw: 0 south, 90 west, 180 north, -90 east); `sells` is the stall's theme word, a key of `goods`",
   "checked_by": "tools/plaza_centre.py build recomputes every at, keeper_at and centrepiece from the piece it builds and refuses on any difference"
  },
  "rules": "every piece inside its square, off every street, lot, anchor, building, earthwork, lamp, waystone pad, street mouth, door apron, desire line, NPC, walked route line, signpost and dressing piece of its town (tools/plaza_centre.py docstring); furniture over at most coverage_max of the square; no block data/spawn_blocks.json lists; every cell of the square lit in the model; every stall, the centrepiece and every bench reachable on foot from the Centre's and the Mart's doors",
@@ -291,12 +291,15 @@
    "minecraft:birch_stairs",
    "minecraft:birch_wall_sign",
    "minecraft:black_carpet",
+   "minecraft:black_terracotta",
    "minecraft:blackstone",
    "minecraft:blast_furnace",
    "minecraft:blue_carpet",
+   "minecraft:blue_terracotta",
    "minecraft:bookshelf",
    "minecraft:brewing_stand",
    "minecraft:brown_carpet",
+   "minecraft:brown_terracotta",
    "minecraft:campfire",
    "minecraft:cartography_table",
    "minecraft:chain",
@@ -313,6 +316,7 @@
    "minecraft:cobblestone",
    "minecraft:composter",
    "minecraft:cyan_carpet",
+   "minecraft:cyan_terracotta",
    "minecraft:dark_oak_fence",
    "minecraft:dark_oak_planks",
    "minecraft:dark_oak_slab",
@@ -326,7 +330,9 @@
    "minecraft:flower_pot",
    "minecraft:gilded_blackstone",
    "minecraft:gray_carpet",
+   "minecraft:gray_terracotta",
    "minecraft:green_carpet",
+   "minecraft:green_terracotta",
    "minecraft:grindstone",
    "minecraft:hay_block",
    "minecraft:iron_bars",
@@ -338,6 +344,7 @@
    "minecraft:lantern",
    "minecraft:lectern",
    "minecraft:light_blue_carpet",
+   "minecraft:light_blue_terracotta",
    "minecraft:light_gray_carpet",
    "minecraft:loom",
    "minecraft:mangrove_fence",
@@ -358,9 +365,11 @@
    "minecraft:oak_stairs",
    "minecraft:oak_wall_sign",
    "minecraft:orange_carpet",
+   "minecraft:orange_terracotta",
    "minecraft:packed_ice",
    "minecraft:packed_mud",
    "minecraft:pink_carpet",
+   "minecraft:pink_terracotta",
    "minecraft:polished_andesite",
    "minecraft:polished_basalt",
    "minecraft:polished_blackstone_bricks",
@@ -371,11 +380,13 @@
    "minecraft:prismarine_bricks",
    "minecraft:prismarine_wall",
    "minecraft:purple_carpet",
+   "minecraft:purple_terracotta",
    "minecraft:quartz_bricks",
    "minecraft:quartz_pillar",
    "minecraft:raw_copper_block",
    "minecraft:raw_gold_block",
    "minecraft:red_carpet",
+   "minecraft:red_terracotta",
    "minecraft:sea_lantern",
    "minecraft:smithing_table",
    "minecraft:smoker",
@@ -401,7 +412,8 @@
    "minecraft:terracotta",
    "minecraft:tuff",
    "minecraft:waxed_copper_grate",
-   "minecraft:waxed_cut_copper"
+   "minecraft:waxed_cut_copper",
+   "minecraft:white_terracotta"
   ]
  },
  "towns": {
@@ -462,12 +474,12 @@
      "at": [
       1470,
       118,
-      5266
+      5265
      ],
      "keeper_at": [
       1470,
       118,
-      5265,
+      5266,
       0
      ]
     }
@@ -609,12 +621,12 @@
      "at": [
       1770,
       139,
-      3603
+      3602
      ],
      "keeper_at": [
       1770,
       139,
-      3602,
+      3603,
       0
      ]
     },
@@ -629,12 +641,12 @@
      "awning": "minecraft:green_carpet",
      "why": "apricorn seeds (gym1_vendor_01)",
      "at": [
-      1738,
+      1737,
       139,
       3616
      ],
      "keeper_at": [
-      1737,
+      1738,
       139,
       3616,
       -90
@@ -651,12 +663,12 @@
      "awning": "minecraft:green_carpet",
      "why": "the herbalist",
      "at": [
-      1752,
+      1751,
       139,
       3634
      ],
      "keeper_at": [
-      1751,
+      1752,
       139,
       3634,
       -90
@@ -675,12 +687,12 @@
      "at": [
       1759,
       139,
-      3638
+      3639
      ],
      "keeper_at": [
       1759,
       139,
-      3639,
+      3638,
       180
      ]
     },
@@ -697,12 +709,12 @@
      "at": [
       1766,
       139,
-      3638
+      3639
      ],
      "keeper_at": [
       1766,
       139,
-      3639,
+      3638,
       180
      ]
     },
@@ -717,12 +729,12 @@
      "awning": "minecraft:gray_carpet",
      "why": "a mason's tool belt",
      "at": [
-      1771,
+      1772,
       139,
       3618
      ],
      "keeper_at": [
-      1772,
+      1771,
       139,
       3618,
       90
@@ -914,12 +926,12 @@
      "awning": "minecraft:red_carpet",
      "why": "the Rescue Quartermaster's shelf: filters, tanks, Super Potions",
      "at": [
-      1632,
+      1633,
       108,
       2811
      ],
      "keeper_at": [
-      1633,
+      1632,
       108,
       2811,
       90
@@ -938,12 +950,12 @@
      "at": [
       1607,
       108,
-      2824
+      2825
      ],
      "keeper_at": [
       1607,
       108,
-      2825,
+      2824,
       180
      ]
     },
@@ -960,12 +972,12 @@
      "at": [
       1628,
       108,
-      2826
+      2827
      ],
      "keeper_at": [
       1628,
       108,
-      2827,
+      2826,
       180
      ]
     },
@@ -982,12 +994,12 @@
      "at": [
       1623,
       108,
-      2821
+      2822
      ],
      "keeper_at": [
       1623,
       108,
-      2822,
+      2821,
       180
      ]
     }
@@ -1113,12 +1125,12 @@
      "at": [
       1664,
       175,
-      1398
+      1399
      ],
      "keeper_at": [
       1664,
       175,
-      1399,
+      1398,
       180
      ]
     },
@@ -1135,12 +1147,12 @@
      "at": [
       1668,
       175,
-      1398
+      1399
      ],
      "keeper_at": [
       1668,
       175,
-      1399,
+      1398,
       180
      ]
     }
@@ -1288,12 +1300,12 @@
      "at": [
       4290,
       111,
-      1528
+      1527
      ],
      "keeper_at": [
       4290,
       111,
-      1527,
+      1528,
       0
      ]
     },
@@ -1310,12 +1322,12 @@
      "at": [
       4297,
       111,
-      1528
+      1527
      ],
      "keeper_at": [
       4297,
       111,
-      1527,
+      1528,
       0
      ]
     },
@@ -1332,12 +1344,12 @@
      "at": [
       4304,
       111,
-      1528
+      1527
      ],
      "keeper_at": [
       4304,
       111,
-      1527,
+      1528,
       0
      ]
     },
@@ -1352,12 +1364,12 @@
      "awning": "minecraft:pink_carpet",
      "why": "sweets for the garden's visitors",
      "at": [
-      4334,
+      4335,
       111,
       1552
      ],
      "keeper_at": [
-      4335,
+      4334,
       111,
       1552,
       90
@@ -1374,12 +1386,12 @@
      "awning": "minecraft:brown_carpet",
      "why": "the orchard's produce",
      "at": [
-      4334,
+      4335,
       111,
       1559
      ],
      "keeper_at": [
-      4335,
+      4334,
       111,
       1559,
       90
@@ -1396,12 +1408,12 @@
      "awning": "minecraft:brown_carpet",
      "why": "the garden's compost and mulch",
      "at": [
-      4286,
+      4285,
       111,
       1545
      ],
      "keeper_at": [
-      4285,
+      4286,
       111,
       1545,
       -90
@@ -1709,12 +1721,12 @@
      "awning": "minecraft:purple_carpet",
      "why": "the Tracker's Outfitter: pickup and magnet upgrades, the Mega Bracelet",
      "at": [
-      4682,
+      4683,
       118,
       2425
      ],
      "keeper_at": [
-      4683,
+      4682,
       118,
       2425,
       90
@@ -1731,12 +1743,12 @@
      "awning": "minecraft:brown_carpet",
      "why": "smoked game",
      "at": [
-      4682,
+      4683,
       118,
       2432
      ],
      "keeper_at": [
-      4683,
+      4682,
       118,
       2432,
       90
@@ -1753,12 +1765,12 @@
      "awning": "minecraft:green_carpet",
      "why": "the herbalist's reeds",
      "at": [
-      4682,
+      4683,
       118,
       2439
      ],
      "keeper_at": [
-      4683,
+      4682,
       118,
       2439,
       90
@@ -1777,12 +1789,12 @@
      "at": [
       4672,
       118,
-      2442
+      2443
      ],
      "keeper_at": [
       4672,
       118,
-      2443,
+      2442,
       180
      ]
     }
@@ -1969,12 +1981,12 @@
      "at": [
       6185,
       95,
-      3410
+      3411
      ],
      "keeper_at": [
       6185,
       95,
-      3411,
+      3410,
       180
      ]
     },
@@ -1991,12 +2003,12 @@
      "at": [
       6190,
       95,
-      3412
+      3413
      ],
      "keeper_at": [
       6190,
       95,
-      3413,
+      3412,
       180
      ]
     },
@@ -2013,12 +2025,12 @@
      "at": [
       6207,
       95,
-      3412
+      3413
      ],
      "keeper_at": [
       6207,
       95,
-      3413,
+      3412,
       180
      ]
     },
@@ -2035,12 +2047,12 @@
      "at": [
       6208,
       95,
-      3386
+      3385
      ],
      "keeper_at": [
       6208,
       95,
-      3385,
+      3386,
       0
      ]
     }
@@ -2156,12 +2168,12 @@
      "awning": "minecraft:orange_carpet",
      "why": "the Rim Ironmonger: gold pack, furnace upgrades, Charcoal",
      "at": [
-      6086,
+      6087,
       108,
       5000
      ],
      "keeper_at": [
-      6087,
+      6086,
       108,
       5000,
       90
@@ -2180,12 +2192,12 @@
      "at": [
       6074,
       108,
-      5007
+      5008
      ],
      "keeper_at": [
       6074,
       108,
-      5008,
+      5007,
       180
      ]
     },
@@ -2202,12 +2214,12 @@
      "at": [
       6086,
       108,
-      5004
+      5005
      ],
      "keeper_at": [
       6086,
       108,
-      5005,
+      5004,
       180
      ]
     },
@@ -2222,12 +2234,12 @@
      "awning": "minecraft:orange_carpet",
      "why": "the rim smithy",
      "at": [
-      6067,
+      6066,
       108,
       4994
      ],
      "keeper_at": [
-      6066,
+      6067,
       108,
       4994,
       -90
@@ -2355,12 +2367,12 @@
      "awning": "minecraft:red_carpet",
      "why": "the Garrison Quartermaster: diamond pack, inception upgrade, Max Revive",
      "at": [
-      3593,
+      3592,
       113,
       6460
      ],
      "keeper_at": [
-      3592,
+      3593,
       113,
       6460,
       -90
@@ -2379,12 +2391,12 @@
      "at": [
       3612,
       113,
-      6460
+      6461
      ],
      "keeper_at": [
       3612,
       113,
-      6461,
+      6460,
       180
      ]
     },
@@ -2399,12 +2411,12 @@
      "awning": "minecraft:red_carpet",
      "why": "packs and upgrades",
      "at": [
-      3618,
+      3619,
       113,
       6458
      ],
      "keeper_at": [
-      3619,
+      3618,
       113,
       6458,
       90
@@ -2421,12 +2433,12 @@
      "awning": "minecraft:gray_carpet",
      "why": "the garrison smithy",
      "at": [
-      3593,
+      3592,
       113,
       6452
      ],
      "keeper_at": [
-      3592,
+      3593,
       113,
       6452,
       -90
@@ -2569,12 +2581,12 @@
      "awning": "minecraft:red_carpet",
      "why": "the Harbour Scrivener: blank, return, warp and bound scrolls",
      "at": [
-      2645,
+      2644,
       65,
       6485
      ],
      "keeper_at": [
-      2644,
+      2645,
       65,
       6485,
       -90
@@ -2591,12 +2603,12 @@
      "awning": "minecraft:blue_carpet",
      "why": "the fish market",
      "at": [
-      2645,
+      2644,
       65,
       6493
      ],
      "keeper_at": [
-      2644,
+      2645,
       65,
       6493,
       -90
@@ -2613,12 +2625,12 @@
      "awning": "minecraft:cyan_carpet",
      "why": "the far-water catch",
      "at": [
-      2645,
+      2644,
       65,
       6501
      ],
      "keeper_at": [
-      2644,
+      2645,
       65,
       6501,
       -90
@@ -2637,12 +2649,12 @@
      "at": [
       2653,
       65,
-      6506
+      6507
      ],
      "keeper_at": [
       2653,
       65,
-      6507,
+      6506,
       180
      ]
     }
@@ -2769,12 +2781,12 @@
      "awning": "minecraft:orange_carpet",
      "why": "the Deck Chandler: Dive, Net and Lure Balls",
      "at": [
-      5154,
+      5153,
       63,
       7383
      ],
      "keeper_at": [
-      5153,
+      5154,
       63,
       7383,
       -90
@@ -2791,12 +2803,12 @@
      "awning": "minecraft:light_blue_carpet",
      "why": "the fishing trader",
      "at": [
-      5166,
+      5167,
       63,
       7383
      ],
      "keeper_at": [
-      5167,
+      5166,
       63,
       7383,
       90
@@ -2920,12 +2932,12 @@
      "at": [
       2612,
       115,
-      3573
+      3572
      ],
      "keeper_at": [
       2612,
       115,
-      3572,
+      3573,
       0
      ]
     },
@@ -2942,12 +2954,12 @@
      "at": [
       2624,
       115,
-      3573
+      3572
      ],
      "keeper_at": [
       2624,
       115,
-      3572,
+      3573,
       0
      ]
     }
