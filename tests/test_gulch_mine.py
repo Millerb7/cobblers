@@ -440,7 +440,13 @@ def farm_spots(spec, site, den_id):
     ax, ay, az = den["anchor"]
     x0, y0, z0, x1, y1, z1 = farm["approach"]
     clear = spec["megas"]["spawn_clear"]
-    spots = [(ax + clear + 32.5, ay, az + 0.5), (ax + 0.5, ay, az + clear + 32.5)]
+    # east and south of the anchor, else west and north where the approach box (clipped to farms_grid, the field's own
+    # extent) stops short of a den near the field's edge: the same distance out either way
+    r = clear + 32
+    ways = [(ax + r + 0.5, ay, az + 0.5), (ax + 0.5, ay, az + r + 0.5), (ax - r + 0.5, ay, az + 0.5),
+            (ax + 0.5, ay, az - r + 0.5)]
+    spots = [s for s in ways if x0 <= s[0] < x1 + 1 and z0 <= s[2] < z1 + 1][:2]
+    assert len(spots) == 2, (site, "no two standing places inside the approach box", farm["approach"])
     for s in spots:
         assert x0 <= s[0] < x1 + 1 and y0 <= s[1] < y1 + 1 and z0 <= s[2] < z1 + 1, (site, s, farm["approach"])
         assert math.dist(s, (ax + 0.5, ay, az + 0.5)) > clear, (site, s)
@@ -457,6 +463,24 @@ def _farm_world(site, den_id, fns=None, respawn=1200, gt=10_000_000, seed=7, pla
     who = [w.player(s) for s in spots[:players]]
     _run(w, 4 * PASS + 5)
     return spec, den, w, who
+
+
+def den_megas(w, den_id):
+    """The Pokemon in `w` carrying den `den_id`'s tag. Every OTHER Pokemon in the world must carry exactly one other
+    live den's tag (a neighbour whose approach box the players also stand in: the Mega field's ranges overlap), so a
+    stray or a doubly-claimed Mega still fails here rather than being ignored."""
+    tag = SPEC["megas"]["tag"]
+    live = {"%s.%s" % (tag, d["id"]) for _s, d in GM.dens(SPEC)}
+    mine = "%s.%s" % (tag, den_id)
+    out = []
+    for e in w.entities:
+        if e["kind"] != "pokemon":
+            continue
+        own = {t for t in e["tags"] if t in live}
+        assert len(own) == 1, ("a Mega carrying %d den tags" % len(own), e)
+        if mine in own:
+            out.append(e)
+    return out
 
 
 def _run(w, ticks):
