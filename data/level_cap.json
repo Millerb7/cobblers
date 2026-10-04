@@ -4,5 +4,13 @@
   "decision": "The owner, 2026-09-28: block catching above the cap entirely. A Pokemon over the thrower's RCT level cap breaks free from any ball, a Master Ball included, in battle or out; one at the cap is caught (rctmod refuses a battle only when a party member is strictly over the cap).",
   "mechanism": "Cobblemon 1.8.0's poke_ball_capture_calculated callback, after the ball's own maths: it tags the target, asks cobblers:levelcap/check (run as the thrower, at the thrower) to compare the target's Pokemon.Level with `rctmod player get level_cap`, reads the answer back as a tag on the thrower and sets the shakes to 0. A cap it cannot read (0, RCT still loading) or a level it cannot read (0) lets the catch through.",
   "message": "It broke free! Your team isn't strong enough yet.",
-  "message_color": "red"
+  "message_color": "red",
+  "party_notice": {
+    "why": "rctmod refuses every trainer battle while a party member is STRICTLY over the player's cap (TrainerMob.canBattleAgainst: getPlayerLevel(player) <= getLevelCap(); getPlayerLevel is the highest level in the party, TrainerManager.java:276-286), and nothing in rctmod tells the player which Pokemon or what the cap is: its own words are a dialog line, and a trainer on sight (forceBattleOnSight) never engages at all, so it never speaks. This notice runs near any rctmod trainer and says so with the cap. Mechanism, read from the jars: `rctmod player get level_cap <target>` returns the cap (PlayerCommands.java:114-117, 441-457); Cobblemon 1.8.0's `runmolang <molang> <player>` binds q.player (RunMolangCommand.execute), `q.player.party` is PlayerPartyStore.getStruct() (PlayerMoLangFunctions lambda 33) and its `highest_level` iterates the store's levels (PokemonStoreMoLangFunctions); q.run_command calls Commands.performPrefixedCommand directly (GeneralMoLangFunctions). It does not name the Pokemon: the party screen shows levels, and comparing a get_pokemon slot (a struct, or 0 when empty) is unproven.",
+    "radius": 16,
+    "period_ticks": 40,
+    "text": "Trainers will not battle you: a Pokemon in your party is above your level cap of ",
+    "text_after": ". Put every Pokemon above it in the PC (or let a friend hold it) and they will.",
+    "color": "gold"
+  }
 }
