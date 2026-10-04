@@ -392,6 +392,23 @@ def check_walk(spec, W, cells):
     return probs, reach
 
 
+def check_outside_seats(spec, cells):
+    """An NPC seated outside the tower (Nia at her clinic): a block the city writes under it and nothing it writes in
+    the two cells of the stand. The street's own tread is R9B's and is not modelled here, so the city's sidewalk under
+    the seat is required."""
+    probs = []
+    for n in spec["npcs"]:
+        if n.get("storey"):
+            continue
+        x, y, z = n["at"]
+        if cells.get((x, y - 1, z), AIR) == AIR:
+            probs.append("%s at %s: the city writes no floor under it" % (n["id"], n["at"]))
+        for dy in (0, 1):
+            if cells.get((x, y + dy, z), AIR) != AIR:
+                probs.append("%s at %s: the city writes %s in its stand" % (n["id"], n["at"], cells[(x, y + dy, z)]))
+    return probs
+
+
 def check_caches(spec):
     probs = []
     rw = json.loads((ROOT / "data" / "rewards.json").read_text(encoding="utf-8"))["rewards"]
@@ -465,7 +482,7 @@ def build(source_root):
     W = writes(spec, cells)
     probs += check_writes(spec, W, cells, plan, dc_spec)
     walk_probs, reach = check_walk(spec, W, cells)
-    probs += walk_probs + check_caches(spec)
+    probs += walk_probs + check_caches(spec) + check_outside_seats(spec, cells)
     return spec, W, probs, reach
 
 

@@ -296,3 +296,14 @@ def test_a_seat_off_the_floor_is_named(built, monkeypatch):
     W = H.writes(spec, cells)
     probs, _reach = H.check_walk(spec, W, cells)
     assert sum("does not stand on a floor" in p for p in probs) == len(real(spec))
+
+
+def test_nia_stands_on_the_citys_sidewalk_and_a_lifted_seat_is_named(built):
+    _s, cells, _plan, _dc = built
+    spec = H.load()
+    assert H.check_outside_seats(spec, cells) == []
+    lifted = json.loads(json.dumps(spec))
+    for n in lifted["npcs"]:
+        if not n.get("storey"):
+            n["at"][1] += 1
+    assert any("no floor under it" in p for p in H.check_outside_seats(lifted, cells))
