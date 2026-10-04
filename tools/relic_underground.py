@@ -965,6 +965,10 @@ def cmd_report(a):
                 bad.append("the cradle's stand %s is not a floor cell with two clear over it" % ((x, y, z),))
         if len(spots) < 5:
             bad.append("the cradle has fewer than four stands and a marker")
+        # 4c the confrontation (geometry.release.confrontation, 2026-10-04): Brann and Elara stand in the cradle's air
+        #    on its floor with two clear over their feet, on no stand, not on the marker and not on each other
+        bad += finale_seat_problems(geo, ccells, spots, finale_seats())
+        note.append("the confrontation: %s" % ", ".join("%s %s" % (t, s) for t, s in finale_seats()))
         gap = math.hypot(geo.cc[0] - geo.hc[0], geo.cc[1] - geo.hc[1]) - geo.hr - geo.cr
         note.append("the cradle: radius %d, floor y%d, dome y%d-%d, %d dressing blocks, %d blocks of rock to the hall"
                     % (geo.cr, geo.cfloor, geo.crim_c, geo.capex_c, len(ccells), int(gap)))
@@ -1202,7 +1206,51 @@ def guard_functions(spec):
             # knock box's qualify tests it, so a player who digs into the records room past the guard is refused
             fn[act] += ["# the zone's second key: this player was admitted by the guard (zone.pass.admit, 2026-10-03)",
                         "scoreboard players set @s %s 1" % spec["zone"]["pass"]["admit"]["objective"]]
+    fx = spec["geometry"]["release"].get("fx")
+    if fx:
+        fn["release_fx"] = release_fx_lines(fx)
     return fn
+
+
+def release_fx_lines(fx):
+    """geometry.release.fx (2026-10-04): the restraint going dark, for THE RELEASING PLAYER only. Run as and at that
+    player by the last effect of rift_crisis_resolved's setter (data/quests.json unlock_league_after_rift_resolution),
+    so it plays once per release. Light and sound only: nothing is spawned and no block changes. Every particle and
+    sound names `@s` as its viewer; a player not in the cradle gets nothing."""
+    x, y, z = fx["at"]
+    pos = "%s %s %s" % (x, y, z)
+    out = ["# the restraint goes dark (data/relic_underground.json geometry.release.fx). As and at the releasing",
+           "# player only; every viewer is @s, so a partner who has not released sees nothing change.",
+           "execute unless entity @s[x=%s,y=%s,z=%s,distance=..%d] run return fail" % (x, y, z, fx["reach"])]
+    for name, dx, dy, dz, speed, count in fx["particles"]:
+        out.append("particle %s %s %s %s %s %s %d force @s" % (name, pos, dx, dy, dz, speed, count))
+    for name, vol, pitch in fx["sounds"]:
+        out.append("playsound %s master @s %s %s %s" % (name, pos, vol, pitch))
+    out.append("title @s actionbar %s" % text(fx["actionbar"], color="light_purple", italic=True))
+    return out
+
+
+def finale_seats():
+    """[(trainer id, (x, y, z))] of the confrontation (data/finale_trainers.json), for report's seat check."""
+    doc = json.loads((ROOT / "data" / "finale_trainers.json").read_text(encoding="utf-8"))
+    return [(t["id"], tuple(t["seat"])) for t in doc["trainers"]]
+
+
+def finale_seat_problems(geo, ccells, spots, seats):
+    """report's check 4c: each seat in the cradle's air on its floor, off the cut, two clear over its feet of every
+    cell the cradle's dressing writes (ccells), and on none of `spots` (the actor marker and the stands, the binder's
+    among them) nor on another seat. Returns the problems, [] when clean."""
+    bad, taken = [], set(spots)
+    for tid, (x, y, z) in seats:
+        r = geo.carved_range(x, z)
+        if r is None or not geo.in_cradle(x, z) or geo.in_passage(x, z) or y - 1 != geo.cfloor or y + 2 > r[1] \
+                or any((x, y + d, z) in ccells for d in (0, 1, 2)):
+            bad.append("%s's seat %s is not a cradle floor cell with two clear over it" % (tid, (x, y, z)))
+        if (x, y, z) in taken:
+            bad.append("%s's seat %s takes a player stand, the binder's stand, the marker or another seat"
+                       % (tid, (x, y, z)))
+        taken.add((x, y, z))
+    return bad
 
 
 def cmd_build(a):

@@ -183,6 +183,13 @@ def test_plan_rejects_a_quest_transition_flag_without_ids():
 
 STAGE = "quest.main_worldshift_reveal.stage"
 PENDING = "rift_crisis_pending"
+# since 2026-10-04 the release also waits on the confrontation (data/finale_trainers.json): this player has beaten
+# Brann and Elara in the cradle. The stage alone no longer opens it
+AT_STAGE = {"kind": "progression_equals", "field": STAGE, "value": PENDING}
+READY = {"kind": "all", "conditions": [
+    AT_STAGE,
+    {"kind": "progression_equals", "field": "quest.main_worldshift_reveal.brann_defeated", "value": True},
+    {"kind": "progression_equals", "field": "quest.main_worldshift_reveal.elara_defeated", "value": True}]}
 
 
 def _calls(transition):
@@ -225,18 +232,19 @@ def test_exactly_one_beat_grants_the_flag_and_only_behind_release_hoopa_at_the_c
     into = [(n["id"], r) for n in conv["nodes"] for r in n.get("responses") or [] if r.get("next") == "release_001"]
     into += [(n["id"], None) for n in conv["nodes"] if n.get("next") == "release_001"]
     assert [(nid, r["text"]) for nid, r in into] == [("bound_004", "Release Hoopa.")]
-    assert into[0][1]["visible_when"] == {"kind": "progression_equals", "field": STAGE, "value": PENDING}
-    # ... reached from the one entry rule that reads rift_crisis_pending, by plain lines
+    assert into[0][1]["visible_when"] == READY
+    # ... reached from the one entry rule that reads rift_crisis_pending AND both wins, by plain lines
     entry = [r for r in conv["entry_rules"] if r["node"] == "bound_001"]
-    assert [r["when"] for r in entry] == [{"kind": "progression_equals", "field": STAGE, "value": PENDING}]
+    assert [r["when"] for r in entry] == [READY]
     walk, seen = "bound_001", []
     while nodes[walk]["kind"] == "line":
         seen.append(walk)
         walk = nodes[walk]["next"]
     assert walk == "bound_004" and seen == ["bound_001", "bound_002", "bound_003"]
-    # and the transition itself refuses any other stage, so a released player re-talking cannot re-run it
+    # and the transition itself refuses any other stage, so a released player re-talking cannot re-run it, and a
+    # player who has not beaten both cannot run it whatever page they reach
     t = next(t for _q, t in _transitions() if t["id"] == set_by["transition"])
-    assert {"kind": "progression_equals", "field": STAGE, "value": PENDING} in t["conditions"]
+    assert t["conditions"] == READY["conditions"]
 
 
 def test_the_stage_the_release_needs_is_set_in_play_and_admits_the_player_to_the_hall():

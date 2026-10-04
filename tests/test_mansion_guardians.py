@@ -74,6 +74,7 @@ ROUTE_SEATS = _load("route_trainers.json")["trainers"]
 VR_SEATS = _load("vr_trainers.json")["trainers"]   # Victory Road's ten, seated 2026-09-30
 LATE_SEATS = _load("late_route_trainers.json")["trainers"]   # routes 4-8's 28, seated 2026-09-30
 ARENA_SEATS = _load("arena_trainers.json")["trainers"]       # Heaven's Arena's seven tier champions, 2026-10-01
+FINALE_SEATS = _load("finale_trainers.json")["trainers"]     # Brann and Elara in Hoopa's cradle, 2026-10-04
 ROUTE_TRAINER_IDS = {r["id"] for r in _load("trainers.json")["trainers"]}
 PLACEMENTS = _load("placements.json")
 
@@ -621,7 +622,8 @@ def test_r17_placements_are_the_route_seats_then_the_guardians():
            [(s["id"], tuple(s["seat"]), s["yaw"]) for s in LATE_SEATS] + \
            [(g["id"], tuple(g["seat"]), g["yaw"]) for g in GUARDS] + \
            [(v["id"], tuple(v["seat"]), v["yaw"]) for v in VR_SEATS] + \
-           [(a["id"], tuple(a["seat"]), a["yaw"]) for a in ARENA_SEATS if "seat" in a and a.get("seated", True)]
+           [(a["id"], tuple(a["seat"]), a["yaw"]) for a in ARENA_SEATS if "seat" in a and a.get("seated", True)] + \
+           [(f["id"], tuple(f["seat"]), f["yaw"]) for f in FINALE_SEATS]
     # 13 route + 28 late route + 5 guardians + 10 Victory Road + the arena's SEATED records. It was 18, then 28, then
     # 56, then 63 with the arena's seven, and is 56 since 2026-10-03: the owner retired the spire's battles ("have the
     # middle just be hubs"), so all seven records carry `seated: false` and their old stand under `superseded_seat`
@@ -629,7 +631,9 @@ def test_r17_placements_are_the_route_seats_then_the_guardians():
     # shrink silently; only the seats went.
     assert (len(ROUTE_SEATS), len(LATE_SEATS), len(GUARDS), len(VR_SEATS), len(ARENA_SEATS)) == (13, 28, 5, 10, 7)
     assert all(a.get("seated") is False and a.get("superseded_seat") for a in ARENA_SEATS)
-    assert len(want) == 56
+    # and the finale's two (data/finale_trainers.json, 2026-10-04), appended last by load()
+    assert len(FINALE_SEATS) == 2
+    assert len(want) == 58
     assert RT.placements() == want
 
 

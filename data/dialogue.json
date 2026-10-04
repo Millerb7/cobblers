@@ -10110,7 +10110,7 @@
       "quest_id": "main_worldshift_reveal",
       "npc_id": "npc_main_relic_hall_binder",
       "npc_name": "Compact binder",
-      "source": "docs/story/NPCS_AND_RIFT_FINALE.md Scene 5 (Codex, commit 9cbfd213, local branch codex/trainer-modes), ported minimally into the carved relic hall by the owner's decision of 2026-10-03 (data/relic_underground.json geometry.release). Codex's narration and Hoopa's lines are kept, except 'The machine is quiet' and 'because the steering anchors are silent', which Scenes 1-4 would have made true and which are not built; the binder's lines are Elara's Scene 4 lines 6-7, given to the cradle staff Scene 1 names. Placeholders for Codex or the owner to replace.",
+      "source": "docs/story/NPCS_AND_RIFT_FINALE.md Scene 5 (Codex, commit 9cbfd213, local branch codex/trainer-modes), ported into Hoopa's carved cradle by the owner's decisions of 2026-10-03 and 2026-10-04 (data/relic_underground.json geometry.release). Codex's narration and Hoopa's lines are kept; 'The machine is quiet' is restored now that the confrontation is built (data/finale_trainers.json: Brann and Elara are beaten before the release is offered). The binder's briefing (confront_*) is Codex's Scene 1 and 3 lines (Nia, Oren) given to the cradle staff, since Scenes 1 and 3 are not built. Placeholders for Codex or the owner to replace.",
       "scope": "player",
       "cursor": {
         "progression_field": "quest.main_worldshift_reveal.relic_release_cursor",
@@ -10123,11 +10123,35 @@
         {
           "priority": 10,
           "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.stage",
+                "value": "rift_crisis_pending"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.brann_defeated",
+                "value": true
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.elara_defeated",
+                "value": true
+              }
+            ]
+          },
+          "node": "bound_001"
+        },
+        {
+          "priority": 15,
+          "when": {
             "kind": "progression_equals",
             "field": "quest.main_worldshift_reveal.stage",
             "value": "rift_crisis_pending"
           },
-          "node": "bound_001"
+          "node": "confront_001"
         },
         {
           "priority": 20,
@@ -10158,6 +10182,34 @@
           "next": "release_closed"
         },
         {
+          "id": "confront_001",
+          "kind": "line",
+          "speaker": "binder",
+          "text": "You came down past the guard. Then you know the Compact started the final steering cycle.",
+          "next": "confront_002"
+        },
+        {
+          "id": "confront_002",
+          "kind": "line",
+          "speaker": "binder",
+          "text": "Tomas proved the target is occupied. There is no cleaner setting left.",
+          "next": "confront_003"
+        },
+        {
+          "id": "confront_003",
+          "kind": "line",
+          "speaker": "binder",
+          "text": "Captain Saye holds the cradle floor. The Director is at her console behind the restraint.",
+          "next": "confront_004"
+        },
+        {
+          "id": "confront_004",
+          "kind": "line",
+          "speaker": "binder",
+          "text": "I will not open the ring while either of them still stands for the cycle. Face them, then come back to me.",
+          "next": "confront_004"
+        },
+        {
           "id": "bound_001",
           "kind": "line",
           "speaker": "binder",
@@ -10175,7 +10227,7 @@
           "id": "bound_003",
           "kind": "line",
           "speaker": "narration",
-          "text": "The rings pull inward each time Hoopa moves. The binding holds.",
+          "text": "The rings pull inward each time Hoopa moves. The machine is quiet; the binding is not.",
           "next": "bound_004"
         },
         {
@@ -10188,9 +10240,24 @@
               "id": "r_release",
               "text": "Release Hoopa.",
               "visible_when": {
-                "kind": "progression_equals",
-                "field": "quest.main_worldshift_reveal.stage",
-                "value": "rift_crisis_pending"
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.main_worldshift_reveal.stage",
+                    "value": "rift_crisis_pending"
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.main_worldshift_reveal.brann_defeated",
+                    "value": true
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.main_worldshift_reveal.elara_defeated",
+                    "value": true
+                  }
+                ]
               },
               "next": "release_001"
             },

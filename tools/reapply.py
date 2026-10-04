@@ -1764,9 +1764,14 @@ def steps(with_spawns=False):
     # 2026-10-03: and the Compact binder in Hoopa's cradle (geometry.release; at the hall's relic ring until the cradle
     # was carved), whose conversation releases Hoopa and grants rift_crisis_resolved (the owner: "set it ourselves at
     # the quest stage that ends the Rift crisis")
-    out.append(("R18RU", "the Compact guards at the HQ's ring-0 door and the binder in Hoopa's cradle "
-                         "(data/relic_underground.json geometry.hq.guard, geometry.release)",
-                [("npc", n) for n in relic_underground.npc_placements()]))
+    # 2026-10-04: and the confrontation the release now waits on, Brann and Elara (data/finale_trainers.json), rctmod
+    # trainers R17 already places as every seat; placed again here so `--only R18RU` re-applies the whole finale. The
+    # "trainer" action leaves one already standing at its seat, so each stands once
+    out.append(("R18RU", "the Compact guards at the HQ's ring-0 door, the binder in Hoopa's cradle and the "
+                         "confrontation's Brann and Elara (data/relic_underground.json geometry.hq.guard, "
+                         "geometry.release; data/finale_trainers.json)",
+                [("npc", n) for n in relic_underground.npc_placements()]
+                + [("trainer", t) for t in route_trainers.finale_placements()]))
     # Codex's ten named residents (2026-10-02, data/resident_encounters.json): each one's dressing inside a forceload of
     # its recorded bbox, then - for the two with no presence gate (Old Jaw, Whiteback) - an RCON summon guarded on tag
     # AND species, and its bind. The eight gated ones are left to the pack's keeper, which brings each in the first time
