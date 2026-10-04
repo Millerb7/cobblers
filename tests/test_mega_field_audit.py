@@ -284,11 +284,20 @@ def basin():
     return A.load_basin()
 
 
-def gulch_fns(spec):
+def gulch_fns(spec, ground):
     import gulch_mine as GM
     m = copy.deepcopy(spec)
     for s in m["megas"]["slots"]:                       # the mine's slots need a hall floor; the field's dens do not
         s["_anchor"] = [s["anchor"][0], 47, s["anchor"][1]]
+    # each farm den's pack seated as GM.model() seats it (2026-10-05): without it keeper_files writes the pre-pack single
+    # Mega and the audit would be checking output the real build never makes. A den the generator refuses to seat
+    # (GulchError) is left unseated, so its single Mega is what the audit sees and names.
+    for fa in m.get("farms", []):
+        for d in fa["dens"]:
+            try:
+                d["_members"] = GM.pack_homes(m, d, ground)
+            except GM.GulchError:
+                pass
     model = types.SimpleNamespace(spec=m)
     fns = dict(GM.cutter_files(model))
     fns.update(GM.keeper_files(model))
@@ -335,7 +344,7 @@ def committed_borders(ground):
 
 def run(spec, ground, basin, lairs, with_order=False, borders=None):
     import gulch_mine as GM
-    fns, cb = gulch_fns(spec)
+    fns, cb = gulch_fns(spec, ground)
     names = src = None
     if with_order:
         import reapply
@@ -355,7 +364,82 @@ FLOOR = "basin column(s) of the field's floor are outside mega_field.polygon"
 # the same shape. EMPTY since 2026-10-04's per-den field: the two findings of the species-keyed layout are closed --
 # the lone steelix and charizard dens (now each den has a neighbour or is dropped) and the border tips 0.75 outside a
 # range (tools/mega_borders.py Border.inside). tools/mega_field_audit.py main() carries the same list.
-KNOWN = ()
+# 2026-10-05 (independent audit of the packs, the west floor and the road's clearance): A.KNOWN_ROAD, two findings
+# each with its strict xfail below -- aggro_reach assumed, and four dens 0.26 under road_clear.
+KNOWN = A.KNOWN_ROAD
+
+
+# KNOWN 1 (2026-10-05). Without it the road's clearance would rest on a notice distance nobody measured and nothing
+# would say so: aggro_reach 16 is vanilla 1.21.1 FOLLOW_RANGE, assumed for Fight or Flight, whose jar and source are not
+# in the checkout; EXP-054 is not run. Turns red (strict) when EXP-054 records a result, so this entry is removed then.
+@pytest.mark.xfail(strict=True, reason="KNOWN: aggro_reach is ASSUMED, EXP-054 not run")
+def test_the_roads_aggro_reach_is_measured():
+    R = A.Report()
+    A.check_road(SPEC, R)
+    assert not [e for e in R.errors if KNOWN[0].search(e)], R.errors
+
+
+# KNOWN 2 (2026-10-05). Without it a den inside Victory Road's clearance passes: four dens stand 53.74 from the walked
+# line against road_clear 54 (tools/mega_field.py floor() measures `road` on a 2-block grid, right to within 1.41,
+# and applies road_clear with no allowance). Strict: turns red when the generator measures column to column.
+@pytest.mark.xfail(strict=True, reason="KNOWN: 4 dens 53.74 < road_clear 54 from Victory Road's walked line")
+def test_every_den_clears_the_road_by_road_clear(committed):
+    assert not [e for e in committed.errors if KNOWN[1].search(e)]
+
+
+# Without it a range could reach onto the road itself, and the KNOWN shortfall above could grow unseen: every range
+# ends at least the road's half-width (data/rift_sculpt.json victory_road_descent.width / 2) from the walked line, and
+# no den is under road_clear but the four KNOWN ones.
+def test_no_range_reaches_the_road_and_no_new_den_is_under_road_clear(committed):
+    assert not [e for e in committed.errors if "inside the road's half-width" in e]
+    under = sorted(e.split(":")[1].strip() for e in committed.errors if "walked line: under leash" in e)
+    assert under == ["gm_mf_3704_5196", "gm_mf_3748_5152", "gm_mf_3996_4810", "gm_mf_4072_4734"], under
+
+
+# Without it the owner's "use the left side of the southern tip as well" (2026-10-05) could be reverted unseen: dens
+# stand on the floor the old 128 rule emptied (within 128 + lair_radius of Victory Road's walked line), and the audit
+# states that band's coverage and every farm's.
+def test_the_west_floor_holds_dens_and_every_farm_states_its_coverage(committed):
+    notes = "\n".join(committed.notes)
+    m = re.search(r"^west floor: (\d+) usable columns within (\d+) .* walked line; (\d+) den\(s\) stand there, .* cover "
+                  r"(\d+) of them", notes, re.M)
+    assert m, notes[:500]
+    assert int(m.group(2)) == 128 + SPEC["mega_field"]["layout"]["lair_radius"]
+    assert int(m.group(3)) >= 1 and int(m.group(4)) >= 1, m.group(0)
+    farms = {f["id"] for f in SPEC["farms"] if f["id"].startswith("field_")}
+    assert set(re.findall(r"^farm (field_\d+_\d+): ", notes, re.M)) == farms
+    assert not [e for e in committed.errors if e.startswith("floor: no den stands within")]
+
+
+# Without it the west floor could be emptied again by the generator: sites dropping every den within 128 + lair_radius
+# of Victory Road (the pre-2026-10-05 rule) is named by the west-floor check.
+def test_sites_leaving_the_west_floor_empty_is_caught(ground, basin, lairs, monkeypatch):
+    road = [tuple(p) for p in json.loads((ROOT / "data" / "route_paths.json").read_text(encoding="utf-8"))["paths"][
+        SPEC["mega_field"]["layout"]["road"]]]
+    old = 128 + SPEC["mega_field"]["layout"]["lair_radius"]
+
+    def secluded(r):
+        for f in r["farms"]:
+            f["dens"] = [d for d in f["dens"] if A.near_points([(d["anchor"][0], d["anchor"][2])], road) >= old]
+        r["farms"] = [f for f in r["farms"] if f["dens"]]
+    spec = _sites_with(monkeypatch, secluded)
+    rep = run(spec, ground, basin, lairs, borders=committed_borders(ground))
+    assert any(e.startswith("floor: no den stands within %d" % old) for e in rep.errors), rep.errors[:5]
+
+
+# KNOWN 3 (2026-10-05). Without it the contested ground of the west floor could stay bare unseen: 41 of 85 borders
+# write nothing while their lenses hold free dressing columns by this audit's rules (tools/mega_borders.py:125 keeps
+# the old 128-from-every-critical-path dressing floor the owner relaxed for Victory Road). Strict: red when dressed.
+@pytest.mark.xfail(strict=True, reason="KNOWN: 41 borders bare under mega_borders.py's old 128 dressing floor")
+def test_no_border_is_bare_where_its_lens_has_free_ground(committed):
+    assert not [e for e in committed.errors if KNOWN[2].search(e)]
+
+
+# KNOWN 4 (2026-10-05). Without it a border could read as one den's ground on both sides: gm_mf_4076_5086's side of its
+# border with gm_mf_4118_5028 carries none of its own scrape palette. Strict: red when the re-dress fixes it.
+@pytest.mark.xfail(strict=True, reason="KNOWN: gm_mf_4076_5086's side of its border carries none of its own scrape")
+def test_every_border_side_carries_its_own_scrape(committed):
+    assert not [e for e in committed.errors if KNOWN[3].search(e)]
 
 
 def unknown(rep):
@@ -392,8 +476,9 @@ def test_every_border_column_lies_inside_both_ranges(committed):
 
 # Without it the owner's "overlapping ranges" and the floor they cover would go unreported: the audit states the
 # overlapping pairs and their overlaps, the usable floor and the fraction inside a range, and the borders, kills and
-# their share of that floor (per-den field, 2026-10-04: 27 dens, 45 pairs 1.3..28.0, 18.4% of 449,577 usable columns,
-# 45 borders, 19 kills, 5,563 columns = 6.7% of the floor in range against the 8% cap, none empty).
+# their share of that floor (the west floor, 2026-10-05, measured by this audit: 61 dens, 85 pairs 0.4..28.0, 202,082
+# of 449,577 usable columns = 44.9% in a range, 85 borders, 14 kills, 5,290 columns = 2.6% against the 8% cap, 41
+# empty for want of a free dressing column; was 27 dens, 45 pairs, 18.4%, 45 borders, 19 kills on 2026-10-04).
 def test_the_committed_crowding_and_floor_are_reported(committed):
     notes = "\n".join(committed.notes)
     assert re.search(r"^crowding: \d+ dens, [1-9]\d* overlapping pairs, overlaps [\d.]+\.\.[\d.]+ blocks", notes, re.M)
@@ -478,14 +563,28 @@ def test_sites_with_the_anchor_a_block_high_is_caught(ground, basin, lairs, monk
     assert any(e.startswith("den: ") and "is not round(ground) + 1" in e for e in rep.errors)
 
 
-# Without it Megas could be seated by the critical path: sites reading road_clear as 100 seats dens under 128 from it.
-def test_sites_reading_road_clear_as_100_is_caught(ground, basin, lairs, monkeypatch):
+# Re-pointed 2026-10-05 (the owner: "use the left side of the southern tip as well"; road_clear 149 -> 54, so reading it
+# as 100 is now a FAR clearance and sites refuses any road_clear that is not its sum). Without it Megas could be seated
+# on Victory Road's edge: sites computing the clearance WITHOUT the leash (road_clear = aggro_reach + road_margin = 18,
+# and the sum its guard checks taken away with aggro_reach, data untouched) seats dens whose ranges reach the road. The
+# audit derives leash + aggro_reach + half-width from the committed data and names dens under it -- more than the four
+# KNOWN ones, and with ranges inside the road's half-width.
+def test_sites_computing_road_clear_without_the_leash_is_caught(ground, basin, lairs, monkeypatch):
     import mega_field as MF
-    _reading(monkeypatch, "sites", ["mega_field", "layout", "road_clear"], 100)
+    orig = MF.sites
+
+    def no_leash(spec, source_root=None):
+        s = copy.deepcopy(spec)
+        lay = s["mega_field"]["layout"]
+        lay["road_clear"] = lay.pop("aggro_reach") + lay["road_margin"]
+        return orig(s, source_root)
+    monkeypatch.setattr(MF, "sites", no_leash)
     spec = copy.deepcopy(SPEC)
     spec["farms"] = [f for f in spec["farms"] if not f["id"].startswith("field_")] + MF.sites(SPEC)["farms"]
     rep = run(spec, ground, basin, lairs, borders=committed_borders(ground))
-    assert any(e.startswith("den: ") and "from the critical path" in e for e in rep.errors), rep.errors
+    under = [e for e in rep.errors if e.startswith("den: ") and "walked line: under leash" in e]
+    assert len(under) > 4, rep.errors
+    assert any(e.startswith("den: ") and "inside the road's half-width" in e for e in rep.errors), under
 
 
 # Inverted 2026-10-04: a species may hold several dens (the committed field gives lopunny, sableye, glalie and venusaur
@@ -498,7 +597,7 @@ def test_sites_keying_dens_by_species_is_caught(ground, basin, monkeypatch):
             for d in f["dens"]:
                 d["id"] = "gm_mf_" + d["species"]
     spec = _sites_with(monkeypatch, by_species)
-    fns, _cb = gulch_fns(SPEC)
+    fns, _cb = gulch_fns(SPEC, ground)
     sold = re.findall(r'sell:\{id:"mega_showdown:([a-z_]+)"', "\n".join(fns.get("cutters_place") or []))
     R = A.Report()
     A.check_dens(spec, ground, basin, A.design(), R, sold)
@@ -519,7 +618,109 @@ def test_a_keeper_level_off_by_one_is_caught(ground, basin, lairs, monkeypatch):
     monkeypatch.setattr(GM, "den_level", lambda spec, site, d: orig(spec, site, d) + 1)
     rep = run(SPEC, ground, basin, lairs)
     bad = [e for e in rep.errors if e.startswith("level: ")]
-    assert len(bad) == sum(len(f["dens"]) for f in SPEC["farms"] if f["id"].startswith("field_"))
+    # one per pack member (2026-10-05: every member is spawned at the level)
+    assert len(bad) == sum(A.pack_size(SPEC, d) for _fa, d in A.field_dens(SPEC))
+
+
+# ------------------------------------------------------------------- the packs (the owner, 2026-10-05), generator mutations
+# "make more than one mega per zone, like a few of each mon, and make sure they are uncatchable". Each mutation changes
+# tools/gulch_mine.py (pack_homes or keeper_files), never data/gulch_mine.json.
+def _keeper_rewrite(monkeypatch, change):
+    """GM.keeper_files wrapped: its output {name: lines} changed by change(fns); data untouched."""
+    import gulch_mine as GM
+    orig = GM.keeper_files
+
+    def wrapped(m):
+        fns = dict(orig(m))
+        change(fns)
+        return fns
+    monkeypatch.setattr(GM, "keeper_files", wrapped)
+
+
+def _homes_rewrite(monkeypatch, change):
+    import gulch_mine as GM
+    orig = GM.pack_homes
+    monkeypatch.setattr(GM, "pack_homes", lambda spec, d, ground: change(d, orig(spec, d, ground)))
+
+
+def _field_ids():
+    return [d["id"] for _fa, d in A.field_dens(SPEC)]
+
+
+# Without it "a few of each mon" could quietly become two: the generator seating a pack of 2 (data still says 3) is
+# named once per den, by the member it lost.
+def test_a_pack_of_two_is_caught(ground, basin, lairs, monkeypatch):
+    _homes_rewrite(monkeypatch, lambda d, homes: homes[:2])
+    rep = run(SPEC, ground, basin, lairs)
+    named = sorted(e.split(":")[1].strip() for e in rep.errors if re.search(r"^pack: \S+: no megas/spawn_\S+_m3 ", e))
+    assert named == sorted(_field_ids()), rep.errors[:5]
+
+
+# Without it a pack member could be catchable: member 3 spawned by a plain line without `uncatchable` is named for every
+# den, as a spawn outside the uncatchable macro.
+def test_member_three_spawned_catchable_is_caught(ground, basin, lairs, monkeypatch):
+    def catchable(fns):
+        for k in [k for k in fns if re.fullmatch(r"megas/spawn_\S+_m3", k)]:
+            fns[k] = [re.sub(r"^function \S+/megas/spawn_at \{x:(-?\d+),y:(-?\d+),z:(-?\d+),species:\"(\w+)\","
+                             r"aspect:\"([^\"]+)\",level:(\d+)\}$", r"spawnpokemonat \1 \2 \3 \4 \5 level=\6", l)
+                      for l in fns[k]]
+    _keeper_rewrite(monkeypatch, catchable)
+    rep = run(SPEC, ground, basin, lairs)
+    named = sorted(e.split(":")[1].strip() for e in rep.errors
+                   if e.startswith("pack: ") and "spawns outside spawn_at" in e)
+    assert named == sorted(_field_ids()), rep.errors[:5]
+
+
+# Without it a member could spawn off its den's pad (in rock, or out on the range): member 1's home pushed 4 blocks
+# east by the generator is named for every den.
+def test_a_member_off_the_pad_is_caught(ground, basin, lairs, monkeypatch):
+    def push(d, homes):
+        homes = copy.deepcopy(homes)
+        homes[0]["at"][0] += 4
+        return homes
+    _homes_rewrite(monkeypatch, push)
+    rep = run(SPEC, ground, basin, lairs)
+    named = sorted(e.split(":")[1].strip() for e in rep.errors if e.startswith("pack: ") and "off its den's pad" in e)
+    assert named == sorted("%s_m1" % i for i in _field_ids()), rep.errors[:5]
+
+
+# Without it the den-wide guard could let a fourth Mega stand: the guard reading `matches 5..` (more than pack_size + 1)
+# is named for every den.
+def test_the_duplicate_guard_past_pack_size_plus_one_is_caught(ground, basin, lairs, monkeypatch):
+    def loose(fns):
+        for k in [k for k in fns if k.startswith("megas/pack_")]:
+            fns[k] = [l.replace("matches 4..", "matches 5..") for l in fns[k]]
+    _keeper_rewrite(monkeypatch, loose)
+    rep = run(SPEC, ground, basin, lairs)
+    named = sorted(e.split(":")[1].strip() for e in rep.errors if e.startswith("pack: ") and "kill past its pack" in e)
+    assert named == sorted(_field_ids()), rep.errors[:5]
+
+
+# Without it two members could share one respawn clock (a beaten member would hold its packmate's respawn): member 2's
+# keeper reading member 1's gm.resp is named for every den.
+def test_a_member_on_another_members_clock_is_caught(ground, basin, lairs, monkeypatch):
+    def share(fns):
+        for k in [k for k in fns if re.fullmatch(r"megas/keep_\S+_m2", k)]:
+            m1 = k[len("megas/keep_"):-1] + "1"
+            fns[k] = [l.replace("#%s2 " % m1[:-1], "#%s " % m1) for l in fns[k]]
+    _keeper_rewrite(monkeypatch, share)
+    rep = run(SPEC, ground, basin, lairs)
+    named = sorted(e.split(":")[1].strip() for e in rep.errors
+                   if e.startswith("keeper: ") and "does not keep its own respawn clock" in e)
+    assert named == sorted("%s_m2" % i for i in _field_ids()), rep.errors[:5]
+
+
+# Without it a Charizard den could hold only one of its two Megas: the generator giving every member the den's own
+# aspect is named for every Charizard den, and for no other.
+def test_a_charizard_pack_of_one_aspect_is_caught(ground, basin, lairs, monkeypatch):
+    def one(d, homes):
+        return [dict(h, aspect=d["aspect"]) for h in homes]
+    _homes_rewrite(monkeypatch, one)
+    rep = run(SPEC, ground, basin, lairs)
+    zard = sorted(d["id"] for _fa, d in A.field_dens(SPEC) if d["species"] == "charizard")
+    assert zard, "no Charizard den: this mutation cannot bite on the committed field"
+    named = sorted(e.split(":")[1].strip() for e in rep.errors if e.startswith("pack: ") and "mixes" in e)
+    assert named == zard, rep.errors[:5]
 
 
 # Without it the drop chance or respawn could drift from section 13.1's per tier.
@@ -546,10 +747,27 @@ def test_a_pack_without_the_battle_callback_is_caught(ground, basin, lairs, monk
 
 
 # Without it a retired den's Mega would be left on staging with nothing to leash or replace it.
+# Re-pointed 2026-10-05: with 55 retired dens the last one's ground lies inside its neighbours' holds, so forgetting it
+# left R9SX covering it by accident. The den forgotten is one whose anchor +- leash no other den's hold covers, picked
+# from the generator's steps without it (so the mutation bites on both counts); the audit still judges both.
 def test_retire_forgetting_a_den_is_caught(ground, basin, lairs, monkeypatch):
     import gulch_mine as GM
     orig = GM.retired_dens
-    monkeypatch.setattr(GM, "retired_dens", lambda spec: orig(spec)[:-1])
+
+    def covered(holds, x, z, L):
+        return any(min(h[0], h[2]) <= x - L and x + L <= max(h[0], h[2]) and min(h[1], h[3]) <= z - L
+                   and z + L <= max(h[1], h[3]) for h in holds)
+    alone = None
+    for k, (i, (x, _y, z), L) in enumerate(orig(SPEC)):
+        with pytest.MonkeyPatch.context() as mp:
+            mp.setattr(GM, "retired_dens", lambda spec, k=k: [r for j, r in enumerate(orig(spec)) if j != k])
+            holds = [tuple(int(v) for v in s[1].split()[2:]) for s in (tuple(t) for t in GM.retire_steps(SPEC))
+                     if s[0] == "cmd" and s[1].startswith("forceload add")]
+        if not covered(holds, x, z, L):
+            alone = k
+            break
+    assert alone is not None, "every retired den lies inside another's hold: this mutation cannot bite on R9SX"
+    monkeypatch.setattr(GM, "retired_dens", lambda spec: [r for j, r in enumerate(orig(spec)) if j != alone])
     rep = run(SPEC, ground, basin, lairs)
     assert any(e.startswith("retire: megas/retire kills") for e in rep.errors)
     assert any(e.startswith("retire: R9SX holds no box covering") for e in rep.errors)
@@ -681,6 +899,8 @@ def test_borders_writing_a_spawn_condition_are_caught(ground, basin, lairs, monk
     def wrap(orig):
         def scar(self):
             orig(self)
+            if not self.w:          # 2026-10-05: 41 of 85 borders write nothing (KNOWN 3); the sand goes in the rest
+                return
             k = min(self.w)
             self.w[k] = "minecraft:sand"
         return scar

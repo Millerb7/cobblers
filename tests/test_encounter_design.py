@@ -266,6 +266,35 @@ def columns_of(box_set):
     return int(mask.sum())
 
 
+def mega_den_ranges():
+    """[(anchor x, anchor z, leash, {line species})] of the Mega field's dens, from data/gulch_mine.json (farms field_*,
+    mega_field.families.lines by the den's species). Read from the data, never from tools/compile_spawns.py."""
+    gm = json.loads((ROOT / "data" / "gulch_mine.json").read_text(encoding="utf-8"))
+    lines = ((gm.get("mega_field") or {}).get("families") or {}).get("lines") or {}
+    return [(d["anchor"][0], d["anchor"][2], d["leash"], set(lines.get(d["species"]) or []))
+            for fa in gm.get("farms") or [] if fa["id"].startswith("field_") for d in fa["dens"]]
+
+
+def split_den_lines(spawns, dens=None):
+    """(other details, den-line details) of one compiled file. The Mega field's dens carry their evolution lines as
+    natural spawns over each den's range (the owner, 2026-10-05: "have some base mons of each version running around in
+    the area as well as the megas"). They are not a heart (section 10's hearts are `<sub>_h<n>_` and add above-cap
+    presences; these are the den's own line inside its range), so they are taken out before split_heart: a detail is a
+    den line when its species is in a den's line and every corner column of its box is inside that den's range
+    (hypot to the anchor <= leash). Nothing here reads the id; test_encounter_hearts checks the split against the ids."""
+    dens = mega_den_ranges() if dens is None else dens
+    rest, den = [], []
+    for e in spawns:
+        c = e.get("condition") or {}
+        hit = False
+        if all(k in c for k in ("minX", "maxX", "minZ", "maxZ")):
+            corners = [(x, z) for x in (c["minX"], c["maxX"]) for z in (c["minZ"], c["maxZ"])]
+            hit = any(e.get("pokemon") in line and all((x - ax) ** 2 + (z - az) ** 2 <= L * L for x, z in corners)
+                      for ax, az, L, line in dens)
+        (den if hit else rest).append(e)
+    return rest, den
+
+
 def split_heart(spawns):
     """(base details, heart details) of one compiled sub-region file, told apart by the compiled condition alone.
 
@@ -335,6 +364,7 @@ def world(pack):
     # Placement walks route_01..08 only, as tools/availability.py does (section 1 defers to it): victory_road is
     # not a leg a sub-region is placed on, so the Rift is off the path here and its tier is a raised one.
     legs = {r: rb for r, rb in route_boxes.items() if route_leg[r] <= 8}
+    dens_of = mega_den_ranges()
     subs = {}
     for p in sorted((pw / "subregions").glob("*.json")):
         b = boxes(p)
@@ -343,9 +373,10 @@ def world(pack):
         nearest = min((g, route_leg[r], r) for r, g in gaps.items() if g is not None)
         authored = (DESIGN["tables"].get(p.stem) or {}).get("tier")
         spawns = details(p)
-        base, heart = split_heart(spawns)
+        rest, den = split_den_lines(spawns, dens_of)
+        base, heart = split_heart(rest)
         subs[p.stem] = {"rows": rows_of(spawns), "base_rows": rows_of(base), "heart_rows": rows_of(heart),
-                        "base": base, "heart": heart,
+                        "base": base, "heart": heart, "den": den,
                         "on_path": bool(near), "leg": min(near) if near else None,
                         "nearest": nearest, "authored_tier": authored,
                         "tier": min(near) if near else (authored if authored is not None else nearest[1])}

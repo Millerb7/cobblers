@@ -30,7 +30,9 @@ are taken from the generator, as its OUTPUT, to check they hold the chunks they 
   signature  each declared signature block is written at least its declared number of times
   footprint  no written column in a town's footprint, within 32 of a placement, within 4 of a resident anchor, in the
              gulch's block box or zone polygon, within 32 of a Rift zone wall or post, under painted water, or within
-             128 of the critical path
+             128 of the critical path -- but the Mega field's own road (gulch_mine.json mega_field.layout.road), where
+             the owner put dens on 2026-10-05: there every written column lies inside its den's range (anchor, leash)
+             and none within the road's half-width (data/rift_sculpt.json <road>_descent.width / 2) of its walked line
   steps      every command is one the server accepts and this audit reads; the re-application runs each den's function
              inside a forceload of every column it writes and releases it after
 
@@ -336,8 +338,12 @@ def check_visible(rep, W, d, anchor, rec, R):
         if W.at(fx, gf, fz) != AIR or not W.solid(fx, gf - d["dig"]["depth"], fz):
             R.err("visible", "%s: the ground at feature_at is not opened %d deep to a floor" % (sp, d["dig"]["depth"]))
     else:
+        # the sign, not a boulder of the den's rubble that happens to lie by it (2026-10-05: gm_mf_4166_5058's re-dress
+        # set a blackstone/cobblestone boulder within 4 of feature_at, and with its bone heap unbuilt the boulder alone
+        # read as the sign)
+        rubble = {base(b) for b in d.get("boulder") or []}
         tall = [k for k, s in rep.state.items() if s != AIR and math.hypot(k[0] - fx, k[2] - fz) <= 4
-                and k[1] > W.ground(k[0], k[2])]
+                and k[1] > W.ground(k[0], k[2]) and base(s) not in rubble]
         # or, laid flat, a ground the scrape round it is not made of (a strike fused to obsidian)
         plain = set(d.get("scrape") or {}) | {base(d.get("pad", "")), *(d.get("path") or {})}
         flat = [k for k, s in rep.state.items() if s != AIR and math.hypot(k[0] - fx, k[2] - fz) <= 2
@@ -413,10 +419,42 @@ def check_footprint(cols, d, gm, W, R):
     wet = [c for c in sorted(cols) if water_mask.level_at(c[0], c[1], W.ground, bodies, sea)[0] is not None]
     if wet:
         R.err("footprint", "%s: %d written column(s) under painted water, e.g. %s" % (sp, len(wet), wet[0]))
-    route = [c for path in load_json("route_paths.json")["paths"].values() for c in path]
-    dmin = min(math.hypot(rx - c[0], rz_ - c[1]) for c in sorted(cols)[::5] for rx, rz_ in route[::3])
+    # 128 from every critical path, but the Mega field's own road (gulch_mine.json mega_field.layout.road, Victory
+    # Road): the owner, 2026-10-05, "make sure to use the left side of the southern tip as well, not just secluded in
+    # those pockets" (review 64: the 128 rule left that floor no den). Along it a lair is its den's dressing: every
+    # column it writes lies inside its den's range (anchor and leash, gulch_mine.json farms), whose clearance from the
+    # road tools/mega_field_audit.py derives (leash + aggro_reach + half-width), and none on the road's own width
+    # (data/rift_sculpt.json entrances <road>_descent.width / 2).
+    road = ((gm.get("mega_field") or {}).get("layout") or {}).get("road")
+    paths = load_json("route_paths.json")["paths"]
+    route = [c for k, path in paths.items() if k != road for c in path]
+    dmin = min(math.hypot(rx - c[0], rz_ - c[1]) for c in sorted(cols)[::5] for rx, rz_ in route[::3]) if route else 1e9
     if dmin < 128:
         R.err("footprint", "%s writes %.0f blocks from the critical path (data/route_paths.json): under 128" % (sp, dmin))
+    if road in paths:
+        den = next((dn for fa in gm.get("farms") or [] for dn in fa["dens"] if dn["id"] == sp), None)
+        ent = [e for e in load_json("rift_sculpt.json").get("entrances") or [] if e.get("id") == "%s_descent" % road]
+        if den is None:
+            R.err("footprint", "%s is no den of data/gulch_mine.json farms: its range, which bounds its lair along %s, "
+                               "is unknown" % (sp, road))
+        else:
+            ax, _ay, az = den["anchor"]
+            outr = [c for c in sorted(cols) if math.hypot(c[0] - ax, c[1] - az) > den["leash"]]
+            if outr:
+                R.err("footprint", "%s writes %d column(s) outside its den's range (leash %d), e.g. %s"
+                      % (sp, len(outr), den["leash"], outr[0]))
+        if len(ent) != 1 or not isinstance(ent[0].get("width"), (int, float)):
+            R.err("footprint", "no data/rift_sculpt.json entrance %s_descent with a width: %s's distance from the road "
+                               "cannot be judged" % (road, sp))
+        else:
+            import numpy as np
+            cc, pp = np.asarray(sorted(cols), dtype=float), np.asarray(paths[road], dtype=float)
+            dv = min(float(np.hypot(cc[i:i + 512, None, 0] - pp[None, :, 0], cc[i:i + 512, None, 1] - pp[None, :, 1]).min())
+                     for i in range(0, len(cc), 512))
+            if dv <= ent[0]["width"] / 2.0:
+                R.err("footprint", "%s writes %.1f from %s's walked line: on the road (half-width %g)"
+                      % (sp, dv, road, ent[0]["width"] / 2.0))
+            dmin = min(dmin, dv)
     return dmin
 
 

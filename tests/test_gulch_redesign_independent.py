@@ -1754,3 +1754,65 @@ def test_the_audit_is_clean_on_the_pack_and_names_each_planted_fault(fault, buil
         assert probs == [], probs
     else:
         assert [p for p in probs if re.search(FAULTS[fault], p)], probs
+
+
+# ---------------------------------------------------------------- the packs (the owner, 2026-10-05), generator mutations
+# "make more than one mega per zone, like a few of each mon, and make sure they are uncatchable". Each mutation changes
+# tools/gulch_mine.py and rebuilds the pack; data/gulch_mine.json is never touched.
+PACK_FAULTS = {
+    "a pack of two": r"megas: gm_mf_\d+_\d+_m3 \(pack member of gm_mf_\d+_\d+\) has no one spawn_at call",
+    "the guard one past": r"megas: gm_mf_\d+_\d+'s megas/pack_gm_mf_\d+_\d+ does not kill past its pack of 3",
+    "the macro catchable": r"megas: megas/spawn_at is not the one macro line",
+    "a member off the pad": r"megas: gm_mf_\d+_\d+_m1's home .* is off its den's pad",
+    "a member leashed to its home": r"megas: gm_mf_\d+_\d+_m2's leash is not `positioned",
+}
+
+
+def _pack_fault(mp, fault):
+    orig_homes, orig_keeper = GM.pack_homes, GM.keeper_files
+
+    def keeper(change):
+        def wrapped(m):
+            fns = dict(orig_keeper(m))
+            change(fns)
+            return fns
+        return wrapped
+    if fault == "a pack of two":
+        mp.setattr(GM, "pack_homes", lambda spec, d, ground: orig_homes(spec, d, ground)[:2])
+    elif fault == "a member off the pad":
+        def off(spec, d, ground):
+            h = orig_homes(spec, d, ground)
+            h[0]["at"][0] += 4
+            return h
+        mp.setattr(GM, "pack_homes", off)
+    elif fault == "the guard one past":
+        mp.setattr(GM, "keeper_files", keeper(lambda f: [f.__setitem__(k, [l.replace("matches 4..", "matches 5..")
+                                                                           for l in f[k]])
+                                                         for k in list(f) if k.startswith("megas/pack_")]))
+    elif fault == "the macro catchable":
+        mp.setattr(GM, "keeper_files", keeper(lambda f: f.__setitem__("megas/spawn_at", [l.replace(" uncatchable", "")
+                                                                                         for l in f["megas/spawn_at"]])))
+    elif fault == "a member leashed to its home":
+        # the leash measured from member 2's own home instead of the den's anchor: its range would drift with its home
+        def leash(f):
+            for k in [k for k in f if k.startswith("leash_")]:
+                f[k] = [re.sub(r"(tag=\S+_m2\] positioned )(-?\d+ -?\d+ -?\d+)( unless .* run tp @s )(-?\d+ -?\d+ -?\d+)$",
+                               r"\g<1>\g<4>\g<3>\g<4>", l) for l in f[k]]
+        mp.setattr(GM, "keeper_files", keeper(leash))
+
+
+# Without it the packs' rules could be broken in the generator and the audit stay clean: each of five generator faults
+# -- a pack of two, the den guard one past pack_size + 1, the spawn macro without `uncatchable`, member 1 off its pad,
+# member 2 leashed from its own home -- is named by tools/gulch_mine_audit.py on the rebuilt pack.
+@pytest.mark.slow
+@pytest.mark.parametrize("fault", sorted(PACK_FAULTS))
+def test_the_audit_names_each_pack_fault_in_the_generator(fault, src, sculpt, tmp_path):
+    root, _g = src
+    out = tmp_path / "cobblers_gulch_mine"
+    with pytest.MonkeyPatch.context() as mp:
+        _pack_fault(mp, fault)
+        mp.setattr(GM, "OUT", out)
+        m, _near, _tops = GM.model(root)
+        GM.write(m, GM.lines(m), GM.zone_boxes(m.spec["zone"]["polygon"]))
+    probs = _audit(out, sculpt, tmp_path)
+    assert [p for p in probs if re.search(PACK_FAULTS[fault], p)], probs[:8]
