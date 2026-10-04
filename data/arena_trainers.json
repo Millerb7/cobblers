@@ -3,7 +3,7 @@
   "status": "authored 2026-10-01; record and stand together, nothing placed in any world and nothing observed in game",
   "source": "docs/world-building/HEAVENS_ARENA.md (the tower), docs/research/notes/rct-arena-capabilities.md (what rctmod supports), and the owner's decision of 2026-10-01: \"the arena stands. Author plain standalone fights -- the series gating resting on unproven A1 is not worth the risk of hijacking every level cap.\"",
   "generated_by": "hand, from derived/deep_city/plan.json 'arena' tiers (tools/deep_city.py arena_plan, run 2026-10-01). Each seat is that tier's own reserved `stand` triple verbatim; each yaw is computed from the stand to that tier's own `door` (round(degrees(atan2(-dx, dz))), Minecraft's convention: 0 = +Z, -90 = +X). Nothing here re-derives the geometry and nothing here edits it: tools/deep_city.py owns the tower, and plan[\"arena\"][\"tiers\"][n][\"trainer\"] is the null slot this file fills.",
-  "consumed_by": "tools/route_trainers.py (the rctmod trainer, mob, dialog and loot files, the per-player defeat advancement, and the cycle) and its placements() for tools/reapply.py R17, which summons each one at its seat.",
+  "consumed_by": "tools/arena_runtime.py (each champion's team becomes the rank-up exam class cobblers:arena_exam_<id>, spawned per challenger) and tools/route_trainers.py, which no longer seats them: every record here carries `seated: false` and its old seat, gate, yaw, faces and eye_contact under `superseded_seat` (the owner, 2026-10-03: the spire's middle is just hubs). tools/arena_audit.py still reads the superseded stand and gate against the built spire.",
   "ground": "No world save was read to decide any position (CLAUDE.md, 'Ground comes from the heightmap, never from a world'). The stands are inside a built tower, not on terrain: tools/deep_city.py arena_plan_halls checks each stand: the ring under its 3x3, and 3x3x3 of air above it, and the seat is the plan's `stand`, which is the floor block's air column. The arena is below the heightmap entirely -- the pit's y15 to y118 -- so ground.py does not apply to it.",
   "authored_as_plain_standalone_fights": {
     "no_gating_is_authored": "There is no mechanical lock on any tier. A player may walk up the spiral stair and challenge tier 7 first. Every mob file tools/route_trainers.py writes for these seven carries `series: []` and `requiredDefeats: []`, exactly as it does for the 56 trainers already seated, and this file authors no `requiredDefeats`, no series, no advancement gate on a door and no per-tier lift condition.",
@@ -88,11 +88,6 @@
         "player_loss": "Floor's mine. Walk it off and come back, I am not going anywhere."
       },
       "after_win": "Odell steps off the ring and waves you at the stair. Seventeen blocks up, the next floor's ring is already lit.",
-      "seat": [3609, 17, 3257],
-      "gate": {"box": [3607, 18, 3239, 4, 13, 4], "landing": [3613.5, 16, 3243.5, 21.8], "to": "tier 2"},
-      "yaw": 180,
-      "faces": "across tier 1's ring at the challenger's mark [3609, 17, 3249], the stair bay's exit behind it",
-      "eye_contact": false,
       "repeatable": true,
       "cooldown": "arena",
       "skin": "rctmod:textures/trainers/single/worker_braden_0460.png",
@@ -143,6 +138,19 @@
             "level": 56
           }
         ]
+      },
+      "seated": false,
+      "superseded_seat": {
+        "seat": [3609, 17, 3257],
+        "gate": {
+          "box": [3607, 18, 3239, 4, 13, 4],
+          "landing": [3613.5, 16, 3243.5, 21.8],
+          "to": "tier 2"
+        },
+        "yaw": 180,
+        "faces": "across tier 1's ring at the challenger's mark [3609, 17, 3249], the stair bay's exit behind it",
+        "eye_contact": false,
+        "why": "Retired 2026-10-03 by the owner: \"leave current spire, but remove the trainer battles, have the middle just be hubs\". The champion no longer stands in the spire and its stair gate is gone; tools/route_trainers.py seats only records that carry `seat`. The record stays because its team is the rank-up exam fight of data/arena_fights.json (tools/arena_runtime.py spawns it as a cobblemon:npc class per challenger). Kept here, not deleted, so the stand and gate geometry tools/arena_audit.py checks against the built spire survive."
       }
     },
     {
@@ -189,11 +197,6 @@
         "player_loss": "The water wins by waiting. It always did."
       },
       "after_win": "Nessa wrings out a sleeve and points up the stair with her chin.",
-      "seat": [3609, 34, 3257],
-      "gate": {"box": [3607, 35, 3239, 4, 13, 4], "landing": [3610.5, 33, 3245.5, 7.1], "to": "tier 3"},
-      "yaw": 180,
-      "faces": "across tier 2's ring at the challenger's mark [3609, 34, 3249], the stair bay's exit behind it",
-      "eye_contact": false,
       "repeatable": true,
       "cooldown": "arena",
       "skin": "rctmod:textures/trainers/single/hiker_nob_00b7.png",
@@ -244,6 +247,19 @@
             "level": 59
           }
         ]
+      },
+      "seated": false,
+      "superseded_seat": {
+        "seat": [3609, 34, 3257],
+        "gate": {
+          "box": [3607, 35, 3239, 4, 13, 4],
+          "landing": [3610.5, 33, 3245.5, 7.1],
+          "to": "tier 3"
+        },
+        "yaw": 180,
+        "faces": "across tier 2's ring at the challenger's mark [3609, 34, 3249], the stair bay's exit behind it",
+        "eye_contact": false,
+        "why": "Retired 2026-10-03 by the owner: \"leave current spire, but remove the trainer battles, have the middle just be hubs\". The champion no longer stands in the spire and its stair gate is gone; tools/route_trainers.py seats only records that carry `seat`. The record stays because its team is the rank-up exam fight of data/arena_fights.json (tools/arena_runtime.py spawns it as a cobblemon:npc class per challenger). Kept here, not deleted, so the stand and gate geometry tools/arena_audit.py checks against the built spire survive."
       }
     },
     {
@@ -296,11 +312,6 @@
         "player_loss": "Slow is not the same as safe, and you were neither."
       },
       "after_win": "Veyl kills the floor's work lamps and the light core takes over, white all the way up the stair.",
-      "seat": [3609, 51, 3257],
-      "gate": {"box": [3607, 52, 3239, 4, 13, 4], "landing": [3609.5, 50, 3245.5, 0.0], "to": "tier 4"},
-      "yaw": 180,
-      "faces": "across tier 3's ring at the challenger's mark [3609, 51, 3249], the stair bay's exit behind it",
-      "eye_contact": false,
       "repeatable": true,
       "cooldown": "arena",
       "skin": "rctmod:textures/trainers/single/engineer_bernie_00de.png",
@@ -357,6 +368,19 @@
             "level": 62
           }
         ]
+      },
+      "seated": false,
+      "superseded_seat": {
+        "seat": [3609, 51, 3257],
+        "gate": {
+          "box": [3607, 52, 3239, 4, 13, 4],
+          "landing": [3609.5, 50, 3245.5, 0.0],
+          "to": "tier 4"
+        },
+        "yaw": 180,
+        "faces": "across tier 3's ring at the challenger's mark [3609, 51, 3249], the stair bay's exit behind it",
+        "eye_contact": false,
+        "why": "Retired 2026-10-03 by the owner: \"leave current spire, but remove the trainer battles, have the middle just be hubs\". The champion no longer stands in the spire and its stair gate is gone; tools/route_trainers.py seats only records that carry `seat`. The record stays because its team is the rank-up exam fight of data/arena_fights.json (tools/arena_runtime.py spawns it as a cobblemon:npc class per challenger). Kept here, not deleted, so the stand and gate geometry tools/arena_audit.py checks against the built spire survive."
       }
     },
     {
@@ -410,11 +434,6 @@
         "player_loss": "Dry off downstairs. The floor below will take you back."
       },
       "after_win": "Marro spins the sluice wheel shut behind you. Somewhere above, the drum's wall opens onto the Rift.",
-      "seat": [3609, 68, 3257],
-      "gate": {"box": [3607, 69, 3239, 4, 13, 4], "landing": [3608.5, 67, 3245.5, -7.1], "to": "tier 5"},
-      "yaw": 180,
-      "faces": "across tier 4's ring at the challenger's mark [3609, 68, 3249], the stair bay's exit behind it",
-      "eye_contact": false,
       "repeatable": true,
       "cooldown": "arena",
       "skin": "rctmod:textures/trainers/single/fisherman_andrew_00e9.png",
@@ -472,6 +491,19 @@
             "level": 65
           }
         ]
+      },
+      "seated": false,
+      "superseded_seat": {
+        "seat": [3609, 68, 3257],
+        "gate": {
+          "box": [3607, 69, 3239, 4, 13, 4],
+          "landing": [3608.5, 67, 3245.5, -7.1],
+          "to": "tier 5"
+        },
+        "yaw": 180,
+        "faces": "across tier 4's ring at the challenger's mark [3609, 68, 3249], the stair bay's exit behind it",
+        "eye_contact": false,
+        "why": "Retired 2026-10-03 by the owner: \"leave current spire, but remove the trainer battles, have the middle just be hubs\". The champion no longer stands in the spire and its stair gate is gone; tools/route_trainers.py seats only records that carry `seat`. The record stays because its team is the rank-up exam fight of data/arena_fights.json (tools/arena_runtime.py spawns it as a cobblemon:npc class per challenger). Kept here, not deleted, so the stand and gate geometry tools/arena_audit.py checks against the built spire survive."
       }
     },
     {
@@ -532,11 +564,6 @@
         "player_loss": "Sit on the terrace a while. The light is better than the company downstairs."
       },
       "after_win": "Ilse points up the stair. From the next floor the drum has stepped in, and its glass looks out over the Rift floor.",
-      "seat": [3609, 85, 3257],
-      "gate": {"box": [3607, 86, 3239, 4, 13, 4], "landing": [3605.5, 84, 3243.5, -21.8], "to": "tier 6"},
-      "yaw": 180,
-      "faces": "across tier 5's ring at the challenger's mark [3609, 85, 3249], the stair bay's exit behind it",
-      "eye_contact": false,
       "repeatable": true,
       "cooldown": "arena",
       "skin": "rctmod:textures/trainers/single/aroma_lady_violet_022e.png",
@@ -601,6 +628,19 @@
             "level": 68
           }
         ]
+      },
+      "seated": false,
+      "superseded_seat": {
+        "seat": [3609, 85, 3257],
+        "gate": {
+          "box": [3607, 86, 3239, 4, 13, 4],
+          "landing": [3605.5, 84, 3243.5, -21.8],
+          "to": "tier 6"
+        },
+        "yaw": 180,
+        "faces": "across tier 5's ring at the challenger's mark [3609, 85, 3249], the stair bay's exit behind it",
+        "eye_contact": false,
+        "why": "Retired 2026-10-03 by the owner: \"leave current spire, but remove the trainer battles, have the middle just be hubs\". The champion no longer stands in the spire and its stair gate is gone; tools/route_trainers.py seats only records that carry `seat`. The record stays because its team is the rank-up exam fight of data/arena_fights.json (tools/arena_runtime.py spawns it as a cobblemon:npc class per challenger). Kept here, not deleted, so the stand and gate geometry tools/arena_audit.py checks against the built spire survive."
       }
     },
     {
@@ -662,11 +702,6 @@
         "player_loss": "You looked away. Everyone does, the first dozen times."
       },
       "after_win": "Quell goes back to the ceiling without another word. The stair above this floor is unlit the whole way to the crown.",
-      "seat": [3609, 102, 3257],
-      "gate": {"box": [3607, 103, 3239, 4, 13, 4], "landing": [3605.5, 101, 3242.5, -20.0], "to": "tier 7"},
-      "yaw": 180,
-      "faces": "across tier 6's ring at the challenger's mark [3609, 102, 3249], the stair bay's exit behind it",
-      "eye_contact": false,
       "repeatable": true,
       "cooldown": "arena",
       "skin": "rctmod:textures/trainers/single/scientist_ted_014f.png",
@@ -732,6 +767,19 @@
             "level": 72
           }
         ]
+      },
+      "seated": false,
+      "superseded_seat": {
+        "seat": [3609, 102, 3257],
+        "gate": {
+          "box": [3607, 103, 3239, 4, 13, 4],
+          "landing": [3605.5, 101, 3242.5, -20.0],
+          "to": "tier 7"
+        },
+        "yaw": 180,
+        "faces": "across tier 6's ring at the challenger's mark [3609, 102, 3249], the stair bay's exit behind it",
+        "eye_contact": false,
+        "why": "Retired 2026-10-03 by the owner: \"leave current spire, but remove the trainer battles, have the middle just be hubs\". The champion no longer stands in the spire and its stair gate is gone; tools/route_trainers.py seats only records that carry `seat`. The record stays because its team is the rank-up exam fight of data/arena_fights.json (tools/arena_runtime.py spawns it as a cobblemon:npc class per challenger). Kept here, not deleted, so the stand and gate geometry tools/arena_audit.py checks against the built spire survive."
       }
     },
     {
@@ -800,11 +848,6 @@
         "player_loss": "That is the crown. It is not cruel, it is just higher than you are."
       },
       "after_win": "Oryx steps aside and lets you stand on the crown's floor. The light core ends here; above it is only the shaft and, far up, the tear.",
-      "seat": [3609, 119, 3257],
-      "gate": {"box": [3607, 120, 3239, 4, 7, 4], "landing": [3605.5, 118, 3241.5, -18.4], "to": "the crown"},
-      "yaw": 180,
-      "faces": "across tier 7's ring at the challenger's mark [3609, 119, 3249], the stair bay's exit behind it",
-      "eye_contact": false,
       "repeatable": true,
       "cooldown": "arena",
       "skin": "rctmod:textures/trainers/single/pokemon_ranger_jeffrey_0336.png",
@@ -877,6 +920,19 @@
             "level": 76
           }
         ]
+      },
+      "seated": false,
+      "superseded_seat": {
+        "seat": [3609, 119, 3257],
+        "gate": {
+          "box": [3607, 120, 3239, 4, 7, 4],
+          "landing": [3605.5, 118, 3241.5, -18.4],
+          "to": "the crown"
+        },
+        "yaw": 180,
+        "faces": "across tier 7's ring at the challenger's mark [3609, 119, 3249], the stair bay's exit behind it",
+        "eye_contact": false,
+        "why": "Retired 2026-10-03 by the owner: \"leave current spire, but remove the trainer battles, have the middle just be hubs\". The champion no longer stands in the spire and its stair gate is gone; tools/route_trainers.py seats only records that carry `seat`. The record stays because its team is the rank-up exam fight of data/arena_fights.json (tools/arena_runtime.py spawns it as a cobblemon:npc class per challenger). Kept here, not deleted, so the stand and gate geometry tools/arena_audit.py checks against the built spire survive."
       }
     }
   ]

@@ -146,6 +146,9 @@ STAND_FIELDS = frozenset({
     # THERE, so if data/trainers.json ever generates records for these seven, a copy of one of these in the
     # roster is two authors for one value and must fault rather than quietly win.
     "tier", "repeatable", "cooldown",
+    # 2026-10-03: the arena's seven were unseated; whether a record stands anywhere, and the stand it used to have,
+    # are stand facts too
+    "seated", "superseded_seat",
 })
 # Fields a seat file may RESTATE for whoever reads the seat list, and never the value this tool uses:
 # the roster's copy is read, the seat file's must match it exactly, and a drift apart is a fault.
@@ -231,7 +234,16 @@ def load():
     for e in guards + vr + arena:
         if "rct" in e and e["id"] not in recs:
             recs[e["id"]] = e
-    return recs, seats + guards + vr + arena, fields
+    # The arena's seven are RECORDS, not seats, since 2026-10-03 (the owner: "leave current spire, but remove the
+    # trainer battles, have the middle just be hubs"). Each carries `seated: false` and its old stand under
+    # `superseded_seat`; its team is the rank-up exam tools/arena_runtime.py spawns per challenger. So they stay in
+    # `recs` above and are never seated, gated or cycled here. A record with `seat` would be seated again, and one
+    # with `seated: false` AND a `seat` is a contradiction that fails rather than guesses.
+    both = [e["id"] for e in arena if e.get("seated") is False and "seat" in e]
+    if both:
+        raise SystemExit("data/arena_trainers.json: %s say seated false and still carry a seat" % both)
+    arena_seated = [e for e in arena if "seat" in e and e.get("seated", True)]
+    return recs, seats + guards + vr + arena_seated, fields
 
 
 def overrides():
