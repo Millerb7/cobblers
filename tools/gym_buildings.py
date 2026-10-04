@@ -344,6 +344,13 @@ def check_record(doc, lot_rect, lot_level, e):
             if block_name(e.at(x, y + dy, z)) != "minecraft:air":
                 bad.append("the spawner needs two air cells over it; %s is %s"
                            % ([x, y + dy, z], e.at(x, y + dy, z)))
+        # the leader stands at pos.above(), so the spawner must be IN the floor, flush, as the donor gyms set theirs:
+        # on the floor it is a plinth and the leader stands on it (the owner, 2026-10-04, "the gym leader on a
+        # rock": all seven halls). The shared rule, also used by tools/npc_spot_sweep.py on the replayed apply
+        import npc_spot_sweep as sweep
+        why = sweep.spawner_problem(e.at, (x, y, z))
+        if why:
+            bad.append(why)
     if not [p for p, s in e.cells.items() if block_name(s) == "minecraft:chest"]:
         bad.append("no chest: every gym building carries the leader's chest")
     if any(block_name(s) == HEALER for s in e.cells.values()):

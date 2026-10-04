@@ -50,12 +50,12 @@
     "name": "Lt. Surge",
     "spawner": [
       1747,
-      191,
+      190,
       1414
     ],
     "powered_by": [
       1747,
-      190,
+      189,
       1414
     ],
     "why": "EXP-013 E2 (VERIFIED, on staging): a bare rctmod:trainer_spawner set by command with TrainerIds on a redstone block spawned its leader and he battled. The donor template does the same (its own spawner stands at [1736, 174, 1403] and is removed with the shell by tools/gym_demolish.py), so once the shell is down this is the only kanto_ltsurge in the town and the badge cannot be won without reaching the gallery (a persistent leader spawner anywhere awards the badge: verified on staging 2026-09-24, docs/STATE.md).",
@@ -1337,21 +1337,21 @@
       "op": "setblock",
       "pos": [
         1747,
-        190,
+        189,
         1414
       ],
       "block": "minecraft:redstone_block",
-      "why": "-- Surge. The power under the spawner, set into the gallery floor as the donor template sets its own"
+      "why": "-- Surge. The power under the spawner, in the course UNDER the gallery floor, as the donor template sets its own"
     },
     {
       "op": "setblock",
       "pos": [
         1747,
-        191,
+        190,
         1414
       ],
       "block": "rctmod:trainer_spawner{TrainerIds:[\"kanto_ltsurge\"]}",
-      "why": "the only trainer spawner in the town once the shell is down, with two air cells over it"
+      "why": "the only trainer spawner in the town once the shell is down, set INTO the gallery floor so the leader (spawned at its pos.above()) stands at the floor's level, not on a plinth (2026-10-04); two air cells over it"
     },
     {
       "op": "setblock",

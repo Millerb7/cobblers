@@ -48,12 +48,12 @@
     "name": "Brock",
     "spawner": [
       1832,
-      156,
+      155,
       3696
     ],
     "powered_by": [
       1832,
-      155,
+      154,
       3696
     ],
     "why": "EXP-013 E2 (VERIFIED, on staging): a bare rctmod:trainer_spawner set by command with TrainerIds ['kanto_brock'] on a redstone block spawned Brock and he battled. The donor template does the same thing - its redstone_block at [6,0,12] sits under its spawner at [6,1,12]. Taking the shell down removes the template's spawner, so this one is the only kanto_brock in the town and the badge cannot be won without reaching the gallery (a persistent kanto_brock anywhere awards the badge: verified on staging 2026-09-24, docs/STATE.md).",
@@ -1597,21 +1597,21 @@
       "op": "setblock",
       "pos": [
         1832,
-        155,
+        154,
         3696
       ],
       "block": "minecraft:redstone_block",
-      "why": "-- Brock. The power under the spawner, set into the gallery floor as the donor template sets its own"
+      "why": "-- Brock. The power under the spawner, in the course UNDER the gallery floor, as the donor template sets its own (cobbleverse:brock: redstone [6,0,12] under the floor layer, spawner [6,1,12] in it)"
     },
     {
       "op": "setblock",
       "pos": [
         1832,
-        156,
+        155,
         3696
       ],
       "block": "rctmod:trainer_spawner{TrainerIds:[\"kanto_brock\"]}",
-      "why": "the only trainer spawner in the town once the shell is down, and two air cells over it"
+      "why": "the only trainer spawner in the town once the shell is down, set INTO the gallery floor so Brock (spawned at its pos.above()) stands at the floor's own level, not on a one-block plinth (the owner, 2026-10-04: 'the gym leader on a rock'); two air cells over it"
     },
     {
       "op": "setblock",
