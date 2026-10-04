@@ -24,6 +24,19 @@ recorded and not chased; read it before reversing anything.
   fought him.
 - Next, in order: the owner's answers to the morning report's section 4; then 3a below.
 
+## 2a. 2026-10-05: branch `build/2026-10-05-p0` (stacked on #118), the owner's "finish all in parallel, ready for a play test"
+
+Merged here: P0-1 Oak gives the starter (allowStarterOnJoin false + `openstarterscreen` from Oak's dialogue) and its
+independent audit (tools/oak_starter_audit.py, last prepare job); Heaven's Arena spawn-free zone; contract fixes.
+In flight from 1d5f6fd (each in its own worktree; merge, then the independent audits where named): Mega dens as packs +
+west side of the southern tip + each den's evolution family (then re-point mega_field/mega_dens audits); spawn
+redesign rows A-D and rows E-H (every area rare/ultra-rare/heart, Tilpey teeming); tools/spawn_tiers_audit.py
+(independent, strict xfail until the redesign lands); east research station near (6050, 1843) + Pine Isles ferry;
+Jungle Isle lost temples; Elara confronting at the HQ door; tools/new_player_walk.py (the standing walk check). Then ONE
+prepare, install (the starter lock reaches the live world's shared config -- the owner asked for the play test
+build), apply, world probes. Open with the owner: P0-2 "the leader rejection" and P0-3 are named in no repo document;
+the Rift portal sheets (review 73).
+
 ## 3. What waits on the owner
 
 The morning report's section 4 (twelve items, the Nether question first) and the Giovanni fight (section 1).
