@@ -67,6 +67,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # the Deep's city and the relic area's surface (tools/deep_city.py, 2026-09-27): stood on the pit R9B
                 # sinks, after Victory Road's caves (R9C) write round the mouth
                 "cobblers_deep_city",
+                # 2026-10-03: Heaven's Arena as a dome on the Deep's north floor (tools/arena_dome.py,
+                # data/arena_dome.json): pure block functions run by R9AD, after the city's paving it stands on
+                "cobblers_arena_dome",
                 # Victory Road as one cave network (2026-09-23; it replaced the spine and its regions), its Habitat
                 # Block tiles and its finds
                 "cobblers_vr_caves", "cobblers_habitats", "cobblers_rewards",
@@ -506,6 +509,10 @@ def prepare_jobs(a):
     # drum fully overwritten, the rings, seats and gate boxes from the data, the climb walked with and without gates
     add("arena_audit", "arena_audit.py", *src)
     add("deep_city_audit", "deep_city_audit.py", *src)
+    # Heaven's Arena as a dome on the Deep's north floor (2026-10-03): its build runs the city's build in memory and
+    # refuses any column the city writes more than paving on, the keep-clears, and anything under min_street from the
+    # city or a door; and the contract marks the arena runtime reads must stand on floor with two air above
+    add("arena_dome:build", "arena_dome.py", "build", *src)
     # the relic site underground (2026-10-02): its own fail-closed report runs first and refuses on a problem; the
     # undo is derived from the superseded surface generator minus the city build above. Its audit runs LATE (below),
     # once every other block pack is built, because it sweeps them all for a cell the undo or the shell would touch
@@ -1490,6 +1497,11 @@ def steps(with_spawns=False):
     # R9D was the retired Victory Road regions step, and tests/test_reapply_vr_steps.py keeps that id retired
     out.append(("R9DC", "the Deep's city and the relic area's surface (tools/deep_city.py)",
                 [("fn", "cobblers:deep_city/%s" % f) for f in indexed("cobblers_deep_city", "deep_city")]))
+    # Heaven's Arena's dome on the Deep's north floor (2026-10-03, tools/arena_dome.py): AFTER R9DC, because it writes
+    # over the city's floor paving inside its own footprint and nothing else; before R9E and the lights. Phase 1 the
+    # structure, then phase 2 the ring lanterns that stand on its posts
+    out.append(("R9AD", "Heaven's Arena: the dome, its gatehouse tower and five fight venues (data/arena_dome.json)",
+                [("fn", "cobblers:arena_dome/%s" % f) for f in indexed("cobblers_arena_dome", "arena_dome")]))
     # the relic site underground (2026-10-02, tools/relic_underground.py): AFTER R9DC, because its undo takes off the
     # old surface build minus what the city now writes, and its passage meets the HQ's side of the pit; BEFORE R9E and
     # before Codex's cradle, whose own shell would seal the passage. Hold the box, undo, carve (CAVERN pattern), release
