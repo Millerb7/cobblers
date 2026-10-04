@@ -809,7 +809,7 @@
       "type": "boolean",
       "scope": "player",
       "initial": false,
-      "why": "the player beat Director Elara Venn, the ONE Elara: a Cobblemon NPC in the HQ tower's director's office who talks and fights (data/hq_tower.json npcs and fights; team data/finale_trainers.json finale_elara_venn; the integration of 2026-10-04). Set only by cobblers:hq_tower/won_elara, run as the WINNING player by the cobblers_hq_tower pack's battle_victory callback when the losing NPC stands at Elara's spot. record_cradle_open and the release (unlock_league_after_rift_resolution and the binder's 'Release Hoopa.') require it."
+      "why": "the player beat Director Elara Venn, the ONE Elara: a Cobblemon NPC standing in the HQ tower's door (data/hq_tower.json door_keeper, the owner, 2026-10-05) who talks, keeps the door and fights there (data/hq_tower.json npcs and fights; team data/finale_trainers.json finale_elara_venn; the integration of 2026-10-04). Set only by cobblers:hq_tower/won_elara, run as the WINNING player by the cobblers_hq_tower pack's battle_victory callback when the losing NPC stands at Elara's spot. record_cradle_open and the release (unlock_league_after_rift_resolution and the binder's 'Release Hoopa.') require it."
     },
     {
       "id": "quest.main_worldshift_reveal.finale_nia_cursor",
@@ -849,7 +849,7 @@
       "scope": "player",
       "initial": "elara_before",
       "allowed_values": "node ids from dlg_main_finale_elara",
-      "why": "the dialogue cursor of Director Elara Venn in the HQ tower's director's office (data/hq_tower.json npcs, 2026-10-04). Entry rules pick the node from the stage; the cursor gates nothing."
+      "why": "the dialogue cursor of Director Elara Venn, who stands in the HQ tower's door for the whole finale (data/hq_tower.json door_keeper and npcs, the owner, 2026-10-05; in the director's office 2026-10-04 to 2026-10-05). Entry rules pick the node from the stage, and the cursor only returns a player to the choice they left (meet_choice, elara_choice) or to the turn-away's second line (door_002); it gates nothing."
     },
     {
       "id": "quest.evt_vr_abandoned_cut.started",
