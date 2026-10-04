@@ -236,7 +236,7 @@ Strength. The trench combines Dive and keys, but the keys are its whole puzzle.
    - Manaphy and Phione on the appearing island off Sunset West, postgame (proposal).
    - Mesprit, Azelf and Uxie under Arrow Lake, Marshy Marsh and Lake Tilpey, in air-chambered grottos reached with
      Surf, gated by 3, 5 and 7 badges (decided: in the lakes, one early, one mid, one late).
-   - Kyogre and Suicune stay unplaced (`STRUCTURE_DECISIONS.md:85, 182`).
+   - Kyogre and Suicune stay unplaced (`STRUCTURE_DECISIONS.md:85, 182`). **Superseded for Kyogre (the owner, 2026-10-05: "for the kyogre research, make them looking at a dive portal underwater, that will later tp the player to a kyogre cave"):** Coldwater Station studies a sealed dive arch at (6191, 1844) that will lead to a Kyogre cave (data/coldwater_station.json).
 2. **Which water needs Dive, and which is reachable by Surf or swimming?**
    - Swimming: every surface, every shore, every river, and the top 5 blocks of any lake or sea
      (`DEATH_AND_WIPE.md:243-261`).
@@ -307,4 +307,4 @@ Strength. The trench combines Dive and keys, but the keys are its whole puzzle.
    can lie on the floor and `SQ-DIG-02` is Surf content. No ledge is needed.
 9. **Rosters for the southern sea.** *Recommend:* author a Southern Shallows marine zone around Pallet and Relic
    Island before the reef is built.
-10. **Kyogre and Suicune.** *Recommend:* leave them unplaced.
+10. **Kyogre and Suicune.** *Recommend:* leave them unplaced. **Superseded for Kyogre (the owner, 2026-10-05: "for the kyogre research, make them looking at a dive portal underwater, that will later tp the player to a kyogre cave"):** Coldwater Station studies a sealed dive arch at (6191, 1844) that will lead to a Kyogre cave (data/coldwater_station.json).

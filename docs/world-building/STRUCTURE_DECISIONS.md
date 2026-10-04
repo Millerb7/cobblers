@@ -179,7 +179,7 @@ donor templates.
 
 | Species | Reason |
 | --- | --- |
-| Kyogre, Rayquaza | the trio collapses without all three. Rayquaza already has a loaded function that spawns it in the End |
+| Kyogre, Rayquaza | (Kyogre superseded 2026-10-05: the owner placed a Kyogre lead, Coldwater Station's sealed dive arch, data/coldwater_station.json) the trio collapses without all three. Rayquaza already has a loaded function that spawns it in the End |
 | Ho-Oh, Celebi | good, but they duplicate roles: Moltres covers the fire bird, and the Stillwater cherry basin is better left to its own story |
 | Dialga, Palkia | the strongest runners-up for the Rift, but they pull the campaign into a time-and-space plot. Giratina, with the loaded Distortion World, already occupies that lane |
 | Latias, Latios, Jirachi, Deoxys, Cresselia, Darkrai, Shaymin, Phione, Manaphy, Regieleki, Regidrago | roaming, event or mythical mechanics that need their own systems; better as later additions |
