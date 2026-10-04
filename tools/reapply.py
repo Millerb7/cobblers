@@ -611,6 +611,12 @@ def prepare_jobs(a):
     # clear of; fail-closed on any piece off its square's free cells, a spawn-condition block, a dark cell, a stall
     # record that is not what it builds, or a stall the Centre's and Mart's doors cannot walk to
     add("plaza_centre:build", "plaza_centre.py", "build", *src)
+    # and the squares' independent audit (tools/town_squares_audit.py, written by an agent that built neither the
+    # squares nor the stalls): the R13 functions voxelised against the plans, footprints, heightmap and spawn blocks;
+    # every stall's counter and keeper; light at its own rule; reach from the Centre's and Mart's doors; every contract
+    # stall staffed once by R17M; the stalls' goods (jars, spawn blocks, power, theme); the survey's no-spend towns;
+    # and the budget curve recomputed and pinned. After the markets jobs (above) and the squares' build
+    add("town_squares_audit", "town_squares_audit.py", "--server-dir", a.server_dir, *src)
     # the working Pokemon: after the dressing, whose pieces they stand beside and keep clear of
     add("ambient:build", "ambient.py", "build", *src)
     # the evolution-stone faces: after the town plans, the signposts, the dressing and the working Pokemon, which they
