@@ -323,8 +323,7 @@ FLOOR = "basin column(s) of the field's floor are outside mega_field.polygon"
 #      pairs, not dens).
 #   2. 14 borders write 28 scar columns up to 0.75 block outside one of the two ranges, all at the lens's two tips:
 #      tools/mega_borders.py Border.scar adds the `ragged` term to a half-width that is already zero at the tips.
-KNOWN = (re.compile(r"^crowding: gm_mf_(steelix|charizard): its range overlaps no other den's"),
-         re.compile(r"^borders: \w+__\w+: \d+ of its \d+ columns lie outside the overlap of the two ranges"))
+KNOWN = (re.compile(r"^crowding: gm_mf_(steelix|charizard): its range overlaps no other den's"),)
 
 
 def unknown(rep):
@@ -353,8 +352,8 @@ def test_every_dens_range_overlaps_another_dens(committed):
     assert not [e for e in committed.errors if "its range overlaps no other den's" in e]
 
 
-# Finding 2 (KNOWN). Without it a border could be dressed where only one Mega ranges, not where two meet.
-@pytest.mark.xfail(strict=True, reason="KNOWN 2026-10-04: 28 ragged scar tips up to 0.75 past a range; see KNOWN")
+# Finding 2, FIXED 2026-10-04 (tools/mega_borders.py Border.scar keeps a block inside both ranges). Without it a
+# border could be dressed where only one Mega ranges, not where two meet.
 def test_every_border_column_lies_inside_both_ranges(committed):
     assert not [e for e in committed.errors if "lie outside the overlap of the two ranges" in e]
 

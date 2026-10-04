@@ -225,6 +225,10 @@ class Border:
                 hw = hw0 * math.sqrt(max(0.0, 1 - k * k)) + rag * (0.5 * math.sin(0.35 * t + p1) + 0.5 * math.sin(0.9 * t + p2))
                 if abs(w) > hw or self.rng.random() > B["cover"] or not self.free(x, z):
                     continue
+                # inside BOTH ranges, with a block's margin: the ragged edge is added after the lens has narrowed to
+                # nothing, and at its tips it reached up to 0.75 outside one range (mega_field_audit borders, 2026-10-04)
+                if any(math.hypot(x - d["anchor"][0], z - d["anchor"][2]) > d["leash"] - 1.0 for d in (self.a, self.b)):
+                    continue
                 if self.rng.random() < B["own_side"]:
                     st = _pick(self.rng, ka if w < 0 else kb)
                 else:
