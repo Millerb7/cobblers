@@ -1861,7 +1861,7 @@
         },
         {
           "id": "record_cradle_open",
-          "source": "docs/story/NPCS_AND_RIFT_FINALE.md (Codex, branch codex/trainer-modes) Scene 4: Director Elara Venn's decision in the HQ tower's director's office, invoked after line elara_006 of dlg_main_finale_elara. Since the integration of 2026-10-04 she fights first (choice elara_choice) and this transition requires that THIS player has beaten her (elara_defeated)",
+          "source": "docs/story/NPCS_AND_RIFT_FINALE.md (Codex, branch codex/trainer-modes) Scene 4: Director Elara Venn's decision, since 2026-10-05 at the HQ tower's door (data/hq_tower.json door_keeper; Codex's second stand for her, the secure-shaft head the door opens from), invoked after line elara_006 of dlg_main_finale_elara. Since the integration of 2026-10-04 she fights first (choice elara_choice) and this transition requires that THIS player has beaten her (elara_defeated)",
           "conditions": [
             {
               "kind": "progression_equals",
@@ -1879,6 +1879,30 @@
               "kind": "set_progression",
               "field": "quest.main_worldshift_reveal.stage",
               "value": "cradle_open"
+            }
+          ]
+        },
+        {
+          "id": "elara_door_admit",
+          "source": "the owner, 2026-10-05: 'BLOCKING NPC: Elara at the HQ door.' Director Elara Venn stands in the HQ tower's doorway for every player (data/hq_tower.json door_keeper); her choice 'Let me through.' runs this, and its one effect moves THIS player inside past her (cobblers:hq_tower/door_admit, the relic HQ guard's relic_hq_admit shape). Its stages are exactly the tower door gate's (gates.door, deep_handoff_received or later), so she never lets in a player the gate would set back; tools/hq_tower.py check_door_keeper fails when they differ. Writes nothing: passing her is not progress, Brann's hall is",
+          "conditions": [
+            {
+              "kind": "progression_in",
+              "field": "quest.main_worldshift_reveal.stage",
+              "values": [
+                "deep_handoff_received",
+                "hq_crossed",
+                "anchor_shutdown",
+                "cradle_open",
+                "rift_released",
+                "league_recognized"
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "kind": "function",
+              "function": "cobblers:hq_tower/door_admit"
             }
           ]
         },

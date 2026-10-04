@@ -10124,7 +10124,7 @@
           "id": "nia_007",
           "kind": "line",
           "speaker": "nia",
-          "text": "Headquarters is the black tower on the top ring, west side. The tower door inside will open for my packet. Climb.",
+          "text": "Headquarters is the black tower on the top ring, west side. Elara keeps its door herself. My packet gets you past her; it will not get you her blessing. Climb.",
           "next": "nia_repeat"
         },
         {
@@ -10318,7 +10318,7 @@
           "id": "brann_repeat",
           "kind": "line",
           "speaker": "brann",
-          "text": "The stair is open. Anchor control is at the top of the tower; Elara's office is the floor below it.",
+          "text": "The stair is open. Anchor control is at the top of the tower. Elara is holding the door you came in by.",
           "next": "brann_repeat"
         }
       ],
@@ -10467,7 +10467,7 @@
           "id": "oren_repeat",
           "kind": "line",
           "speaker": "oren",
-          "text": "Anchors are down. The secure shaft is still locked from Elara's office.",
+          "text": "Anchors are down. The secure shaft is still locked, and Elara holds the door above it.",
           "next": "oren_repeat"
         },
         {
@@ -10487,7 +10487,7 @@
       "quest_id": "main_worldshift_reveal",
       "npc_id": "npc_finale_elara_venn",
       "npc_name": "Director Elara Venn",
-      "source": "docs/story/NPCS_AND_RIFT_FINALE.md (Codex, branch codex/trainer-modes) Scene 4, Elara's decision, in the HQ tower's director's office (data/hq_tower.json storey hq_s9), the floor below anchor control. The integration of 2026-10-04 makes her the ONE Elara, who talks and fights here: Codex's lines 1-4 open, the choice starts her battle (npc_battle; team data/finale_trainers.json finale_elara_venn), the win sets elara_defeated (the cobblers_hq_tower battle_victory callback), and lines 5-7 after the win write cradle_open, the stage the doc opens the secure shaft at and the release reads. The choice's line is new (Codex's Elara does not fight)",
+      "source": "docs/story/NPCS_AND_RIFT_FINALE.md (Codex, branch codex/trainer-modes) Scene 4, Elara's decision. Since the owner's 2026-10-05 'BLOCKING NPC: Elara at the HQ door' she is the ONE Elara and stands in the HQ tower's doorway for the whole finale (data/hq_tower.json door_keeper): Codex gives her two stands, 'hq_director_office, then the secure-shaft head', and the tower door opens from the secure-shaft head. The player meets her there three times: turned away at rift_crisis_pending (door_001-002, new); let up at deep_handoff_received after a confrontation in words (meet_001-003 and meet_choice, new), told to come back down to her; and at anchor_shutdown Codex's lines 1-4, the choice that starts the ONE Elara battle (npc_battle; team data/finale_trainers.json finale_elara_venn; the win sets elara_defeated by the cobblers_hq_tower battle_victory callback), and lines 5-7 after the win, which write cradle_open. 'Let me through.' (elara_door_admit) is how every player gets in. The choice's line is new (Codex's Elara does not fight). In the director's office 2026-10-04 to 2026-10-05",
       "scope": "player",
       "cursor": {
         "progression_field": "quest.main_worldshift_reveal.finale_elara_cursor",
@@ -10545,7 +10545,44 @@
           "node": "elara_001"
         },
         {
+          "priority": 14,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.stage",
+                "value": "deep_handoff_received"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.finale_elara_cursor",
+                "value": "meet_choice"
+              }
+            ]
+          },
+          "node": "meet_choice"
+        },
+        {
+          "priority": 16,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.main_worldshift_reveal.stage",
+            "value": "deep_handoff_received"
+          },
+          "node": "meet_001"
+        },
+        {
           "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.main_worldshift_reveal.stage",
+            "value": "hq_crossed"
+          },
+          "node": "elara_waiting"
+        },
+        {
+          "priority": 22,
           "when": {
             "kind": "progression_equals",
             "field": "quest.main_worldshift_reveal.stage",
@@ -10566,16 +10603,32 @@
           "node": "elara_after"
         },
         {
-          "priority": 40,
+          "priority": 36,
           "when": {
-            "kind": "progression_in",
-            "field": "quest.main_worldshift_reveal.stage",
-            "values": [
-              "deep_handoff_received",
-              "hq_crossed"
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.stage",
+                "value": "rift_crisis_pending"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.finale_elara_cursor",
+                "value": "door_002"
+              }
             ]
           },
-          "node": "elara_waiting"
+          "node": "door_002"
+        },
+        {
+          "priority": 38,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.main_worldshift_reveal.stage",
+            "value": "rift_crisis_pending"
+          },
+          "node": "door_001"
         },
         {
           "priority": 50,
@@ -10590,15 +10643,127 @@
           "id": "elara_before",
           "kind": "line",
           "speaker": "elara",
-          "text": "Whoever you are, this office is not on your route.",
+          "text": "Whoever you are, this door is not on your route.",
           "next": "elara_before"
         },
         {
-          "id": "elara_waiting",
+          "id": "door_001",
           "kind": "line",
           "speaker": "elara",
+          "text": "Jun let you into the Deep. That was his to give. This door is mine.",
+          "next": "door_002"
+        },
+        {
+          "id": "door_002",
+          "kind": "line",
+          "speaker": "elara",
+          "text": "Behind me is the operation that keeps every light down here burning. It has no use for a trainer without orders. Step back.",
+          "next": "door_002"
+        },
+        {
+          "id": "meet_001",
+          "kind": "line",
+          "speaker": "elara",
+          "text": "Nia's packet. She thinks an evacuation order makes you staff.",
+          "next": "meet_002"
+        },
+        {
+          "id": "meet_002",
+          "kind": "line",
+          "speaker": "elara",
+          "text": "I have read Tomas's trace more times than she has. I know what is on the other side of the cycle.",
+          "next": "meet_003"
+        },
+        {
+          "id": "meet_003",
+          "kind": "line",
+          "speaker": "elara",
+          "text": "Go up, then. Captain Saye holds the briefing hall, and Oren will show you why the machine is still running.",
+          "next": "meet_choice"
+        },
+        {
+          "id": "meet_choice",
+          "kind": "choice",
+          "speaker": "elara",
+          "text": "When you have run out of arguments, come back down. I will be here. The shaft under this floor answers to me.",
+          "responses": [
+            {
+              "id": "r_through",
+              "text": "Let me through.",
+              "visible_when": {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "elara_door_admit"
+                },
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            },
+            {
+              "id": "r_not_yet",
+              "text": "Not yet.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "elara_waiting",
+          "kind": "choice",
+          "speaker": "elara",
           "text": "The anchors are still live. Nothing you say to me changes while the machine is running.",
-          "next": "elara_waiting"
+          "responses": [
+            {
+              "id": "r_through",
+              "text": "Let me through.",
+              "visible_when": {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "elara_door_admit"
+                },
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            },
+            {
+              "id": "r_not_yet",
+              "text": "Not yet.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "elara_001",
@@ -10684,17 +10849,87 @@
         },
         {
           "id": "elara_repeat",
-          "kind": "line",
+          "kind": "choice",
           "speaker": "elara",
           "text": "The shaft is open. Follow the passage beneath the relic site.",
-          "next": "elara_repeat"
+          "responses": [
+            {
+              "id": "r_through",
+              "text": "Let me through.",
+              "visible_when": {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "elara_door_admit"
+                },
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            },
+            {
+              "id": "r_not_yet",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
         },
         {
           "id": "elara_after",
-          "kind": "line",
+          "kind": "choice",
           "speaker": "elara",
           "text": "The cradle is empty. Now the work starts that nobody can exchange their way out of.",
-          "next": "elara_after"
+          "responses": [
+            {
+              "id": "r_through",
+              "text": "Let me through.",
+              "visible_when": {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
+                  "rift_released",
+                  "league_recognized"
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "elara_door_admit"
+                },
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            },
+            {
+              "id": "r_not_yet",
+              "text": "Goodbye.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
         }
       ],
       "speakers": {
