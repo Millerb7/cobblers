@@ -196,9 +196,11 @@ def test_the_replay_order_is_reapplys_order():
     pos = [src.find('("%s", ' % s) for s, _p, _f in W.REPLAY]
     assert all(p > 0 for p in pos), dict(zip([s for s, _p, _f in W.REPLAY], pos))
     assert pos == sorted(pos)
-    relic = (ROOT / "tools" / "relic_underground.py").read_text(encoding="utf-8")
+    # R9RU and R9HQ take their functions from their own tool's FOLDER, not from a name in reapply.py
+    own = {"R9RU": "relic_underground.py", "R9HQ": "hq_tower.py"}
     for s, p, f in W.REPLAY:
-        assert ("cobblers:%s/" % f) in src or (s == "R9RU" and 'FOLDER = "%s"' % f in relic), (s, p)
+        tool = (ROOT / "tools" / own[s]).read_text(encoding="utf-8") if s in own else ""
+        assert ("cobblers:%s/" % f) in src or 'FOLDER = "%s"' % f in tool, (s, p)
 
 
 # Without it, the audit could import the generator it checks and share its derivation (CLAUDE.md, independence).
