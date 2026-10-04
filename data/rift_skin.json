@@ -146,7 +146,19 @@
     "count": 9,
     "view_range": 3.0,
     "use": "glimpses only: sheets set deep inside a narrow tear in a solid face, the rock hiding every edge. Never standing in the open, never in a fissure (owner, 2026-09-22).",
-    "block": "minecraft:nether_portal"
+    "block": "minecraft:nether_portal",
+    "sheet_tag": "rift_sheet",
+    "siting": "tools/rift_skin.py site_sheet (2026-10-05, after the owner: 'if portal sheets are blended in it'd be better'). One sheet per equal share of the SHEER stretches, at the first station from the share's middle where the face is one cliff step; it faces the basin along the nearest axis, `tear.depth` blocks behind the face, reached by a tear `tear.width` wide on the panel's courses `tear.y`. In the sculpted heightmap (rock iff y <= H) every cell of the panel and a `margin` round it, the layers in front of and behind it, and the tear's walls are rock. A station that fails is refused and the next is tried; fewer than `count` if a share has none. Never within `entrance_clearance` stations beyond an entrance's gap. Its own re-apply step, R1S (cobblers:rift/sheets); the build fails if a sheet's box is not enclosed.",
+    "margin": 1,
+    "entrance_clearance": 60,
+    "tear": {
+      "width": 1,
+      "y": [1, 3],
+      "depth": [2, 5],
+      "search": 8,
+      "approach": 3,
+      "why": "y: courses above the panel's bottom, whose bottom course is one over the floor in front, so the tear is at eye height. depth: blocks from the face to the sheet's layer, shallowest first. search: how far either side of the ring station to look for the face. approach: columns of dry basin floor in front of the face, none above the panel's bottom course."
+    }
   },
   "water": {
     "falls": 6,

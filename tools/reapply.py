@@ -1490,7 +1490,8 @@ def rift_zone_steps(index, spec):
 def steps(with_spawns=False):
     """[(step id, title, [(kind, value)])]; kind is fn (a function), wait (seconds), check (a callable name)."""
     doc = placements()
-    # the Rift's entities (the trailhead guards' placeholders and the portal sheets) after its blocks: fx force-loads
+    # the Rift's entities (the trailhead guards' placeholders; the portal sheets are R1S's since 2026-10-05, and
+    # fx_go still kills any old sheet, which carries rift_fx_all) after its blocks: fx force-loads
     # their chunks and schedules fx_go 60 ticks on, which summons them and counts them. No step ran it until the
     # 2026-09-24 rehearsal found 0 of 14 on a fresh export: they had been placed by hand on staging
     out = [("R1", "the Rift skin: the block pass over the sculpted shape, then its entities",
@@ -1505,7 +1506,13 @@ def steps(with_spawns=False):
             [("fn", "cobblers:lakebed_repair/%s" % f) for f in indexed("cobblers_lakebed_repair", "lakebed_repair")]),
            ("R1B", "the Rift biome, painted over the skin",
             [("fn", "cobblers:rift/%s" % f) for f in indexed("cobblers_rift_biome", "rift")]),
-           ("R2", "Displaced City cavern", [("fn", "cobblers:cavern/%s" % f) for f in CAVERN]),
+           # the portal sheets (tools/rift_skin.py, 2026-10-05): their own step, so re-siting them never needs R1
+           # again. After R1, whose fx_go kills the old sheets by rift_fx_all and whose seal must not refill the new
+           # tears. sheets force-loads and schedules sheets_go 60 ticks on, which kills every sheet, puts back the
+           # old slots, seals and carves, summons and counts
+           ("R1S", "the Rift's portal sheets: glimpses through a tear in a sheer face",
+            [("fn", "cobblers:rift/sheets"), ("wait", 8), ("check", "rift_sheets")]),
+           ("R2","Displaced City cavern", [("fn", "cobblers:cavern/%s" % f) for f in CAVERN]),
            ("R3", "world tree", [("fn", "cobblers:worldtree/%02d_tree" % k) for k in range(4)]
             + [("fn", "cobblers:worldtree/90_foundation"), ("check", "crown")]),
            ("R4", "Foothill grove", [("fn", "cobblers:reapply/grove"), ("fn", "cobblers:reapply/grove_augment")]),
@@ -2279,6 +2286,22 @@ def _run_steps(a, rc, todo, rec, path, live=None):
                 print("   the Rift's entities: %s of %d" % (got, want), flush=True)
                 if got != want:
                     bad.append("the Rift's entities: %s of %d summoned (cobblers:rift/fx)" % (got, want))
+            elif kind == "check" and v == "rift_sheets":
+                # sheets_go counts the sheets standing after it ran; the plan says how many it sited
+                pl = json.loads((ROOT / "derived" / "rift_skin" / "plan.json").read_text(encoding="utf-8"))
+                want = pl["sheets_expected"]
+                got = None
+                for _ in range(10):
+                    r = rc("scoreboard players get #%s cobblers.rift_fx" % pl["sheet_tag"])
+                    m = re.search(r"has (\d+) ", r)
+                    if m:
+                        got = int(m.group(1))
+                        if got == want:
+                            break
+                    time.sleep(2)
+                print("   the Rift's portal sheets: %s of %d" % (got, want), flush=True)
+                if got != want:
+                    bad.append("the Rift's portal sheets: %s of %d summoned (cobblers:rift/sheets)" % (got, want))
             elif kind == "check" and v == "verify":
                 time.sleep(5)
                 print(rc("save-all flush", timeout=600))
