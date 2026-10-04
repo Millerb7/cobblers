@@ -96,6 +96,10 @@ class Den:
     def __init__(self, doc, rec, gden, g, index):
         self.doc, self.rec, self.g = doc, rec, g
         self.species = rec["species"]
+        # the lair kit's own species decides the kit's behaviour (tyranitar's split boulders, abomasnow's snow): a field
+        # den takes a kit by data/gulch_mine.json mega_field.dressing.kit_of, and its record names the kit's den
+        kits = {r["den"]: r["species"] for r in doc.get("superseded_dens") or []}
+        self.kit_species = kits.get(rec.get("kit"), self.species)
         self.ax, self.ay, self.az = gden["anchor"]
         self.G0 = self.ay - 1
         pad = doc["anchor_pad"]
@@ -189,7 +193,7 @@ class Den:
     def boulders(self):
         L = self.L
         n = L["boulders"]
-        tyr = self.species == "tyranitar"
+        tyr = self.kit_species == "tyranitar"
         for i in range(n):
             a = 2 * math.pi * i / n + self.theta + self.rng.uniform(-0.2, 0.2)
             if self.angle_off(a) < math.radians(L["ring_gap_degrees"]) / 2:
@@ -210,7 +214,7 @@ class Den:
                     h = max(1, int(round(hb * (1 - (d / (br + 0.8)) ** 2))))
                     for _ in range(h):
                         self.stack(x, z, self.rng.choice(self.rec["boulder"]))
-                    if self.species == "abomasnow":
+                    if self.kit_species == "abomasnow":
                         self.stack(x, z, "minecraft:snow[layers=%d]" % self.rng.randint(1, 3))
             if tyr:                         # the pieces knocked off it
                 for _ in range(4):
@@ -509,7 +513,7 @@ class Den:
         feature()
         self.boulders()
         self.carcass()
-        if self.species == "abomasnow":
+        if self.kit_species == "abomasnow":
             self.frost_late()
         self.pad()
         return self

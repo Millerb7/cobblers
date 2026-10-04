@@ -328,7 +328,9 @@ def _gone_farm_mega(site, den_id, fns=None):
     import test_gulch_mine as TG
     spec, _den, w, who = TG._farm_world(site, den_id, fns=fns or TG.farm_keeper(FARM_RESP),
                                         respawn=FARM_RESP, players=1)
-    megas = [e for e in w.entities if e["kind"] == "pokemon"]
+    # the den under test is the one Mega carrying its den tag (the Mega field's ranges overlap, 2026-10-04, so its
+    # neighbours' Megas share the world; TG.den_megas checks each of them is another live den's own)
+    megas = TG.den_megas(w, den_id)
     assert len(megas) == 1, (site, "the den's Mega never came up: the scenario would prove nothing", megas)
     w.entities.remove(megas[0])
     return TG, w, w.gt, who[0]
