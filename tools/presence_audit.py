@@ -96,6 +96,8 @@ def arena(rc):
         out.append(("arena", "plan", (cx, cz), "the plan's tiers %s are not the record's %s"
                     % ([t["y"] for t in a["tiers"]], rec["tiers"])))
     _hold(rc, cx, 64, cz)
+    retired = {r["tier"] for r in json.loads((ROOT / "data" / "arena_trainers.json").read_text(encoding="utf-8"))["trainers"]
+               if r.get("seated") is False}
     for t in a["tiers"]:
         sx, sy, sz = t["stand"]
         # the drum's radius at this tier's walls: the halls layout steps in at its setbacks (data/deep_city.json taper)
@@ -111,8 +113,11 @@ def arena(rc):
         if not any(_block(rc, *p, "!air") for p in wall):
             bad.append("no drum wall at radius %d" % r)
         n = _count(rc, "@e[type=rctmod:trainer,x=%d,y=%d,z=%d,distance=..2]" % (sx, sy, sz))
-        if n != 1:
-            bad.append("%d trainers at the stand, expected 1" % n)
+        # the hub's champions were retired 2026-10-03 (the owner: "remove the trainer battles, have the middle just be
+        # hubs"; data/arena_trainers.json seated false): a retired tier's stand must now be EMPTY
+        want = 0 if t["tier"] in retired else 1
+        if n != want:
+            bad.append("%d trainers at the stand, expected %d" % (n, want))
         out.append(("arena", "tier %d (y%d)" % (t["tier"], t["y"]), (sx, sy, sz), "; ".join(bad)))
     crown = rec["crown"]
     # the crown's own deck, at the crown's y (it read y crown-1 until 2026-10-03: the ring layout's tier-7 air, which
