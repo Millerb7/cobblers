@@ -231,7 +231,7 @@ def test_a_second_screen_opener_in_another_pack_is_caught(tmp_path):
 
 
 @pytest.mark.parametrize("edit,check", [
-    (lambda c: c.update(allowStarterOnJoin=True), "P4:allow_on_join"),
+    (lambda c: c.update(allowStarterOnJoin=False), "P4:allow_on_join"),
     (lambda c: c["starters"][0]["pokemon"].append("bulbasaur level=5 aspect=cobblers_starter_1"), "P4:five_entries"),
     (lambda c: c["starters"][0]["pokemon"].__setitem__(0, "cosmog level=5"), "P4:five_entries"),
 ])

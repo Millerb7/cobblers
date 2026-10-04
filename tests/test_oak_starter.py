@@ -51,11 +51,11 @@ def _option(pages, node, value):
     return next(o for o in pages[node]["input"]["options"] if o["value"] == value)
 
 
-# Without it the native screen opens on join again and Oak gives nothing: Cobblemon sets a new player's
-# starterLocked to !allowStarterOnJoin (PlayerDataJsonBackend @1.8.0).
-def test_the_config_locks_the_screen_on_join_and_offers_exactly_the_five():
+# Without it a new player gets no starter on join (the owner, 2026-10-05: "native chooser ... keep the menu on first
+# join"): Cobblemon sets a new player's starterLocked to !allowStarterOnJoin (PlayerDataJsonBackend @1.8.0).
+def test_the_config_opens_the_chooser_on_join_and_offers_exactly_the_five():
     cfg = _json(STARTERS)
-    assert cfg["allowStarterOnJoin"] is False
+    assert cfg["allowStarterOnJoin"] is True
     # with no datapack `starters` category the screen shows this list (getStarterList falls back to the config)
     assert [c["name"] for c in cfg["starters"]] == ["cobblers_mythical"]
     assert cfg["starters"][0]["pokemon"] == MS.config_entries(_json(DATA / "mythical_starters.json"))
