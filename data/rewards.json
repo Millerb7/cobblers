@@ -1762,6 +1762,72 @@
       "built_by": "tools/far_south.py (the barrel, in cobblers_far_south's garden_folly build, step R9FS)",
       "trigger": {"min": [2902, 95, 7629], "max": [2903, 96, 7631]},
       "container": {"block": "minecraft:barrel", "at": [2902, 94, 7630]}
+    },
+    {
+      "id": "jungle_temple_ring_court_undercroft",
+      "kind": "cache",
+      "place": "the Ring Court on the Long Isle's jungle (data/jungle_temples.json ring_court): the barrel set in the undercroft's floor, under the trapdoor at the ring's eye",
+      "contents": [
+        {
+          "item": "cobblemon:sun_stone",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/sun_stone.json in Cobblemon-fabric-1.8.0+1.21.1.jar (opened 2026-10-04: experiments/EXP-000-cobblemon-1.8-compat/runtime/server/mods)"
+        },
+        {
+          "item": "cobblemon:ancient_great_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/ancient_great_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar (opened 2026-10-04: experiments/EXP-000-cobblemon-1.8-compat/runtime/server/mods)"
+        }
+      ],
+      "message": "In the room under the eye: a Sun Stone, and three Ancient Great Balls older than any Mart's.",
+      "why": "data/jungle_temples.json ring_court: SQ-JUNGLE-01's one hidden cache, the find behind the temple's puzzle. Tier 8 (data/encounter_design.json long_isle_south), band 44-50 PROVISIONAL (LONG_ISLE.md D5): a Sun Stone (no stone ore generates in this world, docs/research/notes/reward-item-inventory.md section 2: Gloom, Petilil, Cottonee and Helioptile in the rosters wait on it) and three great-tier balls. Ancient Great Ball's catch behaviour in Cobblemon 1.8.0 is not measured here; the item exists in the jar. items_hook: data/jungle_temples.json ring_court caches[0].",
+      "built_by": "tools/jungle_temples.py (the barrel, in cobblers_jungle_temples' ring_court build, step R9JT)",
+      "trigger": {"min": [7202, 127, 7525], "max": [7203, 128, 7527]},
+      "container": {"block": "minecraft:barrel", "at": [7202, 126, 7526]}
+    },
+    {
+      "id": "jungle_temple_harbour_mark_offering",
+      "kind": "cache",
+      "place": "the Harbour Mark on the Long Isle's jungle (data/jungle_temples.json harbour_mark): the offering stone on the plinth's east edge, under the sign that asks a coin",
+      "contents": [
+        {
+          "item": "cobblemon:kings_rock",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/kings_rock.json in Cobblemon-fabric-1.8.0+1.21.1.jar (opened 2026-10-04: experiments/EXP-000-cobblemon-1.8-compat/runtime/server/mods)"
+        },
+        {
+          "item": "cobblemon:revive",
+          "count": 2,
+          "verification": "assets/cobblemon/models/item/revive.json in Cobblemon-fabric-1.8.0+1.21.1.jar (opened 2026-10-04: experiments/EXP-000-cobblemon-1.8-compat/runtime/server/mods)"
+        }
+      ],
+      "message": "In the offering stone under the mark: a King's Rock, and two Revives left for the crossing.",
+      "why": "data/jungle_temples.json harbour_mark: what sailors left for the sea. Tier 8, band 44-50 PROVISIONAL: a King's Rock (held: flinch; Poliwhirl's and Slowpoke's evolution item) and two Revives, the challengers' cairn's measure of a consumable find. items_hook: data/jungle_temples.json harbour_mark caches[0].",
+      "built_by": "tools/jungle_temples.py (the barrel, in cobblers_jungle_temples' harbour_mark build, step R9JT)",
+      "trigger": {"min": [7564, 149, 7327], "max": [7565, 150, 7329]},
+      "container": {"block": "minecraft:barrel", "at": [7564, 148, 7328]}
+    },
+    {
+      "id": "jungle_temple_vine_pyramid_altar",
+      "kind": "cache",
+      "place": "the Green Stair on the Long Isle's jungle (data/jungle_temples.json vine_pyramid): the stone before the summit altar, reached up the vines on the third tier's north face",
+      "contents": [
+        {
+          "item": "cobblemon:big_root",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/big_root.json in Cobblemon-fabric-1.8.0+1.21.1.jar (opened 2026-10-04: experiments/EXP-000-cobblemon-1.8-compat/runtime/server/mods)"
+        },
+        {
+          "item": "cobblemon:ancient_feather_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/ancient_feather_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar (opened 2026-10-04: experiments/EXP-000-cobblemon-1.8-compat/runtime/server/mods)"
+        }
+      ],
+      "message": "Before the altar, under the stone: a Big Root, and three Ancient Feather Balls for the ones who fly.",
+      "why": "data/jungle_temples.json vine_pyramid: the summit's offering. Tier 8, band 44-50 PROVISIONAL: a Big Root (held: draining moves heal more; the jungle's Grass types) and three Ancient Feather Balls for the island's birds (Chatot, Squawkabilly). Ancient Feather Ball's catch behaviour in Cobblemon 1.8.0 is not measured here; the item exists in the jar. items_hook: data/jungle_temples.json vine_pyramid caches[0].",
+      "built_by": "tools/jungle_temples.py (the barrel, in cobblers_jungle_temples' vine_pyramid build, step R9JT)",
+      "trigger": {"min": [7712, 155, 6824], "max": [7713, 156, 6826]},
+      "container": {"block": "minecraft:barrel", "at": [7712, 154, 6825]}
     }
   ]
 }
