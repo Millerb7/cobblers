@@ -820,6 +820,11 @@ def prepare_jobs(a):
     # explores Oak's offer from a fresh player, and sweeps every pack under build/datapacks for a second
     # openstarterscreen, a starter species given, or a data/*/starters/ folder. Fail-closed; KNOWN listed in the tool
     add("oak_starter_audit", "oak_starter_audit.py")
+    # a fresh player's walk (tools/new_player_walk.py, the owner 2026-10-05: "Can a new player get a starter, reach
+    # gym 1, and beat it" known continuously): spawn -> Oak -> starter -> each route and gym -> the League, read from
+    # the packs built above (towns, dialogue, forms, trainers, spawns, gym buildings, progression). LAST, after
+    # oak_starter_audit, which it runs as one stage. Fail-closed on a FAIL; NOT_MODELLED and KNOWN do not stop it
+    add("new_player_walk", "new_player_walk.py", *src)
     return J
 
 

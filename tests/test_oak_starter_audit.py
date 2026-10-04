@@ -256,7 +256,9 @@ def test_prepare_runs_the_audit_after_the_dialogue_and_every_pack():
     mine = [i for i, (n, f) in enumerate(jobs) if inspect.getclosurevars(f).nonlocals.get("tool") == "oak_starter_audit.py"]
     assert len(mine) == 1, names
     assert mine[0] > names.index("compile_dialogue")
-    assert mine[0] == len(jobs) - 1, "the sweep must follow every pack's build: %s" % names[mine[0]:]
+    # only the new player's walk may follow it: it builds nothing, and it runs this audit as one of its stages
+    assert names[mine[0] + 1:] in ([], ["new_player_walk"]), \
+        "the sweep must follow every pack's build: %s" % names[mine[0]:]
 
 
 # --------------------------------------------------------------------------------------------- the Molang model
