@@ -98,7 +98,8 @@ def test_the_grant_is_the_transitions_first_effect_and_it_moves_the_stage_to_rif
     sets = {e["field"]: e["value"] for e in t["effects"] if e.get("kind") == "set_progression"}
     assert sets.get("quest.main_worldshift_reveal.stage") == "rift_released"
     conds = [(c.get("kind"), c.get("field"), c.get("value")) for c in t["conditions"]]
-    assert ("progression_equals", "quest.main_worldshift_reveal.stage", "rift_crisis_pending") in conds
+    # the LAST HQ stage since the integration of 2026-10-04 (data/hq_tower.json finale_order), Codex's Scene 5 'Reads'
+    assert ("progression_equals", "quest.main_worldshift_reveal.stage", "cradle_open") in conds
 
 
 def test_nothing_else_in_data_names_the_grant_function_or_grants_the_advancement():
@@ -183,9 +184,11 @@ def test_plan_rejects_a_quest_transition_flag_without_ids():
 
 STAGE = "quest.main_worldshift_reveal.stage"
 PENDING = "rift_crisis_pending"
-# since 2026-10-04 the release also waits on the confrontation (data/finale_trainers.json): this player has beaten
-# Brann and Elara in the cradle. The stage alone no longer opens it
-AT_STAGE = {"kind": "progression_equals", "field": STAGE, "value": PENDING}
+# since 2026-10-04 the release also waits on the confrontation: this player has beaten Brann and Elara. Since the
+# integration of 2026-10-04 they fight in the HQ tower and the release reads the LAST HQ stage, cradle_open (Elara's),
+# not rift_crisis_pending (data/hq_tower.json finale_order). The stage alone does not open it
+RELEASE_STAGE = "cradle_open"
+AT_STAGE = {"kind": "progression_equals", "field": STAGE, "value": RELEASE_STAGE}
 READY = {"kind": "all", "conditions": [
     AT_STAGE,
     {"kind": "progression_equals", "field": "quest.main_worldshift_reveal.brann_defeated", "value": True},
@@ -254,6 +257,12 @@ def test_the_stage_the_release_needs_is_set_in_play_and_admits_the_player_to_the
                       for e in t.get("effects") or [])]
     assert setters == ["record_rift_crisis_pending"]
     assert _calls("record_rift_crisis_pending") == [("dialogue.json", "dlg_main_rift_surveyor", "line rift_007")]
+    # ... the release's own stage, cradle_open, has one setter and Director Elara Venn's conversation invokes it ...
+    opens = [t["id"] for _q, t in _transitions()
+             if any(e.get("kind") == "set_progression" and e.get("field") == STAGE and e.get("value") == RELEASE_STAGE
+                    for e in t.get("effects") or [])]
+    assert opens == ["record_cradle_open"]
+    assert _calls("record_cradle_open") == [("dialogue.json", "dlg_main_finale_elara", "line elara_006")]
     # ... and the HQ guard, the hall's one way in, admits a player at that stage
     relic = _json("relic_underground.json")
     assert PENDING in relic["geometry"]["hq"]["guard"]["stages"]

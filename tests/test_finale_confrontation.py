@@ -1,23 +1,27 @@
-"""The Rift finale's confrontation: Brann and Elara in Hoopa's cradle, and the release that waits on them.
+"""The Rift finale's confrontation: Brann and Elara, and the release that waits on them.
 
-WRITTEN BY THE IMPLEMENTER (datapack-content-dev, 2026-10-04) at the caller's request; an independent audit follows.
-What is asserted, on the real data and the real generators:
+WRITTEN BY THE IMPLEMENTER (datapack-content-dev, 2026-10-04) at the caller's request, then RE-POINTED by the
+integration of 2026-10-04 (the HQ tower merged): ONE Brann and ONE Elara, each a Cobblemon NPC in their HQ tower room
+who talks and fights, no rctmod seats in the cradle, and the release at the last HQ stage, cradle_open. The integration
+changed what is asserted to the new design and kept every check that still holds; an independent audit follows.
 
-  records   data/finale_trainers.json carries exactly Brann and Elara, each a full record (rct team == team) whose
-            `sets` is its own declared, player-scoped boolean field of main_worldshift_reveal, listed in the quest's
-            progression_field_refs; no level above the post-gym-8 cap of 60, and Elara's ace at it
-  rct data  tools/route_trainers.files(): the won function sets exactly that field to 1 and saves, the advancement
-            is rctmod defeat_count for that id at count 1; Brann battles on sight, Elara does not
-  seats     each in the cradle's air on its floor, two clear, on no player stand, binder stand or actor marker
-            (tools/relic_underground.py Geo and cradle_composition, the cells the build writes)
-  gate      the binder's 'Release Hoopa.', its bound_001 entry rule and the setter transition all require the stage
-            AND both fields; walking the conversation offline with either field unset never reaches release_001
+  records   data/finale_trainers.json carries exactly Brann and Elara, each a seatless record with a team whose `sets`
+            is its own declared, player-scoped boolean field of main_worldshift_reveal; the old cradle seat and rct
+            block are kept under superseded_seat; no level above the post-gym-8 cap of 60, and Elara's ace at it
+  fight     the NPC class tools/compile_dialogue.py emits carries the team as its party; tools/route_trainers.files()
+            emits nothing for these ids; tools/hq_tower.fight_files() writes exactly the field to 1 for the winner
+  seats     the SUPERSEDED cradle seats still pass report's seat check (so restoring them is not a rebuild), and the
+            check is fed no live seat
+  gate      the binder's 'Release Hoopa.', its bound_001 entry rule and the setter transition all require cradle_open
+            AND both fields; walking the conversation offline with either field unset, or at an earlier stage, never
+            reaches release_001
   compiled  the compiled release page runs the grant only under all three, and the fx last
   fx        cobblers:relic_underground/release_fx is @s-only, spawns nothing and changes no block
-  reapply   R18RU places both trainers beside the binder
+  reapply   R18HQ places both NPCs; R18RU places no trainer
 
-Not covered: anything in game. Nobody has fought Brann or Elara or released Hoopa on a server; rctmod's sight check
-and the defeat advancement are proven for other seats (EXP-027, the mansion guardians), not these.
+Not covered: anything in game. Nobody has fought Brann or Elara or released Hoopa on a server; a Cobblemon NPC battle
+and its battle_victory callback are proven for the arena probe (docs/research/notes/arena-per-player-opponents.md
+section 8), not for these.
 """
 import json
 import math
@@ -31,12 +35,15 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 
 import compile_dialogue as CD  # noqa: E402
+import hq_tower as H  # noqa: E402
 import relic_underground as R  # noqa: E402
 import route_trainers as RT  # noqa: E402
 
 DATA = ROOT / "data"
 STAGE = "quest.main_worldshift_reveal.stage"
 PENDING = "rift_crisis_pending"
+OPEN = "cradle_open"          # the release's stage since the integration of 2026-10-04 (data/hq_tower.json finale_order)
+NPC = {"finale_brann_saye": "npc_finale_brann_saye", "finale_elara_venn": "npc_finale_elara_venn"}
 BRANN, ELARA = "finale_brann_saye", "finale_elara_venn"
 FIELD = {BRANN: "quest.main_worldshift_reveal.brann_defeated", ELARA: "quest.main_worldshift_reveal.elara_defeated"}
 CAP = 60
@@ -62,7 +69,10 @@ def test_exactly_brann_and_elara_each_with_its_own_player_field():
         assert (f["type"], f["scope"], f["initial"], f["quest_id"]) == ("boolean", "player", False,
                                                                         "main_worldshift_reveal")
         assert FIELD[tid] in QUEST["progression_field_refs"]
-        assert t["rct"]["team"] == t["team"]
+        # teams only: the cradle seat and the rctmod block are superseded, kept, and not live
+        assert "seat" not in t and "rct" not in t
+        assert t["superseded_seat"]["rct"]["team"] == t["team"]
+        assert t["npc"] == NPC[tid]
     # no other trainer record anywhere uses these ids
     assert not set(FINALE) & {r["id"] for r in _json("trainers.json")["trainers"]}
 
@@ -82,22 +92,33 @@ def files():
     return RT.files()
 
 
-def test_rct_data_sets_exactly_the_field_on_a_win_only(files):
+def test_no_rctmod_data_and_the_win_sets_exactly_the_field(files):
+    # rctmod places nothing for them any more: no trainer, mob, advancement or won function under these ids
+    assert not [k for k in files if any(tid in k for tid in FINALE)]
+    fights = H.fight_files()
+    spec = H.load()
+    by = {f["trainer"]: f for f in spec["fights"]}
+    assert sorted(by) == [BRANN, ELARA]
     for tid in FINALE:
-        won = files["data/cobblers/function/trainers/won/%s.mcfunction" % tid]
+        won = fights["data/cobblers/function/hq_tower/%s.mcfunction" % by[tid]["function"]].splitlines()
         assert any(("t.d.%s = 1;" % CD.key(FIELD[tid])) in l and "save_data" in l for l in won)
         others = [f for f in FIELD.values() if f != FIELD[tid]]
         assert not any(CD.key(o) in l for l in won for o in others)
-        adv = files["data/cobblers/advancement/trainer/%s.json" % tid]
-        assert adv["criteria"] == {"won": {"trigger": "rctmod:defeat_count",
-                                           "conditions": {"trainer_ids": [tid], "count": 1}}}
-        trainer = files["data/rctmod/trainers/%s.json" % tid]
-        assert trainer["team"] == FINALE[tid]["team"]
-    assert files["data/rctmod/mobs/trainers/single/%s.json" % BRANN].get("forceBattleOnSight") is True
-    assert "forceBattleOnSight" not in files["data/rctmod/mobs/trainers/single/%s.json" % ELARA]
+
+
+def test_each_npc_class_fights_with_its_team():
+    files, _done, refused = CD.build_all(DATA)
+    from arena_runtime import properties
+    for tid, npc in NPC.items():
+        assert FINALE[tid]["conversation"] not in refused
+        cls = files["data/cobblers/npcs/%s.json" % npc]
+        assert cls["party"] == {"type": "simple", "pokemon": [properties(m, m["level"]) for m in FINALE[tid]["team"]]}
+        assert cls["battleConfiguration"] == {"canChallenge": False}
+        assert cls["interaction"]["type"] == "dialogue"
 
 
 def test_seats_are_free_cradle_floor_cells():
+    """The SUPERSEDED cradle seats (kept so the owner can move the fights back): still free floor cells."""
     geo = R.Geo(SPEC)
     cells = R.cradle_composition(geo, SPEC)
     cr = SPEC["composition"]["cradle"]
@@ -107,7 +128,7 @@ def test_seats_are_free_cradle_floor_cells():
     assert tuple(SPEC["geometry"]["release"]["at"]) in taken
     seen = set()
     for tid, t in FINALE.items():
-        x, y, z = t["seat"]
+        x, y, z = t["superseded_seat"]["seat"]
         r = geo.carved_range(x, z)
         assert geo.in_cradle(x, z) and not geo.in_passage(x, z), tid
         assert y - 1 == geo.cfloor and r is not None and y + 2 <= r[1], tid
@@ -115,10 +136,10 @@ def test_seats_are_free_cradle_floor_cells():
         assert (x, y, z) not in taken | seen, tid
         seen.add((x, y, z))
     # Brann's sight stays inside the cradle's radius plus nothing: 8 from his seat is under 17 from the centre
-    bx, _by, bz = FINALE[BRANN]["seat"]
-    assert math.hypot(bx + 0.5 - geo.cc[0], bz + 0.5 - geo.cc[1]) + FINALE[BRANN]["sight_distance"] <= geo.cr + 1
+    bx, _by, bz = FINALE[BRANN]["superseded_seat"]["seat"]
+    assert math.hypot(bx + 0.5 - geo.cc[0], bz + 0.5 - geo.cc[1]) + FINALE[BRANN]["superseded_seat"]["sight_distance"] <= geo.cr + 1
     # and he sees the cut: some cell of the passage's axis inside the cradle is within his sight
-    assert any(math.hypot(bx - x, bz - SPEC["geometry"]["axis_z"]) <= FINALE[BRANN]["sight_distance"]
+    assert any(math.hypot(bx - x, bz - SPEC["geometry"]["axis_z"]) <= FINALE[BRANN]["superseded_seat"]["sight_distance"]
                for x in range(geo.cc[0], geo.cc[0] + geo.cr + 1))
 
 
@@ -130,22 +151,25 @@ def _spots(geo):
 
 
 def test_reports_seat_check_passes_the_real_seats_and_bites():
-    # report's 4c (relic_underground.finale_seat_problems) is clean on the real seats, and refuses a seat on a pylon,
-    # on the binder's stand, in the cut, in the hall, and two trainers on one cell -- so it is not checking nothing
+    # report's 4c (relic_underground.finale_seat_problems) is fed no live seat since the integration, is clean on the
+    # superseded seats, and refuses a seat on a pylon, on the binder's stand, in the cut, in the hall, and two trainers
+    # on one cell -- so it is not checking nothing
     geo = R.Geo(SPEC)
     cells = R.cradle_composition(geo, SPEC)
     spots = _spots(geo)
-    assert R.finale_seat_problems(geo, cells, spots, R.finale_seats()) == []
+    assert R.finale_seats() == []
+    old = [(tid, tuple(t["superseded_seat"]["seat"])) for tid, t in FINALE.items()]
+    assert R.finale_seat_problems(geo, cells, spots, old) == []
     px, pz = R._at(geo.cc, SPEC["composition"]["cradle"]["pylons"]["orbit"], 45)
     hx, hz = SPEC["geometry"]["hall"]["centre"]
     for bad in [(px, 13, pz), tuple(SPEC["geometry"]["release"]["at"]), (3366, 13, SPEC["geometry"]["axis_z"]),
                 (hx, 13, hz), (3352, 14, 3300)]:
         assert R.finale_seat_problems(geo, cells, spots, [("x", bad)]), bad
-    one = tuple(FINALE[BRANN]["seat"])
+    one = tuple(FINALE[BRANN]["superseded_seat"]["seat"])
     assert R.finale_seat_problems(geo, cells, spots, [("a", one), ("b", one)])
 
 
-READY = [{"kind": "progression_equals", "field": STAGE, "value": PENDING},
+READY = [{"kind": "progression_equals", "field": STAGE, "value": OPEN},
          {"kind": "progression_equals", "field": FIELD[BRANN], "value": True},
          {"kind": "progression_equals", "field": FIELD[ELARA], "value": True}]
 
@@ -194,14 +218,18 @@ def _reachable(state):
 
 @pytest.mark.parametrize("brann,elara", [(False, False), (True, False), (False, True)])
 def test_without_both_wins_the_release_is_unreachable(brann, elara):
-    state = {STAGE: PENDING, FIELD[BRANN]: brann, FIELD[ELARA]: elara}
+    state = {STAGE: OPEN, FIELD[BRANN]: brann, FIELD[ELARA]: elara}
     got = _reachable(state)
     assert "release_001" not in got
     assert "confront_001" in got
 
 
-def test_with_both_wins_at_the_stage_the_release_is_reachable_and_not_after():
-    assert "release_001" in _reachable({STAGE: PENDING, FIELD[BRANN]: True, FIELD[ELARA]: True})
+def test_with_both_wins_at_the_stage_the_release_is_reachable_and_not_before_or_after():
+    assert "release_001" in _reachable({STAGE: OPEN, FIELD[BRANN]: True, FIELD[ELARA]: True})
+    # every earlier finale stage gets the briefing, with both wins or not; nothing after reaches the release again
+    for earlier in (PENDING, "deep_handoff_received", "hq_crossed", "anchor_shutdown"):
+        got = _reachable({STAGE: earlier, FIELD[BRANN]: True, FIELD[ELARA]: True})
+        assert "release_001" not in got and "confront_001" in got, earlier
     for later in ("rift_released", "league_recognized", "giovanni_reveal_complete"):
         assert "release_001" not in _reachable({STAGE: later, FIELD[BRANN]: True, FIELD[ELARA]: True})
 
@@ -214,7 +242,7 @@ def test_compiled_release_page_grants_only_under_all_three():
     guard = body[:body.index("cobblers:flag/rift_crisis_resolved/grant")]
     for f in FIELD.values():
         assert "t.d.%s == 1" % CD.key(f) in guard
-    assert "'%s'" % PENDING in guard
+    assert "'%s'" % OPEN in guard and "'%s'" % PENDING not in guard
     assert body.index("rift_crisis_resolved/grant") < body.index("relic_underground/release_fx")
 
 
@@ -229,11 +257,14 @@ def test_release_fx_is_for_the_releasing_player_only():
     assert any(l.startswith("playsound") and " master @s " in l for l in cmds)
 
 
-def test_r18ru_places_both_trainers_beside_the_binder():
+def test_r18hq_places_both_npcs_and_r18ru_no_trainer():
     src = (ROOT / "tools" / "reapply.py").read_text(encoding="utf-8")
     step = src[src.index('("R18RU"'):]
     step = step[:step.index("out.append", 1)]
-    assert '[("trainer", t) for t in route_trainers.finale_placements()]' in step
-    got = RT.finale_placements()
-    assert sorted(p[0] for p in got) == [BRANN, ELARA]
-    assert {p[0]: p[1] for p in got} == {tid: tuple(t["seat"]) for tid, t in FINALE.items()}
+    assert '"trainer"' not in step and not hasattr(RT, "finale_placements")
+    got = {p[2]: p[1] for p in H.npc_placements()}
+    spec = {n["id"]: tuple(n["at"]) for n in H.load()["npcs"]}
+    for npc in NPC.values():
+        assert got["cobblers:%s" % npc] == spec[npc]
+    # and no rctmod seat anywhere carries them
+    assert not {p[0] for p in RT.placements()} & set(FINALE)

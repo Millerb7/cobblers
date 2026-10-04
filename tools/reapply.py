@@ -148,6 +148,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # old surface build taken off, then the hall, gallery and passage carved, by R9RU; its zone check acts on
                 # its own (an advancement), so world-local below
                 "cobblers_relic_underground",
+                # 2026-10-04: the Compact HQ tower's interior and its two per-player gates (tools/hq_tower.py,
+                # data/hq_tower.json): block functions run by R9HQ after R9RU; its gate cycle acts on its own (a tick
+                # driver that moves players), so world-local below
+                "cobblers_hq_tower",
                 # 2026-10-02: the Drovers' Hollow in the Rift Foot (tools/drovers_hollow.py): a longbarn, its fold and
                 # the old working under the bank, run by R9HF
                 "cobblers_drovers_hollow",
@@ -312,6 +316,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                # 2026-10-02: the residents' keeper SPAWNS Pokemon on its own when a player comes near, so it must never
                # load in the global folder, where the live world would run it too
                "cobblers_residents", "cobblers_relic_underground",
+               # 2026-10-04: the HQ tower's gate cycle tags and moves players near the tower on its own tick
+               "cobblers_hq_tower",
                # 2026-10-03: species forms for the starters; global would change the live world's species too
                "cobblers_mythical_starters",
                # 2026-10-03: the southern residents' keeper spawns its two Pokemon the same way
@@ -547,6 +553,10 @@ def prepare_jobs(a):
     # undo is derived from the superseded surface generator minus the city build above. Its audit runs LATE (below),
     # once every other block pack is built, because it sweeps them all for a cell the undo or the shell would touch
     add("relic_underground:build", "relic_underground.py", *src, "build")
+    # the Compact HQ tower's interior (2026-10-04): runs the city's build in memory, refuses a tower that is not the one
+    # data/hq_tower.json records, any write outside its interior, and a walk from the doorway that misses a seat, a
+    # cache or the top
+    add("hq_tower:build", "hq_tower.py", "build", *src)
     add("habitat_blocks:function", "habitat_blocks.py", "function")
     add("rewards_pack", "rewards_pack.py")
     # every conversation that compiles, in one pack: the NPCs', the props' and the actors' (refusals are listed)
@@ -1577,6 +1587,12 @@ def steps(with_spawns=False):
     import relic_underground
     out.append(("R9RU", "the relic site underground: the old surface build off, the hall carved (data/relic_underground.json)",
                 relic_underground.placement_steps()))
+    # the Compact HQ tower's interior (2026-10-04, tools/hq_tower.py): AFTER R9DC, whose shell and floors it opens and
+    # furnishes, and after R9RU, whose room its door opens into; before R9E and the lights. Its trainers are R17's, its
+    # four story NPCs R18HQ's
+    import hq_tower
+    out.append(("R9HQ", "the Compact HQ tower's interior: eleven storeys, the stair, the door and the caches (data/hq_tower.json)",
+                hq_tower.placement_steps()))
     # the Habitat Blocks, after everything that builds the floors they sit in (R9C's shell pass overwrites them). A
     # block placed by command stays inert until its chunk loads from disk, and EXP-021 found only a restart does that
     # reliably: the audit runs with the server stopped, so the boot after it is that restart. Verify after it.
@@ -1819,14 +1835,17 @@ def steps(with_spawns=False):
     # 2026-10-03: and the Compact binder in Hoopa's cradle (geometry.release; at the hall's relic ring until the cradle
     # was carved), whose conversation releases Hoopa and grants rift_crisis_resolved (the owner: "set it ourselves at
     # the quest stage that ends the Rift crisis")
-    # 2026-10-04: and the confrontation the release now waits on, Brann and Elara (data/finale_trainers.json), rctmod
-    # trainers R17 already places as every seat; placed again here so `--only R18RU` re-applies the whole finale. The
-    # "trainer" action leaves one already standing at its seat, so each stands once
-    out.append(("R18RU", "the Compact guards at the HQ's ring-0 door, the binder in Hoopa's cradle and the "
-                         "confrontation's Brann and Elara (data/relic_underground.json geometry.hq.guard, "
-                         "geometry.release; data/finale_trainers.json)",
-                [("npc", n) for n in relic_underground.npc_placements()]
-                + [("trainer", t) for t in route_trainers.finale_placements()]))
+    out.append(("R18RU", "the Compact guards at the HQ's ring-0 door and the binder in Hoopa's cradle "
+                         "(data/relic_underground.json geometry.hq.guard, geometry.release)",
+                [("npc", n) for n in relic_underground.npc_placements()]))
+    # the finale's four (2026-10-04, data/hq_tower.json npcs): Nia Calder at her clinic's door, Captain Brann Saye, Director
+    # Elara Venn and Oren Pell in the HQ tower R9HQ furnished. NPCs, so after the restart that loaded cobblers_dialogue's
+    # classes, like R18RU's, each turned to its yaw. Brann and Elara are also the finale's two fights (the integration of
+    # 2026-10-04: ONE of each, here, not rctmod seats in the cradle): their classes carry a party (data/finale_trainers.json
+    # teams, compiled by tools/compile_dialogue.py) and their conversations start Cobblemon's own NPC battle; the win is
+    # read by the cobblers_hq_tower pack's battle_victory callback
+    out.append(("R18HQ", "the finale's NPCs: Nia Calder, Brann Saye, Elara Venn and Oren Pell (data/hq_tower.json npcs)",
+                [("npc", n) for n in hq_tower.npc_placements()]))
     # Codex's ten named residents (2026-10-02, data/resident_encounters.json): each one's dressing inside a forceload of
     # its recorded bbox, then - for the two with no presence gate (Old Jaw, Whiteback) - an RCON summon guarded on tag
     # AND species, and its bind. The eight gated ones are left to the pack's keeper, which brings each in the first time

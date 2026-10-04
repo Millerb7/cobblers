@@ -968,7 +968,8 @@ def cmd_report(a):
         # 4c the confrontation (geometry.release.confrontation, 2026-10-04): Brann and Elara stand in the cradle's air
         #    on its floor with two clear over their feet, on no stand, not on the marker and not on each other
         bad += finale_seat_problems(geo, ccells, spots, finale_seats())
-        note.append("the confrontation: %s" % ", ".join("%s %s" % (t, s) for t, s in finale_seats()))
+        note.append("the confrontation: %s" % (", ".join("%s %s" % (t, s) for t, s in finale_seats())
+                                               or "no seat in the cradle (Brann and Elara fight in the HQ tower)"))
         gap = math.hypot(geo.cc[0] - geo.hc[0], geo.cc[1] - geo.hc[1]) - geo.hr - geo.cr
         note.append("the cradle: radius %d, floor y%d, dome y%d-%d, %d dressing blocks, %d blocks of rock to the hall"
                     % (geo.cr, geo.cfloor, geo.crim_c, geo.capex_c, len(ccells), int(gap)))
@@ -1231,9 +1232,12 @@ def release_fx_lines(fx):
 
 
 def finale_seats():
-    """[(trainer id, (x, y, z))] of the confrontation (data/finale_trainers.json), for report's seat check."""
+    """[(trainer id, (x, y, z))] of any confrontation seat in the cradle (data/finale_trainers.json), for report's seat
+    check. EMPTY since the integration of 2026-10-04: Brann and Elara are one Cobblemon NPC each in the HQ tower
+    (data/hq_tower.json npcs, checked by tools/hq_tower.py), who talk and fight there, so their records carry a team
+    and no seat. A seat added back here is checked against the cradle again."""
     doc = json.loads((ROOT / "data" / "finale_trainers.json").read_text(encoding="utf-8"))
-    return [(t["id"], tuple(t["seat"])) for t in doc["trainers"]]
+    return [(t["id"], tuple(t["seat"])) for t in doc["trainers"] if "seat" in t]
 
 
 def finale_seat_problems(geo, ccells, spots, seats):

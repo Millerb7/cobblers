@@ -696,7 +696,11 @@
         "dlg_main_rift_surveyor",
         "dlg_main_league_steward",
         "dlg_main_relic_hq_guard",
-        "dlg_main_relic_hq_guard_inside"
+        "dlg_main_relic_hq_guard_inside",
+        "dlg_main_finale_nia",
+        "dlg_main_finale_brann",
+        "dlg_main_finale_oren",
+        "dlg_main_finale_elara"
       ],
       "beats": [
         {
@@ -1730,12 +1734,12 @@
         },
         {
           "id": "unlock_league_after_rift_resolution",
-          "external_trigger_contract": "THIS transition is rift_crisis_resolved's setter (data/progression.json flags, set_by quest_transition): its first effect grants the flag's advancement to the releasing player, then the stage and League cursor move, and last the restraint's light and sound play for that player (cobblers:relic_underground/release_fx, tools/relic_underground.py). It is invoked by exactly one node: dlg_main_relic_hall_release line release_001, after the choice 'Release Hoopa.' (the Compact binder in Hoopa's carved cradle, (3363, 13, 3312), data/relic_underground.json geometry.release). Since 2026-10-04 (the owner: 'FINISH THE FINALE ... the confrontation with Elara and Brann, the release') it requires, beside stage rift_crisis_pending, that THIS player has beaten Captain Brann Saye and Director Elara Venn in the cradle (brann_defeated, elara_defeated: data/finale_trainers.json, set by rctmod's defeat_count for the winning side only), so a player who reaches the binder first cannot release Hoopa past them.",
+          "external_trigger_contract": "THIS transition is rift_crisis_resolved's setter (data/progression.json flags, set_by quest_transition): its first effect grants the flag's advancement to the releasing player, then the stage and League cursor move, and last the restraint's light and sound play for that player (cobblers:relic_underground/release_fx, tools/relic_underground.py). It is invoked by exactly one node: dlg_main_relic_hall_release line release_001, after the choice 'Release Hoopa.' (the Compact binder in Hoopa's carved cradle, (3363, 13, 3312), data/relic_underground.json geometry.release). Since the integration of 2026-10-04 it requires stage cradle_open (Codex's Scene 5 'Reads', the LAST HQ stage, written by Director Elara Venn) AND that THIS player has beaten Captain Brann Saye and Director Elara Venn in the HQ tower (brann_defeated, elara_defeated: set by the cobblers_hq_tower battle_victory callback for the winning player only), and nothing earlier, so a player who reaches the binder first cannot release Hoopa past them. Order: data/hq_tower.json finale_order.",
           "conditions": [
             {
               "kind": "progression_equals",
               "field": "quest.main_worldshift_reveal.stage",
-              "value": "rift_crisis_pending"
+              "value": "cradle_open"
             },
             {
               "kind": "progression_equals",
@@ -1787,6 +1791,98 @@
           ]
         },
         {
+          "id": "record_deep_handoff_received",
+          "source": "docs/story/NPCS_AND_RIFT_FINALE.md (Codex, branch codex/trainer-modes) Scene 1: Nia Calder's handoff at the Deep's clinic, invoked after line nia_006 of dlg_main_finale_nia",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "rift_crisis_pending"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "deep_handoff_received"
+            }
+          ]
+        },
+        {
+          "id": "record_hq_crossed",
+          "source": "docs/story/NPCS_AND_RIFT_FINALE.md (Codex, branch codex/trainer-modes) Scene 2: Captain Brann Saye's threshold in the HQ tower's briefing hall. Since the integration of 2026-10-04 he fights first: the choice 'I'm not leaving.' (dlg_main_finale_brann brann_choice) starts his battle, and this transition runs after line brann_005, reached only once THIS player has beaten him (brann_defeated). It stands the hall guard down, which is the HQ tower's climb gate (data/hq_tower.json gates.climb), so the climb is earned",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "deep_handoff_received"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.brann_defeated",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "hq_crossed"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.finale_brann_cursor",
+              "value": "brann_006"
+            }
+          ]
+        },
+        {
+          "id": "record_anchor_shutdown",
+          "source": "docs/story/NPCS_AND_RIFT_FINALE.md (Codex, branch codex/trainer-modes) Scene 3: Oren Pell's shutdown in the HQ tower's anchor control room, invoked by the choice 'Run the marked sequence.' (dlg_main_finale_oren oren_board). The doc allows one proven interaction in place of a four-step console; this is that one interaction",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "hq_crossed"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "anchor_shutdown"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.finale_oren_cursor",
+              "value": "oren_after_1"
+            }
+          ]
+        },
+        {
+          "id": "record_cradle_open",
+          "source": "docs/story/NPCS_AND_RIFT_FINALE.md (Codex, branch codex/trainer-modes) Scene 4: Director Elara Venn's decision in the HQ tower's director's office, invoked after line elara_006 of dlg_main_finale_elara. Since the integration of 2026-10-04 she fights first (choice elara_choice) and this transition requires that THIS player has beaten her (elara_defeated)",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "anchor_shutdown"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.elara_defeated",
+              "value": true
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "cradle_open"
+            }
+          ]
+        },
+        {
           "id": "relic_hq_admit",
           "source": "data/relic_underground.json geometry.hq.guard; the owner, 2026-10-02: 'the HQ door should need the finale's quest stage, not a plate anyone can stand on', at rift_crisis_pending or later",
           "conditions": [
@@ -1795,6 +1891,10 @@
               "field": "quest.main_worldshift_reveal.stage",
               "values": [
                 "rift_crisis_pending",
+                "deep_handoff_received",
+                "hq_crossed",
+                "anchor_shutdown",
+                "cradle_open",
                 "rift_released",
                 "league_recognized"
               ]
@@ -1953,7 +2053,11 @@
         "quest.main_worldshift_reveal.relic_inside_cursor",
         "quest.main_worldshift_reveal.relic_release_cursor",
         "quest.main_worldshift_reveal.brann_defeated",
-        "quest.main_worldshift_reveal.elara_defeated"
+        "quest.main_worldshift_reveal.elara_defeated",
+        "quest.main_worldshift_reveal.finale_nia_cursor",
+        "quest.main_worldshift_reveal.finale_brann_cursor",
+        "quest.main_worldshift_reveal.finale_oren_cursor",
+        "quest.main_worldshift_reveal.finale_elara_cursor"
       ]
     },
     {

@@ -1,12 +1,11 @@
 {
   "schema": "cobblers.finale-trainers/1",
-  "generated_by": "hand, 2026-10-04 (datapack-content-dev): the seats are measured off tools/relic_underground.py Geo and cradle_composition(), the cells the cradle's build writes, never a world",
+  "generated_by": "hand, 2026-10-04 (datapack-content-dev), the teams; the integration of 2026-10-04 moved the cradle seats under superseded_seat",
   "source": "the owner, 2026-10-04: 'FINISH THE FINALE ... The cradle chamber, the confrontation with Elara and Brann, the release.' Characters and lines from docs/story/NPCS_AND_RIFT_FINALE.md (Codex, branch codex/trainer-modes) Scene 2 (Captain Brann Saye) and Scene 4 (Director Elara Venn).",
-  "note": "The Rift finale's confrontation: Brann and Elara are Radical Cobblemon Trainers in Hoopa's cradle, record and seat together like data/mansion_guardians.json. tools/route_trainers.py generates their RCT data (team, mob, three lines, empty loot, the defeat advancement) beside the route trainers', and tools/reapply.py places them (R17, as every seat, and again in R18RU with the binder; the placement is idempotent). Beating one sets that player's own field (`sets`), and the binder's 'Release Hoopa.' (data/dialogue.json dlg_main_relic_hall_release) and its transition unlock_league_after_rift_resolution (data/quests.json), rift_crisis_resolved's setter, both require BOTH fields at stage rift_crisis_pending. Per player throughout: the defeat field is the winning player's (rctmod defeat_count fires for the winning side only, EXP-027).",
+  "note": "The Rift finale's two fights, Captain Brann Saye and Director Elara Venn. Since the integration of 2026-10-04 (the integrating session's call on the owner's 'FINISH THE FINALE ... the confrontation with Elara and Brann'): ONE Brann and ONE Elara, each a single Cobblemon NPC in their HQ tower room (data/hq_tower.json npcs: Codex's placement) who both TALKS (their conversations and stage transitions, data/dialogue.json dlg_main_finale_brann / _elara) and FIGHTS through Cobblemon's own NPC battle: the conversation's npc_battle names this file's `team`, which tools/compile_dialogue.py compiles into the NPC class's `simple` party, a choice starts q.npc.start_battle(q.player, 'singles'), and the cobblers_hq_tower pack's battle_victory callback (tools/hq_tower.py) runs `sets` as the winning player. This file is therefore TEAMS ONLY: tools/route_trainers.py does not read it, rctmod places nothing from it.",
   "departures_from_the_finale_doc": [
-    "Codex's doc has no battles and no teams: its Brann stands down ('My people will not fight a trainer who came through eight leaders to stop that') and its Elara opens the shaft after a conversation. The owner asked for a confrontation with both as trainers, so both fight. Brann's line 4 is dropped and his stand-down is moved to after the battle; Elara's lines 1-4 open her battle and 5-7 close it.",
-    "Codex places Brann in hq_briefing_hall and Elara in hq_director_office (data/deep_city.json hq). The HQ interior is another builder's unit (2026-10-04); the owner's handover (docs/HANDOVER_SESSION.md item 6) puts 'the cradle chamber with Elara and Brann and the release' together, so they stand in the cradle. If the HQ builder seats them in their rooms instead, these two seats move and nothing else does.",
-    "Codex's intermediate stages (deep_handoff_received, hq_crossed, anchor_shutdown, cradle_open) are NOT added: the HQ builder coordinates on the stage enum in data/progression.json, and the confrontation's state is two per-player booleans instead, read beside stage == rift_crisis_pending."
+    "Codex's doc has no battles and no teams: its Brann stands down ('My people will not fight a trainer who came through eight leaders to stop that') and its Elara opens the shaft after a conversation. The owner asked for a confrontation with both, so both fight: Brann's line 4 gains 'I will.' and his stand-down follows the win; Elara's lines 1-4 open her battle and 5-7 follow it.",
+    "Codex's intermediate stages ARE in the enum (data/progression.json, the HQ tower's unit): the fights sit inside them, Brann's before hq_crossed and Elara's before cradle_open (data/hq_tower.json finale_order)."
   ],
   "level_cap": "60 after gym 8 (docs/mechanics/LEAGUE_LEVEL_CAP.md: 'After gym 8 the cap stays at 60'). Brann tops out at 58 (Victory Road's veterans reach 59-60); Elara's ace is 60, level with the cap and with every Elite Four ace (data/trainers.json elite_01..04), because she is the story's last fight before the League.",
   "teams_why": "authored here, not in the finale doc (it has none): for trainer-balance-designer to review. Sets reuse the repository's own authored sets where the species already has one (Hariyama from Bruno, Aggron and Excadrill from Victory Road, Arcanine from Blaine, Bronzong and Hatterene from Sabrina; Klinklang's Victory Road set with Wild Charge for Charge Beam), re-levelled, with an ability, item and nature where the source set had none. Corviknight, Porygon-Z, Reuniclus and Metagross are new sets of level-up or TM moves; their legality against the Cobblemon 1.8.0 jar is NOT checked (no legality tool exists; the same open item as data/arena_fights.json mechanism_needs N11). Brann: the guard captain, a wall of Steel and Fighting. Elara: the Compact's machine and its binding, Steel and Psychic, Trick Room behind a Bronzong, Metagross the ace.",
@@ -15,17 +14,9 @@
       "id": "finale_brann_saye",
       "display_name": "Captain Brann Saye",
       "npc_of_the_finale_doc": "npc_finale_brann_saye",
-      "sets": ["quest.main_worldshift_reveal.brann_defeated"],
-      "seat": [3363, 13, 3300],
-      "seat_why": "the cradle's floor (y12) at orbit 8, bearing 315 from the centre (3357, 3306): round(3357 + 8 cos 315) = 3363, round(3306 + 8 sin 315) = 3300; the binder's (3363, 13, 3312) mirrored across the cut. Feet and head clear of every cell tools/relic_underground.py cradle_composition() writes (checked by its report), off the passage's three columns z3305-3307, and on none of Codex's four player stands (bearings 90, 135, 180, 270) or the actor marker",
-      "yaw": 0,
-      "yaw_why": "facing south (Minecraft yaw 0 faces +z), across the cut a player walks in by (z3305-3307), so he meets the player first",
-      "skin": "rctmod:textures/trainers/single/pokemon_ranger_jeffrey_0336.png",
-      "skin_note": "dead data, as every seat's (docs/research/notes/npc-skins.md 1c: rctmod excludes textureResource from deserialisation); named from a texture already in the 0.18.1 jar",
-      "eye_contact": true,
-      "sight_distance": 8.0,
-      "sight_why": "battles on sight, so the order is Brann first: a player coming in along the cut (z3306) is inside 8 of (3363.5, 3300.5) from x3357 to x3369. 8 reaches at most 16.5 from the cradle's centre on his side, and the cradle's radius is 16 with 24 blocks of rock shell beyond: rctmod's sight passes through walls (data/mansion_guardians.json note), and nothing standable is within 8 of him outside the cradle. A player at the binder (3363, 3312) is 12 away and is not pulled in",
-      "cooldown": "finale",
+      "sets": [
+        "quest.main_worldshift_reveal.brann_defeated"
+      ],
       "team": [
         {"species": "hariyama", "level": 56, "moveset": ["fakeout", "closecombat", "knockoff", "heavyslam"], "ability": "thickfat", "heldItem": "assault_vest", "nature": "adamant"},
         {"species": "aggron", "level": 56, "moveset": ["stealthrock", "heavyslam", "rockslide", "bodypress"], "ability": "sturdy", "heldItem": "chople_berry", "nature": "impish"},
@@ -33,40 +24,70 @@
         {"species": "arcanine", "level": 57, "moveset": ["flareblitz", "wildcharge", "closecombat", "extremespeed"], "ability": "intimidate", "heldItem": "sitrus_berry", "nature": "jolly"},
         {"species": "corviknight", "level": 58, "moveset": ["bravebird", "bodypress", "ironhead", "roost"], "ability": "pressure", "heldItem": "leftovers", "nature": "impish"}
       ],
-      "dialogue_text": {
-        "pre": "Nia sent you. Every person below us has watched a home fail, and I will not call them villains for wanting one place that stays. Show me you can stop this without killing the city.",
-        "player_win": "I read Tomas's result. The destination is occupied, and Elara ordered the cycle anyway. I am standing the cradle guard down. Do not mistake that for forgiveness.",
-        "player_loss": "Go back up. A reckless shutdown kills this city, and you are not ready to make a careful one."
-      },
-      "after_win": "Brann signals the cradle staff away from the consoles. Past the restraint, Elara has not moved.",
-      "rct": {
-        "name": {"literal": "Captain Brann Saye"},
-        "battleRules": {"maxItemUses": 0, "healPlayers": false, "adjustPlayerLevels": false, "adjustNPCLevels": false},
-        "ai": {"type": "rct", "data": {"moveBias": 1.2, "switchBias": 0.7, "statusMoveBias": 1.0, "itemBias": 1.0, "maxSelectMargin": 0.15}},
-        "bag": [],
-        "team": [
-          {"species": "hariyama", "level": 56, "moveset": ["fakeout", "closecombat", "knockoff", "heavyslam"], "ability": "thickfat", "heldItem": "assault_vest", "nature": "adamant"},
-          {"species": "aggron", "level": 56, "moveset": ["stealthrock", "heavyslam", "rockslide", "bodypress"], "ability": "sturdy", "heldItem": "chople_berry", "nature": "impish"},
-          {"species": "excadrill", "level": 57, "moveset": ["earthquake", "ironhead", "rockslide", "rapidspin"], "ability": "moldbreaker", "heldItem": "focus_sash", "nature": "jolly"},
-          {"species": "arcanine", "level": 57, "moveset": ["flareblitz", "wildcharge", "closecombat", "extremespeed"], "ability": "intimidate", "heldItem": "sitrus_berry", "nature": "jolly"},
-          {"species": "corviknight", "level": 58, "moveset": ["bravebird", "bodypress", "ironhead", "roost"], "ability": "pressure", "heldItem": "leftovers", "nature": "impish"}
-        ]
+      "npc": "npc_finale_brann_saye",
+      "conversation": "dlg_main_finale_brann",
+      "fights_as": "the Cobblemon NPC npc_finale_brann_saye in the HQ tower (data/hq_tower.json npcs and fights): its class's party is `team` (tools/compile_dialogue.py battle_class), started from dlg_main_finale_brann's choice, recorded by cobblers:hq_tower/won_brann",
+      "superseded_seat": {
+        "seat": [
+          3363,
+          13,
+          3300
+        ],
+        "seat_why": "the cradle's floor (y12) at orbit 8, bearing 315 from the centre (3357, 3306): round(3357 + 8 cos 315) = 3363, round(3306 + 8 sin 315) = 3300; the binder's (3363, 13, 3312) mirrored across the cut. Feet and head clear of every cell tools/relic_underground.py cradle_composition() writes (checked by its report), off the passage's three columns z3305-3307, and on none of Codex's four player stands (bearings 90, 135, 180, 270) or the actor marker",
+        "yaw": 0,
+        "yaw_why": "facing south (Minecraft yaw 0 faces +z), across the cut a player walks in by (z3305-3307), so he meets the player first",
+        "skin": "rctmod:textures/trainers/single/pokemon_ranger_jeffrey_0336.png",
+        "skin_note": "dead data, as every seat's (docs/research/notes/npc-skins.md 1c: rctmod excludes textureResource from deserialisation); named from a texture already in the 0.18.1 jar",
+        "eye_contact": true,
+        "sight_distance": 8.0,
+        "sight_why": "battles on sight, so the order is Brann first: a player coming in along the cut (z3306) is inside 8 of (3363.5, 3300.5) from x3357 to x3369. 8 reaches at most 16.5 from the cradle's centre on his side, and the cradle's radius is 16 with 24 blocks of rock shell beyond: rctmod's sight passes through walls (data/mansion_guardians.json note), and nothing standable is within 8 of him outside the cradle. A player at the binder (3363, 3312) is 12 away and is not pulled in",
+        "cooldown": "finale",
+        "dialogue_text": {
+          "pre": "Nia sent you. Every person below us has watched a home fail, and I will not call them villains for wanting one place that stays. Show me you can stop this without killing the city.",
+          "player_win": "I read Tomas's result. The destination is occupied, and Elara ordered the cycle anyway. I am standing the cradle guard down. Do not mistake that for forgiveness.",
+          "player_loss": "Go back up. A reckless shutdown kills this city, and you are not ready to make a careful one."
+        },
+        "after_win": "Brann signals the cradle staff away from the consoles. Past the restraint, Elara has not moved.",
+        "rct": {
+          "name": {
+            "literal": "Captain Brann Saye"
+          },
+          "battleRules": {
+            "maxItemUses": 0,
+            "healPlayers": false,
+            "adjustPlayerLevels": false,
+            "adjustNPCLevels": false
+          },
+          "ai": {
+            "type": "rct",
+            "data": {
+              "moveBias": 1.2,
+              "switchBias": 0.7,
+              "statusMoveBias": 1.0,
+              "itemBias": 1.0,
+              "maxSelectMargin": 0.15
+            }
+          },
+          "bag": [],
+          "team": [
+            {"species": "hariyama", "level": 56, "moveset": ["fakeout", "closecombat", "knockoff", "heavyslam"], "ability": "thickfat", "heldItem": "assault_vest", "nature": "adamant"},
+            {"species": "aggron", "level": 56, "moveset": ["stealthrock", "heavyslam", "rockslide", "bodypress"], "ability": "sturdy", "heldItem": "chople_berry", "nature": "impish"},
+            {"species": "excadrill", "level": 57, "moveset": ["earthquake", "ironhead", "rockslide", "rapidspin"], "ability": "moldbreaker", "heldItem": "focus_sash", "nature": "jolly"},
+            {"species": "arcanine", "level": 57, "moveset": ["flareblitz", "wildcharge", "closecombat", "extremespeed"], "ability": "intimidate", "heldItem": "sitrus_berry", "nature": "jolly"},
+            {"species": "corviknight", "level": 58, "moveset": ["bravebird", "bodypress", "ironhead", "roost"], "ability": "pressure", "heldItem": "leftovers", "nature": "impish"}
+          ]
+        },
+        "superseded_on": "2026-10-04",
+        "superseded_why": "see moved_why: the ONE Brann is the HQ tower NPC"
       }
     },
     {
       "id": "finale_elara_venn",
       "display_name": "Director Elara Venn",
       "npc_of_the_finale_doc": "npc_finale_elara_venn",
-      "sets": ["quest.main_worldshift_reveal.elara_defeated"],
-      "seat": [3347, 13, 3306],
-      "seat_why": "the cradle's floor (y12) at orbit 10, bearing 180 from the centre (3357, 3306): due west, behind the restraint from the cut, between Codex's west player stand (3349, 13, 3306) and the west console (orbit 11, (3346, 3306)). Feet and head clear of every cell cradle_composition() writes (the floor light at orbit 9 is (3348, 12, 3306), under the player stand's side, not hers); on none of the four player stands, the binder's, Brann's or the actor marker",
-      "yaw": -90,
-      "yaw_why": "facing east (Minecraft yaw -90 faces +x), across the restraint toward the cut and the player stand in front of her",
-      "skin": "rctmod:textures/trainers/single/scientist_ted_014f.png",
-      "skin_note": "dead data (see Brann's skin_note); named from a texture already in the 0.18.1 jar",
-      "eye_contact": false,
-      "eye_contact_why": "she is talked to, not stumbled on: the player crosses the cradle to her console after Brann",
-      "cooldown": "finale",
+      "sets": [
+        "quest.main_worldshift_reveal.elara_defeated"
+      ],
       "team": [
         {"species": "bronzong", "level": 57, "moveset": ["trickroom", "gyroball", "bodypress", "hypnosis"], "ability": "levitate", "heldItem": "leftovers", "nature": "sassy"},
         {"species": "hatterene", "level": 58, "moveset": ["trickroom", "psychic", "mysticalfire", "drainingkiss"], "ability": "magicbounce", "heldItem": "colbur_berry", "nature": "quiet"},
@@ -75,26 +96,64 @@
         {"species": "reuniclus", "level": 59, "moveset": ["calmmind", "psychic", "focusblast", "recover"], "ability": "magicguard", "heldItem": "leftovers", "nature": "modest"},
         {"species": "metagross", "level": 60, "moveset": ["meteormash", "zenheadbutt", "earthquake", "hammerarm"], "ability": "clearbody", "heldItem": "weakness_policy", "nature": "adamant"}
       ],
-      "dialogue_text": {
-        "pre": "Listen to the city before you call this simple. I knew the destination was occupied. I ordered the cycle because I could name the people who would die if I stopped.",
-        "player_win": "That certainty became an excuse to leave the other names blank. There is no operation left to finish. Release it, and we begin the work that cannot be solved by exchanging somebody else's home.",
-        "player_loss": "Every light below us belongs to someone the Compact carried out. Do not come back to put them out."
-      },
-      "after_win": "Elara steps back from her console. The binder at the restraint is waiting for you.",
-      "rct": {
-        "name": {"literal": "Director Elara Venn"},
-        "battleRules": {"maxItemUses": 0, "healPlayers": false, "adjustPlayerLevels": false, "adjustNPCLevels": false},
-        "ai": {"type": "rct", "data": {"moveBias": 1.25, "switchBias": 0.8, "statusMoveBias": 1.05, "itemBias": 1.0, "maxSelectMargin": 0.12}},
-        "bag": [],
-        "team": [
-          {"species": "bronzong", "level": 57, "moveset": ["trickroom", "gyroball", "bodypress", "hypnosis"], "ability": "levitate", "heldItem": "leftovers", "nature": "sassy"},
-          {"species": "hatterene", "level": 58, "moveset": ["trickroom", "psychic", "mysticalfire", "drainingkiss"], "ability": "magicbounce", "heldItem": "colbur_berry", "nature": "quiet"},
-          {"species": "klinklang", "level": 58, "moveset": ["shiftgear", "geargrind", "wildcharge", "thunderwave"], "ability": "clearbody", "heldItem": "life_orb", "nature": "adamant"},
-          {"species": "porygonz", "level": 59, "moveset": ["nastyplot", "triattack", "darkpulse", "thunderbolt"], "ability": "adaptability", "heldItem": "life_orb", "nature": "modest"},
-          {"species": "reuniclus", "level": 59, "moveset": ["calmmind", "psychic", "focusblast", "recover"], "ability": "magicguard", "heldItem": "leftovers", "nature": "modest"},
-          {"species": "metagross", "level": 60, "moveset": ["meteormash", "zenheadbutt", "earthquake", "hammerarm"], "ability": "clearbody", "heldItem": "weakness_policy", "nature": "adamant"}
-        ]
+      "npc": "npc_finale_elara_venn",
+      "conversation": "dlg_main_finale_elara",
+      "fights_as": "the Cobblemon NPC npc_finale_elara_venn in the HQ tower (data/hq_tower.json npcs and fights): its class's party is `team` (tools/compile_dialogue.py battle_class), started from dlg_main_finale_elara's choice, recorded by cobblers:hq_tower/won_elara",
+      "superseded_seat": {
+        "seat": [
+          3347,
+          13,
+          3306
+        ],
+        "seat_why": "the cradle's floor (y12) at orbit 10, bearing 180 from the centre (3357, 3306): due west, behind the restraint from the cut, between Codex's west player stand (3349, 13, 3306) and the west console (orbit 11, (3346, 3306)). Feet and head clear of every cell cradle_composition() writes (the floor light at orbit 9 is (3348, 12, 3306), under the player stand's side, not hers); on none of the four player stands, the binder's, Brann's or the actor marker",
+        "yaw": -90,
+        "yaw_why": "facing east (Minecraft yaw -90 faces +x), across the restraint toward the cut and the player stand in front of her",
+        "skin": "rctmod:textures/trainers/single/scientist_ted_014f.png",
+        "skin_note": "dead data (see Brann's skin_note); named from a texture already in the 0.18.1 jar",
+        "eye_contact": false,
+        "eye_contact_why": "she is talked to, not stumbled on: the player crosses the cradle to her console after Brann",
+        "cooldown": "finale",
+        "dialogue_text": {
+          "pre": "Listen to the city before you call this simple. I knew the destination was occupied. I ordered the cycle because I could name the people who would die if I stopped.",
+          "player_win": "That certainty became an excuse to leave the other names blank. There is no operation left to finish. Release it, and we begin the work that cannot be solved by exchanging somebody else's home.",
+          "player_loss": "Every light below us belongs to someone the Compact carried out. Do not come back to put them out."
+        },
+        "after_win": "Elara steps back from her console. The binder at the restraint is waiting for you.",
+        "rct": {
+          "name": {
+            "literal": "Director Elara Venn"
+          },
+          "battleRules": {
+            "maxItemUses": 0,
+            "healPlayers": false,
+            "adjustPlayerLevels": false,
+            "adjustNPCLevels": false
+          },
+          "ai": {
+            "type": "rct",
+            "data": {
+              "moveBias": 1.25,
+              "switchBias": 0.8,
+              "statusMoveBias": 1.05,
+              "itemBias": 1.0,
+              "maxSelectMargin": 0.12
+            }
+          },
+          "bag": [],
+          "team": [
+            {"species": "bronzong", "level": 57, "moveset": ["trickroom", "gyroball", "bodypress", "hypnosis"], "ability": "levitate", "heldItem": "leftovers", "nature": "sassy"},
+            {"species": "hatterene", "level": 58, "moveset": ["trickroom", "psychic", "mysticalfire", "drainingkiss"], "ability": "magicbounce", "heldItem": "colbur_berry", "nature": "quiet"},
+            {"species": "klinklang", "level": 58, "moveset": ["shiftgear", "geargrind", "wildcharge", "thunderwave"], "ability": "clearbody", "heldItem": "life_orb", "nature": "adamant"},
+            {"species": "porygonz", "level": 59, "moveset": ["nastyplot", "triattack", "darkpulse", "thunderbolt"], "ability": "adaptability", "heldItem": "life_orb", "nature": "modest"},
+            {"species": "reuniclus", "level": 59, "moveset": ["calmmind", "psychic", "focusblast", "recover"], "ability": "magicguard", "heldItem": "leftovers", "nature": "modest"},
+            {"species": "metagross", "level": 60, "moveset": ["meteormash", "zenheadbutt", "earthquake", "hammerarm"], "ability": "clearbody", "heldItem": "weakness_policy", "nature": "adamant"}
+          ]
+        },
+        "superseded_on": "2026-10-04",
+        "superseded_why": "see moved_why: the ONE Elara is the HQ tower NPC"
       }
     }
-  ]
+  ],
+  "moved_why": "Two of each character collided when the cradle confrontation (commits 3e0f5ad, d968d79: rctmod trainers seated in Hoopa's cradle) met the HQ tower (7e0524e, da3ceba: Cobblemon dialogue NPCs in their rooms, with Codex's four intermediate stages). The rctmod seats were dropped, not the NPCs, because (1) Codex places Brann in the briefing hall and Elara in the director's office, and their stage transitions (hq_crossed, cradle_open) are spoken there; (2) a Cobblemon NPC with a party fights through the mechanism proven in game on 2026-10-03 for the arena (docs/research/notes/arena-per-player-opponents.md section 8: start_battle opened the battle, the battle_victory callback saw the win and the loss), so one entity can carry both; (3) an rctmod trainer cannot open our compiled dialogue. Each record's cradle seat, sight, skin, rctmod lines and rct block are kept under superseded_seat: the seats were measured off the cradle's own cells, and if the owner wants the fights back in the cradle that is the work to restore.",
+  "move_legality": "measured 2026-10-04 against the Cobblemon 1.8.0 jar's species files (data/cobblemon/species, from the client profile's Cobblemon-fabric-1.8.0+1.21.1.jar, never the server's): every move of both teams is in the species' or a pre-evolution's learnset and every ability is in the species' ability list; 0 faults of 44 moves and 11 abilities. No repository tool runs this check yet"
 }

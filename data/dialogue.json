@@ -9952,6 +9952,706 @@
       }
     },
     {
+      "id": "dlg_main_finale_nia",
+      "quest_id": "main_worldshift_reveal",
+      "npc_id": "npc_finale_nia_calder",
+      "npc_name": "Nia Calder",
+      "source": "docs/story/NPCS_AND_RIFT_FINALE.md (Codex, branch codex/trainer-modes) Scene 1, Nia's handoff. Line 1 is adapted: Codex's 'You made it past Jun.' names Warden Jun Saye, whose Victory Road post is not built; the last line is added to point at the HQ tower (data/hq_tower.json). Writes deep_handoff_received, which opens the HQ tower's door gate",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.main_worldshift_reveal.finale_nia_cursor",
+        "initial_node": "nia_before",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.main_worldshift_reveal.stage",
+            "value": "rift_crisis_pending"
+          },
+          "node": "nia_001"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open"
+            ]
+          },
+          "node": "nia_repeat"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "nia_after"
+        },
+        {
+          "priority": 40,
+          "when": {
+            "kind": "always"
+          },
+          "node": "nia_before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "nia_before",
+          "kind": "line",
+          "speaker": "nia",
+          "text": "The clinic is for people the Rift has already hurt. If the Compact sent you, you are early.",
+          "next": "nia_before"
+        },
+        {
+          "id": "nia_001",
+          "kind": "line",
+          "speaker": "nia",
+          "text": "You made it down into the Deep. Then you know the Compact has started the final steering cycle.",
+          "next": "nia_002"
+        },
+        {
+          "id": "nia_002",
+          "kind": "line",
+          "speaker": "nia",
+          "text": "I joined to carry people out of collapsing places. I still believe they deserve carrying.",
+          "next": "nia_003"
+        },
+        {
+          "id": "nia_003",
+          "kind": "line",
+          "speaker": "nia",
+          "text": "Elara's order would save them by choosing strangers to disappear. That is not rescue anymore.",
+          "next": "nia_004"
+        },
+        {
+          "id": "nia_004",
+          "kind": "line",
+          "speaker": "nia",
+          "text": "Brann holds the briefing hall. Oren is in anchor control, keeping the machine stable because an unstable stop could tear the Deep open.",
+          "next": "nia_005"
+        },
+        {
+          "id": "nia_005",
+          "kind": "line",
+          "speaker": "nia",
+          "text": "Show Oren this route packet. It contains Tomas's occupied-site reading and my authorization to evacuate the cradle staff.",
+          "next": "nia_006"
+        },
+        {
+          "id": "nia_006",
+          "kind": "line",
+          "speaker": "nia",
+          "text": "Get the anchors down safely. Then Elara has no operation left to defend.",
+          "next": "nia_007",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "record_deep_handoff_received"
+            }
+          ]
+        },
+        {
+          "id": "nia_007",
+          "kind": "line",
+          "speaker": "nia",
+          "text": "Headquarters is the black tower on the top ring, west side. The tower door inside will open for my packet. Climb.",
+          "next": "nia_repeat"
+        },
+        {
+          "id": "nia_repeat",
+          "kind": "line",
+          "speaker": "nia",
+          "text": "Briefing hall, anchor control, then Elara. Do not open the shaft while the anchors are live.",
+          "next": "nia_repeat"
+        },
+        {
+          "id": "nia_after",
+          "kind": "line",
+          "speaker": "nia",
+          "text": "The steering has stopped. I can hear the city again instead of the machine.",
+          "next": "nia_after"
+        }
+      ],
+      "speakers": {
+        "nia": "Nia Calder"
+      }
+    },
+    {
+      "id": "dlg_main_finale_brann",
+      "quest_id": "main_worldshift_reveal",
+      "npc_id": "npc_finale_brann_saye",
+      "npc_name": "Captain Brann Saye",
+      "source": "docs/story/NPCS_AND_RIFT_FINALE.md (Codex, branch codex/trainer-modes) Scene 2, Brann's threshold, in the HQ tower's briefing hall (data/hq_tower.json storey hq_s1). The integration of 2026-10-04 (the owner: 'the confrontation with Elara and Brann') makes him the ONE Brann, who talks and fights here: the player's refusal to leave ('I'm not leaving.') starts his battle (npc_battle; team data/finale_trainers.json finale_brann_saye), the win sets brann_defeated (the cobblers_hq_tower battle_victory callback), and the stand-down after the win writes hq_crossed. Departure from Codex: line 4 ('My people will not fight a trainer ...') gains 'I will.', because the owner asked for him to fight; lines 5-6 follow the battle. The repeat line names the tower's top for Codex's 'Relay Row', since anchor control is the tower's control room",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.main_worldshift_reveal.finale_brann_cursor",
+        "initial_node": "brann_before",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.stage",
+                "value": "deep_handoff_received"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.brann_defeated",
+                "value": true
+              }
+            ]
+          },
+          "node": "brann_005"
+        },
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.stage",
+                "value": "deep_handoff_received"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.finale_brann_cursor",
+                "value": "brann_choice"
+              }
+            ]
+          },
+          "node": "brann_choice"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.main_worldshift_reveal.stage",
+            "value": "deep_handoff_received"
+          },
+          "node": "brann_001"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "brann_repeat"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "always"
+          },
+          "node": "brann_before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "brann_before",
+          "kind": "line",
+          "speaker": "brann",
+          "text": "You should not be in this tower. Go back down before somebody less patient finds you.",
+          "next": "brann_before"
+        },
+        {
+          "id": "brann_001",
+          "kind": "line",
+          "speaker": "brann",
+          "text": "Nia sent you. I hoped she would choose evacuation over mutiny.",
+          "next": "brann_002"
+        },
+        {
+          "id": "brann_002",
+          "kind": "line",
+          "speaker": "brann",
+          "text": "Every person below us has watched a home fail. I will not call them villains for wanting one place that stays.",
+          "next": "brann_003"
+        },
+        {
+          "id": "brann_003",
+          "kind": "line",
+          "speaker": "brann",
+          "text": "But I read Tomas's result. The destination is occupied, and Elara ordered the cycle anyway.",
+          "next": "brann_004"
+        },
+        {
+          "id": "brann_004",
+          "kind": "line",
+          "speaker": "brann",
+          "text": "My people will not fight a trainer who came through eight leaders to stop that. I will.",
+          "next": "brann_choice"
+        },
+        {
+          "id": "brann_choice",
+          "kind": "choice",
+          "speaker": "brann",
+          "text": "This hall is the last place I can still turn you round. Walk back down, or show me you can stop this without killing the city.",
+          "responses": [
+            {
+              "id": "r_stay",
+              "text": "I'm not leaving.",
+              "actions": [
+                {
+                  "kind": "npc_battle",
+                  "format": "singles"
+                }
+              ]
+            },
+            {
+              "id": "r_not_yet",
+              "text": "Not yet.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "brann_005",
+          "kind": "line",
+          "speaker": "brann",
+          "text": "I am standing down the hall guard. Do not mistake that for forgiveness if a reckless shutdown kills this city.",
+          "next": "brann_006",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "record_hq_crossed"
+            }
+          ]
+        },
+        {
+          "id": "brann_006",
+          "kind": "line",
+          "speaker": "brann",
+          "text": "Bring Oren a controlled stop. Then face Elara with the machine silent.",
+          "next": "brann_repeat"
+        },
+        {
+          "id": "brann_repeat",
+          "kind": "line",
+          "speaker": "brann",
+          "text": "The stair is open. Anchor control is at the top of the tower; Elara's office is the floor below it.",
+          "next": "brann_repeat"
+        }
+      ],
+      "speakers": {
+        "brann": "Captain Brann Saye"
+      },
+      "npc_battle": {
+        "trainers": "finale_trainers.json",
+        "trainer": "finale_brann_saye",
+        "skill": 5
+      }
+    },
+    {
+      "id": "dlg_main_finale_oren",
+      "quest_id": "main_worldshift_reveal",
+      "npc_id": "npc_finale_oren_pell",
+      "npc_name": "Oren Pell",
+      "source": "docs/story/NPCS_AND_RIFT_FINALE.md (Codex, branch codex/trainer-modes) Scene 3, Oren's shutdown, in the HQ tower's control room at the top (data/hq_tower.json storey s10). The control interaction is one dialogue choice, as the doc allows ('one proven interaction if a four-step console would require a new mechanism')",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.main_worldshift_reveal.finale_oren_cursor",
+        "initial_node": "oren_before",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.main_worldshift_reveal.stage",
+            "value": "hq_crossed"
+          },
+          "node": "oren_001"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.main_worldshift_reveal.stage",
+            "value": "anchor_shutdown"
+          },
+          "node": "oren_repeat"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "cradle_open",
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "oren_done"
+        },
+        {
+          "priority": 40,
+          "when": {
+            "kind": "always"
+          },
+          "node": "oren_before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "oren_before",
+          "kind": "line",
+          "speaker": "oren",
+          "text": "Do not touch the board. Not you, not anyone the Captain has not cleared.",
+          "next": "oren_before"
+        },
+        {
+          "id": "oren_001",
+          "kind": "line",
+          "speaker": "oren",
+          "text": "Do not touch the board yet. A dead anchor and a safe anchor are not the same thing.",
+          "next": "oren_002"
+        },
+        {
+          "id": "oren_002",
+          "kind": "line",
+          "speaker": "oren",
+          "text": "I kept telling myself control made the exchanges moral. Better measurements. Smaller losses. One more family carried out.",
+          "next": "oren_003"
+        },
+        {
+          "id": "oren_003",
+          "kind": "line",
+          "speaker": "oren",
+          "text": "Tomas proved the target is occupied. There is no cleaner setting left.",
+          "next": "oren_004"
+        },
+        {
+          "id": "oren_004",
+          "kind": "line",
+          "speaker": "oren",
+          "text": "The three outer relays must go quiet before the core. Use the marked sequence; I will hold the return load.",
+          "next": "oren_board"
+        },
+        {
+          "id": "oren_board",
+          "kind": "choice",
+          "speaker": "oren",
+          "text": "Outer relays first, then the core. My hand is on the return load.",
+          "responses": [
+            {
+              "id": "r_run",
+              "text": "Run the marked sequence.",
+              "next": "oren_after_1",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "record_anchor_shutdown"
+                }
+              ]
+            },
+            {
+              "id": "r_not_yet",
+              "text": "Not yet.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "oren_after_1",
+          "kind": "line",
+          "speaker": "oren",
+          "text": "All four are down. The Rift is no longer being steered, but Hoopa is still bound in the cradle.",
+          "next": "oren_after_2"
+        },
+        {
+          "id": "oren_after_2",
+          "kind": "line",
+          "speaker": "oren",
+          "text": "Elara has the shaft interlock. Make her look at what remains when the miracle is removed.",
+          "next": "oren_repeat"
+        },
+        {
+          "id": "oren_repeat",
+          "kind": "line",
+          "speaker": "oren",
+          "text": "Anchors are down. The secure shaft is still locked from Elara's office.",
+          "next": "oren_repeat"
+        },
+        {
+          "id": "oren_done",
+          "kind": "line",
+          "speaker": "oren",
+          "text": "The board is dark. Tomas's trace is the only thing left on it, and I am leaving it there.",
+          "next": "oren_done"
+        }
+      ],
+      "speakers": {
+        "oren": "Oren Pell"
+      }
+    },
+    {
+      "id": "dlg_main_finale_elara",
+      "quest_id": "main_worldshift_reveal",
+      "npc_id": "npc_finale_elara_venn",
+      "npc_name": "Director Elara Venn",
+      "source": "docs/story/NPCS_AND_RIFT_FINALE.md (Codex, branch codex/trainer-modes) Scene 4, Elara's decision, in the HQ tower's director's office (data/hq_tower.json storey hq_s9), the floor below anchor control. The integration of 2026-10-04 makes her the ONE Elara, who talks and fights here: Codex's lines 1-4 open, the choice starts her battle (npc_battle; team data/finale_trainers.json finale_elara_venn), the win sets elara_defeated (the cobblers_hq_tower battle_victory callback), and lines 5-7 after the win write cradle_open, the stage the doc opens the secure shaft at and the release reads. The choice's line is new (Codex's Elara does not fight)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.main_worldshift_reveal.finale_elara_cursor",
+        "initial_node": "elara_before",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 5,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.stage",
+                "value": "anchor_shutdown"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.elara_defeated",
+                "value": true
+              }
+            ]
+          },
+          "node": "elara_005"
+        },
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.stage",
+                "value": "anchor_shutdown"
+              },
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.finale_elara_cursor",
+                "value": "elara_choice"
+              }
+            ]
+          },
+          "node": "elara_choice"
+        },
+        {
+          "priority": 10,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.main_worldshift_reveal.stage",
+            "value": "anchor_shutdown"
+          },
+          "node": "elara_001"
+        },
+        {
+          "priority": 20,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.main_worldshift_reveal.stage",
+            "value": "cradle_open"
+          },
+          "node": "elara_repeat"
+        },
+        {
+          "priority": 30,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "rift_released",
+              "league_recognized"
+            ]
+          },
+          "node": "elara_after"
+        },
+        {
+          "priority": 40,
+          "when": {
+            "kind": "progression_in",
+            "field": "quest.main_worldshift_reveal.stage",
+            "values": [
+              "deep_handoff_received",
+              "hq_crossed"
+            ]
+          },
+          "node": "elara_waiting"
+        },
+        {
+          "priority": 50,
+          "when": {
+            "kind": "always"
+          },
+          "node": "elara_before"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "elara_before",
+          "kind": "line",
+          "speaker": "elara",
+          "text": "Whoever you are, this office is not on your route.",
+          "next": "elara_before"
+        },
+        {
+          "id": "elara_waiting",
+          "kind": "line",
+          "speaker": "elara",
+          "text": "The anchors are still live. Nothing you say to me changes while the machine is running.",
+          "next": "elara_waiting"
+        },
+        {
+          "id": "elara_001",
+          "kind": "line",
+          "speaker": "elara",
+          "text": "Listen to the city before you call this simple. Every light below us belongs to someone the Compact carried out.",
+          "next": "elara_002"
+        },
+        {
+          "id": "elara_002",
+          "kind": "line",
+          "speaker": "elara",
+          "text": "We found them air, medicine, years. The ordinary world did not arrive to help.",
+          "next": "elara_003"
+        },
+        {
+          "id": "elara_003",
+          "kind": "line",
+          "speaker": "elara",
+          "text": "I knew the destination was occupied. I ordered the cycle because I could name the people who would die if I stopped.",
+          "next": "elara_004"
+        },
+        {
+          "id": "elara_004",
+          "kind": "line",
+          "speaker": "elara",
+          "text": "That certainty became an excuse to leave the other names blank.",
+          "next": "elara_choice"
+        },
+        {
+          "id": "elara_choice",
+          "kind": "choice",
+          "speaker": "elara",
+          "text": "The interlock answers to me. If you want the shaft, you will have to take it from the one who ordered the cycle.",
+          "responses": [
+            {
+              "id": "r_fight",
+              "text": "Then I'll take it.",
+              "actions": [
+                {
+                  "kind": "npc_battle",
+                  "format": "singles"
+                }
+              ]
+            },
+            {
+              "id": "r_not_yet",
+              "text": "Not yet.",
+              "actions": [
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "elara_005",
+          "kind": "line",
+          "speaker": "elara",
+          "text": "You shut the anchors down without collapsing the Deep. There is no operation left to finish.",
+          "next": "elara_006"
+        },
+        {
+          "id": "elara_006",
+          "kind": "line",
+          "speaker": "elara",
+          "text": "The shaft opens from here. Hoopa is below the relic that first taught this place how to bind it.",
+          "next": "elara_007",
+          "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "record_cradle_open"
+            }
+          ]
+        },
+        {
+          "id": "elara_007",
+          "kind": "line",
+          "speaker": "elara",
+          "text": "Release it. Then we begin the work that cannot be solved by exchanging somebody else's home.",
+          "next": "elara_repeat"
+        },
+        {
+          "id": "elara_repeat",
+          "kind": "line",
+          "speaker": "elara",
+          "text": "The shaft is open. Follow the passage beneath the relic site.",
+          "next": "elara_repeat"
+        },
+        {
+          "id": "elara_after",
+          "kind": "line",
+          "speaker": "elara",
+          "text": "The cradle is empty. Now the work starts that nobody can exchange their way out of.",
+          "next": "elara_after"
+        }
+      ],
+      "speakers": {
+        "elara": "Director Elara Venn"
+      },
+      "npc_battle": {
+        "trainers": "finale_trainers.json",
+        "trainer": "finale_elara_venn",
+        "skill": 5
+      }
+    },
+    {
       "id": "dlg_main_relic_hq_guard",
       "quest_id": "main_worldshift_reveal",
       "npc_id": "npc_main_relic_hq_guard",
@@ -9973,6 +10673,10 @@
             "field": "quest.main_worldshift_reveal.stage",
             "values": [
               "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open",
               "rift_released",
               "league_recognized"
             ]
@@ -10016,6 +10720,10 @@
                 "field": "quest.main_worldshift_reveal.stage",
                 "values": [
                   "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open",
                   "rift_released",
                   "league_recognized"
                 ]
@@ -10110,7 +10818,7 @@
       "quest_id": "main_worldshift_reveal",
       "npc_id": "npc_main_relic_hall_binder",
       "npc_name": "Compact binder",
-      "source": "docs/story/NPCS_AND_RIFT_FINALE.md Scene 5 (Codex, commit 9cbfd213, local branch codex/trainer-modes), ported into Hoopa's carved cradle by the owner's decisions of 2026-10-03 and 2026-10-04 (data/relic_underground.json geometry.release). Codex's narration and Hoopa's lines are kept; 'The machine is quiet' is restored now that the confrontation is built (data/finale_trainers.json: Brann and Elara are beaten before the release is offered). The binder's briefing (confront_*) is Codex's Scene 1 and 3 lines (Nia, Oren) given to the cradle staff, since Scenes 1 and 3 are not built. Placeholders for Codex or the owner to replace.",
+      "source": "docs/story/NPCS_AND_RIFT_FINALE.md Scene 5 (Codex, commit 9cbfd213, local branch codex/trainer-modes), ported into Hoopa's carved cradle by the owner's decisions of 2026-10-03 and 2026-10-04 (data/relic_underground.json geometry.release). Codex's narration and Hoopa's lines are kept; 'The machine is quiet' is restored now that the confrontation is built. Since the integration of 2026-10-04 the release reads Codex's own Scene 5 stage, cradle_open, with both of this player's wins (Brann and Elara fight in the HQ tower, data/hq_tower.json finale_order); the binder's briefing (confront_*) is shown at every earlier finale stage and points up to the tower. Placeholders for Codex or the owner to replace.",
       "scope": "player",
       "cursor": {
         "progression_field": "quest.main_worldshift_reveal.relic_release_cursor",
@@ -10128,7 +10836,7 @@
               {
                 "kind": "progression_equals",
                 "field": "quest.main_worldshift_reveal.stage",
-                "value": "rift_crisis_pending"
+                "value": "cradle_open"
               },
               {
                 "kind": "progression_equals",
@@ -10147,9 +10855,15 @@
         {
           "priority": 15,
           "when": {
-            "kind": "progression_equals",
+            "kind": "progression_in",
             "field": "quest.main_worldshift_reveal.stage",
-            "value": "rift_crisis_pending"
+            "values": [
+              "rift_crisis_pending",
+              "deep_handoff_received",
+              "hq_crossed",
+              "anchor_shutdown",
+              "cradle_open"
+            ]
           },
           "node": "confront_001"
         },
@@ -10199,7 +10913,7 @@
           "id": "confront_003",
           "kind": "line",
           "speaker": "binder",
-          "text": "Captain Saye holds the cradle floor. The Director is at her console behind the restraint.",
+          "text": "Captain Saye holds the tower's briefing hall. The Director keeps the shaft interlock in her office, under anchor control.",
           "next": "confront_004"
         },
         {
@@ -10245,7 +10959,7 @@
                   {
                     "kind": "progression_equals",
                     "field": "quest.main_worldshift_reveal.stage",
-                    "value": "rift_crisis_pending"
+                    "value": "cradle_open"
                   },
                   {
                     "kind": "progression_equals",
