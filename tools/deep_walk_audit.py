@@ -73,6 +73,7 @@ REPLAY = (("R1", "cobblers_rift", "rift"),
           ("R9B", "cobblers_deep", "deep"),
           ("R9C", "cobblers_vr_caves", "vr_caves"),
           ("R9DC", "cobblers_deep_city", "deep_city"),
+          ("R9AD", "cobblers_arena_dome", "arena_dome"),      # Heaven's Arena's dome on the north floor, 2026-10-03
           ("R9RU", "cobblers_relic_underground", "relic_underground"),
           ("R9E", "cobblers_habitats", "habitats"),
           ("R15", "cobblers_signs", "signs"))
