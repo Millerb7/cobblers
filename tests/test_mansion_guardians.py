@@ -621,11 +621,15 @@ def test_r17_placements_are_the_route_seats_then_the_guardians():
            [(s["id"], tuple(s["seat"]), s["yaw"]) for s in LATE_SEATS] + \
            [(g["id"], tuple(g["seat"]), g["yaw"]) for g in GUARDS] + \
            [(v["id"], tuple(v["seat"]), v["yaw"]) for v in VR_SEATS] + \
-           [(a["id"], tuple(a["seat"]), a["yaw"]) for a in ARENA_SEATS]
-    # 13 route + 28 late route + 5 guardians + 10 Victory Road + 7 arena. It was 18, then 28, then 56, now 63; the
-    # count is asserted so the data cannot shrink silently, and it moves only when records are deliberately added.
+           [(a["id"], tuple(a["seat"]), a["yaw"]) for a in ARENA_SEATS if "seat" in a and a.get("seated", True)]
+    # 13 route + 28 late route + 5 guardians + 10 Victory Road + the arena's SEATED records. It was 18, then 28, then
+    # 56, then 63 with the arena's seven, and is 56 since 2026-10-03: the owner retired the spire's battles ("have the
+    # middle just be hubs"), so all seven records carry `seated: false` and their old stand under `superseded_seat`
+    # (their teams are tools/arena_runtime.py's exam fights). The seven RECORDS are still asserted, so the data cannot
+    # shrink silently; only the seats went.
     assert (len(ROUTE_SEATS), len(LATE_SEATS), len(GUARDS), len(VR_SEATS), len(ARENA_SEATS)) == (13, 28, 5, 10, 7)
-    assert len(want) == 63
+    assert all(a.get("seated") is False and a.get("superseded_seat") for a in ARENA_SEATS)
+    assert len(want) == 56
     assert RT.placements() == want
 
 

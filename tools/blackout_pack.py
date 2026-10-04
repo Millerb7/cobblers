@@ -233,10 +233,15 @@ def build(cfg, mounts, placements, progression, boat_rows=None):
        + (["# the money goes into the claim too (data/blackout.json money.held_by_wild_victor)",
            "execute if score @s bo.clm matches 2 run function %s:recovery/hold_money" % NS] if money.get("held_by_wild_victor") else [])
        + ["tag @s add cobblers.bo_pending"])
+    arena = cfg.get("arena_exempt") or {}
     fn("blackout/battle_loss_npc", [
         "# as a player who has just lost to an NPC trainer: trainer claims bind to the route trainers, not built yet,",
-        "# so this is money and the return only",
-        "function %s:blackout/dedupe" % NS,
+        "# so this is money and the return only"]
+       + (["# a Heaven's Arena bout is sport, not a blackout: no charge, no return (data/blackout.json arena_exempt;",
+           "# tools/arena_runtime.py holds the tag from the bout's start until its NPC is cleared). Before the dedupe,",
+           "# so an arena loss never stamps an incident that would swallow a real blackout after it",
+           "execute if entity @s[tag=%s] run return 0" % arena["player_tag"]] if arena.get("player_tag") else [])
+       + ["function %s:blackout/dedupe" % NS,
         "execute if score #dup bo.tmp matches 1 run return 0",
         "scoreboard players set @s bo.clm 3",
         "function %s:blackout/charge" % NS,

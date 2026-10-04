@@ -184,10 +184,18 @@ def test_a_seat_moved_off_its_stand_is_named(built):
 
 
 @pytest.mark.slow
-def test_a_cycle_missing_a_tiers_tp_is_named(built):
-    # Removing this lets a cycle that announces the gate but never turns the player back pass.
+def test_a_cycle_gate_line_for_a_retired_tier_is_named(built):
+    # Removing this lets a cycle keep turning players back on a champion who no longer stands in the spire.
+    # It was "a cycle missing a tier's tp is named" until 2026-10-03, when the owner retired the spire's battles and
+    # every record went `seated: false` (tools/arena_audit.py load()): the expectation for each tier is now NO gate
+    # line, so the mutation adds one rather than removing one.
     cv, plan, _spec = built
-    cycle = [ln for ln in A.cycle_lines() if not (ln.startswith("tp @a[") and "arena_tier_4_champion" in ln)]
+    t4 = next(t for t in TRAINERS if t["id"] == "arena_tier_4_champion")
+    assert t4.get("retired"), "tier 4 is seated again: restore the old missing-tp mutation"
+    x, y, z, dx, dy, dz = t4["gate"]["box"]
+    stale = "tp @a[x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d,tag=!cobblers_beat_arena_tier_4_champion,gamemode=!creative," \
+            "gamemode=!spectator] 0 0 0 0 0" % (x, y, z, dx, dy, dz)
+    cycle = A.cycle_lines() + [stale]
     problems, _s = A.audit(cv.get, AR, TRAINERS, tuple(plan["spire"]["centre"]), int(plan["arena"]["lobby"]), cycle)
     assert any(k == "cycle" and "arena_tier_4_champion" in m for k, m in problems)
 
