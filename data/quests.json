@@ -798,42 +798,42 @@
       "existing_progression_links": [
         {
           "flag": "gym1_cleared",
-          "relationship": "authoritative battle/route gate between reveal beats 2 and 3; dialogue cannot read it yet",
+          "relationship": "authoritative battle/route gate between reveal beats 2 and 3; the badge carries the stage forward (flags[].carries_stage) and opens the next actor (carry_forward)",
           "runtime_owner": "data/progression.json and tools/progression_pack.py"
         },
         {
           "flag": "gym2_cleared",
-          "relationship": "authoritative battle/route gate between reveal beats 3 and 4; dialogue cannot read it yet",
+          "relationship": "authoritative battle/route gate between reveal beats 3 and 4; the badge carries the stage forward (flags[].carries_stage) and opens the next actor (carry_forward)",
           "runtime_owner": "data/progression.json and tools/progression_pack.py"
         },
         {
           "flag": "gym3_cleared",
-          "relationship": "authoritative battle/route gate between reveal beats 4 and 5; dialogue cannot read it yet",
+          "relationship": "authoritative battle/route gate between reveal beats 4 and 5; the badge carries the stage forward (flags[].carries_stage) and opens the next actor (carry_forward)",
           "runtime_owner": "data/progression.json and tools/progression_pack.py"
         },
         {
           "flag": "gym4_cleared",
-          "relationship": "authoritative battle/route gate between reveal beats 5 and 6; dialogue cannot read it yet",
+          "relationship": "authoritative battle/route gate between reveal beats 5 and 6; the badge carries the stage forward (flags[].carries_stage) and opens the next actor (carry_forward)",
           "runtime_owner": "data/progression.json and tools/progression_pack.py"
         },
         {
           "flag": "gym5_cleared",
-          "relationship": "authoritative battle/route gate between reveal beats 6 and 7; dialogue cannot read it yet",
+          "relationship": "authoritative battle/route gate between reveal beats 6 and 7; the badge carries the stage forward (flags[].carries_stage) and opens the next actor (carry_forward)",
           "runtime_owner": "data/progression.json and tools/progression_pack.py"
         },
         {
           "flag": "gym6_cleared",
-          "relationship": "authoritative battle/route gate between reveal beats 7 and 8; dialogue cannot read it yet",
+          "relationship": "authoritative battle/route gate between reveal beats 7 and 8; the badge carries the stage forward (flags[].carries_stage) and opens the next actor (carry_forward)",
           "runtime_owner": "data/progression.json and tools/progression_pack.py"
         },
         {
           "flag": "gym7_cleared",
-          "relationship": "authoritative battle/route gate between reveal beats 8 and 9; dialogue cannot read it yet",
+          "relationship": "authoritative battle/route gate between reveal beats 8 and 9; the badge carries the stage forward (flags[].carries_stage) and opens the next actor (carry_forward)",
           "runtime_owner": "data/progression.json and tools/progression_pack.py"
         },
         {
           "flag": "gym8_cleared",
-          "relationship": "authoritative battle/route gate between reveal beats 9 and 10; dialogue cannot read it yet",
+          "relationship": "authoritative battle/route gate between reveal beats 9 and 10; the badge carries the stage forward (flags[].carries_stage) and opens the next actor (carry_forward)",
           "runtime_owner": "data/progression.json and tools/progression_pack.py"
         },
         {
@@ -1733,6 +1733,351 @@
           ]
         },
         {
+          "id": "carry_by_gym1_cleared_to_pallet_complete",
+          "source": "docs/world-building/CRITICAL_PATH_WALK_2.md blocker 2, the owner 2026-10-05 ('Playable end to end'): a player holding gym1_cleared whose stage is still before pallet_complete (an actor skipped, or the badge won before the badge carry shipped) is carried to it when they open a conversation that reads it, so the conversation can tell its account and its own completion, unchanged, moves the stage on. Never moves a stage down: its stages are only the ones before pallet_complete.",
+          "conditions": [
+            {
+              "kind": "starter_chosen"
+            },
+            {
+              "kind": "flag",
+              "flag": "gym1_cleared"
+            },
+            {
+              "kind": "progression_in",
+              "field": "quest.main_worldshift_reveal.stage",
+              "values": [
+                "not_started",
+                "oak_sendoff",
+                "mismatch_seen",
+                "oak_admitted"
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "pallet_complete"
+            }
+          ]
+        },
+        {
+          "id": "carry_by_gym1_cleared_to_brock_account_heard",
+          "source": "docs/world-building/CRITICAL_PATH_WALK_2.md blocker 2, the owner 2026-10-05 ('Playable end to end'): a player holding gym1_cleared whose stage is still before brock_account_heard (an actor skipped, or the badge won before the badge carry shipped) is carried to it when they open a conversation that reads it, so the conversation can tell its account and its own completion, unchanged, moves the stage on. Never moves a stage down: its stages are only the ones before brock_account_heard.",
+          "conditions": [
+            {
+              "kind": "starter_chosen"
+            },
+            {
+              "kind": "flag",
+              "flag": "gym1_cleared"
+            },
+            {
+              "kind": "progression_in",
+              "field": "quest.main_worldshift_reveal.stage",
+              "values": [
+                "not_started",
+                "oak_sendoff",
+                "mismatch_seen",
+                "oak_admitted",
+                "pallet_complete"
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "brock_account_heard"
+            }
+          ]
+        },
+        {
+          "id": "carry_by_gym2_cleared_to_misty_reveal_complete",
+          "source": "docs/world-building/CRITICAL_PATH_WALK_2.md blocker 2, the owner 2026-10-05 ('Playable end to end'): a player holding gym2_cleared whose stage is still before misty_reveal_complete (an actor skipped, or the badge won before the badge carry shipped) is carried to it when they open a conversation that reads it, so the conversation can tell its account and its own completion, unchanged, moves the stage on. Never moves a stage down: its stages are only the ones before misty_reveal_complete.",
+          "conditions": [
+            {
+              "kind": "starter_chosen"
+            },
+            {
+              "kind": "flag",
+              "flag": "gym2_cleared"
+            },
+            {
+              "kind": "progression_in",
+              "field": "quest.main_worldshift_reveal.stage",
+              "values": [
+                "not_started",
+                "oak_sendoff",
+                "mismatch_seen",
+                "oak_admitted",
+                "pallet_complete",
+                "brock_account_heard"
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "misty_reveal_complete"
+            }
+          ]
+        },
+        {
+          "id": "carry_by_gym3_cleared_to_surge_reveal_complete",
+          "source": "docs/world-building/CRITICAL_PATH_WALK_2.md blocker 2, the owner 2026-10-05 ('Playable end to end'): a player holding gym3_cleared whose stage is still before surge_reveal_complete (an actor skipped, or the badge won before the badge carry shipped) is carried to it when they open a conversation that reads it, so the conversation can tell its account and its own completion, unchanged, moves the stage on. Never moves a stage down: its stages are only the ones before surge_reveal_complete.",
+          "conditions": [
+            {
+              "kind": "starter_chosen"
+            },
+            {
+              "kind": "flag",
+              "flag": "gym3_cleared"
+            },
+            {
+              "kind": "progression_in",
+              "field": "quest.main_worldshift_reveal.stage",
+              "values": [
+                "not_started",
+                "oak_sendoff",
+                "mismatch_seen",
+                "oak_admitted",
+                "pallet_complete",
+                "brock_account_heard",
+                "misty_reveal_complete"
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "surge_reveal_complete"
+            }
+          ]
+        },
+        {
+          "id": "carry_by_gym4_cleared_to_erika_reveal_complete",
+          "source": "docs/world-building/CRITICAL_PATH_WALK_2.md blocker 2, the owner 2026-10-05 ('Playable end to end'): a player holding gym4_cleared whose stage is still before erika_reveal_complete (an actor skipped, or the badge won before the badge carry shipped) is carried to it when they open a conversation that reads it, so the conversation can tell its account and its own completion, unchanged, moves the stage on. Never moves a stage down: its stages are only the ones before erika_reveal_complete.",
+          "conditions": [
+            {
+              "kind": "starter_chosen"
+            },
+            {
+              "kind": "flag",
+              "flag": "gym4_cleared"
+            },
+            {
+              "kind": "progression_in",
+              "field": "quest.main_worldshift_reveal.stage",
+              "values": [
+                "not_started",
+                "oak_sendoff",
+                "mismatch_seen",
+                "oak_admitted",
+                "pallet_complete",
+                "brock_account_heard",
+                "misty_reveal_complete",
+                "surge_reveal_complete"
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "erika_reveal_complete"
+            }
+          ]
+        },
+        {
+          "id": "carry_by_gym5_cleared_to_koga_reveal_complete",
+          "source": "docs/world-building/CRITICAL_PATH_WALK_2.md blocker 2, the owner 2026-10-05 ('Playable end to end'): a player holding gym5_cleared whose stage is still before koga_reveal_complete (an actor skipped, or the badge won before the badge carry shipped) is carried to it when they open a conversation that reads it, so the conversation can tell its account and its own completion, unchanged, moves the stage on. Never moves a stage down: its stages are only the ones before koga_reveal_complete.",
+          "conditions": [
+            {
+              "kind": "starter_chosen"
+            },
+            {
+              "kind": "flag",
+              "flag": "gym5_cleared"
+            },
+            {
+              "kind": "progression_in",
+              "field": "quest.main_worldshift_reveal.stage",
+              "values": [
+                "not_started",
+                "oak_sendoff",
+                "mismatch_seen",
+                "oak_admitted",
+                "pallet_complete",
+                "brock_account_heard",
+                "misty_reveal_complete",
+                "surge_reveal_complete",
+                "erika_reveal_complete"
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "koga_reveal_complete"
+            }
+          ]
+        },
+        {
+          "id": "carry_by_gym6_cleared_to_sabrina_reveal_complete",
+          "source": "docs/world-building/CRITICAL_PATH_WALK_2.md blocker 2, the owner 2026-10-05 ('Playable end to end'): a player holding gym6_cleared whose stage is still before sabrina_reveal_complete (an actor skipped, or the badge won before the badge carry shipped) is carried to it when they open a conversation that reads it, so the conversation can tell its account and its own completion, unchanged, moves the stage on. Never moves a stage down: its stages are only the ones before sabrina_reveal_complete.",
+          "conditions": [
+            {
+              "kind": "starter_chosen"
+            },
+            {
+              "kind": "flag",
+              "flag": "gym6_cleared"
+            },
+            {
+              "kind": "progression_in",
+              "field": "quest.main_worldshift_reveal.stage",
+              "values": [
+                "not_started",
+                "oak_sendoff",
+                "mismatch_seen",
+                "oak_admitted",
+                "pallet_complete",
+                "brock_account_heard",
+                "misty_reveal_complete",
+                "surge_reveal_complete",
+                "erika_reveal_complete",
+                "koga_reveal_complete"
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "sabrina_reveal_complete"
+            }
+          ]
+        },
+        {
+          "id": "carry_by_gym7_cleared_to_blaine_reveal_complete",
+          "source": "docs/world-building/CRITICAL_PATH_WALK_2.md blocker 2, the owner 2026-10-05 ('Playable end to end'): a player holding gym7_cleared whose stage is still before blaine_reveal_complete (an actor skipped, or the badge won before the badge carry shipped) is carried to it when they open a conversation that reads it, so the conversation can tell its account and its own completion, unchanged, moves the stage on. Never moves a stage down: its stages are only the ones before blaine_reveal_complete.",
+          "conditions": [
+            {
+              "kind": "starter_chosen"
+            },
+            {
+              "kind": "flag",
+              "flag": "gym7_cleared"
+            },
+            {
+              "kind": "progression_in",
+              "field": "quest.main_worldshift_reveal.stage",
+              "values": [
+                "not_started",
+                "oak_sendoff",
+                "mismatch_seen",
+                "oak_admitted",
+                "pallet_complete",
+                "brock_account_heard",
+                "misty_reveal_complete",
+                "surge_reveal_complete",
+                "erika_reveal_complete",
+                "koga_reveal_complete",
+                "sabrina_reveal_complete"
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "blaine_reveal_complete"
+            }
+          ]
+        },
+        {
+          "id": "carry_by_gym8_cleared_to_giovanni_reveal_complete",
+          "source": "docs/world-building/CRITICAL_PATH_WALK_2.md blocker 2, the owner 2026-10-05 ('Playable end to end'): a player holding gym8_cleared whose stage is still before giovanni_reveal_complete (an actor skipped, or the badge won before the badge carry shipped) is carried to it when they open a conversation that reads it, so the conversation can tell its account and its own completion, unchanged, moves the stage on. Never moves a stage down: its stages are only the ones before giovanni_reveal_complete.",
+          "conditions": [
+            {
+              "kind": "starter_chosen"
+            },
+            {
+              "kind": "flag",
+              "flag": "gym8_cleared"
+            },
+            {
+              "kind": "progression_in",
+              "field": "quest.main_worldshift_reveal.stage",
+              "values": [
+                "not_started",
+                "oak_sendoff",
+                "mismatch_seen",
+                "oak_admitted",
+                "pallet_complete",
+                "brock_account_heard",
+                "misty_reveal_complete",
+                "surge_reveal_complete",
+                "erika_reveal_complete",
+                "koga_reveal_complete",
+                "sabrina_reveal_complete",
+                "blaine_reveal_complete"
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "giovanni_reveal_complete"
+            }
+          ]
+        },
+        {
+          "id": "carry_by_gym8_cleared_to_rift_crisis_pending",
+          "source": "docs/world-building/CRITICAL_PATH_WALK_2.md blocker 2, the owner 2026-10-05 ('Playable end to end'): Nia Calder (dlg_main_finale_nia, Codex's Scene 1) reads rift_crisis_pending, which only the Rift surveyor at the Victory Road trailhead wrote. A player holding the Earth Badge who walked past him is carried to it when they open Nia's conversation, so record_deep_handoff_received, unchanged, runs. Never moves a stage down.",
+          "conditions": [
+            {
+              "kind": "starter_chosen"
+            },
+            {
+              "kind": "flag",
+              "flag": "gym8_cleared"
+            },
+            {
+              "kind": "progression_in",
+              "field": "quest.main_worldshift_reveal.stage",
+              "values": [
+                "not_started",
+                "oak_sendoff",
+                "mismatch_seen",
+                "oak_admitted",
+                "pallet_complete",
+                "brock_account_heard",
+                "misty_reveal_complete",
+                "surge_reveal_complete",
+                "erika_reveal_complete",
+                "koga_reveal_complete",
+                "sabrina_reveal_complete",
+                "blaine_reveal_complete",
+                "giovanni_reveal_complete"
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "rift_crisis_pending"
+            }
+          ]
+        },
+        {
           "id": "unlock_league_after_rift_resolution",
           "external_trigger_contract": "THIS transition is rift_crisis_resolved's setter (data/progression.json flags, set_by quest_transition): its first effect grants the flag's advancement to the releasing player, then the stage and League cursor move, and last the restraint's light and sound play for that player (cobblers:relic_underground/release_fx, tools/relic_underground.py). It is invoked by exactly one node: dlg_main_relic_hall_release line release_001, after the choice 'Release Hoopa.' (the Compact binder in Hoopa's carved cradle, (3363, 13, 3312), data/relic_underground.json geometry.release). Since the integration of 2026-10-04 it requires stage cradle_open (Codex's Scene 5 'Reads', the LAST HQ stage, written by Director Elara Venn) AND that THIS player has beaten Captain Brann Saye and Director Elara Venn in the HQ tower (brann_defeated, elara_defeated: set by the cobblers_hq_tower battle_victory callback for the winning player only), and nothing earlier, so a player who reaches the binder first cannot release Hoopa past them. Order: data/hq_tower.json finale_order.",
           "conditions": [
@@ -1955,7 +2300,7 @@
           "flag": "gym1_cleared",
           "fires": "after the separately owned leader battle",
           "result": "Chapter 2 and the gym1 town waystone become eligible.",
-          "runtime_status": "the flag exists; the dialogue compiler cannot read advancement-backed flags directly"
+          "runtime_status": "the flag exists; it carries the reveal stage forward (data/progression.json carries_stage) and the next actor's entry rules read it (compile_dialogue's flag condition). Not yet run in game."
         },
         {
           "beat": "misty",
@@ -1963,7 +2308,7 @@
           "flag": "gym2_cleared",
           "fires": "after the separately owned leader battle",
           "result": "Chapter 3 and the gym2 town waystone become eligible.",
-          "runtime_status": "the flag exists; the dialogue compiler cannot read advancement-backed flags directly"
+          "runtime_status": "the flag exists; it carries the reveal stage forward (data/progression.json carries_stage) and the next actor's entry rules read it (compile_dialogue's flag condition). Not yet run in game."
         },
         {
           "beat": "surge",
@@ -1971,7 +2316,7 @@
           "flag": "gym3_cleared",
           "fires": "after the separately owned leader battle",
           "result": "Chapter 4 and the gym3 town waystone become eligible.",
-          "runtime_status": "the flag exists; the dialogue compiler cannot read advancement-backed flags directly"
+          "runtime_status": "the flag exists; it carries the reveal stage forward (data/progression.json carries_stage) and the next actor's entry rules read it (compile_dialogue's flag condition). Not yet run in game."
         },
         {
           "beat": "erika",
@@ -1979,7 +2324,7 @@
           "flag": "gym4_cleared",
           "fires": "after the separately owned leader battle",
           "result": "Chapter 5 and the gym4 town waystone become eligible.",
-          "runtime_status": "the flag exists; the dialogue compiler cannot read advancement-backed flags directly"
+          "runtime_status": "the flag exists; it carries the reveal stage forward (data/progression.json carries_stage) and the next actor's entry rules read it (compile_dialogue's flag condition). Not yet run in game."
         },
         {
           "beat": "koga",
@@ -1987,7 +2332,7 @@
           "flag": "gym5_cleared",
           "fires": "after the separately owned leader battle",
           "result": "Chapter 6 and the gym5 town waystone become eligible.",
-          "runtime_status": "the flag exists; the dialogue compiler cannot read advancement-backed flags directly"
+          "runtime_status": "the flag exists; it carries the reveal stage forward (data/progression.json carries_stage) and the next actor's entry rules read it (compile_dialogue's flag condition). Not yet run in game."
         },
         {
           "beat": "sabrina",
@@ -1995,7 +2340,7 @@
           "flag": "gym6_cleared",
           "fires": "after the separately owned leader battle",
           "result": "Chapter 7 and the gym6 town waystone become eligible.",
-          "runtime_status": "the flag exists; the dialogue compiler cannot read advancement-backed flags directly"
+          "runtime_status": "the flag exists; it carries the reveal stage forward (data/progression.json carries_stage) and the next actor's entry rules read it (compile_dialogue's flag condition). Not yet run in game."
         },
         {
           "beat": "blaine",
@@ -2003,7 +2348,7 @@
           "flag": "gym7_cleared",
           "fires": "after the separately owned leader battle",
           "result": "Chapter 8 and the gym7 town waystone become eligible; this does not record the crater shutdown.",
-          "runtime_status": "the flag exists; the dialogue compiler cannot read advancement-backed flags directly"
+          "runtime_status": "the flag exists; it carries the reveal stage forward (data/progression.json carries_stage) and the next actor's entry rules read it (compile_dialogue's flag condition). Not yet run in game."
         },
         {
           "beat": "giovanni",
@@ -2011,7 +2356,7 @@
           "flag": "gym8_cleared",
           "fires": "after the separately owned leader battle",
           "result": "Chapter 9 and the gym8 town waystone become eligible; current progression also opens the League too early.",
-          "runtime_status": "the flag exists; the dialogue compiler cannot read advancement-backed flags directly"
+          "runtime_status": "the flag exists; it carries the reveal stage forward (data/progression.json carries_stage) and the next actor's entry rules read it (compile_dialogue's flag condition). Not yet run in game."
         },
         {
           "beat": "blaine",
@@ -2046,7 +2391,7 @@
       "generation_blockers": [
         "Pallet relocation remains open, so all Pallet actor anchors are staging anchors rather than final coordinates.",
         "Build and verify the Gym 1 actor markers, Pallet boundary, localized damaged-house cluster, and Brock geology display specified in docs/story/MAINLINE_REVEAL_IMPLEMENTATION.md.",
-        "The dialogue compiler cannot read advancement-backed gym flags; each beat records its intended existing flag gate, but current compiled dialogue enforces story order only.",
+        "Badge carry (2026-10-05): each gym flag carries the stage forward and opens the next actor (carry_forward). Written, compiled and unit-tested only; neither the runmolang carry in the flag's reward nor the actors' flag probes has run in game.",
         "Every later town actor needs a verified safe standing marker after its town exists; proposed town centres are not placement coordinates.",
         "Misty needs a relief ledger and belongings display; Surge needs the planned signal array and a comparison record.",
         "Erika needs a tangible survey ledger; do not claim the current dry tarn contains water.",
@@ -2082,7 +2427,14 @@
         "quest.main_worldshift_reveal.finale_brann_cursor",
         "quest.main_worldshift_reveal.finale_oren_cursor",
         "quest.main_worldshift_reveal.finale_elara_cursor"
-      ]
+      ],
+      "carry_forward": {
+        "rule": "A player who beats the gyms in order can always reach the finale. Three mechanisms, all per player: (1) each gym badge carries the stage up to the stage of the beat it closes (data/progression.json flags[].carries_stage, tools/progression_pack.py flag/<id>/carry); (2) each town actor opens on its own stage OR LATER, or on the badge before it (its entry rules), so a skipped actor never strands the next; when it opens on the badge with an earlier stage, a carry_by_* transition first lifts the stage to the one it reads; (3) every locked line names what is missing: the badge, and the actor to visit. Completion transitions are unchanged and strict (stage equals the one before), so an actor heard late tells its account and moves nothing; the stage never goes down.",
+        "story_order": "Unchanged for a player who talks to everyone: each actor's completion still sets the next actor's cursor, and the badge carry is a no-op because that player's stage is already at or past it.",
+        "not_covered": "The Pallet actors (Oak, Mina, Maren) keep their strict chain: a player carried past Pallet by the Boulder Badge finds Mina's and Oak's return lines and Maren's account no longer advance anything, and Maren may stay on her locked line. Nothing later depends on them. The HQ tower scenes (Brann, Oren, Elara) and the release are physically ordered inside the tower and keep their strict stages.",
+        "source": "the owner, 2026-10-05; docs/world-building/CRITICAL_PATH_WALK_2.md blocker 2",
+        "starter": "Every carry also needs the starter tag (the starter gate, tools/oak_starter_audit.py P1): the main stage never moves for a player Cobblemon has not given a starter. A player who picked before the tag existed is tagged the first time they take Oak's offer."
+      }
     },
     {
       "id": "evt_vr_abandoned_cut",

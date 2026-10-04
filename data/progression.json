@@ -78,7 +78,14 @@
           3606
         ]
       },
-      "offers_marker": "gym2_town"
+      "offers_marker": "gym2_town",
+      "carries_stage": {
+        "field": "quest.main_worldshift_reveal.stage",
+        "to": "brock_account_heard",
+        "why": "the owner, 2026-10-05: 'Playable end to end is the only target that matters now.' docs/world-building/CRITICAL_PATH_WALK_2.md blocker 2: the reveal moved only by 13 conversations in strict order, so one skipped actor stranded every later one. Winning this badge moves THIS player's stage up to the stage of the beat it closes (data/quests.json main_worldshift_reveal beats[].world_change_flag), never down: tools/progression_pack.py writes flag/<id>/carry, a runmolang on q.player.data() that the flag's granted reward calls once, as the winner. A player who talks to everyone in order is already at or past it, so the carry changes nothing for them. The dialogue's own badge rules (data/quests.json carry_by_* transitions) cover a player who won the badge before this shipped, since a held advancement never re-runs its reward.",
+        "requires_tag": "cobblers_starter_chosen",
+        "requires_tag_why": "the starter gate (tools/compile_dialogue.py STARTER_TAG; tools/oak_starter_audit.py P1): the main stage never moves for a player Cobblemon has not given a starter. A player who chose before the tag existed is tagged by Oak's offer (openstarterscreen returns 0); until then this carry does nothing and the next actor's own badge rule (data/quests.json carry_by_*) carries them once they are tagged."
+      }
     },
     {
       "id": "gym2_cleared",
@@ -107,7 +114,14 @@
           2800
         ]
       },
-      "offers_marker": "gym3_town"
+      "offers_marker": "gym3_town",
+      "carries_stage": {
+        "field": "quest.main_worldshift_reveal.stage",
+        "to": "misty_reveal_complete",
+        "why": "the owner, 2026-10-05: 'Playable end to end is the only target that matters now.' docs/world-building/CRITICAL_PATH_WALK_2.md blocker 2: the reveal moved only by 13 conversations in strict order, so one skipped actor stranded every later one. Winning this badge moves THIS player's stage up to the stage of the beat it closes (data/quests.json main_worldshift_reveal beats[].world_change_flag), never down: tools/progression_pack.py writes flag/<id>/carry, a runmolang on q.player.data() that the flag's granted reward calls once, as the winner. A player who talks to everyone in order is already at or past it, so the carry changes nothing for them. The dialogue's own badge rules (data/quests.json carry_by_* transitions) cover a player who won the badge before this shipped, since a held advancement never re-runs its reward.",
+        "requires_tag": "cobblers_starter_chosen",
+        "requires_tag_why": "the starter gate (tools/compile_dialogue.py STARTER_TAG; tools/oak_starter_audit.py P1): the main stage never moves for a player Cobblemon has not given a starter. A player who chose before the tag existed is tagged by Oak's offer (openstarterscreen returns 0); until then this carry does nothing and the next actor's own badge rule (data/quests.json carry_by_*) carries them once they are tagged."
+      }
     },
     {
       "id": "gym3_cleared",
@@ -136,7 +150,14 @@
           1388
         ]
       },
-      "offers_marker": "gym4_town"
+      "offers_marker": "gym4_town",
+      "carries_stage": {
+        "field": "quest.main_worldshift_reveal.stage",
+        "to": "surge_reveal_complete",
+        "why": "the owner, 2026-10-05: 'Playable end to end is the only target that matters now.' docs/world-building/CRITICAL_PATH_WALK_2.md blocker 2: the reveal moved only by 13 conversations in strict order, so one skipped actor stranded every later one. Winning this badge moves THIS player's stage up to the stage of the beat it closes (data/quests.json main_worldshift_reveal beats[].world_change_flag), never down: tools/progression_pack.py writes flag/<id>/carry, a runmolang on q.player.data() that the flag's granted reward calls once, as the winner. A player who talks to everyone in order is already at or past it, so the carry changes nothing for them. The dialogue's own badge rules (data/quests.json carry_by_* transitions) cover a player who won the badge before this shipped, since a held advancement never re-runs its reward.",
+        "requires_tag": "cobblers_starter_chosen",
+        "requires_tag_why": "the starter gate (tools/compile_dialogue.py STARTER_TAG; tools/oak_starter_audit.py P1): the main stage never moves for a player Cobblemon has not given a starter. A player who chose before the tag existed is tagged by Oak's offer (openstarterscreen returns 0); until then this carry does nothing and the next actor's own badge rule (data/quests.json carry_by_*) carries them once they are tagged."
+      }
     },
     {
       "id": "gym4_cleared",
@@ -165,7 +186,14 @@
           1554
         ]
       },
-      "offers_marker": "gym5_town"
+      "offers_marker": "gym5_town",
+      "carries_stage": {
+        "field": "quest.main_worldshift_reveal.stage",
+        "to": "erika_reveal_complete",
+        "why": "the owner, 2026-10-05: 'Playable end to end is the only target that matters now.' docs/world-building/CRITICAL_PATH_WALK_2.md blocker 2: the reveal moved only by 13 conversations in strict order, so one skipped actor stranded every later one. Winning this badge moves THIS player's stage up to the stage of the beat it closes (data/quests.json main_worldshift_reveal beats[].world_change_flag), never down: tools/progression_pack.py writes flag/<id>/carry, a runmolang on q.player.data() that the flag's granted reward calls once, as the winner. A player who talks to everyone in order is already at or past it, so the carry changes nothing for them. The dialogue's own badge rules (data/quests.json carry_by_* transitions) cover a player who won the badge before this shipped, since a held advancement never re-runs its reward.",
+        "requires_tag": "cobblers_starter_chosen",
+        "requires_tag_why": "the starter gate (tools/compile_dialogue.py STARTER_TAG; tools/oak_starter_audit.py P1): the main stage never moves for a player Cobblemon has not given a starter. A player who chose before the tag existed is tagged by Oak's offer (openstarterscreen returns 0); until then this carry does nothing and the next actor's own badge rule (data/quests.json carry_by_*) carries them once they are tagged."
+      }
     },
     {
       "id": "gym5_cleared",
@@ -194,7 +222,14 @@
           2422
         ]
       },
-      "offers_marker": "gym6_town"
+      "offers_marker": "gym6_town",
+      "carries_stage": {
+        "field": "quest.main_worldshift_reveal.stage",
+        "to": "koga_reveal_complete",
+        "why": "the owner, 2026-10-05: 'Playable end to end is the only target that matters now.' docs/world-building/CRITICAL_PATH_WALK_2.md blocker 2: the reveal moved only by 13 conversations in strict order, so one skipped actor stranded every later one. Winning this badge moves THIS player's stage up to the stage of the beat it closes (data/quests.json main_worldshift_reveal beats[].world_change_flag), never down: tools/progression_pack.py writes flag/<id>/carry, a runmolang on q.player.data() that the flag's granted reward calls once, as the winner. A player who talks to everyone in order is already at or past it, so the carry changes nothing for them. The dialogue's own badge rules (data/quests.json carry_by_* transitions) cover a player who won the badge before this shipped, since a held advancement never re-runs its reward.",
+        "requires_tag": "cobblers_starter_chosen",
+        "requires_tag_why": "the starter gate (tools/compile_dialogue.py STARTER_TAG; tools/oak_starter_audit.py P1): the main stage never moves for a player Cobblemon has not given a starter. A player who chose before the tag existed is tagged by Oak's offer (openstarterscreen returns 0); until then this carry does nothing and the next actor's own badge rule (data/quests.json carry_by_*) carries them once they are tagged."
+      }
     },
     {
       "id": "gym6_cleared",
@@ -223,7 +258,14 @@
           3386
         ]
       },
-      "offers_marker": "gym7_town"
+      "offers_marker": "gym7_town",
+      "carries_stage": {
+        "field": "quest.main_worldshift_reveal.stage",
+        "to": "sabrina_reveal_complete",
+        "why": "the owner, 2026-10-05: 'Playable end to end is the only target that matters now.' docs/world-building/CRITICAL_PATH_WALK_2.md blocker 2: the reveal moved only by 13 conversations in strict order, so one skipped actor stranded every later one. Winning this badge moves THIS player's stage up to the stage of the beat it closes (data/quests.json main_worldshift_reveal beats[].world_change_flag), never down: tools/progression_pack.py writes flag/<id>/carry, a runmolang on q.player.data() that the flag's granted reward calls once, as the winner. A player who talks to everyone in order is already at or past it, so the carry changes nothing for them. The dialogue's own badge rules (data/quests.json carry_by_* transitions) cover a player who won the badge before this shipped, since a held advancement never re-runs its reward.",
+        "requires_tag": "cobblers_starter_chosen",
+        "requires_tag_why": "the starter gate (tools/compile_dialogue.py STARTER_TAG; tools/oak_starter_audit.py P1): the main stage never moves for a player Cobblemon has not given a starter. A player who chose before the tag existed is tagged by Oak's offer (openstarterscreen returns 0); until then this carry does nothing and the next actor's own badge rule (data/quests.json carry_by_*) carries them once they are tagged."
+      }
     },
     {
       "id": "gym7_cleared",
@@ -252,7 +294,14 @@
           4984
         ]
       },
-      "offers_marker": "gym8_town"
+      "offers_marker": "gym8_town",
+      "carries_stage": {
+        "field": "quest.main_worldshift_reveal.stage",
+        "to": "blaine_reveal_complete",
+        "why": "the owner, 2026-10-05: 'Playable end to end is the only target that matters now.' docs/world-building/CRITICAL_PATH_WALK_2.md blocker 2: the reveal moved only by 13 conversations in strict order, so one skipped actor stranded every later one. Winning this badge moves THIS player's stage up to the stage of the beat it closes (data/quests.json main_worldshift_reveal beats[].world_change_flag), never down: tools/progression_pack.py writes flag/<id>/carry, a runmolang on q.player.data() that the flag's granted reward calls once, as the winner. A player who talks to everyone in order is already at or past it, so the carry changes nothing for them. The dialogue's own badge rules (data/quests.json carry_by_* transitions) cover a player who won the badge before this shipped, since a held advancement never re-runs its reward.",
+        "requires_tag": "cobblers_starter_chosen",
+        "requires_tag_why": "the starter gate (tools/compile_dialogue.py STARTER_TAG; tools/oak_starter_audit.py P1): the main stage never moves for a player Cobblemon has not given a starter. A player who chose before the tag existed is tagged by Oak's offer (openstarterscreen returns 0); until then this carry does nothing and the next actor's own badge rule (data/quests.json carry_by_*) carries them once they are tagged."
+      }
     },
     {
       "id": "gym8_cleared",
@@ -281,7 +330,14 @@
           6444
         ]
       },
-      "offers_marker": "league"
+      "offers_marker": "league",
+      "carries_stage": {
+        "field": "quest.main_worldshift_reveal.stage",
+        "to": "giovanni_reveal_complete",
+        "why": "the owner, 2026-10-05: 'Playable end to end is the only target that matters now.' docs/world-building/CRITICAL_PATH_WALK_2.md blocker 2: the reveal moved only by 13 conversations in strict order, so one skipped actor stranded every later one. Winning this badge moves THIS player's stage up to the stage of the beat it closes (data/quests.json main_worldshift_reveal beats[].world_change_flag), never down: tools/progression_pack.py writes flag/<id>/carry, a runmolang on q.player.data() that the flag's granted reward calls once, as the winner. A player who talks to everyone in order is already at or past it, so the carry changes nothing for them. The dialogue's own badge rules (data/quests.json carry_by_* transitions) cover a player who won the badge before this shipped, since a held advancement never re-runs its reward.",
+        "requires_tag": "cobblers_starter_chosen",
+        "requires_tag_why": "the starter gate (tools/compile_dialogue.py STARTER_TAG; tools/oak_starter_audit.py P1): the main stage never moves for a player Cobblemon has not given a starter. A player who chose before the tag existed is tagged by Oak's offer (openstarterscreen returns 0); until then this carry does nothing and the next actor's own badge rule (data/quests.json carry_by_*) carries them once they are tagged."
+      }
     },
     {
       "id": "champion_cleared",
@@ -310,7 +366,7 @@
         "quest": "main_worldshift_reveal",
         "transition": "unlock_league_after_rift_resolution",
         "invoked_by": "dlg_main_relic_hall_release",
-        "invoked_at": "line release_001 ('The restraint opens.'), reached by the choice 'Release Hoopa.', shown only at stage rift_crisis_pending to a player who has beaten both Captain Brann Saye and Director Elara Venn in the cradle (quest.main_worldshift_reveal.brann_defeated and elara_defeated, data/finale_trainers.json, 2026-10-04; the transition requires the same three); NPC npc_main_relic_hall_binder at (3363, 13, 3312) in Hoopa's carved cradle (the hall's relic ring at (3390, 8, 3268) until 2026-10-03), seated by tools/reapply.py step R18RU (data/relic_underground.json geometry.release). The owner, 2026-10-03: 'set it ourselves at the quest stage that ends the Rift crisis'",
+        "invoked_at": "line release_001 ('The restraint opens.'), reached by the choice 'Release Hoopa.', shown only at stage cradle_open to a player who has beaten both Captain Brann Saye and Director Elara Venn in the HQ tower (quest.main_worldshift_reveal.brann_defeated and elara_defeated, data/finale_trainers.json, 2026-10-04; the transition requires the same three); NPC npc_main_relic_hall_binder at (3363, 13, 3312) in Hoopa's carved cradle (the hall's relic ring at (3390, 8, 3268) until 2026-10-03), seated by tools/reapply.py step R18RU (data/relic_underground.json geometry.release). The owner, 2026-10-03: 'set it ourselves at the quest stage that ends the Rift crisis'",
         "superseded_invoked_by_owed": "Kept as the plan the binder replaced (Scene 5 at the cradle still waits on the cradle and a verified Hoopa model). Hoopa's release at the cradle: docs/story/NPCS_AND_RIFT_FINALE.md Scene 5 (Codex, commit 9cbfd213 on the local branch codex/trainer-modes, NOT merged), actor_finale_hoopa at the cradle centre (3357, 12, 3306), player choice 'Release Hoopa.'. It needs the cradle chamber carved (data/deep_city.json reserves its box, nothing carves it) and a data/scenes.json scene whose Hoopa actor opens that conversation. Until then nothing invokes the transition and nobody holds this flag. Set invoked_by to the conversation id when it lands; tests/test_rift_crisis_resolved.py holds the two in step."
       },
       "why": "Approved in docs/story/ARC.md ('The final story confrontation ends the forced activation and releases Hoopa from the steering mechanism. It sets rift_crisis_resolved', and the League row 'Requires rift_crisis_resolved'). Per player, like every flag here: an advancement, granted by cobblers:flag/rift_crisis_resolved/grant, which the transition's first effect runs as and at the releasing player. It is the gate data/rift_zones.json z5 names.",
