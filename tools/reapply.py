@@ -151,6 +151,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-04: the jungle's three lost temples on the Long Isle's south (tools/jungle_temples.py,
                 # data/jungle_temples.json), built by R9JT; no load or tick and no Pokemon, so not world-local
                 "cobblers_jungle_temples",
+                # 2026-10-05: Hollin's Apricorn Farm at (2068, 5570) (tools/apricorn_farm.py, data/apricorn_farm.json):
+                # seven terraced groves, the yard and lanes, built by R9AF; block functions and the stall merchant's
+                # summon, nothing that runs on its own; the farmer and the merchant stood by R18AF
+                "cobblers_apricorn_farm",
                 # 2026-10-02: the relic site underground (tools/relic_underground.py, data/relic_underground.json): the
                 # old surface build taken off, then the hall, gallery and passage carved, by R9RU; its zone check acts on
                 # its own (an advancement), so world-local below
@@ -705,6 +709,10 @@ def prepare_jobs(a):
     # keep-clear list, the authored clearance, spawn blocks) and on a record the heightmap disagrees with. Its
     # independent audit is owed (data/jungle_temples.json audit_checklist); add it here, after this job, when written
     add("jungle_temples", "jungle_temples.py", *src)
+    # Hollin's Apricorn Farm (2026-10-05): the generator fails closed on its own guards (allow-list, spawn blocks, wet
+    # columns, overlaps, fruit attachment, gates, spots, siting). Its independent audit is OWED (data/apricorn_farm.json
+    # audit_checklist); add its job here, after this one, when it exists
+    add("apricorn_farm:build", "apricorn_farm.py", "build", *src)
     add("drovers_hollow:build", "drovers_hollow.py", "build", *src)
     add("drovers_hollow_audit", "drovers_hollow_audit.py", *src)
     # the three wayside places of 2026-10-03. Each generator refuses a spawn-condition palette and any block outside its
@@ -1741,6 +1749,11 @@ def steps(with_spawns=False):
     import jungle_temples
     out.append(("R9JT", "the jungle's lost temples: the Ring Court, the Harbour Mark, the Green Stair (data/jungle_temples.json)",
                 jungle_temples.placement_steps()))
+    # Hollin's Apricorn Farm (2026-10-05, tools/apricorn_farm.py): one block pass held in a forceload of the farm's box
+    # (90 chunks), before R9E with the other block passes; the farmer and the stall keeper stand on it (R18AF)
+    import apricorn_farm
+    out.append(("R9AF", "Hollin's Apricorn Farm: seven terraced groves, the farmyard and lanes (data/apricorn_farm.json)",
+                apricorn_farm.placement_steps()))
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
@@ -1877,6 +1890,11 @@ def steps(with_spawns=False):
     # after the restart that loaded cobblers_dialogue's classes, on the ground R9SO's orchard stands on
     out.append(("R18SO", "the Old Orchard's keeper, Wenna Marlow (data/old_orchard.json npc)",
                 [("npc", n) for n in old_orchard.npc_placements()]))
+    # Hollin's Apricorn Farm (2026-10-05): the farmer, Tamsin Hollin, an NPC like the Old Orchard's keeper (her class
+    # loaded at boot from cobblers_dialogue), turned to her yaw; then the stall's CobbleDollars merchant, summoned in a
+    # forceload of its chunk and de-duplicated by tag 100 ticks later (tools/markets.py's shape)
+    out.append(("R18AF", "Hollin's Apricorn Farm: the farmer and the stall merchant (data/apricorn_farm.json npc, merchant)",
+                apricorn_farm.entity_steps()))
     # the Copperway Khan's salvager (2026-10-02): an NPC on the dug-out hall's floor R9DU wrote, her class loaded at boot
     # from cobblers_dialogue, so placed over RCON after the restart like R17N's
     out.append(("R18DU", "the Copperway Khan's salvager (data/dune_ruin.json npc)",

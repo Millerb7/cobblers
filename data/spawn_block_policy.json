@@ -154,6 +154,21 @@
       "scope": "gardens and orchards"
     },
     {
+      "blocks": [
+        "cobblemon:red_apricorn",
+        "cobblemon:blue_apricorn",
+        "cobblemon:yellow_apricorn",
+        "cobblemon:green_apricorn",
+        "cobblemon:pink_apricorn",
+        "cobblemon:white_apricorn",
+        "cobblemon:black_apricorn"
+      ],
+      "scope": "Hollin's Apricorn Farm (apricorn_farm: tools/apricorn_farm.py, data/apricorn_farm.json) at (2068, 5570): its seven groves, the drying sheds' bunches and the stall's display branch",
+      "why": "the farm is made of apricorn trees: the fruit is the point of it, and it must be real fruit for a player to pick. The entry above already allows apricorns in gardens and orchards; this one names the place, as the scope rule asks (tests/test_system_contracts.py C4)",
+      "consequence": "read from the Cobblemon 1.8.0 jar: 0100_voltorb.json (voltorb hisuian, levels 8-33, uncommon), 0101_electrode.json (electrode hisuian, levels 30-49, uncommon) and their herds (0101_electrode_alpha a boss bucket) need #cobblemon:apricorns nearby, sky light 8-15, any overworld biome. The farm stands in tier-1 sub-regions (south_west_fields, pallet's outskirts, arrow_creeks: level cap 25), so an Electrode above the cap can appear here unless the install's inherited-spawn suppression covers these sub-regions",
+      "decided": "OWNER TO CONFIRM: added 2026-10-05 by the farm's builder under the owner's request for the farm ('groves of all seven colours'); on the review list"
+    },
+    {
       "tags": [
         "leaves",
         "flowers",
