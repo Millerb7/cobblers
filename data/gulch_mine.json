@@ -3239,7 +3239,7 @@
     },
     "field_why": "The Mega field (the owner, 2026-10-03; docs/world-building/MEGA_FIELD.md section 4). The owner's rule is relative: 'if cap after gym 5 is 50 ... lvl 60 or so, so it takes a team' (SOUTHERN_RIFT_MEGA.md:657), so the cap plus about 10 for the outer tier and plus 17 for the deeper (60 and 67 over a cap of 50). The field lies inside Z2 (8 badges, data/rift_zones.json), where the cap is 60 (docs/mechanics/LEAGUE_LEVEL_CAP.md section 2: after gym 8 and through the Elite Four), so the same rule gives 70 and 77. If the owner instead cuts a gym-6 zone out of Z2 for the field (SOUTHERN_RIFT_MEGA.md:706-709, still held), the same rule gives the old outer and deeper levels, 60 and 67: one line each here. A Mega is a Mega form (about 100 more base stats than its line) 10 to 17 levels over the party's cap, so one partner at the cap does not beat it alone (ASSUMED until EXP-054 A6 times a win). Drop rates and respawn are section 13's, unchanged (ASSUMED, untimed)."
   },
-  "farms_why": "The Mega field (the owner, 2026-10-03): 'everywhere in the red inside the rift should be the mega area ... an aggressive and hostile resource farm ... fight high level megas that in theory should require more than one mon to kill and get a reward to spend in the big town next to this area in the rift.' Packed to its floor 2026-10-04 (the owner: 'Megas are clashing over territory -- not seven dens in a field but a region where they are everywhere, pressing against each other for space ... overlapping ranges'): 27 dens in 8 farms, the 23 land Megas the Cutters sell a stone for that the client draws dealt over them in bands (mega_field.layout.roster), laid out by `python tools/mega_field.py sites` on the canonical heightmap, never a world: anchors packed as close as two lairs allow (lair_spacing 43), each Mega's range (leash) 36, so every range overlaps a neighbour's by 8 or more (layout.min_overlap) and the borders between them are dressed as contested ground (data/mega_borders.json, step R9MB). Inside the field and 36 off its edge, 149 off Victory Road's walked line, 60 off the gulch zone, in a Rift zone (z2), on a pad level to within one block. Species and tier are both banded by distance from the Cutters' square: the nearest 16 are field_outer (level 70), the 11 at 400 or more field_deeper (level 77). `python tools/mega_field.py floor` measures the floor and the ranges. Every den is dressed as a lair (data/mega_dens.json, step R9MD). The material chain is section 13's unchanged: a defeated Mega rolls its tier's drop of one raw mega_showdown:mega_stone, owner-only, spent at the Cutters in the Cutters' Gulch next door (2 raw and a diamond a keyed stone). NO ZONE on any farm, as decision B4 (2026-10-01): the level band is the gate inside the field, and the field lies inside Z2 (8 badges, data/rift_zones.json). A farm is field_<col>_<row> of 192-block squares; its approach box is its dens' extent plus 64, and the ground of their whole ranges, clipped to farms_grid. A den's id is gm_mf_<x>_<z>, its anchor's column, never its species (2026-10-04: a species may hold several dens); every keeper tag, score, lair function and border is named by it, and no new den reuses a retired den's id.",
+  "farms_why": "The Mega field (the owner, 2026-10-03): 'everywhere in the red inside the rift should be the mega area ... an aggressive and hostile resource farm ... fight high level megas that in theory should require more than one mon to kill and get a reward to spend in the big town next to this area in the rift.' Packed to its floor 2026-10-04 (the owner: 'Megas are clashing over territory -- not seven dens in a field but a region where they are everywhere, pressing against each other for space ... overlapping ranges'): 61 dens in 16 farms (2026-10-05: the west floor added, below), the 23 land Megas the Cutters sell a stone for that the client draws dealt over them in bands (mega_field.layout.roster), laid out by `python tools/mega_field.py sites` on the canonical heightmap, never a world: anchors packed as close as two lairs allow (lair_spacing 43), each Mega's range (leash) 36, so every range overlaps a neighbour's by 8 or more (layout.min_overlap) and the borders between them are dressed as contested ground (data/mega_borders.json, step R9MB). Inside the field and 36 off its edge, 54 off Victory Road's walked line (layout.why.road_clear, 2026-10-05: was 149), 60 off the gulch zone, in a Rift zone (z2), on a pad level to within one block. Species and tier are both banded by distance from the Cutters' square: the nearest 24 are field_outer (level 70), the 37 at 400 or more field_deeper (level 77). `python tools/mega_field.py floor` measures the floor and the ranges. Every den is dressed as a lair (data/mega_dens.json, step R9MD). The material chain is section 13's unchanged: a defeated Mega rolls its tier's drop of one raw mega_showdown:mega_stone, owner-only, spent at the Cutters in the Cutters' Gulch next door (2 raw and a diamond a keyed stone). NO ZONE on any farm, as decision B4 (2026-10-01): the level band is the gate inside the field, and the field lies inside Z2 (8 badges, data/rift_zones.json). A farm is field_<col>_<row> of 192-block squares; its approach box is its dens' extent plus 64, and the ground of their whole ranges, clipped to farms_grid. A den's id is gm_mf_<x>_<z>, its anchor's column, never its species (2026-10-04: a species may hold several dens); every keeper tag, score, lair function and border is named by it, and no new den reuses a retired den's id.",
   "superseded_farms_why": "The open-air Mega farms (the owner, 2026-10-01): 'Mega Pokemon walking in the OPEN, not only in caverns -- a player should see them before they reach them.' Seven dens across the Rift's two southern arms, four outer and three deeper, keeping the material chain and the Cutters exactly as designed: a den's Mega rolls the same raw-stone drop at its tier's rate, and the keyed stone is still cut at the Cutters inside the badge-gated gulch. What changes is that the fight is on open ground a player can see across, not in a hall they have to be let into. NO ZONE on any of the seven -- decision B4 (the owner, 2026-10-01): 'drop the zone on the open dens. A turn-back in open country reads as an invisible wall. Let the level band gate them; being seen and too strong is the point.' So no farm declares a `zone`: there is no polygon, no turn-back point, no zone advancement and no badge-flag check of its own anywhere in the farms. THE GATE IS THE LEVEL BAND ALONE -- outer level 60, deeper 67 (farm_tiers) against a level cap of 50 after gym 5 -- and the only thing that stops an underlevelled party is losing the fight. Nothing is hidden and nobody is bounced: a player at any badge count can walk up to a den, see what it is and try it. The badge flag still gates the GULCH itself (this file's own `zone`, the rockslide gate at gulch_mouth), which is a different thing and untouched: the Cutters who turn a raw stone into a keyed one are inside it, so a stone won in the open is worth nothing until that gate opens. The halls' two Megas (megas.slots) stay as they are: the owner said not ONLY in caverns. Sites measured off the canonical heightmap, never a world (CLAUDE.md): inside the arm polygons of data/regions.json, pad slope under 10 degrees, 24+ clear of every keep_clear box, 260+ apart so finding one is an event rather than a checklist. The sightline measurement that chose them saturated at its own 136-block ceiling for all twelve candidates, so it proves each has a long clear approach and did NOT rank them: spacing and arm coverage picked these seven. The east arm holds the gulch, its road and the Cutters, so it carries the outer tier; the west arm had nothing in it at all, so it carries the deeper tier and the longest walk.",
   "farms_grid": {
     "x": [
@@ -4257,7 +4257,7 @@
       "road": "victory_road",
       "candidate_step": 2,
       "edge_clear": 30,
-      "road_clear": 149,
+      "road_clear": 54,
       "gulch_clear": 53,
       "keep_clear": [
         {
@@ -4381,7 +4381,7 @@
         ]
       ],
       "why": {
-        "road_clear": "149 = 128 + lair_radius 21: every den is dressed as a lair (data/mega_dens.json), a lair writes nothing within 128 of the critical path (tools/mega_dens_audit.py footprint rule) and reaches lair_radius from its anchor. So Victory Road crosses the field as a road with no Mega within 149 - leash 36 = 113 blocks of its walked line. If the owner wants the Megas ON the road, this and the lairs' 128 rule change together (docs/world-building/MEGA_FIELD.md section 4)",
+        "road_clear": "54 = leash 36 + aggro_reach 16 + road_margin 2 (the owner, 2026-10-05, review 64: 'make sure to use the left side of the southern tip as well, not just secluded in those pockets': Megas along Victory Road). A den's range (its leash disc round the anchor) ends 18 from Victory Road's walked line; a Mega at its range's edge notices a player aggro_reach away, so a player within road_margin of the walked line (half the road's width 4 where it comes down, data/rift_sculpt.json entrances victory_road_descent.width) is outside every resting Mega's notice: the road runs BETWEEN territories, never through one. aggro_reach is ASSUMED: vanilla 1.21.1 Mob.createMobAttributes() FOLLOW_RANGE 16.0, the reach a NearestAttackableTargetGoal searches; that Cobblemon's PokemonEntity keeps it and Fight or Flight targets by it is NOT VERIFIED (no FoF jar or source in the checkout; EXP-054). The leash is walked back every megas.leash_every_ticks 40, so a Mega chasing someone can overrun its range for up to 2 s. Replaces 149 = 128 + lair_radius (the lairs' critical-path rule): a lair's write box now comes within 54 - 21 x sqrt 2 = 24 of the walked line, never onto it, and the keep_clear discs (the gatehouse post, the descent) are unchanged. tools/mega_dens_audit.py and tools/mega_field_audit.py still hold 128 (their author re-points them); tools/mega_borders.py still writes nothing within 128 of a critical path, so a border nearer the road is undressed",
         "gulch_clear": "53 = 32 + lair_radius 21 (a lair keeps 32 from the gulch's zone, mega_dens_audit footprint rule); `sites` takes the larger of it and leash 36 + megas.spawn_clear 24 = 60, so a leashed Mega never comes within 24 of the gulch zone and never wanders into the Cutters' town",
         "keep_clear": "the same 59 round the two things inside the field that are not ours to crowd: z2's gate post (a lair keeps 32 from a Rift zone post, + its 27) and the descent the road comes down",
         "edge_clear": "30 = 21 x sqrt 2, rounded up: a lair's whole write box lies inside the field; `sites` takes the larger of it and the leash, so a Mega's whole range is the field's floor and its approach box never climbs the rim",
@@ -4400,7 +4400,9 @@
       "lair_spacing": 43,
       "deeper_from_town": 400,
       "min_overlap": 8,
-      "reach_rounds": 12
+      "reach_rounds": 12,
+      "aggro_reach": 16,
+      "road_margin": 2
     },
     "dressing": {
       "kit_of": {
@@ -4433,31 +4435,527 @@
   },
   "farms": [
     {
+      "id": "field_1_1",
+      "name": "the Mega field, cell 1 1",
+      "tier": "field_deeper",
+      "approach": [
+        3788,
+        65,
+        4582,
+        3974,
+        135,
+        4786
+      ],
+      "dens": [
+        {
+          "id": "gm_mf_3910_4646",
+          "species": "glalie",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3910,
+            102,
+            4646
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 122,
+          "town_blocks": 446
+        },
+        {
+          "id": "gm_mf_3852_4700",
+          "species": "scizor",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3852,
+            103,
+            4700
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 125,
+          "town_blocks": 479
+        },
+        {
+          "id": "gm_mf_3910_4722",
+          "species": "heracross",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3910,
+            89,
+            4722
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 69,
+          "town_blocks": 417
+        }
+      ]
+    },
+    {
+      "id": "field_2_1",
+      "name": "the Mega field, cell 2 1",
+      "tier": "field_outer",
+      "approach": [
+        3890,
+        60,
+        4524,
+        4136,
+        126,
+        4798
+      ],
+      "dens": [
+        {
+          "id": "gm_mf_4032_4588",
+          "species": "audino",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4032,
+            87,
+            4588
+          ],
+          "leash": 36,
+          "tier": "field_outer",
+          "road_blocks": 69,
+          "town_blocks": 379
+        },
+        {
+          "id": "gm_mf_3972_4606",
+          "species": "camerupt",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3972,
+            94,
+            4606
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 107,
+          "town_blocks": 414
+        },
+        {
+          "id": "gm_mf_4002_4650",
+          "species": "audino",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4002,
+            87,
+            4650
+          ],
+          "leash": 36,
+          "tier": "field_outer",
+          "road_blocks": 54,
+          "town_blocks": 364
+        },
+        {
+          "id": "gm_mf_3958_4654",
+          "species": "camerupt",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3958,
+            92,
+            4654
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 83,
+          "town_blocks": 400
+        },
+        {
+          "id": "gm_mf_3954_4698",
+          "species": "beedrill",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3954,
+            85,
+            4698
+          ],
+          "leash": 36,
+          "tier": "field_outer",
+          "road_blocks": 54,
+          "town_blocks": 384
+        },
+        {
+          "id": "gm_mf_4072_4734",
+          "species": "banette",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4072,
+            84,
+            4734
+          ],
+          "leash": 36,
+          "tier": "field_outer",
+          "road_blocks": 54,
+          "town_blocks": 262
+        }
+      ]
+    },
+    {
+      "id": "field_3_1",
+      "name": "the Mega field, cell 3 1",
+      "tier": "field_outer",
+      "approach": [
+        4062,
+        60,
+        4624,
+        4190,
+        121,
+        4804
+      ],
+      "dens": [
+        {
+          "id": "gm_mf_4126_4688",
+          "species": "sableye",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4126,
+            84,
+            4688
+          ],
+          "leash": 36,
+          "tier": "field_outer",
+          "road_blocks": 61,
+          "town_blocks": 242
+        },
+        {
+          "id": "gm_mf_4126_4740",
+          "species": "sableye",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4126,
+            89,
+            4740
+          ],
+          "leash": 36,
+          "tier": "field_outer",
+          "road_blocks": 97,
+          "town_blocks": 212
+        }
+      ]
+    },
+    {
+      "id": "field_1_2",
+      "name": "the Mega field, cell 1 2",
+      "tier": "field_outer",
+      "approach": [
+        3696,
+        64,
+        4702,
+        3976,
+        129,
+        5012
+      ],
+      "dens": [
+        {
+          "id": "gm_mf_3886_4766",
+          "species": "heracross",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3886,
+            88,
+            4766
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 54,
+          "town_blocks": 430
+        },
+        {
+          "id": "gm_mf_3838_4770",
+          "species": "scizor",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3838,
+            96,
+            4770
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 86,
+          "town_blocks": 476
+        },
+        {
+          "id": "gm_mf_3830_4822",
+          "species": "scizor",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3830,
+            88,
+            4822
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 55,
+          "town_blocks": 479
+        },
+        {
+          "id": "gm_mf_3772_4838",
+          "species": "gallade",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3772,
+            97,
+            4838
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 87,
+          "town_blocks": 536
+        },
+        {
+          "id": "gm_mf_3912_4896",
+          "species": "ampharos",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3912,
+            91,
+            4896
+          ],
+          "leash": 36,
+          "tier": "field_outer",
+          "road_blocks": 55,
+          "town_blocks": 399
+        },
+        {
+          "id": "gm_mf_3760_4900",
+          "species": "blastoise",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3760,
+            92,
+            4900
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 55,
+          "town_blocks": 550
+        },
+        {
+          "id": "gm_mf_3868_4948",
+          "species": "abomasnow",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3868,
+            93,
+            4948
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 55,
+          "town_blocks": 451
+        }
+      ]
+    },
+    {
       "id": "field_2_2",
       "name": "the Mega field, cell 2 2",
       "tier": "field_outer",
       "approach": [
-        3936,
-        85,
-        4880,
-        4064,
-        146,
-        5008
+        3922,
+        65,
+        4724,
+        4110,
+        144,
+        5004
       ],
       "dens": [
         {
-          "id": "gm_mf_4000_4944",
-          "species": "lopunny",
+          "id": "gm_mf_4046_4788",
+          "species": "absol",
           "aspect": "mega_evolution=mega",
           "anchor": [
-            4000,
-            114,
-            4944
+            4046,
+            91,
+            4788
           ],
           "leash": 36,
           "tier": "field_outer",
-          "road_blocks": 151,
-          "town_blocks": 323
+          "road_blocks": 74,
+          "town_blocks": 269
+        },
+        {
+          "id": "gm_mf_3996_4810",
+          "species": "medicham",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3996,
+            89,
+            4810
+          ],
+          "leash": 36,
+          "tier": "field_outer",
+          "road_blocks": 54,
+          "town_blocks": 314
+        },
+        {
+          "id": "gm_mf_3986_4940",
+          "species": "medicham",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3986,
+            112,
+            4940
+          ],
+          "leash": 36,
+          "tier": "field_outer",
+          "road_blocks": 139,
+          "town_blocks": 335
+        }
+      ]
+    },
+    {
+      "id": "field_0_3",
+      "name": "the Mega field, cell 0 3",
+      "tier": "field_deeper",
+      "approach": [
+        3568,
+        70,
+        4910,
+        3770,
+        137,
+        5178
+      ],
+      "dens": [
+        {
+          "id": "gm_mf_3706_4974",
+          "species": "venusaur",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3706,
+            94,
+            4974
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 62,
+          "town_blocks": 615
+        },
+        {
+          "id": "gm_mf_3658_5016",
+          "species": "blaziken",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3658,
+            104,
+            5016
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 89,
+          "town_blocks": 671
+        },
+        {
+          "id": "gm_mf_3662_5066",
+          "species": "charizard",
+          "aspect": "mega_evolution=mega_x",
+          "anchor": [
+            3662,
+            101,
+            5066
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 67,
+          "town_blocks": 682
+        },
+        {
+          "id": "gm_mf_3632_5114",
+          "species": "steelix",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3632,
+            105,
+            5114
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 54,
+          "town_blocks": 726
+        }
+      ]
+    },
+    {
+      "id": "field_1_3",
+      "name": "the Mega field, cell 1 3",
+      "tier": "field_deeper",
+      "approach": [
+        3734,
+        68,
+        4894,
+        3984,
+        139,
+        5134
+      ],
+      "dens": [
+        {
+          "id": "gm_mf_3920_4958",
+          "species": "camerupt",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3920,
+            101,
+            4958
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 103,
+          "town_blocks": 403
+        },
+        {
+          "id": "gm_mf_3838_4996",
+          "species": "gardevoir",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3838,
+            94,
+            4996
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 57,
+          "town_blocks": 493
+        },
+        {
+          "id": "gm_mf_3888_5028",
+          "species": "abomasnow",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3888,
+            107,
+            5028
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 116,
+          "town_blocks": 457
+        },
+        {
+          "id": "gm_mf_3842_5044",
+          "species": "gallade",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3842,
+            101,
+            5044
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 85,
+          "town_blocks": 506
+        },
+        {
+          "id": "gm_mf_3798_5070",
+          "species": "venusaur",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3798,
+            92,
+            5070
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 58,
+          "town_blocks": 556
         }
       ]
     },
@@ -4466,143 +4964,115 @@
       "name": "the Mega field, cell 2 3",
       "tier": "field_outer",
       "approach": [
-        3864,
-        87,
-        4914,
-        4168,
-        253,
+        3868,
+        91,
+        4918,
+        4146,
+        155,
         5150
       ],
       "dens": [
         {
-          "id": "gm_mf_4060_4978",
+          "id": "gm_mf_4030_4982",
+          "species": "houndoom",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4030,
+            117,
+            4982
+          ],
+          "leash": 36,
+          "tier": "field_outer",
+          "road_blocks": 199,
+          "town_blocks": 309
+        },
+        {
+          "id": "gm_mf_4082_4984",
           "species": "absol",
           "aspect": "mega_evolution=mega",
           "anchor": [
-            4060,
-            116,
-            4978
+            4082,
+            119,
+            4984
           ],
           "leash": 36,
           "tier": "field_outer",
-          "road_blocks": 218,
-          "town_blocks": 280
+          "road_blocks": 238,
+          "town_blocks": 264
         },
         {
-          "id": "gm_mf_3972_4988",
-          "species": "heracross",
-          "aspect": "mega_evolution=mega",
-          "anchor": [
-            3972,
-            115,
-            4988
-          ],
-          "leash": 36,
-          "tier": "field_outer",
-          "road_blocks": 161,
-          "town_blocks": 364
-        },
-        {
-          "id": "gm_mf_4016_4988",
+          "id": "gm_mf_3978_4988",
           "species": "audino",
           "aspect": "mega_evolution=mega",
           "anchor": [
-            4016,
-            117,
+            3978,
+            115,
             4988
           ],
           "leash": 36,
           "tier": "field_outer",
-          "road_blocks": 193,
-          "town_blocks": 324
+          "road_blocks": 165,
+          "town_blocks": 358
         },
         {
-          "id": "gm_mf_4104_4998",
-          "species": "sableye",
+          "id": "gm_mf_3932_5022",
+          "species": "heracross",
           "aspect": "mega_evolution=mega",
           "anchor": [
-            4104,
+            3932,
             116,
-            4998
-          ],
-          "leash": 36,
-          "tier": "field_outer",
-          "road_blocks": 264,
-          "town_blocks": 253
-        },
-        {
-          "id": "gm_mf_3928_5022",
-          "species": "scizor",
-          "aspect": "mega_evolution=mega",
-          "anchor": [
-            3928,
-            115,
             5022
           ],
           "leash": 36,
           "tier": "field_deeper",
-          "road_blocks": 150,
-          "town_blocks": 418
+          "road_blocks": 153,
+          "town_blocks": 414
         },
         {
-          "id": "gm_mf_4060_5030",
-          "species": "lopunny",
+          "id": "gm_mf_3976_5032",
+          "species": "beedrill",
           "aspect": "mega_evolution=mega",
           "anchor": [
-            4060,
-            116,
-            5030
-          ],
-          "leash": 36,
-          "tier": "field_outer",
-          "road_blocks": 254,
-          "town_blocks": 308
-        },
-        {
-          "id": "gm_mf_3972_5032",
-          "species": "glalie",
-          "aspect": "mega_evolution=mega",
-          "anchor": [
-            3972,
-            117,
+            3976,
+            118,
             5032
           ],
           "leash": 36,
           "tier": "field_outer",
-          "road_blocks": 189,
-          "town_blocks": 383
+          "road_blocks": 192,
+          "town_blocks": 380
         },
         {
-          "id": "gm_mf_4104_5042",
+          "id": "gm_mf_4064_5032",
           "species": "houndoom",
           "aspect": "mega_evolution=mega",
           "anchor": [
-            4104,
+            4064,
             116,
-            5042
+            5032
           ],
           "leash": 36,
           "tier": "field_outer",
-          "road_blocks": 294,
-          "town_blocks": 282
+          "road_blocks": 258,
+          "town_blocks": 306
         },
         {
-          "id": "gm_mf_4016_5052",
-          "species": "camerupt",
+          "id": "gm_mf_4020_5054",
+          "species": "lopunny",
           "aspect": "mega_evolution=mega",
           "anchor": [
-            4016,
-            117,
-            5052
+            4020,
+            116,
+            5054
           ],
           "leash": 36,
           "tier": "field_outer",
-          "road_blocks": 236,
-          "town_blocks": 356
+          "road_blocks": 240,
+          "town_blocks": 354
         },
         {
           "id": "gm_mf_4076_5086",
-          "species": "beedrill",
+          "species": "medicham",
           "aspect": "mega_evolution=mega",
           "anchor": [
             4076,
@@ -4644,6 +5114,20 @@
           "town_blocks": 217
         },
         {
+          "id": "gm_mf_4118_5028",
+          "species": "banette",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4118,
+            117,
+            5028
+          ],
+          "leash": 36,
+          "tier": "field_outer",
+          "road_blocks": 294,
+          "town_blocks": 262
+        },
+        {
           "id": "gm_mf_4166_5058",
           "species": "banette",
           "aspect": "mega_evolution=mega",
@@ -4659,7 +5143,7 @@
         },
         {
           "id": "gm_mf_4122_5088",
-          "species": "medicham",
+          "species": "houndoom",
           "aspect": "mega_evolution=mega",
           "anchor": [
             4122,
@@ -4673,7 +5157,7 @@
         },
         {
           "id": "gm_mf_4118_5132",
-          "species": "ampharos",
+          "species": "lopunny",
           "aspect": "mega_evolution=mega",
           "anchor": [
             4118,
@@ -4688,59 +5172,144 @@
       ]
     },
     {
+      "id": "field_0_4",
+      "name": "the Mega field, cell 0 4",
+      "tier": "field_deeper",
+      "approach": [
+        3578,
+        65,
+        5132,
+        3776,
+        142,
+        5394
+      ],
+      "dens": [
+        {
+          "id": "gm_mf_3704_5196",
+          "species": "charizard",
+          "aspect": "mega_evolution=mega_x",
+          "anchor": [
+            3704,
+            89,
+            5196
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 54,
+          "town_blocks": 697
+        },
+        {
+          "id": "gm_mf_3712_5240",
+          "species": "steelix",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3712,
+            92,
+            5240
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 91,
+          "town_blocks": 713
+        },
+        {
+          "id": "gm_mf_3642_5270",
+          "species": "garchomp",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3642,
+            102,
+            5270
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 55,
+          "town_blocks": 788
+        },
+        {
+          "id": "gm_mf_3690_5286",
+          "species": "metagross",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3690,
+            102,
+            5286
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 105,
+          "town_blocks": 757
+        },
+        {
+          "id": "gm_mf_3658_5330",
+          "species": "garchomp",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3658,
+            110,
+            5330
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 93,
+          "town_blocks": 809
+        }
+      ]
+    },
+    {
       "id": "field_1_4",
       "name": "the Mega field, cell 1 4",
       "tier": "field_deeper",
       "approach": [
-        3692,
-        90,
-        5166,
-        3946,
-        177,
-        5376
+        3684,
+        64,
+        5088,
+        3876,
+        149,
+        5352
       ],
       "dens": [
         {
-          "id": "gm_mf_3834_5230",
-          "species": "steelix",
+          "id": "gm_mf_3748_5152",
+          "species": "blaziken",
           "aspect": "mega_evolution=mega",
           "anchor": [
-            3834,
-            117,
-            5230
+            3748,
+            88,
+            5152
           ],
           "leash": 36,
           "tier": "field_deeper",
-          "road_blocks": 170,
-          "town_blocks": 609
+          "road_blocks": 54,
+          "town_blocks": 637
         },
         {
-          "id": "gm_mf_3882_5242",
+          "id": "gm_mf_3812_5232",
+          "species": "blaziken",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3812,
+            115,
+            5232
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 156,
+          "town_blocks": 627
+        },
+        {
+          "id": "gm_mf_3782_5288",
           "species": "charizard",
           "aspect": "mega_evolution=mega_x",
           "anchor": [
-            3882,
-            120,
-            5242
+            3782,
+            117,
+            5288
           ],
           "leash": 36,
           "tier": "field_deeper",
-          "road_blocks": 213,
-          "town_blocks": 580
-        },
-        {
-          "id": "gm_mf_3756_5312",
-          "species": "metagross",
-          "aspect": "mega_evolution=mega",
-          "anchor": [
-            3756,
-            114,
-            5312
-          ],
-          "leash": 36,
-          "tier": "field_deeper",
-          "road_blocks": 170,
-          "town_blocks": 721
+          "road_blocks": 175,
+          "town_blocks": 686
         }
       ]
     },
@@ -4759,7 +5328,7 @@
       "dens": [
         {
           "id": "gm_mf_4084_5176",
-          "species": "glalie",
+          "species": "beedrill",
           "aspect": "mega_evolution=mega",
           "anchor": [
             4084,
@@ -4773,7 +5342,7 @@
         },
         {
           "id": "gm_mf_4074_5222",
-          "species": "gardevoir",
+          "species": "glalie",
           "aspect": "mega_evolution=mega",
           "anchor": [
             4074,
@@ -4787,7 +5356,7 @@
         },
         {
           "id": "gm_mf_4066_5266",
-          "species": "blastoise",
+          "species": "gardevoir",
           "aspect": "mega_evolution=mega",
           "anchor": [
             4066,
@@ -4801,7 +5370,7 @@
         },
         {
           "id": "gm_mf_4092_5314",
-          "species": "venusaur",
+          "species": "gallade",
           "aspect": "mega_evolution=mega",
           "anchor": [
             4092,
@@ -4815,7 +5384,7 @@
         },
         {
           "id": "gm_mf_4044_5318",
-          "species": "venusaur",
+          "species": "blastoise",
           "aspect": "mega_evolution=mega",
           "anchor": [
             4044,
@@ -4844,7 +5413,7 @@
       "dens": [
         {
           "id": "gm_mf_4144_5212",
-          "species": "abomasnow",
+          "species": "ampharos",
           "aspect": "mega_evolution=mega",
           "anchor": [
             4144,
@@ -4858,7 +5427,7 @@
         },
         {
           "id": "gm_mf_4136_5274",
-          "species": "gallade",
+          "species": "abomasnow",
           "aspect": "mega_evolution=mega",
           "anchor": [
             4136,
@@ -4877,27 +5446,56 @@
       "name": "the Mega field, cell 0 5",
       "tier": "field_deeper",
       "approach": [
-        3648,
+        3644,
         90,
         5286,
-        3776,
+        3772,
         146,
         5401
       ],
       "dens": [
         {
-          "id": "gm_mf_3712_5350",
-          "species": "garchomp",
+          "id": "gm_mf_3708_5350",
+          "species": "metagross",
           "aspect": "mega_evolution=mega",
           "anchor": [
-            3712,
+            3708,
             114,
             5350
           ],
           "leash": 36,
           "tier": "field_deeper",
-          "road_blocks": 150,
-          "town_blocks": 779
+          "road_blocks": 146,
+          "town_blocks": 782
+        }
+      ]
+    },
+    {
+      "id": "field_1_5",
+      "name": "the Mega field, cell 1 5",
+      "tier": "field_deeper",
+      "approach": [
+        3690,
+        92,
+        5276,
+        3818,
+        194,
+        5401
+      ],
+      "dens": [
+        {
+          "id": "gm_mf_3754_5340",
+          "species": "metagross",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3754,
+            116,
+            5340
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 184,
+          "town_blocks": 741
         }
       ]
     },
@@ -4916,7 +5514,7 @@
       "dens": [
         {
           "id": "gm_mf_4094_5358",
-          "species": "blaziken",
+          "species": "blastoise",
           "aspect": "mega_evolution=mega",
           "anchor": [
             4094,
@@ -5808,7 +6406,267 @@
         }
       ],
       "why": "the 2026-10-04 packing (23 dens, one per species, ids gm_mf_<species>), superseded the same night when each den was given its own id and the field filled further; its ids are not reused, so R9SX removes any Mega a keeper left at them"
+    },
+    {
+      "id": "field_2_2",
+      "name": "the Mega field, cell 2 2",
+      "tier": "field_outer",
+      "approach": [
+        3936,
+        85,
+        4880,
+        4064,
+        146,
+        5008
+      ],
+      "dens": [
+        {
+          "id": "gm_mf_4000_4944",
+          "species": "lopunny",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4000,
+            114,
+            4944
+          ],
+          "leash": 36,
+          "tier": "field_outer",
+          "road_blocks": 151,
+          "town_blocks": 323
+        }
+      ],
+      "why": "2026-10-05: the field re-laid when Victory Road's clearance was re-derived (layout.road_clear 149 -> 54, the owner's west floor); these dens of the 27-den layout are not in the new one, so R9SX removes any Mega a keeper left at them. The farm's other dens, if any, kept their ids and are live"
+    },
+    {
+      "id": "field_2_3",
+      "name": "the Mega field, cell 2 3",
+      "tier": "field_outer",
+      "approach": [
+        3864,
+        87,
+        4914,
+        4168,
+        253,
+        5150
+      ],
+      "dens": [
+        {
+          "id": "gm_mf_4060_4978",
+          "species": "absol",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4060,
+            116,
+            4978
+          ],
+          "leash": 36,
+          "tier": "field_outer",
+          "road_blocks": 218,
+          "town_blocks": 280
+        },
+        {
+          "id": "gm_mf_3972_4988",
+          "species": "heracross",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3972,
+            115,
+            4988
+          ],
+          "leash": 36,
+          "tier": "field_outer",
+          "road_blocks": 161,
+          "town_blocks": 364
+        },
+        {
+          "id": "gm_mf_4016_4988",
+          "species": "audino",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4016,
+            117,
+            4988
+          ],
+          "leash": 36,
+          "tier": "field_outer",
+          "road_blocks": 193,
+          "town_blocks": 324
+        },
+        {
+          "id": "gm_mf_4104_4998",
+          "species": "sableye",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4104,
+            116,
+            4998
+          ],
+          "leash": 36,
+          "tier": "field_outer",
+          "road_blocks": 264,
+          "town_blocks": 253
+        },
+        {
+          "id": "gm_mf_3928_5022",
+          "species": "scizor",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3928,
+            115,
+            5022
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 150,
+          "town_blocks": 418
+        },
+        {
+          "id": "gm_mf_4060_5030",
+          "species": "lopunny",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4060,
+            116,
+            5030
+          ],
+          "leash": 36,
+          "tier": "field_outer",
+          "road_blocks": 254,
+          "town_blocks": 308
+        },
+        {
+          "id": "gm_mf_3972_5032",
+          "species": "glalie",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3972,
+            117,
+            5032
+          ],
+          "leash": 36,
+          "tier": "field_outer",
+          "road_blocks": 189,
+          "town_blocks": 383
+        },
+        {
+          "id": "gm_mf_4104_5042",
+          "species": "houndoom",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4104,
+            116,
+            5042
+          ],
+          "leash": 36,
+          "tier": "field_outer",
+          "road_blocks": 294,
+          "town_blocks": 282
+        },
+        {
+          "id": "gm_mf_4016_5052",
+          "species": "camerupt",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            4016,
+            117,
+            5052
+          ],
+          "leash": 36,
+          "tier": "field_outer",
+          "road_blocks": 236,
+          "town_blocks": 356
+        }
+      ],
+      "why": "2026-10-05: the field re-laid when Victory Road's clearance was re-derived (layout.road_clear 149 -> 54, the owner's west floor); these dens of the 27-den layout are not in the new one, so R9SX removes any Mega a keeper left at them. The farm's other dens, if any, kept their ids and are live"
+    },
+    {
+      "id": "field_1_4",
+      "name": "the Mega field, cell 1 4",
+      "tier": "field_deeper",
+      "approach": [
+        3692,
+        90,
+        5166,
+        3946,
+        177,
+        5376
+      ],
+      "dens": [
+        {
+          "id": "gm_mf_3834_5230",
+          "species": "steelix",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3834,
+            117,
+            5230
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 170,
+          "town_blocks": 609
+        },
+        {
+          "id": "gm_mf_3882_5242",
+          "species": "charizard",
+          "aspect": "mega_evolution=mega_x",
+          "anchor": [
+            3882,
+            120,
+            5242
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 213,
+          "town_blocks": 580
+        },
+        {
+          "id": "gm_mf_3756_5312",
+          "species": "metagross",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3756,
+            114,
+            5312
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 170,
+          "town_blocks": 721
+        }
+      ],
+      "why": "2026-10-05: the field re-laid when Victory Road's clearance was re-derived (layout.road_clear 149 -> 54, the owner's west floor); these dens of the 27-den layout are not in the new one, so R9SX removes any Mega a keeper left at them. The farm's other dens, if any, kept their ids and are live"
+    },
+    {
+      "id": "field_0_5",
+      "name": "the Mega field, cell 0 5",
+      "tier": "field_deeper",
+      "approach": [
+        3648,
+        90,
+        5286,
+        3776,
+        146,
+        5401
+      ],
+      "dens": [
+        {
+          "id": "gm_mf_3712_5350",
+          "species": "garchomp",
+          "aspect": "mega_evolution=mega",
+          "anchor": [
+            3712,
+            114,
+            5350
+          ],
+          "leash": 36,
+          "tier": "field_deeper",
+          "road_blocks": 150,
+          "town_blocks": 779
+        }
+      ],
+      "why": "2026-10-05: the field re-laid when Victory Road's clearance was re-derived (layout.road_clear 149 -> 54, the owner's west floor); these dens of the 27-den layout are not in the new one, so R9SX removes any Mega a keeper left at them. The farm's other dens, if any, kept their ids and are live"
     }
   ],
-  "superseded_farms_reason": "Superseded 2026-10-03 by the Mega field (mega_field; docs/world-building/MEGA_FIELD.md). The owner, on the map: 'everywhere in the red inside the rift should be the mega area, not just spawn one randomly in the world.' These seven were sited inside data/regions.json's rift_south_west_arm and rift_south_east_arm subregion polygons, which take in the plateau round the basin; all seven stand on high ground outside the basin (y121-148), 163 to 1,133 blocks from the nearest of the owner's coordinates, and none is inside the field. Kept, not deleted: the records hold the 2026-10-01 siting and the B4 reasoning, and staging has had them applied (R9S, R9MD), so their anchors say where a keeper may still have left a Mega and a lair stands. 2026-10-04: the 11 dens of 2026-10-03 (farms field_*, ids gm_field_<col>_<row>_<n>) joined them when the field was packed to its floor with 23 dens whose ranges overlap (the owner, 2026-10-04); their ids are not reused (the new dens are gm_mf_<species>), so R9SX removes any Mega a keeper left at them. Their lairs, if R9MD ever wrote them, are blocks and stay where they stood: no step removes a lair 2026-10-04 (later): the 23 dens of gm_mf_<species> joined them when every den was given its own id, independent of species (gm_mf_<x>_<z>, the anchor's column), so a species can hold several territories, and the field was filled further (27 dens). None of the 23 ids is reused."
+  "superseded_farms_reason": "Superseded 2026-10-03 by the Mega field (mega_field; docs/world-building/MEGA_FIELD.md). The owner, on the map: 'everywhere in the red inside the rift should be the mega area, not just spawn one randomly in the world.' These seven were sited inside data/regions.json's rift_south_west_arm and rift_south_east_arm subregion polygons, which take in the plateau round the basin; all seven stand on high ground outside the basin (y121-148), 163 to 1,133 blocks from the nearest of the owner's coordinates, and none is inside the field. Kept, not deleted: the records hold the 2026-10-01 siting and the B4 reasoning, and staging has had them applied (R9S, R9MD), so their anchors say where a keeper may still have left a Mega and a lair stands. 2026-10-04: the 11 dens of 2026-10-03 (farms field_*, ids gm_field_<col>_<row>_<n>) joined them when the field was packed to its floor with 23 dens whose ranges overlap (the owner, 2026-10-04); their ids are not reused (the new dens are gm_mf_<species>), so R9SX removes any Mega a keeper left at them. Their lairs, if R9MD ever wrote them, are blocks and stay where they stood: no step removes a lair 2026-10-04 (later): the 23 dens of gm_mf_<species> joined them when every den was given its own id, independent of species (gm_mf_<x>_<z>, the anchor's column), so a species can hold several territories, and the field was filled further (27 dens). None of the 23 ids is reused. 2026-10-05: the field re-laid at 61 dens when Victory Road's clearance was re-derived for the owner's west floor (layout.why.road_clear); the 27-den layout's dens that did not survive by id joined these, and no new den reuses a retired id."
 }
