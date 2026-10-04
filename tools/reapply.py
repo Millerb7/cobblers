@@ -710,9 +710,12 @@ def prepare_jobs(a):
     # independent audit is owed (data/jungle_temples.json audit_checklist); add it here, after this job, when written
     add("jungle_temples", "jungle_temples.py", *src)
     # Hollin's Apricorn Farm (2026-10-05): the generator fails closed on its own guards (allow-list, spawn blocks, wet
-    # columns, overlaps, fruit attachment, gates, spots, siting). Its independent audit is OWED (data/apricorn_farm.json
-    # audit_checklist); add its job here, after this one, when it exists
+    # columns, overlaps, fruit attachment, gates, spots, siting). Then its independent audit (tools/apricorn_farm_audit.py,
+    # another agent's, never imports the generator to derive): the built pack replayed over the heightmap, fruit
+    # attachment in the final world, terraces and floors re-derived, walking, light, siting, the merchant, the farmer's
+    # dialogue (compiled by compile_dialogue above) and this wiring; KNOWN defects print and do not fail it
     add("apricorn_farm:build", "apricorn_farm.py", "build", *src)
+    add("apricorn_farm_audit", "apricorn_farm_audit.py", *src)
     add("drovers_hollow:build", "drovers_hollow.py", "build", *src)
     add("drovers_hollow_audit", "drovers_hollow_audit.py", *src)
     # the three wayside places of 2026-10-03. Each generator refuses a spawn-condition palette and any block outside its
