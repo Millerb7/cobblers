@@ -71,6 +71,14 @@ Two items, after the tour. Same rule as the overnight: record defects, do not ch
    the city's hub (3609, 3249) in staging now; what the hub goes back to (the Core spire, build_spire_ring without
    `arena`, is the precedent) is part of (d).
 
+   **Decided on the tour (the owner, 2026-10-03):** the dome goes on **site A, centre (3584, 3171), radius 40**
+   (docs/world-building/ARENA_SITE_NORTH.md; "it makes more sense"; it lengthens the walk to Victory Road by 34). The
+   halls at the hub (3609, 3249) **stay standing but lose their trainer battles**: "leave current spire, but remove the
+   trainer battles, have the middle just be hubs or something" (a non-battle hub). The mechanism is PROVEN for one
+   player (docs/research/notes/arena-per-player-opponents.md section 8): Cobblemon NPC class with a pool party,
+   `spawnnpcat` at absolute coords, `start_battle` from runmolang, a battle_victory callback tagging won/lost. The
+   fight ladder is data/arena_fights.json (nine ranks; the owner's open questions are its open_questions).
+
 **Pose test, in game 2026-10-03 (Eevee at (807, 177, 248) on Frostpeak, the owner watching):** NO control we have
 gives a sleeping or sitting pose. `spawnpokemonat ... status=sleep uncatchable no_ai`: the server holds
 `Pokemon.Status {StatusName: cobblemon:sleep, StatusTimer: 292}` but the timer never runs and nothing shows. The same

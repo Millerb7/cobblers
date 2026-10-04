@@ -349,3 +349,23 @@ argument, doubles, and a player logging out mid-fight (the NPC must be swept).
 - **Team-by-player:** a pool `weight` reading `q.player.data.<field>`.
 - **Format:** the empty rule set (§3) — does an arena battle accept something a normal battle rejects?
 - **Money:** CobbleDollars on a `cobblemon:npc` win.
+
+
+## 8. RESULT, run in game 2026-10-03 (staging-2026-10-01, the owner playing, one player)
+
+The probe pack of section 7 was installed world-local (`cobblers_arena_probe`, staging only) and the server restarted.
+- **Spawn: PASS.** `spawnnpcat X Y Z cobblers:arena_probe 12` with ABSOLUTE coordinates spawns the class at level 12
+  (`data get ... Level` -> 12); the relative form `execute ... positioned ^ ^ ^4 run spawnnpcat ~ ~ ~ ...` spawned
+  nothing and printed nothing. Command output is empty either way: find the NPC by position and tag it.
+- **Start without a click: PASS.** `runmolang "q.npc.start_battle(q.player, 'singles');" @s <npc>` run as the player
+  opened the battle screen immediately ("opened immediately", the owner). It returns the battle's UUID on success and
+  **0 when refused**: it returned 0 while the player had no Pokemon (Cobblemon's `standard` class refused the same
+  way), and a UUID once `givepokemonother` had given one.
+- **Win: PASS.** The `battle_victory` callback added `arena_won` and not `arena_lost` (twice).
+- **Loss: PASS.** `arena_lost` and not `arena_won`. **The loss also fired our blackout** (the player was sent home to
+  (1461, 118, 5306)): the arena needs its own blackout exception (data/arena_fights.json open question 4).
+- **Re-roll: PASS.** Fight 1 and 2 Machop, fight 3 Zubat: the non-static pool re-rolls per challenge (a repeat is
+  chance in a three-entry pool).
+- **Remove: PASS.** `kill` by tag; no error. The NPC unloads with its chunk when the player leaves (a teleport home
+  after a loss): cleanup must load the chunk or run while the player is near.
+- Not run: two players at once (needs a second account), a forfeit/run, `canChallenge: false` against a click.
