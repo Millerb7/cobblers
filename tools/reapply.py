@@ -673,8 +673,8 @@ def prepare_jobs(a):
     add("ursaluna_cave_audit", "ursaluna_cave_audit.py", *src)
     add("frostpeak_camp:build", "frostpeak_camp.py", "build", *src)
     add("frostpeak_camp_audit", "frostpeak_camp_audit.py", "--inputs-root", str(ROOT), *src)
-    # Coldwater Station (2026-10-05): its builder's siting guards fail the job; NO independent audit exists yet
-    # (data/coldwater_station.json audit_checklist is the brief for it, another agent's)
+    # Coldwater Station (2026-10-05): its builder's siting guards fail the job; its independent audit
+    # (tools/coldwater_station_audit.py) runs after sea_floor:build below, so it replays the sea packs it must keep clear
     add("coldwater_station:build", "coldwater_station.py", "build", *src)
     add("sea_drift:build", "sea_drift.py", "build", *src)
     add("frostpeak_summit:build", "frostpeak_summit.py", "build", *src)
@@ -755,6 +755,9 @@ def prepare_jobs(a):
     # exclusions and the EMITTED sea_life pack; after both packs are built
     add("sea_floor:build", "sea_floor.py", "build", *src)
     add("sea_floor_audit", "sea_floor_audit.py", *src)
+    # Coldwater Station's independent audit (never imports its builder, tools/portals.py or tools/frostpeak_camp.py):
+    # the built functions replayed over the heightmap, and the freshly built sea packs held off its sealed arch
+    add("coldwater_station_audit", "coldwater_station_audit.py", "--require-sea", *src)
     # the gym interiors: the healing machines out of all eight placed gyms, and gym 1's works carved under its lot;
     # then the offline audit, which re-derives every shell box from data/placements.json, replays the written
     # functions into a voxel model and fails the prepare on a broken route, a trainer that can be walked round, a
