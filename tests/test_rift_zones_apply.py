@@ -13,7 +13,9 @@ three. Terrain is solid up to round(heightmap) and air above it; every emitted f
 the order R9Z runs them.
 
 NOT COVERED: anything that needs a server -- that the advancements fire, that `tp` lands where the data says,
-that the barrier cannot be jumped or pearled. Nor the zone check itself, which is location only.
+that the barrier cannot be jumped or pearled. The zone check's LOGIC is covered since 2026-10-04 (qualify on entry,
+at the end of this file, also written by the implementer at the caller's request): a small interpreter runs the
+emitted functions against a modelled player. Whether the server agrees with that interpreter is not covered.
 """
 from __future__ import annotations
 
@@ -723,3 +725,218 @@ def test_dropping_the_approach_from_build_breaks_the_gates_that_need_it():
     broken = {gate[0] for gate in gates if walk_problems(gate, block)}
     assert {"z2_victory_road_descent", "z2_wilds_slip"} <= broken, broken
     assert not broken & {"z1", "z2"}, "z1 and z2 meet their ground without an approach: %s" % broken
+
+
+# ------------------------------------------------------------------ qualify on entry
+#
+# docs/world-building/CRITICAL_PATH_WALK_2.md item 1: Victory Road's fights 8-10 lie inside z5's boxes, 40 blocks
+# under G5, and the zone check tested only the score a knock box sets, so a player holding rift_crisis_resolved
+# who walked the caves north was teleported to the turn-back. These tests RUN the emitted advancement and
+# functions with their own small interpreter (this file's, not the generator's): the location advancement's
+# boxes decide whether the zone check fires, and the .mcfunction text decides what it does to the player.
+
+def _selector_args(sel):
+    """'@s[a=1,advancements={x=true,y=true}]' -> [('a', '1'), ('advancements', '{x=true,y=true}')]."""
+    assert sel.startswith("@s"), sel
+    if sel == "@s":
+        return []
+    body, out, cur, depth = sel[3:-1], [], "", 0
+    for ch in body:
+        depth += ch == "{"
+        depth -= ch == "}"
+        if ch == "," and depth == 0:
+            out.append(cur)
+            cur = ""
+        else:
+            cur += ch
+    out.append(cur)
+    return [tuple(a.split("=", 1)) for a in out if a]
+
+
+def _matches(player, sel):
+    """This file's reading of a selector on @s: gamemode, advancements and a dx/dy/dz volume."""
+    args = dict()
+    for k, v in _selector_args(sel):
+        if k == "gamemode":
+            if v.startswith("!") and player["gamemode"] == v[1:]:
+                return False
+            if not v.startswith("!") and player["gamemode"] != v:
+                return False
+        elif k == "advancements":
+            for term in v.strip("{}").split(","):
+                a, want = term.split("=")
+                if (a in player["advancements"]) != (want == "true"):
+                    return False
+        else:
+            args[k] = int(v)
+    if "x" in args:
+        x, y, z = player["pos"]
+        for c, p in (("x", x), ("y", y), ("z", z)):
+            if not args[c] <= p < args[c] + args["d" + c] + 1:
+                return False
+    return True
+
+
+def _run(fn_dir, line, player, depth=0):
+    """Run one command line against `player`. Only the commands the zone functions use are understood; anything
+    else raises, so a new command cannot be silently skipped."""
+    assert depth < 8
+    t = line.split()
+    if t[0] == "execute":
+        i = 1
+        while i < len(t):
+            if t[i] in ("if", "unless"):
+                want = t[i] == "if"
+                if t[i + 1] == "entity":
+                    ok, i = _matches(player, t[i + 2]), i + 3
+                elif t[i + 1] == "score":
+                    assert t[i + 2] == "@s" and t[i + 4] == "matches" and t[i + 5] == "1..", t
+                    ok, i = player["scores"].get(t[i + 3], None) is not None and player["scores"][t[i + 3]] >= 1, i + 6
+                else:
+                    raise AssertionError("unknown execute test: %s" % line)
+                if ok != want:
+                    return
+            elif t[i] == "on" and t[i + 1] == "vehicle":
+                return   # the test player rides nothing
+            elif t[i] == "run":
+                return _run(fn_dir, " ".join(t[i + 1:]), player, depth + 1)
+            else:
+                raise AssertionError("unknown execute part: %s" % line)
+        return
+    if t[0] == "function":
+        ns, path = t[1].split(":", 1)
+        assert path.startswith(RZ.FOLDER + "/"), t[1]
+        for ln in _lines(fn_dir, path[len(RZ.FOLDER) + 1:]):
+            _run(fn_dir, ln, player, depth + 1)
+    elif t[0] == "scoreboard" and t[1:3] == ["players", "set"] and t[3] == "@s":
+        player["scores"][t[4]] = int(t[5])
+    elif t[0] == "tp" and t[1] == "@s":
+        player["pos"] = (float(t[2]), float(t[3]), float(t[4]))
+        player["turned_back"] = True
+    elif t[0] in ("title", "spawnpoint", "advancement"):
+        pass
+    else:
+        raise AssertionError("unknown command: %s" % line)
+
+
+def _fires(adv_dir, name, pos):
+    """Whether a minecraft:location advancement's boxes contain `pos`, read from the emitted JSON."""
+    doc = json.loads((adv_dir / (name + ".json")).read_text(encoding="utf-8"))
+    conds = doc["criteria"]["here"]["conditions"]["player"]
+    terms = conds[0]["terms"] if conds[0]["condition"] == "minecraft:any_of" else conds
+
+    def inside(term):
+        p = term["predicate"]["location"]["position"]
+        return all(p[c]["min"] <= v < p[c]["max"] for c, v in zip("xyz", pos))
+    return any(inside(term) for term in terms)
+
+
+def _enter(fn_dir, adv_dir, zid, pos, advancements):
+    """A survival player with no pass score stands at `pos`; the zone's location advancement must fire there and
+    its reward runs (twice: the advancement is revoked and fires again while the player stays)."""
+    assert _fires(adv_dir, "%s_zone" % zid, pos), "%s's zone check does not fire at %s" % (zid, pos)
+    player = {"pos": pos, "gamemode": "survival", "advancements": set(advancements), "scores": {},
+              "turned_back": False}
+    for _ in range(2):
+        _run(fn_dir, "function %s:%s/%s/zone" % (RZ.NS, RZ.FOLDER, zid), player)
+        if player["turned_back"]:
+            break
+    return player
+
+
+def _testable_enforced():
+    return sorted(zid for zid, z in live_zones().items()
+                  if enforced(z) and z["pass"]["kind"] in ("badges", "flag") and z["pass"].get("advancements"))
+
+
+def _far_point(zid, z):
+    """A point inside one of the zone's boxes, at least 32 blocks from every knock box, from the data."""
+    knocks = knocks_of(z)
+    for b in z["boxes"]:
+        cx, cz = (b[0] + b[2]) // 2, (b[1] + b[3]) // 2
+        if all(abs(cx - (k[0] + k[3]) / 2) > 32 or abs(cz - (k[2] + k[5]) / 2) > 32 for k in knocks):
+            return (cx + 0.5, 40.0, cz + 0.5)
+    raise AssertionError("%s has no box 32 blocks from a knock" % zid)
+
+
+def test_the_zones_with_a_server_testable_pass_are_enforced_today():
+    # the tests below are vacuous if no zone qualifies; z5 is the one the walk found
+    assert "z5" in _testable_enforced(), _testable_enforced()
+
+
+@pytest.mark.parametrize("zid", _testable_enforced())
+def test_a_player_holding_the_pass_who_enters_away_from_any_knock_is_not_turned_back(zid):
+    z = live_zones()[zid]
+    fn, adv = fast()
+    pos = _far_point(zid, z)
+    for k in knocks_of(z):
+        assert not _matches({"pos": pos, "gamemode": "survival", "advancements": set()},
+                            "@s[%s]" % RZ.sel_box(k))
+    player = _enter(fn, adv, zid, pos, z["pass"]["advancements"])
+    assert not player["turned_back"], "%s turned back a qualified player at %s" % (zid, pos)
+    assert player["pos"] == pos, "the admit teleported the player"
+    assert player["scores"].get(SPEC["pass"]["objective_prefix"] + zid) == 1
+
+
+@pytest.mark.parametrize("zid", _testable_enforced())
+def test_a_player_without_the_pass_is_still_turned_back(zid):
+    z = live_zones()[zid]
+    fn, adv = fast()
+    pos = _far_point(zid, z)
+    tx, ty, tz, _yaw = z["turn_back"]
+    advs = z["pass"]["advancements"]
+    # none of it, and (for a multi-advancement pass) all but the last: both are passless
+    for held in ([], advs[:-1]) if len(advs) > 1 else ([],):
+        player = _enter(fn, adv, zid, pos, held)
+        assert player["turned_back"], "%s let a player holding only %s stay at %s" % (zid, held, pos)
+        assert player["pos"] == (tx, float(int(ty)), tz)
+        assert SPEC["pass"]["objective_prefix"] + zid not in player["scores"]
+
+
+def test_victory_roads_last_fights_are_inside_z5_and_open_to_a_player_who_released_hoopa():
+    vr = json.loads((ROOT / "data" / "vr_trainers.json").read_text(encoding="utf-8"))
+    seats = [tuple(float(c) + 0.5 * (i != 1) for i, c in enumerate(t["seat"]))
+             for t in vr["trainers"] if t["stand_index"] >= 8]
+    assert len(seats) == 3
+    fn, adv = fast()
+    z5 = live_zones()["z5"]
+    for pos in seats:
+        assert _fires(adv, "z5_zone", pos), "stand %s is no longer inside z5: re-read the walk's item 1" % (pos,)
+        assert not _enter(fn, adv, "z5", pos, z5["pass"]["advancements"])["turned_back"], pos
+        assert _enter(fn, adv, "z5", pos, [])["turned_back"], pos
+
+
+# Without it the interpreter above could pass for reasons of its own. Dropping qualify on entry from the GENERATOR --
+# data untouched (CLAUDE.md, "mutate the generator, not the record") -- must bring the walk's blocker back.
+def test_dropping_qualify_on_entry_from_build_turns_a_qualified_player_back_in_victory_roads_caves():
+    src = (ROOT / "tools" / "rift_zones.py").read_text(encoding="utf-8")
+    old = "FOLDER, zid)] + entry + ["
+    assert src.count(old) == 1
+    mod = types.ModuleType("rift_zones_no_entry")
+    mod.__file__ = str(ROOT / "tools" / "rift_zones.py")
+    exec(compile(src.replace(old, "FOLDER, zid)] + ["), mod.__file__, "exec"), mod.__dict__)
+    mfn, madv = build(module=mod)
+    vr = json.loads((ROOT / "data" / "vr_trainers.json").read_text(encoding="utf-8"))
+    seat = next(t["seat"] for t in vr["trainers"] if t["stand_index"] == 9)
+    pos = (seat[0] + 0.5, float(seat[1]), seat[2] + 0.5)
+    assert _enter(mfn, madv, "z5", pos, live_zones()["z5"]["pass"]["advancements"])["turned_back"]
+
+
+def test_a_player_at_the_knock_is_still_answered_by_the_guard():
+    # the knock is kept: a qualified player in G5's knock box is granted and arrives on the walkway
+    z5 = live_zones()["z5"]
+    fn, _adv = fast()
+    k = z5["knock"]
+    player = {"pos": (k[0] + 0.5, float(k[1]), k[2] + 0.5), "gamemode": "survival",
+              "advancements": set(z5["pass"]["advancements"]), "scores": {}, "turned_back": False}
+    _run(fn, "function %s:%s/z5/knock" % (RZ.NS, RZ.FOLDER), player)
+    ax, ay, az, _ = z5["arrive"]
+    assert player["pos"] == (ax, float(int(ay)), az)
+    assert player["scores"][SPEC["pass"]["objective_prefix"] + "z5"] == 1
+    passless = dict(player, advancements=set(), scores={}, pos=(k[0] + 0.5, float(k[1]), k[2] + 0.5))
+    _run(fn, "function %s:%s/z5/knock" % (RZ.NS, RZ.FOLDER), passless)
+    assert passless["scores"] == {} and passless["pos"] == (k[0] + 0.5, float(k[1]), k[2] + 0.5)
+    # and the zone check leaves a passless player standing in the knock box to be answered
+    passless["turned_back"] = False
+    _run(fn, "function %s:%s/z5/zone" % (RZ.NS, RZ.FOLDER), passless)
+    assert not passless["turned_back"]

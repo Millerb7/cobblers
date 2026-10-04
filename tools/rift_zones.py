@@ -1369,6 +1369,9 @@ def zone_functions(zid, z):
     gate its knock, exit, grant and qualify. tools/reapply.py holds these for a held zone, because with no
     advancement calling them they are deliberately unreferenced."""
     out = ["%s/zone" % zid, "%s/turn_back" % zid]
+    p = z.get("pass") or {}
+    if p.get("kind") in ("badges", "flag") and p.get("advancements"):
+        out.append("%s/admit" % zid)   # qualify on entry, called only by the zone check
     for name, *_ in gates_of(zid, z):
         pre = zid if name == zid else "%s/%s" % (zid, name[len(zid) + 1:])
         out += ["%s/%s" % (pre, f) for f in ("knock", "exit", "grant", "qualify")]
@@ -1830,12 +1833,35 @@ def cmd_build(a):
         # standing in front of a guard, behind its barrier, being asked. Without this the zone check and the
         # knock advancement would both fire on the same tick and race.
         skip = "".join(" unless entity @s[%s]" % sel_box(k) for (_n, _g, _d, _a, _t, _e, k) in gates)
+        # QUALIFY ON ENTRY (data/rift_zones.json pass.qualify_on_entry, 2026-10-04). A player who already meets the
+        # zone's pass is given the score by the zone check itself, BEFORE the score is tested, wherever in the zone
+        # they stand. Without it only a knock box set the score, so a qualified player who crossed into a zone
+        # anywhere but its gatehouse -- Victory Road's caves into z5, 40 blocks under G5 -- was turned back
+        # (docs/world-building/CRITICAL_PATH_WALK_2.md item 1). A caught-count pass has no server-side test, so
+        # such a zone keeps the knock-only form.
+        testable = p["kind"] in ("badges", "flag") and bool(p.get("advancements"))
+        entry = []
+        if testable:
+            inner = ",".join("%s=true" % a for a in p["advancements"])
+            entry = [
+                "# qualify on entry: a player holding %s is admitted here, without a teleport, so a" % short,
+                "# qualified player is never turned back anywhere in the zone. The knock still answers at the gate.",
+                "execute if entity @s[advancements={%s}] unless score @s %s matches 1.. run function %s/%s/admit"
+                % (inner, obj, F, zid)]
+            fn["%s/admit" % zid] = [
+                "# %s's pass, granted by the zone check to a player who already holds %s (qualify on entry)." % (zid, short),
+                "# Sets the score and says so; no teleport: the player stays where they walked in.",
+                "scoreboard players set @s %s 1" % obj,
+                "title @s actionbar %s" % text("You hold %s: %s lets you pass." % (short, z["name"]), color="gray")]
+        else:
+            entry = ["# no qualify on entry: a %s pass has no server-side test (zones.%s.qualify_why); only the guard"
+                     % (p["kind"], zid), "# grants it."]
         fn["%s/zone" % zid] = [
             "# %s's zone check (docs/mechanics/RIFT_ZONES.md section 4, data/rift_zones.json). The advancement tests" % zid,
             "# LOCATION ONLY; the pass is tested here, because minecraft:entity_scores does not match an unset score",
             "# and putting it in the advancement would fail open for every player who never met a guard.",
             "# The %d knock box(es) in front of this zone's guards are excluded: there the guard answers instead." % len(gates),
-            "advancement revoke @s only %s:%s/%s_zone" % (NS, FOLDER, zid),
+            "advancement revoke @s only %s:%s/%s_zone" % (NS, FOLDER, zid)] + entry + [
             "execute if entity %s unless score @s %s matches 1..%s run function %s/%s/turn_back"
             % (ex, obj, skip, F, zid)]
         fn["%s/turn_back" % zid] = [
