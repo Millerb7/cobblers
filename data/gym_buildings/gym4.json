@@ -36,24 +36,24 @@
   },
   "bounds": [
     4293,
-    110,
+    109,
     1475,
     4327,
     134,
     1511
   ],
-  "bounds_why": "the glasshouse (4294..4326 x 1476..1509), the roof's one-block overhang on all four sides (x4293 and x4327, z1475 and z1510) and the moss apron in front of the door (z1510..1511). Inside the lot rect on every side, and inside the gym_erika spawn-free box on every side.",
+  "bounds_why": "the glasshouse (4294..4326 x 1476..1509), the roof's one-block overhang on all four sides (x4293 and x4327, z1475 and z1510) and the moss apron in front of the door (z1510..1511); from y109, the one cell of the pad under the court floor that holds the leader spawner's redstone (2026-10-04: the spawner is set INTO the floor, its power under it). Inside the lot rect on every side, and inside the gym_erika spawn-free box on every side.",
   "leader": {
     "id": "kanto_erika",
     "name": "Erika",
     "spawner": [
       4308,
-      111,
+      110,
       1480
     ],
     "powered_by": [
       4308,
-      110,
+      109,
       1480
     ],
     "why": "EXP-013 E2 (VERIFIED, on staging): a bare rctmod:trainer_spawner set by command with TrainerIds on a redstone block spawned the leader and he battled. The donor template does the same thing. Taking the shell down removes the template's spawner at [4303, 110, 1492], so this one is the only kanto_erika in the town and the badge cannot be won without reaching the court (a persistent leader spawner anywhere awards the badge: verified on staging 2026-09-24, docs/STATE.md).",
@@ -1641,21 +1641,21 @@
       "op": "setblock",
       "pos": [
         4308,
-        110,
+        109,
         1480
       ],
       "block": "minecraft:redstone_block",
-      "why": "-- Erika. The power under the spawner, set into the court floor as the donor template sets its own"
+      "why": "-- Erika. The power under the spawner, in the course UNDER the court floor, as the donor template sets its own"
     },
     {
       "op": "setblock",
       "pos": [
         4308,
-        111,
+        110,
         1480
       ],
       "block": "rctmod:trainer_spawner{TrainerIds:[\"kanto_erika\"]}",
-      "why": "the only trainer spawner in the town once the shell is down, with two air cells over it"
+      "why": "the only trainer spawner in the town once the shell is down, set INTO the court floor so the leader (spawned at its pos.above()) stands at the floor's level, not on a plinth (2026-10-04); two air cells over it"
     },
     {
       "op": "setblock",

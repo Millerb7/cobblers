@@ -265,7 +265,7 @@
         "source": "data/gym_buildings/gym1.json site.lot_level 141; the forecourt apron is polished_andesite at y141 (part 'the forecourt apron in front of the door', box 1811..1841 x 3659..3663)"
       },
       "faces": "west, toward the door (x1824-1828, z3664)",
-      "why": "Codex's anchor is 'built Brock gym prefab' with the donor origin (1838, 140, 3690), now the Stoneworks Hall. Brock the leader stands on the gallery at the spawner (1832, 156, 3696) and is not doubled there; the witness Brock stands outside on the forecourt, east of the door lamp at x1830, off the door line."
+      "why": "Codex's anchor is 'built Brock gym prefab' with the donor origin (1838, 140, 3690), now the Stoneworks Hall. Brock the leader stands on the gallery over the spawner (1832, 155, 3696, set into the gallery floor since 2026-10-04) and is not doubled there; the witness Brock stands outside on the forecourt, east of the door lamp at x1830, off the door line."
     },
     {
       "id": "npc_main_league_steward",

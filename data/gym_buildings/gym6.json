@@ -44,12 +44,12 @@
   "name": "Sabrina",
   "spawner": [
    6196,
-   112,
+   111,
    3312
   ],
   "powered_by": [
    6196,
-   111,
+   110,
    3312
   ],
   "why": "kanto_sabrina is the upstream Radical Cobblemon Trainers id and it is load-bearing: a persistent leader trainer anywhere awards the badge (verified on staging 2026-09-24, docs/STATE.md). EXP-013 E2 (VERIFIED, on staging): a bare rctmod:trainer_spawner set by command with TrainerIds on a redstone block spawned the leader and he battled. The donor shell's own spawner goes with the shell in this function's clearing fill, so this is the only kanto_sabrina in the town and the badge cannot be won without reaching the lens chamber.",
@@ -1272,21 +1272,21 @@
    "op": "setblock",
    "pos": [
     6196,
-    111,
+    110,
     3312
    ],
    "block": "minecraft:redstone_block",
-   "why": "the redstone block set into the lens floor. EXP-013 E2 (VERIFIED, on staging): an unpowered rctmod:trainer_spawner spawns nobody; on a redstone block the leader spawned and battled"
+   "why": "the redstone block in the course UNDER the lens floor, as the donor gyms set theirs (2026-10-04). EXP-013 E2 (VERIFIED, on staging): an unpowered rctmod:trainer_spawner spawns nobody; on a redstone block the leader spawned and battled"
   },
   {
    "op": "setblock",
    "pos": [
     6196,
-    112,
+    111,
     3312
    ],
    "block": "rctmod:trainer_spawner{TrainerIds:[\"kanto_sabrina\"]}",
-   "why": "Sabrina. kanto_sabrina is the upstream id (Radical Cobblemon Trainers); the donor shell's own spawner at the gym's old centre goes with the shell in the clearing fill above, so this is the only kanto_sabrina in the town. Two air cells stand over it (y113, y114) and nothing is written there"
+   "why": "Sabrina. kanto_sabrina is the upstream id (Radical Cobblemon Trainers); the donor shell's own spawner at the gym's old centre goes with the shell in the clearing fill above, so this is the only kanto_sabrina in the town. Set INTO the lens floor so she (spawned at its pos.above()) stands at the floor's level, not on a plinth (2026-10-04). Two air cells stand over it (y112, y113)"
   },
   {
    "op": "setblock",
