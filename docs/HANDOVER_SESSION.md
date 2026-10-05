@@ -24,7 +24,7 @@ decisions and every open item), and nothing else, before it starts.
   the owner's and the friend's accounts (all badges, rctmod progress through Giovanni; the friend's
   `rift_crisis_resolved` and stage `rift_released`); `cobblers_test` (Giovanni setup) in the world's datapacks; the
   unapplied waystone override parked in the scratchpad (not installed).
-- **In flight:** a content-architect is writing `docs/world-building/KYOGRE_CAVE.md` (Kyogre full design; Groudon in
+- **Done:** `docs/world-building/KYOGRE_CAVE.md` (committed) (Kyogre full design; Groudon in
   a volcano under lava and Rayquaza on a sky island through a relic portal, as companion outlines). If it is
   uncommitted when you start, read it, then commit it.
 - **Published pages:** Region Nuzlocke Map https://claude.ai/artifact/TbFP4bqU6hmpkUR3ZBv1mW (`tools/nuzlocke_map.py`),
