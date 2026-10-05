@@ -136,6 +136,9 @@ def load_rules(path: Path) -> dict:
         "scale": {k: v for k, v in comp["scale"].items() if k != "why"},
         "targets": {k: ratios[k] for k in KINDS.values()},
         "tolerance": ratios["tolerance"],
+        "tolerance_pokemon": ratios.get("tolerance_pokemon", 0),
+        "mining_situations_floor": comp["mining_towns"].get("situations_min"),
+        "mining_rest_split": comp["mining_towns"].get("rest_split"),
         "situations_floor": floor,
         "situations_floor_from": floor_from,
         "mining": list(comp["mining_towns"]["settlements"]),
@@ -149,13 +152,32 @@ def load_rules(path: Path) -> dict:
     }
 
 
+def share_band(kind, total, rules, mining):
+    """(target share, tolerance) for one kind in a town of `total`: the tolerance is composition.ratios.tolerance or
+    tolerance_pokemon / total, whichever is wider; in a mining town with rest_split "proportional" the other kinds
+    share 1 - working_min in the ratio of their own targets (composition.mining_towns.rest_why)."""
+    tol = max(rules["tolerance"], (rules.get("tolerance_pokemon") or 0) / float(total))
+    target = rules["targets"][kind]
+    if mining and kind != "working" and rules.get("mining_rest_split") == "proportional":
+        rest = sum(v for k, v in rules["targets"].items() if k != "working")
+        target = target / rest * (1 - rules["working_min"])
+    return target, tol
+
+
+def floor_for(rules, mining):
+    if mining and rules.get("mining_situations_floor") is not None:
+        return rules["mining_situations_floor"]
+    return rules["situations_floor"]
+
+
 def share_ok(n, total, kind, rules, mining) -> bool:
     s = n / total
     if kind == "working" and mining:
         return s >= rules["working_min"] - EPS
-    ok = abs(s - rules["targets"][kind]) <= rules["tolerance"] + EPS
+    target, tol = share_band(kind, total, rules, mining)
+    ok = abs(s - target) <= tol + EPS
     if kind == "situations":
-        ok = ok and s >= rules["situations_floor"] - EPS
+        ok = ok and s >= floor_for(rules, mining) - EPS
     return ok
 
 
@@ -388,15 +410,16 @@ def data_layer(rules, towns_dir, jar, jar_reason, atm):
             if kind == "working" and mining:
                 continue
             s = counts[t][kind] / n
-            if abs(s - rules["targets"][kind]) > rules["tolerance"] + EPS:
+            target, tol = share_band(kind, n, rules, mining)
+            if abs(s - target) > tol + EPS:
                 ratio_p.append(f"{t}: {kind} {counts[t][kind]}/{n} = {s:.3f}, outside "
-                               f"{rules['targets'][kind]} +- {rules['tolerance']}{why}")
+                               f"{target:.3f} +- {tol:.3f}{why}")
         s = counts[t]["situations"] / n
-        if rules["situations_floor"] is None:
+        fl = floor_for(rules, mining)
+        if fl is None:
             floor_p.append(f"{t}: the situations floor cannot be read from {rules['situations_floor_from']}")
-        elif s < rules["situations_floor"] - EPS:
-            floor_p.append(f"{t}: situations {counts[t]['situations']}/{n} = {s:.3f}, under "
-                           f"{rules['situations_floor']}{why}")
+        elif s < fl - EPS:
+            floor_p.append(f"{t}: situations {counts[t]['situations']}/{n} = {s:.3f}, under {fl}{why}")
         if mining:
             w = counts[t]["working"] / n
             if w < rules["working_min"] - EPS:

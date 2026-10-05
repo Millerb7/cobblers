@@ -135,8 +135,9 @@ def test_the_ceiling_is_read_from_the_rules_file(tmp_path):
 # Without this a town with no pets and too many placed would pass the 30/15/20/35 composition.
 def test_shares_outside_target_plus_tolerance_fail(tmp_path):
     problems = only_fails(audit(*build(tmp_path, "fail_ratios"), layer="data"), "ratios")
-    assert problems == ["alpha: pets 0/10 = 0.000, outside 0.15 +- 0.08",
-                        "alpha: placed 3/10 = 0.300, outside 0.2 +- 0.08"]
+    # the fixture's rules carry no tolerance_pokemon, so the band is the plain 0.08
+    assert problems == ["alpha: pets 0/10 = 0.000, outside 0.150 +- 0.080",
+                        "alpha: placed 3/10 = 0.300, outside 0.200 +- 0.080"]
 
 
 # Without this situations at 4/14 = 0.286 would pass: inside 0.35 +- 0.08 but under the owner's 0.30 floor.
@@ -331,11 +332,17 @@ def test_the_committed_rules_load_with_their_own_values():
 # Without this the rules' arithmetic limits would stay invisible. Hand-computed from 30/15/20/35 +- 0.08,
 # floor 0.30, mining working >= 0.50: an outpost admits only 6 (2/1/1/2); a mining town admits only 40
 # (20/3/5/12); no mining hamlet or outpost admits any total.
-def test_the_rules_admit_these_totals_only():
+# Without this the rules could again be unmeetable in whole numbers (2026-10-05, before tolerance_pokemon and the
+# mining rest split: an outpost could total only 6, a mining town only 40, and no mining hamlet at all).
+def test_every_total_in_every_size_band_admits_a_split():
     r = A.load_rules(ROOT / "data" / "ambient.json")
-    assert A.feasible_totals(3, 6, r, mining=False) == {6: [2, 1, 1, 2]}
-    assert A.feasible_totals(40, 48, r, mining=True) == {40: [20, 3, 5, 12]}
-    assert A.feasible_totals(3, 16, r, mining=True) == {}
+    scale = json.loads((ROOT / "data" / "ambient.json").read_text(encoding="utf-8"))["composition"]["scale"]
+    for size, band in scale.items():
+        if size == "why":
+            continue
+        for mining in (False, True):
+            got = A.feasible_totals(band[0], band[1], r, mining=mining)
+            assert sorted(got) == list(range(band[0], band[1] + 1)), (size, mining, sorted(got))
 
 
 # Without this a form or a namespaced id would count as a new species and dodge the variety rules.

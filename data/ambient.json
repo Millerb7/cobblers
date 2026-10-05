@@ -264,7 +264,9 @@
       "placed": 0.2,
       "situations": 0.35,
       "tolerance": 0.08,
-      "why": "the owner's rough target, varied per town as much as keeps towns distinct: each share within tolerance of its target, situations never under 0.30"
+      "tolerance_pokemon": 1,
+      "situations_min": 0.3,
+      "why": "the owner's rough target, varied per town as much as keeps towns distinct: each share within tolerance of its target or within tolerance_pokemon Pokemon of it, whichever is wider (the independent audit, 2026-10-05: at 0.08 alone an outpost could total only 6), situations never under situations_min"
     },
     "mining_towns": {
       "settlements": [
@@ -272,6 +274,9 @@
         "rift_dig_camp"
       ],
       "working_min": 0.5,
+      "rest_split": "proportional",
+      "situations_min": 0.2,
+      "rest_why": "a mining town's pets, placed and situations share what working leaves (1 - its working share target, working_min) in the owner's 15:20:35 proportion, each within the same tolerance, situations at least 0.20: at 0.50 working the general bands and the 0.30 floor could not be met together (the independent audit, 2026-10-05: no mining hamlet passed at any total)",
       "why": "the owner: mining towns go higher on working, at least 50%, mining or hauling. Fossick (the Craters' mining town) and the West Spur Dig"
     },
     "variety": {
