@@ -275,6 +275,16 @@
     "minecraft:decorated_pot",
     "minecraft:barrel[facing=up]"
    ]
+  },
+  "light": {
+   "counter": [
+    "minecraft:lantern[hanging=false]"
+   ],
+   "stock": [
+    "minecraft:barrel[facing=up]",
+    "minecraft:chain[axis=y]",
+    "minecraft:barrel[facing=up]"
+   ]
   }
  },
  "blocks": {
@@ -310,6 +320,7 @@
    "minecraft:cherry_trapdoor",
    "minecraft:cherry_wall_sign",
    "minecraft:chiseled_bookshelf",
+   "minecraft:chiseled_sandstone",
    "minecraft:chiseled_stone_bricks",
    "minecraft:coal_block",
    "minecraft:coarse_dirt",
@@ -321,6 +332,7 @@
    "minecraft:dark_oak_planks",
    "minecraft:dark_oak_slab",
    "minecraft:dark_oak_stairs",
+   "minecraft:dark_oak_trapdoor",
    "minecraft:dark_oak_wall_sign",
    "minecraft:decorated_pot",
    "minecraft:dried_kelp_block",
@@ -340,6 +352,7 @@
    "minecraft:jungle_planks",
    "minecraft:jungle_slab",
    "minecraft:jungle_stairs",
+   "minecraft:jungle_trapdoor",
    "minecraft:jungle_wall_sign",
    "minecraft:lantern",
    "minecraft:lectern",
@@ -363,6 +376,7 @@
    "minecraft:oak_planks",
    "minecraft:oak_slab",
    "minecraft:oak_stairs",
+   "minecraft:oak_trapdoor",
    "minecraft:oak_wall_sign",
    "minecraft:orange_carpet",
    "minecraft:orange_terracotta",
@@ -391,10 +405,12 @@
    "minecraft:smithing_table",
    "minecraft:smoker",
    "minecraft:smooth_basalt",
+   "minecraft:smooth_sandstone",
    "minecraft:spruce_fence",
    "minecraft:spruce_planks",
    "minecraft:spruce_slab",
    "minecraft:spruce_stairs",
+   "minecraft:spruce_trapdoor",
    "minecraft:spruce_wall_sign",
    "minecraft:stone",
    "minecraft:stone_brick_slab",
@@ -3006,6 +3022,552 @@
      "at": [
       2627,
       3589
+     ],
+     "why": "lights a part of the square no other light reaches"
+    }
+   ]
+  },
+  "gorge_hamlet": {
+   "name": "Bridgekeep",
+   "class": "small",
+   "coverage_max": 0.15,
+   "why": "The bridge-keepers' walled yard above the Tilpey gorge. Its plan promised 'a well at its centre' and no placement ever built one (TOWN_SQUARES_SURVEY 2, TOWN_CENTERS); a hamlet gets the well and one stall, not a market: the keepers' rope and line, the one trade a bridge town has.",
+   "palette": {
+    "wood": "jungle",
+    "awning": "minecraft:orange_carpet",
+    "post": "minecraft:jungle_fence",
+    "foundation": "minecraft:smooth_sandstone",
+    "well_rim": "minecraft:smooth_sandstone",
+    "well_cap": "minecraft:chiseled_sandstone"
+   },
+   "square": {
+    "rect": [
+     6798,
+     4353,
+     6828,
+     4381
+    ],
+    "y": 113,
+    "centrepiece": [
+     6806,
+     114,
+     4377
+    ]
+   },
+   "centrepiece": {
+    "id": "gorge_hamlet_well",
+    "kind": "well",
+    "near": [
+     6806,
+     4377
+    ],
+    "facing": "north",
+    "why": "the well the yard was planned round: a dry sandstone well, roofed in jungle wood, a chain down to the capped shaft (no water: a spawn condition)",
+    "at": [
+     6806,
+     4377
+    ]
+   },
+   "stalls": [
+    {
+     "id": "gorge_hamlet_stall_1",
+     "near": [
+      6824,
+      4374
+     ],
+     "facing": "west",
+     "sells": "rods",
+     "awning": "minecraft:orange_carpet",
+     "why": "the keepers' rope and line: string and a rod for the river under the bridge",
+     "at": [
+      6826,
+      114,
+      4376
+     ],
+     "keeper_at": [
+      6825,
+      114,
+      4376,
+      90
+     ]
+    }
+   ],
+   "pieces": [
+    {
+     "id": "gorge_hamlet_bench_1",
+     "kind": "bench",
+     "near": [
+      6824,
+      4359
+     ],
+     "facing": "west",
+     "why": "a bench under the east wall, looking west across the yard to the well",
+     "at": [
+      6824,
+      4359
+     ]
+    },
+    {
+     "id": "gorge_hamlet_lamp_1",
+     "kind": "lamp_post",
+     "at": [
+      6811,
+      4365
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "gorge_hamlet_lamp_2",
+     "kind": "lamp_post",
+     "at": [
+      6818,
+      4366
+     ],
+     "why": "lights a part of the square no other light reaches"
+    }
+   ]
+  },
+  "tableland_stop": {
+   "name": "Redbrow",
+   "class": "small",
+   "coverage_max": 0.15,
+   "why": "The waystation and the prospector's house on the badlands rim. The yard was bare red terracotta with the Prospector standing on it alone (TOWN_SQUARES_SURVEY 2): a sieve and its sample piles by the prospector's door give it a middle, the Prospector gets a tent, and the waystation's larder a second, so a rest stop sells a traveller a meal as well as a ball.",
+   "palette": {
+    "wood": "dark_oak",
+    "awning": "minecraft:orange_carpet",
+    "post": "minecraft:dark_oak_fence",
+    "foundation": "minecraft:terracotta",
+    "pile_a": "minecraft:raw_copper_block",
+    "pile_b": "minecraft:orange_terracotta"
+   },
+   "square": {
+    "rect": [
+     4830,
+     5680,
+     4856,
+     5700
+    ],
+    "y": 161,
+    "centrepiece": [
+     4846,
+     162,
+     5682
+    ]
+   },
+   "centrepiece": {
+    "id": "tableland_stop_sieve",
+    "kind": "sieve",
+    "near": [
+     4846,
+     5686
+    ],
+    "facing": "west",
+    "why": "the prospector's sieve: a screen over a catch barrel between two posts, a pile of raw copper and one of orange clay either side, the sorted finds behind",
+    "at": [
+     4846,
+     5682
+    ]
+   },
+   "stalls": [
+    {
+     "id": "tableland_stop_stall_1",
+     "near": [
+      4851,
+      5695
+     ],
+     "facing": "west",
+     "sells": "core_samples",
+     "awning": "minecraft:orange_carpet",
+     "why": "the Prospector's counter (data/markets.json counters redbrow): Soft Sand and a Heavy Ball, by his own door",
+     "at": [
+      4852,
+      162,
+      5696
+     ],
+     "keeper_at": [
+      4851,
+      162,
+      5696,
+      90
+     ]
+    },
+    {
+     "id": "tableland_stop_stall_2",
+     "near": [
+      4839,
+      5696
+     ],
+     "facing": "north",
+     "sells": "field_kitchen",
+     "awning": "minecraft:red_carpet",
+     "why": "the waystation's larder: a meal for the road off the tableland",
+     "at": [
+      4841,
+      162,
+      5694
+     ],
+     "keeper_at": [
+      4841,
+      162,
+      5693,
+      180
+     ]
+    }
+   ],
+   "pieces": [
+    {
+     "id": "tableland_stop_lamp_1",
+     "kind": "lamp_post",
+     "at": [
+      4848,
+      5684
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "tableland_stop_lamp_2",
+     "kind": "lamp_post",
+     "at": [
+      4830,
+      5693
+     ],
+     "why": "lights a part of the square no other light reaches"
+    }
+   ]
+  },
+  "rift_rim_stop": {
+   "name": "Rimwatch",
+   "class": "small",
+   "coverage_max": 0.15,
+   "why": "The rangers' post on the Rift rim: a boardwalk from the Centre to the overlook, and 'there is no square' (TOWN_SQUARES_SURVEY 2). It stays a boardwalk: the rangers' board at its middle, where the Rift's weather and closures are posted, and one tent of rim kit, so the post a player rests at before the Rift has something to buy.",
+   "palette": {
+    "wood": "spruce",
+    "awning": "minecraft:green_carpet",
+    "post": "minecraft:spruce_fence",
+    "foundation": "minecraft:spruce_planks"
+   },
+   "square": {
+    "rect": [
+     3746,
+     3948,
+     3772,
+     3956
+    ],
+    "y": 139,
+    "centrepiece": [
+     3759,
+     140,
+     3952
+    ]
+   },
+   "centrepiece": {
+    "id": "rift_rim_stop_rangers_board",
+    "kind": "notice_board",
+    "near": [
+     3759,
+     3950
+    ],
+    "facing": "south",
+    "lines": [
+     "RIMWATCH",
+     "Rift weather",
+     "and closures",
+     "ask a ranger"
+    ],
+    "why": "the rangers' board at the boardwalk's middle: the post's one civic thing",
+    "at": [
+     3759,
+     3952
+    ]
+   },
+   "stalls": [
+    {
+     "id": "rift_rim_stop_stall_1",
+     "near": [
+      3764,
+      3955
+     ],
+     "facing": "north",
+     "sells": "storm_gear",
+     "awning": "minecraft:green_carpet",
+     "why": "the rangers' rim kit: a glass, a compass and a lantern for the Rift's edge",
+     "at": [
+      3762,
+      140,
+      3955
+     ],
+     "keeper_at": [
+      3762,
+      140,
+      3954,
+      180
+     ]
+    }
+   ],
+   "pieces": []
+  },
+  "merian_hut": {
+   "name": "Merian Hut",
+   "class": "small",
+   "coverage_max": 0.15,
+   "why": "A bed at the end of a walk: the hut, its woodshed and its stable in a row along a cobbled apron (TOWN_SQUARES_SURVEY 2). A hamlet gets a well and one stall, not a market: the well in front of the hut, and the hut's larder in a tent, so the walker can buy a meal for the way on.",
+   "palette": {
+    "wood": "spruce",
+    "awning": "minecraft:brown_carpet",
+    "post": "minecraft:spruce_fence",
+    "foundation": "minecraft:cobblestone",
+    "well_rim": "minecraft:stone_bricks",
+    "well_cap": "minecraft:mossy_cobblestone"
+   },
+   "square": {
+    "rect": [
+     2779,
+     1032,
+     2847,
+     1038
+    ],
+    "y": 107,
+    "centrepiece": [
+     2831,
+     108,
+     1037
+    ]
+   },
+   "centrepiece": {
+    "id": "merian_hut_well",
+    "kind": "well",
+    "near": [
+     2826,
+     1036
+    ],
+    "facing": "north",
+    "why": "the hut's well on the apron: stone-brick rim, spruce roof, a chain to the capped shaft (dry: water is a spawn condition)",
+    "at": [
+     2831,
+     1037
+    ]
+   },
+   "stalls": [
+    {
+     "id": "merian_hut_stall_1",
+     "near": [
+      2790,
+      1037
+     ],
+     "facing": "north",
+     "sells": "provisions",
+     "awning": "minecraft:brown_carpet",
+     "why": "the hut's larder: food for the walk on",
+     "at": [
+      2790,
+      108,
+      1037
+     ],
+     "keeper_at": [
+      2790,
+      108,
+      1036,
+      180
+     ]
+    }
+   ],
+   "pieces": [
+    {
+     "id": "merian_hut_lamp_1",
+     "kind": "lamp_post",
+     "at": [
+      2838,
+      1035
+     ],
+     "why": "lights a part of the square no other light reaches"
+    },
+    {
+     "id": "merian_hut_lamp_2",
+     "kind": "lamp_post",
+     "at": [
+      2816,
+      1035
+     ],
+     "why": "lights a part of the square no other light reaches"
+    }
+   ]
+  },
+  "displaced_city": {
+   "name": "The Displaced City",
+   "class": "small",
+   "coverage_max": 0.15,
+   "why": "The summit town on the cavern's top bench. Its middle already stands -- the 16x16 summit square at y46 with the cairn carried down from the Scar in its centre (TOWN_SQUARES_SURVEY 2) -- but nowhere sold anything. Two tents on the square's free corners sell only what a town living underground makes for itself: light and what grows in the dark. Neither keeper is named for the people, whose own name is unwritten (docs/story/handoffs/DISPLACED_CITY_AND_SCAR.md question 13).",
+   "palette": {
+    "wood": "spruce",
+    "awning": "minecraft:brown_carpet",
+    "post": "minecraft:spruce_fence",
+    "foundation": "minecraft:stone_bricks"
+   },
+   "square": {
+    "rect": [
+     3321,
+     1750,
+     3336,
+     1765
+    ],
+    "y": 46,
+    "centrepiece": [
+     3328,
+     47,
+     1757
+    ]
+   },
+   "centrepiece": {
+    "id": "displaced_city_cairn",
+    "kind": "existing",
+    "placement": "displaced_cairn",
+    "near": [
+     3328,
+     1757
+    ],
+    "at": [
+     3328,
+     1757
+    ],
+    "facing": "north",
+    "why": "the summit cairn the town carried down from the Scar (data/placements.json displaced_cairn): the square's middle already, built by its own placement; this build writes nothing for it"
+   },
+   "stalls": [
+    {
+     "id": "displaced_city_stall_1",
+     "near": [
+      3333,
+      1752
+     ],
+     "facing": "west",
+     "sells": "light",
+     "awning": "minecraft:brown_carpet",
+     "why": "the lamp-maker's tent: lanterns and torches, a cavern town's one export",
+     "at": [
+      3333,
+      47,
+      1752
+     ],
+     "keeper_at": [
+      3332,
+      47,
+      1752,
+      90
+     ]
+    },
+    {
+     "id": "displaced_city_stall_2",
+     "near": [
+      3324,
+      1763
+     ],
+     "facing": "north",
+     "sells": "herbs",
+     "awning": "minecraft:green_carpet",
+     "why": "the cave garden's tent: mushrooms and glow berries grown on the benches",
+     "at": [
+      3324,
+      47,
+      1763
+     ],
+     "keeper_at": [
+      3324,
+      47,
+      1762,
+      180
+     ]
+    }
+   ],
+   "pieces": [],
+   "walk_from": [
+    {
+     "id": "summit_stair_top",
+     "at": [
+      3336,
+      1756
+     ],
+     "why": "the top of the summit stair (data/placements.json displaced_summit_stair, x3337-3344 z1755-1757), the one way up from the old road onto the square; the town has no Pokemon Center to walk from"
+    }
+   ]
+  },
+  "rift_dig_camp": {
+   "name": "West Spur Dig",
+   "class": "small",
+   "coverage_max": 0.15,
+   "why": "The archaeologists' camp on the Rift's west spur: eight tents, the finds shed and a gravel middle with nothing on it (TOWN_SQUARES_SURVEY 2). The sieve the finds go through stands in the middle, and the camp's stores sell the tools of the dig -- the brush above all, which is how a player works the suspicious blocks the Rift is full of.",
+   "palette": {
+    "wood": "spruce",
+    "awning": "minecraft:brown_carpet",
+    "post": "minecraft:spruce_fence",
+    "foundation": "minecraft:packed_mud",
+    "pile_a": "minecraft:tuff",
+    "pile_b": "minecraft:coarse_dirt"
+   },
+   "square": {
+    "rect": [
+     3100,
+     3290,
+     3116,
+     3316
+    ],
+    "y": 89,
+    "centrepiece": [
+     3109,
+     90,
+     3300
+    ]
+   },
+   "walk_from": [
+    {
+     "placement": "dig_finds_shed",
+     "why": "the finds shed, the camp's one building with a door (the dig has no Pokemon Center)"
+    }
+   ],
+   "centrepiece": {
+    "id": "rift_dig_camp_sieve",
+    "kind": "sieve",
+    "near": [
+     3108,
+     3303
+    ],
+    "facing": "south",
+    "why": "the finds sieve: a screen over a catch barrel, a pile of tuff spoil and one of dug earth either side, the sorted finds behind",
+    "at": [
+     3109,
+     3300
+    ]
+   },
+   "stalls": [
+    {
+     "id": "rift_dig_camp_stall_1",
+     "near": [
+      3112,
+      3296
+     ],
+     "facing": "west",
+     "sells": "tools",
+     "awning": "minecraft:brown_carpet",
+     "why": "the dig's stores, by the finds shed: brushes, a shovel and light for the trenches",
+     "at": [
+      3112,
+      90,
+      3296
+     ],
+     "keeper_at": [
+      3111,
+      90,
+      3296,
+      90
+     ]
+    }
+   ],
+   "pieces": [
+    {
+     "id": "rift_dig_camp_lamp_1",
+     "kind": "lamp_post",
+     "at": [
+      3104,
+      3316
      ],
      "why": "lights a part of the square no other light reaches"
     }

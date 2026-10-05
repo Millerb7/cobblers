@@ -1110,7 +1110,10 @@ def site_problems(doc, traders, source_root=None, skip_dressing=False, plazas=No
                 why = site.blocked(x + dx, z + dz)
                 if why:
                     out.append("%s: the cell (%d, %d) is taken by %s" % (where, x + dx, z + dz, why))
-        if y - 1 < sea:
+        # below the sea level on the surface is under water; a settlement on a cavern's floor (the Displaced City,
+        # tools/ground.py GROUND_KINDS) is below it by design and dry, its air the cavern plan's, so the rule is the
+        # surface's only (2026-10-05: the summit square is at y46 against the sea's y62)
+        if y - 1 < sea and (placements["settlements"].get(s) or {}).get("ground") != "cavern_floor":
             out.append("%s: its ground y%d is under the sea level y%d" % (where, y - 1, sea))
         for what, q in others + [(o[0], tuple(o[2])) for o in built if o[1] is not c]:
             if math.dist((x, y, z), q) < NPC_CLEAR:

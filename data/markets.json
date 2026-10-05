@@ -374,7 +374,7 @@
       "status": "sited",
       "at": [4832, 162, 5687],
       "yaw": -75,
-      "site_why": "sited 2026-10-03 (the owner: 'every town should have somewhere a player goes to spend money'; this answers Q-4 as yes, a small one). The stop has no Mart and so no clerk to stand beside, so the Prospector keeps a stall on the yard instead (markets.py: a counter with a `stall` and no clerk is held to the stall rule): data/placements.json tableland_stop plan.plaza [4830, 5680, 4856, 5700] y161, the yard's west inner edge by the waystation door, 4.5+ from the waystone (4832, 5682), off the lamp grid, facing the yard's centre",
+      "site_why": "sited 2026-10-03 (the owner: 'every town should have somewhere a player goes to spend money'; this answers Q-4 as yes, a small one). The stop has no Mart and so no clerk to stand beside, so the Prospector keeps a stall on the yard instead (markets.py: a counter with a `stall` and no clerk is held to the stall rule): data/placements.json tableland_stop plan.plaza [4830, 5680, 4856, 5700] y161, the yard's west inner edge by the waystation door, 4.5+ from the waystone (4832, 5682), off the lamp grid, facing the yard's centre. 2026-10-05: the yard got its square (data/plaza_centres.json tableland_stop), so the Prospector now stands at the contract's keeper_at, the open front of stall 1 by his own house on the yard's east side ([4851, 162, 5696] yaw 90, markets.position); `at` and `yaw` here are the fallback, kept as every other counter's is (tools/plaza_centre.py masks a counter's `at`, so the contract seat must not be copied here)",
       "sited_by": "as sunset_harbour",
       "stall": "tableland_stop_stall_1",
       "near_trader": null,
@@ -864,6 +864,102 @@
         {"id": "carrot", "item": "minecraft:carrot", "name": "Carrot", "count": 8, "price": 160, "gate": null, "strand": "provision", "why": "the fields', 20 each against bank.json's 5", "verified": "minecraft 1.21.1 jar"},
         {"id": "potato", "item": "minecraft:potato", "name": "Potato", "count": 8, "price": 160, "gate": null, "strand": "provision", "why": "the fields', 20 each against bank.json's 5", "verified": "minecraft 1.21.1 jar"}
       ]
+    },
+    {
+      "id": "bridgekeep_rope_and_line", "town": "gorge_hamlet", "stall": "gorge_hamlet_stall_1", "path": "off_path", "badge": null, "status": "sited",
+      "at": [6825, 114, 4376], "yaw": 90,
+      "site_why": "the contract seat (data/plaza_centres.json gorge_hamlet_stall_1, keeper_at), copied: the tent under the yard's east wall, facing west across the yard to the well",
+      "keeper": {"name": "Bridge Keeper", "greeting": "Line for the river, string for the rest. The bridge takes all the rope we make."},
+      "theme": "the bridge-keepers' hamlet above the Tilpey gorge: what a bridge town makes is rope and line",
+      "sells": "rods", "category": "Rope and Line",
+      "stall_why": "2026-10-05, the owner: 'Every town should have somewhere a player goes to spend money'. no_counter called this hamlet 'a candidate if the owner wants one (rope, not stock)'; this is that, a stall and not a counter. Every line is an ungated vanilla provision, off the budget curve (stalls_basis.budget), at Sunset West's net-loft prices",
+      "stock": [
+        {"id": "string", "item": "minecraft:string", "name": "String", "count": 8, "price": 240, "gate": null, "strand": "provision", "why": "the keepers' cord, 30 each against bank.json's 1 (the net loft's price)", "verified": "minecraft 1.21.1 jar, read 2026-10-05 by tools/markets.py ids"},
+        {"id": "fishing_rod", "item": "minecraft:fishing_rod", "name": "Fishing Rod", "count": 1, "price": 350, "gate": null, "strand": "provision", "why": "a line for the river under the bridge (the net loft's price; no bank price)", "verified": "minecraft 1.21.1 jar, read 2026-10-05 by tools/markets.py ids"}
+      ]
+    },
+    {
+      "id": "redbrow_waystation_larder", "town": "tableland_stop", "stall": "tableland_stop_stall_2", "path": "off_path", "badge": null, "status": "sited",
+      "at": [4841, 162, 5693], "yaw": 180,
+      "site_why": "the contract seat (data/plaza_centres.json tableland_stop_stall_2, keeper_at), copied: the tent on the yard's south side, in front of the waystation, facing north",
+      "keeper": {"name": "Waystation Cook", "greeting": "Potatoes bake in the clay oven, rabbit off the rim. Eat before the descent."},
+      "theme": "the waystation on the badlands rim: a meal for the road off the tableland",
+      "sells": "field_kitchen", "category": "Waystation Larder",
+      "stall_why": "2026-10-05: the Prospector's counter sells only Soft Sand and a Heavy Ball (power, for players with money to spend on a ball); a rest stop also feeds the traveller, so the waystation's larder is its second tent. Ungated vanilla provisions, off the budget curve (stalls_basis.budget), at the field kitchens' prices",
+      "stock": [
+        {"id": "baked_potato", "item": "minecraft:baked_potato", "name": "Baked Potato", "count": 6, "price": 240, "gate": null, "strand": "provision", "why": "40 each against bank.json's 10 (Cinderlee's field kitchen's price)", "verified": "minecraft 1.21.1 jar, read 2026-10-05 by tools/markets.py ids"},
+        {"id": "cooked_rabbit", "item": "minecraft:cooked_rabbit", "name": "Cooked Rabbit", "count": 4, "price": 320, "gate": null, "strand": "provision", "why": "badlands rabbit, 80 each against bank.json's 20", "verified": "minecraft 1.21.1 jar, read 2026-10-05 by tools/markets.py ids"},
+        {"id": "rabbit_stew", "item": "minecraft:rabbit_stew", "name": "Rabbit Stew", "count": 1, "price": 120, "gate": null, "strand": "provision", "why": "120 against bank.json's 30", "verified": "minecraft 1.21.1 jar, read 2026-10-05 by tools/markets.py ids"}
+      ]
+    },
+    {
+      "id": "rimwatch_rangers_kit", "town": "rift_rim_stop", "stall": "rift_rim_stop_stall_1", "path": "off_path", "badge": null, "status": "sited",
+      "at": [3762, 140, 3954], "yaw": 180,
+      "site_why": "the contract seat (data/plaza_centres.json rift_rim_stop_stall_1, keeper_at), copied: the tent on the boardwalk's south side, east of the rangers' board, facing north",
+      "keeper": {"name": "Rim Ranger", "greeting": "Glass for the far wall, a compass for when the fog comes up, a lamp for the night watch."},
+      "theme": "the rangers' post on the Rift rim: the kit a ranger carries to the edge",
+      "sells": "storm_gear", "category": "Rim Kit",
+      "stall_why": "2026-10-05, the owner: 'Every town should have somewhere a player goes to spend money'. no_counter keeps Rimwatch without a counter (Holdfast is the last stores before the Road, and nothing here is a rung); this is a stall of ungated vanilla instruments, off the budget curve (stalls_basis.budget), at Highwire's and Northlight's prices",
+      "stock": [
+        {"id": "spyglass", "item": "minecraft:spyglass", "name": "Spyglass", "count": 1, "price": 900, "gate": null, "strand": "provision", "why": "across the Rift to the far wall (Highwire's price; no bank price)", "verified": "minecraft 1.21.1 jar, read 2026-10-05 by tools/markets.py ids"},
+        {"id": "compass", "item": "minecraft:compass", "name": "Compass", "count": 1, "price": 600, "gate": null, "strand": "provision", "why": "for the fog off the Rift (Northlight's price; no bank price)", "verified": "minecraft 1.21.1 jar, read 2026-10-05 by tools/markets.py ids"},
+        {"id": "lantern", "item": "minecraft:lantern", "name": "Lantern", "count": 4, "price": 480, "gate": null, "strand": "provision", "why": "the night watch's lamp, 120 each (Highwire's price; no bank price)", "verified": "minecraft 1.21.1 jar, read 2026-10-05 by tools/markets.py ids"}
+      ]
+    },
+    {
+      "id": "merian_hut_larder", "town": "merian_hut", "stall": "merian_hut_stall_1", "path": "off_path", "badge": null, "status": "sited",
+      "at": [2790, 108, 1036], "yaw": 180,
+      "site_why": "the contract seat (data/plaza_centres.json merian_hut_stall_1, keeper_at), copied: the tent on the apron's west end, in front of the stable, facing north",
+      "keeper": {"name": "Hut Warden", "greeting": "Bread from the morning, mutton from the stable's flock. It's a long way down either side."},
+      "theme": "a mountain hut at the end of a walk: food for the walk on",
+      "sells": "provisions", "category": "Hut Larder",
+      "stall_why": "2026-10-05, the owner: 'Every town should have somewhere a player goes to spend money'. no_counter keeps the hut without a counter ('a bed at the end of a walk', PROGRESSION_LADDER 1.2: nothing here is a rung); a hamlet gets one stall, and a hut's is its larder. Ungated vanilla provisions, off the budget curve (stalls_basis.budget), at the bakehouses' and kitchens' prices",
+      "stock": [
+        {"id": "bread", "item": "minecraft:bread", "name": "Bread", "count": 6, "price": 240, "gate": null, "strand": "provision", "why": "40 each against bank.json's 5", "verified": "minecraft 1.21.1 jar, read 2026-10-05 by tools/markets.py ids"},
+        {"id": "cooked_mutton", "item": "minecraft:cooked_mutton", "name": "Cooked Mutton", "count": 4, "price": 320, "gate": null, "strand": "provision", "why": "the stable's flock, 80 each against bank.json's 20", "verified": "minecraft 1.21.1 jar, read 2026-10-05 by tools/markets.py ids"},
+        {"id": "beetroot_soup", "item": "minecraft:beetroot_soup", "name": "Beetroot Soup", "count": 1, "price": 100, "gate": null, "strand": "provision", "why": "a hot bowl at the hut, 100 against bank.json's 20", "verified": "minecraft 1.21.1 jar, read 2026-10-05 by tools/markets.py ids"}
+      ]
+    },
+    {
+      "id": "displaced_lampwright", "town": "displaced_city", "stall": "displaced_city_stall_1", "path": "off_path", "badge": null, "status": "sited",
+      "at": [3332, 47, 1752], "yaw": 90,
+      "site_why": "the contract seat (data/plaza_centres.json displaced_city_stall_1, keeper_at), copied: the tent in the summit square's north-east corner, facing west to the cairn",
+      "keeper": {"name": "Lampwright", "greeting": "Down here a lamp is the first thing anyone makes and the last thing they sell."},
+      "theme": "a town living underground makes its own light",
+      "sells": "light", "category": "Lamps",
+      "stall_why": "2026-10-05, the owner: 'Every town should have somewhere a player goes to spend money'. no_counter recorded 'a market would decide a story question' (the residents' own name is unwritten, docs/story/handoffs/DISPLACED_CITY_AND_SCAR.md question 13); the story handoff says nothing about trade, so the stall sells only what any town in the dark would make, and its keeper is named for the trade, never for the people. OWNER TO CONFIRM. Ungated vanilla provisions, off the budget curve (stalls_basis.budget), at the Rimside chandler's prices",
+      "stock": [
+        {"id": "lantern", "item": "minecraft:lantern", "name": "Lantern", "count": 4, "price": 480, "gate": null, "strand": "provision", "why": "120 each (the Rimside chandler's price; no bank price)", "verified": "minecraft 1.21.1 jar, read 2026-10-05 by tools/markets.py ids"},
+        {"id": "torch", "item": "minecraft:torch", "name": "Torch", "count": 16, "price": 160, "gate": null, "strand": "provision", "why": "10 each (the Rimside chandler's price; no bank price)", "verified": "minecraft 1.21.1 jar, read 2026-10-05 by tools/markets.py ids"}
+      ]
+    },
+    {
+      "id": "displaced_cave_garden", "town": "displaced_city", "stall": "displaced_city_stall_2", "path": "off_path", "badge": null, "status": "sited",
+      "at": [3324, 47, 1762], "yaw": 180,
+      "site_why": "the contract seat (data/plaza_centres.json displaced_city_stall_2, keeper_at), copied: the tent in the summit square's south-west corner, facing north to the cairn",
+      "keeper": {"name": "Cave Gardener", "greeting": "Mushrooms off the lower benches, berries off the vines. Nothing here has seen the sun."},
+      "theme": "the benches' farms grow what grows without sun",
+      "sells": "herbs", "category": "Cave Garden",
+      "stall_why": "as displaced_lampwright (OWNER TO CONFIRM). The town's farms (data/placements.json displaced_farms) are the source; ungated vanilla provisions, off the budget curve, at Stoneford's and Tilpey's herbalists' prices",
+      "stock": [
+        {"id": "brown_mushroom", "item": "minecraft:brown_mushroom", "name": "Brown Mushroom", "count": 4, "price": 160, "gate": null, "strand": "provision", "why": "40 each (the herbalists' price; no bank price)", "verified": "minecraft 1.21.1 jar, read 2026-10-05 by tools/markets.py ids"},
+        {"id": "red_mushroom", "item": "minecraft:red_mushroom", "name": "Red Mushroom", "count": 4, "price": 160, "gate": null, "strand": "provision", "why": "40 each (the herbalists' price; no bank price)", "verified": "minecraft 1.21.1 jar, read 2026-10-05 by tools/markets.py ids"},
+        {"id": "glow_berries", "item": "minecraft:glow_berries", "name": "Glow Berries", "count": 4, "price": 240, "gate": null, "strand": "provision", "why": "60 each against bank.json's 20 (Greenhollow's price)", "verified": "minecraft 1.21.1 jar, read 2026-10-05 by tools/markets.py ids"}
+      ]
+    },
+    {
+      "id": "dig_stores", "town": "rift_dig_camp", "stall": "rift_dig_camp_stall_1", "path": "off_path", "badge": null, "status": "sited",
+      "at": [3111, 90, 3296], "yaw": 90,
+      "site_why": "the contract seat (data/plaza_centres.json rift_dig_camp_stall_1, keeper_at), copied: the tent on the gravel middle's east side, below the finds shed, facing west",
+      "keeper": {"name": "Dig Quartermaster", "greeting": "Brushes, mostly. Everyone thinks they'll find the big one with a shovel."},
+      "theme": "an archaeologists' dig sells the tools of the dig",
+      "sells": "tools", "category": "Dig Stores",
+      "stall_why": "2026-10-05, the owner: 'Every town should have somewhere a player goes to spend money'. no_counter keeps the dig without a counter ('an archaeologists' dig, not a town'); the brush is how a player works suspicious blocks, so the camp's stores are the one place on the spur that sells it. Ungated vanilla provisions, off the budget curve (stalls_basis.budget), at Cinderlee's and Fossick's prices",
+      "stock": [
+        {"id": "brush", "item": "minecraft:brush", "name": "Brush", "count": 1, "price": 300, "gate": null, "strand": "provision", "why": "the archaeologist's tool (Cinderlee's core shed's price; no bank price)", "verified": "minecraft 1.21.1 jar, read 2026-10-05 by tools/markets.py ids"},
+        {"id": "iron_shovel", "item": "minecraft:iron_shovel", "name": "Iron Shovel", "count": 1, "price": 500, "gate": null, "strand": "provision", "why": "for the trenches (Fossick's price; no bank price)", "verified": "minecraft 1.21.1 jar, read 2026-10-05 by tools/markets.py ids"},
+        {"id": "torch", "item": "minecraft:torch", "name": "Torch", "count": 16, "price": 160, "gate": null, "strand": "provision", "why": "10 each, for the cuts into the spur (no bank price)", "verified": "minecraft 1.21.1 jar, read 2026-10-05 by tools/markets.py ids"}
+      ]
     }
   ],
   "places_beyond_towns": [
@@ -873,14 +969,14 @@
   "no_counter": [
     {"town": "deep_city", "why": "the Compact's own counter is story-gated (TOWN_SQUARES_SURVEY 6, owner question 6: does the Compact sell, and to whom); Rimside's stalls are staffed under stalls (deep_rimside_*), unsited until its front row's positions are read. Its Mart clerk is NOT built: a data/traders.json record needs the league_mart template's shopkeeper jigsaw carried through the city's placement, which tools/deep_city.py does not record"},
     {"town": "league","why": "the League sells nothing (PROGRESSION_LADDER 1.1 row 9); netherite and TMCraft grade 6 are rewards, owner Q-5"},
-    {"town": "displaced_city", "why": "a summit town of displaced people, no trader record, and its residents' own name is still unwritten; a market would decide a story question"},
-    {"town": "merian_hut", "why": "a bed at the end of a walk (PROGRESSION_LADDER 1.2)"},
-    {"town": "gorge_hamlet", "why": "the bridge-keepers' hamlet has no trade to sell; a candidate if the owner wants one (rope, not stock)"},
-    {"town": "rift_rim_stop", "why": "a rangers' post: a Centre, not a shop (PROGRESSION_LADDER 1.2); Holdfast is the last stores before the Road"},
+    {"town": "displaced_city", "why": "a summit town of displaced people, no trader record, and its residents' own name is still unwritten; a badge counter would decide a story question. 2026-10-05: its places to spend are two stalls on the summit square (stalls displaced_lampwright, displaced_cave_garden), ungated CobbleDollars merchants named for their trades, never for the people (OWNER TO CONFIRM: until then the recorded reason was against any market)"},
+    {"town": "merian_hut", "why": "a bed at the end of a walk (PROGRESSION_LADDER 1.2): no badge shelf. Its one place to spend is the larder (stalls merian_hut_larder), an ungated CobbleDollars merchant on the apron, 2026-10-05"},
+    {"town": "gorge_hamlet", "why": "the bridge-keepers' hamlet has no badge shelf. Its one place to spend is the rope-and-line stall (stalls bridgekeep_rope_and_line), an ungated CobbleDollars merchant on the yard, 2026-10-05: the 'rope, not stock' this entry offered"},
+    {"town": "rift_rim_stop", "why": "a rangers' post: a Centre, not a shop (PROGRESSION_LADDER 1.2); Holdfast is the last stores before the Road. Its one place to spend is the rangers' kit (stalls rimwatch_rangers_kit), an ungated CobbleDollars merchant of instruments on the boardwalk, 2026-10-05: no rung, no ball"},
     {"town": "relic_island", "why": "an outpost reached by the free Relic row; dark and unkept is the point"},
     {"town": "the_scar", "why": "dark and unkept by design"},
     {"town": "viltri_light", "why": "a lighthouse, not a town"},
-    {"town": "rift_dig_camp", "why": "an archaeologists' dig, not a town"},
+    {"town": "rift_dig_camp", "why": "an archaeologists' dig, not a town: no badge shelf. Its one place to spend is the dig stores (stalls dig_stores), an ungated CobbleDollars merchant on the gravel middle, 2026-10-05"},
     {"town": "frostpeak_shrine", "why": "a shrine at the top of the world"},
     {"town": "jungle_ruins", "why": "dark and unkept by design"},
     {"town": "great_oak_pallet", "why": "a landmark tree"},

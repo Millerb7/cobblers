@@ -40,6 +40,14 @@ THE CONTRACT (with the trader builder; do not rename):
   block's y, which is the keeper's feet y. The build recomputes all of it from the piece and REFUSES on any drift, so
   the record cannot say one thing while the function builds another.
 
+Walking (2026-10-05, the hamlets and the summit town): every stall's customer cell, the centrepiece and every bench is
+reached on foot from the Pokemon Center's door and the Mart's where the town has them. A settlement with no Centre (the
+Displaced City, the West Spur Dig) names `walk_from` -- [{"placement": <id with a template door>, "why"} or {"id", "at":
+[x, z], "why"}] -- where a player arrives instead; a settlement WITH a Centre still walks from it whatever walk_from adds.
+A centrepiece the town already has (the Displaced City's cairn, an earthwork placement) is {"kind": "existing",
+"placement": <earthwork id>, "at": [x, z]}: this build writes nothing for it, checks that its placement builds that column
+above the floor inside the square, and walks to the cells beside it.
+
 Spawn-neutral: no block data/spawn_blocks.json lists (water, bells, leaves, flowers, wool, lightning rods, iron
 blocks ...): a square must not decide what spawns in a town (TOWN_CENTERS rule 7). Every block is in the data's
 `blocks.ids`, each checked against the 1.21.1 client jar's blockstates when that jar is present (`check-ids`).
@@ -689,6 +697,23 @@ def piece_barrel_stack(town, spec, goods):
     return p
 
 
+def piece_sieve(town, spec, goods):
+    """A prospector's sieve, 5 by 2: a trapdoor screen on a catch barrel between two posts, a sample pile at each end
+    and a crate of sorted finds behind (TOWN_SQUARES_SURVEY 4, Redbrow: "sample piles and a sieve on the yard"). The
+    piles are `pile_a` and `pile_b` (raw blocks or terracotta: none is a spawn condition; sand and gravel would be,
+    or would fall)."""
+    p = Piece()
+    wood = pal(town, spec, "wood", "spruce")
+    p.put(0, 0, 0, "minecraft:barrel[facing=up]")                       # the catch
+    p.put(0, 1, 0, "minecraft:%s_trapdoor[half=bottom,open=false]" % wood)  # the screen
+    for x in (-1, 1):
+        p.column(x, 0, 0, 1, "minecraft:%s_fence" % wood)                # the frame's posts
+    p.put(-2, 0, 0, pal(town, spec, "pile_a", "minecraft:raw_copper_block"))
+    p.put(2, 0, 0, pal(town, spec, "pile_b", "minecraft:terracotta"))
+    p.put(0, 0, 1, "minecraft:barrel[facing=up]")                       # the sorted finds
+    return p
+
+
 def piece_carpet_eye(town, spec, goods):
     """A flush eye laid in carpet on the paving: the crossing stays flat. White and yellow carpet are spawn
     conditions, so the eye's white is light grey."""
@@ -782,7 +807,7 @@ PIECES = {
     "notice_board": piece_notice_board, "stone_lantern": piece_stone_lantern, "well": piece_well,
     "brazier": piece_brazier, "pylon": piece_pylon, "sighting_post": piece_sighting_post, "onix_run": piece_onix_run,
     "standing_stones": piece_standing_stones, "boat_hull": piece_boat_hull, "net_rack": piece_net_rack,
-    "barrel_stack": piece_barrel_stack, "carpet_eye": piece_carpet_eye, "plinth": piece_plinth,
+    "barrel_stack": piece_barrel_stack, "sieve": piece_sieve, "carpet_eye": piece_carpet_eye, "plinth": piece_plinth,
     "pavilion": piece_pavilion, "parterre": piece_parterre, "pergola": piece_pergola, "first_step": piece_first_step,
 }
 
@@ -804,6 +829,8 @@ def seat(town, rec, spec, goods):
     kind = spec["kind"]
     if kind == "path":
         return seat_path(town, spec)
+    if kind == "existing":
+        return seat_existing(town, spec)
     if kind not in PIECES:
         raise SystemExit("%s/%s: unknown piece kind %r (known: %s)" % (town.settlement, spec["id"], kind,
                                                                        ", ".join(sorted(PIECES))))
@@ -856,6 +883,27 @@ def seat(town, rec, spec, goods):
             raise SystemExit("%s/%s: its open cell %s has a block at feet or head height" % (town.settlement, spec["id"], c))
         out["open"].add(c)
     return out
+
+
+def seat_existing(town, spec):
+    """A centrepiece the town already has, built by its own placement (the Displaced City's summit cairn, an earthwork
+    placed by tools/place_town.py): this build writes NOTHING for it. It names the placement, which must be one of this
+    settlement's earthworks, and `at`, which must be a column that placement builds above the square's floor and inside
+    the square; the square's centrepiece is then that column. Reach is to the cells beside it."""
+    q = next((p for p in town.doc["placements"] if p.get("id") == spec.get("placement")
+              and p.get("settlement") == town.settlement), None)
+    if q is None or q.get("kind") != "earthwork":
+        raise SystemExit("%s/%s: existing centrepiece %r is not an earthwork placement of this settlement"
+                         % (town.settlement, spec["id"], spec.get("placement")))
+    at = (spec["at"][0], spec["at"][-1])
+    cols = earthwork_columns(q.get("commands"), town.y)
+    if at not in cols:
+        raise SystemExit("%s/%s: %s builds nothing above the floor at %s" % (town.settlement, spec["id"], q["id"], list(at)))
+    r = town.rect
+    if not (r[0] <= at[0] <= r[2] and r[1] <= at[1] <= r[3]):
+        raise SystemExit("%s/%s: %s is outside the square" % (town.settlement, spec["id"], list(at)))
+    return {"blocks": [], "cols": [], "floor": town.floor_at(*at) + 1, "flush": True, "facing": "north",
+            "origin": at, "existing": sorted(c for c in cols if r[0] <= c[0] <= r[2] and r[1] <= c[1] <= r[3])}
 
 
 PATH_MAY_CROSS = ("street", "street verge", "walked route line", "outside the square")
@@ -1034,6 +1082,9 @@ def plan_town(settlement, rec, doc, ground, refs, data):
     for _spec, st in seated:
         opened |= st.get("open") or set()
     occupied = {c for c, (_pid, flush) in taken.items() if not flush} - opened
+    # an existing centrepiece's own columns (its placement built them): not this build's furniture, so not counted
+    # against coverage, but a wall to the walk
+    existing = {tuple(c) for _spec, st in seated for c in st.get("existing") or []}
     rect_n = (town.rect[2] - town.rect[0] + 1) * (town.rect[3] - town.rect[1] + 1)
     cover = len(occupied) / rect_n
     cap = float(rec.get("coverage_max", 0.15))
@@ -1091,11 +1142,27 @@ def plan_town(settlement, rec, doc, ground, refs, data):
                          % (settlement, len(dark), dark[:4]))
     # walking: every stall's customer cell, the centrepiece and every bench from the Centre's and the Mart's doors
     starts = {d["role"]: (bid, d["front"]) for bid, d in town.doors.items() if d["role"] in ("pokecenter", "pokemart")}
-    if "pokecenter" not in starts:
-        raise SystemExit("%s: no Pokemon Center door found (a placement with a template file and role pokecenter)" % settlement)
+    # a settlement with no Centre (an outpost, the dig, the summit town): the walk starts where the record's
+    # `walk_from` says a player arrives -- a placement's door (as doors() finds it) or a named cell -- each with its why.
+    # A settlement that HAS a Centre walks from it whatever walk_from adds: the starts are never fewer than before
+    has_centre = any(q.get("settlement") == settlement and "pokecenter" in q["id"] for q in doc["placements"])
+    for i, w in enumerate(rec.get("walk_from") or []):
+        if not w.get("why"):
+            raise SystemExit("%s: walk_from %d has no why" % (settlement, i))
+        if w.get("placement"):
+            if w["placement"] not in town.doors:
+                raise SystemExit("%s: walk_from %s is not a placement with a template door here" % (settlement, w["placement"]))
+            starts["from %s" % w["placement"]] = (w["placement"], town.doors[w["placement"]]["front"])
+        elif isinstance(w.get("at"), list) and len(w["at"]) == 2:
+            starts["from %s" % (w.get("id") or i)] = (w.get("id") or "walk_from %d" % i, tuple(w["at"]))
+        else:
+            raise SystemExit("%s: walk_from %d names neither a placement nor an at [x, z]" % (settlement, i))
+    if "pokecenter" not in starts and (has_centre or not rec.get("walk_from")):
+        raise SystemExit("%s: no Pokemon Center door found (a placement with a template file and role pokecenter)%s"
+                         % (settlement, "" if has_centre else "; a settlement with no Centre names walk_from"))
     reach = {}
     for role, (bid, front) in sorted(starts.items()):
-        seen = walk(town, front, occupied)
+        seen = walk(town, front, occupied | existing)
         on_square = [seen[c] for c in rect_cells(town.rect) if c in seen]
         if not on_square:
             raise SystemExit("%s: the square cannot be reached on foot from %s's door at %s" % (settlement, bid, front))
@@ -1111,10 +1178,13 @@ def plan_town(settlement, rec, doc, ground, refs, data):
             goal = st.get("customer")
             if goal is not None:
                 goals = [goal]
+            elif st.get("existing"):
+                goals = [n for c in st["existing"] for n in ((c[0] + 1, c[1]), (c[0] - 1, c[1]), (c[0], c[1] + 1),
+                                                             (c[0], c[1] - 1)) if n not in occupied and n not in existing]
             else:
                 goals = [n for c in st["cols"] for n in ((c[0] + 1, c[1]), (c[0] - 1, c[1]), (c[0], c[1] + 1), (c[0], c[1] - 1))
                          if n not in occupied]
-            if st["flush"]:
+            if st["flush"] and not st.get("existing"):
                 goals = list(st["cols"])
             if not any(g in seen for g in goals):
                 raise SystemExit("%s/%s: cannot be reached on foot from %s's door" % (settlement, spec["id"], bid))
@@ -1131,6 +1201,15 @@ def plan_town(settlement, rec, doc, ground, refs, data):
     for spec, st in seated:
         cols, ys = st["cols"], [b[1] for b in st["blocks"]]
         cmds.append("# %s: %s (%s)" % (spec["id"], spec["kind"], (spec.get("why") or spec.get("sells") or "")[:100]))
+        if st.get("existing") is not None:
+            # built by its own placement: nothing is written here, and the report carries its columns, not blocks
+            cmds.append("# %s stands by placement %s (%d columns on the square); this function writes nothing for it"
+                        % (spec["id"], spec["placement"], len(st["existing"])))
+            report["pieces"].append({"id": spec["id"], "kind": "existing", "role": spec["role"], "at": spec.get("at"),
+                                     "placement": spec["placement"], "facing": st["facing"], "floor_y": st["floor"],
+                                     "flush": True, "columns": [], "existing_columns": [list(c) for c in st["existing"]],
+                                     "blocks": [], "check": None})
+            continue
         if spec["kind"] == "path":
             # plants off the link first, so none is left standing on paving
             for x, y, z, _s in st["blocks"]:
@@ -1189,13 +1268,15 @@ def build(a):
         (REPORT / ("%s.json" % settlement)).write_text(json.dumps(report, indent=1), encoding="utf-8")
         names.append(settlement)
         stalls = sum(1 for p in report["pieces"] if p["kind"] == "stall")
-        print("%-12s %-14s %3d pieces, %d stalls, %5d blocks, cover %4.1f%%, Centre door %s steps, Mart door %s steps"
+        print("%-12s %-14s %3d pieces, %d stalls, %5d blocks, cover %4.1f%%, Centre door %s steps, Mart door %s steps%s"
               % (settlement, report["name"], len(report["pieces"]), stalls,
                  sum(len(p["blocks"]) for p in report["pieces"]), 100 * report["coverage"],
                  report["reach"].get("pokecenter", {}).get("steps_to_square", "-"),
-                 report["reach"].get("pokemart", {}).get("steps_to_square", "-")))
+                 report["reach"].get("pokemart", {}).get("steps_to_square", "-"),
+                 "".join(", %s %s steps" % (k, v["steps_to_square"]) for k, v in sorted(report["reach"].items())
+                         if k.startswith("from "))))
     (FUNCS / "index.txt").write_text("\n".join(names) + "\n", encoding="utf-8")
-    checks = [p["check"] for s in names for p in load_json(REPORT / ("%s.json" % s))["pieces"]]
+    checks = [p["check"] for s in names for p in load_json(REPORT / ("%s.json" % s))["pieces"] if p.get("check")]
     (REPORT / "checks.txt").write_text("\n".join(checks) + "\n", encoding="utf-8")
     print("wrote", PACK)
 

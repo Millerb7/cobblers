@@ -32,11 +32,16 @@ YAW = {"south": 0, "west": 90, "north": 180, "east": -90}
 # the survey's twelve: no middle, a bare one, Steepside's partial one, and Pallet's crossroads
 SURVEYED = {"hometown", "gym1_town", "gym2_town", "gym3_town", "gym4_town", "gym5_town", "gym6_town", "gym7_town",
             "gym8_town", "sunset_west", "sea_town", "tea_town"}
+# 2026-10-05, the owner: "Several towns still have no middle at all ... Every town should have somewhere a player goes
+# to spend money." The places with people and no middle or nowhere to spend: the four rest stops, the summit town (its
+# cairn square existed, nothing sold) and the Dig. A hamlet gets a well (or its one civic thing) and ONE stall
+HAMLETS = {"gorge_hamlet", "merian_hut", "rift_rim_stop", "rift_dig_camp"}
+SECOND = HAMLETS | {"tableland_stop", "displaced_city"}
 
 
 # ------------------------------------------------------------------------------------------- the contract, data only
 def test_every_surveyed_town_has_a_square():
-    assert set(DATA["towns"]) == SURVEYED
+    assert set(DATA["towns"]) == SURVEYED | SECOND
 
 
 @pytest.mark.parametrize("town", sorted(DATA["towns"]))
@@ -90,11 +95,12 @@ def test_stall_ids_unique_across_towns():
 
 
 def test_stall_counts_follow_the_size_class():
-    """The survey's rule: small 2, medium 4, large 6; Pallet (intact) and Steepside (the survey's 2) excepted."""
+    """The survey's rule: small 2, medium 4, large 6; Pallet (intact), Steepside (the survey's 2) and the hamlets (one
+    stall each, 2026-10-05) excepted."""
     want = {"small": 2, "medium": 4, "large": 6}
     for town, rec in DATA["towns"].items():
         n = len(rec["stalls"])
-        if town == "hometown":
+        if town == "hometown" or town in HAMLETS:
             assert n == 1
         elif town == "tea_town":
             assert n == 2
@@ -213,18 +219,38 @@ def _walk(t, start, occupied):
     return seen
 
 
+def _starts(t, town):
+    """{label: (x, z)} where a walk to the square starts: the Centre's and the Mart's doors; for a settlement with NO
+    Centre placement, the record's walk_from (a placement's door or a named cell) instead -- and a settlement with a
+    Centre must have its door here whatever walk_from says."""
+    doors = {d["role"]: d["front"] for d in t.doors.values() if d["role"] in ("pokecenter", "pokemart")}
+    has_centre = any(q.get("settlement") == town and "pokecenter" in q["id"] for q in DOC["placements"])
+    if has_centre:
+        assert "pokecenter" in doors, "%s: no Centre door" % town
+        return doors
+    out = dict(doors)
+    for w in DATA["towns"][town].get("walk_from") or []:
+        out["from %s" % (w.get("placement") or w.get("id"))] = (
+            t.doors[w["placement"]]["front"] if w.get("placement") else tuple(w["at"]))
+    assert out, "%s: no Centre and no walk_from" % town
+    return out
+
+
 @needs_inputs
 @pytest.mark.parametrize("town", sorted(DATA["towns"]))
 def test_square_reachable_from_the_centre_and_mart_doors(built, town):
     _cmds, report, t = built[town]
-    occupied = {tuple(c) for p in report["pieces"] if not p["flush"] for c in p["columns"]}
-    doors = {d["role"]: d["front"] for d in t.doors.values() if d["role"] in ("pokecenter", "pokemart")}
-    assert "pokecenter" in doors, "%s: no Centre door" % town
-    for role, front in doors.items():
+    existing = {tuple(c) for p in report["pieces"] for c in p.get("existing_columns") or []}
+    occupied = {tuple(c) for p in report["pieces"] if not p["flush"] for c in p["columns"]} | existing
+    for role, front in _starts(t, town).items():
         seen = _walk(t, front, occupied)
         for p in report["pieces"]:
             if p["kind"] == "stall":
                 assert tuple(p["customer"]) in seen, "%s: %s not reached from the %s" % (town, p["id"], role)
+            elif p["kind"] == "existing":
+                ring = {(x + dx, z + dz) for x, z in map(tuple, p["existing_columns"])
+                        for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1))} - occupied
+                assert ring & seen, "%s: %s not reached from the %s" % (town, p["id"], role)
             elif p["role"] == "centrepiece" or p["kind"] == "bench":
                 cols = {tuple(c) for c in p["columns"]}
                 ring = cols if p["flush"] else {(x + dx, z + dz) for x, z in cols
@@ -272,7 +298,8 @@ def test_every_keeper_reached_face_to_face_from_the_aisle(built, town):
             continue
         if t.floor_at(x, z) < y <= t.floor_at(x, z) + 2:
             walls.add((x, z))
-    front = next(d["front"] for d in t.doors.values() if d["role"] == "pokecenter")
+    starts = _starts(t, town)
+    front = starts.get("pokecenter") or next(iter(starts.values()))
     seen = _walk(t, front, walls)
     for p in report["pieces"]:
         if p["kind"] != "stall":
@@ -373,6 +400,68 @@ def test_mutation_mask_off_is_caught_here(monkeypatch):
         pytest.skip("another rule refused the mutated stall first: %s" % e)
     cols = {tuple(c) for p in report["pieces"] if p["kind"] == "stall" for c in p["columns"]}
     assert cols & streets, "the mutation did not put a stall on the street"
+
+
+def _cairn_columns():
+    """The Displaced City cairn's columns above the summit square's floor, read here from its placement's own commands
+    (my parser, not plaza_centre.earthwork_columns)."""
+    q = next(p for p in DOC["placements"] if p["id"] == "displaced_cairn")
+    y0 = DATA["towns"]["displaced_city"]["square"]["y"]
+    cols = set()
+    for c in q["commands"]:
+        m = re.match(r"\s*(fill|setblock) (-?\d+) (-?\d+) (-?\d+)(?: (-?\d+) (-?\d+) (-?\d+))? (\S+)", c)
+        if not m or P.block_name(m.group(8)) == "minecraft:air":
+            continue
+        v = [int(m.group(i)) for i in (2, 3, 4)]
+        w = [int(m.group(i)) for i in (5, 6, 7)] if m.group(5) else v
+        if max(v[1], w[1]) <= y0:
+            continue
+        cols |= {(x, z) for x in range(min(v[0], w[0]), max(v[0], w[0]) + 1)
+                 for z in range(min(v[2], w[2]), max(v[2], w[2]) + 1)}
+    return cols
+
+
+@needs_inputs
+def test_existing_centrepiece_is_the_cairn_and_nothing_is_written_on_it(built):
+    """The Displaced City's middle is its cairn, built by its own placement: the square's centrepiece is one of the
+    cairn's columns, the report's existing columns are the cairn's (on the square), and the function writes no block in
+    any of them."""
+    cmds, report, _t = built["displaced_city"]
+    cairn = _cairn_columns()
+    sq = DATA["towns"]["displaced_city"]["square"]
+    assert (sq["centrepiece"][0], sq["centrepiece"][2]) in cairn
+    piece = next(p for p in report["pieces"] if p["kind"] == "existing")
+    x0, z0, x1, z1 = sq["rect"]
+    assert {tuple(c) for c in piece["existing_columns"]} == {c for c in cairn if x0 <= c[0] <= x1 and z0 <= c[1] <= z1}
+    written = {(x, z) for (x, _y, z) in _voxels(cmds)}
+    assert not written & cairn
+
+
+@needs_inputs
+def test_mutation_existing_centrepiece_columns_shifted_is_caught(monkeypatch):
+    """Shift the columns the GENERATOR reads off an earthwork (data untouched): the cairn's centre cell is then not
+    among them and the build refuses, or the report's columns no longer match the cairn read here."""
+    import ground as G
+    real = P.earthwork_columns
+    monkeypatch.setattr(P, "earthwork_columns", lambda cmds, y: {(x + 4, z) for x, z in real(cmds, y)})
+    rec = DATA["towns"]["displaced_city"]
+    try:
+        _cmds, report = P.plan_town("displaced_city", rec, DOC, P.ground_for("displaced_city", G.Ground(), DOC, None),
+                                    P.refs_of(), DATA)
+    except SystemExit as e:
+        assert "builds nothing above the floor" in str(e) or "not free" in str(e)
+        return
+    piece = next(p for p in report["pieces"] if p["kind"] == "existing")
+    assert {tuple(c) for c in piece["existing_columns"]} != _cairn_columns()
+
+
+def test_a_settlement_without_a_centre_names_where_it_is_walked_from():
+    """No Centre placement, then walk_from with a why; a Centre, then no walk_from is needed."""
+    for town, rec in DATA["towns"].items():
+        has_centre = any(q.get("settlement") == town and "pokecenter" in q["id"] for q in DOC["placements"])
+        if not has_centre:
+            assert rec.get("walk_from"), "%s: no Centre and no walk_from" % town
+            assert all(w.get("why") for w in rec["walk_from"]), town
 
 
 # ------------------------------------------------------------------------------------------------- the step R13
