@@ -304,15 +304,9 @@
       "northlight",
       "mining_town",
       "tea_town",
-      "displaced_city",
-      "viltri_light",
-      "gorge_hamlet",
-      "tableland_stop",
-      "rift_rim_stop",
-      "rift_dig_camp",
-      "merian_hut"
+      "viltri_light"
     ],
-    "scope_held": {"sea_town": "held 2026-10-06 (docs/OVERNIGHT_REVIEW_2026-10-06.md N20): its file, data/ambient_towns_held/sea_town.json, clashes with the generator (a pet with no open cell beside its owner); back into scope when it composes"},
+    "scope_held": {"displaced_city": "held 2026-10-06 (docs/OVERNIGHT_REVIEW_2026-10-06.md N42): the build's replay of the cavern town refuses its situations on built blocks the town-plan check cannot see (a Duskull line meets a lantern, then the rising floor's cobblestone): re-site its situations against the built cavern", "gorge_hamlet": "held 2026-10-06 (docs/OVERNIGHT_REVIEW_2026-10-06.md N41): authored before tonight's new square in this town (tools/plaza_centre.py, data/plaza_centres.json); the built square takes cells its situations and pets used. Its file is in data/ambient_towns_held/; back into scope when re-sited against the square", "tableland_stop": "held 2026-10-06 (docs/OVERNIGHT_REVIEW_2026-10-06.md N41): authored before tonight's new square in this town (tools/plaza_centre.py, data/plaza_centres.json); the built square takes cells its situations and pets used. Its file is in data/ambient_towns_held/; back into scope when re-sited against the square", "rift_rim_stop": "held 2026-10-06 (docs/OVERNIGHT_REVIEW_2026-10-06.md N41): authored before tonight's new square in this town (tools/plaza_centre.py, data/plaza_centres.json); the built square takes cells its situations and pets used. Its file is in data/ambient_towns_held/; back into scope when re-sited against the square", "merian_hut": "held 2026-10-06 (docs/OVERNIGHT_REVIEW_2026-10-06.md N41): authored before tonight's new square in this town (tools/plaza_centre.py, data/plaza_centres.json); the built square takes cells its situations and pets used. Its file is in data/ambient_towns_held/; back into scope when re-sited against the square", "rift_dig_camp": "held 2026-10-06 (docs/OVERNIGHT_REVIEW_2026-10-06.md N41): authored before tonight's new square in this town (tools/plaza_centre.py, data/plaza_centres.json); the built square takes cells its situations and pets used. Its file is in data/ambient_towns_held/; back into scope when re-sited against the square", "sea_town": "held 2026-10-06 (docs/OVERNIGHT_REVIEW_2026-10-06.md N20): its file, data/ambient_towns_held/sea_town.json, clashes with the generator (a pet with no open cell beside its owner); back into scope when it composes"},
     "scope_why": "every settlement with a town plan and people; Pallet (hometown) stays intact by the owner's earlier call; the League, Relic Island, the Scar and the retired jungle ruins have no townsfolk",
     "town_file": {
       "path": "data/ambient_towns/<settlement>.json",

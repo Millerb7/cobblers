@@ -1444,15 +1444,25 @@ def plan(source_root=None, packs=None, towns_dir=None):
                         cells.setdefault(c, set()).add(site.y(*c))
     built = Built(packs or PACKS, g, cells, steps)
     towns, everyone, shortfalls, town_props, summaries = {}, [], [], {}, {}
+    failed = []
     for s, (site, bld) in csites.items():
         site.built = built
-        idlers, props = compose_town(s, composed[s], site, bld, rules, comp, sizes)
-        wp = worker_points([w for w in workers if w["settlement"] == s], site, data["rules"])
-        summaries[s] = enforce(s, composed[s], idlers, wp, site, doc, comp)
+        # every composed town is tried and each one's first refusal named, then the build fails once: the town authors
+        # can only check against the plan (compose), so a built-town refusal is found here, and one per run is slow
+        try:
+            idlers, props = compose_town(s, composed[s], site, bld, rules, comp, sizes)
+            wp = worker_points([w for w in workers if w["settlement"] == s], site, data["rules"])
+            summaries[s] = enforce(s, composed[s], idlers, wp, site, doc, comp)
+        except IdleError as e:
+            failed.append(str(e))
+            continue
         towns[s] = idlers
         everyone += idlers
         if props:
             town_props[s] = props
+    if failed:
+        raise IdleError("ambient_idle: %d composed town(s) refused by the built town:\n  %s"
+                        % (len(failed), "\n  ".join(failed)))
     for s, spec in specs.items():
         site = sites[s]
         site.built = built
