@@ -1,17 +1,16 @@
 {
   "schema": 1,
   "generated_by": "hand",
-  "status": "authored 2026-10-03; generated into the world-local pack cobblers_markets by tools/markets.py; keepers placed by tools/reapply.py R17M; NOT run in game (docs/mechanics/MARKET_GATING.md section 5 is the experiment)",
+  "status": "authored 2026-10-03; generated into the world-local pack cobblers_markets by tools/markets.py; since 2026-10-06 every seller, counter and stall, is a CobbleDollars merchant summoned by R17M through cobblers:stalls/merchants/all (decision counters_are_merchants); a merchant's purchase through its own screen is NOT yet observed in game",
   "owner_brief": "the owner, 2026-10-03: 'I want a player to rely on money throughout the game, and to advance materially as they travel ... Backpack tiers from the Cobbleverse backpack mod, unlocked town by town so a player upgrades as they go ... Per-town stock that reads as the place - a mining town sells what a mining town would. Priced so money matters.'",
   "mechanism": {
-    "summary": "a market keeper is a Cobblemon dialogue NPC beside the town's Mart: one option per shelf item, an option gated on a badge visible only to a player holding that badge (compile_dialogue 'flag' probe -> isVisible), each option running a function that re-checks the gate, reads the balance, refuses if short, charges by macro, verifies the balance fell by exactly the price, and only then gives the item as the player. The ferry's sequence (tools/ferries.py trip_lines) with the teleport replaced by a give",
+    "summary": "since 2026-10-06 (decision counters_are_merchants) a market counter's keeper is a CobbleDollars merchant (cobbledollars:cobble_merchant) at its seat, built exactly as a stall's (stall_merchant): one CobbleMerchantShop category named by the counter's `category`, one offer per shelf line at the line's unit price; the merchant's own screen (Categories / Offers / Buy) takes the money. The screen shows one list to every player, so no line is gated any more: every line that was gated on a badge carries gate_dropped with its old gate. Until 2026-10-06 the keeper was a Cobblemon dialogue NPC with badge-gated options and a checked purchase function (superseded_dialogue_purchase)",
     "sources": [
-      "docs/mechanics/MARKET_GATING.md sections 4-5 (the recommendation and its experiment)",
-      "tools/compile_dialogue.py: visible_when -> isVisible; the flag probe; the function effect",
-      "tools/ferries.py trip_lines: cooldown, gate re-check, balance read (EXP-040), macro charge (EXP-042 run 1), verify",
-      "experiments/EXP-022-native-dialogue-runtime/README.md bugs 1-2: give runs as the player, and the score objective exists before a store"
+      "the owner, 2026-10-06, after playing: 'need the steve traders gone. the button list for purchases is bad, should be the villagers with ui only'",
+      "docs/research/notes/cobbleverse-merchants.md sections 1-3: the merchant entity, VillagerData and CobbleMerchantShop shape",
+      "docs/mechanics/MARKET_GATING.md section 1: an entity's shop is one list, the same for every player (why the gates go)"
     ],
-    "rung": "5 (datapack) + 7 (functions), with 2 (CobbleDollars) for the money and 4 (configuration) for the recipes; no scripting layer, no companion, no mod",
+    "rung": "2 (CobbleDollars) for the shop and the money, 5 (datapack) + 7 (functions) for the summon, 4 (configuration) for the recipes; no scripting layer, no companion, no mod",
     "what_it_is_not": "the Mart clerks (data/traders.json) are untouched: they keep the trade GUI and the ungated basics. A town gets a clerk AND a keeper"
   },
   "income_basis": {
@@ -32,21 +31,6 @@
     "gym6_cleared": "the Marsh Badge",
     "gym7_cleared": "the Volcano Badge",
     "gym8_cleared": "the Earth Badge"
-  },
-  "purchase": {
-    "cooldown_ticks": 20,
-    "cooldown_why": "the ferry's rule (data/ferries.json trip.cooldown_why): a second submit of the same option must not pay twice. The menu closes after every purchase, so one second is ample"
-  },
-  "messages": {
-    "voice": "PLACEHOLDERS for Codex's voice (the keepers' greetings are on the counters). Placeholders: {item}, {price}, {count}, {requirement}, and {balance} in 'short' only",
-    "option": "{item}: ${price}",
-    "option_count": "{item} x{count}: ${price}",
-    "leave": "Just looking.",
-    "short": "That's ${price}. You have ${balance}.",
-    "gated": "I only sell that to trainers with {requirement}.",
-    "charge_failed": "The payment didn't go through, so nothing changed hands. Check your balance and try again.",
-    "give_failed": "I couldn't hand that over, so your ${price} is back with you.",
-    "paid": "Paid ${price} for {item}."
   },
   "recipe_overlay": {
     "file": "modpack/config/sophisticatedcore-common.toml",
@@ -74,6 +58,7 @@
       "stall_why": "the squares' contract's one Pallet stall is `packs`, 'the Packmaker ... leather pack and bedroll, by the Mart': this counter's own stock, word for word",
       "near_trader": "hometown_mart",
       "keeper": {"name": "Packmaker", "greeting": "First time out? Everyone leaves Pallet with a pack and a bedroll. The rest you'll buy on the road."},
+      "category": "Packs and Bedrolls",
       "theme": "the one town that is a house: the last thing home gives you is the means never to come back (PROGRESSION_LADDER 1.1)",
       "stock": [
         {"id": "backpack", "item": "sophisticatedbackpacks:backpack", "name": "Leather backpack", "count": 1, "price": 300, "gate": null, "strand": "convenience", "why": "tier 1 of 6: 27 slots, 1 upgrade slot. Craftable too (recipe_overlay.left_craftable)"},
@@ -93,13 +78,14 @@
       "near_trader": "gym1_mart",
       "sited_by": "measured 2026-10-03: the nearest cell to the Mart clerk that tools/ambient.py's Site marks free (lots, anchors, lamps, building footprints with a 1-block margin, earthworks) on all 3x3 round it, level with its neighbours, 3.5+ blocks from every placed NPC and 3+ from every walked route line; y = the plan's ground + 1. The dressing pieces were not in that measurement (derived/signposts.json absent in the agent worktree): tools/markets.py audit checks them in a full checkout",
       "keeper": {"name": "Yard Steward", "greeting": "Masons' yard. Boulder Badge holders can buy from the back shelf: copper packs, the stonecutter and anvil fittings, and, if you can stand the price, the crafting kit."},
+      "category": "Packs and Fittings",
       "theme": "the plateau's builders' town, dressed with a stonecutter, a grindstone and an anvil bench (TOWN_CHARACTER.md): a masons' town sells workstations",
       "stock": [
-        {"id": "copper_backpack", "item": "sophisticatedbackpacks:copper_backpack", "name": "Copper backpack", "count": 1, "price": 1200, "gate": "gym1_cleared", "strand": "convenience", "why": "tier 2: 45 slots"},
-        {"id": "stonecutter_upgrade", "item": "sophisticatedbackpacks:stonecutter_upgrade", "name": "Stonecutter upgrade", "count": 1, "price": 1800, "gate": "gym1_cleared", "strand": "convenience", "why": "a mason's tool, in the pack"},
-        {"id": "anvil_upgrade", "item": "sophisticatedbackpacks:anvil_upgrade", "name": "Anvil upgrade", "count": 1, "price": 2500, "gate": "gym1_cleared", "strand": "convenience", "why": "repairs on the road, while gear is still repaired rather than replaced (PROGRESSION_LADDER 4.1)"},
-        {"id": "hard_stone", "item": "cobblemon:hard_stone", "name": "Hard Stone", "count": 1, "price": 500, "gate": "gym1_cleared", "strand": "power", "why": "the rock town's held item, replacing the TM blank the ladder put here (TIERED_GOODS 2.2)"},
-        {"id": "crafting_upgrade", "item": "sophisticatedbackpacks:crafting_upgrade", "name": "Crafting upgrade", "count": 1, "price": 7500, "gate": "gym1_cleared", "strand": "convenience", "stretch": true, "affordable_by": 3, "why": "decision B7: price as the gate. Visible from badge 1, affordable around badge 3 to a player who saves (PROGRESSION_LADDER 4)"}
+        {"id": "copper_backpack", "item": "sophisticatedbackpacks:copper_backpack", "name": "Copper backpack", "count": 1, "price": 1200, "gate": null, "gate_dropped": {"gate": "gym1_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "why": "tier 2: 45 slots"},
+        {"id": "stonecutter_upgrade", "item": "sophisticatedbackpacks:stonecutter_upgrade", "name": "Stonecutter upgrade", "count": 1, "price": 1800, "gate": null, "gate_dropped": {"gate": "gym1_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "why": "a mason's tool, in the pack"},
+        {"id": "anvil_upgrade", "item": "sophisticatedbackpacks:anvil_upgrade", "name": "Anvil upgrade", "count": 1, "price": 2500, "gate": null, "gate_dropped": {"gate": "gym1_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "why": "repairs on the road, while gear is still repaired rather than replaced (PROGRESSION_LADDER 4.1)"},
+        {"id": "hard_stone", "item": "cobblemon:hard_stone", "name": "Hard Stone", "count": 1, "price": 500, "gate": null, "gate_dropped": {"gate": "gym1_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "the rock town's held item, replacing the TM blank the ladder put here (TIERED_GOODS 2.2)"},
+        {"id": "crafting_upgrade", "item": "sophisticatedbackpacks:crafting_upgrade", "name": "Crafting upgrade", "count": 1, "price": 7500, "gate": null, "gate_dropped": {"gate": "gym1_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "stretch": true, "affordable_by": 3, "why": "decision B7: price as the gate. Visible from badge 1, affordable around badge 3 to a player who saves (PROGRESSION_LADDER 4)"}
       ]
     },
     {
@@ -115,12 +101,13 @@
       "near_trader": "gym2_mart",
       "sited_by": "as stoneford",
       "keeper": {"name": "Rescue Quartermaster", "greeting": "We kit out the rescue crews. Cascade Badge holders can have what the crews carry: water tanks, filters, and the stronger medicine."},
+      "category": "Rescue Kit",
       "theme": "the lake town that takes in whoever the water brings: a rescue crew sells water carried and medicine",
       "stock": [
-        {"id": "filter_upgrade", "item": "sophisticatedbackpacks:filter_upgrade", "name": "Filter upgrade", "count": 1, "price": 1200, "gate": "gym2_cleared", "strand": "convenience", "why": "sorting matters while the pack is small (PROGRESSION_LADDER 4.1)"},
-        {"id": "tank_upgrade", "item": "sophisticatedbackpacks:tank_upgrade", "name": "Tank upgrade", "count": 1, "price": 1500, "gate": "gym2_cleared", "strand": "convenience", "why": "water carried, for a lake crew"},
-        {"id": "super_potion", "item": "cobblemon:super_potion", "name": "Super Potion", "count": 3, "price": 1200, "gate": "gym2_cleared", "strand": "power", "why": "the first medicine above the Mart's Potion, released from stock_policy's withheld Treatments; 400 each against bank.json's 175 sell-back"},
-        {"id": "mystic_water", "item": "cobblemon:mystic_water", "name": "Mystic Water", "count": 1, "price": 1000, "gate": "gym2_cleared", "strand": "power", "why": "the water town's held item"}
+        {"id": "filter_upgrade", "item": "sophisticatedbackpacks:filter_upgrade", "name": "Filter upgrade", "count": 1, "price": 1200, "gate": null, "gate_dropped": {"gate": "gym2_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "why": "sorting matters while the pack is small (PROGRESSION_LADDER 4.1)"},
+        {"id": "tank_upgrade", "item": "sophisticatedbackpacks:tank_upgrade", "name": "Tank upgrade", "count": 1, "price": 1500, "gate": null, "gate_dropped": {"gate": "gym2_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "why": "water carried, for a lake crew"},
+        {"id": "super_potion", "item": "cobblemon:super_potion", "name": "Super Potion", "count": 3, "price": 1200, "gate": null, "gate_dropped": {"gate": "gym2_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "the first medicine above the Mart's Potion, released from stock_policy's withheld Treatments; 400 each against bank.json's 175 sell-back"},
+        {"id": "mystic_water", "item": "cobblemon:mystic_water", "name": "Mystic Water", "count": 1, "price": 1000, "gate": null, "gate_dropped": {"gate": "gym2_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "the water town's held item"}
       ]
     },
     {
@@ -136,12 +123,13 @@
       "near_trader": "gym3_mart",
       "sited_by": "as stoneford",
       "keeper": {"name": "Relay Storekeeper", "greeting": "Relay stores. Thunder Badge holders can have the iron pack, a battery, a magnet, and Great Balls by the five."},
+      "category": "Relay Stores",
       "theme": "the signal town that keeps the power and the relays running: the one trade that would sell a battery",
       "stock": [
-        {"id": "iron_backpack", "item": "sophisticatedbackpacks:iron_backpack", "name": "Iron backpack", "count": 1, "price": 4500, "gate": "gym3_cleared", "strand": "convenience", "why": "tier 3, the hinge: 81 slots and 7 upgrade slots, a complete 'no house' loadout (PROGRESSION_LADDER 2.1)"},
-        {"id": "battery_upgrade", "item": "sophisticatedbackpacks:battery_upgrade", "name": "Battery upgrade", "count": 1, "price": 1500, "gate": "gym3_cleared", "strand": "convenience", "why": "the relay town's own stock"},
-        {"id": "magnet", "item": "cobblemon:magnet", "name": "Magnet", "count": 1, "price": 800, "gate": "gym3_cleared", "strand": "power", "why": "the electric town's held item"},
-        {"id": "great_ball", "item": "cobblemon:great_ball", "name": "Great Ball", "count": 5, "price": 1750, "gate": "gym3_cleared", "strand": "power", "why": "the first ball above the Mart's Poke Ball (200), released from the withheld Pokeballs; 350 each, under defaultShop's 750 because the clerk's Poke Ball is already half defaultShop's"}
+        {"id": "iron_backpack", "item": "sophisticatedbackpacks:iron_backpack", "name": "Iron backpack", "count": 1, "price": 4500, "gate": null, "gate_dropped": {"gate": "gym3_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "why": "tier 3, the hinge: 81 slots and 7 upgrade slots, a complete 'no house' loadout (PROGRESSION_LADDER 2.1)"},
+        {"id": "battery_upgrade", "item": "sophisticatedbackpacks:battery_upgrade", "name": "Battery upgrade", "count": 1, "price": 1500, "gate": null, "gate_dropped": {"gate": "gym3_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "why": "the relay town's own stock"},
+        {"id": "magnet", "item": "cobblemon:magnet", "name": "Magnet", "count": 1, "price": 800, "gate": null, "gate_dropped": {"gate": "gym3_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "the electric town's held item"},
+        {"id": "great_ball", "item": "cobblemon:great_ball", "name": "Great Ball", "count": 5, "price": 1750, "gate": null, "gate_dropped": {"gate": "gym3_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "the first ball above the Mart's Poke Ball (200), released from the withheld Pokeballs; 350 each, under defaultShop's 750 because the clerk's Poke Ball is already half defaultShop's"}
       ]
     },
     {
@@ -157,14 +145,15 @@
       "near_trader": "gym4_mart",
       "sited_by": "as stoneford",
       "keeper": {"name": "Green Grocer", "greeting": "From the green. Rainbow Badge holders can buy the feeding fittings, malasadas and puffs your partners will love you for, and a Miracle Seed."},
+      "category": "From the Green",
       "theme": "the garden town built round a green: food, and the feeding upgrade is food that follows you",
       "stock": [
-        {"id": "feeding_upgrade", "item": "sophisticatedbackpacks:feeding_upgrade", "name": "Feeding upgrade", "count": 1, "price": 2000, "gate": "gym4_cleared", "strand": "convenience", "why": "food that follows you"},
-        {"id": "advanced_feeding_upgrade", "item": "sophisticatedbackpacks:advanced_feeding_upgrade", "name": "Advanced feeding upgrade", "count": 1, "price": 4500, "gate": "gym4_cleared", "strand": "convenience", "why": "the second step of the same"},
-        {"id": "sweet_malasada", "item": "cobblecuisine:sweet_malasada", "name": "Sweet Malasada", "count": 1, "price": 900, "gate": "gym4_cleared", "strand": "power", "why": "friendship +12 (cobblecuisine.json malasadaFriendship): a friendship evolution bought rather than walked. The plain 'malasada' id does not exist (TIERED_GOODS 2.6)"},
-        {"id": "sweet_pokepuff", "item": "cobblecuisine:sweet_pokepuff", "name": "Sweet Pokepuff", "count": 1, "price": 500, "gate": "gym4_cleared", "strand": "power", "why": "friendship +6 (pokepuffFriendship)"},
-        {"id": "miracle_seed", "item": "cobblemon:miracle_seed", "name": "Miracle Seed", "count": 1, "price": 1000, "gate": "gym4_cleared", "strand": "power", "why": "the grass town's held item"},
-        {"id": "full_heal", "item": "cobblemon:full_heal", "name": "Full Heal", "count": 3, "price": 900, "gate": "gym4_cleared", "strand": "power", "why": "released Remedies: the garden's cure-all"}
+        {"id": "feeding_upgrade", "item": "sophisticatedbackpacks:feeding_upgrade", "name": "Feeding upgrade", "count": 1, "price": 2000, "gate": null, "gate_dropped": {"gate": "gym4_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "why": "food that follows you"},
+        {"id": "advanced_feeding_upgrade", "item": "sophisticatedbackpacks:advanced_feeding_upgrade", "name": "Advanced feeding upgrade", "count": 1, "price": 4500, "gate": null, "gate_dropped": {"gate": "gym4_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "why": "the second step of the same"},
+        {"id": "sweet_malasada", "item": "cobblecuisine:sweet_malasada", "name": "Sweet Malasada", "count": 1, "price": 900, "gate": null, "gate_dropped": {"gate": "gym4_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "friendship +12 (cobblecuisine.json malasadaFriendship): a friendship evolution bought rather than walked. The plain 'malasada' id does not exist (TIERED_GOODS 2.6)"},
+        {"id": "sweet_pokepuff", "item": "cobblecuisine:sweet_pokepuff", "name": "Sweet Pokepuff", "count": 1, "price": 500, "gate": null, "gate_dropped": {"gate": "gym4_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "friendship +6 (pokepuffFriendship)"},
+        {"id": "miracle_seed", "item": "cobblemon:miracle_seed", "name": "Miracle Seed", "count": 1, "price": 1000, "gate": null, "gate_dropped": {"gate": "gym4_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "the grass town's held item"},
+        {"id": "full_heal", "item": "cobblemon:full_heal", "name": "Full Heal", "count": 3, "price": 900, "gate": null, "gate_dropped": {"gate": "gym4_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "released Remedies: the garden's cure-all"}
       ]
     },
     {
@@ -180,12 +169,13 @@
       "near_trader": "gym5_mart",
       "sited_by": "as stoneford",
       "keeper": {"name": "Tracker's Outfitter", "greeting": "Trappers' gear. Soul Badge holders can buy pickup and magnet fittings, a Poison Barb, and the Mega Bracelet, if they've saved for it."},
+      "category": "Trapper Gear",
       "theme": "the fen-edge watch town that traps and tracks: pickup and magnet are trapping",
       "stock": [
-        {"id": "pickup_upgrade", "item": "sophisticatedbackpacks:pickup_upgrade", "name": "Pickup upgrade", "count": 1, "price": 1500, "gate": "gym5_cleared", "strand": "convenience", "why": "trapping"},
-        {"id": "magnet_upgrade", "item": "sophisticatedbackpacks:magnet_upgrade", "name": "Magnet upgrade", "count": 1, "price": 1500, "gate": "gym5_cleared", "strand": "convenience", "why": "trapping at a distance. The ladder's advanced magnet (3,000) is not sold: the shelf with the bracelet ran to 98% of the leg (TIERED_GOODS 3)"},
-        {"id": "mega_bracelet", "item": "mega_showdown:mega_bracelet", "name": "Mega Bracelet", "count": 1, "price": 7500, "gate": "gym5_cleared", "strand": "power", "why": "Mega Evolution at cap 45 of 55, three gyms left to use it on (PROGRESSION_LADDER 4.1); the one rung a player should save for, and the flat $600 blackout makes saving safe"},
-        {"id": "poison_barb", "item": "cobblemon:poison_barb", "name": "Poison Barb", "count": 1, "price": 1000, "gate": "gym5_cleared", "strand": "power", "why": "the poison town's held item"}
+        {"id": "pickup_upgrade", "item": "sophisticatedbackpacks:pickup_upgrade", "name": "Pickup upgrade", "count": 1, "price": 1500, "gate": null, "gate_dropped": {"gate": "gym5_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "why": "trapping"},
+        {"id": "magnet_upgrade", "item": "sophisticatedbackpacks:magnet_upgrade", "name": "Magnet upgrade", "count": 1, "price": 1500, "gate": null, "gate_dropped": {"gate": "gym5_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "why": "trapping at a distance. The ladder's advanced magnet (3,000) is not sold: the shelf with the bracelet ran to 98% of the leg (TIERED_GOODS 3)"},
+        {"id": "mega_bracelet", "item": "mega_showdown:mega_bracelet", "name": "Mega Bracelet", "count": 1, "price": 7500, "gate": null, "gate_dropped": {"gate": "gym5_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "Mega Evolution at cap 45 of 55, three gyms left to use it on (PROGRESSION_LADDER 4.1); the one rung a player should save for, and the flat $600 blackout makes saving safe"},
+        {"id": "poison_barb", "item": "cobblemon:poison_barb", "name": "Poison Barb", "count": 1, "price": 1000, "gate": null, "gate_dropped": {"gate": "gym5_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "the poison town's held item"}
       ]
     },
     {
@@ -202,13 +192,14 @@
       "near_trader": "gym6_mart",
       "sited_by": "as stoneford",
       "keeper": {"name": "Archive Stores", "greeting": "The archive keeps what it records, and packs it tight. Marsh Badge holders can buy the smithing and stacking fittings, a Twisted Spoon, and Ultra Balls by the five."},
+      "category": "Archive Stores",
       "theme": "the region's place of study, a town of record-keepers: it sells compression",
       "stock": [
-        {"id": "smithing_upgrade", "item": "sophisticatedbackpacks:smithing_upgrade", "name": "Smithing upgrade", "count": 1, "price": 3000, "gate": "gym6_cleared", "strand": "convenience", "why": "the last portable workstation"},
-        {"id": "stack_upgrade_starter_tier", "item": "sophisticatedbackpacks:stack_upgrade_starter_tier", "name": "Stack upgrade (starter)", "count": 1, "price": 2000, "gate": "gym6_cleared", "strand": "convenience", "why": "compression; capped at 3 per pack (maxUpgradesPerStorage stack_upgrades|3)"},
-        {"id": "stack_upgrade_tier_1", "item": "sophisticatedbackpacks:stack_upgrade_tier_1", "name": "Stack upgrade (tier 1)", "count": 1, "price": 3500, "gate": "gym6_cleared", "strand": "convenience", "why": "tiers 2 and up are crafted from this one, so the purchase gates them (TIERED_GOODS 2.1 residuals)"},
-        {"id": "twisted_spoon", "item": "cobblemon:twisted_spoon", "name": "Twisted Spoon", "count": 1, "price": 1000, "gate": "gym6_cleared", "strand": "power", "why": "the psychic town's held item"},
-        {"id": "ultra_ball", "item": "cobblemon:ultra_ball", "name": "Ultra Ball", "count": 5, "price": 4000, "gate": "gym6_cleared", "strand": "power", "why": "the strongest standard ball, at the central hub; 800 each against defaultShop's 1,000"}
+        {"id": "smithing_upgrade", "item": "sophisticatedbackpacks:smithing_upgrade", "name": "Smithing upgrade", "count": 1, "price": 3000, "gate": null, "gate_dropped": {"gate": "gym6_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "why": "the last portable workstation"},
+        {"id": "stack_upgrade_starter_tier", "item": "sophisticatedbackpacks:stack_upgrade_starter_tier", "name": "Stack upgrade (starter)", "count": 1, "price": 2000, "gate": null, "gate_dropped": {"gate": "gym6_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "why": "compression; capped at 3 per pack (maxUpgradesPerStorage stack_upgrades|3)"},
+        {"id": "stack_upgrade_tier_1", "item": "sophisticatedbackpacks:stack_upgrade_tier_1", "name": "Stack upgrade (tier 1)", "count": 1, "price": 3500, "gate": null, "gate_dropped": {"gate": "gym6_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "why": "tiers 2 and up are crafted from this one, so the purchase gates them (TIERED_GOODS 2.1 residuals)"},
+        {"id": "twisted_spoon", "item": "cobblemon:twisted_spoon", "name": "Twisted Spoon", "count": 1, "price": 1000, "gate": null, "gate_dropped": {"gate": "gym6_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "the psychic town's held item"},
+        {"id": "ultra_ball", "item": "cobblemon:ultra_ball", "name": "Ultra Ball", "count": 5, "price": 4000, "gate": null, "gate_dropped": {"gate": "gym6_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "the strongest standard ball, at the central hub; 800 each against defaultShop's 1,000"}
       ]
     },
     {
@@ -224,15 +215,16 @@
       "near_trader": "gym7_mart",
       "sited_by": "as stoneford",
       "keeper": {"name": "Rim Ironmonger", "greeting": "Heat's our trade. Volcano Badge holders can buy the gold pack, one cooking fitting of their choice, a Charcoal Stick, and Max Potions."},
+      "category": "Forge Goods",
       "theme": "the research town on the crater rim: a town on a volcano sells heat, and nowhere else should",
       "stock": [
-        {"id": "gold_backpack", "item": "sophisticatedbackpacks:gold_backpack", "name": "Gold backpack", "count": 1, "price": 8000, "gate": "gym7_cleared", "strand": "convenience", "why": "tier 4: 96 slots, 8 upgrade slots; a receipt more than a reward (PROGRESSION_LADDER 2.4)"},
-        {"id": "smelting_upgrade", "item": "sophisticatedbackpacks:smelting_upgrade", "name": "Smelting upgrade", "count": 1, "price": 2800, "gate": "gym7_cleared", "strand": "convenience", "group": "furnace_upgrades", "why": "furnace_upgrades|1: a pack holds one, so the group is priced to stand alone"},
-        {"id": "smoking_upgrade", "item": "sophisticatedbackpacks:smoking_upgrade", "name": "Smoking upgrade", "count": 1, "price": 2000, "gate": "gym7_cleared", "strand": "convenience", "group": "furnace_upgrades", "why": "moved from Fenhide with the rest of the furnace group"},
-        {"id": "blasting_upgrade", "item": "sophisticatedbackpacks:blasting_upgrade", "name": "Blasting upgrade", "count": 1, "price": 2500, "gate": "gym7_cleared", "strand": "convenience", "group": "furnace_upgrades", "why": "ore, for a crater town"},
-        {"id": "auto_smelting_upgrade", "item": "sophisticatedbackpacks:auto_smelting_upgrade", "name": "Auto-smelting upgrade", "count": 1, "price": 4500, "gate": "gym7_cleared", "strand": "convenience", "group": "furnace_upgrades", "why": "the dearest of the group"},
-        {"id": "charcoal_stick", "item": "cobblemon:charcoal_stick", "name": "Charcoal Stick", "count": 1, "price": 1000, "gate": "gym7_cleared", "strand": "power", "why": "the fire town's held item (the id is charcoal_stick, TIERED_GOODS 2.6)"},
-        {"id": "max_potion", "item": "cobblemon:max_potion", "name": "Max Potion", "count": 3, "price": 2700, "gate": "gym7_cleared", "strand": "power", "why": "released Treatments; 900 each against bank.json's 625"}
+        {"id": "gold_backpack", "item": "sophisticatedbackpacks:gold_backpack", "name": "Gold backpack", "count": 1, "price": 8000, "gate": null, "gate_dropped": {"gate": "gym7_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "why": "tier 4: 96 slots, 8 upgrade slots; a receipt more than a reward (PROGRESSION_LADDER 2.4)"},
+        {"id": "smelting_upgrade", "item": "sophisticatedbackpacks:smelting_upgrade", "name": "Smelting upgrade", "count": 1, "price": 2800, "gate": null, "gate_dropped": {"gate": "gym7_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "group": "furnace_upgrades", "why": "furnace_upgrades|1: a pack holds one, so the group is priced to stand alone"},
+        {"id": "smoking_upgrade", "item": "sophisticatedbackpacks:smoking_upgrade", "name": "Smoking upgrade", "count": 1, "price": 2000, "gate": null, "gate_dropped": {"gate": "gym7_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "group": "furnace_upgrades", "why": "moved from Fenhide with the rest of the furnace group"},
+        {"id": "blasting_upgrade", "item": "sophisticatedbackpacks:blasting_upgrade", "name": "Blasting upgrade", "count": 1, "price": 2500, "gate": null, "gate_dropped": {"gate": "gym7_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "group": "furnace_upgrades", "why": "ore, for a crater town"},
+        {"id": "auto_smelting_upgrade", "item": "sophisticatedbackpacks:auto_smelting_upgrade", "name": "Auto-smelting upgrade", "count": 1, "price": 4500, "gate": null, "gate_dropped": {"gate": "gym7_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "group": "furnace_upgrades", "why": "the dearest of the group"},
+        {"id": "charcoal_stick", "item": "cobblemon:charcoal_stick", "name": "Charcoal Stick", "count": 1, "price": 1000, "gate": null, "gate_dropped": {"gate": "gym7_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "the fire town's held item (the id is charcoal_stick, TIERED_GOODS 2.6)"},
+        {"id": "max_potion", "item": "cobblemon:max_potion", "name": "Max Potion", "count": 3, "price": 2700, "gate": null, "gate_dropped": {"gate": "gym7_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "released Treatments; 900 each against bank.json's 625"}
       ]
     },
     {
@@ -248,13 +240,14 @@
       "near_trader": "gym8_mart",
       "sited_by": "as stoneford",
       "keeper": {"name": "Garrison Quartermaster", "greeting": "Last stores before the Road. Earth Badge holders draw the diamond pack, the inception fitting, gold caps, and what the League will cost you in medicine."},
+      "category": "Garrison Stores",
       "theme": "the southern garrison at the last gate before Victory Road: a quartermaster's answer to 'I have too much' is packs inside packs, and the caps are for hyper-training a level-55 team at the last gate",
       "stock": [
-        {"id": "diamond_backpack", "item": "sophisticatedbackpacks:diamond_backpack", "name": "Diamond backpack", "count": 1, "price": 10000, "gate": "gym8_cleared", "strand": "convenience", "why": "tier 5: 108 slots, 9 upgrade slots. 10,000 is PROGRESSION_LADDER revision 2's figure; revision 1's 20,000 is the one the owner's brief quotes (TIERED_GOODS 3), an owner call. Netherite is smithed from this pack (recipe left on)"},
-        {"id": "inception_upgrade", "item": "sophisticatedbackpacks:inception_upgrade", "name": "Inception upgrade", "count": 1, "price": 7000, "gate": "gym8_cleared", "strand": "convenience", "why": "packs inside packs"},
-        {"id": "bottle_cap_gold", "item": "obc:bottle_cap_gold", "name": "Gold Bottle Cap", "count": 1, "price": 6000, "gate": "gym8_cleared", "strand": "power", "why": "the one reliable gold-cap tap (obc treasure goldBottleCap 0.0); at 6,000 a badge-8 player can buy two or three"},
-        {"id": "max_revive", "item": "cobblemon:max_revive", "name": "Max Revive", "count": 1, "price": 2500, "gate": "gym8_cleared", "strand": "power", "why": "released Treatments; against bank.json's 1,000"},
-        {"id": "full_restore", "item": "cobblemon:full_restore", "name": "Full Restore", "count": 2, "price": 3000, "gate": "gym8_cleared", "strand": "power", "why": "released Treatments; 1,500 each against bank.json's 750"}
+        {"id": "diamond_backpack", "item": "sophisticatedbackpacks:diamond_backpack", "name": "Diamond backpack", "count": 1, "price": 10000, "gate": null, "gate_dropped": {"gate": "gym8_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "why": "tier 5: 108 slots, 9 upgrade slots. 10,000 is PROGRESSION_LADDER revision 2's figure; revision 1's 20,000 is the one the owner's brief quotes (TIERED_GOODS 3), an owner call. Netherite is smithed from this pack (recipe left on)"},
+        {"id": "inception_upgrade", "item": "sophisticatedbackpacks:inception_upgrade", "name": "Inception upgrade", "count": 1, "price": 7000, "gate": null, "gate_dropped": {"gate": "gym8_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "why": "packs inside packs"},
+        {"id": "bottle_cap_gold", "item": "obc:bottle_cap_gold", "name": "Gold Bottle Cap", "count": 1, "price": 6000, "gate": null, "gate_dropped": {"gate": "gym8_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "the one reliable gold-cap tap (obc treasure goldBottleCap 0.0); at 6,000 a badge-8 player can buy two or three"},
+        {"id": "max_revive", "item": "cobblemon:max_revive", "name": "Max Revive", "count": 1, "price": 2500, "gate": null, "gate_dropped": {"gate": "gym8_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "released Treatments; against bank.json's 1,000"},
+        {"id": "full_restore", "item": "cobblemon:full_restore", "name": "Full Restore", "count": 2, "price": 3000, "gate": null, "gate_dropped": {"gate": "gym8_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "released Treatments; 1,500 each against bank.json's 750"}
       ]
     },
     {
@@ -270,12 +263,13 @@
       "near_trader": "mining_mart",
       "sited_by": "as stoneford",
       "keeper": {"name": "Mine Stores", "greeting": "Mine stores. Thunder Badge holders can buy the compacting and voiding fittings every digger swears by. The Assayer next door has the stones."},
+      "category": "Mine Stores",
       "theme": "the mine, smelter and fossil lab: a mining town sells what a digger needs to carry ore home, and its Assayer (data/traders.json mining_assayer) already sells the ten stones",
       "stock": [
-        {"id": "compacting_upgrade", "item": "sophisticatedbackpacks:compacting_upgrade", "name": "Compacting upgrade", "count": 1, "price": 2000, "gate": "gym3_cleared", "strand": "convenience", "why": "ore into blocks, in the pack"},
-        {"id": "advanced_compacting_upgrade", "item": "sophisticatedbackpacks:advanced_compacting_upgrade", "name": "Advanced compacting upgrade", "count": 1, "price": 3500, "gate": "gym3_cleared", "strand": "convenience", "why": "the second step"},
-        {"id": "void_upgrade", "item": "sophisticatedbackpacks:void_upgrade", "name": "Void upgrade", "count": 1, "price": 1200, "gate": "gym3_cleared", "strand": "convenience", "why": "spoil, voided"},
-        {"id": "advanced_void_upgrade", "item": "sophisticatedbackpacks:advanced_void_upgrade", "name": "Advanced void upgrade", "count": 1, "price": 2500, "gate": "gym3_cleared", "strand": "convenience", "why": "the second step"}
+        {"id": "compacting_upgrade", "item": "sophisticatedbackpacks:compacting_upgrade", "name": "Compacting upgrade", "count": 1, "price": 2000, "gate": null, "gate_dropped": {"gate": "gym3_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "why": "ore into blocks, in the pack"},
+        {"id": "advanced_compacting_upgrade", "item": "sophisticatedbackpacks:advanced_compacting_upgrade", "name": "Advanced compacting upgrade", "count": 1, "price": 3500, "gate": null, "gate_dropped": {"gate": "gym3_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "why": "the second step"},
+        {"id": "void_upgrade", "item": "sophisticatedbackpacks:void_upgrade", "name": "Void upgrade", "count": 1, "price": 1200, "gate": null, "gate_dropped": {"gate": "gym3_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "why": "spoil, voided"},
+        {"id": "advanced_void_upgrade", "item": "sophisticatedbackpacks:advanced_void_upgrade", "name": "Advanced void upgrade", "count": 1, "price": 2500, "gate": null, "gate_dropped": {"gate": "gym3_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "why": "the second step"}
       ]
     },
     {
@@ -291,16 +285,17 @@
       "near_trader": "northlight_mart",
       "sited_by": "as stoneford",
       "keeper": {"name": "Station Supply", "greeting": "Station supply. Hammocks for anyone; Marsh Badge holders can buy the supplements the station feeds its own team, and the capsules it tests abilities with."},
+      "category": "Station Supply",
       "theme": "the research station and aurora observatory: a research station sells supplements",
       "stock": [
         {"id": "hammock", "item": "comforts:hammock_white", "name": "Hammock", "count": 1, "price": 800, "gate": null, "strand": "convenience", "why": "a researcher's bed; ungated, since travel already gates the station (PROGRESSION_LADDER 5.4)"},
-        {"id": "hp_up", "item": "cobblemon:hp_up", "name": "HP Up", "count": 1, "price": 3500, "gate": "gym6_cleared", "strand": "power", "why": "above bank.json's 2,500 sell-back on purpose (PROGRESSION_LADDER 6.4)"},
-        {"id": "protein", "item": "cobblemon:protein", "name": "Protein", "count": 1, "price": 3500, "gate": "gym6_cleared", "strand": "power", "why": "as hp_up"},
-        {"id": "iron", "item": "cobblemon:iron", "name": "Iron", "count": 1, "price": 3500, "gate": "gym6_cleared", "strand": "power", "why": "as hp_up"},
-        {"id": "calcium", "item": "cobblemon:calcium", "name": "Calcium", "count": 1, "price": 3500, "gate": "gym6_cleared", "strand": "power", "why": "as hp_up"},
-        {"id": "zinc", "item": "cobblemon:zinc", "name": "Zinc", "count": 1, "price": 3500, "gate": "gym6_cleared", "strand": "power", "why": "as hp_up"},
-        {"id": "carbos", "item": "cobblemon:carbos", "name": "Carbos", "count": 1, "price": 3500, "gate": "gym6_cleared", "strand": "power", "why": "as hp_up"},
-        {"id": "ability_capsule", "item": "cobblemon:ability_capsule", "name": "Ability Capsule", "count": 1, "price": 10000, "gate": "gym6_cleared", "strand": "power", "why": "2026-10-05, the owner after the play test (note 8): 'sell Ability Capsules'. Its only recipe brews it from minecraft:dragon_breath (Cobblemon-fabric-1.8.0 data/cobblemon/recipe/brewing_stand/ability_capsule.json), an End item, and the End has no portal here; otherwise it is Nether bastion and ruin chest loot, finite and shared. Gated with the station's other supplements; 10,000 (about three vitamins) is a PROPOSED price, the owner's to set, and data/bank.json and Cobbleverse's bank buy none back. docs/research/OBTAINABILITY_SWEEP_2026-10-05.md"}
+        {"id": "hp_up", "item": "cobblemon:hp_up", "name": "HP Up", "count": 1, "price": 3500, "gate": null, "gate_dropped": {"gate": "gym6_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "above bank.json's 2,500 sell-back on purpose (PROGRESSION_LADDER 6.4)"},
+        {"id": "protein", "item": "cobblemon:protein", "name": "Protein", "count": 1, "price": 3500, "gate": null, "gate_dropped": {"gate": "gym6_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "as hp_up"},
+        {"id": "iron", "item": "cobblemon:iron", "name": "Iron", "count": 1, "price": 3500, "gate": null, "gate_dropped": {"gate": "gym6_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "as hp_up"},
+        {"id": "calcium", "item": "cobblemon:calcium", "name": "Calcium", "count": 1, "price": 3500, "gate": null, "gate_dropped": {"gate": "gym6_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "as hp_up"},
+        {"id": "zinc", "item": "cobblemon:zinc", "name": "Zinc", "count": 1, "price": 3500, "gate": null, "gate_dropped": {"gate": "gym6_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "as hp_up"},
+        {"id": "carbos", "item": "cobblemon:carbos", "name": "Carbos", "count": 1, "price": 3500, "gate": null, "gate_dropped": {"gate": "gym6_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "as hp_up"},
+        {"id": "ability_capsule", "item": "cobblemon:ability_capsule", "name": "Ability Capsule", "count": 1, "price": 10000, "gate": null, "gate_dropped": {"gate": "gym6_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "2026-10-05, the owner after the play test (note 8): 'sell Ability Capsules'. Its only recipe brews it from minecraft:dragon_breath (Cobblemon-fabric-1.8.0 data/cobblemon/recipe/brewing_stand/ability_capsule.json), an End item, and the End has no portal here; otherwise it is Nether bastion and ruin chest loot, finite and shared. Gated with the station's other supplements; 10,000 (about three vitamins) is a PROPOSED price, the owner's to set, and data/bank.json and Cobbleverse's bank buy none back. docs/research/OBTAINABILITY_SWEEP_2026-10-05.md"}
       ]
     },
     {
@@ -317,6 +312,7 @@
       "near_trader": "tea_mart",
       "sited_by": "as stoneford",
       "keeper": {"name": "Tea House Kitchen", "greeting": "From the tea house kitchen. Cheaper than Greenhollow, and we don't ask for badges. The terrace cutters trade their stones through us too: any of the ten, at the Assayer's price."},
+      "category": "Kitchen and Stones",
       "theme": "the tea town stepping down the slope below the tea house: its kitchen's sweets, cheaper than the garden town's, the region's cheapest route to a friendship evolution",
       "stock": [
         {"id": "sweet_malasada", "item": "cobblecuisine:sweet_malasada", "name": "Sweet Malasada", "count": 1, "price": 700, "gate": null, "strand": "power", "why": "Greenhollow's 900 less a margin (PROGRESSION_LADDER 1.2)"},
@@ -349,12 +345,13 @@
       "stall": "sunset_west_stall_1",
       "near_trader": "sunset_west_mart",
       "keeper": {"name": "Harbour Scrivener", "greeting": "Scrolls for travellers. Anyone can have a blank or a return scroll; warp and bound scrolls are for Soul Badge holders."},
+      "category": "Travel Scrolls",
       "theme": "the port where the boats go: a port sells the way home and the way onward",
       "stock": [
         {"id": "blank_scroll", "item": "waystones:blank_scroll", "name": "Blank scroll", "count": 1, "price": 400, "gate": null, "strand": "convenience", "why": "a convenience: scrolls are cheap to craft (TIERED_GOODS 2.6)"},
         {"id": "return_scroll", "item": "waystones:return_scroll", "name": "Return scroll", "count": 1, "price": 1200, "gate": null, "strand": "convenience", "why": "as blank_scroll"},
-        {"id": "warp_scroll", "item": "waystones:warp_scroll", "name": "Warp scroll", "count": 1, "price": 3500, "gate": "gym5_cleared", "strand": "convenience", "why": "as blank_scroll"},
-        {"id": "bound_scroll", "item": "waystones:bound_scroll", "name": "Bound scroll", "count": 1, "price": 2600, "gate": "gym5_cleared", "strand": "convenience", "why": "as blank_scroll"}
+        {"id": "warp_scroll", "item": "waystones:warp_scroll", "name": "Warp scroll", "count": 1, "price": 3500, "gate": null, "gate_dropped": {"gate": "gym5_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "why": "as blank_scroll"},
+        {"id": "bound_scroll", "item": "waystones:bound_scroll", "name": "Bound scroll", "count": 1, "price": 2600, "gate": null, "gate_dropped": {"gate": "gym5_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "why": "as blank_scroll"}
       ]
     },
     {
@@ -370,6 +367,7 @@
       "stall": "sea_town_stall_1",
       "near_trader": "sea_town_mart",
       "keeper": {"name": "Deck Chandler", "greeting": "Balls for the water. The ferry's the badge out here, so no badges asked."},
+      "category": "Balls for the Water",
       "theme": "the town on the sea: the balls that work on water",
       "stock": [
         {"id": "dive_ball", "item": "cobblemon:dive_ball", "name": "Dive Ball", "count": 5, "price": 3000, "gate": null, "strand": "power", "why": "travel gates the town (the ferry), so the shelf is ungated (PROGRESSION_LADDER 5.4)"},
@@ -390,6 +388,7 @@
       "stall": "tableland_stop_stall_1",
       "near_trader": null,
       "keeper": {"name": "Prospector", "greeting": "Sieve's been kind this week."},
+      "category": "Sieve Finds",
       "theme": "the prospector's waystation on the red tableland, dressed with sample piles, a sieve and ore crates",
       "stock": [
         {"id": "soft_sand", "item": "cobblemon:soft_sand", "name": "Soft Sand", "count": 1, "price": 1000, "gate": null, "strand": "power", "why": "what a sieve leaves"},
@@ -406,6 +405,24 @@
     "left_out": "ids considered and left out of every stall: minecraft:cake (alcremie's neededNearbyBlocks), minecraft:rail (carkol and coalossal), minecraft:wheat_seeds (it places minecraft:wheat, beheeyem's): data/spawn_blocks.json names each, so a player who buys one decides encounters where they put it. cobblemon:poke_rod (verified in Cobblemon-fabric-1.8.0+1.21.1.jar) is withheld: it catches Pokemon, which stock_policy keeps off ungated stalls. Cobblecuisine teas and shakes are withheld: their boosts (shiny, catch rate, EVs; cobblecuisine.json boostSettings) are power, not provisions. Added 2026-10-03 with the sixteen new stalls: apricorns and apricorn seeds (spawn blocks; Stoneford's seed stall), minecraft:pumpkin_seeds (its stem grows minecraft:pumpkin, a spawn block, which the PLACES map cannot see), minecraft:torchflower_seeds and minecraft:pitcher_pod (they grow spawn blocks), minecraft:moss_block and minecraft:bone_meal on the new mulch stalls (bone meal on grass grows flowers and on moss grows flowering azalea, both spawn blocks; the seed cart's existing bone meal is left as it was), minecraft:magma_block (Cinderlee's core samples), minecraft:white_bed (Holdfast's cot is red), minecraft:bundle (experimental in 1.21.1), minecraft:iron_ingot at Fenhide's ball bench (the Great Ball core: Highwire's gated line), every Poke Ball and every X item on an ungated stall (power: Tilpey's `battle_items` stall holds the badge counter instead)",
     "sites": "a stall keeper stands where data/plaza_centres.json (the squares' contract, built in parallel) seats its `stall`; until that file exists, at the fallback measured from the data alone: inside the plan's plaza rect, 2-3 in from its edge (the middle is the centrepiece's), off the plaza's flush-lamp grid (tools/town_plan.py: every 27 from the corner) and its neighbours, 4.5+ from the waystone and every placed NPC and keeper, 3.5+ from every walked route point, turned to the square's centre. Integrated 2026-10-03 against the merged contract: every record names the contract stall whose theme fits its goods and carries that stall's theme word as `sells` (its own `stall_why` says why), and every contract stall is staffed once, by an existing keeper or one authored for it. The counter stands at stall 1 except at Tilpey (stall 4, `battle_items`: the counter's power stays behind its badge) and Steepside (stall 2, the contract's 'Tea House Kitchen'); Pallet's counter is on its one stall, `packs`. A new trader's fallback `at` is its contract seat, copied"
   },
+  "superseded_dialogue_purchase": {
+    "note": "superseded 2026-10-06 (decision counters_are_merchants): the counters' dialogue menus and their checked purchase functions, which no tool emits any more since every counter is a CobbleDollars merchant. Kept, not deleted: the hand-authored purchase rule and messages are the judgement a per-player shop would need again (MARKET_GATING.md section 4)",
+    "purchase": {
+      "cooldown_ticks": 20,
+      "cooldown_why": "the ferry's rule (data/ferries.json trip.cooldown_why): a second submit of the same option must not pay twice. The menu closes after every purchase, so one second is ample"
+    },
+    "messages": {
+      "voice": "PLACEHOLDERS for Codex's voice (the keepers' greetings are on the counters). Placeholders: {item}, {price}, {count}, {requirement}, and {balance} in 'short' only",
+      "option": "{item}: ${price}",
+      "option_count": "{item} x{count}: ${price}",
+      "leave": "Just looking.",
+      "short": "That's ${price}. You have ${balance}.",
+      "gated": "I only sell that to trainers with {requirement}.",
+      "charge_failed": "The payment didn't go through, so nothing changed hands. Check your balance and try again.",
+      "give_failed": "I couldn't hand that over, so your ${price} is back with you.",
+      "paid": "Paid ${price} for {item}."
+    }
+  },
   "stall_merchant": {
     "kind": "cobbledollars:cobble_merchant",
     "villager_data": {
@@ -417,20 +434,23 @@
     "remove_radius": 2.5,
     "owner_brief": "the owner, 2026-10-04, at Stoneford's square: 'the steve villagers aren't it, it should be the cobbleverse ones that have nice ui'",
     "source": "docs/research/notes/cobbleverse-merchants.md sections 1-3: the entity, VillagerData and CobbleMerchantShop shape tools/traders.py already summons from the BCA shopkeeper templates; a merchant summoned on staging 2026-10-04 with an authored two-offer list held it and echoed it back with data get (the purchase through its screen is NOT yet observed)",
-    "keeper": "every sited stall's keeper is a CobbleDollars merchant at its seat (the squares' contract keeper_at, else the record's at/yaw), named keeper.name, NoAI, PersistenceRequired, Invulnerable, Silent, turned to the seat's yaw, tagged cobblers_stall and cobblers_stall_<id>; keeper.greeting is not shown (the merchant's screen has none) and is kept for the record",
-    "offers": "one CobbleMerchantShop category per stall, named by the stall's `category` (its theme in words); one offer per stock line, Item {count: 1, id: item}, Price the line's UNIT price as a string (price / count; a line whose price does not divide by its count is refused). The merchant screen sells singly with a quantity selector, and every offer in every BCA template and in the staging probe is count 1: what the screen does with Item.count above 1 is not verified (research note, Unknown), so 16 torches for $160 is offered as Torch at $10, sixteen for $160",
-    "money": "CobbleDollars' own screen takes the price from the buyer's balance; tools/markets.py emits no purchase function, dialogue or NPC class for a merchant stall, so nothing charges twice",
-    "replaces": "the Cobblemon dialogue keeper (spawnnpcat cobblers:npc_stall_<id>) R17M placed until 2026-10-04: once the new merchant stands, its place step kills every cobblemon:npc within remove_radius of its spot (the old keeper stood there, or one block behind it on today's table before the tents moved the keeper to the open front); every other placed NPC stands 3.5+ away (NPC_CLEAR)",
-    "gated_lines": "refused on a stall: the merchant shows one list to every player and cannot hide a line until a badge (MARKET_GATING.md section 1); a gated line belongs on a counter"
+    "keeper": "every sited stall's AND every sited counter's keeper (since 2026-10-06, decision counters_are_merchants) is a CobbleDollars merchant at its seat (the squares' contract keeper_at, else the record's at/yaw), named keeper.name, NoAI, PersistenceRequired, Invulnerable, Silent, turned to the seat's yaw, tagged cobblers_stall and cobblers_stall_<id> (stall and counter ids never repeat across the two lists); keeper.greeting is not shown (the merchant's screen has none) and is kept for the record",
+    "offers": "one CobbleMerchantShop category per stall or counter, named by its `category` (its theme in words); one offer per stock line, Item {count: 1, id: item}, Price the line's UNIT price as a string (price / count; a line whose price does not divide by its count is refused). The merchant screen sells singly with a quantity selector, and every offer in every BCA template and in the staging probe is count 1: what the screen does with Item.count above 1 is not verified (research note, Unknown), so 16 torches for $160 is offered as Torch at $10, sixteen for $160",
+    "money": "CobbleDollars' own screen takes the price from the buyer's balance; tools/markets.py emits no purchase function, dialogue or NPC class for any merchant, so nothing charges twice",
+    "replaces": "the Cobblemon dialogue keepers R17M placed with spawnnpcat (cobblers:npc_stall_<id> until 2026-10-04, cobblers:npc_market_<id> until 2026-10-06), which carry no tag: each town's merchant place step first runs <town>_clear, which kills every cobblemon:npc within remove_radius of each of the town's merchant seats (the old keeper stood on that seat, or one block behind it on a stall's table before the tents moved the keeper to the open front), then summons; every other placed NPC stands 3.5+ away (NPC_CLEAR). Not covered: a dialogue keeper that stood somewhere other than its record's seat today",
+    "gated_lines": "refused on every merchant: the screen shows one list to every player and cannot hide a line until a badge (MARKET_GATING.md section 1). A counter line that was gated keeps the old gate in gate_dropped {gate, decision, why}; a stall line was never gated"
   },
-  "decisions_pending": [
+  "decisions": [
     {
-      "id": "gated_counters_stay_dialogue",
-      "asked": "2026-10-04",
-      "question": "should the badge-gated counters also become CobbleDollars merchants?",
-      "default_taken": "no: the counters stay Cobblemon dialogue clerks. A merchant's CobbleMerchantShop is one list per entity, shown to every player (docs/research/notes/cobbleverse-merchants.md section 2, 'No per-player stock'), so it cannot hide a line until the player holds the badge; the counters' isVisible options can. No verified per-player mechanism was found: CobbleDollars 2.0.0+Beta-6's `/cm open shop <id>` might open a per-badge shop for one player from a dialogue option, but it is not installed and not tested (same note, section 4)",
-      "owner_did_not_answer": true
-    },
+      "id": "counters_are_merchants",
+      "asked": "2026-10-04 (as gated_counters_stay_dialogue: should the badge-gated counters also become CobbleDollars merchants? default taken: no)",
+      "answered": "2026-10-06",
+      "owner": "the owner, after playing: 'need the steve traders gone. the button list for purchases is bad, should be the villagers with ui only'",
+      "decision": "yes: every counter is a CobbleDollars merchant at its seat, yaw and name, built as a stall's (stall_merchant). The merchant screen shows one list to every player, so the 53 badge-gated counter lines lose their gates; each keeps its old gate in gate_dropped. The counters' badge still places them on the curve and the backpack ladder (a counter's badge is its town's), but a line is now buyable by anyone who reaches the counter, one badge earlier on the critical path than the ladder's rung",
+      "what_it_costs": "per-player stock (MARKET_GATING.md's option 7) is gone from the markets: a player who reaches a town before its gym can buy its shelf. No verified per-player merchant mechanism exists (docs/research/notes/cobbleverse-merchants.md section 4: CobbleDollars 2.0.0+Beta-6's `/cm open shop <id>` is not installed and not tested)"
+    }
+  ],
+  "decisions_pending": [
     {
       "id": "merchant_bank",
       "asked": "2026-10-04",

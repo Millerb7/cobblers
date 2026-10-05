@@ -1,4 +1,5 @@
-"""The town squares' stall keepers and the closed spend-money gaps (tools/markets.py `stalls`, data/markets.json).
+"""The town squares' stall keepers and the closed spend-money gaps (tools/markets.py `stalls`, data/markets.json);
+since 2026-10-06 the counters' merchants too (decision counters_are_merchants: every seller is a merchant).
 
 The builder's own tests (the independent audit of the stalls is a separate unit). They cover:
   - the squares' contract (data/plaza_centres.json, another builder's): read from a fixture, since the real file may
@@ -59,17 +60,19 @@ def test_the_contract_is_read_with_its_towns():
 
 def test_a_contract_seat_wins_and_the_rest_fall_back():
     doc, p = M.load(), M.load_plazas(FIXTURE)
-    keep = {k[0]: k for k in M.npc_placements(doc, p)}
+    # since 2026-10-06 (decision counters_are_merchants) a counter's keeper is a merchant too, seated by the same rule
+    assert M.npc_placements(doc, p) == []
     merch = {m["stall"]: m for m in M.stall_merchants(doc, p)}
-    assert keep["dlg_market_stoneford"][1] == (1745, 139, 3622) and keep["dlg_market_stoneford"][3] == 180
+    keep = {m["stall"]: m for m in merch.values() if m["kind"] == "counter"}
+    assert keep["stoneford"]["at"] == (1745, 139, 3622) and keep["stoneford"]["yaw"] == 180
     # the fixture's stall 2 is staffed by whichever record names it (2026-10-03: the terrace seedsman; the masons' yard
     # moved to stall 6, which the fixture does not have, so it falls back); since 2026-10-04 a stall's keeper is a
     # merchant, seated by the same rule
     assert merch["stoneford_terrace_seedsman"]["at"] == (1755, 139, 3632)
     assert merch["stoneford_masons_yard"]["at"] == tuple(_stall(doc, "stoneford_masons_yard")["at"])
-    assert keep["dlg_market_redbrow"][1] == (4838, 162, 5690)
+    assert keep["redbrow"]["at"] == (4838, 162, 5690)
     # not in the contract: the record's own fallback site
-    assert keep["dlg_market_viltri_quay"][1] == tuple(next(c for c in doc["counters"] if c["id"] == "viltri_quay")["at"])
+    assert keep["viltri_quay"]["at"] == tuple(next(c for c in doc["counters"] if c["id"] == "viltri_quay")["at"])
     assert merch["fenhide_trapper"]["at"] == tuple(_stall(doc, "fenhide_trapper")["at"])
     assert merch["fenhide_trapper"]["yaw"] == _stall(doc, "fenhide_trapper")["yaw"]
     assert M.stall_placements(doc, p) == []
@@ -130,14 +133,17 @@ def test_the_committed_markets_and_stalls_pass_every_offline_rule():
     files, npcs = M.build(doc, {})
     assert M.output_problems(doc, files) == []
     assert M.output_problems(doc, files, {}) == []          # with the seats: every summon on its seat, turned to its yaw
-    assert len(npcs) == len(M.emitted(doc))
+    assert npcs == []                                       # no dialogue keeper since 2026-10-06
+    assert not [k for k in files if "/dialogues/" in k or "/npcs/" in k]
     summons = [x for body in files.values() if isinstance(body, list) for x in body if x.startswith("summon ")]
-    # one summon per stall record that names where its keeper stands -- counted from data/markets.json itself, not
-    # pasted (it was a literal 33 until Arrow Creeks Farm's stand made 34 on 2026-10-05); an unsited stall has no `at`
-    raw = json.loads((ROOT / "data" / "markets.json").read_text(encoding="utf-8"))["stalls"]
-    standing = [s["id"] for s in raw if isinstance(s.get("at"), list) and len(s["at"]) == 3]
-    assert not [s["id"] for s in raw if s.get("status") == "unsited" and s.get("at")]
-    assert len(summons) == len(M.emitted_stalls(doc)) == len(standing) > 0
+    # one summon per stall or counter record that names where its keeper stands -- counted from data/markets.json
+    # itself, not pasted (it was a literal 33 until Arrow Creeks Farm's stand made 34 on 2026-10-05); an unsited stall
+    # has no `at`; every sited counter has one (2026-10-06: the counters are merchants)
+    raw = json.loads((ROOT / "data" / "markets.json").read_text(encoding="utf-8"))
+    standing = [s["id"] for s in raw["stalls"] if isinstance(s.get("at"), list) and len(s["at"]) == 3]
+    assert not [s["id"] for s in raw["stalls"] if s.get("status") == "unsited" and s.get("at")]
+    counters = [c["id"] for c in raw["counters"] if c.get("status") == "sited"]
+    assert len(summons) == len(M.emitted_stalls(doc)) + len(M.emitted(doc)) == len(standing) + len(counters) > 0
 
 
 def test_every_town_with_a_square_or_a_clerk_now_has_a_keeper_or_says_why():
@@ -212,13 +218,51 @@ def test_a_counter_with_neither_clerk_nor_stall_cannot_be_sited():
     assert any("redbrow: sited with no near_trader to stand beside and no stall" in x for x in _static(doc))
 
 
+def test_a_counter_line_gated_or_missing_its_dropped_gate_is_refused():
+    """2026-10-06 (decision counters_are_merchants): a counter's merchant shows every line to every player, so a line
+    may not carry a gate; on a critical-path counter every line records its own badge in gate_dropped (the old rule's
+    gate, kept as a record); a counter needs a category and a price that divides by its count."""
+    def counter(doc, cid):
+        return next(c for c in doc["counters"] if c["id"] == cid)
+    doc = _doc()
+    assert not [x for x in _static(doc) if "gate" in x]
+    st = counter(doc, "stoneford")
+    st["stock"][0]["gate"] = "gym1_cleared"                         # re-gated
+    st["stock"][1].pop("gate_dropped")                              # its record lost
+    st["stock"][2]["gate_dropped"] = dict(st["stock"][2]["gate_dropped"], gate="gym2_cleared")   # another town's badge
+    st["stock"][3]["gate_dropped"] = dict(st["stock"][3]["gate_dropped"], decision="nobody_decided")
+    st["stock"][4]["gate_dropped"] = dict(st["stock"][4]["gate_dropped"], why="")
+    hw = counter(doc, "highwire")
+    hw["stock"][3]["price"] = 1751                                  # five Great Balls: does not divide
+    hw["category"] = 'Relay "Stores"'
+    counter(doc, "pallet")["stock"][0]["gate_dropped"] = {"gate": "gym1_cleared", "decision": "counters_are_merchants",
+                                                          "why": "probe"}
+    probs = _static(doc)
+    assert any("stoneford item copper_backpack: gated on 'gym1_cleared'" in p for p in probs), probs
+    assert any("stoneford item stonecutter_upgrade: a critical-path counter at badge 1 records a dropped gate None" in p
+               for p in probs)
+    assert any("stoneford item anvil_upgrade: a critical-path counter at badge 1 records a dropped gate 'gym2_cleared'"
+               in p for p in probs)
+    assert any("stoneford item hard_stone: gate_dropped" in p for p in probs)
+    assert any("stoneford item crafting_upgrade: gate_dropped" in p for p in probs)
+    assert any("highwire item great_ball: $1751 for 5 does not divide" in p for p in probs)
+    assert any("counter highwire: category" in p for p in probs)
+    assert any("pallet item backpack: Pallet's shelf was never gated" in p for p in probs)
+    # and the decision the records cite must exist
+    doc = _doc()
+    doc["decisions"] = []
+    assert sum("gate_dropped" in p for p in _static(doc)) == sum(
+        1 for c in doc["counters"] for it in c["stock"] if it.get("gate_dropped"))
+
+
 # ------------------------------------------------------------------------------------------------ generator mutation
 def _merchant_named(doc, files, needle, plazas=None):
     return {p.split(" merchant:")[0] for p in M.output_problems(doc, files, plazas) if needle in p}
 
 
 def _every_stall(doc):
-    return {"stall %s" % s["id"] for s in M.emitted_stalls(doc)}
+    """Every merchant the pack summons: each sited stall's and, since 2026-10-06, each sited counter's."""
+    return {"%s %s" % (kind, s["id"]) for s, kind in M.merchant_records(doc)}
 
 
 def test_a_mutated_shop_generator_is_caught_at_every_stall(monkeypatch):
@@ -249,17 +293,35 @@ def test_a_mutated_summon_is_caught_at_every_stall(monkeypatch):
     assert _merchant_named(doc, files, "rotation None", {}) == _every_stall(doc)
 
 
-def test_a_dialogue_keeper_removal_without_the_guard_is_caught(monkeypatch):
+def test_a_dialogue_keeper_removal_dropped_or_moved_after_the_summons_is_caught(monkeypatch):
+    """2026-10-06 ("need the steve traders gone"): each town's _place runs _clear, which kills every cobblemon:npc on
+    a merchant seat, before any summon. The generator mutated three ways, data untouched."""
     real = M.merchant_functions
-
-    def unguarded(doc, plazas):
-        files = real(doc, plazas)
-        return {k: [x.split(" run ", 1)[1] if "type=cobblemon:npc" in x else x for x in v] for k, v in files.items()}
-    monkeypatch.setattr(M, "merchant_functions", unguarded)
     doc = M.load()
+
+    def no_call(doc, plazas):         # _place stops calling _clear
+        return {k: [x for x in v if not x.endswith("_clear")] for k, v in real(doc, plazas).items()}
+    monkeypatch.setattr(M, "merchant_functions", no_call)
     files, _ = M.build(doc, {})
-    assert _merchant_named(doc, files, "does not remove the dialogue keeper") == _every_stall(doc)
-    assert _merchant_named(doc, files, "without a new merchant standing") == _every_stall(doc)
+    assert _merchant_named(doc, files, "does not run _clear before its summons") == _every_stall(doc)
+
+    def no_kills(doc, plazas):        # _clear kills nothing
+        return {k: [x for x in v if not (k.endswith("_clear.mcfunction") and x.startswith("kill "))]
+                for k, v in real(doc, plazas).items()}
+    monkeypatch.setattr(M, "merchant_functions", no_kills)
+    files, _ = M.build(doc, {})
+    assert _merchant_named(doc, files, "does not remove the dialogue keeper at its seat") == _every_stall(doc)
+
+    def late(doc, plazas):            # the kills move into _done, after the summons (the 2026-10-04 shape)
+        files = real(doc, plazas)
+        for k in [k for k in files if k.endswith("_clear.mcfunction")]:
+            done = k.replace("_clear.mcfunction", "_done.mcfunction")
+            files[done] = files[done] + [x for x in files[k] if x.startswith("kill ")]
+            files[k] = [x for x in files[k] if not x.startswith("kill ")]
+        return files
+    monkeypatch.setattr(M, "merchant_functions", late)
+    files, _ = M.build(doc, {})
+    assert _merchant_named(doc, files, "its town's _done kills a Cobblemon NPC") == _every_stall(doc)
 
 
 def test_a_stall_dialogue_or_purchase_left_beside_a_merchant_is_caught():
@@ -267,12 +329,19 @@ def test_a_stall_dialogue_or_purchase_left_beside_a_merchant_is_caught():
     doc = M.load()
     files, _ = M.build(doc, {})
     s = M.emitted_stalls(doc)[0]
+    c = M.emitted(doc)[0]
     files["data/cobblers/function/stalls/%s/x.mcfunction" % s["id"]] = ["say x"]
     files["data/cobblers/dialogues/dlg_stall_%s.json" % s["id"]] = {}
+    # and a counter's (2026-10-06): its old menu, class and purchase function
+    files["data/cobblers/dialogues/dlg_market_%s.json" % c["id"]] = {}
+    files["data/cobblers/npcs/npc_market_%s.json" % c["id"]] = {}
+    files["data/cobblers/function/markets/%s/%s.mcfunction" % (c["id"], c["stock"][0]["id"])] = ["say x"]
     files["data/cobblers/function/stalls/merchants/extra.mcfunction"] = ["execute as @p run cobbledollars remove @s 5"]
     probs = M.output_problems(doc, files)
-    assert sum("beside its merchant" in p for p in probs) == 2
+    assert sum("beside its merchant" in p for p in probs) == 4
+    assert sum("a counter's purchase function or charge macro is emitted" in p for p in probs) == 1
     assert any("extra.mcfunction: a merchant function charges" in p for p in probs)
+    assert M.output_problems(doc, M.build(doc, {})[0]) == []
 
 
 def test_a_gated_stall_line_an_indivisible_price_and_a_missing_category_are_refused():
@@ -299,7 +368,7 @@ def test_the_world_check_reads_every_merchant_back(monkeypatch):
     monkeypatch.setattr(time, "sleep", lambda s: None)
     doc = M.load()
     ms = M.stall_merchants(doc)
-    stalls = {s["id"]: s for s in M.emitted_stalls(doc)}
+    stalls = {s["id"]: s for s, _kind in M.merchant_records(doc)}      # the counters' merchants too, since 2026-10-06
     by_tag = {m["tag"]: m for m in ms}
 
     def world(missing=(), npc_left=(), off_seat=(), cheap=()):
@@ -334,6 +403,12 @@ def test_the_world_check_reads_every_merchant_back(monkeypatch):
     assert any(p.startswith("tilpey_stationer: its merchant is not on its seat") for p in got)
     assert any(p.startswith("fenhide_trapper: its shop reads") for p in got)
     assert len(got) == 4
+    # the counters' merchants are read back the same way: Steepside's Tea House Kitchen with its Steve still beside it
+    got = M.verify(world(missing=["holdfast"], npc_left=["steepside"], cheap=["greenhollow"]), doc)
+    assert any(p.startswith("holdfast: 0 merchants") for p in got)
+    assert any(p.startswith("steepside: 1 Cobblemon NPC(s) still within") for p in got)
+    assert any(p.startswith("greenhollow: its shop reads") for p in got)
+    assert len(got) == 3
 
 
 # ------------------------------------------------------------------------------------------------ sites without derived/
@@ -392,14 +467,15 @@ def test_r17m_places_every_counter_keeper_and_every_stall_merchant_then_reads_th
     files, _ = M.build(doc)
     assert "data/cobblers/function/stalls/merchants/all.mcfunction" in files
     assert M.MERCHANTS_FN == "cobblers:stalls/merchants/all"
-    # no dialogue stall keeper is placed any more: the merchant replaces it (and removes it)
-    assert M.stall_placements(doc) == []
+    # no dialogue keeper is placed any more, at a stall (2026-10-04) or a counter (2026-10-06): the merchant replaces
+    # it (and its town's _clear removes it)
+    assert M.stall_placements(doc) == [] and M.npc_placements(doc) == []
     ms = M.stall_merchants(doc)
-    assert sorted(m["stall"] for m in ms) == sorted(s["id"] for s in M.emitted_stalls(doc))
+    assert sorted(m["stall"] for m in ms) == sorted([s["id"] for s in M.emitted_stalls(doc)] + [c["id"] for c in M.emitted(doc)])
     assert len({m["tag"] for m in ms}) == len(ms)
     # 3.5+ blocks between every two keepers the step places, merchants included; so the removal radius (2.5) round a
     # merchant reaches no other keeper
-    ks = [(k[0], k[1]) for k in M.npc_placements(doc)] + [(m["stall"], m["at"]) for m in ms]
+    ks = [(m["stall"], m["at"]) for m in ms]
     for a in range(len(ks)):
         for b in range(a + 1, len(ks)):
             assert math.dist(ks[a][1], ks[b][1]) >= M.NPC_CLEAR, (ks[a][0], ks[b][0])
