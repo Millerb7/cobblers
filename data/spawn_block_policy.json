@@ -1,6 +1,7 @@
 {
   "schema": "cobblers.spawn-block-policy/1",
   "status": "draft",
+  "owner_decision_2026_10_05": "Spawn-condition blocks: ALLOW (the owner after the play test: \"give me all the spawns, id like to just place most things down to help with spawns\"). The owner places them by hand from docs/world-building/SPAWN_BLOCKS_LIST.md (tools/spawn_blocks_list.py). NOT YET ENFORCED in the tools: about 60 generators and audits still refuse a spawn-condition block in our own builds and 29 tests check it; each reads data/spawn_blocks.json itself, with no shared switch. Flipping them is a builder task (Wave 2), and the substitutions already applied to templates stay until it lands.",
   "note": "What a placed template may contain of the blocks in data/spawn_blocks.json. Everything else fails validation: a donor's roof must not decide a town's encounters. Substitutions are applied to the template itself by tools/spawn_blocks.py substitute, so the fix travels with the asset and is not rediscovered per placement.",
   "substitutions": [
     {
