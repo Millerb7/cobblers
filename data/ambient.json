@@ -310,9 +310,10 @@
       "rift_dig_camp",
       "merian_hut",
       "gorge_hamlet",
-      "sea_town"
+      "sea_town",
+      "displaced_city"
     ],
-    "scope_held": {"displaced_city": "held 2026-10-06 (docs/OVERNIGHT_REVIEW_2026-10-06.md N42): the build's replay of the cavern town refuses its situations on built blocks the town-plan check cannot see (a Duskull line meets a lantern, then the rising floor's cobblestone): re-site its situations against the built cavern"},
+    "scope_held": {},
     "scope_why": "every settlement with a town plan and people; Pallet (hometown) stays intact by the owner's earlier call; the League, Relic Island, the Scar and the retired jungle ruins have no townsfolk",
     "town_file": {
       "path": "data/ambient_towns/<settlement>.json",

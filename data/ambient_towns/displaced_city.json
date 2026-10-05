@@ -150,13 +150,13 @@
     {"id": "displaced_gutter_woobat", "species": "woobat", "spot": "gutter", "building": "displaced_house_03", "why": "a Woobat hanging from the gutter, its nose print on the wall"},
     {"id": "displaced_window_litwick", "species": "litwick", "spot": "window", "building": "displaced_house_10", "why": "a Litwick in the window, the household's only candle; they know what it is and keep it anyway"},
     {"id": "displaced_porch_paras", "species": "paras", "spot": "porch", "building": "displaced_house_06", "why": "a Paras on the butcher's porch, its mushrooms bigger than last week"},
-    {"id": "displaced_step_foongus", "species": "foongus", "spot": "step", "building": "displaced_house_12", "why": "a Foongus on the step that looks exactly like a dropped Poke Ball, which is the point"},
+    {"id": "displaced_step_foongus", "species": "foongus", "spot": "step", "building": "displaced_house_12", "at": [3275, 29, 1750], "facing": "east", "why": "a Foongus on the step that looks exactly like a dropped Poke Ball, which is the point. Measured 2026-10-06 beside the house's door as the built cavern has it (the spruce door at (3274, 29, 1749)): the step the template resolves to, (3275, 29, 1751), is under the cavern's risen grass"},
     {"id": "displaced_porch_mawile", "species": "mawile", "spot": "porch", "building": "displaced_house_11", "why": "a Mawile on the mason's porch, smiling at the front and chewing at the back"},
     {"id": "displaced_walltop_spinarak", "species": "spinarak", "spot": "wall_top", "building": "displaced_house_02", "why": "a Spinarak on the wall top, its web strung to the next house"},
     {"id": "displaced_window_tynamo", "species": "tynamo", "spot": "window", "building": "displaced_house_16", "why": "a Tynamo in a jar in the window, a night light"},
     {"id": "displaced_walltop_glimmet", "species": "glimmet", "spot": "wall_top", "building": "displaced_house_23", "why": "a Glimmet on the tannery's wall top, catching the lamp light"},
     {"id": "displaced_roof_gastly", "species": "gastly", "spot": "roof", "building": "displaced_house_20", "why": "a Gastly on a roof in a city with no sky; the household says it was here first"},
-    {"id": "displaced_step_mimikyu", "species": "mimikyu", "spot": "step", "building": "displaced_house_31", "why": "a Mimikyu on the fisher's step in its rag disguise, waiting for someone to want to play"}
+    {"id": "displaced_step_mimikyu", "species": "mimikyu", "spot": "step", "building": "displaced_house_31", "side": "west", "why": "a Mimikyu on the fisher's step in its rag disguise, waiting for someone to want to play"}
   ],
   "situations": [
     {
@@ -205,7 +205,7 @@
       "title": "The gate count",
       "story": "Every evening four Duskull line up where the old road comes in and count the people arriving. They have never once got the same number as the mason.",
       "unique": false,
-      "at": [3267, 28, 1665],
+      "at": [3267, 28, 1662],
       "facing": "west",
       "members": [
         {"species": "duskull", "count": 4, "pose": "still", "offsets": [[0, 0, 0], [1, 0, 2], [2, 0, 4], [3, 1, 6]]}
@@ -218,7 +218,7 @@
       "title": "Standoff in the alley",
       "story": "Two Stunky face a Skuntank in the alley behind the upper street, tails up. Everyone else has left the alley.",
       "unique": false,
-      "at": [3375, 35, 1700],
+      "at": [3375, 35, 1699],
       "facing": "east",
       "members": [
         {"species": "stunky", "count": 2, "pose": "still", "offsets": [[0, 0, 0], [-2, 0, 0]]},
