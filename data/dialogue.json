@@ -11932,7 +11932,8 @@
             "field": "quest.evt_station_director.started",
             "value": true
           },
-          "node": "$cursor"
+          "node": "hub",
+          "why": "play test 2026-10-05 (review 88): resuming at the cursor dropped a returning player mid-chain; every grant is a response action, so the hub loses nothing a skipped line carried"
         },
         {
           "priority": 20,
@@ -12094,6 +12095,36 @@
               "next": "k001"
             },
             {
+              "id": "r_scroll_locked",
+              "text": "My Kubfu is growing. Do you know of the scrolls?",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_issuing"
+                  },
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "flag",
+                      "flag": "gym5_cleared"
+                    }
+                  },
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_kubfu"
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_station_director.scroll_claimed",
+                    "value": false
+                  }
+                ]
+              },
+              "next": "k100"
+            },
+            {
               "id": "r_bye",
               "text": "Goodbye.",
               "actions": [
@@ -12224,6 +12255,13 @@
           "kind": "line",
           "speaker": "vale",
           "text": "Write and tell me what it becomes. The station has only ever read about it.",
+          "next": "hub"
+        },
+        {
+          "id": "k100",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "We keep two, and one of them is yours when your Kubfu is ready for it. Come back with the Soul Badge: a Kubfu that has not seen that much will not read either.",
           "next": "hub"
         },
         {
