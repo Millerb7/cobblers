@@ -446,6 +446,24 @@
       },
       "faces": "the farm yard's middle at (3149, 5714), 5.7 blocks off",
       "why": "Arrow Creeks Farm's farmer (data/pokemon_farm.json farmer; tools/pokemon_farm.py checks this seat is the spot its plan leaves open): in the yard where the farm's two lanes cross, on the yard's coarse dirt (the ground's top block replaced, its height unchanged), 457 blocks from the nearest walked route line. Not in a data/towns.json town, so settlement null."
+    },
+    {
+      "id": "npc_fossil_dig_foreman",
+      "conversation": "dlg_fossil_dig_foreman",
+      "settlement": null,
+      "at": [
+        4168,
+        143,
+        5621
+      ],
+      "yaw": -90,
+      "ground": {
+        "kind": "heightmap",
+        "y": 142,
+        "source": "tools/ground.py, the canonical heightmap rounded"
+      },
+      "faces": "the Scorchbone Dig's pit, due east, at (4183, 5621) on the bone bed, 15 blocks off",
+      "why": "Hollis Quarne, the Scorchbone Dig's foreman (data/fossil_dig.json npc; tools/fossil_dig.py seat_problems checks this seat is the spot its plan leaves open, two blocks of air on the ground + 1): on the dig's west lip between the camp and the pit, two blocks north of the rim stair's line (z 5623), about 259 blocks from the nearest route path. Not in a data/towns.json town, so settlement null."
     }
   ],
   "not_seated": [

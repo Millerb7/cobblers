@@ -5779,6 +5779,32 @@
       ]
     },
     {
+      "id": "ambient_fossil_dig",
+      "source": "data/fossil_dig.json; docs: the owner's request of 2026-10-06 (data/fossil_dig.json request)",
+      "scope": "player",
+      "optional": true,
+      "progression_gate": [],
+      "availability": {
+        "conditions": [],
+        "repeatable": true,
+        "npcs_remain_after_completion": true
+      },
+      "dialogue_ids": [
+        "dlg_fossil_dig_foreman"
+      ],
+      "objectives": [],
+      "transitions": [],
+      "writer": "dialogue cursor persistence only; the conversation sets no story, reward, or completion state",
+      "readers": "the foreman's conversation only",
+      "multiplayer": {
+        "state": "per_player",
+        "concurrent_players": "each player advances and restores their own cursor"
+      },
+      "progression_field_refs": [
+        "quest.ambient_fossil_dig.foreman_cursor"
+      ]
+    },
+    {
       "id": "ambient_drovers_hollow",
       "source": "data/drovers_hollow.json; the owner's request of 2026-10-02 for places in the south (data/drovers_hollow.json request)",
       "scope": "player",
