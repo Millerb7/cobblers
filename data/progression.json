@@ -9,6 +9,7 @@
     "Gym waystone positions are the block tools/place_town.py sets (the lower half): x and z from the town plan in data/placements.json, y the plan's surface + 1 as its placement report records. tests check they agree."
   ],
   "namespace": "cobblers",
+  "waystone_gate": {"enforced": false, "why": "the owner, play test 2026-10-05 (review 89): \"turn that off or make it later waystones are blocked\". Off: a gym badge still activates its town's waystone, but no waystone is forgotten for want of a badge and a right-click activates one as the Waystones mod does. true restores the badge gate (activate with the flag, forget without it, re-synced after every use)"},
   "active_series": "kanto",
   "series": [
     {

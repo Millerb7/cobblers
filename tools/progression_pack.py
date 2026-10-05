@@ -181,7 +181,8 @@ def plan(doc: dict, series: str | None = None, placements: dict | None = None) -
             first_win[tid] = {"flag": r["flag"], "items": list(r.get("items") or []), "one_of": list(r.get("one_of") or [])}
     return {"namespace": ns, "series": active, "flags": flags,
             "waystones": waystones, "unplaced": sorted(unplaced), "markers": markers,
-            "empty_loot_tables": empty_loot, "empty_functions": empty_fn, "first_win": first_win}
+            "empty_loot_tables": empty_loot, "empty_functions": empty_fn, "first_win": first_win,
+            "waystone_gate": bool(_obj(doc.get("waystone_gate") or {"enforced": True}, "waystone_gate").get("enforced", True))}
 
 
 def _carry(fid: str, spec, doc: dict) -> dict:
@@ -356,24 +357,28 @@ def files(p: dict) -> dict:
         x, y, z = ws["position"]
         lines.append("execute if entity %s in %s run waystones activate @s %d %d %d"
                      % (_has(ns, ws["flag"], True), ws["dimension"], x, y, z))
-        lines.append("execute if entity %s in %s run waystones forget @s %d %d %d"
-                     % (_has(ns, ws["flag"], False), ws["dimension"], x, y, z))
+        if p.get("waystone_gate", True):
+            lines.append("execute if entity %s in %s run waystones forget @s %d %d %d"
+                         % (_has(ns, ws["flag"], False), ws["dimension"], x, y, z))
     out["data/%s/function/navigation/reconcile.mcfunction" % ns] = "\n".join(lines) + "\n"
 
-    out["data/%s/advancement/navigation/used_waystone.json" % ns] = json.dumps({
-        "criteria": {"used": {"trigger": "minecraft:any_block_use", "conditions": {
-            "location": [{"condition": "minecraft:location_check",
-                          "predicate": {"block": {"blocks": "#waystones:waystones"}}}]}}},
-        "rewards": {"function": "%s:navigation/on_use" % ns}}, indent=2) + "\n"
-    out["data/%s/function/navigation/on_use.mcfunction" % ns] = "\n".join([
-        "advancement revoke @s only %s:navigation/used_waystone" % ns,
-        "tag @s add %s.resync" % ns,
-        "schedule function %s:navigation/deferred 1t replace" % ns,
-    ]) + "\n"
-    out["data/%s/function/navigation/deferred.mcfunction" % ns] = "\n".join([
-        "execute as @a[tag=%s.resync] at @s run function %s:navigation/reconcile" % (ns, ns),
-        "tag @a remove %s.resync" % ns,
-    ]) + "\n"
+    # waystone_gate.enforced false (the owner, play test 2026-10-05, review 89): a badge still activates its town's
+    # waystone, but nothing is forgotten and a right-click activates as the Waystones mod does, so no re-sync on use
+    if p.get("waystone_gate", True):
+        out["data/%s/advancement/navigation/used_waystone.json" % ns] = json.dumps({
+            "criteria": {"used": {"trigger": "minecraft:any_block_use", "conditions": {
+                "location": [{"condition": "minecraft:location_check",
+                              "predicate": {"block": {"blocks": "#waystones:waystones"}}}]}}},
+            "rewards": {"function": "%s:navigation/on_use" % ns}}, indent=2) + "\n"
+        out["data/%s/function/navigation/on_use.mcfunction" % ns] = "\n".join([
+            "advancement revoke @s only %s:navigation/used_waystone" % ns,
+            "tag @s add %s.resync" % ns,
+            "schedule function %s:navigation/deferred 1t replace" % ns,
+        ]) + "\n"
+        out["data/%s/function/navigation/deferred.mcfunction" % ns] = "\n".join([
+            "execute as @a[tag=%s.resync] at @s run function %s:navigation/reconcile" % (ns, ns),
+            "tag @a remove %s.resync" % ns,
+        ]) + "\n"
 
     triggers = [f for f in p["flags"] if f["kind"] == "trigger"]
     load = ["scoreboard objectives add %s.left minecraft.custom:minecraft.leave_game" % ns]

@@ -86,6 +86,13 @@ def test_reconcile_activates_and_forgets_each_gym_waystone_at_its_position(gym, 
     act = [l for l in mine if re.search(r" run waystones activate @s %d %d %d$" % (x, y, z), l)]
     forget = [l for l in mine if re.search(r" run waystones forget @s %d %d %d$" % (x, y, z), l)]
     assert len(act) == 1 and "%s=true" % flag in act[0], mine
-    assert len(forget) == 1 and "%s=false" % flag in forget[0], mine
-    assert len(mine) == 2, mine
+    # data/progression.json waystone_gate (the owner, play test 2026-10-05, review 89): with the gate off nothing is
+    # forgotten; with it on, a player without the badge loses the waystone
+    gated = (json.loads((ROOT / "data" / "progression.json").read_text(encoding="utf-8")).get("waystone_gate")
+             or {"enforced": True}).get("enforced", True)
+    if gated:
+        assert len(forget) == 1 and "%s=false" % flag in forget[0], mine
+    else:
+        assert forget == [], mine
+    assert len(mine) == (2 if gated else 1), mine
     assert not [l for l in reconcile if l.startswith("# %s " % ws["town"]) and "not placed" in l]
