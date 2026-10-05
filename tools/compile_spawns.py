@@ -411,11 +411,16 @@ def compile_habitat(h, entries):
     # cobblemon:farfetch'd, an invalid location, and the whole data load stopped on staging, 2026-09-26)
     # a habitat pool spawn takes a timeRange of its own (Cobblemon 1.8.0 HabitatSpawn, and the jar's own
     # habitat_pools/abandoned_village_house.json): an entry's conditions.timeRange carries through, so a night bird
-    # is a night bird in a tree too
+    # is a night bird in a tree too.
+    # A regional form ("corsola galarian") is the species plus `modifiers`: HabitatSpawn.species is a Species, not a
+    # properties string, so "corsola galarian" there would be an invalid species and fail the data load; the form goes
+    # in `modifiers` (a PokemonProperties), as the jar's own habitat pools write it ("modifiers": "galarian";
+    # docs/research/notes/habitat-blocks-underground.md, HabitatSpawn.kt). 2026-10-05, tools/desert_wreck.py's pool.
     doc = {"name": "cobblers.habitat.%s.name" % h["id"], "type": "cobblemon:natural",
-           "spawns": [dict({"species": e["species"], "bucket": e["bucket"],
+           "spawns": [dict({"species": e["species"].split()[0], "bucket": e["bucket"],
                             "spawnablePositionType": position_type(e),
                             "weight": e["weight"], "levelRange": e["level"], "phases": "1-25"},
+                           **({"modifiers": " ".join(e["species"].split()[1:])} if len(e["species"].split()) > 1 else {}),
                            **({"timeRange": e["conditions"]["timeRange"]}
                               if (e.get("conditions") or {}).get("timeRange") else {})) for e in compiled]}
     compiled_names = {display.get(e["species"], e["species"]) for e in compiled}

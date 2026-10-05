@@ -7478,6 +7478,36 @@
       },
       "status": "planned",
       "why": "A few Horsea kept in the station's study pool (docs/world-building/RESEARCH_STATION.md section 5.3, the Seaward Drift's precedent: a water Habitat Block). ACTIVATED, up to 4 alive at once, one at a time. The position is the middle of the post tools/research_station.py sets under the study deck's centre (456, 2828): the sea floor there is y57 (heightmap, rounded), 5 under the sea's y62, the post runs y58-61 and the block replaces its middle; the pack must run BEFORE R9E or it writes the post back over this block. spawn_range 8 reaches the water round the deck (its 17 by 17 box, x448-464, z2820-2836, is 289 water columns 3-8 deep, measured 2026-10-02); cancel_range 8 holds the shallows band's natural pool off it. The nearest other Habitat Block is elder_lake_viltri_hollow_1, 898 blocks away (measured from this file's positions). Moved 2026-10-02 from Shrew Lake's lagoon (2574, 103, 4114), where it kept Psyduck, when the owner moved the station to the coast; tools/research_station.py cleanup puts that cell back to lake water on staging. In-water activated spawning is not verified (the Drift's caveat)."
+    },
+    {
+      "id": "desert_wreck_strand_ward",
+      "place": "the Brass Petrel on the southern desert beach (data/desert_wreck.json): one block under the sand in the middle of the dead reef",
+      "pool": "cobblers:desert_wreck_strand",
+      "style": "natural",
+      "replace_spawns": true,
+      "range_of_influence": 28,
+      "position": {
+        "x": 6488,
+        "y": 62,
+        "z": 6818
+      },
+      "status": "planned",
+      "why": "written by tools/desert_wreck.py records --write from the plan (data/desert_wreck.json pool.blocks): inside its range every ambient spawn is drawn from the strand's pool instead of the pack's defaults (EXP-021; the vertical shape is EXP-033, unrun). Not in a block the pack writes, so R9E may run before or after R9DW. Inert until its chunk reloads: restart after R9E."
+    },
+    {
+      "id": "desert_wreck_hold_ward",
+      "place": "the Brass Petrel on the southern desert beach (data/desert_wreck.json): one block under the keel, under the sand-choked forepeak",
+      "pool": "cobblers:desert_wreck_strand",
+      "style": "natural",
+      "replace_spawns": true,
+      "range_of_influence": 28,
+      "position": {
+        "x": 6488,
+        "y": 62,
+        "z": 6762
+      },
+      "status": "planned",
+      "why": "written by tools/desert_wreck.py records --write from the plan (data/desert_wreck.json pool.blocks): inside its range every ambient spawn is drawn from the strand's pool instead of the pack's defaults (EXP-021; the vertical shape is EXP-033, unrun). Not in a block the pack writes, so R9E may run before or after R9DW. Inert until its chunk reloads: restart after R9E."
     }
   ]
 }
