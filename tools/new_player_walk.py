@@ -1321,6 +1321,10 @@ class Walker:
         self.vr_stands(st, caves_held)
         forced = self.forced()
         vr = sorted(t for t, i in forced.items() if t.startswith("route_09_") and i["forced"])
+        authored = {s["id"] for s in self.inp.data("vr_trainers.json").get("trainers") or []}
+        if set(vr) - authored:
+            st.warnings.append("built forced route_09 trainer(s) with no stand in data/vr_trainers.json: %s"
+                               % sorted(set(vr) - authored))
         self.fight_each(st, vr, 9)
         return st
 
