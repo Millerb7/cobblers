@@ -1,0 +1,626 @@
+{
+  "settlement": "mining_town",
+  "size": "town",
+  "target": 44,
+  "character": "Fossick is a working mine: half its Pokemon break, drill, haul and sort ore from the adit to the pithead yard, and the rest are a mine town's, a canary at the adit, fossils in the wash trough, a Golem asleep on the rails. Rock and steel only, and the only town with fossil Pokemon.",
+  "workers": [
+    {
+      "id": "mining_ore_carrier",
+      "settlement": "mining_town",
+      "species": "machoke",
+      "level": 44,
+      "job": "carry",
+      "route": [[6636, 5696], [6624, 5699]],
+      "carry": "minecraft:raw_iron_block",
+      "carry_height": 1.6,
+      "box": [1.0, 1.8],
+      "pickup": {
+        "sound": "minecraft:block.stone.hit"
+      },
+      "drop": {
+        "sound": "minecraft:block.chain.place",
+        "block": "minecraft:raw_iron_block",
+        "count": 10
+      },
+      "interact": "The Machoke hauls broken ore to the headframe. It nods at you on its way past."
+    },
+    {
+      "id": "mining_coal_breaker",
+      "settlement": "mining_town",
+      "species": "roggenrola",
+      "level": 44,
+      "job": "work",
+      "at": [6608, 5692],
+      "face": [6605, 5692],
+      "every": 26,
+      "box": [0.8, 0.8],
+      "effect": {
+        "block": "minecraft:coal_ore",
+        "count": 14,
+        "sound": "minecraft:block.stone.break",
+        "pitch": 1.1
+      },
+      "interact": "The Roggenrola is headbutting coal loose from the pile. It seems to enjoy it."
+    },
+    {
+      "id": "mining_ore_breaker",
+      "settlement": "mining_town",
+      "species": "tinkatuff",
+      "level": 44,
+      "job": "work",
+      "at": [6640, 5692],
+      "face": [6637, 5692],
+      "every": 18,
+      "look_around": [6620, 5699],
+      "effect": {
+        "block": "minecraft:iron_ore",
+        "count": 16,
+        "sound": "minecraft:block.anvil.land",
+        "pitch": 1.2
+      },
+      "interact": "The Tinkatuff breaks ore off the pile with its hammer into pieces a cart can take. It keeps the best-shaped pieces for the hammer."
+    },
+    {
+      "id": "fossick_excadrill_spoil",
+      "settlement": "mining_town",
+      "species": "excadrill",
+      "level": 44,
+      "job": "work",
+      "at": [6640, 5707],
+      "face": [6637, 5707],
+      "every": 30,
+      "effect": {
+        "block": "minecraft:cobbled_deepslate",
+        "count": 16,
+        "sound": "minecraft:block.stone.break",
+        "pitch": 0.8
+      },
+      "interact": "The Excadrill drills through the spoil heap looking for anything the first pass missed. It finds something about once a day."
+    },
+    {
+      "id": "fossick_graveler_copper",
+      "settlement": "mining_town",
+      "species": "graveler",
+      "level": 44,
+      "job": "carry",
+      "route": [[6609, 5703], [6617, 5703]],
+      "carry": "minecraft:raw_copper_block",
+      "carry_height": 1.4,
+      "box": [1.0, 1.2],
+      "pickup": {
+        "sound": "minecraft:block.copper.hit"
+      },
+      "drop": {
+        "sound": "minecraft:block.copper.place",
+        "block": "minecraft:raw_copper_block",
+        "count": 10
+      },
+      "interact": "The Graveler carries copper to the headframe two-handed and scratches its head with the third."
+    },
+    {
+      "id": "fossick_onix_heading",
+      "settlement": "mining_town",
+      "species": "onix",
+      "level": 45,
+      "job": "work",
+      "at": [6724, 5798],
+      "face": [6733, 5806],
+      "every": 48,
+      "effect": {
+        "block": "minecraft:deepslate",
+        "count": 20,
+        "spread": 0.6,
+        "sound": "minecraft:block.deepslate.break",
+        "pitch": 0.6
+      },
+      "interact": "The Onix is boring the new heading into the hill beside the adit. The miners follow it in with props."
+    },
+    {
+      "id": "fossick_rolycoly_coal",
+      "settlement": "mining_town",
+      "species": "rolycoly",
+      "level": 43,
+      "job": "carry",
+      "route": [[6640, 5720], [6658, 5720]],
+      "carry": "minecraft:coal_block",
+      "carry_height": 0.9,
+      "box": [0.8, 0.8],
+      "pickup": {
+        "sound": "minecraft:block.stone.hit"
+      },
+      "drop": {
+        "sound": "minecraft:block.stone.place",
+        "block": "minecraft:coal_block",
+        "count": 8
+      },
+      "interact": "The Rolycoly rolls a coal block along the ore road. It is not clear which of them is pushing."
+    },
+    {
+      "id": "fossick_carkol_spur",
+      "settlement": "mining_town",
+      "species": "carkol",
+      "level": 44,
+      "job": "carry",
+      "route": [[6684, 5726], [6692, 5734]],
+      "carry": "minecraft:coal_ore",
+      "carry_height": 1.3,
+      "box": [0.9, 1.1],
+      "pickup": {
+        "sound": "minecraft:block.stone.hit"
+      },
+      "drop": {
+        "sound": "minecraft:block.stone.place",
+        "block": "minecraft:coal_ore",
+        "count": 10
+      },
+      "interact": "The Carkol hauls coal ore down the spur on its own wheels. Every load leaves a black line behind it."
+    },
+    {
+      "id": "fossick_klang_winch",
+      "settlement": "mining_town",
+      "species": "klang",
+      "level": 44,
+      "job": "work",
+      "at": [6624, 5703],
+      "face": [6620, 5699],
+      "every": 36,
+      "effect": {
+        "particle": "minecraft:electric_spark",
+        "count": 8,
+        "spread": 0.3,
+        "dy": 1.0,
+        "sound": "minecraft:block.chain.hit",
+        "pitch": 0.8
+      },
+      "interact": "The Klang turns the headframe's winch, gears against gears. The chain down the shaft moves a link at a time."
+    },
+    {
+      "id": "fossick_hariyama_cart",
+      "settlement": "mining_town",
+      "species": "hariyama",
+      "level": 45,
+      "job": "carry",
+      "route": [[6708, 5750], [6720, 5762]],
+      "carry": "minecraft:iron_ore",
+      "carry_height": 1.9,
+      "box": [1.1, 1.9],
+      "pickup": {
+        "sound": "minecraft:block.stone.hit"
+      },
+      "drop": {
+        "sound": "minecraft:block.stone.place",
+        "block": "minecraft:iron_ore",
+        "count": 12
+      },
+      "interact": "The Hariyama brings ore up the spur with one palm under the load and the other ready to slap anything that falls."
+    },
+    {
+      "id": "fossick_aron_scrap",
+      "settlement": "mining_town",
+      "species": "aron",
+      "level": 43,
+      "job": "work",
+      "at": [6700, 5772],
+      "face": [6702, 5776],
+      "every": 40,
+      "box": [0.8, 0.7],
+      "effect": {
+        "block": "minecraft:iron_bars",
+        "count": 8,
+        "sound": "minecraft:entity.generic.eat",
+        "pitch": 0.7
+      },
+      "interact": "The Aron is the yard's scrap collector. It is eating a bent rail. The assay clerk lets it."
+    },
+    {
+      "id": "fossick_sableye_gems",
+      "settlement": "mining_town",
+      "species": "sableye",
+      "level": 44,
+      "job": "work",
+      "at": [6688, 5790],
+      "face": [6690, 5790],
+      "every": 58,
+      "box": [0.8, 0.9],
+      "effect": {
+        "particle": "minecraft:glow",
+        "count": 6,
+        "spread": 0.2,
+        "dy": 0.7,
+        "sound": "minecraft:block.amethyst_block.chime",
+        "pitch": 1.4
+      },
+      "interact": "The Sableye sorts the morning's gems for the assay office. It holds each one up to its own eyes to compare."
+    },
+    {
+      "id": "fossick_nosepass_compass",
+      "settlement": "mining_town",
+      "species": "nosepass",
+      "level": 43,
+      "job": "work",
+      "at": [6680, 5700],
+      "face": [6680, 5690],
+      "every": 160,
+      "effect": {
+        "particle": "minecraft:electric_spark",
+        "count": 4,
+        "spread": 0.1,
+        "dy": 1.1,
+        "sound": "minecraft:block.copper_bulb.turn_on",
+        "pitch": 1.2
+      },
+      "interact": "The Nosepass is the surveyors' compass. It faces north. It has faced north since it got here."
+    },
+    {
+      "id": "fossick_crustle_slag",
+      "settlement": "mining_town",
+      "species": "crustle",
+      "level": 44,
+      "job": "work",
+      "at": [6744, 5792],
+      "face": [6748, 5798],
+      "every": 44,
+      "effect": {
+        "block": "minecraft:blackstone",
+        "count": 12,
+        "sound": "minecraft:block.gravel.break",
+        "pitch": 0.9
+      },
+      "interact": "The Crustle picks through the slag heap for a better rock to carry. It has been carrying the same one for a year."
+    },
+    {
+      "id": "fossick_tinkatink_picks",
+      "settlement": "mining_town",
+      "species": "tinkatink",
+      "level": 42,
+      "job": "work",
+      "at": [6614, 5694],
+      "face": [6612, 5690],
+      "every": 24,
+      "box": [0.7, 0.8],
+      "effect": {
+        "particle": "minecraft:crit",
+        "count": 6,
+        "dy": 0.6,
+        "sound": "minecraft:block.anvil.use",
+        "pitch": 1.6
+      },
+      "interact": "The Tinkatink straightens the pit-tools stall's picks with its little hammer. It glares at the Tinkatuff's big one."
+    },
+    {
+      "id": "fossick_drilbur_sump",
+      "settlement": "mining_town",
+      "species": "drilbur",
+      "level": 43,
+      "job": "work",
+      "at": [6627, 5645],
+      "face": [6629, 5643],
+      "every": 32,
+      "box": [0.8, 0.8],
+      "effect": {
+        "block": "minecraft:gravel",
+        "count": 12,
+        "sound": "minecraft:block.gravel.break",
+        "pitch": 1.1
+      },
+      "interact": "The Drilbur keeps the bowl's sump dug out so the houses stay dry. It surfaces, shakes, and goes back down."
+    },
+    {
+      "id": "fossick_cufant_copper",
+      "settlement": "mining_town",
+      "species": "cufant",
+      "level": 44,
+      "job": "carry",
+      "route": [[6598, 5712], [6560, 5712]],
+      "carry": "minecraft:copper_block",
+      "carry_height": 1.5,
+      "box": [1.0, 1.3],
+      "pickup": {
+        "sound": "minecraft:block.copper.hit"
+      },
+      "drop": {
+        "sound": "minecraft:block.copper.place",
+        "block": "minecraft:copper_block",
+        "count": 10
+      },
+      "interact": "The Cufant carries the smelted copper down the ore road to the west end, trunk over the load to keep it steady."
+    },
+    {
+      "id": "fossick_geodude_breaker",
+      "settlement": "mining_town",
+      "species": "geodude",
+      "level": 42,
+      "job": "work",
+      "at": [6632, 5711],
+      "face": [6636, 5708],
+      "every": 22,
+      "box": [0.8, 0.6],
+      "effect": {
+        "block": "minecraft:andesite",
+        "count": 10,
+        "sound": "minecraft:block.stone.hit",
+        "pitch": 1.2
+      },
+      "interact": "The Geodude breaks the spoil's bigger lumps with its fists so the Excadrill can get through."
+    },
+    {
+      "id": "fossick_orthworm_testhole",
+      "settlement": "mining_town",
+      "species": "orthworm",
+      "level": 44,
+      "job": "work",
+      "at": [6636, 5622],
+      "face": [6640, 5622],
+      "every": 70,
+      "effect": {
+        "block": "minecraft:tuff",
+        "count": 14,
+        "sound": "minecraft:block.tuff.break",
+        "pitch": 0.7
+      },
+      "interact": "The Orthworm bores a test hole above the bowl for the surveyors. It comes back up with a core in its mouth."
+    },
+    {
+      "id": "fossick_nacli_salt",
+      "settlement": "mining_town",
+      "species": "nacli",
+      "level": 42,
+      "job": "work",
+      "at": [6600, 5711],
+      "face": [6603, 5708],
+      "every": 46,
+      "box": [0.7, 0.7],
+      "effect": {
+        "block": "minecraft:calcite",
+        "count": 8,
+        "sound": "minecraft:block.calcite.hit",
+        "pitch": 1.3
+      },
+      "interact": "The Nacli sorts rock salt out of the copper spoil and stacks it in little cubes. The cook buys every one."
+    },
+    {
+      "id": "fossick_lairon_props",
+      "settlement": "mining_town",
+      "species": "lairon",
+      "level": 44,
+      "job": "work",
+      "at": [6712, 5766],
+      "face": [6718, 5766],
+      "every": 54,
+      "effect": {
+        "block": "minecraft:spruce_log",
+        "count": 10,
+        "sound": "minecraft:block.wood.hit",
+        "pitch": 0.7
+      },
+      "interact": "The Lairon headbutts the spur's pit props square. Some of them it headbutts twice, for luck."
+    },
+    {
+      "id": "fossick_dwebble_shells",
+      "settlement": "mining_town",
+      "species": "dwebble",
+      "level": 42,
+      "job": "carry",
+      "route": [[6632, 5682], [6632, 5668]],
+      "carry": "minecraft:cobblestone",
+      "carry_height": 0.9,
+      "box": [0.7, 0.8],
+      "pickup": {
+        "sound": "minecraft:block.stone.hit"
+      },
+      "drop": {
+        "sound": "minecraft:block.stone.place",
+        "block": "minecraft:cobblestone",
+        "count": 8
+      },
+      "interact": "The Dwebble carries stones up the bowl walk to try them on as shells. None of them fits, so it brings them back."
+    }
+  ],
+  "pets": [
+    {
+      "id": "fossick_foreman_mawile",
+      "species": "mawile",
+      "owner": "npc_stone_tip_mining_town_foreman",
+      "mode": "follow",
+      "why": "the foreman's Mawile; the back jaw does the talking when the foreman will not"
+    },
+    {
+      "id": "fossick_counter_cranidos",
+      "species": "cranidos",
+      "owner": "fossick",
+      "mode": "wait",
+      "why": "the market counter's Cranidos, which has headbutted a dent into the counter's front"
+    },
+    {
+      "id": "fossick_counter_minior",
+      "species": "minior",
+      "owner": "fossick",
+      "mode": "wait",
+      "why": "a Minior on the counter in its shell, like a paperweight; the clerk swears it fell out of the sky into the yard"
+    },
+    {
+      "id": "fossick_tools_shieldon",
+      "species": "shieldon",
+      "owner": "fossick_pit_tools",
+      "mode": "wait",
+      "why": "the pit-tools keeper's Shieldon, lying across the front of the stall like a door"
+    },
+    {
+      "id": "fossick_tools_kabuto",
+      "species": "kabuto",
+      "owner": "fossick_pit_tools",
+      "mode": "follow",
+      "why": "the tools keeper found it in a fossil bed in the bowl and it has followed her since"
+    }
+  ],
+  "placed": [
+    {
+      "id": "fossick_glimmet_window",
+      "species": "glimmet",
+      "spot": "window",
+      "building": "mining_house_02",
+      "why": "in the library's window among the specimen stones; the label under it is wrong"
+    },
+    {
+      "id": "fossick_boldore_step",
+      "species": "boldore",
+      "spot": "step",
+      "building": "mining_house_14",
+      "why": "beside the step of the house nearest the mine, its crystals lighting the doorway"
+    },
+    {
+      "id": "fossick_omanyte_step",
+      "species": "omanyte",
+      "spot": "step",
+      "building": "mining_house_06",
+      "why": "used as a doorstop by the fisher cottage, which is how it likes it"
+    },
+    {
+      "id": "fossick_lunatone_roof",
+      "species": "lunatone",
+      "spot": "roof",
+      "building": "mining_house_03",
+      "why": "on the armorer's roof at the bowl's east side, facing the Solrock across the walk"
+    },
+    {
+      "id": "fossick_solrock_roof",
+      "species": "solrock",
+      "spot": "roof",
+      "building": "mining_house_01",
+      "why": "on the big house's roof at the bowl's west side, facing the Lunatone; they turn together"
+    },
+    {
+      "id": "fossick_anorith_gutter",
+      "species": "anorith",
+      "spot": "gutter",
+      "building": "mining_house_12",
+      "why": "in the gutter, where the rain brings it things to catch"
+    }
+  ],
+  "situations": [
+    {
+      "id": "fossick_adit_canary",
+      "title": "The canary at the adit",
+      "unique": true,
+      "story": "A Chatot sits on a post at the adit's mouth. When it stops singing, everyone comes out. The Whismur under it has learned to sing for it on the days it sulks.",
+      "at": [6726, 143, 5804],
+      "facing": "east",
+      "members": [
+        {
+          "species": "chatot",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 1, 0]]
+        },
+        {
+          "species": "whismur",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[1, 0, 1]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:spruce_fence",
+          "at": [0, 0, 0]
+        }
+      ],
+      "why": "Fossick's own: a mine's canary, at the mouth of the mine; the only bird in town"
+    },
+    {
+      "id": "fossick_golem_on_the_rails",
+      "title": "The Golem asleep on the rails",
+      "unique": false,
+      "story": "A Golem curled up across the old rails at the ore road and would not move, so the carts stop there now and the haulers unload round it. Two Geodude sleep on top of it.",
+      "at": [6664, 139, 5718],
+      "facing": "west",
+      "members": [
+        {
+          "species": "golem",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        },
+        {
+          "species": "geodude",
+          "count": 2,
+          "pose": "still",
+          "offsets": [[0, 1, 0], [1, 0, 1]]
+        }
+      ],
+      "props": [],
+      "why": "on the rail line between the spur and the yard; a family heap",
+      "allow": ["street"]
+    },
+    {
+      "id": "fossick_wash_trough",
+      "title": "Fossils in the wash trough",
+      "unique": false,
+      "story": "The miners wash ore in the trough above the bowl. Two Lileep have planted themselves in it, and a Cradily stands over them as if it is their trough.",
+      "at": [6626, 134, 5634],
+      "facing": "west",
+      "members": [
+        {
+          "species": "lileep",
+          "count": 2,
+          "pose": "still",
+          "offsets": [[0, 0, 0], [1, 0, 0]]
+        },
+        {
+          "species": "cradily",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[2, 0, 1]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:water_cauldron",
+          "at": [0, 0, 0]
+        },
+        {
+          "block": "minecraft:water_cauldron",
+          "at": [1, 0, 0]
+        }
+      ],
+      "why": "the town's name is fossicking; the fossils live here and nowhere else"
+    },
+    {
+      "id": "fossick_salt_lick",
+      "title": "The salt lick behind the ore road",
+      "unique": false,
+      "story": "A Garganacl stands behind the ore road houses and every Pokemon that passes stops to lick it. A Bidoof and a Wooloo are queuing for a second go.",
+      "at": [6596, 139, 5734],
+      "facing": "north",
+      "members": [
+        {
+          "species": "garganacl",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        },
+        {
+          "species": "bidoof",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[2, 0, 0]]
+        },
+        {
+          "species": "wooloo",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[-2, 0, 1]]
+        }
+      ],
+      "props": [],
+      "why": "behind the houses, off the road; a salt mine's joke"
+    }
+  ],
+  "counts": {
+    "working": 22,
+    "pets": 5,
+    "placed": 6,
+    "situations": 11,
+    "total": 44
+  }
+}

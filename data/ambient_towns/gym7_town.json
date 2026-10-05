@@ -1,0 +1,557 @@
+{
+  "settlement": "gym7_town",
+  "size": "town",
+  "target": 46,
+  "character": "Cinderlee is a field station on a live crater rim: its Pokemon feed the vents, cut and label cores, cook on the fumaroles and keep the instruments, and the rest have found the warm places, a kiln, a bath, a mast top, a coil. Fire Pokemon only, plus two cold visitors who will not leave the warmth.",
+  "workers": [
+    {
+      "id": "blaine_fumarole_magby",
+      "settlement": "gym7_town",
+      "species": "magby",
+      "level": 34,
+      "job": "work",
+      "at": [6103, 4976],
+      "face": [6105, 4976],
+      "every": 40,
+      "effect": {
+        "particle": "minecraft:flame",
+        "count": 10,
+        "spread": 0.2,
+        "speed": 0.02,
+        "dy": 0.8,
+        "sound": "minecraft:block.lava.pop",
+        "pitch": 0.9
+      },
+      "interact": "The Magby is feeding the vent. The air above it shimmers, and so does the Magby."
+    },
+    {
+      "id": "blaine_sample_carrier",
+      "settlement": "gym7_town",
+      "species": "charmeleon",
+      "level": 34,
+      "job": "carry",
+      "route": [[6041, 4993], [6045, 4984], [6045, 4964], [6039, 4963]],
+      "carry": "minecraft:tuff",
+      "carry_height": 1.5,
+      "box": [1.0, 1.5],
+      "pickup": {
+        "sound": "minecraft:block.tuff.hit"
+      },
+      "drop": {
+        "sound": "minecraft:block.tuff.place",
+        "block": "minecraft:tuff",
+        "count": 10
+      },
+      "interact": "The Charmeleon sets a core down at the field lab and holds its tail well away from the labels. Then it goes back for the next."
+    },
+    {
+      "id": "cinderlee_torkoal_oven",
+      "settlement": "gym7_town",
+      "species": "torkoal",
+      "level": 33,
+      "job": "work",
+      "at": [6090, 5003],
+      "face": [6087, 5005],
+      "every": 60,
+      "effect": {
+        "particle": "minecraft:campfire_cosy_smoke",
+        "count": 3,
+        "spread": 0.2,
+        "speed": 0.01,
+        "dy": 1.0,
+        "sound": "minecraft:block.smoker.smoke",
+        "pitch": 0.9
+      },
+      "interact": "The Torkoal is the field kitchen's oven. The cook slides a tray onto its shell and it closes its eyes."
+    },
+    {
+      "id": "cinderlee_heatmor_corecutter",
+      "settlement": "gym7_town",
+      "species": "heatmor",
+      "level": 34,
+      "job": "work",
+      "at": [6057, 5029],
+      "face": [6054, 5026],
+      "every": 50,
+      "effect": {
+        "particle": "minecraft:flame",
+        "count": 8,
+        "spread": 0.15,
+        "speed": 0.01,
+        "dy": 0.9,
+        "sound": "minecraft:item.flintandsteel.use",
+        "pitch": 0.8
+      },
+      "interact": "The Heatmor cuts the cores to length with the flame from its snout. Its eyes keep drifting towards the core shed."
+    },
+    {
+      "id": "cinderlee_slugma_roadmender",
+      "settlement": "gym7_town",
+      "species": "slugma",
+      "level": 33,
+      "job": "work",
+      "at": [6100, 4994],
+      "face": [6102, 4994],
+      "every": 80,
+      "box": [0.8, 0.8],
+      "effect": {
+        "block": "minecraft:magma_block",
+        "count": 10,
+        "sound": "minecraft:block.lava.pop",
+        "pitch": 1.1
+      },
+      "interact": "The Slugma fills the cracks in the causeway with itself, sets, and moves on to the next one. The road is very smooth."
+    },
+    {
+      "id": "cinderlee_turtonator_stones",
+      "settlement": "gym7_town",
+      "species": "turtonator",
+      "level": 34,
+      "job": "work",
+      "at": [6103, 5029],
+      "face": [6100, 5026],
+      "every": 56,
+      "effect": {
+        "block": "minecraft:basalt",
+        "count": 12,
+        "sound": "minecraft:block.stone.hit",
+        "pitch": 0.7
+      },
+      "interact": "The Turtonator turns the cooling stones so they cool evenly. Do not touch its shell; it says so on the sign."
+    },
+    {
+      "id": "cinderlee_braixen_labels",
+      "settlement": "gym7_town",
+      "species": "braixen",
+      "level": 33,
+      "job": "work",
+      "at": [6049, 4957],
+      "face": [6046, 4955],
+      "every": 44,
+      "effect": {
+        "particle": "minecraft:small_flame",
+        "count": 6,
+        "spread": 0.15,
+        "dy": 0.9,
+        "sound": "minecraft:item.flintandsteel.use",
+        "pitch": 1.4
+      },
+      "interact": "The Braixen burns the date onto each sample crate with the tip of its stick. Its handwriting is better than the scientists'."
+    },
+    {
+      "id": "cinderlee_charcadet_instrument",
+      "settlement": "gym7_town",
+      "species": "charcadet",
+      "level": 33,
+      "job": "work",
+      "at": [6095, 4987],
+      "face": [6095, 4990],
+      "every": 62,
+      "effect": {
+        "particle": "minecraft:scrape",
+        "count": 8,
+        "spread": 0.3,
+        "dy": 1.0,
+        "sound": "minecraft:item.axe.scrape",
+        "pitch": 1.2
+      },
+      "interact": "The Charcadet polishes the rim instrument's copper. It has been told the instrument is not armour, and is not convinced."
+    },
+    {
+      "id": "cinderlee_camerupt_obsidian",
+      "settlement": "gym7_town",
+      "species": "camerupt",
+      "level": 34,
+      "job": "work",
+      "at": [6025, 4982],
+      "face": [6028, 4978],
+      "every": 70,
+      "effect": {
+        "block": "minecraft:obsidian",
+        "count": 12,
+        "sound": "minecraft:block.stone.break",
+        "pitch": 0.6
+      },
+      "interact": "The Camerupt breaks obsidian off the pile by sitting on it. It takes a while. It has all day."
+    },
+    {
+      "id": "cinderlee_numel_eggs",
+      "settlement": "gym7_town",
+      "species": "numel",
+      "level": 32,
+      "job": "work",
+      "at": [6123, 4989],
+      "face": [6120, 4986],
+      "every": 90,
+      "effect": {
+        "particle": "minecraft:cloud",
+        "count": 6,
+        "spread": 0.2,
+        "dy": 0.6,
+        "sound": "minecraft:block.lava.pop",
+        "pitch": 1.3
+      },
+      "interact": "The Numel lowers a basket of eggs into the fumarole for the field kitchen, and pulls it up when they are done. It does not know how it knows."
+    },
+    {
+      "id": "cinderlee_tepig_chestnuts",
+      "settlement": "gym7_town",
+      "species": "tepig",
+      "level": 32,
+      "job": "work",
+      "at": [6114, 5017],
+      "face": [6112, 5014],
+      "every": 48,
+      "box": [0.8, 0.8],
+      "effect": {
+        "particle": "minecraft:small_flame",
+        "count": 6,
+        "spread": 0.2,
+        "dy": 0.4,
+        "sound": "minecraft:block.fire.ambient",
+        "pitch": 1.2
+      },
+      "interact": "The Tepig is roasting chestnuts on the vent's lip for the kitchen. Roughly one in three reaches the kitchen."
+    },
+    {
+      "id": "cinderlee_larvesta_silk",
+      "settlement": "gym7_town",
+      "species": "larvesta",
+      "level": 33,
+      "job": "work",
+      "at": [6131, 4972],
+      "face": [6134, 4970],
+      "every": 66,
+      "effect": {
+        "particle": "minecraft:flame",
+        "count": 5,
+        "spread": 0.2,
+        "dy": 0.5,
+        "sound": "minecraft:block.wool.place",
+        "pitch": 1.1
+      },
+      "interact": "The Larvesta warms the silk it spins at the vent. The lab's heat gloves are made of it."
+    },
+    {
+      "id": "cinderlee_chimchar_lamplighter",
+      "settlement": "gym7_town",
+      "species": "chimchar",
+      "level": 32,
+      "job": "work",
+      "at": [6062, 4984],
+      "face": [6060, 4981],
+      "every": 120,
+      "effect": {
+        "particle": "minecraft:flame",
+        "count": 6,
+        "spread": 0.1,
+        "dy": 2.0,
+        "sound": "minecraft:item.firecharge.use",
+        "pitch": 1.3
+      },
+      "interact": "The Chimchar lights the square's lamps at dusk by climbing them. It lights this one twice, to be sure."
+    }
+  ],
+  "pets": [
+    {
+      "id": "cinderlee_analyst_houndour",
+      "species": "houndour",
+      "owner": "npc_main_blaine_crater_analyst",
+      "mode": "follow",
+      "why": "the crater analyst's Houndour, which barks once at every tremor before the instruments catch it"
+    },
+    {
+      "id": "cinderlee_analyst_fennekin",
+      "species": "fennekin",
+      "owner": "npc_main_blaine_crater_analyst",
+      "mode": "follow",
+      "why": "the analyst's Fennekin, carrying a twig it has not yet learned to light"
+    },
+    {
+      "id": "cinderlee_counter_litleo",
+      "species": "litleo",
+      "owner": "cinderlee",
+      "mode": "wait",
+      "why": "the market counter's Litleo, lying across the counter's warm end"
+    },
+    {
+      "id": "cinderlee_counter_torchic",
+      "species": "torchic",
+      "owner": "cinderlee",
+      "mode": "follow",
+      "why": "the counter clerk's Torchic, a warm handful she keeps under her coat at night"
+    },
+    {
+      "id": "cinderlee_provisions_ponyta",
+      "species": "ponyta",
+      "owner": "cinderlee_rim_provisions",
+      "mode": "wait",
+      "why": "the provisioner's Ponyta, tied to nothing and waiting by the stall anyway"
+    },
+    {
+      "id": "cinderlee_coreshed_sizzlipede",
+      "species": "sizzlipede",
+      "owner": "cinderlee_core_shed",
+      "mode": "wait",
+      "why": "the core shed keeper's Sizzlipede, coiled round the warm end of the shed's bench"
+    },
+    {
+      "id": "cinderlee_kitchen_fuecoco",
+      "species": "fuecoco",
+      "owner": "cinderlee_core_shed",
+      "mode": "follow",
+      "why": "the core shed keeper's Fuecoco, which eats the cores that break and several that had not"
+    }
+  ],
+  "placed": [
+    {
+      "id": "cinderlee_litwick_window",
+      "species": "litwick",
+      "spot": "window",
+      "building": "gym7_house_01",
+      "why": "in the temple's window, the only candle that never needs lighting"
+    },
+    {
+      "id": "cinderlee_lampent_porch",
+      "species": "lampent",
+      "spot": "porch",
+      "building": "gym7_house_05",
+      "why": "hanging from the porch as the porch lamp; the household had a lamp once"
+    },
+    {
+      "id": "cinderlee_vulpix_roof",
+      "species": "vulpix",
+      "spot": "roof",
+      "building": "gym7_house_05",
+      "why": "curled on the roof over the chimney, the warmest tiles in town"
+    },
+    {
+      "id": "cinderlee_fletchling_gutter",
+      "species": "fletchling",
+      "spot": "gutter",
+      "building": "gym7_house_07",
+      "why": "in the gutter, where it has been sorting the ash out of the rainwater"
+    },
+    {
+      "id": "cinderlee_cyndaquil_step",
+      "species": "cyndaquil",
+      "spot": "step",
+      "building": "gym7_house_07",
+      "why": "asleep on the warm step, its back just smoking"
+    },
+    {
+      "id": "cinderlee_scorbunny_roof",
+      "species": "scorbunny",
+      "spot": "roof",
+      "building": "gym7_house_10",
+      "why": "on the roof ridge, kicking its heels against the tiles"
+    },
+    {
+      "id": "cinderlee_pansear_window",
+      "species": "pansear",
+      "spot": "window",
+      "building": "gym7_house_04",
+      "why": "in the cartographer's window, where the maps are weighted down with warm stones"
+    },
+    {
+      "id": "cinderlee_darumaka_step",
+      "species": "darumaka",
+      "spot": "step",
+      "building": "gym7_house_01",
+      "why": "sitting on the step like a doorstop, which is what it is used for"
+    },
+    {
+      "id": "cinderlee_litten_window",
+      "species": "litten",
+      "spot": "window",
+      "building": "gym7_pokecenter",
+      "why": "in the Centre's window, ignoring everyone in the Centre"
+    }
+  ],
+  "situations": [
+    {
+      "id": "cinderlee_cold_visitors",
+      "title": "The cold visitors in the Centiskorch's coil",
+      "unique": true,
+      "story": "A Snorunt and a Bergmite came up the rim with a supply cart a week ago and have not left the Centiskorch's coil since. The Centiskorch has not moved either.",
+      "at": [6096, 108, 4943],
+      "facing": "south",
+      "members": [
+        {
+          "species": "centiskorch",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        },
+        {
+          "species": "snorunt",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[1, 0, 1]]
+        },
+        {
+          "species": "bergmite",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[-1, 0, 1]]
+        }
+      ],
+      "props": [],
+      "why": "Cinderlee's own: the only ice in town, and the reason it stays; outside the Centre, where travellers arrive"
+    },
+    {
+      "id": "cinderlee_stone_bath",
+      "title": "The bath nobody else can use",
+      "unique": false,
+      "story": "The town built a stone bath over the warm spring between the vents. A Magcargo got in first, and the water has been boiling ever since. A Pignite waits beside it with a towel.",
+      "at": [6116, 108, 4980],
+      "facing": "south",
+      "members": [
+        {
+          "species": "magcargo",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        },
+        {
+          "species": "pignite",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[2, 0, 0]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:stone_brick_slab",
+          "at": [-1, 0, 0]
+        },
+        {
+          "block": "minecraft:stone_brick_slab",
+          "at": [1, 0, 0]
+        },
+        {
+          "block": "minecraft:stone_brick_slab",
+          "at": [0, 0, -1]
+        },
+        {
+          "block": "minecraft:stone_brick_slab",
+          "at": [0, 0, 1]
+        }
+      ],
+      "why": "between fumaroles 1 and 2, the warm ground"
+    },
+    {
+      "id": "cinderlee_durant_column",
+      "title": "The Durant column to the core shed",
+      "unique": false,
+      "story": "Every afternoon a column of Durant marches up to the core shed's back and away with the crumbs from the bench. The core shed's Heatmor works round the far side. They know.",
+      "at": [6076, 108, 5014],
+      "facing": "north",
+      "members": [
+        {
+          "species": "durant",
+          "count": 5,
+          "pose": "still",
+          "offsets": [[0, 0, 0], [1, 0, 2], [2, 0, 4], [3, 0, 6], [4, 0, 8]]
+        }
+      ],
+      "props": [],
+      "why": "a line IS the situation; it heads for the core shed stall on the square's south edge"
+    },
+    {
+      "id": "cinderlee_mast_top",
+      "title": "The bird on the instrument mast",
+      "unique": false,
+      "story": "A Talonflame has taken the top of the instrument mast, and a Fletchinder the rung below. The readings come down with a pencilled note: less one bird.",
+      "at": [6015, 111, 4935],
+      "facing": "east",
+      "on_dressing_ok": true,
+      "members": [
+        {
+          "species": "talonflame",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 22, 0]]
+        },
+        {
+          "species": "fletchinder",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 20, 1]]
+        }
+      ],
+      "props": [],
+      "why": "on the mast's head (the dressing landmark, height 22), seen from the whole rim; the generator seats them on its top blocks"
+    },
+    {
+      "id": "cinderlee_old_kiln",
+      "title": "Asleep in the old kiln",
+      "unique": false,
+      "story": "The old brick kiln behind the field lab has not been fired in years, but it is never cold. Two Charmander and a Slugma sleep in it every night.",
+      "at": [6020, 111, 4952],
+      "facing": "south",
+      "members": [
+        {
+          "species": "charmander",
+          "count": 2,
+          "pose": "still",
+          "offsets": [[0, 0, 0], [1, 0, 0]]
+        },
+        {
+          "species": "slugma",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 1]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:bricks",
+          "at": [-1, 0, 0]
+        },
+        {
+          "block": "minecraft:bricks",
+          "at": [2, 0, 0]
+        },
+        {
+          "block": "minecraft:bricks",
+          "at": [0, 0, -1]
+        },
+        {
+          "block": "minecraft:bricks",
+          "at": [1, 0, -1]
+        },
+        {
+          "block": "minecraft:brick_slab",
+          "at": [0, 1, -1]
+        }
+      ],
+      "why": "a half-kiln of bricks behind the lab, open to the south"
+    },
+    {
+      "id": "cinderlee_causeway_race",
+      "title": "After the causeway race",
+      "unique": false,
+      "story": "Every evening two Rapidash race the length of the causeway and stand at its end, blowing. Nobody has ever seen who wins.",
+      "at": [6146, 107, 4999],
+      "facing": "west",
+      "members": [
+        {
+          "species": "rapidash",
+          "count": 2,
+          "pose": "still",
+          "offsets": [[0, 0, 0], [0, 0, 2]]
+        }
+      ],
+      "props": [],
+      "why": "the causeway's gym end; the pair IS the story"
+    }
+  ],
+  "counts": {
+    "working": 13,
+    "pets": 7,
+    "placed": 9,
+    "situations": 17,
+    "total": 46
+  }
+}

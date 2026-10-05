@@ -1,0 +1,546 @@
+{
+  "settlement": "sea_town",
+  "size": "town",
+  "target": 44,
+  "character": "Pacifidlog floats: its Pokemon fish, smoke the catch, bail, caulk and keep the lights on the rafts, and the rest are the sea's, washed up on doorsteps, in the bait tanks, on the breakwater and tied up alongside. Water Pokemon only, and the only town with no ground under it: every y here is the deck's (walk y63), never the heightmap's sea floor.",
+  "workers": [
+    {
+      "id": "pacifidlog_kingler_catch",
+      "settlement": "sea_town",
+      "species": "kingler",
+      "level": 50,
+      "job": "carry",
+      "y": 63,
+      "route": [[5080, 7378], [5099, 7378]],
+      "carry": "minecraft:cod",
+      "carry_height": 1.0,
+      "box": [1.0, 1.2],
+      "pickup": {
+        "sound": "minecraft:entity.fishing_bobber.retrieve"
+      },
+      "drop": {
+        "sound": "minecraft:block.barrel.close",
+        "block": "minecraft:barrel",
+        "count": 6
+      },
+      "interact": "The Kingler brings the Row's catch to the guild held high in its big claw. It has never dropped one, and never let go of one either."
+    },
+    {
+      "id": "pacifidlog_veluza_smoker",
+      "settlement": "sea_town",
+      "species": "veluza",
+      "level": 50,
+      "job": "work",
+      "y": 63,
+      "at": [5111, 7384],
+      "face": [5109, 7385],
+      "every": 40,
+      "effect": {
+        "particle": "minecraft:campfire_cosy_smoke",
+        "count": 3,
+        "spread": 0.2,
+        "speed": 0.01,
+        "dy": 1.0,
+        "sound": "minecraft:block.smoker.smoke",
+        "pitch": 1.0
+      },
+      "interact": "The Veluza hangs the catch in the smokehouse, cleaned. Nobody asks how it cleans them so fast."
+    },
+    {
+      "id": "pacifidlog_bruxish_station",
+      "settlement": "sea_town",
+      "species": "bruxish",
+      "level": 49,
+      "job": "work",
+      "y": 63,
+      "at": [5060, 7380],
+      "face": [5060, 7383],
+      "every": 60,
+      "effect": {
+        "particle": "minecraft:splash",
+        "count": 20,
+        "spread": 0.4,
+        "dy": 0.2,
+        "sound": "minecraft:entity.generic.splash",
+        "pitch": 1.1
+      },
+      "interact": "The Bruxish leaps off the Row and comes back up grinning with a fish. Do not look at its head for too long."
+    },
+    {
+      "id": "pacifidlog_dhelmise_hull",
+      "settlement": "sea_town",
+      "species": "dhelmise",
+      "level": 51,
+      "job": "work",
+      "y": 63,
+      "at": [5214, 7304],
+      "face": [5216, 7298],
+      "every": 70,
+      "effect": {
+        "block": "minecraft:stripped_spruce_log",
+        "count": 12,
+        "sound": "minecraft:block.wood.hit",
+        "pitch": 0.7
+      },
+      "interact": "The Dhelmise holds the new hull's keel steady while the boatwright fits the ribs. It knows a great deal about hulls, mostly from the bottom."
+    },
+    {
+      "id": "pacifidlog_barbaracle_caulker",
+      "settlement": "sea_town",
+      "species": "barbaracle",
+      "level": 50,
+      "job": "work",
+      "y": 63,
+      "at": [5222, 7304],
+      "face": [5220, 7298],
+      "every": 48,
+      "effect": {
+        "block": "minecraft:dark_oak_planks",
+        "count": 10,
+        "sound": "minecraft:block.wood.place",
+        "pitch": 1.1
+      },
+      "interact": "The Barbaracle caulks the hull's seams with seven hands, and argues with itself about every one."
+    },
+    {
+      "id": "pacifidlog_marill_bailer",
+      "settlement": "sea_town",
+      "species": "marill",
+      "level": 48,
+      "job": "work",
+      "y": 63,
+      "at": [5214, 7288],
+      "face": [5214, 7283],
+      "every": 36,
+      "box": [0.8, 0.8],
+      "effect": {
+        "particle": "minecraft:splash",
+        "count": 22,
+        "spread": 0.35,
+        "dy": 0.4,
+        "sound": "minecraft:item.bucket.empty",
+        "pitch": 1.4
+      },
+      "interact": "The Marill is bailing out the moored raft with its tail. The raft is not leaking. The Marill likes bailing."
+    },
+    {
+      "id": "pacifidlog_floatzel_lifeguard",
+      "settlement": "sea_town",
+      "species": "floatzel",
+      "level": 50,
+      "job": "work",
+      "y": 63,
+      "at": [4983, 7644],
+      "face": [4970, 7650],
+      "every": 120,
+      "look_around": [4990, 7660],
+      "effect": {
+        "particle": "minecraft:poof",
+        "count": 4,
+        "spread": 0.2,
+        "dy": 0.4,
+        "sound": "minecraft:entity.player.splash",
+        "pitch": 1.3
+      },
+      "interact": "The Floatzel watches the Current Gate's water. It has pulled out three swimmers this month and is waiting for the fourth."
+    },
+    {
+      "id": "pacifidlog_spheal_barrels",
+      "settlement": "sea_town",
+      "species": "spheal",
+      "level": 48,
+      "job": "carry",
+      "y": 63,
+      "route": [[5176, 7393], [5192, 7393]],
+      "carry": "minecraft:barrel",
+      "carry_height": 1.0,
+      "box": [0.8, 0.8],
+      "pickup": {
+        "sound": "minecraft:block.barrel.open"
+      },
+      "drop": {
+        "sound": "minecraft:block.barrel.close",
+        "block": "minecraft:jungle_planks",
+        "count": 8
+      },
+      "interact": "The Spheal rolls the Mart's barrels round to the back on its nose. It has dropped one in the sea and does not want to talk about it."
+    },
+    {
+      "id": "pacifidlog_chinchou_light",
+      "settlement": "sea_town",
+      "species": "chinchou",
+      "level": 48,
+      "job": "work",
+      "y": 63,
+      "at": [5170, 7364],
+      "face": [5172, 7366],
+      "every": 100,
+      "box": [0.8, 0.8],
+      "effect": {
+        "particle": "minecraft:glow",
+        "count": 6,
+        "spread": 0.3,
+        "dy": 0.8,
+        "sound": "minecraft:block.amethyst_block.chime",
+        "pitch": 0.8
+      },
+      "interact": "The Chinchou is the centre raft's night light. On a dark night it blinks to the boats coming in."
+    },
+    {
+      "id": "pacifidlog_piplup_board",
+      "settlement": "sea_town",
+      "species": "piplup",
+      "level": 48,
+      "job": "work",
+      "y": 63,
+      "at": [5113, 7369],
+      "face": [5113, 7373],
+      "every": 54,
+      "box": [0.7, 0.8],
+      "effect": {
+        "particle": "minecraft:poof",
+        "count": 4,
+        "spread": 0.2,
+        "dy": 1.0,
+        "sound": "minecraft:block.wood.hit",
+        "pitch": 1.5
+      },
+      "interact": "The Piplup polishes the guild's catch board every morning. It stands on tiptoe to do the top line, which is still empty."
+    },
+    {
+      "id": "pacifidlog_oshawott_clams",
+      "settlement": "sea_town",
+      "species": "oshawott",
+      "level": 48,
+      "job": "work",
+      "y": 63,
+      "at": [5157, 7383],
+      "face": [5154, 7386],
+      "every": 30,
+      "box": [0.7, 0.8],
+      "effect": {
+        "particle": "minecraft:crit",
+        "count": 6,
+        "dy": 0.4,
+        "sound": "minecraft:entity.turtle.egg_crack",
+        "pitch": 1.3
+      },
+      "interact": "The Oshawott opens clams for the Row's stall with its scalchop. It checks each one for a pearl first."
+    },
+    {
+      "id": "pacifidlog_buizel_deck",
+      "settlement": "sea_town",
+      "species": "buizel",
+      "level": 48,
+      "job": "work",
+      "y": 63,
+      "at": [5142, 7372],
+      "face": [5140, 7374],
+      "every": 34,
+      "box": [0.8, 0.8],
+      "effect": {
+        "particle": "minecraft:splash",
+        "count": 18,
+        "spread": 0.35,
+        "dy": 0.2,
+        "sound": "minecraft:entity.generic.splash",
+        "pitch": 1.3
+      },
+      "interact": "The Buizel scrubs the raft's logs by spinning on them. The deck is very clean and slightly worn."
+    },
+    {
+      "id": "pacifidlog_poliwhirl_ropes",
+      "settlement": "sea_town",
+      "species": "poliwhirl",
+      "level": 49,
+      "job": "work",
+      "y": 63,
+      "at": [5165, 7469],
+      "face": [5167, 7469],
+      "every": 50,
+      "effect": {
+        "particle": "minecraft:poof",
+        "count": 4,
+        "spread": 0.2,
+        "dy": 0.8,
+        "sound": "minecraft:block.wool.place",
+        "pitch": 1.0
+      },
+      "interact": "The Poliwhirl winds the stilt quarter's mooring ropes round the landing post. It goes round the way the spiral on its belly goes."
+    }
+  ],
+  "pets": [
+    {
+      "id": "pacifidlog_counter_shellos",
+      "species": "shellos",
+      "owner": "pacifidlog",
+      "mode": "wait",
+      "why": "the square counter's Shellos, which is the wrong colour for this side of the sea and is very proud of it"
+    },
+    {
+      "id": "pacifidlog_counter_popplio",
+      "species": "popplio",
+      "owner": "pacifidlog",
+      "mode": "follow",
+      "why": "the counter clerk's Popplio, which blows a bubble at every customer"
+    },
+    {
+      "id": "pacifidlog_row_totodile",
+      "species": "totodile",
+      "owner": "pacifidlog_fishers_row",
+      "mode": "follow",
+      "why": "the Row stall-keeper's Totodile, which has bitten every fisher in town once, affectionately"
+    },
+    {
+      "id": "pacifidlog_row_sobble",
+      "species": "sobble",
+      "owner": "pacifidlog_fishers_row",
+      "mode": "wait",
+      "why": "the Row stall's Sobble, half-hidden behind the fish crates; it cries when anyone haggles"
+    },
+    {
+      "id": "pacifidlog_row_krabby",
+      "species": "krabby",
+      "owner": "pacifidlog_fishers_row",
+      "mode": "wait",
+      "why": "in a bucket by the Row stall; the keeper swears it is a pet and not stock"
+    }
+  ],
+  "placed": [
+    {
+      "id": "pacifidlog_wattrel_roof",
+      "species": "wattrel",
+      "spot": "roof",
+      "building": "sea_town_pokecenter",
+      "why": "on the Centre's red roof, the highest perch on the rafts"
+    },
+    {
+      "id": "pacifidlog_dewpider_gutter",
+      "species": "dewpider",
+      "spot": "gutter",
+      "building": "sea_town_pokecenter",
+      "why": "in the Centre's gutter in its bubble, where the rain refills it"
+    },
+    {
+      "id": "pacifidlog_mantyke_step",
+      "species": "mantyke",
+      "spot": "step",
+      "building": "sea_town_pokemart",
+      "why": "flat on the Mart's step like a doormat; customers wipe their feet beside it, not on it"
+    },
+    {
+      "id": "pacifidlog_horsea_window",
+      "species": "horsea",
+      "spot": "window",
+      "building": "sea_town_pokecenter",
+      "why": "in the Centre's window, in the nurse's jar"
+    },
+    {
+      "id": "pacifidlog_corsola_step",
+      "species": "corsola",
+      "spot": "step",
+      "at": [5160, 63, 7334],
+      "why": "beside the step of the hut on raft 3; the family keeps it watered"
+    },
+    {
+      "id": "pacifidlog_clamperl_step",
+      "species": "clamperl",
+      "spot": "step",
+      "at": [5138, 63, 7398],
+      "why": "by the step of the hut on raft 7; it shuts when anyone walks past"
+    },
+    {
+      "id": "pacifidlog_pyukumuku_step",
+      "species": "pyukumuku",
+      "spot": "step",
+      "at": [5178, 63, 7356],
+      "why": "on the doorstep of the hut on raft 2, where it washes up every morning; somebody throws it back every evening"
+    },
+    {
+      "id": "pacifidlog_magikarp_step",
+      "species": "magikarp",
+      "spot": "step",
+      "at": [5160, 63, 7398],
+      "why": "flapping beside the step of the hut on raft 8, where it has flapped for a week and is fine"
+    },
+    {
+      "id": "pacifidlog_shellder_step",
+      "species": "shellder",
+      "spot": "step",
+      "at": [5146, 63, 7420],
+      "why": "beside the step of the hut on raft 11, holding the door's latch string in its shell"
+    }
+  ],
+  "situations": [
+    {
+      "id": "pacifidlog_lapras_moored",
+      "title": "The Lapras tied up at the guild raft",
+      "unique": true,
+      "story": "A Lapras is tied up alongside the guild raft like a boat, and a Froakie and a Quaxly sit on its back as if it were part of the deck. Nobody remembers tying it.",
+      "at": [5110, 63, 7368],
+      "facing": "north",
+      "members": [
+        {
+          "species": "lapras",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, -1, -3]]
+        },
+        {
+          "species": "froakie",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 1, -3]]
+        },
+        {
+          "species": "quaxly",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[1, 1, -4]]
+        }
+      ],
+      "props": [],
+      "why": "Pacifidlog's own: a town on the water moors what it has; on the guild raft's north edge, the Lapras in the water beside it"
+    },
+    {
+      "id": "pacifidlog_bait_tanks",
+      "title": "The bait tanks on the Row",
+      "unique": false,
+      "story": "The Row keeps its bait in a row of tanks, and the tanks are full of Wishiwashi. The fishers have stopped using them as bait. One day there will be enough of them.",
+      "at": [5066, 63, 7377],
+      "facing": "north",
+      "members": [
+        {
+          "species": "wishiwashi",
+          "count": 5,
+          "pose": "still",
+          "offsets": [[0, 0, 0], [1, 0, 0], [2, 0, 0], [3, 0, 0], [4, 0, 0]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:water_cauldron",
+          "at": [0, 0, 0]
+        },
+        {
+          "block": "minecraft:water_cauldron",
+          "at": [1, 0, 0]
+        },
+        {
+          "block": "minecraft:water_cauldron",
+          "at": [2, 0, 0]
+        },
+        {
+          "block": "minecraft:water_cauldron",
+          "at": [3, 0, 0]
+        },
+        {
+          "block": "minecraft:water_cauldron",
+          "at": [4, 0, 0]
+        }
+      ],
+      "why": "a school IS the situation; along the Row's south edge near its root"
+    },
+    {
+      "id": "pacifidlog_the_one_that_got_away",
+      "title": "The one that got away",
+      "unique": false,
+      "story": "A Seaking lies on the guild raft beside the catch board, with a Goldeen. The fishers measure it every day. It is never caught, and the board's top line stays empty.",
+      "at": [5102, 63, 7374],
+      "facing": "east",
+      "members": [
+        {
+          "species": "seaking",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        },
+        {
+          "species": "goldeen",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 2]]
+        }
+      ],
+      "props": [],
+      "why": "by the guild hall's west wall, where the catch board is"
+    },
+    {
+      "id": "pacifidlog_breakwater_flock",
+      "title": "The flock on the breakwater",
+      "unique": false,
+      "story": "Three Flamigo stand on the Current Gate's breakwater on one leg each, facing the current. They move in step, and nobody has seen them start.",
+      "at": [5010, 63, 7650],
+      "facing": "west",
+      "members": [
+        {
+          "species": "flamigo",
+          "count": 3,
+          "pose": "still",
+          "offsets": [[0, 0, 0], [3, 0, 0], [6, 0, 0]]
+        }
+      ],
+      "props": [],
+      "why": "a flock IS the situation; on the breakwater by the gate"
+    },
+    {
+      "id": "pacifidlog_no_swimming",
+      "title": "Why nobody swims at the gate",
+      "unique": false,
+      "story": "A Mareanie and a Toxapex live on the swimmers' hut's ladder. The hut still has a sign that says Swimmers. Nobody swims at the Current Gate any more.",
+      "at": [4985, 63, 7646],
+      "facing": "south",
+      "members": [
+        {
+          "species": "mareanie",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        },
+        {
+          "species": "toxapex",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[2, 0, 1]]
+        }
+      ],
+      "props": [],
+      "why": "the swimmers' hut on the gate raft"
+    },
+    {
+      "id": "pacifidlog_inn_tray",
+      "title": "The sushi on the inn's tray",
+      "unique": false,
+      "story": "A Tatsugiri has lain on the inn's serving tray by the door all week, pretending to be sushi. A Carvanha waits beside it, hungry and not fooled.",
+      "at": [5162, 63, 7506],
+      "facing": "south",
+      "allow": [
+        "street",
+        "walkway"
+      ],
+      "members": [
+        {
+          "species": "tatsugiri",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        },
+        {
+          "species": "carvanha",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, -2]]
+        }
+      ],
+      "props": [],
+      "why": "on the stilt boardwalk at the inn's door"
+    }
+  ],
+  "counts": {
+    "working": 13,
+    "pets": 5,
+    "placed": 9,
+    "situations": 17,
+    "total": 44
+  }
+}
