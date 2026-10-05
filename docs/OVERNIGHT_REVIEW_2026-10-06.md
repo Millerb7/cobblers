@@ -17,3 +17,10 @@ who found it. Fixed items are not listed here; they are in the commits.
 | N10 | `data/quests.json` still marks the 8 evidence objects "unbuilt" (Codex's file, left unedited; `tools/reveal_evidence.py` builds them) | data/quests.json | beats builder |
 | N11 | `test_no_swallowed_crashes` flags far_south_audit, jungle_temples_audit, test_ambient_idle and test_apricorn_farm | tests/ | beats builder |
 | N12 | The premise "nothing invokes the story" was wrong: the 13 tellers are seated and the chain Oak -> League compiles and runs (60 chain tests); what was missing was the evidence displays and anyone talking to them in game | - | beats builder |
+| N13 | Pacifidlog's ambient file is refused by the generator: all ~8,000 deck cells are within 8 of a water-export column, and a deck earthwork is refused as worker ground | tools/ambient.py, tools/ambient_idle.py vs data/ambient_towns/sea_town.json | author B |
+| N14 | Rimwatch and the West Spur Dig place no NPC or stall keeper, so they have no pets; the dig is written as an outpost (6) | data/ambient_towns/ | author B |
+| N15 | Cinderlee's two mast birds: the mast is dressing, not a building template, so compose cannot check they sit on its head | data/ambient_towns/gym7_town.json | author B |
+| N16 | `tools/rift_skin.py` (line 489) and `tools/rift_deep.py` crash on Path(None) without --source-root: neither uses terrain.env_source_root() | tools/ | finale builder |
+| N17 | Stale claims that the finale has no setter or cradle: STATE (two lines), CRITICAL_PATH_WALK_2 item 10, REVIEW 16, data/relic_underground.json zone.pass.why_not_the_finale_flag | docs/, data/ | finale builder |
+| N18 | Hoopa has species data but no model or texture in the 1.8.0 jar (draws as a placeholder); no actor built, the release's particles and sound stand in; other mods not checked | - | finale builder |
+| N19 | Three placeholder lines for Codex in dlg_main_relic_hq_guard (admit_pending, turned_away_2) and dlg_main_relic_hall_release (confront_003) | data/dialogue.json | finale builder |
