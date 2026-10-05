@@ -463,7 +463,7 @@ class TownSite:
             for g in grow(cells, 2):
                 self.why.setdefault(g, "worker %s" % wid)
                 self.worker_near.setdefault(g, "worker %s" % wid)
-        self.water = water
+        self.water = None if self.base.deck else water   # Pacifidlog's decks: see tools/ambient.py Site
         self.water_margin = int(rules["water_changed_margin"])
 
     def on_square(self, x, z):

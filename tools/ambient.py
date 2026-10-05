@@ -231,8 +231,11 @@ class Site:
             mark(TD.grow({(lamp["at"][0], lamp["at"][2])}, 1), "lamp")
         for bid, rect in TD.building_footprints(settlement, doc).items():
             mark(TD.rect_cells(rect, 1), "building %s" % bid)
+        # a sea-deck settlement (Pacifidlog) stands on its earthworks: the decks ARE its ground (tools/ground.py
+        # for_settlement), so they are not refused, and the water export's margin does not apply to authored decks
+        self.deck = (doc.get("settlements", {}).get(settlement) or {}).get("ground") == "sea_deck"
         for q in doc["placements"]:
-            if q.get("settlement") == settlement and q.get("kind") == "earthwork":
+            if q.get("settlement") == settlement and q.get("kind") == "earthwork" and not self.deck:
                 mark(TD.command_columns(q.get("commands")), "earthwork %s" % q["id"])
         # the dressing's pieces, seated as the dressing seats them
         town = (dressing.get("towns") or {}).get(settlement)
@@ -250,7 +253,7 @@ class Site:
             for p in json.loads(pc.read_text(encoding="utf-8")).get("pieces") or []:
                 mark({tuple(c) for c in p.get("columns") or []} | {(b[0], b[2]) for b in p.get("blocks") or []},
                      "plaza piece %s" % p["id"])
-        self.water = water
+        self.water = None if self.deck else water
         self.water_margin = int(rules["water_changed_margin"])
 
     def y(self, x, z):
