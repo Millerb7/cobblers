@@ -1526,6 +1526,11 @@ def held_functions():
                   % (zid, ", ".join("%s %s blocks in" % (n, d) for n, d in sorted(gates.items()))))
         for fn in RZ.zone_functions(zid, z[zid]):
             out["cobblers:rift_zones/%s" % fn] = reason
+    # 2026-10-06: a composed town's undo (tools/ambient_idle.py t/<s>/cleanup: its props and its Pokemon out), one per
+    # town file in data/ambient_towns/; deliberately run by no step, as the Shrew Station and Seaward Drift cleanups
+    # are run by hand. Derived from the town files, so a town that leaves composition stops being held here
+    for f in sorted((ROOT / "data" / "ambient_towns").glob("*.json")):
+        out["cobblers:ambient_idle/t/%s/cleanup" % f.stem] = ("the undo of composed town %s (data/ambient_towns/%s): run by hand to take its props and Pokemon out" % (f.stem, f.name))
     return out
 
 
