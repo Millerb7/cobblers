@@ -9716,14 +9716,22 @@
           "kind": "line",
           "speaker": "picker",
           "text": "Use an iron pick. Dig down to the band and stop; the ore ends there. Give it ten quiet minutes and the rock mends, but any chest you leave stays put.",
-          "next": "repeat"
+          "next": "birds"
+        },
+        {
+          "id": "birds",
+          "kind": "line",
+          "speaker": "picker",
+          "text": "Those giant old trees on the plateau are not empty, you know. Taillow nest all up the one west of the rows, and Spearow in the one off to the north-west. Walk in under the branches and they come down to look at you.",
+          "next": "repeat",
+          "why": "play test 2026-10-05: the world-tree nests (activated Habitat Blocks, data/habitat_blocks.json) needed a hint. elder_viltri_plateau_2 (Taillow, Swellow) stands 298 blocks west of this seat and elder_viltri_plateau_3 (Spearow, Fearow) 592 blocks north-west, measured from data/habitat_blocks.json positions. It alternates with repeat so a player whose cursor already sits on repeat still hears it"
         },
         {
           "id": "repeat",
           "kind": "line",
           "speaker": "picker",
           "text": "Upper rows, old stone in the meadow: Leaf in the green face, Shiny in the bright one.",
-          "next": "repeat"
+          "next": "birds"
         }
       ]
     },
@@ -9875,14 +9883,22 @@
           "kind": "line",
           "speaker": "field_hand",
           "text": "Use an iron pick. Dig down to the band and stop; the ore ends there. Leave it ten minutes and the rock mends, but any chest you leave stays put.",
-          "next": "repeat"
+          "next": "birds"
+        },
+        {
+          "id": "birds",
+          "kind": "line",
+          "speaker": "field_hand",
+          "text": "And the giant pines out past the fields have birds nesting in them. Hoothoot in the one to the south, Starly in the one to the north-west, little Rowlet in the north-east one. Stand in under the branches and they show themselves.",
+          "next": "repeat",
+          "why": "play test 2026-10-05: the world-tree nests (activated Habitat Blocks, data/habitat_blocks.json) needed a hint, Hoothoot and Starly named. From this seat, measured from data/habitat_blocks.json positions: elder_south_pine_isle_1 (Hoothoot, Noctowl) 424 blocks south, elder_south_pine_isle_2 (Starly, Staravia) 599 blocks north-west, elder_south_pine_isle_3 (Rowlet line) 391 blocks north-east. It alternates with repeat so a player whose cursor already sits on repeat still hears it"
         },
         {
           "id": "repeat",
           "kind": "line",
           "speaker": "field_hand",
           "text": "Weather mast, square-side cut. Dark band at the foot; stop when you reach it.",
-          "next": "repeat"
+          "next": "birds"
         }
       ]
     },

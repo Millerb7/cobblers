@@ -10,6 +10,11 @@ It owns three parts of data/spawns.json and nothing else:
   Victory Road pools   for every vrc_* pool in the design's habitats: its habitats[] record's entries and level_band,
                        and its habitat_block entries
   route selection      route_species_selection, per route, from the sub-regions its corridor crosses
+  held items           the held_items field of every spawn_pool_world entry (sub-region, marine, waterway), generated
+                       or copied through, from rules.held_items (the owner, 2026-10-05: wild held items, a find and not
+                       a farm); tools/compile_spawns.py writes it as the Cobblemon 1.8.0 spawn detail's heldItems.
+                       Fails closed on an item the jar does not name, a listed species that spawns in no such entry,
+                       a species past max_total_percent, and held_items on a habitat-block entry
 
 Every other entry and habitat (the elder and sapling bird nests, the Route 1 mansion, the unplaced pools, the Windward
 Sea's marine bands, the Mt Clay outflow waterway) is copied through untouched, in its place.
@@ -117,6 +122,81 @@ def dumps(doc):
 
 # ------------------------------------------------------------------ the jar
 
+# The vanilla items CobblemonHeldItemManager remaps to a Showdown item (docs/research/ITEMS_ABILITY_EV_HELD_MEGA.md
+# section 3: Items.BONE -> thickclub, Items.SNOWBALL -> snowball, Items.GOLD_BLOCK -> bignugget). A minecraft: item
+# outside these has no battle effect, so rules.held_items may not name one.
+VANILLA_HELD = {"minecraft:bone", "minecraft:snowball", "minecraft:gold_block"}
+# the spawn mechanisms tools/compile_spawns.py writes as spawn_pool_world details, which carry heldItems
+POOL_WORLD = (SURFACE, "marine_coordinate_boxes", "waterway_coordinate_boxes")
+
+
+def jar_items(jar):
+    """{"cobblemon:<path>"} for every item the jar names in its English lang file (item.cobblemon.<path>)."""
+    import zipfile
+    with zipfile.ZipFile(jar) as z:
+        lang = json.loads(z.read("assets/cobblemon/lang/en_us.json"))
+    return {"cobblemon:" + k[len("item.cobblemon."):] for k in lang
+            if k.startswith("item.cobblemon.") and "." not in k[len("item.cobblemon."):]}
+
+
+def held_items_by_species(rules, dex):
+    """({species: [{"item", "percentage"}]}, problems) from rules.held_items (the owner, 2026-10-05: wild held items,
+    "rare enough to be a find rather than a farm"). Fails closed on an item the jar does not name (or a vanilla item
+    Cobblemon does not remap), a class with no percent, and a species whose items sum past max_total_percent."""
+    hr = rules.get("held_items")
+    if not hr:
+        return {}, []
+    problems, out = [], {}
+    if hr.get("field") != "heldItems":
+        problems.append("rules.held_items.field is heldItems (the Cobblemon 1.8.0 PokemonSpawnDetail field), not %r"
+                        % hr.get("field"))
+    pct = hr.get("percent") or {}
+    cap = hr.get("max_total_percent")
+    for i, rec in enumerate(hr.get("items") or []):
+        item, cls = rec.get("item"), rec.get("class")
+        where = "rules.held_items.items[%d] (%s)" % (i, item)
+        if cls not in pct or not isinstance(pct[cls], (int, float)) or not 0 < pct[cls] <= 100:
+            problems.append("%s: class %r has no percent in (0, 100] in rules.held_items.percent" % (where, cls))
+            continue
+        ok = item in VANILLA_HELD if str(item).startswith("minecraft:") else item in dex.items
+        if not ok:
+            problems.append("%s: not an item the Cobblemon jar names%s" % (
+                where, " nor a vanilla item it remaps to a held item" if str(item).startswith("minecraft:") else ""))
+            continue
+        for sp in rec.get("species") or []:
+            if not dex.has(sp):
+                problems.append("%s: %s is not a species in the Cobblemon jar" % (where, sp))
+                continue
+            if any(h["item"] == item for h in out.get(sp, [])):
+                problems.append("%s: %s holds %s twice" % (where, sp, item))
+                continue
+            out.setdefault(sp, []).append({"item": item, "percentage": pct[cls]})
+    for sp, hs in sorted(out.items()):
+        total = sum(h["percentage"] for h in hs)
+        if not isinstance(cap, (int, float)) or total > cap:
+            problems.append("rules.held_items: %s's items sum to %s%%, past max_total_percent %r" % (sp, total, cap))
+    return out, problems
+
+
+def stamp_held_items(entries, held):
+    """Set (or clear) held_items on every entry from the rule: the rule owns the field. Returns (problems, stamped
+    species). A habitat-block entry never carries one (its pool spawn is another format)."""
+    problems, used = [], set()
+    for e in entries:
+        if e.get("mechanism") not in POOL_WORLD:
+            if "held_items" in e:
+                problems.append("%s: held_items on a %s entry; rules.held_items reaches spawn_pool_world entries only"
+                                % (e["id"], e.get("mechanism")))
+            continue
+        hs = held.get(e["species"])
+        if hs and e.get("ambient") and e.get("weight", 0) > 0:
+            e["held_items"] = [dict(h) for h in hs]
+            used.add(e["species"])
+        else:
+            e.pop("held_items", None)
+    return problems, used
+
+
 class Dex:
     """Species, forms, evolutions and roots from the Cobblemon jar."""
 
@@ -129,6 +209,7 @@ class Dex:
                 if r in self.species and r != k:
                     self.pre.setdefault(r, k)
         self.positions = position_types.upstream_positions(jar)
+        self.items = jar_items(jar)
 
     def split(self, name):
         parts = name.split()
@@ -801,7 +882,8 @@ def generate(design, spawns, regions, routes, dex, dolls, landmarks=None):
                 entries += gen_entries[k]
                 done.add(k)
             continue
-        entries.append(e)
+        # a copy: stamp_held_items below sets fields on it, and the caller's spawns must stay what was read
+        entries.append(json.loads(json.dumps(e)))
     for k in sorted(gen_entries):
         if k not in done:
             entries += gen_entries[k]
@@ -813,6 +895,15 @@ def generate(design, spawns, regions, routes, dex, dolls, landmarks=None):
             problems.append("%s: a heart entry has alpha %r; rules.hearts.alpha is %r" % (e["id"], e.get("alpha"), alpha))
         elif not e.get("heart") and "alpha" in e:
             problems.append("%s: alpha belongs to a heart entry only (section 10)" % e["id"])
+    # rules.held_items (the owner, 2026-10-05: wild held items, a find and not a farm): stamped on every
+    # spawn_pool_world entry of a listed species, generated or copied through; a listed species that spawns in no
+    # such entry is a stale rule
+    held, hp = held_items_by_species(rules, dex)
+    problems += hp
+    sp_problems, used = stamp_held_items(entries, held)
+    problems += sp_problems
+    for sp in sorted(set(held) - used):
+        problems.append("rules.held_items: %s spawns in no spawn_pool_world entry; remove it from the rule" % sp)
     if problems:
         raise DesignError("\n".join(problems))
     route_ids ={int(r["id"][6:8]): r["id"] for r in routes["routes"] if r["id"].startswith("route_")}
