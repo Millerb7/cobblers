@@ -12,13 +12,18 @@ document, a data file another system owns, or the server's jars, and the generat
     gates      the badge a town's gym awards: data/progression.json's gymN_cleared flags name their town
                (waystone.town), data/towns.json orders the gym towns. A critical-path shelf is gated on its own town's
                badge (PROGRESSION_LADDER.md 1.1 "Flag" column); an off-path shelf is ungated or gated on 1.2's flag
-               for that town (1.2 and 5.4: "where travel already gates a shelf, leave it ungated")
-    the window MARKET_GATING.md 4: a gated option is visible only to a player holding the flag (isVisible reads a
-               tag the dialogue's probe sets from the advancement), the option re-probes before it runs anything, and
-               the menu is stateless (principle 12: no quest field written)
-    payment    MARKET_GATING.md 4 + tools/ferries.py's docstring ("read the balance, refuse if it is short, charge
-               ..., verify the balance fell by exactly the fare, and only then deliver"), checked by EXECUTING each
-               generated function in a small command model under seven scenarios, not by matching its text
+               for that town (1.2 and 5.4: "where travel already gates a shelf, leave it ungated"). Since 2026-10-06
+               (the owner: "should be the villagers with ui only"; data/markets.json decisions counters_are_merchants)
+               a counter is a CobbleDollars merchant, whose screen shows one list to every player (MARKET_GATING.md 1):
+               no line may carry a gate, the design's gate is held against the line's gate_dropped record, and each
+               built counter whose shelf the ladder gates is a FINDING (sold before the badge), not a fault
+    the window the merchant's own screen: each built counter is one cobbledollars:cobble_merchant summon tagged
+               <stall_merchant.tag>_<id>, NoAI, named its keeper; the pack ships no dialogue or NPC class
+    payment    the screen charges the offer's Price per item: one offer per shelf line, Item count 1, Price x the line's
+               count = the line's price, no offer without a line; no function in the pack gives or charges (it could
+               charge twice). Read with town_squares_audit's SNBT reader, not the builder's writer
+    removal    the Cobblemon dialogue keeper each merchant replaces stood on the seat (spawnnpcat at the integer
+               block): a kill of type=cobblemon:npc centred on the merchant must reach hypot(0.5, 0.5)
     tiers      PROGRESSION_LADDER.md 2.1 (tier -> badge: leather 0, copper 1, iron 3, gold 7, diamond 8, netherite
                a reward, never sold) and 2.3.1 ("the tiers above leather must not be craftable")
     overlay    the base file base-pack/cobbleverse/config/sophisticatedcore-common.toml; the jars' recipe JSON for
@@ -640,6 +645,89 @@ def dialogue_problems(counter_id, pack, stock, gate_of):
     return out
 
 
+# ------------------------------------------------------------------------------------------------ the merchants
+# Since 2026-10-06 (data/markets.json decisions counters_are_merchants) no counter has a dialogue menu or a purchase
+# function: the command model and the window check above (run_function, purchase_problems, dialogue_problems) audit
+# no generated file any more and are kept, with their synthetic tests, for the per-player shop MARKET_GATING.md
+# section 4 describes. What the pack holds now is read here.
+MERCHANT_KIND = "cobbledollars:cobble_merchant"
+_SUMMON = re.compile(r"(?:^|\brun )summon (\S+) (-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?) (-?\d+(?:\.\d+)?)(?: (.+))?$")
+_CALL = re.compile(r"(?:^|\brun |^schedule )function ([a-z0-9_.\-]+:[a-z0-9_./\-]+)")
+
+
+def _snbt(text):
+    # town_squares_audit's reader: written by another agent for its own audit, not tools/traders.py's writer
+    import town_squares_audit as TSA
+    return TSA.snbt(text)
+
+
+def merchant_summons(pack, only=None):
+    """[{kind, pos (x, y, z), block, nbt, tags, yaw, file}] for every summon in the pack's functions (or in the
+    functions in `only`). An unreadable SNBT is a summon with an empty nbt, so it is still counted."""
+    out = []
+    for rel, body in sorted(pack.items()):
+        if not rel.endswith(".mcfunction") or (only is not None and rel not in only):
+            continue
+        for raw in body.splitlines():
+            m = _SUMMON.search(raw.strip())
+            if not m or raw.strip().startswith("#"):
+                continue
+            try:
+                nbt = _snbt(m.group(5)) if m.group(5) else {}
+            except ValueError:
+                nbt = {}
+            pos = tuple(float(m.group(k)) for k in (2, 3, 4))
+            tags = [t for t in (nbt.get("Tags") or []) if isinstance(t, str)]
+            rot = nbt.get("Rotation")
+            out.append({"kind": m.group(1), "pos": pos, "block": tuple(math.floor(v) for v in pos), "nbt": nbt,
+                        "tags": tags, "yaw": rot[0] if isinstance(rot, list) and rot else None, "file": rel})
+    return out
+
+
+def npc_kills(pack):
+    """[((x, y, z) centre, radius, file)] of every `kill @e[type=cobblemon:npc,x=,y=,z=,distance=..r]` in the pack."""
+    out = []
+    for rel, body in pack.items():
+        if not rel.endswith(".mcfunction"):
+            continue
+        for raw in body.splitlines():
+            if raw.strip().startswith("#"):
+                continue
+            for sel in re.findall(r"kill @e\[([^\]]*)\]", raw):
+                a = dict(x.split("=", 1) for x in sel.split(",") if "=" in x)
+                r = re.fullmatch(r"\.\.(\d+(?:\.\d+)?)", a.get("distance", ""))
+                if a.get("type") == "cobblemon:npc" and r and all(k in a for k in "xyz"):
+                    out.append(((float(a["x"]), float(a["y"]), float(a["z"])), float(r.group(1)), rel))
+    return out
+
+
+def reachable(pack, root):
+    """The pack paths of every function `root` runs, following `function`, `schedule function` and `execute ... run
+    function` inside the pack."""
+    seen, todo = set(), [root]
+    while todo:
+        fid = todo.pop()
+        ns, path = fid.split(":", 1)
+        rel = "data/%s/function/%s.mcfunction" % (ns, path)
+        if rel in seen or rel not in pack:
+            continue
+        seen.add(rel)
+        todo += [m.group(1) for line in pack[rel].splitlines() for m in _CALL.finditer(line.strip())]
+    return seen
+
+
+def pack_keepers(pack, doc, root):
+    """[(counter id, (x, y, z) block, yaw)] of every counter merchant summoned by a function `root` reaches."""
+    prefix = (doc.get("stall_merchant") or {}).get("tag") or "cobblers_stall"
+    ids = {c["id"] for c in doc["counters"]}
+    out = []
+    for m in merchant_summons(pack, reachable(pack, root)):
+        for t in m["tags"]:
+            if t.startswith(prefix + "_") and t[len(prefix) + 1:] in ids:
+                out.append((t[len(prefix) + 1:], m["block"], m["yaw"]))
+    return out
+
+
 # ------------------------------------------------------------------------------------------------ keepers
 def seg_dist(px, pz, a, b):
     (ax, az), (bx, bz) = a, b
@@ -766,21 +854,34 @@ def other_npcs(exclude_prefix="dlg_market_"):
 # ------------------------------------------------------------------------------------------------ the audit
 def audit(doc, pack, overlay_text, base_text, progression, towns, bank, income, index=None, placements=None,
           templates=None, walked=None, others=None, min_route=3.0, keepers=None, income_multiplier=1.0):
-    """(faults, findings, notes). `pack` is {rel: text}; `keepers` the R17M placements [(dialogue, (x,y,z), class,
-    yaw)], `index` a JarIndex or None (jar checks then NOT CHECKED)."""
+    """(faults, findings, notes). `pack` is {rel: text}; `keepers` the counters' merchants R17M summons [(counter id,
+    (x,y,z) block, yaw)] (pack_keepers), `index` a JarIndex or None (jar checks then NOT CHECKED)."""
     F, W, N = [], [], []
     tb = town_badges(progression, towns)
     fb = flag_badge(tb)
     flags = {f["id"] for f in progression["flags"]}
-    built_ids = sorted(re.match(r"data/cobblers/npcs/npc_market_([a-z0-9_]+)\.json$", r).group(1)
-                       for r in pack if re.match(r"data/cobblers/npcs/npc_market_[a-z0-9_]+\.json$", r))
+    # since 2026-10-06 (the owner: "should be the villagers with ui only"; data/markets.json decisions
+    # counters_are_merchants) a counter's keeper is a CobbleDollars merchant: known in the pack by the summon carrying
+    # its tag <stall_merchant.tag>_<counter id>, read with town_squares_audit's own SNBT reader (not the builder's)
+    prefix = (doc.get("stall_merchant") or {}).get("tag") or "cobblers_stall"
     counters = {c["id"]: c for c in doc["counters"]}
+    by_counter = {}
+    for m in merchant_summons(pack):
+        named = [t[len(prefix) + 1:] for t in m["tags"] if t.startswith(prefix + "_") and t[len(prefix) + 1:] in counters]
+        for cid in named:
+            by_counter.setdefault(cid, []).append(m)
+    built_ids = sorted(by_counter)
     sited = sorted(c["id"] for c in doc["counters"] if c.get("status") == "sited")
     if built_ids != sited:
-        F.append("pack: keepers built %s, but data/markets.json sites %s" % (built_ids, sited))
+        F.append("pack: counter merchants summoned for %s, but data/markets.json sites %s" % (built_ids, sited))
+    for cid, ms in sorted(by_counter.items()):
+        if len(ms) != 1:
+            F.append("pack: %d merchant summons carry counter %s's tag, not 1" % (len(ms), cid))
     built = [counters[i] for i in built_ids if i in counters]
 
-    # --- gates against the design
+    # --- gates against the design. A merchant shows one list to every player (MARKET_GATING.md section 1), so no
+    # counter line may carry a gate; the gate each line USED to carry is kept in gate_dropped and is still held to the
+    # design (until 2026-10-06 this rule read `gate` itself: a critical-path shelf gated on its own town's badge)
     def design_gate_ok(c, gate):
         town = c["town"]
         if town in tb:
@@ -789,61 +890,104 @@ def audit(doc, pack, overlay_text, base_text, progression, towns, bank, income, 
             return gate in (None, OFF_PATH_FLAG[town]), "none or %s (PROGRESSION_LADDER 1.2, 5.4)" % OFF_PATH_FLAG[town]
         return False, "a town the ladder gives no market"
 
+    def dropped(it):
+        gd = it.get("gate_dropped")
+        return gd.get("gate") if isinstance(gd, dict) else None
+
+    decided = {d.get("id") for d in doc.get("decisions") or []}
     for c in doc["counters"]:
         for it in c["stock"]:
-            g = it.get("gate")
+            if it.get("gate"):
+                F.append("gate: %s/%s is gated on %s, but its merchant shows every line to every player "
+                         "(MARKET_GATING 1)" % (c["id"], it["id"], it["gate"]))
+            gd = it.get("gate_dropped")
+            if gd is not None and not (isinstance(gd, dict) and gd.get("decision") in decided and gd.get("why")):
+                F.append("gate: %s/%s's gate_dropped %r names no recorded decision and why" % (c["id"], it["id"], gd))
+            g = dropped(it)
             if g and g not in flags:
-                F.append("gate: %s/%s is gated on %s, which data/progression.json does not declare" % (c["id"], it["id"], g))
+                F.append("gate: %s/%s records the gate %s, which data/progression.json does not declare"
+                         % (c["id"], it["id"], g))
             ok, why = design_gate_ok(c, g)
             if not ok:
-                F.append("gate: %s/%s (town %s) is gated on %s; the design says %s" % (c["id"], it["id"], c["town"], g, why))
+                F.append("gate: %s/%s (town %s) records the gate %s; the design says %s"
+                         % (c["id"], it["id"], c["town"], g, why))
             if it["item"] in NEVER_SOLD:
                 F.append("shelf: %s/%s sells %s, which the ladder never sells" % (c["id"], it["id"], it["item"]))
+    for c in built:
+        lost = sorted({dropped(it) for it in c["stock"] if dropped(it)})
+        if lost:
+            W.append("window: %s (%s): PROGRESSION_LADDER gates its shelf on %s; data/markets.json drops the gate "
+                     "(decision counters_are_merchants), so its %d gated lines are on sale to a player who reaches the "
+                     "town without that badge" % (c["id"], c["town"], " / ".join(lost),
+                                                 sum(1 for it in c["stock"] if dropped(it))))
 
     def expected_gate(c):
         town = c["town"]
         if town in tb:
             return lambda it: tb[town][1]
-        return lambda it: it.get("gate") if it.get("gate") in (None, OFF_PATH_FLAG.get(town)) else "<undesigned>"
+        return lambda it: dropped(it) if dropped(it) in (None, OFF_PATH_FLAG.get(town)) else "<undesigned>"
 
-    # --- the pack: load, the window, the payment
+    # --- the pack: load, and the merchant's screen as the only shop window and the only payment
     load_tag = json.loads(pack.get("data/minecraft/tags/function/load.json", "{}") or "{}")
     if "cobblers:markets/load" not in (load_tag.get("values") or []):
         F.append("pack: the load tag does not run cobblers:markets/load")
-    loaded = set()
-    p0 = Player(0)
-    try:
-        run_function(pack, "cobblers:markets/load", p0)
-        loaded = set(p0.objectives)
-    except Unmodelled as e:
-        F.append("pack: cobblers:markets/load: %s" % e)
+    for rel in pack:
+        if re.match(r"data/cobblers/(dialogues|npcs)/", rel):
+            F.append("pack: %s is a dialogue or NPC class; every seller is a merchant since 2026-10-06" % rel)
+    for rel, body in pack.items():
+        if rel.endswith(".mcfunction") and re.search(r"(?m)(?:^|\brun )(?:give @s |cobbledollars (?:remove|add) )", body):
+            F.append("payment: %s gives or charges; the merchant's own screen does both, so this could charge twice" % rel)
+    offered = set()
+    all_kills = npc_kills(pack)
     for c in built:
-        gate_of = expected_gate(c)
-        F += ["window: %s" % s for s in dialogue_problems(c["id"], pack, c["stock"], gate_of)]
-        npc = pack.get("data/cobblers/npcs/npc_market_%s.json" % c["id"])
-        if npc:
-            n = json.loads(npc)
-            if (n.get("interaction") or {}).get("dialogue") != "cobblers:dlg_market_%s" % c["id"]:
-                F.append("npc: %s does not open its own dialogue" % c["id"])
-            if n.get("isMovable") is not False or n.get("canDespawn") is not False or n.get("isInvulnerable") is not True:
-                F.append("npc: %s can be moved, despawned or killed" % c["id"])
+        m = by_counter[c["id"]][0]
+        d = m["nbt"]
+        if m["kind"] != MERCHANT_KIND:
+            F.append("merchant: %s summons %s, not %s" % (c["id"], m["kind"], MERCHANT_KIND))
+        if d.get("NoAI") != 1:
+            F.append("merchant: %s has AI (NoAI %r): it walks off its seat" % (c["id"], d.get("NoAI")))
+        try:
+            nm = json.loads(d.get("CustomName") or "null")
+            nm = nm.get("text") if isinstance(nm, dict) else nm
+        except ValueError:
+            nm = d.get("CustomName")
+        if nm != (c.get("keeper") or {}).get("name"):
+            F.append("merchant: %s is named %r, its keeper %r" % (c["id"], nm, (c.get("keeper") or {}).get("name")))
+        offers = [o for cat in (d.get("CobbleMerchantShop") or []) if isinstance(cat, dict)
+                  for o in (cat.get("Offers") or []) if isinstance(o, dict)]
         for it in c["stock"]:
-            ref = "cobblers:markets/%s/%s" % (c["id"], it["id"])
-            others_flags = {f for f in fb if f != gate_of(it)}
-            F += ["payment: %s" % s for s in purchase_problems(pack, ref, it["item"], int(it["price"]), int(it["count"]),
-                                                              gate_of(it), loaded, others_flags)]
-    # the stalls (2026-10-03, data/markets.json `stalls`) share this pack under function/stalls/: their purchases are
-    # not the counters' shelves, so they are left out of this comparison (tools/markets.py audits them; the
-    # independent audit of the stalls is a separate unit)
-    gives = set(re.findall(r"\bgive @s ([a-z0-9_.\-]+:[a-z0-9_/.\-]+)", "\n".join(
-        v for k, v in pack.items() if k.endswith(".mcfunction") and not k.startswith("data/cobblers/function/stalls/"))))
+            hit = [o for o in offers if (o.get("Item") or {}).get("id") == it["item"]]
+            if len(hit) != 1:
+                F.append("payment: %s offers %s %d times, not once" % (c["id"], it["item"], len(hit)))
+                continue
+            o = hit[0]
+            offers.remove(o)
+            offered.add(it["item"])
+            p = o.get("Price")
+            if o["Item"].get("count") != 1:
+                F.append("payment: %s offers %s %r at a time; the screen sells singly" % (c["id"], it["item"],
+                                                                                        o["Item"].get("count")))
+            if not (isinstance(p, str) and p.isdigit()) or int(p) * int(it["count"]) != int(it["price"]):
+                F.append("payment: %s sells %s at %r each; the shelf's line is %d for $%d"
+                         % (c["id"], it["item"], p, int(it["count"]), int(it["price"])))
+        for o in offers:
+            F.append("payment: %s offers %r, which no shelf line sells" % (c["id"], o))
+            if isinstance(o.get("Item"), dict) and o["Item"].get("id"):
+                offered.add(o["Item"]["id"])
+        # the Cobblemon dialogue keeper it replaces (spawnnpcat at the integer seat, reapply's npc action, so within
+        # hypot(0.5, 0.5) of the merchant's centre) must be killed by a selector centred on the merchant
+        cx, cy, cz = m["pos"]
+        kills = [k for k in all_kills if math.dist(k[0], (cx, cy, cz)) < 0.01]
+        if not any(r >= math.hypot(0.5, 0.5) for _c, r, _f in kills):
+            F.append("merchant: %s: no kill of type=cobblemon:npc centred on its merchant reaches the dialogue keeper "
+                     "R17M placed on that seat (a Steve left beside it)" % c["id"])
     sold_built = {it["item"] for c in built for it in c["stock"]}
-    if gives != sold_built:
-        F.append("pack: functions give %s, but the built shelves sell %s"
-                 % (sorted(gives - sold_built), sorted(sold_built - gives)))
+    if offered != sold_built:
+        F.append("pack: the counters' merchants offer %s, but the built shelves sell %s"
+                 % (sorted(offered - sold_built), sorted(sold_built - offered)))
 
     # --- ids against the jars
-    every = sorted({it["item"] for c in doc["counters"] for it in c["stock"]} | gives)
+    every = sorted({it["item"] for c in doc["counters"] for it in c["stock"]} | offered)
     if index is None:
         N.append("NOT CHECKED: ids and recipes against the jars (no jar folder given)")
     else:
@@ -937,7 +1081,7 @@ def audit(doc, pack, overlay_text, base_text, progression, towns, bank, income, 
     for c in doc["counters"]:
         groups = {}
         for it in c["stock"]:
-            g = it.get("gate")
+            g = dropped(it)           # the badge the line was designed to wait for (gate_dropped since 2026-10-06)
             b = fb[g] if g in fb else (crit.get(c["town"], 1) if c["town"] in crit else 1)
             b = max(b, 1)
             if it.get("group"):
@@ -1002,29 +1146,31 @@ def audit(doc, pack, overlay_text, base_text, progression, towns, bank, income, 
                                  "multiplier scales bank sales it is a money printer"
                                  % (c["id"], it["id"], unit, sell[it["item"]], m, why))
 
-    # --- the keepers R17M places
+    # --- the keepers R17M places: since 2026-10-06 the counters' merchants, summoned by the functions R17M runs
+    # (keepers: [(counter id, (x, y, z) block, yaw)], read from those functions' summons by pack_keepers)
     if keepers is not None:
         # where each built keeper should stand: its stall's keeper_at when the squares' contract seats it (the owner,
         # 2026-10-03: keepers onto the squares), else data/markets.json's own `at`
         seats = contract_seats()
         want_at = {c["id"]: [int(v) for v in seats[c["stall"]][:3]] if c.get("stall") in seats else list(c["at"])
                    for c in built}
+        want_yaw = {c["id"]: seats[c["stall"]][3] if c.get("stall") in seats else c.get("yaw") for c in built}
         byid = {}
         for k in keepers:
-            m = re.fullmatch(r"dlg_market_([a-z0-9_]+)", k[0])
-            byid.setdefault(m.group(1) if m else k[0], []).append(k)
+            byid.setdefault(k[0], []).append(k)
         for c in built:
             ks = byid.pop(c["id"], [])
             if len(ks) != 1:
-                F.append("keeper: R17M places %d keepers for %s" % (len(ks), c["id"]))
+                F.append("keeper: R17M summons %d merchants for %s" % (len(ks), c["id"]))
                 continue
             k = ks[0]
-            if tuple(k[1]) != tuple(want_at[c["id"]]) or k[2] != "cobblers:npc_market_%s" % c["id"]:
-                F.append("keeper: R17M places %s at %s; the data sites it at %s" % (k[2], list(k[1]), want_at[c["id"]]))
-            if "data/cobblers/npcs/npc_market_%s.json" % c["id"] not in pack:
-                F.append("keeper: R17M places class %s, which the pack does not ship" % k[2])
+            if tuple(k[1]) != tuple(want_at[c["id"]]):
+                F.append("keeper: R17M summons %s's merchant at %s; the data sites it at %s"
+                         % (c["id"], list(k[1]), want_at[c["id"]]))
+            if k[2] is None or abs((float(k[2]) - float(want_yaw[c["id"]]) + 180) % 360 - 180) > 0.01:
+                F.append("keeper: R17M turns %s's merchant to yaw %s; its seat's is %s" % (c["id"], k[2], want_yaw[c["id"]]))
         for cid in byid:
-            F.append("keeper: R17M places %s, which no built counter is" % cid)
+            F.append("keeper: R17M summons a merchant for %s, which no built counter is" % cid)
         if placements is not None:
             plans = placements["settlements"]
             for c in built:
@@ -1036,7 +1182,7 @@ def audit(doc, pack, overlay_text, base_text, progression, towns, bank, income, 
                 if not plan:
                     N.append("keeper %s: town %s has no street plan; checked against buildings and walked lines only"
                              % (c["id"], c["town"]))
-                mine = [k for k in keepers if not k[0].endswith("_" + c["id"])]
+                mine = [k for k in keepers if k[0] != c["id"]]
                 at = tuple(want_at[c["id"]])
                 F += keeper_problems(c["id"], at, plan, fps, walked or {},
                                      (others or []) + [("keeper %s" % k[0], tuple(k[1])) for k in mine], min_route)
@@ -1084,7 +1230,7 @@ def run(pack_dir=DEFAULT_PACK, jar_dir=None, keepers=None, files=None, overlay_t
         others, missing = other_npcs()
         notes += ["NOT CHECKED: NPCs placed by %s could not be listed" % m for m in missing]
         if keepers is None:
-            keepers = r17m_keepers()
+            keepers = pack_keepers(pack, doc, r17m_root())
     F, W, N = audit(doc, pack, overlay_text, base_text, read_json(ROOT / "data" / "progression.json"),
                     read_json(ROOT / "data" / "towns.json"), read_json(BANK), ladder_income(), index=index,
                     placements=placements, templates=templates, walked=walked, others=others, keepers=keepers,
@@ -1098,13 +1244,17 @@ def min_route():
     return float(npc_seats.MIN_ROUTE)
 
 
-def r17m_keepers():
-    """The keepers reapply's R17M step places, read the way R17M reads them (its source names the call)."""
+def r17m_root():
+    """The function R17M runs to summon the merchants, read the way R17M names it (its source names the constant).
+    Since 2026-10-06 the counters' keepers are merchants summoned by it; R17M's `npc` actions place none."""
     src = (TOOLS / "reapply.py").read_text(encoding="utf-8")
-    if not re.search(r'"R17M".*?markets\.npc_placements\(markets\.load\(\)\)', src, re.S):
-        raise AuditError("tools/reapply.py has no R17M step placing markets.npc_placements(markets.load())")
+    block = re.search(r'out\.append\(\("R17M",.*?\)\)\)', src, re.S)
+    if not block or '("fn", markets.MERCHANTS_FN)' not in block.group(0):
+        raise AuditError("tools/reapply.py has no R17M step running markets.MERCHANTS_FN")
     import markets
-    return list(markets.npc_placements(markets.load()))
+    if markets.npc_placements(markets.load()):
+        raise AuditError("markets.npc_placements still lists dialogue keepers for R17M to place beside the merchants")
+    return markets.MERCHANTS_FN
 
 
 def main(argv=None):

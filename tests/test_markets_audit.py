@@ -3,7 +3,8 @@
 Three layers:
   - the audit's own machinery on synthetic fixtures with hand-computed answers (a made-up jar, a made-up overlay, a
     hand-written purchase function, a made-up plan), so the audit is tested on more than the one surface it audits;
-  - the real markets: the data, the pack tools/markets.py builds, the overlay, the keepers R17M places;
+  - the real markets: the data, the pack tools/markets.py builds, the overlay, the keepers R17M places (since
+    2026-10-06 every counter's keeper is a CobbleDollars merchant: data/markets.json decisions counters_are_merchants);
   - GENERATOR mutations: tools/markets.py's own functions changed (never data/markets.json), each of which must turn
     the audit red. A mutation that only edited the record would move the expectation with the output.
 
@@ -283,83 +284,52 @@ def test_the_committed_overlay_switches_off_exactly_the_sold_items(M):
 
 
 # --------------------------------------------------------------------------------- generator mutations (A-6)
-def _mutate_lines(monkeypatch, M, fn):
-    real = M.buy_lines
-    monkeypatch.setattr(M, "buy_lines", lambda doc, c, it: fn(real(doc, c, it), it))
+# Since 2026-10-06 (data/markets.json decisions counters_are_merchants) a counter is a CobbleDollars merchant: the
+# purchase and window mutations of the dialogue era went with the generator they mutated (buy_lines, conversation).
+# The merchant's generator is mutated instead, data untouched; each must fail at every built counter.
+def _built(M):
+    return sorted(c["id"] for c in M.load()["counters"] if c.get("status") == "sited")
 
 
-def _move_give_first(lines, it):
-    give = [l for l in lines if " give @s " in l]
-    rest = [l for l in lines if " give @s " not in l]
-    k = next(i for i, l in enumerate(rest) if "cobbledollars query" in l)
-    return rest[:k] + give + rest[k:]
+def _named(F, prefix, needle):
+    return sorted({f.split(": ")[1].split(" ")[0].split("/")[0] for f in F if f.startswith(prefix) and needle in f})
 
 
-PURCHASE_MUTATIONS = {
-    "give before the charge": _move_give_first,
-    "the price + 1": lambda ls, it: [l.replace("set value %d" % it["price"], "set value %d" % (int(it["price"]) + 1)) for l in ls],
-    "the gate dropped": lambda ls, it: [l for l in ls if "advancements=" not in l],
-    "the verify dropped": lambda ls, it: [l for l in ls if "#after" not in l or "store result" in l],
-    "the refund dropped": lambda ls, it: [l for l in ls if "markets/refund" not in l],
-    "the balance check dropped": lambda ls, it: [l for l in ls if "matches %d.." % int(it["price"]) not in l],
-    "the cooldown dropped": lambda ls, it: [l for l in ls if "> #now" not in l],
-    "the give to a named player": lambda ls, it: [l.replace("give @s", "give @p") for l in ls],
-}
-
-
-# protects each payment rule against the GENERATOR (tools/markets.py buy_lines changed, data untouched): every
-# mutation must fail at every built purchase it can reach. Removing it leaves the payment model unproven on the
-# real output. "The cooldown moved last" from TIERED_GOODS A-6 is not here: one function runs to completion before
-# the next click, so it moves no money, and a check claiming to catch it would be slack
-@pytest.mark.parametrize("name", sorted(PURCHASE_MUTATIONS))
-def test_a_mutated_purchase_generator_is_caught(monkeypatch, M, name):
-    _mutate_lines(monkeypatch, M, PURCHASE_MUTATIONS[name])
+# protects the shop against the GENERATOR (tools/markets.py merchant_shop changed): an offer dropped, and every price
+# doubled, must each be named at every built counter
+def test_a_mutated_shop_generator_is_caught(monkeypatch, M):
+    real = M.merchant_shop
+    monkeypatch.setattr(M, "merchant_shop", lambda s: [dict(real(s)[0], Offers=real(s)[0]["Offers"][:-1])])
     F, _w, _n = _audit(M)
-    pay = [f for f in F if f.startswith("payment")]
-    doc = M.load()
-    built = [(c["id"], it) for c in doc["counters"] if c.get("status") == "sited" for it in c["stock"]]
-    if name == "the gate dropped":
-        built = [b for b in built if b[1].get("gate")]
-    hit = {f.split(": ")[1] for f in pay}
-    assert hit == {"cobblers:markets/%s/%s" % (cid, it["id"]) for cid, it in built}, (name, len(hit), len(built))
+    assert _named(F, "payment", "times, not once") == _built(M)
 
-
-def _mutate_conversation(monkeypatch, M, fn):
-    real = M.conversation
-    monkeypatch.setattr(M, "conversation", lambda doc, c: fn(*real(doc, c)))
-
-
-def _no_visibility(conv, quest):
-    for r in conv["nodes"][0]["responses"]:
-        r.pop("visible_when", None)
-    return conv, quest
-
-
-def _no_reprobe(conv, quest):
-    for t in quest["transitions"]:
-        t["conditions"] = []
-    return conv, quest
-
-
-def _next_badge(conv, quest):
-    bump = lambda f: "gym%d_cleared" % (int(f[3]) % 8 + 1)
-    for r in conv["nodes"][0]["responses"]:
-        if r.get("visible_when"):
-            r["visible_when"] = dict(r["visible_when"], flag=bump(r["visible_when"]["flag"]))
-    for t in quest["transitions"]:
-        t["conditions"] = [dict(c, flag=bump(c["flag"])) for c in t["conditions"]]
-    return conv, quest
-
-
-# protects the window against the GENERATOR (tools/markets.py conversation changed): an option shown to everyone, a
-# purchase run without the re-probe, the menu probing the next town's badge. Each must fail every gated option
-@pytest.mark.parametrize("mut,needle", [(_no_visibility, "visible to everyone"), (_no_reprobe, "without re-probing"),
-                                        (_next_badge, "not on a tag the menu probes from")])
-def test_a_mutated_window_generator_is_caught(monkeypatch, M, mut, needle):
-    _mutate_conversation(monkeypatch, M, mut)
+    def dear(s):
+        cat = real(s)[0]
+        return [dict(cat, Offers=[dict(o, Price=str(int(o["Price"]) * 2)) for o in cat["Offers"]])]
+    monkeypatch.setattr(M, "merchant_shop", dear)
     F, _w, _n = _audit(M)
-    gated = sum(1 for c in M.load()["counters"] if c.get("status") == "sited" for it in c["stock"] if it.get("gate"))
-    assert sum(1 for f in F if needle in f) == gated, [f for f in F if f.startswith("window")][:3]
+    assert _named(F, "payment", "the shelf's line is") == _built(M)
+
+
+# protects the payment rule "nothing but the screen charges" against the GENERATOR (tools/markets.py merchant_functions
+# given back a dialogue-era purchase): a give or a charge anywhere in the pack is named
+def test_a_generator_that_charges_beside_the_screen_is_caught(monkeypatch, M):
+    real = M.merchant_functions
+    monkeypatch.setattr(M, "merchant_functions", lambda doc, pl: dict(real(doc, pl), **{
+        "data/cobblers/function/stalls/merchants/extra.mcfunction": ["cobbledollars remove @s 5", "give @s foo:x 1"]}))
+    F, _w, _n = _audit(M)
+    assert any(f.startswith("payment: data/cobblers/function/stalls/merchants/extra.mcfunction gives or charges")
+               for f in F)
+
+
+# protects the removal against the GENERATOR (tools/markets.py merchant_functions changed): with the dialogue keepers'
+# kills gone from the pack, every built counter is named as leaving its Steve beside its merchant
+def test_a_generator_that_leaves_the_dialogue_keeper_is_caught(monkeypatch, M):
+    real = M.merchant_functions
+    monkeypatch.setattr(M, "merchant_functions", lambda doc, pl: {
+        k: [x for x in v if "type=cobblemon:npc" not in x] for k, v in real(doc, pl).items()})
+    F, _w, _n = _audit(M)
+    assert _named(F, "merchant", "a Steve left beside it") == _built(M)
 
 
 # protects the overlay against the GENERATOR (tools/markets.py disabled_set changed): a sold item left craftable,
@@ -374,32 +344,38 @@ def test_a_mutated_overlay_generator_is_caught(monkeypatch, M):
     assert any("netherite_backpack has its recipe switched off but no built counter sells it" in f for f in F)
 
 
-# protects the keepers against the GENERATOR R17M calls (tools/markets.py npc_placements changed): a keeper moved
-# into its Mart must be named both as a placement that left its data and as a keeper inside a building
+# protects the keepers against the GENERATOR R17M runs (tools/markets.py stall_merchants changed): every counter's
+# merchant moved ten blocks and turned round must be named as a summon that left its data, at every built counter
 def test_a_mutated_keeper_placement_is_caught(monkeypatch, M):
-    doc = M.load()
-    pl = MA.read_json(ROOT / "data" / "placements.json")
-    sited = [c for c in doc["counters"] if c.get("status") == "sited"]
-    # 2026-10-03: Pallet (a donor town, no plan) and Redbrow (no Mart: its keeper stands at a stall on the yard) are
-    # sited too, and have no Mart anchor to move into; their keepers are moved ten blocks instead, which the same
-    # placement check must still name
-    marts = {c["id"]: next((a for a in ((pl["settlements"][c["town"]].get("plan") or {}).get("anchors") or [])
-                            if a["role"] == "pokemart"), None) for c in sited}
-    real = M.npc_placements
+    real = M.stall_merchants
 
-    def inside(d=None):
+    def moved(doc=None, plazas=None):
         out = []
-        for dlg, at, cls, yaw in real(d):
-            a = marts[dlg[len("dlg_market_"):]]
-            if a is None:
-                out.append((dlg, (at[0] + 10, at[1], at[2]), cls, yaw))
-                continue
-            r = a["rect"]
-            out.append((dlg, ((r[0] + r[2]) // 2, at[1], (r[1] + r[3]) // 2), cls, yaw))
+        for m in real(doc, plazas):
+            if m["kind"] == "counter":
+                m = dict(m, at=(m["at"][0] + 10, m["at"][1], m["at"][2]), data=dict(m["data"], Rotation=[
+                    float(m["yaw"]) + 180.0, 0.0]))
+            out.append(m)
         return out
-    monkeypatch.setattr(M, "npc_placements", inside)
-    F, _w, _n = _audit(M, keepers=M.npc_placements(doc), placements=pl, templates=None, walked={}, others=[])
-    assert sum(1 for f in F if "the data sites it at" in f) == len(sited)
+    monkeypatch.setattr(M, "stall_merchants", moved)
+    doc = M.load()
+    files, _ = M.build(doc)
+    pack = MA.load_pack(files)
+    keepers = MA.pack_keepers(pack, doc, M.MERCHANTS_FN)
+    assert sorted(k[0] for k in keepers) == _built(M)
+    F, _w, _n = _audit(M, keepers=keepers, placements=MA.read_json(ROOT / "data" / "placements.json"), templates=None,
+                       walked={}, others=[])
+    assert sum(1 for f in F if "the data sites it at" in f) == len(_built(M))
+    assert sum(1 for f in F if "its seat's is" in f) == len(_built(M))
+
+
+# protects "R17M summons the counters' merchants": the audit reads the step from tools/reapply.py and the summons from
+# the functions it runs, never from markets.npc_placements (empty since 2026-10-06)
+def test_r17m_runs_the_merchants_and_places_no_dialogue_keeper(M):
+    assert MA.r17m_root() == M.MERCHANTS_FN
+    pack = MA.load_pack(M.build(M.load())[0])
+    assert sorted(k[0] for k in MA.pack_keepers(pack, M.load(), MA.r17m_root())) == _built(M)
+    assert not [r for r in pack if r.startswith(("data/cobblers/dialogues/", "data/cobblers/npcs/"))]
 
 
 # --------------------------------------------------------------------------------- data rules against the design
@@ -415,16 +391,36 @@ def _item(doc, cid, iid):
     return next(it for it in c["stock"] if it["id"] == iid)
 
 
-# protects "each town's shelf only adds items at or after its badge": a shelf gated below its town's badge, and an
-# off-path shelf on a flag the ladder does not give it, are both named
+def _drop(it, gate):
+    it["gate_dropped"] = dict(it.get("gate_dropped") or {"decision": "counters_are_merchants", "why": "probe"}, gate=gate)
+
+
+# protects "each town's shelf only adds items at or after its badge", read since 2026-10-06 from the gate each line
+# records in gate_dropped (a merchant cannot gate): a shelf recorded below its town's badge, and an off-path shelf on a
+# flag the ladder does not give it, are both named
 def test_a_gate_off_the_design_is_caught(M):
-    doc = _doc_with(M, lambda d: _item(d, "highwire", "iron_backpack").update(gate="gym2_cleared"))
+    doc = _doc_with(M, lambda d: _drop(_item(d, "highwire", "iron_backpack"), "gym2_cleared"))
     F, _w, _n = MA.audit(doc, MA.load_pack(M.build(M.load())[0]), MA.OVERLAY.read_text(encoding="utf-8"),
                          **{k: v for k, v in _inputs().items()})
-    assert any("highwire/iron_backpack (town gym3_town) is gated on gym2_cleared" in f for f in F)
-    doc = _doc_with(M, lambda d: _item(d, "fossick", "void_upgrade").update(gate="gym2_cleared"))
+    assert any("highwire/iron_backpack (town gym3_town) records the gate gym2_cleared" in f for f in F)
+    doc = _doc_with(M, lambda d: _drop(_item(d, "fossick", "void_upgrade"), "gym2_cleared"))
     F, _w, _n = MA.audit(doc, MA.load_pack(M.build(M.load())[0]), MA.OVERLAY.read_text(encoding="utf-8"), **_inputs())
     assert any("fossick/void_upgrade" in f and "none or gym3_cleared" in f for f in F)
+
+
+# protects "a merchant shows every line to every player" (the owner, 2026-10-06: "villagers with ui only"): a counter
+# line that still carries a gate is a fault, a dropped gate with no recorded decision is a fault, and every built
+# counter the ladder gates is reported as a FINDING (on sale before its badge), not hidden
+def test_a_gated_merchant_line_and_an_unrecorded_drop_are_caught_and_the_lost_gates_reported(M):
+    doc = _doc_with(M, lambda d: _item(d, "highwire", "magnet").update(gate="gym3_cleared"))
+    F, W, _n = MA.audit(doc, MA.load_pack(M.build(M.load())[0]), MA.OVERLAY.read_text(encoding="utf-8"), **_inputs())
+    assert any("highwire/magnet is gated on gym3_cleared, but its merchant shows every line" in f for f in F)
+    doc = _doc_with(M, lambda d: _item(d, "highwire", "magnet")["gate_dropped"].update(decision="nobody"))
+    F, W, _n = MA.audit(doc, MA.load_pack(M.build(M.load())[0]), MA.OVERLAY.read_text(encoding="utf-8"), **_inputs())
+    assert any("highwire/magnet's gate_dropped" in f and "no recorded decision" in f for f in F)
+    gated = sorted(c["id"] for c in M.load()["counters"] if c.get("status") == "sited"
+                   and any(it.get("gate_dropped") for it in c["stock"]))
+    assert sorted(w.split(": ")[1].split(" ")[0] for w in W if w.startswith("window:")) == gated
 
 
 # protects the tier ladder: copper sold before badge 1's town, or gold before iron, is named; removing it lets the
@@ -476,10 +472,12 @@ def test_ids_and_recipe_conditions_in_the_server_jars(M, jars):
     assert F == [], F
 
 
-# protects the id check against the GENERATOR: a give of an id that is not in any jar (TIERED_GOODS 2.6's
+# protects the id check against the GENERATOR: an offer of an id that is not in any jar (TIERED_GOODS 2.6's
 # 'charcoal', not 'charcoal_stick') must be named
 def test_a_generator_giving_a_missing_id_is_caught(monkeypatch, M, jars):
-    _mutate_lines(monkeypatch, M, lambda ls, it: [l.replace("cobblemon:charcoal_stick", "cobblemon:charcoal") for l in ls])
+    real = M.merchant_shop
+    monkeypatch.setattr(M, "merchant_shop", lambda s: json.loads(json.dumps(real(s)).replace(
+        "cobblemon:charcoal_stick", "cobblemon:charcoal")))
     F, _w, _n = _audit(M, index=jars)
     assert "id: cobblemon:charcoal is not an item in any server jar" in F
 
