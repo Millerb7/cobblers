@@ -379,8 +379,11 @@ def files(doc, ground):
         near.append("execute if entity %s unless score #%s %s matches 1 run function %s:legendary/%s/open"
                     % (_zone_sel(gate_zone, _sel(rec, ns)), rid, obj, ns, rid))
         if lake:
-            near.append("execute unless entity %s unless score #%s %s matches 0 run function %s:legendary/%s/close"
-                        % (_zone_sel(gate_zone, _sel(rec, ns)), rid, obj, ns, rid))
+            # never shut anyone in: the partition stays open while ANY player is in the chamber or the doorway
+            # (play test 2026-10-05, review 87: the approach box alone let Azelf's gate close on a player inside)
+            inside = _grow(_hull([g["chamber"], g["door"]]), 1)
+            near.append("execute unless entity %s unless entity %s unless score #%s %s matches 0 run function %s:legendary/%s/close"
+                        % (_zone_sel(gate_zone, _sel(rec, ns)), _zone_sel(inside, "gamemode=!spectator"), rid, obj, ns, rid))
         near.append("execute as %s run function %s:legendary/%s/met"
                     % (_zone_sel(g["zone"], _sel(rec, ns, met_false=True)), ns, rid))
         near.append("execute if score #%s %s matches 0 run function %s:legendary/%s/keep" % (rid, obj, ns, rid))

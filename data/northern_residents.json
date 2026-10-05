@@ -144,6 +144,8 @@
         "yaw": 180.0,
         "trigger": 4,
         "leash": 10,
+        "stays_still": true,
+        "stays_still_why": "play test 2026-10-05 (review 84): awake, Old Knot wandered to Hesketh's fire and the leash-10 keeper kept snapping it back. It is a tree: the keeper wakes it in name only (the message and the sound) and keeps NoAI, so it stands at the clearing's centre facing its yaw until a player battles it. Matches the live fix the session made (NoAI at (1588.5, 134, 3280.5) yaw 180)",
         "appears_after": null,
         "gate": "gym1_cleared",
         "intended_stage": "post_gym_1",

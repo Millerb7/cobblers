@@ -122,7 +122,7 @@ Togepi, Toedscool, Aerodactyl, Tauros, Miltank, Cyclizar...). A find is never th
 family: the prizes and the cave belong to Victory Road. Finds sit in the rare bucket and the top half of
 the band. **A route corridor never carries a find**, even where it crosses the find's sub-region: the reward belongs
 to the player who leaves the path. The corridor otherwise takes a sub-region's anchor, common and uncommon families
-(at most 20 species per route, `route_species_selection`), and keeps the water families where the route crosses water.
+(20 species per route filled by score, `route_species_selection`), and keeps the water families where the route crosses water. **Every crossed table keeps its three likeliest land families** (`rules.corridor_table_min`, play test 2026-10-05, review 85: a corridor box compiles only its own table's listed species, and Pallet's meadows had lost every slot but Caterpie to the route-wide ranking); the kept species may pass 20, up to `rules.corridor_species_ceiling` 40.
 
 **A route has a rare and an ultra-rare table (the owner, 2026-10-05: "every area should have a rare, ultra rare, and
 boss table"; ruled the same day that a corridor is an area for the rare and ultra-rare tables but carries no heart --

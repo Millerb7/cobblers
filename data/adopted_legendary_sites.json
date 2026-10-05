@@ -375,6 +375,7 @@
     "mirror": "none",
     "anchor_mode": "corner",
     "y_mode": "absolute",
+    "remove_items": [{"template_pos": [10, 1, 10], "path": "storageWrapper.contents.inventory.Items", "id": "lumymon:glacier_feather", "why": "play test 2026-10-05 (owner note 14): the template's base Sophisticated Storage barrel holds the summoning feather, and a friend caught Moltres for free; the feathers' one source is Shrew Station (docs/STATE.md legendary decisions). Read 2026-10-06 from the server's COBBLEVERSE-DP template. The summit barrel's loot (gems and gear) is kept"}],
     "command": "/place template cobbleverse:legendary/articuno 672 310 369 none none",
     "top_y": 383,
     "ceiling_margin": 192

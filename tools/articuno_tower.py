@@ -99,7 +99,12 @@ def placement_steps(rec=None):
     x0, _y0, z0, x1, _y1, z1 = summit_box(rec)
     hold = "%d %d %d %d" % (x0, z0, x1, z1)
     command = rec["placement"]["command"].lstrip("/")
-    return [("cmd", "forceload add " + hold), ("wait", 3), ("cmd", command), ("cmd", "forceload remove " + hold)]
+    import place_donor
+    pl = rec["placement"]
+    clear = place_donor.remove_item_commands((pl["corner"][0], pl["y"], pl["corner"][1]), pl["rotation"],
+                                             pl.get("remove_items"))
+    return ([("cmd", "forceload add " + hold), ("wait", 3), ("cmd", command)] + [("cmd", c) for c in clear]
+            + [("cmd", "forceload remove " + hold)])
 
 
 def _runs(values):

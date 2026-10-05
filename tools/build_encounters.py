@@ -54,8 +54,9 @@ route_species_selection: per route, the sub-regions data/routes.json's geography
 table only families in rules.corridor_roles (never a find), plus rules.corridor_rare_min of the crossed on-path
 tables' rare- and ultra-role species, reserved first (the owner, 2026-10-05: every area has a rare and an ultra-rare). Each species is scored by its chance in the
 table (the audit's rule: bucket share renormalised over the buckets its context holds, times weight over the bucket's
-weight) times the corridor length in that table; every crossed table's water species are kept, then the rest by
-score until corridor_species_limit. tools/compile_spawns.py then compiles a corridor species only if it is listed.
+weight) times the corridor length in that table; every crossed table's water species and its corridor_table_min
+likeliest land species are kept (past corridor_species_limit if need be, up to corridor_species_ceiling), then the
+rest by score until corridor_species_limit. tools/compile_spawns.py then compiles a corridor species only if it is listed.
 
 Fails closed (exit 1, a message per problem): a species not in the jar; a species the client draws as the substitute
 doll (modpack/manifest/client-pack-atm-subset.json species); a spawn above its tier's cap or outside its band; a table
@@ -621,6 +622,7 @@ def route_selection(routes, generated, rules, placement=None):
     find (section 6), and a find belongs to whoever leaves the path."""
     allowed_roles = set(rules["corridor_roles"])
     rare_min = dict(rules.get("corridor_rare_min") or {})
+    table_min = int(rules.get("corridor_table_min") or 0)
     placement = placement or {}
     limit = rules["corridor_species_limit"]
     out = {}
@@ -632,10 +634,16 @@ def route_selection(routes, generated, rules, placement=None):
             end = tr[i + 1]["at_distance_blocks"] if i + 1 < len(tr) else total
             for s in t["subregions"]:
                 length[s] = length.get(s, 0.0) + max(0.0, end - t["at_distance_blocks"])
-        score, keep, rscore = {}, set(), {k: {} for k in rare_min}
+        score, keep, rscore, floor = {}, set(), {k: {} for k in rare_min}, {}
         for sub in sorted(length):
             rows = generated[sub]
             chance = table_chances(rows)
+            # rules.corridor_table_min: a box compiles only the listed species of ITS table, so a table whose
+            # species all lose the route-wide ranking left boxes of one species (Pallet's stretch of Route 1 was
+            # Caterpie alone, play test 2026-10-05, review 85)
+            own = sorted({r["name"] for r in rows if r["role"] in allowed_roles and r["half"] != "water"},
+                         key=lambda s: (-chance[s], s))
+            floor[sub] = own
             for r in rows:
                 if r["role"] in rare_min:
                     if placement.get(sub) == "path":
@@ -650,9 +658,14 @@ def route_selection(routes, generated, rules, placement=None):
         for role, n in sorted(rare_min.items()):
             cands = sorted((s for s in rscore[role] if s not in keep), key=lambda s: (-rscore[role][s], s))
             keep.update(cands[:n])
-        if len(keep) > limit:
-            raise DesignError("%s: %d water and reserved rare species to keep, over the corridor limit %d: %s"
-                              % (rt["id"], len(keep), limit, sorted(keep)))
+        for sub in sorted(floor):
+            keep.update(floor[sub][:table_min])
+        # the kept species may pass corridor_species_limit (which then only stops the fill by score): a route that
+        # crosses many tables keeps each one's minimum rather than shrinking it to one species a stretch
+        ceiling = rules.get("corridor_species_ceiling", limit)
+        if len(keep) > ceiling:
+            raise DesignError("%s: %d water, reserved rare and per-table species to keep, over the corridor ceiling %d: %s"
+                              % (rt["id"], len(keep), ceiling, sorted(keep)))
         rest = sorted((s for s in score if s not in keep), key=lambda s: (-score[s], s))
         chosen = set(keep) | set(rest[:max(0, limit - len(keep))])
         spaced = sorted(s for s in chosen if " " in s)

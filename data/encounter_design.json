@@ -42,7 +42,11 @@
     "corridor_roles": ["anchor", "common", "uncommon"],
     "corridor_rare_min": {"rare": 2, "ultra": 1},
     "corridor_rare_min_why": "the owner, 2026-10-05: \"every area should have a rare, ultra rare, and boss table\"; the ruling the same day: a route corridor gets a rare and an ultra-rare table, reserved from the crossed on-path tables' rare- and ultra-role families (never an off-path find), but no heart (section 10: the path stays catchable)",
+    "corridor_table_min": 3,
+    "corridor_table_min_why": "play test 2026-10-05 (review 85): a corridor box compiles only the route's listed species of its own table, and Pallet's meadows lost every slot but Caterpie to the route-wide ranking, so Route 1's first 180 blocks spawned Caterpie alone (113 route boxes held one or two species). Each crossed table keeps its three likeliest land species of the corridor roles before the rest is filled by score (measured over the 9 routes' boxes: one species at half or more of a box's weight in 163 boxes, from 330; none under three species; Pallet's stretch 12% Caterpie)",
     "corridor_species_limit": 20,
+    "corridor_species_ceiling": 40,
+    "corridor_species_ceiling_why": "corridor_species_limit stops the fill by score; the species a route must keep (every crossed table's water species, the reserved rares, corridor_table_min per crossed table) may pass it, up to this ceiling, where the design fails closed",
     "themes": {
       "meadow": ["normal", "grass", "bug", "fairy", "flying", "electric", "fire", "ground", "poison", "dark", "psychic"],
       "forest": ["bug", "grass", "normal", "flying", "poison", "dark", "ghost", "fairy", "steel", "ice", "fire", "electric", "fighting", "dragon"],

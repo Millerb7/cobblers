@@ -111,11 +111,16 @@ def test_the_step_holds_the_footprint_then_pastes_the_records_command_then_relea
     steps = AT.placement_steps()
     x0, _y, z0, x1, _t, z1 = SUMMIT
     kinds = [k for k, _v in steps]
-    assert kinds == ["cmd", "wait", "cmd", "cmd"]
+    assert kinds == ["cmd", "wait", "cmd", "cmd", "cmd"]
     assert steps[0][1] == "forceload add %d %d %d %d" % (x0, z0, x1, z1)
     assert steps[2][1] == SITE["placement"]["command"].lstrip("/")
     assert steps[2][1] == "place template %s %d %d %d none none" % (SITE["template"], x0, SITE["placement"]["y"], z0)
-    assert steps[3][1] == "forceload remove %d %d %d %d" % (x0, z0, x1, z1)
+    # after the paste, while the chunks are held: the template's base barrel loses its summoning feather (play test
+    # 2026-10-05: a free legendary from the tower's chest). Template position (10, 1, 10), read from the server's
+    # COBBLEVERSE-DP legendary/articuno.nbt on 2026-10-06
+    assert steps[3][1] == ('data remove block %d %d %d storageWrapper.contents.inventory.Items[{id:"lumymon:glacier_feather"}]'
+                           % (x0 + 10, SITE["placement"]["y"] + 1, z0 + 10))
+    assert steps[4][1] == "forceload remove %d %d %d %d" % (x0, z0, x1, z1)
 
 
 @pytest.mark.slow

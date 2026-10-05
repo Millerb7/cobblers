@@ -183,6 +183,23 @@ def loot_commands(rec, template_doc):
     return out
 
 
+def remove_item_commands(position, rotation, entries):
+    """`data remove` of one authored item from a container the template fills with items, not a loot table.
+
+    entries: the record's remove_items, each {template_pos, path, id}: the container's position in the template,
+    the NBT path of its item list (a Sophisticated Storage barrel nests it: storageWrapper.contents.inventory.Items)
+    and the item. Play test 2026-10-05: the bird towers' base barrels handed out the summoning feathers, and a
+    friend caught Moltres for free; the feathers' one source is Shrew Station (docs/STATE.md, legendary decisions)."""
+    import place_town
+    out = []
+    for e in entries or []:
+        tx, ty, tz = e["template_pos"]
+        rx, rz = place_town.rotate(tx, tz, rotation or "none")
+        out.append('data remove block %d %d %d %s[{id:"%s"}]' % (position[0] + rx, position[1] + ty, position[2] + rz,
+                                                                  e["path"], e["id"]))
+    return out
+
+
 def jigsaw_commands(rec, template_doc):
     """A `setblock` of its own final state for every jigsaw the template holds, when the record asks for it.
 
@@ -373,6 +390,9 @@ def main(argv=None):
                 extra = loot_commands(rec, tdoc) + jigsaw_commands(rec, tdoc)
             elif rec.get("clear_loot") or rec.get("jigsaws"):
                 raise SystemExit("%s clears loot or resolves jigsaws, which needs --server-dir to read its template" % rec["id"])
+            pos = rec["position"]
+            extra = extra + remove_item_commands((pos["x"], pos["y"], pos["z"]), rec.get("rotation"),
+                                                 rec.get("remove_items"))
             for name, lines_out in functions(rec, subs, check, extra).items():
                 fn = out / "data" / NS / "function" / "structures" / ("%s.mcfunction" % name)
                 fn.parent.mkdir(parents=True, exist_ok=True)
