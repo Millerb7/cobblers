@@ -61,6 +61,43 @@
       "volcanic": ["fire", "rock", "ground", "bug", "dragon", "ghost", "poison", "steel"],
       "jungle": ["grass", "bug", "normal", "flying", "fighting", "poison", "dark", "water", "dragon"],
       "cave": ["rock", "ground", "steel", "poison", "dark", "ghost", "fighting", "dragon", "flying", "psychic", "fire", "fairy"]
+    },
+    "held_items": {
+      "why": "the owner, play test 2026-10-05: \"wild held items, rare enough to be a find rather than a farm\". A wild spawn of a listed species sometimes holds an item that fits it (a Leftovers Snorlax, a Lucky Egg Chansey); the chance is the main series' own 5% for a type booster or a stone, and 2% for an item a player would otherwise buy or earn (Leftovers, Lucky Egg, Light Ball, King's Rock, Quick Claw, Focus Band, Black Sludge, Ditto's powders), so a catch that comes with one is a find and catching a box of them to strip the items is not a plan",
+      "field": "heldItems",
+      "field_source": "Cobblemon-fabric-1.8.0+1.21.1.jar: PokemonSpawnDetail has the field heldItems (List<PossibleHeldItem>); PossibleHeldItemAdapter reads an object {\"item\": <item id, or #tag>, \"percentage\": <number>}. PokemonSpawnDetail.createSpawnAction (javap -c, read 2026-10-05) takes the chance of no item as 1 - sum(percentage / 100), and when that roll does not come up picks one listed item weighted by its percentage, so a percentage is a chance out of 100 per spawn. None of the jar's own 1,544 spawn_pool_world files uses the field: VERIFIED from bytecode, NOT seen in game",
+      "where": "every spawn_pool_world entry tools/build_encounters.py writes or copies through (sub-region rosters and their hearts, route corridors, the waterway, the marine bands) whose species is listed, stamped as held_items and written by tools/compile_spawns.py as heldItems. NOT habitat-block pools (a Habitat Block's pool spawn is a different format; no heldItems field was verified for it) and NOT the Mega field dens (tools/compile_spawns.py mega_den_spawns, from data/gulch_mine.json, not from data/spawns.json)",
+      "percent": {"booster": 5, "prize": 2},
+      "percent_why": "the main series' wild held-item rates (50% common, 5% rare, 1% very rare; from memory, not a cited source) as the scale. Nothing here is common: 5% for a type booster, a stone or a bone; 2% for an item with a strong battle effect, between rare and very rare because a Cobblemon player meets far more wild spawns than a main-series one; at most max_total_percent per species, so 19 of 20 spawns of any species hold nothing",
+      "max_total_percent": 5,
+      "items": [
+        {"species": ["snorlax"], "item": "cobblemon:leftovers", "class": "prize"},
+        {"species": ["chansey", "blissey"], "item": "cobblemon:lucky_egg", "class": "prize"},
+        {"species": ["pikachu"], "item": "cobblemon:light_ball", "class": "prize"},
+        {"species": ["ditto"], "item": "cobblemon:quick_powder", "class": "prize"},
+        {"species": ["ditto"], "item": "cobblemon:metal_powder", "class": "prize"},
+        {"species": ["sneasel"], "item": "cobblemon:quick_claw", "class": "prize", "why": "Meowth, the owner's example, spawns nowhere in our pools; Sneasel is the main series' other Quick Claw holder"},
+        {"species": ["slowpoke", "poliwag", "poliwhirl"], "item": "cobblemon:kings_rock", "class": "prize"},
+        {"species": ["machop", "machoke"], "item": "cobblemon:focus_band", "class": "prize"},
+        {"species": ["grimer", "muk", "trubbish", "garbodor", "croagunk", "toxicroak"], "item": "cobblemon:black_sludge", "class": "prize"},
+        {"species": ["cubone", "marowak"], "item": "minecraft:bone", "class": "booster", "why": "a bone held by Cubone or Marowak is its Thick Club (CobblemonHeldItemManager remaps Items.BONE to thickclub, docs/research/ITEMS_ABILITY_EV_HELD_MEGA.md section 3)"},
+        {"species": ["geodude", "graveler"], "item": "cobblemon:everstone", "class": "booster"},
+        {"species": ["onix", "roggenrola", "boldore", "aron", "lairon"], "item": "cobblemon:hard_stone", "class": "booster"},
+        {"species": ["magneton"], "item": "cobblemon:magnet", "class": "booster"},
+        {"species": ["bronzor", "bronzong"], "item": "cobblemon:metal_coat", "class": "booster"},
+        {"species": ["gastly", "haunter"], "item": "cobblemon:spell_tag", "class": "booster"},
+        {"species": ["abra"], "item": "cobblemon:twisted_spoon", "class": "booster"},
+        {"species": ["spearow", "fearow"], "item": "cobblemon:sharp_beak", "class": "booster"},
+        {"species": ["butterfree"], "item": "cobblemon:silver_powder", "class": "booster"},
+        {"species": ["tentacool", "tentacruel"], "item": "cobblemon:poison_barb", "class": "booster"},
+        {"species": ["vulpix", "growlithe"], "item": "cobblemon:charcoal_stick", "class": "booster"},
+        {"species": ["swinub", "piloswine", "snover", "abomasnow"], "item": "cobblemon:never_melt_ice", "class": "booster"},
+        {"species": ["oddish", "gloom"], "item": "cobblemon:absorb_bulb", "class": "booster"},
+        {"species": ["murkrow"], "item": "cobblemon:black_glasses", "class": "booster"},
+        {"species": ["dratini", "dragonair"], "item": "cobblemon:dragon_fang", "class": "booster"},
+        {"species": ["drilbur"], "item": "cobblemon:soft_sand", "class": "booster"},
+        {"species": ["volbeat", "illumise"], "item": "cobblemon:bright_powder", "class": "booster"}
+      ]
     }
   },
   "tables": {

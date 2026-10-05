@@ -15,7 +15,9 @@ Route files (spawn_pool_world/routes/<route>.json), per spawns.json compilation.
 Sub-region files (spawn_pool_world/subregions/<sub>.json): every ambient entry scoped to the sub-region over its
 polygon, corridor excluded; an entry carrying a "heart" (docs/mechanics/ENCOUNTER_DESIGN.md section 10) only over the
 heart's cells (heart_boxes), and never in a route file. A heart entry with "alpha" true compiles as a native alpha
-(heart_pokemon: "<species> alpha=true"), in sub-region, waterway and marine files alike.
+(heart_pokemon: "<species> alpha=true"), in sub-region, waterway and marine files alike. An entry carrying
+"held_items" compiles them as the spawn detail's heldItems (held_items()) in route, sub-region, waterway and marine
+files alike, never in a habitat pool.
 
 Habitat files (habitat_pools/<habitat>.json): every ambient entry scoped to the habitat.
 
@@ -97,6 +99,20 @@ def heart_pokemon(entry):
     data/cobblemon/spawn_pool_world/herds/0023_fearow_alpha.json "fearow held_item=cobblemon:flying_gem alpha=true"
     (Cobblemon-fabric-1.8.0+1.21.1.jar). tools/build_encounters.py fails closed on a heart entry without the flag."""
     return entry["species"] + (" alpha=true" if entry.get("alpha") is True else "")
+
+
+def held_items(entry):
+    """{"heldItems": [...]} for an entry carrying held_items (tools/build_encounters.py stamps them from
+    data/encounter_design.json rules.held_items; the owner, 2026-10-05: wild held items, a find and not a farm), else {}.
+
+    heldItems is the Cobblemon 1.8.0 PokemonSpawnDetail field (List<PossibleHeldItem>, each {"item", "percentage"},
+    read through PossibleHeldItemAdapter); createSpawnAction gives no item with chance 1 - sum(percentage) / 100.
+    Verified from the jar's bytecode, not in game. Written on spawn_pool_world details only: a habitat pool spawn and a
+    Mega field den row (mega_den_spawns, from data/gulch_mine.json) never carry one."""
+    hs = entry.get("held_items")
+    if not hs:
+        return {}
+    return {"heldItems": [{"item": h["item"], "percentage": h["percentage"]} for h in hs]}
 
 
 def position_type(entry):
@@ -243,7 +259,7 @@ def compile_route(route, entries_by_scope, allowed=None, zones=()):
                         else "%s_p%d_%s_%s" % (b["id"], k, s, e["species"])
                     spawns.append({"id": sid, "pokemon": e["species"], "type": "pokemon",
                                    "spawnablePositionType": position_type(e), "bucket": e["bucket"], "level": e["level"],
-                                   "weight": e["weight"], "condition": cond})
+                                   "weight": e["weight"], "condition": cond, **held_items(e)})
                     species.add(e["species"])
     doc = {"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [], "spawns": spawns}
     summary = {"route_id": route["id"], "source_box_count": len(boxes), "compiled_entry_count": len(spawns),
@@ -361,7 +377,8 @@ def compile_subregion(sub, entries, exclude, grid, waterways=()):
             cond = box_condition(b[0], b[1], b[2], b[3], e)
             spawns.append({"id": "%s_b%04d_%s" % (sub["id"], n, e["species"].replace(" ", "_")), "pokemon": e["species"],
                            "type": "pokemon", "spawnablePositionType": position_type(e),
-                           "bucket": e["bucket"], "level": e["level"], "weight": e["weight"], "condition": cond})
+                           "bucket": e["bucket"], "level": e["level"], "weight": e["weight"], "condition": cond,
+                           **held_items(e)})
     hboxes = []
     if hearts:
         geoms = {json.dumps(e["heart"], sort_keys=True) for e in hearts}
@@ -373,7 +390,8 @@ def compile_subregion(sub, entries, exclude, grid, waterways=()):
                 cond = box_condition(b[0], b[1], b[2], b[3], e)
                 spawns.append({"id": "%s_h%04d_%s" % (sub["id"], n, e["species"].replace(" ", "_")), "pokemon": heart_pokemon(e),
                                "type": "pokemon", "spawnablePositionType": position_type(e),
-                               "bucket": e["bucket"], "level": e["level"], "weight": e["weight"], "condition": cond})
+                               "bucket": e["bucket"], "level": e["level"], "weight": e["weight"], "condition": cond,
+                               **held_items(e)})
     doc = {"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [], "spawns": spawns}
     summary = {"subregion_id": sub["id"], "box_count": len(boxes), "compiled_entry_count": len(spawns),
                "species": sorted({e["species"] for e in base}),
@@ -438,7 +456,7 @@ def build_waterways(spawns, waterways, grid=WATERWAY_GRID, routes=None):
                                        "spawnablePositionType": position_type(e),
                                        "bucket": e["bucket"], "level": e["level"],
                                        "weight": round(e["weight"] * mult, 3),
-                                       "condition": box_condition(b[0], b[1], b[2], b[3], e)})
+                                       "condition": box_condition(b[0], b[1], b[2], b[3], e), **held_items(e)})
         hboxes = []
         if hearts:
             hboxes = focus_heart_boxes(all_boxes, one_heart(w["id"], hearts), grid, corridor, whole_boxes=True)
@@ -450,7 +468,7 @@ def build_waterways(spawns, waterways, grid=WATERWAY_GRID, routes=None):
                                        "pokemon": heart_pokemon(e), "type": "pokemon",
                                        "spawnablePositionType": position_type(e),
                                        "bucket": e["bucket"], "level": e["level"], "weight": e["weight"],
-                                       "condition": box_condition(b[0], b[1], b[2], b[3], e)})
+                                       "condition": box_condition(b[0], b[1], b[2], b[3], e), **held_items(e)})
         doc = {"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [], "spawns": spawns_out}
         files["data/cobblers/spawn_pool_world/waterways/%s.json" % w["id"]] = dumps(doc)
         summaries.append({"waterway_id": w["id"], "box_count": boxes, "compiled_entry_count": len(spawns_out),
@@ -715,7 +733,7 @@ def build_marine(spawns, regions, routes, waterways=()):
                 spawns_out.append({"id": "%s_b%04d_%s" % (bid, n, e["species"].replace(" ", "_")), "pokemon": e["species"],
                                    "type": "pokemon", "spawnablePositionType": position_type(e),
                                    "bucket": e["bucket"], "level": e["level"], "weight": e["weight"],
-                                   "condition": marine_condition(b[0], b[1], b[2], b[3], e)})
+                                   "condition": marine_condition(b[0], b[1], b[2], b[3], e), **held_items(e)})
         hboxes = []
         if hearts:
             hboxes = focus_heart_boxes(boxes, one_heart(bid, hearts), MARINE_GRID, corridor)
@@ -726,7 +744,7 @@ def build_marine(spawns, regions, routes, waterways=()):
                     spawns_out.append({"id": "%s_h%04d_%s" % (bid, n, e["species"].replace(" ", "_")), "pokemon": heart_pokemon(e),
                                        "type": "pokemon", "spawnablePositionType": position_type(e),
                                        "bucket": e["bucket"], "level": e["level"], "weight": e["weight"],
-                                       "condition": marine_condition(b[0], b[1], b[2], b[3], e)})
+                                       "condition": marine_condition(b[0], b[1], b[2], b[3], e), **held_items(e)})
         doc = {"enabled": True, "neededInstalledMods": [], "neededUninstalledMods": [], "spawns": spawns_out}
         files["data/cobblers/spawn_pool_world/marine/%s.json" % bid] = dumps(doc)
         summaries.append({"band_id": bid, "box_count": len(boxes), "compiled_entry_count": len(spawns_out),
