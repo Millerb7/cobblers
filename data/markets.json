@@ -290,7 +290,7 @@
       "stall": "northlight_stall_1",
       "near_trader": "northlight_mart",
       "sited_by": "as stoneford",
-      "keeper": {"name": "Station Supply", "greeting": "Station supply. Hammocks for anyone; Marsh Badge holders can buy the supplements the station feeds its own team."},
+      "keeper": {"name": "Station Supply", "greeting": "Station supply. Hammocks for anyone; Marsh Badge holders can buy the supplements the station feeds its own team, and the capsules it tests abilities with."},
       "theme": "the research station and aurora observatory: a research station sells supplements",
       "stock": [
         {"id": "hammock", "item": "comforts:hammock_white", "name": "Hammock", "count": 1, "price": 800, "gate": null, "strand": "convenience", "why": "a researcher's bed; ungated, since travel already gates the station (PROGRESSION_LADDER 5.4)"},
@@ -299,7 +299,8 @@
         {"id": "iron", "item": "cobblemon:iron", "name": "Iron", "count": 1, "price": 3500, "gate": "gym6_cleared", "strand": "power", "why": "as hp_up"},
         {"id": "calcium", "item": "cobblemon:calcium", "name": "Calcium", "count": 1, "price": 3500, "gate": "gym6_cleared", "strand": "power", "why": "as hp_up"},
         {"id": "zinc", "item": "cobblemon:zinc", "name": "Zinc", "count": 1, "price": 3500, "gate": "gym6_cleared", "strand": "power", "why": "as hp_up"},
-        {"id": "carbos", "item": "cobblemon:carbos", "name": "Carbos", "count": 1, "price": 3500, "gate": "gym6_cleared", "strand": "power", "why": "as hp_up"}
+        {"id": "carbos", "item": "cobblemon:carbos", "name": "Carbos", "count": 1, "price": 3500, "gate": "gym6_cleared", "strand": "power", "why": "as hp_up"},
+        {"id": "ability_capsule", "item": "cobblemon:ability_capsule", "name": "Ability Capsule", "count": 1, "price": 10000, "gate": "gym6_cleared", "strand": "power", "why": "2026-10-05, the owner after the play test (note 8): 'sell Ability Capsules'. Its only recipe brews it from minecraft:dragon_breath (Cobblemon-fabric-1.8.0 data/cobblemon/recipe/brewing_stand/ability_capsule.json), an End item, and the End has no portal here; otherwise it is Nether bastion and ruin chest loot, finite and shared. Gated with the station's other supplements; 10,000 (about three vitamins) is a PROPOSED price, the owner's to set, and data/bank.json and Cobbleverse's bank buy none back. docs/research/OBTAINABILITY_SWEEP_2026-10-05.md"}
       ]
     },
     {
@@ -315,14 +316,24 @@
       "stall_why": "the squares' contract names stall 2 (`sweets`) 'the Tea House Kitchen: malasadas and pokepuffs', this counter's stock; stall 1 (`tea`) goes to the tea front, which sells what is taken with the tea",
       "near_trader": "tea_mart",
       "sited_by": "as stoneford",
-      "keeper": {"name": "Tea House Kitchen", "greeting": "From the tea house kitchen. Cheaper than Greenhollow, and we don't ask for badges."},
+      "keeper": {"name": "Tea House Kitchen", "greeting": "From the tea house kitchen. Cheaper than Greenhollow, and we don't ask for badges. The terrace cutters trade their stones through us too: any of the ten, at the Assayer's price."},
       "theme": "the tea town stepping down the slope below the tea house: its kitchen's sweets, cheaper than the garden town's, the region's cheapest route to a friendship evolution",
       "stock": [
         {"id": "sweet_malasada", "item": "cobblecuisine:sweet_malasada", "name": "Sweet Malasada", "count": 1, "price": 700, "gate": null, "strand": "power", "why": "Greenhollow's 900 less a margin (PROGRESSION_LADDER 1.2)"},
         {"id": "sweet_pokepuff", "item": "cobblecuisine:sweet_pokepuff", "name": "Sweet Pokepuff", "count": 1, "price": 400, "gate": null, "strand": "power", "why": "Greenhollow's 500 less a margin"},
         {"id": "mint_pokepuff", "item": "cobblecuisine:mint_pokepuff", "name": "Mint Pokepuff", "count": 1, "price": 400, "gate": null, "strand": "power", "why": "2026-10-03, the shelf widened from two lines to the kitchen's flavours (TOWN_SQUARES_SURVEY 4): friendship +6 like the sweet one (cobblecuisine.json pokepuffFriendship; whether flavour changes the gain is NOT VERIFIED, TIERED_GOODS 2.6). Id read from cobblecuisine-2.0.1-1.7.rc1.jar's lang 2026-10-03; Greenhollow sells no mint puff, so no discount rule binds"},
         {"id": "citrus_pokepuff", "item": "cobblecuisine:citrus_pokepuff", "name": "Citrus Pokepuff", "count": 1, "price": 400, "gate": null, "strand": "power", "why": "as mint_pokepuff"},
-        {"id": "mocha_pokepuff", "item": "cobblecuisine:mocha_pokepuff", "name": "Mocha Pokepuff", "count": 1, "price": 400, "gate": null, "strand": "power", "why": "as mint_pokepuff: the tea house's own, a coffee-house puff"}
+        {"id": "mocha_pokepuff", "item": "cobblecuisine:mocha_pokepuff", "name": "Mocha Pokepuff", "count": 1, "price": 400, "gate": null, "strand": "power", "why": "as mint_pokepuff: the tea house's own, a coffee-house puff"},
+        {"id": "thunder_stone", "item": "cobblemon:thunder_stone", "name": "Thunder Stone", "count": 1, "price": 2100, "gate": null, "strand": "power", "why": "2026-10-05, the owner after the play test: 'the stone shard gate, so evolution stones are actually purchasable'. The only other seller is the Mining Town's Assayer (data/traders.json mining_assayer), a CobbleDollars merchant whose authored shop is proof P-7 (never seen to sell) at leg 8; this is the earliest off-path counter (the tea town, leg 2, STONE_ECONOMY.md section 7) and buys through the dialogue purchase the ferries use (EXP-040, EXP-042). 2,100 is the Assayer's price (traders.json stock_policy.stones, open decision O-6), so one stone has one price everywhere; data/bank.json never buys a stone back, so no face prints money. Ungated, as every line at this counter is (the owner, 2026-10-05: 'don't limit the player'). Off the critical path, so not on the curve: stalls_basis.budget already leaves stones in the 30-35% outside it. docs/research/OBTAINABILITY_SWEEP_2026-10-05.md"},
+        {"id": "water_stone", "item": "cobblemon:water_stone", "name": "Water Stone", "count": 1, "price": 2100, "gate": null, "strand": "power", "why": "as thunder_stone"},
+        {"id": "fire_stone", "item": "cobblemon:fire_stone", "name": "Fire Stone", "count": 1, "price": 2100, "gate": null, "strand": "power", "why": "as thunder_stone"},
+        {"id": "leaf_stone", "item": "cobblemon:leaf_stone", "name": "Leaf Stone", "count": 1, "price": 2100, "gate": null, "strand": "power", "why": "as thunder_stone; the tea town's own seam (data/mines.json) gives it free to a player who climbs to the cutting"},
+        {"id": "moon_stone", "item": "cobblemon:moon_stone", "name": "Moon Stone", "count": 1, "price": 2100, "gate": null, "strand": "power", "why": "as thunder_stone"},
+        {"id": "sun_stone", "item": "cobblemon:sun_stone", "name": "Sun Stone", "count": 1, "price": 2100, "gate": null, "strand": "power", "why": "as thunder_stone"},
+        {"id": "shiny_stone", "item": "cobblemon:shiny_stone", "name": "Shiny Stone", "count": 1, "price": 2100, "gate": null, "strand": "power", "why": "as leaf_stone"},
+        {"id": "dusk_stone", "item": "cobblemon:dusk_stone", "name": "Dusk Stone", "count": 1, "price": 2100, "gate": null, "strand": "power", "why": "as thunder_stone"},
+        {"id": "dawn_stone", "item": "cobblemon:dawn_stone", "name": "Dawn Stone", "count": 1, "price": 2100, "gate": null, "strand": "power", "why": "as thunder_stone"},
+        {"id": "ice_stone", "item": "cobblemon:ice_stone", "name": "Ice Stone", "count": 1, "price": 2100, "gate": null, "strand": "power", "why": "as thunder_stone"}
       ]
     },
     {
