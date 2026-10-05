@@ -10495,6 +10495,90 @@
       }
     },
     {
+      "id": "dlg_fossil_dig_foreman",
+      "quest_id": "ambient_fossil_dig",
+      "npc_id": "npc_fossil_dig_foreman",
+      "source": "data/fossil_dig.json; docs: the owner's request of 2026-10-06 (data/fossil_dig.json request)",
+      "scope": "player",
+      "cursor": {
+        "progression_field": "quest.ambient_fossil_dig.foreman_cursor",
+        "initial_node": "greeting",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "greeting",
+          "kind": "line",
+          "speaker": "quarne",
+          "text": "Mind where you put your boots. Everything down there is a great deal older than you are.",
+          "next": "bed"
+        },
+        {
+          "id": "bed",
+          "kind": "line",
+          "speaker": "quarne",
+          "text": "It's a bone bed. One dry season killed a whole herd on this mesa, and the clay kept them. We've cut it down a step at a time.",
+          "next": "seams"
+        },
+        {
+          "id": "seams",
+          "kind": "line",
+          "speaker": "quarne",
+          "text": "See the grey seams at the foot of the trench walls? That's where the fossils sit. Put a pick in one and you'll break it and get nothing.",
+          "next": "brush"
+        },
+        {
+          "id": "brush",
+          "kind": "line",
+          "speaker": "quarne",
+          "text": "Use a brush. Hold it on the seam and work it slow. If you haven't got one, make one from a feather, a copper ingot and a stick, or buy one at Cinderlee.",
+          "next": "silt"
+        },
+        {
+          "id": "silt",
+          "kind": "line",
+          "speaker": "quarne",
+          "text": "The wind silts a brushed seam back up in about a day. Come back and there'll be new grey in the walls. I've stopped asking how.",
+          "next": "machine"
+        },
+        {
+          "id": "machine",
+          "kind": "line",
+          "speaker": "quarne",
+          "text": "A fossil's only a stone until you wake it. For that you want the restoring machine: a Fossil Analyzer, a Restoration Tank and a Monitor, built together.",
+          "next": "parts"
+        },
+        {
+          "id": "parts",
+          "kind": "line",
+          "speaker": "quarne",
+          "text": "The Analyzer wants amethyst. Sableye and Glimmet shed it when you beat them. The Tank wants a Revive, and you'll be handed a few of those on the road.",
+          "next": "repeat"
+        },
+        {
+          "id": "repeat",
+          "kind": "line",
+          "speaker": "quarne",
+          "text": "Brush slow. Bring me anything with teeth and I'll try not to look jealous.",
+          "next": "repeat"
+        }
+      ],
+      "speakers": {
+        "quarne": "Hollis Quarne"
+      }
+    },
+    {
       "id": "dlg_drovers_hollow_drover",
       "quest_id": "ambient_drovers_hollow",
       "npc_id": "npc_drovers_hollow_drover",

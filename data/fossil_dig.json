@@ -1,0 +1,161 @@
+{
+  "schema": "cobblers.fossil-dig/1",
+  "id": "fossil_dig",
+  "name": "the Scorchbone Dig",
+  "status": "authored; not built in any world (tools/fossil_dig.py build writes build/datapacks/cobblers_fossil_dig)",
+  "generated_by": "hand (the place's design); every block position is computed by tools/fossil_dig.py from these offsets and tools/ground.py",
+  "request": "the owner, 2026-10-06: build a fossil dig at about (4183, 5623), 'its kind of empty'. docs/research/OBTAINABILITY_SWEEP_2026-10-05.md row P0: 14 of 15 Cobblemon fossils have no supply in this pre-generated world",
+  "story": "A sun-baked bone bed on the scorched plateau's west mesa: one dry season killed a herd here and the clay kept them. A small crew has cut the bed down in three stepped trenches and camps on its west lip. The grey seams in the trench walls are where the fossils sit; a brush gets them out, and the wind silts a brushed seam back up in a day.",
+  "namespace": "cobblers",
+  "folder": "fossil_dig",
+  "ground_rule": "every Y is tools/ground.py's (the canonical heightmap, rounded); nothing here reads a world (tools/ground_rule.py WORLD_READS is empty)",
+  "site": {
+    "centre": [4183, 5623],
+    "subregion": "plateau_west",
+    "tier": 8,
+    "measured": "2026-10-05 by this builder from tools/ground.py: the centre reads y142; every column of the 97 x 97 round it reads y138..145, the 49 x 49 y140..144, and the ground rises gently west to east (about y140 at x4135 to y144 at x4231). tools/water_mask.py level_at: dry (sea level 62, no lake basin). Sub-region plateau_west (tier 8, ceiling 60) from data/regions.json. The orchestrator's relayed figures (y142, y138-145 over 97 x 97, no water) are confirmed.",
+    "keep_clear": {
+      "path_clearance": 128,
+      "path_clearance_why": "data/encounter_design.json rules.hearts.clear_of_path_blocks, the rule tests/test_resident_siting.py and data/southern_residents.json rules.path_clearance hold every southern place to: a find off the road. Checked over every written column, not the centre",
+      "authored_clearance": 96,
+      "authored_clearance_why": "data/southern_residents.json rules.authored_clearance: every written column at least 96 from any x/z another data/*.json authors (tools/southern_residents.py authored_points) and from every route corridor box (corridor_boxes). data/regions.json is excluded: its points are sub-region polygon vertices, boundaries and not places (the nearest, (4088, 5632), is a plateau_west / plateau_south corner)",
+      "excluded_files": ["regions.json", "fossil_dig.json"],
+      "keep_out_boxes": [
+        {"box": [3450, 4700, 4250, 5450], "why": "the Mega farm keep-out box (data/southern_residents.json rules.keep_out_box)"}
+      ],
+      "habitat_reach": "no activated Habitat Block's spawn_range reaches a written column (this place adds no Pokemon, so there is no leash)"
+    }
+  },
+  "pit": {
+    "why": "three nested rectangles, each a stepped trench two blocks below the one round it; the top one is cut one block below the lowest ground under it, so every column of the dig is dug at least one",
+    "levels": [
+      {"id": "upper", "rect": [-12, -8, 12, 8], "depth_below_lowest_ground": 1},
+      {"id": "middle", "rect": [-9, -5, 10, 5], "step": 2},
+      {"id": "bed", "rect": [-6, -2, 8, 2], "step": 2}
+    ],
+    "riser_depth": 2,
+    "riser_why": "the riser between two levels (cells of the outer level within riser_depth of the inner one) is written solid in strata from the lower floor up to the upper floor's underside, so a seam's support and backing are always this pack's blocks, never whatever the ground held",
+    "outer_skin_depth": 1,
+    "floor": ["minecraft:coarse_dirt", "minecraft:coarse_dirt", "minecraft:terracotta"],
+    "strata": ["minecraft:terracotta", "minecraft:orange_terracotta", "minecraft:yellow_terracotta", "minecraft:brown_terracotta", "minecraft:white_terracotta", "minecraft:red_terracotta", "minecraft:light_gray_terracotta"],
+    "strata_band": 2,
+    "strata_why": "badlands bands, two blocks thick, fixed by absolute y (strata[(y // strata_band) % 7]): every wall of the dig shows the same bands at the same height, as a real cut does",
+    "stairs": {
+      "kind": "spruce",
+      "lz": 0,
+      "why": "one stair run on the west side of each level, at lz 0, descending east: the rim to the upper level, the upper to the middle, the middle to the bone bed. No seam is on the west risers"
+    }
+  },
+  "bone_bed": {
+    "why": "a skeleton lying exposed on the bed's floor, read from the rim: a spine, four pairs of ribs, a skull to the east and a tail sunk in the floor to the west. lz +-2 stays clear so the seams in the bed's risers can be reached",
+    "spine": {"lx": [-3, 6], "lz": 0},
+    "ribs": {"lx": [-1, 1, 3, 5], "lz": [-1, 1]},
+    "skull": [[7, -1, 1], [7, 0, 1], [7, 1, 1], [8, 0, 1], [7, 0, 2]],
+    "tail_flush": [[-4, 0]],
+    "fragments": "about one floor cell in nine of the middle level is a bone block flush with the floor (tools/wayside_kit.py pick, so every rebuild is the same)"
+  },
+  "fossils": {
+    "verified": "Cobblemon-fabric-1.8.0+1.21.1.jar (C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/mods), read 2026-10-05 with Python zipfile: data/cobblemon/loot_table/fossils/rare/<name>.json is type minecraft:archaeology, one pool, one roll, one entry naming that one fossil item; data/cobblemon/tags/item/fossils.json lists these 15 items",
+    "why_rare_tables": "the rare tables give exactly one fossil and nothing else. The uncommon tables (8 of 39..57 weight is a fossil) also drop Razor Fang, Prism Scale, Deep Sea Tooth and Scale, King's Rock, Black Augurite, Peat Block, Never-Melt Ice, Fairy Feather, Everstone and Vivichoke seeds: a renewable source of evolution items other systems price, which this place has no business opening. galar_top_fossils and galar_bottom_fossils are left out: they only repeat the four fossilized halves",
+    "tables": [
+      {"item": "cobblemon:helix_fossil", "loot_table": "cobblemon:fossils/rare/helix_fossil"},
+      {"item": "cobblemon:dome_fossil", "loot_table": "cobblemon:fossils/rare/dome_fossil"},
+      {"item": "cobblemon:old_amber_fossil", "loot_table": "cobblemon:fossils/rare/old_amber_fossil"},
+      {"item": "cobblemon:root_fossil", "loot_table": "cobblemon:fossils/rare/root_fossil"},
+      {"item": "cobblemon:claw_fossil", "loot_table": "cobblemon:fossils/rare/claw_fossil"},
+      {"item": "cobblemon:skull_fossil", "loot_table": "cobblemon:fossils/rare/skull_fossil"},
+      {"item": "cobblemon:armor_fossil", "loot_table": "cobblemon:fossils/rare/armor_fossil"},
+      {"item": "cobblemon:cover_fossil", "loot_table": "cobblemon:fossils/rare/cover_fossil"},
+      {"item": "cobblemon:plume_fossil", "loot_table": "cobblemon:fossils/rare/plume_fossil"},
+      {"item": "cobblemon:jaw_fossil", "loot_table": "cobblemon:fossils/rare/jaw_fossil"},
+      {"item": "cobblemon:sail_fossil", "loot_table": "cobblemon:fossils/rare/sail_fossil"},
+      {"item": "cobblemon:fossilized_bird", "loot_table": "cobblemon:fossils/rare/bird_fossil"},
+      {"item": "cobblemon:fossilized_fish", "loot_table": "cobblemon:fossils/rare/fish_fossil"},
+      {"item": "cobblemon:fossilized_drake", "loot_table": "cobblemon:fossils/rare/drake_fossil"},
+      {"item": "cobblemon:fossilized_dino", "loot_table": "cobblemon:fossils/rare/dino_fossil"}
+    ],
+    "seam_block": "minecraft:suspicious_gravel",
+    "seam_block_why": "suspicious_gravel is not a Cobblemon spawn condition (data/spawn_blocks.json); suspicious_sand is (Sandygast, Palossand, herds), and so are sand and red_sand. Brushed out, it turns to plain gravel (vanilla), which is what the restore looks for",
+    "nbt": "{LootTable:\"<loot_table>\"}",
+    "nbt_why": "vanilla 1.21.1 BrushableBlockEntity reads the LootTable key on load (the same key a structure's suspicious block carries); NOT VERIFIED in a running game"
+  },
+  "faces": [
+    {"id": "north_upper", "level": "middle", "side": "north", "cells": [[-3, -6], [1, -6], [5, -6]], "offset_ticks": 0},
+    {"id": "east_upper", "level": "middle", "side": "east", "cells": [[11, -3], [11, 0], [11, 3]], "offset_ticks": 6000},
+    {"id": "north_lower", "level": "bed", "side": "north", "cells": [[0, -3], [3, -3], [6, -3]], "offset_ticks": 12000},
+    {"id": "south_lower", "level": "bed", "side": "south", "cells": [[-1, 3], [2, 3], [5, 3]], "offset_ticks": 18000}
+  ],
+  "faces_why": "four faces of three seams each, every seam in a riser at the foot of the wall (one above the lower floor), so a player standing on the lower floor brushes it at their feet. A face is the restore's unit: its seams, the riser cells between them, the cell under each seam and the cell behind it",
+  "restore": {
+    "period_ticks": 24000,
+    "every_ticks": 100,
+    "approach_margin": 48,
+    "approach_down": 16,
+    "approach_up": 32,
+    "rearm_tag": "fossil_dig_rearm",
+    "rearm": ["minecraft:air", "minecraft:cave_air", "minecraft:gravel"],
+    "why": "tools/mines.py's restore, the same shape: every 100 ticks the pack looks for a player inside the dig's approach box (the faces' bounds grown by approach_margin across, approach_down below and approach_up above), and only then checks each face. A face is restored when at least period_ticks (24,000 ticks, 1,200 s, one Minecraft day) have passed since its last restore, the four corners of its box are loaded, and no player and no Pokemon stands in its box grown by one. The restore writes over the rearm tag only (air, cave air, plain gravel: a brushed seam, a dug-out wall), so a player's own block survives and an unbrushed seam keeps the fossil it already holds. Each seam is re-armed with one of the 15 rare tables by random value 0..14. The build sets each face's clock so face k first falls due offset_ticks after the build (6,000 ticks apart), so the walls come back one at a time while players keep visiting; after an idle spell longer than the period every face is due and all four come back on the first approach (no sibling rule: bunching is harmless here, a full dig on return). Nothing is restored before the build has run (#built). Game time and the scores are saved with the world, so a restart neither repeats nor loses a restore",
+    "per_player": "NOT per player: a suspicious block is a world block, one fossil for whoever brushes it first, as vanilla archaeology is. A per-player supply would need per-player state the block cannot hold (a scoreboard gate per player per face, or a dialogue grant); the shared restore is chosen as the simplest thing that works for a small cooperative group, and the period is the knob",
+    "yield": "12 seams, so at most 12 fossils per full cycle of the four faces (one every 100 s on average at a camped dig); each seam's fossil is uniform over the 15"
+  },
+  "camp": {
+    "why": "the crew's camp on the dig's west lip, where the ground is lowest and flattest: two ridge tents, two sieves with their spoil heaps and a wash tub, a sorting table with a pot and a skull on it, and a finds board facing the pit",
+    "tents": [
+      {"id": "tent_north", "rect": [-24, -11, -20, -7]},
+      {"id": "tent_south", "rect": [-24, 7, -20, 11]}
+    ],
+    "tent_canvas": "minecraft:white_wool",
+    "tent_canvas_why": "white wool is not a spawn condition in data/spawn_blocks.json (eleven coloured wools and four carpets are, for Smeargle, herds, Milcery and Alcremie); the tents are open at both ends with a barrel and a hanging lantern inside. No bed (a respawn point, the blackout's)",
+    "sieves": [[-17, -5], [-17, -3]],
+    "spoil": [[-16, -5], [-16, -4]],
+    "tub": [-17, -4],
+    "sorting_table": [[-17, 2], [-17, 3], [-17, 4]],
+    "finds_board": {"x": -19, "lz": [-1, 1], "faces": "east"},
+    "entrance_sign": [-14, 2]
+  },
+  "lanterns": {
+    "why": "lanterns standing on two-high spruce fence posts (never light blocks): four at the pit's rim corners, four in the middle level's corners, two on the bed, two at the camp",
+    "posts": [
+      {"at": [-14, -10], "on": "ground"}, {"at": [14, -10], "on": "ground"}, {"at": [-14, 10], "on": "ground"}, {"at": [14, 10], "on": "ground"},
+      {"at": [-9, -5], "on": "middle"}, {"at": [10, -5], "on": "middle"}, {"at": [-9, 5], "on": "middle"}, {"at": [10, 5], "on": "middle"},
+      {"at": [-6, -2], "on": "bed"}, {"at": [8, 2], "on": "bed"},
+      {"at": [-21, 0], "on": "ground"}, {"at": [-18, 6], "on": "ground"}
+    ]
+  },
+  "signs": {
+    "entrance": ["SCORCHBONE DIG", "Brush the grey", "seams. No picks.", "- H. Quarne"],
+    "board": [
+      ["FINDS BOARD", "Scorchbone Dig", "this season", ""],
+      ["Helix  Dome", "Old Amber  Root", "Claw  Skull", "Armor  Cover"],
+      ["Plume  Jaw", "Sail  Bird", "Fish  Drake", "Dino"],
+      ["", "Brushed seams", "silt back up", "in a day."]
+    ]
+  },
+  "blocks": {
+    "rule": "vanilla 1.21.1 only, none a spawn condition in data/spawn_blocks.json unless a data/spawn_block_policy.json entry scoped to fossil_dig allows it (none does), no chest (a Gimmighoul condition) and no bed (tools/wayside_kit.py load_record refuses all three when this record loads). The generator refuses any block not listed here",
+    "ids": [
+      "minecraft:air",
+      "minecraft:terracotta", "minecraft:orange_terracotta", "minecraft:yellow_terracotta", "minecraft:brown_terracotta",
+      "minecraft:white_terracotta", "minecraft:red_terracotta", "minecraft:light_gray_terracotta",
+      "minecraft:coarse_dirt", "minecraft:bone_block", "minecraft:suspicious_gravel", "minecraft:gravel",
+      "minecraft:spruce_stairs", "minecraft:spruce_fence", "minecraft:spruce_planks", "minecraft:spruce_slab",
+      "minecraft:spruce_wall_sign", "minecraft:spruce_sign", "minecraft:lantern",
+      "minecraft:white_wool", "minecraft:barrel", "minecraft:scaffolding", "minecraft:cauldron",
+      "minecraft:decorated_pot", "minecraft:skeleton_skull"
+    ]
+  },
+  "npc": {
+    "conversation": "dlg_fossil_dig_foreman",
+    "at_local": [-15, -2],
+    "why": "Hollis Quarne, the dig's foreman, stands on the west lip between his camp and the pit, beside the rim stair, on his own ground + 1: the first person a player meets coming to the pit from the camp side. Seated by data/npc_seats.json npc_fossil_dig_foreman (R17N places every seat there), as the Arrow Creeks farmer is; tools/fossil_dig.py seat_problems refuses a build whose plan does not leave that seat open"
+  },
+  "encounter": {
+    "habitat_block": "none",
+    "why": "the fossil Pokemon this dig supplies are restored, not caught: a Habitat Block of wild Archen or Tyrunt here would answer the same need a second way and add a nest the siting rules would then have to keep clear. Left out on purpose"
+  },
+  "machine": {
+    "verified": "Cobblemon-fabric-1.8.0+1.21.1.jar recipes, read 2026-10-05: data/cobblemon/recipe/fossil_analyzer.json (cobbled deepslate, c:gems/amethyst, c:ingots/iron, glass, c:dusts/redstone), restoration_tank.json (c:ingots/iron, glass, cobblemon:revive, composter), monitor.json (c:ingots/iron, glass, c:ingots/copper, redstone torch); data/cobblemon/tags/item/fossil_machine_parts.json names the three. There is no item called a Resurrection Machine: it is these three parts together",
+    "obtainable": "yes, by routes that exist today: amethyst from Sableye (drops 0-2 amethyst shards, species/generation3/sableye.json) and Glimmet (0-1), both in data/spawns.json; a Revive from data/rewards.json (seven grant lines name cobblemon:revive) or the campfire pot (heal_powder + honey_bottle, campfire_pot/revive.json; honey is sold at four stalls in data/markets.json: fenhide_apothecary, steepside_tea_front, greenhollow_sweet_stall, arrow_creeks_farm_stand); the brush is vanilla-craftable (feather, copper ingot, stick) and sold at Cinderlee's core shed and the Rift dig camp's stores (data/markets.json). No stall line is added",
+    "proposal_not_built": "if amethyst by drops proves too thin in play, the cheapest route is one stall line of minecraft:amethyst_shard at Redbrow's waystation (data/markets.json tableland_stop), 660 blocks east; not added here, because data/markets.json is being edited by another agent tonight and the need is not shown"
+  }
+}
