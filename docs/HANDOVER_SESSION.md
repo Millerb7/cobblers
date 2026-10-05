@@ -1,56 +1,43 @@
-# Handover: Wave 1 fixes and research (session 595493c5, 2026-10-06)
+# Handover: Wave 1 and the 2026-10-05/06 overnight build (session 595493c5)
 
-A cold session reads CLAUDE.md, `docs/STATE.md`, this file and `docs/PLAYTEST_2026-10-05.md`, and nothing else.
+A cold session reads CLAUDE.md, `docs/STATE.md`, this file, `docs/MORNING_REPORT_2026-10-06.md` and
+`docs/OVERNIGHT_REVIEW_2026-10-06.md`, and nothing else, before it starts.
 
 ## 1. The branch
-- **`build/2026-10-06-next`** on origin, stacked on `build/2026-10-05-p0` (draft PR
-  [Millerb7/cobblers#119](https://github.com/Millerb7/cobblers/pull/119), frozen). No PR of its own yet. This session
-  worked in worktree `wave-1-launch-prep-3d2fa0` on local branch `wave1-2026-10-06` (the branch itself was checked
-  out in the old `consolidate-parallel-sessions-b6b9d7` worktree, left untouched) and pushed with
-  `git push origin HEAD:build/2026-10-06-next`. Re-read the head before quoting it: `git fetch --prune; git rev-parse
-  origin/build/2026-10-06-next`.
+- **`build/2026-10-06-next`** on origin (no PR yet), stacked on `build/2026-10-05-p0` (draft PR
+  [Millerb7/cobblers#119](https://github.com/Millerb7/cobblers/pull/119), frozen). Worked from worktree
+  `wave-1-launch-prep-3d2fa0`, local branch `wave1-2026-10-06`, pushed with `git push origin HEAD:build/2026-10-06-next`
+  (the branch itself is checked out in the old `consolidate-parallel-sessions-b6b9d7` worktree, untouched).
+  Re-read the head before quoting: `git fetch --prune; git rev-parse origin/build/2026-10-06-next`.
+- Next: open ONE draft PR for it against main (memory: one big PR per batch) after #119 merges, or stacked on #119.
 
 ## 2. Where it stopped
-- **Staging is DOWN**, stopped cleanly by RCON; `max-tick-time=60000` restored. **The lock is released.**
-- **Built and committed, NOT prepared, installed or applied:** route variety / Pallet's Caterpie (85), Old Knot still
-  (84), the lake grotto partitions never shut a player in (87), the bird towers' feathers removed after the paste
-  (note 14), Dr. Vale's locked scroll line and hub re-entry (88), the waystone gate off (89). Commits 188edd8,
-  37fd3d6, 926e6fd, 8338100.
-- **Next, as commands** (main session, holding the lock): `python tools/validate_data.py` after
-  `python tools/local_inputs.py hydrate --store C:/Users/wnd/Documents/cobblers-local`; then `python tools/reapply.py
-  prepare` (~25 min, once); `install`; then the affected steps on staging (the spawns are installed by install; the
-  residents R18R-family step for Old Knot; R14L is NOT re-runnable (duplicates summons): apply Azelf's new `near`
-  by install + /reload rather than re-running R14L; R9E/R18A-family re-pastes are not needed for the feathers: run
-  `data remove block 895 68 5582 storageWrapper.contents.inventory.Items[{id:"lumymon:thunder_feather"}]`,
-  `... 6266 168 5361 ...ember_feather`, `... 682 311 379 ...glacier_feather` over RCON and read the barrels back).
-  Also still deferred from the play test: farms, the bank buy list (install_check's one problem), Coldwater, the arena
-  spawn-free zone.
-- **Not done in Wave 1:** the spawn-block **allow** is recorded and the owner's list is generated
-  (`docs/world-building/SPAWN_BLOCKS_LIST.md`), but ~60 generators/audits and 29 tests still refuse a spawn block in
-  our builds, each reading `data/spawn_blocks.json` itself: a builder task (~4M). The second waystone near Viltri Quay
-  and research-station waystones wait on locations.
+- **Staging is UP**: java pid 50764 (booted 05:55, universe flags, max-tick-time 60000). **The lock is released.**
+- Everything built tonight is applied to staging and read back (the morning report's table). Nothing is half-done.
+- `derived/` and `build/` in this worktree are current for head 541a7d8 + the docs commits (prepare stamp
+  58322c025cddfef1); any data/ or tools/ commit needs a full prepare (~27 min) before install. Run prepare with
+  `COBBLERS_SERVER_ROOT=C:/Users/wnd/Documents/github/cobblers-server` set (sea_drift_audit needs it, N40).
+- `reapply.py run` refuses unless max-tick-time is -1: stop, set -1, boot, run, stop, restore 60000, boot.
 
 ## 3. Waits on the owner
-- **Route rosters grew:** routes now carry 20/20/28/35/20/23/24/28/28 species (was 20 each) so every crossed table keeps
-  three of its own; veto or accept.
-- Challenge mode design (`docs/research/RCT_PER_PLAYER_MODE.md`): both leaders standing in every gym, each refusing
-  the other mode's players -- acceptable?
-- Summit barrels in the bird towers keep their loot (gems, diamond boots, trident, netherite template): keep?
-- Kyogre questions 1 (per player) and 8 (chests) were not answered; defaults recorded.
-- Locations: the second Viltri Quay waystone, research-station waystones.
-- Per-player chests: Lootr (MIT, client+server, world-critical once used) vs SlashLoot (server-only, young); ADR next.
+The morning report's "Waiting on you" list (10 items: N8 badgeless walk to the finale; N39 stone gate; the Displaced
+City market held; obtainability proposals; route species growth; Challenge mode's two leaders; summit loot;
+waystone locations; Kyogre 1 and 8; in-game checks).
 
 ## 4. Do not rediscover
-- Caterpie's cause was not its weight: a corridor box compiles only its table's species on the ROUTE's 20-species list,
-  and Pallet lost every slot but Caterpie (also on the Viltri plateau). 113 route boxes had 1-2 species.
-- The feathers ARE in the templates (Sophisticated barrel at template (10,1,10)/(14,1,13)/(14,0,17), path
-  `storageWrapper.contents.inventory.Items`); STATE's older line saying otherwise was wrong.
-- `test_system_contracts.py::test_contract_c4...` fails on `tools/bank.py` at 1c24f76 already.
-- Two tests were edited by the implementer for intended behaviour changes (`test_articuno_tower.py`,
-  `test_gym_waystones.py`): a second reader should look.
-- `git reset --hard` on a worktree branch is refused by the auto-mode classifier; branch with `git switch -c ... --track`.
-- Writing files with Python `Path.write_text` on Windows needs `newline="\n"` or git warns CRLF.
+- The ten beats and the Rift finale were ALREADY wired (N12, finale builder): the work was evidence displays and
+  wayfinding lines, not wiring.
+- No "stone shard" exists in any jar (N21); TMs are uncraftable from renewables (N22).
+- `ambient_idle.py compose` (the authors' check) does not replay the built packs: 10 of 13 towns passed it and failed
+  the build (N43). Re-site against `build` (55 s, names every refused town since tonight).
+- `ambient.Site` marks plaza pieces taken; `markets.py` opts out (`avoid_plaza_pieces`) because keepers stand on their
+  stall pieces (N38).
+- The independent idle audit was taught the composition by the orchestrator (N48): a second reader must check it.
+- The squares audit and the markets design disagree on gating evolution stones (N39): stones are KNOWN-ungated.
+- Mega-field dens hold 2-3 Megas each in staging (N50, P1): not caused tonight, cause not found.
+- `git reset --hard` on a worktree branch is refused by the auto-mode classifier; use `git switch -c ... --track`.
 
 ## 5. Cost
-`python tools/session_cost.py`: 152 turns, 4.2M weighted for the main session (context 326k at hand-over), agents 2.4M
-(three research agents).
+`python tools/session_cost.py`: 424 turns, 20.6M weighted for the main session (context 682k at hand-over, far past
+the line), agents 37.2M weighted (20 agents: 3 research, 8 builders, 2 town authors, 1 re-siter, 5 auditors/reviewers,
+1 generator).
