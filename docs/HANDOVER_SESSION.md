@@ -12,7 +12,7 @@ A cold session reads CLAUDE.md, `docs/STATE.md`, this file, `docs/MORNING_REPORT
 - Next: open ONE draft PR for it against main (memory: one big PR per batch) after #119 merges, or stacked on #119.
 
 ## 2. Where it stopped
-- **Staging is DOWN: the detached boot (java pid 50764, 05:55) was killed when the tool's background task hit its 2-hour limit; its log ends at 06:21 with no shutdown line (review N53). The apply's own save-all and the world's autosaves precede it; whatever changed after the last autosave is lost. The coordination lock is released.** max-tick-time is 60000.
+- **Staging is UP for the owner's flight**: java pid 60608 (18:08, 2026-10-05 evening), started in the owner's Terminal panel tab "staging server" so it outlives the session, at **-Xmx12G** (16G failed: the owner's client and desktop apps leave ~16 GB of commit free; the JVM died with a native mmap OOM, hs_err_pid48636.log). 12G is enough to play, NOT for a /reload of the full pack stack. The lock is released.
 - Everything built tonight is applied to staging and read back (the morning report's table). Nothing is half-done.
 - `derived/` and `build/` in this worktree are current for head 541a7d8 + the docs commits (prepare stamp
   58322c025cddfef1); any data/ or tools/ commit needs a full prepare (~27 min) before install. Run prepare with
@@ -23,6 +23,16 @@ A cold session reads CLAUDE.md, `docs/STATE.md`, this file, `docs/MORNING_REPORT
 The morning report's "Waiting on you" list (10 items: N8 badgeless walk to the finale; N39 stone gate; the Displaced
 City market held; obtainability proposals; route species growth; Challenge mode's two leaders; summit loot;
 waystone locations; Kyogre 1 and 8; in-game checks).
+
+## 3b. The owner's queue (2026-10-05 evening)
+- Ambient composition: KEEP as built; the owner judges by walking towns.
+- Decisions the owner owes after flying: the wreck's interior; the Rift finale start to finish; whether the towns read right.
+- Queue 1: the six P1s from the critical-path walk (docs/world-building/CRITICAL_PATH_WALK_1.md, _2.md), first "no
+  in-world explanation of Victory Road or the Rift finale": a player who finishes gym 8 must know where to go.
+- Queue 2: leader rejection on the Elite Four is unverified (the same class as Giovanni's): prove it before anyone
+  reaches it.
+- Queue 3: the 11 items the obtainability sweep says are still unobtainable without the research station or Blaine's
+  exchange: say which actually block something (docs/research/OBTAINABILITY_SWEEP_2026-10-05.md).
 
 ## 4. Do not rediscover
 - The ten beats and the Rift finale were ALREADY wired (N12, finale builder): the work was evidence displays and
