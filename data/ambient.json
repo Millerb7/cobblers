@@ -304,7 +304,6 @@
       "northlight",
       "mining_town",
       "tea_town",
-      "sea_town",
       "displaced_city",
       "viltri_light",
       "gorge_hamlet",
@@ -313,6 +312,7 @@
       "rift_dig_camp",
       "merian_hut"
     ],
+    "scope_held": {"sea_town": "held 2026-10-06 (docs/OVERNIGHT_REVIEW_2026-10-06.md N20): its file, data/ambient_towns_held/sea_town.json, clashes with the generator (a pet with no open cell beside its owner); back into scope when it composes"},
     "scope_why": "every settlement with a town plan and people; Pallet (hometown) stays intact by the owner's earlier call; the League, Relic Island, the Scar and the retired jungle ruins have no townsfolk",
     "town_file": {
       "path": "data/ambient_towns/<settlement>.json",

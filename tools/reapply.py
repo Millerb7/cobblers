@@ -700,7 +700,9 @@ def prepare_jobs(a):
     add("dune_ruin:build", "dune_ruin.py", "build", *src)
     add("dune_ruin_audit", "dune_ruin_audit.py", *src)
     add("reveal_evidence:build", "reveal_evidence.py", "build")
+    add("reveal_evidence_audit", "reveal_evidence_audit.py", *src)
     add("desert_wreck:build", "desert_wreck.py", "build", *src)
+    add("desert_wreck_audit", "desert_wreck_audit.py", *src)
     # the ten named residents (2026-10-02), then their independent audit, which re-derives every site and write from
     # the data and the heightmap and fails the prepare on a broken pack
     add("resident_encounters", "resident_encounters.py", *src)
@@ -878,6 +880,8 @@ def prepare_jobs(a):
     # the wake at 16, no brain-remaking merge, the workers' flags, the snow house's Buneary. Fail-closed; KNOWN
     # defects are listed in the tool and a fixed one fails until it is removed there
     add("ambient_idle_audit", "ambient_idle_audit.py", *src)
+    # the owner's composition (2026-10-05): the town files and the idle plan, re-derived (tools/ambient_composition_audit.py)
+    add("ambient_composition_audit", "ambient_composition_audit.py", "--plan", "derived/ambient/idle_plan.json", "--plan", "derived/ambient/plan.json")
     # Oak gives the starter: its independent audit (tools/oak_starter_audit.py, written by an agent that did not build
     # it). LAST, so it runs after compile_dialogue and after every other pack is built: it reads the compiled dialogue,
     # explores Oak's offer from a fresh player, and sweeps every pack under build/datapacks for a second
