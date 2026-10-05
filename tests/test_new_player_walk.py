@@ -368,6 +368,41 @@ def test_a_stand_inside_a_zone_its_flags_do_not_open_fails(tmp_path):
     assert "only its knock box" in st.checks[0]["evidence"]["summary"]
 
 
+def knock_pack(packs, box=(100, 101, 70, 71, 60, 61)):
+    """z9's knock box: its advancement -> knock -> qualify -> (gym 1's flag) grant, which sets z9's pass."""
+    d = packs / "cobblers_rift_zones" / "data" / "cobblers"
+    x0, x1, y0, y1, z0, z1 = box
+    write(d / "advancement" / "rift_zones" / "z9_knock.json",
+          {"criteria": {"here": {"trigger": "minecraft:location", "conditions": {"player": [
+              {"condition": "minecraft:entity_properties", "entity": "this", "predicate": {"location": {"position": {
+                  "x": {"min": x0, "max": x1}, "y": {"min": y0, "max": y1}, "z": {"min": z0, "max": z1}}}}}]}}},
+           "rewards": {"function": "cobblers:rift_zones/z9/knock"}})
+    f = d / "function" / "rift_zones" / "z9"
+    write(f / "knock.mcfunction", "advancement revoke @s only cobblers:rift_zones/z9_knock\n"
+                                  "function cobblers:rift_zones/z9/qualify\n")
+    write(f / "qualify.mcfunction", "execute if entity @s[advancements={cobblers:flag/gym1_cleared=true}] "
+                                    "run function cobblers:rift_zones/z9/grant\n")
+    write(f / "grant.mcfunction", "scoreboard players set @s cob_pass_z9 1\ntp @s 1 2 3\n")
+
+
+def test_a_knock_box_on_the_routed_path_gives_the_pass_and_one_off_it_does_not(tmp_path):
+    # without this, a knock-only zone would fail every stand behind its own gatehouse, or pass one the route never
+    # brings the player to (Victory Road's fights 8-10, 80 blocks from G5's knock box)
+    root, packs = make_world(tmp_path)
+    zone_pack(packs, TURN)                      # nothing admits on entry
+    knock_pack(packs)
+    z = W.zone_checks(packs)["z9"]
+    assert z["knocks"] == [((100, 101, 70, 71, 60, 61), [frozenset({"cobblers:flag/gym1_cleared"})])]
+    w = W.Walker(inputs(root, packs))
+    held = {"cobblers:flag/gym1_cleared"}
+    st = W.Stage("s", "s")
+    w.zones_admit(st, "on", held, 102, 70, 60, "x", path=[(80, 60), (90, 60)])        # 10 blocks from the knock
+    w.zones_admit(st, "off", held, 102, 70, 60, "x", path=[(80, 90), (83, 90)])       # hypot(17, 29) away
+    w.zones_admit(st, "unheld", set(), 102, 70, 60, "x", path=[(80, 60), (90, 60)])
+    assert [c["verdict"] for c in st.checks] == ["PASS", "FAIL", "FAIL"]
+    assert W.box_distance((100, 101, 70, 71, 60, 61), [(90, 60)]) == 10.0
+
+
 # ------------------------------------------------------------------------------------------------- victory road
 
 def vr_world(tmp_path, seat="100.5 71 62.5", forced=True):

@@ -47,8 +47,11 @@ NOT_MODELLED if none fails but one could not be modelled, and PASS only when eve
 
 THE ZONE MODEL is the built cobblers_rift_zones pack read as the server runs it: a zone is enforced only when a built
 advancement's location boxes call its zone function; that function turns back on a score; a held advancement set
-admits only when its line runs BEFORE the turn-back line and calls a function that sets that score. A zone a player's
-flags do not admit is closed to every walk at that point (its columns, every y); the knock boxes are not modelled.
+admits only when its line runs BEFORE the turn-back line and calls a function that sets that score. A knock box (a
+built *_knock advancement) admits the sets that, through the functions it calls, reach a function setting that score.
+A stand or a lot inside a zone passes if the zone admits the flags on entry, or a knock box admitting them lies within
+the corridor of the routed path. A zone that admits the flags neither way is closed to every walk at that point (its
+columns, every y); one whose knock admits them is assumed knocked at -- the walks do not route through the knock box.
 
 THE MOVEMENT MODEL (stage spawn_to_oak and every route) IS COARSE, and says so in each check: the canonical heightmap
 (tools/ground.py, rounded), 4-connected, a step climbs at most 1 block and drops at most 3 (the rule
@@ -82,8 +85,9 @@ Writes derived/new_player_walk/report.json; the last line printed is the one-lin
 
 DATA MODE (--from-data). The packs that need only data/, tools/ and modpack/ are generated into the directory by
 their own generators (progression, trainers, spawns, dialogue, mythical starters; rift zones and gym buildings also
-need the heightmap). The rest -- cobblers_towns (kits/), cobblers_donor (the server's templates) -- are not built, and
-every check that reads them reports NOT_MODELLED naming the missing input, never FAIL and never PASS.
+need the heightmap; the donor placements except those needing the server's templates, which the League does not).
+cobblers_towns (kits/) is not built, and every check that reads it reports NOT_MODELLED naming the missing input,
+never FAIL and never PASS.
 """
 from __future__ import annotations
 
@@ -555,12 +559,60 @@ def zone_checks(packs):
         if z["objective"]:
             sets = re.compile(r"^\s*scoreboard players set @s %s [1-9]" % re.escape(z["objective"]), re.M)
             z["admits"] = [need for need, fn in pending if sets.search(function_text(packs, fn) or "")]
+        z["knocks"] = []
+    # the knock boxes: a built *_knock advancement's boxes, and the advancement sets that, through the functions it
+    # calls, reach a function setting a zone's pass score (the zone is the one whose objective that is)
+    by_obj = {z["objective"]: zid for zid, z in out.items() if z["objective"]}
+    for f in sorted(d.glob("*_knock.json")):
+        adv = json.loads(f.read_text(encoding="utf-8"))
+        boxes = _positions(adv.get("criteria"), [])
+        found = {}
+        _knock_calls(packs, (adv.get("rewards") or {}).get("function") or "", frozenset(), by_obj, found, 0)
+        for zid, admits in found.items():
+            out[zid]["knocks"] += [(b, sorted(set(admits), key=sorted)) for b in boxes]
     return out
 
 
+PLAIN_FN = re.compile(r"^function ([\w.:/-]+)\s*$")
+SETS_SCORE = re.compile(r"^\s*scoreboard players set @s (\w+) [1-9]", re.M)
+
+
+def _knock_calls(packs, ref, need, by_obj, found, depth):
+    text = function_text(packs, ref)
+    if text is None or depth > 4:
+        return
+    for o in SETS_SCORE.findall(text):
+        if o in by_obj:
+            found.setdefault(by_obj[o], []).append(need)
+    for line in text.splitlines():
+        s = line.strip()
+        if not s or s.startswith("#"):
+            continue
+        m = RUN_FN.search(s) or PLAIN_FN.match(s)
+        if not m:
+            continue
+        sel = ADV_SEL.search(s) if s.startswith("execute if entity @s[") else None
+        more = frozenset(k.split("=", 1)[0].strip() for k in sel.group(1).split(",")
+                         if k.strip().endswith("=true")) if sel else frozenset()
+        _knock_calls(packs, m.group(1), need | more, by_obj, found, depth + 1)
+
+
 def zone_passable(z, held):
-    """Whether a player holding the advancement ids `held` is let stay anywhere in zone z."""
+    """Whether a player holding the advancement ids `held` is let stay anywhere in zone z, without knocking."""
     return not z["turns_back"] or any(a <= set(held) for a in z["admits"])
+
+
+def knock_admits(z, held):
+    """The knock boxes of zone z where a player holding `held` is given the pass."""
+    return [b for b, admits in z.get("knocks") or [] if any(a <= set(held) for a in admits)]
+
+
+def box_distance(b, line):
+    """The least column distance from a (x0, x1, y0, y1, z0, z1) box to any point of `line`."""
+    a = np.asarray(line, dtype=float)
+    dx = np.maximum(0, np.maximum(b[0] - a[:, 0], a[:, 0] - b[1]))
+    dz = np.maximum(0, np.maximum(b[4] - a[:, 1], a[:, 1] - b[5]))
+    return float(np.hypot(dx, dz).min())
 
 
 def in_box(b, x, y, z):
@@ -904,10 +956,11 @@ class Walker:
         return {"cobblers:flag/gym%d_cleared" % k for k in range(1, n + 1) if gym_leader_id(self.inp.packs, k)[0]}
 
     def closed(self, held):
-        """((x0, x1, z0, z1) column boxes, zone ids) of every enforced zone `held` does not admit."""
+        """((x0, x1, z0, z1) column boxes, zone ids) of every enforced zone `held` opens neither on entry nor at a
+        knock box (a knock that admits is assumed taken: the walks do not route through it)."""
         boxes, names = [], []
         for zid, z in sorted(self.zones().items()):
-            if not zone_passable(z, held):
+            if not zone_passable(z, held) and not knock_admits(z, held):
                 names.append(zid)
                 boxes += [(b[0], b[1], b[4], b[5]) for b in z["boxes"]]
         return boxes, names
@@ -1207,14 +1260,23 @@ class Walker:
             self.battle_check(st, "beat:%s" % tid, team, cap, pool, tid)
             self.reach_check(st, "cap_reachable:%s" % tid, team, cap, pool, tid)
 
-    def zones_admit(self, st, name, held, x, y, z, what):
-        """One check: every enforced zone containing (x, y, z) (y None: any height) admits `held`."""
+    def knocked(self, zn, held, path):
+        """The first knock box of zone zn admitting `held` that lies within CORRIDOR of the routed `path`, or None."""
+        for b in knock_admits(zn, held):
+            if path and box_distance(b, path) <= CORRIDOR:
+                return b
+        return None
+
+    def zones_admit(self, st, name, held, x, y, z, what, path=None):
+        """One check: every enforced zone containing (x, y, z) (y None: any height) admits `held` on entry, or at a
+        knock box on the routed `path` (within the corridor), where the player is given the pass on the way in."""
         inside = [(zid, zn) for zid, zn in sorted(self.zones().items())
                   if any(in_box(b, x, y, z) for b in zn["boxes"])]
-        shut = [zid for zid, zn in inside if not zone_passable(zn, held)]
+        shut = [zid for zid, zn in inside if not zone_passable(zn, held) and not self.knocked(zn, held, path)]
         if shut:
             needs = {zid: [sorted(a) for a in self.zones()[zid]["admits"]] or "nothing admits on entry: only its knock "
-                     "box sets the pass, so a player arriving any other way is turned back" for zid in shut}
+                     "box sets the pass, and none admitting these flags lies within %d blocks of the routed path, so "
+                     "a player arriving this way is turned back" % CORRIDOR for zid in shut}
             st.add(name, FAIL, {"summary": "%s at (%s, %s, %s) stands in %s, which turn(s) back a player holding %d "
                                 "flag(s): %s" % (what, x, y, z, shut, len(held), needs), "held": sorted(held)},
                    not_covered="the zone check as the built functions read; that the server runs it is not modelled")
@@ -1245,20 +1307,7 @@ class Walker:
         line = [tuple(p) for p in line]
         st.add("walked_line", PASS, "victory_road: %d points, %d blocks walked" % (len(line),
                                                                                    round(walked_length(line))))
-        # the zones the line crosses, with the eight badges: the gate that opens this leg
-        crossed = {}
-        for x, z in line:
-            for zid, zn in self.zones().items():
-                if zid not in crossed and any(in_box(b, x, None, z) for b in zn["boxes"]):
-                    crossed[zid] = (x, z)
-        shut = {zid: p for zid, p in crossed.items() if not zone_passable(self.zones()[zid], held)}
-        st.add("gate_opens", FAIL if shut else PASS,
-               {"summary": ("the line enters %s, which the %d gym flag(s) built do not admit (each needs one of %s)"
-                            % (sorted(shut), len(held), {z: [sorted(a) for a in self.zones()[z]["admits"]]
-                                                          for z in shut})) if shut else
-                           "the line crosses %s; the %d gym flag(s) the progression pack binds admit each"
-                           % (sorted(crossed) or "no enforced zone", len(held)), "crossed": crossed,
-                "held": sorted(held)})
+        self.gate_check(st, line, held)
         rect, _src = self.gym_lot(GYM_COUNT)
         if rect:
             add_walk(st, "walk_onto_line", self.walk_held(held, lot_ring(rect), [line[0]]),
@@ -1275,9 +1324,29 @@ class Walker:
         self.fight_each(st, vr, 9)
         return st
 
+    def gate_check(self, st, line, held):
+        """gate_opens: every enforced zone the line crosses admits `held` -- the badges that open this leg."""
+        crossed = {}
+        for x, z in line:
+            for zid, zn in self.zones().items():
+                if zid not in crossed and any(in_box(b, x, None, z) for b in zn["boxes"]):
+                    crossed[zid] = (x, z)
+        shut = {zid: p for zid, p in crossed.items() if not zone_passable(self.zones()[zid], held)
+                and not self.knocked(self.zones()[zid], held, line)}
+        st.add("gate_opens", FAIL if shut else PASS,
+               {"summary": ("the line enters %s, which the %d gym flag(s) built do not admit (each needs one of %s)"
+                            % (sorted(shut), len(held), {z: [sorted(a) for a in self.zones()[z]["admits"]]
+                                                          for z in shut})) if shut else
+                           "the line crosses %s; the %d gym flag(s) the progression pack binds admit each"
+                           % (sorted(crossed) or "no enforced zone", len(held)), "crossed": crossed,
+                "held": sorted(held)})
+
     def vr_stands(self, st, held):
         """Each authored stand (data/vr_trainers.json): seated by the built cycle at its seat, forcing a battle where
-        the data says it makes eye contact, and admitted by every enforced zone it stands in."""
+        the data says it makes eye contact, and admitted by every enforced zone it stands in -- on entry, or at a
+        knock box on the routed path (data/route_paths.json victory_road, the surface line to the caves' mouth;
+        the caves themselves pass no knock box)."""
+        path = [tuple(p) for p in self.paths.get("victory_road") or []]
         if "cobblers_trainers" in self.inp.unbuilt:
             st.add("seated", NM, "cobblers_trainers is not built in this mode: %s" % self.inp.unbuilt["cobblers_trainers"])
             return
@@ -1297,7 +1366,7 @@ class Walker:
                        "(data says eye contact: %s)" % (tid, seat[0], seat[1], seat[2], off, sx, sy, sz,
                                                         info["forced"], s.get("eye_contact")),
                        not_covered="that rctmod spawns and holds the trainer there")
-            self.zones_admit(st, "zone_admits:%s" % tid, held, sx, sy, sz, tid)
+            self.zones_admit(st, "zone_admits:%s" % tid, held, sx, sy, sz, tid, path=path)
 
     def league_rect(self, st):
         """The League's footprint [x0, z0, x1, z1] from the built `place template` and the template's size."""
@@ -1308,8 +1377,9 @@ class Walker:
         if not placed:
             st.add("league_placed", FAIL, "no built function places %s" % LEAGUE_TEMPLATE)
             return None
-        sizes = {tuple(p["size"]) for p in self.inp.data("placements.json").get("placements") or []
-                 if p.get("pack_template") == LEAGUE_TEMPLATE and p.get("size")}
+        recs = [p for p in self.inp.data("placements.json").get("placements") or []
+                if p.get("pack_template") == LEAGUE_TEMPLATE]
+        sizes = {tuple(p["size"]) for p in recs if p.get("size")}
         x, y, z, rot, mirror, f = placed[0]
         if len(sizes) != 1 or mirror != "none":
             st.add("league_placed", NM, "%s placed at (%d, %d, %d) %s by %s, but its size is %s and mirror %s: the "
@@ -1317,10 +1387,15 @@ class Walker:
             return None
         rect = template_rect(x, z, list(next(iter(sizes))), rot)
         others = sorted({(p[0], p[2], p[3]) for p in placed[1:]} - {(x, z, rot)})
-        st.add("league_placed", FAIL if others else PASS,
-               "%s placed at (%d, %d, %d) %s by %s: footprint x%d-%d z%d-%d%s" % (
+        # the design the emitted command must carry out: data/placements.json's position and rotation
+        want = sorted({(r["position"]["x"], r["position"]["y"], r["position"]["z"], r.get("rotation", "none"))
+                       for r in recs if r.get("position")})
+        off = [w for w in want if w != (x, y, z, rot)]
+        st.add("league_placed", FAIL if others or off else PASS,
+               "%s placed at (%d, %d, %d) %s by %s: footprint x%d-%d z%d-%d%s%s" % (
                    LEAGUE_TEMPLATE, x, y, z, rot, f, rect[0], rect[2], rect[1], rect[3],
-                   (", and ELSEWHERE too: %s" % others) if others else ""),
+                   (", and ELSEWHERE too: %s" % others) if others else "",
+                   ("; data/placements.json says %s" % off) if off else ""),
                not_covered="that the template places; its rooms, doors and elevator")
         return rect
 
@@ -1334,7 +1409,14 @@ class Walker:
             over =sorted({zid for zid, zn in self.zones().items()
                            for b in zn["boxes"] if b[0] <= rect[2] and b[1] >= rect[0] and b[4] <= rect[3]
                            and b[5] >= rect[1]})
-            shut = [zid for zid in over if not zone_passable(self.zones()[zid], held)]
+            # the routed path: Victory Road's line, then straight on from its end to the footprint's centre
+            line = [tuple(p) for p in self.paths.get("victory_road") or []]
+            if line:
+                (ax, az), (bx, bz) = line[-1], ((rect[0] + rect[2]) / 2.0, (rect[1] + rect[3]) / 2.0)
+                n = int(max(abs(bx - ax), abs(bz - az))) or 1
+                line = line + [(ax + (bx - ax) * i / n, az + (bz - az) * i / n) for i in range(1, n + 1)]
+            shut = [zid for zid in over if not zone_passable(self.zones()[zid], held)
+                    and not self.knocked(self.zones()[zid], held, line)]
             st.add("zones_over_league", FAIL if shut else PASS,
                    "the footprint lies in enforced zone(s) %s; %s" % (over or "none", (
                        "%s turn(s) back a player holding %s" % (shut, sorted(held))) if shut else
@@ -1407,6 +1489,24 @@ def run(inp, only=None):
     return stages
 
 
+def donor_pack(out):
+    """place_donor.py's own `function` loop into `out`, minus the records that need the server's templates
+    (clear_loot, jigsaws): without --server-dir it refuses the whole pack for those, and the League is not one."""
+    sys.path.insert(0, str(TOOLS))
+    import place_donor as P
+    subs = json.loads((ROOT / "data" / "spawn_block_policy.json").read_text(encoding="utf-8"))["substitutions"]
+    for rec in P.records(json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))):
+        if rec.get("clear_loot") or rec.get("jigsaws"):
+            continue
+        pos = rec["position"]
+        extra = P.remove_item_commands((pos["x"], pos["y"], pos["z"]), rec.get("rotation"), rec.get("remove_items"))
+        for name, lines in P.functions(rec, subs, None, extra).items():
+            f = Path(out) / "data" / P.NS / "function" / "structures" / ("%s.mcfunction" % name)
+            f.parent.mkdir(parents=True, exist_ok=True)
+            f.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return 0
+
+
 def build_from_data(dest, source_root=None):
     """Generate into `dest` every pack the walk reads that committed data can build, each by its own generator.
     Returns {pack: why it was not built} for the rest. Never writes under build/."""
@@ -1465,23 +1565,7 @@ def build_from_data(dest, source_root=None):
             return gym_buildings.main(["build"] + (["--source-root", source_root] if source_root else []))
     step("cobblers_gym_buildings", gyms)
 
-    def donors():
-        # place_donor.py's own `function` loop, minus the records that need the server's templates (clear_loot,
-        # jigsaws): without --server-dir it refuses the whole pack for those, and the League is not one of them
-        import place_donor as P
-        subs = json.loads((ROOT / "data" / "spawn_block_policy.json").read_text(encoding="utf-8"))["substitutions"]
-        out = dest / "cobblers_donor"
-        for rec in P.records(json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))):
-            if rec.get("clear_loot") or rec.get("jigsaws"):
-                continue
-            pos = rec["position"]
-            extra = P.remove_item_commands((pos["x"], pos["y"], pos["z"]), rec.get("rotation"), rec.get("remove_items"))
-            for name, lines in P.functions(rec, subs, None, extra).items():
-                f = out / "data" / P.NS / "function" / "structures" / ("%s.mcfunction" % name)
-                f.parent.mkdir(parents=True, exist_ok=True)
-                f.write_text("\n".join(lines) + "\n", encoding="utf-8")
-        return 0
-    step("cobblers_donor", donors)
+    step("cobblers_donor", lambda: donor_pack(dest / "cobblers_donor"))
     for p in REQUIRED_PACKS:
         if p not in unbuilt and not (dest / p).is_dir():
             unbuilt[p] = "its generator wrote nothing"
