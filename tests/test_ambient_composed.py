@@ -65,7 +65,8 @@ def test_town_files_are_read_and_their_workers_supersede_the_towns():
     towns = A.town_files(FIXDIR)
     assert set(towns) == {TOWN}
     data = copy.deepcopy(DATA)
-    data["workers"].append(dict(data["workers"][0], id="old_gorge_worker", settlement=TOWN))
+    sample = (data["workers"] or data["superseded_workers"]["workers"])[0]
+    data["workers"].append(dict(sample, id="old_gorge_worker", settlement=TOWN))
     ws, sup = A.workers_of(data, towns)
     assert sup == ["old_gorge_worker"]
     assert {w["id"] for w in ws if w["settlement"] == TOWN} == {w["id"] for w in FIX["workers"]}

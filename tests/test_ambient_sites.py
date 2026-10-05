@@ -38,7 +38,7 @@ FNDIR = PACK / "data" / "cobblers" / "function" / "ambient"
 DRESSING = ROOT / "build" / "datapacks" / "cobblers_town_dressing" / "data" / "cobblers" / "function" / "town_dressing"
 DATA = json.loads((ROOT / "data" / "ambient.json").read_text(encoding="utf-8"))
 RULES = DATA["rules"]
-WORKERS = {w["id"]: w for w in DATA["workers"]}
+WORKERS = {w["id"]: w for w in DATA["workers"] + (DATA.get("superseded_workers") or {}).get("workers", [])}  # superseded records are the format samples since the town files (2026-10-05)
 DOC = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
 WORLD = json.loads((ROOT / "data" / "world.json").read_text(encoding="utf-8"))
 SPAWN_BLOCKS = set(json.loads((ROOT / "data" / "spawn_blocks.json").read_text(encoding="utf-8"))["blocks"])
