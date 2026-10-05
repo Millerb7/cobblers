@@ -1,0 +1,1015 @@
+{
+ "note": "fixture generator output: idle-style towns map plus a workers list with routes",
+ "towns": {
+  "alpha": [
+   {
+    "id": "alpha_machop",
+    "town": "alpha",
+    "kind": "worker",
+    "species": "machop",
+    "at": [
+     5.5,
+     64,
+     50.5
+    ]
+   },
+   {
+    "id": "alpha_timburr",
+    "town": "alpha",
+    "kind": "worker",
+    "species": "timburr",
+    "at": [
+     17.5,
+     64,
+     50.5
+    ]
+   },
+   {
+    "id": "alpha_bidoof",
+    "town": "alpha",
+    "kind": "worker",
+    "species": "bidoof",
+    "at": [
+     29.5,
+     64,
+     50.5
+    ]
+   },
+   {
+    "id": "alpha_growlithe",
+    "town": "alpha",
+    "kind": "pet",
+    "species": "growlithe",
+    "at": [
+     41.5,
+     64,
+     50.5
+    ]
+   },
+   {
+    "id": "alpha_pidgey",
+    "town": "alpha",
+    "kind": "placed",
+    "species": "pidgey",
+    "at": [
+     65.5,
+     64,
+     50.5
+    ]
+   },
+   {
+    "id": "alpha_psyduck_0",
+    "town": "alpha",
+    "kind": "situation",
+    "species": "psyduck",
+    "at": [
+     80.5,
+     64,
+     20.5
+    ],
+    "situation": "alpha_garden"
+   },
+   {
+    "id": "alpha_psyduck_1",
+    "town": "alpha",
+    "kind": "situation",
+    "species": "psyduck",
+    "at": [
+     81.5,
+     64,
+     20.5
+    ],
+    "situation": "alpha_garden"
+   },
+   {
+    "id": "alpha_psyduck_2",
+    "town": "alpha",
+    "kind": "situation",
+    "species": "psyduck",
+    "at": [
+     80.5,
+     64,
+     21.5
+    ],
+    "situation": "alpha_garden"
+   },
+   {
+    "id": "alpha_munchlax",
+    "town": "alpha",
+    "kind": "situation",
+    "species": "munchlax",
+    "at": [
+     80.5,
+     64,
+     80.5
+    ],
+    "situation": "alpha_apples"
+   }
+  ],
+  "bravo": [
+   {
+    "id": "bravo_mudbray",
+    "town": "bravo",
+    "kind": "worker",
+    "species": "mudbray",
+    "at": [
+     1005.5,
+     64,
+     30.5
+    ]
+   },
+   {
+    "id": "bravo_skwovet",
+    "town": "bravo",
+    "kind": "worker",
+    "species": "skwovet",
+    "at": [
+     1015.5,
+     64,
+     30.5
+    ]
+   },
+   {
+    "id": "bravo_eevee",
+    "town": "bravo",
+    "kind": "pet",
+    "species": "eevee",
+    "at": [
+     1025.5,
+     64,
+     30.5
+    ]
+   },
+   {
+    "id": "bravo_hoothoot",
+    "town": "bravo",
+    "kind": "placed",
+    "species": "hoothoot",
+    "at": [
+     1035.5,
+     64,
+     30.5
+    ]
+   },
+   {
+    "id": "bravo_spearow_0",
+    "town": "bravo",
+    "kind": "situation",
+    "species": "spearow",
+    "at": [
+     1050.5,
+     64,
+     10.5
+    ],
+    "situation": "bravo_queue"
+   },
+   {
+    "id": "bravo_spearow_1",
+    "town": "bravo",
+    "kind": "situation",
+    "species": "spearow",
+    "at": [
+     1051.5,
+     64,
+     10.5
+    ],
+    "situation": "bravo_queue"
+   }
+  ],
+  "charlie": [
+   {
+    "id": "charlie_wooper",
+    "town": "charlie",
+    "kind": "worker",
+    "species": "wooper",
+    "at": [
+     5.5,
+     64,
+     1050.5
+    ]
+   },
+   {
+    "id": "charlie_sandshrew",
+    "town": "charlie",
+    "kind": "worker",
+    "species": "sandshrew",
+    "at": [
+     17.5,
+     64,
+     1050.5
+    ]
+   },
+   {
+    "id": "charlie_diglett",
+    "town": "charlie",
+    "kind": "worker",
+    "species": "diglett",
+    "at": [
+     29.5,
+     64,
+     1050.5
+    ]
+   },
+   {
+    "id": "charlie_vulpix",
+    "town": "charlie",
+    "kind": "pet",
+    "species": "vulpix",
+    "at": [
+     41.5,
+     64,
+     1050.5
+    ]
+   },
+   {
+    "id": "charlie_poochyena",
+    "town": "charlie",
+    "kind": "pet",
+    "species": "poochyena",
+    "at": [
+     53.5,
+     64,
+     1050.5
+    ]
+   },
+   {
+    "id": "charlie_zubat",
+    "town": "charlie",
+    "kind": "placed",
+    "species": "zubat",
+    "at": [
+     65.5,
+     64,
+     1050.5
+    ]
+   },
+   {
+    "id": "charlie_natu",
+    "town": "charlie",
+    "kind": "placed",
+    "species": "natu",
+    "at": [
+     77.5,
+     64,
+     1050.5
+    ]
+   },
+   {
+    "id": "charlie_slugma",
+    "town": "charlie",
+    "kind": "situation",
+    "species": "slugma",
+    "at": [
+     90.5,
+     64,
+     1010.5
+    ],
+    "situation": "charlie_chimney"
+   },
+   {
+    "id": "charlie_wingull_0",
+    "town": "charlie",
+    "kind": "situation",
+    "species": "wingull",
+    "at": [
+     10.5,
+     64,
+     1090.5
+    ],
+    "situation": "charlie_laundry"
+   },
+   {
+    "id": "charlie_wingull_1",
+    "town": "charlie",
+    "kind": "situation",
+    "species": "wingull",
+    "at": [
+     11.5,
+     64,
+     1090.5
+    ],
+    "situation": "charlie_laundry"
+   },
+   {
+    "id": "charlie_wingull_2",
+    "town": "charlie",
+    "kind": "situation",
+    "species": "wingull",
+    "at": [
+     12.5,
+     64,
+     1090.5
+    ],
+    "situation": "charlie_laundry"
+   },
+   {
+    "id": "charlie_wingull_3",
+    "town": "charlie",
+    "kind": "situation",
+    "species": "wingull",
+    "at": [
+     13.5,
+     64,
+     1090.5
+    ],
+    "situation": "charlie_laundry"
+   }
+  ],
+  "delta": [
+   {
+    "id": "delta_rockruff",
+    "town": "delta",
+    "kind": "pet",
+    "species": "rockruff",
+    "at": [
+     2010.5,
+     64,
+     150.5
+    ]
+   },
+   {
+    "id": "delta_larvitar",
+    "town": "delta",
+    "kind": "pet",
+    "species": "larvitar",
+    "at": [
+     2030.5,
+     64,
+     150.5
+    ]
+   },
+   {
+    "id": "delta_cubone",
+    "town": "delta",
+    "kind": "pet",
+    "species": "cubone",
+    "at": [
+     2050.5,
+     64,
+     150.5
+    ]
+   },
+   {
+    "id": "delta_sableye",
+    "town": "delta",
+    "kind": "placed",
+    "species": "sableye",
+    "at": [
+     2070.5,
+     64,
+     150.5
+    ]
+   },
+   {
+    "id": "delta_bronzor",
+    "town": "delta",
+    "kind": "placed",
+    "species": "bronzor",
+    "at": [
+     2090.5,
+     64,
+     150.5
+    ]
+   },
+   {
+    "id": "delta_noibat",
+    "town": "delta",
+    "kind": "placed",
+    "species": "noibat",
+    "at": [
+     2110.5,
+     64,
+     150.5
+    ]
+   },
+   {
+    "id": "delta_woobat",
+    "town": "delta",
+    "kind": "placed",
+    "species": "woobat",
+    "at": [
+     2130.5,
+     64,
+     150.5
+    ]
+   },
+   {
+    "id": "delta_smeargle",
+    "town": "delta",
+    "kind": "placed",
+    "species": "smeargle",
+    "at": [
+     2150.5,
+     64,
+     150.5
+    ]
+   },
+   {
+    "id": "delta_trapinch_0",
+    "town": "delta",
+    "kind": "situation",
+    "species": "trapinch",
+    "at": [
+     2180.5,
+     64,
+     60.5
+    ],
+    "situation": "delta_pileup"
+   },
+   {
+    "id": "delta_trapinch_1",
+    "town": "delta",
+    "kind": "situation",
+    "species": "trapinch",
+    "at": [
+     2181.5,
+     64,
+     60.5
+    ],
+    "situation": "delta_pileup"
+   },
+   {
+    "id": "delta_trapinch_2",
+    "town": "delta",
+    "kind": "situation",
+    "species": "trapinch",
+    "at": [
+     2182.5,
+     64,
+     60.5
+    ],
+    "situation": "delta_pileup"
+   },
+   {
+    "id": "delta_trapinch_3",
+    "town": "delta",
+    "kind": "situation",
+    "species": "trapinch",
+    "at": [
+     2180.5,
+     64,
+     61.5
+    ],
+    "situation": "delta_pileup"
+   },
+   {
+    "id": "delta_trapinch_4",
+    "town": "delta",
+    "kind": "situation",
+    "species": "trapinch",
+    "at": [
+     2181.5,
+     64,
+     61.5
+    ],
+    "situation": "delta_pileup"
+   },
+   {
+    "id": "delta_trapinch_5",
+    "town": "delta",
+    "kind": "situation",
+    "species": "trapinch",
+    "at": [
+     2182.5,
+     64,
+     61.5
+    ],
+    "situation": "delta_pileup"
+   },
+   {
+    "id": "delta_joltik_0",
+    "town": "delta",
+    "kind": "situation",
+    "species": "joltik",
+    "at": [
+     2180.5,
+     64,
+     110.5
+    ],
+    "situation": "delta_lanterns"
+   },
+   {
+    "id": "delta_joltik_1",
+    "town": "delta",
+    "kind": "situation",
+    "species": "joltik",
+    "at": [
+     2181.5,
+     64,
+     110.5
+    ],
+    "situation": "delta_lanterns"
+   },
+   {
+    "id": "delta_joltik_2",
+    "town": "delta",
+    "kind": "situation",
+    "species": "joltik",
+    "at": [
+     2182.5,
+     64,
+     110.5
+    ],
+    "situation": "delta_lanterns"
+   },
+   {
+    "id": "delta_joltik_3",
+    "town": "delta",
+    "kind": "situation",
+    "species": "joltik",
+    "at": [
+     2180.5,
+     64,
+     111.5
+    ],
+    "situation": "delta_lanterns"
+   },
+   {
+    "id": "delta_joltik_4",
+    "town": "delta",
+    "kind": "situation",
+    "species": "joltik",
+    "at": [
+     2181.5,
+     64,
+     111.5
+    ],
+    "situation": "delta_lanterns"
+   },
+   {
+    "id": "delta_joltik_5",
+    "town": "delta",
+    "kind": "situation",
+    "species": "joltik",
+    "at": [
+     2182.5,
+     64,
+     111.5
+    ],
+    "situation": "delta_lanterns"
+   }
+  ]
+ },
+ "workers": [
+  {
+   "id": "delta_work_00",
+   "settlement": "delta",
+   "species": "geodude",
+   "job": "carry",
+   "points": [
+    [
+     2005.5,
+     64,
+     20.5
+    ],
+    [
+     2005.5,
+     64,
+     25.5
+    ],
+    [
+     2005.5,
+     64,
+     30.5
+    ]
+   ]
+  },
+  {
+   "id": "delta_work_01",
+   "settlement": "delta",
+   "species": "onix",
+   "job": "carry",
+   "points": [
+    [
+     2011.5,
+     64,
+     20.5
+    ],
+    [
+     2011.5,
+     64,
+     25.5
+    ],
+    [
+     2011.5,
+     64,
+     30.5
+    ]
+   ]
+  },
+  {
+   "id": "delta_work_02",
+   "settlement": "delta",
+   "species": "drilbur",
+   "job": "carry",
+   "points": [
+    [
+     2017.5,
+     64,
+     20.5
+    ],
+    [
+     2017.5,
+     64,
+     25.5
+    ],
+    [
+     2017.5,
+     64,
+     30.5
+    ]
+   ]
+  },
+  {
+   "id": "delta_work_03",
+   "settlement": "delta",
+   "species": "rhyhorn",
+   "job": "carry",
+   "points": [
+    [
+     2023.5,
+     64,
+     20.5
+    ],
+    [
+     2023.5,
+     64,
+     25.5
+    ],
+    [
+     2023.5,
+     64,
+     30.5
+    ]
+   ]
+  },
+  {
+   "id": "delta_work_04",
+   "settlement": "delta",
+   "species": "nosepass",
+   "job": "carry",
+   "points": [
+    [
+     2029.5,
+     64,
+     20.5
+    ],
+    [
+     2029.5,
+     64,
+     25.5
+    ],
+    [
+     2029.5,
+     64,
+     30.5
+    ]
+   ]
+  },
+  {
+   "id": "delta_work_05",
+   "settlement": "delta",
+   "species": "geodude",
+   "job": "carry",
+   "points": [
+    [
+     2035.5,
+     64,
+     20.5
+    ],
+    [
+     2035.5,
+     64,
+     25.5
+    ],
+    [
+     2035.5,
+     64,
+     30.5
+    ]
+   ]
+  },
+  {
+   "id": "delta_work_06",
+   "settlement": "delta",
+   "species": "onix",
+   "job": "carry",
+   "points": [
+    [
+     2041.5,
+     64,
+     20.5
+    ],
+    [
+     2041.5,
+     64,
+     25.5
+    ],
+    [
+     2041.5,
+     64,
+     30.5
+    ]
+   ]
+  },
+  {
+   "id": "delta_work_07",
+   "settlement": "delta",
+   "species": "drilbur",
+   "job": "carry",
+   "points": [
+    [
+     2047.5,
+     64,
+     20.5
+    ],
+    [
+     2047.5,
+     64,
+     25.5
+    ],
+    [
+     2047.5,
+     64,
+     30.5
+    ]
+   ]
+  },
+  {
+   "id": "delta_work_08",
+   "settlement": "delta",
+   "species": "rhyhorn",
+   "job": "carry",
+   "points": [
+    [
+     2053.5,
+     64,
+     20.5
+    ],
+    [
+     2053.5,
+     64,
+     25.5
+    ],
+    [
+     2053.5,
+     64,
+     30.5
+    ]
+   ]
+  },
+  {
+   "id": "delta_work_09",
+   "settlement": "delta",
+   "species": "nosepass",
+   "job": "carry",
+   "points": [
+    [
+     2059.5,
+     64,
+     20.5
+    ],
+    [
+     2059.5,
+     64,
+     25.5
+    ],
+    [
+     2059.5,
+     64,
+     30.5
+    ]
+   ]
+  },
+  {
+   "id": "delta_work_10",
+   "settlement": "delta",
+   "species": "geodude",
+   "job": "carry",
+   "points": [
+    [
+     2065.5,
+     64,
+     20.5
+    ],
+    [
+     2065.5,
+     64,
+     25.5
+    ],
+    [
+     2065.5,
+     64,
+     30.5
+    ]
+   ]
+  },
+  {
+   "id": "delta_work_11",
+   "settlement": "delta",
+   "species": "onix",
+   "job": "carry",
+   "points": [
+    [
+     2071.5,
+     64,
+     20.5
+    ],
+    [
+     2071.5,
+     64,
+     25.5
+    ],
+    [
+     2071.5,
+     64,
+     30.5
+    ]
+   ]
+  },
+  {
+   "id": "delta_work_12",
+   "settlement": "delta",
+   "species": "drilbur",
+   "job": "carry",
+   "points": [
+    [
+     2077.5,
+     64,
+     20.5
+    ],
+    [
+     2077.5,
+     64,
+     25.5
+    ],
+    [
+     2077.5,
+     64,
+     30.5
+    ]
+   ]
+  },
+  {
+   "id": "delta_work_13",
+   "settlement": "delta",
+   "species": "rhyhorn",
+   "job": "carry",
+   "points": [
+    [
+     2083.5,
+     64,
+     20.5
+    ],
+    [
+     2083.5,
+     64,
+     25.5
+    ],
+    [
+     2083.5,
+     64,
+     30.5
+    ]
+   ]
+  },
+  {
+   "id": "delta_work_14",
+   "settlement": "delta",
+   "species": "nosepass",
+   "job": "carry",
+   "points": [
+    [
+     2089.5,
+     64,
+     20.5
+    ],
+    [
+     2089.5,
+     64,
+     25.5
+    ],
+    [
+     2089.5,
+     64,
+     30.5
+    ]
+   ]
+  },
+  {
+   "id": "delta_work_15",
+   "settlement": "delta",
+   "species": "geodude",
+   "job": "carry",
+   "points": [
+    [
+     2095.5,
+     64,
+     20.5
+    ],
+    [
+     2095.5,
+     64,
+     25.5
+    ],
+    [
+     2095.5,
+     64,
+     30.5
+    ]
+   ]
+  },
+  {
+   "id": "delta_work_16",
+   "settlement": "delta",
+   "species": "onix",
+   "job": "carry",
+   "points": [
+    [
+     2101.5,
+     64,
+     20.5
+    ],
+    [
+     2101.5,
+     64,
+     25.5
+    ],
+    [
+     2101.5,
+     64,
+     30.5
+    ]
+   ]
+  },
+  {
+   "id": "delta_work_17",
+   "settlement": "delta",
+   "species": "drilbur",
+   "job": "carry",
+   "points": [
+    [
+     2107.5,
+     64,
+     20.5
+    ],
+    [
+     2107.5,
+     64,
+     25.5
+    ],
+    [
+     2107.5,
+     64,
+     30.5
+    ]
+   ]
+  },
+  {
+   "id": "delta_work_18",
+   "settlement": "delta",
+   "species": "rhyhorn",
+   "job": "carry",
+   "points": [
+    [
+     2113.5,
+     64,
+     20.5
+    ],
+    [
+     2113.5,
+     64,
+     25.5
+    ],
+    [
+     2113.5,
+     64,
+     30.5
+    ]
+   ]
+  },
+  {
+   "id": "delta_work_19",
+   "settlement": "delta",
+   "species": "nosepass",
+   "job": "carry",
+   "points": [
+    [
+     2119.5,
+     64,
+     20.5
+    ],
+    [
+     2119.5,
+     64,
+     25.5
+    ],
+    [
+     2119.5,
+     64,
+     30.5
+    ]
+   ]
+  }
+ ]
+}

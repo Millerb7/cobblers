@@ -1,0 +1,69 @@
+{
+ "note": "fixture copy of data/ambient.json composition thresholds at c3e961b; scope and mining_towns narrowed to the four fixture towns",
+ "composition": {
+  "ceiling": {
+   "per_town": 48,
+   "in_view_max": 20,
+   "in_view_radius": 24,
+   "why": "MEASURED, the owner's client at Brock's plaza 2026-10-03 (commit fca84c4d): idle Pokemon in rings 5-11 blocks round the player 0 -> 120-130 FPS, 10 -> 90-100, 20 -> 100-110, 30 -> 85-100, 50 -> 65-70; 50 SPREAD through the town held 100-130. The bend is how many are close and in view at once, not the town's total, so the ceiling is 50 a town spread with at most about 20 within 24 blocks of any standing point; 48 leaves a margin. Nothing above 50 was measured. Server-side cost of the AI-on kinds (sleepers, pets) is NOT measured: to measure on staging after the apply."
+  },
+  "scale": {
+   "town": [
+    40,
+    48
+   ],
+   "hamlet": [
+    10,
+    16
+   ],
+   "outpost": [
+    3,
+    6
+   ],
+   "why": "a town's count scales with its size: town = a gym town or a place with a square and 12+ buildings; hamlet = a stop or village of 4-11 buildings; outpost = a single house or camp"
+  },
+  "ratios": {
+   "working": 0.3,
+   "pets": 0.15,
+   "placed": 0.2,
+   "situations": 0.35,
+   "tolerance": 0.08,
+   "why": "the owner's rough target, varied per town as much as keeps towns distinct: each share within tolerance of its target, situations never under 0.30"
+  },
+  "mining_towns": {
+   "settlements": [
+    "delta"
+   ],
+   "working_min": 0.5,
+   "why": "the owner: mining towns go higher on working, at least 50%, mining or hauling. Fossick (the Craters' mining town) and the West Spur Dig"
+  },
+  "variety": {
+   "max_towns_per_species": 3,
+   "max_roster_overlap": 0.2,
+   "same_species_group_radius": 4,
+   "why": "the owner: if two towns share a roster they read as one town; no group of the same species sitting together unless it IS the situation. A species appears in at most 3 towns' rosters (all kinds counted), any two towns' rosters overlap (Jaccard) at most 0.20, and outside a situation no two of one species stand within 4 blocks. Measured 2026-10-05 before this: Snorlax in 13 of 16 towns, Purrloin 11, Slowpoke and Murkrow 8; Viltri Quay and Sunset West shared 0.52"
+  },
+  "scope": [
+   "alpha",
+   "bravo",
+   "charlie",
+   "delta"
+  ],
+  "scope_why": "every settlement with a town plan and people; Pallet (hometown) stays intact by the owner's earlier call; the League, Relic Island, the Scar and the retired jungle ruins have no townsfolk",
+  "town_file": {
+   "path": "data/ambient_towns/<settlement>.json",
+   "supersedes": "idle.towns[<settlement>] and this town's entries in workers, once the generator reads the file",
+   "fields": {
+    "settlement": "the id",
+    "size": "town | hamlet | outpost (scale above)",
+    "target": "the town's total, inside its scale band",
+    "character": "one line: what this town's Pokemon say about it, and why its roster differs from every other town's",
+    "workers": "list, tools/ambient.py's worker record (id, settlement, species, level, job, route/pickup/drop/interact, carry...) for the WORKING share: each a job you can watch, sited on the town plan",
+    "pets": "list of {id, species, owner: an NPC id the apply places (data/npc_seats.json, a stall keeper, a resident), mode: follow | wait, why}",
+    "placed": "list of {id, species, spot: roof | gutter | window | under_cart | step | wall_top | porch, building: a building id from derived/towns/<settlement>_placement.json (or at: [x, y, z] measured from the plan), why}",
+    "situations": "list of {id, title, story: one or two lines a player would retell, unique: true for the one thing nobody else has, at: [x, y, z] the situation's anchor measured from the plan (never a world), facing, members: [{species, count, pose: still | sleep | follow | wander_leashed, offsets: [[dx, dy, dz], ...]}], props: [{block, at: [dx, dy, dz]}] (vanilla or pack blocks; a spawn-condition block is allowed, data/spawn_block_policy.json owner_decision_2026_10_05), why}",
+    "counts": "{working, pets, placed, situations, total}: the author's tally, re-derived and checked by the audit, never trusted"
+   }
+  }
+ }
+}
