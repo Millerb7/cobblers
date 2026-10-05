@@ -26,6 +26,20 @@ Every fact on the page is read, never invented:
                   same source tools/battle_sim.py reads. Without the jar (--jar, or the EXP-000 runtime copy in this
                   checkout or a sibling worktree) ids are shown title-cased and untyped, and the page says so
 
+LAYOUT (the owner, 2026-10-05: "splits per gym and the end game, e4. have a sidebar for navigation as well through
+the fight. im going to add fights so this will be the starter template"). One section per split in travel order --
+split N ends at gym leader N, an "After the eighth badge" split holds the HQ tower, the end game is Victory Road, the
+Elite Four in order and the Champion -- each one table of its fights whose rows open onto the team. A sidebar of
+bare-token anchors (#split-3, #fight-route_02_trainer_01), sticky on desktop and a "Fights" drawer at <=700px,
+highlights the current split. Without JavaScript every team is shown and the sidebar is plain links.
+
+HOW FIGHTS ARE PLACED (no fight is hand-placed; RULE below is printed at the foot of the page). Every trainer record
+in data/trainers.json and every entry of the seat-only files is placed by the first match: (1) its own `split` (1-8,
+"hq" or "endgame"); (2) a gym leader by its `order`; (3) the Elite Four and Champion in the end game; (4) a seat-only
+file's entries where SIDE puts that file (mansion: split 1; HQ tower: "hq"); (5) a `route_id` in the split of the gym
+in the town data/routes.json says that route leads to, or the end game if it leads to the League. Anything else is
+listed under Unplaced with its reason (and printed by the CLI), never dropped.
+
 WHAT THIS DOES NOT COVER. In-game behaviour: valid output is not proof any trainer battles as listed. Trainers that
 are not ours (Cobbleverse's own, anything a donor template places) are not listed. The Heaven's Arena exam teams
 (data/arena_trainers.json, unseated since 2026-10-03) are not route trainers and are left out.
@@ -166,13 +180,121 @@ def emitter_lines():
     return ["%s:%d" % (EMITTER, i) for i, ln in enumerate(text, 1) if 'out["data/rctmod/trainers/' in ln]
 
 
+# The seat-only files: their entries carry one team and no route, so the file says where they sit. An entry's own
+# `split` still overrides this.
+SIDE = (("data/mansion_guardians.json", {"split": 1, "area": "The Gastly mansion",
+                                         "note": "The Gastly mansion, off Route 1: five possessed Channelers, one per "
+                                                 "room (data/mansion_guardians.json)."}),
+        ("data/hq_trainers.json", {"split": "hq", "area": "The Compact HQ tower", "note": None}))
+WORDS = ("hq", "endgame")
+RANK = {"route": 0, "side": 1, "other": 2, "leader": 3, "e4": 4, "champion": 5}
+RULE = ("Every trainer record in data/trainers.json and every entry of the seat-only files (data/mansion_guardians.json, "
+        "data/hq_trainers.json) is placed by the first rule that matches: (1) its own `split` field, 1 to 8 for a gym's "
+        "split, \"hq\" for after the eighth badge or \"endgame\"; (2) a gym leader goes in the split of its `order`; "
+        "(3) the Elite Four and the Champion go in the end game; (4) a seat-only file's entries go where that file is "
+        "placed (the mansion in split 1, the HQ tower after the eighth badge); (5) a record with a `route_id` goes in "
+        "the split of the gym in the town its route in data/routes.json leads to, or the end game if the route leads "
+        "to the League. Anything else is listed under Unplaced with the reason, never dropped. Within a split: route "
+        "trainers by trainer_order (optional ones after), then side areas, then other placed fights, then the gym "
+        "leader; the end game ends with the Elite Four in order and the Champion.")
+
+
+def short_route(name):
+    """'Route 1 — Pallet to Brock' -> 'Route 1'."""
+    return re.split(r"\s+[–—-]\s+", name or "", maxsplit=1)[0]
+
+
+def split_value(v, n_gyms):
+    if isinstance(v, bool):
+        return None
+    if isinstance(v, int) or (isinstance(v, str) and v.isdigit()):
+        return int(v) if 1 <= int(v) <= n_gyms else None
+    return v if v in WORDS else None
+
+
+def place(rec, seat, side, route_by_id, gym_by_town, n_gyms):
+    """(split, kind, area, reason) by RULE; split is None (and reason says why) when nothing matches."""
+    cls = rec.get("class")
+    kind = {"gym_leader": "leader", "elite_four": "e4", "champion": "champion"}.get(cls) or (
+        "side" if side else "route" if rec.get("route_id") else "other")
+    rt = route_by_id.get(rec.get("route_id"))
+    area = side["area"] if side else short_route(rt["display_name"]) if rt else None
+    explicit = rec.get("split", (seat or {}).get("split"))
+    if explicit is not None:
+        k = split_value(explicit, n_gyms)
+        if k is None:
+            return None, kind, area, "its split %r is not 1-%d, \"hq\" or \"endgame\"" % (explicit, n_gyms)
+        return k, kind, area, None
+    if kind == "leader":
+        k = split_value(rec.get("order"), n_gyms)
+        return (k, kind, area, None) if k else (None, kind, area, "a gym leader whose order %r is not 1-%d"
+                                                % (rec.get("order"), n_gyms))
+    if kind in ("e4", "champion"):
+        return "endgame", kind, "The League", None
+    if side:
+        return side["split"], kind, area, None
+    if rec.get("route_id"):
+        if not rt:
+            return None, kind, area, "route_id %r is not in data/routes.json" % rec["route_id"]
+        if rt.get("to_town") in gym_by_town:
+            return gym_by_town[rt["to_town"]], kind, area, None
+        if rt.get("to_town") == "league":
+            return "endgame", kind, area, None
+        return None, kind, area, "its route %s leads to %r, which has no gym and is not the League" % (
+            rt["id"], rt.get("to_town"))
+    return None, kind, area, "class %r with no route_id and no split" % cls
+
+
+def build_splits(recs, seat_of, routes, gyms, league_meta, caps, side_entries, town_name):
+    """[split], [unplaced fight]: every record and side entry placed by RULE, none dropped."""
+    n = len(gyms)
+    route_by_id = {r["id"]: r for r in routes}
+    gym_by_town = {g["town_id"]: g["n"] for g in gyms}
+    fights, unplaced = {}, []
+    items = [(r, seat_of.get(r["id"]), None) for r in recs] + [(e, seat_of.get(e["id"], e), s) for e, s in side_entries]
+    for i, (rec, seat, side) in enumerate(items):
+        k, kind, area, reason = place(rec, seat, side, route_by_id, gym_by_town, n)
+        f = {"rec": rec, "seat": seat, "kind": kind, "area": area, "reason": reason, "side": side,
+             "sort": (RANK[kind], rec.get("class") != "route" if kind == "route" else 0,
+                      rec.get("trainer_order") or rec.get("order") or 0, i)}
+        if kind in ("leader", "e4", "champion"):
+            f["meta"] = (next((g for g in gyms if g["n"] == k), {}) if kind == "leader"
+                         else league_meta.get(rec["id"], {}))
+        (unplaced if k is None else fights.setdefault(k, [])).append(f)
+    after = caps.get(n + 1, (None, None))
+    splits = []
+    for g in gyms:
+        rt = next((r for r in routes if r.get("to_town") == g["town_id"]), None)
+        frm = town_name(rt["from_town"]) if rt else None
+        splits.append({"key": str(g["n"]), "title": "Split %d: %s%s" % (g["n"], (frm + " → ") if frm else "", g["town"]),
+                       "nav": "%d · %s" % (g["n"], g["rec"]["display_name"]), "cap": caps.get(g["n"], (None, None)),
+                       "gym": g, "fights": fights.get(g["n"], [])})
+    if fights.get("hq"):
+        splits.append({"key": "hq", "title": "After the eighth badge", "nav": "After badge %d" % n, "cap": after,
+                       "gym": None, "fights": fights["hq"]})
+    road = next((r for r in routes if r.get("to_town") == "league"), None)
+    splits.append({"key": "endgame", "title": "End game: %sthe League" % (
+        (short_route(road["display_name"]) + " and ") if road else ""), "nav": "End game", "cap": after,
+                   "gym": None, "fights": fights.get("endgame", [])})
+    for s in splits:
+        s["fights"].sort(key=lambda f: f["sort"])
+        notes = []
+        for f in s["fights"]:
+            rt = route_by_id.get(f["rec"].get("route_id"))
+            note = (f["side"] or {}).get("note") or (rt and "%s: %s → %s" % (
+                f["area"], town_name(rt["from_town"]), town_name(rt["to_town"])))
+            if note and note not in notes:
+                notes.append(note)
+        s["notes"] = notes
+    return splits, unplaced
+
+
 def collect():
     import nuzlocke_map as NM
     import route_trainers as RT
 
     doc = load_json("data/trainers.json")
     recs = doc["trainers"]
-    by_id = {r["id"]: r for r in recs}
     town = {t["id"]: t for t in NM.towns()}
     caps = NM.level_caps()
     gpos = NM.gyms()
@@ -182,59 +304,47 @@ def collect():
     gyms = []
     for r in sorted((r for r in recs if r["class"] == "gym_leader"), key=lambda r: r["order"]):
         n, g, meta = r["order"], gpos[r["order"]], gmeta.get(r["id"], {})
-        gyms.append({"rec": r, "n": n, "town": town.get(g["town"], {}).get("name", g["town"]), "x": g["x"],
-                     "z": g["z"], "type": meta.get("theme"), "theme": r.get("theme"),
+        gyms.append({"rec": r, "n": n, "town_id": g["town"], "town": town.get(g["town"], {}).get("name", g["town"]),
+                     "x": g["x"], "z": g["z"], "type": meta.get("theme"), "theme": r.get("theme"),
                      "format": meta.get("battle_format") or r["rct"].get("battleFormat") or r.get("format"),
                      "cap": caps[n][0], "upstream": meta.get("upstream_trainer_id")})
-    league_at = town.get("league", {})
-    league = []
-    for r in sorted((r for r in recs if r["class"] in ("elite_four", "champion")),
-                    key=lambda r: (r["class"] == "champion", r.get("order", 0))):
-        meta = lmeta.get(r["id"], {})
-        league.append({"rec": r, "type": meta.get("theme") or r.get("theme"),
-                       "format": meta.get("battle_format") or r["rct"].get("battleFormat") or r.get("format"),
-                       "upstream": meta.get("upstream_trainer_id")})
+    league_meta = {}
+    for r in recs:
+        if r["class"] in ("elite_four", "champion"):
+            meta = lmeta.get(r["id"], {})
+            league_meta[r["id"]] = {"type": meta.get("theme") or r.get("theme"),
+                                    "format": meta.get("battle_format") or r["rct"].get("battleFormat") or r.get("format"),
+                                    "upstream": meta.get("upstream_trainer_id")}
 
     _recs, seats, _fields = RT.load()
     seat_of = {s["id"]: s for s in seats}
     routes = sorted(load_json("data/routes.json")["routes"], key=lambda r: int(r["order"]))
-    groups = []
-    for k, rt in enumerate(routes, 1):
-        members = sorted((r for r in recs if r.get("route_id") == rt["id"]),
-                         key=lambda r: (r["class"] != "route", r.get("trainer_order", 0)))
-        groups.append({"key": rt["id"], "title": rt["display_name"],
-                       "from": town.get(rt["from_town"], {}).get("name", rt["from_town"]),
-                       "to": town.get(rt["to_town"], {}).get("name", rt["to_town"]),
-                       "cap": caps.get(k, (None, None)), "note": None,
-                       "trainers": [(r, seat_of.get(r["id"])) for r in members]})
-    # the two record-and-seat files, which carry one team and no modes
-    mg = load_json("data/mansion_guardians.json")
-    hq = load_json("data/hq_trainers.json")
-    side = {
-        "route_01_pallet_to_brock": {"key": "mansion", "title": "The Gastly mansion (off Route 1)",
-                                     "note": "Five possessed Channelers, one per room (data/mansion_guardians.json).",
-                                     "trainers": [(e, seat_of.get(e["id"], e)) for e in mg["trainers"]]},
-        "route_08_blaine_to_giovanni": {"key": "hq", "title": "The Compact HQ tower (after the eighth badge)",
-                                        "note": hq["band"]["why"].split(";")[0] + ".",
-                                        "trainers": [(e, seat_of.get(e["id"], e)) for e in hq["trainers"]]},
-    }
-    ordered = []
-    for g in groups:
-        ordered.append(g)
-        if g["key"] in side:
-            s = side[g["key"]]
-            ordered.append({**s, "from": None, "to": None, "cap": g["cap"], "extra": True})
+    side_entries = []
+    for rel, spec in SIDE:
+        d = load_json(rel)
+        spec = dict(spec)
+        if spec["note"] is None and rel.endswith("hq_trainers.json"):
+            spec["note"] = "The Compact HQ tower: " + d["band"]["why"].split(";")[0] + "."
+        side_entries += [(e, spec) for e in d["trainers"]]
+    splits, unplaced = build_splits(recs, seat_of, routes, gyms, league_meta, caps, side_entries,
+                                    lambda t: town.get(t, {}).get("name", t))
 
     tally = {"normal": 0, "challenge": 0, "both": 0, None: 0}
     for r in recs:
         tally[live_mode(r)] += 1
-    return {"gyms": gyms, "league": league, "league_at": league_at, "routes": ordered, "tally": tally,
+    return {"splits": splits, "unplaced": unplaced, "league_at": town.get("league", {}), "tally": tally,
             "records": len(recs), "contract": doc.get("generation_contract", {}).get("runtime_mode_selection"),
             "emitter": emitter_lines(), "init_cap": NM.rct_setting("initialLevelCap"),
             "rel_cap": NM.rct_setting("relativeLevelCap"), "nm_style": NM.STYLE}
 
 
 # ------------------------------------------------------------------ page
+#
+# Layout (the owner, 2026-10-05: "splits per gym and the end game, e4. have a sidebar for navigation as well through
+# the fight. im going to add fights so this will be the starter template"): one section per split in travel order,
+# each ONE table of its fights whose rows open onto that fight's team as a compact table; a sidebar (sticky on
+# desktop, a "Fights" drawer at <=700px) of in-page anchors. Without JavaScript the page is complete: every team row
+# is shown and the sidebar is a plain list of links. The script only hides, reveals and highlights.
 
 TYPE_LIGHT = dict(zip(TYPES, ("#e4e1d3", "#f8cfb0", "#c6dcf5", "#f6e59a", "#cde8b8", "#cdeeed", "#efc0b8", "#e0c4e6",
                               "#ecd9ad", "#d6d9f5", "#f6c4d6", "#dfe7a6", "#e0d6b0", "#d2c8e4", "#c9c2f2", "#d4ccc6",
@@ -242,8 +352,15 @@ TYPE_LIGHT = dict(zip(TYPES, ("#e4e1d3", "#f8cfb0", "#c6dcf5", "#f6e59a", "#cde8
 TYPE_DARK = dict(zip(TYPES, ("#4a4636", "#6e3218", "#1f4170", "#5e5010", "#2f5a1f", "#1f5a5a", "#6a2420", "#522a5e",
                              "#5e4a1e", "#363f78", "#6c2442", "#4a5414", "#574c26", "#3e3260", "#362a7a", "#3d332d",
                              "#3e4650", "#6a2a58")))
-OWN_LIGHT = "--warn-bg:#fff3cd; --warn-rule:#d9a400; --live:#0e766c; --plan:#8a3b9a;"
-OWN_DARK = "--warn-bg:#3a3010; --warn-rule:#c99a1c; --live:#52c7b8; --plan:#d39be0;"
+OWN_LIGHT = "--warn-bg:#fff3cd; --warn-rule:#d9a400; --live:#0e766c; --plan:#8a3b9a; --zebra:#e9eee5; --sight:#b01a31;"
+OWN_DARK = "--warn-bg:#3a3010; --warn-rule:#c99a1c; --live:#52c7b8; --plan:#d39be0; --zebra:#222c32; --sight:#ff8a96;"
+
+# WCAG AA, checked on the page's own CSS in both themes (page_problems): text 4.5:1, the focus ring 3:1
+TEXT_PAIRS = ([("ink", bg) for bg in ("paper", "card", "zebra", "tag-bg", "warn-bg")]
+              + [("ink-soft", bg) for bg in ("paper", "card", "zebra", "tag-bg")]
+              + [("sight", "tag-bg"), ("plan", "tag-bg"), ("marker-ink", "marker"), ("gold-ink", "gold")]
+              + [("ink", "t-" + t) for t in TYPES])
+UI_PAIRS = [("marker", bg) for bg in ("paper", "card", "zebra")]
 
 
 def tokens(palette, own):
@@ -257,57 +374,123 @@ def style(nm_style):
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ @@DARK@@ color-scheme:dark; }}
 :root[data-theme="dark"]{ @@DARK@@ color-scheme:dark; }
 *{box-sizing:border-box}
+.cg [hidden]{display:none !important}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45}
-.cg{max-width:1180px;margin:0 auto;padding:20px 16px 48px}
+.cg{max-width:1360px;margin:0 auto;padding:20px 16px 48px}
 .cg h1{font-family:var(--display);font-weight:700;font-size:clamp(1.7rem,4.5vw,2.6rem);margin:0 0 4px}
-.cg h2{font-family:var(--display);font-weight:700;font-size:1.4rem;margin:28px 0 10px;border-bottom:2px solid var(--path);padding-bottom:4px}
-.cg h3{font-family:var(--display);font-weight:700;font-size:1.15rem;margin:0}
-.sub{color:var(--ink-soft);margin:0 0 14px}
+.cg h2{font-family:var(--display);font-weight:700;font-size:1.4rem;margin:26px 0 8px;border-bottom:2px solid var(--path);padding-bottom:4px;display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline}
+.sub{color:var(--ink-soft);margin:0 0 10px}
 .status{background:var(--warn-bg);border:1px solid var(--warn-rule);border-left:6px solid var(--warn-rule);border-radius:10px;padding:12px 16px;margin:0 0 14px}
 .status p{margin:4px 0}.status .big{font-weight:700;font-size:1.08rem}
 .status code,.src code{font-size:.82rem;overflow-wrap:anywhere}
 .mapline{color:var(--ink-soft);font-style:italic;margin:0 0 14px}
-.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 6px}
-.bar button{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--rule);border-radius:999px;padding:4px 14px;cursor:pointer}
-.bar button[aria-pressed="true"]{background:var(--marker);color:var(--marker-ink);border-color:var(--marker)}
-.tbl{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--rule);border-radius:10px;background:var(--card)}
-.tbl table{border-collapse:collapse;width:100%;min-width:560px;font-size:.93rem}
-.tbl th,.tbl td{padding:6px 10px;text-align:left;border-top:1px solid var(--rule);vertical-align:top}
-.tbl th{border-top:0;color:var(--ink-soft);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em}
-.cards{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
-.card{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:14px 16px;min-width:0}
-.card header{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline;justify-content:space-between;margin-bottom:6px}
-.badge{display:inline-grid;place-items:center;min-width:1.9em;height:1.9em;border-radius:999px;background:var(--gold);color:var(--gold-ink);font-weight:700;margin-right:6px}
-.cap{font-family:var(--display);font-weight:700;background:var(--gold);color:var(--gold-ink);border-radius:999px;padding:1px 10px;white-space:nowrap}
-.meta{color:var(--ink-soft);font-size:.92rem;margin:0 0 6px;overflow-wrap:anywhere}
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-items:start}
+@media (min-width:701px){.layout{grid-template-columns:260px minmax(0,1fr)}
+.side{position:sticky;top:0;max-height:100vh;overflow:auto;padding:10px 0}
+.drawer > summary{display:none}}
+.side{background:var(--paper)}
+.seg{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:0 0 10px}
+.seg button{font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--rule);border-radius:999px;padding:4px 14px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--marker);color:var(--marker-ink);border-color:var(--marker)}
+.drawer > summary{font-family:var(--display);font-weight:700;font-size:1.05rem;cursor:pointer;padding:8px 12px;background:var(--card);border:1px solid var(--rule);border-radius:10px}
+.nav{font-size:.92rem}
+.nav ol{list-style:none;margin:0;padding:0}
+.nav > ol > li{margin:0 0 4px}
+.nav a{display:block;color:var(--ink);text-decoration:none;border-radius:6px;padding:3px 8px;overflow-wrap:anywhere}
+.nav a:hover{text-decoration:underline}
+.nav a.sp{font-weight:700}
+.nav a[aria-current]{background:var(--marker);color:var(--marker-ink)}
+.nav details{margin:0 0 0 8px}
+.nav details > summary{cursor:pointer;color:var(--ink-soft);font-size:.85rem;padding:1px 8px}
+.nav details ol{border-left:2px solid var(--rule);margin:2px 0 6px 10px}
+.cg a:focus-visible,.cg button:focus-visible,.cg summary:focus-visible{outline:3px solid var(--marker);outline-offset:2px}
+.split,.sum{scroll-margin-top:12px}
+.tbl{overflow:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--rule);border-radius:10px;background:var(--card);margin:0 0 10px}
+.cg.js .tbl{max-height:85vh}
+.tbl > table{border-collapse:separate;border-spacing:0;width:100%;min-width:680px;font-size:.93rem}
+.cg table caption{caption-side:top;text-align:left;font-weight:700;padding:8px 10px;color:var(--ink)}
+.cg th,.cg td{padding:6px 10px;text-align:left;border-top:1px solid var(--rule);vertical-align:top}
+.cg thead th{border-top:0;color:var(--ink-soft);font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;background:var(--card)}
+.tbl > table > thead th{position:sticky;top:0;z-index:1;box-shadow:inset 0 -1px 0 var(--rule)}
+.sum.z > *{background:var(--zebra)}
+.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.tm > td{background:var(--card);padding:4px 10px 14px}
+.xp{font:inherit;font-weight:700;color:var(--ink);background:none;border:0;padding:0;cursor:pointer;text-align:left}
+.xp::before{content:"\\25B8";display:inline-block;width:1.1em;transition:transform .15s}
+.xp[aria-expanded="true"]::before{transform:rotate(90deg)}
+@media (prefers-reduced-motion:reduce){.xp::before{transition:none}}
+.team{border-collapse:collapse;width:100%;font-size:.9rem;margin:6px 0 0;border:1px solid var(--rule)}
+.team caption{padding:4px 0}
+.team tbody tr:nth-child(even) > *{background:var(--zebra)}
+.team .spc{margin-right:4px}
+.gymline{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:8px 12px;margin:0 0 10px}
+.badge{display:inline-grid;place-items:center;min-width:1.9em;height:1.9em;border-radius:999px;background:var(--gold);color:var(--gold-ink);font-weight:700;margin-right:4px}
+.cap{font-family:var(--display);font-weight:700;font-size:1rem;background:var(--gold);color:var(--gold-ink);border-radius:999px;padding:1px 10px;white-space:nowrap}
+.meta{color:var(--ink-soft);font-size:.92rem;margin:4px 0;overflow-wrap:anywhere}
 .tag{display:inline-block;font-size:.78rem;background:var(--tag-bg);border-radius:4px;padding:0 6px;margin:1px 2px 1px 0;white-space:nowrap}
-.tag.sight{color:var(--path);font-weight:700}.tag.live{color:var(--live);font-weight:700}.tag.plan{color:var(--plan);font-weight:700}
+.tag.sight{color:var(--sight);font-weight:700}.tag.live{color:var(--live);font-weight:700}.tag.plan{color:var(--plan);font-weight:700}
 .ty{display:inline-block;font-size:.74rem;font-weight:700;border-radius:4px;padding:0 6px;margin:1px 2px 1px 0;text-transform:uppercase;letter-spacing:.03em;background:var(--tag-bg);color:var(--ink)}
-.team{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
-.mon{border:1px solid var(--rule);border-radius:8px;padding:6px 8px;min-width:0}
-.mon .nm{font-weight:700}.mon .lv{color:var(--ink-soft);font-size:.9rem;margin-left:4px}
-.mon .det{font-size:.86rem;color:var(--ink-soft);margin:2px 0;overflow-wrap:anywhere}
-.mv{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px}
-.mv span{font-size:.82rem;border-radius:4px;padding:1px 6px;background:var(--tag-bg);color:var(--ink)}
 .plan-note{font-size:.92rem;margin:6px 0 0}
 .compact{font-size:.88rem;color:var(--ink-soft);margin:8px 0 0;overflow-wrap:anywhere}
 .compact b{color:var(--ink)}
-.rt{margin:0;padding:0;list-style:none;display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
-@media (min-width:900px){.cards.two{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .cg[data-mode="normal"] .m-ch,.cg[data-mode="normal"] .c-no{display:none}
 .cg:not([data-mode="normal"]) .m-no,.cg:not([data-mode="normal"]) .c-ch{display:none}
-.src{margin-top:28px;color:var(--ink-soft);font-size:.85rem}
+.how{margin-top:28px}
+.src{margin-top:12px;color:var(--ink-soft);font-size:.85rem}
 .src li{margin:3px 0}
+@media (max-width:700px){
+.cg.js .side{position:sticky;top:0;z-index:3;padding:6px 0}
+.cg.js .drawer[open] .nav{max-height:60vh;overflow:auto;background:var(--card);border:1px solid var(--rule);border-radius:10px;margin-top:4px;padding:6px}
+.cg.js .split,.cg.js .sum{scroll-margin-top:96px}
+}
+@media (max-width:480px){
+.stk,.stk > tbody,.stk > tbody > tr,.stk > tbody > tr > th,.stk > tbody > tr > td,.stk > caption{display:block;width:100%}
+.stk > thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tbl > table{min-width:0}
+.cg.js .tbl{max-height:none}
+.stk > tbody > tr{border-top:1px solid var(--rule);padding:6px 0}
+.stk > tbody > tr > th,.stk > tbody > tr > td{border-top:0;padding:2px 10px}
+.stk > tbody > tr > td[data-l]::before{content:attr(data-l) ": ";font-weight:700;color:var(--ink-soft)}
+.tm > td{padding:4px 6px 12px}
+}
 """
-    return base + css.replace("@@LIGHT@@", light).replace("@@DARK@@", dark) + "".join(".ty.%s,.mv span.%s{background:var(--t-%s)}\n" % (t, t, t) for t in TYPES)
+    return base + css.replace("@@LIGHT@@", light).replace("@@DARK@@", dark) + "".join(
+        ".ty.%s{background:var(--t-%s)}\n" % (t, t) for t in TYPES)
 
 
-TOGGLE = """<script>
-(function(){var cg=document.getElementById('cg'),bar=document.getElementById('modebar');if(!cg||!bar)return;
-bar.hidden=false;var bs=bar.querySelectorAll('button');
-function set(m){cg.setAttribute('data-mode',m);for(var i=0;i<bs.length;i++){bs[i].setAttribute('aria-pressed',bs[i].getAttribute('data-m')===m?'true':'false');}}
-for(var i=0;i<bs.length;i++){bs[i].addEventListener('click',function(){set(this.getAttribute('data-m'));});}})();
+SCRIPT = """<script>
+(function(){var cg=document.getElementById('cg');if(!cg)return;cg.className+=' js';
+var bar=document.getElementById('modebar');
+if(bar){bar.hidden=false;var bs=bar.querySelectorAll('button');
+var setMode=function(m){cg.setAttribute('data-mode',m);for(var i=0;i<bs.length;i++){bs[i].setAttribute('aria-pressed',bs[i].getAttribute('data-m')===m?'true':'false');}};
+for(var i=0;i<bs.length;i++){bs[i].addEventListener('click',function(){setMode(this.getAttribute('data-m'));});}}
+var hosts=cg.querySelectorAll('[data-team]');
+for(var j=0;j<hosts.length;j++){(function(h){var row=document.getElementById(h.getAttribute('data-team')),nm=h.querySelector('.nm');if(!row||!nm)return;
+var b=document.createElement('button');b.type='button';b.className='xp';b.setAttribute('aria-expanded','false');b.setAttribute('aria-controls',row.id);
+nm.parentNode.insertBefore(b,nm);b.appendChild(nm);row.hidden=true;
+b.addEventListener('click',function(){var o=b.getAttribute('aria-expanded')!=='true';b.setAttribute('aria-expanded',o?'true':'false');row.hidden=!o;});})(hosts[j]);}
+var drawer=document.getElementById('drawer'),mq=window.matchMedia?window.matchMedia('(max-width:700px)'):null;
+var narrow=function(){return !!(mq&&mq.matches);};
+var fit=function(){if(drawer)drawer.open=!narrow();};fit();
+if(mq){if(mq.addEventListener)mq.addEventListener('change',fit);else if(mq.addListener)mq.addListener(fit);}
+var open=function(id){var t=id?document.getElementById(id):null;if(!t)return;var xb=t.querySelector('.xp');if(xb&&xb.getAttribute('aria-expanded')!=='true')xb.click();};
+var nav=document.getElementById('nav');
+if(nav){nav.addEventListener('click',function(e){var a=e.target.closest?e.target.closest('a'):null;if(!a)return;open(a.getAttribute('href').slice(1));if(narrow()&&drawer)drawer.open=false;});}
+if(location.hash){open(decodeURIComponent(location.hash.slice(1)));}
+if(nav&&'IntersectionObserver' in window){var links={},al=nav.querySelectorAll('a');for(var k=0;k<al.length;k++){links[al[k].getAttribute('href').slice(1)]=al[k];}
+var cur={};var mark=function(kind,id){if(cur[kind]===id||!links[id])return;if(cur[kind]&&links[cur[kind]])links[cur[kind]].removeAttribute('aria-current');cur[kind]=id;links[id].setAttribute('aria-current','location');
+if(kind==='s'&&!narrow()){var d=links[id].parentNode.querySelector('details');if(d)d.open=true;}};
+var io=new IntersectionObserver(function(es){for(var i=0;i<es.length;i++){if(es[i].isIntersecting){var el=es[i].target;mark(el.tagName==='SECTION'?'s':'f',el.id);}}},{rootMargin:'0px 0px -75% 0px'});
+var obs=cg.querySelectorAll('section.split,tr.sum');for(var o=0;o<obs.length;o++)io.observe(obs[o]);}
+})();
 </script>"""
+
+
+def anchor(prefix, s):
+    """A bare-token in-page anchor: letters, digits, _ - . only."""
+    return prefix + re.sub(r"[^A-Za-z0-9_.-]", "-", str(s))
 
 
 def fmt(f):
@@ -319,28 +502,37 @@ def type_chip(t):
     return '<span class="ty %s">%s</span>' % (esc(t) if t in TYPES else "", esc(pretty(t) or "?"))
 
 
-def mon_html(m, names):
+def theme_html(typ, theme=None):
+    chip = type_chip(typ) if (typ or "").lower() in TYPES else '<span class="tag">%s</span>' % esc(typ or "?")
+    return chip + (" " + esc(theme) if theme else "")
+
+
+def ace(team):
+    return max(m["level"] for m in team)
+
+
+def thead(cols):
+    return "<thead><tr>%s</tr></thead>" % "".join('<th scope="col">%s</th>' % esc(c) for c in cols)
+
+
+TEAM_COLS = ("Pokemon", "Lv", "Ability", "Item", "Nature", "Moves")
+
+
+def mon_row(m, names):
     sp, types = names.species(m["species"])
-    det = []
-    if m.get("ability"):
-        det.append("Ability " + esc(names.ability(m["ability"])))
-    if m.get("heldItem"):
-        det.append("Item " + esc(names.item(m["heldItem"])))
-    if m.get("nature"):
-        det.append(esc(pretty(m["nature"])) + " nature")
-    moves = []
-    for mv in m.get("moveset") or []:
-        name, typ = names.move(mv)
-        moves.append('<span class="%s"%s>%s</span>' % (esc(typ or ""), ' title="%s"' % esc(pretty(typ)) if typ else "",
-                                                       esc(name)))
-    return ('<li class="mon"><div><span class="nm">%s</span><span class="lv">Lv %d</span> %s</div>%s'
-            '<div class="mv">%s</div></li>' % (esc(sp), m["level"], "".join(type_chip(t) for t in types),
-                                               '<div class="det">%s</div>' % " · ".join(det) if det else "",
-                                               "".join(moves)))
+    moves = ", ".join(names.move(mv)[0] for mv in m.get("moveset") or [])
+    cell = lambda label, v, cls="": '<td%s data-l="%s">%s</td>' % (' class="%s"' % cls if cls else "", label, v)
+    return ('<tr><th scope="row"><span class="spc">%s</span>%s</th>%s%s%s%s%s</tr>'
+            % (esc(sp), "".join(type_chip(t) for t in types), cell("Level", "%d" % m["level"], "num"),
+               cell("Ability", esc(names.ability(m["ability"])) if m.get("ability") else "none"),
+               cell("Item", esc(names.item(m["heldItem"])) if m.get("heldItem") else "none"),
+               cell("Nature", esc(pretty(m["nature"])) if m.get("nature") else "unset"),
+               cell("Moves", esc(moves) or "unset")))
 
 
-def team_html(team, names):
-    return '<ul class="team">%s</ul>' % "".join(mon_html(m, names) for m in team)
+def team_table(team, names, caption):
+    return ('<table class="team stk"><caption>%s</caption>%s<tbody>%s</tbody></table>'
+            % (esc(caption), thead(TEAM_COLS), "".join(mon_row(m, names) for m in team)))
 
 
 def compact(team, names, label):
@@ -348,25 +540,38 @@ def compact(team, names, label):
         esc(label), esc(" · ".join("%s %d" % (names.species(m["species"])[0], m["level"]) for m in team)))
 
 
-def modes_html(rec, names, plan_key):
-    """The Challenge team in full (the Normal one compact), or the reverse when the toggle says Normal."""
+def modes_block(rec, names, plan_key, who):
+    """The Challenge team as a table (the Normal one compact under it), or the reverse when the toggle says Normal."""
     modes = rec.get("modes") or {}
     if "challenge" not in modes:
         return ('<p class="meta"><span class="tag">One team: no Challenge version authored</span></p>'
-                + team_html(rec["team"], names))
+                + team_table(rec["team"], names, "%s: the one team" % who))
     ch, no = modes["challenge"], modes["normal"]
     note = lambda mode, m: (plan_key(rec, mode, m) and '<p class="plan-note"><b>%s plan:</b> %s</p>'
                             % (mode.capitalize(), esc(plan_key(rec, mode, m)))) or ""
     if ch["team"] == no["team"]:
         return ('<p class="meta"><span class="tag plan">Challenge team is a placeholder, identical to Normal</span></p>'
-                + team_html(no["team"], names) + note("normal", no))
+                + team_table(no["team"], names, "%s: Normal team (Challenge is the same placeholder)" % who)
+                + note("normal", no))
     answers = ch.get("open_line")
     ans = ('<p class="compact"><b>Answers the design expects:</b> %s</p>'
            % esc(", ".join(names.species(s)[0] for s in answers))) if answers else ""
     return ('<div class="m-ch">%s%s%s</div><div class="m-no">%s%s</div>%s%s'
-            % (team_html(ch["team"], names), note("challenge", ch), ans, team_html(no["team"], names),
-               note("normal", no), '<div class="c-no">%s</div>' % compact(no["team"], names, "Normal team (live in game)"),
+            % (team_table(ch["team"], names, "%s: Challenge team" % who), note("challenge", ch), ans,
+               team_table(no["team"], names, "%s: Normal team" % who), note("normal", no),
+               '<div class="c-no">%s</div>' % compact(no["team"], names, "Normal team (live in game)"),
                '<div class="c-ch">%s</div>' % compact(ch["team"], names, "Challenge team (planned)")))
+
+
+def mode_val(rec, f, mark=False):
+    """f(team) for the mode the toggle shows; one value when there is one team or the two are identical."""
+    modes = rec.get("modes") or {}
+    if "challenge" not in modes:
+        return esc(f(rec["team"]))
+    ch, no = modes["challenge"]["team"], modes["normal"]["team"]
+    if ch == no:
+        return esc(f(no)) + (' <span class="tag plan">placeholder</span>' if mark else "")
+    return '<span class="m-ch">%s</span><span class="m-no">%s</span>' % (esc(f(ch)), esc(f(no)))
 
 
 def boss_plan(rec, mode, m):
@@ -377,83 +582,132 @@ def route_plan(rec, mode, m):
     return (rec.get("mode_intent") or {}).get(mode)
 
 
-def ace(team):
-    return max(m["level"] for m in team)
+def team_desc(t):
+    return "%d, ace Lv %d" % (len(t), ace(t))
 
 
-def summary_table(model, names):
-    rows = []
-    for g in model["gyms"]:
-        r = g["rec"]
-        rows.append((str(g["n"]), r["display_name"], g["town"], g["type"] or "", "Lv %d" % g["cap"], r["modes"]["normal"]["team"],
-                     r["modes"]["challenge"]["team"]))
-    for e in model["league"]:
-        r = e["rec"]
-        rows.append(("E4" if r["class"] == "elite_four" else "Ch", r["display_name"], "The League", e["type"] or "", "",
-                     r["modes"]["normal"]["team"], r["modes"]["challenge"]["team"]))
-    body = "".join("<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%d, ace Lv %d</td>"
-                   "<td>%d, ace Lv %d%s</td></tr>" % (esc(a), esc(b), esc(c), type_chip(d) if d.lower() in TYPES else esc(d),
-                                                       esc(cap), len(no), ace(no), len(ch), ace(ch),
-                                                       " (placeholder)" if ch == no else "")
-                   for a, b, c, d, cap, no, ch in rows)
-    return ('<div class="tbl"><table><thead><tr><th>Badge</th><th>Trainer</th><th>Where</th><th>Type</th><th>Cap</th>'
-            '<th>Normal (live)</th><th>Challenge</th></tr></thead><tbody>%s</tbody></table></div>' % body)
+FIGHT_COLS = ("#", "Fight", "Where", "Stands at", "Unavoidable", "Team", "Ace Lv")
 
 
-def gym_card(g, names):
-    r = g["rec"]
-    return ('<article class="card" id="%s"><header><h3><span class="badge">%d</span>%s</h3><span class="cap">Cap Lv %d</span>'
-            '</header><p class="meta">%s · %s %s · %s · Gym spawner at x %d, z %d</p>%s</article>'
-            % (esc(r["id"]), g["n"], esc(r["display_name"]), g["cap"], esc(g["town"]),
-               type_chip(g["type"]) if (g["type"] or "").lower() in TYPES else '<span class="tag">%s</span>' % esc(g["type"]),
-               esc(g["theme"] or ""), esc(fmt(g["format"])), g["x"], g["z"], modes_html(r, names, boss_plan)))
+def fight_name(f):
+    r = f["rec"]
+    return r.get("display_name") or r.get("name") or r["id"]
 
 
-def league_card(e, names):
-    r = e["rec"]
-    role = "Champion" if r["class"] == "champion" else "Elite Four %d" % r.get("order", 0)
-    return ('<article class="card" id="%s"><header><h3>%s</h3><span class="meta">%s</span></header>'
-            '<p class="meta">%s %s</p>%s</article>'
-            % (esc(r["id"]), esc(r["display_name"]), esc(role),
-               type_chip(e["type"]) if (e["type"] or "").lower() in TYPES else '<span class="tag">%s</span>' % esc(e["type"]),
-               esc(fmt(e["format"])), modes_html(r, names, boss_plan)))
-
-
-def trainer_card(rec, seat, names):
-    tags = []
+def fight_rows(f, i, names):
+    rec, seat, kind = f["rec"], f["seat"], f["kind"]
+    meta = f.get("meta") or {}
+    rid = rec["id"]
+    kinds, tags, extra = [], [], []
+    if kind == "leader":
+        kinds.append('<span class="tag">Gym leader, badge %d</span>' % rec["order"])
+    elif kind == "e4":
+        kinds.append('<span class="tag">Elite Four %d</span>' % rec.get("order", 0))
+    elif kind == "champion":
+        kinds.append('<span class="tag">Champion</span>')
     if rec.get("class") == "optional_route":
-        tags.append('<span class="tag">Optional</span>')
+        kinds.append('<span class="tag">Optional</span>')
+    if rec.get("archetype"):
+        kinds.append('<span class="tag">%s</span>' % esc(pretty(rec["archetype"])))
     if seat and seat.get("eye_contact"):
         sd = seat.get("sight_distance")
         tags.append('<span class="tag sight">Battles on sight%s</span>' % (" (%g blocks)" % sd if sd else ""))
     elif seat and seat.get("eye_contact") is False:
         tags.append('<span class="tag">Talk to battle</span>')
-    if rec.get("archetype"):
-        tags.append('<span class="tag">%s</span>' % esc(pretty(rec["archetype"])))
-    where = ("Stands at x %d, y %d, z %d" % tuple(seat["seat"])) if seat and seat.get("seat") else "No seat authored"
-    extra = []
+    fmt_ = meta.get("format") or rec.get("format") or (rec.get("rct") or {}).get("battleFormat")
+    if fmt_:
+        tags.append('<span class="tag">%s</span>' % esc(fmt(fmt_)))
+    if kind in ("e4", "champion") and meta.get("type"):
+        tags.append(theme_html(meta["type"]))
+    if f.get("reason"):
+        extra.append("<b>Unplaced:</b> " + esc(f["reason"]))
     if seat and seat.get("unavoidable"):
         extra.append("<b>Unavoidable:</b> " + esc(seat["unavoidable"]))
     if seat and seat.get("why"):
         extra.append("<b>Why here:</b> " + esc(seat["why"]))
     if rec.get("lesson"):
         extra.append("<b>Lesson:</b> " + esc(rec["lesson"]))
-    name = rec.get("display_name") or rec.get("name") or rec["id"]
-    fmt_ = rec.get("format") or (rec.get("rct") or {}).get("battleFormat")
-    return ('<li class="card" id="%s"><header><h3>%s</h3><span>%s</span></header><p class="meta">%s%s</p>%s%s</li>'
-            % (esc(rec["id"]), esc(name), "".join(tags), esc(where), (" · " + esc(fmt(fmt_))) if fmt_ else "",
-               "".join('<p class="meta">%s</p>' % x for x in extra), modes_html(rec, names, route_plan)))
+    boss = kind in ("leader", "e4", "champion")
+    if kind == "leader" and "x" in meta:
+        where, pos = "%s gym" % meta["town"], "x %d, z %d (gym spawner)" % (meta["x"], meta["z"])
+    elif kind in ("e4", "champion"):
+        where, pos = "The League", "League building, no authored coordinate"
+    else:
+        where = f["area"] or "No route"
+        pos = ("x %d, y %d, z %d" % tuple(seat["seat"])) if seat and seat.get("seat") else "No seat authored"
+    unav = "Boss" if boss else "Yes" if seat and seat.get("unavoidable") else "No"
+    name = fight_name(f)
+    cells = ('<td class="num" data-l="#">%d</td><th scope="row" data-team="%s"><span class="nm">%s</span>%s</th>'
+             '<td data-l="Where">%s</td><td class="num" data-l="Stands at">%s</td><td data-l="Unavoidable">%s</td>'
+             '<td class="num" data-l="Team">%s</td><td class="num" data-l="Ace Lv">%s</td>'
+             % (i + 1, anchor("team-", rid), esc(name), (" " + " ".join(kinds)) if kinds else "", esc(where), esc(pos),
+                unav, mode_val(rec, lambda t: "%d" % len(t), True), mode_val(rec, lambda t: "%d" % ace(t))))
+    inner = (('<p class="meta">%s</p>' % " ".join(tags) if tags else "")
+             + "".join('<p class="meta">%s</p>' % x for x in extra)
+             + modes_block(rec, names, boss_plan if boss else route_plan, name))
+    return ('<tr class="sum%s" id="%s" data-tm="%s">%s</tr><tr class="tm" id="%s"><td colspan="%d">%s</td></tr>'
+            % (" z" if i % 2 else "", anchor("fight-", rid), anchor("team-", rid), cells, anchor("team-", rid),
+               len(FIGHT_COLS), inner))
 
 
-def route_section(g, names):
-    cap, who = g["cap"]
-    head = ("%s → %s" % (g["from"], g["to"])) if g.get("from") else ""
-    capline = (' <span class="cap">Cap Lv %d</span>' % cap) if cap else ""
-    return ('<section id="%s"><h2>%s%s</h2>%s%s<ol class="rt">%s</ol></section>'
-            % (esc(g["key"]), esc(g["title"]), capline,
-               '<p class="sub">%s%s</p>' % (esc(head), (" · level cap set by %s's ace" % esc(who)) if who else "") if head else "",
-               '<p class="sub">%s</p>' % esc(g["note"]) if g.get("note") else "",
-               "".join(trainer_card(r, s, names) for r, s in g["trainers"])))
+def fights_table(fights, names, caption):
+    return ('<div class="tbl"><table class="stk"><caption>%s</caption>%s<tbody>%s</tbody></table></div>'
+            % (esc(caption), thead(FIGHT_COLS), "".join(fight_rows(f, i, names) for i, f in enumerate(fights))))
+
+
+def gym_line(g):
+    r = g["rec"]
+    return ('<p class="gymline"><span class="badge">%d</span><b>%s</b> · %s · %s · %s · team %s · gym spawner '
+            '<span class="num">x %d, z %d</span></p>'
+            % (g["n"], esc(r["display_name"]), esc(g["town"]), theme_html(g["type"], g["theme"]), esc(fmt(g["format"])),
+               mode_val(r, team_desc, True), g["x"], g["z"]))
+
+
+def split_section(s, model, names):
+    cap, who = s["cap"]
+    sid = anchor("split-", s["key"])
+    capline = '<span class="cap">Cap Lv %d</span>' % cap if cap else ""
+    lead = ('<p class="sub">Level cap set by %s\'s ace.</p>' % esc(who)) if who else ""
+    if s["key"] == "endgame":
+        la = model.get("league_at") or {}
+        lead += ('<p class="sub">%sThe Elite Four\'s and Champion\'s spawners come with the League building; no '
+                 "coordinate is authored for them.</p>"
+                 % (("The League stands near x %d, z %d. " % (la["x"], la["z"])) if la.get("x") is not None else ""))
+    body = (fights_table(s["fights"], names, "%s: %d fights in order. Open a fight for the team."
+                         % (s["title"], len(s["fights"])))
+            if s["fights"] else '<p class="meta">No fights placed here yet.</p>')
+    return ('<section class="split" id="%s" aria-labelledby="h-%s"><h2 id="h-%s">%s %s</h2>%s%s%s%s</section>'
+            % (sid, sid, sid, esc(s["title"]), capline, lead, gym_line(s["gym"]) if s.get("gym") else "",
+               "".join('<p class="sub">%s</p>' % esc(n) for n in s["notes"]), body))
+
+
+def unplaced_section(model, names):
+    u = model.get("unplaced") or []
+    if not u:
+        return ""
+    return ('<section class="split" id="split-unplaced" aria-labelledby="h-split-unplaced"><h2 id="h-split-unplaced">'
+            'Unplaced</h2><p class="sub">%d fights match no placement rule; each row says why.</p>%s</section>'
+            % (len(u), fights_table(u, names, "Unplaced fights. Open a fight for the reason and the team.")))
+
+
+def sidebar(model):
+    items = []
+    groups = [(anchor("split-", s["key"]), s["nav"], s["fights"]) for s in model["splits"]]
+    if model.get("unplaced"):
+        groups.append(("split-unplaced", "Unplaced", model["unplaced"]))
+    for sid, label, fights in groups:
+        sub = "".join('<li><a href="#%s">%s</a></li>' % (anchor("fight-", f["rec"]["id"]), esc(fight_name(f)))
+                      for f in fights)
+        items.append('<li><a class="sp" href="#%s">%s</a>%s</li>'
+                     % (sid, esc(label), ('<details><summary>%d fights</summary><ol>%s</ol></details>'
+                                          % (len(fights), sub)) if fights else ""))
+    return ('<aside class="side" aria-label="Guide navigation">'
+            '<div class="seg" id="modebar" role="group" aria-label="Teams shown in full" hidden><span>Teams:</span>'
+            '<button type="button" data-m="challenge" aria-pressed="true">Challenge</button>'
+            '<button type="button" data-m="normal" aria-pressed="false">Normal</button></div>'
+            '<details class="drawer" id="drawer" open><summary>Fights</summary>'
+            '<nav class="nav" id="nav" aria-label="Fights by split"><ol>%s</ol></nav></details></aside>'
+            % "".join(items))
 
 
 def status_html(model):
@@ -478,50 +732,83 @@ def status_html(model):
 
 
 def render(model, names):
-    gyms = "".join(gym_card(g, names) for g in model["gyms"])
-    league = "".join(league_card(e, names) for e in model["league"])
-    la = model.get("league_at") or {}
-    routes = "".join(route_section(g, names) for g in model["routes"])
-    n_route = sum(len(g["trainers"]) for g in model["routes"])
     names_src = ("Pokemon, move, ability and item names and types: the Cobblemon 1.8 jar's Showdown data (%s)"
                  % esc(Path(names.sd["source"]).name)) if names.sd else (
         "No Cobblemon jar was found, so names are the data's ids title-cased and no types are shown")
     if names.missing:
         names_src += "; not found there, shown title-cased: %s" % esc(", ".join(sorted(names.missing)))
+    n_fights = sum(len(s["fights"]) for s in model["splits"])
     return "".join([
         "<title>Challenge Mode Trainers</title>\n<style>%s</style>\n" % style(model["nm_style"]),
-        '<main class="cg" id="cg">',
+        '<main class="cg" id="cg" data-mode="challenge">',
         "<h1>Challenge Mode Trainers</h1>",
-        '<p class="sub">The eight gyms, the League and every route trainer, in travel order, with the Challenge '
-        "team first and the Normal team beside it.</p>",
+        '<p class="sub">Every fight, split by gym in travel order and then the end game: %d fights in %d splits. Each '
+        "row opens onto that fight's team; Challenge teams are shown in full, with the Normal team summarised under "
+        "them.</p>" % (n_fights, len(model["splits"])),
         status_html(model),
         '<p class="mapline">Map: see the Region Nuzlocke Map page</p>',
-        '<div class="bar" id="modebar" hidden><span>Show full team:</span>'
-        '<button type="button" data-m="challenge" aria-pressed="true">Challenge</button>'
-        '<button type="button" data-m="normal" aria-pressed="false">Normal</button></div>',
-        "<h2>At a glance</h2>", summary_table(model, names),
-        '<p class="sub">Cap: rctmod\'s level cap while that leader is your next required trainer, '
-        "max(initialLevelCap %d, the ace's level + relativeLevelCap %d), from the live team.</p>"
-        % (model["init_cap"], model["rel_cap"]),
-        '<h2 id="gyms">The eight gyms</h2><div class="cards two">%s</div>' % gyms,
-        '<h2 id="league">The League</h2><p class="sub">%s Their spawners come with the League building; '
-        "no coordinate is authored for them.</p>"
-        % (("The League stands near x %d, z %d." % (la["x"], la["z"])) if la.get("x") is not None else ""),
-        '<div class="cards two">%s</div>' % league,
-        '<h2 id="routes">Route trainers</h2><p class="sub">%d trainers. "Battles on sight" means the trainer '
-        "starts the fight when it sees you; the others wait to be spoken to.</p>" % n_route,
-        routes,
+        '<p class="sub">Cap: rctmod\'s level cap while that split\'s boss is your next required trainer, '
+        "max(initialLevelCap %d, the ace's level + relativeLevelCap %d), from the live team. \"Battles on sight\" "
+        "means the trainer starts the fight when it sees you; the others wait to be spoken to. Unavoidable \"Yes\" "
+        "means the trainer's seat file records why it cannot be walked past.</p>" % (model["init_cap"], model["rel_cap"]),
+        '<div class="layout">', sidebar(model), '<div class="content">',
+        "".join(split_section(s, model, names) for s in model["splits"]),
+        unplaced_section(model, names),
+        '<section class="how" id="how" aria-labelledby="h-how"><h2 id="h-how">How fights are placed</h2>'
+        '<p class="sub">%s To add a fight: add a trainer record to <code>data/trainers.json</code> with a '
+        "<code>route_id</code> from <code>data/routes.json</code> (or a <code>split</code> of 1-8, \"hq\" or "
+        "\"endgame\") and re-run <code>python tools/challenge_guide.py</code>.</p></section>" % esc(RULE),
         '<ul class="src"><li>Teams: <code>data/trainers.json</code>; seats: <code>data/route_trainers.json</code>, '
         "<code>data/late_route_trainers.json</code>, <code>data/mansion_guardians.json</code>, "
-        "<code>data/vr_trainers.json</code>, <code>data/hq_trainers.json</code>; gyms: "
-        "<code>data/gym_buildings/</code>, <code>data/gym_trainers.json</code>; caps: "
-        "<code>modpack/config/rctmod-server.toml</code>.</li><li>%s.</li>"
+        "<code>data/vr_trainers.json</code>, <code>data/hq_trainers.json</code>; routes: "
+        "<code>data/routes.json</code>; gyms: <code>data/gym_buildings/</code>, <code>data/gym_trainers.json</code>; "
+        "caps: <code>modpack/config/rctmod-server.toml</code>.</li><li>%s.</li>"
         "<li>Generated by <code>tools/challenge_guide.py</code>. Valid page, not proof of in-game behaviour.</li></ul>"
         % names_src,
-        "</main>\n", TOGGLE, "\n"])
+        "</div></div></main>\n", SCRIPT, "\n"])
 
 
 VOID = {"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "source", "track", "wbr"}
+
+
+def luminance(c):
+    c = c.lstrip("#")
+    if len(c) == 3:
+        c = "".join(ch * 2 for ch in c)
+    lin = lambda v: v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4
+    r, g, b = (lin(int(c[i:i + 2], 16) / 255) for i in (0, 2, 4))
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+def contrast(a, b):
+    hi, lo = sorted((luminance(a), luminance(b)), reverse=True)
+    return (hi + 0.05) / (lo + 0.05)
+
+
+THEMES = (("light", r":root\{"), ("dark", r':root\[data-theme="dark"\]\{'),
+          ("dark (system)", r':root:not\(\[data-theme="light"\]\)\{'))
+
+
+def theme_tokens(css):
+    """Every hex token the CSS declares, per theme block: :root, :root[data-theme=dark], and the
+    prefers-color-scheme block (each checked, since a page can be shown in any of the three)."""
+    pick = lambda blocks: {k: v for b in blocks for k, v in re.findall(r"--([\w-]+)\s*:\s*(#[0-9a-fA-F]{3,8})\b", b)}
+    light = pick(re.findall(THEMES[0][1] + r"([^}]*)\}", css))
+    return [light] + [{**light, **pick(re.findall(rx + r"([^}]*)\}", css))} for _n, rx in THEMES[1:]]
+
+
+def contrast_problems(css):
+    out = []
+    for theme, tok in zip([n for n, _rx in THEMES], theme_tokens(css)):
+        for pairs, need in ((TEXT_PAIRS, 4.5), (UI_PAIRS, 3.0)):
+            for fg, bg in pairs:
+                if fg not in tok or bg not in tok:
+                    out.append("contrast: the %s theme lacks --%s or --%s" % (theme, fg, bg))
+                    continue
+                r = contrast(tok[fg], tok[bg])
+                if r < need:
+                    out.append("contrast: %s --%s on --%s is %.2f, under %.1f" % (theme, fg, bg, r, need))
+    return out
 
 
 def page_problems(page):
@@ -549,6 +836,10 @@ def page_problems(page):
     for decl in re.findall(r"([\w-]+)\s*:\s*[^;{}]*(?:#[0-9a-fA-F]{3,8}\b|rgba?\()", css):
         if not decl.startswith("--"):
             out.append("a literal colour outside a token: %s" % decl)
+    out += contrast_problems(css)
+    for a in re.findall(r'\b(?:id|href)="#?([^"]*)"', page):
+        if not re.fullmatch(r"[A-Za-z0-9_.-]+", a):
+            out.append("an anchor that is not a bare token: %r" % a)
     body = re.sub(r"<style>.*?</style>|<script>.*?</script>", "", page, flags=re.S)
     stack = []
     for close, name in re.findall(r"<(/?)([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>", body):
@@ -582,11 +873,14 @@ def main(argv=None):
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(page, encoding="utf-8")
     t = model["tally"]
-    print("wrote %s (%d bytes): %d gyms, %d League, %d route-side trainers; live roster normal=%d challenge=%d "
+    print("wrote %s (%d bytes): %d splits (%s), %d unplaced; live roster normal=%d challenge=%d "
           "identical=%d neither=%d; names from %s%s"
-          % (out, len(page.encode("utf-8")), len(model["gyms"]), len(model["league"]),
-             sum(len(g["trainers"]) for g in model["routes"]), t["normal"], t["challenge"], t["both"], t[None],
+          % (out, len(page.encode("utf-8")), len(model["splits"]),
+             ", ".join("%s:%d" % (s["key"], len(s["fights"])) for s in model["splits"]), len(model["unplaced"]),
+             t["normal"], t["challenge"], t["both"], t[None],
              jar or "ids (no jar)", ("; %d ids not in the jar" % len(names.missing)) if names.missing else ""))
+    for f in model["unplaced"]:
+        print("UNPLACED %s: %s" % (f["rec"]["id"], f["reason"]))
 
 
 if __name__ == "__main__":
