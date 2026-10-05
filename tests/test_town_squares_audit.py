@@ -439,7 +439,7 @@ def test_mutation_a_stall_built_without_its_counter_is_caught(tmp_path, monkeypa
     res = A.audit(None, None, None, npcs=_npcs(), r17m_fns=_r17m_fns(), markets_files=_markets_files())
     caught = {k for c, k, _m in res["problems"] if c == "stall" and k.endswith(":counter")}
     n = sum(len(t["stalls"]) for t in A.load(ROOT / "data" / "plaza_centres.json")["towns"].values())
-    assert len(caught) == n == 51     # 43 until 2026-10-05; the six new squares added 8
+    assert len(caught) == n == 49     # 43 until 2026-10-05; the six new squares added 8, the Displaced City's 2 held (data/held/)
 
 
 @need_build
@@ -494,7 +494,7 @@ def test_mutation_merchant_seated_at_the_table_facing_it_is_caught(monkeypatch):
     assert markets.merchant_problems(doc, files, markets.load_plazas()) == []      # the builder's check passes it
     P = _staffing(files)
     unstaffed = {k for _c, k, _m in P if k.count("_stall_") == 1 and ":" not in k}
-    assert len(unstaffed) == 51     # 43 until 2026-10-05; the six new squares added 8
+    assert len(unstaffed) == 49     # 43 until 2026-10-05; the six new squares added 8, the Displaced City's 2 held (data/held/)
 
 
 def test_mutation_merchant_price_doubled_is_caught(monkeypatch):
@@ -533,4 +533,4 @@ def test_mutation_tent_built_without_clearing_its_footprint_is_caught(tmp_path, 
     res = A.audit(None, None, None, npcs=_npcs(), r17m_fns=_r17m_fns(), markets_files=_markets_files())
     caught = {k.rsplit(":", 1)[0] for c, k, _m in res["problems"] if c == "stall" and k.endswith(":air0")}
     n = sum(len(t["stalls"]) for t in A.load(ROOT / "data" / "plaza_centres.json")["towns"].values())
-    assert len(caught) == n == 51     # 43 until 2026-10-05; the six new squares added 8
+    assert len(caught) == n == 49     # 43 until 2026-10-05; the six new squares added 8, the Displaced City's 2 held (data/held/)

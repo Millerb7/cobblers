@@ -258,6 +258,16 @@ KNOWN = {
     ("power", "steepside:cobblecuisine:sweet_malasada"): "ungated friendship food on Steepside's counter (strand power)",
     ("power", "steepside:cobblecuisine:sweet_pokepuff"): "as above",
     ("power", "steepside:cobblecuisine:mint_pokepuff"): "as above",
+    ("power", "steepside:cobblemon:thunder_stone"): "2026-10-05 (obtainability sweep, the owner's 'evolution stones actually purchasable'): the ten stones ungated at Steepside, as docs/mechanics/PROGRESSION_LADDER.md 5.4 designs them and tools/markets_audit.py (independent) requires; this rule and that design disagree. OWNER: gate or not (docs/OVERNIGHT_REVIEW_2026-10-06.md N39)",
+    ("power", "steepside:cobblemon:water_stone"): "as thunder_stone",
+    ("power", "steepside:cobblemon:fire_stone"): "as thunder_stone",
+    ("power", "steepside:cobblemon:leaf_stone"): "as thunder_stone",
+    ("power", "steepside:cobblemon:moon_stone"): "as thunder_stone",
+    ("power", "steepside:cobblemon:sun_stone"): "as thunder_stone",
+    ("power", "steepside:cobblemon:shiny_stone"): "as thunder_stone",
+    ("power", "steepside:cobblemon:dusk_stone"): "as thunder_stone",
+    ("power", "steepside:cobblemon:dawn_stone"): "as thunder_stone",
+    ("power", "steepside:cobblemon:ice_stone"): "as thunder_stone",
     ("power", "steepside:cobblecuisine:citrus_pokepuff"): "as above",
     ("power", "steepside:cobblecuisine:mocha_pokepuff"): "as above",
     ("power", "pacifidlog:cobblemon:dive_ball"): "ungated balls on Pacifidlog's counter (travel as the gate, "
@@ -278,19 +288,12 @@ KNOWN = {
     ("reach", "tableland_stop:pokemart"): "Redbrow, a rest stop with a Centre and no Mart: as above",
     ("reach", "rift_rim_stop:pokemart"): "Rimwatch, a rangers' post with a Centre and no Mart: as above",
     ("reach", "merian_hut:pokemart"): "Merian Hut, a rest stop with a Centre and no Mart: as above",
-    ("reach", "displaced_city:pokecenter"): "the Displaced City has no Centre and no Mart (data/placements.json): its "
-                                           "square's reach is unverified by this audit (the builder walks from the "
-                                           "summit stair's top)",
-    ("reach", "displaced_city:pokemart"): "as above",
     ("reach", "rift_dig_camp:pokecenter"): "the West Spur Dig has no Centre and no Mart: its square's reach is unverified "
                                           "by this audit (the builder walks from the finds shed's door)",
     ("reach", "rift_dig_camp:pokemart"): "as above",
     ("square", "rift_rim_stop"): "data/towns.json places Rimwatch at x3790-3838 z3767-3815 (centre 3814, 3791); the "
                                  "settlement's plan, its Centre (3729, 3945) and the square (3746-3772, 3948-3956) are "
                                  "170 blocks south-south-west of that centre: towns.json is stale, as for sea_town",
-    ("square", "displaced_city"): "data/towns.json places the Displaced City at x2904-3035 z1645-1776 (centre 2969, "
-                                  "1710); the plan's summit square, the cairn (3328, 1757) and the 24 house origins (x3266-3402, "
-                                  "z1680-1825) are 300+ blocks east: towns.json is stale, as for sea_town",
 }
 
 
