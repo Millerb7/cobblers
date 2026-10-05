@@ -932,33 +932,6 @@
       ]
     },
     {
-      "id": "displaced_lampwright", "town": "displaced_city", "stall": "displaced_city_stall_1", "path": "off_path", "badge": null, "status": "sited",
-      "at": [3332, 47, 1752], "yaw": 90,
-      "site_why": "the contract seat (data/plaza_centres.json displaced_city_stall_1, keeper_at), copied: the tent in the summit square's north-east corner, facing west to the cairn",
-      "keeper": {"name": "Lampwright", "greeting": "Down here a lamp is the first thing anyone makes and the last thing they sell."},
-      "theme": "a town living underground makes its own light",
-      "sells": "light", "category": "Lamps",
-      "stall_why": "2026-10-05, the owner: 'Every town should have somewhere a player goes to spend money'. no_counter recorded 'a market would decide a story question' (the residents' own name is unwritten, docs/story/handoffs/DISPLACED_CITY_AND_SCAR.md question 13); the story handoff says nothing about trade, so the stall sells only what any town in the dark would make, and its keeper is named for the trade, never for the people. OWNER TO CONFIRM. Ungated vanilla provisions, off the budget curve (stalls_basis.budget), at the Rimside chandler's prices",
-      "stock": [
-        {"id": "lantern", "item": "minecraft:lantern", "name": "Lantern", "count": 4, "price": 480, "gate": null, "strand": "provision", "why": "120 each (the Rimside chandler's price; no bank price)", "verified": "minecraft 1.21.1 jar, read 2026-10-05 by tools/markets.py ids"},
-        {"id": "torch", "item": "minecraft:torch", "name": "Torch", "count": 16, "price": 160, "gate": null, "strand": "provision", "why": "10 each (the Rimside chandler's price; no bank price)", "verified": "minecraft 1.21.1 jar, read 2026-10-05 by tools/markets.py ids"}
-      ]
-    },
-    {
-      "id": "displaced_cave_garden", "town": "displaced_city", "stall": "displaced_city_stall_2", "path": "off_path", "badge": null, "status": "sited",
-      "at": [3324, 47, 1762], "yaw": 180,
-      "site_why": "the contract seat (data/plaza_centres.json displaced_city_stall_2, keeper_at), copied: the tent in the summit square's south-west corner, facing north to the cairn",
-      "keeper": {"name": "Cave Gardener", "greeting": "Mushrooms off the lower benches, berries off the vines. Nothing here has seen the sun."},
-      "theme": "the benches' farms grow what grows without sun",
-      "sells": "herbs", "category": "Cave Garden",
-      "stall_why": "as displaced_lampwright (OWNER TO CONFIRM). The town's farms (data/placements.json displaced_farms) are the source; ungated vanilla provisions, off the budget curve, at Stoneford's and Tilpey's herbalists' prices",
-      "stock": [
-        {"id": "brown_mushroom", "item": "minecraft:brown_mushroom", "name": "Brown Mushroom", "count": 4, "price": 160, "gate": null, "strand": "provision", "why": "40 each (the herbalists' price; no bank price)", "verified": "minecraft 1.21.1 jar, read 2026-10-05 by tools/markets.py ids"},
-        {"id": "red_mushroom", "item": "minecraft:red_mushroom", "name": "Red Mushroom", "count": 4, "price": 160, "gate": null, "strand": "provision", "why": "40 each (the herbalists' price; no bank price)", "verified": "minecraft 1.21.1 jar, read 2026-10-05 by tools/markets.py ids"},
-        {"id": "glow_berries", "item": "minecraft:glow_berries", "name": "Glow Berries", "count": 4, "price": 240, "gate": null, "strand": "provision", "why": "60 each against bank.json's 20 (Greenhollow's price)", "verified": "minecraft 1.21.1 jar, read 2026-10-05 by tools/markets.py ids"}
-      ]
-    },
-    {
       "id": "dig_stores", "town": "rift_dig_camp", "stall": "rift_dig_camp_stall_1", "path": "off_path", "badge": null, "status": "sited",
       "at": [3111, 90, 3296], "yaw": 90,
       "site_why": "the contract seat (data/plaza_centres.json rift_dig_camp_stall_1, keeper_at), copied: the tent on the gravel middle's east side, below the finds shed, facing west",
