@@ -155,7 +155,7 @@
   "pets": [
     {"id": "sunset_harbour_popplio", "species": "popplio", "owner": "sunset_harbour", "mode": "follow", "why": "the harbour counter's Popplio waits by the counter balancing a water balloon on its nose for customers"},
     {"id": "sunset_harbour_wingull", "species": "wingull", "owner": "sunset_harbour", "mode": "follow", "why": "and a Wingull that follows the harbour keeper everywhere, because she once fed it"},
-    {"id": "sunset_market_meowth", "species": "meowth", "owner": "sunset_fish_market", "mode": "wait", "why": "the fish market's Meowth, kept as a guard against the other cats: a poacher turned gamekeeper"},
+    {"id": "sunset_market_meowth", "species": "meowth", "owner": "sunset_net_loft", "mode": "wait", "why": "the net loft's Meowth, kept as a guard against the other cats: a poacher turned gamekeeper. Re-homed 2026-10-06 from sunset_fish_market: the fish market stands on the square, which the world cuts below the heightmap and the build's replay does not, so the build finds no open cell beside it; give it back to the fish market when the replay models the square"},
     {"id": "sunset_loft_pyukumuku", "species": "pyukumuku", "owner": "sunset_net_loft", "mode": "wait", "why": "the net loft keeper's Pyukumuku in its bucket by the stall; nobody remembers why he keeps it"},
     {"id": "sunset_farwater_chinchou", "species": "chinchou", "owner": "sunset_far_water_catch", "mode": "wait", "why": "the far-water seller's Chinchou in a tank by the stall, its lights the stall's sign"},
     {"id": "sunset_farwater_tatsugiri", "species": "tatsugiri", "owner": "sunset_far_water_catch", "mode": "wait", "why": "and a Tatsugiri in a dish beside it, which customers keep trying to buy"}
