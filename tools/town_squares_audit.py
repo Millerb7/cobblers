@@ -269,6 +269,28 @@ KNOWN = {
     ("spend", "deep_city"): "the Deep's city: its two stalls are unsited (markets.json no_counter: story-gated)",
     ("square", "sea_town"): "data/towns.json places Pacifidlog at x7020-7280 z6704-7238 (centre 7210, 6960); the "
                             "settlement, data/sea_town.json and the square are at (5160, 7380): towns.json is stale",
+    # 2026-10-05, the hamlets' and the summit town's squares (the squares' builder, recorded, not fixed): the reach rule
+    # walks from a Centre AND a Mart, and these places have no Mart (or neither). Their reach is NOT VERIFIED here: the
+    # builder walks from the Centre and from data/plaza_centres.json `walk_from` (the Displaced City's summit stair, the
+    # Dig's finds shed), which this audit does not read. Whether the rule should walk from a declared arrival instead is
+    # the audit owner's question, not a slack to take here
+    ("reach", "gorge_hamlet:pokemart"): "Bridgekeep is a hamlet with a Centre and no Mart: Mart reach unanswerable",
+    ("reach", "tableland_stop:pokemart"): "Redbrow, a rest stop with a Centre and no Mart: as above",
+    ("reach", "rift_rim_stop:pokemart"): "Rimwatch, a rangers' post with a Centre and no Mart: as above",
+    ("reach", "merian_hut:pokemart"): "Merian Hut, a rest stop with a Centre and no Mart: as above",
+    ("reach", "displaced_city:pokecenter"): "the Displaced City has no Centre and no Mart (data/placements.json): its "
+                                           "square's reach is unverified by this audit (the builder walks from the "
+                                           "summit stair's top)",
+    ("reach", "displaced_city:pokemart"): "as above",
+    ("reach", "rift_dig_camp:pokecenter"): "the West Spur Dig has no Centre and no Mart: its square's reach is unverified "
+                                          "by this audit (the builder walks from the finds shed's door)",
+    ("reach", "rift_dig_camp:pokemart"): "as above",
+    ("square", "rift_rim_stop"): "data/towns.json places Rimwatch at x3790-3838 z3767-3815 (centre 3814, 3791); the "
+                                 "settlement's plan, its Centre (3729, 3945) and the square (3746-3772, 3948-3956) are "
+                                 "170 blocks south-south-west of that centre: towns.json is stale, as for sea_town",
+    ("square", "displaced_city"): "data/towns.json places the Displaced City at x2904-3035 z1645-1776 (centre 2969, "
+                                  "1710); the plan's summit square, the cairn (3328, 1757) and the 24 house origins (x3266-3402, "
+                                  "z1680-1825) are 300+ blocks east: towns.json is stale, as for sea_town",
 }
 
 

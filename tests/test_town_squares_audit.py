@@ -386,8 +386,11 @@ def test_known_defects_are_exactly_the_recorded_ones(real):
 @need_build
 def test_every_town_reaches_its_square_from_both_doors(real):
     # Without it a town whose Centre opens onto a cliff would be counted as having a middle.
+    # 2026-10-05: a hamlet with no Mart, or a place with neither, is exempt ONLY for the door its KNOWN reach entry
+    # names (recorded by the squares' builder); a town missing a door with no KNOWN entry still fails here
     for t, r in real["towns"].items():
-        assert set(r["reach"]) == {"pokecenter", "pokemart"}, t
+        missing = {k.split(":", 1)[1] for c, k in A.KNOWN if c == "reach" and k.startswith(t + ":")}
+        assert set(r["reach"]) == {"pokecenter", "pokemart"} - missing, t
         assert r["stalls"] >= 1 and r["blocks"] > 0, t
 
 
@@ -436,7 +439,7 @@ def test_mutation_a_stall_built_without_its_counter_is_caught(tmp_path, monkeypa
     res = A.audit(None, None, None, npcs=_npcs(), r17m_fns=_r17m_fns(), markets_files=_markets_files())
     caught = {k for c, k, _m in res["problems"] if c == "stall" and k.endswith(":counter")}
     n = sum(len(t["stalls"]) for t in A.load(ROOT / "data" / "plaza_centres.json")["towns"].values())
-    assert len(caught) == n == 43
+    assert len(caught) == n == 51     # 43 until 2026-10-05; the six new squares added 8
 
 
 @need_build
@@ -491,7 +494,7 @@ def test_mutation_merchant_seated_at_the_table_facing_it_is_caught(monkeypatch):
     assert markets.merchant_problems(doc, files, markets.load_plazas()) == []      # the builder's check passes it
     P = _staffing(files)
     unstaffed = {k for _c, k, _m in P if k.count("_stall_") == 1 and ":" not in k}
-    assert len(unstaffed) == 43
+    assert len(unstaffed) == 51     # 43 until 2026-10-05; the six new squares added 8
 
 
 def test_mutation_merchant_price_doubled_is_caught(monkeypatch):
@@ -530,4 +533,4 @@ def test_mutation_tent_built_without_clearing_its_footprint_is_caught(tmp_path, 
     res = A.audit(None, None, None, npcs=_npcs(), r17m_fns=_r17m_fns(), markets_files=_markets_files())
     caught = {k.rsplit(":", 1)[0] for c, k, _m in res["problems"] if c == "stall" and k.endswith(":air0")}
     n = sum(len(t["stalls"]) for t in A.load(ROOT / "data" / "plaza_centres.json")["towns"].values())
-    assert len(caught) == n == 43
+    assert len(caught) == n == 51     # 43 until 2026-10-05; the six new squares added 8
