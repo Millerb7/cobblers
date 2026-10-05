@@ -267,7 +267,9 @@ def test_a_commented_out_loot_line_or_a_badgeless_table_fails_the_badge(tmp_path
 def test_a_leader_too_strong_at_the_cap_fails_gym_1(tmp_path, monkeypatch):
     # without this, a leader no starter-and-catchables team can beat at the cap would pass
     st = stage(run(tmp_path, {"gym_1"}, brock=(20,) * 6), "gym_1")
-    assert st.verdict == "PASS"                     # six weak dummies at the cap: still beaten
+    assert check(st, "beat:kanto_brock")["verdict"] == "PASS"     # six weak dummies at the cap: still beaten
+    # ... but not at L14, the top wild level on route 1: the six levels between are XP, which is not modelled
+    assert check(st, "cap_reachable")["verdict"] == "NOT_MODELLED" and st.verdict == "NOT_MODELLED"
     monkeypatch.setitem(DEX, "titan", mon("Titan", 200, ["1:tackle"]))
     root, packs = make_world(tmp_path / "b")
     p = packs / "cobblers_trainers" / "data" / "rctmod" / "trainers" / "kanto_brock.json"
@@ -287,6 +289,183 @@ def test_a_missing_built_artifact_fails_never_passes(tmp_path):
     (packs / "cobblers_towns" / "data" / "cobblers" / "function" / "towns" / "hometown.mcfunction").unlink()
     st = stage(W.run(inputs(root, packs), {"spawn_to_oak"}), "spawn_to_oak")
     assert st.verdict == "FAIL" and check(st, "spawn_set")["verdict"] == "FAIL"
+
+
+# ------------------------------------------------------------------------------------------------- the zones
+
+def zone_pack(packs, body, admit="scoreboard players set @s cob_pass_z9 1\n", box=(100, 104, -64, 320, 0, 119)):
+    """A built zone z9 over x100-104 (every z of the flat world), its function `body`, its admit function `admit`."""
+    d = packs / "cobblers_rift_zones" / "data" / "cobblers"
+    x0, x1, y0, y1, z0, z1 = box
+    write(d / "advancement" / "rift_zones" / "z9_zone.json",
+          {"criteria": {"here": {"trigger": "minecraft:location", "conditions": {"player": [
+              {"condition": "minecraft:any_of", "terms": [{"condition": "minecraft:entity_properties", "entity": "this",
+                                                          "predicate": {"location": {"position": {
+                                                              "x": {"min": x0, "max": x1}, "y": {"min": y0, "max": y1},
+                                                              "z": {"min": z0, "max": z1}}}}}]}]}}},
+           "rewards": {"function": "cobblers:rift_zones/z9/zone"}})
+    write(d / "function" / "rift_zones" / "z9" / "zone.mcfunction", body)
+    write(d / "function" / "rift_zones" / "z9" / "admit.mcfunction", admit)
+
+
+ADMIT = ("execute if entity @s[advancements={cobblers:flag/gym1_cleared=true}] unless score @s cob_pass_z9 matches 1.. "
+         "run function cobblers:rift_zones/z9/admit\n")
+TURN = ("execute if entity @s[gamemode=!creative] unless score @s cob_pass_z9 matches 1.. "
+        "run function cobblers:rift_zones/z9/turn_back\n")
+GRANT_LATE = ("execute if entity @s[advancements={cobblers:flag/gym1_cleared=true}] "
+              "run function cobblers:rift_zones/z9/admit\n")
+
+
+def test_a_zone_admits_a_flag_only_on_a_line_before_its_turn_back(tmp_path):
+    # without this, a grant that runs after the teleport (CRITICAL_PATH_WALK_2 item 1's shape) would read as a pass
+    root, packs = make_world(tmp_path)
+    zone_pack(packs, "advancement revoke @s only cobblers:rift_zones/z9_zone\n" + ADMIT + TURN)
+    z = W.zone_checks(packs)["z9"]
+    assert z["turns_back"] and z["objective"] == "cob_pass_z9"
+    assert z["boxes"] == [(100, 104, -64, 320, 0, 119)]
+    assert W.zone_passable(z, {"cobblers:flag/gym1_cleared"}) and not W.zone_passable(z, set())
+    zone_pack(packs, TURN + GRANT_LATE)
+    assert not W.zone_passable(W.zone_checks(packs)["z9"], {"cobblers:flag/gym1_cleared"})
+
+
+def test_an_admit_that_never_sets_the_pass_score_admits_nobody(tmp_path):
+    # without this, a line that calls an admit function writing the wrong objective would count as a pass
+    root, packs = make_world(tmp_path)
+    zone_pack(packs, ADMIT + TURN, admit="scoreboard players set @s cob_pass_z1 1\n")
+    assert not W.zone_passable(W.zone_checks(packs)["z9"], {"cobblers:flag/gym1_cleared"})
+
+
+def test_a_zone_function_no_advancement_calls_is_not_enforced(tmp_path):
+    # without this, a held zone (built functions, no zone advancement: z4 today) would close the walk
+    root, packs = make_world(tmp_path)
+    zone_pack(packs, TURN)
+    (packs / "cobblers_rift_zones" / "data" / "cobblers" / "advancement" / "rift_zones" / "z9_zone.json").unlink()
+    assert W.zone_checks(packs) == {}
+
+
+def test_a_closed_zone_stops_route_1_and_the_flag_reopens_it(tmp_path):
+    # without this, a route through a zone the player's badges do not open would read as walkable
+    root, packs = make_world(tmp_path)
+    zone_pack(packs, ADMIT + TURN)
+    r1 = stage(W.run(inputs(root, packs), {"route_1"}), "route_1")
+    ev = check(r1, "walk_corridor")["evidence"]
+    assert not ev["reached"] and ev["closed_zones"] == ["z9"] and ev["stuck_after"] == [99, 60]
+    w = W.Walker(inputs(root, packs))
+    ev = w.walk_held({"cobblers:flag/gym1_cleared"}, [(60, 60)], [(180, 60)], line=[tuple(p) for p in ROUTE])
+    assert ev["reached"] and ev["steps"] == 120 and "closed_zones" not in ev
+
+
+def test_a_stand_inside_a_zone_its_flags_do_not_open_fails(tmp_path):
+    # without this, Victory Road's fights 8-10 inside z5 (CRITICAL_PATH_WALK_2 item 1) would pass again
+    root, packs = make_world(tmp_path)
+    zone_pack(packs, TURN + GRANT_LATE)
+    w = W.Walker(inputs(root, packs))
+    st = W.Stage("s", "s")
+    w.zones_admit(st, "a", {"cobblers:flag/gym1_cleared"}, 102, 70, 60, "x")
+    w.zones_admit(st, "b", set(), 110, 70, 60, "y")
+    w.zones_admit(st, "c", set(), 102, 400, 60, "z")          # above the box's y range
+    assert [c["verdict"] for c in st.checks] == ["FAIL", "PASS", "PASS"]
+    assert "only its knock box" in st.checks[0]["evidence"]["summary"]
+
+
+def knock_pack(packs, box=(100, 101, 70, 71, 60, 61)):
+    """z9's knock box: its advancement -> knock -> qualify -> (gym 1's flag) grant, which sets z9's pass."""
+    d = packs / "cobblers_rift_zones" / "data" / "cobblers"
+    x0, x1, y0, y1, z0, z1 = box
+    write(d / "advancement" / "rift_zones" / "z9_knock.json",
+          {"criteria": {"here": {"trigger": "minecraft:location", "conditions": {"player": [
+              {"condition": "minecraft:entity_properties", "entity": "this", "predicate": {"location": {"position": {
+                  "x": {"min": x0, "max": x1}, "y": {"min": y0, "max": y1}, "z": {"min": z0, "max": z1}}}}}]}}},
+           "rewards": {"function": "cobblers:rift_zones/z9/knock"}})
+    f = d / "function" / "rift_zones" / "z9"
+    write(f / "knock.mcfunction", "advancement revoke @s only cobblers:rift_zones/z9_knock\n"
+                                  "function cobblers:rift_zones/z9/qualify\n")
+    write(f / "qualify.mcfunction", "execute if entity @s[advancements={cobblers:flag/gym1_cleared=true}] "
+                                    "run function cobblers:rift_zones/z9/grant\n")
+    write(f / "grant.mcfunction", "scoreboard players set @s cob_pass_z9 1\ntp @s 1 2 3\n")
+
+
+def test_a_knock_box_on_the_routed_path_gives_the_pass_and_one_off_it_does_not(tmp_path):
+    # without this, a knock-only zone would fail every stand behind its own gatehouse, or pass one the route never
+    # brings the player to (Victory Road's fights 8-10, 80 blocks from G5's knock box)
+    root, packs = make_world(tmp_path)
+    zone_pack(packs, TURN)                      # nothing admits on entry
+    knock_pack(packs)
+    z = W.zone_checks(packs)["z9"]
+    assert z["knocks"] == [((100, 101, 70, 71, 60, 61), [frozenset({"cobblers:flag/gym1_cleared"})])]
+    w = W.Walker(inputs(root, packs))
+    held = {"cobblers:flag/gym1_cleared"}
+    st = W.Stage("s", "s")
+    w.zones_admit(st, "on", held, 102, 70, 60, "x", path=[(80, 60), (90, 60)])        # 10 blocks from the knock
+    w.zones_admit(st, "off", held, 102, 70, 60, "x", path=[(80, 90), (83, 90)])       # hypot(17, 29) away
+    w.zones_admit(st, "unheld", set(), 102, 70, 60, "x", path=[(80, 60), (90, 60)])
+    assert [c["verdict"] for c in st.checks] == ["PASS", "FAIL", "FAIL"]
+    assert W.box_distance((100, 101, 70, 71, 60, 61), [(90, 60)]) == 10.0
+
+
+# ------------------------------------------------------------------------------------------------- victory road
+
+def vr_world(tmp_path, seat="100.5 71 62.5", forced=True):
+    root, packs = make_world(tmp_path, forced=forced)
+    write(root / "data" / "vr_trainers.json", {"trainers": [{"id": "route_01_trainer_01", "seat": [100, 71, 62],
+                                                             "eye_contact": True}]})
+    cyc = packs / "cobblers_trainers" / "data" / "cobblers" / "function" / "trainers" / "cycle.mcfunction"
+    cyc.write_text('execute as @e[nbt={TrainerId:"route_01_trainer_01",InBattle:0b}] positioned %s run tp @s\n'
+                   % seat, encoding="utf-8")
+    return root, packs
+
+
+def test_an_authored_stand_seated_where_the_data_puts_it_passes(tmp_path):
+    # without this, the seat check could fail every correct seat (the half-block centring)
+    w = W.Walker(inputs(*vr_world(tmp_path)))
+    st = W.Stage("s", "s")
+    w.vr_stands(st, set())
+    assert [(c["check"], c["verdict"]) for c in st.checks] == [("seated:route_01_trainer_01", "PASS"),
+                                                                ("zone_admits:route_01_trainer_01", "PASS")]
+
+
+def test_a_stand_seated_elsewhere_unseated_or_not_forcing_fails(tmp_path):
+    # without this, a cycle that seats a Victory Road trainer two blocks off, or never, or a mob that never
+    # initiates where the data says eye contact, would pass
+    for i, kw in enumerate(({"seat": "102.5 71 62.5"}, {"seat": "1 1 1\n"}, {"forced": False})):
+        root, packs = vr_world(tmp_path / str(i), **kw)
+        if i == 1:
+            (packs / "cobblers_trainers" / "data" / "cobblers" / "function" / "trainers" / "cycle.mcfunction"
+             ).write_text("say nobody\n", encoding="utf-8")
+        st = W.Stage("s", "s")
+        W.Walker(inputs(root, packs)).vr_stands(st, set())
+        assert check(st, "seated:route_01_trainer_01")["verdict"] == "FAIL", kw
+
+
+# ------------------------------------------------------------------------------------------------- the League
+
+def test_template_rect_rotates_about_the_corner():
+    # without this, the League's footprint would be computed in the wrong quadrant: x3635-3754 z2375-2485 is the
+    # footprint data/placements.json league_building chosen_because states for (3754, 2375) clockwise_90
+    size = [111, 159, 120]
+    assert W.template_rect(3754, 2375, size, "clockwise_90") == [3635, 2375, 3754, 2485]
+    assert W.template_rect(0, 0, size, "none") == [0, 0, 110, 119]
+    assert W.template_rect(0, 0, size, "180") == [-110, -119, 0, 0]
+    assert W.template_rect(0, 0, size, "counterclockwise_90") == [0, -110, 119, 0]
+
+
+def test_a_flag_is_emitted_only_by_a_grant_something_calls(tmp_path):
+    # without this, the flag past Victory Road's caves could be granted by a function nothing runs, or by a
+    # commented-out line, and the leg it opens would read as open
+    root, packs = make_world(tmp_path)
+    prog = packs / "cobblers_progression" / "data" / "cobblers"
+    write(prog / "advancement" / "flag" / "rift_crisis_resolved.json",
+          {"criteria": {"set": {"trigger": "minecraft:impossible"}}})
+    assert W.flag_emitted(packs, W.CRISIS_FLAG)[0] == "FAIL"
+    g = prog / "function" / "flag" / "rift_crisis_resolved" / "grant.mcfunction"
+    write(g, "# advancement grant @s only cobblers:flag/rift_crisis_resolved\n")
+    assert W.flag_emitted(packs, W.CRISIS_FLAG)[0] == "FAIL"
+    write(g, "advancement grant @s only cobblers:flag/rift_crisis_resolved\n")
+    v, ev = W.flag_emitted(packs, W.CRISIS_FLAG)
+    assert v == "FAIL" and "nothing built calls" in ev
+    write(packs / "cobblers_dialogue" / "data" / "cobblers" / "dialogues" / "d.json",
+          {"x": "q.run_command('run function cobblers:flag/rift_crisis_resolved/grant')"})
+    assert W.flag_emitted(packs, W.CRISIS_FLAG)[0] == "PASS"
 
 
 # ------------------------------------------------------------------------------------------------- the verdicts
