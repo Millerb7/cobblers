@@ -1,0 +1,232 @@
+{
+  "settlement": "sunset_west",
+  "size": "town",
+  "target": 44,
+  "character": "Sunset West is the fishermen's town at the river mouth: salt-water Pokemon that fish, dive, haul nets and rinse the catch, and the rest are shore life that has decided the town is part of the beach (a beached Wailmer, a rock pool, cats queuing at the fish market). Sea species only: the lake's freshwater roster stays at Viltri Quay.",
+  "authored_by": "town author A, 2026-10-05, by hand; positions measured from derived/towns/sunset_west_plan.json, sunset_west_placement.json, derived/plaza_centres/sunset_west.json and tools/ground.py (rounded) through tools/ambient.py's Site; y in a situation is the standing y (ground, or the plaza's paved y 64, + 1). Nothing stands where the ground is at or under sea level, and no worker stands on the plaza: it is cut up to three blocks below the heightmap and Site would stand a worker on the uncut ground",
+  "workers": [
+    {
+      "id": "sunset_catch_pelipper",
+      "settlement": "sunset_west",
+      "species": "pelipper",
+      "level": 26,
+      "job": "carry",
+      "route": [[2627, 6478], [2636, 6488]],
+      "carry": "minecraft:cod",
+      "carry_height": 1.3,
+      "pickup": {"sound": "minecraft:entity.generic.splash"},
+      "drop": {"sound": "minecraft:entity.fish.swim", "block": "minecraft:wet_sponge", "count": 6},
+      "interact": "The Pelipper ferries the catch up from the slipway in its bill, three fish at a time, and tips them out at the fish market's back."
+    },
+    {
+      "id": "sunset_pier_cramorant",
+      "settlement": "sunset_west",
+      "species": "cramorant",
+      "level": 26,
+      "job": "work",
+      "at": [2628, 6516],
+      "face": [2625, 6519],
+      "every": 50,
+      "effect": {"block": "minecraft:light_blue_wool", "count": 8, "sound": "minecraft:entity.generic.splash", "pitch": 0.9},
+      "interact": "The Cramorant at the pier's root has an Arrokuda stuck in its throat again and looks at you as if this were your fault."
+    },
+    {
+      "id": "sunset_nets_octillery",
+      "settlement": "sunset_west",
+      "species": "octillery",
+      "level": 27,
+      "job": "work",
+      "at": [2615, 6512],
+      "face": [2615, 6516],
+      "every": 30,
+      "effect": {"block": "minecraft:cobweb", "count": 8, "sound": "minecraft:block.wool.hit", "pitch": 0.9},
+      "interact": "The Octillery hauls a net in hand over hand over hand over hand. It does the work of the whole crew and expects to be paid like it."
+    },
+    {
+      "id": "sunset_shells_clauncher",
+      "settlement": "sunset_west",
+      "species": "clauncher",
+      "level": 25,
+      "job": "work",
+      "at": [2600, 6495],
+      "face": [2603, 6495],
+      "every": 26,
+      "effect": {"block": "minecraft:bone_block", "count": 8, "sound": "minecraft:block.bone_block.break", "pitch": 1.4},
+      "interact": "The Clauncher behind the armourer's house cracks mussel shells with a pop of its claw. The armourer collects the shells for buttons."
+    },
+    {
+      "id": "sunset_rugs_crabrawler",
+      "settlement": "sunset_west",
+      "species": "crabrawler",
+      "level": 26,
+      "job": "work",
+      "at": [2662, 6512],
+      "face": [2662, 6509],
+      "every": 24,
+      "effect": {"block": "minecraft:red_wool", "count": 10, "sound": "minecraft:block.wool.hit", "pitch": 0.8},
+      "interact": "The net loft's Crabrawler beats the dust out of the loft's rugs. It punches harder than the rugs strictly need."
+    },
+    {
+      "id": "sunset_buoy_seel",
+      "settlement": "sunset_west",
+      "species": "seel",
+      "level": 25,
+      "job": "work",
+      "at": [2603, 6502],
+      "face": [2600, 6502],
+      "every": 40,
+      "effect": {"block": "minecraft:red_concrete", "count": 6, "sound": "minecraft:block.metal.hit", "pitch": 1.2},
+      "interact": "The Seel balances the harbour buoy on its nose while the paint dries. It has been told twice that it can put it down."
+    },
+    {
+      "id": "sunset_rinse_remoraid",
+      "settlement": "sunset_west",
+      "species": "remoraid",
+      "level": 24,
+      "job": "work",
+      "at": [2612, 6528],
+      "face": [2609, 6528],
+      "every": 28,
+      "effect": {"block": "minecraft:water_cauldron", "count": 10, "sound": "minecraft:entity.generic.splash", "pitch": 1.5},
+      "interact": "The Remoraid rinses the fish boxes in the shallows with a jet of water, aimed with great precision at the boxes and, now and then, at you."
+    },
+    {
+      "id": "sunset_tides_wattrel",
+      "settlement": "sunset_west",
+      "species": "wattrel",
+      "level": 25,
+      "job": "carry",
+      "route": [[2668, 6509], [2688, 6512]],
+      "carry": "minecraft:paper",
+      "carry_height": 1.3,
+      "pickup": {"sound": "minecraft:item.book.page_turn"},
+      "drop": {"sound": "minecraft:item.book.put", "block": "minecraft:white_wool", "count": 4},
+      "interact": "The Wattrel carries the day's tide table from the Mart's back door to the strand houses, one slip at a time."
+    },
+    {
+      "id": "sunset_sand_sandygast",
+      "settlement": "sunset_west",
+      "species": "sandygast",
+      "level": 24,
+      "job": "work",
+      "at": [2608, 6530],
+      "face": [2605, 6530],
+      "every": 36,
+      "effect": {"block": "minecraft:sand", "count": 14, "sound": "minecraft:block.sand.place", "pitch": 0.9},
+      "interact": "The Sandygast is building itself a bigger body out of the beach, a scoop at a time. The children are told not to take its shovel."
+    },
+    {
+      "id": "sunset_shore_wimpod",
+      "settlement": "sunset_west",
+      "species": "wimpod",
+      "level": 23,
+      "job": "work",
+      "at": [2616, 6532],
+      "face": [2613, 6534],
+      "every": 32,
+      "effect": {"block": "minecraft:gravel", "count": 10, "sound": "minecraft:block.gravel.hit", "pitch": 1.4},
+      "interact": "The Wimpod picks over the shore for whatever the tide left. If you step closer it is gone, and back a minute later."
+    },
+    {
+      "id": "sunset_chart_inkay",
+      "settlement": "sunset_west",
+      "species": "inkay",
+      "level": 25,
+      "job": "work",
+      "at": [2661, 6560],
+      "face": [2659, 6563],
+      "every": 44,
+      "effect": {"block": "minecraft:black_wool", "count": 8, "sound": "minecraft:item.ink_sac.use", "pitch": 1.0},
+      "interact": "The cartographer's Inkay inks the soundings onto the harbour chart pinned by her door, upside down, which is how it reads them."
+    },
+    {
+      "id": "sunset_slip_dewgong",
+      "settlement": "sunset_west",
+      "species": "dewgong",
+      "level": 28,
+      "job": "work",
+      "at": [2622, 6476],
+      "face": [2622, 6474],
+      "every": 48,
+      "effect": {"block": "minecraft:packed_ice", "count": 8, "sound": "minecraft:block.wood.hit", "pitch": 0.7},
+      "interact": "The Dewgong noses the moored boats off the slipway one by one at high tide, and back up it when they come in."
+    }
+  ],
+  "pets": [
+    {"id": "sunset_harbour_popplio", "species": "popplio", "owner": "sunset_harbour", "mode": "wait", "why": "the harbour counter's Popplio waits by the counter balancing a water balloon on its nose for customers"},
+    {"id": "sunset_harbour_wingull", "species": "wingull", "owner": "sunset_harbour", "mode": "follow", "why": "and a Wingull that follows the harbour keeper everywhere, because she once fed it"},
+    {"id": "sunset_market_meowth", "species": "meowth", "owner": "sunset_fish_market", "mode": "wait", "why": "the fish market's Meowth, kept as a guard against the other cats: a poacher turned gamekeeper"},
+    {"id": "sunset_loft_pyukumuku", "species": "pyukumuku", "owner": "sunset_net_loft", "mode": "wait", "why": "the net loft keeper's Pyukumuku in its bucket by the stall; nobody remembers why he keeps it"},
+    {"id": "sunset_farwater_chinchou", "species": "chinchou", "owner": "sunset_far_water_catch", "mode": "wait", "why": "the far-water seller's Chinchou in a tank by the stall, its lights the stall's sign"},
+    {"id": "sunset_farwater_tatsugiri", "species": "tatsugiri", "owner": "sunset_far_water_catch", "mode": "wait", "why": "and a Tatsugiri in a dish beside it, which customers keep trying to buy"}
+  ],
+  "placed": [
+    {"id": "sunset_gutter_shellder", "species": "shellder", "spot": "gutter", "building": "sunset_house_04", "why": "a Shellder in the fisher's gutter, clamped shut against the drip"},
+    {"id": "sunset_step_corsola", "species": "corsola", "spot": "step", "building": "sunset_house_12", "why": "a Corsola on the temple step, mistaken for a planter"},
+    {"id": "sunset_porch_clamperl", "species": "clamperl", "spot": "step", "at": [2765, 65, 6605], "why": "a Clamperl on the big house's doorstep, with a pearl, which nobody will touch (the template has no free porch, so measured beside the door)"},
+    {"id": "sunset_walltop_binacle", "species": "binacle", "spot": "step", "building": "sunset_house_08", "why": "a Binacle on the tool smith's step, both heads arguing"},
+    {"id": "sunset_window_staryu", "species": "staryu", "spot": "window", "building": "sunset_house_10", "why": "a Staryu in the library window, its core blinking in the evening"},
+    {"id": "sunset_step_mareanie", "species": "mareanie", "spot": "step", "building": "sunset_house_07", "why": "a Mareanie on the tannery step; the tanner steps over it"},
+    {"id": "sunset_roof_fletchling", "species": "fletchling", "spot": "roof", "building": "sunset_house_05", "why": "a Fletchling on the fletcher's roof, of all places"},
+    {"id": "sunset_roof_starly", "species": "starly", "spot": "roof", "building": "sunset_house_13", "why": "a Starly on the hill house above the lane"},
+    {"id": "sunset_step_wiglett", "species": "wiglett", "spot": "step", "building": "sunset_house_05", "why": "a Wiglett poking up from the sand beside the fletcher's step"}
+  ],
+  "situations": [
+    {
+      "id": "sunset_beached_wailmer",
+      "title": "Beached",
+      "story": "A young Wailmer came in on the high tide and is stuck at the foot of the slipway. Three Squirtle keep it wet with their water guns until the tide comes back.",
+      "unique": true,
+      "at": [2604, 63, 6474],
+      "facing": "west",
+      "members": [
+        {"species": "wailmer", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]},
+        {"species": "squirtle", "count": 3, "pose": "still", "offsets": [[2, 1, 2], [-1, 1, 6], [1, 1, 4]]}
+      ],
+      "props": [],
+      "why": "the slipway's foot, west of the sunset_slipway anchor, above sea level"
+    },
+    {
+      "id": "sunset_espurr_queue",
+      "title": "Waiting for scraps",
+      "story": "Four Espurr sit in a line at the fish market's back, staring at the stall without blinking. The fishmonger says they have never once asked.",
+      "unique": false,
+      "at": [2640, 66, 6493],
+      "facing": "east",
+      "members": [
+        {"species": "espurr", "count": 4, "pose": "still", "offsets": [[0, 0, 0], [-1, 0, 0], [-2, 0, 0], [-3, 0, 0]]}
+      ],
+      "props": [],
+      "why": "behind sunset_west_stall_2 (the fish stall), off the plaza's west edge"
+    },
+    {
+      "id": "sunset_rock_pool",
+      "title": "The rock pool at low tide",
+      "story": "Four Tentacool sit stranded in the rock pool below the strand at low tide. The children are told to keep away and do not.",
+      "unique": false,
+      "at": [2610, 63, 6536],
+      "facing": "west",
+      "members": [
+        {"species": "tentacool", "count": 4, "pose": "still", "offsets": [[0, 0, 0], [2, 0, 4], [-1, 0, 6], [1, 0, 9]]}
+      ],
+      "props": [],
+      "why": "the shore south of the west pier, every member on ground above sea level"
+    },
+    {
+      "id": "sunset_magikarp_net",
+      "allow": ["street"],
+      "title": "Nobody wants them back",
+      "story": "A net hung to dry on the strand still has five Magikarp in it, flopping. Nobody wants them, nobody will let them go, and they have been there since Tuesday.",
+      "unique": false,
+      "at": [2646, 64, 6530],
+      "facing": "east",
+      "members": [
+        {"species": "magikarp", "count": 5, "pose": "still", "offsets": [[0, 0, 0], [2, 0, 1], [-1, 0, 2], [1, 0, -1], [3, 0, 0]]}
+      ],
+      "props": [{"block": "minecraft:oak_fence", "at": [-2, 0, 0]}, {"block": "minecraft:oak_fence", "at": [5, 0, 0]}, {"block": "minecraft:cobweb", "at": [1, 1, 0]}],
+      "why": "on the strand by the butcher's (sunset_house_02), where the nets are hung"
+    }
+  ],
+  "counts": {"working": 12, "pets": 6, "placed": 9, "situations": 17, "total": 44},
+  "notes": "Supersedes idle.towns.sunset_west (Slowpoke, Snorlax, Purrloin and Murkrow gone; it shared 0.52 of its roster with Viltri Quay and now shares none). Every pet's owner is a market keeper on the square: there is no seated NPC in Sunset West (data/npc_seats.json). Twelve workers (two carriers) is over data/ambient.json rules.per_town (4 stationary)."
+}

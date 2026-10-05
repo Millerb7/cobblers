@@ -1,0 +1,233 @@
+{
+  "settlement": "displaced_city",
+  "size": "town",
+  "target": 42,
+  "character": "The Displaced City is a whole town rebuilt in a cavern by people who lost theirs: its Pokemon are cave, ghost and fungus species that dig, haul, light the streets and grow the food, and its situations are about loss and making do (masks waiting to be recognised, a gate count that never comes out right, a rubbish heap with a king). Nothing from the surface towns' rosters.",
+  "authored_by": "town author A, 2026-10-05, by hand; positions measured from derived/towns/displaced_city_plan.json and displaced_city_placement.json, on the settlement's own ground (tools/ground.py for_settlement: the cavern floor from derived/cavern/plan, never the mountain's heightmap over it) and the plan's paved street y; every worker stands on a street cell; y in a situation is the standing y (floor or paving + 1)",
+  "workers": [
+    {
+      "id": "displaced_ore_cufant",
+      "settlement": "displaced_city",
+      "species": "cufant",
+      "level": 34,
+      "job": "carry",
+      "route": [[3320, 1718], [3320, 1722], [3326, 1724], [3328, 1726]],
+      "carry": "minecraft:raw_copper",
+      "carry_height": 1.2,
+      "pickup": {"sound": "minecraft:block.stone.hit"},
+      "drop": {"sound": "minecraft:block.copper.place", "block": "minecraft:raw_copper_block", "count": 8},
+      "interact": "The Cufant hauls copper ore down the old road to the smiths, trunk curled round the load. It came here with the people and works for the same reason."
+    },
+    {
+      "id": "displaced_shoring_conkeldurr",
+      "settlement": "displaced_city",
+      "species": "conkeldurr",
+      "level": 38,
+      "job": "carry",
+      "route": [[3283, 1731], [3283, 1740]],
+      "carry": "minecraft:cobblestone",
+      "carry_height": 1.3,
+      "pickup": {"sound": "minecraft:block.stone.hit"},
+      "drop": {"sound": "minecraft:block.stone.place", "block": "minecraft:cobblestone", "count": 12},
+      "interact": "The Conkeldurr carries shoring stone along the lower street on its concrete pillar. The roof above the west houses is the one everyone watches."
+    },
+    {
+      "id": "displaced_lamps_lampent",
+      "settlement": "displaced_city",
+      "species": "lampent",
+      "level": 36,
+      "job": "work",
+      "at": [3306, 1741],
+      "face": [3305, 1735],
+      "every": 50,
+      "effect": {"particle": "minecraft:soul_fire_flame", "count": 10, "spread": 0.3, "dy": 1.0, "sound": "minecraft:block.candle.extinguish", "pitch": 0.8},
+      "interact": "The Lampent tends the street lamps on the upper street, lighting each one off itself. The people have stopped asking what it takes in return."
+    },
+    {
+      "id": "displaced_dig_excadrill",
+      "settlement": "displaced_city",
+      "species": "excadrill",
+      "level": 38,
+      "job": "work",
+      "at": [3422, 1757],
+      "face": [3424, 1757],
+      "every": 28,
+      "effect": {"block": "minecraft:stone", "count": 14, "sound": "minecraft:block.stone.break", "pitch": 0.7},
+      "interact": "The Excadrill is cutting a new room into the east wall for the next family to arrive. There is always a next family."
+    },
+    {
+      "id": "displaced_scrap_aron",
+      "settlement": "displaced_city",
+      "species": "aron",
+      "level": 32,
+      "job": "work",
+      "at": [3309, 1765],
+      "face": [3306, 1765],
+      "every": 30,
+      "effect": {"block": "minecraft:iron_block", "count": 8, "sound": "minecraft:block.anvil.land", "pitch": 1.4},
+      "interact": "The Aron outside the smithy eats the scrap the smiths cannot use. Nothing in this city is wasted, least of all iron."
+    },
+    {
+      "id": "displaced_beds_shiinotic",
+      "settlement": "displaced_city",
+      "species": "shiinotic",
+      "level": 34,
+      "job": "work",
+      "at": [3416, 1782],
+      "face": [3419, 1782],
+      "every": 55,
+      "effect": {"block": "minecraft:shroomlight", "count": 8, "sound": "minecraft:block.amethyst_block.chime", "pitch": 0.7},
+      "interact": "The Shiinotic stands over the mushroom beds and glows, because nothing else down here makes light that food will grow by."
+    },
+    {
+      "id": "displaced_rubbish_trubbish",
+      "settlement": "displaced_city",
+      "species": "trubbish",
+      "level": 30,
+      "job": "carry",
+      "route": [[3292, 1798], [3297, 1800], [3302, 1805]],
+      "carry": "minecraft:paper",
+      "carry_height": 0.9,
+      "pickup": {"sound": "minecraft:block.composter.fill"},
+      "drop": {"sound": "minecraft:block.composter.empty", "block": "minecraft:composter", "count": 6},
+      "interact": "The Trubbish collects the street's rubbish and carries it to the heap, where its king lives."
+    },
+    {
+      "id": "displaced_till_diglett",
+      "settlement": "displaced_city",
+      "species": "diglett",
+      "level": 28,
+      "job": "work",
+      "at": [3363, 1815],
+      "face": [3363, 1818],
+      "every": 26,
+      "effect": {"block": "minecraft:rooted_dirt", "count": 10, "sound": "minecraft:block.rooted_dirt.break", "pitch": 1.2},
+      "interact": "The Diglett tills the mushroom beds by coming up in a new place every few seconds. The furrows are perfectly straight."
+    },
+    {
+      "id": "displaced_hour_loudred",
+      "settlement": "displaced_city",
+      "species": "loudred",
+      "level": 33,
+      "job": "work",
+      "at": [3333, 1735],
+      "face": [3333, 1738],
+      "every": 120,
+      "effect": {"block": "minecraft:copper_block", "count": 6, "sound": "minecraft:block.bell.use", "pitch": 0.6},
+      "interact": "There is no sun down here, so the Loudred calls the hours. It has a different shout for each, and the children know them all."
+    },
+    {
+      "id": "displaced_drain_dunsparce",
+      "settlement": "displaced_city",
+      "species": "dunsparce",
+      "level": 30,
+      "job": "work",
+      "at": [3304, 1691],
+      "face": [3302, 1691],
+      "every": 34,
+      "effect": {"block": "minecraft:gravel", "count": 10, "sound": "minecraft:block.gravel.break", "pitch": 1.1},
+      "interact": "The Dunsparce bores a drain under the lower street with its tail, so the seep runs away from the houses and not into them."
+    },
+    {
+      "id": "displaced_gems_sableye",
+      "settlement": "displaced_city",
+      "species": "sableye",
+      "level": 33,
+      "job": "work",
+      "at": [3394, 1734],
+      "face": [3396, 1734],
+      "every": 40,
+      "effect": {"block": "minecraft:amethyst_block", "count": 8, "sound": "minecraft:block.amethyst_cluster.break", "pitch": 1.3},
+      "interact": "The Sableye cuts the cavern's crystal for the jeweller and eats the offcuts. The jeweller counts the whole stones twice."
+    }
+  ],
+  "pets": [
+    {"id": "displaced_mason_axew", "species": "axew", "owner": "npc_stone_tip_displaced_city_mason", "mode": "follow", "why": "the mason's Axew follows her and tests its tusks on her offcuts"},
+    {"id": "displaced_mason_gible", "species": "gible", "owner": "npc_stone_tip_displaced_city_mason", "mode": "wait", "why": "a Gible, which came with her from the old city in a sack of tools, waits in the warm by her feet"},
+    {"id": "displaced_mason_zorua", "species": "zorua", "owner": "npc_stone_tip_displaced_city_mason", "mode": "wait", "why": "and a Zorua that is, on some days, a second mason"}
+  ],
+  "placed": [
+    {"id": "displaced_gutter_woobat", "species": "woobat", "spot": "gutter", "building": "displaced_house_03", "why": "a Woobat hanging from the gutter, its nose print on the wall"},
+    {"id": "displaced_window_litwick", "species": "litwick", "spot": "window", "building": "displaced_house_10", "why": "a Litwick in the window, the household's only candle; they know what it is and keep it anyway"},
+    {"id": "displaced_porch_paras", "species": "paras", "spot": "porch", "building": "displaced_house_06", "why": "a Paras on the butcher's porch, its mushrooms bigger than last week"},
+    {"id": "displaced_step_foongus", "species": "foongus", "spot": "step", "building": "displaced_house_12", "why": "a Foongus on the step that looks exactly like a dropped Poke Ball, which is the point"},
+    {"id": "displaced_porch_mawile", "species": "mawile", "spot": "porch", "building": "displaced_house_11", "why": "a Mawile on the mason's porch, smiling at the front and chewing at the back"},
+    {"id": "displaced_walltop_spinarak", "species": "spinarak", "spot": "wall_top", "building": "displaced_house_02", "why": "a Spinarak on the wall top, its web strung to the next house"},
+    {"id": "displaced_window_tynamo", "species": "tynamo", "spot": "window", "building": "displaced_house_16", "why": "a Tynamo in a jar in the window, a night light"},
+    {"id": "displaced_walltop_glimmet", "species": "glimmet", "spot": "wall_top", "building": "displaced_house_23", "why": "a Glimmet on the tannery's wall top, catching the lamp light"},
+    {"id": "displaced_roof_gastly", "species": "gastly", "spot": "roof", "building": "displaced_house_20", "why": "a Gastly on a roof in a city with no sky; the household says it was here first"},
+    {"id": "displaced_step_mimikyu", "species": "mimikyu", "spot": "step", "building": "displaced_house_31", "why": "a Mimikyu on the fisher's step in its rag disguise, waiting for someone to want to play"}
+  ],
+  "situations": [
+    {
+      "id": "displaced_yamask_faces",
+      "title": "Does anyone know this face",
+      "story": "Three Yamask sit by the square every evening, each holding up its mask to the people walking home, waiting for someone from the old city to recognise the face.",
+      "unique": true,
+      "at": [3318, 46, 1760],
+      "facing": "east",
+      "members": [
+        {"species": "yamask", "count": 3, "pose": "still", "offsets": [[0, 0, 0], [-1, 0, 2], [-2, -1, -2]]}
+      ],
+      "props": [],
+      "why": "off the square's west edge, facing the people crossing it; the only town where the situation is the displaced themselves"
+    },
+    {
+      "id": "displaced_morelull_ring",
+      "title": "The fairy ring",
+      "story": "Five Morelull stand in a ring at the end of the mushroom beds and pulse their light in turn, round and round. The children are not allowed in the ring and go in anyway.",
+      "unique": false,
+      "at": [3350, 31, 1810],
+      "facing": "north",
+      "members": [
+        {"species": "morelull", "count": 5, "pose": "still", "offsets": [[0, 1, -2], [2, 0, 0], [0, 0, 2], [-2, 0, 0], [1, 0, 1]]}
+      ],
+      "props": [],
+      "why": "by the mushroom beds south of the butcher's lot"
+    },
+    {
+      "id": "displaced_rubbish_king",
+      "title": "The king of the heap",
+      "story": "A Garbodor sits enthroned on the rubbish heap at the end of the lane, and two Trubbish bring it the best of what the Trubbish worker collects.",
+      "unique": false,
+      "at": [3300, 30, 1812],
+      "facing": "north",
+      "members": [
+        {"species": "garbodor", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]},
+        {"species": "trubbish", "count": 2, "pose": "still", "offsets": [[2, -1, -1], [-2, 0, -1]]}
+      ],
+      "props": [{"block": "minecraft:composter", "at": [0, 0, 2]}],
+      "why": "the end of the lower street's west lane, past where the rubbish route ends"
+    },
+    {
+      "id": "displaced_duskull_count",
+      "allow": ["street"],
+      "title": "The gate count",
+      "story": "Every evening four Duskull line up where the old road comes in and count the people arriving. They have never once got the same number as the mason.",
+      "unique": false,
+      "at": [3267, 28, 1665],
+      "facing": "west",
+      "members": [
+        {"species": "duskull", "count": 4, "pose": "still", "offsets": [[0, 0, 0], [1, 0, 2], [2, 0, 4], [3, 1, 6]]}
+      ],
+      "props": [],
+      "why": "on the old road where it enters the town (street cells, so allowed)"
+    },
+    {
+      "id": "displaced_stunky_standoff",
+      "title": "Standoff in the alley",
+      "story": "Two Stunky face a Skuntank in the alley behind the upper street, tails up. Everyone else has left the alley.",
+      "unique": false,
+      "at": [3375, 35, 1700],
+      "facing": "east",
+      "members": [
+        {"species": "stunky", "count": 2, "pose": "still", "offsets": [[0, 0, 0], [-2, 0, 0]]},
+        {"species": "skuntank", "count": 1, "pose": "still", "offsets": [[3, 0, 1]]}
+      ],
+      "props": [],
+      "why": "the open floor inside the upper street's eastern loop"
+    }
+  ],
+  "counts": {"working": 11, "pets": 3, "placed": 10, "situations": 18, "total": 42},
+  "notes": "New: data/ambient.json listed the Displaced City under idle.not_populated because the heightmap there is the mountain over the cavern; the generator now reads the settlement's own ground (tools/ground.py for_settlement, the cavern floor), and every position here was measured on it. The only NPC the apply seats here is the mason (data/npc_seats.json), so the pets are three, all hers (0.07 of the town, inside the tolerance). Eleven workers (three carriers) is over data/ambient.json rules.per_town."
+}
