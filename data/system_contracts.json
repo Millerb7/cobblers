@@ -439,6 +439,7 @@
         "sea_drift_audit.py": "checker: the built sea_drift pack (the Seaward Drift, its strips, Driftmouth Isle and its lighthouse), replayed: no written block is a spawn condition unless a data/spawn_block_policy.json entry scoped to sea_drift whitelists it (none since 2026-10-02: the line is straight and writes no minecraft:rail, and the audit fails any rail that turns). tools/sea_drift.py does not read the file and is not yet one of this contract's sources (the test author's to add)",
         "portals_audit.py": "checker: the built portals pack, against data/portals.json blocks and the spawn conditions. It checks the WORLD side only: the pocket dimension's rooms carry a chest, which is a spawn condition (Gimmighoul), and the dimension's biome is minecraft:the_void, whose mob spawn list is empty. Whether a Cobblemon pool can match that biome is UNTESTED (EXP-047 left spawning in the pocket unrun)",
         "vr_caves.py": "source: vr_caves",
+        "fossil_dig.py": "source: fossil_dig (the Scorchbone Dig, 2026-10-05: tools/wayside_kit.py load_record reads the conditions when data/fossil_dig.json loads and refuses a blocks.ids holding one no policy entry scoped to fossil_dig allows; the plan refuses any block outside blocks.ids)",
         "route1_old_mine.py": "source: earthworks (its record is the route1_old_mine earthwork in data/placements.json)",
         "town_audit.py": "checker: the built towns, templates and earthworks, against the policy",
         "validate_data.py": "checker: placed structure templates, against the policy",
