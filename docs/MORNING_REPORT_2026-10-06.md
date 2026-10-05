@@ -6,8 +6,7 @@ the live world was never touched. Snapshot before: `cobblers-staging/snapshot-20
 ## In the world (staging-2026-10-01), read back after a restart
 
 Prepare complete (175 jobs, head 541a7d8), install_check 0 problems, then R9DW, R9AF, R9PF, R9E, R13, R16C, R16H,
-R17F, R17M, R17NE, R18AF, R18CW and a restart. Staging is UP (java pid 50764, booted 05:55, max-tick-time 60000);
-the coordination lock is released.
+R17F, R17M, R17NE, R18AF, R18CW and a restart. Staging is DOWN: the detached boot (java pid 50764, 05:55) was killed when the tool's background task hit its 2-hour limit; its log ends at 06:21 with no shutdown line (review N53). The apply's own save-all and the world's autosaves precede it; whatever changed after the last autosave is lost. The coordination lock is released.
 
 | What | Where | Read back |
 |---|---|---|

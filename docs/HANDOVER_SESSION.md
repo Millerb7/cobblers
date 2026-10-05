@@ -12,7 +12,7 @@ A cold session reads CLAUDE.md, `docs/STATE.md`, this file, `docs/MORNING_REPORT
 - Next: open ONE draft PR for it against main (memory: one big PR per batch) after #119 merges, or stacked on #119.
 
 ## 2. Where it stopped
-- **Staging is UP**: java pid 50764 (booted 05:55, universe flags, max-tick-time 60000). **The lock is released.**
+- **Staging is DOWN: the detached boot (java pid 50764, 05:55) was killed when the tool's background task hit its 2-hour limit; its log ends at 06:21 with no shutdown line (review N53). The apply's own save-all and the world's autosaves precede it; whatever changed after the last autosave is lost. The coordination lock is released.** max-tick-time is 60000.
 - Everything built tonight is applied to staging and read back (the morning report's table). Nothing is half-done.
 - `derived/` and `build/` in this worktree are current for head 541a7d8 + the docs commits (prepare stamp
   58322c025cddfef1); any data/ or tools/ commit needs a full prepare (~27 min) before install. Run prepare with
