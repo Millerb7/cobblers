@@ -27,8 +27,28 @@ NOT_MODELLED if none fails but one could not be modelled, and PASS only when eve
                 model (imported and run, its blocking codes only); the level cap from the RCT config; each starter
                 plus the routes' catchables at the cap against the built team (tools/battle_sim.py); the badge
                 wired (advancement -> granted function -> first_win loot table holding a badge); the cap advancing.
-  victory_road, league
-                the battles only (cap 60/62); the walks are NOT_MODELLED (a cave network and a template's rooms).
+                Every gym also asks cap_reachable: the leader fought at the top wild level met by then (routes 1..N);
+                beaten there, the cap need not be reached (PASS); lost there and won at the cap, the levels between
+                come from XP, which is NOT_MODELLED; no wild pool at all is a FAIL.
+  victory_road  data/route_paths.json victory_road as a corridor from gym 8's lot, with the zones the line crosses
+                admitting a player holding the eight gym flags; the flag past the caves (cobblers:flag/
+                rift_crisis_resolved) emitted -- its advancement, a built function granting it, and a compiled
+                dialogue or function calling that; each authored stand (data/vr_trainers.json) seated by the built
+                cycle function at its seat, with a forced-battle mob, and admitted by every enforced zone it stands in
+                (CRITICAL_PATH_WALK_2 item 1); the forced fights at the cap, with cap_reachable. The caves themselves
+                and the story chain to the flag are NOT_MODELLED by name.
+  league        the League template placed by a built function (its footprint from the emitted `place template`
+                and the template's size); every enforced zone over that footprint admitting the flags held
+                (CRITICAL_PATH_WALK_2 item 4: a zone that is built but has no zone advancement is reported as a
+                warning, not enforced); a walk from Victory Road's line end to the footprint; the champion_cleared
+                flag bound to kanto_champion_blue and rewarded; the five fights at the cap, with cap_reachable. The
+                template's spawners and the Elite Four's order (upstream) are NOT_MODELLED by name.
+  multiplayer   NOT_MODELLED: a second player's flags, reveal cursors and hold-offs (CRITICAL_PATH_WALK_1 item 3).
+
+THE ZONE MODEL is the built cobblers_rift_zones pack read as the server runs it: a zone is enforced only when a built
+advancement's location boxes call its zone function; that function turns back on a score; a held advancement set
+admits only when its line runs BEFORE the turn-back line and calls a function that sets that score. A zone a player's
+flags do not admit is closed to every walk at that point (its columns, every y); the knock boxes are not modelled.
 
 THE MOVEMENT MODEL (stage spawn_to_oak and every route) IS COARSE, and says so in each check: the canonical heightmap
 (tools/ground.py, rounded), 4-connected, a step climbs at most 1 block and drops at most 3 (the rule
@@ -55,7 +75,15 @@ rctmod's rule (docs/mechanics/LEAGUE_LEVEL_CAP.md, relayed), not read from rctmo
 
   python tools/new_player_walk.py                   # every stage; exit 1 if any FAILs
   python tools/new_player_walk.py --only gym_1      # one stage (repeatable)
-Writes derived/new_player_walk/report.json.
+  python tools/new_player_walk.py --packs <dir>     # another build's datapacks (read only)
+  python tools/new_player_walk.py --from-data <dir> # build what committed data alone can build into <dir>, walk it
+  python tools/new_player_walk.py --no-battles      # every check but the fights (those report NOT_MODELLED)
+Writes derived/new_player_walk/report.json; the last line printed is the one-line verdict.
+
+DATA MODE (--from-data). The packs that need only data/, tools/ and modpack/ are generated into the directory by
+their own generators (progression, trainers, spawns, dialogue, mythical starters; rift zones and gym buildings also
+need the heightmap). The rest -- cobblers_towns (kits/), cobblers_donor (the server's templates) -- are not built, and
+every check that reads them reports NOT_MODELLED naming the missing input, never FAIL and never PASS.
 """
 from __future__ import annotations
 
@@ -90,6 +118,13 @@ GYM_COUNT = 8
 LEAGUE = ["kanto_league_lorelei", "kanto_league_bruno", "kanto_league_agatha", "kanto_league_lance",
           "kanto_champion_blue"]
 TEAM_EXTRA = 5
+LEAGUE_TEMPLATE = "cobbleverse:kanto_league"     # upstream's id; data/league_trainers.json why_overrides_and_not_seats
+CHAMPION_FLAG = "champion_cleared"
+CRISIS_FLAG = "cobblers:flag/rift_crisis_resolved"
+# every pack a full walk reads; a build/ missing one of them is not a build this walk can judge
+REQUIRED_PACKS = ("cobblers_towns", "cobblers_dialogue", "cobblers_mythical_starters", "cobblers_trainers",
+                  "cobblers_spawns", "cobblers_gym_buildings", "cobblers_progression", "cobblers_rift_zones",
+                  "cobblers_donor")
 
 # Failures already reported and not yet decided, so that prepare is not stopped by a finding the owner already has.
 # Each still prints (as KNOWN) on every run, and an entry whose check no longer fails is printed FIXED? and fails the
@@ -142,10 +177,13 @@ class Inputs:
     """Everything the walk reads, loaded lazily so a test can hand any piece in."""
 
     def __init__(self, root=ROOT, packs=None, source_root=None, ground=None, battle=None, raw=None, water=None,
-                 gym_audit=None, oak=None):
+                 gym_audit=None, oak=None, battles=True, unbuilt=None):
         self.root = Path(root)
         self.packs = Path(packs) if packs else self.root / "build" / "datapacks"
         self.source_root = source_root
+        self.battles = battles
+        # {pack: why it was not built} in data mode: a check reading one reports NOT_MODELLED, not FAIL
+        self.unbuilt = dict(unbuilt or {})
         self._ground, self._battle, self._raw, self._water = ground, battle, raw, water
         self._jar = None
         self._gym_audit = gym_audit
@@ -260,9 +298,10 @@ def flood(G, ok, starts):
     return np.array(seen, dtype=np.int64)
 
 
-def walk(inp, starts, goals, line=None, radius=CORRIDOR, margin=LINK_MARGIN):
+def walk(inp, starts, goals, line=None, radius=CORRIDOR, margin=LINK_MARGIN, closed=()):
     """Can a player walk from any of `starts` to any of `goals` ((x, z) lists)? With `line`, only inside a corridor
-    `radius` either side of it; else anywhere in the box round the points. Returns an evidence dict."""
+    `radius` either side of it; else anywhere in the box round the points. `closed`: (x0, x1, z0, z1) column boxes
+    no step may enter (a zone the player's flags do not admit). Returns an evidence dict."""
     pts = list(starts) + list(goals) + list(line or [])
     x0, z0 = min(p[0] for p in pts) - margin, min(p[1] for p in pts) - margin
     x1, z1 = max(p[0] for p in pts) + margin, max(p[1] for p in pts) + margin
@@ -281,11 +320,19 @@ def walk(inp, starts, goals, line=None, radius=CORRIDOR, margin=LINK_MARGIN):
             allowed[max(0, z - z0 - 2):z - z0 + 3, max(0, x - x0 - 2):x - x0 + 3] = True
     else:
         allowed = np.ones(G.shape, dtype=bool)
+    shut = 0
+    for bx0, bx1, bz0, bz1 in closed:
+        if bx1 < x0 or bx0 > x1 or bz1 < z0 or bz0 > z1:
+            continue
+        allowed[max(0, bz0 - z0):max(0, bz1 - z0 + 1), max(0, bx0 - x0):max(0, bx1 - x0 + 1)] = False
+        shut += 1
     ok = allowed & dry
     seen = flood(G, ok, [(z - z0, x - x0) for x, z in starts])
     hits = [(int(seen[z - z0, x - x0]), (x, z)) for x, z in goals if seen[z - z0, x - x0] >= 0]
     ev = {"from": [list(s) for s in starts[:3]], "to_count": len(goals), "reached": bool(hits),
           "steps": min(hits)[0] if hits else None}
+    if shut:
+        ev["closed_zone_boxes"] = shut
     if not hits:
         ev["wet_starts"] = [list(s) for s in starts if not dry[s[1] - z0, s[0] - x0]][:3]
         ev["wet_goals"] = sum(1 for x, z in goals if not dry[z - z0, x - x0])
@@ -328,9 +375,11 @@ def add_walk(stage, name, ev, what):
         msg += ", start in water %s" % ev["wet_starts"]
     if ev.get("off_map"):
         msg += ", the box %s runs off the heightmap" % ev["off_map"]
+    if not ev["reached"] and ev.get("closed_zones"):
+        msg += ", zones closed to this player's flags: %s" % ev["closed_zones"]
     stage.add(name, v, {"summary": msg, **ev}, coarse=True,
-              not_covered="heightmap only: buildings, walls, doors, trees, fences, rivers, bridges and every placed "
-                          "block are invisible to this walk")
+              not_covered="heightmap only: buildings, walls, doors, trees, fences, rivers, bridges, the Rift sculpt "
+                          "and every placed block are invisible to this walk; zone knock boxes are not modelled")
     return v
 
 
@@ -435,6 +484,177 @@ def rct_caps(root):
     over = Path(root) / "modpack" / "config" / "rctmod-server.toml"
     base = Path(root) / "base-pack" / "cobbleverse" / "config" / "rctmod-server.toml"
     return B.level_caps(over if over.exists() else base)
+
+
+# ------------------------------------------------------------------------------------------ the zones, as built
+
+ADV_SEL = re.compile(r"advancements=\{([^}]*)\}")
+RUN_FN = re.compile(r"\brun function ([\w.:/-]+)\s*$")
+SCORE_TEST = re.compile(r"\bunless score @s (\w+) matches 1\.\.")
+
+
+def function_text(packs, ref):
+    """The text of built function `ns:path` in any pack under `packs`, or None."""
+    ns, _, path = (ref or "").partition(":")
+    if not ns or not path:
+        return None
+    for f in sorted(Path(packs).glob("*/data/%s/function/%s.mcfunction" % (ns, path))):
+        return f.read_text(encoding="utf-8")
+    return None
+
+
+def _positions(obj, out):
+    """Every location predicate's (x0, x1, y0, y1, z0, z1) under an advancement's criteria."""
+    if isinstance(obj, dict):
+        pos = obj.get("position")
+        if isinstance(pos, dict) and all(isinstance(pos.get(a), dict) for a in ("x", "y", "z")):
+            out.append(tuple(pos[a][k] for a in ("x", "y", "z") for k in ("min", "max")))
+        for v in obj.values():
+            _positions(v, out)
+    elif isinstance(obj, list):
+        for v in obj:
+            _positions(v, out)
+    return out
+
+
+def zone_checks(packs):
+    """{zone: {"boxes": [(x0, x1, y0, y1, z0, z1)], "function", "turns_back", "objective", "admits": [frozenset]}}
+    for every zone check a built cobblers_rift_zones advancement calls. A zone function nothing calls is not here: it
+    never runs. `admits`: each advancement set that, all held, runs a function setting the zone's pass score on a line
+    BEFORE the turn-back line -- a grant after it comes too late, the player is already teleported (the shape of
+    CRITICAL_PATH_WALK_2 item 1)."""
+    out = {}
+    d = Path(packs) / "cobblers_rift_zones" / "data" / "cobblers" / "advancement" / "rift_zones"
+    for f in sorted(d.glob("*_zone.json")):
+        adv = json.loads(f.read_text(encoding="utf-8"))
+        ref = (adv.get("rewards") or {}).get("function") or ""
+        z = {"boxes": _positions(adv.get("criteria"), []), "function": ref, "turns_back": False, "objective": None,
+             "admits": [], "built": False}
+        out[f.stem[:-len("_zone")]] = z
+        text = function_text(packs, ref)
+        if text is None:
+            continue
+        z["built"] = True
+        pending = []
+        for line in text.splitlines():
+            s = line.strip()
+            m = RUN_FN.search(s)
+            if not s or s.startswith("#") or not m:
+                continue
+            if m.group(1).endswith("/turn_back"):
+                z["turns_back"] = True
+                sc = SCORE_TEST.search(s)
+                z["objective"] = sc.group(1) if sc else None
+                break
+            sel = ADV_SEL.search(s)
+            if sel and s.startswith("execute if entity @s["):
+                need = frozenset(k.split("=", 1)[0].strip() for k in sel.group(1).split(",")
+                                 if k.strip().endswith("=true"))
+                if need:
+                    pending.append((need, m.group(1)))
+        if z["objective"]:
+            sets = re.compile(r"^\s*scoreboard players set @s %s [1-9]" % re.escape(z["objective"]), re.M)
+            z["admits"] = [need for need, fn in pending if sets.search(function_text(packs, fn) or "")]
+    return out
+
+
+def zone_passable(z, held):
+    """Whether a player holding the advancement ids `held` is let stay anywhere in zone z."""
+    return not z["turns_back"] or any(a <= set(held) for a in z["admits"])
+
+
+def in_box(b, x, y, z):
+    return b[0] <= x <= b[1] and (y is None or b[2] <= y <= b[3]) and b[4] <= z <= b[5]
+
+
+def flag_advancement(packs, name):
+    p = Path(packs) / "cobblers_progression" / "data" / "cobblers" / "advancement" / "flag" / ("%s.json" % name)
+    return (json.loads(p.read_text(encoding="utf-8")) if p.is_file() else None), p
+
+
+def flag_trainer(packs, name):
+    """(the first trainer id the built flag advancement `name`'s rctmod:defeat_count names, its path), or (None, path)."""
+    d, p = flag_advancement(packs, name)
+    for c in ((d or {}).get("criteria") or {}).values():
+        if c.get("trigger") == "rctmod:defeat_count":
+            ids = (c.get("conditions") or {}).get("trainer_ids") or []
+            if ids:
+                return ids[0], p
+    return None, p
+
+
+def flag_emitted(packs, fid):
+    """(verdict, evidence) for whether anything built can give the advancement `fid` (ns:path): an advancement whose
+    own trigger can fire, or an `advancement grant ... only fid` line in a built function that some built file calls
+    (a compiled dialogue's run_command, another function, an advancement's reward)."""
+    ns, _, path = fid.partition(":")
+    advs = sorted(Path(packs).glob("*/data/%s/advancement/%s.json" % (ns, path)))
+    if not advs:
+        return FAIL, "no built advancement %s" % fid
+    triggers = sorted({c.get("trigger") for c in (json.loads(advs[0].read_text(encoding="utf-8")).get("criteria")
+                                                   or {}).values()})
+    if triggers and triggers != ["minecraft:impossible"]:
+        return PASS, "%s fires on its own trigger(s) %s" % (fid, triggers)
+    grant = re.compile(r"^(?!\s*#).*\badvancement grant @s only %s\s*$" % re.escape(fid), re.M)
+    granters = []
+    for f in sorted(Path(packs).rglob("*.mcfunction")):
+        try:
+            if grant.search(f.read_text(encoding="utf-8")):
+                rel = f.relative_to(packs).parts
+                i = rel.index("function")
+                granters.append("%s:%s" % (rel[2], "/".join(rel[i + 1:])[:-len(".mcfunction")]))
+        except (ValueError, OSError, UnicodeDecodeError):
+            continue
+    if not granters:
+        return FAIL, "%s is minecraft:impossible and no built function grants it" % fid
+    callers = []
+    for f in sorted(Path(packs).rglob("*")):
+        if f.suffix not in (".json", ".mcfunction") or not f.is_file():
+            continue
+        try:
+            text = f.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        for g in granters:
+            if re.search(r"function %s(?![\w/])" % re.escape(g), text):
+                callers.append("%s -> %s" % (f.relative_to(packs).as_posix(), g))
+    if not callers:
+        return FAIL, "%s is granted by %s, which nothing built calls" % (fid, granters)
+    return PASS, "%s granted by %s, called from %s" % (fid, granters, callers[:3])
+
+
+PLACE = re.compile(r"^\s*place template (\S+) (-?\d+) (-?\d+) (-?\d+)(?: (\w+))?(?: (\w+))?", re.M)
+
+
+def template_rect(x, z, size, rotation):
+    """[x0, z0, x1, z1] a template of `size` [sx, sy, sz] covers when placed at corner (x, z): vanilla rotates about
+    the corner, so a local (dx, dz) lands at (x - dz, z + dx) clockwise_90, (x - dx, z - dz) 180, (x + dz, z - dx)
+    counterclockwise_90."""
+    sx, sz = size[0] - 1, size[2] - 1
+    if rotation == "clockwise_90":
+        return [x - sz, z, x, z + sx]
+    if rotation == "180":
+        return [x - sx, z - sz, x, z]
+    if rotation == "counterclockwise_90":
+        return [x, z - sx, x + sz, z]
+    return [x, z, x + sx, z + sz]
+
+
+def placed_templates(packs, template):
+    """[(x, y, z, rotation, mirror, function file)] for every `place template <template>` a built function runs."""
+    out = []
+    for f in sorted(Path(packs).rglob("*.mcfunction")):
+        try:
+            text = f.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
+            continue
+        if template not in text:
+            continue
+        for m in PLACE.finditer(text):
+            if m.group(1) == template:
+                out.append((int(m.group(2)), int(m.group(3)), int(m.group(4)), m.group(5) or "none",
+                            m.group(6) or "none", f.relative_to(packs).as_posix()))
+    return out
 
 
 # ------------------------------------------------------------------------------------------ the starters
@@ -578,6 +798,9 @@ class Fights:
 def stage_spawn_to_oak(inp):
     st = Stage("spawn_to_oak", "the world spawn to Professor Oak")
     town = inp.packs / "cobblers_towns" / "data" / "cobblers" / "function" / "towns" / "hometown.mcfunction"
+    if "cobblers_towns" in inp.unbuilt:
+        st.add("spawn_set", NM, "cobblers_towns is not built in this mode: %s" % inp.unbuilt["cobblers_towns"])
+        return st
     spawn = None
     if town.is_file():
         m = re.search(r"^setworldspawn (-?\d+) (-?\d+) (-?\d+)", town.read_text(encoding="utf-8"), re.M)
@@ -645,16 +868,7 @@ def stage_starter(inp):
 
 
 def gym_leader_id(packs, n):
-    p = Path(packs) / "cobblers_progression" / "data" / "cobblers" / "advancement" / "flag" / ("gym%d_cleared.json" % n)
-    if not p.is_file():
-        return None, p
-    d = json.loads(p.read_text(encoding="utf-8"))
-    for c in (d.get("criteria") or {}).values():
-        if c.get("trigger") == "rctmod:defeat_count":
-            ids = (c.get("conditions") or {}).get("trainer_ids") or []
-            if ids:
-                return ids[0], p
-    return None, p
+    return flag_trainer(packs, "gym%d_cleared" % n)
 
 
 def ace(team):
@@ -677,6 +891,33 @@ class Walker:
         self.forms = forms_index(inp.packs / "cobblers_mythical_starters")
         self._spawners = None
         self._forced = None
+        self._zones = None
+
+    def zones(self):
+        if self._zones is None:
+            self._zones = zone_checks(self.inp.packs)
+        return self._zones
+
+    def held_after(self, n):
+        """The gym flags (advancement ids) a player holds after gym n: each one the built progression pack binds to a
+        trainer's defeat. Whether the gym stage itself passed is that stage's verdict, not repeated here."""
+        return {"cobblers:flag/gym%d_cleared" % k for k in range(1, n + 1) if gym_leader_id(self.inp.packs, k)[0]}
+
+    def closed(self, held):
+        """((x0, x1, z0, z1) column boxes, zone ids) of every enforced zone `held` does not admit."""
+        boxes, names = [], []
+        for zid, z in sorted(self.zones().items()):
+            if not zone_passable(z, held):
+                names.append(zid)
+                boxes += [(b[0], b[1], b[4], b[5]) for b in z["boxes"]]
+        return boxes, names
+
+    def walk_held(self, held, starts, goals, **kw):
+        boxes, names = self.closed(held)
+        ev = walk(self.inp, starts, goals, closed=boxes, **kw)
+        if names:
+            ev["closed_zones"] = names
+        return ev
 
     def spawners(self):
         if self._spawners is None:
@@ -705,6 +946,9 @@ class Walker:
     def battle_check(self, st, name, team, level, pool, tid):
         """Every starter (+ the best catchables of `pool`) against one built team; a FAIL names the starters that
         lose. The starter's own result alone is recorded beside it."""
+        if not self.inp.battles:
+            st.add(name, NM, "%s at L%d: battles not run (--no-battles)" % (tid, level))
+            return
         try:
             self.fights.foes(team["team"])
         except Exception as e:      # battle_sim.SimError and a malformed team alike
@@ -740,16 +984,18 @@ class Walker:
             return st
         line = [tuple(p) for p in line]
         st.add("walked_line", PASS, "%s: %d points, %d blocks walked" % (name, len(line), round(walked_length(line))))
+        held = self.held_after(n - 1)       # the badges a player can hold on this route
         if prev_lot:
-            add_walk(st, "walk_onto_route", walk(self.inp, prev_lot, [line[0]]), "%s onto %s" % (prev_label, name))
-        add_walk(st, "walk_corridor", walk(self.inp, [line[0]], [line[-1]], line=line),
+            add_walk(st, "walk_onto_route", self.walk_held(held, prev_lot, [line[0]]),
+                     "%s onto %s" % (prev_label, name))
+        add_walk(st, "walk_corridor", self.walk_held(held, [line[0]], [line[-1]], line=line),
                  "%s end to end inside a %d-block corridor" % (name, CORRIDOR))
         rect, src = self.gym_lot(n)
         if rect:
             ring = lot_ring(rect)
-            add_walk(st, "walk_to_gym_lot", walk(self.inp, [line[-1]], ring),
+            add_walk(st, "walk_to_gym_lot", self.walk_held(held, [line[-1]], ring),
                      "%s's end to gym %d's lot (%s)" % (name, n, src))
-            add_walk(st, "walk_back_from_gym_lot", walk(self.inp, ring, [line[-1]]),
+            add_walk(st, "walk_back_from_gym_lot", self.walk_held(held, ring, [line[-1]]),
                      "gym %d's lot back to %s's end" % (n, name))
         else:
             st.add("walk_to_gym_lot", NM, "gym %d has neither a data/gym_buildings record nor a gym_interiors shell "
@@ -849,16 +1095,22 @@ class Walker:
         st.add("leader_team", PASS, "%s: %s" % (tid, ", ".join("%s %d" % (m["species"], m["level"]) for m in team["team"])))
         # spawned
         sp = self.spawners().get(tid)
+        gid = "gym%d" % n
         if sp:
             st.add("leader_spawner", PASS, "%s spawner at %s (%s)" % (tid, sp[0][0], sp[0][1]))
+        elif "cobblers_gym_buildings" in self.inp.unbuilt and gid in self.records:
+            st.add("leader_spawner", NM, "cobblers_gym_buildings is not built in this mode: %s"
+                   % self.inp.unbuilt["cobblers_gym_buildings"])
         elif "gym%d" % n not in self.records:
             st.add("leader_spawner", NM, "%s's spawner is not in any text function: a donor template's .nbt is not read"
                    % tid)
         else:
             st.add("leader_spawner", FAIL, "no rctmod:trainer_spawner for %s in any built function" % tid)
         # the hall
-        gid = "gym%d" % n
-        if gid in self.records:
+        if gid in self.records and "cobblers_gym_buildings" in self.inp.unbuilt:
+            st.add("hall_walk", NM, "cobblers_gym_buildings is not built in this mode: %s"
+                   % self.inp.unbuilt["cobblers_gym_buildings"])
+        elif gid in self.records:
             audit, built = self.inp.gym_audit()
             if not built.get(gid):
                 st.add("hall_walk", FAIL, "%s's function is not built (cobblers_gym_buildings)" % gid)
@@ -880,6 +1132,7 @@ class Walker:
                                                                                 ace(team)),
                not_covered="rctmod's series order (upstream) and its refusal over the cap are relayed, not modelled")
         self.battle_check(st, "beat:%s" % tid, team, cap, route_pools(self.inp.packs, n), tid)
+        self.reach_check(st, "cap_reachable", team, cap, route_pools(self.inp.packs, n), tid)
         # the badge
         self.badge_check(st, n, tid, adv)
         # the cap advances
@@ -892,6 +1145,33 @@ class Walker:
                    not_covered="that rctmod moves the cap on this win: its series data is upstream, the rule is relayed "
                                "from docs/mechanics/LEAGUE_LEVEL_CAP.md")
         return st
+
+    def reach_check(self, st, name, team, cap, pool, tid):
+        """Is the level the fight above assumed reachable with what spawns before it? The cap fight assumes a team AT
+        the cap. Fought again at the top wild level met by then: beaten there, the cap need not be reached (PASS);
+        beaten only at the cap, the levels between come from XP on wilds below them, which is not modelled; no
+        compiled wild pool at all leaves nothing to level on (FAIL)."""
+        if not pool:
+            st.add(name, FAIL, "no compiled wild pool before %s: nothing to catch or level on" % tid)
+            return
+        top = max(pool.values())
+        if top >= cap:
+            st.add(name, PASS, "wilds up to L%d before %s reach the cap L%d" % (top, tid, cap))
+            return
+        sub = Stage("x", "x")
+        self.battle_check(sub, name, team, top, pool, tid)
+        c = sub.checks[0]
+        if c["verdict"] == PASS:
+            st.add(name, PASS, {"summary": "%s is beaten at L%d, the top wild level met before him, so the cap L%d "
+                                "need not be reached" % (tid, top, cap), "at_wild_top": c["evidence"]},
+                   not_covered=c["not_covered"])
+        elif c["verdict"] == FAIL:
+            st.add(name, NM, {"summary": "%s needs levels the wilds do not reach: they stop at L%d, the cap is L%d; "
+                              "levelling past them on XP is not modelled (%s)" % (tid, top, cap,
+                                                                                 c["evidence"]["summary"]),
+                              "at_wild_top": c["evidence"]})
+        else:
+            st.add(name, NM, c["evidence"])
 
     def badge_check(self, st, n, tid, adv):
         d = json.loads(adv.read_text(encoding="utf-8"))
@@ -915,16 +1195,180 @@ class Walker:
                                                                                  badge or "NO badge item"),
                not_covered="that rctmod:defeat_count fires (EXP-027 proved gym 1 once)")
 
-    def tail_stage(self, sid, title, ids, extra_upto, why):
-        st = Stage(sid, title)
-        st.add("walk", NM, why)
+    def fight_each(self, st, ids, upto):
+        """Each trainer in `ids` at its cap with the catchables of routes 1..upto, and its cap_reachable."""
+        pool = route_pools(self.inp.packs, upto)
         for tid in ids:
             team = trainer_team(self.inp.packs, tid)
             if not team:
-                st.add("beat:%s" % tid, FAIL, "%s has no built team" % tid)
+                st.add("beat:%s" % tid, FAIL, "%s has no built team (cobblers_trainers)" % tid)
                 continue
-            self.battle_check(st, "beat:%s" % tid, team, self.cap_for(team), route_pools(self.inp.packs, extra_upto),
-                              tid)
+            cap = self.cap_for(team)
+            self.battle_check(st, "beat:%s" % tid, team, cap, pool, tid)
+            self.reach_check(st, "cap_reachable:%s" % tid, team, cap, pool, tid)
+
+    def zones_admit(self, st, name, held, x, y, z, what):
+        """One check: every enforced zone containing (x, y, z) (y None: any height) admits `held`."""
+        inside = [(zid, zn) for zid, zn in sorted(self.zones().items())
+                  if any(in_box(b, x, y, z) for b in zn["boxes"])]
+        shut = [zid for zid, zn in inside if not zone_passable(zn, held)]
+        if shut:
+            needs = {zid: [sorted(a) for a in self.zones()[zid]["admits"]] or "nothing admits on entry: only its knock "
+                     "box sets the pass, so a player arriving any other way is turned back" for zid in shut}
+            st.add(name, FAIL, {"summary": "%s at (%s, %s, %s) stands in %s, which turn(s) back a player holding %d "
+                                "flag(s): %s" % (what, x, y, z, shut, len(held), needs), "held": sorted(held)},
+                   not_covered="the zone check as the built functions read; that the server runs it is not modelled")
+        else:
+            st.add(name, PASS, "%s at (%s, %s, %s): %s" % (what, x, y, z, ("in %s, each admitting the flags held"
+                                                                           % [i for i, _ in inside]) if inside else
+                                                           "in no enforced zone"))
+
+    def crisis_flag(self, st):
+        """The flag past the caves: emitted, and the chain to it named as not modelled. True if emitted."""
+        v, ev = flag_emitted(self.inp.packs, CRISIS_FLAG)
+        if v == FAIL and "cobblers_dialogue" in self.inp.unbuilt:
+            v, ev = NM, "%s (cobblers_dialogue not built in this mode)" % ev
+        st.add("flag_emitted:rift_crisis_resolved", v, ev,
+               not_covered="that the dialogue's conditions are met: the conversations before it are not walked")
+        st.add("story_chain", NM, "the conversations that lead to %s (data/quests.json main_worldshift_reveal, in "
+               "strict order: CRITICAL_PATH_WALK_2 item 2) -- their conditions, actors and seats are not walked" %
+               CRISIS_FLAG)
+        return v == PASS
+
+    def vr_stage(self):
+        st = Stage("victory_road", "Giovanni's town through Victory Road")
+        held = self.held_after(GYM_COUNT)
+        line = self.paths.get("victory_road")
+        if not line:
+            st.add("walked_line", FAIL, "data/route_paths.json has no victory_road line")
+            return st
+        line = [tuple(p) for p in line]
+        st.add("walked_line", PASS, "victory_road: %d points, %d blocks walked" % (len(line),
+                                                                                   round(walked_length(line))))
+        # the zones the line crosses, with the eight badges: the gate that opens this leg
+        crossed = {}
+        for x, z in line:
+            for zid, zn in self.zones().items():
+                if zid not in crossed and any(in_box(b, x, None, z) for b in zn["boxes"]):
+                    crossed[zid] = (x, z)
+        shut = {zid: p for zid, p in crossed.items() if not zone_passable(self.zones()[zid], held)}
+        st.add("gate_opens", FAIL if shut else PASS,
+               {"summary": ("the line enters %s, which the %d gym flag(s) built do not admit (each needs one of %s)"
+                            % (sorted(shut), len(held), {z: [sorted(a) for a in self.zones()[z]["admits"]]
+                                                          for z in shut})) if shut else
+                           "the line crosses %s; the %d gym flag(s) the progression pack binds admit each"
+                           % (sorted(crossed) or "no enforced zone", len(held)), "crossed": crossed,
+                "held": sorted(held)})
+        rect, _src = self.gym_lot(GYM_COUNT)
+        if rect:
+            add_walk(st, "walk_onto_line", self.walk_held(held, lot_ring(rect), [line[0]]),
+                     "gym %d's lot onto victory_road" % GYM_COUNT)
+        add_walk(st, "walk_corridor", self.walk_held(held, [line[0]], [line[-1]], line=line),
+                 "victory_road end to end inside a %d-block corridor" % CORRIDOR)
+        st.add("walk_caves", NM, "Victory Road's caves (data/vr_caves.json) are a braided cave network under the "
+               "heightmap: no walk here models them, nor whether the surface skips them (CRITICAL_PATH_WALK_2 item 3)")
+        crisis = self.crisis_flag(st)
+        caves_held = held | ({CRISIS_FLAG} if crisis else set())
+        self.vr_stands(st, caves_held)
+        forced = self.forced()
+        vr = sorted(t for t, i in forced.items() if t.startswith("route_09_") and i["forced"])
+        self.fight_each(st, vr, 9)
+        return st
+
+    def vr_stands(self, st, held):
+        """Each authored stand (data/vr_trainers.json): seated by the built cycle at its seat, forcing a battle where
+        the data says it makes eye contact, and admitted by every enforced zone it stands in."""
+        if "cobblers_trainers" in self.inp.unbuilt:
+            st.add("seated", NM, "cobblers_trainers is not built in this mode: %s" % self.inp.unbuilt["cobblers_trainers"])
+            return
+        forced = self.forced()
+        for s in self.inp.data("vr_trainers.json").get("trainers") or []:
+            tid, (sx, sy, sz) = s["id"], s["seat"]
+            info = forced.get(tid)
+            seat = info and info["seat"]
+            if not seat:
+                st.add("seated:%s" % tid, FAIL, "%s: no built mob or no seat in the built cycle function "
+                       "(cobblers_trainers trainers/cycle)" % tid)
+            else:
+                off = max(abs(seat[0] - (sx + 0.5)), abs(seat[1] - sy), abs(seat[2] - (sz + 0.5)))
+                bad = off > 1.0 or (s.get("eye_contact") and not info["forced"])
+                st.add("seated:%s" % tid, FAIL if bad else PASS,
+                       "%s seated at (%s, %s, %s), %.1f from its authored stand (%d, %d, %d); forces a battle: %s "
+                       "(data says eye contact: %s)" % (tid, seat[0], seat[1], seat[2], off, sx, sy, sz,
+                                                        info["forced"], s.get("eye_contact")),
+                       not_covered="that rctmod spawns and holds the trainer there")
+            self.zones_admit(st, "zone_admits:%s" % tid, held, sx, sy, sz, tid)
+
+    def league_rect(self, st):
+        """The League's footprint [x0, z0, x1, z1] from the built `place template` and the template's size."""
+        if "cobblers_donor" in self.inp.unbuilt:
+            st.add("league_placed", NM, "cobblers_donor is not built in this mode: %s" % self.inp.unbuilt["cobblers_donor"])
+            return None
+        placed = placed_templates(self.inp.packs, LEAGUE_TEMPLATE)
+        if not placed:
+            st.add("league_placed", FAIL, "no built function places %s" % LEAGUE_TEMPLATE)
+            return None
+        sizes = {tuple(p["size"]) for p in self.inp.data("placements.json").get("placements") or []
+                 if p.get("pack_template") == LEAGUE_TEMPLATE and p.get("size")}
+        x, y, z, rot, mirror, f = placed[0]
+        if len(sizes) != 1 or mirror != "none":
+            st.add("league_placed", NM, "%s placed at (%d, %d, %d) %s by %s, but its size is %s and mirror %s: the "
+                   "footprint is not modelled" % (LEAGUE_TEMPLATE, x, y, z, rot, f, sorted(sizes) or "unknown", mirror))
+            return None
+        rect = template_rect(x, z, list(next(iter(sizes))), rot)
+        others = sorted({(p[0], p[2], p[3]) for p in placed[1:]} - {(x, z, rot)})
+        st.add("league_placed", FAIL if others else PASS,
+               "%s placed at (%d, %d, %d) %s by %s: footprint x%d-%d z%d-%d%s" % (
+                   LEAGUE_TEMPLATE, x, y, z, rot, f, rect[0], rect[2], rect[1], rect[3],
+                   (", and ELSEWHERE too: %s" % others) if others else ""),
+               not_covered="that the template places; its rooms, doors and elevator")
+        return rect
+
+    def league_stage(self):
+        st = Stage("league", "the Elite Four and the Champion")
+        held = self.held_after(GYM_COUNT)
+        if flag_emitted(self.inp.packs, CRISIS_FLAG)[0] == PASS:
+            held = held | {CRISIS_FLAG}
+        rect = self.league_rect(st)
+        if rect:
+            over =sorted({zid for zid, zn in self.zones().items()
+                           for b in zn["boxes"] if b[0] <= rect[2] and b[1] >= rect[0] and b[4] <= rect[3]
+                           and b[5] >= rect[1]})
+            shut = [zid for zid in over if not zone_passable(self.zones()[zid], held)]
+            st.add("zones_over_league", FAIL if shut else PASS,
+                   "the footprint lies in enforced zone(s) %s; %s" % (over or "none", (
+                       "%s turn(s) back a player holding %s" % (shut, sorted(held))) if shut else
+                       "each admits the flags held (%d)" % len(held)))
+            spec = self.inp.data("rift_zones.json").get("zones") or {}
+            for zid, zd in sorted(spec.items()):
+                if zid in self.zones() or str(zd.get("status", "")).startswith("SUPERSEDED"):
+                    continue
+                if any(b[0] <= rect[2] and b[2] >= rect[0] and b[1] <= rect[3] and b[3] >= rect[1]
+                       for b in zd.get("boxes") or []):
+                    st.warnings.append("data/rift_zones.json zone %s covers the League's footprint but has no built "
+                                       "zone advancement, so it is not enforced today; the day it is, the League "
+                                       "sits behind its pass (CRITICAL_PATH_WALK_2 item 4)" % zid)
+            line = self.paths.get("victory_road")
+            if line:
+                add_walk(st, "walk_to_league", self.walk_held(held, [tuple(line[-1])], lot_ring(rect)),
+                         "victory_road's end to the League's footprint")
+        st.add("league_spawners", NM, "the five trainers' spawners are inside the %s template (upstream .nbt): "
+               "not read" % LEAGUE_TEMPLATE)
+        st.add("elite_four_order", NM, "the Elite Four's order and the elevator to the Champion (rctmod's series and "
+               "cobbleverse:trainer/kanto/defeat_elite_lance, upstream; CRITICAL_PATH_WALK_2 item 5): not read")
+        self.fight_each(st, LEAGUE, 9)
+        tid, adv = flag_trainer(self.inp.packs, CHAMPION_FLAG)
+        if not tid:
+            st.add("champion_flag", FAIL, "no built rctmod:defeat_count advancement at %s" % adv.name)
+        else:
+            fn = (((flag_advancement(self.inp.packs, CHAMPION_FLAG)[0] or {}).get("rewards") or {}).get("function")
+                  or "")
+            ok = tid == LEAGUE[-1] and function_text(self.inp.packs, fn) is not None
+            st.add("champion_flag", PASS if ok else FAIL,
+                   "%s is set by beating %s (the Champion here is %s) and rewards %s (%s)" % (
+                       CHAMPION_FLAG, tid, LEAGUE[-1], fn or "nothing", "built" if function_text(
+                           self.inp.packs, fn) is not None else "NOT built"),
+                   not_covered="that rctmod:defeat_count fires for the Champion")
         return st
 
 
@@ -951,18 +1395,97 @@ def run(inp, only=None):
         rect, _src = w.gym_lot(n)
         prev = lot_ring(rect) if rect else None
         label = "gym %d's lot" % n
-    forced = w.forced()
-    vr = sorted(t for t, i in forced.items() if t.startswith("route_09_") and i["forced"])
     if want("victory_road"):
-        stages.append(w.tail_stage("victory_road", "Victory Road's forced fights", vr, 9,
-                                   "Victory Road is a cave network (data/vr_caves.json) behind the Rift's zone checks: "
-                                   "no heightmap walk models it (CRITICAL_PATH_WALK_2 items 1 and 3)"))
+        stages.append(w.vr_stage())
     if want("league"):
-        stages.append(w.tail_stage("league", "the Elite Four and the Champion", LEAGUE, 9,
-                                   "the League's rooms are the kanto_league template's and its spawners' positions "
-                                   "are not in data; the elevator's advancement is unproven (CRITICAL_PATH_WALK_2 "
-                                   "item 5); each fight is run from full health"))
+        stages.append(w.league_stage())
+    if want("multiplayer"):
+        st = Stage("multiplayer", "a second player on the same path")
+        st.add("second_player", NM, "a second player's flags, reveal cursors and trainer hold-offs "
+               "(CRITICAL_PATH_WALK_1 item 3): the walk is one player's")
+        stages.append(st)
     return stages
+
+
+def build_from_data(dest, source_root=None):
+    """Generate into `dest` every pack the walk reads that committed data can build, each by its own generator.
+    Returns {pack: why it was not built} for the rest. Never writes under build/."""
+    import contextlib
+    import io
+    dest = Path(dest)
+    dest.mkdir(parents=True, exist_ok=True)
+    sys.path.insert(0, str(TOOLS))
+    unbuilt = {"cobblers_towns": "tools/place_town.py needs kits/ (gitignored) and derived/routes/critical_legs.json"}
+    quiet = io.StringIO()
+
+    def step(pack, fn):
+        try:
+            with contextlib.redirect_stdout(quiet), contextlib.redirect_stderr(quiet):
+                rc = fn()
+            if rc:
+                unbuilt[pack] = "its generator exited %s" % rc
+        except (Exception, SystemExit) as e:        # one generator's failure must not hide the others' packs
+            unbuilt[pack] = "its generator raised %s: %s" % (type(e).__name__, str(e)[:200])
+
+    import progression_pack
+    import route_trainers
+    import compile_spawns
+    import compile_dialogue
+    import mythical_starters
+    step("cobblers_progression", lambda: progression_pack.main(["--out", str(dest / "cobblers_progression")]))
+    step("cobblers_trainers", lambda: route_trainers.main(["--out", str(dest / "cobblers_trainers")]))
+    step("cobblers_spawns", lambda: compile_spawns.main(["--out", str(dest / "cobblers_spawns")]))
+    step("cobblers_dialogue", lambda: compile_dialogue.main(["--all", "--out", str(dest / "cobblers_dialogue")]))
+
+    def starters():
+        doc = json.loads(mythical_starters.DATA.read_text(encoding="utf-8"))
+        problems = mythical_starters.check(doc)
+        if problems:
+            return "%d problem(s)" % len(problems)
+        for rel, text in mythical_starters.files(doc).items():
+            p = dest / "cobblers_mythical_starters" / rel
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text(text, encoding="utf-8", newline="\n")
+        return 0
+    step("cobblers_mythical_starters", starters)
+
+    def zones():
+        import rift_zones
+        from unittest import mock
+        with mock.patch.object(rift_zones, "PACKS", dest):
+            return rift_zones.cmd_build(argparse.Namespace(source_root=source_root))
+    step("cobblers_rift_zones", zones)
+
+    def gyms():
+        import gym_buildings
+        from unittest import mock
+        pack = dest / "cobblers_gym_buildings"
+        with mock.patch.object(gym_buildings, "PACK", pack), \
+                mock.patch.object(gym_buildings, "FUNCS", pack / "data" / "cobblers" / "function" / "gym_buildings"):
+            return gym_buildings.main(["build"] + (["--source-root", source_root] if source_root else []))
+    step("cobblers_gym_buildings", gyms)
+
+    def donors():
+        # place_donor.py's own `function` loop, minus the records that need the server's templates (clear_loot,
+        # jigsaws): without --server-dir it refuses the whole pack for those, and the League is not one of them
+        import place_donor as P
+        subs = json.loads((ROOT / "data" / "spawn_block_policy.json").read_text(encoding="utf-8"))["substitutions"]
+        out = dest / "cobblers_donor"
+        for rec in P.records(json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))):
+            if rec.get("clear_loot") or rec.get("jigsaws"):
+                continue
+            pos = rec["position"]
+            extra = P.remove_item_commands((pos["x"], pos["y"], pos["z"]), rec.get("rotation"), rec.get("remove_items"))
+            for name, lines in P.functions(rec, subs, None, extra).items():
+                f = out / "data" / P.NS / "function" / "structures" / ("%s.mcfunction" % name)
+                f.parent.mkdir(parents=True, exist_ok=True)
+                f.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        return 0
+    step("cobblers_donor", donors)
+    for p in REQUIRED_PACKS:
+        if p not in unbuilt and not (dest / p).is_dir():
+            unbuilt[p] = "its generator wrote nothing"
+    return unbuilt
 
 
 def main(argv=None):
@@ -971,9 +1494,18 @@ def main(argv=None):
     ap.add_argument("--source-root", default=None)
     ap.add_argument("--only", action="append", default=None, help="one stage id (repeatable), e.g. gym_1")
     ap.add_argument("--out", default=str(OUT))
+    ap.add_argument("--from-data", default=None, metavar="DIR",
+                    help="build what committed data can build into DIR (never build/) and walk that")
+    ap.add_argument("--no-battles", action="store_true", help="skip the fights; they report NOT_MODELLED")
     a = ap.parse_args(argv)
     sys.path.insert(0, str(TOOLS))
-    inp = Inputs(packs=a.packs, source_root=a.source_root)
+    unbuilt = {}
+    if a.from_data:
+        unbuilt = build_from_data(a.from_data, a.source_root)
+        a.packs = a.from_data
+        for p, why in sorted(unbuilt.items()):
+            print("UNBUILT      %s: %s" % (p, why))
+    inp = Inputs(packs=a.packs, source_root=a.source_root, battles=not a.no_battles, unbuilt=unbuilt)
     stages = run(inp, set(a.only) if a.only else None)
     failed, known, fixed = triage(stages)
     for s in stages:
@@ -984,16 +1516,20 @@ def main(argv=None):
         print("FIXED?       %s %s no longer fails: remove it from KNOWN in tools/new_player_walk.py" % k)
     out = Path(a.out)
     out.parent.mkdir(parents=True, exist_ok=True)
+    mode = "data" if a.from_data else "built"
     out.write_text(json.dumps({"schema": "cobblers.new-player-walk/1", "partial": bool(a.only),
-                               "only": sorted(a.only) if a.only else None,
+                               "only": sorted(a.only) if a.only else None, "mode": mode,
+                               "packs": Path(a.packs).as_posix(), "unbuilt": unbuilt, "battles": not a.no_battles,
                                "stages": [s.as_dict() for s in stages]}, indent=1, default=str), encoding="utf-8")
     bad = failed or fixed
-    print("new_player_walk: %s -- %d stage(s): %d PASS, %d FAIL (%d only on KNOWN checks), %d NOT_MODELLED%s; "
+    print("new_player_walk: %s -- %d stage(s): %d PASS, %d FAIL (%d only on KNOWN checks), %d NOT_MODELLED%s%s%s; "
           "detail in %s" % (
               "FAIL" if bad else "ok", len(stages), sum(s.verdict == PASS for s in stages),
               sum(s.verdict == FAIL for s in stages), sum(s.verdict == FAIL for s in stages) - len(failed),
               sum(s.verdict == NM for s in stages),
-              (" (PARTIAL: --only %s)" % ",".join(sorted(a.only))) if a.only else "", out.as_posix()))
+              (" (PARTIAL: --only %s)" % ",".join(sorted(a.only))) if a.only else "",
+              (" (DATA MODE: %d pack(s) unbuilt)" % len(unbuilt)) if a.from_data else "",
+              " (NO BATTLES)" if a.no_battles else "", out.as_posix()))
     return 1 if bad else 0
 
 
@@ -1010,7 +1546,7 @@ def triage(stages):
                     known.append(k)
                 else:
                     new = True
-            elif k in KNOWN:
+            elif k in KNOWN and c["verdict"] == PASS:      # NOT_MODELLED (e.g. --no-battles) is not a fix
                 fixed.append(k)
         if new:
             failed.append(s.id)
