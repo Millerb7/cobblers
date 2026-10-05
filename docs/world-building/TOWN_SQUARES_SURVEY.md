@@ -263,6 +263,14 @@ in staging overnight on 2026-10-03 (`docs/STATE.md:22`).
 
 These need no square and no shop, and I propose none.
 
+**Superseded in part, 2026-10-05** (the owner: "Several towns still have no middle at all ... Every town should have
+somewhere a player goes to spend money"). Squares and stalls were built (`data/plaza_centres.json`, R13; stalls in
+`data/markets.json`, R17M) for Bridgekeep and Redbrow (section 2 above), Merian Hut, Rimwatch, the West Spur Dig and
+the Displaced City (its cairn square kept as the middle; two stalls named for their trades, not the people: **owner to
+confirm**, since the table below recorded "none, by decision"). Still none, by reason: the League (sells nothing),
+The Scar and Relic Island (dark and unkept), Viltri Light (one keeper on a 6-wide door apron; the tower is its middle),
+the Deep's city (story-gated), the research station and the outposts with no people.
+
 | Place | What its middle is | Spend |
 |---|---|---|
 | The League | No plaza. The arrival is two polished-tuff forecourts either side of the ramp (y88; the heightmap under the west forecourt reads 86-88). The torch walk `TOWN_CENTERS.md` proposed is not built. | "The League sells nothing" (`no_counter`). The Centre and Mart are inside the Cobbleverse template; whether that template carries a shopkeeper is **not verified**. |
