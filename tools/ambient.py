@@ -249,7 +249,8 @@ class Site:
         # the square's pieces (tools/plaza_centre.py): it keeps clear of data/ambient.json's workers but reads no town
         # file, so a composed town's worker keeps clear of its pieces instead
         pc = ROOT / "derived" / "plaza_centres" / ("%s.json" % settlement)
-        if pc.is_file():
+        # tools/markets.py reuses this Site for its stall keepers, who stand ON their plaza pieces: it opts out
+        if pc.is_file() and rules.get("avoid_plaza_pieces", True):
             for p in json.loads(pc.read_text(encoding="utf-8")).get("pieces") or []:
                 mark({tuple(c) for c in p.get("columns") or []} | {(b[0], b[2]) for b in p.get("blocks") or []},
                      "plaza piece %s" % p["id"])

@@ -1077,7 +1077,7 @@ def site_problems(doc, traders, source_root=None, skip_dressing=False, plazas=No
         else:
             if s not in sites:
                 try:
-                    sites[s] = A.Site(s, base, placements, dressing, None, rules)
+                    sites[s] = A.Site(s, base, placements, dressing, None, dict(rules, avoid_plaza_pieces=False))  # a stall stands on its piece
                 except SystemExit as e:  # town_dressing.town_plan exits when derived/towns/<s>_plan.json is missing
                     sites[s] = e
             site = sites[s]
