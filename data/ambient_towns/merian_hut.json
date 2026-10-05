@@ -1,0 +1,55 @@
+{
+  "settlement": "merian_hut",
+  "size": "outpost",
+  "target": 6,
+  "character": "The Merian hut is a Pokemon Center, a woodshed and a stable in a high cirque: its Pokemon chop the wood and mind the stable, two birds live on it, and two Mankey have stolen the washing. Mountain species only.",
+  "authored_by": "town author A, 2026-10-05, by hand; positions measured from derived/towns/merian_hut_plan.json, merian_hut_placement.json and tools/ground.py (rounded) through tools/ambient.py's Site; the yard is not cut (plaza y 107, ground 107); y is the standing y",
+  "workers": [
+    {
+      "id": "merian_stable_skiddo",
+      "settlement": "merian_hut",
+      "species": "skiddo",
+      "level": 30,
+      "job": "work",
+      "at": [2787, 1034],
+      "face": [2787, 1030],
+      "every": 40,
+      "effect": {"block": "minecraft:hay_block", "count": 8, "sound": "minecraft:block.grass.hit", "pitch": 0.9},
+      "interact": "The Skiddo minds the stable door and eats its hay one mouthful at a time, very slowly, so there is always some left."
+    },
+    {
+      "id": "merian_wood_kleavor",
+      "settlement": "merian_hut",
+      "species": "kleavor",
+      "level": 32,
+      "job": "work",
+      "at": [2839, 1034],
+      "face": [2839, 1030],
+      "every": 28,
+      "effect": {"block": "minecraft:spruce_log", "count": 12, "sound": "minecraft:block.wood.break", "pitch": 0.8},
+      "interact": "The Kleavor splits the woodshed's logs with one stroke each. The hut has not bought an axe in years."
+    }
+  ],
+  "pets": [],
+  "placed": [
+    {"id": "merian_roof_spearow", "species": "spearow", "spot": "roof", "building": "merian_stable", "why": "a Spearow on the stable roof, shouting at the wind"},
+    {"id": "merian_step_bunnelby", "species": "bunnelby", "spot": "step", "building": "merian_woodshed", "why": "a Bunnelby on the woodshed step, ears out, digging a hole nobody asked for"}
+  ],
+  "situations": [
+    {
+      "id": "merian_mankey_washing",
+      "title": "Who took the washing",
+      "story": "Two Mankey stole the hut's washing off the line and have hung it on the stable fence, and one of them is wearing a sock.",
+      "unique": true,
+      "at": [2800, 108, 1036],
+      "facing": "north",
+      "members": [
+        {"species": "mankey", "count": 2, "pose": "still", "offsets": [[0, 0, 1], [3, 0, 1]]}
+      ],
+      "props": [{"block": "minecraft:oak_fence", "at": [0, 0, 0]}, {"block": "minecraft:oak_fence", "at": [1, 0, 0]}, {"block": "minecraft:oak_fence", "at": [2, 0, 0]}, {"block": "minecraft:white_carpet", "at": [1, 1, 0]}],
+      "why": "the yard between the stable and the Pokemon Center"
+    }
+  ],
+  "counts": {"working": 2, "pets": 0, "placed": 2, "situations": 2, "total": 6},
+  "notes": "No pets: no NPC the apply places stands here (data/npc_seats.json, data/markets.json), so the town has none rather than an invented owner; 0 of 6 is inside the composition's tolerance (one Pokemon). Supersedes idle.towns.merian_hut (the dozing Snorlax and the Swinub are gone)."
+}

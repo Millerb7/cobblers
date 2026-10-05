@@ -1,0 +1,97 @@
+{
+  "settlement": "gorge_hamlet",
+  "size": "hamlet",
+  "target": 14,
+  "character": "Bridgekeep is three buildings and a walled courtyard in the dunes: its Pokemon are desert ones that keep the sand out, carry the water in and watch the trail, and the dunes' own life sits just outside the wall taking tolls. Desert species only; desert houses have no glass, so nothing sits in a window.",
+  "authored_by": "town author A, 2026-10-05, by hand; positions measured from derived/towns/gorge_hamlet_plan.json, gorge_hamlet_placement.json and tools/ground.py (rounded) through tools/ambient.py's Site; the courtyard is not cut (plaza y 113, ground 113); y in a situation is the standing y",
+  "workers": [
+    {
+      "id": "bridgekeep_sand_hippopotas",
+      "settlement": "gorge_hamlet",
+      "species": "hippopotas",
+      "level": 40,
+      "job": "work",
+      "at": [6805, 4375],
+      "face": [6805, 4378],
+      "every": 34,
+      "effect": {"block": "minecraft:sand", "count": 14, "sound": "minecraft:block.sand.break", "pitch": 0.8},
+      "interact": "The Hippopotas clears the night's sand out of the courtyard by breathing it back out over the wall. It is never finished, and seems to like that."
+    },
+    {
+      "id": "bridgekeep_water_numel",
+      "settlement": "gorge_hamlet",
+      "species": "numel",
+      "level": 40,
+      "job": "carry",
+      "route": [[6778, 4369], [6806, 4369]],
+      "carry": "minecraft:water_bucket",
+      "carry_height": 1.2,
+      "pickup": {"sound": "minecraft:item.bucket.fill"},
+      "drop": {"sound": "minecraft:item.bucket.empty", "block": "minecraft:water_cauldron", "count": 6},
+      "interact": "The Numel plods the water in from the trail cistern through the courtyard gate, one bucket on its hump, without hurrying and without stopping."
+    },
+    {
+      "id": "bridgekeep_ball_rellor",
+      "settlement": "gorge_hamlet",
+      "species": "rellor",
+      "level": 38,
+      "job": "work",
+      "at": [6820, 4360],
+      "face": [6820, 4357],
+      "every": 30,
+      "effect": {"block": "minecraft:red_sand", "count": 10, "sound": "minecraft:block.sand.hit", "pitch": 1.2},
+      "interact": "The Rellor rolls its ball of sand and grit along the courtyard wall, packing the gaps the wind made."
+    },
+    {
+      "id": "bridgekeep_vane_baltoy",
+      "settlement": "gorge_hamlet",
+      "species": "baltoy",
+      "level": 38,
+      "job": "work",
+      "at": [6799, 4372],
+      "face": [6796, 4372],
+      "every": 50,
+      "effect": {"block": "minecraft:smooth_sandstone", "count": 8, "sound": "minecraft:block.stone.hit", "pitch": 1.6},
+      "interact": "The Baltoy spins by the gate on one point. The elder reads the wind from which way it leans."
+    }
+  ],
+  "pets": [
+    {"id": "bridgekeep_elder_sandile", "species": "sandile", "owner": "npc_stone_tip_gorge_hamlet_elder", "mode": "wait", "why": "the elder's Sandile lies by her feet with only its eyes out of the sand"},
+    {"id": "bridgekeep_elder_silicobra", "species": "silicobra", "owner": "npc_stone_tip_gorge_hamlet_elder", "mode": "follow", "why": "and a Silicobra that follows her round the courtyard, shedding sand like a leaking sack"}
+  ],
+  "placed": [
+    {"id": "bridgekeep_roof_cacnea", "species": "cacnea", "spot": "roof", "building": "gorge_house_south", "why": "a Cacnea on the flat roof, standing as still as a real cactus"},
+    {"id": "bridgekeep_step_skorupi", "species": "skorupi", "spot": "step", "building": "gorge_house_south", "why": "a Skorupi on the doorstep, which is why the household knocks before it opens the door"},
+    {"id": "bridgekeep_gutter_larvesta", "species": "larvesta", "spot": "gutter", "building": "gorge_hamlet_pokecenter", "why": "a Larvesta along the Pokemon Center's eave, soaking up the sun"}
+  ],
+  "situations": [
+    {
+      "id": "bridgekeep_trapinch_tolls",
+      "title": "The toll pits",
+      "story": "Three Trapinch have dug their pits beside the trail just outside the gate and wait at the bottom of each with their jaws open. Travellers have started leaving them a berry to pass.",
+      "unique": true,
+      "at": [6782, 114, 4363],
+      "facing": "south",
+      "members": [
+        {"species": "trapinch", "count": 3, "pose": "still", "offsets": [[0, 0, 0], [4, 0, 0], [8, 0, 0]]}
+      ],
+      "props": [],
+      "why": "beside the dune trail west of the courtyard gate, off the trail itself"
+    },
+    {
+      "id": "bridgekeep_maractus_shade",
+      "title": "Shade for the elder",
+      "story": "Two Maractus stand very still in the courtyard so the elder can sit in their shade in the afternoon. They move when the sun does.",
+      "unique": false,
+      "at": [6809, 114, 4372],
+      "facing": "east",
+      "members": [
+        {"species": "maractus", "count": 2, "pose": "still", "offsets": [[0, 0, 0], [2, 0, 2]]}
+      ],
+      "props": [],
+      "why": "west of the elder's seat (6813, 4370), not beside it"
+    }
+  ],
+  "counts": {"working": 4, "pets": 2, "placed": 3, "situations": 5, "total": 14},
+  "notes": "Supersedes idle.towns.gorge_hamlet (Slowpoke and Purrloin gone; Cacnea, Hippopotas, Maractus, Sandile and Trapinch kept, now each with something to do). Four workers (one carrier) is inside data/ambient.json rules.per_town."
+}

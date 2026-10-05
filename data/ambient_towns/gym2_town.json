@@ -1,0 +1,237 @@
+{
+  "settlement": "gym2_town",
+  "size": "town",
+  "target": 44,
+  "character": "Viltri Quay is the lake's rescue port: its Pokemon are freshwater ones that work boats, piers, nets and the relief office, and the rest are lake-shore life that treats the town as part of the bank (crabs under the rescue boat, a dam behind the library, a family crossing the promenade). Fresh water only: nothing from the sea coast at Sunset West.",
+  "authored_by": "town author A, 2026-10-05, by hand; positions measured from derived/towns/gym2_town_plan.json, gym2_town_placement.json, derived/plaza_centres/gym2_town.json and tools/ground.py (rounded) through tools/ambient.py's Site; y in a situation is the standing y (ground, or the plaza's paved y 107, + 1). No worker stands on the plaza: the plaza is cut a block below the heightmap there, and Site would stand a worker on the uncut ground",
+  "workers": [
+    {
+      "id": "viltri_plank_timburr",
+      "settlement": "gym2_town",
+      "species": "timburr",
+      "level": 22,
+      "job": "carry",
+      "route": [[1634, 2861], [1648, 2860]],
+      "carry": "minecraft:spruce_planks",
+      "carry_height": 1.2,
+      "pickup": {"sound": "minecraft:block.wood.hit"},
+      "drop": {"sound": "minecraft:block.wood.place", "block": "minecraft:spruce_planks", "count": 10},
+      "interact": "The Timburr shoulders a plank as long as itself down to the east pier, where the Scyther is cutting the new keel."
+    },
+    {
+      "id": "viltri_keel_scyther",
+      "settlement": "gym2_town",
+      "species": "scyther",
+      "level": 24,
+      "job": "work",
+      "at": [1652, 2859],
+      "face": [1652, 2862],
+      "every": 28,
+      "look_around": [1634, 2861],
+      "effect": {"block": "minecraft:spruce_planks", "count": 12, "sound": "minecraft:block.wood.break", "pitch": 1.2},
+      "interact": "The boatwright's Scyther shaves the keel plank in long curls. It stops, sights along it, and shaves again."
+    },
+    {
+      "id": "viltri_catch_buizel",
+      "settlement": "gym2_town",
+      "species": "buizel",
+      "level": 22,
+      "job": "carry",
+      "route": [[1640, 2884], [1640, 2864]],
+      "carry": "minecraft:cod",
+      "carry_height": 1.0,
+      "pickup": {"sound": "minecraft:entity.generic.splash"},
+      "drop": {"sound": "minecraft:entity.fish.swim", "block": "minecraft:wet_sponge", "count": 6},
+      "interact": "The Buizel runs the morning's catch up from the water's edge one fish at a time, dripping all the way."
+    },
+    {
+      "id": "viltri_lifeguard_floatzel",
+      "settlement": "gym2_town",
+      "species": "floatzel",
+      "level": 25,
+      "job": "work",
+      "at": [1569, 2860],
+      "face": [1563, 2866],
+      "every": 60,
+      "look_around": [1563, 2860],
+      "effect": {"block": "minecraft:light_blue_wool", "count": 6, "sound": "minecraft:entity.generic.splash", "pitch": 1.3},
+      "interact": "The quay's Floatzel watches the swimmers off the west pier with its float half inflated. It glares at the Golduck in its chair."
+    },
+    {
+      "id": "viltri_mop_wooper",
+      "settlement": "gym2_town",
+      "species": "wooper",
+      "level": 20,
+      "job": "work",
+      "at": [1585, 2855],
+      "face": [1585, 2857],
+      "every": 30,
+      "effect": {"block": "minecraft:wet_sponge", "count": 10, "sound": "minecraft:entity.generic.splash", "pitch": 1.4},
+      "interact": "The Wooper mops the promenade by lying on it and rolling. The flagstones behind it shine."
+    },
+    {
+      "id": "viltri_nets_corphish",
+      "settlement": "gym2_town",
+      "species": "corphish",
+      "level": 21,
+      "job": "work",
+      "at": [1600, 2754],
+      "face": [1603, 2754],
+      "every": 32,
+      "effect": {"block": "minecraft:cobweb", "count": 8, "sound": "minecraft:entity.sheep.shear", "pitch": 1.1},
+      "interact": "The fisher's Corphish picks the knots out of the nets hung on the cottage's back wall, snipping the ones it cannot pick."
+    },
+    {
+      "id": "viltri_letters_swablu",
+      "settlement": "gym2_town",
+      "species": "swablu",
+      "level": 20,
+      "job": "carry",
+      "route": [[1598, 2802], [1580, 2808], [1566, 2808]],
+      "carry": "minecraft:paper",
+      "carry_height": 1.3,
+      "pickup": {"sound": "minecraft:item.book.page_turn"},
+      "drop": {"sound": "minecraft:item.book.put", "block": "minecraft:white_wool", "count": 4},
+      "interact": "The relief clerk's Swablu carries the day's lists of the missing to the library to be copied. It holds the page in its beak, very carefully."
+    },
+    {
+      "id": "viltri_dredge_quagsire",
+      "settlement": "gym2_town",
+      "species": "quagsire",
+      "level": 24,
+      "job": "work",
+      "at": [1580, 2896],
+      "face": [1580, 2900],
+      "every": 40,
+      "effect": {"block": "minecraft:mud", "count": 14, "sound": "minecraft:block.mud.break", "pitch": 0.8},
+      "interact": "The Quagsire scoops the silt out of the shallows so the rescue boat can get in. It does not seem to mind which way the silt goes."
+    },
+    {
+      "id": "viltri_bilge_mudkip",
+      "settlement": "gym2_town",
+      "species": "mudkip",
+      "level": 20,
+      "job": "work",
+      "at": [1557, 2861],
+      "face": [1560, 2866],
+      "every": 26,
+      "effect": {"block": "minecraft:clay", "count": 8, "sound": "minecraft:entity.generic.splash", "pitch": 1.5},
+      "interact": "The Mudkip keeps the moored rowing boat's bilge empty, spitting each mouthful back over the side."
+    },
+    {
+      "id": "viltri_winch_poliwhirl",
+      "settlement": "gym2_town",
+      "species": "poliwhirl",
+      "level": 23,
+      "job": "work",
+      "at": [1664, 2861],
+      "face": [1664, 2864],
+      "every": 36,
+      "effect": {"block": "minecraft:chain", "count": 6, "sound": "minecraft:block.chain.hit", "pitch": 0.9},
+      "interact": "The Poliwhirl turns the winch that hauls boats up past the east pier, its belly swirl turning with the drum."
+    },
+    {
+      "id": "viltri_sweep_lombre",
+      "settlement": "gym2_town",
+      "species": "lombre",
+      "level": 21,
+      "job": "work",
+      "at": [1616, 2766],
+      "face": [1616, 2770],
+      "every": 28,
+      "effect": {"block": "minecraft:lily_pad", "count": 8, "sound": "minecraft:block.grass.hit", "pitch": 1.2},
+      "interact": "The Lombre sweeps the avenue by the Mart with the pad on its head, humming."
+    }
+  ],
+  "pets": [
+    {"id": "viltri_clerk_marill", "species": "marill", "owner": "npc_main_misty_relief_clerk", "mode": "follow", "why": "the relief clerk's Marill follows her between the desk and the square, its tail float bobbing behind"},
+    {"id": "viltri_clerk_azurill", "species": "azurill", "owner": "npc_main_misty_relief_clerk", "mode": "wait", "why": "and an Azurill that waits by the desk, sitting on its own tail, because it cannot keep up"},
+    {"id": "viltri_rescue_dewpider", "species": "dewpider", "owner": "viltri_quay", "mode": "wait", "why": "the rescue-gear seller's Dewpider, in its bubble, next to the diving helmets: a sales pitch"},
+    {"id": "viltri_boatwright_chewtle", "species": "chewtle", "owner": "viltri_boatwright", "mode": "follow", "why": "the boatwright's Chewtle follows him and bites every plank he picks up, to test it"},
+    {"id": "viltri_fishmonger_skitty", "species": "skitty", "owner": "viltri_fishmonger", "mode": "wait", "why": "the fishmonger's Skitty waits by the fish with enormous patience"},
+    {"id": "viltri_catch_surskit", "species": "surskit", "owner": "viltri_strange_catch", "mode": "wait", "why": "the strange-catch seller's Surskit skates in circles in a bucket of lake water by the stall"}
+  ],
+  "placed": [
+    {"id": "viltri_gutter_shellos", "species": "shellos", "spot": "gutter", "building": "gym2_house_03", "why": "a Shellos in the gutter after rain, as if the gutter were a stream"},
+    {"id": "viltri_gutter_tympole", "species": "tympole", "spot": "gutter", "building": "gym2_house_05", "why": "a Tympole in the gutter of the end house, humming in the drainpipe"},
+    {"id": "viltri_step_lotad", "species": "lotad", "spot": "step", "building": "gym2_house_04", "why": "a Lotad on the mason's step, keeping its pad wet in a puddle"},
+    {"id": "viltri_roof_pidgey", "species": "pidgey", "spot": "roof", "building": "gym2_house_06", "why": "a Pidgey on the library roof"},
+    {"id": "viltri_window_minccino", "species": "minccino", "spot": "step", "building": "gym2_house_01", "why": "a Minccino on the fisher's step, dusting it with its tail"},
+    {"id": "viltri_porch_froakie", "species": "froakie", "spot": "step", "building": "gym2_house_08", "why": "a Froakie on the tannery step, its froth drying in the sun"},
+    {"id": "viltri_roof_taillow", "species": "taillow", "spot": "roof", "building": "gym2_house_02", "why": "a Taillow on the cartographer's roof, facing into the wind off the lake"},
+    {"id": "viltri_window_wynaut", "species": "wynaut", "spot": "step", "building": "gym2_house_07", "why": "a Wynaut on the farmhouse step, swaying, waiting to be noticed"},
+    {"id": "viltri_walltop_ledyba", "species": "ledyba", "spot": "wall_top", "building": "gym2_house_04", "why": "a Ledyba on the mason's wall top, warming up before it flies"}
+  ],
+  "situations": [
+    {
+      "id": "viltri_swanna_crossing",
+      "allow": ["street"],
+      "title": "Right of way",
+      "story": "A Swanna leads five Ducklett across the promenade from the lake to the farm's puddle, in a line, at their pace. Nobody on the promenade moves until the last one is over.",
+      "unique": true,
+      "at": [1660, 108, 2853],
+      "facing": "north",
+      "members": [
+        {"species": "swanna", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]},
+        {"species": "ducklett", "count": 5, "pose": "still", "offsets": [[0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 5], [0, 0, 7]]}
+      ],
+      "props": [],
+      "why": "on the promenade's east end (street cells 2854-2858) between the east pier and gym2_house_07; the gap before the last Ducklett is the straggler"
+    },
+    {
+      "id": "viltri_hull_krabby",
+      "title": "Tenants of the rescue boat",
+      "story": "Four Krabby have moved in under the edges of the rescue boat in the square and pinch the ankles of anyone who sits on it to rest.",
+      "unique": false,
+      "at": [1633, 108, 2807],
+      "facing": "north",
+      "members": [
+        {"species": "krabby", "count": 4, "pose": "still", "offsets": [[-1, 0, -2], [2, 0, -2], [-2, 0, 2], [1, 0, 2]]}
+      ],
+      "props": [],
+      "why": "round gym2_rescue_hull (columns x 1630-1636, z 2806-2808 in derived/plaza_centres/gym2_town.json), never on its blocks"
+    },
+    {
+      "id": "viltri_library_dam",
+      "title": "The dam behind the library",
+      "story": "A Bibarel has been damming the drain behind the library for a week and two Bidoof keep bringing it sticks. The library cellar is starting to flood.",
+      "unique": false,
+      "at": [1562, 108, 2794],
+      "facing": "south",
+      "members": [
+        {"species": "bibarel", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]},
+        {"species": "bidoof", "count": 2, "pose": "wander_leashed", "offsets": [[-2, 0, 1], [2, 0, -1]]}
+      ],
+      "props": [{"block": "minecraft:oak_log", "at": [0, 0, 1]}, {"block": "minecraft:water_cauldron", "at": [1, 0, 1]}],
+      "why": "the library's (gym2_house_06) back, its north side, outside its lot"
+    },
+    {
+      "id": "viltri_poliwag_anglers",
+      "title": "Gone fishing",
+      "story": "Four Poliwag sit in a row at the water's edge east of the gym with their tails in the lake, exactly like the anglers on the pier. Nothing has bitten.",
+      "unique": false,
+      "at": [1635, 105, 2888],
+      "facing": "south",
+      "members": [
+        {"species": "poliwag", "count": 4, "pose": "still", "offsets": [[0, 0, 0], [2, 0, 0], [4, 0, 0], [6, 0, 0]]}
+      ],
+      "props": [],
+      "why": "the shore below the east lawn, y105, outside the water export's margin"
+    },
+    {
+      "id": "viltri_golduck_chair",
+      "title": "The lifeguard's chair",
+      "story": "A Golduck sits in the lifeguard's tall chair at the west pier every day. The real lifeguard, a Floatzel, works from the ground and has stopped arguing.",
+      "unique": false,
+      "at": [1563, 110, 2860],
+      "facing": "south",
+      "members": [
+        {"species": "golduck", "count": 1, "pose": "still", "offsets": [[0, 1, 0]]}
+      ],
+      "props": [{"block": "minecraft:scaffolding", "at": [0, 0, 0]}],
+      "why": "the west pier's landward end, beside the Floatzel's station"
+    }
+  ],
+  "counts": {"working": 11, "pets": 6, "placed": 9, "situations": 18, "total": 44},
+  "notes": "Supersedes idle.towns.gym2_town (Slowpoke, Snorlax and Purrloin are gone; Psyduck is left out on purpose because the owner's brief used it as the example and the other author may too). Eleven workers (three carriers) is over data/ambient.json rules.per_town (2 carriers, 4 stationary)."
+}
