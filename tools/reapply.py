@@ -137,6 +137,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-05: the mainline beats' evidence displays beside eight tellers (tools/reveal_evidence.py), run
                 # by R17NE after R17N
                 "cobblers_reveal_evidence",
+                # 2026-10-05: the Brass Petrel, the wreck half-buried in the south-east dunes' beach (tools/desert_wreck.py),
+                # run by R9DW before R9E
+                "cobblers_desert_wreck",
                 # 2026-10-02: Codex's ten named residents (tools/resident_encounters.py, data/resident_encounters.json):
                 # a keeper loop and respawn clock hold them, so world-local; dressed and the ungated ones summoned by R18R
                 "cobblers_residents",
@@ -697,6 +700,7 @@ def prepare_jobs(a):
     add("dune_ruin:build", "dune_ruin.py", "build", *src)
     add("dune_ruin_audit", "dune_ruin_audit.py", *src)
     add("reveal_evidence:build", "reveal_evidence.py", "build")
+    add("desert_wreck:build", "desert_wreck.py", "build", *src)
     # the ten named residents (2026-10-02), then their independent audit, which re-derives every site and write from
     # the data and the heightmap and fails the prepare on a broken pack
     add("resident_encounters", "resident_encounters.py", *src)
@@ -1722,6 +1726,10 @@ def steps(with_spawns=False):
                 old_orchard.placement_steps()))
     # the Copperway Khan (2026-10-02, tools/dune_ruin.py): BEFORE R9E, because its build writes the vault floor - after
     # R9E it would lay smooth sandstone over the Cofagrigus Habitat Block set in that floor
+    # the Brass Petrel (2026-10-05, tools/desert_wreck.py): BEFORE R9E, whose Habitat Blocks include the beach's two
+    import desert_wreck
+    out.append(("R9DW", "the Brass Petrel: the wreck in the south-east dunes' beach, its dead reef and anchor (data/desert_wreck.json)",
+                desert_wreck.placement_steps()))
     import dune_ruin
     out.append(("R9DU", "the Copperway Khan, its sealed store and the Copperway's milestones (data/dune_ruin.json)",
                 dune_ruin.placement_steps()))
