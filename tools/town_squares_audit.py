@@ -28,8 +28,8 @@ WHAT IT READS (the built result):
   report (derived/plaza_centres/*.json) is NOT read: the function is what the server runs.
   The R17M step: tools/reapply.steps()'s R17M when it can be built (a full checkout after prepare); else what R17M
   composes (markets.npc_placements + markets.stall_placements for the `npc` actions, cobblers:markets/load and
-  markets.MERCHANTS_FN for the `fn` ones), and the report says which. Its `npc` actions are the counters' dialogue
-  clerks; its `fn` ids are FOLLOWED through the markets pack (build/datapacks/cobblers_markets, else markets.build()
+  markets.MERCHANTS_FN for the `fn` ones), and the report says which. Its `npc` actions were the counters' dialogue
+  clerks until 2026-10-06 and are empty now; its `fn` ids are FOLLOWED through the markets pack (build/datapacks/cobblers_markets, else markets.build()
   in memory, said so) via `function`, `schedule function` and `execute ... run function`, and every `summon` and
   `kill @e[type=cobblemon:npc,...]` in them is read with MY OWN parser (snbt() below; not traders.to_snbt, not
   markets.shop_offers). A stall's merchant is known by its tag <stall_merchant.tag>_<stall id>.
@@ -62,24 +62,27 @@ THE CHECKS (each named in the output; P = problem, K = known defect, recorded in
             functions write, the plan's lamps (the lamp_block one below the plan's `at`) and earthwork lanterns.
             Cells: every square cell no standing piece covers, street cells over the square INCLUDED (the generator
             leaves those to the street lamps; I do not)
-  staff     every contract stall has exactly one R17M keeper -- a counter's dialogue clerk (`npc` action) or a stall's
-            merchant (a summon in the functions R17M runs) -- at its keeper_at with its yaw (the merchant's
-            Rotation[0]); every keeper stands at a contract keeper_at, or is in a declared fallback town (Fossick
-            mining_town, Northlight, Redbrow tableland_stop, the Deep's city deep_city); a record's `sells` is its
-            stall's theme word; every sited stall has exactly one merchant summon with its tag, an unsited one none;
-            no R17M `npc` action is a cobblers:npc_stall_* dialogue keeper and no followed function summons a
-            cobblemon:npc; each merchant's functions kill type=cobblemon:npc centred on its own block (the dialogue
-            keeper it replaces), with a radius that reaches no counter clerk
+  staff     every contract stall has exactly one R17M keeper -- a merchant (a summon in the functions R17M runs), a
+            stall's since 2026-10-04 and a counter's since 2026-10-06 (data/markets.json decisions
+            counters_are_merchants: "should be the villagers with ui only") -- at its keeper_at with its yaw (the
+            merchant's Rotation[0]); every keeper stands at a contract keeper_at, or is in a declared fallback town
+            (Fossick mining_town, Northlight, Redbrow tableland_stop, the Deep's city deep_city); a record's `sells` is
+            its stall's theme word; every sited stall and counter has exactly one merchant summon with its tag, an
+            unsited one none; no R17M `npc` action is a cobblers:npc_stall_* or npc_market_* dialogue keeper and no
+            followed function summons a cobblemon:npc; each merchant's functions kill type=cobblemon:npc centred on its
+            own block (the dialogue keeper it replaces), with a radius that reaches no other NPC R17M places
   merchant  each merchant summon is cobbledollars:cobble_merchant, centred on its block (x.5, whole y, z.5), NoAI and
             PersistenceRequired 1b, named its keeper's name
-  shop      each merchant's CobbleMerchantShop is ONE category equal to its stall's non-empty `category`; one offer per
-            stall line (data/markets.json stock), Item count 1, Price a whole-number string with Price x the line's
-            count = the line's price; no offer without a line; and no sited stall line gated (a merchant shows one
-            list to every player: a gated line belongs on a counter)
+  shop      each merchant's CobbleMerchantShop is ONE category equal to its stall's or counter's non-empty
+            `category`; one offer per line (data/markets.json stock), Item count 1, Price a whole-number string with
+            Price x the line's count = the line's price; no offer without a line; and no sited stall or counter line
+            gated (a merchant shows one list to every player)
   items     every item on an emitted stall or counter exists in a jar (NOT CHECKED, said so, without the jar); none
             places a spawn-condition block (my own item -> block map, PLACES_BLOCK); none is a ball, a battle item or
-            a boost unless gated on a badge (my own vocabulary: any non-vanilla id outside the convenience namespaces,
-            every *_ball, and the vanilla power list POWER_VANILLA)
+            a boost unless gated on a badge, or its badge gate was dropped by a decision data/markets.json records
+            (gate_dropped.decision in `decisions`: since 2026-10-06 every counter is a merchant and cannot gate; until
+            then the rule was "gated on a badge" alone) (my own vocabulary: any non-vanilla id outside the convenience
+            namespaces, every *_ball, and the vanilla power list POWER_VANILLA)
   theme     every stall line fits its theme by THEME_WORDS below; lines judged by hand are HAND_JUDGED, with why
   spend     every town TOWN_SQUARES_SURVEY section 0 lists as having nowhere to spend money now has an emitted stall or
             counter selling something other than the Mart's three items
@@ -860,17 +863,19 @@ def staff_checks(plazas, markets_doc, npcs, summons=(), kills=()):
     P = []
     cs = contract_stalls(plazas)
     prefix = (markets_doc.get("stall_merchant") or {}).get("tag") or "cobblers_stall"
-    stalls = {s["id"]: s for s in markets_doc.get("stalls") or []}
+    # since 2026-10-06 (data/markets.json decisions counters_are_merchants) a counter's keeper is a merchant too, known
+    # by the same tag family: <prefix>_<counter id>
+    stalls = merchant_recs(markets_doc)
     recs = {}
     for c in markets_doc["counters"]:
         recs["cobblers:npc_market_%s" % c["id"]] = c
-    for s in stalls.values():
+    for s in markets_doc.get("stalls") or []:
         recs["cobblers:npc_stall_%s" % s["id"]] = s
     keepers = []              # (label, block, yaw, markets record or None, kind)
     for cls, pos, yaw in npcs:
-        if re.fullmatch(r"cobblers:npc_stall_.+", cls):
-            P.append(("staff", cls + ":dialogue", "R17M still places %s, a Cobblemon dialogue stall keeper (every stall "
-                      "keeper is a CobbleDollars merchant since 2026-10-04)" % cls))
+        if re.fullmatch(r"cobblers:npc_(stall|market)_.+", cls):
+            P.append(("staff", cls + ":dialogue", "R17M still places %s, a Cobblemon dialogue keeper (every stall keeper "
+                      "is a CobbleDollars merchant since 2026-10-04, every counter keeper since 2026-10-06)" % cls))
         keepers.append((cls, tuple(pos), yaw, recs.get(cls), "npc"))
     per_stall = {}
     for m in summons:
@@ -892,8 +897,8 @@ def staff_checks(plazas, markets_doc, npcs, summons=(), kills=()):
         want = 1 if s.get("status") == "sited" else 0
         got = len(per_stall.get(sid, []))
         if got != want:
-            P.append(("staff", sid + ":merchants", "stall %s (%s): %d merchant summon(s) carry its tag, not %d"
-                      % (sid, s.get("status"), got, want)))
+            P.append(("staff", sid + ":merchants", "%s %s (%s): %d merchant summon(s) carry its tag, not %d"
+                      % (s["_kind"], sid, s.get("status"), got, want)))
     by_pos = {}
     for k in keepers:
         by_pos.setdefault(k[1], []).append(k)
@@ -927,21 +932,37 @@ def staff_checks(plazas, markets_doc, npcs, summons=(), kills=()):
         if pos not in seats and rec["town"] not in FALLBACK_TOWNS:
             P.append(("staff", label + ":seat", "%s (%s) stands at %s, no contract keeper_at, in %s, not a declared "
                       "fallback town" % (rec["id"], label, list(pos), rec["town"])))
-    # the removal is MEANT to take a dialogue stall keeper; it must take no counter clerk
-    clerks = [(cls, pos) for cls, pos, _y in npcs if not re.fullmatch(r"cobblers:npc_stall_.+", cls)]
+    # the removal is MEANT to take a dialogue keeper (a stall's until 2026-10-04, a counter's until 2026-10-06); it
+    # must take no other Cobblemon NPC R17M places
+    clerks = [(cls, pos) for cls, pos, _y in npcs if not re.fullmatch(r"cobblers:npc_(stall|market)_.+", cls)]
     for sid, ms in sorted(per_stall.items()):
         bx, by, bz = ms[0]["block"]
         centre = (bx + 0.5, by, bz + 0.5)
         mine = [(c, r) for _f, c, r in kills if math.dist(c, centre) < 0.01]
         if not mine:
-            P.append(("staff", sid + ":replaces", "stall %s: no `kill @e[type=cobblemon:npc,...]` centred on its "
-                      "merchant at %s, so the dialogue keeper it replaces stays in the world" % (sid, list(centre))))
+            P.append(("staff", sid + ":replaces", "%s %s: no `kill @e[type=cobblemon:npc,...]` centred on its "
+                      "merchant at %s, so the dialogue keeper it replaces stays in the world"
+                      % (stalls[sid]["_kind"], sid, list(centre))))
         for c, r in mine:
             for cls, (nx, ny, nz) in clerks:
                 if math.dist(c, (nx + 0.5, ny, nz + 0.5)) <= r:
-                    P.append(("staff", "%s:kills:%s" % (sid, cls), "stall %s: its removal (radius %s round %s) "
-                              "reaches the counter clerk %s at %s" % (sid, r, list(c), cls, [nx, ny, nz])))
+                    P.append(("staff", "%s:kills:%s" % (sid, cls), "%s %s: its removal (radius %s round %s) "
+                              "reaches the R17M NPC %s at %s" % (stalls[sid]["_kind"], sid, r, list(c), cls, [nx, ny, nz])))
     return P
+
+
+def merchant_recs(markets_doc):
+    """{id: record with '_kind'} of every record a merchant summon may name by its tag: the stalls (merchants since
+    2026-10-04) and the counters (since 2026-10-06, decision counters_are_merchants). A counter and a stall sharing an
+    id would share a tag: that is named, not merged."""
+    out = {}
+    for kind, recs in (("stall", markets_doc.get("stalls") or []), ("counter", markets_doc["counters"])):
+        for r in recs:
+            if r["id"] in out:
+                raise SystemExit("data/markets.json: %s %s and %s %s share an id, so their merchants would share a tag"
+                                 % (out[r["id"]]["_kind"], r["id"], kind, r["id"]))
+            out[r["id"]] = dict(r, _kind=kind)
+    return out
 
 
 def merchant_checks(markets_doc, summons):
@@ -951,14 +972,14 @@ def merchant_checks(markets_doc, summons):
     line's count is the line's price; no other offer. And no stall line gated (a merchant shows one list to everyone)."""
     P = []
     prefix = (markets_doc.get("stall_merchant") or {}).get("tag") or "cobblers_stall"
-    stalls = {s["id"]: s for s in markets_doc.get("stalls") or []}
+    stalls = merchant_recs(markets_doc)          # the counters too, since 2026-10-06
     for s in stalls.values():
         if s.get("status") != "sited":
             continue
         for it in s.get("stock") or []:
             if it.get("gate"):
-                P.append(("shop", "%s:%s:gated" % (s["id"], it["item"]), "stall %s: %s is gated on %r, but its "
-                          "merchant shows every line to every player" % (s["id"], it["item"], it["gate"])))
+                P.append(("shop", "%s:%s:gated" % (s["id"], it["item"]), "%s %s: %s is gated on %r, but its "
+                          "merchant shows every line to every player" % (s["_kind"], s["id"], it["item"], it["gate"])))
     for m in summons:
         sid = merchant_stall(m, stalls, prefix)
         if sid is None or m["kind"] == "cobblemon:npc":
@@ -1003,8 +1024,8 @@ def merchant_checks(markets_doc, summons):
                 P.append(("shop", "%s:%s:price" % (sid, it["item"]), "%s: %s at %r each; the line is %s for $%s"
                           % (w, it["item"], p, it["count"], it["price"])))
         for o in offers:
-            P.append(("shop", "%s:%s:extra" % (sid, ((o or {}).get("Item") or {}).get("id")), "%s: an offer no stall "
-                      "line has: %r" % (w, o)))
+            P.append(("shop", "%s:%s:extra" % (sid, ((o or {}).get("Item") or {}).get("id")), "%s: an offer no %s "
+                      "line has: %r" % (w, s["_kind"], o)))
     return P
 
 
@@ -1075,6 +1096,15 @@ def item_checks(markets_doc, spawn, ids):
             power = (ns == "cobblemon" and path.endswith("_ball")) or path.endswith("poke_ball") or \
                     (ns not in ("minecraft",) and ns not in CONVENIENCE_NS) or bool(POWER_VANILLA.fullmatch(item))
             gated = bool(it.get("gate")) and isinstance(rec.get("badge"), int) and rec["badge"] >= 1
+            # changed 2026-10-06 (the owner: "should be the villagers with ui only"; data/markets.json decisions
+            # counters_are_merchants): a counter's merchant cannot gate, so a power line whose badge gate was dropped
+            # BY THAT RECORDED DECISION counts as the owner's call, not as this rule's fault. The record must name the
+            # badge and a decision data/markets.json actually holds; anything else still fails
+            gd = it.get("gate_dropped")
+            decided = {d.get("id") for d in markets_doc.get("decisions") or []}
+            if not gated and isinstance(gd, dict) and gd.get("gate") and gd.get("decision") in decided \
+                    and isinstance(rec.get("badge"), int):
+                gated = True
             if power and not gated:
                 P.append(("power", "%s:%s" % (rec["id"], item), "%s %s: %s is a ball, battle item or boost and is not "
                           "badge-gated" % (kind, rec["id"], item)))

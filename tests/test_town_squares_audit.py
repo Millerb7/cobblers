@@ -204,6 +204,22 @@ def test_power_rule_flags_an_ungated_ball_and_passes_a_badge_gated_one():
     assert sorted(p[1] for p in P if p[0] == "power") == ["s:cobblemon:great_ball", "s:minecraft:splash_potion"]
 
 
+def test_power_rule_accepts_a_gate_dropped_by_a_recorded_decision_only():
+    # 2026-10-06 (the owner: "should be the villagers with ui only"): a counter is a merchant and cannot gate, so a
+    # ball whose badge gate was dropped BY A DECISION data/markets.json records passes; the same record citing a
+    # decision nobody took, or naming no badge, still fails. Without it the rule would either fail every counter or
+    # wave through any ungated ball.
+    drop = lambda **kw: dict({"gate": "gym6_cleared", "decision": "counters_are_merchants", "why": "probe"}, **kw)
+    doc = _market([{"id": "u", "item": "cobblemon:ultra_ball", "price": 1, "gate": None, "gate_dropped": drop()},
+                   {"id": "v", "item": "cobblemon:great_ball", "price": 1, "gate": None,
+                    "gate_dropped": drop(decision="nobody_decided")},
+                   {"id": "w", "item": "cobblemon:net_ball", "price": 1, "gate": None, "gate_dropped": drop(gate=None)}],
+                  [])
+    doc["decisions"] = [{"id": "counters_are_merchants"}]
+    P, _u = A.item_checks(doc, set(), {})
+    assert sorted(p[1] for p in P if p[0] == "power") == ["c:cobblemon:great_ball", "c:cobblemon:net_ball"]
+
+
 def test_item_rule_reads_the_block_an_item_puts_down_and_what_it_grows():
     # Without it a seed whose stem fruits into a spawn block (a pumpkin) would be sold as harmless.
     doc = _market([], [{"id": "p", "item": "minecraft:pumpkin_seeds", "price": 1, "gate": None}])
@@ -224,7 +240,10 @@ def _kill(x, y, z, r=2.5):
     return "execute if entity @e[tag=a] run kill @e[type=cobblemon:npc,x=%d.5,y=%d,z=%d.5,distance=..%s]" % (x, y, z, r)
 
 
-MK = {"counters": [{"id": "a", "town": "t"}, {"id": "b", "town": "t"}],
+# counter a is sited, a merchant since 2026-10-06 (data/markets.json decisions counters_are_merchants); b is not
+MK = {"counters": [{"id": "a", "town": "t", "status": "sited", "category": "Fish", "keeper": {"name": "Fisher"},
+                    "stock": [{"item": "minecraft:cod", "count": 4, "price": 80, "gate": None}]},
+                   {"id": "b", "town": "t"}],
       "stall_merchant": {"tag": "cobblers_stall"},
       "stalls": [{"id": "c", "town": "t", "sells": "fish", "status": "sited", "category": "Fish",
                   "keeper": {"name": "Fisher"},
@@ -245,26 +264,34 @@ def _staff(npcs, lines, plazas=None):
     return sorted(p[1] for p in A.staff_checks(plazas, MK, npcs, summons, kills)), summons
 
 
-def test_staffing_counts_clerks_and_merchants_and_names_each_fault():
+def test_staffing_counts_merchants_and_names_each_fault():
     # Without it a stall could stand empty, two keepers share one spot, a keeper stand off every stall, a dialogue
-    # stall keeper survive the merchants, or a merchant's removal of the old keeper miss it or take a counter clerk.
-    good = [_summon("c", 9, 1, 9), _kill(9, 1, 9), _summon("d", 2, 2, 2), _kill(2, 2, 2)]
-    clerk = [("cobblers:npc_market_a", (5, 1, 6), 0)]
-    assert _staff(clerk, good)[0] == []
-    # two clerks on one seat, the second merchant nowhere
-    keys, _s = _staff(clerk + [("cobblers:npc_market_b", (5, 1, 6), 0)], good[2:])
-    assert keys == ["c:merchants", "t_stall_1", "t_stall_2"]
-    # a Cobblemon dialogue stall keeper still placed by R17M, beside the merchant on its seat
-    keys, _s = _staff(clerk + [("cobblers:npc_stall_c", (9, 1, 9), 0)], good)
+    # keeper (a stall's, or since 2026-10-06 a counter's) survive the merchants, or a merchant's removal of the old
+    # keeper miss it or take another NPC R17M places. Counter a's keeper is a merchant on t_stall_1's seat.
+    a = [_summon("a", 5, 1, 6), _kill(5, 1, 6)]
+    good = a + [_summon("c", 9, 1, 9), _kill(9, 1, 9), _summon("d", 2, 2, 2), _kill(2, 2, 2)]
+    assert _staff([], good)[0] == []
+    # the counter's merchant missing, and the first stall's: both seats empty
+    keys, _s = _staff([], good[4:])
+    assert keys == ["a:merchants", "c:merchants", "t_stall_1", "t_stall_2"]
+    # a Cobblemon dialogue keeper still placed by R17M beside the merchant on its seat: the counter's, then a stall's
+    keys, _s = _staff([("cobblers:npc_market_a", (5, 1, 6), 0)], good)
+    assert keys == ["cobblers:npc_market_a:dialogue", "t_stall_1"]
+    keys, _s = _staff([("cobblers:npc_stall_c", (9, 1, 9), 0)], good)
     assert keys == ["cobblers:npc_stall_c:dialogue", "t_stall_2"]
     # a merchant off every seat in a town that is not a declared fallback; and one with no removal of the old keeper
-    keys, _s = _staff(clerk, [_summon("c", 1, 1, 1), _summon("d", 2, 2, 2), _kill(2, 2, 2)])
+    keys, _s = _staff([], a + [_summon("c", 1, 1, 1), _summon("d", 2, 2, 2), _kill(2, 2, 2)])
     assert keys == ["c:replaces", "merchant c:seat", "t_stall_2"]
-    # a removal wide enough to reach the clerk at (5, 1, 6) from (9, 1, 9): 5.0 blocks centre to centre
-    keys, _s = _staff(clerk, [_summon("c", 9, 1, 9), _kill(9, 1, 9, 5), _summon("d", 2, 2, 2), _kill(2, 2, 2)])
-    assert keys == ["c:kills:cobblers:npc_market_a"]
+    # the counter's merchant with no removal: its Steve stays (the owner, 2026-10-06: "need the steve traders gone")
+    keys, _s = _staff([], [_summon("a", 5, 1, 6)] + good[2:])
+    assert keys == ["a:replaces"]
+    # a removal wide enough to reach another NPC R17M places, at (12, 1, 9) from (9, 1, 9): 3.0 blocks centre to
+    # centre (a dialogue keeper is the removal's target, never its victim, so the victim here is another class)
+    keys, _s = _staff([("cobblers:npc_other", (12, 1, 9), 0)],
+                      a + [_summon("c", 9, 1, 9), _kill(9, 1, 9, 5), _summon("d", 2, 2, 2), _kill(2, 2, 2)])
+    assert keys == ["c:kills:cobblers:npc_other", "cobblers:npc_other"]
     # turned the wrong way on its seat
-    keys, _s = _staff(clerk, [_summon("c", 9, 1, 9, yaw=90.0), _kill(9, 1, 9), _summon("d", 2, 2, 2), _kill(2, 2, 2)])
+    keys, _s = _staff([], a + [_summon("c", 9, 1, 9, yaw=90.0), _kill(9, 1, 9), _summon("d", 2, 2, 2), _kill(2, 2, 2)])
     assert keys == ["t_stall_2:yaw"]
 
 
@@ -301,6 +328,13 @@ def test_merchant_shop_must_equal_its_stalls_lines():
     assert run(_summon("c", 9, 1, 9), gated) == ["c:minecraft:cod:gated"]
     gated["stalls"][0]["category"] = ""
     assert "c:category" in run(_summon("c", 9, 1, 9), gated)
+    # a counter's merchant is held to its own lines the same way (2026-10-06), and may not be gated either
+    assert run(_summon("a", 5, 1, 6)) == []
+    assert run(_summon("a", 5, 1, 6, shop='[{Category:"Fish",Offers:[{Item:{count:1,id:"minecraft:cod"},Price:"40"}]}]')) \
+        == ["a:minecraft:cod:price"]
+    gated = json.loads(json.dumps(MK))
+    gated["counters"][0]["stock"][0]["gate"] = "badge_1"
+    assert run(_summon("a", 5, 1, 6), gated) == ["a:minecraft:cod:gated"]
 
 
 def test_r17m_merchants_follows_calls_and_names_a_missing_function():
@@ -512,7 +546,8 @@ def test_mutation_merchant_price_doubled_is_caught(monkeypatch):
     monkeypatch.setattr(markets, "merchant_shop", doubled)
     P = _staffing(_markets_files())
     mk = A.load(ROOT / "data" / "markets.json")
-    lines = sum(len(s["stock"]) for s in mk["stalls"] if s.get("status") == "sited")
+    # every sited stall's line, and since 2026-10-06 every sited counter's (the counters are merchants)
+    lines = sum(len(s["stock"]) for s in mk["stalls"] + mk["counters"] if s.get("status") == "sited")
     assert {k for c, k, _m in P} == {k for c, k, _m in P if c == "shop" and k.endswith(":price")}
     assert len(P) == lines > 0
 
