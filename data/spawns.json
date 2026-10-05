@@ -16772,6 +16772,20 @@
       "spawnable_position": "grounded"
     },
     {
+      "id": "surface.river_of_shrews_vale.seedot",
+      "species": "seedot",
+      "bucket": "common",
+      "level": "8-13",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "river_of_shrews_vale",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "named common family, tier 1: the family starts here",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
       "id": "surface.river_of_shrews_vale.starly",
       "species": "starly",
       "bucket": "uncommon",
@@ -17148,6 +17162,20 @@
       "spawnable_position": "grounded"
     },
     {
+      "id": "surface.pallet_meadows.hoppip",
+      "species": "hoppip",
+      "bucket": "common",
+      "level": "4-8",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "pallet_meadows",
+      "mechanism": "spawn_json_coordinate_boxes",
+      "conditions": {},
+      "eligibility_reason": "named common family, tier 1: the family starts here",
+      "biomes": [],
+      "spawnable_position": "grounded"
+    },
+    {
       "id": "surface.pallet_meadows.lechonk",
       "species": "lechonk",
       "bucket": "uncommon",
@@ -17178,20 +17206,6 @@
     {
       "id": "surface.pallet_meadows.fletchling",
       "species": "fletchling",
-      "bucket": "uncommon",
-      "level": "4-8",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "pallet_meadows",
-      "mechanism": "spawn_json_coordinate_boxes",
-      "conditions": {},
-      "eligibility_reason": "named uncommon family, tier 1: the family starts here",
-      "biomes": [],
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "surface.pallet_meadows.hoppip",
-      "species": "hoppip",
       "bucket": "uncommon",
       "level": "4-8",
       "weight": 6.0,
@@ -44817,6 +44831,21 @@
           "conditions": {}
         },
         {
+          "species": "Seedot",
+          "pokemon": "seedot",
+          "types": [
+            "grass"
+          ],
+          "family": "seedot",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 1: the family starts here",
+          "level": "8-13",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
           "species": "Starly",
           "pokemon": "starly",
           "types": [
@@ -45221,6 +45250,22 @@
           "conditions": {}
         },
         {
+          "species": "Hoppip",
+          "pokemon": "hoppip",
+          "types": [
+            "grass",
+            "flying"
+          ],
+          "family": "hoppip",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 1: the family starts here",
+          "level": "4-8",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
           "species": "Lechonk",
           "pokemon": "lechonk",
           "types": [
@@ -45259,22 +45304,6 @@
             "flying"
           ],
           "family": "fletchling",
-          "family_priority": "uncommon",
-          "ambient": true,
-          "eligibility_reason": "named uncommon family, tier 1: the family starts here",
-          "level": "4-8",
-          "bucket": "uncommon",
-          "weight": 6.0,
-          "conditions": {}
-        },
-        {
-          "species": "Hoppip",
-          "pokemon": "hoppip",
-          "types": [
-            "grass",
-            "flying"
-          ],
-          "family": "hoppip",
           "family_priority": "uncommon",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 1: the family starts here",
@@ -45373,7 +45402,7 @@
         "why": "the middle of Pallet's meadows, away from Route 1: grown birds and sheep a new player sees before they can hold one (the owner, 2026-10-05: a boss table in every area)",
         "alpha": true,
         "above_cap_share": {
-          "land": 0.013
+          "land": 0.0149
         },
         "entries": [
           {
@@ -56142,12 +56171,12 @@
         "goldeen",
         "gossifleur",
         "hoothoot",
-        "mareep",
+        "hoppip",
         "marill",
         "oddish",
         "pidgey",
         "scyther",
-        "shinx",
+        "seedot",
         "skwovet",
         "slowpoke",
         "surskit",
