@@ -557,3 +557,16 @@ Each step is one unit. Build work goes only to an agent with a shell (CLAUDE.md,
    stripped (`data/blackout.json:148`).
 8. **Instanced chests.** *Default: per-player claim pedestals now, and choose an instanced-chest mod separately* (a
    dependency review). Every reward record is already switchable.
+
+### The owner's answers (2026-10-06)
+
+| # | Answer |
+|---|---|
+| 1 | Not answered separately; the default (per player, once, keyed on the catch) stands until the owner says otherwise. |
+| 2 | **`gym8_cleared`** plus Dive plus the station's quest, level 60 ("do gym 8 yeah"). |
+| 3 | **No**: an unqualified friend cannot come in. |
+| 4 | **No overworld rain** while Kyogre is awake. |
+| 5 | **Yes**: remove Cobbleverse's shiny level-100 Rayquaza at the End spawn by override. |
+| 6 | **As proposed**: `champion_cleared` plus met Kyogre and Groudon, level 70, the arch on the great cone's summit. |
+| 7 | **Both** routes past Groudon's lava: Fire Resistance and the cooling puzzle. |
+| 8 | Not answered; pedestals now, with the mod chosen from `docs/research/PER_PLAYER_CHESTS.md` (Wave 1 research). |
