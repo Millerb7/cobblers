@@ -148,8 +148,8 @@
     {"id": "viltri_clerk_azurill", "species": "azurill", "owner": "npc_main_misty_relief_clerk", "mode": "wait", "why": "and an Azurill that waits by the desk, sitting on its own tail, because it cannot keep up"},
     {"id": "viltri_rescue_dewpider", "species": "dewpider", "owner": "viltri_quay", "mode": "wait", "why": "the rescue-gear seller's Dewpider, in its bubble, next to the diving helmets: a sales pitch"},
     {"id": "viltri_boatwright_chewtle", "species": "chewtle", "owner": "viltri_boatwright", "mode": "follow", "why": "the boatwright's Chewtle follows him and bites every plank he picks up, to test it"},
-    {"id": "viltri_fishmonger_skitty", "species": "skitty", "owner": "viltri_fishmonger", "mode": "wait", "why": "the fishmonger's Skitty waits by the fish with enormous patience"},
-    {"id": "viltri_catch_surskit", "species": "surskit", "owner": "viltri_strange_catch", "mode": "wait", "why": "the strange-catch seller's Surskit skates in circles in a bucket of lake water by the stall"}
+    {"id": "viltri_fishmonger_skitty", "species": "skitty", "owner": "viltri_fishmonger", "mode": "follow", "why": "the fishmonger's Skitty waits by the fish with enormous patience"},
+    {"id": "viltri_catch_surskit", "species": "surskit", "owner": "viltri_strange_catch", "mode": "follow", "why": "the strange-catch seller's Surskit skates in circles in a bucket of lake water by the stall"}
   ],
   "placed": [
     {"id": "viltri_gutter_shellos", "species": "shellos", "spot": "gutter", "building": "gym2_house_03", "why": "a Shellos in the gutter after rain, as if the gutter were a stream"},
@@ -186,10 +186,10 @@
       "at": [1633, 108, 2807],
       "facing": "north",
       "members": [
-        {"species": "krabby", "count": 4, "pose": "still", "offsets": [[-1, 0, -2], [2, 0, -2], [-2, 0, 2], [1, 0, 2]]}
+        {"species": "krabby", "count": 4, "pose": "still", "offsets": [[-3, 2, -1], [3, 2, -1], [-3, 2, 1], [3, 2, 1]]}
       ],
       "props": [],
-      "why": "round gym2_rescue_hull (columns x 1630-1636, z 2806-2808 in derived/plaza_centres/gym2_town.json), never on its blocks"
+      "why": "on gym2_rescue_hull's four corner gunwales (the top slabs at y109, x 1630 and 1636, z 2806 and 2808 in derived/plaza_centres/gym2_town.json), where a sitter's ankles are. Re-sited 2026-10-06: round the hull on the square's paving the build's replay meets the heightmap's stone (the square is cut below the heightmap in the world, not in any replayed pack); the hull's own blocks are the one footing both agree on"
     },
     {
       "id": "viltri_library_dam",

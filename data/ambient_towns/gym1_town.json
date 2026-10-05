@@ -162,7 +162,7 @@
     {"id": "stoneford_witness_larvitar", "species": "larvitar", "owner": "npc_main_brock_witness", "mode": "wait", "why": "the witness at the gym's forecourt keeps a Larvitar that chews the forecourt's gravel while it waits"},
     {"id": "stoneford_workstations_tinkatink", "species": "tinkatink", "owner": "stoneford", "mode": "follow", "why": "the workstations seller's Tinkatink follows her round the stall with its hammer, tapping every anvil she sells"},
     {"id": "stoneford_tools_rockruff", "species": "rockruff", "owner": "stoneford_masons_yard", "mode": "wait", "why": "the masons' yard tool seller's Rockruff sits by the stall and guards the chisels"},
-    {"id": "stoneford_bakehouse_fidough", "species": "fidough", "owner": "stoneford_bakehouse", "mode": "wait", "why": "the bakehouse stall's Fidough lies by the bread, proving"},
+    {"id": "stoneford_bakehouse_fidough", "species": "fidough", "owner": "stoneford_bakehouse", "mode": "follow", "why": "the bakehouse stall's Fidough lies by the bread, proving"},
     {"id": "stoneford_seeds_skwovet", "species": "skwovet", "owner": "stoneford_terrace_seedsman", "mode": "wait", "why": "the seedsman's Skwovet sits on the seed sacks with its cheeks full; the seedsman says it is stock-taking"},
     {"id": "stoneford_witness_smoliv", "species": "smoliv", "owner": "npc_main_brock_witness", "mode": "follow", "why": "the witness's other Pokemon, a Smoliv from the herbalist's stall that she bought by mistake and kept"},
     {"id": "stoneford_mulch_lechonk", "species": "lechonk", "owner": "stoneford_mulch_carter", "mode": "follow", "why": "the mulch carter's Lechonk follows him everywhere and smells of what he sells"}

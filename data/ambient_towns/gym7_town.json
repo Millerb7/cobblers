@@ -471,7 +471,7 @@
           "species": "talonflame",
           "count": 1,
           "pose": "still",
-          "offsets": [[0, 22, 0]]
+          "offsets": [[-1, 24, -1]]
         },
         {
           "species": "fletchinder",
@@ -481,7 +481,7 @@
         }
       ],
       "props": [],
-      "why": "on the mast's head (the dressing landmark, height 22), seen from the whole rim; the generator seats them on its top blocks"
+      "why": "on the mast's head (the dressing landmark, height 22), seen from the whole rim; the generator seats them on its top blocks. The Talonflame stands on the head's platform (y134, inside its parapet), one west and one north of the mast's core column, which runs solid up to it"
     },
     {
       "id": "cinderlee_old_kiln",

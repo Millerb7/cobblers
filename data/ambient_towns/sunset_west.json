@@ -153,7 +153,7 @@
     }
   ],
   "pets": [
-    {"id": "sunset_harbour_popplio", "species": "popplio", "owner": "sunset_harbour", "mode": "wait", "why": "the harbour counter's Popplio waits by the counter balancing a water balloon on its nose for customers"},
+    {"id": "sunset_harbour_popplio", "species": "popplio", "owner": "sunset_harbour", "mode": "follow", "why": "the harbour counter's Popplio waits by the counter balancing a water balloon on its nose for customers"},
     {"id": "sunset_harbour_wingull", "species": "wingull", "owner": "sunset_harbour", "mode": "follow", "why": "and a Wingull that follows the harbour keeper everywhere, because she once fed it"},
     {"id": "sunset_market_meowth", "species": "meowth", "owner": "sunset_fish_market", "mode": "wait", "why": "the fish market's Meowth, kept as a guard against the other cats: a poacher turned gamekeeper"},
     {"id": "sunset_loft_pyukumuku", "species": "pyukumuku", "owner": "sunset_net_loft", "mode": "wait", "why": "the net loft keeper's Pyukumuku in its bucket by the stall; nobody remembers why he keeps it"},
