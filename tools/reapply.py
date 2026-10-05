@@ -134,6 +134,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 "cobblers_old_orchard",
                 # 2026-10-02: the Copperway Khan in the south-east dunes and its milestones (tools/dune_ruin.py), run by R9DU
                 "cobblers_dune_ruin",
+                # 2026-10-05: the mainline beats' evidence displays beside eight tellers (tools/reveal_evidence.py), run
+                # by R17NE after R17N
+                "cobblers_reveal_evidence",
                 # 2026-10-02: Codex's ten named residents (tools/resident_encounters.py, data/resident_encounters.json):
                 # a keeper loop and respawn clock hold them, so world-local; dressed and the ungated ones summoned by R18R
                 "cobblers_residents",
@@ -693,6 +696,7 @@ def prepare_jobs(a):
     add("old_orchard_audit", "old_orchard_audit.py", *src)
     add("dune_ruin:build", "dune_ruin.py", "build", *src)
     add("dune_ruin_audit", "dune_ruin_audit.py", *src)
+    add("reveal_evidence:build", "reveal_evidence.py", "build")
     # the ten named residents (2026-10-02), then their independent audit, which re-derives every site and write from
     # the data and the heightmap and fails the prepare on a broken pack
     add("resident_encounters", "resident_encounters.py", *src)
@@ -1921,6 +1925,11 @@ def steps(with_spawns=False):
     import npc_seats
     out.append(("R17N", "the settlement NPCs (data/npc_seats.json)",
                 [("npc", n) for n in npc_seats.placements()]))
+    # the mainline beats' evidence (2026-10-05, tools/reveal_evidence.py): a prop and a sign beside each gym town's
+    # teller, after R17N seats them, into replaceable blocks only
+    import reveal_evidence
+    out.append(("R17NE", "the mainline beats' evidence displays beside the tellers (data/reveal_evidence.json)",
+                reveal_evidence.placement_steps()))
     # the Old Orchard's keeper (2026-10-02, tools/old_orchard.py): an NPC like the settlement ones, placed over RCON
     # after the restart that loaded cobblers_dialogue's classes, on the ground R9SO's orchard stands on
     out.append(("R18SO", "the Old Orchard's keeper, Wenna Marlow (data/old_orchard.json npc)",
