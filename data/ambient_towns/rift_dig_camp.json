@@ -1,0 +1,101 @@
+{
+  "settlement": "rift_dig_camp",
+  "size": "outpost",
+  "target": 6,
+  "character": "The West Spur Dig is an archaeologists' camp at the end of the Rift's west spur, and half its Pokemon dig, haul and record; the others are what the dig turned up. An outpost by its own plan (\"An outpost, so no Center\") and a camp by the scale; no pets, because the camp places no archaeologist or keeper for one to belong to.",
+  "workers": [
+    {
+      "id": "dig_diggersby_cut",
+      "settlement": "rift_dig_camp",
+      "species": "diggersby",
+      "level": 52,
+      "job": "work",
+      "at": [3074, 3296],
+      "face": [3070, 3296],
+      "every": 30,
+      "effect": {
+        "block": "minecraft:coarse_dirt",
+        "count": 16,
+        "sound": "minecraft:block.gravel.break",
+        "pitch": 0.9
+      },
+      "interact": "The Diggersby takes the excavation's face back a hand's width at a time with its ears. It stops dead whenever its ears touch something hard."
+    },
+    {
+      "id": "dig_timburr_props",
+      "settlement": "rift_dig_camp",
+      "species": "timburr",
+      "level": 51,
+      "job": "carry",
+      "route": [[3078, 3300], [3090, 3300]],
+      "carry": "minecraft:spruce_planks",
+      "carry_height": 1.3,
+      "box": [0.8, 1.0],
+      "pickup": {
+        "sound": "minecraft:block.wood.hit"
+      },
+      "drop": {
+        "sound": "minecraft:block.wood.place",
+        "block": "minecraft:spruce_planks",
+        "count": 8
+      },
+      "interact": "The Timburr carries planks up the track for the scaffold over the cut. It carries them the way it carries its own beam: over one shoulder, without looking."
+    },
+    {
+      "id": "dig_smeargle_finds",
+      "settlement": "rift_dig_camp",
+      "species": "smeargle",
+      "level": 51,
+      "job": "work",
+      "at": [3127, 3294],
+      "face": [3127, 3292],
+      "every": 70,
+      "effect": {
+        "particle": "minecraft:squid_ink",
+        "count": 4,
+        "spread": 0.2,
+        "dy": 1.0,
+        "sound": "minecraft:item.book.page_turn",
+        "pitch": 1.2
+      },
+      "interact": "The Smeargle draws every find on the finds shed's tally board before it goes in. Its drawings are better than the photographs."
+    }
+  ],
+  "pets": [],
+  "placed": [
+    {
+      "id": "dig_woobat_roof",
+      "species": "woobat",
+      "spot": "roof",
+      "building": "dig_finds_shed",
+      "why": "on the finds shed's roof under the spur's overhang, where it is darkest at noon"
+    }
+  ],
+  "situations": [
+    {
+      "id": "dig_unown_in_the_cut",
+      "title": "The Unown at the cut face",
+      "unique": true,
+      "story": "Two Unown hang in front of the excavation's cut where it has exposed carving. The archaeologists have started copying down the shapes they make.",
+      "at": [3074, 91, 3302],
+      "facing": "west",
+      "members": [
+        {
+          "species": "unown",
+          "count": 2,
+          "pose": "still",
+          "offsets": [[-1, 1, -2], [-1, 2, 2]]
+        }
+      ],
+      "props": [],
+      "why": "the dig's own: at the cut's east edge, floating, where a player looking at the excavation sees them"
+    }
+  ],
+  "counts": {
+    "working": 3,
+    "pets": 0,
+    "placed": 1,
+    "situations": 2,
+    "total": 6
+  }
+}

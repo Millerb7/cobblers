@@ -1,0 +1,574 @@
+{
+  "settlement": "gym6_town",
+  "size": "town",
+  "target": 47,
+  "character": "Tilpey Cross is a city of readers, minds and shops on a grid by the lake: its Pokemon keep the hour, mind doors, sort books, serve food and perform on the corner, and the rest stare, nap, dance and play chess. Psychic and city Pokemon; no farm animal and nothing from the marsh or the garden.",
+  "workers": [
+    {
+      "id": "sabrina_abra_reader",
+      "settlement": "gym6_town",
+      "species": "abra",
+      "level": 28,
+      "job": "blink",
+      "every": 100,
+      "box": [0.9, 1.1],
+      "spots": [
+        {
+          "at": [6148, 3491],
+          "face": [6150, 3491]
+        },
+        {
+          "at": [6157, 3496],
+          "face": [6158, 3496]
+        },
+        {
+          "at": [6121, 3501],
+          "face": [6120, 3501]
+        }
+      ],
+      "interact": "The Abra is asleep. It has been reading all the same: the page turns by itself."
+    },
+    {
+      "id": "sabrina_natu_watcher",
+      "settlement": "gym6_town",
+      "species": "natu",
+      "level": 28,
+      "job": "work",
+      "at": [6131, 3317],
+      "face": [6140, 3300],
+      "every": 80,
+      "box": [0.8, 0.9],
+      "effect": {
+        "particle": "minecraft:witch",
+        "count": 6,
+        "dy": 1.2,
+        "sound": "minecraft:block.amethyst_block.chime",
+        "pitch": 1.4
+      },
+      "interact": "The Natu has not looked away from the spire's lens since you arrived. The instrument beside it ticks."
+    },
+    {
+      "id": "tilpey_minccino_sweeper",
+      "settlement": "gym6_town",
+      "species": "minccino",
+      "level": 27,
+      "job": "work",
+      "at": [6186, 3384],
+      "face": [6186, 3386],
+      "every": 30,
+      "box": [0.7, 0.7],
+      "effect": {
+        "particle": "minecraft:poof",
+        "count": 5,
+        "spread": 0.3,
+        "dy": 0.1,
+        "sound": "minecraft:item.brush.brushing.generic",
+        "pitch": 1.3
+      },
+      "interact": "The Minccino sweeps the square's paving with its tail. It goes back over a stone you stepped on."
+    },
+    {
+      "id": "tilpey_porygon_doorcount",
+      "settlement": "gym6_town",
+      "species": "porygon",
+      "level": 28,
+      "job": "work",
+      "at": [6232, 3473],
+      "face": [6232, 3476],
+      "every": 64,
+      "box": [0.9, 0.9],
+      "effect": {
+        "particle": "minecraft:electric_spark",
+        "count": 6,
+        "spread": 0.2,
+        "dy": 0.8,
+        "sound": "minecraft:block.note_block.bit",
+        "pitch": 1.6
+      },
+      "interact": "The Porygon counts everyone who goes into the department store. It has counted you twice."
+    },
+    {
+      "id": "tilpey_kadabra_pencils",
+      "settlement": "gym6_town",
+      "species": "kadabra",
+      "level": 28,
+      "job": "work",
+      "at": [6203, 3410],
+      "face": [6207, 3412],
+      "every": 70,
+      "effect": {
+        "particle": "minecraft:enchant",
+        "count": 12,
+        "spread": 0.4,
+        "dy": 1.0,
+        "sound": "minecraft:block.enchantment_table.use",
+        "pitch": 1.3
+      },
+      "interact": "The Kadabra sharpens the stationer's pencils by looking at them. The shavings come off in perfect spirals."
+    },
+    {
+      "id": "tilpey_medicham_dojo",
+      "settlement": "gym6_town",
+      "species": "medicham",
+      "level": 29,
+      "job": "work",
+      "at": [6250, 3344],
+      "face": [6260, 3340],
+      "every": 50,
+      "effect": {
+        "particle": "minecraft:crit",
+        "count": 10,
+        "sound": "minecraft:block.wood.break",
+        "pitch": 1.0
+      },
+      "interact": "The Medicham breaks one board for the dojo's beginners, slowly, so they can see how. Then it waits for them to try."
+    },
+    {
+      "id": "tilpey_bronzong_hours",
+      "settlement": "gym6_town",
+      "species": "bronzong",
+      "level": 29,
+      "job": "work",
+      "at": [6203, 3402],
+      "face": [6196, 3402],
+      "every": 200,
+      "effect": {
+        "particle": "minecraft:note",
+        "count": 3,
+        "spread": 0.5,
+        "dy": 1.6,
+        "sound": "minecraft:block.bell.use",
+        "pitch": 0.6
+      },
+      "interact": "The Bronzong keeps the square's hours. Nobody wound it; nobody remembers it being wrong."
+    },
+    {
+      "id": "tilpey_indeedee_kitchen",
+      "settlement": "gym6_town",
+      "species": "indeedee",
+      "level": 27,
+      "job": "work",
+      "at": [6187, 3408],
+      "face": [6185, 3411],
+      "every": 46,
+      "effect": {
+        "particle": "minecraft:happy_villager",
+        "count": 5,
+        "spread": 0.3,
+        "dy": 0.8,
+        "sound": "minecraft:block.smoker.smoke",
+        "pitch": 1.2
+      },
+      "interact": "The Indeedee brings plates out from the market kitchen. It knows what you ordered before you do."
+    },
+    {
+      "id": "tilpey_exeggcute_herbs",
+      "settlement": "gym6_town",
+      "species": "exeggcute",
+      "level": 27,
+      "job": "work",
+      "at": [6203, 3416],
+      "face": [6207, 3413],
+      "every": 54,
+      "box": [0.8, 0.7],
+      "effect": {
+        "block": "minecraft:fern",
+        "count": 8,
+        "sound": "minecraft:block.grass.place",
+        "pitch": 1.3
+      },
+      "interact": "The Exeggcute tend the physic garden's beds, all six at once, in six slightly different directions."
+    },
+    {
+      "id": "tilpey_mrmime_corner",
+      "settlement": "gym6_town",
+      "species": "mrmime",
+      "level": 28,
+      "job": "work",
+      "at": [6152, 3400],
+      "face": [6152, 3398],
+      "every": 36,
+      "effect": {
+        "particle": "minecraft:end_rod",
+        "count": 4,
+        "spread": 0.4,
+        "dy": 1.0,
+        "sound": "minecraft:block.amethyst_block.hit",
+        "pitch": 1.5
+      },
+      "interact": "The Mr. Mime on the corner is pressing its hands against a wall that is not there. You walk round it anyway."
+    },
+    {
+      "id": "tilpey_beheeyem_books",
+      "settlement": "gym6_town",
+      "species": "beheeyem",
+      "level": 28,
+      "job": "carry",
+      "route": [[6150, 3468], [6165, 3468]],
+      "carry": "minecraft:book",
+      "carry_height": 1.5,
+      "pickup": {
+        "sound": "minecraft:item.book.page_turn"
+      },
+      "drop": {
+        "sound": "minecraft:item.book.put",
+        "block": "minecraft:bookshelf",
+        "count": 6
+      },
+      "interact": "The Beheeyem carries the reading stall's books back up from the lake a few at a time. Its fingers blink when it thinks about the one it is holding."
+    },
+    {
+      "id": "tilpey_wobbuffet_door",
+      "settlement": "gym6_town",
+      "species": "wobbuffet",
+      "level": 28,
+      "job": "work",
+      "at": [6212, 3473],
+      "face": [6212, 3476],
+      "every": 90,
+      "effect": {
+        "particle": "minecraft:poof",
+        "count": 4,
+        "spread": 0.2,
+        "dy": 0.6,
+        "sound": "minecraft:block.wool.hit",
+        "pitch": 0.8
+      },
+      "interact": "The Wobbuffet minds the department store's side door. It does not stop anyone going in. It sends back anyone who pushes."
+    },
+    {
+      "id": "tilpey_magnemite_lamps",
+      "settlement": "gym6_town",
+      "species": "magnemite",
+      "level": 27,
+      "job": "work",
+      "at": [6236, 3401],
+      "face": [6236, 3398],
+      "every": 74,
+      "box": [0.7, 0.7],
+      "effect": {
+        "particle": "minecraft:electric_spark",
+        "count": 10,
+        "spread": 0.3,
+        "dy": 1.4,
+        "sound": "minecraft:entity.iron_golem.repair",
+        "pitch": 1.6
+      },
+      "interact": "The Magnemite is fixing the street lamp. It has fixed this lamp every evening for a month."
+    }
+  ],
+  "pets": [
+    {
+      "id": "tilpey_pattern_meowstic",
+      "species": "meowstic",
+      "owner": "npc_main_sabrina_pattern",
+      "mode": "follow",
+      "why": "the pattern-reader's Meowstic, ears folded: they stay folded until it needs to know what you are thinking"
+    },
+    {
+      "id": "tilpey_pattern_solosis",
+      "species": "solosis",
+      "owner": "npc_main_sabrina_pattern",
+      "mode": "follow",
+      "why": "the pattern-reader's Solosis, floating at shoulder height wherever she stops"
+    },
+    {
+      "id": "tilpey_counter_skitty",
+      "species": "skitty",
+      "owner": "tilpey_cross",
+      "mode": "wait",
+      "why": "the market counter's Skitty, chasing the counter's own string"
+    },
+    {
+      "id": "tilpey_counter_wynaut",
+      "species": "wynaut",
+      "owner": "tilpey_cross",
+      "mode": "follow",
+      "why": "the counter clerk's Wynaut, which agrees with everything the clerk says"
+    },
+    {
+      "id": "tilpey_stationer_hatenna",
+      "species": "hatenna",
+      "owner": "tilpey_stationer",
+      "mode": "follow",
+      "why": "the stationer's Hatenna, who hides under the stall whenever a customer is cross"
+    },
+    {
+      "id": "tilpey_kitchen_glameow",
+      "species": "glameow",
+      "owner": "tilpey_market_kitchen",
+      "mode": "wait",
+      "why": "the market kitchen's Glameow, sitting where the scraps land and looking as if it does not care"
+    },
+    {
+      "id": "tilpey_garden_ralts",
+      "species": "ralts",
+      "owner": "tilpey_physic_garden",
+      "mode": "follow",
+      "why": "the physic gardener's Ralts, which hides behind her when anyone it does not know comes near"
+    }
+  ],
+  "placed": [
+    {
+      "id": "tilpey_chimecho_porch",
+      "species": "chimecho",
+      "spot": "porch",
+      "building": "gym6_house_06",
+      "why": "hanging from the porch beam where a wind chime would be; it rings when the door opens"
+    },
+    {
+      "id": "tilpey_sigilyph_step",
+      "species": "sigilyph",
+      "spot": "step",
+      "building": "gym6_house_05",
+      "why": "on the library's step, still as a statue, facing the observatory; the readers walk round it"
+    },
+    {
+      "id": "tilpey_munna_window",
+      "species": "munna",
+      "spot": "window",
+      "building": "gym6_house_09",
+      "why": "asleep in the window, a faint pink mist on the glass"
+    },
+    {
+      "id": "tilpey_espurr_window",
+      "species": "espurr",
+      "spot": "window",
+      "building": "gym6_house_04",
+      "why": "staring out of the cartographer's window at nothing, without blinking"
+    },
+    {
+      "id": "tilpey_pidove_gutter",
+      "species": "pidove",
+      "spot": "gutter",
+      "building": "gym6_house_06",
+      "why": "in the temple's gutter, where the city's pigeons always are"
+    },
+    {
+      "id": "tilpey_ducklett_step",
+      "species": "ducklett",
+      "spot": "step",
+      "building": "gym6_house_18",
+      "why": "on the fisher cottage's step, dripping from the lake"
+    },
+    {
+      "id": "tilpey_drowzee_porch",
+      "species": "drowzee",
+      "spot": "porch",
+      "building": "gym6_house_11",
+      "why": "on the porch chair, asleep, which nobody remarks on"
+    },
+    {
+      "id": "tilpey_elgyem_roof",
+      "species": "elgyem",
+      "spot": "roof",
+      "building": "gym6_house_10",
+      "why": "on the masons' roof; the masons say it was there when they built it"
+    },
+    {
+      "id": "tilpey_chingling_window",
+      "species": "chingling",
+      "spot": "window",
+      "building": "gym6_pokemart",
+      "why": "in the Mart's window, tinkling every time a customer leaves"
+    }
+  ],
+  "situations": [
+    {
+      "id": "tilpey_staring_contest",
+      "title": "The staring contest in the square",
+      "unique": true,
+      "story": "A Xatu and a Girafarig have been staring at each other in the square since morning, and a small crowd has gathered. The money is on the Girafarig: it has two heads.",
+      "at": [6186, 95, 3402],
+      "facing": "east",
+      "members": [
+        {
+          "species": "girafarig",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[-2, 0, 0]]
+        },
+        {
+          "species": "xatu",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[2, 0, 0]]
+        },
+        {
+          "species": "gothita",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 2]]
+        },
+        {
+          "species": "mimejr",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[1, 0, 2]]
+        },
+        {
+          "species": "dottler",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[-1, 0, 2]]
+        }
+      ],
+      "props": [],
+      "why": "Tilpey Cross's own: a city of minds settles things by looking, and a city draws a crowd for anything",
+      "allow": [
+        "walkway",
+        "street"
+      ]
+    },
+    {
+      "id": "tilpey_observatory_nap",
+      "title": "Asleep on the observatory steps",
+      "unique": false,
+      "story": "A Musharna is asleep on the observatory steps in a haze of pink dream mist. The Hypno and the Rellor next to it were not tired when they sat down.",
+      "at": [6165, 96, 3366],
+      "facing": "south",
+      "members": [
+        {
+          "species": "musharna",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        },
+        {
+          "species": "hypno",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[2, 0, 0]]
+        },
+        {
+          "species": "rellor",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[-2, 0, 0]]
+        }
+      ],
+      "props": [],
+      "why": "the observatory's south face, between it and the Centre; a hypnotist asleep is the joke"
+    },
+    {
+      "id": "tilpey_bronzor_tea",
+      "title": "The tea service in the masons' garden",
+      "unique": false,
+      "story": "In the masons' back garden three Bronzor sit on the table like a tea service. The masons eat standing up.",
+      "at": [6264, 95, 3366],
+      "facing": "west",
+      "members": [
+        {
+          "species": "bronzor",
+          "count": 3,
+          "pose": "still",
+          "offsets": [[0, 1, 0], [1, 1, 0], [0, 1, 1]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:smooth_stone_slab",
+          "at": [0, 0, 0]
+        },
+        {
+          "block": "minecraft:smooth_stone_slab",
+          "at": [1, 0, 0]
+        },
+        {
+          "block": "minecraft:smooth_stone_slab",
+          "at": [0, 0, 1]
+        }
+      ],
+      "why": "a back garden taken over: the three of one species ARE the situation, on a table behind the house"
+    },
+    {
+      "id": "tilpey_spoink_step",
+      "title": "The Spoink that will not stop",
+      "unique": false,
+      "story": "Since dawn a Spoink has been bouncing outside the cartographer's door. A Grumpig sits beside it with its head in its hands.",
+      "at": [6155, 96, 3402],
+      "facing": "north",
+      "members": [
+        {
+          "species": "spoink",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        },
+        {
+          "species": "grumpig",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[2, 0, 0]]
+        }
+      ],
+      "props": [],
+      "why": "a Spoink's heart stops if it stops bouncing; the one that has grown out of it is tired"
+    },
+    {
+      "id": "tilpey_chess_by_the_library",
+      "title": "The chess game by the library",
+      "unique": false,
+      "story": "A Meditite and an Inkay play chess on a barrel by the library's door. The Inkay plays upside down, and is winning.",
+      "at": [6242, 95, 3352],
+      "facing": "west",
+      "members": [
+        {
+          "species": "meditite",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, -1]]
+        },
+        {
+          "species": "inkay",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 1]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:barrel",
+          "at": [0, 0, 0]
+        },
+        {
+          "block": "minecraft:black_carpet",
+          "at": [0, 1, 0]
+        }
+      ],
+      "why": "the library's east door; a reading town's pastime"
+    },
+    {
+      "id": "tilpey_observatory_dance",
+      "title": "The dance in Observatory Street",
+      "unique": false,
+      "story": "On clear nights two Clefairy and a Cleffa dance in the street in front of the observatory. The astronomers time their readings by them.",
+      "at": [6158, 98, 3341],
+      "facing": "north",
+      "members": [
+        {
+          "species": "clefairy",
+          "count": 2,
+          "pose": "still",
+          "offsets": [[0, 0, 0], [2, 0, 1]]
+        },
+        {
+          "species": "cleffa",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[1, 0, -1]]
+        }
+      ],
+      "props": [],
+      "why": "the gym street's west end, under the observatory; the moon is what the observatory looks at",
+      "allow": ["street"]
+    }
+  ],
+  "counts": {
+    "working": 13,
+    "pets": 7,
+    "placed": 9,
+    "situations": 18,
+    "total": 47
+  }
+}

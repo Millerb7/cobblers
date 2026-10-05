@@ -1,0 +1,102 @@
+{
+  "settlement": "rift_rim_stop",
+  "size": "outpost",
+  "target": 6,
+  "character": "Rimwatch is the rangers' post on the Rift's lip: a dog and an owl on watch, a bird in the gutter, and three small Pokemon on the rail who watch the Rift for reasons of their own. No pets: the post places no ranger or keeper for one to belong to.",
+  "workers": [
+    {
+      "id": "rim_growlithe_watch",
+      "settlement": "rift_rim_stop",
+      "species": "growlithe",
+      "level": 58,
+      "job": "work",
+      "at": [3773, 3945],
+      "face": [3782, 3950],
+      "every": 140,
+      "look_around": [3760, 3945],
+      "effect": {
+        "particle": "minecraft:poof",
+        "count": 4,
+        "spread": 0.2,
+        "dy": 0.2,
+        "sound": "minecraft:entity.wolf.ambient",
+        "pitch": 1.3
+      },
+      "interact": "The rangers' Growlithe watches the Rift without blinking. When you move, it watches you too."
+    },
+    {
+      "id": "rim_noctowl_nightwatch",
+      "settlement": "rift_rim_stop",
+      "species": "noctowl",
+      "level": 58,
+      "job": "work",
+      "at": [3768, 3958],
+      "face": [3782, 3962],
+      "every": 180,
+      "look_around": [3760, 3950],
+      "box": [0.9, 1.4],
+      "effect": {
+        "particle": "minecraft:poof",
+        "count": 3,
+        "spread": 0.2,
+        "dy": 1.2,
+        "sound": "minecraft:entity.parrot.ambient",
+        "pitch": 0.6
+      },
+      "interact": "The Noctowl keeps the night watch over the Rift, turning its head round the whole way and back. The rangers write down what it looks at."
+    }
+  ],
+  "pets": [],
+  "placed": [
+    {
+      "id": "rimwatch_starly_gutter",
+      "species": "starly",
+      "spot": "gutter",
+      "building": "rimpost_cabin_north",
+      "why": "in the north cabin's gutter, out of the wind that comes up out of the Rift"
+    }
+  ],
+  "situations": [
+    {
+      "id": "rimwatch_rail_watchers",
+      "title": "The three on the overlook rail",
+      "unique": true,
+      "story": "Every evening a Rockruff, a Shinx and a Pawmi sit in a row at the overlook end of the square and stare down into the Rift. The rangers have never found out what they are waiting for.",
+      "at": [3771, 140, 3952],
+      "facing": "east",
+      "allow": [
+        "walkway",
+        "street"
+      ],
+      "members": [
+        {
+          "species": "rockruff",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, -2]]
+        },
+        {
+          "species": "shinx",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        },
+        {
+          "species": "pawmi",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 2]]
+        }
+      ],
+      "props": [],
+      "why": "Rimwatch's own: the square's east end, at the overlook, facing the Rift"
+    }
+  ],
+  "counts": {
+    "working": 2,
+    "pets": 0,
+    "placed": 1,
+    "situations": 3,
+    "total": 6
+  }
+}
