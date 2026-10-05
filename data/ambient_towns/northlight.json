@@ -142,7 +142,7 @@
     }
   ],
   "pets": [
-    {"id": "northlight_hand_swinub", "species": "swinub", "owner": "npc_stone_tip_northlight_field_hand", "mode": "wait", "why": "the field hand's Swinub, which has its nose in the snow by her feet whenever she stops"},
+    {"id": "northlight_hand_swinub", "species": "swinub", "owner": "npc_stone_tip_northlight_field_hand", "mode": "follow", "why": "the field hand's Swinub, which has its nose in the snow by her feet whenever she stops"},
     {"id": "northlight_hand_eevee", "species": "eevee", "owner": "npc_stone_tip_northlight_field_hand", "mode": "follow", "why": "and an Eevee that follows her; the field station keeps asking whether it will be a Glaceon"},
     {"id": "northlight_station_snorunt", "species": "snorunt", "owner": "northlight_station", "mode": "wait", "why": "the station counter's Snorunt waits by the counter in a little drift of its own making"},
     {"id": "northlight_kit_vulpix", "species": "vulpix", "owner": "northlight_field_kit", "mode": "follow", "why": "the field-kit seller's Vulpix (the snow kind) follows her round the stall"},

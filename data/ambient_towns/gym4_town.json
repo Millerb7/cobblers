@@ -255,9 +255,9 @@
     {
       "id": "greenhollow_archivist_chikorita",
       "species": "chikorita",
-      "owner": "npc_main_erika_survey_archivist",
+      "owner": "greenhollow_herbalist",
       "mode": "follow",
-      "why": "the survey archivist's Chikorita, its leaf over her notes whenever she stops to write"
+      "why": "the herbalist's Chikorita, its leaf over her notes whenever she stops to write. Re-homed 2026-10-06 from npc_main_erika_survey_archivist (it was the survey archivist's): she stands on the green, which the world cuts below the heightmap and the build's replay does not, so the build finds no open cell round her; give it back to the archivist when the replay models the square"
     },
     {
       "id": "greenhollow_market_skiddo",
@@ -269,9 +269,9 @@
     {
       "id": "greenhollow_seedcart_pikipek",
       "species": "pikipek",
-      "owner": "greenhollow_seed_cart",
+      "owner": "greenhollow_compost_keeper",
       "mode": "wait",
-      "why": "perched on the seed cart's handle, cracking the seconds the seed seller cannot sell"
+      "why": "by the compost heap, cracking the seconds the seed seller cannot sell and sends to the compost. Re-homed 2026-10-06 from greenhollow_seed_cart (it perched on the cart's handle): the cart stands on the green, which the world cuts below the heightmap and the build's replay does not, so the build finds no open cell beside it; give it back to the seed cart when the replay models the square"
     },
     {
       "id": "greenhollow_herbalist_petilil",
@@ -284,14 +284,14 @@
       "id": "greenhollow_sweets_swirlix",
       "species": "swirlix",
       "owner": "greenhollow_sweet_stall",
-      "mode": "wait",
+      "mode": "follow",
       "why": "the sweet stall's Swirlix, which smells exactly like the stall and is not for sale"
     },
     {
       "id": "greenhollow_orchard_applin",
       "species": "applin",
       "owner": "greenhollow_orchard",
-      "mode": "wait",
+      "mode": "follow",
       "why": "the orchard keeper's Applin, sitting among the apples on the stall; customers keep picking it up"
     },
     {
@@ -373,7 +373,7 @@
       "title": "The marrow show",
       "unique": true,
       "story": "Five entries in a row on the green for the end-of-season marrow show. Four of them are Pumpkaboo. Nobody has told the judges which one is the pumpkin.",
-      "at": [4296, 111, 1578],
+      "at": [4286, 111, 1563],
       "facing": "north",
       "members": [
         {
@@ -397,7 +397,7 @@
           "at": [10, 0, 0]
         }
       ],
-      "why": "Greenhollow's own: a garden town's show, and the only town where a Pokemon is entered as produce. Pumpkaboo come in sizes, so the row reads as a judged line."
+      "why": "Greenhollow's own: a garden town's show, and the only town where a Pokemon is entered as produce. Pumpkaboo come in sizes, so the row reads as a judged line. Re-sited 2026-10-06 to the west of the green (x 4284-4296, z 1563), where the green's paving and the heightmap agree: further east the square is cut below the heightmap in the world but not in the build's replay."
     },
     {
       "id": "greenhollow_lotad_crossing",

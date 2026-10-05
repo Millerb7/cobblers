@@ -191,7 +191,7 @@
       "title": "Blown in",
       "story": "Three Bramblin rolled down from the upper terraces in the night and fetched up against a garden fence, where they are waiting for a wind going the other way.",
       "unique": false,
-      "at": [2630, 114, 3545],
+      "at": [2630, 114, 3544],
       "facing": "east",
       "members": [
         {"species": "bramblin", "count": 3, "pose": "still", "offsets": [[0, 0, 0], [0, 0, 1], [0, 0, 2]]}

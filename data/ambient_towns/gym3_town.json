@@ -180,7 +180,7 @@
       "title": "The web on the corner",
       "story": "A Galvantula has strung a web across the corner between the end house and the gym's wall and sleeps in it by day; three Joltik sit in the strands, eating the static the web catches.",
       "unique": false,
-      "at": [1718, 175, 1428],
+      "at": [1718, 175, 1429],
       "facing": "west",
       "members": [
         {"species": "galvantula", "count": 1, "pose": "sleep", "offsets": [[0, 0, 0]]},

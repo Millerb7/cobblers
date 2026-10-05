@@ -56,7 +56,7 @@
     }
   ],
   "pets": [
-    {"id": "bridgekeep_elder_sandile", "species": "sandile", "owner": "npc_stone_tip_gorge_hamlet_elder", "mode": "wait", "why": "the elder's Sandile lies by her feet with only its eyes out of the sand"},
+    {"id": "bridgekeep_elder_sandile", "species": "sandile", "owner": "npc_stone_tip_gorge_hamlet_elder", "mode": "follow", "why": "the elder's Sandile lies by her feet with only its eyes out of the sand"},
     {"id": "bridgekeep_elder_silicobra", "species": "silicobra", "owner": "npc_stone_tip_gorge_hamlet_elder", "mode": "follow", "why": "and a Silicobra that follows her round the courtyard, shedding sand like a leaking sack"}
   ],
   "placed": [
@@ -83,13 +83,13 @@
       "title": "Shade for the elder",
       "story": "Two Maractus stand very still in the courtyard so the elder can sit in their shade in the afternoon. They move when the sun does.",
       "unique": false,
-      "at": [6809, 114, 4372],
+      "at": [6818, 114, 4371],
       "facing": "east",
       "members": [
         {"species": "maractus", "count": 2, "pose": "still", "offsets": [[0, 0, 0], [2, 0, 2]]}
       ],
       "props": [],
-      "why": "west of the elder's seat (6813, 4370), not beside it"
+      "why": "east of the elder's seat (6813, 4370), not beside it: the morning shade. Re-sited 2026-10-06 from west of her (6809, 4372), where the square built since crosses the courtyard with desire lines; the open ground east of her is the nearest that takes both"
     }
   ],
   "counts": {"working": 4, "pets": 2, "placed": 3, "situations": 5, "total": 14},

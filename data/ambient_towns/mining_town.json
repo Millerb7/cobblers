@@ -420,9 +420,9 @@
     {
       "id": "fossick_foreman_mawile",
       "species": "mawile",
-      "owner": "npc_stone_tip_mining_town_foreman",
+      "owner": "fossick_pit_tools",
       "mode": "follow",
-      "why": "the foreman's Mawile; the back jaw does the talking when the foreman will not"
+      "why": "the pit-tools seller's Mawile; the back jaw does the haggling when the seller will not. Re-homed 2026-10-06 from npc_stone_tip_mining_town_foreman (it was the foreman's): the foreman stands on the square, which the world cuts below the heightmap and the build's replay does not, so the build finds no open cell round him; give it back to the foreman when the replay models the square"
     },
     {
       "id": "fossick_counter_cranidos",

@@ -295,15 +295,15 @@
       "id": "pacifidlog_row_sobble",
       "species": "sobble",
       "owner": "pacifidlog_fishers_row",
-      "mode": "wait",
+      "mode": "follow",
       "why": "the Row stall's Sobble, half-hidden behind the fish crates; it cries when anyone haggles"
     },
     {
       "id": "pacifidlog_row_krabby",
       "species": "krabby",
-      "owner": "pacifidlog_fishers_row",
+      "owner": "pacifidlog",
       "mode": "wait",
-      "why": "in a bucket by the Row stall; the keeper swears it is a pet and not stock"
+      "why": "in a bucket by the square counter; the clerk swears it is a pet and not stock. Re-homed 2026-10-06 from pacifidlog_fishers_row (it was in a bucket by the Row stall): the Row keeper's ring has room for two of his three pets (the clam workers and the stall take the rest), and the market's speaker beside him is not an NPC the town plan knows"
     }
   ],
   "placed": [
