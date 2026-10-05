@@ -11548,6 +11548,15 @@
       },
       "entry_rules": [
         {
+          "priority": 5,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.main_worldshift_reveal.stage",
+            "value": "rift_crisis_pending"
+          },
+          "node": "admit_pending"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "progression_in",
@@ -11584,8 +11593,16 @@
           "id": "turned_away_2",
           "kind": "line",
           "speaker": "guard",
-          "text": "When the operation needs you, they'll tell me. The Rift surveyor at the Victory Road trailhead signs the orders, or Nia Calder at the clinic. Move along.",
+          "text": "When the operation needs you, they'll tell me. The Rift surveyor at the Victory Road trailhead signs the orders, or Nia Calder at the clinic two rings down. Move along.",
           "next": "turned_away_2"
+        },
+        {
+          "id": "admit_pending",
+          "kind": "line",
+          "speaker": "guard",
+          "text": "The surveyor's word opens this door, not the Director's tower. She stands in its doorway herself and answers to one thing: Nia Calder's packet. The clinic is two rings down, south-east of here.",
+          "placeholder": "Claude, 2026-10-05 (the finale builder): the Rift finale's way-finding line, for Codex to replace. A player at rift_crisis_pending is admitted here and then turned back by Elara (door_001/door_002), and until this line nothing at the HQ named Nia, whose handoff (record_deep_handoff_received) is the next stage",
+          "next": "admit"
         },
         {
           "id": "admit",
@@ -11794,7 +11811,8 @@
           "id": "confront_003",
           "kind": "line",
           "speaker": "binder",
-          "text": "Captain Saye holds the tower's briefing hall. The Director keeps the shaft interlock in her office, under anchor control.",
+          "text": "Captain Saye holds the tower's briefing hall. The Director holds the tower's door herself, up at the top of the stair, and only Nia Calder's packet gets you past her.",
+          "placeholder": "Claude, 2026-10-05 (the finale builder), for Codex to replace: was 'The Director keeps the shaft interlock in her office, under anchor control.', true until Elara moved to the HQ tower's door the same day (data/hq_tower.json door_keeper), which sent a player to an empty office",
           "next": "confront_004"
         },
         {
