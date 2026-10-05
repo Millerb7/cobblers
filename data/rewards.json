@@ -1828,6 +1828,51 @@
       "built_by": "tools/jungle_temples.py (the barrel, in cobblers_jungle_temples' vine_pyramid build, step R9JT)",
       "trigger": {"min": [7712, 155, 6824], "max": [7713, 156, 6826]},
       "container": {"block": "minecraft:barrel", "at": [7712, 154, 6825]}
+    },
+    {
+      "id": "desert_wreck_sea_chest",
+      "kind": "cache",
+      "place": "the Brass Petrel on the southern desert beach: the master's sea chest in the stern cabin",
+      "contents": [
+        {
+          "item": "cobblemon:shell_bell",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/shell_bell.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:spell_tag",
+          "count": 1,
+          "verification": "assets/cobblemon/models/item/spell_tag.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        },
+        {
+          "item": "cobblemon:dive_ball",
+          "count": 3,
+          "verification": "assets/cobblemon/models/item/dive_ball.json in Cobblemon-fabric-1.8.0+1.21.1.jar"
+        }
+      ],
+      "message": "In the master's sea chest: the ship's Shell Bell, a Spell Tag and three Dive Balls.",
+      "why": "ADR-002's cache (data/rewards.json, tools/rewards_pack.py): standing beside the master's sea chest (a barrel, scenery) in the stern cabin grants it once per player. Tier 7-8 south coast: a Shell Bell (the ship's bell, a held item that heals by damage dealt), a Spell Tag (the ghosts of the strand; boosts Ghost moves) and Dive Balls, the sea's situational ball. Item ids verified in the Cobblemon 1.8.0 jar (assets/cobblemon/models/item/<id>.json) 2026-10-05.",
+      "built_by": "tools/desert_wreck.py (the barrel, in cobblers_desert_wreck's build, reapply step R9DW)",
+      "trigger": {
+        "min": [
+          6490,
+          71,
+          6788
+        ],
+        "max": [
+          6492,
+          72,
+          6790
+        ]
+      },
+      "container": {
+        "block": "minecraft:barrel",
+        "at": [
+          6491,
+          71,
+          6789
+        ]
+      }
     }
   ]
 }

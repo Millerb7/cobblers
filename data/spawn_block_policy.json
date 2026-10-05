@@ -496,6 +496,22 @@
       "why": "the farm's Combee refill the hives with Cobblemon's native cobblemon:pokemon_bee behaviour, which only gathers nectar from a flower: FlowerSensor (1.8.0 jar) takes the nearest not-waterlogged block of a vanilla flowers block tag within 5 blocks of the Pokemon. Every flower is a spawn condition (#cobblemon:flowers and the colour tags), so the forage cannot be spawn-neutral. Two small flowers, one yellow and one blue, are the fewest that still read as a flower bed",
       "consequence": "read from the 1.8.0 jar 2026-10-05, spawns needing #cobblemon:flowers nearby in any overworld biome by day: combee (1-24), cutiefly (5-30), ribombee (25-46), comfey (24-49, rare, any time); vivillon savanna wings (12-41, #cobblemon:is_savanna); and through #cobblemon:yellow_flowers / #cobblemon:blue_flowers flabebe (5-30), floette (19-37) and florges (32-55) of those two colours (floette eternal also lists cornflower). Fitting for an apiary; the level-cap refusal still stops a catch above a player's cap",
       "decided": "OWNER TO CONFIRM: added 2026-10-05 by the farm's systems agent as the means of the owner's \"yeah combee refills\" (the owner approved the refill, not these flowers by name); on the review list (data/pokemon_farm.json owner_questions)"
+    },
+    {
+      "blocks": [
+        "minecraft:sand",
+        "minecraft:dead_brain_coral_block",
+        "minecraft:dead_tube_coral_block",
+        "minecraft:dead_horn_coral_block",
+        "minecraft:dead_fire_coral_block",
+        "minecraft:dead_bubble_coral_block",
+        "minecraft:dead_horn_coral",
+        "minecraft:dead_bubble_coral"
+      ],
+      "scope": "the Brass Petrel (desert_wreck: tools/desert_wreck.py, data/desert_wreck.json, pack cobblers_desert_wreck) on the southern desert beach at (6488, 6772): the dead reef on the flats in front of the stern (x6466-6510, z6794-6838) and the sand spilled into the hold and the stern breach",
+      "why": "the brief of 2026-10-05: 'a bleached dead reef across the flats in front, Galarian Corsola/Cursola and Sandygast there'. Dead coral is the spawn condition of exactly those two (data/spawn_blocks.json: #cobblemon:dead_coral, neededNearbyBlocks), so the reef cannot be spawn-neutral and is not meant to be; sand is Sandygast's and Palossand's base block. The reef also lies inside the strand's natural Habitat Blocks (data/habitat_blocks.json desert_wreck_strand_ward, desert_wreck_hold_ward), which replace the ambient spawns there with the strand's own pool, so the pack's dead-coral spawns are not what a player meets inside their range",
+      "consequence": "read from data/spawn_blocks.json 2026-10-05: corsola galarian and cursola (#cobblemon:dead_coral nearby; the Cobblemon 1.8.0 jar and COBBLEVERSE-DP-v31), herds of them; on sand, sandygast and palossand (#minecraft:sand / #c:sand base). The level-cap refusal still stops a catch above a player's cap",
+      "decided": "the owner, 2026-10-05: spawn-condition blocks ALLOWED (this file's owner_decision_2026_10_05); this entry names where, as the contract C4 requires"
     }
   ],
   "checked_paving": {
