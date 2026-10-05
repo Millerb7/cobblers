@@ -1,0 +1,40 @@
+{
+  "settlement": "gorge_hamlet",
+  "fixture": "tests/fixtures/ambient_towns: a FIXTURE for tools/ambient.py and tools/ambient_idle.py (--towns-dir), written by the generator's builder 2026-10-05 to exercise every record kind before the real town files land. Not the town's authored composition; never copied to data/ambient_towns.",
+  "size": "hamlet",
+  "target": 12,
+  "character": "fixture: a dry gorge stop whose Pokemon dig, sift and bask",
+  "workers": [
+    {"id": "fx_gorge_sandile_digger", "species": "sandile", "level": 30, "job": "work", "at": [6801, 4360], "face": [6800, 4360], "every": 60,
+     "effect": {"block": "minecraft:sand", "count": 10, "sound": "minecraft:block.sand.break"}, "interact": "A Sandile digs a cool hole to lie in. It keeps digging."},
+    {"id": "fx_gorge_machop_mason", "species": "machop", "level": 30, "job": "work", "at": [6825, 4368], "face": [6826, 4368], "every": 50,
+     "effect": {"block": "minecraft:sandstone", "count": 12, "sound": "minecraft:block.stone.break"}, "interact": "The Machop is squaring sandstone blocks for the elder's wall."},
+    {"id": "fx_gorge_trapinch_sifter", "species": "trapinch", "level": 30, "job": "work", "at": [6824, 4356], "face": [6825, 4356], "every": 70,
+     "effect": {"block": "minecraft:red_sand", "count": 8, "sound": "minecraft:block.sand.hit"}, "interact": "A Trapinch sifts the gorge's sand for anything that glints."},
+    {"id": "fx_gorge_abra_courier", "species": "abra", "level": 30, "job": "blink", "every": 200,
+     "spots": [{"at": [6806, 4378], "face": [6806, 4370]}, {"at": [6817, 4379], "face": [6817, 4370]}],
+     "interact": "The Abra carries the hamlet's letters. Mostly it naps between them."}
+  ],
+  "pets": [
+    {"id": "fx_elder_hippopotas", "species": "hippopotas", "owner": "npc_stone_tip_gorge_hamlet_elder", "mode": "follow", "why": "fixture: a follow pet"},
+    {"id": "fx_elder_sandshrew", "species": "sandshrew", "owner": "npc_stone_tip_gorge_hamlet_elder", "mode": "wait", "why": "fixture: a wait pet"}
+  ],
+  "placed": [
+    {"id": "fx_center_roof_baltoy", "species": "baltoy", "spot": "roof", "building": "gorge_hamlet_pokecenter", "why": "fixture: a roof spot from the template"},
+    {"id": "fx_cart_dwebble", "species": "dwebble", "spot": "under_cart", "at": [6800, 114, 4366], "facing": "east",
+     "props": [{"block": "minecraft:spruce_slab[type=bottom]", "at": [0, 1, 0]}, {"block": "minecraft:spruce_fence", "at": [1, 0, 0]}],
+     "allow": ["walkway"], "why": "fixture: an explicit at with its own cart"}
+  ],
+  "situations": [
+    {"id": "fx_diglett_queue", "title": "The Diglett queue", "story": "Three Diglett wait in a line on the square as if the Center might open a counter for them.",
+     "unique": true, "at": [6820, 114, 4355], "facing": "north", "allow": ["walkway"],
+     "members": [{"species": "diglett", "count": 3, "pose": "still", "offsets": [[0, 0, 0], [-1, 0, 0], [-2, 0, 0]]}],
+     "props": [{"block": "minecraft:barrel[facing=up]", "at": [1, 0, 0]}],
+     "why": "fixture: one species in a group IS the situation"},
+    {"id": "fx_lunatone_nap", "title": "The napping moon", "story": "A Lunatone sleeps on the square by day, which nobody in the hamlet can explain.",
+     "at": [6826, 114, 4377], "facing": "west", "allow": ["walkway"],
+     "members": [{"species": "lunatone", "count": 1, "pose": "sleep", "offsets": [[0, 0, 0]]}],
+     "why": "fixture: a sleep pose"}
+  ],
+  "counts": {"working": 4, "pets": 2, "placed": 2, "situations": 4, "total": 12}
+}

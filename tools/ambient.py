@@ -35,7 +35,18 @@ blocks, or on or within 8 of a column the pending water export changes (derived/
 present: the owner, 2026-09-28, nothing built that the export would invalidate). A route may not step more than one
 block between neighbouring cells.
 
-  python tools/ambient.py build [--source-root <root>]     # the pack, and derived/ambient/plan.json
+Composed towns (data/ambient.json `composition`, the owner 2026-10-05). A settlement with a town file
+data/ambient_towns/<settlement>.json (or one in --towns-dir) is composed by that file: its `workers` REPLACE this town's
+entries in data/ambient.json `workers` (the build names the ones it superseded), and the fixed per-town limit
+(rules.per_town, 2 carriers / 4 stationary) is replaced for it by the composition rules: the file's total inside its
+size band, its target equal to the total its records make, its own `counts` tally (when given) equal to what the records
+make, and the working share within composition.ratios.tolerance of the target share (a mining town: at least
+mining_towns.working_min). A town without a file keeps the old limit. A worker record may carry `y` (the feet y of every
+cell it stands on), for ground the heightmap does not know; every settlement with its own measured ground in
+data/placements.json (`ground`: the Displaced City's cavern floor, the sea town's decks) is read through
+tools/ground.py for_settlement, never the bare heightmap.
+
+  python tools/ambient.py build [--source-root <root>] [--towns-dir <dir>]   # the pack, and derived/ambient/plan.json
   python tools/ambient.py verify --rcon --server-dir <server>   # a running staging server: one of each, flags held
 
 The re-application: reapply.py R16C places each worker (force-loads its station, runs its place function) and checks
@@ -60,6 +71,7 @@ from terrain import env_source_root  # noqa: E402  (the env var, else .claude/se
 DATA = ROOT / "data" / "ambient.json"
 OUT = ROOT / "build" / "datapacks" / "cobblers_ambient"
 PLAN = ROOT / "derived" / "ambient" / "plan.json"
+TOWNS_DIR = ROOT / "data" / "ambient_towns"
 WATER_CHANGED = ROOT / "derived" / "water_shape" / "changed.npy"
 NS, FOLDER = "cobblers", "ambient"
 F = "%s:%s" % (NS, FOLDER)
@@ -83,6 +95,107 @@ def load():
 def num(v):
     s = "%.2f" % v
     return s.rstrip("0").rstrip(".") if "." in s else s
+
+
+# ------------------------------------------------------------------------------------------------ composed towns
+
+TOWN_FIELDS = ("settlement", "size", "target", "character", "workers", "pets", "placed", "situations")
+
+
+def town_files(towns_dir=None, data=None):
+    """{settlement: town file} every data/ambient_towns/*.json (or `towns_dir`'s), checked for shape: the file named
+    after its settlement, the settlement in composition.scope, every field of composition.town_file present."""
+    d = Path(towns_dir) if towns_dir else TOWNS_DIR
+    if not d.is_dir():
+        return {}
+    comp = (data or load())["composition"]
+    out = {}
+    for p in sorted(d.glob("*.json")):
+        t = json.loads(p.read_text(encoding="utf-8"))
+        s = t.get("settlement")
+        if s != p.stem:
+            raise AmbientError("ambient: %s names settlement %r; a town file is named after its settlement" % (p, s))
+        if s not in comp["scope"]:
+            raise AmbientError("ambient/%s: not in composition.scope (%s)" % (s, p))
+        missing = [f for f in TOWN_FIELDS if f not in t]
+        if missing:
+            raise AmbientError("ambient/%s: the town file lacks %s (composition.town_file.fields)" % (s, missing))
+        if t["size"] not in comp["scale"]:
+            raise AmbientError("ambient/%s: size %r is not one of %s" % (s, t["size"], sorted(k for k in comp["scale"] if k != "why")))
+        out[s] = t
+    return out
+
+
+def town_counts(t):
+    """{working, pets, placed, situations, total} what a town file's records make (never its own `counts`)."""
+    sit = 0
+    for x in t.get("situations") or []:
+        for m in x.get("members") or []:
+            sit += int(m.get("count", len(m.get("offsets") or [])))
+    c = {"working": len(t.get("workers") or []), "pets": len(t.get("pets") or []),
+         "placed": len(t.get("placed") or []), "situations": sit}
+    c["total"] = sum(c.values())
+    return c
+
+
+def composition_problems(s, t, comp):
+    """[message] a town file's breaches of the count rules: the size band, the target, the author's tally, the working
+    share. (Placement rules -- one species bunched, too many in view -- need positions: tools/ambient_idle.py.)"""
+    bad = []
+    c = town_counts(t)
+    lo, hi = comp["scale"][t["size"]]
+    if not lo <= int(t["target"]) <= hi:
+        bad.append("%s: target %s is outside the %s band %d-%d (composition.scale)" % (s, t["target"], t["size"], lo, hi))
+    if not lo <= c["total"] <= hi:
+        bad.append("%s: its records make %d Pokemon, outside the %s band %d-%d (composition.scale)" % (s, c["total"], t["size"], lo, hi))
+    if c["total"] != int(t["target"]):
+        bad.append("%s: target %s, but its records make %d (%s)" % (s, t["target"], c["total"], c))
+    if c["total"] > comp["ceiling"]["per_town"]:
+        bad.append("%s: %d Pokemon, over the ceiling of %d (composition.ceiling)" % (s, c["total"], comp["ceiling"]["per_town"]))
+    if t.get("counts"):
+        diff = {k: (t["counts"].get(k), v) for k, v in c.items() if t["counts"].get(k) != v}
+        if diff:
+            bad.append("%s: the file's counts disagree with its records ({field: (counts says, records make)}): %s" % (s, diff))
+    if c["total"]:
+        share = c["working"] / c["total"]
+        r = comp["ratios"]
+        if s in comp["mining_towns"]["settlements"]:
+            if share < comp["mining_towns"]["working_min"] - 1e-9:
+                bad.append("%s: working share %.2f, under a mining town's %.2f (composition.mining_towns)"
+                           % (s, share, comp["mining_towns"]["working_min"]))
+        else:
+            # within the tolerance or tolerance_pokemon Pokemon, whichever is wider (the audit's rule, 2026-10-05)
+            slack = max(r["tolerance"] * c["total"], float(r.get("tolerance_pokemon", 0)))
+            if abs(c["working"] - r["working"] * c["total"]) > slack + 1e-9:
+                bad.append("%s: working share %.2f (%d of %d), outside %.2f +- %.2f or %s Pokemon (composition.ratios)"
+                           % (s, share, c["working"], c["total"], r["working"], r["tolerance"], r.get("tolerance_pokemon", 0)))
+        for m in [m for x in t.get("situations") or [] for m in x.get("members") or []]:
+            if "count" in m and int(m["count"]) != len(m.get("offsets") or []):
+                bad.append("%s: a situation member (%s) says count %s with %d offsets"
+                           % (s, m.get("species"), m["count"], len(m.get("offsets") or [])))
+    return bad
+
+
+def workers_of(data, towns):
+    """(workers, superseded ids): data/ambient.json's workers, with every composed town's entries replaced by its town
+    file's `workers` (each given the file's settlement)."""
+    out = [w for w in data["workers"] if w["settlement"] not in towns]
+    superseded = [w["id"] for w in data["workers"] if w["settlement"] in towns]
+    for s, t in sorted(towns.items()):
+        for w in t["workers"]:
+            if w.get("settlement", s) != s:
+                raise AmbientError("ambient/%s: worker %s names settlement %r in %s's town file" % (s, w.get("id"), w.get("settlement"), s))
+            out.append(dict(w, settlement=s))
+    return out, superseded
+
+
+def settlement_ground(settlement, base, doc, source_root=None):
+    """The ground a settlement stands on: the heightmap, or its own measured ground (data/placements.json `ground`:
+    the cavern floor, the sea town's decks, an islet) through tools/ground.py for_settlement."""
+    if (doc["settlements"].get(settlement) or {}).get("ground") is None:
+        return base
+    import ground as G
+    return G.for_settlement(settlement, source_root, doc)
 
 
 def yaw_to(ax, az, bx, bz):
@@ -130,6 +243,13 @@ class Site:
             for e in entries:
                 blocks, _floor = TD.place(e, settlement, ground, mask)
                 mark({(b[0], b[2]) for b in blocks}, "dressing %s" % e["id"])
+        # the square's pieces (tools/plaza_centre.py): it keeps clear of data/ambient.json's workers but reads no town
+        # file, so a composed town's worker keeps clear of its pieces instead
+        pc = ROOT / "derived" / "plaza_centres" / ("%s.json" % settlement)
+        if pc.is_file():
+            for p in json.loads(pc.read_text(encoding="utf-8")).get("pieces") or []:
+                mark({tuple(c) for c in p.get("columns") or []} | {(b[0], b[2]) for b in p.get("blocks") or []},
+                     "plaza piece %s" % p["id"])
         self.water = water
         self.water_margin = int(rules["water_changed_margin"])
 
@@ -185,6 +305,11 @@ def plan_worker(w, site, rules):
     level = int(w.get("level", rules["level"]))
     if not 1 <= level <= 100:
         raise AmbientError("ambient/%s: level %d" % (wid, level))
+    if w.get("y") is not None:
+        def Y(_x, _z, _y=int(w["y"])):       # the record's own feet y: ground the heightmap does not know
+            return _y
+    else:
+        Y = site.y
 
     def check(cells, what):
         for x, z in cells:
@@ -204,7 +329,7 @@ def plan_worker(w, site, rules):
         pts = densify(route, float(rules["step_blocks"]))
         cells = cells_of(pts)
         check(cells, "route")
-        ys = {c: site.y(*c) for c in cells}
+        ys = {c: Y(*c) for c in cells}
         prev = None
         for c in cells:
             if prev is not None and abs(ys[c] - ys[prev]) > 1:
@@ -223,13 +348,13 @@ def plan_worker(w, site, rules):
     elif w["job"] == "work":
         (x, z), (fx, fz) = w["at"], w["face"]
         check([(x, z)], "station")
-        y = site.y(x, z)
+        y = Y(x, z)
         hx, hz = x + 0.5 + (fx - x) * 0.12, z + 0.5 + (fz - z) * 0.12
         if (math.floor(hx), math.floor(hz)) != (x, z) and site.blocked(math.floor(hx), math.floor(hz)):
             hx, hz = x + 0.5, z + 0.5                  # the hop's cell is not free (a lot, an anchor): it hops in place
         p["hop"] = (hx, hz)
         p.update(start=(x + 0.5, y, z + 0.5), yaw=yaw_to(x + 0.5, z + 0.5, fx + 0.5, fz + 0.5),
-                 face=(fx + 0.5, site.y(fx, fz) if not site.blocked(fx, fz) else y, fz + 0.5),
+                 face=(fx + 0.5, Y(fx, fz) if not site.blocked(fx, fz) else y, fz + 0.5),
                  every=int(w.get("every", rules["work_every"])), effect=w["effect"])
         if w.get("look_around"):
             lx, lz = w["look_around"]
@@ -239,17 +364,20 @@ def plan_worker(w, site, rules):
         for s in w["spots"]:
             (x, z), (fx, fz) = s["at"], s["face"]
             check([(x, z)], "spot")
-            spots.append((x + 0.5, site.y(x, z), z + 0.5, yaw_to(x + 0.5, z + 0.5, fx + 0.5, fz + 0.5)))
+            spots.append((x + 0.5, Y(x, z), z + 0.5, yaw_to(x + 0.5, z + 0.5, fx + 0.5, fz + 0.5)))
         if len(spots) < 2:
             raise AmbientError("ambient/%s: a blink job needs two spots or more" % wid)
         p.update(spots=spots, start=spots[0][:3], every=int(w.get("every", rules["blink_every"])))
     return p
 
 
-def plan(source_root=None):
+def plan(source_root=None, towns_dir=None):
     import ground as G
     data = load()
     rules = data["rules"]
+    comp = data["composition"]
+    towns = town_files(towns_dir, data)
+    workers, superseded = workers_of(data, towns)
     doc = json.loads((ROOT / "data" / "placements.json").read_text(encoding="utf-8"))
     dressing = json.loads((ROOT / "data" / "town_dressing.json").read_text(encoding="utf-8"))
     g = G.Ground(source_root)
@@ -258,7 +386,7 @@ def plan(source_root=None):
         import numpy as np
         water = np.load(WATER_CHANGED)
     sites, out, seen = {}, [], set()
-    for w in data["workers"]:
+    for w in workers:
         if w["id"] in seen:
             raise AmbientError("ambient: duplicate worker %s" % w["id"])
         seen.add(w["id"])
@@ -266,17 +394,26 @@ def plan(source_root=None):
         if s not in doc["settlements"]:
             raise AmbientError("ambient/%s: settlement %r has no plan" % (w["id"], s))
         if s not in sites:
-            sites[s] = Site(s, g, doc, dressing, water, rules)
+            sites[s] = Site(s, settlement_ground(s, g, doc, source_root), doc, dressing, water, rules)
         out.append(plan_worker(w, sites[s], rules))
-    # the owner's per-town limit (data/ambient.json rules.per_town): carriers, and stationary workers (work and blink)
+    # a composed town: the composition's count rules (its band, target, tally and working share) in place of the
+    # fixed limit below
+    bad = []
+    for s, t in sorted(towns.items()):
+        bad += composition_problems(s, t, comp)
+    if bad:
+        raise AmbientError("ambient: the composition rules (data/ambient.json composition) refuse:\n  " + "\n  ".join(bad))
+    # the owner's per-town limit (data/ambient.json rules.per_town) for a town with no town file: carriers, and
+    # stationary workers (work and blink)
     cap = rules["per_town"]
-    for s in sorted({w["settlement"] for w in out}):
+    for s in sorted({w["settlement"] for w in out} - set(towns)):
         n_carry = sum(1 for w in out if w["settlement"] == s and w["job"] == "carry")
         n_still = sum(1 for w in out if w["settlement"] == s and w["job"] != "carry")
         if n_carry > cap["carriers"] or n_still > cap["stationary"]:
             raise AmbientError("ambient: %s has %d carriers and %d stationary workers; the limit is %d and %d"
                                % (s, n_carry, n_still, cap["carriers"], cap["stationary"]))
-    return {"rules": rules, "workers": out, "water_changed_checked": water is not None}
+    return {"rules": rules, "workers": out, "water_changed_checked": water is not None,
+            "composed_towns": sorted(towns), "superseded_workers": superseded}
 
 
 # ------------------------------------------------------------------------------------------------ the functions
@@ -606,13 +743,17 @@ def main(argv=None):
     sub = ap.add_subparsers(dest="cmd", required=True)
     b = sub.add_parser("build")
     b.add_argument("--source-root", default=env_source_root())
+    b.add_argument("--towns-dir", default=None, help="the composed town files (default data/ambient_towns)")
     v = sub.add_parser("verify")
     v.add_argument("--rcon", action="store_true", required=True)
     v.add_argument("--server-dir", required=True)
     a = ap.parse_args(argv)
     if a.cmd == "build":
-        pl = plan(a.source_root)
+        pl = plan(a.source_root, a.towns_dir)
         fns = write(pl)
+        if pl["composed_towns"]:
+            print("composed by their town files: %s; data/ambient.json workers superseded: %s"
+                  % (", ".join(pl["composed_towns"]), ", ".join(pl["superseded_workers"]) or "none"))
         for w in pl["workers"]:
             extra = len(w["points"]) if w["job"] == "carry" else len(w.get("spots") or [1])
             print("%-28s %-12s %-8s %-6s %s" % (w["id"], w["settlement"], w["species"], w["job"],

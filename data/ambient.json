@@ -235,7 +235,7 @@
     }
   },
   "composition": {
-    "status": "rules set 2026-10-05 (the owner's composition brief); towns authored in data/ambient_towns/<settlement>.json; generator and audit to follow",
+    "status": "rules set 2026-10-05 (the owner's composition brief); towns authored in data/ambient_towns/<settlement>.json. GENERATOR BUILT 2026-10-05: tools/ambient.py reads every town file's workers in place of the town's data/ambient.json workers and checks the count rules (band, target, tally, working share) in place of rules.per_town; tools/ambient_idle.py places its pets, placed (spots resolved from the building templates as placed) and situations (members, poses, props) in place of idle.towns[<settlement>], and fails closed on the band, one species within same_species_group_radius outside a situation, and more than in_view_max within in_view_radius of a standing point. Checked against a fixture town (tests/fixtures/ambient_towns, tests/test_ambient_composed.py); `python tools/ambient_idle.py compose` checks the town files without the built packs. NOT run: a full build with real town files (needs reapply.py prepare), anything in game; the pets/placed/situations shares and the cross-town variety rules are the audit's (tools/ambient_composition_audit.py), not the generator's",
     "request": "the owner, 2026-10-05: \"Right now they read as paste: the same species, sitting in groups, with little variety. Fix it by composition\": 30% working (a job you can watch), 15% pets (belonging to an NPC, following or waiting near them), 20% placed in the world (on roofs, in gutters, under carts, in windows: not doing anything, just living there), 35% unique situations (\"this is the part that matters\": a group of Psyduck that have taken over someone's back garden, something in a chimney, a line of them queuing at a door, one asleep in a crate of apples; each town gets at least one thing nobody else has). Mining towns at least 50% working, mining or hauling. Vary the species; no group of one species together unless it IS the situation; write the unique ones per town rather than generating them. \"Tell me what the real ceiling is from the frame-rate test rather than from the plan, and fill to it.\"",
     "ceiling": {
       "per_town": 48,
@@ -322,6 +322,16 @@
         "situations": "list of {id, title, story: one or two lines a player would retell, unique: true for the one thing nobody else has, at: [x, y, z] the situation's anchor measured from the plan (never a world), facing, members: [{species, count, pose: still | sleep | follow | wander_leashed, offsets: [[dx, dy, dz], ...]}], props: [{block, at: [dx, dy, dz]}] (vanilla or pack blocks; a spawn-condition block is allowed, data/spawn_block_policy.json owner_decision_2026_10_05), why}",
         "counts": "{working, pets, placed, situations, total}: the author's tally, re-derived and checked by the audit, never trusted"
       }
+    },
+    "spot_fit": {
+      "roof": {"max_width": 1.0, "max_height": 1.5},
+      "gutter": {"max_width": 1.0, "max_height": 1.5},
+      "window": {"max_width": 1.0, "max_height": 1.5},
+      "why": "the generator's working limit (tools/ambient_idle.py), NOT measured in game: a Pokemon wider than a block (the jar's hitbox x baseScale) hangs off a ridge or an eave, and one taller than the window's glass run (the generator also caps a window at its own glass height) shows over the window instead of in it. Every placed Pokemon's body is also checked clear of its building's template blocks and, in a full build, of the built town"
+    },
+    "poses": {
+      "wander_leashed": {"home_radius": 2, "leash": 4},
+      "why": "a situation member that wanders on a short leash: Cobblemon's home walk (the follower's behaviours) with home_radius 2 round its own spot, put back by the keeper beyond 4; a member's own home_radius or leash overrides it. A follow member is homed on the situation's anchor (the situation's home_radius and leash, else idle.rules')"
     }
   }
 }
