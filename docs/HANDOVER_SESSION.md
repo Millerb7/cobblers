@@ -51,6 +51,9 @@ A cold session reads CLAUDE.md, `docs/STATE.md`, this file, `docs/MORNING_REPORT
    `b8e115d8-...` moved to `C:/Users/wnd/Documents/cobblers-staging/player-wipe-2026-10-07/` (restore = move them
    back with the server stopped), scores reset. Their next join is a fresh player: Oak's lab scene and the mode choice
    get their first in-game test.
+11. **Per-player chests: Lootr, DECIDED** (2026-10-07). Next: ADR (dependency, world-critical, client install), the
+   three staging experiments in `docs/research/PER_PLAYER_CHESTS.md` section 7, re-apply/re-export behaviour (does
+   re-placing reset every player's opened state?), then literal-`Items` containers to deterministic loot tables.
 5. Waiting on the owner: the source of "THE NURSE: 30 minutes", "237 ambient across 26 settlements" (the world holds
    530 idle in 22) and "the four P2s"; none is in the repository. The sapling hint: N32 measured 6 tree-only species,
    not 13.
