@@ -36,13 +36,16 @@ NOT_MODELLED if none fails but one could not be modelled, and PASS only when eve
                 dialogue or function calling that; each authored stand (data/vr_trainers.json) seated by the built
                 cycle function at its seat, with a forced-battle mob, and admitted by every enforced zone it stands in
                 (CRITICAL_PATH_WALK_2 item 1); the forced fights at the cap, with cap_reachable. The caves themselves
-                and the story chain to the flag are NOT_MODELLED by name.
+                and the story chain to the flag are NOT_MODELLED by name. told_where_next (2026-10-06): the Earth
+                Badge's built reward offers a waypoint within 16 blocks of the seat of the NPC whose conversation
+                moves the reveal to rift_crisis_pending (docs/world-building/POST_GYM8_DIRECTION.md).
   league        the League template placed by a built function (its footprint from the emitted `place template`
                 and the template's size); every enforced zone over that footprint admitting the flags held
                 (CRITICAL_PATH_WALK_2 item 4: a zone that is built but has no zone advancement is reported as a
                 warning, not enforced); a walk from Victory Road's line end to the footprint; the champion_cleared
                 flag bound to kanto_champion_blue and rewarded; the five fights at the cap, with cap_reachable. The
-                template's spawners and the Elite Four's order (upstream) are NOT_MODELLED by name.
+                template's spawners and the Elite Four's order (upstream) are NOT_MODELLED by name. told_where_next
+                (2026-10-06): rift_crisis_resolved's built reward offers a waypoint inside the League's footprint.
   multiplayer   NOT_MODELLED: a second player's flags, reveal cursors and hold-offs (CRITICAL_PATH_WALK_1 item 3).
 
 THE ZONE MODEL is the built cobblers_rift_zones pack read as the server runs it: a zone is enforced only when a built
@@ -633,6 +636,49 @@ def flag_trainer(packs, name):
             if ids:
                 return ids[0], p
     return None, p
+
+
+SHARE = re.compile(r"xaero-waypoint:([^:\"]+):([^:\"]+):(-?\d+):(-?\d+|~):(-?\d+):")
+TOLD_RADIUS = 16            # blocks: a waypoint this near a seat points at the person standing there
+
+
+def flag_offer(packs, flag):
+    """(name, x, z) of the Xaero waypoint the built flag `flag`'s reward offers the player who earns it, or None; and
+    the function's path. Read from the emitted cobblers:flag/<flag>/granted, not from data/progression.json."""
+    ref = "cobblers:flag/%s/granted" % flag
+    text = function_text(packs, ref)
+    if text is None:
+        return None, ref
+    for line in text.splitlines():
+        m = SHARE.search(line) if line.startswith("tellraw") else None
+        if m:
+            return (m.group(1), int(m.group(3)), int(m.group(5))), ref
+    return None, ref
+
+
+def story_actor_seats(inp, from_stage, to_stage):
+    """{npc id: (x, z)} of every seated NPC whose conversation runs a transition moving the reveal's stage from
+    `from_stage` to `to_stage` (data/quests.json transitions, data/dialogue.json, data/npc_seats.json)."""
+    quests = inp.data("quests.json")
+    quests = quests.get("quests") if isinstance(quests, dict) else quests
+    stage = "quest.main_worldshift_reveal.stage"
+    moving = set()
+    for q in quests or []:
+        for t in q.get("transitions") or []:
+            frm = any(c.get("field") == stage and c.get("value") == from_stage for c in t.get("conditions") or [])
+            to = any(e.get("field") == stage and e.get("value") == to_stage for e in t.get("effects") or [])
+            if frm and to:
+                moving.add(t["id"])
+    npcs = set()
+    for c in inp.data("dialogue.json").get("conversations") or []:
+        for n in c.get("nodes") or []:
+            acts = list(n.get("actions") or []) + list(n.get("actions_after_acknowledge") or [])
+            for r in n.get("responses") or []:
+                acts += list(r.get("actions") or [])
+            if any(a.get("transition") in moving for a in acts) and c.get("npc_id"):
+                npcs.add(c["npc_id"])
+    seats = {s["id"]: s["at"] for s in inp.data("npc_seats.json").get("seats") or [] if s.get("at")}
+    return {n: (seats[n][0], seats[n][2]) for n in sorted(npcs) if n in seats}
 
 
 def flag_emitted(packs, fid):
@@ -1307,6 +1353,7 @@ class Walker:
         line = [tuple(p) for p in line]
         st.add("walked_line", PASS, "victory_road: %d points, %d blocks walked" % (len(line),
                                                                                    round(walked_length(line))))
+        self.told_after_gym8(st)
         self.gate_check(st, line, held)
         rect, _src = self.gym_lot(GYM_COUNT)
         if rect:
@@ -1327,6 +1374,30 @@ class Walker:
                                % sorted(set(vr) - authored))
         self.fight_each(st, vr, 9)
         return st
+
+    def told_after_gym8(self, st):
+        """told_where_next: the Earth Badge's built reward offers a waypoint to the person who opens the Rift road --
+        whoever's conversation moves the reveal from giovanni_reveal_complete to rift_crisis_pending (the owner,
+        2026-10-06: 'A player who beats gym 8 needs to know where to go'; docs/world-building/POST_GYM8_DIRECTION.md).
+        Before that night the badge offered the League, which turns the player back until the finale."""
+        if "cobblers_progression" in self.inp.unbuilt:
+            st.add("told_where_next", NM, "cobblers_progression is not built in this mode: %s"
+                   % self.inp.unbuilt["cobblers_progression"])
+            return
+        offer, ref = flag_offer(self.inp.packs, "gym%d_cleared" % GYM_COUNT)
+        actors = story_actor_seats(self.inp, "giovanni_reveal_complete", "rift_crisis_pending")
+        if not actors:
+            st.add("told_where_next", FAIL, "no seated NPC's conversation moves the reveal from "
+                   "giovanni_reveal_complete to rift_crisis_pending (data/quests.json, dialogue.json, npc_seats.json)")
+            return
+        near = offer and [n for n, (x, z) in actors.items()
+                          if max(abs(offer[1] - x), abs(offer[2] - z)) <= TOLD_RADIUS]
+        st.add("told_where_next", PASS if near else FAIL,
+               ("%s offers the waypoint '%s' at (%d, %d), on %s's seat" % (ref, offer[0], offer[1], offer[2], near[0]))
+               if near else ("%s offers %s; the next story actor is %s, and no waypoint stands within %d of a seat"
+                             % (ref, ("'%s' at (%d, %d)" % offer) if offer else "no waypoint at all",
+                                actors, TOLD_RADIUS)),
+               not_covered="that Xaero's shows the offer, and what the actor says (tests/test_post_gym8_direction.py)")
 
     def gate_check(self, st, line, held):
         """gate_opens: every enforced zone the line crosses admits `held` -- the badges that open this leg."""
@@ -1438,6 +1509,15 @@ class Walker:
             if line:
                 add_walk(st, "walk_to_league", self.walk_held(held, [tuple(line[-1])], lot_ring(rect)),
                          "victory_road's end to the League's footprint")
+            # told_where_next: the flag that opens the League offers its waypoint (POST_GYM8_DIRECTION.md)
+            crisis = CRISIS_FLAG.split("/")[-1]
+            offer, ref = flag_offer(self.inp.packs, crisis)
+            inside = offer and rect[0] <= offer[1] <= rect[2] and rect[1] <= offer[2] <= rect[3]
+            st.add("told_where_next", PASS if inside else FAIL,
+                   "%s offers %s; the League's footprint is x%d-%d z%d-%d" % (
+                       ref, ("'%s' at (%d, %d)" % offer) if offer else "no waypoint", rect[0], rect[2], rect[1],
+                       rect[3]),
+                   not_covered="that Xaero's shows the offer")
         st.add("league_spawners", NM, "the five trainers' spawners are inside the %s template (upstream .nbt): "
                "not read" % LEAGUE_TEMPLATE)
         st.add("elite_four_order", NM, "the Elite Four's order and the elevator to the Champion (rctmod's series and "
