@@ -11,8 +11,8 @@ A cold session reads CLAUDE.md, `docs/STATE.md`, this file, `docs/MORNING_REPORT
 - Next: ONE draft PR for it against main (memory: one big PR per batch) after #119 merges, or stacked on #119.
 
 ## 2. Where it stopped
-- **Staging is UP for the owner** (terminal tab "staging (for the owner)", -Xmx12G, max-tick-time 60000, process
-  checked after boot). **The lock is released.** Everything in the brief that was built is applied and read back
+- **Staging is UP for the owner** (terminal tab "staging (for the owner)", -Xmx12G, max-tick-time 60000; process 31996
+  at hand-over). **The lock is released.** Head `9caaf60` + this commit; re-read with `git fetch --prune`. Everything in the brief that was built is applied and read back
   from the world (the morning report's table: 33 of 33 probes, 22/22 NPCs, 26/26 traders, 530/532 idlers).
 - Snapshot before tonight's apply: `C:/Users/wnd/Documents/cobblers-staging/snapshot-2026-10-07-before-apply`.
 - **`build/` is stale** against the last commits (`economy_audit` wired into prepare, the docs). Any install needs a
@@ -91,6 +91,10 @@ coordinates (Elite Four refusal, Hoopa at the cradle, juniors' facing, a trainin
 Giratina and Darkrai).
 
 ## 4. Do not rediscover
+- **Agents are model-pinned since 2026-10-07** (`.claude/agents/*.md` `model:`; escalation rules in CLAUDE.md
+  Delegation). Wave A's gym and trade audits (A1, A2, A4 checks) meet escalation rule 1: launch them with `model: opus`.
+- **Staging dies with its terminal session.** On 2026-10-07 the panel's session was replaced and the server went with
+  it (log ends mid-RCON, no shutdown line). Check the PROCESS before telling the owner it is up.
 - The brief's premises "Hoopa spawns after the release" (it was my hand-spawned display) and "the fossil site is in"
   (not then; now applied) were false: the morning report says so.
 - The Mart tiers live on the CLERKS, which only R14 (town traders) writes; R17M is the counter merchants. A batch
@@ -104,5 +108,5 @@ Giratina and Darkrai).
 - Two Combees at the Pokemon farm (`idle_farm_combee_2/3`) wander off: R16C's verify fails on them (N94).
 
 ## 5. Cost
-`python tools/session_cost.py`: 827 turns, 47.4M weighted for the main session (context 259k at hand-over, average
-469k); agents together 96.4M weighted across both nights. Tonight's agents: 10 builders, 5 independent auditors (training grounds, legendary sweep, Challenge, juniors, economy).
+`python tools/session_cost.py`: 898 turns, 50.5M weighted for the main session (context 344k at hand-over, average
+456k); agents together 96.4M weighted across both nights. Tonight's agents: 10 builders, 5 independent auditors (training grounds, legendary sweep, Challenge, juniors, economy).
