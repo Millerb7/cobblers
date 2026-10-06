@@ -26876,6 +26876,188 @@
       "conditions": {},
       "eligibility_reason": "base stage",
       "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.training_ground_gym1.audino",
+      "species": "audino",
+      "bucket": "common",
+      "level": "17-19",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "training_ground_gym1",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base experience yield 390 (Cobblemon 1.8.0 species data), the highest of any species with no evolution; fast experience group. No evolution, so legal at every tier (data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.training_ground_gym2.audino",
+      "species": "audino",
+      "bucket": "common",
+      "level": "22-24",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "training_ground_gym2",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base experience yield 390 (Cobblemon 1.8.0 species data), the highest of any species with no evolution; fast experience group. No evolution, so legal at every tier (data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.training_ground_gym3.audino",
+      "species": "audino",
+      "bucket": "common",
+      "level": "27-29",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "training_ground_gym3",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base experience yield 390 (Cobblemon 1.8.0 species data), the highest of any species with no evolution; fast experience group. No evolution, so legal at every tier (data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.training_ground_gym4.audino",
+      "species": "audino",
+      "bucket": "common",
+      "level": "32-34",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "training_ground_gym4",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base experience yield 390 (Cobblemon 1.8.0 species data), the highest of any species with no evolution; fast experience group. No evolution, so legal at every tier (data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.training_ground_gym5.audino",
+      "species": "audino",
+      "bucket": "common",
+      "level": "37-39",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "training_ground_gym5",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base experience yield 390 (Cobblemon 1.8.0 species data), the highest of any species with no evolution; fast experience group. No evolution, so legal at every tier (data/spawns.json evolution_policy)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.training_ground_gym6.audino",
+      "species": "audino",
+      "bucket": "common",
+      "level": "42-44",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "training_ground_gym6",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "as above",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.training_ground_gym6.chansey",
+      "species": "chansey",
+      "bucket": "common",
+      "level": "42-44",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "training_ground_gym6",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base experience yield 395; it comes from Happiny by a held-item evolution, which data/spawns.json evolution_policy allows only from tier 6 ('Evolutions not by level appear only from tier 6')",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.training_ground_gym6.blissey",
+      "species": "blissey",
+      "bucket": "common",
+      "level": "42-44",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "training_ground_gym6",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base experience yield 635, the highest of any non-legendary; a friendship evolution, so tier 6 and up only, as Chansey. Already wild at tier 7 (tilpey_west_meadows, 43-50)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.training_ground_gym7.audino",
+      "species": "audino",
+      "bucket": "common",
+      "level": "47-49",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "training_ground_gym7",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "as above",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.training_ground_gym7.chansey",
+      "species": "chansey",
+      "bucket": "common",
+      "level": "47-49",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "training_ground_gym7",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base experience yield 395; it comes from Happiny by a held-item evolution, which data/spawns.json evolution_policy allows only from tier 6 ('Evolutions not by level appear only from tier 6')",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.training_ground_gym7.blissey",
+      "species": "blissey",
+      "bucket": "common",
+      "level": "47-49",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "training_ground_gym7",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base experience yield 635, the highest of any non-legendary; a friendship evolution, so tier 6 and up only, as Chansey. Already wild at tier 7 (tilpey_west_meadows, 43-50)",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.training_ground_gym8.audino",
+      "species": "audino",
+      "bucket": "common",
+      "level": "52-54",
+      "weight": 24.0,
+      "ambient": true,
+      "scope": "training_ground_gym8",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "as above",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.training_ground_gym8.chansey",
+      "species": "chansey",
+      "bucket": "common",
+      "level": "52-54",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "training_ground_gym8",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base experience yield 395; it comes from Happiny by a held-item evolution, which data/spawns.json evolution_policy allows only from tier 6 ('Evolutions not by level appear only from tier 6')",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.training_ground_gym8.blissey",
+      "species": "blissey",
+      "bucket": "common",
+      "level": "52-54",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "training_ground_gym8",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "base experience yield 635, the highest of any non-legendary; a friendship evolution, so tier 6 and up only, as Chansey. Already wild at tier 7 (tilpey_west_meadows, 43-50)",
+      "spawnable_position": "grounded"
     }
   ],
   "subregions": [
@@ -57086,6 +57268,302 @@
         }
       ],
       "placement_status": "authored: data/habitat_blocks.json desert_wreck_strand_ward, desert_wreck_hold_ward, status planned"
+    },
+    {
+      "id": "training_ground_gym1",
+      "display_name": "Stoneford Training Ground",
+      "intended_location": "Stoneford Training Ground: one activated Habitat Block, training_ground_gym1_block in data/habitat_blocks.json, at (1833, 139, 3618), 91 blocks from gym1_town's centre and 81 from the nearest route path",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 17,
+        "maximum": 19
+      },
+      "level_band_why": "cap 20 (the cap before gym 1, rctmod's computation in tools/legendaries_audit.py rct_caps) less [3, 1]: cap - 3 to cap - 1: just under the cap the player holds on reaching the town, so every one is catchable (rctmod refuses only strictly above the cap, and so does the catch block, data/level_cap.json) and none out-levels the team the ground is filling. Within every host sub-region's ceiling (data/encounter_design.json rules.hearts.next_cap of its tier, which is the next cap up).",
+      "why": "the levelling catch-up (docs/mechanics/LEVEL_CATCHUP.md): the jar's highest base-experience species that the encounter rules allow at each band: Blissey 635, Chansey 395, Audino 390, then 300 for the pseudo-legendary finals, which the maturity rules keep out of every band below the Elite Four. The yield is what the Pokemon is for here",
+      "entries": [
+        {
+          "species": "Audino",
+          "pokemon": "audino",
+          "family": "audino",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "base experience yield 390 (Cobblemon 1.8.0 species data), the highest of any species with no evolution; fast experience group. No evolution, so legal at every tier (data/spawns.json evolution_policy)",
+          "level": "17-19",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json training_ground_gym1_block, status planned"
+    },
+    {
+      "id": "training_ground_gym2",
+      "display_name": "Viltri Quay Training Ground",
+      "intended_location": "Viltri Quay Training Ground: one activated Habitat Block, training_ground_gym2_block in data/habitat_blocks.json, at (1543, 106, 2759), 75 blocks from gym2_town's centre and 75 from the nearest route path",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 22,
+        "maximum": 24
+      },
+      "level_band_why": "cap 25 (the cap before gym 2, rctmod's computation in tools/legendaries_audit.py rct_caps) less [3, 1]: cap - 3 to cap - 1: just under the cap the player holds on reaching the town, so every one is catchable (rctmod refuses only strictly above the cap, and so does the catch block, data/level_cap.json) and none out-levels the team the ground is filling. Within every host sub-region's ceiling (data/encounter_design.json rules.hearts.next_cap of its tier, which is the next cap up).",
+      "why": "the levelling catch-up (docs/mechanics/LEVEL_CATCHUP.md): the jar's highest base-experience species that the encounter rules allow at each band: Blissey 635, Chansey 395, Audino 390, then 300 for the pseudo-legendary finals, which the maturity rules keep out of every band below the Elite Four. The yield is what the Pokemon is for here",
+      "entries": [
+        {
+          "species": "Audino",
+          "pokemon": "audino",
+          "family": "audino",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "base experience yield 390 (Cobblemon 1.8.0 species data), the highest of any species with no evolution; fast experience group. No evolution, so legal at every tier (data/spawns.json evolution_policy)",
+          "level": "22-24",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json training_ground_gym2_block, status planned"
+    },
+    {
+      "id": "training_ground_gym3",
+      "display_name": "Highwire Training Ground",
+      "intended_location": "Highwire Training Ground: one activated Habitat Block, training_ground_gym3_block in data/habitat_blocks.json, at (1586, 140, 1436), 105 blocks from gym3_town's centre and 103 from the nearest route path",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 27,
+        "maximum": 29
+      },
+      "level_band_why": "cap 30 (the cap before gym 3, rctmod's computation in tools/legendaries_audit.py rct_caps) less [3, 1]: cap - 3 to cap - 1: just under the cap the player holds on reaching the town, so every one is catchable (rctmod refuses only strictly above the cap, and so does the catch block, data/level_cap.json) and none out-levels the team the ground is filling. Within every host sub-region's ceiling (data/encounter_design.json rules.hearts.next_cap of its tier, which is the next cap up).",
+      "why": "the levelling catch-up (docs/mechanics/LEVEL_CATCHUP.md): the jar's highest base-experience species that the encounter rules allow at each band: Blissey 635, Chansey 395, Audino 390, then 300 for the pseudo-legendary finals, which the maturity rules keep out of every band below the Elite Four. The yield is what the Pokemon is for here",
+      "entries": [
+        {
+          "species": "Audino",
+          "pokemon": "audino",
+          "family": "audino",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "base experience yield 390 (Cobblemon 1.8.0 species data), the highest of any species with no evolution; fast experience group. No evolution, so legal at every tier (data/spawns.json evolution_policy)",
+          "level": "27-29",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json training_ground_gym3_block, status planned"
+    },
+    {
+      "id": "training_ground_gym4",
+      "display_name": "Greenhollow Training Ground",
+      "intended_location": "Greenhollow Training Ground: one activated Habitat Block, training_ground_gym4_block in data/habitat_blocks.json, at (4391, 110, 1505), 96 blocks from gym4_town's centre and 93 from the nearest route path",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 32,
+        "maximum": 34
+      },
+      "level_band_why": "cap 35 (the cap before gym 4, rctmod's computation in tools/legendaries_audit.py rct_caps) less [3, 1]: cap - 3 to cap - 1: just under the cap the player holds on reaching the town, so every one is catchable (rctmod refuses only strictly above the cap, and so does the catch block, data/level_cap.json) and none out-levels the team the ground is filling. Within every host sub-region's ceiling (data/encounter_design.json rules.hearts.next_cap of its tier, which is the next cap up).",
+      "why": "the levelling catch-up (docs/mechanics/LEVEL_CATCHUP.md): the jar's highest base-experience species that the encounter rules allow at each band: Blissey 635, Chansey 395, Audino 390, then 300 for the pseudo-legendary finals, which the maturity rules keep out of every band below the Elite Four. The yield is what the Pokemon is for here",
+      "entries": [
+        {
+          "species": "Audino",
+          "pokemon": "audino",
+          "family": "audino",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "base experience yield 390 (Cobblemon 1.8.0 species data), the highest of any species with no evolution; fast experience group. No evolution, so legal at every tier (data/spawns.json evolution_policy)",
+          "level": "32-34",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json training_ground_gym4_block, status planned"
+    },
+    {
+      "id": "training_ground_gym5",
+      "display_name": "Fenhide Training Ground",
+      "intended_location": "Fenhide Training Ground: one activated Habitat Block, training_ground_gym5_block in data/habitat_blocks.json, at (4644, 118, 2516), 70 blocks from gym5_town's centre and 51 from the nearest route path",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 37,
+        "maximum": 39
+      },
+      "level_band_why": "cap 40 (the cap before gym 5, rctmod's computation in tools/legendaries_audit.py rct_caps) less [3, 1]: cap - 3 to cap - 1: just under the cap the player holds on reaching the town, so every one is catchable (rctmod refuses only strictly above the cap, and so does the catch block, data/level_cap.json) and none out-levels the team the ground is filling. Within every host sub-region's ceiling (data/encounter_design.json rules.hearts.next_cap of its tier, which is the next cap up).",
+      "why": "the levelling catch-up (docs/mechanics/LEVEL_CATCHUP.md): the jar's highest base-experience species that the encounter rules allow at each band: Blissey 635, Chansey 395, Audino 390, then 300 for the pseudo-legendary finals, which the maturity rules keep out of every band below the Elite Four. The yield is what the Pokemon is for here",
+      "entries": [
+        {
+          "species": "Audino",
+          "pokemon": "audino",
+          "family": "audino",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "base experience yield 390 (Cobblemon 1.8.0 species data), the highest of any species with no evolution; fast experience group. No evolution, so legal at every tier (data/spawns.json evolution_policy)",
+          "level": "37-39",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json training_ground_gym5_block, status planned"
+    },
+    {
+      "id": "training_ground_gym6",
+      "display_name": "Tilpey Cross Training Ground",
+      "intended_location": "Tilpey Cross Training Ground: one activated Habitat Block, training_ground_gym6_block in data/habitat_blocks.json, at (6170, 97, 3268), 133 blocks from gym6_town's centre and 112 from the nearest route path",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 42,
+        "maximum": 44
+      },
+      "level_band_why": "cap 45 (the cap before gym 6, rctmod's computation in tools/legendaries_audit.py rct_caps) less [3, 1]: cap - 3 to cap - 1: just under the cap the player holds on reaching the town, so every one is catchable (rctmod refuses only strictly above the cap, and so does the catch block, data/level_cap.json) and none out-levels the team the ground is filling. Within every host sub-region's ceiling (data/encounter_design.json rules.hearts.next_cap of its tier, which is the next cap up).",
+      "why": "the levelling catch-up (docs/mechanics/LEVEL_CATCHUP.md): the jar's highest base-experience species that the encounter rules allow at each band: Blissey 635, Chansey 395, Audino 390, then 300 for the pseudo-legendary finals, which the maturity rules keep out of every band below the Elite Four. The yield is what the Pokemon is for here",
+      "entries": [
+        {
+          "species": "Audino",
+          "pokemon": "audino",
+          "family": "audino",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "as above",
+          "level": "42-44",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        },
+        {
+          "species": "Chansey",
+          "pokemon": "chansey",
+          "family": "happiny",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base experience yield 395; it comes from Happiny by a held-item evolution, which data/spawns.json evolution_policy allows only from tier 6 ('Evolutions not by level appear only from tier 6')",
+          "level": "42-44",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Blissey",
+          "pokemon": "blissey",
+          "family": "happiny",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base experience yield 635, the highest of any non-legendary; a friendship evolution, so tier 6 and up only, as Chansey. Already wild at tier 7 (tilpey_west_meadows, 43-50)",
+          "level": "42-44",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json training_ground_gym6_block, status planned"
+    },
+    {
+      "id": "training_ground_gym7",
+      "display_name": "Cinderlee Training Ground",
+      "intended_location": "Cinderlee Training Ground: one activated Habitat Block, training_ground_gym7_block in data/habitat_blocks.json, at (6108, 105, 4885), 115 blocks from gym7_town's centre and 54 from the nearest route path",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 47,
+        "maximum": 49
+      },
+      "level_band_why": "cap 50 (the cap before gym 7, rctmod's computation in tools/legendaries_audit.py rct_caps) less [3, 1]: cap - 3 to cap - 1: just under the cap the player holds on reaching the town, so every one is catchable (rctmod refuses only strictly above the cap, and so does the catch block, data/level_cap.json) and none out-levels the team the ground is filling. Within every host sub-region's ceiling (data/encounter_design.json rules.hearts.next_cap of its tier, which is the next cap up).",
+      "why": "the levelling catch-up (docs/mechanics/LEVEL_CATCHUP.md): the jar's highest base-experience species that the encounter rules allow at each band: Blissey 635, Chansey 395, Audino 390, then 300 for the pseudo-legendary finals, which the maturity rules keep out of every band below the Elite Four. The yield is what the Pokemon is for here",
+      "entries": [
+        {
+          "species": "Audino",
+          "pokemon": "audino",
+          "family": "audino",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "as above",
+          "level": "47-49",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        },
+        {
+          "species": "Chansey",
+          "pokemon": "chansey",
+          "family": "happiny",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base experience yield 395; it comes from Happiny by a held-item evolution, which data/spawns.json evolution_policy allows only from tier 6 ('Evolutions not by level appear only from tier 6')",
+          "level": "47-49",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Blissey",
+          "pokemon": "blissey",
+          "family": "happiny",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base experience yield 635, the highest of any non-legendary; a friendship evolution, so tier 6 and up only, as Chansey. Already wild at tier 7 (tilpey_west_meadows, 43-50)",
+          "level": "47-49",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json training_ground_gym7_block, status planned"
+    },
+    {
+      "id": "training_ground_gym8",
+      "display_name": "Holdfast Training Ground",
+      "intended_location": "Holdfast Training Ground: one activated Habitat Block, training_ground_gym8_block in data/habitat_blocks.json, at (3717, 111, 6535), 80 blocks from gym8_town's centre and 76 from the nearest route path",
+      "mechanism": "habitat_block",
+      "replace_spawns": false,
+      "level_band": {
+        "minimum": 52,
+        "maximum": 54
+      },
+      "level_band_why": "cap 55 (the cap before gym 8, rctmod's computation in tools/legendaries_audit.py rct_caps) less [3, 1]: cap - 3 to cap - 1: just under the cap the player holds on reaching the town, so every one is catchable (rctmod refuses only strictly above the cap, and so does the catch block, data/level_cap.json) and none out-levels the team the ground is filling. Within every host sub-region's ceiling (data/encounter_design.json rules.hearts.next_cap of its tier, which is the next cap up).",
+      "why": "the levelling catch-up (docs/mechanics/LEVEL_CATCHUP.md): the jar's highest base-experience species that the encounter rules allow at each band: Blissey 635, Chansey 395, Audino 390, then 300 for the pseudo-legendary finals, which the maturity rules keep out of every band below the Elite Four. The yield is what the Pokemon is for here",
+      "entries": [
+        {
+          "species": "Audino",
+          "pokemon": "audino",
+          "family": "audino",
+          "family_priority": "anchor",
+          "ambient": true,
+          "eligibility_reason": "as above",
+          "level": "52-54",
+          "bucket": "common",
+          "weight": 24.0,
+          "conditions": {}
+        },
+        {
+          "species": "Chansey",
+          "pokemon": "chansey",
+          "family": "happiny",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base experience yield 395; it comes from Happiny by a held-item evolution, which data/spawns.json evolution_policy allows only from tier 6 ('Evolutions not by level appear only from tier 6')",
+          "level": "52-54",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Blissey",
+          "pokemon": "blissey",
+          "family": "happiny",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "base experience yield 635, the highest of any non-legendary; a friendship evolution, so tier 6 and up only, as Chansey. Already wild at tier 7 (tilpey_west_meadows, 43-50)",
+          "level": "52-54",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        }
+      ],
+      "placement_status": "authored: data/habitat_blocks.json training_ground_gym8_block, status planned"
     }
   ],
   "route_species_selection_note": "Generated by tools/build_encounters.py from data/encounter_design.json (docs/mechanics/ENCOUNTER_DESIGN.md section 6): per route, the families in rules.corridor_roles (never a find) of every sub-region its corridor crosses (data/routes.json geography transitions), at most corridor_species_limit: every crossed table's water species kept, rules.corridor_rare_min of the crossed on-path tables' rare- and ultra-role species reserved (the owner, 2026-10-05), and the rest by chance times corridor length. tools/compile_spawns.py reads this list and does not choose. Do not edit by hand.",
