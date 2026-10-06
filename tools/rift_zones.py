@@ -1871,6 +1871,11 @@ def cmd_build(a):
             "execute on vehicle run tp @s %s %d %s" % (tx, ty, tz),
             "tp @s %s %d %s %s 0" % (tx, ty, tz, tyaw),
             "title @s actionbar %s" % text("Turned back: %s opens with %s." % (z["name"], short), color="gold")]
+        if z.get("turn_back_hint"):
+            # the zone's own sentence saying where the pass is earned (data/rift_zones.json zones.*.turn_back_hint):
+            # an actionbar is gone in two seconds, so the hint goes to chat, where it stays. Only here: a turn-back
+            # runs once per crossing (the player is moved out), where a knock box re-fires while they stand in it
+            fn["%s/turn_back" % zid].append("tellraw @s %s" % text(z["turn_back_hint"], color="gray"))
 
         # one gate's own four functions, for the zone's guard and for every post
         for name, gid, _gd, arr, tb, eb, knock in gates:

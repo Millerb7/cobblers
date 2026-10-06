@@ -3165,6 +3165,8 @@
       },
       "arrive": [3573.5, 85, 2677.5, 180.0],
       "turn_back": [3573.5, 86, 2688.5, 0.0],
+      "turn_back_hint": "The League's precinct opens when Hoopa is released. Hoopa is bound in a cradle under the Compact's HQ, in the Deep; the Rift surveyor at the Victory Road trailhead knows the way.",
+      "turn_back_hint_why": "the owner, 2026-10-06: a player who beats gym 8 must know where to go. A player who walks the Rift floor to the League (the surface way, CRITICAL_PATH_WALK_2 item 3) or the caves past z2687 before the finale was turned back with 'z5 opens with the Rift's crisis resolved', which names a flag, not a place. Printed to chat once per turn-back by tools/rift_zones.py (never at the knock box, which re-fires while a player stands in it). docs/world-building/POST_GYM8_DIRECTION.md",
       "exit": [3571, 85, 2678, 3576, 86, 2678],
       "wall": "league_gate",
       "why": "this is the zone that makes the Rift's finale precede the League instead of running beside it.",

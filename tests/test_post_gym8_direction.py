@@ -182,6 +182,26 @@ def test_the_completing_lines_still_complete():
             assert not n.get("actions") and not n.get("actions_after_acknowledge"), (cid, nid)
 
 
+ZONES_FN = ROOT / "build" / "datapacks" / "cobblers_rift_zones" / "data" / "cobblers" / "function" / "rift_zones"
+
+
+def test_the_league_gate_says_where_its_pass_is_earned():
+    hint = _doc("rift_zones.json")["zones"]["z5"]["turn_back_hint"]
+    _has(hint, "Hoopa", "Compact's HQ", "the Deep", "surveyor", "trailhead")
+
+
+@pytest.mark.skipif(not (ZONES_FN / "z5" / "turn_back.mcfunction").is_file(),
+                    reason="the zones pack is not built (python tools/rift_zones.py build)")
+def test_the_built_turn_back_prints_the_hint_once_and_the_knock_does_not():
+    hint = _doc("rift_zones.json")["zones"]["z5"]["turn_back_hint"]
+    tb = (ZONES_FN / "z5" / "turn_back.mcfunction").read_text(encoding="utf-8")
+    tells = [l for l in tb.splitlines() if l.startswith("tellraw @s ")]
+    assert len(tells) == 1 and json.loads(tells[0][len("tellraw @s "):])["text"] == hint, tb
+    # the knock re-fires while a player stands in its box: a chat line there would repeat every second
+    for f in ZONES_FN.glob("z5/**/qualify.mcfunction"):
+        assert "tellraw" not in f.read_text(encoding="utf-8"), f
+
+
 def test_what_the_lines_claim_about_the_world_matches_the_data():
     vr = _doc("vr_caves.json")
     assert vr["mouth"]["toward"] == "north"          # "climb north from the Deep's floor"
