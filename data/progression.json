@@ -1911,6 +1911,195 @@
       "why": "the Compact HQ tower's fight 7 of 7 (data/hq_trainers.json, 2026-10-04), set by its rctmod defeat_count advancement (tools/route_trainers.py)"
     },
     {
+      "id": "quest.gym1_junior_01.defeated",
+      "quest_id": "gym1_junior_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 1's junior 1 of 2 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym1_junior_02.defeated",
+      "quest_id": "gym1_junior_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 1's junior 2 of 2 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym2_junior_01.defeated",
+      "quest_id": "gym2_junior_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 2's junior 1 of 2 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym2_junior_02.defeated",
+      "quest_id": "gym2_junior_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 2's junior 2 of 2 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym3_junior_01.defeated",
+      "quest_id": "gym3_junior_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 3's junior 1 of 2 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym3_junior_02.defeated",
+      "quest_id": "gym3_junior_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 3's junior 2 of 2 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym4_junior_01.defeated",
+      "quest_id": "gym4_junior_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 4's junior 1 of 2 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym4_junior_02.defeated",
+      "quest_id": "gym4_junior_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 4's junior 2 of 2 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym5_junior_01.defeated",
+      "quest_id": "gym5_junior_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 5's junior 1 of 3 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym5_junior_02.defeated",
+      "quest_id": "gym5_junior_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 5's junior 2 of 3 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym5_junior_03.defeated",
+      "quest_id": "gym5_junior_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 5's junior 3 of 3 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym6_junior_01.defeated",
+      "quest_id": "gym6_junior_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 6's junior 1 of 3 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym6_junior_02.defeated",
+      "quest_id": "gym6_junior_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 6's junior 2 of 3 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym6_junior_03.defeated",
+      "quest_id": "gym6_junior_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 6's junior 3 of 3 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym7_junior_01.defeated",
+      "quest_id": "gym7_junior_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 7's junior 1 of 3 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym7_junior_02.defeated",
+      "quest_id": "gym7_junior_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 7's junior 2 of 3 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym7_junior_03.defeated",
+      "quest_id": "gym7_junior_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 7's junior 3 of 3 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym8_junior_01.defeated",
+      "quest_id": "gym8_junior_01",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 8's junior 1 of 4 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym8_junior_02.defeated",
+      "quest_id": "gym8_junior_02",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 8's junior 2 of 4 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym8_junior_03.defeated",
+      "quest_id": "gym8_junior_03",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 8's junior 3 of 4 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
+      "id": "quest.gym8_junior_04.defeated",
+      "quest_id": "gym8_junior_04",
+      "field": "defeated",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "gym 8's junior 4 of 4 (data/gym_junior_trainers.json, 2026-10-06), set by its rctmod defeat_count advancement (tools/route_trainers.py). Read by nothing yet: no gate keys on it"
+    },
+    {
       "id": "quest.route_04_trainer_01.defeated",
       "quest_id": "route_04_trainer_01",
       "field": "defeated",

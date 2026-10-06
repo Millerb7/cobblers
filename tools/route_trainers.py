@@ -30,6 +30,10 @@ From data/trainers.json (generated from docs/story/TRAINER_RULES.json) and four 
                                 used to author beside the seat (kept there, decided against, emitted nowhere)
   data/hq_trainers.json         the Compact HQ tower's seven (2026-10-04), record and seat together like the
                                 mansion guardians, on the floors tools/hq_tower.py builds inside the tower's shell
+  data/gym_junior_trainers.json the gym juniors (2026-10-06): 21 trainers inside the eight halls, two to four a gym,
+                                stand only (records in data/trainers.json, generated from TRAINER_RULES gym_trainers).
+                                Every seat is proved unavoidable against its own hall's geometry by
+                                tools/gym_trainers.py check; seated, cycled and summoned like every other seat here
   data/gym_trainers.json        the eight gym leaders. No seat either: our own gym build sets
                                 rctmod:trainer_spawner{TrainerIds:["kanto_brock"]} and the badge is awarded
                                 for beating that id, so the id cannot be re-pointed and our roster reaches a
@@ -265,6 +269,9 @@ def load():
     arena = doc("arena_trainers.json")["trainers"]
     # the Compact HQ tower's seven (2026-10-04, data/hq_trainers.json): record and seat together, like the guardians
     hq = doc("hq_trainers.json")["trainers"]
+    # the gym juniors (2026-10-06, data/gym_junior_trainers.json): the stand only, like Victory Road's ten; the roster
+    # is generated into data/trainers.json, and each seat is proved unavoidable by tools/gym_trainers.py check
+    gym = doc("gym_junior_trainers.json")["trainers"]
     prog = doc("progression.json")
     fields = {f["id"] for f in prog["quest_fields"]}
     recs = {r["id"]: r for r in t["trainers"]}
@@ -274,7 +281,8 @@ def load():
                           ("data/mansion_guardians.json", guards),
                           ("data/vr_trainers.json", vr),
                           ("data/arena_trainers.json", arena),
-                          ("data/hq_trainers.json", hq)):
+                          ("data/hq_trainers.json", hq),
+                          ("data/gym_junior_trainers.json", gym)):
         SUPERSEDED.extend(ownership(recs, entries, name))
     # a seat file whose trainer has no generated record carries the record itself: the five mansion
     # guardians, the arena's seven, and before #96 Victory Road's tenth. ownership() has already proved it
@@ -291,7 +299,7 @@ def load():
     if both:
         raise SystemExit("data/arena_trainers.json: %s say seated false and still carry a seat" % both)
     arena_seated = [e for e in arena if "seat" in e and e.get("seated", True)]
-    return recs, seats + guards + vr + arena_seated + hq, fields
+    return recs, seats + guards + vr + arena_seated + hq + gym, fields
 
 
 def overrides():

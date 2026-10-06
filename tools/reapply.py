@@ -812,6 +812,8 @@ def prepare_jobs(a):
     # world; both take their ground from tools/ground.py and the town plan's levelled lot
     add("gym_demolish:build", "gym_demolish.py", "build", *src)
     add("gym_buildings:build", "gym_buildings.py", "build", *src)
+    # the gym juniors (2026-10-06, tools/gym_trainers.py): every seat proved must-pass against the gym's own geometry
+    add("gym_trainers:check", "gym_trainers.py", "check")
     # (no audit job for the gym buildings yet: the audit and the tests are another agent's, CLAUDE.md principle 16.
     # Add it here, after gym_buildings:build, so a broken hall stops the prepare before anything is installed.)
     # the dive and sky portals and the pocket dimension they lead into (data/portals.json, EXP-047, ADR-004);

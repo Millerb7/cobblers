@@ -196,7 +196,11 @@ SEATED = [s for s in RT.load()[1] if s["id"] in TRAINERS and CM.has_challenge(TR
 
 
 def test_every_seated_trainer_with_a_challenge_team_gets_a_challenge_copy(files):
-    assert len(SEATED) == 51
+    # 51 route seats, plus the gym juniors (data/gym_junior_trainers.json, 2026-10-06): each gets a Challenge copy too
+    import json as _json
+    juniors = _json.loads((ROOT / "data" / "gym_junior_trainers.json").read_text(encoding="utf-8"))
+    n_jr = len(juniors.get("trainers") or juniors.get("seats") or juniors.get("juniors") or [])
+    assert n_jr > 0 and len(SEATED) == 51 + n_jr, (len(SEATED), n_jr)
     for s in SEATED:
         cid = s["id"] + SFX
         assert files["data/rctmod/trainers/%s.json" % cid]["team"] == TRAINERS[s["id"]]["modes"]["challenge"]["rct"]["team"]
