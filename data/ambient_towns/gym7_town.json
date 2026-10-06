@@ -1,7 +1,7 @@
 {
   "settlement": "gym7_town",
   "size": "town",
-  "target": 46,
+  "target": 48,
   "character": "Cinderlee is a field station on a live crater rim: its Pokemon feed the vents, cut and label cores, cook on the fumaroles and keep the instruments, and the rest have found the warm places, a kiln, a bath, a mast top, a coil. Fire Pokemon only, plus two cold visitors who will not leave the warmth.",
   "workers": [
     {
@@ -354,13 +354,6 @@
       "why": "in the cartographer's window, where the maps are weighted down with warm stones"
     },
     {
-      "id": "cinderlee_darumaka_step",
-      "species": "darumaka",
-      "spot": "step",
-      "building": "gym7_house_01",
-      "why": "sitting on the step like a doorstop, which is what it is used for"
-    },
-    {
       "id": "cinderlee_litten_window",
       "species": "litten",
       "spot": "window",
@@ -450,9 +443,9 @@
       "members": [
         {
           "species": "durant",
-          "count": 5,
+          "count": 4,
           "pose": "still",
-          "offsets": [[0, 0, 0], [1, 0, 2], [2, 0, 4], [3, 0, 6], [4, 0, 8]]
+          "offsets": [[0, 0, 0], [1, 0, 2], [2, 0, 4], [3, 0, 6]]
         }
       ],
       "props": [],
@@ -545,13 +538,83 @@
       ],
       "props": [],
       "why": "the causeway's gym end; the pair IS the story"
+    },
+    {
+      "id": "cinderlee_weighing_queue",
+      "title": "The queue to be weighed",
+      "unique": false,
+      "story": "The field lab weighs every Pokemon that comes up off the rim and pays for it in Oran berries. The ones that have been weighed once keep coming back. This morning's queue is a Quilava, a Monferno and a Crocalor, and all three were weighed yesterday.",
+      "at": [6040, 110, 4957],
+      "facing": "south",
+      "members": [
+        {
+          "species": "quilava",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        },
+        {
+          "species": "monferno",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, -2]]
+        },
+        {
+          "species": "crocalor",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, -4]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:heavy_weighted_pressure_plate",
+          "at": [0, 0, 2]
+        }
+      ],
+      "why": "a field station records everything, and a queue at its door is the town's own: the line comes down x 6040 (z 4953-4957, the plan's y 110, the terrace east of the lab) to the scale plate at (6040, 4959), two east of blaine_field_lab at (6038, 4960). Three fire middle stages, none of whose families is otherwise in Cinderlee's roster"
+    },
+    {
+      "id": "cinderlee_clodsire_wallow",
+      "title": "The geological feature",
+      "unique": false,
+      "story": "A Clodsire has been lying in the warm ground on the east rim for three days. The analyst has started logging it as a geological feature, with a reading every hour.",
+      "at": [6128, 107, 5008],
+      "facing": "west",
+      "members": [
+        {
+          "species": "clodsire",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:mud",
+          "at": [2, 0, 0]
+        },
+        {
+          "block": "minecraft:mud",
+          "at": [-2, 0, 1]
+        },
+        {
+          "block": "minecraft:mud",
+          "at": [1, 0, 2]
+        },
+        {
+          "block": "minecraft:mud",
+          "at": [0, 0, -2]
+        }
+      ],
+      "why": "on the open rim east of the square where the vents are (the plan's y 107, clear of every worker's cells and the causeway race at (6146, 4999)): the field station's habit of measuring everything, turned on a Pokemon that will not move. It is 1.6 wide, so it lies across three cells; the mud is heaped round it, outside its body"
     }
   ],
   "counts": {
     "working": 13,
     "pets": 7,
-    "placed": 9,
-    "situations": 17,
-    "total": 46
+    "placed": 8,
+    "situations": 20,
+    "total": 48
   }
 }

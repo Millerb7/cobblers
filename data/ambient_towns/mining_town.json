@@ -432,13 +432,6 @@
       "why": "the market counter's Cranidos, which has headbutted a dent into the counter's front"
     },
     {
-      "id": "fossick_counter_minior",
-      "species": "minior",
-      "owner": "fossick",
-      "mode": "wait",
-      "why": "a Minior on the counter in its shell, like a paperweight; the clerk swears it fell out of the sky into the yard"
-    },
-    {
       "id": "fossick_tools_shieldon",
       "species": "shieldon",
       "owner": "fossick_pit_tools",
@@ -462,13 +455,6 @@
       "why": "in the library's window among the specimen stones; the label under it is wrong"
     },
     {
-      "id": "fossick_boldore_step",
-      "species": "boldore",
-      "spot": "step",
-      "building": "mining_house_14",
-      "why": "beside the step of the house nearest the mine, its crystals lighting the doorway"
-    },
-    {
       "id": "fossick_omanyte_step",
       "species": "omanyte",
       "spot": "step",
@@ -488,13 +474,6 @@
       "spot": "roof",
       "building": "mining_house_01",
       "why": "on the big house's roof at the bowl's west side, facing the Lunatone; they turn together"
-    },
-    {
-      "id": "fossick_anorith_gutter",
-      "species": "anorith",
-      "spot": "gutter",
-      "building": "mining_house_12",
-      "why": "in the gutter, where the rain brings it things to catch"
     }
   ],
   "situations": [
@@ -614,13 +593,121 @@
       ],
       "props": [],
       "why": "behind the houses, off the road; a salt mine's joke"
+    },
+    {
+      "id": "fossick_ditto_ore",
+      "title": "The lump of ore with a face",
+      "unique": false,
+      "story": "The sorted iron waits by the ore road for the cart. One lump in the heap has a face. It is a Ditto; it has been sorted into the iron three times, and the sorters have started a book on what it assays at.",
+      "at": [6706, 140, 5758],
+      "facing": "east",
+      "members": [
+        {
+          "species": "ditto",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:iron_ore",
+          "at": [1, 0, 0]
+        },
+        {
+          "block": "minecraft:iron_ore",
+          "at": [-1, 0, 0]
+        },
+        {
+          "block": "minecraft:raw_iron_block",
+          "at": [0, 0, 1]
+        },
+        {
+          "block": "minecraft:iron_ore",
+          "at": [0, 0, -1]
+        },
+        {
+          "block": "minecraft:iron_ore",
+          "at": [-1, 1, 0]
+        },
+        {
+          "block": "minecraft:raw_iron_block",
+          "at": [-1, 0, 1]
+        }
+      ],
+      "why": "a mining town's sorted heap, six blocks west of the ore road on its open side (the plan's y 140, clear of the Aron's scrap station at (6700, 5772)); a Pokemon that becomes what it sits among is the one joke only a mine can tell"
+    },
+    {
+      "id": "fossick_klefki_keys",
+      "title": "Whoever the Klefki likes",
+      "unique": false,
+      "story": "The foreman lost the library's keys in the spring. A Klefki has them now. It hangs by the door all day and lets in whoever it likes, which has never yet included the foreman.",
+      "at": [6621, 135, 5650],
+      "facing": "east",
+      "members": [
+        {
+          "species": "klefki",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 1, 0]]
+        }
+      ],
+      "props": [],
+      "why": "at mining_house_02 (library_2, door on its east wall at z 5652), one north of the doorway on the plan's y 135, held one up at a keyhole's height: Klefki float, and this one is guarding a door"
+    },
+    {
+      "id": "fossick_munchlax_snap_tins",
+      "title": "The snap tins under the shelf",
+      "unique": false,
+      "story": "The miners leave their snap tins on the shelf by the adit. One goes missing every shift, and every shift the Munchlax under the shelf is a little rounder. Nobody has yet moved the shelf.",
+      "at": [6729, 143, 5801],
+      "facing": "west",
+      "members": [
+        {
+          "species": "munchlax",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:spruce_planks",
+          "at": [-1, 0, 0]
+        },
+        {
+          "block": "minecraft:spruce_planks",
+          "at": [1, 0, 0]
+        },
+        {
+          "block": "minecraft:spruce_planks",
+          "at": [-1, 1, 0]
+        },
+        {
+          "block": "minecraft:spruce_planks",
+          "at": [1, 1, 0]
+        },
+        {
+          "block": "minecraft:spruce_slab",
+          "at": [-1, 2, 0]
+        },
+        {
+          "block": "minecraft:spruce_slab",
+          "at": [0, 2, 0]
+        },
+        {
+          "block": "minecraft:spruce_slab",
+          "at": [1, 2, 0]
+        }
+      ],
+      "why": "by the adit, three north of the canary's post (fossick_adit_canary at (6726, 5804)) on the plan's y 143: where miners would leave their food going underground. The shelf is two posts and a slab top with the Munchlax under it"
     }
   ],
   "counts": {
     "working": 22,
-    "pets": 5,
-    "placed": 6,
-    "situations": 11,
+    "pets": 4,
+    "placed": 4,
+    "situations": 14,
     "total": 44
   }
 }

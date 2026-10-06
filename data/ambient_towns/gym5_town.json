@@ -1,7 +1,7 @@
 {
   "settlement": "gym5_town",
   "size": "town",
-  "target": 46,
+  "target": 48,
   "character": "Fenhide is a trappers' and poisoners' town in the reeds: its Pokemon cut reeds, smoke eels, spin snares, paint balls and dig ditches, and the ones off work are the marsh's families, frogs, mushrooms and things you should not step on. Poison and mud only; nothing here would live in a garden.",
   "workers": [
     {
@@ -317,13 +317,6 @@
       "why": "in the corner of the window behind its own web; nobody in this house dusts"
     },
     {
-      "id": "fenhide_venipede_step",
-      "species": "venipede",
-      "spot": "step",
-      "building": "gym5_house_09",
-      "why": "curled on the doorstep; visitors knock from the path"
-    },
-    {
       "id": "fenhide_grimer_gutter",
       "species": "grimer",
       "spot": "gutter",
@@ -401,9 +394,9 @@
       "members": [
         {
           "species": "tympole",
-          "count": 2,
+          "count": 1,
           "pose": "still",
-          "offsets": [[0, 0, -3], [0, 0, -2]]
+          "offsets": [[0, 0, -2]]
         },
         {
           "species": "palpitoad",
@@ -525,13 +518,70 @@
         }
       ],
       "why": "four different species round one barrel by the market stall; the town's nightlife"
+    },
+    {
+      "id": "fenhide_antidote_queue",
+      "title": "The queue for the antidote",
+      "unique": false,
+      "story": "Three wild Pokemon off the downs have learned that the Centre opens at seven and the nurse cures poison for nothing. They queue along the wall in the order they arrived, and the Linoone has been first every day this week.",
+      "at": [4620, 118, 2371],
+      "facing": "south",
+      "members": [
+        {
+          "species": "linoone",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        },
+        {
+          "species": "furret",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, -2]]
+        },
+        {
+          "species": "pidgeotto",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, -4]]
+        }
+      ],
+      "props": [],
+      "why": "a poisoners' town has a Centre that treats poison more than anything else, and the downs' wild Pokemon have worked that out. The line stands along the Centre's west wall (x 4620, z 2367-2371, the plan's y 118) beside its doorway at (4621, 2373), not in front of it, so the way in stays open"
+    },
+    {
+      "id": "fenhide_kecleon_target",
+      "title": "The fifth target",
+      "unique": false,
+      "story": "The trackers' yard has four target posts and a fifth that has never once been hit. The fifth is a Kecleon. It has stood at the butt since spring and the trackers have started taking bets on it.",
+      "at": [4716, 120, 2401],
+      "facing": "west",
+      "members": [
+        {
+          "species": "kecleon",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:hay_block",
+          "at": [1, 0, 0]
+        },
+        {
+          "block": "minecraft:hay_block",
+          "at": [1, 1, 0]
+        }
+      ],
+      "why": "in line with the yard's target posts (koga_target_3 at (4714, 2398), koga_target_4 at (4718, 2405)), on the plan's y 120, with a hay butt behind it the way an archery butt stands: a trackers' town's practice yard is where a camouflaged Pokemon would hide in plain sight"
     }
   ],
   "counts": {
     "working": 13,
     "pets": 7,
-    "placed": 9,
-    "situations": 17,
-    "total": 46
+    "placed": 8,
+    "situations": 20,
+    "total": 48
   }
 }
