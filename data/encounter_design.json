@@ -69,7 +69,7 @@
       "final_only": true,
       "bst_min": 500,
       "excluded_labels": ["legendary", "mythical", "ultra_beast", "paradox", "restricted"],
-      "owner_named_out": ["vileplume", "breloom", "crobat"],
+      "starter_finals_max_per_zone": 1, "starter_families": ["azurill", "bagon", "budew", "bulbasaur", "charmander", "chespin", "chikorita", "chimchar", "cyndaquil", "eevee", "fennekin", "froakie", "fuecoco", "grookey", "litten", "mudkip", "oshawott", "pichu", "piplup", "popplio", "quaxly", "rowlet", "scorbunny", "snivy", "sobble", "sprigatito", "squirtle", "tepig", "torchic", "totodile", "treecko", "turtwig"], "starter_families_source": "base-pack/cobbleverse/config/cobblemon/starters.json (the mainline starters; modpack/config/cobblemon/starters.json now lists the mythical ones), each walked to its family root in the Cobblemon 1.8.0 jar", "starter_finals_why": "the owner, 2026-10-06: \"thats to agressive on starters, technically most of those should be available in world somehow, we need variety\": at most one starter final stage per Victory Road zone (the starter families also spawn wild elsewhere, ENCOUNTER_DESIGN.md section 11); the rest of each zone is non-starter bangers, none repeated across zones", "owner_named_out": ["vileplume", "breloom", "crobat"],
       "why": "Measured from the Cobblemon 1.8.0 jar's species files (baseStats summed): the 27 mainline starters' final stages total 525-535, the pseudo-legendaries 600 (Baxcalibur is a client doll and stays out), so one predicate -- a final stage (no evolution in the jar) with a base-stat total of 500 or more, not legendary, mythical, an ultra beast or paradox -- admits all three of the owner's kinds: 186 species pass it once the client dolls are taken out, before the finds are. Crobat totals 535 and passes the number; the owner named it underwhelming, so it is out by name (owner_named_out), as are Vileplume (490) and Breloom (460), which the number already rejects. A find's family stays out (section 6: a find is never the base of a Victory Road family): Dragonite, Tyranitar, Salamence, Hydreigon and Kommo-o and the seven starter lines that are finds are an off-path table's reward and are not repeated here. tools/build_encounters.py fails closed on any vrc_ row that breaks this."
     },
     "held_items": {
@@ -488,23 +488,23 @@
     "_staple_why": "the cave staple a themed zone carries, rebuilt 2026-10-06 (rules.victory_road_roster): Noivern (535, Flying/Dragon) is the cave's flyer in Crobat's place, Archaludon (600, Steel/Dragon) and Glimmora (525, Rock/Poison) the cave's stone. Each carries a type in every themed zone's theme (Dragon or Poison is in water, volcanic, mushroom and cave), where Steelix and Golem carried none in the water and mushroom zones. Weights unchanged (8, 4, 4).",
     "_staple": [["noivern", "common", 8], ["archaludon", "uncommon", 4], ["glimmora", "uncommon", 4]],
     "vrc_cave": {"tier": 9, "levels": [54, 60], "themes": ["cave"],
-      "land": [["rhyperior", "common"], ["swampert", "common"], ["torterra", "common"], ["infernape", "common"], ["krookodile", "uncommon"], ["gallade", "rare"]]},
+      "land": [["rhyperior", "common"], ["excadrill", "common"], ["mamoswine", "common"], ["swampert", "common"], ["krookodile", "uncommon"], ["gallade", "rare"]]},
     "vrc_drowned": {"tier": 9, "levels": [54, 60], "themes": ["water"], "staple": true,
-      "land": [["blastoise", "common"], ["feraligatr", "common"], ["samurott", "common"]],
+      "land": [["feraligatr", "common"], ["golisopod", "common"], ["seismitoad", "common"]],
       "water": [["starmie", "common"], ["kingdra", "common"], ["gyarados", "common"], ["walrein", "common"], ["dhelmise", "uncommon"]]},
     "vrc_drowned_core": {"tier": 9, "levels": [54, 60], "themes": ["water"], "staple": true, "core_of": "vrc_drowned", "prize": "milotic"},
     "vrc_slagworks": {"tier": 9, "levels": [54, 60], "themes": ["volcanic"], "staple": true,
-      "land": [["charizard", "common"], ["typhlosion", "common"], ["cinderace", "common"], ["arcanine", "uncommon"], ["volcarona", "uncommon"]]},
+      "land": [["charizard", "common"], ["magmortar", "common"], ["centiskorch", "common"], ["arcanine", "uncommon"], ["volcarona", "uncommon"]]},
     "vrc_slagworks_core": {"tier": 9, "levels": [54, 60], "themes": ["volcanic"], "staple": true, "core_of": "vrc_slagworks", "prize": "garchomp"},
     "vrc_bloom": {"tier": 9, "levels": [54, 60], "themes": ["mushroom"], "staple": true,
-      "land": [["venusaur", "common"], ["meganium", "common"], ["sceptile", "common"], ["tangrowth", "uncommon"]]},
+      "land": [["venusaur", "common"], ["tsareena", "common"], ["hydrapple", "common"], ["tangrowth", "uncommon"]]},
     "vrc_bloom_core": {"tier": 9, "levels": [54, 60], "themes": ["mushroom"], "staple": true, "core_of": "vrc_bloom", "prize": "goodra",
       "prize_why": "re-picked 2026-10-06 (rules.victory_road_roster): Goodra (600) is the one pseudo-legendary outside the finds and the other four prizes, and Dragon is a mushroom-theme type; Tangrowth (535), the prize the owner flew on 2026-09-23, stays in the zone as its uncommon"},
     "vrc_raw_tear": {"tier": 9, "levels": [54, 60], "themes": ["cave"], "staple": true,
-      "land": [["delphox", "common"], ["chandelure", "common"], ["gardevoir", "common"], ["alakazam", "uncommon"], ["dusknoir", "uncommon"]]},
+      "land": [["chandelure", "common"], ["gardevoir", "common"], ["gengar", "common"], ["alakazam", "uncommon"], ["dusknoir", "uncommon"]]},
     "vrc_raw_tear_core": {"tier": 9, "levels": [54, 60], "themes": ["cave"], "staple": true, "core_of": "vrc_raw_tear", "prize": "dragapult"},
     "vrc_abandoned_cut": {"tier": 9, "levels": [54, 60], "themes": ["cave"], "staple": true,
-      "land": [["aggron", "common"], ["empoleon", "common"], ["klinklang", "common"], ["kingambit", "uncommon"]]},
+      "land": [["aggron", "common"], ["magnezone", "common"], ["klinklang", "common"], ["kingambit", "uncommon"]]},
     "vrc_abandoned_cut_core": {"tier": 9, "levels": [54, 60], "themes": ["cave"], "staple": true, "core_of": "vrc_abandoned_cut", "prize": "metagross"}
   }
 }

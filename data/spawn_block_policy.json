@@ -512,7 +512,8 @@
       "why": "the brief of 2026-10-05: 'a bleached dead reef across the flats in front, Galarian Corsola/Cursola and Sandygast there'. Dead coral is the spawn condition of exactly those two (data/spawn_blocks.json: #cobblemon:dead_coral, neededNearbyBlocks), so the reef cannot be spawn-neutral and is not meant to be; sand is Sandygast's and Palossand's base block. The reef also lies inside the strand's natural Habitat Blocks (data/habitat_blocks.json desert_wreck_strand_ward, desert_wreck_hold_ward), which replace the ambient spawns there with the strand's own pool, so the pack's dead-coral spawns are not what a player meets inside their range",
       "consequence": "read from data/spawn_blocks.json 2026-10-05: corsola galarian and cursola (#cobblemon:dead_coral nearby; the Cobblemon 1.8.0 jar and COBBLEVERSE-DP-v31), herds of them; on sand, sandygast and palossand (#minecraft:sand / #c:sand base). The level-cap refusal still stops a catch above a player's cap",
       "decided": "the owner, 2026-10-05: spawn-condition blocks ALLOWED (this file's owner_decision_2026_10_05); this entry names where, as the contract C4 requires"
-    }
+    },
+    {"blocks": ["minecraft:carved_pumpkin"], "scope": "Greenhollow's marrow show (data/ambient_towns/gym4_town.json situation greenhollow_marrow_show, pack cobblers_ambient_idle): one carved pumpkin among four Pumpkaboo", "why": "the owner's composition brief (2026-10-05): the unique situations are the point, and this one is four Pumpkaboo and one real pumpkin", "consequence": "a carved pumpkin is a spawn condition (data/spawn_blocks.json); one block on Greenhollow's green, inside a town", "decided": "the owner, 2026-10-05 (data/spawn_block_policy.json owner_decision_2026_10_05: spawn-condition blocks allowed)"}
   ],
   "checked_paving": {
     "gym1_town": [

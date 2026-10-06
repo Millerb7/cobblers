@@ -807,6 +807,13 @@ def victory_road_roster_problems(dex, rules, tables, pid, rows):
             out.append("%s: %s is one the owner named out of Victory Road" % (pid, name))
         if r["family"] in finds:
             out.append("%s: %s is of the %s family, a find off the path (section 6)" % (pid, name, r["family"]))
+    # the owner, 2026-10-06: "thats to agressive on starters ... we need variety": at most starter_finals_max_per_zone
+    # starter families in one pool
+    starters = sorted({r["family"] for r in rows if r["family"] in set(vr.get("starter_families") or [])})
+    cap = vr.get("starter_finals_max_per_zone")
+    if isinstance(cap, int) and len(starters) > cap:
+        out.append("%s: %d starter families %s, over rules.victory_road_roster starter_finals_max_per_zone %d"
+                   % (pid, len(starters), starters, cap))
     return out
 
 

@@ -22541,34 +22541,34 @@
       "spawnable_position": "grounded"
     },
     {
+      "id": "habitat.vrc_cave.excadrill",
+      "species": "excadrill",
+      "bucket": "common",
+      "level": "54-60",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "vrc_cave",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "named common family, tier 9: the family starts here",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_cave.mamoswine",
+      "species": "mamoswine",
+      "bucket": "common",
+      "level": "54-60",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "vrc_cave",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "named common family, tier 9: the family starts here",
+      "spawnable_position": "grounded"
+    },
+    {
       "id": "habitat.vrc_cave.swampert",
       "species": "swampert",
-      "bucket": "common",
-      "level": "54-60",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "vrc_cave",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "named common family, tier 9: the family starts here",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.vrc_cave.torterra",
-      "species": "torterra",
-      "bucket": "common",
-      "level": "54-60",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "vrc_cave",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "named common family, tier 9: the family starts here",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.vrc_cave.infernape",
-      "species": "infernape",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -22606,19 +22606,6 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_drowned.blastoise",
-      "species": "blastoise",
-      "bucket": "common",
-      "level": "54-60",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "vrc_drowned",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "named common family, tier 9: the family starts here",
-      "spawnable_position": "grounded"
-    },
-    {
       "id": "habitat.vrc_drowned.feraligatr",
       "species": "feraligatr",
       "bucket": "common",
@@ -22632,8 +22619,21 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_drowned.samurott",
-      "species": "samurott",
+      "id": "habitat.vrc_drowned.golisopod",
+      "species": "golisopod",
+      "bucket": "common",
+      "level": "54-60",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "vrc_drowned",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "named common family, tier 9: the family starts here",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned.seismitoad",
+      "species": "seismitoad",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -22749,19 +22749,6 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_drowned_core.blastoise",
-      "species": "blastoise",
-      "bucket": "common",
-      "level": "54-60",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "vrc_drowned_core",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "named common family, tier 9: the family starts here",
-      "spawnable_position": "grounded"
-    },
-    {
       "id": "habitat.vrc_drowned_core.feraligatr",
       "species": "feraligatr",
       "bucket": "common",
@@ -22775,8 +22762,21 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_drowned_core.samurott",
-      "species": "samurott",
+      "id": "habitat.vrc_drowned_core.golisopod",
+      "species": "golisopod",
+      "bucket": "common",
+      "level": "54-60",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "vrc_drowned_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "named common family, tier 9: the family starts here",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_drowned_core.seismitoad",
+      "species": "seismitoad",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -22922,8 +22922,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_slagworks.typhlosion",
-      "species": "typhlosion",
+      "id": "habitat.vrc_slagworks.magmortar",
+      "species": "magmortar",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -22935,8 +22935,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_slagworks.cinderace",
-      "species": "cinderace",
+      "id": "habitat.vrc_slagworks.centiskorch",
+      "species": "centiskorch",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -23026,8 +23026,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_slagworks_core.typhlosion",
-      "species": "typhlosion",
+      "id": "habitat.vrc_slagworks_core.magmortar",
+      "species": "magmortar",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -23039,8 +23039,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_slagworks_core.cinderace",
-      "species": "cinderace",
+      "id": "habitat.vrc_slagworks_core.centiskorch",
+      "species": "centiskorch",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -23143,8 +23143,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_bloom.meganium",
-      "species": "meganium",
+      "id": "habitat.vrc_bloom.tsareena",
+      "species": "tsareena",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -23156,8 +23156,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_bloom.sceptile",
-      "species": "sceptile",
+      "id": "habitat.vrc_bloom.hydrapple",
+      "species": "hydrapple",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -23234,8 +23234,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_bloom_core.meganium",
-      "species": "meganium",
+      "id": "habitat.vrc_bloom_core.tsareena",
+      "species": "tsareena",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -23247,8 +23247,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_bloom_core.sceptile",
-      "species": "sceptile",
+      "id": "habitat.vrc_bloom_core.hydrapple",
+      "species": "hydrapple",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -23325,19 +23325,6 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_raw_tear.delphox",
-      "species": "delphox",
-      "bucket": "common",
-      "level": "54-60",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "vrc_raw_tear",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "named common family, tier 9: the family starts here",
-      "spawnable_position": "grounded"
-    },
-    {
       "id": "habitat.vrc_raw_tear.chandelure",
       "species": "chandelure",
       "bucket": "common",
@@ -23353,6 +23340,19 @@
     {
       "id": "habitat.vrc_raw_tear.gardevoir",
       "species": "gardevoir",
+      "bucket": "common",
+      "level": "54-60",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "named common family, tier 9: the family starts here",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear.gengar",
+      "species": "gengar",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -23429,19 +23429,6 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_raw_tear_core.delphox",
-      "species": "delphox",
-      "bucket": "common",
-      "level": "54-60",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "vrc_raw_tear_core",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "named common family, tier 9: the family starts here",
-      "spawnable_position": "grounded"
-    },
-    {
       "id": "habitat.vrc_raw_tear_core.chandelure",
       "species": "chandelure",
       "bucket": "common",
@@ -23457,6 +23444,19 @@
     {
       "id": "habitat.vrc_raw_tear_core.gardevoir",
       "species": "gardevoir",
+      "bucket": "common",
+      "level": "54-60",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "named common family, tier 9: the family starts here",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear_core.gengar",
+      "species": "gengar",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -23559,8 +23559,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_abandoned_cut.empoleon",
-      "species": "empoleon",
+      "id": "habitat.vrc_abandoned_cut.magnezone",
+      "species": "magnezone",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -23650,8 +23650,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_abandoned_cut_core.empoleon",
-      "species": "empoleon",
+      "id": "habitat.vrc_abandoned_cut_core.magnezone",
+      "species": "magnezone",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -51963,6 +51963,38 @@
           "conditions": {}
         },
         {
+          "species": "Excadrill",
+          "pokemon": "excadrill",
+          "types": [
+            "ground",
+            "steel"
+          ],
+          "family": "drilbur",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Mamoswine",
+          "pokemon": "mamoswine",
+          "types": [
+            "ice",
+            "ground"
+          ],
+          "family": "swinub",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
           "species": "Swampert",
           "pokemon": "swampert",
           "types": [
@@ -51970,38 +52002,6 @@
             "ground"
           ],
           "family": "mudkip",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
-          "species": "Torterra",
-          "pokemon": "torterra",
-          "types": [
-            "grass",
-            "ground"
-          ],
-          "family": "turtwig",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
-          "species": "Infernape",
-          "pokemon": "infernape",
-          "types": [
-            "fire",
-            "fighting"
-          ],
-          "family": "chimchar",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52057,21 +52057,6 @@
       "placement_status": "tiles in data/habitat_blocks.json (vrc_*), written by tools/vr_caves.py records --write",
       "entries": [
         {
-          "species": "Blastoise",
-          "pokemon": "blastoise",
-          "types": [
-            "water"
-          ],
-          "family": "squirtle",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
           "species": "Feraligatr",
           "pokemon": "feraligatr",
           "types": [
@@ -52087,12 +52072,29 @@
           "conditions": {}
         },
         {
-          "species": "Samurott",
-          "pokemon": "samurott",
+          "species": "Golisopod",
+          "pokemon": "golisopod",
           "types": [
+            "bug",
             "water"
           ],
-          "family": "oshawott",
+          "family": "wimpod",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Seismitoad",
+          "pokemon": "seismitoad",
+          "types": [
+            "water",
+            "ground"
+          ],
+          "family": "tympole",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52244,21 +52246,6 @@
       "placement_status": "tiles in data/habitat_blocks.json (vrc_*), written by tools/vr_caves.py records --write",
       "entries": [
         {
-          "species": "Blastoise",
-          "pokemon": "blastoise",
-          "types": [
-            "water"
-          ],
-          "family": "squirtle",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
           "species": "Feraligatr",
           "pokemon": "feraligatr",
           "types": [
@@ -52274,12 +52261,29 @@
           "conditions": {}
         },
         {
-          "species": "Samurott",
-          "pokemon": "samurott",
+          "species": "Golisopod",
+          "pokemon": "golisopod",
           "types": [
+            "bug",
             "water"
           ],
-          "family": "oshawott",
+          "family": "wimpod",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Seismitoad",
+          "pokemon": "seismitoad",
+          "types": [
+            "water",
+            "ground"
+          ],
+          "family": "tympole",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52462,12 +52466,12 @@
           "conditions": {}
         },
         {
-          "species": "Typhlosion",
-          "pokemon": "typhlosion",
+          "species": "Magmortar",
+          "pokemon": "magmortar",
           "types": [
             "fire"
           ],
-          "family": "cyndaquil",
+          "family": "magby",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52477,12 +52481,13 @@
           "conditions": {}
         },
         {
-          "species": "Cinderace",
-          "pokemon": "cinderace",
+          "species": "Centiskorch",
+          "pokemon": "centiskorch",
           "types": [
-            "fire"
+            "fire",
+            "bug"
           ],
-          "family": "scorbunny",
+          "family": "sizzlipede",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52601,12 +52606,12 @@
           "conditions": {}
         },
         {
-          "species": "Typhlosion",
-          "pokemon": "typhlosion",
+          "species": "Magmortar",
+          "pokemon": "magmortar",
           "types": [
             "fire"
           ],
-          "family": "cyndaquil",
+          "family": "magby",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52616,12 +52621,13 @@
           "conditions": {}
         },
         {
-          "species": "Cinderace",
-          "pokemon": "cinderace",
+          "species": "Centiskorch",
+          "pokemon": "centiskorch",
           "types": [
-            "fire"
+            "fire",
+            "bug"
           ],
-          "family": "scorbunny",
+          "family": "sizzlipede",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52756,12 +52762,12 @@
           "conditions": {}
         },
         {
-          "species": "Meganium",
-          "pokemon": "meganium",
+          "species": "Tsareena",
+          "pokemon": "tsareena",
           "types": [
             "grass"
           ],
-          "family": "chikorita",
+          "family": "bounsweet",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52771,12 +52777,13 @@
           "conditions": {}
         },
         {
-          "species": "Sceptile",
-          "pokemon": "sceptile",
+          "species": "Hydrapple",
+          "pokemon": "hydrapple",
           "types": [
-            "grass"
+            "grass",
+            "dragon"
           ],
-          "family": "treecko",
+          "family": "applin",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52879,12 +52886,12 @@
           "conditions": {}
         },
         {
-          "species": "Meganium",
-          "pokemon": "meganium",
+          "species": "Tsareena",
+          "pokemon": "tsareena",
           "types": [
             "grass"
           ],
-          "family": "chikorita",
+          "family": "bounsweet",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52894,12 +52901,13 @@
           "conditions": {}
         },
         {
-          "species": "Sceptile",
-          "pokemon": "sceptile",
+          "species": "Hydrapple",
+          "pokemon": "hydrapple",
           "types": [
-            "grass"
+            "grass",
+            "dragon"
           ],
-          "family": "treecko",
+          "family": "applin",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -53001,22 +53009,6 @@
       "placement_status": "tiles in data/habitat_blocks.json (vrc_*), written by tools/vr_caves.py records --write",
       "entries": [
         {
-          "species": "Delphox",
-          "pokemon": "delphox",
-          "types": [
-            "fire",
-            "psychic"
-          ],
-          "family": "fennekin",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
           "species": "Chandelure",
           "pokemon": "chandelure",
           "types": [
@@ -53040,6 +53032,22 @@
             "fairy"
           ],
           "family": "ralts",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Gengar",
+          "pokemon": "gengar",
+          "types": [
+            "ghost",
+            "poison"
+          ],
+          "family": "gastly",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -53141,22 +53149,6 @@
       "placement_status": "tiles in data/habitat_blocks.json (vrc_*), written by tools/vr_caves.py records --write",
       "entries": [
         {
-          "species": "Delphox",
-          "pokemon": "delphox",
-          "types": [
-            "fire",
-            "psychic"
-          ],
-          "family": "fennekin",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
           "species": "Chandelure",
           "pokemon": "chandelure",
           "types": [
@@ -53180,6 +53172,22 @@
             "fairy"
           ],
           "family": "ralts",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Gengar",
+          "pokemon": "gengar",
+          "types": [
+            "ghost",
+            "poison"
+          ],
+          "family": "gastly",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -53313,13 +53321,13 @@
           "conditions": {}
         },
         {
-          "species": "Empoleon",
-          "pokemon": "empoleon",
+          "species": "Magnezone",
+          "pokemon": "magnezone",
           "types": [
-            "water",
+            "electric",
             "steel"
           ],
-          "family": "piplup",
+          "family": "magnemite",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -53438,13 +53446,13 @@
           "conditions": {}
         },
         {
-          "species": "Empoleon",
-          "pokemon": "empoleon",
+          "species": "Magnezone",
+          "pokemon": "magnezone",
           "types": [
-            "water",
+            "electric",
             "steel"
           ],
-          "family": "piplup",
+          "family": "magnemite",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
