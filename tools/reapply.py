@@ -650,6 +650,9 @@ def prepare_jobs(a):
     add("rift_mines_audit", "rift_mines_audit.py", *src)
     add("place_donor:function", "place_donor.py", "function", "--server-dir", a.server_dir)
     add("traders:function", "traders.py", "function", "--server-dir", a.server_dir)
+    # the economy's independent audit (2026-10-06, tools/economy_audit.py, not the builders'): no arbitrage, no Mart
+    # tier leak, every item real; reports the exchange ratios and the AFK-farmable bank prices
+    add("economy_audit", "economy_audit.py")
     add("sapling_celebi", "sapling_celebi.py")
     # the authored legendary chambers, then their offline audit: a chamber whose roof would break a lake bed,
     # whose shell is not sealed, whose gate line lacks its badge flag or whose mouth falls outside the water
