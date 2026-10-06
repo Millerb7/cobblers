@@ -10,7 +10,7 @@
   "site": 1,
   "waterway": 1,
   "total": 72,
-  "not_zones": 20
+  "not_zones": 28
  },
  "derivation": {
   "tables_are_subregions": "data/encounter_design.json has 63 tables and data/regions.json 63 sub-regions, the same ids",
@@ -1766,6 +1766,46 @@
   },
   {
    "zone": "station_study_pool",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "training_ground_gym1",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "training_ground_gym2",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "training_ground_gym3",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "training_ground_gym4",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "training_ground_gym5",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "training_ground_gym6",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "training_ground_gym7",
+   "what": "Habitat Block pool",
+   "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
+  },
+  {
+   "zone": "training_ground_gym8",
    "what": "Habitat Block pool",
    "why": "no placed block in data/habitat_blocks.json: not in the world, so nobody meets it; it becomes a zone when placed"
   },
