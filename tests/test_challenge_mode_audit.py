@@ -25,14 +25,7 @@ import challenge_mode_audit as A  # noqa: E402
 
 # The defects the real build has today (found by this audit, 2026-10-06). Each is (check, Challenge id). When the
 # builder moves a spawner, its entries leave this set and the test says so: update it, never widen it.
-KNOWN = {
-    # Misty's second spawner is the floor of a one-wide water channel: seagrass and water over it, a warped-plank
-    # rim and glass between it and Misty. The self-placing line tests for air, so it is never set.
-    ("P:headroom", "kanto_misty_challenge"),
-    ("P:room", "kanto_misty_challenge"),
-    # Bruno's second spawner has a minecraft:light block over it: `if block ... minecraft:air` is false, never set.
-    ("P:headroom", "kanto_league_bruno_challenge"),
-}
+KNOWN = set()  # 2026-10-06: Misty's and Bruno's Challenge spawners moved to air cells (1605, 132, 2873), (3695, 127, 2437)
 
 
 @pytest.fixture(scope="module")

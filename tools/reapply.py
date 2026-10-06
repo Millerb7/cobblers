@@ -629,6 +629,7 @@ def prepare_jobs(a):
     # route_events does, so a seat cannot quietly move when the ground under it changes.
     add("late_route_trainers", "late_route_trainers.py", *src)
     add("route_trainers", "route_trainers.py")
+    add("challenge_mode_audit", "challenge_mode_audit.py")
     # Heaven's Arena's per-player opponents (2026-10-03): the ladder, the champions' exam teams and the dome's venues.
     # It FAILS while data/arena_dome.json has no venues: an arena with nowhere to fight is not a pack to install
     add("arena_runtime", "arena_runtime.py")

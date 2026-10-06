@@ -41,7 +41,7 @@
       "advancement": "cobbleverse:trainer/kanto/defeat_misty",
       "upstream_mob": {"type": "kanto", "signatureItem": "lumymon:cerulean_star", "maxTrainerWins": -1, "maxTrainerDefeats": 1, "battleCooldownTicks": 240, "spawnWeightFactor": 0, "biomeTagBlacklist": ["is_void", "is_underground", "is_nether", "is_end"], "biomeTagWhitelist": ["cobbleverse:lukewarm_ocean"]},
       "upstream_required": ["kanto_brock"],
-      "spawner": {"at": [1602, 132, 2874], "measured_by": "template", "template": "cobbleverse:misty (COBBLEVERSE-DP-v31 data/cobbleverse/structure/misty.nbt)", "template_cell": [8, 25, 15], "why": "three west of the template's own spawner (cell [11, 25, 15] -> (1605, 132, 2874), data/gym_interiors.json gym2 expect_spawner_at, which this transform reproduces): warped planks set into the floor over smooth stone, flush on four sides, two air over it. Measured from the template on 2026-10-06; gym 2 is the carved interior nobody models in data, so nothing re-checks this at build time"}
+      "spawner": {"at": [1605, 132, 2873], "measured_by": "template", "template": "cobbleverse:misty (COBBLEVERSE-DP-v31 data/cobbleverse/structure/misty.nbt)", "template_cell": [8, 25, 15], "why": "three west of the template's own spawner (cell [11, 25, 15] -> (1605, 132, 2874), data/gym_interiors.json gym2 expect_spawner_at, which this transform reproduces): warped planks set into the floor over smooth stone, flush on four sides, two air over it. Measured from the template on 2026-10-06; gym 2 is the carved interior nobody models in data, so nothing re-checks this at build time"}
     },
     "kanto_ltsurge": {
       "lang": "ltsurge",
@@ -95,7 +95,7 @@
       "advancement": "cobbleverse:trainer/kanto/defeat_elite_bruno",
       "upstream_mob": {"type": "kanto_league", "signatureItem": "cobblemon:focus_band", "maxTrainerWins": -1, "maxTrainerDefeats": 1, "battleCooldownTicks": 240, "spawnWeightFactor": 0, "biomeTagBlacklist": ["is_void", "is_nether", "is_overworld"], "biomeTagWhitelist": ["is_end"]},
       "upstream_required": ["kanto_league_lorelei"],
-      "spawner": {"at": [3695, 127, 2438], "measured_by": "template", "template": "cobbleverse:kanto_league (COBBLEVERSE-DP-v31 data/cobbleverse/structure/kanto_league.nbt)", "template_cell": [63, 39, 59], "why": "two along from the template's Bruno spawner (cell [61, 39, 59] -> (3695, 127, 2436)), orange concrete over deepslate tiles, flush, two air over it. Measured from the template on 2026-10-06"}
+      "spawner": {"at": [3695, 127, 2437], "measured_by": "template", "template": "cobbleverse:kanto_league (COBBLEVERSE-DP-v31 data/cobbleverse/structure/kanto_league.nbt)", "template_cell": [63, 39, 59], "why": "two along from the template's Bruno spawner (cell [61, 39, 59] -> (3695, 127, 2436)), orange concrete over deepslate tiles, flush, two air over it. Measured from the template on 2026-10-06"}
     },
     "kanto_league_agatha": {
       "advancement": "cobbleverse:trainer/kanto/defeat_elite_agatha",
