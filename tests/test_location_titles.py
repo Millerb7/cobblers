@@ -7,6 +7,8 @@ import json
 import sys
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 
@@ -17,11 +19,11 @@ import signposts  # noqa: E402
 def test_every_titled_place_has_a_name_and_a_box():
     # A settlement with no name would title as nothing, or the build would stop: the owner's rule is that every
     # settlement has at least its working name in data/signposts.json until a display name lands.
-    regs = LT.regions()
-    sets = LT.settlements(regs)
-    assert len(regs) == 21
+    sets = LT.settlements(LT.regions())
+    zs = LT.zones()
+    assert len(zs) == sum(1 for z in zone_doc()["zones"] if z["kind"] != "site")
     assert not [s["id"] for s in sets if not s["name"] or not s["box"]]
-    assert not [r["id"] for r in regs if not r["name"] or not r["boxes"]]
+    assert not [z["zone"] for z in zs if not z["name"] or not z["subtitle"] or not z["boxes"]]
 
 
 def test_titles_cover_settlements_not_landmark_trees():
@@ -58,20 +60,45 @@ def test_the_displaced_city_titles_in_its_cavern_not_on_the_summit():
     assert s["y"] and s["y"][1] < 115
 
 
-def test_the_pack_pairs_every_enter_with_a_leave(tmp_path):
-    LT.build(tmp_path / "pack")
-    adv = tmp_path / "pack" / "data" / "cobblers" / "advancement" / "titles"
-    fn = tmp_path / "pack" / "data" / "cobblers" / "function" / "titles"
-    ins = sorted(p.name[3:] for p in adv.glob("in_*.json"))
-    outs = sorted(p.name[4:] for p in adv.glob("out_*.json"))
-    assert ins == outs and len(ins) == 21 + len(LT.settlements(LT.regions()))
+@pytest.fixture(scope="module")
+def pack(tmp_path_factory):
+    out = tmp_path_factory.mktemp("titles") / "pack"
+    LT.build(out)
+    return out
+
+
+def zone_doc():
+    return json.loads((ROOT / "data" / "nuzlocke_zones.json").read_text(encoding="utf-8"))
+
+
+def test_the_pack_titles_exactly_the_catch_zones_and_the_settlements(pack):
+    # The owner, 2026-10-06: the titles fire for the Nuzlocke zones' boundaries (and settlements), not the regions.
+    adv = pack / "data" / "cobblers" / "advancement" / "titles"
+    ins = {p.name[3:-5] for p in adv.glob("in_*.json")}
+    zones = {"zone_" + z["zone"] for z in zone_doc()["zones"] if z["kind"] != "site"}
+    places = {"place_" + s["id"] for s in LT.settlements(LT.regions())}
+    assert ins == zones | places
+    assert not [k for k in ins if k.startswith("region_")]
+    # a site zone is titled by its settlement
+    for z in zone_doc()["zones"]:
+        if z["kind"] == "site":
+            assert "place_" + z["settlement"] in ins
+
+
+def test_the_pack_pairs_every_enter_with_a_leave(pack):
+    adv = pack / "data" / "cobblers" / "advancement" / "titles"
+    fn = pack / "data" / "cobblers" / "function" / "titles"
+    ins = sorted(p.name[3:-5] for p in adv.glob("in_*.json"))
+    outs = sorted(p.name[4:-5] for p in adv.glob("out_*.json"))
+    assert ins == outs
+    rearm = (fn / "rearm_places.mcfunction").read_text(encoding="utf-8")
     for key in ins:
-        key = key[:-5]
         enter = (fn / ("enter_%s.mcfunction" % key)).read_text(encoding="utf-8")
         leave = (fn / ("leave_%s.mcfunction" % key)).read_text(encoding="utf-8")
         # entering arms the leave, leaving re-arms the enter: without both a title shows once per life
         assert "advancement revoke @s only cobblers:titles/out_%s" % key in enter
-        assert leave.strip() == "advancement revoke @s only cobblers:titles/in_%s" % key
+        assert leave.strip().splitlines()[-1] == "advancement revoke @s only cobblers:titles/in_%s" % key
+        assert "advancement revoke @s only cobblers:titles/in_%s\n" % key in rearm
         a = json.loads((adv / ("in_%s.json" % key)).read_text(encoding="utf-8"))
         assert "display" not in a                    # hidden: no toast, nothing in the advancement screen
         assert a["rewards"]["function"] == "cobblers:titles/enter_%s" % key
@@ -79,17 +106,27 @@ def test_the_pack_pairs_every_enter_with_a_leave(tmp_path):
         assert o["criteria"]["here"]["conditions"]["player"][1]["condition"] == "minecraft:inverted"
 
 
-def test_region_titles_give_way_to_a_settlement(tmp_path):
-    LT.build(tmp_path / "pack")
-    fn = tmp_path / "pack" / "data" / "cobblers" / "function" / "titles"
-    text = (fn / "enter_region_pallet_fields.mcfunction").read_text(encoding="utf-8")
-    title_lines = [l for l in text.splitlines() if l.lstrip().startswith(("title", "execute")) and "title @s" in l]
-    assert title_lines and all("unless predicate cobblers:titles/in_any_settlement" in l for l in title_lines)
-    assert (tmp_path / "pack" / "data" / "cobblers" / "predicate" / "titles" / "in_any_settlement.json").is_file()
+def test_zone_titles_give_way_to_a_settlement_and_come_back_after_it(pack):
+    fn = pack / "data" / "cobblers" / "function" / "titles"
+    text = (fn / "enter_zone_pallet_meadows.mcfunction").read_text(encoding="utf-8")
+    first_title = next(i for i, l in enumerate(text.splitlines()) if "title @s" in l)
+    guard = next(i for i, l in enumerate(text.splitlines()) if "in_enclosure" in l)
+    assert guard < first_title
+    # retry, not hold: the zone's own in_ is revoked inside a settlement, so it titles on stepping out
+    assert text.splitlines()[guard].endswith("return run advancement revoke @s only cobblers:titles/in_zone_pallet_meadows")
+
+
+def test_the_pack_loads_and_ticks_through_the_1_21_folders(pack):
+    tags = pack / "data" / "minecraft" / "tags" / "function"
+    assert json.loads((tags / "load.json").read_text(encoding="utf-8"))["values"] == ["cobblers:titles/load"]
+    assert json.loads((tags / "tick.json").read_text(encoding="utf-8"))["values"] == ["cobblers:titles/tick"]
+    assert json.loads((pack / "pack.mcmeta").read_text(encoding="utf-8"))["pack"]["pack_format"] == 48
+    load = (pack / "data" / "cobblers" / "function" / "titles" / "load.mcfunction").read_text(encoding="utf-8")
+    assert "scoreboard objectives add cob_t_left minecraft.custom:minecraft.leave_game" in load
 
 
 def test_leaving_needs_distance_past_the_edge():
     # Hysteresis: the leave box is the enter box grown, so walking a border does not re-title at every step.
-    tight = LT._inside([(0, 0, 9, 9)])
-    loose = LT._inside([(0, 0, 9, 9)], grow=16)
+    tight = LT._inside([(0, 0, 9, 9, None, None)])
+    loose = LT._inside([(0, 0, 9, 9, None, None)], grow=16)
     assert loose["predicate"]["location"]["position"]["x"]["min"] == tight["predicate"]["location"]["position"]["x"]["min"] - 16
