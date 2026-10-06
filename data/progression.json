@@ -331,7 +331,8 @@
           6444
         ]
       },
-      "offers_marker": "league",
+      "offers_marker": "rift_surveyor",
+      "offers_marker_why": "the owner, 2026-10-06: 'A player who beats gym 8 needs to know where to go.' Until tonight this offered the League, which turns the player back at G5 on the Deep's north rim until rift_crisis_resolved, so the one direction the game gave after the Earth Badge was a gate that would not open. The badge carries the stage to giovanni_reveal_complete, so the surveyor's account opens on the first click (dlg_main_rift_surveyor rule 5). The League's marker moved to rift_crisis_resolved. docs/world-building/POST_GYM8_DIRECTION.md",
       "carries_stage": {
         "field": "quest.main_worldshift_reveal.stage",
         "to": "giovanni_reveal_complete",
@@ -370,6 +371,8 @@
         "invoked_at": "line release_001 ('The restraint opens.'), reached by the choice 'Release Hoopa.', shown only at stage cradle_open to a player who has beaten both Captain Brann Saye and Director Elara Venn in the HQ tower (quest.main_worldshift_reveal.brann_defeated and elara_defeated, data/finale_trainers.json, 2026-10-04; the transition requires the same three); NPC npc_main_relic_hall_binder at (3363, 13, 3312) in Hoopa's carved cradle (the hall's relic ring at (3390, 8, 3268) until 2026-10-03), seated by tools/reapply.py step R18RU (data/relic_underground.json geometry.release). The owner, 2026-10-03: 'set it ourselves at the quest stage that ends the Rift crisis'",
         "superseded_invoked_by_owed": "Kept as the plan the binder replaced (Scene 5 at the cradle still waits on the cradle and a verified Hoopa model). Hoopa's release at the cradle: docs/story/NPCS_AND_RIFT_FINALE.md Scene 5 (Codex, commit 9cbfd213 on the local branch codex/trainer-modes, NOT merged), actor_finale_hoopa at the cradle centre (3357, 12, 3306), player choice 'Release Hoopa.'. It needs the cradle chamber carved (data/deep_city.json reserves its box, nothing carves it) and a data/scenes.json scene whose Hoopa actor opens that conversation. Until then nothing invokes the transition and nobody holds this flag. Set invoked_by to the conversation id when it lands; tests/test_rift_crisis_resolved.py holds the two in step."
       },
+      "offers_marker": "league",
+      "offers_marker_why": "the League opens on this flag (z5), so this is where its waypoint belongs: offered to the releasing player at the cradle, with the hint naming both ways up (the precinct gate on the north rim and Victory Road's caves from the Deep's floor). Moved here from gym8_cleared 2026-10-06 (docs/world-building/POST_GYM8_DIRECTION.md).",
       "why": "Approved in docs/story/ARC.md ('The final story confrontation ends the forced activation and releases Hoopa from the steering mechanism. It sets rift_crisis_resolved', and the League row 'Requires rift_crisis_resolved'). Per player, like every flag here: an advancement, granted by cobblers:flag/rift_crisis_resolved/grant, which the transition's first effect runs as and at the releasing player. It is the gate data/rift_zones.json z5 names.",
       "multiplayer": "per player. Each player releases Hoopa for themselves; a late joiner, a player who died or disconnected keeps or lacks it on their own record. Codex's 'one world transition that advances every eligible player' (Scene 5) is NOT built: it is world-scoped state the dialogue compiler refuses, and an owner call."
     }
@@ -3261,10 +3264,18 @@
         "name": "Gym 8 Giovanni",
         "initials": "G8"
       },
+      "rift_surveyor": {
+        "npc_seat": "npc_main_rift_surveyor",
+        "name": "Rift Surveyor",
+        "initials": "RS",
+        "hint": "Victory Road starts at the Rift trailhead, about a thousand blocks north of Holdfast up the Victory Road signs. The Rift surveyor at its gate knows what the Compact is doing in the Rift.",
+        "why": "the Earth Badge's marker (flags gym8_cleared offers_marker_why): the next story actor, at his seat in data/npc_seats.json. Measured 2026-10-06: the seat (3552, 112, 5334) is 1,082 blocks north of Giovanni's spawner (3565, 120, 6416); the Victory Road signposts from Holdfast's exit (3597, 112, 6420) run past him (victory_road_transition_4 at (3561, 113, 5308)). The hint is a system line, not a character's: Codex owns the surveyor's words"
+      },
       "league": {
         "placement": "league_building",
         "name": "Pokemon League",
-        "initials": "PL"
+        "initials": "PL",
+        "hint": "Hoopa is free, and the League's precinct gate on the Deep's north rim will let you through. Victory Road's caves also climb to the League from the Deep's floor, under its north face."
       }
     }
   },

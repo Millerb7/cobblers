@@ -226,9 +226,25 @@ MARKER_NAME = re.compile(r"^[A-Za-z0-9 ]{1,32}$")      # Xaero's share: 1-32 cha
 MARKER_INITIALS = re.compile(r"^[A-Za-z0-9]{1,3}$")    # 1-3 characters
 
 
+MARKER_HINT_MAX = 240      # one chat line's worth; the hint is the sentence that says where to go and why
+
+
+def _npc_seat(npc_id):
+    """(x, y, z) of a seated dialogue NPC (data/npc_seats.json, the seat reapply R17N summons it at), or None."""
+    doc = json.loads((ROOT / "data" / "npc_seats.json").read_text(encoding="utf-8"))
+    for s in doc.get("seats") or []:
+        if s.get("id") == npc_id and isinstance(s.get("at"), list) and len(s["at"]) == 3:
+            return tuple(int(v) for v in s["at"])
+    return None
+
+
 def _markers(spec, placements) -> dict:
-    """{town: {name, initials, color, x, y, z}}: each gym marker at the middle of its building's placed footprint
-    (tools/place_donor.py box, from the placement's position, size and rotation in data/placements.json)."""
+    """{town: {name, initials, color, x, y, z[, hint]}}: each gym marker at the middle of its building's placed
+    footprint (tools/place_donor.py box, from the placement's position, size and rotation in data/placements.json),
+    or, for a marker naming `npc_seat`, at that NPC's seat in data/npc_seats.json (the Rift surveyor, whom the Earth
+    Badge points at: docs/world-building/POST_GYM8_DIRECTION.md). Either way the point is read from the file that
+    places the thing, never written down twice, so the marker follows it when it moves. An optional `hint` is one
+    sentence printed with the offer, saying where to go and why."""
     if not spec:
         return {}
     if placements is None:
@@ -247,13 +263,29 @@ def _markers(spec, placements) -> dict:
         if not MARKER_NAME.match(str(m.get("name", ""))) or not MARKER_INITIALS.match(str(m.get("initials", ""))):
             raise ProgressionError("gym marker %r: name must be 1-32 letters, digits or spaces and initials 1-3 "
                                    "letters or digits (Xaero's share format)" % town)
-        rec = by_id.get(m.get("placement"))
-        if not rec or not rec.get("position") or not rec.get("size"):
-            raise ProgressionError("gym marker %r: placement %r not found, or has no position and size"
-                                   % (town, m.get("placement")))
-        lo, hi = place_donor.box(rec)
-        out[town] = {"name": m["name"], "initials": m["initials"], "color": color,
-                     "x": (lo[0] + hi[0]) // 2, "y": rec["position"]["y"], "z": (lo[2] + hi[2]) // 2}
+        hint = m.get("hint")
+        if hint is not None and (not isinstance(hint, str) or not hint.strip() or len(hint) > MARKER_HINT_MAX):
+            raise ProgressionError("gym marker %r: hint must be a non-empty string of at most %d characters"
+                                   % (town, MARKER_HINT_MAX))
+        if ("placement" in m) == ("npc_seat" in m):
+            raise ProgressionError("gym marker %r: name exactly one of placement or npc_seat" % town)
+        if "npc_seat" in m:
+            seat = _npc_seat(m["npc_seat"])
+            if seat is None:
+                raise ProgressionError("gym marker %r: npc_seat %r has no seat in data/npc_seats.json"
+                                       % (town, m["npc_seat"]))
+            out[town] = {"name": m["name"], "initials": m["initials"], "color": color,
+                         "x": seat[0], "y": seat[1], "z": seat[2]}
+        else:
+            rec = by_id.get(m.get("placement"))
+            if not rec or not rec.get("position") or not rec.get("size"):
+                raise ProgressionError("gym marker %r: placement %r not found, or has no position and size"
+                                       % (town, m.get("placement")))
+            lo, hi = place_donor.box(rec)
+            out[town] = {"name": m["name"], "initials": m["initials"], "color": color,
+                         "x": (lo[0] + hi[0]) // 2, "y": rec["position"]["y"], "z": (lo[2] + hi[2]) // 2}
+        if hint is not None:
+            out[town]["hint"] = hint.strip()
     return out
 
 
@@ -303,9 +335,10 @@ def files(p: dict) -> dict:
             # they see the offer; Xaero's shows it as a shared waypoint with an [Add] button
             m = p["markers"][flag["offers_marker"]]
             granted.append("tellraw @s " + json.dumps(
-                ["", {"text": "Next: %s. " % m["name"], "color": "gold"},
-                 {"text": "Add it to your map: ", "color": "gray"},
-                 {"text": xaero_share(m), "color": "dark_gray"}]))
+                ["", {"text": "Next: %s. " % m["name"], "color": "gold"}]
+                + ([{"text": m["hint"] + " ", "color": "white"}] if m.get("hint") else [])
+                + [{"text": "Add it to your map: ", "color": "gray"},
+                   {"text": xaero_share(m), "color": "dark_gray"}]))
         for tid, fw in sorted(p.get("first_win", {}).items()):
             if fw["flag"] != flag["id"]:
                 continue
