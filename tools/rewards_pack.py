@@ -5,6 +5,9 @@ For every record of kind "cache":
   advancement/reward/<id>.json   criterion minecraft:location: the player stands in the record's trigger box in the
                                  overworld. Per player and once only, by construction: an advancement is granted once
                                  per player and recorded in advancements/<uuid>.json, which a re-export carries.
+                                 A record with `requires_flags` also needs every named progression flag
+                                 (cobblers:flag/<id>) in the same predicate: the legendary activation items of
+                                 data/adopted_legendary_sites.json sweep_sites are found only by a Champion.
   function/reward/<id>           run as the earning player by the advancement's reward: gives the contents and says so
                                  to that player only.
 
@@ -37,7 +40,26 @@ class RewardError(Exception):
     pass
 
 
-def problems(doc):
+def declared_flags():
+    """The progression flags data/progression.json declares; each is the advancement cobblers:flag/<id>."""
+    doc = json.loads((ROOT / "data" / "progression.json").read_text(encoding="utf-8"))
+    return {f["id"] for f in doc.get("flags") or []}
+
+
+def flag_problems(r, flags):
+    """`requires_flags` (added 2026-10-06 by the legendaries sweep): a cache that only a holder of every named
+    progression flag can earn. A player in the box without them earns nothing and may come back later."""
+    req = r.get("requires_flags")
+    if r.get("kind") != "cache":
+        return ["%s: requires_flags is for a cache; an npc_grant is gated by its quest" % r["id"]]
+    if not (isinstance(req, list) and req and all(isinstance(f, str) and ID.match(f) for f in req)):
+        return ["%s: requires_flags must be a non-empty list of flag ids" % r["id"]]
+    return ["%s: requires_flags names %s, which data/progression.json does not declare" % (r["id"], f)
+            for f in req if f not in flags]
+
+
+def problems(doc, flags=None):
+    flags = declared_flags() if flags is None else flags
     out = []
     seen = set()
     for r in doc.get("rewards") or []:
@@ -77,6 +99,8 @@ def problems(doc):
             if not (isinstance(ct, dict) and isinstance(ct.get("block"), str) and isinstance(ct.get("at"), list)
                     and len(ct["at"]) == 3):
                 out.append("%s: a cache needs a container {block, at: [x, y, z]}" % rid)
+        if "requires_flags" in r:
+            out += flag_problems(r, flags)
         if kind == "npc_grant" and not r.get("quest"):
             out.append("%s: an npc_grant names its quest" % rid)
         if kind == "npc_grant" and not (isinstance(r.get("npc_at"), list) and len(r["npc_at"]) == 3):
@@ -114,9 +138,13 @@ def advancement(r):
     (x0, y0, z0), (x1, y1, z1) = r["trigger"]["min"], r["trigger"]["max"]
     # a position predicate reads the player's feet as a double: max + 1 takes in the whole of the last block
     pos = {"x": {"min": x0, "max": x1 + 1}, "y": {"min": y0, "max": y1 + 1}, "z": {"min": z0, "max": z1 + 1}}
+    pred = {"location": {"position": pos, "dimension": "minecraft:overworld"}}
+    if r.get("requires_flags"):
+        # the same entity predicate, so the one condition still reads "this player, here": and holding every flag
+        pred["type_specific"] = {"type": "minecraft:player", "advancements": {
+            "%s:flag/%s" % (NS, f): True for f in r["requires_flags"]}}
     return {"criteria": {"found": {"trigger": "minecraft:location", "conditions": {"player": [
-        {"condition": "minecraft:entity_properties", "entity": "this",
-         "predicate": {"location": {"position": pos, "dimension": "minecraft:overworld"}}}]}}},
+        {"condition": "minecraft:entity_properties", "entity": "this", "predicate": pred}]}}},
             "rewards": {"function": "%s:reward/%s" % (NS, r["id"])}}
 
 
