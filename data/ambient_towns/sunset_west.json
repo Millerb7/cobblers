@@ -1,7 +1,7 @@
 {
   "settlement": "sunset_west",
   "size": "town",
-  "target": 44,
+  "target": 47,
   "character": "Sunset West is the fishermen's town at the river mouth: salt-water Pokemon that fish, dive, haul nets and rinse the catch, and the rest are shore life that has decided the town is part of the beach (a beached Wailmer, a rock pool, cats queuing at the fish market). Sea species only: the lake's freshwater roster stays at Viltri Quay.",
   "authored_by": "town author A, 2026-10-05, by hand; positions measured from derived/towns/sunset_west_plan.json, sunset_west_placement.json, derived/plaza_centres/sunset_west.json and tools/ground.py (rounded) through tools/ambient.py's Site; y in a situation is the standing y (ground, or the plaza's paved y 64, + 1). Nothing stands where the ground is at or under sea level, and no worker stands on the plaza: it is cut up to three blocks below the heightmap and Site would stand a worker on the uncut ground",
   "workers": [
@@ -225,8 +225,47 @@
       ],
       "props": [{"block": "minecraft:oak_fence", "at": [-2, 0, 0]}, {"block": "minecraft:oak_fence", "at": [5, 0, 0]}, {"block": "minecraft:cobweb", "at": [1, 1, 0]}],
       "why": "on the strand by the butcher's (sunset_house_02), where the nets are hung"
+    },
+    {
+      "id": "sunset_bombirdier_chimney",
+      "title": "The stork on the forge",
+      "story": "A Bombirdier has built a nest in the armorer's chimney pot and will not be smoked out. The armorer now lights his forge only after it flies out to sea in the morning, and the town says that brings luck.",
+      "unique": true,
+      "at": [2607, 73, 6493],
+      "facing": "west",
+      "members": [
+        {"species": "bombirdier", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]}
+      ],
+      "props": [],
+      "why": "on the cobblestone-wall chimney pot of sunset_house_01 (plains_armorer_house_1), the column's top block at y72 read from the template as placed, so the feet are y73; a stork on a chimney, the coast's only nest on a house"
+    },
+    {
+      "id": "sunset_alomomola_step",
+      "title": "Applying for the job",
+      "story": "An Alomomola beached itself on the Pokemon Center's step at high tide and will not go back in. The nurse is fairly sure it is applying for a job, and has started letting it hold the door.",
+      "unique": true,
+      "at": [2650, 68, 6478],
+      "facing": "east",
+      "members": [
+        {"species": "alomomola", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]}
+      ],
+      "props": [],
+      "why": "beside the street to sunset_pokecenter's door (2654, 6475), on the plan's ground at feet y68 west of it, not on the street; the sea's nurse at the land's nurse's door"
+    },
+    {
+      "id": "sunset_relicanth_exhibit",
+      "title": "Do not touch the fossil",
+      "story": "The cartographer found a Relicanth on the beach and is certain it is a fossil. He has fenced it off beside his house and charges a coin to look; nobody has told him it blinks.",
+      "unique": true,
+      "at": [2665, 64, 6567],
+      "facing": "north",
+      "members": [
+        {"species": "relicanth", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]}
+      ],
+      "props": [{"block": "minecraft:oak_fence", "at": [-2, 0, 0]}, {"block": "minecraft:oak_fence", "at": [2, 0, 0]}, {"block": "minecraft:oak_fence", "at": [0, 0, 2]}, {"block": "minecraft:oak_fence", "at": [0, 0, -2]}],
+      "why": "the open ground east of sunset_house_03 (plains_cartographer_1, footprint x2649-2658), feet y64 from the plan, clear of the street along x2662-2668 to the north"
     }
   ],
-  "counts": {"working": 12, "pets": 6, "placed": 9, "situations": 17, "total": 44},
+  "counts": {"working": 12, "pets": 6, "placed": 9, "situations": 20, "total": 47},
   "notes": "Supersedes idle.towns.sunset_west (Slowpoke, Snorlax, Purrloin and Murkrow gone; it shared 0.52 of its roster with Viltri Quay and now shares none). Every pet's owner is a market keeper on the square: there is no seated NPC in Sunset West (data/npc_seats.json). Twelve workers (two carriers) is over data/ambient.json rules.per_town (4 stationary)."
 }
