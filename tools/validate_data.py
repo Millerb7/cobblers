@@ -186,6 +186,8 @@ SCHEMAS = {
                 "admin", "grunt", "route",
                 # an optional trainer off the critical path (the Lake Viltri north-bank angler, PR #48)
                 "optional_route",
+                # a junior inside a gym, passed before its leader (data/gym_junior_trainers.json, 2026-10-06)
+                "gym_trainer",
             },
             "format": {"GEN_9_SINGLES", "GEN_9_DOUBLES"},
         },

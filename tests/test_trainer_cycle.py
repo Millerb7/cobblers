@@ -143,8 +143,10 @@ def test_every_placed_trainer_has_exactly_one_line_of_each_kind(cycle):
     arena = n("arena_trainers.json")
     seated_arena = [t["id"] for t in arena if "seat" in t and t.get("seated", True)]
     # + the Compact HQ tower's seven (2026-10-04, data/hq_trainers.json), seated like the mansion guardians
+    # + the gym juniors (2026-10-06, data/gym_junior_trainers.json), seated like Victory Road's ten
     want = (len(n("route_trainers.json")) + len(n("late_route_trainers.json")) + len(n("mansion_guardians.json"))
-            + len(n("vr_trainers.json")) + len(seated_arena) + len(n("hq_trainers.json")))
+            + len(n("vr_trainers.json")) + len(seated_arena) + len(n("hq_trainers.json"))
+            + len(n("gym_junior_trainers.json")))
     assert len(IDS) == want and len(set(IDS)) == want, (len(IDS), want)
     assert not ({t["id"] for t in arena} - set(seated_arena)) & set(IDS), "an unseated arena champion is placed"
     assert REPEATABLE == {s["id"] for s in SEATS if s.get("repeatable")} and REPEATABLE <= set(IDS), sorted(REPEATABLE)

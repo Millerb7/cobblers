@@ -6163,5 +6163,1464 @@
       ],
       "fairness": "Availability is broad, but fairness cannot be judged until Giovanni's format and roster are decided."
     }
-  ]
+  ],
+  "gym_trainers": {
+    "why": "The owner, 2026-10-06: each gym has its own trainers inside it, placed so a player must pass them, with teams that fit the leader's type and the level band -- attrition before the leader, as the mainline does. Counts follow docs/mechanics/GYM_INTERIORS.md section 4 (2, 2, 2, 2, 3, 3, 3, 4). Where each one stands is data/gym_junior_trainers.json, proved by tools/gym_trainers.py check.",
+    "level_rule": "Explicit levels. Every member is below the leader's ace (difficulty.gym_ace_levels), the gym's cap at relative_level_cap 0. The first junior a player meets tops out within one level of the strongest trainer on the route into the town, and each junior after tops out at or above the one before, in the order a player reaches them. Challenge keeps the same top level (the caps do not move) and adds one member, with a held item on the top member.",
+    "ai_profiles": {
+      "normal": "gym_normal",
+      "challenge": "gym_challenge"
+    },
+    "trainers": [
+      {
+        "id": "gym1_junior_01",
+        "gym": 1,
+        "name": "Hall Mason",
+        "type": "Rock",
+        "lesson": "Sturdy holds one more turn: a single strong hit is not a plan.",
+        "teams": {
+          "normal": [
+            {
+              "species": "roggenrola",
+              "moveset": [
+                "smackdown",
+                "sandattack",
+                "harden",
+                "tackle"
+              ],
+              "level": 16
+            },
+            {
+              "species": "nacli",
+              "moveset": [
+                "rockthrow",
+                "mudshot",
+                "headbutt",
+                "harden"
+              ],
+              "level": 17
+            }
+          ],
+          "challenge": [
+            {
+              "species": "roggenrola",
+              "moveset": [
+                "smackdown",
+                "sandattack",
+                "harden",
+                "tackle"
+              ],
+              "level": 16
+            },
+            {
+              "species": "rockruff",
+              "moveset": [
+                "rocktomb",
+                "bite",
+                "howl",
+                "sandattack"
+              ],
+              "level": 16
+            },
+            {
+              "species": "nacli",
+              "moveset": [
+                "rockthrow",
+                "mudshot",
+                "headbutt",
+                "harden"
+              ],
+              "level": 17,
+              "heldItem": "sitrus_berry"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "Every stone in this hall was squared by hand. Let's see how square you are.",
+          "player_win": "Cut clean. The foreman will want to see that.",
+          "player_loss": "Rough edges. Go back down and dress them."
+        }
+      },
+      {
+        "id": "gym1_junior_02",
+        "gym": 1,
+        "name": "Loft Foreman",
+        "type": "Rock",
+        "lesson": "Rock Tomb slows the answer you were counting on.",
+        "teams": {
+          "normal": [
+            {
+              "species": "rockruff",
+              "moveset": [
+                "rocktomb",
+                "bite",
+                "howl",
+                "sandattack"
+              ],
+              "level": 17
+            },
+            {
+              "species": "larvitar",
+              "moveset": [
+                "rockslide",
+                "bite",
+                "scaryface",
+                "mudslap"
+              ],
+              "level": 18
+            }
+          ],
+          "challenge": [
+            {
+              "species": "binacle",
+              "moveset": [
+                "rocktomb",
+                "furyswipes",
+                "mudslap",
+                "withdraw"
+              ],
+              "level": 17
+            },
+            {
+              "species": "rockruff",
+              "moveset": [
+                "rocktomb",
+                "bite",
+                "howl",
+                "sandattack"
+              ],
+              "level": 17
+            },
+            {
+              "species": "larvitar",
+              "moveset": [
+                "rockslide",
+                "bite",
+                "scaryface",
+                "mudslap"
+              ],
+              "level": 18,
+              "heldItem": "sitrus_berry"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "You came over the wall. Most people take the stack that goes nowhere.",
+          "player_win": "Good climbing, better battling. Brock is through the lit slot.",
+          "player_loss": "The wall's still there. Climb it again when you're ready."
+        }
+      },
+      {
+        "id": "gym2_junior_01",
+        "gym": 2,
+        "name": "Quay Swimmer",
+        "type": "Water",
+        "lesson": "Swift Swim and priority: the water moves first unless you make it wait.",
+        "teams": {
+          "normal": [
+            {
+              "species": "buizel",
+              "moveset": [
+                "watergun",
+                "quickattack",
+                "swift",
+                "soak"
+              ],
+              "level": 21
+            },
+            {
+              "species": "shellder",
+              "moveset": [
+                "watergun",
+                "iciclespear",
+                "withdraw",
+                "supersonic"
+              ],
+              "level": 22
+            }
+          ],
+          "challenge": [
+            {
+              "species": "buizel",
+              "moveset": [
+                "watergun",
+                "quickattack",
+                "swift",
+                "soak"
+              ],
+              "level": 21
+            },
+            {
+              "species": "wingull",
+              "moveset": [
+                "watergun",
+                "wingattack",
+                "supersonic",
+                "quickattack"
+              ],
+              "level": 21
+            },
+            {
+              "species": "shellder",
+              "moveset": [
+                "watergun",
+                "iciclespear",
+                "withdraw",
+                "supersonic"
+              ],
+              "level": 22,
+              "heldItem": "sitrus_berry"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "Nobody walks up to Misty's door. Whatever brought you, the water decides the rest.",
+          "player_win": "You keep your head above it. Go on in.",
+          "player_loss": "Swim back to the shallows and catch your breath."
+        }
+      },
+      {
+        "id": "gym2_junior_02",
+        "gym": 2,
+        "name": "Lifeguard",
+        "type": "Water",
+        "lesson": "Recover undoes chip damage: hit hard or not at all.",
+        "teams": {
+          "normal": [
+            {
+              "species": "staryu",
+              "moveset": [
+                "watergun",
+                "rapidspin",
+                "recover",
+                "swift"
+              ],
+              "level": 22
+            },
+            {
+              "species": "corphish",
+              "moveset": [
+                "bubblebeam",
+                "knockoff",
+                "harden",
+                "protect"
+              ],
+              "level": 23
+            }
+          ],
+          "challenge": [
+            {
+              "species": "krabby",
+              "moveset": [
+                "bubblebeam",
+                "metalclaw",
+                "harden",
+                "mudshot"
+              ],
+              "level": 22
+            },
+            {
+              "species": "staryu",
+              "moveset": [
+                "watergun",
+                "rapidspin",
+                "recover",
+                "swift"
+              ],
+              "level": 22
+            },
+            {
+              "species": "corphish",
+              "moveset": [
+                "bubblebeam",
+                "knockoff",
+                "harden",
+                "protect"
+              ],
+              "level": 23,
+              "heldItem": "sitrus_berry"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "Last check before the pool. Misty doesn't wait for anyone who can't keep up.",
+          "player_win": "Strong strokes. She's at the far rim.",
+          "player_loss": "Out of the water. Rest, then try again."
+        }
+      },
+      {
+        "id": "gym3_junior_01",
+        "gym": 3,
+        "name": "Line Engineer",
+        "type": "Electric",
+        "lesson": "Thunder Wave first, damage second: paralysis is the real attack.",
+        "teams": {
+          "normal": [
+            {
+              "species": "magnemite",
+              "moveset": [
+                "spark",
+                "thunderwave",
+                "supersonic",
+                "gyroball"
+              ],
+              "level": 26
+            },
+            {
+              "species": "pachirisu",
+              "moveset": [
+                "nuzzle",
+                "spark",
+                "quickattack",
+                "charm"
+              ],
+              "level": 27
+            }
+          ],
+          "challenge": [
+            {
+              "species": "magnemite",
+              "moveset": [
+                "spark",
+                "thunderwave",
+                "supersonic",
+                "gyroball"
+              ],
+              "level": 26
+            },
+            {
+              "species": "flaaffy",
+              "moveset": [
+                "thundershock",
+                "cottonspore",
+                "thunderwave",
+                "takedown"
+              ],
+              "level": 26
+            },
+            {
+              "species": "pachirisu",
+              "moveset": [
+                "nuzzle",
+                "spark",
+                "quickattack",
+                "charm"
+              ],
+              "level": 27,
+              "heldItem": "cheri_berry"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "Mind the tower, it's live. So am I.",
+          "player_win": "Clean break in the circuit. Up you go.",
+          "player_loss": "Tripped the breaker. Reset and come back."
+        }
+      },
+      {
+        "id": "gym3_junior_02",
+        "gym": 3,
+        "name": "Relay Technician",
+        "type": "Electric",
+        "lesson": "Charge Beam builds: end it before the third turn.",
+        "teams": {
+          "normal": [
+            {
+              "species": "voltorb",
+              "moveset": [
+                "chargebeam",
+                "spark",
+                "rollout",
+                "screech"
+              ],
+              "level": 27
+            },
+            {
+              "species": "flaaffy",
+              "moveset": [
+                "thundershock",
+                "cottonspore",
+                "thunderwave",
+                "takedown"
+              ],
+              "level": 28
+            }
+          ],
+          "challenge": [
+            {
+              "species": "emolga",
+              "moveset": [
+                "spark",
+                "aerialace",
+                "encore",
+                "quickattack"
+              ],
+              "level": 27
+            },
+            {
+              "species": "voltorb",
+              "moveset": [
+                "chargebeam",
+                "spark",
+                "rollout",
+                "screech"
+              ],
+              "level": 27
+            },
+            {
+              "species": "flaaffy",
+              "moveset": [
+                "thundershock",
+                "cottonspore",
+                "thunderwave",
+                "takedown"
+              ],
+              "level": 28,
+              "heldItem": "cheri_berry"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "Three runs and only one of them is carrying. Did you read which?",
+          "player_win": "You can read a board. The Lieutenant's past the duct.",
+          "player_loss": "Grounded. Walk the catwalk again and think."
+        }
+      },
+      {
+        "id": "gym4_junior_01",
+        "gym": 4,
+        "name": "Glasshouse Gardener",
+        "type": "Grass",
+        "lesson": "Powders are the threat; the damage is just weather.",
+        "teams": {
+          "normal": [
+            {
+              "species": "skiploom",
+              "moveset": [
+                "megadrain",
+                "acrobatics",
+                "stunspore",
+                "synthesis"
+              ],
+              "level": 31
+            },
+            {
+              "species": "gloom",
+              "moveset": [
+                "megadrain",
+                "acid",
+                "sleeppowder",
+                "moonblast"
+              ],
+              "level": 32
+            }
+          ],
+          "challenge": [
+            {
+              "species": "nuzleaf",
+              "moveset": [
+                "razorleaf",
+                "fakeout",
+                "torment",
+                "payback"
+              ],
+              "level": 31
+            },
+            {
+              "species": "skiploom",
+              "moveset": [
+                "megadrain",
+                "acrobatics",
+                "stunspore",
+                "synthesis"
+              ],
+              "level": 31
+            },
+            {
+              "species": "gloom",
+              "moveset": [
+                "gigadrain",
+                "acid",
+                "sleeppowder",
+                "moonblast"
+              ],
+              "level": 32,
+              "heldItem": "lum_berry"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "Mind the beds. Mind me, too.",
+          "player_win": "You walk the canopy like you planted it.",
+          "player_loss": "Wilted. Take some sun and come back up."
+        }
+      },
+      {
+        "id": "gym4_junior_02",
+        "gym": 4,
+        "name": "Canopy Botanist",
+        "type": "Grass",
+        "lesson": "Regenerator and Leech Seed: a slow fight favours the garden.",
+        "teams": {
+          "normal": [
+            {
+              "species": "weepinbell",
+              "moveset": [
+                "razorleaf",
+                "poisonpowder",
+                "knockoff",
+                "wrap"
+              ],
+              "level": 32
+            },
+            {
+              "species": "tangela",
+              "moveset": [
+                "megadrain",
+                "ancientpower",
+                "stunspore",
+                "knockoff"
+              ],
+              "level": 33
+            }
+          ],
+          "challenge": [
+            {
+              "species": "cacturne",
+              "moveset": [
+                "needlearm",
+                "suckerpunch",
+                "leechseed",
+                "spikes"
+              ],
+              "level": 32
+            },
+            {
+              "species": "weepinbell",
+              "moveset": [
+                "razorleaf",
+                "poisonpowder",
+                "knockoff",
+                "wrap"
+              ],
+              "level": 32
+            },
+            {
+              "species": "tangela",
+              "moveset": [
+                "gigadrain",
+                "ancientpower",
+                "stunspore",
+                "knockoff"
+              ],
+              "level": 33,
+              "heldItem": "lum_berry"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "One line of piers still has its second stone. You saw which?",
+          "player_win": "Erika is in the court below. Drop carefully.",
+          "player_loss": "Down in the mulch again. The ladder is by the wall."
+        }
+      },
+      {
+        "id": "gym5_junior_01",
+        "gym": 5,
+        "name": "Fen Tracker",
+        "type": "Poison",
+        "lesson": "Sucker Punch punishes the slow, careful setup.",
+        "teams": {
+          "normal": [
+            {
+              "species": "croagunk",
+              "moveset": [
+                "poisonjab",
+                "suckerpunch",
+                "revenge",
+                "taunt"
+              ],
+              "level": 36
+            },
+            {
+              "species": "skorupi",
+              "moveset": [
+                "poisonfang",
+                "bite",
+                "toxicspikes",
+                "pinmissile"
+              ],
+              "level": 37
+            }
+          ],
+          "challenge": [
+            {
+              "species": "grimer",
+              "moveset": [
+                "sludge",
+                "minimize",
+                "mudbomb",
+                "disable"
+              ],
+              "level": 36
+            },
+            {
+              "species": "croagunk",
+              "moveset": [
+                "poisonjab",
+                "suckerpunch",
+                "revenge",
+                "taunt"
+              ],
+              "level": 36
+            },
+            {
+              "species": "skorupi",
+              "moveset": [
+                "poisonfang",
+                "bite",
+                "toxicspikes",
+                "pinmissile"
+              ],
+              "level": 37,
+              "heldItem": "black_sludge"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "You came in loud. Koga will have heard you already.",
+          "player_win": "Quieter than you look. Take the reed stair.",
+          "player_loss": "The fen keeps what it catches. Dry off and try again."
+        }
+      },
+      {
+        "id": "gym5_junior_02",
+        "gym": 5,
+        "name": "Reed Watcher",
+        "type": "Poison",
+        "lesson": "Toxic is a clock: every switch spends your time.",
+        "teams": {
+          "normal": [
+            {
+              "species": "golbat",
+              "moveset": [
+                "poisonfang",
+                "wingattack",
+                "confuseray",
+                "bite"
+              ],
+              "level": 37
+            },
+            {
+              "species": "arbok",
+              "moveset": [
+                "poisonfang",
+                "glare",
+                "crunch",
+                "acidspray"
+              ],
+              "level": 38
+            }
+          ],
+          "challenge": [
+            {
+              "species": "qwilfish",
+              "moveset": [
+                "poisonjab",
+                "aquatail",
+                "spikes",
+                "toxicspikes"
+              ],
+              "level": 37
+            },
+            {
+              "species": "golbat",
+              "moveset": [
+                "poisonfang",
+                "wingattack",
+                "confuseray",
+                "bite"
+              ],
+              "level": 37
+            },
+            {
+              "species": "arbok",
+              "moveset": [
+                "poisonfang",
+                "glare",
+                "crunch",
+                "acidspray"
+              ],
+              "level": 38,
+              "heldItem": "black_sludge"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "The tank is breathing. Do you know where it comes up?",
+          "player_win": "You read the water. The flue's below.",
+          "player_loss": "Too long under. Breathe, then come back."
+        }
+      },
+      {
+        "id": "gym5_junior_03",
+        "gym": 5,
+        "name": "Watch Floor Sentry",
+        "type": "Poison",
+        "lesson": "Toxic Spikes and a pivot: the damage comes on entry.",
+        "teams": {
+          "normal": [
+            {
+              "species": "nidorina",
+              "moveset": [
+                "poisonfang",
+                "doublekick",
+                "bite",
+                "toxicspikes"
+              ],
+              "level": 38
+            },
+            {
+              "species": "skuntank",
+              "moveset": [
+                "nightslash",
+                "toxic",
+                "suckerpunch",
+                "flamethrower"
+              ],
+              "level": 39
+            }
+          ],
+          "challenge": [
+            {
+              "species": "toxapex",
+              "moveset": [
+                "venoshock",
+                "recover",
+                "toxicspikes",
+                "banefulbunker"
+              ],
+              "level": 38
+            },
+            {
+              "species": "nidorina",
+              "moveset": [
+                "poisonfang",
+                "doublekick",
+                "bite",
+                "toxicspikes"
+              ],
+              "level": 38
+            },
+            {
+              "species": "skuntank",
+              "moveset": [
+                "nightslash",
+                "toxic",
+                "suckerpunch",
+                "flamethrower"
+              ],
+              "level": 39,
+              "heldItem": "black_sludge"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "Up the flue and still standing. Koga will be pleased, if you get past me.",
+          "player_win": "Go on. He has been watching you since the door.",
+          "player_loss": "Back down the chute. The fen is patient."
+        }
+      },
+      {
+        "id": "gym6_junior_01",
+        "gym": 6,
+        "name": "Archive Reader",
+        "type": "Psychic",
+        "lesson": "Calm Mind turns a slow special attacker into a wall: break it early.",
+        "teams": {
+          "normal": [
+            {
+              "species": "kadabra",
+              "moveset": [
+                "psybeam",
+                "recover",
+                "reflect",
+                "calmmind"
+              ],
+              "level": 41
+            },
+            {
+              "species": "hattrem",
+              "moveset": [
+                "psychic",
+                "lifedew",
+                "disarmingvoice",
+                "calmmind"
+              ],
+              "level": 42
+            }
+          ],
+          "challenge": [
+            {
+              "species": "kirlia",
+              "moveset": [
+                "psychic",
+                "calmmind",
+                "magicalleaf",
+                "drainingkiss"
+              ],
+              "level": 41
+            },
+            {
+              "species": "kadabra",
+              "moveset": [
+                "psybeam",
+                "recover",
+                "reflect",
+                "calmmind"
+              ],
+              "level": 41
+            },
+            {
+              "species": "hattrem",
+              "moveset": [
+                "psychic",
+                "lifedew",
+                "disarmingvoice",
+                "calmmind"
+              ],
+              "level": 42,
+              "heldItem": "lum_berry"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "Three of the stacks stop short. One doesn't. You knew that before you came in.",
+          "player_win": "You read well. The gallery is above.",
+          "player_loss": "You trusted the wrong stack. Read again."
+        }
+      },
+      {
+        "id": "gym6_junior_02",
+        "gym": 6,
+        "name": "Gallery Medium",
+        "type": "Psychic",
+        "lesson": "Hypnosis misses often; a team that plans for sleep never needs luck.",
+        "teams": {
+          "normal": [
+            {
+              "species": "xatu",
+              "moveset": [
+                "psychic",
+                "nightshade",
+                "confuseray",
+                "airslash"
+              ],
+              "level": 42
+            },
+            {
+              "species": "bronzong",
+              "moveset": [
+                "extrasensory",
+                "payback",
+                "hypnosis",
+                "gyroball"
+              ],
+              "level": 43
+            }
+          ],
+          "challenge": [
+            {
+              "species": "girafarig",
+              "moveset": [
+                "psychic",
+                "crunch",
+                "agility",
+                "doublehit"
+              ],
+              "level": 42
+            },
+            {
+              "species": "xatu",
+              "moveset": [
+                "psychic",
+                "nightshade",
+                "confuseray",
+                "airslash"
+              ],
+              "level": 42
+            },
+            {
+              "species": "bronzong",
+              "moveset": [
+                "extrasensory",
+                "payback",
+                "hypnosis",
+                "gyroball"
+              ],
+              "level": 43,
+              "heldItem": "lum_berry"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "The eye in the arch is looking at you, not me.",
+          "player_win": "You see clearly. The turret ladder is north.",
+          "player_loss": "Your eyes lied to you. Rest them."
+        }
+      },
+      {
+        "id": "gym6_junior_03",
+        "gym": 6,
+        "name": "Lens Keeper",
+        "type": "Psychic",
+        "lesson": "Trick Room-style speed control: the slow side moves first here.",
+        "teams": {
+          "normal": [
+            {
+              "species": "hypno",
+              "moveset": [
+                "psychic",
+                "hypnosis",
+                "headbutt",
+                "nastyplot"
+              ],
+              "level": 43
+            },
+            {
+              "species": "grumpig",
+              "moveset": [
+                "psybeam",
+                "powergem",
+                "zenheadbutt",
+                "bounce"
+              ],
+              "level": 44
+            }
+          ],
+          "challenge": [
+            {
+              "species": "slowpoke",
+              "moveset": [
+                "psychic",
+                "yawn",
+                "waterpulse",
+                "slackoff"
+              ],
+              "level": 43
+            },
+            {
+              "species": "hypno",
+              "moveset": [
+                "psychic",
+                "hypnosis",
+                "headbutt",
+                "nastyplot"
+              ],
+              "level": 43
+            },
+            {
+              "species": "grumpig",
+              "moveset": [
+                "psybeam",
+                "powergem",
+                "zenheadbutt",
+                "bounce"
+              ],
+              "level": 44,
+              "heldItem": "lum_berry"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "One more lens before hers. Look through me first.",
+          "player_win": "Sabrina is waiting at the top. She knew you would come.",
+          "player_loss": "Fogged. Come back when you can see."
+        }
+      },
+      {
+        "id": "gym7_junior_01",
+        "gym": 7,
+        "name": "Assay Hand",
+        "type": "Fire",
+        "lesson": "Flame Charge snowballs: stop the first speed boost.",
+        "teams": {
+          "normal": [
+            {
+              "species": "rapidash",
+              "moveset": [
+                "flamecharge",
+                "stomp",
+                "flareblitz",
+                "agility"
+              ],
+              "level": 46
+            },
+            {
+              "species": "camerupt",
+              "moveset": [
+                "lavaplume",
+                "earthpower",
+                "yawn",
+                "flamethrower"
+              ],
+              "level": 47
+            }
+          ],
+          "challenge": [
+            {
+              "species": "magmar",
+              "moveset": [
+                "flamethrower",
+                "firepunch",
+                "smokescreen",
+                "confuseray"
+              ],
+              "level": 46
+            },
+            {
+              "species": "rapidash",
+              "moveset": [
+                "flamecharge",
+                "stomp",
+                "flareblitz",
+                "agility"
+              ],
+              "level": 46
+            },
+            {
+              "species": "camerupt",
+              "moveset": [
+                "lavaplume",
+                "earthpower",
+                "yawn",
+                "flamethrower"
+              ],
+              "level": 47,
+              "heldItem": "sitrus_berry"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "The spoil steps are hot. So's my team.",
+          "player_win": "You'll do. Mind the broken flight, it goes nowhere.",
+          "player_loss": "Cool off by the furnace and try again."
+        }
+      },
+      {
+        "id": "gym7_junior_02",
+        "gym": 7,
+        "name": "Rim Researcher",
+        "type": "Fire",
+        "lesson": "Nasty Plot plus a fast Fire type: pressure it before it sets up.",
+        "teams": {
+          "normal": [
+            {
+              "species": "houndoom",
+              "moveset": [
+                "flamethrower",
+                "crunch",
+                "nastyplot",
+                "foulplay"
+              ],
+              "level": 47
+            },
+            {
+              "species": "pyroar",
+              "moveset": [
+                "flamethrower",
+                "hypervoice",
+                "nobleroar",
+                "workup"
+              ],
+              "level": 48
+            }
+          ],
+          "challenge": [
+            {
+              "species": "salazzle",
+              "moveset": [
+                "flamethrower",
+                "venoshock",
+                "nastyplot",
+                "toxic"
+              ],
+              "level": 47
+            },
+            {
+              "species": "houndoom",
+              "moveset": [
+                "flamethrower",
+                "crunch",
+                "nastyplot",
+                "foulplay"
+              ],
+              "level": 47
+            },
+            {
+              "species": "pyroar",
+              "moveset": [
+                "flamethrower",
+                "hypervoice",
+                "nobleroar",
+                "workup"
+              ],
+              "level": 48,
+              "heldItem": "sitrus_berry"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "The gantry is the only way up. I'm the only way past it.",
+          "player_win": "Readings are good. Up to the gallery.",
+          "player_loss": "The vent was hotter than you. Down you go."
+        }
+      },
+      {
+        "id": "gym7_junior_03",
+        "gym": 7,
+        "name": "Flue Keeper",
+        "type": "Fire",
+        "lesson": "Sun boosts every Fire move: change the weather or lose the race.",
+        "teams": {
+          "normal": [
+            {
+              "species": "ninetales",
+              "moveset": [
+                "flamethrower",
+                "extrasensory",
+                "willowisp",
+                "sunnyday"
+              ],
+              "level": 48
+            },
+            {
+              "species": "centiskorch",
+              "moveset": [
+                "firelash",
+                "bugbite",
+                "coil",
+                "crunch"
+              ],
+              "level": 49
+            }
+          ],
+          "challenge": [
+            {
+              "species": "torkoal",
+              "moveset": [
+                "sunnyday",
+                "lavaplume",
+                "bodypress",
+                "yawn"
+              ],
+              "level": 48
+            },
+            {
+              "species": "ninetales",
+              "moveset": [
+                "flamethrower",
+                "extrasensory",
+                "willowisp",
+                "sunnyday"
+              ],
+              "level": 48
+            },
+            {
+              "species": "centiskorch",
+              "moveset": [
+                "firelash",
+                "bugbite",
+                "coil",
+                "crunch"
+              ],
+              "level": 49,
+              "heldItem": "sitrus_berry"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "Four hoods, one breathing. You have to get past me to pick.",
+          "player_win": "The leap is yours. Blaine is below the flue.",
+          "player_loss": "Wrong hood. The geyser will bring you back up."
+        }
+      },
+      {
+        "id": "gym8_junior_01",
+        "gym": 8,
+        "name": "Sapper",
+        "type": "Ground",
+        "lesson": "Sand Stream chip and Sand Rush: the field fights for them.",
+        "teams": {
+          "normal": [
+            {
+              "species": "sandslash",
+              "moveset": [
+                "earthquake",
+                "slash",
+                "rapidspin",
+                "sandstorm"
+              ],
+              "level": 51
+            },
+            {
+              "species": "donphan",
+              "moveset": [
+                "earthquake",
+                "rockslide",
+                "knockoff",
+                "iceshard"
+              ],
+              "level": 52
+            }
+          ],
+          "challenge": [
+            {
+              "species": "marowak",
+              "moveset": [
+                "bonemerang",
+                "firepunch",
+                "knockoff",
+                "stompingtantrum"
+              ],
+              "level": 51
+            },
+            {
+              "species": "sandslash",
+              "moveset": [
+                "earthquake",
+                "slash",
+                "rapidspin",
+                "sandstorm"
+              ],
+              "level": 51
+            },
+            {
+              "species": "donphan",
+              "moveset": [
+                "earthquake",
+                "rockslide",
+                "knockoff",
+                "iceshard"
+              ],
+              "level": 52,
+              "heldItem": "leftovers"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "You found the sap. Most stand in the yard waiting for a door.",
+          "player_win": "Down the heading, then. Mind the shoring.",
+          "player_loss": "Cave-in. Climb out and come back down."
+        }
+      },
+      {
+        "id": "gym8_junior_02",
+        "gym": 8,
+        "name": "Heading Guard",
+        "type": "Ground",
+        "lesson": "Dig dodges a turn: use it to switch, not to wait.",
+        "teams": {
+          "normal": [
+            {
+              "species": "dugtrio",
+              "moveset": [
+                "dig",
+                "suckerpunch",
+                "slash",
+                "sandtomb"
+              ],
+              "level": 52
+            },
+            {
+              "species": "gliscor",
+              "moveset": [
+                "earthquake",
+                "acrobatics",
+                "knockoff",
+                "swordsdance"
+              ],
+              "level": 53
+            }
+          ],
+          "challenge": [
+            {
+              "species": "claydol",
+              "moveset": [
+                "earthpower",
+                "psybeam",
+                "rocktomb",
+                "cosmicpower"
+              ],
+              "level": 52
+            },
+            {
+              "species": "dugtrio",
+              "moveset": [
+                "dig",
+                "suckerpunch",
+                "slash",
+                "sandtomb"
+              ],
+              "level": 52
+            },
+            {
+              "species": "gliscor",
+              "moveset": [
+                "earthquake",
+                "acrobatics",
+                "knockoff",
+                "swordsdance"
+              ],
+              "level": 53,
+              "heldItem": "leftovers"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "The heading's shored for one. You'll fight me in it.",
+          "player_win": "Through, then. The tower stair is round the corner.",
+          "player_loss": "Back to the sap. The drill starts over."
+        }
+      },
+      {
+        "id": "gym8_junior_03",
+        "gym": 8,
+        "name": "Undercroft Sentry",
+        "type": "Ground",
+        "lesson": "Rock Slide flinches and Lightning Rod: plan around both.",
+        "teams": {
+          "normal": [
+            {
+              "species": "rhydon",
+              "moveset": [
+                "rockslide",
+                "earthquake",
+                "hammerarm",
+                "scaryface"
+              ],
+              "level": 52
+            },
+            {
+              "species": "whiscash",
+              "moveset": [
+                "earthquake",
+                "waterpulse",
+                "amnesia",
+                "zenheadbutt"
+              ],
+              "level": 53
+            }
+          ],
+          "challenge": [
+            {
+              "species": "golem",
+              "moveset": [
+                "rockslide",
+                "earthquake",
+                "explosion",
+                "defensecurl"
+              ],
+              "level": 52
+            },
+            {
+              "species": "rhydon",
+              "moveset": [
+                "rockslide",
+                "earthquake",
+                "hammerarm",
+                "scaryface"
+              ],
+              "level": 52
+            },
+            {
+              "species": "whiscash",
+              "moveset": [
+                "earthquake",
+                "waterpulse",
+                "amnesia",
+                "zenheadbutt"
+              ],
+              "level": 53,
+              "heldItem": "leftovers"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "Nobody comes up the stair without coming past me.",
+          "player_win": "Up the stair. The walk is open.",
+          "player_loss": "Back to the drift. Try the stair again when you can."
+        }
+      },
+      {
+        "id": "gym8_junior_04",
+        "gym": 8,
+        "name": "Wall Captain",
+        "type": "Ground",
+        "lesson": "Sheer Force and Earth Power: the last guard hits like the boss.",
+        "teams": {
+          "normal": [
+            {
+              "species": "seismitoad",
+              "moveset": [
+                "earthpower",
+                "muddywater",
+                "drainpunch",
+                "stealthrock"
+              ],
+              "level": 53
+            },
+            {
+              "species": "nidoking",
+              "moveset": [
+                "earthpower",
+                "poisonjab",
+                "megahorn",
+                "thunderbolt"
+              ],
+              "level": 54
+            }
+          ],
+          "challenge": [
+            {
+              "species": "gastrodon",
+              "moveset": [
+                "earthpower",
+                "muddywater",
+                "recover",
+                "toxic"
+              ],
+              "level": 53
+            },
+            {
+              "species": "seismitoad",
+              "moveset": [
+                "earthpower",
+                "muddywater",
+                "drainpunch",
+                "stealthrock"
+              ],
+              "level": 53
+            },
+            {
+              "species": "nidoking",
+              "moveset": [
+                "earthpower",
+                "poisonjab",
+                "megahorn",
+                "thunderbolt"
+              ],
+              "level": 54,
+              "heldItem": "leftovers"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "The gate walk is mine. The Boss sees everything from here.",
+          "player_win": "You held the line. He's at the end of the walk.",
+          "player_loss": "Back to the yard. The drill starts over."
+        }
+      }
+    ]
+  }
 }

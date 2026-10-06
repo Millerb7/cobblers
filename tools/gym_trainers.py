@@ -495,6 +495,7 @@ class Graph:
         self.index = {p: k for k, p in enumerate(self.nodes)}
         jumps = offsets(reach, deep)
         adj = [[] for _ in self.nodes]
+        long_moves = set()
         for k, (x, y, z) in enumerate(self.nodes):
             out = set()
             c = v.cls(x, y, z)
@@ -525,7 +526,11 @@ class Graph:
                         out.add(q)
             out.discard((x, y, z))
             adj[k] = [self.index[q] for q in out]
+            for q in out:
+                if not ((q[0], q[2]) == (x, z) or (abs(q[0] - x) + abs(q[2] - z) == 1 and q[1] == y)):
+                    long_moves.add((k, self.index[q]))       # a jump, or a fall down a neighbouring column
         self.adj = adj
+        self.long = long_moves
         arrive = list(h.ring) + (sky_positions(v) if arrival == "sky" else [])
         self.arrival = arrival
         self.starts = sorted({self.index[s] for s in arrive if s in self.index})
@@ -537,18 +542,30 @@ class Graph:
         if not self.starts:
             raise SystemExit("%s: no position on the arrival ring" % h.gym)
 
+    def _split(self, blocked):
+        if isinstance(blocked, Block):
+            return blocked.nodes, blocked.edge
+        return blocked, None
+
+    def _ok(self, k, j, edge):
+        """A move is refused by a Block's edge rule only when it is a jump or a fall: a step between neighbouring
+        positions never leaves those two cells, so blocking the positions already covers it."""
+        return edge is None or (k, j) not in self.long or not edge(self.nodes[k], self.nodes[j])
+
     def reach(self, blocked=frozenset()):
-        """Distances (BFS, in moves) from the street to every position, never entering `blocked`."""
+        """Distances (BFS, in moves) from the street to every position, never entering `blocked` (a set of
+        positions, or a Block, which also refuses the jumps and falls that pass through what it blocks)."""
+        nodes, edge = self._split(blocked)
         dist = {}
         q = deque()
         for s in self.starts:
-            if s not in blocked:
+            if s not in nodes:
                 dist[s] = 0
                 q.append(s)
         while q:
             k = q.popleft()
             for j in self.adj[k]:
-                if j not in dist and j not in blocked:
+                if j not in dist and j not in nodes and self._ok(k, j, edge):
                     dist[j] = dist[k] + 1
                     q.append(j)
         return dist
@@ -559,10 +576,11 @@ class Graph:
 
     def path(self, blocked=frozenset()):
         """One shortest walk street -> leader, as node indices, or None."""
+        nodes, edge = self._split(blocked)
         prev = {}
         q = deque()
         for s in self.starts:
-            if s not in blocked:
+            if s not in nodes:
                 prev[s] = None
                 q.append(s)
         while q:
@@ -574,7 +592,7 @@ class Graph:
                     k = prev[k]
                 return out[::-1]
             for j in self.adj[k]:
-                if j not in prev and j not in blocked:
+                if j not in prev and j not in nodes and self._ok(k, j, edge):
                     prev[j] = k
                     q.append(j)
         return None
@@ -637,24 +655,49 @@ class Graph:
 
 
 # ------------------------------------------------------------------------------------------------ sight
-def los(v, a, b):
-    """Clear line of sight eye to eye between two positions: no solid cell on the segment."""
-    ax, ay, az = a[0] + 0.5, a[1] + EYE, a[2] + 0.5
-    bx, by, bz = b[0] + 0.5, b[1] + EYE, b[2] + 0.5
-    n = max(2, int(math.dist((ax, ay, az), (bx, by, bz)) * 5))
+def los_points(v, a, b, skip=()):
+    """Clear line of sight between two points (floats): no solid cell on the segment but the ones in `skip`."""
+    n = max(2, int(math.dist(a, b) * 5))
     for k in range(1, n):
         t = k / n
-        c = (int(math.floor(ax + (bx - ax) * t)), int(math.floor(ay + (by - ay) * t)),
-             int(math.floor(az + (bz - az) * t)))
-        if c in ((a[0], a[1] + 1, a[2]), (b[0], b[1] + 1, b[2])):
+        c = (int(math.floor(a[0] + (b[0] - a[0]) * t)), int(math.floor(a[1] + (b[1] - a[1]) * t)),
+             int(math.floor(a[2] + (b[2] - a[2]) * t)))
+        if c in skip:
             continue
         if v.cls(*c) == SOLID:
             return False
     return True
 
 
+def los(v, a, b):
+    """Clear line of sight eye to eye between two positions."""
+    return los_points(v, (a[0] + 0.5, a[1] + EYE, a[2] + 0.5), (b[0] + 0.5, b[1] + EYE, b[2] + 0.5),
+                      skip=((a[0], a[1] + 1, a[2]), (b[0], b[1] + 1, b[2])))
+
+
+# Where a player is, against where the graph says. A position is a cell; the player's feet are anywhere in its
+# column's footprint (0.71 from the centre, horizontally) and up to half a block above its floor (a slab, a stair).
+SLACK = 0.87
+
+
 def sphere(g, seat, d):
-    """Every position within d of the seat, through walls: what rctmod's sight check can reach."""
+    """Every position from which a player MIGHT be within d of the seat, through walls: the most rctmod's sight
+    check can reach. Used where over-counting is the safe side (the leader, street and apart checks)."""
+    sx, sy, sz = seat
+    r = int(math.ceil(d + SLACK))
+    out = set()
+    for x in range(sx - r, sx + r + 1):
+        for y in range(sy - r, sy + r + 1):
+            for z in range(sz - r, sz + r + 1):
+                k = g.index.get((x, y, z))
+                if k is not None and math.dist((x, y, z), seat) <= d + SLACK:
+                    out.add(k)
+    return out
+
+
+def seen(g, seat, d):
+    """Every position at which a player IS within d of the seat wherever in it they stand, in clear line of sight:
+    the least rctmod's sight check reaches. Used where under-counting is the safe side (the cut)."""
     sx, sy, sz = seat
     r = int(math.ceil(d))
     out = set()
@@ -662,19 +705,77 @@ def sphere(g, seat, d):
         for y in range(sy - r, sy + r + 1):
             for z in range(sz - r, sz + r + 1):
                 k = g.index.get((x, y, z))
-                if k is not None and math.dist((x, y, z), seat) <= d:
+                if k is not None and math.dist((x, y, z), seat) <= d - SLACK and los(g.v, seat, (x, y, z)):
                     out.add(k)
     return out
 
 
-def seen(g, seat, d):
-    """The part of the sphere in clear line of sight: smaller than what rctmod checks, so a cut by it is a cut."""
-    return {k for k in sphere(g, seat, d) if los(g.v, seat, g.nodes[k])}
+class Block:
+    """Positions a walk may not enter, and a rule refusing the jumps and falls that pass through what is blocked
+    on the way between two positions that are not."""
+
+    def __init__(self, nodes, edge=None):
+        self.nodes, self.edge = frozenset(nodes), edge
+
+
+def sight_block(g, seat, d):
+    """The cut's block: the positions surely in sight, and every jump or fall during which the player is surely
+    within d of the seat in clear line of sight at some moment."""
+    v = g.v
+    sx, sy, sz = seat
+    eye = (sx + 0.5, sy + EYE, sz + 0.5)
+
+    def surely(px, pz, h_lo, h_hi, side):
+        hd = math.hypot(px - eye[0], pz - eye[2]) + side
+        vd = max(abs(h_lo - sy), abs(h_hi - sy))
+        if math.hypot(hd, vd) > d:
+            return False
+        return all(los_points(v, eye, (px, h + EYE, pz), skip=((sx, sy + 1, sz),)) for h in (h_lo, h_hi))
+
+    def edge(a, b):
+        if math.hypot(b[0] - a[0], b[2] - a[2]) >= 1.5:          # a jump: anywhere on the line, any height of the arc
+            lo, hi = min(a[1], b[1]), max(a[1], b[1]) + 1.25
+            n = int(math.ceil(math.hypot(b[0] - a[0], b[2] - a[2]) * 4))
+            for k in range(1, n):
+                t = k / n
+                if surely(a[0] + 0.5 + (b[0] - a[0]) * t, a[2] + 0.5 + (b[2] - a[2]) * t, lo, hi, 0.3):
+                    return True
+            return False
+        # a step up (over the take-off, then onto the next column) or a fall (down the next column): each height
+        # in the column is passed at some moment, somewhere in the column's footprint
+        cols = [((a[0], a[2]), range(a[1], max(a[1], b[1]) + 1)),
+                ((b[0], b[2]), range(min(a[1], b[1]), max(a[1], b[1]) + 1))]
+        return any(surely(cx + 0.5, cz + 0.5, h, h, 0.71) for (cx, cz), hs in cols for h in hs)
+
+    return Block(seen(g, seat, d), edge)
 
 
 def body(g, seat):
     x, y, z = seat
     return {g.index[p] for p in ((x, y, z), (x, y + 1, z)) if p in g.index}
+
+
+def body_block(g, seat):
+    """The softlock check's block: the junior's two cells, which no walk, jump or fall can pass through."""
+    sx, sy, sz = seat
+    cells = {(sx, sy, sz), (sx, sy + 1, sz)}
+
+    def edge(a, b):
+        if math.hypot(b[0] - a[0], b[2] - a[2]) < 1.5:
+            col = (b[0], b[2]) == (sx, sz) or (a[0], a[2]) == (sx, sz)
+            return col and min(a[1], b[1]) <= sy + 1 and max(a[1], b[1]) + 1 >= sy
+        h = max(a[1], b[1])
+        n = int(math.ceil(math.hypot(b[0] - a[0], b[2] - a[2]) * 10))
+        for k in range(1, n):
+            t = k / n
+            px, pz = a[0] + 0.5 + (b[0] - a[0]) * t, a[2] + 0.5 + (b[2] - a[2]) * t
+            for cx in {int(math.floor(px - HALF_WIDTH)), int(math.floor(px + HALF_WIDTH))}:
+                for cz in {int(math.floor(pz - HALF_WIDTH)), int(math.floor(pz + HALF_WIDTH))}:
+                    if (cx, h, cz) in cells or (cx, h + 1, cz) in cells:
+                        return True
+        return False
+
+    return Block(body(g, seat), edge)
 
 
 def yaw_towards(seat, target):
@@ -697,16 +798,16 @@ def check_seat(h, gen, mod, seat, d, mod_baseline=None):
     if not in_rect(seat, h.footprint):
         bad.append(("stand", "%s is outside the hall's footprint %s" % (list(seat), list(h.footprint))))
     if (mod_baseline if mod_baseline is not None else mod.reaches_leader()):
-        if not mod.reaches_leader(frozenset(body(mod, seat))):
+        if not mod.reaches_leader(body_block(mod, seat)):
             bad.append(("softlock", "with the junior standing at %s the MODEST player can no longer reach the "
                                     "leader: the seat is the way through" % (list(seat),)))
     else:
-        if not gen.reaches_leader(frozenset(body(gen, seat))):
+        if not gen.reaches_leader(body_block(gen, seat)):
             bad.append(("softlock", "with the junior standing at %s even the GENEROUS player cannot reach the "
                                     "leader" % (list(seat),)))
-    s = seen(gen, seat, d)
-    if gen.reaches_leader(frozenset(s)):
-        p = gen.path(frozenset(s))
+    s = sight_block(gen, seat, d)
+    if gen.reaches_leader(s):
+        p = gen.path(s)
         bad.append(("cut", "a walk reaches the leader without entering the junior's sight (%s, d %.1f), e.g. via %s"
                            % (list(seat), d, [list(gen.nodes[k]) for k in p[::max(1, len(p) // 6)]])))
     full = sphere(gen, seat, d)
@@ -747,9 +848,9 @@ def candidates(h, gen, mod, radii=RADII):
                         near.add(s)
     found = []
     for s in sorted(near):
-        if gen.reaches_leader(frozenset(seen(gen, s, r))):
+        if gen.reaches_leader(sight_block(gen, s, r)):
             continue                                   # not even the widest sight cuts it
-        d = next(d for d in radii if not gen.reaches_leader(frozenset(seen(gen, s, d))))
+        d = next(d for d in radii if not gen.reaches_leader(sight_block(gen, s, d)))
         if check_seat(h, gen, mod, s, d, base):
             continue
         reached = [dist[k] for k in seen(gen, s, d) if k in dist]
@@ -798,8 +899,10 @@ def check_gym(gym, seats, recs, G=None, verbose=False):
         seat = tuple(s["seat"])
         for code, msg in check_seat(h, gen, mod, seat, float(s["sight_distance"]), base):
             problems.append((gym, s["id"], code, msg))
-        full = sphere(gen, seat, float(s["sight_distance"]))
-        spheres[s["id"]] = full
+        # apart: no position where two juniors would BOTH surely force a fight. rctmod starts one battle at a time,
+        # so an overlap of the outer spheres is spacing, not a fault; an overlap of the cores is two juniors doing
+        # one junior's job
+        spheres[s["id"]] = seen(gen, seat, float(s["sight_distance"]))
         sight = [k for k in seen(gen, seat, float(s["sight_distance"])) if k in first]
         entry = min(sight, key=lambda k: (first[k], gen.nodes[k])) if sight else None
         r = recs.get(s["id"])
@@ -826,15 +929,15 @@ def check_gym(gym, seats, recs, G=None, verbose=False):
         open_gen = Graph(h0, True, arrival)
     for row, s in zip(rows, seats):
         seat, d = tuple(s["seat"]), float(s["sight_distance"])
-        row["cut_holds_for_a_flyer"] = not sky.reaches_leader(frozenset(seen(sky, seat, d)))
+        row["cut_holds_for_a_flyer"] = not sky.reaches_leader(sight_block(sky, seat, d))
         if open_gen is not None:
-            row["cut_holds_with_defects_open"] = not open_gen.reaches_leader(frozenset(seen(open_gen, seat, d)))
+            row["cut_holds_with_defects_open"] = not open_gen.reaches_leader(sight_block(open_gen, seat, d))
     ids = list(spheres)
     for i in range(len(ids)):
         for j in range(i + 1, len(ids)):
             both = spheres[ids[i]] & spheres[ids[j]]
             if both:
-                problems.append((gym, ids[i], "apart", "%d position(s) inside both %s's and %s's sight"
+                problems.append((gym, ids[i], "apart", "%d position(s) surely inside both %s's and %s's sight"
                                  % (len(both), ids[i], ids[j])))
     ace = max(m["level"] for m in recs[LEADERS[gym]]["team"])
     order = sorted(rows, key=lambda r: (r["first_reached_moves"] if r["first_reached_moves"] is not None else 1e9))
