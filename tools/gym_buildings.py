@@ -412,6 +412,7 @@ def write_function(name, lines):
 
 
 def main(argv=None):
+    global PACK, FUNCS
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     sub = p.add_subparsers(dest="cmd", required=True)
     for name in ("report", "build"):
@@ -424,6 +425,10 @@ def main(argv=None):
 
     if a.source_root:
         os.environ["COBBLERS_SOURCE_ROOT"] = a.source_root
+    if getattr(a, "out", None):
+        # OVERNIGHT_REVIEW N31: --out was accepted and ignored (always build/); the writers read these two globals
+        PACK = Path(a.out)
+        FUNCS = PACK / "data" / "cobblers" / "function" / "gym_buildings"
     recs = records(a.gym)
     if not recs:
         raise SystemExit("data/gym_buildings holds no record; there is nothing to generate (fail closed)")
