@@ -143,6 +143,8 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-06: the fossil dig on the scorched plateau's west mesa (tools/fossil_dig.py), run by R9FD; its
                 # load and tick tags restore the brushed seams
                 "cobblers_fossil_dig",
+                # 2026-10-06: the training grounds' signs (tools/training_grounds.py; the grounds' Habitat Blocks are R9E's), run by R9TG
+                "cobblers_training_grounds",
                 # 2026-10-02: Codex's ten named residents (tools/resident_encounters.py, data/resident_encounters.json):
                 # a keeper loop and respawn clock hold them, so world-local; dressed and the ungated ones summoned by R18R
                 "cobblers_residents",
@@ -708,6 +710,7 @@ def prepare_jobs(a):
     add("desert_wreck_audit", "desert_wreck_audit.py", *src)
     add("fossil_dig:build", "fossil_dig.py", "build", *src)
     add("fossil_dig_audit", "fossil_dig_audit.py", *src)
+    add("training_grounds:build", "training_grounds.py", "build")
     # the ten named residents (2026-10-02), then their independent audit, which re-derives every site and write from
     # the data and the heightmap and fails the prepare on a broken pack
     add("resident_encounters", "resident_encounters.py", *src)
@@ -1823,6 +1826,8 @@ def steps(with_spawns=False):
     out.append(("R9E", "Habitat Blocks (data/habitat_blocks.json), then let their chunks reload",
                 [("fn", "cobblers:habitats/place"), ("wait", 20)]))
     # after the rooms they stand in exist; their classes loaded at boot from cobblers_dialogue
+    # the training grounds (2026-10-06, tools/training_grounds.py): a sign at each, after R9E placed their Habitat Blocks
+    out.append(("R9TG", "the training grounds' signs (data/training_grounds.json)", [("fn", "cobblers:training_grounds/build")]))
     out.append(("R9F", "NPCs a reward is given through (data/rewards.json npc_grant)",
                 [("npc", n) for n in npcs()]))
     # the bridges, after the towns and donors (neither may stand on one, and a donor placed whole would erase what it
