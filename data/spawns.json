@@ -22541,8 +22541,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_cave.excadrill",
-      "species": "excadrill",
+      "id": "habitat.vrc_cave.gliscor",
+      "species": "gliscor",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -51963,13 +51963,13 @@
           "conditions": {}
         },
         {
-          "species": "Excadrill",
-          "pokemon": "excadrill",
+          "species": "Gliscor",
+          "pokemon": "gliscor",
           "types": [
             "ground",
-            "steel"
+            "flying"
           ],
-          "family": "drilbur",
+          "family": "gligar",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
