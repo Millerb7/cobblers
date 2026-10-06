@@ -40,18 +40,24 @@ feet cell that is water, a ladder or scaffolding. Two models over the same voxel
 
 WHAT EACH SEAT MUST PROVE (check; each is a named code an audit can ask for):
 
+  Two readings of a sight, because a position is a cell and the player's feet may be anywhere in it (SLACK 0.87):
+  seen() is where a player IS within sight wherever they stand (centre within sight_distance - SLACK, in clear
+  line of sight, which rctmod does not even require: its sight passes walls, docs/mechanics/GYM_INTERIORS.md
+  section 3); sphere() is where a player MIGHT be (centre within sight_distance + SLACK, through walls).
+
   stand     the seat is a position on solid footing, dry, with two passable cells, inside the hall's own footprint
-  softlock  with the junior's two body cells blocked, MODEST still reaches the leader from the street
-  cut       with every position inside the junior's sight (within sight_distance AND in clear line of sight, which
-            is smaller than the real check: rctmod's sight passes through walls, docs/mechanics/GYM_INTERIORS.md
-            section 3) blocked, GENEROUS can no longer reach the leader from the street. That is "a player must
-            pass them": every way to the leader enters the junior's sight
-  leader    the junior's FULL sight sphere (through walls) holds no position from which the leader can be engaged,
-            so no junior fights a player standing at the leader
-  street    the full sphere holds no position outside the hall's footprint: no junior pulls a passer-by off the street
-  apart     no position is inside two juniors' full spheres: one forced fight at a time
-  order     the juniors' levels rise in the order a player first reaches their sight (GENEROUS distance), and every
+  softlock  with the junior's two body cells blocked -- and every jump or fall through them refused -- MODEST still
+            reaches the leader from the street
+  cut       with seen() blocked, and every jump or fall during which the player is surely in sight refused (so a
+            sprint jump cannot fly over a junior), GENEROUS can no longer reach the leader from the street. That is
+            "a player must pass them": every way to the leader enters the junior's sight
+  leader    sphere() holds no position from which the leader can be engaged, so no junior fights a player at him
+  street    sphere() holds no position outside the hall's footprint: no junior pulls a passer-by off the street
+  apart     no position is in two juniors' seen(): no two juniors doing one junior's job (rctmod starts one battle at
+            a time, so outer spheres touching is spacing, not a fault)
+  order     the juniors' levels rise in the order a player first reaches their seen() (GENEROUS distance), and every
             level is below the leader's ace (the gym's cap, data/trainers.json generation_contract.gym_ace_levels)
+  facing    the yaw is within 90 degrees of where a player first enters its sight
 
 WHAT THIS DOES NOT PROVE, and the audit should not assume it does:
   - that eye contact fires. rctmod starts a forced battle only after player and trainer have stared at each other
