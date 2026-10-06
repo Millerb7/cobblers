@@ -227,6 +227,8 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # data/spectrier_cap.json): its own tick tag judges each new wild Spectrier, so world-local below,
                 # the cobblers_sizes shape (self-driving, no blocks, no step)
                 "cobblers_spectrier_cap",
+                # 2026-10-06: the catchable Hoopa at the cradle (tools/hoopa_cradle.py): a self-driving keeper, world-local
+                "cobblers_hoopa_cradle",
                 # 2026-10-03: Heaven's Arena's per-player opponents (tools/arena_runtime.py, data/arena_fights.json,
                 # data/arena_dome.json venues): NPC classes, a battle_victory callback and a tick driver that spawns
                 # and clears opponents on its own, so world-local below; R17A places the venues' posts
@@ -308,6 +310,7 @@ EXCLUDED = {
     "cobblers_sizes": "self-driving: its own minecraft load tag runs it",
     "cobblers_levelcap": "self-driving: a Cobblemon poke_ball_capture_calculated callback runs its check; its load tag makes the scores; its tick tag runs the over-cap party notice near trainers",
     "cobblers_rift_storm": "self-driving: its own minecraft load tag starts the storm loop (tools/rift_storm.py)",
+    "cobblers_hoopa_cradle": "self-driving: its keeper gives each player holding rift_crisis_resolved who stands in the cradle their own level-60 Hoopa (data/hoopa_cradle.json)",
     "cobblers_spectrier_cap": "self-driving: its own minecraft tick tag judges each new wild Spectrier at the Crown "
                               "Cemetery (tools/spectrier_cap.py); it writes no blocks",
     "cobblers_blackout": "self-driving: its own load and tick tags, an advancement and three Cobblemon callbacks run it; "
@@ -333,7 +336,7 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_sizes", "cobblers_blackout", "cobblers_rift_mines", "cobblers_gulch_mine",
                "cobblers_rift_zones", "cobblers_mega_recipes",
                "cobblers_ferries", "cobblers_ambient", "cobblers_ambient_idle", "cobblers_levelcap", "cobblers_mines",
-               "cobblers_legendaries", "cobblers_spectrier_cap",
+               "cobblers_legendaries", "cobblers_spectrier_cap", "cobblers_hoopa_cradle",
                # 2026-10-03: charges CobbleDollars and gives items, like the ferry
                "cobblers_markets",
                # 2026-10-02: the den keeper loop holds the bear on its own tick, so world-local as its own comment says
@@ -868,6 +871,7 @@ def prepare_jobs(a):
     add("size_outliers", "size_outliers.py")
     # one Spectrier per player at the Crown Cemetery (data/spectrier_cap.json; fails closed if the placement moved)
     add("spectrier_cap", "spectrier_cap.py")
+    add("hoopa_cradle", "hoopa_cradle.py")
     # blackout, recovery claims and the water ladder (data/blackout.json, data/water_mounts.json)
     add("blackout_pack", "blackout_pack.py")
     # the loose functions (town prep, elders, grove, islet) in one pack
