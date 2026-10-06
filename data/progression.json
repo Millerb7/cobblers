@@ -722,6 +722,38 @@
       "allowed_values": "node ids from dlg_main_pallet_oak"
     },
     {
+      "id": "quest.main_worldshift_reveal.trainer_mode",
+      "quest_id": "main_worldshift_reveal",
+      "field": "trainer_mode",
+      "type": "enum",
+      "scope": "player",
+      "initial": "unset",
+      "allowed_values": [
+        "unset",
+        "normal",
+        "challenge"
+      ],
+      "why": "Oak's League rules choice (docs/mechanics/OAK_AND_CHALLENGE.md), written once: both transitions that write it (data/quests.json record_trainer_mode_*) require it unset, because rctmod's `player set series` clears a player's rctmod progress on every call (docs/research/RCT_PER_PLAYER_MODE.md section 1). challenge also put the player in rctmod series cobblers_challenge and tagged them cobblers_mode_challenge in the same action; normal changed nothing in rctmod. A player who never chose plays the Normal teams (rctmod's initial series, kanto)."
+    },
+    {
+      "id": "quest.main_worldshift_reveal.oak_greeted",
+      "quest_id": "main_worldshift_reveal",
+      "field": "oak_greeted",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "Oak's lab scene (data/scenes.json oak_lab): set when Oak's conversation opened by itself as this player walked into the lab, so it opens once and every later talk is a click on Oak (data/quests.json greet_in_lab)."
+    },
+    {
+      "id": "quest.main_worldshift_reveal.lab_starter_cursor",
+      "quest_id": "main_worldshift_reveal",
+      "field": "lab_starter_cursor",
+      "type": "enum",
+      "scope": "player",
+      "initial": "lab_starter_001",
+      "allowed_values": "node ids from dlg_main_pallet_lab_starter"
+    },
+    {
       "id": "quest.main_worldshift_reveal.pallet_mina_cursor",
       "quest_id": "main_worldshift_reveal",
       "field": "pallet_mina_cursor",

@@ -51,11 +51,12 @@ def _option(pages, node, value):
     return next(o for o in pages[node]["input"]["options"] if o["value"] == value)
 
 
-# Without it a new player gets no starter on join (the owner, 2026-10-05: "native chooser ... keep the menu on first
-# join"): Cobblemon sets a new player's starterLocked to !allowStarterOnJoin (PlayerDataJsonBackend @1.8.0).
-def test_the_config_opens_the_chooser_on_join_and_offers_exactly_the_five():
+# Without it the chooser opens as a menu on join instead of in Oak's lab (the owner, 2026-10-06: "Oak offering the
+# starters in the lab as a scene rather than a menu on join"; true from 2026-10-05 to 2026-10-06): Cobblemon sets a new
+# player's starterLocked to !allowStarterOnJoin (PlayerDataJsonBackend @1.8.0), and Oak's offer unlocks it.
+def test_the_config_locks_the_chooser_on_join_and_offers_exactly_the_five():
     cfg = _json(STARTERS)
-    assert cfg["allowStarterOnJoin"] is True
+    assert cfg["allowStarterOnJoin"] is False
     # with no datapack `starters` category the screen shows this list (getStarterList falls back to the config)
     assert [c["name"] for c in cfg["starters"]] == ["cobblers_mythical"]
     assert cfg["starters"][0]["pokemon"] == MS.config_entries(_json(DATA / "mythical_starters.json"))
@@ -85,8 +86,9 @@ def test_a_player_who_has_chosen_goes_on_and_anyone_else_keeps_the_screen(compil
     act = _option(pages, "oak_offer_002", "oak_offer_choose")["action"]
     branch = act[act.index("q.player.has_tag('%s') ?" % CD.STARTER_TAG):]
     chosen, _, other = branch.partition(" : ")
-    assert "q.dialogue.set_page('oak_001')" in chosen
-    assert "= 'oak_001'" in chosen
+    # a player who has chosen goes on to Oak's League rules (2026-10-06), then the send-off
+    assert "q.dialogue.set_page('oak_mode_001')" in chosen
+    assert "= 'oak_mode_001'" in chosen
     assert "q.dialogue.close()" in other and "set_page" not in other
 
 
@@ -155,11 +157,24 @@ def test_no_path_reaches_the_send_off_without_a_starter(conv):
     assert _sendoff_nodes(conv)
     assert not _ungated_reach(conv) & _sendoff_nodes(conv)
     # and nothing else can move Oak's cursor before the send-off: every transition that writes it needs a later stage
+    # -- or is run only from a page that is itself behind the starter gate (Oak's League rules, 2026-10-06: the two
+    # record_trainer_mode_* transitions move the cursor to their "recorded" line, and are reachable only after the pick)
     quest = next(q for q in _json(DATA / "quests.json")["quests"] if q["id"] == conv["quest_id"])
+    ungated = _ungated_reach(conv)
+    used_from = {}
+    for n in conv["nodes"]:
+        for r in n.get("responses") or []:
+            for a in r.get("actions") or []:
+                if a["kind"] == "quest_transition":
+                    used_from.setdefault(a["transition"], set()).add(n["id"])
+        for a in n.get("actions_after_acknowledge") or []:
+            if a["kind"] == "quest_transition":
+                used_from.setdefault(a["transition"], set()).add(n["id"])
     for t in quest["transitions"]:
         if any(e.get("field") == conv["cursor"]["progression_field"] for e in t["effects"]):
             stages = [c.get("value") for c in t["conditions"] if c.get("field") == "quest.main_worldshift_reveal.stage"]
-            assert stages and "not_started" not in stages, t["id"]
+            gated = t["id"] in used_from and not (used_from[t["id"]] & ungated)
+            assert (stages and "not_started" not in stages) or gated, t["id"]
 
 
 # The check above bites: an ungated way to oak_001 is found.

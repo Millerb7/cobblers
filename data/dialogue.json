@@ -1564,7 +1564,43 @@
         "cursor_is": "next_unread_node"
       },
       "starter_gate": "The owner's priority zero (2026-10-05): Oak gives the starter. modpack/config/cobblemon/starters.json sets allowStarterOnJoin false, so a new player joins starter-locked (Cobblemon 1.8.0 PlayerDataJsonBackend: starterLocked = !allowStarterOnJoin) and the native screen refuses them until Oak's oak_offer_choose runs `openstarterscreen` for them (tools/compile_dialogue.py open_starter_screen). That command unlocks, opens the config's five-way screen, and returns 0 without opening for a player who has already chosen; chooseStarter refuses a second pick (docs/research/notes/starter-selection.md section 5). oak_001 onward, and so record_oak_sendoff, is reached only by a player Cobblemon says has chosen: the starter_chosen entry rule, or the open action's own 0 result.",
+      "mode_choice": "The owner, 2026-10-06: 'Oak offering the mode choice -- the difference explained without the words easy and hard. Codex wrote his dialogue. Build it.' Codex's lines are docs/story/CHALLENGE_GYM_DESIGN.md 'Oak's world-wide choice', written for ONE choice for the whole world; the choice is built PER PLAYER (docs/research/RCT_PER_PLAYER_MODE.md: rctmod's series is per player), so the three lines that said 'this campaign', 'this world' and 'everyone uses it' say 'your journey' and 'yours alone' here, and nothing else is changed. Standard = Normal, Full-Team = Challenge (docs/mechanics/OAK_AND_CHALLENGE.md). The choice sits between the starter and the send-off, and is written once (data/quests.json record_trainer_mode_*). Full-Team is not offered to a player who already holds the Boulder Badge: the series command would wipe their rctmod progress.",
       "entry_rules": [
+        {
+          "priority": 4,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "starter_chosen"
+              },
+              {
+                "kind": "not",
+                "condition": {
+                  "kind": "progression_equals",
+                  "field": "quest.main_worldshift_reveal.trainer_mode",
+                  "value": "unset"
+                }
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.pallet_oak_cursor",
+                "values": [
+                  "oak_offer_001",
+                  "oak_offer_002",
+                  "oak_mode_001",
+                  "oak_mode_002",
+                  "oak_mode_003",
+                  "oak_mode_004",
+                  "oak_mode_005",
+                  "oak_mode_confirm_standard",
+                  "oak_mode_confirm_full"
+                ]
+              }
+            ]
+          },
+          "node": "oak_001"
+        },
         {
           "priority": 5,
           "when": {
@@ -1583,7 +1619,7 @@
               }
             ]
           },
-          "node": "oak_001"
+          "node": "oak_mode_001"
         },
         {
           "priority": 10,
@@ -1615,7 +1651,7 @@
                   "kind": "open_starter_screen"
                 }
               ],
-              "next": "oak_001"
+              "next": "oak_mode_001"
             },
             {
               "id": "oak_offer_wait",
@@ -1627,6 +1663,150 @@
               ]
             }
           ]
+        },
+        {
+          "id": "oak_mode_001",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "Before I send you out, we need to record the League rules your journey will follow.",
+          "next": "oak_mode_002"
+        },
+        {
+          "id": "oak_mode_002",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "Under Standard rules, Gym Leaders use focused teams. Their plans are clear, and their held items support the lesson without filling every slot.",
+          "next": "oak_mode_003"
+        },
+        {
+          "id": "oak_mode_003",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "Under Full-Team rules, every Gym Leader brings six. Their combinations are tighter, their held items matter, and a prepared answer may need help from the rest of your party.",
+          "next": "oak_mode_004"
+        },
+        {
+          "id": "oak_mode_004",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "The level limits are identical. This changes what each battle asks of you, not how far you may train.",
+          "next": "oak_mode_005"
+        },
+        {
+          "id": "oak_mode_005",
+          "kind": "choice",
+          "speaker": "professor_oak",
+          "text": "This record is yours alone. Once I enter it, it cannot be changed. Which rules should I enter?",
+          "responses": [
+            {
+              "id": "oak_mode_pick_standard",
+              "text": "Use Standard rules.",
+              "next": "oak_mode_confirm_standard"
+            },
+            {
+              "id": "oak_mode_pick_full",
+              "text": "Use Full-Team rules.",
+              "visible_when": {
+                "kind": "not",
+                "condition": {
+                  "kind": "flag",
+                  "flag": "gym1_cleared"
+                }
+              },
+              "next": "oak_mode_confirm_full"
+            },
+            {
+              "id": "oak_mode_think",
+              "text": "Let me think.",
+              "actions": [
+                {
+                  "kind": "set_cursor",
+                  "node": "oak_mode_001"
+                },
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "oak_mode_confirm_standard",
+          "kind": "choice",
+          "speaker": "professor_oak",
+          "text": "Record Standard rules for your journey? This cannot be changed later.",
+          "responses": [
+            {
+              "id": "oak_mode_record_standard",
+              "text": "Record them.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "record_trainer_mode_normal"
+                }
+              ],
+              "next": "oak_mode_recorded_normal"
+            },
+            {
+              "id": "oak_mode_back_standard",
+              "text": "Let me think.",
+              "actions": [
+                {
+                  "kind": "set_cursor",
+                  "node": "oak_mode_001"
+                },
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "oak_mode_confirm_full",
+          "kind": "choice",
+          "speaker": "professor_oak",
+          "text": "Record Full-Team rules for your journey? This cannot be changed later.",
+          "responses": [
+            {
+              "id": "oak_mode_record_full",
+              "text": "Record them.",
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "record_trainer_mode_challenge"
+                }
+              ],
+              "next": "oak_mode_recorded_challenge"
+            },
+            {
+              "id": "oak_mode_back_full",
+              "text": "Let me think.",
+              "actions": [
+                {
+                  "kind": "set_cursor",
+                  "node": "oak_mode_001"
+                },
+                {
+                  "kind": "close_dialogue"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "oak_mode_recorded_normal",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "Your League rules are recorded: Standard rules.",
+          "next": "oak_001"
+        },
+        {
+          "id": "oak_mode_recorded_challenge",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "Your League rules are recorded: Full-Team rules.",
+          "next": "oak_001"
         },
         {
           "id": "oak_001",
@@ -1702,6 +1882,42 @@
           "speaker": "professor_oak",
           "text": "Trust the ground before the map. Bring back an account from someone who was outside Pallet.",
           "next": "oak_repeat_after_mismatch"
+        }
+      ]
+    },
+    {
+      "id": "dlg_main_pallet_lab_starter",
+      "quest_id": "main_worldshift_reveal",
+      "npc_id": null,
+      "source": "docs/mechanics/OAK_AND_CHALLENGE.md (the owner, 2026-10-06: Oak offers the starters in the lab as a scene)",
+      "scope": "player",
+      "opened_by": "the five starter actors of data/scenes.json oak_lab, standing in the lab for a player who has not chosen; the choice itself is Cobblemon's chooser, opened by Oak",
+      "speakers": {
+        "narration": null
+      },
+      "cursor": {
+        "progression_field": "quest.main_worldshift_reveal.lab_starter_cursor",
+        "initial_node": "lab_starter_001",
+        "persist": "after_each_node",
+        "restore": "on_every_interaction",
+        "cursor_is": "next_unread_node"
+      },
+      "entry_rules": [
+        {
+          "priority": 10,
+          "when": {
+            "kind": "always"
+          },
+          "node": "$cursor"
+        }
+      ],
+      "nodes": [
+        {
+          "id": "lab_starter_001",
+          "kind": "line",
+          "speaker": "narration",
+          "text": "One of the five Professor Oak keeps in the lab. Talk to him to choose your partner.",
+          "next": "lab_starter_001"
         }
       ]
     },

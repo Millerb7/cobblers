@@ -24,7 +24,8 @@ The runtime pieces, each proven on the disposable world before this compiler rel
   scenes     two effects reach the scene runtime (tools/scenes_pack.py, data/scenes.json): sync_scene runs the scene's
              per-player beat for this player at once, so an actor moves on the click that moved its checkpoint rather
              than up to a second later; scene_function runs one of the scene's named functions as the player (a flash,
-             a controlled encounter). Both are server-sourced commands like every other.
+             a controlled encounter). Both are server-sourced commands like every other. open_dialogue opens a
+             conversation for this player with no click (Oak's lab scene opens his as the player walks in).
   flags      a condition {"kind": "flag", "flag": "<id>"} holds when the player has the progression flag's advancement
              (cobblers:flag/<id>, tools/progression_pack.py). Advancements are not in q.player.data(), so it is probed as
              the held items are: `execute as <uuid> if entity @s[advancements={...=true}] run tag @s add <tag>`, then
@@ -52,6 +53,15 @@ The runtime pieces, each proven on the disposable world before this compiler rel
              {"kind": "starter_chosen"} reads STARTER_TAG, which the pack's starter_chosen callback
              (CallbackHandler.kt @1.8.0: STARTER_CHOSEN -> cobblemon:starter_chosen, context `player`, the struct
              player_tick_pre's proven callbacks read) adds the moment a pick is made. NOT yet run in game.
+  series     an effect {"kind": "rctmod_series", "series": "<id>"} runs Radical Cobblemon Trainers' own
+             `rctmod player set series <id> <player>` for the talking player, as the server (op 4; the command needs
+             2). Read from rctmod v0.19.0-beta source (docs/research/RCT_PER_PLAYER_MODE.md section 1): the targets
+             form is the one a non-player source may use; an unknown series is refused with an error to the player;
+             and EVERY call, even to the series the player is already in, clears their rctmod progress. So the
+             compiler refuses it anywhere but inside a quest transition whose conditions require the field it writes to
+             be unset (check_series_guard). Oak's League rules choice, 2026-10-06 (docs/mechanics/OAK_AND_CHALLENGE.md).
+             {"kind": "tag_player", "tag": "<tag>"} adds a scoreboard tag to the talking player in the same action,
+             for selectors that cannot read player data (the route trainers' swap). NOT yet run in game.
   opened by  a conversation with "npc_id": null has no NPC class: a prop or an actor opens it (the scene runtime runs
              /opendialogue for the player who clicked), never an NPC's interaction.
   speakers   a conversation may name its speakers ("speakers": {"pip": "Pip", "narration": null}); a speaker mapped to
@@ -236,6 +246,20 @@ class Compiler:
             return run(["execute as ", UUID, " at @s run function %s:scenes/%s/fn/%s" % (NS, ident(e["scene"]), ident(e["function"]))])
         if k == "function":
             return run(["execute as ", UUID, " at @s run function %s" % function_id(e["function"])])
+        if k == "open_dialogue":
+            # open a conversation for this player without an NPC's click: Oak's lab scene opens his conversation as
+            # the player walks in (data/scenes.json oak_lab, a zone's transition). `opendialogue` runs inside a
+            # function (tools/scenes_pack.py runtime facts); the conversation's own entry rules pick the page
+            return run(["execute as ", UUID, " run opendialogue %s:%s @s" % (NS, ident(e["conversation"]))])
+        if k == "rctmod_series":
+            # see "series" in the module docstring: put the talking player in an rctmod series. EVERY call clears
+            # their rctmod progress, so only a transition guarded by its own lock field may carry this
+            return run(["execute as ", UUID, " run rctmod player set series %s @s" % ident(e["series"])])
+        if k == "tag_player":
+            tag = e.get("tag")
+            if not isinstance(tag, str) or not re.fullmatch(r"[a-z0-9_.]+", tag):
+                raise Unsupported("tag_player %r is not [a-z0-9_.]+" % (tag,))
+            return run(["execute as ", UUID, " run tag @s add %s" % tag])
         raise Unsupported("effect kind %s" % k)
 
     def battle_action(self, a):
@@ -273,8 +297,27 @@ class Compiler:
                 run(["execute as ", UUID, " store success score @s %s run give @s %s %d" % (TX_SCORE, item, count)]) +
                 run(["execute as ", UUID, " unless score @s %s matches 1 run tag @s add %s" % (TX_SCORE, GIVE_FAILED)]))
 
+    def check_series_guard(self, t):
+        """A transition that runs rctmod_series must be a one-shot: it requires a field at its declared initial value
+        and sets that same field away from it, so a second run is refused before the command is reached (see
+        "series" in the module docstring: every call wipes the player's rctmod progress)."""
+        if not any(e["kind"] == "rctmod_series" for e in t["effects"]):
+            return
+        for c in t["conditions"]:
+            if c.get("kind") != "progression_equals" or c["field"] not in self.fields:
+                continue
+            f = self.fields[c["field"]]
+            if f.get("type") != "enum" or c.get("value") != f.get("initial"):
+                continue
+            if any(e["kind"] == "set_progression" and e["field"] == c["field"] and e["value"] != f["initial"]
+                   for e in t["effects"]):
+                return
+        raise Unsupported("transition %s runs rctmod_series without a lock: it must require an enum field at its "
+                          "initial value and set that field away from it" % t["id"])
+
     def transition(self, tid):
         t = self.transitions[tid]
+        self.check_series_guard(t)
         probes = {}
         cond = " && ".join(self.cond(c, probes) for c in t["conditions"]) or "1"
         body = " ".join(self.effect(e) for e in t["effects"])
