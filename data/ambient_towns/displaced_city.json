@@ -162,12 +162,12 @@
     {
       "id": "displaced_yamask_faces",
       "title": "Does anyone know this face",
-      "story": "Three Yamask sit by the square every evening, each holding up its mask to the people walking home, waiting for someone from the old city to recognise the face.",
+      "story": "Two Yamask sit by the square every evening, each holding up its mask to the people walking home, waiting for someone from the old city to recognise the face.",
       "unique": true,
       "at": [3318, 46, 1760],
       "facing": "east",
       "members": [
-        {"species": "yamask", "count": 3, "pose": "still", "offsets": [[0, 0, 0], [-1, 0, 2], [-2, -1, -2]]}
+        {"species": "yamask", "count": 2, "pose": "still", "offsets": [[0, 0, 0], [-1, 0, 2]]}
       ],
       "props": [],
       "why": "off the square's west edge, facing the people crossing it; the only town where the situation is the displaced themselves"
@@ -175,12 +175,12 @@
     {
       "id": "displaced_morelull_ring",
       "title": "The fairy ring",
-      "story": "Five Morelull stand in a ring at the end of the mushroom beds and pulse their light in turn, round and round. The children are not allowed in the ring and go in anyway.",
+      "story": "Four Morelull stand in a ring at the end of the mushroom beds and pulse their light in turn, round and round. The children are not allowed in the ring and go in anyway.",
       "unique": false,
       "at": [3350, 31, 1810],
       "facing": "north",
       "members": [
-        {"species": "morelull", "count": 5, "pose": "still", "offsets": [[0, 1, -2], [2, 0, 0], [0, 0, 2], [-2, 0, 0], [1, 0, 1]]}
+        {"species": "morelull", "count": 4, "pose": "still", "offsets": [[0, 1, -2], [2, 0, 0], [0, 0, 2], [-2, 0, 0]]}
       ],
       "props": [],
       "why": "by the mushroom beds south of the butcher's lot"
@@ -188,13 +188,13 @@
     {
       "id": "displaced_rubbish_king",
       "title": "The king of the heap",
-      "story": "A Garbodor sits enthroned on the rubbish heap at the end of the lane, and two Trubbish bring it the best of what the Trubbish worker collects.",
+      "story": "A Garbodor sits enthroned on the rubbish heap at the end of the lane, and a Trubbish brings it the best of what the Trubbish worker collects.",
       "unique": false,
       "at": [3300, 30, 1812],
       "facing": "north",
       "members": [
         {"species": "garbodor", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]},
-        {"species": "trubbish", "count": 2, "pose": "still", "offsets": [[2, -1, -1], [-2, 0, -1]]}
+        {"species": "trubbish", "count": 1, "pose": "still", "offsets": [[2, -1, -1]]}
       ],
       "props": [{"block": "minecraft:composter", "at": [0, 0, 2]}],
       "why": "the end of the lower street's west lane, past where the rubbish route ends"
@@ -203,12 +203,12 @@
       "id": "displaced_duskull_count",
       "allow": ["street"],
       "title": "The gate count",
-      "story": "Every evening four Duskull line up where the old road comes in and count the people arriving. They have never once got the same number as the mason.",
+      "story": "Every evening three Duskull line up where the old road comes in and count the people arriving. They have never once got the same number as the mason.",
       "unique": false,
       "at": [3267, 28, 1662],
       "facing": "west",
       "members": [
-        {"species": "duskull", "count": 4, "pose": "still", "offsets": [[0, 0, 0], [1, 0, 2], [2, 0, 4], [3, 1, 6]]}
+        {"species": "duskull", "count": 3, "pose": "still", "offsets": [[0, 0, 0], [1, 0, 2], [2, 0, 4]]}
       ],
       "props": [],
       "why": "on the old road where it enters the town (street cells, so allowed)"
@@ -226,6 +226,45 @@
       ],
       "props": [],
       "why": "the open floor inside the upper street's eastern loop"
+    },
+    {
+      "id": "displaced_shuppet_chimney",
+      "title": "Hung up the chimney",
+      "story": "Smoke from the cottage chimney by the north gate comes out in the shape of a face some evenings. It is a Shuppet hanging in the chimney pot, feeding on the grudges of everyone who has burned their dinner.",
+      "unique": true,
+      "at": [3272, 36, 1720],
+      "facing": "east",
+      "members": [
+        {"species": "shuppet", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]}
+      ],
+      "props": [],
+      "why": "on the cobblestone-wall chimney pot of displaced_house_16 (small_house_2), the column's top block at y35 read from the template as placed, so the feet are y36; something in a chimney, under the cavern roof"
+    },
+    {
+      "id": "displaced_poochyena_butcher",
+      "title": "Two at the butcher's door",
+      "story": "Two Poochyena wait at the butcher's door every evening, one behind the other, for the bones. The butcher swears he has never once given them any, and they have never once missed an evening.",
+      "unique": true,
+      "at": [3329, 28, 1809],
+      "facing": "north",
+      "members": [
+        {"species": "poochyena", "count": 2, "pose": "still", "offsets": [[0, 0, 0], [0, 0, 2]]}
+      ],
+      "props": [],
+      "why": "south of displaced_house_06 (butcher_shop_1, door 3329, 1806), feet y28 from the cavern floor, off the street at z1813; a queue at a door, one species because the queue is the situation (Greavard first, 2026-10-06: it is in the ATM client-model subset)"
+    },
+    {
+      "id": "displaced_parasect_bed",
+      "title": "The best bed in the cavern",
+      "story": "The grower's best mushroom bed is a Parasect that sat down behind the fletcher's and stayed. He harvests round it every morning, and it lets him, as long as he leaves the big one on its back.",
+      "unique": true,
+      "at": [3384, 41, 1780],
+      "facing": "west",
+      "members": [
+        {"species": "parasect", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]}
+      ],
+      "props": [{"block": "minecraft:red_mushroom", "at": [-1, 0, 1]}, {"block": "minecraft:brown_mushroom", "at": [1, 0, 1]}, {"block": "minecraft:red_mushroom", "at": [2, 0, 0]}],
+      "why": "the shelf east of displaced_house_09 (fletcher_house_1, footprint x3374-3380), feet y41 on the cavern floor where four columns lie level; the mushrooms are props, and they keep in the cavern's dark"
     }
   ],
   "counts": {"working": 11, "pets": 3, "placed": 10, "situations": 18, "total": 42},

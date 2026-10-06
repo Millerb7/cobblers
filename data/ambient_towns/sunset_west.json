@@ -227,17 +227,17 @@
       "why": "on the strand by the butcher's (sunset_house_02), where the nets are hung"
     },
     {
-      "id": "sunset_bombirdier_chimney",
-      "title": "The stork on the forge",
-      "story": "A Bombirdier has built a nest in the armorer's chimney pot and will not be smoked out. The armorer now lights his forge only after it flies out to sea in the morning, and the town says that brings luck.",
+      "id": "sunset_cramorant_chimney",
+      "title": "The bird on the forge",
+      "story": "A Cramorant has taken the armorer's chimney pot for a nest and will not be smoked out. The armorer now lights his forge only after it flies out to fish in the morning, and the town says that brings luck.",
       "unique": true,
       "at": [2607, 73, 6493],
       "facing": "west",
       "members": [
-        {"species": "bombirdier", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]}
+        {"species": "cramorant", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]}
       ],
       "props": [],
-      "why": "on the cobblestone-wall chimney pot of sunset_house_01 (plains_armorer_house_1), the column's top block at y72 read from the template as placed, so the feet are y73; a stork on a chimney, the coast's only nest on a house"
+      "why": "on the cobblestone-wall chimney pot of sunset_house_01 (plains_armorer_house_1), the column's top block at y72 read from the template as placed, so the feet are y73; a seabird nesting on a chimney, the coast's only nest on a house (a Bombirdier first, 2026-10-06: it is in the ATM client-model subset, so the town's own Cramorant)"
     },
     {
       "id": "sunset_alomomola_step",

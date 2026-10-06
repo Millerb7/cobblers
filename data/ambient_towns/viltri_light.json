@@ -31,9 +31,7 @@
       "interact": "The Drifloon floats the lantern oil down the keeper's track from the cart road, holding the lamp by a string. It has never dropped one."
     }
   ],
-  "pets": [
-    {"id": "viltri_light_keeper_noctowl", "species": "noctowl", "owner": "npc_stone_tip_viltri_light_keeper", "mode": "wait", "why": "the keeper's Noctowl keeps the night watch with him and turns its head to every ship that does not come"}
-  ],
+  "pets": [],
   "placed": [
     {"id": "viltri_light_step_clobbopus", "species": "clobbopus", "spot": "step", "at": [553, 70, 4523], "why": "a Clobbopus on the lighthouse's foundation step, punching the barnacles off it"}
   ],
@@ -50,8 +48,21 @@
       ],
       "props": [],
       "why": "the low ground west of the lighthouse platform, where the estuary used to run"
+    },
+    {
+      "id": "viltri_light_noctowl_post",
+      "title": "The night watch",
+      "story": "The keeper's Noctowl has taken the old mooring post at the bottom of the lighthouse steps for its own. It sits there every night facing the empty estuary, and turns its head for every ship that does not come.",
+      "unique": true,
+      "at": [550, 68, 4531],
+      "facing": "west",
+      "members": [
+        {"species": "noctowl", "count": 1, "pose": "still", "offsets": [[0, 1, 0]]}
+      ],
+      "props": [{"block": "minecraft:oak_fence", "at": [0, 0, 0]}, {"block": "minecraft:chain", "at": [1, 0, 0]}],
+      "why": "converted 2026-10-06 from the keeper's pet (the outpost's band holds three situation Pokemon only if a pet or a placed one gives its place): the low ground south of the lighthouse platform, feet y68 from the plan, the Noctowl on its post prop"
     }
   ],
-  "counts": {"working": 2, "pets": 1, "placed": 1, "situations": 2, "total": 6},
+  "counts": {"working": 2, "pets": 0, "placed": 1, "situations": 3, "total": 6},
   "notes": "New: data/ambient.json listed Viltri Light under idle.not_populated ('a lighthouse with no town plan worth a group'); it now has a plan (derived/towns/viltri_light_plan.json) and a seated keeper (data/npc_seats.json), which is what an outpost of six needs."
 }
