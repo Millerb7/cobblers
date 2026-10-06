@@ -1,7 +1,7 @@
 {
   "settlement": "tea_town",
   "size": "town",
-  "target": 42,
+  "target": 47,
   "character": "Steepside lives on its tea terraces: its Pokemon are Grass and Bug types that pick, water, dry, sew and sweeten, a tea-ghost or two in the cups, and garden life that has moved into the town as if it were one more terrace (a hive with a queen, tumbleweeds against a fence, a row of Exeggcute on a wall). Leaf, flower and orchard species only.",
   "authored_by": "town author A, 2026-10-05, by hand; positions measured from derived/towns/tea_town_plan.json, tea_town_placement.json, derived/plaza_centres/tea_town.json and tools/ground.py (rounded) through tools/ambient.py's Site; y in a situation is the standing y (ground + 1). No worker stands on the square",
   "workers": [
@@ -148,6 +148,8 @@
     {"id": "tea_front_chikorita", "species": "chikorita", "owner": "steepside_tea_front", "mode": "follow", "why": "and a Chikorita that follows him, sniffing the samples"}
   ],
   "placed": [
+    {"id": "tea_roof_volbeat", "species": "volbeat", "spot": "roof", "building": "tea_house_13", "why": "a Volbeat on a ridge of the lower lane, waiting for dusk to signal across the terraces (2026-10-06)"},
+    {"id": "tea_window_illumise", "species": "illumise", "spot": "window", "building": "tea_house_10", "why": "an Illumise in a window two houses away from the Volbeat, which is the point of it (2026-10-06)"},
     {"id": "tea_roof_hoppip", "species": "hoppip", "spot": "roof", "building": "tea_house_02", "why": "a Hoppip on the ridge, holding on against the wind"},
     {"id": "tea_gutter_sunkern", "species": "sunkern", "spot": "gutter", "building": "tea_house_05", "why": "a Sunkern in the gutter, as if it had seeded there"},
     {"id": "tea_window_gossifleur", "species": "gossifleur", "spot": "window", "building": "tea_house_04", "why": "a Gossifleur in the window box, mistaken for the flowers in it"},
@@ -175,13 +177,13 @@
     {
       "id": "tea_vespiquen_court",
       "title": "The queen holds court",
-      "story": "A Vespiquen has taken the garden behind the drying racks for her own and three Combee wait on her, while the household eats its lunch indoors.",
+      "story": "A Vespiquen has taken the garden behind the drying racks for her own and two Combee wait on her, while the household eats its lunch indoors.",
       "unique": false,
       "at": [2640, 114, 3530],
       "facing": "south",
       "members": [
         {"species": "vespiquen", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]},
-        {"species": "combee", "count": 3, "pose": "still", "offsets": [[2, 0, 1], [-2, 0, 1], [0, 0, 2]]}
+        {"species": "combee", "count": 2, "pose": "still", "offsets": [[2, 0, 1], [-2, 0, 1]]}
       ],
       "props": [{"block": "minecraft:bee_nest", "at": [0, 0, -2]}],
       "why": "the open garden east of the terrace road houses, between the seedling bed and the racks"
@@ -207,12 +209,51 @@
       "at": [2637, 114, 3712],
       "facing": "south",
       "members": [
-        {"species": "exeggcute", "count": 4, "pose": "still", "offsets": [[0, 0, 0], [3, 0, 0], [6, 0, 0], [9, 0, -1]]}
+        {"species": "exeggcute", "count": 3, "pose": "still", "offsets": [[0, 0, 0], [3, 0, 0], [6, 0, 0]]}
       ],
       "props": [],
       "why": "beside the lake lane, west of tea_house_01"
+    },
+    {
+      "id": "tea_poltchageist_chimney",
+      "title": "The smokehouse's second brew",
+      "story": "The smokehouse chimney has started smelling of green tea. A Poltchageist has moved into the chimney pot and steeps itself in the smoke, and the butcher's hams have never tasted better.",
+      "unique": true,
+      "at": [2609, 121, 3518],
+      "facing": "west",
+      "members": [
+        {"species": "poltchageist", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]}
+      ],
+      "props": [],
+      "why": "on the cobblestone-wall chimney pot of tea_house_04 (butcher_shop_1), the column's top block at y120 read from the template as placed, so the feet are y121; something in a chimney, and a tea ghost in the tea town"
+    },
+    {
+      "id": "tea_slowpoke_leaf_bins",
+      "title": "Asleep in the leaf bins",
+      "story": "The pickers tip the morning's leaves into the bins behind the end house. A Slowpoke climbed in on Tuesday and has slept in the leaves ever since; the pickers say it improves the flavour.",
+      "unique": true,
+      "at": [2617, 115, 3612],
+      "facing": "west",
+      "members": [
+        {"species": "slowpoke", "count": 1, "pose": "sleep", "offsets": [[0, 0, 0]]}
+      ],
+      "props": [{"block": "minecraft:composter[level=7]", "at": [0, 0, -2]}, {"block": "minecraft:composter[level=7]", "at": [0, 0, 2]}, {"block": "minecraft:hay_block", "at": [2, 0, 0]}],
+      "why": "the open ground east of tea_house_09 (small_house_2, back wall x2612), feet y115 from the plan; Slowpoke is one of rules.sleeps_by_day's day sleepers, so it may be posed asleep"
+    },
+    {
+      "id": "tea_cherubi_ripening",
+      "title": "Ripe by Sunday",
+      "story": "Three Cherubi have sat in the herb patch behind the corner house for so long that the gardener has started waiting for them to ripen. She says Sunday.",
+      "unique": true,
+      "at": [2581, 116, 3533],
+      "facing": "east",
+      "members": [
+        {"species": "cherubi", "count": 3, "pose": "still", "offsets": [[0, 0, 0], [-1, 0, -2], [0, 0, 3]]}
+      ],
+      "props": [{"block": "minecraft:composter", "at": [-1, 0, 1]}, {"block": "minecraft:melon", "at": [1, 0, -2]}],
+      "why": "the back (west) of tea_house_07 (medium_house_2, which faces east and keeps its own little wheat plot), feet y116 from the plan"
     }
   ],
-  "counts": {"working": 11, "pets": 5, "placed": 9, "situations": 17, "total": 42},
+  "counts": {"working": 11, "pets": 5, "placed": 11, "situations": 20, "total": 47},
   "notes": "Supersedes idle.towns.tea_town (Slowpoke, Snorlax and Purrloin gone). tea_oddish_picker is kept with its id and record. Eleven workers (two carriers) is over data/ambient.json rules.per_town."
 }

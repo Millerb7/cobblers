@@ -231,17 +231,17 @@
       "why": "beside northlight_sled_rack (7260, 1583)"
     },
     {
-      "id": "northlight_frigibax_chimney",
+      "id": "northlight_froslass_chimney",
       "title": "The fire that will not catch",
-      "story": "The house by the sledging hill has not got its fire going all week. A Frigibax is sitting in the chimney pot, and every time the smoke comes up it breathes on it.",
+      "story": "The house by the sledging hill has not got its fire going all week. A Froslass is sitting in the chimney pot, and every time the smoke comes up she breathes on it.",
       "unique": true,
       "at": [7213, 127, 1583],
       "facing": "south",
       "members": [
-        {"species": "frigibax", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]}
+        {"species": "froslass", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]}
       ],
       "props": [],
-      "why": "on the cobblestone-wall chimney pot of northlight_house_14 (snowy_small_house_6), the column's top block at y126 read from the template as placed, so the feet are y127; something in a chimney, and the cold one"
+      "why": "on the cobblestone-wall chimney pot of northlight_house_14 (snowy_small_house_6), the column's top block at y126 read from the template as placed, so the feet are y127; something in a chimney, and the cold one (a Frigibax first, 2026-10-06: it is in the ATM client-model subset)"
     },
     {
       "id": "northlight_cetoddle_ice_queue",

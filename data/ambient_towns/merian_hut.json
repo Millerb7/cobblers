@@ -32,8 +32,7 @@
   ],
   "pets": [],
   "placed": [
-    {"id": "merian_roof_spearow", "species": "spearow", "spot": "roof", "building": "merian_stable", "why": "a Spearow on the stable roof, shouting at the wind"},
-    {"id": "merian_step_bunnelby", "species": "bunnelby", "spot": "step", "building": "merian_woodshed", "why": "a Bunnelby on the woodshed step, ears out, digging a hole nobody asked for"}
+    {"id": "merian_roof_spearow", "species": "spearow", "spot": "roof", "building": "merian_stable", "why": "a Spearow on the stable roof, shouting at the wind"}
   ],
   "situations": [
     {
@@ -48,8 +47,21 @@
       ],
       "props": [{"block": "minecraft:oak_fence", "at": [0, 0, 0]}, {"block": "minecraft:oak_fence", "at": [1, 0, 0]}, {"block": "minecraft:oak_fence", "at": [2, 0, 0]}, {"block": "minecraft:white_carpet", "at": [1, 1, 0]}],
       "why": "the yard between the stable and the Pokemon Center"
+    },
+    {
+      "id": "merian_bunnelby_cellar",
+      "title": "The cellar nobody asked for",
+      "story": "A Bunnelby has dug a cellar beside the woodshed that the hut keeper did not ask for. He has filled it in twice; the second time it piled the dirt neatly at his door and started again.",
+      "unique": true,
+      "at": [2844, 108, 1028],
+      "facing": "west",
+      "members": [
+        {"species": "bunnelby", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]}
+      ],
+      "props": [{"block": "minecraft:coarse_dirt", "at": [1, 0, 0]}, {"block": "minecraft:coarse_dirt", "at": [0, 0, 1]}],
+      "why": "converted 2026-10-06 from the placed Bunnelby on the woodshed step (an outpost holds three situation Pokemon only if a placed one gives its place): the open ground south-east of merian_woodshed (footprint to x2842, z1024), feet y108 from the plan, off the path at x2837-2841"
     }
   ],
-  "counts": {"working": 2, "pets": 0, "placed": 2, "situations": 2, "total": 6},
+  "counts": {"working": 2, "pets": 0, "placed": 1, "situations": 3, "total": 6},
   "notes": "No pets: no NPC the apply places stands here (data/npc_seats.json, data/markets.json), so the town has none rather than an invented owner; 0 of 6 is inside the composition's tolerance (one Pokemon). Supersedes idle.towns.merian_hut (the dozing Snorlax and the Swinub are gone)."
 }

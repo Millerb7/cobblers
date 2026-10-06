@@ -266,13 +266,13 @@
       "title": "Sitting for the sculptor",
       "story": "Behind the masons' house a Tyrunt and an Archen have held the same pose for an hour beside a block with half a head carved into it. The mason went for lunch and nobody has told them.",
       "unique": true,
-      "at": [1736, 139, 3566],
+      "at": [1737, 139, 3566],
       "facing": "east",
       "members": [
         {"species": "tyrunt", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]},
         {"species": "archen", "count": 1, "pose": "still", "offsets": [[0, 0, -3]]}
       ],
-      "props": [{"block": "minecraft:chiseled_stone_bricks", "at": [1, 0, -2]}, {"block": "minecraft:stone_bricks", "at": [1, 1, -2]}],
+      "props": [{"block": "minecraft:chiseled_stone_bricks", "at": [-1, 0, -2]}, {"block": "minecraft:stone_bricks", "at": [-1, 1, -2]}],
       "why": "the open ground west of gym1_house_07 (masons_house_1, footprint x1740-1747), feet y139 from the plan; two fossil revivals from the rescue side of town modelling for the stone side of it"
     },
     {

@@ -1,7 +1,7 @@
 {
   "settlement": "gym3_town",
   "size": "town",
-  "target": 44,
+  "target": 43,
   "character": "Highwire is the storm-relay town cut into the Tri Peaks' deepslate: every Pokemon here is Electric or a mountain bird, and the town lives on charge. Its workers keep the lamps, the relay, the siren and the telegraph running; the rest gather where the current is (round the pylon, in a crate of look-alike Poke Balls, on the lightning rods).",
   "authored_by": "town author A, 2026-10-05, by hand; positions measured from derived/towns/gym3_town_plan.json, gym3_town_placement.json, derived/plaza_centres/gym3_town.json and tools/ground.py (rounded) through tools/ambient.py's Site; the square is not cut (plaza y 174, ground 174), so Site's y is the paving's; y in a situation is the standing y",
   "workers": [
@@ -150,7 +150,6 @@
     {"id": "highwire_spares_morpeko", "species": "morpeko", "owner": "highwire_relay_spares", "mode": "wait", "why": "the spares seller's Morpeko waits by the stall and turns hungry, and then angry, by lunchtime"}
   ],
   "placed": [
-    {"id": "highwire_roof_tranquill", "species": "tranquill", "spot": "roof", "building": "gym3_house_04", "why": "a Tranquill on the ridge of the house by the square, a relay crew's messenger bird waiting for the next note to carry up the line (2026-10-06)"},
     {"id": "highwire_roof_emolga", "species": "emolga", "spot": "roof", "building": "gym3_house_01", "why": "an Emolga on the ridge, ready to glide down to the lane"},
     {"id": "highwire_window_plusle", "species": "plusle", "spot": "window", "building": "gym3_house_02", "why": "a Plusle in the corner house's window"},
     {"id": "highwire_window_minun", "species": "minun", "spot": "window", "building": "gym3_pokecenter", "why": "and a Minun in the Pokemon Center's window across the lane, the two of them cheering each other"},
@@ -249,17 +248,17 @@
     {
       "id": "highwire_staravia_vane",
       "title": "The weathervane",
-      "story": "A Staravia lives on the very top of the Mart and turns to face every change of wind. The relay crew read the weather off it before they climb, and they say it has never been wrong.",
+      "story": "A Staravia lives on the ridge of the Pokemon Center and turns to face every change of wind. The relay crew read the weather off it before they climb, and they say it has never been wrong.",
       "unique": true,
-      "at": [1678, 190, 1447],
+      "at": [1706, 185, 1385],
       "facing": "west",
       "members": [
         {"species": "staravia", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]}
       ],
       "props": [],
-      "why": "the highest column of gym3_pokemart (the template's top block at y189, read as placed), so the feet are y190; a mountain bird above the storm town"
+      "why": "the ridge of gym3_pokecenter (the template's top row at y184 along z1385, read as placed), so the feet are y185; on the north side, because the Mart top already has the Pikipek and the middle of town is at the in-view limit; a mountain bird above the storm town"
     }
   ],
-  "counts": {"working": 11, "pets": 5, "placed": 10, "situations": 18, "total": 44},
+  "counts": {"working": 11, "pets": 5, "placed": 9, "situations": 18, "total": 43},
   "notes": "Supersedes idle.towns.gym3_town (Snorlax and Purrloin gone; the Galvantula's web corner kept and given its Joltik). surge_magnemite_lamp is kept with its id and record unchanged. Eleven workers (three carriers) is over data/ambient.json rules.per_town (2 carriers, 4 stationary)."
 }

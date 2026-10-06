@@ -1,7 +1,7 @@
 {
   "settlement": "gorge_hamlet",
   "size": "hamlet",
-  "target": 14,
+  "target": 15,
   "character": "Bridgekeep is three buildings and a walled courtyard in the dunes: its Pokemon are desert ones that keep the sand out, carry the water in and watch the trail, and the dunes' own life sits just outside the wall taking tolls. Desert species only; desert houses have no glass, so nothing sits in a window.",
   "authored_by": "town author A, 2026-10-05, by hand; positions measured from derived/towns/gorge_hamlet_plan.json, gorge_hamlet_placement.json and tools/ground.py (rounded) through tools/ambient.py's Site; the courtyard is not cut (plaza y 113, ground 113); y in a situation is the standing y",
   "workers": [
@@ -68,12 +68,12 @@
     {
       "id": "bridgekeep_trapinch_tolls",
       "title": "The toll pits",
-      "story": "Three Trapinch have dug their pits beside the trail just outside the gate and wait at the bottom of each with their jaws open. Travellers have started leaving them a berry to pass.",
+      "story": "Two Trapinch have dug their pits beside the trail just outside the gate and wait at the bottom of each with their jaws open. Travellers have started leaving them a berry to pass.",
       "unique": true,
       "at": [6782, 114, 4363],
       "facing": "south",
       "members": [
-        {"species": "trapinch", "count": 3, "pose": "still", "offsets": [[0, 0, 0], [4, 0, 0], [8, 0, 0]]}
+        {"species": "trapinch", "count": 2, "pose": "still", "offsets": [[0, 0, 0], [4, 0, 0]]}
       ],
       "props": [],
       "why": "beside the dune trail west of the courtyard gate, off the trail itself"
@@ -90,8 +90,34 @@
       ],
       "props": [],
       "why": "east of the elder's seat (6813, 4370), not beside it: the morning shade. Re-sited 2026-10-06 from west of her (6809, 4372), where the square built since crosses the courtyard with desire lines; the open ground east of her is the nearest that takes both"
+    },
+    {
+      "id": "bridgekeep_palossand_door",
+      "title": "Somebody's sandcastle",
+      "story": "A sandcastle appeared overnight beside the south house's door, big enough to sit in. The family's child says she built it. She did not build it, and it has started taking her spade.",
+      "unique": true,
+      "at": [6821, 114, 4386],
+      "facing": "north",
+      "members": [
+        {"species": "palossand", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]}
+      ],
+      "props": [{"block": "minecraft:sand", "at": [1, 0, -1]}, {"block": "minecraft:sandstone_wall", "at": [1, 0, 1]}],
+      "why": "east of gorge_house_south's door (6817, 4387), off the lane that runs past it at z4383-4384; feet y114 from the plan"
+    },
+    {
+      "id": "bridgekeep_cacturne_corner",
+      "title": "Nobody planted it",
+      "story": "There is a cactus at the corner of the Pokemon Center that nobody planted. At noon it is a cactus. At dusk it is three blocks nearer the door, and the nurse locks up early.",
+      "unique": true,
+      "at": [6829, 114, 4354],
+      "facing": "west",
+      "members": [
+        {"species": "cacturne", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]}
+      ],
+      "props": [],
+      "why": "the open ground south-east of gorge_hamlet_pokecenter (footprint to x6821, z4347), feet y114 from the plan"
     }
   ],
-  "counts": {"working": 4, "pets": 2, "placed": 3, "situations": 5, "total": 14},
+  "counts": {"working": 4, "pets": 2, "placed": 3, "situations": 6, "total": 15},
   "notes": "Supersedes idle.towns.gorge_hamlet (Slowpoke and Purrloin gone; Cacnea, Hippopotas, Maractus, Sandile and Trapinch kept, now each with something to do). Four workers (one carrier) is inside data/ambient.json rules.per_town."
 }
