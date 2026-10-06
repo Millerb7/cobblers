@@ -1274,6 +1274,12 @@ def main(argv=None):
         if not a.world:
             ap.error("verify needs --world <stopped world copy>")
         return verify(a.world)
+    if not a.source_root:
+        # OVERNIGHT_REVIEW N16: without --source-root this crashed on Path(None); every tool resolves the root here
+        import terrain
+        a.source_root = terrain.env_source_root()
+        if not a.source_root:
+            ap.error("no source root: pass --source-root, or set COBBLERS_SOURCE_ROOT (.claude/settings.json env)")
     plan = build(a.source_root, a.server_dir)
     order, border, nfx = write(plan)
     for k, v in sorted(plan.counts.items()):
