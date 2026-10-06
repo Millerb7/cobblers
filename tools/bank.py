@@ -130,9 +130,11 @@ def sell_points(server_dir=None):
         skipped.append("the %d data/traders.json shopkeepers' template shops (no --server-dir)" % len(tdoc["traders"]))
     else:
         import traders
+        tiers = traders.mart_tiers(tdoc, traders.load_towns())       # a Mart's shelf widens with its town's tier
         for t in tdoc["traders"]:
             _, data = traders.entity_of(server_dir, t["template"])      # SystemExit when a template is missing
-            shop, _, _ = traders.apply_stock_policy(data, policy, stock=t.get("stock"), rid=t["id"])
+            shop, _, _ = traders.apply_stock_policy(data, policy, stock=t.get("stock"), rid=t["id"],
+                                                    tier=tiers.get(t["id"], 0))
             pts.extend(shop_points("trader %s" % t["id"], shop.get("CobbleMerchantShop")))
     return pts, skipped
 
