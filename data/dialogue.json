@@ -3072,6 +3072,25 @@
           "why": "holding gym7_cleared with an earlier stage: carry_by_gym7_cleared_to_blaine_reveal_complete lifts the stage to blaine_reveal_complete, then the account opens"
         },
         {
+          "priority": 7,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.giovanni_cursor",
+                "value": "giovanni_repeat"
+              },
+              {
+                "kind": "flag",
+                "flag": "gym8_cleared"
+              }
+            ]
+          },
+          "node": "giovanni_way",
+          "why": "the owner, 2026-10-06: 'A player who beats gym 8 needs to know where to go.' An Earth Badge holder who has heard the account gets the way to the Rift surveyor instead of the bare repeat; giovanni_way's next is the repeat, so nothing is lost (docs/world-building/POST_GYM8_DIRECTION.md)"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "always"
@@ -3134,13 +3153,21 @@
           "kind": "line",
           "speaker": "southern watch officer",
           "text": "After the badge, follow the Rift's south-west arm to its fork, then the trunk toward the head. The final operation lies above the containment cradle.",
-          "next": "giovanni_repeat",
+          "next": "giovanni_way",
           "actions_after_acknowledge": [
             {
               "kind": "quest_transition",
               "transition": "complete_giovanni_reveal"
             }
           ]
+        },
+        {
+          "id": "giovanni_way",
+          "kind": "line",
+          "speaker": "southern watch officer",
+          "text": "With the Earth Badge, take the Victory Road signs north out of Holdfast. The Rift surveyor at the trailhead gate, about a thousand blocks on, has the rest of the route.",
+          "placeholder": "Claude, 2026-10-06 (the direction builder, docs/world-building/POST_GYM8_DIRECTION.md): way-finding line for Codex to replace. giovanni_007 names the Rift's arms but not the person who opens the Rift road; this names him and where he stands. Measured: the surveyor's seat (3552, 112, 5334) is 1,082 blocks north of Giovanni's spawner (3565, 120, 6416), and the Victory Road posts from Holdfast's exit run past him",
+          "next": "giovanni_repeat"
         },
         {
           "id": "giovanni_repeat",
@@ -3223,6 +3250,58 @@
           "why": "holding gym8_cleared with an earlier stage: carry_by_gym8_cleared_to_giovanni_reveal_complete lifts the stage to giovanni_reveal_complete, then the account opens"
         },
         {
+          "priority": 7,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_equals",
+                "field": "quest.main_worldshift_reveal.rift_cursor",
+                "value": "rift_repeat"
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "rift_crisis_pending",
+                  "deep_handoff_received",
+                  "hq_crossed",
+                  "anchor_shutdown",
+                  "cradle_open"
+                ]
+              }
+            ]
+          },
+          "node": "rift_way_2",
+          "why": "the owner, 2026-10-06: a player who comes back to the surveyor mid-crisis hears where the HQ and the cradle are and what Victory Road is (rift_way_2, rift_way_3, then the repeat), not only the repeat (docs/world-building/POST_GYM8_DIRECTION.md)"
+        },
+        {
+          "priority": 8,
+          "when": {
+            "kind": "all",
+            "conditions": [
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.rift_cursor",
+                "values": [
+                  "rift_repeat",
+                  "rift_after"
+                ]
+              },
+              {
+                "kind": "progression_in",
+                "field": "quest.main_worldshift_reveal.stage",
+                "values": [
+                  "rift_released",
+                  "league_recognized"
+                ]
+              }
+            ]
+          },
+          "node": "rift_after",
+          "why": "after the release the repeat ('release Hoopa before approaching the League') is stale: say the League is open and where Victory Road climbs to it"
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "always"
@@ -3285,13 +3364,45 @@
           "kind": "line",
           "speaker": "Rift surveyor",
           "text": "The world will not reset when this ends. Pallet, the missing settlement, and every stranded refugee will still be here.",
-          "next": "rift_repeat",
+          "next": "rift_way_1",
           "actions_after_acknowledge": [
             {
               "kind": "quest_transition",
               "transition": "record_rift_crisis_pending"
             }
           ]
+        },
+        {
+          "id": "rift_way_1",
+          "kind": "line",
+          "speaker": "Rift surveyor",
+          "text": "The road is the Rift floor: down the south-west arm to the fork, then up the trunk to the Deep, the great sink at its head. The Sink Gate stair on its south-east lip takes you down to the city's top ring.",
+          "placeholder": "Claude, 2026-10-06 (the direction builder, docs/world-building/POST_GYM8_DIRECTION.md): way-finding, for Codex to replace. rift_002 names the arms; nothing named the Deep or the way down into it. Measured: the Victory Road line (data/routes.json) runs the south-west arm, the fork, the trunk, and reaches the Sink Gate's exit (3695, 3394) at 25 blocks; the gate is a stair from the lip (y82) to ring 0 (y66), bearing 146 (data/deep_city.json sink_gate, derived/deep_city/plan.json)",
+          "next": "rift_way_2"
+        },
+        {
+          "id": "rift_way_2",
+          "kind": "line",
+          "speaker": "Rift surveyor",
+          "text": "The Compact's headquarters is the black tower on the top ring's west side. The guard at its iron door answers to my word. Hoopa's containment cradle lies beneath it.",
+          "placeholder": "Claude, 2026-10-06 (the direction builder): CRITICAL_PATH_WALK_2 item 6, 'nothing points to the HQ'. Measured: the HQ door (3443, 67, 3282) and its guard (3444, 67, 3283) are on ring 0 (tread y66), west of the pit's centre; the cradle (3357, 12, 3306) is under the HQ (data/relic_underground.json). Nia's line nia_007 uses the same words for the tower, so the two agree",
+          "next": "rift_way_3"
+        },
+        {
+          "id": "rift_way_3",
+          "kind": "line",
+          "speaker": "Rift surveyor",
+          "text": "Victory Road's caves climb north from the Deep's floor to the League. The League's gate will not open for you until Hoopa is free.",
+          "placeholder": "Claude, 2026-10-06 (the direction builder): what Victory Road is and in what order. Measured: the caves' mouth is at (3560, 1, 3064) under the Deep's north face and their exit ravine opens onto the League's apron at (3656, 89, 2486) (data/vr_caves.json); z5 admits only rift_crisis_resolved (data/rift_zones.json). Whether the surface walk to G5 should also be a way is the owner's open question (CRITICAL_PATH_WALK_2 item 3); this line names neither as the only one",
+          "next": "rift_repeat"
+        },
+        {
+          "id": "rift_after",
+          "kind": "line",
+          "speaker": "Rift surveyor",
+          "text": "Hoopa is free, and the League will open for you. Victory Road's caves climb to it from the Deep's floor, under the north face.",
+          "placeholder": "Claude, 2026-10-06 (the direction builder): after the release the surveyor's repeat still said 'release Hoopa before approaching the League'; this is what an Earth Badge holder who comes back to him hears instead",
+          "next": "rift_after"
         },
         {
           "id": "rift_repeat",
@@ -11875,7 +11986,8 @@
               "league_recognized"
             ]
           },
-          "node": "released_repeat"
+          "node": "release_way",
+          "why": "2026-10-06 (docs/world-building/POST_GYM8_DIRECTION.md): was released_repeat; a player who talks to the binder again after the release hears where to go (release_way), then the repeat"
         },
         {
           "priority": 30,
@@ -12010,6 +12122,14 @@
           "kind": "line",
           "speaker": "hoopa",
           "text": "Hoopa!",
+          "next": "release_way"
+        },
+        {
+          "id": "release_way",
+          "kind": "line",
+          "speaker": "binder",
+          "text": "It is done. Go back up the stair to the top ring. Victory Road's caves climb north from the Deep's floor to the League, and the League's gate will open for you now.",
+          "placeholder": "Claude, 2026-10-06 (the direction builder, docs/world-building/POST_GYM8_DIRECTION.md), for Codex to replace: after the release nothing said where the game goes next. Measured: the caves' mouth is at (3560, 1, 3064) under the Deep's north face (data/vr_caves.json mouth), and z5 admits a rift_crisis_resolved holder on entry (tools/rift_zones.py qualify on entry). The flag's own reward also offers the League's waypoint (data/progression.json rift_crisis_resolved offers_marker)",
           "next": "released_repeat"
         },
         {
