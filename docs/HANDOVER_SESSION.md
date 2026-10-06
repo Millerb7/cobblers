@@ -28,6 +28,23 @@ A cold session reads CLAUDE.md, `docs/STATE.md`, this file, `docs/MORNING_REPORT
 4. The leader question: one Challenge-aware leader instead of two (swap the spawner's `TrainerIds` by the nearest
    player's mode, like the route trainers' swap, itself unproven E7), or the second spawner only while a Challenge
    player is near. The owner has not chosen.
+6. **One leader per gym** (the owner, 2026-10-07: "i saw two brock and a brock outside the gym, remove excess
+   stuff"). This answers item 4's question: one visible leader. Recommended: swap the spawner's `TrainerIds` by the
+   nearest player's mode; test it on staging first.
+7. **The Brock OUTSIDE gym 1** is not explained. With no player near, the world holds only the two juniors (rctmod
+   trainers) and no `cobblemon:npc` within 150 of Brock's spawner (1832, 155, 3696); our packs place exactly two
+   spawners there (Normal (1832, 155, 3696), Challenge (1830, 155, 3696)). Candidates: a donor template's own spawner
+   ("Our list is not the world"), or a spawner-spawned Brock that walked out. Look with a player near.
+8. **At least 3 juniors per gym, some gyms more** (today 2/2/2/2/3/3/3/4): gyms 1-4 need one more each, plus more
+   in some later gyms; same builder + `gym_trainers_audit` path as the 21.
+9. **Double battles: supported.** rctmod trainer files take `"battleFormat": "GEN_9_DOUBLES"` (read from
+   `rctmod-fabric-1.21.1-0.19.0-beta.jar`: 50 bundled trainers use it, e.g. `boss_giovanni_0045.json`); rctapi also
+   has `GEN_9_TRIPLES`; Cobblemon 1.8.0's own PvP request GUI offers doubles and triples. None of our trainers uses it;
+   not seen in game in this pack.
+10. **The owner's character on staging is WIPED** (2026-10-07, at their request): the 19 per-player files of
+   `b8e115d8-...` moved to `C:/Users/wnd/Documents/cobblers-staging/player-wipe-2026-10-07/` (restore = move them
+   back with the server stopped), scores reset. Their next join is a fresh player: Oak's lab scene and the mode choice
+   get their first in-game test.
 5. Waiting on the owner: the source of "THE NURSE: 30 minutes", "237 ambient across 26 settlements" (the world holds
    530 idle in 22) and "the four P2s"; none is in the repository. The sapling hint: N32 measured 6 tree-only species,
    not 13.
