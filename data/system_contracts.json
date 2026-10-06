@@ -424,6 +424,7 @@
       ],
       "tools": {
         "arena_dome_audit.py": "checker: the built cobblers_arena_dome functions (Heaven's Arena's dome), forbidden blocks against data/spawn_blocks.json",
+        "bank.py": "checker: refuses a bank buy line for an item whose block a spawn condition names (data/spawn_blocks.json), unless the line is in_place: the bank would pay players to strip spawn blocks out of the world. It places nothing (review N1, accounted 2026-10-06)",
         "markets.py": "checker: refuses a counter or stall line whose item places a block a spawn condition names (data/spawn_blocks.json)",
         "plaza_centre.py": "checker: refuses spawn-condition blocks in the town squares it builds (R13); its built pack is checked by town_squares_audit.py",
         "town_squares_audit.py": "checker: the built plaza_centres functions and the stalls' goods, against data/spawn_blocks.json",
