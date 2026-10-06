@@ -117,7 +117,8 @@ MUTATIONS = {
     # an unset cursor enters past the offer (the third node of the conversation, data untouched)
     "fresh_skips_offer": (
         ('target = "(%s == 0 ? %s : %s)" % (c, lit(self.initial), c)',
-         'target = "(%s == 0 ? %s : %s)" % (c, lit(self.conv["nodes"][2]["id"]), c)'),
+         # (min: a one-node conversation -- the lab's starter actors, 2026-10-06 -- must still compile)
+         'target = "(%s == 0 ? %s : %s)" % (c, lit(self.conv["nodes"][min(2, len(self.conv["nodes"]) - 1)]["id"]), c)'),
         {"P1:write_before_offer", "P1:write_without_starter"}),
     # a second opener of the screen, in the starter_chosen callback
     "callback_opens_screen": (
@@ -231,7 +232,7 @@ def test_a_second_screen_opener_in_another_pack_is_caught(tmp_path):
 
 
 @pytest.mark.parametrize("edit,check", [
-    (lambda c: c.update(allowStarterOnJoin=False), "P4:allow_on_join"),
+    (lambda c: c.update(allowStarterOnJoin=True), "P4:allow_on_join"),
     (lambda c: c["starters"][0]["pokemon"].append("bulbasaur level=5 aspect=cobblers_starter_1"), "P4:five_entries"),
     (lambda c: c["starters"][0]["pokemon"].__setitem__(0, "cosmog level=5"), "P4:five_entries"),
 ])

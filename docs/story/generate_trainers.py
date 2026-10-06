@@ -21,6 +21,17 @@ RULES_PATH = ROOT / "docs" / "story" / "TRAINER_RULES.json"
 ROUTES_PATH = ROOT / "data" / "routes.json"
 OUTPUT_PATH = ROOT / "data" / "trainers.json"
 AI_KEYS = {"moveBias", "switchBias", "statusMoveBias", "itemBias", "maxSelectMargin"}
+# A Challenge team is installed under its own rctmod id, <id>_challenge (tools/challenge_mode.py,
+# docs/mechanics/OAK_AND_CHALLENGE.md), and rctmod refuses to spawn a second trainer of the same IDENTITY within
+# uniqueTrainerRadius of the first (TrainerSpawner.isUnique, docs/research/RCT_PER_PLAYER_MODE.md section 2). Both
+# leaders stand in one gym, so the Challenge payload carries an identity of its own.
+CHALLENGE_SUFFIX = "_challenge"
+RUNTIME_MODE_SELECTION = (
+    "per player: Oak records the choice once (quest.main_worldshift_reveal.trainer_mode) and puts a Challenge "
+    "player in rctmod series cobblers_challenge; each record's modes.challenge.rct is installed as "
+    "<rctmod id>_challenge by tools/challenge_mode.py (docs/mechanics/OAK_AND_CHALLENGE.md); top-level team and "
+    "rct mirror normal"
+)
 
 
 def load_json(path: Path):
@@ -65,7 +76,7 @@ def validate_pokemon(pokemon, context):
 
 def make_rct(trainer, rules):
     payload = {
-        "identity": trainer["id"],
+        "identity": trainer.get("identity", trainer["id"]),
         "name": {"literal": trainer["name"]},
         "battleFormat": trainer.get("battle_format", "GEN_9_SINGLES"),
         "battleRules": {
@@ -112,6 +123,7 @@ def build_boss_mode(slot, mode_name, rules):
     ai_profile = mode.get("ai_profile", slot["ai_profile"])
     source = {
         "id": slot["id"],
+        "identity": slot["id"] + (CHALLENGE_SUFFIX if mode_name == "challenge" else ""),
         "name": slot["name"],
         "ai_profile": ai_profile,
         "battle_format": mode.get("battle_format", slot.get("battle_format", "GEN_9_SINGLES")),
@@ -158,7 +170,9 @@ def build_bosses(rules):
         normal = build_boss_mode(slot, "normal", rules)
         challenge = build_boss_mode(slot, "challenge", rules)
         if challenge is None:
+            # an Elite Four or Champion slot with no Challenge members: the same team, under its own identity
             challenge = deepcopy(normal)
+            challenge["rct"]["identity"] = slot["id"] + CHALLENGE_SUFFIX
         entry.update(
             {
                 "ace_level": slot["ace_level"],
@@ -307,6 +321,7 @@ def build_route_trainers(rules, routes_doc, route_orders=None):
             }
             challenge_source = {
                 "id": trainer_id,
+                "identity": trainer_id + CHALLENGE_SUFFIX,
                 "name": placement["name"],
                 "ai_profile": challenge_ai,
                 "team": challenge_team,
@@ -398,7 +413,7 @@ def build_document(rules, routes):
             "placement_status": "proposal_only",
             "dialogue_ids": "campaign metadata; RCT sidecars require a future compiler",
             "difficulty_modes": ["normal", "challenge"],
-            "runtime_mode_selection": "not implemented; top-level team and rct mirror normal",
+            "runtime_mode_selection": RUNTIME_MODE_SELECTION,
         },
         "trainers": bosses + route_trainers,
     }
@@ -445,7 +460,7 @@ def main():
         expected["generation_contract"].update(
             {
                 "difficulty_modes": ["normal", "challenge"],
-                "runtime_mode_selection": "not implemented; top-level team and rct mirror normal",
+                "runtime_mode_selection": RUNTIME_MODE_SELECTION,
                 "authored_boss_rosters": sum(
                     trainer.get("class") in {"gym_leader", "elite_four", "champion"}
                     and trainer.get("status") != "held"

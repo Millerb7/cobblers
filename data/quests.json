@@ -1452,6 +1452,94 @@
       ],
       "transitions": [
         {
+          "id": "greet_in_lab",
+          "why": "Oak's lab scene (data/scenes.json oak_lab zone lab_floor, docs/mechanics/OAK_AND_CHALLENGE.md): the first time a player who has not been sent off walks into the lab, Oak's conversation opens by itself; once, then he is clicked like anyone else",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.oak_greeted",
+              "value": false
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.stage",
+              "value": "not_started"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.oak_greeted",
+              "value": true
+            },
+            {
+              "kind": "open_dialogue",
+              "conversation": "dlg_main_pallet_oak"
+            }
+          ]
+        },
+        {
+          "id": "record_trainer_mode_normal",
+          "why": "Oak's League rules, Standard (docs/mechanics/OAK_AND_CHALLENGE.md): written once; the player stays in rctmod's initial series, kanto, so no command runs",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.trainer_mode",
+              "value": "unset"
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.trainer_mode",
+              "value": "normal"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.pallet_oak_cursor",
+              "value": "oak_mode_recorded_normal"
+            }
+          ]
+        },
+        {
+          "id": "record_trainer_mode_challenge",
+          "why": "Oak's League rules, Full-Team (docs/mechanics/OAK_AND_CHALLENGE.md): written once, because rctmod's `player set series` clears the player's rctmod progress on every call; refused to a player who already holds the Boulder Badge, whose progress it would wipe. The tag lets the route trainers' swap find a Challenge player by selector",
+          "conditions": [
+            {
+              "kind": "progression_equals",
+              "field": "quest.main_worldshift_reveal.trainer_mode",
+              "value": "unset"
+            },
+            {
+              "kind": "not",
+              "condition": {
+                "kind": "flag",
+                "flag": "gym1_cleared"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.trainer_mode",
+              "value": "challenge"
+            },
+            {
+              "kind": "rctmod_series",
+              "series": "cobblers_challenge"
+            },
+            {
+              "kind": "tag_player",
+              "tag": "cobblers_mode_challenge"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.main_worldshift_reveal.pallet_oak_cursor",
+              "value": "oak_mode_recorded_challenge"
+            }
+          ]
+        },
+        {
           "id": "record_oak_sendoff",
           "conditions": [
             {
@@ -2406,6 +2494,9 @@
       "progression_field_refs": [
         "quest.main_worldshift_reveal.stage",
         "quest.main_worldshift_reveal.pallet_oak_cursor",
+        "quest.main_worldshift_reveal.trainer_mode",
+        "quest.main_worldshift_reveal.oak_greeted",
+        "quest.main_worldshift_reveal.lab_starter_cursor",
         "quest.main_worldshift_reveal.pallet_mina_cursor",
         "quest.main_worldshift_reveal.pallet_maren_cursor",
         "quest.main_worldshift_reveal.brock_cursor",

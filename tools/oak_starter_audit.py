@@ -33,8 +33,9 @@ WHAT IS CHECKED
       whose species is a macro is flagged when its pack names a starter species anywhere).
   P3  "Not yet" (the offer's other options) closes with the offer still standing: the next talk shows the offer again;
       a player carrying the tag, at any cursor value, never sees the offer or the page that leads to it.
-  P4  modpack/config/cobblemon/starters.json: allowStarterOnJoin TRUE (the owner, 2026-10-05: "native chooser ... keep
-      the menu on first join"; Oak's offer stays as a second door), exactly the five aspect=cobblers_starter_1
+  P4  modpack/config/cobblemon/starters.json: allowStarterOnJoin FALSE (the owner, 2026-10-06: "Oak offering the
+      starters in the lab as a scene rather than a menu on join"; it was true from 2026-10-05), exactly the five
+      aspect=cobblers_starter_1
       entries; no pack under build/datapacks (nor modpack/) ships data/<ns>/starters/.
   P5  REPORTED, not failed: quests, flags and rewards the data makes available before Oak that assume a party (a
       battle, an encounter, a party check); FAILED: an RCT initial level cap below the starters' level.
@@ -428,6 +429,11 @@ class Model:
             if r is not None and obj in w["objectives"]:
                 w["scores"][obj] = r
             return r
+        # a progression flag probe (compile_dialogue's `flag` condition; first in Oak's dialogue 2026-10-06, the League
+        # rules choice). The explored players hold no flag, so it never passes (integrator edit to the model only)
+        m = re.fullmatch(r"if entity @s\[advancements=\{cobblers:flag/[a-z0-9_]+=true\}\] (.*)", rest)
+        if m:
+            return None
         self.unknown.append("execute as @s " + rest)
         return None
 
@@ -441,6 +447,12 @@ class Model:
         m = re.fullmatch(r"tag @s (add|remove) (\S+)", cmd)
         if m:
             (w["tags"].add if m.group(1) == "add" else w["tags"].discard)(m.group(2))
+            return 1
+        # Oak's League rules choice (2026-10-06, integrator edit to the model only): rctmod's series command and the
+        # mode tag move neither the starter state nor the main stage, so they are modelled as successes that touch
+        # nothing this audit checks. Their own guarantees are docs/mechanics/OAK_AND_CHALLENGE.md's audit list
+        m = re.fullmatch(r"rctmod player set series ([a-z0-9_]+) @s", cmd)
+        if m:
             return 1
         if re.fullmatch(r"%s @s" % SCREEN, cmd):
             # RELAYED semantics (see OPEN): a player who has chosen gets nothing and 0; anyone else is unlocked and 1
@@ -638,9 +650,11 @@ class Audit:
     # ------------------------------------------------------------------ P4
     def check_config(self):
         cfg = read_json(self.config)
-        if cfg.get("allowStarterOnJoin") is not True:
-            self.fail("P4", "allow_on_join", "%s allowStarterOnJoin is %r, not true: a new player gets no chooser on join"
-                      % (self.config, cfg.get("allowStarterOnJoin")))
+        # the owner, 2026-10-06: "Oak offering the starters in the lab as a scene rather than a menu on join" -- the
+        # rule is back to a93f059's: locked on join, Oak's offer is the one door (integrator edit, the owner's call)
+        if cfg.get("allowStarterOnJoin") is not False:
+            self.fail("P4", "allow_on_join", "%s allowStarterOnJoin is %r, not false: the chooser opens on join instead "
+                      "of in Oak's lab" % (self.config, cfg.get("allowStarterOnJoin")))
         entries = [p for c in cfg.get("starters") or [] for p in c.get("pokemon") or []]
         species, bad = set(), []
         for e in entries:

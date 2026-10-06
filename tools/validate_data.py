@@ -765,7 +765,7 @@ SCENE_ID = re.compile(r"[a-z0-9_]+")
 # effect kinds only a dialogue may run (tools/scenes_pack.py zone())
 SCENE_ITEM_CONDITIONS = {"held_item", "inventory_contains"}
 SCENE_ITEM_EFFECTS = {"consume_held_item", "give_item", "grant_reward_once"}
-SCENE_EFFECT_KINDS = {"particles", "sequence", "push"}
+SCENE_EFFECT_KINDS = {"particles", "sequence", "push", "actionbar"}   # actionbar: Oak's lab, 2026-10-06
 
 
 def _box(b):
