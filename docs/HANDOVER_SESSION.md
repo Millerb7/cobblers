@@ -28,9 +28,15 @@ A cold session reads CLAUDE.md, `docs/STATE.md`, this file, `docs/MORNING_REPORT
 4. The leader question: one Challenge-aware leader instead of two (swap the spawner's `TrainerIds` by the nearest
    player's mode, like the route trainers' swap, itself unproven E7), or the second spawner only while a Challenge
    player is near. The owner has not chosen.
-6. **One leader per gym** (the owner, 2026-10-07: "i saw two brock and a brock outside the gym, remove excess
-   stuff"). This answers item 4's question: one visible leader. Recommended: swap the spawner's `TrainerIds` by the
-   nearest player's mode; test it on staging first.
+6. **One leader per gym: DECIDED** (the owner, 2026-10-07: "remove excess stuff", then "yeah update it" to the
+   plan below). All 13 bosses (8 leaders, the Elite Four, the Champion) stand as ONE person: keep the Normal spawner,
+   drop the second (Challenge) spawner, and swap the spawner's `TrainerIds` and the standing trainer's `TrainerId` to
+   `<id>_challenge` while the nearest player within reach carries `cobblers_mode_challenge`, back otherwise, never in
+   a battle (the route trainers' swap, `data/challenge_mode.json` routes_why, RCT_PER_PLAYER_MODE.md R-b, unproven
+   E7). Order: prove it on Brock in staging first (a Normal and a Challenge player each get the right team; the
+   wrong-series refusal holds for a mixed group), then roll to the other 12. Update `data/challenge_mode.json`
+   `owner_decision_to_confirm`, `tools/challenge_mode.py` `spawner_files`, the Challenge audit (group P checks the
+   second spawners today) and the review entry N77.
 7. **The Brock OUTSIDE gym 1** is not explained. With no player near, the world holds only the two juniors (rctmod
    trainers) and no `cobblemon:npc` within 150 of Brock's spawner (1832, 155, 3696); our packs place exactly two
    spawners there (Normal (1832, 155, 3696), Challenge (1830, 155, 3696)). Candidates: a donor template's own spawner
