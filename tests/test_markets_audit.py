@@ -450,7 +450,12 @@ def test_the_curve_and_the_floor_bite(M):
 
 
 # ================================================================================================ with the jars
-JAR_CANDIDATES = [os.environ.get("COBBLERS_JAR_DIR") or "", "C:/Users/wnd/Documents/github/cobblers-server/mods"]
+# Never the live server's own mods folder (OVERNIGHT_REVIEW N56: the old default read cobblers-server/mods without the
+# coordination lock while the owner's server ran). The fallback is the offline snapshot taken while it was stopped.
+JAR_CANDIDATES = [os.environ.get("COBBLERS_JAR_DIR") or "",
+                  "C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/mods"]
+assert not any(Path(d).resolve() == Path("C:/Users/wnd/Documents/github/cobblers-server/mods").resolve()
+               for d in JAR_CANDIDATES[1:]), "the fallback must not be the live server's mods folder"
 
 
 @pytest.fixture(scope="module")
