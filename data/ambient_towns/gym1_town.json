@@ -1,7 +1,7 @@
 {
   "settlement": "gym1_town",
   "size": "town",
-  "target": 44,
+  "target": 48,
   "character": "Stoneford is a masons' town that also runs the plateau's rescues: its Pokemon cut, haul, dig and burn lime for the wall going up south of the square, and the rest are stone that moved in, Rock types pretending to be something else (a tree, a pile, a roadblock). No water, no fish, no ghosts: nothing here is shared with the lake or the coast.",
   "authored_by": "town author A, 2026-10-05, by hand; positions measured from derived/towns/gym1_town_plan.json, gym1_town_placement.json, derived/plaza_centres/gym1_town.json and tools/ground.py (rounded) through tools/ambient.py's Site; y in a situation is the standing y (ground or paved street + 1)",
   "workers": [
@@ -175,6 +175,7 @@
     {"id": "stoneford_walltop_bronzor", "species": "bronzor", "spot": "wall_top", "building": "gym1_house_14", "why": "a Bronzor on the garden wall of the tall house, catching the light"},
     {"id": "stoneford_walltop_klawf", "species": "klawf", "spot": "wall_top", "building": "gym1_house_07", "why": "a Klawf on the masons' house wall, upside down, the way it hangs off cliffs"},
     {"id": "stoneford_gutter_minior", "species": "minior", "spot": "gutter", "building": "gym1_house_11", "why": "a Minior in the armourer's gutter; it fell there and nobody has worked out how to get it down"},
+    {"id": "stoneford_step_pawniard", "species": "pawniard", "spot": "step", "building": "gym1_house_08", "why": "a Pawniard on the toolsmith's step, running its own blades along the whetstone every time the door opens (2026-10-06)"},
     {"id": "stoneford_porch_dwebble", "species": "dwebble", "spot": "porch", "building": "gym1_house_17", "why": "a Dwebble on the tannery porch wearing one of the yard's offcuts as its shell"}
   ],
   "situations": [
@@ -197,13 +198,13 @@
       "id": "stoneford_rhyhorn_roadblock",
       "allow": ["street"],
       "title": "The Rhyhorn across the west lane",
-      "story": "A Rhyhorn has lain down across the west lane and will not move. Three Lillipup bark at it from a safe distance while a cart of crates waits behind it.",
+      "story": "A Rhyhorn has lain down across the west lane and will not move. Two Lillipup bark at it from a safe distance while a cart of crates waits behind it.",
       "unique": false,
       "at": [1700, 139, 3596],
       "facing": "east",
       "members": [
         {"species": "rhyhorn", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]},
-        {"species": "lillipup", "count": 3, "pose": "still", "offsets": [[4, 1, -3], [-3, 0, 3], [5, 0, 3]]}
+        {"species": "lillipup", "count": 2, "pose": "still", "offsets": [[4, 1, -3], [-3, 0, 3]]}
       ],
       "props": [{"block": "minecraft:barrel", "at": [-4, 0, 0]}, {"block": "minecraft:barrel", "at": [-4, 0, 1]}],
       "why": "a street that is blocked, with the town's dogs as the audience"
@@ -246,8 +247,48 @@
       ],
       "props": [],
       "why": "beside brock_approach_yard_stone (1720, 3702), the first thing a player walking in from Pallet passes"
+    },
+    {
+      "id": "stoneford_klefki_chimney",
+      "title": "The armorer's keys",
+      "story": "The armorer's forge has drawn badly all week and his shop keys went missing on Monday. A Klefki is sitting in the chimney pot with the whole ring, and jingles them every time the fire is lit.",
+      "unique": true,
+      "at": [1743, 146, 3533],
+      "facing": "east",
+      "members": [
+        {"species": "klefki", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]}
+      ],
+      "props": [],
+      "why": "on the cobblestone-wall chimney pot of gym1_house_11 (armorer_house_1), the column's top block at y145 read from the template as placed, so the feet are y146; something in a chimney, and the only key thief in any town"
+    },
+    {
+      "id": "stoneford_sculptors_models",
+      "title": "Sitting for the sculptor",
+      "story": "Behind the masons' house a Tyrunt and an Archen have held the same pose for an hour beside a block with half a head carved into it. The mason went for lunch and nobody has told them.",
+      "unique": true,
+      "at": [1736, 139, 3566],
+      "facing": "east",
+      "members": [
+        {"species": "tyrunt", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]},
+        {"species": "archen", "count": 1, "pose": "still", "offsets": [[0, 0, -3]]}
+      ],
+      "props": [{"block": "minecraft:chiseled_stone_bricks", "at": [1, 0, -2]}, {"block": "minecraft:stone_bricks", "at": [1, 1, -2]}],
+      "why": "the open ground west of gym1_house_07 (masons_house_1, footprint x1740-1747), feet y139 from the plan; two fossil revivals from the rescue side of town modelling for the stone side of it"
+    },
+    {
+      "id": "stoneford_temple_claydol",
+      "title": "The temple's new statue",
+      "story": "A Claydol has stood on a plinth by the temple door since the spring fair. The priest has started leaving offerings at its feet, and it has started accepting them.",
+      "unique": true,
+      "at": [1694, 139, 3600],
+      "facing": "north",
+      "members": [
+        {"species": "claydol", "count": 1, "pose": "still", "offsets": [[0, 1, 0]]}
+      ],
+      "props": [{"block": "minecraft:chiseled_stone_bricks", "at": [0, 0, 0]}, {"block": "minecraft:flower_pot", "at": [-1, 0, -1]}],
+      "why": "the temple's (gym1_house_15) north-east corner by its door, off the street at z3597; feet y139 from the plan, the Claydol standing on its plinth prop; a Rock type pretending to be a statue, the town's habit"
     }
   ],
-  "counts": {"working": 12, "pets": 7, "placed": 8, "situations": 17, "total": 44},
+  "counts": {"working": 12, "pets": 7, "placed": 9, "situations": 20, "total": 48},
   "notes": "Supersedes idle.towns.gym1_town (the dozing Snorlax, Purrloin and Murkrow are gone) and the brock_* workers: the Graveler's route is kept; the bench's Machop is now a Sawk at the same station. Twelve workers (four carriers) is over data/ambient.json rules.per_town (2 carriers, 4 stationary): the composition's 30% working asks for more, and which rule wins is the generator's and the owner's call."
 }

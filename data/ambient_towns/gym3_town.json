@@ -1,7 +1,7 @@
 {
   "settlement": "gym3_town",
   "size": "town",
-  "target": 42,
+  "target": 44,
   "character": "Highwire is the storm-relay town cut into the Tri Peaks' deepslate: every Pokemon here is Electric or a mountain bird, and the town lives on charge. Its workers keep the lamps, the relay, the siren and the telegraph running; the rest gather where the current is (round the pylon, in a crate of look-alike Poke Balls, on the lightning rods).",
   "authored_by": "town author A, 2026-10-05, by hand; positions measured from derived/towns/gym3_town_plan.json, gym3_town_placement.json, derived/plaza_centres/gym3_town.json and tools/ground.py (rounded) through tools/ambient.py's Site; the square is not cut (plaza y 174, ground 174), so Site's y is the paving's; y in a situation is the standing y",
   "workers": [
@@ -150,6 +150,7 @@
     {"id": "highwire_spares_morpeko", "species": "morpeko", "owner": "highwire_relay_spares", "mode": "wait", "why": "the spares seller's Morpeko waits by the stall and turns hungry, and then angry, by lunchtime"}
   ],
   "placed": [
+    {"id": "highwire_roof_tranquill", "species": "tranquill", "spot": "roof", "building": "gym3_house_04", "why": "a Tranquill on the ridge of the house by the square, a relay crew's messenger bird waiting for the next note to carry up the line (2026-10-06)"},
     {"id": "highwire_roof_emolga", "species": "emolga", "spot": "roof", "building": "gym3_house_01", "why": "an Emolga on the ridge, ready to glide down to the lane"},
     {"id": "highwire_window_plusle", "species": "plusle", "spot": "window", "building": "gym3_house_02", "why": "a Plusle in the corner house's window"},
     {"id": "highwire_window_minun", "species": "minun", "spot": "window", "building": "gym3_pokecenter", "why": "and a Minun in the Pokemon Center's window across the lane, the two of them cheering each other"},
@@ -165,12 +166,12 @@
       "id": "highwire_mareep_ring",
       "allow": ["walkway"],
       "title": "Warming hands at the pylon",
-      "story": "Six Mareep stand in a ring round the relay pylon. Each time it hums, their wool puffs up a size, and on cold mornings the townsfolk come and stand among them to warm their hands.",
+      "story": "Four Mareep stand in a ring round the relay pylon. Each time it hums, their wool puffs up a size, and on cold mornings the townsfolk come and stand among them to warm their hands.",
       "unique": true,
       "at": [1689, 175, 1397],
       "facing": "north",
       "members": [
-        {"species": "mareep", "count": 6, "pose": "still", "offsets": [[-3, 0, 0], [3, 0, 0], [0, 0, -3], [0, 0, 3], [-2, 0, 2], [2, 0, 2]]}
+        {"species": "mareep", "count": 4, "pose": "still", "offsets": [[-3, 0, 0], [3, 0, 0], [0, 0, -3], [0, 0, 3]]}
       ],
       "props": [],
       "why": "the ring is the situation; gym3_relay_pylon's columns are x 1688-1690, z 1396-1398, so every member stands clear of them"
@@ -192,12 +193,12 @@
     {
       "id": "highwire_voltorb_crate",
       "title": "Not for sale",
-      "story": "The crate of Poke Balls outside the Mart has three in it that are Voltorb. The clerk has stopped selling from that crate.",
+      "story": "The crate of Poke Balls outside the Mart has two in it that are Voltorb. The clerk has stopped selling from that crate.",
       "unique": false,
       "at": [1667, 175, 1447],
       "facing": "east",
       "members": [
-        {"species": "voltorb", "count": 3, "pose": "still", "offsets": [[0, 1, 0], [1, 0, 0], [-1, 0, 1]]}
+        {"species": "voltorb", "count": 2, "pose": "still", "offsets": [[0, 1, 0], [1, 0, 0]]}
       ],
       "props": [{"block": "minecraft:barrel", "at": [0, 0, 0]}],
       "why": "against the Mart's west wall, outside its anchor (x 1674+)"
@@ -229,8 +230,36 @@
       ],
       "props": [],
       "why": "east of the Mart's anchor (x 1697), the town's quietest corner"
+    },
+    {
+      "id": "highwire_charge_queue",
+      "title": "Waiting to be charged",
+      "story": "Behind the Pokemon Center, where the healing machine's cable comes through the wall, an Elekid, a Blitzle and a Pincurchin wait in line. Whoever is at the front has its fur standing on end.",
+      "unique": true,
+      "at": [1704, 175, 1375],
+      "facing": "south",
+      "members": [
+        {"species": "elekid", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]},
+        {"species": "blitzle", "count": 1, "pose": "still", "offsets": [[-2, 0, 0]]},
+        {"species": "pincurchin", "count": 1, "pose": "still", "offsets": [[-4, 0, 0]]}
+      ],
+      "props": [{"block": "minecraft:lightning_rod", "at": [1, 0, 0]}],
+      "why": "the open ground north of gym3_pokecenter (back wall z1383), feet y175 from the plan, off the streets at the door; a queue of three different species, because what they queue for is the same"
+    },
+    {
+      "id": "highwire_staravia_vane",
+      "title": "The weathervane",
+      "story": "A Staravia lives on the very top of the Mart and turns to face every change of wind. The relay crew read the weather off it before they climb, and they say it has never been wrong.",
+      "unique": true,
+      "at": [1678, 190, 1447],
+      "facing": "west",
+      "members": [
+        {"species": "staravia", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]}
+      ],
+      "props": [],
+      "why": "the highest column of gym3_pokemart (the template's top block at y189, read as placed), so the feet are y190; a mountain bird above the storm town"
     }
   ],
-  "counts": {"working": 11, "pets": 5, "placed": 9, "situations": 17, "total": 42},
+  "counts": {"working": 11, "pets": 5, "placed": 10, "situations": 18, "total": 44},
   "notes": "Supersedes idle.towns.gym3_town (Snorlax and Purrloin gone; the Galvantula's web corner kept and given its Joltik). surge_magnemite_lamp is kept with its id and record unchanged. Eleven workers (three carriers) is over data/ambient.json rules.per_town (2 carriers, 4 stationary)."
 }
