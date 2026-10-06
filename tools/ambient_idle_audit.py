@@ -119,6 +119,9 @@ KNOWN: dict = {
     ('road', 'gym5_town_fenhide_moths_at_the_lamp_1'): "2026-10-06 overnight (N48): 'moths at the lamp' hover at a street lamp; AI-on followers, not standing on the road",
     ('road', 'gym5_town_fenhide_moths_at_the_lamp_2'): "2026-10-06 overnight (N48): 'moths at the lamp' hover at a street lamp; AI-on followers, not standing on the road",
     ('road', 'gym5_town_fenhide_moths_at_the_lamp_3'): "2026-10-06 overnight (N48): 'moths at the lamp' hover at a street lamp; AI-on followers, not standing on the road",
+    ('cap', 'gym1_town'): "2026-10-06/07 overnight (N89): the hand-written situations took Stoneford to 51 against 48; the owner picks which three go",
+    ('body', 'gorge_hamlet_bridgekeep_palossand_door_1'): "2026-10-06/07 overnight (N89): a sandcastle Pokemon's hitbox 0.15 into the sand block its own story stages it against",
+    ('footprint', 'tea_town_tea_poltchageist_chimney_1'): "2026-10-06/07 overnight (N89): staged inside its chimney pot (no open sky), so the roof exemption does not reach it; for the owner",
 }
 
 
@@ -799,6 +802,7 @@ def check_spots(idlers, m, SW, rest, town_data, beyond=None):
             P.append(("spot", i["id"], "%s at %s: y ends .5 but the block under it is %s, not a seat"
                       % (i["id"], i["at"], seat_state)))
         cls, detail = SW.classify(m, bx, fy, bz)
+        sky = cls == "outside"            # as replayed: floor under, two cells of room, open sky (before any exemption)
         if seat and cls == "pedestal":
             cls = "outside"               # a bench seat stands one above the paving round it: that is a bench
         if cls == "indoors" and i["kind"] == "still" and any(inside(bb, bx, bz) and housed(src, bx, bz)
@@ -834,7 +838,10 @@ def check_spots(idlers, m, SW, rest, town_data, beyond=None):
         if not td:
             continue
         for bid, rr in td["buildings"].items():
-            if inside((min(rr[0], rr[2]), min(rr[1], rr[3]), max(rr[0], rr[2]), max(rr[1], rr[3])), bx, bz)                     and role[0] != "placed":
+            # a situation member under open sky inside a footprint is ON that building (a chimney, a vane): the
+            # generator anchors situations on "a building's top" by design (tools/ambient_idle.py anchor_ground_ok),
+            # so only one that is indoors or in a block is inside it (2026-10-06, review N89)
+            if inside((min(rr[0], rr[2]), min(rr[1], rr[3]), max(rr[0], rr[2]), max(rr[1], rr[3])), bx, bz)                     and role[0] != "placed" and not (role[0] == "situation" and sky):
                 P.append(("footprint", i["id"], "%s at %s is inside building %s's footprint" % (i["id"], i["at"], bid)))
                 break
         if (bx, bz) in td["streets"] and not set(role[2]) & {"street", "walkway"}:
