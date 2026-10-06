@@ -12,7 +12,8 @@ A cold session reads CLAUDE.md, `docs/STATE.md`, this file, `docs/MORNING_REPORT
 - Next: open ONE draft PR for it against main (memory: one big PR per batch) after #119 merges, or stacked on #119.
 
 ## 2. Where it stopped
-- **Staging is UP for the owner's flight**: java pid 60608 (18:08, 2026-10-05 evening), started in the owner's Terminal panel tab "staging server" so it outlives the session, at **-Xmx12G** (16G failed: the owner's client and desktop apps leave ~16 GB of commit free; the JVM died with a native mmap OOM, hs_err_pid48636.log). 12G is enough to play, NOT for a /reload of the full pack stack. The lock is released.
+- **Staging is DOWN** (stopped cleanly at the owner's request, 18:45 2026-10-05); the lock is released. Start it for the owner in the Terminal panel at -Xmx12G (memory: start-staging-in-terminal-panel).
+- **NEXT BATCH (the owner, 2026-10-06): the merchant conversion and the fossil dig, built, merged, audited, NOT applied.** Before prepare: settle the dig's siting against data/far_south.json keep_out_box (the box was the 2026-10-04 one-night brief for the Mega field expansion; recommended: record that it binds nothing new and shrink its south edge to z5560), then wire `add("fossil_dig_audit", "fossil_dig_audit.py", *src)` after fossil_dig:build. Then prepare (~27 min), install, run R9FD, R17M (kills the Steve at each counter seat, summons the merchant), R17N (the foreman, Hollis Quarne (4168, 143, 5621)); read back: 15 counter merchants, no dialogue clerk within 2.5 of any seat, the 12 seams at the dig.
 - Everything built tonight is applied to staging and read back (the morning report's table). Nothing is half-done.
 - `derived/` and `build/` in this worktree are current for head 541a7d8 + the docs commits (prepare stamp
   58322c025cddfef1); any data/ or tools/ commit needs a full prepare (~27 min) before install. Run prepare with
