@@ -7508,6 +7508,190 @@
       },
       "status": "planned",
       "why": "written by tools/desert_wreck.py records --write from the plan (data/desert_wreck.json pool.blocks): inside its range every ambient spawn is drawn from the strand's pool instead of the pack's defaults (EXP-021; the vertical shape is EXP-033, unrun). Not in a block the pack writes, so R9E may run before or after R9DW. Inert until its chunk reloads: restart after R9E."
+    },
+    {
+      "id": "training_ground_gym1_block",
+      "place": "Stoneford Training Ground, 91 blocks from gym1_town's centre (data/training_grounds.json)",
+      "pool": "cobblers:training_ground_gym1",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1833,
+        "y": 139,
+        "z": 3618
+      },
+      "mimic": "minecraft:grass_block",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 6
+      },
+      "status": "planned",
+      "why": "written by tools/training_grounds.py records --write: the levelling catch-up for gym 1 (cap 20, docs/mechanics/LEVEL_CATCHUP.md). In the grass at the heightmap's ground, keeping up to 6 of its pool alive within 16 blocks; battle EXP from them stops at the cap (rctmod)."
+    },
+    {
+      "id": "training_ground_gym2_block",
+      "place": "Viltri Quay Training Ground, 75 blocks from gym2_town's centre (data/training_grounds.json)",
+      "pool": "cobblers:training_ground_gym2",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1543,
+        "y": 106,
+        "z": 2759
+      },
+      "mimic": "minecraft:grass_block",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 6
+      },
+      "status": "planned",
+      "why": "written by tools/training_grounds.py records --write: the levelling catch-up for gym 2 (cap 25, docs/mechanics/LEVEL_CATCHUP.md). In the grass at the heightmap's ground, keeping up to 6 of its pool alive within 16 blocks; battle EXP from them stops at the cap (rctmod)."
+    },
+    {
+      "id": "training_ground_gym3_block",
+      "place": "Highwire Training Ground, 105 blocks from gym3_town's centre (data/training_grounds.json)",
+      "pool": "cobblers:training_ground_gym3",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 1586,
+        "y": 140,
+        "z": 1436
+      },
+      "mimic": "minecraft:grass_block",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 6
+      },
+      "status": "planned",
+      "why": "written by tools/training_grounds.py records --write: the levelling catch-up for gym 3 (cap 30, docs/mechanics/LEVEL_CATCHUP.md). In the grass at the heightmap's ground, keeping up to 6 of its pool alive within 16 blocks; battle EXP from them stops at the cap (rctmod)."
+    },
+    {
+      "id": "training_ground_gym4_block",
+      "place": "Greenhollow Training Ground, 96 blocks from gym4_town's centre (data/training_grounds.json)",
+      "pool": "cobblers:training_ground_gym4",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4391,
+        "y": 110,
+        "z": 1505
+      },
+      "mimic": "minecraft:grass_block",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 6
+      },
+      "status": "planned",
+      "why": "written by tools/training_grounds.py records --write: the levelling catch-up for gym 4 (cap 35, docs/mechanics/LEVEL_CATCHUP.md). In the grass at the heightmap's ground, keeping up to 6 of its pool alive within 16 blocks; battle EXP from them stops at the cap (rctmod)."
+    },
+    {
+      "id": "training_ground_gym5_block",
+      "place": "Fenhide Training Ground, 70 blocks from gym5_town's centre (data/training_grounds.json)",
+      "pool": "cobblers:training_ground_gym5",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 4644,
+        "y": 118,
+        "z": 2516
+      },
+      "mimic": "minecraft:grass_block",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 6
+      },
+      "status": "planned",
+      "why": "written by tools/training_grounds.py records --write: the levelling catch-up for gym 5 (cap 40, docs/mechanics/LEVEL_CATCHUP.md). In the grass at the heightmap's ground, keeping up to 6 of its pool alive within 16 blocks; battle EXP from them stops at the cap (rctmod)."
+    },
+    {
+      "id": "training_ground_gym6_block",
+      "place": "Tilpey Cross Training Ground, 133 blocks from gym6_town's centre (data/training_grounds.json)",
+      "pool": "cobblers:training_ground_gym6",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6170,
+        "y": 97,
+        "z": 3268
+      },
+      "mimic": "minecraft:grass_block",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 6
+      },
+      "status": "planned",
+      "why": "written by tools/training_grounds.py records --write: the levelling catch-up for gym 6 (cap 45, docs/mechanics/LEVEL_CATCHUP.md). In the grass at the heightmap's ground, keeping up to 6 of its pool alive within 16 blocks; battle EXP from them stops at the cap (rctmod)."
+    },
+    {
+      "id": "training_ground_gym7_block",
+      "place": "Cinderlee Training Ground, 115 blocks from gym7_town's centre (data/training_grounds.json)",
+      "pool": "cobblers:training_ground_gym7",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 6108,
+        "y": 105,
+        "z": 4885
+      },
+      "mimic": "minecraft:grass_block",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 6
+      },
+      "status": "planned",
+      "why": "written by tools/training_grounds.py records --write: the levelling catch-up for gym 7 (cap 50, docs/mechanics/LEVEL_CATCHUP.md). In the grass at the heightmap's ground, keeping up to 6 of its pool alive within 16 blocks; battle EXP from them stops at the cap (rctmod)."
+    },
+    {
+      "id": "training_ground_gym8_block",
+      "place": "Holdfast Training Ground, 80 blocks from gym8_town's centre (data/training_grounds.json)",
+      "pool": "cobblers:training_ground_gym8",
+      "style": "activated",
+      "replace_spawns": false,
+      "position": {
+        "x": 3717,
+        "y": 111,
+        "z": 6535
+      },
+      "mimic": "minecraft:grass_block",
+      "activated": {
+        "spawn_range": 16,
+        "chance": 1.0,
+        "trigger": "TICK",
+        "cancel_range": -1,
+        "max_spawns_per_activation": 2,
+        "max_spawns": 6
+      },
+      "status": "planned",
+      "why": "written by tools/training_grounds.py records --write: the levelling catch-up for gym 8 (cap 55, docs/mechanics/LEVEL_CATCHUP.md). In the grass at the heightmap's ground, keeping up to 6 of its pool alive within 16 blocks; battle EXP from them stops at the cap (rctmod)."
     }
   ]
 }
