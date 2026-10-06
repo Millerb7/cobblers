@@ -338,13 +338,6 @@
       "why": "staring out of the cartographer's window at nothing, without blinking"
     },
     {
-      "id": "tilpey_ducklett_step",
-      "species": "ducklett",
-      "spot": "step",
-      "building": "gym6_house_18",
-      "why": "on the fisher cottage's step, dripping from the lake"
-    },
-    {
       "id": "tilpey_drowzee_porch",
       "species": "drowzee",
       "spot": "porch",
@@ -364,6 +357,14 @@
       "spot": "window",
       "building": "gym6_pokemart",
       "why": "in the Mart's window, tinkling every time a customer leaves"
+    },
+    {
+      "id": "tilpey_misdreavus_chimney",
+      "species": "misdreavus",
+      "spot": "roof",
+      "at": [6255, 103, 3420],
+      "facing": "west",
+      "why": "in the armourer's chimney pot (gym6_house_07's chimney stack, the cobblestone wall at (6255, 3420) whose top, at 102, stands two to four above the roof blocks round it: the template as placed). The family hear crying in the chimney every evening and have stopped lighting the fire; it is not crying, it is laughing. Written as a situation first; tools/ambient_idle_audit.py refuses any situation member over a building's footprint (placed are exempt), so it is placed, at an explicit `at`"
     }
   ],
   "situations": [
@@ -557,24 +558,6 @@
       "allow": ["street"]
     },
     {
-      "id": "tilpey_chimney_misdreavus",
-      "title": "The voice in the armourer's chimney",
-      "unique": false,
-      "story": "The armourer's family hear crying in their chimney every evening and have stopped lighting the fire. It is a Misdreavus sitting in the pot, and it is not crying: it is laughing at them.",
-      "at": [6255, 103, 3420],
-      "facing": "west",
-      "members": [
-        {
-          "species": "misdreavus",
-          "count": 1,
-          "pose": "still",
-          "offsets": [[0, 0, 0]]
-        }
-      ],
-      "props": [],
-      "why": "something in a chimney, in the town that listens: gym6_house_07's chimney stack is the cobblestone wall at (6255, 3420) whose top, at 102, stands two to four above the roof blocks round it (the template as placed, building top 103 feet y). The highest chimney in Tilpey Cross, seen from the east road"
-    },
-    {
       "id": "tilpey_spiritomb_stone",
       "title": "The memory stone with a face",
       "unique": false,
@@ -596,6 +579,24 @@
         }
       ],
       "why": "beside sabrina_memory_stone_5 at (6290, 3453), on the plan's y 96: a town that keeps memory stones gets the one Pokemon that is bound to a keystone. Someone has left it candles"
+    },
+    {
+      "id": "tilpey_gothorita_over_the_shoulder",
+      "title": "A page behind",
+      "unique": false,
+      "story": "Whoever stops to read at the records stall finds a Gothorita reading over their shoulder. It is always exactly one page behind, and it will not let you turn until it has finished.",
+      "at": [6153, 95, 3488],
+      "facing": "west",
+      "members": [
+        {
+          "species": "gothorita",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        }
+      ],
+      "props": [],
+      "why": "a city of readers: beside where a reader stands at sabrina_reading_stall (6150, 3492, facing north), three east of the stall's keeper and customer cells, on the plan's y 95"
     }
   ],
   "counts": {

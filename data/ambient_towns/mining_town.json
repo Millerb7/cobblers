@@ -657,9 +657,9 @@
     },
     {
       "id": "fossick_munchlax_snap_tins",
-      "title": "The snap tins under the shelf",
+      "title": "The snap tins on the shelf",
       "unique": false,
-      "story": "The miners leave their snap tins on the shelf by the adit. One goes missing every shift, and every shift the Munchlax under the shelf is a little rounder. Nobody has yet moved the shelf.",
+      "story": "The miners leave their snap tins on the shelf by the adit. One goes missing every shift, and every shift the Munchlax beside the shelf is a little rounder. Nobody has yet moved the shelf.",
       "at": [6729, 143, 5801],
       "facing": "west",
       "members": [
@@ -673,34 +673,30 @@
       "props": [
         {
           "block": "minecraft:spruce_planks",
-          "at": [-1, 0, 0]
+          "at": [-1, 0, 1]
         },
         {
           "block": "minecraft:spruce_planks",
-          "at": [1, 0, 0]
-        },
-        {
-          "block": "minecraft:spruce_planks",
-          "at": [-1, 1, 0]
-        },
-        {
-          "block": "minecraft:spruce_planks",
-          "at": [1, 1, 0]
+          "at": [1, 0, 1]
         },
         {
           "block": "minecraft:spruce_slab",
-          "at": [-1, 2, 0]
+          "at": [-1, 1, 1]
         },
         {
           "block": "minecraft:spruce_slab",
-          "at": [0, 2, 0]
+          "at": [0, 1, 1]
         },
         {
           "block": "minecraft:spruce_slab",
-          "at": [1, 2, 0]
+          "at": [1, 1, 1]
+        },
+        {
+          "block": "minecraft:barrel",
+          "at": [0, 0, 1]
         }
       ],
-      "why": "by the adit, three north of the canary's post (fossick_adit_canary at (6726, 5804)) on the plan's y 143: where miners would leave their food going underground. The shelf is two posts and a slab top with the Munchlax under it"
+      "why": "by the adit, three north of the canary's post (fossick_adit_canary at (6726, 5804)) on the plan's y 143: where miners would leave their food going underground. The shelf (two posts, a barrel of tins and a slab top) stands one south of the Munchlax, not over it: a top over it reads as a roof to tools/ambient_idle_audit.py"
     }
   ],
   "counts": {

@@ -524,7 +524,7 @@
       "title": "The queue for the antidote",
       "unique": false,
       "story": "Three wild Pokemon off the downs have learned that the Centre opens at seven and the nurse cures poison for nothing. They queue along the wall in the order they arrived, and the Linoone has been first every day this week.",
-      "at": [4620, 118, 2371],
+      "at": [4617, 118, 2371],
       "facing": "south",
       "members": [
         {
@@ -547,7 +547,7 @@
         }
       ],
       "props": [],
-      "why": "a poisoners' town has a Centre that treats poison more than anything else, and the downs' wild Pokemon have worked that out. The line stands along the Centre's west wall (x 4620, z 2367-2371, the plan's y 118) beside its doorway at (4621, 2373), not in front of it, so the way in stays open"
+      "why": "a poisoners' town has a Centre that treats poison more than anything else, and the downs' wild Pokemon have worked that out. The line stands two west of the Centre's footprint, out from under its eaves (x 4617, z 2367-2371, the plan's y 118; at x 4620 the idle audit found it indoors under the roof at y 122), north of its doorway at (4621, 2373) and not in front of it, so the way in stays open"
     },
     {
       "id": "fenhide_kecleon_target",
