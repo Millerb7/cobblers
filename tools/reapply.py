@@ -310,7 +310,7 @@ EXCLUDED = {
                               "Cemetery (tools/spectrier_cap.py); it writes no blocks",
     "cobblers_blackout": "self-driving: its own load and tick tags, an advancement and three Cobblemon callbacks run it; "
                          "it writes no blocks",
-    "cobblers_titles": "event functions (enter_place_*), fired on entering a place, not applied to the world",
+    "cobblers_titles": "event functions (enter_place_*, enter_zone_*) fired on entering a place or a Nuzlocke zone, and its own load and tick functions: self-driving, not applied to the world",
     "cobblers_trainers": "self-driving: each trainer's won function is an advancement reward rctmod fires for the winner, "
                          "and its tick cycle keeps each trainer home and refuses a rematch; the trainers themselves are "
                          "placed by R17 over RCON (summon_persistent), not by a function",
@@ -831,6 +831,7 @@ def prepare_jobs(a):
     # each line walks 5 -> 30 -> 45 through two forms to its native final, the screen offers exactly the five, the
     # 27 stay wild. Fail-closed; an unissued scroll is printed OPEN and does not stop prepare
     add("mythical_starters_audit", "mythical_starters_audit.py")
+    add("nuzlocke_zones", "nuzlocke_zones.py", "--check")
     add("location_titles", "location_titles.py")
     # the badge flags: one advancement per gym leader and the Champion, set by rctmod on a won battle
     add("progression_pack", "progression_pack.py")
