@@ -251,15 +251,30 @@
     {
       "id": "stoneford_klefki_chimney",
       "title": "The armorer's keys",
-      "story": "The armorer's forge has drawn badly all week and his shop keys went missing on Monday. A Klefki is sitting in the chimney pot with the whole ring, and jingles them every time the fire is lit.",
+      "story": "The armorer's forge has drawn badly all week and his shop keys went missing on Monday. A Nickit is curled in the chimney pot with the whole ring, and only comes down when the fire is lit.",
       "unique": true,
-      "at": [1743, 146, 3533],
+      "at": [
+        1743,
+        146,
+        3533
+      ],
       "facing": "east",
       "members": [
-        {"species": "klefki", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]}
+        {
+          "species": "nickit",
+          "count": 1,
+          "pose": "still",
+          "offsets": [
+            [
+              0,
+              0,
+              0
+            ]
+          ]
+        }
       ],
       "props": [],
-      "why": "on the cobblestone-wall chimney pot of gym1_house_11 (armorer_house_1), the column's top block at y145 read from the template as placed, so the feet are y146; something in a chimney, and the only key thief in any town"
+      "why": "on the cobblestone-wall chimney pot of gym1_house_11 (armorer_house_1), the column's top block at y145 read from the template as placed, so the feet are y146; something in a chimney; a Nickit, not Fossick's Klefki (orchestrator 2026-10-06: the two authors both wrote a lone key-Klefki)"
     },
     {
       "id": "stoneford_sculptors_models",
