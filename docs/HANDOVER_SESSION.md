@@ -20,6 +20,18 @@ A cold session reads CLAUDE.md, `docs/STATE.md`, this file, `docs/MORNING_REPORT
 - `reapply.py run` refuses unless max-tick-time is -1: stop, set -1, boot, run, stop, restore 60000, boot.
 - Nothing half-done. Merged agent branches: every `worktree-agent-*` of the night (juniors audit, economy audit).
 
+## 2b. The next job (the owner's answers, 2026-10-07; STATE "What is decided")
+1. Gate the finale behind badges (N8): no badgeless walk through the tellers to the HQ door.
+2. Early-reachable towns (Sunset West, Pacifidlog) keep late-tier Mart stock, priced out of reach early.
+3. Late-game items by DIRECT trade, no money: a vanilla villager with `Offers` (e.g. 4 netherite ingots for a Master
+   Ball). Experiment first: a summoned villager with a modded `sell` item, no restock or price drift, trades as set.
+4. The leader question: one Challenge-aware leader instead of two (swap the spawner's `TrainerIds` by the nearest
+   player's mode, like the route trainers' swap, itself unproven E7), or the second spawner only while a Challenge
+   player is near. The owner has not chosen.
+5. Waiting on the owner: the source of "THE NURSE: 30 minutes", "237 ambient across 26 settlements" (the world holds
+   530 idle in 22) and "the four P2s"; none is in the repository. The sapling hint: N32 measured 6 tree-only species,
+   not 13.
+
 ## 3. Waits on the owner
 The morning report's "Waiting on you": decisions N8, N39/N54, N64, N67/N93, N71, N74, N77, N82, N83, N89, the four
 item blockers, Kyogre Q1/Q8, summit loot, waystones, the two legendary rumour lines; and the in-game checks with
