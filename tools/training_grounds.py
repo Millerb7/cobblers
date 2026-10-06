@@ -151,6 +151,17 @@ def footprints():
         fp, unk = M.building_footprints(settlement, placements, templates)
         out += [tuple(v) + (k,) for k, v in sorted(fp.items())]
         unknown += unk
+        # and the town plan's lots and lamps (the independent audit, 2026-10-06: gym 8's first site stood 26-31 blocks
+        # from Holdfast's lamps and a lot, under building_clear_blocks): a town's furniture is part of the town
+        pp = ROOT / "derived" / "towns" / ("%s_plan.json" % settlement)
+        if pp.is_file():
+            plan = json.loads(pp.read_text(encoding="utf-8"))
+            for lot in plan.get("lots") or []:
+                x0, z0, x1, z1 = lot["rect"]
+                out.append((min(x0, x1), min(z0, z1), max(x0, x1), max(z0, z1), "%s lot %s" % (settlement, lot.get("id"))))
+            for lamp in plan.get("lamps") or []:
+                x, z = lamp["at"][0], lamp["at"][-1]
+                out.append((x, z, x, z, "%s lamp" % settlement))
     if unknown:
         raise SiteError("building sizes could not be read for %s (kits hydrated? the COBBLEVERSE pack and the vanilla jar "
                         "present?)" % unknown[:5])

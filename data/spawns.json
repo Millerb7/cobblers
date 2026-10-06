@@ -57516,7 +57516,7 @@
     {
       "id": "training_ground_gym8",
       "display_name": "Holdfast Training Ground",
-      "intended_location": "Holdfast Training Ground: one activated Habitat Block, training_ground_gym8_block in data/habitat_blocks.json, at (3717, 111, 6535), 80 blocks from gym8_town's centre and 76 from the nearest route path",
+      "intended_location": "Holdfast Training Ground: one activated Habitat Block, training_ground_gym8_block in data/habitat_blocks.json, at (3569, 113, 6519), 81 blocks from gym8_town's centre and 81 from the nearest route path",
       "mechanism": "habitat_block",
       "replace_spawns": false,
       "level_band": {

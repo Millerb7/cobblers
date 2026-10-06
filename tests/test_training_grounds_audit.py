@@ -30,7 +30,7 @@ DATA = ROOT / "data" / "training_grounds.json"
 # The defects the audit found on 2026-10-06 (gym 8's ground is 26.2 blocks from a lower_lane lamp and 31.1 from
 # lower_lane_lot_09 in derived/towns/gym8_town_plan.json, under the 32 docs/mechanics/LEVEL_CATCHUP.md section 7.4
 # asks). Fixing it, or a new failure, changes this set.
-KNOWN_FAILS = {("training_ground_gym8", "building_clearance")}
+KNOWN_FAILS = set()  # 2026-10-06: gym 8 re-sited clear of Holdfast's lots and lamps (tools/training_grounds.py footprints)
 
 
 # ------------------------------------------------------------------------------------------------ synthetic pieces

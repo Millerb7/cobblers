@@ -7672,14 +7672,14 @@
     },
     {
       "id": "training_ground_gym8_block",
-      "place": "Holdfast Training Ground, 80 blocks from gym8_town's centre (data/training_grounds.json)",
+      "place": "Holdfast Training Ground, 81 blocks from gym8_town's centre (data/training_grounds.json)",
       "pool": "cobblers:training_ground_gym8",
       "style": "activated",
       "replace_spawns": false,
       "position": {
-        "x": 3717,
-        "y": 111,
-        "z": 6535
+        "x": 3569,
+        "y": 113,
+        "z": 6519
       },
       "mimic": "minecraft:grass_block",
       "activated": {

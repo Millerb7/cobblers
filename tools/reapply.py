@@ -856,6 +856,8 @@ def prepare_jobs(a):
     # our wild spawns: the route and sub-region rosters from data/spawns.json (the suppression that makes them the
     # only thing spawning there is generated at install, against the server and world it will run on)
     add("compile_spawns", "compile_spawns.py")
+    # the training grounds' independent audit (2026-10-06), on the pools compile_spawns just wrote
+    add("training_grounds_audit", "training_grounds_audit.py", "--pools", "build/datapacks/cobblers_spawns/data/cobblers/habitat_pools")
     # ... then its independent habitat audit (the owner, 2026-10-04: "wrong-country spawns"): every compiled entry
     # judged against the species' own natural spawn data in the Cobblemon jar and the place's paint, never against
     # data/encounter_design.json. Fails closed on an unjudged misfit or a stale ruling
