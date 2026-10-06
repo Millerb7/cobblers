@@ -11,7 +11,7 @@ A cold session reads CLAUDE.md, `docs/STATE.md`, this file, `docs/MORNING_REPORT
 - Next: ONE draft PR for it against main (memory: one big PR per batch) after #119 merges, or stacked on #119.
 
 ## 2. Where it stopped
-- **Staging is UP for the owner** (terminal tab "staging (for the owner)", -Xmx12G, max-tick-time 60000; process 31996
+- **Staging is DOWN** (stopped cleanly at the owner's request, 2026-10-07 18:52; -Xmx12G, max-tick-time 60000; was process 31996
   at hand-over). **The lock is released.** Head `9caaf60` + this commit; re-read with `git fetch --prune`. Everything in the brief that was built is applied and read back
   from the world (the morning report's table: 33 of 33 probes, 22/22 NPCs, 26/26 traders, 530/532 idlers).
 - Snapshot before tonight's apply: `C:/Users/wnd/Documents/cobblers-staging/snapshot-2026-10-07-before-apply`.
