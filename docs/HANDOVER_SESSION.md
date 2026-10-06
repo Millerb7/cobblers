@@ -58,6 +58,32 @@ A cold session reads CLAUDE.md, `docs/STATE.md`, this file, `docs/MORNING_REPORT
    530 idle in 22) and "the four P2s"; none is in the repository. The sapling hint: N32 measured 6 tree-only species,
    not 13.
 
+## 2c. The fan-out the owner asked for ("start all the rest if possible", 2026-10-07): PROPOSED, cost not yet approved
+
+Estimates at the measured rates (builder ~4M, design/research ~0.6-1M, independent audit ~2M). Integration (prepare,
+install, the staging runs) stays in the main session, once per wave.
+
+**Wave A (about 30M): the approved builds and the designs that gate wave B.**
+| # | Unit | Agent | Est. |
+|---|---|---|---|
+| A1 | One leader per gym: swap on Brock, then the 13 (2b item 6) | minecraft-systems-dev + audit | 6M |
+| A2 | Juniors to 3+ per gym, more in some (2b item 8) | datapack-content-dev; `gym_trainers_audit` re-run | 4M |
+| A3 | Finale gated behind badges (N8) + early-town late-stock pricing (N67) | datapack-content-dev | 3M |
+| A4 | Direct trades: villager `Offers` experiment, then late-game barter lines | minecraft-systems-dev | 4M |
+| A5 | Lootr: ADR + the three staging experiments' setup (2b item 11) | content-architect (ADR) + main session (staging) | 1M |
+| A6 | Every item attainable, gated allowed: a route per item from the sweep's 11 rows | trainer-balance-designer (design) | 1M |
+| A7 | EV/IV training and "Marts as EV/IV hubs, items to traders": design | content-architect | 1M |
+| A8 | "Playing Minecraft is worth it": the grind loops (items, Pokemon) on top of the exchange | content-architect | 1M |
+| A9 | Campaign and world story outline (Challenge mode skips most of it) | content-architect | 1M |
+| A10 | Side islands: story reasons, a gym move, exploration-only ones | world-content-dev (design) | 1M |
+| A11 | Audits for A1-A4 | test-author x2 | 4M |
+
+**Wave B (about 25-35M), after the owner reads A6-A10:** the builds the designs call for, plus the known-broken list
+(U57 Mega dens, U58 crater flag, U47 Mega-field direction after Koga, U73 Victory Road's walk line, U71 z4 over the
+League, U54 HQ/arena cap, U61 coastal pools, U79 ferry migration).
+
+Parked by the owner: Mega carry, team tuning, Misty, doubles.
+
 ## 3. Waits on the owner
 The morning report's "Waiting on you": decisions N8, N39/N54, N64, N67/N93, N71, N74, N77, N82, N83, N89, the four
 item blockers, Kyogre Q1/Q8, summit loot, waystones, the two legendary rumour lines; and the in-game checks with
