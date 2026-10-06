@@ -16,7 +16,22 @@ list is `docs/OVERNIGHT_REVIEW_2026-10-06.md` (N60-N94 are tonight's).
 
 ## What is IN THE WORLD (staging), read back from the world
 
-RESULTS_TABLE
+Every row below was read from the world over RCON after a plain restart, by a probe built from `data/` (a block or
+an entity at the recorded coordinate), plus each system's own `verify`. **33 of 33 probes present; 22 of 22
+settlement NPCs; 26 of 26 traders; 530 of 532 idle Pokemon in 22 settlements** (two wandering Combees at the Pokemon farm not found, N94). Not seen by a
+player: none of it has been talked to, fought or caught in game.
+
+| What | Where (x, y, z) | Read back |
+|---|---|---|
+| Gym juniors, 21 | gym 1 town to gym 8 town, seats in `data/gym_junior_trainers.json` (moved tonight: gym 3 (1732, 175, 1424), gym 7 (6179, 120, 4991)) | 21 of 21 rctmod trainers at their seats |
+| Training grounds, 8 | gym 1 (1833, 139, 3618); gym 2 (1543, 106, 2759); gym 3 (1586, 140, 1436); gym 4 (4391, 110, 1505); gym 5 (4644, 118, 2516); gym 6 (6170, 97, 3268); gym 7 (6108, 105, 4885); gym 8 (3569, 113, 6519) | 8 of 8 Habitat Blocks |
+| Giratina's Distortion shrine | (4374, 66, 2862), altar (4397, 78, 2882) | its own check block |
+| Darkrai's Newmoon Island | (24, 141, 5582), shrine (73, 187, 5615) | its own check block |
+| The fossil dig and foreman | dig (4183, 5623); foreman (4168.5, 143, 5621.5) | a dig lantern; the foreman by `npc_seats verify` |
+| Elara Venn, re-seated | (3439, 67, 3306) | the NPC at her seat |
+| The merchants and Mart tiers | every town counter | `traders verify`: 26 traders, 0 problems (each Mart's shelf matches its tier) |
+| Situations and town Pokemon | 22 settlements | `ambient_idle verify`: 530 of 532; 2 wandering Combees missing |
+| Hoopa cradle, Oak's lab, Challenge spawners, Nuzlocke titles | installed packs | installed (`install_check` 0 problems); self-driving, not seen running |
 
 ## What was built tonight, by item
 
@@ -64,4 +79,16 @@ In-game checks (staging, with coordinates):
 - **The exchange**: sell netherite at the Bank, buy at Fossick's and Northlight's counters.
 - **Giratina** (4397, 78, 2882) and **Darkrai** (73, 187, 5615) with `champion_cleared`.
 
-PROCESS_NOTES
+## How the night went (process)
+
+- **Two seats were moved, the rest recorded.** Defects were fixed only where they blocked the apply: the two
+  junior seats (one would have locked gym 7), five roof perches the ambient audit misread (N89), the Oak audit
+  counting display actors as starters (N90), and the Challenge spawners' chunk marker (N91). Everything else is in
+  the review list.
+- **Deviation (N92):** the Mart tiers, the exchange and the bank reached prepare with no independent audit. I held
+  R17M out of the run and had them audited first (clean). But the bank is a config file and was already live from
+  the install and boot, about 40 minutes before its audit came back.
+- **My miss, caught by the world:** I left R14 (the town traders) out of the batch, so the Mart tiers were not on
+  the clerks. `traders verify` showed 11 Marts with the old shelves; R14 then put them right (26 of 26).
+- **build/ is stale** against the last two commits (`economy_audit` wired into prepare). The next install needs a
+  full prepare first.
