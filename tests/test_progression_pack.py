@@ -744,7 +744,11 @@ def test_real_no_emptied_leader_table_lacks_a_first_win_record_and_each_gives_a_
     assert emptied, "no rctmod table is emptied: the rule was never exercised"
     assert sorted(set(emptied) - set(trainers)) == []
     series = doc["upstream_neutralised"]["first_win_rewards"]["series"]
-    leaders = [t for f in doc["flags"] if f["set_by"]["kind"] == "trainer_defeat"
+    # Challenge mode (data/challenge_mode.json, 2026-10-06): a flag also lists <leader>_challenge, whose win grants
+    # the same flag and so the same one-time reward (progression_pack keys the reward on the flag, not the id). It
+    # is covered by its Normal leader's record; a second record would pay the reward twice
+    sfx = json.loads((REAL_DATA.parent / "challenge_mode.json").read_text(encoding="utf-8"))["id_suffix"]
+    leaders = [t[:-len(sfx)] if t.endswith(sfx) else t for f in doc["flags"] if f["set_by"]["kind"] == "trainer_defeat"
                for t in f["set_by"]["trainer_ids"][series]]
     assert sorted(set(leaders) - set(trainers)) == [], "a %s leader has no first-win reward" % series
     for tid, r in trainers.items():

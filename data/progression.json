@@ -58,7 +58,8 @@
         "kind": "trainer_defeat",
         "trainer_ids": {
           "kanto": [
-            "kanto_brock"
+            "kanto_brock",
+            "kanto_brock_challenge"
           ],
           "johto": [
             "johto_valerio"
@@ -94,7 +95,8 @@
         "kind": "trainer_defeat",
         "trainer_ids": {
           "kanto": [
-            "kanto_misty"
+            "kanto_misty",
+            "kanto_misty_challenge"
           ],
           "johto": [
             "johto_raffaello"
@@ -130,7 +132,8 @@
         "kind": "trainer_defeat",
         "trainer_ids": {
           "kanto": [
-            "kanto_ltsurge"
+            "kanto_ltsurge",
+            "kanto_ltsurge_challenge"
           ],
           "johto": [
             "johto_chiara"
@@ -166,7 +169,8 @@
         "kind": "trainer_defeat",
         "trainer_ids": {
           "kanto": [
-            "kanto_erika"
+            "kanto_erika",
+            "kanto_erika_challenge"
           ],
           "johto": [
             "johto_angelo"
@@ -202,7 +206,8 @@
         "kind": "trainer_defeat",
         "trainer_ids": {
           "kanto": [
-            "kanto_koga"
+            "kanto_koga",
+            "kanto_koga_challenge"
           ],
           "johto": [
             "johto_furio"
@@ -238,7 +243,8 @@
         "kind": "trainer_defeat",
         "trainer_ids": {
           "kanto": [
-            "kanto_sabrina"
+            "kanto_sabrina",
+            "kanto_sabrina_challenge"
           ],
           "johto": [
             "johto_jasmine"
@@ -274,7 +280,8 @@
         "kind": "trainer_defeat",
         "trainer_ids": {
           "kanto": [
-            "kanto_blaine"
+            "kanto_blaine",
+            "kanto_blaine_challenge"
           ],
           "johto": [
             "johto_alfredo"
@@ -310,7 +317,8 @@
         "kind": "trainer_defeat",
         "trainer_ids": {
           "kanto": [
-            "kanto_giovanni"
+            "kanto_giovanni",
+            "kanto_giovanni_challenge"
           ],
           "johto": [
             "johto_sandra"
@@ -346,7 +354,8 @@
         "kind": "trainer_defeat",
         "trainer_ids": {
           "kanto": [
-            "kanto_champion_blue"
+            "kanto_champion_blue",
+            "kanto_champion_blue_challenge"
           ],
           "johto": [
             "johto_champion_lance"

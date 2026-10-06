@@ -31,7 +31,7 @@
       "normal",
       "challenge"
     ],
-    "runtime_mode_selection": "not implemented; top-level team and rct mirror normal",
+    "runtime_mode_selection": "per player: Oak records the choice once (quest.main_worldshift_reveal.trainer_mode) and puts a Challenge player in rctmod series cobblers_challenge; each record's modes.challenge.rct is installed as <rctmod id>_challenge by tools/challenge_mode.py (docs/mechanics/OAK_AND_CHALLENGE.md); top-level team and rct mirror normal",
     "preserved_blocked_route_orders": []
   },
   "trainers": [
@@ -374,7 +374,7 @@
             }
           ],
           "rct": {
-            "identity": "gym_01_brock",
+            "identity": "gym_01_brock_challenge",
             "name": {
               "literal": "Brock"
             },
@@ -826,7 +826,7 @@
             }
           ],
           "rct": {
-            "identity": "gym_02_misty",
+            "identity": "gym_02_misty_challenge",
             "name": {
               "literal": "Misty"
             },
@@ -1332,7 +1332,7 @@
             }
           ],
           "rct": {
-            "identity": "gym_03_surge",
+            "identity": "gym_03_surge_challenge",
             "name": {
               "literal": "Lt. Surge"
             },
@@ -1837,7 +1837,7 @@
             }
           ],
           "rct": {
-            "identity": "gym_04_erika",
+            "identity": "gym_04_erika_challenge",
             "name": {
               "literal": "Erika"
             },
@@ -2394,7 +2394,7 @@
             }
           ],
           "rct": {
-            "identity": "gym_05_koga",
+            "identity": "gym_05_koga_challenge",
             "name": {
               "literal": "Koga"
             },
@@ -2951,7 +2951,7 @@
             }
           ],
           "rct": {
-            "identity": "gym_06_sabrina",
+            "identity": "gym_06_sabrina_challenge",
             "name": {
               "literal": "Sabrina"
             },
@@ -3507,7 +3507,7 @@
             }
           ],
           "rct": {
-            "identity": "gym_07_blaine",
+            "identity": "gym_07_blaine_challenge",
             "name": {
               "literal": "Blaine"
             },
@@ -4121,7 +4121,7 @@
             }
           ],
           "rct": {
-            "identity": "gym_08_giovanni",
+            "identity": "gym_08_giovanni_challenge",
             "name": {
               "literal": "Giovanni"
             },
@@ -4729,7 +4729,7 @@
             }
           ],
           "rct": {
-            "identity": "elite_01_lorelei",
+            "identity": "elite_01_lorelei_challenge",
             "name": {
               "literal": "Lorelei"
             },
@@ -5330,7 +5330,7 @@
             }
           ],
           "rct": {
-            "identity": "elite_02_bruno",
+            "identity": "elite_02_bruno_challenge",
             "name": {
               "literal": "Bruno"
             },
@@ -5931,7 +5931,7 @@
             }
           ],
           "rct": {
-            "identity": "elite_03_agatha",
+            "identity": "elite_03_agatha_challenge",
             "name": {
               "literal": "Agatha"
             },
@@ -6532,7 +6532,7 @@
             }
           ],
           "rct": {
-            "identity": "elite_04_lance",
+            "identity": "elite_04_lance_challenge",
             "name": {
               "literal": "Lance"
             },
@@ -7133,7 +7133,7 @@
             }
           ],
           "rct": {
-            "identity": "champion_blue",
+            "identity": "champion_blue_challenge",
             "name": {
               "literal": "Blue"
             },
@@ -7387,7 +7387,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_01_trainer_01",
+            "identity": "route_01_trainer_01_challenge",
             "name": {
               "literal": "Trail Novice"
             },
@@ -7611,7 +7611,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_01_trainer_02",
+            "identity": "route_01_trainer_02_challenge",
             "name": {
               "literal": "Meadow Apiarist"
             },
@@ -7848,7 +7848,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_01_trainer_03",
+            "identity": "route_01_trainer_03_challenge",
             "name": {
               "literal": "Vale Naturalist"
             },
@@ -8145,7 +8145,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_01_trainer_04",
+            "identity": "route_01_trainer_04_challenge",
             "name": {
               "literal": "Plateau Guide"
             },
@@ -8362,7 +8362,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_02_trainer_01",
+            "identity": "route_02_trainer_01_challenge",
             "name": {
               "literal": "Ravine Scrapper"
             },
@@ -8597,7 +8597,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_02_trainer_02",
+            "identity": "route_02_trainer_02_challenge",
             "name": {
               "literal": "Glowbug Keeper"
             },
@@ -8856,7 +8856,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_02_shore_trainer_01",
+            "identity": "route_02_shore_trainer_01_challenge",
             "name": {
               "literal": "North Bank Angler"
             },
@@ -9155,7 +9155,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_02_trainer_03",
+            "identity": "route_02_trainer_03_challenge",
             "name": {
               "literal": "Lake Surveyor"
             },
@@ -9367,7 +9367,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_03_trainer_01",
+            "identity": "route_03_trainer_01_challenge",
             "name": {
               "literal": "Climbing Novice"
             },
@@ -9596,7 +9596,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_03_trainer_02",
+            "identity": "route_03_trainer_02_challenge",
             "name": {
               "literal": "Grove Ranger"
             },
@@ -9834,7 +9834,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_03_trainer_03",
+            "identity": "route_03_trainer_03_challenge",
             "name": {
               "literal": "Groundkeeper"
             },
@@ -10091,7 +10091,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_03_trainer_04",
+            "identity": "route_03_trainer_04_challenge",
             "name": {
               "literal": "Signal Watcher"
             },
@@ -10399,7 +10399,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_03_trainer_05",
+            "identity": "route_03_trainer_05_challenge",
             "name": {
               "literal": "Vessu Ranger"
             },
@@ -10607,7 +10607,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_04_trainer_01",
+            "identity": "route_04_trainer_01_challenge",
             "name": {
               "literal": "Snowfield Novice"
             },
@@ -10832,7 +10832,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_04_trainer_02",
+            "identity": "route_04_trainer_02_challenge",
             "name": {
               "literal": "Alpine Ranger"
             },
@@ -11071,7 +11071,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_04_trainer_03",
+            "identity": "route_04_trainer_03_challenge",
             "name": {
               "literal": "Campfire Keeper"
             },
@@ -11370,7 +11370,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_04_trainer_04",
+            "identity": "route_04_trainer_04_challenge",
             "name": {
               "literal": "Ridge Scout"
             },
@@ -11629,7 +11629,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_04_trainer_05",
+            "identity": "route_04_trainer_05_challenge",
             "name": {
               "literal": "Bird Watcher"
             },
@@ -11928,7 +11928,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_04_trainer_06",
+            "identity": "route_04_trainer_06_challenge",
             "name": {
               "literal": "Naturalist"
             },
@@ -12137,7 +12137,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_05_trainer_01",
+            "identity": "route_05_trainer_01_challenge",
             "name": {
               "literal": "Field Hand"
             },
@@ -12362,7 +12362,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_05_trainer_02",
+            "identity": "route_05_trainer_02_challenge",
             "name": {
               "literal": "Field Medic"
             },
@@ -12596,7 +12596,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_05_trainer_03",
+            "identity": "route_05_trainer_03_challenge",
             "name": {
               "literal": "Mind Reader"
             },
@@ -12889,7 +12889,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_05_trainer_04",
+            "identity": "route_05_trainer_04_challenge",
             "name": {
               "literal": "Trail Warden"
             },
@@ -13097,7 +13097,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_06_trainer_01",
+            "identity": "route_06_trainer_01_challenge",
             "name": {
               "literal": "Marsh Novice"
             },
@@ -13327,7 +13327,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_06_trainer_02",
+            "identity": "route_06_trainer_02_challenge",
             "name": {
               "literal": "Marsh Ranger"
             },
@@ -13562,7 +13562,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_06_trainer_03",
+            "identity": "route_06_trainer_03_challenge",
             "name": {
               "literal": "Night Courier"
             },
@@ -13850,7 +13850,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_06_trainer_04",
+            "identity": "route_06_trainer_04_challenge",
             "name": {
               "literal": "Lake Pathfinder"
             },
@@ -14156,7 +14156,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_06_trainer_05",
+            "identity": "route_06_trainer_05_challenge",
             "name": {
               "literal": "Displaced Archivist"
             },
@@ -14363,7 +14363,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_07_trainer_01",
+            "identity": "route_07_trainer_01_challenge",
             "name": {
               "literal": "Expedition Novice"
             },
@@ -14593,7 +14593,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_07_trainer_02",
+            "identity": "route_07_trainer_02_challenge",
             "name": {
               "literal": "Bridge Hand"
             },
@@ -14828,7 +14828,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_07_trainer_03",
+            "identity": "route_07_trainer_03_challenge",
             "name": {
               "literal": "Shore Battler"
             },
@@ -15126,7 +15126,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_07_trainer_04",
+            "identity": "route_07_trainer_04_challenge",
             "name": {
               "literal": "Crater Geologist"
             },
@@ -15390,7 +15390,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_07_trainer_05",
+            "identity": "route_07_trainer_05_challenge",
             "name": {
               "literal": "Ash-Path Ranger"
             },
@@ -15690,7 +15690,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_07_trainer_06",
+            "identity": "route_07_trainer_06_challenge",
             "name": {
               "literal": "Prospector"
             },
@@ -15904,7 +15904,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_08_trainer_01",
+            "identity": "route_08_trainer_01_challenge",
             "name": {
               "literal": "Crater Novice"
             },
@@ -16135,7 +16135,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_08_trainer_02",
+            "identity": "route_08_trainer_02_challenge",
             "name": {
               "literal": "Crater Scout"
             },
@@ -16375,7 +16375,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_08_trainer_03",
+            "identity": "route_08_trainer_03_challenge",
             "name": {
               "literal": "Grassland Keeper"
             },
@@ -16669,7 +16669,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_08_trainer_04",
+            "identity": "route_08_trainer_04_challenge",
             "name": {
               "literal": "Sand Runner"
             },
@@ -16927,7 +16927,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_08_trainer_05",
+            "identity": "route_08_trainer_05_challenge",
             "name": {
               "literal": "Plateau Ranger"
             },
@@ -17221,7 +17221,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_08_trainer_06",
+            "identity": "route_08_trainer_06_challenge",
             "name": {
               "literal": "Rift Surveyor"
             },
@@ -17533,7 +17533,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_08_trainer_07",
+            "identity": "route_08_trainer_07_challenge",
             "name": {
               "literal": "Final Warden"
             },
@@ -17801,7 +17801,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_09_trainer_01",
+            "identity": "route_09_trainer_01_challenge",
             "name": {
               "literal": "League Applicant"
             },
@@ -18052,7 +18052,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_09_trainer_02",
+            "identity": "route_09_trainer_02_challenge",
             "name": {
               "literal": "Rift Hiker"
             },
@@ -18308,7 +18308,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_09_trainer_03",
+            "identity": "route_09_trainer_03_challenge",
             "name": {
               "literal": "Slagworks Keeper"
             },
@@ -18560,7 +18560,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_09_trainer_04",
+            "identity": "route_09_trainer_04_challenge",
             "name": {
               "literal": "Rift Cartographer"
             },
@@ -18816,7 +18816,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_09_trainer_05",
+            "identity": "route_09_trainer_05_challenge",
             "name": {
               "literal": "Trench Climber"
             },
@@ -19068,7 +19068,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_09_trainer_06",
+            "identity": "route_09_trainer_06_challenge",
             "name": {
               "literal": "Field Medic"
             },
@@ -19324,7 +19324,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_09_trainer_07",
+            "identity": "route_09_trainer_07_challenge",
             "name": {
               "literal": "Veteran Tactician"
             },
@@ -19576,7 +19576,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_09_trainer_08",
+            "identity": "route_09_trainer_08_challenge",
             "name": {
               "literal": "Cut Foreman"
             },
@@ -19827,7 +19827,7 @@
           ],
           "ai_profile": "route_challenge",
           "rct": {
-            "identity": "route_09_trainer_09",
+            "identity": "route_09_trainer_09_challenge",
             "name": {
               "literal": "League Veteran"
             },
@@ -20188,7 +20188,7 @@
           ],
           "ai_profile": "league_aggressive",
           "rct": {
-            "identity": "route_09_trainer_10",
+            "identity": "route_09_trainer_10_challenge",
             "name": {
               "literal": "League Examiner"
             },

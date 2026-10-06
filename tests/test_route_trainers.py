@@ -110,7 +110,9 @@ def test_the_defeat_advancement_is_defeat_count_for_this_trainer_at_count_1(file
     assert list(adv["criteria"]) == ["won"]
     crit = adv["criteria"]["won"]
     assert crit["trigger"] == "rctmod:defeat_count"
-    assert crit["conditions"] == {"trainer_ids": [tid], "count": 1}
+    # and its Challenge copy's (tools/challenge_mode.py, 2026-10-06): the one seat carries either id, and a win over
+    # either is this trainer's win
+    assert crit["conditions"] == {"trainer_ids": [tid, tid + "_challenge"], "count": 1}
     assert adv["rewards"]["function"] == "cobblers:trainers/won/%s" % tid
     assert "data/cobblers/function/trainers/won/%s.mcfunction" % tid in files
 
