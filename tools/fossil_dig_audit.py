@@ -940,9 +940,16 @@ def siting(R, cb, written, data_dir):
             bmin, bwho = d, b
     near["authored_box"] = (bmin, bwho)
     R.check("siting", bmin >= ac, "%.0f blocks from the box %s in data/%s (needs %d)" % (bmin, bwho[:4], bwho[4], ac))
+    # an owner's siting decision recorded in data/fossil_dig.json keep_out_overrides ({file, box, decided}) waives the
+    # overlap with exactly that box and nothing else; it is reported, never silently passed
+    waived = {(o["file"], tuple(o["box"])) for o in (jload(data_dir / "fossil_dig.json").get("keep_out_overrides") or [])}
     for kb, f in keep_outs(data_dir):
-        R.check("siting", float(np.min(_rect_d(C, kb))) > 0, "the dig overlaps the keep-out box %s declared in data/%s"
-                % (list(kb), f))
+        inside = float(np.min(_rect_d(C, kb))) <= 0
+        if inside and (f, tuple(kb)) in waived:
+            print("WAIVED siting: the dig overlaps the keep-out box %s in data/%s, by the owner's decision recorded in "
+                  "data/fossil_dig.json keep_out_overrides" % (list(kb), f))
+            continue
+        R.check("siting", not inside, "the dig overlaps the keep-out box %s declared in data/%s" % (list(kb), f))
     for t in jload(data_dir / "towns.json")["towns"]:
         f = t.get("footprint") or {}
         if f.get("min_x") is None:

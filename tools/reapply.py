@@ -707,6 +707,7 @@ def prepare_jobs(a):
     add("desert_wreck:build", "desert_wreck.py", "build", *src)
     add("desert_wreck_audit", "desert_wreck_audit.py", *src)
     add("fossil_dig:build", "fossil_dig.py", "build", *src)
+    add("fossil_dig_audit", "fossil_dig_audit.py", *src)
     # the ten named residents (2026-10-02), then their independent audit, which re-derives every site and write from
     # the data and the heightmap and fails the prepare on a broken pack
     add("resident_encounters", "resident_encounters.py", *src)

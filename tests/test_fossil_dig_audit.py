@@ -49,7 +49,7 @@ JAR = _jar()
 # [3244, 3460, 4923, 5707] (the Rift's southern arms widened by 300, "another builder is expanding the Mega field
 # there") and the dig (x 4156..4200, z 5609..5637) is inside it. The builder checked only data/southern_residents.json's
 # keep-out. If this set changes, either the finding was resolved or a new one appeared: both must be looked at.
-KNOWN_SITING = {("siting", "the dig overlaps the keep-out box [3244, 3460, 4923, 5707] declared in data/far_south.json")}
+KNOWN_SITING = set()  # 2026-10-06: the far-south keep-out box ends at z5560 (data/far_south.json box_changed_why); the dig clears it
 
 
 def build(ground=SYNTH):
