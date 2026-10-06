@@ -62,6 +62,16 @@
       "jungle": ["grass", "bug", "normal", "flying", "fighting", "poison", "dark", "water", "dragon"],
       "cave": ["rock", "ground", "steel", "poison", "dark", "ghost", "fighting", "dragon", "flying", "psychic", "fire", "fairy"]
     },
+    "victory_road_roster": {
+      "quote": "some of the mons in victory road feel underwhelming, it should be hit after hit. why is vileplume there? why is breloom? crobat? i think its final starter evos and pseudo legendaries or bangers",
+      "by": "the owner, 2026-10-06, after walking Victory Road",
+      "pools": "every habitats pool whose id starts vrc_, and the _staple they carry",
+      "final_only": true,
+      "bst_min": 500,
+      "excluded_labels": ["legendary", "mythical", "ultra_beast", "paradox", "restricted"],
+      "owner_named_out": ["vileplume", "breloom", "crobat"],
+      "why": "Measured from the Cobblemon 1.8.0 jar's species files (baseStats summed): the 27 mainline starters' final stages total 525-535, the pseudo-legendaries 600 (Baxcalibur is a client doll and stays out), so one predicate -- a final stage (no evolution in the jar) with a base-stat total of 500 or more, not legendary, mythical, an ultra beast or paradox -- admits all three of the owner's kinds: 186 species pass it once the client dolls are taken out, before the finds are. Crobat totals 535 and passes the number; the owner named it underwhelming, so it is out by name (owner_named_out), as are Vileplume (490) and Breloom (460), which the number already rejects. A find's family stays out (section 6: a find is never the base of a Victory Road family): Dragonite, Tyranitar, Salamence, Hydreigon and Kommo-o and the seven starter lines that are finds are an off-path table's reward and are not repeated here. tools/build_encounters.py fails closed on any vrc_ row that breaks this."
+    },
     "held_items": {
       "why": "the owner, play test 2026-10-05: \"wild held items, rare enough to be a find rather than a farm\". A wild spawn of a listed species sometimes holds an item that fits it (a Leftovers Snorlax, a Lucky Egg Chansey); the chance is the main series' own 5% for a type booster or a stone, and 2% for an item a player would otherwise buy or earn (Leftovers, Lucky Egg, Light Ball, King's Rock, Quick Claw, Focus Band, Black Sludge, Ditto's powders), so a catch that comes with one is a find and catching a box of them to strip the items is not a plan",
       "field": "heldItems",
@@ -468,31 +478,33 @@
     "rift_south_east_arm": {"tier": 9, "themes": ["cave"], "placement": "off", "tier_why": "209 blocks off Route 8 into the Rift",
       "land": [["baltoy", "anchor"], ["golett", "common"], ["gligar", "common"], ["sneasel", "common"], ["murkrow", "common"], ["misdreavus", "common"], ["machop", "common"], ["klefki", "uncommon"], ["duskull", "uncommon"], ["mawile", "uncommon"], ["pawniard", "uncommon"], ["croagunk", "uncommon"], ["druddigon", "find"], ["bagon", "find"], ["goomy", "ultra"]],
       "habitat_fixes": {
-        "archaludon": "replaces Flygon as a heart presence (2026-10-04, the owner's wrong-country sweep; tools/spawn_habitat_audit.py KNOWN): Flygon's line is native in the Cobblemon 1.8.0 jar only to is_desert, two steps from the Rift's cool windswept_gravelly_hills paint, and no condition puts a desert in the Rift. Archaludon is native on the surface (and below sky light 8) to is_mountain, whose is_hills holds windswept_gravelly_hills itself -- the Rift's own paint. A single-stage Dragon presence at the same slot beside Salamence and Haxorus; its Steel replaces Flygon's Ground, which the arm keeps in Gligar, Gliscor, Golett, Golurk, Baltoy and Claydol. Duraludon, its base, is Victory Road's raw-tear uncommon; Archaludon is wild nowhere else"},
+        "archaludon": "replaces Flygon as a heart presence (2026-10-04, the owner's wrong-country sweep; tools/spawn_habitat_audit.py KNOWN): Flygon's line is native in the Cobblemon 1.8.0 jar only to is_desert, two steps from the Rift's cool windswept_gravelly_hills paint, and no condition puts a desert in the Rift. Archaludon is native on the surface (and below sky light 8) to is_mountain, whose is_hills holds windswept_gravelly_hills itself -- the Rift's own paint. A single-stage Dragon presence at the same slot beside Salamence and Haxorus; its Steel replaces Flygon's Ground, which the arm keeps in Gligar, Gliscor, Golett, Golurk, Baltoy and Claydol. Duraludon, its base, was Victory Road's raw-tear uncommon until 2026-10-06, when Archaludon itself joined Victory Road's cave staple (rules.victory_road_roster: final stages only)"},
       "heart": {"kind": "focus", "at": {"x": 4400, "z": 4944, "why": "the arm's deepest floor: the cell farthest (204 blocks) from its edge and the path band"}, "radius": 128,
         "why": "the south-east arm's far end",
         "land": [["salamence", "presence"], ["archaludon", "presence"], ["haxorus", "presence"]]}}
   },
   "habitats": {
-    "_note": "Victory Road's tiles (tools/vr_caves.py), tier 9, levels 54-60, no anchors: a zone is several strong families at even weight. A themed zone (staple: true) also carries the cave staple at the weights given; a core pool is its zone plus the prize the owner flew (2026-09-23), the only rare-bucket family in it.",
-    "_staple": [["crobat", "common", 8], ["steelix", "uncommon", 4], ["golem", "uncommon", 4]],
+    "_note": "Victory Road's tiles (tools/vr_caves.py), tier 9, levels 54-60, no anchors: a zone is several strong families at even weight. A themed zone (staple: true) also carries the cave staple at the weights given; a core pool is its zone plus the prize the owner flew (2026-09-23), the only rare-bucket family in it. Every species is a final stage of 500 or more (rules.victory_road_roster, the owner 2026-10-06: final starter evolutions, pseudo-legendaries, bangers).",
+    "_staple_why": "the cave staple a themed zone carries, rebuilt 2026-10-06 (rules.victory_road_roster): Noivern (535, Flying/Dragon) is the cave's flyer in Crobat's place, Archaludon (600, Steel/Dragon) and Glimmora (525, Rock/Poison) the cave's stone. Each carries a type in every themed zone's theme (Dragon or Poison is in water, volcanic, mushroom and cave), where Steelix and Golem carried none in the water and mushroom zones. Weights unchanged (8, 4, 4).",
+    "_staple": [["noivern", "common", 8], ["archaludon", "uncommon", 4], ["glimmora", "uncommon", 4]],
     "vrc_cave": {"tier": 9, "levels": [54, 60], "themes": ["cave"],
-      "land": [["crobat", "common"], ["steelix", "common"], ["golem", "common"], ["ferrothorn", "common"], ["aggron", "uncommon"], ["gallade", "rare"]]},
+      "land": [["rhyperior", "common"], ["swampert", "common"], ["torterra", "common"], ["infernape", "common"], ["krookodile", "uncommon"], ["gallade", "rare"]]},
     "vrc_drowned": {"tier": 9, "levels": [54, 60], "themes": ["water"], "staple": true,
-      "land": [["golisopod", "common"], ["barbaracle", "common"], ["crawdaunt", "common"]],
-      "water": [["lanturn", "common"], ["kingdra", "common"], ["gyarados", "common"], ["toxapex", "common"], ["dhelmise", "uncommon"]]},
+      "land": [["blastoise", "common"], ["feraligatr", "common"], ["samurott", "common"]],
+      "water": [["starmie", "common"], ["kingdra", "common"], ["gyarados", "common"], ["walrein", "common"], ["dhelmise", "uncommon"]]},
     "vrc_drowned_core": {"tier": 9, "levels": [54, 60], "themes": ["water"], "staple": true, "core_of": "vrc_drowned", "prize": "milotic"},
     "vrc_slagworks": {"tier": 9, "levels": [54, 60], "themes": ["volcanic"], "staple": true,
-      "land": [["magmortar", "common"], ["arcanine", "common"], ["coalossal", "common"], ["centiskorch", "uncommon"], ["salazzle", "uncommon"]]},
+      "land": [["charizard", "common"], ["typhlosion", "common"], ["cinderace", "common"], ["arcanine", "uncommon"], ["volcarona", "uncommon"]]},
     "vrc_slagworks_core": {"tier": 9, "levels": [54, 60], "themes": ["volcanic"], "staple": true, "core_of": "vrc_slagworks", "prize": "garchomp"},
     "vrc_bloom": {"tier": 9, "levels": [54, 60], "themes": ["mushroom"], "staple": true,
-      "land": [["breloom", "common"], ["amoonguss", "common"], ["vileplume", "common"], ["shiinotic", "uncommon"]]},
-    "vrc_bloom_core": {"tier": 9, "levels": [54, 60], "themes": ["mushroom"], "staple": true, "core_of": "vrc_bloom", "prize": "tangrowth"},
+      "land": [["venusaur", "common"], ["meganium", "common"], ["sceptile", "common"], ["tangrowth", "uncommon"]]},
+    "vrc_bloom_core": {"tier": 9, "levels": [54, 60], "themes": ["mushroom"], "staple": true, "core_of": "vrc_bloom", "prize": "goodra",
+      "prize_why": "re-picked 2026-10-06 (rules.victory_road_roster): Goodra (600) is the one pseudo-legendary outside the finds and the other four prizes, and Dragon is a mushroom-theme type; Tangrowth (535), the prize the owner flew on 2026-09-23, stays in the zone as its uncommon"},
     "vrc_raw_tear": {"tier": 9, "levels": [54, 60], "themes": ["cave"], "staple": true,
-      "land": [["noivern", "common"], ["claydol", "common"], ["bronzong", "common"], ["duraludon", "uncommon"], ["reuniclus", "uncommon"]]},
+      "land": [["delphox", "common"], ["chandelure", "common"], ["gardevoir", "common"], ["alakazam", "uncommon"], ["dusknoir", "uncommon"]]},
     "vrc_raw_tear_core": {"tier": 9, "levels": [54, 60], "themes": ["cave"], "staple": true, "core_of": "vrc_raw_tear", "prize": "dragapult"},
     "vrc_abandoned_cut": {"tier": 9, "levels": [54, 60], "themes": ["cave"], "staple": true,
-      "land": [["aggron", "common"], ["probopass", "common"], ["klinklang", "common"], ["copperajah", "uncommon"]]},
+      "land": [["aggron", "common"], ["empoleon", "common"], ["klinklang", "common"], ["kingambit", "uncommon"]]},
     "vrc_abandoned_cut_core": {"tier": 9, "levels": [54, 60], "themes": ["cave"], "staple": true, "core_of": "vrc_abandoned_cut", "prize": "metagross"}
   }
 }

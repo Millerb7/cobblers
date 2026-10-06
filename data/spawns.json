@@ -22528,8 +22528,8 @@
       "alpha": true
     },
     {
-      "id": "habitat.vrc_cave.crobat",
-      "species": "crobat",
+      "id": "habitat.vrc_cave.rhyperior",
+      "species": "rhyperior",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -22541,8 +22541,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_cave.steelix",
-      "species": "steelix",
+      "id": "habitat.vrc_cave.swampert",
+      "species": "swampert",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -22554,8 +22554,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_cave.golem",
-      "species": "golem",
+      "id": "habitat.vrc_cave.torterra",
+      "species": "torterra",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -22567,8 +22567,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_cave.ferrothorn",
-      "species": "ferrothorn",
+      "id": "habitat.vrc_cave.infernape",
+      "species": "infernape",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -22580,8 +22580,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_cave.aggron",
-      "species": "aggron",
+      "id": "habitat.vrc_cave.krookodile",
+      "species": "krookodile",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 6.0,
@@ -22606,8 +22606,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_drowned.golisopod",
-      "species": "golisopod",
+      "id": "habitat.vrc_drowned.blastoise",
+      "species": "blastoise",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -22619,8 +22619,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_drowned.barbaracle",
-      "species": "barbaracle",
+      "id": "habitat.vrc_drowned.feraligatr",
+      "species": "feraligatr",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -22632,8 +22632,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_drowned.crawdaunt",
-      "species": "crawdaunt",
+      "id": "habitat.vrc_drowned.samurott",
+      "species": "samurott",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -22645,8 +22645,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_drowned.lanturn",
-      "species": "lanturn",
+      "id": "habitat.vrc_drowned.starmie",
+      "species": "starmie",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -22684,8 +22684,8 @@
       "spawnable_position": "submerged"
     },
     {
-      "id": "habitat.vrc_drowned.toxapex",
-      "species": "toxapex",
+      "id": "habitat.vrc_drowned.walrein",
+      "species": "walrein",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -22694,7 +22694,7 @@
       "mechanism": "habitat_block",
       "conditions": {},
       "eligibility_reason": "named common family, tier 9: the family starts here",
-      "spawnable_position": "seafloor"
+      "spawnable_position": "submerged"
     },
     {
       "id": "habitat.vrc_drowned.dhelmise",
@@ -22710,8 +22710,8 @@
       "spawnable_position": "submerged"
     },
     {
-      "id": "habitat.vrc_drowned.crobat",
-      "species": "crobat",
+      "id": "habitat.vrc_drowned.noivern",
+      "species": "noivern",
       "bucket": "common",
       "level": "54-60",
       "weight": 8.0,
@@ -22723,8 +22723,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_drowned.steelix",
-      "species": "steelix",
+      "id": "habitat.vrc_drowned.archaludon",
+      "species": "archaludon",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 4.0,
@@ -22736,8 +22736,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_drowned.golem",
-      "species": "golem",
+      "id": "habitat.vrc_drowned.glimmora",
+      "species": "glimmora",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 4.0,
@@ -22749,8 +22749,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_drowned_core.golisopod",
-      "species": "golisopod",
+      "id": "habitat.vrc_drowned_core.blastoise",
+      "species": "blastoise",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -22762,8 +22762,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_drowned_core.barbaracle",
-      "species": "barbaracle",
+      "id": "habitat.vrc_drowned_core.feraligatr",
+      "species": "feraligatr",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -22775,8 +22775,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_drowned_core.crawdaunt",
-      "species": "crawdaunt",
+      "id": "habitat.vrc_drowned_core.samurott",
+      "species": "samurott",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -22788,8 +22788,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_drowned_core.lanturn",
-      "species": "lanturn",
+      "id": "habitat.vrc_drowned_core.starmie",
+      "species": "starmie",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -22827,8 +22827,8 @@
       "spawnable_position": "submerged"
     },
     {
-      "id": "habitat.vrc_drowned_core.toxapex",
-      "species": "toxapex",
+      "id": "habitat.vrc_drowned_core.walrein",
+      "species": "walrein",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -22837,7 +22837,7 @@
       "mechanism": "habitat_block",
       "conditions": {},
       "eligibility_reason": "named common family, tier 9: the family starts here",
-      "spawnable_position": "seafloor"
+      "spawnable_position": "submerged"
     },
     {
       "id": "habitat.vrc_drowned_core.dhelmise",
@@ -22853,8 +22853,8 @@
       "spawnable_position": "submerged"
     },
     {
-      "id": "habitat.vrc_drowned_core.crobat",
-      "species": "crobat",
+      "id": "habitat.vrc_drowned_core.noivern",
+      "species": "noivern",
       "bucket": "common",
       "level": "54-60",
       "weight": 8.0,
@@ -22866,8 +22866,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_drowned_core.steelix",
-      "species": "steelix",
+      "id": "habitat.vrc_drowned_core.archaludon",
+      "species": "archaludon",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 4.0,
@@ -22879,8 +22879,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_drowned_core.golem",
-      "species": "golem",
+      "id": "habitat.vrc_drowned_core.glimmora",
+      "species": "glimmora",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 4.0,
@@ -22909,8 +22909,34 @@
       }
     },
     {
-      "id": "habitat.vrc_slagworks.magmortar",
-      "species": "magmortar",
+      "id": "habitat.vrc_slagworks.charizard",
+      "species": "charizard",
+      "bucket": "common",
+      "level": "54-60",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "vrc_slagworks",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "named common family, tier 9: the family starts here",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks.typhlosion",
+      "species": "typhlosion",
+      "bucket": "common",
+      "level": "54-60",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "vrc_slagworks",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "named common family, tier 9: the family starts here",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks.cinderace",
+      "species": "cinderace",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -22924,32 +22950,6 @@
     {
       "id": "habitat.vrc_slagworks.arcanine",
       "species": "arcanine",
-      "bucket": "common",
-      "level": "54-60",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "vrc_slagworks",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "named common family, tier 9: the family starts here",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.vrc_slagworks.coalossal",
-      "species": "coalossal",
-      "bucket": "common",
-      "level": "54-60",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "vrc_slagworks",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "named common family, tier 9: the family starts here",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.vrc_slagworks.centiskorch",
-      "species": "centiskorch",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 6.0,
@@ -22961,8 +22961,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_slagworks.salazzle",
-      "species": "salazzle",
+      "id": "habitat.vrc_slagworks.volcarona",
+      "species": "volcarona",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 6.0,
@@ -22974,8 +22974,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_slagworks.crobat",
-      "species": "crobat",
+      "id": "habitat.vrc_slagworks.noivern",
+      "species": "noivern",
       "bucket": "common",
       "level": "54-60",
       "weight": 8.0,
@@ -22987,8 +22987,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_slagworks.steelix",
-      "species": "steelix",
+      "id": "habitat.vrc_slagworks.archaludon",
+      "species": "archaludon",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 4.0,
@@ -23000,8 +23000,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_slagworks.golem",
-      "species": "golem",
+      "id": "habitat.vrc_slagworks.glimmora",
+      "species": "glimmora",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 4.0,
@@ -23013,8 +23013,34 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_slagworks_core.magmortar",
-      "species": "magmortar",
+      "id": "habitat.vrc_slagworks_core.charizard",
+      "species": "charizard",
+      "bucket": "common",
+      "level": "54-60",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "vrc_slagworks_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "named common family, tier 9: the family starts here",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks_core.typhlosion",
+      "species": "typhlosion",
+      "bucket": "common",
+      "level": "54-60",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "vrc_slagworks_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "named common family, tier 9: the family starts here",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_slagworks_core.cinderace",
+      "species": "cinderace",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -23028,32 +23054,6 @@
     {
       "id": "habitat.vrc_slagworks_core.arcanine",
       "species": "arcanine",
-      "bucket": "common",
-      "level": "54-60",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "vrc_slagworks_core",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "named common family, tier 9: the family starts here",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.vrc_slagworks_core.coalossal",
-      "species": "coalossal",
-      "bucket": "common",
-      "level": "54-60",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "vrc_slagworks_core",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "named common family, tier 9: the family starts here",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.vrc_slagworks_core.centiskorch",
-      "species": "centiskorch",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 6.0,
@@ -23065,8 +23065,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_slagworks_core.salazzle",
-      "species": "salazzle",
+      "id": "habitat.vrc_slagworks_core.volcarona",
+      "species": "volcarona",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 6.0,
@@ -23078,8 +23078,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_slagworks_core.crobat",
-      "species": "crobat",
+      "id": "habitat.vrc_slagworks_core.noivern",
+      "species": "noivern",
       "bucket": "common",
       "level": "54-60",
       "weight": 8.0,
@@ -23091,8 +23091,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_slagworks_core.steelix",
-      "species": "steelix",
+      "id": "habitat.vrc_slagworks_core.archaludon",
+      "species": "archaludon",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 4.0,
@@ -23104,8 +23104,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_slagworks_core.golem",
-      "species": "golem",
+      "id": "habitat.vrc_slagworks_core.glimmora",
+      "species": "glimmora",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 4.0,
@@ -23130,8 +23130,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_bloom.breloom",
-      "species": "breloom",
+      "id": "habitat.vrc_bloom.venusaur",
+      "species": "venusaur",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -23143,8 +23143,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_bloom.amoonguss",
-      "species": "amoonguss",
+      "id": "habitat.vrc_bloom.meganium",
+      "species": "meganium",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -23156,8 +23156,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_bloom.vileplume",
-      "species": "vileplume",
+      "id": "habitat.vrc_bloom.sceptile",
+      "species": "sceptile",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -23169,8 +23169,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_bloom.shiinotic",
-      "species": "shiinotic",
+      "id": "habitat.vrc_bloom.tangrowth",
+      "species": "tangrowth",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 6.0,
@@ -23182,8 +23182,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_bloom.crobat",
-      "species": "crobat",
+      "id": "habitat.vrc_bloom.noivern",
+      "species": "noivern",
       "bucket": "common",
       "level": "54-60",
       "weight": 8.0,
@@ -23195,8 +23195,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_bloom.steelix",
-      "species": "steelix",
+      "id": "habitat.vrc_bloom.archaludon",
+      "species": "archaludon",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 4.0,
@@ -23208,8 +23208,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_bloom.golem",
-      "species": "golem",
+      "id": "habitat.vrc_bloom.glimmora",
+      "species": "glimmora",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 4.0,
@@ -23221,8 +23221,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_bloom_core.breloom",
-      "species": "breloom",
+      "id": "habitat.vrc_bloom_core.venusaur",
+      "species": "venusaur",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -23234,8 +23234,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_bloom_core.amoonguss",
-      "species": "amoonguss",
+      "id": "habitat.vrc_bloom_core.meganium",
+      "species": "meganium",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -23247,8 +23247,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_bloom_core.vileplume",
-      "species": "vileplume",
+      "id": "habitat.vrc_bloom_core.sceptile",
+      "species": "sceptile",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -23257,63 +23257,63 @@
       "mechanism": "habitat_block",
       "conditions": {},
       "eligibility_reason": "named common family, tier 9: the family starts here",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.vrc_bloom_core.shiinotic",
-      "species": "shiinotic",
-      "bucket": "uncommon",
-      "level": "54-60",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "vrc_bloom_core",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "named uncommon family, tier 9: the family starts here",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.vrc_bloom_core.crobat",
-      "species": "crobat",
-      "bucket": "common",
-      "level": "54-60",
-      "weight": 8.0,
-      "ambient": true,
-      "scope": "vrc_bloom_core",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "named common family, tier 9: the family starts here",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.vrc_bloom_core.steelix",
-      "species": "steelix",
-      "bucket": "uncommon",
-      "level": "54-60",
-      "weight": 4.0,
-      "ambient": true,
-      "scope": "vrc_bloom_core",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "named uncommon family, tier 9: the family starts here",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.vrc_bloom_core.golem",
-      "species": "golem",
-      "bucket": "uncommon",
-      "level": "54-60",
-      "weight": 4.0,
-      "ambient": true,
-      "scope": "vrc_bloom_core",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "named uncommon family, tier 9: the family starts here",
       "spawnable_position": "grounded"
     },
     {
       "id": "habitat.vrc_bloom_core.tangrowth",
       "species": "tangrowth",
+      "bucket": "uncommon",
+      "level": "54-60",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "vrc_bloom_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "named uncommon family, tier 9: the family starts here",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom_core.noivern",
+      "species": "noivern",
+      "bucket": "common",
+      "level": "54-60",
+      "weight": 8.0,
+      "ambient": true,
+      "scope": "vrc_bloom_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "named common family, tier 9: the family starts here",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom_core.archaludon",
+      "species": "archaludon",
+      "bucket": "uncommon",
+      "level": "54-60",
+      "weight": 4.0,
+      "ambient": true,
+      "scope": "vrc_bloom_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "named uncommon family, tier 9: the family starts here",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom_core.glimmora",
+      "species": "glimmora",
+      "bucket": "uncommon",
+      "level": "54-60",
+      "weight": 4.0,
+      "ambient": true,
+      "scope": "vrc_bloom_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "named uncommon family, tier 9: the family starts here",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_bloom_core.goodra",
+      "species": "goodra",
       "bucket": "rare",
       "level": "57-60",
       "weight": 2.0,
@@ -23325,8 +23325,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_raw_tear.noivern",
-      "species": "noivern",
+      "id": "habitat.vrc_raw_tear.delphox",
+      "species": "delphox",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -23338,8 +23338,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_raw_tear.claydol",
-      "species": "claydol",
+      "id": "habitat.vrc_raw_tear.chandelure",
+      "species": "chandelure",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -23351,8 +23351,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_raw_tear.bronzong",
-      "species": "bronzong",
+      "id": "habitat.vrc_raw_tear.gardevoir",
+      "species": "gardevoir",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -23364,34 +23364,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_raw_tear.duraludon",
-      "species": "duraludon",
-      "bucket": "uncommon",
-      "level": "54-60",
-      "weight": 0.9,
-      "ambient": true,
-      "scope": "vrc_raw_tear",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "named uncommon family, tier 9: the family starts here",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.vrc_raw_tear.archaludon",
-      "species": "archaludon",
-      "bucket": "uncommon",
-      "level": "57-60",
-      "weight": 5.1,
-      "ambient": true,
-      "scope": "vrc_raw_tear",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "evolves from Duraludon using metal alloy, not by level: in the wild from tier 6, in the upper half of the band (57-60)",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.vrc_raw_tear.reuniclus",
-      "species": "reuniclus",
+      "id": "habitat.vrc_raw_tear.alakazam",
+      "species": "alakazam",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 6.0,
@@ -23403,8 +23377,21 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_raw_tear.crobat",
-      "species": "crobat",
+      "id": "habitat.vrc_raw_tear.dusknoir",
+      "species": "dusknoir",
+      "bucket": "uncommon",
+      "level": "54-60",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "named uncommon family, tier 9: the family starts here",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear.noivern",
+      "species": "noivern",
       "bucket": "common",
       "level": "54-60",
       "weight": 8.0,
@@ -23416,8 +23403,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_raw_tear.steelix",
-      "species": "steelix",
+      "id": "habitat.vrc_raw_tear.archaludon",
+      "species": "archaludon",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 4.0,
@@ -23429,13 +23416,78 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_raw_tear.golem",
-      "species": "golem",
+      "id": "habitat.vrc_raw_tear.glimmora",
+      "species": "glimmora",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 4.0,
       "ambient": true,
       "scope": "vrc_raw_tear",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "named uncommon family, tier 9: the family starts here",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear_core.delphox",
+      "species": "delphox",
+      "bucket": "common",
+      "level": "54-60",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "named common family, tier 9: the family starts here",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear_core.chandelure",
+      "species": "chandelure",
+      "bucket": "common",
+      "level": "54-60",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "named common family, tier 9: the family starts here",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear_core.gardevoir",
+      "species": "gardevoir",
+      "bucket": "common",
+      "level": "54-60",
+      "weight": 12.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "named common family, tier 9: the family starts here",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear_core.alakazam",
+      "species": "alakazam",
+      "bucket": "uncommon",
+      "level": "54-60",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear_core",
+      "mechanism": "habitat_block",
+      "conditions": {},
+      "eligibility_reason": "named uncommon family, tier 9: the family starts here",
+      "spawnable_position": "grounded"
+    },
+    {
+      "id": "habitat.vrc_raw_tear_core.dusknoir",
+      "species": "dusknoir",
+      "bucket": "uncommon",
+      "level": "54-60",
+      "weight": 6.0,
+      "ambient": true,
+      "scope": "vrc_raw_tear_core",
       "mechanism": "habitat_block",
       "conditions": {},
       "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -23446,84 +23498,6 @@
       "species": "noivern",
       "bucket": "common",
       "level": "54-60",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "vrc_raw_tear_core",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "named common family, tier 9: the family starts here",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.vrc_raw_tear_core.claydol",
-      "species": "claydol",
-      "bucket": "common",
-      "level": "54-60",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "vrc_raw_tear_core",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "named common family, tier 9: the family starts here",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.vrc_raw_tear_core.bronzong",
-      "species": "bronzong",
-      "bucket": "common",
-      "level": "54-60",
-      "weight": 12.0,
-      "ambient": true,
-      "scope": "vrc_raw_tear_core",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "named common family, tier 9: the family starts here",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.vrc_raw_tear_core.duraludon",
-      "species": "duraludon",
-      "bucket": "uncommon",
-      "level": "54-60",
-      "weight": 0.9,
-      "ambient": true,
-      "scope": "vrc_raw_tear_core",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "named uncommon family, tier 9: the family starts here",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.vrc_raw_tear_core.archaludon",
-      "species": "archaludon",
-      "bucket": "uncommon",
-      "level": "57-60",
-      "weight": 5.1,
-      "ambient": true,
-      "scope": "vrc_raw_tear_core",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "evolves from Duraludon using metal alloy, not by level: in the wild from tier 6, in the upper half of the band (57-60)",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.vrc_raw_tear_core.reuniclus",
-      "species": "reuniclus",
-      "bucket": "uncommon",
-      "level": "54-60",
-      "weight": 6.0,
-      "ambient": true,
-      "scope": "vrc_raw_tear_core",
-      "mechanism": "habitat_block",
-      "conditions": {},
-      "eligibility_reason": "named uncommon family, tier 9: the family starts here",
-      "spawnable_position": "grounded"
-    },
-    {
-      "id": "habitat.vrc_raw_tear_core.crobat",
-      "species": "crobat",
-      "bucket": "common",
-      "level": "54-60",
       "weight": 8.0,
       "ambient": true,
       "scope": "vrc_raw_tear_core",
@@ -23533,8 +23507,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_raw_tear_core.steelix",
-      "species": "steelix",
+      "id": "habitat.vrc_raw_tear_core.archaludon",
+      "species": "archaludon",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 4.0,
@@ -23546,8 +23520,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_raw_tear_core.golem",
-      "species": "golem",
+      "id": "habitat.vrc_raw_tear_core.glimmora",
+      "species": "glimmora",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 4.0,
@@ -23585,8 +23559,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_abandoned_cut.probopass",
-      "species": "probopass",
+      "id": "habitat.vrc_abandoned_cut.empoleon",
+      "species": "empoleon",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -23611,8 +23585,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_abandoned_cut.copperajah",
-      "species": "copperajah",
+      "id": "habitat.vrc_abandoned_cut.kingambit",
+      "species": "kingambit",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 6.0,
@@ -23624,8 +23598,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_abandoned_cut.crobat",
-      "species": "crobat",
+      "id": "habitat.vrc_abandoned_cut.noivern",
+      "species": "noivern",
       "bucket": "common",
       "level": "54-60",
       "weight": 8.0,
@@ -23637,8 +23611,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_abandoned_cut.steelix",
-      "species": "steelix",
+      "id": "habitat.vrc_abandoned_cut.archaludon",
+      "species": "archaludon",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 4.0,
@@ -23650,8 +23624,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_abandoned_cut.golem",
-      "species": "golem",
+      "id": "habitat.vrc_abandoned_cut.glimmora",
+      "species": "glimmora",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 4.0,
@@ -23676,8 +23650,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_abandoned_cut_core.probopass",
-      "species": "probopass",
+      "id": "habitat.vrc_abandoned_cut_core.empoleon",
+      "species": "empoleon",
       "bucket": "common",
       "level": "54-60",
       "weight": 12.0,
@@ -23702,8 +23676,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_abandoned_cut_core.copperajah",
-      "species": "copperajah",
+      "id": "habitat.vrc_abandoned_cut_core.kingambit",
+      "species": "kingambit",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 6.0,
@@ -23715,8 +23689,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_abandoned_cut_core.crobat",
-      "species": "crobat",
+      "id": "habitat.vrc_abandoned_cut_core.noivern",
+      "species": "noivern",
       "bucket": "common",
       "level": "54-60",
       "weight": 8.0,
@@ -23728,8 +23702,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_abandoned_cut_core.steelix",
-      "species": "steelix",
+      "id": "habitat.vrc_abandoned_cut_core.archaludon",
+      "species": "archaludon",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 4.0,
@@ -23741,8 +23715,8 @@
       "spawnable_position": "grounded"
     },
     {
-      "id": "habitat.vrc_abandoned_cut_core.golem",
-      "species": "golem",
+      "id": "habitat.vrc_abandoned_cut_core.glimmora",
+      "species": "glimmora",
       "bucket": "uncommon",
       "level": "54-60",
       "weight": 4.0,
@@ -51973,77 +51947,77 @@
       "placement_status": "tiles in data/habitat_blocks.json (vrc_*), written by tools/vr_caves.py records --write",
       "entries": [
         {
-          "species": "Crobat",
-          "pokemon": "crobat",
+          "species": "Rhyperior",
+          "pokemon": "rhyperior",
           "types": [
-            "poison",
-            "flying"
-          ],
-          "family": "zubat",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
-          "species": "Steelix",
-          "pokemon": "steelix",
-          "types": [
-            "steel",
-            "ground"
-          ],
-          "family": "onix",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
-          "species": "Golem",
-          "pokemon": "golem",
-          "types": [
-            "rock",
-            "ground"
-          ],
-          "family": "geodude",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
-          "species": "Ferrothorn",
-          "pokemon": "ferrothorn",
-          "types": [
-            "grass",
-            "steel"
-          ],
-          "family": "ferroseed",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
-          "species": "Aggron",
-          "pokemon": "aggron",
-          "types": [
-            "steel",
+            "ground",
             "rock"
           ],
-          "family": "aron",
+          "family": "rhyhorn",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Swampert",
+          "pokemon": "swampert",
+          "types": [
+            "water",
+            "ground"
+          ],
+          "family": "mudkip",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Torterra",
+          "pokemon": "torterra",
+          "types": [
+            "grass",
+            "ground"
+          ],
+          "family": "turtwig",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Infernape",
+          "pokemon": "infernape",
+          "types": [
+            "fire",
+            "fighting"
+          ],
+          "family": "chimchar",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Krookodile",
+          "pokemon": "krookodile",
+          "types": [
+            "ground",
+            "dark"
+          ],
+          "family": "sandile",
           "family_priority": "uncommon",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -52083,13 +52057,12 @@
       "placement_status": "tiles in data/habitat_blocks.json (vrc_*), written by tools/vr_caves.py records --write",
       "entries": [
         {
-          "species": "Golisopod",
-          "pokemon": "golisopod",
+          "species": "Blastoise",
+          "pokemon": "blastoise",
           "types": [
-            "bug",
             "water"
           ],
-          "family": "wimpod",
+          "family": "squirtle",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52099,13 +52072,12 @@
           "conditions": {}
         },
         {
-          "species": "Barbaracle",
-          "pokemon": "barbaracle",
+          "species": "Feraligatr",
+          "pokemon": "feraligatr",
           "types": [
-            "rock",
             "water"
           ],
-          "family": "binacle",
+          "family": "totodile",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52115,13 +52087,12 @@
           "conditions": {}
         },
         {
-          "species": "Crawdaunt",
-          "pokemon": "crawdaunt",
+          "species": "Samurott",
+          "pokemon": "samurott",
           "types": [
-            "water",
-            "dark"
+            "water"
           ],
-          "family": "corphish",
+          "family": "oshawott",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52131,13 +52102,13 @@
           "conditions": {}
         },
         {
-          "species": "Lanturn",
-          "pokemon": "lanturn",
+          "species": "Starmie",
+          "pokemon": "starmie",
           "types": [
             "water",
-            "electric"
+            "psychic"
           ],
-          "family": "chinchou",
+          "family": "staryu",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52179,13 +52150,13 @@
           "conditions": {}
         },
         {
-          "species": "Toxapex",
-          "pokemon": "toxapex",
+          "species": "Walrein",
+          "pokemon": "walrein",
           "types": [
-            "poison",
+            "ice",
             "water"
           ],
-          "family": "mareanie",
+          "family": "spheal",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52211,13 +52182,13 @@
           "conditions": {}
         },
         {
-          "species": "Crobat",
-          "pokemon": "crobat",
+          "species": "Noivern",
+          "pokemon": "noivern",
           "types": [
-            "poison",
-            "flying"
+            "flying",
+            "dragon"
           ],
-          "family": "zubat",
+          "family": "noibat",
           "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52227,13 +52198,13 @@
           "conditions": {}
         },
         {
-          "species": "Steelix",
-          "pokemon": "steelix",
+          "species": "Archaludon",
+          "pokemon": "archaludon",
           "types": [
             "steel",
-            "ground"
+            "dragon"
           ],
-          "family": "onix",
+          "family": "duraludon",
           "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -52243,13 +52214,13 @@
           "conditions": {}
         },
         {
-          "species": "Golem",
-          "pokemon": "golem",
+          "species": "Glimmora",
+          "pokemon": "glimmora",
           "types": [
             "rock",
-            "ground"
+            "poison"
           ],
-          "family": "geodude",
+          "family": "glimmet",
           "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -52273,13 +52244,12 @@
       "placement_status": "tiles in data/habitat_blocks.json (vrc_*), written by tools/vr_caves.py records --write",
       "entries": [
         {
-          "species": "Golisopod",
-          "pokemon": "golisopod",
+          "species": "Blastoise",
+          "pokemon": "blastoise",
           "types": [
-            "bug",
             "water"
           ],
-          "family": "wimpod",
+          "family": "squirtle",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52289,13 +52259,12 @@
           "conditions": {}
         },
         {
-          "species": "Barbaracle",
-          "pokemon": "barbaracle",
+          "species": "Feraligatr",
+          "pokemon": "feraligatr",
           "types": [
-            "rock",
             "water"
           ],
-          "family": "binacle",
+          "family": "totodile",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52305,13 +52274,12 @@
           "conditions": {}
         },
         {
-          "species": "Crawdaunt",
-          "pokemon": "crawdaunt",
+          "species": "Samurott",
+          "pokemon": "samurott",
           "types": [
-            "water",
-            "dark"
+            "water"
           ],
-          "family": "corphish",
+          "family": "oshawott",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52321,13 +52289,13 @@
           "conditions": {}
         },
         {
-          "species": "Lanturn",
-          "pokemon": "lanturn",
+          "species": "Starmie",
+          "pokemon": "starmie",
           "types": [
             "water",
-            "electric"
+            "psychic"
           ],
-          "family": "chinchou",
+          "family": "staryu",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52369,13 +52337,13 @@
           "conditions": {}
         },
         {
-          "species": "Toxapex",
-          "pokemon": "toxapex",
+          "species": "Walrein",
+          "pokemon": "walrein",
           "types": [
-            "poison",
+            "ice",
             "water"
           ],
-          "family": "mareanie",
+          "family": "spheal",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52401,13 +52369,13 @@
           "conditions": {}
         },
         {
-          "species": "Crobat",
-          "pokemon": "crobat",
+          "species": "Noivern",
+          "pokemon": "noivern",
           "types": [
-            "poison",
-            "flying"
+            "flying",
+            "dragon"
           ],
-          "family": "zubat",
+          "family": "noibat",
           "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52417,13 +52385,13 @@
           "conditions": {}
         },
         {
-          "species": "Steelix",
-          "pokemon": "steelix",
+          "species": "Archaludon",
+          "pokemon": "archaludon",
           "types": [
             "steel",
-            "ground"
+            "dragon"
           ],
-          "family": "onix",
+          "family": "duraludon",
           "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -52433,13 +52401,13 @@
           "conditions": {}
         },
         {
-          "species": "Golem",
-          "pokemon": "golem",
+          "species": "Glimmora",
+          "pokemon": "glimmora",
           "types": [
             "rock",
-            "ground"
+            "poison"
           ],
-          "family": "geodude",
+          "family": "glimmet",
           "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -52478,12 +52446,43 @@
       "placement_status": "tiles in data/habitat_blocks.json (vrc_*), written by tools/vr_caves.py records --write",
       "entries": [
         {
-          "species": "Magmortar",
-          "pokemon": "magmortar",
+          "species": "Charizard",
+          "pokemon": "charizard",
+          "types": [
+            "fire",
+            "flying"
+          ],
+          "family": "charmander",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Typhlosion",
+          "pokemon": "typhlosion",
           "types": [
             "fire"
           ],
-          "family": "magby",
+          "family": "cyndaquil",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Cinderace",
+          "pokemon": "cinderace",
+          "types": [
+            "fire"
+          ],
+          "family": "scorbunny",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52499,38 +52498,6 @@
             "fire"
           ],
           "family": "growlithe",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
-          "species": "Coalossal",
-          "pokemon": "coalossal",
-          "types": [
-            "rock",
-            "fire"
-          ],
-          "family": "rolycoly",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
-          "species": "Centiskorch",
-          "pokemon": "centiskorch",
-          "types": [
-            "fire",
-            "bug"
-          ],
-          "family": "sizzlipede",
           "family_priority": "uncommon",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -52540,13 +52507,13 @@
           "conditions": {}
         },
         {
-          "species": "Salazzle",
-          "pokemon": "salazzle",
+          "species": "Volcarona",
+          "pokemon": "volcarona",
           "types": [
-            "poison",
+            "bug",
             "fire"
           ],
-          "family": "salandit",
+          "family": "larvesta",
           "family_priority": "uncommon",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -52556,13 +52523,13 @@
           "conditions": {}
         },
         {
-          "species": "Crobat",
-          "pokemon": "crobat",
+          "species": "Noivern",
+          "pokemon": "noivern",
           "types": [
-            "poison",
-            "flying"
+            "flying",
+            "dragon"
           ],
-          "family": "zubat",
+          "family": "noibat",
           "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52572,13 +52539,13 @@
           "conditions": {}
         },
         {
-          "species": "Steelix",
-          "pokemon": "steelix",
+          "species": "Archaludon",
+          "pokemon": "archaludon",
           "types": [
             "steel",
-            "ground"
+            "dragon"
           ],
-          "family": "onix",
+          "family": "duraludon",
           "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -52588,13 +52555,13 @@
           "conditions": {}
         },
         {
-          "species": "Golem",
-          "pokemon": "golem",
+          "species": "Glimmora",
+          "pokemon": "glimmora",
           "types": [
             "rock",
-            "ground"
+            "poison"
           ],
-          "family": "geodude",
+          "family": "glimmet",
           "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -52618,12 +52585,43 @@
       "placement_status": "tiles in data/habitat_blocks.json (vrc_*), written by tools/vr_caves.py records --write",
       "entries": [
         {
-          "species": "Magmortar",
-          "pokemon": "magmortar",
+          "species": "Charizard",
+          "pokemon": "charizard",
+          "types": [
+            "fire",
+            "flying"
+          ],
+          "family": "charmander",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Typhlosion",
+          "pokemon": "typhlosion",
           "types": [
             "fire"
           ],
-          "family": "magby",
+          "family": "cyndaquil",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Cinderace",
+          "pokemon": "cinderace",
+          "types": [
+            "fire"
+          ],
+          "family": "scorbunny",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52639,38 +52637,6 @@
             "fire"
           ],
           "family": "growlithe",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
-          "species": "Coalossal",
-          "pokemon": "coalossal",
-          "types": [
-            "rock",
-            "fire"
-          ],
-          "family": "rolycoly",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
-          "species": "Centiskorch",
-          "pokemon": "centiskorch",
-          "types": [
-            "fire",
-            "bug"
-          ],
-          "family": "sizzlipede",
           "family_priority": "uncommon",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -52680,13 +52646,13 @@
           "conditions": {}
         },
         {
-          "species": "Salazzle",
-          "pokemon": "salazzle",
+          "species": "Volcarona",
+          "pokemon": "volcarona",
           "types": [
-            "poison",
+            "bug",
             "fire"
           ],
-          "family": "salandit",
+          "family": "larvesta",
           "family_priority": "uncommon",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -52696,13 +52662,13 @@
           "conditions": {}
         },
         {
-          "species": "Crobat",
-          "pokemon": "crobat",
+          "species": "Noivern",
+          "pokemon": "noivern",
           "types": [
-            "poison",
-            "flying"
+            "flying",
+            "dragon"
           ],
-          "family": "zubat",
+          "family": "noibat",
           "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52712,13 +52678,13 @@
           "conditions": {}
         },
         {
-          "species": "Steelix",
-          "pokemon": "steelix",
+          "species": "Archaludon",
+          "pokemon": "archaludon",
           "types": [
             "steel",
-            "ground"
+            "dragon"
           ],
-          "family": "onix",
+          "family": "duraludon",
           "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -52728,13 +52694,13 @@
           "conditions": {}
         },
         {
-          "species": "Golem",
-          "pokemon": "golem",
+          "species": "Glimmora",
+          "pokemon": "glimmora",
           "types": [
             "rock",
-            "ground"
+            "poison"
           ],
-          "family": "geodude",
+          "family": "glimmet",
           "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -52774,29 +52740,13 @@
       "placement_status": "tiles in data/habitat_blocks.json (vrc_*), written by tools/vr_caves.py records --write",
       "entries": [
         {
-          "species": "Breloom",
-          "pokemon": "breloom",
-          "types": [
-            "grass",
-            "fighting"
-          ],
-          "family": "shroomish",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
-          "species": "Amoonguss",
-          "pokemon": "amoonguss",
+          "species": "Venusaur",
+          "pokemon": "venusaur",
           "types": [
             "grass",
             "poison"
           ],
-          "family": "foongus",
+          "family": "bulbasaur",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52806,13 +52756,12 @@
           "conditions": {}
         },
         {
-          "species": "Vileplume",
-          "pokemon": "vileplume",
+          "species": "Meganium",
+          "pokemon": "meganium",
           "types": [
-            "grass",
-            "poison"
+            "grass"
           ],
-          "family": "oddish",
+          "family": "chikorita",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52822,13 +52771,27 @@
           "conditions": {}
         },
         {
-          "species": "Shiinotic",
-          "pokemon": "shiinotic",
+          "species": "Sceptile",
+          "pokemon": "sceptile",
           "types": [
-            "grass",
-            "fairy"
+            "grass"
           ],
-          "family": "morelull",
+          "family": "treecko",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Tangrowth",
+          "pokemon": "tangrowth",
+          "types": [
+            "grass"
+          ],
+          "family": "tangela",
           "family_priority": "uncommon",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -52838,13 +52801,13 @@
           "conditions": {}
         },
         {
-          "species": "Crobat",
-          "pokemon": "crobat",
+          "species": "Noivern",
+          "pokemon": "noivern",
           "types": [
-            "poison",
-            "flying"
+            "flying",
+            "dragon"
           ],
-          "family": "zubat",
+          "family": "noibat",
           "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52854,13 +52817,13 @@
           "conditions": {}
         },
         {
-          "species": "Steelix",
-          "pokemon": "steelix",
+          "species": "Archaludon",
+          "pokemon": "archaludon",
           "types": [
             "steel",
-            "ground"
+            "dragon"
           ],
-          "family": "onix",
+          "family": "duraludon",
           "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -52870,13 +52833,13 @@
           "conditions": {}
         },
         {
-          "species": "Golem",
-          "pokemon": "golem",
+          "species": "Glimmora",
+          "pokemon": "glimmora",
           "types": [
             "rock",
-            "ground"
+            "poison"
           ],
-          "family": "geodude",
+          "family": "glimmet",
           "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -52900,29 +52863,13 @@
       "placement_status": "tiles in data/habitat_blocks.json (vrc_*), written by tools/vr_caves.py records --write",
       "entries": [
         {
-          "species": "Breloom",
-          "pokemon": "breloom",
-          "types": [
-            "grass",
-            "fighting"
-          ],
-          "family": "shroomish",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
-          "species": "Amoonguss",
-          "pokemon": "amoonguss",
+          "species": "Venusaur",
+          "pokemon": "venusaur",
           "types": [
             "grass",
             "poison"
           ],
-          "family": "foongus",
+          "family": "bulbasaur",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52932,13 +52879,12 @@
           "conditions": {}
         },
         {
-          "species": "Vileplume",
-          "pokemon": "vileplume",
+          "species": "Meganium",
+          "pokemon": "meganium",
           "types": [
-            "grass",
-            "poison"
+            "grass"
           ],
-          "family": "oddish",
+          "family": "chikorita",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -52948,67 +52894,18 @@
           "conditions": {}
         },
         {
-          "species": "Shiinotic",
-          "pokemon": "shiinotic",
+          "species": "Sceptile",
+          "pokemon": "sceptile",
           "types": [
-            "grass",
-            "fairy"
+            "grass"
           ],
-          "family": "morelull",
-          "family_priority": "uncommon",
-          "ambient": true,
-          "eligibility_reason": "named uncommon family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "uncommon",
-          "weight": 6.0,
-          "conditions": {}
-        },
-        {
-          "species": "Crobat",
-          "pokemon": "crobat",
-          "types": [
-            "poison",
-            "flying"
-          ],
-          "family": "zubat",
-          "family_priority": "staple",
+          "family": "treecko",
+          "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
           "level": "54-60",
           "bucket": "common",
-          "weight": 8.0,
-          "conditions": {}
-        },
-        {
-          "species": "Steelix",
-          "pokemon": "steelix",
-          "types": [
-            "steel",
-            "ground"
-          ],
-          "family": "onix",
-          "family_priority": "staple",
-          "ambient": true,
-          "eligibility_reason": "named uncommon family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "uncommon",
-          "weight": 4.0,
-          "conditions": {}
-        },
-        {
-          "species": "Golem",
-          "pokemon": "golem",
-          "types": [
-            "rock",
-            "ground"
-          ],
-          "family": "geodude",
-          "family_priority": "staple",
-          "ambient": true,
-          "eligibility_reason": "named uncommon family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "uncommon",
-          "weight": 4.0,
+          "weight": 12.0,
           "conditions": {}
         },
         {
@@ -53018,6 +52915,69 @@
             "grass"
           ],
           "family": "tangela",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "named uncommon family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Noivern",
+          "pokemon": "noivern",
+          "types": [
+            "flying",
+            "dragon"
+          ],
+          "family": "noibat",
+          "family_priority": "staple",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "common",
+          "weight": 8.0,
+          "conditions": {}
+        },
+        {
+          "species": "Archaludon",
+          "pokemon": "archaludon",
+          "types": [
+            "steel",
+            "dragon"
+          ],
+          "family": "duraludon",
+          "family_priority": "staple",
+          "ambient": true,
+          "eligibility_reason": "named uncommon family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "uncommon",
+          "weight": 4.0,
+          "conditions": {}
+        },
+        {
+          "species": "Glimmora",
+          "pokemon": "glimmora",
+          "types": [
+            "rock",
+            "poison"
+          ],
+          "family": "glimmet",
+          "family_priority": "staple",
+          "ambient": true,
+          "eligibility_reason": "named uncommon family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "uncommon",
+          "weight": 4.0,
+          "conditions": {}
+        },
+        {
+          "species": "Goodra",
+          "pokemon": "goodra",
+          "types": [
+            "dragon"
+          ],
+          "family": "goomy",
           "family_priority": "prize",
           "ambient": true,
           "eligibility_reason": "find: the reason to leave the path, rare bucket, top half of the band (57-60)",
@@ -53041,6 +53001,84 @@
       "placement_status": "tiles in data/habitat_blocks.json (vrc_*), written by tools/vr_caves.py records --write",
       "entries": [
         {
+          "species": "Delphox",
+          "pokemon": "delphox",
+          "types": [
+            "fire",
+            "psychic"
+          ],
+          "family": "fennekin",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Chandelure",
+          "pokemon": "chandelure",
+          "types": [
+            "ghost",
+            "fire"
+          ],
+          "family": "litwick",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Gardevoir",
+          "pokemon": "gardevoir",
+          "types": [
+            "psychic",
+            "fairy"
+          ],
+          "family": "ralts",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Alakazam",
+          "pokemon": "alakazam",
+          "types": [
+            "psychic"
+          ],
+          "family": "abra",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "named uncommon family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Dusknoir",
+          "pokemon": "dusknoir",
+          "types": [
+            "ghost"
+          ],
+          "family": "duskull",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "named uncommon family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
           "species": "Noivern",
           "pokemon": "noivern",
           "types": [
@@ -53048,60 +53086,12 @@
             "dragon"
           ],
           "family": "noibat",
-          "family_priority": "common",
+          "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
           "level": "54-60",
           "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
-          "species": "Claydol",
-          "pokemon": "claydol",
-          "types": [
-            "ground",
-            "psychic"
-          ],
-          "family": "baltoy",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
-          "species": "Bronzong",
-          "pokemon": "bronzong",
-          "types": [
-            "steel",
-            "psychic"
-          ],
-          "family": "bronzor",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
-          "species": "Duraludon",
-          "pokemon": "duraludon",
-          "types": [
-            "steel",
-            "dragon"
-          ],
-          "family": "duraludon",
-          "family_priority": "uncommon",
-          "ambient": true,
-          "eligibility_reason": "named uncommon family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "uncommon",
-          "weight": 0.9,
+          "weight": 8.0,
           "conditions": {}
         },
         {
@@ -53112,53 +53102,6 @@
             "dragon"
           ],
           "family": "duraludon",
-          "family_priority": "uncommon",
-          "ambient": true,
-          "eligibility_reason": "evolves from Duraludon using metal alloy, not by level: in the wild from tier 6, in the upper half of the band (57-60)",
-          "level": "57-60",
-          "bucket": "uncommon",
-          "weight": 5.1,
-          "conditions": {}
-        },
-        {
-          "species": "Reuniclus",
-          "pokemon": "reuniclus",
-          "types": [
-            "psychic"
-          ],
-          "family": "solosis",
-          "family_priority": "uncommon",
-          "ambient": true,
-          "eligibility_reason": "named uncommon family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "uncommon",
-          "weight": 6.0,
-          "conditions": {}
-        },
-        {
-          "species": "Crobat",
-          "pokemon": "crobat",
-          "types": [
-            "poison",
-            "flying"
-          ],
-          "family": "zubat",
-          "family_priority": "staple",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "common",
-          "weight": 8.0,
-          "conditions": {}
-        },
-        {
-          "species": "Steelix",
-          "pokemon": "steelix",
-          "types": [
-            "steel",
-            "ground"
-          ],
-          "family": "onix",
           "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -53168,13 +53111,13 @@
           "conditions": {}
         },
         {
-          "species": "Golem",
-          "pokemon": "golem",
+          "species": "Glimmora",
+          "pokemon": "glimmora",
           "types": [
             "rock",
-            "ground"
+            "poison"
           ],
-          "family": "geodude",
+          "family": "glimmet",
           "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -53198,6 +53141,84 @@
       "placement_status": "tiles in data/habitat_blocks.json (vrc_*), written by tools/vr_caves.py records --write",
       "entries": [
         {
+          "species": "Delphox",
+          "pokemon": "delphox",
+          "types": [
+            "fire",
+            "psychic"
+          ],
+          "family": "fennekin",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Chandelure",
+          "pokemon": "chandelure",
+          "types": [
+            "ghost",
+            "fire"
+          ],
+          "family": "litwick",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Gardevoir",
+          "pokemon": "gardevoir",
+          "types": [
+            "psychic",
+            "fairy"
+          ],
+          "family": "ralts",
+          "family_priority": "common",
+          "ambient": true,
+          "eligibility_reason": "named common family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "common",
+          "weight": 12.0,
+          "conditions": {}
+        },
+        {
+          "species": "Alakazam",
+          "pokemon": "alakazam",
+          "types": [
+            "psychic"
+          ],
+          "family": "abra",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "named uncommon family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
+          "species": "Dusknoir",
+          "pokemon": "dusknoir",
+          "types": [
+            "ghost"
+          ],
+          "family": "duskull",
+          "family_priority": "uncommon",
+          "ambient": true,
+          "eligibility_reason": "named uncommon family, tier 9: the family starts here",
+          "level": "54-60",
+          "bucket": "uncommon",
+          "weight": 6.0,
+          "conditions": {}
+        },
+        {
           "species": "Noivern",
           "pokemon": "noivern",
           "types": [
@@ -53205,60 +53226,12 @@
             "dragon"
           ],
           "family": "noibat",
-          "family_priority": "common",
+          "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
           "level": "54-60",
           "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
-          "species": "Claydol",
-          "pokemon": "claydol",
-          "types": [
-            "ground",
-            "psychic"
-          ],
-          "family": "baltoy",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
-          "species": "Bronzong",
-          "pokemon": "bronzong",
-          "types": [
-            "steel",
-            "psychic"
-          ],
-          "family": "bronzor",
-          "family_priority": "common",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "common",
-          "weight": 12.0,
-          "conditions": {}
-        },
-        {
-          "species": "Duraludon",
-          "pokemon": "duraludon",
-          "types": [
-            "steel",
-            "dragon"
-          ],
-          "family": "duraludon",
-          "family_priority": "uncommon",
-          "ambient": true,
-          "eligibility_reason": "named uncommon family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "uncommon",
-          "weight": 0.9,
+          "weight": 8.0,
           "conditions": {}
         },
         {
@@ -53269,53 +53242,6 @@
             "dragon"
           ],
           "family": "duraludon",
-          "family_priority": "uncommon",
-          "ambient": true,
-          "eligibility_reason": "evolves from Duraludon using metal alloy, not by level: in the wild from tier 6, in the upper half of the band (57-60)",
-          "level": "57-60",
-          "bucket": "uncommon",
-          "weight": 5.1,
-          "conditions": {}
-        },
-        {
-          "species": "Reuniclus",
-          "pokemon": "reuniclus",
-          "types": [
-            "psychic"
-          ],
-          "family": "solosis",
-          "family_priority": "uncommon",
-          "ambient": true,
-          "eligibility_reason": "named uncommon family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "uncommon",
-          "weight": 6.0,
-          "conditions": {}
-        },
-        {
-          "species": "Crobat",
-          "pokemon": "crobat",
-          "types": [
-            "poison",
-            "flying"
-          ],
-          "family": "zubat",
-          "family_priority": "staple",
-          "ambient": true,
-          "eligibility_reason": "named common family, tier 9: the family starts here",
-          "level": "54-60",
-          "bucket": "common",
-          "weight": 8.0,
-          "conditions": {}
-        },
-        {
-          "species": "Steelix",
-          "pokemon": "steelix",
-          "types": [
-            "steel",
-            "ground"
-          ],
-          "family": "onix",
           "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -53325,13 +53251,13 @@
           "conditions": {}
         },
         {
-          "species": "Golem",
-          "pokemon": "golem",
+          "species": "Glimmora",
+          "pokemon": "glimmora",
           "types": [
             "rock",
-            "ground"
+            "poison"
           ],
-          "family": "geodude",
+          "family": "glimmet",
           "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -53387,13 +53313,13 @@
           "conditions": {}
         },
         {
-          "species": "Probopass",
-          "pokemon": "probopass",
+          "species": "Empoleon",
+          "pokemon": "empoleon",
           "types": [
-            "rock",
+            "water",
             "steel"
           ],
-          "family": "nosepass",
+          "family": "piplup",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -53418,12 +53344,13 @@
           "conditions": {}
         },
         {
-          "species": "Copperajah",
-          "pokemon": "copperajah",
+          "species": "Kingambit",
+          "pokemon": "kingambit",
           "types": [
+            "dark",
             "steel"
           ],
-          "family": "cufant",
+          "family": "pawniard",
           "family_priority": "uncommon",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -53433,13 +53360,13 @@
           "conditions": {}
         },
         {
-          "species": "Crobat",
-          "pokemon": "crobat",
+          "species": "Noivern",
+          "pokemon": "noivern",
           "types": [
-            "poison",
-            "flying"
+            "flying",
+            "dragon"
           ],
-          "family": "zubat",
+          "family": "noibat",
           "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -53449,13 +53376,13 @@
           "conditions": {}
         },
         {
-          "species": "Steelix",
-          "pokemon": "steelix",
+          "species": "Archaludon",
+          "pokemon": "archaludon",
           "types": [
             "steel",
-            "ground"
+            "dragon"
           ],
-          "family": "onix",
+          "family": "duraludon",
           "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -53465,13 +53392,13 @@
           "conditions": {}
         },
         {
-          "species": "Golem",
-          "pokemon": "golem",
+          "species": "Glimmora",
+          "pokemon": "glimmora",
           "types": [
             "rock",
-            "ground"
+            "poison"
           ],
-          "family": "geodude",
+          "family": "glimmet",
           "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -53511,13 +53438,13 @@
           "conditions": {}
         },
         {
-          "species": "Probopass",
-          "pokemon": "probopass",
+          "species": "Empoleon",
+          "pokemon": "empoleon",
           "types": [
-            "rock",
+            "water",
             "steel"
           ],
-          "family": "nosepass",
+          "family": "piplup",
           "family_priority": "common",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -53542,12 +53469,13 @@
           "conditions": {}
         },
         {
-          "species": "Copperajah",
-          "pokemon": "copperajah",
+          "species": "Kingambit",
+          "pokemon": "kingambit",
           "types": [
+            "dark",
             "steel"
           ],
-          "family": "cufant",
+          "family": "pawniard",
           "family_priority": "uncommon",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -53557,13 +53485,13 @@
           "conditions": {}
         },
         {
-          "species": "Crobat",
-          "pokemon": "crobat",
+          "species": "Noivern",
+          "pokemon": "noivern",
           "types": [
-            "poison",
-            "flying"
+            "flying",
+            "dragon"
           ],
-          "family": "zubat",
+          "family": "noibat",
           "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named common family, tier 9: the family starts here",
@@ -53573,13 +53501,13 @@
           "conditions": {}
         },
         {
-          "species": "Steelix",
-          "pokemon": "steelix",
+          "species": "Archaludon",
+          "pokemon": "archaludon",
           "types": [
             "steel",
-            "ground"
+            "dragon"
           ],
-          "family": "onix",
+          "family": "duraludon",
           "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",
@@ -53589,13 +53517,13 @@
           "conditions": {}
         },
         {
-          "species": "Golem",
-          "pokemon": "golem",
+          "species": "Glimmora",
+          "pokemon": "glimmora",
           "types": [
             "rock",
-            "ground"
+            "poison"
           ],
-          "family": "geodude",
+          "family": "glimmet",
           "family_priority": "staple",
           "ambient": true,
           "eligibility_reason": "named uncommon family, tier 9: the family starts here",

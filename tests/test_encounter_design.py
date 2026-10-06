@@ -114,7 +114,7 @@ THEME_SHARE_MIN = 0.70      # target 6
 GYM_ANSWERS_MIN = 2         # target 7 ("at least two families")
 MARGIN = 128                # section 1: "within 128 blocks of one"
 MISFITS = ("excadrill", "quagsire", "whiscash", "boldore", "graveler")   # section 7a / target 2
-STAPLE = ("crobat", "steelix", "golem")                                   # section 7a
+STAPLE = ("noivern", "archaludon", "glimmora")                            # section 7a
 # Section 7a's themed zones (Drowned Gallery, Slagworks, Bloom, Raw Tear, Abandoned Cut) and their core tiles;
 # vrc_cave is the unthemed cave.
 THEMED_ZONES = ("vrc_drowned", "vrc_slagworks", "vrc_bloom", "vrc_raw_tear", "vrc_abandoned_cut")
@@ -435,7 +435,7 @@ def test_the_thresholds_here_are_the_documents():
                    "No spawn in a table is above its tier's cap"):
         assert phrase in S8, "section 8 no longer says %r" % phrase
     assert "within 128 blocks" in flat(section("1"))
-    assert "(Crobat, Steelix, Golem)" in flat(section("7a"))
+    assert "(Noivern, Archaludon, Glimmora)" in flat(section("7a"))
     for zone in ("Drowned Gallery", "Slagworks", "Bloom", "Raw Tear", "Abandoned Cut"):
         assert zone in flat(section("7a"))
     assert TIER_CAP == {1: 20, 2: 25, 3: 30, 4: 35, 5: 40, 6: 45, 7: 50, 8: 55, 9: 60}, TIER_CAP
