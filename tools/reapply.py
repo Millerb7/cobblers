@@ -876,6 +876,7 @@ def prepare_jobs(a):
     # one Spectrier per player at the Crown Cemetery (data/spectrier_cap.json; fails closed if the placement moved)
     add("spectrier_cap", "spectrier_cap.py")
     add("hoopa_cradle", "hoopa_cradle.py")
+    add("legendary_sweep_audit", "legendary_sweep_audit.py", *src)
     # blackout, recovery claims and the water ladder (data/blackout.json, data/water_mounts.json)
     add("blackout_pack", "blackout_pack.py")
     # the loose functions (town prep, elders, grove, islet) in one pack
