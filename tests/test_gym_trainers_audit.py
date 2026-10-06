@@ -180,12 +180,11 @@ def problems_of(rep, who, codes=None):
 
 JUNIORS = sorted(A.load(ROOT / "data" / "gym_junior_trainers.json")["trainers"], key=lambda t: t["id"])
 IDS = [t["id"] for t in JUNIORS]
-# defects this audit found on 2026-10-06, each recorded in the hand-back; the xfail is strict, so a fix turns it red
+# defects this audit found on 2026-10-06, each recorded in the hand-back. Strict by hand (pytest.xfail() is never
+# strict): a known defect that is gone FAILS, naming the entry to remove. gym7_junior_03's softlock was fixed by
+# moving its seat one block north to (6179, 120, 4991), gym3_junior_01's must-pass by moving it one block east to
+# (1732, 175, 1424). Both moves were found by this audit and re-proved by tools/gym_trainers.py check.
 KNOWN = {
-    ("must_pass", "gym3_junior_01"): "the transformer stair's first step (1733, 176, 1425) is 2.45 from the seat, "
-                                     "inside sight 3.0 for most of the cell but not all of it",
-    ("softlock", "gym7_junior_03"): "it stands on the one-wide gallery strip z4992 at the gantry stair's head; "
-                                    "with jumps of one gap there is no way past it",
 }
 
 
@@ -206,18 +205,22 @@ def test_each_junior_stands_dry_inside_its_hall_and_alone(report, tid):
 @pytest.mark.parametrize("tid", IDS)
 def test_every_walk_to_the_leader_passes_within_each_juniors_sight(report, tid):
     # Removing this lets a junior stand where a player walks round it (attrition before the leader is the point).
+    found = problems_of(report, tid, {"must_pass"})
     if ("must_pass", tid) in KNOWN:
+        assert found, "fixed: remove ('must_pass', %r) from KNOWN" % tid
         pytest.xfail(KNOWN[("must_pass", tid)])
-    assert problems_of(report, tid, {"must_pass"}) == []
+    assert found == []
 
 
 @real
 @pytest.mark.parametrize("tid", IDS)
 def test_no_junior_walls_the_only_way_to_its_leader(report, tid):
     # Removing this lets a junior pinned at speed 0 lock a player out of the gym.
+    found = problems_of(report, tid, {"softlock"})
     if ("softlock", tid) in KNOWN:
+        assert found, "fixed: remove ('softlock', %r) from KNOWN" % tid
         pytest.xfail(KNOWN[("softlock", tid)])
-    assert problems_of(report, tid, {"softlock"}) == []
+    assert found == []
 
 
 @real

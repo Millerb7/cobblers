@@ -35,7 +35,7 @@
      "skin": "rctmod:textures/trainers/single/swimmer_adrian_035e.png", "eye_contact": true, "sight_distance": 3.0,
      "room": "vestibule", "why": "just inside the door, on the vestibule floor between the door and the pool: whoever comes through the door is in his sight before the hall opens out"},
 
-    {"id": "gym3_junior_01", "name": "Line Engineer", "gym": "gym3", "seat": [1731, 175, 1424], "yaw": 135,
+    {"id": "gym3_junior_01", "name": "Line Engineer", "gym": "gym3", "seat": [1732, 175, 1424], "yaw": 135,
      "skin": "rctmod:textures/trainers/single/engineer_baily_00dc.png", "eye_contact": true, "sight_distance": 3.0,
      "room": "tower_foot", "why": "on the hall floor at the foot of the transformer tower's stair, the only climb off the floor"},
     {"id": "gym3_junior_02", "name": "Relay Technician", "gym": "gym3", "seat": [1731, 182, 1417], "yaw": 45,
@@ -75,7 +75,7 @@
     {"id": "gym7_junior_02", "name": "Rim Researcher", "gym": "gym7", "seat": [6177, 113, 4985], "yaw": 90,
      "skin": "rctmod:textures/trainers/single/scientist_connor_0150.png", "eye_contact": true, "sight_distance": 2.5,
      "room": "assay_deck", "why": "at the east end of the assay deck, at the foot of the gantry stair"},
-    {"id": "gym7_junior_03", "name": "Flue Keeper", "gym": "gym7", "seat": [6179, 120, 4992], "yaw": 90,
+    {"id": "gym7_junior_03", "name": "Flue Keeper", "gym": "gym7", "seat": [6179, 120, 4991], "yaw": 90,
      "skin": "rctmod:textures/trainers/single/scientist_darrius_0575.png", "eye_contact": true, "sight_distance": 2.5,
      "room": "gallery", "why": "on the gallery at the head of the gantry stair, before the four hoods (trainers_why: the gallery)"},
 
