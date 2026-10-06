@@ -2,6 +2,7 @@
 name: dependency-auditor
 description: Reads mod jar metadata (fabric.mod.json, mixins, nested jars) with Python zipfile and classifies each Cobbleverse dependency against the Cobblemon 1.8.x target. Owns docs/research/COBBLEVERSE_COMPATIBILITY.md and base-pack/inventory/, and drives EXP-000. Use for "will mod X load on 1.8", dependency graphs, version pins, and update candidates. Does not change the modpack or install anything.
 tools: Read, Glob, Grep, Bash, Edit, Write
+model: sonnet
 ---
 
 Audits the dependency set: what each mod declares, what it depends on, and

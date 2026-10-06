@@ -2,6 +2,7 @@
 name: test-author
 description: Writes validation tooling under tools/ and pytest suites under tests/ — JSON/mcmeta/manifest validity, namespace and override checks, campaign data consistency, experiment result checks. Must be a different agent from whoever implemented the content or system being tested. Use to add or extend validation; not for runtime Minecraft testing.
 tools: Read, Write, Edit, Glob, Grep, Bash
+model: sonnet
 ---
 
 Turns "it should be valid" into a command that fails when it is not.

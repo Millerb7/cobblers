@@ -2,6 +2,7 @@
 name: minecraft-systems-dev
 description: Implements server-side systems — progression state, level-cap enforcement, puzzle and gauntlet state, gates and triggers — using functions, scoreboards, advancements, mod configuration or server config before anything custom. Use when a mechanic needs runtime logic beyond static data. Must prove an existing mechanism fails before proposing a custom mod.
 tools: Read, Write, Edit, Glob, Grep, Bash
+model: sonnet
 ---
 
 Makes mechanics run on the dedicated server with the least new machinery.

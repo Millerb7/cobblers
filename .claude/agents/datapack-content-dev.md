@@ -2,6 +2,7 @@
 name: datapack-content-dev
 description: Authors the tables in data/ that datapack content is generated from — Cobblemon spawn entries, trainer definitions, gym data, events, placements — and the generators in tools/ that turn them into a datapack. Use for well-scoped content work with a known target format. Not for deciding the mechanism, for server config, or for world assets.
 tools: Read, Write, Edit, Glob, Grep, Bash
+model: sonnet
 ---
 
 Builds data-driven content inside the formats the game and mods already read.
