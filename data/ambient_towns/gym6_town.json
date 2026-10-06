@@ -1,7 +1,7 @@
 {
   "settlement": "gym6_town",
   "size": "town",
-  "target": 47,
+  "target": 48,
   "character": "Tilpey Cross is a city of readers, minds and shops on a grid by the lake: its Pokemon keep the hour, mind doors, sort books, serve food and perform on the corner, and the rest stare, nap, dance and play chess. Psychic and city Pokemon; no farm animal and nothing from the marsh or the garden.",
   "workers": [
     {
@@ -338,13 +338,6 @@
       "why": "staring out of the cartographer's window at nothing, without blinking"
     },
     {
-      "id": "tilpey_pidove_gutter",
-      "species": "pidove",
-      "spot": "gutter",
-      "building": "gym6_house_06",
-      "why": "in the temple's gutter, where the city's pigeons always are"
-    },
-    {
       "id": "tilpey_ducklett_step",
       "species": "ducklett",
       "spot": "step",
@@ -562,13 +555,54 @@
       "props": [],
       "why": "the gym street's west end, under the observatory; the moon is what the observatory looks at",
       "allow": ["street"]
+    },
+    {
+      "id": "tilpey_chimney_misdreavus",
+      "title": "The voice in the armourer's chimney",
+      "unique": false,
+      "story": "The armourer's family hear crying in their chimney every evening and have stopped lighting the fire. It is a Misdreavus sitting in the pot, and it is not crying: it is laughing at them.",
+      "at": [6255, 103, 3420],
+      "facing": "west",
+      "members": [
+        {
+          "species": "misdreavus",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        }
+      ],
+      "props": [],
+      "why": "something in a chimney, in the town that listens: gym6_house_07's chimney stack is the cobblestone wall at (6255, 3420) whose top, at 102, stands two to four above the roof blocks round it (the template as placed, building top 103 feet y). The highest chimney in Tilpey Cross, seen from the east road"
+    },
+    {
+      "id": "tilpey_spiritomb_stone",
+      "title": "The memory stone with a face",
+      "unique": false,
+      "story": "Seven memory stones stand along the rows, each a stone the Rift left and what the town remembers of it. The one near the end of the east row has grown a face. It is a Spiritomb, and the readers say it remembers things nobody wrote down.",
+      "at": [6290, 96, 3454],
+      "facing": "west",
+      "members": [
+        {
+          "species": "spiritomb",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:candle[candles=2,lit=true]",
+          "at": [-1, 0, 1]
+        }
+      ],
+      "why": "beside sabrina_memory_stone_5 at (6290, 3453), on the plan's y 96: a town that keeps memory stones gets the one Pokemon that is bound to a keystone. Someone has left it candles"
     }
   ],
   "counts": {
     "working": 13,
     "pets": 7,
-    "placed": 9,
-    "situations": 18,
-    "total": 47
+    "placed": 8,
+    "situations": 20,
+    "total": 48
   }
 }

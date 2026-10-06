@@ -1,7 +1,7 @@
 {
   "settlement": "gym8_town",
   "size": "town",
-  "target": 46,
+  "target": 48,
   "character": "Holdfast is a garrison on the south strand: its Pokemon drill, drive stakes, dig the ditch, shoe the stores and stand sentry, and the off-duty ones are a garrison's, recruits on parade, dogs in a heap, a wagon nobody moves. Ground and fighting Pokemon; no fire, no psychic and no marsh.",
   "workers": [
     {
@@ -329,13 +329,6 @@
       "why": "beside the step, only its eyes showing above the dirt"
     },
     {
-      "id": "holdfast_pupitar_step",
-      "species": "pupitar",
-      "spot": "step",
-      "building": "gym8_house_04",
-      "why": "beside the step like a rock; the household uses it as one"
-    },
-    {
       "id": "holdfast_larvitar_roof",
       "species": "larvitar",
       "spot": "roof",
@@ -435,15 +428,15 @@
       "id": "holdfast_dog_heap",
       "title": "The dogs off watch",
       "unique": false,
-      "story": "Every dog off watch sleeps in one heap by the depot fire: two Herdier, a Yamper and a Furfrou that was somebody's pet before it joined up.",
+      "story": "Every dog off watch sleeps in one heap by the depot fire: a Herdier, a Yamper and a Furfrou that was somebody's pet before it joined up.",
       "at": [3652, 111, 6434],
       "facing": "south",
       "members": [
         {
           "species": "herdier",
-          "count": 2,
+          "count": 1,
           "pose": "still",
-          "offsets": [[0, 0, 0], [1, 0, 1]]
+          "offsets": [[0, 0, 0]]
         },
         {
           "species": "yamper",
@@ -541,13 +534,70 @@
         }
       ],
       "why": "west of the drill ground, quiet; the garrison's memory"
+    },
+    {
+      "id": "holdfast_butcher_queue",
+      "title": "The queue at the butcher's door",
+      "unique": false,
+      "story": "At six every evening the butcher throws out the trimmings, and by five there is a queue at his door: a Mightyena, a Zangoose and a Persian, who would fight anywhere else and here wait their turn. The garrison calls it the best-drilled unit in Holdfast.",
+      "at": [3603, 114, 6498],
+      "facing": "south",
+      "members": [
+        {
+          "species": "mightyena",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        },
+        {
+          "species": "zangoose",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, -2]]
+        },
+        {
+          "species": "persian",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, -4]]
+        }
+      ],
+      "props": [],
+      "why": "gym8_house_04 is the butcher's shop, its door on the west wall at z 6500; the queue stands on the strip between the street (x 3597-3601) and the shop (x 3603, z 6494-6498, the plan's y 114), north of the door so the way in stays open. The doorstep's placed Pupitar is taken out for it (the conversion from placed the composition asks for)"
+    },
+    {
+      "id": "holdfast_sirfetchd_sentry",
+      "title": "The sentry nobody posted",
+      "unique": false,
+      "story": "A Sirfetch'd stands at the end of the gate palisade with its leek on its shoulder, facing the road out. Nobody posted it. The watch changes round it four times a day, and it has never once been relieved.",
+      "at": [3627, 111, 6415],
+      "facing": "north",
+      "members": [
+        {
+          "species": "sirfetchd",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:spruce_fence",
+          "at": [1, 0, 0]
+        },
+        {
+          "block": "minecraft:lantern",
+          "at": [1, 1, 0]
+        }
+      ],
+      "why": "a garrison town's own soldier: by giovanni_palisade at (3624, 6420), on the plan's y 111 and clear of the Rhydon's stake line; the fence post and lantern are its sentry post"
     }
   ],
   "counts": {
     "working": 13,
     "pets": 7,
-    "placed": 9,
-    "situations": 17,
-    "total": 46
+    "placed": 8,
+    "situations": 20,
+    "total": 48
   }
 }
