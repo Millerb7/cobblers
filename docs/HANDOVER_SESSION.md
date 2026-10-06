@@ -33,6 +33,7 @@ waystone locations; Kyogre 1 and 8; in-game checks).
 - Queue 2: leader rejection on the Elite Four is unverified (the same class as Giovanni's): prove it before anyone
   reaches it.
 - Queue 4 (owner, in game): the HQ and arena fights ignore the level cap (Cobblemon NPC battles, not rctmod): review N57; and the finale run left the stage unmoved (N58).
+- Queue 5 (owner decision 2026-10-06): a catchable Hoopa at the cradle on the release (STATE "Hoopa is catchable"); Elara re-placement (R18HQ) so staging matches data (N58).
 - Queue 3: the 11 items the obtainability sweep says are still unobtainable without the research station or Blaine's
   exchange: say which actually block something (docs/research/OBTAINABILITY_SWEEP_2026-10-05.md).
 
