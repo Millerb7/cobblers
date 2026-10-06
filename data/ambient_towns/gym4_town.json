@@ -1,7 +1,7 @@
 {
   "settlement": "gym4_town",
   "size": "town",
-  "target": 46,
+  "target": 48,
   "character": "Greenhollow is a gardeners' town round a moss green: its Pokemon water, weed, trim, pollinate and haul silt and hay, and the ones that are not working have planted themselves in it. Grass and bug Pokemon of the downs and the pond, and none of the cats, sleepers and crows every other town had.",
   "workers": [
     {
@@ -358,13 +358,6 @@
       "spot": "step",
       "building": "gym4_house_02",
       "why": "beside the door pretending to be the potted tree; the potted tree is round the back"
-    },
-    {
-      "id": "greenhollow_capsakid_step",
-      "species": "capsakid",
-      "spot": "step",
-      "building": "gym4_house_07",
-      "why": "beside the step among the pepper pots, which is how it got bought"
     }
   ],
   "situations": [
@@ -525,13 +518,87 @@
         }
       ],
       "why": "on the green's centrepiece, seen from the whole square; the two are on the roof, not on the ground"
+    },
+    {
+      "id": "greenhollow_psyduck_water_butt",
+      "title": "Two Psyduck and a water butt",
+      "unique": false,
+      "story": "Two Psyduck have moved into the back garden of the house on the pond road and take the water butt in turns. The owner has fenced the beans off from them and gardens round the rest.",
+      "at": [4230, 110, 1574],
+      "facing": "north",
+      "members": [
+        {
+          "species": "psyduck",
+          "count": 2,
+          "pose": "still",
+          "offsets": [[0, 0, 0], [3, 0, 1]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:water_cauldron[level=3]",
+          "at": [1, 0, 0]
+        },
+        {
+          "block": "minecraft:oak_fence",
+          "at": [-2, 0, 2]
+        },
+        {
+          "block": "minecraft:oak_fence",
+          "at": [-1, 0, 2]
+        },
+        {
+          "block": "minecraft:oak_fence",
+          "at": [0, 0, 2]
+        },
+        {
+          "block": "minecraft:composter",
+          "at": [5, 0, 0]
+        }
+      ],
+      "why": "a gardeners' town's one garden it has lost: the back of gym4_house_02 (its door faces north onto the pond road, so its garden is the open ground south of it, x 4228-4235, z 1572-1576, all at the plan's y 110). Two of one species because the pair IS the story"
+    },
+    {
+      "id": "greenhollow_appletun_crate",
+      "title": "Asleep in the top crate",
+      "unique": false,
+      "story": "The orchard's crates are stacked by the lane to go out at dawn. The best apple in the top one is an Appletun, and the orchard keeper is not going to be the one who wakes it.",
+      "at": [4339, 112, 1563],
+      "facing": "west",
+      "members": [
+        {
+          "species": "appletun",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 1, 0]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:barrel",
+          "at": [0, 0, 0]
+        },
+        {
+          "block": "minecraft:barrel",
+          "at": [0, 0, 1]
+        },
+        {
+          "block": "minecraft:barrel",
+          "at": [0, 0, -1]
+        },
+        {
+          "block": "minecraft:barrel",
+          "at": [0, 1, 1]
+        }
+      ],
+      "why": "on the verge between the green's east edge and the east lane (x 4337-4341 at the plan's y 112), four blocks south of the orchard keeper's stall at (4335, 1559): her crates, her Applin's grown-up cousin. It stands on the middle crate, so it reads as in it"
     }
   ],
   "counts": {
     "working": 13,
     "pets": 7,
-    "placed": 9,
-    "situations": 17,
-    "total": 46
+    "placed": 8,
+    "situations": 20,
+    "total": 48
   }
 }
