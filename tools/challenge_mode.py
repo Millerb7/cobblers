@@ -185,6 +185,8 @@ def spawner_files(bosses):
         x, y, z = e["spawner"]["at"]
         out["data/%s/function/trainers/challenge/place_%s.mcfunction" % (NS, cid)] = [
             "# %s's spawner, set into the floor and powered from below (EXP-013 E2): %s" % (cid, e["spawner"]["why"]),
+            "# chunks-loaded-by: %s:trainers/challenge/cycle (execute if loaded at the spawner's cell; the redstone "
+            "block under it is the same chunk)" % NS,
             "setblock %d %d %d minecraft:redstone_block" % (x, y - 1, z),
             "setblock %d %d %d %s{TrainerIds:[\"%s\"]}" % (x, y, z, SPAWNER, cid)]
         cycle.append("execute if entity @a[x=%d,y=%d,z=%d,distance=..%d] if loaded %d %d %d unless block %d %d %d %s "
