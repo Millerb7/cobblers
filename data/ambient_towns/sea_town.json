@@ -1,7 +1,7 @@
 {
   "settlement": "sea_town",
   "size": "town",
-  "target": 44,
+  "target": 47,
   "character": "Pacifidlog floats: its Pokemon fish, smoke the catch, bail, caulk and keep the lights on the rafts, and the rest are the sea's, washed up on doorsteps, in the bait tanks, on the breakwater and tied up alongside. Water Pokemon only, and the only town with no ground under it: every y here is the deck's (walk y63), never the heightmap's sea floor.",
   "workers": [
     {
@@ -534,13 +534,106 @@
       ],
       "props": [],
       "why": "on the stilt boardwalk at the inn's door"
+    },
+    {
+      "id": "pacifidlog_slowpoke_angler",
+      "title": "The angler who uses its tail",
+      "unique": false,
+      "story": "A Slowpoke sits at the edge of the south raft with its tail in the sea. It has fished there since spring and caught nothing, and the fishers have started leaving it the odd sardine so it does not lose heart.",
+      "at": [5161, 63, 7421],
+      "facing": "west",
+      "members": [
+        {
+          "species": "slowpoke",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:barrel",
+          "at": [1, 0, 2]
+        }
+      ],
+      "why": "a fishing town's laziest fisher: on the south raft's west edge at the deck's walk y 63, the open sea one block west (the plan's seabed at x 5159). Slowpoke is 1.2 wide, so it takes the three deck cells x 5160-5162, z 7420-7422; the barrel is the sardines"
+    },
+    {
+      "id": "pacifidlog_frillish_washing",
+      "title": "One sheet too many",
+      "unique": false,
+      "story": "There is washing out on the line at the north edge of the raft, two sheets and something between them. Nobody hung out a third sheet. It is a Frillish, and it has been drying for a week.",
+      "at": [5142, 63, 7418],
+      "facing": "north",
+      "members": [
+        {
+          "species": "frillish",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:spruce_fence",
+          "at": [-2, 0, 0]
+        },
+        {
+          "block": "minecraft:spruce_fence",
+          "at": [-2, 1, 0]
+        },
+        {
+          "block": "minecraft:spruce_fence",
+          "at": [2, 0, 0]
+        },
+        {
+          "block": "minecraft:spruce_fence",
+          "at": [2, 1, 0]
+        },
+        {
+          "block": "minecraft:white_wool",
+          "at": [-1, 1, 0]
+        },
+        {
+          "block": "minecraft:white_wool",
+          "at": [1, 1, 0]
+        }
+      ],
+      "why": "a raft town's washing line over the water, on the north edge of the raft at x 5138-5152 (deck walk y 63, the sea at z 7417 west of x 5140): a Frillish is the one Pokemon that reads as a wet sheet"
+    },
+    {
+      "id": "pacifidlog_starmie_lamp",
+      "title": "The lamp that came back on",
+      "unique": false,
+      "story": "The lamp-keeper put up a bare post where the boardwalk meets the west raft, meaning to finish the lamp in the morning. That night a Starmie climbed onto it and lit it, and it has lit it every night since. The lamp-keeper has stopped ordering the glass.",
+      "at": [4980, 63, 7376],
+      "facing": "north",
+      "members": [
+        {
+          "species": "starmie",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 2, 0]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:spruce_fence",
+          "at": [0, 0, 0]
+        },
+        {
+          "block": "minecraft:spruce_fence",
+          "at": [0, 1, 0]
+        }
+      ],
+      "why": "the boardwalk's lamps stand on its north and south edges every 8 blocks in turn (the last north one at x 4995, the last south one at 4987); its west end meets the west raft at x 4980, on whose north edge (deck walk y 63) the Starmie's post stands. Pacifidlog keeps the lights, and this one keeps itself"
     }
   ],
   "counts": {
     "working": 13,
     "pets": 5,
     "placed": 9,
-    "situations": 17,
-    "total": 44
+    "situations": 20,
+    "total": 47
   }
 }

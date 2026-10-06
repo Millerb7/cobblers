@@ -42,15 +42,7 @@
       "interact": "The Helioptile spreads its frills in the sun all day and charges the prospector's lamp with it at dusk."
     }
   ],
-  "pets": [
-    {
-      "id": "redbrow_counter_cacnea",
-      "species": "cacnea",
-      "owner": "redbrow",
-      "mode": "wait",
-      "why": "the counter keeper's Cacnea, standing by the stall like a potted plant that charges for water"
-    }
-  ],
+  "pets": [],
   "placed": [
     {
       "id": "redbrow_rufflet_roof",
@@ -78,13 +70,36 @@
       ],
       "props": [],
       "why": "Redbrow's own, between the square and the lookout, facing the drop; a pair is the joke"
+    },
+    {
+      "id": "redbrow_two_cactuses",
+      "title": "Two cactuses by the counter",
+      "unique": false,
+      "story": "The counter keeps one potted cactus for luck. There are two by it now, and travellers who stop to water the plants are charged for it. Only one of the cactuses is doing the charging.",
+      "at": [4830, 162, 5689],
+      "facing": "east",
+      "members": [
+        {
+          "species": "cacnea",
+          "count": 1,
+          "pose": "still",
+          "offsets": [[0, 0, 0]]
+        }
+      ],
+      "props": [
+        {
+          "block": "minecraft:potted_cactus",
+          "at": [-1, 0, 0]
+        }
+      ],
+      "why": "the counter keeper's Cacnea, which was her pet, written as the joke it already was (the composition's conversion of a pet into a situation, which an outpost of six has no other room for): two west and two south of the counter NPC at (4832, 5687), on the plan's y 162, with the real potted cactus beside it"
     }
   ],
   "counts": {
     "working": 2,
-    "pets": 1,
+    "pets": 0,
     "placed": 1,
-    "situations": 2,
+    "situations": 3,
     "total": 6
   }
 }
