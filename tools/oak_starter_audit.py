@@ -74,6 +74,7 @@ GIVE_RE = re.compile(r"(?<![a-z0-9_])(give_?pokemon\w*|pokegive\w*|spawn_?pokemo
                      r"(?![a-z0-9_])", re.I)
 POKEGIVE_RE = re.compile(r"(?<![a-z0-9_])(give_?pokemon\w*|pokegive\w*|spawn_?pokemon\w*|pokespawn\w*)(?![a-z0-9_])",
                          re.I)
+UNCATCHABLE_RE = re.compile(r"(?<![a-z0-9_])uncatchable(?![a-z0-9_])", re.I)
 SCREEN = "openstarterscreen"
 DIALOGUE_PACK = "cobblers_dialogue"           # compile_dialogue.py's default pack under build/datapacks
 NPC_NAME = re.compile(r"\boak\b", re.I)
@@ -610,7 +611,7 @@ class Audit:
 
     def sweep(self):
         roots = [r for r, _ in self.roots()]
-        seen, screens, gives, macro_sites, starter_named = set(), [], [], [], {}
+        seen, screens, gives, macro_sites, starter_named, displays = set(), [], [], [], {}, []
         for r, ex in self.roots():
             for f, text in text_files(r, ex):
                 key = str(Path(f).resolve()) if "!/" not in str(f) else str(f)
@@ -630,7 +631,16 @@ class Audit:
                     if POKEGIVE_RE.search(unit) and "$(" in unit and not SPECIES_RE.search(unit):
                         macro_sites.append((f, r, unit.strip()[:160]))
                     if SPECIES_RE.search(unit) and GIVE_RE.search(unit):
+                        # a display: only spawn verbs, and the Cobblemon `uncatchable` flag on the same line (VERIFIED
+                        # in game, EXP-023; docs/research/notes/wild-mega-pokemon.md) -- Oak's lab actors, 2026-10-06
+                        verbs = {m.group(1).lower() for m in GIVE_RE.finditer(unit)}
+                        if all(v.startswith(("spawn", "pokespawn")) for v in verbs) and UNCATCHABLE_RE.search(unit):
+                            displays.append(f)
+                            continue
                         gives.append((f, unit.strip()[:160]))
+        if displays:
+            self.notes.append("P2 %d uncatchable display spawn(s) of a starter species, not counted as gives (%d file(s))"
+                      % (len(displays), len(set(map(str, displays)))))
         for f, unit in gives:
             self.fail("P2", "starter_given:%s" % Path(str(f)).name, "%s gives or spawns a starter species: %s" % (f, unit))
         for f, r, unit in macro_sites:
