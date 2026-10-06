@@ -12,7 +12,8 @@
     "quest": "npc_grant: the quest in data/quests.json whose grant_reward_once gives the contents",
     "contents": "[{item, count, components?, verification}]: every item id proved by the jar path that defines it",
     "message": "what the player is told, as one line of chat to that player only",
-    "built_by": "the tool and reapply step that put the container back after an export"
+    "built_by": "the tool and reapply step that put the container back after an export",
+    "requires_flags": "cache only, optional (2026-10-06): progression flag ids from data/progression.json; the find is earned only by a player holding every one (cobblers:flag/<id> in the same location predicate). Standing in the box without them earns nothing, and the player may come back"
   },
   "rewards": [
     {
@@ -1876,6 +1877,82 @@
           6491,
           71,
           6789
+        ]
+      }
+    },
+    {
+      "id": "sweep_red_chain",
+      "kind": "cache",
+      "place": "the Distortion shrine in the Glacial Tear's lower trough (data/adopted_legendary_sites.json sweep_giratina_shrine): at the foot of Giratina's altar, under the black glass dome",
+      "requires_flags": [
+        "champion_cleared"
+      ],
+      "contents": [
+        {
+          "item": "lumymon:red_chain",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/red_chain.json in LumyMon-0.6.6.jar"
+        }
+      ],
+      "message": "Coiled at the foot of the altar, cold and heavier than it looks: a Red Chain.",
+      "why": "the ONE source of lumymon:red_chain in our world, the item lumymon:giratina_altar consumes or wants (GiratinaAltar's RED_CHAIN, LumyMon-0.6.6 class strings). Measured 2026-10-06 against the server snapshot: the only other producers are a recipe in the DISABLED Sinnoh pack and rctmod's team_galactic_cyrus loot, a trainer our campaign never seats. Giratina rolls 85-99 (the altar's own strings), so only the Champion's cap (100) can hold it: requires_flags champion_cleared, once per player.",
+      "built_by": "the pasted template itself (data/placements.json legendary_giratina_shrine, tools/place_donor.py, reapply step R9): the container is lumymon:giratina_altar at template [23, 12, 20]",
+      "trigger": {
+        "min": [
+          4393,
+          78,
+          2878
+        ],
+        "max": [
+          4401,
+          80,
+          2886
+        ]
+      },
+      "container": {
+        "block": "lumymon:giratina_altar",
+        "at": [
+          4397,
+          78,
+          2882
+        ]
+      }
+    },
+    {
+      "id": "sweep_nightmare_weaver",
+      "kind": "cache",
+      "place": "Newmoon Island, hanging over the Fungal Isle's west end (data/adopted_legendary_sites.json sweep_newmoon_island): at Darkrai's shrine, in the island's top room",
+      "requires_flags": [
+        "champion_cleared"
+      ],
+      "contents": [
+        {
+          "item": "lumymon:nightmare_weaver",
+          "count": 1,
+          "verification": "assets/lumymon/models/item/nightmare_weaver.json in LumyMon-0.6.6.jar"
+        }
+      ],
+      "message": "Snagged on the shrine, a knot of black thread that will not quite hold still: a Nightmare Weaver.",
+      "why": "the ONE source of lumymon:nightmare_weaver in our world, the item lumymon:darkrai_shrine wants (DarkraiShrine's NIGHTMARE_WEAVER, LumyMon-0.6.6 class strings). Measured 2026-10-06 against the server snapshot: the only other producer is a recipe in the DISABLED Sinnoh pack; the island's own loot tables (COBBLEVERSE-Loot-DP newmoon_island and newmoon_island_nightmare) and its literal container items hold none. Darkrai rolls 70-85 (99 shiny), so only the Champion's cap holds it: requires_flags champion_cleared, once per player.",
+      "built_by": "the pasted template itself (data/placements.json legendary_newmoon_island, tools/place_donor.py, reapply step R9): the container is lumymon:darkrai_shrine at template [49, 46, 33]",
+      "trigger": {
+        "min": [
+          69,
+          186,
+          5611
+        ],
+        "max": [
+          77,
+          189,
+          5619
+        ]
+      },
+      "container": {
+        "block": "lumymon:darkrai_shrine",
+        "at": [
+          73,
+          187,
+          5615
         ]
       }
     }

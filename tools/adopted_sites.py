@@ -27,8 +27,12 @@ TURN = {"none": lambda dx, dz: (dx, dz), "clockwise_90": lambda dx, dz: (-dz, dx
 
 
 def sites(doc=None):
+    """Every site with a position: the surface-seated `sites` AND the sweep's `sweep_sites` (sunk or floating,
+    tools/legendary_sweep.py, 2026-10-06). A consumer that keeps clear of adopted sites (sea life, the hidden-site
+    spread, the research station) must see both: reading only `sites` would drop the sweep's two from every exclusion
+    built on this list (CLAUDE.md 'Our list is not the world')."""
     doc = doc if doc is not None else json.loads(SITES.read_text(encoding="utf-8"))
-    return list(doc.get("sites") or [])
+    return list(doc.get("sites") or []) + list(doc.get("sweep_sites") or [])
 
 
 def site(site_id, doc=None):
