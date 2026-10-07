@@ -306,11 +306,34 @@ def card_shop(policy):
              "Offers": [{"Item": {"count": 1, "id": c["item"]}, "Price": str(int(c["price"]))}]}]
 
 
+def training_policy(policy):
+    return (((policy or {}).get("mart") or {}).get("training")) or {}
+
+
+def training_offers(policy, tier=0):
+    """[(item id, authored price)] of every stock_policy.mart.training line with badges <= tier, in table order
+    (docs/mechanics/EV_IV_TRAINING.md option B: the Training shelf rides on the Mart tier rule)."""
+    out = []
+    for t in training_policy(policy).get("tiers") or []:
+        if isinstance(t, dict) and isinstance(t.get("badges"), int) and t["badges"] <= int(tier or 0):
+            out += [(i["item"], int(i["price"])) for i in t.get("items") or []]
+    return out
+
+
+def training_shop(policy, tier=0, bands=None, step=1):
+    """The Training category for a Mart clerk at `tier`, or [] when it carries no line. Authored, in the offer shape
+    card_shop emits; an early-reach clerk's bands (early_reach_prices) price each line from its authored price."""
+    bands = bands or {}
+    offers = [{"Item": {"count": 1, "id": iid}, "Price": str(apply_price(price, bands.get(iid), step))}
+              for iid, price in training_offers(policy, tier)]
+    return [{"Category": training_policy(policy)["category"], "Offers": offers}] if offers else []
+
+
 def mart_shop_items(policy, rid=None, tier=0):
-    """Every item id a Mart clerk's shop should offer: the basic items and its tier's lines (mart_tier_items), plus
-    the trainer card at the one clerk the policy names. Used by the shop filter and by the in-game verify, so the two
-    cannot disagree."""
-    items = set(mart_items(policy)) | mart_tier_items(policy, tier)
+    """Every item id a Mart clerk's shop should offer: the basic items and its tier's lines (mart_tier_items), its
+    tier's training lines (training_offers), plus the trainer card at the one clerk the policy names. Used by the shop
+    filter and by the in-game verify, so the two cannot disagree."""
+    items = set(mart_items(policy)) | mart_tier_items(policy, tier) | {i for i, _ in training_offers(policy, tier)}
     if rid is not None and card_policy(policy) and rid == card_policy(policy).get("trader"):
         items.add(card_policy(policy)["item"])
     return items
@@ -366,6 +389,14 @@ def apply_stock_policy(data, policy, stock=None, rid=None, tier=0):
             c = dict(cat)
             c["Offers"] = offers
             cats_out.append(c)
+    if stock == "mart" and training_policy(policy):
+        # the Training shelf (stock_policy.mart.training, EV_IV_TRAINING.md option B): authored like the card, appended
+        # after the filter, released by the same tier. No template carries these lines.
+        train = training_shop(policy, tier, floors, step)
+        cats_out = cats_out + train
+        ids = {o["Item"]["id"] for c in train for o in c["Offers"]}
+        kept = kept + [o["Item"]["id"] for c in train for o in c["Offers"]]
+        held = [i for i in held if i not in ids]
     if stock == "mart" and card_policy(policy) and rid is not None and rid == card_policy(policy).get("trader"):
         # rctmod:trainer_card is in no shopkeeper template and in no shop of ours: without the card
         # `spawningRequiresTrainerCard = true` (modpack/config/rctmod-server.toml:87) means no RCT trainer ever
@@ -610,6 +641,34 @@ def static_problems(doc, placements_doc=None, plans_dir=None):
                 elif iid in seen_items:
                     out.append((None, "stock_policy.mart.tiers: %s is listed twice (or is already a basic item)" % iid))
                 seen_items.add(iid)
+    train = training_policy(doc.get("stock_policy"))
+    if train:
+        # the Training shelf: authored offers, so every field the offer is built from must be there and sane, and no
+        # line may also be a Mart line (one item, two prices on one screen)
+        seen = set(mart_items(doc.get("stock_policy"))) | mart_tier_items(doc.get("stock_policy"), 8)
+        if not (isinstance(train.get("category"), str) and train["category"]):
+            out.append((None, "stock_policy.mart.training needs a category"))
+        if train.get("buys") is not False:
+            out.append((None, "stock_policy.mart.training must say buys: false (no bank buys a training line back)"))
+        if not isinstance(train.get("tiers"), list) or not train["tiers"]:
+            out.append((None, "stock_policy.mart.training.tiers must be a non-empty list"))
+        for t in train.get("tiers") if isinstance(train.get("tiers"), list) else []:
+            b = t.get("badges") if isinstance(t, dict) else None
+            if not (isinstance(b, int) and not isinstance(b, bool) and 1 <= b <= 8):
+                out.append((None, "stock_policy.mart.training.tiers: badges must be 1-8, got %r" % (b,)))
+            if isinstance(t, dict) and not t.get("why"):
+                out.append((None, "stock_policy.mart.training.tiers: the tier-%r line needs a why" % (b,)))
+            for o in (t.get("items") if isinstance(t, dict) else None) or []:
+                iid = o.get("item") if isinstance(o, dict) else None
+                pr = o.get("price") if isinstance(o, dict) else None
+                if not (isinstance(iid, str) and ":" in iid):
+                    out.append((None, "stock_policy.mart.training: %r is not a namespaced item id" % (iid,)))
+                    continue
+                if not (isinstance(pr, int) and not isinstance(pr, bool) and pr > 0):
+                    out.append((None, "stock_policy.mart.training: %s needs a positive whole price" % iid))
+                if iid in seen:
+                    out.append((None, "stock_policy.mart.training: %s is listed twice (or is already a Mart line)" % iid))
+                seen.add(iid)
     return out
 
 
@@ -760,6 +819,12 @@ def main(argv=None):
                                                      " (override)" if "mart_tier" in r else "", len(add),
                                                      ", ".join(i.split(":")[1] for i in add) or "-"))
             floors = early_reach_prices(policy, r["id"])
+            train = training_shop(policy, tiers[r["id"]], floors, int(early_reach_policy(policy).get("round_to") or 1))
+            if train:
+                offs = train[0]["Offers"]
+                print("%-18s   training +%d: %s" % ("", len(offs), ", ".join(
+                    "%s %s" % (o["Item"]["id"].split(":")[1], o["Price"]) for o in offs)))
+            add = add + [o["Item"]["id"] for c in train for o in c["Offers"]]
             if floors:
                 held = {i: b for i, b in floors.items() if i in add}
                 show = lambda b: ("x%s" % b[1]) if b[0] == "markup" else str(b[1])
