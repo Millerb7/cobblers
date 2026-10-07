@@ -189,7 +189,7 @@
       "id": "displaced_rubbish_king",
       "title": "The king of the heap",
       "story": "A Garbodor sits enthroned on the rubbish heap at the end of the lane, and a Trubbish brings it the best of what the Trubbish worker collects.",
-      "unique": false,
+      "unique": true,
       "at": [3300, 30, 1812],
       "facing": "north",
       "members": [
@@ -231,7 +231,7 @@
       "id": "displaced_shuppet_chimney",
       "title": "Hung up the chimney",
       "story": "Smoke from the cottage chimney by the north gate comes out in the shape of a face some evenings. It is a Shuppet hanging in the chimney pot, feeding on the grudges of everyone who has burned their dinner.",
-      "unique": true,
+      "unique": false,
       "at": [3272, 36, 1720],
       "facing": "east",
       "members": [
@@ -242,8 +242,8 @@
     },
     {
       "id": "displaced_poochyena_butcher",
-      "title": "Two at the butcher's door",
-      "story": "Two Poochyena wait at the butcher's door every evening, one behind the other, for the bones. The butcher swears he has never once given them any, and they have never once missed an evening.",
+      "title": "Waiting for the butcher",
+      "story": "The butcher's shop is his daughter's now. His two Poochyena still sit at the door every evening at the hour he used to come down from the surface market, one behind the other, and go in when the lamps are turned down. She leaves the door on the latch for them.",
       "unique": true,
       "at": [3329, 28, 1809],
       "facing": "north",
@@ -251,7 +251,7 @@
         {"species": "poochyena", "count": 2, "pose": "still", "offsets": [[0, 0, 0], [0, 0, 2]]}
       ],
       "props": [],
-      "why": "south of displaced_house_06 (butcher_shop_1, door 3329, 1806), feet y28 from the cavern floor, off the street at z1813; a queue at a door, one species because the queue is the situation (Greavard first, 2026-10-06: it is in the ATM client-model subset)"
+      "why": "south of displaced_house_06 (butcher_shop_1, door 3329, 1806), feet y28 from the cavern floor, off the street at z1813; two at a door, one species because they are one household's (Greavard first, 2026-10-06: it is in the ATM client-model subset). Rewritten 2026-10-08 (unit AMB): dogs queuing at a butcher's door for scraps is Holdfast's; this pair is the Displaced City's own, about someone who did not come back. Same spot, same members"
     },
     {
       "id": "displaced_parasect_bed",

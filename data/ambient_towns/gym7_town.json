@@ -436,7 +436,7 @@
     {
       "id": "cinderlee_durant_column",
       "title": "The Durant column to the core shed",
-      "unique": false,
+      "unique": true,
       "story": "Every afternoon a column of Durant marches up to the core shed's back and away with the crumbs from the bench. The core shed's Heatmor works round the far side. They know.",
       "at": [6076, 108, 5014],
       "facing": "north",
@@ -577,7 +577,7 @@
     {
       "id": "cinderlee_clodsire_wallow",
       "title": "The geological feature",
-      "unique": false,
+      "unique": true,
       "story": "A Clodsire has been lying in the warm ground on the east rim for three days. The analyst has started logging it as a geological feature, with a reading every hour.",
       "at": [6128, 107, 5008],
       "facing": "west",

@@ -534,9 +534,9 @@
     },
     {
       "id": "tilpey_observatory_dance",
-      "title": "The dance in Observatory Street",
-      "unique": false,
-      "story": "On clear nights two Clefairy and a Cleffa dance in the street in front of the observatory. The astronomers time their readings by them.",
+      "title": "The Metronome lesson",
+      "unique": true,
+      "story": "Two Clefairy are teaching a Cleffa to wag its finger in Observatory Street. Nobody can say what a Metronome will do until it has done it, so the street empties when the lesson starts. Last week it was a Hydro Pump, and the bookseller's awning is still drying.",
       "at": [6158, 98, 3341],
       "facing": "north",
       "members": [
@@ -554,7 +554,7 @@
         }
       ],
       "props": [],
-      "why": "the gym street's west end, under the observatory; the moon is what the observatory looks at",
+      "why": "the gym street's west end, under the observatory. Rewritten 2026-10-08 (unit AMB): Clefairy dancing in front of an observatory is Northlight's (its night shift round a Lunatone); the same members on the same spots, now Tilpey's own",
       "allow": ["street"]
     },
     {
@@ -583,7 +583,7 @@
     {
       "id": "tilpey_gothorita_over_the_shoulder",
       "title": "A page behind",
-      "unique": false,
+      "unique": true,
       "story": "Whoever stops to read at the records stall finds a Gothorita reading over their shoulder. It is always exactly one page behind, and it will not let you turn until it has finished.",
       "at": [6153, 95, 3488],
       "facing": "west",

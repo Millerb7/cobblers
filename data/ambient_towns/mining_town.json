@@ -567,7 +567,7 @@
     {
       "id": "fossick_salt_lick",
       "title": "The salt lick behind the ore road",
-      "unique": false,
+      "unique": true,
       "story": "A Garganacl stands behind the ore road houses and every Pokemon that passes stops to lick it. A Bidoof and a Wooloo are queuing for a second go.",
       "at": [6596, 139, 5734],
       "facing": "north",
@@ -597,7 +597,7 @@
     {
       "id": "fossick_ditto_ore",
       "title": "The lump of ore with a face",
-      "unique": false,
+      "unique": true,
       "story": "The sorted iron waits by the ore road for the cart. One lump in the heap has a face. It is a Ditto; it has been sorted into the iron three times, and the sorters have started a book on what it assays at.",
       "at": [6706, 140, 5758],
       "facing": "east",
@@ -640,7 +640,7 @@
     {
       "id": "fossick_klefki_keys",
       "title": "Whoever the Klefki likes",
-      "unique": false,
+      "unique": true,
       "story": "The foreman lost the library's keys in the spring. A Klefki has them now. It hangs by the door all day and lets in whoever it likes, which has never yet included the foreman.",
       "at": [6621, 135, 5650],
       "facing": "east",

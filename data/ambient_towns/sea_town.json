@@ -405,7 +405,7 @@
     {
       "id": "pacifidlog_bait_tanks",
       "title": "The bait tanks on the Row",
-      "unique": false,
+      "unique": true,
       "story": "The Row keeps its bait in a row of tanks, and the tanks are full of Wishiwashi. The fishers have stopped using them as bait. One day there will be enough of them.",
       "at": [5066, 63, 7377],
       "facing": "north",
@@ -561,7 +561,7 @@
     {
       "id": "pacifidlog_frillish_washing",
       "title": "One sheet too many",
-      "unique": false,
+      "unique": true,
       "story": "There is washing out on the line at the north edge of the raft, two sheets and something between them. Nobody hung out a third sheet. It is a Frillish, and it has been drying for a week.",
       "at": [5142, 63, 7418],
       "facing": "north",
@@ -604,7 +604,7 @@
     {
       "id": "pacifidlog_starmie_lamp",
       "title": "The lamp that came back on",
-      "unique": false,
+      "unique": true,
       "story": "The lamp-keeper put up a bare post where the boardwalk meets the west raft, meaning to finish the lamp in the morning. That night a Starmie climbed onto it and lit it, and it has lit it every night since. The lamp-keeper has stopped ordering the glass.",
       "at": [4980, 63, 7376],
       "facing": "north",

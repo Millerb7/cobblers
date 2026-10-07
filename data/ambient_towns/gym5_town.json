@@ -335,7 +335,7 @@
       "species": "tympole",
       "spot": "step",
       "building": "gym5_house_08",
-      "why": "in the rain butt by the step, only its eyes over the rim"
+      "why": "on the step's edge in the puddle the step has never drained, only its eyes over the water (rewritten 2026-10-08, unit AMB: a tenant in the rain butt is Viltri Quay's Barboach)"
     },
     {
       "id": "fenhide_skorupi_porch",
@@ -387,7 +387,7 @@
     {
       "id": "fenhide_frog_chorus",
       "title": "The frog chorus on the fen walk",
-      "unique": false,
+      "unique": true,
       "story": "At dusk the frogs line up on the fen walk's edge in order of size and sing, smallest first. The Seismitoad comes in last and loudest.",
       "at": [4599, 116, 2430],
       "facing": "east",
@@ -477,7 +477,7 @@
     {
       "id": "fenhide_barrel_cards",
       "title": "The game on the eel barrel",
-      "unique": false,
+      "unique": true,
       "story": "Four of Fenhide's hardest sit round an upturned eel barrel playing a game with pebbles. Nobody will tell you the rules. The Croagunk is winning.",
       "at": [4700, 119, 2452],
       "facing": "north",
@@ -552,7 +552,7 @@
     {
       "id": "fenhide_kecleon_target",
       "title": "The fifth target",
-      "unique": false,
+      "unique": true,
       "story": "The trackers' yard has four target posts and a fifth that has never once been hit. The fifth is a Kecleon. It has stood at the butt since spring and the trackers have started taking bets on it.",
       "at": [4716, 120, 2401],
       "facing": "west",
