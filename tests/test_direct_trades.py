@@ -44,9 +44,22 @@ def doc():
     return D.load()
 
 
-def _place(doc, g=None):
+def _place(doc, g=None, fn="place"):
     out, _res = D.files(doc, g or FlatGround())
-    return out["data/cobblers/function/direct_trades/place.mcfunction"]
+    return out["data/cobblers/function/direct_trades/%s.mcfunction" % fn]
+
+
+def _counter(doc):
+    return _place(doc, fn="counter")
+
+
+def _held(doc, keep=()):
+    """A copy with every line but `keep` held back as a proposal."""
+    d = copy.deepcopy(doc)
+    for ln in d["lines"]:
+        if ln["id"] not in keep:
+            ln["approved"], ln["status"] = False, "proposal"
+    return d
 
 
 def _summon(text):
@@ -67,11 +80,10 @@ def test_the_summon_carries_every_fixed_trade_field_exactly(doc):
     for flag in ("NoAI:1b", "Invulnerable:1b", "PersistenceRequired:1b", "Silent:1b"):
         assert flag in s
     rs = _recipes(s)
-    placed = [o["id"] for o in doc["experiment_offers"]] + [ln["id"] for ln in doc["lines"] if ln["approved"] is True]
-    assert len(rs) == len(placed)
-    for oid, r in zip(placed, rs):
-        tail = CONTROL_TAIL if oid == "exp_control_multiplier" else FIXED_TAIL
-        assert tail in r, (oid, r)
+    assert len(rs) == len(doc["experiment_offers"])
+    for o, r in zip(doc["experiment_offers"], rs):
+        tail = CONTROL_TAIL if o["id"] == "exp_control_multiplier" else FIXED_TAIL
+        assert tail in r, (o["id"], r)
 
 
 def test_the_experiment_recipes_are_the_ones_authored(doc):
@@ -81,23 +93,41 @@ def test_the_experiment_recipes_are_the_ones_authored(doc):
     assert rs[1].startswith('{buy:{id:"cobblemon:poke_ball",count:4},sell:{id:"cobblemon:poke_ball",count:1},')
 
 
+# the owner, 2026-10-08: the re-priced lines go at Northlight's counter; the Holdfast booth stays EXP-055's
+def test_the_northlight_barterer_carries_every_approved_line_and_nothing_else(doc):
+    s = _summon(_counter(doc))
+    assert s.startswith("summon minecraft:villager 7277.5 116 1525.5 {")
+    assert 'VillagerData:{type:"minecraft:snow",profession:"minecraft:cartographer",level:5}' in s
+    assert 'Tags:["cob_dt_exchange","cob_dt_exchange_new"]' in s
+    approved = [ln for ln in doc["lines"] if ln["approved"] is True]
+    assert len(approved) == 8
+    rs = _recipes(s)
+    assert len(rs) == len(approved)
+    for ln, r in zip(approved, rs):
+        assert r.endswith(FIXED_TAIL) or FIXED_TAIL in r, ln["id"]
+        assert ('sell:{id:"%s",count:1}' % ln["sell"]["id"]) in r
+    assert "cobblemon:poke_ball" not in s
+    for ln in approved:
+        assert ln["sell"]["id"] not in _place(doc), ln["id"]
+
+
 def test_held_lines_are_not_placed(doc):
-    assert all(ln["approved"] is False and ln["status"] == "proposal" for ln in doc["lines"])
-    text = _place(doc)
-    for ln in doc["lines"]:
-        assert ln["sell"]["id"] not in text, ln["id"]
-    assert len(_recipes(_summon(text))) == len(doc["experiment_offers"])
+    d = _held(doc)
+    for fn in ("place", "counter"):
+        text = _place(d, fn=fn)
+        for ln in d["lines"]:
+            assert ln["sell"]["id"] not in text, (fn, ln["id"])
+    assert len(_recipes(_summon(_place(d)))) == len(d["experiment_offers"])
+    assert "Recipes:[]" in _counter(d)
 
 
 def test_an_approved_line_is_placed_and_only_it(doc):
-    d = copy.deepcopy(doc)
-    mb = next(ln for ln in d["lines"] if ln["id"] == "master_ball")
-    mb["approved"], mb["status"] = True, "approved"
-    text = _place(d)
+    d = _held(doc, keep=("master_ball",))
+    text = _counter(d)
     rs = _recipes(_summon(text))
-    assert len(rs) == len(d["experiment_offers"]) + 1
-    assert rs[-1].startswith('{buy:{id:"minecraft:diamond_block",count:1},buyB:{id:"minecraft:netherite_ingot",count:4},'
-                             'sell:{id:"cobblemon:master_ball",count:1},' + FIXED_TAIL)
+    assert len(rs) == 1
+    assert rs[0].startswith('{buy:{id:"minecraft:netherite_block",count:1},buyB:{id:"minecraft:netherite_ingot",'
+                            'count:21},sell:{id:"cobblemon:master_ball",count:1},' + FIXED_TAIL)
     for ln in d["lines"]:
         if ln["id"] != "master_ball":
             assert ln["sell"]["id"] not in text, ln["id"]
@@ -106,10 +136,34 @@ def test_an_approved_line_is_placed_and_only_it(doc):
 def test_edges_list_every_line_held_or_placed(doc):
     e = {x["id"]: x for x in D.edges(doc)}
     assert set(e) == {o["id"] for o in doc["experiment_offers"]} | {ln["id"] for ln in doc["lines"]}
-    assert e["master_ball"]["placed"] is False
-    assert e["master_ball"]["inputs"] == [{"id": "minecraft:diamond_block", "count": 1},
-                                          {"id": "minecraft:netherite_ingot", "count": 4}]
+    assert e["master_ball"]["placed"] is True
+    assert e["master_ball"]["inputs"] == [{"id": "minecraft:netherite_block", "count": 1},
+                                          {"id": "minecraft:netherite_ingot", "count": 21}]
     assert e["exp_two_inputs"]["placed"] is True
+    assert {x["id"] for x in D.edges(_held(doc)) if not x["placed"]} == {ln["id"] for ln in doc["lines"]}
+
+
+# ------------------------------------------------------------------ the price rule (the owner, 2026-10-08)
+def test_every_approved_line_is_priced_within_the_band_of_the_counter(doc):
+    assert D.pricing_problems(doc) == []
+    # the Master Ball, worked by hand: a netherite block (9 x $900) and 21 ingots (x $900) = $27,000, the counter's
+    mb = next(ln for ln in doc["lines"] if ln["id"] == "master_ball")
+    assert D.line_value(doc, mb) == 9 * 900 + 21 * 900 == 27000
+    assert D.reference_price(mb, D.counter_prices()) == 27000
+
+
+def test_the_old_cheap_master_ball_is_refused(doc):
+    d = copy.deepcopy(doc)
+    mb = next(ln for ln in d["lines"] if ln["id"] == "master_ball")
+    mb["buy"], mb["buyB"] = {"id": "minecraft:diamond_block", "count": 1}, {"id": "minecraft:netherite_ingot", "count": 4}
+    probs = D.pricing_problems(d)
+    assert any(p.startswith("line master_ball: inputs worth $4680 against a reference of $27000") for p in probs), probs
+
+
+def test_a_stale_input_value_is_refused(doc):
+    d = copy.deepcopy(doc)
+    d["pricing"]["values"]["minecraft:netherite_ingot"]["value"] = 200
+    assert any("netherite_ingot is 200, its source (bank) says 900" in p for p in D.pricing_problems(d))
 
 
 # ------------------------------------------------------------------ the guards bite (each mutation must be refused)
@@ -145,7 +199,7 @@ def test_the_same_item_in_both_slots_is_refused(doc):
 
 def test_approved_without_status_is_refused(doc):
     d = copy.deepcopy(doc)
-    d["lines"][0]["approved"] = True
+    d["lines"][0]["status"] = "proposal"
     _refused(d, "disagrees")
 
 
@@ -175,7 +229,45 @@ def test_the_booth_guards_every_shell_cell_before_carving(doc):
 
 def test_the_step_holds_the_chunk_and_runs_place(doc):
     assert D.steps(doc) == [("cmd", "forceload add 3632 6460 3636 6464"), ("wait", 3), ("fn", "cobblers:direct_trades/place"),
-                            ("wait", 7), ("cmd", "forceload remove 3632 6460 3636 6464")]
+                            ("wait", 7), ("cmd", "forceload remove 3632 6460 3636 6464"),
+                            ("cmd", "forceload add 7273 1521 7281 1529"), ("wait", 3),
+                            ("fn", "cobblers:direct_trades/counter"), ("wait", 7),
+                            ("cmd", "forceload remove 7273 1521 7281 1529")]
+
+
+# ------------------------------------------------------------------ the Northlight spot (from the Mart's template)
+def test_the_counter_reads_back_the_whole_roof_within_reach_before_the_summon(doc):
+    lines = _counter(doc).splitlines()
+    roof = [ln for ln in lines if ln.startswith("execute if block ") and ln.split()[4] != "115"]
+    assert len(roof) == 9 * 9            # every column within 4 of (7277, 1525)
+    cols = {(int(ln.split()[3]), int(ln.split()[5])) for ln in roof}
+    assert cols == {(x, z) for x in range(7273, 7282) for z in range(1521, 1530)}
+    assert all(int(ln.split()[4]) >= 116 + D.LIGHTNING_CLEARANCE for ln in roof)
+    assert "execute if block 7277 115 1525 #minecraft:air run scoreboard players set #counter_breach cob_dt 1" in lines
+    assert "execute unless block 7277 116 1525 #minecraft:air run scoreboard players set #counter_breach cob_dt 1" in lines
+    assert "execute unless block 7277 117 1525 #minecraft:air run scoreboard players set #counter_breach cob_dt 1" in lines
+    stop = lines.index("execute if score #counter_breach cob_dt matches 1 run return fail")
+    assert max(i for i, ln in enumerate(lines) if ln.startswith("execute ") and "breach cob_dt 1" in ln) < stop
+    assert stop < lines.index(_summon("\n".join(lines)))
+    assert not [ln for ln in lines if ln.startswith(("fill ", "setblock "))]
+
+
+def test_a_spot_whose_reach_leaves_the_roof_is_refused(doc):
+    d = copy.deepcopy(doc)
+    d["counter_site"]["z"] = 1530          # the reach box runs to z1534, under the porch's open sky
+    _refused(d, "within 4 of the counter barterer")
+
+
+def test_a_spot_inside_a_wall_is_refused(doc):
+    d = copy.deepcopy(doc)
+    d["counter_site"]["z"] = 1524          # the Mart's own counter
+    _refused(d, "is not air")
+
+
+def test_the_rcon_checks_use_one_selector_each():
+    for c in D.rcon_checks():
+        assert "][" not in c, c
+    assert "data get entity @e[type=minecraft:villager,tag=cob_dt_exchange,limit=1] Offers.Recipes" in D.rcon_checks()
 
 
 def test_reapply_wires_the_pack():
