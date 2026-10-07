@@ -286,3 +286,20 @@ These need to be retired or corrected so that no island story reads drowned or s
 10. **Sunset early arrival:** should the $100 strait ferry stay ungated at S0, given the 43-53 east and the level 60
     Slaking?
 11. **Misty:** confirm she stays parked and out of this work (F5).
+
+## Decisions taken 2026-10-08 (overnight)
+
+Taken by unit WAY on the owner's instruction (2026-10-08: of P3 and its alternative, "take the reversible one").
+
+1. **Q6, in part: the SQ-SUNSET-01 gate is off the four charters.** `charter_relic`, `charter_trench`,
+   `charter_appearing_island` and `charter_jungle_ruins` in `data/ferries.json` no longer list the `quest_field` gate
+   on `quest.sq_sunset_01.completed`, which nothing grants (F4, review N109). Each keeps its fare ($600) and its
+   `champion_cleared` gate. The dropped gate is kept in place on each charter under `superseded_gates`, with its
+   `blocked_by` and a `superseded_why`; restoring it is moving that entry back into `gates`. Measured after the change
+   (`python tools/ferries.py build`): 5 lines built of 11, `charter_relic` among them, and no built file names
+   `sq_sunset`. The trench and appearing-island charters stay unbuilt (their landings are unsited) and the Jungle Isle
+   charter stays retired; for those three nothing in the game changes until they have landings.
+2. **Not decided here:** whether SQ-SUNSET-01 becomes the Sunset Isle's story (P3) is still the owner's and Codex's.
+   If it does, its grant re-gates the charters by moving `superseded_gates` back, one entry each.
+3. **Untouched on purpose:** Pacifidlog's ferry (the owner reasons Pacifidlog is reached at six badges because it
+   has no ferry), every gym's place, and whether Northlight becomes required (those questions above remain the owner's).
