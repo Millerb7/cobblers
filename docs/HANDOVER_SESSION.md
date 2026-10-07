@@ -12,35 +12,24 @@ before it starts. The review list is `docs/OVERNIGHT_REVIEW_2026-10-06.md` (N95-
   `git fetch --prune; git rev-parse origin/build/2026-10-06-next`.
 - Next: ONE draft PR for it against main (memory: one big PR per batch) after #119 merges, or stacked on #119.
 
-## 2. Where it stopped
-- Wave A is built, audited, installed and applied to staging, and read back from the world before and after a
-  restart (the morning report's table). Prepare is complete at head 9827099 (187 jobs; later commits are docs only).
-- **Staging**: stopped with RCON `stop` at the end of the session, lock released (see section 5 of the morning report
-  for the boot history). Boot: terminal panel, `-Xmx16G` for unattended runs (12G cannot `/reload`, N111), universe
-  flags; `max-tick-time` is back at 60000.
-- The worktree `wave-a-builds-integration-98eb36` has a full `derived/` (copied from `wave-1-launch-prep-3d2fa0`) and a
-  complete `build/`: use it for the next install.
-- Agent worktrees of the night (`agent-a1bee230…`, `agent-a7097f3a…`, `agent-a33db429…`, `agent-ad8e5716…` and the
-  four auditors') are all merged; they can be cleaned up.
+## 2. Where it stopped (overnight 2026-10-08/09)
+- The overnight brief is built, audited, applied to staging and read back after a restart: `docs/MORNING_REPORT_2026-10-09.md`.
+  Prepare complete at the head before the docs commits (187 jobs). Staging stopped with RCON `stop`, saved, lock
+  released, `max-tick-time` 60000, no Lootr in `mods/` (jar and generated config kept in
+  `C:/Users/wnd/Documents/cobblers-local/mods-pending/`).
+- Snapshots: `cobblers-staging/snapshot-2026-10-08-before-overnight` (before tonight), `snapshot-2026-10-07-before-wave-a`.
+  Disposable: `cobblers-staging/lootr-exp-2026-10-08` (Lootr converted containers in it; do not boot it without Lootr
+  expecting them), `staging-2026-10-01.oom-2026-10-07` (the OOM-damaged copy).
+- This worktree has a full `derived/` and a complete `build/`.
 
-## 3. The owner's answers (2026-10-08) and the next job
-Recorded in STATE "What is decided" ("The owner's answers to the Wave A morning report"). The next session's work, in
-order, each with an independent audit before any apply:
-1. **A fresh independent audit of A1** (another agent, opus, escalation rule 1): the integrator fixed the retire and
-   edited `tests/test_challenge_mode_audit.py` to match (N95). Then measure Misty's and the League's
-   `single_leader.restore` from their templates and the League's `normal_at` (N97). Roll out the 12 only after the
-   owner's Brock check passes.
-2. **Pricing (A3 follow-up):** Pacifidlog reachable at 6 badges, not 0; early-town status heals re-priced as a
-   convenience (not 9,500). Re-run `economy_audit`; R14 at apply.
-3. **Barter lines (A4 follow-up):** re-price so the exchange is an alternative path, not a ~5.8x bypass of
-   Northlight's $27,000 Master Ball; place the approved lines at **Northlight's counter** (the one trading centre);
-   fix `rcon_checks()`'s selectors (N113). The economy audit with barter edges is in place.
-4. **Lootr:** the owner gave permission to download it (2026-10-08). Install on staging only, run EXP-056 (mind the
-   shared `mods/` hazard in ADR-007: the jar out of `mods/` before any live boot); ADR-007 stays Proposed until seen
-   working.
-5. Gym 2 keeps two juniors (accepted). The finale gate stays on all eight badges (as built).
-6. The owner does the five in-game checks, Brock first; Wave B waits on the owner's read of A6-A10.
-Still unsourced: "THE NURSE: 30 minutes", "237 ambient across 26 settlements", "the four P2s".
+## 3. Next
+1. **Owner: Brock in game**, then the 12 bosses, after fixing the two traps (N115) and deciding Agatha/Lance (N116).
+2. **Owner: TMs at counters** (N126/N127): commit 2833317's `data/markets.json` part holds the 41 lines; re-apply it
+   once the gate is chosen, then prepare + R17M. Arena trophies by barter (N125).
+3. Griseous Core needs a sweep site to declare extra caches (N118); the Pallet waypoint needs its marker record (N120);
+   the gulch cove town and the Deep's city have no ambient (N119); walk 2 items 7-8 (N121).
+4. Lootr: the two-player cases with the owner, on a disposable copy; ADR-007 stays Proposed.
+5. Owner questions left in each design file's "Decisions taken 2026-10-08 (overnight)" section.
 
 ## 4. Do not rediscover
 - `reapply.py prepare` needs `--server-dir` and the lock env (`COBBLERS_SERVER_LOCK`, `COBBLERS_LOCK_OWNER` equal to
