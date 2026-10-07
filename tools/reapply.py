@@ -1944,6 +1944,19 @@ def steps(with_spawns=False):
                 + [("fn", "cobblers:arena/load"), ("fn", "cobblers:arena/retire_spire"),
                    ("fn", "cobblers:arena/posts/place")]
                 + [("cmd", "forceload remove " + h) for h in hold]))
+    # one leader per gym (the owner, 2026-10-07; docs/mechanics/ONE_LEADER_SWAP.md): for every boss in
+    # data/challenge_mode.json single_leader.rollout, the second spawner a world already holds is removed once, at its
+    # recorded data position, with any Challenge-id trainer by it, then read back from the world. Each line tests the
+    # block first, so on a fresh export (no second spawner) it changes nothing. cobblers_trainers is EXCLUDED as
+    # self-driving; this step is the one thing in it run over RCON. Held in a forceload, like R17A
+    import challenge_mode
+    single_hold = ["%d %d %d %d" % b for b in challenge_mode.retire_hold()]
+    if single_hold:
+        out.append(("R17L", "one leader per gym: the retired second spawners removed (data/challenge_mode.json single_leader)",
+                    [("cmd", "forceload add " + h) for h in single_hold] + [("wait", 3)]
+                    + [("fn", f) for f in challenge_mode.retire_functions()]
+                    + [("check", "single_leader")]
+                    + [("cmd", "forceload remove " + h) for h in single_hold]))
     # the ferrymen (data/ferries.json): NPCs, so an export erases them, and their classes load at boot from
     # cobblers_ferries, so they are placed over RCON after the restart, as R9F and R17 place theirs; the load function
     # first (the pack's scores, also created by its load tag). Listed from the committed data, not the build
@@ -2291,6 +2304,13 @@ def _run_steps(a, rc, todo, rec, path, live=None):
                 bad += ["stall merchants: %s" % m for m in problems]
                 print("   stall merchants: %d stalls, %d problems" % (len(markets.emitted_stalls(markets.load())),
                                                                      len(problems)), flush=True)
+            elif kind == "check" and v == "single_leader":
+                # one leader per gym: the second spawner gone, the one spawner Normal with nobody near (R17L)
+                import challenge_mode
+                problems = challenge_mode.single_leader_verify(rc)
+                bad += ["single leader: %s" % m for m in problems]
+                print("   single leader: %d bosses, %d problems" % (len(challenge_mode.rollout()), len(problems)),
+                      flush=True)
             elif kind == "check" and v == "ambient_idle":
                 import ambient_idle
                 problems = ambient_idle.verify(rc)

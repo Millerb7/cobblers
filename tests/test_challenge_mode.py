@@ -137,8 +137,9 @@ def test_every_kanto_badge_flag_lists_the_challenge_id_beside_the_normal_one():
 
 
 # Without it a gym has one leader for both modes, or the second leader is spawned on a plinth, into a wall, or
-# not at all.
-@pytest.mark.parametrize("up", UPSTREAM)
+# not at all. A boss in data/challenge_mode.json single_leader.rollout stands as ONE leader instead (the owner,
+# 2026-10-07); its swap and retire function are tests/test_one_leader_swap.py's.
+@pytest.mark.parametrize("up", [u for u in UPSTREAM if u not in CM.rollout()])
 def test_each_challenge_boss_has_a_second_spawner_set_while_a_player_is_near(files, up):
     cid = up + SFX
     x, y, z = DATA["bosses"][up]["spawner"]["at"]
