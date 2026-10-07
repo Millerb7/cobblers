@@ -99,7 +99,35 @@ and a comparator against one; server-side Distant Horizons over a chunk holding 
 
 ## Results
 
-Not run.
+**Console proxy pass, 2026-10-08 (overnight; the owner's download permission 2026-10-08).** No player: every
+per-player claim below is a proxy and is labelled so. Run on a DISPOSABLE copy of the staging snapshot,
+`cobblers-staging/lootr-exp-2026-10-08` (never staging-2026-10-01), Minecraft 1.21.1, Fabric Loader 0.19.5, Cobblemon
+1.8.0+1.21.1, the server's full mod set plus Lootr. The jar: `lootr-fabric-1.21.1-1.11.38.127.jar` from
+`cdn.modrinth.com/data/EltpO5cN/versions/nar56EsW/`, 1,111,591 bytes, **sha512 equal to Modrinth's API record
+(measured)**, sha1 `6671786d4c36a33dcefff85d757022c2a8ed535f` (matches the note's relayed value). Its
+`fabric.mod.json`: fabricloader >=0.17.0, fabric >=0.100.3, minecraft 1.21.1, java >=21, cloth-config >=15.0.127
+(the server has 15.0.140). Removed from `mods/` and its generated `config/lootr.json` moved out straight after
+(both kept in `C:/Users/wnd/Documents/cobblers-local/mods-pending/`).
+
+| Case | Result |
+|---|---|
+| 0 boot | PASS: booted (Done), no Lootr or mixin error in the log; `/lootr` registers (custom-chest, openers, open_as_uuid, refresh, decay, ...). Client join NOT run |
+| A command-placed chest + LootTable | PASS (block): `lootr:lootr_chest`, LootTable kept, a `LootrId` assigned. Two players NOT run |
+| B1 template paste (watchtower) | PASS: its chest at (3029, 113, 4610) became `lootr:lootr_chest` |
+| B2 paste then `data remove ... LootTable` | **FAIL as a strip (proxy)**: the chest converted anyway and kept `LootTable` (+ `LootTableSeed`). Run as two RCON commands, not one function: whether `clear_loot`'s in-function order prevents conversion is UNPROVEN, and this result says it may not |
+| B3 barrel with literal Items | PASS: stays `minecraft:barrel`, shared |
+| B4 bird-tower barrel | NOT run |
+| C1 `lootr custom-chest` on a filled barrel | PASS: `lootr:lootr_barrel` with `customInventory` holding the items, `customSize` 27 |
+| C2 custom-chest from a function | NOT run |
+| D1 restart with a looted chest | NOT run (needs a player) |
+| D2 the same setblock re-run over a Lootr chest | **Resets (proxy)**: a NEW `LootrId` (openers are keyed per id), so every player could loot again after a re-apply |
+| D3 portal cache via R16P | NOT run (same mechanism as D2: expected to reset) |
+| D4 where the state lives | `<world>/data/lootr/` exists (empty: nobody opened anything); `tools/carry_players.py` does not carry it, so a re-export **resets** opened state |
+
+Verdict so far: Lootr loads and converts as documented; a re-apply or re-export resets every player's opened state
+(D2, D4); our `clear_loot` order may not keep a stripped container vanilla (B2) — both are findings for ADR-007.
+ADR-007 stays Proposed (the owner: until it is seen working). Remaining: two players (A, D1), B2 in one function,
+C2, B4.
 
 ## Limitations
 
