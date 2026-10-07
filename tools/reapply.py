@@ -266,6 +266,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # dialogues and the purchases their options run; the keepers are placed over RCON by R17M. It charges
                 # CobbleDollars and gives items, so world-local below
                 "cobblers_markets",
+                # 2026-10-07: direct trades (tools/direct_trades.py, data/direct_trades.json, EXP-055): a buried booth
+                # under the Holdfast counter and a vanilla villager with fixed item-for-item offers, placed by R18DT.
+                # It gives items for items, so world-local below like the markets
+                "cobblers_direct_trades",
                 # 2026-09-28: the evolution-stone faces (tools/mines.py, data/mines.json, STONE_ECONOMY.md): blocks run by
                 # R9O; the faces' restore on approach acts on its own (a tick driver), so world-local below
                 "cobblers_mines",
@@ -339,6 +343,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_legendaries", "cobblers_spectrier_cap", "cobblers_hoopa_cradle",
                # 2026-10-03: charges CobbleDollars and gives items, like the ferry
                "cobblers_markets",
+               # 2026-10-07: the barterer trades items for items, so it never loads in the global folder either
+               "cobblers_direct_trades",
                # 2026-10-02: the den keeper loop holds the bear on its own tick, so world-local as its own comment says
                "cobblers_ursaluna_cave",
                # 2026-10-02: the residents' keeper SPAWNS Pokemon on its own when a player comes near, so it must never
@@ -611,6 +617,9 @@ def prepare_jobs(a):
     # against the base and the jars' recipe conditions, tiers and the curve against PROGRESSION_LADDER, and every
     # keeper R17M places off streets, buildings, walked lines and other NPCs, and in front of its Mart
     add("markets:audit_independent", "markets_audit.py", "--server-dir", a.server_dir, *src)
+    # direct trades (2026-10-07, data/direct_trades.json, EXP-055): the barterer's booth from the heightmap and its
+    # fixed offers; refuses data whose fixed-trade fields would let a price move, and places no held line
+    add("direct_trades:build", "direct_trades.py", "build")
     # the CobbleDollars Bank's buy list (2026-10-05, data/bank.json): no pack -- a config overlay that `install` copies
     # (modpack/config/cobbledollars/bank.json). Refuses an overlay the data does not write, a bought item any authored
     # shop sells at or below the bank's price (the shopkeeper templates read from <server>/mods and datapacks only),
@@ -1998,6 +2007,12 @@ def steps(with_spawns=False):
     # forceload of its chunk and de-duplicated by tag 100 ticks later (tools/markets.py's shape)
     out.append(("R18AF", "Hollin's Apricorn Farm: the farmer and the stall merchant (data/apricorn_farm.json npc, merchant)",
                 apricorn_farm.entity_steps()))
+    # direct trades (2026-10-07, EXP-055): the barterer, a vanilla villager whose fixed item-for-item offers are written
+    # into its summon, in a booth carved 9 under the Holdfast counter (no sky, so no lightning, which would discard it).
+    # Held in a forceload of its chunk; the place function refuses to carve if the shell meets air or water (score
+    # #breach cob_dt) and de-duplicates by tag 100 ticks on. Only approved barter lines are in it
+    import direct_trades
+    out.append(("R18DT", "the barterer under the Holdfast counter (data/direct_trades.json)", direct_trades.steps()))
     # the Copperway Khan's salvager (2026-10-02): an NPC on the dug-out hall's floor R9DU wrote, her class loaded at boot
     # from cobblers_dialogue, so placed over RCON after the restart like R17N's
     out.append(("R18DU", "the Copperway Khan's salvager (data/dune_ruin.json npc)",

@@ -1,0 +1,157 @@
+{
+  "schema": "cobblers.direct_trades/1",
+  "generated_by": "hand",
+  "status": "authored 2026-10-07 (wave A, unit A4); NOT run in game. Experiment EXP-055 (experiments/EXP-055-direct-trade-villager/README.md) is NOT_EXECUTED. The barter lines are PROPOSALS held out of the place function until the owner approves them after the experiment; tools/economy_audit.py (an independent auditor) checks their edges, this unit does not",
+  "owner_brief": "the owner, 2026-10-07 (docs/STATE.md 'What is decided', the owner's answers item 5): late-game items by direct trade, no money where possible -- '4 netherite ingots for a master ball or something difficult, money systems will be abused somehow'",
+  "mechanism": {
+    "summary": "a vanilla villager (minecraft:villager) summoned with its Offers written in the summon command: item for item, no CobbleDollars. CobbleDollars cannot barter: an Offer holds item, price and stock only (docs/OVERNIGHT_REVIEW_2026-10-06.md N63)",
+    "rung": "Cobblemon native has no barter NPC; CobbleDollars (a Cobbleverse dependency) prices in money only (N63); so the cheapest rung that trades item for item is vanilla data in a summon command (functions/commands), with no addon, script or mod",
+    "pack": "cobblers_direct_trades, world-local, run by tools/reapply.py step R18DT"
+  },
+  "namespace": "cobblers",
+  "folder": "direct_trades",
+  "pack": "cobblers_direct_trades",
+  "site": {
+    "near_counter": "holdfast",
+    "x": 3634,
+    "z": 6462,
+    "depth_below_ground": 9,
+    "booth": {"shell": "minecraft:stone_bricks", "light": "minecraft:glowstone", "interior": [3, 3, 3]},
+    "why": "Holdfast is the gym 8 town (data/markets.json counter 'holdfast', badge 8, at (3634, 113, 6462)): the last stores before Victory Road, so late-game by place as well as by input. The booth is a 3x3x3 room 9 blocks under the counter's heightmap ground, not on the street: a villager struck by lightning is discarded even though MobsBeGone refuses the witch it would become (EXP-055 'Lightning'), and lightning cannot reach a villager that cannot see the sky and is more than 3 blocks under any strike point. Underground also keeps the booth off every street, lot and NPC the town plan seats, which this worktree cannot read (derived/towns is absent). The place function refuses to carve if any shell cell is air, water or lava (a cave, a cellar, an aquifer) and says so in a score",
+    "access": "experiment only: the owner reaches it with /tp. A production site (a door, a stair, or a building interior) is decision pending 'barterer_site'"
+  },
+  "barterer": {
+    "name": "Garrison Barterer",
+    "tag": "cob_dt_barterer",
+    "type": "minecraft:plains",
+    "profession": "minecraft:armorer",
+    "level": 5,
+    "yaw": 0,
+    "why": "level 5 (master) is the last level, so no trade can level it up and add vanilla trades; a profession other than none or nitwit, because those two have no trades table (EXP-055 'Profession')"
+  },
+  "fixed_trade": {
+    "uses": 0,
+    "maxUses": 9999,
+    "rewardExp": false,
+    "xp": 0,
+    "priceMultiplier": 0.0,
+    "specialPrice": 0,
+    "demand": 0,
+    "why": {
+      "priceMultiplier": "0 zeroes both the demand surcharge and the reputation (gossip) discount, which are each multiplied by it (EXP-055 'Price'); it does NOT touch Hero of the Village",
+      "maxUses": "high enough that the shared stock never runs out between restocks (stock is per villager, so a small stock would let one player empty it for everyone); any restock only resets uses",
+      "xp": "0 so trading never raises the villager's experience",
+      "rewardExp": "false: no experience orbs for the player",
+      "uses_specialPrice_demand": "written as 0 so no default is relied on"
+    }
+  },
+  "rules": {
+    "buy_count_one": "every barter line's `buy` (cost A) has count 1 and its bulk cost goes in `buyB`. Hero of the Village takes max(1, floor((0.3 + 0.0625 * amplifier) * count)) off cost A whatever priceMultiplier is, but cost A is clamped to at least 1 and cost B is never discounted (EXP-055 'Price'), so a count-1 cost A cannot move",
+    "distinct_inputs": "`buy` and `buyB` are different items: the trade screen's auto-fill moves every matching stack into the first slot up to a full stack, so a line paying the same item in both slots leaves the second slot empty for a player holding fewer than a stack plus the second cost",
+    "experiment_offers_never_gain": "every experiment offer's output is one of its own inputs, at a count no larger than the worst-case (fully discounted) count paid of it, so it can stand in any world, the live one included",
+    "max_lines": 8
+  },
+  "experiment_offers": [
+    {
+      "id": "exp_two_inputs",
+      "buy": {"id": "cobblemon:poke_ball", "count": 4},
+      "buyB": {"id": "cobblemon:great_ball", "count": 1},
+      "sell": {"id": "cobblemon:great_ball", "count": 1},
+      "purpose": "the fixed line under test: a modded item on both sides, two inputs, the fixed-trade fields. Cost A is 4 so drift either way is visible; the player always loses 4 Poke Balls (or 1 if fully discounted), never gains"
+    },
+    {
+      "id": "exp_control_multiplier",
+      "buy": {"id": "cobblemon:poke_ball", "count": 4},
+      "sell": {"id": "cobblemon:poke_ball", "count": 1},
+      "overrides": {"priceMultiplier": 0.2},
+      "purpose": "the control: the same villager, priceMultiplier 0.2 instead of 0. If its cost falls below 4 after trades while exp_two_inputs stays at 4, multiplier 0 is what holds the fixed line; if neither moves, a NoAI villager collects no trade gossip either. Worst case 1 Poke Ball for 1: never a gain"
+    }
+  ],
+  "lines": [
+    {
+      "id": "master_ball",
+      "status": "proposal",
+      "approved": false,
+      "buy": {"id": "minecraft:diamond_block", "count": 1},
+      "buyB": {"id": "minecraft:netherite_ingot", "count": 4},
+      "sell": {"id": "cobblemon:master_ball", "count": 1},
+      "late_game_why": "the owner's own example; a Master Ball removes the catch check, and Holdfast is the last town before Victory Road",
+      "inputs_why": "4 netherite ingots, the owner's figure: each needs 4 ancient debris from the Nether (data/bank.json buys an ingot at 900), plus a diamond block as the count-1 cost A"
+    },
+    {
+      "id": "ability_patch",
+      "status": "proposal",
+      "approved": false,
+      "buy": {"id": "cobblemon:ability_capsule", "count": 1},
+      "buyB": {"id": "minecraft:netherite_ingot", "count": 2},
+      "sell": {"id": "cobblemon:ability_patch", "count": 1},
+      "late_game_why": "a hidden ability; today only Heaven's Arena's rank 7 and 50-streak prizes give one (data/arena_fights.json)",
+      "inputs_why": "an Ability Capsule (a counter item, data/markets.json) upgraded with 2 netherite ingots"
+    },
+    {
+      "id": "life_orb",
+      "status": "proposal",
+      "approved": false,
+      "buy": {"id": "minecraft:diamond_block", "count": 1},
+      "buyB": {"id": "minecraft:netherite_scrap", "count": 4},
+      "sell": {"id": "cobblemon:life_orb", "count": 1},
+      "late_game_why": "a competitive held item no counter sells (none of the six held items below is in data/markets.json or data/traders.json, grep 2026-10-07; data/rewards.json, quests.json and arena_fights.json hand some out once, as finds or prizes)",
+      "inputs_why": "a diamond block and 4 netherite scrap (4 ancient debris smelted)"
+    },
+    {
+      "id": "choice_band",
+      "status": "proposal",
+      "approved": false,
+      "buy": {"id": "minecraft:diamond_block", "count": 1},
+      "buyB": {"id": "minecraft:netherite_scrap", "count": 3},
+      "sell": {"id": "cobblemon:choice_band", "count": 1},
+      "late_game_why": "a competitive held item no counter sells",
+      "inputs_why": "a diamond block and 3 netherite scrap"
+    },
+    {
+      "id": "choice_specs",
+      "status": "proposal",
+      "approved": false,
+      "buy": {"id": "minecraft:diamond_block", "count": 1},
+      "buyB": {"id": "minecraft:netherite_scrap", "count": 3},
+      "sell": {"id": "cobblemon:choice_specs", "count": 1},
+      "late_game_why": "a competitive held item no counter sells",
+      "inputs_why": "as choice_band"
+    },
+    {
+      "id": "choice_scarf",
+      "status": "proposal",
+      "approved": false,
+      "buy": {"id": "minecraft:diamond_block", "count": 1},
+      "buyB": {"id": "minecraft:netherite_scrap", "count": 3},
+      "sell": {"id": "cobblemon:choice_scarf", "count": 1},
+      "late_game_why": "a competitive held item no counter sells",
+      "inputs_why": "as choice_band"
+    },
+    {
+      "id": "leftovers",
+      "status": "proposal",
+      "approved": false,
+      "buy": {"id": "minecraft:diamond_block", "count": 1},
+      "buyB": {"id": "minecraft:netherite_scrap", "count": 2},
+      "sell": {"id": "cobblemon:leftovers", "count": 1},
+      "late_game_why": "a competitive held item no counter sells",
+      "inputs_why": "a diamond block and 2 netherite scrap"
+    },
+    {
+      "id": "destiny_knot",
+      "status": "proposal",
+      "approved": false,
+      "buy": {"id": "minecraft:diamond_block", "count": 1},
+      "buyB": {"id": "minecraft:netherite_scrap", "count": 2},
+      "sell": {"id": "cobblemon:destiny_knot", "count": 1},
+      "late_game_why": "the breeding item that passes down IVs: late-game team building, no counter sells it",
+      "inputs_why": "a diamond block and 2 netherite scrap"
+    }
+  ],
+  "decisions_pending": [
+    {"id": "approve_lines", "question": "which proposed lines go live, at what inputs (set approved: true and status: approved on each); asked after EXP-055 passes"},
+    {"id": "barterer_site", "question": "where the barterer stands for players: the experiment booth is buried and reached by /tp"},
+    {"id": "master_ball_counter", "question": "data/markets.json also sells a Master Ball for 27000 CobbleDollars: keep the money route beside the barter, or retire it (the owner's 'money systems will be abused')"}
+  ]
+}
