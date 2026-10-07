@@ -41,6 +41,8 @@ The runtime pieces, each proven on the disposable world before this compiler rel
              "npc_battle"} closes the dialogue and starts the NPC's battle against the talking player, as Cobblemon's own
              dialogues/npc-example.json does. The result is read elsewhere, by a battle_victory callback (the finale's:
              tools/hq_tower.py). First used 2026-10-04 by Brann and Elara in the HQ tower; NOT yet run in game.
+             The action must name "over_cap_node", a line shown instead to a party over the player's RCT level cap
+             (tools/levelcap_pack.py battle_check; review N57), because rctmod's refusal never reaches a cobblemon:npc.
   starter    a response action {"kind": "open_starter_screen"} (its response's only action) runs Cobblemon's own
              `openstarterscreen <player>` for the talking player (Oak's first conversation, the owner's priority zero,
              2026-10-05). Read from OpenStarterScreenCommand.kt @1.8.0: permission level 2; a player who has already
@@ -86,6 +88,8 @@ import hashlib
 import json
 import re
 from pathlib import Path
+
+import levelcap_pack as LC  # the NPC-battle level-cap check's function and tag (one source)
 
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_OUT = ROOT / "build" / "datapacks" / "cobblers_dialogue"
@@ -272,7 +276,19 @@ class Compiler:
             raise Unsupported("an npc_battle response needs the conversation's npc_battle (the NPC's party)")
         if a.get("format", "singles") != "singles":
             raise Unsupported("npc_battle format %r: only 'singles' has been run in game" % a.get("format"))
-        return "q.player.save_data(); q.dialogue.close(); q.npc.start_battle(q.player, 'singles');"
+        # The level cap (review N57, sweep U54): rctmod refuses an over-cap party only for its own trainer entities,
+        # never for a cobblemon:npc, so every NPC battle is gated here. tools/levelcap_pack.py battle_check reads the
+        # cap as the catch check does (`rctmod player get level_cap`) and leaves PARTY_OVER on an over-cap player;
+        # q.run_command runs it at once (Commands.performPrefixedCommand, data/level_cap.json party_notice.why).
+        # A refused player is shown `over_cap_node` instead, a line of this conversation. A cap that did not read lets
+        # the battle through (battle_check clears the tag first). NOT yet run in game.
+        refuse = a.get("over_cap_node")
+        if refuse not in self.nodes or self.nodes[refuse]["kind"] != "line":
+            raise Unsupported("npc_battle needs over_cap_node, a line of this conversation shown to a party over the "
+                              "level cap (got %r)" % (refuse,))
+        return (run(["execute as ", UUID, " at @s run function %s {x:\"\"}" % LC.BATTLE_CHECK]) +
+                " q.player.has_tag('%s') ? { %s } : { q.player.save_data(); q.dialogue.close(); "
+                "q.npc.start_battle(q.player, 'singles'); };" % (LC.PARTY_OVER, self.goto(refuse)))
 
     def starter_action(self, r):
         """The response that offers the native starter screen (see "starter" in the module docstring). A player who
