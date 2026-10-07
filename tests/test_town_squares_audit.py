@@ -220,6 +220,115 @@ def test_power_rule_accepts_a_gate_dropped_by_a_recorded_decision_only():
     assert sorted(p[1] for p in P if p[0] == "power") == ["c:cobblemon:great_ball", "c:cobblemon:net_ball"]
 
 
+def _price_gated(price, badge, count=1, **kw):
+    return dict({"id": "t%d_%d" % (price, badge), "item": "tmcraft:tm_probe_%d_%d" % (price, badge), "count": count,
+                 "price": price, "gate": None, "gate_badge": badge}, **kw)
+
+
+def test_power_rule_counter_price_above_its_income_gate_passes_and_below_or_undeclared_fails():
+    # 2026-10-09 (the owner: "price them above the income gate. A TM costing less than a player earns before badge 1
+    # is free"): on a counter the price is the gate. Income here is 1000 x badge, so by hand: badge 2's gate is 2000.
+    # Without it a TM priced under what the road pays would pass as gated, or every counter TM would fail forever.
+    doc = _market([_price_gated(2001, 2),                       # one dollar above: passes
+                   _price_gated(2000, 2),                       # equal is not above: fails
+                   _price_gated(1999, 2),                       # below: fails
+                   _price_gated(4002, 2, count=2),              # 2001 a unit: passes
+                   _price_gated(4000, 2, count=2),              # 2000 a unit, the line's 4000 is no excuse: fails
+                   _price_gated(9001, 9),                       # no badge 9 in the income basis: fails
+                   dict(_price_gated(5000, 1), gate_badge=True),  # a bool is not a badge: fails
+                   {"id": "nd", "item": "tmcraft:tm_nodecl", "price": 9000, "gate": None}],  # declares nothing
+                  [dict(_price_gated(2001, 2), item="cobblemon:ultra_ball")])   # a stall: price gates nothing
+    P, _u = A.item_checks(doc, set(), {})
+    power = {p[1]: p[2] for p in P if p[0] == "power"}
+    assert sorted(power) == sorted(["c:tmcraft:tm_probe_2000_2", "c:tmcraft:tm_probe_1999_2",
+                                    "c:tmcraft:tm_probe_4000_2", "c:tmcraft:tm_probe_9001_9",
+                                    "c:tmcraft:tm_probe_5000_1", "c:tmcraft:tm_nodecl",
+                                    "s:cobblemon:ultra_ball"])
+    assert "not above the 2000 earned by badge 2" in power["c:tmcraft:tm_probe_2000_2"]
+    assert "declares no gate_badge" in power["c:tmcraft:tm_nodecl"]
+    assert "no figure for" in power["c:tmcraft:tm_probe_9001_9"]
+
+
+FIXTURE_2833317 = ROOT / "tests" / "fixtures" / "counter_lines_2833317.json"
+
+
+def _with_2833317(price_of=None, badge_of=None):
+    """The committed data/markets.json, in memory, with the 41 counter lines 2833317 added (held out by e41b72e)
+    put back on their counters. price_of/badge_of(counter, line) -> the line's price / declared gate_badge (None:
+    declare none). The file on disk is not touched."""
+    import copy
+    mk = copy.deepcopy(A.load(ROOT / "data" / "markets.json"))
+    fx = A.load(FIXTURE_2833317)["counters"]
+    by = {c["id"]: c for c in mk["counters"]}
+    for cid, lines in fx.items():
+        for l in copy.deepcopy(lines):
+            if badge_of is not None and badge_of(by[cid], l) is not None:
+                l["gate_badge"] = badge_of(by[cid], l)
+            if price_of is not None:
+                l["price"] = price_of(by[cid], l)
+            by[cid]["stock"].append(l)
+    return mk, {(cid, l["item"]) for cid, ls in fx.items() for l in ls}
+
+
+def _tm_badge(counter, line):
+    """The badge each 2833317 line was priced at, from its own words ('5% of income at badge N'); else the
+    counter's badge (the memories and the Sachet)."""
+    import re
+    m = re.search(r"at badge (\d)", line.get("why") or "")
+    return int(m.group(1)) if m else counter["badge"]
+
+
+def _power_keys(mk):
+    P, _u = A.item_checks(mk, set(), {})
+    return {p[1]: p[2] for p in P if p[0] == "power"}
+
+
+def test_the_2833317_counter_lines_fail_at_their_old_prices_with_or_without_a_declared_gate():
+    # The 41 lines 2833317 put on Fossick and Northlight (23 TMs at 5% of income, 17 memories, the Sachet). Without
+    # it they could go back on sale at $500-$7,300 against $9,475-$145,078 earned, which the owner calls free.
+    base = set(_power_keys(A.load(ROOT / "data" / "markets.json")))
+    mk, added = _with_2833317()
+    assert len(added) == 41 and sum(1 for _c, i in added if i.startswith("tmcraft:tm_")) == 23
+    want = {"%s:%s" % k for k in added}
+    got = _power_keys(mk)
+    assert set(got) - base == want                                      # every one, nothing else
+    assert all("declares no gate_badge" in got[k] for k in want)
+    mk, _a = _with_2833317(badge_of=_tm_badge)                          # declared, still at the old prices
+    got = _power_keys(mk)
+    assert set(got) - base == want
+    assert all("not above the" in got[k] for k in want)
+    assert "one costs 500, not above the 9475 earned by badge 1" in got["fossick:tmcraft:tm_bide"]
+
+
+def test_the_2833317_counter_lines_pass_one_dollar_above_their_declared_income_gate():
+    # The same 41 lines re-priced by hand to the income basis + $1 a unit, each declaring its badge: none fails, and
+    # the audit's power findings are back to the committed data's (the KNOWN set is not disturbed). Without it the
+    # rule could fail a correctly re-priced line and the builder would have no price that passes.
+    inc = A.load(ROOT / "data" / "markets.json")["income_basis"]["cumulative_by_badge"]
+    base = _power_keys(A.load(ROOT / "data" / "markets.json"))
+    mk, _a = _with_2833317(badge_of=_tm_badge,
+                           price_of=lambda c, l: (inc[str(_tm_badge(c, l))] + 1) * (l.get("count") or 1))
+    assert _power_keys(mk) == base
+
+
+def test_mutation_the_income_basis_raised_one_dollar_fails_every_line_priced_one_above_it():
+    # Mutates the INPUT the threshold comes from (income_basis.cumulative_by_badge), with every line record left as
+    # the previous test priced it: all 41 must flip to failing. Without it the gate could be a constant, or read from
+    # the line itself (a record-side check moves with the record and proves nothing).
+    import copy
+    inc = A.load(ROOT / "data" / "markets.json")["income_basis"]["cumulative_by_badge"]
+    base = set(_power_keys(A.load(ROOT / "data" / "markets.json")))
+    mk, added = _with_2833317(badge_of=_tm_badge,
+                              price_of=lambda c, l: (inc[str(_tm_badge(c, l))] + 1) * (l.get("count") or 1))
+    assert set(_power_keys(mk)) == base
+    raised = copy.deepcopy(mk)
+    raised["income_basis"]["cumulative_by_badge"] = {k: v + 1 for k, v in inc.items()}
+    assert set(_power_keys(raised)) - base == {"%s:%s" % k for k in added}
+    gone = copy.deepcopy(mk)
+    del gone["income_basis"]["cumulative_by_badge"]                     # the basis missing: nothing can pass by price
+    assert set(_power_keys(gone)) - base == {"%s:%s" % k for k in added}
+
+
 def test_item_rule_reads_the_block_an_item_puts_down_and_what_it_grows():
     # Without it a seed whose stem fruits into a spawn block (a pumpkin) would be sold as harmless.
     doc = _market([], [{"id": "p", "item": "minecraft:pumpkin_seeds", "price": 1, "gate": None}])
