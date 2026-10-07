@@ -30,6 +30,10 @@ POLICY = DOC["stock_policy"]
 MARTS = [r for r in DOC["traders"] if r.get("stock") == "mart"]
 TIERS = TR.mart_tiers(DOC, TOWNS)
 TIER_ITEMS = {i: t["badges"] for t in POLICY["mart"]["tiers"] for i in t["items"]}
+# The Training shelf (stock_policy.mart.training, 2026-10-08): authored lines with their own prices, on the same tier
+# rule. Read here from the data, not through traders.training_offers.
+TRAINING = {o["item"]: (t["badges"], int(o["price"]))
+            for t in (POLICY["mart"].get("training") or {}).get("tiers") or [] for o in t["items"]}
 
 # The shopkeeper template's own offers (bca:stores/store_workers/shopkeeper_ds_general, read from the 2026-10-05
 # offline snapshot's COBBLEVERSE-DP-v31.zip): the shelf a tier filters from. Prices are the template's.
@@ -89,16 +93,25 @@ def test_an_off_path_mart_takes_the_tier_of_the_critical_town_nearest_the_clerk(
 def test_a_mart_at_tier_n_sells_the_basics_and_every_line_up_to_n(tier):
     data, kept, held = TR.apply_stock_policy(_template_shop(), POLICY, "mart", "x", tier)
     want = set(POLICY["mart"]["items"]) | {i for i, b in TIER_ITEMS.items() if b <= tier}
-    assert _offered(data) == want and set(kept) == want
+    training = {i for i, (b, _p) in TRAINING.items() if b <= tier}
+    assert _offered(data) == want | training and set(kept) == want | training
     assert set(held) == {"cobblemon:" + k for k in TEMPLATE} - want
+    cats = {c["Category"] for c in data["CobbleMerchantShop"] if c["Offers"]}
+    assert (POLICY["mart"]["training"]["category"] in cats) == bool(training), "the Training category iff a line"
 
 
-# Without it the shelf is authored, not the template's: prices drift from the template the clerk is read from.
+# Without it the shelf is authored, not the template's: prices drift from the template the clerk is read from, or a
+# training line from the price the data authors. Clerk "x" is in no early-reach list, so every line is at normal price.
 def test_a_tier_line_keeps_the_template_price():
     data, _, _ = TR.apply_stock_policy(_template_shop(), POLICY, "mart", "x", 8)
+    seen = 0
     for c in data["CobbleMerchantShop"]:
         for o in c["Offers"]:
-            assert o["Price"] == str(TEMPLATE[o["Item"]["id"].split(":")[1]])
+            iid = o["Item"]["id"]
+            want = TRAINING[iid][1] if iid in TRAINING else TEMPLATE[iid.split(":")[1]]
+            assert o["Price"] == str(want), (iid, o["Price"], want)
+            seen += iid in TRAINING
+    assert seen == len(TRAINING) > 0
 
 
 # Without it a tier names an item the template never stocks, and the clerk silently lacks it (function mode

@@ -60,6 +60,22 @@ Where each expectation comes from:
               (docs/mechanics/MINECRAFT_PLAY_LOOPS.md) are REPORTED: B1 an input that cannot be bought, B2 no input
               in AFK_FARMABLE, B3 no output the Bank buys (or one recipe away from one), B4 no cost A over 1 and no
               non-zero priceMultiplier on a line.
+              Since 2026-10-08 the data declares TWO villagers (`barterer` at `site` with the experiment offers,
+              `counter_barterer` at `counter_site` with the approved lines): FAILURE unless each is summoned once, on
+              its site's block, with exactly its own offers. BYPASS: FAILURE when a line's worst-case inputs, valued at
+              the Bank's price (a storage block through its jar recipe) or else their cheapest money price, are worth
+              less than the output's cheapest money path, or, where it has none, the counter lines the line names as
+              its reference (the owner, 2026-10-08: "an alternative path, not a bypass"). PREMIUM: FAILURE when the
+              Bank pays more for the output than the inputs are worth to it. An arena prize sold as stock is REPORTED.
+  forceload   every block the R18DT functions read or write and every summon they place, read from the EMITTED
+              functions, must lie in a chunk a forceload holds when the step runs them, and no hold may be released
+              before a function they schedule has had its ticks (tools/direct_trades.py steps(), the reapply step).
+  Mart prices the early-reach band of data/traders.json stock_policy.mart.early_reach_pricing, recomputed from its
+              criterion over the EMITTED shelves (mart_price_checks); a ball in the convenience band fails the band's
+              stated premise. Training lines (stock_policy.mart.training) join the tier table.
+  vitamins    EV_IV_TRAINING.md 4.2 E2: no vitamin obtainable at or under the Bank's own vitamin price.
+  rewards     a counter line selling a gym leader's first-win reward ahead of the counter's badge, or in an ungated
+              off-path town, is REPORTED with the income at that badge (the counters have no early-reach band).
 
   python tools/economy_audit.py [--server-dir SNAPSHOT] [--vanilla-jar JAR] [--no-jars]
 
@@ -79,7 +95,12 @@ What this does NOT cover:
   - for barter: that the villager trades at all, keeps its offers, or that its cost A really stays put in a running game
     (EXP-055); a gain that needs more than BARTER_ROUNDS conversion rounds; a cycle that pays in an item no seller,
     recipe or barter produces from the item it starts with (that is a conversion of gathered goods, not a loop, and
-    B1-B3 report it); B2 against inputs made one recipe away from a farmed item (gold in a netherite ingot).
+    B1-B3 report it); B2 against inputs made one recipe away from a farmed item (gold in a netherite ingot);
+  - for the barterers' sites: anything a world holds (the place function's own read-back is what refuses a missing
+    roof); lightning beyond the template's roof; whether a villager in the Mart blocks a player's path (judged by hand
+    from the template, not checked here); forceload for any reapply step other than R18DT;
+  - the reach a clerk or counter is priced for: early_reach_pricing.traders is the owner's list, and an ungated town not
+    on it (Northlight, Fossick) is reported, never failed.
 """
 from __future__ import annotations
 
@@ -658,15 +679,32 @@ def independent_tier(settlement, pos, crit):
     return b, "nearest critical route %.0f blocks" % d0, near
 
 
+def tier_table(mart):
+    """({item: badges}, {item: authored price or None}, [failures]) from the DATA's two tier tables:
+    stock_policy.mart.tiers (ids; the price is the shopkeeper template's) and stock_policy.mart.training.tiers
+    ({item, price}; the price is authored there). Read here, not through tools/traders.py."""
+    tier, price, fails = {}, {}, []
+    tables = [("mart.tiers", mart.get("tiers") or []),
+              ("mart.training.tiers", (mart.get("training") or {}).get("tiers") or [])]
+    for where, tiers in tables:
+        for t in tiers:
+            for o in t.get("items") or []:
+                iid = o.get("item") if isinstance(o, dict) else o
+                if iid in tier:
+                    fails.append("TIER %s is listed twice across the tier tables (again in %s): one line, one tier"
+                                 % (iid, where))
+                tier[iid] = int(t["badges"])
+                price[iid] = int(o["price"]) if isinstance(o, dict) and o.get("price") is not None else None
+    return tier, price, fails
+
+
 def tier_checks(trader_doc, claimed, offered, progression, routes_doc, towns_doc):
     """(failures, reports)."""
     fails, reps = [], []
     policy = trader_doc["stock_policy"]
     mart = policy["mart"]
-    item_tier = {}
-    for t in mart.get("tiers") or []:
-        for i in t["items"]:
-            item_tier[i] = t["badges"]
+    item_tier, _authored, f = tier_table(mart)
+    fails += f
     basics = set(mart.get("items") or [])
     card = policy.get("trainer_card") or {}
     crit = critical_routes(progression, routes_doc)
@@ -709,6 +747,151 @@ def tier_checks(trader_doc, claimed, offered, progression, routes_doc, towns_doc
                         % (rid, r["settlement"], town.get("gates"), town.get("access"), theirs,
                            ", ".join(i.split(":")[1] for i in above) or "-",
                            ", ".join("%d badges %.0f" % bx for bx in early) or "-"))
+    return fails, reps
+
+
+# ------------------------------------------------------------------------------------------------ Mart prices
+def _is_ball(item):
+    return item.split(":")[-1].endswith("_ball")
+
+
+def mart_price_checks(trader_doc, markets_doc, shelf):
+    """(failures, reports) for the PRICES on the emitted Mart shelves. `shelf` is {clerk id: {item: unit price}} read
+    from the emitted summons. The rule is data/traders.json stock_policy.mart.early_reach_pricing.criterion, applied
+    here with this file's own arithmetic:
+      - the normal price of a training line is the one stock_policy.mart.training authors; of a template line, the one
+        every clerk NOT listed in early_reach_pricing.traders charges (they must agree: one item, one normal price);
+      - an ordinary clerk charges the normal price; no clerk charges less;
+      - a listed clerk reachable with R badges, for a tier line of badges T, d = T - R: d <= 0 the normal price;
+        1 <= d <= convenience_within at least normal x convenience_markup rounded up to round_to (more is REPORTED);
+        d > convenience_within more than data/markets.json income_basis.cumulative_by_badge[T] (the most a player with
+        T-1 badges has, the criterion's own reading);
+      - no ball in the convenience band: the band's stated premise (convenience_within_why) is that nothing in it
+        changes what a player can catch, so a ball there is a FAILURE of the premise, not of the arithmetic."""
+    fails, reps = [], []
+    mart = trader_doc["stock_policy"]["mart"]
+    tier_of, authored, _f = tier_table(mart)
+    basics = set(mart.get("items") or [])
+    erp = mart.get("early_reach_pricing") or {}
+    early = {rid: int(v["reachable_from_badges"]) for rid, v in (erp.get("traders") or {}).items()}
+    within = int(erp.get("convenience_within") or 0)
+    markup = float(erp.get("convenience_markup") or 1)
+    step = int(erp.get("round_to") or 1)
+    income = {int(k): float(v) for k, v in ((markets_doc.get("income_basis") or {}).get("cumulative_by_badge")
+                                            or {}).items()}
+    normal = {i: p for i, p in authored.items() if p is not None}
+    seen = {}
+    for rid, items in shelf.items():
+        if rid in early:
+            continue
+        for i, p in items.items():
+            seen.setdefault(i, set()).add(p)
+    for i, ps in sorted(seen.items()):
+        if len(ps) > 1:
+            fails.append("PRICE %s sells at %s across the ordinary Marts: one item, one normal price"
+                         % (i, ", ".join("$%g" % p for p in sorted(ps))))
+        if i in normal and ps != {normal[i]}:
+            fails.append("PRICE training line %s sells at %s at the ordinary Marts; the data authors $%d"
+                         % (i, ", ".join("$%g" % p for p in sorted(ps)), normal[i]))
+        normal.setdefault(i, min(ps))
+    for rid, items in sorted(shelf.items()):
+        for i, p in sorted(items.items()):
+            n = normal.get(i)
+            if n is not None and p < n - 1e-9:
+                fails.append("PRICE UNDER %s sells %s at $%g, below its normal $%g" % (rid, i, p, n))
+    for rid, reach in sorted(early.items()):
+        if rid not in shelf:
+            fails.append("PRICE early-reach clerk %s has no emitted shelf" % rid)
+            continue
+        bands = {"normal": 0, "convenience": 0, "gate": 0}
+        for i, p in sorted(shelf[rid].items()):
+            if i in basics or i not in tier_of:
+                continue
+            t, n = tier_of[i], normal.get(i)
+            d = t - reach
+            bands["normal" if d <= 0 else "convenience" if d <= within else "gate"] += 1
+            if n is None:
+                reps.append("price %s %s: no normal price to compare (no ordinary clerk sells it)" % (rid, i))
+                if d <= within:
+                    continue
+            if d <= 0:
+                if abs(p - n) > 1e-9:
+                    reps.append("price %s %s at $%g, tier %d within reach %d: normal is $%g" % (rid, i, p, t, reach, n))
+            elif d <= within:
+                floor = math.ceil(n * markup / step - 1e-9) * step
+                if p < floor - 1e-9:
+                    fails.append("PRICE CONVENIENCE %s sells %s (tier %d, reach %d) at $%g, under normal $%g x %g = $%d"
+                                 % (rid, i, t, reach, p, n, markup, floor))
+                elif p > floor + 1e-9:
+                    reps.append("price %s %s (tier %d, reach %d) at $%g, above the convenience price $%d"
+                                % (rid, i, t, reach, p, floor))
+                if _is_ball(i):
+                    fails.append("CONVENIENCE BALL %s sells %s (tier %d) to a player with %d badges at $%g: the band's "
+                                 "premise is that nothing in it changes what a player can catch" % (rid, i, t, reach, p))
+            else:
+                cap = income.get(t)
+                if cap is None:
+                    fails.append("PRICE GATE %s %s: tier %d has no income_basis.cumulative_by_badge entry" % (rid, i, t))
+                elif p <= cap:
+                    fails.append("PRICE GATE %s sells %s (tier %d, reach %d) at $%g: a player with %d badges can hold "
+                                 "$%g (income_basis, RELAYED)" % (rid, i, t, reach, p, t - 1, cap))
+        reps.append("price bands %s (reach %d): %d normal, %d convenience, %d income-gated tier line(s) checked"
+                    % (rid, reach, bands["normal"], bands["convenience"], bands["gate"]))
+    return fails, reps
+
+
+def reward_ahead_report(markets_doc, progression, towns_doc):
+    """REPORT lines: a counter line selling a gym leader's first-win reward (data/progression.json
+    upstream_neutralised.first_win_rewards, flag gymN_cleared) at a counter whose own badge is below N, or in a town
+    data/towns.json leaves ungated off the critical path. No threshold: the counters have no early-reach band in the data
+    (early_reach_pricing lists Mart clerks only), so this names the line, the gap and the income at the counter's badge
+    for the owner rather than inventing a gate."""
+    reps = []
+    fwr = ((progression.get("upstream_neutralised") or {}).get("first_win_rewards") or {}).get("trainers") or {}
+    leader_of = {}
+    for tid, t in fwr.items():
+        m = re.fullmatch(r"gym(\d+)_cleared", str(t.get("flag")))
+        if not m:
+            continue
+        for i in list(t.get("items") or []) + list(t.get("one_of") or []):
+            leader_of.setdefault(i, (int(m.group(1)), tid))
+    income = (markets_doc.get("income_basis") or {}).get("cumulative_by_badge") or {}
+    towns = {t["id"]: t for t in towns_doc.get("towns") or []}
+    for c in markets_doc.get("counters") or []:
+        b = c.get("badge")
+        town = towns.get(c.get("town")) or {}
+        open_early = not town.get("critical_path") and not town.get("gates")
+        for s in c.get("stock") or []:
+            if s["item"] not in leader_of:
+                continue
+            n, tid = leader_of[s["item"]]
+            if (isinstance(b, int) and n > b) or open_early:
+                reps.append("leader reward on sale %s/%s %s at $%s: %s's gym-%d reward; counter badge %s%s; income "
+                            "through badge %s is $%s (RELAYED)"
+                            % (c.get("town"), c["id"], s["item"], s["price"], tid, n, b,
+                               ", town ungated off the critical path (reachable before any badge)" if open_early else "",
+                               b, income.get(str(b), "?")))
+    return reps
+
+
+# ------------------------------------------------------------------------------------------------ the vitamin rule
+# docs/mechanics/EV_IV_TRAINING.md:33 names the six vitamins; its section 4.2 (E2): nothing -- seller, recipe chain or
+# barter -- may yield a vitamin at or under the Bank's vitamin price, or a vitamin is a money printer. The threshold is
+# the Bank's own effective price for each, read from the emitted bank, not a constant.
+VITAMINS = ("cobblemon:hp_up", "cobblemon:protein", "cobblemon:iron", "cobblemon:calcium", "cobblemon:zinc",
+            "cobblemon:carbos")
+
+
+def vitamin_checks(best, bank_prices):
+    fails, reps = [], []
+    for v in VITAMINS:
+        pay = bank_prices.get(v)
+        if pay is None:
+            reps.append("vitamin %s: the Bank does not buy it, so E2 has no threshold" % v)
+            continue
+        if v in best and best[v][0] <= pay + 1e-9:
+            fails.append("VITAMIN %s obtainable for $%.2f, at or under the Bank's $%d (EV_IV_TRAINING.md 4.2 E2) -- %s"
+                         % (v, best[v][0], pay, chain(best, v)))
     return fails, reps
 
 
@@ -946,40 +1129,112 @@ class _FlatGround:
         return self._Box()
 
 
-def barter_emitted(dt_mod=None, doc=None):
-    """[(kind, [recipe dict])] of every summon in the functions tools/direct_trades.py emits, read by this file."""
-    dt_mod = dt_mod or importlib.import_module("direct_trades")
-    doc = doc if doc is not None else read_json(DIRECT_TRADES)
-    files, _res = dt_mod.files(doc, _FlatGround())
+SUMMON_AT = re.compile(r"^summon\s+(\S+)\s+(-?[\d.]+)\s+(-?[\d.]+)\s+(-?[\d.]+)\s")
+
+
+class Emitted(tuple):
+    """(kind, [recipe dict], tags, (x, y, z) or None, function path) of one summon. A tuple, so (kind, recipes) still
+    unpacks from its first two fields."""
+    __slots__ = ()
+
+    def __new__(cls, kind, recipes, tags=(), pos=None, path=None):
+        return tuple.__new__(cls, (kind, recipes, tuple(tags), pos, path))
+
+
+def barter_emitted(dt_mod=None, doc=None, files=None):
+    """[Emitted] of every summon in the functions tools/direct_trades.py emits, read by this file."""
+    if files is None:
+        dt_mod = dt_mod or importlib.import_module("direct_trades")
+        doc = doc if doc is not None else read_json(DIRECT_TRADES)
+        files, _res = dt_mod.files(doc, _FlatGround())
     out = []
     for path, text in sorted(files.items()):
         if not path.endswith(".mcfunction"):
             continue
-        for kind, nbt in summons(text.splitlines()):
-            out.append((kind, list(((nbt.get("Offers") or {}).get("Recipes")) or [])))
+        for line in text.splitlines():
+            line = line.strip()
+            got = summons([line])
+            if not got:
+                continue
+            kind, nbt = got[0]
+            m = SUMMON_AT.match(line)
+            pos = tuple(float(m.group(k)) for k in (2, 3, 4)) if m else None
+            out.append(Emitted(kind, list(((nbt.get("Offers") or {}).get("Recipes")) or []),
+                               [str(t) for t in nbt.get("Tags") or []], pos, path))
     return out
 
 
-def emitted_checks(data_edges, emitted):
+def declared_barterers(doc):
+    """[(key, tag, site x, site z, offer ids)] of the villagers data/direct_trades.json declares, read from the data's
+    own pairing: `barterer` stands at `site` and carries the experiment offers (site.role: "experiment ... carrying the
+    experiment offers only"); `counter_barterer` stands at `counter_site` and carries every approved line
+    (counter_site.role: "production ... carrying every approved line"). Empty when the data declares neither, in which
+    case one villager carrying every placed offer is expected (the shape before 2026-10-08)."""
+    out = []
+    live = [ln.get("id") for ln in doc.get("lines") or []
+            if ln.get("approved") is True or ln.get("status") == "approved"]
+    for key, site_key, ids in (("barterer", "site", [o.get("id") for o in doc.get("experiment_offers") or []]),
+                               ("counter_barterer", "counter_site", live)):
+        b, s = doc.get(key), doc.get(site_key)
+        if isinstance(b, dict) and b.get("tag") and isinstance(s, dict):
+            out.append((key, b["tag"], int(s["x"]), int(s["z"]), ids))
+    return out
+
+
+def emitted_checks(data_edges, emitted, doc=None):
     """(failures, [Barter] of the placed group as emitted): every emitted recipe must be a placed data offer with every
-    fixed field written and equal to the data's."""
+    fixed field written and equal to the data's; with declared barterers, each declared villager is summoned exactly
+    once, at its site's block, carrying exactly its own offers."""
     fails = []
     placed = [b for b in data_edges if b.group == "placed"]
     by_key = {}
     for b in placed:
         by_key.setdefault((b.authored, b.gets), []).append(b)
-    villagers = [rs for kind, rs in emitted if kind == "minecraft:villager"]
-    if len(villagers) != 1:
-        fails.append("BARTER EMITTED %d villager summons, not 1" % len(villagers))
+    villagers = [e for e in emitted if e[0] == "minecraft:villager"]
+    declared = declared_barterers(doc or {})
+    if not declared:
+        if len(villagers) != 1:
+            fails.append("BARTER EMITTED %d villager summons, not 1" % len(villagers))
+    else:
+        if len(villagers) != len(declared):
+            fails.append("BARTER EMITTED %d villager summons; the data declares %d barterer(s) (%s)"
+                         % (len(villagers), len(declared), ", ".join(d[0] for d in declared)))
+        tags = {d[1] for d in declared}
+        for e in villagers:
+            if not tags & set(e[2]):
+                fails.append("BARTER EMITTED a villager in %s carrying no declared barterer's tag (%s)"
+                             % (e[4], ", ".join(e[2]) or "no tags"))
+        for key, tag, sx, sz, ids in declared:
+            mine = [e for e in villagers if tag in e[2]]
+            if len(mine) != 1:
+                fails.append("BARTER EMITTED %d villager(s) tagged %s (%s), not 1" % (len(mine), tag, key))
+                continue
+            e = mine[0]
+            if e[3] is None or (math.floor(e[3][0]), math.floor(e[3][2])) != (sx, sz):
+                fails.append("BARTER EMITTED %s summoned at %s, not on its site's block (%d, %d)" % (key, e[3], sx, sz))
+            want = {}
+            for b in placed:
+                if b.id in ids:
+                    want[(b.authored, b.gets)] = want.get((b.authored, b.gets), 0) + 1
+            got = {}
+            for r in e[1]:
+                k = ((_cost_of(r.get("buy")), _cost_of(r.get("buyB"))), _cost_of(r.get("sell")))
+                got[k] = got.get(k, 0) + 1
+            if got != want:
+                fails.append("BARTER EMITTED %s carries %d offer(s) that are not its own and lacks %d of its own "
+                             "(the data puts %s on it)" % (key, sum(max(0, n - want.get(k, 0)) for k, n in got.items()),
+                                                           sum(max(0, n - got.get(k, 0)) for k, n in want.items()),
+                                                           ", ".join(ids) or "nothing"))
     out, seen = [], set()
-    for rs in villagers:
-        for r in rs:
+    for e in villagers:
+        for r in e[1]:
             buy, buy_b, sell = _cost_of(r.get("buy")), _cost_of(r.get("buyB")), _cost_of(r.get("sell"))
             match = by_key.get(((buy, buy_b), sell)) or []
             if not match:
                 fails.append("BARTER EMITTED an offer no placed data offer authors: %s + %s -> %s"
                              % (buy, buy_b, sell))
-                edge = Barter("emitted?", "placed", _pays(buy, buy_b), (buy, buy_b), sell)
+                edge = Barter("emitted:%s" % (sell[0] if sell else "?"), "placed", _pays(buy, buy_b), (buy, buy_b),
+                              sell)
             else:
                 edge = match[0]
                 seen.add(edge.id)
@@ -1059,13 +1314,19 @@ def barter_checks(sales, conversions, bank_prices, best, doc=None, dt_mod=None):
             return fails, reps, ["NOT READ: data/direct_trades.json is absent; no barter edge audited"]
         doc = read_json(DIRECT_TRADES)
     data_edges = barter_data(doc)
+    dt_mod = dt_mod or importlib.import_module("direct_trades")
     try:
-        emitted = barter_emitted(dt_mod, doc)
+        files, _res = dt_mod.files(doc, _FlatGround())
+        emitted = barter_emitted(files=files)
     except Exception as exc:                       # the generator refusing its data is itself the finding
         fails.append("BARTER the generator emitted nothing: %s" % str(exc).splitlines()[0][:200])
-        emitted = []
-    f, placed = emitted_checks(data_edges, emitted)
+        files, emitted = None, []
+    f, placed = emitted_checks(data_edges, emitted, doc)
     fails += f
+    if files is not None and hasattr(dt_mod, "steps"):
+        fails += forceload_checks(files, dt_mod.steps(doc))
+    elif files is not None:
+        notes.append("NOT CHECKED: forceload cover (the barter generator given has no step list)")
     proposal = [b for b in data_edges if b.group == "proposal"]
     seeds = {MONEY} | {i for b in placed + proposal for i, _n in b.pays} | {b.gets[0] for b in placed + proposal}
     base = gains(seeds, conversions, sales, bank_prices)
@@ -1136,7 +1397,179 @@ def barter_checks(sales, conversions, bank_prices, best, doc=None, dt_mod=None):
         if pm is not None and float(pm) != 0.0 and not b.experiment:
             reps.append("barter rule B4 (%s) %s: priceMultiplier %s lets reputation and demand move cost A"
                         % (b.group, b.id, pm))
+    f, r = barter_value_checks(placed + proposal, doc, conversions, bank_prices, best)
+    fails += f
+    reps += r
     return fails, reps, notes
+
+
+def liquidation(item, conversions, bank_prices):
+    """The most money the Bank pays for one `item`: directly, or for what one single-input recipe turns one of it into
+    (a storage block uncrafts to nine; read from the jars' recipes, not from data/direct_trades.json pricing.values).
+    None when the Bank buys neither."""
+    vals = []
+    if item in bank_prices:
+        vals.append(float(bank_prices[item]))
+    for _name, _kind, ings, rid, rcount in conversions:
+        if len(ings) == 1 and ings[0][1] == 1 and ings[0][0] == {item} and rid in bank_prices:
+            vals.append(float(bank_prices[rid]) * rcount)
+    return max(vals) if vals else None
+
+
+def _arena_prizes():
+    """{item: [prize id]} of data/arena_fights.json's once-per-player prizes."""
+    p = DATA / "arena_fights.json"
+    out = {}
+    if not p.is_file():
+        return out
+    for it in ((read_json(p).get("prizes") or {}).get("items") or []):
+        for c in it.get("contents") or []:
+            out.setdefault(c.get("item"), []).append(it.get("id"))
+    return out
+
+
+def barter_value_checks(edges, doc, conversions, bank_prices, best):
+    """(failures, reports) on what a barter costs against what its output costs in money.
+
+    The value of an input is what the player gives up for it: its liquidation (the Bank) when the Bank buys it or what
+    it uncrafts to, else its cheapest money price (`best`), else unknown. The price of the output is its cheapest money
+    path (`best`: sellers and recipes); where it has none, the counter lines the data names as the line's reference
+    (data/markets.json prices, read here). The owner, 2026-10-08: "the exchange should be an alternative path, not a
+    bypass", so FAILURE (BYPASS) when the worst-case inputs (cost A at 1) are worth less than the output's price.
+    FAILURE (PREMIUM) when the Bank buys the output for more than the inputs are worth to it -- turning goods into more
+    money than the Bank's own prices allow -- and for a vitamin at or above (E2). A once-per-player arena prize sold
+    as stock is REPORTED (data/bank.json kinds.not_built records why it was kept off the counters)."""
+    fails, reps = [], []
+    md = read_json(DATA / "markets.json")
+    counter = {(c["id"], s.get("id")): float(s["price"]) for c in md.get("counters") or [] for s in c.get("stock") or []}
+    ref_by_out = {}
+    for ln in doc.get("lines") or []:
+        ref = ln.get("reference") or {}
+        try:
+            ref_by_out[(ln.get("sell") or {}).get("id")] = sum(counter[(ref["counter"], lid)] for lid in ref["lines"])
+        except (KeyError, TypeError):
+            pass
+    prizes = _arena_prizes()
+    for b in edges:
+        if b.experiment:
+            continue
+        vals, unknown = 0.0, []
+        for i, n in b.pays:
+            v = liquidation(i, conversions, bank_prices)
+            if v is None and i in best:
+                v = best[i][0]
+            if v is None:
+                unknown.append(i)
+            else:
+                vals += v * n
+        out, cnt = b.gets
+        if out in best:
+            price, how = best[out][0] * cnt, "its cheapest money path, %s" % best[out][1]
+        elif out in ref_by_out:
+            price, how = ref_by_out[out] * cnt, "the counter lines named as its reference"
+        else:
+            price, how = None, None
+        if unknown:
+            reps.append("barter value (%s) %s: NOT DERIVABLE, no value for %s" % (b.group, b.id, ", ".join(unknown)))
+        elif price is None:
+            reps.append("barter value (%s) %s: inputs worth $%.0f; the output has no money price to compare"
+                        % (b.group, b.id, vals))
+        else:
+            reps.append("barter value (%s) %s: inputs worth $%.0f against $%.0f (%s): %.3f"
+                        % (b.group, b.id, vals, price, how, vals / price if price else float("inf")))
+            if vals < price - 1e-6:
+                fails.append("BARTER BYPASS (%s) %s: the worst-case inputs are worth $%.0f, under the output's $%.0f "
+                             "(%s): cheaper than the counter" % (b.group, b.id, vals, price, how))
+        pay = bank_prices.get(out)
+        if pay is not None and not unknown:
+            if pay * cnt > vals + 1e-6 or (out in VITAMINS and pay * cnt >= vals - 1e-6):
+                fails.append("BARTER PREMIUM (%s) %s: the Bank pays $%d for %d x %s, inputs worth $%.0f"
+                             % (b.group, b.id, pay * cnt, cnt, out, vals))
+        if out in prizes:
+            reps.append("barter trophy (%s) %s: %s is a once-per-player arena prize (data/arena_fights.json %s); "
+                        "data/bank.json kinds.not_built kept it off the counters so a trophy does not become stock"
+                        % (b.group, b.id, out, ", ".join(prizes[out])))
+    return fails, reps
+
+
+# ------------------------------------------------------------------------------------------------ forceload
+_BLOCK_AT = re.compile(r"\b(?:if|unless) block (-?\d+) (-?\d+) (-?\d+)")
+_SETBLOCK = re.compile(r"^setblock (-?\d+) (-?\d+) (-?\d+)")
+_FILL = re.compile(r"^fill (-?\d+) (-?\d+) (-?\d+) (-?\d+) (-?\d+) (-?\d+)")
+_SCHEDULE = re.compile(r"\bschedule function (\S+) (\d+)t\b")
+_FORCELOAD = re.compile(r"^forceload (add|remove) (-?\d+) (-?\d+)(?: (-?\d+) (-?\d+))?\s*$")
+
+
+def touched_chunks(text):
+    """{(chunk x, chunk z): an (x, z) in it} of every block a function reads or writes and every summon it places."""
+    out = {}
+    for line in text.splitlines():
+        line = line.strip()
+        pts = [(int(m.group(1)), int(m.group(3))) for m in _BLOCK_AT.finditer(line)]
+        m = _SETBLOCK.match(line)
+        if m:
+            pts.append((int(m.group(1)), int(m.group(3))))
+        m = _FILL.match(line)
+        if m:
+            x0, z0, x1, z1 = int(m.group(1)), int(m.group(3)), int(m.group(4)), int(m.group(6))
+            for cx in range(min(x0, x1) >> 4, (max(x0, x1) >> 4) + 1):
+                for cz in range(min(z0, z1) >> 4, (max(z0, z1) >> 4) + 1):
+                    pts.append((max(min(x0, x1), cx * 16), max(min(z0, z1), cz * 16)))
+        m = SUMMON_AT.match(line)
+        if m:
+            pts.append((math.floor(float(m.group(2))), math.floor(float(m.group(4)))))
+        for x, z in pts:
+            out.setdefault((x >> 4, z >> 4), (x, z))
+    return out
+
+
+def forceload_checks(files, steps, step_id="R18DT"):
+    """Failures: a step runs a function that touches a chunk no forceload holds at that moment, or removes the hold
+    before a function the run scheduled has had its ticks. Read from the emitted functions and the step list (the
+    reapply step's actions), never from the data's coordinates: what is checked is what the server would run."""
+    fails = []
+    held = []                                            # [(cx0, cz0, cx1, cz1)]
+    pending = []                                         # [(function, seconds still to wait, chunks)]
+
+    def fn_text(name):
+        ns, _, path = name.partition(":")
+        return files.get("data/%s/function/%s.mcfunction" % (ns, path))
+
+    def covered(ch):
+        return any(a <= ch[0] <= c and b <= ch[1] <= d for a, b, c, d in held)
+
+    for kind, v in steps:
+        if kind == "cmd":
+            m = _FORCELOAD.match(str(v))
+            if m:
+                x0, z0 = int(m.group(2)), int(m.group(3))
+                x1, z1 = (int(m.group(4)), int(m.group(5))) if m.group(4) else (x0, z0)
+                box = (min(x0, x1) >> 4, min(z0, z1) >> 4, max(x0, x1) >> 4, max(z0, z1) >> 4)
+                if m.group(1) == "add":
+                    held.append(box)
+                else:
+                    for fname, left, chunks in pending:
+                        if left > 0 and any(box[0] <= c[0] <= box[2] and box[1] <= c[1] <= box[3] for c in chunks):
+                            fails.append("FORCELOAD %s releases %s while %s, scheduled %.1f s earlier than it runs, "
+                                         "still needs it" % (step_id, v, fname, left))
+                    if box in held:
+                        held.remove(box)
+        elif kind == "wait":
+            pending = [(f, left - float(v), ch) for f, left, ch in pending]
+        elif kind == "fn":
+            text = fn_text(v)
+            if text is None:
+                fails.append("FORCELOAD %s runs %s, which the pack does not emit" % (step_id, v))
+                continue
+            for ch, (x, z) in sorted(touched_chunks(text).items()):
+                if not covered(ch):
+                    fails.append("FORCELOAD %s runs %s, which touches chunk %s at (%d, %d): no forceload holds it"
+                                 % (step_id, v, ch, x, z))
+            for m in _SCHEDULE.finditer(text):
+                sub = fn_text(m.group(1)) or ""
+                chunks = set(touched_chunks(sub)) | set(touched_chunks(text))
+                pending.append((m.group(1), int(m.group(2)) / 20.0, chunks))
+    return fails
 
 
 # ------------------------------------------------------------------------------------------------ the run
@@ -1199,8 +1632,25 @@ def audit(server_dir=None, vanilla_jar=None, markets_mod=None, bank_mod=None, us
     reps += r
     notes += n
 
+    f, r = vitamin_checks(best, bank_prices)
+    fails += f
+    reps += r
+    reps += reward_ahead_report(markets_doc, progression, towns_doc)
+
     if claimed is not None:
         f, r = tier_checks(trader_doc, claimed, offered, progression, routes_doc, towns_doc)
+        fails += f
+        reps += r
+        marts = {t["id"] for t in trader_doc["traders"] if t.get("stock") == "mart"}
+        shelf = {}
+        for s in sales:
+            m = re.match(r"trader (\S+) / ", s.where)
+            if m and m.group(1) in marts:
+                prev = shelf.setdefault(m.group(1), {}).get(s.item)
+                if prev is not None and abs(prev - s.unit) > 1e-9:
+                    fails.append("PRICE %s offers %s twice, at $%g and $%g" % (m.group(1), s.item, prev, s.unit))
+                shelf[m.group(1)][s.item] = min(s.unit, prev if prev is not None else s.unit)
+        f, r = mart_price_checks(trader_doc, markets_doc, shelf)
         fails += f
         reps += r
 

@@ -65,6 +65,24 @@ def test_jar_index_reads_items_from_lang_keys_including_nested_jars(jar_dir):
     assert "foo:x" not in idx.items and "foo:tool" not in idx.items
 
 
+# protects A-1 for code-named items (TMCraft's TMs have no lang key): an id with an item model AND an item-tag entry is
+# an item; a model alone or a tag alone is not. Without the both-rule a stray model would pass a typo, and without the
+# rule at all the 23 TM lines would fail although the jar registers them
+def test_an_item_with_no_lang_key_needs_both_a_model_and_an_item_tag(tmp_path):
+    _jar(tmp_path / "t.jar", {
+        "assets/tm/lang/en_us.json": {"item_group.tm.tms": "TMs"},
+        "assets/tm/models/item/tm_both.json": {"parent": "item/generated"},
+        "assets/tm/models/item/tm_model_only.json": {"parent": "item/generated"},
+        "data/tm/tags/item/tm_moves.json": {"values": ["tm:tm_both", "tm:tm_tag_only",
+                                                       {"id": "tm:tm_optional", "required": False}]},
+        "assets/tm/models/item/tm_optional.json": {"parent": "item/generated"},
+    })
+    idx = MA.JarIndex.from_dir(tmp_path)
+    assert idx.is_item("tm:tm_both")
+    assert not idx.is_item("tm:tm_model_only") and not idx.is_item("tm:tm_tag_only")
+    assert not idx.is_item("tm:tm_optional"), "an optional tag entry is not a registry fact"
+
+
 # protects A-3: a second recipe making a switched-off item without the condition is named; removing it lets a
 # disabled tier stay craftable through a side recipe
 def test_recipe_gate_names_an_unconditioned_side_recipe_and_an_item_no_recipe_makes(jar_dir):
@@ -473,6 +491,10 @@ def test_ids_and_recipe_conditions_in_the_server_jars(M, jars):
     for missing in ("comforts:sleeping_bag", "cobblecuisine:malasada", "cobblemon:x_defense"):
         assert missing not in jars.items
     assert "cobblemon:x_defence" in jars.items
+    # TMCraft's TMs: no lang key, but a model and the tm_moves tag (tmcraft-1.4.19+1.8.0.jar); a TM that does not
+    # exist must still fail
+    assert "tmcraft:tm_earthquake" not in jars.items and jars.is_item("tmcraft:tm_earthquake")
+    assert not jars.is_item("tmcraft:tm_notamove")
     F, _w, _n = _audit(M, index=jars)
     assert F == [], F
 
