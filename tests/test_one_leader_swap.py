@@ -179,8 +179,16 @@ def test_the_retire_function_targets_exactly_the_recorded_second_spawner(files):
     assert 'nbt={TrainerId:"%s",InBattle:0b}]' % cid in body[kill[0]]
     assert 'nbt={TrainerId:"kanto_brock",InBattle:0b},tag=!cobblers_keep_leader]' in body[kill[1]]
     assert max(kill) < min(i for i, l in enumerate(body) if " setblock " in l)
+    # The one spawner may be named only to put it back on the Normal id from the Challenge id (review N115 trap a,
+    # 2026-10-09: the one leader still on the Challenge id in the lag window is kept and returned to Normal, spawner
+    # first, as the cycle's nobody-near line would). It is never set, filled or given any other id.
     nx, ny, nz = _brock_seat()
-    assert not any("%d %d %d" % (nx, ny, nz) in l for l in body), "the retire function must not touch the one spawner"
+    one = "%d %d %d" % (nx, ny, nz)
+    back = ('if block %s rctmod:trainer_spawner{TrainerIds:["%s"]} run data merge block %s {TrainerIds:["kanto_brock"]}'
+            % (one, cid, one))
+    touching = [l for l in body if one in l]
+    assert touching and all(l.endswith(back) and l.startswith(guard) for l in touching), \
+        "the retire function touches the one spawner other than to return it to the Normal id: %s" % touching
 
 
 def test_the_retire_function_restores_the_floor_the_gym_model_built():

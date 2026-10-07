@@ -52,7 +52,9 @@ Checks (FAIL fails the run; REPORT is a finding that needs an owner or another t
                   (CommandWorld) over mixed crowds in and out of battle; the retire function writing only the retired
                   cell and the one under it, back to the gym's own replayed build, removing the old Challenge trainer
                   whether or not the cycle ran first, never in a battle, never the one leader; nothing else still
-                  anchored at the retired cell; reapply step R17L running it
+                  anchored at the retired cell; reapply step R17L running it; for a boss whose one spawner moves
+                  (single_leader.move), the move judged against the build and run after the retire, leaving no
+                  trainer the swap cannot reach
   R   routes      every seated trainer with a Challenge team has a copy whose mob is the Normal mob but for series,
                   whose team is the record's Challenge team; both ids in the seat's defeat advancement; the swap
                   never summons or kills (one exception, matched exactly: a one-leader boss's retire function may
@@ -1505,7 +1507,21 @@ class Audit:
                       first (R17L forceloads and waits before the retire); a trainer in a battle is never killed; and
                       the one leader is never killed while a player stands where a battle with it can start
           P1:stale    nothing else in the generated packs still anchors at the retired cell
-          P1:wired    tools/reapply.py has step R17L and it runs this retire function
+          P1:wired    tools/reapply.py has step R17L and it runs this retire function (and a moved boss's move
+                      function after it)
+          P1:retire_renames  with a Challenge player where a battle with the leader can start, R17L leaves the
+                      leader's id and its spawner as they were (a battle could start on the wrong team before the
+                      next cycle)
+          P1:move*    a boss with single_leader.move (data/challenge_mode.json; the swap then follows move.to):
+                      move.from is the build's one spawner; the new cell is a floor of the build with two passable
+                      cells over it and its redstone block touches nothing redstone-sensitive (P1:move_to); the move
+                      writes only the new cell (the Normal spawner), the one under it (what the build has under its own
+                      spawner) and the old cell (what the build has on all four sides: P1:move_restore) (P1:move_at);
+                      the record's to_replaces/from_restore match the build (P1:move_record); after R17L with nobody
+                      near the spawner stands moved (P1:move), never moved under a battle (P1:move_battle), a re-run
+                      changes nothing (P1:move_rerun); and every trainer of either id left standing is one the swap
+                      still drives (P1:move_orphan: rctmod spawns no second trainer of an identity while one stands),
+                      after a first run, a held run then a re-run, and on a world without the second spawner
           REPORT P1:inbattle_assumed   what the swap does if rctmod does not save InBattle as a 0b/1b byte (ASSUMED,
                       docs/research/notes/rct-arena-capabilities.md:59 documents the tag, not its form)
 
@@ -1523,6 +1539,18 @@ class Audit:
         if place in T or any(l.strip().endswith("place_%s" % cid) for l in cycle):
             self.fail("P1:count", "%s stands as one leader but its second spawner is still placed (%s)" % (cid, place))
         n = ns[0]
+        # A boss whose ONE spawner moves (data/challenge_mode.json bosses.<u>.single_leader.move, the owner's
+        # 2026-10-09 decision for Lance): the build has it at n0 (move.from must be that cell, read from the replayed
+        # build, not from the generator), and after R17L it stands at move.to, which the swap must then follow.
+        mv = ((self.cm["bosses"][u].get("single_leader") or {}).get("move")) or None
+        n0 = n
+        if mv:
+            if tuple(mv.get("from") or ()) != n0 or not mv.get("to"):
+                self.fail("P1:move", "%s: single_leader.move.from %s is not the build's one spawner %s (or no move.to)"
+                          % (u, mv.get("from"), n0))
+                return
+            n = tuple(mv["to"])
+        n0d = (n0[0], n0[1] - 1, n0[2])
         nd = (n[0], n[1] - 1, n[2])
         c = tuple(self.cm["bosses"][u]["spawner"]["at"])
         cd = (c[0], c[1] - 1, c[2])
@@ -1601,11 +1629,15 @@ class Audit:
             self.fail("P1:retire", "%s stands as one leader but nothing retires its second spawner at %s (%s)" % (cid, c, rp))
             return
         rl = [l.strip() for l in lines_of(T[rp]) if l.strip() and not l.strip().startswith("#")]
-        w = worlds.get(n)
-        floor, under = (w.at(c), w.at(cd)) if w is not None else (None, None)
-        for s in getattr(w, "donor_subs", ()):   # a template placement: place_donor's fills, in their order
-            floor = s["to"] if floor is not None and bname(floor) == s["from"] else floor
-            under = s["to"] if under is not None and bname(under) == s["from"] else under
+        w = worlds.get(n0)
+
+        def built(cell):
+            """The gym's own replayed build at `cell`, after place_donor's fills (a template placement), in order."""
+            st = w.at(cell) if w is not None else None
+            for s in getattr(w, "donor_subs", ()):
+                st = s["to"] if st is not None and bname(st) == s["from"] else st
+            return st
+        floor, under = built(c), built(cd)
         if floor is None or under is None:
             self.fail("P1:retire", "%s: no replayed build holds %s and %s, so the restore cannot be judged" % (cid, c, cd))
             return
@@ -1620,57 +1652,191 @@ class Audit:
             elif m.group(5) != (floor if cell == c else under):
                 self.fail("P1:restore", "%s sets %s at %s; the gym's own build has %s there"
                           % (rn, m.group(5), cell, floor if cell == c else under))
-        old_world = {n: sp(u), nd: "minecraft:redstone_block", c: sp(cid), cd: "minecraft:redstone_block"}
+        # The move (a moved boss only): R17L runs the retire, then cobblers:trainers/challenge/move_<u>. Every block it
+        # may write is judged against the build, never against the record or the generator: the new cell must be a
+        # floor of the build with two passable cells over it, the block under it what the build has under its own one
+        # spawner (the template's spawners each sit on a redstone block), and the old cell what the build has on all
+        # four sides of it.
+        ml, mpath, restore0, under0, to_floor, to_under = [], None, None, None, None, None
+        if mv:
+            mpath = "data/cobblers/function/trainers/challenge/move_%s.mcfunction" % u
+            if mpath not in T:
+                self.fail("P1:move", "%s's spawner moves to %s (single_leader.move) but nothing moves it (%s)" % (u, n, mpath))
+                return
+            ml = [l.strip() for l in lines_of(T[mpath]) if l.strip() and not l.strip().startswith("#")]
+            sides = [built((n0[0] + a, n0[1], n0[2] + b)) for a, b in ((1, 0), (-1, 0), (0, 1), (0, -1))]
+            restore0 = sides[0] if sides[0] is not None and len(set(sides)) == 1 else None
+            under0, to_floor, to_under = built(n0d), built(n), built(nd)
+            if restore0 is None:
+                self.fail("P1:move", "%s: the build's four sides of the old cell %s disagree (%s): the restore cannot be "
+                          "judged" % (u, n0, sides))
+                return
+            over = [built((n[0], n[1] + i, n[2])) for i in (1, 2)]
+            if (not solid_floor(to_floor) or bname(to_floor) == SPAWNER or has_part(to_floor, CONTAINER_PARTS)
+                    or not all(passable(s) for s in over)):
+                self.fail("P1:move_to", "%s: the new cell %s holds %s with %s over it in the build: not a floor a "
+                          "trainer stands on" % (u, n, to_floor, over))
+            for a, b, h in ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, -1)):
+                nb = (nd[0] + a, nd[1] + h, nd[2] + b)
+                if has_part(built(nb), REDSTONE_SENSITIVE_PARTS) or bname(built(nb)) == SPAWNER:
+                    self.fail("P1:move_to", "%s: the redstone block under %s would touch %s at %s" % (u, n, built(nb), nb))
+            want_at = {n: sp(u), nd: under0, n0: restore0}
+            for line in ml:
+                mm = re.search(r"run (setblock|fill) (-?\d+) (-?\d+) (-?\d+) (\S+)", line)
+                if not mm:
+                    continue
+                cell = tuple(int(x) for x in mm.groups()[1:4])
+                if mm.group(1) == "fill" or cell not in want_at:
+                    self.fail("P1:move_at", "%s writes %s at %s, not only the new cell %s, the one under it and the "
+                              "old cell %s" % (mpath, mm.group(1), cell, n, n0))
+                elif mm.group(5) != want_at[cell]:
+                    self.fail("P1:move_restore" if cell == n0 else "P1:move_at", "%s sets %s at %s; want %s (the "
+                              "build's %s)" % (mpath, mm.group(5), cell, want_at[cell],
+                                               "four sides of the old cell" if cell == n0 else
+                                               "block under its own spawner" if cell == nd else "spawner, moved"))
+            # the record tells the truth about what the move replaces (a data check, from the build)
+            rep = mv.get("to_replaces") or {}
+            if (bname(rep.get("floor")), bname(rep.get("under"))) != (bname(to_floor), bname(to_under)) \
+                    or mv.get("from_restore") != restore0:
+                self.fail("P1:move_record", "%s: single_leader.move records to_replaces %s and from_restore %s; the "
+                          "build has %s over %s at %s and %s around %s" % (u, rep, mv.get("from_restore"), to_floor,
+                                                                           to_under, n, restore0, n0))
+        r17 = rl + ml   # R17L: the retire, then the move (tools/challenge_mode.py retire_functions(), checked below)
+        seat_now = {n0: sp(u), n0d: under0 or "minecraft:redstone_block"}
+        if mv:
+            seat_now.update({n: to_floor, nd: to_under})
+        old_world = dict(seat_now)
+        old_world.update({c: sp(cid), cd: "minecraft:redstone_block"})
+
+        def moved_wrong(cw):
+            """None when the one spawner stands moved: move.to the Normal spawner over the build's under-spawner
+            block, the old cell the build's floor (else a description)."""
+            got = (cw.blocks.get(n), cw.blocks.get(nd), cw.blocks.get(n0))
+            if spawner_ids(got[0]) != [u] or bname(got[0]) != SPAWNER or got[1:] != (under0, restore0):
+                return "%s holds %s over %s and the old cell %s holds %s; want %s over %s and %s" % (
+                    n, got[0], got[1], n0, got[2], sp(u), under0, restore0)
+            return None
+
+        def ungoverned(cw):
+            """After R17L, every standing trainer of either id must be one the swap still drives (rctmod spawns no
+            second trainer of an identity while one stands, uniqueTrainerRadius 151, so one the swap cannot reach is
+            THE leader for good): a Challenge player near the one spawner must turn it to the Challenge id and, gone,
+            back. Returns the trainers it does not drive."""
+            out = []
+            for players, want in (([{"pos": at(inside), "tags": {tag}}], cid), ([], u)):
+                cw2 = CommandWorld(cw.blocks, [dict(t, battle=False) for t in cw.trainers if t["id"] in (u, cid)],
+                                   players)
+                run(cw2, mine, 3)
+                out += ["%s at %s stays %s (want %s)" % (t.get("who", "a trainer"), t["pos"], t["id"], want)
+                        for t in cw2.trainers if t["id"] != want]
+            return out
         try:
             # R17L forceloads and waits 3 s before the retire; the trainers clock runs the cycle every 10 ticks, so
             # the cycle has run anywhere from 0 to 6 times first
             for k in range(0, 7):
                 for leader_battle in (False, True):
-                    cw = CommandWorld(old_world, [{"id": u, "battle": leader_battle, "pos": stand(n), "who": "leader"},
+                    cw = CommandWorld(old_world, [{"id": u, "battle": leader_battle, "pos": stand(n0), "who": "leader"},
                                                   {"id": cid, "battle": False, "pos": stand(c), "who": "old"}], [])
                     run(cw, mine, k)
-                    run(cw, rl)
+                    run(cw, r17)
                     left = [(t["who"], t["id"]) for t in cw.trainers]
                     if (cw.blocks.get(c), cw.blocks.get(cd)) != (floor, under):
                         self.fail("P1:retire", "%s after the cycle ran %d time(s): %s holds %s over %s, want %s over %s"
                                   % (cid, k, c, cw.blocks.get(c), cw.blocks.get(cd), floor, under))
                         break
-                    if left != [("leader", u)]:
+                    # a moved boss's idle leader may go with the retire (the moved spawner then spawns him at the new
+                    # cell); a leader in a battle never goes, and the old Challenge trainer always does
+                    want_left = [[("leader", u)]] if (leader_battle or not mv) else [[("leader", u)], []]
+                    if left not in want_left:
                         self.fail("P1:retire", "%s with nobody near, the leader %s, after the cycle ran %d time(s) "
                                   "first (R17L forceloads and waits before the retire): trainers left %s, want only "
                                   "the leader on %s" % (cid, "in a battle" if leader_battle else "idle", k, left, u))
+                        break
+                    if not mv:
+                        continue
+                    if leader_battle:
+                        # never moved under a battle; and once the battle is over the next re-apply's R17L moves it
+                        if (cw.blocks.get(n0), cw.blocks.get(n)) != (sp(u), to_floor):
+                            self.fail("P1:move_battle", "%s's spawner moves while %s is in a battle by it: %s now holds "
+                                      "%s, %s holds %s" % (u, u, n0, cw.blocks.get(n0), n, cw.blocks.get(n)))
+                            break
+                        for t in cw.trainers:
+                            t["battle"] = False
+                        run(cw, r17)
+                    bad = moved_wrong(cw)
+                    if bad:
+                        self.fail("P1:move", "%s after R17L with nobody near (the leader %s, cycle %d time(s) first): %s"
+                                  % (u, "in a battle, then a re-run" if leader_battle else "idle", k, bad))
+                        break
+                    bad = ungoverned(cw)
+                    if bad:
+                        self.fail("P1:move_orphan", "%s after R17L (the leader %s first, cycle %d time(s)): %s -- the "
+                                  "spawner moved to %s and left a trainer the swap cannot reach"
+                                  % (u, "in a battle, then a re-run" if leader_battle else "idle", k, "; ".join(bad), n))
+                        break
+                    # a re-run of the completed R17L (every re-apply runs it) changes nothing, the new leader included
+                    cw.trainers.append({"id": u, "battle": False, "pos": stand(n), "who": "new leader"})
+                    snap = (dict(cw.blocks), [(t["who"], t["id"]) for t in cw.trainers])
+                    run(cw, r17)
+                    if (dict(cw.blocks), [(t["who"], t["id"]) for t in cw.trainers]) != snap:
+                        self.fail("P1:move_rerun", "%s: R17L run again after the move changes the world: %s -> %s"
+                                  % (u, snap[1], [(t["who"], t["id"]) for t in cw.trainers]))
                         break
                 else:
                     continue
                 break
             # the one leader already gone (despawned): at most one trainer may be left, and none on the Challenge id
             for k in range(0, 7):
-                cw = CommandWorld(old_world, [{"id": cid, "battle": False, "pos": stand(c)}], [])
+                cw = CommandWorld(old_world, [{"id": cid, "battle": False, "pos": stand(c), "who": "old"}], [])
                 run(cw, mine, k)
-                run(cw, rl)
+                run(cw, r17)
                 ids = [t["id"] for t in cw.trainers]
                 if len(ids) > 1 or cid in ids:
                     self.fail("P1:retire", "%s with only the old trainer standing, after the cycle ran %d time(s): "
                               "trainers left %s" % (cid, k, ids))
                     break
+                if mv and (moved_wrong(cw) or ungoverned(cw)):
+                    self.fail("P1:move_orphan" if not moved_wrong(cw) else "P1:move",
+                              "%s with only the old trainer standing: %s" % (u, moved_wrong(cw) or ungoverned(cw)))
+                    break
+            # a world without the second spawner (a fresh export; or something else in that cell): the retire changes
+            # nothing; a moved boss's spawner still moves, and the trainer its old spawner already spawned must not be
+            # left where the swap cannot reach it
             for state, below in ((floor, under), ("minecraft:chest", "minecraft:stone")):
-                cw = run(CommandWorld({n: sp(u), nd: "minecraft:redstone_block", c: state, cd: below},
-                                      [{"id": u, "battle": False, "pos": stand(n)}], []), rl)
-                if (cw.blocks.get(c), cw.blocks.get(cd)) != (state, below) or len(cw.trainers) != 1:
+                fresh = dict(seat_now)
+                fresh.update({c: state, cd: below})
+                cw = run(CommandWorld(fresh, [{"id": u, "battle": False, "pos": stand(n0), "who": "leader"}], []), r17)
+                if (cw.blocks.get(c), cw.blocks.get(cd)) != (state, below) or len(cw.trainers) > 1 \
+                        or (not mv and len(cw.trainers) != 1):
                     self.fail("P1:retire_at", "%s changes a world whose %s holds %s over %s: now %s over %s, %d trainer(s)"
                               % (rn, c, state, below, cw.blocks.get(c), cw.blocks.get(cd), len(cw.trainers)))
-            # the one leader is never killed while a Challenge player stands where a battle with it can start: on a
-            # re-run (the second spawner already gone) and on the first run (it still stands), cycle 0..6 times first
-            # (P1:rerun_kills for a re-run, every re-apply runs R17L; P1:retire_kills for the first run)
+                elif mv and moved_wrong(cw):
+                    self.fail("P1:move", "%s in a world without the second spawner: %s" % (u, moved_wrong(cw)))
+                elif mv and ungoverned(cw):
+                    self.fail("P1:move_orphan", "%s in a world without the second spawner (%s over %s at %s), its "
+                              "leader standing by the old cell: %s -- the spawner moved to %s and left a trainer the "
+                              "swap cannot reach" % (u, state, below, c, "; ".join(ungoverned(cw)), n))
+            # the one leader is never killed, renamed or re-spawnered while a Challenge player stands where a battle
+            # with it can start: on a re-run (the second spawner already gone) and on the first run (it still stands),
+            # cycle 0..6 times first (P1:rerun_kills for a re-run, every re-apply runs R17L; P1:retire_kills for the
+            # first run; P1:retire_renames for a leader left standing with its id or its spawner changed under the
+            # player). Measured from where the leader stands before R17L (the old cell for a moved boss).
+            ax, az = n0[0] - c[0], n0[2] - c[2]
+            al = (ax * ax + az * az) ** 0.5
+            away0 = (ax / al, 0.0, az / al) if al else away
+            at0 = lambda d, sgn: tuple(stand(n0)[i] + sgn * away0[i] * d for i in range(3))
             for first in (False, True):
                 for sgn, k in itertools.product((1, -1), range(0, 7)):
-                    blocks = dict(old_world) if first else {n: sp(u), nd: "minecraft:redstone_block", c: floor, cd: under}
-                    trainers = [{"id": u, "battle": False, "pos": stand(n), "who": "leader"}]
+                    blocks = dict(old_world) if first else dict(seat_now)
+                    if not first:
+                        blocks.update({c: floor, cd: under})
+                    trainers = [{"id": u, "battle": False, "pos": stand(n0), "who": "leader"}]
                     if first:
                         trainers.append({"id": cid, "battle": False, "pos": stand(c), "who": "old"})
-                    cw = CommandWorld(blocks, trainers, [{"pos": at(inside, sgn), "tags": {tag}}])
+                    cw = CommandWorld(blocks, trainers, [{"pos": at0(inside, sgn), "tags": {tag}}])
                     run(cw, mine, k)
-                    run(cw, rl)
+                    snap = ([t["id"] for t in cw.trainers if t["who"] == "leader"], cw.blocks.get(n0), cw.blocks.get(n))
+                    run(cw, r17)
                     if not any(t["who"] == "leader" for t in cw.trainers):
                         self.fail("P1:retire_kills" if first else "P1:rerun_kills",
                                   "%s, %s, after the cycle ran %d time(s), kills the one leader while a Challenge "
@@ -1679,8 +1845,17 @@ class Audit:
                                   "follows" % (rn, "on its first run" if first else "run again", k, inside, u,
                                                "away from" if sgn > 0 else "toward", fb, c, ln))
                         break
-            cw = run(CommandWorld(old_world, [{"id": u, "battle": False, "pos": stand(n)},
-                                              {"id": cid, "battle": True, "pos": stand(c)}], []), rl)
+                    now = ([t["id"] for t in cw.trainers if t["who"] == "leader"], cw.blocks.get(n0), cw.blocks.get(n))
+                    if now != snap:
+                        self.fail("P1:retire_renames",
+                                  "%s, %s, after the cycle ran %d time(s), changes the one leader (id, spawner %s, %s) "
+                                  "from %s to %s while a Challenge player stands %g from it %s the retired cell "
+                                  "(within %g, where a battle starts on sight): a battle can start before the next "
+                                  "cycle puts it back" % (rn, "on its first run" if first else "run again", k, n0, n,
+                                                          snap, now, inside, "away from" if sgn > 0 else "toward", fb))
+                        break
+            cw = run(CommandWorld(old_world, [{"id": u, "battle": False, "pos": stand(n0)},
+                                              {"id": cid, "battle": True, "pos": stand(c)}], []), r17)
             if not any(t["id"] == cid and t["battle"] for t in cw.trainers):
                 self.fail("P1:retire_battle", "%s kills a trainer that is in a battle" % rn)
         except ValueError as e:
@@ -1693,17 +1868,32 @@ class Audit:
                     if not line.strip().startswith("#") and any(a in line for a in anchors):
                         self.fail("P1:stale", "%s still names the retired cell %s: %s" % (k, c, line.strip()[:140]))
                         break
+        # a moved boss: nothing but its move function still names the old cell (the cycle follows move.to)
+        if mv:
+            anchors0 = ("x=%d.5,y=%d,z=%d.5" % n0, "%d %d %d" % n0)
+            for k, v in T.items():
+                if k.endswith(".mcfunction") and k != mpath:
+                    for line in lines_of(v):
+                        if not line.strip().startswith("#") and any(a in line for a in anchors0):
+                            self.fail("P1:stale", "%s still names %s's old cell %s: %s" % (k, u, n0, line.strip()[:140]))
+                            break
         # the re-apply step that runs it
         ra = self.root / "tools" / "reapply.py"
         src = ra.read_text(encoding="utf-8", errors="replace") if ra.exists() else ""
         fid = "cobblers:trainers/challenge/retire_%s" % cid
         try:
-            listed = fid in self.art.mod("challenge_mode").retire_functions()
+            fns = list(self.art.mod("challenge_mode").retire_functions())
         except Exception as e:  # noqa: BLE001 - a generator that cannot list its own retire functions is the finding
-            listed = False
+            fns = []
             self.note("P1: challenge_mode.retire_functions() raised %s" % e)
+        listed = fid in fns
         if '"R17L"' not in src or "retire_functions()" not in src or not listed:
             self.fail("P1:wired", "tools/reapply.py step R17L does not run %s" % fid)
+        if mv:
+            # R17L runs the move AFTER the retire: the retire's kills are what clear the old cell's trainer (above)
+            mfid = "cobblers:trainers/challenge/move_%s" % u
+            if mfid not in fns or not listed or fns.index(mfid) < fns.index(fid):
+                self.fail("P1:wired", "tools/reapply.py step R17L does not run %s after %s (%s)" % (mfid, fid, fns))
 
     # ================================================================================================ R
     def check_routes(self):
