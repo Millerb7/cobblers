@@ -205,7 +205,11 @@ def test_gym3_full_check_is_clean(g3):
     seats = [s for s in SEATS["trainers"] if s["gym"] == "gym3"]
     problems, row = T.check_gym("gym3", seats, recs, G)
     assert problems == []
-    assert row["juniors_in_pass_order"] == ["gym3_junior_01", "gym3_junior_02"]
+    # the property, not a recorded order: every gym 3 seat is met, once, and no junior met later tops out lower
+    order = row["juniors_in_pass_order"]
+    assert sorted(order) == sorted(s["id"] for s in seats)
+    tops = [max(m["level"] for m in recs[t]["team"]) for t in order]
+    assert tops == sorted(tops), list(zip(order, tops))
 
 
 def test_gym2_the_proof_needs_defect_d1_closed_and_says_so():
@@ -227,12 +231,35 @@ def test_gym2_the_proof_needs_defect_d1_closed_and_says_so():
 
 
 # ------------------------------------------------------------------------------------------------ the rosters
-def test_the_counts_follow_the_design_two_to_four_a_gym():
+# The owner's ask (relayed by the A2 brief, 2026-10-06, and data/gym_junior_trainers.json's note): at least three
+# juniors a gym. A gym whose geometry cannot take three says so as DATA, in its own entry of the seat file:
+#   "gyms": {"gymN": {"below_minimum": {"juniors": <its count>, "why": "<the geometry>", "evidence": "<the check>"}}}
+MIN_JUNIORS = 3
+
+
+def test_every_gym_has_at_least_three_juniors_or_declares_why_not():
+    # Removing this lets a gym fall below the owner's minimum silently, or keep an exception it no longer needs.
     by = {}
     for s in SEATS["trainers"]:
         by[s["gym"]] = by.get(s["gym"], 0) + 1
-    assert by == {"gym1": 2, "gym2": 2, "gym3": 2, "gym4": 2, "gym5": 3, "gym6": 3, "gym7": 3, "gym8": 4}
-    assert len({s["id"] for s in SEATS["trainers"]}) == 21
+    assert len({s["id"] for s in SEATS["trainers"]}) == len(SEATS["trainers"])
+    faults = []
+    for n in range(1, 9):
+        gym = "gym%d" % n
+        have = by.get(gym, 0)
+        exc = (SEATS.get("gyms", {}).get(gym) or {}).get("below_minimum")
+        if have < MIN_JUNIORS:
+            if not exc:
+                faults.append("%s has %d junior(s), below %d, and no gyms.%s.below_minimum record in "
+                              "data/gym_junior_trainers.json" % (gym, have, MIN_JUNIORS, gym))
+            elif exc.get("juniors") != have or not exc.get("why") or not exc.get("evidence"):
+                faults.append("%s's below_minimum record %r does not declare its count %d with a why and evidence"
+                              % (gym, exc, have))
+        elif exc:
+            faults.append("%s has %d juniors but still declares below_minimum: remove it" % (gym, have))
+        if have < 1:
+            faults.append("%s has no junior at all" % gym)
+    assert faults == []
 
 
 def test_every_seat_has_a_generated_roster_with_both_modes_below_the_ace():

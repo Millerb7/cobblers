@@ -1,4 +1,4 @@
-"""tools/gym_trainers_audit.py: the independent audit of the 21 gym juniors.
+"""tools/gym_trainers_audit.py: the independent audit of the gym juniors (every seat in data/gym_junior_trainers.json).
 
 Two halves. The first runs the audit's own movement, sight and replay code over SYNTHETIC halls whose answers can
 be worked out by hand, so the model is tested on more than the one set of real halls. The second runs the audit
@@ -113,6 +113,83 @@ def test_a_junior_in_a_one_wide_corridor_is_a_softlock_and_in_a_two_wide_one_is_
         assert A.junior_walks(h, g, j, {(10, 64, 28)})["t"]["softlock_free"] is (not walled)
 
 
+def test_two_juniors_side_by_side_wall_a_two_wide_lane_that_each_alone_leaves_open():
+    # Removing this lets two juniors that each pass the one-at-a-time softlock check stand shoulder to shoulder
+    # across a two-wide lane and lock the player out (R17 summons them all at once).
+    h = flat_hall(corridor(width=2))
+    g = A.Graph(h, [(10, 64, 2)])
+    goal = {(10, 64, 28)}
+    js = {"a": {"seat": (10, 64, 15), "yaw": 180, "sight": 3.0}, "b": {"seat": (11, 64, 15), "yaw": 180, "sight": 3.0}}
+    walks = A.junior_walks(h, g, js, goal)
+    assert walks["a"]["softlock_free"] and walks["b"]["softlock_free"]
+    assert A.standing_together(g, goal, [(10, 64, 15)])["reaches_leader"] is True
+    assert A.standing_together(g, goal, [(10, 64, 15), (11, 64, 15)])["reaches_leader"] is False
+
+
+def test_a_junior_behind_a_wall_holds_the_cut_by_distance_but_not_by_line_of_sight():
+    # Removing this lets a junior "guard" a corridor through a solid wall: rctmod's trigger is a mutual stare
+    # (rctmod-server.toml forceBattleLookTicks: "look at each other"), so a wall between them may mean no battle.
+    for window, blind in ((False, True), (True, False)):
+        cmds = corridor(width=1) + ["fill 12 64 15 12 65 15 minecraft:air"]        # the junior's own pocket at x12
+        if window:
+            cmds.append("fill 11 64 15 11 65 15 minecraft:air")                     # x11 opened between them
+        h = flat_hall(cmds)
+        g = A.Graph(h, [(10, 64, 2)])
+        r = A.junior_walks(h, g, {"t": {"seat": (12, 64, 15), "yaw": 90, "sight": 3.0}}, {(10, 64, 28)})["t"]
+        assert r["evade"][False] is None                     # 2.0 from (10, 64, 15): surely within 3.0 - U
+        assert bool(r["evade"]["los"]) is blind
+
+
+def one_way_drop_hall():
+    """A one-wide corridor (x10, feet y64) from the arrival at z2 to z14, then a two-block drop (z15-28, feet y62) to
+    the leader at z28: the drop cannot be climbed back. The way back is a return lane: east at z20 to x12, two steps
+    up (z19, z18) to y64, north along x12 to z5, west through x11 into the corridor. Worked by hand: everything past
+    the drop gets back only along the x12 lane."""
+    return flat_hall([
+        "fill 5 61 0 20 70 30 minecraft:stone",
+        "fill 10 64 2 10 65 14 minecraft:air",        # the upper corridor (floor y63)
+        "fill 10 62 15 10 65 28 minecraft:air",       # the drop and the lower corridor (floor y61)
+        "fill 11 62 20 12 65 20 minecraft:air",       # east at z20
+        "fill 12 63 19 12 66 19 minecraft:air",       # step one (floor y62)
+        "fill 12 64 18 12 66 18 minecraft:air",       # step two (floor y63)
+        "fill 12 64 5 12 65 17 minecraft:air",        # the return lane
+        "fill 11 64 5 11 65 5 minecraft:air",         # back into the corridor
+    ])
+
+
+def test_a_junior_in_the_only_way_back_from_a_drop_walls_the_player_in():
+    # Removing this lets a junior stand in the one lane back out of a part of a hall a player drops into: the way in
+    # still works (the softlock check passes) and the player cannot leave.
+    h = one_way_drop_hall()
+    g = A.Graph(h, [(10, 64, 2)])
+    goal = {(10, 62, 28)}
+    assert (10, 62, 15) in g.adj and (10, 64, 14) not in {q for q, _s in A.moves(h, (10, 62, 15))}
+    free = A.standing_together(g, goal, [])
+    assert free["reaches_leader"] and free["walled_in"] == [] and free["one_way"] == 0
+    lane = A.standing_together(g, goal, [(12, 64, 10)])
+    assert lane["reaches_leader"] is True
+    assert (10, 62, 28) in lane["walled_in"] and (10, 62, 15) in lane["walled_in"]
+    assert (10, 64, 2) not in lane["walled_in"]
+    # the same junior on the corridor's own side, before the drop, walls nothing in: its seat is not on the way back
+    side = A.standing_together(g, goal, [(10, 64, 3)])
+    assert side["walled_in"] == [] and side["reaches_leader"] is False
+
+
+def test_a_drop_with_no_way_back_at_all_is_the_halls_not_a_juniors():
+    # Removing this lets a hall's own one-way drop be charged to a junior standing elsewhere (or hidden).
+    h = flat_hall([                                   # one_way_drop_hall() without its return lane
+        "fill 5 61 0 20 70 30 minecraft:stone",
+        "fill 10 64 2 10 65 14 minecraft:air",
+        "fill 10 62 15 10 65 28 minecraft:air",
+    ])
+    g = A.Graph(h, [(10, 64, 2)])
+    st = A.standing_together(g, {(10, 62, 28)}, [(10, 64, 3)])
+    # with the junior at z3 nothing past it is reached, so nothing is charged to it; with nobody standing the 14
+    # cells z15-28 of the lower corridor are the hall's own trap
+    assert st["walled_in"] == []
+    assert A.standing_together(g, {(10, 62, 28)}, [])["one_way"] == 14
+
+
 def test_fill_modes_replace_hollow_and_keep_replay_as_minecraft_does():
     # Removing this lets the replay misread a substitution or a hollow shell, and every hall built on it.
     w = A.World(lambda x, y, z: "minecraft:air")
@@ -184,7 +261,11 @@ IDS = [t["id"] for t in JUNIORS]
 # strict): a known defect that is gone FAILS, naming the entry to remove. gym7_junior_03's softlock was fixed by
 # moving its seat one block north to (6179, 120, 4991), gym3_junior_01's must-pass by moving it one block east to
 # (1732, 175, 1424). Both moves were found by this audit and re-proved by tools/gym_trainers.py check.
+# Found 2026-10-06 (A2 audit): the Archive Reader's cut holds only through a block -- a walk from (6195, 98, 3332)
+# passes within 3.5 of her only where no clear line joins the player's eye to her (closest 2.45 at (6198, 99,
+# 3326)). A warning in the CLI (runtime sight through walls is unverified), recorded here so it cannot widen.
 KNOWN = {
+    ("line_of_sight", "gym6_junior_01"): "the Archive Reader's cut holds only if rctmod's sight passes walls",
 }
 
 
@@ -221,6 +302,27 @@ def test_no_junior_walls_the_only_way_to_its_leader(report, tid):
         assert found, "fixed: remove ('softlock', %r) from KNOWN" % tid
         pytest.xfail(KNOWN[("softlock", tid)])
     assert found == []
+
+
+@real
+@pytest.mark.parametrize("tid", IDS)
+def test_every_walk_to_the_leader_passes_in_each_juniors_line_of_sight(report, tid):
+    # Removing this lets a junior guard its lane only through a wall, which a mutual-stare trigger may never fire.
+    found = [w for w in report["warnings"] if w[1] == tid and w[0] == "line_of_sight"]
+    if ("line_of_sight", tid) in KNOWN:
+        assert found, "fixed: remove ('line_of_sight', %r) from KNOWN" % tid
+        pytest.xfail(KNOWN[("line_of_sight", tid)])
+    assert found == []
+
+
+@real
+def test_no_gym_is_walled_by_its_juniors_standing_together(report):
+    # Removing this lets juniors that each leave a lane open fill every lane together, or shut the only way back
+    # out of a part of a hall a player drops into.
+    together = [p for p in report["problems"] if p[0] in ("softlock", "walled_in") and p[1] in A.GYMS]
+    assert together == []
+    for gym, r in report["gyms"].items():
+        assert r["info"].get("walled_in_by_juniors") == 0, gym
 
 
 @real
@@ -294,6 +396,33 @@ def test_turning_the_juniors_round_in_route_trainers_fails_the_facing(G):
     assert problems_of(clean, "gym6_junior_01", {"facing"}) == []
     rep = A.audit(("gym6",), placements=rt.placements(), G=G, strict_facing=True)
     assert problems_of(rep, "gym6_junior_01", {"facing"}), rep["problems"]
+
+
+@real
+def test_two_juniors_moved_side_by_side_across_gym7s_stair_fail_together_and_not_alone(G):
+    # Removing this loses the proof, on a real hall, that the juniors are judged standing at once: the Rim
+    # Researcher moved (in route_trainers' placements, the generator of what R17 summons) beside the Stair Stoker
+    # fills the stair's other lane, and only the all-at-once check sees it.
+    rt = mutated(ROOT / "tools" / "route_trainers.py", PLACEMENTS,
+                 'return [(s["id"], (6179, 116, 4987) if s["id"] == "gym7_junior_02" else tuple(s["seat"]), s["yaw"]) '
+                 'for s in seats]', "route_trainers_mutant")
+    rep = A.audit(("gym7",), placements=rt.placements(), G=G)
+    assert problems_of(rep, "gym7", {"softlock"}), rep["problems"]
+    assert problems_of(rep, "gym7_junior_02", {"softlock"}) == [] and problems_of(rep, "gym7_junior_04",
+                                                                                  {"softlock"}) == []
+
+
+@real
+def test_undoing_the_stair_stokers_facing_correction_fails_the_facing(G):
+    # Removing this loses the proof that the new gym 7 seat's yaw (135, corrected from 180) is what keeps the climb
+    # past him in front of him.
+    rt = mutated(ROOT / "tools" / "route_trainers.py", PLACEMENTS,
+                 'return [(s["id"], tuple(s["seat"]), 180 if s["id"] == "gym7_junior_04" else s["yaw"]) '
+                 'for s in seats]', "route_trainers_mutant")
+    clean = A.audit(("gym7",), G=G, strict_facing=True)
+    assert problems_of(clean, "gym7_junior_04", {"facing"}) == []
+    rep = A.audit(("gym7",), placements=rt.placements(), G=G, strict_facing=True)
+    assert problems_of(rep, "gym7_junior_04", {"facing"}), rep["problems"]
 
 
 @real

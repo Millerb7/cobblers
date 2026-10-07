@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Independent audit of the gym juniors: 21 seats in the eight gyms, their rosters and the pack that carries them.
+"""Independent audit of the gym juniors: every seat in data/gym_junior_trainers.json (26 on 2026-10-06), their rosters and the pack that carries them.
 
 WHY THIS EXISTS. `tools/gym_trainers.py check` proves each seat over `tools/gym_buildings.py build_one()`'s voxel
 model and gym 2's replay of `place_donor.commands()` / `gym_interiors.gym2_commands()` -- the generators' own
@@ -75,7 +75,14 @@ CHECKS (codes; each problem is one line):
   sight       the mob file exists and forceBattleOnSight is true [sight]
   must_pass   with every position (and jump flight / fall cell) the junior surely sees removed, and its body
               cells, no arrival reaches the leader [must_pass]
-  softlock    with the junior's two body cells blocked, some arrival still reaches the leader [softlock]
+  sight line  the must_pass cut again, counting only cells with a clear line from the player's eye to the junior
+              (feet + 0.5, 1.0 or 1.5): rctmod-server.toml says trainer and player "look at each other", so a cut
+              that holds only through a block is a WARNING [line_of_sight] (a failure with --strict-sight)
+  softlock    with the junior's two body cells blocked, some arrival still reaches the leader [softlock]; and with
+              EVERY junior's body cells blocked at once, as R17 summons them [softlock, the gym named]
+  walled_in   with every junior standing, no position a player can reach has its only way back to an arrival
+              through a junior's body (moves are one-way across a fall, so the way out is its own backward search;
+              the hall's own one-way drops, there with nobody standing, are a note) [walled_in]
   leader      no position the junior possibly sees engages the leader [leader]; the spawner is found in the
               replayed blocks where the record says, and the leader's team tops out at the contract's ace
   order       ordering the juniors by the fewest moves before a player is surely in each one's sight (facing
@@ -704,6 +711,31 @@ class Graph:
 MAX_GAP = 3
 
 
+def leavers(g, ok_pos=None, ok_move=None):
+    """Every position from which some arrival is reached over the positions ok_pos admits and the moves ok_move
+    admits: the way back out. Moves are not symmetric (a fall is one way), so this is its own search, backward over
+    the graph's moves, not the forward reach reversed."""
+    rev = {}
+    for p, ms in g.adj.items():
+        for q, sw in ms:
+            if q in g.adj:
+                rev.setdefault(q, []).append((p, sw))
+    out = set()
+    todo = deque()
+    for a in g.arrivals:
+        if a in g.adj and (ok_pos is None or ok_pos(a)) and a not in out:
+            out.add(a)
+            todo.append(a)
+    while todo:
+        q = todo.popleft()
+        for p, sw in rev.get(q, ()):
+            if p in out or (ok_pos is not None and not ok_pos(p)) or (ok_move is not None and not ok_move(sw)):
+                continue
+            out.add(p)
+            todo.append(p)
+    return out
+
+
 def walk(h, arr):
     """The graph at the narrowest jump that reaches the leader: gaps of 1 first (the stated model), wider only when
     the hall's own way to its leader needs one. Returns (graph, engage set, gap)."""
@@ -1017,6 +1049,34 @@ def junior_walks(h, g, juniors, goal):
                 evade[cone] = {"from": path[0], "to": hit, "closest": near,
                                "closest_distance": round(dist3(feet(near), feet(seat)), 2), "moves": len(path) - 1}
 
+        # line of sight: the same cut in any direction, counting only cells with a clear line from the player's eye
+        # to some part of the junior (feet + 0.5, 1.0, 1.5). If rctmod's trigger is the player's look ray hitting the
+        # trainer (the jar's ProjectileUtil / EntityHitResult, see THE SIGHT), a cell behind a wall never fires.
+        los_cache = {}
+
+        def los_seen(c, seat=seat, d=d):
+            if c not in los_cache:
+                sf = feet(seat)
+                cf = feet(c)
+                eye = (cf[0], cf[1] + EYE, cf[2])
+                los_cache[c] = surely_seen(seat, 0, d, c, cone=False) and any(
+                    clear_line(h, eye, (sf[0], sf[1] + k, sf[2])) for k in (0.5, 1.0, 1.5))
+            return los_cache[c]
+
+        def ok_pos3(q, body=body):
+            return not los_seen(q) and q not in body and (q[0], q[1] + 1, q[2]) not in body
+
+        def ok_move3(sw, body=body):
+            return not body.intersection(sw) and not any(los_seen(c) for c in sw)
+
+        _d3, parent3, hit3 = g.bfs(ok_pos3, ok_move3, goal)
+        evade["los"] = None
+        if hit3:
+            path = path_to(parent3, hit3)
+            near = min(path, key=lambda p: dist3(feet(p), feet(seat)))
+            evade["los"] = {"from": path[0], "to": hit3, "closest": near,
+                            "closest_distance": round(dist3(feet(near), feet(seat)), 2), "moves": len(path) - 1}
+
         def ok_pos2(q, body=body):
             return q not in body and (q[0], q[1] + 1, q[2]) not in body
 
@@ -1029,7 +1089,33 @@ def junior_walks(h, g, juniors, goal):
     return out
 
 
-def audit_gym(gym, juniors, recs, lead, sp, G, pack, home, others, build=None, strict_facing=False):
+def standing_together(g, goal, seat_list):
+    """Every junior's two body cells blocked AT ONCE (R17 summons them all; the per-junior softlock check blocks one
+    at a time, which two juniors side by side in a two-wide lane both pass): whether an arrival still reaches the
+    leader, the positions a player can then reach whose only way back to an arrival runs through a body
+    (`walled_in`), and how many reachable positions have no way back even with nobody standing (`one_way`: the
+    hall's own drops, not the juniors')."""
+    body = set()
+    for s in seat_list:
+        body |= {tuple(s), (s[0], s[1] + 1, s[2])}
+
+    def ok_pos(q):
+        return q not in body and (q[0], q[1] + 1, q[2]) not in body
+
+    def ok_move(sw):
+        return not body.intersection(sw)
+
+    _d, _p, hit = g.bfs(ok_pos, ok_move, goal)
+    inside, _pp, _r = g.bfs(ok_pos, ok_move)
+    out_free = leavers(g)
+    out_all = leavers(g, ok_pos, ok_move)
+    return {"reaches_leader": hit is not None,
+            "walled_in": sorted(p for p in inside if p in out_free and p not in out_all),
+            "one_way": sum(1 for p in inside if p not in out_free)}
+
+
+def audit_gym(gym, juniors, recs, lead, sp, G, pack, home, others, build=None, strict_facing=False,
+              strict_sight=False):
     """{'problems': [(code, id, detail)], 'notes': [...], 'info': {...}} for one gym."""
     h = hall(gym, G, build)
     probs, notes, info, warns = [], [], {}, []
@@ -1140,9 +1226,36 @@ def audit_gym(gym, juniors, recs, lead, sp, G, pack, home, others, build=None, s
                           "within its sight distance only behind or beside it (closest %.2f at %s)"
                           % (juniors[tid]["yaw"], e["from"], e["to"], e["moves"], e["closest_distance"],
                              e["closest"])))
+        if not r["evade"][False] and r["evade"].get("los"):
+            e = r["evade"]["los"]
+            (probs if strict_sight else warns).append((
+                "line_of_sight", tid, "a walk from %s reaches the leader at %s in %d moves passing within its sight "
+                "distance only behind a block (no clear line from the player's eye to it; closest %.2f at %s): the cut "
+                "holds only if rctmod's sight passes walls" % (e["from"], e["to"], e["moves"], e["closest_distance"],
+                                                               e["closest"])))
         if not r["softlock_free"]:
             probs.append(("softlock", tid, "with its two body cells at %s blocked, no arrival reaches the leader"
                           % (juniors[tid]["seat"],)))
+    # every junior stands at once (R17 summons them all): the hall is judged with ALL their bodies in place, once for
+    # the way in and once for the way back out
+    if walks:
+        st = standing_together(g, goal, [juniors[t]["seat"] for t in walks])
+        if not st["reaches_leader"]:
+            probs.append(("softlock", gym, "with all %d juniors standing at once no arrival reaches the leader"
+                          % len(walks)))
+        trapped = st["walled_in"]
+        info["walled_in_by_juniors"] = len(trapped)
+        if trapped:
+            who = min(walks, key=lambda t: min(dist3(feet(p), feet(juniors[t]["seat"])) for p in trapped))
+            probs.append(("walled_in", gym, "%d position(s) a player reaches with every junior standing have a way "
+                          "back to an arrival only through a junior's body (e.g. %s, nearest %s at %s)"
+                          % (len(trapped), trapped[0], who, juniors[who]["seat"])))
+        hall_traps = st["one_way"]
+        info["one_way_without_juniors"] = hall_traps
+        if hall_traps:
+            notes.append("way back (information): %d reachable position(s) have no way back to an arrival in the walk "
+                         "model even with no junior standing (the hall's own one-way drops; not the juniors')"
+                         % hall_traps)
     if gym != "gym2":
         # D3 (information): a rider on a flying mount setting down anywhere open to the sky inside the lot
         gs = Graph(h, arrivals(h, sky=True), gap)
@@ -1179,7 +1292,7 @@ def audit_gym(gym, juniors, recs, lead, sp, G, pack, home, others, build=None, s
     return {"problems": probs, "warnings": warns, "notes": notes, "info": info}
 
 
-def audit(gyms=GYMS, placements=None, roster=None, build=None, G=None, strict_facing=False):
+def audit(gyms=GYMS, placements=None, roster=None, build=None, G=None, strict_facing=False, strict_sight=False):
     """The whole audit. `placements` replaces route_trainers.placements() and `roster` the gym_trainer records of
     data/trainers.json -- the two hooks the generator-mutation tests use."""
     import ground as ground_mod
@@ -1217,7 +1330,7 @@ def audit(gyms=GYMS, placements=None, roster=None, build=None, G=None, strict_fa
             if recs.get(tid) and (recs[tid].get("type_theme") or "").lower() != (L or {}).get("type"):
                 probs.append(("roster", tid, "stated theme %r differs from the leader's type %s"
                               % (recs[tid].get("type_theme"), (L or {}).get("type"))))
-        r = audit_gym(gym, juniors, recs, L, sp, G, pack, home, others, build, strict_facing)
+        r = audit_gym(gym, juniors, recs, L, sp, G, pack, home, others, build, strict_facing, strict_sight)
         r["problems"] = probs + r["problems"]
         r["leader"] = L
         r["juniors"] = sorted(juniors)
@@ -1234,13 +1347,15 @@ def main(argv=None):
                                     "the newest server snapshot)")
     ap.add_argument("--strict-facing", action="store_true",
                     help="fail, rather than warn, on a junior passed only beside or behind it")
+    ap.add_argument("--strict-sight", action="store_true",
+                    help="fail, rather than warn, on a junior passed only with a block between it and the player")
     ap.add_argument("--json", default=str(ROOT / "derived" / "gym_trainers_audit" / "report.json"))
     a = ap.parse_args(argv)
     miss = inputs_missing(a.build)
     if miss:
         print("gym_trainers_audit: cannot run, missing: %s" % ", ".join(miss))
         return 2
-    rep = audit(tuple(a.gym or GYMS), build=a.build, strict_facing=a.strict_facing)
+    rep = audit(tuple(a.gym or GYMS), build=a.build, strict_facing=a.strict_facing, strict_sight=a.strict_sight)
     out = Path(a.json)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(rep, indent=1, default=list) + "\n", encoding="utf-8")
