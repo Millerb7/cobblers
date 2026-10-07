@@ -6,9 +6,12 @@ drafted record). Before this, both the builder's check (tools/legendary_sweep.py
 hidden-site clearance rule. A sweep site may now declare `extra_caches` [{"source", "items", "flags"}]; a declared one is
 spared that site's clearance rule and NOTHING else.
 
-Every case here uses a SCRATCH Griseous record built in memory (the drafted shape: sweep_red_chain's trigger and
-container, champion_cleared, one Core and one Orb). Nothing on disk is written and data/ is untouched; the real record is
-step 2, a builder's.
+Every scenario case uses a SCRATCH Griseous record built in memory (the drafted shape: sweep_red_chain's trigger and
+container, champion_cleared, one Core and one Orb). Nothing on disk is written and data/ is untouched. Since 2026-10-09
+the real record is COMMITTED (data/rewards.json giratina_griseous, declared on sweep_giratina_shrine.extra_caches), so
+every scenario starts from an in-memory copy with the committed declaration STRIPPED (`adopted_with` names every
+declaration a scenario has) and, where the scenario needs the record absent, the committed record removed
+(`rewards_without`). One pair of tests holds the committed record itself to both checkers, unpatched.
 
 INDEPENDENCE. The audit's mutations edit the GENERATOR (tools/rewards_pack.py, which writes every cache) in memory with
 the authored data untouched (CLAUDE.md "How to prove an audit is independent"). The audit's expectations come from the
@@ -83,10 +86,20 @@ def rewards_with(*records):
     return doc
 
 
+def rewards_without(*ids):
+    """A copy of data/rewards.json with the named committed records removed."""
+    doc = copy.deepcopy(REWARDS)
+    doc["rewards"] = [r for r in doc["rewards"] if r.get("id") not in set(ids)]
+    return doc
+
+
 def adopted_with(decls):
-    """{site id: [declaration]} applied to a copy of data/adopted_legendary_sites.json."""
+    """{site id: [declaration]} applied to a copy of data/adopted_legendary_sites.json with EVERY committed
+    extra_caches declaration stripped first, so a scenario holds exactly the declarations it names (the committed
+    one on Giratina's site would otherwise spare every scratch record at the altar)."""
     doc = copy.deepcopy(DOC)
     for s in doc["sweep_sites"]:
+        s.pop("extra_caches", None)
         if s["id"] in decls:
             s["extra_caches"] = decls[s["id"]]
     return doc
@@ -120,11 +133,14 @@ def ground():
 
 def with_scratch_points(monkeypatch, *records):
     """H.authored_points as it would read data/rewards.json holding the scratch records: their coordinates join the
-    clearance rule unless the caller's skip set names them (the real walker, the real skip semantics)."""
+    clearance rule unless the caller's skip set names them (the real walker, the real skip semantics). A scratch record
+    REPLACES a committed one of the same id (the committed giratina_griseous), as rewards_with does, so a scenario's
+    verdict comes from its own record and not from the committed one at the same coordinates."""
     real = H.authored_points
+    replaced = {r["id"] for r in records}
 
     def pts(skip_ids=()):
-        out = real(skip_ids)
+        out = real(set(skip_ids) | replaced)
         H._walk({"rewards": [copy.deepcopy(r) for r in records]}, out, "data/rewards.json", set(skip_ids))
         return out
     monkeypatch.setattr(H, "authored_points", pts)
@@ -148,7 +164,7 @@ def test_an_undeclared_record_at_the_altar_still_fails_the_clearance_rule(ground
     # Without it any record could be dropped beside a hidden legendary: the exemption must come from a declaration.
     rec = griseous()
     with_scratch_points(monkeypatch, rec)
-    bad = builder_problems(ground, site_of(DOC, GIRATINA), rewards_with(rec))
+    bad = builder_problems(ground, site_of(adopted_with({}), GIRATINA), rewards_with(rec))
     assert any("authored point in data/rewards.json 0 from the footprint edge" in b for b in bad), bad
 
 
@@ -198,8 +214,19 @@ def test_a_declared_extra_cache_is_held_to_every_other_rule(rec, decl, want):
 
 def test_a_declaration_naming_no_record_fails():
     # Without it a declaration could outlive its record and nobody would notice the Core was gone.
-    bad = S.placement_problems(site_of(adopted_with({GIRATINA: [declaration()]}), GIRATINA), PLACEMENTS, REWARDS)
+    bad = S.placement_problems(site_of(adopted_with({GIRATINA: [declaration()]}), GIRATINA), PLACEMENTS,
+                               rewards_without(SRC))
     assert any("names 0 data/rewards.json records" in b for b in bad), bad
+
+
+def test_the_committed_griseous_cache_passes_the_builders_check(ground):
+    # Without it the committed Core and Orb (data/rewards.json giratina_griseous) could break a rule while every
+    # scenario above, built on scratch copies, stays green.
+    site = site_of(DOC, GIRATINA)
+    assert site.get("extra_caches") == [declaration()], site.get("extra_caches")
+    rec = next(r for r in REWARDS["rewards"] if r["id"] == SRC)
+    assert RP.problems({"rewards": [rec]}) == []
+    assert builder_problems(ground, site, REWARDS) == []
 
 
 # ================================================================================ the independent audit
@@ -272,7 +299,7 @@ def test_the_audit_passes_a_declared_extra_cache_at_the_altar(declared, packs, m
 @pytest.mark.slow
 def test_the_audit_fails_an_undeclared_record_at_the_altar(packs, ground, monkeypatch):
     # Without it the audit's clearance rule would have a hole any record at the altar could use.
-    patched_j(monkeypatch, rewards_with(griseous()))
+    patched_j(monkeypatch, rewards_with(griseous()), adopted_with({}))
     R = A.Report()
     A.paste_audit(R, packs, ground, sightlines=False)
     assert any("authored point (4393, 2878) in data/rewards.json is 0 from the footprint edge" in p for p in problems(R)), problems(R)
@@ -300,6 +327,20 @@ def test_the_audit_still_fails_a_second_item_in_the_activation_cache(declared, m
     R = A.Report()
     A.cache_audit(R, declared[1])
     assert any("cobblers:reward/sweep_red_chain gives more than the item" in p for p in problems(R)), problems(R)
+
+
+@needs_snapshot
+@pytest.mark.slow
+def test_the_audit_passes_the_committed_griseous_cache(packs, ground):
+    # Without it the committed Core and Orb could fail the independent audit (jars, flags, extent, contents) while the
+    # scratch scenarios pass. Nothing is patched: the audit reads data/ as committed.
+    R = A.Report()
+    sites = A.paste_audit(R, packs, ground, sightlines=False)
+    A.cache_audit(R, sites)
+    A.extra_cache_audit(R, packs, sites)
+    assert problems(R) == []
+    assert R.facts[PASTE + ".extra_caches"] == [SRC]
+    assert set(R.known) == {"giratina_dome_sealed"} and SRC in R.known["giratina_dome_sealed"]
 
 
 @needs_snapshot
