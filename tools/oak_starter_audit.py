@@ -435,8 +435,27 @@ class Model:
         m = re.fullmatch(r"if entity @s\[advancements=\{cobblers:flag/[a-z0-9_]+=true\}\] (.*)", rest)
         if m:
             return None
+        # compile_dialogue's `function` effect runs as AND at the player; the position changes nothing modelled here
+        m = re.fullmatch(r"at @s (.*)", rest)
+        if m:
+            return self._sub(w, m.group(1))
         self.unknown.append("execute as @s " + rest)
         return None
+
+    # A progression flag's grant (test author, 2026-10-08, for the held Pallet -> gym 1 waypoint in
+    # docs/world-building/WALK_P2.md section 2). tools/progression_pack.py writes flag/<id>/grant (`advancement grant
+    # @s only cobblers:flag/<id>`) only for a flag data/progression.json declares with set_by.kind quest_transition;
+    # an advancement moves neither the starter state nor the main stage, so a grant of such a flag is a success that
+    # touches nothing this audit checks. Any other flag has no grant function, and stays an unmodelled command.
+    flag_registry = None
+
+    def _grantable(self, fid):
+        if Model.flag_registry is None:
+            prog = json.loads((Path(__file__).resolve().parent.parent / "data" / "progression.json")
+                              .read_text(encoding="utf-8"))
+            Model.flag_registry = {f["id"]: f for f in prog.get("flags") or []}
+        f = Model.flag_registry.get(fid)
+        return f is not None and (f.get("set_by") or {}).get("kind") == "quest_transition"
 
     def _leaf(self, w, cmd):
         m = re.fullmatch(r"scoreboard players set @s (\S+) (-?\d+)", cmd)
@@ -454,6 +473,9 @@ class Model:
         # nothing this audit checks. Their own guarantees are docs/mechanics/OAK_AND_CHALLENGE.md's audit list
         m = re.fullmatch(r"rctmod player set series ([a-z0-9_]+) @s", cmd)
         if m:
+            return 1
+        m = re.fullmatch(r"function cobblers:flag/([a-z0-9_]+)/grant", cmd)
+        if m and self._grantable(m.group(1)):
             return 1
         if re.fullmatch(r"%s @s" % SCREEN, cmd):
             # RELAYED semantics (see OPEN): a player who has chosen gets nothing and 0; anyone else is unlocked and 1
