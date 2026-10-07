@@ -25,7 +25,16 @@ import challenge_mode_audit as A  # noqa: E402
 
 # The defects the real build has today (found by this audit, 2026-10-06). Each is (check, Challenge id). When the
 # builder moves a spawner, its entries leave this set and the test says so: update it, never widen it.
-KNOWN = set()  # 2026-10-06: Misty's and Bruno's Challenge spawners moved to air cells (1605, 132, 2873), (3695, 127, 2437)
+# 2026-10-06: Misty's and Bruno's Challenge spawners moved to air cells (1605, 132, 2873), (3695, 127, 2437).
+# 2026-10-06, the one-leader rule (P1) on Brock, the first boss in single_leader.rollout (commit c8b5090):
+#   P1:retire        with nobody near, the cycle's nobody-near line (tools/challenge_mode.py single_lines, distance 24
+#                    of the one spawner) renames the OLD Challenge trainer on the retired cell (1830, 155, 3696) to
+#                    kanto_brock before R17L's retire runs, so the retire's kill (Challenge id only) misses it and a
+#                    second Normal Brock is left standing; single_leader_verify looks for the Challenge id only
+#   P1:retire_kills  the retire's kill guard is "no player within 17 of the RETIRED cell", but the swap follows a
+#                    player within 17 of the ONE spawner two blocks east, so a re-run kills the one leader while a
+#                    Challenge player stands 15.5 east of him
+KNOWN = {("P1:retire", "kanto_brock_challenge"), ("P1:retire_kills", "kanto_brock_challenge")}
 
 
 @pytest.fixture(scope="module")
@@ -147,6 +156,65 @@ def test_the_replay_reads_fill_modes_and_setblock():
     assert w.spawners() == [((1, 10, 1), ["x"])]
 
 
+# ------------------------------------------------------------------------------------------------ the 3-D model
+SPW = 'rctmod:trainer_spawner{TrainerIds:["%s"]}'
+
+
+def cworld(start="t", battle=False, players=(), inbattle=True, extra=()):
+    """A spawner at (0, 64, 0) holding `start`, its trainer standing on it, players at (x, 65, 0.5)."""
+    return A.CommandWorld({(0, 64, 0): SPW % start, (0, 63, 0): "minecraft:redstone_block"},
+                          [{"id": start, "battle": battle, "pos": (0.5, 65.0, 0.5)}] + list(extra),
+                          [{"pos": (0.5 + x, 65.0, 0.5), "tags": set(t)} for x, t in players], inbattle=inbattle)
+
+
+# Without it P1 would trust a world model whose block, selector and nbt rules nobody had worked by hand.
+def test_the_command_world_follows_vanillas_execute_rules():
+    w = cworld(players=[(3, "m"), (6, "")])
+    w.run('execute positioned 0.5 64 0.5 as @p[distance=..10] if entity @s[tag=m] '
+          'run data merge block 0 64 0 {TrainerIds:["t_c"]}')
+    assert w.blocks[(0, 64, 0)] == SPW % "t_c"                  # the nearest (3, tagged) decided
+    w.run('execute unless block 0 64 0 rctmod:trainer_spawner{TrainerIds:["t_c"]} run setblock 0 64 0 minecraft:stone')
+    assert w.blocks[(0, 64, 0)] == SPW % "t_c"                  # the predicate matched, so unless stopped it
+    w.run('execute if block 0 63 0 minecraft:redstone_block run data merge block 0 63 0 {TrainerIds:["x"]}')
+    assert w.blocks[(0, 63, 0)] == "minecraft:redstone_block"   # no block entity: a merge changes nothing
+    w.run('execute positioned 0.5 64 0.5 unless entity @a[distance=..2] run data merge entity '
+          '@e[type=rctmod:trainer,x=0.5,y=64,z=0.5,distance=..24,nbt={TrainerId:"t",InBattle:0b},limit=1] {TrainerId:"t_c"}')
+    assert [t["id"] for t in w.trainers] == ["t_c"]
+    w.run('execute positioned 0.5 64 0.5 if entity @a[distance=..2] run kill @e[type=rctmod:trainer,distance=..24]')
+    assert len(w.trainers) == 1                                 # nobody within 2: no kill
+    w.run('execute positioned 10.5 64 0.5 run kill @e[type=rctmod:trainer,distance=..9]')
+    assert len(w.trainers) == 1                                 # the trainer is 10.05 away: out of 9
+    w.run('execute positioned 10.5 64 0.5 run kill @e[type=rctmod:trainer,distance=..10.1]')
+    assert w.trainers == []
+
+
+# Without it a merge vanilla would refuse at load could be modelled as working.
+def test_the_command_world_refuses_a_multi_target_merge_as_vanilla_does():
+    with pytest.raises(ValueError):
+        cworld().run('execute positioned 0.5 64 0.5 run data merge entity @e[type=rctmod:trainer,distance=..5] {TrainerId:"x"}')
+
+
+# Without it the InBattle report would rest on a model that cannot tell a saved byte from an absent tag.
+def test_without_a_saved_inbattle_no_inbattle_predicate_matches():
+    sel = '@e[type=rctmod:trainer,x=0.5,y=64,z=0.5,distance=..5,nbt={TrainerId:"t",InBattle:%s}]'
+    line = 'execute positioned 0.5 64 0.5 if entity %s run setblock 9 9 9 minecraft:stone'
+    for inb, battle, form, hit in [(True, True, "1b", True), (True, False, "0b", True), (True, False, "1b", False),
+                                   (False, True, "1b", False), (False, False, "0b", False)]:
+        w = cworld(battle=battle, inbattle=inb)
+        w.run(line % (sel % form))
+        assert ((9, 9, 9) in w.blocks) == hit, (inb, battle, form)
+
+
+# Without it a selector anchored by x/y/z could be measured from the execute position instead.
+def test_a_selector_origin_overrides_the_execute_position():
+    w = cworld(players=[(3, "m")])
+    w.run('execute positioned 100 64 100 as @p[x=0.5,y=65,z=0.5,distance=..4] run setblock 1 1 1 minecraft:stone')
+    assert (1, 1, 1) in w.blocks
+    w2 = cworld(players=[(3, "m")])
+    w2.run('execute positioned 100 64 100 as @p[distance=..4] run setblock 1 1 1 minecraft:stone')
+    assert (1, 1, 1) not in w2.blocks
+
+
 # ------------------------------------------------------------------------------------------------ the real build
 # Without it a new defect in the lab, the series command, the bosses, the spawners or the swap would pass unseen; and
 # a fixed one would stay listed as known.
@@ -212,7 +280,39 @@ MUTATIONS = {
     "swap_never_returns": ("challenge_mode", [(
         '        "execute as %s at @s unless entity @a[distance=..%s] run data merge entity @s {TrainerId:\\"%s\\"}"\n'
         '        % (sel(cid), near, tid),\n', "")], "R", "R:swap"),
+    # --- one leader (P1). Each edits tools/challenge_mode.py and leaves data/challenge_mode.json alone.
+    # the retire one block east of where the second spawner stood
+    "retire_off_by_one": ("challenge_mode", [(
+        "    floor, under = restore_blocks(up, entry)\n",
+        "    floor, under = restore_blocks(up, entry)\n    x += 1\n")], "P", "P1:retire_at"),
+    # the restore puts back the air over the floor instead of the floor
+    "restore_wrong_floor": ("challenge_mode", [(
+        "return e.at(x, y, z), e.at(x, y - 1, z)", "return e.at(x, y + 1, z), e.at(x, y - 1, z)")], "P", "P1:restore"),
+    # the battle guard dropped from the swap: the spawner changes under a battle
+    "single_swap_blind_to_battle": ("challenge_mode", [(
+        '    head = "execute if loaded', '    busy = ""\n    head = "execute if loaded')], "P", "P1:swap"),
+    # the retire kills the old trainer even in a battle
+    "retire_kills_in_battle": ("challenge_mode", [(
+        "'nbt={TrainerId:\"%s\",InBattle:0b}]' % (x, y, z, reach(), SEAT_BOX, cid)",
+        "'nbt={TrainerId:\"%s\"}]' % (x, y, z, reach(), SEAT_BOX, cid)")], "P", "P1:retire_battle"),
+    # Brock's second spawner put back while Brock is still in the rollout
+    "second_spawner_back": ("challenge_mode", [(
+        "        if up in single:\n", "        if up in single and False:\n")], "P", "P1:count"),
 }
+
+
+# Without it the narrow R:summon exception could be widened into one that excuses any kill in a retire function.
+def test_the_retire_kill_is_excused_only_in_its_exact_shape(up, monkeypatch):
+    fresh(monkeypatch, "challenge_mode", [(
+        "'nbt={TrainerId:\"%s\",InBattle:0b}]' % (x, y, z, reach(), SEAT_BOX, cid)",
+        "'nbt={TrainerId:\"%s\"}]' % (x, y, z, reach(), SEAT_BOX, cid)")])
+    fresh(monkeypatch, "route_trainers")
+    assert "R:summon" in {c for c, _ in keyed(run(up, "R"))}
+
+
+# Without it the exception could excuse a kill the unmutated build does not even make.
+def test_the_unmutated_retire_kill_is_excused(baseline):
+    assert "R:summon" not in {c for c, _ in baseline}
 
 
 @pytest.mark.parametrize("name", sorted(MUTATIONS))

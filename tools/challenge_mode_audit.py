@@ -47,10 +47,16 @@ Checks (FAIL fails the run; REPORT is a finding that needs an owner or another t
                   the Challenge one set into a solid floor block with two air over it, not on or over a container,
                   door or redstone-sensitive block, its redstone block touching nothing redstone-sensitive, on the
                   same floor and in a straight open line from the Normal leader; the self-placing cycle line checks
-                  exactly that cell
+                  exactly that cell. A boss in data/challenge_mode.json single_leader.rollout is judged instead by P1
+                  (Audit.check_single_leader): one spawner and no second; the swap run through a 3-D command model
+                  (CommandWorld) over mixed crowds in and out of battle; the retire function writing only the retired
+                  cell and the one under it, back to the gym's own replayed build, removing the old Challenge trainer
+                  whether or not the cycle ran first, never in a battle, never the one leader; nothing else still
+                  anchored at the retired cell; reapply step R17L running it
   R   routes      every seated trainer with a Challenge team has a copy whose mob is the Normal mob but for series,
                   whose team is the record's Challenge team; both ids in the seat's defeat advancement; the swap
-                  never summons or kills, never acts in battle, ends on the Challenge id exactly when the nearest
+                  never summons or kills (one exception, matched exactly: a one-leader boss's retire function may
+                  kill its old Challenge-id trainer at the retired cell, out of battle; P1 judges it), never acts in battle, ends on the Challenge id exactly when the nearest
                   player within the seat's reach carries the mode tag, and on the Normal id otherwise
   K   keyed       REPORT: other systems that key on a Normal boss id and never mention the Challenge id
 
@@ -63,6 +69,9 @@ all (E7) are RCT_PER_PLAYER_MODE.md section 7 and need a running Minecraft. The 
 of rctmod. tools/reapply.py R17 checks a seat by its Normal id only (reapply.py, kind "trainer"): run while a
 Challenge player stands within reach, it summons a second trainer; that is reported, not modelled. The donor's
 post-placement substitutions inside misty/kanto_league (lily pads to air, healers to bricks) are not replayed.
+P1 models vanilla's commands, not rctmod: no spawner spawns or despawns, a TrainerId merge notifies no spawner, and
+whether InBattle is saved as a 0b/1b byte is ASSUMED (reported as P1:inbattle_assumed, never passed as fact). The
+one-leader proof in a running game is docs/mechanics/ONE_LEADER_SWAP.md.
 Oak's own entry and offer pages are tools/oak_starter_audit.py's (P1/P3/P6); this audit does not re-derive them.
 """
 from __future__ import annotations
@@ -534,6 +543,169 @@ class SeatModel:
             for t in self.select(target, x, b):
                 if "id" in t:
                     t["id"] = new
+
+
+class CommandWorld:
+    """A small 3-D world for a one-leader gym (data/challenge_mode.json single_leader.rollout): blocks by cell,
+    trainers and players at real positions. Written here from vanilla's command rules, not from tools/challenge_mode.py:
+
+      execute   if loaded | if/unless block X Y Z state | if/unless entity <sel> | positioned X Y Z | as <sel> | at @s
+      run       data merge block X Y Z {TrainerIds:[..]} | data merge entity <sel> {TrainerId:".."} | setblock | kill
+
+    Selectors: @a @p @e @s with x/y/z (the origin), distance=..r, type, tag, nbt (TrainerId, InBattle), limit; @p is
+    the nearest. A block predicate `name{TrainerIds:[..]}` matches when every listed id is in the block's list (vanilla's
+    NBT list predicate). A `data merge entity` whose target can match more than one entity is REFUSED, as vanilla
+    refuses it when the function loads. `inbattle=False` models an rctmod that never saves InBattle as a byte: no
+    InBattle predicate matches then. rctmod itself is not modelled (a spawner never spawns, a merge notifies nothing)."""
+
+    def __init__(self, blocks, trainers, players, inbattle=True):
+        self.blocks = dict(blocks)                     # {(x, y, z): state}
+        self.trainers = [dict(t) for t in trainers]    # {"id", "battle", "pos": (x, y, z)}
+        self.players = [dict(p) for p in players]      # {"pos": (x, y, z), "tags": set}
+        self.inbattle = inbattle
+
+    @staticmethod
+    def _d(a, b):
+        return sum((a[i] - b[i]) ** 2 for i in range(3)) ** 0.5
+
+    def _nbt(self, t, nbt):
+        body = nbt.strip()[1:-1]
+        for part in split_args(body):
+            k, _, v = part.partition(":")
+            if k == "TrainerId":
+                if t["id"] != v.strip('"'):
+                    return False
+            elif k == "InBattle":
+                if not self.inbattle or v not in ("0b", "1b") or t["battle"] != (v == "1b"):
+                    return False
+            else:
+                raise ValueError("nbt key %r is not modelled" % k)
+        return True
+
+    def select(self, sel, executor, pos):
+        kind, a = parse_selector(sel)
+        if kind == "s":
+            pool = [executor] if executor is not None else []
+        elif kind == "e":
+            if a.get("type") != ["rctmod:trainer"]:
+                raise ValueError("@e without type=rctmod:trainer is not modelled: %s" % sel)
+            pool = list(self.trainers)
+        else:
+            pool = list(self.players)
+        origin = pos
+        if "x" in a:
+            origin = (float(a["x"][0]), float(a["y"][0]), float(a["z"][0]))
+        out = []
+        for e in pool:
+            ok = True
+            for d in a.get("distance", []):
+                if not d.startswith(".."):
+                    raise ValueError("distance %r" % d)
+                if origin is None:
+                    raise ValueError("a distance with no position: %s" % sel)
+                if self._d(origin, e["pos"]) > float(d[2:]) + 1e-9:
+                    ok = False
+            for t in a.get("tag", []):
+                tags = e.get("tags", set())
+                if (t.startswith("!") and t[1:] in tags) or (not t.startswith("!") and t not in tags):
+                    ok = False
+            for n in a.get("nbt", []):
+                if "id" not in e or not self._nbt(e, n):
+                    ok = False
+            if a.get("type") == ["rctmod:trainer"] and "id" not in e:
+                ok = False
+            if set(a) - {"x", "y", "z", "distance", "tag", "nbt", "type", "limit"}:
+                raise ValueError("selector argument not modelled: %s" % sel)
+            if ok:
+                out.append(e)
+        if kind == "p":
+            out = sorted(out, key=lambda e: self._d(origin, e["pos"]))[:1]
+        if "limit" in a:
+            out = out[:int(a["limit"][0])]
+        return out
+
+    @staticmethod
+    def _single(sel):
+        kind, a = parse_selector(sel)
+        return kind in "sp" or a.get("limit") == ["1"]
+
+    def block_ok(self, cell, pred):
+        state = self.blocks.get(cell, "minecraft:air")
+        name = pred.split("{", 1)[0]
+        if bname(state) != name:
+            return False
+        if "{" in pred:
+            have = spawner_ids(state)
+            return all(i in have for i in spawner_ids(pred))
+        return True
+
+    def run(self, line):
+        line = line.strip()
+        if not line or line.startswith("#"):
+            return
+        if not line.startswith("execute "):
+            raise ValueError("not modelled: %s" % line[:80])
+        chain, sep, cmd = line[len("execute "):].partition(" run ")
+        if not sep:
+            raise ValueError("no run: %s" % line[:80])
+        ctxs, rest = [(None, None)], chain.strip()
+        while rest:
+            m = re.match(r"if loaded -?\d+ -?\d+ -?\d+\s*", rest)
+            if m:
+                rest = rest[m.end():]
+                continue
+            m = re.match(r"(if|unless) block (-?\d+) (-?\d+) (-?\d+) (\S+)\s*", rest)
+            if m:
+                cell = tuple(int(v) for v in m.groups()[1:4])
+                if self.block_ok(cell, m.group(5)) == (m.group(1) == "unless"):
+                    return
+                rest = rest[m.end():]
+                continue
+            m = re.match(r"positioned (-?[\d.]+) (-?[\d.]+) (-?[\d.]+)\s*", rest)
+            if m:
+                p = tuple(float(v) for v in m.groups())
+                ctxs = [(x, p) for x, _p in ctxs]
+                rest = rest[m.end():]
+                continue
+            if rest.startswith("as "):
+                sel, rest = take_selector(rest[3:])
+                ctxs = [(e, p) for (x, p) in ctxs for e in self.select(sel, x, p)]
+                continue
+            if rest.startswith("at @s"):
+                rest = rest[5:].lstrip()
+                ctxs = [(x, x["pos"] if x is not None else p) for (x, p) in ctxs]
+                continue
+            if rest.startswith("if entity ") or rest.startswith("unless entity "):
+                neg = rest.startswith("unless")
+                sel, rest = take_selector(rest[len("unless entity " if neg else "if entity "):])
+                ctxs = [(x, p) for (x, p) in ctxs if bool(self.select(sel, x, p)) != neg]
+                continue
+            raise ValueError("execute part not modelled: %r" % rest[:50])
+        for x, p in ctxs:
+            m = re.fullmatch(r'data merge block (-?\d+) (-?\d+) (-?\d+) \{TrainerIds:(\[[^\]]*\])\}', cmd)
+            if m:
+                cell = tuple(int(v) for v in m.groups()[:3])
+                state = self.blocks.get(cell, "minecraft:air")
+                if bname(state) == SPAWNER:
+                    self.blocks[cell] = "%s{TrainerIds:%s}" % (SPAWNER, m.group(4))
+                continue
+            m = re.fullmatch(r'data merge entity (@\S+?(?:\[.*\])?) \{TrainerId:"([^"]+)"\}', cmd)
+            if m:
+                if not self._single(m.group(1)):
+                    raise ValueError("data merge entity needs one target; vanilla refuses %s" % m.group(1))
+                for t in self.select(m.group(1), x, p):
+                    t["id"] = m.group(2)
+                continue
+            m = re.fullmatch(r"setblock (-?\d+) (-?\d+) (-?\d+) (\S+)", cmd)
+            if m:
+                self.blocks[tuple(int(v) for v in m.groups()[:3])] = m.group(4)
+                continue
+            m = re.fullmatch(r"kill (@\S+?(?:\[.*\])?)", cmd)
+            if m:
+                gone = self.select(m.group(1), x, p)
+                self.trainers = [t for t in self.trainers if not any(t is g for g in gone)]
+                continue
+            raise ValueError("run not modelled: %s" % cmd[:80])
 
 
 # ------------------------------------------------------------------------------------------------ the artifacts
@@ -1204,9 +1376,13 @@ class Audit:
         tick = text_of(T.get("data/cobblers/function/trainers/tick.mcfunction") or "")
         if "function cobblers:trainers/challenge/cycle" not in tick:
             self.fail("P:cycle_runs", "the trainers tick never runs cobblers:trainers/challenge/cycle")
+        single = self.rollout
         for u in order:
             cid = u + sfx
             ns, cs = normal.get(u, []), challenge.get(cid, [])
+            if u in single:
+                self.check_single_leader(u, cid, ns, cs, worlds, cycle)
+                continue
             if len(ns) != 1 or len(cs) != 1:
                 self.fail("P:count", "%s: %d Normal spawner(s), %s: %d Challenge spawner(s)" % (u, len(ns), cid, len(cs)))
                 if not ns or not cs:
@@ -1266,15 +1442,234 @@ class Audit:
                           % (cid, c, lines[0][:200] if lines else "missing"))
         self.ran += 9
 
+    # ---- P1: a boss that stands as ONE leader (the owner, 2026-10-07; data/challenge_mode.json single_leader)
+    @functools.cached_property
+    def rollout(self):
+        """The bosses data/challenge_mode.json names in single_leader.rollout (a list, or "all"). Read from the data,
+        not from tools/challenge_mode.py rollout()."""
+        r = (self.cm.get("single_leader") or {}).get("rollout") or []
+        return set(self.cm["bosses"]) if r == "all" else set(r)
+
+    @staticmethod
+    def retire_path(cid):
+        return "data/cobblers/function/trainers/challenge/retire_%s.mcfunction" % cid
+
+    def check_single_leader(self, u, cid, ns, cs, worlds, cycle):
+        """The one-leader rule for boss `u`, judged from the generated text run through CommandWorld:
+
+          P1:count    exactly one spawner carries the Normal id; none carries the Challenge id; no place function
+                      or place line for a second spawner
+          P1:swap     the cycle's lines for this boss, run over every mix of nearby players from either id, in and
+                      out of battle, toward and away from the retired cell: in a battle nothing changes (block or
+                      trainer); otherwise the spawner AND the trainer end on the Challenge id exactly when the nearest
+                      player within rctmod's forceBattleMaxDistance (modpack/config/rctmod-server.toml: the farthest
+                      a battle starts on sight) carries the mode tag, and on the Normal id when nobody is within it
+                      plus 16. Between those two distances either answer is allowed: that is the generator's reach
+          P1:swap_at  every `data merge block` naming either id targets the one spawner
+          P1:retire*  the retire function writes only the retired cell (data/challenge_mode.json bosses.<u>.spawner.at,
+                      where the earlier build set the second spawner) and the cell under it, back to what the gym's
+                      own replayed build has there (tools/gym_buildings.py's emitted text, or the template); a world
+                      without the second spawner, or with something else in that cell, is left alone; the old
+                      Challenge trainer standing on the retired cell is gone afterwards, whether or not the cycle ran
+                      first (R17L forceloads and waits before the retire); a trainer in a battle is never killed; and
+                      the one leader is never killed while a player stands where a battle with it can start
+          P1:stale    nothing else in the generated packs still anchors at the retired cell
+          P1:wired    tools/reapply.py has step R17L and it runs this retire function
+          REPORT P1:inbattle_assumed   what the swap does if rctmod does not save InBattle as a 0b/1b byte (ASSUMED,
+                      docs/research/notes/rct-arena-capabilities.md:59 documents the tag, not its form)
+
+        NOT modelled: rctmod. A spawner never spawns or despawns here, a TrainerId merge notifies no spawner, and a
+        spawner whose TrainerIds no longer match its trainer does nothing; those are experiment E7 and the staging
+        proof (docs/mechanics/ONE_LEADER_SWAP.md)."""
+        T = self.art.trainers
+        tag = self.cm["mode"]["tag"]
+        if len(ns) != 1 or cs:
+            self.fail("P1:count", "%s stands as one leader: %d spawner(s) carry %s and %d carry %s, want 1 and 0"
+                      % (cid, len(ns), u, len(cs), cid))
+            if len(ns) != 1:
+                return
+        place = "data/cobblers/function/trainers/challenge/place_%s.mcfunction" % cid
+        if place in T or any(l.strip().endswith("place_%s" % cid) for l in cycle):
+            self.fail("P1:count", "%s stands as one leader but its second spawner is still placed (%s)" % (cid, place))
+        n = ns[0]
+        nd = (n[0], n[1] - 1, n[2])
+        c = tuple(self.cm["bosses"][u]["spawner"]["at"])
+        cd = (c[0], c[1] - 1, c[2])
+        fb = toml_value(self.root / "modpack" / "config" / "rctmod-server.toml", "forceBattleMaxDistance")
+        try:
+            fb = float(fb)
+        except (TypeError, ValueError):
+            self.fail("P1:swap", "modpack/config/rctmod-server.toml has no forceBattleMaxDistance (%r)" % (fb,))
+            return
+        sp = lambda i: '%s{TrainerIds:["%s"]}' % (SPAWNER, i)
+        stand = lambda cell: (cell[0] + 0.5, cell[1] + 1.0, cell[2] + 0.5)
+        dx, dz = n[0] - c[0], n[2] - c[2]
+        ln = (dx * dx + dz * dz) ** 0.5 or 1.0
+        away = (dx / ln, 0.0, dz / ln) if (dx or dz) else (1.0, 0.0, 0.0)
+        at = lambda d, sgn=1: tuple(stand(n)[i] + sgn * away[i] * d for i in range(3))
+        ids_re = r'\{TrainerId:"(%s|%s)"\}$' % (re.escape(u), re.escape(cid))
+        mine = [l.strip() for l in cycle if l.strip().startswith("execute")
+                and ("run data merge block %d %d %d " % n in l or re.search(r"run data merge entity .*" + ids_re, l.strip()))]
+        for k, v in T.items():
+            if k.endswith(".mcfunction"):
+                for line in lines_of(v):
+                    m = re.search(r"data merge block (-?\d+) (-?\d+) (-?\d+) \{TrainerIds:(\[[^\]]*\])\}", line)
+                    if m and set(spawner_ids("TrainerIds:" + m.group(4))) & {u, cid} \
+                            and tuple(int(x) for x in m.groups()[:3]) != n:
+                        self.fail("P1:swap_at", "%s merges a spawner at %s, not %s's one spawner %s"
+                                  % (k, m.groups()[:3], u, n))
+        if not mine:
+            self.fail("P1:swap", "%s stands as one leader but the cycle has no swap lines for its spawner %s" % (u, n))
+            return
+
+        def run(cw, lines, times=1):
+            for _ in range(times):
+                for line in lines:
+                    cw.run(line)
+            return cw
+
+        inside, far = fb - 0.5, fb + 16
+        crowds = [[], [(inside, True)], [(inside, False)], [(1.0, True), (inside, False)], [(1.0, False), (inside, True)],
+                  [(far, True)], [(far, False), (far, True)], [(inside, True), (far, False)]]
+        try:
+            bad = None
+            for sgn, start, battle, crowd in itertools.product((1, -1), (u, cid), (False, True), crowds):
+                players = [{"pos": at(d, sgn), "tags": {tag} if t else set()} for d, t in crowd]
+                cw = run(CommandWorld({n: sp(start), nd: "minecraft:redstone_block"},
+                                      [{"id": start, "battle": battle, "pos": stand(n)}], players), mine)
+                near = sorted((d, t) for d, t in crowd if d <= fb)
+                want = start if battle else (cid if near and near[0][1] else u)
+                got = (spawner_ids(cw.blocks.get(n)), [t["id"] for t in cw.trainers])
+                if got != ([want], [want]):
+                    bad = "from %s, in battle %s, players %s (%s the retired cell): spawner %s, trainer %s, expected %s" % (
+                        start, battle, crowd, "away from" if sgn > 0 else "toward", got[0], got[1], want)
+                    break
+            if bad:
+                self.fail("P1:swap", "%s: %s" % (u, bad))
+            # the battle guard rests on InBattle's form, which is ASSUMED: say what happens without it
+            blind = []
+            for battle in (False, True):
+                cw = run(CommandWorld({n: sp(u), nd: "minecraft:redstone_block"},
+                                      [{"id": u, "battle": battle, "pos": stand(n)}],
+                                      [{"pos": at(inside), "tags": {tag}}], inbattle=False), mine)
+                blind.append((spawner_ids(cw.blocks.get(n)), [t["id"] for t in cw.trainers]))
+            if blind != [([cid], [cid]), ([u], [u])]:
+                self.report("P1:inbattle_assumed", "%s: if rctmod does not save InBattle as a 0b/1b byte, a Challenge "
+                            "player within %g leaves the spawner on %s and the trainer on %s out of battle, and the "
+                            "spawner on %s during a battle. A trainer left on %s refuses that player (wrong_series) for "
+                            "as long as it lasts: Challenge mode cannot pass %s. Proof: ONE_LEADER_SWAP.md a-steps"
+                            % (u, inside, blind[0][0], blind[0][1], blind[1][0], u, u))
+        except ValueError as e:
+            self.fail("P1:model", "%s's swap lines are not ones this audit can run: %s" % (u, e))
+            return
+
+        # the retire
+        rp = self.retire_path(cid)
+        rn = "%s (%s)" % (cid, rp)
+        if rp not in T:
+            self.fail("P1:retire", "%s stands as one leader but nothing retires its second spawner at %s (%s)" % (cid, c, rp))
+            return
+        rl = [l.strip() for l in lines_of(T[rp]) if l.strip() and not l.strip().startswith("#")]
+        w = worlds.get(n)
+        floor, under = (w.at(c), w.at(cd)) if w is not None else (None, None)
+        if floor is None or under is None:
+            self.fail("P1:retire", "%s: no replayed build holds %s and %s, so the restore cannot be judged" % (cid, c, cd))
+            return
+        for line in rl:
+            m = re.search(r"run (setblock|fill) (-?\d+) (-?\d+) (-?\d+) (\S+)", line)
+            if not m:
+                continue
+            cell = tuple(int(x) for x in m.groups()[1:4])
+            if m.group(1) == "fill" or cell not in (c, cd):
+                self.fail("P1:retire_at", "%s writes %s at %s, not only the retired cell %s and the one under it"
+                          % (rn, m.group(1), cell, c))
+            elif m.group(5) != (floor if cell == c else under):
+                self.fail("P1:restore", "%s sets %s at %s; the gym's own build has %s there"
+                          % (rn, m.group(5), cell, floor if cell == c else under))
+        old_world = {n: sp(u), nd: "minecraft:redstone_block", c: sp(cid), cd: "minecraft:redstone_block"}
+        try:
+            for k in (0, 1):
+                cw = CommandWorld(old_world, [{"id": u, "battle": False, "pos": stand(n), "who": "leader"},
+                                              {"id": cid, "battle": False, "pos": stand(c), "who": "old"}], [])
+                run(cw, mine, k)
+                run(cw, rl)
+                left = [(t["who"], t["id"]) for t in cw.trainers]
+                if (cw.blocks.get(c), cw.blocks.get(cd)) != (floor, under):
+                    self.fail("P1:retire", "%s after the cycle ran %d time(s): %s holds %s over %s, want %s over %s"
+                              % (cid, k, c, cw.blocks.get(c), cw.blocks.get(cd), floor, under))
+                if left != [("leader", u)]:
+                    self.fail("P1:retire", "%s with nobody near, after the cycle ran %d time(s) first (R17L forceloads "
+                              "and waits before the retire): trainers left %s, want only the leader on %s. The "
+                              "cycle's nobody-near line turns every %s within its radius of %s back to %s, the old "
+                              "trainer on %s included, before the retire's kill (which names %s only) runs"
+                              % (cid, k, left, u, cid, n, u, c, cid))
+            for state, below in ((floor, under), ("minecraft:chest", "minecraft:stone")):
+                cw = run(CommandWorld({n: sp(u), nd: "minecraft:redstone_block", c: state, cd: below},
+                                      [{"id": u, "battle": False, "pos": stand(n)}], []), rl)
+                if (cw.blocks.get(c), cw.blocks.get(cd)) != (state, below) or len(cw.trainers) != 1:
+                    self.fail("P1:retire_at", "%s changes a world whose %s holds %s over %s: now %s over %s, %d trainer(s)"
+                              % (rn, c, state, below, cw.blocks.get(c), cw.blocks.get(cd), len(cw.trainers)))
+            for sgn in (1, -1):
+                cw = CommandWorld({n: sp(cid), nd: "minecraft:redstone_block", c: floor, cd: under},
+                                  [{"id": cid, "battle": False, "pos": stand(n)}],
+                                  [{"pos": at(inside, sgn), "tags": {tag}}])
+                run(cw, mine)
+                run(cw, rl)
+                if not cw.trainers:
+                    self.fail("P1:retire_kills", "%s, run again (every re-apply runs R17L) while a Challenge player stands "
+                              "%g from %s's spawner %s the retired cell: it kills the one leader. Its guard must cover "
+                              "everyone within %g of %s, i.e. reach at least %g + %.1f from %s"
+                              % (rn, inside, u, "away from" if sgn > 0 else "toward", fb, n, fb, ln, c))
+                    break
+            cw = run(CommandWorld(old_world, [{"id": u, "battle": False, "pos": stand(n)},
+                                              {"id": cid, "battle": True, "pos": stand(c)}], []), rl)
+            if not any(t["id"] == cid and t["battle"] for t in cw.trainers):
+                self.fail("P1:retire_battle", "%s kills a trainer that is in a battle" % rn)
+        except ValueError as e:
+            self.fail("P1:model", "%s is not a function this audit can run: %s" % (rn, e))
+        # nothing else still anchors at the retired cell
+        anchors = ("x=%d.5,y=%d,z=%d.5" % c, "%d %d %d" % c)
+        for k, v in T.items():
+            if k.endswith(".mcfunction") and k != rp:
+                for line in lines_of(v):
+                    if not line.strip().startswith("#") and any(a in line for a in anchors):
+                        self.fail("P1:stale", "%s still names the retired cell %s: %s" % (k, c, line.strip()[:140]))
+                        break
+        # the re-apply step that runs it
+        ra = self.root / "tools" / "reapply.py"
+        src = ra.read_text(encoding="utf-8", errors="replace") if ra.exists() else ""
+        fid = "cobblers:trainers/challenge/retire_%s" % cid
+        try:
+            listed = fid in self.art.mod("challenge_mode").retire_functions()
+        except Exception as e:  # noqa: BLE001 - a generator that cannot list its own retire functions is the finding
+            listed = False
+            self.note("P1: challenge_mode.retire_functions() raised %s" % e)
+        if '"R17L"' not in src or "retire_functions()" not in src or not listed:
+            self.fail("P1:wired", "tools/reapply.py step R17L does not run %s" % fid)
+
     # ================================================================================================ R
     def check_routes(self):
         T, sfx, sid = self.art.trainers, self.suffix, self.series_id
         recs, seats = self.art.seats
         challenge_cycle = lines_of(T.get("data/cobblers/function/trainers/challenge/cycle.mcfunction") or [])
         normal_cycle = lines_of(T.get("data/cobblers/function/trainers/cycle.mcfunction") or [])
+        # ONE exception: a one-leader boss's retire function may kill the old Challenge-id trainer standing at the
+        # retired cell, with exactly this shape (anchored at that cell, that id only, never in a battle, only with no
+        # player near). Whether that kill is SAFE is P1's (check_single_leader runs it); here it is only excused.
+        exempt = {}
+        for u in self.rollout:
+            cid = u + sfx
+            c = tuple((self.cm["bosses"].get(u) or {}).get("spawner", {}).get("at") or ())
+            if len(c) == 3:
+                exempt[self.retire_path(cid)] = re.compile(
+                    r'execute positioned %d\.5 %d %d\.5 unless entity @a\[distance=\.\.[0-9.]+\] run kill '
+                    r'@e\[type=rctmod:trainer,distance=\.\.[0-9.]+,nbt=\{TrainerId:"%s",InBattle:0b\}\]'
+                    % (c[0], c[1], c[2], re.escape(cid)))
         for k, v in T.items():
             if k.endswith(".mcfunction"):
                 for line in lines_of(v):
+                    if k in exempt and exempt[k].fullmatch(line.strip()):
+                        continue
                     if re.search(r"rctmod trainer summon|summon rctmod:trainer|kill @e\[type=rctmod:trainer", line):
                         self.fail("R:summon", "%s summons or kills a trainer: %s" % (k, line[:120]))
         tag = self.cm["mode"]["tag"]
