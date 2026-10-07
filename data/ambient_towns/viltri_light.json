@@ -51,16 +51,16 @@
     },
     {
       "id": "viltri_light_noctowl_post",
-      "title": "The night watch",
-      "story": "The keeper's Noctowl has taken the old mooring post at the bottom of the lighthouse steps for its own. It sits there every night facing the empty estuary, and turns its head for every ship that does not come.",
+      "title": "The keeper's post",
+      "story": "The keeper has no road and no boat, so her letters go by Pidove. It waits on the old mooring post at the foot of the lighthouse steps every morning and carries them up the dry estuary to Viltri Quay. It has never lost one, and it is always back before the lamp is lit.",
       "unique": true,
       "at": [550, 68, 4531],
       "facing": "west",
       "members": [
-        {"species": "noctowl", "count": 1, "pose": "still", "offsets": [[0, 1, 0]]}
+        {"species": "pidove", "count": 1, "pose": "still", "offsets": [[0, 1, 0]]}
       ],
       "props": [{"block": "minecraft:oak_fence", "at": [0, 0, 0]}, {"block": "minecraft:chain", "at": [1, 0, 0]}],
-      "why": "converted 2026-10-06 from the keeper's pet (the outpost's band holds three situation Pokemon only if a pet or a placed one gives its place): the low ground south of the lighthouse platform, feet y68 from the plan, the Noctowl on its post prop"
+      "why": "converted 2026-10-06 from the keeper's pet (the outpost's band holds three situation Pokemon only if a pet or a placed one gives its place): the low ground south of the lighthouse platform, feet y68 from the plan, the bird on its post prop. Rewritten 2026-10-08 (unit AMB): an owl keeping the night watch is Rimwatch's working Noctowl; a Pidove (0.28 x 0.44 blocks, the jar's hitbox x baseScale) on the Noctowl's post (0.72 x 1.71)"
     }
   ],
   "counts": {"working": 2, "pets": 0, "placed": 1, "situations": 3, "total": 6},

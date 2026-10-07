@@ -250,9 +250,9 @@
     },
     {
       "id": "stoneford_klefki_chimney",
-      "title": "The armorer's keys",
-      "story": "The armorer's forge has drawn badly all week and his shop keys went missing on Monday. A Nickit is curled in the chimney pot with the whole ring, and only comes down when the fire is lit.",
-      "unique": true,
+      "title": "The sweep nobody pays",
+      "story": "The armorer has never once paid a sweep, and his chimney draws cleaner than any on the wall. A Nickit sleeps in the pot by day and goes down the flue at night for whatever has rolled behind the grate; its brush of a tail does the sweeping on the way.",
+      "unique": false,
       "at": [
         1743,
         146,
@@ -274,7 +274,7 @@
         }
       ],
       "props": [],
-      "why": "on the cobblestone-wall chimney pot of gym1_house_11 (armorer_house_1), the column's top block at y145 read from the template as placed, so the feet are y146; something in a chimney; a Nickit, not Fossick's Klefki (orchestrator 2026-10-06: the two authors both wrote a lone key-Klefki)"
+      "why": "on the cobblestone-wall chimney pot of gym1_house_11 (armorer_house_1), the column's top block at y145 read from the template as placed, so the feet are y146; something in a chimney; a Nickit, not Fossick's Klefki (orchestrator 2026-10-06: the two authors both wrote a lone key-Klefki). Rewritten 2026-10-08 (unit AMB): the lost keys were Fossick's Klefki's joke and the badly drawing forge Sunset West's; not credited unique, since five towns have something on a chimney and Northlight's is the one credited"
     },
     {
       "id": "stoneford_sculptors_models",

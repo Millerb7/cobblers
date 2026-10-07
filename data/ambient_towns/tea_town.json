@@ -178,7 +178,7 @@
       "id": "tea_vespiquen_court",
       "title": "The queen holds court",
       "story": "A Vespiquen has taken the garden behind the drying racks for her own and two Combee wait on her, while the household eats its lunch indoors.",
-      "unique": false,
+      "unique": true,
       "at": [2640, 114, 3530],
       "facing": "south",
       "members": [
@@ -205,7 +205,7 @@
       "id": "tea_exeggcute_count",
       "title": "There were five yesterday",
       "story": "A row of Exeggcute basks along the lake lane by the last house. The picker who passes them every morning swears the number changes.",
-      "unique": false,
+      "unique": true,
       "at": [2637, 114, 3712],
       "facing": "south",
       "members": [
@@ -218,7 +218,7 @@
       "id": "tea_poltchageist_chimney",
       "title": "The smokehouse's second brew",
       "story": "The smokehouse chimney has started smelling of green tea. A Poltchageist has moved into the chimney pot and steeps itself in the smoke, and the butcher's hams have never tasted better.",
-      "unique": true,
+      "unique": false,
       "at": [2609, 121, 3518],
       "facing": "west",
       "members": [
@@ -231,7 +231,7 @@
       "id": "tea_slowpoke_leaf_bins",
       "title": "Asleep in the leaf bins",
       "story": "The pickers tip the morning's leaves into the bins behind the end house. A Slowpoke climbed in on Tuesday and has slept in the leaves ever since; the pickers say it improves the flavour.",
-      "unique": true,
+      "unique": false,
       "at": [2617, 115, 3612],
       "facing": "west",
       "members": [

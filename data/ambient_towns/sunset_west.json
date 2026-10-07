@@ -158,7 +158,7 @@
     {"id": "sunset_market_meowth", "species": "meowth", "owner": "sunset_net_loft", "mode": "wait", "why": "the net loft's Meowth, kept as a guard against the other cats: a poacher turned gamekeeper. Re-homed 2026-10-06 from sunset_fish_market: the fish market stands on the square, which the world cuts below the heightmap and the build's replay does not, so the build finds no open cell beside it; give it back to the fish market when the replay models the square"},
     {"id": "sunset_loft_pyukumuku", "species": "pyukumuku", "owner": "sunset_net_loft", "mode": "wait", "why": "the net loft keeper's Pyukumuku in its bucket by the stall; nobody remembers why he keeps it"},
     {"id": "sunset_farwater_chinchou", "species": "chinchou", "owner": "sunset_far_water_catch", "mode": "wait", "why": "the far-water seller's Chinchou in a tank by the stall, its lights the stall's sign"},
-    {"id": "sunset_farwater_tatsugiri", "species": "tatsugiri", "owner": "sunset_far_water_catch", "mode": "wait", "why": "and a Tatsugiri in a dish beside it, which customers keep trying to buy"}
+    {"id": "sunset_farwater_tatsugiri", "species": "tatsugiri", "owner": "sunset_far_water_catch", "mode": "wait", "why": "and a Tatsugiri that rides in the stall's scale pan; every catch weighs a little heavier while it is aboard (rewritten 2026-10-08, unit AMB: a Tatsugiri taken for food is Pacifidlog's situation)"}
   ],
   "placed": [
     {"id": "sunset_gutter_shellder", "species": "shellder", "spot": "gutter", "building": "sunset_house_04", "why": "a Shellder in the fisher's gutter, clamped shut against the drip"},
@@ -228,16 +228,16 @@
     },
     {
       "id": "sunset_cramorant_chimney",
-      "title": "The bird on the forge",
-      "story": "A Cramorant has taken the armorer's chimney pot for a nest and will not be smoked out. The armorer now lights his forge only after it flies out to fish in the morning, and the town says that brings luck.",
-      "unique": true,
+      "title": "The weather bird",
+      "story": "A Cramorant dries its wings on the warm chimney pot at the top of the beach after every morning's fishing, and the boats read the day off it: wings out, fair; head under its wing, stay in harbour. It has been wrong twice in four years, and both times it was the boats who said so.",
+      "unique": false,
       "at": [2607, 73, 6493],
       "facing": "west",
       "members": [
         {"species": "cramorant", "count": 1, "pose": "still", "offsets": [[0, 0, 0]]}
       ],
       "props": [],
-      "why": "on the cobblestone-wall chimney pot of sunset_house_01 (plains_armorer_house_1), the column's top block at y72 read from the template as placed, so the feet are y73; a seabird nesting on a chimney, the coast's only nest on a house (a Bombirdier first, 2026-10-06: it is in the ATM client-model subset, so the town's own Cramorant)"
+      "why": "on the cobblestone-wall chimney pot of sunset_house_01 (plains_armorer_house_1), the column's top block at y72 read from the template as placed, so the feet are y73; a seabird on a chimney, the coast's only bird on a house (a Bombirdier first, 2026-10-06: it is in the ATM client-model subset, so the town's own Cramorant). Rewritten 2026-10-08 (unit AMB): the armorer's badly drawing forge was Stoneford's joke too; not credited unique, since five towns have something on a chimney and Northlight's is the one credited"
     },
     {
       "id": "sunset_alomomola_step",

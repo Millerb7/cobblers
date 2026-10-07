@@ -247,7 +247,7 @@
       "id": "northlight_cetoddle_ice_queue",
       "title": "First in line for the ice",
       "story": "Every morning two Cetoddle queue at the Mart door before it opens. The Mart sells ice for the cool boxes; they buy nothing, they wait for the clerk to drop a block, and they eat it on the step.",
-      "unique": true,
+      "unique": false,
       "at": [7280, 116, 1538],
       "facing": "north",
       "members": [

@@ -463,7 +463,7 @@
       "id": "holdfast_stuck_wagon",
       "title": "The wagon that has not moved since Tuesday",
       "unique": false,
-      "story": "A Rhyhorn fell asleep against the supply wagon's wheel, and the wagon has not moved since. The Tauros in the harness is still waiting. A Rattata lives under it now.",
+      "story": "On Tuesday the quartermaster put a Rhyhorn and a Tauros in the supply wagon's harness together, and each is certain it is the one in charge. Each pulls its own way, the wagon stays exactly where it is, and the garrison has started drilling round it. A Rattata lives under it now.",
       "at": [3618, 114, 6494],
       "facing": "east",
       "members": [
@@ -500,12 +500,12 @@
           "at": [2, 0, -1]
         }
       ],
-      "why": "west of the Mart; the load stands where the wagon stopped"
+      "why": "west of the Mart; the load stands where the wagon stopped. Rewritten 2026-10-08 (unit AMB): a Rhyhorn lying down in a cart's way is Stoneford's roadblock; Holdfast's is a tug of war. Same members, same spots"
     },
     {
       "id": "holdfast_marowak_cairn",
       "title": "The Marowak at the cairn",
-      "unique": false,
+      "unique": true,
       "story": "Every evening a Marowak stands at the little cairn by the drill ground, with a Duskull at its shoulder. The garrison salutes it as they pass.",
       "at": [3594, 115, 6534],
       "facing": "south",
@@ -568,7 +568,7 @@
     {
       "id": "holdfast_sirfetchd_sentry",
       "title": "The sentry nobody posted",
-      "unique": false,
+      "unique": true,
       "story": "A Sirfetch'd stands at the end of the gate palisade with its leek on its shoulder, facing the road out. Nobody posted it. The watch changes round it four times a day, and it has never once been relieved.",
       "at": [3627, 111, 6415],
       "facing": "north",

@@ -357,7 +357,7 @@
       "species": "sudowoodo",
       "spot": "step",
       "building": "gym4_house_02",
-      "why": "beside the door pretending to be the potted tree; the potted tree is round the back"
+      "why": "beside the door, under the deepest part of the eaves, where no rain reaches; it has not been out in the wet since the first storm of spring (rewritten 2026-10-08, unit AMB: a Sudowoodo posing as a potted tree is Stoneford's situation)"
     }
   ],
   "situations": [
@@ -414,7 +414,7 @@
     {
       "id": "greenhollow_gloom_bench",
       "title": "The bench nobody sits next to",
-      "unique": false,
+      "unique": true,
       "story": "A Gloom has the bench outside the Centre. A Sentret and a Wurmple share the far end of it, as far from the smell as the bench allows.",
       "at": [4256, 110, 1548],
       "facing": "south",
@@ -521,14 +521,14 @@
     },
     {
       "id": "greenhollow_psyduck_water_butt",
-      "title": "Two Psyduck and a water butt",
-      "unique": false,
-      "story": "Two Psyduck have moved into the back garden of the house on the pond road and take the water butt in turns. The owner has fenced the beans off from them and gardens round the rest.",
+      "title": "The third row of beans",
+      "unique": true,
+      "story": "The house on the pond road planted two rows of beans this spring and has three. The third is a pair of Smoliv that sat down at the end of the bean fence one wet morning and put down roots. The owner waters all three rows now, and the Smoliv are coming on better than the beans.",
       "at": [4230, 110, 1574],
       "facing": "north",
       "members": [
         {
-          "species": "psyduck",
+          "species": "smoliv",
           "count": 2,
           "pose": "still",
           "offsets": [[0, 0, 0], [3, 0, 1]]
@@ -556,12 +556,12 @@
           "at": [5, 0, 0]
         }
       ],
-      "why": "a gardeners' town's one garden it has lost: the back of gym4_house_02 (its door faces north onto the pond road, so its garden is the open ground south of it, x 4228-4235, z 1572-1576, all at the plan's y 110). Two of one species because the pair IS the story"
+      "why": "a gardeners' town's garden that has gained a row: the back of gym4_house_02 (its door faces north onto the pond road, so its garden is the open ground south of it, x 4228-4235, z 1572-1576, all at the plan's y 110). Two of one species because the pair IS the story. Rewritten 2026-10-08 (unit AMB): Psyduck that have taken over a back garden is Viltri Quay's (the owner's own example) and a tenant in a water butt is its Barboach; two Smoliv (0.27 x 0.50 blocks, the jar's hitbox x baseScale) stand on the Psyduck's spots (0.64 x 0.80), so nothing they occupy is new"
     },
     {
       "id": "greenhollow_appletun_crate",
       "title": "Asleep in the top crate",
-      "unique": false,
+      "unique": true,
       "story": "The orchard's crates are stacked by the lane to go out at dawn. The best apple in the top one is an Appletun, and the orchard keeper is not going to be the one who wakes it.",
       "at": [4339, 112, 1563],
       "facing": "west",
