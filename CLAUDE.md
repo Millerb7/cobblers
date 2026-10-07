@@ -638,6 +638,9 @@ So, before a figure goes into a brief, a commit, a document or a decision:
   had written itself an hour earlier; being its author is not evidence.
 - **When a decision is built on a relayed number, say so in the decision.** The owner chose A1 on a
   premise that turned out to be this session's error, and said afterwards it was not theirs to be held to.
+- **A number in a BRIEF that nobody can source is checked before it is used, not after** (the owner, 2026-10-09,
+  after three briefs in a row rested on figures nobody could trace: "237 ambient", "13 species", "the four P2s"):
+  measure it or trace it first; if it cannot be traced, build on the measurement and say so.
 - **And an instruction built on a bad number should be questioned, not executed.** The agent told to
   "delete the 38" deleted 10, kept 28, and explained. That is the behaviour, not an exception to it.
 
