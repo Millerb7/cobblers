@@ -1249,7 +1249,9 @@ def audit(doc, source_root=None, skip_dressing=False, plazas=None):
 
 # ---------------------------------------------------------------------------------------------------- the jars
 def jar_items(jar_dir):
-    """{item id} from every jar's lang files: item.<ns>.<path> and block.<ns>.<path> keys. Read only."""
+    """{item id} from every jar's lang files (item.<ns>.<path> and block.<ns>.<path> keys) and item models
+    (assets/<ns>/models/item/<path>.json). Read only. The models count since 2026-10-08: TMCraft's per-move TMs
+    (tmcraft:tm_<move>) have an item model and no lang key, the shape tools/economy_audit.py already accepts."""
     return jar_items_of(sorted(Path(jar_dir).glob("*.jar")))
 
 
@@ -1258,6 +1260,10 @@ def jar_items_of(jars):
     for jp in jars:
         with zipfile.ZipFile(jp) as z:
             for n in z.namelist():
+                m = re.fullmatch(r"assets/([a-z0-9_.\-]+)/models/item/([a-z0-9_/.\-]+)\.json", n)
+                if m:
+                    ids.add("%s:%s" % m.groups())
+                    continue
                 if re.fullmatch(r"assets/[^/]+/lang/en_us\.json", n):
                     try:
                         lang = json.loads(z.read(n).decode("utf-8", "replace"))
