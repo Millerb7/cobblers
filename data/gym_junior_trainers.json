@@ -1,7 +1,7 @@
 {
   "schema": "cobblers.gym-junior-trainers/1",
   "generated_by": "hand, from the seats python tools/gym_trainers.py propose proves for each hall; every seat is re-proved by python tools/gym_trainers.py check",
-  "note": "The STAND of each gym junior: where it stands and how it behaves standing there. The roster (who it is, its Normal and Challenge teams, its lines) is data/trainers.json, generated from docs/story/TRAINER_RULES.json gym_trainers. tools/route_trainers.py reads both halves like any seat file (eye contact, the rematch hold-off, the per-player defeat field) and tools/reapply.py R17 summons each one. Counts follow docs/mechanics/GYM_INTERIORS.md section 4: 2, 2, 2, 2, 3, 3, 3, 4. What every seat proves, and what it does not, is docs/world-building/GYM_TRAINERS.md.",
+  "note": "The STAND of each gym junior: where it stands and how it behaves standing there. The roster (who it is, its Normal and Challenge teams, its lines) is data/trainers.json, generated from docs/story/TRAINER_RULES.json gym_trainers. tools/route_trainers.py reads both halves like any seat file (eye contact, the rematch hold-off, the per-player defeat field) and tools/reapply.py R17 summons each one. Counts followed docs/mechanics/GYM_INTERIORS.md section 4 (2, 2, 2, 2, 3, 3, 3, 4) until the owner asked on 2026-10-07 for at least three a gym, some more: now 3, 2, 3, 3, 3, 4, 4, 4. Gym 2 stays at two because its only must-pass ground is the porch, door and vestibule (a rider sets down anywhere open to the sky) and no three proven seats there are apart (docs/world-building/GYM_TRAINERS.md). What every seat proves, and what it does not, is docs/world-building/GYM_TRAINERS.md.",
   "gyms": {
     "gym2": {
       "arrival": "sky",
@@ -27,6 +27,9 @@
     {"id": "gym1_junior_02", "name": "Loft Foreman", "gym": "gym1", "seat": [1828, 153, 3684], "yaw": -135,
      "skin": "rctmod:textures/trainers/single/hiker_alan_00b9.png", "eye_contact": true, "sight_distance": 3.0,
      "room": "the_wall", "why": "at the head of the unfinished wall, where the climb tops out onto the beams: nobody reaches the lit slot without coming over the wall beside him"},
+    {"id": "gym1_junior_03", "name": "Coal Hauler", "gym": "gym1", "seat": [1826, 153, 3695], "yaw": -135,
+     "skin": "rctmod:textures/trainers/single/worker_conrad_0586.png", "eye_contact": true, "sight_distance": 2.5,
+     "room": "the_beams", "why": "at the south end of the beam walk, one block west of the x1827 lane where it meets the climb to Brock (single-cell chokepoints x1829 z3696-3697, y153-155): every walk south along the beams comes into his sight; added 2026-10-07 (the owner: at least three a gym), chosen from python tools/gym_trainers.py propose --gym gym1 (first reached at 22 moves, after the Loft Foreman's 20)"},
 
     {"id": "gym2_junior_01", "name": "Quay Swimmer", "gym": "gym2", "seat": [1611, 131, 2884], "yaw": 90,
      "skin": "rctmod:textures/trainers/single/swimmer_aubree_0375.png", "eye_contact": true, "sight_distance": 4.0,
@@ -41,6 +44,9 @@
     {"id": "gym3_junior_02", "name": "Relay Technician", "gym": "gym3", "seat": [1731, 182, 1417], "yaw": 45,
      "skin": "rctmod:textures/trainers/single/scientist_beau_0154.png", "eye_contact": true, "sight_distance": 2.5,
      "room": "the_catwalk", "why": "on the catwalk between the tower cap and the downlead: the record's own seat for one (trainers_why: the catwalk, x1730-1733 z1402-1418)"},
+    {"id": "gym3_junior_03", "name": "Cable Rigger", "gym": "gym3", "seat": [1730, 183, 1412], "yaw": 0,
+     "skin": "rctmod:textures/trainers/single/engineer_bernie_00de.png", "eye_contact": true, "sight_distance": 3.0,
+     "room": "the_catwalk", "why": "on the catwalk's raised west step near its north end, beside the single-cell climb at (1733, 184, 1410) onto the cable run east, facing back down the catwalk: every walk north along it comes into her sight, five blocks past the Relay Technician; added 2026-10-07 (the owner: at least three a gym), chosen from python tools/gym_trainers.py propose --gym gym3 (first reached at 17 moves, after the Relay Technician's 16). The first seat tried, (1731, 182, 1411), stood on the catwalk's one lane in the audit's walk model (tools/gym_trainers_audit.py [softlock]) and was moved"},
 
     {"id": "gym4_junior_01", "name": "Glasshouse Gardener", "gym": "gym4", "seat": [4314, 116, 1502], "yaw": 90,
      "skin": "rctmod:textures/trainers/single/aroma_lady_rose_0241.png", "eye_contact": true, "sight_distance": 3.0,
@@ -48,6 +54,9 @@
     {"id": "gym4_junior_02", "name": "Canopy Botanist", "gym": "gym4", "seat": [4302, 120, 1494], "yaw": -27,
      "skin": "rctmod:textures/trainers/single/beauty_lori_010b.png", "eye_contact": true, "sight_distance": 3.5,
      "room": "high_canopy", "why": "on the high canopy's north edge, above the west line of piers, the only crossing to the court (trainers_why: the high canopy's north edge)"},
+    {"id": "gym4_junior_03", "name": "Bough Climber", "gym": "gym4", "seat": [4316, 120, 1499], "yaw": 0,
+     "skin": "rctmod:textures/trainers/single/aroma_lady_alison_0480.png", "eye_contact": true, "sight_distance": 3.0,
+     "room": "living_bough", "why": "at the head of the living bough, where the climb from the low canopy (x4317, y117-119) tops out onto the high canopy: every way up comes into her sight from the south; added 2026-10-07 (the owner: at least three a gym), chosen from python tools/gym_trainers.py propose --gym gym4 (first reached at 13 moves, between the Glasshouse Gardener's 10 and the Canopy Botanist's 24, so she tops out level with the Botanist)"},
 
     {"id": "gym5_junior_01", "name": "Fen Tracker", "gym": "gym5", "seat": [4585, 117, 2478], "yaw": -90,
      "skin": "rctmod:textures/trainers/single/ninja_boy_antonio_0359.png", "eye_contact": true, "sight_distance": 2.5,
@@ -68,6 +77,9 @@
     {"id": "gym6_junior_03", "name": "Lens Keeper", "gym": "gym6", "seat": [6195, 105, 3308], "yaw": 45,
      "skin": "rctmod:textures/trainers/single/psychic_brittney_03bb.png", "eye_contact": true, "sight_distance": 2.5,
      "room": "gallery", "why": "on the gallery's north arm beside the foot of the turret ladder. The record named the chamber's threshold at the ladder's head; that cell is within reach of Sabrina, and the arm's middle lane is the only way along it, so the seat is the ladder foot's north side"},
+    {"id": "gym6_junior_04", "name": "Stack Warden", "gym": "gym6", "seat": [6185, 105, 3325], "yaw": 0,
+     "skin": "rctmod:textures/trainers/single/psychic_bryce_038c.png", "eye_contact": true, "sight_distance": 3.5,
+     "room": "gallery", "why": "at the gallery's south-west corner, where the south strip turns north onto the west walk, facing the strip: every way from the stacks to the north arm turns this corner inside his sight, nine blocks past the Gallery Medium and seventeen short of the Lens Keeper; added 2026-10-07 (the owner: at least three a gym, some more; gym 6's gallery has the most room between seats), chosen from python tools/gym_trainers.py propose --gym gym6 (first reached at 12 moves, between the Medium's 10 and the Lens Keeper's 16, so he tops out level with the Lens Keeper). The first seat tried, (6186, 105, 3319) on the west walk, had a lane on each side of it, so no yaw faced every walk past it (tools/gym_trainers_audit.py [facing])"},
 
     {"id": "gym7_junior_01", "name": "Assay Hand", "gym": "gym7", "seat": [6161, 111, 4992], "yaw": 0,
      "skin": "rctmod:textures/trainers/single/scientist_braydon_015a.png", "eye_contact": true, "sight_distance": 2.5,
@@ -78,6 +90,9 @@
     {"id": "gym7_junior_03", "name": "Flue Keeper", "gym": "gym7", "seat": [6179, 120, 4991], "yaw": 90,
      "skin": "rctmod:textures/trainers/single/scientist_darrius_0575.png", "eye_contact": true, "sight_distance": 2.5,
      "room": "gallery", "why": "on the gallery at the head of the gantry stair, before the four hoods (trainers_why: the gallery)"},
+    {"id": "gym7_junior_04", "name": "Stair Stoker", "gym": "gym7", "seat": [6180, 116, 4987], "yaw": 135,
+     "skin": "rctmod:textures/trainers/single/burglar_00d3.png", "eye_contact": true, "sight_distance": 2.5,
+     "room": "gantry_stair", "why": "on the gantry stair's east lane, three steps up, turned to face down the west lane a climber takes past him (yaw 180, straight down the stair, left that lane beside him: tools/gym_trainers_audit.py [facing]): the stair (x6179-6180, z4985-4990) is the only climb from the assay deck to the gallery, and its west lane stays open past him; added 2026-10-07 (the owner: at least three a gym, some more), chosen from python tools/gym_trainers.py propose --gym gym7 (first reached at 12 moves, between the Rim Researcher's 10 and the Flue Keeper's 16, so he tops out level with the Flue Keeper)"},
 
     {"id": "gym8_junior_01", "name": "Sapper", "gym": "gym8", "seat": [3576, 107, 6408], "yaw": 180,
      "skin": "rctmod:textures/trainers/single/worker_colin_037a.png", "eye_contact": true, "sight_distance": 2.5,
