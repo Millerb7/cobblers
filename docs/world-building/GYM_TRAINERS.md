@@ -22,7 +22,13 @@ The seat file declares only stand fields; the roster declares none (`tools/route
 
 ## What is placed
 
-21 juniors: 2, 2, 2, 2, 3, 3, 3, 4 (docs/mechanics/GYM_INTERIORS.md section 4). Every one has `eye_contact` true (rctmod `forceBattleOnSight` at its `sight_distance`, `forceBattleLookTicks` 30, `forceBattleMaxLevelDiff` 10), `maxTrainerDefeats` 1, the rematch hold-off and its per-player field `quest.<id>.defeated`, exactly as a route trainer. `first` is the GENEROUS move count at which a walker first enters its sight; juniors are listed in that order, which is the order their levels rise in. Normal is the team; Challenge is the same top level plus the member shown and a held item on the top member.
+26 juniors: 3, 2, 3, 3, 3, 4, 4, 4. Section 4 of docs/mechanics/GYM_INTERIORS.md set 2, 2, 2, 2, 3, 3, 3, 4; the
+owner asked on 2026-10-07 for at least three a gym, some more, so gyms 1, 3 and 4 gained one each and gyms 6 and 7
+one more each (their galleries and stairs had the most room between proven seats; gym 5's only spare seats crowd the
+reed stair beside two juniors, and gym 8 already had four). **Gym 2 cannot take a third** under the proof below: with
+a rider able to set down anywhere open to the sky, the only must-pass ground is the porch, door and vestibule, and of
+the 123 proven (seat, sight) pairs there no three have disjoint `seen()` sets (`apart`). A third gym 2 junior needs a
+change to the hall (a gate or a roofed approach) or the owner relaxing `apart` there. Every one has `eye_contact` true (rctmod `forceBattleOnSight` at its `sight_distance`, `forceBattleLookTicks` 30, `forceBattleMaxLevelDiff` 10), `maxTrainerDefeats` 1, the rematch hold-off and its per-player field `quest.<id>.defeated`, exactly as a route trainer. `first` is the GENEROUS move count at which a walker first enters its sight; juniors are listed in that order, which is the order their levels rise in. Normal is the team; Challenge is the same top level plus the member shown and a held item on the top member.
 
 ### gym1 (Brock, Rock; ace 20; leader stand [1832, 156, 3696])
 
@@ -30,6 +36,7 @@ The seat file declares only stand fields; the roster declares none (`tools/route
 |---|---|---|---|---|---|---|---|---|
 | `gym1_junior_01` | Hall Mason | [1819, 147, 3681] | 135 | 2.5 | 12 | roggenrola 16, nacli 17 | rockruff 16; sitrus_berry | the_gantry: on the south gantry where it leaves the loft's east edge: the stair is the only way onto the loft and the gantries the only way off it, and every walk east passes inside her sight. (The loft's own edge, at the stair head, is the stair's only landing: a junior there would wall it.) |
 | `gym1_junior_02` | Loft Foreman | [1828, 153, 3684] | -135 | 3.0 | 20 | rockruff 17, larvitar 18 | binacle 17; sitrus_berry | the_wall: at the head of the unfinished wall, where the climb tops out onto the beams: nobody reaches the lit slot without coming over the wall beside him |
+| `gym1_junior_03` | Coal Hauler | [1826, 153, 3695] | -135 | 2.5 | 22 | rolycoly 18, carkol 19 | nosepass 18; sitrus_berry | the_beams: the south end of the beam walk where it meets the climb to Brock (added 2026-10-07) |
 
 A rider setting down anywhere open to the sky still has to pass every junior here (a roofed hall).
 
@@ -46,8 +53,9 @@ Proved for a player who arrives by air (see D1 and the island below). A rider se
 
 | id | name | seat | yaw | sight | first | Normal | Challenge adds | where |
 |---|---|---|---|---|---|---|---|---|
-| `gym3_junior_01` | Line Engineer | [1731, 175, 1424] | 135 | 3.0 | 9 | magnemite 26, pachirisu 27 | flaaffy 26; cheri_berry | tower_foot: on the hall floor at the foot of the transformer tower's stair, the only climb off the floor |
+| `gym3_junior_01` | Line Engineer | [1732, 175, 1424] | 135 | 3.0 | 9 | magnemite 26, pachirisu 27 | flaaffy 26; cheri_berry | tower_foot: on the hall floor at the foot of the transformer tower's stair, the only climb off the floor |
 | `gym3_junior_02` | Relay Technician | [1731, 182, 1417] | 45 | 2.5 | 16 | voltorb 27, flaaffy 28 | emolga 27; cheri_berry | the_catwalk: on the catwalk between the tower cap and the downlead: the record's own seat for one (trainers_why: the catwalk, x1730-1733 z1402-1418) |
+| `gym3_junior_03` | Cable Rigger | [1730, 183, 1412] | 0 | 3.0 | 17 | plusle 28, luxio 29 | minun 28; cheri_berry | the_catwalk: the raised west step near the north end, beside the climb onto the cable run (added 2026-10-07) |
 
 A rider setting down anywhere open to the sky still has to pass every junior here (a roofed hall).
 
@@ -57,6 +65,7 @@ A rider setting down anywhere open to the sky still has to pass every junior her
 |---|---|---|---|---|---|---|---|---|
 | `gym4_junior_01` | Glasshouse Gardener | [4314, 116, 1502] | 90 | 3.0 | 10 | skiploom 31, gloom 32 | nuzleaf 31; lum_berry | low_canopy: on the low canopy's deck where the bench run arrives and the living bough leaves (trainers_why: the low canopy's deck) |
 | `gym4_junior_02` | Canopy Botanist | [4302, 120, 1494] | -27 | 3.5 | 24 | weepinbell 32, tangela 33 | cacturne 32; lum_berry | high_canopy: on the high canopy's north edge, above the west line of piers, the only crossing to the court (trainers_why: the high canopy's north edge) |
+| `gym4_junior_03` | Bough Climber | [4316, 120, 1499] | 0 | 3.0 | 13 | sunflora 32, breloom 33 | lombre 32; lum_berry | living_bough: the head of the living bough, between the two above in pass order (added 2026-10-07) |
 
 A rider setting down anywhere open to the sky still has to pass every junior here (a roofed hall).
 
@@ -77,6 +86,7 @@ A rider setting down anywhere open to the sky still has to pass every junior her
 | `gym6_junior_01` | Archive Reader | [6199, 98, 3324] | 63 | 3.5 | 2 | kadabra 41, hattrem 42 | kirlia 41; lum_berry | hall: on the hall floor at the foot of the finished stack, the only climb to the gallery (trainers_why: the hall floor by the door) |
 | `gym6_junior_02` | Gallery Medium | [6194, 105, 3328] | -135 | 3.0 | 10 | xatu 42, bronzong 43 | girafarig 42; lum_berry | gallery: on the gallery's south strip, which every way from the stacks to the turret crosses (trainers_why: the gallery's south strip) |
 | `gym6_junior_03` | Lens Keeper | [6195, 105, 3308] | 45 | 2.5 | 16 | hypno 43, grumpig 44 | slowpoke 43; lum_berry | gallery: on the gallery's north arm beside the foot of the turret ladder. The record named the chamber's threshold at the ladder's head; that cell is within reach of Sabrina, and the arm's middle lane is the only way along it, so the seat is the ladder foot's north side |
+| `gym6_junior_04` | Stack Warden | [6185, 105, 3325] | 0 | 3.5 | 12 | chimecho 43, medicham 44 | beheeyem 43; lum_berry | gallery: the south-west corner where the south strip turns north, between Gallery Medium and Lens Keeper in pass order (added 2026-10-07) |
 
 A rider setting down anywhere open to the sky still has to pass every junior here (a roofed hall).
 
@@ -86,7 +96,8 @@ A rider setting down anywhere open to the sky still has to pass every junior her
 |---|---|---|---|---|---|---|---|---|
 | `gym7_junior_01` | Assay Hand | [6161, 111, 4992] | 0 | 2.5 | 4 | rapidash 46, camerupt 47 | magmar 46; sitrus_berry | the_spoil_steps: beside the head of the spoil steps where they meet the assay deck: the one climb off the drill floor that leads anywhere (trainers_why: the drill floor) |
 | `gym7_junior_02` | Rim Researcher | [6177, 113, 4985] | 90 | 2.5 | 10 | houndoom 47, pyroar 48 | salazzle 47; sitrus_berry | assay_deck: at the east end of the assay deck, at the foot of the gantry stair |
-| `gym7_junior_03` | Flue Keeper | [6179, 120, 4992] | 90 | 2.5 | 17 | ninetales 48, centiskorch 49 | torkoal 48; sitrus_berry | gallery: on the gallery at the head of the gantry stair, before the four hoods (trainers_why: the gallery) |
+| `gym7_junior_03` | Flue Keeper | [6179, 120, 4991] | 90 | 2.5 | 16 | ninetales 48, centiskorch 49 | torkoal 48; sitrus_berry | gallery: on the gallery at the head of the gantry stair, before the four hoods (trainers_why: the gallery) |
+| `gym7_junior_04` | Stair Stoker | [6180, 116, 4987] | 135 | 2.5 | 12 | heatmor 48, talonflame 49 | darmanitan 48; sitrus_berry | gantry_stair: the stair's east lane three steps up, facing the west lane, between Rim Researcher and Flue Keeper in pass order (added 2026-10-07) |
 
 A rider setting down anywhere open to the sky still has to pass every junior here (a roofed hall).
 
@@ -213,15 +224,15 @@ Findings, recorded and not chased:
 
 Nothing in `tools/reapply.py` was edited. The steps that carry this work:
 
-1. `prepare`: the existing `route_trainers` job rebuilds `cobblers_trainers` with the 21 (84 seated trainers, was
-   63). **Proposed, for the main session to add:** `add("gym_trainers:check", "gym_trainers.py", "check")` after
+1. `prepare`: the existing `route_trainers` job rebuilds `cobblers_trainers` with the 26 (89 seated trainers, measured
+   from `python tools/route_trainers.py` on 2026-10-07; 84 with the first 21). **Proposed, for the main session to add:** `add("gym_trainers:check", "gym_trainers.py", "check")` after
    `gym_buildings:build`, so a moved hall or seat stops the prepare. It needs the heightmap and, for gym 2, the
    donor zip, and takes about 2.5 minutes.
 2. `install`, then a **restart**: rctmod's trainer, mob and dialog files and the advancements load at boot.
 3. **R17**, which already summons every `tools/route_trainers.py` `placements()` entry with
    `rctmod trainer summon_persistent`; the 21 are appended after the HQ tower's seven. R17 runs after R16G, so the
    halls stand before the juniors arrive.
-4. Probes: 21 `rctmod:trainer` entities with `TrainerId` `gym*_junior_*`, each within 0.75 of its seat.
+4. Probes: 26 `rctmod:trainer` entities with `TrainerId` `gym*_junior_*`, each within 0.75 of its seat.
 
 ## What an audit must check
 

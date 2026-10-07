@@ -33,7 +33,7 @@
     ],
     "runtime_mode_selection": "per player: Oak records the choice once (quest.main_worldshift_reveal.trainer_mode) and puts a Challenge player in rctmod series cobblers_challenge; each record's modes.challenge.rct is installed as <rctmod id>_challenge by tools/challenge_mode.py (docs/mechanics/OAK_AND_CHALLENGE.md); top-level team and rct mirror normal",
     "preserved_blocked_route_orders": [],
-    "gym_trainers": 21
+    "gym_trainers": 26
   },
   "trainers": [
     {
@@ -20781,6 +20781,262 @@
       }
     },
     {
+      "id": "gym1_junior_03",
+      "display_name": "Coal Hauler",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "rolycoly",
+          "moveset": [
+            "smackdown",
+            "rapidspin",
+            "rockpolish",
+            "smokescreen"
+          ],
+          "level": 18
+        },
+        {
+          "species": "carkol",
+          "moveset": [
+            "flamecharge",
+            "smackdown",
+            "rapidspin",
+            "smokescreen"
+          ],
+          "level": 19
+        }
+      ],
+      "gym_order": 1,
+      "split": 1,
+      "leader_ace_level": 20,
+      "type_theme": "Rock",
+      "trainer_order": 3,
+      "lesson": "Rapid Spin and Rock Polish buy speed: hit before the stone gets going.",
+      "dialogue": {
+        "pre": "dlg_gym1_junior_03_pre",
+        "win": "dlg_gym1_junior_03_win",
+        "loss": "dlg_gym1_junior_03_loss"
+      },
+      "dialogue_text": {
+        "pre": "Last cart before the boss. Everything you brought up here, I haul back down.",
+        "player_win": "Fair load. Brock's just up the ladder. Mind the soot.",
+        "player_loss": "Too heavy for you yet. Back down the beams with you."
+      },
+      "rct": {
+        "identity": "gym1_junior_03",
+        "name": {
+          "literal": "Coal Hauler"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "rolycoly",
+            "moveset": [
+              "smackdown",
+              "rapidspin",
+              "rockpolish",
+              "smokescreen"
+            ],
+            "level": 18
+          },
+          {
+            "species": "carkol",
+            "moveset": [
+              "flamecharge",
+              "smackdown",
+              "rapidspin",
+              "smokescreen"
+            ],
+            "level": 19
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "rolycoly",
+              "moveset": [
+                "smackdown",
+                "rapidspin",
+                "rockpolish",
+                "smokescreen"
+              ],
+              "level": 18
+            },
+            {
+              "species": "carkol",
+              "moveset": [
+                "flamecharge",
+                "smackdown",
+                "rapidspin",
+                "smokescreen"
+              ],
+              "level": 19
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym1_junior_03",
+            "name": {
+              "literal": "Coal Hauler"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "rolycoly",
+                "moveset": [
+                  "smackdown",
+                  "rapidspin",
+                  "rockpolish",
+                  "smokescreen"
+                ],
+                "level": 18
+              },
+              {
+                "species": "carkol",
+                "moveset": [
+                  "flamecharge",
+                  "smackdown",
+                  "rapidspin",
+                  "smokescreen"
+                ],
+                "level": 19
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "rolycoly",
+              "moveset": [
+                "smackdown",
+                "rapidspin",
+                "rockpolish",
+                "smokescreen"
+              ],
+              "level": 18
+            },
+            {
+              "species": "nosepass",
+              "moveset": [
+                "rockthrow",
+                "block",
+                "thunderwave",
+                "harden"
+              ],
+              "level": 18
+            },
+            {
+              "species": "carkol",
+              "moveset": [
+                "flamecharge",
+                "smackdown",
+                "rapidspin",
+                "smokescreen"
+              ],
+              "level": 19,
+              "heldItem": "sitrus_berry"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym1_junior_03_challenge",
+            "name": {
+              "literal": "Coal Hauler"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "rolycoly",
+                "moveset": [
+                  "smackdown",
+                  "rapidspin",
+                  "rockpolish",
+                  "smokescreen"
+                ],
+                "level": 18
+              },
+              {
+                "species": "nosepass",
+                "moveset": [
+                  "rockthrow",
+                  "block",
+                  "thunderwave",
+                  "harden"
+                ],
+                "level": 18
+              },
+              {
+                "species": "carkol",
+                "moveset": [
+                  "flamecharge",
+                  "smackdown",
+                  "rapidspin",
+                  "smokescreen"
+                ],
+                "level": 19,
+                "heldItem": "sitrus_berry"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
       "id": "gym2_junior_01",
       "display_name": "Quay Swimmer",
       "class": "gym_trainer",
@@ -21805,6 +22061,262 @@
       }
     },
     {
+      "id": "gym3_junior_03",
+      "display_name": "Cable Rigger",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "plusle",
+          "moveset": [
+            "electroball",
+            "spark",
+            "encore",
+            "quickattack"
+          ],
+          "level": 28
+        },
+        {
+          "species": "luxio",
+          "moveset": [
+            "spark",
+            "bite",
+            "charge",
+            "leer"
+          ],
+          "level": 29
+        }
+      ],
+      "gym_order": 3,
+      "split": 3,
+      "leader_ace_level": 30,
+      "type_theme": "Electric",
+      "trainer_order": 3,
+      "lesson": "Electro Ball hits harder the faster it is: slow it down or outpace it.",
+      "dialogue": {
+        "pre": "dlg_gym3_junior_03_pre",
+        "win": "dlg_gym3_junior_03_win",
+        "loss": "dlg_gym3_junior_03_loss"
+      },
+      "dialogue_text": {
+        "pre": "You walked the whole catwalk to get here. The cable run is mine.",
+        "player_win": "Line's yours. Keep your hands off the rails on the way over.",
+        "player_loss": "Tripped the breaker. Reset and come back along the catwalk."
+      },
+      "rct": {
+        "identity": "gym3_junior_03",
+        "name": {
+          "literal": "Cable Rigger"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "plusle",
+            "moveset": [
+              "electroball",
+              "spark",
+              "encore",
+              "quickattack"
+            ],
+            "level": 28
+          },
+          {
+            "species": "luxio",
+            "moveset": [
+              "spark",
+              "bite",
+              "charge",
+              "leer"
+            ],
+            "level": 29
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "plusle",
+              "moveset": [
+                "electroball",
+                "spark",
+                "encore",
+                "quickattack"
+              ],
+              "level": 28
+            },
+            {
+              "species": "luxio",
+              "moveset": [
+                "spark",
+                "bite",
+                "charge",
+                "leer"
+              ],
+              "level": 29
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym3_junior_03",
+            "name": {
+              "literal": "Cable Rigger"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "plusle",
+                "moveset": [
+                  "electroball",
+                  "spark",
+                  "encore",
+                  "quickattack"
+                ],
+                "level": 28
+              },
+              {
+                "species": "luxio",
+                "moveset": [
+                  "spark",
+                  "bite",
+                  "charge",
+                  "leer"
+                ],
+                "level": 29
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "plusle",
+              "moveset": [
+                "electroball",
+                "spark",
+                "encore",
+                "quickattack"
+              ],
+              "level": 28
+            },
+            {
+              "species": "minun",
+              "moveset": [
+                "electroball",
+                "spark",
+                "encore",
+                "thunderwave"
+              ],
+              "level": 28
+            },
+            {
+              "species": "luxio",
+              "moveset": [
+                "spark",
+                "bite",
+                "charge",
+                "leer"
+              ],
+              "level": 29,
+              "heldItem": "cheri_berry"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym3_junior_03_challenge",
+            "name": {
+              "literal": "Cable Rigger"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "plusle",
+                "moveset": [
+                  "electroball",
+                  "spark",
+                  "encore",
+                  "quickattack"
+                ],
+                "level": 28
+              },
+              {
+                "species": "minun",
+                "moveset": [
+                  "electroball",
+                  "spark",
+                  "encore",
+                  "thunderwave"
+                ],
+                "level": 28
+              },
+              {
+                "species": "luxio",
+                "moveset": [
+                  "spark",
+                  "bite",
+                  "charge",
+                  "leer"
+                ],
+                "level": 29,
+                "heldItem": "cheri_berry"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
       "id": "gym4_junior_01",
       "display_name": "Glasshouse Gardener",
       "class": "gym_trainer",
@@ -22307,6 +22819,262 @@
                   "ancientpower",
                   "stunspore",
                   "knockoff"
+                ],
+                "level": 33,
+                "heldItem": "lum_berry"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym4_junior_03",
+      "display_name": "Bough Climber",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "sunflora",
+          "moveset": [
+            "gigadrain",
+            "razorleaf",
+            "leechseed",
+            "bulletseed"
+          ],
+          "level": 32
+        },
+        {
+          "species": "breloom",
+          "moveset": [
+            "forcepalm",
+            "megadrain",
+            "stunspore",
+            "headbutt"
+          ],
+          "level": 33
+        }
+      ],
+      "gym_order": 4,
+      "split": 4,
+      "leader_ace_level": 35,
+      "type_theme": "Grass",
+      "trainer_order": 3,
+      "lesson": "Stun Spore is the plan, not the damage: keep a cure or a switch ready.",
+      "dialogue": {
+        "pre": "dlg_gym4_junior_03_pre",
+        "win": "dlg_gym4_junior_03_win",
+        "loss": "dlg_gym4_junior_03_loss"
+      },
+      "dialogue_text": {
+        "pre": "Nobody gets up the living bough without a scratch. Let's give you one.",
+        "player_win": "Steady footing. The high canopy is all yours.",
+        "player_loss": "The bough threw you. Breathe, and climb it again."
+      },
+      "rct": {
+        "identity": "gym4_junior_03",
+        "name": {
+          "literal": "Bough Climber"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "sunflora",
+            "moveset": [
+              "gigadrain",
+              "razorleaf",
+              "leechseed",
+              "bulletseed"
+            ],
+            "level": 32
+          },
+          {
+            "species": "breloom",
+            "moveset": [
+              "forcepalm",
+              "megadrain",
+              "stunspore",
+              "headbutt"
+            ],
+            "level": 33
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "sunflora",
+              "moveset": [
+                "gigadrain",
+                "razorleaf",
+                "leechseed",
+                "bulletseed"
+              ],
+              "level": 32
+            },
+            {
+              "species": "breloom",
+              "moveset": [
+                "forcepalm",
+                "megadrain",
+                "stunspore",
+                "headbutt"
+              ],
+              "level": 33
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym4_junior_03",
+            "name": {
+              "literal": "Bough Climber"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "sunflora",
+                "moveset": [
+                  "gigadrain",
+                  "razorleaf",
+                  "leechseed",
+                  "bulletseed"
+                ],
+                "level": 32
+              },
+              {
+                "species": "breloom",
+                "moveset": [
+                  "forcepalm",
+                  "megadrain",
+                  "stunspore",
+                  "headbutt"
+                ],
+                "level": 33
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "sunflora",
+              "moveset": [
+                "gigadrain",
+                "razorleaf",
+                "leechseed",
+                "bulletseed"
+              ],
+              "level": 32
+            },
+            {
+              "species": "lombre",
+              "moveset": [
+                "bubblebeam",
+                "megadrain",
+                "furyswipes",
+                "leechseed"
+              ],
+              "level": 32
+            },
+            {
+              "species": "breloom",
+              "moveset": [
+                "forcepalm",
+                "megadrain",
+                "stunspore",
+                "headbutt"
+              ],
+              "level": 33,
+              "heldItem": "lum_berry"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym4_junior_03_challenge",
+            "name": {
+              "literal": "Bough Climber"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "sunflora",
+                "moveset": [
+                  "gigadrain",
+                  "razorleaf",
+                  "leechseed",
+                  "bulletseed"
+                ],
+                "level": 32
+              },
+              {
+                "species": "lombre",
+                "moveset": [
+                  "bubblebeam",
+                  "megadrain",
+                  "furyswipes",
+                  "leechseed"
+                ],
+                "level": 32
+              },
+              {
+                "species": "breloom",
+                "moveset": [
+                  "forcepalm",
+                  "megadrain",
+                  "stunspore",
+                  "headbutt"
                 ],
                 "level": 33,
                 "heldItem": "lum_berry"
@@ -23853,6 +24621,262 @@
       }
     },
     {
+      "id": "gym6_junior_04",
+      "display_name": "Stack Warden",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "chimecho",
+          "moveset": [
+            "extrasensory",
+            "takedown",
+            "yawn",
+            "healbell"
+          ],
+          "level": 43
+        },
+        {
+          "species": "medicham",
+          "moveset": [
+            "zenheadbutt",
+            "highjumpkick",
+            "calmmind",
+            "forcepalm"
+          ],
+          "level": 44
+        }
+      ],
+      "gym_order": 6,
+      "split": 6,
+      "leader_ace_level": 45,
+      "type_theme": "Psychic",
+      "trainer_order": 4,
+      "lesson": "Calm Mind stacks every turn it is left alone: pressure it early.",
+      "dialogue": {
+        "pre": "dlg_gym6_junior_04_pre",
+        "win": "dlg_gym6_junior_04_win",
+        "loss": "dlg_gym6_junior_04_loss"
+      },
+      "dialogue_text": {
+        "pre": "The gallery's west walk is shelved by thought. You'll need yours.",
+        "player_win": "Your mind held. The north arm is ahead.",
+        "player_loss": "You lost the thread. Go back to the stacks and find it."
+      },
+      "rct": {
+        "identity": "gym6_junior_04",
+        "name": {
+          "literal": "Stack Warden"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "chimecho",
+            "moveset": [
+              "extrasensory",
+              "takedown",
+              "yawn",
+              "healbell"
+            ],
+            "level": 43
+          },
+          {
+            "species": "medicham",
+            "moveset": [
+              "zenheadbutt",
+              "highjumpkick",
+              "calmmind",
+              "forcepalm"
+            ],
+            "level": 44
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "chimecho",
+              "moveset": [
+                "extrasensory",
+                "takedown",
+                "yawn",
+                "healbell"
+              ],
+              "level": 43
+            },
+            {
+              "species": "medicham",
+              "moveset": [
+                "zenheadbutt",
+                "highjumpkick",
+                "calmmind",
+                "forcepalm"
+              ],
+              "level": 44
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym6_junior_04",
+            "name": {
+              "literal": "Stack Warden"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "chimecho",
+                "moveset": [
+                  "extrasensory",
+                  "takedown",
+                  "yawn",
+                  "healbell"
+                ],
+                "level": 43
+              },
+              {
+                "species": "medicham",
+                "moveset": [
+                  "zenheadbutt",
+                  "highjumpkick",
+                  "calmmind",
+                  "forcepalm"
+                ],
+                "level": 44
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "chimecho",
+              "moveset": [
+                "extrasensory",
+                "takedown",
+                "yawn",
+                "healbell"
+              ],
+              "level": 43
+            },
+            {
+              "species": "beheeyem",
+              "moveset": [
+                "zenheadbutt",
+                "psybeam",
+                "headbutt",
+                "guardsplit"
+              ],
+              "level": 43
+            },
+            {
+              "species": "medicham",
+              "moveset": [
+                "zenheadbutt",
+                "highjumpkick",
+                "calmmind",
+                "forcepalm"
+              ],
+              "level": 44,
+              "heldItem": "lum_berry"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym6_junior_04_challenge",
+            "name": {
+              "literal": "Stack Warden"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "chimecho",
+                "moveset": [
+                  "extrasensory",
+                  "takedown",
+                  "yawn",
+                  "healbell"
+                ],
+                "level": 43
+              },
+              {
+                "species": "beheeyem",
+                "moveset": [
+                  "zenheadbutt",
+                  "psybeam",
+                  "headbutt",
+                  "guardsplit"
+                ],
+                "level": 43
+              },
+              {
+                "species": "medicham",
+                "moveset": [
+                  "zenheadbutt",
+                  "highjumpkick",
+                  "calmmind",
+                  "forcepalm"
+                ],
+                "level": 44,
+                "heldItem": "lum_berry"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
       "id": "gym7_junior_01",
       "display_name": "Assay Hand",
       "class": "gym_trainer",
@@ -24611,6 +25635,262 @@
                   "bugbite",
                   "coil",
                   "crunch"
+                ],
+                "level": 49,
+                "heldItem": "sitrus_berry"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "gym7_junior_04",
+      "display_name": "Stair Stoker",
+      "class": "gym_trainer",
+      "format": "GEN_9_SINGLES",
+      "team": [
+        {
+          "species": "heatmor",
+          "moveset": [
+            "firelash",
+            "slash",
+            "bugbite",
+            "honeclaws"
+          ],
+          "level": 48
+        },
+        {
+          "species": "talonflame",
+          "moveset": [
+            "flamecharge",
+            "acrobatics",
+            "aerialace",
+            "agility"
+          ],
+          "level": 49
+        }
+      ],
+      "gym_order": 7,
+      "split": 7,
+      "leader_ace_level": 50,
+      "type_theme": "Fire",
+      "trainer_order": 4,
+      "lesson": "Flame Charge speeds it up with every hit: answer the first one.",
+      "dialogue": {
+        "pre": "dlg_gym7_junior_04_pre",
+        "win": "dlg_gym7_junior_04_win",
+        "loss": "dlg_gym7_junior_04_loss"
+      },
+      "dialogue_text": {
+        "pre": "Halfway up the gantry is where the heat starts. Keep climbing if you can.",
+        "player_win": "You took the heat. The gallery's at the top.",
+        "player_loss": "Burned out on the stair. Cool off and come back up."
+      },
+      "rct": {
+        "identity": "gym7_junior_04",
+        "name": {
+          "literal": "Stair Stoker"
+        },
+        "battleFormat": "GEN_9_SINGLES",
+        "battleRules": {
+          "maxItemUses": 0,
+          "healPlayers": false,
+          "adjustPlayerLevels": false,
+          "adjustNPCLevels": false
+        },
+        "ai": {
+          "type": "rct",
+          "data": {
+            "moveBias": 1.08,
+            "switchBias": 0.45,
+            "statusMoveBias": 0.85,
+            "itemBias": 0.75,
+            "maxSelectMargin": 0.25
+          }
+        },
+        "bag": [],
+        "team": [
+          {
+            "species": "heatmor",
+            "moveset": [
+              "firelash",
+              "slash",
+              "bugbite",
+              "honeclaws"
+            ],
+            "level": 48
+          },
+          {
+            "species": "talonflame",
+            "moveset": [
+              "flamecharge",
+              "acrobatics",
+              "aerialace",
+              "agility"
+            ],
+            "level": 49
+          }
+        ]
+      },
+      "modes": {
+        "normal": {
+          "team": [
+            {
+              "species": "heatmor",
+              "moveset": [
+                "firelash",
+                "slash",
+                "bugbite",
+                "honeclaws"
+              ],
+              "level": 48
+            },
+            {
+              "species": "talonflame",
+              "moveset": [
+                "flamecharge",
+                "acrobatics",
+                "aerialace",
+                "agility"
+              ],
+              "level": 49
+            }
+          ],
+          "ai_profile": "gym_normal",
+          "rct": {
+            "identity": "gym7_junior_04",
+            "name": {
+              "literal": "Stair Stoker"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.08,
+                "switchBias": 0.45,
+                "statusMoveBias": 0.85,
+                "itemBias": 0.75,
+                "maxSelectMargin": 0.25
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "heatmor",
+                "moveset": [
+                  "firelash",
+                  "slash",
+                  "bugbite",
+                  "honeclaws"
+                ],
+                "level": 48
+              },
+              {
+                "species": "talonflame",
+                "moveset": [
+                  "flamecharge",
+                  "acrobatics",
+                  "aerialace",
+                  "agility"
+                ],
+                "level": 49
+              }
+            ]
+          }
+        },
+        "challenge": {
+          "team": [
+            {
+              "species": "heatmor",
+              "moveset": [
+                "firelash",
+                "slash",
+                "bugbite",
+                "honeclaws"
+              ],
+              "level": 48
+            },
+            {
+              "species": "darmanitan",
+              "moveset": [
+                "firepunch",
+                "firefang",
+                "headbutt",
+                "workup"
+              ],
+              "level": 48
+            },
+            {
+              "species": "talonflame",
+              "moveset": [
+                "flamecharge",
+                "acrobatics",
+                "aerialace",
+                "agility"
+              ],
+              "level": 49,
+              "heldItem": "sitrus_berry"
+            }
+          ],
+          "ai_profile": "gym_challenge",
+          "rct": {
+            "identity": "gym7_junior_04_challenge",
+            "name": {
+              "literal": "Stair Stoker"
+            },
+            "battleFormat": "GEN_9_SINGLES",
+            "battleRules": {
+              "maxItemUses": 0,
+              "healPlayers": false,
+              "adjustPlayerLevels": false,
+              "adjustNPCLevels": false
+            },
+            "ai": {
+              "type": "rct",
+              "data": {
+                "moveBias": 1.22,
+                "switchBias": 0.7,
+                "statusMoveBias": 1.0,
+                "itemBias": 0.95,
+                "maxSelectMargin": 0.14
+              }
+            },
+            "bag": [],
+            "team": [
+              {
+                "species": "heatmor",
+                "moveset": [
+                  "firelash",
+                  "slash",
+                  "bugbite",
+                  "honeclaws"
+                ],
+                "level": 48
+              },
+              {
+                "species": "darmanitan",
+                "moveset": [
+                  "firepunch",
+                  "firefang",
+                  "headbutt",
+                  "workup"
+                ],
+                "level": 48
+              },
+              {
+                "species": "talonflame",
+                "moveset": [
+                  "flamecharge",
+                  "acrobatics",
+                  "aerialace",
+                  "agility"
                 ],
                 "level": 49,
                 "heldItem": "sitrus_berry"

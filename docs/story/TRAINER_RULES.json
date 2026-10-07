@@ -6165,7 +6165,7 @@
     }
   ],
   "gym_trainers": {
-    "why": "The owner, 2026-10-06: each gym has its own trainers inside it, placed so a player must pass them, with teams that fit the leader's type and the level band -- attrition before the leader, as the mainline does. Counts follow docs/mechanics/GYM_INTERIORS.md section 4 (2, 2, 2, 2, 3, 3, 3, 4). Where each one stands is data/gym_junior_trainers.json, proved by tools/gym_trainers.py check.",
+    "why": "The owner, 2026-10-06: each gym has its own trainers inside it, placed so a player must pass them, with teams that fit the leader's type and the level band -- attrition before the leader, as the mainline does. Counts follow docs/mechanics/GYM_INTERIORS.md section 4 (2, 2, 2, 2, 3, 3, 3, 4), raised by the owner on 2026-10-07 to at least three a gym: 3, 2, 3, 3, 3, 4, 4, 4 (gym 2's door is the only must-pass ground once a rider can land anywhere open to the sky, and it holds two apart seats, not three: docs/world-building/GYM_TRAINERS.md). Where each one stands is data/gym_junior_trainers.json, proved by tools/gym_trainers.py check.",
     "level_rule": "Explicit levels. Every member is below the leader's ace (difficulty.gym_ace_levels), the gym's cap at relative_level_cap 0. The first junior a player meets tops out within one level of the strongest trainer on the route into the town, and each junior after tops out at or above the one before, in the order a player reaches them. Challenge keeps the same top level (the caps do not move) and adds one member, with a held item on the top member.",
     "ai_profiles": {
       "normal": "gym_normal",
@@ -6308,6 +6308,75 @@
           "pre": "You came over the wall. Most people take the stack that goes nowhere.",
           "player_win": "Good climbing, better battling. Brock is through the lit slot.",
           "player_loss": "The wall's still there. Climb it again when you're ready."
+        }
+      },
+      {
+        "id": "gym1_junior_03",
+        "gym": 1,
+        "name": "Coal Hauler",
+        "type": "Rock",
+        "lesson": "Rapid Spin and Rock Polish buy speed: hit before the stone gets going.",
+        "teams": {
+          "normal": [
+            {
+              "species": "rolycoly",
+              "moveset": [
+                "smackdown",
+                "rapidspin",
+                "rockpolish",
+                "smokescreen"
+              ],
+              "level": 18
+            },
+            {
+              "species": "carkol",
+              "moveset": [
+                "flamecharge",
+                "smackdown",
+                "rapidspin",
+                "smokescreen"
+              ],
+              "level": 19
+            }
+          ],
+          "challenge": [
+            {
+              "species": "rolycoly",
+              "moveset": [
+                "smackdown",
+                "rapidspin",
+                "rockpolish",
+                "smokescreen"
+              ],
+              "level": 18
+            },
+            {
+              "species": "nosepass",
+              "moveset": [
+                "rockthrow",
+                "block",
+                "thunderwave",
+                "harden"
+              ],
+              "level": 18
+            },
+            {
+              "species": "carkol",
+              "moveset": [
+                "flamecharge",
+                "smackdown",
+                "rapidspin",
+                "smokescreen"
+              ],
+              "level": 19,
+              "heldItem": "sitrus_berry"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "Last cart before the boss. Everything you brought up here, I haul back down.",
+          "player_win": "Fair load. Brock's just up the ladder. Mind the soot.",
+          "player_loss": "Too heavy for you yet. Back down the beams with you."
         }
       },
       {
@@ -6587,6 +6656,75 @@
         }
       },
       {
+        "id": "gym3_junior_03",
+        "gym": 3,
+        "name": "Cable Rigger",
+        "type": "Electric",
+        "lesson": "Electro Ball hits harder the faster it is: slow it down or outpace it.",
+        "teams": {
+          "normal": [
+            {
+              "species": "plusle",
+              "moveset": [
+                "electroball",
+                "spark",
+                "encore",
+                "quickattack"
+              ],
+              "level": 28
+            },
+            {
+              "species": "luxio",
+              "moveset": [
+                "spark",
+                "bite",
+                "charge",
+                "leer"
+              ],
+              "level": 29
+            }
+          ],
+          "challenge": [
+            {
+              "species": "plusle",
+              "moveset": [
+                "electroball",
+                "spark",
+                "encore",
+                "quickattack"
+              ],
+              "level": 28
+            },
+            {
+              "species": "minun",
+              "moveset": [
+                "electroball",
+                "spark",
+                "encore",
+                "thunderwave"
+              ],
+              "level": 28
+            },
+            {
+              "species": "luxio",
+              "moveset": [
+                "spark",
+                "bite",
+                "charge",
+                "leer"
+              ],
+              "level": 29,
+              "heldItem": "cheri_berry"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "You walked the whole catwalk to get here. The cable run is mine.",
+          "player_win": "Line's yours. Keep your hands off the rails on the way over.",
+          "player_loss": "Tripped the breaker. Reset and come back along the catwalk."
+        }
+      },
+      {
         "id": "gym4_junior_01",
         "gym": 4,
         "name": "Glasshouse Gardener",
@@ -6722,6 +6860,75 @@
           "pre": "One line of piers still has its second stone. You saw which?",
           "player_win": "Erika is in the court below. Drop carefully.",
           "player_loss": "Down in the mulch again. The ladder is by the wall."
+        }
+      },
+      {
+        "id": "gym4_junior_03",
+        "gym": 4,
+        "name": "Bough Climber",
+        "type": "Grass",
+        "lesson": "Stun Spore is the plan, not the damage: keep a cure or a switch ready.",
+        "teams": {
+          "normal": [
+            {
+              "species": "sunflora",
+              "moveset": [
+                "gigadrain",
+                "razorleaf",
+                "leechseed",
+                "bulletseed"
+              ],
+              "level": 32
+            },
+            {
+              "species": "breloom",
+              "moveset": [
+                "forcepalm",
+                "megadrain",
+                "stunspore",
+                "headbutt"
+              ],
+              "level": 33
+            }
+          ],
+          "challenge": [
+            {
+              "species": "sunflora",
+              "moveset": [
+                "gigadrain",
+                "razorleaf",
+                "leechseed",
+                "bulletseed"
+              ],
+              "level": 32
+            },
+            {
+              "species": "lombre",
+              "moveset": [
+                "bubblebeam",
+                "megadrain",
+                "furyswipes",
+                "leechseed"
+              ],
+              "level": 32
+            },
+            {
+              "species": "breloom",
+              "moveset": [
+                "forcepalm",
+                "megadrain",
+                "stunspore",
+                "headbutt"
+              ],
+              "level": 33,
+              "heldItem": "lum_berry"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "Nobody gets up the living bough without a scratch. Let's give you one.",
+          "player_win": "Steady footing. The high canopy is all yours.",
+          "player_loss": "The bough threw you. Breathe, and climb it again."
         }
       },
       {
@@ -7139,6 +7346,75 @@
         }
       },
       {
+        "id": "gym6_junior_04",
+        "gym": 6,
+        "name": "Stack Warden",
+        "type": "Psychic",
+        "lesson": "Calm Mind stacks every turn it is left alone: pressure it early.",
+        "teams": {
+          "normal": [
+            {
+              "species": "chimecho",
+              "moveset": [
+                "extrasensory",
+                "takedown",
+                "yawn",
+                "healbell"
+              ],
+              "level": 43
+            },
+            {
+              "species": "medicham",
+              "moveset": [
+                "zenheadbutt",
+                "highjumpkick",
+                "calmmind",
+                "forcepalm"
+              ],
+              "level": 44
+            }
+          ],
+          "challenge": [
+            {
+              "species": "chimecho",
+              "moveset": [
+                "extrasensory",
+                "takedown",
+                "yawn",
+                "healbell"
+              ],
+              "level": 43
+            },
+            {
+              "species": "beheeyem",
+              "moveset": [
+                "zenheadbutt",
+                "psybeam",
+                "headbutt",
+                "guardsplit"
+              ],
+              "level": 43
+            },
+            {
+              "species": "medicham",
+              "moveset": [
+                "zenheadbutt",
+                "highjumpkick",
+                "calmmind",
+                "forcepalm"
+              ],
+              "level": 44,
+              "heldItem": "lum_berry"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "The gallery's west walk is shelved by thought. You'll need yours.",
+          "player_win": "Your mind held. The north arm is ahead.",
+          "player_loss": "You lost the thread. Go back to the stacks and find it."
+        }
+      },
+      {
         "id": "gym7_junior_01",
         "gym": 7,
         "name": "Assay Hand",
@@ -7343,6 +7619,75 @@
           "pre": "Four hoods, one breathing. You have to get past me to pick.",
           "player_win": "The leap is yours. Blaine is below the flue.",
           "player_loss": "Wrong hood. The geyser will bring you back up."
+        }
+      },
+      {
+        "id": "gym7_junior_04",
+        "gym": 7,
+        "name": "Stair Stoker",
+        "type": "Fire",
+        "lesson": "Flame Charge speeds it up with every hit: answer the first one.",
+        "teams": {
+          "normal": [
+            {
+              "species": "heatmor",
+              "moveset": [
+                "firelash",
+                "slash",
+                "bugbite",
+                "honeclaws"
+              ],
+              "level": 48
+            },
+            {
+              "species": "talonflame",
+              "moveset": [
+                "flamecharge",
+                "acrobatics",
+                "aerialace",
+                "agility"
+              ],
+              "level": 49
+            }
+          ],
+          "challenge": [
+            {
+              "species": "heatmor",
+              "moveset": [
+                "firelash",
+                "slash",
+                "bugbite",
+                "honeclaws"
+              ],
+              "level": 48
+            },
+            {
+              "species": "darmanitan",
+              "moveset": [
+                "firepunch",
+                "firefang",
+                "headbutt",
+                "workup"
+              ],
+              "level": 48
+            },
+            {
+              "species": "talonflame",
+              "moveset": [
+                "flamecharge",
+                "acrobatics",
+                "aerialace",
+                "agility"
+              ],
+              "level": 49,
+              "heldItem": "sitrus_berry"
+            }
+          ]
+        },
+        "dialogue_text": {
+          "pre": "Halfway up the gantry is where the heat starts. Keep climbing if you can.",
+          "player_win": "You took the heat. The gallery's at the top.",
+          "player_loss": "Burned out on the stair. Cool off and come back up."
         }
       },
       {
