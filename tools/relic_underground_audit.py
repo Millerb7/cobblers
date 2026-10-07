@@ -47,7 +47,11 @@ What must hold:
              data/progression.json's enum order (the owner's choice, written HERE, not read from the relic data);
              nothing else anywhere calls a transition that runs the guard's function; the built function moves @s
              only (no @a/@e/@p/@r), only near the guard, by one tp, which is the edge's target. The way out
-             (the inside guard) is ungated and lands on the street the doorstep walk reaches
+             (the inside guard) is ungated and lands on the street the doorstep walk reaches. Since 2026-10-07
+             (review N8, 'no player reaches the finale without a badge'): every setter of rift_crisis_pending in
+             data/quests.json needs a declared badge flag, and the built admit function refuses, fail closed and
+             before its tp or its admit score, a player without each of those flags' advancements, and on no
+             other flag (finale_badges; the relic data's own requires_flag is not read)
   spawns     every column of the hall, gallery, passage and the HQ's way down (this audit's own derivation) is inside
              a spawn-free zone in data/spawn_suppression.json, and no Habitat Block stands in one (the owner,
              2026-10-02: nothing spawns there)
@@ -308,23 +312,53 @@ REACH = re.compile(r"^execute unless entity @s\[x=(-?\d+),y=(-?\d+),z=(-?\d+),di
                    r"run return fail$")
 
 
-def _holds(c, stage):
-    """Does condition c hold for a player at this main-quest stage? Only what the guard may test is understood;
-    anything else raises, and the caller reports it."""
+FLAG_LOCK = re.compile(r"^execute unless entity @s\[advancements=\{([a-z0-9_.-]+):flag/([a-z0-9_]+)=true\}\] "
+                       r"run return fail$")
+
+
+def _holds(c, stage, flags=()):
+    """Does condition c hold for a player at this main-quest stage who holds these progression flags? Only what the
+    guard may test is understood; anything else raises, and the caller reports it."""
     k = c.get("kind")
     if k == "always":
         return True
     if k == "all":
-        return all(_holds(x, stage) for x in c["conditions"])
+        return all(_holds(x, stage, flags) for x in c["conditions"])
     if k == "any":
-        return any(_holds(x, stage) for x in c["conditions"])
+        return any(_holds(x, stage, flags) for x in c["conditions"])
     if k == "not":
-        return not _holds(c["condition"], stage)
+        return not _holds(c["condition"], stage, flags)
     if k == "progression_equals" and c.get("field") == STAGE_FIELD:
         return c["value"] == stage
     if k == "progression_in" and c.get("field") == STAGE_FIELD:
         return stage in c["values"]
+    if k == "flag":
+        return c.get("flag") in flags
     raise ValueError("a condition the guard audit cannot evaluate: %s" % (c,))
+
+
+def finale_badges(qs, prog):
+    """({flag ids}, problems): the badge the finale's first stage needs, read from data/quests.json's setters of
+    OWNER_STAGE (never from the relic data the generator reads). The owner, 2026-10-07 (review N8): 'no player reaches
+    the finale without a badge'. Every transition that sets the stage to OWNER_STAGE must require at least one flag
+    declared in data/progression.json; the guard's function must then refuse a player missing any of them, so a
+    player who reached the stage before its setters were gated is still held to the badge."""
+    probs, need = [], set()
+    declared = {f.get("id") for f in prog.get("flags") or []}
+    setters = [t for q in qs["quests"] for t in q.get("transitions") or []
+               if any(e.get("kind") == "set_progression" and e.get("field") == STAGE_FIELD
+                      and e.get("value") == OWNER_STAGE for e in t.get("effects") or [])]
+    if not setters:
+        probs.append("no transition in data/quests.json sets %s" % OWNER_STAGE)
+    for t in setters:
+        flags = {c.get("flag") for c in t.get("conditions") or [] if c.get("kind") == "flag"}
+        if not flags:
+            probs.append("%s sets %s without a badge flag (the owner, 2026-10-07: no player reaches the finale "
+                         "without a badge)" % (t.get("id"), OWNER_STAGE))
+        for f in sorted(flags - declared):
+            probs.append("%s needs flag %r, which data/progression.json does not declare" % (t.get("id"), f))
+        need |= flags & declared
+    return need, probs
 
 
 def guard_edges(spec, zone):
@@ -340,6 +374,9 @@ def guard_edges(spec, zone):
     if OWNER_STAGE not in vals:
         return edges, ["%s is not a value of %s in data/progression.json" % (OWNER_STAGE, STAGE_FIELD)]
     want = set(vals[vals.index(OWNER_STAGE):])
+    badges, bprobs = finale_badges(qs, prog)
+    probs += bprobs
+    ns = prog.get("namespace") or "cobblers"
     h = spec["geometry"]["hq"]
     for key, side, gated in (("guard", "admit", True), ("inside_guard", "release", False)):
         g = h[key]
@@ -379,8 +416,9 @@ def guard_edges(spec, zone):
                 probs.append("%s runs %s from %s, not from a stage-gated option" % (conv["id"], fname, how))
                 continue
             try:
-                shown = {v for v in vals if _holds(r.get("visible_when") or {"kind": "always"}, v)}
-                passes = {v for v in vals if all(_holds(c, v) for c in t.get("conditions") or [])}
+                # a player holding the finale's badge: what the dialogue decides on the stage alone
+                shown = {v for v in vals if _holds(r.get("visible_when") or {"kind": "always"}, v, badges)}
+                passes = {v for v in vals if all(_holds(c, v, badges) for c in t.get("conditions") or [])}
             except ValueError as e:
                 probs.append("%s option %s: %s" % (conv["id"], r.get("id"), e))
                 continue
@@ -406,6 +444,25 @@ def guard_edges(spec, zone):
         if len(reach) != 1 or cmds.index(reach[0].group(0)) > cmds.index(tps[0].group(0)):
             probs.append("%s does not refuse, before its tp, a player away from the guard" % fname)
             continue
+        if gated:
+            # the badge lock, in the function itself: for every flag a setter of OWNER_STAGE needs, a fail-closed
+            # refusal before the tp and before any score the zone's qualify reads (zone.pass.admit)
+            first_effect = min([cmds.index(tps[0].group(0))] +
+                               [i for i, c_ in enumerate(cmds) if c_.startswith("scoreboard players set @s ")])
+            locks = {}
+            for i, c_ in enumerate(cmds):
+                m = FLAG_LOCK.match(c_)
+                if m:
+                    locks.setdefault((m.group(1), m.group(2)), i)
+            for b in sorted(badges):
+                at = locks.get((ns, b))
+                if at is None or at > first_effect:
+                    probs.append("%s does not refuse, before it moves or admits anyone, a player without %s:flag/%s"
+                                 % (fname, ns, b))
+            for (lns, lf) in sorted(locks):
+                if lns != ns or lf not in badges:
+                    probs.append("%s refuses on %s:flag/%s, which no setter of %s requires: a player who holds the "
+                                 "badge could be turned back" % (fname, lns, lf, OWNER_STAGE))
         seat = tuple(int(v) for v in reach[0].groups()[:3])
         if list(seat) != list(g["at"]):
             probs.append("%s tests nearness to %s, but the %s stands at %s" % (fname, seat, key, g["at"]))

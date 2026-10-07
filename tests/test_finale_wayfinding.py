@@ -14,6 +14,7 @@ from data/progression.json, so a renamed stage fails here instead of silently ma
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 
 import pytest
@@ -34,6 +35,13 @@ def _stages():
     return f["allowed_values"]
 
 
+def _badges():
+    """The eight gym badge flags, from data/progression.json (gym<N>_cleared)."""
+    out = sorted(f["id"] for f in _doc("progression.json")["flags"] if re.fullmatch(r"gym[1-8]_cleared", f["id"]))
+    assert len(out) == 8, out
+    return frozenset(out)
+
+
 def _holds(cond, state):
     k = cond["kind"]
     if k == "always":
@@ -44,15 +52,19 @@ def _holds(cond, state):
         return state.get(cond["field"]) == cond["value"]
     if k == "progression_in":
         return state.get(cond["field"]) in cond["values"]
-    if k in ("flag", "starter_chosen"):
-        return False        # the finale's players are already past every carry; no carry rule should fire here
+    if k == "flag":
+        return cond["flag"] in state.get("flags", ())
+    if k == "starter_chosen":
+        return state.get("starter", False)
     raise AssertionError("condition kind %s is not modelled by this test" % k)
 
 
-def heard(conv_id, stage):
-    """The texts a player at `stage` (every other field unset) hears on opening the conversation."""
+def heard(conv_id, stage, flags=None, starter=True):
+    """The texts a player at `stage` (every other field unset) hears on opening the conversation. Since 2026-10-07
+    (review N8) only an Earth Badge holder reaches rift_crisis_pending, so the default player holds all eight badges
+    and a starter; the badge carries read only stages before the finale's, so none of them fires here."""
     c = CONVS[conv_id]
-    state = {STAGE: stage}
+    state = {STAGE: stage, "flags": _badges() if flags is None else frozenset(flags), "starter": starter}
     rule = next(r for r in sorted(c["entry_rules"], key=lambda r: r["priority"]) if _holds(r["when"], state))
     nodes = {n["id"]: n for n in c["nodes"]}
     out, seen, nid = [], set(), rule["node"]
