@@ -157,9 +157,16 @@ def test_the_retire_function_targets_exactly_the_recorded_second_spawner(files):
     for l in body:
         if " setblock " in l:
             assert l.startswith('execute if block %d %d %d rctmod:trainer_spawner{TrainerIds:["%s"]} ' % (sx, sy, sz, cid))
-    kill = [l for l in body if " kill " in l]
-    assert len(kill) == 1 and kill[0].startswith("execute positioned %d.5 %d %d.5 unless entity @a[" % (sx, sy, sz))
-    assert 'nbt={TrainerId:"%s",InBattle:0b}' % cid in kill[0]
+    # every kill: only while the second spawner stands (a re-run kills nothing), with nobody near the old seat, never in
+    # a battle; one for the Challenge id, one for any Normal-id trainer but the kept one; all before the setblocks
+    # (the 2026-10-07 integration fix of audit P1:retire / P1:retire_kills)
+    kill = [i for i, l in enumerate(body) if " kill " in l]
+    guard = ('execute if block %d %d %d rctmod:trainer_spawner{TrainerIds:["%s"]} positioned %d.5 %d %d.5 unless entity @a['
+             % (sx, sy, sz, cid, sx, sy, sz))
+    assert len(kill) == 2 and all(body[i].startswith(guard) for i in kill)
+    assert 'nbt={TrainerId:"%s",InBattle:0b}]' % cid in body[kill[0]]
+    assert 'nbt={TrainerId:"kanto_brock",InBattle:0b},tag=!cobblers_keep_leader]' in body[kill[1]]
+    assert max(kill) < min(i for i, l in enumerate(body) if " setblock " in l)
     nx, ny, nz = _brock_seat()
     assert not any("%d %d %d" % (nx, ny, nz) in l for l in body), "the retire function must not touch the one spawner"
 
