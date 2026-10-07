@@ -565,7 +565,9 @@ def leader_cycle_lines(challenge=False):
         flag = flag_of.get(up)
         if not flag:
             continue
-        x, y, z = ent["spawner"]["at"]
+        # where the Challenge leader stands: its second spawner, or for a one-leader gym (data/challenge_mode.json
+        # single_leader.rollout) the one spawner the swap drives
+        x, y, z = CM.challenge_seat(up, ent)
         me = '@e[type=rctmod:trainer,x=%d.5,y=%d,z=%d.5,distance=..24,nbt={TrainerId:"%s"}]' % (x, y, z, cid)
         ch += ["# %s, Challenge mode's leader: no rematch once the badge is held" % cid,
                "execute as %s at @s if entity @a[distance=..9.0,advancements={%s:flag/%s=true}] "

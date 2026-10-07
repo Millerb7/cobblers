@@ -28,7 +28,13 @@ docs/mechanics/OAK_AND_CHALLENGE.md, which also lists what an audit must check. 
              trainers clock, every 10 ticks) while a player is within NEAR, the chunk is loaded, the block is not
              already there and the two cells over it are air: no re-apply step is needed, and an export that erases it
              is repaired the next time a player comes near.
-  routes     <id>_challenge for every seated trainer whose record has a Challenge team: the same files as the Normal
+  one leader the owner's 2026-10-07 decision (docs/mechanics/ONE_LEADER_SWAP.md): a boss named in data/challenge_mode.json
+             single_leader.rollout gets NO second spawner. The cycle instead swaps its ONE spawner's TrainerIds and its
+             standing trainer's TrainerId to <id>_challenge while the nearest player within REACH of the spawner carries
+             the mode tag, and back otherwise, never while either id is InBattle (single_lines). The second spawner a
+             world already holds is removed once by cobblers:trainers/challenge/retire_<id> (reapply step R17L), at its
+             recorded data position, and read back by single_leader_verify. Bosses not in the rollout: unchanged.
+  routes    <id>_challenge for every seated trainer whose record has a Challenge team: the same files as the Normal
              seat (team from modes.challenge.rct), series cobblers_challenge. tools/route_trainers.py's cycle swaps
              the one standing entity's TrainerId to whichever mode the nearest player is in (ASSUMED, experiment E7).
 
@@ -47,6 +53,9 @@ SPAWNER = "rctmod:trainer_spawner"
 # a second spawner is only set while a player is this near it: no block checks run for an empty gym, and a spawner
 # spawns its trainer only for a nearby player anyway
 NEAR = 48
+RCT_CONFIG = ROOT / "modpack" / "config" / "rctmod-server.toml"
+# the radius every other selector in this pack uses around a leader's seat (tools/route_trainers.py leader_cycle_lines)
+SEAT_BOX = 24
 
 
 class ChallengeError(SystemExit):
@@ -178,10 +187,18 @@ def boss_files(overrides, with_refusals, league_lines):
 
 
 def spawner_files(bosses):
-    """The second spawner per boss: one place function each, and the lines the trainers cycle runs."""
+    """The second spawner per boss: one place function each, and the lines the trainers cycle runs. A boss in the
+    single-leader rollout gets no place function and no place line: its swap lines and its one-shot retire function
+    instead, in the same position in the cycle."""
     out, cycle = {}, ["# the second spawners: set while a player is within %d, the chunk is loaded, the block is "
                       "missing and the two cells over it are air" % NEAR]
-    for _rec, _up, cid, e in bosses:
+    single = rollout()
+    for _rec, up, cid, e in bosses:
+        if up in single:
+            seat = normal_seat(up, e)
+            cycle += single_lines(up, cid, seat, reach())
+            out["data/%s/function/trainers/challenge/retire_%s.mcfunction" % (NS, cid)] = retire_lines(up, cid, e)
+            continue
         x, y, z = e["spawner"]["at"]
         out["data/%s/function/trainers/challenge/place_%s.mcfunction" % (NS, cid)] = [
             "# %s's spawner, set into the floor and powered from below (EXP-013 E2): %s" % (cid, e["spawner"]["why"]),
@@ -198,8 +215,202 @@ def spawner_files(bosses):
 
 
 def spawner_seats(overrides):
-    """[(challenge id, (x, y, z), badge flag or None, upstream id)] for the hold-off lines."""
-    return [(cid, tuple(e["spawner"]["at"]), None, up) for _r, up, cid, e in boss_ids(overrides)]
+    """[(challenge id, (x, y, z), badge flag or None, upstream id)] for the hold-off lines: where the Challenge
+    leader stands, which for a single-leader boss is its one spawner."""
+    return [(cid, challenge_seat(up, e), None, up) for _r, up, cid, e in boss_ids(overrides)]
+
+
+# ------------------------------------------------------------------------------------------------ one leader
+def rollout():
+    """The upstream ids that stand as ONE leader (data/challenge_mode.json single_leader.rollout: a list, or "all").
+    An id that is not one of the bosses fails rather than silently doing nothing."""
+    d = doc()
+    r = (d.get("single_leader") or {}).get("rollout") or []
+    if r == "all":
+        return set(d["bosses"])
+    if not isinstance(r, list):
+        raise ChallengeError("single_leader.rollout must be a list of boss ids or \"all\", not %r" % (r,))
+    unknown = sorted(set(r) - set(d["bosses"]))
+    if unknown:
+        raise ChallengeError("single_leader.rollout names %s, which data/challenge_mode.json bosses does not" % unknown)
+    return set(r)
+
+
+def _gym_leader_records():
+    """{upstream id: (gym id, leader record)} from data/gym_buildings/*.json, the records that build the spawner."""
+    out = {}
+    for f in sorted((ROOT / "data" / "gym_buildings").glob("gym*.json")):
+        g = json.loads(f.read_text(encoding="utf-8"))
+        lead = g.get("leader") or {}
+        if lead.get("id") and lead.get("spawner"):
+            out[lead["id"]] = (g["id"], lead)
+    return out
+
+
+def normal_seat(up, entry):
+    """The Normal leader's one spawner, from the data that builds it: data/gym_buildings leader.spawner, else
+    data/gym_interiors.json expect_spawner_at (Misty's template spawner), else the entry's own
+    single_leader.normal_at (the League's template spawners, which no other record carries). None of these is read
+    from a world. A rollout boss with none fails: its swap would have nothing to drive."""
+    gb = _gym_leader_records().get(up)
+    if gb:
+        return tuple(gb[1]["spawner"])
+    for g in json.loads((ROOT / "data" / "gym_interiors.json").read_text(encoding="utf-8"))["gyms"]:
+        lead = g.get("leader") or {}
+        if g.get("built") and lead.get("id") == up and lead.get("expect_spawner_at"):
+            return tuple(lead["expect_spawner_at"])
+    at = (entry.get("single_leader") or {}).get("normal_at")
+    if at:
+        return tuple(at)
+    raise ChallengeError("%s is in single_leader.rollout but no record gives its Normal spawner: add "
+                         "bosses.%s.single_leader.normal_at, measured from its template" % (up, up))
+
+
+def challenge_seat(up, entry):
+    """Where the Challenge leader stands: the one spawner for a rollout boss, the second spawner otherwise."""
+    return normal_seat(up, entry) if up in rollout() else tuple(entry["spawner"]["at"])
+
+
+def reach():
+    """How near a player must be for its mode to choose the leader: rctmod's server-wide forceBattleMaxDistance
+    (modpack/config/rctmod-server.toml), the farthest a trainer starts a battle on sight, plus one -- the same
+    `sight + 1` the route swap uses (tools/route_trainers.py). Within it the leader has the right id before any
+    battle can start; beyond it nobody can start one, so the leader may go back to Normal. Read from the file, not a
+    constant, so a config change moves it."""
+    m = None
+    for line in RCT_CONFIG.read_text(encoding="utf-8").splitlines():
+        s = line.strip()
+        if s.startswith("forceBattleMaxDistance") and "=" in s:
+            m = float(s.split("=", 1)[1].strip())
+    if m is None:
+        raise ChallengeError("%s has no forceBattleMaxDistance" % RCT_CONFIG)
+    return m + 1
+
+
+def single_lines(up, cid, seat, near):
+    """One leader per gym: the spawner's TrainerIds and its standing trainer's TrainerId follow the nearest player
+    within `near` of the SPAWNER (both decided from the same point, so block and entity cannot disagree), the
+    Challenge id while that player carries the mode tag, the Normal id otherwise and when nobody is near.
+
+    Never during a battle: rctmod's documented InBattle entity tag (docs/research/notes/rct-arena-capabilities.md).
+    The entity is only merged while it reads InBattle:0b, and the block is held while either id near the seat reads
+    InBattle:1b, so a battle never sees its spawner change under it. If rctmod never writes that tag, the entity
+    lines match nothing and the leader stays Normal (a Challenge player is refused, never mis-teamed).
+
+    Block first, entity second, in one function run: the trainer's setTrainerId notifies its spawner
+    (notifyChangeTrainerId, RCT_PER_PLAYER_MODE.md section 2), and the spawner then already holds the new id.
+    ASSUMED, experiment E7: that data merge swaps the team and that the spawner accepts the merge."""
+    x, y, z = seat
+    tag = mode_tag()
+    box = "x=%d.5,y=%d,z=%d.5,distance=..%d" % (x, y, z, SEAT_BOX)
+    busy = " ".join('unless entity @e[type=rctmod:trainer,%s,nbt={TrainerId:"%s",InBattle:1b}]' % (box, i)
+                    for i in (up, cid))
+    head = "execute if loaded %d %d %d if block %d %d %d %s %s positioned %d.5 %d %d.5" % (
+        x, y, z, x, y, z, SPAWNER, busy, x, y, z)
+    holds = lambda i: 'unless block %d %d %d %s{TrainerIds:["%s"]}' % (x, y, z, SPAWNER, i)
+    block = lambda i: 'run data merge block %d %d %d {TrainerIds:["%s"]}' % (x, y, z, i)
+    ent = lambda i: '@e[type=rctmod:trainer,%s,nbt={TrainerId:"%s",InBattle:0b},limit=1]' % (box, i)
+    entity = lambda frm, to: "run data merge entity %s {TrainerId:\"%s\"}" % (ent(frm), to)
+    n = "%g" % near
+    return [
+        "# %s: ONE leader (single_leader.rollout). The nearest player within %s of the spawner chooses the id, never "
+        "in a battle; the spawner first, then the trainer" % (up, n),
+        "%s as @p[distance=..%s] if entity @s[tag=%s] %s %s" % (head, n, tag, holds(cid), block(cid)),
+        "%s as @p[distance=..%s] unless entity @s[tag=%s] %s %s" % (head, n, tag, holds(up), block(up)),
+        "%s unless entity @a[distance=..%s] %s %s" % (head, n, holds(up), block(up)),
+        "%s as @p[distance=..%s] if entity @s[tag=%s] %s" % (head, n, tag, entity(up, cid)),
+        "%s as @p[distance=..%s] unless entity @s[tag=%s] %s" % (head, n, tag, entity(cid, up)),
+        "%s unless entity @a[distance=..%s] %s" % (head, n, entity(cid, up)),
+    ]
+
+
+def restore_blocks(up, entry):
+    """(floor, under): what the second spawner and its redstone block replaced, from the record that built the
+    floor. A gym_buildings gym: its own voxel model (tools/gym_buildings.py), so nothing is copied by hand. Otherwise
+    (templates) the entry's single_leader.restore, or a failure naming it."""
+    x, y, z = entry["spawner"]["at"]
+    if entry["spawner"].get("measured_by") == "gym_buildings":
+        gb = _gym_leader_records().get(up)
+        if not gb:
+            raise ChallengeError("%s is measured_by gym_buildings but no data/gym_buildings record has it" % up)
+        sys.path.insert(0, str(ROOT / "tools"))
+        import gym_buildings as GB
+        e, _r, _l = GB.build_one(GB.records(gb[0])[0][1])
+        nx, ny, nz = gb[1]["spawner"]
+        if not e.at(nx, ny, nz).startswith('%s{TrainerIds:["%s"]}' % (SPAWNER, up)):
+            raise ChallengeError("%s's gym model has %s at its spawner %s" % (up, e.at(nx, ny, nz), (nx, ny, nz)))
+        return e.at(x, y, z), e.at(x, y - 1, z)
+    r = (entry.get("single_leader") or {}).get("restore") or {}
+    if not (r.get("floor") and r.get("under")):
+        raise ChallengeError("%s is in single_leader.rollout from a template: add bosses.%s.single_leader.restore "
+                             "{floor, under}, measured from its template" % (up, up))
+    return r["floor"], r["under"]
+
+
+def retire_lines(up, cid, entry):
+    """Once, from reapply step R17L: the second spawner at its recorded position (bosses[].spawner.at) back to the
+    floor it replaced, its redstone block back to what was under it, and any standing <id>_challenge trainer near it
+    removed, never in a battle and never while a player is near (with nobody near the swap holds the one leader at
+    the Normal id, so a Challenge-id trainer then is the second spawner's). Every line tests the block first: a
+    world that never had the second spawner is left alone."""
+    x, y, z = entry["spawner"]["at"]
+    floor, under = restore_blocks(up, entry)
+    has = 'if block %d %d %d %s{TrainerIds:["%s"]}' % (x, y, z, SPAWNER, cid)
+    return [
+        "# %s: retire the second spawner at (%d, %d, %d) now that %s stands as one leader (docs/mechanics/"
+        "ONE_LEADER_SWAP.md); run once by reapply step R17L with the chunks held" % (cid, x, y, z, up),
+        "execute %s if block %d %d %d minecraft:redstone_block run setblock %d %d %d %s" % (has, x, y - 1, z, x, y - 1, z, under),
+        "execute %s run setblock %d %d %d %s" % (has, x, y, z, floor),
+        'execute positioned %d.5 %d %d.5 unless entity @a[distance=..%g] run kill @e[type=rctmod:trainer,distance=..%d,'
+        'nbt={TrainerId:"%s",InBattle:0b}]' % (x, y, z, reach(), SEAT_BOX, cid),
+    ]
+
+
+def retire_hold(overrides=None):
+    """[(x0, z0, x1, z1)] the chunks R17L forceloads: the seat box around each rollout boss's second spawner and its
+    Normal spawner, so the block tests and the entity selectors see loaded chunks."""
+    d = doc()
+    out = []
+    for up in sorted(rollout()):
+        e = d["bosses"][up]
+        xs, zs = [], []
+        for (x, _y, z) in (tuple(e["spawner"]["at"]), normal_seat(up, e)):
+            xs += [x - SEAT_BOX, x + SEAT_BOX]
+            zs += [z - SEAT_BOX, z + SEAT_BOX]
+        out.append((min(xs), min(zs), max(xs), max(zs)))
+    return out
+
+
+def retire_functions():
+    """The function ids R17L runs, in rollout order."""
+    return ["%s:trainers/challenge/retire_%s" % (NS, challenge_id(up)) for up in sorted(rollout())]
+
+
+def single_leader_verify(rc):
+    """Read back from the world, after R17L, for each rollout boss: the second spawner gone, the one spawner present,
+    no Challenge-id trainer by the old cell, and -- only while no player is near, which it reports -- the spawner
+    reading the Normal id. `rc` sends one command and returns its text; `execute if` answers "Test passed" or
+    "Test failed". Returns the problems."""
+    d, problems = doc(), []
+    for up in sorted(rollout()):
+        e, cid = d["bosses"][up], challenge_id(up)
+        sx, sy, sz = e["spawner"]["at"]
+        nx, ny, nz = normal_seat(up, e)
+        if "passed" in rc("execute if block %d %d %d %s" % (sx, sy, sz, SPAWNER)):
+            problems.append("%s: the second spawner at (%d, %d, %d) is still there" % (cid, sx, sy, sz))
+        if "passed" not in rc("execute if block %d %d %d %s" % (nx, ny, nz, SPAWNER)):
+            problems.append("%s: no spawner at its seat (%d, %d, %d)" % (up, nx, ny, nz))
+            continue
+        if "passed" in rc("execute positioned %d.5 %d %d.5 if entity @a[distance=..%g]" % (nx, ny, nz, reach())):
+            problems.append("%s: a player is within %g, so the Normal id with nobody near was NOT checked" % (up, reach()))
+            continue
+        if "passed" not in rc('execute if block %d %d %d %s{TrainerIds:["%s"]}' % (nx, ny, nz, SPAWNER, up)):
+            problems.append("%s: with nobody near, the spawner at (%d, %d, %d) does not read TrainerIds [%s]"
+                            % (up, nx, ny, nz, up))
+        if "passed" in rc('execute if entity @e[type=rctmod:trainer,x=%d.5,y=%d,z=%d.5,distance=..%d,'
+                          'nbt={TrainerId:"%s"}]' % (sx, sy, sz, SEAT_BOX, cid)):
+            problems.append("%s: a trainer still carries the Challenge id with nobody near" % cid)
+    return problems
 
 
 # ------------------------------------------------------------------------------------------------ routes
@@ -252,8 +463,11 @@ def main(argv=None):
     files = boss_files(over, RT.with_refusals, RT.league_lines)
     recs, seats, _f = RT.load()
     routes = [s["id"] for s in seats if s["id"] in recs and has_challenge(recs[s["id"]])]
-    print("series %s; %d Challenge bosses, %d spawners; %d seated trainers swap to a Challenge id"
-          % (series_id(), len(boss_ids(over)), len(files["cycle"]) - 1, len(routes)))
+    places = [k for k in files if "/trainers/challenge/place_" in k]
+    retires = [k for k in files if "/trainers/challenge/retire_" in k]
+    print("series %s; %d Challenge bosses: %d with a second spawner, %d as one leader (%s); %d seated trainers swap "
+          "to a Challenge id" % (series_id(), len(boss_ids(over)), len(places), len(retires),
+                                 ", ".join(sorted(rollout())) or "none", len(routes)))
     return 0
 
 
