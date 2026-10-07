@@ -8,7 +8,8 @@ document, a data file another system owns, or the server's jars, and the generat
 
   where each expectation comes from
     ids        the server's jars: an item exists when a jar's assets/<ns>/lang/en_us.json carries item.<ns>.<path> or
-               block.<ns>.<path> (nested META-INF/jars too)
+               block.<ns>.<path> (nested META-INF/jars too), or when it has both an item model and an item-tag entry
+               (TMCraft's code-named TMs; see JarIndex)
     gates      the badge a town's gym awards: data/progression.json's gymN_cleared flags name their town
                (waystone.town), data/towns.json orders the gym towns. A critical-path shelf is gated on its own town's
                badge (PROGRESSION_LADDER.md 1.1 "Flag" column); an off-path shelf is ungated or gated on 1.2's flag
@@ -219,11 +220,25 @@ def ladder_income(text=None):
 
 # ------------------------------------------------------------------------------------------------ the jars
 class JarIndex:
-    """Items (from lang keys) and the recipes that produce selected ids, read from a folder of jars."""
+    """Items and the recipes that produce selected ids, read from a folder of jars.
 
-    def __init__(self, items=(), recipes=()):
+    An id is an item when a jar's lang carries item.<ns>.<path> or block.<ns>.<path>, OR when it has BOTH an item model
+    (assets/<ns>/models/item/<path>.json) AND a place in an item tag (data/<ns>/tags/item/*.json). The second rule is
+    for items whose display name is built in code: TMCraft's per-move TMs (tmcraft-1.4.19+1.8.0.jar, read in the
+    2026-10-05 offline snapshot's mods/) carry no lang key -- assets/tmcraft/lang/en_us.json has 65 keys, none of them
+    item.tmcraft.tm_* -- but each has assets/tmcraft/models/item/tm_<move>.json and is listed by
+    data/tmcraft/tags/item/tm_moves.json (929 values, tmcraft:tm_bide among them), and data/tmcraft/recipe/tm_<move>.json
+    names it as its result. A model alone is not enough (a model can exist for a block-only or unused id); vanilla's
+    tag loader refuses a tag naming an unregistered required id, so a tag entry is a registry fact."""
+
+    def __init__(self, items=(), recipes=(), models=(), tagged=()):
         self.items = set(items)
         self.recipes = list(recipes)       # (where, result id, [conditions])
+        self.models = set(models)          # ids with an item model
+        self.tagged = set(tagged)          # ids an item tag lists
+
+    def is_item(self, i):
+        return i in self.items or (i in self.models and i in self.tagged)
 
     @classmethod
     def from_dir(cls, jar_dir, want_results=()):
@@ -248,6 +263,18 @@ class JarIndex:
                     m = re.fullmatch(r"(?:item|block)\.([a-z0-9_.\-]+)\.([a-z0-9_./\-]+)", k)
                     if m:
                         self.items.add("%s:%s" % (m.group(1), m.group(2)))
+            elif re.fullmatch(r"assets/([^/]+)/models/item/(.+)\.json", name):
+                m = re.fullmatch(r"assets/([^/]+)/models/item/(.+)\.json", name)
+                self.models.add("%s:%s" % m.groups())
+            elif re.fullmatch(r"data/[^/]+/tags/items?/.+\.json", name):
+                try:
+                    vals = json.loads(z.read(name).decode("utf-8-sig")).get("values") or []
+                except (ValueError, AttributeError):
+                    continue
+                for v in vals:
+                    v = v.get("id") if isinstance(v, dict) and v.get("required", True) else v
+                    if isinstance(v, str) and not v.startswith("#"):
+                        self.tagged.add(v)
             elif want and re.fullmatch(r"data/[^/]+/recipes?/.+\.json", name):
                 raw = z.read(name)
                 if not any(w.encode() in raw for w in want):
@@ -992,7 +1019,7 @@ def audit(doc, pack, overlay_text, base_text, progression, towns, bank, income, 
         N.append("NOT CHECKED: ids and recipes against the jars (no jar folder given)")
     else:
         for i in every:
-            if i not in index.items:
+            if not index.is_item(i):
                 F.append("id: %s is not an item in any server jar" % i)
 
     # --- the overlay and the recipes

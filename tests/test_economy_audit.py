@@ -403,10 +403,17 @@ def test_a_generator_that_raises_the_output_count_is_a_placed_loop():
 
 
 # Without it a generator that places held lines would pass: every proposal line would reach the villager unapproved.
+# Since 2026-10-08 every real line is approved, so one is held on an in-memory copy of the data (the file is untouched)
+# and the CODE change is what places it.
 def test_a_generator_that_places_held_lines_fails():
+    doc = E.read_json(E.DIRECT_TRADES)
+    held = doc["lines"][-1]
+    held.update(status="proposal", approved=False)
+    clean, _r, _n = E.audit(None, None, use_jars=False, direct_trades_doc=doc)
+    assert not [f for f in clean if f.startswith("BARTER EMITTED")], clean[:5]
     d = mutant("direct_trades", 'return list(doc["experiment_offers"]) + placed_lines(doc)',
                'return list(doc["experiment_offers"]) + list(doc["lines"])')
-    fails, _r, _n = E.audit(None, None, use_jars=False, direct_trades_mod=d)
+    fails, _r, _n = E.audit(None, None, use_jars=False, direct_trades_mod=d, direct_trades_doc=doc)
     assert any(f.startswith("BARTER EMITTED an offer no placed data offer authors") for f in fails), fails[:5]
 
 
@@ -433,3 +440,271 @@ def test_an_approved_line_from_bought_inputs_to_a_dearer_bank_item_is_a_placed_m
                             late_game_why="test", inputs_why="test")
     fails, _r, _n = E.audit(None, None, use_jars=False, direct_trades_doc=doc)
     assert any(f.startswith("BARTER LOOP (placed) $") for f in fails), fails[:5]
+
+
+# ======================================================================== 2026-10-08: the Training shelf, the band,
+# the second barterer. Written by the economy auditor of the MART and EXCH units, which it built neither of. Synthetic
+# fixtures first (hand-computable), then the real data, then generator mutations (CODE changed, data untouched).
+
+# Without it the Training shelf's 19 lines are "neither a Mart basic nor a tier line" and the audit cannot tell a
+# training line on time from one sold early: the tier table must read both of the data's tables.
+def test_the_tier_table_reads_the_mart_and_the_training_tables():
+    mart = {"tiers": [{"badges": 1, "items": ["m:heal"]}],
+            "training": {"tiers": [{"badges": 2, "items": [{"item": "m:power", "price": 1500}]}]}}
+    tier, price, fails = E.tier_table(mart)
+    assert tier == {"m:heal": 1, "m:power": 2} and price == {"m:heal": None, "m:power": 1500} and fails == []
+    mart["training"]["tiers"][0]["items"].append({"item": "m:heal", "price": 5})
+    assert any("m:heal is listed twice" in f for f in E.tier_table(mart)[2])
+
+
+# Without it a training line sold above the clerk's tier would pass: the synthetic road gives g2 tier 1; a tier-2
+# training line there is a leak, a tier-1 one is not.
+def test_a_training_line_above_the_claimed_tier_is_a_tier_leak():
+    prog = {"flags": [{"id": "gym1_cleared"}, {"id": "gym2_cleared"}],
+            "chapters": [{"id": "c1", "unlocked_by": [], "unlocks": ["gym1_cleared"]},
+                         {"id": "c2", "unlocked_by": ["gym1_cleared"], "unlocks": ["gym2_cleared"]}]}
+    routes = {"routes": [{"id": "r1", "chapter": "c1", "from_town": "home", "to_town": "g1",
+                          "corridor": {"polyline": [{"x": 0, "z": 0}, {"x": 100, "z": 0}]}},
+                         {"id": "r2", "chapter": "c2", "from_town": "g1", "to_town": "g2",
+                          "corridor": {"polyline": [{"x": 100, "z": 0}, {"x": 200, "z": 0}]}}]}
+    doc = {"stock_policy": {"mart": {"items": ["m:ball"], "tiers": [],
+                                     "training": {"tiers": [{"badges": 1, "items": [{"item": "m:sel", "price": 1}]},
+                                                            {"badges": 2, "items": [{"item": "m:mochi", "price": 1}]}]}}},
+           "traders": [{"id": "g2_mart", "stock": "mart", "settlement": "g2", "position": {"x": 200, "z": 0}}]}
+    towns = {"towns": [{"id": "g2", "critical_path": True}]}
+    fails, _ = E.tier_checks(doc, {"g2_mart": 1}, {"g2_mart": {"m:ball", "m:sel", "m:mochi"}}, prog, routes, towns)
+    assert fails == ["TIER LEAK g2_mart sells m:mochi (tier 2) at claimed tier 1"], fails
+
+
+def _price_doc():
+    return {"stock_policy": {"mart": {
+        "items": ["m:poke_ball"],
+        "tiers": [{"badges": 1, "items": ["m:heal"]}, {"badges": 2, "items": ["m:great_ball"]},
+                  {"badges": 3, "items": ["m:hyper"]}],
+        "training": {"tiers": [{"badges": 1, "items": [{"item": "m:power", "price": 1500}]}]},
+        "early_reach_pricing": {"convenience_within": 2, "convenience_markup": 2, "round_to": 100,
+                                "traders": {"far_mart": {"reachable_from_badges": 0}}}}}, "traders": []}
+
+
+PRICE_MKT = {"income_basis": {"cumulative_by_badge": {"1": 500, "2": 900, "3": 2000}}}
+
+
+def _shelves(**far):
+    near = {"m:poke_ball": 200, "m:heal": 150, "m:great_ball": 600, "m:hyper": 1500, "m:power": 1500}
+    f = {"m:poke_ball": 200, "m:heal": 300, "m:power": 3000, "m:hyper": 2100}
+    f.update(far)
+    return {"near_mart": near, "far_mart": f}
+
+
+# Without it the early-reach band is unaudited. Hand-computed on a clerk reachable at 0 badges, within 2, x2, round
+# 100, income through badge 3 = 2,000: a tier-1 heal (normal 150) must be at least 300; the tier-1 power item (authored
+# 1,500) at least 3,000; a tier-3 hyper potion (normal 1,500) more than 2,000; and nothing below its normal price.
+def test_the_early_reach_band_on_a_synthetic_shelf():
+    doc = _price_doc()
+    assert E.mart_price_checks(doc, PRICE_MKT, _shelves())[0] == []
+    f, _r = E.mart_price_checks(doc, PRICE_MKT, _shelves(**{"m:heal": 299}))
+    assert f == ["PRICE CONVENIENCE far_mart sells m:heal (tier 1, reach 0) at $299, under normal $150 x 2 = $300"], f
+    f, _r = E.mart_price_checks(doc, PRICE_MKT, _shelves(**{"m:hyper": 2000}))
+    assert len(f) == 1 and f[0].startswith("PRICE GATE far_mart sells m:hyper (tier 3, reach 0) at $2000"), f
+    f, _r = E.mart_price_checks(doc, PRICE_MKT, _shelves(**{"m:hyper": 1400}))
+    assert any(x.startswith("PRICE UNDER far_mart sells m:hyper at $1400, below its normal $1500") for x in f), f
+    f, _r = E.mart_price_checks(doc, PRICE_MKT, _shelves(**{"m:power": 2900}))
+    assert len(f) == 1 and f[0].startswith("PRICE CONVENIENCE far_mart sells m:power"), f
+    sh = _shelves()
+    sh["near_mart"]["m:power"] = 1400                    # an ordinary clerk under the authored price
+    f, _r = E.mart_price_checks(doc, PRICE_MKT, sh)
+    assert any(x.startswith("PRICE training line m:power") for x in f)
+    assert any(x.startswith("PRICE UNDER near_mart sells m:power at $1400") for x in f), f
+
+
+# Without it the band's own premise (nothing in it changes what a player can catch) is unenforced: a tier-2 ball at a
+# 0-badge clerk is in the band, so it fails even at the correct x2 price.
+def test_a_ball_in_the_convenience_band_fails_the_premise():
+    f, _r = E.mart_price_checks(_price_doc(), PRICE_MKT, _shelves(**{"m:great_ball": 1200}))
+    assert f == ["CONVENIENCE BALL far_mart sells m:great_ball (tier 2) to a player with 0 badges at $1200: the band's "
+                 "premise is that nothing in it changes what a player can catch"], f
+
+
+# Without it EV_IV_TRAINING.md 4.2's E2 rule rests on the generic arbitrage check, which only REPORTS equality: a
+# vitamin at exactly the Bank's 2,500 is a failure here, at 2,600 it is not.
+def test_a_vitamin_at_or_under_the_bank_price_fails():
+    bank = {"cobblemon:protein": 2500}
+    assert E.vitamin_checks({"cobblemon:protein": (2500.0, "x")}, bank)[0]
+    assert E.vitamin_checks({"cobblemon:protein": (2600.0, "x")}, bank)[0] == []
+
+
+def _two_doc():
+    doc = _doc(offers=[_off("e", ("m:p", 4), ("m:p", 1))],
+               lines=[_off("l", ("m:a", 1), ("m:o", 1), buy_b=("m:b", 5), status="approved", approved=True)])
+    doc.update(barterer={"tag": "bt"}, site={"x": 3, "z": 4}, counter_barterer={"tag": "ct"},
+               counter_site={"x": 40, "z": 8})
+    return doc
+
+
+E_REC = '{buy:{id:"m:p",count:4},sell:{id:"m:p",count:1},%s}' % FIX
+L_REC = '{buy:{id:"m:a",count:1},buyB:{id:"m:b",count:5},sell:{id:"m:o",count:1},%s}' % FIX
+
+
+def _vill(x, z, tag, *recs):
+    return ('summon minecraft:villager %d.5 64 %d.5 {NoAI:1b,Offers:{Recipes:[%s]},Tags:["%s","%s_new"]}'
+            % (x, z, ",".join(recs), tag, tag))
+
+
+def _stub_lines(*lines):
+    return types.SimpleNamespace(files=lambda doc, g: ({"data/t/function/p.mcfunction": "\n".join(lines) + "\n"}, {}))
+
+
+def _emitted_fails(doc, *lines):
+    f, _r, _n = E.barter_checks([], [], {}, {}, doc=doc, dt_mod=_stub_lines(*lines))
+    return [x for x in f if x.startswith("BARTER EMITTED")]
+
+
+# Without it the count of villagers is a constant 1 and the second barterer is a failure, or any number passes. The
+# data declares two (barterer at site with the experiment offers; counter_barterer at counter_site with the approved
+# lines): each must be summoned once, on its site's block, with exactly its own offers.
+def test_each_declared_barterer_is_summoned_once_at_its_site_with_its_own_offers():
+    doc = _two_doc()
+    assert _emitted_fails(doc, _vill(3, 4, "bt", E_REC), _vill(40, 8, "ct", L_REC)) == []
+    f = _emitted_fails(doc, _vill(3, 4, "bt", E_REC))
+    assert any("1 villager summons; the data declares 2" in x for x in f), f
+    f = _emitted_fails(doc, _vill(3, 4, "bt", L_REC), _vill(40, 8, "ct", E_REC))
+    assert any(x.startswith("BARTER EMITTED barterer carries 1 offer(s) that are not its own") for x in f), f
+    assert any(x.startswith("BARTER EMITTED counter_barterer carries 1 offer(s)") for x in f), f
+    f = _emitted_fails(doc, _vill(3, 4, "bt", E_REC), _vill(41, 8, "ct", L_REC))
+    assert f == ["BARTER EMITTED counter_barterer summoned at (41.5, 64.0, 8.5), not on its site's block (40, 8)"], f
+    f = _emitted_fails(doc, _vill(3, 4, "bt", E_REC), _vill(40, 8, "zz", L_REC))
+    assert any("carrying no declared barterer's tag" in x for x in f) and any("tagged ct" in x for x in f), f
+
+
+# Without it the owner's "an alternative path, not a bypass" is unenforced. 1 block (uncrafts to 9 ingots at $10) +
+# 3 ingots is worth $120 to the Bank; against a $130 counter price it is a bypass, against $120 it is not. The Bank
+# buying the output for $200 is a premium (goods into more money than the Bank's own prices allow).
+def test_a_barter_cheaper_than_its_money_price_is_a_bypass_and_a_bank_premium_fails():
+    conv = [("x:unblock", "crafting_shapeless", [({"m:blk"}, 1)], "m:ing", 9)]
+    b = E.Barter("l", "placed", [("m:blk", 1), ("m:ing", 3)], (("m:blk", 1), ("m:ing", 3)), ("m:out", 1))
+    f, _r = E.barter_value_checks([b], {"lines": []}, conv, {"m:ing": 10}, {"m:out": (130.0, "buy at c for $130")})
+    assert f == ["BARTER BYPASS (placed) l: the worst-case inputs are worth $120, under the output's $130 (its cheapest "
+                 "money path, buy at c for $130): cheaper than the counter"], f
+    f, r = E.barter_value_checks([b], {"lines": []}, conv, {"m:ing": 10}, {"m:out": (120.0, "buy at c for $120")})
+    assert f == [] and any(x.startswith("barter value (placed) l: inputs worth $120 against $120") for x in r)
+    f, _r = E.barter_value_checks([b], {"lines": []}, conv, {"m:ing": 10, "m:out": 200}, {})
+    assert f == ["BARTER PREMIUM (placed) l: the Bank pays $200 for 1 x m:out, inputs worth $120"], f
+    v = E.Barter("v", "placed", [("m:ing", 12)], (None, ("m:ing", 12)), ("cobblemon:protein", 1))
+    f, _r = E.barter_value_checks([v], {"lines": []}, [], {"m:ing": 10, "cobblemon:protein": 120}, {})
+    assert any(x.startswith("BARTER PREMIUM (placed) v") for x in f), "a vitamin at exactly its inputs' worth is E2"
+
+
+# Without it a step could hold one chunk of two (tonight's earlier Holdfast defect) and the place function's checks
+# would read unloaded blocks. x10 and x20 are chunks 0 and 1; a box over 6-14 holds only chunk 0. A hold released
+# before a scheduled function's 100 ticks (5 s) are up is also named.
+def test_forceload_must_hold_every_chunk_a_step_function_touches():
+    files = {"data/n/function/f.mcfunction": "execute if block 10 64 5 #minecraft:air run say a\n"
+                                              "execute unless block 20 64 5 #minecraft:air run say b\n"
+                                              "schedule function n:g 100t replace\n",
+             "data/n/function/g.mcfunction": "kill @e[tag=x]\n"}
+    one = [("cmd", "forceload add 6 1 14 9"), ("fn", "n:f"), ("wait", 7), ("cmd", "forceload remove 6 1 14 9")]
+    f = E.forceload_checks(files, one)
+    assert len(f) == 1 and "touches chunk (1, 0) at (20, 5)" in f[0], f
+    both = [("cmd", "forceload add 6 1 24 9"), ("fn", "n:f"), ("wait", 7), ("cmd", "forceload remove 6 1 24 9")]
+    assert E.forceload_checks(files, both) == []
+    early = [("cmd", "forceload add 6 1 24 9"), ("fn", "n:f"), ("wait", 3), ("cmd", "forceload remove 6 1 24 9")]
+    assert any("releases" in x for x in E.forceload_checks(files, early))
+    assert any("does not emit" in x for x in E.forceload_checks(files, [("fn", "n:missing")]))
+
+
+# ------------------------------------------------------------------------------------------------ the real data
+# Without it the band check could pass by reading no early-reach shelf. Counted here from data/traders.json: Sunset
+# West (reach 0, tier 7) carries every tier line of tiers 1-7 from both tables; within 2 is the convenience band.
+@needs_snap
+def test_the_early_reach_clerks_are_priced_by_the_band(real):
+    fails, reps, _n = real
+    assert not [f for f in fails if f.startswith(("PRICE", "CONVENIENCE"))]
+    pol = E.read_json(E.DATA / "traders.json")["stock_policy"]["mart"]
+    within = pol["early_reach_pricing"]["convenience_within"]
+    tiers = [(t["badges"], len(t["items"])) for t in pol["tiers"] + pol["training"]["tiers"] if t["badges"] <= 7]
+    conv = sum(n for b, n in tiers if 1 <= b <= within)
+    gate = sum(n for b, n in tiers if b > within)
+    want = "price bands sunset_west_mart (reach 0): 0 normal, %d convenience, %d income-gated" % (conv, gate)
+    assert conv > 0 and gate > 0 and any(r.startswith(want) for r in reps), [r for r in reps if "price bands" in r]
+
+
+# Without it an approved line could be re-priced under the counter unnoticed: every approved line is valued (inputs
+# at the Bank's price, a block through its jar recipe) against the counter, at a ratio of at least 1.
+@needs_jars
+def test_every_approved_barter_line_is_valued_against_the_counter(real):
+    fails, reps, _n = real
+    assert not [f for f in fails if f.startswith(("BARTER BYPASS", "BARTER PREMIUM"))]
+    doc = E.read_json(E.DIRECT_TRADES)
+    for ln in doc["lines"]:
+        if ln.get("approved") is True:
+            r = next((x for x in reps if x.startswith("barter value (placed) %s: inputs worth" % ln["id"])), None)
+            assert r is not None, ln["id"]
+            assert float(r.rsplit(": ", 1)[1]) >= 1.0, r
+
+
+# Without it the Northlight barterer's place function could read its roof in a chunk the step never loads: the real
+# function touches both chunks of the 9x9 lightning box (454, 95) and (455, 95), and the real step holds both.
+def test_the_real_barter_step_holds_every_chunk_it_reads():
+    import direct_trades as DT
+    doc = E.read_json(E.DIRECT_TRADES)
+    files, _res = DT.files(doc, E._FlatGround())
+    counter = files["data/%s/function/%s/counter.mcfunction" % (doc["namespace"], doc["folder"])]
+    assert {(454, 95), (455, 95)} <= set(E.touched_chunks(counter))
+    assert E.forceload_checks(files, DT.steps(doc)) == []
+
+
+# --------------------------------------------------------------------------------------------- generator mutations
+# Without it the audit might not read traders.py's band: with the x2 markup dropped inside the generator (data
+# untouched), Sunset West sells its tier-1 and tier-2 lines at the ordinary price.
+@needs_snap
+def test_a_generator_that_drops_the_convenience_markup_fails():
+    t = mutant("traders", 'markup = erp.get("convenience_markup") or 1', "markup = 1")
+    fails, _r, _n = E.audit(SNAP, None, use_jars=False, traders_mod=t)
+    assert any(f.startswith("PRICE CONVENIENCE sunset_west_mart sells cobblemon:power_weight") for f in fails), fails[:5]
+
+
+# Without it a vitamin could reach a Mart: the generator appends a protein at $2,000 to the tier-1 training lines.
+@needs_snap
+def test_a_generator_that_shelves_a_vitamin_at_2000_fails():
+    t = mutant("traders", 'out += [(i["item"], int(i["price"])) for i in t.get("items") or []]',
+               'out += [(i["item"], int(i["price"])) for i in t.get("items") or []] + '
+               '([("cobblemon:protein", 2000)] if t["badges"] == 1 else [])')
+    fails, _r, _n = E.audit(SNAP, None, use_jars=False, traders_mod=t)
+    assert any(f.startswith("VITAMIN cobblemon:protein obtainable for $2000.00") for f in fails), fails[:5]
+
+
+# Without it a training shelf one tier early would pass: the generator's tier comparison is off by one.
+@needs_snap
+def test_a_generator_that_shelves_training_a_tier_early_is_a_leak():
+    t = mutant("traders", 't["badges"] <= int(tier or 0):\n            out += [(i["item"]',
+               't["badges"] <= int(tier or 0) + 1:\n            out += [(i["item"]')
+    fails, _r, _n = E.audit(SNAP, None, use_jars=False, traders_mod=t)
+    assert any(f.startswith("TIER LEAK gym1_mart sells cobblemon:power_") for f in fails), fails[:5]
+
+
+# Without it a barter re-priced under the counter inside the generator would pass: cost B at 9/10 of its count makes
+# the Master Ball 1 block + 18 ingots, $24,300 against the counter's $27,000.
+@needs_jars
+def test_a_generator_that_prices_a_barter_at_nine_tenths_is_a_bypass():
+    d = mutant("direct_trades", 'r["buyB"] = _cost(offer["buyB"])',
+               'r["buyB"] = dict(_cost(offer["buyB"]), count=int(offer["buyB"]["count"]) * 9 // 10)')
+    fails, _r, _n = E.audit(SNAP, VANILLA, use_jars=True, direct_trades_mod=d)
+    assert any(f.startswith("BARTER BYPASS (placed) emitted:cobblemon:master_ball: the worst-case inputs are worth "
+                            "$24300, under the output's $27000") for f in fails), fails[:8]
+
+
+# Without it a step holding one chunk of two would pass: the Northlight box shrunk to end at the villager's own x.
+def test_a_generator_whose_forceload_drops_the_second_chunk_fails():
+    d = mutant("direct_trades", 'cbox = "%d %d %d %d" % (cx - r, cz - r, cx + r, cz + r)',
+               'cbox = "%d %d %d %d" % (cx - r, cz - r, cx, cz + r)')
+    fails, _r, _n = E.audit(None, None, use_jars=False, direct_trades_mod=d)
+    assert any(f.startswith("FORCELOAD R18DT runs cobblers:direct_trades/counter, which touches chunk (455, 95)")
+               for f in fails), fails[:5]
+
+
+# Without it the experiment's offers (one with priceMultiplier 0.2) could reach the production barterer players use.
+def test_a_generator_that_puts_the_experiment_offers_on_the_production_barterer_fails():
+    d = mutant("direct_trades", 'if o["id"] not in ids]', ']')
+    fails, _r, _n = E.audit(None, None, use_jars=False, direct_trades_mod=d)
+    assert any(f.startswith("BARTER EMITTED counter_barterer carries 2 offer(s) that are not its own")
+               for f in fails), fails[:5]
