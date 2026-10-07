@@ -81,7 +81,9 @@ THE CHECKS (each named in the output; P = problem, K = known defect, recorded in
             places a spawn-condition block (my own item -> block map, PLACES_BLOCK); none is a ball, a battle item or
             a boost unless gated on a badge, or its badge gate was dropped by a decision data/markets.json records
             (gate_dropped.decision in `decisions`: since 2026-10-06 every counter is a merchant and cannot gate; until
-            then the rule was "gated on a badge" alone) (my own vocabulary: any non-vanilla id outside the convenience
+            then the rule was "gated on a badge" alone), or -- a counter line only, since 2026-10-09 (the owner: "price
+            them above the income gate") -- it declares `gate_badge` N and one unit costs strictly more than
+            income_basis.cumulative_by_badge[N]; a power line declaring neither fails (my own vocabulary: any non-vanilla id outside the convenience
             namespaces, every *_ball, and the vanilla power list POWER_VANILLA)
   theme     every stall line fits its theme by THEME_WORDS below; lines judged by hand are HAND_JUDGED, with why
   spend     every town TOWN_SQUARES_SURVEY section 0 lists as having nowhere to spend money now has an emitted stall or
@@ -1105,9 +1107,31 @@ def item_checks(markets_doc, spawn, ids):
             if not gated and isinstance(gd, dict) and gd.get("gate") and gd.get("decision") in decided \
                     and isinstance(rec.get("badge"), int):
                 gated = True
+            # changed 2026-10-09 (the owner: "TMs AT COUNTERS: price them above the income gate. A TM costing less
+            # than a player earns before badge 1 is free, and TMs are permanent unlocks"): on a counter, which cannot
+            # gate, the PRICE is the gate. A line declaring `gate_badge` N passes when one unit costs strictly more
+            # than income_basis.cumulative_by_badge[N] -- what the road pays by badge N, read from the data, never
+            # from the builder's pricing. Per unit: a line of `count` items is sold one at a time at price / count
+            # (the shop check), so the comparison is price > income x count. Counters only: a stall's power line
+            # still needs a badge gate
+            why = "is not badge-gated and declares no gate_badge"
+            gb = it.get("gate_badge")
+            if not gated and kind == "counter" and "gate_badge" in it:
+                inc = ((markets_doc.get("income_basis") or {}).get("cumulative_by_badge") or {})
+                n = it.get("count") or 1
+                if isinstance(gb, bool) or not isinstance(gb, int) or str(gb) not in inc:
+                    why = "declares gate_badge %r, which income_basis.cumulative_by_badge has no figure for" % (gb,)
+                elif isinstance(it.get("price"), (int, float)) and not isinstance(it.get("price"), bool) \
+                        and it["price"] > inc[str(gb)] * n:
+                    gated = True
+                else:
+                    why = ("declares gate_badge %d but one costs %s, not above the %d earned by badge %d (the owner, "
+                           "2026-10-09: a price under the income gate is free)"
+                           % (gb, "%.0f" % (it["price"] / n) if isinstance(it.get("price"), (int, float)) else
+                              repr(it.get("price")), inc[str(gb)], gb))
             if power and not gated:
-                P.append(("power", "%s:%s" % (rec["id"], item), "%s %s: %s is a ball, battle item or boost and is not "
-                          "badge-gated" % (kind, rec["id"], item)))
+                P.append(("power", "%s:%s" % (rec["id"], item), "%s %s: %s is a ball, battle item or boost and %s"
+                          % (kind, rec["id"], item, why)))
     return P, unchecked
 
 
