@@ -44,6 +44,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -356,13 +357,24 @@ def retire_lines(up, cid, entry):
     x, y, z = entry["spawner"]["at"]
     floor, under = restore_blocks(up, entry)
     has = 'if block %d %d %d %s{TrainerIds:["%s"]}' % (x, y, z, SPAWNER, cid)
+    # The kills run FIRST and only while the second spawner still stands (`has`), so a re-run kills nothing (audit
+    # P1:retire_kills). In R17L's forceload wait the trainers cycle's nobody-near line renames the old Challenge
+    # trainer to the Normal id before the retire runs (audit P1:retire), so a Challenge-id-only kill can leave two
+    # Normal leaders: keep the Normal-id trainer nearest the one spawner and remove any other (2026-10-07 integration
+    # fix). Never in a battle, never with a player near.
+    nx, ny, nz = normal_seat(up, entry)
+    near = "positioned %d.5 %d %d.5 unless entity @a[distance=..%g]" % (x, y, z, reach())
+    sel = 'type=rctmod:trainer,distance=..%d,nbt={TrainerId:"%s",InBattle:0b}'
     return [
         "# %s: retire the second spawner at (%d, %d, %d) now that %s stands as one leader (docs/mechanics/"
         "ONE_LEADER_SWAP.md); run once by reapply step R17L with the chunks held" % (cid, x, y, z, up),
+        "execute %s %s run kill @e[%s]" % (has, near, sel % (SEAT_BOX, cid)),
+        "execute %s %s positioned %d.5 %d %d.5 as @e[%s,sort=nearest,limit=1] run tag @s add cobblers_keep_leader"
+        % (has, near, nx, ny, nz, sel % (SEAT_BOX, up)),
+        "execute %s %s run kill @e[%s,tag=!cobblers_keep_leader]" % (has, near, sel % (SEAT_BOX, up)),
+        "tag @e[type=rctmod:trainer,tag=cobblers_keep_leader] remove cobblers_keep_leader",
         "execute %s if block %d %d %d minecraft:redstone_block run setblock %d %d %d %s" % (has, x, y - 1, z, x, y - 1, z, under),
         "execute %s run setblock %d %d %d %s" % (has, x, y, z, floor),
-        'execute positioned %d.5 %d %d.5 unless entity @a[distance=..%g] run kill @e[type=rctmod:trainer,distance=..%d,'
-        'nbt={TrainerId:"%s",InBattle:0b}]' % (x, y, z, reach(), SEAT_BOX, cid),
     ]
 
 
@@ -410,6 +422,13 @@ def single_leader_verify(rc):
         if "passed" in rc('execute if entity @e[type=rctmod:trainer,x=%d.5,y=%d,z=%d.5,distance=..%d,'
                           'nbt={TrainerId:"%s"}]' % (sx, sy, sz, SEAT_BOX, cid)):
             problems.append("%s: a trainer still carries the Challenge id with nobody near" % cid)
+        # Two leaders of this boss standing at once (the rename race, audit P1:retire): `execute if entity` answers
+        # "Test passed, count: N".
+        both = rc('execute if entity @e[type=rctmod:trainer,x=%d.5,y=%d,z=%d.5,distance=..%d,nbt={TrainerId:"%s"}]'
+                  % (nx, ny, nz, SEAT_BOX, up))
+        m = re.search(r"count:\s*(\d+)", both or "")
+        if m and int(m.group(1)) > 1:
+            problems.append("%s: %s trainers carry the Normal id near its seat" % (up, m.group(1)))
     return problems
 
 
