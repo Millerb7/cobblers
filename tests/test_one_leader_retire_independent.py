@@ -219,9 +219,6 @@ def test_a_rerun_in_the_lag_window_kills_nobody_only_because_of_the_block_test(b
 
 # The FIRST run has the same lag window, and there `has` holds: the one leader, still on the Challenge id, is killed
 # out of battle. Low impact if rctmod's spawner respawns him (not verified); R17L run with nobody online cannot hit it.
-@pytest.mark.xfail(strict=True, reason="tools/challenge_mode.py:376 kills every Challenge-id trainer within 24 of the "
-                   "old seat; the one leader is 1-5 blocks away and carries that id for up to 10 ticks after a "
-                   "Challenge player leaves reach or a battle ends")
 def test_the_first_run_never_kills_the_one_leader_in_the_lag_window(built_all):
     files, d = built_all
     cycle = lines(files[CYCLE])
@@ -238,8 +235,6 @@ def test_the_first_run_never_kills_the_one_leader_in_the_lag_window(built_all):
 # only), so the second spawner goes and its trainer stays. No later run can remove it, because every line now fails
 # `has`. The cycle then renames it to the Normal id: two leaders, for good. single_leader_verify reports it (two
 # Normal ids, or "NOT checked" while a player is within 17), but the remedy is by hand.
-@pytest.mark.xfail(strict=True, reason="tools/challenge_mode.py:381-382: the setblocks are gated by `has` but not by "
-                   "the player guard, so a run with a player near orphans the old trainer and a re-run cannot repair it")
 def test_a_first_run_with_a_player_near_leaves_no_orphaned_second_trainer(built_all):
     files, d = built_all
     cycle = lines(files[CYCLE])

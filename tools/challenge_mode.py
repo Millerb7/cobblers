@@ -34,6 +34,9 @@ docs/mechanics/OAK_AND_CHALLENGE.md, which also lists what an audit must check. 
              the mode tag, and back otherwise, never while either id is InBattle (single_lines). The second spawner a
              world already holds is removed once by cobblers:trainers/challenge/retire_<id> (reapply step R17L), at its
              recorded data position, and read back by single_leader_verify. Bosses not in the rollout: unchanged.
+             A boss with single_leader.move (Lance, the owner's 2026-10-09 decision: two League storeys inside one
+             swap reach, measured by tools/league_separation.py) also gets cobblers:trainers/challenge/move_<id>,
+             run by R17L after its retire: the one spawner set at move.to, the old cell restored.
   routes    <id>_challenge for every seated trainer whose record has a Challenge team: the same files as the Normal
              seat (team from modes.challenge.rct), series cobblers_challenge. tools/route_trainers.py's cycle swaps
              the one standing entity's TrainerId to whichever mode the nearest player is in (ASSUMED, experiment E7).
@@ -200,6 +203,8 @@ def spawner_files(bosses):
             seat = normal_seat(up, e)
             cycle += single_lines(up, cid, seat, reach())
             out["data/%s/function/trainers/challenge/retire_%s.mcfunction" % (NS, cid)] = retire_lines(up, cid, e)
+            if move_of(up, e):
+                out["data/%s/function/trainers/challenge/move_%s.mcfunction" % (NS, up)] = move_lines(up, cid, e)
             continue
         x, y, z = e["spawner"]["at"]
         out["data/%s/function/trainers/challenge/place_%s.mcfunction" % (NS, cid)] = [
@@ -263,6 +268,10 @@ def normal_seat(up, entry):
             return tuple(lead["expect_spawner_at"])
     at = (entry.get("single_leader") or {}).get("normal_at")
     if at:
+        mv = move_of(up, entry)
+        if mv and tuple(at) != tuple(mv["to"]):
+            raise ChallengeError("%s: single_leader.normal_at %s is not move.to %s: the swap would drive a spawner the "
+                                 "move never sets" % (up, tuple(at), tuple(mv["to"])))
         return tuple(at)
     raise ChallengeError("%s is in single_leader.rollout but no record gives its Normal spawner: add "
                          "bosses.%s.single_leader.normal_at, measured from its template" % (up, up))
@@ -361,37 +370,107 @@ def retire_lines(up, cid, entry):
     # The kills run FIRST and only while the second spawner still stands (`has`), so a re-run kills nothing (audit
     # P1:retire_kills). In R17L's forceload wait the trainers cycle's nobody-near line renames the old Challenge
     # trainer to the Normal id before the retire runs (audit P1:retire), so a Challenge-id-only kill can leave two
-    # Normal leaders: keep the Normal-id trainer nearest the one spawner and remove any other (2026-10-07 integration
-    # fix). Never in a battle, never with a player near.
+    # Normal leaders: keep the trainer nearest the one spawner and remove any other (2026-10-07 integration fix).
+    # Never in a battle, never with a player near.
     nx, ny, nz = normal_seat(up, entry)
     # nobody within reach of EITHER seat: the swap follows players within reach of the one spawner, so the guard's
     # radius from the old seat is reach + the distance between the seats (A1 audit P1:retire_kills, 2026-10-07)
     gap = ((x - nx) ** 2 + (y - ny) ** 2 + (z - nz) ** 2) ** 0.5
     near = "positioned %d.5 %d %d.5 unless entity @a[distance=..%g]" % (x, y, z, reach() + math.ceil(gap))
     sel = 'type=rctmod:trainer,distance=..%d,nbt={TrainerId:"%s",InBattle:0b}'
+    # The one leader is KEPT whichever id it carries (review N115 trap a, 2026-10-09): for up to one cycle (10 ticks)
+    # after a Challenge player leaves reach or a battle ends, it still carries the Challenge id with nobody near, and
+    # the Challenge-id kill would take it. So every trainer of either id by the one spawner is a candidate, in a
+    # battle or not, the nearest is kept, and a kept leader on the Challenge id is first put back on the Normal id,
+    # spawner then trainer (single_lines' order), which is what the cycle's nobody-near lines do on their next run.
+    # The kills then cannot reach it: it is on the Normal id and carries the keep tag.
+    cand = "cobblers_leader_candidate"
+    pick = "%s %s positioned %d.5 %d %d.5 as @e[type=rctmod:trainer,distance=..%d,%%s]" % (has, near, nx, ny, nz, SEAT_BOX)
+    kept = '%s %s as @e[type=rctmod:trainer,tag=cobblers_keep_leader,nbt={TrainerId:"%s",InBattle:0b},limit=1]' % (
+        has, near, cid)
     return [
         "# %s: retire the second spawner at (%d, %d, %d) now that %s stands as one leader (docs/mechanics/"
         "ONE_LEADER_SWAP.md); run once by reapply step R17L with the chunks held" % (cid, x, y, z, up),
         "# chunks-loaded-by: tools/reapply.py R17L (retire_hold's forceload of the seat box)",
+        "execute %s run tag @s add %s" % (pick % ('nbt={TrainerId:"%s"}' % up), cand),
+        "execute %s run tag @s add %s" % (pick % ('nbt={TrainerId:"%s"}' % cid), cand),
+        "execute %s run tag @s add cobblers_keep_leader" % (pick % ("tag=%s,sort=nearest,limit=1" % cand)),
+        'execute %s if block %d %d %d %s{TrainerIds:["%s"]} run data merge block %d %d %d {TrainerIds:["%s"]}'
+        % (kept, nx, ny, nz, SPAWNER, cid, nx, ny, nz, up),
+        'execute %s run data merge entity @s {TrainerId:"%s"}' % (kept, up),
         "execute %s %s run kill @e[%s]" % (has, near, sel % (SEAT_BOX, cid)),
-        "execute %s %s positioned %d.5 %d %d.5 as @e[%s,sort=nearest,limit=1] run tag @s add cobblers_keep_leader"
-        % (has, near, nx, ny, nz, sel % (SEAT_BOX, up)),
         "execute %s %s run kill @e[%s,tag=!cobblers_keep_leader]" % (has, near, sel % (SEAT_BOX, up)),
         "tag @e[type=rctmod:trainer,tag=cobblers_keep_leader] remove cobblers_keep_leader",
-        "execute %s if block %d %d %d minecraft:redstone_block run setblock %d %d %d %s" % (has, x, y - 1, z, x, y - 1, z, under),
-        "execute %s run setblock %d %d %d %s" % (has, x, y, z, floor),
+        "tag @e[type=rctmod:trainer,tag=%s] remove %s" % (cand, cand),
+        # The setblocks wait for the same player guard as the kills (review N115 trap b, 2026-10-09): with a player
+        # near, the kills are skipped, and a setblock that still ran would leave the old trainer standing with no
+        # spawner and no later run able to reach it, since every line tests `has`. Now nothing runs, and the next
+        # re-apply's R17L, with nobody near, does all of it.
+        "execute %s %s if block %d %d %d minecraft:redstone_block run setblock %d %d %d %s" % (
+            has, near, x, y - 1, z, x, y - 1, z, under),
+        "execute %s %s run setblock %d %d %d %s" % (has, near, x, y, z, floor),
+    ]
+
+
+def move_of(up, entry):
+    """A one-leader boss whose ONE spawner moves (data/challenge_mode.json bosses.<id>.single_leader.move): the
+    owner's 2026-10-09 decision for two League storeys inside each other's swap reach, measured by
+    tools/league_separation.py. None for every other boss. A move names from, to and from_restore, or fails."""
+    mv = (entry.get("single_leader") or {}).get("move")
+    if not mv:
+        return None
+    for k in ("from", "to", "from_restore"):
+        if not mv.get(k):
+            raise ChallengeError("%s: single_leader.move needs %s" % (up, k))
+    if tuple(mv["from"]) == tuple(mv["to"]):
+        raise ChallengeError("%s: single_leader.move goes nowhere" % up)
+    return mv
+
+
+def move_lines(up, cid, entry):
+    """Once, from reapply step R17L after the boss's retire: the ONE spawner from move.from to move.to. The new
+    cell gets a redstone block under it and the spawner over it with the Normal id; then the old cell gets
+    move.from_restore (the template's floor there; the template's redstone block under it stays). Every line first
+    tests that the old cell still holds a spawner, so a re-run, or a world that never had it, changes nothing; and
+    the last line also tests that the new spawner stands, so the old one is never removed without it.
+
+    Never with a player within reach of either cell (no battle can start with the old leader or the new one) and
+    never while either id is in a battle by the old cell. Kills nothing: the old cell's standing trainer is removed
+    by the retire just before, which kills the Normal-id trainers by the retired cell other than the one nearest
+    the new spawner (retire_lines). NOT covered: a world with no second spawner (a fresh export) whose old spawner
+    had already spawned its trainer -- the retire does nothing there, so that trainer stays, away from the swap."""
+    mv = move_of(up, entry)
+    ox, oy, oz = mv["from"]
+    nx, ny, nz = mv["to"]
+    r = "%g" % reach()
+    old = "if block %d %d %d %s" % (ox, oy, oz, SPAWNER)
+    busy = " ".join('unless entity @e[type=rctmod:trainer,x=%d.5,y=%d,z=%d.5,distance=..%d,nbt={TrainerId:"%s",'
+                    'InBattle:1b}]' % (ox, oy, oz, SEAT_BOX, i) for i in (up, cid))
+    guard = ("positioned %d.5 %d %d.5 unless entity @a[distance=..%s] positioned %d.5 %d %d.5 unless entity "
+             "@a[distance=..%s] %s" % (ox, oy, oz, r, nx, ny, nz, r, busy))
+    return [
+        "# %s: the one spawner moves from (%d, %d, %d) to (%d, %d, %d) (data/challenge_mode.json bosses.%s."
+        "single_leader.move; tools/league_separation.py); run by reapply step R17L after retire_%s" % (
+            up, ox, oy, oz, nx, ny, nz, up, cid),
+        "# chunks-loaded-by: tools/reapply.py R17L (retire_hold's forceload of the seat box)",
+        "execute %s %s run setblock %d %d %d minecraft:redstone_block" % (old, guard, nx, ny - 1, nz),
+        'execute %s %s run setblock %d %d %d %s{TrainerIds:["%s"]}' % (old, guard, nx, ny, nz, SPAWNER, up),
+        'execute %s if block %d %d %d %s{TrainerIds:["%s"]} %s run setblock %d %d %d %s' % (
+            old, nx, ny, nz, SPAWNER, up, guard, ox, oy, oz, mv["from_restore"]),
     ]
 
 
 def retire_hold(overrides=None):
     """[(x0, z0, x1, z1)] the chunks R17L forceloads: the seat box around each rollout boss's second spawner and its
-    Normal spawner, so the block tests and the entity selectors see loaded chunks."""
+    Normal spawner (and, for a boss whose spawner moves, its old cell), so the block tests and the entity selectors
+    see loaded chunks."""
     d = doc()
     out = []
     for up in sorted(rollout()):
         e = d["bosses"][up]
         xs, zs = [], []
-        for (x, _y, z) in (tuple(e["spawner"]["at"]), normal_seat(up, e)):
+        mv = move_of(up, e)
+        for (x, _y, z) in (tuple(e["spawner"]["at"]), normal_seat(up, e)) + ((tuple(mv["from"]),) if mv else ()):
             xs += [x - SEAT_BOX, x + SEAT_BOX]
             zs += [z - SEAT_BOX, z + SEAT_BOX]
         out.append((min(xs), min(zs), max(xs), max(zs)))
@@ -399,8 +478,13 @@ def retire_hold(overrides=None):
 
 
 def retire_functions():
-    """The function ids R17L runs, in rollout order."""
-    return ["%s:trainers/challenge/retire_%s" % (NS, challenge_id(up)) for up in sorted(rollout())]
+    """The function ids R17L runs, in rollout order: each boss's retire, then its move if its spawner moves."""
+    d, out = doc(), []
+    for up in sorted(rollout()):
+        out.append("%s:trainers/challenge/retire_%s" % (NS, challenge_id(up)))
+        if move_of(up, d["bosses"][up]):
+            out.append("%s:trainers/challenge/move_%s" % (NS, up))
+    return out
 
 
 def single_leader_verify(rc):
@@ -415,6 +499,9 @@ def single_leader_verify(rc):
         nx, ny, nz = normal_seat(up, e)
         if "passed" in rc("execute if block %d %d %d %s" % (sx, sy, sz, SPAWNER)):
             problems.append("%s: the second spawner at (%d, %d, %d) is still there" % (cid, sx, sy, sz))
+        mv = move_of(up, e)
+        if mv and "passed" in rc("execute if block %d %d %d %s" % (tuple(mv["from"]) + (SPAWNER,))):
+            problems.append("%s: the spawner has not moved: (%d, %d, %d) still holds one" % ((up,) + tuple(mv["from"])))
         if "passed" not in rc("execute if block %d %d %d %s" % (nx, ny, nz, SPAWNER)):
             problems.append("%s: no spawner at its seat (%d, %d, %d)" % (up, nx, ny, nz))
             continue
