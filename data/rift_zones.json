@@ -519,7 +519,7 @@
         "z2",
         "z5"
       ],
-      "why": "the south edge of the traced `gate` region (bbox 3511-3635 x 2612-2686), which is where data/rift_regions.json owner_intent[2] puts it: 'The entrance to the Elite Four is sealed off unless you go through the town first.' The approach corridor entrance_to_e4 (z2661-3025) runs up to it and the League's lot (data/placements.json, x3517-3636 z2591-2701) stands behind it.",
+      "why": "the south edge of the traced `gate` region (bbox 3511-3635 x 2612-2686), which is where data/rift_regions.json owner_intent[2] puts it: 'The entrance to the Elite Four is sealed off unless you go through the town first.' The approach corridor entrance_to_e4 (z2661-3025) runs up to it. CORRECTED 2026-10-09 (U8): this said the League's lot (x3517-3636 z2591-2701) stands behind it, which was the lot before the League moved onto the apex oval on 2026-09-23. The built lot is x3635-3754 z2375-2485 (data/placements.json league_building, and data/towns.json), about 180 blocks north of this wall and north of behind_league at z2560, so it lies in z4's boxes, not z5's (U71, review N30; still open, see behind_league.why).",
       "span": [3371, 3739],
       "floor_y": 84,
       "across": 369,
@@ -1037,7 +1037,7 @@
         "z5",
         "z4"
       ],
-      "why": "docs/mechanics/RIFT_ZONES.md section 2 and section 5: east-west across the trunk at z2560, 31 blocks north of the League's lot, as built on staging. The earlier line (3466, 2544)-(3768, 2629) came within a block of the lot's north-east corner. Kept unchanged: nothing found here disagrees with it.",
+      "why": "docs/mechanics/RIFT_ZONES.md section 2 and section 5: east-west across the trunk at z2560, 31 blocks north of the League's lot, as built on staging. The earlier line (3466, 2544)-(3768, 2629) came within a block of the lot's north-east corner. Kept unchanged: nothing found here disagrees with it. STALE SINCE 2026-09-23 (U71, review N30, recorded 2026-10-09 by U8): 'the League's lot' here is the old one (x3517-3636 z2591-2701). The built lot, x3635-3754 z2375-2485, is NORTH of this cut and so inside z4, held today only by z4.needs_dialogue. The owner's O5 ('re-cut the zone; do not move the lot') was tried on 2026-10-09 and is NOT applied, because tools/rift_zones.py refuses it: moved to at 2360 with G4 at (3682, 2340) facing west, the League, both forecourts, the waystone and the steward (3647, 2490) all fall in z5 and none in z4, but z4 shrinks to the extent's tip (550 traced columns, 3 boxes, x3680-3711 z2336-2359), the z4/z5 frontier is 115 columns, 37 across (an L: x3680-3681 z2336-2357, then z2358-2359 x3681-3716), and `report` fails 'cut behind_league spans only 37 blocks: too narrow to be a rim-to-rim crossing', so `build` emits nothing. The check is right: on the canonical heightmap the Rift's floor runs on north of data/landmarks.json rift.extent to the rim at z2316-2321 (ground y87 at z2321-2335, rim y114-163), that pocket belongs to no zone, and a walk from (3673, 2340) on z5's side to (3694, 2340) inside z4 goes round the wall's north end at (3680, 2335) in 58 steps at y87-89. At 2368, the southmost cut whose 8-block raster row (z2368-2375) stays off the lot, with G4 at (3669, 2340): z4 1,308 columns, the frontier 177 columns and exactly 60 across, so `report` passes and the League walk loses its N30 warning, but the wall still does not close (a 32-step walk round its north end at (3667, 2335), y87; tests/test_rift_zones_apply.py test_the_barrier_is_the_only_way_past_a_gatehouse_in_a_wall fails for z4) and two more of that file's tests fail because G4's knock box lies wholly inside z4's 8-block raster (x3664 against the mask's x3667), so z4 counts as unreachable. Resolving it needs the owner: widen rift.extent at the apex, wall z4 against unzoned floor as well, re-shape z4 elsewhere, or fold z4 into z5.",
       "span": [3434, 3779],
       "floor_y": 86,
       "across": 346,
@@ -3007,7 +3007,7 @@
           }
         }
       ],
-      "area_why": "the traced `gate` region plus the part of e4_tower south of the behind_league cut: the League's gate and the lot it stands on (data/placements.json league, x3517-3636 z2591-2701). RIFT_ZONES.md does not give the League's precinct a zone of its own; this file adds one, for the reason under `settles.league_opens_too_early`.",
+      "area_why": "the traced `gate` region plus the part of e4_tower south of the behind_league cut: the League's gate and the lot it stood on until 2026-09-23 (x3517-3636 z2591-2701). The built lot (x3635-3754 z2375-2485) is north of the cut and so in z4, not here: U71, open (behind_league.why). RIFT_ZONES.md does not give the League's precinct a zone of its own; this file adds one, for the reason under `settles.league_opens_too_early`.",
       "pass": {
         "kind": "flag",
         "flags": [
