@@ -1833,6 +1833,14 @@
               "transition": "record_oak_sendoff"
             }
           ],
+          "next": "oak_birds"
+        },
+        {
+          "id": "oak_birds",
+          "kind": "line",
+          "speaker": "professor_oak",
+          "text": "One more page for the field guide: birds nest in the great trees. Stand under a big crown and look up. Some kinds nest nowhere else.",
+          "placeholder": "Claude, 2026-10-08 (unit WAY, the owner: 'the sapling hint ... An NPC mentioning birds nesting is enough'): a functional hint for Codex to replace. Measured from data/habitat_blocks.json and data/spawns.json: 6 species spawn only from the tree nests (the elder_* and sapling_* blocks' pools), Bombirdier (elder_marshy_marsh_2), Ledyba and Ledian (elder_foothill_woods_4), Vullaby (elder_wedge_south_1, sapling_desert_long_isle_north), Mandibuzz (elder_wedge_south_1) and Rowlet (elder_south_pine_isle_3); Hoothoot and Starly also nest in trees but spawn in the open too (surface.route1_maze_forest, surface.river_of_shrews_vale). Said once, after the send-off, so every player who leaves Pallet hears it",
           "next": "oak_repeat_before_mismatch"
         },
         {
@@ -6548,6 +6556,14 @@
           "kind": "line",
           "speaker": "owner",
           "text": "Lunch, undisturbed. A small miracle.",
+          "next": "o_birds"
+        },
+        {
+          "id": "o_birds",
+          "kind": "line",
+          "speaker": "owner",
+          "text": "The birds are better neighbours. They nest up in the great tree north of here. Some you only ever see round a tree like that.",
+          "placeholder": "Claude, 2026-10-08 (unit WAY, the sapling hint): a functional line for Codex to replace. Measured: the picnic (data/scenes.json route1_rattata_picnic, area x1434-1460 z4812-4840) is about 209 blocks south-south-east of the Route 1 world-tree sapling (data/habitat_blocks.json route1_sapling_low/crown at (1380, 4628)), whose crown pool holds Pidgey; the six tree-only species are on other elders (see dlg_main_pallet_oak oak_birds). Alternates with o_done for a player who has finished the picnic",
           "next": "o_done"
         }
       ],
