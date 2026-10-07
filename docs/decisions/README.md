@@ -29,6 +29,7 @@ Status values: `Proposed`, `Accepted`, `Superseded by ADR-NNN`, `Rejected`.
 | [ADR-004](ADR-004-pocket-spaces.md) | Hidden spaces: carved in place where the fiction says they are, a pocket dimension only for spaces that are really elsewhere; no far-overworld pockets (Xaero caches through its effects, and Distant Horizons shows them) | Accepted |
 | [ADR-005](ADR-005-death-wipe-water-mechanism.md) | Death, wipe and water: datapack functions and MoLang first; a server-side module only where an experiment proves the game will not do it | Proposed |
 | [ADR-006](ADR-006-server-delivered-client-pack.md) | One client resource pack delivered by the server (`resource-pack` in server.properties); the AllTheMons part needs the author's written permission (licence v3.2) or a no-redistribution variant | Proposed |
+| [ADR-007](ADR-007-per-player-chests-lootr.md) | Per-player chests by Lootr (client and server, world-critical once used); anything that matters stays an ADR-002 grant, Lootr containers hold texture from deterministic tables; nothing authored until EXP-056 passes | Proposed (the owner chose Lootr 2026-10-07; not implemented) |
 
 Expected future ADRs (not yet written, pending experiments):
 
