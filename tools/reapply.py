@@ -1956,7 +1956,9 @@ def steps(with_spawns=False):
     # one leader per gym (the owner, 2026-10-07; docs/mechanics/ONE_LEADER_SWAP.md): for every boss in
     # data/challenge_mode.json single_leader.rollout, the second spawner a world already holds is removed once, at its
     # recorded data position, with any Challenge-id trainer by it, then read back from the world. Each line tests the
-    # block first, so on a fresh export (no second spawner) it changes nothing. cobblers_trainers is EXCLUDED as
+    # block first, so on a fresh export (no second spawner) it changes nothing. A boss whose one spawner moves
+    # (single_leader.move, Lance) has its move function listed after its retire by retire_functions(), and moves
+    # once: it tests the old cell first. cobblers_trainers is EXCLUDED as
     # self-driving; this step is the one thing in it run over RCON. Held in a forceload, like R17A
     import challenge_mode
     single_hold = ["%d %d %d %d" % b for b in challenge_mode.retire_hold()]
