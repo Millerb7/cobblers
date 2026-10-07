@@ -255,15 +255,17 @@
       "stall": "gym8_town_stall_1",
       "near_trader": "gym8_mart",
       "sited_by": "as stoneford",
-      "keeper": {"name": "Garrison Quartermaster", "greeting": "Last stores before the Road. Earth Badge holders draw the diamond pack, the inception fitting, gold caps, and what the League will cost you in medicine."},
+      "keeper": {"name": "Garrison Quartermaster", "greeting": "Last stores before the Road. Earth Badge holders draw the diamond pack, the inception fitting, and what the League will cost you in medicine."},
       "category": "Garrison Stores",
-      "theme": "the southern garrison at the last gate before Victory Road: a quartermaster's answer to 'I have too much' is packs inside packs, and the caps are for hyper-training a level-55 team at the last gate",
+      "theme": "the southern garrison at the last gate before Victory Road: a quartermaster's answer to 'I have too much' is packs inside packs. The Gold Bottle Cap left this shelf 2026-10-09 (decision arena_trophies_not_sold; superseded_stock)",
       "stock": [
         {"id": "diamond_backpack", "item": "sophisticatedbackpacks:diamond_backpack", "name": "Diamond backpack", "count": 1, "price": 10000, "gate": null, "gate_dropped": {"gate": "gym8_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "why": "tier 5: 108 slots, 9 upgrade slots. 10,000 is PROGRESSION_LADDER revision 2's figure; revision 1's 20,000 is the one the owner's brief quotes (TIERED_GOODS 3), an owner call. Netherite is smithed from this pack (recipe left on)"},
         {"id": "inception_upgrade", "item": "sophisticatedbackpacks:inception_upgrade", "name": "Inception upgrade", "count": 1, "price": 7000, "gate": null, "gate_dropped": {"gate": "gym8_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "convenience", "why": "packs inside packs"},
-        {"id": "bottle_cap_gold", "item": "obc:bottle_cap_gold", "name": "Gold Bottle Cap", "count": 1, "price": 6000, "gate": null, "gate_dropped": {"gate": "gym8_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "the one reliable gold-cap tap (obc treasure goldBottleCap 0.0); at 6,000 a badge-8 player can buy two or three"},
         {"id": "max_revive", "item": "cobblemon:max_revive", "name": "Max Revive", "count": 1, "price": 2500, "gate": null, "gate_dropped": {"gate": "gym8_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "released Treatments; against bank.json's 1,000"},
         {"id": "full_restore", "item": "cobblemon:full_restore", "name": "Full Restore", "count": 2, "price": 3000, "gate": null, "gate_dropped": {"gate": "gym8_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "released Treatments; 1,500 each against bank.json's 750"}
+      ],
+      "superseded_stock": [
+        {"id": "bottle_cap_gold", "item": "obc:bottle_cap_gold", "name": "Gold Bottle Cap", "count": 1, "price": 6000, "gate": null, "gate_dropped": {"gate": "gym8_cleared", "decision": "counters_are_merchants", "why": "the owner, 2026-10-06: 'villagers with ui only': the merchant screen shows one list to every player, so the line is sold to anyone who reaches the counter"}, "strand": "power", "why": "the one reliable gold-cap tap (obc treasure goldBottleCap 0.0); at 6,000 a badge-8 player can buy two or three", "superseded": {"decision": "arena_trophies_not_sold", "when": "2026-10-09 (design unit U5)", "was": "stocked on this counter since 2026-10-03", "prize": "data/arena_fights.json prizes.items arena_prize_rank_3 and four more of its prizes carry obc:bottle_cap_gold", "why": "the line as it stood, kept so its price and reasoning are not lost; no merchant sells it. Other routes stay: the arena's prizes, a quest reward (data/quests.json) and a cache (data/rewards.json)"}}
       ]
     },
     {
@@ -521,6 +523,13 @@
     "gated_lines": "refused on every merchant: the screen shows one list to every player and cannot hide a line until a badge (MARKET_GATING.md section 1). A counter line that was gated keeps the old gate in gate_dropped {gate, decision, why}; a stall line was never gated"
   },
   "decisions": [
+    {
+      "id": "arena_trophies_not_sold",
+      "answered": "2026-10-09",
+      "owner": "the owner, 2026-10-09 (docs/STATE.md 'The owner's decisions of 2026-10-09' (3)): 'ARENA TROPHIES: keep them once-per-player prizes. Do not also sell them at a counter. A prize you can buy is not a prize.'",
+      "decision": "no counter or stall sells an item that data/arena_fights.json prizes.items gives. Applied 2026-10-09 (design unit U5): holdfast's bottle_cap_gold (obc:bottle_cap_gold, $6,000) moved to the counter's superseded_stock. Sweep of every counter and stall here and every Mart in data/traders.json for the six prize items (cobblemon:choice_band, cobblemon:leftovers, obc:bottle_cap_gold, cobblemon:choice_scarf, cobblemon:life_orb, cobblemon:ability_patch, read from arena_fights.json 2026-10-09): that line was the only one. The five barter lines (data/direct_trades.json) were superseded under the same decision earlier the same day",
+      "what_it_costs": "a badge-8 player has no repeatable Gold Bottle Cap: the arena's five cap prizes are once per player, plus one quest reward and one cache"
+    },
     {
       "id": "counters_are_merchants",
       "asked": "2026-10-04 (as gated_counters_stay_dialogue: should the badge-gated counters also become CobbleDollars merchants? default taken: no)",
