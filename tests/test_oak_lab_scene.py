@@ -30,12 +30,34 @@ SERIES, MODE_TAG = CM["series"]["id"], CM["mode"]["tag"]
 FILES = CD.build(CONV, DATA)
 DLG = FILES["data/cobblers/dialogues/%s.json" % CONV]
 PAGES = {p["id"]: p for p in DLG["pages"]}
+# The flag registry, read here rather than taken from the compiler: what a `function cobblers:flag/<id>/grant` call
+# does is decided by tools/progression_pack.py, which writes that function (`advancement grant @s only
+# cobblers:flag/<id>`) for a flag declared in data/progression.json whose set_by.kind is quest_transition, and for no
+# other flag (tests/test_rift_crisis_resolved.py test_only_quest_transition_flags_get_a_grant_function).
+FLAG_REGISTRY = {f["id"]: f for f in json.loads((DATA / "progression.json").read_text(encoding="utf-8"))["flags"]}
 
 
 class Cmds:
     """The commands Oak's compiled scripts send, acting on one player; anything else fails the test."""
 
     P = r"(?:PLAYER-UUID|Player|@s)"
+    flags = FLAG_REGISTRY
+
+    def grant(self, w, fid):
+        """A quest transition's `function` effect naming a flag's grant (compile_dialogue emits it as `execute as
+        <player> at @s run function cobblers:flag/<id>/grant`). Judged on the registry, never on which line calls it:
+        a flag that is undeclared, or is set by anything but a quest transition, has no grant function in the pack,
+        and calling one is a failure. A held advancement granted again is a no-op (progression_pack's grant comment),
+        so `granted` records every call and `flags` the state."""
+        f = self.flags.get(fid)
+        assert f is not None, "a grant of flag %r, which data/progression.json does not declare" % fid
+        kind = (f.get("set_by") or {}).get("kind")
+        assert kind == "quest_transition", (
+            "a grant of flag %r, set by %r: tools/progression_pack.py writes flag/<id>/grant only for quest_transition"
+            " flags, so this function does not exist" % (fid, kind))
+        w["flags"].add(fid)
+        w["granted"].append(fid)
+        return 1
 
     def on_write(self, run, key, val):
         pass
@@ -55,6 +77,9 @@ class Cmds:
         return self.sub(w, m.group(1))
 
     def sub(self, w, rest):
+        m = re.fullmatch(r"at @s (.*)", rest)
+        if m:                                       # position only: nothing this model tracks depends on it
+            return self.sub(w, m.group(1))
         m = re.fullmatch(r"run (.*)", rest)
         if m:
             return self.leaf(w, m.group(1))
@@ -96,6 +121,9 @@ class Cmds:
                 return 0
             w["screen"] = True
             return 1
+        m = re.fullmatch(r"function cobblers:flag/([a-z0-9_]+)/grant", cmd)
+        if m:
+            return self.grant(w, m.group(1))
         raise AssertionError("a command this model does not interpret: %r" % cmd)
 
 
@@ -104,32 +132,34 @@ CMDS = Cmds()
 
 def fresh(**kw):
     w = {"data": {}, "tags": set(), "flags": set(), "scores": {}, "objectives": set(), "chosen": False,
-         "screen": False, "series": [], "opened": []}
+         "screen": False, "series": [], "opened": [], "granted": []}
     w.update(kw)
     return w
 
 
-def talk(w, answers=None):
+def talk(w, answers=None, dlg=None, cmds=None):
     """One talk with Oak, read to the end; `answers` {page: option value, or a list taken in turn (the last repeats)},
-    else the first visible option."""
+    else the first visible option. `dlg` and `cmds` default to the real compiled dialogue and the model above."""
+    dlg, cmds = dlg or DLG, cmds or CMDS
+    pages = {p["id"]: p for p in dlg["pages"]}
     answers = {k: list(v) if isinstance(v, list) else [v] for k, v in (answers or {}).items()}
-    r = OA.Run(w, CMDS)
-    r.exec(DLG["initializationAction"])
+    r = OA.Run(w, cmds)
+    r.exec(dlg["initializationAction"])
     page, v, shown, offered = (None if r.closed else r.page), r.v, [], {}
     while page is not None:
         assert len(shown) < 64, shown[-8:]
         shown.append(page)
-        inp = PAGES[page].get("input")
+        inp = pages[page].get("input")
         if isinstance(inp, str):
             action = inp
         else:
             opts = [o for o in inp["options"]
-                    if not o.get("isVisible") or OA.Run(w, CMDS, {}).truth(OA.Run(w, CMDS, {}).exec(o["isVisible"]))]
+                    if not o.get("isVisible") or OA.Run(w, cmds, {}).truth(OA.Run(w, cmds, {}).exec(o["isVisible"]))]
             offered[page] = [o["value"] for o in opts]
             queue = answers.get(page)
             want = (queue.pop(0) if len(queue) > 1 else queue[0]) if queue else None
             action = next(o for o in opts if want is None or o["value"] == want)["action"]
-        rr = OA.Run(w, CMDS, v)
+        rr = OA.Run(w, cmds, v)
         rr.exec(action)
         page = None if rr.closed else rr.page
     return shown, offered
@@ -271,8 +301,78 @@ def test_the_compiler_refuses_a_series_command_without_its_lock():
         CD.compile_conversation(conv, dict(quests, main_worldshift_reveal=q), fields, DATA)
 
 
+# ------------------------------------------------------------------------------------------------ the bird hint
+# Test author, unit WAY review (2026-10-08): `oak_birds` is the sapling hint (birds nest in the great trees), placed
+# after the send-off so every player who leaves Pallet hears it. Checked through the compiled dialogue.
+STANDARD = {"oak_mode_005": "oak_mode_pick_standard", "oak_mode_confirm_standard": "oak_mode_record_standard"}
+
+
+# Without it a re-wire of the send-off can orphan the hint (a dead node) with every other test still green.
+def test_the_bird_hint_follows_the_send_off_in_the_same_talk():
+    w = started()
+    shown, _ = talk(w, STANDARD)
+    assert shown[shown.index("oak_003") + 1] == "oak_birds", shown
+    assert field(w, STAGE) == "oak_sendoff"
+
+
+# Without it the hint could become the repeat line (heard on every talk) or loop inside one talk.
+def test_the_bird_hint_is_heard_once_and_later_talks_give_the_repeat_line():
+    w = started()
+    heard = talk(w, STANDARD)[0]
+    for _ in range(4):
+        heard += talk(w)[0]
+    assert heard.count("oak_birds") == 1, heard
+    assert talk(w)[0] == ["oak_repeat_before_mismatch"]
+
+
+# ------------------------------------------------------------------------------------------------ a flag grant
+# The model's grant rule, exercised through what the compiler EMITS for a `function` effect on the send-off. The flag
+# is synthetic (added to a copy of the registry), so these say nothing about any authored flag: they prove the model
+# judges a grant by the registry, not by which line makes it. Without them the rule above could accept any function.
+def _sendoff_granting(flag):
+    dialogue, quests, fields = CD.load(DATA)
+    q = copy.deepcopy(quests["main_worldshift_reveal"])
+    t = next(t for t in q["transitions"] if t["id"] == "record_oak_sendoff")
+    t["effects"].insert(0, {"kind": "function", "function": "cobblers:flag/%s/grant" % flag})
+    conv = next(c for c in dialogue["conversations"] if c["id"] == CONV)
+    return CD.compile_conversation(conv, dict(quests, main_worldshift_reveal=q), fields, DATA)[
+        "data/cobblers/dialogues/%s.json" % CONV]
+
+
+class _Registry(Cmds):
+    def __init__(self, extra):
+        self.flags = dict(FLAG_REGISTRY, **extra)
+
+
+PROBE = {"id": "probe_sendoff", "set_by": {"kind": "quest_transition", "quest": "main_worldshift_reveal",
+                                           "transition": "record_oak_sendoff"}}
+
+
+def test_a_send_off_granting_a_quest_transition_flag_holds_it_once():
+    cmds, dlg = _Registry({PROBE["id"]: PROBE}), _sendoff_granting(PROBE["id"])
+    w = fresh()
+    talk(w, {"oak_offer_002": "oak_offer_choose"}, dlg, cmds)
+    pick(w)
+    talk(w, STANDARD, dlg, cmds)
+    assert PROBE["id"] in w["flags"] and field(w, STAGE) == "oak_sendoff"
+    for _ in range(3):
+        talk(w, None, dlg, cmds)
+    assert w["granted"].count(PROBE["id"]) == 1     # the transition's stage guard: never run twice
+
+
+@pytest.mark.parametrize("flag,why", [("probe_undeclared", "does not declare"), ("gym1_cleared", "quest_transition")])
+def test_a_grant_the_progression_pack_does_not_write_fails(flag, why):
+    assert flag == "probe_undeclared" or FLAG_REGISTRY[flag]["set_by"]["kind"] != "quest_transition"
+    dlg = _sendoff_granting(flag)
+    w = fresh()
+    talk(w, {"oak_offer_002": "oak_offer_choose"}, dlg)
+    pick(w)
+    with pytest.raises(AssertionError, match=why):
+        talk(w, STANDARD, dlg)
+
+
 # ------------------------------------------------------------------------------------------------ the scene
-SCENES = {s["id"]: s for s in json.loads((DATA / "scenes.json").read_text(encoding="utf-8"))["scenes"]}
+SCENES ={s["id"]: s for s in json.loads((DATA / "scenes.json").read_text(encoding="utf-8"))["scenes"]}
 SCENE = SCENES["oak_lab"]
 SEATS = {s["id"]: s for s in json.loads((DATA / "npc_seats.json").read_text(encoding="utf-8"))["seats"]}
 LAB = ROOT / "kits" / "structures" / "campaign" / "f4" / "pallet" / "rare_structures" / "lab.nbt"

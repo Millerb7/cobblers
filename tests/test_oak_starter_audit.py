@@ -280,3 +280,19 @@ def test_molang_model_by_hand():
     m.command(w, "execute as PLAYER-UUID store result score @s s run openstarterscreen @s")
     m.command(w, "execute as PLAYER-UUID if score @s s matches 0 run tag @s add t")
     assert w["scores"]["s"] == 0 and "t" in w["tags"]
+
+
+# Without it the audit either flags every flag grant as unmodelled (the held Pallet -> gym 1 waypoint, WALK_P2.md
+# section 2, could never land) or, widened carelessly, accepts a grant of a flag no pack writes a grant function for.
+def test_the_model_accepts_a_grant_only_for_a_quest_transition_flag():
+    prog = json.loads((ROOT / "data" / "progression.json").read_text(encoding="utf-8"))
+    kinds = {f["id"]: f["set_by"]["kind"] for f in prog["flags"]}
+    good = next(f for f, k in kinds.items() if k == "quest_transition")
+    bad = next(f for f, k in kinds.items() if k != "quest_transition")
+    for fid, ok in ((good, True), (bad, False), ("probe_undeclared", False)):
+        m = A.Model("k")
+        w = {"data": {}, "tags": set(), "scores": {}, "objectives": set(), "chosen": False, "unlocked": False,
+             "offer_seen": False, "notyet": False}
+        r = m.command(w, "execute as PLAYER-UUID at @s run function cobblers:flag/%s/grant" % fid)
+        assert (r == 1 and not m.unknown) if ok else (r is None and m.unknown), (fid, r, m.unknown)
+        assert w["data"] == {} and not w["unlocked"]        # a grant touches neither the stage nor the starter
