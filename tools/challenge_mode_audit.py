@@ -68,7 +68,8 @@ NOT COVERED. Validity, not behaviour. Whether rctmod really refuses the other mo
 all (E7) are RCT_PER_PLAYER_MODE.md section 7 and need a running Minecraft. The swap model is of the SELECTORS, not
 of rctmod. tools/reapply.py R17 checks a seat by its Normal id only (reapply.py, kind "trainer"): run while a
 Challenge player stands within reach, it summons a second trainer; that is reported, not modelled. The donor's
-post-placement substitutions inside misty/kanto_league (lily pads to air, healers to bricks) are not replayed.
+post-placement substitutions inside misty/kanto_league are replayed for P1's restore only (data/spawn_block_policy.json
+substitutions, the record's own, its remove_blocks; 2026-10-08); P's floor checks and the healer sweep are not.
 P1 models vanilla's commands, not rctmod: no spawner spawns or despawns, a TrainerId merge notifies no spawner, and
 whether InBattle is saved as a 0b/1b byte is ASSUMED (reported as P1:inbattle_assumed, never passed as fact). The
 one-leader proof in a running game is docs/mechanics/ONE_LEADER_SWAP.md.
@@ -1371,6 +1372,13 @@ class Audit:
                 if a.get("id") == p.get("lot", pid) or (p.get("kind") == "gym" and a.get("role") == "gym"):
                     level = a.get("level")
             w = TemplateWorld(size, cells, (pos["x"], pos["y"], pos["z"]), p.get("rotation", "none"), level)
+            # what the donor placement then fills over the template (tools/place_donor.py `commands`: the policy's
+            # substitutions, then the record's own, then remove_blocks to air), read here from the data itself, so the
+            # retire's restore is judged against the block the world held when the second spawner replaced it
+            # (2026-10-08: Bruno's orange concrete is Moar Concrete as built)
+            own = p.get("substitutions") if isinstance(p.get("substitutions"), list) else []
+            w.donor_subs = (list(self.doc("spawn_block_policy.json").get("substitutions") or []) + list(own)
+                            + [{"from": b, "to": "minecraft:air"} for b in p.get("remove_blocks") or []])
             self.note("P: %s placed from the %s template at %s %s, structure void resolved against lot level %s"
                       % (pid, tname, (pos["x"], pos["y"], pos["z"]), p.get("rotation", "none"), level))
             for c, ids in w.spawners():
@@ -1595,6 +1603,9 @@ class Audit:
         rl = [l.strip() for l in lines_of(T[rp]) if l.strip() and not l.strip().startswith("#")]
         w = worlds.get(n)
         floor, under = (w.at(c), w.at(cd)) if w is not None else (None, None)
+        for s in getattr(w, "donor_subs", ()):   # a template placement: place_donor's fills, in their order
+            floor = s["to"] if floor is not None and bname(floor) == s["from"] else floor
+            under = s["to"] if under is not None and bname(under) == s["from"] else under
         if floor is None or under is None:
             self.fail("P1:retire", "%s: no replayed build holds %s and %s, so the restore cannot be judged" % (cid, c, cd))
             return
