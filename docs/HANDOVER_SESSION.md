@@ -23,14 +23,24 @@ before it starts. The review list is `docs/OVERNIGHT_REVIEW_2026-10-06.md` (N95-
 - Agent worktrees of the night (`agent-a1bee230…`, `agent-a7097f3a…`, `agent-a33db429…`, `agent-ad8e5716…` and the
   four auditors') are all merged; they can be cleaned up.
 
-## 3. Waits on the owner
-- **Brock in game** (A1 b-steps in `docs/mechanics/ONE_LEADER_SWAP.md`), then the rollout to the other 12 (Misty and
-  the League need `single_leader.restore` measured from their templates first, N97).
-- Decisions: finale gate eight badges or one; Pacifidlog 0 or 6; tier-1 heals at 9,500; gym 2 at two juniors; the
-  eight barter lines and the $27,000 Master Ball; Lootr download permission and ADR-007 Accepted; the questions in
-  the five design files (A6-A10), which Wave B is built from.
-- The sources of "THE NURSE: 30 minutes", "237 ambient across 26 settlements", "the four P2s".
-- Wave B (handover of 2026-10-07 section 2c): about 25-35M, after the owner reads A6-A10.
+## 3. The owner's answers (2026-10-08) and the next job
+Recorded in STATE "What is decided" ("The owner's answers to the Wave A morning report"). The next session's work, in
+order, each with an independent audit before any apply:
+1. **A fresh independent audit of A1** (another agent, opus, escalation rule 1): the integrator fixed the retire and
+   edited `tests/test_challenge_mode_audit.py` to match (N95). Then measure Misty's and the League's
+   `single_leader.restore` from their templates and the League's `normal_at` (N97). Roll out the 12 only after the
+   owner's Brock check passes.
+2. **Pricing (A3 follow-up):** Pacifidlog reachable at 6 badges, not 0; early-town status heals re-priced as a
+   convenience (not 9,500). Re-run `economy_audit`; R14 at apply.
+3. **Barter lines (A4 follow-up):** re-price so the exchange is an alternative path, not a ~5.8x bypass of
+   Northlight's $27,000 Master Ball; place the approved lines at **Northlight's counter** (the one trading centre);
+   fix `rcon_checks()`'s selectors (N113). The economy audit with barter edges is in place.
+4. **Lootr:** the owner gave permission to download it (2026-10-08). Install on staging only, run EXP-056 (mind the
+   shared `mods/` hazard in ADR-007: the jar out of `mods/` before any live boot); ADR-007 stays Proposed until seen
+   working.
+5. Gym 2 keeps two juniors (accepted). The finale gate stays on all eight badges (as built).
+6. The owner does the five in-game checks, Brock first; Wave B waits on the owner's read of A6-A10.
+Still unsourced: "THE NURSE: 30 minutes", "237 ambient across 26 settlements", "the four P2s".
 
 ## 4. Do not rediscover
 - `reapply.py prepare` needs `--server-dir` and the lock env (`COBBLERS_SERVER_LOCK`, `COBBLERS_LOCK_OWNER` equal to
