@@ -2904,7 +2904,7 @@
           "id": "koga_mega",
           "kind": "line",
           "speaker": "marsh tracker",
-          "text": "Megas fight over the Rift's south-west basin, behind the Victory Road gate, and that gate wants eight badges. Before then, with Sabrina's badge, the Cutters' Gulch lookout on the Rift's east rim, about 2,300 blocks south of here, lets you down to the mine where their stones are cut.",
+          "text": "Megas fight over the south end of the Rift, behind the Victory Road gate, and that gate wants eight badges. Before then, with Sabrina's badge, the Cutters' Gulch lookout on the Rift's east rim, about 2,300 blocks south of here, lets you down to the mine where their stones are cut.",
           "placeholder": "Claude, 2026-10-08 (unit WAY, U47 'direct the player to the Mega field after Koga'): way-finding for Codex to replace. Measured from data: all 61 Mega dens (data/gulch_mine.json farms, field_*) have their anchor inside data/rift_zones.json z2's boxes, and z2 admits 8 badges (its guard G2 stands at the Victory Road trailhead (3548, 5322)); none is in the gulch zone. The gulch road starts on the plateau at (4392, 126, 4706) and passes the lookout's grille at (4362, 116, 4706) (gulch_mine.json gate.road, gate.grille), 2,274 blocks from Fenhide's centre (4646, 2446), bearing south; the gulch admits cobblers:flag/gym6_cleared (gulch_mine.json flag). So the line promises the field at eight badges and the gulch at Sabrina's. CRITICAL_PATH_WALK_2 item 14's 'open at 6 badges' does not reproduce from the zone boxes. The new end node: koga_repeat (Codex's text unchanged) now leads here, so a player who has finished the account hears it on the next talk",
           "next": "koga_mega"
         }
