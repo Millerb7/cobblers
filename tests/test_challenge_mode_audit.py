@@ -313,19 +313,22 @@ MUTATIONS = {
     "retire_kills_in_battle": ("challenge_mode", [(
         "sel = 'type=rctmod:trainer,distance=..%d,nbt={TrainerId:\"%s\",InBattle:0b}'",
         "sel = 'type=rctmod:trainer,distance=..%d,nbt={TrainerId:\"%s\"}'")], "P", "P1:retire_battle"),
-    # the Challenge-id kill no longer waits for the second spawner: a re-run kills again
     # the retire's player guard measured from the old seat with the swap's reach alone (the 2026-10-07 integration
-    # widened it to reach + the seats' gap): a Challenge player 15.5 east of the one spawner turns the leader to the
-    # Challenge id and the first-run kill takes him. (The old "kill without has" mutation no longer harms anyone: with
-    # the widened guard a Challenge-id trainer near the old seat is never the leader, so `has` is defence in depth.)
+    # widened it to reach + the seats' gap): a Challenge player 15.5 east of the one spawner has turned the leader to
+    # the Challenge id, and the first run acts with him inside battle range. Before review N115 trap a (2026-10-09) the
+    # Challenge-id kill took the leader (P1:retire_kills); since then the leader is kept and put back on the Normal id,
+    # spawner and trainer, under that player's feet, so a battle can start on the wrong team before the next cycle
+    # (P1:retire_renames). Same mutation, same fault, the check that names it moved with the generator.
     "retire_guard_too_narrow": ("challenge_mode", [(
-        "reach() + math.ceil(gap))", "reach())")], "P", "P1:retire_kills"),
+        "reach() + math.ceil(gap))", "reach())")], "P", "P1:retire_renames"),
     # the Normal-id kill spares nobody: the one leader goes with the renamed old trainer
     "retire_keeps_nobody": ("challenge_mode", [(
         ',tag=!cobblers_keep_leader]" % (has, near', ']" % (has, near')], "P", "P1:retire"),
-    # the keep measured from the OLD seat: the renamed old trainer is kept and the one leader killed
+    # the keep measured from the OLD seat: the old trainer, nearest the old seat, is kept (and put on the Normal id)
+    # and the one leader killed. Since review N115 trap a the keep picks from every candidate of either id; the
+    # mutation moves that pick's origin, which is what it moved before.
     "retire_keeps_the_old_one": ("challenge_mode", [(
-        "% (has, near, nx, ny, nz, sel % (SEAT_BOX, up))", "% (has, near, x, y, z, sel % (SEAT_BOX, up))")],
+        '% (has, near, nx, ny, nz, SEAT_BOX)', '% (has, near, x, y, z, SEAT_BOX)')],
         "P", "P1:retire"),
     # Brock's second spawner put back while Brock is still in the rollout
     "second_spawner_back": ("challenge_mode", [(
