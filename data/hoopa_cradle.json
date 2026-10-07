@@ -17,6 +17,10 @@
   "level": 60,
   "level_why": "the RCT cap after gym 8 (docs/mechanics/LEAGUE_LEVEL_CAP.md); the release needs both HQ wins, which come after the gyms on the finale chain (data/hq_tower.json finale_order). Above the thrower's cap the level-cap callback breaks the ball anyway (data/level_cap.json), so a player who somehow releases early is refused by that, not by this.",
   "gate_flag": "cobblers:flag/rift_crisis_resolved",
+  "cache": {
+    "reward": "hoopa_prison_bottle",
+    "why": "2026-10-08 (overnight, unit REWARD): docs/mechanics/ITEM_ROUTES.md section 2.3's Prison Bottle route, a requires_flags cache inside the cradle on Hoopa's own gate. The item is given by data/rewards.json hoopa_prison_bottle (ADR-002, tools/rewards_pack.py), not by this pack. Its container is the dais centre tools/relic_underground.py already lays under the spot (step R9RU), so no block is added to the cradle and tools/relic_underground_audit.py's composition is unchanged. tools/hoopa_cradle.py cache_problems holds the reward's coordinates to the spot and the dais."
+  },
   "caught_advancement": "cobblers:hoopa_cradle/caught",
   "caught_advancement_why": "per player and permanent: one minecraft:impossible criterion, granted only by the caught function. Carried across a re-export with every other advancement (tools/carry_players.py).",
   "tags": {

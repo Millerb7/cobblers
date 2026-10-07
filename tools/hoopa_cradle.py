@@ -48,6 +48,7 @@ import function_limits  # noqa: E402
 DATA = ROOT / "data" / "hoopa_cradle.json"
 RELIC = ROOT / "data" / "relic_underground.json"
 QUESTS = ROOT / "data" / "quests.json"
+REWARDS = ROOT / "data" / "rewards.json"
 DEFAULT_OUT = ROOT / "build" / "datapacks" / "cobblers_hoopa_cradle"
 SCHEMA = "cobblers.hoopa_cradle/1"
 PACK_FORMAT = 48
@@ -105,6 +106,42 @@ def problems(doc, relic=None, quests=None):
         first = (tr.get("effects") or [{}])[0]
         if first != {"kind": "function", "function": want}:
             bad.append("%s's first effect is %r, not the grant of %s this pack keys on" % (RELEASE, first, doc["gate_flag"]))
+    bad += cache_problems(doc, relic)
+    return bad
+
+
+def cache_problems(doc, relic, rewards=None):
+    """`cache` (2026-10-08): the Prison Bottle is a data/rewards.json cache (ADR-002, tools/rewards_pack.py), not
+    something this pack gives. Its container is the dais centre tools/relic_underground.py already lays under the
+    spot (composition.cradle.dais.centre, the rift_seep block at floor_y), so this holds the hand-written record to
+    that block: container at the spot one down in the palette's block, the trigger over the spot from the floor up,
+    and requires_flags holding the flag this pack's Hoopa keys on."""
+    c = doc.get("cache")
+    if not c:
+        return []
+    rewards = rewards if rewards is not None else json.loads(REWARDS.read_text(encoding="utf-8"))
+    r = {x.get("id"): x for x in rewards.get("rewards") or []}.get(c.get("reward"))
+    if r is None or r.get("kind") != "cache":
+        return ["cache.reward %r is not a cache in data/rewards.json" % (c.get("reward"),)]
+    bad = []
+    x, y, z = doc["spot"]
+    dais = relic["composition"]["cradle"]["dais"]
+    want_block = relic["palette"].get(dais["centre"], dais["centre"])
+    ct = r.get("container") or {}
+    if list(ct.get("at") or []) != [x, y - 1, z]:
+        bad.append("%s's container is at %s; the dais centre under the spot is %s" % (r["id"], ct.get("at"), [x, y - 1, z]))
+    if ct.get("block") != want_block:
+        bad.append("%s's container block %s is not the dais centre's %s" % (r["id"], ct.get("block"), want_block))
+    t = r.get("trigger") or {}
+    lo, hi = t.get("min") or [0, 0, 0], t.get("max") or [0, 0, 0]
+    rad = relic["geometry"]["cradle"]["radius"]
+    if not (lo[0] <= x <= hi[0] and lo[2] <= z <= hi[2] and lo[1] == y - 1 and hi[1] >= y):
+        bad.append("%s's trigger %s..%s does not stand over the spot from the floor up" % (r["id"], lo, hi))
+    if max(abs(lo[0] - x), abs(hi[0] - x), abs(lo[2] - z), abs(hi[2] - z)) >= rad:
+        bad.append("%s's trigger %s..%s reaches the cradle's wall (radius %d)" % (r["id"], lo, hi, rad))
+    flag = doc["gate_flag"].split("/", 1)[-1]
+    if flag not in (r.get("requires_flags") or []):
+        bad.append("%s does not require %s, the flag this cradle's Hoopa keys on" % (r["id"], flag))
     return bad
 
 
