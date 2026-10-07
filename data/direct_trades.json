@@ -114,9 +114,35 @@
       "inputs_why": "a block of netherite (9 ingots, $8,100) and 21 ingots ($18,900): $27,000, exactly the counter's 30 ingots, so the barter is the counter's price paid in metal rather than money (1.00 of the reference). Cost A is the block so the whole cost stays netherite while cost A keeps count 1"
     },
     {
-      "id": "ability_patch",
+      "id": "choice_specs",
       "status": "approved",
       "approved": true,
+      "buy": {"id": "minecraft:diamond_block", "count": 1},
+      "buyB": {"id": "minecraft:netherite_ingot", "count": 4},
+      "sell": {"id": "cobblemon:choice_specs", "count": 1},
+      "reference": {"counter": "northlight_station", "lines": ["assault_vest"], "why": "no counter sells it; the Assault Vest ($4,500, 5 ingots) is the counter's top held-item rung, and a Choice item is a held item of that weight (the reference the superseded life_orb and choice_band lines shared)"},
+      "late_game_why": "a competitive held item, and not an arena prize (data/arena_fights.json prizes.items, read 2026-10-09), so it stays. Other route (N104): Cobblemon's recipe (data/cobblemon/recipe/choice_specs.json: Wise Glasses, blaze rods, gold, redstone)",
+      "inputs_why": "a diamond block ($1,080, 9 diamonds at the bank's $120) and 4 netherite ingots ($3,600): $4,680, 1.04 of the reference"
+    },
+    {
+      "id": "destiny_knot",
+      "status": "approved",
+      "approved": true,
+      "buy": {"id": "minecraft:diamond_block", "count": 1},
+      "buyB": {"id": "minecraft:netherite_ingot", "count": 3},
+      "sell": {"id": "cobblemon:destiny_knot", "count": 1},
+      "reference": {"counter": "northlight_station", "lines": ["focus_sash"], "why": "no counter sells it; the Focus Sash ($3,600, 4 ingots) is the counter's standard held-item rung, and the Destiny Knot is a breeding held item of that weight"},
+      "late_game_why": "the breeding item that passes down IVs, and not an arena prize (data/arena_fights.json prizes.items, read 2026-10-09), so it stays. Other route (N104): Cobblemon's recipe (data/cobblemon/recipe/destiny_knot.json: wool, string, a ghast tear)",
+      "inputs_why": "a diamond block ($1,080) and 3 netherite ingots ($2,700): $3,780, 1.05 of the reference"
+    }
+  ],
+  "superseded_lines_why": "the owner, 2026-10-09 (decision arena_trophies_not_sold): 'keep them once-per-player prizes. Do not also sell them at a counter. A prize you can buy is not a prize.' Each record below is the line as it stood (approved 2026-10-08), kept so its pricing and reasoning are not lost; nothing reads this list, so none is placed. Its sell item is one of data/arena_fights.json prizes.items (read 2026-10-09: Choice Band rank 1, Leftovers rank 2, Choice Scarf rank 4, Life Orb rank 6, Ability Patch rank 7, each 'once per player'). Restoring one is the owner's decision, not a merge's",
+  "superseded_lines": [
+    {
+      "id": "ability_patch",
+      "status": "superseded",
+      "approved": false,
+      "superseded": {"decision": "arena_trophies_not_sold", "was": "approved 2026-10-08", "prize": "arena_prize_rank_7 (and the 50-streak prize)"},
       "buy": {"id": "cobblemon:ability_capsule", "count": 1},
       "buyB": {"id": "minecraft:netherite_ingot", "count": 4},
       "sell": {"id": "cobblemon:ability_patch", "count": 1},
@@ -126,8 +152,9 @@
     },
     {
       "id": "life_orb",
-      "status": "approved",
-      "approved": true,
+      "status": "superseded",
+      "approved": false,
+      "superseded": {"decision": "arena_trophies_not_sold", "was": "approved 2026-10-08", "prize": "arena_prize_rank_6"},
       "buy": {"id": "minecraft:diamond_block", "count": 1},
       "buyB": {"id": "minecraft:netherite_ingot", "count": 4},
       "sell": {"id": "cobblemon:life_orb", "count": 1},
@@ -137,8 +164,9 @@
     },
     {
       "id": "choice_band",
-      "status": "approved",
-      "approved": true,
+      "status": "superseded",
+      "approved": false,
+      "superseded": {"decision": "arena_trophies_not_sold", "was": "approved 2026-10-08", "prize": "arena_prize_rank_1"},
       "buy": {"id": "minecraft:diamond_block", "count": 1},
       "buyB": {"id": "minecraft:netherite_ingot", "count": 4},
       "sell": {"id": "cobblemon:choice_band", "count": 1},
@@ -147,20 +175,10 @@
       "inputs_why": "as life_orb: $4,680, 1.04 of the reference"
     },
     {
-      "id": "choice_specs",
-      "status": "approved",
-      "approved": true,
-      "buy": {"id": "minecraft:diamond_block", "count": 1},
-      "buyB": {"id": "minecraft:netherite_ingot", "count": 4},
-      "sell": {"id": "cobblemon:choice_specs", "count": 1},
-      "reference": {"counter": "northlight_station", "lines": ["assault_vest"], "why": "as choice_band"},
-      "late_game_why": "a competitive held item. Other route (N104): Cobblemon's recipe (data/cobblemon/recipe/choice_specs.json: Wise Glasses, blaze rods, gold, redstone)",
-      "inputs_why": "as life_orb: $4,680, 1.04 of the reference"
-    },
-    {
       "id": "choice_scarf",
-      "status": "approved",
-      "approved": true,
+      "status": "superseded",
+      "approved": false,
+      "superseded": {"decision": "arena_trophies_not_sold", "was": "approved 2026-10-08", "prize": "arena_prize_rank_4"},
       "buy": {"id": "minecraft:diamond_block", "count": 1},
       "buyB": {"id": "minecraft:netherite_ingot", "count": 4},
       "sell": {"id": "cobblemon:choice_scarf", "count": 1},
@@ -170,33 +188,24 @@
     },
     {
       "id": "leftovers",
-      "status": "approved",
-      "approved": true,
+      "status": "superseded",
+      "approved": false,
+      "superseded": {"decision": "arena_trophies_not_sold", "was": "approved 2026-10-08", "prize": "arena_prize_rank_2"},
       "buy": {"id": "minecraft:diamond_block", "count": 1},
       "buyB": {"id": "minecraft:netherite_ingot", "count": 3},
       "sell": {"id": "cobblemon:leftovers", "count": 1},
       "reference": {"counter": "northlight_station", "lines": ["focus_sash"], "why": "no counter sells it; the Focus Sash ($3,600, 4 ingots) is the counter's standard held-item rung, and Leftovers is a held item of that weight"},
       "late_game_why": "a competitive held item. No recipe in Cobblemon 1.8.0 or Mega Showdown 1.0.2 (read 2026-10-08); other routes are one-off finds and prizes: Heaven's Arena's rank 2 prize, the old orchard's cask and the gate watcher's thanks (data/arena_fights.json, data/rewards.json)",
       "inputs_why": "a diamond block ($1,080) and 3 netherite ingots ($2,700): $3,780, 1.05 of the reference"
-    },
-    {
-      "id": "destiny_knot",
-      "status": "approved",
-      "approved": true,
-      "buy": {"id": "minecraft:diamond_block", "count": 1},
-      "buyB": {"id": "minecraft:netherite_ingot", "count": 3},
-      "sell": {"id": "cobblemon:destiny_knot", "count": 1},
-      "reference": {"counter": "northlight_station", "lines": ["focus_sash"], "why": "as leftovers: a breeding held item of the standard rung"},
-      "late_game_why": "the breeding item that passes down IVs. Other route (N104): Cobblemon's recipe (data/cobblemon/recipe/destiny_knot.json: wool, string, a ghast tear)",
-      "inputs_why": "as leftovers: $3,780, 1.05 of the reference"
     }
   ],
   "decisions": [
+    {"id": "arena_trophies_not_sold", "decided": "the owner, 2026-10-09 (docs/STATE.md 'The owner's decisions of 2026-10-09' (3)): 'ARENA TROPHIES: keep them once-per-player prizes. Do not also sell them at a counter. A prize you can buy is not a prize.' Applied: the five barter lines whose output is an arena prize (data/arena_fights.json prizes.items) moved to superseded_lines. No counter (data/markets.json counters and stalls) or Mart (data/traders.json) sold any of the five (grep, 2026-10-09). The Master Ball, Choice Specs and Destiny Knot are not prizes and stay. The arena's sixth prize item, obc:bottle_cap_gold, is still sold on Giovanni's counter (data/markets.json counter holdfast, town gym8_town, line bottle_cap_gold): it is a consumable the arena gives at five ranks and streaks and a quest gives too, not one of the five trophies review N125 named, so it was left for the owner"},
     {"id": "approve_lines", "decided": "the owner, 2026-10-08: re-price the lines so the exchange is an alternative path, not a bypass; re-priced lines go at the counter. Applied by pricing.rule: every line approved at 1.00-1.05 of its reference"},
     {"id": "barterer_site", "decided": "the owner, 2026-10-08: 'Players trade at Northlight's counter. One place.' The barterer stands at counter_site, inside the Northlight Mart beside the counter; the Holdfast booth stays as EXP-055's"},
     {"id": "master_ball_counter", "decided": "kept: the owner's 2026-10-08 answer makes the barter an alternative to the counter's $27,000 Master Ball, not its replacement; both price 30 netherite ingots"}
   ],
   "decisions_pending": [
-    {"id": "held_items_money_line", "question": "the Life Orb, the three Choice items, Leftovers, Destiny Knot and the Ability Patch are barter-only at the counter (no money where possible, 2026-10-07): keep them so, or also list them on Station Supply for money at the reference price"}
+    {"id": "held_items_money_line", "question": "Choice Specs and the Destiny Knot are barter-only at the counter (no money where possible, 2026-10-07): keep them so, or also list them on Station Supply for money at the reference price. (Narrowed 2026-10-09: the Life Orb, Choice Band, Choice Scarf, Leftovers and Ability Patch are arena prizes and are sold nowhere, decision arena_trophies_not_sold)"}
   ]
 }
