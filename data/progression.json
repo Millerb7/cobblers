@@ -312,6 +312,18 @@
       }
     },
     {
+      "id": "crater_operation_stopped",
+      "set_by": {
+        "kind": "quest_transition",
+        "quest": "main_worldshift_reveal",
+        "transition": "record_crater_operation_stopped",
+        "invoked_by": "dlg_main_blaine_crater_analyst",
+        "invoked_at": "line blaine_008 (acknowledged, before complete_blaine_reveal), and the blaine_repeat entry rule (priority 7) for a player who heard the account before the setter existed; NPC npc_main_blaine_crater_analyst in gym7_town (Cinderlee). A stand-in: the design's beat is the Craters climax ('The player stops the activation; crater_operation_stopped records it', docs/story/FACTION.md:211; ARC.md:48), which is not written (docs/story/CAMPAIGN_OUTLINE.md section 4 C1, Codex). When it lands, move invoked_by and both invocations to it."
+      },
+      "why": "Approved in docs/story/ARC.md:27 and :48 ('Sets crater_operation_stopped, then gym7_cleared') and docs/story/FACTION.md:237 ('Stopping it sets crater_operation_stopped; defeating Blaine separately sets gym7_cleared'). Had no setter until 2026-10-09 (review N9, sweep U58). Read by nothing in data yet; the Kyogre 'two sleepers' beat is designed to (docs/world-building/KYOGRE_CAVE.md:88). Per player, like every flag here: an advancement granted by cobblers:flag/crater_operation_stopped/grant, which the transition runs as and at the listening player.",
+      "multiplayer": "per player. ARC.md speaks of the operation's defeat as one world event; a world-scoped flag is state the dialogue compiler refuses, and an owner call (as for rift_crisis_resolved)."
+    },
+    {
       "id": "gym8_cleared",
       "set_by": {
         "kind": "trainer_defeat",

@@ -769,7 +769,8 @@
           "requires_stage": "sabrina_reveal_complete",
           "requires_existing_flag": "gym6_cleared",
           "world_change_flag": "gym7_cleared",
-          "missing_story_flag": "crater_operation_stopped",
+          "story_flag": "crater_operation_stopped",
+          "story_flag_setter": "record_crater_operation_stopped, at the crater analyst's blaine_008 (a stand-in for the Craters climax, unit WB1 2026-10-09)",
           "required_fact": "Compact leadership knowingly selects an occupied destination and proceeds anyway.",
           "completion_stage": "blaine_reveal_complete"
         },
@@ -1782,6 +1783,34 @@
           ]
         },
         {
+          "id": "record_crater_operation_stopped",
+          "external_trigger_contract": "THIS transition is crater_operation_stopped's setter (data/progression.json flags, set_by quest_transition; unit WB1 2026-10-09, U58 / review N9). Its one effect grants the flag's advancement to the player who heard the crater analyst's account. Invoked by dlg_main_blaine_crater_analyst at line blaine_008 (before complete_blaine_reveal) and by its blaine_repeat entry rule (a player who heard the account before this shipped). It stands in for the Craters climax that does not exist (docs/story/CAMPAIGN_OUTLINE.md C1, for Codex): when that scene lands, move both invocations to it. Its condition is the account's own opening gate (entry rule 5's stage list), so the flag is never granted to a player the analyst would refuse; it does not read gym7_cleared, because 'defeating Blaine separately sets gym7_cleared' (docs/story/FACTION.md:237). No stage moves.",
+          "conditions": [
+            {
+              "kind": "progression_in",
+              "field": "quest.main_worldshift_reveal.stage",
+              "values": [
+                "sabrina_reveal_complete",
+                "blaine_reveal_complete",
+                "giovanni_reveal_complete",
+                "rift_crisis_pending",
+                "deep_handoff_received",
+                "hq_crossed",
+                "anchor_shutdown",
+                "cradle_open",
+                "rift_released",
+                "league_recognized"
+              ]
+            }
+          ],
+          "effects": [
+            {
+              "kind": "function",
+              "function": "cobblers:flag/crater_operation_stopped/grant"
+            }
+          ]
+        },
+        {
           "id": "complete_giovanni_reveal",
           "conditions": [
             {
@@ -2449,10 +2478,11 @@
         },
         {
           "beat": "blaine",
-          "kind": "missing_progression_flag",
+          "kind": "existing_progression_flag",
           "flag": "crater_operation_stopped",
-          "result": "Should record defeat of the Craters activation separately from Blaine's badge.",
-          "runtime_status": "approved in ARC.md but absent from data/progression.json; no setter is invented here"
+          "fires": "when record_crater_operation_stopped runs (its one effect, cobblers:flag/crater_operation_stopped/grant), invoked by dlg_main_blaine_crater_analyst line blaine_008 and its blaine_repeat entry rule",
+          "result": "Records defeat of the Craters activation separately from Blaine's badge.",
+          "runtime_status": "declared in data/progression.json 2026-10-09 (unit WB1, U58) with the analyst's account as a stand-in setter: the Craters climax scene does not exist (docs/story/CAMPAIGN_OUTLINE.md C1, Codex). Compiled and unit-tested only; not run in game"
         },
         {
           "beat": "league",
@@ -2485,7 +2515,7 @@
         "Misty needs a relief ledger and belongings display; Surge needs the planned signal array and a comparison record.",
         "Erika needs a tangible survey ledger; do not claim the current dry tarn contains water.",
         "Koga needs an abandoned anchor/control-plate display; Sabrina needs a convergence-record table.",
-        "Blaine needs an occupied-destination model and acknowledged warning; crater_operation_stopped is approved in ARC.md but absent from the progression ledger.",
+        "Blaine needs an occupied-destination model and acknowledged warning; crater_operation_stopped is declared (2026-10-09) with the analyst's account as its stand-in setter; the Craters climax scene it stands in for is not written (Codex, CAMPAIGN_OUTLINE C1).",
         "Giovanni needs an approved dissenter evidence carrier; the route packet is a content requirement, not a placed object.",
         "The containment cradle beneath the League plateau has no Y, entrance, footprint, structure ID, or build.",
         "rift_crisis_resolved is granted by unlock_league_after_rift_resolution, which the Compact binder's release (dlg_main_relic_hall_release, in the carved relic hall) invokes. Codex's Scenes 1-4 and a visible Hoopa actor are not built; the in-game League gate (RCT's chain after gym8) is unchanged.",
