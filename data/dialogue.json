@@ -3145,6 +3145,22 @@
           "why": "holding gym6_cleared with an earlier stage: carry_by_gym6_cleared_to_sabrina_reveal_complete lifts the stage to sabrina_reveal_complete, then the account opens"
         },
         {
+          "priority": 7,
+          "when": {
+            "kind": "progression_equals",
+            "field": "quest.main_worldshift_reveal.blaine_cursor",
+            "value": "blaine_repeat"
+          },
+          "actions": [
+            {
+              "kind": "quest_transition",
+              "transition": "record_crater_operation_stopped"
+            }
+          ],
+          "node": "blaine_repeat",
+          "why": "Claude, 2026-10-09 (unit WB1, U58): a player who heard the whole account before blaine_008 recorded the stop never hears blaine_008 again, so the repeat records it. Granting a held advancement is a no-op and does not re-run its reward, so a repeated click changes nothing."
+        },
+        {
           "priority": 10,
           "when": {
             "kind": "always"
@@ -3213,9 +3229,14 @@
           "id": "blaine_008",
           "kind": "line",
           "speaker": "crater analyst",
-          "text": "Blaine's challenge remains separate. The badge opens the southern road; shutting down the operation needs its own authoritative record.",
+          "text": "The activation is stopped, and this record says you were here when it stopped. Blaine's challenge remains separate: his badge opens the southern road.",
+          "placeholder": "Claude, 2026-10-09 (unit WB1, U58 / review N9): a functional line for Codex to replace, with the Craters climax it stands in for (docs/story/CAMPAIGN_OUTLINE.md section 4, C1). Codex's line said 'shutting down the operation needs its own authoritative record', a design note spoken in game. The design names the setter's beat ('The player stops the activation; crater_operation_stopped records it', docs/story/FACTION.md:211) but no scene exists, so the analyst's account, which already reports the stop (blaine_006-007), is the record: acknowledging this line runs record_crater_operation_stopped (data/quests.json) before complete_blaine_reveal. Codex's line: 'Blaine's challenge remains separate. The badge opens the southern road; shutting down the operation needs its own authoritative record.' Reversible: drop the first action and restore the text.",
           "next": "blaine_repeat",
           "actions_after_acknowledge": [
+            {
+              "kind": "quest_transition",
+              "transition": "record_crater_operation_stopped"
+            },
             {
               "kind": "quest_transition",
               "transition": "complete_blaine_reveal"
