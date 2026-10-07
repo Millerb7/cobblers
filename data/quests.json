@@ -1550,6 +1550,10 @@
           ],
           "effects": [
             {
+              "kind": "function",
+              "function": "cobblers:flag/oak_sendoff/grant"
+            },
+            {
               "kind": "set_progression",
               "field": "quest.main_worldshift_reveal.stage",
               "value": "oak_sendoff"

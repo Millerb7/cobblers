@@ -384,6 +384,20 @@
       "offers_marker_why": "the League opens on this flag (z5), so this is where its waypoint belongs: offered to the releasing player at the cradle, with the hint naming both ways up (the precinct gate on the north rim and Victory Road's caves from the Deep's floor). Moved here from gym8_cleared 2026-10-06 (docs/world-building/POST_GYM8_DIRECTION.md).",
       "why": "Approved in docs/story/ARC.md ('The final story confrontation ends the forced activation and releases Hoopa from the steering mechanism. It sets rift_crisis_resolved', and the League row 'Requires rift_crisis_resolved'). Per player, like every flag here: an advancement, granted by cobblers:flag/rift_crisis_resolved/grant, which the transition's first effect runs as and at the releasing player. It is the gate data/rift_zones.json z5 names.",
       "multiplayer": "per player. Each player releases Hoopa for themselves; a late joiner, a player who died or disconnected keeps or lacks it on their own record. Codex's 'one world transition that advances every eligible player' (Scene 5) is NOT built: it is world-scoped state the dialogue compiler refuses, and an owner call."
+    },
+    {
+      "id": "oak_sendoff",
+      "set_by": {
+        "kind": "quest_transition",
+        "quest": "main_worldshift_reveal",
+        "transition": "record_oak_sendoff",
+        "invoked_by": "dlg_main_pallet_oak",
+        "invoked_at": "line oak_003 ('Come back if the field guide raises questions.'), acknowledged; reached only by a player Cobblemon says has chosen a starter (data/dialogue.json dlg_main_pallet_oak starter_gate). NPC npc_main_pallet_oak at (1493, 118, 5317) in his lab (data/npc_seats.json). The transition's condition (stage not_started) makes it run once per player"
+      },
+      "offers_marker": "gym1_town",
+      "offers_marker_why": "NAVIGATION.md section 6, one gym ahead, starting at the start: every gymN_cleared offers gym N+1's waypoint, and gym 1's is Oak's to offer as he sends the player off (docs/world-building/WALK_P2.md section 2, review N120). Brock's gym is 1,672 blocks north of Oak's seat; until this, Oak's own lines and the Route 1 signs were the only way a player found it.",
+      "why": "A flag only so that its granted reward offers the gym 1 waypoint to the player Oak sends off: an advancement, granted by cobblers:flag/oak_sendoff/grant, which record_oak_sendoff's first effect runs as and at that player. No chapter, zone or gate reads it. Named for the stage value the same transition sets (quest.main_worldshift_reveal.stage oak_sendoff).",
+      "multiplayer": "per player, like every flag here: each player is sent off and offered the waypoint for themselves. A player sent off before this shipped already holds stage oak_sendoff or later, so the transition never runs for them again and they are not offered it; the Route 1 signs still lead them."
     }
   ],
   "chapters": [
@@ -3500,10 +3514,15 @@
     }
   ],
   "gym_markers": {
-    "why": "NAVIGATION.md section 6, one gym ahead: when gymN_cleared is granted the player is offered a Xaero's waypoint to the next gym, by a chat share they accept with a click. Gym 1's is Oak's to offer at the start (not built). The waypoint points at the middle of the gym building's placed footprint (tools/place_donor.py box). Replaces Cobbleverse's gym maps, which point at naturally generated gyms this world does not have.",
+    "why": "NAVIGATION.md section 6, one gym ahead: when gymN_cleared is granted the player is offered a Xaero's waypoint to the next gym, by a chat share they accept with a click. Gym 1's is Oak's to offer at the start: flag oak_sendoff, granted by his send-off (data/quests.json record_oak_sendoff), offers gym1_town. The waypoint points at the middle of the gym building's placed footprint (tools/place_donor.py box). Replaces Cobbleverse's gym maps, which point at naturally generated gyms this world does not have.",
     "share_format": "xaero-waypoint:<name>:<initials>:<x>:<y or ~>:<z>:<color>:<rotation>:<yaw>:Internal-overworld-waypoints, read from xaerominimap-fabric-1.21.1-26.4.2 WaypointSharingHandler (name 1-32 characters, initials 1-3, no '-', '_' or ':')",
     "color": 14,
     "markers": {
+      "gym1_town": {
+        "placement": "gym1_brock_gym",
+        "name": "Gym 1 Brock",
+        "initials": "G1"
+      },
       "gym2_town": {
         "placement": "gym2_misty_gym",
         "name": "Gym 2 Misty",
