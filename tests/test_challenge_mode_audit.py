@@ -27,14 +27,13 @@ import challenge_mode_audit as A  # noqa: E402
 # builder moves a spawner, its entries leave this set and the test says so: update it, never widen it.
 # 2026-10-06: Misty's and Bruno's Challenge spawners moved to air cells (1605, 132, 2873), (3695, 127, 2437).
 # 2026-10-06, the one-leader rule (P1) on Brock, the first boss in single_leader.rollout (commit c8b5090):
-#   P1:retire        with nobody near, the cycle's nobody-near line (tools/challenge_mode.py single_lines, distance 24
-#                    of the one spawner) renames the OLD Challenge trainer on the retired cell (1830, 155, 3696) to
-#                    kanto_brock before R17L's retire runs, so the retire's kill (Challenge id only) misses it and a
-#                    second Normal Brock is left standing; single_leader_verify looks for the Challenge id only
+#   P1:retire        FIXED in ab0de08 (the retire now keeps the Normal-id trainer nearest the one spawner and kills
+#                    the rest): the cycle renamed the old Challenge trainer to kanto_brock before R17L's retire ran
 #   P1:retire_kills  the retire's kill guard is "no player within 17 of the RETIRED cell", but the swap follows a
-#                    player within 17 of the ONE spawner two blocks east, so a re-run kills the one leader while a
-#                    Challenge player stands 15.5 east of him
-KNOWN = {("P1:retire", "kanto_brock_challenge"), ("P1:retire_kills", "kanto_brock_challenge")}
+#                    player within 17 of the ONE spawner two blocks east. ab0de08 put every kill under the second-
+#                    spawner block test, so a RE-RUN no longer kills; the FIRST run still kills the one leader while a
+#                    Challenge player stands 15.5 east of him (once the cycle has swapped him to the Challenge id)
+KNOWN = {("P1:retire_kills", "kanto_brock_challenge")}
 
 
 @pytest.fixture(scope="module")
@@ -205,6 +204,25 @@ def test_without_a_saved_inbattle_no_inbattle_predicate_matches():
         assert ((9, 9, 9) in w.blocks) == hit, (inb, battle, form)
 
 
+# Without it the keep-the-nearest retire could be judged by a model that sorts from the wrong point or ignores tags.
+def test_sort_nearest_is_measured_from_the_position_reached_and_tag_filters_apply():
+    far = {"id": "t", "battle": False, "pos": (6.5, 65.0, 0.5)}           # 6 east of the spawner
+    w = cworld(extra=[far])                                                # the spawner's own trainer at 0.5
+    w.run('execute positioned 6.5 64 0.5 as @e[type=rctmod:trainer,distance=..24,nbt={TrainerId:"t"},'
+          'sort=nearest,limit=1] run tag @s add keep')
+    assert [sorted(t.get("tags", ())) for t in w.trainers] == [[], ["keep"]]   # nearest to x6.5 is the far one
+    w.run('execute positioned 0.5 64 0.5 run kill @e[type=rctmod:trainer,distance=..24,tag=!keep]')
+    assert [t["pos"][0] for t in w.trainers] == [6.5]
+    w.run("tag @e[type=rctmod:trainer,tag=keep] remove keep")             # a bare line: no position needed
+    assert w.trainers[0]["tags"] == set()
+    w2 = cworld(extra=[dict(far)])
+    w2.run('execute positioned 6.5 64 0.5 as @e[type=rctmod:trainer,distance=..24,sort=furthest,limit=1] '
+           'run tag @s add keep')
+    assert [sorted(t.get("tags", ())) for t in w2.trainers] == [["keep"], []]
+    with pytest.raises(ValueError):
+        cworld().run('execute positioned 0.5 64 0.5 run kill @e[type=rctmod:trainer,sort=random,limit=1]')
+
+
 # Without it a selector anchored by x/y/z could be measured from the execute position instead.
 def test_a_selector_origin_overrides_the_execute_position():
     w = cworld(players=[(3, "m")])
@@ -293,8 +311,19 @@ MUTATIONS = {
         '    head = "execute if loaded', '    busy = ""\n    head = "execute if loaded')], "P", "P1:swap"),
     # the retire kills the old trainer even in a battle
     "retire_kills_in_battle": ("challenge_mode", [(
-        "'nbt={TrainerId:\"%s\",InBattle:0b}]' % (x, y, z, reach(), SEAT_BOX, cid)",
-        "'nbt={TrainerId:\"%s\"}]' % (x, y, z, reach(), SEAT_BOX, cid)")], "P", "P1:retire_battle"),
+        "sel = 'type=rctmod:trainer,distance=..%d,nbt={TrainerId:\"%s\",InBattle:0b}'",
+        "sel = 'type=rctmod:trainer,distance=..%d,nbt={TrainerId:\"%s\"}'")], "P", "P1:retire_battle"),
+    # the Challenge-id kill no longer waits for the second spawner: a re-run kills again
+    "retire_kill_without_has": ("challenge_mode", [(
+        '"execute %s %s run kill @e[%s]" % (has, near, sel % (SEAT_BOX, cid))',
+        '"execute %s run kill @e[%s]" % (near, sel % (SEAT_BOX, cid))')], "P", "P1:rerun_kills"),
+    # the Normal-id kill spares nobody: the one leader goes with the renamed old trainer
+    "retire_keeps_nobody": ("challenge_mode", [(
+        ',tag=!cobblers_keep_leader]" % (has, near', ']" % (has, near')], "P", "P1:retire"),
+    # the keep measured from the OLD seat: the renamed old trainer is kept and the one leader killed
+    "retire_keeps_the_old_one": ("challenge_mode", [(
+        "% (has, near, nx, ny, nz, sel % (SEAT_BOX, up))", "% (has, near, x, y, z, sel % (SEAT_BOX, up))")],
+        "P", "P1:retire"),
     # Brock's second spawner put back while Brock is still in the rollout
     "second_spawner_back": ("challenge_mode", [(
         "        if up in single:\n", "        if up in single and False:\n")], "P", "P1:count"),
@@ -304,8 +333,8 @@ MUTATIONS = {
 # Without it the narrow R:summon exception could be widened into one that excuses any kill in a retire function.
 def test_the_retire_kill_is_excused_only_in_its_exact_shape(up, monkeypatch):
     fresh(monkeypatch, "challenge_mode", [(
-        "'nbt={TrainerId:\"%s\",InBattle:0b}]' % (x, y, z, reach(), SEAT_BOX, cid)",
-        "'nbt={TrainerId:\"%s\"}]' % (x, y, z, reach(), SEAT_BOX, cid)")])
+        '"execute %s %s run kill @e[%s]" % (has, near, sel % (SEAT_BOX, cid))',
+        '"execute %s run kill @e[%s]" % (near, sel % (SEAT_BOX, cid))')])
     fresh(monkeypatch, "route_trainers")
     assert "R:summon" in {c for c, _ in keyed(run(up, "R"))}
 
