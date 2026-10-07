@@ -257,3 +257,179 @@ def test_an_unknown_id_in_markets_emission_is_a_missing_id():
                '"Offers": [{"Item": {"count": 1, "id": it["item"] + "_nonexistent"}')
     fails, _r, _n = E.audit(SNAP, VANILLA, markets_mod=m, use_jars=True)
     assert any(f.startswith("MISSING ID minecraft:coal_nonexistent") for f in fails), fails[:5]
+
+
+# ------------------------------------------------------------------------------------------------ barter edges
+# The barter tests below were written by the A4 auditor, not the builder of tools/direct_trades.py. They prove the
+# audit's barter arithmetic on synthetic edges, then read the real data and the real generator, then mutate the
+# generator's CODE. They do not prove that a villager trades, keeps its offers or holds its price in a running game:
+# that is EXP-055.
+FIX = "uses:0,maxUses:9999,rewardExp:0b,specialPrice:0,demand:0,priceMultiplier:0.0f,xp:0"
+
+
+def _doc(offers=(), lines=()):
+    return {"fixed_trade": {"uses": 0, "maxUses": 9999, "rewardExp": False, "specialPrice": 0, "demand": 0,
+                            "priceMultiplier": 0.0, "xp": 0},
+            "experiment_offers": list(offers), "lines": list(lines)}
+
+
+def _off(oid, buy, sell, buy_b=None, **kw):
+    o = {"id": oid, "buy": {"id": buy[0], "count": buy[1]}, "sell": {"id": sell[0], "count": sell[1]}}
+    if buy_b:
+        o["buyB"] = {"id": buy_b[0], "count": buy_b[1]}
+    o.update(kw)
+    return o
+
+
+def _stub(*recipes):
+    """A stand-in for tools/direct_trades.py whose place function summons one villager with these SNBT recipes."""
+    text = 'summon minecraft:villager 0.5 64 0.5 {NoAI:1b,Offers:{Recipes:[%s]},Tags:["t"]}\n' % ",".join(recipes)
+    return types.SimpleNamespace(files=lambda doc, g: ({"data/t/function/p.mcfunction": text}, {}))
+
+
+# Without it a barter whose output the Bank buys would not be a loop: buy m:a at $10, barter 1 m:a for 1 m:b, sell
+# m:b for $15. A dollar comes back for 10/15 of a dollar.
+def test_a_barter_from_bought_inputs_to_a_bank_bought_output_is_a_money_loop():
+    b = E.Barter("x", "placed", [("m:a", 1)], (("m:a", 1), None), ("m:b", 1))
+    g = E.gains({E.MONEY}, [b.conversion()], [_sale("m:a", 10.0)], {"m:b": 15})
+    assert set(g) == {E.MONEY} and abs(g[E.MONEY][0] - 10 / 15) < 1e-9
+    assert E.gains({E.MONEY}, [], [_sale("m:a", 10.0)], {"m:b": 15}) == {}
+
+
+# Without it an item cycle with no money in it would pass: a block crafts into 9 gems and the barter gives a block for
+# 8 gems, so one block comes back for 8/9 of a block.
+def test_an_item_cycle_through_a_barter_and_a_recipe_is_a_loop():
+    conv = [("x:gems", "crafting_shapeless", [({"m:block"}, 1)], "m:gem", 9)]
+    b = E.Barter("x", "proposal", [("m:gem", 8)], (None, ("m:gem", 8)), ("m:block", 1))
+    g = E.gains({"m:block", "m:gem"}, conv + [b.conversion()], [], {})
+    assert abs(g["m:block"][0] - 8 / 9) < 1e-9 and abs(g["m:gem"][0] - 8 / 9) < 1e-9
+    assert E.gains({"m:block", "m:gem"}, conv, [], {}) == {}
+
+
+# Without it a cost A would be counted as authored: Hero of the Village and reputation can bring it down to the
+# clamp's floor of 1, so "4 m:p for 2 m:p" looks like a loss as written and is a gain of one at the worst case.
+def test_a_cost_a_counts_as_one_and_a_cost_b_as_authored():
+    (b,) = E.barter_data(_doc(offers=[_off("e", ("m:p", 4), ("m:p", 2))]))
+    assert b.pays == [("m:p", 1)]
+    assert abs(E.gains({"m:p"}, [b.conversion()], [], {})["m:p"][0] - 0.5) < 1e-9
+    (c,) = E.barter_data(_doc(lines=[_off("l", ("m:a", 3), ("m:o", 1), buy_b=("m:b", 5), status="proposal")]))
+    assert c.group == "proposal" and c.pays == [("m:a", 1), ("m:b", 5)]
+
+
+# Without it a loop that needs an input nobody sells would be called money from nothing: m:x is gathered, not bought,
+# so selling the barter's output is income from gathering (B1 holds), not a loop.
+def test_an_unbought_input_breaks_the_money_loop():
+    b = E.Barter("x", "placed", [("m:a", 1), ("m:x", 2)], (("m:a", 1), ("m:x", 2)), ("m:b", 1))
+    assert E.gains({E.MONEY, "m:a", "m:x", "m:b"}, [b.conversion()], [_sale("m:a", 10.0)], {"m:b": 100}) == {}
+
+
+# Without it the placed group could be read from the data's word instead of what the villager offers, and a missing
+# fixed field (maxUses defaults to 4, xp to 1, rewardExp to true) would pass.
+def test_the_emitted_villager_must_be_exactly_the_placed_offers_with_every_fixed_field():
+    doc = _doc(offers=[_off("e", ("m:p", 4), ("m:g", 1), buy_b=("m:g", 1))])
+    good = '{buy:{id:"m:p",count:4},buyB:{id:"m:g",count:1},sell:{id:"m:g",count:1},%s}' % FIX
+    f, _r, _n = E.barter_checks([], [], {}, {}, doc=doc, dt_mod=_stub(good))
+    assert f == [], f
+    missing = good.replace(",priceMultiplier:0.0f", "")
+    f, _r, _n = E.barter_checks([], [], {}, {}, doc=doc, dt_mod=_stub(missing))
+    assert any(x.startswith("BARTER EMITTED e omits priceMultiplier") for x in f), f
+    moved = good.replace("maxUses:9999", "maxUses:4")
+    f, _r, _n = E.barter_checks([], [], {}, {}, doc=doc, dt_mod=_stub(moved))
+    assert any(x.startswith("BARTER EMITTED e writes maxUses") for x in f), f
+    extra = '{buy:{id:"m:q",count:1},sell:{id:"m:r",count:1},%s}' % FIX
+    f, _r, _n = E.barter_checks([], [], {}, {}, doc=doc, dt_mod=_stub(good, extra))
+    assert any(x.startswith("BARTER EMITTED an offer no placed data offer authors") for x in f), f
+    f, _r, _n = E.barter_checks([], [], {}, {}, doc=doc, dt_mod=_stub())
+    assert any(x.startswith("BARTER NOT EMITTED e") for x in f), f
+
+
+# Without it a gain the recipes already had would be blamed on the barter, or a barter gain hidden behind it: a recipe
+# dupe (1 m:a -> 2 m:a) is reported as pre-existing; a placed barter gain on another item fails as placed; a proposal
+# gain fails as proposal.
+def test_gains_are_attributed_to_the_recipes_the_placed_villager_or_the_proposals():
+    conv = [("x:dupe", "crafting_shapeless", [({"m:d"}, 1)], "m:d", 2)]
+    doc = _doc(offers=[_off("e", ("m:b", 1), ("m:b", 2))],
+               lines=[_off("l", ("m:c", 1), ("m:c", 3), status="proposal", approved=False),
+                      _off("k", ("m:d", 1), ("m:e", 1), status="proposal", approved=False)])
+    rec = '{buy:{id:"m:b",count:1},sell:{id:"m:b",count:2},%s}' % FIX
+    f, r, _n = E.barter_checks([], conv, {}, {}, doc=doc, dt_mod=_stub(rec))
+    assert any(x.startswith("barter pre-existing gain m:d") for x in r), r
+    assert not any(" m:d:" in x for x in f), f
+    assert any(x.startswith("BARTER LOOP (placed) m:b") for x in f), f
+    assert any(x.startswith("BARTER LOOP (proposal) m:c") for x in f), f
+    assert not any(x.startswith("BARTER LOOP (placed) m:c") for x in f)
+
+
+# Without it the play-loop rules would go unreported: B1 every input bought, B2 a farmed input, B3 a Bank-bought
+# output, B4 a cost A over 1 on a line.
+def test_the_play_loop_rules_are_reported_per_line():
+    doc = _doc(lines=[_off("l", ("minecraft:iron_ingot", 2), ("m:o", 1), buy_b=("m:x", 1), status="proposal")])
+    sales = [_sale("minecraft:iron_ingot", 5.0), _sale("m:x", 1.0)]
+    _f, r, _n = E.barter_checks(sales, [], {"m:o": 3}, E.cheapest(sales, []), doc=doc, dt_mod=_stub())
+    for rule in ("B1", "B2", "B3", "B4"):
+        assert any(x.startswith("barter rule %s (proposal) l" % rule) for x in r), (rule, r)
+
+
+# Without it the audit could read no barter at all and pass: today's data carries 2 experiment offers placed and 8
+# proposal lines (counted here from data/direct_trades.json, not from the audit), and every one gets a REPORT line.
+def test_the_real_barter_edges_are_all_read(real):
+    _f, reps, notes = real
+    doc = E.read_json(E.DIRECT_TRADES)
+    live = [ln for ln in doc["lines"] if ln.get("approved") is True or ln.get("status") == "approved"]
+    placed, proposal = len(doc["experiment_offers"]) + len(live), len(doc["lines"]) - len(live)
+    note = next(n for n in notes if n.startswith("barter:"))
+    assert note.startswith("barter: %d placed offer(s) read from the emitted villager, %d proposal line(s)"
+                           % (placed, proposal)), note
+    for o in doc["experiment_offers"] + doc["lines"]:
+        assert any(r.startswith("barter %s (" % o["id"]) for r in reps), o["id"]
+
+
+# Without it a generator that stops writing priceMultiplier would pass the audit (the codec's default is 0.0, so the
+# price would not move, but the offer is no longer the one the data authors and nothing else says so).
+def test_a_generator_that_drops_price_multiplier_fails():
+    d = mutant("direct_trades", "v = over.get(k, fixed[k])",
+               'v = over.get(k, fixed[k])\n        if k == "priceMultiplier":\n            continue')
+    fails, _r, _n = E.audit(None, None, use_jars=False, direct_trades_mod=d)
+    assert any(f.startswith("BARTER EMITTED exp_two_inputs omits priceMultiplier") for f in fails), fails[:5]
+
+
+# Without it a generator that pays out one more than authored would pass: the control offer becomes 1 Poke Ball (its
+# worst-case cost A) for 2, a loop in Poke Balls through the placed villager.
+def test_a_generator_that_raises_the_output_count_is_a_placed_loop():
+    d = mutant("direct_trades", 'r["sell"] = _cost(offer["sell"])',
+               'r["sell"] = dict(_cost(offer["sell"]), count=int(offer["sell"]["count"]) + 1)')
+    fails, _r, _n = E.audit(None, None, use_jars=False, direct_trades_mod=d)
+    assert any(f.startswith("BARTER LOOP (placed) cobblemon:poke_ball") for f in fails), fails[:5]
+
+
+# Without it a generator that places held lines would pass: every proposal line would reach the villager unapproved.
+def test_a_generator_that_places_held_lines_fails():
+    d = mutant("direct_trades", 'return list(doc["experiment_offers"]) + placed_lines(doc)',
+               'return list(doc["experiment_offers"]) + list(doc["lines"])')
+    fails, _r, _n = E.audit(None, None, use_jars=False, direct_trades_mod=d)
+    assert any(f.startswith("BARTER EMITTED an offer no placed data offer authors") for f in fails), fails[:5]
+
+
+# Without it a generator that allows a cost A of 2 would go unseen by the economy: the audit reports B4 on the line it
+# then emits (a finding, not a failure, unless it makes a loop). The data copy is in memory; the file is untouched.
+def test_a_generator_that_allows_a_cost_a_of_two_is_reported_b4():
+    d = mutant("direct_trades", 'if int(ln["buy"]["count"]) != 1:', 'if int(ln["buy"]["count"]) > 2:')
+    doc = E.read_json(E.DIRECT_TRADES)
+    ln = doc["lines"][0]
+    ln.update(status="approved", approved=True)
+    ln["buy"]["count"] = 2
+    fails, reps, _n = E.audit(None, None, use_jars=False, direct_trades_mod=d, direct_trades_doc=doc)
+    assert any(r.startswith("barter rule B4 (placed) %s: cost A is 2" % ln["id"]) for r in reps), reps[-5:]
+    assert not [f for f in fails if f.startswith("BARTER EMITTED") or f.startswith("BARTER NOT")], fails[:5]
+
+
+# Without it an approved line paid in bought items for an output the Bank buys dearer would pass: 1 Poke Ball and
+# 1 Great Ball (sold at the counters) for a netherite ingot the Bank buys at $900. The real generator, on a copy of the
+# data whose last line is replaced by that one, approved (the short list's eight-line cap holds; the file is untouched).
+def test_an_approved_line_from_bought_inputs_to_a_dearer_bank_item_is_a_placed_money_loop():
+    doc = E.read_json(E.DIRECT_TRADES)
+    doc["lines"][-1] = _off("money_machine", ("cobblemon:poke_ball", 1), ("minecraft:netherite_ingot", 1),
+                            buy_b=("cobblemon:great_ball", 1), status="approved", approved=True,
+                            late_game_why="test", inputs_why="test")
+    fails, _r, _n = E.audit(None, None, use_jars=False, direct_trades_doc=doc)
+    assert any(f.startswith("BARTER LOOP (placed) $") for f in fails), fails[:5]

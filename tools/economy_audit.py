@@ -43,6 +43,23 @@ Where each expectation comes from:
   afk         a stated table of vanilla 1.21.1 items an unattended farm produces (below, AFK_FARMABLE), each with its
               mechanism; REPORT its effective bank price, the file:line that sets it, and whether data/bank.json
               overrides the base.
+  barter      the item-for-item edges of data/direct_trades.json (the barterer, EXP-055), read by THIS file -- never
+              through tools/direct_trades.py's edges() -- and the Offers.Recipes of the villager its place function
+              emits, read by this file's SNBT reader (tools/direct_trades.py files() is CALLED only for its output, on
+              a flat stand-in ground: the offers do not depend on the ground). Two groups, reported separately:
+              "placed" (what the emitted villager offers) and "proposal" (every line that is not approved).
+              Every cost A counts as 1 (vanilla 1.21.1 MerchantOffer clamps a discounted cost A to at least 1, and
+              Hero of the Village takes at least 1 off it whatever priceMultiplier is -- read from the client jar's
+              bytecode, 2026-10-06); a cost B as authored (no discount reaches it, same source). FAILURE when a
+              cycle across the Bank, every seller, the recipes and the barter edges ends with more money or more of
+              any barter item than it started with and the cycle needs a barter edge (a gain that exists without
+              one is REPORTED as pre-existing); FAILURE when the emitted villager offers a recipe no placed data
+              offer authors, omits one, or writes a fixed field (uses, maxUses, rewardExp, specialPrice, demand,
+              priceMultiplier, xp) that is missing or differs from the data (the codec's defaults are maxUses 4,
+              rewardExp true and xp 1, so a missing field is a different trade). The play-loop rules B1-B4
+              (docs/mechanics/MINECRAFT_PLAY_LOOPS.md) are REPORTED: B1 an input that cannot be bought, B2 no input
+              in AFK_FARMABLE, B3 no output the Bank buys (or one recipe away from one), B4 no cost A over 1 and no
+              non-zero priceMultiplier on a line.
 
   python tools/economy_audit.py [--server-dir SNAPSHOT] [--vanilla-jar JAR] [--no-jars]
 
@@ -58,7 +75,11 @@ What this does NOT cover:
   - whether vanilla mob spawning is on (the AFK table lists what a farm WOULD make);
   - the gathering rates, the leg incomes and max_leg_hours, which are assumed or relayed until timed in staging;
   - the stability of the off-path tier: it is the nearest critical route, and the margin to the next route is printed
-    because a few blocks can move it.
+    because a few blocks can move it;
+  - for barter: that the villager trades at all, keeps its offers, or that its cost A really stays put in a running game
+    (EXP-055); a gain that needs more than BARTER_ROUNDS conversion rounds; a cycle that pays in an item no seller,
+    recipe or barter produces from the item it starts with (that is a conversion of gathered goods, not a loop, and
+    B1-B3 report it); B2 against inputs made one recipe away from a farmed item (gold in a netherite ingot).
 """
 from __future__ import annotations
 
@@ -84,6 +105,7 @@ BASE_BANK = ROOT / "base-pack" / "cobbleverse" / "config" / "cobbledollars" / "b
 BASE_SHOP = ROOT / "base-pack" / "cobbleverse" / "config" / "cobbledollars" / "default_shop.json"
 OUR_SHOP = ROOT / "modpack" / "config" / "cobbledollars" / "default_shop.json"
 COMMITTED_BANK = ROOT / "modpack" / "config" / "cobbledollars" / "bank.json"
+DIRECT_TRADES = DATA / "direct_trades.json"
 
 DEFAULT_SNAPSHOT = "C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05"
 DEFAULT_VANILLA = "C:/Users/wnd/AppData/Roaming/ModrinthApp/meta/versions/1.21.1-0.19.5/1.21.1-0.19.5.jar"
@@ -837,8 +859,289 @@ def afk_report(bank_prices, bank_doc, server_dir=None):
     return reps
 
 
+# ------------------------------------------------------------------------------------------------ barter
+MONEY = "$"
+BARTER_ROUNDS = 16
+# vanilla 1.21.1 MerchantOffer: the codec's keys and defaults, read from the client jar's bytecode (class dbu, its
+# RecordCodecBuilder: uses 0, maxUses 4, rewardExp true, specialPrice 0, demand 0, priceMultiplier 0.0f, xp 1)
+OFFER_DEFAULTS = {"uses": 0, "maxUses": 4, "rewardExp": True, "specialPrice": 0, "demand": 0, "priceMultiplier": 0.0,
+                  "xp": 1}
+FIXED_FIELDS = tuple(OFFER_DEFAULTS)
+
+
+class Barter:
+    """One item-for-item edge. `pays` is the worst case for the player's counterparty: cost A at 1, cost B as authored;
+    `authored` the counts as written."""
+    __slots__ = ("id", "group", "pays", "authored", "gets", "fields", "experiment")
+
+    def __init__(self, oid, group, pays, authored, gets, fields=None, experiment=False):
+        self.id, self.group, self.pays, self.authored, self.gets = oid, group, pays, authored, gets
+        self.fields, self.experiment = fields or {}, experiment
+
+    def conversion(self):
+        return ("barter:%s" % self.id, "barter(%s)" % self.group, [({i}, n) for i, n in self.pays], self.gets[0],
+                self.gets[1])
+
+
+def _scalar(v):
+    """An SNBT scalar the reader left as text -> int, float or bool."""
+    s = str(v)
+    if s in ("true", "false"):
+        return s == "true"
+    m = re.fullmatch(r"(-?\d+)([bBsSlL]?)", s)
+    if m:
+        return int(m.group(1))
+    m = re.fullmatch(r"(-?\d*\.?\d+(?:[eE]-?\d+)?)([fFdD]?)", s)
+    if m:
+        return float(m.group(1))
+    return s
+
+
+def _pays(buy, buy_b):
+    """Worst-case inputs: cost A clamped to 1, cost B as authored; one entry per item."""
+    out = {}
+    if buy:
+        out[buy[0]] = out.get(buy[0], 0) + 1
+    if buy_b:
+        out[buy_b[0]] = out.get(buy_b[0], 0) + buy_b[1]
+    return sorted(out.items())
+
+
+def _cost_of(c):
+    return (str(c["id"]), int(_scalar(c.get("count", 1)))) if c else None
+
+
+def barter_data(doc):
+    """[Barter] of every offer data/direct_trades.json authors. group "placed" for the experiment offers and any line
+    whose approved is true OR whose status is "approved" (either is enough to count it as live); "proposal" for the
+    rest. The expected fixed fields are the data's fixed_trade with the offer's own overrides."""
+    out = []
+    fixed = doc.get("fixed_trade") or {}
+    groups = [("placed", o, True) for o in doc.get("experiment_offers") or []]
+    for ln in doc.get("lines") or []:
+        live = ln.get("approved") is True or ln.get("status") == "approved"
+        groups.append(("placed" if live else "proposal", ln, False))
+    for group, o, exp in groups:
+        buy, buy_b, sell = _cost_of(o.get("buy")), _cost_of(o.get("buyB")), _cost_of(o.get("sell"))
+        fields = {k: fixed.get(k) for k in FIXED_FIELDS}
+        fields.update({k: v for k, v in (o.get("overrides") or {}).items()})
+        out.append(Barter(o.get("id"), group, _pays(buy, buy_b), (buy, buy_b), sell, fields, exp))
+    return out
+
+
+class _FlatGround:
+    """A level stand-in for tools/ground.py: the barterer's offers do not depend on the ground."""
+
+    class _Box:
+        def min(self):
+            return 100
+
+        def max(self):
+            return 100
+
+    def __call__(self, x, z):
+        return 100
+
+    def box(self, *_a):
+        return self._Box()
+
+
+def barter_emitted(dt_mod=None, doc=None):
+    """[(kind, [recipe dict])] of every summon in the functions tools/direct_trades.py emits, read by this file."""
+    dt_mod = dt_mod or importlib.import_module("direct_trades")
+    doc = doc if doc is not None else read_json(DIRECT_TRADES)
+    files, _res = dt_mod.files(doc, _FlatGround())
+    out = []
+    for path, text in sorted(files.items()):
+        if not path.endswith(".mcfunction"):
+            continue
+        for kind, nbt in summons(text.splitlines()):
+            out.append((kind, list(((nbt.get("Offers") or {}).get("Recipes")) or [])))
+    return out
+
+
+def emitted_checks(data_edges, emitted):
+    """(failures, [Barter] of the placed group as emitted): every emitted recipe must be a placed data offer with every
+    fixed field written and equal to the data's."""
+    fails = []
+    placed = [b for b in data_edges if b.group == "placed"]
+    by_key = {}
+    for b in placed:
+        by_key.setdefault((b.authored, b.gets), []).append(b)
+    villagers = [rs for kind, rs in emitted if kind == "minecraft:villager"]
+    if len(villagers) != 1:
+        fails.append("BARTER EMITTED %d villager summons, not 1" % len(villagers))
+    out, seen = [], set()
+    for rs in villagers:
+        for r in rs:
+            buy, buy_b, sell = _cost_of(r.get("buy")), _cost_of(r.get("buyB")), _cost_of(r.get("sell"))
+            match = by_key.get(((buy, buy_b), sell)) or []
+            if not match:
+                fails.append("BARTER EMITTED an offer no placed data offer authors: %s + %s -> %s"
+                             % (buy, buy_b, sell))
+                edge = Barter("emitted?", "placed", _pays(buy, buy_b), (buy, buy_b), sell)
+            else:
+                edge = match[0]
+                seen.add(edge.id)
+            for k in FIXED_FIELDS:
+                if k not in r:
+                    fails.append("BARTER EMITTED %s omits %s: the codec default %r applies, not the data's %r"
+                                 % (edge.id, k, OFFER_DEFAULTS[k], edge.fields.get(k)))
+                    continue
+                got, want = _scalar(r[k]), edge.fields.get(k)
+                if k == "rewardExp":
+                    got = bool(got) if not isinstance(got, str) else got
+                    want = bool(want)
+                if isinstance(got, str) or want is None or abs(float(got) - float(want)) > 1e-9:
+                    fails.append("BARTER EMITTED %s writes %s=%r, the data says %r" % (edge.id, k, r[k], want))
+            out.append(Barter(edge.id, "placed", _pays(buy, buy_b), (buy, buy_b), sell, edge.fields, edge.experiment))
+    for b in placed:
+        if b.id not in seen:
+            fails.append("BARTER NOT EMITTED %s: placed in the data, absent from the villager" % b.id)
+    return fails, out
+
+
+def unit_costs(seed, conversions, sales, bank_prices, rounds=BARTER_ROUNDS):
+    """{item: (cost in units of `seed`, how)} with the seed costing 1 and money the item '$': the least of the seed
+    that obtains each item through the Bank (item -> $), the sited sellers ($ -> item) and the conversions (recipes and
+    barter). A seed that comes back costing less than 1 is a gain: a cycle that ends with more than it started."""
+    inf = float("inf")
+    best = {seed: (1.0, "start with one %s" % seed)}
+    sited = [s for s in sales if s.sited]
+    for _ in range(rounds):
+        changed = False
+        for item, pay in bank_prices.items():
+            if item in best and pay > 0 and item != MONEY:
+                c = best[item][0] / pay
+                if c < best.get(MONEY, (inf,))[0] * (1 - 1e-12):
+                    best[MONEY] = (c, "sell %s to the Bank for $%d" % (item, pay))
+                    changed = True
+        if MONEY in best:
+            m = best[MONEY][0]
+            for s in sited:
+                c = s.unit * m
+                if c < best.get(s.item, (inf,))[0] * (1 - 1e-12):
+                    best[s.item] = (c, "buy at %s for $%g" % (s.where, s.unit))
+                    changed = True
+        for name, kind, ings, rid, rcount in conversions:
+            total, parts = 0.0, []
+            for acc, n in ings:
+                c = min(((best[i][0], i) for i in acc if i in best), default=None)
+                if c is None:
+                    break
+                total += c[0] * n
+                parts.append("%d x %s" % (n, c[1]))
+            else:
+                unit = total / rcount
+                if unit < best.get(rid, (inf,))[0] * (1 - 1e-12):
+                    best[rid] = (unit, "%s %s (%s -> %d)" % (kind, name, " + ".join(parts), rcount))
+                    changed = True
+        if best[seed][0] < 1 - 1e-9 or not changed:
+            break
+    return best
+
+
+def gains(seeds, conversions, sales, bank_prices):
+    """{seed: (cost of one seed in seeds, how)} for every seed obtainable for less than one of itself."""
+    out = {}
+    for s in sorted(seeds):
+        best = unit_costs(s, conversions, sales, bank_prices)
+        if best[s][0] < 1 - 1e-9:
+            out[s] = best[s]
+    return out
+
+
+def barter_checks(sales, conversions, bank_prices, best, doc=None, dt_mod=None):
+    """(failures, reports, notes) for the barter edges."""
+    fails, reps, notes = [], [], []
+    if doc is None:
+        if not DIRECT_TRADES.is_file():
+            return fails, reps, ["NOT READ: data/direct_trades.json is absent; no barter edge audited"]
+        doc = read_json(DIRECT_TRADES)
+    data_edges = barter_data(doc)
+    try:
+        emitted = barter_emitted(dt_mod, doc)
+    except Exception as exc:                       # the generator refusing its data is itself the finding
+        fails.append("BARTER the generator emitted nothing: %s" % str(exc).splitlines()[0][:200])
+        emitted = []
+    f, placed = emitted_checks(data_edges, emitted)
+    fails += f
+    proposal = [b for b in data_edges if b.group == "proposal"]
+    seeds = {MONEY} | {i for b in placed + proposal for i, _n in b.pays} | {b.gets[0] for b in placed + proposal}
+    base = gains(seeds, conversions, sales, bank_prices)
+    with_placed = gains(seeds, conversions + [b.conversion() for b in placed], sales, bank_prices)
+    with_all = gains(seeds, conversions + [b.conversion() for b in placed + proposal], sales, bank_prices)
+    for s, (c, how) in sorted(base.items()):
+        reps.append("barter pre-existing gain %s: one costs %.4f of itself without any barter edge -- %s" % (s, c, how))
+    for s, (c, how) in sorted(with_placed.items()):
+        if s not in base:
+            fails.append("BARTER LOOP (placed) %s: one costs %.4f of itself through the emitted villager -- %s"
+                         % (s, c, how))
+    for s, (c, how) in sorted(with_all.items()):
+        if s not in base and s not in with_placed:
+            fails.append("BARTER LOOP (proposal) %s: one costs %.4f of itself once the proposed lines go live -- %s"
+                         % (s, c, how))
+    notes.append("barter: %d placed offer(s) read from the emitted villager, %d proposal line(s) from the data; %d "
+                 "seed(s) tested for a gain over %d conversions" % (len(placed), len(proposal), len(seeds),
+                                                                     len(conversions)))
+    afk = set(AFK_FARMABLE)
+    recipes_from = {}
+    for name, kind, ings, rid, rcount in conversions:
+        for acc, _n in ings:
+            for i in acc:
+                recipes_from.setdefault(i, set()).add((rid, name))
+    made_by = {}
+    for name, kind, ings, rid, rcount in conversions:
+        made_by.setdefault(rid, []).append(name)
+    for b in placed + proposal:
+        head = "barter %s (%s): %s -> %d x %s" % (b.id, b.group, " + ".join("%d x %s" % (n, i) for i, n in b.pays),
+                                                 b.gets[1], b.gets[0])
+        parts = []
+        cost = [(i, n, best.get(i)) for i, n in b.pays]
+        unbought = [i for i, _n, c in cost if c is None]
+        if unbought:
+            parts.append("cannot be bought: %s" % ", ".join(unbought))
+        else:
+            parts.append("inputs cost $%.2f to buy" % sum(n * c[0] for _i, n, c in cost))
+            reps.append("barter rule B1 (%s) %s: every input can be bought (%s)"
+                        % (b.group, b.id, ", ".join("%s $%.2f" % (i, c[0]) for i, _n, c in cost)))
+        banked = [(i, n, bank_prices[i]) for i, n in b.pays if i in bank_prices]
+        if banked:
+            parts.append("the Bank would pay $%d for the inputs it buys (%s)"
+                         % (sum(n * p for _i, n, p in banked), ", ".join("%d x %s at $%d" % (n, i, p)
+                                                                        for i, n, p in banked)))
+        out_item = b.gets[0]
+        if out_item in best:
+            parts.append("the output is otherwise obtainable for $%.2f (%s)" % (best[out_item][0], best[out_item][1]))
+        if made_by.get(out_item):
+            parts.append("the output has a recipe: %s" % ", ".join(sorted(made_by[out_item])[:3]))
+        reps.append("%s; %s" % (head, "; ".join(parts)))
+        for i, _n in b.pays:
+            if i in afk:
+                reps.append("barter rule B2 (%s) %s: input %s is made by an unattended farm (%s)"
+                            % (b.group, b.id, i, AFK_FARMABLE[i][0]))
+        if out_item in bank_prices:
+            reps.append("barter rule B3 (%s) %s: the Bank buys the output %s at $%d"
+                        % (b.group, b.id, out_item, bank_prices[out_item]))
+        one_hop = sorted({rid for rid, _n in recipes_from.get(out_item, ()) if rid in bank_prices})
+        if one_hop:
+            reps.append("barter rule B3 (%s) %s: the output %s is one recipe from Bank-bought %s"
+                        % (b.group, b.id, out_item, ", ".join(one_hop)))
+        buy = b.authored[0]
+        if buy and buy[1] > 1 and not b.experiment:
+            reps.append("barter rule B4 (%s) %s: cost A is %d; Hero of the Village takes max(1, floor((0.3 + "
+                        "0.0625 x amplifier) x %d)) off it whatever priceMultiplier is" % (b.group, b.id, buy[1],
+                                                                                         buy[1]))
+        pm = b.fields.get("priceMultiplier")
+        if pm is not None and float(pm) != 0.0 and not b.experiment:
+            reps.append("barter rule B4 (%s) %s: priceMultiplier %s lets reputation and demand move cost A"
+                        % (b.group, b.id, pm))
+    return fails, reps, notes
+
+
 # ------------------------------------------------------------------------------------------------ the run
-def audit(server_dir=None, vanilla_jar=None, markets_mod=None, bank_mod=None, use_jars=True, traders_mod=None):
+def audit(server_dir=None, vanilla_jar=None, markets_mod=None, bank_mod=None, use_jars=True, traders_mod=None,
+          direct_trades_mod=None, direct_trades_doc=None):
     """(failures, reports, notes)."""
     fails, reps, notes = [], [], []
     bank_doc = read_json(DATA / "bank.json")
@@ -891,6 +1194,10 @@ def audit(server_dir=None, vanilla_jar=None, markets_mod=None, bank_mod=None, us
     reps += unsited_arbitrage(bank_prices, sales)
     notes.append("arbitrage: %d bank prices against %d sale offers (%d sited) and %d recipes"
                  % (len(bank_prices), len(sales), sum(1 for s in sales if s.sited), len(conversions)))
+    f, r, n = barter_checks(sales, conversions, bank_prices, best, doc=direct_trades_doc, dt_mod=direct_trades_mod)
+    fails += f
+    reps += r
+    notes += n
 
     if claimed is not None:
         f, r = tier_checks(trader_doc, claimed, offered, progression, routes_doc, towns_doc)
