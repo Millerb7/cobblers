@@ -196,6 +196,10 @@
           "yaw": 90,
           "pitch": 0,
           "reach": 6,
+          "requires_flag": "gym8_cleared",
+          "requires_flag_why": "defence in depth for the owner's 2026-10-07 rule 'no player reaches the finale without a badge' (review N8). The stage gate is the dialogue's (stages above), and since 2026-10-07 the stage's setters need gym8_cleared too (data/quests.json record_rift_crisis_pending, carry_by_gym8_cleared_to_rift_crisis_pending). This is the second lock, in the function itself: a player without the Earth Badge's advancement (cobblers:flag/gym8_cleared, tools/progression_pack.py) is told why and not moved, and the zone's admit record is not set. It covers a player who reached the stage before the setter was gated",
+          "refused_text": "The guard looks you over. \"Clearance or not, nobody goes below without the Earth Badge.\"",
+          "refused_text_placeholder": "Claude, 2026-10-07: the refusal line, for Codex to replace",
           "why": "the guard's 'Go through.' runs this as and at THAT player only (compile_dialogue's `function` effect: execute as <their uuid>). It moves them to the inside landing; the door never opens, so nobody behind them comes in. reach: the function does nothing for a player more than 6 blocks from the guard"
         },
         "inside_landing": [3440, 67, 3282],

@@ -1795,21 +1795,22 @@
               "kind": "set_progression",
               "field": "quest.main_worldshift_reveal.stage",
               "value": "giovanni_reveal_complete"
-            },
-            {
-              "kind": "set_progression",
-              "field": "quest.main_worldshift_reveal.rift_cursor",
-              "value": "rift_001"
             }
-          ]
+          ],
+          "rift_cursor_why": "removed 2026-10-07 (review N8, the finale badge gate): this transition also set the Rift surveyor's cursor to rift_001, which opened his account to a player with NO badges (the watch officer's account alone). The surveyor now opens rift_001 from his own entry rule, which needs giovanni_reveal_complete AND gym8_cleared (data/dialogue.json dlg_main_rift_surveyor priority 5), so a badgeless player who heard the watch hears rift_locked instead of an account whose last line (rift_007, record_rift_crisis_pending) would refuse them. The removed effect was set_progression quest.main_worldshift_reveal.rift_cursor = rift_001"
         },
         {
           "id": "record_rift_crisis_pending",
+          "gate": "the owner, 2026-10-07: 'no player reaches the finale without a badge' (review N8). The badge is gym8_cleared, the Earth Badge: the surveyor's own locked line, Victory Road's sealing and the other setter of this stage (carry_by_gym8_cleared_to_rift_crisis_pending) all name it. Without it a player with a starter and no badges walked the ten tellers in turn and reached this stage, and the relic HQ guard admitted them. The tellers' beats stay ungated (the badge OR the previous teller's account); only the finale's first stage needs the badge",
           "conditions": [
             {
               "kind": "progression_equals",
               "field": "quest.main_worldshift_reveal.stage",
               "value": "giovanni_reveal_complete"
+            },
+            {
+              "kind": "flag",
+              "flag": "gym8_cleared"
             }
           ],
           "effects": [

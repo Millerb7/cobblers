@@ -3431,11 +3431,15 @@
                   "rift_released",
                   "league_recognized"
                 ]
+              },
+              {
+                "kind": "flag",
+                "flag": "gym8_cleared"
               }
             ]
           },
           "node": "rift_001",
-          "why": "at giovanni_reveal_complete or later but never unlocked (an actor before it was skipped, or a badge carried the stage): open the account. Its completion reads giovanni_reveal_complete only, so a stage already past it does not move."
+          "why": "at giovanni_reveal_complete or later but never unlocked (an actor before it was skipped, or a badge carried the stage): open the account. Its completion reads giovanni_reveal_complete only, so a stage already past it does not move. Needs gym8_cleared since 2026-10-07 (the owner: 'no player reaches the finale without a badge', review N8): the watch officer's account alone no longer opens it, and rift_007's record_rift_crisis_pending needs the badge too"
         },
         {
           "priority": 6,
@@ -3530,7 +3534,8 @@
           "id": "rift_locked",
           "kind": "line",
           "speaker": "Rift surveyor",
-          "text": "Victory Road stays sealed to anyone Giovanni has not passed. Bring the Earth Badge from his gym on South Strand, or the southern watch officer's report.",
+          "text": "Victory Road stays sealed to anyone Giovanni has not passed. Bring the Earth Badge from his gym on South Strand.",
+          "placeholder": "Claude, 2026-10-07 (the finale badge gate, review N8): Codex's line ended 'or the southern watch officer's report', which was the leak: the report alone no longer opens the account (entry rule 5 and record_rift_crisis_pending need gym8_cleared). Cut to the badge; for Codex to reword",
           "next": "rift_locked"
         },
         {
