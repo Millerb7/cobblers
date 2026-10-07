@@ -372,6 +372,7 @@ def retire_lines(up, cid, entry):
     return [
         "# %s: retire the second spawner at (%d, %d, %d) now that %s stands as one leader (docs/mechanics/"
         "ONE_LEADER_SWAP.md); run once by reapply step R17L with the chunks held" % (cid, x, y, z, up),
+        "# chunks-loaded-by: tools/reapply.py R17L (retire_hold's forceload of the seat box)",
         "execute %s %s run kill @e[%s]" % (has, near, sel % (SEAT_BOX, cid)),
         "execute %s %s positioned %d.5 %d %d.5 as @e[%s,sort=nearest,limit=1] run tag @s add cobblers_keep_leader"
         % (has, near, nx, ny, nz, sel % (SEAT_BOX, up)),
