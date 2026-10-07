@@ -333,3 +333,52 @@ No new reapply step, no new mechanism, no new dependency.
 - *43 contract stalls*: I measured 41 stall records in `data/markets.json`; see 2.1.
 - The three figures the brief excluded ("THE NURSE: 30 minutes", "237 ambient across 26 settlements", "the four P2s")
   are not used here.
+
+---
+
+## Decisions taken 2026-10-08 (overnight)
+
+Unit MART built option B as data (`data/traders.json` `stock_policy.mart.training`) and generator
+(`tools/traders.py` `training_offers` / `training_shop`, appended in `apply_stock_policy` beside the trainer card).
+**Nothing was run in game; P-7 (an authored offer sells) is still unproven, and the whole shelf rests on it.** A
+question was answered here only where this design recommends one answer and the answer moves no progression gate,
+level cap or story beat. Everything else stays the owner's.
+
+**Taken:**
+
+| Q | Call | Why it was mine to take |
+|---|---|---|
+| 1 | **B**: the Marts keep their basics and tiers and gain a Training category | the design's recommendation and its own stated default if unanswered; no gate moves (2.1: no seller gates per player) |
+| 5 | **Power items at tier 1** (gym 2's town), reset mochi and the six EV-lowering berries at tier 2, mochi at tier 3 | the design's proposed table (4.1); EVs touch no level or EXP (4.3), so no cap moves |
+| 6 | **"HP first, steer with a power item"** | sections 2.2 and 4 design for exactly this; the alternative (stat pens) is a different system's generator change and new siting, not taken |
+| 9 (part) | **Hyper-training candies NOT on the shelf** | the design's own condition, "only if EV-6 passes" (4.1); EV-6 is not run. Whether to sell them once it passes stays the owner's |
+| 4 (part) | **Vitamins stay where they are** (3,500 at Northlight's counter, not on any Mart) | the design keeps the shortcuts on the counters (4.1, 4.2); keeping the status quo changes nothing. Overriding the base bank's 2,500 buy-back is still the owner's named decision |
+
+What was built, by tier (the clerk's tier rule is unchanged):
+
+| Tier | Lines (all 19 ids verified in `Cobblemon-fabric-1.8.0+1.21.1.jar`: lang key `item.cobblemon.<id>` and item model) | Price (PLACEHOLDER, 4.1) |
+|---|---|---|
+| 1 | `power_weight`, `power_bracer`, `power_belt`, `power_lens`, `power_band`, `power_anklet` | 1,500 |
+| 2 | `fresh_start_mochi`; `pomeg_berry`, `kelpsy_berry`, `qualot_berry`, `hondew_berry`, `grepa_berry`, `tamato_berry` | 1,000; 300 |
+| 3 | `health_mochi`, `muscle_mochi`, `resist_mochi`, `genius_mochi`, `clever_mochi`, `swift_mochi` | 800 |
+
+The early-reach clerks price the shelf by `early_reach_pricing` like any tier line: at Sunset West (reachable at 0)
+tiers 1-2 are in the convenience band (x2: power items 3,000, reset mochi 2,000, berries 600) and the mochi (tier 3)
+behind the income gate (28,700, from `income_basis`, RELAYED); at Pacifidlog (priced for 6 badges, the owner
+2026-10-08) every training line is at its normal price.
+
+Economy (4.2): none of the 19 ids is bought by `data/bank.json`, the generated `modpack/config/cobbledollars/bank.json`
+or the base bank (grep; the one `_mochi` hit is `potato_mochi`), and no vitamin is on the shelf, so the vitamin rule
+holds. `tools/economy_audit.py` found **0 arbitrage failures** with the shelf emitted (669 sale offers, from 479); its
+190 FAILURE lines are all one rule, "neither a Mart basic nor a tier line": the independent audit predates the
+Training category and must be taught it (test-author). E1 (`never_buy`) is not done: `data/bank.json` is not this
+unit's.
+
+**Left to the owner:**
+
+- **Q2** whether battle training plus a shelf satisfies "EV training implemented".
+- **Q3** whether boss teams carry EVs (Normal, Challenge, neither): it changes every gym's difficulty.
+- **Q4** overriding the base bank's 2,500 vitamin buy-back.
+- **Q7** the shelf's prices: shipped as the 4.1 placeholders, not derived.
+- **Q8** whether a training ground is its own Nuzlocke zone.
+- **Q9** whether to sell the hyper-training candies at all once EV-6 passes.
