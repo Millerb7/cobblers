@@ -33,7 +33,7 @@ import challenge_mode_audit as A  # noqa: E402
 #                    player within 17 of the ONE spawner two blocks east. ab0de08 put every kill under the second-
 #                    spawner block test, so a RE-RUN no longer kills; the FIRST run still kills the one leader while a
 #                    Challenge player stands 15.5 east of him (once the cycle has swapped him to the Challenge id)
-KNOWN = {("P1:retire_kills", "kanto_brock_challenge")}
+KNOWN = set()  # P1:retire_kills closed by the widened retire guard (2026-10-07 integration)
 
 
 @pytest.fixture(scope="module")
@@ -314,9 +314,12 @@ MUTATIONS = {
         "sel = 'type=rctmod:trainer,distance=..%d,nbt={TrainerId:\"%s\",InBattle:0b}'",
         "sel = 'type=rctmod:trainer,distance=..%d,nbt={TrainerId:\"%s\"}'")], "P", "P1:retire_battle"),
     # the Challenge-id kill no longer waits for the second spawner: a re-run kills again
-    "retire_kill_without_has": ("challenge_mode", [(
-        '"execute %s %s run kill @e[%s]" % (has, near, sel % (SEAT_BOX, cid))',
-        '"execute %s run kill @e[%s]" % (near, sel % (SEAT_BOX, cid))')], "P", "P1:rerun_kills"),
+    # the retire's player guard measured from the old seat with the swap's reach alone (the 2026-10-07 integration
+    # widened it to reach + the seats' gap): a Challenge player 15.5 east of the one spawner turns the leader to the
+    # Challenge id and the first-run kill takes him. (The old "kill without has" mutation no longer harms anyone: with
+    # the widened guard a Challenge-id trainer near the old seat is never the leader, so `has` is defence in depth.)
+    "retire_guard_too_narrow": ("challenge_mode", [(
+        "reach() + math.ceil(gap))", "reach())")], "P", "P1:retire_kills"),
     # the Normal-id kill spares nobody: the one leader goes with the renamed old trainer
     "retire_keeps_nobody": ("challenge_mode", [(
         ',tag=!cobblers_keep_leader]" % (has, near', ']" % (has, near')], "P", "P1:retire"),

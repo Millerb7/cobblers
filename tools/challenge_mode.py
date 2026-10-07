@@ -44,6 +44,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import re
 import sys
 from pathlib import Path
@@ -363,7 +364,10 @@ def retire_lines(up, cid, entry):
     # Normal leaders: keep the Normal-id trainer nearest the one spawner and remove any other (2026-10-07 integration
     # fix). Never in a battle, never with a player near.
     nx, ny, nz = normal_seat(up, entry)
-    near = "positioned %d.5 %d %d.5 unless entity @a[distance=..%g]" % (x, y, z, reach())
+    # nobody within reach of EITHER seat: the swap follows players within reach of the one spawner, so the guard's
+    # radius from the old seat is reach + the distance between the seats (A1 audit P1:retire_kills, 2026-10-07)
+    gap = ((x - nx) ** 2 + (y - ny) ** 2 + (z - nz) ** 2) ** 0.5
+    near = "positioned %d.5 %d %d.5 unless entity @a[distance=..%g]" % (x, y, z, reach() + math.ceil(gap))
     sel = 'type=rctmod:trainer,distance=..%d,nbt={TrainerId:"%s",InBattle:0b}'
     return [
         "# %s: retire the second spawner at (%d, %d, %d) now that %s stands as one leader (docs/mechanics/"
