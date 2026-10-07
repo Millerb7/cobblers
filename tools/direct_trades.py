@@ -286,9 +286,12 @@ def steps(doc=None):
     x and z only, so the step list needs no heightmap."""
     doc = doc or load()
     x, z = int(doc["site"]["x"]), int(doc["site"]["z"])
-    return [("cmd", "forceload add %d %d" % (x, z)), ("wait", 3),
+    # the whole 5x5 footprint (booth()'s shell), not its centre: at (3634, 6462) the box's z6464 is the next chunk,
+    # where an unloaded shell cell slips the breach check (A4 audit, 2026-10-07)
+    box = "%d %d %d %d" % (x - 2, z - 2, x + 2, z + 2)
+    return [("cmd", "forceload add %s" % box), ("wait", 3),
             ("fn", "%s:%s/place" % (doc["namespace"], doc["folder"])), ("wait", 7),
-            ("cmd", "forceload remove %d %d" % (x, z))]
+            ("cmd", "forceload remove %s" % box)]
 
 
 def rcon_checks(doc=None):

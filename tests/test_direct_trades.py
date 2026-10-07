@@ -174,8 +174,8 @@ def test_the_booth_guards_every_shell_cell_before_carving(doc):
 
 
 def test_the_step_holds_the_chunk_and_runs_place(doc):
-    assert D.steps(doc) == [("cmd", "forceload add 3634 6462"), ("wait", 3), ("fn", "cobblers:direct_trades/place"),
-                            ("wait", 7), ("cmd", "forceload remove 3634 6462")]
+    assert D.steps(doc) == [("cmd", "forceload add 3632 6460 3636 6464"), ("wait", 3), ("fn", "cobblers:direct_trades/place"),
+                            ("wait", 7), ("cmd", "forceload remove 3632 6460 3636 6464")]
 
 
 def test_reapply_wires_the_pack():
