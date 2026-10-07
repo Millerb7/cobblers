@@ -77,7 +77,8 @@ THE CHECKS (each named in the output; P = problem, K = known defect, recorded in
             `category`; one offer per line (data/markets.json stock), Item count 1, Price a whole-number string with
             Price x the line's count = the line's price; no offer without a line; and no sited stall or counter line
             gated (a merchant shows one list to every player)
-  items     every item on an emitted stall or counter exists in a jar (NOT CHECKED, said so, without the jar); none
+  items     every item on an emitted stall or counter exists in a jar -- a lang key, or an item model AND an item-tag
+            entry (jar_index; NOT CHECKED, said so, without the jar); none
             places a spawn-condition block (my own item -> block map, PLACES_BLOCK); none is a ball, a battle item or
             a boost unless gated on a badge, or its badge gate was dropped by a decision data/markets.json records
             (gate_dropped.decision in `decisions`: since 2026-10-06 every counter is a merchant and cannot gate; until
@@ -90,8 +91,8 @@ THE CHECKS (each named in the output; P = problem, K = known defect, recorded in
             counter selling something other than the Mart's three items
   curve     the critical path's ask, recomputed from income_basis.counts' own words (critical towns from data/towns.json
             critical_path; every counter line; a stall's GATED lines only; a pick-one group at its dearest; stretch
-            excluded), shown per badge, within target_ratio, and equal to BASELINE_CURVE (the curve at 31e9b2a, before
-            any stall existed): the stalls moved no money
+            excluded), shown per badge, within target_ratio, and equal to the same curve with every stall removed:
+            the stalls moved no money (until 2026-10-09 a constant, the curve at 31e9b2a; see curve_checks)
 
 INDEPENDENCE, PROVEN BY MUTATING THE GENERATORS (tests/test_town_squares_audit.py; data untouched):
   - tools/plaza_centre.py piece_stall made to drop its counter block: the builder's own checks pass (they compare the
@@ -1031,9 +1032,43 @@ def merchant_checks(markets_doc, summons):
     return P
 
 
+ITEM_MODEL = re.compile(r"assets/([a-z0-9_.\-]+)/models/item/([a-z0-9_/.\-]+)\.json")
+ITEM_TAG = re.compile(r"data/[a-z0-9_.\-]+/tags/items?/[a-z0-9_/.\-]+\.json")
+
+
+def tag_ids(raw):
+    """The ids an item-tag file names as REQUIRED entries: a plain "ns:path" string, or {"id": ..., "required":
+    true|absent}. A "#tag" reference names no item; a {"required": false} entry is optional and is no evidence the id
+    exists (the tag loader skips a missing optional entry silently)."""
+    try:
+        vals = json.loads(raw.decode("utf-8-sig")).get("values") or []
+    except (ValueError, AttributeError):
+        return set()
+    out = set()
+    for v in vals:
+        if isinstance(v, dict):
+            if v.get("required", True) is False:
+                continue
+            v = v.get("id")
+        if isinstance(v, str) and ":" in v and not v.startswith("#"):
+            out.add(v)
+    return out
+
+
 def jar_index(vanilla, jar_dir):
-    """({namespace: set(paths)}, notes)."""
+    """({namespace: set(paths)}, notes).
+
+    An id exists when a jar's lang carries item.<ns>.<path> or block.<ns>.<path>, OR -- changed 2026-10-09 -- when the
+    jars carry BOTH an item model assets/<ns>/models/item/<path>.json AND a required entry for it in an item tag
+    data/*/tags/item(s)/*.json. The second rule is for items whose name is built in code: TMCraft's per-move TMs
+    (tmcraft-1.4.19+1.8.0.jar in the 2026-10-05 offline snapshot's mods/) have no item.tmcraft.tm_* lang key, but
+    each has its item model and is listed by data/tmcraft/tags/item/tm_moves.json (929 values, tmcraft:tm_bide among
+    them). tools/markets_audit.py JarIndex states the same evidence rule; this is a separate implementation of it. A
+    model ALONE is not enough (a model file can outlive or precede its registration); a tag alone is not enough
+    either (a tag is data any pack can write). Both together are jar evidence, not a runtime registry read: NOT
+    COVERED is that the item actually registers on the server."""
     ids, notes = {}, []
+    models, tagged = set(), set()
 
     def read_lang(zf, name):
         try:
@@ -1047,8 +1082,13 @@ def jar_index(vanilla, jar_dir):
 
     def scan(zf, depth=0):
         for name in zf.namelist():
+            mm = ITEM_MODEL.fullmatch(name)
             if re.fullmatch(r"assets/[^/]+/lang/en_us\.json", name):
                 read_lang(zf, name)
+            elif mm:
+                models.add("%s:%s" % mm.groups())
+            elif ITEM_TAG.fullmatch(name):
+                tagged.update(tag_ids(zf.read(name)))
             elif depth == 0 and name.startswith("META-INF/jars/") and name.endswith(".jar"):
                 import io
                 try:
@@ -1073,6 +1113,18 @@ def jar_index(vanilla, jar_dir):
         notes.append("mod ids from %d jar(s) in %s" % (len(jars), jar_dir))
     else:
         notes.append("NOT CHECKED: mod ids (no jar folder at %s)" % jar_dir)
+    by_model_tag = 0
+    for i in sorted(models & tagged):
+        ns, path = i.split(":", 1)
+        if path not in ids.get(ns, ()):
+            ids.setdefault(ns, set()).add(path)
+            by_model_tag += 1
+    if by_model_tag:
+        notes.append("%d id(s) with no lang key accepted on an item model AND an item-tag entry" % by_model_tag)
+    if not (vanilla and Path(vanilla).is_file()):
+        # a mod's assets/minecraft/lang/en_us.json overrides a handful of vanilla names; it is not the vanilla item
+        # list, so without the vanilla jar minecraft: ids are NOT CHECKED (as the note says), not failed against it
+        ids.pop("minecraft", None)
     return ids, notes
 
 
@@ -1086,8 +1138,8 @@ def item_checks(markets_doc, spawn, ids):
             ns, path = item.split(":", 1)
             if ns in ids:
                 if path not in ids[ns]:
-                    P.append(("items", "%s:%s:exists" % (rec["id"], item), "%s %s: %s is in no jar's lang file"
-                              % (kind, rec["id"], item)))
+                    P.append(("items", "%s:%s:exists" % (rec["id"], item), "%s %s: %s is in no jar's lang file and "
+                              "has no item model with an item-tag entry" % (kind, rec["id"], item)))
             else:
                 unchecked.add(ns)
             placed = PLACES_BLOCK.get(item, item)
@@ -1187,12 +1239,15 @@ def curve(markets_doc, towns):
     return out
 
 
-# measured 2026-10-04 by curve() on `git show 31e9b2a:data/markets.json` (no `stalls` key existed), towns at HEAD:
-# (badge, cumulative ask, cumulative income). The same numbers came out of 5407171^ and of HEAD 7a7272d
-BASELINE_CURVE = [(1, 6550, 9475), (2, 11450, 17023), (3, 20000, 28655), (4, 29800, 45615), (5, 41300, 60905),
-                  (6, 54800, 82275), (7, 71000, 109038), (8, 99500, 145078)]
-
-
+# The property this check protects is "the stalls moved no money": the market stalls (R17M, 2026-10-04) were added
+# as flavour on top of the counters' badge ladder, and a gated stall line on the critical path would raise the ask
+# unseen. Until 2026-10-09 it was pinned as a constant, the curve curve() measured on `git show 31e9b2a:data/
+# markets.json` (no `stalls` key existed): badge 8 at 99,500 of 145,078. A constant cannot tell a stall line from a
+# deliberate counter re-price, so it failed on the owner's own decision (the Gold Bottle Cap, 6,000, off Holdfast's
+# counter, arena_trophies_not_sold; Max Revive 2,500 -> 2,900 and Full Restore 3,000 -> 3,500 to hold markets_audit's
+# band: 99,500 - 6,000 + 400 + 500 = 94,400). It is now derived from the data: the curve with the stalls equals the
+# curve with every stall removed. What the counters ask is not this audit's to pin: tools/markets_audit.py holds the
+# counters to PROGRESSION_LADDER 0.3's band, and this check still holds every badge to income_basis.target_ratio.
 def curve_checks(markets_doc, towns):
     P = []
     rows = curve(markets_doc, towns)
@@ -1200,9 +1255,11 @@ def curve_checks(markets_doc, towns):
     for b, ask, inc, ratio in rows:
         if ratio > target:
             P.append(("curve", "badge%d" % b, "badge %d: ask %d of %d earned, %.3f over %.2f" % (b, ask, inc, ratio, target)))
-    if [(b, a, i) for b, a, i, _r in rows] != BASELINE_CURVE:
-        P.append(("curve", "baseline", "the curve %s is not the pre-stall curve %s"
-                  % ([(b, a, i) for b, a, i, _r in rows], BASELINE_CURVE)))
+    bare = curve(dict(markets_doc, stalls=[]), towns)
+    moved = [(b, a - a0) for (b, a, _i, _r), (_b0, a0, _i0, _r0) in zip(rows, bare) if a != a0]
+    if moved:
+        P.append(("curve", "stalls", "the stalls move the critical path's ask (badge, dollars added): %s; the curve "
+                  "without them is %s" % (moved, [(b, a, i) for b, a, i, _r in bare])))
     return P, rows
 
 

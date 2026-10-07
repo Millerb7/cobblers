@@ -478,10 +478,125 @@ def test_curve_is_unchanged_by_the_stalls_and_inside_the_target():
     mk = A.load(ROOT / "data" / "markets.json")
     towns = A.load(ROOT / "data" / "towns.json")
     rows = A.curve(mk, towns)
-    assert [(b, a, i) for b, a, i, _r in rows] == A.BASELINE_CURVE
     assert all(0.65 <= r <= 0.70 for _b, _a, _i, r in rows), rows
     no_stalls = dict(mk, stalls=[])
     assert A.curve(no_stalls, towns) == rows
+    P, _rows = A.curve_checks(mk, towns)
+    assert P == [], P
+
+
+def test_curve_check_names_a_gated_stall_line_and_lets_a_counter_reprice_through():
+    # The check pins "the stalls moved no money", derived from the data, not a constant curve. By hand: a counter at
+    # badge 1 asking 600 against 1000 earned (0.60). A gated 40 stall line at badge 1 moves badges 1-8 by 40 and is
+    # named; re-pricing the counter 600 -> 650 (a deliberate counter change, markets_audit's to judge) is not; a
+    # re-price to 750 (0.75) still fails the 0.70 target. Without it either a stall could move the ladder unseen, or
+    # every deliberate counter re-price would fail this audit forever (the 2026-10-09 Holdfast prices did).
+    counter = [{"id": "a", "item": "x:a", "price": 600, "gate": None}]
+    stall = [{"id": "f", "item": "minecraft:salmon", "price": 40, "gate": "gym1_cleared"},
+             {"id": "e", "item": "minecraft:cod", "price": 100, "gate": None}]       # ungated: never counted
+    P, _r = A.curve_checks(_market(counter, stall), TOWNS)
+    assert [k for _c, k, _m in P] == ["stalls"]
+    assert "[(1, 40), (2, 40), (3, 40), (4, 40), (5, 40), (6, 40), (7, 40), (8, 40)]" in P[0][2]
+    P, _r = A.curve_checks(_market([dict(counter[0], price=650)], stall[1:]), TOWNS)
+    assert P == []
+    P, _r = A.curve_checks(_market([dict(counter[0], price=750)], stall[1:]), TOWNS)
+    assert [k for _c, k, _m in P] == ["badge1"]
+
+
+def test_curve_check_follows_the_real_counters_when_a_counter_line_is_repriced():
+    # Mutates the committed data in memory (the file is untouched): Holdfast's Full Restore back to its pre-N129 3,000.
+    # The curve moves by -500 at badge 8 and the check stays silent on the stalls; it is the counters' auditor that
+    # owns the band. Without it the audit could quietly regain a hard-coded curve that fails every owner re-price.
+    import copy
+    mk = copy.deepcopy(A.load(ROOT / "data" / "markets.json"))
+    towns = A.load(ROOT / "data" / "towns.json")
+    before = A.curve(mk, towns)
+    hold = next(c for c in mk["counters"] if c["id"] == "holdfast")
+    line = next(l for l in hold["stock"] if l["item"] == "cobblemon:full_restore")
+    line["price"] -= 500
+    after = A.curve(mk, towns)
+    assert [a for _b, a, _i, _r in before][:7] == [a for _b, a, _i, _r in after][:7]
+    assert before[7][1] - after[7][1] == 500
+    P, _r = A.curve_checks(mk, towns)
+    assert [k for _c, k, _m in P if k == "stalls"] == []
+
+
+def test_a_trade_evolution_item_is_power_like_a_stone_and_passes_only_with_a_recorded_gate_drop():
+    # A Link Cable evolves a Kadabra, a Machoke, a Haunter or a Graveler: a power step like an evolution stone (the
+    # stones are power here, KNOWN at Steepside). On a counter it passes the way its siblings on the same counters
+    # (the Metal Coat, the Dubious Disc) pass: a gate_dropped record citing a decision data/markets.json holds. Without
+    # it a new evolution item could go on sale from the first visit with nothing recording why.
+    drop = {"gate": "gym3_cleared", "decision": "counters_are_merchants", "why": "probe"}
+    doc = _market([{"id": "lc", "item": "cobblemon:link_cable", "price": 2160, "gate": None},
+                   {"id": "mc", "item": "cobblemon:metal_coat", "price": 2160, "gate": None, "gate_dropped": drop}], [])
+    doc["decisions"] = [{"id": "counters_are_merchants"}]
+    P, _u = A.item_checks(doc, set(), {})
+    assert [p[1] for p in P if p[0] == "power"] == ["c:cobblemon:link_cable"]
+
+
+def _jar(path, files):
+    import zipfile
+    with zipfile.ZipFile(path, "w") as z:
+        for name, body in files.items():
+            z.writestr(name, body if isinstance(body, (str, bytes)) else json.dumps(body))
+
+
+def test_an_item_exists_by_its_lang_key_or_by_model_and_tag_together_never_by_one_alone(tmp_path):
+    # TMCraft's per-move TMs have an item model and an item-tag entry and no lang key. By hand, one synthetic jar:
+    #   tm_both   model + tag              -> exists
+    #   tm_model  model only               -> fails (a model can exist for an unregistered id)
+    #   tm_tag    tag only                 -> fails (a tag is data any pack can write)
+    #   tm_opt    model + {"required": false} tag entry -> fails (an optional entry is no evidence)
+    #   tm_ref    model + "#tmcraft:tm_ref" (a tag reference, not an item) -> fails
+    #   named     lang key only            -> exists (the old rule, unchanged)
+    # and the same in a jar nested under META-INF/jars/. Without it the 7 TMCraft TMs on the counters fail as
+    # missing, or a model file alone would let a typo'd id through.
+    model = {"parent": "item/generated"}
+    _jar(tmp_path / "inner.jar", {"assets/nest/models/item/deep.json": model,
+                                  "data/nest/tags/item/all.json": {"values": ["nest:deep"]}})
+    (tmp_path / "mods").mkdir()
+    _jar(tmp_path / "mods" / "tm.jar", {
+        "assets/tmcraft/lang/en_us.json": {"item.tmcraft.named": "Named", "itemGroup.tmcraft": "x"},
+        "assets/minecraft/lang/en_us.json": {"item.minecraft.stick": "Renamed Stick"},   # a mod's override
+        "assets/tmcraft/models/item/tm_both.json": model,
+        "assets/tmcraft/models/item/tm_model.json": model,
+        "assets/tmcraft/models/item/tm_opt.json": model,
+        "assets/tmcraft/models/item/tm_ref.json": model,
+        "data/tmcraft/tags/item/tm_moves.json": {"values": ["tmcraft:tm_both", "tmcraft:tm_tag", "#tmcraft:tm_ref",
+                                                            {"id": "tmcraft:tm_opt", "required": False}]},
+        "META-INF/jars/inner.jar": (tmp_path / "inner.jar").read_bytes(),
+    })
+    ids, notes = A.jar_index(None, tmp_path / "mods")
+    assert ids["tmcraft"] == {"named", "tm_both"}
+    assert ids["nest"] == {"deep"}
+    assert any("2 id(s) with no lang key accepted" in n for n in notes), notes
+    # no vanilla jar: a mod's one-key minecraft lang override is not the vanilla list, so minecraft: is unchecked
+    # (named as such), never failed against that fragment
+    assert "minecraft" not in ids
+    _P, unchecked = A.item_checks(_market([{"id": "w", "item": "minecraft:wheat", "price": 1, "gate": None}], []),
+                                  set(), ids)
+    assert unchecked == {"minecraft"} and _P == []
+    stock = [{"id": p, "item": "tmcraft:%s" % p, "price": 1, "gate": None}
+             for p in ("tm_both", "tm_model", "tm_tag", "tm_opt", "tm_ref", "named")]
+    P, _u = A.item_checks(_market(stock, []), set(), ids)
+    assert sorted(p[1] for p in P if p[0] == "items") == ["c:tmcraft:tm_model:exists", "c:tmcraft:tm_opt:exists",
+                                                          "c:tmcraft:tm_ref:exists", "c:tmcraft:tm_tag:exists"]
+
+
+SNAPSHOT_MODS = Path("C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/mods")
+
+
+@pytest.mark.skipif(not SNAPSHOT_MODS.is_dir(), reason="needs the 2026-10-05 offline server snapshot's mods/ at %s"
+                    % SNAPSHOT_MODS)
+def test_every_counter_and_stall_item_is_in_the_snapshot_jars():
+    # The committed stock against the real jars (the offline snapshot, never the live server): no item is missing,
+    # and an id TMCraft does not ship still is. Without it a TM with no lang key would fail as missing, and an id
+    # nobody registers could be sold as a blank slot. Minecraft ids are judged only when the vanilla jar is present.
+    ids, _n = A.jar_index(A.DEFAULT_VANILLA if A.DEFAULT_VANILLA.is_file() else None, SNAPSHOT_MODS)
+    mk = A.load(ROOT / "data" / "markets.json")
+    P, _u = A.item_checks(mk, set(), ids)
+    assert [m for c, _k, m in P if c == "items"] == []
+    assert "tm_bide" in ids["tmcraft"] and "tm_not_a_move" not in ids["tmcraft"]
 
 
 def test_wired_into_prepare_after_the_squares_and_the_markets():
