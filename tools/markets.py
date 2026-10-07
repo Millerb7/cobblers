@@ -448,6 +448,153 @@ def bank_prices():
     return out
 
 
+# ---------------------------------------------------------------------------------------------------- price policies
+# data/markets.json price_policies.income_gate (the owner, 2026-10-09: "TMs AT COUNTERS: price them above the income
+# gate"). A stock line carrying price_rule "income_gate" and a declared gate_badge B is priced by THIS rule, never by
+# hand: per unit, the smallest multiple of round_to strictly above income_basis.cumulative_by_badge[B] (the most a
+# player with B-1 badges can hold, data/traders.json stock_policy.mart.early_reach_pricing's INCOME GATE); an exchange
+# line keeps its material and takes the smallest whole count of it whose bank value clears the same bar, priced at
+# exactly count x the bank's price (data/bank.json exchanges.shape). `prices --write` writes the result into the data;
+# the audit refuses a line whose price is not the rule's. A counter's held_stock carries lines the rule prices but
+# nothing sells, each with its reason.
+POLICY = "income_gate"
+GATE_BADGES = range(1, 9)
+
+
+def income_gate_policy(doc):
+    return ((doc.get("price_policies") or {}).get(POLICY)) or {}
+
+
+def policy_lines(doc):
+    """[(counter, line, held)] for every counter line (stock or held_stock) under the income-gate rule."""
+    return [(c, it, held) for c in doc.get("counters") or [] for held, key in ((False, "stock"), (True, "held_stock"))
+            for it in c.get(key) or [] if it.get("price_rule") == POLICY]
+
+
+def leader_badges(progression=None):
+    """{item: the lowest gym N whose leader's first win offers it} from data/progression.json
+    upstream_neutralised.first_win_rewards (flag gymN_cleared, items and one_of)."""
+    prog = progression or json.loads((ROOT / "data" / "progression.json").read_text(encoding="utf-8"))
+    out = {}
+    fwr = ((prog.get("upstream_neutralised") or {}).get("first_win_rewards") or {}).get("trainers") or {}
+    for t in fwr.values():
+        m = re.fullmatch(r"gym(\d+)_cleared", str(t.get("flag")))
+        if m:
+            for i in list(t.get("items") or []) + list(t.get("one_of") or []):
+                out[i] = min(out.get(i, 99), int(m.group(1)))
+    return out
+
+
+def policy_price(doc, it, bank=None):
+    """(price, exchange count or None) that the income-gate rule gives line `it`."""
+    gb = it.get("gate_badge")
+    if isinstance(gb, bool) or gb not in GATE_BADGES:
+        raise MarketError("line %s: gate_badge %r is not a whole badge 1-8" % (it.get("id"), gb))
+    cum = ((doc.get("income_basis") or {}).get("cumulative_by_badge") or {}).get(str(gb))
+    if not isinstance(cum, int):
+        raise MarketError("line %s: income_basis.cumulative_by_badge has no badge %d" % (it.get("id"), gb))
+    cnt = it.get("count") or 1
+    ex = it.get("exchange_for")
+    if ex:
+        bank = bank_prices() if bank is None else bank
+        if ex.get("item") not in bank:
+            raise MarketError("line %s: the bank does not buy its exchange material %r" % (it.get("id"), ex.get("item")))
+        n = cum // bank[ex["item"]] + 1
+        return n * bank[ex["item"]] * cnt, n
+    step = int(income_gate_policy(doc).get("round_to") or 0)
+    if step <= 0:
+        raise MarketError("price_policies.income_gate.round_to must be a positive whole number")
+    return (cum // step + 1) * step * cnt, None
+
+
+def ball_ceiling(doc):
+    """(unit price, line id) of the cheapest `ball` exchange line on a counter: tools/bank.py's exchange floor needs
+    every ball exchange to cost MORE than the dearest non-exchange line on any shelf, so a stocked income-gate line
+    must stay under this."""
+    got = [(it["price"] / (it.get("count") or 1), it["id"]) for c in doc.get("counters") or []
+           for it in c.get("stock") or [] if it.get("exchange_for") and it.get("kind") == "ball"]
+    return min(got) if got else (None, None)
+
+
+def price_policy_problems(doc, progression=None, bank=None):
+    out = []
+    pol = income_gate_policy(doc)
+    lines = policy_lines(doc)
+    if lines and not pol:
+        return ["%d line(s) name price_rule income_gate but data/markets.json has no price_policies.income_gate"
+                % len(lines)]
+    leaders = leader_badges(progression)
+    ceiling, ceiling_id = ball_ceiling(doc)
+    for c, it in [(c, it) for c in doc.get("counters") or [] for it in c.get("stock") or []
+                  if "gate_badge" in it and it.get("price_rule") != POLICY]:
+        out.append("counter %s item %s: gate_badge without price_rule income_gate (its price would be hand-typed)"
+                   % (c["id"], it.get("id")))
+    seen = {}
+    for c, it, held in lines:
+        where = "counter %s %s %s" % (c["id"], "held line" if held else "item", it.get("id"))
+        seen.setdefault(it.get("item"), []).append(where)
+        try:
+            price, n = policy_price(doc, it, bank)
+        except MarketError as e:
+            out.append("%s: %s" % (where, e))
+            continue
+        if not it.get("gate_why"):
+            out.append("%s: no gate_why (why badge %s is this item's gate)" % (where, it.get("gate_badge")))
+        if it.get("price") != price:
+            out.append("%s: price %r is not the income-gate rule's $%d (run tools/markets.py prices --write)"
+                       % (where, it.get("price"), price))
+        if n is not None and (it.get("exchange_for") or {}).get("count") != n:
+            out.append("%s: exchange_for count %r is not the rule's %d" % (where, it["exchange_for"].get("count"), n))
+        lb = leaders.get(it.get("item"))
+        if it.get("item", "").startswith("tmcraft:") and lb != it.get("gate_badge"):
+            out.append("%s: a leader's TM gates on the badge its leader gives (gym %s in data/progression.json "
+                       "first_win_rewards), not %r" % (where, lb, it.get("gate_badge")))
+        unit = price / (it.get("count") or 1)
+        if held:
+            h = it.get("held") or {}
+            if not h.get("reason") or not h.get("why"):
+                out.append("%s: held with no held.reason and held.why" % where)
+            elif h["reason"] == "ball_floor" and ceiling is not None and unit < ceiling:
+                out.append("%s: held for the ball floor, but its $%s is now under %s's $%s: release it to stock"
+                           % (where, money(unit), ceiling_id, money(ceiling)))
+        elif not it.get("exchange_for") and ceiling is not None and unit >= ceiling:
+            out.append("%s: $%s is not under %s's $%s, so the Master Ball exchange would fall under tools/bank.py's "
+                       "ball floor: hold it (held_stock, reason ball_floor)" % (where, money(unit), ceiling_id,
+                                                                                 money(ceiling)))
+    for item, ws in seen.items():
+        if len(ws) > 1:
+            out.append("%s is under the income-gate rule twice: %s" % (item, "; ".join(ws)))
+    return out
+
+
+def price_table(doc, bank=None):
+    """[(counter, line, held, price, exchange count)] for every income-gate line."""
+    return [(c, it, held) + policy_price(doc, it, bank) for c, it, held in policy_lines(doc)]
+
+
+def write_prices(path, doc, bank=None):
+    """Rewrite each income-gate line's price (and exchange count) in the data file's own text, one line per stock
+    entry, so nothing else in the file moves. Returns the number of lines changed."""
+    text = Path(path).read_text(encoding="utf-8")
+    rows = text.split("\n")
+    changed = 0
+    for c, it, held, price, n in price_table(doc, bank):
+        key = '{"id": "%s", "item": "%s"' % (it["id"], it["item"])
+        hits = [i for i, r in enumerate(rows) if key in r]
+        if len(hits) != 1:
+            raise MarketError("prices --write: %d lines of %s carry %s; expected one" % (len(hits), path, key))
+        i = hits[0]
+        new = re.sub(r'"price": -?\d+', '"price": %d' % price, rows[i], count=1)
+        if n is not None:
+            new = re.sub(r'("exchange_for": \{"item": "[^"]+", "count": )\d+', r"\g<1>%d" % n, new, count=1)
+        if new != rows[i]:
+            rows[i] = new
+            changed += 1
+    if changed:
+        Path(path).write_text("\n".join(rows), encoding="utf-8", newline="\n")
+    return changed
+
+
 def static_problems(doc, planned_flags, towns, traders):
     out = []
     town_ids = [t["id"] for t in towns]
@@ -1237,7 +1384,8 @@ def audit(doc, source_root=None, skip_dressing=False, plazas=None):
     towns = json.loads((ROOT / "data" / "towns.json").read_text(encoding="utf-8"))["towns"]
     traders = {t["id"]: t for t in json.loads((ROOT / "data" / "traders.json").read_text(encoding="utf-8"))["traders"]}
     plazas = load_plazas() if plazas is None else plazas
-    problems = static_problems(doc, planned, towns, traders) + stall_problems(doc, towns, plazas) + collision_problems(doc)
+    problems = static_problems(doc, planned, towns, traders) + stall_problems(doc, towns, plazas) + \
+        collision_problems(doc) + price_policy_problems(doc, prog)
     if problems:
         return problems, contract_report(doc, plazas)
     problems += curve_problems(doc) + overlay_problems(doc)
@@ -1295,8 +1443,22 @@ def main(argv=None):
                    help="a further jar to read (repeatable): the Minecraft 1.21.1 jar for the stalls' minecraft: ids; "
                         "without one, every minecraft: id is reported NOT CHECKED")
     sub.add_parser("report")
+    pr = sub.add_parser("prices", help="the income-gate rule's price per line (price_policies.income_gate)")
+    pr.add_argument("--write", action="store_true", help="write the rule's prices into the data file")
     args = p.parse_args(argv)
     doc = load(args.data)
+    if args.cmd == "prices":
+        inc = doc["income_basis"]["cumulative_by_badge"]
+        ceiling, ceiling_id = ball_ceiling(doc)
+        for c, it, held, price, n in price_table(doc):
+            print("%-18s %-22s gate badge %d (income $%s)  $%s%s  %s" % (
+                c["id"], it["id"], it["gate_badge"], money(inc[str(it["gate_badge"])]), money(price),
+                " = %d x %s" % (n, it["exchange_for"]["item"]) if n is not None else "",
+                "HELD (%s)" % (it.get("held") or {}).get("reason") if held else "stock"))
+        print("ball ceiling: %s at $%s" % (ceiling_id, money(ceiling) if ceiling is not None else "?"))
+        if args.write:
+            print("wrote %d line(s) in %s" % (write_prices(args.data, doc), args.data))
+        return 0
     if args.cmd == "build":
         files, npcs = build(doc)
         write(files, args.out)
