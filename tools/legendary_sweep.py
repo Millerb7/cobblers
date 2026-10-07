@@ -21,6 +21,10 @@ encounter), to the residents' rules (tests/test_resident_siting.py: 128 from eve
 activated Habitat Block's spawn range plus a 28-block leash), to the runtime ceiling y575, and to the bare-terrain
 route sightings. The record's measured numbers are held to the heightmap (tools/ground.py, rounded), never a world.
 
+A site's activation item has ONE cache holding ONE item. A site may also declare `extra_caches` (each a data/rewards.json
+cache with its own items and gate, e.g. the Griseous Core at Giratina's altar): a declared one is spared THIS site's
+clearance rule and is held instead to its declared items and gate and to a trigger inside the site's carve.
+
   python tools/legendary_sweep.py measure <site id>     the numbers, as the record should state them
   python tools/legendary_sweep.py check                 every sweep site against the record and the rules
   python tools/legendary_sweep.py catalogue             the catalogue table's counts by status
@@ -73,6 +77,19 @@ def caches_for(site, rewards=None):
     return [r for r in rewards["rewards"] if r["id"] in ids]
 
 
+def extra_caches(site):
+    """The site's DECLARED extra caches (`extra_caches`, added 2026-10-09 for the Griseous Core at Giratina's altar):
+    [{"source": <data/rewards.json id>, "items": [item id, ...], "flags": [progression flag, ...]}]. Each is its own
+    data/rewards.json cache record, held by placement_problems to the declared items (one of each), the declared gate and
+    a trigger inside the site's carve. Only a declared one is spared the hidden-site clearance and the one-item contract,
+    and only for its own site."""
+    return list(site.get("extra_caches") or [])
+
+
+def extra_cache_ids(site):
+    return {d.get("source") for d in extra_caches(site)}
+
+
 def legendary_centres(exclude, placements=None):
     out = H.legendary_centres(exclude, placements)
     out["hoopa_cradle"] = HOOPA
@@ -111,7 +128,7 @@ def measure(site, g, placements=None, points=None, rewards=None):
                             "fill_blocks": int(np.clip(level - h, 0, None).sum()), "fill_columns": int((h < level).sum())}
     elif kind == "floating":
         out["gap_over_highest_ground"] = y - int(h.max())
-    skip = {site["id"], site.get("scheduled_as")} | {r["id"] for r in caches_for(site, rewards)}
+    skip = {site["id"], site.get("scheduled_as")} | {r["id"] for r in caches_for(site, rewards)} | extra_cache_ids(site)
     pts = [p for p in (points if points is not None else H.authored_points(skip))]
     near = H.nearest_authored(box, pts)
     routes = np.array([p for pl in json.loads((ROOT / "data" / "route_paths.json").read_text(encoding="utf-8"))
@@ -237,6 +254,65 @@ def placement_problems(site, placements, rewards=None):
     every = [x["id"] for x in rdoc["rewards"] for c in x.get("contents") or [] if c.get("item") == item.get("item")]
     if len(every) > 1:
         bad.append("%s has %d sources in data/rewards.json %s; it has ONE" % (item.get("item"), len(every), every))
+    bad += extra_cache_problems(site, placements, rdoc)
+    return bad
+
+
+def extra_cache_problems(site, placements, rdoc):
+    """[problem] for each declared extra cache: one record, the declared items one of each, the declared gate (real
+    progression flags), and its trigger box and container inside the site's carve (footprint x/z, bottom to top layer)."""
+    bad = []
+    decl = extra_caches(site)
+    if not decl:
+        return bad
+    flags = {f["id"] for f in json.loads((ROOT / "data" / "progression.json").read_text(encoding="utf-8"))["flags"]}
+    item = site.get("activation_item") or {}
+    box = adopted_sites.footprint(site, placements)
+    y0 = adopted_sites.where(site, placements)["y"]
+    y1 = y0 + int(site["size"][1]) - 1
+    seen = set()
+
+    def inside(p):
+        return box[0] <= p[0] <= box[2] and y0 <= p[1] <= y1 and box[1] <= p[2] <= box[3]
+
+    for d in decl:
+        src = d.get("source")
+        tag = "extra cache %r" % src
+        if not src or src in seen or src == item.get("source"):
+            bad.append("%s: a declared extra cache needs its own source, not repeated, not the activation item's" % tag)
+            continue
+        seen.add(src)
+        want = list(d.get("items") or [])
+        gate = d.get("flags")
+        hits = [r for r in rdoc["rewards"] if r.get("id") == src]
+        if len(hits) != 1:
+            bad.append("%s names %d data/rewards.json records" % (tag, len(hits)))
+            continue
+        r = hits[0]
+        if r.get("kind") != "cache":
+            bad.append("%s is a %s, not a cache" % (tag, r.get("kind")))
+        got = [c.get("item") for c in r.get("contents") or []]
+        if not want or sorted(got) != sorted(want) or len(set(want)) != len(want) \
+                or any(c.get("count") != 1 for c in r.get("contents") or []):
+            bad.append("%s gives %s; the site declares %s, one of each"
+                       % (tag, [(c.get("item"), c.get("count")) for c in r.get("contents") or []], want))
+        if item.get("item") in got:
+            bad.append("%s hands out the activation item %s, whose one source is %s" % (tag, item.get("item"), item.get("source")))
+        if not isinstance(gate, list) or not gate:
+            bad.append("%s declares no gate (flags)" % tag)
+        else:
+            if r.get("requires_flags") != gate:
+                bad.append("%s requires %s; the site declares %s" % (tag, r.get("requires_flags"), gate))
+            unknown = [f for f in gate if f not in flags]
+            if unknown:
+                bad.append("%s gates on %s, not data/progression.json flags" % (tag, unknown))
+        trig = r.get("trigger") or {}
+        if not (trig.get("min") and trig.get("max") and inside(trig["min"]) and inside(trig["max"])):
+            bad.append("%s's trigger box %s is not inside the site's carve x%d-%d y%d-%d z%d-%d"
+                       % (tag, trig, box[0], box[2], y0, y1, box[1], box[3]))
+        at = (r.get("container") or {}).get("at")
+        if at is not None and not inside(at):
+            bad.append("%s's container %s is not inside the site's carve" % (tag, at))
     return bad
 
 

@@ -28,6 +28,12 @@ WHERE EACH EXPECTATION COMES FROM
                   modpack/config/rctmod-server.toml; after kanto_champion_blue there is none (100).
   the caches      the GENERATED rewards pack (tools/rewards_pack.py run into a temporary folder): its advancement
                   predicate and its function, read as Minecraft would read them.
+  the extras      a sweep record's `extra_caches` (added 2026-10-09 for the Griseous Core) is the one thing read from
+                  `sweep_sites`, and only as a CLAIM: which data/rewards.json records the site owns beside the
+                  activation cache. A declared record is spared that site's clearance rule and nothing else; it is held
+                  to the jars (each item ships a model), data/progression.json (the gate), the generated pack (one of
+                  each, the gate in the predicate) and the template's extent (its trigger box). An undeclared record
+                  at the altar still fails the clearance rule; a second item in the activation cache still fails.
   the Hoopa       the GENERATED cobblers_hoopa_cradle pack (tools/hoopa_cradle.py build), RUN in this file's own model
                   of the commands it uses (execute, scoreboard, selectors, macros, return, schedule) and of its two
                   MoLang callbacks, against scenarios whose expected outcome is the owner's decision
@@ -329,6 +335,15 @@ def placements():
     return _j(DATA / "placements.json")["placements"]
 
 
+def declared_extras(sid):
+    """The `extra_caches` the sweep record scheduled as `sid` DECLARES. A declaration is a claim to be checked, not an
+    expectation: it names which data/rewards.json records the site owns besides its activation item's cache, and every
+    one is then held, by extra_cache_audit, to the jars (the items exist), data/progression.json (the gate is a flag),
+    the GENERATED rewards pack (gate, items, one of each) and the template's own extent (the position)."""
+    rec = [s for s in _j(DATA / "adopted_legendary_sites.json").get("sweep_sites") or [] if s.get("scheduled_as") == sid]
+    return list(rec[0].get("extra_caches") or []) if len(rec) == 1 else []
+
+
 def sweep_placements(pl=None):
     """The pastes the sweep scheduled: data/placements.json records carrying `sweep_site`."""
     return [q for q in (pl if pl is not None else placements()) if q.get("sweep_site")]
@@ -619,8 +634,11 @@ def paste_audit(R, packs, g, pl=None, donor=None, sightlines=True):
         R.fact(sid + ".spread_nearest", (round(spread[0][0]), spread[0][1]))
         for d, k in spread:
             R.check(sid, d >= SPREAD, "%s: %s is %d from this site's centre (spread %d)" % (sid, k, d, SPREAD))
+        # skipped: the activation item's cache, and the extra caches THIS site declares (each one held to the carve,
+        # its items and its gate by extra_cache_audit; a record declared nowhere, or on another site, is not skipped)
         skip = {sid, q.get("sweep_site")} | {r["id"] for r in _j(DATA / "rewards.json")["rewards"]
-                                              if any(c.get("item") == item for c in r.get("contents") or [])}
+                                              if any(c.get("item") == item for c in r.get("contents") or [])} \
+            | {d.get("source") for d in declared_extras(sid)}
         pts = authored_points(skip)
         near = min((edge(box, x, z), src, x, z) for x, z, src in pts)
         R.fact(sid + ".nearest_authored", (round(near[0]), near[1], near[2], near[3]))
@@ -775,6 +793,140 @@ def source_audit(R, packs, sites):
 # ============================================================================================ 3. the caches
 
 
+def _cache_cells(s, lo, hi):
+    """([standable template cells in the predicate box], [those reached from outside the template])."""
+    q = s["q"]
+    x0, y0, z0 = q["position"]["x"], q["position"]["y"], q["position"]["z"]
+    grid, t = s["grid"], s["template"]
+    feet = []
+    for x in range(int(math.floor(lo[0])), int(math.ceil(hi[0]))):
+        for y in range(int(math.floor(lo[1])), int(math.ceil(hi[1]))):
+            for z in range(int(math.floor(lo[2])), int(math.ceil(hi[2]))):
+                c = (x - x0, y - y0, z - z0)
+                if _passable(grid.get(c, "minecraft:air")) and _passable(grid.get((c[0], c[1] + 1, c[2]), "minecraft:air")) \
+                        and not _passable(grid.get((c[0], c[1] - 1, c[2]), "minecraft:air")):
+                    feet.append(c)
+    slab = full_slab_top(t, grid)
+    reach = reachable_cells(t, grid, (slab + 1) if slab is not None else 0)
+    return feet, [c for c in feet if c in reach]
+
+
+def _generated_rewards(rewards, doc):
+    """({id: advancement}, {id: function lines}) of the rewards pack as `rewards` (tools/rewards_pack.py) writes it."""
+    with tempfile.TemporaryDirectory() as tmp:
+        out = Path(tmp) / "cobblers_rewards"
+        rewards.write(doc, out)
+        advs = {p.stem: json.loads(p.read_text(encoding="utf-8")) for p in (out / "data" / "cobblers" / "advancement" / "reward").glob("*.json")}
+        fns = {p.stem: p.read_text(encoding="utf-8").splitlines() for p in (out / "data" / "cobblers" / "function" / "reward").glob("*.mcfunction")}
+    return advs, fns
+
+
+def item_is_real(packs, item):
+    """An item id the loaded jars ship a model for (assets/<ns>/models/item/<path>.json), the same evidence each
+    data/rewards.json `verification` cites. A vanilla id is not in the snapshot's jars and is not vouched for here."""
+    if not isinstance(item, str) or ":" not in item:
+        return False
+    ns, path = item.split(":", 1)
+    return packs.find("assets/%s/models/item/%s.json" % (ns, path)) is not None
+
+
+def extra_cache_audit(R, packs, sites, rewards=None):
+    """Every `extra_caches` declaration of a sweep site, held to everything the activation cache is held to except the
+    one-item rule: the record exists once and is a cache; its items exist in the loaded jars, are not the activation
+    item, and the GENERATED function gives exactly one of each and nothing else; its gate is real progression flags and
+    the GENERATED advancement requires every one; its predicate box is an overworld box inside the template's extent
+    (corner to corner, bottom layer to top) and holds a cell a player can stand on. A declaration on a sweep record no
+    paste was audited for is a problem: nothing would hold it to a carve."""
+    if rewards is None:
+        import rewards_pack as rewards
+    doc = _j(DATA / "rewards.json")
+    flags = {f["id"] for f in _j(DATA / "progression.json")["flags"]}
+    advs, fns = _generated_rewards(rewards, doc)
+    for rec in _j(DATA / "adopted_legendary_sites.json").get("sweep_sites") or []:
+        if rec.get("extra_caches") and rec.get("scheduled_as") not in sites:
+            R.check("extras", False, "%s declares extra_caches but its paste %r was not audited"
+                    % (rec.get("id"), rec.get("scheduled_as")))
+    for sid, s in sites.items():
+        decl = declared_extras(sid)
+        R.fact(sid + ".extra_caches", [d.get("source") for d in decl])
+        q, t = s["q"], s["template"]
+        x0, y0, z0 = q["position"]["x"], q["position"]["y"], q["position"]["z"]
+        sx, sy, sz = t["size"]
+        seen = set()
+        for d in decl:
+            src = d.get("source")
+            tag = "%s: extra cache %r" % (sid, src)
+            if not R.check(sid, isinstance(src, str) and src not in seen, "%s is unnamed or declared twice" % tag):
+                continue
+            seen.add(src)
+            hits = [r for r in doc["rewards"] if r.get("id") == src]
+            if not R.check(sid, len(hits) == 1, "%s names %d data/rewards.json records" % (tag, len(hits))):
+                continue
+            r = hits[0]
+            R.check(sid, r.get("kind") == "cache", "%s is a %s, not a cache" % (tag, r.get("kind")))
+            want = list(d.get("items") or [])
+            R.check(sid, bool(want) and len(set(want)) == len(want), "%s declares items %s" % (tag, want))
+            for it in want:
+                R.check(sid, item_is_real(packs, it), "%s: %s is not an item any loaded jar ships" % (tag, it))
+            R.check(sid, s["item"] not in want and s["item"] not in [c.get("item") for c in r.get("contents") or []],
+                    "%s hands out the activation item %s" % (tag, s["item"]))
+            gate = d.get("flags")
+            R.check(sid, isinstance(gate, list) and bool(gate) and all(f in flags for f in gate),
+                    "%s's gate %r is not a list of data/progression.json flags" % (tag, gate))
+            # the generated function: one of each declared item, nothing else
+            lines = fns.get(src)
+            if not R.check(sid, lines is not None and src in advs, "%s: the rewards pack has no reward/%s" % (tag, src)):
+                continue
+            gives = [l for l in lines if l.startswith("give ")]
+            got = []
+            for l in gives:
+                m = re.fullmatch(r"give @s ([a-z0-9_.-]+:[a-z0-9_./-]+)(\[[^\]]*\])? (\d+)", l)
+                got.append((m.group(1), int(m.group(3))) if m else (l, None))
+            R.check(sid, sorted(got) == sorted((it, 1) for it in want),
+                    "%s: cobblers:reward/%s gives %s, the site declares one each of %s" % (tag, src, got, want))
+            adv = advs[src]
+            R.check(sid, adv.get("rewards", {}).get("function") == "cobblers:reward/%s" % src,
+                    "%s: the advancement's reward is %s" % (tag, adv.get("rewards")))
+            crit = adv.get("criteria") or {}
+            R.check(sid, len(crit) == 1, "%s: %d criteria" % (tag, len(crit)))
+            for c in crit.values():
+                R.check(sid, c.get("trigger") == "minecraft:location", "%s: trigger %s" % (tag, c.get("trigger")))
+                preds = [x.get("predicate") or {} for x in (c.get("conditions") or {}).get("player") or []
+                         if x.get("condition") == "minecraft:entity_properties" and x.get("entity") == "this"]
+                need = {"cobblers:flag/%s" % f: True for f in (gate if isinstance(gate, list) else [])}
+                R.check(sid, bool(need) and any((p.get("type_specific") or {}).get("type") in ("minecraft:player", "player")
+                                                and all(((p.get("type_specific") or {}).get("advancements") or {}).get(k) == v
+                                                        for k, v in need.items()) for p in preds),
+                        "%s: earning reward/%s does not require %s" % (tag, src, sorted(need)))
+                boxes = []
+                for p in preds:
+                    loc = p.get("location") or {}
+                    pos = loc.get("position") or {}
+                    if loc.get("dimension") == "minecraft:overworld" and all(k in pos for k in "xyz"):
+                        boxes.append(([pos[k]["min"] for k in "xyz"], [pos[k]["max"] for k in "xyz"]))
+                if not R.check(sid, len(boxes) == 1, "%s: the advancement's location is not one overworld box" % tag):
+                    continue
+                lo, hi = boxes[0]
+                # the predicate reads feet as a double: the template's extent is [corner, corner + size]
+                inside = (x0 <= lo[0] and hi[0] <= x0 + sx and y0 <= lo[1] and hi[1] <= y0 + sy
+                          and z0 <= lo[2] and hi[2] <= z0 + sz)
+                R.fact(sid + ".extra." + src + ".box", (lo, hi))
+                if not R.check(sid, inside, "%s: its trigger box %s-%s is not inside the template's extent (%d, %d, %d)-(%d, %d, %d)"
+                               % (tag, lo, hi, x0, y0, z0, x0 + sx, y0 + sy, z0 + sz)):
+                    continue
+                feet, ok = _cache_cells(s, lo, hi)
+                R.fact(sid + ".extra." + src + ".standable_cells", len(feet))
+                R.check(sid, len(feet) > 0, "%s: no cell in its box is somewhere a player can stand" % tag)
+                if feet and not ok:
+                    # inside the same sealed shell as the activation cache (run after cache_audit): one finding, not
+                    # two. Sealed when the activation cache is not: a finding of its own, unlisted, so it fails
+                    key = "giratina_dome_sealed" if "giratina" in sid else sid + "_sealed"
+                    if key in R.known:
+                        R.known[key] += "; so is extra cache %s" % src
+                    else:
+                        R.known[src + "_sealed"] = "%s: none of the %d cells in its box is reached from outside" % (tag, len(feet))
+
+
 def cache_audit(R, sites, rewards=None):
     """Generate the rewards pack and read each sweep cache as Minecraft would: who earns it, where, how often, what."""
     if rewards is None:
@@ -838,22 +990,9 @@ def cache_audit(R, sites, rewards=None):
                            % (sid, s["altar"])):
                 continue
             lo, hi = hit
-            q = s["q"]
-            x0, y0, z0 = q["position"]["x"], q["position"]["y"], q["position"]["z"]
-            grid, t = s["grid"], s["template"]
-            feet = []
-            for x in range(int(math.floor(lo[0])), int(math.ceil(hi[0]))):
-                for y in range(int(math.floor(lo[1])), int(math.ceil(hi[1]))):
-                    for z in range(int(math.floor(lo[2])), int(math.ceil(hi[2]))):
-                        c = (x - x0, y - y0, z - z0)
-                        if _passable(grid.get(c, "minecraft:air")) and _passable(grid.get((c[0], c[1] + 1, c[2]), "minecraft:air")) \
-                                and not _passable(grid.get((c[0], c[1] - 1, c[2]), "minecraft:air")):
-                            feet.append(c)
+            feet, ok = _cache_cells(s, lo, hi)
             R.fact(sid + ".cache_standable_cells", len(feet))
             R.check(sid, len(feet) > 0, "%s: no cell in the cache's box is somewhere a player can stand" % sid)
-            slab = full_slab_top(t, grid)
-            reach = reachable_cells(t, grid, (slab + 1) if slab is not None else 0)
-            ok = [c for c in feet if c in reach]
             R.fact(sid + ".cache_cells_reached_from_outside", len(ok))
             if feet and not ok:
                 R.known["giratina_dome_sealed" if "giratina" in sid else sid + "_sealed"] = (
@@ -1531,6 +1670,7 @@ def audit(server_dir, ground, pl=None, hoopa=None, rewards=None, donor=None, sec
         source_audit(R, packs, sites)
     if "caches" in sections:
         cache_audit(R, sites, rewards)
+        extra_cache_audit(R, packs, sites, rewards)
     if "levels" in sections:
         level_audit(R, sites)
     if "hoopa" in sections:
