@@ -100,7 +100,8 @@ def test_the_northlight_barterer_carries_every_approved_line_and_nothing_else(do
     assert 'VillagerData:{type:"minecraft:snow",profession:"minecraft:cartographer",level:5}' in s
     assert 'Tags:["cob_dt_exchange","cob_dt_exchange_new"]' in s
     approved = [ln for ln in doc["lines"] if ln["approved"] is True]
-    assert len(approved) == 8
+    # derived from the data, not a literal: at least one line and no more than the authored cap (rules.max_lines)
+    assert 1 <= len(approved) <= doc["rules"]["max_lines"], len(approved)
     rs = _recipes(s)
     assert len(rs) == len(approved)
     for ln, r in zip(approved, rs):
@@ -109,6 +110,44 @@ def test_the_northlight_barterer_carries_every_approved_line_and_nothing_else(do
     assert "cobblemon:poke_ball" not in s
     for ln in approved:
         assert ln["sell"]["id"] not in _place(doc), ln["id"]
+
+
+def _arena_prize_items():
+    """{item id} of every data/arena_fights.json prizes.items contents entry, read here and not through the audit."""
+    a = json.loads((ROOT / "data" / "arena_fights.json").read_text(encoding="utf-8"))
+    return {c["item"] for p in a["prizes"]["items"] for c in p.get("contents") or []}
+
+
+def test_every_approved_line_obeys_the_authored_rules(doc):
+    # Without it a line could be approved with a discountable cost A, the same item in both slots or a stale status,
+    # whatever the count of lines happens to be (rules: buy_count_one, distinct_inputs, max_lines).
+    approved = [ln for ln in doc["lines"] if ln["approved"] is True]
+    assert approved and len(approved) <= doc["rules"]["max_lines"]
+    for ln in approved:
+        assert ln["status"] == "approved", ln["id"]
+        assert ln["buy"]["count"] == 1, ln["id"]
+        assert ln.get("buyB") and ln["buyB"]["id"] != ln["buy"]["id"], ln["id"]
+        assert ln["sell"]["count"] == 1, ln["id"]
+
+
+def test_no_approved_line_sells_an_arena_prize(doc):
+    # Without it a once-per-player arena trophy could be bought at the counter again (the owner, 2026-10-09,
+    # arena_trophies_not_sold: "A prize you can buy is not a prize").
+    prizes = _arena_prize_items()
+    assert prizes, "data/arena_fights.json prizes.items lists no item: the check would pass vacuously"
+    sold = {ln["id"]: ln["sell"]["id"] for ln in doc["lines"] if ln["approved"] is True}
+    assert not {k: v for k, v in sold.items() if v in prizes}, sold
+
+
+def test_superseded_lines_are_never_placed(doc):
+    # Without it a line the owner retired (data/direct_trades.json superseded_lines) could reach the counter again.
+    gone = doc.get("superseded_lines") or []
+    assert gone, "no superseded_lines: nothing to check"
+    assert {ln["id"] for ln in gone}.isdisjoint({ln["id"] for ln in doc["lines"]})
+    text = _counter(doc) + _place(doc)
+    for ln in gone:
+        assert ln.get("approved") is not True, ln["id"]
+        assert ln["sell"]["id"] not in text, ln["id"]
 
 
 def test_held_lines_are_not_placed(doc):
