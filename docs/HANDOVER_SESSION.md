@@ -12,24 +12,20 @@ before it starts. The review list is `docs/OVERNIGHT_REVIEW_2026-10-06.md` (N95-
   `git fetch --prune; git rev-parse origin/build/2026-10-06-next`.
 - Next: ONE draft PR for it against main (memory: one big PR per batch) after #119 merges, or stacked on #119.
 
-## 2. Where it stopped (overnight 2026-10-08/09)
-- The overnight brief is built, audited, applied to staging and read back after a restart: `docs/MORNING_REPORT_2026-10-09.md`.
-  Prepare complete at the head before the docs commits (187 jobs). Staging stopped with RCON `stop`, saved, lock
-  released, `max-tick-time` 60000, no Lootr in `mods/` (jar and generated config kept in
-  `C:/Users/wnd/Documents/cobblers-local/mods-pending/`).
-- Snapshots: `cobblers-staging/snapshot-2026-10-08-before-overnight` (before tonight), `snapshot-2026-10-07-before-wave-a`.
-  Disposable: `cobblers-staging/lootr-exp-2026-10-08` (Lootr converted containers in it; do not boot it without Lootr
-  expecting them), `staging-2026-10-01.oom-2026-10-07` (the OOM-damaged copy).
-- This worktree has a full `derived/` and a complete `build/`.
+## 2. Where it stopped (2026-10-09, day)
+- Today's build is applied and read back: `docs/REPORT_2026-10-09.md`. Staging stopped with RCON `stop`, saved, lock
+  released, `max-tick-time` 60000. Snapshot before today: `cobblers-staging/snapshot-2026-10-09-before-day`.
+- This worktree has a full `derived/` and a complete `build/` (prepare at the head before the docs commits).
 
 ## 3. Next
-1. **Owner: Brock in game**, then the 12 bosses, after fixing the two traps (N115) and deciding Agatha/Lance (N116).
-2. **Owner: TMs at counters** (N126/N127): commit 2833317's `data/markets.json` part holds the 41 lines; re-apply it
-   once the gate is chosen, then prepare + R17M. Arena trophies by barter (N125).
-3. Griseous Core needs a sweep site to declare extra caches (N118); the Pallet waypoint needs its marker record (N120);
-   the gulch cove town and the Deep's city have no ambient (N119); walk 2 items 7-8 (N121).
-4. Lootr: the two-player cases with the owner, on a disposable copy; ADR-007 stays Proposed.
-5. Owner questions left in each design file's "Decisions taken 2026-10-08 (overnight)" section.
+1. **Owner: Brock in game** -> then fix `P1:move_orphan` (N130) and decide Agatha/Bruno and Bruno/Lorelei (N131)
+   before the League rolls out; the other 7 gyms' templates need nothing more than Misty's/the League's measured data.
+2. **Owner decisions** listed in the report (N128 the Master Ball floor, N138 Link Cable/Upgrade, N132 z4, N129 prices,
+   the 12 design choices, U7).
+3. **Land the coast fringe (N139)**: store its cells in a form no siting scanner reads as a point, then re-audit.
+4. The level-cap check's gauntlet gap (N133); U6 mint-seed barter (research done: `docs/research/notes/mint-seeds.md`).
+5. The guides: regenerate with `python tools/player_guide_battles.py` and `python tools/player_guide_map.py`
+   after data changes; tests for both are a test-author's job (none yet).
 
 ## 4. Do not rediscover
 - `reapply.py prepare` needs `--server-dir` and the lock env (`COBBLERS_SERVER_LOCK`, `COBBLERS_LOCK_OWNER` equal to
