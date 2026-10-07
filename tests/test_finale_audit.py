@@ -18,6 +18,7 @@ Not covered: anything in game (see the tool's docstring). The cradle and z5 test
 those packs are not built (the relic pack needs the Rift skin's pack).
 """
 import json
+import re
 import shutil
 import sys
 import types
@@ -284,10 +285,11 @@ def emit(out, mutate=None):
     functions)."""
     import compile_dialogue as CD
     import hq_tower as HQ
+    import levelcap_pack as LC
     import progression_pack as PP
     import relic_underground as RU
     import route_trainers as RT
-    ns = types.SimpleNamespace(CD=CD, PP=PP, RU=RU, RT=RT, HQ=HQ)
+    ns = types.SimpleNamespace(CD=CD, PP=PP, RU=RU, RT=RT, HQ=HQ, LC=LC)
     undo = mutate(ns) if mutate else None
     try:
         files, _done, _ref = CD.build_all(DATA)
@@ -295,6 +297,11 @@ def emit(out, mutate=None):
             f = out / "cobblers_dialogue" / rel
             f.parent.mkdir(parents=True, exist_ok=True)
             f.write_text(content if isinstance(content, str) else json.dumps(content), encoding="utf-8")
+        # the level-cap pack (U54): each fight's choice runs its battle_check before the battle
+        for rel, text in ns.LC.files(json.loads((DATA / "level_cap.json").read_text(encoding="utf-8"))).items():
+            f = out / "cobblers_levelcap" / rel
+            f.parent.mkdir(parents=True, exist_ok=True)
+            f.write_text(text, encoding="utf-8")
         assert RT.main(["--out", str(out / "cobblers_trainers")]) == 0
         assert PP.main(["--out", str(out / "cobblers_progression")]) == 0
         fx = RU.guard_functions(RU.load())["release_fx"]
@@ -394,6 +401,100 @@ def test_the_story_reaches_the_release_in_order(real):
     bad, notes = A.check_story(packs, fns)
     assert bad == [], bad[:5]
     assert "rift_released" in notes[0]
+
+
+# Protects: THE LEVEL CAP at the two finale fights (sweep U54, review N57; test-author 2026-10-07, not the builder of
+# 85be563). Brann and Elara are cobblemon:npc, outside rctmod's own refusal: a party strictly over the cap never starts
+# their fight, is shown the AUTHORED over_cap_node and changes nothing; at the cap, and with a cap that does not read,
+# the fight starts; from every state a refusal leaves, a party back under the cap reaches the fight (no trap). If
+# removed, a level-100 Pokemon fights the finale again and nothing says so. Not covered: that `rctmod player get
+# level_cap` and q.player.party.highest_level answer in game as modelled, and that a tag set by a nested run_command
+# is visible to the dialogue's next expression (an experiment).
+def test_an_over_cap_party_never_fights_brann_or_elara_and_is_never_trapped(real):
+    packs, fns = real
+    bad, notes = A.check_over_cap(packs, fns)
+    assert bad == [], bad[:5]
+    # hand: start states with the fight open = the one stage x fight field unset/0 (2) x the other field (3) x flag (2)
+    # x the 4 cursors test_compiled_conversations_follow_the_chain counts = 48 each; a refusal leaves at least one
+    for who in ("brann", "elara"):
+        m = re.search(r"'%s': \((\d+), (\d+)\)" % who, notes[0])
+        assert m and int(m.group(1)) == 48 and int(m.group(2)) > 0, notes
+
+
+def ignore_the_overcap_tag(ns):
+    real = ns.CD.Compiler.battle_action
+
+    def battle_action(self, a):
+        return real(self, a).replace("q.player.has_tag('", "q.player.has_tag('x")
+    ns.CD.Compiler.battle_action = battle_action
+    return lambda: setattr(ns.CD.Compiler, "battle_action", real)
+
+
+# Protects: INDEPENDENCE of the over-cap check. compile_dialogue reading a tag battle_check never sets (data untouched)
+# must let the over-cap party fight; if this passes, check_over_cap is not executing the compiled gate.
+def test_mutation_dialogue_ignores_the_overcap_tag(tmp_path):
+    packs, fns = emit(tmp_path, ignore_the_overcap_tag)
+    bad, _ = A.check_over_cap(packs, fns)
+    assert any("over a cap of" in b and "starts the fight" in b for b in bad), bad[:3]
+
+
+LC_SRC = (ROOT / "tools" / "levelcap_pack.py").read_text(encoding="utf-8")
+
+
+def levelcap_mutant(old, new):
+    """tools/levelcap_pack.py's SOURCE mutated (data/level_cap.json untouched); emit() writes the pack from it."""
+    assert LC_SRC.count(old) == 1, "mutant no longer matches tools/levelcap_pack.py: re-aim it (%r)" % old[:60]
+
+    def mutate(ns):
+        mod = types.ModuleType("levelcap_pack_under_test")
+        mod.__file__ = str(ROOT / "tools" / "levelcap_pack.py")
+        exec(compile(LC_SRC.replace(old, new), "levelcap_pack_under_test", "exec"), mod.__dict__)
+        ns.LC = mod
+        return None
+    return mutate
+
+
+# Protects: INDEPENDENCE of the boundary. party_compare at-or-over (`>=`) must refuse a party AT the cap, so the fight
+# never starts there; if this passes, the check does not read the emitted comparison.
+def test_mutation_levelcap_at_or_over_refuses_at_the_cap(tmp_path):
+    packs, fns = emit(tmp_path, levelcap_mutant("highest_level > $(cap)", "highest_level >= $(cap)"))
+    bad, _ = A.check_over_cap(packs, fns)
+    assert any("at the cap never starts the fight" in b for b in bad), bad[:3]
+
+
+# Protects: INDEPENDENCE of the fail-open direction. battle_check tagging a player whose cap does not read must stop
+# the fight; if this passes, a fail-closed regression (the finale walled off while RCT is unreadable) goes unseen.
+def test_mutation_levelcap_fail_closed_blocks_the_finale(tmp_path):
+    old = ('"$execute store result score @s %s run rctmod player get level_cap @s$(x)" % CAP,\n'
+           '            "execute unless score @s %s matches 1.. run return 0" % CAP,')
+    new = ('"$execute store result score @s %s run rctmod player get level_cap @s$(x)" % CAP,\n'
+           '            "execute unless score @s %s matches 1.. run tag @s add %s" % (CAP, PARTY_OVER),\n'
+           '            "execute unless score @s %s matches 1.. run return 0" % CAP,')
+    packs, fns = emit(tmp_path, levelcap_mutant(old, new))
+    bad, _ = A.check_over_cap(packs, fns)
+    assert any("with a cap that does not read never starts the fight" in b for b in bad), bad[:3]
+
+
+def refusal_ends_the_chain(ns):
+    real = ns.CD.Compiler.battle_action
+
+    def battle_action(self, a):
+        # the refusal also writes the stage back a step: a refusal that edits the story (and strands the player)
+        out = real(self, a)
+        return out.replace("q.player.has_tag('%s') ? { " % "cobblers.party_overcap",
+                           "q.player.has_tag('%s') ? { t.d.%s = 'rift_crisis_pending'; "
+                           % ("cobblers.party_overcap", A.key(A.STAGE)), 1)
+    ns.CD.Compiler.battle_action = battle_action
+    return lambda: setattr(ns.CD.Compiler, "battle_action", real)
+
+
+# Protects: INDEPENDENCE of the no-trap / no-change half. A refusal that also moves the stage (data untouched) must be
+# reported -- as a story change, and as a trap, since the fight's stage is gone; if this passes, a refusal that
+# strands the player would go unseen.
+def test_mutation_a_refusal_that_moves_the_story_is_reported(tmp_path):
+    packs, fns = emit(tmp_path, refusal_ends_the_chain)
+    bad, _ = A.check_over_cap(packs, fns)
+    assert any("changes the story" in b for b in bad), bad[:3]
 
 
 # Protects: the release writes the doc's stage and League cursor and runs release_fx after the grant, @s only,
@@ -743,8 +844,9 @@ def test_prepare_runs_the_audits_after_their_inputs():
     import reapply
     names = [n for n, _f in reapply.prepare_jobs(types.SimpleNamespace(source_root="", server_dir=""))]
     at = names.index("finale_audit")
+    # levelcap_pack (U54): the fights' choices call its battle_check, which must be built before the audit reads it
     for before in ("compile_dialogue", "route_trainers", "progression_pack", "relic_underground:build",
-                   "rift_zones:build", "hq_tower:build"):
+                   "rift_zones:build", "hq_tower:build", "levelcap_pack"):
         assert names.index(before) < at, before
     at = names.index("hq_tower_audit")
     for before in ("deep_city:build", "relic_underground:build", "hq_tower:build", "route_trainers"):

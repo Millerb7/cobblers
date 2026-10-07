@@ -15,7 +15,11 @@ helpers: every expectation is derived from the data the design owns --
 -- and every behaviour is checked by EXECUTING the emitted .mcfunction files in this file's own small command model
 (World below): scoreboards, tags, storage, macros, execute chains, selectors with distance/scores/advancements, the
 emitted battle_victory callback's own run_command lines, and the two runmolang shapes the pack uses. A command the
-model does not know is a failure, not a skip.
+model does not know is a failure, not a skip. The challenge calls the level-cap pack's battle_check (sweep U54), so the
+flows run that pack too (emitted by tools/levelcap_pack.py for data/level_cap.json, or --levelcap-pack): `execute
+store result score`, `rctmod player get level_cap` (each model player has a cap, or none: the command fails and 0 is
+stored) and party_compare's runmolang on the party's highest level. Its expectation is rctmod's own rule (strictly
+over the cap refuses), not anything the generator computes.
 
 The purse rounding is taken from the data, not from the builder: prizes.purse_formula says "nearest 50 of 13 x
 (level sum)", and rank 8's typical_per_leg (13 x (74+75+76) = 2925, typed as 2900) fixes an exact half as rounding
@@ -37,6 +41,7 @@ import itertools
 import json
 import re
 import sys
+import types
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -502,6 +507,26 @@ def blackout_files(pack_dir=None):
                    B.load("progression.json"), None)
 
 
+def levelcap_pack(pack_dir=None, files=None):
+    """The level-cap pack as its generator emits it for data/level_cap.json (in memory unless a built pack or a files
+    dict is given): its functions ({"ns:path": [lines]}) and its load tag. The arena's challenge calls its battle_check
+    (sweep U54, review N57), so the flows run it; nothing here is an expectation."""
+    if files is None and pack_dir:
+        root = Path(pack_dir)
+        files = {p.relative_to(root).as_posix(): p.read_text(encoding="utf-8") for p in root.rglob("*") if p.is_file()}
+    if files is None:
+        sys.path.insert(0, str(ROOT / "tools"))
+        import levelcap_pack as LC
+        files = LC.files(doc(DATA / "level_cap.json"))
+    fns = {}
+    for rel, t in files.items():
+        m = re.fullmatch(r"data/([a-z0-9_]+)/function/(.+)\.mcfunction", rel)
+        if m:
+            fns["%s:%s" % m.groups()] = t.splitlines()
+    load = json.loads(files.get("data/minecraft/tags/function/load.json", '{"values":[]}'))["values"]
+    return types.SimpleNamespace(functions=fns, load_tag=load)
+
+
 def check_blackout(E, bfiles, problems):
     """Only a player holding the bout tag is exempt, only from the NPC-loss path, and before anything is charged."""
     tag = E.bout_tag
@@ -536,6 +561,10 @@ class Ent:
         self.advs = set(kw.pop("advs", ()))
         self.cls = kw.pop("cls", None)
         self.level = kw.pop("level", None)
+        # a player's RCT level cap (None: `rctmod player get level_cap` fails) and the party's highest level; the
+        # default sits AT the cap, so every flow also walks the strictly-over boundary (sweep U54)
+        self.cap = kw.pop("cap", 50)
+        self.party = kw.pop("party", 50)
         self.money, self.items, self.heals, self.said = [], [], 0, []
         self.__dict__.update(kw)
 
@@ -590,10 +619,12 @@ class Return(Exception):
 class World:
     """Just enough of a server to run the emitted functions: players, NPCs, scores, tags, storage, a battle each."""
 
-    def __init__(self, pack, extra_functions=None, refuse=False):
+    def __init__(self, pack, extra_functions=None, refuse=False, levelcap=None):
         self.P = pack
         self.functions = dict(pack.functions)
         self.functions.update(extra_functions or {})
+        # the level-cap pack (levelcap_pack()): the challenge calls its battle_check (sweep U54); its load tag runs too
+        self.functions.update(levelcap.functions if levelcap else {})
         self.ents = []
         self.scores = {}
         self.objectives = set()
@@ -603,12 +634,12 @@ class World:
         self.refuse = refuse
         self.callback = self._parse_callback()
         self.depth = 0
-        for f in pack.load_tag:
+        for f in pack.load_tag + (levelcap.load_tag if levelcap else []):
             self.run_function(f, None, None)
 
     # -------- entities
-    def player(self, pos, advs=()):
-        e = Ent("minecraft:player", pos, advs=advs)
+    def player(self, pos, advs=(), cap=50, party=50):
+        e = Ent("minecraft:player", pos, advs=advs, cap=cap, party=party)
         self.ents.append(e)
         return e
 
@@ -791,6 +822,13 @@ class World:
             return self.molang(line, ent, pos)
         if h == "advancement":
             return (False, 1)
+        if h == "rctmod":
+            # rctmod's `player get level_cap <player>`: its result is the cap; a cap that does not read is a failed
+            # command, and a failed command stores 0 through `execute store result` (vanilla 1.20.3+)
+            if t[1:4] != ["player", "get", "level_cap"] or len(t) != 5:
+                raise AuditError("rctmod command the model does not know: %s" % line)
+            (e,) = self.select(t[4], ent, pos)
+            return (False, 0 if e.cap is None else int(e.cap))
         raise AuditError("a command the model does not know: %s" % line)
 
     def scoreboard(self, t, ent, pos):
@@ -886,8 +924,12 @@ class World:
                 res = (False, 0)
                 for e, p in ctxs:
                     r = self.command(cmd, e, p)
-                    if store:
-                        self.storage_set(store[0], store[1], r[1])
+                    if store and store[0] == "storage":
+                        self.storage_set(store[1], store[2], r[1])
+                    elif store:
+                        self._obj(store[2])
+                        for hd in self.holders(store[1], e, p):
+                            self.set_score(hd, store[2], r[1])
                     if r[0]:
                         return r
                     res = r
@@ -940,15 +982,22 @@ class World:
                     raise AuditError("execute %s %s" % (w, k))
                 ctxs = [(e, p) for e, p in ctxs if test(e, p) == (w == "if")]
             elif w == "store":
+                if toks[i + 1:i + 3] == ["result", "score"]:
+                    store = ("score", toks[i + 3], toks[i + 4])
+                    i += 5
+                    continue
                 if toks[i + 1:i + 3] != ["result", "storage"] or toks[i + 5:i + 7] != ["int", "1"]:
                     raise AuditError("execute store %s" % toks[i:i + 7])
-                store = (toks[i + 3], toks[i + 4])
+                store = ("storage", toks[i + 3], toks[i + 4])
                 i += 7
             else:
                 raise AuditError("execute subcommand the model does not know: %s" % w)
         return (False, len(ctxs))
 
     def molang(self, line, ent, pos):
+        one = re.fullmatch(r'runmolang "([^"]*)" (\S+)', line)
+        if one:
+            return self.party_molang(one.group(1), one.group(2), ent, pos)
         m = re.fullmatch(r'runmolang "([^"]*)" (\S+) (\S+)', line)
         if not m:
             raise AuditError("runmolang the model does not read: %s" % line)
@@ -968,6 +1017,20 @@ class World:
                         self.command(tpl.group(1) + p.uuid + tpl.group(2), None, None)
                 else:
                     raise AuditError("molang the model does not read: %s" % code)
+        return (False, 1)
+
+    def party_molang(self, code, ps, ent, pos):
+        """The one single-target shape the level-cap pack uses (party_compare): `(q.player.party.highest_level <op> N)
+        ? { q.run_command(...); } : { q.run_command(...); };` -- a number compare on the party's highest level, then
+        one branch's commands, each a string concatenation with q.player.uuid, run as the server."""
+        m = re.fullmatch(r"\(q\.player\.party\.highest_level (>=|>|<=|<|==) (-?\d+)\) \? \{ (.*) \} : \{ (.*) \};", code)
+        if not m:
+            raise AuditError("molang the model does not read: %s" % code)
+        op, n = m.group(1), int(m.group(2))
+        for p in self.select(ps, ent, pos):
+            hit = {">": p.party > n, ">=": p.party >= n, "<": p.party < n, "<=": p.party <= n, "==": p.party == n}[op]
+            for expr in re.findall(r"q\.run_command\((.*?)\);", m.group(3) if hit else m.group(4)):
+                self.command(self._eval(expr, {"q.player.uuid": p.uuid}), None, None)
         return (False, 1)
 
     # -------- the callback, read from the emitted .molang
@@ -1056,21 +1119,26 @@ def settle(W, player):
     return until(W, lambda: player.in_battle or (W.score(player, "ar.live") or 0) == 0)
 
 
-def fresh(E, P, rank, advs, wins=0, venue=None, bfn=None, refuse=False):
-    W = World(P, extra_functions=bfn, refuse=refuse)
+def fresh(E, P, rank, advs, wins=0, venue=None, bfn=None, refuse=False, levelcap=None, cap=50, party=50):
+    W = World(P, extra_functions=bfn, refuse=refuse, levelcap=levelcap)
     v = E.venues[venue]
-    p = W.player(v["post"][:3], advs)
+    p = W.player(v["post"][:3], advs, cap=cap, party=party)
     if rank is not None:
         W.set_score(p, "ar.rank", rank)
         W.set_score(p, "ar.wins", wins)
     return W, p
 
 
-def check_flows(E, P, bfiles, problems):
+def check_flows(E, P, bfiles, problems, lc=None):
     gym8, champ, lance = (E.flag["gym8_cleared"], E.flag["champion_cleared"],
                           E.flag["rct_defeated:kanto_league_lance"])
     bfn_name = "cobblers:blackout/battle_loss_npc"
     bfn = {bfn_name: bfiles["data/cobblers/function/blackout/battle_loss_npc.mcfunction"].splitlines()}
+    lc = lc if lc is not None else levelcap_pack()
+    module_fresh = fresh
+
+    def fresh_(*a, **kw):                   # every flow's world carries the level-cap pack
+        return module_fresh(*a, levelcap=lc, **kw)
 
     def fail(msg):
         problems.append("flow: " + msg)
@@ -1101,7 +1169,7 @@ def check_flows(E, P, bfiles, problems):
         for rank in sorted(E.ranks):
             for k in range(8):
                 advs = {a for i, a in enumerate((gym8, lance, champ)) if k >> i & 1}
-                W, p = fresh(E, P, rank, advs, venue=venue)
+                W, p = fresh_(E, P, rank, advs, venue=venue)
                 b = len(W.spawns)
                 click(W, p, venue)
                 want = E.offered(venue, rank, advs)
@@ -1132,7 +1200,7 @@ def check_flows(E, P, bfiles, problems):
         venue = venue_of(n)
         # the least a player at this rank holds, and never champion_cleared below rank 5 (it waives the pool)
         advs = {gym8} | ({lance} if n == 4 else set()) | ({champ} if n >= 5 else set())
-        W, p = fresh(E, P, n, advs, venue=venue)
+        W, p = fresh_(E, P, n, advs, venue=venue)
         r = E.ranks[n]
         legs = E.legs(n)
         for run in range(E.need(n)):
@@ -1207,7 +1275,7 @@ def check_flows(E, P, bfiles, problems):
     else:
         n = gl[0]
         venue = venue_of(n)
-        W, p = fresh(E, P, n, full, venue=venue, bfn=bfn)
+        W, p = fresh_(E, P, n, full, venue=venue, bfn=bfn)
         click(W, p, venue)
         until(W, lambda: p.in_battle, 100)
         W.result(p, True, blackout=bfn_name)
@@ -1238,7 +1306,7 @@ def check_flows(E, P, bfiles, problems):
     if va == vb:
         fail("two players: ranks 1 and 5 share venue %s, no second venue to test with" % va)
         return
-    W = World(P)
+    W = World(P, levelcap=lc)
     a = W.player(E.venues[va]["post"][:3], {gym8})
     b = W.player(E.venues[vb]["post"][:3], full)
     W.set_score(b, "ar.rank", 5)
@@ -1275,7 +1343,7 @@ def check_flows(E, P, bfiles, problems):
     # 6. the streak: levels, size, purse, bonus, milestones once, heals, and a loss resets it
     sn, s, _e, _mm = E.streak()
     venue = venue_of(sn)
-    W, p = fresh(E, P, sn, full, venue=venue)
+    W, p = fresh_(E, P, sn, full, venue=venue)
     ms = {x["streak"]: x["prize"] for x in E.ranks[sn].get("milestones", [])}
     every5 = E.ranks[sn]["purse"]["every_5th_win_bonus"]
     top_ms = max(ms) if ms else 10
@@ -1326,7 +1394,7 @@ def check_flows(E, P, bfiles, problems):
         rank = max(r for r in E.ranks if E.offered(venue, r, full) == n)
         if rank - n < 2:
             continue
-        W, p = fresh(E, P, rank, full, venue=venue)
+        W, p = fresh_(E, P, rank, full, venue=venue)
         click(W, p, venue)
         for leg in range(E.legs(n)):
             until(W, lambda: p.in_battle, 100)
@@ -1341,17 +1409,58 @@ def check_flows(E, P, bfiles, problems):
             fail("exhibition rank %d counted toward rank %d's wins" % (n, rank))
 
     # 8. a refused start: the run ends, no opponent, no tag
-    W, p = fresh(E, P, 1, {gym8}, venue=venue_of(1), refuse=True)
+    W, p = fresh_(E, P, 1, {gym8}, venue=venue_of(1), refuse=True)
     click(W, p, venue_of(1))
     until(W, lambda: (W.score(p, "ar.live") or 0) == 0 and not W.npcs(), 100)
     if W.npcs() or E.bout_tag in p.tags or W.score(p, "ar.live"):
         fail("a refused start left opponent %d, tag %s, live %s" % (len(W.npcs()), E.bout_tag in p.tags,
                                                                    W.score(p, "ar.live")))
 
+    # 9. the level cap (sweep U54, review N57). An arena opponent is a cobblemon:npc, outside rctmod's own over-cap
+    # refusal, so the challenge must apply rctmod's rule itself: a party whose highest level is STRICTLY over the
+    # player's RCT cap is refused (canBattleAgainst's test; data/level_cap.json's "decision" for a catch), at the cap
+    # is matched (every flow above runs at 50/50), and before anything spawns or heals. A refused player whose party
+    # is back under is matched on the next click (no trap); a stale refusal tag refuses nobody; a cap that does not
+    # read lets the challenge through (the direction a catch takes: failing closed would shut every venue).
+    def cap_click(venue, rank, cap, party, tags=(), W=None, p=None):
+        if W is None:
+            W, p = fresh_(E, P, rank, full, venue=venue, cap=cap, party=party)
+        p.tags |= set(tags)
+        b, heals = len(W.spawns), p.heals
+        click(W, p, venue)
+        started = until(W, lambda: p.in_battle, 100)
+        return W, p, bool(spawned(W, b)) and started, p.heals - heals
+
+    for venue in E.venues:
+        rank = min((r for r in E.ranks if E.offered(venue, r, full) is not None), default=None)
+        if rank is None:
+            continue
+        W, p, ok, heals = cap_click(venue, rank, 30, 31)
+        if ok or W.npcs() or heals or W.score(p, "ar.live"):
+            fail("cap: a party at 31 over a cap of 30 at %s: matched %s, %d opponent(s), %d heal(s), live %s"
+                 % (venue, ok, len(W.npcs()), heals, W.score(p, "ar.live")))
+        shown = [W.score(p, o) for s in p.said for o in re.findall(r'"objective":"([^"]+)"', s)]
+        if 30 not in shown:
+            fail("cap: the refusal at %s does not show the player's cap of 30 (scores shown %s)" % (venue, shown))
+        refusal_tags = set(p.tags)
+        p.party = 30
+        W, p, ok, _h = cap_click(venue, rank, None, None, W=W, p=p)
+        if not ok:
+            fail("cap: a refused player back at the cap (30/30) is still refused at %s: a trap" % venue)
+        for cap in (30, None):
+            W, p, ok, _h = cap_click(venue, rank, cap, 20, tags=refusal_tags)
+            if not ok:
+                fail("cap: a stale refusal tag %s refuses an under-cap party at %s (cap %s)"
+                     % (sorted(refusal_tags), venue, cap))
+        W, p, ok, _h = cap_click(venue, rank, None, 100)
+        if not ok:
+            fail("cap: a cap that does not read refuses the challenge at %s (it must fail open, as a catch does)"
+                 % venue)
+
 
 # ===================================================================================================== the report
 
-def audit(pack_dir=PACK, dome_path=DOME, blackout_pack_dir=None, route=True):
+def audit(pack_dir=PACK, dome_path=DOME, blackout_pack_dir=None, route=True, levelcap_pack_dir=None):
     problems = []
     for k in STATS:
         STATS[k] = 0
@@ -1365,7 +1474,7 @@ def audit(pack_dir=PACK, dome_path=DOME, blackout_pack_dir=None, route=True):
     if route:
         check_route_trainers(E, problems)
     try:
-        check_flows(E, P, bfiles, problems)
+        check_flows(E, P, bfiles, problems, levelcap_pack(levelcap_pack_dir))
     except AuditError as e:
         problems.append("model: %s" % e)
     return problems
@@ -1376,9 +1485,10 @@ def main(argv=None):
     ap.add_argument("--pack", default=str(PACK))
     ap.add_argument("--dome", default=str(DOME))
     ap.add_argument("--blackout-pack", default=None, help="a built cobblers_blackout (default: emitted in memory)")
+    ap.add_argument("--levelcap-pack", default=None, help="a built cobblers_levelcap (default: emitted in memory)")
     a = ap.parse_args(argv)
     try:
-        problems = audit(Path(a.pack), Path(a.dome), a.blackout_pack)
+        problems = audit(Path(a.pack), Path(a.dome), a.blackout_pack, levelcap_pack_dir=a.levelcap_pack)
     except AuditError as e:
         print("arena_runtime_audit: FAIL -- %s" % e)
         return 1
@@ -1391,7 +1501,7 @@ def main(argv=None):
               % (len(problems), known, "; ".join(sorted(KNOWN))))
         return 1
     print("arena_runtime_audit: ok -- classes, venues, posts, ladder, purses, prizes, gauntlets, streak, two players, "
-          "blackout exemption and the retired champions, all against the data")
+          "blackout exemption, the level-cap refusal and the retired champions, all against the data")
     return 0
 
 
