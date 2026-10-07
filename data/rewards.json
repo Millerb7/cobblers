@@ -1955,6 +1955,82 @@
           5615
         ]
       }
+    },
+    {
+      "id": "groudon_red_orb",
+      "kind": "cache",
+      "place": "Groudon's sealed chamber deep under the Craters (data/legendaries.json groudon): set into the smooth basalt pedestal Groudon sleeps on, at the chamber's south end",
+      "requires_flags": [
+        "champion_cleared"
+      ],
+      "contents": [
+        {
+          "item": "mega_showdown:red_orb",
+          "count": 1,
+          "verification": "assets/mega_showdown/models/item/red_orb.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+        }
+      ],
+      "message": "In a seam of the pedestal, hot to the touch and glowing from inside: a Red Orb.",
+      "why": "2026-10-08 (overnight, unit REWARD): docs/mechanics/ITEM_ROUTES.md section 2.3's Red Orb route. The Red Orb is Primal Groudon's item (Mega Showdown 1.0.2 ships data/mega_showdown/mega_showdown/effect/red_orb.json; that holding it triggers the Primal form is ASSUMED, ITEM_ROUTES.md section 6). Gated on champion_cleared rather than the chamber's own gym8_cleared, the design's recommendation and its open question Q5: Primal Groudon before the League would be the answer to it, not an answer. A player who opens the chamber at eight badges earns nothing here and may come back as Champion. Jar path read in the offline server snapshot C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/mods.",
+      "built_by": "tools/legendaries.py (the pedestal is the carve's own setblock, reapply step R14L); coordinates from legendaries.geometry() on the canonical heightmap (pedestal (6672, 68, 5542), chamber x6662-6682 y69-79 z5524-5544), held to it by tools/legendaries.py cache_problems",
+      "trigger": {
+        "min": [
+          6668,
+          68,
+          5538
+        ],
+        "max": [
+          6676,
+          71,
+          5544
+        ]
+      },
+      "container": {
+        "block": "minecraft:smooth_basalt",
+        "at": [
+          6672,
+          68,
+          5542
+        ]
+      }
+    },
+    {
+      "id": "hoopa_prison_bottle",
+      "kind": "cache",
+      "place": "Hoopa's cradle under the relic area (data/relic_underground.json geometry.cradle): at the restraint's centre, on the Rift's seep block in the middle of the dais",
+      "requires_flags": [
+        "rift_crisis_resolved"
+      ],
+      "contents": [
+        {
+          "item": "mega_showdown:prison_bottle",
+          "count": 1,
+          "verification": "assets/mega_showdown/models/item/prison_bottle.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"
+        }
+      ],
+      "message": "Where the restraint held it, an empty bottle, still humming: the Prison Bottle.",
+      "why": "2026-10-08 (overnight, unit REWARD): docs/mechanics/ITEM_ROUTES.md section 2.3's Prison Bottle route, a requires_flags cache inside the cradle on Hoopa's own gate, rift_crisis_resolved (data/hoopa_cradle.json gate_flag), which the release grants the releasing player first (data/quests.json unlock_league_after_rift_resolution). The Unbound form changes Hoopa only; that the bottle triggers it under Mega Showdown 1.0.2 is ASSUMED (data/mega_showdown/mega_showdown/effect/prison_bottle.json exists in the jar; the trigger was not read). Jar path read in the offline server snapshot C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/mods.",
+      "built_by": "tools/relic_underground.py (the dais centre, composition.cradle.dais.centre = palette rift_seep, laid at floor_y under the spot; reapply step R9RU); coordinates from data/hoopa_cradle.json spot (3357, 13, 3306) and data/relic_underground.json geometry.cradle, held to them by tools/hoopa_cradle.py cache_problems",
+      "trigger": {
+        "min": [
+          3355,
+          12,
+          3304
+        ],
+        "max": [
+          3359,
+          15,
+          3308
+        ]
+      },
+      "container": {
+        "block": "minecraft:crying_obsidian",
+        "at": [
+          3357,
+          12,
+          3306
+        ]
+      }
     }
   ]
 }

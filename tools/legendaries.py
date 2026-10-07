@@ -32,6 +32,9 @@ THE CHAMBER, PARAMETRIC BY DESIGN
 
   python tools/legendaries.py                     # -> build/datapacks/cobblers_legendaries
   python tools/legendaries.py --report            # the geometry of every record, nothing written
+
+A record's optional `cache` (2026-10-08) names a data/rewards.json cache whose container is the chamber's
+pedestal; this tool only holds that record's coordinates to the geometry (cache_problems) and writes no item.
 """
 from __future__ import annotations
 
@@ -456,6 +459,59 @@ def files(doc, ground):
     return out
 
 
+# ------------------------------------------------------------------ the chamber's cache (data/rewards.json)
+
+
+REWARDS = ROOT / "data" / "rewards.json"
+
+
+def cache_problems(doc, ground, rewards=None):
+    """A sited record with `cache` names a data/rewards.json cache whose container is a block THIS tool writes
+    (2026-10-08: `pedestal`, the setblock under the legendary). The reward itself is ADR-002's advancement
+    (tools/rewards_pack.py); nothing in this pack gives an item. This holds the hand-written coordinates in that
+    record to the chamber's geometry, so a moved portal, drop or chamber cannot leave the find in rock: the
+    container must be the pedestal block at the pedestal, and the trigger box must hold the pedestal's column
+    and stand inside the chamber's footprint, from the pedestal's y up into the chamber."""
+    recs = [r for r in emitted(doc) if r.get("cache")]
+    if not recs:
+        return []
+    rewards = rewards if rewards is not None else json.loads(REWARDS.read_text(encoding="utf-8"))
+    by_id = {r.get("id"): r for r in rewards.get("rewards") or []}
+    bad = []
+    for rec in recs:
+        c = rec["cache"]
+        rid = c.get("reward")
+        if c.get("container") != "pedestal":
+            bad.append("%s: cache.container must be 'pedestal' (the one container this tool writes)" % rec["id"])
+            continue
+        r = by_id.get(rid)
+        if r is None or r.get("kind") != "cache":
+            bad.append("%s: cache.reward %r is not a cache in data/rewards.json" % (rec["id"], rid))
+            continue
+        g = geometry(rec, doc, ground)
+        px, py, pz = g["pedestal"]
+        ct = r.get("container") or {}
+        if list(ct.get("at") or []) != [px, py, pz]:
+            bad.append("%s: %s's container is at %s; the pedestal is at %s"
+                       % (rec["id"], rid, ct.get("at"), [px, py, pz]))
+        if ct.get("block") != doc["defaults"]["pedestal_block"]:
+            bad.append("%s: %s's container block %s is not the pedestal block %s"
+                       % (rec["id"], rid, ct.get("block"), doc["defaults"]["pedestal_block"]))
+        t = r.get("trigger") or {}
+        lo, hi = t.get("min") or [0, 0, 0], t.get("max") or [0, 0, 0]
+        cx0, cy0, cz0, cx1, cy1, cz1 = g["chamber"]
+        if not (lo[0] <= px <= hi[0] and lo[2] <= pz <= hi[2]):
+            bad.append("%s: %s's trigger %s..%s does not hold the pedestal's column" % (rec["id"], rid, lo, hi))
+        if not (cx0 <= lo[0] and hi[0] <= cx1 and cz0 <= lo[2] and hi[2] <= cz1 and lo[1] == py
+                and py < hi[1] <= cy1):
+            bad.append("%s: %s's trigger %s..%s leaves the chamber %s (from the pedestal's y%d up)"
+                       % (rec["id"], rid, lo, hi, g["chamber"], py))
+        if not r.get("requires_flags"):
+            bad.append("%s: %s has no requires_flags; a legendary's item is gated (docs/mechanics/ITEM_ROUTES.md "
+                       "section 1)" % (rec["id"], rid))
+    return bad
+
+
 # ------------------------------------------------------------------ the re-application
 
 
@@ -521,6 +577,7 @@ def main(argv=None):
         if rel.endswith(".mcfunction"):
             bad += ["%s:%d %s: %s" % (rel, n, cmd, why)
                     for n, cmd, why in function_limits.check_lines(text.splitlines(), where=rel)]
+    bad += cache_problems(doc, g_)
     for m in bad:
         print("ERROR %s" % m)
     if bad:
