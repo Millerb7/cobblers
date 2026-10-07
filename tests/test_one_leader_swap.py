@@ -55,13 +55,25 @@ def test_a_rollout_naming_a_boss_that_does_not_exist_fails(monkeypatch):
         CM.rollout()
 
 
-def test_rollout_all_fails_closed_while_the_template_bosses_lack_their_measurements(monkeypatch):
-    # Misty's gym and the League are templates: no record carries what their second spawners replaced, and none
-    # carries the League's own spawners, so "all" must refuse until single_leader.restore (and, for the League,
-    # normal_at) is measured for each, rather than drive or restore a guessed cell
-    _with(monkeypatch, "all")
+def _without_single_leader(d, ups):
+    for u in ups:
+        d["bosses"][u].pop("single_leader", None)
+    return d
+
+
+TEMPLATE_BOSSES = ("kanto_misty", "kanto_league_lorelei", "kanto_league_bruno", "kanto_league_agatha",
+                   "kanto_league_lance", "kanto_champion_blue")
+
+
+# Without it a template boss could join the rollout with no measured seat or floor and the swap would drive, or the
+# retire restore, a guessed cell. Since M1 (bfa6971) the file carries the measurements, so the property is held on an
+# in-memory copy WITHOUT them (2026-10-08 test author): it must still refuse, naming what is missing.
+@pytest.mark.parametrize("boss", TEMPLATE_BOSSES)
+def test_rollout_all_fails_closed_for_a_template_boss_without_its_measurements(monkeypatch, boss):
+    _without_single_leader(_with(monkeypatch, "all"), [boss])
     with pytest.raises(SystemExit) as e:
         CM.spawner_files(CM.boss_ids(OVER))
+    assert ("bosses.%s.single_leader" % boss) in str(e.value)
     assert "normal_at" in str(e.value) or "restore" in str(e.value)
 
 
@@ -190,10 +202,13 @@ def test_the_retire_function_follows_the_recorded_position_not_a_constant(monkey
     assert not any("1830 155 3696" in l for l in lines)
 
 
+# Without it the retire could put a guessed block back into a template floor. Held on an in-memory copy without
+# Misty's single_leader (the file has it since M1, bfa6971), so the refusal itself stays tested.
 def test_a_template_boss_in_the_rollout_needs_its_restore_blocks(monkeypatch):
-    d = _with(monkeypatch, ["kanto_misty"])
-    with pytest.raises(SystemExit):
+    d = _without_single_leader(_with(monkeypatch, ["kanto_misty"]), ["kanto_misty"])
+    with pytest.raises(SystemExit) as e:
         CM.retire_lines("kanto_misty", "kanto_misty" + SFX, d["bosses"]["kanto_misty"])
+    assert "single_leader.restore" in str(e.value)
 
 
 # ------------------------------------------------------------------------------------------------ the reapply step
