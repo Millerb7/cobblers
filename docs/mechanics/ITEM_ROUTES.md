@@ -368,3 +368,30 @@ own builder already writes, so no carve and no audit derivation changes.
 - **Unproven:** the ADR-002 two-player grant (section 6). Also unproven is that either item changes the form under
   Mega Showdown 1.0.2. The jar ships `effect/red_orb.json` and `effect/prison_bottle.json`, but the trigger was not
   read. Neither cache has been run in a world.
+
+### Exchange and counter lines (unit EXCH)
+
+Unit EXCH, on the owner's 2026-10-08 answers (`docs/STATE.md`: "Players trade at Northlight's counter. One place, so
+the economy has a centre"; "the exchange should be an alternative path, not a bypass"). Built in `data/markets.json`
+(generator `tools/markets.py`, placed by R17M); nothing here has been bought in game (proof P-7). Every item id was read
+in the jars of the 2026-10-05 server snapshot (`C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05/mods`),
+not the live server folder, which this unit did not open; `python tools/markets.py ids` found all 219 sold ids.
+
+| # | Decision | Why |
+|---|---|---|
+| D1 | **Route A for TMs, the leaders' pools only (Q1 answered for stage 1 as "curated": 23 TMs, not ~930).** Every distinct TM in the nine `first_win_rewards` `one_of` lists is a counter line: Brock's, Misty's and Surge's ten at **Fossick**, Erika's, Koga's, Sabrina's, Blaine's and Giovanni's thirteen at **Northlight** (Fire Blast once, under Blaine) | A counter cannot gate per player (`counters_are_merchants`), so the town is the gate. The critical-path counters cannot carry them: the price curve (`tools/markets.py curve`) already asks 0.65-0.70 of income against a 0.70 target, and one TM per counter breaks it. The two off-path exchange counters are not on the curve; Fossick is the gym-3 rung, Northlight the gym-6 rung, so the first three leaders' TMs land after their gyms and the last five at the one centre |
+| D2 | TM ids are TMCraft's finished `tmcraft:tm_<move>` items, each read as `assets/tmcraft/models/item/tm_<move>.json` in `tmcraft-1.4.19+1.8.0.jar` | They have no lang key, so `tools/markets.py ids` now also accepts an item model (as `tools/economy_audit.py` already did). `cobblemon:technical_machine` stays out (its move component in a merchant offer is unverified, 2.1) |
+| D3 | TM price: **5% of the road's cumulative income at the leader's badge** (`income_basis`), rounded to $100: $500, $900, $1,400, $2,300, $3,000, $4,100, $5,500, $7,300. PROPOSED, the owner's (Q12) | One rule, rising with the road. Blaine's and Giovanni's TMs sit at Northlight's gym-6 rung ahead of their leaders, so their price is their gate (answer 4) |
+| D4 | **The 17 memories at Northlight** (`mega_showdown:<type>_memory`, lang keys in `mega_showdown-fabric-1.0.2`), $1,000 each, PROPOSED (Q11 answered with the recommendation) | The design's recommended seller; inert before Silvally at L45, and the bank buys none back |
+| D5 | **The Sachet at Fossick**, an exchange line, 18 diamonds = $2,160 (`cobblemon:sachet`) | The design's recommendation. The one-centre rule is about where players trade item for item (the barter now stands at Northlight); the money counters elsewhere stay, and Northlight is a later rung for a weaker item |
+| D6 | **The barter is at Northlight**: the eight `data/direct_trades.json` lines, re-priced to 1.00-1.05 of the counter's price and approved, on a villager inside the Northlight Mart (`counter_site`, step R18DT). EXP-055's villager stays under Holdfast | The owner's two answers above. The rule and each line's price are in `data/direct_trades.json` `pricing` |
+
+**Still the owner's** (unchanged by the above): Q2 TMs single-use or permanent (`consumeMoveItemOnUse`); Q3 Mewtwo in
+or out, and the Origin Fossil; Q6 Dynamax; Q12 every PROPOSED price above; and Q1 beyond stage 1 (whether "every item"
+means all ~930 TMs). Not built tonight, though the design names them: the mint seeds, the brewing stand, PP Up/Max,
+the bottle cap, the ancient balls, the Link Cable, the Upgrade, the pot and teacup lines (each waits on a price or a
+question above).
+
+**Known gaps this leaves for other owners:** `tools/markets_audit.py` and `tools/town_squares_audit.py` read item ids
+from lang keys only, so the 23 TM lines read as unknown ids there (`tests/test_markets_audit.py::test_ids_and_recipe_
+conditions_in_the_server_jars`); `data/bank.json` `not_built` still says "TMs are not built".
