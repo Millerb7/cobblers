@@ -22,8 +22,10 @@ What each check expects comes from the authored record or the build's own plan, 
   dens    data/gulch_mine.json `farms[].dens` and the mine's two hall slots: each den's chunk is held, its keeper
           driven three times from the console (the tick drives it only while a PLAYER is inside the den's approach
           box, 128 square and anchor-24 to anchor+32, so a player flying over higher never sees a den spawn), then
-          its Mega counted by its own tag. A count other than 1 is reported WITH the den's clock scores (gm.gone,
-          gm.resp, #now gm.t) and any player within `megas.spawn_clear`, which blocks a spawn by design.
+          its Megas counted: a mine slot's one by its own tag; a farm den's PACK (pack_size, 3 since 2026-10-05) by
+          the den's tag (expected the pack size) and by each member's tag <den>_m<k> (expected 1 each). A wrong count
+          is reported WITH the short members' clock scores (gm.gone, gm.resp, #now gm.t) and any player within
+          `megas.spawn_clear`, which blocks a spawn by design.
           This WRITES: it spawns any Mega that is due. Staging only.
   relic   the superseded surface (the ring on its plinth, the cordon's gate: tools/relic_surface_superseded.py
           old_record, the old build's own record, since the capped derived/deep_city/plan.json carries neither) and
@@ -179,13 +181,23 @@ def gulch(rc):
 def dens(rc, wait):
     d = json.loads((ROOT / "data" / "gulch_mine.json").read_text(encoding="utf-8"))
     tag = d["megas"]["tag"]
-    rows = [(s["id"], s["anchor"][0], None, s["anchor"][1], "mine") for s in d["megas"]["slots"]]
+    # A mine slot holds one Mega, kept under the slot's own id. A farm den holds a PACK (the owner, 2026-10-05:
+    # mega_field.layout.pack_size, or the den's own pack_size; tools/gulch_mine.py pack_homes, commit cd64bea): member
+    # k is <den>_m<k>, with its own tag, keeper and clock (#<den>_m<k> gm.gone); every member also carries the den's
+    # tag. So a den is expected to hold its pack size under the den's tag and exactly one under each member's tag, and
+    # its clocks are the members' -- a den-level #<den> gm.gone is never written for a pack and reads "Can't get value".
+    # (Before this, the probe expected 1 under the den's tag and read #<den> gm.gone: N50/U57's "2-3 Megas, clock
+    # unset" was a pack read by a single-Mega probe.)
+    pack_default = ((d.get("mega_field") or {}).get("layout") or {}).get("pack_size", 1)
+    rows = [(s["id"], s["anchor"][0], None, s["anchor"][1], "mine", [s["id"]]) for s in d["megas"]["slots"]]
     for f in d.get("farms", []):
         for den in f["dens"]:
             x, y, z = den["anchor"]
-            rows.append((den["id"], x, y, z, f["id"]))
+            n = den.get("pack_size", pack_default)
+            mids = ["%s_m%d" % (den["id"], k + 1) for k in range(n)] if n > 1 else [den["id"]]
+            rows.append((den["id"], x, y, z, f["id"], mids))
     out = []
-    for did, x, y, z, where in rows:
+    for did, x, y, z, where, mids in rows:
         y = 64 if y is None else y
         _hold(rc, x, y, z, settle=wait)
         # The tick runs a den's keeper (drive_<farm>) only while a PLAYER stands in its approach box (128 square,
@@ -197,12 +209,15 @@ def dens(rc, wait):
             time.sleep(1)
         time.sleep(wait)
         n = _count(rc, "@e[type=cobblemon:pokemon,tag=%s.%s]" % (tag, did))
+        per = {m: (n if m == did else _count(rc, "@e[type=cobblemon:pokemon,tag=%s.%s]" % (tag, m))) for m in mids}
         why = ""
-        if n != 1:
-            sc = {k: rc("scoreboard players get #%s %s" % (did, k)) for k in ("gm.gone", "gm.resp")}
+        if n != len(mids) or any(c != 1 for c in per.values()):
+            sc = {m: {k: rc("scoreboard players get #%s %s" % (m, k)) for k in ("gm.gone", "gm.resp")}
+                  for m, c in per.items() if c != 1}
             sc["now"] = rc("scoreboard players get #now gm.t")
             near = _count(rc, "@a[x=%d,y=%d,z=%d,distance=..%d]" % (x, y, z, d["megas"]["spawn_clear"]))
-            why = "%d Megas (expected 1); player within spawn_clear: %d; clock %s" % (n, near, sc)
+            why = "%d Megas under the den's tag (expected %d); per member %s (expected 1 each); player within " \
+                  "spawn_clear: %d; clock %s" % (n, len(mids), per, near, sc)
         out.append(("dens", "%s (%s)" % (did, where), (x, y, z), why))
         _free(rc, x, z)
     return out
