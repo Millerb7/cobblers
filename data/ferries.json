@@ -863,7 +863,10 @@
           "flag": "champion_cleared",
           "says": "beaten the Champion",
           "why": "WATER_PROPOSAL decision 6"
-        },
+        }
+      ],
+      "gate_why": "champion_cleared: WATER_PROPOSAL decision 6. The SQ-SUNSET-01 gate was dropped 2026-10-08 (docs/world-building/SIDE_ISLANDS.md 'Decisions taken 2026-10-08 (overnight)'): nothing grants quest.sq_sunset_01.completed, so it shut the charter for everyone (review N109). Kept below under superseded_gates; restoring it is moving that entry back into gates. This charter is retired in any case (status below)",
+      "superseded_gates": [
         {
           "kind": "quest_field",
           "quest": "sq_sunset_01",
@@ -871,10 +874,10 @@
           "value": true,
           "says": "finished A Boat for the Outer Sea",
           "blocked_by": "DECLARED but never set: data/progression.json now has quest.sq_sunset_01.completed so this line builds, and nothing grants it, so the charter is shut. SQ-SUNSET-01 is story (docs/story/SIDEQUESTS.md) and Codex's. The alternative is to drop this gate and leave the charter on champion_cleared alone - the owner's call, one line.",
-          "why": "WATER_PROPOSAL decision 6: chartered travel is SQ-SUNSET-01's reward"
+          "why": "WATER_PROPOSAL decision 6: chartered travel is SQ-SUNSET-01's reward",
+          "superseded_why": "dropped 2026-10-08 overnight (the reversible option of docs/world-building/SIDE_ISLANDS.md A10): an unreachable gate. Move this entry back into gates once SQ-SUNSET-01 grants its completed field"
         }
       ],
-      "gate_why": "champion_cleared and SQ-SUNSET-01: WATER_PROPOSAL decision 6",
       "swim": {
         "declared": "gate",
         "island": [
@@ -916,7 +919,10 @@
           "flag": "champion_cleared",
           "says": "beaten the Champion",
           "why": "WATER_PROPOSAL decision 6"
-        },
+        }
+      ],
+      "gate_why": "champion_cleared: WATER_PROPOSAL decision 6. The SQ-SUNSET-01 gate was dropped 2026-10-08 (docs/world-building/SIDE_ISLANDS.md 'Decisions taken 2026-10-08 (overnight)'): nothing grants quest.sq_sunset_01.completed, so it shut the charter for everyone (review N109). Kept below under superseded_gates; restoring it is moving that entry back into gates",
+      "superseded_gates": [
         {
           "kind": "quest_field",
           "quest": "sq_sunset_01",
@@ -924,10 +930,10 @@
           "value": true,
           "says": "finished A Boat for the Outer Sea",
           "blocked_by": "DECLARED but never set: data/progression.json now has quest.sq_sunset_01.completed so this line builds, and nothing grants it, so the charter is shut. SQ-SUNSET-01 is story (docs/story/SIDEQUESTS.md) and Codex's. The alternative is to drop this gate and leave the charter on champion_cleared alone - the owner's call, one line.",
-          "why": "WATER_PROPOSAL decision 6"
+          "why": "WATER_PROPOSAL decision 6",
+          "superseded_why": "dropped 2026-10-08 overnight (the reversible option of docs/world-building/SIDE_ISLANDS.md A10): an unreachable gate. Move this entry back into gates once SQ-SUNSET-01 grants its completed field"
         }
       ],
-      "gate_why": "champion_cleared and SQ-SUNSET-01: WATER_PROPOSAL decision 6",
       "swim": {
         "declared": "unsited",
         "why": "the appearing island is outside the heightmap and not built; far open sea, not walked"
@@ -949,7 +955,10 @@
           "flag": "champion_cleared",
           "says": "beaten the Champion",
           "why": "WATER_PROPOSAL decision 6"
-        },
+        }
+      ],
+      "gate_why": "champion_cleared: WATER_PROPOSAL decision 6. The SQ-SUNSET-01 gate was dropped 2026-10-08 (docs/world-building/SIDE_ISLANDS.md 'Decisions taken 2026-10-08 (overnight)'): nothing grants quest.sq_sunset_01.completed, so it shut the charter for everyone (review N109). Kept below under superseded_gates; restoring it is moving that entry back into gates",
+      "superseded_gates": [
         {
           "kind": "quest_field",
           "quest": "sq_sunset_01",
@@ -957,10 +966,10 @@
           "value": true,
           "says": "finished A Boat for the Outer Sea",
           "blocked_by": "DECLARED but never set: data/progression.json now has quest.sq_sunset_01.completed so this line builds, and nothing grants it, so the charter is shut. SQ-SUNSET-01 is story (docs/story/SIDEQUESTS.md) and Codex's. The alternative is to drop this gate and leave the charter on champion_cleared alone - the owner's call, one line.",
-          "why": "WATER_PROPOSAL decision 6"
+          "why": "WATER_PROPOSAL decision 6",
+          "superseded_why": "dropped 2026-10-08 overnight (the reversible option of docs/world-building/SIDE_ISLANDS.md A10): an unreachable gate. Move this entry back into gates once SQ-SUNSET-01 grants its completed field"
         }
       ],
-      "gate_why": "champion_cleared and SQ-SUNSET-01: WATER_PROPOSAL decision 6",
       "swim": {
         "declared": "unsited",
         "why": "the trench's marker is not sited"
@@ -982,7 +991,10 @@
           "flag": "champion_cleared",
           "says": "beaten the Champion",
           "why": "WATER_PROPOSAL decision 6"
-        },
+        }
+      ],
+      "gate_why": "champion_cleared: WATER_PROPOSAL decision 6. The SQ-SUNSET-01 gate was dropped 2026-10-08 (docs/world-building/SIDE_ISLANDS.md 'Decisions taken 2026-10-08 (overnight)'): nothing grants quest.sq_sunset_01.completed, so it shut the charter for everyone (review N109). Kept below under superseded_gates; restoring it is moving that entry back into gates",
+      "superseded_gates": [
         {
           "kind": "quest_field",
           "quest": "sq_sunset_01",
@@ -990,10 +1002,10 @@
           "value": true,
           "says": "finished A Boat for the Outer Sea",
           "blocked_by": "DECLARED but never set: data/progression.json now has quest.sq_sunset_01.completed so this line builds, and nothing grants it, so the charter is shut. SQ-SUNSET-01 is story (docs/story/SIDEQUESTS.md) and Codex's. The alternative is to drop this gate and leave the charter on champion_cleared alone - the owner's call, one line.",
-          "why": "WATER_PROPOSAL decision 6"
+          "why": "WATER_PROPOSAL decision 6",
+          "superseded_why": "dropped 2026-10-08 overnight (the reversible option of docs/world-building/SIDE_ISLANDS.md A10): an unreachable gate. Move this entry back into gates once SQ-SUNSET-01 grants its completed field"
         }
       ],
-      "gate_why": "champion_cleared and SQ-SUNSET-01: WATER_PROPOSAL decision 6",
       "swim": {
         "declared": "kindness",
         "why": "Relic Island is swimmable from Pallet's beach (C3); the charter is travel, not a gate"
