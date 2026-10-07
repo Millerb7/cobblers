@@ -65,6 +65,8 @@ import re
 import shutil
 from pathlib import Path
 
+import levelcap_pack as LC  # the NPC-battle level-cap check (battle_check) and its tag
+
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 OUT = ROOT / "build" / "datapacks" / "cobblers_arena"
@@ -453,6 +455,14 @@ def files(dome_path=DOME):
              "function %s" % F_("validate"),
              "execute if score @s ar.live matches 1 run return run %s" % say(
                  "Your opponent is already on the floor. Finish that bout first.", "gray"),
+             "# the level cap (review N57, sweep U54): an arena opponent is a cobblemon:npc, which rctmod's over-cap",
+             "# refusal never reaches, so a party strictly over the player's RCT cap is refused here, before anything",
+             "# spawns (tools/levelcap_pack.py battle_check; a cap that did not read lets the challenge through)",
+             "function %s {x:\"\"}" % LC.BATTLE_CHECK,
+             "execute if entity @s[tag=%s] run return run tellraw @s [%s,{\"score\":{\"name\":\"@s\",\"objective\":"
+             "\"%s\"},\"color\":\"gold\"},%s]"
+             % (LC.PARTY_OVER, text("The Arena will not match you: a Pokemon in your party is above your level cap of "),
+                LC.CAP, text(". Put every Pokemon above it in the PC and challenge again.")),
              "# the venue holds one run at a time",
              "scoreboard players set #busy ar.t 0",
              "execute as @a[scores={ar.live=1,ar.venue=%d}] unless score @s ar.id = #me ar.id run "
