@@ -1918,6 +1918,7 @@
         ]
       }
     },
+    {"id": "giratina_griseous", "kind": "cache", "place": "the Distortion shrine in the Glacial Tear's lower trough (data/adopted_legendary_sites.json sweep_giratina_shrine): at the foot of Giratina's altar, under the black glass dome", "requires_flags": ["champion_cleared"], "contents": [{"item": "mega_showdown:griseous_core", "count": 1, "verification": "verified in the jar by the REWARD unit 2026-10-08 (docs/mechanics/ITEM_ROUTES.md Cache routes)"}, {"item": "mega_showdown:griseous_orb", "count": 1, "verification": "verified in the jar by the REWARD unit 2026-10-08; its only other route is recipe/griseous_orb.json from ghost and dragon gems nothing in our world drops"}], "message": "Behind the chain, two cold relics of the Distortion World: a Griseous Core and a Griseous Orb.", "why": "docs/mechanics/ITEM_ROUTES.md 2.3 and review N118: Giratina is adopted, so its form items need a source; gated like the chain on champion_cleared. Declared as an extra cache on sweep_giratina_shrine (tools/legendary_sweep.py extra_caches, commit 4197551).", "built_by": "the pasted template itself (data/placements.json legendary_giratina_shrine, tools/place_donor.py, reapply step R9): the container is lumymon:giratina_altar at template [23, 12, 20]", "trigger": {"min": [4393, 78, 2878], "max": [4401, 80, 2886]}, "container": {"block": "lumymon:giratina_altar", "at": [4397, 78, 2882]}},
     {
       "id": "sweep_nightmare_weaver",
       "kind": "cache",

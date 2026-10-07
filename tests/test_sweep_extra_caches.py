@@ -77,7 +77,9 @@ def declaration(**over):
 
 def rewards_with(*records):
     doc = copy.deepcopy(REWARDS)
-    doc["rewards"] += [copy.deepcopy(r) for r in records]
+    # a scratch record replaces a committed one of the same id (giratina_griseous is in the data since 2026-10-09)
+    ids = {r["id"] for r in records}
+    doc["rewards"] = [r for r in doc["rewards"] if r.get("id") not in ids] + [copy.deepcopy(r) for r in records]
     return doc
 
 
