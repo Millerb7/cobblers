@@ -14,6 +14,8 @@ WHAT IT READS. The EMITTED packs under --packs (default build/datapacks), never 
   cobblers_progression        the flag's advancement (must be impossible to earn) and its grant function
   cobblers_relic_underground  release_fx; the carve functions REPLAYED over the cradle (the binder's stand) when built
   cobblers_rift_zones         z5's zone/admit/turn_back, EXECUTED by this file's own command model
+  cobblers_levelcap           battle_check and party_compare, EXECUTED: each fight's choice runs them first (U54), with
+                              the model player's RCT cap (MODEL_CAP, or none) and party's highest level; check_over_cap
   every pack                  swept for anything that grants the flag, writes a defeat field, calls a won function, or
                               writes a chain stage
 and the Cobblemon 1.8 jar (species learnsets and abilities, held items), under experiments/EXP-000-*/runtime/server/mods.
@@ -110,6 +112,10 @@ WON_FN = {"brann": "cobblers:hq_tower/won_brann", "elara": "cobblers:hq_tower/wo
 CALLBACK = "cobblers_hq_tower/data/cobblemon/callbacks/battle_victory/cobblers_hq_tower.molang"
 DOOR_OPEN = set(ORDER[1:])          # the tower door: deep_handoff_received and every later stage
 CLIMB_OPEN = set(ORDER[2:])         # above the briefing hall: hq_crossed and every later stage
+# the model player's RCT level cap: the finale comes after gym 8, where the cap is 60 (level_cap_after_gym8(), pinned by
+# tests/test_finale_audit.py). The value only has to be a real cap; the over-cap check (check_over_cap) is rctmod's
+# rule -- a party whose highest level is STRICTLY over the cap is refused -- not anything a generator computes
+MODEL_CAP = 60
 
 
 def key(field):
@@ -127,7 +133,7 @@ class MolangError(Exception):
 
 
 TOK = re.compile(r"\s*(?:(?P<num>\d+(?:\.\d+)?)|(?P<str>'(?:\\.|[^'\\])*')|(?P<name>[A-Za-z_][A-Za-z0-9_.]*)"
-                 r"|(?P<op>==|!=|&&|\|\||[!?:=+(){};,\-<>]))")
+                 r"|(?P<op>==|!=|<=|>=|&&|\|\||[!?:=+(){};,\-<>]))")
 
 
 def tokens(src):
@@ -205,7 +211,9 @@ class Parser:
     def expr(self):
         return self.binary(0)
 
-    LEVELS = [("||",), ("&&",), ("==", "!="), ("+",)]
+    # MoLang's precedence: comparisons bind tighter than equality, looser than + (the level-cap pack's party_compare,
+    # `q.player.party.highest_level > N`, sweep U54)
+    LEVELS = [("||",), ("&&",), ("==", "!="), ("<", ">", "<=", ">="), ("+",)]
 
     def binary(self, lvl):
         if lvl == len(self.LEVELS):
@@ -333,6 +341,9 @@ class Molang:
             return self.temp.get("t.d", 0)
         if name == "q.player":
             return self.p
+        if name == "q.player.party.highest_level":
+            # the party's highest level (the quantity rctmod's canBattleAgainst compares with the cap)
+            return self.p.party
         if name.startswith("v."):
             return self.vars.get(name[2:], 0)
         if name.startswith("c."):
@@ -374,6 +385,10 @@ class Molang:
                 return 0 if same(a, b) else 1
             if op == "+":
                 return (str(a) + str(b)) if isinstance(a, str) or isinstance(b, str) else a + b
+            if op in ("<", ">", "<=", ">="):
+                if isinstance(a, str) or isinstance(b, str):
+                    raise MolangError("%r %s %r: a comparison of a string" % (a, op, b))
+                return 1 if {"<": a < b, ">": a > b, "<=": a <= b, ">=": a >= b}[op] else 0
         if k == "call":
             return self.call(e[1], [self.eval(a) for a in e[2]])
         if k == "foreach":
@@ -441,6 +456,9 @@ class Player:
         self.data, self.adv, self.tags, self.scores = {}, set(), set(), {}
         self.gamemode, self.pos, self.saves = "survival", pos, 0
         self.vehicle = None
+        # the RCT level cap `rctmod player get level_cap` answers (None: the command fails) and the party's highest
+        # level; the default sits AT the post-gym-8 cap, so every walk also crosses the strictly-over boundary (U54)
+        self.cap, self.party = MODEL_CAP, MODEL_CAP
 
     def snapshot(self):
         return (tuple(sorted(self.data.items(), key=lambda kv: kv[0])), frozenset(self.adv))
@@ -469,6 +487,7 @@ class World:
         self.depth = 0
         self.entities = {e.uuid: e for e in entities}
         self.battles = []                   # (npc, format, player data) from q.npc.start_battle
+        self.storage = {}                   # command storage: {"ns:id": {key: value}} (macro arguments)
 
     def players(self):
         return [e for e in self.entities.values() if isinstance(e, Player)]
@@ -490,18 +509,25 @@ class World:
             return []                                       # a uuid of nothing loaded: the command does nothing
         raise Unmodelled("target %s" % sel)
 
-    def function(self, fid, p, at=None):
+    def function(self, fid, p, at=None, macro=None):
         if fid not in self.functions:
             raise Unmodelled("function %s is in no pack" % fid)
+        lines = [ln.strip() for ln in self.functions[fid]]
+        if any(ln.startswith("$") for ln in lines):
+            # a macro function (1.20.2+): run without arguments, or missing one, it fails whole and runs nothing
+            need = {k for ln in lines if ln.startswith("$") for k in re.findall(r"\$\((\w+)\)", ln)}
+            if macro is None or not need <= set(macro):
+                raise Unmodelled("macro function %s called without %s" % (fid, sorted(need - set(macro or {}))))
         self.log.append(("function", fid, dict(p.data) if p else {}, frozenset(p.adv) if p else frozenset()))
         self.depth += 1
         if self.depth > 40:
             raise Unmodelled("function recursion through %s" % fid)
         try:
-            for line in self.functions[fid]:
-                line = line.strip()
+            for line in lines:
                 if not line or line.startswith("#"):
                     continue
+                if line.startswith("$"):
+                    line = re.sub(r"\$\((\w+)\)", lambda m: str(macro[m.group(1)]), line[1:])
                 if self.command(line, p, at=at) == "return":
                     break
         finally:
@@ -517,10 +543,26 @@ class World:
         if head == "execute":
             return self.execute(w[1:], 0, p, at, cmd)
         if head == "function":
-            self.function(w[1], p, at)
+            macro = None
+            if len(w) > 2 and w[2] == "with":
+                if w[3] != "storage" or len(w) not in (5, 6):
+                    raise Unmodelled(cmd)
+                st = self.storage.get(w[4], {})
+                macro = dict(st) if len(w) == 5 else st.get(w[5])
+                if not isinstance(macro, dict):
+                    raise Unmodelled("function %s with storage %s: no compound there" % (w[1], " ".join(w[4:])))
+            elif len(w) > 2:
+                macro = snbt_compound(" ".join(w[2:]), cmd)
+            self.function(w[1], p, at, macro)
             return None
         if head == "return":
             return "return"
+        if head == "rctmod":
+            # `rctmod player get level_cap <player>`: its result is the cap; a cap that does not read fails the command
+            if w[1:4] != ["player", "get", "level_cap"] or len(w) != 5:
+                raise Unmodelled(cmd)
+            (t,) = self.targets(w[4], p, at)
+            return ("result", 0 if t.cap is None else int(t.cap))
         if head == "advancement" and p is not None and w[2] in ("@s", p.uuid) and w[3] == "only":
             (p.adv.add if w[1] == "grant" else p.adv.discard)(w[4])
             self._log("advancement", "%s %s" % (w[1], w[4]), p)
@@ -532,6 +574,9 @@ class World:
                 return None
             if w[1] == "players" and w[3].startswith("#"):
                 return None                                 # a fake player (a clock): nobody's state
+            if w[1] == "players" and p is not None and w[3] == "@s" and w[2] == "get" and len(w) == 5:
+                v = p.scores.get(w[4])
+                return ("result", 0 if v is None else v)    # an unset score fails the command: 0 is stored
             if w[1] == "players" and p is not None and w[3] == "@s":
                 if w[2] == "set":
                     p.scores[w[4]] = int(w[5])
@@ -580,12 +625,39 @@ class World:
 
     def execute(self, w, i, me, at, raw):
         """One `execute` chain from word i, as `me` at `at`. A selector naming several entities forks the chain."""
+        store = None
         while i < len(w):
             sub = w[i]
             if sub == "run":
                 if me is None:
                     return None
-                return self.command(" ".join(w[i + 1:]), me, at=at)
+                r = self.command(" ".join(w[i + 1:]), me, at=at)
+                if store is None:
+                    return r
+                # `execute store result ...`: the command's result (0 when it failed) goes to a score or to storage
+                if not (isinstance(r, tuple) and r[0] == "result"):
+                    raise Unmodelled("store result of a command the model gives no result: %s" % raw)
+                if store[0] == "score":
+                    if store[1] != "@s":
+                        raise Unmodelled(raw)
+                    me.scores[store[2]] = r[1]
+                else:
+                    self.storage.setdefault(store[1], {})[store[2]] = r[1]
+                return None
+            if sub == "store":
+                if store is not None or w[i + 1] != "result":
+                    raise Unmodelled(raw)
+                if w[i + 2] == "score":
+                    store = ("score", w[i + 3], w[i + 4])
+                    i += 5
+                elif w[i + 2] == "storage" and w[i + 5:i + 7] == ["int", "1"] and "." not in w[i + 4]:
+                    store = ("storage", w[i + 3], w[i + 4])
+                    i += 7
+                else:
+                    raise Unmodelled(raw)
+                continue
+            if store is not None and sub != "run":
+                raise Unmodelled("a subcommand after store: %s" % raw)
             if sub in ("as", "at"):
                 got = self.targets(w[i + 1], me, at)
                 if len(got) != 1 or got[0] is not me:
@@ -630,6 +702,24 @@ class World:
                 continue
             raise Unmodelled(raw)
         return None
+
+
+def snbt_compound(s, cmd):
+    """A flat SNBT compound of macro arguments, {k:"text"} or {k:123}; anything else is not modelled."""
+    s = s.strip()
+    if not (s.startswith("{") and s.endswith("}")):
+        raise Unmodelled(cmd)
+    out = {}
+    for part in [x for x in s[1:-1].split(",") if x.strip()]:
+        k, _, v = part.partition(":")
+        v = v.strip()
+        if re.fullmatch(r'"[^"]*"', v):
+            out[k.strip()] = v[1:-1]
+        elif re.fullmatch(r"-?\d+", v):
+            out[k.strip()] = int(v)
+        else:
+            raise Unmodelled(cmd)
+    return out
 
 
 def in_range(v, rng):
@@ -985,15 +1075,18 @@ class Conversation:
     ("field", pre, key, new) for a defeat field a conversation writes itself, ("battle", pre), ("offer", data) when
     CHOICE is visible."""
 
-    def __init__(self, dlg, functions, npc=None, win=None, pos=None):
+    def __init__(self, dlg, functions, npc=None, win=None, pos=None, party=None):
         self.dlg, self.functions, self.npc, self.win = dlg, functions, npc, win
         self.pos = pos                      # where the talking player stands; None: the old default, far from all
+        self.party = party                  # (RCT cap or None, party's highest level); None: the Player default
         self.pages = {p["id"]: p for p in dlg["pages"]}
         self.memo = {}
 
     def run(self, src, data, adv):
         w, p = World(self.functions), (Player(pos=self.pos) if self.pos is not None else Player())
         p.data, p.adv = dict(data), set(adv)
+        if self.party is not None:
+            p.cap, p.party = self.party
         pos0 = p.pos
         m = Molang(w, p, npc=self.npc)
         m.run(src)
@@ -1014,6 +1107,8 @@ class Conversation:
                 self.win(won)
                 nxt.append(sig(won.data, won.adv))
         page = None if m.closed else m.page
+        if page is not None and self.party is not None:
+            ev.append(("page", dict(data), page))           # the page this action shows (check_over_cap's walks)
         return ev, nxt, (dict(p.data), set(p.adv)), page
 
     def expand(self, s):
@@ -1297,6 +1392,81 @@ def check_story(packs, functions, spots=None, limit=20000):
         bad.append("the story from %s never reaches %s" % (PENDING, FLAG))
     notes.append("story: %d states reached from %s; stages %s" % (len(seen), PENDING,
                                                                   [o for o in ORDER if o in stages]))
+    return dedupe(bad), notes
+
+
+def over_cap_nodes(data=DATA):
+    """{conversation id: over_cap_node} for each npc_battle action in data/dialogue.json: the AUTHORED refusal line."""
+    out = {}
+    for c in jload(Path(data) / "dialogue.json")["conversations"]:
+        for n in c.get("nodes") or []:
+            for r in n.get("responses") or []:
+                for a in r.get("actions") or []:
+                    if a.get("kind") == "npc_battle" and a.get("over_cap_node"):
+                        out[c["id"]] = a["over_cap_node"]
+    return out
+
+
+def check_over_cap(packs, functions, data_dir=DATA, spots=None):
+    """THE LEVEL CAP (sweep U54, review N57). Brann and Elara are cobblemon:npc, which rctmod's own over-cap refusal
+    never reaches, so their conversations must apply rctmod's rule: a party whose highest level is STRICTLY over the
+    player's RCT cap never starts the fight and is shown the authored over_cap_node instead, changing no stage, field
+    or flag. At the cap the fight starts; with a cap that does not read it starts too (the direction a catch takes:
+    failing closed would wall the finale off for everyone while RCT is unreadable). NO TRAP: from every state a
+    refusal can leave the player in (the cursor at the refusal line, the conversation closed on it), a party back
+    under the cap reaches the fight. Walked from every start state with the fight open (the stage it needs, the
+    field not yet 1), executing the compiled conversation, the emitted battle_check and its party_compare."""
+    bad, notes = [], []
+    convs = conversations(packs, functions, spots)
+    refusal = over_cap_nodes(data_dir)
+    counts = {}
+    for who, c in FIGHTS.items():
+        cv = convs.get(who)
+        if cv is None:
+            bad.append("the compiled %s is not in %s/cobblers_dialogue" % (c["conv"], packs))
+            continue
+        node = refusal.get(c["conv"])
+        if node is None:
+            bad.append("%s: data/dialogue.json's npc_battle names no over_cap_node" % c["conv"])
+            continue
+
+        def conv(party):
+            return Conversation(cv.dlg, functions, cv.npc, cv.win, party=party)
+
+        over, under = conv((MODEL_CAP, MODEL_CAP + 1)), conv((MODEL_CAP, MODEL_CAP - 10))
+        others = (("at the cap", conv((MODEL_CAP, MODEL_CAP))), ("with a cap that does not read", conv((None, 100))))
+        starts = [(d, a) for d, a in start_states(data_dir, cv.dlg, c["conv"])
+                  if d.get(key(STAGE)) == c["from"] and d.get(key(c["fight"])) != 1]
+        left = 0
+        try:
+            for d, a in starts:
+                s = sig(d, a)
+                seen, ev = over.reach(s)
+                if any(e[0] == "battle" for e in ev):
+                    bad.append("%s: a party at %d over a cap of %d starts the fight from %s"
+                               % (c["conv"], MODEL_CAP + 1, MODEL_CAP, d))
+                if not any(e[0] == "page" and e[2] == node for e in ev):
+                    bad.append("%s: the refusal %s is never shown to an over-cap party from %s" % (c["conv"], node, d))
+                if any(e[0] in ("stage", "field", "grant") for e in ev):
+                    bad.append("%s: an over-cap party changes the story from %s: %s"
+                               % (c["conv"], d, [e for e in ev if e[0] in ("stage", "field", "grant")][:2]))
+                for s2 in seen:
+                    d2 = dict(s2[0])
+                    if d2.get(key(STAGE)) == c["from"] and d2.get(key(c["fight"])) != 1:
+                        left += 1
+                        if not any(e[0] == "battle" for e in under.reach(s2)[1]):
+                            bad.append("%s: a trap -- from %s, left by a refusal, a party back under the cap never "
+                                       "reaches the fight" % (c["conv"], d2))
+                for what, cvx in others:
+                    if not any(e[0] == "battle" for e in cvx.reach(s)[1]):
+                        bad.append("%s: a party %s never starts the fight from %s" % (c["conv"], what, d))
+        except (Unmodelled, MolangError) as e:
+            bad.append("%s does not run in the model with a level cap: %s" % (c["conv"], e))
+            continue
+        counts[who] = (len(starts), left)
+        if len(bad) > 30:
+            break
+    notes.append("over_cap: {who: (start states with the fight open, states a refusal leaves)} %s" % counts)
     return dedupe(bad), notes
 
 
@@ -1963,6 +2133,9 @@ def audit(packs=PACKS, jar=None, data=DATA, skip_jar=False, spots=None):
     b, n = check_story(packs, functions, spots)
     problems += b
     results["story"] = n
+    b, n = check_over_cap(packs, functions, data, spots)
+    problems += b
+    results["over_cap"] = n
     problems += check_release_effects(packs, functions)
     problems += check_progression(packs)
     b, n = check_gates(functions, data)

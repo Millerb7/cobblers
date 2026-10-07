@@ -11347,7 +11347,8 @@
               "actions": [
                 {
                   "kind": "npc_battle",
-                  "format": "singles"
+                  "format": "singles",
+                  "over_cap_node": "brann_over_cap"
                 }
               ]
             },
@@ -11361,6 +11362,14 @@
               ]
             }
           ]
+        },
+        {
+          "id": "brann_over_cap",
+          "kind": "line",
+          "speaker": "brann",
+          "text": "Not with that one in your party. It is past what your badges let you command. Put it in the PC and I will fight you.",
+          "placeholder": "Claude, 2026-10-09 (unit WB1, U54 / review N57): a functional refusal line for Codex to replace. Shown instead of the battle when the party's highest level is strictly over the player's RCT level cap (tools/levelcap_pack.py battle_check, read by tools/compile_dialogue.py battle_action). Brann and Elara are Cobblemon NPCs, so rctmod's own over-cap refusal never reached them (the owner, in game 2026-10-06: 'a level-100 Pokemon was not refused a fight').",
+          "next": "brann_choice"
         },
         {
           "id": "brann_005",
@@ -11873,7 +11882,8 @@
               "actions": [
                 {
                   "kind": "npc_battle",
-                  "format": "singles"
+                  "format": "singles",
+                  "over_cap_node": "elara_over_cap"
                 }
               ]
             },
@@ -11887,6 +11897,14 @@
               ]
             }
           ]
+        },
+        {
+          "id": "elara_over_cap",
+          "kind": "line",
+          "speaker": "elara",
+          "text": "Not with that team. One of yours is past what your badges let you command. Put it in the PC and come back.",
+          "placeholder": "Claude, 2026-10-09 (unit WB1, U54 / review N57): a functional refusal line for Codex to replace. Shown instead of the battle when the party's highest level is strictly over the player's RCT level cap (tools/levelcap_pack.py battle_check, read by tools/compile_dialogue.py battle_action). Brann and Elara are Cobblemon NPCs, so rctmod's own over-cap refusal never reached them (the owner, in game 2026-10-06: 'a level-100 Pokemon was not refused a fight').",
+          "next": "elara_choice"
         },
         {
           "id": "elara_005",

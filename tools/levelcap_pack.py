@@ -15,6 +15,10 @@ How (docs/research/notes/level-cap-catch-block.md, every hook read in source, th
   cobblers:levelcap/check
       the cap from `rctmod player get level_cap @s` (its result is the cap), the target's Pokemon.Level, the
       comparison (strictly over, as rctmod's own refusal), the message. A cap or level it cannot read (0) allows it.
+  cobblers:levelcap/battle_check
+      the same cap and party_compare, as and at a player about to start a Cobblemon NPC battle (review N57: rctmod's
+      refusal never reaches a cobblemon:npc); the caller reads the tag cobblers.party_overcap and says the refusal.
+      Called by tools/compile_dialogue.py (every npc_battle response) and tools/arena_runtime.py (every challenge).
 
 Callbacks fire only from data/cobblemon/callbacks/<event>/, under a cobblers_ file name (.claude/rules/datapacks.md).
 The rctmod line is a macro: a mod's command written plainly in a function may be parsed at server start before it is
@@ -35,6 +39,11 @@ NS = "cobblers"
 TARGET, OVER = "cobblers.lc_target", "cobblers.overcap"
 CAP, LV = "cobblers.lc_cap", "cobblers.lc_lv"
 CLOCK, PARTY_OVER, TOLD = "cobblers.lc_clock", "cobblers.party_overcap", "cobblers.oc_told"
+# the pre-battle check for Cobblemon NPC battles (review N57, sweep U54): rctmod's over-cap refusal
+# (TrainerMob.canBattleAgainst) guards only rctmod:trainer entities, so a cobblemon:npc that fights -- the HQ tower's
+# Brann and Elara (tools/compile_dialogue.py npc_battle) and Heaven's Arena's opponents (tools/arena_runtime.py) --
+# fights any party. Those callers run BATTLE_CHECK as and at the player, then read PARTY_OVER.
+BATTLE_CHECK = "%s:levelcap/battle_check" % NS
 
 
 def party_notice_files(doc):
@@ -67,8 +76,6 @@ def party_notice_files(doc):
                       {"text": n.get("text_after", ""), "color": color}])
     radius, period = int(n["radius"]), int(n["period_ticks"])
     near = "@e[type=rctmod:trainer,distance=..%d]" % radius
-    mol = ("(q.player.party.highest_level > $(cap)) ? { q.run_command('tag ' + q.player.uuid + ' add %s'); } : "
-           "{ q.run_command('tag ' + q.player.uuid + ' remove %s'); };" % (PARTY_OVER, PARTY_OVER))
     return {
         "data/%s/function/levelcap/tick.mcfunction" % NS: "\n".join([
             "scoreboard players add #clock %s 1" % CLOCK,
@@ -93,11 +100,43 @@ def party_notice_files(doc):
             "execute if entity @s[tag=%s,tag=!%s] run tellraw @s %s" % (PARTY_OVER, TOLD, msg),
             "tag @s[tag=%s] add %s" % (PARTY_OVER, TOLD),
             ""]),
+        **compare_file(),
+        "data/minecraft/tags/function/tick.json": json.dumps({"values": ["%s:levelcap/tick" % NS]}) + "\n",
+    }
+
+
+def compare_file():
+    """party_compare: $(cap) rendered into q.player.party.highest_level > cap, answered as the PARTY_OVER tag (set in
+    one branch, cleared in the other). Shared by the notice's party_check and the NPC-battle battle_check."""
+    mol = ("(q.player.party.highest_level > $(cap)) ? { q.run_command('tag ' + q.player.uuid + ' add %s'); } : "
+           "{ q.run_command('tag ' + q.player.uuid + ' remove %s'); };" % (PARTY_OVER, PARTY_OVER))
+    return {
         "data/%s/function/levelcap/party_compare.mcfunction" % NS: "\n".join([
             "# macro: $(cap) is the player's RCT level cap; Cobblemon's runmolang binds q.player to @s",
             '$runmolang "%s" @s' % mol,
             ""]),
-        "data/minecraft/tags/function/tick.json": json.dumps({"values": ["%s:levelcap/tick" % NS]}) + "\n",
+    }
+
+
+def battle_check_files():
+    """battle_check: as and at a player about to start a Cobblemon NPC battle, leave the PARTY_OVER tag on them exactly
+    when their party's highest level is strictly over their RCT level cap -- the cap read as the catch check and the
+    notice read it (`rctmod player get level_cap @s` on a macro line), the comparison party_compare's, the test
+    rctmod's canBattleAgainst makes on the same quantity. The tag is cleared FIRST, so a cap that did not read (0: RCT
+    still loading, the command failed) lets the battle through, as it lets a catch through. Says nothing: the caller
+    owns the refusal line (a dialogue node, the arena's tellraw)."""
+    return {
+        "data/%s/function/levelcap/battle_check.mcfunction" % NS: "\n".join([
+            "# as and at a player about to start a Cobblemon NPC battle (tools/compile_dialogue.py npc_battle, "
+            "tools/arena_runtime.py challenge): tag %s when the party is strictly over the RCT cap" % PARTY_OVER,
+            "tag @s remove %s" % PARTY_OVER,
+            "scoreboard players set @s %s 0" % CAP,
+            "$execute store result score @s %s run rctmod player get level_cap @s$(x)" % CAP,
+            "execute unless score @s %s matches 1.. run return 0" % CAP,
+            "execute store result storage %s:levelcap cap int 1 run scoreboard players get @s %s" % (NS, CAP),
+            "function %s:levelcap/party_compare with storage %s:levelcap" % (NS, NS),
+            ""]),
+        **compare_file(),
     }
 
 
@@ -138,6 +177,7 @@ def files(doc):
             ""]),
         "data/minecraft/tags/function/load.json": json.dumps({"values": ["%s:levelcap/load" % NS]}) + "\n",
         **party_notice_files(doc),
+        **battle_check_files(),
         "pack.mcmeta": json.dumps({"pack": {"pack_format": 48, "description":
                                    "Cobblers: no catching over the level cap (tools/levelcap_pack.py)"}}, indent=2) + "\n",
     }

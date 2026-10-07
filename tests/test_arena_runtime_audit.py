@@ -19,6 +19,8 @@ mutant fails the audit with the named problem:
   exam_level    each exam member one level over the authored team: the exam classes' teams differ from the data
   relative      spawnnpcat at relative coordinates: refused by the static check and by the model
   named_holder  a player's name as a score holder: refused by the no-identity check
+  cap_ignored   (sweep U54, 2026-10-07) the challenge's over-cap guard reads a tag nobody sets: "cap: a party at 31 ..."
+and LC_MUTANTS edit tools/levelcap_pack.py the same way: at_or_over, no_clear_first, fail_closed (each named below).
 A mutation test that only edited data would move the expectation and the output together and prove nothing.
 
 NOT COVERED (validity is not runtime behaviour; see the audit's own docstring): Cobblemon accepting each properties
@@ -122,7 +124,48 @@ MUTANTS = {
     "named_holder": ('"scoreboard players operation @s ar.id = #next ar.id"]',
                      '"scoreboard players operation Steve ar.id = #next ar.id"]',
                      "a named score holder 'Steve'"),
+    # sweep U54: the challenge's guard reads a tag battle_check never sets -- an over-cap party is matched
+    "cap_ignored": ('"execute if entity @s[tag=%s] run return run tellraw',
+                    '"execute if entity @s[tag=%s_x] run return run tellraw',
+                    "cap: a party at 31 over a cap of 30"),
 }
+
+
+LC_SRC = (ROOT / "tools" / "levelcap_pack.py").read_text(encoding="utf-8")
+# sweep U54: tools/levelcap_pack.py's source mutated (data/level_cap.json untouched); each must fail the audit's cap flow
+LC_MUTANTS = {
+    # at-or-over: a party AT the cap is refused -- every flow (run at 50/50) loses its bouts
+    "at_or_over": ("highest_level > $(cap)", "highest_level >= $(cap)", "0 spawns"),
+    # no clear-first: an old refusal survives a cap that does not read
+    "no_clear_first": ('"tag @s remove %s" % PARTY_OVER,\n            "scoreboard players set @s %s 0" % CAP,',
+                       '"scoreboard players set @s %s 0" % CAP,', "a stale refusal tag"),
+    # fail closed: a cap that does not read refuses
+    "fail_closed": ('"$execute store result score @s %s run rctmod player get level_cap @s$(x)" % CAP,\n'
+                    '            "execute unless score @s %s matches 1.. run return 0" % CAP,',
+                    '"$execute store result score @s %s run rctmod player get level_cap @s$(x)" % CAP,\n'
+                    '            "execute unless score @s %s matches 1.. run tag @s add %s" % (CAP, PARTY_OVER),\n'
+                    '            "execute unless score @s %s matches 1.. run return 0" % CAP,',
+                    "a cap that does not read refuses"),
+}
+
+
+# Protects: the audit's cap flow reads the EMITTED level-cap pack, not the builder's rule. Each mutant edits
+# tools/levelcap_pack.py's source in memory (data untouched), the pack it emits is written to tmp and the audit runs on
+# the real arena pack with it. If removed, the cap flow could pass a strictness, trap or fail-closed regression.
+@pytest.mark.parametrize("name", sorted(LC_MUTANTS))
+def test_a_mutated_levelcap_generator_fails_the_audit(name, pack, tmp_path):
+    old, new, expect = LC_MUTANTS[name]
+    assert LC_SRC.count(old) == 1, "mutant %s no longer matches tools/levelcap_pack.py: re-aim it" % name
+    mod = types.ModuleType("levelcap_pack_under_test")
+    mod.__file__ = str(ROOT / "tools" / "levelcap_pack.py")
+    exec(compile(LC_SRC.replace(old, new), "levelcap_pack_under_test", "exec"), mod.__dict__)
+    out = tmp_path / "cobblers_levelcap"
+    for rel, text in mod.files(json.loads((ROOT / "data" / "level_cap.json").read_text(encoding="utf-8"))).items():
+        (out / rel).parent.mkdir(parents=True, exist_ok=True)
+        (out / rel).write_text(text, encoding="utf-8")
+    bad = unknown(A.audit(pack, route=False, levelcap_pack_dir=out))
+    assert bad, "the audit passed a level-cap generator mutated by %s" % name
+    assert any(expect in p for p in bad), bad[:5]
 
 
 # Protects: the audit's independence from the builder. Each mutant changes the GENERATOR with data/ untouched; an
