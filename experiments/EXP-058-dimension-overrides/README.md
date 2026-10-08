@@ -77,8 +77,11 @@ python tools/dimension_audit.py --world <throwaway>/exp058_control --dimension t
 
 ## Run B: the override
 
-1. Fresh world `exp058_override`, same seed. **Before its first boot**, create
-   `<throwaway>/exp058_override/datapacks/` and copy `build/datapacks/cobblers_dimension_overrides` into it.
+1. **The SAME world as run A** (same seed by construction), stopped after run A. Only now copy
+   `build/datapacks/cobblers_dimension_overrides` into its `datapacks/` folder. (Corrected 2026-10-10 by the
+   independent audit 9f1c8f5: a pack present before a world's first boot is probably ordered BELOW the global
+   COBBLEVERSE-DP; a pack first seen by an existing world is added at the top of its order, which is the case the
+   staging and live worlds are in.)
 2. Boot. Then:
 
 ```
