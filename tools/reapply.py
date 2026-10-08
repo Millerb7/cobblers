@@ -273,6 +273,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-09-28: the evolution-stone faces (tools/mines.py, data/mines.json, STONE_ECONOMY.md): blocks run by
                 # R9O; the faces' restore on approach acts on its own (a tick driver), so world-local below
                 "cobblers_mines",
+                # 2026-10-10: the refillable mining caves (tools/mining_caves.py, data/mining_caves.json,
+                # ECONOMY_OVERHAUL.md section 3): blocks run by R9OC; the galleries' restore on approach acts on its own
+                # (a tick driver, tools/mines.py's), so world-local below
+                "cobblers_mining_caves",
                 # 2026-09-29: the dive and sky portals and the pocket dimension (tools/portals.py, data/portals.json,
                 # ADR-004, EXP-047). It ships a `dimension` and a `dimension_type`, which register only at a server
                 # BOOT, not at a /reload: installing this pack needs a restart before R16P will run. The arches are
@@ -345,6 +349,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_sizes", "cobblers_blackout", "cobblers_rift_mines", "cobblers_gulch_mine",
                "cobblers_rift_zones", "cobblers_mega_recipes",
                "cobblers_ferries", "cobblers_ambient", "cobblers_ambient_idle", "cobblers_levelcap", "cobblers_mines",
+               # 2026-10-10: the mining caves' restore drives itself on its own tick, like the stone faces'
+               "cobblers_mining_caves",
                "cobblers_legendaries", "cobblers_spectrier_cap", "cobblers_hoopa_cradle",
                # 2026-10-03: charges CobbleDollars and gives items, like the ferry
                "cobblers_markets",
@@ -907,6 +913,10 @@ def prepare_jobs(a):
 
     # the stone faces' audit LAST: it checks R9O through steps(), which indexes every pack built above, so on a fresh
     # build/ it failed closed on whichever pack came after it in this list (found 2026-10-02 on a new worktree)
+    # the refillable mining caves (data/mining_caves.json): late, because its siting guard keeps clear of every
+    # other built pack's writes and reads them from build/datapacks; it fails closed on a write where a cave may not
+    # stand. Before mines_audit, which lists reapply's steps (R9OC's build functions come from the data)
+    add("mining_caves:build", "mining_caves.py", "build", *src)
     add("mines_audit", "mines_audit.py", *src)
     # the idle Pokemon (tools/ambient_idle.py): LAST of the builds, because it seats them on the BUILT town -- it
     # replays every pack's block writes through steps() (tools/npc_spot_sweep.py) and refuses a spot a signpost, a
@@ -1723,6 +1733,14 @@ def steps(with_spawns=False):
     import mines
     out.append(("R9O", "the evolution-stone faces at their seven places (data/mines.json)",
                 [("fn", f) for f in mines.build_functions()]))
+    # the refillable mining caves (tools/mining_caves.py, data/mining_caves.json; ECONOMY_OVERHAUL.md section 3): after
+    # R9O and, like it, after the towns (R8) and the donors (R9) whose writes they keep clear of; before the Habitat
+    # Blocks (R9E) and the lights (R16). One build function a cave, named from the committed data. The galleries'
+    # restore on approach drives itself (cobblers:mining_caves/tick) and needs no step
+    import mining_caves
+    out.append(("R9OC", "the refillable mining caves: %s (data/mining_caves.json)" % ", ".join(
+                    "%s with %d galleries" % (c["id"], len(c["galleries"])) for c in mining_caves.load()["caves"]),
+                [("fn", f) for f in mining_caves.build_functions()]))
     # the city stands on the pit R9B sinks, after R9C (the caves write round the mouth the city keeps clear) and before
     # R9E (Habitat Blocks sit on finished floors) and the lights (R16). Structure, then the Centre and Mart by
     # /place template, then what hangs on the structure (ladders, hatches, panes, doors, signs, lamps). R9DC, not R9D:
