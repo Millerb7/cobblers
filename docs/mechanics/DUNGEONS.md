@@ -2,6 +2,8 @@
 
 **Status: DESIGN AND COSTING ONLY (content-architect, 2026-10-08).** Nothing here is built, placed, generated or run.
 The owner's answers of 2026-10-08 to section 15 are applied (0.1), and the dungeon death rule is added (2.5).
+The owner's sigil direction (D21) is designed in 7.4, and the run tag's requirements (D22) are written into the
+engine (11.3), both the same day.
 This rewrite answers the owner's timed-dungeon brief of 2026-10-08 (relayed close to verbatim by the brief): "an
 instanced run with a TIMER. Finish it or get out before the clock runs down. If you are still inside when it does, you
 die. They are visible rips in the world, torn from the Rift." The architectural choice is
@@ -54,6 +56,8 @@ value this design chooses so the arithmetic can be done, to be replaced by a tim
 | D18 | **The legendary picks, approved as proposed** (Q13): section 8's table | 8 |
 | D19 | **Order: EXP-059 first, then the probes, the data, the engine. The Night Shift only** (Q14, and Q15's first half) | 13 |
 | D20 | **Death in a dungeon:** the guardian system does not apply inside dungeons. A death costs the blackout's money, the run's held rewards, and the sigil and lockout to try again. Nothing else: items are kept and nothing holds them, whatever killed the player (Q3) | 2.5 |
+| D21 | **Sigils: most rips take one.** "I want an entry fee. Most rips take a sigil, as Entei's room does. But the fee has to SCALE WITH TIER." Netherite exists only from badge 8 (the Nether gate), so "one sigil per tier, priced in what a player can actually have at that point: early materials for early rips, netherite only for the late ones." And: "SIGILS DO NOT MAKE RIPS STATIC. A sigil decides who can enter, not where the rip is." (Q10 superseded) | 7.4, 7.3 |
+| D22 | **The run tag goes in the dungeon engine build.** "'A death soon after a wild hit may be credited to that Pokemon' would have made the timer take items, the opposite of what I decided. Make sure the run tag covers that case and the claim delivery gap." | 2.5, 11.3 |
 
 **Findings against other documents:**
 - **F1 and F2 are resolved.** `DUNGEON_PLACEMENT.md` now records Q11 ("every catch after the Champion") as decided
@@ -68,9 +72,22 @@ value this design chooses so the arithmetic can be done, to be replaced by a tim
   `tools/entei_boss.py` 752, `tests/test_entei_boss.py` 370, `tests/test_entei_boss_audit.py` 779,
   `tests/test_entei_boss_fixes_independent.py` 630, `experiments/EXP-059-entei-boss/README.md` 212.
   `tools/arena_runtime.py` is 1,217 (*measured*).
-- **F5. "The sigil" in D20 assumes a key.** Q10 (still open) recommends free entry to the overworld dungeons, with
-  crafted keys only for the Nether pair. Under Q10 a death in the Night Shift spends no sigil; the lockout alone gates
-  the retry. 2.5 writes the cost as "the sigil, where the dungeon takes one".
+- **F5 is resolved by D21.** D20's "sigil" assumed a key while Q10 recommended free overworld entry. The owner chose
+  the key: every rip takes its band's sigil (7.4), with one free entry, the Night Shift's first run per player (7.4,
+  Q20). The hedge "the sigil, where the dungeon takes one" is gone; 2.5 now says what a retry costs.
+- **F6. The bank's Nether tier opens a leg early.** `data/bank.json:262` (`effort_model.tiers.nether.opens_leg: 7`,
+  "the gym-7 Nether trip") predates the Nether gate at `cobblers:flag/gym8_cleared` (`data/nether_gate.json:7`). So the
+  effort model credits Nether wages one leg before a player can earn them. 7.4 prices netherite from badge 8, the
+  gate's answer. The bank's field is the economy unit's to correct, not this design's.
+- **F7. The Entei recipe has no recipe-book give.** The server runs `doLimitedCrafting` for the TM gate
+  (`data/tm_gate.json:10`), under which a grid recipe missing from a player's book cannot be crafted. The gate's
+  sync gives `recipe give @s *` but keys its re-sync on a plan hash built from the global `datapacks/` folder only
+  (`tools/tm_gate.py:31`). `tools/entei_boss.py` emits the Tower Ash recipe (`:711-712`) and no `recipe give`
+  (Grep, 2026-10-08). If its pack is not covered by that hash, a player synced before the pack was installed cannot
+  craft a Tower Ash. This is ASSUMED, not run: the rip sigils (7.4) carry their own give for this reason, and EXP-059
+  should craft a Tower Ash as a player who synced before the pack went in.
+- **F8. The death-rule code check has reported** (`docs/research/DUNGEON_DEATH.md`, against `88bf98b`): the rule is
+  NOT met today. 2.5 and 11.3 now carry its findings. `docs/STATE.md:157` still says "code check in progress".
 
 ---
 
@@ -179,7 +196,9 @@ The board is text displays on the wall, generated from the record and showing ex
 - "no Pokemon past the cracked lamps", the parkour's no-deploy line;
 - which legs are optional;
 - "Dying here takes no items, only your money and what the run has earned", the death rule (2.5);
-- "Leaving the game does not stop the rift", the logout rule (2.6).
+- "Leaving the game does not stop the rift", the logout rule (2.6);
+- "The rift has taken your {sigil}. Go back now and it is returned; past this board it is spent", the sigil rule
+  (7.4).
 
 A player can plan greed before they reach the seam. Legibility is the owner's requirement for the multiplier, and the
 clock needs the same.
@@ -197,8 +216,10 @@ Entei's room reached the same conclusion for one boss (`data/entei_boss.json:132
    `money`). Nothing holds it, so it is not recoverable. That is the gulch Megas' rule (contract C12: "still charges
    the money", `docs/mechanics/BLACKOUT_RECOVERY_COUPLING.md:17-30`);
 2. **the run's held rewards** (the escrow, below);
-3. **the sigil, where the dungeon takes one** (F5), **and the lockout**: the hour runs from entry (D17), so the retry
-   waits.
+3. **the price of a retry: another sigil and the lockout.** The sigil was spent when the player crossed the threshold
+   (7.4), so the death does not take it; it took the run it paid for. To go again the player brings their band's
+   sigil (or uses the Night Shift's one free entry, if unspent) and waits out the hour, which runs from the threshold
+   (D17).
 
 **What is kept:** every item in the inventory, including the seam ores and den drops already picked up, and any
 Pokemon caught in the run. The rift pick is taken back, because it was never the player's.
@@ -211,25 +232,36 @@ their overworld checkpoint and healed (`DEATH_AND_WIPE.md:61-80`).
 - **Victor-side, the built pattern.** Every entity the engine spawns carries the blackout's `claims.exempt_tag`
   (`data/blackout.json:71`): stand NPCs, every boss stage, den Pokemon and the lake legendary. Entei does this today
   (`data/entei_boss.json:132`), and the blackout tests the victor for the tag (`BLACKOUT_RECOVERY_COUPLING.md:17-22`).
-- **Player-side, new.** A player carrying the run tag makes no claim, whatever the victor. This covers a victor the
-  engine did not spawn. It is a change to `tools/blackout_pack.py`, for `minecraft-systems-dev`. **The run's own death
-  handling must not clear the run tag before the blackout has read it.**
-- **CODE VERIFICATION PENDING** (a separate agent is checking the paths; nothing here is verified). It must settle:
-  - whether a trainer (`cobblemon:npc`) loss makes a claim at all. The blackout ships a line "You lost the battle. No
-    items were taken." (`data/blackout.json` `messages.npc_no_items`), which suggests it does not. This is not read
-    in code;
-  - whether the exempt-tag test covers the NPC path as well as the wild path;
-  - what message the exempt branch prints;
-  - whether the player-side check can be added where the victor check sits.
+- **Player-side, new: the run tag** (D22). A player carrying the run tag makes no claim, whatever the victor. This
+  covers a victor the engine did not spawn, and vanilla's kill credit (below). It is a change to
+  `tools/blackout_pack.py`, for `minecraft-systems-dev`, and its full requirement is engine item **E1** (11.3).
+- **What the code check found** (`docs/research/DUNGEON_DEATH.md`, against `88bf98b`; VERIFIED (code) and (sim)
+  there, nothing run in game). **The rule is NOT met today**:
+  - a trainer (`cobblemon:npc`) loss goes through `battle_loss_npc`, which takes no items (its section 3, row 3). It
+    needs no exemption and must not gain one (its section 4, rule 3);
+  - the exempt test reads the **victor** only, in `blackout/battle_loss_wild` (`tools/blackout_pack.py:229`). A wild
+    battle loss (M3) and a kill outside battle (M4) both pass through it, so a wild Pokemon the keeper did not tag
+    still claims items and holds the $600 (`hold_money`, `:626-631`). **The den as designed (3.6) spawns exactly
+    such Pokemon** (its section 2, item 2);
+  - the player-side check fits beside the victor test as one line (its section 4, rule 2);
+  - two further gaps, both closed by E1: **the kill-credit window** (vanilla credits a death to the last mob that
+    hurt the player within 100 ticks, ASSUMED there, so the timer's `kill @s` within five seconds of a wild hit
+    becomes a wild kill and a claim) and **the delivery gap** (a claim resolved while its owner is in a run is
+    summoned at the owner's feet, inside the slot, `as @a at @s`; its section 2, items 3-4);
+  - what the exempt branch prints is not reported there. The 2.5 lines below do not depend on it.
 
-  Until it reports, the rule above is the design and not a property of the code. The in-game check is DX1 (section
+  Until E1 is built, the rule above is the design and not a property of the code. The in-game check is DX1 (section
   14).
 
 **The timer's kill.**
 - **`kill @s`**, never `damage ... outside_border` alone, because a totem can stop that (DM 1.3, probe B2). The
   blackout counts it through `deathCount` (DM 1.3, VERIFIED (repo) `tools/blackout_pack.py:12`, `:55`).
-- `keepInventory` is set at load (`tools/blackout_pack.py:174`, *relayed* via DM). A command death is environmental
-  under rule 5 already, so the timer could never make a claim. D20 extends the same outcome to every death in a run.
+- `keepInventory` is set at load (`tools/blackout_pack.py:174`, *relayed* via DM). **A command death is environmental
+  only if no wild Pokemon hit the player in the last 100 ticks.** Within that window vanilla's kill credit names the
+  hitter (ASSUMED, `DUNGEON_DEATH.md` section 2 item 4), the advancement path M4 runs, and the timer, lava or a fall
+  would make a claim: the timer taking items, the opposite of D20. Fight-or-Flight attacks unprovoked from level 25
+  (`base-pack/cobbleverse/config/fightorflight.json5:3-17`, *relayed* there), so this is a live case, not a corner. E1
+  (11.3) closes it by reading the player's run tag, not the killer.
 
 **Escrow, the stake.** Every reward the run pays is held **in escrow**, except the real items the player picks up (seam
 ores, den drops) and a caught Pokemon. The escrow is scores on the player, paid by `loot give` only at a clean exit
@@ -249,7 +281,8 @@ a claim line. Then, on arrival:
   2. "The {money} is gone for good. No one in the rift is holding it." (only if money was taken)
   3. "Lost with the run: {held_summary}." or "The run had earned nothing yet."
   4. "Kept: everything you mined and picked up{, and {caught}}."
-  5. "{dungeon} opens to you again in about {minutes} minutes." Add "Your {sigil} was spent." where a sigil was spent.
+  5. "{dungeon} opens to you again in about {minutes} minutes, for another {sigil}." The band's sigil name (7.4), or
+     "for a {sigil}" if the run was the free first entry.
 
 Line 1 is the difference a player must not miss. A normal loss says "{victor} took {summary}. Beat it, catch it or kill
 it to recover everything." (`data/blackout.json` `messages.claim`), and nothing in a rift is waiting to be beaten.
@@ -258,7 +291,8 @@ it to recover everything." (`data/blackout.json` `messages.claim`), and nothing 
   already forfeit, and the battle only delays the death. A player is never killed mid-battle, because what Cobblemon
   does with the battle and the NPC is unread (DM B3).
 - **Lockout: our own uptime counter, not game time.** `#up dg.up` adds 20 every keeper pass, and a player's entry stamp
-  is `dg.last_<dungeon> = #up`. The scoreboard carries both across a re-export (`tools/carry_players.py:84`, *relayed*
+  is `dg.last_<dungeon> = #up`, written at the threshold, the same moment the clock starts and the sigil is spent
+  (7.4; "entry" in D17 is read as the threshold, Q21). The scoreboard carries both across a re-export (`tools/carry_players.py:84`, *relayed*
   via `data/entei_boss.json:110`), so they cannot disagree the way Entei's game-time stamp and a reset `Time` do. The
   lockout is **72,000 ticks (one hour of uptime) per dungeon per player, counted from entry** (D17). It must be at
   least the longest clock, 39 minutes (46,800 ticks), or it never binds. That is the old P3 finding, which *stands*.
@@ -296,7 +330,8 @@ keeper pass. It fires when their own clock is at or below 0 after the gap, or wh
   still inside when it does, you die."
 - **What they are told:** the title "The rift closed without you", then the blackout's line and the 2.5 chat lines.
   The first chat line is preceded by "The rift closed {minutes} minutes ago while you were away."
-- **What they lost:** the blackout's money, the run's held rewards, and the sigil and lockout (2.5).
+- **What they lost:** the blackout's money and the run's held rewards. The sigil was already spent at the threshold;
+  the retry costs another and waits out the lockout (2.5, 7.4).
 - **What they kept:** every item, including what they mined and picked up, and any catch.
 - **Why the kill, and not a quiet teleport out:** if logging out avoided the $600, quitting would be the way to dodge
   a timeout. A crash is unlucky, but its cost is the same as dying, no more.
@@ -584,7 +619,7 @@ band.
 
 | Question (the vision's four, `GAME_VISION.md:149-150`) | Answer |
 |---|---|
-| Two players at once | **Solo:** separate slots, 4 per dungeon. **Co-op (later):** up to 4 members in one slot. Everyone within 4 blocks of the rip who clicks within 10 seconds of the first click joins. Each passes the gate, lockout and cap checks, and each is refused alone |
+| Two players at once | **Solo:** separate slots, 4 per dungeon. **Co-op (later):** up to 4 members in one slot. Everyone within 4 blocks of the rip who clicks within 10 seconds of the first click joins. Each passes the gate, lockout, cap and sigil checks, and each is refused alone. Each pays their own sigil, of their own band (7.4) |
 | One player ahead | Each member's NPCs spawn at **their own band** (the arena's per-player spawn). Clocks are per player, each sized to that member's band. The gates wait for every member present (below) |
 | A player joins late | Never into a run in progress. They take another slot or wait |
 | A player leaves mid-dungeon | **Logout:** that member's clock keeps running while they are away (D15, 2.6). Back in time, they resume where they stood. Back too late, they are killed into the blackout on return, with the death rule's costs (2.5). **Clean exit by either rip:** their escrow is paid and the others carry on |
@@ -636,10 +671,12 @@ also tests.
 - not already in a run;
 - no elytra;
 - a party over the cap;
-- a free slot.
+- a free slot;
+- **the sigil, last** (7.4): the player's free first entry, else a sigil of their band or higher in the inventory.
+  It is last so that a refusal for any other reason never touches a sigil.
 
 Then it:
-1. reserves the slot and freezes the band;
+1. reserves the slot, freezes the band, takes the sigil (or marks the free entry used) and adds the run tag (E1);
 2. resets the slot's mutables (1, Instancing). The mutable chunks are force-loaded first: every write function
    carries `# chunks-loaded-by:` or `function_limits` refuses it (`tools/function_limits.py:9-18`, *relayed* via DM
    8). The occupancy guard holds: never reset under a player (DM 8);
@@ -647,12 +684,14 @@ Then it:
    sets adventure, gives the pick and shows the bar.
 
 **The back rip and the far rip** run `dg/exit`:
-1. pay the escrow (9.1);
+1. pay the escrow (9.1); if the player never crossed the threshold, return the sigil instead (7.4);
 2. set survival and `clear` the pick;
 3. empty and remove the bar;
 4. teleport to the overworld rip's outside point, a fixed coordinate in the record, so no return point needs storing
    (unlike Entei's eaten key);
-5. free the slot once its last member is out.
+5. free the slot once its last member is out;
+6. start the run tag's 100-tick tail; when it ends the keeper removes the tag and runs the claim delivery as the
+   player (E1).
 
 ### 7.3 Fixed now, random later
 
@@ -661,6 +700,104 @@ Then it:
 - **Random, later** (D5; DM 7.4): a scheduler over authored, validated candidate sites with `random value`, a
   forceload, an expiry countdown, and an announcement. Nothing in this design blocks it. The rip is already an entity
   set plus a frame that a function places and removes. Its cost is section 12's.
+- **Sigils work with either** (D21: "A sigil decides who can enter, not where the rip is"). The sigil is checked by
+  `door_click` against the clicker's band, not against the rip's place, so a moving rip takes the same sigil as a
+  fixed one and nothing in 7.4 names a coordinate.
+
+### 7.4 Sigils: the entry fee, one per band (D21)
+
+**The rule.** Every rip takes a sigil at entry, of the entrant's band (5.1), with one exception (the free first run,
+below). The ladder is **per band, not per dungeon**: the Night Shift at band 1 and the Last Cistern at band 1 take the
+same sigil, and the Night Shift entered at band 6 takes the band-6 one. That is what makes the fee scale with what the
+player can have. The band is the only progress measure the engine already freezes at the rip, and a dungeon's place
+says nothing about its entrant (the Night Shift opens at 0 badges and serves every band, 10).
+
+**The ladder.** Made at any crafting table (shapeless), never bought. Values are bank prices; times are the
+gathering the inputs take at `data/bank.json`'s declared `rate_per_hour` (raw iron 30, coal 60, raw gold 10, redstone
+25, diamond 4, ancient debris 10 by pickaxe and 30 by bed or TNT, `:172-181`). Those rates are the economy's planning
+values, not timings, so every time below is ***planning*** too.
+
+| Band (caps) | Badges | Sigil | Recipe | Bank value | Gathering | Why it is affordable then |
+|---|---|---|---|---|---|---|
+| 1 (20, 25) | 0-1 | **Soot Sigil** | 3 iron ingots + 3 coal | $39 | ~9 min | A stone pickaxe opens the early tier at leg 1 (`data/bank.json:260`). The Old Mine's Lower Galleries are the Night Shift's neighbours, cut at the same adit (`data/mining_caves.json:218-227`), and one reset yields about 8 iron and 10 coal (`:70`, *relayed* there), two sigils' worth |
+| 2 (30, 35) | 2-3 | **Gilt Sigil** | 1 gold ingot + 4 iron ingots + 2 redstone | $62 | ~19 min | Gold and redstone are the deep tier: an iron pickaxe below y32 (`data/bank.json:178-179`), which opens at leg 3, the leg played holding 2 badges (`:261`) and so the first band-2 leg |
+| 3 (40, 45) | 4-5 | **Glint Sigil** | 1 diamond + 1 gold ingot + 2 iron ingots | $160 | ~25 min | The first diamond: the deep tier's prize, four an hour (`:180`) |
+| 4 (50, 55) | 6-7 | **Deepstone Sigil** | 2 diamonds + 1 gold ingot | $262 | ~36 min | Still overworld materials; the Nether is closed until badge 8 (`data/nether_gate.json:7`) |
+| 5 (60, 62) | 8 | **Cinder Sigil** | 1 netherite ingot | $900 | ~48 min (32 by bed mining) | The Nether opens with badge 8. A netherite ingot is 4 scrap + 4 gold (`data/bank.json:183`); debris needs the diamond pickaxe a band-3 player already has |
+| 6 (100) | Champion | **Rift-Black Sigil** | 1 netherite ingot + 4 netherite scrap | $1,708 | ~72 min (48) | The Tower Ash's tier and nearly its price (2 netherite ingots, $1,800, `data/entei_boss.json:44-46`), less four gold. It is not 2 ingots because two shapeless recipes with one ingredient list make the grid ambiguous (ASSUMED vanilla behaviour; the validator forbids it either way) |
+
+- **Monotone by construction:** each rung costs more value and more gathering than the one below, and netherite
+  appears only at bands 5 and 6. Netherite is unpayable before badge 8 because the gate keeps players out
+  (`data/nether_gate.json:7`), though "the gate keeps players out, not things" (`:56`): a badge-8 friend can gift
+  netherite, and so a band-6 sigil, to a band-1 player, who may then overpay. Nothing is gained by it.
+- **Against income** (`data/markets.json:26-27`, measured from the file: $4,033 in leg 1 rising to $68,505 in leg 8),
+  every sigil's bank value is under 2% of its band's leg. **The fee is time, not money:** about a third of the band-1 clock
+  (9 of 29 minutes, 4.1's planning clock), rising to nearly two clocks at band 6 (72 of 39), where the lockout and the bundles are largest.
+- **Challenge mode pays the same** (the Tower Ash's rule, `data/entei_boss.json:46`).
+- **No evolution stone, type gem, progression id or spawn-condition block is an input.** Stones and gems are contested
+  progression materials (`data/bank.json:141-150`; gems feed 805 TM recipes, `docs/research/DROPS_AUDIT.md:303`).
+- **The seam can pay only the band-1 fee, and only at greed.** The band-1 seam yields coal and iron (9.3), so a
+  Soot Sigil's six ores can be mined in a run, but only by taking at least 6 seam blocks, past the free tier of 4
+  (3.3): a self-funded retry always costs clock. No higher sigil can be mined in its own band's seam: band 2 has no
+  gold, bands 3-4 no diamond, and no band any netherite (9.3). The validator holds this (V16).
+- **The item.** Each sigil is a distinct pottery sherd with no other use, as the Tower Ash is (`data/entei_boss.json:31`
+  gives the reasoning): band 1 `minecraft:miner_pottery_sherd`, 2 `prize`, 3 `explorer`, 4 `danger`, 5 `burn`, 6
+  `skull`. Each carries `minecraft:custom_data {cobblers_dg_sigil:<band>}`, an `item_name` in the band's colour, the
+  rarity `rare`, and two lore lines: "The rift lets you in for this." and "For a trainer at level cap {caps}." The
+  ids are ASSUMED to exist in 1.21.1 (only the mourner sherd is VERIFIED, by the Entei unit). The validator confirms
+  each in the vanilla jar and repeats the Entei sweep for any other recipe naming it. A plain sherd found by a player
+  has no `custom_data` and is never taken.
+- **The recipe book.** The server runs `doLimitedCrafting` (F7), so the dungeon pack gives its six recipes itself,
+  with an advancement on `minecraft:tick` that runs `recipe give @s` for each, and does not rely on the TM gate's
+  sync. **The recipes are not badge-gated:** the rip already checks the band, so crafting a higher sigil early only
+  overpays, and a player who can read the whole ladder in the book can plan for it (Q23). The TM gate's mechanism
+  (`data/tm_gate.json:6-12`) could gate them per badge if the owner prefers.
+
+**Consumed at the threshold, returned before it.** `door_click` takes the sigil when it reserves the slot, so a run
+in progress has always been paid for. **If the player leaves by the back rip before crossing the threshold, the clock
+never started, and `dg/exit` gives the sigil back** (by a loot table that rebuilds it with its components), and the
+lockout is not stamped. Past the threshold it is spent, whatever happens next: a clean exit, a death, a timeout or a
+dead run on relog.
+- **Why on entry, not only on failure.** The owner asked for "an entry fee". A fee taken only on failure is a
+  deposit: success would be free, and the fee would stack on a failure already costing $600, the escrow and the
+  lockout (2.5). A deposit also has to be held across a death, a logout and a dead run and given back on a clean exit,
+  which is three more exit paths to get right. A fee at entry has one point of consumption and nothing to hold.
+- **Why the threshold refund.** The entry room is the place to read the board, and "nothing is lost by eating it at
+  the wrong time" is already the Tower Ash's rule (`data/entei_boss.json:48`). The board says the sigil is returned
+  until the threshold. **No spam cost:** a slot whose last run never crossed the threshold is still clean, so the next
+  `door_click` there skips the reset. The lockout is stamped at the threshold (2.5).
+
+**Free rips: one free entry, not a free rip.** **The Night Shift's first run is free, once per player**, a waiver
+marked by an advancement at `door_click`, and no sigil is given. It is the tutorial dungeon at 0 badges: a player
+arriving from the starter has never seen a sigil, and the first run teaches the clock, the board, the seam and the
+death rule. A fee before the first look is a wall, not a decision. Every later entry pays. **No rip is free for
+good.** A free band-1 Night Shift would leave the lockout alone gating the band-1 bundle; the Soot Sigil is nine
+minutes' mining next door, and "most rips take one" is the owner's rule. The only other candidate is the future
+moving rip (7.3), whose scarcity could be its fee. That is the scheduler's question, not this one's (Q19). The Entei
+room keeps its Tower Ash (12).
+
+**Lockout, escrow and co-op.**
+- **Lockout:** checked before the sigil, so a locked-out player never spends one. A sigil buys one run; the lockout
+  caps runs at one an hour per dungeon, so a player spends at most one sigil per dungeon per hour of uptime.
+- **Escrow:** the sigil is never escrow. It is never paid back at a clean exit and never forfeit at a death: it was
+  spent at the threshold. No reward table may pay a sigil (V16), so a run cannot refund its own fee.
+- **Co-op:** each member pays their own sigil, for their own band, because band, clock and lockout are already per
+  member (5.1, 6). A member without one is refused alone and the others go in. A partner can hand over a sigil
+  item, and the receiver's own band decides whether it counts.
+- **Which sigil is taken:** one of the player's own band if held, else the lowest higher band held. A lower band's
+  sigil is refused: "This sigil is too weak for you now." Its lore says which caps it serves, so a stale one is
+  legible.
+
+**Out of the bank's reach** (a sigil must not be sellable for more than its inputs; here it is not sellable at all):
+1. no sell point buys a sigil's base item: each of the six sherds joins `data/bank.json` `never_buy`, and the
+   Produce Buyer, every trader buy line and every `exchange_for` price are checked;
+2. no counter sells a sigil, a sigil's base item, or anything priced in sigils; the only source is the recipe;
+3. no recipe takes a sigil's base item except the decorated pot (the Entei sweep), so a sigil cannot be turned
+   into anything, and no recipe turns it back into its inputs;
+4. a refund returns the sigil itself, never money or inputs;
+5. no dungeon reward table, first-clear prize or escrow table pays a sigil or a sigil's base item;
+6. no sigil base item is in the blackout's claim lists, so a recovery claim never takes or returns one.
+`tools/economy_audit.py`'s Entei checks are the pattern; V16 generalises them.
 
 ---
 
@@ -831,7 +968,11 @@ what a generator would sequence (12).
   - `escrow`, `adventure`, `rift_pick` (components), `sweep` (no-deploy box rules);
   - `battle_rules` (the arena's), `payout: "clawback"`;
   - `claims_exempt_tag` (read from `data/blackout.json`), and `death` (2.5): the player-side no-claim rule keyed on
-    the run tag, and `messages.death` (titles by cause, the five chat lines);
+    the run tag, which is `data/blackout.json` `dungeon_exempt.player_tag` (proposed `cobblers.dungeon_run`,
+    `DUNGEON_DEATH.md` section 4 rule 1; read, never copied), its `tail_ticks: 100` (E1), and `messages.death`
+    (titles by cause, the five chat lines);
+  - `sigils` (7.4): per band the id, sherd item, name, colour, lore and recipe; `accept: "own_or_higher"`;
+    `refund_before_threshold: true`; `free_first_entry: ["night_shift"]`; and each recipe's `why`;
   - `absence` (2.6): the `dg.seen` stamp, the per-slot deadline, and the dead-run check's order (before the eject);
   - `slots_per_dungeon: 4`, `members_max: 1` (co-op raises it).
 - **`dungeons[]`.** The `night_shift` record:
@@ -878,13 +1019,61 @@ what a generator would sequence (12).
     - the membrane;
     - timeout and sudden death;
     - the absence gap, the slot deadline and the dead-run check (2.6), run first;
-    - the death handling on respawn: escrow cleared, survival, pick, bar, slot, the 2.5 messages;
-    - the survival and pick backstop over the overworld;
+    - the death handling on respawn: escrow cleared, survival, pick, bar, slot, the 2.5 messages, the run tag's tail
+      started (never the tag removed, E1);
+    - the tail countdown, then the tag removed and the claim delivery run (E1);
+    - the survival, pick and stale-tag backstop over the overworld;
   - `stand`, `boss_stage`, `seam_reset`, `lake`, `den`, `pay`.
 - **Callbacks** (`data/cobblemon/callbacks/<event>/cobblers_dg_*.molang`): `battle_victory`, `battle_fainted` (the
   den) and `pokemon_captured` (the lake). The key ball's callbacks already exist (`tools/key_ball.py`).
 - **The keeper's cost** is per live member. An idle dungeon costs one check per pass, measured against
   `docs/mechanics/TOWN_TICK_BUDGET.md`'s idle floor.
+- **Sigils** (7.4): the six recipes and their `recipe give` advancement; the sigil step in `door_click` (count, take
+  one of the right band, or the free entry); the threshold refund loot tables.
+
+**E1. The run tag: a required part of the engine build (D22), not a later fix.** It is what makes D20 true in the
+code. The blackout half is `minecraft-systems-dev`'s change to `tools/blackout_pack.py`, built and audited with the
+engine, never after it. From `docs/research/DUNGEON_DEATH.md` section 4, with the two gaps the owner named made
+explicit:
+1. **One player tag for the run**, read from `data/blackout.json` `dungeon_exempt.player_tag`. It is **added by
+   `door_click` in the function that reserves the slot, before the 40-tick arrival delay**, so a wild hit taken at
+   the rip's mouth just before the teleport is already covered.
+2. **The blackout exempts a player holding it** in `blackout/battle_loss_wild`, beside the victor test
+   (`tools/blackout_pack.py:229`), and again as the first line of `recovery/make`. It sets no `bo.clm 2`, so no money
+   is held. The charge and the return run unchanged. It is **not** added to `battle_loss_npc`, which takes no items.
+3. **The kill-credit window (the owner's case).** Vanilla credits a death to the last mob that hurt the player within
+   100 ticks, whatever finally killed them (ASSUMED, vanilla `getKillCredit`; `DUNGEON_DEATH.md` section 2 item 4).
+   So the timer's `kill @s`, a fall, lava or the dead-run kill on relog, within five seconds of a wild hit, arrives
+   at the blackout as a wild kill (M4) and would make a claim. **Rule 2 covers it, because the exemption reads the
+   player, never the killer: a run-tagged player makes no claim, however the death is credited.** Three timing
+   requirements keep it covering every case:
+   - **the engine never clears the tag before the blackout has read it.** The run's death handling runs on respawn,
+     after the blackout's death path, and the tag is removed only at the end of the tail below;
+   - **the tag outlives the run by a tail of 100 ticks** (`tail_ticks`, equal to the credit window) after every way
+     out: a clean exit, the eject, the respawn after a death and the dead-run kill. A hit taken in the slot cannot
+     then credit an overworld death a second later. The cost is a leniency, never a loss: an overworld wild Pokemon
+     that kills the player inside those five seconds makes no claim either;
+   - **the tag cannot go stale.** The overworld backstop sweep (3.3) removes it from any player outside
+     `cobblers:pocket` with no live run and no tail left, including after a logout during the tail. A stale tag would
+     exempt a player in the overworld for good.
+4. **The claim delivery gap.** A claim settled while its owner is in a run (a friend beats the guardian of an older
+   loss) is summoned `as @a at @s`, at the owner's feet: inside the slot, where a full inventory, a death or the
+   eject loses it to the reset (`DUNGEON_DEATH.md` section 2 item 3, M9). So:
+   - `recovery/deliver` and the login delivery **return for a player holding the run tag**, leaving the claim as
+     settled-and-waiting;
+   - **when the tail ends, the keeper removes the tag and runs `function cobblers:recovery/deliver` as the player**,
+     who is then in the overworld. A player who logs out during a run gets their delivery at the end of the tail
+     after they return, not at login inside the slot.
+5. **Every keeper-spawned wild Pokemon still carries `claims.exempt_tag`** (den, boss stages, the lake). The den must
+   gain it (`DUNGEON_DEATH.md` section 2 item 2). This is the second layer, not the rule.
+6. **The clawback and sudden death are ordered.** After a won stand battle at clock 0 the $600 charge would land
+   inside the NPC payout clawback's measuring window (`DUNGEON_DEATH.md` section 2 item 5). The engine runs the
+   clawback to completion before the sudden-death kill.
+7. **The rift pick is taken by its component**, never by item id (`DUNGEON_DEATH.md` section 4 rule 6).
+
+`tests/test_dungeon_death.py` already holds the generated pack to rules 2 and 4 as **xfail(strict)** until
+`dungeon_exempt` exists (`DUNGEON_DEATH.md` section 5). E1 is done when those pass unmarked, V15 passes against the
+generated functions, and DX1 is seen in game.
 
 ### 11.4 Validation (`tools/validate_data.py` and an independent audit; `test-author`, not the builder)
 
@@ -903,14 +1092,18 @@ what a generator would sequence (12).
 | V11 | The lake legendary is in `data/key_ball.json` `bosses`, at level at most the cap of band 6 (100), gated at band 6 only; no dungeon Pokemon is an alpha | the two data files |
 | V12 | `lockout_ticks` is at least the longest clock in ticks | the data |
 | V13 | Every exit path (`exit`, the respawn, eject, a dead run on relog) restores survival and clears the pick; a live run on relog keeps adventure and the pick | the generated functions, path by path |
-| V15 | **No claim in a dungeon:** every `spawnnpcat` and `spawnpokemonat` the engine emits tags the entity with `claims.exempt_tag` in the same function; the blackout's claim step has the player-side run-tag exemption; the run's death handling clears the run tag only after the blackout has run | the generated functions and `data/blackout.json`, not `tools/dungeon.py`'s own spawn list. The mutation: drop the tag from one stand's spawn inside the generator, and V15 must fail |
+| V15 | **No claim in a dungeon:** every `spawnnpcat` and `spawnpokemonat` the engine emits tags the entity with `claims.exempt_tag` in the same function; the blackout's claim step has the player-side run-tag exemption; the tag is added in `door_click` before the arrival delay; no function removes it except the tail's end and the backstop; the tail is at least the credit window (100 ticks); `recovery/deliver` and the login delivery return for a tagged player, and the tail's end runs the delivery (E1) | the generated functions of both packs and `data/blackout.json`, not `tools/dungeon.py`'s own spawn list. Mutations, each inside a generator: drop the tag from one stand's spawn; remove the tag in the respawn handler; drop the deliver guard. V15 must fail on each. A simulated case: a wild hit, then the timer's kill 60 ticks later, makes no claim |
+| V16 | **Sigils:** one per band 1-6; bank value and planning gathering time strictly rise with band; netherite (ingot, scrap, debris) only in bands 5-6; no input is an evolution stone, gem, progression id or spawn-condition block; no two crafting recipes on the server share an ingredient list with a sigil's (the Tower Ash's included); each base item exists in the 1.21.1 jar, is named by no other recipe but the decorated pot, is on `never_buy`, and is in no sell point, counter stock, `exchange_for`, reward, escrow or claim list; the band-1 sigil's ore count exceeds the seam's free tier (4) and no higher sigil's inputs are all in its own band's seam table | `data/bank.json`, `data/markets.json`, `data/produce_buyer.json`, `data/traders.json`, `data/blackout.json`, the server's recipe sweep (as `tools/tm_gate.py` sweeps), not `tools/dungeon.py`. The recipes and seam ores are read from the GENERATED pack. Mutations, each inside the generator with the data untouched: emit the band-2 recipe with a diamond, and the generated-against-data check must fail; emit gold ore in the band-2 seam reset, and the self-funding check must fail |
 | V14 | `python tools/id_authorship.py` stays at 0 faults; ids are prefixed `dg_` | the tool |
 
 **New contracts** in `data/system_contracts.json`:
 - "dungeon NPCs carry no rctmod series" (consumer: the level cap; *stands*);
 - "dungeon wins pay $0 net" (consumer: the economy; *stands*);
 - "a dungeon death is a blackout death with no recovery claim: the money taken and not held, the checkpoint,
-  keepInventory, whatever the cause" (owner: `recovery_claims`; consumer: the dungeons; beside C12);
+  keepInventory, whatever the cause, however vanilla credits the kill; and no claim is delivered into a slot" (owner:
+  `recovery_claims`; consumer: the dungeons; beside C12; E1);
+- "a sigil is never bought and never sold" (owner: the dungeons; consumers: the bank, the Produce Buyer, the markets;
+  7.4, V16);
 - "the water ladder qualifies Dive in the pocket" (consumer: the lake; beside C15).
 
 ### 11.5 Runtime proof (a new EXP; the builder designs it, the main session runs it, `qa-reviewer` grades it)
@@ -922,7 +1115,10 @@ Each of the following is seen once:
 - a forfeit;
 - a loss to a stand and to a boss stage, each with a claim-eligible item carried (balls, medicine): the item kept, no
   guardian, the money taken and not held, the 2.5 lines shown (DX1 in a full run);
-- a timeout outside a battle and inside one (sudden death);
+- a timeout outside a battle and inside one (sudden death), and a timeout within five seconds of a wild hit: no
+  claim (E1);
+- the sigil: the free first entry, a sigil taken at each band, a locked-out click that keeps it, a lower band's
+  sigil refused, and a sigil returned on leaving before the threshold (SG1 in a full run);
 - a turn-back at x3;
 - a logout shorter than the clock (resumed, the gap charged) and one longer (killed on return, the 2.6 lines);
 - the band-6 Volcanion caught with a Beast Ball, and a Great Ball refused and handed back.
@@ -956,6 +1152,10 @@ Probes present / probes total are reported, per CLAUDE.md "A success report is n
 - the game-time lockout is replaced by the uptime counter (2.5);
 - **the eaten Tower Ash stays as the Nether's rip.** No Nether ground can be measured (`:52`), so the key opens a
   short-lived visual rip at the player for the 40-tick delay, and the player carries the rip.
+- **The Tower Ash is already the band-6 fee in another form** (D21: "as Entei's room does"): 2 netherite ingots,
+  $1,800 (`:44-46`), beside the Rift-Black Sigil's $1,708 (7.4). It keeps its own item, recipe and eat-to-enter
+  mechanism, and nothing in 7.4 touches the built Entei unit. At the re-home the owner can merge the two, so that one
+  band-6 item opens both; until then the validator only forbids their recipes from colliding (V16).
 
 That re-home is a "further dungeon" unit (13), about 7M.
 
@@ -976,11 +1176,11 @@ That re-home is a "further dungeon" unit (13), about 7M.
 | # | Step | Agent | Cost |
 |---|---|---|---|
 | 0 | Run EXP-059 on staging; fix its three recorded defects | main session + the owner | 2.5M (*relayed* estimate, old 1.2) |
-| 1 | The probe pack (section 14: P1, B1, B2, B3, R1, R2, F1, L1, L2, C1, XT1, V1, I2, LO1, DX1), after the death-rule code check (2.5) reports | `minecraft-systems-dev`, narrow | 2.6M |
+| 1 | The probe pack (section 14: P1, B1, B2, B3, R1, R2, F1, L1, L2, C1, XT1, V1, I2, LO1, SG1; DX1 waits for E1 in step 5) | `minecraft-systems-dev`, narrow | 2.6M |
 | 2 | Run the probes; time a fight per band (XT1) | main session + the owner | 2M |
 | 3 | Night Shift rosters, boss stages, escrow tables, the clock per band re-derived from XT1 | `trainer-balance-designer` (opus) | 1.5M |
 | 4 | Night Shift spine, palettes, dressing, the rip cell on `ground.py` | `world-content-dev` (data only) | 2M |
-| 5 | Engine core: rip, slots, clock, bar, return margin, timeout and sudden death, the death rule (no claim), escrow, the absence gap and dead-run check, lockout, adventure and pick, sweeps | `minecraft-systems-dev` | 4.5M |
+| 5 | Engine core: rip, slots, clock, bar, return margin, timeout and sudden death, the death rule with the run tag (E1, both packs), escrow, the absence gap and dead-run check, lockout, sigils (7.4), adventure and pick, sweeps | `minecraft-systems-dev` | 4.5M (the sigils and E1 are inside this estimate, ASSUMED, not re-costed) |
 | 6 | Legs: stands and clawback, the boss chain, seam markers and rate, parkour sweep and catch bands, the lake with membrane and catch, the den | `minecraft-systems-dev` | 4.5M |
 | 7 | The shell generator from segment kinds; the re-apply steps | `minecraft-systems-dev` | 4M |
 | 8 | Independent audit A: engine and legs (timer deaths, escrow, exits, economy) | `test-author`, opus | 3M |
@@ -1050,7 +1250,8 @@ dungeon. The segment kinds are built so the sequencer can be added then without 
 | L2 | A wild battle started and finished underwater, with Dive | 3.7 (fallback: dry chamber) |
 | **C1 (new)** | **The first chained fight.** Heaven's Arena proved spawn, start, win, loss, re-roll and remove one at a time and never chained one fight into the next; `docs/STATE.md:225` lists the in-function spawn as NOT proven. C1 proves both: `spawnnpcat` from a **macro line in a function** after a plain restart, then a victory's follow-up starting the next battle 60 ticks later, three times in a row | 3.1, 3.2 (F3) |
 | **LO1 (new)** | Log out mid-run for less than the clock left and for more. Read the clock on return against `gap x rate`, the slot freed at its deadline while the player is away, and the dead-run kill on the first pass back. Also log out mid-battle: what Cobblemon does with the battle and the NPC. And stop the server for a minute mid-run: no clock lost | 2.6 |
-| **DX1 (new)** | Inside a run, carrying claim-eligible items: lose to a stand NPC, to a boss stage and to a tagged wild Pokemon, and die by `kill` and in lava. Each must charge the money, make no claim (no guardian, nothing held), keep every item, and show the 2.5 lines. Runs after the death-rule code check | 2.5 |
+| **DX1 (new)** | Inside a run, carrying claim-eligible items: lose to a stand NPC, to a boss stage, to a tagged wild Pokemon and to an UNTAGGED one, and die by `kill` and in lava, each also within five seconds of a wild hit. Each must charge the money, make no claim (no guardian, nothing held), keep every item, and show the 2.5 lines. And: a claim settled by a second player while the owner is in a run is delivered in the overworld at the tail's end, not in the slot. Runs after E1 is built | 2.5, E1 |
+| **SG1 (new)** | `clear @s minecraft:miner_pottery_sherd[minecraft:custom_data~{cobblers_dg_sigil:1}] 1` takes one sigil and leaves a plain sherd and a band-2 sigil (syntax ASSUMED, the R2 class); the recipe result carries its components (EXP-059 X3 covers the Tower Ash's); the `recipe give` advancement makes the recipe craftable under `doLimitedCrafting` for a player synced before the pack went in (F7) | 7.4 |
 | **XT1 (new)** | Time an NPC fight at 2, 4 and 6 opposing members at caps 20, 45 and 100, and a 3-stage chain | the clock (4.1) |
 | **V1 (new)** | A rip's particles and display seen from 32, 64 and 128 blocks; `force` mode and a plume | 7.1 |
 | **I2 (new)** | The time and block count of one slot's shell re-apply | 11.3, the re-apply budget |
@@ -1073,8 +1274,9 @@ Dropped from DM's list, with the reason:
 1. **DECIDED (D13).** The greed ladder: x1.25 at 5, x1.5 at 10, x2.0 at 15, x3 at 20, holding for the rest of the run.
 2. **DECIDED (D14).** Slack 1.25 x the planning budget (29-39 minutes by band), re-derived from XT1's timings before
    it ships.
-3. **DECIDED (D20).** Death, by the timer or anything else, is the blackout ($600, checkpoint, inventory kept) plus the
-   escrow forfeit and the sigil and lockout. No claim is made in a dungeon (2.5). The code check is pending.
+3. **DECIDED (D20, D22).** Death, by the timer or anything else, is the blackout ($600, checkpoint, inventory kept)
+   plus the escrow forfeit; the retry costs another sigil and the lockout. No claim is made in a dungeon (2.5). The
+   code check has reported that the rule is not met today (F8); the run tag (E1) is built with the engine.
 4. **DECIDED (D15).** A logout does not stop the clock. Back in time, the run resumes. Back too late, the player is
    killed into the blackout on return (2.6). This replaces the recommendation to end the run without a kill.
 5. **OPEN. Healing in a run: none provided; your own potions between fights, priced in clock; no bag items in
@@ -1085,8 +1287,8 @@ Dropped from DM's list, with the reason:
 8. **OPEN. Riding allowed outside the parkour?** *Recommend yes.* The budget assumes foot, so a mount is earned slack.
    A run-wide sweep would remove battle send-outs.
 9. **DECIDED (D17).** Lockout one hour of server uptime per dungeon per player, counted from entry.
-10. **OPEN. Entry free for the overworld dungeons, lockout-limited; the Nether pair keep their crafted keys?**
-    *Recommend yes* (old Q6, *stands*). This decides whether D20's "sigil" applies outside the Nether (F5).
+10. **DECIDED (D21), against this question's recommendation.** Most rips take a sigil, scaled by band (7.4). The
+    recommendation of free overworld entry is withdrawn.
 11. **OPEN. A fall costs 15 seconds and a return to the last checkpoint?** *Recommend yes.* About 35 seconds a fall
     in all.
 12. **OPEN. Before the Champion, the lake legendary is visible, asleep and sealed ("It does not stir for you yet"),
@@ -1103,7 +1305,18 @@ Dropped from DM's list, with the reason:
 18. **OPEN. Authored dungeons; reconsider a sequencer at dungeon 3 if you want three or more variants per dungeon?**
     *Recommend yes* (13.1).
 19. **OPEN. A random rip scheduler only after two fixed dungeons are played?** *Recommend yes* (D5). It adds a
-    scheduler, an expiry and a candidate validator, about one narrow unit (2.6M) plus an audit.
+    scheduler, an expiry and a candidate validator, about one narrow unit (2.6M) plus an audit. A moving rip takes
+    the same sigil (7.3); whether its scarcity should make it free is decided with the scheduler.
+20. **OPEN. The Night Shift's first run free, once per player, as a waiver (no sigil given); no rip free for good?**
+    *Recommend yes* (7.4).
+21. **OPEN. "Entry" in D17 read as the threshold: the sigil is returned and no lockout is stamped for a player who
+    leaves by the back rip without crossing it?** *Recommend yes* (7.4, 2.5).
+22. **OPEN. The ladder of 7.4 as priced: Soot (3 iron, 3 coal), Gilt (1 gold, 4 iron, 2 redstone), Glint (1 diamond,
+    1 gold, 2 iron), Deepstone (2 diamonds, 1 gold), Cinder (1 netherite ingot), Rift-Black (1 netherite ingot, 4
+    scrap)?** *Recommend yes*, retuned when gathering is timed. A higher band's sigil is accepted for a lower band; a
+    lower one is refused.
+23. **OPEN. Sigil recipes visible from the start, not badge-gated?** *Recommend yes*: the rip checks the band, so the
+    gate would only hide the ladder (7.4).
 
 **Still open from other documents**, untouched by this design: `DUNGEON_PLACEMENT.md` Q12-Q15 (its Q11 is decided, D8), and its band-4 paradox
 threats; `DROPS_PROGRESSION_SPLIT.md` Q2, Q4 and Q5 (old 8.11-8.14).

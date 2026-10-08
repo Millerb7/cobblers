@@ -2,7 +2,8 @@
 
 - **Status:** Proposed
 - **Date:** 2026-10-08 (rewritten the same day for the owner's timed-dungeon shape; the hub-and-sockets version it
-  replaces is summarised under Alternatives; amended the same day with the owner's answers and the death rule)
+  replaces is summarised under Alternatives; amended the same day with the owner's answers and the death rule, and
+  again with the sigil ladder and the run tag's engine requirement)
 - **Evidence:**
   - `docs/mechanics/DUNGEONS.md`, which holds the design, the worked numbers (section 4), the costing (13) and the
     validator (11.4).
@@ -23,13 +24,16 @@
     key (`data/key_ball.json`; EXP-064 NOT_EXECUTED).
   - **Pending, and this ADR should not be accepted before them:**
     - EXP-059;
-    - the code check of the dungeon death rule (a separate agent is reading the blackout's claim paths; `DUNGEONS.md`
-      2.5, against `docs/mechanics/DEATH_AND_WIPE.md` and `docs/mechanics/BLACKOUT_RECOVERY_COUPLING.md`);
+    - the run tag built and passing (`DUNGEONS.md` 11.3 E1). The code check of the death rule has reported
+      (`docs/research/DUNGEON_DEATH.md`): **the rule is NOT met today**. An untagged wild Pokemon still claims items
+      and holds the $600; vanilla's kill credit can turn the timer's kill into a wild kill; a claim can be delivered
+      into a slot. `tests/test_dungeon_death.py` holds the pack to the fix as xfail(strict);
     - probes P1 (the discard returns a Pokemon with its HP), B1 (the per-player bar), B2/B3 (the kill and sudden
       death), R2 (`can_break`), C1 (an in-function macro `spawnnpcat`, and the first fight ever chained from a
       victory's follow-up into the next battle: Heaven's Arena proved its steps only one at a time), XT1 (fight
-      timings, which set the clock), L2 (a battle underwater), LO1 (the clock across a logout) and DX1 (no claim on a
-      dungeon death);
+      timings, which set the clock), L2 (a battle underwater), LO1 (the clock across a logout), SG1 (a sigil taken by its
+      component, and its recipe craftable under `doLimitedCrafting`) and DX1 (no claim on a dungeon death, including
+      within five seconds of a wild hit, and no delivery into a slot);
     - all are `DUNGEONS.md` section 14.
 
 ## Context
@@ -57,7 +61,11 @@ bottom.
   1.25; the clock keeps running through a logout; solo first, with separate clocks in co-op; the one-hour lockout;
   the legendary picks as proposed; the order EXP-059, probes, data, engine, building the Night Shift only;
 - **no guardian inside a dungeon:** a dungeon death costs the blackout's money, the run's held rewards, and the sigil
-  and lockout, and nothing else. Items are kept and nothing holds them.
+  and lockout, and nothing else. Items are kept and nothing holds them;
+- **the run tag goes in the engine build**, covering a death credited to a wild Pokemon that hit the player shortly
+  before, and the claim delivery gap;
+- **sigils: most rips take one**, as Entei's room does, scaled by tier: early materials for early rips, netherite only
+  from badge 8, when the Nether opens. Sigils decide who enters, not where a rip is; fixed rips first still stands.
 
 The earlier version of this ADR chose a hub with socketed wings and no clock, which this shape supersedes. The choice
 here fixes:
@@ -90,11 +98,27 @@ run against a per-player clock.**
     exit by either rip.
   - **The death rule: no recovery claim inside a dungeon**, whatever the cause: the timer, a boss, a trainer, a fall,
     lava. An instance resets, so a guardian holding items would stop existing and the items would be lost for good.
-    A death costs the blackout's money (taken, not held), the run's escrow, and the sigil and lockout. It is built in
-    two layers. Every entity the engine spawns carries `claims.exempt_tag`, Entei's pattern. And a run-tagged player
-    makes no claim whatever the victor, a change to `tools/blackout_pack.py`. The code paths are being checked, not
-    verified.
-  - The lockout counts on our own uptime score, never on game time.
+    A death costs the blackout's money (taken, not held) and the run's escrow; a retry costs another sigil and the
+    lockout. It is built in two layers. Every entity the engine spawns carries `claims.exempt_tag`, Entei's pattern.
+    And **a run-tagged player makes no claim whatever the victor**, a change to `tools/blackout_pack.py` built with
+    the engine (`DUNGEONS.md` E1). The tag is added at the click, before the arrival delay; it outlives every exit by a
+    100-tick tail equal to vanilla's kill-credit window, so the timer, a fall or lava shortly after a wild hit stays
+    claim-free; the engine never clears it before the blackout has read it; and the claim delivery returns for a
+    tagged player and runs as the player when the tail ends, in the overworld, never into a slot.
+  - The lockout counts on our own uptime score, never on game time, and is stamped at the entry room's threshold.
+- **Sigils, the entry fee** (`DUNGEONS.md` 7.4). One per band, accepted at every rip, of the entrant's frozen band or
+  higher: Soot (3 iron ingots, 3 coal), Gilt (1 gold ingot, 4 iron ingots, 2 redstone), Glint (1 diamond, 1 gold
+  ingot, 2 iron ingots), Deepstone (2 diamonds, 1 gold ingot), Cinder (1 netherite ingot), Rift-Black (1 netherite
+  ingot, 4 netherite scrap). Crafted, never bought, bank value $39 to $1,708, about 9 to 72 minutes of gathering at the
+  bank's declared rates (planning). Each is a distinct pottery sherd with custom data, as the Tower Ash is.
+  - **Taken at the click, spent at the threshold**: leaving by the back rip before the threshold returns it. A fee on
+    entry, not a deposit on failure, because the owner asked for an entry fee and a deposit makes success free while
+    adding three exit paths that must hold and return it.
+  - **One free entry**, the Night Shift's first run per player, a waiver; no rip is free for good.
+  - **Co-op:** each member pays their own, for their own band.
+  - **Never bought or sold:** each base item joins the bank's `never_buy`; no counter, exchange, reward, escrow or
+    claim list names one; no recipe uses one. The pack gives its own recipes, because `doLimitedCrafting` (the TM
+    gate) blocks a recipe a player's book lacks.
 - **Legs**, by mechanism:
   - stands and the boss are `cobblemon:npc` battles (never rctmod), spawned by macro `spawnnpcat` at absolute
     coordinates and started by `runmolang start_battle`;
@@ -139,6 +163,18 @@ run against a per-player clock.**
 - **The uninstalled Ultra Beast or Wormhole mods.** Each is a new dependency with its own dimension rules. Not
   proposed.
 - **Rebuild the whole run on entry.** Rejected for its cost per entry (research 8).
+- **Free overworld entry, keys only in the Nether** (this design's earlier Q10). Superseded by the owner: most rips
+  take a sigil.
+- **One sigil price for every rip** (the Tower Ash's 2 netherite ingots everywhere). Rejected by the owner: netherite
+  exists only from badge 8, so the Night Shift at 0 badges could not be paid for.
+- **A sigil per dungeon rather than per band.** Rejected: the Night Shift serves every band from 0 badges, so a
+  dungeon's sigil cannot match its entrant's means. The band is what the engine already freezes at the rip.
+- **The sigil as a deposit, taken only on failure.** Rejected: it makes success free, stacks on a failure that already
+  costs $600, the escrow and the lockout, and must be held across a death, a logout and a dead run.
+- **Sigils sold at a counter.** Rejected: the fee becomes money (under 2% of a leg's income at every band), and a
+  price would have to clear the income gate and the bank's buy-low-sell-high rule.
+- **The victor tag alone, without the run tag.** Rejected by the code check: it misses untagged wild Pokemon, vanilla's
+  kill credit and the delivery into a slot (`docs/research/DUNGEON_DEATH.md` sections 2-3).
 
 All costs are estimates from the repository's measured agent rates (CLAUDE.md "What a builder actually costs"), not
 measurements of this work.
@@ -156,8 +192,10 @@ measurements of this work.
   - every exit path must restore survival and take the rift pick back, or a player leaves with adventure mode or a
     free unbreakable pickaxe;
   - every dungeon's NPC wins must be clawed back to $0 net;
-  - every entity a dungeon spawns must carry the claims exempt tag, and the blackout gains a player-side exemption.
-    Audit V15 checks both by mutating the generator;
+  - every entity a dungeon spawns must carry the claims exempt tag, and the blackout gains a player-side exemption
+    with a tail and a delivery guard. Audit V15 checks all of it by mutating the generators;
+  - six sigil base items join the bank's `never_buy` and every sell-point check, and the server's recipe sweep must
+    show no recipe collides with a sigil's (V16);
   - the seam enters the economy audit as a renewable supply;
   - the shells add a re-apply step whose time (probe I2) joins every re-apply;
   - the clock is honest only after XT1 times real fights. Until then every budget figure is a planning value.
@@ -165,8 +203,11 @@ measurements of this work.
   - XT1's fight times are far from the planning paces (re-derive the clocks);
   - P1 fails (the no-deploy leg has no mechanism; parkour would need geometry alone);
   - L2 fails (the lake falls back to a dry chamber behind the membrane);
-  - the death-rule code check or DX1 shows that the claim cannot be suppressed for a run-tagged player (then every
+  - DX1 shows that the claim cannot be suppressed for a run-tagged player in game (the code check found it can, by
+    one line beside the victor test) (then every
     victor must carry the tag, and "our list is not the world" is an accepted gap, stated in `does_not_cover`);
   - C1 fails (no fight chains from a victory's follow-up: the stands and the staged boss need another trigger);
   - the owner wants three or more variants per dungeon (cost the sequencer);
-  - co-op is wanted (XD8, the second account, and the `minecraft.mined` probe R1).
+  - co-op is wanted (XD8, the second account, and the `minecraft.mined` probe R1);
+  - gathering is timed and a sigil's real cost is far from its planning time (retune the ladder);
+  - the Entei room is re-homed on the engine (merge the Tower Ash with the band-6 sigil, or keep both).
