@@ -77,9 +77,16 @@ early. Since merchants cannot gate per player, the price is the gate wherever a 
 
 ### 2.1 Type gems and crafted TMs (row 1)
 
-**What is blocked.** Every crafted TM: none of 3,596 TM recipes is craftable from renewable inputs, and 805 name a
-type gem outright (`OBTAINABILITY_SWEEP_2026-10-05.md` section 4 row P0, *relayed*). Under the no-crafting rule the
-gems are beside the point: a no-crafting run needs **finished TMs**, so the gem question answers itself.
+**What was blocked, corrected 2026-10-08.** The sweep's "none of 3,596 TM recipes is craftable" (`OBTAINABILITY_SWEEP_2026-10-05.md`
+section 4 row P0) **no longer holds**: alpha battles drop type gems in every type (`docs/research/DROPS_AUDIT.md` 2.4,
+*relayed*), and with them **603 of TMCraft's 802 TMs are craftable**; every one of its 805 native recipes names a gem,
+and the loaded TM-producing recipes are 1,734, not 3,596 (`docs/research/DROP_RATE_CONSUMERS.md` 3.1, *relayed*). The
+blank discs need no shop: copper from one ingot, the higher grades by smithing upgrade (3.2 there, *relayed*), and no
+counter sells one (no `blank_disc` id in `data/`, *measured* by grep). So a crafted TM is gated by neither gems nor
+blanks, and 18 of the 23 shelf TMs undercut their income-gated price (3.3 there, *relayed*; the owner's decision,
+section 4 item 1 there). Under option C (`docs/mechanics/DROPS_PROGRESSION_SPLIT.md` 3.4-3.5; designed, not built) an
+alpha pays more gems as its level rises. Under the no-crafting rule a run still needs **finished TMs**, so the
+recommendation below stands; Route A now has a free crafted competitor for anyone who crafts.
 
 **Recommendation: sell finished TMs; do not sell gems.**
 
@@ -176,11 +183,11 @@ no-crafting solo run.
 | 2 | **Mint seeds** (6) | six lines at Northlight's Station Supply, beside the vitamins (`markets.json:298-303`, *measured*) | gym-6 rung: a nature is a permanent stat change with no cap bound (test 2 is mild), and one seed is renewable forever (test 3) | six lines; price the owner's |
 | 3 | **Dynamax** (band, wishing star, max mushroom, power spot) | none until decided. If kept: band and a Power Spot as one post-Champion reward | Dynamax needs a Power Spot within 32 (`powerSpotRange`, *relayed* `OBTAINABILITY_MODS.md:59`) | **decision first** (Q6): `dynamax: false` is a config change, not this unit's |
 | 4 | **Brewing stand** (or a blaze rod) | one line at Northlight | not before the Ability Capsule's own seller (Northlight, 10,000, `markets.json:304`): a stand makes capsules renewable from dragon's breath (four rostered droppers, *relayed*) | one line; price at or above the capsule's |
-| 5 | **Exp. Candies, Rare Candy** | lines at the gym-town counters from gym 4 on, or as training-ground prizes | the cap clamps them and a candy is not used up at the cap (`LEVEL_CATCHUP.md:31`, *relayed* VERIFIED from source, not run), so the gate is economic, not power: the curve has no room at badges 1-3 (`LEVEL_CATCHUP.md:22-23`, *relayed*) | lines; the owner's (candies are "cut by design" today) |
+| 5 | **Exp. Candies, Rare Candy** (and the IV candies and Lucky Egg) | **decided 2026-10-08 (the owner): dungeon rewards only**, per band and first clear (`DUNGEONS.md` section 4). No counter line, no training-ground prize; the alpha tier tables that drop them today are to be emptied (`DROPS_PROGRESSION_SPLIT.md` 3.5) | the cap clamps them and a candy is not used up at the cap (`LEVEL_CATCHUP.md:31`, *relayed* VERIFIED from source, not run), so the dungeon bundle is sized to half a cap step for one Pokemon | none here; the dungeon tables are `trainer-balance-designer`'s |
 | 5 | **PP Up, PP Max** | one line each at Holdfast (gym-8 rung) | convenience; late | two lines |
 | 5 | **Ability Patch** | already routed: arena prize at rank 7 and streak 50 (`OBTAINABILITY_SWEEP_2026-10-05.md:155`, *relayed*) | hidden abilities are late power | none |
 | 6 | **Ancient balls** (15) | the Ancient Origin Ball: Blue's first win (`progression.json:3614`, *measured*). The other 14: a late off-path counter | the Origin Ball is a Master Ball (post-Champion is right); the rest are throw-arc variants, convenience | lines; the owner may cut them (Q7) |
-| 6 | **Beast Ball** | none unless an Ultra Beast is offered | nothing uses it | declare out (Q7) |
+| 6 | **Beast Ball** | **the dungeon-boss key** (the owner, 2026-10-08): $5,000 at the Cinderlee counter, its crafting recipe closed (`data/key_ball.json:5`, `:21-27`, *read*) | the only ball that catches a tagged dungeon boss, x5; every other ball refused there; built, NOT RUN (EXP-064) | done in `data/key_ball.json`; Q7 no longer covers it |
 | 8 | **Plain bottle cap** | one line beside the gold cap at Holdfast (*relayed* sweep row 8) | one-stat hyper-training at the gym-8 rung, under the gold cap | one line |
 | 11 | **LumyMon's nine Kanto locators** | none: they are already craftable and are misleading, not missing | n/a | a generator change (`progression_pack.py upstream_neutralised` recipe kind) or leave them; Q8 asks whether a deliberately disabled item counts against "every item" |
 
@@ -308,7 +315,8 @@ as a gap.
 5. **The Primal orbs at `champion_cleared` rather than at Groudon's and Kyogre's own gate?** The recommendation is
    yes, because Primal Groudon before the League is a single answer, not a plausible one.
 6. **Dynamax:** off (`dynamax: false`), or kept with a post-Champion band and Power Spot?
-7. **Ancient balls and the Beast Ball:** routed at a late counter, or declared out?
+7. **Ancient balls:** routed at a late counter, or declared out? (The Beast Ball is answered: the dungeon-boss key,
+   section 3 row 6.)
 8. **A deliberately disabled item** (the Kanto locators, if their recipes are emptied): does it count against
    "every item"?
 9. **The Link Cable for solo players:** at the gym-3 rung, or later? Without it, solo players lose 18 rostered
@@ -358,9 +366,10 @@ own builder already writes, so no carve and no audit derivation changes.
   exempt from the one-item contract. The record was drafted and then removed. Its shape: `sweep_red_chain`'s trigger
   and container, `requires_flags` `champion_cleared`, and contents `mega_showdown:griseous_core` and
   `mega_showdown:griseous_orb`, one of each. Both ids were verified in the jar.
-- **Griseous Orb goes with the Core when the Core is built.** The jar keeps both ids. The Orb's only route is the
-  jar's `recipe/griseous_orb.json`, which needs `cobblemon:ghost_gem` and `cobblemon:dragon_gem`, and section 2.1
-  says nothing in our world drops those gems.
+- **The Griseous Orb no longer waits on the Core.** The jar keeps both ids. The Orb's route is the jar's
+  `recipe/griseous_orb.json`, which needs `cobblemon:ghost_gem` and `cobblemon:dragon_gem`, and alphas drop both:
+  ghost gems from tier 6, dragon gems from tier 2 (`docs/research/DROP_RATE_CONSUMERS.md` 3.4, *relayed*). So the Orb
+  is craftable once those alphas are reached; whether the cache still carries one beside the Core is the owner's.
 - **Not built, by the brief:** the Blue Orb (the Kyogre cave is not built), and the catalyst and second DNA (Q3, "if
   Mewtwo is in"). Nothing else in this file is both a cache or first-win route and free of an owner question. The
   memories alternative is Q11 and the Origin Fossil is Q3. The fossil machine is an npc_grant that needs a quest and

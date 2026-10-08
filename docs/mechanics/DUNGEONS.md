@@ -3,7 +3,12 @@
 **Status: DESIGN AND COSTING ONLY (content-architect, 2026-10-08).** Nothing here is built, placed, generated or run.
 It answers the owner's brief of 2026-10-08 ("MANY DUNGEONS ... cost two approaches before building either ... build one
 completely before building six partially"). The architectural choice is proposed as
-`docs/decisions/ADR-008-dungeon-runs.md` (Proposed).
+`docs/decisions/ADR-008-dungeon-runs.md` (Proposed; it stays Proposed).
+
+**Revised 2026-10-08** with what the owner approved that day (relayed by the update brief): changes D1-D9 of
+`docs/mechanics/DROPS_PROGRESSION_SPLIT.md` section 4 (progression items become dungeon rewards; the den), and from
+`docs/mechanics/DUNGEON_PLACEMENT.md` section 5 only the level cap as the governing constraint and the Beast Ball rule.
+The rest of that list is marked OPEN where it would land (section 0.1).
 
 Labels: **VERIFIED** = seen in source, a jar read recorded in `docs/research/`, or a run, with the citation;
 **ASSUMED** = inferred, not checked; *relayed* = a number taken from another document and not re-measured here;
@@ -31,6 +36,27 @@ Two findings outside the brief, recorded and not chased:
   level (`npcLevels`) and evaluates team size as MoLang with `q.level` and `q.player` visible
   (`docs/research/notes/arena-per-player-opponents.md:98-102`, VERIFIED from `PoolPartyProvider` source; the
   `npcLevels` filter is not yet run). Section 5 builds on it.
+
+### 0.1 Owner decisions of 2026-10-08 (relayed by the update brief) and what stays open
+
+Decided, and applied in the sections named:
+- **Progression items are dungeon-exclusive rewards:** Exp. Candies, the six IV candies, Rare Candy and the Lucky Egg
+  (`DROPS_PROGRESSION_SPLIT.md` 1.3-1.4). That document's Q1 is answered: the Lucky Egg moves. Materials stay as
+  drops. Section 4.
+- **The den**, a fourth, optional leg kind, in two dungeons: the Night Shift (the Electirizer) and the Last Cistern (the
+  two armours). That document's Q3 is answered: the Last Cistern, not the Temple Calendar. Section 2.3.
+- **The Beast Ball is the key to every dungeon boss, and only dungeon bosses.** Overworld legendaries stay catchable
+  with any ball. Built as `data/key_ball.json` (tag `cobblers.key_boss`; boss list Entei only), NOT RUN:
+  `experiments/EXP-064-beast-ball-key` is NOT_EXECUTED (`data/key_ball.json:4`, *read*). Section 2.3.
+- **The level cap is the governing constraint on any catchable dungeon boss:** its level is at or under the lowest
+  cap its gate admits, because the cap pack refuses a catch strictly over the thrower's cap with every ball
+  (`DUNGEON_PLACEMENT.md` Q8). The window's cap is **60, and 62 after Lance; not 80** (`DUNGEON_PLACEMENT.md` Q1,
+  *relayed* from `LEAGUE_LEVEL_CAP.md:3-6`, `:50-56`). Sections 2.3, 7.2.
+
+**OPEN** (the owner has not answered; `DUNGEON_PLACEMENT.md` section 6): every dungeon catch after the Champion (Q11),
+so pre-League wild bosses fight-only; the Temple Calendar as the window's dungeon at `gym8_cleared` (Q13); the paradox
+columns, threats and band-6 paradox catches (C2-C8); Koraidon and Miraidon (Q14); which sites count as dungeon bosses
+(Q15). Nothing below assumes an answer to any of them.
 
 ---
 
@@ -152,6 +178,7 @@ hold for every combination by construction. That is the saving.
 The hub has two open wings and one sealed door. The player takes the trainer wing and the seam wing **in either
 order**, and the boss door opens only when both legs are flagged done. This is the vision's own shape, "Final Chamber:
 opens only when every required dungeon flag is set" (`docs/vision/GAME_VISION.md:134`).
+Where a dungeon has a **den** (2.3), it is a further room off the hub, optional: the boss door never waits on it.
 - Why not fixed: the order is the cheapest variety there is, and fixing it throws that away.
 - Why not shuffled: a shuffle needs the rooms re-seated per run. A hub gives the same variety with one geometry, and
   gives the player the choice. Seam first is a breather; trainers first means carrying damage into the dig.
@@ -166,8 +193,9 @@ opens only when every required dungeon flag is set" (`docs/vision/GAME_VISION.md
 | Seam wing: dig through to the alcove | 6-8 | the seam's depth is the tuning knob (2.3) |
 | Boss | 6-8 | a 3-6 member NPC at the cap |
 | **Run** | **25-31** | |
+| Den, optional, where a dungeon has one | 5-6 more | four wild battles, ASSUMED: none timed |
 
-### 2.3 The three leg kinds (every one reuses a built or proven part)
+### 2.3 The leg kinds: three required, one optional (every one reuses a built or proven part)
 
 - **Trainer wing: a gauntlet of three NPC trainers.** The arena's loop: `spawnnpcat` at absolute coordinates with a
   level, `q.npc.start_battle`, and the `battle_victory` callback. All PASS in game for one player
@@ -191,6 +219,35 @@ opens only when every required dungeon flag is set" (`docs/vision/GAME_VISION.md
   (`NETHER_DUNGEON_SCOPE.md:130-139`). An NPC boss with a scaled team uses the proven per-player loop and is a real
   fight at every band. The Nether dungeons keep the built Entei keeper (wild, catchable once, then `uncatchable` with
   an item roll, `data/entei_boss.json:22-26`).
+  - **An NPC boss is never catchable by any ball**: a ball thrown at an NPC's Pokemon is refused as `not_wild`
+    (`docs/research/notes/beast-ball-key-1.8.0.md:151-152`, *relayed*; that an NPC's battle Pokemon takes that path
+    is ASSUMED, not thrown at). It carries no key tag.
+  - **A wild catch-mode boss is a key boss** (the owner's Beast Ball rule, 0.1). Its own tool adds the tag
+    `cobblers.key_boss` in the function that binds it, and it is listed in `data/key_ball.json` `bosses`; the key
+    pack's two callbacks raise a Beast Ball's rate x5 on a tagged boss and refuse every other ball, the Master Ball
+    included, handing it back (`data/key_ball.json:8-17`, *read*). Built for Entei only, NOT RUN (EXP-064).
+  - **The cap binds every key boss:** its level is at or under the lowest cap its gate admits. A Beast Ball refused by
+    the level cap, not the key, is consumed (`data/key_ball.json:35`, *read*). Entei is level 100 behind the
+    Champion, at cap 100, so it never meets this. Whether every wild catch-mode boss is gated at `champion_cleared`
+    is OPEN (`DUNGEON_PLACEMENT.md` Q11).
+  - **No dungeon Pokemon is an alpha**: not a boss, not a den Pokemon. An alpha is re-levelled above the party, pays
+    alpha gems and breaks the cap's catch block (`DUNGEON_PLACEMENT.md` section 3, P3 of `DROPS_PROGRESSION_SPLIT.md`).
+- **Den (optional): a room of wild Pokemon for one evolution key** (`DROPS_PROGRESSION_SPLIT.md` section 5; the owner
+  approved both dens, 2026-10-08). Only the Night Shift and the Last Cistern have one.
+  - Four wild Pokemon, spawned at the band's level (cap-2 to cap-1, the arena rule) when the slot is built, and
+    knocked out in battle. They are `uncatchable` (Entei's farm-mode pattern, `data/entei_boss.json:22-26`) and
+    never alpha. They are not key bosses and carry no tag.
+  - Drops are the **species' own tables** at entity death; no generated loot. They land in the player's own slot.
+  - The boss door does not wait on the den (2.1).
+  - **Night Shift, the powerhouse (the Electirizer):** 4 Elekid at bands 1-2 (an Electirizer that early has no
+    Electabuzz to use it on); 3 Electabuzz and 1 Electivire at band 3; 2 and 2 at bands 4-6. Expected Electirizers a
+    run 0.198 / 0.772 / 0.973, at least one in 18% / 59% / 68% of runs (*relayed*, `DROPS_PROGRESSION_SPLIT.md`
+    section 5, computed there from `drops-1.8.0.json`). Side drop: redstone, bought by the bank (about 5 a run,
+    *relayed*), so the den is declared to `tools/economy_audit.py` on the lockout clock, as the seam is.
+  - **Last Cistern, the two sentries (the Auspicious and Malicious Armor):** 2 Armarouge and 2 Ceruledge at bands 4-6,
+    the band where Charcadet becomes catchable. Each armour 0.355 a run expected, both in 10.5% of runs (*relayed*,
+    the same section). Charcoal, the side drop, is not bought.
+  - **Every player can evolve once:** the band's first clear guarantees one of each key (section 4).
 
 ### 2.4 Reset, instancing, failure
 
@@ -226,12 +283,15 @@ player has. The others add places and areas, not coverage.
 | 2 | **The Street That Ends at Nothing.** The Worldshift took a city off Mt Vessu and left its road. Walk the road past its end and you are in the city as it was the hour before. | The Scar, the road's end (centre 2110, 950) | `data/towns.json:2059-2073` ("foundations and a road that ends at nothing"); the city itself, `:1435-1448` | ~gym 2-3 (Mt Vessu tier 3, `encounter_design.json:180`) |
 | 3 | **Under the Patriarch.** The great dark oak over the Rift drinks from something below the Wedge, and its roots have grown round what they found. | The Patriarch's foot (4272, 3600) | `data/towns.json:2570-2606` | ~gym 6-7 (the Wedge, tiers 6 and 8, `encounter_design.json:320`, `:398`) |
 | 4 | **The Last Cistern.** The waterworks of a plateau town that died of thirst; the pumps still run, on nothing. | The Dry Cistern (4530, 5850) | `data/dry_cistern.json:16-28` (authored, not applied, not audited) | ~gym 7 (plateau_west tier 8, `:414`) |
-| 5 | **The Temple Calendar.** Three jungle temples are one instrument; the run is inside the day it measures. | One of the long-isle jungle temples, e.g. (7200, 7528) | `data/jungle_temples.json:85-89` (ground NOT measured by this unit) | ~gym 7-8 (long_isle_south tier 8, `:392`) |
+| 5 | **The Temple Calendar.** Three jungle temples are one instrument; the run is inside the day it measures. | One of the long-isle jungle temples, e.g. (7200, 7528) | `data/jungle_temples.json:85-89` (ground NOT measured by this unit) | ~gym 7-8 (long_isle_south tier 8, `:392`); a door at `gym8_cleared` as the window's dungeon is OPEN (`DUNGEON_PLACEMENT.md` Q13) |
 | 6 | **The Tower After the Fire** (Entei) | anywhere in the Nether (the key) | built: `data/entei_boss.json`; theme `docs/mechanics/NETHER_ENCOUNTERS.md` 3.1 | Champion (`entei_boss.json:13`) |
 | 7 | **The Crucible** (Heatran) | anywhere in the Nether (the key) | designed: `NETHER_ENCOUNTERS.md` 3.2 | Champion |
 
 **Gap, said plainly:** nothing between gym 3 and gym 6 in the north and centre. The Merian Hut (`data/towns.json:
 1679-1714`, tier 4) or the Sentinel (`:2496-2532`, tier 4) would fill it. Q3.
+
+**Dens** (2.3): the Night Shift (the Electirizer) and the Last Cistern (the two armours). They drop evolution keys
+the counters do not sell, never a stone.
 
 **Rosters follow the theme, drawn from families with evidence** (E1, in a compiled table, as
 `NETHER_ENCOUNTERS.md` section 2 defines it). For dungeon 1, the shift's own Pokemon:
@@ -253,16 +313,40 @@ The balance designer chooses; this is the shape.
   `:228`);
 - an evolution stone (ADR-003 owns them);
 - a `*_plate` or an arena trophy (`docs/STATE.md:143` item 3);
-- the Ability Patch (the arena's, `docs/mechanics/ITEM_ROUTES.md:181`).
+- the Ability Patch (the arena's, `docs/mechanics/ITEM_ROUTES.md` section 3, row 5).
 
-Candidates come from the registered list (VERIFIED, `docs/research/ITEMS_ABILITY_EV_HELD_MEGA.md:136-142`). Of the
-18 type gems only `fire_gem`'s id has been read (`data/entei_boss.json:100`, `:108`); the other gem ids are ASSUMED to
-follow it.
+**Progression is the dungeons' exclusive** (the owner, 2026-10-08). A progression item is a dungeon reward and appears
+in no other generated table: the twelve ids of `DROPS_PROGRESSION_SPLIT.md` 1.3 (`exp_candy_xs` to `_xl`,
+`rare_candy`, the six IV candies `health_`, `mighty_`, `tough_`, `smart_`, `courage_` and `quick_candy`) and the
+`lucky_egg`. The generator and the validator fail closed on one anywhere else: the alpha tables, `data/rewards.json`,
+`data/markets.json`, `data/traders.json` and the arena. Two changes outside this file make that true, neither built:
+- the four `cobblemon:alpha/alpha_rewards_tier1..4` loot tables overridden empty at their own path (option C,
+  `DROPS_PROGRESSION_SPLIT.md` 3.5); until then every wild alpha KO still pays candies;
+- the Lucky Egg stripped from Blissey, Chansey and Togepi with `species_additions` at their paths (1.4 there).
 
-**Why gems are the spine.** They are TM crafting material (the changelog quote at `ITEMS_ABILITY_EV_HELD_MEGA.md:139`),
-805 TM recipes name one (`ITEM_ROUTES.md:80-81`, *relayed*), and nothing in our world drops them (`:362-363`). So the
-area's gems give the dungeon a demand that never runs out. They are no power bypass, because the counters' TMCraft
-blanks still gate the grade by gym (`docs/mechanics/PROGRESSION_LADDER.md:177-182`).
+The counters' priced vitamins and Ability Capsule (`data/markets.json:388-394`, *relayed*) are outside the owner's
+direction, which is about free drops; whether they stay is OPEN (section 8).
+
+Candidates come from the registered list (VERIFIED, `docs/research/ITEMS_ABILITY_EV_HELD_MEGA.md:136-142`). The 18
+`<type>_gem` ids are read in the jar's alpha type tables (`DROPS_PROGRESSION_SPLIT.md` 1.3, *relayed*).
+
+**Gems are the dungeons' volume; progression is their exclusive.** Gems are TM crafting material (the changelog quote
+at `ITEMS_ABILITY_EV_HELD_MEGA.md:139`), and every one of TMCraft's 805 native TM recipes names one
+(`docs/research/DROP_RATE_CONSUMERS.md` 3.1, *relayed*). They are **not** scarce, so they are not the reason to run a
+dungeon:
+- **alpha battles drop them in every type** (`docs/research/DROPS_AUDIT.md` 2.4, *relayed*): about 1.125 gems per KO
+  below level 51 today, and under option C, which grows the pay with the alpha's level and pays its second type,
+  2.25 / 3.75 / 5.625 from levels 31 / 51 / 66 (`DROPS_PROGRESSION_SPLIT.md` 3.4-3.5, *relayed*; designed, not built;
+  the roll counts are that document's Q2, OPEN);
+- **no blank disc gates a TM's grade.** No counter sells a blank (no `blank_disc` id anywhere in `data/`, *measured*
+  by grep), and every TMCraft blank is craftable: copper from one ingot, the higher grades by smithing upgrade
+  (`DROP_RATE_CONSUMERS.md` 3.2, *relayed*). With alpha gems, 603 of the 802 TMCraft TMs are craftable (3.1 there,
+  *relayed*). The blank lines `PROGRESSION_LADDER.md:177-184` designs were never authored.
+
+So the old case that gems are "no power bypass" is gone: crafted TMs undercut the income-gated TM shelf from leg 1
+whoever supplies the gems (`DROP_RATE_CONSUMERS.md` 3.3 and its section 4 item 1, an owner decision, OPEN). A
+dungeon's gems add to a supply the alphas already provide, and a run is worth doing for what only it gives: the
+progression bundle and the first clears below.
 
 | # | Gems (area) | Battle items (registered ids) | Seam |
 |---|---|---|---|
@@ -274,11 +358,37 @@ blanks still gate the grade by gym (`docs/mechanics/PROGRESSION_LADDER.md:177-18
 | 6 Tower | fire, ghost | `NETHER_ENCOUNTERS.md:363`'s candidates; `life_orb` VERIFIED | none (boss only, as built) or Nether materials |
 | 7 Crucible | steel, fire | `heat_rock`, `iron_ball`, `metal_powder`, `assault_vest` | ancient debris, if the economy wants it |
 
+**Progression, every home, by band.** Candies are type-neutral, so they scale by band, not by home. The sizing rule:
+**one run's candies are about half a cap step for one medium-fast Pokemon at that band**, so a run helps one Pokemon
+catch up and never levels a party. The table is *relayed* from `DROPS_PROGRESSION_SPLIT.md` section 4 (candy EXP
+there is itself *relayed* from `LEVEL_CATCHUP.md:31`); the exact bundles are `trainer-balance-designer`'s.
+
+| Band (cap at entry) | Cap step (EXP, n³) | Candies per run | EXP | IV candies | Rare Candy |
+|---|---:|---|---:|---|---|
+| 1 (20, 25) | 7,625-11,375 | 1 M + 2 S | 4,600 | none | none |
+| 2 (30, 35) | 15,875-21,125 | 3 M | 9,000 | none | none |
+| 3 (40, 45) | 27,125-33,875 | 1 L + 2 M | 16,000 | none | none |
+| 4 (50, 55) | 41,375-49,625 | 2 L + 1 M | 23,000 | 1-2 of one random stat | none |
+| 5 (60, 62) | 49,625 (55 to 60) | 1 XL | 30,000 | 2-3 | 1 |
+| 6 (100) | 784,000 (60 to 100) | 2 XL | 60,000 | 3-4 | 1-2 |
+
+The cap clamps every candy: one used at the cap adds nothing and is not consumed, one below it stops at the cap
+(`DROPS_PROGRESSION_SPLIT.md` 2.2, VERIFIED there in rctmod bytecode; not run in game, X3). So no bundle can overshoot,
+and the band-5 bundle in the window levels to 60 at most.
+
 **Scaling of rewards.** Each band (section 5) has its own table. Bands 1-2 pay one gem and a minor item, bands 3-4 two
-gems and a weather rock or seed, and bands 5-6 three gems and the competitive items. Choice items are postgame band only.
+gems and a weather rock or seed, and bands 5-6 three gems and the competitive items, each with the band's progression
+bundle above. Choice items are postgame band only.
 **Each band's first clear** grants a one-time, per-player prize (an advancement, the Spectrier pattern,
-`tools/spectrier_cap.py`). A dungeon open from badge 0 therefore has six first clears to give. Exact items and weights
-are `trainer-balance-designer`'s.
+`tools/spectrier_cap.py`). A dungeon open from badge 0 therefore has six first clears to give. Decided first clears
+(the owner, 2026-10-08):
+- Night Shift, band 1: the **Lucky Egg** (drop-only today, `DROPS_AUDIT.md` 4.5, *relayed*; so once stripped from the three species,
+  this is its route);
+- Night Shift, band 3: one **Electirizer**;
+- Last Cistern, band 4: one **Auspicious Armor** and one **Malicious Armor**;
+- band 5 of every home: one **Rare Candy**.
+
+The other first clears, and all exact items and weights, are `trainer-balance-designer`'s.
 
 ---
 
@@ -324,7 +434,8 @@ and an informed team, as the gyms were (`docs/STATE.md:344`). The main session r
    pattern is never the last one, and the boss comes from a pool.
 2. **The band changes as you badge up**: new stages, team sizes and tables. A dungeon first run at badge 0 is a
    different fight at badge 4, 8 and after the Champion.
-3. **Gems never stop being wanted** (section 4): every TM consumes them.
+3. **Gems and progression never stop being wanted** (section 4): every crafted TM consumes a gem, and the candies,
+   IV candies and Rare Candy are found nowhere else.
 4. **A collection per band**, drawn without repeats until it is complete, then a flat consolation (the scope's lever,
    `NETHER_DUNGEON_SCOPE.md:99-100`).
 5. **Six first clears per dungeon**, one per band.
@@ -349,7 +460,7 @@ staging run can be repeated at caps 20, 45 and 60 by granting flags.
 - **`engine`:**
   - `pocket` (read from `data/portals.json`, failing closed on disagreement, as Entei does,
     `data/entei_boss.json:55`);
-  - `bands` (the section 5 table);
+  - `bands` (the section 5 table), each with `progression`: a list of `{item, count}` (section 4's bundle);
   - `lockout_ticks`;
   - `battle_rules` (the arena's, `data/arena_fights.json:30`);
   - `hub_heal` (Q4);
@@ -378,7 +489,10 @@ staging run can be repeated at caps 20, 45 and 60 by granting flags.
     - `trainer`: three stands, "Night Shift Hand", "Shotfirer" and "Timberman" (placeholder names), each with
       families by band;
     - `seam`: yield by band, the variant count (8) and the alcove box;
-    - `boss`: an NPC, "the Foreman", with a team by band. He stayed down to keep the lamps lit.
+    - `boss`: an NPC, "the Foreman", with a team by band. He stayed down to keep the lamps lit. Every boss record
+      carries `key_boss` (bool) and `gate_flag`; the Foreman's `key_boss` is false (an NPC, 2.3). A `key_boss: true`
+      record must be listed in `data/key_ball.json` `bosses`.
+  - `den` (optional): `{species_by_band, count, uncatchable: true}`. The Night Shift's is the powerhouse (2.3).
   - `rewards`: `collection_by_band`, `first_clear_by_band` (section 4).
   - `messages`, `does_not_cover`.
 
@@ -392,6 +506,15 @@ staging run can be repeated at caps 20, 45 and 60 by granting flags.
 5. No band's top level is above its cap, and no family is a doll or a mis-modelled final form
    (`docs/research/COBBLEVERSE_COMPATIBILITY.md:108-148`, *relayed*).
 6. Drops: the section 4 rule. Seam: bankable output per run at most the cave's per-reset yield of the same tier.
+   - **Progression is exclusive:** no file in our packs other than a dungeon reward table names a progression id
+     (section 4's list), and the four alpha tier tables are empty. The mutation that proves it: put `exp_candy_xs`
+     back in the tier-1 override and the check must fail (`DROPS_PROGRESSION_SPLIT.md` 3.5).
+   - **Dens:** every den species has a drop entry for its declared item; no den Pokemon is an alpha; the den's
+     expected yield per run is computed from the species file with `DROPS_AUDIT.md` 2.1's roll model, never stated
+     by hand.
+   - **Key bosses:** a `key_boss` record's level is at or under the lowest cap its `gate_flag` admits; no key boss
+     and no dungeon Pokemon is an alpha; every `key_boss` is in `data/key_ball.json` `bosses`, and no other boss is.
+     A gate below `champion_cleared` is not a failure while Q11 is OPEN.
 7. `lockout_ticks` is at least the run's target length (P3).
 8. Ids are prefixed `dg_`. `python tools/id_authorship.py` stays at 0 faults.
 9. `python -m pytest tests/test_system_contracts.py`: new contracts "dungeon NPCs carry no rctmod series" (consumer:
@@ -460,10 +583,24 @@ staging run can be repeated at caps 20, 45 and 60 by granting flags.
    is a dig, not a farm.
 7. **Solo instances only, or friends in one slot?** *Recommend solo first.* It is the Entei decision, and a shared slot
    needs XD8 and the two-player battle question (`NETHER_DUNGEON_SCOPE.md` X5).
-8. **Gems as the reward spine (TM material)?** *Recommend yes.* Section 4: an unbounded demand, gated by the
-   counters' blanks.
+8. **Gems as the reward spine?** **Superseded** by the owner's 2026-10-08 direction: progression is the dungeons'
+   exclusive and gems their volume (section 4). The blank gate it leaned on does not exist.
 9. **The Nether pair after the overworld ones, on the same engine?** *Recommend yes*, with Entei's room re-themed as
    `NETHER_ENCOUNTERS.md` Q5 proposes.
+
+From `DROPS_PROGRESSION_SPLIT.md` section 8:
+10. **The Lucky Egg** (its Q1): **decided, moved** (0.1, section 4).
+11. **Option C's roll counts**, 2.25 / 3.75 / 5.625 gems by tier (its Q2): **OPEN.** *Recommend keep them.*
+12. **The armour den's home** (its Q3): **decided, the Last Cistern** (2.3).
+13. **The counters' priced progression**, vitamins and the Ability Capsule (its Q4): **OPEN.** *Recommend it stays*:
+    priced, and the direction is about free drops.
+14. **Dragon's breath on the Pasture Loot blacklist** (its Q5; the Ability Capsule's brewing input): **OPEN.**
+    *Recommend yes.*
+
+From `DUNGEON_PLACEMENT.md` section 6, all **OPEN**: Q11 (every catch after the Champion), Q12 (the Beast Ball idle
+from Cinderlee to the Champion), Q13 (the Temple Calendar as the window's dungeon), Q14 (Koraidon and Miraidon), Q15
+(which sites are dungeon bosses; `data/key_ball.json` `bosses_why` already treats the shrines, the lake trio, the
+Regis, Lugia, Hoopa, Ursaluna, the Gulch Megas and the raid dens as not), and paradox threats at band 4.
 
 ## 9. Unknowns, as experiments or research
 
@@ -474,3 +611,5 @@ staging run can be repeated at caps 20, 45 and 60 by granting flags.
 | R-D3 | Whether `shiny` is a parsed property for `spawnpokemonat`, and the NPC pool | `cobblemon-researcher` |
 | R-D4 | Whether a forfeit, a flee or a logout mid NPC battle ends it (open since `arena-per-player-opponents.md:371`) | staging, with XD6 |
 | XD1-XD8 | Section 7.4 | builder designs, main session runs, `qa-reviewer` grades |
+| X3, X5, X6 | A candy at the cap is refused and kept; a dual-type alpha's gem types; option C's callback loads (`DROPS_PROGRESSION_SPLIT.md` section 6) | staging, main session |
+| EXP-064 | The Beast Ball key on a tagged boss (NOT_EXECUTED) | staging, main session |

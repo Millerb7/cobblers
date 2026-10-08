@@ -8,10 +8,20 @@ split? It takes as settled, and does not reopen, two decisions of the same day:
   paradox-shaped waits on model delivery.
 - **The Beast Ball is the key to every dungeon boss, and only dungeon bosses** (Entei today, Heatran and whatever
   follows). Legendaries in the overworld stay catchable with ordinary balls, so a Master Ball keeps its purpose.
+  **Built** as `data/key_ball.json` (tag `cobblers.key_boss`, boss list Entei only), NOT RUN: EXP-064 is
+  NOT_EXECUTED (`data/key_ball.json:4`, *read*).
 
 The revision folds in the owner's second instruction: **the level cap is the governing constraint**, because a
 catchable boss must sit at or under the cap of the player who throws at it. It replaces the first version's argument
 for a window paradox reward.
+
+**Owner response, 2026-10-08 (relayed by the update brief).** Approved: **the level cap as the governing constraint**
+and **the Beast Ball rule** (dungeon bosses only). Both are now in `DUNGEONS.md` (0.1, 2.3, 7.2). The recommendation
+(section 3) and every question in section 6 are **unanswered and OPEN**; section 5 marks which changes were applied.
+The paradox rule above is this document's premise; the approval relayed for the update does not name it, so
+`DUNGEONS.md` does not record it yet (OPEN). Also folded in: changes P1-P3 of `DROPS_PROGRESSION_SPLIT.md` section 4
+(approved), which make progression items dungeon rewards. Line numbers cited into `DUNGEONS.md` in sections 0-4
+are from its text before that day's revision.
 
 Labels: **VERIFIED** / **ASSUMED** as `.claude/rules/research.md`; *read* = this unit read the value at the cited
 line; *relayed* = taken from another document's measurement and not re-run here; **REASONED** = argued from the
@@ -30,7 +40,7 @@ standard type chart or design logic, not simulated.
 | Q5 | "The dungeons": one block | **Not one block.** `docs/mechanics/DUNGEONS.md:223-231` sites seven homes. Five are overworld and open before gym 8; the two Nether ones open after the Champion. Every run re-tiers to the cap at entry (`:287-298`), so all five overworld dungeons already run in the window at band 5. **What the window lacks is a dungeon that first opens at badge 8.** |
 | Q6 | "Only 7 paradoxes are modelled today" | **Right** (`docs/research/notes/paradox-pokemon-1.8.0.md:24-27`). The 570-590 ones are Walking Wake, Iron Leaves, Iron Boulder (590), Iron Hands and Iron Jugulis (570). Koraidon and Miraidon are 670. |
 | Q7 | "The wild stays as it is" | **The wild as it is spawns paradoxes** where suppression does not reach (`paradox-pokemon-1.8.0.md:94-102`), so "only in late dungeons" needs the inherited spawn files switched off (`:309-310`). And the paradox decision is recorded in no document yet (change C1). |
-| Q8 | **How the cap refuses a catch, and whether a Beast Ball can override it** | **It cannot.** The level-cap pack's `poke_ball_capture_calculated` callback calls `set_shakes(0)` when the target's level is **strictly greater** than the thrower's RCT cap (`tools/levelcap_pack.py:146-170`, *read*). That callback fires after every ball's maths, the Master Ball's included, and a refusal from any script wins whatever the order (`docs/research/notes/beast-ball-key-1.8.0.md:98`, `:133-136`). The Beast Ball key only *raises the rate and refuses*; it never forces a success (`:133`). So **a key boss above the thrower's cap is uncatchable with every ball**, and the player sees the cap's "Your team isn't strong enough yet" instead of the key's line (`:296-299`). A boss **at** the cap is catchable. Neither the cap pack nor the key callbacks has been thrown at in game (`:142-143`). |
+| Q8 | **How the cap refuses a catch, and whether a Beast Ball can override it** | **It cannot.** The level-cap pack's `poke_ball_capture_calculated` callback calls `set_shakes(0)` when the target's level is **strictly greater** than the thrower's RCT cap (`tools/levelcap_pack.py:146-170`, *read*). That callback fires after every ball's maths, the Master Ball's included, and a refusal from any script wins whatever the order (`docs/research/notes/beast-ball-key-1.8.0.md:98`, `:133-136`). The Beast Ball key only *raises the rate and refuses*; it never forces a success (`:133`). So **a key boss above the thrower's cap is uncatchable with every ball**, and the player sees the cap's "Your team isn't strong enough yet" instead of the key's line (`:296-299`). A boss **at** the cap is catchable. Neither the cap pack nor the key callbacks has been thrown at in game (`:142-143`). The built key pack states the cost: a Beast Ball the cap refuses is consumed, not refunded (`data/key_ball.json:35`, *read*). |
 | Q9 | **Which dungeon bosses could be caught at all** | **Only wild ones.** The overworld dungeons' boss is **an NPC by default** with a 3-6 member team; only the Nether dungeons have a wild boss (`DUNGEONS.md:190-193`, *read*). A ball thrown at an NPC's Pokemon is refused at the hit as `not_wild` (`beast-ball-key-1.8.0.md:151-152`, VERIFIED as a refusal Cobblemon has; ASSUMED that an RCT or Cobblemon NPC's battle Pokemon takes that path, not thrown at). So the cap question bites only where a dungeon has a **wild catch-mode boss**: today Entei, then Heatran. Bands 1-5 of the overworld homes have none. |
 | Q10 | **Is a level-60 boss cheaper to catch than a level-100 one?** | **No.** The capture formula has no level term above level 13, except a step to x0.1 when the thrower's active battler is 50 or more levels below the target (`beast-ball-key-1.8.0.md:55-66`, VERIFIED in bytecode). At cap, the player's team is at the boss's level, so the step never applies. **A catch-rate-3 boss at 60 costs the same throws as Entei at 100**: about 4 asleep at 1 HP, 19 at full HP, so $21k-$95k at $5,000 a ball (`:207-214`, computed by the note). Paradox catch rates are **not read** anywhere in the repository (no match in `paradox-pokemon-1.8.0.md`). |
 
@@ -101,6 +111,9 @@ matters: a wild 570 paradox at level 60, one per player before the Champion. It 
 
 ## 3. Recommendation: (c), every catch after the Champion; pre-League dungeon bosses are set pieces
 
+**Status: OPEN.** The owner has not answered Q11 or Q13; nothing in `DUNGEONS.md` assumes this recommendation. What is
+decided either way: the cap binds any key boss (section 2), and no dungeon Pokemon is an alpha (below).
+
 **Choose (c) in its revised form.** Pre-League dungeon bosses are fight-only set pieces with item rewards; every
 catchable dungeon boss is postgame, behind `champion_cleared`. The reasons, in order:
 
@@ -130,10 +143,17 @@ at entry from `rctmod player get level_cap` (`DUNGEONS.md:287-289`).
 | 5 (window) | 60, 62 | in the late homes (Patriarch, Cistern, Temple) | **none** |
 | 6 (postgame) | 100 | any usable paradox | Entei (100, built), Heatran (designed), one wild paradox boss per late home, catch-once per player per species (`entei_boss.json:22-24`), then `uncatchable` farm mode |
 
-- **The window's new dungeon: the Temple Calendar**, already "~gym 7-8" (`DUNGEONS.md:229`). Its door opens at
-  `gym8_cleared`, the Nether gate's flag (`nether_gate.json:7`).
-- **Key bosses are never alphas.** Cobblemon re-levels an alpha to the nearest player's highest level +4 to +20, which
-  at 100 only clamps but becomes a trap the day a gate moves under the Champion (`entei_boss.json:16`, *read*).
+- **Progression in the window (P2, approved):** band 5 pays candies that level to 60 at most, because the cap clamps
+  every candy and one used at the cap is not consumed (`DROPS_PROGRESSION_SPLIT.md` 2.2, VERIFIED there in rctmod
+  bytecode, not run: X3). This adds no Elite Four exposure beyond what the free training grounds already allow
+  (REASONED). The band-5 bundle is one XL candy, 2-3 IV candies and one Rare Candy (`DUNGEONS.md` section 4,
+  *relayed*).
+- **The window's new dungeon: the Temple Calendar** (OPEN, Q13), already "~gym 7-8" (`DUNGEONS.md` section 3). Its
+  door would open at `gym8_cleared`, the Nether gate's flag (`nether_gate.json:7`).
+- **No dungeon Pokemon is ever an alpha (P3, approved)**: no key boss, no other boss, no den Pokemon. Cobblemon
+  re-levels an alpha to the nearest player's highest level +4 to +20, which at 100 only clamps but becomes a trap the
+  day a gate moves under the Champion (`entei_boss.json:16`, *read*). A den alpha would also pay alpha gems and
+  re-level above the band (`DROPS_PROGRESSION_SPLIT.md` section 4, P3).
 - **The cap rule as a generator check:** a key boss's level must be at or under the lowest cap its gate admits. Under
   this recommendation that is always 100, so it costs nothing to enforce, and it catches the day someone moves a gate.
 
@@ -154,53 +174,57 @@ at entry from `rctmod player get level_cap` (`DUNGEONS.md:287-289`).
 
 ---
 
-## 5. Changes to `docs/mechanics/DUNGEONS.md` (listed, not made)
+## 5. Changes to `docs/mechanics/DUNGEONS.md` (status 2026-10-08)
 
-- **C1. Section 0:** record the two owner decisions of 2026-10-08, the paradox rule and the boss-key rule (dungeon
-  bosses only; overworld legendaries untouched), with the cap as the constraint on any catchable boss. Record that the
-  window cap is 60/62, not 80 (Q1).
-- **C2. Section 2.3 boss line (`:190-193`):** overworld bosses stay NPCs, never catchable, with no key tag. Every wild
-  catch-mode boss is a key boss and is gated at `champion_cleared`. Add a band-6 wild paradox boss to the late homes.
-- **C3. Section 3 table (`:223-231`):** a "paradox" column (none for homes 1-2; threat at band 5+ for 3-5; catch at
-  band 6 only). Move the Temple Calendar's "First reachable" to `gym8_cleared`.
-- **C4. Section 4 rewards (`:248-281`):** paradox rewards are band-6 catches, once per player per species, keyed on
-  the catch (Entei's `catch.rule`). Bands 1-5 reward items only. The generator fails closed on:
-  - a key boss whose level exceeds the lowest cap its gate admits;
-  - a key boss gated below `champion_cleared`;
-  - an alpha key boss;
-  - any paradox catch below band 6.
-- **C5. Section 5 band table (`:291-298`):** add "paradox threat" (bands 5-6) and "catchable boss" (band 6 only)
-  columns. The caps there are right; nothing needs 80.
-- **C6. Section 7.1 schema:** per band, `paradox.threats` (species list) and `paradox.catch` (species or null, band 6
-  only); per boss, `key_boss` (bool) and `gate_flag`.
-- **C7. Section 7.2 validation (`test-author`):** every paradox named is in the usable set (today 7), so a doll never
-  ships; no paradox appears in bands 1-4; the C4 checks.
-- **C8. Cross-reference:** the paradox note's Flutter Mane rite, "move it to a dungeon first clear"
-  (`paradox-pokemon-1.8.0.md:305-306`), becomes a band-6 catch, not a second reward.
-- **C9. Dependency, outside DUNGEONS.md:** switch off the inherited paradox spawn files (Q7), on
+Applied only where the owner approved: the cap as the constraint and the Beast Ball rule. Everything else is OPEN
+and waits on section 6. Section references are to `DUNGEONS.md`'s revised text, not its old line numbers.
+
+- **C1. Section 0. Partly applied (0.1).** The boss-key rule (dungeon bosses only; overworld legendaries untouched),
+  the cap as the constraint on any catchable boss, and the window cap of 60/62, not 80 (Q1), are recorded. **OPEN:**
+  the paradox rule.
+- **C2. Section 2.3 boss line. Partly applied.** Overworld bosses stay NPCs, never catchable, with no key tag; every
+  wild catch-mode boss is a key boss under the cap. **OPEN:** gating every key boss at `champion_cleared` (Q11), and a
+  band-6 wild paradox boss in the late homes.
+- **C3. Section 3 table. OPEN.** The "paradox" column, and the Temple Calendar's "First reachable" at `gym8_cleared`
+  (Q13; noted in the row as open).
+- **C4. Section 4 rewards. Partly applied.** Bands 1-5 reward items only: already the section's rule, and candies and
+  IV candies are items. Added (P1, approved): a band's progression bundle is sized by D2's rule, about half a cap
+  step for one medium-fast Pokemon (`DROPS_PROGRESSION_SPLIT.md` section 4). The fail-closed checks, applied in 7.2:
+  - a key boss whose level exceeds the lowest cap its gate admits: **applied**;
+  - an alpha key boss: **applied**, and widened by P3 to every dungeon Pokemon;
+  - a key boss gated below `champion_cleared`: **OPEN** (Q11);
+  - paradox rewards as band-6 catches, and any paradox catch below band 6: **OPEN**.
+- **C5. Section 5 band table. OPEN** (paradox and catchable-boss columns). The caps there are right; nothing needs 80.
+- **C6. Section 7.1 schema. Partly applied:** per boss, `key_boss` (bool) and `gate_flag`. **OPEN:** per band,
+  `paradox.threats` and `paradox.catch`.
+- **C7. Section 7.2 validation. Partly applied:** the C4 checks marked applied. **OPEN:** the paradox checks (every
+  paradox in the usable set, today 7; none in bands 1-4).
+- **C8. Cross-reference. OPEN:** the Flutter Mane rite as a band-6 catch (`paradox-pokemon-1.8.0.md:305-306`).
+- **C9. Dependency, outside DUNGEONS.md. OPEN:** switch off the inherited paradox spawn files (Q7), on
   `datapack-content-dev`'s list, in `data/spawn_suppression.json`.
-- **C10. Section 8:** add Q11-Q15 below; drop the old window-reward question.
+- **C10. Section 8. Applied as a pointer:** `DUNGEONS.md` section 8 lists Q11-Q15 and the band-4 question as OPEN.
+  It had no window-reward question to drop.
 
 ADR-008 (Proposed) owns the architecture; this narrows its reward and catch rules, so it is an amendment to propose
 there, not a new ADR.
 
 ---
 
-## 6. Open questions, each with a recommendation
+## 6. Open questions, each with a recommendation (none answered as of 2026-10-08)
 
-1. **Q11. Every catch after the Champion, or one window catch (a wild 570 paradox at 60 in the Temple)?**
+1. **OPEN. Q11. Every catch after the Champion, or one window catch (a wild 570 paradox at 60 in the Temple)?**
    *Recommend after* (section 3). The window catch is legal under the cap; it is rejected on cost and Elite Four
    exposure, not on the cap.
-2. **Q12. The Beast Ball sits idle from Cinderlee to the Champion.** Keep the sale there (owner-decided, harmless) or
+2. **OPEN. Q12. The Beast Ball sits idle from Cinderlee to the Champion.** Keep the sale there (owner-decided, harmless) or
    accept the idle stretch as the price of a clean League? *Recommend keep it*, and let Blaine's optional first-win
    Beast Ball (`beast-ball-key-1.8.0.md:234-235`) introduce it as a promise of the postgame.
-3. **Q13. Which home is the window's new dungeon?** *Recommend the Temple Calendar* at `gym8_cleared`.
-4. **Q14. Koraidon and Miraidon (670): dungeon bosses (Beast Ball) or overworld legendaries (ordinary balls)?**
+3. **OPEN. Q13. Which home is the window's new dungeon?** *Recommend the Temple Calendar* at `gym8_cleared`.
+4. **OPEN. Q14. Koraidon and Miraidon (670): dungeon bosses (Beast Ball) or overworld legendaries (ordinary balls)?**
    *Recommend dungeon bosses at band 6*, so they fall under the key rule; the owner's rule decides by where they sit.
-5. **Q15. Are the Hoopa cradle, the Ursaluna cave, the Gulch Megas and the shrine legendaries dungeon bosses?**
-   *Reading: no.* `DUNGEONS.md:216-218` leaves them out of the dungeon homes, so they keep ordinary balls. The owner
-   to confirm.
-6. **Paradox threats at band 4 (cap 50/55)?** *Recommend no.* A player who sees one at band 4 will expect to get one.
+5. **OPEN. Q15. Are the Hoopa cradle, the Ursaluna cave, the Gulch Megas and the shrine legendaries dungeon bosses?**
+   *Reading: no.* `DUNGEONS.md` section 3 leaves them out of the dungeon homes, so they keep ordinary balls, and the
+   built key pack already tags none of them (`data/key_ball.json:33`, *read*). The owner to confirm.
+6. **OPEN. Paradox threats at band 4 (cap 50/55)?** *Recommend no.* A player who sees one at band 4 will expect to get one.
 
 **Unknowns, experiment candidates (the main session runs them; this agent has no shell):**
 - **U1.** `battle_sim` per-foe matrix for the paradox *threats* at band 5, so each band-5 boss stays beatable at cap
