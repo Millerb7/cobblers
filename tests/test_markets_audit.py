@@ -362,12 +362,119 @@ def test_curve_follows_its_inputs_not_constants():
     assert sum("THE tier's rate" in f for f in F) == 6                       # legs 3-8 cannot pick one tier
 
 
+# protects the stalls' place in R2 (price_policies.curve_scale criterion: "a critical stall's gated ones"): a stall's
+# ungated provision on a critical-path town moves nothing however dear; a gated convenience line on it counts (+1000
+# at t1: badge 1's 1480 / 711 leaves the band); an off-path stall counts nothing. Without it a gated stall line would
+# escape the band, or food would price the road
+def test_curve_counts_a_critical_stalls_gated_line_and_never_its_provisions():
+    base, _n = _syn()
+    stall = lambda town, **kw: {"id": "s", "town": town, "stock": [
+        dict({"id": "x", "item": "x:x", "price": 10 ** 6, "strand": "provision"}, **kw)]}
+    doc = _syn_doc()
+    doc["stalls"] = [stall("t1")]
+    assert _syn(doc)[0] == base
+    doc["stalls"] = [stall("elsewhere", price=1000, strand="convenience", gate="g1")]
+    assert _syn(doc)[0] == base
+    doc["stalls"] = [stall("t1", price=1000, strand="convenience", gate="g1")]
+    assert 1 in _badges(_syn(doc)[0], "outside 0.65-0.70")
+
+
 # protects fail-closed placement: a critical-path line of no known strand is named, not silently left out
 def test_curve_names_a_line_of_unknown_strand():
     doc = _syn_doc()
     del doc["counters"][1]["stock"][0]["strand"]
     F, _n = _syn(doc)
     assert any("c1/a has strand None" in f for f in F)
+
+
+# --------------------------------------------------------------------------------- the curve rule on a synthetic shelf
+# data/markets.json price_policies.curve_scale worked on paper, with _syn_doc's terms (fights 100 a leg; produce 50,
+# 60, 70; gathering 20, 40, 90), band 0.65-0.70 (midpoint 0.675), round_to 50, and income 2000 / 3000 / 6000:
+#   leg 1   earned 2000 + 50 + 20 = 2070; 0.675 x 2070 = 1397.25; - fights 100 = 1297.25
+#           list shelf: home bag 300 + t1 a 1000 + group g at its dearest 600 + pin 10 = 1910; scale 0.67919
+#           bag 203.76 -> 200; a (count 2, so a $100 step) 679.19 -> 700; g_hi 407.51 -> 400; g_lo 271.68 -> 250;
+#           pin 6.79 -> 0 steps, raised to the one-step floor 50. Leg 1 costs 200 + 700 + 400 + 50 = 1350
+#   leg 2   nothing on the shelf (t2 has no counter)
+#   leg 3   earned 6000 + 70 + 90 = 6160; 0.675 x 6160 = 4158; - fights 300 - leg 1's 1350 = 2508
+#           list shelf: t3 iron 2000; scale 1.254: iron 2508 -> 2500; the stretch crafting_upgrade (list 1000,
+#           affordable_by 3, sold at t1) takes leg 3's scale: 1254 -> 1250
+#   the power line and the off-path counter are not on the curve and carry no rule
+CR_CRIT = {"home": 0, "t1": 1, "t3": 3}
+CR_INCOME = {1: 2000, 2: 3000, 3: 6000, 4: 7000, 5: 8000, 6: 9000, 7: 10000, 8: 11000}
+
+
+def _cr_doc():
+    def line(i, lp, p, count=1, **kw):
+        return dict({"id": i, "item": "x:" + i, "count": count, "price": p, "list_price": lp, "strand": "convenience",
+                     "price_rule": "curve_scale"}, **kw)
+    doc = _syn_doc()
+    doc["price_policies"] = {"curve_scale": {"band": [0.65, 0.7], "round_to": 50}}
+    doc["counters"] = [
+        {"id": "h", "town": "home", "stock": [line("bag", 300, 200)]},
+        {"id": "c1", "town": "t1", "stock": [
+            line("a", 1000, 700, count=2), line("g_lo", 400, 250, group="g"), line("g_hi", 600, 400, group="g"),
+            line("pin", 10, 50), {"id": "tm", "item": "x:tm", "count": 1, "price": 99999, "strand": "power"},
+            dict(line("crafting_upgrade", 1000, 1250, stretch=True, affordable_by=3), item=SB + "crafting_upgrade")]},
+        {"id": "c3", "town": "t3", "stock": [line("iron", 2000, 2500)]},
+        {"id": "off", "town": "elsewhere", "stock": [{"id": "far", "item": "x:far", "count": 1, "price": 5000,
+                                                      "strand": "convenience"}]}]
+    return doc
+
+
+def _cr(doc, income=CR_INCOME):
+    return MA.curve_price_faults(doc, CR_CRIT, income, SYN_EFFORT, SYN_BLACKOUT)
+
+
+def _cr_line(doc, iid):
+    return next(it for c in doc["counters"] for it in c["stock"] if it["id"] == iid)
+
+
+# protects the curve rule's arithmetic on a shelf worked by hand: every price above is the rule's, so nothing is named.
+# Without it the audit's re-derivation of the rule could be wrong in a way the real data happens to hide
+def test_curve_rule_accepts_exactly_the_hand_worked_prices():
+    assert _cr(_cr_doc()) == []
+
+
+# protects "never accept a scaled price the rule does not produce": one step off the rounding, the old list price typed
+# back, the floor ignored, a stretch on its own leg's scale, each is named with the rule's figure; and a mispriced leg
+# 1 line faults ALONE (leg 3's expectation is built from the rule's leg-1 prices, not the written ones)
+@pytest.mark.parametrize("iid, price, needle", [
+    ("bag", 250, "h/bag costs $250; price_policies.curve_scale gives list $300 x leg 1's scale 0.6792 = $200"),
+    ("a", 680, "c1/a costs $680"),                                           # count 2: a $100 step, 679 -> 700
+    ("iron", 2000, "c3/iron costs $2000; price_policies.curve_scale gives list $2000 x leg 3's scale 1.2540 = $2500"),
+    ("pin", 0, "c1/pin costs $0"),                                           # under the one-step floor
+    ("crafting_upgrade", 1000, "c1/crafting_upgrade costs $1000"),           # leg 1's scale would give 700
+])
+def test_curve_rule_names_a_price_the_rule_does_not_give(iid, price, needle):
+    doc = _cr_doc()
+    _cr_line(doc, iid)["price"] = price
+    F = _cr(doc)
+    assert len(F) == 1 and needle in F[0], F
+
+
+# protects the rule's reach and its records: a ruled line off the curve, a curve line with no rule, a missing list
+# price, a stretch affordable at a badge the ladder does not give, a policy band moved off 0.3's, a leg already over
+# the midpoint before its shelf -- each named. Without it the rule could price lines it never reaches, or quietly
+# leave a hand-typed price on the curve
+def test_curve_rule_names_its_record_faults():
+    doc = _cr_doc()
+    doc["counters"][3]["stock"][0].update(price_rule="curve_scale", list_price=5000)
+    assert any("off/far carries price_rule curve_scale but is not a critical-path convenience line" in f for f in _cr(doc))
+    doc = _cr_doc()
+    _cr_line(doc, "iron").pop("price_rule")
+    assert any("c3/iron is a critical-path convenience line without price_rule curve_scale" in f for f in _cr(doc))
+    doc = _cr_doc()
+    _cr_line(doc, "bag")["list_price"] = 0
+    assert any("h/bag carries price_rule curve_scale with list_price 0" in f for f in _cr(doc))
+    doc = _cr_doc()
+    _cr_line(doc, "crafting_upgrade")["affordable_by"] = 2
+    assert any("affordable_by 2; the ladder makes it affordable at badge 3" in f for f in _cr(doc))
+    doc = _cr_doc()
+    doc["price_policies"]["curve_scale"]["band"] = [0.6, 0.7]
+    assert _cr(doc) == ["curve rule: price_policies.curve_scale.band [0.6, 0.7] is not PROGRESSION_LADDER 0.3's "
+                        "[0.65, 0.7]"]
+    F = _cr(_cr_doc(), income={**CR_INCOME, 3: 1000})                  # 0.675 x 1160 = 783 < 300 + 1350
+    assert any("leg 3:" in f and "no positive scale exists" in f for f in F)
 
 
 # protects the gate source: a town's badge comes from the gym flag's own town, not from data/markets.json
@@ -637,6 +744,105 @@ def test_the_curve_and_the_floor_bite(M):
     doc = _doc_with(M, lambda d: _item(d, "northlight_station", "zinc").update(price=2500))
     F, _w, _n = MA.audit(doc, MA.load_pack(M.build(doc)[0]), MA.OVERLAY.read_text(encoding="utf-8"), **_inputs())
     assert any("northlight_station/zinc sells at $2500 each, not above bank.json's $2500" in f for f in F)
+
+
+# ------------------------------------------------------------------------- the curve rule and the ladder, real data
+def _crit():
+    tb = MA.town_badges(MA.read_json(ROOT / "data" / "progression.json"), MA.read_json(ROOT / "data" / "towns.json"))
+    return {t: n for t, (n, _f) in tb.items()}
+
+
+def _real_rule(doc):
+    return MA.curve_price_faults(doc, _crit(), MA.trainer_income(doc), MA.read_json(MA.DATA_BANK),
+                                 MA.read_json(MA.BLACKOUT))
+
+
+def _ruled(doc):
+    return [(c["id"], it["id"]) for c in doc["counters"] for it in c["stock"] if it.get("price_rule") == "curve_scale"]
+
+
+# protects the committed convenience strand against price_policies.curve_scale: every critical-path convenience line
+# carries the rule and costs what the rule gives. Nonempty: the check reaches ruled lines in the hometown and all
+# eight gym towns. Without it a hand-typed price could sit on the curve
+def test_the_committed_convenience_prices_are_the_curve_rules(M):
+    doc = M.load()
+    ruled = _ruled(doc)
+    assert len({c for c, _i in ruled}) >= 9                                 # the hometown and the eight gym towns
+    assert _real_rule(doc) == []
+
+
+# protects the curve-rule check's independence from the builder: tools/markets.py's curve_prices MUTATED (data
+# untouched) -- its band read 0.01 high, or its earned term $500 a leg richer -- writes prices the audit refuses,
+# while the unmutated builder's prices pass. A mutation of the record would move the expectation with the output
+@pytest.mark.parametrize("mutation", ["band", "earned"])
+def test_a_mutated_curve_rule_generator_is_caught(monkeypatch, M, mutation):
+    def priced_by_builder():
+        doc = json.loads(json.dumps(M.load()))
+        _s, prices = M.curve_prices(doc)
+        for c in doc["counters"]:
+            for it in c["stock"]:
+                if (c["id"], it["id"]) in prices:
+                    it["price"] = prices[(c["id"], it["id"])]
+        return doc
+    assert _real_rule(priced_by_builder()) == []
+    if mutation == "band":
+        lo_hi = M.curve_band(M.load())
+        monkeypatch.setattr(M, "curve_band", lambda doc: (lo_hi[0] + 0.01, lo_hi[1] + 0.01))
+    else:
+        real = M.r2_earned
+        monkeypatch.setattr(M, "r2_earned", lambda doc, effort=None: {
+            b: (f, t, e + 500 * b) for b, (f, t, e) in real(doc, effort).items()})
+    F = _real_rule(priced_by_builder())
+    assert len(F) >= 8 and all("price_policies.curve_scale gives list" in f for f in F), F
+
+
+# protects the curve-rule check's INPUT PATH: the whole audit, given no effort, reads data/bank.json from disk; pointed
+# at a copy with doubled gathering rates, the earned term moves and the committed prices are no longer the rule's.
+# Without it the rule's earned term could be a constant
+def test_mutation_the_curve_rule_follows_the_bank_file(M, tmp_path, monkeypatch):
+    eff = MA.read_json(MA.DATA_BANK)
+    for b in eff["buys"]:
+        b["rate_per_hour"] *= 2
+    (tmp_path / "bank.json").write_text(json.dumps(eff), encoding="utf-8")
+    assert not [f for f in _audit(M)[0] if f.startswith("curve rule:")]
+    monkeypatch.setattr(MA, "DATA_BANK", tmp_path / "bank.json")
+    assert len([f for f in _audit(M)[0] if f.startswith("curve rule:")]) >= 8
+
+
+# protects TIERED_GOODS' ladder as RELATIVE worth under the curve rule (CURVEPRICE): a ruled line is held to the
+# ladder by its list_price, not by the scaled price a player pays -- so a list equal to the ladder raises no finding
+# and a list moved off it does, naming the list; and the old ladder price typed back as `price` is not a ladder pass
+# but a curve-rule fault. Without it the ruled lines either drown the ladder in findings or escape it entirely
+def test_the_ladder_reads_a_ruled_lines_list_price_and_the_rule_reads_its_price(M):
+    i = _inputs()
+    pack = MA.load_pack(M.build(M.load())[0])
+    overlay = MA.OVERLAY.read_text(encoding="utf-8")
+    run = lambda d: MA.audit(d, pack, overlay, **i)
+    base = M.load()
+    ib = _item(base, "highwire", "iron_backpack")
+    assert ib["price_rule"] == "curve_scale" and ib["list_price"] == MA.LADDER[SB + "iron_backpack"][1] != ib["price"]
+    F, W, _n = run(base)
+    assert not [w for w in W if "iron_backpack at highwire" in w]
+    assert not [f for f in F if f.startswith("curve rule:")]
+    doc = _doc_with(M, lambda d: _item(d, "highwire", "iron_backpack").update(list_price=4600))
+    F, W, _n = run(doc)
+    assert any("iron_backpack at highwire lists (list_price, curve_scale) at $4600 each; the ladder prices it at $4500"
+               in w for w in W), W
+    doc = _doc_with(M, lambda d: _item(d, "highwire", "iron_backpack").update(price=4500))
+    F, W, _n = run(doc)
+    assert not [w for w in W if "iron_backpack at highwire" in w]
+    rule = [f for f in F if f.startswith("curve rule:")]
+    assert len(rule) == 1 and rule[0].startswith("curve rule: highwire/iron_backpack costs $4500; price_policies."
+                                                 "curve_scale gives list $4500 x leg 3's scale ")
+    assert rule[0].endswith("= $%d (rounded to $50)" % ib["price"]), rule
+    # a line the rule does not price is still held to the ladder by what it costs (Highwire's five Great Balls)
+    gb = _item(base, "highwire", "great_ball")
+    assert "price_rule" not in gb
+    unit = lambda d: _item(d, "highwire", "great_ball")["price"] / gb["count"]
+    doc = _doc_with(M, lambda d: _item(d, "highwire", "great_ball").update(price=gb["count"] * 760))
+    assert any("great_ball at highwire costs $760 each; the ladder prices it at $750" in w for w in run(doc)[1])
+    doc = _doc_with(M, lambda d: _item(d, "highwire", "great_ball").update(price=gb["count"] * 750))
+    assert unit(doc) == 750 and not [w for w in run(doc)[1] if "great_ball at highwire" in w]
 
 
 # ================================================================================================ with the jars
