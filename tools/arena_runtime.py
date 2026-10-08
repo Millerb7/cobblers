@@ -46,6 +46,22 @@ STATE (all per player, scoreboard; nothing server-wide but the id counter and th
   ar.next   1 when the clear-up should spawn the next leg;  ar.idle  sweeps that found the bout not in battle
   ar.left   minecraft.custom:minecraft.leave_game: a player who left mid-run loses the run when they return
 
+MONEY (data/arena_fights.json prizes.purse_policy, unit ARENACAP 2026-10-10). The arena pays its own purse with
+`cobbledollars give`, and CobbleDollars ALSO pays every NPC win by itself (battleVictory, any loser of ActorType.NPC;
+docs/research/notes/paid-services-and-npc-payouts.md B2). CobbleDollars has no per-entity or per-battle exclusion
+(its only test is the actor type), and turning earnCobbleDollarsFromNPC off would end every trainer's pay, so the
+arena takes that payout BACK: `cobbledollars query @s` (its result is the balance) snapshots the balance just before
+start_battle; on the win the gain since then, bounded by the most CobbleDollars could pay for that opponent
+(cd_bound), is removed with `cobbledollars remove`, then the arena's purse is paid. The two handlers answer the same
+BATTLE_VICTORY in no fixed order, so the clear-up 2 s later looks once more (or `rejoined`, for a player who left).
+  ar.bal    the balance baseline;  ar.cmax  what may still be taken back for this win;  ar.claw  1: a second look
+  ar.first  1 when the payment being made is a first;  ar.spaid  the longest streak whose wins were ever paid
+  ar.rday / ar.rper  paid repeat wins in the current period / that period's number (gametime / day_ticks)
+  tags cobblers.arena_paid_<rank>_<p|e><leg>_w<wins> | _clear_w<wins>: that payment's first is spent, for good
+The purse (docs/mechanics/ECONOMY_OVERHAUL.md section 6): full only for a win at the player's own rank never paid
+before (each advance win, leg, clear bonus, exam leg; the streak's new bests); every other win pays the flat
+repeat_purse, at most daily_cap_wins a period; bonuses never pay on a repeat.
+
 MULTIPLAYER. One opponent per player, owned by score; a venue holds one live run at a time (a second player is told
 it is in use); battles are built for the one named player. A player who leaves the venue between legs, logs out,
 flees or forfeits loses the RUN (never the rank); the opponent is cleared by the result, by `arena/abandon`, or by the
@@ -97,7 +113,13 @@ SKILL = {1: 3, 2: 3, 3: 4, 4: 4, 5: 5, 6: 5, 7: 5, 8: 5, 9: 5}
 EXAM_SKILL = 5
 SLUG = re.compile(r"[a-z0-9_]+")
 OBJECTIVES = ["ar.id", "ar.rank", "ar.wins", "ar.cur", "ar.kind", "ar.leg", "ar.streak", "ar.best", "ar.venue",
-              "ar.exh", "ar.live", "ar.go", "ar.end", "ar.next", "ar.idle", "ar.t"]
+              "ar.exh", "ar.live", "ar.go", "ar.end", "ar.next", "ar.idle", "ar.t",
+              # the purse policy and the CobbleDollars clawback (unit ARENACAP, 2026-10-10)
+              "ar.bal", "ar.cmax", "ar.claw", "ar.first", "ar.spaid", "ar.rday", "ar.rper"]
+# CobbleDollars' own config: its NPC-win payout multiplier bounds the clawback (prizes.purse_policy)
+CD_CONFIG = ROOT / "modpack" / "config" / "cobbledollars" / "common.json"
+PAID = "cobblers.arena_paid_"             # + <rank>_p<leg> | <rank>_e<leg> | <rank>_clear: a first already paid
+CLAW_MARGIN = 3                           # added to the computed bound (cd_bound): integer slack, not a tuned fudge
 
 
 class ArenaError(SystemExit):
@@ -136,6 +158,45 @@ def purse(levels, rule):
     same half (#half = step/2 - 1)."""
     step, k = rule
     return (k * sum(levels) + step // 2 - 1) // step * step
+
+
+def purse_policy(fights):
+    """prizes.purse_policy, validated: (repeat_purse, daily_cap_wins, day_ticks). Fails closed when a knob is
+    missing or not a non-negative integer, so a typo can never become an unlimited purse."""
+    pol = fights["prizes"].get("purse_policy")
+    if not isinstance(pol, dict):
+        raise ArenaError("data/arena_fights.json prizes.purse_policy is missing: the arena's purse has no cap")
+
+    def knob(obj, k, where):
+        v = obj.get(k)
+        if not isinstance(v, int) or isinstance(v, bool) or v < 0:
+            raise ArenaError("data/arena_fights.json prizes.%s.%s must be an integer >= 0, not %r" % (where, k, v))
+        return v
+    out = tuple(knob(pol, k, "purse_policy") for k in ("repeat_purse", "daily_cap_wins", "day_ticks"))
+    if out[2] == 0:
+        raise ArenaError("prizes.purse_policy.day_ticks must be at least 1")
+    kept = knob(pol.get("cobbledollars_auto_payout") or {}, "kept_cap", "purse_policy.cobbledollars_auto_payout")
+    if kept != 0:
+        raise ArenaError("prizes.purse_policy.cobbledollars_auto_payout.kept_cap is %d: only 0 (the whole automatic "
+                         "payout goes back) is implemented in cd/settle" % kept)
+    return out
+
+
+def cd_multiplier_permille(path=CD_CONFIG):
+    """CobbleDollars' cobbleDollarsIncomeMultiplier (modpack/config/cobbledollars/common.json) in thousandths."""
+    v = doc(path).get("cobbleDollarsIncomeMultiplier")
+    if not isinstance(v, (int, float)) or isinstance(v, bool) or v < 0:
+        raise ArenaError("%s has no numeric cobbleDollarsIncomeMultiplier: the clawback cannot be bounded" % path)
+    return int(math.ceil(v * 1000 - 1e-9))
+
+
+def cd_bound(level_sum, mult_pm):
+    """The most CobbleDollars' battleVictory can credit for one NPC loser whose team's levels sum to at most
+    `level_sum` (bytecode, docs/research/notes/paid-services-and-npc-payouts.md B2):
+        B = int(5 * S * sum(L / 50.0))  = S*S/10 at most      amount = B + nextBetween(B/2, 2B) <= 3B
+        credit = floor(amount * multiplier)
+    The same integer steps the scoreboard takes in cd/bound_streak, plus CLAW_MARGIN. A clawback never takes more."""
+    return (level_sum * level_sum // 10 * 3 * mult_pm) // 1000 + CLAW_MARGIN
 
 
 def drawn_levels(members, top):
@@ -206,6 +267,7 @@ def ladder(fights, trainers, league):
                      purse=p, exhibition=(p // 4 + rule[0] // 2 - 1) // rule[0] * rule[0],
                      clear_bonus=r["purse"].get("clear_bonus", 0),
                      exam=[(t, purse([m["level"] for m in champs[t]["team"]], rule)) for t in leg_ids],
+                     exam_sum=[sum(m["level"] for m in champs[t]["team"]) for t in leg_ids],
                      prize=r.get("first_clear_prize"))
             if e["top"] > band["cap"]:
                 raise ArenaError("rank %d tops out at %d, over its band's cap %d" % (n, e["top"], band["cap"]))
@@ -320,8 +382,10 @@ def fmt(v):
 
 # ------------------------------------------------------------------ the pack
 
-def files(dome_path=DOME):
-    fights = doc(DATA / "arena_fights.json")
+def files(dome_path=DOME, fights=None, cd_config=CD_CONFIG):
+    """`fights` (a parsed data/arena_fights.json) and `cd_config` exist so the purse policy's knobs can be exercised;
+    the build always reads the files."""
+    fights = doc(DATA / "arena_fights.json") if fights is None else fights
     trainers = doc(DATA / "arena_trainers.json")["trainers"]
     league = doc(DATA / "league_trainers.json")["trainers"]
     bout_tag = doc(DATA / "blackout.json")["arena_exempt"]["player_tag"]
@@ -338,6 +402,8 @@ def files(dome_path=DOME):
     used = {t for e in lad.values() for t, _p in e.get("exam", [])}
     champs = {k: v for k, v in champs.items() if k in used}
     rule = purse_rule(fights)
+    rep_purse, rep_wins, day_ticks = purse_policy(fights)
+    mult_pm = cd_multiplier_permille(cd_config)
 
     out = {"pack.mcmeta": {"pack": {"pack_format": 48, "description":
                                     "Cobblers: Heaven's Arena per-player opponents (tools/arena_runtime.py)"}}}
@@ -356,7 +422,14 @@ def files(dome_path=DOME):
                      "scoreboard players set #c50 ar.t %d" % rule[0],
                      "scoreboard players set #half ar.t %d" % (rule[0] // 2 - 1),
                      "scoreboard players set #c2 ar.t 2",
-                     "scoreboard players set #c5 ar.t 5"])
+                     "scoreboard players set #c5 ar.t 5",
+                     "scoreboard players set #c3 ar.t 3",
+                     "scoreboard players set #c10 ar.t 10",
+                     "scoreboard players set #c1000 ar.t 1000",
+                     "# prizes.purse_policy and CobbleDollars' income multiplier (thousandths)",
+                     "scoreboard players set #rcap ar.t %d" % rep_wins,
+                     "scoreboard players set #cday ar.t %d" % day_ticks,
+                     "scoreboard players set #cdm ar.t %d" % mult_pm])
     fn["tick"] = [
         "execute as @a[scores={ar.left=1..}] run function %s" % F_("rejoined"),
         "execute as @a[scores={ar.go=1..}] run function %s" % F_("go_tick"),
@@ -375,7 +448,9 @@ def files(dome_path=DOME):
         "# as a player: no bout, no run. The blackout exemption tag goes with it",
         "scoreboard players set @s ar.live 0", "scoreboard players set @s ar.leg 0",
         "scoreboard players set @s ar.next 0", "scoreboard players set @s ar.go 0",
-        "scoreboard players set @s ar.idle 0", "tag @s remove %s" % bout_tag]
+        "scoreboard players set @s ar.idle 0", "tag @s remove %s" % bout_tag,
+        "# a clawback still pending here is dropped, never run: only `after` and `rejoined` may take money back",
+        "scoreboard players set @s ar.claw 0", "scoreboard players reset @s ar.bal"]
     fn["kill_mine"] = ["function %s" % F_("mine"),
                        "execute as %s if score @s ar.id = #me ar.id run kill @s" % NPC]
     fn["lose_run"] = [
@@ -384,6 +459,8 @@ def files(dome_path=DOME):
         "function %s" % F_("end_run")]
     fn["rejoined"] = [
         "scoreboard players reset @s ar.left",
+        "# left in the two seconds after a win: CobbleDollars' payout may have landed after the first clawback",
+        "execute if score @s ar.claw matches 1 run function %s" % F_("cd/last"),
         "execute unless score @s ar.live matches 1 run return 0",
         say("You left Heaven's Arena mid-run: that run is over. Your rank is kept.", "gray"),
         "function %s" % F_("lose_run")]
@@ -583,8 +660,9 @@ def files(dome_path=DOME):
         for leg, (tid, _p) in enumerate(e["exam"]):
             ann.append("execute if score @s ar.kind matches 2 if score @s ar.cur matches %d if score @s ar.leg matches "
                        "%d run %s" % (n, leg, say("Rank-up fight: %s" % champs[tid]["display_name"])))
-    ann.append("execute if score @s ar.exh matches 1 run %s" % say(
-        "An exhibition: two or more ranks below your own pays a quarter purse and no bonus.", "gray"))
+    ann.append("execute if score @s ar.cur < @s ar.rank run %s" % say(
+        "A rank you have cleared: a win pays $%d, at most %d paid wins a day." % (rep_purse, rep_wins)
+        if rep_purse and rep_wins else "A rank you have cleared: a win here pays no purse.", "gray"))
     fn["announce"] = ann
     fn["spawn_failed"] = [
         "# no opponent appeared: the class is not loaded (NPC classes load at server START; restart after install)",
@@ -597,6 +675,8 @@ def files(dome_path=DOME):
         "function %s" % F_("mine"),
         "execute as %s if score @s ar.id = #me ar.id run tag @s add %s" % (npc("tag=!%s" % DONE_TAG), PICK),
         "execute unless entity @e[type=cobblemon:npc,tag=%s] run return run function %s" % (PICK, F_("lose_run")),
+        "# the balance before this bout: whatever CobbleDollars credits for the win is measured against it",
+        "function %s {x:\"\"}" % F_("cd/snap"),
         "runmolang \"t.b = q.npc.start_battle(q.player, 'singles'); (t.b == 0) ? { q.run_command('execute as ' + "
         "q.player.uuid + ' run function %s'); };\" @s @e[type=cobblemon:npc,tag=%s,limit=1]" % (F_("refused"), PICK),
         "tag @e[tag=%s] remove %s" % (PICK, PICK)]
@@ -615,10 +695,18 @@ def files(dome_path=DOME):
         "function %s" % F_("mark_done"),
         "scoreboard players set @s ar.idle 0",
         "scoreboard players set @s ar.next 0",
+        "# CobbleDollars pays this win by itself (any NPC loser; prizes.purse_policy.cobbledollars_auto_payout): take",
+        "# it back, bounded by the most it could have paid, BEFORE the arena's own purse. Its handler and this callback",
+        "# answer the same BATTLE_VICTORY in an order the jar does not fix, so `after` looks a second time",
+        "function %s" % F_("cd/bound"),
+        "function %s" % F_("cd/settle"),
         "function %s" % F_("purse"),
         "execute if score @s ar.kind matches 1 run function %s" % F_("won_pool"),
         "execute if score @s ar.kind matches 2 run function %s" % F_("won_exam"),
         "execute if score @s ar.kind matches 3 run function %s" % F_("won_streak"),
+        "# the new baseline includes the arena's own purse and bonuses; the second look claws only what came after",
+        "function %s {x:\"\"}" % F_("cd/snap"),
+        "scoreboard players set @s ar.claw 1",
         "scoreboard players set @s ar.end %d" % END_TICKS]
     wp = ["scoreboard players add @s ar.leg 1"]
     for n, e in sorted(lad.items()):
@@ -630,7 +718,12 @@ def files(dome_path=DOME):
            "scoreboard players set @s ar.leg 0"]
     for n, e in sorted(lad.items()):
         if e["format"] != "streak" and e["legs"] > 1 and e["clear_bonus"]:
-            wp.append("execute if score @s ar.cur matches %d if score @s ar.exh matches 0 run function %s {amount:%d}"
+            # the clear bonus is part of a first clear only (prizes.purse_policy): at the player's own rank, once
+            # per clear index; a repeat clear pays the repeat already paid for its last leg, and no bonus
+            wp.append("execute if score @s ar.cur matches %d run scoreboard players set @s ar.first 0" % n)
+            wp.append("execute if score @s ar.cur matches %d if score @s ar.cur = @s ar.rank run function %s "
+                      "{t:\"%s%d_clear\"}" % (n, F_("first_t"), PAID, n))
+            wp.append("execute if score @s ar.cur matches %d if score @s ar.first matches 1 run function %s {amount:%d}"
                       % (n, F_("pay"), e["clear_bonus"]))
             wp.append("execute if score @s ar.cur matches %d run %s" % (n, say("Gauntlet cleared.")))
     wp.append("execute if score @s ar.cur = @s ar.rank run function %s" % F_("progress"))
@@ -707,7 +800,9 @@ def files(dome_path=DOME):
           "execute unless score @s ar.best >= @s ar.streak run scoreboard players operation @s ar.best = @s ar.streak",
           "scoreboard players operation #r ar.t = @s ar.streak",
           "scoreboard players operation #r ar.t %= #c5 ar.t",
-          "execute if score #r ar.t matches 0 run function %s {amount:%d}" % (F_("pay"), st["bonus"])]
+          "# the every-5th bonus only when this win is a new best paid streak (ar.first from streak/first)",
+          "execute if score #r ar.t matches 0 if score @s ar.first matches 1 run function %s {amount:%d}"
+          % (F_("pay"), st["bonus"])]
     for at, pid in se["milestones"]:
         ws.append("execute if score @s ar.streak matches %d.. unless entity @s[tag=cobblers.%s] run function %s"
                   % (at, pid, F_("prize/%s" % pid)))
@@ -718,21 +813,72 @@ def files(dome_path=DOME):
     fn["won_streak"] = ws
 
     # ---- money: the purse of the bout just won, before any score moves
-    pu = ["# as the winner: 13 x the opponent's level sum, to the nearest 50 (prizes.purse_formula); a quarter when an",
-          "# exhibition. Pool bouts use the draw's levels (ace at the top, each earlier one lower), exams the authored"]
+    pu = ["# as the winner (prizes.purse_policy; docs/mechanics/ECONOMY_OVERHAUL.md section 6): a win on the way to the",
+          "# player's FIRST clear of a rank -- at their own rank, each `advance` win, leg, clear bonus and exam leg --",
+          "# pays its full figure once (tag %s<rank>_<p|e><leg>_w<wins>); every other win pays the flat repeat" % PAID,
+          "scoreboard players set @s ar.first 0",
+          "execute if score @s ar.cur = @s ar.rank run function %s" % F_("purse_first"),
+          "execute if score @s ar.first matches 1 run return run function %s" % F_("purse_full"),
+          "function %s" % F_("repeat")]
+    fn["purse"] = pu
+    pf = ["# as the winner at their own rank: is this exact payment (rank, kind, leg, wins so far) still unpaid?",
+          "# ar.leg is this bout's own leg index (0-based); ar.wins the rank's wins or clears before this one"]
+    full = ["# as the winner of a first: 13 x the opponent's level sum, to the nearest 50 (prizes.purse_formula); pool",
+            "# bouts use the draw's levels (ace at the top, each earlier one lower), exams the authored ones"]
     for n, e in sorted(lad.items()):
         if e["format"] == "streak":
             continue
-        pu.append("execute if score @s ar.kind matches 1 if score @s ar.cur matches %d if score @s ar.exh matches 0 run "
-                  "function %s {amount:%d}" % (n, F_("pay"), e["purse"]))
-        pu.append("execute if score @s ar.kind matches 1 if score @s ar.cur matches %d if score @s ar.exh matches 1 run "
-                  "function %s {amount:%d}" % (n, F_("pay"), e["exhibition"]))
+        for leg in range(e["legs"]):
+            pf.append("execute if score @s ar.kind matches 1 if score @s ar.cur matches %d if score @s ar.leg matches %d "
+                      "run function %s {t:\"%s%d_p%d\"}" % (n, leg, F_("first_t"), PAID, n, leg))
+        full.append("execute if score @s ar.kind matches 1 if score @s ar.cur matches %d run function %s {amount:%d}"
+                    % (n, F_("pay"), e["purse"]))
         for leg, (_t, p) in enumerate(e["exam"]):
-            pu.append("execute if score @s ar.kind matches 2 if score @s ar.cur matches %d if score @s ar.leg matches %d "
-                      "run function %s {amount:%d}" % (n, leg, F_("pay"), p))
-    pu.append("execute if score @s ar.kind matches 3 run function %s" % F_("streak/purse"))
-    fn["purse"] = pu
+            pf.append("execute if score @s ar.kind matches 2 if score @s ar.cur matches %d if score @s ar.leg matches %d "
+                      "run function %s {t:\"%s%d_e%d\"}" % (n, leg, F_("first_t"), PAID, n, leg))
+            full.append("execute if score @s ar.kind matches 2 if score @s ar.cur matches %d if score @s ar.leg matches "
+                        "%d run function %s {amount:%d}" % (n, leg, F_("pay"), p))
+    pf.append("execute if score @s ar.kind matches 3 run function %s" % F_("streak/first"))
+    full.append("execute if score @s ar.kind matches 3 run function %s" % F_("streak/purse"))
+    fn["purse_first"] = pf
+    fn["purse_full"] = full
+    fn["first_t"] = [
+        "# as the winner: the payment $(t), keyed by the wins so far at this rank",
+        "$data modify storage %s first.t set value \"$(t)\"" % STORE,
+        "execute store result storage %s first.w int 1 run scoreboard players get @s ar.wins" % STORE,
+        "function %s with storage %s first" % (F_("first"), STORE)]
+    fn["first"] = [
+        "# ar.first 1 when the tag is not yet held (this payment was never made), then hold it for good",
+        "scoreboard players set @s ar.first 1",
+        "$execute if entity @s[tag=$(t)_w$(w)] run scoreboard players set @s ar.first 0",
+        "$tag @s add $(t)_w$(w)"]
+    fn["streak/first"] = [
+        "# a first when this win's number (ar.streak + 1) is past the longest streak ever paid (ar.spaid)",
+        "scoreboard players operation #w ar.t = @s ar.streak",
+        "scoreboard players add #w ar.t 1",
+        "execute unless score @s ar.spaid >= #w ar.t run scoreboard players set @s ar.first 1",
+        "execute if score @s ar.first matches 1 run scoreboard players operation @s ar.spaid = #w ar.t"]
+    if rep_purse == 0 or rep_wins == 0:
+        fn["repeat"] = [
+            "# prizes.purse_policy: repeat_purse %d, daily_cap_wins %d -- a repeat win pays nothing"
+            % (rep_purse, rep_wins),
+            say("A repeat win: Heaven's Arena pays its purse only on the way to a first clear.", "gray")]
+    else:
+        fn["repeat"] = [
+            "# prizes.purse_policy: a flat repeat_purse %d, at most daily_cap_wins %d paid wins per player per"
+            % (rep_purse, rep_wins),
+            "# day_ticks of game time (`time query gametime`, which sleeping does not advance)",
+            "execute store result score #per ar.t run time query gametime",
+            "scoreboard players operation #per ar.t /= #cday ar.t",
+            "execute unless score @s ar.rper = #per ar.t run scoreboard players set @s ar.rday 0",
+            "scoreboard players operation @s ar.rper = #per ar.t",
+            "execute if score @s ar.rday >= #rcap ar.t run return run %s" % say(
+                "A repeat win: today's %d paid repeat wins are used up. The way to a first clear still pays in full."
+                % rep_wins, "gray"),
+            "scoreboard players add @s ar.rday 1",
+            "function %s {amount:%d}" % (F_("pay"), rep_purse)]
     fn["streak/purse"] = [
+        "# the purse of a streak win that extends the player's best paid streak (streak/first)",
         "function %s" % F_("streak/levels"),
         "# the level sum of m members ending at L: m*L - m(m-1)/2",
         "scoreboard players operation #s ar.t = #m ar.t",
@@ -752,6 +898,60 @@ def files(dome_path=DOME):
         "# CobbleDollars' own command: `give` is VERIFIED from the jar (EXP-040); `remove` is the form proven in game",
         "$cobbledollars give @s $(amount)",
         '$tellraw @s {"text":"+$(amount) CobbleDollars","color":"green"}']
+
+    # ---- CobbleDollars' automatic NPC-win payout, taken back (prizes.purse_policy.cobbledollars_auto_payout)
+    # Commands, from CobbleDollars-fabric-2.0.0+Beta-5.1+1.21.1.jar fr/harmex/cobbledollars/common/command/
+    # CobbleDollarsCommand: `cobbledollars query <target>` returns the balance as its result (BigInteger.intValue);
+    # `cobbledollars remove <targets> <amount>` takes min(amount, balance), amount >= 1. A macro line, as the
+    # level-cap pack's rctmod read is (EXP-046: a mod command on a plain line can be inert until a /reload).
+    fn["cd/snap"] = ["# as a player: the balance now, the baseline a clawback measures from",
+                     "$execute store result score @s ar.bal run cobbledollars query @s$(x)"]
+    fn["cd/now"] = ["$execute store result score #now ar.t run cobbledollars query @s$(x)"]
+    fn["cd/settle"] = [
+        "# as the winner: whatever the balance gained since the baseline, up to what is left of ar.cmax, goes back.",
+        "# No baseline or no allowance: nothing is taken. A failed read stores 0, which makes the gain <= 0",
+        "execute unless score @s ar.bal matches -2147483648.. run return 0",
+        "execute unless score @s ar.cmax matches 1.. run return 0",
+        "function %s {x:\"\"}" % F_("cd/now"),
+        "scoreboard players operation #now ar.t -= @s ar.bal",
+        "scoreboard players operation #now ar.t < @s ar.cmax",
+        "execute if score #now ar.t matches ..0 run return 0",
+        "scoreboard players operation @s ar.cmax -= #now ar.t",
+        "execute store result storage %s claw.amount int 1 run scoreboard players get #now ar.t" % STORE,
+        "function %s with storage %s claw" % (F_("cd/claw"), STORE)]
+    fn["cd/claw"] = [
+        "$cobbledollars remove @s $(amount)",
+        '$tellraw @s {"text":"(-$(amount): CobbleDollars\' own payout for an arena win goes back; the Arena pays its '
+        'purse itself)","color":"gray"}']
+    fn["cd/last"] = ["# as the player, the second look after a win; then no clawback is pending",
+                     "function %s" % F_("cd/settle"),
+                     "scoreboard players set @s ar.claw 0",
+                     "scoreboard players reset @s ar.bal"]
+    bd = ["# as the winner: ar.cmax, the most CobbleDollars can credit for THIS opponent (tools/arena_runtime.cd_bound:",
+          "# floor(3 * S*S/10 * multiplier) + %d, S the team's largest possible level sum)" % CLAW_MARGIN,
+          "scoreboard players set @s ar.cmax 0"]
+    for n, e in sorted(lad.items()):
+        if e["format"] == "streak":
+            continue
+        bd.append("execute if score @s ar.kind matches 1 if score @s ar.cur matches %d run scoreboard players set @s "
+                  "ar.cmax %d" % (n, cd_bound(e["members"] * e["top"], mult_pm)))
+        for leg, s_ in enumerate(e["exam_sum"]):
+            bd.append("execute if score @s ar.kind matches 2 if score @s ar.cur matches %d if score @s ar.leg matches %d "
+                      "run scoreboard players set @s ar.cmax %d" % (n, leg, cd_bound(s_, mult_pm)))
+    bd.append("execute if score @s ar.kind matches 3 run function %s" % F_("cd/bound_streak"))
+    fn["cd/bound"] = bd
+    fn["cd/bound_streak"] = [
+        "# m members at or under L: S <= m*L; the same integer steps as cd_bound",
+        "function %s" % F_("streak/levels"),
+        "scoreboard players operation #S ar.t = #m ar.t",
+        "scoreboard players operation #S ar.t *= #L ar.t",
+        "scoreboard players operation #S ar.t *= #S ar.t",
+        "scoreboard players operation #S ar.t /= #c10 ar.t",
+        "scoreboard players operation #S ar.t *= #c3 ar.t",
+        "scoreboard players operation #S ar.t *= #cdm ar.t",
+        "scoreboard players operation #S ar.t /= #c1000 ar.t",
+        "scoreboard players add #S ar.t %d" % CLAW_MARGIN,
+        "scoreboard players operation @s ar.cmax = #S ar.t"]
     for pid, p in sorted(prizes.items()):
         fn["prize/%s" % pid] = (["tag @s add cobblers.%s" % pid]
                                 + ["give @s %s %d" % (c["item"], c["count"]) for c in p["contents"]]
@@ -775,6 +975,8 @@ def files(dome_path=DOME):
         "scoreboard players set @s ar.end %d" % END_TICKS]
     nxt = ["# as the player, the clear-up after a result: the beaten (or winning) opponent goes; then the next leg, or "
            "the end",
+           "# the second look for CobbleDollars' payout (it and the callback answer the same event in no fixed order)",
+           "execute if score @s ar.claw matches 1 run function %s" % F_("cd/last"),
            "function %s" % F_("kill_mine"),
            "execute unless score @s ar.next matches 1 run return run function %s" % F_("end_run"),
            "scoreboard players set @s ar.next 0",
