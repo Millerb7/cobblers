@@ -237,6 +237,9 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # self-driving keeper that spawns per player in cobblers:pocket, two callbacks; world-local below.
                 # Its rooms are blocks in the pocket dimension, built by R16Q after the portals' R16P
                 "cobblers_entei_boss",
+                # 2026-10-08: the Beast Ball is the key to dungeon bosses (tools/key_ball.py, data/key_ball.json): two
+                # Cobblemon callbacks and the jar's beast_ball recipe closed; no blocks, no step; world-local below
+                "cobblers_key_ball",
                 # 2026-10-03: Heaven's Arena's per-player opponents (tools/arena_runtime.py, data/arena_fights.json,
                 # data/arena_dome.json venues): NPC classes, a battle_victory callback and a tick driver that spawns
                 # and clears opponents on its own, so world-local below; R17A places the venues' posts
@@ -341,6 +344,7 @@ EXCLUDED = {
     "cobblers_sizes": "self-driving: its own minecraft load tag runs it",
     "cobblers_levelcap": "self-driving: a Cobblemon poke_ball_capture_calculated callback runs its check; its load tag makes the scores; its tick tag runs the over-cap party notice near trainers",
     "cobblers_rift_storm": "self-driving: its own minecraft load tag starts the storm loop (tools/rift_storm.py)",
+    "cobblers_key_ball": "self-driving: two Cobblemon callbacks (pokemon_catch_rate_calculated, poke_ball_capture_calculated) run it and call key_ball/refused; its recipe overrides act at load; it writes no blocks (tools/key_ball.py)",
     "cobblers_hoopa_cradle": "self-driving: its keeper gives each player holding rift_crisis_resolved who stands in the cradle their own level-60 Hoopa (data/hoopa_cradle.json)",
     "cobblers_spectrier_cap": "self-driving: its own minecraft tick tag judges each new wild Spectrier at the Crown "
                               "Cemetery (tools/spectrier_cap.py); it writes no blocks",
@@ -374,6 +378,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_legendaries", "cobblers_spectrier_cap", "cobblers_hoopa_cradle",
                # 2026-10-08: the Entei keeper SPAWNS a legendary per player on its own and gives items: never global
                "cobblers_entei_boss",
+               # 2026-10-08: refuses every ball but the Beast Ball at a dungeon boss and gives balls back: never global
+               "cobblers_key_ball",
                # 2026-10-03: charges CobbleDollars and gives items, like the ferry
                "cobblers_markets",
                # 2026-10-10: charges CobbleDollars and sets party levels, EVs and IVs, like the markets
@@ -953,6 +959,9 @@ def prepare_jobs(a):
     # the repeatable Entei in cobblers:pocket (data/entei_boss.json; fails closed on a bankable drop, a room in the
     # portals' rescue box or outside the border, or an alpha / mis-levelled boss)
     add("entei_boss", "entei_boss.py")
+    # the Beast Ball key (data/key_ball.json): fails closed if any boss tool's bind does not add the shared tag, if the
+    # refusal message hints at the key, or if data/blackout.json can take a Beast Ball
+    add("key_ball", "key_ball.py")
     # the Nether's badge-8 gate (data/nether_gate.json; fails closed if the flag is not the eighth badge's, the pallet
     # is off the canonical ground, or the gated dimension is the pocket's)
     add("nether_gate", "nether_gate.py")
