@@ -64,6 +64,7 @@ SAMPLE_STEP = 4.0
 SUBREGION_GRID = 32
 WATERWAY_GRID = 16
 MARINE_GRID = 32
+OVERWORLD = "minecraft:overworld"
 
 
 def dumps(doc):
@@ -80,14 +81,36 @@ def box_condition(min_x, max_x, min_z, max_z, entry):
     column's sky flag once, at the top of the spawning zone around the player (see marine_condition), so under a
     deep lake it is false and a forced canSeeSky empties every submerged and seafloor entry: on staging
     2026-09-26 /checkspawn on the floor of Lake Viltri and Shrew Lake found nothing at all.
+
+    Nor is it forced on an entry bound off the overworld (open_sky_forced): under the Nether's roof no column sees the
+    sky, so a forced canSeeSky empties every grounded Nether entry (review N154).
     """
     cond = {"minX": min_x, "maxX": max_x, "minZ": min_z, "maxZ": max_z}
-    if position_type(entry) not in ("submerged", "seafloor"):
+    if open_sky_forced(entry):
         cond["canSeeSky"] = True
     if entry.get("biomes"):
         cond["biomes"] = list(entry["biomes"])
     cond.update(entry.get("conditions") or {})
     return cond
+
+
+def open_sky_forced(entry):
+    """Whether box_condition adds canSeeSky true: a land or surface entry on the overworld only.
+
+    The dimension is read from the entry's own conditions.dimensions, the Cobblemon 1.8.0 SpawningCondition field
+    (a list of dimension ids; an empty or absent list restricts nothing; docs/research/notes/
+    spawn-dimension-condition-1.8.0.md). An entry with no dimensions is an overworld entry, as every one compiled
+    before 2026-10-08 was, and keeps the sky. An entry whose dimensions name anything but minecraft:overworld (the
+    Nether, the End, or an empty list, which Cobblemon reads as every dimension) gets no forced sky; it may still
+    author canSeeSky in its conditions."""
+    if position_type(entry) in ("submerged", "seafloor"):
+        return False
+    dims = (entry.get("conditions") or {}).get("dimensions")
+    if dims is None:
+        return True
+    if not isinstance(dims, list) or not all(isinstance(d, str) and ":" in d for d in dims):
+        raise SystemExit("%s: conditions.dimensions must be a list of dimension ids, not %r" % (entry.get("species"), dims))
+    return bool(dims) and set(dims) == {OVERWORLD}
 
 
 def heart_pokemon(entry):

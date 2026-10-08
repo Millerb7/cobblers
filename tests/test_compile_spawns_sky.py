@@ -58,6 +58,59 @@ def test_submerged_and_seafloor_box_entries_do_not_require_the_sky(position):
     assert "canSeeSky" not in cond, cond
 
 
+# ------------------------------------------------------------------------------------- off the overworld (N154)
+# Under the Nether's roof no column sees the sky, so a forced canSeeSky empties every grounded Nether entry. The
+# dimension is the entry's own conditions.dimensions, the Cobblemon 1.8.0 SpawningCondition field
+# (docs/research/notes/spawn-dimension-condition-1.8.0.md).
+
+NETHER = "minecraft:the_nether"
+
+
+# Without it every grounded or surface entry bound to the Nether (or the End) compiles with canSeeSky and never spawns.
+@pytest.mark.parametrize("position", IN_THE_OPEN)
+@pytest.mark.parametrize("dims", [[NETHER], ["minecraft:the_end"], [NETHER, "minecraft:overworld"], []])
+def test_an_entry_bound_off_the_overworld_does_not_require_the_sky(position, dims):
+    cond = CS.box_condition(0, 31, 0, 31, _entry(position, conditions={"dimensions": dims}))
+    assert "canSeeSky" not in cond, cond
+    assert cond["dimensions"] == dims
+
+
+# Without it an entry that names the overworld explicitly loses the sky test that keeps it out of caves.
+@pytest.mark.parametrize("position", IN_THE_OPEN)
+def test_an_entry_bound_to_the_overworld_keeps_the_sky(position):
+    cond = CS.box_condition(0, 31, 0, 31, _entry(position, conditions={"dimensions": ["minecraft:overworld"]}))
+    assert cond["canSeeSky"] is True, cond
+
+
+# Without it a typo ("the_nether", a bare string) compiles silently and the entry spawns in no dimension or every one.
+@pytest.mark.parametrize("dims", ["minecraft:the_nether", ["the_nether"], [3]])
+def test_a_malformed_dimension_list_fails_closed(dims):
+    with pytest.raises(SystemExit):
+        CS.box_condition(0, 31, 0, 31, _entry("grounded", conditions={"dimensions": dims}))
+
+
+# Without it the unit tests above pass while a compile path that does not go through box_condition (route, sub-region,
+# heart, waterway, Mega den) still forces the sky on a Nether entry. The data is copied and one grounded entry is bound
+# to the Nether; everything else, and every other entry's sky, is the real data's.
+def test_a_nether_bound_entry_compiles_without_the_sky_on_every_path(tmp_path):
+    doc = json.loads((ROOT / "data" / "spawns.json").read_text(encoding="utf-8"))
+    target = next(e for e in doc["entries"] if e.get("ambient") and not e.get("heart")
+                  and (e.get("spawnable_position") or "grounded") == "grounded"
+                  and e.get("mechanism") == "spawn_json_coordinate_boxes" and not (e.get("conditions") or {}))
+    target["conditions"] = {"dimensions": [NETHER]}
+    spawns = tmp_path / "spawns.json"
+    spawns.write_text(json.dumps(doc), encoding="utf-8")
+    out = tmp_path / "out"
+    assert CS.main(["--spawns", str(spawns), "--out", str(out)]) == 0
+    base = out / "data" / "cobblers" / "spawn_pool_world"
+    bound = [(p.name, s) for p in base.rglob("*.json") for s in json.loads(p.read_text(encoding="utf-8")).get("spawns") or []
+             if s["condition"].get("dimensions")]
+    assert bound, "the Nether-bound entry %s compiled nowhere" % target["id"]
+    assert all(s["condition"]["dimensions"] == [NETHER] for _, s in bound)
+    forced = [(n, s["id"]) for n, s in bound if "canSeeSky" in s["condition"]]
+    assert not forced, (len(forced), forced[:5])
+
+
 # ------------------------------------------------------------------------------------------------ the whole output
 
 @pytest.fixture(scope="module")

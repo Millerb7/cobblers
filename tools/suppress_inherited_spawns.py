@@ -11,7 +11,8 @@ applies it to every inherited file:
   - per resource path take the effective file (the highest-priority source); skip our own cobblers_* packs and
     files already "enabled": false
   - add one coordinate anticondition per box to every spawn detail, keeping any anticondition it already has
-    (a singular "anticondition" object moves into the plural list)
+    (a singular "anticondition" object moves into the plural list); each box carries "dimensions":
+    ["minecraft:overworld"], so it suppresses nothing in the Nether or the End at the same x/z (box_anticondition)
 
 With --subregions the box set is the route corridors plus every sub-region polygon from data/regions.json, plus every
 marine band box data/spawns.json marine_zones defines (tools/compile_spawns.py marine_bands). Without it,
@@ -44,6 +45,8 @@ ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_OUT = ROOT / "build" / "datapacks" / "cobblers_suppress"
 POOL = re.compile(r"(?:.*/)?data/([^/]+)/spawn_pool_world/(.+\.json)$")
 GRID = 8
+# every box below is drawn on the overworld; the suppression is bound to it (review N153)
+OVERWORLD = "minecraft:overworld"
 
 
 def route_boxes(routes):
@@ -136,6 +139,19 @@ def collect(server, world):
     return sources
 
 
+def box_anticondition(box, dimension=OVERWORLD):
+    """One suppression anticondition: the box, bound to the dimension it was drawn in (review N153).
+
+    Every box this tool takes (routes, sub-regions, marine bands, spawn-free zones) is an overworld box. Without the
+    dimension, Cobblemon compares the box with the spawn position in whatever dimension the player stands, so each
+    overworld box also suppressed every inherited Nether and End spawn at the same x/z. SpawningCondition.fits in
+    Cobblemon 1.8.0 rejects a position whose world.dimension().location() is not in a non-empty "dimensions" list, and
+    SpawnDetail.isSatisfiedBy drops a detail only when an anticondition is satisfied: so in the Nether this
+    anticondition is never satisfied and the inherited detail stands. docs/research/notes/spawn-dimension-condition-1.8.0.md."""
+    x0, x1, z0, z1 = box
+    return {"minX": x0, "maxX": x1, "minZ": z0, "maxZ": z1, "dimensions": [dimension]}
+
+
 def suppress(doc, conds):
     n = 0
     for s in doc.get("spawns", []):
@@ -195,7 +211,7 @@ def main(argv=None):
     boxes.extend(compile_spawns.spawn_free_zones())
     if a.boxes == "merged":
         boxes = merge_boxes(boxes, a.grid)
-    conds = [{"minX": x0, "maxX": x1, "minZ": z0, "maxZ": z1} for x0, x1, z0, z1 in boxes]
+    conds = [box_anticondition(b) for b in boxes]
     sources = collect(Path(a.server), Path(a.world))
     effective = {}
     for src, path, raw in sources:
