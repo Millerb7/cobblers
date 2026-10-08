@@ -30,8 +30,8 @@ never. The page reads the stage evolutions; an evolution requirement it cannot p
 
 WHAT THE PAGE NEVER SAYS. docs/player/ is public and tests/test_player_site_leaks.py holds it to that. An item whose
 only source is a story file is "earned in the story" with at most the badge it waits for: no place, person, id or
-coordinate. A held line (markets.json `held_stock`: priced, sold by no merchant) is "not on sale yet", without the
-counter it is held for. A counter is named only for a line it actually stocks.
+coordinate. A held line (markets.json `held_stock`: priced, sold by no merchant) that no story file gives is "not on
+sale yet", without the counter it is held for; one a story file gives is "earned in the story" (Silvally's memories). A counter is named only for a line it actually stocks.
 
 PUBLISHED (2026-10-08). The leak test reads data/mythical_starters.json as a legendary file; the five starter species
 are public by the owner's decision and let through by its ALLOW list (`_STARTER`), and nothing else from that file is.
@@ -160,12 +160,18 @@ def sources(item):
                                     "stocks it today."))
     if item in (ROOT / "data/traders.json").read_text(encoding="utf-8"):
         out.append(("mart", "Sold by a Mart clerk."))
-    for kind in ("shop", "mart", "held"):  # a seller first; "held" only when nobody sells it
+    for kind in ("shop", "mart"):  # a seller first
         hits = list(dict.fromkeys(o for o in out if o[0] == kind))
         if hits:
             return hits
+    # a story source before a held line: a line held at a counter is sold by nobody, so when a story file gives the
+    # item that is where a player gets it (Silvally's memories: held in data/markets.json, given by the station,
+    # the owner, 2026-10-08)
     if any(item in (ROOT / f).read_text(encoding="utf-8") for f in STORY_FILES):
         return [("story", "Earned in the story.")]
+    hits = list(dict.fromkeys(o for o in out if o[0] == "held"))
+    if hits:
+        return hits
     return [("none", "No source in the campaign's data yet.")]
 
 
@@ -291,10 +297,10 @@ def collect(jar_path=None):
             for f in forms:
                 kind = next(a for a in f["aspects"] if a.endswith("-memory"))[:-len("-memory")]
                 it = next((i for i in names if i.split(":")[-1] == "%s_memory" % kind), None)
+                src = sources(it) if it else [("none", "No source in the campaign's data yet.")]
                 specials.append({"line": ln["name"], "for": "form", "final": t["name"], "type": f.get("primaryType",
                                  kind).lower(), "item": it, "name": names.get(it) or "%s Memory" % kind.title(),
-                                 "sources": sources(it) if it else [("none", "No source in the campaign's data yet.")],
-                                 "gate": None})
+                                 "sources": src, "gate": story_gate(it) if it and src[0][0] == "story" else None})
     return {"lines": lines, "specials": specials, "levels": levels, "aces": aces, "missing": sorted(jar.dex.missing),
             "category": d["starter_category"]["displayName"]}
 
@@ -325,6 +331,11 @@ def render_line(ln, model):
                render_specials(model, ln["name"])))
 
 
+def gated(src, gate):
+    """'Earned in the story.' -> 'Earned in the story, once you hold 5 badges.' when the item waits for a badge."""
+    return src[:-1] + ", once you hold %d badges." % gate if gate else src
+
+
 def render_specials(model, line_name):
     """The items one line needs (its evolution items, its final's memories), or ""."""
     out = []
@@ -334,16 +345,14 @@ def render_specials(model, line_name):
         its = [s for s in ev if s["line"] == line]
         lis = []
         for s in its:
-            src = " ".join(w for _k, w in s["sources"])
-            if s["gate"]:
-                src = src[:-1] + ", once you hold %d badges." % s["gate"]
+            src = gated(" ".join(w for _k, w in s["sources"]), s["gate"])
             lis.append("<li><b>%s</b>: %s</li>" % (esc(s["name"]), esc(src)))
         out.append('<h3>%s: the evolution items</h3><p>Which item you use decides what it becomes.</p><ul>%s</ul>'
                    % (esc(line), "".join(lis)))
     fm = [s for s in specials if s["for"] == "form"]
     for final in sorted({s["final"] for s in fm}):
         its = [s for s in fm if s["final"] == final]
-        srcs = sorted({" ".join(w for _k, w in s["sources"]) for s in its})
+        srcs = sorted({gated(" ".join(w for _k, w in s["sources"]), s["gate"]) for s in its})
         rows = "".join("<tr><td>%s</td><td>%s</td></tr>" % (esc(s["name"]), badges([s["type"]])) for s in its)
         out.append('<h3>%s: the memories</h3><p>%s takes the type of the memory it holds: give it one to hold and it '
                    'becomes that type. There are %d, one for every type but Normal; holding none, it stays Normal.</p>'

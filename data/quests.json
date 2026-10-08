@@ -6011,6 +6011,18 @@
             "equals": true
           },
           "text": "With five badges and your starter Kubfu in the party, ask the Director for one scroll: Darkness or Waters."
+        },
+        {
+          "id": "silvally_memories",
+          "active_when": {
+            "field": "quest.evt_station_director.started",
+            "equals": true
+          },
+          "complete_when": {
+            "field": "quest.evt_station_director.memories_claimed",
+            "equals": true
+          },
+          "text": "With five badges and your starter Type: Null or Silvally in the party, ask the Director for the memories."
         }
       ],
       "transitions": [
@@ -6183,9 +6195,70 @@
               "value": "k020"
             }
           ]
+        },
+        {
+          "id": "grant_memories",
+          "conditions": [
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_station_issuing"
+            },
+            {
+              "kind": "flag",
+              "flag": "gym5_cleared"
+            },
+            {
+              "kind": "player_tag",
+              "tag": "cobblers_station_silvally"
+            },
+            {
+              "kind": "progression_equals",
+              "field": "quest.evt_station_director.memories_claimed",
+              "value": false
+            }
+          ],
+          "effects": [
+            {
+              "kind": "grant_reward_once",
+              "reward": "reward_station_silvally_memories",
+              "target": "triggering_player",
+              "claim_field": "quest.evt_station_director.memories_claimed",
+              "idempotency_key": "evt_station_director:reward_station_silvally_memories:{player_uuid}",
+              "receipt_commit": "atomic_with_item_delivery"
+            },
+            {
+              "kind": "set_progression",
+              "field": "quest.evt_station_director.dialogue_cursor",
+              "value": "n010"
+            }
+          ]
         }
       ],
       "rewards": [
+        {
+          "id": "reward_station_silvally_memories",
+          "status": "item_ids_verified",
+          "record": "data/rewards.json station_director",
+          "contents": [
+            {"item": "mega_showdown:bug_memory", "count": 1, "verification": "assets/mega_showdown/models/item/bug_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:dark_memory", "count": 1, "verification": "assets/mega_showdown/models/item/dark_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:dragon_memory", "count": 1, "verification": "assets/mega_showdown/models/item/dragon_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:electric_memory", "count": 1, "verification": "assets/mega_showdown/models/item/electric_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:fairy_memory", "count": 1, "verification": "assets/mega_showdown/models/item/fairy_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:fighting_memory", "count": 1, "verification": "assets/mega_showdown/models/item/fighting_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:fire_memory", "count": 1, "verification": "assets/mega_showdown/models/item/fire_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:flying_memory", "count": 1, "verification": "assets/mega_showdown/models/item/flying_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:ghost_memory", "count": 1, "verification": "assets/mega_showdown/models/item/ghost_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:grass_memory", "count": 1, "verification": "assets/mega_showdown/models/item/grass_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:ground_memory", "count": 1, "verification": "assets/mega_showdown/models/item/ground_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:ice_memory", "count": 1, "verification": "assets/mega_showdown/models/item/ice_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:poison_memory", "count": 1, "verification": "assets/mega_showdown/models/item/poison_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:psychic_memory", "count": 1, "verification": "assets/mega_showdown/models/item/psychic_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:rock_memory", "count": 1, "verification": "assets/mega_showdown/models/item/rock_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:steel_memory", "count": 1, "verification": "assets/mega_showdown/models/item/steel_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"},
+            {"item": "mega_showdown:water_memory", "count": 1, "verification": "assets/mega_showdown/models/item/water_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar"}
+          ]
+        },
         {
           "id": "reward_station_scroll_of_darkness",
           "status": "item_ids_verified",
@@ -6253,6 +6326,7 @@
         "quest.evt_station_director.thunder_claimed",
         "quest.evt_station_director.ember_claimed",
         "quest.evt_station_director.scroll_claimed",
+        "quest.evt_station_director.memories_claimed",
         "quest.evt_station_director.dialogue_cursor"
       ]
     },

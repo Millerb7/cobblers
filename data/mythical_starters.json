@@ -25,6 +25,16 @@
     "what_it_needs": ["the items record and its route text in data/research_station.json", "a Director dialogue option and a grant function emitted by tools/research_station.py, once per player", "tools/research_station_audit.py and tests/test_research_station.py updated by their owners (the test pins every item as held today)", "the owner's word on the gate and on whether every player or only a Kubfu player is given them"],
     "already_true": "data/blackout.json excludes both scrolls from its consumables (docs/research/NATIVE_STARTERS_1_8_0.md section 3c)."
   },
+  "typenull_memories": {
+    "line": "starter_typenull",
+    "status": "BUILT 2026-10-08, not observed in game: data/research_station.json economy.items silvally_memories. The Director (dlg_station_director r_memory, n001-n011; r_memory_locked, n100) gives ALL 17 memories together, once (one claim, quest.evt_station_director.memories_claimed), behind gym5_cleared, the one switch economy.issuing, and the tag cobblers_station_silvally that the station pack's second party callback keeps on a player whose party holds this line's Type: Null in either starter form, or a Silvally in any form (economy.silvally_check).",
+    "built_as": "data/research_station.json economy.items silvally_memories, economy.tags.silvally_partner and economy.silvally_check; data/quests.json evt_station_director grant_memories and reward_station_silvally_memories; data/progression.json quest.evt_station_director.memories_claimed; data/dialogue.json dlg_station_director r_memory, r_memory_locked, n001-n011, n100; data/rewards.json station_director; tools/research_station.py silvally_callback_text",
+    "decision": "The owner, 2026-10-08: 'Silvally should get memories from the same lady as Urshifu's scrolls'; asked how many: all 17 memories, at badge 5, once.",
+    "items": ["mega_showdown:bug_memory", "mega_showdown:dark_memory", "mega_showdown:dragon_memory", "mega_showdown:electric_memory", "mega_showdown:fairy_memory", "mega_showdown:fighting_memory", "mega_showdown:fire_memory", "mega_showdown:flying_memory", "mega_showdown:ghost_memory", "mega_showdown:grass_memory", "mega_showdown:ground_memory", "mega_showdown:ice_memory", "mega_showdown:poison_memory", "mega_showdown:psychic_memory", "mega_showdown:rock_memory", "mega_showdown:steel_memory", "mega_showdown:water_memory"],
+    "items_verified": "17 assets/mega_showdown/models/item/<type>_memory.json in mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar, read 2026-10-08 from the server snapshot of 2026-10-05; the Cobblemon 1.8.0 jar ships no memory item, only Silvally's 17 type forms (aspects <type>-memory) and the rks_memory feature",
+    "why_all": "Swapping memories is Silvally's identity: its type follows the memory it holds, so one memory would fix it to one type.",
+    "still_held": "data/markets.json keeps all 17 lines held (no counter sells them); their why names the Director as the source."
+  },
   "starter_category": {
     "name": "cobblers_mythical",
     "displayName": "Cobblers"
