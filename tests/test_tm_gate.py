@@ -22,6 +22,7 @@ import collections
 import copy
 import json
 import os
+import re
 import sys
 import types
 from pathlib import Path
@@ -45,7 +46,7 @@ T = "tmcraft:tm_"
 OUTLIERS = {
     1: {T + "thunderwave": (6, 5)},
     2: {T + "willowisp": (4, 5)},
-    3: {T + "nuzzle": (2, 5)},
+    3: {T + "nuzzle": (2, 5), T + "inferno": (3, 5), T + "zapcannon": (4, 5)},  # the owner, 2026-10-08
     4: {T + "trickroom": (5, 6)},
     5: {T + "uturn": (6, 5), T + "voltswitch": (6, 5), T + "flipturn": (5, 5), T + "partingshot": (3, 5)},
     6: {T + "knockoff": (4, 6)},
@@ -53,7 +54,8 @@ OUTLIERS = {
         T + "quiverdance": (6, 7), T + "shiftgear": (7, 7), T + "bellydrum": (6, 7), T + "shellsmash": (8, 8)},
     8: {T + "magnitude": (4, 5)},
     9: {T + m: (4, 7) for m in ("hyperbeam", "gigaimpact", "blastburn", "frenzyplant", "hydrocannon", "rockwrecker",
-                                "eternabeam")},
+                                "eternabeam", "meteorassault", "roaroftime")} | {T + "prismaticlaser": (5, 7)},
+    # the owner, 2026-10-08: "Meteor Assault, Prismatic Laser and Roar of Time: Hyper Beam class, badge 7"
     10: {T + "explosion": (5, 7), T + "selfdestruct": (4, 6)},
     11: {T + "solarbeam": (3, 5), T + "solarblade": (3, 5)},
     12: {T + "sheercold": (3, 8), T + "horndrill": (3, 8)},
@@ -61,7 +63,7 @@ OUTLIERS = {
     14: {T + "hex": (4, 5), T + "venoshock": (4, 5), T + "facade": (4, 5), T + "acrobatics": (3, 5),
          T + "weatherball": (2, 4)},
     15: {T + "sludgebomb": (7, 6), T + "ironhead": (6, 5)},
-    16: {T + "return": (7, 6), T + "frustration": (7, 6)},
+    16: {T + "return": (7, 7), T + "frustration": (7, 7)},  # measured 2026-10-08: full power is cheap, so 102's band
     17: {T + "glare": (7, 6)},
 }
 # the shelf lines the groups also name, which the shelf already places at the group's badge (groups 7, 8, 12, 15)
@@ -87,14 +89,44 @@ BY_HAND = {
     T + "leechseed": (54.0, 2),      # 90% x 60: a top (54) is inclusive
     T + "spark": (74.0, 4),          # 65 + 30% paralysis x 30 = 74: inclusive
     T + "searingshot": (104.0, 7),   # 100 x 0.95 (5 PP) + 30% burn x 30 = 104: inclusive
-    T + "inferno": (62.5, 3),        # 50% x (100 x 0.95 + 30): named in group 3's text, not placed
-    T + "zapcannon": (72.0, 4),      # 50% x (120 x 0.95 + 30): the same
-    T + "roaroftime": (64.1, 4),     # 90% x 150 x 0.5 (recharge) x 0.95: a recharge move group 9 does not list
+    T + "dragonpulse": (85.0, 6),    # 85, no effect: one over the badge-5 top (84)
 }
 # docs/mechanics/TM_POWER_GATE.md 3: TMs by badge, the rule alone and with the shelf
 PROPOSAL_POWER_RULE = {1: 163, 2: 122, 3: 110, 4: 104, 5: 107, 6: 99, 7: 66, 8: 31}
 PROPOSAL_WITH_SHELF = {1: 166, 2: 122, 3: 107, 4: 103, 5: 109, 6: 96, 7: 66, 8: 33}
-APPLIED = {1: 165, 2: 120, 3: 100, 4: 88, 5: 121, 6: 101, 7: 72, 8: 35}
+APPLIED = {1: 165, 2: 120, 3: 99, 4: 85, 5: 122, 6: 99, 7: 77, 8: 35}
+# the owner, 2026-10-08: "A craft that unlocks before its input is a dead recipe". The four chain TMs of the
+# 2026-10-05 snapshot that opened before their input (read from tmcraft-1.4.19's recipes, listed here by hand):
+# chain TM -> (its input TM, the badge before the raise, the input's badge)
+CHAIN_RAISES = {T + "boneclub": (T + "bonemerang", 3, 6), T + "nobleroar": (T + "roar", 1, 2),
+                T + "stunspore": (T + "spore", 5, 8), T + "triplekick": (T + "doublekick", 2, 3)}
+# the snapshot's plan: APPLIED with the four raises (1: -1 Noble Roar; 2: +1 Noble Roar -1 Triple Kick; 3: -1 Bone
+# Club +1 Triple Kick; 5: -1 Stun Spore; 6: +1 Bone Club; 8: +1 Stun Spore)
+SNAPSHOT_APPLIED = {1: 164, 2: 120, 3: 99, 4: 85, 5: 121, 6: 100, 7: 77, 8: 36}
+TM_ID = re.compile(r'"(tmcraft:tm_[a-z0-9_]+)"')
+
+
+def chain_inputs(resolved):
+    """{(recipe id, chain TM): {input TMs}} read here from the loaded recipes' own JSON (the ingredients or the key),
+    not through the generator's traits()."""
+    out = {}
+    for rid, (_, r) in resolved["recipes"].items():
+        res = G.result_id(r)
+        if not (isinstance(res, str) and res.startswith(T)) or r.get("type") not in (
+                "minecraft:crafting_shaped", "minecraft:crafting_shapeless"):
+            continue
+        ins = set(TM_ID.findall(json.dumps([r.get("ingredients"), r.get("key")])))
+        if ins:
+            out[(rid, res)] = ins
+    return out
+
+
+def chain_failures(plan, chains):
+    """Every recipe whose chain TM opens before one of its input TMs."""
+    tms = plan["tms"]
+    return sorted("%s: %s %d < %s %d" % (rid, item, tms[item]["badge"], i, tms[i]["badge"])
+                  for (rid, item), ins in chains.items() for i in sorted(ins)
+                  if item in tms and i in tms and tms[i]["badge"] > tms[item]["badge"])
 
 
 def _mutant(*subs):
@@ -354,9 +386,9 @@ def test_the_distribution_is_the_proposals_moved_only_by_the_outliers():
             want[after] += 1
     got = collections.Counter(t["badge"] for t in tms.values())
     assert dict(got) == dict(want)
-    assert dict(got) == APPLIED  # the delta, stated: {1: -1, 2: -2, 3: -7, 4: -15, 5: +12, 6: +5, 7: +6, 8: +2}
+    assert dict(got) == APPLIED  # the delta, stated: {1: -1, 2: -2, 3: -8, 4: -18, 5: +13, 6: +3, 7: +11, 8: +2}
     assert {b: APPLIED[b] - PROPOSAL_WITH_SHELF[b] for b in APPLIED} == \
-        {1: -1, 2: -2, 3: -7, 4: -15, 5: 12, 6: 5, 7: 6, 8: 2}
+        {1: -1, 2: -2, 3: -8, 4: -18, 5: 13, 6: 3, 7: 11, 8: 2}
 
 
 def test_an_outlier_placed_on_a_shelf_tm_is_refused():
@@ -440,8 +472,13 @@ def test_mutant_with_an_exclusive_band_top_is_caught():
 
 def test_mutant_with_an_inclusive_badge_1_floor_is_caught(tmp_path):
     m = _mutant(('    if s < bands["badge_1_below"]:', '    if s <= bands["badge_1_below"]:'))
-    plan, exp, _ = _make(m, tmp_path)
-    assert plan["tms"][T + "howl"]["badge"] == 1 != exp["unlisted_badge"][T + "howl"]
+    plan, exp, files = _make(m, tmp_path)
+    tms, _ = _place(m)
+    assert tms[T + "howl"]["badge"] == 1 != exp["unlisted_badge"][T + "howl"]
+    # howl is crafted from tackle (badge 2): in the plan the chain rule lifts it back to 2, and fails closed naming
+    # the raise badge_rule.chain does not list, so the mutant still builds nothing
+    assert plan["tms"][T + "howl"]["badge"] == 2 and files is None
+    assert any(p.startswith(T + "howl is raised 1 -> 2") for p in plan["problems"]), plan["problems"]
 
 
 def test_mutant_that_skips_the_resync_on_a_starter_pick_is_caught(tmp_path):
@@ -491,6 +528,103 @@ def test_the_snapshot_places_every_tm_by_the_power_rule_and_matches_the_shelf():
     tm_gated = {rid for rid, g in plan["gated"].items() if not g.get("device")}
     assert made == tm_gated
     assert len(plan["tms"]) == 802
-    assert plan["distribution"] == APPLIED
+    assert plan["distribution"] == SNAPSHOT_APPLIED  # APPLIED, moved only by the four chain raises
     assert outlier_failures(plan["tms"]) == []
     assert plan["tms"]["tmcraft:tm_shadowball"]["badge"] == 5  # 81.6: no longer waiting for badge 8 by type
+
+
+# ---------------------------------------------------------------- the owner's four calls of 2026-10-08
+
+def _snapshot_plan(mod=G):
+    resolved = mod.resolve(mod.read_server(SNAPSHOT))
+    return mod.plan(mod.load(), resolved, copy.deepcopy(MARKETS), copy.deepcopy(PROGRESSION)), resolved
+
+
+def test_inferno_and_zap_cannon_land_with_group_3_at_badge_5():
+    tms, problems = _place(G)
+    assert problems == []
+    group = next(g for g in G.load()["badge_rule"]["power"]["outliers"] if g["group"] == 3)
+    assert not group.get("not_placed")
+    for item, band in ((T + "inferno", 3), (T + "zapcannon", 4)):
+        assert (tms[item]["power_badge"], tms[item]["badge"]) == (band, 5), item
+        assert tms[item]["rule"].startswith("outlier 3 (Nuzzle)"), tms[item]["rule"]
+    # the same badge as the status moves the group compares them with (groups 1 and 2)
+    assert {tms[T + m]["badge"] for m in ("nuzzle", "thunderwave", "willowisp", "inferno", "zapcannon")} == {5}
+
+
+def test_the_three_unlisted_recharge_moves_are_hyper_beam_class_at_badge_7():
+    tms, _ = _place(G)
+    group = next(g for g in G.load()["badge_rule"]["power"]["outliers"] if g["group"] == 9)
+    assert not group.get("not_placed")
+    for item, band in ((T + "meteorassault", 4), (T + "prismaticlaser", 5), (T + "roaroftime", 4)):
+        assert (tms[item]["power_badge"], tms[item]["badge"]) == (band, 7), item
+        assert tms[item]["rule"].startswith("outlier 9 (recharge moves)"), tms[item]["rule"]
+    assert tms[T + "hyperbeam"]["badge"] == 7
+
+
+def test_return_and_frustration_are_placed_by_the_friendship_measurement():
+    tms, _ = _place(G)
+    # full power is 102 (floor(255 x 10 / 25)), and 102 sits in the badge-7 band (94.1-104), stated by hand
+    assert G.band(102, G.load()["badge_rule"]["power"]["bands"]) == 7
+    for m in ("return", "frustration"):
+        assert (tms[T + m]["power_badge"], tms[T + m]["badge"]) == (7, 7), m
+    group = next(g for g in G.load()["badge_rule"]["power"]["outliers"] if g["group"] == 16)
+    assert "open" not in group  # the open question was answered by measuring, not left
+    assert {"level_up", "walking", "battle", "soothe_bell", "items", "start", "return_at_each_cap"} <= set(
+        group["measured"])
+
+
+def test_every_chain_tm_opens_no_earlier_than_its_input():
+    plan, resolved = _snapshot_plan()
+    assert plan["problems"] == [], plan["problems"][:5]
+    chains = chain_inputs(resolved)
+    assert {item for _, item in chains} >= set(CHAIN_RAISES)
+    assert chain_failures(plan, chains) == []
+    raised = {r["item"]: (r["input"], r["from"], r["to"]) for r in plan["chain_raises"]}
+    assert raised == CHAIN_RAISES
+    for item, (inp, before, after) in CHAIN_RAISES.items():
+        assert plan["tms"][item]["badge"] == after == plan["tms"][inp]["badge"], item
+        assert plan["tms"][inp]["badge"] == after  # never the input lowered
+    # every raise is a named, reasoned entry in the data
+    declared = G.load()["badge_rule"]["chain"]["raises"]
+    assert {d["item"]: (d["input"], d["from"], d["to"]) for d in declared} == CHAIN_RAISES
+    assert all(d.get("why") for d in declared)
+
+
+def test_mutant_without_the_chain_raise_is_caught():
+    m = _mutant(("            if need > badge[item]:\n", "            if False:\n"))
+    plan, resolved = _snapshot_plan(m)
+    fails = chain_failures(plan, chain_inputs(resolved))
+    assert {f.split(": ")[1].split(" ")[0] for f in fails} == set(CHAIN_RAISES), fails
+    dead = [p for p in plan["problems"] if "a dead recipe" in p]
+    assert len(dead) == len(CHAIN_RAISES), plan["problems"]
+    assert sum("does not raise it" in p for p in plan["problems"]) == len(CHAIN_RAISES)
+
+
+def test_mutant_without_the_raise_or_the_dead_recipe_check_is_still_caught_here():
+    m = _mutant(("            if need > badge[item]:\n", "            if False:\n"),
+                ("if i in tms and tms[i][\"badge\"] > tms[item][\"badge\"]:", "if False:"))
+    plan, resolved = _snapshot_plan(m)
+    assert len(chain_failures(plan, chain_inputs(resolved))) == len(CHAIN_RAISES)
+
+
+def test_an_undeclared_chain_raise_fails_closed(tmp_path):
+    # the fixture's howl is crafted from tackle; score tackle into band 3 and howl (band 2) must rise to it
+    scores = F.score_table()
+    scores["tms"][T + "tackle"].update(score=60.0, power_badge=3)
+    plan, _, _ = _make(G, tmp_path / "a", scores=scores)
+    assert [p for p in plan["problems"] if "badge_rule.chain.raises does not list it" in p] == [
+        "%showl is raised 2 -> 3 to its input %stackle, and badge_rule.chain.raises does not list it" % (T, T)]
+    doc = G.load()
+    doc["badge_rule"]["chain"]["raises"].append({"item": T + "howl", "input": T + "tackle", "from": 2, "to": 3})
+    plan, _, files = _make(G, tmp_path / "b", doc=doc, scores=copy.deepcopy(scores))
+    assert plan["problems"] == [] and files
+    assert plan["tms"][T + "howl"]["badge"] == 3
+
+
+def test_mutant_that_drops_the_hyper_beam_class_placements_is_caught():
+    m = _mutant(('for g in rule["outliers"]:', 'for g in [g for g in rule["outliers"] if g["group"] != 9]:'))
+    tms, _ = _place(m)
+    fails = outlier_failures(tms)
+    assert {f.split(" ")[2].rstrip(":") for f in fails} == set(OUTLIERS[9]), fails
+    assert all(f.startswith("group 9 ") for f in fails)
