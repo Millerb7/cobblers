@@ -735,7 +735,7 @@
       "statement": "Every Mega the gulch's generated keeper spawns, and every Entei the Entei boss's generated keeper binds in a pocket slot, carries the tag data/blackout.json claims.exempt_tag names, and the generated blackout, with that Pokemon as the wild victor, makes no item claim and no guardian, and still charges the money; an untagged wild victor still claims. The Entei relies on it because its slot is freed and its Entei killed the moment the beaten player is sent out, so a guardian there would hold the player's items where nobody can return. The tag is the gulch's own (cobblers.gm): a gulch sweep that ever keys on the bare tag would reach the Entei too.",
       "stated_in": [
         {
-          "at": "data/entei_boss.json:113",
+          "at": "data/entei_boss.json:131",
           "quote": "The Entei carries the blackout's claims.exempt_tag"
         },
         {

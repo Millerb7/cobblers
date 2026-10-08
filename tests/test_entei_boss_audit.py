@@ -455,8 +455,6 @@ def test_the_lockout_ends_at_its_ticks_and_not_before(pack):
 # Without it a re-export (tools/carry_players.py carries data/scoreboard.dat, not level.dat's Time, so the game clock
 # restarts near 0) locks out every player who ever entered until the new clock passes their old entry time: days of
 # uptime. Found by this audit: tools/entei_boss.py:433-436 treats a NEGATIVE now - eb.last as inside the lockout.
-@pytest.mark.xfail(strict=True, reason="DEFECT tools/entei_boss.py:435-436: `#d matches ..lock-1` also matches a "
-                   "negative delta, so a game clock that restarts lower (a re-export) locks a past entrant out")
 def test_a_game_clock_that_restarts_lower_never_locks_a_past_entrant_out(pack):
     w = world(pack)
     w.gametime = 5_000_000
@@ -471,8 +469,6 @@ def test_a_game_clock_that_restarts_lower_never_locks_a_past_entrant_out(pack):
 # Without it a player who has NEVER entered is refused on a world younger than one lockout: `operation -= @s eb.last`
 # creates the missing score at 0 (getOrCreatePlayerScore), so the `matches -2147483648..` guard no longer tells
 # "never entered" apart. A fresh export is such a world for its first 24,000 ticks.
-@pytest.mark.xfail(strict=True, reason="DEFECT tools/entei_boss.py:433-436: the subtraction creates eb.last=0 before "
-                   "the guard reads it, so a never-entrant on a clock under the lockout is refused")
 def test_a_player_who_never_entered_is_never_locked_out(pack):
     w = world(pack)
     w.gametime = 300
@@ -524,9 +520,6 @@ def test_an_intruder_is_sent_out_and_their_catch_grants_nobody_the_flag(pack):
 # Without it a player catches TWO Entei: a catchable one left standing when its run ended (its owner logged out, so
 # the keeper's kill could not reach its unloaded chunk) is still there when they log back in, and a catch then is
 # outside an owned slot, so the flag is never granted and their next run is catchable again.
-@pytest.mark.xfail(strict=True, reason="DEFECT: slot/s<k>/free's kill cannot reach an unloaded Entei "
-                   "(tools/entei_boss.py:516) and the stale-run kill runs only for an OWNED slot (:504); caught "
-                   "grants only in an owned slot in mode 1 (:565, :582), so a relog catch leaves the flag unset")
 def test_any_catch_of_a_boss_entei_makes_the_next_run_uncatchable(pack):
     w = world(pack)
     p = champion(w, pack, "Ash", sigils=2)
