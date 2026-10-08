@@ -45,7 +45,17 @@
     "minecraft:iron_sword",
     "minecraft:redstone",
     "minecraft:diamond",
-    "minecraft:emerald"
+    "minecraft:emerald",
+    "cobblemon:fire_stone",
+    "cobblemon:water_stone",
+    "cobblemon:thunder_stone",
+    "cobblemon:leaf_stone",
+    "cobblemon:moon_stone",
+    "cobblemon:sun_stone",
+    "cobblemon:shiny_stone",
+    "cobblemon:dusk_stone",
+    "cobblemon:dawn_stone",
+    "cobblemon:ice_stone"
   ],
   "legacy_flatten_item_quantity": false
 }

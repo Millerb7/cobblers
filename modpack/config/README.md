@@ -47,9 +47,15 @@ a restart. That a sale pays in game is not run (`data/bank.json` `experiment`).
 
 `lenientdeath.json5` is Cobbleverse's file with one id added to the items kept on death: `cobblemon:beast_ball`, next to the Master Ball (the owner, 2026-10-08: the Beast Ball is the only ball that catches a dungeon boss and is exempt from blackout loss like the Master Ball; the Beast Ball key's audit, ef62faf, found Lenient Death kept the Master Ball on death and not the Beast Ball).
 
-`PastureLoot.json` is Cobbleverse's file with eight ids appended to `item_blacklist`: coal, raw copper, raw iron, iron
-ingot, iron nugget, redstone, diamond and emerald (the owner, after the 2026-10-10 overnight: `ranch_ore` is excluded,
-`data/bank.json` `decisions_pending` ranch_ore). The bank buys those ores at flat prices for miners, and a pastured
+`PastureLoot.json` is Cobbleverse's file with eighteen ids appended to `item_blacklist`. The first eight are ore:
+coal, raw copper, raw iron, iron ingot, iron nugget, redstone, diamond and emerald (the owner, after the 2026-10-10
+overnight: `ranch_ore` is excluded, `data/bank.json` `decisions_pending` ranch_ore). The last ten are the evolution
+stones, fire, water, thunder, leaf, moon, sun, shiny, dusk, dawn and ice (the owner, 2026-10-08: no ranch produces
+stones). Every Eeveelution's drop table is its stone at 25% over two passes, so one pastured Jolteon made about 3.7
+thunder stones an hour (`docs/research/DROPS_AUDIT.md` section 4.2, relayed), which made the mining faces, the
+Assayer and the counters' stone lines pointless after the first stone. Battle drops stay the effort route to a stone.
+The emerald stays blacklisted although the bank no longer buys it (the owner, 2026-10-08): nothing needs a ranch
+emerald, and removing the line would reopen it if the bank ever buys emeralds again. The bank buys the other ores at flat prices for miners, and a pastured
 Pokemon dropped seven of them unattended (Steelix raw iron, Sableye diamonds and emeralds, measured from the species
 drop tables in the offline snapshot's jars); the iron nugget is there because nine of them craft into a bought iron
 ingot (Honedge, Doublade, Aegislash, Orthworm). Pasture Loot has no per-item rate and no gate, only this list, so a
