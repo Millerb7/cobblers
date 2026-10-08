@@ -152,7 +152,7 @@ def test_a_forced_evolution_is_a_fault(jar, monkeypatch, tmp_path):
 def test_a_form_on_a_native_final_is_a_fault(jar, monkeypatch, tmp_path):
     extra = {"data/cobblers/species_additions/x_silvally.json":
              {"target": "cobblemon:silvally", "forms": [{"name": "Starter", "aspects": [A2]}]}}
-    assert_named(faults(jar, build(monkeypatch, tmp_path, extra=extra)), "adds to silvally", "carries 11 forms")
+    assert_named(faults(jar, build(monkeypatch, tmp_path, extra=extra)), "adds to silvally", "carries 13 forms")
 
 
 # Without it a species-level change would reach every wild, raid and trainer copy of the species.
@@ -267,7 +267,7 @@ def _screen(tmp_path, pokemon):
     return p
 
 
-FIVE = ["%s level=5 aspect=%s" % (s, A1) for s in ("cosmog", "kubfu", "typenull", "poipole", "meltan")]
+FIVE = ["%s level=5 aspect=%s" % (s, A1) for s in ("cosmog", "kubfu", "typenull", "poipole", "meltan", "larvesta")]
 
 
 # Without it the screen could offer a wrong level, no aspect (the wild-shaped Pokemon), a sixth or a missing line.
@@ -275,7 +275,7 @@ FIVE = ["%s level=5 aspect=%s" % (s, A1) for s in ("cosmog", "kubfu", "typenull"
     ([e.replace("level=5", "level=6") if e.startswith("kubfu") else e for e in FIVE], "the decision is level=5"),
     ([e.split(" aspect=")[0] if e.startswith("poipole") else e for e in FIVE], "the decision is level=5 aspect="),
     (FIVE + ["charmander level=5 aspect=%s" % A1], "offers ['charmander'"),
-    (FIVE[:-1], "the decision is exactly the five"),
+    (FIVE[:-1], "the decision is exactly the 6 stage-1 lines"),
     (["Type: Null level=5 aspect=%s" % A1 if e.startswith("typenull") else e for e in FIVE], "is not a species id"),
 ])
 def test_the_starter_screen_offers_exactly_the_five(jar, monkeypatch, tmp_path, pokemon, needle):

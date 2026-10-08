@@ -1641,7 +1641,7 @@
           "id": "oak_offer_002",
           "kind": "choice",
           "speaker": "professor_oak",
-          "text": "Five are waiting in the lab. Choose one, and look after it. You only get the one.",
+          "text": "Six are waiting in the lab. Choose one, and look after it. You only get the one.",
           "responses": [
             {
               "id": "oak_offer_choose",
@@ -1899,7 +1899,7 @@
       "npc_id": null,
       "source": "docs/mechanics/OAK_AND_CHALLENGE.md (the owner, 2026-10-06: Oak offers the starters in the lab as a scene)",
       "scope": "player",
-      "opened_by": "the five starter actors of data/scenes.json oak_lab, standing in the lab for a player who has not chosen; the choice itself is Cobblemon's chooser, opened by Oak",
+      "opened_by": "the six starter actors of data/scenes.json oak_lab, standing in the lab for a player who has not chosen; the choice itself is Cobblemon's chooser, opened by Oak",
       "speakers": {
         "narration": null
       },
@@ -1924,7 +1924,7 @@
           "id": "lab_starter_001",
           "kind": "line",
           "speaker": "narration",
-          "text": "One of the five Professor Oak keeps in the lab. Talk to him to choose your partner.",
+          "text": "One of the six Professor Oak keeps in the lab. Talk to him to choose your partner.",
           "next": "lab_starter_001"
         }
       ]

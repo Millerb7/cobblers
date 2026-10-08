@@ -8,8 +8,8 @@ how each one evolves, and the items a line needs (Kubfu's scrolls, Silvally's me
 
 WHAT A TIER IS. There is one starter category (modpack/config/cobblemon/starters.json, `cobblers_mythical`), so a tier
 is not a category or a power ranking: it is the stage of a line, and every line shares the same three.
-  tier 1  the stage-1 form the screen gives, at levels.start (5), all five at the same base-stat total
-  tier 2  the stage-2 form at levels.stage_2 (30), again one total for all five
+  tier 1  the stage-1 form the screen gives, at levels.start (5), all six at the same base-stat total
+  tier 2  the stage-2 form at levels.stage_2 (30), again one total for all six
   tier 3  the native final species at levels.final (45), the Cobblemon 1.8.0 species unchanged, so its totals differ
 Tiers 1 and 2 are OUR forms (data/mythical_starters.json `stages`, built by tools/mythical_starters.py); tier 3 is read
 from the jar.
@@ -64,7 +64,7 @@ STATS = (("hp", "HP"), ("attack", "Atk"), ("defence", "Def"), ("special_attack",
 # data/ files an item can be given through without a shop: the page says "earned in the story" and nothing more.
 STORY_FILES = ("data/rewards.json", "data/quests.json", "data/research_station.json", "data/dialogue.json")
 GUIDE = {"file": "starters.html", "title": "Starters", "label": "Starters", "order": 10,
-         "description": "The five starters on the starter screen: their stats at each tier, how each line evolves, "
+         "description": "The six starters on the starter screen: their stats at each tier, how each line evolves, "
                         "and how to get the items two of them need.",
          "generator": "tools/player_guide_starters.py"}
 TIME = {"day": "during the day", "night": "at night", "dawn": "at dawn", "dusk": "at dusk"}
@@ -361,7 +361,7 @@ def render(model):
             '<li><b>Tier 2</b>, a stronger form at level %d. You can first reach it on the way to gym %d, holding %d '
             'badges.</li>'
             '<li><b>Tier 3</b>, the final Pokemon at level %d. You can first reach it on the way to gym %d, holding '
-            '%d badges.</li></ul><p>Tiers 1 and 2 are the same total for all five, so the lines differ in how '
+            '%d badges.</li></ul><p>Tiers 1 and 2 are the same total for all six, so the lines differ in how '
             'their stats are spread, not in how many. Tier 3 is the standard final Pokemon. Your level cap is '
             'the next leader\'s ace (<a href="battles.html">Trainer battles</a>), which is why a tier waits for a '
             'badge. When your starter qualifies, the game offers the evolution; you can wait.</p></div>%s'
