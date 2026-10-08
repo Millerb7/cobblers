@@ -229,6 +229,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 "cobblers_spectrier_cap",
                 # 2026-10-06: the catchable Hoopa at the cradle (tools/hoopa_cradle.py): a self-driving keeper, world-local
                 "cobblers_hoopa_cradle",
+                # 2026-10-08: the repeatable Entei (tools/entei_boss.py, data/entei_boss.json): a sigil advancement, a
+                # self-driving keeper that spawns per player in cobblers:pocket, two callbacks; world-local below.
+                # Its rooms are blocks in the pocket dimension, built by R16Q after the portals' R16P
+                "cobblers_entei_boss",
                 # 2026-10-03: Heaven's Arena's per-player opponents (tools/arena_runtime.py, data/arena_fights.json,
                 # data/arena_dome.json venues): NPC classes, a battle_victory callback and a tick driver that spawns
                 # and clears opponents on its own, so world-local below; R17A places the venues' posts
@@ -341,6 +345,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_rift_zones", "cobblers_mega_recipes",
                "cobblers_ferries", "cobblers_ambient", "cobblers_ambient_idle", "cobblers_levelcap", "cobblers_mines",
                "cobblers_legendaries", "cobblers_spectrier_cap", "cobblers_hoopa_cradle",
+               # 2026-10-08: the Entei keeper SPAWNS a legendary per player on its own and gives items: never global
+               "cobblers_entei_boss",
                # 2026-10-03: charges CobbleDollars and gives items, like the ferry
                "cobblers_markets",
                # 2026-10-07: the barterer trades items for items, so it never loads in the global folder either
@@ -890,6 +896,9 @@ def prepare_jobs(a):
     # one Spectrier per player at the Crown Cemetery (data/spectrier_cap.json; fails closed if the placement moved)
     add("spectrier_cap", "spectrier_cap.py")
     add("hoopa_cradle", "hoopa_cradle.py")
+    # the repeatable Entei in cobblers:pocket (data/entei_boss.json; fails closed on a bankable drop, a room in the
+    # portals' rescue box or outside the border, or an alpha / mis-levelled boss)
+    add("entei_boss", "entei_boss.py")
     add("legendary_sweep_audit", "legendary_sweep_audit.py", *src)
     # blackout, recovery claims and the water ladder (data/blackout.json, data/water_mounts.json)
     add("blackout_pack", "blackout_pack.py")
@@ -1928,6 +1937,12 @@ def steps(with_spawns=False):
     out.append(("R16P", "the dive and sky portals (%d) and their rooms in cobblers:pocket" % len(portal_ids),
                 [("fn", "cobblers:portals/world/%s" % p) for p in portal_ids]
                 + [("fn", "cobblers:portals/place")]))
+    # the Entei boss's rooms (tools/entei_boss.py, data/entei_boss.json): four sealed slots in cobblers:pocket, after
+    # R16P because the dimension is the portals pack's (it registers only at a boot: a first install restarts before
+    # this runs). Flat and deterministic like the portal rooms, so a re-export's loss is rebuilt exactly. Each room
+    # function holds its own chunks (function_limits.ensure_loaded). The keeper, the sigil and the callbacks need no step
+    out.append(("R16Q", "the Entei boss's four rooms in cobblers:pocket (data/entei_boss.json)",
+                [("fn", "cobblers:entei_boss/place")]))
     # the signposts after the donors too: a donor is placed whole, and Sabrina's department store's air margin erased
     # the post where Route 7 leaves her town when the signs went in first (the staging run of 2026-09-21)
     out.append(("R15", "route signposts, after the donors", [("fn", "cobblers:signs/place")]))

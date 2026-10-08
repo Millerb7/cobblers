@@ -151,10 +151,30 @@ def test_the_refund_gives_back_exactly_what_the_recipe_makes(files):
     assert give[0].startswith("give @s %s[" % res["id"])
     assert 'minecraft:custom_data={cobblers_entei:"sigil"}' in give[0]
     assert "can_always_eat:true" in give[0]
-    # materials only: every ingredient is a Nether item no authored counter sells
-    markets = (ROOT / "data" / "markets.json").read_text(encoding="utf-8")
+    # materials only: no authored counter SELLS an ingredient (a priced stock line); an exchange_for price names the
+    # item without selling it
+    sold = set()
+
+    def walk(v):
+        if isinstance(v, dict):
+            if "item" in v and "price" in v:
+                sold.add(v["item"])
+            for x in v.values():
+                walk(x)
+        elif isinstance(v, list):
+            for x in v:
+                walk(x)
+    for name in ("markets.json", "traders.json"):
+        walk(json.loads((ROOT / "data" / name).read_text(encoding="utf-8")))
+    assert sold, "the walk found no stock line at all: the shape it reads has changed"
     for ing in rec["ingredients"]:
-        assert '"item": "%s"' % ing["item"] not in markets, ing
+        assert ing["item"] not in sold, ing
+
+
+def test_the_entry_price_is_the_economy_designs_two_netherite_ingots():
+    # docs/mechanics/ECONOMY_OVERHAUL.md section 8 / U9 (integration branch 213b1d8), relayed by the coordinator
+    ings = DOC["key"]["recipe"]["ingredients"]
+    assert ings == [{"item": "minecraft:netherite_ingot", "count": 2}]
 
 
 def test_enter_refunds_every_refusal_before_anything_changes(files):

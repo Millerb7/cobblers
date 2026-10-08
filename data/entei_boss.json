@@ -38,11 +38,9 @@
     "recipe": {
       "id": "cobblers:entei_boss/ember_sigil",
       "ingredients": [
-        {"item": "minecraft:netherite_scrap", "count": 2},
-        {"item": "minecraft:blaze_rod", "count": 4},
-        {"item": "minecraft:magma_cream", "count": 2}
+        {"item": "minecraft:netherite_ingot", "count": 2}
       ],
-      "why": "MATERIALS, not money (the owner, 2026-10-10). All three come only from the Nether, and none is sold by any authored counter (grep of data/markets.json and data/traders.json, 2026-10-08), so there is no cash path to a sigil and a Challenge-mode player pays exactly what everyone pays. Netherite scrap is the effort-limited part (NETHER_DUNGEON_SCOPE.md section 3: ancient debris is not AFK-farmable, gold is). The bank buys netherite_scrap at 202 (data/bank.json:113), so a sigil's money-equivalent cost is about 404 plus the blaze and magma runs; crafting destroys them, which makes the run a sink. COUNTS ARE A PLACEHOLDER for trainer-balance-designer and the owner."
+      "why": "MATERIALS, not money (the owner, 2026-10-10). The price is the economy design's: docs/mechanics/ECONOMY_OVERHAUL.md section 8 and build item U9 (integration branch, 213b1d8): 'Each entry consumes a key made from 2 netherite ingots', the same on every clear, in both modes, Challenge players included. No authored counter SELLS a netherite ingot: data/markets.json names it only as an exchange_for price (a line costing the bank value of N ingots), never as stock, so there is no cash path to a sigil (checked 2026-10-08; tests/test_entei_boss.py walks the stock lines). The bank buys netherite_ingot at 900 (data/bank.json:114), so a sigil destroys $1,800 of bank value (8 ancient debris and 8 gold): the run is a sink. Superseded 2026-10-08 the same night: this unit's first placeholder, 2 netherite scrap + 4 blaze rods + 2 magma cream (about $404 of bank value), replaced by the economy design's price."
     },
     "refund": "a sigil eaten where it cannot open anything (outside the Nether, during a run, before the Champion, inside the lockout, or with every slot busy) is given back at once with a line saying why: nothing is lost by eating it at the wrong time"
   },
