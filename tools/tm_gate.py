@@ -381,6 +381,12 @@ def plan(doc, resolved, markets, progression):
             for _, gem, _, _ in tm_recipes.get(item, []):
                 if gem:
                     type_badge.setdefault(gem, badge)
+    # A type no leader's pool teaches (ghost, dragon, ice, ...) is never placed early: it waits for the LAST leader,
+    # not the first. Defaulting it to minimum_badge put Shadow Ball before Brock (the owner, 2026-10-08). The same
+    # holds for a grade no shelf line reaches: it is a problem (fail closed) and its fallback is the last leader too.
+    if not pools:
+        problems.append("no gym leader's first-win pool names a TM: badge_rule.unlisted cannot place any type")
+    no_gym = max(pools) if pools else 8
     grade_badge = {}
     for gi, g in enumerate(order):
         cands = [b for item, b in shelf.items() if item in tm_recipes and (grade_of(item) or 0) >= gi
@@ -405,9 +411,10 @@ def plan(doc, resolved, markets, progression):
             g = grade if grade is not None else grade_of(item)
             if g is None:
                 return None, "recipe %s names no blank disc and no input TM with one" % rid
-            tb = type_badge.get(gem, floor)
-            gb = grade_badge.get(order[g]) or floor
-            b, w = max(floor, tb, gb), "type %s -> %d, grade %s -> %d" % (gem, tb, order[g], gb)
+            tb = type_badge.get(gem, no_gym)
+            gb = grade_badge.get(order[g]) or no_gym
+            b, w = max(floor, tb, gb), "type %s -> %d%s, grade %s -> %d" % (
+                gem, tb, "" if gem in type_badge else " (no leader teaches it)", order[g], gb)
             for inp in inputs:
                 ib = shelf.get(inp) or (rule_badge(inp, stack + (item,))[0] if inp in tm_recipes else None)
                 if ib is None:
@@ -503,7 +510,8 @@ def plan(doc, resolved, markets, progression):
                           "version": doc["sync_version"]}, sort_keys=True)
     key = int(hashlib.sha256(key_src.encode()).hexdigest()[:8], 16) % 2000000000 + 1
     return {"tms": tms, "gated": gated, "closed_advancements": closed_adv, "closed_recipes": sorted(closed_recipes),
-            "type_badge": type_badge, "grade_badge": grade_badge, "top_badge": top, "key": key,
+            "type_badge": type_badge, "no_gym_type_badge": no_gym, "grade_badge": grade_badge, "top_badge": top,
+            "key": key,
             "shelf_disagreements": disagree, "problems": problems, "notes": notes,
             "counts": {"tm_items": len(tms), "gated_recipes": len(gated),
                        "gated_tm_recipes": sum(1 for g in gated.values() if not g.get("device")),
