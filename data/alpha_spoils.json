@@ -1,0 +1,61 @@
+{
+  "schema": "cobblers.alpha_spoils/1",
+  "generated_by": "hand (the jar's callback and alpha loot tables read from Cobblemon-fabric-1.8.0+1.21.1.jar on 2026-10-08)",
+  "status": "built, not observed in game: no alpha has been beaten with the pack loaded (experiments/EXP-066-alpha-spoils)",
+  "owner_decision": "the owner, 2026-10-08: \"Option C for alphas. Candies out, gems in, paid by alpha level. They stay worth finding as the world's type-gem source, and the levelling design stops leaking.\"",
+  "design": "docs/mechanics/DROPS_PROGRESSION_SPLIT.md section 3 (option C, 3.5)",
+  "tool": "tools/alpha_spoils.py (check, build); the pack is build/datapacks/cobblers_alpha_spoils, world-local",
+  "fields": {
+    "jar_callback": "the jar's own alpha callback, never overridden (.claude/rules/datapacks.md); check reads it and fails unless it still names exactly the candy_tables, the type-table pattern and the type-tier threshold below",
+    "candy_tables": "the jar's alpha reward-tier loot tables, each overridden at its own path with an empty table ({\"type\": \"minecraft:chest\", \"pools\": []}); `items_as_read` is every item the jar's table carried, and check fails when the jar's table no longer carries exactly those",
+    "type_tables": "the jar's per-type loot tables our callback rolls: `pattern` with <type> a Pokemon type's showdown id and <tier> 1 or 2; `tier2_from_level` is the level from which the jar's callback (and ours) uses tier 2; `gem` is the item each type table must name",
+    "jar_rolls": "what the jar's callback rolls per KO besides its tier table: two independent 1-in-2 rolls of the type tables (primary, then the type it computes for slot 1)",
+    "bands": "our callback's extra rolls by the alpha's level at the faint: from `from_level` (inclusive) until the next band's; `extra_rolls` names which of the alpha's types each certain extra roll uses (`secondary` is the second type of a dual-type alpha and the only type of a single-type one; `primary` is the first type); `gems_per_ko` is the design's expected gems per KO, jar's rolls and ours together, which check recomputes from the jar's type tables and fails on a difference above 0.001"
+  },
+  "jar_callback": "data/cobblemon/callbacks/battle_fainted/pokemon_alpha_drops.molang",
+  "callback": "data/cobblemon/callbacks/battle_fainted/cobblers_alpha_spoils.molang",
+  "candy_tables": [
+    {
+      "id": "cobblemon:alpha/alpha_rewards_tier1",
+      "jar_from_level": 1,
+      "items_as_read": ["cobblemon:exp_candy_xs", "cobblemon:exp_candy_s", "cobblemon:exp_candy_m"]
+    },
+    {
+      "id": "cobblemon:alpha/alpha_rewards_tier2",
+      "jar_from_level": 31,
+      "items_as_read": ["cobblemon:exp_candy_s", "cobblemon:exp_candy_m", "cobblemon:exp_candy_l"]
+    },
+    {
+      "id": "cobblemon:alpha/alpha_rewards_tier3",
+      "jar_from_level": 51,
+      "items_as_read": ["cobblemon:exp_candy_m", "cobblemon:exp_candy_l", "cobblemon:health_candy", "cobblemon:mighty_candy",
+                        "cobblemon:tough_candy", "cobblemon:smart_candy", "cobblemon:courage_candy", "cobblemon:quick_candy"]
+    },
+    {
+      "id": "cobblemon:alpha/alpha_rewards_tier4",
+      "jar_from_level": 66,
+      "items_as_read": ["cobblemon:exp_candy_l", "cobblemon:exp_candy_xl", "cobblemon:rare_candy", "cobblemon:health_candy",
+                        "cobblemon:mighty_candy", "cobblemon:tough_candy", "cobblemon:smart_candy", "cobblemon:courage_candy",
+                        "cobblemon:quick_candy"]
+    }
+  ],
+  "type_tables": {
+    "pattern": "cobblemon:alpha/types/<type>_rewards_tier<tier>",
+    "tier2_from_level": 51,
+    "gem": "cobblemon:<type>_gem",
+    "types": ["bug", "dark", "dragon", "electric", "fairy", "fighting", "fire", "flying", "ghost", "grass", "ground", "ice",
+              "normal", "poison", "psychic", "rock", "steel", "water"]
+  },
+  "jar_rolls": {"type_rolls": 2, "chance_each": 0.5},
+  "bands": [
+    {"from_level": 1, "extra_rolls": [], "gems_per_ko": 1.125,
+     "why": "leg 1 unchanged: the jar's two 1-in-2 rolls only (the design's 3.5 table, 'under 31')"},
+    {"from_level": 31, "extra_rolls": ["secondary"], "gems_per_ko": 2.25,
+     "why": "one certain roll of the second type, so a dual-type alpha pays its second type whatever X5 finds about the jar's callback"},
+    {"from_level": 51, "extra_rolls": ["secondary"], "gems_per_ko": 3.75,
+     "why": "the same roll, now at type tier 2 (2-3 gems a gem roll), as the jar's own rolls are"},
+    {"from_level": 66, "extra_rolls": ["secondary", "primary"], "gems_per_ko": 5.625,
+     "why": "a second certain roll, of the first type: the alpha that used to pay tier-4 candies (about 57,000 EXP a KO) pays the most gems instead"}
+  ],
+  "not_covered": "a dual-type alpha under level 31 gets only the jar's two rolls, which (if the X5 reading holds) are both its first type: the design keeps leg 1 at 1.125 gems a KO, and paying its second type there would change that figure. A caught alpha pays nothing: the event is battle_fainted only"
+}

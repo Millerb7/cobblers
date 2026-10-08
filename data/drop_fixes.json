@@ -11,7 +11,8 @@
     "drops": "the table we ship, in Cobblemon's drops format",
     "intent": "percent of defeats that drop at least one of each item, as the fixed table rolls (DropTable.getDrops, exact); check recomputes it from `drops` and fails on a difference above 0.01",
     "why": "the fault and the fix in words",
-    "dungeon_boss": "where a species is also a dungeon boss: whether this table reaches it, and beside what"
+    "dungeon_boss": "where a species is also a dungeon boss: whether this table reaches it, and beside what",
+    "removes": "items deliberately taken out of a species table that has no fault (the owner's progression split, 2026-10-08): `drops` must be upstream's table with exactly these entries removed and nothing else changed; `fixes` is then empty, since there is no fault to remove"
   },
   "fixes": [
     {
@@ -732,8 +733,244 @@
         "minecraft:dragon_breath": 100.0
       },
       "why": "Ambiguous: the Cobblemon jar and Mega Showdown both ship data/cobblemon/species/generation5/kyurem.json, and which mod's file the loader takes is mod load order. Read both 2026-10-08: Cobblemon's carries a drop table (amount 3, Dragon's Breath 2-3, every defeat); Mega Showdown's carries NO `drops` key at all, so if it wins Kyurem drops nothing. Mega Showdown's file is a rework of the species for its own purposes (it adds `implemented` and `riding`, and changes baseScale, hitbox, forms and behaviour) that leaves drops out rather than setting an empty table, so it states no intent about drops and there is nothing to merge. Chosen: Cobblemon's table, the only one either mod ships. Our species_additions file sets `drops`, which replaces the species table after whichever species file loaded (module docstring), so load order no longer decides Kyurem's drops. Only drops: which mod's baseScale, hitbox, forms, behaviour and riding win is still the loader's, and is not a drop table's to settle. The White and Black forms carry no table of their own in either file, so they follow this one."
+    },
+    {
+      "species": "chansey",
+      "fixes": [],
+      "removes": [
+        "cobblemon:lucky_egg"
+      ],
+      "upstream": {
+        "via": "species",
+        "pack": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+        "path": "data/cobblemon/species/generation1/chansey.json",
+        "drops": {
+          "amount": 1,
+          "entries": [
+            {
+              "item": "cobblemon:lucky_egg",
+              "percentage": 10.0
+            },
+            {
+              "item": "cobblemon:oval_stone",
+              "percentage": 10.0
+            },
+            {
+              "item": "minecraft:egg",
+              "percentage": 50.0
+            }
+          ]
+        }
+      },
+      "drops": {
+        "amount": 1,
+        "entries": [
+          {
+            "item": "cobblemon:oval_stone",
+            "percentage": 10.0
+          },
+          {
+            "item": "minecraft:egg",
+            "percentage": 50.0
+          }
+        ]
+      },
+      "intent": {
+        "cobblemon:oval_stone": 10.0,
+        "minecraft:egg": 45.0
+      },
+      "why": "progression: moved to dungeons (the owner, 2026-10-08: \"The Lucky Egg: yes, to dungeons.\"). The Lucky Egg is a held item that raises battle EXP, the one progression item a species table carried (docs/mechanics/DROPS_PROGRESSION_SPLIT.md 1.2 and 1.4); it becomes a dungeon reward (the design's D4, a Night Shift band-1 first clear, not built here). A live dropper: drops-1.8.0.json marks Chansey spawned by our tables. Only the Lucky Egg entry is removed: amount, order and every other entry are upstream's, verbatim (`removes`; tools/drop_fixes.py check fails otherwise). Because the egg was rolled first, the entries after it are now chosen where it used to take the pass, so their rates rise a little: oval_stone 9% -> 10%; egg 40.5% -> 45% a defeat (DropTable.getDrops, exact)."
+    },
+    {
+      "species": "blissey",
+      "fixes": [],
+      "removes": [
+        "cobblemon:lucky_egg"
+      ],
+      "upstream": {
+        "via": "species",
+        "pack": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+        "path": "data/cobblemon/species/generation2/blissey.json",
+        "drops": {
+          "amount": 1,
+          "entries": [
+            {
+              "item": "cobblemon:lucky_egg",
+              "percentage": 25.0
+            },
+            {
+              "item": "cobblemon:oval_stone",
+              "percentage": 25.0
+            },
+            {
+              "item": "minecraft:egg",
+              "percentage": 50.0
+            }
+          ]
+        }
+      },
+      "drops": {
+        "amount": 1,
+        "entries": [
+          {
+            "item": "cobblemon:oval_stone",
+            "percentage": 25.0
+          },
+          {
+            "item": "minecraft:egg",
+            "percentage": 50.0
+          }
+        ]
+      },
+      "intent": {
+        "cobblemon:oval_stone": 25.0,
+        "minecraft:egg": 37.5
+      },
+      "why": "progression: moved to dungeons (the owner, 2026-10-08: \"The Lucky Egg: yes, to dungeons.\"). The Lucky Egg is a held item that raises battle EXP, the one progression item a species table carried (docs/mechanics/DROPS_PROGRESSION_SPLIT.md 1.2 and 1.4); it becomes a dungeon reward (the design's D4, a Night Shift band-1 first clear, not built here). A live dropper: drops-1.8.0.json marks Blissey spawned by our tables. Only the Lucky Egg entry is removed: amount, order and every other entry are upstream's, verbatim (`removes`; tools/drop_fixes.py check fails otherwise). Because the egg was rolled first, the entries after it are now chosen where it used to take the pass, so their rates rise a little: oval_stone 18.75% -> 25%; egg 28.12% -> 37.5% a defeat (DropTable.getDrops, exact)."
+    },
+    {
+      "species": "togepi",
+      "fixes": [],
+      "removes": [
+        "cobblemon:lucky_egg"
+      ],
+      "upstream": {
+        "via": "species",
+        "pack": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+        "path": "data/cobblemon/species/generation2/togepi.json",
+        "drops": {
+          "amount": 3,
+          "entries": [
+            {
+              "item": "cobblemon:lucky_egg",
+              "percentage": 2.5
+            },
+            {
+              "item": "cobblemon:shiny_stone",
+              "percentage": 2.5
+            },
+            {
+              "item": "cobblemon:fairy_feather",
+              "percentage": 2.5
+            }
+          ]
+        }
+      },
+      "drops": {
+        "amount": 3,
+        "entries": [
+          {
+            "item": "cobblemon:shiny_stone",
+            "percentage": 2.5
+          },
+          {
+            "item": "cobblemon:fairy_feather",
+            "percentage": 2.5
+          }
+        ]
+      },
+      "intent": {
+        "cobblemon:shiny_stone": 7.3141,
+        "cobblemon:fairy_feather": 7.1402
+      },
+      "why": "progression: moved to dungeons (the owner, 2026-10-08: \"The Lucky Egg: yes, to dungeons.\"). The Lucky Egg is a held item that raises battle EXP, the one progression item a species table carried (docs/mechanics/DROPS_PROGRESSION_SPLIT.md 1.2 and 1.4); it becomes a dungeon reward (the design's D4, a Night Shift band-1 first clear, not built here). A live dropper: drops-1.8.0.json marks Togepi spawned by our tables. Only the Lucky Egg entry is removed: amount, order and every other entry are upstream's, verbatim (`removes`; tools/drop_fixes.py check fails otherwise). Because the egg was rolled first, the entries after it are now chosen where it used to take the pass, so their rates rise a little: shiny_stone 7.14% -> 7.314%; fairy_feather 6.97% -> 7.14% a defeat (DropTable.getDrops, exact)."
+    },
+    {
+      "species": "togetic",
+      "fixes": [],
+      "removes": [
+        "cobblemon:lucky_egg"
+      ],
+      "upstream": {
+        "via": "species",
+        "pack": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+        "path": "data/cobblemon/species/generation2/togetic.json",
+        "drops": {
+          "amount": 3,
+          "entries": [
+            {
+              "item": "cobblemon:lucky_egg",
+              "percentage": 5.0
+            },
+            {
+              "item": "cobblemon:shiny_stone",
+              "percentage": 5.0
+            },
+            {
+              "item": "cobblemon:fairy_feather",
+              "percentage": 5.0
+            }
+          ]
+        }
+      },
+      "drops": {
+        "amount": 3,
+        "entries": [
+          {
+            "item": "cobblemon:shiny_stone",
+            "percentage": 5.0
+          },
+          {
+            "item": "cobblemon:fairy_feather",
+            "percentage": 5.0
+          }
+        ]
+      },
+      "intent": {
+        "cobblemon:shiny_stone": 14.2625,
+        "cobblemon:fairy_feather": 13.6189
+      },
+      "why": "progression: moved to dungeons (the owner, 2026-10-08: \"The Lucky Egg: yes, to dungeons.\"). The Lucky Egg is a held item that raises battle EXP, the one progression item a species table carried (docs/mechanics/DROPS_PROGRESSION_SPLIT.md 1.2 and 1.4); it becomes a dungeon reward (the design's D4, a Night Shift band-1 first clear, not built here). Not spawned wild (drops-1.8.0.json marks Togetic not live), but reached by evolving a caught Togepi, and Pasture Loot rolls an owned Pokemon's own table, so left alone it would ranch the egg at 1.1635 an hour (the JSON's ranch_per_hour, relayed, not re-measured): stripped with its line so the egg keeps no drop route. Only the Lucky Egg entry is removed: amount, order and every other entry are upstream's, verbatim (`removes`; tools/drop_fixes.py check fails otherwise). Because the egg was rolled first, the entries after it are now chosen where it used to take the pass, so their rates rise a little: shiny_stone 13.62% -> 14.26%; fairy_feather 13% -> 13.62% a defeat (DropTable.getDrops, exact)."
+    },
+    {
+      "species": "togekiss",
+      "fixes": [],
+      "removes": [
+        "cobblemon:lucky_egg"
+      ],
+      "upstream": {
+        "via": "species",
+        "pack": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+        "path": "data/cobblemon/species/generation4/togekiss.json",
+        "drops": {
+          "amount": 3,
+          "entries": [
+            {
+              "item": "cobblemon:lucky_egg",
+              "percentage": 10.0
+            },
+            {
+              "item": "cobblemon:shiny_stone",
+              "percentage": 10.0
+            },
+            {
+              "item": "cobblemon:fairy_feather",
+              "percentage": 10.0
+            }
+          ]
+        }
+      },
+      "drops": {
+        "amount": 3,
+        "entries": [
+          {
+            "item": "cobblemon:shiny_stone",
+            "percentage": 10.0
+          },
+          {
+            "item": "cobblemon:fairy_feather",
+            "percentage": 10.0
+          }
+        ]
+      },
+      "intent": {
+        "cobblemon:shiny_stone": 27.1,
+        "cobblemon:fairy_feather": 24.9049
+      },
+      "why": "progression: moved to dungeons (the owner, 2026-10-08: \"The Lucky Egg: yes, to dungeons.\"). The Lucky Egg is a held item that raises battle EXP, the one progression item a species table carried (docs/mechanics/DROPS_PROGRESSION_SPLIT.md 1.2 and 1.4); it becomes a dungeon reward (the design's D4, a Night Shift band-1 first clear, not built here). Not spawned wild (drops-1.8.0.json marks Togekiss not live), but reached by evolving a caught Togepi, and Pasture Loot rolls an owned Pokemon's own table, so left alone it would ranch the egg at 2.0119 an hour (the JSON's ranch_per_hour, relayed, not re-measured): stripped with its line so the egg keeps no drop route. Only the Lucky Egg entry is removed: amount, order and every other entry are upstream's, verbatim (`removes`; tools/drop_fixes.py check fails otherwise). Because the egg was rolled first, the entries after it are now chosen where it used to take the pass, so their rates rise a little: shiny_stone 24.9% -> 27.1%; fairy_feather 22.84% -> 24.9% a defeat (DropTable.getDrops, exact)."
     }
   ],
   "open": [],
-  "owner_decision_2026_10_08": "the owner, 2026-10-08: \"BROKEN IDS: fix all of them. Entei's Sacred Ash gets a substitute that exists and suits a revival. Kyurem's load-order conflict: pick one deliberately and record why.\" The three cases held open until then (Entei, Ho-Oh, Kyurem) are fixes now; nothing is held open."
+  "owner_decision_2026_10_08": "the owner, 2026-10-08: \"BROKEN IDS: fix all of them. Entei's Sacred Ash gets a substitute that exists and suits a revival. Kyurem's load-order conflict: pick one deliberately and record why.\" The three cases held open until then (Entei, Ho-Oh, Kyurem) are fixes now; nothing is held open.",
+  "progression_removals_2026_10_08": "the owner, 2026-10-08: \"The Lucky Egg: yes, to dungeons.\" Five records (chansey, blissey, togepi, togetic, togekiss) carry `removes` [cobblemon:lucky_egg] and no fault: every species table in the jars and datapacks that names the egg (docs/research/notes/drops-1.8.0.json items[cobblemon:lucky_egg].droppers, all five, form null)"
 }

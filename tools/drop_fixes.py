@@ -50,6 +50,11 @@ WHERE OUR FILE GOES, and why two kinds:
 Each fix records upstream's table as it was read; `check` fails when upstream no longer matches, so a fix never
 silently overrides a table upstream has since changed.
 
+A DELIBERATE REMOVAL (the owner, 2026-10-08: "The Lucky Egg: yes, to dungeons"): a record with `removes` [item ids]
+and an empty `fixes` is not a fault fix but a progression item taken out of a sound table. `check` then requires
+`drops` to be upstream's table with exactly those entries removed and nothing else changed, so the rest of the table
+stays upstream's verbatim.
+
 NOT folded into tools/mythical_starters.py, the one other species_additions emitter: that pack adds FORMS (which
 append) for six starters and is coupled to the starter screen's config; this one REPLACES tables, carries copies of
 upstream files, and has its own sweep. Same layer (world-local), different job.
@@ -460,6 +465,15 @@ def check(doc, upstream=None, items=None, upstream_tables=None, mod_files=None):
             if got not in allowed:
                 problems.append("%s: upstream's species table is now %s, not the recorded %s"
                                 % (sp, json.dumps(got), json.dumps(up["drops"])))
+        removes = fx.get("removes") or []
+        if removes:
+            # a deliberate removal (the progression split): upstream's table with exactly these items taken out
+            want = dict(up["drops"], entries=[e for e in up["drops"].get("entries", []) if e.get("item") not in removes])
+            if fx["drops"] != want:
+                problems.append("%s: drops is not upstream's table less %s: %s" % (sp, removes, json.dumps(fx["drops"])))
+            for it in removes:
+                if not any(e.get("item") == it for e in up["drops"].get("entries", [])):
+                    problems.append("%s: removes %s, which upstream's table does not carry" % (sp, it))
         try:
             ic = item_chances(fx["drops"])
             ec = entry_chances(fx["drops"])

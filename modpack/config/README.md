@@ -47,13 +47,19 @@ a restart. That a sale pays in game is not run (`data/bank.json` `experiment`).
 
 `lenientdeath.json5` is Cobbleverse's file with one id added to the items kept on death: `cobblemon:beast_ball`, next to the Master Ball (the owner, 2026-10-08: the Beast Ball is the only ball that catches a dungeon boss and is exempt from blackout loss like the Master Ball; the Beast Ball key's audit, ef62faf, found Lenient Death kept the Master Ball on death and not the Beast Ball).
 
-`PastureLoot.json` is Cobbleverse's file with eighteen ids appended to `item_blacklist`. The first eight are ore:
+`PastureLoot.json` is Cobbleverse's file with nineteen ids appended to `item_blacklist`. The first eight are ore:
 coal, raw copper, raw iron, iron ingot, iron nugget, redstone, diamond and emerald (the owner, after the 2026-10-10
 overnight: `ranch_ore` is excluded, `data/bank.json` `decisions_pending` ranch_ore). The last ten are the evolution
 stones, fire, water, thunder, leaf, moon, sun, shiny, dusk, dawn and ice (the owner, 2026-10-08: no ranch produces
 stones). Every Eeveelution's drop table is its stone at 25% over two passes, so one pastured Jolteon made about 3.7
 thunder stones an hour (`docs/research/DROPS_AUDIT.md` section 4.2, relayed), which made the mining faces, the
 Assayer and the counters' stone lines pointless after the first stone. Battle drops stay the effort route to a stone.
+The nineteenth is `minecraft:dragon_breath` (the owner, 2026-10-08: "Dragon's Breath: yes, blacklist it"). It is the
+only input that brews the Ability Capsule (`data/cobblemon/recipe/brewing_stand/ability_capsule.json` in the Cobblemon
+jar, cited in `data/markets.json`'s Ability Capsule line), so a pastured Dragonair, which drops it every defeat, would
+ranch about 6.8 an hour (6.8236, `docs/research/notes/drops-1.8.0.json` `ranch_per_hour`; Dratini 4.0, Deino 4.4,
+Drampa 0.86, and Rayquaza 36 if ever pastured) into a progression item. Battle drops still give it
+(`docs/mechanics/DROPS_PROGRESSION_SPLIT.md` 1.4 and Q5).
 The emerald stays blacklisted although the bank no longer buys it (the owner, 2026-10-08): nothing needs a ranch
 emerald, and removing the line would reopen it if the bank ever buys emeralds again. The bank buys the other ores at flat prices for miners, and a pastured
 Pokemon dropped seven of them unattended (Steelix raw iron, Sableye diamonds and emeralds, measured from the species
