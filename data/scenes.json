@@ -18,7 +18,7 @@
       "quest_id": "main_worldshift_reveal",
       "source": "docs/mechanics/OAK_AND_CHALLENGE.md (the owner, 2026-10-06: Oak offers the starters in the lab as a scene rather than a menu on join)",
       "built_by": "tools/place_town.py build('hometown'): hometown_oaks_lab, template kits/structures/campaign/f4/pallet/rare_structures/lab.nbt, rotation none, origin (1487, 117, 5309), floor template layer 0 = y117 (data/npc_seats.json npc_main_pallet_oak). Markers are template cells (x-1487, z-5309) on layer 1 with solid layer 0 under and air on layers 1-2, read from the template on 2026-10-06; tests/test_oak_lab_scene.py re-reads them",
-      "why": "A new player joins with no starter and Cobblemon's chooser locked (modpack/config/cobblemon/starters.json allowStarterOnJoin false). Walking from spawn (1461, 118, 5306) the hotbar says Oak is waiting; the five starters stand in a row along the lab's north wall, each the player's own, until they have chosen; on the first step into the lab Oak's conversation opens by itself (greet_in_lab, once): his offer, Cobblemon's own chooser opened by Oak, then the League rules, then the send-off.",
+      "why": "A new player joins with no starter and Cobblemon's chooser locked (modpack/config/cobblemon/starters.json allowStarterOnJoin false). Walking from spawn (1461, 118, 5306) the hotbar says Oak is waiting; the six starters stand in a row along the lab's north wall, each the player's own, until they have chosen; on the first step into the lab Oak's conversation opens by itself (greet_in_lab, once): his offer, Cobblemon's own chooser opened by Oak, then the League rules, then the send-off.",
       "area": {
         "from": [1440, 105, 5290],
         "to": [1510, 135, 5335]
@@ -28,14 +28,16 @@
         "starter_kubfu": {"at": [1495, 118, 5313], "yaw": 0, "slots": [[0, 0], [0, 0.9], [0.7, 0.45]]},
         "starter_typenull": {"at": [1497, 118, 5313], "yaw": 0, "slots": [[0, 0], [0, 0.9], [0.7, 0.45]]},
         "starter_poipole": {"at": [1499, 118, 5313], "yaw": 0, "slots": [[0, 0], [0, 0.9], [0.7, 0.45]]},
-        "starter_meltan": {"at": [1501, 118, 5313], "yaw": 0, "slots": [[0, 0], [0, 0.9], [0.7, 0.45]]}
+        "starter_meltan": {"at": [1501, 118, 5313], "yaw": 0, "slots": [[0, 0], [0, 0.9], [0.7, 0.45]]},
+        "starter_larvesta": {"at": [1491, 118, 5313], "yaw": 0, "slots": [[0, 0], [0.7, 0], [0.35, -0.35]], "why": "the sixth (the owner, 2026-10-08): template x4, the one two-block cell left on the north row (x4-15 inside, the five at x6-15). Its slots stay on row z4 so the copy keeps clear of the west door's z5 half (door at template x3, z5-6)."}
       },
       "actors": [
         {"id": "cosmog", "species": "cosmog", "level": 5, "conversation": "dlg_main_pallet_lab_starter", "not_yours": "That one is waiting for someone else.", "place": [{"when": {"kind": "not", "condition": {"kind": "starter_chosen"}}, "marker": "starter_cosmog"}]},
         {"id": "kubfu", "species": "kubfu", "level": 5, "conversation": "dlg_main_pallet_lab_starter", "not_yours": "That one is waiting for someone else.", "place": [{"when": {"kind": "not", "condition": {"kind": "starter_chosen"}}, "marker": "starter_kubfu"}]},
         {"id": "typenull", "species": "typenull", "level": 5, "conversation": "dlg_main_pallet_lab_starter", "not_yours": "That one is waiting for someone else.", "place": [{"when": {"kind": "not", "condition": {"kind": "starter_chosen"}}, "marker": "starter_typenull"}]},
         {"id": "poipole", "species": "poipole", "level": 5, "conversation": "dlg_main_pallet_lab_starter", "not_yours": "That one is waiting for someone else.", "place": [{"when": {"kind": "not", "condition": {"kind": "starter_chosen"}}, "marker": "starter_poipole"}]},
-        {"id": "meltan", "species": "meltan", "level": 5, "conversation": "dlg_main_pallet_lab_starter", "not_yours": "That one is waiting for someone else.", "place": [{"when": {"kind": "not", "condition": {"kind": "starter_chosen"}}, "marker": "starter_meltan"}]}
+        {"id": "meltan", "species": "meltan", "level": 5, "conversation": "dlg_main_pallet_lab_starter", "not_yours": "That one is waiting for someone else.", "place": [{"when": {"kind": "not", "condition": {"kind": "starter_chosen"}}, "marker": "starter_meltan"}]},
+        {"id": "larvesta", "species": "larvesta", "level": 5, "conversation": "dlg_main_pallet_lab_starter", "not_yours": "That one is waiting for someone else.", "place": [{"when": {"kind": "not", "condition": {"kind": "starter_chosen"}}, "marker": "starter_larvesta"}]}
       ],
       "zones": [
         {"id": "lab_floor", "from": [1491, 118, 5312], "to": [1502, 120, 5318], "transitions": ["greet_in_lab"], "why": "the lab's main room inside its double door (template x4-15, z3-9): the first step in opens Oak's conversation, once"}

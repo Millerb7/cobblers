@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""The five mythical starters, "a-lite" at 30 and 45, from data/mythical_starters.json, as the world pack
+"""The six starters (five mythical, and Larvesta), "a-lite" at 30 and 45, from data/mythical_starters.json, as the world pack
 build/datapacks/cobblers_mythical_starters.
 
 The design (docs/mechanics/NATIVE_STARTERS_COST.md sections 6a and 7, the owner 2026-10-02/03): Cosmog, Kubfu,
@@ -68,8 +68,9 @@ import battle_sim as B  # noqa: E402  (the jar finder, species keys, Showdown mo
 # ------------------------------------------------------------------------------------------------ the jar
 
 def jar_species(jar):
-    """Every species file in the jar, implemented or not: four of the five lines are `implemented: false` in the
-    bare jar (Mega Showdown and COBBLEVERSE switch them on), so battle_sim.load_pack drops them."""
+    """Every species file in the jar, implemented or not: four of the six lines are `implemented: false` in the
+    bare jar (Mega Showdown and COBBLEVERSE switch them on), so battle_sim.load_pack drops them. Larvesta and
+    Volcarona are implemented in the bare jar."""
     z = zipfile.ZipFile(jar)
     out = {}
     for n in z.namelist():
@@ -273,7 +274,7 @@ def config_entries(doc):
 
 
 def check_config(doc):
-    """The starter screen offers exactly the five stage-1 forms and none of the 27 (they stay wild)."""
+    """The starter screen offers exactly the record's stage-1 forms (six) and none of the 27 (they stay wild)."""
     p = []
     cfg = json.loads(STARTERS.read_text(encoding="utf-8"))
     cats = cfg.get("starters") or []
@@ -313,7 +314,7 @@ def files(doc):
         out["data/%s/species_additions/mythical_starter_%s.json" % (NS, species)] = \
             json.dumps(addition(doc, species, stages), indent=2) + "\n"
     out["pack.mcmeta"] = json.dumps({"pack": {"pack_format": 48, "description":
-                                     "Cobblers: the five mythical starters, a-lite at %d/%d (tools/mythical_starters.py)"
+                                     "Cobblers: the six starters, a-lite at %d/%d (tools/mythical_starters.py)"
                                      % (doc["levels"]["stage_2"], doc["levels"]["final"])}}, indent=2) + "\n"
     return out
 

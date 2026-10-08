@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Independent audit of the five mythical starters ("a-lite" at 30 and 45) as the server would load them.
+"""Independent audit of the six starters (five mythical, and Larvesta), "a-lite" at 30 and 45, as the server loads them.
 
 Written by a test author, not by the session that built them. It never imports tools/mythical_starters.py and never
 takes an expectation from data/mythical_starters.json's stage specs: the record's levels, aspects, shapes, BSTs and
@@ -70,6 +70,9 @@ LINES = {
     "typenull": ("typenull", "typenull"),
     "poipole": ("poipole", "poipole"),
     "meltan": ("meltan", "melmetal"),
+    # the sixth (the owner, 2026-10-08; docs/research/notes/larvesta-starter-1.8.0.md version A): stage 2 is a 430
+    # form in Larvesta's own shape, never plain Larvesta (native Larvesta evolves at 59)
+    "larvesta": ("larvesta", "larvesta"),
 }
 # 1.2 and 6a: the jar has no Meltan evolution; the decision names Melmetal as its final.
 DECLARED_FINALS = {"meltan": {"melmetal"}}
@@ -372,8 +375,8 @@ def check_screen(starters_path, species):
             p.append("starter screen %r: properties %s, the decision is level=%d aspect=%s"
                      % (e, props, START, ASPECT[1]))
     if sorted(seen) != sorted(LINES):
-        p.append("the starter screen offers %s; the decision is exactly the five stage-1 lines %s"
-                 % (sorted(seen), sorted(LINES)))
+        p.append("the starter screen offers %s; the decision is exactly the %d stage-1 lines %s"
+                 % (sorted(seen), len(LINES), sorted(LINES)))
     return p
 
 
@@ -431,12 +434,12 @@ def audit(pack=PACK, starters=STARTERS, spawns=SPAWNS, record=RECORD, upstream=U
     if adds:
         allowed = set(LINES) | {v[0] for v in LINES.values()}
         for sp in sorted(set(adds) - allowed):
-            faults.append("our pack adds to %s, which is not a stage-1 or stage-2 species of the five lines "
+            faults.append("our pack adds to %s, which is not a stage-1 or stage-2 species of the starter lines "
                           "(finals and everything else stay native: decision 4)" % sp)
         nforms = sum(len(d.get("forms") or []) for d in adds.values())
         if nforms != 2 * len(LINES):
-            faults.append("our pack carries %d forms; the decision is %d (two stages x five lines, 4)"
-                          % (nforms, 2 * len(LINES)))
+            faults.append("our pack carries %d forms; the decision is %d (two stages x %d lines, 4)"
+                          % (nforms, 2 * len(LINES), len(LINES)))
         for line in LINES:
             faults += check_line(line, adds, species, moves, authored.get(line, set()))
     faults += check_screen(starters, species)
@@ -459,8 +462,8 @@ def main(argv=None):
     if faults:
         print("mythical_starters_audit: %d fault(s)" % len(faults))
         return 1
-    print("mythical_starters_audit: ok: five lines walk 5 -> %d -> %d through two forms to their native finals; "
-          "the screen offers the five; the 27 stay wild (%d open)" % (STAGE_2, FINAL, len(opens)))
+    print("mythical_starters_audit: ok: %d lines walk 5 -> %d -> %d through two forms to their native finals; "
+          "the screen offers them; the 27 stay wild (%d open)" % (len(LINES), STAGE_2, FINAL, len(opens)))
     return 0
 
 
