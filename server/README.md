@@ -31,6 +31,32 @@ the things that must never be committed.
 6. Read and, if you agree, accept the EULA in `<serverdir>/eula.txt` yourself.
 7. `pwsh server/scripts/boot-test.ps1 -ServerDir <serverdir>`.
 
+## Client pack (ADR-006, Proposed)
+
+The server can push one resource pack to every client, so players install nothing by hand:
+`cobblers-client-AllTheMons-subset.zip` (AllTheMons models for the 43 doll species, Flutter Mane and Iron Valiant
+among them, plus Cobblemon 1.8's own files for the mis-assembled and crash forms). It is built locally and never
+committed.
+
+**Licence gate first.** The AllTheMons files are under ALLTHEMONS LICENSE v3.2, whose §1.3 allows uploading copies
+"only with explicit written permission". Hosting the zip at a URL is an upload. Do not do steps 2-4 until Lvnatic's
+written permission is on record in ADR-006. Without it, the route that uploads nothing is ATM x MSD v4.0 referenced
+from Modrinth by hash (`docs/research/CLIENT_MODEL_FIXES.md`).
+
+1. Build it, with the game closed, from a client instance (read only):
+   `python tools/client_model_fix.py build --server-pack --instance "<client instance>"`.
+   It prints the size and the sha1 and writes `build/client/cobblers-client-AllTheMons-subset.zip.sha1`.
+   If the sha1 differs from `resource-pack-sha1` in `config/server.properties.example`, update the example, ADR-006
+   and `docs/research/CLIENT_MODEL_FIXES.md` (`tests/test_server_client_pack.py` fails until they agree).
+2. Host the zip at an HTTPS direct-download URL reachable without login (ADR-006, "Hosting"). Upload the exact built
+   file: a re-zipped copy has a different sha1, and clients reject it.
+3. With the server stopped, copy the five `resource-pack*` / `require-resource-pack` lines from the example into the
+   live `server.properties`, and set `resource-pack=<the URL>`.
+4. Start the server, join, accept the prompt, and check the client log for the pack and a Flutter Mane or Vullaby on
+   screen (`/pokespawn fluttermane`). A player who declines is disconnected (`require-resource-pack=true`).
+
+A rebuild that changes the zip changes the sha1: re-upload, then update `resource-pack-sha1` in the live file.
+
 ## EXP-001 F4 playtest
 
 The local F4 profile reuses the verified 100-jar runtime but has its own world,
