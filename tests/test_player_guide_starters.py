@@ -5,11 +5,10 @@ The expectations are read from the data and the jar directly, not from the gener
 finals from data/mythical_starters.json, the display names from the jar's en_us.json, the keepers from
 data/markets.json.
 
-The page is NOT published (see the generator's docstring): tests/test_player_site_leaks.py forbids the stage-1 species
-names on any public page, because data/mythical_starters.json is read there as a legendary file. Until the owner
-decides, the currency test skips when the page is neither in docs/player/ nor in guides.json, and
-`test_only_the_starter_species_would_leak` pins that the starters' own names are the ONLY thing the leak test would
-object to.
+The page is published (2026-10-08; the generator's docstring): the leak test lets the starter species through by its
+ALLOW list, and `test_only_the_starter_species_would_leak` pins that they are the ONLY thing from
+data/mythical_starters.json it would otherwise object to. The abilities are checked against the data's own pools and
+the jar's species files and lang directly; the taglines against the data.
 """
 from __future__ import annotations
 
@@ -98,6 +97,115 @@ def test_the_filter_has_a_button_per_line_and_all(page):
         head = re.search(r'<section class="line" [^>]*><h2>%s</h2>(.*?)</section>' % re.escape(html.escape(s["line"])),
                          raw, re.S)
         assert head and html.escape(s["name"]) in head.group(1), (s["line"], s["name"])
+
+
+def _sections(raw):
+    """{line heading: section html}."""
+    return {html.unescape(h): b for h, b in
+            re.findall(r'<section class="line" [^>]*><h2>(.*?)</h2>(.*?)</section>', raw, re.S)}
+
+
+def _ability_groups(section):
+    """The abilities table of one line as [(form, [(ability name, hidden)])], in the page's order; a row with an empty
+    form cell belongs to the form above it."""
+    body = re.search(r'<table class="stats abilities">.*?<tbody>(.*?)</tbody>', section, re.S)
+    assert body, "a line has no abilities table"
+    groups = []
+    for _tier, form, cell, desc in re.findall(r"<tr><td>(.*?)</td><td>(.*?)</td><td>(.*?)</td><td>(.*?)</td></tr>",
+                                              body.group(1)):
+        assert _text(desc).strip(), "an ability with no description"
+        if form:
+            groups.append((html.unescape(form), []))
+        hidden = '<span class="tag">hidden</span>' in cell
+        groups[-1][1].append((_text(cell.replace('<span class="tag">hidden</span>', "")).strip(), hidden))
+    return groups
+
+
+def _species_pool(z, sid, forms=False):
+    """A species file's ability pool, read straight from the jar; with `forms`, every form's own pool too."""
+    s = json.loads(z.read(next(n for n in z.namelist()
+                               if n.startswith("data/cobblemon/species/") and n.endswith("/%s.json" % sid)))
+                   .decode("utf-8"))
+    pools = [s["abilities"]]
+    if forms:
+        pools += [f["abilities"] for f in s.get("forms") or [] if f.get("abilities")]
+    return pools
+
+
+def _expect(pool, lang):
+    normal = [a for a in pool if not a.startswith("h:")]
+    return [(lang["cobblemon.ability.%s" % a], False) for a in normal] + \
+           [(lang["cobblemon.ability.%s" % a[2:]], True) for a in pool if a.startswith("h:") and a[2:] not in normal]
+
+
+def test_every_stage_shows_its_abilities(page):
+    """Every tier of every line shows at least one ability with a description; tiers 1 and 2 show the stage's own
+    `abilities` from the data when it sets them (Smeargle's Protean) and the jar species' pool otherwise; a final shows
+    a pool its jar species file carries; a hidden ability is marked hidden. Expectations read from the data and the
+    species files, not from the generator."""
+    raw, jar = page
+    lang = _lang(jar)
+    z = zipfile.ZipFile(jar)
+    secs = _sections(raw)
+    for ln in _data()["lines"]:
+        groups = _ability_groups(secs[lang["cobblemon.species.%s.name" % ln["stages"][0]["species"]]])
+        assert len(groups) >= len(ln["stages"]) + (1 if ln["final"] else 0), (ln["id"], groups)
+        for (form, got), st in zip(groups, ln["stages"]):
+            assert got, (ln["id"], form)
+            want = _expect(st.get("abilities") or _species_pool(z, st["species"])[0], lang)
+            assert got == want, (ln["id"], st["stage"], got, want)
+        finals = [_expect(p, lang) for fin in ln["final"] for p in _species_pool(z, fin, forms=True)]
+        for form, got in groups[len(ln["stages"]):]:
+            assert got and got in finals, (ln["id"], form, got, finals)
+    # the owner's case: Smeargle's forms carry Protean, not the jar's Own Tempo / Technician / Moody
+    sm = next(ln for ln in _data()["lines"] if ln["stages"][0]["species"] == "smeargle")
+    assert all(g == [("Protean", False)] for _f, g in _ability_groups(secs[lang["cobblemon.species.smeargle.name"]])), \
+        sm["id"]
+
+
+def test_every_ability_shown_exists_in_the_jar(page):
+    """Every ability name on the page is the jar's en_us.json name of an id the jar's running Showdown
+    (data/abilities.js) knows, and its description is that id's own."""
+    import mythical_starters as MS
+    raw, jar = page
+    lang = _lang(jar)
+    known = MS.running_abilities(zipfile.ZipFile(jar))
+    by_name = {v: k.split(".")[2] for k, v in lang.items() if re.fullmatch(r"cobblemon\.ability\.[a-z0-9]+", k)}
+    seen = 0
+    for sec in _sections(raw).values():
+        body = re.search(r'<table class="stats abilities">.*?<tbody>(.*?)</tbody>', sec, re.S).group(1)
+        for _t, _f, cell, desc in re.findall(r"<tr><td>(.*?)</td><td>(.*?)</td><td>(.*?)</td><td>(.*?)</td></tr>", body):
+            name = _text(cell.replace('<span class="tag">hidden</span>', "")).strip()
+            assert name in by_name, name
+            aid = by_name[name]
+            assert aid in known, (name, aid)
+            assert html.unescape(desc) == lang["cobblemon.ability.%s.desc" % aid], name
+            seen += 1
+    assert seen >= sum(len(ln["stages"]) for ln in _data()["lines"])
+
+
+def test_every_line_has_its_tagline(page):
+    """Every line carries a `tagline` in the data, shown first under its name; Smeargle's is the owner's words."""
+    raw, jar = page
+    lang = _lang(jar)
+    secs = _sections(raw)
+    for ln in _data()["lines"]:
+        tag = (ln.get("tagline") or "").strip()
+        assert tag, "%s has no tagline" % ln["id"]
+        sec = secs[lang["cobblemon.species.%s.name" % ln["stages"][0]["species"]]]
+        m = re.match(r'<p class="tagline">(.*?)</p>', sec)
+        assert m and html.unescape(m.group(1)) == tag, ln["id"]
+    sm = next(ln for ln in _data()["lines"] if ln["stages"][0]["species"] == "smeargle")
+    assert sm["tagline"] == "An adaptive and despicable choice of your own fate."  # the owner, 2026-10-08
+
+
+def test_a_line_without_a_tagline_stops_the_run(page, monkeypatch):
+    d = _data()
+    del d["lines"][0]["tagline"]
+    real = G.doc
+    monkeypatch.setattr(G, "doc", lambda rel: d if rel == G.DATA else real(rel))
+    with pytest.raises(SystemExit, match="tagline"):
+        G.collect(str(page[1]))
 
 
 def test_the_starter_screen_is_the_lines():

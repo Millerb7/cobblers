@@ -18,7 +18,20 @@ from the jar.
 SOURCES, each read, never copied in:
   data/mythical_starters.json           lines, stages, their stats and evolutions; levels; starter_category
   modpack/config/cobblemon/starters.json what the screen offers; must be exactly the lines' stage-1 species at levels.start
-  the Cobblemon 1.8.0 jar (read only)   display names, types, the finals' base stats, Silvally's memory forms
+  the Cobblemon 1.8.0 jar (read only)   display names, types, the finals' base stats, Silvally's memory forms; the
+                                        ability pools (species files) and each ability's name and one-line
+                                        description (assets/cobblemon/lang/en_us.json `cobblemon.ability.<id>[.desc]`)
+
+ABILITIES. A tier 1 or 2 stage shows its own `abilities` when data/mythical_starters.json sets them (Smeargle's three
+forms carry Protean; tools/mythical_starters.py writes them onto the form), else the jar species' pool, which a form
+that sets none inherits. A final shows the jar's pool for the form it evolves into (Urshifu's style form, else the
+species). `h:` marks a hidden ability, shown as hidden; a hidden ability that is also a normal one is shown once.
+COBBLEVERSE's species_additions for these species (COBBLEVERSE-DP-v31: cosmog, cosmoem, kubfu, lunala, meltan,
+naganadel, solgaleo, urshifu) set no `abilities` (read 2026-10-08), so nothing overrides the jar's pools; this page
+does not re-read that zip, which is not in the repository. An ability the lang file cannot name stops the run.
+
+THE TAGLINE. Every line's `tagline` in data/mythical_starters.json is shown under its name: what the line offers over
+the whole game, in a sentence. A line without one stops the run. Taglines name no place or person.
   data/trainers.json                    generation_contract.gym_ace_levels: when 30 and 45 are first reachable
   data/markets.json                     counters and stalls: where an item is sold, or that it is priced and held
   data/traders.json                     the Mart clerks: an item named there is "sold by a Mart clerk"
@@ -96,6 +109,7 @@ class Jar:
                 self.raw[n.rsplit("/", 1)[1][:-5]] = n
         self.zip = z
         self.cache = {}
+        self.lang = json.loads(z.read("assets/cobblemon/lang/en_us.json").decode("utf-8"))
 
     def species(self, sid):
         if sid not in self.raw:
@@ -116,6 +130,36 @@ class Jar:
         stats = f.get("baseStats") or s["baseStats"]
         typed = f if f.get("primaryType") else s
         return stats, [t.lower() for t in (typed.get("primaryType"), typed.get("secondaryType")) if t]
+
+    def pool(self, sid, aspect=None):
+        """The species-file ability pool (`id`, `h:id` hidden) of `sid` or of its form carrying `aspect`; a form that
+        sets no `abilities` has the species'."""
+        s = self.species(sid)
+        f = next((f for f in s.get("forms") or [] if aspect in (f.get("aspects") or [])), {}) if aspect else {}
+        return list(f.get("abilities") or s.get("abilities") or [])
+
+    def ability(self, aid):
+        """(display name, one-line description) of an ability id, from the jar's en_us.json. Stops the run on an id
+        the lang file does not name: the page never shows an ability it cannot describe."""
+        name = self.lang.get("cobblemon.ability.%s" % aid)
+        desc = self.lang.get("cobblemon.ability.%s.desc" % aid)
+        if not name or not desc:
+            raise SystemExit("the jar's en_us.json has no name or description for the ability %r" % aid)
+        return name, desc
+
+
+def shown(pool, jar, where):
+    """A pool as the page shows it: [{"id", "name", "desc", "hidden"}], the normal abilities in order, then each
+    hidden one that is not also a normal one (Smeargle's `protean`, `h:protean` is one Protean, not two)."""
+    if not pool:
+        raise SystemExit("%s has no abilities: neither our form nor the jar's species sets any" % where)
+    normal = [a for a in pool if not a.startswith("h:")]
+    hidden = [a[2:] for a in pool if a.startswith("h:") and a[2:] not in normal]
+    out = []
+    for aid, h in [(a, False) for a in normal] + [(a, True) for a in hidden]:
+        name, desc = jar.ability(aid)
+        out.append({"id": aid, "name": name, "desc": desc, "hidden": h})
+    return out
 
 
 # ------------------------------------------------------------------------------------------------ inputs
@@ -263,8 +307,11 @@ def collect(jar_path=None):
             _s, types = jar.form(st["species"], None)
             label = jar.name(st["species"]) + (SAME_SPECIES.get(st["stage"], "") if st["species"] ==
                                                ln["stages"][0]["species"] else "")
+            # our form's own pool when the stage sets one (Smeargle's Protean), else the species' (the form inherits)
+            pool = st.get("abilities") or jar.pool(st["species"])
             tiers.append({"tier": st["stage"], "name": label, "types": types, "stats": stats, "species": st["species"],
-                          "level": {1: levels["start"], 2: levels["stage_2"]}.get(st["stage"], levels["final"])})
+                          "level": {1: levels["start"], 2: levels["stage_2"]}.get(st["stage"], levels["final"]),
+                          "abilities": shown(pool, jar, "%s %s stage %d" % (DATA, ln["id"], st["stage"]))})
             for ev in st["evolutions"]:
                 sp, props = parse_result(ev["result"])
                 final = "aspect" not in props
@@ -274,7 +321,8 @@ def collect(jar_path=None):
                     fname = jar.name(sp) + (" (%s Style)" % style.replace("_", " ").title() if style else "")
                     fstats, ftypes = jar.form(sp, aspect)
                     tiers.append({"tier": 3, "name": fname, "types": ftypes, "stats": fstats,
-                                  "level": levels["final"], "species": sp})
+                                  "level": levels["final"], "species": sp,
+                                  "abilities": shown(jar.pool(sp, aspect), jar, "the jar's %s" % fname)})
                     steps.append(words(ev, jar, fname))
                 else:
                     to = 3 if props.get("aspect") == d["aspects"].get("stage_3") else 2
@@ -288,7 +336,10 @@ def collect(jar_path=None):
             notes.append("Sketch copies the last move its target used, for good, and the copy stays among its moves. "
                          "Each %s can do it %d times; after that, Sketch fails."
                          % (jar.name(ln["stages"][0]["species"]), ln["sketch_cap"]["uses"]))
-        lines.append({"id": ln["id"], "anchor": "line-%d" % (len(lines) + 1), "name": jar.name(ln["stages"][0]["species"]), "tiers": tiers, "steps": steps,
+        if not str(ln.get("tagline") or "").strip():
+            raise SystemExit("%s %s has no `tagline`: the page shows one under every line's name" % (DATA, ln["id"]))
+        lines.append({"id": ln["id"], "anchor": "line-%d" % (len(lines) + 1), "name": jar.name(ln["stages"][0]["species"]),
+                      "tagline": ln["tagline"].strip(), "tiers": tiers, "steps": steps,
                       "gyms": ln.get("potent_at", {}).get("gyms") or [], "notes": notes,
                       "own_final": len(ln["stages"]) == 3})
     specials = []
@@ -330,14 +381,24 @@ def render_line(ln, model):
         rows.append('<tr><td>%d</td><td>%s</td><td>%s</td><td class="n">%d</td>%s<td class="n"><b>%d</b></td></tr>'
                     % (t["tier"], esc(t["name"]), badges(t["types"]), t["level"], cells, sum(t["stats"].values())))
     best = ", ".join(str(g) for g in ln["gyms"])
+    # one row per ability a tier has; the tier and form are named on its first row only
+    arows = []
+    for t in ln["tiers"]:
+        for i, a in enumerate(t["abilities"]):
+            arows.append('<tr><td>%s</td><td>%s</td><td>%s%s</td><td>%s</td></tr>'
+                         % ("%d" % t["tier"] if i == 0 else "", esc(t["name"]) if i == 0 else "", esc(a["name"]),
+                            ' <span class="tag">hidden</span>' if a["hidden"] else "", esc(a["desc"])))
     # the section's id is the anchor the contents list links to, and the shared filter's key (player_site.filter_nav):
     # a line's items sit inside its own section, so "show this starter" shows everything about it
-    return ('<section class="line" %s><h2>%s</h2>%s<table class="stats"><thead><tr><th>Tier</th><th>Form</th>'
-            '<th>Type</th><th>Lv</th>%s<th>Total</th></tr></thead><tbody>%s</tbody></table>'
+    return ('<section class="line" %s><h2>%s</h2><p class="tagline">%s</p>%s<table class="stats"><thead><tr>'
+            '<th>Tier</th><th>Form</th><th>Type</th><th>Lv</th>%s<th>Total</th></tr></thead><tbody>%s</tbody></table>'
+            '<h3>Abilities</h3><table class="stats abilities"><thead><tr><th>Tier</th><th>Form</th><th>Ability</th>'
+            '<th>What it does</th></tr></thead><tbody>%s</tbody></table>'
             '<h3>How it evolves</h3><ol class="steps">%s</ol>%s%s</section>'
-            % (player_site.section_attr(ln["anchor"]), esc(ln["name"]),
+            % (player_site.section_attr(ln["anchor"]), esc(ln["name"]), esc(ln["tagline"]),
                '<p class="lead">At its strongest around gym%s %s.</p>' % ("s" if len(ln["gyms"]) > 1 else "", best)
-               if best else "", head, "".join(rows), "".join("<li>%s</li>" % esc(s) for s in ln["steps"]),
+               if best else "", head, "".join(rows), "".join(arows),
+               "".join("<li>%s</li>" % esc(s) for s in ln["steps"]),
                "".join("<p>%s</p>" % esc(n) for n in ln.get("notes") or []),
                render_specials(model, ln["name"])))
 
@@ -391,7 +452,10 @@ def render(model):
             '%d badges.</li></ul><p>Tiers 1 and 2 are the same total for all seven, so the lines differ in how '
             'their stats are spread, not in how many. Tier 3 is the standard final Pokemon%s. Your level cap is '
             'the next leader\'s ace (<a href="battles.html">Trainer battles</a>), which is why a tier waits for a '
-            'badge. When your starter qualifies, the game offers the evolution; you can wait.</p></div>%s%s'
+            'badge. When your starter qualifies, the game offers the evolution; you can wait.</p>'
+            '<p><b>Abilities.</b> Each line lists every tier\'s abilities and what they do, in the game\'s own words. '
+            'One marked hidden is that form\'s hidden ability, not its usual one; where the hidden ability is the '
+            'same as the usual one, it is listed once.</p></div>%s%s'
             '<section id="not-covered"><h2>What this page leaves out</h2><ul><li>Movesets: check the summary screen '
             'in game.</li><li>Where anything is found in the world: an item that is not sold is "earned in the '
             'story", with no more said.</li><li>Any Pokemon not given by the starter screen: the tiers and '

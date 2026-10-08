@@ -198,6 +198,8 @@ section.doc li{margin:.15rem 0}
 .page-starters .stats td.n{text-align:right;font-variant-numeric:tabular-nums}
 .page-starters .stats .t{margin-right:3px}
 .page-starters ol.steps{margin:4px 0;padding-left:22px}
+.page-starters .tagline{font-style:italic;margin:0 0 8px}
+.page-starters .abilities td{vertical-align:top}
 @media (max-width:560px){.page-starters main{padding:8px 10px 20px}.page-starters .stats{font-size:.78rem}}
 /* items.html (tools/player_guide_items.py) */
 .page-items main{max-width:1080px;margin:0 auto;padding:12px 16px 20px}

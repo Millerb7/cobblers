@@ -125,6 +125,7 @@
   "lines": [
     {
       "id": "starter_cosmog",
+      "tagline": "The late bloomer: a drifting wisp for most of the road, then a sun or a moon at the end of it.",
       "potent_at": {
         "gyms": [
           6,
@@ -246,6 +247,7 @@
     },
     {
       "id": "starter_kubfu",
+      "tagline": "Fast out of the gate, then two scrolls and one choice: which kind of fighter it becomes.",
       "potent_at": {
         "gyms": [
           1,
@@ -360,6 +362,7 @@
     },
     {
       "id": "starter_typenull",
+      "tagline": "The closer: plain and patient through the middle of the journey, then any type it remembers, its memories earned in the story.",
       "potent_at": {
         "gyms": [
           8
@@ -458,6 +461,7 @@
     },
     {
       "id": "starter_poipole",
+      "tagline": "A small poison with a sharp midgame, grown into a dragon that gets stronger with every knockout.",
       "potent_at": {
         "gyms": [
           4
@@ -566,6 +570,7 @@
     },
     {
       "id": "starter_meltan",
+      "tagline": "A nut of living steel that shrugs off poison and grows into a heavy-fisted giant.",
       "potent_at": {
         "gyms": [
           5
@@ -661,6 +666,7 @@
     },
     {
       "id": "starter_larvesta",
+      "tagline": "A fragile ember, four times weak to Rock, that repays the wait as a sun moth with Quiver Dance.",
       "potent_at": {
         "gyms": [
           3,
@@ -760,6 +766,7 @@
     },
     {
       "id": "starter_smeargle",
+      "tagline": "An adaptive and despicable choice of your own fate.",
       "potent_at": {
         "gyms": [
           2,
