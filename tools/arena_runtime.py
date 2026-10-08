@@ -119,7 +119,7 @@ OBJECTIVES = ["ar.id", "ar.rank", "ar.wins", "ar.cur", "ar.kind", "ar.leg", "ar.
 # CobbleDollars' own config: its NPC-win payout multiplier bounds the clawback (prizes.purse_policy)
 CD_CONFIG = ROOT / "modpack" / "config" / "cobbledollars" / "common.json"
 PAID = "cobblers.arena_paid_"             # + <rank>_p<leg> | <rank>_e<leg> | <rank>_clear: a first already paid
-CLAW_MARGIN = 3                           # added to the computed bound (cd_bound): integer slack, not a tuned fudge
+CLAW_MARGIN = 0                           # added to the computed bound (cd_bound): integer slack, not a tuned fudge
 
 
 class ArenaError(SystemExit):
