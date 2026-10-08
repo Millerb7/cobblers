@@ -1,0 +1,22 @@
+{
+  "schema": "cobblers.player_guides/1",
+  "note": "The public guides in docs/player/. Each generator writes its own entry through tools/player_site.py register(); index.html and every page's header are built from this list. Do not edit by hand. Everything in docs/player/ is public.",
+  "guides": [
+    {
+      "file": "region-map.html",
+      "title": "Where to catch what",
+      "label": "Region map",
+      "description": "A map of the region's wild encounter areas: what lives in each, how often by day and night, at what level, and where to find any Pokemon you search for.",
+      "generator": "tools/player_guide_map.py",
+      "order": 10
+    },
+    {
+      "file": "battles.html",
+      "title": "Trainer battles",
+      "label": "Trainer battles",
+      "description": "Every trainer fight in the order you meet it: teams in Normal and Challenge, where each trainer stands, and the level cap that holds until each leader falls.",
+      "generator": "tools/player_guide_battles.py",
+      "order": 20
+    }
+  ]
+}
