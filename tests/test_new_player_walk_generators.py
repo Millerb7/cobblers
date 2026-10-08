@@ -7,7 +7,8 @@ changed -- data/ untouched -- and asserts the same check now FAILs and names the
 
   generator                    mutation                                         check that must FAIL
   rift_zones.cmd_build         no qualify-on-entry line (the pre-2026-10-04 form) victory_road zone_admits:<fights 8-10>
-  rift_zones.held_zones        holds nothing, so z4 ships its zone check         league zones_over_league
+  rift_zones.zone_masks        z4|z5 split 200 south (z4 released and kept       league zones_over_league
+                               enforced; built past report 8c, which refuses it)
   route_trainers.cycle_lines   never seats route_09_trainer_08                   victory_road seated:route_09_trainer_08
   progression_pack             a defeat flag binds no trainer                    league champion_flag, victory_road gate_opens
   progression_pack.files       the crisis flag's grant line commented out        victory_road flag_emitted:rift_crisis_resolved
@@ -103,20 +104,55 @@ def test_fights_8_to_10_fail_when_rift_zones_admits_only_at_the_knock(base, grou
     assert "only its knock box" in next(c for c in st.checks if c["check"] == bad[0])["evidence"]["summary"]
 
 
-def test_the_league_fails_when_rift_zones_enforces_the_zone_over_it(base, ground, tmp_path, monkeypatch, capsys):
-    # without this, the latent blocker of CRITICAL_PATH_WALK_2 item 4 -- the League inside z4, gated on 120 species --
-    # ships the day z4 stops being held
-    import argparse
+def rift_zones_into(packs, spec_copy, old=None, new=None):
+    """tools/rift_zones.py recompiled with SPEC on a scratch copy of data/rift_zones.json (trace rewrites its spec) and
+    PACKS on `packs`, z4 released (held_zones holds nothing) and, if given, `old` replaced by `new` in its source."""
     import rift_zones
+    src = Path(rift_zones.__file__).read_text(encoding="utf-8")
+    edits = [('SPEC = ROOT / "data" / "rift_zones.json"', 'SPEC = Path(r"%s")' % spec_copy),
+             ('PACKS = ROOT / "build" / "datapacks"', 'PACKS = Path(r"%s")' % packs)]
+    if old is not None:
+        edits.append((old, new))
+    for a, b in edits:
+        assert src.count(a) == 1, "the mutation no longer matches tools/rift_zones.py: re-aim it (%r)" % a
+        src = src.replace(a, b)
+    shutil.copy(ROOT / "data" / "rift_zones.json", spec_copy)
+    g = {"__name__": "rift_zones_mutated", "__file__": rift_zones.__file__}
+    exec(compile(src, "<mutated rift_zones>", "exec"), g)
+    g["held_zones"] = lambda spec: {}
+    return g
+
+
+def test_the_league_fails_when_rift_zones_traces_z4_over_it(base, ground, tmp_path, capsys):
+    # without this, the blocker of CRITICAL_PATH_WALK_2 item 4 -- the League inside z4, gated on 120 species -- could
+    # come back through the generator (fixed in data by fdbe1e5) and the walk would not see it the day z4 is released
+    import argparse
     st = walker(base, ground).league_stage()
     assert verdicts(st, "zones_over_league")["zones_over_league"] == "PASS"
+    # z4 released and ENFORCED, generator as committed: the League is not under it (the premise fdbe1e5 fixed)
     p = copy(base, tmp_path)
-    monkeypatch.setattr(rift_zones, "held_zones", lambda spec: {})
-    monkeypatch.setattr(rift_zones, "PACKS", p)
-    rift_zones.cmd_build(argparse.Namespace(source_root=None))
-    st = walker(p, ground).league_stage()
-    c = next(c for c in st.checks if c["check"] == "zones_over_league")
-    assert c["verdict"] == "FAIL" and "z4" in c["evidence"]
+    rz = rift_zones_into(p, tmp_path / "spec_as_built.json")
+    rz["cmd_build"](argparse.Namespace(source_root=None))
+    assert verdicts(walker(p, ground).league_stage(), "zones_over_league")["zones_over_league"] == "PASS"
+    # the GENERATOR's split of the two zones on behind_league moved 200 blocks south, to where the cut stood until
+    # fdbe1e5 (z2560); data/ untouched. `report` 8c refuses the result, so the build is run past it: what is tested is
+    # the walk's own check, not the gate in front of it
+    old = '        masks[less] = both & (idx < c["at"])\n        masks[ge] = both & (idx >= c["at"])'
+    new = '        masks[less] = both & (idx < c["at"] + 200)\n        masks[ge] = both & (idx >= c["at"] + 200)'
+    q = tmp_path / "mutated"
+    shutil.copytree(base, q)
+    rz = rift_zones_into(q, tmp_path / "spec_mutated.json", old, new)
+    rz["cmd_trace"](argparse.Namespace(source_root=None))
+    rz["cmd_report"] = lambda a, quiet=False: 0
+    # with the split moved, G4 (data: z2357) stands 200 blocks inside z4 and unreachable_zones ships z4 OPEN, the
+    # owner's fail-open rule of 2026-10-03 -- measured: built that way the check PASSES, correctly, as nothing is
+    # enforced. z4 is kept enforced here, as if its guard had been re-sited to the moved edge, exactly as held_zones
+    # is emptied above
+    real_unreachable = rz["unreachable_zones"]
+    rz["unreachable_zones"] = lambda spec: {k: v for k, v in real_unreachable(spec).items() if k != "z4"}
+    rz["cmd_build"](argparse.Namespace(source_root=None))
+    c = next(c for c in walker(q, ground).league_stage().checks if c["check"] == "zones_over_league")
+    assert c["verdict"] == "FAIL" and "z4" in c["evidence"], c
 
 
 def test_a_stand_fails_when_route_trainers_stops_seating_it(base, ground, tmp_path, monkeypatch, capsys):
