@@ -12647,6 +12647,63 @@
               "next": "k100"
             },
             {
+              "id": "r_memory",
+              "text": "I raised a Type: Null. Do you know of the memories?",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_issuing"
+                  },
+                  {
+                    "kind": "flag",
+                    "flag": "gym5_cleared"
+                  },
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_silvally"
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_station_director.memories_claimed",
+                    "value": false
+                  }
+                ]
+              },
+              "next": "n001"
+            },
+            {
+              "id": "r_memory_locked",
+              "text": "I'm raising a Type: Null. Do you know of the memories?",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_issuing"
+                  },
+                  {
+                    "kind": "not",
+                    "condition": {
+                      "kind": "flag",
+                      "flag": "gym5_cleared"
+                    }
+                  },
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_silvally"
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_station_director.memories_claimed",
+                    "value": false
+                  }
+                ]
+              },
+              "next": "n100"
+            },
+            {
               "id": "r_bye",
               "text": "Goodbye.",
               "actions": [
@@ -12784,6 +12841,80 @@
           "kind": "line",
           "speaker": "vale",
           "text": "We keep two, and one of them is yours when your Kubfu is ready for it. Come back with the Soul Badge: a Kubfu that has not seen that much will not read either.",
+          "next": "hub"
+        },
+        {
+          "id": "n001",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "Know of them? We keep all seventeen. Type: Null was built to carry one, and the mask holds it back. Once it grows into Silvally, the disc it holds decides its type.",
+          "next": "n002"
+        },
+        {
+          "id": "n002",
+          "kind": "choice",
+          "speaker": "vale",
+          "text": "The station gives the whole set, once, to whoever raised it. One disc would fix it to one type, and changing is the point. Will you take them?",
+          "responses": [
+            {
+              "id": "r_memories_take",
+              "text": "I'll take them.",
+              "visible_when": {
+                "kind": "all",
+                "conditions": [
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_issuing"
+                  },
+                  {
+                    "kind": "flag",
+                    "flag": "gym5_cleared"
+                  },
+                  {
+                    "kind": "player_tag",
+                    "tag": "cobblers_station_silvally"
+                  },
+                  {
+                    "kind": "progression_equals",
+                    "field": "quest.evt_station_director.memories_claimed",
+                    "value": false
+                  }
+                ]
+              },
+              "actions": [
+                {
+                  "kind": "quest_transition",
+                  "transition": "grant_memories"
+                }
+              ],
+              "next": "n010"
+            },
+            {
+              "id": "r_memories_later",
+              "text": "Not yet.",
+              "next": "hub"
+            }
+          ]
+        },
+        {
+          "id": "n010",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "Here: seventeen memories, from our store. Give your Silvally one to hold, and change it whenever the fight calls for another. Type: Null becomes Silvally at level 45.",
+          "next": "n011"
+        },
+        {
+          "id": "n011",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "Write and tell me which one it settles on. The station has only ever read about them.",
+          "next": "hub"
+        },
+        {
+          "id": "n100",
+          "kind": "line",
+          "speaker": "vale",
+          "text": "We keep a set for it, and it is yours when your Type: Null is ready for it. Come back with the Soul Badge: before then a memory would only sit in your bag.",
           "next": "hub"
         },
         {

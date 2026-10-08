@@ -2864,6 +2864,15 @@
       "why": "grant_reward_once's ONE claim for Kubfu's scroll, shared by grant_scroll_darkness and grant_scroll_waters, so either closes both (data/research_station.json economy.items kubfu_scroll)."
     },
     {
+      "id": "quest.evt_station_director.memories_claimed",
+      "quest_id": "evt_station_director",
+      "field": "memories_claimed",
+      "type": "boolean",
+      "scope": "player",
+      "initial": false,
+      "why": "grant_reward_once's ONE claim for Silvally's 17 memories, given together by grant_memories, once (data/research_station.json economy.items silvally_memories)."
+    },
+    {
       "id": "quest.evt_station_director.dialogue_cursor",
       "quest_id": "evt_station_director",
       "field": "dialogue_cursor",
@@ -2892,7 +2901,11 @@
         "k010",
         "k011",
         "k020",
-        "k021"
+        "k021",
+        "n001",
+        "n002",
+        "n010",
+        "n011"
       ],
       "why": "the dialogue cursor of Dr. Imogen Vale (dlg_station_director)."
     },
