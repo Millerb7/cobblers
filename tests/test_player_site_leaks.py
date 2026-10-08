@@ -360,6 +360,22 @@ def _public_names():
     return names
 
 
+# Without it the starter allowance could grow past the starter lines (another paradox, a legendary) on the strength of
+# a public source elsewhere: every entry given the _STARTER reason must be offered on the starter screen or be a stage
+# of an offered line (data/mythical_starters.json learnset_from), nothing else. (Independent review, 2026-10-08.)
+def test_the_starter_allowance_is_exactly_the_starter_lines():
+    screen = json.loads((ROOT / "modpack" / "config" / "cobblemon" / "starters.json").read_text(encoding="utf-8"))
+    offered = {norm(p.split()[0]) for c in screen["starters"] for p in c["pokemon"]}
+    chains = set(offered)
+    for ln in json.loads((DATA / "mythical_starters.json").read_text(encoding="utf-8"))["lines"]:
+        chain = [norm(s) for s in ln.get("learnset_from") or []]
+        if chain and chain[0] in offered:
+            chains.update(chain)
+    starter = {n for n, why in ALLOW.items() if why == _STARTER}
+    assert starter <= chains, "starter allowance outside the starter lines: %s" % sorted(starter - chains)
+    assert {"misdreavus", "mismagius", "fluttermane"} <= starter
+
+
 def test_allow_list_is_needed_and_public(sec):
     forbidden = set(sec["names"]) | {norm(re.split(r"[:/]", i)[-1]) for i in sec["ids"]}
     stale = [n for n in list(ALLOW) + list(ORDINARY_WORDS) if n not in forbidden]

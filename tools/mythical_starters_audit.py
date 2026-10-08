@@ -316,6 +316,11 @@ def check_form(where, form, stage, line, species, moves, adds_species, authored)
         if early:
             p.append("%s: %s in the level-up moves; the decision is that they arrive only through Sketch"
                      % (where, early))
+    elif "abilities" in form:
+        # Since d9c422d the generator emits a stage's `abilities`; the decision sets a pool for Smeargle alone
+        # (docs/STATE.md "Smeargle, the seventh starter"), so on any other line a form keeps its species' pool.
+        p.append("%s: abilities %s; the decision sets a form's ability pool only for %s, every other line keeps "
+                 "its species' own" % (where, form.get("abilities"), sorted(FORM_FINALS)))
     members = {line, LINES[line][0]} | set(native_final_species(species, line))
     legal = learnset(species, members)
     for e in form.get("moves") or []:
