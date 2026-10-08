@@ -3,8 +3,9 @@
 
 Who it is for: a Nuzlocke player deciding where to spend the one catch a zone allows. It answers "what lives here, how
 often, at what level, and when" for every campaign area, and "where does this Pokemon live" for every species, on a
-shaded-relief picture of the region. One HTML file, no server, no network: the relief is an inline JPEG, the areas
-inline SVG, the tables inline JSON.
+shaded-relief picture of the region. One page of the public site docs/player/ (tools/player_site.py: the shared
+header, spoiler note and footer, docs/player/assets/site.css for every style, the guides.json entry GUIDE), no server,
+no network: the relief is an inline JPEG, the areas inline SVG, the tables inline JSON.
 
 What it reads (the live data, never a design document and never a world):
   - the pools tools/compile_spawns.py EMITS. By default this tool runs compile_spawns into a temporary directory, so the
@@ -35,6 +36,7 @@ altitude and nearby-block conditions as met. Day and night are computed separate
 
   python tools/player_guide_map.py            # write docs/player/region-map.html
   python tools/player_guide_map.py --check    # exit 1 if the committed page differs from a fresh build
+  python tools/player_site.py                 # the whole site: every guide and the index
 """
 from __future__ import annotations
 
@@ -56,6 +58,7 @@ from PIL import Image
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import compile_spawns  # noqa: E402
+import player_site  # noqa: E402  the shared header, footer, stylesheet and manifest of docs/player/
 import terrain  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -446,71 +449,12 @@ def fmt_num(v):
 # ------------------------------------------------------------------ the page
 
 
-CSS = r"""
-:root{--bg:#f6f4ee;--fg:#1d2126;--muted:#5b6470;--card:#ffffff;--line:#d5d0c4;--accent:#b4441a;--chip:#efe9dc;
---common:#3b7a3b;--uncommon:#2f5f9e;--rare:#8a3fa0;--ultra-rare:#b4441a;--btext:#fff;color-scheme:light}
-:root[data-theme=dark]{--bg:#14171b;--fg:#e7e9ec;--muted:#9aa3ad;--card:#1d2127;--line:#353b44;--accent:#f08a5d;
---chip:#2a3038;--common:#7cc47c;--uncommon:#7aa9ee;--rare:#d08ae4;--ultra-rare:#f08a5d;--btext:#111;color-scheme:dark}
-@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#14171b;--fg:#e7e9ec;--muted:#9aa3ad;
---card:#1d2127;--line:#353b44;--accent:#f08a5d;--chip:#2a3038;--common:#7cc47c;--uncommon:#7aa9ee;--rare:#d08ae4;
---ultra-rare:#f08a5d;--btext:#111;color-scheme:dark}}
-*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--fg);
-font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-header{display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:center;padding:.6rem 1rem;border-bottom:1px solid var(--line)}
-header h1{font-size:1.15rem;margin:0;flex:1 1 16rem}
-#q{font:inherit;padding:.4rem .6rem;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--fg);
-width:min(22rem,100%)}
-button{font:inherit;padding:.35rem .7rem;border:1px solid var(--line);border-radius:6px;background:var(--card);
-color:var(--fg);cursor:pointer}button:hover{border-color:var(--accent)}
-main{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(20rem,1fr);gap:0;height:calc(100vh - 3.4rem);min-height:30rem}
-#mapwrap{position:relative;overflow:hidden;border-right:1px solid var(--line);background:#224e8a;touch-action:none}
-#map{width:100%;height:100%;display:block;cursor:grab;user-select:none}
-#map.drag{cursor:grabbing}
-.tools{position:absolute;top:.5rem;left:.5rem;display:flex;flex-direction:column;gap:.3rem}
-.tools button{width:2.2rem;height:2.2rem;padding:0;font-size:1.1rem;opacity:.92}
-.layers{position:absolute;top:.5rem;right:.5rem;background:var(--card);border:1px solid var(--line);border-radius:6px;
-padding:.3rem .5rem;font-size:.82rem;opacity:.94}
-.layers label{display:block;white-space:nowrap}
-#coord{position:absolute;bottom:.4rem;left:.5rem;background:var(--card);border:1px solid var(--line);border-radius:4px;
-padding:.1rem .4rem;font-size:.78rem;opacity:.9;font-variant-numeric:tabular-nums}
-#panel{overflow:auto;padding:.8rem 1rem 2rem}
-#panel h2{margin:.1rem 0 .2rem;font-size:1.2rem}#panel h3{margin:1rem 0 .3rem;font-size:.95rem;color:var(--muted);
-text-transform:uppercase;letter-spacing:.04em}
-.meta{color:var(--muted);font-size:.88rem;margin:.1rem 0}
-table{border-collapse:collapse;width:100%;font-size:.86rem}
-th,td{text-align:left;padding:.25rem .35rem;border-bottom:1px solid var(--line);vertical-align:top}
-th{font-weight:600;color:var(--muted);font-size:.78rem}td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
-.b{display:inline-block;padding:0 .35rem;border-radius:4px;font-size:.76rem;font-weight:600;color:var(--btext);
-white-space:nowrap}
-.b.common{background:var(--common)}.b.uncommon{background:var(--uncommon)}.b.rare{background:var(--rare)}
-.b.ultra-rare{background:var(--ultra-rare)}
-.cond{color:var(--muted);font-size:.8rem}
-a,.link{color:var(--accent);cursor:pointer;text-decoration:underline;text-underline-offset:2px}
-.reglist{columns:2 13rem;column-gap:1.2rem;padding:0;margin:.3rem 0;list-style:none}
-.reglist li{break-inside:avoid;margin:0 0 .6rem}.reglist b{display:block;font-size:.88rem}
-.reglist span{display:inline-block;margin:.05rem .4rem .05rem 0;font-size:.86rem}
-.sw{display:inline-block;width:.8rem;height:.8rem;border-radius:2px;vertical-align:-.05rem;margin-right:.3rem;
-border:1px solid rgba(0,0,0,.25)}
-.area{fill-opacity:.30;stroke:none;cursor:pointer}.area:hover{fill-opacity:.55}
-#map.has-sel .area{fill-opacity:.12}#map.has-sel .area.sel{fill-opacity:.7}
-#map.has-hit .area{fill-opacity:.08}#map.has-hit .area.hit{fill-opacity:.65}
-#map.has-hit .area.sel,#map.has-sel .area.sel{fill-opacity:.75}
-.outline{fill:none;stroke:#fff;stroke-opacity:.55;vector-effect:non-scaling-stroke;stroke-width:1;pointer-events:none}
-.cl{fill:none;stroke:#fff3c4;stroke-width:2;stroke-dasharray:6 5;vector-effect:non-scaling-stroke;pointer-events:none;
-stroke-opacity:.9}
-.lbl{font-family:system-ui,sans-serif;paint-order:stroke;stroke:#000;stroke-opacity:.7;fill:#fff;pointer-events:none;
-text-anchor:middle;dominant-baseline:middle}
-.lbl.town{font-weight:700;fill:#fffbe8}.lbl.area-l{font-style:italic;fill:#e9f2ff}
-.dot{fill:#fffbe8;stroke:#000;stroke-opacity:.7;vector-effect:non-scaling-stroke;pointer-events:none}
-section.doc{max-width:62rem;margin:0 auto;padding:.6rem 1rem}section.doc h2{font-size:1.05rem;margin:1.2rem 0 .3rem}
-section.doc li{margin:.15rem 0}.small{font-size:.85rem;color:var(--muted)}
-.spec-row{cursor:pointer}.spec-row:hover td{background:var(--chip)}
-.legend-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(14rem,1fr));gap:.2rem 1rem;font-size:.88rem}
-@media (max-width:820px){main{grid-template-columns:minmax(0,1fr);height:auto}#mapwrap{height:62vh;border-right:0;
-border-bottom:1px solid var(--line)}#panel{max-height:none;overflow-x:auto;padding:.6rem .6rem 1.5rem}.reglist{columns:1}
-header h1{flex-basis:100%}#q{flex:1 1 auto;width:auto;min-width:0}th,td{padding:.2rem .25rem}table{font-size:.8rem}
-.layers{font-size:.75rem;padding:.2rem .35rem}}
-"""
+# The page's look lives in docs/player/assets/site.css (shared by every guide, hand-written; the map's rules are its
+# "the region map" section, under body.page-map). This tool emits classes and ids only.
+GUIDE = {"file": "region-map.html", "title": "Where to catch what", "label": "Region map", "order": 10,
+         "description": "A map of the region's wild encounter areas: what lives in each, how often by day and night, "
+                        "at what level, and where to find any Pokemon you search for.",
+         "generator": "tools/player_guide_map.py"}
 
 JS = r"""
 (function(){
@@ -614,9 +558,6 @@ q.addEventListener('change',()=>{const v=q.value.trim().toLowerCase();if(!v)retu
  const m=D.species.find(s=>s[1].toLowerCase()===v)||D.species.find(s=>s[1].toLowerCase().startsWith(v))||
  D.species.find(s=>s[1].toLowerCase().includes(v));if(m)selectSpecies(m[0]);else selectSpecies('')});
 q.addEventListener('keydown',e=>{if(e.key==='Enter')q.dispatchEvent(new Event('change'))});
-document.getElementById('theme').onclick=()=>{const r=document.documentElement;
- const dark=r.dataset.theme?r.dataset.theme==='dark':matchMedia('(prefers-color-scheme: dark)').matches;
- r.dataset.theme=dark?'light':'dark'};
 setVB();
 const hm=/^#(area|pokemon)=(.+)$/.exec(location.hash);
 if(hm&&hm[1]==='area'&&byId[decodeURIComponent(hm[2])])selectArea(decodeURIComponent(hm[2]),true);
@@ -725,7 +666,10 @@ def build_page(pack_pools, source_note):
     tg = count("training_ground_")
     other_pools = len(pools_out) - vr - nests - tg
     data = {"view": view, "areas": out_areas, "regName": reg_name, "regColor": reg_color,
-            "regionOrder": regions_used, "zoneNames": {k: v["name"] for k, v in model["zones"].items()},
+            # only the zones an area on the page counts as: every zone's name went out before 2026-10-08, Victory
+            # Road's five cave zones among them, which this page says it does not list (tests/test_player_site_leaks)
+            "regionOrder": regions_used, "zoneNames": {k: v["name"] for k, v in model["zones"].items()
+                                                       if any(k in a["zones"] for a in out_areas)},
             "positions": [[k, v] for k, v in POSITIONS.items()],
             "posShort": {"grounded": "land", "surface": "water surface", "submerged": "underwater",
                          "seafloor": "lake/sea floor"},
@@ -777,17 +721,12 @@ def build_page(pack_pools, source_note):
     notes_html = ('<section class="doc" id="data-notes"><h2>Data notes</h2><p class="small">Where the data and a '
                   'design document (or two data files) disagree. The compiled data is what the game reads, so the '
                   'page follows it.</p><ul>' + "".join("<li>%s</li>" % e(n) for n in notes) + "</ul></section>")
-    footer = ('<section class="doc small"><p>Generated by <code>python tools/player_guide_map.py</code> from %s; '
-              'heightmap %s. %d areas, %d species, %d table rows. Not verified in game.</p></section>'
-              % (e(source_note), e((world.get("heightmap") or {}).get("sha256", "")[:12]), len(areas), len(species),
-                 entries))
-    page = ('<!doctype html>\n<html lang="en"><head><meta charset="utf-8">'
-            '<meta name="viewport" content="width=device-width,initial-scale=1">'
-            '<title>Cobblers: where to catch what</title><style>%s</style></head><body>'
-            '<header><h1>Cobblers: where to catch what</h1>'
-            '<input id="q" list="species" placeholder="Search a Pokemon" aria-label="Search a Pokemon">'
-            '<datalist id="species">%s</datalist><button id="theme" type="button">Light / dark</button></header>'
-            '<main><section id="mapwrap">%s<div class="tools"><button id="zin" type="button" aria-label="Zoom in">+'
+    sources = ('<p>Region map: from %s; heightmap %s. %d areas, %d species, %d table rows.</p>'
+               % (e(source_note), e((world.get("heightmap") or {}).get("sha256", "")[:12]), len(areas), len(species),
+                  entries))
+    tools = ('<input id="q" list="species" placeholder="Search a Pokemon" aria-label="Search a Pokemon">'
+             '<datalist id="species">%s</datalist>' % datalist)
+    body = ('<main><section id="mapwrap">%s<div class="tools"><button id="zin" type="button" aria-label="Zoom in">+'
             '</button><button id="zout" type="button" aria-label="Zoom out">&minus;</button><button id="zreset" '
             'type="button" aria-label="Whole map">&#8634;</button></div><div class="layers">'
             '<label><input type="checkbox" id="t-routes" checked> Route paths</label>'
@@ -795,10 +734,12 @@ def build_page(pack_pools, source_note):
             '<label><input type="checkbox" id="t-outlines" checked> Borders</label>'
             '<label><input type="checkbox" id="t-alabels" checked> Area names</label>'
             '<label><input type="checkbox" id="t-towns" checked> Towns</label></div>'
-            '<div id="coord">x - z -</div></section><aside id="panel"></aside></main>%s%s%s%s%s'
-            '<script id="data" type="application/json">%s</script><script>%s</script></body></html>\n'
-            % (CSS, datalist, svg, intro, legend, excluded_html, notes_html, footer,
-               json.dumps(data, sort_keys=True, separators=(",", ":"), ensure_ascii=False).replace("</", "<\\/"), JS))
+            '<div id="coord">x - z -</div></section><aside id="panel"></aside></main>%s%s%s%s'
+            % (svg, intro, legend, excluded_html, notes_html))
+    end = ('<script id="data" type="application/json">%s</script><script>%s</script>\n'
+           % (json.dumps(data, sort_keys=True, separators=(",", ":"), ensure_ascii=False).replace("</", "<\\/"), JS))
+    page = player_site.page(GUIDE, body, body_class="page-map", tools_html=tools, end_html=end,
+                            not_covered_href="#not-covered", sources_html=sources)
     stats = {"areas": len(areas), "land": n_land, "sea": n_sea, "waterway": n_way, "route": n_route,
              "species": len(species), "rows": entries, "notes": notes, "labelled_towns": labelled,
              "hidden_towns": sorted(hidden_towns), "jpeg_bytes": len(jpeg), "excluded": {
@@ -832,15 +773,15 @@ def main(argv=None):
         sha(ROOT / "data" / "spawns.json")[:12], sha(ROOT / "data" / "routes.json")[:12])
     page, stats = build_page(pools, src)
     out = Path(a.out)
+    entry = GUIDE if out.resolve() == DEFAULT_OUT.resolve() else None  # a page written elsewhere is not the site's
     if a.check:
-        same = out.is_file() and out.read_bytes() == page.encode("utf-8")
-        print("%s: %s" % (out, "up to date" if same else "DIFFERS from a fresh build; rerun without --check"))
+        same, why = player_site.check(out, page, entry)
+        print("%s: %s" % (out, "up to date" if same else "%s; run python tools/player_site.py" % why))
         return 0 if same else 1
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_bytes(page.encode("utf-8"))
-    print("wrote %s (%s bytes; relief %s bytes): %d areas (%d land, %d sea, %d creek, %d route sections), %d species, "
+    did = player_site.write(out, page, entry)
+    print("%s %s (%s bytes; relief %s bytes): %d areas (%d land, %d sea, %d creek, %d route sections), %d species, "
           "%d rows; left out %d heart rows in %d areas, %d Mega den rows, %d habitat pools; dropped %s; %d data notes"
-          % (out, format(out.stat().st_size, ","), format(stats["jpeg_bytes"], ","), stats["areas"], stats["land"],
+          % (did, out, format(out.stat().st_size, ","), format(stats["jpeg_bytes"], ","), stats["areas"], stats["land"],
              stats["sea"], stats["waterway"], stats["route"], stats["species"], stats["rows"],
              stats["excluded"]["hearts"], stats["excluded"]["heart_areas"], stats["excluded"]["mega_den_rows"],
              stats["excluded"]["habitat_pools"], stats["excluded"]["dropped"] or "none", len(stats["notes"])))
