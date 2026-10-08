@@ -41,6 +41,8 @@
     "minecraft:raw_iron",
     "minecraft:iron_ingot",
     "minecraft:iron_nugget",
+    "minecraft:iron_helmet",
+    "minecraft:iron_sword",
     "minecraft:redstone",
     "minecraft:diamond",
     "minecraft:emerald"

@@ -38,12 +38,8 @@ needs_jars = pytest.mark.skipif(not HAVE_JARS, reason="no snapshot + vanilla jar
 # arbitrage, no tier leak and no missing id. A defect that appears must be fixed or entered here; an entry whose
 # defect disappears fails test_the_failure_set_is_exactly_the_known_defects by name.
 KNOWN: dict = {
-    # Found 2026-10-08 by the independent audit of 8a2e911 once the AFK check read the overlay blacklist. The overlay
-    # names iron_ingot and iron_nugget, but not the iron gear pastured species drop: iron_helmet (Pawniard, Bisharp,
-    # Shelmet, Escavalier) and iron_sword (Honedge, Doublade, Aegislash, read from the species tables) blast into iron
-    # nuggets, nine of which craft the $9 iron ingot. About $1 an item: small money, but it is the ranch_ore
-    # exclusion's hole. Fix is content (modpack/config/PastureLoot.json), not this test: remove the entry when it goes.
-    "AFK BANK minecraft:iron_ingot:": "the iron gear Pasture Loot pays smelts to nuggets (modpack/config/PastureLoot.json)",
+    # (the iron gear leak found 2026-10-08 by the audit of 8a2e911 is closed: modpack/config/PastureLoot.json now
+    # blacklists iron_helmet and iron_sword, the same day)
 }
 # Emptied again 2026-10-08, each removal confirmed fixed rather than unseen:
 #  - the 28 "AFK BANK <item>:" entries (brewed medicines, the six vitamins, PP Up, revives, pot dishes,
