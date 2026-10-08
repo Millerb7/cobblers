@@ -296,21 +296,26 @@ def exchange_floors(doc, markets_doc):
     """{kind: (floor, where it came from)}, each read from data, never a constant (data/bank.json exchanges.floors)."""
     stones = (json.loads(TRADERS.read_text(encoding="utf-8")).get("stock_policy") or {}).get("stones") or {}
     held = set((((doc.get("exchanges") or {}).get("floors") or {}).get("held_item") or {}).get("from_items") or [])
-    units, held_units = [], []
+    units, held_units, held_sold = [], [], set()
     for grp in ("counters", "stalls"):
         for rec in markets_doc.get(grp) or []:
             for it in rec.get("stock") or []:
                 if "exchange_for" in it:
                     continue
                 u = it["price"] / (it.get("count") or 1)
-                units.append(u)
+                units.append(u)      # R4 (the owner's, open): the ball floor still reads income-gated lines too
                 if it["item"] in held:
-                    held_units.append((u, it["item"]))
+                    held_sold.add(it["item"])
+                    # ECONOMY_OVERHAUL.md section 7 R8: the held-item floor reads only lines that are not income-gated,
+                    # "or the floor jumps to $35,000+": an income-gate price is a gate, not the item's value
+                    if it.get("price_rule") != "income_gate":
+                        held_units.append((u, it["item"]))
     return {"evolution_item": (stones.get("price"), "data/traders.json stock_policy.stones.price"),
-            "held_item": (max(held_units)[0] if held_units else None, "the dearest held item on a shelf (%s)"
-                          % (max(held_units)[1] if held_units else "none sold")),
+            "held_item": (max(held_units)[0] if held_units else None,
+                          "the dearest held item on a shelf that is not income-gated (%s)"
+                          % (max(held_units)[1] if held_units else "none sold ungated")),
             "ball": (max(units) if units else None, "the dearest non-exchange line on any shelf")}, \
-        sorted(held - {i for _, i in held_units})
+        sorted(held - held_sold)
 
 
 def exchange_problems(doc, markets_doc, bank):

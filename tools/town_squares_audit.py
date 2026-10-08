@@ -89,10 +89,14 @@ THE CHECKS (each named in the output; P = problem, K = known defect, recorded in
   theme     every stall line fits its theme by THEME_WORDS below; lines judged by hand are HAND_JUDGED, with why
   spend     every town TOWN_SQUARES_SURVEY section 0 lists as having nowhere to spend money now has an emitted stall or
             counter selling something other than the Mart's three items
-  curve     the critical path's ask, recomputed from income_basis.counts' own words (critical towns from data/towns.json
-            critical_path; every counter line; a stall's GATED lines only; a pick-one group at its dearest; stretch
-            excluded), shown per badge, within target_ratio, and equal to the same curve with every stall removed:
-            the stalls moved no money (until 2026-10-09 a constant, the curve at 31e9b2a; see curve_checks)
+  curve     ECONOMY_OVERHAUL.md section 7 R2 (2026-10-10): the critical path's CONVENIENCE lines (critical towns
+            from data/towns.json critical_path; counters and stalls; power and provision lines left out; a pick-one
+            group at its dearest; stretch excluded) plus data/markets.json curve_rule's fight allowance, over trainer
+            income (income_basis.cumulative_by_badge) + curve_rule's produce allowance + curve_rule's gathering hours a
+            leg at the data/bank.json effort_model tier rate, every term cumulative; shown per badge, within
+            target_ratio, and equal to the same curve with every stall removed: the stalls moved no money (until
+            2026-10-09 a constant, the curve at 31e9b2a; until 2026-10-10 every counter line and a stall's gated lines
+            over trainer income alone; see curve_checks)
 
 INDEPENDENCE, PROVEN BY MUTATING THE GENERATORS (tests/test_town_squares_audit.py; data untouched):
   - tools/plaza_centre.py piece_stall made to drop its counter block: the builder's own checks pass (they compare the
@@ -1215,27 +1219,62 @@ def spend_checks(markets_doc, traders):
     return P
 
 
-def curve(markets_doc, towns):
-    """[(badge, cumulative ask, cumulative income, ratio)] from income_basis.counts' words."""
+CURVE_STRANDS = ("convenience", "power", "provision")      # R2 counts the first; data/markets.json's three strands
+
+
+def _critical_records(markets_doc, towns):
     critical = {t["id"] for t in towns["towns"] if t.get("critical_path")}
+    recs = list(markets_doc["counters"]) + list(markets_doc.get("stalls") or [])
+    return [r for r in recs if r.get("town") in critical and isinstance(r.get("badge"), int)]
+
+
+def earned_by_badge(markets_doc, effort=None):
+    """{badge 1-8: (cumulative fight allowance, cumulative earned)} under R2: earned = trainer income
+    (income_basis.cumulative_by_badge) + curve_rule.produce_allowance (by badges held; leg N holds N-1) +
+    curve_rule.gathering_hours_per_leg x the rate of the data/bank.json effort_model tier latest opened by leg N (the
+    sum of rate_per_hour x price over its from_tiers' buys). KeyError/ValueError when a term is missing: the caller
+    names it."""
+    effort = effort if effort is not None else load(ROOT / "data" / "bank.json")
+    cr = markets_doc["curve_rule"]
+    per = int(cr["fight_allowance"]["per_leg"])
+    held = cr["produce_allowance"]["by_badges_held"]
+    hours = float(cr["gathering_hours_per_leg"])
+    tiers = effort["effort_model"]["tiers"]
+    inc = markets_doc["income_basis"]["cumulative_by_badge"]
+    out, f, p, g = {}, 0, 0, 0.0
+    for leg in range(1, 9):
+        f += per
+        p += int(held[str(leg - 1)])
+        open_ = [(t["opens_leg"], n) for n, t in tiers.items() if t["opens_leg"] <= leg]
+        top = max(o for o, _n in open_)
+        names = [n for o, n in open_ if o == top]
+        if len(names) != 1:
+            raise ValueError("leg %d: effort_model opens %s together; R2 counts one tier's hour" % (leg, sorted(names)))
+        src = set(tiers[names[0]]["from_tiers"])
+        g += hours * sum(int(b["rate_per_hour"]) * int(b["price"]) for b in effort["buys"] if b.get("tier") in src)
+        out[leg] = (f, int(inc[str(leg)]) + p + g)
+    return out
+
+
+def curve(markets_doc, towns, effort=None):
+    """[(badge, cumulative ask, cumulative earned, ratio)] under ECONOMY_OVERHAUL R2: ask = the critical path's
+    convenience lines + the fight allowance, earned = earned_by_badge."""
     lines_by_badge = {}
-    recs = [(r, False) for r in markets_doc["counters"]] + [(r, True) for r in markets_doc.get("stalls") or []]
-    for rec, is_stall in recs:
-        if rec.get("town") not in critical or not isinstance(rec.get("badge"), int):
-            continue
+    for rec in _critical_records(markets_doc, towns):
         groups = {}
         for it in rec.get("stock") or []:
-            if it.get("stretch") or (is_stall and not it.get("gate")):
+            if it.get("stretch") or it.get("strand") != "convenience":
                 continue
             k = it.get("group") or it["id"]
             groups[k] = max(groups.get(k, 0), int(it["price"]))
         lines_by_badge[rec["badge"]] = lines_by_badge.get(rec["badge"], 0) + sum(groups.values())
     out, cum = [], 0
-    inc = markets_doc["income_basis"]["cumulative_by_badge"]
+    earned = earned_by_badge(markets_doc, effort)
     for b in range(0, 9):
         cum += lines_by_badge.get(b, 0)
         if b:
-            out.append((b, cum, int(inc[str(b)]), round(cum / int(inc[str(b)]), 4)))
+            fights, got = earned[b]
+            out.append((b, cum + fights, round(got), round((cum + fights) / got, 4)))
     return out
 
 
@@ -1248,14 +1287,28 @@ def curve(markets_doc, towns):
 # band: 99,500 - 6,000 + 400 + 500 = 94,400). It is now derived from the data: the curve with the stalls equals the
 # curve with every stall removed. What the counters ask is not this audit's to pin: tools/markets_audit.py holds the
 # counters to PROGRESSION_LADDER 0.3's band, and this check still holds every badge to income_basis.target_ratio.
-def curve_checks(markets_doc, towns):
+# 2026-10-10 (ECONOMY_OVERHAUL R2): the ask is the convenience lines plus the fight allowance, the earned side trainer
+# income plus the produce allowance and a gathering hour a leg; power lines leave the curve, so a stall's convenience
+# line (gated or not, a merchant cannot gate) is what would move it.
+def curve_checks(markets_doc, towns, effort=None):
     P = []
-    rows = curve(markets_doc, towns)
+    for rec in _critical_records(markets_doc, towns):
+        for it in rec.get("stock") or []:
+            if it.get("strand") not in CURVE_STRANDS:
+                P.append(("curve", "strand:%s:%s" % (rec["id"], it.get("id")),
+                          "%s/%s has strand %r: R2 counts convenience lines and drops power, so it cannot be placed"
+                          % (rec["id"], it.get("id"), it.get("strand"))))
+    try:
+        rows = curve(markets_doc, towns, effort)
+    except (KeyError, ValueError, TypeError) as e:
+        P.append(("curve", "basis", "the R2 curve cannot be computed: %r missing or malformed in data/markets.json "
+                  "curve_rule / income_basis or data/bank.json effort_model" % (e,)))
+        return P, []
     target = float(markets_doc["income_basis"]["target_ratio"])
     for b, ask, inc, ratio in rows:
         if ratio > target:
             P.append(("curve", "badge%d" % b, "badge %d: ask %d of %d earned, %.3f over %.2f" % (b, ask, inc, ratio, target)))
-    bare = curve(dict(markets_doc, stalls=[]), towns)
+    bare = curve(dict(markets_doc, stalls=[]), towns, effort)
     moved = [(b, a - a0) for (b, a, _i, _r), (_b0, a0, _i0, _r0) in zip(rows, bare) if a != a0]
     if moved:
         P.append(("curve", "stalls", "the stalls move the critical path's ask (badge, dollars added): %s; the curve "

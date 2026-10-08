@@ -247,12 +247,127 @@ def test_frontage_on_a_made_up_plan():
     assert len(back) == 1 and "back to its plaza" in back[0]
 
 
-# protects the curve's source: the income table is read from the ladder document, not retyped
-def test_ladder_income_is_read_from_the_document():
-    inc = MA.ladder_income()
-    assert inc[1] == 9475 and inc[3] == 28655 and inc[8] == 145078 and len(inc) == 8
-    with pytest.raises(MA.AuditError):
-        MA.ladder_income("### 0.2\n| badge 1 | 1 | 2 | **3** | 4 |\n### 0.3")
+# protects the curve's income source (ECONOMY_OVERHAUL R1): trainer income is the data's generated basis, re-summed
+# here from its own level sums at 0.28125 S^2; without it a hand-edited or relayed figure would price the curve
+def test_trainer_income_is_the_generated_basis_re_summed_from_its_level_sums():
+    import copy
+    doc = MA.read_json(ROOT / "data" / "markets.json")
+    inc = MA.trainer_income(doc)
+    assert inc == {int(k): v for k, v in doc["income_basis"]["cumulative_by_badge"].items()}
+    # by hand, leg 1's 13 level sums: 0.28125 x (7^2 + 19^2 + ... + 56^2) = 0.28125 x 14339 = 4032.8 -> 4033
+    assert sum(s * s for s in doc["income_basis"]["level_sums"]["normal"]["1"]) == 14339 and inc[1] == 4033
+    edited = copy.deepcopy(doc)
+    edited["income_basis"]["cumulative_by_badge"]["3"] += 1                 # one dollar off its own sums
+    with pytest.raises(MA.AuditError, match="badge 3"):
+        MA.trainer_income(edited)
+    roster = copy.deepcopy(doc)
+    roster["income_basis"]["level_sums"]["normal"]["5"][0] += 1             # a roster grew, the total did not
+    with pytest.raises(MA.AuditError, match="badge 5"):
+        MA.trainer_income(roster)
+    relayed = copy.deepcopy(doc)
+    relayed["income_basis"]["relayed"] = True
+    with pytest.raises(MA.AuditError, match="relayed"):
+        MA.trainer_income(relayed)
+
+
+# --------------------------------------------------------------------------------- the R2 curve on a synthetic shelf
+# A two-town shelf whose every term is worked out on paper (ECONOMY_OVERHAUL section 7 R2):
+#   numerator  home 100 + t1 (200 + group g at its dearest 80) = 380 of convenience, the power line and the stretch
+#              line left out, + fights 100 a leg
+#   earned     income + produce (50 holding 0 badges, 10 a leg after) + one hour a leg at the tier opened by then:
+#              early = 2/h x $10 = 20 (legs 1-2), deep = early + 1/h x $30 = 50 (legs 3-8)
+#   badge 1    480 / (641 + 50 + 20 = 711) = 0.675: inside
+#   badge 2    580 / (150 + 60 + 40 = 250) = 2.32: outside; fights 200 > income 150: the hard check
+#   badge 3    680 / (1000 + 70 + 90 = 1160) = 0.586: outside; with the stretch (1000, from badge 3) 1680 >= 1160
+#   badge 4-8  income 100,000: far under the band
+SYN_CRIT = {"home": 0, "t1": 1}
+SYN_INCOME = {1: 641, 2: 150, 3: 1000, 4: 100000, 5: 100000, 6: 100000, 7: 100000, 8: 100000}
+SYN_EFFORT = {"effort_model": {"tiers": {"early": {"from_tiers": ["early"], "opens_leg": 1},
+                                         "deep": {"from_tiers": ["early", "deep"], "opens_leg": 3}}},
+              "buys": [{"item": "x:ore", "tier": "early", "rate_per_hour": 2, "price": 10},
+                       {"item": "x:gem", "tier": "deep", "rate_per_hour": 1, "price": 30}]}
+SYN_BLACKOUT = {"money": {"cap": 300, "percent": 20}}                    # ceil(300 x 20 / 100) = 60
+
+
+def _syn_doc():
+    line = lambda i, p, strand="convenience", **kw: dict({"id": i, "item": "x:" + i, "price": p, "strand": strand}, **kw)
+    return {"counters": [{"id": "h", "town": "home", "stock": [line("bag", 100)]},
+                         {"id": "c1", "town": "t1", "stock": [
+                             line("a", 200), line("tm", 99999, "power"),
+                             line("g_lo", 50, group="g"), line("g_hi", 80, group="g"),
+                             dict(line("crafting_upgrade", 1000, stretch=True), item=SB + "crafting_upgrade")]},
+                         {"id": "off", "town": "elsewhere", "stock": [line("far", 5000)]}],
+            "curve_rule": {"fight_allowance": {"per_leg": 100, "parts": {"mart": 40, "blackout": 60}},
+                           "produce_allowance": {"by_badges_held": {str(b): (50 if b == 0 else 10) for b in range(8)}},
+                           "gathering_hours_per_leg": 1}}
+
+
+def _syn(doc=None, income=SYN_INCOME, effort=SYN_EFFORT, blackout=SYN_BLACKOUT):
+    return MA.curve_faults(doc or _syn_doc(), SYN_CRIT, income, effort, blackout)
+
+
+def _badges(F, words):
+    import re
+    return sorted(int(re.match(r"curve: after badge (\d)", f).group(1)) for f in F if words in f)
+
+
+# protects R2's terms: fights, produce and gathering are each read and accumulated from data, by hand above; without
+# it a term could be dropped or counted once instead of every leg
+def test_curve_terms_accumulate_every_leg_by_hand():
+    fights, produce, gather, P = MA.curve_terms(_syn_doc(), SYN_EFFORT, SYN_BLACKOUT)
+    assert P == []
+    assert fights == {b: 100 * b for b in range(1, 9)}
+    assert produce == {1: 50, 2: 60, 3: 70, 4: 80, 5: 90, 6: 100, 7: 110, 8: 120}
+    assert gather == {1: 20, 2: 40, 3: 90, 4: 140, 5: 190, 6: 240, 7: 290, 8: 340}
+
+
+# protects the R2 band, the fights hard check and the stretch check on a shelf worked out by hand; without it the
+# band could pass everything, or count the power line, the off-path counter or the whole pick-one group
+def test_curve_band_fights_and_stretch_checks_bite_where_the_hand_figures_say():
+    F, N = _syn()
+    assert _badges(F, "outside 0.65-0.70") == [2, 3, 4, 5, 6, 7, 8]          # badge 1 at 0.675 passes
+    assert _badges(F, "fight allowance") == [2]
+    assert _badges(F, "with its stretch items") == [2, 3]
+    assert any("1:(380+100)/(641+50+20)=0.68" in n for n in N)
+
+
+# protects "power lines leave it" (R2): a power line priced up by any amount moves nothing; a convenience line does
+def test_curve_power_lines_leave_the_numerator_and_convenience_lines_stay():
+    base, _n = _syn()
+    doc = _syn_doc()
+    next(l for l in doc["counters"][1]["stock"] if l["id"] == "tm")["price"] = 10 ** 9
+    assert _syn(doc)[0] == base
+    doc = _syn_doc()
+    next(l for l in doc["counters"][1]["stock"] if l["id"] == "a")["price"] += 1000
+    assert 1 in _badges(_syn(doc)[0], "outside 0.65-0.70")                  # 1480 / 711: badge 1 now fails
+
+
+# protects the inputs the audit does not own: mutating the INPUT (the effort tiers, the blackout file, the declared
+# allowance), never the expectation, must move the verdict; without it a term could be a constant
+def test_curve_follows_its_inputs_not_constants():
+    rich = json.loads(json.dumps(SYN_EFFORT))
+    rich["buys"][0]["rate_per_hour"] = 3                                     # early hour 30: badge 1 earned 721
+    F, N = _syn(effort=rich)
+    assert any("1:(380+100)/(641+50+30)=0.67" in n for n in N)
+    F, _n = _syn(blackout={"money": {"cap": 300, "percent": 10}})            # the blackout now charges 30
+    assert any("parts.blackout 60 is not data/blackout.json's charge 30" in f for f in F)
+    doc = _syn_doc()
+    doc["curve_rule"]["fight_allowance"]["per_leg"] = 700                    # parts no longer sum; fights 700 > 641
+    F, _n = _syn(doc)
+    assert any("sum to 100, not per_leg 700" in f for f in F)
+    assert 1 in _badges(F, "fight allowance")
+    tie = json.loads(json.dumps(SYN_EFFORT))
+    tie["effort_model"]["tiers"]["cave"] = {"from_tiers": ["deep"], "opens_leg": 3}
+    F, _n = _syn(effort=tie)
+    assert sum("THE tier's rate" in f for f in F) == 6                       # legs 3-8 cannot pick one tier
+
+
+# protects fail-closed placement: a critical-path line of no known strand is named, not silently left out
+def test_curve_names_a_line_of_unknown_strand():
+    doc = _syn_doc()
+    del doc["counters"][1]["stock"][0]["strand"]
+    F, _n = _syn(doc)
+    assert any("c1/a has strand None" in f for f in F)
 
 
 # protects the gate source: a town's badge comes from the gym flag's own town, not from data/markets.json
@@ -272,7 +387,7 @@ def M():
 
 def _inputs():
     return dict(progression=MA.read_json(ROOT / "data" / "progression.json"),
-                towns=MA.read_json(ROOT / "data" / "towns.json"), bank=MA.read_json(MA.BANK), income=MA.ladder_income(),
+                towns=MA.read_json(ROOT / "data" / "towns.json"), bank=MA.read_json(MA.BANK),
                 base_text=MA.BASE_OVERLAY.read_text(encoding="utf-8"))
 
 
@@ -281,15 +396,73 @@ def _audit(M, doc=None, overlay_text=None, **kw):
     files, _npcs = M.build(doc)
     i = _inputs()
     return MA.audit(doc, MA.load_pack(files), overlay_text if overlay_text is not None else MA.OVERLAY.read_text(encoding="utf-8"),
-                    i["base_text"], i["progression"], i["towns"], i["bank"], i["income"], **kw)
+                    i["base_text"], i["progression"], i["towns"], i["bank"], **kw)
 
 
 # protects the whole offline contract on the committed data and the pack built from it (jars and keepers aside);
-# removing it leaves the markets unaudited between builds
+# removing it leaves the markets unaudited between builds. The R2 curve is held apart (the next test): the committed
+# convenience strand was priced for model B and has not been re-priced (U5's builder side)
 def test_the_built_markets_pass_the_offline_audit(M):
     F, W, N = _audit(M)
-    assert F == [], F
-    assert any(n.startswith("curve") for n in N)
+    assert [f for f in F if not f.startswith("curve:")] == [], F
+    assert any(n.startswith("curve R2") for n in N)
+
+
+# protects the R2 band on the committed shelf. Strict: it fails today (the convenience strand reads 1.37 at badge 1
+# to 0.38 at badge 8 under R2, ECONOMY_OVERHAUL 1.2's predicted slope) and XPASSes -- failing the run -- the day the
+# strand is re-priced, so the xfail must then be removed rather than left hiding a pass
+@pytest.mark.xfail(strict=True, reason="data/markets.json's convenience lines are not yet re-priced to R2's curve "
+                                       "(ECONOMY_OVERHAUL build list U5: markets.py prices --write)")
+def test_the_committed_shelf_is_inside_the_r2_band(M):
+    F, _w, _n = _audit(M)
+    assert [f for f in F if f.startswith("curve:")] == []
+
+
+# protects the audit's input PATHS: the whole audit, given no effort/blackout, reads data/bank.json and
+# data/blackout.json from disk. Pointed at a copy whose rates are all doubled, badge 1's gathering term doubles (the
+# early hour, $620 committed); pointed at a blackout charging 10%, the allowance's blackout part is named. Without it
+# the terms could be read once into a constant and never follow the files
+def test_mutation_the_audit_follows_its_input_files(M, tmp_path, monkeypatch):
+    eff = MA.read_json(MA.DATA_BANK)
+    for b in eff["buys"]:
+        b["rate_per_hour"] *= 2
+    (tmp_path / "bank.json").write_text(json.dumps(eff), encoding="utf-8")
+    bo = MA.read_json(MA.BLACKOUT)
+    bo["money"]["percent"] = 10
+    (tmp_path / "blackout.json").write_text(json.dumps(bo), encoding="utf-8")
+    early = lambda N: float(next(n for n in N if n.startswith("curve R2")).split("1:(")[1].split(")")[1].split("+")[-1])
+    _f, _w, N0 = _audit(M)
+    monkeypatch.setattr(MA, "DATA_BANK", tmp_path / "bank.json")
+    _f, _w, N1 = _audit(M)
+    assert early(N1) == 2 * early(N0) > 0
+    monkeypatch.setattr(MA, "BLACKOUT", tmp_path / "blackout.json")
+    F, _w, _n = _audit(M)
+    assert any("parts.blackout 600 is not data/blackout.json's charge 300" in f for f in F)
+
+
+# protects R2's split on the REAL shelf: a critical power line (Holdfast's Full Restore) re-priced moves no curve
+# figure; a critical convenience line (Holdfast's Inception Upgrade) moves badge 8's numerator by exactly its change
+def test_the_real_curve_drops_power_lines_and_counts_convenience_lines(M):
+    import copy
+    doc = M.load()
+    tb = MA.town_badges(MA.read_json(ROOT / "data" / "progression.json"), MA.read_json(ROOT / "data" / "towns.json"))
+    crit = {t: n for t, (n, _f) in tb.items()}
+    run = lambda d: MA.curve_faults(d, crit, MA.trainer_income(d), MA.read_json(MA.DATA_BANK), MA.read_json(MA.BLACKOUT))
+    base = run(doc)
+    power = copy.deepcopy(doc)
+    fr = _item(power, "holdfast", "full_restore")
+    assert fr["strand"] == "power"
+    fr["price"] += 50000
+    assert run(power) == base
+    conv = copy.deepcopy(doc)
+    inc = _item(conv, "holdfast", "inception_upgrade")
+    assert inc["strand"] == "convenience"
+    before = next(n for n in base[1] if n.startswith("curve R2"))
+    inc["price"] += 1000
+    after = next(n for n in run(conv)[1] if n.startswith("curve R2"))
+    assert before.split(" 8:(")[0] == after.split(" 8:(")[0]                  # badges 1-7 untouched
+    b8 = lambda n: int(n.split(" 8:(")[1].split("+")[0])
+    assert b8(after) - b8(before) == 1000
 
 
 # protects the committed overlay (what install copies to the server): base plus exactly the sold, built
@@ -456,12 +629,14 @@ def test_tiers_out_of_order_are_caught(M):
     assert any("iron_backpack first sold at badge 7; the ladder places it at badge 3" in f for f in F)
 
 
-# protects the curve band and the floor: a badge-3 shelf priced up past 0.70, and a vitamin priced at its sell-back,
-# are named
+# protects the curve band through the whole audit and the floor: Highwire's Iron Backpack (a badge-3 convenience
+# line) priced up to $1,000,000 takes badge 3 far above the band whatever the rest of the shelf is, and the fault
+# carries the raised ask; a vitamin priced at its sell-back is named
 def test_the_curve_and_the_floor_bite(M):
-    doc = _doc_with(M, lambda d: _item(d, "highwire", "iron_backpack").update(price=9000))
+    doc = _doc_with(M, lambda d: _item(d, "highwire", "iron_backpack").update(price=1000000))
     F, _w, _n = MA.audit(doc, MA.load_pack(M.build(doc)[0]), MA.OVERLAY.read_text(encoding="utf-8"), **_inputs())
-    assert any(f.startswith("curve: after badge 3") for f in F)
+    b3 = [f for f in F if f.startswith("curve: after badge 3 convenience")]
+    assert len(b3) == 1 and int(b3[0].split("convenience ")[1].split(" ")[0]) > 1000000, b3
     doc = _doc_with(M, lambda d: _item(d, "northlight_station", "zinc").update(price=2500))
     F, _w, _n = MA.audit(doc, MA.load_pack(M.build(doc)[0]), MA.OVERLAY.read_text(encoding="utf-8"), **_inputs())
     assert any("northlight_station/zinc sells at $2500 each, not above bank.json's $2500" in f for f in F)
@@ -496,7 +671,7 @@ def test_ids_and_recipe_conditions_in_the_server_jars(M, jars):
     assert "tmcraft:tm_earthquake" not in jars.items and jars.is_item("tmcraft:tm_earthquake")
     assert not jars.is_item("tmcraft:tm_notamove")
     F, _w, _n = _audit(M, index=jars)
-    assert F == [], F
+    assert [f for f in F if not f.startswith("curve:")] == [], F        # the R2 curve: test_the_committed_shelf_...
 
 
 # protects the id check against the GENERATOR: an offer of an id that is not in any jar (TIERED_GOODS 2.6's
@@ -525,4 +700,4 @@ def test_keepers_are_clear_of_roads_buildings_walked_lines_and_other_npcs(M):
     assert [n for n in N if n.startswith("NOT CHECKED: NPCs")] == [], N
     rest = [f for f in F if f.startswith("keeper") and "behind its Mart" not in f and "back to its plaza" not in f]
     assert rest == [], rest
-    assert [f for f in F if not f.startswith("keeper")] == []
+    assert [f for f in F if not f.startswith(("keeper", "curve:"))] == []   # the R2 curve is held strict elsewhere

@@ -171,27 +171,69 @@ def test_door_starts_are_the_middle_half_outside_the_facing_edge():
 
 
 # ------------------------------------------------------------------------------------------- markets, by hand
-def _market(stock_counter, stock_stall, badge=1):
+def _market(stock_counter, stock_stall, badge=1, fights=0, produce=0, hours=0):
+    """Income 1000 x badge. R2's other terms default to 0, so a ratio is the convenience ask over income."""
     return {"income_basis": {"cumulative_by_badge": {str(b): 1000 * b for b in range(1, 9)}, "target_ratio": 0.7},
+            "curve_rule": {"fight_allowance": {"per_leg": fights},
+                           "produce_allowance": {"by_badges_held": {str(b): produce for b in range(8)}},
+                           "gathering_hours_per_leg": hours},
             "counters": [{"id": "c", "town": "gym1_town", "badge": badge, "status": "sited", "stock": stock_counter}],
             "stalls": [{"id": "s", "town": "gym1_town", "badge": badge, "status": "sited", "sells": "fish",
                         "stock": stock_stall}]}
 
 
 TOWNS = {"towns": [{"id": "gym1_town", "critical_path": True}, {"id": "sea_town", "critical_path": False}]}
+# a gathering tier worth 2/h x $10 = $20 an hour from leg 1, and a second worth that + 1/h x $30 = $50 from leg 3
+EFFORT = {"effort_model": {"tiers": {"early": {"from_tiers": ["early"], "opens_leg": 1},
+                                     "deep": {"from_tiers": ["early", "deep"], "opens_leg": 3}}},
+          "buys": [{"item": "x:ore", "tier": "early", "rate_per_hour": 2, "price": 10},
+                   {"item": "x:gem", "tier": "deep", "rate_per_hour": 1, "price": 30}]}
 
 
-def test_curve_counts_counters_and_only_a_stalls_gated_lines():
-    # Without it a stall line could move the money curve unseen, or a pick-one group be counted in full.
-    counter = [{"id": "a", "item": "x:a", "price": 300, "gate": "gym1_cleared"},
-               {"id": "b", "item": "x:b", "price": 200, "group": "g", "gate": "gym1_cleared"},
-               {"id": "c", "item": "x:c", "price": 500, "group": "g", "gate": "gym1_cleared"},
-               {"id": "d", "item": "x:d", "price": 9000, "stretch": True}]
-    stall = [{"id": "e", "item": "minecraft:cod", "price": 100, "gate": None},
-             {"id": "f", "item": "minecraft:salmon", "price": 40, "gate": "gym1_cleared"}]
-    rows = A.curve(_market(counter, stall), TOWNS)
-    assert rows[0] == (1, 300 + 500 + 40, 1000, 0.84)          # a, g at its dearest, f; not d, not e
+def _l(i, price, strand="convenience", **kw):
+    return dict({"id": i, "item": "x:" + i, "price": price, "gate": None, "strand": strand}, **kw)
+
+
+def test_curve_counts_only_convenience_lines_of_counters_and_stalls():
+    # ECONOMY_OVERHAUL R2: "power lines leave it". Without it a power line would weigh on the money curve again, a
+    # stall's convenience line could move it unseen, or a pick-one group be counted in full.
+    counter = [_l("a", 300), _l("b", 200, group="g"), _l("c", 500, group="g"),
+               _l("d", 9000, stretch=True), _l("tm", 7000, "power")]
+    stall = [dict(_l("e", 100, "provision"), item="minecraft:cod"), dict(_l("f", 40), item="minecraft:salmon")]
+    rows = A.curve(_market(counter, stall), TOWNS, EFFORT)
+    assert rows[0] == (1, 300 + 500 + 40, 1000, 0.84)          # a, g at its dearest, f; not d, tm or e
     assert rows[7][1] == 840                                   # nothing after badge 1
+
+
+def test_earned_by_badge_adds_produce_and_one_gathering_hour_a_leg_by_hand():
+    # R2's denominator. By hand with fights 100, produce 50 a leg, 1 hour a leg: leg 1-2 at the early tier's $20,
+    # legs 3-8 at the deep tier's $50. Badge 3: income 3000 + produce 150 + gathering 20 + 20 + 50 = 3240, fights 300.
+    # Without it the produce allowance or the gathering hour could silently drop out of the curve.
+    e = A.earned_by_badge(_market([], [], fights=100, produce=50, hours=1), EFFORT)
+    assert e[1] == (100, 1000 + 50 + 20) and e[2] == (200, 2000 + 100 + 40) and e[3] == (300, 3240)
+    assert e[8] == (800, 8000 + 400 + 40 + 6 * 50)
+    rows = A.curve(_market([_l("a", 1000)], [], fights=100, produce=50, hours=1), TOWNS, EFFORT)
+    assert rows[0] == (1, 1100, 1070, round(1100 / 1070, 4))
+
+
+def test_mutation_the_gathering_rate_input_moves_the_curve():
+    # Mutates the INPUT (data/bank.json's effort rates), never the record under test: the early hour doubles to $40
+    # and badge 1's earned rises by 20. Without it the gathering term could be a constant.
+    rich = json.loads(json.dumps(EFFORT))
+    rich["buys"][0]["rate_per_hour"] = 4
+    mk = _market([_l("a", 1000)], [], hours=1)
+    assert A.curve(mk, TOWNS, rich)[0][2] - A.curve(mk, TOWNS, EFFORT)[0][2] == 20
+
+
+def test_curve_check_names_an_unknown_strand_and_a_missing_basis():
+    # Fail closed: a critical-path line of no strand cannot be placed on either side of R2's split, and a curve whose
+    # curve_rule is gone cannot be computed. Without it both would pass as an empty ask.
+    P, _r = A.curve_checks(_market([{"id": "a", "item": "x:a", "price": 100, "gate": None}], []), TOWNS, EFFORT)
+    assert [k for _c, k, _m in P] == ["strand:c:a"]
+    mk = _market([_l("a", 100)], [])
+    del mk["curve_rule"]
+    P, rows = A.curve_checks(mk, TOWNS, EFFORT)
+    assert [k for _c, k, _m in P] == ["basis"] and rows == []
 
 
 def test_power_rule_flags_an_ungated_ball_and_passes_a_badge_gated_one():
@@ -285,7 +327,9 @@ def _power_keys(mk):
 
 def test_the_2833317_counter_lines_fail_at_their_old_prices_with_or_without_a_declared_gate():
     # The 41 lines 2833317 put on Fossick and Northlight (23 TMs at 5% of income, 17 memories, the Sachet). Without
-    # it they could go back on sale at $500-$7,300 against $9,475-$145,078 earned, which the owner calls free.
+    # it they could go back on sale at $500-$7,300 against what the road pays by their badge (income_basis), which the
+    # owner calls free.
+    inc = A.load(ROOT / "data" / "markets.json")["income_basis"]["cumulative_by_badge"]
     base = set(_power_keys(A.load(ROOT / "data" / "markets.json")))
     mk, added = _with_2833317()
     assert len(added) == 41 and sum(1 for _c, i in added if i.startswith("tmcraft:tm_")) == 23
@@ -297,7 +341,7 @@ def test_the_2833317_counter_lines_fail_at_their_old_prices_with_or_without_a_de
     got = _power_keys(mk)
     assert set(got) - base == want
     assert all("not above the" in got[k] for k in want)
-    assert "one costs 500, not above the 9475 earned by badge 1" in got["fossick:tmcraft:tm_bide"]
+    assert "one costs 500, not above the %d earned by badge 1" % inc["1"] in got["fossick:tmcraft:tm_bide"]
 
 
 def test_the_2833317_counter_lines_pass_one_dollar_above_their_declared_income_gate():
@@ -473,47 +517,62 @@ def test_the_survey_still_names_the_towns_with_nowhere_to_spend():
         assert label in sec, label
 
 
-def test_curve_is_unchanged_by_the_stalls_and_inside_the_target():
-    # Without it a gated stall line could take the critical path over 0.70 of income, or quietly move the ladder.
+def test_curve_is_unchanged_by_the_stalls():
+    # Without it a stall's convenience line could quietly move the critical path's ask.
     mk = A.load(ROOT / "data" / "markets.json")
     towns = A.load(ROOT / "data" / "towns.json")
     rows = A.curve(mk, towns)
-    assert all(0.65 <= r <= 0.70 for _b, _a, _i, r in rows), rows
-    no_stalls = dict(mk, stalls=[])
-    assert A.curve(no_stalls, towns) == rows
+    assert A.curve(dict(mk, stalls=[]), towns) == rows
     P, _rows = A.curve_checks(mk, towns)
+    assert [k for _c, k, _m in P if not k.startswith("badge")] == [], P
+
+
+# Strict: under R2 the committed convenience strand reads 1.37 at badge 1 down to 0.38 at badge 8 (the slope
+# ECONOMY_OVERHAUL 1.2 predicted), so badges 1-4 are over the 0.70 target. It XPASSes -- failing the run -- the day
+# the strand is re-priced, and the xfail must then go.
+@pytest.mark.xfail(strict=True, reason="data/markets.json's convenience lines are not yet re-priced to R2's curve "
+                                       "(ECONOMY_OVERHAUL build list U5: markets.py prices --write)")
+def test_the_committed_curve_is_inside_the_target():
+    mk = A.load(ROOT / "data" / "markets.json")
+    P, _rows = A.curve_checks(mk, A.load(ROOT / "data" / "towns.json"))
     assert P == [], P
 
 
-def test_curve_check_names_a_gated_stall_line_and_lets_a_counter_reprice_through():
+def test_curve_check_names_a_stall_convenience_line_and_lets_a_counter_reprice_through():
     # The check pins "the stalls moved no money", derived from the data, not a constant curve. By hand: a counter at
-    # badge 1 asking 600 against 1000 earned (0.60). A gated 40 stall line at badge 1 moves badges 1-8 by 40 and is
-    # named; re-pricing the counter 600 -> 650 (a deliberate counter change, markets_audit's to judge) is not; a
-    # re-price to 750 (0.75) still fails the 0.70 target. Without it either a stall could move the ladder unseen, or
-    # every deliberate counter re-price would fail this audit forever (the 2026-10-09 Holdfast prices did).
-    counter = [{"id": "a", "item": "x:a", "price": 600, "gate": None}]
-    stall = [{"id": "f", "item": "minecraft:salmon", "price": 40, "gate": "gym1_cleared"},
-             {"id": "e", "item": "minecraft:cod", "price": 100, "gate": None}]       # ungated: never counted
-    P, _r = A.curve_checks(_market(counter, stall), TOWNS)
+    # badge 1 asking 600 against 1000 earned (0.60). A 40 convenience line on a stall at badge 1 moves badges 1-8 by
+    # 40 and is named; re-pricing the counter 600 -> 650 (a deliberate counter change, markets_audit's to judge) is
+    # not; a re-price to 750 (0.75) still fails the 0.70 target. Without it either a stall could move the ladder
+    # unseen, or every deliberate counter re-price would fail this audit forever (the 2026-10-09 Holdfast prices did).
+    counter = [_l("a", 600)]
+    stall = [dict(_l("f", 40), item="minecraft:salmon"),
+             dict(_l("e", 100, "provision"), item="minecraft:cod")]                  # provision: never counted
+    P, _r = A.curve_checks(_market(counter, stall), TOWNS, EFFORT)
     assert [k for _c, k, _m in P] == ["stalls"]
     assert "[(1, 40), (2, 40), (3, 40), (4, 40), (5, 40), (6, 40), (7, 40), (8, 40)]" in P[0][2]
-    P, _r = A.curve_checks(_market([dict(counter[0], price=650)], stall[1:]), TOWNS)
+    P, _r = A.curve_checks(_market([dict(counter[0], price=650)], stall[1:]), TOWNS, EFFORT)
     assert P == []
-    P, _r = A.curve_checks(_market([dict(counter[0], price=750)], stall[1:]), TOWNS)
+    P, _r = A.curve_checks(_market([dict(counter[0], price=750)], stall[1:]), TOWNS, EFFORT)
     assert [k for _c, k, _m in P] == ["badge1"]
 
 
 def test_curve_check_follows_the_real_counters_when_a_counter_line_is_repriced():
-    # Mutates the committed data in memory (the file is untouched): Holdfast's Full Restore back to its pre-N129 3,000.
-    # The curve moves by -500 at badge 8 and the check stays silent on the stalls; it is the counters' auditor that
-    # owns the band. Without it the audit could quietly regain a hard-coded curve that fails every owner re-price.
+    # Mutates the committed data in memory (the file is untouched). Holdfast's Inception Upgrade (convenience) down
+    # 500 moves badge 8's ask by -500 and nothing before it; Holdfast's Full Restore (power) moved by 500 moves
+    # nothing at all (R2: power lines leave the curve). The check stays silent on the stalls either way. Without it
+    # the audit could regain a hard-coded curve, or start counting power lines again.
     import copy
     mk = copy.deepcopy(A.load(ROOT / "data" / "markets.json"))
     towns = A.load(ROOT / "data" / "towns.json")
     before = A.curve(mk, towns)
     hold = next(c for c in mk["counters"] if c["id"] == "holdfast")
-    line = next(l for l in hold["stock"] if l["item"] == "cobblemon:full_restore")
-    line["price"] -= 500
+    power = next(l for l in hold["stock"] if l["item"] == "cobblemon:full_restore")
+    assert power["strand"] == "power"
+    power["price"] -= 500
+    assert A.curve(mk, towns) == before
+    conv = next(l for l in hold["stock"] if l["item"] == "sophisticatedbackpacks:inception_upgrade")
+    assert conv["strand"] == "convenience"
+    conv["price"] -= 500
     after = A.curve(mk, towns)
     assert [a for _b, a, _i, _r in before][:7] == [a for _b, a, _i, _r in after][:7]
     assert before[7][1] - after[7][1] == 500

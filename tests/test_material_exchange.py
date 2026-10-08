@@ -114,6 +114,49 @@ def test_a_master_ball_cheaper_than_the_capsule_is_under_the_ball_floor():
     assert any("master_ball" in p and "ball floor" in p for p in _ex(DOC, m))
 
 
+def _held_lines(m):
+    held = set(DOC["exchanges"]["floors"]["held_item"]["from_items"])
+    return [it for c in m["counters"] for it in c["stock"] if it["item"] in held and "exchange_for" not in it]
+
+
+def test_the_held_item_floor_reads_only_lines_that_are_not_income_gated():
+    # ECONOMY_OVERHAUL section 7 R8: "Read from lines that are not income-gated only, or the floor jumps to $35,000+".
+    # By hand: the committed floor is the dearest of the eight held items, $1,000. Viltri's Mystic Water raised to
+    # $35,000 AS AN INCOME-GATE line leaves it at $1,000; the same price as an ordinary line lifts it to $35,000.
+    # Without it R3's income-gated held items would push every held-item exchange under its floor.
+    assert bank.exchange_floors(DOC, MDOC)[0]["held_item"][0] == max(it["price"] for it in _held_lines(MDOC)) == 1000
+    m = copy.deepcopy(MDOC)
+    _c, it = _line(m, "viltri_quay", "cobblemon:mystic_water")
+    it.update(price=35000, price_rule="income_gate")
+    floors, stale = bank.exchange_floors(DOC, m)
+    assert floors["held_item"][0] == 1000 and stale == []
+    del it["price_rule"]
+    assert bank.exchange_floors(DOC, m)[0]["held_item"][0] == 35000
+
+
+def test_a_held_item_floor_with_every_line_income_gated_fails_closed_and_is_not_called_stale():
+    # R8's edge: when every held item on the shelves is income-gated there is no ungated value to read. The floor must
+    # be reported unreadable (never silently None), and the held items must not be called stale: they are sold.
+    m = copy.deepcopy(MDOC)
+    for it in _held_lines(m):
+        it["price_rule"] = "income_gate"
+    floors, stale = bank.exchange_floors(DOC, m)
+    assert floors["held_item"][0] is None and stale == []
+    assert any("floor for held_item cannot be read" in p for p in _ex(DOC, m))
+
+
+def test_the_ball_floor_still_counts_income_gated_lines_until_the_owner_decides_r4():
+    # R4 (exclude income-gate lines from the Master Ball floor) is the OWNER's decision and is not taken: the ball
+    # floor still reads every non-exchange line, gated or not. An income-gated $35,000 line therefore lifts the ball
+    # floor above the $27,000 Master Ball and is named -- which is why Fossick's dearer TMs stay held. When the owner
+    # takes R4 this test must change with the rule, not be deleted.
+    m = copy.deepcopy(MDOC)
+    _c, it = _line(m, "viltri_quay", "cobblemon:mystic_water")
+    it.update(price=35000, price_rule="income_gate")
+    assert bank.exchange_floors(DOC, m)[0]["ball"][0] == 35000
+    assert any("master_ball" in p and "ball floor" in p for p in _ex(DOC, m))
+
+
 def test_an_evolution_item_under_the_stone_price_is_named():
     m = copy.deepcopy(MDOC)
     _c, it = _line(m, "fossick", "cobblemon:razor_claw")
