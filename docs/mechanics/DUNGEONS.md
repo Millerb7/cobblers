@@ -1,615 +1,981 @@
-# Dungeons: many runs, one engine, authored rooms on fixed sockets
+# Dungeons: timed rift runs, one engine, authored spines
 
 **Status: DESIGN AND COSTING ONLY (content-architect, 2026-10-08).** Nothing here is built, placed, generated or run.
-It answers the owner's brief of 2026-10-08 ("MANY DUNGEONS ... cost two approaches before building either ... build one
-completely before building six partially"). The architectural choice is proposed as
-`docs/decisions/ADR-008-dungeon-runs.md` (Proposed; it stays Proposed).
+This rewrite answers the owner's timed-dungeon brief of 2026-10-08 (relayed close to verbatim by the brief): "an
+instanced run with a TIMER. Finish it or get out before the clock runs down. If you are still inside when it does, you
+die. They are visible rips in the world, torn from the Rift." The architectural choice is
+`docs/decisions/ADR-008-dungeon-runs.md`, rewritten to this shape and still **Proposed**.
 
-**Revised 2026-10-08** with what the owner approved that day (relayed by the update brief): changes D1-D9 of
-`docs/mechanics/DROPS_PROGRESSION_SPLIT.md` section 4 (progression items become dungeon rewards; the den), and from
-`docs/mechanics/DUNGEON_PLACEMENT.md` section 5 only the level cap as the governing constraint and the Beast Ball rule.
-The rest of that list is marked OPEN where it would land (section 0.1).
+**What this replaces.** The earlier version of this file (same day) was a hub with three socketed wings, about 30
+minutes, no clock, rebuilt on entry. The owner's new shape supersedes its run structure (old 2.1-2.4), its costing
+(old 1.1-1.3), its hub data model (old 7.1) and its time budget. **What still stands** is kept below and marked
+*stands*: the reward rules and the progression bundles (section 9), per-gym band scaling (section 5.3), the cap read
+at entry, NPCs as `cobblemon:npc` and never rctmod trainers, the CobbleDollars clawback, the dens, and the homes
+(section 10).
 
-Labels: **VERIFIED** = seen in source, a jar read recorded in `docs/research/`, or a run, with the citation;
-**ASSUMED** = inferred, not checked; *relayed* = a number taken from another document and not re-measured here;
-*measured* = counted by this unit (line counts by Grep over the named files).
+**The mechanisms come from** `docs/research/DUNGEON_MECHANISMS.md` (cited as **DM**), whose verdicts and limits this
+design follows exactly. Where the owner has decided against a DM recommendation (the in-battle pause, DM 1.4), the
+owner's decision governs and DM's analysis is used only for its limits.
 
----
-
-## 0. Premises checked
-
-| # | Premise (from the brief) | Finding |
-|---|---|---|
-| P1 | "The one built dungeon slice, the Entei boss" | **Built, never run, with three recorded defects.** `data/entei_boss.json:4` says "NOT RUN in any world"; `experiments/EXP-059-entei-boss/README.md:3` is NOT_EXECUTED; the morning report lists "a second catch after a logout; the lockout after a clock reset; first-24,000-ticks refusal" (`docs/MORNING_REPORT_2026-10-11.md:18`). Every dungeon below rests on this machinery, so **EXP-059 runs before anything is generalised** (section 7.5, step 0). |
-| P2 | "The refillable mining caves are the built precedent" for a resource leg | **Built offline, never installed or seen** (`data/mining_caves.json:3`). And they are SHARED by design (`:6`), which is why their reset needs an occupancy guard (`:51`). A dungeon's seam is in a private slot, so it needs no guard; what it needs instead is a way to let the player mine the seam while the walls stay unbreakable, which the Entei room's Mining Fatigue ward (`data/entei_boss.json:80`) forbids everywhere. Section 2.3 resolves it. |
-| P3 | Entei's lockout as the model | **A 24,000-tick lockout is shorter than a 30-minute run.** It is 20 minutes of uptime counted from entry (`data/entei_boss.json:91-93`), so on a 30-minute run it has expired before the player is out: it would never bind. A dungeon lockout must be at least the run's own length (section 8, Q5). |
-| P4 | "Each leg is one of trainer battles, a resource farm, a boss fight" | Read as: every run holds all three kinds, boss last. A run of three trainer legs would be a gauntlet, which Heaven's Arena already is (`data/arena_fights.json:27`). Q1 asks the owner to confirm. |
-| P5 | Trainer legs earn nothing extra | **Wrong by default.** CobbleDollars pays automatically on an NPC win; the arena "paid TWICE (our purse + CobbleDollars' automatic NPC payout)" and now claws the automatic one back (`docs/MORNING_REPORT_2026-10-11.md:19`, *relayed*; EXP-060 not run). Every dungeon trainer leg is a cash faucet unless the engine claws back the same way. |
-| P6 | Real cost numbers: "an independent audit around 3M, one prepare run about 30 minutes" | Audit: the repository's recorded range is 0.59-2.99M (`docs/mechanics/NETHER_DUNGEON_SCOPE.md:256-259`, *relayed*); this document uses 2M, 3M for an Opus audit. Prepare: **three documents disagree**: CLAUDE.md "679 s" (about 11 min), the scope "~35 min (*relayed*)" (`NETHER_DUNGEON_SCOPE.md:259`), the brief "about 30 minutes". Not measured here; section 1 uses 30 min as the brief says, and notes the time cost is small next to the token cost either way. |
-
-Two findings outside the brief, recorded and not chased:
-- **The Sunken Court's centre is under water.** `data/towns.json:2359-2363` puts the jungle ruins outpost at
-  (5160, 7463), the coordinate CLAUDE.md ("Measure before relaying") records as ground y61 against sea level y62 after
-  the water export. It is disqualified as a dungeon home here; the jungle temples (`data/jungle_temples.json:89`,
-  `:187`, `:253`) are used instead, with their ground **not measured by this unit**.
-- **The scaling the brief asks for is largely native.** Cobblemon 1.8.0's pool party picks entries by the NPC's
-  level (`npcLevels`) and evaluates team size as MoLang with `q.level` and `q.player` visible
-  (`docs/research/notes/arena-per-player-opponents.md:98-102`, VERIFIED from `PoolPartyProvider` source; the
-  `npcLevels` filter is not yet run). Section 5 builds on it.
-
-### 0.1 Owner decisions of 2026-10-08 (relayed by the update brief) and what stays open
-
-Decided, and applied in the sections named:
-- **Progression items are dungeon-exclusive rewards:** Exp. Candies, the six IV candies, Rare Candy and the Lucky Egg
-  (`DROPS_PROGRESSION_SPLIT.md` 1.3-1.4). That document's Q1 is answered: the Lucky Egg moves. Materials stay as
-  drops. Section 4.
-- **The den**, a fourth, optional leg kind, in two dungeons: the Night Shift (the Electirizer) and the Last Cistern (the
-  two armours). That document's Q3 is answered: the Last Cistern, not the Temple Calendar. Section 2.3.
-- **The Beast Ball is the key to every dungeon boss, and only dungeon bosses.** Overworld legendaries stay catchable
-  with any ball. Built as `data/key_ball.json` (tag `cobblers.key_boss`; boss list Entei only), NOT RUN:
-  `experiments/EXP-064-beast-ball-key` is NOT_EXECUTED (`data/key_ball.json:4`, *read*). Section 2.3.
-- **The level cap is the governing constraint on any catchable dungeon boss:** its level is at or under the lowest
-  cap its gate admits, because the cap pack refuses a catch strictly over the thrower's cap with every ball
-  (`DUNGEON_PLACEMENT.md` Q8). The window's cap is **60, and 62 after Lance; not 80** (`DUNGEON_PLACEMENT.md` Q1,
-  *relayed* from `LEAGUE_LEVEL_CAP.md:3-6`, `:50-56`). Sections 2.3, 7.2.
-
-**OPEN** (the owner has not answered; `DUNGEON_PLACEMENT.md` section 6): every dungeon catch after the Champion (Q11),
-so pre-League wild bosses fight-only; the Temple Calendar as the window's dungeon at `gym8_cleared` (Q13); the paradox
-columns, threats and band-6 paradox catches (C2-C8); Koraidon and Miraidon (Q14); which sites count as dungeon bosses
-(Q15). Nothing below assumes an answer to any of them.
+Labels: **VERIFIED** = read in source, a jar read recorded in `docs/research/`, or a run, with the citation;
+**ASSUMED** = inferred, not checked; ***relayed*** = a number taken from another document and not re-measured by this
+unit, with its source; ***measured*** = counted by this unit (line counts by Grep, 2026-10-08); ***planning*** = a
+value this design chooses so the arithmetic can be done, to be replaced by a timing (probe XT1).
 
 ---
 
-## 1. Recommendation, against the owner's instinct
+## 0. Owner decisions this design builds on (not reopened)
 
-**Recommendation: neither (a) nor (b) as written. Build a hybrid, (a'): every dungeon is AUTHORED, but its variety
-comes from three cheap sources instead of whole hand-built variant runs:**
-
-1. **Contents re-roll on every run, by machinery that is already proven or built.** Trainer teams re-roll at every
-   challenge (VERIFIED in game, `arena-per-player-opponents.md:367-368`). The seam's ore pattern is one of eight
-   variants, never the last one (the mining caves' rule, `data/mining_caves.json:27`, `:51`). The boss is drawn from a
-   small pool; the reward roll draws without repeats until a set is complete.
-2. **Rooms rotate on fixed sockets.** Each dungeon has a fixed hub with three sockets (trainer wing, seam wing, boss
-   room), each a fixed box with a fixed door. Each socket has two authored rooms, chosen "other than last time". Two
-   rooms per socket give 2 x 2 x 2 = **8 layouts for 6 rooms**, where the owner's (a), three whole runs, gives **3
-   layouts for 9 rooms**.
-3. **The run re-tiers to the player's level cap at entry** (section 5), so one dungeon is a different fight at every
-   badge.
-
-**Where the owner is right.** (b) is a different project. Its validator, its runtime experiments and its template
-library all come before the first playable run, and it brings a defect class (rooms that do not connect, bosses in
-corridors, unreachable loot) whose worst case, a softlock in a pocket dimension, is the CLAUDE.md escalation case 1.
-In this stack "dynamic" can only mean picking pre-validated templates with `random value` at run time, because no
-connectivity proof can run inside mcfunction. Done safely, (b) therefore collapses into fixed sockets, which is (a').
-
-**Where the owner is wrong.** The literal (a), several hand-built whole runs per home, is **not** "a fraction of the
-cost" once there are many dungeons. Each extra variant is a whole run of rooms. On the measured rates its marginal cost
-per dungeon (about 9.6M) is the highest of the three, and (b) overtakes it at about **four dungeons** (section 1.2). The
-"different each time" feeling comes mostly from who you fight and what you dig, not from corridor order. That is
-cheap in every option, and it is what (a') spends on.
-
-### 1.1 Rates used (measured unless marked)
-
-| Rate | Value | Source |
+| # | Decision (the owner, 2026-10-08, relayed by the brief) | Where it lands |
 |---|---|---|
-| Builder authoring a place end to end | 3.4-4.6M, 130-160 turns; **4M** used | CLAUDE.md "What a builder actually costs" (measured 2026-10-02) |
-| Narrow follow-up on an existing tool | **2.6M**, ~90 turns | same |
-| Research question settled | 0.57-0.66M; **0.6M** used | CLAUDE.md cost rules |
-| Independent audit | 0.59-2.99M (*relayed*); **2M**, **3M** on Opus | `NETHER_DUNGEON_SCOPE.md:256-259` |
-| Design unit (opus) | ~1M (*relayed*, the scope's own estimate) | `NETHER_DUNGEON_SCOPE.md:273` |
-| Prepare | 11-35 min (sources disagree, P6) | CLAUDE.md; `NETHER_DUNGEON_SCOPE.md:259` |
+| D1 | **No pause in battle.** "The clock budgets for fights; a pause that can be held open by idling in a menu is worse than no pause." | 2.1; the budget in 4 is fights plus movement |
+| D2 | **Boss stages are separate fights chained by the victory hook**, not one battle where the AI picks the order | 3.2 |
+| D3 | **No-deploy is the recall sweep**; a player gets a moment before it pulls back | 3.4 |
+| D4 | **Our own rip** (frame, particles, an interaction to enter), not LegendaryMonuments' portal; no new dependency | 7 |
+| D5 | **Fixed rips first**; a random scheduler later | 7.3 |
+| D6 | **Resource tracking is new work**; the mining caves never counted mined blocks (DM premise 1, `tools/mining_caves.py:15-18`) | 3.3 |
+| D7 | Beast Ball key: dungeon bosses refuse every ball but the Beast Ball, x5 (`data/key_ball.json`) | 8 |
+| D8 | **Catches only after the Champion** (cap 100); pre-League bosses are fight-only set pieces | 3.2, 8 |
+| D9 | Level caps 20-55 by gym, 60 after gym 8, 62 after Lance, 100 after Blue | 5.3 |
+| D10 | Progression items (Exp. Candies, IV candies, Rare Candy, Lucky Egg) are dungeon-exclusive | 9 |
+| D11 | The dens are approved: the Night Shift's Electirizer den, the Last Cistern's armour den | 3.6, 11 |
+| D12 | Paradoxes are dungeon content (`docs/STATE.md:152`); Entei is a boss, Heatran after | 8, 10 |
 
-**The per-dungeon baseline, measured.** The Entei unit is **2,169 lines**: `data/entei_boss.json` 163,
-`tools/entei_boss.py` 702, `tests/test_entei_boss.py` 336, `tests/test_entei_boss_audit.py` 786,
-`experiments/EXP-059-entei-boss/README.md` 182. It is one room, one boss and no legs. Its two donors for the legs:
-the arena runtime is **3,258** (`tools/arena_runtime.py` 1,113, `tools/arena_runtime_audit.py` 1,806,
-`data/arena_fights.json` 339); the mining caves are **2,785** (`tools/mining_caves.py` 983,
-`tools/mining_caves_audit.py` 946, `data/mining_caves.json` 350, tests 162 + 344). A dungeon engine that takes the
-slot and keeper from Entei, the gauntlet loop from the arena and the restore from the caves is about **two Entei
-units of code**, so two builders, not one. The Entei unit's own token spend is **not recorded anywhere** (no report
-names it); the builder rate above stands in for it.
+**Findings against other documents (disagreements, recorded, not papered over):**
+- **F1. `docs/mechanics/DUNGEON_PLACEMENT.md` section 6 still lists Q11 ("every catch after the Champion") as
+  OPEN** (`:215`), and its section 3 is headed "Status: OPEN" (`:114`). The brief relays it as decided (D8). This file
+  follows the brief; that file's status lines are stale.
+- **F2. The vision says "Progress persists"** for dungeons (`docs/vision/GAME_VISION.md:138`) and describes puzzle
+  dungeons with persistent state (`:51`). A timed rift run resets every entry; what persists is first clears, catches,
+  records and lockouts. This design treats rift runs as the vision's "optional dungeon / challenge encounter"
+  (`:64`), not as the persistent puzzle dungeon, which stays a separate, unbuilt kind (Q17).
+- **F3. Heaven's Arena's loop is proven in parts, not as a chain.** The in-game result shows spawn, start, win, loss,
+  re-roll and remove each PASS for one player (`docs/research/notes/arena-per-player-opponents.md:357-371`). Starting
+  a second battle from a victory's follow-up is not in that result, and `docs/STATE.md:220` lists "the in-function
+  spawn" as NOT proven. D2 rests on both; probe C1 (section 13) proves them before the boss is built.
+- **F4. The Entei unit is bigger than the earlier costing said.** The earlier file counted 2,169 lines. Today it is
+  **2,926** (*measured*): `data/entei_boss.json` 183, `tools/entei_boss.py` 752, `tests/test_entei_boss.py` 370,
+  `tests/test_entei_boss_audit.py` 779, `tests/test_entei_boss_fixes_independent.py` 630,
+  `experiments/EXP-059-entei-boss/README.md` 212. The fixes test is new since. `tools/arena_runtime.py` is 1,217
+  (*measured*; it was 1,113).
 
-### 1.2 Costing table
+---
 
-The **shared foundation** is needed by every option: the run engine (slots, entry, keeper, run state, hub gate,
-lockout, rebuild-on-entry reset, loss and blackout exemption, payout clawback, cap read, reward rolls) and the three
-leg kinds.
+## 1. The run's shape
 
-| Item | Who | Cost |
+**A run is a straight line through a pocket slot, with a rip at each end.** The player enters through a rip in the
+overworld and arrives in the **entry room**, where the back rip is always open. A **spine** of 1,000-2,000 blocks runs
+from there through the legs to the **exit room**, whose far rip is the clean way out. Leaving by either rip is a clean
+exit. Being inside when the clock reaches zero is death.
+
+```
+ overworld rip --> [entry room | back rip] -- drift -- stand -- drift -- stand -- seam (+den) -- drift --
+                   gantry (lake below, optional) -- parkour -- drift -- stand -- drift -- boss -- [exit room | far rip]
+```
+
+- **Linear, one spine, legs in a fixed authored order.** A hub (the old design) fights the owner's "backtracking
+  spends the same clock": a hub has no "back". A line makes the clock legible as distance. Every leg's distance from
+  both rips is known, and the entry room's run board shows it (2.4).
+- **Required legs** block the spine: three trainer stands, the parkour and the boss. A stand's or the boss's gate
+  opens on the win and stays open for the rest of the run, so turning back never meets a closed gate.
+- **Optional legs** hang off the spine and cost only clock: the resource seam's greed beyond the free tier, the den,
+  and the legendary lake. **The slack is what a player spends on them** (section 4).
+- **Turning back is always possible.** The parkour is traversable in both directions (3.5, validation V6), and no
+  segment has a one-way drop. The softlock rule: the back rip is reachable from every walkable cell, at every gate
+  state.
+- **Length and clock agree by construction.** The clock for each band is computed from the spine's own measured
+  length and the band's fight budget (4.1), and the validator recomputes it from the BUILT shell (V3). Length is the
+  cheapest knob: 100 blocks of drift is 25 seconds at the planning pace.
+
+**Instancing (DM 8, the recommended approach).** Each slot is a **persistent shell** placed by a re-apply step, and
+only the mutable parts are reset on entry: seam blocks and their markers, gates, the lake's membrane, NPC and boss
+entities, and the run's scores. The pocket's contents do not survive a re-export (EXP-047, `docs/STATE.md:240`), so the
+shell is a re-apply step and never hand-built. Rebuild-on-entry (the old 2.4) is dropped. It is around a million blocks
+per entry at full dressing and is unmeasured (DM 8 table).
+
+**Slots.** 4 slots per dungeon, one strip each: 2,048 long in x, at most 64 wide in z, at 128-block row spacing, in the
+pocket's free rows from z 1,024 (DM 6: about 63 rows fit; the rescue box, x -512..1152 and z -512..768 at y 0..94,
+and Entei's z -768 row are excluded; *relayed* from DM 5 and 6). The builder derives the origins from
+`data/portals.json` and `data/entei_boss.json` and fails closed on any overlap, as Entei's origin does
+(`data/entei_boss.json:63`).
+
+---
+
+## 2. The timer
+
+### 2.1 Tracking: a per-player countdown score, never game-time arithmetic
+
+- **One clock per player in the run**, `dg.clock` on the player, in **quarter-ticks** so 1.25x stays an integer (DM
+  1.1). A minute is 1,200 ticks, or 4,800 units.
+- Each keeper pass (20 ticks) subtracts `20 x rate`. The rates are 4 (x1), 5 (x1.25), 6 (x1.5), 8 (x2) and 12 (x3);
+  section 3.3 gives the ladder. **There is no rate 0** (D1).
+- **Why per player and not per slot.** DM 6 recommends one clock on the slot. The owner asks for a **per-player**
+  multiplier, and a per-player multiplier on a shared clock is incoherent. In solo play the two are identical. In co-op
+  (section 6) one partner's greed shortens only their own clock, and the shared gates still make a slow partner cost a
+  fast one clock. The cost is one bossbar per member instead of per slot, which is trivial.
+- **Immune to game-time jumps** (DM 1.1). Nothing compares against `gametime`, so a re-export, a `/time set` or a
+  restart cannot move it. The keeper runs only while the server ticks, so a crash costs no clock. The keeper
+  re-schedules from `load`, as Entei's does (`tools/entei_boss.py:381`, *relayed* via DM 1.1).
+- **The clock starts when the player crosses the entry room's threshold**, not at the teleport. The entry room is a
+  safe place to read the board. A player who idles there gains nothing, since the clock has not started and no leg is
+  open behind it.
+- **The clock stops at a clean exit.** The remaining value is the run's time record (9.4).
+- **Fall penalty:** 15 s of clock, flat (1,200 units, 6.2).
+- **The same counter pattern fixes the lockout** (2.5). This is the arithmetic class that produced Entei's two clock
+  defects (`data/entei_boss.json:112`; review N142, *relayed*).
+
+### 2.2 Display: one bossbar per member
+
+DM 1.2 gives the reasons for each choice; its probe B1 is required before building.
+- **Bar:** `cobblers:dg_<dungeon>_s<k>_m<m>`, with `players` set to that member only. `max` is set once, at the
+  band's full clock; `value` is set every pass from the score.
+- **Name, rebuilt every pass** (a score inside the name is resolved when the command runs, DM 1.2):
+  `Rift 18:20 · x1.25 · ~14:40 left · taken 6`.
+  - `18:20` is the clock's own time, which falls at the multiplier's speed: at x3 it drops three seconds a second.
+  - `~14:40 left` is real time at the current rate, `clock / (20 x rate)` seconds. It is printed whenever the rate is
+    above x1, so the cost of greed is a number the player reads, not a division they do.
+  - `taken 6` is this member's seam count, once it is above 0.
+- **Colour:** white at x1, yellow at x1.25 and x1.5, red at x2 and x3, purple during the return-margin warning (2.3).
+  These are four of the seven bar colours (DM 1.2).
+- **Moments go on the actionbar and titles, never the clock.** Other packs write to the actionbar (DM 1.2). The cues:
+  - "The rift tightens. Time runs x1.5." with `block.respawn_anchor.deplete` on each threshold;
+  - a title at 5:00, 1:00 and each of the last 10 seconds;
+  - "The rift closes." at zero.
+- **At every end of the run** the bar's `players` is emptied and the bar removed. The players set is a stored UUID
+  list, so a bar left set shows again at reconnect (DM 1.2).
+
+### 2.3 The return margin: "the way back is closing"
+
+Backtracking spends the same clock, so the number a player needs is how long the way back takes, not just the clock.
+The keeper computes it each pass, cheaply, because the run is linear:
+- `back_s = (x - x_entry) x 10 / 56`, the distance to the back rip at sprint (5.6 blocks a second, *relayed*
+  `docs/mechanics/GYM_INTERIORS.md:139`), plus a constant for re-crossing the parkour if the player is past it;
+- the warning fires when real time left is under `back_s + 60`;
+- it turns the bar purple and prints "The way back is closing" once.
+
+It is advice, not a rule. The far rip may be nearer, and the warning says nothing about it.
+
+### 2.4 The entry room's run board
+
+The board is text displays on the wall, generated from the record and showing exactly what the clock assumes:
+- the legs in order, with their distance from the board;
+- this band's clock;
+- the multiplier ladder;
+- "falls cost 15 seconds";
+- "no Pokemon past the cracked lamps", the parkour's no-deploy line;
+- which legs are optional.
+
+A player can plan greed before they reach the seam. Legibility is the owner's requirement for the multiplier, and the
+clock needs the same.
+
+### 2.5 What death means (DM 1.3 A + C, recommended)
+
+**At zero, the player is killed into the existing blackout**, and the run's escrowed rewards are forfeit.
+- **`kill @s`**, never `damage ... outside_border` alone, because a totem can stop that (DM 1.3, probe B2). The
+  blackout counts it through `deathCount` (DM 1.3, VERIFIED (repo) `tools/blackout_pack.py:12`, `:55`). The player is
+  charged **$600 flat** (*relayed*, `data/blackout.json` `money`), returned to their overworld checkpoint and healed.
+- **The inventory is kept** (`keepInventory` is set at load, `tools/blackout_pack.py:174`, *relayed* via DM). A command
+  death is environmental, so **no item is lost**: `docs/mechanics/DEATH_AND_WIPE.md:20-26` rule 5, *relayed*.
+- **Escrow, the stake.** Every reward the run pays except the real items the player picked up (seam ores, den drops) and
+  a caught Pokemon is held **in escrow**: scores on the player, paid by `loot give` only at a clean exit (9.1). Death,
+  timeout and logout clear it. Rule 5 is untouched, because escrowed loot was never an item the player held (DM 1.3
+  C).
+- **Timeout during a battle: sudden death** (DM 1.3, recommended there). The clock holds at 0 and the player is killed
+  the moment `q.player.in_battle` reads 0, whatever the result. This is not a pause: nothing is earned, the escrow is
+  already forfeit, and the battle only delays the death. A player is never killed mid-battle, because what Cobblemon
+  does with the battle and the NPC is unread (DM B3).
+- **Lockout: our own uptime counter, not game time.** `#up dg.up` adds 20 every keeper pass, and a player's entry stamp
+  is `dg.last_<dungeon> = #up`. The scoreboard carries both across a re-export (`tools/carry_players.py:84`, *relayed*
+  via `data/entei_boss.json:110`), so they cannot disagree the way Entei's game-time stamp and a reset `Time` do. The
+  lockout is **72,000 ticks (one hour of uptime) per dungeon per player, counted from entry** (Q9). It must be at
+  least the longest clock, 39 minutes (46,800 ticks), or it never binds. That is the old P3 finding, which *stands*.
+
+---
+
+## 3. The leg kinds: mechanism and what the player sees
+
+### 3.1 Trainer stands
+
+- **Mechanism.** The arena's loop, PASS in game for one player (`arena-per-player-opponents.md:357-368`):
+  1. When the player enters the stand's approach box, `spawnnpcat` with **absolute** coordinates and the band's level
+     spawns the trainer. The relative form spawns nothing (`:358-359`). The spawn runs from a **macro line**, because
+     a parsed command spawns nothing after a plain restart (`.claude/rules/datapacks.md`, EXP-046) and the in-function
+     spawn is unproven (F3).
+  2. On the challenge line, `runmolang "q.npc.start_battle(q.player, 'singles');" @s <npc>` starts it. It returns 0
+     when refused (`:360-363`).
+  3. The `battle_victory` callback, under `data/cobblemon/callbacks/battle_victory/` with a `cobblers_` filename, flags
+     the stand won.
+  4. The keeper opens the gate when `q.player.in_battle` reads 0.
+- **Rules** *stand* from the arena's gauntlet. HP, PP and faints carry between fights. No bag items in battle
+  (`data/arena_fights.json:27`, `:30`, *relayed*). Between fights a player may use their own potions; the clock prices
+  it (Q5).
+- **NPCs are `cobblemon:npc`, never rctmod trainers**, so they sit in no series and cannot move a level cap (the cap
+  trap, `docs/STATE.md:222`). *Stands.*
+- **The CobbleDollars automatic payout is clawed back** to $0 net, as the arena's is (EXP-060 not run; *relayed*,
+  the old P5). *Stands.*
+- **A forfeit sends no result** (DM 1.4, `tools/arena_runtime.py:1112`, *relayed*). The gate stays shut and stepping
+  back onto the challenge line restarts the fight. The clock ran the whole time.
+- **A loss is a normal NPC loss, so the blackout fires** (VERIFIED in game, `arena-per-player-opponents.md:365-366`).
+  The run is over and the escrow forfeit.
+- **What the player sees.** A lit hall with a person standing at its far third. A line of dialogue on the approach,
+  the battle at the line, and a timber gate behind the trainer that swings open on the win.
+
+### 3.2 The staged boss (D2)
+
+- **Mechanism: chained battles** (DM 3.2 b).
+  1. On entering the boss arena, stage 1's NPC class is spawned (macro `spawnnpcat`) and the battle started, as a
+     stand's is.
+  2. The `battle_victory` callback recognises the boss by tag and stage and tags the player `dg.next`.
+  3. On the next keeper pass with `in_battle` at 0, the keeper kills the stage NPC and plays the cue: title "He gets up
+     again.", particles and a sound.
+  4. After 60 ticks it spawns stage k+1's class at the same spot and starts the next battle.
+  5. After the last stage the exit gate opens and the boss's escrow flag is set.
+- **Order is guaranteed**, because the function picks the next stage. One staged party is rejected (D2; DM 3.2 a: the
+  AI may switch stages out of order).
+- **A stage** is the boss's ace alone, at a rising level: stage 1 at cap-2, stage 2 at cap-1, stage 3 at cap. Each has
+  a different moveset and held item. From band 4, stage 3 brings one escort. The boss is "beat it, it heals, it
+  returns a level higher with a different moveset", and never above the band's cap (the arena rule,
+  `tools/arena_runtime.py:25-28`, *relayed*).
+- **Classes:** 3 stages x 6 bands = 18 per boss, generated, or fewer if XD2's level-picked pools work (5.3). Classes load
+  only at a restart (`arena-per-player-opponents.md:63`, *relayed*).
+- **Between stages the player's party carries everything**, and the gap is 60 ticks plus the cue. There is no time to
+  heal, unless a player spends clock in their bag before stepping back to the line. Stage k+1 starts automatically, so
+  idling does not hold it off.
+- **Pre-League bosses are fight-only** (D8). The boss is an NPC, and an NPC's Pokemon cannot be caught
+  (`beast-ball-key-1.8.0.md:151-152`, *relayed*). **A band-6 catch is a separate wild encounter** after the chain,
+  where a dungeon wants one (Entei's pattern, 8 and 12).
+- **What the player sees.** One figure in a large room. It falls, and the room goes dark and loud. It rises with a new
+  light about it. The title names the stage ("II of III"), and the third stage is visibly the strongest.
+
+### 3.3 The resource seam and the multiplier (new work, D6)
+
+- **What it is.** A room whose face holds **24 seam blocks**, the band's ores (9.3), refilled on entry. Everything a
+  player mines is a real drop and theirs.
+- **Keeping the take to the seam: adventure mode for the whole run, plus the rift pick** (DM 2.3).
+  - At entry the player is put in adventure mode and given an **iron pickaxe** with `minecraft:custom_data`
+    `{cobblers_dg:"pick"}`, `minecraft:unbreakable`, and `minecraft:can_break` listing the seam's ore ids only (the
+    1.21 component, ASSUMED until probe R2).
+  - Their own tools break nothing. Nothing outside the seam can be mined, bridged or placed against.
+  - **Every exit path restores survival and takes the pick back:** a clean exit, the respawn after death, the
+    eject, and a relog. In survival the pick would be a free unbreakable iron pickaxe, so the backstop matters. The
+    backstop is an overworld sweep over every player carrying the run tag or the pick: survival, `clear` the pick (DM
+    2.3's warning).
+- **Counting: marker entities, the world's truth** (DM 2.1, recommended).
+  1. When the seam is refilled, one `marker` is summoned in each seam block, tagged with the slot.
+  2. Each keeper pass, a marker whose block is no longer a seam ore is counted once and killed.
+  3. In solo play the count is exact and goes to the player. It counts what is gone, by any means.
+  4. **In co-op** a take is credited to the nearest member (approximate, DM 2.1). The exact per-player count is the
+     `minecraft.mined` stat, one objective per ore id. The rift pick is the right tool by construction, so the stat
+     should count, but whether it counts in adventure mode under `can_break` is ASSUMED until **R1**. The stat is
+     added when co-op is enabled.
+- **The ladder** (the owner's two points are x1.25 at 5 and x3 at 20; the steps between are this design's, Q1):
+
+  | Taken (this player, this run) | 0-4 | 5-9 | 10-14 | 15-19 | 20-24 |
+  |---|---|---|---|---|---|
+  | Rate (units per tick) | 4 | 5 | 6 | 8 | 12 |
+  | Clock speed | x1 | **x1.25** | x1.5 | x2 | **x3** |
+
+- **The multiplier only rises, and holds for the rest of the run** (DM 2.2: "a one-way commitment, and that is the
+  point"; Q1). Leaving the seam does not cool it.
+- **What the player sees.**
+  - The seam's ores in a lit face, and a board beside it with the ladder.
+  - On the 5th, 10th, 15th and 20th block: the actionbar line "The rift tightens. Time runs x1.25." and the sound.
+    The face's remaining markers flare with particles, and the bar turns colour.
+  - The bar's name always shows `taken N` and the real time left (2.2).
+- **The price of greed, worked** (band 1, section 4.3): 5 blocks costs about 3.8 of the run's 6.4 spare minutes. 10 is
+  a gamble that needs sprinting. 15 or 20 means take it and run back out, giving up the third stand, the boss and the
+  bundle.
+- **Economy.** The seam's ores enter `tools/economy_audit.py` as a renewable supply on the lockout clock, capped per
+  run at the matching cave's per-reset yield (`data/mining_caves.json:66-71`, *relayed*). *Stands* from the old design.
+  Diamonds are band 5+ only (9.3).
+
+### 3.4 Parkour, no Pokemon deployable (D3)
+
+- **No refusal exists at datapack level.** No 1.8.0 callback can cancel anything (VERIFIED, all 81, DM 4.1). **The
+  recall sweep** (DM 4.2) works as follows:
+  1. **Every keeper pass** (20 ticks), every `cobblemon:pokemon` in the parkour's box without our tags is removed with
+     `runmolang "q.pokemon.discard;" <player> <entity>`. **Removal returns it to the party with its HP kept**
+     (VERIFIED, `PokemonEntity.remove`, DM 4.2). The query name and the zero-argument `discard` are ASSUMED until
+     **P1**.
+  2. **Never `kill`** a player's Pokemon: that would very likely faint it (DM 4.2, P2).
+  3. **Players in the box are dismounted**, with the Nether gate's bounce (`tools/nether_gate.py:192-193`, *relayed*).
+  4. **The 20-tick period is the owner's "moment".** A player sees the send-out, then within a second the Pokemon
+     blinks out. The actionbar says "The rift will not hold them here."
+- **The geometry closes what the sweep cannot** (DM 4.2's edge cases):
+  - a **gate box on solid ground** before the first jump sweeps and dismounts on entry, so nobody is unseated over a
+    gap;
+  - the box encloses the whole air volume to a **ceiling 3-4 above the route**, so there is no room to fly above it;
+  - **ender pearls** in the box are killed;
+  - **elytra** are refused at the rip (`execute if items entity @s armor.chest minecraft:elytra`, vanilla 1.20.5+,
+    DM 4.2), so none ever enters a run;
+  - **adventure mode** stops block placing.
+- **Riding elsewhere in the run is allowed** (Q8). The sweep runs only in parkour boxes, which hold no battles. A
+  run-wide sweep would remove battle send-outs too, and no flag to tell them apart is read. The clock's budget assumes
+  a player on foot, so a mount in the drifts buys slack, which a player has earned.
+- **What the player sees.** A line of cracked, unlit lamps across the floor marks the box's edge, and the run board
+  names it (2.4). Past it, the Pokemon will not stay.
+
+### 3.5 Parkour and death: what a fall costs (DM 5)
+
+- **A catch band under every gap**, 6 blocks below the route. A player in it is teleported to their **last
+  checkpoint**, the section end they last stood on in either direction, so turning back works. They get
+  `resistance 5` for 2 seconds (probe F1: whether a teleport keeps fall distance) and lose **15 s of clock**.
+- **A fall therefore costs about 35 seconds:** 15 of penalty and about 20 to re-run the section (*planning*). Too many
+  falls cost the run, which is the owner's model. **No fall can kill.** The validator proves a catch band under every
+  gap column (V6). The pocket's bedrock floor is at y0, so nothing reaches the void (DM 5).
+- **Rejected:** `gamerule fallDamage false`, which is server-wide (DM 5), and slow falling, which removes the challenge.
+- **The rescue box** of the portals pack is outside every slot by construction (1, Slots).
+
+### 3.6 The den (optional; D11; the mechanism *stands* from the old 2.3)
+
+The den is a side room of four wild Pokemon at the band's level (cap-2 to cap-1). They are `uncatchable` and never
+alpha, spawned by macro on entering the den box (Entei's farm pattern, `data/entei_boss.json:19`). Their drops are the
+**species' own tables**: real items, so death keeps them. The den costs clock, about 4 wild fights (*planning*: 1.5
+minutes each, 6 in all), and it is the second-largest spend of slack after the lake. The two approved dens and their
+expected yields *stand* (old 2.3, *relayed* from `docs/mechanics/DROPS_PROGRESSION_SPLIT.md` section 5).
+
+### 3.7 The legendary lake (optional; band 6 catches it, every band sees it)
+
+- **Shape.** From a gantry on the spine, a flooded shaft drops 40 blocks.
+  - **A cache on a ledge at 30 deep.** One escrowed item (9.2), taken by clicking an interaction entity. It is within
+    a Surf player's reach: Surf gives about 61 s of air, and a sprint-swim is 5 blocks a second (both *relayed*,
+    `docs/mechanics/WATER_MAP.md:28`, `:40`, measured in EXP-042). A player without Surf can touch 30 deep "with
+    nothing to spare" (`:27`, `:32`), and drowning there is a blackout.
+  - **At the bottom, behind a membrane, the legendary rests on the bed.**
+- **Make it OBVIOUS**, so it rewards noticing, not searching (DM 9; `unhomed-legendaries-1.8.0.md` "Make it OBVIOUS").
+  All are vanilla, ASSUMED until L1:
+  - the legendary is dressed **sleeping** (`PoseType: SLEEP`, `NoAI`, `PersistenceRequired`, proven across a restart,
+    EXP-023/046, *relayed*) and given **`glowing`**, so its outline draws through water and the membrane for anyone
+    on the gantry;
+  - lanterns on the bed (the repository's rule is lanterns, never light blocks);
+  - a bubble column rising from the membrane to the surface;
+  - keeper particles above the water (steam, for the Night Shift's species, 11.2).
+- **The membrane is the gate.** It is a curtain of barrier blocks across the chamber mouth at the bottom, dressed with
+  particles, opened per slot by the keeper:
+  - **Bands 1-5: always closed.** The line is "It does not stir for you yet." This is D8, and it is a promise a player
+    can see.
+  - **Band 6: open only while the member at it is Dive-qualified** by the water system: Dive training plus a
+    Dive-capable party member, `docs/mechanics/DEATH_AND_WIPE.md:32-38` rules 9-10, *relayed* via DM 9. The water
+    system has no dimension filter, so it runs in the pocket (`tools/blackout_pack.py:191`, *relayed* via DM 5). The
+    builder reads its state name from `tools/blackout_pack.py`. **This is what makes it a Dive encounter**, not depth
+    alone. A Surf player could otherwise reach the bed, start a battle and drown mid-battle, the B3 risk.
+- **The encounter (band 6), Entei's pattern** (DM 9):
+  1. When the membrane opens, `spawnpokemonat` by macro spawns the legendary at level 100 (cap 100), catchable.
+  2. It is bound by tag, `PersistenceRequired` and a leash.
+  3. It is tagged `cobblers.key_boss` and listed in `data/key_ball.json` `bosses`, so only a Beast Ball catches it, at
+     x5 (D7).
+  4. It carries the blackout's `claims.exempt_tag` (`data/blackout.json:71`).
+  5. The catch is **once per player**, an advancement granted by the `pokemon_captured` callback. After it, that
+     player's sump holds only the cache.
+- **The battle is underwater.** That a battle starts and runs there is ASSUMED (**L2**). **Fallback** if L2 fails: a
+  dry chamber behind the membrane, the built and audited `lake_grotto` archetype (`tools/legendaries.py`,
+  `docs/mechanics/LEGENDARIES.md` section 2, *relayed*). The Dive gate stays on the membrane either way.
+- **In co-op**, a slot shares its lake, so the cradle's ball check comes back. A player's ball at another member's
+  legendary is refused, as `tools/hoopa_cradle.py:233-247` does, which `data/entei_boss.json:25` says must return "if
+  slots are ever shared".
+- **What it costs in clock:** the cache about 1 minute; the band-6 legendary about 6 minutes: dive, battle, Beast Ball
+  throws, back (*planning*).
+
+---
+
+## 4. The numbers worked
+
+### 4.1 Paces (every one replaced by XT1's timings before the clock ships)
+
+| Quantity | Value | Basis |
 |---|---|---|
-| EXP-059 on staging, the three Entei defects fixed | main session + the owner in game | 2-3M |
-| Research R-D1..R-D4 (section 9) | `cobblemon-researcher` | 4 x 0.6 = 2.4M |
-| Engine core builder | `minecraft-systems-dev` | 4M |
-| Legs builder (gauntlet, seam, boss) | `minecraft-systems-dev` | 4M |
-| Engine audit: softlock, isolation, economy (Opus, rule 1) | `test-author` | 3M |
-| Integration: 2 prepares, full suite, staging proof XD1-XD7 | main session | 2-3M |
-| **Foundation** | | **~17-19M, ~18M used below** |
+| Walk on foot, drifts with turns, stairs and doors | **4.0 blocks/s** | *planning*. Vanilla walk about 4.3 and sprint about 5.6 (sprint *relayed*, `GYM_INTERIORS.md:139`; walk is vanilla, ASSUMED) |
+| Sprint (the return margin) | 5.6 blocks/s | *relayed*, as above |
+| Swim / Dive | 5 / about 10 blocks/s | *relayed*, `WATER_MAP.md:40-42` (EXP-042) |
+| Parkour | 1.5 blocks/s of route, plus 2 falls a run at about 35 s each | *planning* |
+| Seam, free tier (4 blocks) | 0.5 min | *planning*; vanilla break time with an iron pick, ASSUMED |
+| Spawns, cues and gates over a run | 0.5 min | 3 stand spawns, 2 stage gaps of 60 ticks, arrival |
+| A small fight, band 1 (2 opposing members) | **2.0 min** | **the owner's number**; no fight has ever been timed (old 2.2) |
+| Each further opposing member | +0.5 min | *planning* |
+| Boss, 3 stages | 6-9 min by band | inside the owner's 5-10 |
 
-| | **(a) literal: 3 whole runs per home** | **(a') recommended: sockets** | **(b) generator** |
+### 4.2 The owner's case: 1,500 blocks of walking, three small fights, a boss, parkour
+
+The first dungeon's spine (11.1) is **1,464 blocks of walking plus 200 of parkour**, so it is the owner's case.
+
+| Band (cap at entry) | Stand members | Per stand | 3 stands | Boss | Walk | Parkour | Seam + cues | **Required** | **Clock** | **Slack** |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 1 (20, 25) | 2 | 2.0 | 6.0 | 6.0 | 6.1 | 3.5 | 1.0 | **22.6** | **29** | 6.4 (22%) |
+| 2 (30, 35) | 3 | 2.5 | 7.5 | 6.5 | 6.1 | 3.5 | 1.0 | **24.6** | **31** | 6.4 (21%) |
+| 3 (40, 45) | 3 | 2.5 | 7.5 | 7.0 | 6.1 | 3.5 | 1.0 | **25.1** | **32** | 6.9 (22%) |
+| 4 (50, 55) | 4 | 3.0 | 9.0 | 7.5 | 6.1 | 3.5 | 1.0 | **27.1** | **34** | 6.9 (20%) |
+| 5 (60, 62) | 5 | 3.5 | 10.5 | 8.0 | 6.1 | 3.5 | 1.0 | **29.1** | **37** | 7.9 (21%) |
+| 6 (100) | 6 | 4.0 | 12.0 | 9.0 | 6.1 | 3.5 | 1.0 | **31.1** | **39** | 7.9 (20%) |
+
+Minutes throughout. **Clock = ceil(required x 1.25)**; the factor is Q2. The stand sizes are the old band table's
+(*stands*, 5.3). Walk = 1,464 / 4.0 = 366 s.
+
+**What the table says:**
+- **The clock is mostly a fight budget.** Walking is 6 of 23-31 minutes. 1,000 blocks of spine is 4.2 minutes at the
+  planning pace and 2,000 is 8.3. "Longer if the run earns it" is cheap in clock: each extra 400 blocks is about 1.7
+  minutes, and the clock follows by formula.
+- **The honest slack is about 6-8 minutes**, roughly a fifth of the clock. It is what pays for falls beyond two, a
+  forfeit and re-fight, potions between fights, the den, the cache, greed beyond the free tier and, at band 6, the
+  legendary.
+- **At band 6 the legendary (about 6 minutes) eats nearly all the slack** (7.9). A band-6 player chooses: the
+  legendary or greed, rarely both. That is designed in: the sump comes after the seam (11.1) and the board says so.
+
+### 4.3 Greed, worked (band 1, clock 29)
+
+Reaching the seam and digging its free tier takes about 7.4 minutes: about 630 blocks of walking (2.6), two stands
+(4.0), cues (0.3) and the dig (0.5). That leaves **21.6 minutes** on the clock. What remains after the seam is about
+834 blocks (3.5), the parkour (3.5), one stand (2.0), the boss (6.0) and cues (0.2): **15.2 minutes of real time.**
+
+| Taken | Speed | Clock the rest needs | Outcome |
 |---|---|---|---|
-| Option-specific up-front | none | none | generator, 2 builders 8M; validator 4M; its Opus audit (mutate the generator) 3M; runtime-assembly experiments (`place template` in the pocket, load order) 2.5M: **17.5M** |
-| First dungeon, complete | design 1.5M; builder 4M + 2 variants x 2M; audit 2M; staging 1M = **12.5M** | design 1M; builder 4M (6 rooms); audit 2M; staging 1M = **8M** (+1M for the second room per socket = **9M**) | library of ~14 templates 3.5M; design 1M; audit 1M = **5.5M** |
-| **To the first playable run** | 18 + 12.5 = **~30M** | 18 + 9 = **~27M** | 18 + 17.5 + 5.5 = **~41M** |
-| Each further dungeon | design 1.5 + builder 2.6 + 2 x 1.5 + audit 1.5 + 1 = **~9.6M** | design 1 + builder 2.6 + 1 + audit 1 + 0.5 = **~6M** | library 3.5 + design 1 + audit 1 = **~5.5M** |
-| 6 dungeons | ~78M | **~57M** | ~68M |
-| 8 dungeons | ~97M | **~69M** | ~79M |
-| Layouts per dungeon | 3 | 8 | dozens (unbounded only if unvalidated) |
-| Prepares (30 min each) | 2 + 1 per dungeon | 2 + 1 per dungeon | 4 + 1 per theme (the generator's own iteration) |
-| Its defect class | geometry per variant; audited per variant | geometry per ROOM against its socket; combinations valid by construction | every combination; must be enumerated or proved by construction (section 1.3) |
-| Break-even | (b) is cheaper from about 4 dungeons | cheapest at every count up to about 28 | beats (a') only past about 28 themes, (41 - 27) / (6 - 5.5) |
+| 0-4 | x1 | 15.2 | finishes with 6.4 to spare (the whole slack) |
+| 5-9 | x1.25 | 19.0 | **finishes, 2.6 to spare** (the affordable greed) |
+| 10-14 | x1.5 | 22.8 | **1.2 short**: sprinting the remaining drifts saves 1.0 real minute, 1.5 of clock, so it finishes with about 0.3 and no falls beyond the budgeted two |
+| 15-19 | x2 | 30.4 | cannot finish. **Turn back:** about 630 blocks at sprint is 1.9 real minutes, 3.8 of clock |
+| 20-24 | x3 | 45.6 | cannot finish. **Turn back:** 1.9 real minutes is 5.6 of clock, out with about 16 to spare |
 
-Every figure is an estimate built from the measured rates; none is a measurement of this work.
-
-### 1.3 What (b)'s validator would have to close
-
-A generator is only as safe as its validator, and this list is why (b) costs what it does. Each is a check over every
-layout the generator can emit; at run time nothing can check:
-
-1. **Connectivity:** a walkable path (2 air over a solid floor, steps of at most 1, no drop over 3) from the arrival to
-   every leg, to the boss, and back to the exit.
-2. **Softlock:** the exit reachable from every walkable cell, including after a gate closes behind the player.
-3. **Boss in a corridor:** the boss and NPC spots stand in a room of at least a minimum clear battle area. The area a
-   Cobblemon battle needs is ASSUMED (no research note gives it).
-4. **Unreachable loot:** every chest, marker, alcove and seam face reachable from walkable floor.
-5. **Overlap and bounds:** no two templates intersect; none breaks the bedrock shell or leaves the slot; slots never
-   touch.
-6. **Door alignment:** socket faces, widths and heights match on both sides.
-7. **Keeper coverage:** every walkable cell is inside the keeper's sweep box, or a player escapes the eject.
-8. **Load radius:** every NPC spot is loaded while the player is at its trigger. An NPC unloads with its chunk
-   (VERIFIED, `arena-per-player-opponents.md:369-370`).
-9. **Hazards:** no fluid leak, lava, magma (`data/entei_boss.json:81`) or fall; every spot on solid floor with 2 air.
-10. **Reset filter:** the seam's refill volume never overlaps decoration; ward boxes and seam boxes are disjoint.
-11. **Spawn-condition blocks:** none in a template unless whitelisted (`tools/validate_data.py:2583-2637`, *relayed*
-    via `ADR-003:18`).
-12. **Light:** nothing walkable at block light 0 (`tools/light_plan.py`, as `tools/route1_old_mine.py:28-29`).
-13. **Provenance:** every NBT template has a `kits/PROVENANCE.json` record (`tools/validate.py --only
-    template_provenance`).
-14. **Combinatorics:** the run-time choice ranges over exactly the validated set.
-
-(a') keeps every one of these checks, but **per room against its socket's contract**, and items 1, 2, 5, 6 and 14 then
-hold for every combination by construction. That is the saving.
+So **5 is affordable, 10 is a gamble, and 15 or more is "take it and run".** A player who turns back keeps the ore and
+the first two stands' escrow, paid at the back rip, and gives up the third stand, the boss and the progression bundle.
+That is the owner's "greed is the trade" as a legible decision. At band 6 (clock 39, 27.6 left at the seam, 20.2
+needed after): x1.25 finishes with 2.4 to spare, x1.5 is 2.7 short, and greed and the legendary exclude each other.
 
 ---
 
-## 2. Run structure
+## 5. Per-band rules
 
-### 2.1 Legs: neither fixed nor shuffled, but chosen, with the boss always last
+### 5.1 The band is frozen at entry
 
-The hub has two open wings and one sealed door. The player takes the trainer wing and the seam wing **in either
-order**, and the boss door opens only when both legs are flagged done. This is the vision's own shape, "Final Chamber:
-opens only when every required dungeon flag is set" (`docs/vision/GAME_VISION.md:134`).
-Where a dungeon has a **den** (2.3), it is a further room off the hub, optional: the boss door never waits on it.
-- Why not fixed: the order is the cheapest variety there is, and fixing it throws that away.
-- Why not shuffled: a shuffle needs the rooms re-seated per run. A hub gives the same variety with one geometry, and
-  gives the player the choice. Seam first is a breather; trainers first means carrying damage into the dig.
-- The boss is last because it is the climax and the reward. A boss mid-run would leave a leg that pays nothing after it.
+The band is read from the player's level cap at entry: `rctmod player get level_cap @s` on a macro line, the read
+`tools/levelcap_pack.py:58`, `:93` makes (*stands*). It is stored on the player for the run. The clock, the NPC levels,
+the boss stages, the escrow tables and the lake's state all key on it.
 
-### 2.2 Time budget, about 30 minutes (ASSUMED until XD7 times one)
+### 5.2 A party over the cap is refused at the rip
 
-| Part | Minutes | Basis |
+This is the arena's check (`tools/arena_runtime.py:536`, *relayed*; *stands*).
+
+### 5.3 Scaling (*stands* from the old section 5)
+
+The bands are 1 (cap 20, 25), 2 (30, 35), 3 (40, 45), 4 (50, 55), 5 (60, 62) and 6 (100). Trainer members are
+2/3/3/4/5/6, at cap-2 to cap-1, and 95-99 at band 6. Challenge mode adds one member and holds items one band early
+(`docs/mechanics/OAK_AND_CHALLENGE.md:55`, *relayed*). Rung 1 is one class per trainer whose pool entries carry
+`npcLevels`, with MoLang team size (VERIFIED from source, not run: probe XD2). The fallback is generated classes per
+band.
+
+---
+
+## 6. Multiplayer
+
+**Solo first** (Q6). The data model carries `members[]` from day one, so co-op is a switch, not a rewrite.
+
+| Question (the vision's four, `GAME_VISION.md:149-150`) | Answer |
+|---|---|
+| Two players at once | **Solo:** separate slots, 4 per dungeon. **Co-op (later):** up to 4 members in one slot. Everyone within 4 blocks of the rip who clicks within 10 seconds of the first click joins. Each passes the gate, lockout and cap checks, and each is refused alone |
+| One player ahead | Each member's NPCs spawn at **their own band** (the arena's per-player spawn). Clocks are per player, each sized to that member's band. The gates wait for all live members (below) |
+| A player joins late | Never into a run in progress. They take another slot or wait |
+| A player leaves mid-dungeon | **Logout:** that member's run ends, their escrow is forfeit, and on relog they are put outside the rip, survival restored, the pick taken. Not killed: a crash and a rage-quit look the same (Q4). **Clean exit by either rip:** their escrow is paid and the others carry on |
+
+- **Fights:** each member fights their own NPC at each stand and their own boss chain. Two players against one NPC is
+  OPEN (`NETHER_DUNGEON_SCOPE.md` X5, *relayed*) and not needed.
+- **Gates:** a stand's or the boss's gate opens when **every live member** has won their own fight there. A fast
+  member waits on their own clock, which is co-op's tension, and nothing else is shared that way.
+- **Seam:** per-player counts and per-player multipliers (3.3). In co-op the markers credit the nearest member until
+  R1 makes the stat exact. One partner's greed costs only them.
+- **Death and timeout** end the member they happen to. The slot frees when its last member is gone.
+- **The lake:** one legendary per member who has not caught it, each tagged with that member's id, and the cradle's
+  ball check (3.7).
+- **The keeper's ownership sweep** (Entei's, `data/entei_boss.json:104`) generalises to "is a member of slot k";
+  non-members are ejected.
+- **Co-op needs the second account** for its proofs (`docs/STATE.md:182`, *relayed*), so it waits on XD8.
+
+---
+
+## 7. The rips (D4, D5)
+
+### 7.1 What a rip is (DM 7.3, the vanilla-built rip)
+
+A rip is built from these parts, none of which teleports by itself, so nothing can misroute:
+- a **frame** in the Rift's palette (`world-content-dev` chooses, against `docs/world-building/BUILD_PALETTE.md`);
+- **`block_display` entities for a torn edge**;
+- **a dark opening** of non-teleporting blocks;
+- **keeper particles**: `minecraft:reverse_portal` drawn inward, and `minecraft:portal`. They are re-emitted every 10
+  ticks while a player is within 48 blocks, so an unvisited rip costs one distance check;
+- **an interaction entity** filling the opening. A click runs `dg/door_click`, the proven arch click (EXP-034).
+
+**Never** a `nether_portal` or `end_portal` block (DM 7.3: they teleport on their own), and never LegendaryMonuments'
+distortion portal (D4; DM 7.2: its destination is hard-coded, and one gap in a seal sends a player into a world-critical
+mod's dimension).
+
+**Seen from a distance.** Particles render only near the viewer by default, and the `force` mode's reach is ASSUMED.
+Probe **V1** settles whether a rip is visible from its approach path. If it is not, the rip gets a tall plume, which V1
+also tests.
+
+### 7.2 Entry and exit
+
+**`door_click`** checks, in order, and refuses each with a line:
+- the gate flag;
+- the lockout (2.5);
+- not already in a run;
+- no elytra;
+- a party over the cap;
+- a free slot.
+
+Then it:
+1. reserves the slot and freezes the band;
+2. resets the slot's mutables (1, Instancing). The mutable chunks are force-loaded first: every write function
+   carries `# chunks-loaded-by:` or `function_limits` refuses it (`tools/function_limits.py:9-18`, *relayed* via DM
+   8). The occupancy guard holds: never reset under a player (DM 8);
+3. after 40 ticks (Entei's `arrive_delay_ticks`, `data/entei_boss.json:101`) teleports the player to the entry room,
+   sets adventure, gives the pick and shows the bar.
+
+**The back rip and the far rip** run `dg/exit`:
+1. pay the escrow (9.1);
+2. set survival and `clear` the pick;
+3. empty and remove the bar;
+4. teleport to the overworld rip's outside point, a fixed coordinate in the record, so no return point needs storing
+   (unlike Entei's eaten key);
+5. free the slot once its last member is out.
+
+### 7.3 Fixed now, random later
+
+- **Fixed:** each rip is a `data/placements.json` record seated on the heightmap (CLAUDE.md "Ground comes from the
+  heightmap"), built by a re-apply step, as Entei's room is (R16Q).
+- **Random, later** (D5; DM 7.4): a scheduler over authored, validated candidate sites with `random value`, a
+  forceload, an expiry countdown, and an announcement. Nothing in this design blocks it. The rip is already an entity
+  set plus a frame that a function places and removes. Its cost is section 12's.
+
+---
+
+## 8. Which legendaries
+
+**Rule.** A dungeon's legendary is **unhomed and usable today** (`docs/research/notes/unhomed-legendaries-1.8.0.md`,
+group A, 53 species; *relayed*). It is caught only at band 6 (D8), only with a Beast Ball (D7), once per player. The 28
+AllTheMons-only species (group C, including Manaphy, Phione and Nihilego) are **unusable** until the client pack ships
+(ADR-006). No dungeon takes one. Every pick below is "implemented by" MSD or the jar, so **Mega Showdown is
+world-critical for this system**, as it is for Entei (`data/entei_boss.json:10`).
+
+| Dungeon | Lake (Dive) legendary | Why it fits | Boss (NPC chain; band-6 catch, if any) |
+|---|---|---|---|
+| 1 Night Shift | **Volcanion** (fire/water, MSD, catch 3) | The mine broke into hot water: steam over the sump is the "something is down there" (note's Dive item 4) | the Foreman (NPC); no catch |
+| 2 The Street That Ends at Nothing | **Palkia** (water/dragon, MSD) | space folded under a drowned plaza (note item 5) | the city's last warden (NPC) |
+| 3 Under the Patriarch | **Suicune** (water, MSD) | the purifier in the pool the roots drink from (note item 1) | Yveltal's chain, catch at band 6 (note item 10) |
+| 4 The Last Cistern | **Walking Wake** (paradox, jar model, catch 5) | the reservoir the pumps still fill; paradoxes are dungeon content (D12) | the waterworks keeper (NPC) |
+| 5 The Temple Calendar | **Tapu Fini** (water/fairy, MSD) | a misted temple pool (note item 2) | Dialga's chain, catch at band 6 (note item 9) |
+| 6 The Tower After the Fire | none | the built room has no lake | **Entei**, built, catchable once (12) |
+
+**Keldeo** is held for a Swords of Justice set, which is not a dungeon (note item 14). The "Boss" column is a
+proposal for `trainer-balance-designer`, and every legendary pick is the owner's (Q13).
+
+---
+
+## 9. Rewards per band
+
+### 9.1 Escrow and payment
+
+Each leg sets an escrow flag on the player. `dg/exit` pays each flag with
+`loot give @s loot cobblers:dungeons/<id>/b<band>/<leg>`, the portals pedestal's command (`data/entei_boss.json:126`,
+*relayed*). Death, timeout and logout clear the flags.
+
+### 9.2 What each leg pays
+
+| Leg | Pays | Paid how |
 |---|---|---|
-| Arrive, hub, walking between wings | 3 | three short rooms off one hub |
-| Trainer wing: 3 trainers, gauntlet | 10-12 | ~3-4 min a fight, ASSUMED: no fight has been timed (EXP-059 X2 times the first) |
-| Seam wing: dig through to the alcove | 6-8 | the seam's depth is the tuning knob (2.3) |
-| Boss | 6-8 | a 3-6 member NPC at the cap |
-| **Run** | **25-31** | |
-| Den, optional, where a dungeon has one | 5-6 more | four wild battles, ASSUMED: none timed |
+| Each stand | the band's area gems: 1 at bands 1-2, 2 at 3-4, 3 at 5-6, plus a minor battle item at random | escrow |
+| Seam | its ores (9.3) | **real drops** |
+| Den | the species' own drops | **real drops** |
+| Lake cache (bands 2-5; band 1 can reach it only at risk) | one progression item from the band's list | escrow |
+| Boss | **the band's progression bundle** (table below) and one roll on the dungeon's battle-item table | escrow |
+| Band-6 legendary | the catch | the Pokemon |
+| First clear per band | the one-time prize (decided ones below) | advancement plus escrow |
 
-### 2.3 The leg kinds: three required, one optional (every one reuses a built or proven part)
+**The rules *stand*** from the old section 4:
+- items, never CobbleDollars;
+- the generator fails closed on a bankable item, an item any counter sells, an evolution stone, a `*_plate`, an arena
+  trophy or the Ability Patch;
+- progression ids appear in no generated table but a dungeon's, and the alpha tier tables are overridden empty.
 
-- **Trainer wing: a gauntlet of three NPC trainers.** The arena's loop: `spawnnpcat` at absolute coordinates with a
-  level, `q.npc.start_battle`, and the `battle_victory` callback. All PASS in game for one player
-  (`arena-per-player-opponents.md:357-368`). The format is the arena's gauntlet: healed at the start of the run only,
-  HP, PP and faints carry (`data/arena_fights.json:27`), with no bag items (`:30`). The NPCs are `cobblemon:npc`,
-  never rctmod trainers, so they sit in no series and cannot move anyone's level cap (the cap trap, `docs/STATE.md:218`).
-  The automatic CobbleDollars payout is clawed back as the arena's is (P5).
-- **Seam wing: dig to the alcove.** The seam is a face of `#cobblers:cave_resettable` blocks, refilled from one of eight
-  variants on every run (`data/mining_caves.json:24-51`). The leg is done when the player stands in a sealed alcove
-  behind the face. The keeper tests position, as Entei's tests slot ownership (`data/entei_boss.json:88`), so no block
-  break has to be detected. Everything mined on the way is the player's.
-  - **The ward conflict (P2):** the seam wing's walls, floor and ceiling are bedrock. Only the face is breakable, and
-    Mining Fatigue is applied in every other room's box, never in the seam's.
-  - **The yield is income.** Ores the bank buys are capped per run at the matching cave's per-reset yield
-    (`data/mining_caves.json:66-71`), and the dungeon is declared to `tools/economy_audit.py` as a renewable supply
-    on its lockout clock, as R10 asks for the caves (`docs/mechanics/ECONOMY_OVERHAUL.md:520`).
-  - **The area's type-gem clusters in the face, if R-D1 confirms them.** Cobblemon registers each gem with a
-    `TYPE_GEM_CLUSTER_<type>` block (`docs/research/ITEMS_ABILITY_EV_HELD_MEGA.md:139`, VERIFIED as a registration;
-    the drop, the tool and the growth are not read).
-- **Boss: an NPC by default, a wild legendary in the Nether.** One wild Pokemon against six is too easy
-  (`NETHER_DUNGEON_SCOPE.md:130-139`). An NPC boss with a scaled team uses the proven per-player loop and is a real
-  fight at every band. The Nether dungeons keep the built Entei keeper (wild, catchable once, then `uncatchable` with
-  an item roll, `data/entei_boss.json:22-26`).
-  - **An NPC boss is never catchable by any ball**: a ball thrown at an NPC's Pokemon is refused as `not_wild`
-    (`docs/research/notes/beast-ball-key-1.8.0.md:151-152`, *relayed*; that an NPC's battle Pokemon takes that path
-    is ASSUMED, not thrown at). It carries no key tag.
-  - **A wild catch-mode boss is a key boss** (the owner's Beast Ball rule, 0.1). Its own tool adds the tag
-    `cobblers.key_boss` in the function that binds it, and it is listed in `data/key_ball.json` `bosses`; the key
-    pack's two callbacks raise a Beast Ball's rate x5 on a tagged boss and refuse every other ball, the Master Ball
-    included, handing it back (`data/key_ball.json:8-17`, *read*). Built for Entei only, NOT RUN (EXP-064).
-  - **The cap binds every key boss:** its level is at or under the lowest cap its gate admits. A Beast Ball refused by
-    the level cap, not the key, is consumed (`data/key_ball.json:35`, *read*). Entei is level 100 behind the
-    Champion, at cap 100, so it never meets this. Whether every wild catch-mode boss is gated at `champion_cleared`
-    is OPEN (`DUNGEON_PLACEMENT.md` Q11).
-  - **No dungeon Pokemon is an alpha**: not a boss, not a den Pokemon. An alpha is re-levelled above the party, pays
-    alpha gems and breaks the cap's catch block (`DUNGEON_PLACEMENT.md` section 3, P3 of `DROPS_PROGRESSION_SPLIT.md`).
-- **Den (optional): a room of wild Pokemon for one evolution key** (`DROPS_PROGRESSION_SPLIT.md` section 5; the owner
-  approved both dens, 2026-10-08). Only the Night Shift and the Last Cistern have one.
-  - Four wild Pokemon, spawned at the band's level (cap-2 to cap-1, the arena rule) when the slot is built, and
-    knocked out in battle. They are `uncatchable` (Entei's farm-mode pattern, `data/entei_boss.json:22-26`) and
-    never alpha. They are not key bosses and carry no tag.
-  - Drops are the **species' own tables** at entity death; no generated loot. They land in the player's own slot.
-  - The boss door does not wait on the den (2.1).
-  - **Night Shift, the powerhouse (the Electirizer):** 4 Elekid at bands 1-2 (an Electirizer that early has no
-    Electabuzz to use it on); 3 Electabuzz and 1 Electivire at band 3; 2 and 2 at bands 4-6. Expected Electirizers a
-    run 0.198 / 0.772 / 0.973, at least one in 18% / 59% / 68% of runs (*relayed*, `DROPS_PROGRESSION_SPLIT.md`
-    section 5, computed there from `drops-1.8.0.json`). Side drop: redstone, bought by the bank (about 5 a run,
-    *relayed*), so the den is declared to `tools/economy_audit.py` on the lockout clock, as the seam is.
-  - **Last Cistern, the two sentries (the Auspicious and Malicious Armor):** 2 Armarouge and 2 Ceruledge at bands 4-6,
-    the band where Charcadet becomes catchable. Each armour 0.355 a run expected, both in 10.5% of runs (*relayed*,
-    the same section). Charcoal, the side drop, is not bought.
-  - **Every player can evolve once:** the band's first clear guarantees one of each key (section 4).
+**The progression bundle by band** (*relayed* from the old section 4, itself from `DROPS_PROGRESSION_SPLIT.md`
+section 4):
 
-### 2.4 Reset, instancing, failure
+| Band | 1 | 2 | 3 | 4 | 5 | 6 |
+|---|---|---|---|---|---|---|
+| Candies | 1 M + 2 S | 3 M | 1 L + 2 M | 2 L + 1 M | 1 XL | 2 XL |
+| IV candies | none | none | none | 1-2 | 2-3 | 3-4 |
+| Rare Candy | none | none | none | none | 1 | 1-2 |
 
-- **Instancing:** a slot per concurrent run in `cobblers:pocket`. There are 4 per dungeon, as Entei has
-  (`data/entei_boss.json:56-60`). Each player runs their own copy, the owner's Entei rule (`:5`).
-- **Reset by rebuild.** Entering a slot replays its place function (rooms, seam variant, gate closed), then teleports
-  the player. Nothing a player did in a previous run survives, and no block-by-block restore has to be right. The
-  chunk has to be loaded before the fill. This is experiment XD1: forceload, a delay, place, then teleport, as Entei
-  delays its spawn by 40 ticks (`:85-86`).
-- **Loss:** a trainer or boss loss blacks out (it already fires for an NPC loss, VERIFIED,
-  `arena-per-player-opponents.md:365-366`). There is no item claim (the blackout's `claims.exempt_tag`, as Entei's,
-  `data/entei_boss.json:113`). The run is over and the slot frees.
-- **Logout or leaving:** the slot frees on the next keeper pass, the run is lost and the lockout runs (Entei's rule,
-  `:157`).
+The cap clamps every candy, so no bundle can overshoot (*relayed*, X3 not run).
+
+**Decided first clears *stand*** (the owner, 2026-10-08, *relayed*): the Night Shift's band 1 is the **Lucky Egg** and
+its band 3 an **Electirizer**; the Last Cistern's band 4 is one **Auspicious Armor** and one **Malicious Armor**; every
+home's band 5 is one **Rare Candy**. The exact items and weights are `trainer-balance-designer`'s.
+
+### 9.3 The seam by band (Night Shift)
+
+| Bands | Ores |
+|---|---|
+| 1-2 | coal, iron, copper |
+| 3-4 | add gold, redstone, lapis |
+| 5-6 | add diamond |
+
+The old cave-yield table *stands*. Every bankable ore is capped per run at the matching cave's per-reset yield, and the
+24-block face is sized so that 20 or more is reachable: greed must be possible to be a trade. Whether coal or iron ore
+in the pocket draws a spawn-condition Pokemon is moot while the pocket's `the_void` biome spawns nothing, which is
+untested (DM 1.4; `data/portals.json` `pocket.generator.biome_why`, *relayed*). The owner allows spawn-condition
+blocks (`docs/STATE.md:147`).
+
+### 9.4 Records, not bonuses (Q16)
+
+Best clock left and a flawless clear (no faint) are kept per player, per dungeon, per band, as the arena's best streak
+is. **No item pays for time left.** A time bonus would make greed's trade two-sided and harder to read.
 
 ---
 
-## 3. The dungeon list: seven homes, themes not types
+## 10. How many dungeons, and where
 
-Every home is a real place with a record. The door is an arch with a click (the portals pattern, `data/portals.json:4`;
-the click is EXP-034), seated in the place, and the run is in the pocket: the fiction is that the space is elsewhere,
-as ADR-004 reserves the pocket for (`docs/decisions/ADR-004-pocket-spaces.md:32-34`). **Overworld doors avoid the
-Nether's problem** (no ground to measure, `data/entei_boss.json:49`), because the overworld has the heightmap. **No
-home already has a boss** (the Ursaluna cave, Frostpeak's Articuno, the Hoopa cradle and the legendary sites are left
-alone), and no dungeon drops an evolution stone, which has its seven sites already (`ADR-003:64-71`).
+**Recommendation: commit to one, the Night Shift, and decide the rest after the owner has played it.** The target list
+is **six**, and each scales to every band from its gate. The count is about places and themes, not band coverage.
 
-**Dungeon 1 is reachable at 0 badges and scales to every cap**, so a run is always available at whatever badge count a
-player has. The others add places and areas, not coverage.
-
-| # | Dungeon (theme) | Home and door | Evidence the place exists | First reachable |
+| # | Dungeon | Rip home (evidence) | Gate | Legendary |
 |---|---|---|---|---|
-| 1 | **The Night Shift.** The old mine's last shift broke into a lower level the night the south drift fell, and came up without their foreman. The lamps down there are still lit. | The old mine west of Route 1; the door in the south branch's "fall of ground", its last point (1252, 4129) | `tools/route1_old_mine.py:2`, `:21-26`, `:67` (SOUTH); the old mine's cave beside it, `data/mining_caves.json:218-227` | **0 badges** (Route 1, tier 1, `data/encounter_design.json:114-147`) |
-| 2 | **The Street That Ends at Nothing.** The Worldshift took a city off Mt Vessu and left its road. Walk the road past its end and you are in the city as it was the hour before. | The Scar, the road's end (centre 2110, 950) | `data/towns.json:2059-2073` ("foundations and a road that ends at nothing"); the city itself, `:1435-1448` | ~gym 2-3 (Mt Vessu tier 3, `encounter_design.json:180`) |
-| 3 | **Under the Patriarch.** The great dark oak over the Rift drinks from something below the Wedge, and its roots have grown round what they found. | The Patriarch's foot (4272, 3600) | `data/towns.json:2570-2606` | ~gym 6-7 (the Wedge, tiers 6 and 8, `encounter_design.json:320`, `:398`) |
-| 4 | **The Last Cistern.** The waterworks of a plateau town that died of thirst; the pumps still run, on nothing. | The Dry Cistern (4530, 5850) | `data/dry_cistern.json:16-28` (authored, not applied, not audited) | ~gym 7 (plateau_west tier 8, `:414`) |
-| 5 | **The Temple Calendar.** Three jungle temples are one instrument; the run is inside the day it measures. | One of the long-isle jungle temples, e.g. (7200, 7528) | `data/jungle_temples.json:85-89` (ground NOT measured by this unit) | ~gym 7-8 (long_isle_south tier 8, `:392`); a door at `gym8_cleared` as the window's dungeon is OPEN (`DUNGEON_PLACEMENT.md` Q13) |
-| 6 | **The Tower After the Fire** (Entei) | anywhere in the Nether (the key) | built: `data/entei_boss.json`; theme `docs/mechanics/NETHER_ENCOUNTERS.md` 3.1 | Champion (`entei_boss.json:13`) |
-| 7 | **The Crucible** (Heatran) | anywhere in the Nether (the key) | designed: `NETHER_ENCOUNTERS.md` 3.2 | Champion |
+| 1 | **The Night Shift** | the old mine west of Route 1; the rip in the notch before the adit portal (x 1347, z 4120), on the carts' trail toward Route 1 (`tools/route1_old_mine.py:49-61`, *read*) | none (0 badges) | Volcanion |
+| 2 | The Street That Ends at Nothing | the Scar, the road's end (centre 2110, 950; `data/towns.json:2059-2073`, *relayed*) | none; first reachable about gym 2-3 | Palkia |
+| 3 | Under the Patriarch | the Patriarch's foot (4272, 3600; `data/towns.json:2570-2606`, *relayed*) | none; about gym 6-7 | Suicune; Yveltal as the boss |
+| 4 | The Last Cistern | the Dry Cistern (4530, 5850; `data/dry_cistern.json:16-28`, *relayed*; authored, not applied) | none; about gym 7 | Walking Wake |
+| 5 | The Temple Calendar | a long-isle jungle temple, e.g. (7200, 7528) (`data/jungle_temples.json:85-89`, *relayed*; ground NOT measured) | `gym8_cleared` proposed (`DUNGEON_PLACEMENT.md` Q13, OPEN) | Tapu Fini; Dialga as the boss |
+| 6 | The Tower After the Fire | the Nether; the key is eaten anywhere there (12) | `champion_cleared` | Entei |
+| later | The Crucible (Heatran) | the Nether | `champion_cleared` | Heatran |
 
-**Gap, said plainly:** nothing between gym 3 and gym 6 in the north and centre. The Merian Hut (`data/towns.json:
-1679-1714`, tier 4) or the Sentinel (`:2496-2532`, tier 4) would fill it. Q3.
-
-**Dens** (2.3): the Night Shift (the Electirizer) and the Last Cistern (the two armours). They drop evolution keys
-the counters do not sell, never a stone.
-
-**Rosters follow the theme, drawn from families with evidence** (E1, in a compiled table, as
-`NETHER_ENCOUNTERS.md` section 2 defines it). For dungeon 1, the shift's own Pokemon:
-- haulers: Timburr's line (E1, `NETHER_ENCOUNTERS.md:441`) and Machop's line (`encounter_design.json:190`);
-- what lives in rock: Geodude's line (Graveler, `encounter_design.json:190`, `:222`), Roggenrola's (Boldore, `:222`),
-  Onix (`:222`);
-- what digs: Diglett's line (`:173`);
-- the lower level's own: Drilbur to Excadrill (`:280`).
-
-The balance designer chooses; this is the shape.
+- **The gap *stands*:** nothing is first reachable between gym 3 and gym 6 in the north and centre. The Merian Hut or
+  the Sentinel would fill it (old section 3, *relayed*).
+- **Rejected *stands*:** the Sunken Court, whose centre is under water (old P-finding; CLAUDE.md "Measure before
+  relaying").
+- **Coordinates in this table are the homes' records, not rip cells.** Each rip cell is chosen by `world-content-dev`
+  on `tools/ground.py` ground and validated before it enters `data/` (`.claude/rules/datapacks.md` "Coordinates").
 
 ---
 
-## 4. Rewards per area
+## 11. The first dungeon, specified for a builder: The Night Shift
 
-**Rule.** The rewards are items, never CobbleDollars. The generator fails closed on any drop that is:
-- bought by the bank (Entei's `not_bankable` check, `data/entei_boss.json:109`);
-- **sold at any counter** (new: the type boosters a counter sells, `data/bank.json:269`, `data/markets.json:160`,
-  `:228`);
-- an evolution stone (ADR-003 owns them);
-- a `*_plate` or an arena trophy (`docs/STATE.md:143` item 3);
-- the Ability Patch (the arena's, `docs/mechanics/ITEM_ROUTES.md` section 3, row 5).
+**Why it is first.** Open at 0 badges, so one staging run repeats at caps 20, 45, 60 and 100 by granting flags. It
+exercises **every leg kind**: three stands, the staged boss, the seam, parkour, the den, and the lake, which is closed
+at bands 1-5 and a Dive catch at band 6. Entei cannot be first: it is gated at the Champion, so it tests one band and no
+legs (12).
 
-**Progression is the dungeons' exclusive** (the owner, 2026-10-08). A progression item is a dungeon reward and appears
-in no other generated table: the twelve ids of `DROPS_PROGRESSION_SPLIT.md` 1.3 (`exp_candy_xs` to `_xl`,
-`rare_candy`, the six IV candies `health_`, `mighty_`, `tough_`, `smart_`, `courage_` and `quick_candy`) and the
-`lucky_egg`. The generator and the validator fail closed on one anywhere else: the alpha tables, `data/rewards.json`,
-`data/markets.json`, `data/traders.json` and the arena. Two changes outside this file make that true, neither built:
-- the four `cobblemon:alpha/alpha_rewards_tier1..4` loot tables overridden empty at their own path (option C,
-  `DROPS_PROGRESSION_SPLIT.md` 3.5); until then every wild alpha KO still pays candies;
-- the Lucky Egg stripped from Blissey, Chansey and Togepi with `species_additions` at their paths (1.4 there).
+**Theme** (*stands*, old section 3): the old mine's last shift broke into a lower level the night the south drift fell,
+and came up without their foreman. The lamps down there are still lit. In the new fiction the lower level is a piece of
+the Rift, and the rip in the notch is where it shows. Rosters come from the shift's own families (old section 3,
+*relayed*: Timburr, Machop, Geodude, Roggenrola, Onix, Diglett, Drilbur); `trainer-balance-designer` chooses.
 
-The counters' priced vitamins and Ability Capsule (`data/markets.json:388-394`, *relayed*) are outside the owner's
-direction, which is about free drops; whether they stay is OPEN (section 8).
+### 11.1 The spine (segment by segment; x increases from the entry)
 
-Candidates come from the registered list (VERIFIED, `docs/research/ITEMS_ABILITY_EV_HELD_MEGA.md:136-142`). The 18
-`<type>_gem` ids are read in the jar's alpha type tables (`DROPS_PROGRESSION_SPLIT.md` 1.3, *relayed*).
+| # | Segment | Kind | Spine blocks | Contents |
+|---|---|---|---|---|
+| 0 | The Lamp Room | `rip_room` (entry) | 16 | arrival; the back rip; the run board (2.4); the threshold box starts the clock |
+| 1 | The Main Drift | `drift` | 300 | 5 wide, 4 high, timber sets every 4, lanterns; falls 8 |
+| 2 | The Hand's stand | `stand` | 24 | hall 13 x 24 x 8; trainer at the far third; timber gate (barrier-backed) |
+| 3 | The Old Incline | `drift` | 250 | stairs down 20 |
+| 4 | The Shotfirer's stand | `stand` | 24 | as 2 |
+| 5 | The Lower Face | `seam` | 30 | 24 seam blocks in a 9 x 4 face; the ladder board |
+| 5a | The Powerhouse | `den`, a side room off 5 | 0 (20 deep, off-spine) | the Electirizer den (D11) |
+| 6 | The Wet Drift | `drift` | 300 | dripping; ends on the gantry |
+| 7 | The Sump | `lake`, below the gantry | 0 (off-spine) | shaft 24 x 24, water 40 deep; cache at 30; membrane and bed (3.7); steam |
+| 8 | The Collapse | `parkour` | 200 | 4 sections of 50: broken trestles, hung cages, ore carts over a hall 20 deep; catch floor 6 below the route; ceiling 3-4 above it; checkpoints at both ends of each section; the cracked-lamp line and the gate box at entry |
+| 9 | The Haulage | `drift` | 250 | rails taken up (no rail blocks: they draw spawns, `tools/route1_old_mine.py:30-31`) |
+| 10 | The Timberman's stand | `stand` | 24 | as 2 |
+| 11 | The Shift Road | `drift` | 200 | rising to the stope |
+| 12 | The Stope | `boss_arena` | 30 | 27 x 27 x 14; the Foreman, three stages (3.2) |
+| 13 | The Shift Bell | `rip_room` (exit) | 16 | the far rip; escrow paid |
+| | **Total** | | **1,664** | 1,464 walking + 200 parkour, inside a 2,048 strip |
 
-**Gems are the dungeons' volume; progression is their exclusive.** Gems are TM crafting material (the changelog quote
-at `ITEMS_ABILITY_EV_HELD_MEGA.md:139`), and every one of TMCraft's 805 native TM recipes names one
-(`docs/research/DROP_RATE_CONSUMERS.md` 3.1, *relayed*). They are **not** scarce, so they are not the reason to run a
-dungeon:
-- **alpha battles drop them in every type** (`docs/research/DROPS_AUDIT.md` 2.4, *relayed*): about 1.125 gems per KO
-  below level 51 today, and under option C, which grows the pay with the alpha's level and pays its second type,
-  2.25 / 3.75 / 5.625 from levels 31 / 51 / 66 (`DROPS_PROGRESSION_SPLIT.md` 3.4-3.5, *relayed*; designed, not built;
-  the roll counts are that document's Q2, OPEN);
-- **no blank disc gates a TM's grade.** No counter sells a blank (no `blank_disc` id anywhere in `data/`, *measured*
-  by grep), and every TMCraft blank is craftable: copper from one ingot, the higher grades by smithing upgrade
-  (`DROP_RATE_CONSUMERS.md` 3.2, *relayed*). With alpha gems, 603 of the 802 TMCraft TMs are craftable (3.1 there,
-  *relayed*). The blank lines `PROGRESSION_LADDER.md:177-184` designs were never authored.
+Drifts may bend in z inside the 64-wide strip. The spine length is measured along the walked path, never along x.
+Every size is a proposal the builder settles against the validator.
 
-So the old case that gems are "no power bypass" is gone: crafted TMs undercut the income-gated TM shelf from leg 1
-whoever supplies the gems (`DROP_RATE_CONSUMERS.md` 3.3 and its section 4 item 1, an owner decision, OPEN). A
-dungeon's gems add to a supply the alphas already provide, and a run is worth doing for what only it gives: the
-progression bundle and the first clears below.
+**Segment kinds are parametrised and shared by every later dungeon:** `rip_room`, `drift`, `stand`, `seam`, `den`,
+`lake`, `parkour` and `boss_arena`. Each joins the next at one **door contract**: 3 wide and 4 high, on the spine
+centreline, at the segment's floor y. The kinds are what a second dungeon reuses with a new palette and order, and
+what a generator would sequence (12).
 
-| # | Gems (area) | Battle items (registered ids) | Seam |
-|---|---|---|---|
-| 1 Night Shift | rock, ground, steel | `smooth_rock`, `float_stone`, `iron_ball`; `rocky_helmet` from band 4 | coal, iron, copper; gold, redstone, lapis from band 3; diamond from band 5 (the cave yields) |
-| 2 The Street | psychic, fairy, ghost | `psychic_seed`, `misty_seed`, `light_clay`, `eject_button`, `eject_pack`, `room_service` (things that were moved) | the city's stone; which blocks is open, checked against `data/spawn_blocks.json` |
-| 3 Patriarch | grass, dark, bug | `grassy_seed`, `leftovers` (a tree's fruit), `black_sludge` | wood and the area's ores |
-| 4 Last Cistern | water, ground | `damp_rock`, `utility_umbrella`, `absorb_bulb`, `shell_bell` | the plateau's ores |
-| 5 Temple Calendar | grass, rock, electric | `electric_seed`, `scope_lens`, `wide_lens`, `zoom_lens`, `quick_claw`, `loaded_dice` | the island's ores |
-| 6 Tower | fire, ghost | `NETHER_ENCOUNTERS.md:363`'s candidates; `life_orb` VERIFIED | none (boss only, as built) or Nether materials |
-| 7 Crucible | steel, fire | `heat_rock`, `iron_ball`, `metal_powder`, `assault_vest` | ancient debris, if the economy wants it |
+### 11.2 Data: `data/dungeons.json` (schema `cobblers.dungeons/2`, `generated_by: "hand"`)
 
-**Progression, every home, by band.** Candies are type-neutral, so they scale by band, not by home. The sizing rule:
-**one run's candies are about half a cap step for one medium-fast Pokemon at that band**, so a run helps one Pokemon
-catch up and never levels a party. The table is *relayed* from `DROPS_PROGRESSION_SPLIT.md` section 4 (candy EXP
-there is itself *relayed* from `LEVEL_CATCHUP.md:31`); the exact bundles are `trainer-balance-designer`'s.
-
-| Band (cap at entry) | Cap step (EXP, n³) | Candies per run | EXP | IV candies | Rare Candy |
-|---|---:|---|---:|---|---|
-| 1 (20, 25) | 7,625-11,375 | 1 M + 2 S | 4,600 | none | none |
-| 2 (30, 35) | 15,875-21,125 | 3 M | 9,000 | none | none |
-| 3 (40, 45) | 27,125-33,875 | 1 L + 2 M | 16,000 | none | none |
-| 4 (50, 55) | 41,375-49,625 | 2 L + 1 M | 23,000 | 1-2 of one random stat | none |
-| 5 (60, 62) | 49,625 (55 to 60) | 1 XL | 30,000 | 2-3 | 1 |
-| 6 (100) | 784,000 (60 to 100) | 2 XL | 60,000 | 3-4 | 1-2 |
-
-The cap clamps every candy: one used at the cap adds nothing and is not consumed, one below it stops at the cap
-(`DROPS_PROGRESSION_SPLIT.md` 2.2, VERIFIED there in rctmod bytecode; not run in game, X3). So no bundle can overshoot,
-and the band-5 bundle in the window levels to 60 at most.
-
-**Scaling of rewards.** Each band (section 5) has its own table. Bands 1-2 pay one gem and a minor item, bands 3-4 two
-gems and a weather rock or seed, and bands 5-6 three gems and the competitive items, each with the band's progression
-bundle above. Choice items are postgame band only.
-**Each band's first clear** grants a one-time, per-player prize (an advancement, the Spectrier pattern,
-`tools/spectrier_cap.py`). A dungeon open from badge 0 therefore has six first clears to give. Decided first clears
-(the owner, 2026-10-08):
-- Night Shift, band 1: the **Lucky Egg** (drop-only today, `DROPS_AUDIT.md` 4.5, *relayed*; so once stripped from the three species,
-  this is its route);
-- Night Shift, band 3: one **Electirizer**;
-- Last Cistern, band 4: one **Auspicious Armor** and one **Malicious Armor**;
-- band 5 of every home: one **Rare Candy**.
-
-The other first clears, and all exact items and weights, are `trainer-balance-designer`'s.
-
----
-
-## 5. Per-gym scaling
-
-**The run's band is fixed at entry from the player's level cap**: `rctmod player get level_cap @s` on a macro line,
-the read `tools/levelcap_pack.py:58`, `:93` already makes. It is frozen on the slot for the run. A gym-1 run done at gym
-8 is not the same run: every NPC is spawned at the gym-8 band. It is never trivial, and never impossible.
-
-| Band | Player's cap at entry | Badges | Trainer members | Boss members | Trainer level | Boss ace | Stage |
-|---|---|---|---|---|---|---|---|
-| 1 | 20, 25 | 0-1 | 2 | 3 | cap-2 to cap-1 | cap | first stages |
-| 2 | 30, 35 | 2-3 | 3 | 4 | same | cap | middle stages |
-| 3 | 40, 45 | 4-5 | 3 | 5 | same | cap | middle and final |
-| 4 | 50, 55 | 6-7 | 4 | 6 | same | cap | finals; held items appear |
-| 5 | 60, 62 | 8, the League | 5 | 6 | same | cap | finals with sets |
-| 6 | 100 | after the Champion | 6 | 6 | 95-99 | 100 | competitive sets |
-
-The caps are those of `docs/mechanics/NETHER_ENCOUNTERS.md:50-56`, *relayed* from `data/trainers.json:14-23` and
-`LEAGUE_LEVEL_CAP.md:50-56`. The levels follow the arena's rule: no member above the band's cap
-(`tools/arena_runtime.py:25-28`).
-
-**How, at rung 1 (Cobblemon native).** One NPC class per trainer covers every band:
-- each pool entry carries `npcLevels`, so the spawn level picks the stage (`arena-per-player-opponents.md:101`);
-- `minPokemon` and `maxPokemon` are MoLang with `q.level` visible, so team size follows the level (`:98`, `:102`);
-- `q.player` is visible too, so **Challenge mode** can add one member and hold items one band earlier, keyed on the
-  `cobblers_mode_challenge` tag (`docs/mechanics/OAK_AND_CHALLENGE.md:55`). Its rules mirror "every Gym Leader brings
-  six" (`:42`).
-
-All of this is VERIFIED from source and not run: XD2 proves it. If the MoLang team size fails, the fallback is one
-class per band, 6 x 4 = 24 classes per dungeon. That is generated, so it costs nothing in authoring. Classes load
-only at a restart (`arena-per-player-opponents.md:63`).
-
-**What keeps it "doable":** every fight is at or under the cap and a party over the cap is refused at the door (the
-arena's check, `tools/arena_runtime.py:536`). Each band's boss is checked by `tools/battle_sim.py` against a walked
-and an informed team, as the gyms were (`docs/STATE.md:344`). The main session runs it, since the designer has no shell.
-
----
-
-## 6. Replay: what makes the tenth run worth doing
-
-1. **The run changes under you.** Teams re-roll on every run, one of 8 layouts comes up (never the last), the seam
-   pattern is never the last one, and the boss comes from a pool.
-2. **The band changes as you badge up**: new stages, team sizes and tables. A dungeon first run at badge 0 is a
-   different fight at badge 4, 8 and after the Champion.
-3. **Gems and progression never stop being wanted** (section 4): every crafted TM consumes a gem, and the candies,
-   IV candies and Rare Candy are found nowhere else.
-4. **A collection per band**, drawn without repeats until it is complete, then a flat consolation (the scope's lever,
-   `NETHER_DUNGEON_SCOPE.md:99-100`).
-5. **Six first clears per dungeon**, one per band.
-6. **Records:** a flawless clear (no faint) and a best time per dungeon, per player, as the arena's best streak is
-   (`data/arena_fights.json:117`, *relayed* via the scope).
-7. **Rotation across homes.** The per-dungeon lockout (Q5) means the next run is naturally somewhere else, which is the
-   owner's "not the same one twice running" for free.
-8. **Not used, and why:** cash (the arena is the faucet, P5); raising payouts with repetition (it makes one activity
-   dominant, `NETHER_DUNGEON_SCOPE.md:103-104`). A shiny chance per run is ASSUMED to be a spawn property and is
-   unread (R-D3).
-
----
-
-## 7. The first dungeon to build completely: The Night Shift
-
-The first dungeon is **dungeon 1, not Entei.** Entei is gated at the Champion (`data/entei_boss.json:13`), so every
-player who can enter it has cap 100 and it can never test per-gym scaling. The Night Shift is open at 0 badges, so one
-staging run can be repeated at caps 20, 45 and 60 by granting flags.
-
-### 7.1 Data: `data/dungeons.json` (schema `cobblers.dungeons/1`, `generated_by: "hand"`)
-
-- **`engine`:**
-  - `pocket` (read from `data/portals.json`, failing closed on disagreement, as Entei does,
-    `data/entei_boss.json:55`);
-  - `bands` (the section 5 table), each with `progression`: a list of `{item, count}` (section 4's bundle);
-  - `lockout_ticks`;
-  - `battle_rules` (the arena's, `data/arena_fights.json:30`);
-  - `hub_heal` (Q4);
-  - `payout: "clawback"`;
+- **`engine`** (shared):
+  - `pocket` (read from `data/portals.json`, failing closed on disagreement, as Entei does);
+  - `clock` with:
+    - `units_per_tick: 4`;
+    - `period_ticks: 20`;
+    - `ladder` (3.3);
+    - `fall_penalty_s: 15`;
+    - `slack_factor: 1.25`;
+    - `paces` (4.1), each with a `basis` naming its probe;
+  - `bands` (5.3, each with its progression bundle);
+  - `lockout_ticks: 72000`;
+  - `uptime_objective`;
+  - `escrow`, `adventure`, `rift_pick` (components), `sweep` (no-deploy box rules);
+  - `battle_rules` (the arena's), `payout: "clawback"`;
   - `claims_exempt_tag` (read from `data/blackout.json`);
-  - `ward_amplifier`.
-- **`dungeons[]`.** The record for `night_shift`:
-  - `home`: place `route1_old_mine`; the door seated at the SOUTH branch's last point. Its y and facing are
-    **derived from `tools/route1_old_mine.py`'s own geometry** (the drift floor), never read from a world (CLAUDE.md,
-    "Ground comes from the heightmap").
-  - `gate_flag`: none.
-  - `slots: 4`, `slot_origin`: a new band in the pocket. The builder derives it from `data/portals.json` (bands,
-    rescue margin) and `data/entei_boss.json:58-62` (Entei's z -768 row). It must sit inside the border margin and be
-    disjoint from both.
-  - `sockets`:
-    - `hub`: about 15 x 15 x 7, three doors;
-    - `west`: the trainer wing, about 13 x 41, three stands 12 apart;
-    - `east`: the seam wing, about 13 x 21, a face about 9 wide x 6 deep x 5 high, the alcove behind it;
-    - `north`: the stope, about 21 x 21 x 10.
+  - `slots_per_dungeon: 4`, `members_max: 1` (co-op raises it).
+- **`dungeons[]`.** The `night_shift` record:
+  - `rip`: the placement id, the outside point, facing, the plume flag;
+  - `gate_flag: null`;
+  - `slot_rows`: derived;
+  - `spine[]`: segment kind, length and params, as 11.1;
+  - `stands[]`: name, families by band, the dialogue key;
+  - `boss`: `stages_by_band` (3 x 6: level offset, moves, held item, escort from band 4);
+  - `seam`: `blocks: 24`, `ores_by_band`, `yield_cap_by_band`;
+  - `den` (*stands*, old 2.3);
+  - `lake`:
+    - `species: cobblemon:volcanion`, `catch_band: 6`, `props`;
+    - `depth: 40`, `cache_depth: 30`, `cache_by_band`;
+    - `membrane: "dive_qualified"`, `obvious` (pose, glow, lanterns, bubbles, steam);
+    - `key_boss: true`;
+  - `rewards`: escrow tables by band and leg, first clears;
+  - `messages`;
+  - `does_not_cover`, stating what the run's lists miss, per CLAUDE.md "Our list is not the world". For example: Pokemon
+    a player sends out outside parkour boxes; items dropped in the slot.
+- `data/key_ball.json` `bosses` gains the Night Shift's Volcanion; it carries the tag, and the validator checks the two
+  agree. `data/placements.json` gains the rip.
 
-    Each is a box with door positions; every size here is a proposal for the builder to settle. The slot footprint is
-    about 64 x 64, under the 128 spacing.
-  - `rooms[]`: two per socket (`variant` a or b), palette and dressing ids from `world-content-dev`. The hub is "the
-    Lamp Room": a lamp rack, a tally board showing one lit lamp per leg done, and the timber gate to the stope.
-  - `legs`:
-    - `trainer`: three stands, "Night Shift Hand", "Shotfirer" and "Timberman" (placeholder names), each with
-      families by band;
-    - `seam`: yield by band, the variant count (8) and the alcove box;
-    - `boss`: an NPC, "the Foreman", with a team by band. He stayed down to keep the lamps lit. Every boss record
-      carries `key_boss` (bool) and `gate_flag`; the Foreman's `key_boss` is false (an NPC, 2.3). A `key_boss: true`
-      record must be listed in `data/key_ball.json` `bosses`.
-  - `den` (optional): `{species_by_band, count, uncatchable: true}`. The Night Shift's is the powerhouse (2.3).
-  - `rewards`: `collection_by_band`, `first_clear_by_band` (section 4).
-  - `messages`, `does_not_cover`.
+### 11.3 Generator, runtime, re-apply (`tools/dungeon.py`, generalising `tools/entei_boss.py`)
 
-### 7.2 Validation (`tools/validate_data.py`, written by `test-author`, not the builder)
+- **Pack:** `build/datapacks/cobblers_dungeons`, world-local; NPC classes inside it, so a change needs a restart.
+- **Re-apply step (new): the shells.** The step places each slot's shell from the spine:
+  - fills of at most 32,768 blocks;
+  - forceloads of at most 256 chunks per add. A 2,048 x 64 strip is about 512 chunks, so two batches;
+  - every write function declares `chunks-loaded-by`;
+  - a second step places the rip.
 
-1. The door is inside the old mine's drift, and its coordinate traces to the host tool's plan.
-2. Slots are inside the border margin and disjoint from the portals' rescue box, Entei's band and each other.
-3. Every room fits its socket box; its doors are the socket's doors; every spot is on floor with 2 air, inside the
-   keeper box; the seam box is disjoint from every ward box.
-4. The bands cover every cap value the game can produce: 20 to 55, 60, 62 and 100.
-5. No band's top level is above its cap, and no family is a doll or a mis-modelled final form
-   (`docs/research/COBBLEVERSE_COMPATIBILITY.md:108-148`, *relayed*).
-6. Drops: the section 4 rule. Seam: bankable output per run at most the cave's per-reset yield of the same tier.
-   - **Progression is exclusive:** no file in our packs other than a dungeon reward table names a progression id
-     (section 4's list), and the four alpha tier tables are empty. The mutation that proves it: put `exp_candy_xs`
-     back in the tier-1 override and the check must fail (`DROPS_PROGRESSION_SPLIT.md` 3.5).
-   - **Dens:** every den species has a drop entry for its declared item; no den Pokemon is an alpha; the den's
-     expected yield per run is computed from the species file with `DROPS_AUDIT.md` 2.1's roll model, never stated
-     by hand.
-   - **Key bosses:** a `key_boss` record's level is at or under the lowest cap its `gate_flag` admits; no key boss
-     and no dungeon Pokemon is an alpha; every `key_boss` is in `data/key_ball.json` `bosses`, and no other boss is.
-     A gate below `champion_cleared` is not a failure while Q11 is OPEN.
-7. `lockout_ticks` is at least the run's target length (P3).
-8. Ids are prefixed `dg_`. `python tools/id_authorship.py` stays at 0 faults.
-9. `python -m pytest tests/test_system_contracts.py`: new contracts "dungeon NPCs carry no rctmod series" (consumer:
-   the level cap) and "dungeon wins pay $0 net" (consumer: the economy).
-
-### 7.3 Generator and runtime (`tools/dungeon.py`, generalising `tools/entei_boss.py`)
-
-- **Pack:** `build/datapacks/cobblers_dungeons`, world-local.
-- **NPC classes:** in the pack. A change needs a restart (`arena-per-player-opponents.md:63`).
+  The shell's block count is the builder's to report; the step's run time is probe I2.
 - **Functions:**
-  - `door_click`: checks the gate, the lockout, a free slot and a party over the cap;
-  - `enter`: reads and freezes the cap, forceloads, places the slot, then teleports after a delay;
-  - `keeper`: ownership sweep, eject, ward outside the seam, leg flags, gate open;
-  - `leg_trainer`: the arena's spawn, start and victory loop, with the clawback;
-  - `seam`: the variant, and the alcove test;
-  - `boss`;
-  - `reward`: the roll, the collection and the first clear;
-  - `exit`.
-- **Callbacks:** `battle_victory` and `battle_fainted`, under `data/cobblemon/callbacks/<event>/` (the runtime fact in
-  `.claude/rules/datapacks.md`).
-- **Re-apply:** one new step places the door, after R8, the step that builds the old mine with the towns
-  (`tools/route1_old_mine.py:6-8`). The slots need no step: they are placed on entry.
-- **Entei** becomes `dungeons[]` record 6 on the same engine later, its keeper kept as the `wild` boss kind.
+  - `door_click`, `enter`, `exit`;
+  - `keeper` (per pass, per live member):
+    - the clock and the bar;
+    - the return margin;
+    - the ownership sweep and eject;
+    - the seam markers and the rate;
+    - the parkour sweep and the catch bands;
+    - the gates;
+    - the stand and boss spawns;
+    - the membrane;
+    - timeout and sudden death;
+    - the survival and pick backstop over the overworld;
+  - `stand`, `boss_stage`, `seam_reset`, `lake`, `den`, `pay`.
+- **Callbacks** (`data/cobblemon/callbacks/<event>/cobblers_dg_*.molang`): `battle_victory`, `battle_fainted` (the
+  den) and `pokemon_captured` (the lake). The key ball's callbacks already exist (`tools/key_ball.py`).
+- **The keeper's cost** is per live member. An idle dungeon costs one check per pass, measured against
+  `docs/mechanics/TOWN_TICK_BUDGET.md`'s idle floor.
 
-### 7.4 Runtime proof (a new EXP, staging, designed by the builder, graded by `qa-reviewer`)
+### 11.4 Validation (`tools/validate_data.py` and an independent audit; `test-author`, not the builder)
 
-1. **XD1:** the rebuild on entry.
-2. **XD2:** classes by `npcLevels` and the MoLang team size at three spawn levels.
-3. **XD3:** the clawback leaves $0 net.
-4. **XD4:** the seam: mined and refilled; the alcove; no ward in the seam; bedrock walls.
-5. **XD5:** the cap is read and frozen.
-6. **XD6:** a loss blacks out with no claim.
-7. **XD7:** a whole run timed at caps 20, 45 and 60.
-8. **XD8:** two players in two slots (waits for the second account, `docs/STATE.md:177`).
-
-### 7.5 Plan (ordered; each step one experiment or one unit)
-
-| # | Step | Agent |
+| # | Check | Independent of the builder how |
 |---|---|---|
-| 0 | Run EXP-059 (X2-X4) and fix the three recorded Entei defects | main session + the owner |
-| 1 | R-D1..R-D4 (section 9) | `cobblemon-researcher` |
-| 2 | Engine core with grey-box rooms | `minecraft-systems-dev` |
-| 3 | Legs: gauntlet, seam, NPC boss | `minecraft-systems-dev` |
-| 4 | Night Shift rosters, boss teams, tables by band | `trainer-balance-designer` (opus) |
-| 5 | Rooms, palettes, dressing; the door's seat | `world-content-dev` (data only) |
-| 6 | Engine audit and dungeon validation (Opus) | `test-author` |
-| 7 | Prepare, full suite, install, XD1-XD7; `battle_sim` per band | main session |
-| 8 | The owner plays it at three caps; decide dungeon 2 | the owner |
+| V1 | Slots are inside the border margin and disjoint from the rescue box, Entei's row and each other | computed from `data/portals.json` and `data/entei_boss.json`, not from `tools/dungeon.py` |
+| V2 | The rip cell traces to `tools/ground.py` ground, and its outside point is clear and walkable | the heightmap |
+| V3 | **The clock per band equals ceil(required x slack)**, with walking measured as **the BFS path length over the GENERATED shell** from the entry threshold to the far rip | the shell's blocks, not the spine list. The mutation that proves it: lengthen a drift inside the generator only, and V3 must fail |
+| V4 | Softlock: the back rip is reachable from every walkable cell with every gate in every state it can hold (closed ahead, open behind) | BFS over the shell |
+| V5 | Every NPC, boss and legendary spot is on floor with 2 air, inside the keeper box, and inside a room of at least the boss arena's clear area | the shell |
+| V6 | **Parkour:** every gap column has a catch band under it; every jump is feasible **in both directions** (flat gap at most 3, a rise at most 1 with a gap at most 2); the ceiling is 3-4 above the route; the no-deploy box covers the section's whole air volume | the shell |
+| V7 | **Lake:** the cache is at most 30 deep (Surf reach); the membrane sits at the bottom; no water leaks outside the sump | the shell and `data/blackout.json` |
+| V8 | No lava, magma, campfire, fluid leak or fall without a catch band; nothing walkable at block light 0 (`tools/light_plan.py`) | the shell |
+| V9 | The seam's 24 blocks are seam ores; every seam block has a marker in the reset; the seam box is disjoint from every other box | the reset function's output against the shell |
+| V10 | Rewards: the old fail-closed list; progression is exclusive (the mutation: `exp_candy_xs` back in the tier-1 alpha override must fail); escrow ids exist as loot tables | the data and the pack |
+| V11 | The lake legendary is in `data/key_ball.json` `bosses`, at level at most the cap of band 6 (100), gated at band 6 only; no dungeon Pokemon is an alpha | the two data files |
+| V12 | `lockout_ticks` is at least the longest clock in ticks | the data |
+| V13 | Every exit path (`exit`, the respawn, eject, relog) restores survival and clears the pick | the generated functions, path by path |
+| V14 | `python tools/id_authorship.py` stays at 0 faults; ids are prefixed `dg_` | the tool |
+
+**New contracts** in `data/system_contracts.json`:
+- "dungeon NPCs carry no rctmod series" (consumer: the level cap; *stands*);
+- "dungeon wins pay $0 net" (consumer: the economy; *stands*);
+- "a timeout is a blackout death: $600, the checkpoint, keepInventory" (consumer: the blackout);
+- "the water ladder qualifies Dive in the pocket" (consumer: the lake; beside C15).
+
+### 11.5 Runtime proof (a new EXP; the builder designs it, the main session runs it, `qa-reviewer` grades it)
+
+A whole run is played at caps 20, 45, 60 and 100 (flags granted on staging), and timed per leg (XT1's second pass).
+Each of the following is seen once:
+- greed at 5 and at 20;
+- a fall;
+- a forfeit;
+- a loss;
+- a timeout outside a battle and inside one (sudden death);
+- a turn-back at x3;
+- a logout;
+- the band-6 Volcanion caught with a Beast Ball, and a Great Ball refused and handed back.
+
+Probes present / probes total are reported, per CLAUDE.md "A success report is not the work".
 
 ---
 
-## 8. Open questions for the owner
+## 12. The Entei room's fit
 
-1. **Every run has all three leg kinds, boss last?** *Recommend yes* (P4). Three trainer legs is the arena.
-2. **Legs chosen at a hub rather than fixed or shuffled?** *Recommend the hub*: the same variety with one geometry, and
-   it is the vision's sealed final chamber.
-3. **How many homes, and which?** *Recommend building only dungeon 1, then deciding.* The list sites seven. The
-   north and centre gap (gyms 3-6) wants Merian Hut or the Sentinel if the owner wants an eighth.
-4. **Healing inside a run?** *Recommend one hub heal per run*, with no bag items in battle (the arena's rules). "Limited
-   healing" is the vision's gauntlet rule (`GAME_VISION.md:143-145`).
-5. **The lockout per dungeon per player?** *Recommend 72,000 ticks (one hour of uptime) from entry.* That is twice a
-   run (P3), and with several homes a player can always run somewhere.
-6. **Entry cost for the overworld dungeons?** *Recommend free, lockout-limited.* The rewards are non-cash items and
-   the seam is capped at a cave's yield. The Nether pair keep their material keys (`data/entei_boss.json:43`).
-   **Challenge players:** the seam is the only Minecraft play in a run. *Recommend leaving it in*: it is short, and it
-   is a dig, not a farm.
-7. **Solo instances only, or friends in one slot?** *Recommend solo first.* It is the Entei decision, and a shared slot
-   needs XD8 and the two-player battle question (`NETHER_DUNGEON_SCOPE.md` X5).
-8. **Gems as the reward spine?** **Superseded** by the owner's 2026-10-08 direction: progression is the dungeons'
-   exclusive and gems their volume (section 4). The blank gate it leaned on does not exist.
-9. **The Nether pair after the overworld ones, on the same engine?** *Recommend yes*, with Entei's room re-themed as
-   `NETHER_ENCOUNTERS.md` Q5 proposes.
+**Verdict: keep it as built, run it first, and fold it into this shape later. Do not rebuild it first.**
 
-From `DROPS_PROGRESSION_SPLIT.md` section 8:
-10. **The Lucky Egg** (its Q1): **decided, moved** (0.1, section 4).
-11. **Option C's roll counts**, 2.25 / 3.75 / 5.625 gems by tier (its Q2): **OPEN.** *Recommend keep them.*
-12. **The armour den's home** (its Q3): **decided, the Last Cistern** (2.3).
-13. **The counters' priced progression**, vitamins and the Ability Capsule (its Q4): **OPEN.** *Recommend it stays*:
-    priced, and the direction is about free drops.
-14. **Dragon's breath on the Pasture Loot blacklist** (its Q5; the Ability Capsule's brewing input): **OPEN.**
-    *Recommend yes.*
+**What does not fit:**
+- It is one 17 x 17 room with no spine and no legs (`data/entei_boss.json:96`).
+- It has no clock. Its lockout is a game-time delta, the defect class of 2.1 (`:112`).
+- Its boss is single-stage and wild.
+- It is entered by a key eaten in the Nether, not a rip.
 
-From `DUNGEON_PLACEMENT.md` section 6, all **OPEN**: Q11 (every catch after the Champion), Q12 (the Beast Ball idle
-from Cinderlee to the Champion), Q13 (the Temple Calendar as the window's dungeon), Q14 (Koraidon and Miraidon), Q15
-(which sites are dungeon bosses; `data/key_ball.json` `bosses_why` already treats the shrines, the lake trio, the
-Regis, Lugia, Hoopa, Ursaluna, the Gulch Megas and the raid dens as not), and paradox threats at band 4.
+**What fits, and is half this engine:**
+- per-player slots in the pocket, the keeper, the ownership sweep and eject (`:104`);
+- the arrival delay, the logout rule, catch-once by advancement and the claims exemption (`:132`);
+- the key-ball tag;
+- the macro spawn and bind.
 
-## 9. Unknowns, as experiments or research
+**EXP-059 is the cheapest real test of all of it**, and it is NOT_EXECUTED with three recorded defects (the old P1,
+*relayed*). Running it first proves or breaks the machinery the timed engine copies, before two builders copy it.
 
-| Id | Question | Who |
+**Later**, as dungeon 6, on the engine:
+- the room becomes the Tower's boss arena at the end of a spine;
+- Entei becomes the band-6 catch after an NPC chain: the tower's last mourner, whose ace is Entei's grief;
+- the game-time lockout is replaced by the uptime counter (2.5);
+- **the eaten Tower Ash stays as the Nether's rip.** No Nether ground can be measured (`:52`), so the key opens a
+  short-lived visual rip at the player for the 40-tick delay, and the player carries the rip.
+
+That re-home is a "further dungeon" unit (13), about 7M.
+
+---
+
+## 13. Build order and cost
+
+**Rates** (CLAUDE.md "What a builder actually costs", measured 2026-10-02; the audit and prepare figures are the brief's,
+*relayed*):
+- an end-to-end builder 3.4-4.6M (4M used, 4.5M for the engine, which is larger than Entei's 2,926 lines, F4);
+- a narrow follow-up 2.6M;
+- an independent audit about 3M (Opus, escalation case 1: the timer kills players and the run can trap one);
+- research about 0.6M;
+- a prepare 30-50 minutes.
+
+**None of the costs below is a measurement of this work.**
+
+| # | Step | Agent | Cost |
+|---|---|---|---|
+| 0 | Run EXP-059 on staging; fix its three recorded defects | main session + the owner | 2.5M (*relayed* estimate, old 1.2) |
+| 1 | The probe pack (section 14: P1, B1, B2, B3, R1, R2, F1, L1, L2, C1, XT1, V1, I2) | `minecraft-systems-dev`, narrow | 2.6M |
+| 2 | Run the probes; time a fight per band (XT1) | main session + the owner | 2M |
+| 3 | Night Shift rosters, boss stages, escrow tables, the clock per band re-derived from XT1 | `trainer-balance-designer` (opus) | 1.5M |
+| 4 | Night Shift spine, palettes, dressing, the rip cell on `ground.py` | `world-content-dev` (data only) | 2M |
+| 5 | Engine core: rip, slots, clock, bar, return margin, timeout and sudden death, escrow, logout, lockout, adventure and pick, sweeps | `minecraft-systems-dev` | 4.5M |
+| 6 | Legs: stands and clawback, the boss chain, seam markers and rate, parkour sweep and catch bands, the lake with membrane and catch, the den | `minecraft-systems-dev` | 4.5M |
+| 7 | The shell generator from segment kinds; the re-apply steps | `minecraft-systems-dev` | 4M |
+| 8 | Independent audit A: engine and legs (timer deaths, escrow, exits, economy) | `test-author`, opus | 3M |
+| 9 | Independent audit B: geometry (V3-V9 over the built shell; mutate the generator) | `test-author`, opus | 3M |
+| 10 | Integration: 2-3 prepares, the full suite, install, the 11.5 run at four caps | main session | 3M |
+| 11 | Retune the clock and fix from the owner's play | narrow follow-up | 2.6M |
+| | **To the first complete dungeon** | | **about 35M (range 30-40M)** |
+
+**Ordering:**
+- 0-2 before anything is built: principle 15, and they can kill a mechanism cheaply;
+- 3 and 4 fix the data the generator reads;
+- 5 before 6 and 7, which can then run in parallel (two builders, one wave);
+- 8 and 9 in parallel;
+- each audit sees a different builder's work.
+
+**What follows the first dungeon:**
+
+| | Cost each |
+|---|---|
+| Further dungeon, authored, one variant (design 1M, world data 2M, balance 1.5M, audit runs and look 1.5M, integration 1M) | **about 7M** |
+| ... with a new leg mechanic, such as a parkour-guarded shrine | +2.6M |
+| Second variant of an existing dungeon (spine data 1.5M, audit run 0.5M, staging 0.5M; its slot shells re-applied) | **about 2.5M** |
+| Six dungeons, one variant each (35 + 5 x 7) | **about 70M** |
+| ... plus a second variant each (+6 x 2.5) | **about 85M** |
+
+### 13.1 Authored vs generated, costed
+
+**What changes from the hub design.** In a linear run the expensive parts are shared by both options: the engine, the
+segment kinds, and both audits. Audit B already walks any shell, so it checks a generated one as readily as an
+authored one. Connectivity is by construction, since segments join end to end at one door contract. The old design's
+14-class generator validator (old 1.3) is therefore mostly gone. **A "generator" here is a sequencer:** a tool that
+picks segment kinds, order and lengths from a seed to meet a band budget, and emits a spine that audit B then
+validates. It runs at build time in Python, never at run time. ADR-008's rule that mcfunction cannot prove a layout
+stands.
+
+**Rotation costs nothing at run time either way.** Each dungeon's 4 slot shells can hold up to 4 variants, and entry
+assigns a free slot whose variant differs from the player's last.
+
+| | Authored | Generated (sequencer) |
 |---|---|---|
-| R-D1 | Cobblemon 1.8.0 type gem clusters: the 18 gem and cluster block ids, what breaking one drops, the tool, whether they grow | `cobblemon-researcher`, jar |
-| R-D2 | CobbleDollars' automatic NPC payout: its config key, and the arena's clawback (EXP-060's shape) as a reusable pattern | `cobblemon-researcher` |
-| R-D3 | Whether `shiny` is a parsed property for `spawnpokemonat`, and the NPC pool | `cobblemon-researcher` |
-| R-D4 | Whether a forfeit, a flee or a logout mid NPC battle ends it (open since `arena-per-player-opponents.md:371`) | staging, with XD6 |
-| XD1-XD8 | Section 7.4 | builder designs, main session runs, `qa-reviewer` grades |
-| X3, X5, X6 | A candy at the cap is refused and kept; a dual-type alpha's gem types; option C's callback loads (`DROPS_PROGRESSION_SPLIT.md` section 6) | staging, main session |
-| EXP-064 | The Beast Ball key on a tagged boss (NOT_EXECUTED) | staging, main session |
+| Up front | nothing | sequencer builder 4M + its independent audit 3M = **7M** |
+| Per variant | about 2.5M (hand-written spine data, audit run, look) | **about 0.5M** (a seed, audit run, the owner's look) |
+| Break-even | | at about 3.5 extra variants in all (7 / 2.0) |
+| Six dungeons, one extra variant each | +15M | +7M + 3M = **+10M** (saves about 5M) |
+| Six dungeons, three variants each | +30M | +7M + 6M = **+13M** (saves about 17M) |
+| Quality | set pieces placed for the theme: the lake after the seam on purpose, sightlines, the board's story | rhythm from a rule; set pieces must still be authored and inserted, so the lake and the boss arena are fixed templates either way |
+
+**Recommendation: authored**, as the owner leans. Below about four extra variants in all, the sequencer does not pay.
+The things a player remembers (the steam over the sump seen from the gantry, the order that makes greed and the
+legendary exclude each other) are authorial. **Revisit at dungeon 3** if the owner wants three or more variants per
+dungeon. The segment kinds are built so the sequencer can be added then without rework.
+
+---
+
+## 14. Unknowns, as probes (before step 5; DM section 10 unless marked new)
+
+| Id | Probe | Settles |
+|---|---|---|
+| P1 | `runmolang "q.pokemon.discard;"` on an own sent-out Pokemon, by keeper and from `pokemon_sent_post`: it vanishes, the party Pokemon keeps its HP and can be recalled | 3.4, the no-deploy leg |
+| B1 | A per-player bossbar with its name re-set each second from scores; log out and in; clear | 2.2 |
+| B2 | `kill @s` with a totem in the off hand; the blackout fires once | 2.5 |
+| B3 | Sudden death: the clock at 0 mid-battle, the kill when `in_battle` reads 0 | 2.5 |
+| R1 | `minecraft.mined` counts in adventure mode with the rift pick under `can_break` | 3.3, co-op credit |
+| R2 | `minecraft:can_break` on a pick in adventure mode breaks the seam ores and nothing else | 3.3 |
+| F1 | A teleport mid-fall, with and without `resistance 5` | 3.5 |
+| L1 | Glow, lanterns, a bubble column and a beacon read from a gantry 40 above the bed | 3.7, "obvious" |
+| L2 | A wild battle started and finished underwater, with Dive | 3.7 (fallback: dry chamber) |
+| **C1 (new)** | `spawnnpcat` from a **macro line in a function** after a plain restart; then a victory's follow-up starting the next battle 60 ticks later, three times in a row | 3.1, 3.2 (F3) |
+| **XT1 (new)** | Time an NPC fight at 2, 4 and 6 opposing members at caps 20, 45 and 100, and a 3-stage chain | the clock (4.1) |
+| **V1 (new)** | A rip's particles and display seen from 32, 64 and 128 blocks; `force` mode and a plume | 7.1 |
+| **I2 (new)** | The time and block count of one slot's shell re-apply | 11.3, the re-apply budget |
+| XD2 | Pool classes by `npcLevels` and MoLang team size (old 7.4) | 5.3 (fallback: classes per band) |
+| XD3 | The clawback leaves $0 net (old 7.4; EXP-060) | 3.1 |
+| XD8 | Two players in two slots, then one co-op slot (needs the second account) | 6 |
+| EXP-064 | The Beast Ball key on a tagged boss (NOT_EXECUTED) | 3.7 |
+
+Dropped from DM's list, with the reason:
+- **B4**: no pause, so idling buys nothing;
+- **G1 and G2**: no LegendaryMonuments portal, and fixed rips;
+- **S1-S4**: a chain of classes, not a staged party or `set_npc_party`;
+- **I1**: the shells are fills, not templates;
+- **XD1**: no rebuild on entry; I2 replaces it.
+
+---
+
+## 15. Open questions for the owner (numbered; each with a recommendation)
+
+1. **The multiplier ladder between your two points: x1.25 at 5, x1.5 at 10, x2 at 15, x3 at 20, holding for the rest
+   of the run?** *Recommend yes to both.* Each step is a legible moment, and a multiplier that cools when you walk away
+   is no trade.
+2. **The clock is 1.25 x the planning budget (29-39 minutes by band), re-derived from XT1's timings before it ships?**
+   *Recommend yes.* About a fifth of the clock is slack, and that slack is what optional legs spend.
+3. **Timeout is `kill` into the blackout ($600, checkpoint, inventory kept) plus the escrow forfeit?** *Recommend yes.*
+   It is the existing death, and the escrow gives greed a stake without breaking rule 5.
+4. **Logout forfeits the escrow and ends the run, without killing?** *Recommend yes.* A crash and a rage-quit look
+   alike, and with the escrow gone a logout saves only the $600.
+5. **Healing in a run: none provided; your own potions between fights, priced in clock; no bag items in battle?**
+   *Recommend yes.* The clock is the healing restriction the vision asks of gauntlets (`GAME_VISION.md:143-145`).
+6. **Solo first, co-op (up to 4 in a slot) after XD8?** *Recommend yes.* The model carries members from the start.
+7. **In co-op, per-player clocks and multipliers, with gates that wait for every live member?** *Recommend yes.* This
+   is your "per-player" for the multiplier, and the gates keep it co-op.
+8. **Riding allowed outside the parkour?** *Recommend yes.* The budget assumes foot, so a mount is earned slack. A
+   run-wide sweep would remove battle send-outs.
+9. **Lockout one hour of server uptime per dungeon per player, counted from entry?** *Recommend yes.* It is longer than
+   any clock, and with several dungeons there is always another.
+10. **Entry free for the overworld dungeons, lockout-limited; the Nether pair keep their crafted keys?** *Recommend
+    yes* (old Q6, *stands*).
+11. **A fall costs 15 seconds and a return to the last checkpoint?** *Recommend yes.* About 35 seconds a fall in all.
+12. **Before the Champion, the lake legendary is visible, asleep and sealed ("It does not stir for you yet"), with a
+    Surf-depth cache from band 2?** *Recommend yes.* It rewards noticing at every band and keeps D8.
+13. **The legendaries in section 8: Volcanion (Night Shift), Palkia, Suicune, Walking Wake and Tapu Fini; Yveltal and
+    Dialga as band-6 bosses?** *Recommend Volcanion now; decide the others when each dungeon is designed.*
+14. **Six dungeons as the target, building only the Night Shift until you have played it?** *Recommend yes.*
+15. **Entei: keep as built, run EXP-059 first, re-home it on the engine as dungeon 6 later, with the Tower Ash as its
+    rip?** *Recommend yes.*
+16. **Records for time left, never items?** *Recommend yes.* A time bonus muddies greed's trade.
+17. **Timed rift runs are the vision's "optional dungeon"; persistent puzzle dungeons stay a separate future kind (F2)?**
+    *Recommend yes.* Record it in the vision, or say the vision changes.
+18. **Authored dungeons; reconsider a sequencer at dungeon 3 if you want three or more variants per dungeon?**
+    *Recommend yes* (13.1).
+19. **A random rip scheduler only after two fixed dungeons are played?** *Recommend yes* (D5). It adds a scheduler, an
+    expiry and a candidate validator, about one narrow unit (2.6M) plus an audit.
+
+**Still open from other documents**, untouched by this design: `DUNGEON_PLACEMENT.md` Q12-Q15, and its band-4 paradox
+threats; `DROPS_PROGRESSION_SPLIT.md` Q2, Q4 and Q5 (old 8.11-8.14).
