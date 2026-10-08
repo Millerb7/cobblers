@@ -36,7 +36,7 @@ so an exchange is the bank buying the material and a counter selling the reward 
 (a data/markets.json stock line with exchange_for {item, count}). `check` also holds:
   crafts       a crafted item pays its inputs' bank total to total + CRAFT_MAX
   unreachable  nothing the world cannot supply is bought by our list (a base price on one is reported as dormant)
-  effort_model each tier's assumed gathering hour against the battle income of the leg it opens (half_wage, upper_wage)
+  effort_model each tier's assumed gathering hour against the battle income of the leg it opens (R5: parity, upper_wage)
   exchanges    every exchange_for line: material bought, price exact, off-path sited counter in exchanges.towns, kind
                declared, at or above its kind's floor (read from the shelves, never a constant), never bought back
 What the exchange checks do NOT cover: the rates (ASSUMED until timed), anything sold outside data/markets.json at
@@ -429,13 +429,18 @@ def tier_hours(doc):
 
 
 def effort_rows(doc, markets_doc):
-    """[(problem or None, report line)] for every effort_model tier: half_wage and upper_wage against the battle income
-    of the leg where the tier opens (data/markets.json income_basis.leg_by_badge, relayed model B)."""
+    """[(problem or None, report line)] for every effort_model tier against the battle income of the leg where the tier
+    opens (data/markets.json income_basis.leg_by_badge, relayed model B). docs/mechanics/ECONOMY_OVERHAUL.md section 7
+    R5: the leg's fight hour is its income / max_leg_hours; `parity` holds the typical gathering hour at or under the
+    fight hour, `upper_wage` the upper hour at or under effort_model.upper_factor x the fight hour (1.5 in R5)."""
     em = doc.get("effort_model")
     if not em:
         return []
     legs = {int(k): int(v) for k, v in ((markets_doc.get("income_basis") or {}).get("leg_by_badge") or {}).items()}
     H = em.get("max_leg_hours")
+    U = em.get("upper_factor")
+    if not isinstance(U, (int, float)) or isinstance(U, bool) or U < 1:
+        return [("effort_model upper_factor %r: must be a number at least 1 (R5: 1.5)" % (U,), "")]
     rows = []
     for name, (typ, up) in sorted(tier_hours(doc).items()):
         leg = (em["tiers"][name] or {}).get("opens_leg")
@@ -444,9 +449,11 @@ def effort_rows(doc, markets_doc):
                          "max_leg_hours %r is not positive" % (name, leg, H), ""))
             continue
         inc = legs[leg]
-        line = ("tier %s (opens leg %d, battle income $%d): typical hour $%d x %gh = $%d against half the leg $%d; "
-                "upper hour $%d x %gh = $%d against the leg" % (name, leg, inc, typ, H, typ * H, inc // 2, up, H, up * H))
-        broken = [r for r, bad in (("half_wage", typ * H > inc / 2), ("upper_wage", up * H > inc)) if bad]
+        fight = inc / H
+        line = ("tier %s (opens leg %d, battle income $%d, fight hour $%d over %gh): typical hour $%d against the "
+                "fight hour (parity); upper hour $%d against %g x the fight hour, $%d"
+                % (name, leg, inc, fight, H, typ, up, U, U * fight))
+        broken = [r for r, bad in (("parity", typ > fight), ("upper_wage", up > U * fight)) if bad]
         rows.append(("effort_model %s: %s" % (" and ".join(broken), line) if broken else None, line))
     return rows
 

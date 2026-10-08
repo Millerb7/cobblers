@@ -124,7 +124,7 @@
     "a crafted item in `crafts` pays its inputs' bank total to that total + CRAFT_MAX, and every input is bought or named by crafts.removed_inputs (valued at its buys_removed price)",
     "a smelted item and its raw ore are bought together, except an ingot afk_rule names and buys_removed records (the raw ore still sells)",
     "no `unreachable` item is in `buys` (one the BASE buys is reported as dormant, not failed: changing a base price is a separate decision)",
-    "effort_model: every tier holds half_wage and upper_wage against data/markets.json income_basis.leg_by_badge",
+    "effort_model: every tier holds parity and upper_wage (R5) against data/markets.json income_basis.leg_by_badge",
     "every data/markets.json stock line with exchange_for: its material is bought here, its price is exactly count x the material's price, it sits on a sited OFF-PATH counter in a town exchanges.where names (never a stall, never the critical path), its `kind` is one of exchanges.kinds and it clears that kind's floor, and the bank never buys the reward back"
   ],
   "in_place_evidence": "an apricorn's and a berry's item id is also its block's, and data/spawn_blocks.json names those blocks (Pineco, Morpeko and others need them near). Selling the fruit does not take the block out of the world: Cobblemon-fabric-1.8.0+1.21.1.jar, ApricornBlock.harvest drops the fruit (method_9497) and sets AGE to 0 on the same block (method_8652), so the fruit regrows where it hung; BerryBlock.harvestBerry pops BerryBlockEntity.harvest's berries and sets no block (read with javap 2026-10-05). Breaking the block by hand still removes it; that is true with or without a price",
@@ -239,10 +239,19 @@
     "derivation": "a tier's gathering hour is the sum over its items of rate_per_hour x price (rate_per_hour_upper where an item names one, for the upper hour). A unit price is the tier's target hour shared over what one hour of that tool in that place yields, rounded to a whole dollar; a smelted item pays raw to raw + 2 and a crafted one its inputs to inputs + CRAFT_MAX, so no step is worth skipping or worth doing for its own sake",
     "max_leg_hours": 4,
     "max_leg_hours_why": "ASSUMED: a badge leg is played in at most four hours. If EXP timing finds legs longer than this, battling pays less per hour than assumed and the gathering hours below come closer to it: re-price then",
+    "upper_factor": 1.5,
+    "rules_decision": "docs/mechanics/ECONOMY_OVERHAUL.md section 7 R5 (2026-10-10): 'half_wage becomes parity ... upper_wage becomes the upper hour <= 1.5 x the fight hour'. The owner now wants Minecraft to pay early, so parity, not half. The fight hour is the leg's battle income / max_leg_hours",
     "rules": [
-      "half_wage: a tier's typical hour x max_leg_hours is at most half the battle income of the leg where the tier opens. Gathering at the typical rate pays at most half of fighting: worth doing, never the better plan",
-      "upper_wage: a tier's upper hour (bed, TNT, Fortune: the efficient method) x max_leg_hours is at most the whole battle income of that leg. The best grinder earns at most what a fighter earns: an alternative path, not a shortcut"
+      "parity: a tier's typical hour is at most the fight hour of the leg where the tier opens (that leg's battle income / max_leg_hours). Gathering at the typical rate pays at most what fighting pays: an equal path, never the better plan",
+      "upper_wage: a tier's upper hour (bed, TNT, Fortune: the efficient method) is at most upper_factor (1.5) x that fight hour. The best grinder earns at most half again what a fighter earns"
     ],
+    "superseded_rules": {
+      "replaced_by": "R5 parity, 2026-10-10",
+      "rules": [
+        "half_wage: a tier's typical hour x max_leg_hours is at most half the battle income of the leg where the tier opens. Gathering at the typical rate pays at most half of fighting: worth doing, never the better plan",
+        "upper_wage: a tier's upper hour (bed, TNT, Fortune: the efficient method) x max_leg_hours is at most the whole battle income of that leg. The best grinder earns at most what a fighter earns: an alternative path, not a shortcut"
+      ]
+    },
     "tiers": {
       "early": {"from_tiers": ["early"], "opens_leg": 1, "why": "a stone pickaxe in the first caves, on the way to Brock"},
       "deep": {"from_tiers": ["early", "deep"], "opens_leg": 3, "why": "an iron pickaxe at diamond depth; the mining town's own flag is gym3_cleared (PROGRESSION_LADDER 1.2), the leg a miner's town opens"},
