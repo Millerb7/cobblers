@@ -19,15 +19,18 @@ Every piece is one already in use (tools/ferries.py is the pattern, read for it)
                    5. count the crate's items (`clear @s <item> 0`, ASSUMED to count without removing: EXP-061)
                       and refuse when short, nothing taken
                    6. the click is spent (the cooldown starts); read the balance (`cobbledollars query @s`)
-                   7. TAKE the crate (`clear @s <item> <count>`) and refuse unless exactly <count> went
-                   8. PAY through `$cobbledollars give @s $(amount)` and re-read the balance: unless it rose by exactly
-                      the price, record the price as owed (cob_pb_owed) and say so; else count the crate as sold
+                   7. TAKE the crate (`clear @s <item> <count>`); unless exactly <count> went, short_take counts the
+                      crate, records the taken share of the price as owed (cob_pb_owed) and stops, nothing paid
+                   8. COUNT the crate as sold (cob_pb_sold) before anything can return: the cap fails closed
+                   9. PAY through `$cobbledollars give @s $(amount)` and re-read the balance: unless it rose by exactly
+                      the price, record the price as owed (cob_pb_owed) and say so
 The checks (offline, fail closed; the independent audit is test-author's tools/produce_buyer_audit.py):
   static   the schedule covers badges 0..8 once each, never rises, ends at 0, and sums to campaign_cap; the badge flags
            are flags tools/progression_pack.py plans; every crate has a positive count and valid ids; no crate item
            is still bought by the bank (data/bank.json afk_rule moved them here); no authored seller sells a crate item
            at or under the crate's top price / count per unit (tools/bank.py sell_points)
-  output   every sale counts before it takes, takes before it pays, pays once and verifies after it, charges nothing
+  output   every sale counts before it takes, takes before it pays, counts the crate against the allowance before any
+           return after the take, pays once and verifies after it, charges nothing
            (`cobbledollars remove` never appears) and passes tools/function_limits.py
   seat     each site's spot recomputed from its anchor's plan (tools/apricorn_farm.py plan() and spot(), the canonical
            heightmap, never a world) equals the site's expected_at, off the farm's paths and 3.5 blocks from its other
@@ -175,10 +178,14 @@ def sell_lines(doc, crate):
         "scoreboard players operation @s %s = #now %s" % (S["cooldown"], T),
         "scoreboard players add @s %s %d" % (S["cooldown"], int(rt["cooldown_ticks"])),
         "execute store result score #before %s run cobbledollars query @s" % T,
-        "# 7. TAKE the crate first: exactly %d, or nothing is paid" % n,
+        "scoreboard players set #n %s %d" % (T, n),
+        "# 7. TAKE the crate first: exactly %d, or nothing is paid (a short take counts the crate and records the "
+        "taken share as owed: %s)" % (n, fn_id("short_take")),
         "execute store result score #took %s run clear @s %s %d" % (T, item, n),
-        "execute unless score #took %s matches %d run return run tellraw @s %s" % (T, n, text(m["take_failed"], "red")),
-        "# 8. PAY the schedule's price, then the balance must have risen by exactly that",
+        "execute unless score #took %s matches %d run return run function %s" % (T, n, fn_id("short_take")),
+        "# 8. COUNT the crate against the leg's allowance before anything below can return: the cap fails closed",
+        "scoreboard players add @s %s 1" % S["sold"],
+        "# 9. PAY the schedule's price, then the balance must have risen by exactly that",
         "execute store result storage %s pay.amount int 1 run scoreboard players get #price %s" % (store, T),
         "function %s with storage %s pay" % (fn_id("pay"), store),
         "execute store result score #after %s run cobbledollars query @s" % T,
@@ -187,10 +194,29 @@ def sell_lines(doc, crate):
         "execute unless score #after %s = #want %s run scoreboard players operation @s %s += #price %s"
         % (T, T, S["owed"], T),
         "execute unless score #after %s = #want %s run return run tellraw @s %s" % (T, T, text(m["pay_failed"], "red")),
-        "scoreboard players add @s %s 1" % S["sold"],
         "scoreboard players operation #left %s = #cap %s" % (T, T),
         "scoreboard players operation #left %s -= @s %s" % (T, S["sold"]),
         "tellraw @s %s" % paid]
+
+
+def short_take_lines(doc):
+    """cobblers:produce_buyer/short_take, as the player, when the take removed fewer than the crate's count (#took of
+    #n). Unreachable after the dry-run count gate, kept fail closed: the crate counts against the allowance and the
+    taken share of the price, #price x #took / #n rounded down, is recorded as owed. Nothing is paid here."""
+    S, m = doc["runtime"]["scores"], doc["messages"]
+    T = S["temp"]
+    return ["# Generated by tools/produce_buyer.py from data/produce_buyer.json: a short take (as the player)",
+            "# the crate counts against the leg's allowance whatever happened: the cap fails closed",
+            "scoreboard players add @s %s 1" % S["sold"],
+            "# the taken share of the price is owed: #price x #took / #n",
+            "scoreboard players operation #part %s = #price %s" % (T, T),
+            "scoreboard players operation #part %s *= #took %s" % (T, T),
+            "scoreboard players operation #part %s /= #n %s" % (T, T),
+            "scoreboard players operation @s %s += #part %s" % (S["owed"], T),
+            "tellraw @s %s" % text(m["take_failed"], "red"),
+            "# an explicit return, so the caller's `return run function` stops the sale whatever the version does "
+            "with a function that returns nothing",
+            "return 1"]
 
 
 def conversation(doc, site):
@@ -226,6 +252,7 @@ def build(doc):
     files[fn_path("leg")] = leg_lines(doc)
     files[fn_path("pay")] = ["# CobbleDollars' own command, the macro tools/arena_runtime.py and tools/blackout_pack.py use",
                              "$cobbledollars give @s $(amount)"]
+    files[fn_path("short_take")] = short_take_lines(doc)
     for c in doc["crates"]:
         files[fn_path("sell/%s" % c["id"])] = sell_lines(doc, c)
         if not c.get("tag") and len(c["items"]) > 1:
@@ -402,14 +429,29 @@ def output_problems(doc, files):
         after = idx(lambda ln: "#after" in ln and "cobbledollars query" in ln)
         verify = idx(lambda ln: ln.startswith("execute unless score #after") and "run return" in ln)
         sold = idx(lambda ln: ln.startswith("scoreboard players add @s %s 1" % doc["runtime"]["scores"]["sold"]))
-        order = [count, take, took_ok, pay, after, verify, sold]
+        order = [count, take, took_ok, sold, pay, after, verify]
         if None in order or order != sorted(order):
-            out.append("crate %s: the sale is not count < take < take-check < pay < re-read < verify < count-sold "
+            out.append("crate %s: the sale is not count < take < take-check < count-sold < pay < re-read < verify "
                        "(%s)" % (c["id"], order))
+        # fail closed: after the take, nothing returns before the crate is counted against the allowance, and the
+        # short-take return runs the function that counts it and records the owed share
+        if None not in (take, sold):
+            early = [ln for ln in cmds[take + 1:sold] if "return" in ln]
+            if early != [cmds[took_ok]] or not cmds[took_ok].endswith("run return run function %s" % fn_id("short_take")):
+                out.append("crate %s: a return between the take and the count other than the short-take function: "
+                           "the cap could fail open (%s)" % (c["id"], early))
         if sum(1 for ln in cmds if ln == pay_call) != 1:
             out.append("crate %s: pays %d times" % (c["id"], sum(1 for ln in cmds if ln == pay_call)))
         if any("cobbledollars remove" in ln or "cobbledollars give" in ln for ln in cmds):
             out.append("crate %s: a CobbleDollars change outside the pay macro" % c["id"])
+    st = [ln for ln in (files.get(fn_path("short_take")) or []) if not ln.startswith("#")]
+    sold_obj, owed_obj = doc["runtime"]["scores"]["sold"], doc["runtime"]["scores"]["owed"]
+    if not st or st[0] != "scoreboard players add @s %s 1" % sold_obj \
+            or not any(ln.startswith("scoreboard players operation @s %s += " % owed_obj) for ln in st) \
+            or any("cobbledollars" in ln for ln in st) \
+            or [ln for ln in st if "return" in ln] != ["return 1"] or st[-1] != "return 1":
+        out.append("short_take: must first count the crate (%s), record the owed share (%s), move no money and end "
+                   "with `return 1` (its only return)" % (sold_obj, owed_obj))
     pay = files.get(fn_path("pay")) or []
     if [ln for ln in pay if not ln.startswith("#")] != ["$cobbledollars give @s $(amount)"]:
         out.append("the pay function is not exactly the proven macro `$cobbledollars give @s $(amount)`")
