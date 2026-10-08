@@ -33,7 +33,8 @@ generation, marked "with uncommitted changes" when data/ or tools/ differ from i
 first run on a clean tree (commit the tools, then run this command, then commit the pages).
 
 Who imports this: tools/player_guide_battles.py (battles.html), tools/player_guide_map.py (region-map.html),
-tools/player_guide_starters.py (starters.html) and tools/player_guide_items.py (items.html). tools/challenge_guide.py
+tools/player_guide_starters.py (starters.html), tools/player_guide_items.py (items.html) and
+tools/player_guide_drops.py (drops.html, order 35). tools/challenge_guide.py
 does not: its page stays in build/maps/ and off the public site (see its docstring).
 
 A NEW GUIDE (a dungeon guide, once dungeons exist) is one generator, tools/player_guide_<name>.py, shaped like the
