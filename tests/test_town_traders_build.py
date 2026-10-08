@@ -366,34 +366,47 @@ def test_a_mutated_summon_is_caught_at_every_stall(monkeypatch):
 
 
 def test_a_dialogue_keeper_removal_dropped_or_moved_after_the_summons_is_caught(monkeypatch):
-    """2026-10-06 ("need the steve traders gone"): each town's _place runs _clear, which kills every cobblemon:npc on
-    a merchant seat, before any summon. The generator mutated three ways, data untouched."""
+    """2026-10-06 ("need the steve traders gone"): each seller's seat function kills every cobblemon:npc on its seat
+    before its summon; since N155 (2026-10-08) it also kills the merchant's older copies first, and the town's _place
+    runs it only once the seat is shown. The generator mutated, data untouched."""
     real = M.merchant_functions
     doc = M.load()
+    seat_fn = lambda k: "/stalls/merchants/seat/" in k
 
-    def no_call(doc, plazas):         # _place stops calling _clear
-        return {k: [x for x in v if not x.endswith("_clear")] for k, v in real(doc, plazas).items()}
+    def no_call(doc, plazas):         # _place stops running the seat functions
+        return {k: [x for x in v if "/seat/" not in x] for k, v in real(doc, plazas).items()}
     monkeypatch.setattr(M, "merchant_functions", no_call)
     files, _ = M.build(doc, {})
-    assert _merchant_named(doc, files, "does not run _clear before its summons") == _every_stall(doc)
+    assert _merchant_named(doc, files, "does not run seat/") == _every_stall(doc)
 
-    def no_kills(doc, plazas):        # _clear kills nothing
-        return {k: [x for x in v if not (k.endswith("_clear.mcfunction") and x.startswith("kill "))]
-                for k, v in real(doc, plazas).items()}
+    def no_kills(doc, plazas):        # the seat functions kill nothing
+        return {k: [x for x in v if not (seat_fn(k) and x.startswith("kill "))] for k, v in real(doc, plazas).items()}
     monkeypatch.setattr(M, "merchant_functions", no_kills)
     files, _ = M.build(doc, {})
     assert _merchant_named(doc, files, "does not remove the dialogue keeper at its seat") == _every_stall(doc)
+    assert _merchant_named(doc, files, "does not kill the merchant's older copies") == _every_stall(doc)
 
     def late(doc, plazas):            # the kills move into _done, after the summons (the 2026-10-04 shape)
         files = real(doc, plazas)
-        for k in [k for k in files if k.endswith("_clear.mcfunction")]:
-            done = k.replace("_clear.mcfunction", "_done.mcfunction")
-            files[done] = files[done] + [x for x in files[k] if x.startswith("kill ")]
+        for k in [k for k in files if seat_fn(k)]:
+            town = next(t for t in files if t.endswith("_done.mcfunction") and any(
+                k.rsplit("/", 1)[1][:-len(".mcfunction")] in x for x in files[t]))
+            files[town] = files[town] + [x for x in files[k] if x.startswith("kill ")]
             files[k] = [x for x in files[k] if not x.startswith("kill ")]
         return files
     monkeypatch.setattr(M, "merchant_functions", late)
     files, _ = M.build(doc, {})
     assert _merchant_named(doc, files, "its town's _done kills a Cobblemon NPC") == _every_stall(doc)
+
+    def eager(doc, plazas):           # the 2026-10-08 shape: _place staffs every seat at once, without looking
+        files = real(doc, plazas)
+        for k in [k for k in files if k.endswith("_place.mcfunction")]:
+            files[k] = [re.sub(r"^execute if score (#seat_\S+) (\S+) matches 1 run ", "", x) for x in files[k]]
+        return files
+    import re
+    monkeypatch.setattr(M, "merchant_functions", eager)
+    files, _ = M.build(doc, {})
+    assert _merchant_named(doc, files, "does not run seat/") == _every_stall(doc)
 
 
 def test_a_stall_dialogue_or_purchase_left_beside_a_merchant_is_caught():
@@ -533,7 +546,20 @@ def test_r17m_places_every_counter_keeper_and_every_stall_merchant_then_reads_th
     i = src.index('out.append(("R17M", ')
     block = src[i:src.index("out.append(", i + 10)]
     assert "markets.npc_placements(markets.load())" in block
-    assert '("fn", markets.MERCHANTS_FN), ("wait", 8), ("check", "stall_merchants")' in block
+    assert '("fn", markets.MERCHANTS_FN), ("wait", markets.MERCHANT_STEP_SECONDS), ("check", "stall_merchants")' in block
+    # the wait covers the function's longest run, read from the generated text (N155): first look, every look after
+    # it, the blind staffing, then the de-duplication
+    import re
+    fns = {k.rsplit("/", 1)[1][:-len(".mcfunction")]: v for k, v in M.build(M.load(), {})[0].items()
+           if "/stalls/merchants/" in k and "/seat/" not in k and k.endswith(".mcfunction")}
+    for town in [t for t in fns if t + "_place" in fns]:
+        first = int(re.search(r"_place (\d+)t", " ".join(fns[town])).group(1))
+        looks = int(re.search(r"#town_\S+ \S+ (\d+)$", next(x for x in fns[town] if x.startswith(
+            "scoreboard players set #town_"))).group(1))
+        again = int(re.search(r"_place (\d+)t replace$", next(x for x in fns[town + "_place"] if "_place " in x and
+                                                               "schedule" in x)).group(1))
+        dedupe = int(re.search(r"_done (\d+)t", " ".join(fns[town + "_place"])).group(1))
+        assert first + (looks - 1) * again + dedupe <= M.MERCHANT_STEP_SECONDS * 20, town
     assert 'kind == "check" and v == "stall_merchants"' in src and "markets.verify(rc)" in src
     doc = M.load()
     files, _ = M.build(doc)

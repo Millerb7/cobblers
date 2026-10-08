@@ -11,11 +11,13 @@ built from its lines (data/markets.json `stall_merchant`): one category, one off
 Item count 1. The merchant's own screen takes the money, so no seller has a dialogue, NPC class or purchase function.
 
   the keeper     a merchant at its seat (the squares' contract keeper_at, else the record's at/yaw), named, NoAI,
-                 turned to the seat's yaw. Its town's place step first runs <town>_clear, which kills every
-                 cobblemon:npc within remove_radius of each merchant seat (the dialogue keepers R17M placed with
-                 spawnnpcat until 2026-10-04 at the stalls and 2026-10-06 at the counters: they carry no tag, so they
-                 are known by their seat), then summons; 100 ticks later <town>_done kills older copies of each
-                 merchant, where the new one stands. R17M reads every merchant back from the world (verify)
+                 turned to the seat's yaw. Its town's place step looks at each seat every 20 ticks and staffs it
+                 (seat/<id>) only once the seat's chunk shows its saved entities are in (N155: the merchant or the old
+                 keeper seen on it), or blind after 300 ticks: seat/<id> kills every cobblemon:npc within
+                 remove_radius of the seat (the dialogue keepers R17M placed with spawnnpcat until 2026-10-04 at the
+                 stalls and 2026-10-06 at the counters: they carry no tag, so they are known by their seat) and every
+                 copy of the merchant, then summons one; 100 ticks after the last seat <town>_done kills older copies
+                 of each merchant, where the new one stands. R17M reads every merchant back from the world (verify)
   the gates      none. The screen shows one list to every player (MARKET_GATING.md section 1), so a line cannot wait
                  for a badge: every counter line that was gated keeps its old gate in `gate_dropped` {gate, decision,
                  why}, and a line still carrying a gate is refused. A counter's badge still places it on the curve
@@ -71,8 +73,9 @@ The audit is offline and fails closed (the implementer's audit; its tests belong
              DOOR side (the Mart anchor's `facing`), inside its town's footprint, off every street's paved width, and
              facing its plaza's centre (R17M: "beside its town's Mart and turned to face its plaza")
   the output one merchant summon per sited counter and stall, holding exactly its lines (merchant_problems); no
-             dialogue, NPC class, purchase function or charge macro emitted for any seller; each town's place step
-             runs its _clear (the old dialogue keepers, by seat) before its summons; every function passes
+             dialogue, NPC class, purchase function or charge macro emitted for any seller; each summon sits in its
+             seat function after the kills of the old dialogue keeper (by seat) and the merchant's older copies, and
+             the town's place step runs it only once the seat is shown (N155); every function passes
              tools/function_limits.py
 
   python tools/markets.py build    [--out DIR]                     write the pack (no heightmap needed)
@@ -245,9 +248,14 @@ def stall_placements(doc=None, plazas=None):
 # ---------------------------------------------------------------------------------------------------- the merchants
 MERCHANTS_DIR = "stalls/merchants"
 MERCHANTS_FN = "%s:%s/all" % (NS, MERCHANTS_DIR)
-MERCHANT_LOAD_WAIT = 40     # ticks from forceload to summon (tools/traders.py LOAD_WAIT, measured 2026-09-21)
-MERCHANT_DEDUPE_WAIT = 100  # ticks from summon to the removals (tools/traders.py DEDUPE_WAIT)
+MERCHANT_LOAD_WAIT = 40     # ticks from forceload to the first look at the seats (tools/traders.py LOAD_WAIT)
+MERCHANT_POLL_EVERY = 20    # ticks between looks while a seat shows nothing
+MERCHANT_POLLS = 14         # looks before a seat that still shows nothing is staffed blind: 40 + 13 x 20 = 300 ticks
+MERCHANT_DEDUPE_WAIT = 100  # ticks from the last seat staffed to the de-duplication and release (traders.py DEDUPE_WAIT)
+MERCHANT_STEP_TICKS = MERCHANT_LOAD_WAIT + (MERCHANT_POLLS - 1) * MERCHANT_POLL_EVERY + MERCHANT_DEDUPE_WAIT
+MERCHANT_STEP_SECONDS = -(-MERCHANT_STEP_TICKS // 20) + 1   # tools/reapply.py R17M waits this long before verify
 MERCHANT_MARGIN = 8         # force-loaded round a town's stalls: every old keeper stood within remove_radius of a seat
+MERCHANT_WAIT_OBJ = "cobblers_stall_wait"   # #town_<town>: looks left; #seat_<id>: 0 waiting, 1 shown, 2 staffed
 
 
 def merchant_cfg(doc):
@@ -297,19 +305,37 @@ def merchant_box(ms):
     return min(xs) - MERCHANT_MARGIN, min(zs) - MERCHANT_MARGIN, max(xs) + MERCHANT_MARGIN, max(zs) + MERCHANT_MARGIN
 
 
-def merchant_functions(doc, plazas):
-    """{pack path: lines}: per town, tools/traders.py's three steps (force-load and wait; clear the dialogue keepers
-    the merchants replace, then summon with a "new" tag; 100 ticks later, where the new merchant stands, kill the older
-    copies of it, drop the tag, release), and `all`, which starts every town's at once.
+def seat_shown(cfg, m):
+    """The selectors that prove a seat's chunk has its saved entities in: the merchant on its seat, or a Cobblemon NPC
+    within remove_radius of it (the dialogue keeper it replaces). A chunk's saved entities arrive together, so either
+    one seen means every other copy saved in that chunk is in too."""
+    x, y, z = m["at"]
+    return ["@e[type=%s,tag=%s,x=%d.5,y=%d,z=%d.5,distance=..0.6]" % (cfg["kind"], m["tag"], x, y, z),
+            "@e[type=cobblemon:npc,x=%d.5,y=%d,z=%d.5,distance=..%s]" % (x, y, z, float(cfg["remove_radius"]))]
 
-    <town>_clear kills every cobblemon:npc within remove_radius of each of the town's merchant seats, unguarded and
-    BEFORE the summons (2026-10-06: "need the steve traders gone"): the dialogue keepers R17M placed with spawnnpcat
-    carry no tag and their classes are no longer shipped, so a seat is the only handle on them, and a merchant that
-    failed to summon must still not leave a Steve behind. Every other placed NPC stands NPC_CLEAR+ from a seat (the
-    site rules), so the radius reaches no one else. A cobble_merchant is not a cobblemon:npc, so no merchant is hit."""
+
+def merchant_functions(doc, plazas):
+    """{pack path: lines}: per town, force-load and look; staff each seat once its chunk's saved entities are seen to be
+    in; 100 ticks after the last, where each new merchant stands, kill older copies of it, drop the tag, release; and
+    `all`, which starts every town's at once.
+
+    Why it looks before it acts (N155, staging 2026-10-08): a force-loaded chunk accepts a summon at once but its saved
+    entities arrive later, and after a fixed 40 ticks some still had not, so the kill missed the old merchant, the new
+    one was summoned beside it, and the stall was doubled. Nothing a function can test says "this chunk's entities are
+    in", but an entity seen in it does, so <town>_place (every 20 ticks, from 40) marks a seat shown when its merchant
+    or the dialogue keeper it replaces is seen on it (seat_shown), and only a shown seat is staffed: seat/<id> kills
+    every Cobblemon NPC within remove_radius of the seat and every copy of the merchant, then summons one. A seat with
+    nothing on it (its first run, or a merchant lost) is staffed blind after MERCHANT_POLLS looks, 300 ticks, where
+    only a chunk slower than that could still hide a copy; the _done de-duplication stays behind it for that case.
+
+    The NPC kill is unguarded by type tag (2026-10-06: "need the steve traders gone"): the dialogue keepers R17M placed
+    with spawnnpcat carry no tag and their classes are no longer shipped, so a seat is the only handle on them. Every
+    other placed NPC stands NPC_CLEAR+ from a seat (the site rules), so the radius reaches no one else. A cobble_merchant
+    is not a cobblemon:npc, so no merchant is hit by it."""
     import traders as TR
     cfg = merchant_cfg(doc)
     new, radius = cfg["tag"] + "_new", float(cfg["remove_radius"])
+    obj = MERCHANT_WAIT_OBJ
     rel = lambda name: "data/%s/function/%s/%s.mcfunction" % (NS, MERCHANTS_DIR, name)
     ref = lambda name: "%s:%s/%s" % (NS, MERCHANTS_DIR, name)
     by_town = {}
@@ -318,33 +344,55 @@ def merchant_functions(doc, plazas):
     files = {rel("all"): ["# Generated by tools/markets.py from data/markets.json: every town's stall merchants (R17M)"]
              + ["function %s" % ref(t) for t in sorted(by_town)]}
     for town, ms in sorted(by_town.items()):
+        ms = sorted(ms, key=lambda q: q["stall"])
         box = "%d %d %d %d" % merchant_box(ms)
-        files[rel(town)] = ["# Generated by tools/markets.py: the stall merchants of %s" % town,
-                            "# force-load the stalls and give their saved entities time to load before anything is summoned",
-                            "forceload add %s" % box,
-                            "schedule function %s %dt replace" % (ref(town + "_place"), MERCHANT_LOAD_WAIT)]
-        place = ["# Generated by tools/markets.py; called by %s" % ref(town), "# chunks-loaded-by: %s" % ref(town),
-                 "# first the Cobblemon dialogue keepers the merchants replace, then the merchants",
-                 "function %s" % ref(town + "_clear")]
-        clear = ["# Generated by tools/markets.py; called by %s before its summons: every cobblemon:npc on a merchant "
-                 "seat of %s (the dialogue keepers R17M placed with spawnnpcat: no tag, known by the seat)"
-                 % (ref(town + "_place"), town), "# chunks-loaded-by: %s" % ref(town)]
-        done = ["# Generated by tools/markets.py; %d ticks after the summons: one merchant per seat, then release"
-                % MERCHANT_DEDUPE_WAIT]
-        for m in sorted(ms, key=lambda q: q["stall"]):
+        clock, still = "#town_%s" % town, "#open_%s" % town
+        files[rel(town)] = (["# Generated by tools/markets.py: the stall merchants of %s" % town,
+                             "# force-load the stalls; nothing is killed or summoned until a seat shows its chunk's "
+                             "saved entities are in (%s_place)" % town,
+                             "forceload add %s" % box,
+                             "scoreboard objectives add %s dummy" % obj,
+                             "scoreboard players set %s %s %d" % (clock, obj, MERCHANT_POLLS)]
+                            + ["scoreboard players set #seat_%s %s 0" % (m["stall"], obj) for m in ms]
+                            + ["schedule function %s %dt replace" % (ref(town + "_place"), MERCHANT_LOAD_WAIT)])
+        place = ["# Generated by tools/markets.py; scheduled by %s, then by itself every %d ticks until every seat is "
+                 "staffed: a seat is staffed once its chunk's entities are seen, or blind after %d looks"
+                 % (ref(town), MERCHANT_POLL_EVERY, MERCHANT_POLLS), "# chunks-loaded-by: %s" % ref(town),
+                 "scoreboard players remove %s %s 1" % (clock, obj)]
+        done = ["# Generated by tools/markets.py; %d ticks after the last seat is staffed: one merchant per seat, then "
+                "release" % MERCHANT_DEDUPE_WAIT]
+        for m in ms:
             x, y, z = m["at"]
-            place += ["# %s %s: %s, yaw %s" % (m["kind"], m["stall"], m["name"], m["yaw"]),
-                      TR.summon_line(cfg["kind"], x, y, z, m["data"])]
-            clear += ["# %s %s" % (m["kind"], m["stall"]),
-                      "kill @e[type=cobblemon:npc,x=%d.5,y=%d,z=%d.5,distance=..%s]" % (x, y, z, radius)]
+            seat = "#seat_%s" % m["stall"]
+            waiting = "execute if score %s %s matches 0 " % (seat, obj)
+            place += ["# %s %s" % (m["kind"], m["stall"])]
+            place += [waiting + "if entity %s run scoreboard players set %s %s 1" % (sel, seat, obj)
+                      for sel in seat_shown(cfg, m)]
+            place += [waiting + "if score %s %s matches ..0 run scoreboard players set %s %s 1" % (clock, obj, seat, obj),
+                      "execute if score %s %s matches 1 run function %s" % (seat, obj, ref("seat/" + m["stall"]))]
+            files[rel("seat/" + m["stall"])] = [
+                "# Generated by tools/markets.py; run by %s once this seat's chunk shows its entities are in: the "
+                "dialogue keeper and every copy of the merchant, then one merchant" % ref(town + "_place"),
+                "# chunks-loaded-by: %s" % ref(town),
+                "# %s %s: %s, yaw %s" % (m["kind"], m["stall"], m["name"], m["yaw"]),
+                "kill @e[type=cobblemon:npc,x=%d.5,y=%d,z=%d.5,distance=..%s]" % (x, y, z, radius),
+                "kill @e[type=%s,tag=%s]" % (cfg["kind"], m["tag"]),
+                TR.summon_line(cfg["kind"], x, y, z, m["data"]),
+                "scoreboard players set %s %s 2" % (seat, obj)]
             here = "execute if entity @e[tag=%s,tag=%s] run " % (m["tag"], new)
             done += ["# %s" % m["stall"],
                      here + "kill @e[tag=%s,tag=!%s]" % (m["tag"], new),
                      "tag @e[tag=%s,tag=%s] remove %s" % (m["tag"], new, new)]
-        place.append("schedule function %s %dt replace" % (ref(town + "_done"), MERCHANT_DEDUPE_WAIT))
+        place += ["# look again while any seat waits; when none does, de-duplicate and release",
+                  "scoreboard players set %s %s 0" % (still, obj)]
+        place += ["execute if score #seat_%s %s matches 0 run scoreboard players add %s %s 1"
+                  % (m["stall"], obj, still, obj) for m in ms]
+        place += ["execute if score %s %s matches 1.. run schedule function %s %dt replace"
+                  % (still, obj, ref(town + "_place"), MERCHANT_POLL_EVERY),
+                  "execute if score %s %s matches 0 run schedule function %s %dt replace"
+                  % (still, obj, ref(town + "_done"), MERCHANT_DEDUPE_WAIT)]
         done.append("forceload remove %s" % box)
         files[rel(town + "_place")] = place
-        files[rel(town + "_clear")] = clear
         files[rel(town + "_done")] = done
     return files
 
@@ -1459,9 +1507,10 @@ def merchant_problems(doc, files, plazas=None):
     """The merchants as emitted (every sited counter's and stall's), read back from the generated text and held to the
     data: one summon per seller, of the merchant entity, with its keeper's name, the four flags and the profession; a
     single category named by its `category`; exactly its stock lines in order, each Item count 1 at a price that
-    times the line's count is the line's price; the dialogue keeper it replaces removed by its seat in _clear, which
-    _place runs before its summons; no dialogue, NPC class or purchase function left for a seller (nothing charges
-    twice). With `plazas`, also each summon's block and rotation against the seat."""
+    times the line's count is the line's price; its summon in seat/<id> after the kills of the dialogue keeper (by
+    seat) and of the merchant's older copies, run by _place only once the seat is shown (N155); no dialogue, NPC class
+    or purchase function left for a seller (nothing charges twice). With `plazas`, also each summon's block and
+    rotation against the seat."""
     out = []
     cfg = merchant_cfg(doc)
     kind, radius = cfg["kind"], float(cfg["remove_radius"])
@@ -1518,22 +1567,51 @@ def merchant_problems(doc, files, plazas=None):
         if town_fn not in all_fn:
             out.append("%s: %s/all does not start %s" % (w, MERCHANTS_DIR, s["town"]))
         x, y, z = (int(float(v)) for v in parts[2:5])
-        # the dialogue keeper it replaces: killed by its seat in <town>_clear, which <town>_place runs before any
-        # summon (2026-10-06); _done kills only older copies of the merchant, where the new one stands
+        # N155 (2026-10-08): the summon lives in seat/<id>, which kills the dialogue keeper by its seat (2026-10-06)
+        # and every copy of the merchant BEFORE it summons, and which <town>_place runs only for a seat marked shown:
+        # its merchant or its dialogue keeper seen on the seat (the chunk's saved entities are in), or the looks spent
+        seat_fn = mdir + "seat/%s.mcfunction" % s["id"]
+        seat = mfiles.get(seat_fn) or []
         place = mfiles.get(mdir + "%s_place.mcfunction" % s["town"]) or []
-        clear = mfiles.get(mdir + "%s_clear.mcfunction" % s["town"]) or []
         done = mfiles.get(mdir + "%s_done.mcfunction" % s["town"]) or []
-        npc_kill = "kill @e[type=cobblemon:npc,x=%d.5,y=%d,z=%d.5,distance=..%s]" % (x, y, z, radius)
-        if npc_kill not in clear:
-            out.append("%s: its town's _clear does not remove the dialogue keeper at its seat" % w)
-        call = "function %s:%s/%s_clear" % (NS, MERCHANTS_DIR, s["town"])
-        first = [i for i, q in enumerate(place) if q.startswith("summon ")]
-        if call not in place or (first and place.index(call) > first[0]):
-            out.append("%s: its town's _place does not run _clear before its summons" % w)
+        if line not in seat:
+            out.append("%s: its summon is not in seat/%s (the seat's look-then-staff function)" % (w, s["id"]))
+        else:
+            at = seat.index(line)
+            npc_kill = "kill @e[type=cobblemon:npc,x=%d.5,y=%d,z=%d.5,distance=..%s]" % (x, y, z, radius)
+            copies = "kill @e[type=%s,tag=%s_%s]" % (kind, cfg["tag"], s["id"])
+            if npc_kill not in seat[:at]:
+                out.append("%s: its seat function does not remove the dialogue keeper at its seat before the summon" % w)
+            if copies not in seat[:at]:
+                out.append("%s: its seat function does not kill the merchant's older copies before the summon" % w)
+        flag, obj = "#seat_%s" % s["id"], MERCHANT_WAIT_OBJ
+        call = "execute if score %s %s matches 1 run function %s:%s/seat/%s" % (flag, obj, NS, MERCHANTS_DIR, s["id"])
+        if call not in place:
+            out.append("%s: its town's _place does not run seat/%s only once the seat is shown" % (w, s["id"]))
+        else:
+            ci = place.index(call)
+            shown = ["execute if score %s %s matches 0 if entity %s run scoreboard players set %s %s 1"
+                     % (flag, obj, sel, flag, obj) for sel in seat_shown(cfg, {"at": (x, y, z), "tag": "%s_%s" % (
+                         cfg["tag"], s["id"])})]
+            if not all(q in place[:ci] for q in shown):
+                out.append("%s: its town's _place does not look for the merchant or the dialogue keeper on its seat "
+                           "before staffing it (N155)" % w)
+            blind = "execute if score %s %s matches 0 if score #town_%s %s matches ..0 run scoreboard players set %s %s 1" % (
+                flag, obj, s["town"], obj, flag, obj)
+            if blind not in place[:ci]:
+                out.append("%s: its town's _place never staffs the seat blind when the looks run out (an empty seat "
+                           "would wait, and the look reschedule itself, for ever)" % w)
+            if any(q.endswith("run scoreboard players set %s %s 1" % (flag, obj)) and q not in shown and q != blind
+                   for q in place):
+                out.append("%s: its town's _place marks the seat shown on something other than its entities" % w)
+        if any(q.startswith(("kill ", "summon ")) for q in place) or any(
+                re.search(r"\brun (kill|summon) ", q) for q in place):
+            out.append("%s: its town's _place kills or summons itself (only a shown seat's function may)" % w)
         if any("cobblemon:npc" in d for d in done if not d.startswith("#")):
-            out.append("%s: its town's _done kills a Cobblemon NPC (the removal is _clear's, before the summons)" % w)
-        if any(q.startswith("kill ") and not q.startswith("kill @e[type=cobblemon:npc,") for q in clear):
-            out.append("%s: its town's _clear kills something other than a Cobblemon NPC" % w)
+            out.append("%s: its town's _done kills a Cobblemon NPC (the removal is the seat's, before the summon)" % w)
+        if any(q.startswith("kill ") and not q.startswith(("kill @e[type=cobblemon:npc,", "kill @e[type=%s," % kind))
+               for q in seat):
+            out.append("%s: its seat function kills something other than a Cobblemon NPC or its merchant" % w)
         if s["id"] in seats:
             (sx, sy, sz), yaw = seats[s["id"]]
             if (x, y, z) != (sx, sy, sz) or parts[2:5] != ["%d.5" % sx, str(sy), "%d.5" % sz]:
