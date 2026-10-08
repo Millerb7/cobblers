@@ -39,6 +39,9 @@ The output (build/datapacks/cobblers_rift_mines, replayed in index order):
   blocks      no written block is named by a spawn condition (data/spawn_blocks.json), no water, no lava, no meteorid
               ore (they drop evolution stones)
   limits      tools/function_limits.py finds nothing the server would refuse
+  carts       one summon on each data town.carts column, by a look-then-act chain that waits for a cart in every cart's
+              chunk or the blind limit, kills the old carts first and de-duplicates after (tools/chunk_look_audit.py,
+              N155)
 The refill (build/datapacks/cobblers_rift_mines_refill, staging only):
   exact       its writes are exactly the retired gated envelope, every one rock (no air, no fluid), none in a live
               envelope cell or the collapse
@@ -494,8 +497,31 @@ def audit(source_root=None):
     probs += p2
     notes.update(n2)
     probs += output_problems(spec, grid, gated, ungated, top, cols, notes)
+    probs += cart_problems(spec, PACK, notes)
     probs += refill_problems(spec, grid, ungated, ground, notes)
     return probs, notes
+
+
+CARTS_FN = "cobblers:rift_mines/carts"     # the entry R9M calls (tools/reapply.py)
+
+
+def cart_problems(spec, pack, notes=None):
+    """carts: one summon on each data/rift_mines.json town.carts column, through a look-then-act chain held from entry
+    to end that acts only once a look sees a cart in EVERY cart's chunk, or blind; old carts killed first, each summon
+    tagged new and de-duplicated after (tools/chunk_look_audit.py; N155: a kill in the tick of the forceload, or a fixed
+    wait, misses saved carts that arrive later and the summon doubles them). Read from the pack's text; the positions
+    from the data."""
+    import chunk_look_audit as CA
+    tag = "cobblers_rift_mines"
+    want = sorted((x + 0.5, z + 0.5) for x, z in spec["town"]["carts"])
+    out = ["carts: %s" % p for p in CA.problems(pack, CARTS_FN, tag, "the carts", sites=[(x, z) for x, z in want])]
+    got = sorted((float(m.group(1)), float(m.group(2))) for c in CA.chain_lines(pack, CARTS_FN)
+                 for m in [CA.SUMMON.search(c)] if m)
+    if got != want:
+        out.append("carts: the chain summons at %s, the data's carts are at %s" % (got, want))
+    if notes is not None:
+        notes["carts summoned by the chain"] = len(got)
+    return out
 
 
 def measure_pocket(spec, grid, ground):

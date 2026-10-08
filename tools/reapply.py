@@ -1713,13 +1713,14 @@ def rift_zone_steps(index, spec):
 def steps(with_spawns=False):
     """[(step id, title, [(kind, value)])]; kind is fn (a function), wait (seconds), check (a callable name)."""
     doc = placements()
+    import chunk_look
     # the Rift's entities (the trailhead guards' placeholders; the portal sheets are R1S's since 2026-10-05, and
-    # fx_go still kills any old sheet, which carries rift_fx_all) after its blocks: fx force-loads
-    # their chunks and schedules fx_go 60 ticks on, which summons them and counts them. No step ran it until the
-    # 2026-09-24 rehearsal found 0 of 14 on a fresh export: they had been placed by hand on staging
+    # fx still kills any old sheet, which carries rift_fx_all) after its blocks, each block function releasing its own
+    # chunks in its own tick: fx is a look-then-act chain (tools/chunk_look.py, N155), waited for whole and counted.
+    # No step ran it until the 2026-09-24 rehearsal found 0 of 14 on a fresh export: they had been placed by hand
     out = [("R1", "the Rift skin: the block pass over the sculpted shape, then its entities",
             [("fn", "cobblers:rift/%s" % f) for f in indexed("cobblers_rift", "rift")]
-            + [("fn", "cobblers:rift/fx"), ("wait", 8), ("check", "rift_fx")]),
+            + [("fn", "cobblers:rift/fx"), ("wait", chunk_look.STEP_SECONDS), ("check", "rift_fx")]),
            # the lake-bed repair (tools/lakebed_repair.py): AFTER R1, because R1 is the pass that did the damage
            # in every world exported before 2026-09-30 and would undo this if it ran second. The skin itself no
            # longer writes these cells, so on a world exported after the fix this lays back exactly what is
@@ -1730,11 +1731,12 @@ def steps(with_spawns=False):
            ("R1B", "the Rift biome, painted over the skin",
             [("fn", "cobblers:rift/%s" % f) for f in indexed("cobblers_rift_biome", "rift")]),
            # the portal sheets (tools/rift_skin.py, 2026-10-05): their own step, so re-siting them never needs R1
-           # again. After R1, whose fx_go kills the old sheets by rift_fx_all and whose seal must not refill the new
-           # tears. sheets force-loads and schedules sheets_go 60 ticks on, which kills every sheet, puts back the
-           # old slots, seals and carves, summons and counts
+           # again. After R1, whose fx kills the old sheets by rift_fx_all and whose seal must not refill the new
+           # tears. sheets is a look-then-act chain (tools/chunk_look.py, N155): once a sheet shows in every sheet's
+           # chunk, or blind, it kills every sheet, puts back the old slots, seals and carves, summons, then
+           # de-duplicates and counts
            ("R1S", "the Rift's portal sheets: glimpses through a tear in a sheer face",
-            [("fn", "cobblers:rift/sheets"), ("wait", 8), ("check", "rift_sheets")]),
+            [("fn", "cobblers:rift/sheets"), ("wait", chunk_look.STEP_SECONDS), ("check", "rift_sheets")]),
            ("R2","Displaced City cavern", [("fn", "cobblers:cavern/%s" % f) for f in CAVERN]),
            ("R3", "world tree", [("fn", "cobblers:worldtree/%02d_tree" % k) for k in range(4)]
             + [("fn", "cobblers:worldtree/90_foundation"), ("check", "crown")]),
@@ -1766,11 +1768,12 @@ def steps(with_spawns=False):
                 [("fn", "cobblers:vr_caves/%s" % f) for f in indexed("cobblers_vr_caves", "vr_caves")]))
     # the Rift dig camp as a mining town and the mega stone seam in its spur (tools/rift_mines.py): after the camp's
     # prep (R8) and tents (R9), whose cells it keeps clear, and before its lights (R16). Shell, air, fittings, then the
-    # surface; then the carts, entities summoned 60 ticks after their chunks are force-loaded (the Rift's fx pattern).
-    # The seam crystal's ward and daily face drive themselves (an advancement, the pack's tick) and need no step.
+    # surface (each releasing its own chunks in its own tick); then the carts, a look-then-act chain (tools/chunk_look.py,
+    # N155) waited for and counted. The seam crystal's ward and daily face drive themselves and need no step.
+    import rift_mines
     out.append(("R9M", "the Rift dig camp's mines, quarries and the mega stone seam, then its carts",
                 [("fn", "cobblers:rift_mines/%s" % f) for f in indexed("cobblers_rift_mines", "rift_mines")]
-                + [("fn", "cobblers:rift_mines/carts"), ("wait", 5)]))
+                + rift_mines.cart_steps()))
     # the southern Rift's mega site, prototype slice (tools/gulch_mine.py; SOUTHERN_RIFT_MEGA.md decision 12 names the
     # step): after the Rift skin (R1), whose surface it paves and cuts, and before the Habitat Blocks (R9E) and the
     # lights (R16). Earthworks, shell, air, fittings, surface, the faces at variant 0; then the Cutters, villagers
@@ -1818,9 +1821,9 @@ def steps(with_spawns=False):
     out.append(("R9Z", "the Rift's zone walls and gatehouse shells for the zones that can be passed (%d of %d; "
                        "held: %s)" % (len(live), len(live) + len(heldb), ", ".join(sorted(shut)) or "none"),
                 [("fn", "cobblers:rift_zones/%s" % f) for f in live]
-                # the guards' placeholders, one per gate it built, after the shells: force-load, 40 ticks for the
-                # stands already saved there, summon, 100 ticks on keep one per block (the Cutters' pattern)
-                + [("fn", "cobblers:rift_zones/guards"), ("wait", 8)]))
+                # the guards' placeholders, one per gate it built, after the shells (each releases its own chunks in
+                # its own tick): a look-then-act chain (tools/chunk_look.py, N155) waited for and counted
+                + RZ.guard_steps(zspec)))
     # the evolution-stone faces (tools/mines.py, data/mines.json; STONE_ECONOMY.md 5.5 names the step): after the towns
     # (R8) and the donors (R9), whose cells they keep clear, and the Displaced City cavern (R2), whose shell two of the
     # sites cut into; before the Habitat Blocks (R9E) and the lights (R16). One build function a site, named from the
@@ -2597,12 +2600,13 @@ def _run_steps(a, rc, todo, rec, path, live=None):
                 if "passed" not in r:
                     bad.append("the world tree's crown block at %s is missing: cobblers_height is not in the world folder" % (CROWN,))
             elif kind == "check" and v == "rift_fx":
-                # fx_go counts what it summoned into a score; the plan says how many there must be
+                # fx's look-then-act chain counts what stands after its de-duplication (-1 until it ends,
+                # tools/rift_skin.py fx_functions); the plan says how many there must be
                 want = json.loads((ROOT / "derived" / "rift_skin" / "plan.json").read_text(encoding="utf-8"))["entities_expected"]
                 got = None
                 for _ in range(10):
-                    r = rc("scoreboard players get #rift_fx_all cobblers.rift_fx")
-                    m = re.search(r"has (\d+) ", r)
+                    r = rc("scoreboard players get #rift_fx cobblers_chunk_look")
+                    m = re.search(r"has (-?\d+) ", r)
                     if m:
                         got = int(m.group(1))
                         if got == want:
@@ -2628,13 +2632,14 @@ def _run_steps(a, rc, todo, rec, path, live=None):
                 if got != want:
                     bad.append("%s: %s of %d standing after the chain (-1: it never finished)" % (label, got, want))
             elif kind == "check" and v == "rift_sheets":
-                # sheets_go counts the sheets standing after it ran; the plan says how many it sited
+                # sheets' look-then-act chain counts the sheets standing after its de-duplication (-1 until it ends,
+                # tools/rift_skin.py sheet_functions); the plan says how many it sited
                 pl = json.loads((ROOT / "derived" / "rift_skin" / "plan.json").read_text(encoding="utf-8"))
                 want = pl["sheets_expected"]
                 got = None
                 for _ in range(10):
-                    r = rc("scoreboard players get #%s cobblers.rift_fx" % pl["sheet_tag"])
-                    m = re.search(r"has (\d+) ", r)
+                    r = rc("scoreboard players get #rift_sheets cobblers_chunk_look")
+                    m = re.search(r"has (-?\d+) ", r)
                     if m:
                         got = int(m.group(1))
                         if got == want:

@@ -248,7 +248,10 @@ def test_no_written_block_is_a_spawn_condition_a_fluid_light_or_meteorid_ore(bui
     text = "\n".join(p.read_text(encoding="utf-8") for p in fn_dir(pack).rglob("*.mcfunction"))
     summons = re.findall(r"summon (\S+)", text)
     assert summons and set(summons) == {"minecraft:minecart"}
-    assert all('Tags:["cobblers_rift_mines"]' in l for l in text.splitlines() if l.startswith("summon"))
+    # the summon also carries the look-then-act chain's new-copy tag (tools/chunk_look.py, N155, 2026-10-08), which its
+    # end drops once the old copies are gone
+    assert all('Tags:["cobblers_rift_mines","cobblers_rift_mines_new"]' in l
+               for l in text.splitlines() if l.startswith("summon"))
 
 
 def _camp_cells():
