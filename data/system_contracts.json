@@ -102,6 +102,14 @@
         "docs/world-building/SOUTHERN_RIFT_MEGA.md"
       ]
     },
+    "entei_boss": {
+      "what": "the repeatable Entei: one sealed slot per player in cobblers:pocket, entered by eating a crafted sigil in the Nether; catchable until the first catch, then an item roll",
+      "paths": [
+        "data/entei_boss.json",
+        "tools/entei_boss.py",
+        "experiments/EXP-059-entei-boss/README.md"
+      ]
+    },
     "victory_road": {
       "what": "Victory Road's corridor and its cave network",
       "paths": [
@@ -697,16 +705,21 @@
     },
     {
       "id": "C12",
-      "title": "A gulch Mega that blacks a player out makes no claim",
+      "title": "A gulch Mega or the Entei boss that blacks a player out makes no claim",
       "owner": "recovery_claims",
       "consumers": [
-        "gulch_mine"
+        "gulch_mine",
+        "entei_boss"
       ],
       "constrained_by": [
         "gulch_mine"
       ],
-      "statement": "Every Mega the gulch's generated keeper spawns carries the tag data/blackout.json claims.exempt_tag names, and the generated blackout, with that Mega as the wild victor, makes no item claim and no guardian, and still charges the money; an untagged wild victor still claims.",
+      "statement": "Every Mega the gulch's generated keeper spawns, and every Entei the Entei boss's generated keeper binds in a pocket slot, carries the tag data/blackout.json claims.exempt_tag names, and the generated blackout, with that Pokemon as the wild victor, makes no item claim and no guardian, and still charges the money; an untagged wild victor still claims. The Entei relies on it because its slot is freed and its Entei killed the moment the beaten player is sent out, so a guardian there would hold the player's items where nobody can return. The tag is the gulch's own (cobblers.gm): a gulch sweep that ever keys on the bare tag would reach the Entei too.",
       "stated_in": [
+        {
+          "at": "data/entei_boss.json:113",
+          "quote": "The Entei carries the blackout's claims.exempt_tag"
+        },
         {
           "at": "data/blackout.json:59",
           "quote": "\"exempt_tag\": \"cobblers.gm\""
@@ -722,6 +735,7 @@
       ],
       "tests": [
         "tests/test_system_contracts.py::test_contract_c12_a_gulch_mega_makes_no_claim_on_the_player_it_blacks_out",
+        "tests/test_system_contracts.py::test_contract_c12_the_entei_boss_makes_no_claim_on_the_player_it_blacks_out",
         "tests/test_blackout_recovery_pid.py::test_a_tagged_gulch_mega_makes_no_claim_but_the_loss_still_costs_money"
       ]
     },
