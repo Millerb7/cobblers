@@ -212,13 +212,20 @@ def test_heart_ids_and_conditions_agree(world):
     # each other: a heart id is always restricted (minY, or a box set smaller than the roster's); a base row is the
     # roster (its whole box set, no minY); and a Mega den line (test_encounter_design.split_den_lines, by species and
     # range, taken out BEFORE the id split) never carries a heart id and names a den in data/gulch_mine.json -- so a
-    # den line compiled under a heart id, or a heart hidden among the den lines, fails here.
-    wrong, dens = {}, 0
+    # den line compiled under a heart id, or a heart hidden among the den lines, fails here. A fourth kind, a
+    # placement site's line (data/spawns.json placement_sites: Poipole at the two towers, 79f63ae), is taken out of the
+    # base the same way, by species and range (test_placement_site_spawns.split_site_lines: a site species inside its
+    # placement's footprint plus margin, never by id), and must never carry a heart id and must name its site.
+    from test_placement_site_spawns import placement_sites, site_id_pattern, split_site_lines
+    sites = placement_sites()
+    wrong, dens, site_lines = {}, 0, 0
     for k, t in world["subs"].items():
         pat = ED.heart_id(k)
         den = t.get("den", [])
+        base, by_site = split_site_lines(t["base"], sites)
+        _heart_rest, heart_sites = split_site_lines(t["heart"], sites)
         spans = {}
-        for side, rows in (("h", t["heart"]), ("b", t["base"]), ("d", den)):
+        for side, rows in (("h", t["heart"]), ("b", base), ("d", den)):
             for e in rows:
                 spans.setdefault((side, ED.detail_signature(e)), set()).add(ED.box_of(e))
         roster = [frozenset(v) for (side, _s), v in spans.items() if side == "b"]
@@ -228,7 +235,7 @@ def test_heart_ids_and_conditions_agree(world):
             if "minY" not in (e.get("condition") or {}) and \
                     ED.columns_of(spans[("h", ED.detail_signature(e))]) >= ED.columns_of(base_set):
                 bad.append(("heart id spanning the whole place", e["id"]))
-        for e in t["base"]:
+        for e in base:
             if "minY" in (e.get("condition") or {}):
                 bad.append(("non-heart row with minY", e["id"]))
             elif frozenset(spans[("b", ED.detail_signature(e))]) != base_set:
@@ -240,10 +247,21 @@ def test_heart_ids_and_conditions_agree(world):
                 bad.append(("den line by species and range naming no den", e["id"]))
             else:
                 dens += 1
+        for sid, rows in heart_sites.items():   # a site line under a heart id is a site line misfiled as a heart
+            bad.extend(("site line under a heart id", e["id"]) for e in rows)
+        for sid, rows in by_site.items():
+            for e in rows:
+                if "minY" in (e.get("condition") or {}):
+                    bad.append(("site line with minY", e["id"]))
+                elif not site_id_pattern(sid).search(str(e.get("id", ""))):
+                    bad.append(("site line by species and range naming no site", e["id"]))
+                else:
+                    site_lines += 1
         if bad:
             wrong[k] = bad[:3]
     assert not wrong, wrong
     assert dens, "no Mega den line was read; the den branch exercised nothing"
+    assert site_lines or not sites, "no placement-site line was read; the site branch exercised nothing"
 
 
 # Without it a den line could be read as base texture or a heart, or a heart taken for a den line: the den-line split

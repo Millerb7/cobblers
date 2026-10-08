@@ -55,7 +55,8 @@
       "biomes": ["minecraft:end_highlands"],
       "source": "COBBLEVERSE-DP-v31.zip data/cobbleverse/worldgen/structure_set/dawn_tower.json; structure data/cobbleverse/worldgen/structure/dawn_tower.json",
       "carries": "command_block chain in data/cobbleverse/structure/dawn_tower.nbt that spawns Necrozma (data/adopted_legendary_sites.json adopted_dawn_tower)",
-      "why": "an unearned Necrozma: only our pasted tower's chain is rewritten to need champion_cleared (tools/place_donor.py set_commands)"
+      "why": "an unearned Necrozma: only our pasted tower's chain is rewritten to need champion_cleared (tools/place_donor.py set_commands)",
+      "takes_away": "Poipole's only upstream spawn (COBBLEVERSE-DP-v31 cobblemon:0803_poipole, spawning via this structure: data/structures.json cobbleverse:dawn_tower depends_on_it). Poipole now lives at our pasted overworld towers instead: data/spawns.json placement_sites dawn_tower (around legendary_dawn_tower, 38-43) and dusk_tower (around legendary_dusk_tower, 33-38), a rare find compiled by tools/compile_spawns.py (docs/mechanics/NETHER_ENCOUNTERS.md section 4)"
     },
     {
       "structure_set": "cobbleverse:dusk_tower",
@@ -65,7 +66,8 @@
       "biomes": ["minecraft:end_highlands"],
       "source": "COBBLEVERSE-DP-v31.zip data/cobbleverse/worldgen/structure_set/dusk_tower.json; structure data/cobbleverse/worldgen/structure/dusk_tower.json",
       "carries": "command_block chain in data/cobbleverse/structure/dusk_tower.nbt that spawns Necrozma (data/adopted_legendary_sites.json adopted_dusk_tower)",
-      "why": "as the Dawn tower"
+      "why": "as the Dawn tower",
+      "takes_away": "as the Dawn tower: its Poipole spawn (data/structures.json cobbleverse:dusk_tower depends_on_it); Poipole now lives at our pasted overworld towers (data/spawns.json placement_sites)"
     },
     {
       "structure_set": "legendarymonuments:eternatus_cocoon",
