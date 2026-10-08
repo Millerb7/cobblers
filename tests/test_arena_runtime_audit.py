@@ -109,10 +109,10 @@ MUTANTS = {
     # taken back without its bound: other money in the window goes with it
     "claw_uncapped": ('"scoreboard players operation #now ar.t < @s ar.cmax",', '"# uncapped",',
                       "more than CobbleDollars could pay"),
-    # the clear-up's second look gone: a payout landing after the callback is kept
-    "no_second_look": ('"execute if score @s ar.claw matches 1 run function %s" % F_("cd/last"),\n'
-                       '           "function %s" % F_("kill_mine"),',
-                       '"function %s" % F_("kill_mine"),', "clawback"),
+    # the second look gone: a payout landing after the callback is kept. Re-aimed 2026-10-08 (N143, the builder,
+    # on this file's own "re-aim it"): the look moved from the clear-up to the first line of the next tick
+    "no_second_look": ('        "execute as @a[scores={ar.claw=1}] run function %s" % F_("cd/last"),\n', '',
+                       "clawback"),
     # the full purse paid twice on a first
     "purse_twice": ('"execute if score @s ar.first matches 1 run return run function %s" % F_("purse_full"),',
                     '"execute if score @s ar.first matches 1 run function %s" % F_("purse_full"), '

@@ -50,11 +50,16 @@ MONEY (data/arena_fights.json prizes.purse_policy, unit ARENACAP 2026-10-10). Th
 `cobbledollars give`, and CobbleDollars ALSO pays every NPC win by itself (battleVictory, any loser of ActorType.NPC;
 docs/research/notes/paid-services-and-npc-payouts.md B2). CobbleDollars has no per-entity or per-battle exclusion
 (its only test is the actor type), and turning earnCobbleDollarsFromNPC off would end every trainer's pay, so the
-arena takes that payout BACK: `cobbledollars query @s` (its result is the balance) snapshots the balance just before
-start_battle; on the win the gain since then, bounded by the most CobbleDollars could pay for that opponent
-(cd_bound), is removed with `cobbledollars remove`, then the arena's purse is paid. The two handlers answer the same
-BATTLE_VICTORY in no fixed order, so the clear-up 2 s later looks once more (or `rejoined`, for a player who left).
-  ar.bal    the balance baseline;  ar.cmax  what may still be taken back for this win;  ar.claw  1: a second look
+arena takes that payout BACK: `cobbledollars query @s` (its result is the balance) reads the baseline when the battle
+starts and again at the start of every tick until the result; on the win the gain over it, at most the most
+CobbleDollars could pay for that opponent (cd_bound), is removed with `cobbledollars remove`, then the arena's purse
+is paid. The two handlers answer the same BATTLE_VICTORY in no fixed order: a gain below the least CobbleDollars can
+pay (cd_least) means its handler has not run, so the start of the NEXT tick looks instead (or `rejoined`). Battles end
+in END_SERVER_TICK and player commands run between ticks, so with CobbleDollars first nothing a player does is in the
+measured window; with the callback first one inter-tick phase is (see cd/first's comment and EXP-060).
+  ar.bal    the balance baseline;  ar.cmax / ar.cmin  the most / least CobbleDollars can credit for this win;
+  ar.claw   1: the next tick's look is pending;  #cd_first / #cd_last ar.t  wins taken at the callback / next tick;
+  #cb_first ar.t  1 once a next-tick look has seen the payout this boot (from then on it takes at least ar.cmin)
   ar.first  1 when the payment being made is a first;  ar.spaid  the longest streak whose wins were ever paid
   ar.rday / ar.rper  paid repeat wins in the current period / that period's number (gametime / day_ticks)
   tags cobblers.arena_paid_<rank>_<p|e><leg>_w<wins> | _clear_w<wins>: that payment's first is spent, for good
@@ -115,7 +120,9 @@ SLUG = re.compile(r"[a-z0-9_]+")
 OBJECTIVES = ["ar.id", "ar.rank", "ar.wins", "ar.cur", "ar.kind", "ar.leg", "ar.streak", "ar.best", "ar.venue",
               "ar.exh", "ar.live", "ar.go", "ar.end", "ar.next", "ar.idle", "ar.t",
               # the purse policy and the CobbleDollars clawback (unit ARENACAP, 2026-10-10)
-              "ar.bal", "ar.cmax", "ar.claw", "ar.first", "ar.spaid", "ar.rday", "ar.rper"]
+              "ar.bal", "ar.cmax", "ar.claw", "ar.first", "ar.spaid", "ar.rday", "ar.rper",
+              # the least CobbleDollars can credit for the opponent just beaten (2026-10-08, review N143)
+              "ar.cmin"]
 # CobbleDollars' own config: its NPC-win payout multiplier bounds the clawback (prizes.purse_policy)
 CD_CONFIG = ROOT / "modpack" / "config" / "cobbledollars" / "common.json"
 PAID = "cobblers.arena_paid_"             # + <rank>_p<leg> | <rank>_e<leg> | <rank>_clear: a first already paid
@@ -182,12 +189,22 @@ def purse_policy(fights):
     return out
 
 
-def cd_multiplier_permille(path=CD_CONFIG):
-    """CobbleDollars' cobbleDollarsIncomeMultiplier (modpack/config/cobbledollars/common.json) in thousandths."""
+def cd_multiplier_permille(path=CD_CONFIG, floor=False):
+    """CobbleDollars' cobbleDollarsIncomeMultiplier (modpack/config/cobbledollars/common.json) in thousandths:
+    rounded UP for the most it can credit (cd_bound), DOWN (`floor`) for the least (cd_least)."""
     v = doc(path).get("cobbleDollarsIncomeMultiplier")
     if not isinstance(v, (int, float)) or isinstance(v, bool) or v < 0:
         raise ArenaError("%s has no numeric cobbleDollarsIncomeMultiplier: the clawback cannot be bounded" % path)
-    return int(math.ceil(v * 1000 - 1e-9))
+    return int(math.floor(v * 1000 + 1e-9)) if floor else int(math.ceil(v * 1000 - 1e-9))
+
+
+def cd_pays_npc_wins(path=CD_CONFIG):
+    """earnCobbleDollarsFromNPC: false means CobbleDollars pays no NPC win, so there is nothing to take back (and the
+    floor of cd_least would take the player's own money)."""
+    v = doc(path).get("earnCobbleDollarsFromNPC")
+    if not isinstance(v, bool):
+        raise ArenaError("%s has no boolean earnCobbleDollarsFromNPC: whether to take a payout back is unknown" % path)
+    return v
 
 
 def cd_bound(level_sum, mult_pm):
@@ -197,6 +214,18 @@ def cd_bound(level_sum, mult_pm):
         credit = floor(amount * multiplier)
     The same integer steps the scoreboard takes in cd/bound_streak, plus CLAW_MARGIN. A clawback never takes more."""
     return (level_sum * level_sum // 10 * 3 * mult_pm) // 1000 + CLAW_MARGIN
+
+
+def cd_least(level_sum, mult_floor_pm):
+    """The LEAST CobbleDollars' battleVictory can credit for one NPC loser whose team's levels sum to at least
+    `level_sum` (the same bytecode as cd_bound): B = int(5 * S * sum(L / 50.0)), exactly S*S/10 in exact arithmetic,
+    so the double is at least S*S/10 less a rounding error; (S*S - 1) // 10 is never above it (it is one below only
+    when S*S/10 is a whole number the double may land just under). The random draw is at least B / 2
+    (nextBetween's lower end is inclusive whichever of method_43051's two readings holds), so amount >= B + B / 2.
+    The same integer steps cd/bound_streak takes. A win always credits at least this, which is what lets the
+    clawback take it even when money moved the other way in the same window."""
+    b = max(1, (level_sum * level_sum - 1) // 10)
+    return (b + b // 2) * mult_floor_pm // 1000
 
 
 def drawn_levels(members, top):
@@ -404,6 +433,8 @@ def files(dome_path=DOME, fights=None, cd_config=CD_CONFIG):
     rule = purse_rule(fights)
     rep_purse, rep_wins, day_ticks = purse_policy(fights)
     mult_pm = cd_multiplier_permille(cd_config)
+    mult_floor_pm = cd_multiplier_permille(cd_config, floor=True)
+    cd_npc = cd_pays_npc_wins(cd_config)
 
     out = {"pack.mcmeta": {"pack": {"pack_format": 48, "description":
                                     "Cobblers: Heaven's Arena per-player opponents (tools/arena_runtime.py)"}}}
@@ -429,9 +460,21 @@ def files(dome_path=DOME, fights=None, cd_config=CD_CONFIG):
                      "# prizes.purse_policy and CobbleDollars' income multiplier (thousandths)",
                      "scoreboard players set #rcap ar.t %d" % rep_wins,
                      "scoreboard players set #cday ar.t %d" % day_ticks,
-                     "scoreboard players set #cdm ar.t %d" % mult_pm])
+                     "scoreboard players set #cdm ar.t %d" % mult_pm,
+                     "scoreboard players set #cdmf ar.t %d" % mult_floor_pm,
+                     "# the handler order is learned again every boot (cd/last_take): a mod update can change it",
+                     "scoreboard players set #cb_first ar.t 0"])
     fn["tick"] = [
+        "# FIRST, before any packet of this tick's inter-tick phase can be followed by another: the second look at a",
+        "# win whose callback ran before CobbleDollars' handler (cd/first deferred it). Battles end in END_SERVER_TICK",
+        "# (Cobblemon ServerTickHandler on SERVER_TICK_POST), so this is the next point a datapack runs",
+        "execute as @a[scores={ar.claw=1}] run function %s" % F_("cd/last"),
         "execute as @a[scores={ar.left=1..}] run function %s" % F_("rejoined"),
+        "# a bout in battle with no result yet: the balance baseline is re-read every tick, so money a player moves",
+        "# during the battle is never measured as CobbleDollars' payout (player commands and packets run between",
+        "# ticks; the victory and its callback run inside one)",
+        "execute as @a[scores={ar.live=1}] if score @s ar.bal matches -2147483648.. unless score @s ar.claw matches 1 "
+        "run function %s {x:\"\"}" % F_("cd/snap"),
         "execute as @a[scores={ar.go=1..}] run function %s" % F_("go_tick"),
         "execute as @a[scores={ar.end=1..}] run function %s" % F_("end_tick"),
         "scoreboard players add #clock ar.t 1",
@@ -449,7 +492,8 @@ def files(dome_path=DOME, fights=None, cd_config=CD_CONFIG):
         "scoreboard players set @s ar.live 0", "scoreboard players set @s ar.leg 0",
         "scoreboard players set @s ar.next 0", "scoreboard players set @s ar.go 0",
         "scoreboard players set @s ar.idle 0", "tag @s remove %s" % bout_tag,
-        "# a clawback still pending here is dropped, never run: only `after` and `rejoined` may take money back",
+        "# a clawback still pending here is dropped, never run: only cd/first and cd/last (the next tick's second look,",
+        "# or the player's return) may take money back",
         "scoreboard players set @s ar.claw 0", "scoreboard players reset @s ar.bal"]
     fn["kill_mine"] = ["function %s" % F_("mine"),
                        "execute as %s if score @s ar.id = #me ar.id run kill @s" % NPC]
@@ -459,7 +503,8 @@ def files(dome_path=DOME, fights=None, cd_config=CD_CONFIG):
         "function %s" % F_("end_run")]
     fn["rejoined"] = [
         "scoreboard players reset @s ar.left",
-        "# left in the two seconds after a win: CobbleDollars' payout may have landed after the first clawback",
+        "# left in the tick after a win: CobbleDollars' payout may have landed after the callback (the tick's own",
+        "# claw line has already run for a player who is back; this is the same look, kept for its order)",
         "execute if score @s ar.claw matches 1 run function %s" % F_("cd/last"),
         "execute unless score @s ar.live matches 1 run return 0",
         say("You left Heaven's Arena mid-run: that run is over. Your rank is kept.", "gray"),
@@ -696,17 +741,20 @@ def files(dome_path=DOME, fights=None, cd_config=CD_CONFIG):
         "scoreboard players set @s ar.idle 0",
         "scoreboard players set @s ar.next 0",
         "# CobbleDollars pays this win by itself (any NPC loser; prizes.purse_policy.cobbledollars_auto_payout): take",
-        "# it back, bounded by the most it could have paid, BEFORE the arena's own purse. Its handler and this callback",
-        "# answer the same BATTLE_VICTORY in an order the jar does not fix, so `after` looks a second time",
+        "# it back BEFORE the arena's own purse, never less than the least nor more than the most it could have paid",
+        "# for this opponent. Its handler and this callback answer the same BATTLE_VICTORY in an order the jar does",
+        "# not fix: cd/first takes it now when it has landed, else defers to the next tick's second look (ar.claw 1)",
+        "scoreboard players set @s ar.claw 0",
         "function %s" % F_("cd/bound"),
-        "function %s" % F_("cd/settle"),
+        "function %s" % F_("cd/first"),
         "function %s" % F_("purse"),
         "execute if score @s ar.kind matches 1 run function %s" % F_("won_pool"),
         "execute if score @s ar.kind matches 2 run function %s" % F_("won_exam"),
         "execute if score @s ar.kind matches 3 run function %s" % F_("won_streak"),
-        "# the new baseline includes the arena's own purse and bonuses; the second look claws only what came after",
-        "function %s {x:\"\"}" % F_("cd/snap"),
-        "scoreboard players set @s ar.claw 1",
+        "# deferred: the new baseline includes the arena's own purse and bonuses; the second look measures from it",
+        "execute if score @s ar.claw matches 1 run function %s {x:\"\"}" % F_("cd/snap"),
+        "# taken (or nothing to take): no baseline is kept, so nothing more is measured for this win",
+        "execute unless score @s ar.claw matches 1 run scoreboard players reset @s ar.bal",
         "scoreboard players set @s ar.end %d" % END_TICKS]
     wp = ["scoreboard players add @s ar.leg 1"]
     for n, e in sorted(lad.items()):
@@ -907,41 +955,82 @@ def files(dome_path=DOME, fights=None, cd_config=CD_CONFIG):
     fn["cd/snap"] = ["# as a player: the balance now, the baseline a clawback measures from",
                      "$execute store result score @s ar.bal run cobbledollars query @s$(x)"]
     fn["cd/now"] = ["$execute store result score #now ar.t run cobbledollars query @s$(x)"]
-    fn["cd/settle"] = [
-        "# as the winner: whatever the balance gained since the baseline, up to what is left of ar.cmax, goes back.",
-        "# No baseline or no allowance: nothing is taken. A failed read stores 0, which makes the gain <= 0",
+    # WHEN money is measured (Cobblemon-fabric-1.8.0+1.21.1.jar, javap 2026-10-08): WinInstruction emits
+    # BATTLE_VICTORY from PokemonBattle.tick <- BattleRegistry.tick <- ServerTickHandler.onTick <- SERVER_TICK_POST
+    # <- Fabric END_SERVER_TICK (CobblemonFabric.initialize$lambda$13). CobbleDollars' battleVictory and Cobblemon's
+    # CallbackHandler both subscribe at the default priority, so one runs straight after the other with nothing
+    # between. The tick function runs at the START of the next tick. So:
+    #   CobbleDollars first: the callback sees the payout on top of a baseline read at the start of the same tick
+    #     (the tick's re-read): cd/first takes the gain, exact unless a server-side credit landed in that tick.
+    #   the callback first: no payout yet (the gain is below the least it can be); cd/first defers, and cd/last
+    #     takes the gain at the start of the next tick -- which also holds whatever player packets moved in the
+    #     one inter-tick phase between (the residual, bounded to [ar.cmin, ar.cmax]).
+    # Either way the amount taken is clamped to [ar.cmin, ar.cmax], the least and the most CobbleDollars can credit.
+    fn["cd/first"] = [
+        "# as the winner, in the battle_victory callback. No baseline or no allowance: nothing is taken",
         "execute unless score @s ar.bal matches -2147483648.. run return 0",
         "execute unless score @s ar.cmax matches 1.. run return 0",
         "function %s {x:\"\"}" % F_("cd/now"),
         "scoreboard players operation #now ar.t -= @s ar.bal",
+        "# less than the least CobbleDollars credits: its handler has not run yet. The next tick looks (cd/last)",
+        "execute if score #now ar.t < @s ar.cmin run return run scoreboard players set @s ar.claw 1",
+        "scoreboard players add #cd_first ar.t 1",
+        "function %s" % F_("cd/take")]
+    fn["cd/take"] = [
+        "# #now, the balance's gain over the baseline, at most ar.cmax, goes back (at most the balance:",
+        "# `cobbledollars remove` takes min(amount, balance)). cd/first only gets here with #now >= ar.cmin",
         "scoreboard players operation #now ar.t < @s ar.cmax",
         "execute if score #now ar.t matches ..0 run return 0",
-        "scoreboard players operation @s ar.cmax -= #now ar.t",
         "execute store result storage %s claw.amount int 1 run scoreboard players get #now ar.t" % STORE,
         "function %s with storage %s claw" % (F_("cd/claw"), STORE)]
     fn["cd/claw"] = [
         "$cobbledollars remove @s $(amount)",
         '$tellraw @s {"text":"(-$(amount): CobbleDollars\' own payout for an arena win goes back; the Arena pays its '
         'purse itself)","color":"gray"}']
-    fn["cd/last"] = ["# as the player, the second look after a win; then no clawback is pending",
-                     "function %s" % F_("cd/settle"),
-                     "scoreboard players set @s ar.claw 0",
-                     "scoreboard players reset @s ar.bal"]
+    fn["cd/last"] = [
+        "# as the player, at the start of the tick after a deferred win (or on their return): the gain since the",
+        "# callback's baseline (which already holds the arena's own purse) goes back, clamped; then nothing is pending",
+        "execute if score @s ar.bal matches -2147483648.. if score @s ar.cmax matches 1.. run function %s"
+        % F_("cd/last_take"),
+        "scoreboard players set @s ar.claw 0",
+        "scoreboard players reset @s ar.bal"]
+    fn["cd/last_take"] = [
+        "function %s {x:\"\"}" % F_("cd/now"),
+        "scoreboard players operation #now ar.t -= @s ar.bal",
+        "# a gain of at least the least CobbleDollars credits: its handler ran after the callback. Learned for this",
+        "# boot (load resets it): from then on a deferred win always takes at least ar.cmin, because CobbleDollars",
+        "# certainly paid that much, so a smaller gain means money was paid away in the window",
+        "execute if score #now ar.t >= @s ar.cmin run scoreboard players set #cb_first ar.t 1",
+        "execute if score #cb_first ar.t matches 1 run scoreboard players operation #now ar.t > @s ar.cmin",
+        "scoreboard players add #cd_last ar.t 1",
+        "function %s" % F_("cd/take")]
     bd = ["# as the winner: ar.cmax, the most CobbleDollars can credit for THIS opponent (tools/arena_runtime.cd_bound:",
-          "# floor(3 * S*S/10 * multiplier) + %d, S the team's largest possible level sum)" % CLAW_MARGIN,
-          "scoreboard players set @s ar.cmax 0"]
-    for n, e in sorted(lad.items()):
+          "# floor(3 * S*S/10 * multiplier) + %d, S the team's largest possible level sum), and ar.cmin, the least"
+          % CLAW_MARGIN,
+          "# (cd_least: B = max(1, (S*S - 1) / 10), floor((B + B/2) * multiplier), S the smallest possible sum)",
+          "scoreboard players set @s ar.cmax 0",
+          "scoreboard players set @s ar.cmin 0"]
+    if not cd_npc:
+        bd.append("# earnCobbleDollarsFromNPC is false in %s: CobbleDollars pays no arena win, nothing goes back"
+                  % CD_CONFIG.relative_to(ROOT).as_posix())
+    for n, e in (sorted(lad.items()) if cd_npc else []):
         if e["format"] == "streak":
             continue
         bd.append("execute if score @s ar.kind matches 1 if score @s ar.cur matches %d run scoreboard players set @s "
                   "ar.cmax %d" % (n, cd_bound(e["members"] * e["top"], mult_pm)))
+        bd.append("execute if score @s ar.kind matches 1 if score @s ar.cur matches %d run scoreboard players set @s "
+                  "ar.cmin %d" % (n, cd_least(e["members"] * (e["top"] - (e["members"] - 1)), mult_floor_pm)))
         for leg, s_ in enumerate(e["exam_sum"]):
             bd.append("execute if score @s ar.kind matches 2 if score @s ar.cur matches %d if score @s ar.leg matches %d "
                       "run scoreboard players set @s ar.cmax %d" % (n, leg, cd_bound(s_, mult_pm)))
-    bd.append("execute if score @s ar.kind matches 3 run function %s" % F_("cd/bound_streak"))
+            bd.append("execute if score @s ar.kind matches 2 if score @s ar.cur matches %d if score @s ar.leg matches %d "
+                      "run scoreboard players set @s ar.cmin %d" % (n, leg, cd_least(s_, mult_floor_pm)))
+    if cd_npc:
+        bd.append("execute if score @s ar.kind matches 3 run function %s" % F_("cd/bound_streak"))
     fn["cd/bound"] = bd
     fn["cd/bound_streak"] = [
-        "# m members at or under L: S <= m*L; the same integer steps as cd_bound",
+        "# m members, spawned at L - (m - 1) with levelVariation m - 1: m*(L - m + 1) <= S <= m*L; the same integer",
+        "# steps as cd_bound and cd_least",
         "function %s" % F_("streak/levels"),
         "scoreboard players operation #S ar.t = #m ar.t",
         "scoreboard players operation #S ar.t *= #L ar.t",
@@ -951,7 +1040,21 @@ def files(dome_path=DOME, fights=None, cd_config=CD_CONFIG):
         "scoreboard players operation #S ar.t *= #cdm ar.t",
         "scoreboard players operation #S ar.t /= #c1000 ar.t",
         "scoreboard players add #S ar.t %d" % CLAW_MARGIN,
-        "scoreboard players operation @s ar.cmax = #S ar.t"]
+        "scoreboard players operation @s ar.cmax = #S ar.t",
+        "scoreboard players operation #S ar.t = #L ar.t",
+        "scoreboard players operation #S ar.t -= #m ar.t",
+        "scoreboard players add #S ar.t 1",
+        "scoreboard players operation #S ar.t *= #m ar.t",
+        "scoreboard players operation #S ar.t *= #S ar.t",
+        "scoreboard players remove #S ar.t 1",
+        "scoreboard players operation #S ar.t /= #c10 ar.t",
+        "execute if score #S ar.t matches ..0 run scoreboard players set #S ar.t 1",
+        "scoreboard players operation #h ar.t = #S ar.t",
+        "scoreboard players operation #h ar.t /= #c2 ar.t",
+        "scoreboard players operation #S ar.t += #h ar.t",
+        "scoreboard players operation #S ar.t *= #cdmf ar.t",
+        "scoreboard players operation #S ar.t /= #c1000 ar.t",
+        "scoreboard players operation @s ar.cmin = #S ar.t"]
     for pid, p in sorted(prizes.items()):
         fn["prize/%s" % pid] = (["tag @s add cobblers.%s" % pid]
                                 + ["give @s %s %d" % (c["item"], c["count"]) for c in p["contents"]]
@@ -971,12 +1074,13 @@ def files(dome_path=DOME, fights=None, cd_config=CD_CONFIG):
         "scoreboard players set @s ar.streak 0",
         "scoreboard players set @s ar.leg 0",
         "scoreboard players set @s ar.next 0",
+        "# CobbleDollars pays a loser nothing: no baseline is kept for the tick's re-read",
+        "scoreboard players reset @s ar.bal",
         "scoreboard players set @s ar.idle 0",
         "scoreboard players set @s ar.end %d" % END_TICKS]
     nxt = ["# as the player, the clear-up after a result: the beaten (or winning) opponent goes; then the next leg, or "
            "the end",
-           "# the second look for CobbleDollars' payout (it and the callback answer the same event in no fixed order)",
-           "execute if score @s ar.claw matches 1 run function %s" % F_("cd/last"),
+           "# no second look here: the tick's claw line ran it (cd/last) at the start of the tick after the win",
            "function %s" % F_("kill_mine"),
            "execute unless score @s ar.next matches 1 run return run function %s" % F_("end_run"),
            "scoreboard players set @s ar.next 0",
