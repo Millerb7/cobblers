@@ -24,6 +24,10 @@ THE BADGE: the power rule (the owner, 2026-10-08: "TAKE THE POWER RULE ... SHELF
                            badge_rule.shelf_disagreements, exactly, or the plan fails
   any other TM             an outlier group of badge_rule.power.outliers that places it by hand, named and reasoned;
                            else the band of its score (badge_rule.power.bands, docs/mechanics/TM_POWER_GATE.md 3)
+  then, for every TM       a chain TM (crafted from another TM) is raised to its input TM's badge, never the input
+                           lowered (the owner, 2026-10-08: "A craft that unlocks before its input is a dead recipe");
+                           every raise is listed in badge_rule.chain.raises, exactly, and the plan fails if any recipe
+                           still opens before its input (chain_order)
 The scores are the committed table docs/mechanics/TM_POWER_GATE.json. tools/tm_power_score.py writes it from Mega
 Showdown's moves.js (it needs node) and `--check` says whether it is current; this tool needs no node and checks instead
 that the server's moves.js has the sha256 the table was scored from, and that the table covers every TM it gates.
@@ -423,6 +427,67 @@ def tm_recipe_table(doc, resolved):
     return out, problems
 
 
+def chain_order(doc, tms, tm_recipes):
+    """Raise every chain TM to the badge of the TM it is crafted from, then fail closed on any recipe still dead:
+    (raises [{item, input, from, to}], problems, notes). tms ({item: {badge, rule, ...}}) is changed in place.
+
+    The raise (the owner, 2026-10-08: "A craft that unlocks before its input is a dead recipe"): a TM whose recipe takes
+    an input TM opens no earlier than that input, to a fixpoint, since a raised TM can be another chain's input. It only
+    ever goes up, and only the chain TM moves: the input keeps its own badge. A shelf TM is not raised (the shelf wins);
+    a shelf TM crafted from a later TM is left dead and named, for the owner to move a shelf line. Every raise must be
+    listed in badge_rule.chain.raises, exactly (from, to and the input that set it), so no raise is a silent number; a
+    listed raise whose TMs this server does not craft is a note. Then, apart from the raise, every recipe of every TM
+    is checked: badge(TM) >= badge(each input TM it names), or the plan fails. An input TM with no crafting recipe here
+    is not gated, so it sets nothing."""
+    declared = {d["item"]: d for d in doc["badge_rule"]["chain"]["raises"]}
+    problems, notes = [], []
+    inputs = {item: sorted({i for _, _, _, ins in tm_recipes.get(item, []) for i in ins if i in tms}) for item in tms}
+    base = {item: t["badge"] for item, t in tms.items()}
+    badge = dict(base)
+    changed = True
+    while changed:  # terminates: a badge only rises, and never past the highest placed badge
+        changed = False
+        for item in sorted(tms):
+            if tms[item]["rule"] == "shelf" or not inputs[item]:
+                continue
+            need = max(badge[i] for i in inputs[item])
+            if need > badge[item]:
+                badge[item] = need
+                changed = True
+    raises = []
+    for item in sorted(tms):
+        if badge[item] == base[item]:
+            continue
+        src = sorted(inputs[item], key=lambda i: (-badge[i], i))[0]
+        raises.append({"item": item, "input": src, "from": base[item], "to": badge[item]})
+        tms[item]["badge"] = badge[item]
+        tms[item]["rule"] += "; chain: raised %d -> %d, crafted from %s (badge %d)" % (
+            base[item], badge[item], src, badge[src])
+    got = {r["item"]: (r["input"], r["from"], r["to"]) for r in raises}
+    for item, d in sorted(declared.items()):
+        want = (d["input"], d["from"], d["to"])
+        if item not in tms or d["input"] not in tms:
+            notes.append("badge_rule.chain.raises lists %s (from %s), which this server does not craft: nothing to raise"
+                         % (item, d["input"]))
+        elif got.get(item) != want:
+            problems.append("badge_rule.chain.raises lists %s raised %d -> %d by %s; the plan %s" % (
+                item, d["from"], d["to"], d["input"],
+                "raises it %d -> %d by %s" % (got[item][1], got[item][2], got[item][0]) if item in got
+                else "does not raise it (badge %d)" % tms[item]["badge"]))
+    for item in sorted(set(got) - set(declared)):
+        problems.append("%s is raised %d -> %d to its input %s, and badge_rule.chain.raises does not list it"
+                        % (item, got[item][1], got[item][2], got[item][0]))
+    for item in sorted(tms):
+        for rid, _, _, ins in tm_recipes.get(item, []):
+            for i in ins:
+                if i in tms and tms[i]["badge"] > tms[item]["badge"]:
+                    problems.append("%s makes %s at badge %d from %s, which opens at badge %d: a dead recipe%s" % (
+                        rid, item, tms[item]["badge"], i, tms[i]["badge"],
+                        " (a shelf TM, which the shelf places: move its shelf line or the input's)"
+                        if tms[item]["rule"] == "shelf" else ""))
+    return raises, problems, notes
+
+
 def plan(doc, resolved, markets, progression, scores=None):
     """Every gated recipe with its badge and the rule that set it; the advancements and special recipes to close;
     the problems (fail closed). scores: the score table (default: the committed one, badge_rule.power.scores)."""
@@ -458,14 +523,11 @@ def plan(doc, resolved, markets, progression, scores=None):
         notes.append("%d scored TM(s) have no loaded crafting recipe on this server: %s" % (len(extra), extra[:5]))
     for item in sorted(set(shelf) - set(tm_recipes)):
         notes.append("shelf line %s has no loaded crafting recipe: nothing to gate" % item)
-    # a chain TM (tm_howl is tm_leer + a gem + a glove) is placed by its own score, not held behind its input TM: its
-    # recipe needs the input TM in hand, which the shelf, loot or a trade can supply before the input's recipe opens
-    early = sorted("%s %d < %s %d" % (item, t["badge"], inp, tms[inp]["badge"]) for item, t in tms.items()
-                   for _, _, _, inputs in tm_recipes[item] for inp in inputs
-                   if inp in tms and tms[inp]["badge"] > t["badge"])
-    if early:
-        notes.append("%d chain TM recipe(s) open before their input TM's recipe (by design): %s"
-                     % (len(early), early[:6]))
+    # a chain TM (tm_howl is tm_leer + a gem + a glove) never opens before the TM it is crafted from (the owner,
+    # 2026-10-08: "A craft that unlocks before its input is a dead recipe"): raised, named in badge_rule.chain.raises
+    raises, chain_problems, chain_notes = chain_order(doc, tms, tm_recipes)
+    problems += chain_problems
+    notes += chain_notes
     gated = {}
     for item, t in tms.items():
         for rid in t["recipes"]:
@@ -536,7 +598,8 @@ def plan(doc, resolved, markets, progression, scores=None):
     disagree = ["%s: shelf %d, power %d (score %s)" % (item, t["badge"], t["power_badge"], t["score"])
                 for item, t in sorted(tms.items()) if t["rule"] == "shelf" and t["badge"] != t["power_badge"]]
     by_rule = collections.Counter(t["rule"].split(" ")[0].split(":")[0] for t in tms.values())
-    return {"tms": tms, "gated": gated, "closed_advancements": closed_adv, "closed_recipes": sorted(closed_recipes),
+    return {"tms": tms, "gated": gated, "chain_raises": raises,
+            "closed_advancements": closed_adv, "closed_recipes": sorted(closed_recipes),
             "top_badge": top, "key": key, "moves_sha256": scores.get("moves_sha256"),
             "distribution": dict(sorted(collections.Counter(t["badge"] for t in tms.values()).items())),
             "by_rule": dict(sorted(by_rule.items())),

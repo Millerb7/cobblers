@@ -205,26 +205,26 @@ and Skill Swap/Fissure (four or five badges). What the owner may want to decide 
 
 ## 6. The outliers: where the number is wrong
 
-A pure number misjudges these. Each has a suggested hand placement; none is applied.
+A pure number misjudges these. Each has a suggested hand placement; all are applied (the owner, 2026-10-08; section 9).
 
 | # | TM(s) | Score -> rule badge | What the rule misses | Suggested |
 |---:|---|---|---|---:|
 | 1 | Thunder Wave | 90 -> 6 | Valued as a Surf, which is the anchor working as asked. But a mid-game status move should not wait for the badge that also brings Thunderbolt; Toxic's shelf line is 5 | 5 |
 | 2 | Will-O-Wisp | 72.2 -> 4 | Burn is valued at 85 x 85%; it halves every physical attacker for the rest of the fight. Keep the three status inducers together with Toxic | 5 |
-| 3 | Nuzzle | 50 -> 2 | **An inconsistency in the rule**: a guaranteed paralysis on a damaging move is a 100% secondary worth 30, while the status move gets 100. Nuzzle is a Thunder Wave that also deals damage. Inferno and Zap Cannon (100% burn / paralysis, 50% accuracy, 62.5 and 72) have the same gap | 5 |
+| 3 | Nuzzle | 50 -> 2 | **An inconsistency in the rule**: a guaranteed paralysis on a damaging move is a 100% secondary worth 30, while the status move gets 100. Nuzzle is a Thunder Wave that also deals damage. Inferno and Zap Cannon (100% burn / paralysis, 50% accuracy, 62.5 and 72) have the same gap | 5 (Inferno and Zap Cannon too, the owner, 2026-10-08) |
 | 4 | Trick Room | 76 -> 5 | Its value is the team's: on a slow team it decides fights, on a fast one it is negative. The AI does not play around it | 6 |
 | 5 | U-turn, Volt Switch (90 -> 6); Flip Turn (80 -> 5); Parting Shot (55 -> 3) | The pivot's +20 puts a 70-power move level with Surf. Pivoting is good in singles, but not a 90-power move's worth | 5 for all four |
 | 6 | Knock Off | 65 -> 4 | Its 1.5x against a held item (97.5) and the item removal are both code. Trainers here hold items | 6 |
 | 7 | Set-up: Swords Dance, Nasty Plot (70 -> 4), Dragon Dance (65 -> 4), Bulk Up (55 -> 3), Calm Mind (55 -> 3, shelf 6), Quiver Dance (85 -> 6), Shift Gear (95 -> 7), Belly Drum (90 -> 6), Shell Smash (125 -> 8) | A +2 is valued as one 70-power hit, but it multiplies every hit after it: set-up is what sweeps a gym. The rule prices one turn, not the fight | SD, NP, DD, BU, CM at 6 (Calm Mind's shelf line); QD, Shift Gear, Belly Drum at 7; Shell Smash stays 8 |
 | 8 | Earthquake vs Magnitude | 100 -> 7 vs 71 -> 4 | The rule gets the ratio right (Magnitude's mean is 71) but not the variance: 5% of Magnitudes are 150. EQ's shelf line is 8, one later than the rule | EQ 8 (shelf); Magnitude 5 |
-| 9 | Recharge moves: Hyper Beam, Giga Impact, Blast Burn, Frenzy Plant, Hydro Cannon, Rock Wrecker (64.1 -> 4), Eternabeam (68.4 -> 4) | Averaging over two turns halves them, but a gate is about the biggest single hit: 150 power deletes a leader's ace and the recharge never comes | 7 |
+| 9 | Recharge moves: Hyper Beam, Giga Impact, Blast Burn, Frenzy Plant, Hydro Cannon, Rock Wrecker (64.1 -> 4), Eternabeam (68.4 -> 4); Meteor Assault (71.2 -> 4), Prismatic Laser (80 -> 5), Roar of Time (64.1 -> 4), added by the owner 2026-10-08 | Averaging over two turns halves them, but a gate is about the biggest single hit: 150 power deletes a leader's ace and the recharge never comes | 7 |
 | 10 | Explosion (83.1 -> 5), Self-Destruct (66.5 -> 4) | The same: the faint is priced as a cost per turn, the 250/200-power hit as a burst it is | 7 / 6 |
 | 11 | Solar Beam (60 -> 3), Solar Blade (62.5 -> 3) | The charge turn halves them, but in sun (Sunny Day is badge 2) there is no charge: a 120-power move | 5 |
 | 12 | One-hit KOs: Fissure, Sheer Cold, Horn Drill (57 -> 3) | Under the level caps the player's Pokemon is the ace's level, so 30% applies: a 30% chance to delete a gym ace in one turn. A cheese, not a 57-power move | 8 (Fissure's shelf line already is) |
 | 13 | Fixed damage: Dragon Rage (40 -> 2), Sonic Boom (18 -> 1); Seismic Toss, Night Shade (65 -> 4) | Fixed damage is strongest early: Dragon Rage's 40 HP two-shots most Pokemon at cap 25-30. The nominal values assume a level-50 user | Dragon Rage 4, Sonic Boom 2; Seismic Toss and Night Shade stay 4 |
 | 14 | Conditional doublers: Hex, Venoshock (65 -> 4), Facade (70 -> 4), Acrobatics (55 -> 3), Weather Ball (50 -> 2) | Left at stated power on purpose (2.1). Each doubles in a condition a player can set up: 130, 130, 140, 110, 100 | Hex, Venoshock, Facade, Acrobatics 5; Weather Ball 4 |
 | 15 | Band edges: Sludge Bomb (94.5 -> 7) vs Psychic (90.8 -> 6); Poison Jab (84.5 -> 6, shelf 5), Iron Head (84.5 -> 6) vs X-Scissor (80 -> 5) | A 30% side effect pushes a 90 or an 80 over the four-point allowance. Any edge cuts somewhere | Sludge Bomb 6; Iron Head 5 (Poison Jab keeps its shelf 5) |
-| 16 | Return, Frustration | 100 -> 7 | Nominal 100 assumes full (or zero) friendship. How fast Cobblemon's friendship reaches 255 is not verified here | 6, or measure first |
+| 16 | Return, Frustration | 100 -> 7 | Nominal 100 assumes full (or zero) friendship. Measured 2026-10-08 (section 9.1): full power is a purchase at badge 4 for Return and the starting point for Frustration | ~~6, or measure first~~ 7 (measured) |
 | 17 | Signature and one-species TMs: V-create, Double Iron Bash, Multi-Attack, Revival Blessing, Spore, Glare (100 -> 7) ... | The score ignores who can learn it. A badge-8 Sunsteel Strike matters to one species. Harmless in either direction; Glare beating Thunder Wave is correct | leave; if Thunder Wave moves to 5, Glare to 6 |
 
 What the rule cannot see at all, and does not try to: **learnsets** (outlier 17), **the disc grade** (crafting cost,
@@ -246,6 +246,10 @@ badge), and it would bring back the cliff the owner rejected.
   `place` (hand badges), `shelf_agrees` (the shelf lines the group also names) and `not_placed` (TMs the group's text
   mentions that its suggestion does not place); `shelf_disagreements` the 21 lines of section 5, each kept at its
   shelf badge. The type/grade rule is kept under `superseded_unlisted`.
+- `badge_rule.chain` (the owner, 2026-10-08: "A craft that unlocks before its input is a dead recipe"): after the
+  shelf, the groups and the bands, a TM crafted from another TM is raised to its input's badge, never the input
+  lowered (`tm_gate.chain_order`). Every raise is listed in `chain.raises` with its reason or the plan fails, and
+  the plan fails if any recipe still opens before its input (a shelf TM is never raised: it would fail instead).
 - **A committed table, not a call.** `tools/tm_gate.py` reads `docs/mechanics/TM_POWER_GATE.json` and does not score:
   scoring needs `node` to read `moves.js`, which prepare does not otherwise need. The table records the sha256 of the
   `moves.js` it was scored from; the gate fails closed when the server's differs, when the table lacks a TM the
@@ -265,19 +269,24 @@ Never point either at `C:/Users/wnd/Documents/github/cobblers-server/`, the runn
 
 ## 9. What the gate places (the snapshot of 2026-10-05, measured 2026-10-08)
 
-802 TMs: 23 by the shelf, 45 by an outlier group (5 of them hold a TM at its own band: Flip Turn, Shift Gear, Shell
-Smash, Seismic Toss, Night Shade), 734 by their band.
+802 TMs: 23 by the shelf, 50 by an outlier group (7 of them hold a TM at its own band: Flip Turn, Shift Gear, Shell
+Smash, Seismic Toss, Night Shade, Return, Frustration), 729 by their band; then 4 chain TMs raised to their input's
+badge (9.2).
 
-| Badge | With the shelf (section 3) | Applied | Delta |
-|---:|---:|---:|---:|
-| 1 | 166 | 165 | -1 |
-| 2 | 122 | 120 | -2 |
-| 3 | 107 | 100 | -7 |
-| 4 | 103 | 88 | -15 |
-| 5 | 109 | 121 | +12 |
-| 6 | 96 | 101 | +5 |
-| 7 | 66 | 72 | +6 |
-| 8 | 33 | 35 | +2 |
+| Badge | With the shelf (section 3) | Shelf and outliers | And the chain raises (the plan) | Delta |
+|---:|---:|---:|---:|---:|
+| 1 | 166 | 165 | 164 | -2 |
+| 2 | 122 | 120 | 120 | -2 |
+| 3 | 107 | 99 | 99 | -8 |
+| 4 | 103 | 85 | 85 | -18 |
+| 5 | 109 | 122 | 121 | +12 |
+| 6 | 96 | 99 | 100 | +4 |
+| 7 | 66 | 77 | 77 | +11 |
+| 8 | 33 | 35 | 36 | +3 |
+
+The owner's calls of 2026-10-08 moved seven TMs and raised four: Inferno 3 -> 5 and Zap Cannon 4 -> 5 (group 3);
+Meteor Assault 4 -> 7, Prismatic Laser 5 -> 7, Roar of Time 4 -> 7 (group 9); Return and Frustration 6 -> 7 (group
+16, measured in 9.1); the chain raises of 9.2.
 
 The strongest TM at each badge as applied, by score (a placed outlier keeps its score, so Hyper Beam at 7 reads 64.1):
 
@@ -288,13 +297,46 @@ The strongest TM at each badge as applied, by score (a placed outlier keeps its 
 | 3 | Thunderbolt 93 (shelf) | Synthesis, Morning Sun 61.8 |
 | 4 | Giga Drain 90 (shelf); by the rule, Spark 74 | Soft-Boiled, Slack Off 71.2 |
 | 5 | U-turn, Volt Switch 90 (outlier 5) | Thunder Wave 90 (outlier 1) |
-| 6 | Return, Frustration 100 (outlier 16) | Glare 100 (outlier 17) |
-| 7 | Searing Shot, Oblivion Wing 104 | Shift Gear 95 (outlier 7) |
+| 6 | Sludge Bomb 94.5 (outlier 15); Body Slam, Dire Claw 94 | Glare 100 (outlier 17) |
+| 7 | Searing Shot, Oblivion Wing 104; Return, Frustration 100 (102 at full or zero friendship, outlier 16) | Shift Gear 95 (outlier 7) |
 | 8 | Boomburst 140 | Shell Smash 125 |
 
-Left for the owner, named in the data rather than decided here: Inferno and Zap Cannon (group 3's text says they
-have Nuzzle's gap; its suggestion places Nuzzle only), Meteor Assault, Prismatic Laser and Roar of Time (recharge
-moves group 9 does not list), and group 16's "or measure first" (Return and Frustration are placed at 6; how fast
-Cobblemon's friendship reaches 255 is not measured). A chain TM is no longer held behind its input TM: four chain
-recipes open before their input's (Bone Club 3 needs Bonemerang 6; Noble Roar 1 needs Roar 2; Stun Spore 5 needs Spore
-8; Triple Kick 2 needs Double Kick 3); the input can come from the shelf, loot or a trade.
+### 9.1 Friendship, measured (Cobblemon 1.8.0, for group 16)
+
+Read from `Cobblemon-fabric-1.8.0+1.21.1.jar` and Mega Showdown's `moves.js` in the 2026-10-05 snapshot (javap and
+zipfile, 2026-10-08; nothing run in game). The full record, with the class each fact is read from, is
+`data/tm_gate.json` outlier 16 `measured`.
+
+- **Power**: Return = floor(friendship x 10 / 25), Frustration the same of (255 - friendship): 102 at 255 or 0.
+  Cobblemon packs the friendship into the Showdown team. `maxPokemonFriendship` is 255; no rate multiplier exists.
+- **Start**: the species' base friendship: 837 species at 50, 79 at 0. Four of our eight starters start at 0
+  (Cosmog, Type: Null, Poipole, Meltan). The Friend Ball sets 150; the Luxury Ball's boost does nothing in 1.8.0.
+- **Level-up**: +3 below 100, +2 below 200, **+0 from 200**. Levels alone stop at about 200: Return 80.
+- **Walking**: +1 every 120 seconds to a party Pokemon sent out or shouldered, **only below 160** (30 an hour).
+- **Battles**: nothing. An X item used in battle gives +1.
+- **Soothe Bell**: every gain x1.5, rounded. Craftable from iron and wool from the start.
+- **Items**: friendship berries +10 / +5 / +1 by the same thresholds (55 berries from 200 to 255);
+  CobbleCuisine's malasada +12 and Poke Puff +6 (its config; that the gain is flat is not read from its code).
+
+Return for a base-50 starter levelled to each badge's cap (badges 1-7: caps 25-55), by level-ups alone: 42, 46, 50,
+54, 58, 62, 66; holding a Soothe Bell: 52, 58, 64, 70, 76, 80, 80. **But 102 is a purchase**: walk the Pokemon to
+160 (3.7 hours out, 1.8 with the bell), then 8 malasadas (6 with the bell) from greenhollow's badge-4 counter (900
+each) or steepside's (700). Frustration is cheaper still: a base-0 Pokemon has it at 102 when taught, and a
+base-0 starter at cap 25 still has 78. Full power is reachable three badges before badge 7, so the proposal's
+nominal 100 stands, and 102 sits in the badge-7 band (94.1-104): **both at 7**, their own band.
+
+### 9.2 Chain TMs (the owner, 2026-10-08: "A craft that unlocks before its input is a dead recipe")
+
+Four TMCraft recipes take another TM, and opened before it. Each chain TM is raised to its input's badge; no input
+moves (`data/tm_gate.json` `badge_rule.chain.raises`):
+
+| Chain TM | Input TM | Badge before | Raised to |
+|---|---|---:|---:|
+| Bone Club (56.5) | Bonemerang (90) | 3 | 6 |
+| Noble Roar (30) | Roar (45) | 1 | 2 |
+| Stun Spore (75) | Spore (110, left at its band by group 17) | 5 | 8 |
+| Triple Kick (46.8) | Double Kick (60) | 2 | 3 |
+
+Stun Spore at 8 is the costliest: a badge-5 status move waits three badges for its input. The other fix, lowering
+Spore, is the owner's to make, not the chain rule's. The rule holds for every TM: the plan fails when a raise is not
+listed, when a listed raise no longer matches, and when any recipe still opens before its input.
