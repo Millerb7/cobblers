@@ -16,7 +16,8 @@ by calling `page()` and `write()` here and being run once by itself; after that 
 
 THE SITE:
   assets/site.css   hand-written, the only stylesheet; generators emit classes, never a <style> of their own
-  assets/site.js    hand-written, the shared light / dark switch
+  assets/site.js    hand-written: the shared light / dark switch, the section filter and the search box (the markup
+                    for the last two comes from filter_nav(), section_attr() and search_box() here)
   guides.json       the manifest: file, title, nav label, one-line description, generator. Each generator registers
                     its own entry (`register()`) when it writes its page; nobody edits it by hand
   index.html        generated here from the manifest, so a new guide appears without anyone editing the index
@@ -31,8 +32,14 @@ re-run on an unchanged page writes nothing and never dirties the tree. The commi
 generation, marked "with uncommitted changes" when data/ or tools/ differ from it; such a page is re-stamped by the
 first run on a clean tree (commit the tools, then run this command, then commit the pages).
 
-Who imports this: tools/player_guide_battles.py (battles.html) and tools/player_guide_map.py (region-map.html).
-tools/challenge_guide.py does not: its page stays in build/maps/ and off the public site (see its docstring).
+Who imports this: tools/player_guide_battles.py (battles.html), tools/player_guide_map.py (region-map.html),
+tools/player_guide_starters.py (starters.html) and tools/player_guide_items.py (items.html). tools/challenge_guide.py
+does not: its page stays in build/maps/ and off the public site (see its docstring).
+
+A NEW GUIDE (a dungeon guide, once dungeons exist) is one generator, tools/player_guide_<name>.py, shaped like the
+others: a GUIDE entry with the next free `order` (40 after items.html's 30), `page()` and `write()` here, a `main()`
+taking --check, and a leak-test pass. Run it once and it is in the manifest, the header, the footer and the index;
+nothing here changes.
 """
 from __future__ import annotations
 
@@ -168,6 +175,42 @@ def page(entry, body, *, body_class, tools_html="", head_html="", end_html="", n
             % (esc(title), CSS, JS, head_html, esc(body_class), header(entry, tools_html), spoiler(not_covered_href),
                body, footer(entry["generator"] if entry else "tools/player_site.py", sources_html, entry=entry),
                end_html))
+
+
+# ------------------------------------------------------------------ the section filter and the search box
+# One implementation for every guide: the markup here, the behaviour in assets/site.js, the look in assets/site.css.
+# A guide puts filter_nav() above its sections and section_attr(key) on each section it lets the reader pick; a
+# section without it (a key, the "not covered" list) always shows. Without JavaScript neither control shows and every
+# section does (the html element's `nojs` class).
+
+FILTER_KEY = re.compile(r"[a-z0-9][a-z0-9-]*")
+
+
+def filter_nav(options, label="Show"):
+    """The filter buttons: "All", then one per (key, text[, title]) in `options`. A key is the section's anchor id,
+    so #key links to that filter; it must be lowercase letters, digits and hyphens, and not "all"."""
+    seen = set()
+    buttons = ['<button type="button" data-filter="all" aria-pressed="true">All</button>']
+    for opt in options:
+        key, text, title = (tuple(opt) + (None,))[:3]
+        if not FILTER_KEY.fullmatch(key) or key == "all" or key in seen:
+            raise SystemExit("filter_nav: bad or repeated key %r" % key)
+        seen.add(key)
+        buttons.append('<button type="button" data-filter="%s" aria-pressed="false"%s>%s</button>'
+                       % (esc(key), ' title="%s"' % esc(title) if title else "", esc(text)))
+    return '<nav class="filter" data-filter-nav aria-label="%s">%s</nav>' % (esc(label), "".join(buttons))
+
+
+def section_attr(key):
+    """The attributes that put a section under filter key `key`: its id (the #hash) and data-section."""
+    return 'id="%s" data-section="%s"' % (esc(key), esc(key))
+
+
+def search_box(selector, label, placeholder="", ident="find"):
+    """A search box that hides every `selector` match whose data-name (or text) does not contain what is typed."""
+    return ('<div class="search"><label for="%s">%s</label><input type="search" id="%s" data-search="%s" '
+            'placeholder="%s" autocomplete="off"><span data-search-count aria-live="polite"></span></div>'
+            % (esc(ident), esc(label), esc(ident), esc(selector), esc(placeholder)))
 
 
 # ------------------------------------------------------------------ write and check

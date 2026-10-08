@@ -29,6 +29,7 @@ import player_guide_starters as G  # noqa: E402
 import player_guide_battles as PB  # noqa: E402
 import player_site  # noqa: E402
 import test_player_site_leaks as LEAKS  # noqa: E402
+import test_player_site_filter as FILTER  # noqa: E402
 
 
 def _jar():
@@ -59,7 +60,7 @@ def _text(raw):
 def test_every_starter_line_is_on_the_page(page):
     raw, jar = page
     lang = _lang(jar)
-    heads = [html.unescape(h) for h in re.findall(r'<section class="line" id="[^"]*"><h2>(.*?)</h2>', raw)]
+    heads = [html.unescape(h) for h in re.findall(r'<section class="line" [^>]*><h2>(.*?)</h2>', raw)]
     sections = re.findall(r'<section class="line".*?</section>', raw, re.S)
     lines = _data()["lines"]
     assert len(sections) == len(lines)
@@ -72,6 +73,31 @@ def test_every_starter_line_is_on_the_page(page):
         for st in ln["stages"]:  # each tier's stats as the data gives them, in order
             row = " ".join(str(st["baseStats"][k]) for k, _h in G.STATS)
             assert row in " ".join(body.split()), (ln["id"], st["stage"], row)
+
+
+def test_the_filter_has_a_button_per_line_and_all(page):
+    """One button per starter line (named as the line's section is headed) plus All; every line's section is under
+    its own button, and the line's items sit inside that section, so one button shows all of a line and nothing
+    else."""
+    raw, jar = page
+    assert FILTER.filter_problems(raw) == []
+    lang = _lang(jar)
+    buttons = FILTER.nav_buttons(raw)
+    assert buttons[0][:2] == ("all", "All")
+    want = [lang["cobblemon.species.%s.name" % ln["stages"][0]["species"]] for ln in _data()["lines"]]
+    assert sorted(t for _k, t, _a in buttons[1:]) == sorted(want)
+    for key, text, _a in buttons[1:]:
+        sec = re.search(r'<section class="line" id="%s" data-section="%s"><h2>(.*?)</h2>(.*?)</section>'
+                        % (re.escape(key), re.escape(key)), raw, re.S)
+        assert sec and html.unescape(sec.group(1)) == text, (key, text)
+    # every contents link lands on an element that exists (the line links once pointed at ids no section had)
+    ids = set(re.findall(r'\sid="([^"]+)"', raw))
+    assert all(h in ids for h in re.findall(r'href="#([^"]+)"', raw)), sorted(set(re.findall(r'href="#([^"]+)"', raw)) - ids)
+    # an item a line needs is inside that line's section, never in a section of its own
+    for s in G.collect(str(jar))["specials"]:
+        head = re.search(r'<section class="line" [^>]*><h2>%s</h2>(.*?)</section>' % re.escape(html.escape(s["line"])),
+                         raw, re.S)
+        assert head and html.escape(s["name"]) in head.group(1), (s["line"], s["name"])
 
 
 def test_the_starter_screen_is_the_lines():

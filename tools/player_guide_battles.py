@@ -567,6 +567,14 @@ TOOLS = ('<span class="seg" role="group" aria-label="Difficulty">'
          '<a href="#contents">Contents</a>')
 
 
+def filter_label(s):
+    """A section's button: "Gym 3" for a gym (its leader is the button's title), "League" for the Elite Four and the
+    Champion, the leg's own title otherwise."""
+    if s["id"] == "league":
+        return "League"
+    return s["title"].split(":")[0]
+
+
 def render(model):
     secs = model["sections"]
     count = lambda s: sum(len(fs) for _t, fs in s["parts"])
@@ -599,9 +607,14 @@ def render(model):
                 % (esc(ru["relative"]), esc(ru["initial"]), esc(ru["after_champion"]), rules))
     body.append('<nav class="box toc" id="contents"><b>Contents</b><ol>%s<li><a href="#data-notes">Data notes</a>'
                 '</li><li><a href="#not-covered">What this page does not cover</a></li></ol></nav>' % "".join(toc))
+    # the shared section filter (tools/player_site.py filter_nav): one button per gym or leg, beside the
+    # Normal / Challenge switch in the header, which it does not replace
+    body.append(player_site.filter_nav([(s["id"], filter_label(s), s["title"]) for s in secs],
+                                       label="Show one gym or leg"))
     no = 0
     for s in secs:
-        body.append('<section id="%s"><h2>%s<small>%s</small></h2>' % (s["id"], esc(s["title"]), esc(s["sub"])))
+        body.append('<section %s><h2>%s<small>%s</small></h2>' % (player_site.section_attr(s["id"]), esc(s["title"]),
+                                                                  esc(s["sub"])))
         if s["cap"]:
             body.append('<div class="cap">Level cap through this section: <b class="cv m-n">%d</b>'
                         '<b class="cv m-c">%d</b></div>' % (s["cap"]["normal"], s["cap"]["challenge"]))
