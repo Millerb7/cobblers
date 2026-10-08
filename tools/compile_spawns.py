@@ -24,6 +24,11 @@ Habitat files (habitat_pools/<habitat>.json): every ambient entry scoped to the 
 The Mega field's dens (data/gulch_mine.json mega_field.families, 2026-10-05): each den's evolution line, plain and
 catchable, over a box round its anchor, appended to the file of the sub-region holding the anchor (mega_den_spawns).
 
+Placed structures' grounds (data/spawns.json placement_sites, entries with mechanism placement_coordinate_boxes): a
+site's roster over its placement's footprint (data/placements.json) widened by its margin, appended to the file of the
+sub-region holding the footprint, as the dens are (placement_site_spawns). The first: Poipole at the two pasted
+Necrozma towers (docs/mechanics/NETHER_ENCOUNTERS.md section 4).
+
 Marine files (spawn_pool_world/marine/<band>.json), from spawns.json marine_zones: open sea no sub-region, route or
 waterway covers, split into bands by distance from land (marine_bands below); every ambient entry scoped to a band
 (mechanism marine_coordinate_boxes). The first is the Windward Sea off Route 1 (2026-09-26).
@@ -514,7 +519,7 @@ def build(spawns, routes):
     return files, route_summaries, habitat_summaries
 
 
-def build_subregions(spawns, routes, regions, grid=SUBREGION_GRID, waterways=()):
+def build_subregions(spawns, routes, regions, grid=SUBREGION_GRID, waterways=(), placements=None):
     """The sub-region half of the pack: every authored roster over its own polygon.
 
     Kept separate from build() so the route compilation keeps its shape; a sub-region file and a
@@ -534,9 +539,11 @@ def build_subregions(spawns, routes, regions, grid=SUBREGION_GRID, waterways=())
     subs = {s["id"]: s for s in regions["subregions"]}
     dens, den_summ = mega_den_spawns(regions, corridor, spawns,
                                      base_boxes=lambda sid: subregion_boxes.boxes_for(subs[sid]["polygons"], grid, corridor, waterways))
+    sites, site_summ = placement_site_spawns(regions, corridor, spawns, placements,
+                                             base_boxes=lambda sid: subregion_boxes.boxes_for(subs[sid]["polygons"], grid, corridor, waterways))
     for sub in regions["subregions"]:
         ents = by_scope.get(sub["id"], [])
-        extra = dens.get(sub["id"], [])
+        extra = dens.get(sub["id"], []) + sites.get(sub["id"], [])
         if not ents and not extra:
             continue
         if ents:
@@ -547,10 +554,14 @@ def build_subregions(spawns, routes, regions, grid=SUBREGION_GRID, waterways=())
                     "covered_blocks": 0, "corridor_blocks_excluded": 0,
                     "output": "spawn_pool_world/subregions/%s.json" % sub["id"]}
         if extra:
-            # the Mega field's dens' lines (mega_den_spawns), over each den's own box, on top of the roster there
+            # the Mega field's dens' lines (mega_den_spawns), over each den's own box, on top of the roster there,
+            # and a placed structure's grounds (placement_site_spawns), likewise over its own box
             doc["spawns"] += extra
             summ["compiled_entry_count"] += len(extra)
-            summ["mega_dens"] = den_summ[sub["id"]]
+            if sub["id"] in den_summ:
+                summ["mega_dens"] = den_summ[sub["id"]]
+            if sub["id"] in site_summ:
+                summ["placement_sites"] = site_summ[sub["id"]]
         if not doc["spawns"]:
             continue
         files["data/cobblers/spawn_pool_world/subregions/%s.json" % sub["id"]] = dumps(doc)
@@ -627,6 +638,95 @@ def mega_den_spawns(regions, corridor, spawns, gulch=None, base_boxes=None):
             s["species"] |= set(line)
     for s in summ.values():
         s["species"] = sorted(s["species"])
+    return out, summ
+
+
+PLACEMENTS = ROOT / "data" / "placements.json"
+SITE = "placement_coordinate_boxes"
+
+
+def placement_site_spawns(regions, corridor, spawns, placements=None, base_boxes=None):
+    """({sub-region id: [spawn details]}, {sub-region id: [summary]}): the roster of a placed structure's grounds
+    (data/spawns.json placement_sites; entries with mechanism placement_coordinate_boxes scoped to a site id). The first
+    is Poipole at the two pasted Necrozma towers (docs/mechanics/NETHER_ENCOUNTERS.md section 4, the owner approved
+    2026-10-08), whose only upstream spawn rode the End's copies the dimension override switches off.
+
+    The box is the placement's footprint (data/placements.json position and size; corner anchor, rotation none only)
+    widened by the site's margin, less the route corridor boxes and the spawn-free zones, and only where the base
+    roster of the sub-region holding the footprint's centre already spawns (as mega_den_spawns lays a den). The details
+    go into that sub-region's file, after its own roster, with ids <sub>_<site>_b<n>_<species>. box_condition applies:
+    a grounded entry is forced canSeeSky, so a site entry spawns on the open grounds and any sky-open surface of the
+    structure, never under its roof and never in a cave below it.
+
+    Fails closed: an entry naming no site, a site naming no placement, a placement that is not corner-anchored and
+    unrotated, a footprint centre in no sub-region, a site whose box leaves nothing, and an entry whose level is outside
+    the sub-region's level_band (a find, its eligibility_reason starting "find", also outside the band's top half,
+    ENCOUNTER_DESIGN.md section 6). Translation only: every number is the data's."""
+    sites = {s["id"]: s for s in spawns.get("placement_sites") or []}
+    ents = [e for e in spawns["entries"] if e["mechanism"] == SITE and e["ambient"] and e["weight"] > 0]
+    if not sites and not ents:
+        return {}, {}
+    unknown = sorted({e["scope"] for e in ents} - set(sites))
+    if unknown:
+        raise SystemExit("placement-site entries name sites data/spawns.json placement_sites does not define: %s" % unknown)
+    if placements is None:
+        placements = json.loads(PLACEMENTS.read_text(encoding="utf-8"))
+    by_id = {p["id"]: p for p in placements.get("placements") or [] if isinstance(p, dict) and "id" in p}
+    bands = {s["id"]: s.get("level_band") for s in spawns.get("subregions") or []}
+    cut = list(spawn_free_zones()) + [tuple(b[:4]) for b in corridor]
+    out, summ, base_cache = {}, {}, {}
+    for sid, site in sorted(sites.items()):
+        rows_in = [e for e in ents if e["scope"] == sid]
+        if not rows_in:
+            continue
+        p = by_id.get(site["placement"])
+        if p is None:
+            raise SystemExit("placement site %s: data/placements.json has no placement %r" % (sid, site["placement"]))
+        if p.get("anchor_mode") != "corner" or p.get("rotation") != "none":
+            raise SystemExit("placement site %s: %s is %s-anchored, rotation %s; only corner and none are translated"
+                             % (sid, p["id"], p.get("anchor_mode"), p.get("rotation")))
+        x0, z0 = p["position"]["x"], p["position"]["z"]
+        sx, sz = p["size"][0], p["size"][2]
+        m = site["margin"]
+        cx, cz = x0 + sx / 2.0, z0 + sz / 2.0
+        home = [s for s in regions["subregions"]
+                if any(subregion_boxes.point_in_polygon(cx, cz, poly) for poly in s["polygons"])]
+        if not home:
+            raise SystemExit("placement site %s: the footprint centre (%.1f, %.1f) is in no data/regions.json sub-region"
+                             % (sid, cx, cz))
+        sub = sorted(home, key=lambda s: s["id"])[0]["id"]
+        box = (x0 - m, x0 + sx - 1 + m, z0 - m, z0 + sz - 1 + m)
+        boxes = subtract(box, cut)
+        if base_boxes is not None:
+            if sub not in base_cache:
+                base_cache[sub] = base_boxes(sub)
+            boxes = [(max(b[0], c[0]), min(b[1], c[1]), max(b[2], c[2]), min(b[3], c[3]))
+                     for b in boxes for c in base_cache[sub]
+                     if max(b[0], c[0]) <= min(b[1], c[1]) and max(b[2], c[2]) <= min(b[3], c[3])]
+        if not boxes:
+            raise SystemExit("placement site %s: its box %s leaves nothing once the path, spawn-free zones and the "
+                             "sub-region's own cells are applied" % (sid, box))
+        band = bands.get(sub)
+        if not band:
+            raise SystemExit("placement site %s: sub-region %s has no level_band in data/spawns.json" % (sid, sub))
+        lo_b, hi_b = band["minimum"], band["maximum"]
+        rows = []
+        for e in rows_in:
+            lo, hi = (int(v) for v in e["level"].split("-"))
+            if lo < lo_b or hi > hi_b:
+                raise SystemExit("%s: level %s is outside %s's band %d-%d" % (e["id"], e["level"], sub, lo_b, hi_b))
+            if str(e.get("eligibility_reason", "")).startswith("find") and lo < lo_b + (hi_b - lo_b) // 2:
+                raise SystemExit("%s: a find spawns in the top half of the band (from %d), not from %d"
+                                 % (e["id"], lo_b + (hi_b - lo_b) // 2, lo))
+            for bi, b in enumerate(boxes):
+                rows.append({"id": "%s_%s_b%d_%s" % (sub, sid, bi, e["species"].replace(" ", "_")),
+                             "pokemon": e["species"], "type": "pokemon", "spawnablePositionType": position_type(e),
+                             "bucket": e["bucket"], "level": e["level"], "weight": e["weight"],
+                             "condition": box_condition(b[0], b[1], b[2], b[3], e), **held_items(e)})
+        out.setdefault(sub, []).extend(rows)
+        summ.setdefault(sub, []).append({"site": sid, "placement": p["id"], "box": list(box), "box_count": len(boxes),
+                                         "covered_blocks": subregion_boxes.area(boxes), "entries": len(rows),
+                                         "species": sorted({e["species"] for e in rows_in})})
     return out, summ
 
 
@@ -832,7 +932,8 @@ def main(argv=None):
         f.write_text(text, encoding="utf-8", newline="\n")
     manifest = {"generator": "tools/compile_spawns.py",
                 "inputs": {k: hashlib.sha256(Path(v).read_bytes()).hexdigest() for k, v in (("data/spawns.json", a.spawns), ("data/routes.json", a.routes))
-                           + ((("data/gulch_mine.json", GULCH),) if GULCH.is_file() and not a.no_subregions else ())},
+                           + ((("data/gulch_mine.json", GULCH),) if GULCH.is_file() and not a.no_subregions else ())
+                           + ((("data/placements.json", PLACEMENTS),) if spawns.get("placement_sites") and not a.no_subregions else ())},
                 "files": {rel: hashlib.sha256(text.encode("utf-8")).hexdigest() for rel, text in sorted(files.items())},
                 "route_files": rs, "habitat_files": hs, "subregion_files": ss, "waterway_files": ws,
                 "marine_files": ms,
