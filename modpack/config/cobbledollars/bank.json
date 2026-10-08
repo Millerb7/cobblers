@@ -1,10 +1,6 @@
 {
   "bank": [
     {
-      "item": "minecraft:emerald",
-      "price": 400
-    },
-    {
       "item": "minecraft:elytra",
       "price": 25000
     },
@@ -27,50 +23,6 @@
     {
       "item": "lumymon:soul_feather",
       "price": 30000
-    },
-    {
-      "item": "minecraft:porkchop",
-      "price": 10
-    },
-    {
-      "item": "minecraft:cooked_porkchop",
-      "price": 20
-    },
-    {
-      "item": "minecraft:beef",
-      "price": 10
-    },
-    {
-      "item": "minecraft:cooked_beef",
-      "price": 20
-    },
-    {
-      "item": "minecraft:chicken",
-      "price": 10
-    },
-    {
-      "item": "minecraft:cooked_chicken",
-      "price": 20
-    },
-    {
-      "item": "minecraft:rabbit",
-      "price": 10
-    },
-    {
-      "item": "minecraft:cooked_rabbit",
-      "price": 20
-    },
-    {
-      "item": "minecraft:rabbit_stew",
-      "price": 30
-    },
-    {
-      "item": "minecraft:mutton",
-      "price": 10
-    },
-    {
-      "item": "minecraft:cooked_mutton",
-      "price": 20
     },
     {
       "item": "minecraft:chorus_fruit",
