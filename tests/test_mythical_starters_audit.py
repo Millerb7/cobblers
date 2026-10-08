@@ -24,6 +24,13 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
+
+
+def _skip_while_sketch_uncapped():
+    # the owner, 2026-10-08: "remove the cap for smeargle's sketch for now"; these exercise the cap and run again
+    # once a line carries sketch_cap
+    if not any("sketch_cap" in ln for ln in json.loads((ROOT / "data" / "mythical_starters.json").read_text(encoding="utf-8"))["lines"]):
+        pytest.skip("the Sketch cap is off for now (the owner, 2026-10-08)")
 sys.path.insert(0, str(ROOT / "tools"))
 
 import mythical_starters as MS  # noqa: E402  the generator under mutation
@@ -420,8 +427,7 @@ def test_a_smeargle_form_off_the_decision_is_a_fault(jar, monkeypatch, tmp_path,
     ("comment", "a // or unbalanced comment"),
 ])
 def test_the_sketch_cap_off_the_decision_is_a_fault(jar, monkeypatch, tmp_path, part, needle):
-    if not any("sketch_cap" in ln for ln in json.loads((ROOT / "data" / "mythical_starters.json").read_text(encoding="utf-8"))["lines"]):
-        pytest.skip("the Sketch cap is off for now (the owner, 2026-10-08); these run again when a line carries sketch_cap")
+    _skip_while_sketch_uncapped()
     if part in ("guard", "comment"):
         original = MS.sketch_override
 
@@ -559,6 +565,7 @@ def test_an_ability_pool_on_a_line_the_decision_gives_none_is_a_fault(jar, monke
 @pytest.mark.parametrize("event", ["battle_started_post", "battle_victory", "battle_fled"])
 # Without it any one of the three callbacks could be dropped (the earlier case drops only battle_fled)
 def test_each_sketch_callback_is_required(jar, monkeypatch, tmp_path, event):
+    _skip_while_sketch_uncapped()
     original = MS.sketch_files
     monkeypatch.setattr(MS, "sketch_files", lambda line: {k: v for k, v in original(line).items() if event not in k})
     assert_named(faults(jar, build(monkeypatch, tmp_path)), "%s/cobblers_sketch_cap.molang is missing" % event)
@@ -566,6 +573,7 @@ def test_each_sketch_callback_is_required(jar, monkeypatch, tmp_path, event):
 
 # Without it the callbacks could count to a number other than the decided 10 while the override still refused at 10.
 def test_sketch_callbacks_that_stop_short_of_ten_are_a_fault(jar, monkeypatch, tmp_path):
+    _skip_while_sketch_uncapped()
     original = MS.sketch_files
 
     def nine(line):
@@ -579,6 +587,7 @@ def test_sketch_callbacks_that_stop_short_of_ten_are_a_fault(jar, monkeypatch, t
 
 # Without it the move override itself could be missing and Sketch would be uncapped.
 def test_a_missing_sketch_override_is_a_fault(jar, monkeypatch, tmp_path):
+    _skip_while_sketch_uncapped()
     original = MS.files
     monkeypatch.setattr(MS, "files", lambda doc, jar=None: {k: v for k, v in original(doc, jar).items()
                                                              if not k.endswith("moves/sketch.js")})
