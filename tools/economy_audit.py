@@ -1196,9 +1196,24 @@ NOT_A_MOB_FARM = {"minecraft:entities/ender_dragon": "the End is shut (data/bank
 PASTURE_LOOT = "PastureLoot.json"
 
 
-def pasture_config(server_dir=None):
-    """(PastureLoot config, the file read): the server's if given, else the base pack's."""
-    for p in ([Path(server_dir) / "config" / PASTURE_LOOT] if server_dir else []) + \
+PASTURE_LOOT_OVERLAY = ROOT / "modpack" / "config" / PASTURE_LOOT
+
+
+def _rel(p):
+    try:
+        return Path(p).resolve().relative_to(ROOT).as_posix()
+    except ValueError:
+        return str(p)
+
+
+def pasture_config(server_dir=None, overlay=None):
+    """(PastureLoot config, the file read): OUR overlay (modpack/config/PastureLoot.json) when it exists, because install
+    copies modpack/config over the server's config/ and so the overlay is the file the server runs; else the server's
+    if given; else the base pack's. A snapshot taken before the overlay existed carries the base file in its config/,
+    and judging the ranch by it would audit a blacklist we no longer ship. Whether the overlay actually reached a server
+    is tools/install_check.py's question, not this audit's. `overlay` replaces the overlay path (tests)."""
+    ov = PASTURE_LOOT_OVERLAY if overlay is None else Path(overlay)
+    for p in [ov] + ([Path(server_dir) / "config" / PASTURE_LOOT] if server_dir else []) + \
              [ROOT / "base-pack" / "cobbleverse" / "config" / PASTURE_LOOT]:
         if p.is_file():
             return read_json(p), p
@@ -1254,7 +1269,7 @@ def afk_farmable(jars, server_dir=None, conversions=None):
         names = sorted({s.rsplit("/", 1)[-1] for s, _e in ents})
         add(it, "ranch: Pasture Loot pays it from %d species (%s%s), %s does not blacklist it"
             % (len(names), ", ".join(names[:4]), ", ..." if len(names) > 4 else "",
-               pl_src.name if pl_src else "no PastureLoot config"))
+               _rel(pl_src) if pl_src else "no PastureLoot config"))
     for t in sorted(jars.loot):
         m = re.fullmatch(r"minecraft:entities/([a-z0-9_]+)", t)
         if not m or t in NOT_A_MOB_FARM or ("minecraft:" + m.group(1)) in black:

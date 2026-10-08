@@ -37,7 +37,14 @@ needs_jars = pytest.mark.skipif(not HAVE_JARS, reason="no snapshot + vanilla jar
 # Defects the audit finds today: {failure-line prefix: why it is known}. Empty on 2026-10-06: the audit found no
 # arbitrage, no tier leak and no missing id. A defect that appears must be fixed or entered here; an entry whose
 # defect disappears fails test_the_failure_set_is_exactly_the_known_defects by name.
-KNOWN: dict = {}
+KNOWN: dict = {
+    # Found 2026-10-08 by the independent audit of 8a2e911 once the AFK check read the overlay blacklist. The overlay
+    # names iron_ingot and iron_nugget, but not the iron gear pastured species drop: iron_helmet (Pawniard, Bisharp,
+    # Shelmet, Escavalier) and iron_sword (Honedge, Doublade, Aegislash, read from the species tables) blast into iron
+    # nuggets, nine of which craft the $9 iron ingot. About $1 an item: small money, but it is the ranch_ore
+    # exclusion's hole. Fix is content (modpack/config/PastureLoot.json), not this test: remove the entry when it goes.
+    "AFK BANK minecraft:iron_ingot:": "the iron gear Pasture Loot pays smelts to nuggets (modpack/config/PastureLoot.json)",
+}
 # Emptied again 2026-10-08, each removal confirmed fixed rather than unseen:
 #  - the 28 "AFK BANK <item>:" entries (brewed medicines, the six vitamins, PP Up, revives, pot dishes,
 #    emerald_block, gold_ingot): baba770 took each out of the Bank (base_removed / buys_removed, joined to
@@ -782,7 +789,8 @@ def _afk_jars():
 # Without it the farm derivation is unproved: a crop's block loot, a fishing table reached through a nested loot_table
 # reference and a species drop are depth 0; a blacklisted drop is not farmable; a brew of two farmed items is depth 1
 # and a brew over that depth 2; a recipe with one unfarmed slot is not farmable.
-def test_the_afk_farm_set_on_a_stub_jar(tmp_path):
+def test_the_afk_farm_set_on_a_stub_jar(tmp_path, monkeypatch):
+    monkeypatch.setattr(E, "PASTURE_LOOT_OVERLAY", tmp_path / "no_overlay.json")   # the stub server's blacklist rules
     conv = [("t:brew", "cobblemon:brewing_stand", [({"t:bottle"}, 3), ({"t:leek_item"}, 1)], "t:brew", 3),
             ("t:tonic", "cobblemon:brewing_stand", [({"t:brew"}, 3), ({"t:berry"}, 1)], "t:tonic", 3),
             ("t:ring", "crafting_shaped", [({"t:gem"}, 8), ({"t:unfarmed"}, 1)], "t:ring", 1)]
@@ -791,6 +799,24 @@ def test_the_afk_farm_set_on_a_stub_jar(tmp_path):
     assert farm["t:gem"][0] == 0 and "t:hidden" not in farm
     assert farm["t:brew"][0] == 1 and farm["t:tonic"][0] == 2
     assert "t:ring" not in farm
+
+
+# Without it the AFK check could judge the ranch by the server's config/PastureLoot.json (in the offline snapshot, the
+# base pack's file) and not by modpack/config/PastureLoot.json, which install copies over it: the server's blacklist
+# names t:hidden only, the overlay names t:gem, so t:gem is not farmable and t:hidden is (the overlay replaces the
+# file, it does not add to it); with no overlay the server's file rules again.
+def test_the_overlay_blacklist_replaces_the_servers(tmp_path, monkeypatch):
+    sd = _afk_dir(tmp_path, items=["t:hidden"])
+    ov = tmp_path / "overlay.json"
+    ov.write_text(json.dumps({"tick_per_minute": 1200, "drop_chance_per_minute": 0.15, "item_blacklist": ["t:gem"]}),
+                  encoding="utf-8")
+    monkeypatch.setattr(E, "PASTURE_LOOT_OVERLAY", ov)
+    assert E.pasture_config(sd)[1] == ov
+    farm, _b = E.afk_farmable(_afk_jars(), sd, [])
+    assert "t:gem" not in farm and farm["t:hidden"][0] == 0
+    monkeypatch.setattr(E, "PASTURE_LOOT_OVERLAY", tmp_path / "absent.json")
+    farm, _b = E.afk_farmable(_afk_jars(), sd, [])
+    assert farm["t:gem"][0] == 0 and "t:hidden" not in farm
 
 
 # Without it a stated farm whose mob is blacklisted would count as a farm (or a farm whose mob is not, as blocked).
@@ -881,15 +907,44 @@ def test_each_buyer_defect_on_a_hand_written_pack_is_named():
 
 
 # ------------------------------------------------------------------------------------- AFK and the buyer, real data
-# Without it the AFK check could pass vacuously: with the jars it must find the excepted ranch ores farmable (each
-# reported with its decision) and price the emerald ranch per hour from the species tables.
+@pytest.fixture(scope="module")
+def real_jars():
+    return E.load_jars(SNAP, VANILLA)
+
+
+# The ores the owner kept flat in the bank for miners and excluded from the ranch (ranch_ore, after the 2026-10-10
+# overnight). Listed here from the decision text, not read from modpack/config/PastureLoot.json, so a blacklist that
+# loses one is caught by the species tables rather than agreed with.
+RANCH_ORE = ("minecraft:coal", "minecraft:raw_copper", "minecraft:raw_iron", "minecraft:iron_ingot",
+             "minecraft:redstone", "minecraft:diamond", "minecraft:emerald")
+
+
+# Without it the ranch_ore exclusion could be undone silently: read with the real jars and the overlay blacklist, no
+# pastured species pays any flat ore directly (depth 0, "ranch:"), and the AFK check reports no ore exception. The
+# check is not vacuous: the ranch still pays relic coins, which are not ore and not blacklisted.
 @needs_jars
-def test_the_real_ranch_ores_are_reported_as_open_exceptions_with_money(real):
+def test_no_pastured_species_pays_a_flat_ore(real, real_jars):
     _f, reps, notes = real
     assert any(n.startswith("afk: ") for n in notes)
-    for item in ("minecraft:diamond", "minecraft:emerald", "minecraft:raw_iron"):
-        assert any(r.startswith("afk exception %s " % item) and "ranch_ore" in r for r in reps), item
-    assert any(r.startswith("ranch money minecraft:emerald at $400: best thievul, 0.226 a drop") for r in reps)
+    farm, _b = E.afk_farmable(real_jars, SNAP, real_jars.conversions())
+    for item in RANCH_ORE:
+        assert not (item in farm and farm[item][0] == 0 and farm[item][1].startswith("ranch:")), farm.get(item)
+        assert not any(r.startswith("afk exception %s " % item) for r in reps), item
+    assert farm["cobblemon:relic_coin"][1].startswith("ranch:")
+    assert "modpack/config/PastureLoot.json" in farm["cobblemon:relic_coin"][1]
+
+
+# Without it the ranch money figures rest on the fixture alone: with the base pack's blacklist (the one the overlay
+# replaced) the real Thievul table still prices the emerald ranch at 1 - 0.95^5 = 0.226 a drop, and with the overlay
+# the emerald pays nothing (no report line).
+@needs_jars
+def test_the_real_emerald_ranch_was_priced_and_the_overlay_stops_it(real_jars, monkeypatch):
+    doc = {"afk_rule": {"exceptions": [{"item": "minecraft:emerald", "why": "x", "decision": "y"}]}}
+    base = E.ROOT / "base-pack" / "cobbleverse" / "config" / E.PASTURE_LOOT
+    assert E.ranch_money_report(real_jars, {"minecraft:emerald": 400}, doc, SNAP) == []
+    monkeypatch.setattr(E, "PASTURE_LOOT_OVERLAY", base)
+    reps = E.ranch_money_report(real_jars, {"minecraft:emerald": 400}, doc, SNAP)
+    assert any(r.startswith("ranch money minecraft:emerald at $400: best thievul, 0.226 a drop") for r in reps), reps
 
 
 # Without it the emitted buyer could regress unseen: the real pack has no BUYER failure at all (the fail-open count

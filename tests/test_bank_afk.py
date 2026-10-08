@@ -111,10 +111,29 @@ def _fake_server(tmp_path, drops, blacklist):
     return tmp_path
 
 
+# Without it a bought item a pastured species drops could stay in the bank unnamed: the server's blacklist and a
+# non-species file are skipped, a bought undeclared drop is a problem, and one afk_rule.ranch names is not.
+# (Until ranch_ore was resolved the diamond was the declared case; the ore left afk_rule.ranch for the overlay's
+# blacklist, so the declared case is now made explicitly on a copy of the record.)
 def test_the_ranch_is_re_measured_from_the_species_tables(tmp_path):
-    sd = _fake_server(tmp_path, ["minecraft:quartz", "minecraft:diamond", "minecraft:raw_gold"], ["minecraft:raw_gold"])
+    sd = _fake_server(tmp_path, ["minecraft:quartz", "minecraft:diamond", "minecraft:raw_gold"],
+                      ["minecraft:raw_gold", "minecraft:diamond"])
     drops = B.ranch_drops(sd)
-    assert set(drops) == {"minecraft:quartz", "minecraft:diamond"}      # the blacklist and non-species files skipped
+    assert set(drops) == {"minecraft:quartz"}      # the blacklist and non-species files skipped
     doc = _doc()
     probs = B.ranch_problems(doc, B.prices(doc), drops)
-    assert len(probs) == 1 and probs[0].startswith("minecraft:quartz is bought"), probs   # diamond is declared
+    assert len(probs) == 1 and probs[0].startswith("minecraft:quartz is bought"), probs
+    doc["afk_rule"]["ranch"]["items"].append("minecraft:quartz")
+    assert B.ranch_problems(doc, B.prices(doc), drops) == []
+
+
+# Without it bank.py's own check could judge the ranch by a server's stale config/PastureLoot.json (the base file a
+# snapshot taken before the overlay carries) and not by modpack/config/PastureLoot.json, which install delivers: the
+# fake server's blacklist names nothing, the overlay names the bought ores, so with prefer_overlay no ore is a drop.
+def test_the_bank_judges_the_ranch_by_the_overlay_blacklist(tmp_path):
+    ores = ["minecraft:coal", "minecraft:raw_iron", "minecraft:diamond", "minecraft:emerald", "minecraft:redstone"]
+    sd = _fake_server(tmp_path, ores + ["minecraft:quartz"], [])
+    assert B.pasture_config(sd) == sd / "config" / "PastureLoot.json"
+    assert B.pasture_config(sd, prefer_overlay=True) == B.PASTURE_LOOT
+    assert set(B.ranch_drops(sd)) == set(ores) | {"minecraft:quartz"}
+    assert set(B.ranch_drops(sd, B.pasture_config(sd, prefer_overlay=True))) == {"minecraft:quartz"}

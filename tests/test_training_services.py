@@ -26,6 +26,11 @@ PREFIX = "data/cobblers/function/"
 FNS = {p[len(PREFIX):-len(".mcfunction")]: ls for p, ls in FILES.items()
        if p.startswith(PREFIX) and p.endswith(".mcfunction")}
 STATS = T.STATS
+# A starting balance that covers the most any one test spends (a raise, an EV spread and seven IV stats), read from the
+# data so a re-priced service (data/training_services.json price_rule) cannot leave a fixture too poor to buy and turn
+# every purchase test into a refusal test. Was a fixed $10,000, below the rule's $17,200 EV price.
+START = 2 * (DOC["services"]["raise"]["price"] + DOC["services"]["ev"]["price"]
+             + 7 * DOC["services"]["iv"]["price_per_stat"])
 
 
 class Mon:
@@ -40,7 +45,7 @@ class Mon:
 class Player:
     """One player and the server commands the pack uses."""
 
-    def __init__(self, balance=10_000, cap=30, party=None, flags=(), remove_works=True, edit_works=True):
+    def __init__(self, balance=START, cap=30, party=None, flags=(), remove_works=True, edit_works=True):
         self.balance, self.cap, self.flags = balance, cap, set(flags)
         self.party = party if party is not None else {1: Mon(12)}
         self.remove_works, self.edit_works = remove_works, edit_works
@@ -250,7 +255,7 @@ def test_the_output_audit_catches_an_authored_level():
 def test_a_raise_sets_exactly_the_read_cap_and_charges_once(cap, slot):
     p = Player(cap=cap, party={slot: Mon(7)}).click("raise/slot%d" % slot)
     assert p.party[slot].level == cap
-    assert p.balance == 10_000 - price("raise")
+    assert p.balance == START - price("raise")
     assert [l for l in p.log if l.startswith("cobbledollars remove")] == ["cobbledollars remove @s %d" % price("raise")]
 
 
@@ -278,7 +283,7 @@ REFUSALS = {
 def test_every_raise_refusal_charges_nothing_and_edits_nothing(why):
     kw = dict(REFUSALS[why])
     p = Player(**kw).click("raise/slot1")
-    assert p.balance == kw.get("balance", 10_000), why
+    assert p.balance == kw.get("balance", START), why
     assert not [l for l in p.log if l.startswith("cobbledollars remove")], why
     assert p.edits() == [], why
     assert p.told(), "a refusal says why: %s" % why
@@ -286,12 +291,12 @@ def test_every_raise_refusal_charges_nothing_and_edits_nothing(why):
 
 def test_a_charge_that_takes_nothing_does_nothing():
     p = Player(remove_works=False).click("raise/slot1")
-    assert p.balance == 10_000 and p.edits() == [] and p.party[1].level == 12
+    assert p.balance == START and p.edits() == [] and p.party[1].level == 12
 
 
 def test_an_edit_that_does_not_take_is_refunded():
     p = Player(edit_works=False).click("raise/slot1")
-    assert p.balance == 10_000
+    assert p.balance == START
     assert "cobbledollars give @s %d" % price("raise") in p.log
 
 
@@ -299,23 +304,23 @@ def test_a_second_click_inside_the_cooldown_buys_nothing():
     p = Player(party={1: Mon(5)}).click("raise/slot1")
     p.party[1].level = 5                    # as if the first had not landed: the second must still not charge
     p.click("raise/slot1")
-    assert p.balance == 10_000 - price("raise")
+    assert p.balance == START - price("raise")
     p.time += DOC["cooldown_ticks"]
     p.click("raise/slot1")
-    assert p.balance == 10_000 - 2 * price("raise")
+    assert p.balance == START - 2 * price("raise")
 
 
 @pytest.mark.parametrize("rel,flags", [("ev/physical_sweeper/slot1", ()), ("ev/physical_sweeper/slot1", ("gym1_cleared",)),
                                        ("iv/attack/slot1", ("gym2_cleared",)), ("iv/all/slot1", ("gym7_cleared",))])
 def test_ev_and_iv_without_their_badge_charge_nothing(rel, flags):
     p = Player(flags=flags).click(rel)
-    assert p.balance == 10_000 and p.edits() == [] and p.told()
+    assert p.balance == START and p.edits() == [] and p.told()
 
 
 @pytest.mark.parametrize("rel", ["ev/special_wall/slot3", "iv/speed/slot3", "iv/all/slot3"])
 def test_ev_and_iv_on_an_empty_slot_charge_nothing(rel):
     p = Player(flags=("gym2_cleared", "gym8_cleared")).click(rel)
-    assert p.balance == 10_000 and p.edits() == []
+    assert p.balance == START and p.edits() == []
 
 
 def test_ev_and_iv_short_of_money_charge_nothing():
@@ -331,7 +336,7 @@ def test_an_ev_spread_replaces_the_old_one_whatever_it_was(spread):
     old = Mon(20, evs={"attack": 252, "speed": 252, "hp": 6})          # a full 510 already
     p = Player(party={1: old}, flags=("gym2_cleared",)).click("ev/%s/slot1" % spread["id"])
     assert p.party[1].evs == {s: spread["evs"].get(s, 0) for s in STATS}
-    assert p.balance == 10_000 - price("ev")
+    assert p.balance == START - price("ev")
 
 
 def test_without_the_zeroing_the_510_rule_would_keep_the_old_spread():
@@ -350,10 +355,10 @@ def test_iv_one_stat_and_all_six():
     p = Player(flags=("gym8_cleared",)).click("iv/special_attack/slot1")
     assert p.party[1].ivs["special_attack"] == 31 and sum(p.party[1].ivs.values()) == 31
     per = DOC["services"]["iv"]["price_per_stat"]
-    assert p.balance == 10_000 - per
+    assert p.balance == START - per
     p.time += 100
     p.click("iv/all/slot1")
-    assert set(p.party[1].ivs.values()) == {31} and p.balance == 10_000 - 7 * per
+    assert set(p.party[1].ivs.values()) == {31} and p.balance == START - 7 * per
 
 
 # --------------------------------------------------------------------------------------------------- the dialogue
