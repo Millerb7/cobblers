@@ -4,7 +4,8 @@ data/drop_fixes.json, as the world pack build/datapacks/cobblers_drop_fixes.
 
   python tools/drop_fixes.py sweep     # every effective drop table the server loads, with ours on top; exit 1 on a
                                        # fault data/drop_fixes.json neither fixes nor holds open
-  python tools/drop_fixes.py sweep --upstream    # the same without our fixes: what upstream ships
+  python tools/drop_fixes.py sweep --upstream    # the same without our fixes: what upstream ships; exit 1 on a fault
+                                       # no record fixes or holds open
   python tools/drop_fixes.py check     # the data against the upstream it overrides and the roll; writes nothing
   python tools/drop_fixes.py build     # check, then -> build/datapacks/cobblers_drop_fixes
 
@@ -41,6 +42,11 @@ WHERE OUR FILE GOES, and why two kinds:
     datapack at build time, unchanged, so the overlay replaces the drops and nothing else.
   - a table that comes from a SPECIES file (the Cobblemon jar's): ours is a new data/cobblers/species_additions file
     carrying `target` and `drops` only, provided nothing else sets that species' drops (the sweep says so if it does).
+  - a species file that TWO MODS ship with different drops (Kyurem: Cobblemon and Mega Showdown), the sweep's
+    `ambiguous`: which file loads is mod load order, which nothing here controls. The same new species_additions file
+    settles it, because an addition is applied after the species files load, whichever won; the record names every
+    mod's table as read (`upstream.contested`) and `check` compares each with the jars. Only the drops are settled:
+    the mods' other differing keys are still the loader's.
 Each fix records upstream's table as it was read; `check` fails when upstream no longer matches, so a fix never
 silently overrides a table upstream has since changed.
 
@@ -282,8 +288,9 @@ def effective(layer_list):
             if layer == "mods" and rel in files and files[rel][0] == "mods":
                 a, b = files[rel][2], d
                 if isinstance(a, dict) and isinstance(b, dict) and a.get("drops") != b.get("drops"):
+                    # `item` carries the contested file, so a fix names it as "ambiguous <rel>"
                     notes.append({"kind": "ambiguous", "species": SPECIES.fullmatch(rel).group(2)
-                                  if SPECIES.fullmatch(rel) else rel, "rel": rel,
+                                  if SPECIES.fullmatch(rel) else rel, "rel": rel, "item": rel,
                                   "detail": "%s and %s both ship %s with different drops; which mod wins is the "
                                             "loader's order" % (files[rel][1], where, rel)})
             files[rel] = (layer, where, d)
@@ -305,6 +312,10 @@ def effective(layer_list):
         for f in d.get("forms") or []:
             if isinstance(f, dict) and "drops" in f:
                 added_forms.setdefault(stem, []).append((f.get("name"), f["drops"], rel, where))
+    # Two mods shipping one species file with different top-level drops is settled by an addition that sets `drops`:
+    # it replaces the species table after whichever file loaded, so load order no longer decides the drops.
+    notes = [n for n in notes if not (n["kind"] == "ambiguous" and SPECIES.fullmatch(n["rel"])
+                                      and n["species"] in setters)]
     tables = []
     for stem in sorted(set(species) | set(setters) | set(added_forms)):
         sp = species.get(stem)
@@ -405,9 +416,11 @@ def files(doc, upstream):
     return out
 
 
-def check(doc, upstream=None, items=None, upstream_tables=None):
+def check(doc, upstream=None, items=None, upstream_tables=None, mod_files=None):
     """[problem] for the data: each fix's recorded upstream is what upstream ships, its items exist, each entry
-    reaches the rate its `intent` states, and the faults it says it fixes are gone from its table."""
+    reaches the rate its `intent` states, and the faults it says it fixes are gone from its table. mod_files
+    (mod_species()) lets a `contested` record be compared with every mod that ships the file; without it the
+    effective table must be one of the recorded ones."""
     problems = []
     if doc.get("schema") != "cobblers.drop_fixes/1":
         problems.append("schema is %r" % doc.get("schema"))
@@ -430,9 +443,20 @@ def check(doc, upstream=None, items=None, upstream_tables=None):
                                 % (sp, up["path"], up["pack"], json.dumps(got), json.dumps(up["drops"])))
             if (upstream.get(up["path"]) or {}).get("target", "").split(":")[-1] != sp:
                 problems.append("%s: %s targets %r" % (sp, up["path"], (upstream.get(up["path"]) or {}).get("target")))
-        if upstream_tables is not None and up["via"] == "species":
+        contested = up.get("contested") or []
+        if mod_files is not None and up["via"] == "species" and contested:
+            # every mod shipping this species file, as read now, against every one recorded
+            want = {up["pack"]: (up["path"], up["drops"])}
+            want.update({c["pack"]: (c["path"], c["drops"]) for c in contested})
+            got = mod_files.get(sp, {})
+            if got != want:
+                problems.append("%s: the mods shipping its species file now carry %s, not the recorded %s: re-read "
+                                "the fix" % (sp, json.dumps(got, sort_keys=True), json.dumps(want, sort_keys=True)))
+        elif upstream_tables is not None and up["via"] == "species":
             got = upstream_tables.get(sp)
-            if got != up["drops"]:
+            # a contested file: whichever mod the reading above put on top must be one of those recorded
+            allowed = [up["drops"]] + [c["drops"] for c in contested]
+            if got not in allowed:
                 problems.append("%s: upstream's species table is now %s, not the recorded %s"
                                 % (sp, json.dumps(got), json.dumps(up["drops"])))
         try:
@@ -482,8 +506,31 @@ def sweep(doc=None, with_fixes=True, inputs=None):
     fs = faults(tables, items_known(mods_dir, zips, vanilla, ours), notes)
     held = {(o["species"], o.get("form"), o["kind"], o.get("item")) for o in doc.get("open", [])}
     if not with_fixes:
-        held |= set()
+        # upstream's faults, accounted for when a record says it fixes them (the fix is not applied in this mode)
+        held |= fixed_keys(doc)
     return fs, [f for f in fs if key(f) not in held]
+
+
+def fixed_keys(doc):
+    """The fault identities the fixes say they remove: "<kind> <item>" on the species table (form None)."""
+    out = set()
+    for fx in doc["fixes"]:
+        for s in fx.get("fixes", []):
+            kind, _, item = s.partition(" ")
+            out.add((fx["species"], None, kind, item or None))
+    return out
+
+
+def mod_species(mods_dir):
+    """{species: {jar name: (rel, its top-level drops or None)}} for every species file a mod jar ships, nested jars
+    named jar!inner. Several jars per species is the load-order case a `contested` fix records."""
+    out = {}
+    for _layer, fs in layers(mods_dir, [], {}):
+        for rel, where, d in fs:
+            m = SPECIES.fullmatch(rel)
+            if m and isinstance(d, dict):
+                out.setdefault(m.group(2), {})[where] = (rel, d.get("drops"))
+    return out
 
 
 def species_tables(mods_dir, zips):
@@ -503,8 +550,9 @@ def main(argv=None):
         fs, bad = sweep(doc, with_fixes=not a.upstream)
         if a.json:
             Path(a.json).write_text(json.dumps(fs, indent=1), encoding="utf-8")
+        fixed = fixed_keys(doc) if a.upstream else set()
         for f in fs:
-            print("%s %s%s: %s%s" % ("FAULT" if f in bad else "open ", f["species"],
+            print("%s %s%s: %s%s" % ("FAULT" if f in bad else "fixed" if key(f) in fixed else "open ", f["species"],
                                      " (%s)" % f["form"] if f.get("form") else "", f["detail"],
                                      "  [%s]" % f["where"] if f.get("where") else ""))
         print("drop_fixes sweep%s: %d fault(s), %d not fixed or held open" % (" (upstream only)" if a.upstream else "",
@@ -513,7 +561,7 @@ def main(argv=None):
     mods_dir, zips, vanilla = default_inputs()
     upstream = upstream_files(doc, zips)
     items = items_known(mods_dir, zips, vanilla, {})
-    problems = check(doc, upstream, items, species_tables(mods_dir, zips))
+    problems = check(doc, upstream, items, species_tables(mods_dir, zips), mod_species(mods_dir))
     for p in problems:
         print("PROBLEM", p)
     if problems:

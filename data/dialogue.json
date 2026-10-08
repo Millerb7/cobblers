@@ -15521,7 +15521,7 @@
       "id": "dlg_apricorn_farmer",
       "quest_id": "ambient_apricorn_farm",
       "npc_id": "npc_apricorn_farmer",
-      "source": "data/apricorn_farm.json npc; every fact she states is read from the Cobblemon 1.8.0 jar (data/apricorn_farm.json apricorn_facts)",
+      "source": "data/apricorn_farm.json npc; every fact she states is read from the Cobblemon 1.8.0 jar (data/apricorn_farm.json apricorn_facts). The `berries` and `berries_end` lines are the Custap hint (the owner, 2026-10-08: \"a discovery with a hint. Do not sell a tree.\"): berries mutate when two kinds are planted together and a mutation's berry mutates again (data/cobblemon/berries/*.json `mutations`, read in the jar 2026-10-08: Pecha x Persim, Mago x Nanab, Magost x Tanga, Watmel x Chilan, four steps to Custap), and a Custap bait makes what it draws drop twice (spawn_bait_effects/berries/custap_berry.json, drops_reroll 1.0; docs/research/DROPS_AUDIT.md sections 2.3 and 6). It names no berry, by design; the chain stays out of every player guide. That the mutated fruit hangs on one of the two trees is Cobblemon's mechanic as described, not observed in game",
       "scope": "player",
       "cursor": {
         "progression_field": "quest.ambient_apricorn_farm.farmer_cursor",
@@ -15601,6 +15601,20 @@
           "kind": "line",
           "speaker": "tamsin",
           "text": "The stall on the avenue sells the wood. The fruit's free: there's more on those trees than I'll ever get to.",
+          "next": "berries"
+        },
+        {
+          "id": "berries",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "Apricorns keep to themselves. Berries don't: plant two kinds side by side and now and then one bears a fruit that's neither. Plant that, and it does it again.",
+          "next": "berries_end"
+        },
+        {
+          "id": "berries_end",
+          "kind": "line",
+          "speaker": "tamsin",
+          "text": "Mother followed that four summers for the one at the end. Whatever she baited with it, she said, left twice as much behind.",
           "next": "repeat"
         },
         {

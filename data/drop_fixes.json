@@ -7,10 +7,11 @@
   "fields": {
     "species": "the species file stem the table belongs to",
     "fixes": "the sweep's faults this record removes: missing_item <id> or unreachable <id>",
-    "upstream": "where the effective table comes from (via species_additions: a COBBLEVERSE file overlaid at the same path, every other key copied; via species: a species file, fixed by a new data/cobblers/species_additions/drop_fix_<species>.json) and the table as read; tools/drop_fixes.py check fails when upstream no longer ships it",
+    "upstream": "where the effective table comes from (via species_additions: a COBBLEVERSE file overlaid at the same path, every other key copied; via species: a species file, fixed by a new data/cobblers/species_additions/drop_fix_<species>.json) and the table as read; tools/drop_fixes.py check fails when upstream no longer ships it; `contested` lists the other mods shipping the same species file with different drops, as read, when which file loads is mod load order (check compares every one with the jars)",
     "drops": "the table we ship, in Cobblemon's drops format",
     "intent": "percent of defeats that drop at least one of each item, as the fixed table rolls (DropTable.getDrops, exact); check recomputes it from `drops` and fails on a difference above 0.01",
-    "why": "the fault and the fix in words"
+    "why": "the fault and the fix in words",
+    "dungeon_boss": "where a species is also a dungeon boss: whether this table reaches it, and beside what"
   },
   "fixes": [
     {
@@ -612,29 +613,127 @@
         "minecraft:ender_eye": 100.0
       },
       "why": "Missing item: minecraft:eye_of_ender -> minecraft:ender_eye: vanilla's Eye of Ender is minecraft:ender_eye. Only the id is changed; amount, order and percentages are upstream's, so each item drops at the rate upstream's table already gives it."
-    }
-  ],
-  "open": [
+    },
     {
       "species": "entei",
-      "form": null,
-      "kind": "missing_item",
-      "item": "cobblemon:sacred_ash",
-      "why": "No installed jar or datapack registers a Sacred Ash (Cobblemon 1.8.0 has none). There is no item whose intent is clear to substitute, so this is the owner's choice: drop the entry, or name another item. Entei is the repeatable boss (data/entei_boss.json), so its drops matter. The entry is still rolled: its 100% pass yields nothing and the Charcoal Stick entry is unaffected."
+      "fixes": [
+        "missing_item cobblemon:sacred_ash"
+      ],
+      "upstream": {
+        "via": "species",
+        "pack": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+        "path": "data/cobblemon/species/generation2/entei.json",
+        "drops": {
+          "amount": 2,
+          "entries": [
+            {
+              "item": "cobblemon:charcoal_stick"
+            },
+            {
+              "item": "cobblemon:sacred_ash"
+            }
+          ]
+        }
+      },
+      "drops": {
+        "amount": 2,
+        "entries": [
+          {
+            "item": "cobblemon:charcoal_stick"
+          },
+          {
+            "item": "cobblemon:revival_herb"
+          }
+        ]
+      },
+      "intent": {
+        "cobblemon:charcoal_stick": 100.0,
+        "cobblemon:revival_herb": 100.0
+      },
+      "why": "Missing item: cobblemon:sacred_ash -> cobblemon:revival_herb. No installed jar or datapack registers a Sacred Ash (Cobblemon 1.8.0 has none), so the entry was rolled and dropped nothing. The owner, 2026-10-08: \"Entei's Sacred Ash gets a substitute that exists and suits a revival.\" Revival Herb (assets/cobblemon/models/item/revival_herb.json in the Cobblemon jar, read 2026-10-08) is a revival item in its own right (it revives a fainted Pokemon at a cost in friendship), as Sacred Ash is the ash that revived the beasts. Chosen over Max Revive, the other candidate, because it cannot become a farm: data/bank.json does not buy it (nor revive or max_revive: base_removed), no counter sells it (data/traders.json stock_policy withhold_items names it), and it is already a crop (data/bank.json afk_rule), so a guaranteed drop gives a player nothing a herb plot does not. Max Revive would be the scarce item: data/markets.json sells it at 2,900, and a pastured Entei or Ho-Oh under Pasture Loot (9 picks an hour, one entry of two: docs/research/DROPS_AUDIT.md section 2.6, relayed, not measured for a legendary) would make about four an hour unattended. Only the id is changed; amount, order and percentages are upstream's, so the herb drops at the rate upstream gave the ash: every defeat.",
+      "dungeon_boss": "This table DOES reach the repeatable boss (data/entei_boss.json), on top of the boss's own reward, not instead of it. The boss is a wild Entei (no owner) and Cobblemon rolls an unowned Pokemon's species table when its entity dies (PokemonServerDelegate.doDeathDrops: no owner and doPokemonLoot, nothing checks the cause; docs/research/DROPS_AUDIT.md section 2.2, the step from a battle faint to entity death ASSUMED there). So a defeated boss Entei drops, at its body: its held item first (farm mode holds a Life Orb, catch mode a Sitrus Berry: data/entei_boss.json props), then this table (a Charcoal Stick and a Revival Herb), while cobblers:entei_boss/drops gives one item of six straight to the owner (drops.rule). A caught Entei dies no death and drops nothing. The keeper's `kill` of an unfought or abandoned Entei is a death too and drops the same at an empty slot. None of this is observed: EXP-059."
     },
     {
       "species": "hooh",
-      "form": null,
-      "kind": "missing_item",
-      "item": "cobblemon:sacred_ash",
-      "why": "As Entei: no Sacred Ash item exists in 1.8.0. The entry takes the second pass and yields nothing; the Feather entry is unaffected. Owner's choice."
+      "fixes": [
+        "missing_item cobblemon:sacred_ash"
+      ],
+      "upstream": {
+        "via": "species",
+        "pack": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+        "path": "data/cobblemon/species/generation2/hooh.json",
+        "drops": {
+          "amount": 5,
+          "entries": [
+            {
+              "item": "minecraft:feather",
+              "quantityRange": "2-4"
+            },
+            {
+              "item": "cobblemon:sacred_ash"
+            }
+          ]
+        }
+      },
+      "drops": {
+        "amount": 5,
+        "entries": [
+          {
+            "item": "minecraft:feather",
+            "quantityRange": "2-4"
+          },
+          {
+            "item": "cobblemon:revival_herb"
+          }
+        ]
+      },
+      "intent": {
+        "minecraft:feather": 100.0,
+        "cobblemon:revival_herb": 100.0
+      },
+      "why": "As Entei, the same substitute for the same reason: Missing item: cobblemon:sacred_ash -> cobblemon:revival_herb. No installed jar or datapack registers a Sacred Ash (Cobblemon 1.8.0 has none), so the entry was rolled and dropped nothing. The owner, 2026-10-08: \"Entei's Sacred Ash gets a substitute that exists and suits a revival.\" Revival Herb (assets/cobblemon/models/item/revival_herb.json in the Cobblemon jar, read 2026-10-08) is a revival item in its own right (it revives a fainted Pokemon at a cost in friendship), as Sacred Ash is the ash that revived the beasts. Chosen over Max Revive, the other candidate, because it cannot become a farm: data/bank.json does not buy it (nor revive or max_revive: base_removed), no counter sells it (data/traders.json stock_policy withhold_items names it), and it is already a crop (data/bank.json afk_rule), so a guaranteed drop gives a player nothing a herb plot does not. Max Revive would be the scarce item: data/markets.json sells it at 2,900, and a pastured Entei or Ho-Oh under Pasture Loot (9 picks an hour, one entry of two: docs/research/DROPS_AUDIT.md section 2.6, relayed, not measured for a legendary) would make about four an hour unattended. Only the id is changed; amount, order and percentages are upstream's, so the herb drops at the rate upstream gave the ash: every defeat."
     },
     {
       "species": "kyurem",
-      "form": null,
-      "kind": "ambiguous",
-      "item": null,
-      "why": "Not one of the owner's two shapes: the Cobblemon jar and Mega Showdown both ship data/cobblemon/species/generation5/kyurem.json with different drops, and which mod's file wins is the loader's order. Every item in both tables exists and is reachable. Held open as a finding, not fixed."
+      "fixes": [
+        "ambiguous data/cobblemon/species/generation5/kyurem.json"
+      ],
+      "upstream": {
+        "via": "species",
+        "pack": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+        "path": "data/cobblemon/species/generation5/kyurem.json",
+        "drops": {
+          "amount": 3,
+          "entries": [
+            {
+              "item": "minecraft:dragon_breath",
+              "quantityRange": "2-3"
+            }
+          ]
+        },
+        "contested": [
+          {
+            "pack": "mega_showdown-fabric-1.0.2+1.8+1.21.1-release.jar",
+            "path": "data/cobblemon/species/generation5/kyurem.json",
+            "drops": null
+          }
+        ]
+      },
+      "drops": {
+        "amount": 3,
+        "entries": [
+          {
+            "item": "minecraft:dragon_breath",
+            "quantityRange": "2-3"
+          }
+        ]
+      },
+      "intent": {
+        "minecraft:dragon_breath": 100.0
+      },
+      "why": "Ambiguous: the Cobblemon jar and Mega Showdown both ship data/cobblemon/species/generation5/kyurem.json, and which mod's file the loader takes is mod load order. Read both 2026-10-08: Cobblemon's carries a drop table (amount 3, Dragon's Breath 2-3, every defeat); Mega Showdown's carries NO `drops` key at all, so if it wins Kyurem drops nothing. Mega Showdown's file is a rework of the species for its own purposes (it adds `implemented` and `riding`, and changes baseScale, hitbox, forms and behaviour) that leaves drops out rather than setting an empty table, so it states no intent about drops and there is nothing to merge. Chosen: Cobblemon's table, the only one either mod ships. Our species_additions file sets `drops`, which replaces the species table after whichever species file loaded (module docstring), so load order no longer decides Kyurem's drops. Only drops: which mod's baseScale, hitbox, forms, behaviour and riding win is still the loader's, and is not a drop table's to settle. The White and Black forms carry no table of their own in either file, so they follow this one."
     }
-  ]
+  ],
+  "open": [],
+  "owner_decision_2026_10_08": "the owner, 2026-10-08: \"BROKEN IDS: fix all of them. Entei's Sacred Ash gets a substitute that exists and suits a revival. Kyurem's load-order conflict: pick one deliberately and record why.\" The three cases held open until then (Entei, Ho-Oh, Kyurem) are fixes now; nothing is held open."
 }
