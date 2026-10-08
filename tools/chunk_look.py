@@ -82,9 +82,10 @@ def chain(base, box, shown, act, scopes, new_tag, count, holder, note=""):
                    + ["scoreboard players set %s %s 2" % (seen, OBJ),
                       "schedule function %s %dt replace" % (done, DEDUPE_WAIT)])
     d = [gen, by, "# %d ticks after the act: one of each, the count, then release" % DEDUPE_WAIT]
-    for s in scopes:
-        d += ["execute if entity @e[%s,tag=%s] run kill @e[%s,tag=!%s]" % (s, new_tag, s, new_tag),
-              "tag @e[%s,tag=%s] remove %s" % (s, new_tag, new_tag)]
+    # every scope's de-duplication before any untag: a scope untagged first would hide its new entities from a later,
+    # overlapping scope's `if entity ...,tag=<new>` and leave that scope doubled (tools/chunk_look_audit.py's order)
+    d += ["execute if entity @e[%s,tag=%s] run kill @e[%s,tag=!%s]" % (s, new_tag, s, new_tag) for s in scopes]
+    d += ["tag @e[%s,tag=%s] remove %s" % (s, new_tag, new_tag) for s in scopes]
     d += ["execute store result score #%s %s if entity @e[%s]" % (holder, OBJ, count),
           "forceload remove %s" % fl]
     out[done] = d

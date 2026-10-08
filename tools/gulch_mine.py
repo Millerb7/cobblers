@@ -54,6 +54,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import chunk_look as CL        # noqa: E402
 import function_limits as FL   # noqa: E402
 import ground as G             # noqa: E402
 import rift_mines as RM        # noqa: E402  (the tube rasteriser, hashing and run-length helpers; not its model)
@@ -1247,20 +1248,30 @@ def gate_files(m, boxes):
     return files, fn
 
 
+CUTTERS_FN = "%s:%s/cutters" % (NS, FOLDER)
+CUTTERS_HOLDER = "gulch_cutters"        # tools/reapply.py R9S reads the count back from this holder
+
+
 def cutter_files(m):
+    """{function name under gulch_mine/: lines}: the Cutters through tools/chunk_look.py's look-then-act chain (N155).
+    The old shape force-loaded the workshop, summoned after a fixed 40 ticks and de-duplicated 100 ticks later, so a
+    re-run whose chunks' saved villagers arrived after that (staging 2026-10-08, the stall merchants) doubled every
+    bench. The chain looks from tick 40 every 20 until a Cutter is seen (or blind after 300 ticks on a first run),
+    then kills the old Cutters near the workshop and summons each once with `<tag>_new`; 100 ticks later it keeps the
+    new one per bench and counts them into #gulch_cutters. The benches span two chunks (x 268 and 269); a look sees
+    either, and the de-duplication 100 ticks after the act catches the other chunk's villager if it was slower."""
     c = m.spec["cutters"]
     off = c["offer"]
     tag, new = c["tag"], c["tag"] + "_new"
-    F = "%s:%s" % (NS, FOLDER)
     xs = [b["at"][0] for b in c["benches"]]
     zs = [b["at"][2] for b in c["benches"]]
     box = (min(xs) - 2, min(zs) - 2, max(xs) + 2, max(zs) + 2)
-    load = ["# the Cutters (tools/gulch_mine.py, the traders.py pattern): force-load the workshop, wait for its saved",
-            "# villagers to load (40 ticks), summon, and 100 ticks on keep one per bench",
-            "forceload add %d %d %d %d" % box,
-            "schedule function %s/cutters_place 40t replace" % F]
-    place = ["# chunks-loaded-by: %s/cutters" % F]
-    done = ["# chunks-loaded-by: %s/cutters" % F]
+    cx, cy, cz = (min(xs) + max(xs) + 1) / 2, c["benches"][0]["at"][1], (min(zs) + max(zs) + 1) / 2
+    reach = math.ceil(math.hypot(max(xs) - min(xs), max(zs) - min(zs)) / 2) + 4
+    near = "type=minecraft:villager,tag=%s,x=%.1f,y=%.1f,z=%.1f,distance=..%d" % (tag, cx, cy, cz, reach)
+    act = ["# the Cutters' old villagers near the workshop, then one master mason per bench",
+           "kill @e[%s]" % near]
+    scopes = []
     for b in c["benches"]:
         recipes = []
         for s in b["stones"]:
@@ -1269,16 +1280,23 @@ def cutter_files(m):
                            % (off["raw"], off["raw_count"], off["fee"], off["fee_count"], s, off["max_uses"]))
         x, y, z = b["at"]
         name = json.dumps({"text": b["name"]}, ensure_ascii=False).replace("'", "\\'")
-        place.append("summon minecraft:villager %.1f %d %.1f {Tags:[\"%s\",\"%s\",\"%s_%s\"],NoAI:1b,Invulnerable:1b,"
-                     "PersistenceRequired:1b,Silent:1b,Rotation:[%.1ff,0.0f],CustomName:'%s',CustomNameVisible:1b,"
-                     "VillagerData:{profession:\"%s\",level:5,type:\"%s\"},Xp:250,Offers:{Recipes:[%s]}}"
-                     % (x + 0.5, y, z + 0.5, tag, new, tag, b["id"], b["yaw"], name, c["profession"], c["villager_type"],
-                        ",".join(recipes)))
-        done.append("execute positioned %.1f %d %.1f if entity @e[type=minecraft:villager,tag=%s,tag=%s_%s,distance=..1.5] "
-                    "run kill @e[type=minecraft:villager,tag=%s_%s,tag=!%s]" % (x + 0.5, y, z + 0.5, new, tag, b["id"], tag, b["id"], new))
-    place.append("schedule function %s/cutters_done 100t replace" % F)
-    done += ["tag @e[type=minecraft:villager,tag=%s] remove %s" % (new, new), "forceload remove %d %d %d %d" % box]
-    return {"cutters": load, "cutters_place": place, "cutters_done": done}
+        act.append("summon minecraft:villager %.1f %d %.1f {Tags:[\"%s\",\"%s\",\"%s_%s\"],NoAI:1b,Invulnerable:1b,"
+                   "PersistenceRequired:1b,Silent:1b,Rotation:[%.1ff,0.0f],CustomName:'%s',CustomNameVisible:1b,"
+                   "VillagerData:{profession:\"%s\",level:5,type:\"%s\"},Xp:250,Offers:{Recipes:[%s]}}"
+                   % (x + 0.5, y, z + 0.5, tag, new, tag, b["id"], b["yaw"], name, c["profession"], c["villager_type"],
+                      ",".join(recipes)))
+        scopes.append("type=minecraft:villager,tag=%s,tag=%s_%s" % (tag, tag, b["id"]))
+    fns = CL.chain(CUTTERS_FN, box, ["@e[%s]" % near], act, scopes, new, "type=minecraft:villager,tag=%s" % tag,
+                   CUTTERS_HOLDER, note="tools/gulch_mine.py")
+    pre = "%s:%s/" % (NS, FOLDER)
+    return {ref[len(pre):]: lines for ref, lines in fns.items()}
+
+
+def cutter_steps(spec=None):
+    """tools/reapply.py R9S's Cutter actions: start the chain, wait for all of it, read the count back (one per bench).
+    Nothing else in R9S force-loads the workshop at step level, so no step remove can release it under the chain."""
+    spec = spec or load()
+    return CL.steps(CUTTERS_FN, CUTTERS_HOLDER, len(spec["cutters"]["benches"]), "the Cutters at the gulch")
 
 
 STORE = "cobblers:gulch_mine"          # the dens' Pokemon UUIDs and the hitters' UUIDs (farm dens only)

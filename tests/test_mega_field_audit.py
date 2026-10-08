@@ -598,7 +598,7 @@ def test_sites_keying_dens_by_species_is_caught(ground, basin, monkeypatch):
                 d["id"] = "gm_mf_" + d["species"]
     spec = _sites_with(monkeypatch, by_species)
     fns, _cb = gulch_fns(SPEC, ground)
-    sold = re.findall(r'sell:\{id:"mega_showdown:([a-z_]+)"', "\n".join(fns.get("cutters_place") or []))
+    sold = re.findall(r'sell:\{id:"mega_showdown:([a-z_]+)"', "\n".join(fns.get("cutters_act") or []))
     R = A.Report()
     A.check_dens(spec, ground, basin, A.design(), R, sold)
     species = [d["species"] for _fa, d in A.field_dens(SPEC)]

@@ -1773,13 +1773,15 @@ def steps(with_spawns=False):
                 + [("fn", "cobblers:rift_mines/carts"), ("wait", 5)]))
     # the southern Rift's mega site, prototype slice (tools/gulch_mine.py; SOUTHERN_RIFT_MEGA.md decision 12 names the
     # step): after the Rift skin (R1), whose surface it paves and cuts, and before the Habitat Blocks (R9E) and the
-    # lights (R16). Earthworks, shell, air, fittings, surface, the faces at variant 0; then the Cutters, villagers
-    # summoned 40 ticks after their chunks are force-loaded and de-duplicated 100 ticks later (tools/traders.py's
-    # pattern). The gate, the zone check, the faces' ward and the Megas act on their own and need no step.
+    # lights (R16). Earthworks, shell, air, fittings, surface, the faces at variant 0; then the Cutters through their
+    # look-then-act chain (tools/chunk_look.py, N155: summoned only once a saved Cutter is seen, or blind after 300
+    # ticks), waited for and their count read back. The gate, the zone check, the faces' ward and the Megas act on their
+    # own and need no step.
+    import gulch_mine
     out.append(("R9S", "the southern Rift's mega site: the gulch gate, the Cutters' square, the Tally Hall and the "
                        "Cutting Floor, then the Cutters",
                 [("fn", "cobblers:gulch_mine/%s" % f) for f in indexed("cobblers_gulch_mine", "gulch_mine")]
-                + [("fn", "cobblers:gulch_mine/cutters"), ("wait", 8)]))
+                + gulch_mine.cutter_steps()))
     # 2026-10-03, the Mega field (docs/world-building/MEGA_FIELD.md): the field's dens are ordinary farms of the gulch
     # pack and need no step (the keeper spawns each Mega when a player is in its farm's approach box). This removes the
     # Megas a keeper may have left at the seven retired dens (data/gulch_mine.json superseded_farms), which nothing

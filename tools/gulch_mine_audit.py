@@ -56,7 +56,9 @@ Not checked here: the farm dens' drop roll
               only when unset, the keeper's first sight of a gone Mega, a spawn)
   cutters     three villagers, NoAI and invulnerable, standing on the workshop's floor; every offer the data's raw
               stones and a diamond for one stone, unlimited, no experience, no price drift; the 60 stones each exactly
-              once, none of the 32 left out
+              once, none of the 32 left out; summoned once each by a look-then-act chain held in its own forceload
+              from entry to end, acting only after a look sees a Cutter or the blind limit, the old Cutters killed
+              first (tools/chunk_look_audit.py, N155)
   limits      tools/function_limits.py finds nothing the server would refuse
 
 Fails closed: no pack, an empty index, no sculpt plan, no zone advancement or no face is a failure, not a pass.
@@ -76,6 +78,7 @@ from pathlib import Path
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+import chunk_look_audit        # noqa: E402  (reads the Cutters' chain from its text; never imports its generator)
 import function_limits as FL   # noqa: E402
 import ground as GR            # noqa: E402
 
@@ -84,6 +87,7 @@ SPEC = ROOT / "data" / "gulch_mine.json"
 PACK = ROOT / "build" / "datapacks" / "cobblers_gulch_mine"
 FN = PACK / "data" / "cobblers" / "function" / "gulch_mine"
 ADV = PACK / "data" / "cobblers" / "advancement" / "gulch_mine"
+CUTTERS_FN = "cobblers:gulch_mine/cutters"     # the entry R9S calls
 SCULPT = ROOT / "derived" / "rift_sculpt" / "plan.json"
 OUT = ROOT / "derived" / "gulch_mine" / "audit.json"
 SHELL = 2
@@ -902,8 +906,11 @@ def audit(source_root=None):
 
     # ---- the Cutters
     cu = spec["cutters"]
-    place = fn_text("cutters_place")
-    sums = [ln for ln in place.splitlines() if ln.startswith("summon minecraft:villager ")]
+    # the Cutters are a look-then-act chain over several ticks (N155): every command of it, entry first; held from its
+    # entry to its end, the act gated on a look that saw a Cutter or the blind limit, the old Cutters killed before the
+    # summons, each summon tagged new and de-duplicated after (tools/chunk_look_audit.py, never the generator's code)
+    sums = [ln for ln in chunk_look_audit.chain_lines(PACK, CUTTERS_FN) if ln.startswith("summon minecraft:villager ")]
+    probs += ["cutters: %s" % p for p in chunk_look_audit.problems(PACK, CUTTERS_FN, cu["tag"], "the Cutters' chain")]
     if len(sums) != len(cu["benches"]):
         probs.append("cutters: %d villagers summoned, %d benches" % (len(sums), len(cu["benches"])))
     sold = []

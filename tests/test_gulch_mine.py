@@ -49,6 +49,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 sys.path.insert(0, str(ROOT / "tests"))
 
+import chunk_look as CL  # noqa: E402
 import gulch_mine as GM  # noqa: E402
 import gulch_sim as GS  # noqa: E402
 import nbt_sim as N  # noqa: E402
@@ -321,7 +322,7 @@ def test_the_knock_and_turn_back_are_outside_the_zone_and_the_arrival_and_exit_i
 def _cutters():
     fns = GM.cutter_files(spec_model())
     out = {}
-    for l in fns["cutters_place"]:
+    for l in fns["cutters_act"]:
         m = re.fullmatch(r"summon minecraft:villager (\S+) (\S+) (\S+) (\{.*\})", l)
         if m:
             nbt = N.parse_snbt(m.group(4))
@@ -387,6 +388,94 @@ def test_each_cutter_is_a_fixed_master_mason_at_its_bench_and_the_reapply_keeps_
     assert w.alive(stray) and len(left) == 3, w.entities
     assert sorted(t for e in left for t in e["tags"] if "bench" in t) == sorted(cut)
     assert all("cobblers_cutter_new" not in e["tags"] for e in left), left
+
+
+# ---- N155: the Cutters' chunks' saved villagers arrive late (tools/chunk_look.py; staging 2026-10-08, the stall
+# merchants). The world is tests/test_markets_merchant_load.py's LateWorld: a saved entity is invisible until `delay`
+# ticks after its chunk is force-loaded; `schedule` runs. Written by the implementer of the fix (minecraft-systems-dev);
+# an independent test-author review is still owed (CLAUDE.md principle 16).
+
+def _late_world(fns, delay, seeded=True):
+    import mcfunction_sim as S
+    from test_markets_merchant_load import LateWorld
+    w = LateWorld({"%s:%s/%s" % (NS, F, k): v for k, v in fns.items()}, delay)
+    if seeded:
+        for b in SPEC["cutters"]["benches"]:
+            x, y, z = b["at"]
+            w.save(S.Entity("minecraft:villager", (x + 0.5, y, z + 0.5), tags=("cobblers_cutter", "cobblers_cutter_" + b["id"])))
+    return w
+
+
+def _old_cutters():
+    """The pre-N155 shape, rebuilt from the same summons: force-load, a fixed 40 ticks, summon (no look), 100 ticks
+    later keep the new one per bench, release."""
+    fns = GM.cutter_files(spec_model())
+    box = next(l for l in fns["cutters"] if l.startswith("forceload add "))[len("forceload add "):]
+    place = [l for l in fns["cutters_act"] if l.startswith("summon ")] + ["schedule function %s:%s/cutters_done 100t replace" % (NS, F)]
+    done = []
+    for b in SPEC["cutters"]["benches"]:
+        x, y, z = b["at"]
+        done.append("execute positioned %.1f %d %.1f if entity @e[type=minecraft:villager,tag=cobblers_cutter_new,tag=cobblers_cutter_%s,"
+                    "distance=..1.5] run kill @e[type=minecraft:villager,tag=cobblers_cutter_%s,tag=!cobblers_cutter_new]"
+                    % (x + 0.5, y, z + 0.5, b["id"], b["id"]))
+    done += ["tag @e[type=minecraft:villager,tag=cobblers_cutter_new] remove cobblers_cutter_new", "forceload remove " + box]
+    return {"cutters": ["forceload add " + box, "schedule function %s:%s/cutters_place 40t replace" % (NS, F)],
+            "cutters_place": place, "cutters_done": done}
+
+
+def _per_bench(w):
+    return sorted(len(w.living("minecraft:villager", "cobblers_cutter_" + b["id"])) for b in SPEC["cutters"]["benches"])
+
+
+# Without it the fix has nothing to fix: the old fixed-wait shape doubled every bench whose villager arrived late.
+@pytest.mark.parametrize("delay", [141, 200])
+def test_the_old_cutters_shape_doubles_a_bench_whose_villager_arrives_after_its_dedupe(delay):
+    w = _late_world(_old_cutters(), delay)
+    w.run("%s:%s/cutters" % (NS, F), CL.STEP_TICKS + 5)
+    assert _per_bench(w) == [2, 2, 2]
+
+
+# Without it a re-run doubles the Cutters again; 350 is past the blind act and caught by the de-duplication.
+@pytest.mark.parametrize("delay", [0, 20, 141, 200, 299, 350])
+def test_the_cutters_chain_leaves_one_per_bench_however_late_the_villagers_arrive(delay):
+    w = _late_world(GM.cutter_files(spec_model()), delay)
+    w.run(GM.CUTTERS_FN, CL.STEP_TICKS + 5)
+    assert _per_bench(w) == [1, 1, 1]
+    assert not any("cobblers_cutter_new" in e.tags for e in w.living("minecraft:villager", "cobblers_cutter"))
+    assert w.scores[("#" + GM.CUTTERS_HOLDER, CL.OBJ)] == 3
+    assert not w.forced, "the chain left the workshop force-loaded"
+
+
+# Without it a fresh world (an export erases entities) would never get its Cutters.
+def test_the_cutters_chain_acts_blind_on_a_first_run_inside_the_step_wait():
+    w = _late_world(GM.cutter_files(spec_model()), 20, seeded=False)
+    w.run(GM.CUTTERS_FN, CL.STEP_TICKS + 5)
+    assert _per_bench(w) == [1, 1, 1] and w.scores[("#" + GM.CUTTERS_HOLDER, CL.OBJ)] == 3
+
+
+# Without it the look could be dropped from the generator and the tests above would still read its old output: the
+# generator mutated to act in the tick it force-loads doubles again, and tools/chunk_look_audit.py names it.
+def test_dropping_the_look_from_the_cutters_generator_doubles_and_the_audit_names_it(monkeypatch, tmp_path):
+    import chunk_look_audit as CA
+    clean = GM.cutter_files(spec_model())
+    orig = CL.chain
+
+    def at_once(base, *a, **k):
+        fns = orig(base, *a, **k)
+        fns[base] = fns[base] + ["function %s_act" % base]
+        return fns
+    monkeypatch.setattr(CL, "chain", at_once)
+    bad = GM.cutter_files(spec_model())
+    w = _late_world(bad, 200)
+    w.run(GM.CUTTERS_FN, CL.STEP_TICKS + 5)
+    assert _per_bench(w) == [2, 2, 2]
+    for name, fns in (("clean", clean), ("bad", bad)):
+        for k, lines in fns.items():
+            p = tmp_path / name / "data" / NS / "function" / F / (k + ".mcfunction")
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    assert CA.problems(tmp_path / "clean", GM.CUTTERS_FN, "cobblers_cutter") == []
+    assert any("in the tick it force-loads" in p for p in CA.problems(tmp_path / "bad", GM.CUTTERS_FN, "cobblers_cutter"))
 
 
 # ================================================================================================= the faces
@@ -797,10 +886,12 @@ def test_reapply_runs_r9s_after_r9m_and_the_cutters_wait_out_their_placement(mon
     assert ids.index("R1") < ids.index("R9M") < ids.index("R9S") < ids.index("R9E") < ids.index("R16"), ids
     acts = next(s for s in steps if s[0] == "R9S")[2]
     assert acts[:-2] == [("fn", "cobblers:gulch_mine/%s" % f) for f in listed["cobblers_gulch_mine"]]
-    assert acts[-2] == ("fn", "cobblers:gulch_mine/cutters") and acts[-1][0] == "wait"
-    fns = GM.cutter_files(spec_model())
-    delay = sum(int(m) for l in fns["cutters"] + fns["cutters_place"] for m in re.findall(r"schedule function \S+ (\d+)t", l))
-    assert acts[-1][1] * 20 >= delay, (acts[-1], delay)
+    # the Cutters' look-then-act chain (N155): started, waited out past its blind act and de-duplication, counted back
+    assert acts[-3:] == [("fn", "cobblers:gulch_mine/cutters"), ("wait", CL.STEP_SECONDS),
+                         ("check", ("chunk_look", GM.CUTTERS_HOLDER, len(SPEC["cutters"]["benches"]),
+                                    "the Cutters at the gulch"))], acts[-3:]
+    assert CL.STEP_SECONDS * 20 >= CL.STEP_TICKS
+    assert not [a for a in acts if a[0] == "cmd" and a[1].startswith("forceload")], "a step forceload could release the chain"
     for pack in ("cobblers_gulch_mine", "cobblers_mega_recipes"):
         assert pack in reapply.SERVER_PACKS and pack in reapply.WORLD_LOCAL and pack not in reapply.EXCLUDED
     assert not [a for s in steps for a in s[2] if a[0] == "fn" and "refill" in a[1]]
