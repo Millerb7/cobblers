@@ -1,60 +1,62 @@
-# Handover: Wave A (session bacb34ed, 2026-10-08)
+# Handover: session bacb34ed, 2026-10-08 (day after the 2026-10-10 overnight brief)
 
-A cold session reads CLAUDE.md, `docs/STATE.md`, this file and `docs/MORNING_REPORT_2026-10-08.md`, and nothing else,
-before it starts. The review list is `docs/OVERNIGHT_REVIEW_2026-10-06.md` (N95-N113 are Wave A's).
+A cold session reads CLAUDE.md, `docs/STATE.md`, this file and `docs/MORNING_REPORT_2026-10-11.md`, and nothing else,
+before it starts. The review list is `docs/OVERNIGHT_REVIEW_2026-10-06.md` (N140-N161 are the last two days').
 
-## 1. The branch
-- **`build/2026-10-06-next`** on origin, no PR yet, stacked on `build/2026-10-05-p0` (draft PR
-  [Millerb7/cobblers#119](https://github.com/Millerb7/cobblers/pull/119), frozen). Wave A worked from worktree
-  `wave-a-builds-integration-98eb36` (local branch `claude/wave-a-builds-integration-98eb36`) and pushed with
-  `git push origin HEAD:build/2026-10-06-next`; the branch is also checked out (behind) in worktree
-  `consolidate-parallel-sessions-b6b9d7`, so `git switch` to it refuses there. Re-read the head before quoting:
-  `git fetch --prune; git rev-parse origin/build/2026-10-06-next`.
-- Next: ONE draft PR for it against main (memory: one big PR per batch) after #119 merges, or stacked on #119.
+## 1. The branches
+- **`build/2026-10-06-next`** at `d56057d` on origin, no PR yet (memory: one big PR per batch, against main). Worked
+  from worktree `wave-a-builds-integration-98eb36` (local `claude/wave-a-builds-integration-98eb36`), pushed with
+  `git push origin HEAD:build/2026-10-06-next`. Re-read the head first: `git fetch --prune; git rev-parse
+  origin/build/2026-10-06-next`.
+- **Player site:** [Millerb7/cobblers#120](https://github.com/Millerb7/cobblers/pull/120) MERGED (head `f1d6c10`,
+  merge `a00b9c4`); [Millerb7/cobblers#121](https://github.com/Millerb7/cobblers/pull/121) open draft, head `a94f869`,
+  branch `site/player-guides-2-2026-10-08` (FROZEN: reported). Merge with
+  `gh pr merge 121 --match-head-commit a94f8690032600843dcf9447d11e294c8489ba50`. Main holds only the static
+  `docs/player/`; the generators (`tools/player_site.py` and the three guides) reach main with the batch. The site
+  worktree `../site-pr-2026-10-08` can be removed.
 
-## 2. Where it stopped (overnight 2026-10-10)
-- Everything in `docs/MORNING_REPORT_2026-10-11.md` is merged and audited on this branch; NOTHING is installed: a
-  server held port 25565 all night (no lock), so by the safety rule no server work ran. The lock is not held by us.
-- Next, when the port is free (process/port check first, then the lock): EXP-058's throwaway proof (one fresh world,
-  booted without then with the pack: `experiments/EXP-058-dimension-overrides/README.md`), then one full prepare
-  (`--server-dir` + lock env; expect the markets payment faults to clear), snapshot staging, install, boot 16G with
-  `max-tick-time` -1, `run --only R9OC,R14,R16Q,R17M,R17TS,R18DT,R18PB --no-reload` (plus the arena restart), restart,
-  read back. The bank/Produce Buyer wait on EXP-061's `clear 0` check before install.
-- This worktree has a full `derived/` and `build/` (build/ is stale against tonight's data until prepare).
+## 2. Where it stopped
+- **Staging is RUNNING** (process 33216, terminal tab "staging readback", 16G, `max-tick-time` back at 60000) for the
+  owner's in-game checks. **The coordination lock is released** at hand-over; a session that needs the server checks
+  the PROCESS, then asks the owner whether the running server is theirs.
+- In staging (STATE "Latest install"): the 2026-10-10 overnight's work, applied and read back. EXP-058 passed.
+- **Merged after that install, NOT in staging:** the Entei fixes + re-theme, the arena narrowing, Poipole at the towers,
+  services/crafting prices + voucher, the Nether tables + badge-8 gate (`cobblers_nether_gate`, self-driving), the
+  Victory Road closure (R9Z) and the z4 re-cut (R9Z), the iron-gear blacklist. Next, when the owner's checks are done:
+  prepare (~50 min; `--server-dir`, `COBBLERS_SERVER_ROOT`, lock env), snapshot, install, boot 16G with tick -1,
+  `run --only R9Z,R16Q,R17TS --no-reload`, restart, read back with probes. **EXP-059 (Entei) and EXP-062 (services)
+  need that install first**: run now they test the old code.
+- Owed independent audits: the Victory Road closure (its audit is the implementer's), the Nether tables and gate
+  (builders wrote their own tests), the services' crafting rule beyond ed8c773, the apricorn/buyer exemption (N151).
 
-## 3. Next: the overnight brief of 2026-10-10 (the owner, verbatim decisions; run in session bacb34ed because no tool here can start a fresh session)
-1. **Nether override, FIRST (live defect):** stop Blaine-gym copies and Moltres altars generating in the Nether (and the
-   End copies, STATE "Generated gym copies"); re-measure the copy count; prove on a throwaway world; nobody may reach a
-   second Blaine or an unearned Moltres.
-2. **Entei boss (option B, `docs/mechanics/NETHER_DUNGEON_SCOPE.md`):** each player fights their own copy; losing blacks
-   you out; entry costs MATERIALS (Challenge players pay the same); first clear catchable, later clears give items; no
-   Arceus plates; Mewtwo stays on the fossil route; Entei first, Heatran after. Experiments first; check every species
-   against the 1.8.0 jar; the two-player case waits for a second account (never faked).
-3. **Arena payout hole:** settle whether CobbleDollars pays on the arena's NPC wins; if it pays, cap it.
-4. **Economy overhaul:** design then build: trainer income covers the fights; TMs, Mega stones, held items and training
-   from materials; farm products pay early on a declining price, AFK food capped or excluded; a REFILLABLE MINING CAVE
-   (stone-face reset mechanism: where, shared or per-player, yield, netherite too?); the Challenge voucher's real number
-   from the ladder; the paid services ($500 to raise one Pokemon to the cap; EV/IV the same) after researching the
-   level-setting command.
-5. **Queue:** the eight units the brief lists LANDED on 2026-10-09 (`docs/REPORT_2026-10-09.md`); left: the P1s
-   (Victory Road skippable on the surface and z4 over the League are owner decisions, N132; the Champion's floor trigger is
-   in-game only) and the four blocked trainer seats (explain them).
-Blocked on the owner: Brock (holds the 12), Lootr's two-player cases, the in-game checks.
+## 3. Waiting on the owner
+- Decisions:
+  - the arena's remaining leak (N156: emptying the balance to a teammate keeps the payout; an exact fix needs a
+    permissions mod or a mixin, an ADR);
+  - Entei's two new relog cases and the farmable Life Orb (N157);
+  - netherite scrap at gym 1 and services cheaper than a Challenge fight hour (N158);
+  - the dungeon design's nine questions (`docs/mechanics/DUNGEONS.md`, ADR-008 Proposed; The Night Shift first;
+    Ultra Beasts are available as bosses, `docs/research/notes/ultra-beasts-1.8.0.md`);
+  - when the bank config goes server-wide (it stays old until the Produce Buyer is seen working, EXP-061).
+- The live Nether override: copy `build/datapacks/cobblers_dimension_overrides` into the live world's
+  `datapacks/` with the server stopped, before anyone enters the Nether or runs `/locate` there. Install the
+  Nether gate with or before it once it is in a build.
+- In-game: Brock (Normal and Challenge), EXP-060 arena, EXP-061 Produce Buyer, Lootr's two-player cases; EXP-059 and
+  EXP-062 after the next install.
 
 ## 4. Do not rediscover
-- `reapply.py prepare` needs `--server-dir` and the lock env (`COBBLERS_SERVER_LOCK`, `COBBLERS_LOCK_OWNER` equal to
-  the lock file's `owner:` line, `COBBLERS_SERVER_ROOT`). The lock file must carry an `owner: <id>` line or
-  `runtime_guard` refuses.
-- Copying `derived/` into a worktree: the folder already exists (tracked README), so `cp -r src ./derived` nests it;
-  copy the contents.
-- A 12G staging server ran out of memory in reapply's `/reload` (N111); `--no-reload` straight after a boot works.
-- Ctrl-C does not reliably save this server (N112): stop with RCON `stop`.
-- rctmod saves `InBattle` as `0b` on a standing trainer (measured on `gym1_junior_01`).
-- `direct_trades.rcon_checks()`'s `data get` selectors are malformed (N113); read with `@e[...,limit=1]`, after
-  waiting ~5 s for a forceloaded chunk's entities.
-- A1's retire was fixed by the integrator and the auditor's test edited to match (N95): a re-audit by another agent is
-  owed before the 12-boss rollout.
+- `reapply.py prepare` needs `--server-dir`, `COBBLERS_SERVER_ROOT` and the lock env (`COBBLERS_SERVER_LOCK`,
+  `COBBLERS_LOCK_OWNER` = the lock's `owner:` line). Any edit to `data/` or `tools/` after a partial prepare makes
+  every earlier job stale: run prepare whole once the data is final.
+- `/locate` reaches STRUCTURE_STARTS and saves a start; the override cannot remove a saved one (N152). Test worldgen on
+  fresh chunks of a same-seed control world, never on chunks a control run touched.
+- A forceloaded chunk's entities arrive a few seconds later: a kill in the same function misses them (N155, R17M).
+- Agents brief "start from <sha>" often find HEAD already past it (`worktree.baseRef: head`): they merged or reset;
+  three agents also misreported their branch name. Verify every merge by sha, never by the reported branch.
+- Two units can each add contract "C19": a clean text merge hides it (the gate's became C21).
+- `data/towns.json` lags a town's re-site; `data/placements.json` settlement centres are what is built (Pacifidlog).
+- A 12G server cannot `/reload` this build; boot 16G, `--no-reload`; stop with RCON `stop`.
 
 ## 5. Cost
-`python tools/session_cost.py`: this session ~7.5M weighted (context ~400k at hand-over, average ~290k); agents 15.8M
-across 14 (5 design, 4 builders, 1 ADR, 4 audits/checks); about 23-24M of the ~30M approved.
+`python tools/session_cost.py`: this session 44.2M weighted over 825 turns (context 446k at hand-over); agents across
+the session per `tools/session_cost.py` (today's 20 units: designs, builders, audits, the site).
