@@ -29,15 +29,20 @@ SHELF_DISC = {"thunder": "diamond", "earthquake": "diamond", "overheat": "nether
               "toxic": "emerald", "calmmind": "emerald"}
 # unlisted TMs and the badge data/tm_gate.json badge_rule.unlisted gives them, worked by hand:
 #   type_badge from the leaders' pools: normal 1, rock 1, water 2, electric 3, grass 4, poison 5, psychic 6, fire 7,
-#   ground 8; no leader teaches ice or flying. grade_badge: copper/iron/gold 1, diamond 3, emerald 5, netherite 7.
+#   ground 8; no leader teaches ice, flying or ghost, so they wait for the last leader: 8 (never the minimum: Shadow
+#   Ball before Brock was the defect the owner named 2026-10-08). grade_badge: copper/iron/gold 1, diamond 3,
+#   emerald 5, netherite 7.
 UNLISTED = {
-    "icebeam": ("ice", "diamond", None, 3),        # max(1, 3)
+    "icebeam": ("ice", "diamond", None, 8),        # max(8 no leader, 3)
     "tackle": ("normal", "copper", None, 1),       # max(1, 1)
     "heatwave": ("fire", "gold", None, 7),         # max(7, 1)
-    "hurricane": ("flying", "netherite", None, 7),  # max(1, 7)
+    "hurricane": ("flying", "netherite", None, 8),  # max(8 no leader, 7)
+    "shadowball": ("ghost", "gold", None, 8),      # max(8 no leader, 1): the owner's case
+    "hydropump": ("water", "netherite", None, 7),  # max(2, 7): the grade decides
     "howl": ("normal", None, "tackle", 1),         # chain: tackle's copper, and never before tackle (1)
-    "flareblitz": ("fire", None, "icebeam", 7),    # chain: icebeam's diamond -> 3, fire 7, icebeam 3 -> 7
+    "flareblitz": ("fire", None, "icebeam", 8),    # chain: icebeam's diamond -> 3, fire 7, icebeam 8 -> 8
 }
+NO_LEADER_TYPES = {"ice", "flying", "ghost"}       # stated by hand: no SHELF_GEM entry has these types
 ORDINARY = ["minecraft:oak_planks", "minecraft:stick", "cobblemon:poke_ball", "cobblemon:great_ball",
             "handcrafted:oak_chair", "cobblemon:to_nowhere"]
 WITH_ADV = {"minecraft:oak_planks", "minecraft:stick"}   # the rest have no unlock advancement: doLimitedCrafting alone

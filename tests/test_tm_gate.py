@@ -13,6 +13,7 @@ from __future__ import annotations
 import copy
 import json
 import os
+import re
 import sys
 import types
 from pathlib import Path
@@ -116,6 +117,49 @@ def earn_failures(files, exp, plan):
     return out
 
 
+def _leader_badges():
+    """{tmcraft item: badge} from data/progression.json's first-win pools, read here (not through the generator)."""
+    out, fwr, stack = {}, None, [PROGRESSION]
+    while stack and fwr is None:
+        o = stack.pop()
+        if isinstance(o, dict):
+            fwr = o.get("first_win_rewards")
+            stack.extend(o.values())
+        elif isinstance(o, list):
+            stack.extend(o)
+    assert fwr and fwr.get("series") == PROGRESSION.get("active_series"), "no first_win_rewards for the active series"
+    for t in fwr["trainers"].values():
+        m = re.fullmatch(r"gym([1-8])_cleared", t.get("flag", ""))
+        for item in t.get("one_of", []) if m else []:
+            out[item] = min(int(m.group(1)), out.get(item, 9))
+    return out
+
+
+def early_failures(plan, gem_of):
+    """Every TM whose gem type no leader teaches before badge N unlocks at N or later; a type no leader teaches at all
+    waits for the last leader. gem_of: {tmcraft item: gem type}, stated by the caller."""
+    leaders = _leader_badges()
+    first = {}
+    for item, b in leaders.items():
+        if item in gem_of:
+            first[gem_of[item]] = min(b, first.get(gem_of[item], 9))
+    last = max(leaders.values())
+    out = []
+    for item, t in sorted(plan["tms"].items()):
+        if item not in gem_of:
+            continue
+        n = first.get(gem_of[item], last)
+        if t["badge"] < n:
+            out.append("%s (%s): badge %d, no leader teaches %s before %d" % (item, gem_of[item], t["badge"],
+                                                                             gem_of[item], n))
+    return out
+
+
+def _fixture_gems():
+    return dict({"tmcraft:tm_" + m: g for m, g in F.SHELF_GEM.items()},
+                **{"tmcraft:tm_" + m: v[0] for m, v in F.UNLISTED.items()})
+
+
 def device_failures(files, exp, plan):
     out = []
     top = max(t["badge"] for t in plan["tms"].values())
@@ -159,6 +203,19 @@ def test_unlisted_tms_follow_the_rule_worked_by_hand(tmp_path):
     plan, exp, _ = _make(G, tmp_path)
     got = {item: plan["tms"][item]["badge"] for item in exp["unlisted_badge"]}
     assert got == exp["unlisted_badge"]
+
+
+def test_a_type_no_leader_teaches_is_never_early(tmp_path):
+    """Shadow Ball before Brock (the owner, 2026-10-08): a type no leader teaches before badge N is not below N."""
+    plan, _, _ = _make(G, tmp_path)
+    assert {g for g in _fixture_gems().values()} >= F.NO_LEADER_TYPES
+    assert early_failures(plan, _fixture_gems()) == []
+    last = max(_leader_badges().values())
+    assert last == 8
+    for item, (gem, _, _, _) in F.UNLISTED.items():
+        if gem in F.NO_LEADER_TYPES:
+            assert plan["tms"]["tmcraft:tm_" + item]["badge"] == last, item
+    assert plan["tms"]["tmcraft:tm_shadowball"]["badge"] == 8
 
 
 def test_earning_a_badge_gives_exactly_its_tms(tmp_path):
@@ -274,6 +331,15 @@ def test_mutant_that_ignores_the_grade_is_caught(tmp_path):
     assert got != exp["unlisted_badge"]
 
 
+def test_mutant_that_puts_a_type_no_leader_teaches_at_the_minimum_is_caught(tmp_path):
+    """The defect itself, put back: a type with no leader defaulting to minimum_badge (Shadow Ball at badge 1)."""
+    m = _mutant(("tb = type_badge.get(gem, no_gym)", "tb = type_badge.get(gem, floor)"))
+    plan, exp, _ = _make(m, tmp_path)
+    fails = early_failures(plan, _fixture_gems())
+    assert any("tm_shadowball" in f for f in fails), fails
+    assert {item: plan["tms"][item]["badge"] for item in exp["unlisted_badge"]} != exp["unlisted_badge"]
+
+
 # ---------------------------------------------------------------- the real server snapshot, when present
 
 @pytest.mark.skipif(not (SNAPSHOT / "mods").is_dir(), reason="no server snapshot at %s" % SNAPSHOT)
@@ -288,3 +354,14 @@ def test_the_snapshot_places_every_tm_and_matches_the_shelf():
             if str(G.result_id(r)).startswith("tmcraft:tm_") and r.get("type") in G.load()["gated"]["grid_types"]}
     tm_gated = {rid for rid, g in plan["gated"].items() if not g.get("device")}
     assert made == tm_gated
+    # no TM comes before the first leader who teaches its type; gem types read here from the recipe text
+    gem_of = {}
+    for rid in made:
+        _, r = resolved["recipes"][rid]
+        gems = set(re.findall(r'"cobblemon:([a-z]+)_gem"', json.dumps(r)))
+        if len(gems) == 1:
+            gem_of.setdefault(G.result_id(r), gems.pop())
+    assert len(gem_of) > 700, len(gem_of)
+    assert gem_of.get("tmcraft:tm_shadowball") == "ghost"
+    assert plan["tms"]["tmcraft:tm_shadowball"]["badge"] == 8
+    assert early_failures(plan, gem_of) == [], early_failures(plan, gem_of)[:5]
