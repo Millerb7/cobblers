@@ -84,7 +84,9 @@ to `[^A-Za-z0-9]`, looks up both templates (`Moves.getByName`), and calls
 `Pokemon.getAllAccessibleMoves` is the form's `getLevelUpMovesUpTo(level)` plus `benchedMoves`. So Sketch is always
 re-slottable, both because it is benched and because Smeargle's learnset is `1:sketch`
 (`data/cobblemon/species/generation2/smeargle.json`). Every copied move stays on the bench for good. **Sketch is
-unlimited: one new move per use, renewable after every battle, and the copies accumulate.**
+unlimited: one new move per use, renewable after every battle, and the copies accumulate.** A per-Pokemon cap of
+10, built from a datapack, is costed in `sketch-cap-1.8.0.md`. That note also finds that Mega Showdown overwrites
+13 files of the running Showdown, which section 0 does not account for.
 
 **Which battles write through:**
 - Cobblemon's `BattleBuilder.pve` and `pvn` pass their clone flag through from the caller.
