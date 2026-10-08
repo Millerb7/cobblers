@@ -920,6 +920,113 @@
           "evolutions": []
         }
       ]
+    },
+    {
+      "id": "starter_misdreavus",
+      "tagline": "A little ghost that teases its way down the road, until the thing it was haunting steps out of the past: a paradox at full strength from the day it arrives.",
+      "potent_at": {
+        "gyms": [
+          2,
+          5,
+          7
+        ],
+        "peak_gym": 7,
+        "why": "The ghost. Measured 20/35 against the gym leaders (field 15-20; `python tools/mythical_starters.py measure`, 2026-10-08), the top of the field with Cosmog. Confusion and Disarming Voice scrape one win off Brock; Hex and Psybeam take Misty's Horsea and Lombre; Mismagius at 30 carries Koga with Dazzling Gleam and Psybeam (3/5); Flutter Mane at 45 (135 SpA and Speed) takes Sabrina with Shadow Ball and Blaine with Psybeam and Dazzling Gleam (4/5 each). Surge and Erika are its weak gyms. Moonblast and Power Gem were tried in the pool and left out: with them it measured 21/35, above the field. Protosynthesis is not modelled (battle_sim has no such ability), and Flutter Mane learns Sunny Day at 1, which switches it on."
+      },
+      "final": [
+        "fluttermane"
+      ],
+      "final_why": "The owner, 2026-10-08: Misdreavus -> Mismagius -> Flutter Mane, the starter line only. Flutter Mane is not Mismagius's evolution in the jar (Mismagius has `evolutions: []`; Flutter Mane has none and no `preEvolution`), so the 45 step is a CROSS-SPECIES evolution into an unrelated species: an evolution's result is a free PokemonProperties string (jar Evolution.evolutionMethod clones, then getResult().apply(pokemon); Pokemon.setSpecies writes only the species field, then updateAspects, updateForm, checkGender, updateHP and attemptAbilityUpdate). Flutter Mane is `implemented` by COBBLEVERSE-DP-v31 data/cobblemon/species_additions/fluttermane.json, not by the bare jar. Wild Misdreavus and Mismagius carry no starter aspect, so they keep their own (Dusk Stone) evolution and never reach Flutter Mane; and the starter's Misdreavus form never takes a Dusk Stone, because a form's evolutions are its own set or empty, never the species' (jar FormData.getEvolutions: `_evolutions ?: LinkedHashSet()`); paradoxes stay dungeon content everywhere else (docs/STATE.md). Until the AllTheMons models ship (ADR-006) Flutter Mane renders as the placeholder doll.",
+      "models_pending": {
+        "species": [
+          "fluttermane"
+        ],
+        "why": "The owner, 2026-10-08, chose to ship the AllTheMons models for Flutter Mane; that delivery waits on the licence (docs/decisions/ADR-006-server-delivered-client-pack.md, 'Prepared and verified'). Until it ships, Flutter Mane renders as the placeholder doll in game. tools/player_guide_starters.py says so in the starter page's 'What this page leaves out'; remove a species from this list when its model reaches players."
+      },
+      "learnset_from": [
+        "misdreavus",
+        "mismagius",
+        "fluttermane"
+      ],
+      "moves": [
+        "1:astonish",
+        "1:confusion",
+        "10:disarmingvoice",
+        "14:confuseray",
+        "21:hex",
+        "25:psybeam",
+        "27:willowisp",
+        "29:drainingkiss",
+        "32:mysticalfire",
+        "36:dazzlinggleam",
+        "41:shadowball",
+        "43:calmmind"
+      ],
+      "moves_why": "A Ghost/Fairy special set, every move in the 1.8.0 learnset of Misdreavus, Mismagius or Flutter Mane (the jar's generation2/misdreavus.json, generation4/mismagius.json, generation9/fluttermane.json). Astonish and Confusion at 1 (Misdreavus's own) so the level-5 starter can attack; Disarming Voice (Flutter Mane TM) at 10 for Fairy before the final; Confuse Ray at 14; Hex at 21 and Will-O-Wisp at 27 pair (Hex doubles on a burned target), both after Brock's cap of 20; Psybeam at 25; Draining Kiss (Misdreavus TM) at 29; Mystical Fire (Mismagius's level-1 move) at 32, just after the step to Mismagius; Dazzling Gleam at 36 (Flutter Mane's own level 35); Shadow Ball at 41, after Koga's cap of 40; Calm Mind at 43. Left out on purpose: Moonblast (Flutter Mane's level 84) and Power Gem (measured 21/35 with both, above the field), Memento and Perish Song. After 45 Flutter Mane's own learnset takes over: Mystical Fire 49, Power Gem 56, Psyshock 63, Moonblast 84.",
+      "stages": [
+        {
+          "stage": 1,
+          "species": "misdreavus",
+          "form": "Starter",
+          "aspect": "cobblers_starter_1",
+          "shape_from": "misdreavus",
+          "bst": 330,
+          "baseStats": {
+            "hp": 46,
+            "attack": 46,
+            "defence": 46,
+            "special_attack": 64,
+            "special_defence": 64,
+            "speed": 64
+          },
+          "evolutions": [
+            {
+              "id": "cobblers_starter_misdreavus_stage2",
+              "variant": "level_up",
+              "result": "mismagius unaspect=cobblers_starter_1 aspect=cobblers_starter_2",
+              "consumeHeldItem": false,
+              "learnableMoves": [],
+              "requirements": [
+                {
+                  "variant": "level",
+                  "minLevel": 30
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "species": "mismagius",
+          "form": "Starter",
+          "aspect": "cobblers_starter_2",
+          "shape_from": "mismagius",
+          "bst": 430,
+          "baseStats": {
+            "hp": 52,
+            "attack": 52,
+            "defence": 52,
+            "special_attack": 92,
+            "special_defence": 91,
+            "speed": 91
+          },
+          "evolutions": [
+            {
+              "id": "cobblers_starter_misdreavus_fluttermane",
+              "variant": "level_up",
+              "result": "fluttermane unaspect=cobblers_starter_2",
+              "consumeHeldItem": false,
+              "learnableMoves": [],
+              "requirements": [
+                {
+                  "variant": "level",
+                  "minLevel": 45
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }

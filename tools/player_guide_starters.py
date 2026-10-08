@@ -8,8 +8,8 @@ how each one evolves, and the items a line needs (Kubfu's scrolls, Silvally's me
 
 WHAT A TIER IS. There is one starter category (modpack/config/cobblemon/starters.json, `cobblers_mythical`), so a tier
 is not a category or a power ranking: it is the stage of a line, and every line shares the same three.
-  tier 1  the stage-1 form the screen gives, at levels.start (5), all seven at the same base-stat total
-  tier 2  the stage-2 form at levels.stage_2 (30), again one total for all seven
+  tier 1  the stage-1 form the screen gives, at levels.start (5), all eight at the same base-stat total
+  tier 2  the stage-2 form at levels.stage_2 (30), again one total for all eight
   tier 3  the native final species at levels.final (45), the Cobblemon 1.8.0 species unchanged, so its totals differ;
           for a line with no evolution (Smeargle), its own third form (stages[2]), named "<species> (final)"
 Tiers 1 and 2 are OUR forms (data/mythical_starters.json `stages`, built by tools/mythical_starters.py); tier 3 is read
@@ -79,7 +79,7 @@ STATS = (("hp", "HP"), ("attack", "Atk"), ("defence", "Def"), ("special_attack",
 # data/ files an item can be given through without a shop: the page says "earned in the story" and nothing more.
 STORY_FILES = ("data/rewards.json", "data/quests.json", "data/research_station.json", "data/dialogue.json")
 GUIDE = {"file": "starters.html", "title": "Starters", "label": "Starters", "order": 10,
-         "description": "The seven starters on the starter screen: their stats at each tier, how each line evolves, "
+         "description": "The eight starters on the starter screen: their stats at each tier, how each line evolves, "
                         "and how to get the items two of them need.",
          "generator": "tools/player_guide_starters.py"}
 # a stage that keeps the stage-1 species is named by what it is (Smeargle's three forms are all Smeargle)
@@ -338,10 +338,13 @@ def collect(jar_path=None):
                          % (jar.name(ln["stages"][0]["species"]), ln["sketch_cap"]["uses"]))
         if not str(ln.get("tagline") or "").strip():
             raise SystemExit("%s %s has no `tagline`: the page shows one under every line's name" % (DATA, ln["id"]))
+        # a species of the line whose model has not reached players yet (data `models_pending`): it renders as the
+        # placeholder doll in game, and the page's "What this page leaves out" says so
+        pending = [jar.name(s) for s in (ln.get("models_pending") or {}).get("species") or []]
         lines.append({"id": ln["id"], "anchor": "line-%d" % (len(lines) + 1), "name": jar.name(ln["stages"][0]["species"]),
                       "tagline": ln["tagline"].strip(), "tiers": tiers, "steps": steps,
                       "gyms": ln.get("potent_at", {}).get("gyms") or [], "notes": notes,
-                      "own_final": len(ln["stages"]) == 3})
+                      "own_final": len(ln["stages"]) == 3, "models_pending": pending})
     specials = []
     for ln in lines:  # an item a starter evolves on
         for it in items.get(ln["id"], []):
@@ -449,7 +452,7 @@ def render(model):
             '<li><b>Tier 2</b>, a stronger form at level %d. You can first reach it on the way to gym %d, holding %d '
             'badges.</li>'
             '<li><b>Tier 3</b>, the final Pokemon at level %d. You can first reach it on the way to gym %d, holding '
-            '%d badges.</li></ul><p>Tiers 1 and 2 are the same total for all seven, so the lines differ in how '
+            '%d badges.</li></ul><p>Tiers 1 and 2 are the same total for all eight, so the lines differ in how '
             'their stats are spread, not in how many. Tier 3 is the standard final Pokemon%s. Your level cap is '
             'the next leader\'s ace (<a href="battles.html">Trainer battles</a>), which is why a tier waits for a '
             'badge. When your starter qualifies, the game offers the evolution; you can wait.</p>'
@@ -459,7 +462,7 @@ def render(model):
             '<section id="not-covered"><h2>What this page leaves out</h2><ul><li>Movesets: check the summary screen '
             'in game.</li><li>Where anything is found in the world: an item that is not sold is "earned in the '
             'story", with no more said.</li><li>Any Pokemon not given by the starter screen: the tiers and '
-            'evolutions here are the starters\' own.</li></ul></section></main>'
+            'evolutions here are the starters\' own.</li>%s</ul></section></main>'
             % (esc(model["category"]), len(model["lines"]), lv["start"],
                esc("%s need items to evolve or change form: each one's are under its own heading."
                    % " and ".join(needs)) if needs else "", toc,
@@ -467,7 +470,11 @@ def render(model):
                esc(", except for %s, which has no evolution: its tier 3 is a third form of its own"
                    % " and ".join(ln["name"] for ln in model["lines"] if ln.get("own_final")))
                if any(ln.get("own_final") for ln in model["lines"]) else "", nav,
-               "".join(render_line(ln, model) for ln in model["lines"])))
+               "".join(render_line(ln, model) for ln in model["lines"]),
+               "".join('<li>%s, in the %s line, has no model in the client pack yet, so in game it shows as a '
+                       'placeholder doll until its model ships. Its stats and evolution are as this page '
+                       'says.</li>' % (esc(name), esc(ln["name"]))
+                       for ln in model["lines"] for name in ln.get("models_pending") or [])))
     sources = ('<p class="src">From data/mythical_starters.json, modpack/config/cobblemon/starters.json, '
                'data/markets.json and the Cobblemon 1.8.0 species files.</p>')
     return player_site.page(GUIDE, body, body_class="page-starters", not_covered_href="#not-covered",

@@ -1,8 +1,9 @@
 #!/usr/bin/env python
-"""Independent audit of the seven starters (five mythical, Larvesta and Smeargle), "a-lite" at 30 and 45, as the server
-loads them. Smeargle (2026-10-08) has no evolution, so its 45 step is a third form of its own (FORM_FINALS), and its
+"""Independent audit of the eight starters (five mythical, Larvesta, Smeargle and Misdreavus), "a-lite" at 30 and 45, as
+the server loads them. Smeargle (2026-10-08) has no evolution, so its 45 step is a third form of its own (FORM_FINALS), and its
 pack also carries the Sketch cap's move override and callbacks (only their presence and the cap's number are checked
-here; the cap's runtime is EXP-065).
+here; the cap's runtime is EXP-065). Misdreavus (2026-10-08) steps at 45 from a tagged Mismagius into Flutter Mane, a
+species the jar does not relate to it (CROSS_SPECIES_FINALS; the step's runtime is EXP-068).
 
 Written by a test author, not by the session that built them. It never imports tools/mythical_starters.py and never
 takes an expectation from data/mythical_starters.json's stage specs: the record's levels, aspects, shapes, BSTs and
@@ -97,9 +98,20 @@ LINES = {
     "larvesta": ("larvesta", "larvesta"),
     # the seventh: its shape is the owner's literal spread (FORM_FINALS), not a jar species'
     "smeargle": ("smeargle", None),
+    # the eighth (the owner, 2026-10-08): "the starter's own tagged Misdreavus at 5 (330), a tagged Mismagius at 30
+    # (430)", each stage in ITS OWN species' shape (STAGE_SHAPES), then Flutter Mane at 45 (CROSS_SPECIES_FINALS)
+    "misdreavus": ("mismagius", None),
 }
+# A line whose two stages are scaled into different species' shapes: stage -> the species whose shape it takes.
+STAGE_SHAPES = {"misdreavus": {1: "misdreavus", 2: "mismagius"}}
 # 1.2 and 6a: the jar has no Meltan evolution; the decision names Melmetal as its final.
 DECLARED_FINALS = {"meltan": {"melmetal"}}
+# The eighth's 45 step goes to a species the jar does NOT relate to the line (the owner, 2026-10-08: "Flutter Mane at
+# 45"; docs/research/notes/paradox-pokemon-1.8.0.md section 2). The premise, checked against the jar: the stage-2
+# species is a native FINAL (no evolution of its own, so nothing native is displaced), and the declared final has no
+# pre-evolution and no evolution (it joins no line of its own).
+CROSS_SPECIES_FINALS = {"misdreavus": {"fluttermane"}}
+DECLARED_FINALS.update(CROSS_SPECIES_FINALS)
 # 4: a-lite "keeps two native choices, Cosmoem's Solgaleo/Lunala and Kubfu's scrolls"; 2: Kubfu stays item_interact
 # on the scrolls with a level added. 6a: "Every other line reaches its final form on level alone at 45" (no anvil, no
 # friendship, no has_move).
@@ -273,6 +285,9 @@ def check_form(where, form, stage, line, species, moves, adds_species, authored)
     bs = form.get("baseStats") or {}
     if line in FORM_FINALS:
         shape, shape_name = FORM_FINALS[line]["shape"], "the decided spread"
+    elif line in STAGE_SHAPES:
+        shape_name = STAGE_SHAPES[line][stage]
+        shape = species[shape_name]["baseStats"]
     else:
         shape, shape_name = species[LINES[line][1]]["baseStats"], LINES[line][1]
     if sorted(bs) != sorted(shape):
@@ -337,6 +352,18 @@ def check_line(line, adds, species, moves, authored):
         if evolutions_of(species[line]):
             p.append("%s: the jar now has a native evolution; the decision's premise (no evolution) has changed" % line)
         natives = {}
+    elif line in CROSS_SPECIES_FINALS:
+        if evolutions_of(species.get(stage2, {})):
+            p.append("%s: the jar now gives %s a native evolution; the cross-species final's premise has changed"
+                     % (line, stage2))
+        for f in sorted(CROSS_SPECIES_FINALS[line]):
+            fs = species.get(f)
+            if fs is None:
+                p.append("%s: the declared final %s is not a species in the jar" % (line, f))
+            elif evolutions_of(fs) or fs.get("preEvolution"):
+                p.append("%s: the jar now relates %s to a line (evolutions or preEvolution); the premise has changed"
+                         % (line, f))
+        natives = {f: None for f in sorted(CROSS_SPECIES_FINALS[line])}
     elif line in DECLARED_FINALS:
         if evolutions_of(species[line]):
             p.append("%s: the jar now has a native evolution; the decision's premise (1.2) has changed" % line)
@@ -569,8 +596,11 @@ def main(argv=None):
         print("mythical_starters_audit: %d fault(s)" % len(faults))
         return 1
     print("mythical_starters_audit: ok: %d lines walk 5 -> %d -> %d through two forms to their native finals (%s "
-          "to a third form of its own, Sketch capped at %d); the screen offers them; the 27 stay wild (%d open)"
-          % (len(LINES), STAGE_2, FINAL, ", ".join(sorted(FORM_FINALS)), SKETCH_CAP, len(opens)))
+          "to a third form of its own, Sketch capped at %d; %s across species to %s); the screen offers them; "
+          "the 27 stay wild (%d open)"
+          % (len(LINES), STAGE_2, FINAL, ", ".join(sorted(FORM_FINALS)), SKETCH_CAP,
+             ", ".join(sorted(CROSS_SPECIES_FINALS)),
+             ", ".join(sorted(f for v in CROSS_SPECIES_FINALS.values() for f in v)), len(opens)))
     return 0
 
 

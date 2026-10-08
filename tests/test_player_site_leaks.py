@@ -122,6 +122,10 @@ ALLOW: dict[str, str] = {
     # Larvesta, the sixth (the owner, 2026-10-08), is also wild (data/spawns.json), so the region map names it too;
     # Smeargle, the seventh (the owner, 2026-10-08), likewise
     **{n: _STARTER for n in ("cosmog", "cosmoem", "kubfu", "poipole", "meltan", "larvesta", "smeargle")},
+    # the eighth (the owner, 2026-10-08): the line Misdreavus -> Mismagius -> Flutter Mane. Flutter Mane is a paradox,
+    # and paradoxes stay dungeon content (docs/STATE.md), but a starter's own final is public: the page names the line
+    # it raises. Exactly the line's three members; no other paradox, and the drops page's paradox exclusion stands.
+    **{n: _STARTER for n in ("misdreavus", "mismagius", "fluttermane")},
 }
 # Single ordinary English words that a secret file uses as an NPC's label (data/dialogue.json npc_name "Courier",
 # "Guide") and that the pages use in their ordinary sense ("this guide", the route trainer "Night Courier"). Matching

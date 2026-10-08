@@ -54,7 +54,17 @@ format), and a form may give its spread as a literal `shape` instead of a jar sp
                       The count needs modpack/config/cobblemon/main.json maxDynamaxLevel >= the cap (setDmaxLevel
                       clamps to it), and the cap cannot exceed 10 (Showdown's clamp).
 
-What has NOT been run (EXP-049, EXP-065): that the forms load and fight at their stats, that the aspect survives a
+THE EIGHTH, MISDREAVUS (the owner, 2026-10-08). A tagged Misdreavus at 5 and a tagged Mismagius at 30, each in its own
+species' shape, then at 45 a CROSS-SPECIES step into Flutter Mane, which the jar does not relate to the line: the
+result is an ordinary properties string (`fluttermane unaspect=cobblers_starter_2`), and nothing here treats it
+differently from a native final. Read from the 1.8.0 jar's bytecode: Evolution.evolutionMethod clones the Pokemon and
+applies getResult() to it; Pokemon.setSpecies writes only the species field, then runs updateAspects, updateForm,
+checkGender, updateHP and attemptAbilityUpdate (setSpecies itself writes no level, IV, EV, nature, shiny or OT field;
+the bodies of the methods it calls were not read); and
+FormData.getEvolutions returns the form's own set or an empty one, so the starter Misdreavus never takes a Dusk Stone.
+Flutter Mane is `implemented` only through COBBLEVERSE-DP-v31's species_additions. Runtime: EXP-068.
+
+What has NOT been run (EXP-049, EXP-065, EXP-068): that the forms load and fight at their stats, that the aspect survives a
 species change, that a SAME-SPECIES evolution moves a Pokemon from one form to the next (the riskiest link, twice for
 Smeargle), that the cap holds against Rare Candy, and every part of the Sketch cap. Valid JSON is the most this tool
 can claim.

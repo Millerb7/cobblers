@@ -37,7 +37,7 @@ WHAT IS CHECKED
       a player carrying the tag, at any cursor value, never sees the offer or the page that leads to it.
   P4  modpack/config/cobblemon/starters.json: allowStarterOnJoin FALSE (the owner, 2026-10-06: "Oak offering the
       starters in the lab as a scene rather than a menu on join"; it was true from 2026-10-05), exactly the STARTERS
-      set (seven since 2026-10-08) with aspect=cobblers_starter_1
+      set (eight since 2026-10-08) with aspect=cobblers_starter_1
       entries; no pack under build/datapacks (nor modpack/) ships data/<ns>/starters/.
   P5  REPORTED, not failed: quests, flags and rewards the data makes available before Oak that assume a party (a
       battle, an encounter, a party check); FAILED: an RCT initial level cap below the starters' level.
@@ -71,10 +71,13 @@ RCT = ROOT / "modpack" / "config" / "rctmod-server.toml"
 
 STARTERS = {"cosmog", "kubfu", "typenull", "poipole", "meltan",       # the brief / NATIVE_STARTERS_COST.md 6a
             "larvesta",                                               # the sixth, the owner 2026-10-08
-            "smeargle"}                                               # the seventh, the owner 2026-10-08
+            "smeargle",                                               # the seventh, the owner 2026-10-08
+            "misdreavus"}                                             # the eighth, the owner 2026-10-08
 STARTER_ASPECT = "cobblers_starter_1"
 # Smeargle, like Larvesta, is wild (data/spawns.json) and an ambient display (gym1_town, rift_dig_camp), so it is not
 # in the species sweep either; its third form adds cobblers_starter_3 and the name "Starter-Final" to FORM_RE.
+# Misdreavus and Mismagius (the eighth) are wild too, so the form sweep, not the species sweep, catches their leak; its
+# forms are named "Starter" on both species, already in FORM_RE.
 # P2's species sweep names the five mythicals only. Larvesta is wild by design (data/spawns.json, levels 38-60) and
 # an ambient display in two towns (data/ambient_towns/gorge_hamlet.json, gym7_town.json, spawned through a macro), so
 # naming the species would fault those as starter gives. A Larvesta leak is the starter FORM, so the second sweep
@@ -774,7 +777,7 @@ class Audit:
             if "aspect=%s" % STARTER_ASPECT not in toks:
                 bad.append(e)
         if len(entries) != len(STARTERS) or species != STARTERS or bad:
-            self.fail("P4", "five_entries", "%s offers %d entries %r (want exactly the seven with aspect=%s; without "
+            self.fail("P4", "five_entries", "%s offers %d entries %r (want exactly the eight with aspect=%s; without "
                       "it: %r)" % (self.config, len(entries), sorted(species), STARTER_ASPECT, bad))
         level = None
         for e in entries:

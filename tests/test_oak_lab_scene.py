@@ -410,8 +410,8 @@ def test_walking_into_the_lab_opens_oaks_conversation_once():
     assert w2["opened"] == []
 
 
-def test_the_seven_starters_stand_until_the_player_has_chosen():
-    want = {"cosmog", "kubfu", "typenull", "poipole", "meltan", "larvesta", "smeargle"}
+def test_the_eight_starters_stand_until_the_player_has_chosen():
+    want = {"cosmog", "kubfu", "typenull", "poipole", "meltan", "larvesta", "smeargle", "misdreavus"}
     assert {a["species"] for a in SCENE["actors"]} == want == OA.STARTERS
     for a in SCENE["actors"]:
         assert a["place"] == [{"when": {"kind": "not", "condition": {"kind": "starter_chosen"}}, "marker": "starter_" + a["id"]}]
