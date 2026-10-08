@@ -33,11 +33,12 @@ only source is a story file is "earned in the story" with at most the badge it w
 coordinate. A held line (markets.json `held_stock`: priced, sold by no merchant) is "not on sale yet", without the
 counter it is held for. A counter is named only for a line it actually stocks.
 
-NOT PUBLISHED (2026-10-08). The leak test reads data/mythical_starters.json as a legendary file, so the stage-1 species
-it lists (Cosmog, Cosmoem, Kubfu, Poipole, Meltan; "typenull" is matched as one word, so "Type: Null" passes) are
-forbidden names on every public page, and this page cannot exist without them. Whether the five starters the screen
-shows every player are public is the owner's decision, not this tool's: until it is made, nothing has been written to
-docs/player/ or guides.json, and `tests/test_player_guide_starters.py` checks the page in memory.
+PUBLISHED (2026-10-08). The leak test reads data/mythical_starters.json as a legendary file; the five starter species
+are public by the owner's decision and let through by its ALLOW list (`_STARTER`), and nothing else from that file is.
+
+THE FILTER. Each line is one section whose id is the shared filter's key (tools/player_site.py filter_nav): "Show one
+starter" shows that line's stats, evolutions and the items it needs, and only those. Without JavaScript every line
+shows.
 
 Not checked in a running game: the forms, the evolutions, the scrolls and the memories are as the data and the jar
 say (EXP-049 has not run).
@@ -305,7 +306,7 @@ def badges(types, dex=None):
     return "".join('<span class="t t-%s">%s</span>' % (esc(t), esc(t.title())) for t in types)
 
 
-def render_line(ln):
+def render_line(ln, model):
     head = "".join("<th>%s</th>" % h for _k, h in STATS)
     rows = []
     for t in ln["tiers"]:
@@ -313,17 +314,22 @@ def render_line(ln):
         rows.append('<tr><td>%d</td><td>%s</td><td>%s</td><td class="n">%d</td>%s<td class="n"><b>%d</b></td></tr>'
                     % (t["tier"], esc(t["name"]), badges(t["types"]), t["level"], cells, sum(t["stats"].values())))
     best = ", ".join(str(g) for g in ln["gyms"])
-    return ('<section class="line" id="s-%s"><h2>%s</h2>%s<table class="stats"><thead><tr><th>Tier</th><th>Form</th>'
+    # the section's id is the anchor the contents list links to, and the shared filter's key (player_site.filter_nav):
+    # a line's items sit inside its own section, so "show this starter" shows everything about it
+    return ('<section class="line" %s><h2>%s</h2>%s<table class="stats"><thead><tr><th>Tier</th><th>Form</th>'
             '<th>Type</th><th>Lv</th>%s<th>Total</th></tr></thead><tbody>%s</tbody></table>'
-            '<h3>How it evolves</h3><ol class="steps">%s</ol></section>'
-            % (esc(ln["anchor"]), esc(ln["name"]),
+            '<h3>How it evolves</h3><ol class="steps">%s</ol>%s</section>'
+            % (player_site.section_attr(ln["anchor"]), esc(ln["name"]),
                '<p class="lead">At its strongest around gym%s %s.</p>' % ("s" if len(ln["gyms"]) > 1 else "", best)
-               if best else "", head, "".join(rows), "".join("<li>%s</li>" % esc(s) for s in ln["steps"])))
+               if best else "", head, "".join(rows), "".join("<li>%s</li>" % esc(s) for s in ln["steps"]),
+               render_specials(model, ln["name"])))
 
 
-def render_specials(model):
+def render_specials(model, line_name):
+    """The items one line needs (its evolution items, its final's memories), or ""."""
     out = []
-    ev = [s for s in model["specials"] if s["for"] == "evolution"]
+    specials = [s for s in model["specials"] if s["line"] == line_name]
+    ev = [s for s in specials if s["for"] == "evolution"]
     for line in sorted({s["line"] for s in ev}):
         its = [s for s in ev if s["line"] == line]
         lis = []
@@ -334,7 +340,7 @@ def render_specials(model):
             lis.append("<li><b>%s</b>: %s</li>" % (esc(s["name"]), esc(src)))
         out.append('<h3>%s: the evolution items</h3><p>Which item you use decides what it becomes.</p><ul>%s</ul>'
                    % (esc(line), "".join(lis)))
-    fm = [s for s in model["specials"] if s["for"] == "form"]
+    fm = [s for s in specials if s["for"] == "form"]
     for final in sorted({s["final"] for s in fm}):
         its = [s for s in fm if s["final"] == final]
         srcs = sorted({" ".join(w for _k, w in s["sources"]) for s in its})
@@ -352,10 +358,11 @@ def render(model):
     held3, gym3 = reach(lv["final"], aces)
     toc = "".join('<li><a href="#%s">%s</a></li>' % (esc(ln["anchor"]), esc(ln["name"]))
                   for ln in model["lines"])
+    needs = sorted({s["line"] for s in model["specials"]})
+    nav = player_site.filter_nav([(ln["anchor"], ln["name"]) for ln in model["lines"]], label="Show one starter")
     body = ('<main><h1>Starters</h1><p class="lead">The starter screen offers one category, %s, with %d Pokemon, '
-            'each at level %d. This page shows what each becomes and when.</p>'
-            '<nav class="toc"><ol>%s<li><a href="#items">Items two of them need</a></li><li><a href="#not-covered">'
-            'What this page leaves out</a></li></ol></nav>'
+            'each at level %d. This page shows what each becomes and when. %s</p>'
+            '<nav class="toc"><ol>%s<li><a href="#not-covered">What this page leaves out</a></li></ol></nav>'
             '<div class="box"><p><b>Tiers.</b> Every line has the same three tiers:</p><ul>'
             '<li><b>Tier 1</b>, the form the starter screen gives you at level %d.</li>'
             '<li><b>Tier 2</b>, a stronger form at level %d. You can first reach it on the way to gym %d, holding %d '
@@ -364,14 +371,16 @@ def render(model):
             '%d badges.</li></ul><p>Tiers 1 and 2 are the same total for all five, so the lines differ in how '
             'their stats are spread, not in how many. Tier 3 is the standard final Pokemon. Your level cap is '
             'the next leader\'s ace (<a href="battles.html">Trainer battles</a>), which is why a tier waits for a '
-            'badge. When your starter qualifies, the game offers the evolution; you can wait.</p></div>%s'
-            '<section id="items"><h2>Items two of them need</h2>%s</section>'
+            'badge. When your starter qualifies, the game offers the evolution; you can wait.</p></div>%s%s'
             '<section id="not-covered"><h2>What this page leaves out</h2><ul><li>Movesets: check the summary screen '
             'in game.</li><li>Where anything is found in the world: an item that is not sold is "earned in the '
             'story", with no more said.</li><li>Any Pokemon not given by the starter screen: the tiers and '
             'evolutions here are the starters\' own.</li></ul></section></main>'
-            % (esc(model["category"]), len(model["lines"]), lv["start"], toc, lv["start"], lv["stage_2"], gym2, held2,
-               lv["final"], gym3, held3, "".join(render_line(ln) for ln in model["lines"]), render_specials(model)))
+            % (esc(model["category"]), len(model["lines"]), lv["start"],
+               esc("%s need items to evolve or change form: each one's are under its own heading."
+                   % " and ".join(needs)) if needs else "", toc,
+               lv["start"], lv["stage_2"], gym2, held2, lv["final"], gym3, held3, nav,
+               "".join(render_line(ln, model) for ln in model["lines"])))
     sources = ('<p class="src">From data/mythical_starters.json, modpack/config/cobblemon/starters.json, '
                'data/markets.json and the Cobblemon 1.8.0 species files.</p>')
     return player_site.page(GUIDE, body, body_class="page-starters", not_covered_href="#not-covered",
