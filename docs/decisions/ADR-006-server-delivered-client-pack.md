@@ -10,6 +10,10 @@
   - `docs/research/notes/install-sweep-2026-09-26.md`;
   - `base-pack/cobbleverse/licenses/AllTheMons x Mega Showdown - License.txt`.
 
+## Delivery decided (the owner, 2026-10-08)
+
+"The players will get it, this pack won't go public." The pack is handed to our players directly, not hosted at a public URL, so the `server.properties` resource-pack delivery below is not used: each player copies the built `cobblers-client-AllTheMons-subset.zip` into their instance's `resourcepacks/`, and our overlay (`modpack/config/resourcepackoverrides.json`) enables it above COBBLEVERSE RP. The status stays Proposed until it is seen working in game (Flutter Mane, Iron Valiant and the 11 dolls rendering).
+
 ## Context
 
 Two client-side model faults are visible in play:

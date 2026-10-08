@@ -45,6 +45,8 @@ differs from the data or if any authored shop sells a bought item at or below th
 server-wide file (read in the jar: `data/bank.json` `mechanism.verified`); `cobbledollars reload` re-reads it without
 a restart. That a sale pays in game is not run (`data/bank.json` `experiment`).
 
+`resourcepackoverrides.json` lists `file/cobblers-client-AllTheMons-subset.zip` last in `default_packs`, so it loads above COBBLEVERSE RP and CobbleMotion and its models win (the owner, 2026-10-08: the pack goes to our players directly and is never public, so there is no server-pushed URL; `docs/decisions/ADR-006-server-delivered-client-pack.md`). It is built by `tools/client_model_fix.py build --server-pack` into `build/client/`, never committed. A player copies it into the instance's `resourcepacks/`. ASSUMED, to check in game: a listed pack the folder lacks is skipped.
+
 `lenientdeath.json5` is Cobbleverse's file with one id added to the items kept on death: `cobblemon:beast_ball`, next to the Master Ball (the owner, 2026-10-08: the Beast Ball is the only ball that catches a dungeon boss and is exempt from blackout loss like the Master Ball; the Beast Ball key's audit, ef62faf, found Lenient Death kept the Master Ball on death and not the Beast Ball).
 
 `PastureLoot.json` is Cobbleverse's file with nineteen ids appended to `item_blacklist`. The first eight are ore:
