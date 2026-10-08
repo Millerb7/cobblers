@@ -1,19 +1,27 @@
 """tools/tm_gate.py: crafted TMs unlock per player at their badge, and no other recipe is stranded.
 
-Every expectation is stated by tests/tm_gate_fixture.py (a synthetic server written by hand) or read here from
+The badge is the power rule (the owner, 2026-10-08): a shelf TM at its shelf line's badge, every other TM at the badge
+an outlier group of data/tm_gate.json places it at, else at the band of its score in the committed table
+docs/mechanics/TM_POWER_GATE.json. Every expectation is stated by tests/tm_gate_fixture.py (a synthetic server written
+by hand), by the constants below (copied by hand from docs/mechanics/TM_POWER_GATE.md: the outlier table of section 6,
+the shelf table of section 5, the distribution of section 3, and scores worked from section 2), or read here from
 data/markets.json; the recipe book is modelled from the pack's own function text. The mutation tests rewrite the
 GENERATOR's source in memory (CLAUDE.md "How to prove an audit is independent") and leave data/ untouched.
 
+Removed with the type-and-grade rule (2026-10-08), because the rule they pinned is gone: the unlisted-rule test worked
+by type and disc grade, "a type no leader teaches is never early", and the two mutants that ignored the grade and put
+a leaderless type at the minimum. Their replacements are the power-band, outlier and distribution tests below.
+
 Not covered (EXP-067): that Minecraft 1.21.1 enforces doLimitedCrafting as the jar reading says, that `recipe give @s *`
 and the tick advancement behave as modelled, the toasts a sync shows, and Cobblemon's own TM Machine (out of scope,
-data/tm_gate.json does_not_cover).
+data/tm_gate.json does_not_cover). Whether the scores value the moves well is the owner's judgement, not a test.
 """
 from __future__ import annotations
 
+import collections
 import copy
 import json
 import os
-import re
 import sys
 import types
 from pathlib import Path
@@ -32,6 +40,62 @@ PROGRESSION = json.loads((ROOT / "data" / "progression.json").read_text(encoding
 SNAPSHOT = Path(os.environ.get("COBBLERS_SERVER_SNAPSHOT",
                                "C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05"))
 
+T = "tmcraft:tm_"
+# docs/mechanics/TM_POWER_GATE.md 6, by hand: group -> {TM: (the rule's badge, the suggested badge)}
+OUTLIERS = {
+    1: {T + "thunderwave": (6, 5)},
+    2: {T + "willowisp": (4, 5)},
+    3: {T + "nuzzle": (2, 5)},
+    4: {T + "trickroom": (5, 6)},
+    5: {T + "uturn": (6, 5), T + "voltswitch": (6, 5), T + "flipturn": (5, 5), T + "partingshot": (3, 5)},
+    6: {T + "knockoff": (4, 6)},
+    7: {T + "swordsdance": (4, 6), T + "nastyplot": (4, 6), T + "dragondance": (4, 6), T + "bulkup": (3, 6),
+        T + "quiverdance": (6, 7), T + "shiftgear": (7, 7), T + "bellydrum": (6, 7), T + "shellsmash": (8, 8)},
+    8: {T + "magnitude": (4, 5)},
+    9: {T + m: (4, 7) for m in ("hyperbeam", "gigaimpact", "blastburn", "frenzyplant", "hydrocannon", "rockwrecker",
+                                "eternabeam")},
+    10: {T + "explosion": (5, 7), T + "selfdestruct": (4, 6)},
+    11: {T + "solarbeam": (3, 5), T + "solarblade": (3, 5)},
+    12: {T + "sheercold": (3, 8), T + "horndrill": (3, 8)},
+    13: {T + "dragonrage": (2, 4), T + "sonicboom": (1, 2), T + "seismictoss": (4, 4), T + "nightshade": (4, 4)},
+    14: {T + "hex": (4, 5), T + "venoshock": (4, 5), T + "facade": (4, 5), T + "acrobatics": (3, 5),
+         T + "weatherball": (2, 4)},
+    15: {T + "sludgebomb": (7, 6), T + "ironhead": (6, 5)},
+    16: {T + "return": (7, 6), T + "frustration": (7, 6)},
+    17: {T + "glare": (7, 6)},
+}
+# the shelf lines the groups also name, which the shelf already places at the group's badge (groups 7, 8, 12, 15)
+SHELF_AGREES = {T + "calmmind": 6, T + "earthquake": 8, T + "fissure": 8, T + "poisonjab": 5}
+# docs/mechanics/TM_POWER_GATE.md 5, by hand: shelf TM -> (shelf badge, power badge); Shock Wave and Overheat agree
+SHELF_VS_POWER = {
+    T + "bide": (1, 2), T + "headbutt": (1, 5), T + "rockslide": (1, 4), T + "rocktomb": (1, 4),
+    T + "bubblebeam": (2, 4), T + "scald": (2, 6), T + "waterpulse": (2, 3), T + "thunder": (3, 5),
+    T + "thunderbolt": (3, 6), T + "gigadrain": (4, 6), T + "megadrain": (4, 2), T + "poisonfang": (5, 3),
+    T + "poisongas": (5, 2), T + "poisonjab": (5, 6), T + "toxic": (5, 6), T + "calmmind": (6, 3),
+    T + "psywave": (6, 3), T + "skillswap": (6, 1), T + "fireblast": (7, 6), T + "earthquake": (8, 7),
+    T + "fissure": (8, 3),
+}
+# no shelf line, no outlier: score worked by hand from TM_POWER_GATE.md 2, badge from the bands of 3
+BY_HAND = {
+    T + "flamethrower": (93.0, 6),   # 90 + 10% burn x 30
+    T + "psychic": (90.8, 6),        # 90 + 10% x one sp.def stage x 8
+    T + "earthpower": (90.8, 6),     # the same
+    T + "dragonclaw": (80.0, 5),     # 80, no effect
+    T + "xscissor": (80.0, 5),
+    T + "growl": (15.0, 1),          # one attack stage lowered x 15
+    T + "boomburst": (140.0, 8),     # 140
+    T + "leechseed": (54.0, 2),      # 90% x 60: a top (54) is inclusive
+    T + "spark": (74.0, 4),          # 65 + 30% paralysis x 30 = 74: inclusive
+    T + "searingshot": (104.0, 7),   # 100 x 0.95 (5 PP) + 30% burn x 30 = 104: inclusive
+    T + "inferno": (62.5, 3),        # 50% x (100 x 0.95 + 30): named in group 3's text, not placed
+    T + "zapcannon": (72.0, 4),      # 50% x (120 x 0.95 + 30): the same
+    T + "roaroftime": (64.1, 4),     # 90% x 150 x 0.5 (recharge) x 0.95: a recharge move group 9 does not list
+}
+# docs/mechanics/TM_POWER_GATE.md 3: TMs by badge, the rule alone and with the shelf
+PROPOSAL_POWER_RULE = {1: 163, 2: 122, 3: 110, 4: 104, 5: 107, 6: 99, 7: 66, 8: 31}
+PROPOSAL_WITH_SHELF = {1: 166, 2: 122, 3: 107, 4: 103, 5: 109, 6: 96, 7: 66, 8: 33}
+APPLIED = {1: 165, 2: 120, 3: 100, 4: 88, 5: 121, 6: 101, 7: 72, 8: 35}
+
 
 def _mutant(*subs):
     """tools/tm_gate.py with its own source rewritten in memory, as a fresh module."""
@@ -45,16 +109,37 @@ def _mutant(*subs):
     return mod
 
 
-def _make(mod, tmp, doc=None, **kw):
+def _make(mod, tmp, doc=None, scores=None, **kw):
     server, vanilla, exp = F.build_server(tmp, **kw)
     doc = doc or mod.load()
     resolved = mod.resolve(mod.read_server(server, vanilla))
-    plan = mod.plan(doc, resolved, copy.deepcopy(MARKETS), copy.deepcopy(PROGRESSION))
+    plan = mod.plan(doc, resolved, copy.deepcopy(MARKETS), copy.deepcopy(PROGRESSION),
+                    scores=scores if scores is not None else F.score_table())
     return plan, exp, (mod.build(doc, plan) if not plan["problems"] else None)
+
+
+def _place(mod, doc=None, table=None):
+    """The power rule over all 802 scored TMs, no server needed."""
+    return mod.place(doc or mod.load(), table if table is not None else F.score_table(),
+                     mod.shelf_badges(copy.deepcopy(MARKETS)))
 
 
 def _badge_of(plan, rid):
     return plan["gated"][rid]["badge"]
+
+
+def outlier_failures(tms):
+    """Each outlier TM's rule badge is the proposal's 'Score -> rule badge' and its placed badge its 'Suggested'."""
+    out = []
+    for n, items in sorted(OUTLIERS.items()):
+        for item, (before, after) in sorted(items.items()):
+            t = tms.get(item)
+            if t is None:
+                out.append("group %d %s: not placed at all" % (n, item))
+            elif (t["power_badge"], t["badge"]) != (before, after):
+                out.append("group %d %s: rule %s -> placed %s, the proposal says %d -> %d"
+                           % (n, item, t["power_badge"], t["badge"], before, after))
+    return out
 
 
 # ---------------------------------------------------------------- the checks, each a list of failures
@@ -117,49 +202,6 @@ def earn_failures(files, exp, plan):
     return out
 
 
-def _leader_badges():
-    """{tmcraft item: badge} from data/progression.json's first-win pools, read here (not through the generator)."""
-    out, fwr, stack = {}, None, [PROGRESSION]
-    while stack and fwr is None:
-        o = stack.pop()
-        if isinstance(o, dict):
-            fwr = o.get("first_win_rewards")
-            stack.extend(o.values())
-        elif isinstance(o, list):
-            stack.extend(o)
-    assert fwr and fwr.get("series") == PROGRESSION.get("active_series"), "no first_win_rewards for the active series"
-    for t in fwr["trainers"].values():
-        m = re.fullmatch(r"gym([1-8])_cleared", t.get("flag", ""))
-        for item in t.get("one_of", []) if m else []:
-            out[item] = min(int(m.group(1)), out.get(item, 9))
-    return out
-
-
-def early_failures(plan, gem_of):
-    """Every TM whose gem type no leader teaches before badge N unlocks at N or later; a type no leader teaches at all
-    waits for the last leader. gem_of: {tmcraft item: gem type}, stated by the caller."""
-    leaders = _leader_badges()
-    first = {}
-    for item, b in leaders.items():
-        if item in gem_of:
-            first[gem_of[item]] = min(b, first.get(gem_of[item], 9))
-    last = max(leaders.values())
-    out = []
-    for item, t in sorted(plan["tms"].items()):
-        if item not in gem_of:
-            continue
-        n = first.get(gem_of[item], last)
-        if t["badge"] < n:
-            out.append("%s (%s): badge %d, no leader teaches %s before %d" % (item, gem_of[item], t["badge"],
-                                                                             gem_of[item], n))
-    return out
-
-
-def _fixture_gems():
-    return dict({"tmcraft:tm_" + m: g for m, g in F.SHELF_GEM.items()},
-                **{"tmcraft:tm_" + m: v[0] for m, v in F.UNLISTED.items()})
-
-
 def device_failures(files, exp, plan):
     out = []
     top = max(t["badge"] for t in plan["tms"].values())
@@ -196,26 +238,16 @@ def test_each_shelf_tm_unlocks_at_its_shelf_lines_badge(tmp_path):
     plan, _, _ = _make(G, tmp_path)
     assert len(F.shelf_from_markets()) == 23
     assert shelf_failures(plan) == []
-    assert plan["shelf_disagreements"] == []  # the unlisted rule, applied to the shelf, reproduces it
+    # the shelf wins where the power rule disagrees: the 21 lines of docs/mechanics/TM_POWER_GATE.md 5, kept
+    got = {item for item, t in plan["tms"].items() if t["rule"] == "shelf" and t["badge"] != t["power_badge"]}
+    assert got == set(SHELF_VS_POWER)
 
 
-def test_unlisted_tms_follow_the_rule_worked_by_hand(tmp_path):
+def test_unlisted_tms_follow_the_power_rule_worked_by_hand(tmp_path):
     plan, exp, _ = _make(G, tmp_path)
     got = {item: plan["tms"][item]["badge"] for item in exp["unlisted_badge"]}
     assert got == exp["unlisted_badge"]
-
-
-def test_a_type_no_leader_teaches_is_never_early(tmp_path):
-    """Shadow Ball before Brock (the owner, 2026-10-08): a type no leader teaches before badge N is not below N."""
-    plan, _, _ = _make(G, tmp_path)
-    assert {g for g in _fixture_gems().values()} >= F.NO_LEADER_TYPES
-    assert early_failures(plan, _fixture_gems()) == []
-    last = max(_leader_badges().values())
-    assert last == 8
-    for item, (gem, _, _, _) in F.UNLISTED.items():
-        if gem in F.NO_LEADER_TYPES:
-            assert plan["tms"]["tmcraft:tm_" + item]["badge"] == last, item
-    assert plan["tms"]["tmcraft:tm_shadowball"]["badge"] == 8
+    assert all(plan["tms"][i]["rule"].startswith("power:") for i in exp["unlisted_badge"])
 
 
 def test_earning_a_badge_gives_exactly_its_tms(tmp_path):
@@ -278,6 +310,89 @@ def test_devices_can_be_given_back(tmp_path):
     assert "data/carved_wood/recipe/wooden_crafter.json" not in files
 
 
+# ---------------------------------------------------------------- the power rule over the committed score table
+
+def test_each_outlier_group_lands_where_the_proposal_says():
+    tms, problems = _place(G)
+    assert problems == []
+    assert outlier_failures(tms) == []
+    # the data names exactly the proposal's groups and TMs: an outlier dropped from data/tm_gate.json fails here too
+    groups = {g["group"]: set(g.get("place", {})) for g in G.load()["badge_rule"]["power"]["outliers"]}
+    assert groups == {n: set(v) for n, v in OUTLIERS.items()}
+    agrees = {i: b for g in G.load()["badge_rule"]["power"]["outliers"] for i, b in g.get("shelf_agrees", {}).items()}
+    assert agrees == SHELF_AGREES
+
+
+def test_every_shelf_tm_is_at_its_shelf_badge_and_the_disagreements_are_documented():
+    tms, problems = _place(G)
+    assert problems == []
+    shelf = F.shelf_from_markets()
+    assert {i: tms[i]["badge"] for i in shelf} == shelf
+    assert {i: (shelf[i], tms[i]["power_badge"]) for i in shelf if shelf[i] != tms[i]["power_badge"]} == SHELF_VS_POWER
+    lines = G.load()["badge_rule"]["shelf_disagreements"]["lines"]
+    assert {d["item"]: (d["shelf_badge"], d["power_badge"]) for d in lines} == SHELF_VS_POWER
+    assert all(d["kept"] == "shelf" for d in lines)
+
+
+def test_a_tm_with_no_shelf_line_and_no_outlier_is_at_its_power_band():
+    tms, _ = _place(G)
+    placed = {i for items in OUTLIERS.values() for i in items}
+    for item, (score, badge) in BY_HAND.items():
+        assert item not in placed and item not in F.shelf_from_markets(), item
+        assert tms[item]["score"] == score, (item, tms[item]["score"])
+        assert (tms[item]["badge"], tms[item]["rule"]) == (badge, "power: score %s -> %d" % (score, badge)), item
+
+
+def test_the_distribution_is_the_proposals_moved_only_by_the_outliers():
+    tms, _ = _place(G)
+    power = collections.Counter(t["power_badge"] for t in tms.values())
+    assert dict(power) == PROPOSAL_POWER_RULE
+    want = collections.Counter(PROPOSAL_WITH_SHELF)
+    for items in OUTLIERS.values():
+        for item, (before, after) in items.items():
+            want[before] -= 1
+            want[after] += 1
+    got = collections.Counter(t["badge"] for t in tms.values())
+    assert dict(got) == dict(want)
+    assert dict(got) == APPLIED  # the delta, stated: {1: -1, 2: -2, 3: -7, 4: -15, 5: +12, 6: +5, 7: +6, 8: +2}
+    assert {b: APPLIED[b] - PROPOSAL_WITH_SHELF[b] for b in APPLIED} == \
+        {1: -1, 2: -2, 3: -7, 4: -15, 5: 12, 6: 5, 7: 6, 8: 2}
+
+
+def test_an_outlier_placed_on_a_shelf_tm_is_refused():
+    doc = G.load()
+    doc["badge_rule"]["power"]["outliers"][0]["place"]["tmcraft:tm_scald"] = 6
+    _, problems = _place(G, doc=doc)
+    assert any("tm_scald" in p and "shelf wins" in p for p in problems), problems
+
+
+def test_a_moved_score_or_shelf_line_fails_closed():
+    t = F.score_table()
+    t["tms"]["tmcraft:tm_toxic"]["score"] = 75.0          # band 5: the shelf would now agree, the list says otherwise
+    t["tms"]["tmcraft:tm_toxic"]["power_badge"] = 5
+    t["tms"]["tmcraft:tm_tackle"]["power_badge"] = 3      # a row whose badge is not its score's band: stale
+    _, problems = _place(G, table=t)
+    assert any("tm_toxic" in p and "shelf_disagreements lists" in p for p in problems), problems
+    assert any("tm_tackle" in p and "stale" in p for p in problems), problems
+
+
+def test_a_server_whose_moves_differ_from_the_table_fails_closed(tmp_path):
+    t = F.score_table()
+    t["moves_sha256"] = "0" * 64
+    server, vanilla, _ = F.build_server(tmp_path)
+    plan = G.plan(G.load(), G.resolve(G.read_server(server, vanilla)), copy.deepcopy(MARKETS),
+                  copy.deepcopy(PROGRESSION), scores=t)
+    assert any("moves.js" in p and "re-run tools/tm_power_score.py" in p for p in plan["problems"]), plan["problems"]
+
+
+def test_a_tm_the_table_has_not_scored_fails_closed(tmp_path):
+    t = F.score_table()
+    del t["tms"]["tmcraft:tm_icebeam"]
+    plan, _, files = _make(G, tmp_path, scores=t)
+    assert files is None
+    assert any("tm_icebeam" in p and "no score" in p for p in plan["problems"]), plan["problems"]
+
+
 # ---------------------------------------------------------------- mutations of the generator: each check bites
 
 def test_mutant_without_the_give_strands_recipes(tmp_path):
@@ -287,9 +402,46 @@ def test_mutant_without_the_give_strands_recipes(tmp_path):
 
 
 def test_mutant_off_by_one_shelf_badge_is_caught(tmp_path):
-    m = _mutant(('badge, rule = shelf[item], "shelf"', 'badge, rule = shelf[item] + 1, "shelf"'))
+    m = _mutant(('badge, why = shelf[item], "shelf"', 'badge, why = shelf[item] + 1, "shelf"'))
     plan, _, _ = _make(m, tmp_path)
     assert shelf_failures(plan)
+
+
+def test_mutant_where_the_power_rule_beats_the_shelf_is_caught(tmp_path):
+    m = _mutant(('badge, why = shelf[item], "shelf"', 'badge, why = pb, "shelf"'))
+    plan, _, _ = _make(m, tmp_path)
+    fails = shelf_failures(plan)
+    assert any("tm_scald" in f for f in fails), fails
+    tms, _ = _place(m)
+    shelf = F.shelf_from_markets()
+    assert {i: tms[i]["badge"] for i in shelf} != shelf
+
+
+def test_mutant_that_drops_an_outlier_group_is_caught():
+    m = _mutant(('for g in rule["outliers"]:', 'for g in rule["outliers"][1:]:'))
+    tms, _ = _place(m)
+    fails = outlier_failures(tms)
+    assert fails and all("group 1 " in f for f in fails), fails
+
+
+def test_mutant_that_ignores_every_outlier_is_caught():
+    m = _mutant(('elif item in hand:\n            badge, why = hand', 'elif False:\n            badge, why = hand'))
+    tms, _ = _place(m)
+    assert len(outlier_failures(tms)) == sum(1 for items in OUTLIERS.values() for i, (b, a) in items.items() if b != a)
+
+
+def test_mutant_with_an_exclusive_band_top_is_caught():
+    m = _mutant(("        if s <= top:", "        if s < top:"))
+    tms, problems = _place(m)
+    wrong = {i for i, (score, badge) in BY_HAND.items() if tms[i]["badge"] != badge}
+    assert {T + "leechseed", T + "spark", T + "searingshot"} <= wrong, wrong
+    assert any("stale" in p for p in problems)  # and the table's own power_badge column disagrees with it
+
+
+def test_mutant_with_an_inclusive_badge_1_floor_is_caught(tmp_path):
+    m = _mutant(('    if s < bands["badge_1_below"]:', '    if s <= bands["badge_1_below"]:'))
+    plan, exp, _ = _make(m, tmp_path)
+    assert plan["tms"][T + "howl"]["badge"] == 1 != exp["unlisted_badge"][T + "howl"]
 
 
 def test_mutant_that_skips_the_resync_on_a_starter_pick_is_caught(tmp_path):
@@ -324,44 +476,21 @@ def test_mutant_that_closes_no_unlock_is_caught(tmp_path):
     assert closed_failures(files, exp)
 
 
-def test_mutant_that_ignores_the_grade_is_caught(tmp_path):
-    m = _mutant(("b, w = max(floor, tb, gb),", "b, w = max(floor, tb),"))
-    plan, exp, _ = _make(m, tmp_path)
-    got = {item: plan["tms"][item]["badge"] for item in exp["unlisted_badge"]}
-    assert got != exp["unlisted_badge"]
-
-
-def test_mutant_that_puts_a_type_no_leader_teaches_at_the_minimum_is_caught(tmp_path):
-    """The defect itself, put back: a type with no leader defaulting to minimum_badge (Shadow Ball at badge 1)."""
-    m = _mutant(("tb = type_badge.get(gem, no_gym)", "tb = type_badge.get(gem, floor)"))
-    plan, exp, _ = _make(m, tmp_path)
-    fails = early_failures(plan, _fixture_gems())
-    assert any("tm_shadowball" in f for f in fails), fails
-    assert {item: plan["tms"][item]["badge"] for item in exp["unlisted_badge"]} != exp["unlisted_badge"]
-
-
 # ---------------------------------------------------------------- the real server snapshot, when present
 
 @pytest.mark.skipif(not (SNAPSHOT / "mods").is_dir(), reason="no server snapshot at %s" % SNAPSHOT)
-def test_the_snapshot_places_every_tm_and_matches_the_shelf():
+def test_the_snapshot_places_every_tm_by_the_power_rule_and_matches_the_shelf():
     resolved = G.resolve(G.read_server(SNAPSHOT))
     plan = G.plan(G.load(), resolved, copy.deepcopy(MARKETS), copy.deepcopy(PROGRESSION))
-    assert plan["problems"] == [], plan["problems"][:5]
+    assert plan["problems"] == [], plan["problems"][:5]  # among them: the snapshot's moves.js is the one scored
     assert shelf_failures(plan) == []
-    assert plan["shelf_disagreements"] == []
+    assert len(plan["shelf_disagreements"]) == len(SHELF_VS_POWER) == 21
     # every TMCraft TM recipe the server loads is gated, and every gated TM recipe makes a TMCraft TM
     made = {rid for rid, (_, r) in resolved["recipes"].items()
             if str(G.result_id(r)).startswith("tmcraft:tm_") and r.get("type") in G.load()["gated"]["grid_types"]}
     tm_gated = {rid for rid, g in plan["gated"].items() if not g.get("device")}
     assert made == tm_gated
-    # no TM comes before the first leader who teaches its type; gem types read here from the recipe text
-    gem_of = {}
-    for rid in made:
-        _, r = resolved["recipes"][rid]
-        gems = set(re.findall(r'"cobblemon:([a-z]+)_gem"', json.dumps(r)))
-        if len(gems) == 1:
-            gem_of.setdefault(G.result_id(r), gems.pop())
-    assert len(gem_of) > 700, len(gem_of)
-    assert gem_of.get("tmcraft:tm_shadowball") == "ghost"
-    assert plan["tms"]["tmcraft:tm_shadowball"]["badge"] == 8
-    assert early_failures(plan, gem_of) == [], early_failures(plan, gem_of)[:5]
+    assert len(plan["tms"]) == 802
+    assert plan["distribution"] == APPLIED
+    assert outlier_failures(plan["tms"]) == []
+    assert plan["tms"]["tmcraft:tm_shadowball"]["badge"] == 5  # 81.6: no longer waiting for badge 8 by type

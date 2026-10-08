@@ -1,8 +1,11 @@
-# TM gate by power: a proposal
+# TM gate by power
 
-**Status: a proposal for the owner, computed, not wired.** `data/tm_gate.json` and `tools/tm_gate.py` are unchanged:
-the gate still runs the type/grade rule. This page is the scoring rule, the bands, what it produces and the moves it
-gets wrong. The per-TM table is `docs/mechanics/TM_POWER_GATE.json`, written by `tools/tm_power_score.py`.
+**Status: accepted and wired (the owner, 2026-10-08: "TAKE THE POWER RULE, with all 17 outlier groups applied as
+proposed ... SHELF WINS where it disagrees ... Then switch the gate to the power rule").** `tools/tm_gate.py` now
+places every TM by this rule; section 9 is what it places. Sections 1-8 are the proposal as the owner read it. The
+per-TM table is `docs/mechanics/TM_POWER_GATE.json`, written by `tools/tm_power_score.py` and committed: the gate
+reads it. Its "today" and "with the shelf" columns were dropped when it became the gate's input (they described the
+type/grade rule, which is gone, and would have made the table stale whenever a shelf line moved).
 
 The owner's direction (2026-10-08): gate a TM by what it does, not by its type or which leader teaches it, so a
 player's options grow with progress whatever the type; base power drives it, but accuracy, PP, side effects,
@@ -236,17 +239,62 @@ Measured: badge 1 holds 42 emerald-disc TMs (status moves), badge 3 holds 10 net
 Solar Beam). If the owner wants crafting cost and badge to agree, that is a separate rule, max(power badge, grade
 badge), and it would bring back the cliff the owner rejected.
 
-## 8. If the owner accepts
+## 8. How it is wired
 
-Nothing below is done. In `data/tm_gate.json`, `badge_rule.unlisted` would become the power score and these bands,
-with a per-TM `hand` table for the outliers the owner places. `badge_rule.shelf` stays as it is. `tools/tm_gate.py`
-would read the score from this tool's output instead of computing type and grade. That is the gate's data and tool,
-which this unit was told not to change.
+- `data/tm_gate.json` `badge_rule`: `shelf` unchanged and first; `unlisted` is the power rule; `power.bands` are the
+  bands of section 3, not retuned; `power.outliers` the 17 groups of section 6, each a named, reasoned record with its
+  `place` (hand badges), `shelf_agrees` (the shelf lines the group also names) and `not_placed` (TMs the group's text
+  mentions that its suggestion does not place); `shelf_disagreements` the 21 lines of section 5, each kept at its
+  shelf badge. The type/grade rule is kept under `superseded_unlisted`.
+- **A committed table, not a call.** `tools/tm_gate.py` reads `docs/mechanics/TM_POWER_GATE.json` and does not score:
+  scoring needs `node` to read `moves.js`, which prepare does not otherwise need. The table records the sha256 of the
+  `moves.js` it was scored from; the gate fails closed when the server's differs, when the table lacks a TM the
+  server crafts, when a row's `power_badge` is not its score's band, or when the shelf disagreements are no longer
+  exactly the 21 listed. Both tools band with one function, `tm_gate.band`, over the bands in the data.
+- `python tools/tm_power_score.py --server-dir <snapshot> --check` exits 1 when the committed table is not what the
+  scorer would write now.
 
 Reproduce (about a minute, needs `node` for the moves file):
 
 ```
-python tools/tm_power_score.py --server-dir C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05
+python tools/tm_power_score.py --server-dir C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05 [--check]
+python tools/tm_gate.py --server-dir C:/Users/wnd/Documents/cobblers-local/server-snapshot-2026-10-05 [--check]
 ```
 
-Never point it at `C:/Users/wnd/Documents/github/cobblers-server/`, the running server.
+Never point either at `C:/Users/wnd/Documents/github/cobblers-server/`, the running server.
+
+## 9. What the gate places (the snapshot of 2026-10-05, measured 2026-10-08)
+
+802 TMs: 23 by the shelf, 45 by an outlier group (5 of them hold a TM at its own band: Flip Turn, Shift Gear, Shell
+Smash, Seismic Toss, Night Shade), 734 by their band.
+
+| Badge | With the shelf (section 3) | Applied | Delta |
+|---:|---:|---:|---:|
+| 1 | 166 | 165 | -1 |
+| 2 | 122 | 120 | -2 |
+| 3 | 107 | 100 | -7 |
+| 4 | 103 | 88 | -15 |
+| 5 | 109 | 121 | +12 |
+| 6 | 96 | 101 | +5 |
+| 7 | 66 | 72 | +6 |
+| 8 | 33 | 35 | +2 |
+
+The strongest TM at each badge as applied, by score (a placed outlier keeps its score, so Hyper Beam at 7 reads 64.1):
+
+| Badge | Damaging | Status |
+|---:|---|---|
+| 1 | Headbutt 74.5 (shelf) | Perish Song, Heal Bell 33.2 |
+| 2 | Scald 89 (shelf) | Leech Seed 54 |
+| 3 | Thunderbolt 93 (shelf) | Synthesis, Morning Sun 61.8 |
+| 4 | Giga Drain 90 (shelf); by the rule, Spark 74 | Soft-Boiled, Slack Off 71.2 |
+| 5 | U-turn, Volt Switch 90 (outlier 5) | Thunder Wave 90 (outlier 1) |
+| 6 | Return, Frustration 100 (outlier 16) | Glare 100 (outlier 17) |
+| 7 | Searing Shot, Oblivion Wing 104 | Shift Gear 95 (outlier 7) |
+| 8 | Boomburst 140 | Shell Smash 125 |
+
+Left for the owner, named in the data rather than decided here: Inferno and Zap Cannon (group 3's text says they
+have Nuzzle's gap; its suggestion places Nuzzle only), Meteor Assault, Prismatic Laser and Roar of Time (recharge
+moves group 9 does not list), and group 16's "or measure first" (Return and Frustration are placed at 6; how fast
+Cobblemon's friendship reaches 255 is not measured). A chain TM is no longer held behind its input TM: four chain
+recipes open before their input's (Bone Club 3 needs Bonemerang 6; Noble Roar 1 needs Roar 2; Stun Spore 5 needs Spore
+8; Triple Kick 2 needs Double Kick 3); the input can come from the shelf, loot or a trade.

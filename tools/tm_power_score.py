@@ -1,15 +1,25 @@
 #!/usr/bin/env python
-"""Score every TMCraft TM by what its move does, and band the scores into badges 1-8. A PROPOSAL, not the gate.
+"""Score every TMCraft TM by what its move does, and band the scores into badges 1-8: the gate's score table.
 
-docs/mechanics/TM_POWER_GATE.md is the rule in plain terms and the owner's review; docs/mechanics/TM_POWER_GATE.json is
-this tool's output. Nothing here changes data/tm_gate.json or tools/tm_gate.py: the gate still runs the type/grade rule.
+docs/mechanics/TM_POWER_GATE.md is the rule in plain terms; docs/mechanics/TM_POWER_GATE.json is this tool's output,
+COMMITTED, and tools/tm_gate.py reads it (the owner, 2026-10-08: "TAKE THE POWER RULE"). The gate places a TM by its
+shelf line, else by an outlier group in data/tm_gate.json, else by the band of the score written here. The bands are
+data/tm_gate.json badge_rule.power.bands (tm_gate.band), so this tool and the gate band with one definition.
+
+Why a committed table and not a call from the gate: moves.js is a JavaScript module and reading it needs node, which
+prepare does not otherwise need. The table records the sha256 of the moves.js it was scored from, and tools/tm_gate.py
+fails closed when the server's moves.js differs, so a pack update cannot leave the gate on stale scores.
+
+  python tools/tm_power_score.py --server-dir <snapshot>           # rewrite docs/mechanics/TM_POWER_GATE.json
+  python tools/tm_power_score.py --server-dir <snapshot> --check   # exit 1 if the committed table is not current
 
 INPUTS, all read only:
-  --server-dir  a server snapshot (never the live server). tools/tm_gate.py reads its mods for the 802 TM items, their
-                recipes (disc grade) and today's badge; the moves come from Mega Showdown's moves.js in the same mods
-                folder, because Mega Showdown's ShowdownPatcher copies it over Cobblemon's data/moves.js at startup
+  --server-dir  a server snapshot (never the live server). tools/tm_gate.py reads its mods for the TM items and their
+                recipes (disc grade); the moves come from Mega Showdown's moves.js in the same mods folder, because
+                Mega Showdown's ShowdownPatcher copies it over Cobblemon's data/moves.js at startup
                 (docs/research/notes/sketch-cap-1.8.0.md section 2), so it is the copy battles run.
-  --moves-json  instead of reading the jar: a dump of that moves.js (the node step below, done once).
+  --moves-json  instead of running node on the jar's moves.js: a dump of it (the node step below, done once). The
+                sha256 is still taken from the jar's own file.
 
 The move dump needs node: moves.js is a JavaScript module. Its data fields are kept; every callback becomes "<fn>"
 so that a move whose effect lives only in code is visible as such.
@@ -26,6 +36,7 @@ Every constant below is the valuation; docs/mechanics/TM_POWER_GATE.md says why 
 """
 import argparse
 import collections
+import hashlib
 import json
 import subprocess
 import sys
@@ -37,19 +48,19 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 import tm_gate  # noqa: E402
 
-MSD_JAR_GLOB = "mega_showdown-fabric-*.jar"
-MSD_MOVES = "assets/mega_showdown/showdown/moves.js"
+MSD_JAR_GLOB = tm_gate.MSD_JAR_GLOB
+MSD_MOVES = tm_gate.MSD_MOVES
+SCHEMA = tm_gate.SCORES_SCHEMA
+DEFAULT_OUT = ROOT / "docs" / "mechanics" / "TM_POWER_GATE.json"
 NODE_DUMP = ("const m=require(process.argv[1]);const mv=m.Moves||m.BattleMovedex;const o={};"
              "for(const [k,v] of Object.entries(mv)){o[k]=JSON.parse(JSON.stringify(v,(a,b)=>typeof b==='function'?'<fn>':b));}"
              "require('fs').writeFileSync(process.argv[2],JSON.stringify(o));")
 
 # ------------------------------------------------------------------ the bands (score -> badge)
-# badge 1 below 35; then each badge is one step of ten base power plus up to four points of side effects: badge 3 holds
-# the 60-power moves (54 < score <= 64), badge 5 the 80s, badge 6 the 90s, badge 7 the 100s; badge 8 is above 104.
-# The tops sit 4 above the round numbers because base powers cluster on them: a top AT 80 sent every 80-power move with
-# a 10-20% side effect (Crunch, Shadow Ball) a badge past the plain ones (Dragon Claw). Scores are rounded to 0.1 first
-BAND_1_BELOW = 35
-BAND_TOP = {2: 54, 3: 64, 4: 74, 5: 84, 6: 94, 7: 104}  # inclusive upper bound; above 104 is badge 8
+# data/tm_gate.json badge_rule.power.bands, banded by tm_gate.band: badge 1 below 35; then each badge is one step of
+# ten base power plus up to four points of side effects (badge 3 holds the 60-power moves, 54 < score <= 64, badge 5 the
+# 80s, 6 the 90s, 7 the 100s); badge 8 is above 104. Why the tops sit four above the round numbers is the bands' own
+# `why` there and docs/mechanics/TM_POWER_GATE.md 3.
 
 # ------------------------------------------------------------------ damaging moves
 # power for a move whose basePower is 0 or is computed from the battle; stated power is used for every other move,
@@ -235,16 +246,21 @@ HP_COST = {"clangoroussoul": (-30, "a third of HP"), "filletaway": (-45, "half H
 
 
 def load_moves(server_dir, moves_json):
-    if moves_json:
-        return json.loads(Path(moves_json).read_text(encoding="utf-8")), str(moves_json)
+    """(moves, source label, sha256 of the jar's moves.js). The sha256 is always the jar's file: it is what
+    tools/tm_gate.py compares with the server it builds for."""
     jars = sorted((Path(server_dir) / "mods").glob(MSD_JAR_GLOB))
     if len(jars) != 1:
         raise SystemExit("tm_power_score: expected one %s in %s/mods, found %d" % (MSD_JAR_GLOB, server_dir, len(jars)))
+    raw = zipfile.ZipFile(jars[0]).read(MSD_MOVES)
+    sha = hashlib.sha256(raw).hexdigest()
+    label = "%s!%s" % (jars[0].name, MSD_MOVES)
+    if moves_json:
+        return json.loads(Path(moves_json).read_text(encoding="utf-8")), label, sha
     with tempfile.TemporaryDirectory() as td:
         src, out = Path(td) / "moves.js", Path(td) / "moves.json"
-        src.write_bytes(zipfile.ZipFile(jars[0]).read(MSD_MOVES))
+        src.write_bytes(raw)
         subprocess.run(["node", "-e", NODE_DUMP, str(src), str(out)], check=True)
-        return json.loads(out.read_text(encoding="utf-8")), "%s!%s" % (jars[0].name, MSD_MOVES)
+        return json.loads(out.read_text(encoding="utf-8")), label, sha
 
 
 def _stage_list(boosts):
@@ -430,82 +446,84 @@ def score_status(mid, mv):
     return a * v, a, why, hand
 
 
-def badge_of(score):
-    score = round(score, 1)
-    if score < BAND_1_BELOW:
-        return 1
-    for badge, top in sorted(BAND_TOP.items()):
-        if score <= top:
-            return badge
-    return 8
-
-
 def run(server_dir, moves_json):
-    moves, moves_src = load_moves(server_dir, moves_json)
+    """({tm item: row}, [TMs with no move], moves source, moves.js sha256, bands)."""
+    moves, moves_src, sha = load_moves(server_dir, moves_json)
     doc = tm_gate.load()
-    server = tm_gate.read_server(server_dir)
-    resolved = tm_gate.resolve(server)
-    p = tm_gate.plan(doc, resolved, json.loads(tm_gate.MARKETS.read_text(encoding="utf-8")),
-                     json.loads(tm_gate.PROGRESSION.read_text(encoding="utf-8")))
+    bands = doc["badge_rule"]["power"]["bands"]
+    resolved = tm_gate.resolve(tm_gate.read_server(server_dir))
+    tm_recipes, problems = tm_gate.tm_recipe_table(doc, resolved)
+    if problems:
+        raise SystemExit("tm_power_score: %s" % "; ".join(problems[:5]))
     order = doc["badge_rule"]["grade_order"]
-    shelf = tm_gate.shelf_badges(json.loads(tm_gate.MARKETS.read_text(encoding="utf-8")))
     rows = {}
     missing = []
-    for item, t in sorted(p["tms"].items()):
+    for item in sorted(tm_recipes):
         mid = item[len("tmcraft:tm_"):]
         mv = moves.get(mid)
         if mv is None:
             missing.append(item)
             continue
-        grades, gems = [], set()
-        for rid in t["recipes"]:
-            gem, grade, _ = tm_gate.traits(resolved["recipes"][rid][1], order)
-            gems.add(gem)
-            if grade is not None:
-                grades.append(grade)
+        grades = [grade for _, _, grade, _ in tm_recipes[item] if grade is not None]
         if mv["category"] == "Status":
             sc, acc, why, hand = score_status(mid, mv)
         else:
             sc, acc, why = score_damaging(mid, mv)
             hand = mid in NOMINAL
-        rb = badge_of(sc)
         rows[item] = {"move": mv.get("name"), "type": mv.get("type"), "category": mv["category"],
                       "base_power": mv.get("basePower"), "accuracy": mv.get("accuracy"), "pp": mv.get("pp"),
-                      "priority": mv.get("priority"), "score": round(sc, 1), "power_badge": rb,
+                      "priority": mv.get("priority"), "score": round(sc, 1), "power_badge": tm_gate.band(sc, bands),
                       "valued_by_hand": hand, "terms": why,
-                      "shelf_badge": shelf.get(item), "proposed_badge": shelf.get(item, rb),
-                      "today_badge": t["badge"], "today_rule": t["rule"],
                       "disc_grade": order[max(grades)] if grades else None}
-    return rows, missing, moves_src, p
+    return rows, missing, moves_src, sha, bands
+
+
+def render(rows, src, sha, bands):
+    """The table's text: one TM per line, one JSON document."""
+    dist = collections.Counter(r["power_badge"] for r in rows.values())
+    out = {"schema": SCHEMA, "generated_by": "tools/tm_power_score.py",
+           "status": "the gate's score table: tools/tm_gate.py places every TM with no shelf line and no outlier "
+                     "placement by the band of its score (data/tm_gate.json badge_rule.power)",
+           "moves_source": src, "moves_sha256": sha,
+           "bands": {"1": "score < %s" % bands["badge_1_below"],
+                     **{k: "score <= %s" % v for k, v in sorted(bands["top"].items())},
+                     str(bands["above_top"]): "score > %s" % max(bands["top"].values())},
+           "counts": {"power_rule": {str(k): v for k, v in sorted(dist.items())}},
+           "tms": {}}
+    head = json.dumps(out, indent=1)[:-len('{}\n}')].rstrip()  # everything up to the empty "tms" object
+    body = ",\n".join("  %s: %s" % (json.dumps(k), json.dumps(v)) for k, v in sorted(rows.items()))
+    text = head + " {\n" + body + "\n }\n}\n"
+    json.loads(text)  # one TM per line, and still one JSON document
+    return text, dist
 
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--server-dir", required=True)
     ap.add_argument("--moves-json")
-    ap.add_argument("--out", default=str(ROOT / "docs" / "mechanics" / "TM_POWER_GATE.json"))
+    ap.add_argument("--out", default=str(DEFAULT_OUT))
+    ap.add_argument("--check", action="store_true", help="compare with the committed table; write nothing")
     a = ap.parse_args(argv)
-    rows, missing, src, p = run(a.server_dir, a.moves_json)
+    rows, missing, src, sha, bands = run(a.server_dir, a.moves_json)
     if missing:
         print("tm_power_score: %d TM(s) with no move in %s: %s" % (len(missing), src, missing[:10]))
         return 1
-    dist = collections.Counter(r["power_badge"] for r in rows.values())
-    prop = collections.Counter(r["proposed_badge"] for r in rows.values())
-    today = collections.Counter(r["today_badge"] for r in rows.values())
-    out = {"schema": "cobblers.tm_power_gate/1", "generated_by": "tools/tm_power_score.py",
-           "status": "PROPOSAL for the owner; data/tm_gate.json and tools/tm_gate.py are unchanged",
-           "moves_source": src,
-           "bands": {"1": "score < %d" % BAND_1_BELOW, **{str(b): "score <= %d" % t for b, t in BAND_TOP.items()},
-                     "8": "score > %d" % BAND_TOP[7]},
-           "counts": {"power_rule": dict(sorted(dist.items())), "proposed_with_shelf": dict(sorted(prop.items())),
-                      "today": dict(sorted(today.items()))},
-           "tms": {}}
-    head = json.dumps(out, indent=1)[:-len('{}\n}')].rstrip()  # everything up to the empty "tms" object
-    body = ",\n".join("  %s: %s" % (json.dumps(k), json.dumps(v)) for k, v in sorted(rows.items()))
-    Path(a.out).write_text(head + " {\n" + body + "\n }\n}\n", encoding="utf-8")
-    json.loads(Path(a.out).read_text(encoding="utf-8"))  # one TM per line, and still one JSON document
-    print("tm_power_score: %d TMs; power rule %s; with shelf %s; today %s; written %s" % (
-        len(rows), dict(sorted(dist.items())), dict(sorted(prop.items())), dict(sorted(today.items())), a.out))
+    text, dist = render(rows, src, sha, bands)
+    out = Path(a.out)
+    if a.check:
+        old = out.read_text(encoding="utf-8") if out.is_file() else ""
+        if old == text:
+            print("tm_power_score --check: %s is current (%d TMs, moves.js %s)" % (out, len(rows), sha[:12]))
+            return 0
+        a_lines, b_lines = old.splitlines(), text.splitlines()
+        diff = [n for n in range(max(len(a_lines), len(b_lines)))
+                if (a_lines[n] if n < len(a_lines) else None) != (b_lines[n] if n < len(b_lines) else None)]
+        print("tm_power_score --check: %s is NOT current: %d line(s) differ, first at line %d; re-run without --check"
+              % (out, len(diff), diff[0] + 1))
+        return 1
+    out.write_text(text, encoding="utf-8", newline="\n")
+    print("tm_power_score: %d TMs; power rule %s; moves.js %s; written %s" % (
+        len(rows), dict(sorted(dist.items())), sha[:12], out))
     return 0
 
 

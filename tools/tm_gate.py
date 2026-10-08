@@ -15,13 +15,22 @@ player's recipe book. The pack makes the recipe book hold everything but the TMs
 
 A gated recipe is a crafting-grid recipe whose result is a TMCraft TM (data/tm_gate.json `gated`), plus, while
 `devices.enforced`, every grid recipe whose result is a crafting device that never asks the recipe book (the Crafter,
-Tom's crafting terminal). Each TM's badge is its shelf line's gate_badge in data/markets.json; a TM with no shelf line
-takes data/tm_gate.json `badge_rule.unlisted`. Every loaded advancement that unlocks a gated recipe is written back at
-its own path closed, and so is every special recipe `devices.special_recipes_closed` names.
+Tom's crafting terminal). Every loaded advancement that unlocks a gated recipe is written back at its own path closed,
+and so is every special recipe `devices.special_recipes_closed` names.
+
+THE BADGE: the power rule (the owner, 2026-10-08: "TAKE THE POWER RULE ... SHELF WINS where it disagrees").
+  a TM with a shelf line   its gate_badge in data/markets.json, whatever its score (data/tm_gate.json badge_rule.shelf);
+                           every shelf line the power rule would place elsewhere is listed in
+                           badge_rule.shelf_disagreements, exactly, or the plan fails
+  any other TM             an outlier group of badge_rule.power.outliers that places it by hand, named and reasoned;
+                           else the band of its score (badge_rule.power.bands, docs/mechanics/TM_POWER_GATE.md 3)
+The scores are the committed table docs/mechanics/TM_POWER_GATE.json. tools/tm_power_score.py writes it from Mega
+Showdown's moves.js (it needs node) and `--check` says whether it is current; this tool needs no node and checks instead
+that the server's moves.js has the sha256 the table was scored from, and that the table covers every TM it gates.
 
 What it reads: the server's own mods (nested jars too) and its global datapacks folder (`datapacks/`, not `extra/`),
-the vanilla jar when one is found or given, config/advancementdisable.toml. Never a world. The content is GPL / no
-redistribution, so nothing of it is committed: the pack is generated into build/ at prepare.
+the vanilla jar when one is found or given, config/advancementdisable.toml, the committed score table. Never a world.
+The content is GPL / no redistribution, so nothing of it is committed: the pack is generated into build/ at prepare.
 
 What it does NOT cover is data/tm_gate.json `does_not_cover`; first among them, Cobblemon's own TM Machine.
 
@@ -57,15 +66,19 @@ DEFAULT_OUT = ROOT / "build" / "datapacks" / "cobblers_tm_gate"
 DEFAULT_PLAN = ROOT / "derived" / "tm_gate" / "plan.json"
 DEFAULT_SWEEP = ROOT / "derived" / "tm_gate" / "sweep.json"
 SCHEMA = "cobblers.tm_gate/1"
+SCORES_SCHEMA = "cobblers.tm_power_gate/2"
 PACK_FORMAT = 48  # Minecraft 1.21.1
 NS = "cobblers"
 SCORE = "cobblers.tmgate"
 NEVER = {"condition": "fabric:not", "value": {"condition": "fabric:true"}}
-FLAG_RE = re.compile(r"^gym([1-8])_cleared$")
 ENTRY_RE = re.compile(r"^data/([a-z0-9_.-]+)/(recipe|advancement|function)/(.+)\.(json|mcfunction)$")
 GEM_RE = re.compile(r"^cobblemon:([a-z]+)_gem$")
 DISC_RE = re.compile(r"^tmcraft:([a-z]+)_blank_disc$")
 SPECIAL_VANILLA = ("minecraft:crafting_special_", "minecraft:crafting_decorated_pot")
+# Mega Showdown's ShowdownPatcher copies this file over Cobblemon's data/moves.js at startup, so it is the move data
+# battles run (docs/mechanics/TM_POWER_GATE.md 1); the score table records its sha256 and the plan checks it
+MSD_JAR_GLOB = "mega_showdown-fabric-*.jar"
+MSD_MOVES = "assets/mega_showdown/showdown/moves.js"
 VANILLA_CANDIDATES = ("libraries/net/minecraft/server/1.21.1/server-1.21.1.jar", "versions/1.21.1/server-1.21.1.jar",
                       "versions/1.21.1/1.21.1.jar")
 
@@ -139,8 +152,12 @@ def read_server(server_dir, vanilla_jar=None):
     vanilla = Path(vanilla_jar) if vanilla_jar else find_vanilla(server_dir)
     if vanilla:
         _zip_entries(zipfile.ZipFile(vanilla), "vanilla", raw, set(), 0)
+    moves = []  # (jar name, sha256 of moves.js): the move data battles run, which the score table was scored from
     for jar in sorted(mods.glob("*.jar")):
-        _zip_entries(zipfile.ZipFile(jar), jar.name, raw, mod_ids, 10)
+        zf = zipfile.ZipFile(jar)
+        if fnmatch.fnmatchcase(jar.name, MSD_JAR_GLOB) and MSD_MOVES in zf.namelist():
+            moves.append((jar.name, hashlib.sha256(zf.read(MSD_MOVES)).hexdigest()))
+        _zip_entries(zf, jar.name, raw, mod_ids, 10)
     dp = server_dir / "datapacks"
     if dp.is_dir():
         for p in sorted(dp.iterdir()):
@@ -156,7 +173,7 @@ def read_server(server_dir, vanilla_jar=None):
             disabled = set(re.findall(r'"([^"]+)"', m.group(1)))
     raw.sort(key=lambda t: t[0])  # stable: vanilla, mods, built-in packs, datapacks; later wins at the same path
     return {"entries": [e for _, e in raw], "mod_ids": mod_ids, "vanilla": str(vanilla) if vanilla else None,
-            "disabled_adv_ns": disabled}
+            "disabled_adv_ns": disabled, "moves": moves}
 
 
 def condition(c, mod_ids):
@@ -222,7 +239,7 @@ def resolve(server):
                 dropped[kind] += 1
                 continue
             advancements[rid] = (e.source, doc)
-    return {"recipes": recipes, "advancements": advancements, "functions": functions,
+    return {"recipes": recipes, "advancements": advancements, "functions": functions, "moves": server.get("moves", []),
             "unknown_conditions": dict(unknown), "unparsed": dict(unparsed), "dropped": dict(dropped)}
 
 
@@ -284,33 +301,88 @@ def shelf_badges(markets):
     return out
 
 
-def leader_pools(progression):
-    """{badge: [tmcraft items]} from the active series' first-win pools of the eight gym leaders."""
-    fwr = _find_key(progression, "first_win_rewards")
-    out = collections.defaultdict(list)
-    if not fwr or fwr.get("series") != progression.get("active_series"):
-        return out
-    for t in fwr.get("trainers", {}).values():
-        m = FLAG_RE.match(t.get("flag", ""))
-        if m:
-            out[int(m.group(1))].extend(i for i in t.get("one_of", []) if i.startswith("tmcraft:tm_"))
-    return out
+def band(score, bands):
+    """The power badge of one score, by data/tm_gate.json badge_rule.power.bands (the proposal's bands,
+    docs/mechanics/TM_POWER_GATE.md 3): badge 1 below badge_1_below, then the first badge whose inclusive top holds
+    it, else above_top. The score is rounded to 0.1 first, as the table prints it."""
+    s = round(score, 1)
+    if s < bands["badge_1_below"]:
+        return 1
+    for b, top in sorted((int(k), v) for k, v in bands["top"].items()):
+        if s <= top:
+            return b
+    return bands["above_top"]
 
 
-def _find_key(obj, key):
-    if isinstance(obj, dict):
-        if key in obj:
-            return obj[key]
-        for v in obj.values():
-            r = _find_key(v, key)
-            if r is not None:
-                return r
-    elif isinstance(obj, list):
-        for v in obj:
-            r = _find_key(v, key)
-            if r is not None:
-                return r
-    return None
+def load_scores(doc, path=None):
+    """The committed score table tools/tm_power_score.py writes (badge_rule.power.scores)."""
+    p = Path(path) if path else ROOT / doc["badge_rule"]["power"]["scores"]
+    t = json.loads(p.read_text(encoding="utf-8"))
+    if t.get("schema") != SCORES_SCHEMA:
+        raise TmGateError("%s: schema %r, expected %r" % (p, t.get("schema"), SCORES_SCHEMA))
+    return t
+
+
+def place(doc, scores, shelf):
+    """The power rule over every scored TM: (tms {item: {badge, rule, score, power_badge}}, problems).
+
+    shelf wins: a TM with a shelf line takes its gate_badge, whatever its score. Otherwise an outlier group in
+    badge_rule.power.outliers that places it by hand; otherwise its score's band. A placement is never silent: every
+    hand badge is a named, reasoned group in data/tm_gate.json, and each shelf line the power rule would put elsewhere
+    must be listed in badge_rule.shelf_disagreements, exactly (a score or a shelf line that moves is named here)."""
+    rule = doc["badge_rule"]["power"]
+    bands = rule["bands"]
+    table = scores["tms"]
+    problems = []
+    power = {}
+    for item, row in table.items():
+        b = band(row["score"], bands)
+        if b != row.get("power_badge"):
+            problems.append("%s: the score table says power badge %s, the bands give %d for score %s: the table is "
+                            "stale against badge_rule.power.bands (python tools/tm_power_score.py)"
+                            % (item, row.get("power_badge"), b, row["score"]))
+        power[item] = b
+    hand = {}
+    for g in rule["outliers"]:
+        tag = "outlier %d (%s)" % (g["group"], g["name"])
+        for item, b in sorted(g.get("place", {}).items()):
+            if item not in table:
+                problems.append("%s places %s, which the score table does not have" % (tag, item))
+            elif item in shelf:
+                problems.append("%s places %s, a shelf TM: the shelf wins, so the placement is dead; "
+                                "put it under shelf_agrees" % (tag, item))
+            elif item in hand:
+                problems.append("%s places %s, already placed by %s" % (tag, item, hand[item][1]))
+            elif not (isinstance(b, int) and 1 <= b <= 8):
+                problems.append("%s places %s at %r, not a badge 1-8" % (tag, item, b))
+            else:
+                hand[item] = (b, tag)
+        for item, b in sorted(g.get("shelf_agrees", {}).items()):
+            if shelf.get(item) != b:
+                problems.append("%s says %s's shelf line is badge %d; the shelf says %s"
+                                % (tag, item, b, shelf.get(item)))
+    tms = {}
+    for item in sorted(table):
+        pb, sc = power[item], table[item]["score"]
+        if item in shelf:
+            badge, why = shelf[item], "shelf"
+        elif item in hand:
+            badge, why = hand[item][0], "%s; score %s -> %d" % (hand[item][1], sc, pb)
+        else:
+            badge, why = pb, "power: score %s -> %d" % (sc, pb)
+        tms[item] = {"badge": badge, "rule": why, "score": sc, "power_badge": pb}
+    for item in sorted(set(shelf) - set(table)):
+        problems.append("shelf line %s has no score in the table: the shelf/power comparison cannot be made" % item)
+    got = {(i, shelf[i], power[i]) for i in shelf if i in power and shelf[i] != power[i]}
+    doc_lines = doc["badge_rule"]["shelf_disagreements"]["lines"]
+    want = {(d["item"], d["shelf_badge"], d["power_badge"]) for d in doc_lines}
+    for i, s, p in sorted(got - want):
+        problems.append("shelf line %s (badge %d) disagrees with the power rule (%d) and badge_rule."
+                        "shelf_disagreements does not list it so" % (i, s, p))
+    for i, s, p in sorted(want - got):
+        problems.append("badge_rule.shelf_disagreements lists %s as shelf %d against power %d; the data now says "
+                        "shelf %s, power %s" % (i, s, p, shelf.get(i), power.get(i)))
+    return tms, problems
 
 
 def traits(recipe, grade_order, prefix="tmcraft:tm_"):
@@ -330,118 +402,70 @@ def traits(recipe, grade_order, prefix="tmcraft:tm_"):
     return gem, grade, inputs
 
 
-def plan(doc, resolved, markets, progression):
-    """Every gated recipe with its badge and the rule that set it; the advancements and special recipes to close;
-    the problems (fail closed)."""
-    problems, notes = [], []
+def tm_recipe_table(doc, resolved):
+    """({tm item: [(recipe id, gem, grade index, [input TMs])]}, problems): every loaded crafting-grid recipe whose
+    result is a TMCraft TM. A TM recipe of another type is a problem: doLimitedCrafting would not reach it."""
+    problems = []
     grid = set(doc["gated"]["grid_types"])
     prefix = doc["gated"]["result_prefix"]
     order = doc["badge_rule"]["grade_order"]
-    floor = doc["badge_rule"]["minimum_badge"]
-    recipes = resolved["recipes"]
-    tm_recipes = collections.defaultdict(list)  # tm item -> [(recipe id, gem, grade)]
-    for rid, (_, r) in recipes.items():
+    out = collections.defaultdict(list)
+    for rid, (_, r) in resolved["recipes"].items():
         res = result_id(r)
         if isinstance(res, str) and res.startswith(prefix):
             if recipe_kind(r.get("type"), grid) != "grid":
                 problems.append("%s makes %s but is a %s recipe, which doLimitedCrafting does not reach"
                                 % (rid, res, r.get("type")))
                 continue
-            tm_recipes[res].append((rid,) + traits(r, order, prefix))
-    if not tm_recipes:
+            out[res].append((rid,) + traits(r, order, prefix))
+    if not out:
         problems.append("no loaded recipe makes a %s item: is TMCraft in the server's mods?" % prefix)
+    return out, problems
+
+
+def plan(doc, resolved, markets, progression, scores=None):
+    """Every gated recipe with its badge and the rule that set it; the advancements and special recipes to close;
+    the problems (fail closed). scores: the score table (default: the committed one, badge_rule.power.scores)."""
+    notes = []
+    grid = set(doc["gated"]["grid_types"])
+    recipes = resolved["recipes"]
+    tm_recipes, problems = tm_recipe_table(doc, resolved)
+    scores = scores if scores is not None else load_scores(doc)
+    # the table must have been scored from the move data this server's battles run
+    moves = resolved.get("moves") or []
+    if len(moves) != 1:
+        problems.append("the server has %d Mega Showdown moves.js (%s), expected one: the score table's source cannot "
+                        "be checked" % (len(moves), [m[0] for m in moves]))
+    elif moves[0][1] != scores.get("moves_sha256"):
+        problems.append("%s!%s has sha256 %s; the score table was scored from %s: re-run tools/tm_power_score.py"
+                        % (moves[0][0], MSD_MOVES, moves[0][1][:12], str(scores.get("moves_sha256"))[:12]))
     shelf = shelf_badges(markets)
-    pools = leader_pools(progression)
     flags = {f["id"] for f in progression.get("flags", [])}
     for b in range(1, 9):
         if "gym%d_cleared" % b not in flags:
             problems.append("data/progression.json has no flag gym%d_cleared" % b)
-    grades = {}
-
-    def grade_of(item, stack=()):
-        """The highest disc grade among an item's recipes; a chain recipe inherits its input TM's."""
-        if item in grades:
-            return grades[item]
-        if item in stack or item not in tm_recipes:
-            return None
-        best = None
-        for _, _, grade, inputs in tm_recipes[item]:
-            g = grade
-            if g is None and inputs:
-                got = [grade_of(i, stack + (item,)) for i in inputs]
-                g = None if None in got else max(got)
-            if g is not None:
-                best = g if best is None else max(best, g)
-        grades[item] = best
-        return best
-
-    type_badge = {}
-    for badge in sorted(pools):
-        for item in pools[badge]:
-            for _, gem, _, _ in tm_recipes.get(item, []):
-                if gem:
-                    type_badge.setdefault(gem, badge)
-    # A type no leader's pool teaches (ghost, dragon, ice, ...) is never placed early: it waits for the LAST leader,
-    # not the first. Defaulting it to minimum_badge put Shadow Ball before Brock (the owner, 2026-10-08). The same
-    # holds for a grade no shelf line reaches: it is a problem (fail closed) and its fallback is the last leader too.
-    if not pools:
-        problems.append("no gym leader's first-win pool names a TM: badge_rule.unlisted cannot place any type")
-    no_gym = max(pools) if pools else 8
-    grade_badge = {}
-    for gi, g in enumerate(order):
-        cands = [b for item, b in shelf.items() if item in tm_recipes and (grade_of(item) or 0) >= gi
-                 and grade_of(item) is not None]
-        grade_badge[g] = min(cands) if cands else None
-    for g, b in grade_badge.items():
-        if b is None:
-            problems.append("no shelf TM is of disc grade %s or higher: badge_rule.unlisted cannot place it" % g)
-
-    memo = {}
-
-    def rule_badge(item, stack=()):
-        """(badge, why) by badge_rule.unlisted, for every TM; a chain TM also never comes before its input TM."""
-        if item in memo:
-            return memo[item]
-        if item in stack:
-            return None, "a cycle of chain TMs through %s" % item
-        best, why = floor, "minimum"
-        for rid, gem, grade, inputs in tm_recipes[item]:
-            if gem is None:
-                return None, "recipe %s names no gem" % rid
-            g = grade if grade is not None else grade_of(item)
-            if g is None:
-                return None, "recipe %s names no blank disc and no input TM with one" % rid
-            tb = type_badge.get(gem, no_gym)
-            gb = grade_badge.get(order[g]) or no_gym
-            b, w = max(floor, tb, gb), "type %s -> %d%s, grade %s -> %d" % (
-                gem, tb, "" if gem in type_badge else " (no leader teaches it)", order[g], gb)
-            for inp in inputs:
-                ib = shelf.get(inp) or (rule_badge(inp, stack + (item,))[0] if inp in tm_recipes else None)
-                if ib is None:
-                    return None, "recipe %s needs %s, which has no badge" % (rid, inp)
-                if ib > b:
-                    b, w = ib, w + ", input %s -> %d" % (inp, ib)
-            if b >= best:
-                best, why = b, w
-        memo[item] = (best, why)
-        return memo[item]
-
+    placed, place_problems = place(doc, scores, shelf)
+    problems += place_problems
     tms = {}
-    disagree = []
     for item in sorted(tm_recipes):
-        rb, why = rule_badge(item)
-        if item in shelf:
-            badge, rule = shelf[item], "shelf"
-            if rb is not None and rb != badge:
-                disagree.append("%s: shelf %d, unlisted rule %d (%s)" % (item, badge, rb, why))
-        elif rb is None:
-            problems.append("%s has no shelf line and %s: the unlisted rule cannot place it" % (item, why))
+        if item not in placed:
+            problems.append("%s has a crafting recipe on this server and no score in the table: re-run "
+                            "tools/tm_power_score.py" % item)
             continue
-        else:
-            badge, rule = rb, "unlisted: " + why
-        tms[item] = {"badge": badge, "rule": rule, "recipes": sorted(t[0] for t in tm_recipes[item])}
+        tms[item] = dict(placed[item], recipes=sorted(t[0] for t in tm_recipes[item]))
+    extra = sorted(set(placed) - set(tm_recipes))
+    if extra:
+        notes.append("%d scored TM(s) have no loaded crafting recipe on this server: %s" % (len(extra), extra[:5]))
     for item in sorted(set(shelf) - set(tm_recipes)):
         notes.append("shelf line %s has no loaded crafting recipe: nothing to gate" % item)
+    # a chain TM (tm_howl is tm_leer + a gem + a glove) is placed by its own score, not held behind its input TM: its
+    # recipe needs the input TM in hand, which the shelf, loot or a trade can supply before the input's recipe opens
+    early = sorted("%s %d < %s %d" % (item, t["badge"], inp, tms[inp]["badge"]) for item, t in tms.items()
+                   for _, _, _, inputs in tm_recipes[item] for inp in inputs
+                   if inp in tms and tms[inp]["badge"] > t["badge"])
+    if early:
+        notes.append("%d chain TM recipe(s) open before their input TM's recipe (by design): %s"
+                     % (len(early), early[:6]))
     gated = {}
     for item, t in tms.items():
         for rid in t["recipes"]:
@@ -509,9 +533,13 @@ def plan(doc, resolved, markets, progression):
     key_src = json.dumps({"recipes": sorted(recipes), "gated": sorted((k, v["badge"]) for k, v in gated.items()),
                           "version": doc["sync_version"]}, sort_keys=True)
     key = int(hashlib.sha256(key_src.encode()).hexdigest()[:8], 16) % 2000000000 + 1
+    disagree = ["%s: shelf %d, power %d (score %s)" % (item, t["badge"], t["power_badge"], t["score"])
+                for item, t in sorted(tms.items()) if t["rule"] == "shelf" and t["badge"] != t["power_badge"]]
+    by_rule = collections.Counter(t["rule"].split(" ")[0].split(":")[0] for t in tms.values())
     return {"tms": tms, "gated": gated, "closed_advancements": closed_adv, "closed_recipes": sorted(closed_recipes),
-            "type_badge": type_badge, "no_gym_type_badge": no_gym, "grade_badge": grade_badge, "top_badge": top,
-            "key": key,
+            "top_badge": top, "key": key, "moves_sha256": scores.get("moves_sha256"),
+            "distribution": dict(sorted(collections.Counter(t["badge"] for t in tms.values()).items())),
+            "by_rule": dict(sorted(by_rule.items())),
             "shelf_disagreements": disagree, "problems": problems, "notes": notes,
             "counts": {"tm_items": len(tms), "gated_recipes": len(gated),
                        "gated_tm_recipes": sum(1 for g in gated.values() if not g.get("device")),
@@ -670,10 +698,11 @@ def main(argv=None):
         return 1
     by = collections.Counter(t["badge"] for t in p["tms"].values())
     print("tm_gate: %d TMs, %d gated recipes (%d TM, %d device), %d unlock advancements closed, %d special recipes "
-          "closed; TMs by badge %s; shelf disagreements %d; key %d" % (
+          "closed; TMs by badge %s; by rule %s; shelf lines kept against the power rule %d; key %d" % (
               p["counts"]["tm_items"], p["counts"]["gated_recipes"], p["counts"]["gated_tm_recipes"],
               p["counts"]["gated_recipes"] - p["counts"]["gated_tm_recipes"], len(p["closed_advancements"]),
-              len(p["closed_recipes"]), dict(sorted(by.items())), len(p["shelf_disagreements"]), p["key"]))
+              len(p["closed_recipes"]), dict(sorted(by.items())), p["by_rule"], len(p["shelf_disagreements"]),
+              p["key"]))
     for n in p["notes"]:
         print("  note: " + n)
     if a.check:
