@@ -6,6 +6,7 @@ must hold, which TM unlocks at which badge) are stated here by hand, not compute
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 import zipfile
@@ -27,22 +28,23 @@ SHELF_GEM = {
 # discs chosen so the grade envelope is easy to state: diamond 3 (Thunder), emerald 5 (Toxic), netherite 7 (Overheat)
 SHELF_DISC = {"thunder": "diamond", "earthquake": "diamond", "overheat": "netherite", "fissure": "netherite",
               "toxic": "emerald", "calmmind": "emerald"}
-# unlisted TMs and the badge data/tm_gate.json badge_rule.unlisted gives them, worked by hand:
-#   type_badge from the leaders' pools: normal 1, rock 1, water 2, electric 3, grass 4, poison 5, psychic 6, fire 7,
-#   ground 8; no leader teaches ice, flying or ghost, so they wait for the last leader: 8 (never the minimum: Shadow
-#   Ball before Brock was the defect the owner named 2026-10-08). grade_badge: copper/iron/gold 1, diamond 3,
-#   emerald 5, netherite 7.
+# unlisted TMs (no shelf line, no outlier group) and the badge the power rule gives them, worked by hand from the
+# move's Showdown fields with docs/mechanics/TM_POWER_GATE.md 2 and the bands of 3 (badge 1 below 35; tops 54, 64, 74,
+# 84, 94, 104 inclusive; badge 8 above). Neither the type nor the disc grade enters: the gems and discs below only make
+# the recipes look like TMCraft's.
 UNLISTED = {
-    "icebeam": ("ice", "diamond", None, 8),        # max(8 no leader, 3)
-    "tackle": ("normal", "copper", None, 1),       # max(1, 1)
-    "heatwave": ("fire", "gold", None, 7),         # max(7, 1)
-    "hurricane": ("flying", "netherite", None, 8),  # max(8 no leader, 7)
-    "shadowball": ("ghost", "gold", None, 8),      # max(8 no leader, 1): the owner's case
-    "hydropump": ("water", "netherite", None, 7),  # max(2, 7): the grade decides
-    "howl": ("normal", None, "tackle", 1),         # chain: tackle's copper, and never before tackle (1)
-    "flareblitz": ("fire", None, "icebeam", 8),    # chain: icebeam's diamond -> 3, fire 7, icebeam 8 -> 8
+    "icebeam": ("ice", "diamond", None, 6),        # 90 + 10% freeze x 30 = 93
+    "tackle": ("normal", "copper", None, 2),       # 40
+    "heatwave": ("fire", "gold", None, 6),         # 90% x (95 + 10% burn x 30) = 88.2
+    "hurricane": ("flying", "netherite", None, 5),  # 70% x (110 + 30% confusion x 12) = 79.5
+    "shadowball": ("ghost", "gold", None, 5),      # 80 + 20% x one sp.def stage x 8 = 81.6 (badge 8 under the old rule)
+    "hydropump": ("water", "netherite", None, 5),  # 80% x 110 x 0.95 (5 PP) = 83.6
+    "howl": ("normal", None, "tackle", 2),         # +1 attack: 35, not below 35 (a chain TM: tackle in, no floor)
+    "flareblitz": ("fire", None, "icebeam", 7),    # 120 x (1 - 0.5 x 33/100) + 10% burn x 30 = 103.2
 }
-NO_LEADER_TYPES = {"ice", "flying", "ghost"}       # stated by hand: no SHELF_GEM entry has these types
+MSD_JAR = "mega_showdown-fabric-fixture.jar"
+MSD_MOVES = "assets/mega_showdown/showdown/moves.js"
+MSD_TEXT = "const Moves = {}; // the fixture's moves.js: the committed score table is bound to it by score_table()\n"
 ORDINARY = ["minecraft:oak_planks", "minecraft:stick", "cobblemon:poke_ball", "cobblemon:great_ball",
             "handcrafted:oak_chair", "cobblemon:to_nowhere"]
 WITH_ADV = {"minecraft:oak_planks", "minecraft:stick"}   # the rest have no unlock advancement: doLimitedCrafting alone
@@ -59,6 +61,14 @@ def shelf_from_markets():
                 if str(line.get("item", "")).startswith("tmcraft:tm_") and isinstance(line.get("gate_badge"), int):
                     out[line["item"]] = line["gate_badge"]
     return out
+
+
+def score_table():
+    """The committed score table (docs/mechanics/TM_POWER_GATE.json), with its moves_sha256 set to the fixture's own
+    moves.js: the fixture server says its battles run the moves the table was scored from. Every score is the real one."""
+    t = json.loads((ROOT / "docs" / "mechanics" / "TM_POWER_GATE.json").read_text(encoding="utf-8"))
+    t["moves_sha256"] = hashlib.sha256(MSD_TEXT.encode("utf-8")).hexdigest()
+    return t
 
 
 def _shapeless(result, *items):
@@ -161,6 +171,7 @@ def build_server(tmp, extra_functions=None, extra_advancements=None):
     tm[_p("tmcraft:recipes/misc/copper_blank_disc", "advancement")] = _unlock("tmcraft:copper_blank_disc",
                                                                              "minecraft:copper_ingot")
     _jar(server / "mods" / "tmcraft.jar", tm, "tmcraft")
+    _jar(server / "mods" / MSD_JAR, {MSD_MOVES: MSD_TEXT}, "mega_showdown")
     dp = {"pack.mcmeta": {"pack": {"pack_format": 48, "description": "x"}},
           "data/cobbleverse/function/starter_pack.mcfunction": "give @s cobblemon:poke_ball 5\nrecipe give @s *\n",
           "data/cobblemon/advancement/root.json": {"criteria": {"picked_starter": {"trigger": "cobblemon:pick_starter"}},

@@ -1387,7 +1387,7 @@ def test_contract_c23_the_tm_gate_unlocks_on_the_flags_the_progression_pack_gran
     prog = PP.files(PP.plan(PP.load(ROOT / "data" / "progression.json"), None, PLACEMENTS))
     server, vanilla, _ = TF.build_server(tmp_path)
     plan = TG.plan(TG.load(), TG.resolve(TG.read_server(server, vanilla)), copy.deepcopy(markets),
-                   copy.deepcopy(prog_doc))
+                   copy.deepcopy(prog_doc), scores=TF.score_table())
     files = TG.build(TG.load(), plan)
     named = set()
     for rel, text in files.items():
