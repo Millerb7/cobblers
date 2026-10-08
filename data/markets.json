@@ -52,6 +52,22 @@
       "superseded_by": "tools/income_model.py (unit U0, 2026-10-10): model B was linear in levels; the jar pays quadratically"
     }
   },
+  "curve_rule": {
+    "rule": "docs/mechanics/ECONOMY_OVERHAUL.md section 7, R2: 'The band stays. Its numerator becomes the convenience lines plus a declared fight allowance; power lines leave it. Its denominator becomes trainer income (R1) + the produce allowance + one declared gathering hour a leg at the tier's rate. The hard check stays: fights <= trainer income at every badge'",
+    "declared_by": "test-author, unit U5 (2026-10-10). Every value below is copied from the design line cited beside it; none was tuned against the shelf. Read by tools/markets_audit.py and tools/town_squares_audit.py",
+    "fight_allowance": {
+      "per_leg": 2500,
+      "parts": {"mart": 1600, "blackout": 600, "ferries": 300},
+      "source": "ECONOMY_OVERHAUL.md 1.3: 'Fight costs: $2,500 a leg (ASSUMED). That is the Mart allowance of $1,600 (ladder A-5, ASSUMED), one blackout at $600 (data/blackout.json charge_rule, MEASURED) and ferries at about $300.' The audits check the parts sum to per_leg and the blackout part against data/blackout.json money"
+    },
+    "produce_allowance": {
+      "by_badges_held": {"0": 1600, "1": 900, "2": 500, "3": 200, "4": 100, "5": 100, "6": 100, "7": 100},
+      "source": "ECONOMY_OVERHAUL.md 2.2's table 'Most a player can earn in the leg' by badges held (leg N is played holding N-1 badges); its total is the section's 'capped at $3,600 per player'",
+      "status": "the Produce Buyer is not built (unit U2, data/produce_buyer.json): until it is, the game does not pay this and the curve's denominator counts money no NPC hands out"
+    },
+    "gathering_hours_per_leg": 1,
+    "gathering_source": "R2: 'one declared gathering hour a leg at the tier's rate'. The tier of leg N is the data/bank.json effort_model tier with the highest opens_leg <= N; its rate is the typical hour, the sum of rate_per_hour x price over the buys of its from_tiers (effort_model.derivation)"
+  },
   "price_policies": {
     "income_gate": {
       "status": "built as data 2026-10-09 (unit TMPRICE); applied by tools/markets.py (policy_price; `prices --write` writes the result into this file, `audit` refuses a line whose price is not the rule's). NOT bought in game (proof P-7)",
