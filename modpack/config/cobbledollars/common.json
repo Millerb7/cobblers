@@ -1,6 +1,6 @@
 {
   "earnCobbleDollarsFromNPC": true,
-  "earnCobbleDollarsFromWildPokemon": true,
+  "earnCobbleDollarsFromWildPokemon": false,
   "cobbleDollarsIncomeMultiplier": 1.25,
   "playerDataSaveFrequency": 15
 }
