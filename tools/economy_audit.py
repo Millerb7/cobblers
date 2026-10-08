@@ -42,7 +42,21 @@ Where each expectation comes from:
               defaultShop, a BCA template offer).
   afk         a stated table of vanilla 1.21.1 items an unattended farm produces (below, AFK_FARMABLE), each with its
               mechanism; REPORT its effective bank price, the file:line that sets it, and whether data/bank.json
-              overrides the base.
+              overrides the base; a base item no longer bought is REPORTED with its base price and the base_removed
+              line. The CHECK (2026-10-10, afk_farmable, never data/bank.json afk_rule's lists): the farm set is
+              AFK_FARMABLE + AFK_EXTRA (less farms whose every mob the server's mobsbegone blacklist names), the loot of
+              every block whose blockstate carries `age`, every gameplay/fishing loot table, the cobblemon:apricorns and
+              cobblemon:berries tags, every species drop the server's PastureLoot.json item_blacklist does not name,
+              the entity loot of every mob the blacklist does not name, and the closure under every recipe (crafting,
+              cooking, Cobblemon's brewing stand and campfire pot). FAILURE for a bank price on an item in that set
+              unless data/bank.json afk_rule.exceptions names it with a why and a decision (then REPORTED). For each
+              excepted ranch drop the money per hour of a pastured Pokemon is REPORTED (expected_picks: Cobblemon's
+              own drop roll, read from the jar).
+  buyer       the Produce Buyer (tools/produce_buyer.py build(), the emitted pack, read line by line): the schedule from
+              the leg function, the allowance reset guarded by a changed badge count, and in each sell function count
+              (clear ... 0) -> short gate -> take exactly N -> exact gate -> one pay macro -> balance check. FAILURE on
+              any break of that order; ARBITRAGE when a crate costs less with money (every seller and recipe) than the
+              buyer's top price.
   barter      the item-for-item edges of data/direct_trades.json (the barterer, EXP-055), read by THIS file -- never
               through tools/direct_trades.py's edges() -- and the Offers.Recipes of the villager its place function
               emits, read by this file's SNBT reader (tools/direct_trades.py files() is CALLED only for its output, on
@@ -85,9 +99,18 @@ What this does NOT cover:
   - anything in a running game: that a merchant's purchase or the Bank's sale completes (P-7), duplication or races;
   - a merchant a donor template places that no data file names, natural CobbleDollars merchants, villagers' trades,
     loot (chests, bastions, Pasture Loot, Pickup), quests and rewards that hand out a bought item;
-  - recipes added by our own generated datapacks after the snapshot date, brewing (Cobblemon's medicine brews are not
-    recipe JSON), custom/special recipes, and container remainders (a bucket given back is counted as consumed);
-  - smelting fuel (counted as free, so a smelting chain is flagged at its most generous);
+  - recipes added by our own generated datapacks after the snapshot date, custom/special recipes, vanilla potion
+    brewing (code, not JSON; Cobblemon's brewing_stand recipes ARE read since 2026-10-10), and container remainders
+    (a bucket given back is counted as consumed);
+  - smelting and brewing fuel (counted as free, so a chain is flagged at its most generous; blaze powder is finite
+    here: blaze rods come only from Nether chests, docs/research/OBTAINABILITY_SWEEP_2026-10-05.md, relayed);
+  - for afk: whether a campfire pot or a brewing stand runs unattended (a crafting step is counted as the builder's
+    `crafts` rule counts it: one craft from farmed goods is farmed), that Pasture Loot rolls the species table with
+    its amount (ASSUMED), a species' forms' own drop tables, whether a seed is ever found (one is enough), and a
+    harvester's real rate;
+  - for the buyer: that the dialogue opens and runs the function as the player, that `cobbledollars query` returns the
+    balance as its result (relayed), the cooldown's tick arithmetic, and a player's scoreboard name changing (a new
+    holder, a fresh allowance) -- EXP-061;
   - whether vanilla mob spawning is on (the AFK table lists what a farm WOULD make);
   - the gathering rates, the leg incomes and max_leg_hours, which are assumed or relayed until timed in staging;
   - the stability of the off-path tier: it is the nearest critical route, and the margin to the next route is printed
@@ -414,11 +437,32 @@ def trader_sales(server_dir, traders_mod=None):
 
 
 # ------------------------------------------------------------------------------------------------ the jars
+_AGE = re.compile(r"(?:^|,)age=")
+
+
+def _has_age(bs):
+    """True when a blockstate file's variants or multipart conditions name an `age` property (random-tick growth)."""
+    if not isinstance(bs, dict):
+        return False
+    if any(_AGE.search(k) for k in (bs.get("variants") or {})):
+        return True
+    for part in bs.get("multipart") or []:
+        when = part.get("when") if isinstance(part, dict) else None
+        conds = (when.get("OR") or when.get("AND") or [when]) if isinstance(when, dict) else []
+        if any(isinstance(c, dict) and "age" in c for c in conds):
+            return True
+    return False
+
+
 class Jars:
     """Items, item tags and recipes read from the vanilla jar and a server's mods/ and datapacks/."""
 
     def __init__(self):
         self.items, self.tags, self.recipes = set(), {}, []
+        # the AFK reader's inputs: blocks whose blockstate carries `age` (random-tick growth), every loot table (all
+        # copies: a datapack's copy and the jar's are both kept, so the union is the generous reading), and every
+        # species / species_additions drop table [(where, file id, drops)]
+        self.aged, self.loot, self.species = set(), {}, []
 
     def scan_zip(self, z, where, depth=0):
         for name in z.namelist():
@@ -452,6 +496,31 @@ class Jars:
         if m:
             self.items.add("%s:%s" % m.groups())
             return
+        m = re.fullmatch(r"assets/([^/]+)/blockstates/(.+)\.json", name)
+        if m:
+            try:
+                bs = json.loads(read().decode("utf-8-sig"))
+            except ValueError:
+                return
+            if _has_age(bs):
+                self.aged.add("%s:%s" % m.groups())
+            return
+        m = re.fullmatch(r"data/([^/]+)/loot_tables?/(.+)\.json", name)
+        if m:
+            try:
+                self.loot.setdefault("%s:%s" % m.groups(), []).append(json.loads(read().decode("utf-8-sig")))
+            except ValueError:
+                pass
+            return
+        m = re.fullmatch(r"data/([^/]+)/species(?:_additions)?/(.+)\.json", name)
+        if m:
+            try:
+                sp = json.loads(read().decode("utf-8-sig"))
+            except ValueError:
+                return
+            if isinstance(sp, dict) and isinstance(sp.get("drops"), dict):
+                self.species.append((where, "%s:%s" % m.groups(), sp["drops"]))
+            return
         m = re.fullmatch(r"data/([^/]+)/tags/items?/(.+)\.json", name)
         if m:
             try:
@@ -481,6 +550,41 @@ class Jars:
         out = set()
         for v in self.tags.get(tag, ()):
             out |= self.tag_items(v[1:], seen) if v.startswith("#") else {v}
+        return out
+
+    def loot_items(self, table, seen=None):
+        """Every item id any copy of a loot table can drop: item entries, tag entries and nested loot_table
+        references, through pools/entries/children (functions and conditions are not read: a conditional drop counts)."""
+        seen = set() if seen is None else seen
+        if table in seen:
+            return set()
+        seen.add(table)
+        out = set()
+        for doc in self.loot.get(table, ()):
+            out |= self._loot_walk(doc, seen)
+        return out
+
+    def _loot_walk(self, node, seen):
+        out = set()
+        if isinstance(node, list):
+            for x in node:
+                out |= self._loot_walk(x, seen)
+        elif isinstance(node, dict):
+            t = str(node.get("type", "")).replace("minecraft:", "")
+            name = node.get("name")
+            if t == "item" and isinstance(name, str):
+                out.add(name)
+            elif t == "tag" and isinstance(name, str):
+                out |= self.tag_items(name.lstrip("#"))
+            elif t == "loot_table":
+                v = node.get("value", name)
+                if isinstance(v, str):
+                    out |= self.loot_items(v if ":" in v else "minecraft:" + v, seen)
+                elif isinstance(v, dict):
+                    out |= self._loot_walk(v, seen)
+            for k in ("pools", "entries", "children"):
+                if k in node:
+                    out |= self._loot_walk(node[k], seen)
         return out
 
     def ingredient(self, ing):
@@ -518,7 +622,16 @@ class Jars:
             if not isinstance(rid, str):
                 continue
             ings = []
-            if t == "crafting_shaped":
+            if t == "cobblemon:brewing_stand":
+                # Cobblemon 1.8.0's brewing (data/cobblemon/recipe/brewing_stand/*.json: input, bottle, result): one
+                # input over the stand's three bottles makes three results. The blaze powder fuel is counted free, as
+                # smelting fuel is.
+                ings = [(self.ingredient(r.get("bottle")), 3), (self.ingredient(r.get("input")), 1)]
+                if any(acc is None or not acc for acc, _ in ings):
+                    continue
+                out.append((name, t, ings, rid, 3 * max(1, rcount)))
+                continue
+            if t in ("crafting_shaped", "cobblemon:cooking_pot"):
                 key, pattern = r.get("key") or {}, r.get("pattern") or []
                 counts = {}
                 for row in pattern:
@@ -527,7 +640,7 @@ class Jars:
                             counts[ch] = counts.get(ch, 0) + 1
                 for ch, n in counts.items():
                     ings.append((self.ingredient(key.get(ch)), n))
-            elif t == "crafting_shapeless":
+            elif t in ("crafting_shapeless", "cobblemon:cooking_pot_shapeless"):
                 for ing in r.get("ingredients") or []:
                     ings.append((self.ingredient(ing), 1))
             elif t in ("smelting", "blasting", "smoking", "campfire_cooking", "stonecutting"):
@@ -1039,7 +1152,415 @@ def afk_report(bank_prices, bank_doc, server_dir=None):
         over = ("overridden by data/bank.json" if item in ours and item in base else
                 "added by data/bank.json" if item in ours else "NOT overridden (base price stands)")
         reps.append("afk %s $%d (%s) -- %s; %s" % (item, bank_prices[item], src, how, over))
+    removed = {r["item"]: r for r in ((bank_doc.get("base_removed") or {}).get("entries") or [])}
+    for item, (how, _mobs) in sorted(AFK_FARMABLE.items()):
+        if item in bank_prices or item not in base:
+            continue
+        where = ("data/bank.json:%s base_removed" % line_of(DATA / "bank.json", item) if item in removed
+                 else "no record in data/bank.json base_removed")
+        reps.append("afk %s base $%d (base-pack/cobbleverse/config/cobbledollars/bank.json:%s) -- %s; REMOVED from the "
+                    "output (%s)" % (item, base[item], line_of(BASE_BANK, item), how, where))
     return reps
+
+
+# ------------------------------------------------------------------------------------------------ afk: the check
+# The auditor's own statement of what an unattended farm makes beyond AFK_FARMABLE, for growth the jars' blockstates do
+# not show (sugar cane, kelp, cactus and bamboo change no model with age) and for the blocks no crop rule covers.
+# {item or #tag: (mechanism, [vanilla mobs the farm needs])}
+AFK_EXTRA = {
+    "minecraft:pumpkin": ("observer pumpkin farm", []),
+    "minecraft:sugar_cane": ("observer sugar cane farm", []),
+    "minecraft:kelp": ("observer kelp farm", []),
+    "minecraft:cactus": ("cactus farm", []),
+    "minecraft:bamboo": ("observer bamboo farm", []),
+    "minecraft:brown_mushroom": ("mushroom spread in the dark", []),
+    "minecraft:red_mushroom": ("mushroom spread in the dark", []),
+    "minecraft:chorus_fruit": ("chorus farm (the End)", []),
+    "#minecraft:logs": ("a tree farm", []),
+    "#minecraft:saplings": ("a tree farm", []),
+    "minecraft:cobblestone": ("a cobblestone generator under an idle player's pickaxe", []),
+    "minecraft:basalt": ("a basalt generator under an idle player's pickaxe", []),
+    "minecraft:clay_ball": ("mud under pointed dripstone dries to clay", []),
+    "minecraft:pointed_dripstone": ("a dripstone farm", []),
+    "minecraft:bone_meal": ("a composter fed by a crop farm (composting is not a recipe)", []),
+    "minecraft:egg": ("chicken egg farm", ["minecraft:chicken"]),
+    "minecraft:honeycomb": ("bee farm", ["minecraft:bee"]),
+    "minecraft:honey_bottle": ("bee farm", ["minecraft:bee"]),
+    "minecraft:snowball": ("snow golem farm", ["minecraft:snow_golem"]),
+    "minecraft:white_wool": ("sheep farm", ["minecraft:sheep"]),
+    "minecraft:milk_bucket": ("a penned cow", ["minecraft:cow"]),
+}
+# entity loot tables that are not a farm whatever the blacklist says: the End is shut, a player is not a mob
+NOT_A_MOB_FARM = {"minecraft:entities/ender_dragon": "the End is shut (data/bank.json unreachable)",
+                  "minecraft:entities/player": "a player", "minecraft:entities/armor_stand": "placed, not spawned"}
+PASTURE_LOOT = "PastureLoot.json"
+
+
+def pasture_config(server_dir=None):
+    """(PastureLoot config, the file read): the server's if given, else the base pack's."""
+    for p in ([Path(server_dir) / "config" / PASTURE_LOOT] if server_dir else []) + \
+             [ROOT / "base-pack" / "cobbleverse" / "config" / PASTURE_LOOT]:
+        if p.is_file():
+            return read_json(p), p
+    return {}, None
+
+
+def ranch_drops(jars, blacklist):
+    """{item: [(species file id, entry)]}: every species drop entry Pasture Loot can pay (its blacklist removed)."""
+    out = {}
+    for _where, sid, drops in jars.species:
+        for ent in drops.get("entries") or []:
+            it = ent.get("item") if isinstance(ent, dict) else None
+            if isinstance(it, str) and it not in blacklist:
+                out.setdefault(it, []).append((sid, ent))
+    return out
+
+
+def afk_farmable(jars, server_dir=None, conversions=None):
+    """({item: (depth, how)}, [blocked report lines]): what an unattended farm makes, derived here and nowhere else.
+
+    depth 0, the sources: AFK_FARMABLE and AFK_EXTRA (a farm whose every needed mob is on the server's mobsbegone
+    blacklist is BLOCKED and left out); the drops of every block whose blockstate carries `age` (random-tick growth,
+    harvested by water, piston or villager); every gameplay/fishing loot table (AFK fishing); the cobblemon:apricorns
+    and cobblemon:berries tags (they regrow in place); every species drop Pasture Loot's item_blacklist does not name
+    (a pastured Pokemon drops from its own table); the entity loot of every vanilla mob the blacklist does not name.
+    depth n: a recipe (conversions) whose every slot accepts an item of depth < n."""
+    black, _src = mob_blacklist(server_dir)
+    farm, blocked = {}, []
+
+    def add(item, how, depth=0):
+        if item not in farm or depth < farm[item][0]:
+            farm[item] = (depth, how)
+
+    for item, (how, mobs) in sorted(list(AFK_FARMABLE.items()) + list(AFK_EXTRA.items())):
+        if mobs and all(m in black for m in mobs):
+            blocked.append("afk stated source blocked %s: %s needs %s, blacklisted" % (item, how, ", ".join(mobs)))
+            continue
+        for it in (jars.tag_items(item[1:]) if item.startswith("#") else {item}):
+            add(it, "stated: " + how)
+    for b in sorted(jars.aged):
+        ns, p = b.split(":", 1)
+        for it in jars.loot_items("%s:blocks/%s" % (ns, p)):
+            add(it, "crop: %s grows by age and drops it" % b)
+    for t in sorted(jars.loot):
+        if t.split(":", 1)[1].startswith("gameplay/fishing"):
+            for it in jars.loot_items(t):
+                add(it, "fishing loot (%s)" % t)
+    for tag in ("cobblemon:apricorns", "cobblemon:berries"):
+        for it in jars.tag_items(tag):
+            add(it, "grove: #%s regrows in place" % tag)
+    pl, pl_src = pasture_config(server_dir)
+    for it, ents in sorted(ranch_drops(jars, set(pl.get("item_blacklist") or [])).items()):
+        names = sorted({s.rsplit("/", 1)[-1] for s, _e in ents})
+        add(it, "ranch: Pasture Loot pays it from %d species (%s%s), %s does not blacklist it"
+            % (len(names), ", ".join(names[:4]), ", ..." if len(names) > 4 else "",
+               pl_src.name if pl_src else "no PastureLoot config"))
+    for t in sorted(jars.loot):
+        m = re.fullmatch(r"minecraft:entities/([a-z0-9_]+)", t)
+        if not m or t in NOT_A_MOB_FARM or ("minecraft:" + m.group(1)) in black:
+            continue
+        for it in jars.loot_items(t):
+            add(it, "mob farm: minecraft:%s is not blacklisted" % m.group(1))
+    conversions = jars.conversions() if conversions is None else conversions
+    for _ in range(12):
+        changed = False
+        for name, kind, ings, rid, _rc in conversions:
+            depth, parts = 0, []
+            for acc, _n in ings:
+                got = min(((farm[i][0], i) for i in acc if i in farm), default=None)
+                if got is None:
+                    break
+                depth = max(depth, got[0])
+                parts.append(got[1])
+            else:
+                if rid not in farm or depth + 1 < farm[rid][0]:
+                    farm[rid] = (depth + 1, "%s %s from %s" % (kind, name, " + ".join(parts)))
+                    changed = True
+        if not changed:
+            break
+    return farm, blocked
+
+
+def afk_chain(farm, item, depth=0):
+    d, how = farm[item]
+    text = "%s (%s)" % (item, how)
+    if d and depth < 3:
+        m = re.search(r" from (.+)$", how)
+        for s in dict.fromkeys(m.group(1).split(" + ") if m else []):
+            if s in farm and s != item and farm[s][0] < d:
+                text += " <- " + afk_chain(farm, s, depth + 1)
+    return text
+
+
+def afk_checks(bank_prices, bank_doc, farm):
+    """(failures, reports): FAILURE for every item the Bank buys that an unattended farm makes (afk_farmable), unless
+    data/bank.json afk_rule.exceptions names it with a why and a decision (the owner's record; reported, not failed)."""
+    fails, reps = [], []
+    exc = {e.get("item"): e for e in ((bank_doc.get("afk_rule") or {}).get("exceptions") or [])}
+    for item, pay in sorted(bank_prices.items()):
+        if item not in farm:
+            continue
+        e = exc.get(item)
+        if e and str(e.get("why") or "").strip() and str(e.get("decision") or "").strip():
+            reps.append("afk exception %s $%d (%s): %s -- %s" % (item, pay, e["decision"], e["why"][:90],
+                                                                 afk_chain(farm, item)))
+        else:
+            fails.append("AFK BANK %s: the Bank pays $%d and an unattended farm makes it -- %s"
+                         % (item, pay, afk_chain(farm, item)))
+    for item in sorted(exc):
+        if item not in bank_prices or item not in farm:
+            reps.append("afk stale exception %s: %s" % (item, "not bought" if item not in bank_prices
+                                                         else "no farm found for it by this audit"))
+    return fails, reps
+
+
+def _qty(ent):
+    r = ent.get("quantityRange")
+    if isinstance(r, str) and re.fullmatch(r"\d+-\d+", r):
+        a, b = (int(x) for x in r.split("-"))
+        return (a + b) / 2.0
+    return float(ent.get("quantity", 1))
+
+
+def expected_picks(drops):
+    """[expected times each entry is chosen in one roll] of a Cobblemon drop table, exactly, by the algorithm of
+    DropTable.getDrops in Cobblemon-fabric-1.8.0+1.21.1.jar (read with javap 2026-10-10): until the picked total reaches
+    `amount`, one pass over the remaining entries in order takes the first whose percentage roll succeeds (picked +=
+    its quantity, default 1; it leaves the pool once chosen maxSelectableTimes, default 1 ASSUMED) or, when none does,
+    counts a miss (picked += 1); an entry whose quantity exceeds what remains leaves the pool."""
+    ents = [e for e in drops.get("entries") or [] if isinstance(e, dict)]
+    amt = drops.get("amount", 1)
+    amt = int(amt) if isinstance(amt, (int, float)) else int(str(amt).split("-")[-1])
+    q = [int(e.get("quantity", 1)) for e in ents]
+    p = [min(1.0, float(e.get("percentage", 100.0)) / 100.0) for e in ents]
+    cap = [int(e.get("maxSelectableTimes", 1)) for e in ents]
+    memo = {}
+
+    def go(pool, chosen, picked):
+        key = (pool, chosen, picked)
+        if key in memo:
+            return memo[key]
+        out = [0.0] * len(ents)
+        rem = [i for i in pool if q[i] <= amt - picked]
+        if picked >= amt or not rem:
+            memo[key] = out
+            return out
+        miss = 1.0
+        for i in rem:
+            pr = miss * p[i]
+            miss *= 1.0 - p[i]
+            if pr <= 0:
+                continue
+            ch = list(chosen)
+            ch[i] += 1
+            nxt = tuple(j for j in rem if not (j == i and ch[i] >= cap[i]))
+            sub = go(nxt, tuple(ch), picked + q[i])
+            out[i] += pr
+            for k in range(len(ents)):
+                out[k] += pr * sub[k]
+        if miss > 0:
+            sub = go(tuple(rem), chosen, picked + 1)
+            for k in range(len(ents)):
+                out[k] += miss * sub[k]
+        memo[key] = out
+        return out
+
+    return go(tuple(i for i in range(len(ents)) if q[i] <= amt), tuple([0] * len(ents)), 0)
+
+
+def ranch_money_report(jars, bank_prices, bank_doc, server_dir=None):
+    """REPORT the Bank's money per hour from a pasture for every bought, excepted ranch drop: drops an hour =
+    60 x drop_chance_per_minute x 1200 / tick_per_minute (PastureLoot.json); per drop an entry pays its expected picks
+    (expected_picks: Cobblemon's own roll, read from the jar) x its mean quantityRange. That Pasture Loot rolls the
+    species table through getDrops with the species' amount is ASSUMED (not read from pastureLoot's code). The pasture
+    holds defaultPasturedPokemonLimit (config/cobblemon/main.json)."""
+    pl, _src = pasture_config(server_dir)
+    per_hour = 60.0 * float(pl.get("drop_chance_per_minute", 0)) * 1200.0 / float(pl.get("tick_per_minute", 1200) or 1200)
+    limit = None
+    if server_dir and (Path(server_dir) / "config" / "cobblemon" / "main.json").is_file():
+        limit = read_json(Path(server_dir) / "config" / "cobblemon" / "main.json").get("defaultPasturedPokemonLimit")
+    exc = {e.get("item") for e in ((bank_doc.get("afk_rule") or {}).get("exceptions") or [])}
+    black = set(pl.get("item_blacklist") or [])
+    drops = ranch_drops(jars, black)
+    tables = {sid: d for _w, sid, d in jars.species}
+    reps = []
+    for item in sorted(exc):
+        if item not in bank_prices or item not in drops:
+            continue
+        best = None
+        for sid in sorted({s for s, _e in drops[item]}):
+            d = tables[sid]
+            picks = expected_picks(d)
+            per_drop = sum(pk * _qty(e) for pk, e in zip(picks, [e for e in d.get("entries") or [] if isinstance(e, dict)])
+                           if e.get("item") == item)
+            row = (per_drop * per_hour * bank_prices[item], per_drop, sid.rsplit("/", 1)[-1])
+            best = max(best, row) if best else row
+        money, per_drop, sp = best
+        reps.append("ranch money %s at $%d: best %s, %.3f a drop, $%.0f an hour per pastured Pokemon (%d species drop "
+                    "it; %.1f drops an hour)%s" % (item, bank_prices[item], sp, per_drop, money,
+                                                   len({s for s, _ in drops[item]}), per_hour,
+                                                   "; a pasture of %d: $%.0f an hour" % (limit, money * limit)
+                                                   if limit else ""))
+    return reps
+
+
+# ------------------------------------------------------------------------------------------------ the Produce Buyer
+_PB_ROW = re.compile(r"^execute if score #badges (\S+) matches (\d+)(?:\.\.(\d+))? run scoreboard players set "
+                     r"#(price|cap) \1 (-?\d+)$")
+
+
+def _cmds(lines):
+    return [ln.strip() for ln in lines if isinstance(ln, str) and ln.strip() and not ln.strip().startswith("#")]
+
+
+def buyer_emitted(pb_mod=None):
+    pb = pb_mod or importlib.import_module("produce_buyer")
+    return pb.build(pb.load())
+
+
+def buyer_checks(files, best, jars=None):
+    """(failures, reports) over tools/produce_buyer.py build()'s OUTPUT, read here line by line.
+
+    The leg function: the price and crate cap for each badge count 0-8, and the allowance reset, which must be guarded
+    by a changed badge count (an unguarded reset is an allowance per sale). Each sell function, in order: the cooldown,
+    the leg, the closed and spent gates, a COUNT with `clear @s <p> 0` (vanilla 1.21.1: a maxCount of 0 is a dry run, read
+    from the client jar 2026-10-10) and its short gate, the TAKE of exactly N with an exact gate, then ONE pay through a
+    macro function carrying `cobbledollars give`, and a balance check after it. FAILURE when the take is not before the
+    pay, a gate follows the take, a return sits between take and pay, count and take differ in item or number, the count
+    takes (a non-zero count), the pay is not once, `cobbledollars remove` appears, or the reset is unguarded. ARBITRAGE:
+    a crate a player can buy with money (best: every seller and recipe) for less than the buyer's top price."""
+    fails, reps = [], []
+    leg = next((v for k, v in files.items() if k.endswith("/produce_buyer/leg.mcfunction")), None)
+    if leg is None:
+        return ["BUYER: the pack has no leg function"], reps
+    L = _cmds(leg)
+    price, cap = {}, {}
+    for ln in L:
+        m = _PB_ROW.match(ln)
+        if m:
+            lo, hi = int(m.group(2)), int(m.group(3) or m.group(2))
+            for b in range(lo, hi + 1):
+                (price if m.group(4) == "price" else cap)[b] = int(m.group(5))
+    flags = [ln for ln in L if re.match(r"^execute if entity @s\[advancements=\{\S+=true\}\] run scoreboard players add "
+                                         r"#badges \S+ 1$", ln)]
+    if len(set(flags)) != len(flags):
+        fails.append("BUYER leg: a badge flag is counted twice")
+    resets = [ln for ln in L if re.search(r"(?:^|run )scoreboard players set @s \S+ 0$", ln)]
+    guarded = [ln for ln in resets if re.match(r"^execute unless score @s (\S+) = #badges \S+ run ", ln)]
+    if len(resets) != 1 or len(guarded) != 1:
+        fails.append("BUYER leg: the allowance reset is not exactly one reset guarded by a changed badge count (%d "
+                     "resets, %d guarded): an unguarded reset is a fresh allowance on every sale" % (len(resets), len(guarded)))
+    else:
+        legobj = re.match(r"^execute unless score @s (\S+) = ", guarded[0]).group(1)
+        copy = [i for i, ln in enumerate(L) if re.match(r"^scoreboard players operation @s %s = #badges " % re.escape(legobj), ln)]
+        if not copy or copy[0] < L.index(guarded[0]):
+            fails.append("BUYER leg: the player's badge count is recorded before the reset compares it (the reset never "
+                         "fires)" if copy else "BUYER leg: the badge count is never recorded (the reset fires every sale)")
+    sched = [(b, price.get(b, 0), cap.get(b, 0)) for b in range(len(flags) + 1)]
+    total = sum(p * c for _b, p, c in sched)
+    reps.append("buyer schedule (emitted): %s; $%d a player over the campaign" % (
+        ", ".join("%d badges $%d x %d" % row for row in sched), total))
+    if any(sched[i][1] < sched[i + 1][1] for i in range(len(sched) - 1)):
+        fails.append("BUYER leg: the emitted price rises with a badge")
+    top = max((p for _b, p, _c in sched), default=0)
+
+    pay_fns = {k: _cmds(v) for k, v in files.items() if isinstance(v, list) and "/produce_buyer/" in k}
+    for path, lines in sorted(files.items()):
+        m = re.search(r"/produce_buyer/sell/([a-z0-9_]+)\.mcfunction$", path)
+        if not m:
+            continue
+        crate, C = m.group(1), _cmds(lines)
+        w = "BUYER %s:" % crate
+        idx = lambda pat: next((i for i, ln in enumerate(C) if re.search(pat, ln)), None)   # noqa: E731
+        allx = lambda pat: [i for i, ln in enumerate(C) if re.search(pat, ln)]             # noqa: E731
+        clears = [(i, re.match(r"^execute store result score (#\w+) \S+ run clear @s (\S+) (\d+)$", C[i]))
+                  for i in allx(r"\bclear @s ")]
+        if any(mm is None for _i, mm in clears):
+            fails.append("%s a clear is not stored into a score (its count is unread)" % w)
+            continue
+        counts = [(i, mm) for i, mm in clears if mm.group(3) == "0"]
+        takes = [(i, mm) for i, mm in clears if mm.group(3) != "0"]
+        if len(counts) != 1:
+            fails.append("%s %d dry-run counts (clear ... 0); the sale must count exactly once without taking" % (w, len(counts)))
+            continue
+        if len(takes) != 1:
+            fails.append("%s %d takes; exactly one" % (w, len(takes)))
+            continue
+        (ci, cm), (ti, tm) = counts[0], takes[0]
+        n = int(tm.group(3))
+        if ti < ci:
+            fails.append("%s it takes before it counts" % w)
+        if cm.group(2) != tm.group(2):
+            fails.append("%s it counts %s and takes %s" % (w, cm.group(2), tm.group(2)))
+        short = idx(r"^execute unless score %s \S+ matches (\d+)\.\. run return" % re.escape(cm.group(1)))
+        if short is None or not (ci < short < ti) or int(re.search(r"matches (\d+)\.\.", C[short]).group(1)) != n:
+            fails.append("%s no short gate of %d between the count and the take" % (w, n))
+        gate = idx(r"^execute unless score %s \S+ matches %d run return" % (re.escape(tm.group(1)), n))
+        if gate is None or gate != ti + 1:
+            fails.append("%s the take is not followed at once by an exact gate on %d taken" % (w, n))
+        pays = allx(r"^function \S+ with storage ")
+        gives = [k for k, v in pay_fns.items() if any("cobbledollars give" in ln for ln in v)]
+        if len(pays) != 1:
+            fails.append("%s %d pay calls; exactly one" % (w, len(pays)))
+            continue
+        pi = pays[0]
+        fid = re.match(r"^function (\S+) with storage ", C[pi]).group(1)
+        fns, fp = fid.split(":", 1)
+        body = pay_fns.get("data/%s/function/%s.mcfunction" % (fns, fp)) or []
+        if body != ["$cobbledollars give @s $(amount)"]:
+            fails.append("%s the pay call %s is not exactly one `$cobbledollars give @s $(amount)`" % (w, fid))
+        amt = idx(r"^execute store result storage \S+ pay\.amount int 1 run scoreboard players get #price \S+$")
+        if amt is None or not (ti < amt < pi):
+            fails.append("%s the paid amount is not the leg's #price, set after the take" % w)
+        if pi < ti:
+            fails.append("%s it pays before it takes" % w)
+        between = [C[i] for i in range(ti + 2, pi) if re.search(r"\breturn\b", C[i])]
+        if between:
+            fails.append("%s a return between the take and the pay keeps the goods unpaid: %s" % (w, between[0][:80]))
+        for pat, what in ((r"run time query gametime$", "the cooldown"), (r"^function \S*produce_buyer/leg$", "the leg"),
+                          (r"^execute if score #price \S+ matches \.\.0 run return", "the closed gate"),
+                          (r"^execute if score @s \S+ >= #cap \S+ run return", "the spent gate")):
+            at = idx(pat)
+            if at is None or at > ci:
+                fails.append("%s %s is missing or comes after the count" % (w, what))
+        if any("cobbledollars remove" in ln for ln in C) or any("cobbledollars give" in ln for ln in C):
+            fails.append("%s the sell function moves money itself (only the pay macro may)" % w)
+        if len(gives) != 1:
+            fails.append("%s %d pay functions carry `cobbledollars give`" % (w, len(gives)))
+        after = idx(r"^execute unless score #after \S+ = #want \S+ run return")
+        if after is None or after < pi:
+            fails.append("%s no balance check after the pay" % w)
+        spent = idx(r"^execute if score @s \S+ >= #cap \S+ run return")
+        sold_obj = re.match(r"^execute if score @s (\S+) >= ", C[spent]).group(1) if spent is not None else None
+        inc = idx(r"^scoreboard players add @s %s 1$" % re.escape(sold_obj or "\0"))
+        first_ret = next((i for i in range(ti + 2, len(C)) if re.search(r"\breturn\b", C[i])), None)
+        if inc is None or (first_ret is not None and inc > first_ret):
+            fails.append("%s a sale that took the crate can return before counting it against the allowance (command %s "
+                         "returns, the count is command %s): if the balance check misfires after a real pay, every sale pays "
+                         "and none is counted -- the cap fails open" % (w, first_ret, inc))
+        # the crate's items, from the emitted predicate
+        pred = tm.group(2)
+        if pred.startswith("#"):
+            ns, p = pred[1:].split(":", 1)
+            tagf = files.get("data/%s/tags/item/%s.json" % (ns, p))
+            items = set(tagf["values"]) if isinstance(tagf, dict) else (jars.tag_items(pred[1:]) if jars else set())
+        else:
+            items = {pred}
+        if not items:
+            reps.append("buyer %s: the predicate %s is not resolved here (no jars): its crate is not priced" % (crate, pred))
+            continue
+        got = min(((best[i][0], i) for i in items if i in best), default=None)
+        if got is None:
+            reps.append("buyer %s: a crate of %d (%s) cannot be bought with money: no seller or recipe" % (crate, n, pred))
+            continue
+        cost = got[0] * n
+        if cost < top - 1e-9:
+            fails.append("BUYER ARBITRAGE %s: a crate of %d costs $%.2f (%s) and the buyer pays $%d: $%.2f a crate, "
+                         "inside the allowance -- %s" % (crate, n, cost, got[1], top, top - cost, chain(best, got[1])))
+        else:
+            reps.append("buyer %s: a crate of %d costs at least $%.2f with money (%s); the buyer pays at most $%d"
+                        % (crate, n, cost, got[1], top))
+    return fails, reps
 
 
 # ------------------------------------------------------------------------------------------------ barter
@@ -1631,7 +2152,7 @@ def entei_checks(bank_prices, best, files=None):
 
 # ------------------------------------------------------------------------------------------------ the run
 def audit(server_dir=None, vanilla_jar=None, markets_mod=None, bank_mod=None, use_jars=True, traders_mod=None,
-          direct_trades_mod=None, direct_trades_doc=None):
+          direct_trades_mod=None, direct_trades_doc=None, produce_buyer_mod=None):
     """(failures, reports, notes)."""
     fails, reps, notes = [], [], []
     bank_doc = read_json(DATA / "bank.json")
@@ -1715,7 +2236,21 @@ def audit(server_dir=None, vanilla_jar=None, markets_mod=None, bank_mod=None, us
         reps += r
 
     reps += exchange_report(markets_doc, sales, bank_prices, bank_doc, conversions, progression, routes_doc)
-    reps += afk_report(bank_prices, bank_doc, server_dir if server_dir and Path(server_dir).is_dir() else None)
+    sd = server_dir if server_dir and Path(server_dir).is_dir() else None
+    reps += afk_report(bank_prices, bank_doc, sd)
+    if conversions:
+        farm, blocked = afk_farmable(jars, sd, conversions)
+        f, r = afk_checks(bank_prices, bank_doc, farm)
+        fails += f
+        reps += r + blocked + ranch_money_report(jars, bank_prices, bank_doc, sd)
+        notes.append("afk: %d items an unattended farm makes (%d at depth 0), %d of the %d bank prices among them"
+                     % (len(farm), sum(1 for d, _h in farm.values() if d == 0),
+                        sum(1 for i in bank_prices if i in farm), len(bank_prices)))
+    else:
+        notes.append("NOT READ: the AFK farm set (no jars): the Bank's AFK check did not run; this is a PARTIAL run")
+    f, r = buyer_checks(buyer_emitted(produce_buyer_mod), best, jars if conversions else None)
+    fails += f
+    reps += r
     return fails, reps, notes
 
 

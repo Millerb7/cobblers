@@ -14,6 +14,7 @@ and the vanilla jar; without them those tests skip and say so. What none of this
 """
 from __future__ import annotations
 
+import json
 import re
 import sys
 import types
@@ -37,6 +38,34 @@ needs_jars = pytest.mark.skipif(not HAVE_JARS, reason="no snapshot + vanilla jar
 # arbitrage, no tier leak and no missing id. A defect that appears must be fixed or entered here; an entry whose
 # defect disappears fails test_the_failure_set_is_exactly_the_known_defects by name.
 KNOWN: dict = {}
+# 2026-10-10 (the BANKPRODUCE audit): items the Bank still buys that an unattended farm makes, found when the audit
+# learned Cobblemon's brewing-stand and campfire-pot recipes and the farm derivation (afk_farmable). Each breaks
+# data/bank.json afk_rule ("the bank buys nothing an unattended farm makes"); none is excepted. Pre-existing base
+# prices, not added by U1 (the 69 entries are a subset of the 122 at the same prices). Only with the jars.
+_BREWED = "medicinal brew (fished water bottle + medicinal_leek crop) + a crop or berry"
+_COOKED = "campfire-pot dish of crops, berries, ranch honey or sugar"
+AFK_KNOWN = {
+    "cobblemon:potion": _BREWED, "cobblemon:super_potion": _BREWED, "cobblemon:hyper_potion": _BREWED,
+    "cobblemon:max_potion": _BREWED, "cobblemon:full_restore": _BREWED, "cobblemon:ether": _BREWED,
+    "cobblemon:max_ether": _BREWED, "cobblemon:elixir": _BREWED, "cobblemon:max_elixir": _BREWED,
+    "cobblemon:pp_up": _BREWED + " (vivichoke): $2,500 a bottle", "cobblemon:hp_up": "PP Up + a berry",
+    "cobblemon:protein": "PP Up + a berry", "cobblemon:iron": "PP Up + a berry", "cobblemon:calcium": "PP Up + a berry",
+    "cobblemon:zinc": "PP Up + a berry", "cobblemon:carbos": "PP Up + a berry",
+    "cobblemon:revive": "heal powder (revival_herb crop) + ranch honey", "cobblemon:max_revive": "two revives + vivichoke",
+    "cobblemon:candied_apple": _COOKED, "cobblemon:candied_berry": _COOKED, "cobblemon:jubilife_muffin": _COOKED,
+    "cobblemon:lava_cookie": _COOKED, "cobblemon:old_gateau": _COOKED, "cobblemon:pewter_crunchies": _COOKED,
+    "cobblemon:ponigiri": _COOKED, "cobblemon:potato_mochi": _COOKED,
+    "minecraft:emerald_block": "nine ranch emeralds (excepted) craft a block the exception does not name",
+    "minecraft:gold_ingot": "nine gold nuggets, a Meowth/Persian ranch drop Pasture Loot does not blacklist",
+}
+if HAVE_JARS:
+    KNOWN.update({"AFK BANK %s:" % k: v for k, v in AFK_KNOWN.items()})
+# 2026-10-10: tools/produce_buyer.py sell_lines returns on a failed balance check (owed) BEFORE `scoreboard players add
+# @s cob_pb_sold 1`, so a sale whose pay landed but whose check misfired (a `cobbledollars query` that does not return
+# the balance: relayed, EXP-061) pays and is never counted: the allowance fails open. One per crate kind.
+BUYER_FAIL_OPEN = "a sale that took the crate can return before counting it against the allowance"
+KNOWN.update({"BUYER %s: %s" % (c["id"], BUYER_FAIL_OPEN): "produce_buyer.py counts the sale after the pay check"
+              for c in E.read_json(E.DATA / "produce_buyer.json")["crates"]})
 
 
 @pytest.fixture(scope="module")
@@ -202,14 +231,18 @@ def test_every_exchange_line_is_reported_with_its_ratio(real):
         assert "material earns" in r and ("ratio" in r or "NOT DERIVABLE" in r or "NOT EMITTED" in r), r
 
 
-# Without it N64's relayed base food prices would go unverified: the AFK report must carry the base's own prices for
-# melon, dried kelp, mushroom stew and cookies, read from the base file, and say whether data/bank.json overrides them.
+# Without it the base food prices would leave the report silently: since U1 (2026-10-10) melon, dried kelp, mushroom
+# stew and cookies are no longer bought, so each must still be reported with the base's own price (read from the base
+# file) and the data/bank.json base_removed line that took it out -- and none of them may be in the emitted bank.
 def test_the_afk_report_carries_the_base_food_prices():
     base = {e["item"]: int(e["price"]) for e in E.read_json(E.BASE_BANK)["bank"]}
-    reps = E.afk_report(E.bank_effective(E.bank_entries_emitted()), E.read_json(E.DATA / "bank.json"))
+    bank = E.bank_effective(E.bank_entries_emitted())
+    reps = E.afk_report(bank, E.read_json(E.DATA / "bank.json"))
     for item in ("minecraft:melon_slice", "minecraft:dried_kelp", "minecraft:mushroom_stew", "minecraft:cookie"):
+        assert item not in bank, "%s is bought again" % item
         line = next(r for r in reps if r.startswith("afk %s " % item))
-        assert ("$%d " % base[item]) in line and "bank.json:" in line, line
+        assert ("base $%d " % base[item]) in line and "REMOVED" in line, line
+        assert re.search(r"data/bank\.json:\d+ base_removed", line), line
 
 
 # Without it the Mart tiers would be unaudited: with the snapshot, every Mart clerk is tiered and none is a leak.
@@ -708,3 +741,205 @@ def test_a_generator_that_puts_the_experiment_offers_on_the_production_barterer_
     fails, _r, _n = E.audit(None, None, use_jars=False, direct_trades_mod=d)
     assert any(f.startswith("BARTER EMITTED counter_barterer carries 2 offer(s) that are not its own")
                for f in fails), fails[:5]
+
+
+# ============================================================================================ AFK and the Produce Buyer
+# (BANKPRODUCE, 2026-10-10.) Fixtures first (a stub jar set and a hand-written buyer pack, every answer computed by
+# hand), then the real data, then generator mutations: tools/bank.py and tools/produce_buyer.py with their CODE changed
+# and data/ untouched. What none of this covers: that Pasture Loot really rolls a species table (ASSUMED), that a
+# campfire pot or brewing stand can run unattended, and anything EXP-061 tests in game (the dialogue, the give, query).
+def _afk_dir(tmp_path, mobs=(), items=()):
+    (tmp_path / "config").mkdir()
+    (tmp_path / "config" / "mobsbegone-blacklist.json").write_text(json.dumps(list(mobs)), encoding="utf-8")
+    (tmp_path / "config" / "PastureLoot.json").write_text(json.dumps(
+        {"tick_per_minute": 1200, "drop_chance_per_minute": 0.15, "item_blacklist": list(items)}), encoding="utf-8")
+    return str(tmp_path)
+
+
+def _afk_jars():
+    j = E.Jars()
+    j.aged = {"t:leek"}
+    j.loot = {"t:blocks/leek": [{"pools": [{"entries": [{"type": "minecraft:item", "name": "t:leek_item"}]}]}],
+              "t:gameplay/fishing": [{"pools": [{"entries": [{"type": "minecraft:loot_table", "value": "t:fish_junk"}]}]}],
+              "t:fish_junk": [{"pools": [{"entries": [{"type": "minecraft:alternatives", "children": [
+                  {"type": "minecraft:item", "name": "t:bottle"}]}]}]}]}
+    j.species = [("t.jar", "t:species/thief", {"amount": 6, "entries": [
+        {"item": "t:berry", "quantityRange": "2-4"}, {"item": "t:gem", "percentage": 5.0},
+        {"item": "t:hidden", "percentage": 5.0}]})]
+    return j
+
+
+# Without it the farm derivation is unproved: a crop's block loot, a fishing table reached through a nested loot_table
+# reference and a species drop are depth 0; a blacklisted drop is not farmable; a brew of two farmed items is depth 1
+# and a brew over that depth 2; a recipe with one unfarmed slot is not farmable.
+def test_the_afk_farm_set_on_a_stub_jar(tmp_path):
+    conv = [("t:brew", "cobblemon:brewing_stand", [({"t:bottle"}, 3), ({"t:leek_item"}, 1)], "t:brew", 3),
+            ("t:tonic", "cobblemon:brewing_stand", [({"t:brew"}, 3), ({"t:berry"}, 1)], "t:tonic", 3),
+            ("t:ring", "crafting_shaped", [({"t:gem"}, 8), ({"t:unfarmed"}, 1)], "t:ring", 1)]
+    farm, _blocked = E.afk_farmable(_afk_jars(), _afk_dir(tmp_path, items=["t:hidden"]), conv)
+    assert farm["t:leek_item"][0] == 0 and farm["t:bottle"][0] == 0 and farm["t:berry"][0] == 0
+    assert farm["t:gem"][0] == 0 and "t:hidden" not in farm
+    assert farm["t:brew"][0] == 1 and farm["t:tonic"][0] == 2
+    assert "t:ring" not in farm
+
+
+# Without it a stated farm whose mob is blacklisted would count as a farm (or a farm whose mob is not, as blocked).
+def test_a_stated_farm_needing_only_blacklisted_mobs_is_blocked(tmp_path):
+    _farm, blocked = E.afk_farmable(E.Jars(), _afk_dir(tmp_path, mobs=["minecraft:chicken"]), [])
+    assert any(b.startswith("afk stated source blocked minecraft:egg:") for b in blocked)
+    assert not any("minecraft:wheat" in b for b in blocked)
+
+
+# Without it the Bank's AFK rule has no teeth: a bought farm item fails; one excepted with a why AND a decision is
+# reported; an exception with no decision fails; an unfarmed item is silent; a stale exception is reported.
+def test_a_bought_farm_item_fails_unless_excepted_with_a_decision():
+    farm = {"t:pie": (1, "craft"), "t:ore": (0, "ranch"), "t:wart": (0, "crop")}
+    doc = {"afk_rule": {"exceptions": [{"item": "t:ore", "why": "ore stays flat", "decision": "the owner"},
+                                       {"item": "t:wart", "why": "kept", "decision": ""},
+                                       {"item": "t:gone", "why": "x", "decision": "y"}]}}
+    fails, reps = E.afk_checks({"t:pie": 20, "t:ore": 5, "t:wart": 1, "t:gem": 9}, doc, farm)
+    assert sorted(f.split(":")[0] + ":" + f.split(":")[1] for f in fails) == ["AFK BANK t:pie", "AFK BANK t:wart"]
+    assert any(r.startswith("afk exception t:ore $5") for r in reps)
+    assert any(r.startswith("afk stale exception t:gone") for r in reps)
+    assert not any("t:gem" in x for x in fails + reps)
+
+
+# Without it the ranch money figures rest on an unproved roll: the Thievul shape (a sure entry, then two 5% entries,
+# amount 6) takes the sure one once and the first 5% entry with 1 - 0.95^5 = 0.2262191 (five passes after the first);
+# a single 50% entry with amount 1 is taken half the time.
+def test_the_drop_roll_expectation_by_hand():
+    picks = E.expected_picks({"amount": 6, "entries": [{"item": "a"}, {"item": "b", "percentage": 5.0},
+                                                       {"item": "c", "percentage": 5.0}]})
+    assert picks[0] == pytest.approx(1.0) and picks[1] == pytest.approx(1 - 0.95 ** 5)
+    assert E.expected_picks({"amount": "1", "entries": [{"item": "a", "percentage": 50}]}) == [pytest.approx(0.5)]
+
+
+def _pb_pack(take_first=True, count_n="0", guarded=True, pay_twice=False, sold_late=False):
+    leg = ["scoreboard players set #badges t 0",
+           "execute if entity @s[advancements={x:flag/g1=true}] run scoreboard players add #badges t 1",
+           ("execute unless score @s leg = #badges t run " if guarded else "") + "scoreboard players set @s sold 0",
+           "scoreboard players operation @s leg = #badges t",
+           "execute if score #badges t matches 0 run scoreboard players set #price t 40",
+           "execute if score #badges t matches 0 run scoreboard players set #cap t 40",
+           "execute if score #badges t matches 1 run scoreboard players set #price t 0",
+           "execute if score #badges t matches 1 run scoreboard players set #cap t 0"]
+    take = ["execute store result score #took t run clear @s #x:produce_buyer/crops 32",
+            "execute unless score #took t matches 32 run return run tellraw @s \"no\""] + \
+        ([] if sold_late else ["scoreboard players add @s sold 1"])
+    pay =["execute store result storage x:pb pay.amount int 1 run scoreboard players get #price t",
+           "function x:produce_buyer/pay with storage x:pb pay"] * (2 if pay_twice else 1)
+    sell = ["execute store result score #now t run time query gametime",
+            "execute if score @s cd > #now t run return 0",
+            "function x:produce_buyer/leg",
+            "execute if score #price t matches ..0 run return run tellraw @s \"closed\"",
+            "execute if score @s sold >= #cap t run return run tellraw @s \"spent\"",
+            "execute store result score #have t run clear @s #x:produce_buyer/crops %s" % count_n,
+            "execute unless score #have t matches 32.. run return run tellraw @s \"short\"",
+            "execute store result score #before t run cobbledollars query @s"] + \
+        (take + pay if take_first else pay + take) + \
+        ["execute store result score #after t run cobbledollars query @s",
+         "execute unless score #after t = #want t run return run tellraw @s \"owed\""] + \
+        (["scoreboard players add @s sold 1"] if sold_late else [])
+    return {"data/x/function/produce_buyer/leg.mcfunction": leg,
+            "data/x/function/produce_buyer/pay.mcfunction": ["$cobbledollars give @s $(amount)"],
+            "data/x/function/produce_buyer/sell/crops.mcfunction": sell,
+            "data/x/tags/item/produce_buyer/crops.json": {"values": ["t:wheat", "t:carrot"]}}
+
+
+# Without it the buyer reader is unproved: a hand-written correct pack has no failure and its schedule is read back
+# ($40 x 40 at 0 badges, nothing at 1: $1,600 a player); a crate that money buys for less than the price is arbitrage
+# (32 wheat at $0.50 = $16 against $40: $24 a crate).
+def test_the_buyer_reader_on_a_hand_written_pack():
+    fails, reps = E.buyer_checks(_pb_pack(), {"t:carrot": (2.0, "buy at s for $2")})
+    assert fails == [], fails
+    assert any(r.startswith("buyer schedule (emitted): 0 badges $40 x 40, 1 badges $0 x 0; $1600") for r in reps), reps
+    fails, _r = E.buyer_checks(_pb_pack(), {"t:wheat": (0.5, "buy at s for $0.5")})
+    assert fails == ["BUYER ARBITRAGE crops: a crate of 32 costs $16.00 (t:wheat) and the buyer pays $40: $24.00 a "
+                     "crate, inside the allowance -- t:wheat $0.50: buy at s for $0.5"], fails
+
+
+# Without it a sale that takes and does not pay, counts by taking, pays twice, or resets the allowance on every sale
+# would pass: each defect in the hand-written pack is named.
+def test_each_buyer_defect_on_a_hand_written_pack_is_named():
+    def names(**kw):
+        return E.buyer_checks(_pb_pack(**kw), {})[0]
+    assert any("it pays before it takes" in f for f in names(take_first=False))
+    assert any("dry-run counts" in f for f in names(count_n="32"))
+    assert any("allowance reset" in f for f in names(guarded=False))
+    assert any("2 pay calls" in f for f in names(pay_twice=True))
+    assert any("the cap fails open" in f for f in names(sold_late=True))
+
+
+# ------------------------------------------------------------------------------------- AFK and the buyer, real data
+# Without it the AFK check could pass vacuously: with the jars it must find the excepted ranch ores farmable (each
+# reported with its decision) and price the emerald ranch per hour from the species tables.
+@needs_jars
+def test_the_real_ranch_ores_are_reported_as_open_exceptions_with_money(real):
+    _f, reps, notes = real
+    assert any(n.startswith("afk: ") for n in notes)
+    for item in ("minecraft:diamond", "minecraft:emerald", "minecraft:raw_iron"):
+        assert any(r.startswith("afk exception %s " % item) and "ranch_ore" in r for r in reps), item
+    assert any(r.startswith("ranch money minecraft:emerald at $400: best thievul, 0.226 a drop") for r in reps)
+
+
+# Without it the emitted buyer could regress unseen: the real pack has no BUYER failure but the known fail-open count
+# (KNOWN), and its schedule sums to the $3,600 a player the design states (docs/mechanics/ECONOMY_OVERHAUL.md 2.2),
+# read from the emitted leg function.
+def test_the_real_buyer_pack_is_safe_by_its_emitted_lines(real):
+    fails, reps, _n = real
+    other = [f for f in fails if f.startswith("BUYER") and BUYER_FAIL_OPEN not in f]
+    assert not other, other
+    assert any(r.startswith("buyer schedule (emitted): ") and r.endswith("$3600 a player over the campaign")
+               for r in reps)
+
+
+# --------------------------------------------------------------------------- AFK and the buyer, generator mutations
+# Without it the AFK check might read the record and not bank.py's output: bank.py emitting an oran berry after the
+# buys (data/bank.json untouched: the berry stays in buys_removed) must fail as an AFK item.
+@needs_jars
+def test_a_generator_that_buys_a_berry_again_fails_the_afk_rule():
+    b = mutant("bank", 'for b in doc["buys"]]', 'for b in doc["buys"]] + [{"item": "cobblemon:oran_berry", "price": 2}]')
+    fails, _r, _n = E.audit(SNAP, VANILLA, bank_mod=b, use_jars=True)
+    assert any(f.startswith("AFK BANK cobblemon:oran_berry: the Bank pays $2") for f in fails), fails[:5]
+
+
+# Without it the base removals could silently come back: bank.py ignoring base_removed must fail every base food.
+@needs_jars
+def test_a_generator_that_ignores_base_removed_fails_the_afk_rule():
+    b = mutant("bank", 'if e["item"] not in gone]', ']')
+    fails, _r, _n = E.audit(SNAP, VANILLA, bank_mod=b, use_jars=True)
+    for item in ("minecraft:melon_slice", "minecraft:cod", "cobblemon:relic_coin", "minecraft:cake"):
+        assert any(f.startswith("AFK BANK %s:" % item) for f in fails), item
+
+
+_PB_TAKE = ('        "execute store result score #took %s run clear @s %s %d" % (T, item, n),\n'
+            '        "execute unless score #took %s matches %d run return run tellraw @s %s" % (T, n, text(m["take_failed"], '
+            '"red")),\n')
+_PB_PAY = ('        "# 8. PAY the schedule\'s price, then the balance must have risen by exactly that",\n'
+           '        "execute store result storage %s pay.amount int 1 run scoreboard players get #price %s" % (store, T),\n'
+           '        "function %s with storage %s pay" % (fn_id("pay"), store),\n')
+
+
+# Without it the take-before-pay order is unguarded: produce_buyer.py with its pay moved above its take (data untouched)
+# must fail every crate.
+def test_a_generator_that_pays_before_it_takes_fails():
+    m = mutant("produce_buyer", _PB_TAKE + _PB_PAY, _PB_PAY + _PB_TAKE)
+    fails, _r = E.buyer_checks(E.buyer_emitted(m), {})
+    crates = {c["id"] for c in E.read_json(E.DATA / "produce_buyer.json")["crates"]}
+    assert {f.split()[1].rstrip(":") for f in fails if "it pays before it takes" in f} == crates, fails[:4]
+
+
+# Without it a count that takes is unguarded: produce_buyer.py counting with the crate's size instead of 0 removes the
+# goods at the count step, before any gate; every crate must fail.
+def test_a_generator_whose_count_takes_fails():
+    m = mutant("produce_buyer", 'run clear @s %s 0" % (T, item)', 'run clear @s %s %d" % (T, item, n)')
+    fails, _r = E.buyer_checks(E.buyer_emitted(m), {})
+    assert len([f for f in fails if "dry-run counts" in f]) == len(E.read_json(E.DATA / "produce_buyer.json")["crates"])
+
+
+# Without it an unguarded allowance reset (a fresh allowance on every sale, unlimited money) would pass.
+def test_a_generator_whose_allowance_resets_every_sale_fails():
+    m = mutant("produce_buyer", '"execute unless score @s %s = #badges %s run scoreboard players set @s %s 0" % (S["leg"], T, '
+               'S["sold"])', '"scoreboard players set @s %s 0" % S["sold"]')
+    fails, _r = E.buyer_checks(E.buyer_emitted(m), {})
+    assert any(f.startswith("BUYER leg: the allowance reset") for f in fails), fails[:3]
