@@ -38,34 +38,14 @@ needs_jars = pytest.mark.skipif(not HAVE_JARS, reason="no snapshot + vanilla jar
 # arbitrage, no tier leak and no missing id. A defect that appears must be fixed or entered here; an entry whose
 # defect disappears fails test_the_failure_set_is_exactly_the_known_defects by name.
 KNOWN: dict = {}
-# 2026-10-10 (the BANKPRODUCE audit): items the Bank still buys that an unattended farm makes, found when the audit
-# learned Cobblemon's brewing-stand and campfire-pot recipes and the farm derivation (afk_farmable). Each breaks
-# data/bank.json afk_rule ("the bank buys nothing an unattended farm makes"); none is excepted. Pre-existing base
-# prices, not added by U1 (the 69 entries are a subset of the 122 at the same prices). Only with the jars.
-_BREWED = "medicinal brew (fished water bottle + medicinal_leek crop) + a crop or berry"
-_COOKED = "campfire-pot dish of crops, berries, ranch honey or sugar"
-AFK_KNOWN = {
-    "cobblemon:potion": _BREWED, "cobblemon:super_potion": _BREWED, "cobblemon:hyper_potion": _BREWED,
-    "cobblemon:max_potion": _BREWED, "cobblemon:full_restore": _BREWED, "cobblemon:ether": _BREWED,
-    "cobblemon:max_ether": _BREWED, "cobblemon:elixir": _BREWED, "cobblemon:max_elixir": _BREWED,
-    "cobblemon:pp_up": _BREWED + " (vivichoke): $2,500 a bottle", "cobblemon:hp_up": "PP Up + a berry",
-    "cobblemon:protein": "PP Up + a berry", "cobblemon:iron": "PP Up + a berry", "cobblemon:calcium": "PP Up + a berry",
-    "cobblemon:zinc": "PP Up + a berry", "cobblemon:carbos": "PP Up + a berry",
-    "cobblemon:revive": "heal powder (revival_herb crop) + ranch honey", "cobblemon:max_revive": "two revives + vivichoke",
-    "cobblemon:candied_apple": _COOKED, "cobblemon:candied_berry": _COOKED, "cobblemon:jubilife_muffin": _COOKED,
-    "cobblemon:lava_cookie": _COOKED, "cobblemon:old_gateau": _COOKED, "cobblemon:pewter_crunchies": _COOKED,
-    "cobblemon:ponigiri": _COOKED, "cobblemon:potato_mochi": _COOKED,
-    "minecraft:emerald_block": "nine ranch emeralds (excepted) craft a block the exception does not name",
-    "minecraft:gold_ingot": "nine gold nuggets, a Meowth/Persian ranch drop Pasture Loot does not blacklist",
-}
-if HAVE_JARS:
-    KNOWN.update({"AFK BANK %s:" % k: v for k, v in AFK_KNOWN.items()})
-# 2026-10-10: tools/produce_buyer.py sell_lines returns on a failed balance check (owed) BEFORE `scoreboard players add
-# @s cob_pb_sold 1`, so a sale whose pay landed but whose check misfired (a `cobbledollars query` that does not return
-# the balance: relayed, EXP-061) pays and is never counted: the allowance fails open. One per crate kind.
+# Emptied again 2026-10-08, each removal confirmed fixed rather than unseen:
+#  - the 28 "AFK BANK <item>:" entries (brewed medicines, the six vitamins, PP Up, revives, pot dishes,
+#    emerald_block, gold_ingot): baba770 took each out of the Bank (base_removed / buys_removed, joined to
+#    afk_rule.crafts); none of the 28 is in the emitted bank (bank_entries_emitted), and the AFK rule still bites
+#    (test_a_generator_that_buys_a_vitamin_again_fails_the_afk_rule, ..._buys_a_berry_again_...).
+#  - the eight "BUYER <crate>: a sale that took the crate can return before counting it" entries: ca1ce73 counts the
+#    crate straight after the exact take gate, and a short take counts it in short_take; the audit's check is unchanged.
 BUYER_FAIL_OPEN = "a sale that took the crate can return before counting it against the allowance"
-KNOWN.update({"BUYER %s: %s" % (c["id"], BUYER_FAIL_OPEN): "produce_buyer.py counts the sale after the pay check"
-              for c in E.read_json(E.DATA / "produce_buyer.json")["crates"]})
 
 
 @pytest.fixture(scope="module")
@@ -73,14 +53,19 @@ def real():
     return E.audit(SNAP if HAVE_SNAP else None, VANILLA if HAVE_JARS else None, use_jars=HAVE_JARS)
 
 
-def mutant(name, old, new):
-    """tools/<name>.py with one source line changed, loaded as a fresh module (the file on disk is untouched)."""
+def mutant(name, old, new=None, *more):
+    """tools/<name>.py with source text changed, loaded as a fresh module (the file on disk is untouched). Either
+    mutant(name, old, new) or mutant(name, (old, new), (old, new), ...), the replacements applied in order; each target
+    must occur exactly once."""
+    pairs = [(old, new)] if isinstance(old, str) else [old] + ([new] if new is not None else []) + list(more)
     path = ROOT / "tools" / ("%s.py" % name)
     src = path.read_text(encoding="utf-8")
-    assert src.count(old) == 1, "the mutation target moved in tools/%s.py: %r" % (name, old)
+    for a, b in pairs:
+        assert src.count(a) == 1, "the mutation target moved in tools/%s.py: %r" % (name, a)
+        src = src.replace(a, b)
     mod = types.ModuleType("%s_mutant" % name)
     mod.__file__ = str(path)
-    exec(compile(src.replace(old, new), str(path), "exec"), mod.__dict__)
+    exec(compile(src, str(path), "exec"), mod.__dict__)
     return mod
 
 
@@ -696,14 +681,39 @@ def test_a_generator_that_drops_the_convenience_markup_fails():
     assert any(f.startswith("PRICE CONVENIENCE sunset_west_mart sells cobblemon:power_weight") for f in fails), fails[:5]
 
 
-# Without it a vitamin could reach a Mart: the generator appends a protein at $2,000 to the tier-1 training lines.
+# Since baba770 the Bank buys no vitamin (all six are in data/bank.json base_removed and afk_rule.crafts), so E2's
+# threshold is gone and the vitamin rule reports instead of judging. The property is now that a vitamin cannot come
+# back onto the Bank's buy list: bank.py emitting the base protein entry again (its base_removed filter widened for it,
+# data/bank.json untouched) must fail the AFK rule, a protein being PP Up + a berry, PP Up a medicinal brew.
+_BANK_KEEPS_PROTEIN = ('if e["item"] not in gone]', 'if e["item"] not in gone or e["item"] == "cobblemon:protein"]')
+
+
+# Without it a vitamin could return to the Bank unseen and become a farm's money printer again.
+@needs_jars
+def test_a_generator_that_buys_a_vitamin_again_fails_the_afk_rule():
+    b = mutant("bank", *_BANK_KEEPS_PROTEIN)
+    assert "cobblemon:protein" in {e["item"] for e in E.bank_entries_emitted(b)}
+    fails, _r, _n = E.audit(SNAP, VANILLA, bank_mod=b, use_jars=True)
+    assert any(f.startswith("AFK BANK cobblemon:protein: the Bank pays $") for f in fails), fails[:5]
+
+
+# Without it the vitamin rule (EV_IV_TRAINING.md 4.2 E2) would be unproved now the real Bank gives it no threshold:
+# the real data reports each vitamin unbought; with the Bank buying protein again (at the base's price) and the
+# traders generator shelving one at $2,000 on the tier-1 training lines, the rule fails it.
 @needs_snap
-def test_a_generator_that_shelves_a_vitamin_at_2000_fails():
+def test_a_vitamin_shelved_under_a_bank_price_fails_the_vitamin_rule(real):
+    _f, reps, _n = real
+    for v in E.VITAMINS:
+        assert "vitamin %s: the Bank does not buy it, so E2 has no threshold" % v in reps, v
+    b = mutant("bank", *_BANK_KEEPS_PROTEIN)
+    pay = E.bank_effective(E.bank_entries_emitted(b))["cobblemon:protein"]
+    assert pay > 2000, "the base protein price no longer exceeds the $2,000 shelf: re-derive the shelf price"
     t = mutant("traders", 'out += [(i["item"], int(i["price"])) for i in t.get("items") or []]',
                'out += [(i["item"], int(i["price"])) for i in t.get("items") or []] + '
                '([("cobblemon:protein", 2000)] if t["badges"] == 1 else [])')
-    fails, _r, _n = E.audit(SNAP, None, use_jars=False, traders_mod=t)
-    assert any(f.startswith("VITAMIN cobblemon:protein obtainable for $2000.00") for f in fails), fails[:5]
+    fails, _r, _n = E.audit(SNAP, None, use_jars=False, traders_mod=t, bank_mod=b)
+    assert any(f.startswith("VITAMIN cobblemon:protein obtainable for $2000.00, at or under the Bank's $%d" % pay)
+               for f in fails), fails[:5]
 
 
 # Without it a training shelf one tier early would pass: the generator's tier comparison is off by one.
@@ -882,13 +892,13 @@ def test_the_real_ranch_ores_are_reported_as_open_exceptions_with_money(real):
     assert any(r.startswith("ranch money minecraft:emerald at $400: best thievul, 0.226 a drop") for r in reps)
 
 
-# Without it the emitted buyer could regress unseen: the real pack has no BUYER failure but the known fail-open count
-# (KNOWN), and its schedule sums to the $3,600 a player the design states (docs/mechanics/ECONOMY_OVERHAUL.md 2.2),
-# read from the emitted leg function.
+# Without it the emitted buyer could regress unseen: the real pack has no BUYER failure at all (the fail-open count
+# was fixed in ca1ce73), and its schedule sums to the $3,600 a player the design states
+# (docs/mechanics/ECONOMY_OVERHAUL.md 2.2), read from the emitted leg function.
 def test_the_real_buyer_pack_is_safe_by_its_emitted_lines(real):
     fails, reps, _n = real
-    other = [f for f in fails if f.startswith("BUYER") and BUYER_FAIL_OPEN not in f]
-    assert not other, other
+    buyer = [f for f in fails if f.startswith("BUYER")]
+    assert not buyer, buyer
     assert any(r.startswith("buyer schedule (emitted): ") and r.endswith("$3600 a player over the campaign")
                for r in reps)
 
@@ -912,21 +922,37 @@ def test_a_generator_that_ignores_base_removed_fails_the_afk_rule():
         assert any(f.startswith("AFK BANK %s:" % item) for f in fails), item
 
 
+# tools/produce_buyer.py sell_lines since ca1ce73: 7. take + exact gate (a short take runs short_take), 8. count the
+# crate against the allowance, 9. pay. The anchors are the generator's own source lines, so a moved line fails loudly.
 _PB_TAKE = ('        "execute store result score #took %s run clear @s %s %d" % (T, item, n),\n'
-            '        "execute unless score #took %s matches %d run return run tellraw @s %s" % (T, n, text(m["take_failed"], '
-            '"red")),\n')
-_PB_PAY = ('        "# 8. PAY the schedule\'s price, then the balance must have risen by exactly that",\n'
+            '        "execute unless score #took %s matches %d run return run function %s" % (T, n, fn_id("short_take")),\n')
+_PB_COUNT = ('        "# 8. COUNT the crate against the leg\'s allowance before anything below can return: the cap fails closed",\n'
+             '        "scoreboard players add @s %s 1" % S["sold"],\n')
+_PB_PAY = ('        "# 9. PAY the schedule\'s price, then the balance must have risen by exactly that",\n'
            '        "execute store result storage %s pay.amount int 1 run scoreboard players get #price %s" % (store, T),\n'
            '        "function %s with storage %s pay" % (fn_id("pay"), store),\n')
+_PB_CHECK = ('        "execute unless score #after %s = #want %s run return run tellraw @s %s" % (T, T, text(m["pay_failed"], '
+             '"red")),\n')
 
 
-# Without it the take-before-pay order is unguarded: produce_buyer.py with its pay moved above its take (data untouched)
-# must fail every crate.
+def _crates():
+    return {c["id"] for c in E.read_json(E.DATA / "produce_buyer.json")["crates"]}
+
+
+# Without it the take-before-pay order is unguarded: produce_buyer.py with its pay moved above its take (the count
+# kept straight after the take; data untouched) must fail every crate.
 def test_a_generator_that_pays_before_it_takes_fails():
-    m = mutant("produce_buyer", _PB_TAKE + _PB_PAY, _PB_PAY + _PB_TAKE)
+    m = mutant("produce_buyer", _PB_TAKE + _PB_COUNT + _PB_PAY, _PB_PAY + _PB_TAKE + _PB_COUNT)
     fails, _r = E.buyer_checks(E.buyer_emitted(m), {})
-    crates = {c["id"] for c in E.read_json(E.DATA / "produce_buyer.json")["crates"]}
-    assert {f.split()[1].rstrip(":") for f in fails if "it pays before it takes" in f} == crates, fails[:4]
+    assert {f.split()[1].rstrip(":") for f in fails if "it pays before it takes" in f} == _crates(), fails[:4]
+
+
+# Without it ca1ce73's fix could be undone unseen: produce_buyer.py counting the crate after the balance check again
+# (the pre-ca1ce73 order: a misfiring query returns before the count, so the allowance fails open) must fail every crate.
+def test_a_generator_that_counts_after_the_pay_check_fails_open():
+    m = mutant("produce_buyer", (_PB_COUNT, ""), (_PB_CHECK, _PB_CHECK + _PB_COUNT))
+    fails, _r = E.buyer_checks(E.buyer_emitted(m), {})
+    assert {f.split()[1].rstrip(":") for f in fails if BUYER_FAIL_OPEN in f} == _crates(), fails[:4]
 
 
 # Without it a count that takes is unguarded: produce_buyer.py counting with the crate's size instead of 0 removes the

@@ -102,6 +102,14 @@
         "docs/world-building/SOUTHERN_RIFT_MEGA.md"
       ]
     },
+    "mining_caves": {
+      "what": "the refillable mining caves (cave_old_mine, cave_fossick): galleries of vanilla ore restored on approach by the gallery clock mcv.last",
+      "paths": [
+        "data/mining_caves.json",
+        "tools/mining_caves.py",
+        "docs/mechanics/ECONOMY_OVERHAUL.md"
+      ]
+    },
     "entei_boss": {
       "what": "the repeatable Entei: one sealed slot per player in cobblers:pocket, entered by eating a crafted sigil in the Nether; catchable until the first catch, then an item roll",
       "paths": [
@@ -430,6 +438,15 @@
         "tests/test_system_contracts.py::test_contract_c4_every_tool_that_reads_the_spawn_conditions_is_accounted_for",
         "tests/test_system_contracts.py::test_contract_c4_built_world_packs_place_no_spawn_condition_the_policy_never_allows"
       ],
+      "fails_today": {
+        "recorded": "2026-10-08",
+        "commit": "eef6004",
+        "measured": "the built-pack check run against the integration checkout's build/datapacks (12,691 functions): exactly these two packs place a spawn condition no data/spawn_block_policy.json entry names",
+        "cases": {
+          "built:cobblers_lake_life": "tools/lake_life.py:924 sets minecraft:sugar_cane (the lake banks' reeds), a spawn condition (data/spawn_blocks.json), and no policy entry names it. The owner ALLOWED spawn-condition blocks (2026-10-05: docs/STATE.md 'Spawn-condition blocks: ALLOW', data/spawn_block_policy.json owner_decision_2026_10_05), so the fix is a policy entry scoped to lake_life naming where and what it draws, like the mining_caves entry; it is not added here because data/spawn_block_policy.json belongs to datapack-content-dev (docs/STATE.md file-ownership table)",
+          "built:cobblers_ambient_idle": "data/ambient_towns/gym2_town.json:245 props a minecraft:pumpkin (built into ambient_idle/t/gym2_town/props.mcfunction), a spawn condition; the policy whitelists only minecraft:carved_pumpkin, for gym4_town's marrow show. Same owner decision, same owner of the fix: a policy entry scoped to gym2_town, or a prop that is not a spawn condition"
+        }
+      },
       "tools": {
         "arena_dome_audit.py": "checker: the built cobblers_arena_dome functions (Heaven's Arena's dome), forbidden blocks against data/spawn_blocks.json",
         "bank.py": "checker: refuses a bank buy line for an item whose block a spawn condition names (data/spawn_blocks.json), unless the line is in_place: the bank would pay players to strip spawn blocks out of the world. It places nothing (review N1, accounted 2026-10-06)",
@@ -445,7 +462,7 @@
         "rift_mines_audit.py": "checker: the built rift_mines pack (source rift_mines)",
         "gulch_mine_audit.py": "checker: the built gulch_mine pack (source gulch_mine)",
         "mines_audit.py": "checker: the built mines pack (the evolution-stone faces; data/mines.json names no spawn condition)",
-        "mining_caves.py": "not covered: a block source (data/mining_caves.json, pack cobblers_mining_caves: the galleries' vanilla ore, six of whose blocks are spawn conditions under the policy entry scoped to mining_caves) that is not yet one of this contract's SOURCES (the test's _source_blocks reads no data/mining_caves.json; adding it is test-author's). The builder refuses, at build, any spawn condition it places that no data/spawn_block_policy.json entry scoped to mining_caves allows, and the built-pack check below covers its output",
+        "mining_caves.py": "source: mining_caves (data/mining_caves.json, pack cobblers_mining_caves: every block the record names that a cave places, its yields' ores and hosts and each cave's wall, shell, floor, stair and timber, read by _source_blocks in tests/test_system_contracts.py since the caves audit of 2026-10-10; `restore` is the refill's filter, not a block placed). Six of its ores are spawn conditions, covered by the data/spawn_block_policy.json entry scoped to mining_caves. The builder also refuses, at build, any spawn condition no such entry allows, and the built-pack check covers its output",
         "sea_drift_audit.py": "checker: the built sea_drift pack (the Seaward Drift, its strips, Driftmouth Isle and its lighthouse), replayed: no written block is a spawn condition unless a data/spawn_block_policy.json entry scoped to sea_drift whitelists it (none since 2026-10-02: the line is straight and writes no minecraft:rail, and the audit fails any rail that turns). tools/sea_drift.py does not read the file and is not yet one of this contract's sources (the test author's to add)",
         "portals_audit.py": "checker: the built portals pack, against data/portals.json blocks and the spawn conditions. It checks the WORLD side only: the pocket dimension's rooms carry a chest, which is a spawn condition (Gimmighoul), and the dimension's biome is minecraft:the_void, whose mob spawn list is empty. Whether a Cobblemon pool can match that biome is UNTESTED (EXP-047 left spawning in the pocket unrun)",
         "vr_caves.py": "source: vr_caves",
@@ -770,10 +787,11 @@
       "consumers": [
         "ferry",
         "gulch_mine",
+        "mining_caves",
         "rift_mine_gate",
         "water_sites"
       ],
-      "statement": "No action a player can repeat at will (relog, a server restart, placing and boarding a boat, a touch of land, bobbing to the surface, leaving and re-entering an approach box, drinking milk) resets, refreshes early or skips a clock or accumulator a gate relies on: swim fatigue and its collapse clock, the Surf bonus, the ladder's drowning pulses, the blackout dedupe, the gulch Megas' respawn clock, the Ursaluna den's return clock, the ferry's cooldown, the wards' Mining Fatigue. Each case is a scenario in tests/test_gate_clocks.py run with the generated packs. Excepted by design: riding a water Pokemon (it ends fatigue, WATER_BUILD_PLAN 11.2), a blackout (it costs money and a checkpoint return), operator-only gamemode changes.",
+      "statement": "No action a player can repeat at will (relog, a server restart, placing and boarding a boat, a touch of land, bobbing to the surface, leaving and re-entering an approach box, drinking milk) resets, refreshes early or skips a clock or accumulator a gate relies on: swim fatigue and its collapse clock, the Surf bonus, the ladder's drowning pulses, the blackout dedupe, the gulch Megas' respawn clock, the Ursaluna den's return clock, the mining caves' gallery restore clock (mcv.last: a restart or leaving and re-entering a cave's approach box never restores a gallery twice inside its period), the ferry's cooldown, the wards' Mining Fatigue. Each case is a scenario in tests/test_gate_clocks.py run with the generated packs. Excepted by design: riding a water Pokemon (it ends fatigue, WATER_BUILD_PLAN 11.2), a blackout (it costs money and a checkpoint return), operator-only gamemode changes.",
       "stated_in": [
         {
           "at": "data/blackout.json:124",
@@ -790,6 +808,10 @@
         {
           "at": "data/rift_mines.json:983",
           "quote": "per player: an effect, not a block"
+        },
+        {
+          "at": "docs/mechanics/ECONOMY_OVERHAUL.md:299",
+          "quote": "clock must join contract C14's sweep."
         }
       ],
       "tests": [

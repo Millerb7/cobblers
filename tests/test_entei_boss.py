@@ -133,10 +133,31 @@ def test_no_drop_is_money_bankable_or_a_plate(files):
         assert not line.lstrip().startswith("cobbledollars"), line
 
 
+def _bank_file_items():
+    """The ids the CobbleDollars bank file buys, read here from the committed file (not through entei_boss.py)."""
+    path = ROOT / "modpack" / "config" / "cobbledollars" / "bank.json"
+    return {e["item"] for e in json.loads(path.read_text(encoding="utf-8"))["bank"]}
+
+
+# Without it a drop the bank buys would launder the repeatable boss into money. The drop is chosen from the bank file
+# as it stands (the first bought id the boss does not already drop), so the bank's list moving cannot leave the test
+# mutating with an item the bank no longer buys (pp_up left in baba770 and made this test vacuous-red).
 def test_a_bankable_drop_is_refused():
+    drops = {e["item"] for e in DOC["drops"]["entries"]}
+    bankable = sorted(_bank_file_items() - drops)
+    assert bankable, "the bank file buys nothing the boss does not already drop"
     bad = copy.deepcopy(DOC)
-    bad["drops"]["entries"].append({"item": "cobblemon:pp_up", "count": 1, "weight": 1})
-    assert any("cobblemon:pp_up" in p for p in E.problems(bad))
+    bad["drops"]["entries"].append({"item": bankable[0], "count": 1, "weight": 1})
+    assert any(bankable[0] in p and "bank" in p for p in E.problems(bad)), bankable[0]
+
+
+# Without it the bank check could be a stale constant list: an item the bank file no longer buys (pp_up, removed in
+# baba770) is not refused as bankable.
+def test_an_item_the_bank_stopped_buying_is_not_called_bankable():
+    assert "cobblemon:pp_up" not in _bank_file_items()
+    ok = copy.deepcopy(DOC)
+    ok["drops"]["entries"].append({"item": "cobblemon:pp_up", "count": 1, "weight": 1})
+    assert not [p for p in E.problems(ok) if "cobblemon:pp_up" in p and "bank" in p]
 
 
 def test_the_refund_gives_back_exactly_what_the_recipe_makes(files):

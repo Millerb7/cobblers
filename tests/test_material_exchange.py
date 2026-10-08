@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import copy
 import json
+import math
 import os
 import re
 import shutil
@@ -186,13 +187,43 @@ def test_a_netherite_ingot_worth_less_than_its_parts_is_named():
     assert any("netherite_ingot" in p and "inputs" in p for p in bank.craft_problems(d, bank.prices(d)))
 
 
-def test_debris_priced_for_a_shortcut_breaks_the_upper_wage():
+R5_UPPER_FACTOR = 1.5   # docs/mechanics/ECONOMY_OVERHAUL.md section 7 R5: the upper hour <= 1.5 x the fight hour
+
+
+def _r5_debris_break():
+    """The lowest whole-dollar ancient_debris price at which the nether tier's upper hour passes R5's ceiling, worked
+    here from R5 itself and not through tools/bank.py: the fight hour is the opening leg's battle income
+    (data/markets.json income_basis.leg_by_badge) / effort_model.max_leg_hours, the ceiling 1.5 x that, and the upper
+    hour the sum over the tier's buys of (rate_per_hour_upper, else rate_per_hour) x price."""
+    em = DOC["effort_model"]
+    t = em["tiers"]["nether"]
+    fight = MDOC["income_basis"]["leg_by_badge"][str(t["opens_leg"])] / em["max_leg_hours"]
+    rows = [b for b in DOC["buys"] if b.get("tier") in set(t["from_tiers"])]
+    rate = lambda b: b["rate_per_hour_upper"] if b.get("rate_per_hour_upper") is not None else b["rate_per_hour"]  # noqa: E731
+    debris = next(b for b in rows if b["item"] == "minecraft:ancient_debris")
+    rest = sum(rate(b) * b["price"] for b in rows if b is not debris)
+    return math.floor((R5_UPPER_FACTOR * fight - rest) / rate(debris)) + 1
+
+
+def _debris_at(price):
     d = copy.deepcopy(DOC)
     for b in d["buys"]:
         if b["item"] == "minecraft:ancient_debris":
-            b["price"] = 400
-    probs = [p for p, _ in bank.effort_rows(d, MDOC) if p]
-    assert any("nether" in p and "upper_wage" in p for p in probs), probs
+            b["price"] = price
+    return [p for p, _ in bank.effort_rows(d, MDOC) if p]
+
+
+# Without it debris priced as a shortcut past the economy would pass R5's upper wage. The breaking price is derived
+# from R5 (about $549 on 2026-10-08 data): one dollar under it passes, at it the nether tier fails upper_wage. The
+# committed price must sit under it, or the real data already breaks R5.
+def test_debris_priced_for_a_shortcut_breaks_the_upper_wage():
+    assert DOC["effort_model"]["upper_factor"] == R5_UPPER_FACTOR
+    p = _r5_debris_break()
+    real = next(b["price"] for b in DOC["buys"] if b["item"] == "minecraft:ancient_debris")
+    assert real < p, (real, p)
+    assert not [x for x in _debris_at(p - 1) if "nether" in x and "upper_wage" in x], p - 1
+    probs = _debris_at(p)
+    assert any("nether" in x and "upper_wage" in x for x in probs), (p, probs)
 
 
 def test_buying_an_unreachable_item_is_named():
