@@ -813,7 +813,7 @@ def _run(fn_dir, line, player, depth=0):
     elif t[0] == "tp" and t[1] == "@s":
         player["pos"] = (float(t[2]), float(t[3]), float(t[4]))
         player["turned_back"] = True
-    elif t[0] in ("title", "spawnpoint", "advancement"):
+    elif t[0] in ("title", "tellraw", "spawnpoint", "advancement"):
         pass
     else:
         raise AssertionError("unknown command: %s" % line)
@@ -864,11 +864,25 @@ def test_the_zones_with_a_server_testable_pass_are_enforced_today():
     assert "z5" in _testable_enforced(), _testable_enforced()
 
 
+def _vr_seat(index):
+    """Victory Road's stand `index` as a feet position, from data/vr_trainers.json (hand-authored, not this tool's)."""
+    vr = json.loads((ROOT / "data" / "vr_trainers.json").read_text(encoding="utf-8"))
+    s = next(t["seat"] for t in vr["trainers"] if t["stand_index"] == index)
+    return (s[0] + 0.5, float(s[1]), s[2] + 0.5)
+
+
+def _admit_point(zid, z):
+    """Where a pass holder walks in and is admitted: anywhere away from a knock, except in a zone whose pass is
+    earned only inside it (z5, pass.admit_within, 2026-10-08), where it is Victory Road's eighth stand, the first
+    fight inside z5 and in the cave it is earned in."""
+    return _vr_seat(8) if z["pass"].get("admit_within") else _far_point(zid, z)
+
+
 @pytest.mark.parametrize("zid", _testable_enforced())
 def test_a_player_holding_the_pass_who_enters_away_from_any_knock_is_not_turned_back(zid):
     z = live_zones()[zid]
     fn, adv = fast()
-    pos = _far_point(zid, z)
+    pos = _admit_point(zid, z)
     for k in knocks_of(z):
         assert not _matches({"pos": pos, "gamemode": "survival", "advancements": set()},
                             "@s[%s]" % RZ.sel_box(k))
@@ -894,16 +908,34 @@ def test_a_player_without_the_pass_is_still_turned_back(zid):
 
 
 def test_victory_roads_last_fights_are_inside_z5_and_open_to_a_player_who_released_hoopa():
-    vr = json.loads((ROOT / "data" / "vr_trainers.json").read_text(encoding="utf-8"))
-    seats = [tuple(float(c) + 0.5 * (i != 1) for i, c in enumerate(t["seat"]))
-             for t in vr["trainers"] if t["stand_index"] >= 8]
-    assert len(seats) == 3
+    # Since 2026-10-08 (pass.admit_within) the flag admits only in the cave ground at z5's south edge, which the
+    # eighth stand is in; a player who walked up from there holds the score at the ninth and tenth.
+    obj = SPEC["pass"]["objective_prefix"] + "z5"
     fn, adv = fast()
     z5 = live_zones()["z5"]
-    for pos in seats:
+    flag = z5["pass"]["advancements"]
+    for index in (8, 9, 10):
+        pos = _vr_seat(index)
         assert _fires(adv, "z5_zone", pos), "stand %s is no longer inside z5: re-read the walk's item 1" % (pos,)
-        assert not _enter(fn, adv, "z5", pos, z5["pass"]["advancements"])["turned_back"], pos
+        walked_up = _enter(fn, adv, "z5", pos, flag) if index == 8 else None
+        if walked_up is None:
+            player = {"pos": pos, "gamemode": "survival", "advancements": set(flag), "scores": {obj: 1},
+                      "turned_back": False}
+            _run(fn, "function %s:%s/z5/zone" % (RZ.NS, RZ.FOLDER), player)
+            walked_up = player
+        assert not walked_up["turned_back"], pos
         assert _enter(fn, adv, "z5", pos, [])["turned_back"], pos
+
+
+def test_a_flag_holder_over_the_precinct_who_never_walked_the_caves_is_turned_back():
+    # the closure (docs/world-building/CRITICAL_PATH_WALK_2.md item 3): on the surface or in the sky over z5, the flag
+    # alone is not a pass; only the score earned in the caves is
+    z5 = live_zones()["z5"]
+    fn, adv = fast()
+    x, _y, zz = _far_point("z5", z5)
+    for y in (90.0, 140.0):
+        player = _enter(fn, adv, "z5", (x, y, zz), z5["pass"]["advancements"])
+        assert player["turned_back"], "z5 let a flag holder stay at %s without the score" % ((x, y, zz),)
 
 
 # Without it the interpreter above could pass for reasons of its own. Dropping qualify on entry from the GENERATOR --
@@ -916,23 +948,27 @@ def test_dropping_qualify_on_entry_from_build_turns_a_qualified_player_back_in_v
     mod.__file__ = str(ROOT / "tools" / "rift_zones.py")
     exec(compile(src.replace(old, "FOLDER, zid)] + ["), mod.__file__, "exec"), mod.__dict__)
     mfn, madv = build(module=mod)
-    vr = json.loads((ROOT / "data" / "vr_trainers.json").read_text(encoding="utf-8"))
-    seat = next(t["seat"] for t in vr["trainers"] if t["stand_index"] == 9)
-    pos = (seat[0] + 0.5, float(seat[1]), seat[2] + 0.5)
-    assert _enter(mfn, madv, "z5", pos, live_zones()["z5"]["pass"]["advancements"])["turned_back"]
+    # the eighth stand: the one the unmutated build admits a flag holder at (the test above)
+    assert _enter(mfn, madv, "z5", _vr_seat(8), live_zones()["z5"]["pass"]["advancements"])["turned_back"]
 
 
 def test_a_player_at_the_knock_is_still_answered_by_the_guard():
-    # the knock is kept: a qualified player in G5's knock box is granted and arrives on the walkway
+    # the knock is kept, as a door: a player who earned z5's score in the caves is granted and arrives on the
+    # walkway; since 2026-10-08 (pass.knock_needs_score) the flag alone is refused there, which was the surface skip
     z5 = live_zones()["z5"]
+    obj = SPEC["pass"]["objective_prefix"] + "z5"
     fn, _adv = fast()
     k = z5["knock"]
-    player = {"pos": (k[0] + 0.5, float(k[1]), k[2] + 0.5), "gamemode": "survival",
-              "advancements": set(z5["pass"]["advancements"]), "scores": {}, "turned_back": False}
+    at_k = (k[0] + 0.5, float(k[1]), k[2] + 0.5)
+    flag_only = {"pos": at_k, "gamemode": "survival", "advancements": set(z5["pass"]["advancements"]), "scores": {},
+                 "turned_back": False}
+    _run(fn, "function %s:%s/z5/knock" % (RZ.NS, RZ.FOLDER), flag_only)
+    assert flag_only["pos"] == at_k and obj not in flag_only["scores"], "G5 let in a flag holder who never walked the caves"
+    player = dict(flag_only, scores={obj: 1}, pos=at_k)
     _run(fn, "function %s:%s/z5/knock" % (RZ.NS, RZ.FOLDER), player)
     ax, ay, az, _ = z5["arrive"]
     assert player["pos"] == (ax, float(int(ay)), az)
-    assert player["scores"][SPEC["pass"]["objective_prefix"] + "z5"] == 1
+    assert player["scores"][obj] == 1
     passless = dict(player, advancements=set(), scores={}, pos=(k[0] + 0.5, float(k[1]), k[2] + 0.5))
     _run(fn, "function %s:%s/z5/knock" % (RZ.NS, RZ.FOLDER), passless)
     assert passless["scores"] == {} and passless["pos"] == (k[0] + 0.5, float(k[1]), k[2] + 0.5)

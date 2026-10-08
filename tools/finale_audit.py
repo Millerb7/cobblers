@@ -2013,8 +2013,31 @@ def check_z5(packs, functions, data=DATA):
         m = re.search(r"unless score @s (\S+) matches 1\.\.", line)
         if m:
             obj = m.group(1)
+    # Where the flag is tested (2026-10-08, data/rift_zones.json z5.pass.admit_within: Victory Road's caves are the
+    # way to the League): in the cave, at Victory Road's eighth stand (data/vr_trainers.json, the first fight inside
+    # z5), the flag admits; over the precinct's surface, where the old probe stood, it does not -- only the score the
+    # cave gave does. Both probes come from data this audit does not build.
+    vr = jload(Path(data) / "vr_trainers.json")
+    s8 = next(t["seat"] for t in vr["trainers"] if t["stand_index"] == 8)
+    cave = (s8[0] + 0.5, float(s8[1]), s8[2] + 0.5)
+    sky = (3600.5, 100.0, 2600.5)
+    for score in (None, 1):
+        w, pl = World(functions), Player(pos=sky)
+        pl.adv.add(FLAG_ADV)
+        if score and obj:
+            pl.scores[obj] = score
+        try:
+            w.function(zone, pl)
+        except Unmodelled as e:
+            return bad + ["z5's zone check does not run in the model: %s" % e]
+        turned = any(d == "cobblers:rift_zones/z5/turn_back" for k, d, *_ in w.log if k == "function")
+        if not score and not turned:
+            bad.append("z5 lets a player holding %s stay over the precinct at %s without the score Victory Road's "
+                       "caves give: the surface skip (CRITICAL_PATH_WALK_2.md item 3)" % (FLAG, sky))
+        if score and turned:
+            bad.append("z5 turns back a player holding %s and its score at %s" % (FLAG, sky))
     for holds, mode in ((False, "survival"), (True, "survival"), (False, "creative")):
-        w, pl = World(functions), Player(pos=(3600.5, 100.0, 2600.5))
+        w, pl = World(functions), Player(pos=cave)
         pl.gamemode = mode
         if holds:
             pl.adv.add(FLAG_ADV)
