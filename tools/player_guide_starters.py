@@ -1,0 +1,410 @@
+#!/usr/bin/env python
+"""The players' starter guide, docs/player/starters.html: the starters on the starter screen, their stats at each tier,
+how each one evolves, and the items a line needs (Kubfu's scrolls, Silvally's memories) with where a player gets them.
+
+  python tools/player_guide_starters.py            # write docs/player/starters.html and register it in guides.json
+  python tools/player_guide_starters.py --check    # regenerate in memory; exit 1 if the page or its entry is stale
+  python tools/player_guide_starters.py --out F    # write elsewhere (not the site's page, not registered)
+
+WHAT A TIER IS. There is one starter category (modpack/config/cobblemon/starters.json, `cobblers_mythical`), so a tier
+is not a category or a power ranking: it is the stage of a line, and every line shares the same three.
+  tier 1  the stage-1 form the screen gives, at levels.start (5), all five at the same base-stat total
+  tier 2  the stage-2 form at levels.stage_2 (30), again one total for all five
+  tier 3  the native final species at levels.final (45), the Cobblemon 1.8.0 species unchanged, so its totals differ
+Tiers 1 and 2 are OUR forms (data/mythical_starters.json `stages`, built by tools/mythical_starters.py); tier 3 is read
+from the jar.
+
+SOURCES, each read, never copied in:
+  data/mythical_starters.json           lines, stages, their stats and evolutions; levels; starter_category
+  modpack/config/cobblemon/starters.json what the screen offers; must be exactly the lines' stage-1 species at levels.start
+  the Cobblemon 1.8.0 jar (read only)   display names, types, the finals' base stats, Silvally's memory forms
+  data/trainers.json                    generation_contract.gym_ace_levels: when 30 and 45 are first reachable
+  data/markets.json                     counters and stalls: where an item is sold, or that it is priced and held
+  data/traders.json                     the Mart clerks: an item named there is "sold by a Mart clerk"
+  STORY_FILES below                     an item those name and no shop sells is "earned in the story", never more
+
+WHY A STARTER'S EVOLUTION COMES FROM THE DATA AND NOT THE JAR. A starter carries a forced aspect that selects our form,
+and a form's `evolutions` replace the species' own (tools/mythical_starters.py docstring). The jar's own entries would
+tell a player the wrong thing: Cosmog at 43 and 53, Type: Null by friendship, Poipole by knowing Dragon Pulse, Meltan
+never. The page reads the stage evolutions; an evolution requirement it cannot put in words stops the run.
+
+WHAT THE PAGE NEVER SAYS. docs/player/ is public and tests/test_player_site_leaks.py holds it to that. An item whose
+only source is a story file is "earned in the story" with at most the badge it waits for: no place, person, id or
+coordinate. A held line (markets.json `held_stock`: priced, sold by no merchant) is "not on sale yet", without the
+counter it is held for. A counter is named only for a line it actually stocks.
+
+NOT PUBLISHED (2026-10-08). The leak test reads data/mythical_starters.json as a legendary file, so the stage-1 species
+it lists (Cosmog, Cosmoem, Kubfu, Poipole, Meltan; "typenull" is matched as one word, so "Type: Null" passes) are
+forbidden names on every public page, and this page cannot exist without them. Whether the five starters the screen
+shows every player are public is the owner's decision, not this tool's: until it is made, nothing has been written to
+docs/player/ or guides.json, and `tests/test_player_guide_starters.py` checks the page in memory.
+
+Not checked in a running game: the forms, the evolutions, the scrolls and the memories are as the data and the jar
+say (EXP-049 has not run).
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import re
+import sys
+import zipfile
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "tools"))
+import player_site  # noqa: E402  the shared header, footer, stylesheet and manifest of docs/player/
+import player_guide_battles as PB  # noqa: E402  the jar finder and its display names (Dex)
+
+OUT = ROOT / "docs" / "player" / "starters.html"
+DATA = "data/mythical_starters.json"
+CONFIG = "modpack/config/cobblemon/starters.json"
+STATS = (("hp", "HP"), ("attack", "Atk"), ("defence", "Def"), ("special_attack", "SpA"), ("special_defence", "SpD"),
+         ("speed", "Spe"))
+# data/ files an item can be given through without a shop: the page says "earned in the story" and nothing more.
+STORY_FILES = ("data/rewards.json", "data/quests.json", "data/research_station.json", "data/dialogue.json")
+GUIDE = {"file": "starters.html", "title": "Starters", "label": "Starters", "order": 10,
+         "description": "The five starters on the starter screen: their stats at each tier, how each line evolves, "
+                        "and how to get the items two of them need.",
+         "generator": "tools/player_guide_starters.py"}
+TIME = {"day": "during the day", "night": "at night", "dawn": "at dawn", "dusk": "at dusk"}
+
+
+def doc(rel):
+    return json.loads((ROOT / rel).read_text(encoding="utf-8"))
+
+
+esc = player_site.esc
+
+
+# ------------------------------------------------------------------------------------------------ the jar
+
+
+class Jar:
+    """Base stats, types and forms of the species this page names, read from the jar (read only)."""
+
+    def __init__(self, path):
+        self.dex = PB.Dex(path)
+        z = zipfile.ZipFile(path)
+        self.raw = {}
+        for n in z.namelist():
+            if n.startswith("data/cobblemon/species/") and n.endswith(".json"):
+                self.raw[n.rsplit("/", 1)[1][:-5]] = n
+        self.zip = z
+        self.cache = {}
+
+    def species(self, sid):
+        if sid not in self.raw:
+            raise SystemExit("the jar has no species %r" % sid)
+        if sid not in self.cache:
+            self.cache[sid] = json.loads(self.zip.read(self.raw[sid]).decode("utf-8"))
+        return self.cache[sid]
+
+    def name(self, sid):
+        return self.dex.species(sid)[0]
+
+    def form(self, sid, aspect):
+        """(stats, [types]) of `sid`, or of its form carrying `aspect`; a form inherits what it does not set."""
+        s = self.species(sid)
+        f = next((f for f in s.get("forms") or [] if aspect in (f.get("aspects") or [])), {}) if aspect else {}
+        if aspect and not f:
+            raise SystemExit("the jar's %s has no form with the aspect %r" % (sid, aspect))
+        stats = f.get("baseStats") or s["baseStats"]
+        typed = f if f.get("primaryType") else s
+        return stats, [t.lower() for t in (typed.get("primaryType"), typed.get("secondaryType")) if t]
+
+
+# ------------------------------------------------------------------------------------------------ inputs
+
+
+def parse_result(result):
+    """'urshifu wushu_style=rapid_strike unaspect=cobblers_starter_2' -> ('urshifu', {'wushu_style': 'rapid_strike',
+    'unaspect': ..., 'aspect': ...})."""
+    parts = result.split()
+    return parts[0], dict(p.split("=", 1) for p in parts[1:] if "=" in p)
+
+
+def item_names():
+    """{item id: display name} from the shelves' own `name` fields (markets.json)."""
+    out = {}
+
+    def walk(n):
+        if isinstance(n, dict):
+            if isinstance(n.get("item"), str) and isinstance(n.get("name"), str):
+                out.setdefault(n["item"], n["name"])
+            for v in n.values():
+                walk(v)
+        elif isinstance(n, list):
+            for v in n:
+                walk(v)
+    walk(doc("data/markets.json"))
+    return out
+
+
+def sources(item):
+    """How a player gets `item`: [(kind, words)], kind 'shop', 'held', 'mart', 'story' or 'none'. Names a town and
+    its seller only for a line that seller stocks."""
+    m = doc("data/markets.json")
+    towns = {t["id"]: t.get("display_name") or t["id"] for t in doc("data/towns.json")["towns"]}
+    out = []
+    for rec in (m.get("counters") or []) + (m.get("stalls") or []):
+        for line in rec.get("stock") or []:
+            if isinstance(line, dict) and line.get("item") == item:
+                who = (rec.get("keeper") or {}).get("name") or "the market"
+                out.append(("shop", "Sold in %s by %s for $%s." % (towns.get(rec.get("town"), rec.get("town")), who,
+                                                                  format(line.get("price", 0), ","))))
+        for line in rec.get("held_stock") or []:
+            if isinstance(line, dict) and line.get("item") == item:
+                out.append(("held", "Not on sale yet: the campaign prices it for a shop counter, but no merchant "
+                                    "stocks it today."))
+    if item in (ROOT / "data/traders.json").read_text(encoding="utf-8"):
+        out.append(("mart", "Sold by a Mart clerk."))
+    for kind in ("shop", "mart", "held"):  # a seller first; "held" only when nobody sells it
+        hits = list(dict.fromkeys(o for o in out if o[0] == kind))
+        if hits:
+            return hits
+    if any(item in (ROOT / f).read_text(encoding="utf-8") for f in STORY_FILES):
+        return [("story", "Earned in the story.")]
+    return [("none", "No source in the campaign's data yet.")]
+
+
+def story_gate(item):
+    """The badge a story-only item waits for, from data/research_station.json's economy record of it, or None. Only the
+    badge number is taken: the record's place and people stay off the page."""
+    for rec in doc("data/research_station.json").get("economy", {}).get("items") or []:
+        items = rec.get("item") if isinstance(rec.get("item"), list) else [rec.get("item")]
+        if item in items:
+            g = re.fullmatch(r"gym(\d)_cleared", str(rec.get("gate") or ""))
+            return int(g.group(1)) if g else None
+    return None
+
+
+def reach(level, aces):
+    """(badges held, gym heading to) when `level` is first under the cap: the cap is the next leader's ace."""
+    for k, ace in enumerate(aces):
+        if ace >= level:
+            return k, k + 1
+    return len(aces), None
+
+
+def words(ev, jar, final_name):
+    """An evolution in plain words. Stops the run on a requirement it does not know."""
+    bits = []
+    for r in ev.get("requirements") or []:
+        v = r.get("variant")
+        if v == "level":
+            bits.append("reaches level %d" % r["minLevel"])
+        elif v == "time_range":
+            bits.append(TIME.get(r["range"], "in the time range %s" % r["range"]))
+        elif v == "friendship":
+            bits.append("has friendship of %d or more" % r["amount"])
+        elif v == "has_move":
+            bits.append("knows %s" % jar.dex.move(r["move"])[0])
+        elif v == "held_item":
+            bits.append("holds %s" % jar.dex.item(r.get("itemCondition") or r.get("item")))
+        else:
+            raise SystemExit("%s: evolution %s has a requirement this page cannot put in words: %r"
+                             % (DATA, ev.get("id"), r))
+    # a time of day reads after the rest: "reaches level 45 during the day"
+    said = " and ".join(b for b in bits if b not in TIME.values()) + "".join(" " + b for b in bits if b in TIME.values())
+    if ev["variant"] == "level_up":
+        if not bits:
+            raise SystemExit("%s: level-up evolution %s has no requirement" % (DATA, ev.get("id")))
+        how = "When it %s, it can evolve into %s" % (said.strip(), final_name)
+    elif ev["variant"] == "item_interact":
+        how = "Once it %s, use a %s on it to evolve it into %s" % (
+            said.strip() or "is in your party", jar.dex.item(ev["requiredContext"]), final_name)
+    elif ev["variant"] == "trade":
+        how = "Trade it to evolve it into %s" % final_name
+    else:
+        raise SystemExit("%s: evolution %s has a variant this page cannot put in words: %r"
+                         % (DATA, ev.get("id"), ev["variant"]))
+    for d in (ev.get("drops") or {}).get("entries") or []:
+        how += "; the evolution also leaves you a %s" % jar.dex.item(d["item"])
+    return how + "."
+
+
+def collect(jar_path=None):
+    jar = Jar(PB.find_jar(jar_path))
+    d = doc(DATA)
+    cfg = doc(CONFIG)
+    levels = d["levels"]
+    aces = doc("data/trainers.json")["generation_contract"]["gym_ace_levels"]
+    cats = cfg.get("starters") or []
+    if [c.get("name") for c in cats] != [d["starter_category"]["name"]]:
+        raise SystemExit("%s offers %s, %s names %s" % (CONFIG, [c.get("name") for c in cats], DATA,
+                                                         d["starter_category"]["name"]))
+    offered = []
+    for e in cats[0]["pokemon"]:
+        sp, props = parse_result(e)
+        offered.append((sp, int(props.get("level", 0)), props.get("aspect")))
+    want = [(ln["stages"][0]["species"], levels["start"], d["aspects"]["stage_1"]) for ln in d["lines"]]
+    if sorted(offered) != sorted(want):
+        raise SystemExit("%s offers %s; %s's lines start as %s" % (CONFIG, offered, DATA, want))
+    names = item_names()
+    lines, items = [], {}
+    for ln in d["lines"]:
+        tiers, steps = [], []
+        for st in ln["stages"]:
+            stats = st["baseStats"]
+            if sum(stats.values()) != st["bst"]:
+                raise SystemExit("%s %s stage %d: stats sum to %d, bst says %d" % (DATA, ln["id"], st["stage"],
+                                                                                   sum(stats.values()), st["bst"]))
+            _s, types = jar.form(st["species"], None)
+            label = jar.name(st["species"]) + (" (grown)" if st["stage"] > 1 and st["species"] ==
+                                               ln["stages"][0]["species"] else "")
+            tiers.append({"tier": st["stage"], "name": label, "types": types, "stats": stats,
+                          "level": levels["start"] if st["stage"] == 1 else levels["stage_2"]})
+            for ev in st["evolutions"]:
+                sp, props = parse_result(ev["result"])
+                final = "aspect" not in props
+                if final:
+                    style = props.get("wushu_style")
+                    aspect = "%s-style" % style if style and style != "single_strike" else None
+                    fname = jar.name(sp) + (" (%s Style)" % style.replace("_", " ").title() if style else "")
+                    fstats, ftypes = jar.form(sp, aspect)
+                    tiers.append({"tier": 3, "name": fname, "types": ftypes, "stats": fstats,
+                                  "level": levels["final"], "species": sp})
+                    steps.append(words(ev, jar, fname))
+                else:
+                    nxt = jar.name(sp) + (" (grown)" if sp == st["species"] else "")
+                    steps.append(words(ev, jar, nxt))
+                if ev.get("requiredContext"):
+                    items.setdefault(ln["id"], []).append(ev["requiredContext"])
+        # the anchor is the line's position: its data id names the species, which is not the page's to expose as an id
+        lines.append({"id": ln["id"], "anchor": "line-%d" % (len(lines) + 1), "name": jar.name(ln["stages"][0]["species"]), "tiers": tiers, "steps": steps,
+                      "gyms": ln.get("potent_at", {}).get("gyms") or []})
+    specials = []
+    for ln in lines:  # an item a starter evolves on
+        for it in items.get(ln["id"], []):
+            src = sources(it)
+            gate = story_gate(it) if src[0][0] == "story" else None
+            specials.append({"line": ln["name"], "for": "evolution", "item": it, "name": jar.dex.item(it),
+                             "sources": src, "gate": gate})
+    for ln in lines:  # a final whose form follows a held memory
+        for t in ln["tiers"]:
+            if t["tier"] != 3:
+                continue
+            forms = [f for f in jar.species(t["species"]).get("forms") or []
+                     if any(a.endswith("-memory") for a in f.get("aspects") or [])]
+            for f in forms:
+                kind = next(a for a in f["aspects"] if a.endswith("-memory"))[:-len("-memory")]
+                it = next((i for i in names if i.split(":")[-1] == "%s_memory" % kind), None)
+                specials.append({"line": ln["name"], "for": "form", "final": t["name"], "type": f.get("primaryType",
+                                 kind).lower(), "item": it, "name": names.get(it) or "%s Memory" % kind.title(),
+                                 "sources": sources(it) if it else [("none", "No source in the campaign's data yet.")],
+                                 "gate": None})
+    return {"lines": lines, "specials": specials, "levels": levels, "aces": aces, "missing": sorted(jar.dex.missing),
+            "category": d["starter_category"]["displayName"]}
+
+
+# ------------------------------------------------------------------------------------------------ render
+
+
+def badges(types, dex=None):
+    return "".join('<span class="t t-%s">%s</span>' % (esc(t), esc(t.title())) for t in types)
+
+
+def render_line(ln):
+    head = "".join("<th>%s</th>" % h for _k, h in STATS)
+    rows = []
+    for t in ln["tiers"]:
+        cells = "".join('<td class="n">%d</td>' % t["stats"][k] for k, _h in STATS)
+        rows.append('<tr><td>%d</td><td>%s</td><td>%s</td><td class="n">%d</td>%s<td class="n"><b>%d</b></td></tr>'
+                    % (t["tier"], esc(t["name"]), badges(t["types"]), t["level"], cells, sum(t["stats"].values())))
+    best = ", ".join(str(g) for g in ln["gyms"])
+    return ('<section class="line" id="s-%s"><h2>%s</h2>%s<table class="stats"><thead><tr><th>Tier</th><th>Form</th>'
+            '<th>Type</th><th>Lv</th>%s<th>Total</th></tr></thead><tbody>%s</tbody></table>'
+            '<h3>How it evolves</h3><ol class="steps">%s</ol></section>'
+            % (esc(ln["anchor"]), esc(ln["name"]),
+               '<p class="lead">At its strongest around gym%s %s.</p>' % ("s" if len(ln["gyms"]) > 1 else "", best)
+               if best else "", head, "".join(rows), "".join("<li>%s</li>" % esc(s) for s in ln["steps"])))
+
+
+def render_specials(model):
+    out = []
+    ev = [s for s in model["specials"] if s["for"] == "evolution"]
+    for line in sorted({s["line"] for s in ev}):
+        its = [s for s in ev if s["line"] == line]
+        lis = []
+        for s in its:
+            src = " ".join(w for _k, w in s["sources"])
+            if s["gate"]:
+                src = src[:-1] + ", once you hold %d badges." % s["gate"]
+            lis.append("<li><b>%s</b>: %s</li>" % (esc(s["name"]), esc(src)))
+        out.append('<h3>%s: the evolution items</h3><p>Which item you use decides what it becomes.</p><ul>%s</ul>'
+                   % (esc(line), "".join(lis)))
+    fm = [s for s in model["specials"] if s["for"] == "form"]
+    for final in sorted({s["final"] for s in fm}):
+        its = [s for s in fm if s["final"] == final]
+        srcs = sorted({" ".join(w for _k, w in s["sources"]) for s in its})
+        rows = "".join("<tr><td>%s</td><td>%s</td></tr>" % (esc(s["name"]), badges([s["type"]])) for s in its)
+        out.append('<h3>%s: the memories</h3><p>%s takes the type of the memory it holds: give it one to hold and it '
+                   'becomes that type. There are %d, one for every type but Normal; holding none, it stays Normal.</p>'
+                   '<p>How to get them: %s</p><table class="stats"><thead><tr><th>Memory</th><th>Type</th></tr></thead>'
+                   '<tbody>%s</tbody></table>' % (esc(final), esc(final), len(its), esc(" ".join(srcs)), rows))
+    return "".join(out)
+
+
+def render(model):
+    lv, aces = model["levels"], model["aces"]
+    held2, gym2 = reach(lv["stage_2"], aces)
+    held3, gym3 = reach(lv["final"], aces)
+    toc = "".join('<li><a href="#%s">%s</a></li>' % (esc(ln["anchor"]), esc(ln["name"]))
+                  for ln in model["lines"])
+    body = ('<main><h1>Starters</h1><p class="lead">The starter screen offers one category, %s, with %d Pokemon, '
+            'each at level %d. This page shows what each becomes and when.</p>'
+            '<nav class="toc"><ol>%s<li><a href="#items">Items two of them need</a></li><li><a href="#not-covered">'
+            'What this page leaves out</a></li></ol></nav>'
+            '<div class="box"><p><b>Tiers.</b> Every line has the same three tiers:</p><ul>'
+            '<li><b>Tier 1</b>, the form the starter screen gives you at level %d.</li>'
+            '<li><b>Tier 2</b>, a stronger form at level %d. You can first reach it on the way to gym %d, holding %d '
+            'badges.</li>'
+            '<li><b>Tier 3</b>, the final Pokemon at level %d. You can first reach it on the way to gym %d, holding '
+            '%d badges.</li></ul><p>Tiers 1 and 2 are the same total for all five, so the lines differ in how '
+            'their stats are spread, not in how many. Tier 3 is the standard final Pokemon. Your level cap is '
+            'the next leader\'s ace (<a href="battles.html">Trainer battles</a>), which is why a tier waits for a '
+            'badge. When your starter qualifies, the game offers the evolution; you can wait.</p></div>%s'
+            '<section id="items"><h2>Items two of them need</h2>%s</section>'
+            '<section id="not-covered"><h2>What this page leaves out</h2><ul><li>Movesets: check the summary screen '
+            'in game.</li><li>Where anything is found in the world: an item that is not sold is "earned in the '
+            'story", with no more said.</li><li>Any Pokemon not given by the starter screen: the tiers and '
+            'evolutions here are the starters\' own.</li></ul></section></main>'
+            % (esc(model["category"]), len(model["lines"]), lv["start"], toc, lv["start"], lv["stage_2"], gym2, held2,
+               lv["final"], gym3, held3, "".join(render_line(ln) for ln in model["lines"]), render_specials(model)))
+    sources = ('<p class="src">From data/mythical_starters.json, modpack/config/cobblemon/starters.json, '
+               'data/markets.json and the Cobblemon 1.8.0 species files.</p>')
+    return player_site.page(GUIDE, body, body_class="page-starters", not_covered_href="#not-covered",
+                            sources_html=sources)
+
+
+def main(argv=None):
+    p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    p.add_argument("--out", default=str(OUT))
+    p.add_argument("--jar", help="the Cobblemon 1.8 jar (default: the offline snapshot's mods folder)")
+    p.add_argument("--check", action="store_true", help="regenerate in memory; exit 1 if the page differs (but for "
+                                                        "its generated-on line) or its guides.json entry is not current")
+    a = p.parse_args(argv)
+    model = collect(a.jar)
+    text = render(model)
+    out = Path(a.out)
+    entry = GUIDE if out.resolve() == OUT.resolve() else None  # a page written elsewhere is not the site's
+    if a.check:
+        ok, why = player_site.check(out, text, entry)
+        if not ok:
+            print("%s is %s: run python tools/player_guide_starters.py" % (out, why))
+            return 1
+        print("%s is current (%d lines, %d items)" % (out, len(model["lines"]), len(model["specials"])))
+        return 0
+    did = player_site.write(out, text, entry)
+    print("%s %s: %d lines, %d items, %d bytes" % (did, out, len(model["lines"]), len(model["specials"]),
+                                                    len(text.encode("utf-8"))))
+    for s in model["specials"]:
+        print("  %-22s %-6s %s" % (s["name"], s["sources"][0][0], s["item"]))
+    if model["missing"]:
+        print("  not named by the jar: %s" % ", ".join(model["missing"]))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
