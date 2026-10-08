@@ -9,8 +9,9 @@ Written by a test author, not by the session that built them. It never imports t
 takes an expectation from data/mythical_starters.json's stage specs: the record's levels, aspects, shapes, BSTs and
 evolutions are exactly what is under audit, so none of them is read. Two allow-lists ARE read from it, each the owner's
 recorded exception rather than a spec: a line's `authored_moves`, and its `tm_additions` (a non-native `tm:` entry
-passes only when the record names its move with a `decision`; Smeargle's `tm:uturn`, the owner 2026-10-08). The pivot
-spread and the U-turn entry on every Smeargle form are pinned here as constants (FORM_FINALS), not read.
+passes only when the record names its move with a `decision`; Smeargle's `tm:uturn`, the owner 2026-10-08). Smeargle's
+per-stage spreads (the old shape at stages 1-2, the pivot at 3) and the U-turn entry on every Smeargle form are pinned
+here as constants (FORM_FINALS), not read.
 
 WHERE THE EXPECTATIONS COME FROM
   the decision   docs/mechanics/NATIVE_STARTERS_COST.md sections 6a and 7 (the owner, 2026-10-02): Cosmog, Kubfu,
@@ -75,11 +76,16 @@ ASPECT = {1: "cobblers_starter_1", 2: "cobblers_starter_2"}   # 6a table: the as
 # The pivot decision (the owner, 2026-10-08; docs/research/notes/smeargle-pivot.md section 7): Smeargle is a fast
 # pivot, its final form "476: 92/68/78/68/78/92", stages 1 and 2 still 330 and 430 in that spread; and "add U-turn to
 # Smeargle's TM list", so every form carries `tm:uturn` for the native TM Machine.
+# Then "take old-shape-early Smeargle at 476" (the owner, 2026-10-08): stages 1 and 2 go back to the earlier
+# 74/79/60/79/60/98 spread at 330 and 430; only the final keeps the pivot 92/68/78/68/78/92 at 476. The shape is
+# therefore per stage (`shapes`, stage -> spread), pinned here, never read from the record.
 BST[3] = 476
 ASPECT[3] = "cobblers_starter_3"
+_SMEARGLE_OLD = {"hp": 74, "attack": 79, "defence": 60, "special_attack": 79, "special_defence": 60, "speed": 98}
+_SMEARGLE_PIVOT = {"hp": 92, "attack": 68, "defence": 78, "special_attack": 68, "special_defence": 78, "speed": 92}
 FORM_FINALS = {
     "smeargle": {
-        "shape": {"hp": 92, "attack": 68, "defence": 78, "special_attack": 68, "special_defence": 78, "speed": 92},
+        "shapes": {1: _SMEARGLE_OLD, 2: _SMEARGLE_OLD, 3: _SMEARGLE_PIVOT},
         "ability": "protean",
         "keeps": "sketch",
         "never_level_up": {"spore", "shellsmash"},
@@ -299,7 +305,7 @@ def check_form(where, form, stage, line, species, moves, adds_species, authored,
         p.append("%s: aspect %s is a native form's" % (where, ASPECT[stage]))
     bs = form.get("baseStats") or {}
     if line in FORM_FINALS:
-        shape, shape_name = FORM_FINALS[line]["shape"], "the decided spread"
+        shape, shape_name = FORM_FINALS[line]["shapes"][stage], "the decided spread"
     elif line in STAGE_SHAPES:
         shape_name = STAGE_SHAPES[line][stage]
         shape = species[shape_name]["baseStats"]

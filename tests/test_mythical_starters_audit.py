@@ -539,9 +539,15 @@ def test_the_cross_species_premise_is_checked_against_the_jar(jar, monkeypatch, 
     # swapped: share 68.00 of 476)
     (_on("smeargle", A3, lambda f: f.update(baseStats=_stats(92, 92, 78, 68, 78, 68))),
      "smeargle stage 3: attack 92 is not the decided spread's share 68.00 of 476"),
-    # Without it stage 1 could be scaled into the jar's Smeargle (55/20/35/20/45/75) instead: hp 92 x 330/476
+    # Without it stage 1 could be scaled into the jar's Smeargle (55/20/35/20/45/75) instead: hp 74 x 330/450
     (_on("smeargle", A1, lambda f: f.update(baseStats=_stats(73, 26, 46, 26, 60, 99))),
-     "smeargle stage 1: hp 73 is not the decided spread's share 63.78 of 330"),
+     "smeargle stage 1: hp 73 is not the decided spread's share 54.27 of 330"),
+    # Without it stages 1 and 2 could stay in the pivot spread (the build before "old-shape-early", 2026-10-08):
+    # attack 79 x 330/450 = 57.93 and 79 x 430/450 = 75.49
+    (_on("smeargle", A1, lambda f: f.update(baseStats=_stats(64, 47, 54, 47, 54, 64))),
+     "smeargle stage 1: attack 47 is not the decided spread's share 57.93 of 330"),
+    (_on("smeargle", A2, lambda f: f.update(baseStats=_stats(83, 61, 71, 61, 71, 83))),
+     "smeargle stage 2: attack 61 is not the decided spread's share 75.49 of 430"),
     # Without it the third form alone could lose Protean (the earlier case strips every form at once)
     (_on("smeargle", A3, lambda f: f.pop("abilities")), "smeargle stage 3: abilities None"),
     # Without it the third form could evolve on, and the line would not stay at 450
@@ -596,13 +602,15 @@ def test_a_missing_sketch_override_is_a_fault(jar, monkeypatch, tmp_path):
 
 
 # ------------------------------------------------------------------------- the pivot (the owner, 2026-10-08)
-# Smeargle as a fast pivot (docs/research/notes/smeargle-pivot.md): the final form 476 at 92/68/78/68/78/92, stages 1
-# and 2 at 330 and 430 in that spread, and `tm:uturn` on every form so the native TM Machine teaches U-turn. The
-# numbers are hand-computed, not read from the generator: 92 x 330/476 = 63.78, 68 x 330/476 = 47.14, 78 x 330/476 =
-# 54.08 floor to 63/47/54/47/54/63 = 328, and the two largest remainders (.78, hp then speed) take the last two; at
-# 430: 83.11/61.43/70.46 floor to 428, and defence and special defence (.46) take the two.
+# Smeargle as a fast pivot (docs/research/notes/smeargle-pivot.md): the final form 476 at 92/68/78/68/78/92, and
+# `tm:uturn` on every form so the native TM Machine teaches U-turn. "Old-shape-early" (the owner, 2026-10-08): stages
+# 1 and 2 at 330 and 430 in the earlier 74/79/60/79/60/98 (= 450). The numbers are hand-computed, not read from the
+# generator: at 330, 74/79/60/98 x 330/450 = 54.27/57.93/44.00/71.87 floor to 54/57/44/57/44/71 = 327, and the three
+# largest remainders (.93 attack, .93 special attack, .87 speed) take the last three; at 430, 70.71/75.49/57.33/93.64
+# floor to 70/75/57/75/57/93 = 427, and hp (.71), speed (.64) and attack (.49, before special attack in stat order)
+# take the three.
 
-PIVOT = {A1: _stats(64, 47, 54, 47, 54, 64), A2: _stats(83, 61, 71, 61, 71, 83), A3: _stats(92, 68, 78, 68, 78, 92)}
+PIVOT = {A1: _stats(54, 58, 44, 58, 44, 72), A2: _stats(71, 76, 57, 75, 57, 94), A3: _stats(92, 68, 78, 68, 78, 92)}
 SMEARGLE_ADDITION = "data/cobblers/species_additions/mythical_starter_smeargle.json"
 
 
