@@ -44,6 +44,14 @@ WHAT THIS DOES NOT COVER. In-game behaviour: valid output is not proof any train
 are not ours (Cobbleverse's own, anything a donor template places) are not listed. The Heaven's Arena exam teams
 (data/arena_trainers.json, unseated since 2026-10-03) are not route trainers and are left out.
 
+NOT ON THE PUBLIC SITE (decided 2026-10-08, when docs/player/ became one): this page stays in build/maps/ and does not
+import tools/player_site.py. (1) tests/test_player_site_leaks.py finds a story quest's id in it: the status section
+quotes data/trainers.json generation_contract.runtime_mode_selection, which names quest.main_worldshift_reveal. (2) It repeats
+docs/player/battles.html, which already shows every fight in both modes, and adds what that guide leaves out on
+purpose: the Gastly mansion's Channelers and the HQ tower's fights, and each seat's "why it is unavoidable". (3) Its
+output is a fragment for another publisher (page_problems(): no <html>, one <style>), not a page that can carry the
+site's shared header and stylesheet. Publishing it would need all three changed first.
+
   python tools/challenge_guide.py         # -> build/maps/challenge.html
 """
 

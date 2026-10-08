@@ -2,8 +2,9 @@
 """The players' battle guide: one self-contained HTML page of every trainer fight, docs/player/battles.html.
 
 For Nuzlocke and Challenge players planning their fights (the owner, 2026-10-09: "That is how challenge hacks ship
-documentation"). One file, no server, no network: inline CSS and a few lines of inline JavaScript for the
-Normal / Challenge switch and the theme; without JavaScript both teams are shown, labelled.
+documentation"). One page of the public site docs/player/ (tools/player_site.py: the shared header, spoiler note and
+footer, docs/player/assets/site.css for every style, the guides.json entry GUIDE), no server, no network; a few lines
+of inline JavaScript for the Normal / Challenge switch. Without JavaScript both teams are shown, labelled.
 
 EVERY FACT IS READ FROM THE LIVE DATA, never from a design document:
 
@@ -43,8 +44,9 @@ and dialogue; the Gastly mansion's five Channelers (data/mansion_guardians.json)
 (data/hq_trainers.json) and Heaven's Arena's exam teams (data/arena_trainers.json, unseated); Cobbleverse's own
 roaming trainers and anything a donor template places. In-game behaviour is not verified by this page.
 
-  python tools/player_guide_battles.py            # write docs/player/battles.html
-  python tools/player_guide_battles.py --check    # regenerate in memory; exit 1 if the file differs
+  python tools/player_guide_battles.py            # write docs/player/battles.html (unless only its date would change)
+  python tools/player_guide_battles.py --check    # regenerate in memory; exit 1 if the page differs
+  python tools/player_site.py                     # the whole site: every guide and the index
 """
 from __future__ import annotations
 
@@ -60,6 +62,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
+import player_site  # noqa: E402  the shared header, footer, stylesheet and manifest of docs/player/
 
 OUT = ROOT / "docs" / "player" / "battles.html"
 MODS = Path(os.environ.get("COBBLERS_SNAPSHOT_MODS")
@@ -71,12 +74,12 @@ TRAINERS = "data/rctmod/trainers/%s.json"
 MOBS = "data/rctmod/mobs/trainers/single/%s.json"
 CLASS_LABEL = {"route": "Route trainer", "optional_route": "Optional, off the road", "gym_trainer": "Gym trainer",
                "gym_leader": "Gym Leader", "elite_four": "Elite Four", "champion": "Champion"}
-# the eighteen types' badge colours (the familiar palette); text colour is chosen for contrast below
-TYPE_COLOURS = {"normal": "#9fa19f", "fire": "#e62829", "water": "#2980ef", "electric": "#fac000",
-                "grass": "#3fa129", "ice": "#3dcef3", "fighting": "#ff8000", "poison": "#9141cb",
-                "ground": "#915121", "flying": "#81b9ef", "psychic": "#ef4179", "bug": "#91a119",
-                "rock": "#afa981", "ghost": "#704170", "dragon": "#5060e1", "dark": "#624d4e",
-                "steel": "#60a1b8", "fairy": "#ef70ef"}
+# The page's look, the eighteen type badges' colours among it, lives in docs/player/assets/site.css (shared by
+# every guide, hand-written); this tool emits classes only (`t t-<type>`).
+GUIDE = {"file": "battles.html", "title": "Trainer battles", "label": "Trainer battles", "order": 20,
+         "description": "Every trainer fight in the order you meet it: teams in Normal and Challenge, where each "
+                        "trainer stands, and the level cap that holds until each leader falls.",
+         "generator": "tools/player_guide_battles.py"}
 CATEGORY = {"Physical": "Phys", "Special": "Spec", "Status": "Status"}
 
 
@@ -461,97 +464,16 @@ def recs_for(bosses, up):
 # ------------------------------------------------------------------------------------------------ rendering
 
 
-def text_colour(hexc):
-    r, g, b = (int(hexc[i:i + 2], 16) / 255 for i in (1, 3, 5))
-    lin = lambda c: c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
-    lum = 0.2126 * lin(r) + 0.7152 * lin(g) + 0.0722 * lin(b)
-    return "#111" if (lum + 0.05) / 0.05 > 1.05 / (lum + 0.05) else "#fff"
-
-
-CSS = """
-:root{--bg:#f7f6f2;--card:#fff;--ink:#1d1f23;--muted:#5d636d;--rule:#d9d6cc;--accent:#b2402f;--accent-ink:#fff;
---soft:#efece4;--warn:#fff6d8;--warn-rule:#d6a400;color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#15171b;--card:#1f2228;--ink:#e8e6e1;
---muted:#a3a8b1;--rule:#353a43;--accent:#e0705c;--accent-ink:#15171b;--soft:#262a31;--warn:#2d2816;--warn-rule:#a07c10;
-color-scheme:dark}}
-:root[data-theme=dark]{--bg:#15171b;--card:#1f2228;--ink:#e8e6e1;--muted:#a3a8b1;--rule:#353a43;--accent:#e0705c;
---accent-ink:#15171b;--soft:#262a31;--warn:#2d2816;--warn-rule:#a07c10;color-scheme:dark}
-*{box-sizing:border-box}
-html{scroll-padding-top:64px}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-a{color:var(--accent)}
-.bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--rule);padding:8px 16px;
-display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
-.bar b{font-size:1.05rem;margin-right:auto}
-.seg{display:inline-flex;border:1px solid var(--rule);border-radius:999px;overflow:hidden}
-.seg button{font:inherit;font-size:.9rem;color:var(--ink);background:var(--card);border:0;padding:5px 14px;cursor:pointer}
-.seg button[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);font-weight:600}
-.nojs .seg{display:none}
-main{max-width:1180px;margin:0 auto;padding:12px 16px 60px}
-h1{font-size:1.7rem;margin:14px 0 4px}
-h2{font-size:1.35rem;margin:34px 0 4px;padding-bottom:4px;border-bottom:2px solid var(--accent)}
-h2 small{font-weight:400;color:var(--muted);font-size:.95rem;margin-left:8px}
-h3{font-size:1.05rem;margin:20px 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
-.lead{color:var(--muted);margin:0 0 12px}
-.box{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:10px 14px;margin:10px 0}
-.box.warn{background:var(--warn);border-left:5px solid var(--warn-rule)}
-.box p,.box ul{margin:4px 0}
-.toc ol{columns:2 260px;margin:4px 0;padding-left:22px}
-.toc li{break-inside:avoid;margin:2px 0}
-.cap{display:inline-block;background:var(--soft);border:1px solid var(--rule);border-radius:8px;padding:3px 10px;
-margin:6px 0 2px;font-size:.95rem}
-.tr{background:var(--card);border:1px solid var(--rule);border-radius:10px;padding:10px 12px;margin:0 0 12px}
-.tr.boss{border:2px solid var(--accent)}
-.th{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}
-.th .no{color:var(--muted);font-variant-numeric:tabular-nums;font-size:.85rem}
-.th h4{margin:0;font-size:1.1rem}
-.tag{font-size:.78rem;border:1px solid var(--rule);border-radius:999px;padding:0 8px;color:var(--muted)}
-.loc{margin:2px 0 8px;color:var(--muted);font-size:.9rem}
-.loc code{color:var(--ink);background:var(--soft);border-radius:4px;padding:0 5px;font-size:.88rem}
-.ml{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin:6px 0 4px}
-.team{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:8px}
-.mon{border:1px solid var(--rule);border-radius:8px;padding:6px 8px;background:var(--bg)}
-.mh{display:flex;justify-content:space-between;gap:6px;align-items:baseline}
-.mh b{font-size:1rem}
-.lv{font-variant-numeric:tabular-nums;font-weight:600}
-.ty{margin:2px 0 4px}
-.t{display:inline-block;border-radius:4px;padding:0 6px;font-size:.72rem;font-weight:700;text-transform:uppercase;
-letter-spacing:.03em;line-height:1.5;margin-right:3px}
-.kv{display:grid;grid-template-columns:auto 1fr;gap:0 8px;margin:0;font-size:.85rem}
-.kv dt{color:var(--muted)}
-.kv dd{margin:0}
-.mv{list-style:none;margin:4px 0 0;padding:0;font-size:.88rem}
-.mv li{display:flex;gap:6px;align-items:baseline}
-.mv .t{min-width:3.4em;text-align:center;font-size:.66rem}
-.mv small{color:var(--muted);margin-left:auto}
-.asks{background:var(--soft);border-radius:8px;padding:8px 12px;margin:8px 0 0}
-.asks dl{margin:0}
-.asks dt{font-weight:700;font-size:.85rem;margin-top:6px}
-.asks dd{margin:0}
-.asks .f{font-weight:400;color:var(--muted);font-size:.78rem}
-.js[data-mode=normal] .m-c,.js[data-mode=challenge] .m-n{display:none}
-.nojs .cv.m-n::before{content:"Normal "}.nojs .cv.m-c::before{content:" / Challenge "}
-.notes li{margin:4px 0}
-footer{color:var(--muted);font-size:.85rem;border-top:1px solid var(--rule);margin-top:40px;padding-top:10px}
-@media (max-width:560px){body{font-size:14px}.bar{padding:6px 10px}main{padding:8px 10px 40px}
-.team{grid-template-columns:1fr}.tr{padding:8px}h2 small{display:block;margin:0}}
-@media print{.bar{position:static}.seg{display:none}}
-"""
-
-SCRIPT_HEAD = ("(function(){var d=document.documentElement;d.className='js';var m='normal',t='';"
-               "try{m=localStorage.getItem('cobblers-mode')||'normal';t=localStorage.getItem('cobblers-theme')||''}"
-               "catch(e){}d.setAttribute('data-mode',m==='challenge'?'challenge':'normal');"
-               "if(t)d.setAttribute('data-theme',t)})();")
+# The Normal / Challenge switch. The theme switch and the js / nojs classes are the site's (docs/player/assets/site.js).
+SCRIPT_HEAD = ("(function(){var d=document.documentElement;var m='normal';"
+               "try{m=localStorage.getItem('cobblers-mode')||'normal'}catch(e){}"
+               "d.setAttribute('data-mode',m==='challenge'?'challenge':'normal')})();")
 SCRIPT_BODY = ("(function(){var d=document.documentElement;"
                "function sync(){var m=d.getAttribute('data-mode');document.querySelectorAll('[data-set-mode]')"
                ".forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-set-mode')===m)})}"
                "document.querySelectorAll('[data-set-mode]').forEach(function(b){b.addEventListener('click',function(){"
                "var m=b.getAttribute('data-set-mode');d.setAttribute('data-mode',m);"
-               "try{localStorage.setItem('cobblers-mode',m)}catch(e){}sync()})});"
-               "var tb=document.getElementById('theme');tb.addEventListener('click',function(){"
-               "var cur=d.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');"
-               "var n=cur==='dark'?'light':'dark';d.setAttribute('data-theme',n);"
-               "try{localStorage.setItem('cobblers-theme',n)}catch(e){}});sync()})();")
+               "try{localStorage.setItem('cobblers-mode',m)}catch(e){}sync()})});sync()})();")
 
 
 def badge(dex_type, label=None):
@@ -639,8 +561,13 @@ def render_fight(f, no):
     return "".join(out)
 
 
+TOOLS = ('<span class="seg" role="group" aria-label="Difficulty">'
+         '<button type="button" data-set-mode="normal" aria-pressed="true">Normal</button>'
+         '<button type="button" data-set-mode="challenge" aria-pressed="false">Challenge</button></span>'
+         '<a href="#contents">Contents</a>')
+
+
 def render(model):
-    css = CSS + "".join(".t-%s{background:%s;color:%s}" % (t, c, text_colour(c)) for t, c in TYPE_COLOURS.items())
     secs = model["sections"]
     count = lambda s: sum(len(fs) for _t, fs in s["parts"])
     toc = []
@@ -657,12 +584,7 @@ def render(model):
                 str(sh["rules"].get("adjustNPCLevels")).lower()))
     ru = model["rule"]
     body = []
-    body.append('<div class="bar"><b>Cobblers: trainer battles</b>'
-                '<span class="seg" role="group" aria-label="Difficulty">'
-                '<button type="button" data-set-mode="normal" aria-pressed="true">Normal</button>'
-                '<button type="button" data-set-mode="challenge" aria-pressed="false">Challenge</button></span>'
-                '<span class="seg"><button type="button" id="theme" aria-label="Switch light or dark">Light / dark'
-                '</button></span><a href="#contents">Contents</a></div><main>')
+    body.append("<main>")
     body.append("<h1>Every trainer fight, in the order you meet them</h1>")
     body.append('<p class="lead">%d trainers: each gym\'s route, its juniors and its leader, then Victory Road, the '
                 'Elite Four and the Champion. The switch at the top changes every team on the page between '
@@ -711,37 +633,36 @@ def render(model):
                 "<li>How the fights actually play. This page is generated from the data files; it has not been "
                 "checked fight by fight in a running game. Where the game and this page differ, the game is "
                 "right: say so.</li></ul></div></section>")
-    body.append("<footer>Generated by tools/player_guide_battles.py from data/ and the emitted trainer files "
-                "(tools/route_trainers.py), with names and types from %s. Regenerate with "
-                "<code>python tools/player_guide_battles.py</code>; do not edit this file by hand.</footer>"
-                "</main>" % esc(model["jar"]))
-    return ('<!doctype html>\n<html lang="en" class="nojs" data-mode="normal"><head><meta charset="utf-8">'
-            '<meta name="viewport" content="width=device-width,initial-scale=1">'
-            "<title>Cobblers: trainer battles</title><script>%s</script><style>%s</style></head><body>\n%s\n"
-            "<script>%s</script></body></html>\n" % (SCRIPT_HEAD, css, "\n".join(body), SCRIPT_BODY))
+    body.append("</main>")
+    sources = ("<p>Battle guide: from data/ and the emitted trainer files (tools/route_trainers.py), with names and "
+               "types from %s.</p>" % esc(model["jar"]))
+    return player_site.page(GUIDE, "\n".join(body), body_class="page-battles", tools_html=TOOLS,
+                            head_html="<script>%s</script>" % SCRIPT_HEAD, end_html="<script>%s</script>\n" % SCRIPT_BODY,
+                            not_covered_href="#not-covered", sources_html=sources)
 
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--out", default=str(OUT))
     p.add_argument("--jar", help="the Cobblemon 1.8 jar (default: the offline snapshot's mods folder)")
-    p.add_argument("--check", action="store_true", help="regenerate in memory; exit 1 if the file differs")
+    p.add_argument("--check", action="store_true", help="regenerate in memory; exit 1 if the page differs (but for "
+                                                        "its generated-on line) or its guides.json entry is not current")
     a = p.parse_args(argv)
     model = collect(a.jar)
     text = render(model)
     out = Path(a.out)
+    entry = GUIDE if out.resolve() == OUT.resolve() else None  # a page written elsewhere is not the site's
     fights = sum(len(fs) for s in model["sections"] for _t, fs in s["parts"])
     if a.check:
-        have = out.read_text(encoding="utf-8") if out.is_file() else None
-        if have != text:
-            print("%s is %s: run python tools/player_guide_battles.py" % (out, "stale" if have else "missing"))
+        ok, why = player_site.check(out, text, entry)
+        if not ok:
+            print("%s is %s: run python tools/player_site.py" % (out, why))
             return 1
         print("%s is current (%d fights, %d data notes)" % (out, fights, len(model["notes"])))
         return 0
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(text, encoding="utf-8", newline="\n")
-    print("wrote %s: %d fights in %d sections, %d data notes, %d bytes" % (
-        out, fights, len(model["sections"]), len(model["notes"]), len(text.encode("utf-8"))))
+    did = player_site.write(out, text, entry)
+    print("%s %s: %d fights in %d sections, %d data notes, %d bytes" % (
+        did, out, fights, len(model["sections"]), len(model["notes"]), len(text.encode("utf-8"))))
     for s in model["sections"]:
         print("  %-34s %s" % (s["title"], ", ".join("%s %d" % (t, len(fs)) for t, fs in s["parts"])))
     if model["missing"]:
