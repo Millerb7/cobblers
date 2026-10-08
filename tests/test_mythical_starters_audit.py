@@ -1,4 +1,5 @@
-"""tools/mythical_starters_audit.py: the five mythical starters checked against the DECISION and the 1.8.0 jar.
+"""tools/mythical_starters_audit.py: the six starters (five mythical, and Larvesta since 2026-10-08) checked against
+the DECISION and the 1.8.0 jar.
 
 Written by a test author, not by the session that built the starters. Every mutation below changes the GENERATOR's
 code (tools/mythical_starters.py `addition` or `files`, monkeypatched) and leaves data/mythical_starters.json alone
@@ -293,6 +294,59 @@ def test_a_traditional_starter_with_no_wild_family_is_a_fault(jar, monkeypatch, 
     spawns = tmp_path / "spawns.json"
     spawns.write_text(json.dumps(doc), encoding="utf-8")
     assert_named(faults(jar, build(monkeypatch, tmp_path), spawns=spawns), "charmander: no member of its family")
+
+
+# ------------------------------------------------------------------------- Larvesta, the sixth (2026-10-08)
+# Larvesta is the one line that is also an ordinary wild species, with a native level-59 step to Volcarona. These
+# pin that the starter forms are reached by aspect alone and that the line's own jar facts are kept.
+
+# Without it the grown form could keep the jar's 59 (the starter arriving at gym 6 un-evolved) and pass.
+def test_larvesta_reaching_volcarona_at_the_jars_59_is_a_fault(jar, monkeypatch, tmp_path):
+    def m(sp, a):
+        if sp == "larvesta":
+            stage(a, A2)[0]["evolutions"][0]["requirements"] = [{"variant": "level", "minLevel": 59}]
+    assert_named(faults(jar, build(monkeypatch, tmp_path, m)), "larvesta stage 2 -> volcarona", "[59]")
+
+
+# Without it the 45 step could lose Quiver Dance, the move the jar teaches on Larvesta's evolution.
+def test_larvesta_losing_quiver_dance_on_its_evolution_is_a_fault(jar, monkeypatch, tmp_path):
+    def m(sp, a):
+        if sp == "larvesta":
+            stage(a, A2)[0]["evolutions"][0]["learnableMoves"] = []
+    assert_named(faults(jar, build(monkeypatch, tmp_path, m)), "drops the native evolution move(s) ['quiverdance']")
+
+
+# Without it the weak form could jump straight to Volcarona at 30, skipping the grown form and the 45 point.
+def test_larvesta_skipping_its_grown_form_is_a_fault(jar, monkeypatch, tmp_path):
+    def m(sp, a):
+        if sp == "larvesta":
+            stage(a, A1)[0]["evolutions"][0]["result"] = "volcarona unaspect=%s" % A1
+    assert_named(faults(jar, build(monkeypatch, tmp_path, m)), "stage 2 of the larvesta line is larvesta")
+
+
+# Without it the line could take Volcarona's shape (135 SpA) at 330 and pass; the record says Larvesta's own.
+# Hand check: the jar's Larvesta is 55/85/55/50/55/60 = 360, so at 330 Attack's share is 85*330/360 = 77.92 and
+# Volcarona's shape (85/60/65/135/105/100 = 550) gives Attack 60*330/550 = 36, more than 1 off.
+def test_larvesta_in_volcaronas_shape_is_a_fault(jar, monkeypatch, tmp_path):
+    def m(sp, a):
+        if sp == "larvesta":
+            stage(a, A1)[0]["baseStats"] = {"hp": 51, "attack": 36, "defence": 39, "special_attack": 81,
+                                            "special_defence": 63, "speed": 60}
+    assert_named(faults(jar, build(monkeypatch, tmp_path, m)), "larvesta stage 1: attack 36 is not larvesta's share")
+
+
+# Without it a wild Larvesta row could carry the starter aspect and put the 330 form in the grass; a plain wild row
+# (data/spawns.json has three weighted ones) must still pass.
+def test_a_wild_row_carrying_a_starter_form_is_a_fault(jar, monkeypatch, tmp_path):
+    doc = json.loads(AU.SPAWNS.read_text(encoding="utf-8"))
+    larv = [r for r in doc["entries"] if r["species"].split()[0] == "larvesta" and (r.get("weight") or 0) > 0]
+    assert larv, "the fixture no longer has a wild Larvesta"
+    pack = build(monkeypatch, tmp_path)
+    assert faults(jar, pack) == []
+    larv[0]["species"] = "larvesta aspect=%s" % A1
+    spawns = tmp_path / "spawns.json"
+    spawns.write_text(json.dumps(doc), encoding="utf-8")
+    assert_named(faults(jar, pack, spawns=spawns), "carries a starter form ['aspect=%s']" % A1)
 
 
 # Without it the record's list of the 27 (which other tests now read) could drift from the trios upstream offered.

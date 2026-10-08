@@ -437,6 +437,27 @@ def test_every_starter_marker_is_standable_in_the_lab_template():
             assert not air((lx, ly - 1, lz)), (name, "nothing under", (lx, ly - 1, lz))
 
 
+def test_no_two_starters_share_a_block_and_every_stand_is_on_the_heightmap_floor():
+    # Without it a seventh (or a moved sixth) stand can put two copies in one block, and the player clicks the wrong
+    # starter; or a stand can float or sink against the lab floor the heightmap and the template agree on (y117).
+    import ground
+    owner = {}
+    try:
+        g = ground.load()
+    except (OSError, SystemExit) as e:
+        pytest.skip("canonical heightmap unavailable: %s" % e)
+    stands = {n: m for n, m in SCENE["markers"].items() if n.startswith("starter_")}
+    assert set(stands) == {"starter_" + s for s in OA.STARTERS}
+    for name, mk in stands.items():
+        x, y, z = mk["at"]
+        # the floor under every stand is the ground (tools/ground.py, rounded), not a world read
+        assert y - 1 == ORIGIN[1] == round(g(x, z)), (name, y, round(g(x, z)))
+        for ox, oz in mk["slots"]:
+            # tools/scenes_pack.py: the copy stands at the block centre plus its slot
+            cell = (math.floor(x + 0.5 + ox), math.floor(z + 0.5 + oz))
+            assert owner.setdefault(cell, name) == name, (cell, owner[cell], name)
+
+
 def test_the_hint_shows_only_to_a_player_without_a_starter():
     e = SCENE["effects"][0]
     assert e["kind"] == "actionbar" and e["when"] == {"kind": "not", "condition": {"kind": "starter_chosen"}}

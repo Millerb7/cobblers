@@ -398,6 +398,15 @@ def check_wild(spawns_path, record_path, upstream_path, species):
                  "extra %s" % (len(listed), sorted(set(traditional) - set(listed)), sorted(set(listed) - set(traditional))))
     rows = json.loads(Path(spawns_path).read_text(encoding="utf-8"))["entries"]
     wild = {parse_props(r["species"])[0] for r in rows if (r.get("weight") or 0) > 0}
+    # 6a: the forms are the screen's alone. Larvesta (2026-10-08) is both a starter line and a wild species, so a
+    # wild row is fine and a wild row carrying a starter aspect (or form=<its name>) puts a starter in the grass
+    # (the compiled pools are swept by tools/oak_starter_audit.py P2; this is the authored source)
+    for r in rows:
+        words = str(r.get("species") or "").lower().split()
+        hit = [w for w in words[1:] if w.split("=")[-1] in OURS or re.fullmatch(r"form=starter(?:[-_]?grown)?", w)]
+        if hit:
+            p.append("data/spawns.json %s: %r carries a starter form %s; the forms are the starter screen's alone (6a)"
+                     % (r.get("id"), r.get("species"), hit))
     for s in traditional:
         if not descendants(species, s) & wild:
             p.append("%s: no member of its family has a weighted record in data/spawns.json; a starter left the "
