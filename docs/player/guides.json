@@ -25,6 +25,14 @@
       "description": "Every trainer fight in the order you meet it: teams in Normal and Challenge, where each trainer stands, and the level cap that holds until each leader falls.",
       "generator": "tools/player_guide_battles.py",
       "order": 20
+    },
+    {
+      "file": "items.html",
+      "title": "Items and money",
+      "label": "Items and money",
+      "description": "How money works, and every item you can buy, barter for, sell or craft: where, from whom and for how much.",
+      "generator": "tools/player_guide_items.py",
+      "order": 30
     }
   ]
 }
