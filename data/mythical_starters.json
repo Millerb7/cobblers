@@ -769,12 +769,12 @@
       "tagline": "An adaptive and despicable choice of your own fate.",
       "potent_at": {
         "gyms": [
-          2,
+          3,
           4,
-          8
+          7
         ],
-        "peak_gym": 4,
-        "why": "The painter. Its movepool is what it Sketches, so it is as strong as what the player has shown it: measured 19/35 against the gym leaders (field 15-20; `python tools/mythical_starters.py measure`, 2026-10-08), Sketching only the moves of earlier gym leaders' teams and with Gen 9 Protean modelled as one type per duel. Without Protean the same Smeargle wins 9/35, so the ability is most of its strength. Erika is its best gym (4/4, Flamethrower as a Fire type) and Giovanni falls to Surf and Moonblast (5/6). The sim plays no Spore + Shell Smash line, which Sketch reaches and no Sleep Clause stops: that is EXP-065's fight against Sabrina and Lorelei, before trusting the number."
+        "peak_gym": 3,
+        "why": "The painter, played as a fast pivot (the owner, 2026-10-08; docs/research/notes/smeargle-pivot.md): it attacks first for a Protean type, U-turns out, and comes back as something else. Its movepool is what it Sketches. At 330/430/476 in the pivot spread 92/68/78/68/78/92 it measured 21/35 against the gym leaders (field 15-20; `python tools/mythical_starters.py measure`, 2026-10-08), Sketching only the moves of earlier gym leaders' teams, with Gen 9 Protean modelled as one type per duel: 10 at gyms 1-5 and 11 at gyms 6-8. That is one over the field's top. The pivot note's 20 assumed stages 1 and 2 kept the old 74/79/60/79/60/98 shape, which measures 20/35 with the same 476 final; in the pivot shape stage 2 also beats Magneton at gym 3. The sim models no U-turn switch (battle_sim leaves selfSwitch moves out), so the pivot itself is not in the number. Surge (3/4) and Erika (3/4) are its best gyms; Giovanni falls to Surf, Moonblast and Thunderbolt (5/6). EXP-065 plays the pivot against Sabrina, Lorelei and Agatha."
       },
       "final": [],
       "learnset_from": [
@@ -787,9 +787,17 @@
         "20:seismictoss",
         "27:meanlook",
         "33:flamethrower",
-        "40:sleeptalk"
+        "40:sleeptalk",
+        "tm:uturn"
       ],
-      "moves_why": "Smeargle's 1.8.0 learnset is Sketch at 1 and nine tutor, legacy and special entries (falseswipe, flamethrower, captivate, sleeptalk, furyswipes, meanlook, odorsleuth, seismictoss, spore), read from the jar's generation2/smeargle.json. Seven are spread across the levels: Fury Swipes at 1 so the level-5 starter can attack, False Swipe at 10 for catching, Seismic Toss at 20 (damage equal to its level, whatever its Attack), Mean Look at 27, Flamethrower at 33 (its one strong special move, 79 SpA at 45) and Sleep Talk at 40. Left out on purpose: Spore (the owner, 2026-10-08: Spore and Shell Smash arrive only through Sketch), Captivate and Odor Sleuth (no use here). Everything else is Sketch's: the movepool is what the player shows it.",
+      "tm_additions": [
+        {
+          "move": "uturn",
+          "decision": "The owner, 2026-10-08: Smeargle is a fast pivot (docs/research/notes/smeargle-pivot.md); add U-turn to its TM list so the native TM Machine can teach it from a bug gem without Sketch.",
+          "mechanism": "Read in the Cobblemon 1.8.0 jar: a `tm:` learnset entry goes into Learnset.tmMoves (the static `tm` interpreter); FormData.getMoves returns the form's own learnset when it sets `moves`; TechnicalMachineItem refuses with tms.cannot_learn unless pokemon.getForm().getMoves().tmLearnableMoves() contains the move, and TechnicalMachine.filterTms filters the machine by the same list. The disc is data/cobblemon/tms/uturn.json (7 bug gems and a Shed Shell, cobblemon:unlockable). Not run in game: EXP-065."
+        }
+      ],
+      "moves_why": "Smeargle's 1.8.0 learnset is Sketch at 1 and nine tutor, legacy and special entries (falseswipe, flamethrower, captivate, sleeptalk, furyswipes, meanlook, odorsleuth, seismictoss, spore), read from the jar's generation2/smeargle.json. Seven are spread across the levels: Fury Swipes at 1 so the level-5 starter can attack, False Swipe at 10 for catching, Seismic Toss at 20 (damage equal to its level, whatever its Attack), Mean Look at 27, Flamethrower at 33 (its one strong special move, 79 SpA at 45) and Sleep Talk at 40. Left out on purpose: Spore (the owner, 2026-10-08: Spore and Shell Smash arrive only through Sketch), Captivate and Odor Sleuth (no use here). One TM entry, `tm:uturn` (tm_additions: the owner, 2026-10-08, the fast pivot), so the native TM Machine teaches U-turn without Sketch. Everything else is Sketch's: the movepool is what the player shows it.",
       "superseded_sketch_cap_why": "OFF for now (the owner, 2026-10-08: \"remove the cap for smeargle's sketch for now\"). Sketch is unlimited again; the design is kept below so it can be switched back on by renaming the key to sketch_cap (docs/research/notes/sketch-cap-1.8.0.md).",
       "superseded_sketch_cap": {
         "uses": 10,
@@ -814,21 +822,21 @@
           "form": "Starter",
           "aspect": "cobblers_starter_1",
           "shape": {
-            "hp": 74,
-            "attack": 79,
-            "defence": 60,
-            "special_attack": 79,
-            "special_defence": 60,
-            "speed": 98
+            "hp": 92,
+            "attack": 68,
+            "defence": 78,
+            "special_attack": 68,
+            "special_defence": 78,
+            "speed": 92
           },
           "bst": 330,
           "baseStats": {
-            "hp": 54,
-            "attack": 58,
-            "defence": 44,
-            "special_attack": 58,
-            "special_defence": 44,
-            "speed": 72
+            "hp": 64,
+            "attack": 47,
+            "defence": 54,
+            "special_attack": 47,
+            "special_defence": 54,
+            "speed": 64
           },
           "abilities": [
             "protean",
@@ -856,21 +864,21 @@
           "form": "Starter-Grown",
           "aspect": "cobblers_starter_2",
           "shape": {
-            "hp": 74,
-            "attack": 79,
-            "defence": 60,
-            "special_attack": 79,
-            "special_defence": 60,
-            "speed": 98
+            "hp": 92,
+            "attack": 68,
+            "defence": 78,
+            "special_attack": 68,
+            "special_defence": 78,
+            "speed": 92
           },
           "bst": 430,
           "baseStats": {
-            "hp": 71,
-            "attack": 76,
-            "defence": 57,
-            "special_attack": 75,
-            "special_defence": 57,
-            "speed": 94
+            "hp": 83,
+            "attack": 61,
+            "defence": 71,
+            "special_attack": 61,
+            "special_defence": 71,
+            "speed": 83
           },
           "abilities": [
             "protean",
@@ -898,21 +906,21 @@
           "form": "Starter-Final",
           "aspect": "cobblers_starter_3",
           "shape": {
-            "hp": 74,
-            "attack": 79,
-            "defence": 60,
-            "special_attack": 79,
-            "special_defence": 60,
-            "speed": 98
+            "hp": 92,
+            "attack": 68,
+            "defence": 78,
+            "special_attack": 68,
+            "special_defence": 78,
+            "speed": 92
           },
-          "bst": 450,
+          "bst": 476,
           "baseStats": {
-            "hp": 74,
-            "attack": 79,
-            "defence": 60,
-            "special_attack": 79,
-            "special_defence": 60,
-            "speed": 98
+            "hp": 92,
+            "attack": 68,
+            "defence": 78,
+            "special_attack": 68,
+            "special_defence": 78,
+            "speed": 92
           },
           "abilities": [
             "protean",
