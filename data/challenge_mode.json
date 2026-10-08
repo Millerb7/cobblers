@@ -142,5 +142,48 @@
     "rollout": ["kanto_brock"],
     "rollout_why": "A list of bosses ids, or \"all\". Brock only until the staging proof in docs/mechanics/ONE_LEADER_SWAP.md passes (the owner's order). A boss here gets no place_<id>_challenge function and no place line; the cycle's swap drives its one spawner (data/gym_buildings leader.spawner, data/gym_interiors.json expect_spawner_at, or single_leader.normal_at for the League, which no other record carries), and reapply step R17L runs cobblers:trainers/challenge/retire_<id>_challenge once to remove the second spawner a world already holds at bosses[].spawner.at, which therefore stays recorded. A template boss (Misty, the League) also needs single_leader.restore {floor, under}: what its second spawner and redstone block replaced, measured from the template; a gym_buildings boss reads them from its own gym model.",
     "reach_why": "rctmod-server.toml forceBattleMaxDistance (16.0) + 1, computed by tools/challenge_mode.py reach(): the farthest a trainer starts a battle on sight, so within it the leader already carries the nearest player's mode, and beyond it no battle can start."
+  },
+  "voucher": {
+    "status": "SCHEDULE ONLY, as data: nothing grants it yet. The grant (Oak's mode-choice action for the cash, a give in each leader's per-player reward function on the gym N flag, gated on the cobblers_mode_challenge tag and the lock field, once per player) is a later unit's: docs/mechanics/ECONOMY_OVERHAUL.md BUILD LIST U6. NOT run in game",
+    "decision": "the owner, after the 2026-10-10 overnight (docs/STATE.md 'Owner decisions after the 2026-10-10 overnight' (2)): front-loaded, more per gym early, the same total by the end, so overspending early for power and rationing later is a real choice; the total is the ladder's measured one, not the 2026-10-09 $100,000",
+    "where_why": "here, beside the mode it serves (the brief named the file the Challenge mode already uses). ECONOMY_OVERHAUL.md U6 had proposed a separate data/challenge_voucher.json; one file is enough while the voucher is a schedule",
+    "generated_by": "hand (kits, power_kit, shape, delivery); `computed` by tools/challenge_voucher.py --write, and --check fails when the rosters, the bank, the Mart or the income gates move it",
+    "reasoning": "docs/mechanics/SERVICES_AND_CRAFTING.md",
+    "kits": [
+      {"for_leg": 2, "answers": "Misty (Water): a Grass or Electric TM (e.g. tm_megadrain) and a type-boosting held item", "tm": {"minecraft:raw_iron": 48, "minecraft:coal": 32, "minecraft:lapis_lazuli": 16}, "held": {"minecraft:raw_iron": 24, "minecraft:coal": 24}},
+      {"for_leg": 3, "answers": "Surge (Electric): a Ground TM (id to verify) and a held item", "tm": {"minecraft:raw_iron": 48, "minecraft:coal": 32, "minecraft:lapis_lazuli": 16}, "held": {"minecraft:diamond": 1, "minecraft:raw_iron": 24, "minecraft:redstone": 16}},
+      {"for_leg": 4, "answers": "Erika (Grass): a Fire or Flying TM and a held item", "tm": {"minecraft:diamond": 2, "minecraft:raw_iron": 32, "minecraft:raw_gold": 4, "minecraft:lapis_lazuli": 32}, "held": {"minecraft:diamond": 1, "minecraft:raw_iron": 24, "minecraft:redstone": 16}},
+      {"for_leg": 5, "answers": "Koga (Poison): a Ground or Psychic TM and a held item", "tm": {"minecraft:diamond": 2, "minecraft:raw_iron": 32, "minecraft:raw_gold": 4, "minecraft:lapis_lazuli": 32}, "held": {"minecraft:diamond": 1, "minecraft:raw_iron": 24, "minecraft:redstone": 16}},
+      {"for_leg": 6, "answers": "Sabrina (Psychic): a Dark, Bug or Ghost TM, a held item and two Mega stones", "tm": {"minecraft:diamond": 2, "minecraft:raw_iron": 32, "minecraft:raw_gold": 4, "minecraft:lapis_lazuli": 32}, "held": {"minecraft:diamond": 1, "minecraft:raw_iron": 24, "minecraft:redstone": 16}, "extra": {"minecraft:diamond": 2}, "extra_why": "two Mega stones at the Cutters, each 2 raw stones + 1 diamond (SOUTHERN_RIFT_MEGA.md 13.1, RELAYED): the raw stones are fought for and have no bank value, so only the diamonds are counted"},
+      {"for_leg": 7, "answers": "Blaine (Fire): a Water or Rock TM (e.g. tm_scald, tm_rockslide) and a held item", "tm": {"minecraft:diamond": 2, "minecraft:netherite_scrap": 4, "minecraft:raw_iron": 32}, "held": {"minecraft:diamond": 1, "minecraft:netherite_scrap": 2, "minecraft:quartz": 16}},
+      {"for_leg": 8, "answers": "Giovanni (Ground): a Water, Grass or Ice TM (e.g. tm_gigadrain) and a held item", "tm": {"minecraft:diamond": 2, "minecraft:netherite_scrap": 4, "minecraft:raw_iron": 32}, "held": {"minecraft:diamond": 1, "minecraft:netherite_scrap": 2, "minecraft:quartz": 16}},
+      {"for_leg": 9, "answers": "the League (mixed): one TM and one held item", "tm": {"minecraft:diamond": 2, "minecraft:netherite_scrap": 4, "minecraft:raw_iron": 32}, "held": {"minecraft:diamond": 1, "minecraft:netherite_scrap": 2, "minecraft:quartz": 16}}
+    ],
+    "kits_source": "the quantities are docs/mechanics/ECONOMY_OVERHAUL.md section 1.4's answer kits, RELAYED: a design, and no barter line carries them yet (BUILD LIST U4). The TM ids are examples there and unverified. Each material is valued at data/bank.json's price, MEASURED by the tool. for_leg 9 is the League",
+    "power_kit": {"items": ["cobblemon:power_weight", "cobblemon:power_bracer", "cobblemon:power_belt", "cobblemon:power_lens", "cobblemon:power_band", "cobblemon:power_anklet"], "why": "what the services decision obliges (data/training_services.json price_rule): the EV service now costs more than the hour of play it saves, so a Challenge player, who plays with no Minecraft by the owner's design, trains EVs by battle at a training ground with a power item held. The six are durable and serve every spread on every Pokemon; priced at the Mart's training shelf (data/traders.json stock_policy.mart.training tier 1, gym 2's town). Raises are NOT added: the Challenge income covers six raises a leg at every badge (SERVICES_AND_CRAFTING.md section 5). Neither are the IV service nor the vitamins: optional power, and no boss team carries EVs or IVs (\"evs\" occurs 0 times in data/trainers.json)"},
+    "shape": {"rule": "Oak's grant is computed.oak_cash. The rest is shared over the eight gym-clear grants in inverse proportion to the measured Challenge income of the leg each grant opens (data/markets.json income_basis.challenge.leg_by_badge for gyms 1-7; Victory Road + the League, income_basis.post_badge_8.challenge, for gym 8): the poorest leg gets the most", "round_to": 50, "round_to_why": "each grant a multiple of $50; the rounding remainder goes to the gym-1 grant so the total is exact"},
+    "delivery": "a grant pays the next unpaid kits in materials first, whole kits only, then the rest in cash. Cash cannot buy back a material (no seller sells raw ore, diamonds or scrap: rule B1), so a kit must ride on a grant no later than the gym before the one it answers; the tool fails if one would not. A player may sell any material to the bank at the price it was valued at, so materials are the more flexible form",
+    "computed": {
+      "generated_by": "tools/challenge_voucher.py --write",
+      "oak_cash": 4000,
+      "oak_cash_bar": "the cheapest income_gate line on any counter is $4100 (data/markets.json); Oak's cash is the largest multiple of $100 strictly below it",
+      "kits_value_by_leg": {"2": 864, "3": 920, "4": 1048, "5": 1048, "6": 1288, "7": 1860, "8": 1860, "9": 1860},
+      "kits_total": 10748,
+      "power_kit_value": 9000,
+      "total": 23748,
+      "total_was": "ECONOMY_OVERHAUL.md 4.4: $4,000 + $10,748 = about $14,750 (RELAYED review N148); this adds the power kit the services decision obliges ($9000)",
+      "schedule": [
+        {"at": "oak_mode_choice", "value": 4000, "cash": 4000, "kits": []},
+        {"at": "gym1_cleared", "opens_income": 11304, "value": 7298, "kits": [2, 3, 4, 5, 6, 7], "cash": 270},
+        {"at": "gym2_cleared", "opens_income": 20175, "value": 4000, "kits": [8, 9], "cash": 280},
+        {"at": "gym3_cleared", "opens_income": 31065, "value": 2600, "kits": [], "cash": 2600},
+        {"at": "gym4_cleared", "opens_income": 35191, "value": 2300, "kits": [], "cash": 2300},
+        {"at": "gym5_cleared", "opens_income": 57730, "value": 1400, "kits": [], "cash": 1400},
+        {"at": "gym6_cleared", "opens_income": 73868, "value": 1050, "kits": [], "cash": 1050},
+        {"at": "gym7_cleared", "opens_income": 100823, "value": 800, "kits": [], "cash": 800},
+        {"at": "gym8_cleared", "opens_income": 233204, "value": 300, "kits": [], "cash": 300}
+      ],
+      "back_loaded_was": [4000, 864, 920, 1048, 1048, 1288, 1860, 1860, 1860]
+    }
   }
 }

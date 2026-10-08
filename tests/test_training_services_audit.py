@@ -37,6 +37,10 @@ RAISE = DOC["services"]["raise"]["price"]
 EV = DOC["services"]["ev"]["price"]
 IV1 = DOC["services"]["iv"]["price_per_stat"]
 MAX_CAP = DOC["services"]["raise"]["max_cap"]
+# A balance that buys any one EV or IV purchase twice (the double-click check pays twice), read from the data so a
+# re-priced service (data/training_services.json price_rule) cannot turn the purchase checks into refusal checks. The
+# fixed $5,000 / $9,000 / $50,000 balances stood below the rule's $17,200 EV and $103,200 all-six IV prices.
+BAL = 2 * max(RAISE, EV, 6 * IV1) + 1000
 
 
 # ----------------------------------------------------------------------------------------------- reading the pack
@@ -468,17 +472,17 @@ def check_double_click_buys_once(pack):
     out = []
     for page, price, flags in (("raise", RAISE, ()), ("ev_physical_sweeper", EV, ("gym2_cleared",)),
                                ("iv_all", 6 * IV1, ("gym8_cleared",))):
-        p = Player("A", 50000, 30, [mon(5)] + [None] * 5, flags)
+        p = Player("A", BAL, 30, [mon(5)] + [None] * 5, flags)
         g = Game(pack)
         click(g, pack, p, page, 1)
         click(g, pack, p, page, 1)
-        if p.balance != 50000 - price:
-            out.append("%s: two clicks in one tick paid %d" % (page, 50000 - p.balance))
+        if p.balance != BAL - price:
+            out.append("%s: two clicks in one tick paid %d" % (page, BAL - p.balance))
         g.time += DOC["cooldown_ticks"]
         if page == "raise":
             p.party[0]["level"] = 5
         click(g, pack, p, page, 1)
-        if p.balance != 50000 - 2 * price:
+        if p.balance != BAL - 2 * price:
             out.append("%s: a click after the cooldown was not served" % page)
     return out
 
@@ -502,13 +506,13 @@ def check_players_do_not_share_a_purchase(pack):
 def check_ev_spread_replaces_the_old_one(pack):
     out = []
     for sp in DOC["services"]["ev"]["spreads"]:
-        p = Player("A", 5000, 30, [mon(20, evs={"hp": 252, "defence": 252, "speed": 6})] + [None] * 5,
+        p = Player("A", BAL, 30, [mon(20, evs={"hp": 252, "defence": 252, "speed": 6})] + [None] * 5,
                    ("gym2_cleared",))
         g = Game(pack)
         click(g, pack, p, "ev_%s" % sp["id"], 1)
         want = {s: sp["evs"].get(s, 0) for s in STATS}
         got = {s: p.party[0]["evs"].get(s, 0) for s in STATS}
-        if got != want or p.balance != 5000 - EV:
+        if got != want or p.balance != BAL - EV:
             out.append("%s: evs %s balance %d" % (sp["id"], got, p.balance))
     return out
 
@@ -516,11 +520,11 @@ def check_ev_spread_replaces_the_old_one(pack):
 def check_iv_sets_only_what_was_bought(pack):
     out = []
     for oid, stats, price in [(s, (s,), IV1) for s in STATS] + [("all", STATS, 6 * IV1)]:
-        p = Player("A", 9000, 30, [mon(20, ivs={s: 3 for s in STATS})] + [None] * 5, ("gym8_cleared",))
+        p = Player("A", BAL, 30, [mon(20, ivs={s: 3 for s in STATS})] + [None] * 5, ("gym8_cleared",))
         g = Game(pack)
         click(g, pack, p, "iv_%s" % oid, 1)
         want = {s: (DOC["services"]["iv"]["value"] if s in stats else 3) for s in STATS}
-        if p.party[0]["ivs"] != want or p.balance != 9000 - price:
+        if p.party[0]["ivs"] != want or p.balance != BAL - price:
             out.append("%s: ivs %s balance %d" % (oid, p.party[0]["ivs"], p.balance))
     return out
 
@@ -529,16 +533,16 @@ def check_ev_iv_gates_and_refusals_charge_nothing(pack):
     out = []
     for page, flags in (("ev_bulky_special", ()), ("ev_bulky_special", ("gym8_cleared",)),
                         ("iv_speed", ("gym2_cleared",)), ("iv_all", ())):
-        p = Player("A", 50000, 30, [mon(20)] + [None] * 5, flags)
+        p = Player("A", BAL, 30, [mon(20)] + [None] * 5, flags)
         g = Game(pack)
         click(g, pack, p, page, 1)
-        if p.balance != 50000 or p.party[0] != mon(20):
+        if p.balance != BAL or p.party[0] != mon(20):
             out.append("%s without its badge (%s): charged or edited" % (page, flags))
     for page, flag in (("ev_bulky_special", "gym2_cleared"), ("iv_speed", "gym8_cleared")):
-        for p in (Player("A", 50000, 30, None, (flag,)), Player("A", 10, 30, [mon(20)] + [None] * 5, (flag,))):
+        for p in (Player("A", BAL, 30, None, (flag,)), Player("A", 10, 30, [mon(20)] + [None] * 5, (flag,))):
             g = Game(pack)
             click(g, pack, p, page, 1)
-            if p.balance not in (50000, 10):
+            if p.balance not in (BAL, 10):
                 out.append("%s empty or short: charged" % page)
     return out
 
@@ -631,9 +635,9 @@ def test_every_slot_option_of_every_keeper_edits_that_slot(pack):
 @pytest.mark.parametrize("page,flag,price", [("ev_physical_sweeper", "gym2_cleared", EV),
                                              ("iv_all", "gym8_cleared", 6 * IV1)])
 def test_an_ev_or_iv_edit_that_does_not_take_keeps_the_players_money(pack, page, flag, price):
-    p = Player("A", 50000, 30, [mon(20)] + [None] * 5, (flag,))
+    p = Player("A", BAL, 30, [mon(20)] + [None] * 5, (flag,))
     click(Game(pack, edit="fail"), pack, p, page, 1)
-    assert p.balance == 50000 and not any(m.startswith("Done") for m in p.msgs)
+    assert p.balance == BAL and not any(m.startswith("Done") for m in p.msgs)
 
 
 # Removing this lets a menu page strand the player (no way back or out), or the entry depend on a cursor a relog

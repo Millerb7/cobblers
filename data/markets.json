@@ -21,7 +21,7 @@
     "formula_source": "docs/research/notes/paid-services-and-npc-payouts.md B2 (CobbleDollars battleVictory bytecode 370-567, VERIFIED there; the uniform inclusive draw is ASSUMED there); cobbleDollarsIncomeMultiplier from modpack/config/cobbledollars/common.json",
     "verified_in_game": false,
     "unverified": "no payout has been read back in game against this model. The two measured payouts ($732, $600, docs/research/INCOME_MEASUREMENT.md) were against UPSTREAM kanto_brock at multiplier 0.5, not our roster (ECONOMY_OVERHAUL.md P1)",
-    "excluded": "wild battles (CobbleDollars pays them under the same formula while earnCobbleDollarsFromWildPokemon is true: owner question 1, ECONOMY_OVERHAUL.md P2; every figure here assumes they pay nothing); Heaven's Arena; rematches; Cobbleverse's roaming trainers and donor-template trainers; the Compact HQ tower (post_badge_8, not in any badge)",
+    "excluded": "wild battles (they pay nothing: earnCobbleDollarsFromWildPokemon is false in modpack/config/cobbledollars/common.json, the owner after the 2026-10-10 overnight; the tool refuses to write this block while the flag is anything else); Heaven's Arena; rematches; Cobbleverse's roaming trainers and donor-template trainers; the Compact HQ tower (post_badge_8, not in any badge)",
     "counts_trainers": "leg N: Route N's trainers (optional ones included), Route 1's five mansion guardians in leg 1, gym N's juniors, gym N's leader; each beaten once",
     "cumulative_by_badge": {"1": 4033, "2": 8608, "3": 18576, "4": 34991, "5": 56424, "6": 90132, "7": 134330, "8": 202835},
     "leg_by_badge": {"1": 4033, "2": 4576, "3": 9967, "4": 16415, "5": 21433, "6": 33708, "7": 44198, "8": 68505},

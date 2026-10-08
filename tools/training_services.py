@@ -42,6 +42,7 @@ import math
 import re
 import shutil
 import sys
+from fractions import Fraction
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -430,6 +431,53 @@ def static_problems(doc, prog, planned):
     gs = grounds()
     if sorted(k.get("ground") for k in doc.get("keepers") or []) != sorted(gs):
         out.append("keepers must be exactly one per data/training_grounds.json ground")
+    return out + price_rule_problems(doc)
+
+
+def rule_price(doc, key, markets=None, bank=None):
+    """The price price_rule gives services.<key>: the smallest multiple of round_to STRICTLY above hours_saved x the
+    fight hour of the anchor leg (data/markets.json income_basis.leg_by_badge[anchor] / data/bank.json
+    effort_model.max_leg_hours, the fight hour R5 already prices gathering against). None if the rule does not apply."""
+    r = doc.get("price_rule") or {}
+    a = (r.get("applies_to") or {}).get(key)
+    if not a:
+        return None
+    markets = markets if markets is not None else json.loads((ROOT / "data" / "markets.json").read_text(encoding="utf-8"))
+    bank = bank if bank is not None else json.loads((ROOT / "data" / "bank.json").read_text(encoding="utf-8"))
+    leg = Fraction(int(markets["income_basis"]["leg_by_badge"][str(r["anchor_badge"])]))
+    hour = leg / Fraction(bank["effort_model"]["max_leg_hours"])
+    step = int(r["round_to"])
+    return (int(Fraction(a["hours_saved"]) * hour) // step + 1) * step
+
+
+def price_rule_problems(doc, markets=None, bank=None):
+    """price_rule (the owner after the 2026-10-10 overnight: services against craftables, docs/mechanics/
+    SERVICES_AND_CRAFTING.md): every service it names carries exactly the rule's price, so a re-measured income
+    re-prices the service instead of leaving it cheap. A service the rule does not name says why in not_applied."""
+    r = doc.get("price_rule")
+    if not r:
+        return ["no price_rule: the services' prices are not tied to what crafting saves"]
+    out = []
+    if not (type(r.get("anchor_badge")) is int and 1 <= r["anchor_badge"] <= 8 and type(r.get("round_to")) is int
+            and r["round_to"] > 0):
+        return ["price_rule: anchor_badge must be 1..8 and round_to a positive whole number"]
+    s = doc.get("services") or {}
+    named = set(r.get("applies_to") or {}) | set(r.get("not_applied") or {})
+    for key in s:
+        if key not in named:
+            out.append("price_rule: services.%s is neither in applies_to nor in not_applied" % key)
+    for key, a in sorted((r.get("applies_to") or {}).items()):
+        field = a.get("field")
+        if key not in s or field not in s[key]:
+            out.append("price_rule.applies_to.%s: no services.%s.%s" % (key, key, field))
+            continue
+        if not (a.get("hours_saved") and a.get("why")):
+            out.append("price_rule.applies_to.%s: needs hours_saved and why" % key)
+            continue
+        want = rule_price(doc, key, markets, bank)
+        if s[key][field] != want:
+            out.append("services.%s.%s is $%s; price_rule gives $%d (%s h x the leg-%d fight hour, rounded up past it "
+                       "to $%d)" % (key, field, s[key][field], want, a["hours_saved"], r["anchor_badge"], r["round_to"]))
     return out
 
 

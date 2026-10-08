@@ -35,8 +35,10 @@ WHO COUNTS, per leg N (on the way to badge N), in the player guide's meeting ord
   Then Victory Road (data/vr_trainers.json, by route_progress) and the League (data/league_trainers.json, by order).
 
 WHAT IT DOES NOT COUNT, on purpose, and says so in the block it writes:
-  - wild battles: CobbleDollars pays them under the same formula (earnCobbleDollarsFromWildPokemon true). Whether they
-    stay on is owner question 1 (ECONOMY_OVERHAUL.md P2); every figure here assumes they pay nothing;
+  - wild battles: they pay nothing. CobbleDollars would pay them under the same formula, but
+    earnCobbleDollarsFromWildPokemon is false in modpack/config/cobbledollars/common.json (the owner, after the
+    2026-10-10 overnight: wild-battle pay OFF, docs/STATE.md). The flag is read on every run, and --write and --check
+    refuse while it is anything but false, because every figure here would then understate income;
   - Heaven's Arena (data/arena_trainers.json, unseated, its own purse: ECONOMY_OVERHAUL.md section 6);
   - the Compact HQ tower's seven (data/hq_trainers.json): after badge 8, reported under `post_badge_8`, not in any
     badge's figure;
@@ -80,6 +82,12 @@ def doc(rel):
 def multiplier():
     cfg = json.loads(CD_CONFIG.read_text(encoding="utf-8"))
     return cfg["cobbleDollarsIncomeMultiplier"]
+
+
+def wild_pay():
+    """earnCobbleDollarsFromWildPokemon as the overlay sets it (None when the key is absent: CobbleDollars' default
+    then applies, which this model does not assume)."""
+    return json.loads(CD_CONFIG.read_text(encoding="utf-8")).get("earnCobbleDollarsFromWildPokemon")
 
 
 def kotlin_b(levels):
@@ -228,8 +236,9 @@ def block(model, old):
         "unverified": "no payout has been read back in game against this model. The two measured payouts ($732, $600, "
                       "docs/research/INCOME_MEASUREMENT.md) were against UPSTREAM kanto_brock at multiplier 0.5, not "
                       "our roster (ECONOMY_OVERHAUL.md P1)",
-        "excluded": "wild battles (CobbleDollars pays them under the same formula while earnCobbleDollarsFromWildPokemon "
-                    "is true: owner question 1, ECONOMY_OVERHAUL.md P2; every figure here assumes they pay nothing); "
+        "excluded": "wild battles (they pay nothing: earnCobbleDollarsFromWildPokemon is false in "
+                    "modpack/config/cobbledollars/common.json, the owner after the 2026-10-10 overnight; the tool "
+                    "refuses to write this block while the flag is anything else); "
                     "Heaven's Arena; rematches; Cobbleverse's roaming trainers and donor-template trainers; the Compact "
                     "HQ tower (post_badge_8, not in any badge)",
         "counts_trainers": "leg N: Route N's trainers (optional ones included), Route 1's five mansion guardians in "
@@ -328,6 +337,10 @@ def main(argv=None):
     if a.json:
         print(json.dumps(b, indent=2))
         return 0
+    if (a.check or a.write) and wild_pay() is not False:
+        print("%s earnCobbleDollarsFromWildPokemon is %r, not false: wild battles pay, and this model counts trainer "
+              "battles only, so every figure it writes would understate income" % (CD_CONFIG.relative_to(ROOT), wild_pay()))
+        return 1
     if a.check:
         if old != b:
             print("data/markets.json income_basis is not what tools/income_model.py computes: run --write")
