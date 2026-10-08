@@ -231,6 +231,11 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # species_additions `drops` only, no functions and no step. Twelve of them overlay COBBLEVERSE files at
                 # the same path, so the pack must load ABOVE the global COBBLEVERSE pack: world-local below
                 "cobblers_drop_fixes",
+                # 2026-10-08: alphas pay type gems by level and no candies (tools/alpha_spoils.py,
+                # data/alpha_spoils.json, DROPS_PROGRESSION_SPLIT.md option C): the jar's four alpha tier loot tables
+                # emptied at their own paths and a Cobblemon battle_fainted callback beside the jar's. No functions and
+                # no step; a callback acts on its own, so world-local below
+                "cobblers_alpha_spoils",
                 # 2026-10-02: one Spectrier per player at the Crown Cemetery (tools/spectrier_cap.py,
                 # data/spectrier_cap.json): its own tick tag judges each new wild Spectrier, so world-local below,
                 # the cobblers_sizes shape (self-driving, no blocks, no step)
@@ -403,6 +408,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_mythical_starters",
                # 2026-10-08: drop tables overlaying COBBLEVERSE's files at the same path; they win only above the global pack
                "cobblers_drop_fixes",
+               # 2026-10-08: a battle_fainted callback that pays alpha gems; global would change the live world's alphas
+               "cobblers_alpha_spoils",
                # 2026-10-03: the southern residents' keeper spawns its two Pokemon the same way
                "cobblers_southern_residents",
                # 2026-10-03: the northern residents' keeper spawns its three Pokemon the same way
@@ -927,6 +934,10 @@ def prepare_jobs(a):
     # intent) and writes nothing on a problem; then the sweep over every installed jar and datapack with ours on top
     add("drop_fixes:build", "drop_fixes.py", "build")
     add("drop_fixes:sweep", "drop_fixes.py", "sweep")
+    # what an alpha pays (data/alpha_spoils.json): `build` checks the jar's alpha callback and loot tables first (the
+    # tier tables it empties still carry the recorded candies, each band's gems a KO recomputed from the jar's type
+    # tables) and writes nothing on a problem
+    add("alpha_spoils:build", "alpha_spoils.py", "build")
     add("nuzlocke_zones", "nuzlocke_zones.py", "--check")
     add("location_titles", "location_titles.py")
     # the badge flags: one advancement per gym leader and the Champion, set by rctmod on a won battle
