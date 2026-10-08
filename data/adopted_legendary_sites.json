@@ -528,7 +528,7 @@
    "gate": "OUR Champion flag, cobblers:flag/champion_cleared, written into the template's own summit chain after the paste (data/placements.json set_commands, emitted by tools/place_donor.py as `data merge block`). Every link runs only with a Champion within 12 blocks; anyone else is told so and the chain SURVIVES, so the server's one spawn cannot be burned early. The lift stays open: the tower can be climbed before it can be woken. NOT VERIFIED IN GAME.",
    "does_not_travel_here": [
     "`/locate` and any finder: none exists for these towers anyway",
-    "ONE SPAWN ENTRY: data/structures.json records spawn_entries 1, cobblemon:0803_poipole spawning via the tower. Pasted, no Poipole spawns there. A Habitat Block would restore it if the owner wants it (not authored here)."
+    "ONE SPAWN ENTRY: data/structures.json records spawn_entries 1, cobblemon:0803_poipole spawning via the tower. A paste does not carry it; since 2026-10-08 our own compiled spawn does: data/spawns.json placement_sites dawn_tower, Poipole 38-43, rare, over the footprint plus 16 blocks, sky-open ground only (docs/mechanics/NETHER_ENCOUNTERS.md section 4)."
    ],
    "what_a_player_gets": "after the Champion: a 90-block climb by levitation to a summit where Necrozma (Dawn Wings) appears at level 80 with IVs of 30 and four set moves, catchable at the post-Blue cap of 100. ONE per tower for the WHOLE server: the chain fills itself in once it fires. Before the Champion: the tower, the climb and the view.",
    "one_per_server": "DECIDED, the owner, 2026-10-02: kept as Cobbleverse designed it. Whoever gets there first gets it."
@@ -594,7 +594,7 @@
    "gate": "OUR Champion flag, cobblers:flag/champion_cleared, written into the template's own summit chain after the paste (data/placements.json set_commands, emitted by tools/place_donor.py as `data merge block`). Every link runs only with a Champion within 12 blocks; anyone else is told so and the chain SURVIVES, so the server's one spawn cannot be burned early. The lift stays open: the tower can be climbed before it can be woken. NOT VERIFIED IN GAME.",
    "does_not_travel_here": [
     "`/locate` and any finder: none exists for these towers anyway",
-    "ONE SPAWN ENTRY: data/structures.json records spawn_entries 1, cobblemon:0803_poipole spawning via the tower. Pasted, no Poipole spawns there. A Habitat Block would restore it if the owner wants it (not authored here)."
+    "ONE SPAWN ENTRY: data/structures.json records spawn_entries 1, cobblemon:0803_poipole spawning via the tower. A paste does not carry it; since 2026-10-08 our own compiled spawn does: data/spawns.json placement_sites dusk_tower, Poipole 33-38, rare, over the footprint plus 16 blocks, sky-open ground only (docs/mechanics/NETHER_ENCOUNTERS.md section 4)."
    ],
    "what_a_player_gets": "after the Champion: a 90-block climb by levitation to a summit where Necrozma (Dusk Mane) appears at level 80 with IVs of 30 and four set moves, catchable at the post-Blue cap of 100. ONE per tower for the WHOLE server: the chain fills itself in once it fires. Before the Champion: the tower, the climb and the view.",
    "one_per_server": "DECIDED, the owner, 2026-10-02: kept as Cobbleverse designed it. Whoever gets there first gets it."
