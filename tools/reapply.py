@@ -166,6 +166,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # seven terraced groves, the yard and lanes, built by R9AF; block functions and the stall merchant's
                 # summon, nothing that runs on its own; the farmer and the merchant stood by R18AF
                 "cobblers_apricorn_farm",
+                # 2026-10-10: the Produce Buyer at Hollin's farm (tools/produce_buyer.py, data/produce_buyer.json):
+                # its NPC class and dialogue and the sales its options run; placed over RCON by R18PB. It pays
+                # CobbleDollars and takes items, so world-local below like the ferry
+                "cobblers_produce_buyer",
                 # 2026-10-05: Arrow Creeks Farm (tools/pokemon_farm.py, data/pokemon_farm.json): pure block functions
                 # run by R9PF; no tick or load, so not world-local. Its animals are cobblers_ambient_idle's (R16C)
                 "cobblers_pokemon_farm",
@@ -350,6 +354,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_markets",
                # 2026-10-07: the barterer trades items for items, so it never loads in the global folder either
                "cobblers_direct_trades",
+               # 2026-10-10: the Produce Buyer pays CobbleDollars for items, like the ferry charges them
+               "cobblers_produce_buyer",
                # 2026-10-02: the den keeper loop holds the bear on its own tick, so world-local as its own comment says
                "cobblers_ursaluna_cave",
                # 2026-10-02: the residents' keeper SPAWNS Pokemon on its own when a player comes near, so it must never
@@ -768,6 +774,12 @@ def prepare_jobs(a):
     # dialogue (compiled by compile_dialogue above) and this wiring; KNOWN defects print and do not fail it
     add("apricorn_farm:build", "apricorn_farm.py", "build", *src)
     add("apricorn_farm_audit", "apricorn_farm_audit.py", *src)
+    # the Produce Buyer (2026-10-10, docs/mechanics/ECONOMY_OVERHAUL.md U2): farm goods by the crate under a per-player
+    # allowance per leg; its seat is a cell of the farm's plan, so after the farm. The check fails closed on the
+    # schedule, the bank still buying a crate item, a cheaper seller, the sale's order (count, take, pay, verify) and
+    # the seat
+    add("produce_buyer:build", "produce_buyer.py", "build")
+    add("produce_buyer:check", "produce_buyer.py", "check", *src)
     # Arrow Creeks Farm (2026-10-05): the generator fails closed on its siting rules, on a seat (the farmer's in
     # data/npc_seats.json, the stand's in data/markets.json) the plan does not leave open and on a spawn-condition
     # block. Before ambient_idle:build, whose plan takes the farm's animals from it (tools/pokemon_farm.py idlers).
@@ -2022,6 +2034,12 @@ def steps(with_spawns=False):
     # forceload of its chunk and de-duplicated by tag 100 ticks later (tools/markets.py's shape)
     out.append(("R18AF", "Hollin's Apricorn Farm: the farmer and the stall merchant (data/apricorn_farm.json npc, merchant)",
                 apricorn_farm.entity_steps()))
+    # the Produce Buyer (2026-10-10, tools/produce_buyer.py): its load function (the sale's scores), then the buyer, an
+    # NPC whose class loads at boot from cobblers_produce_buyer, placed over RCON like the ferrymen, on the cell of the
+    # farm's plan beside Hollin's stall, after R18AF so the stall keeper it stands apart from is already there
+    import produce_buyer
+    out.append(("R18PB", "the Produce Buyer at Hollin's farm (data/produce_buyer.json)",
+                [("fn", "cobblers:produce_buyer/load")] + [("npc", n) for n in produce_buyer.npc_placements()]))
     # direct trades (2026-10-07, EXP-055): the barterer, a vanilla villager whose fixed item-for-item offers are written
     # into its summon, in a booth carved 9 under the Holdfast counter (no sky, so no lightning, which would discard it).
     # Held in a forceload of its chunk; the place function refuses to carve if the shell meets air or water (score
