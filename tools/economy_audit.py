@@ -1572,6 +1572,63 @@ def forceload_checks(files, steps, step_id="R18DT"):
     return fails
 
 
+# ------------------------------------------------------------------------------------------------ the Entei boss
+def entei_files():
+    """The Entei boss pack's generated files ({path: text}), built in memory by its own generator: what this audit
+    reads is the OUTPUT that reaches the world, never data/entei_boss.json's description of it."""
+    import entei_boss as EB
+    return EB.build(EB.load())
+
+
+def entei_checks(bank_prices, best, files=None):
+    """(failures, reports) for the repeatable Entei (tools/entei_boss.py), from its generated loot tables, recipes and
+    functions. The boss can be fought once per lockout for ever, so a drop the Bank buys is an unpriced mint; a
+    function that pays CobbleDollars is a money reward the design forbids (data/entei_boss.json drops.rule); and a
+    sigil the Bank buys for at least its ingredients' Bank value would make the entry a mint of its own.
+    What it does NOT cover: whether a refused sigil comes back once and only once (a behaviour, tested by
+    tests/test_entei_boss_audit.py on a simulator), and drops sold to a player-run shop (none exists)."""
+    fails, reps = [], []
+    if files is None:
+        try:
+            files = entei_files()
+        except Exception as e:  # the generator fails closed on its own record: that is a finding here too
+            return ["ENTEI the boss pack does not build: %s" % e], reps
+    for path, text in sorted(files.items()):
+        if "/loot_table/" not in path:
+            continue
+        for pool in json.loads(text).get("pools", []):
+            for e in pool.get("entries", []):
+                item = e.get("name") or ""
+                if item in bank_prices:
+                    fails.append("ENTEI drop %s (%s) is bought by the Bank at $%d: a boss fought once per lockout "
+                                 "for ever would mint money" % (item, path, bank_prices[item]))
+                if item.startswith("cobbledollars:"):
+                    fails.append("ENTEI drop %s (%s) is money" % (item, path))
+    for path, text in sorted(files.items()):
+        if path.endswith(".mcfunction"):
+            for n, line in enumerate(text.splitlines(), 1):
+                if not line.startswith("#") and re.search(r"\bcobbledollars (add|give|set|pay)\b", line):
+                    fails.append("ENTEI %s:%d pays money: %s" % (path, n, line.strip()))
+    for path, text in sorted(files.items()):
+        if "/recipe/" not in path:
+            continue
+        r = json.loads(text)
+        res = (r.get("result") or {}).get("id")
+        ings = [i.get("item") for i in r.get("ingredients", [])]
+        value = sum(bank_prices.get(i, 0) for i in ings)
+        cash = [best[i][0] for i in ings if i in best]
+        if res in bank_prices and bank_prices[res] >= value:
+            fails.append("ENTEI the sigil (%s, %s) sells to the Bank for $%d, at least its ingredients' $%d: "
+                         "crafting it is a mint" % (path, res, bank_prices[res], value))
+        reps.append("ENTEI entry: %s from %s; $%d of Bank value destroyed per sigil eaten; %s"
+                    % (res, " + ".join(ings), value,
+                       "cash path $%.0f" % sum(cash) if len(cash) == len(ings) else "no cash path (an ingredient is "
+                       "sold by no counter)"))
+        if value <= 0:
+            reps.append("ENTEI entry costs nothing the Bank values: the lockout is the only limiter")
+    return fails, reps
+
+
 # ------------------------------------------------------------------------------------------------ the run
 def audit(server_dir=None, vanilla_jar=None, markets_mod=None, bank_mod=None, use_jars=True, traders_mod=None,
           direct_trades_mod=None, direct_trades_doc=None):
@@ -1633,6 +1690,9 @@ def audit(server_dir=None, vanilla_jar=None, markets_mod=None, bank_mod=None, us
     notes += n
 
     f, r = vitamin_checks(best, bank_prices)
+    fails += f
+    reps += r
+    f, r = entei_checks(bank_prices, best)
     fails += f
     reps += r
     reps += reward_ahead_report(markets_doc, progression, towns_doc)

@@ -983,6 +983,32 @@ def test_contract_c12_a_gulch_mega_makes_no_claim_on_the_player_it_blacks_out():
         assert items[0]["nbt"]["Owner"] != onlooker["nbt"]["UUID"] and items[0]["pos"] == victor["pos"], site
 
 
+def entei_c12(files):
+    """C12 for the Entei boss (a consumer since 2026-10-08): every Entei its generated keeper binds carries tags the
+    generated blackout treats as exempt -- no item claim, no guardian (a guardian in a pocket slot freed the moment its
+    victim leaves would hold their items where nobody can return), and the loss still costs money. The tags are read
+    from the boss pack's GENERATED bind functions; the verdict is the generated blackout's, run on its simulator."""
+    import test_blackout_recovery_pid as RP
+    binds = {p: t for p, t in files.items() if re.search(r"/function/entei_boss/slot/s\d+/bind\.mcfunction$", p)}
+    assert binds, "no bind function generated: nothing to check"
+    for path, text in sorted(binds.items()):
+        tags = tuple(m.group(1) for m in re.finditer(r"^tag @s add (\S+)$", text, re.M))
+        s = RP._wild_loss({0: ("cobblemon:ultra_ball", 20)}, balance=1000, victor_tags=tags)
+        assert not RP.fn_calls(s, "recovery/make") and not (RP.ledger(s).get("claims") or []), \
+            ("a loss to the Entei makes a claim", path, tags)
+        assert s.get("@s", "bo.lost") > 0, "the loss must still cost money"
+
+
+# Without it the Entei boss's loss path breaks silently: a player beaten in their pocket slot would leave a claim and a
+# guardian in a room that is freed (and its Entei killed) the moment they are sent out, so their items would be lost.
+def test_contract_c12_the_entei_boss_makes_no_claim_on_the_player_it_blacks_out():
+    import entei_boss as EB
+    import test_blackout_recovery_pid as RP
+    entei_c12(EB.build(EB.load()))
+    control = RP._wild_loss({0: ("cobblemon:ultra_ball", 20)}, balance=1000, victor_tags=("cobblers.eb",))
+    assert RP.fn_calls(control, "recovery/make"), "an Entei without the exempt tag must claim, or this proves nothing"
+
+
 # =================================================================================================================
 # C13. The gulch's zone and build stay off Victory Road
 # =================================================================================================================
