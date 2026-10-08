@@ -11,6 +11,14 @@
       "order": 10
     },
     {
+      "file": "starters.html",
+      "title": "Starters",
+      "label": "Starters",
+      "description": "The five starters on the starter screen: their stats at each tier, how each line evolves, and how to get the items two of them need.",
+      "generator": "tools/player_guide_starters.py",
+      "order": 10
+    },
+    {
       "file": "battles.html",
       "title": "Trainer battles",
       "label": "Trainer battles",

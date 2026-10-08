@@ -5,8 +5,9 @@
    guide (body.page-battles); the region map (body.page-map). */
 
 /* ---------------------------------------------------------------- tokens and themes */
-:root{--bg:#f7f6f2;--card:#fff;--ink:#1d1f23;--muted:#5d636d;--rule:#d9d6cc;--accent:#b2402f;--accent-ink:#fff;
---soft:#efece4;--warn:#fff6d8;--warn-rule:#d6a400;
+/* light: lavender (the owner, 2026-10-08) */
+:root{--bg:#f3effa;--card:#fdfbff;--ink:#1f1b2b;--muted:#5f5970;--rule:#dcd3ee;--accent:#6c4cb0;--accent-ink:#fff;
+--soft:#ebe4f6;--warn:#fff6d8;--warn-rule:#d6a400;
 --common:#3b7a3b;--uncommon:#2f5f9e;--rare:#8a3fa0;--ultra-rare:#b4441a;--btext:#fff;color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#15171b;--card:#1f2228;--ink:#e8e6e1;
 --muted:#a3a8b1;--rule:#353a43;--accent:#e0705c;--accent-ink:#15171b;--soft:#262a31;--warn:#2d2816;--warn-rule:#a07c10;
@@ -169,4 +170,16 @@ section.doc li{margin:.15rem 0}
 .layers{font-size:.75rem;padding:.2rem .35rem}}
 @media (max-width:560px){body{font-size:14px}.site-header{padding:6px 10px}.page-battles main{padding:8px 10px 20px}
 .team{grid-template-columns:1fr}.tr{padding:8px}.page-battles h2 small{display:block;margin:0}}
+/* starters.html (tools/player_guide_starters.py) */
+.page-starters main{max-width:980px;margin:0 auto;padding:12px 16px 20px}
+.page-starters h1{font-size:1.7rem;margin:14px 0 4px}
+.page-starters h2{font-size:1.35rem;margin:30px 0 6px;padding-bottom:4px;border-bottom:2px solid var(--accent)}
+.page-starters h3{font-size:1.05rem;margin:16px 0 6px}
+.page-starters table.stats{border-collapse:collapse;width:100%;font-size:.88rem;margin:6px 0}
+.page-starters .stats th,.page-starters .stats td{text-align:left;padding:.25rem .4rem;border-bottom:1px solid var(--rule)}
+.page-starters .stats th{font-weight:600;color:var(--muted);font-size:.78rem}
+.page-starters .stats td.n{text-align:right;font-variant-numeric:tabular-nums}
+.page-starters .stats .t{margin-right:3px}
+.page-starters ol.steps{margin:4px 0;padding-left:22px}
+@media (max-width:560px){.page-starters main{padding:8px 10px 20px}.page-starters .stats{font-size:.78rem}}
 @media print{.site-header{position:static}.seg,#theme{display:none}}
