@@ -109,10 +109,12 @@ matters: a wild 570 paradox at level 60, one per player before the Champion. It 
 
 ---
 
-## 3. Recommendation: (c), every catch after the Champion; pre-League dungeon bosses are set pieces
+## 3. Decided (Q11): (c), every catch after the Champion; pre-League dungeon bosses are set pieces
 
-**Status: OPEN.** The owner has not answered Q11 or Q13; nothing in `DUNGEONS.md` assumes this recommendation. What is
-decided either way: the cap binds any key boss (section 2), and no dungeon Pokemon is an alpha (below).
+**Status: DECIDED for Q11** (the owner, 2026-10-08, relayed by the dungeon brief): every catch after the Champion;
+pre-League dungeon bosses are fight-only set pieces. `DUNGEONS.md` builds on it as D8. **Q13 (which home is the
+window's new dungeon) is still OPEN.** Also decided: the cap binds any key boss (section 2), and no dungeon Pokemon is
+an alpha (below).
 
 **Choose (c) in its revised form.** Pre-League dungeon bosses are fight-only set pieces with item rewards; every
 catchable dungeon boss is postgame, behind `champion_cleared`. The reasons, in order:
@@ -183,8 +185,8 @@ and waits on section 6. Section references are to `DUNGEONS.md`'s revised text, 
   the cap as the constraint on any catchable boss, and the window cap of 60/62, not 80 (Q1), are recorded. **OPEN:**
   the paradox rule.
 - **C2. Section 2.3 boss line. Partly applied.** Overworld bosses stay NPCs, never catchable, with no key tag; every
-  wild catch-mode boss is a key boss under the cap. **OPEN:** gating every key boss at `champion_cleared` (Q11), and a
-  band-6 wild paradox boss in the late homes.
+  wild catch-mode boss is a key boss under the cap. **DECIDED:** every key boss is gated at `champion_cleared` (Q11).
+  **OPEN:** a band-6 wild paradox boss in the late homes.
 - **C3. Section 3 table. OPEN.** The "paradox" column, and the Temple Calendar's "First reachable" at `gym8_cleared`
   (Q13; noted in the row as open).
 - **C4. Section 4 rewards. Partly applied.** Bands 1-5 reward items only: already the section's rule, and candies and
@@ -192,7 +194,7 @@ and waits on section 6. Section references are to `DUNGEONS.md`'s revised text, 
   step for one medium-fast Pokemon (`DROPS_PROGRESSION_SPLIT.md` section 4). The fail-closed checks, applied in 7.2:
   - a key boss whose level exceeds the lowest cap its gate admits: **applied**;
   - an alpha key boss: **applied**, and widened by P3 to every dungeon Pokemon;
-  - a key boss gated below `champion_cleared`: **OPEN** (Q11);
+  - a key boss gated below `champion_cleared`: **decided, to apply** (Q11);
   - paradox rewards as band-6 catches, and any paradox catch below band 6: **OPEN**.
 - **C5. Section 5 band table. OPEN** (paradox and catchable-boss columns). The caps there are right; nothing needs 80.
 - **C6. Section 7.1 schema. Partly applied:** per boss, `key_boss` (bool) and `gate_flag`. **OPEN:** per band,
@@ -202,7 +204,8 @@ and waits on section 6. Section references are to `DUNGEONS.md`'s revised text, 
 - **C8. Cross-reference. OPEN:** the Flutter Mane rite as a band-6 catch (`paradox-pokemon-1.8.0.md:305-306`).
 - **C9. Dependency, outside DUNGEONS.md. OPEN:** switch off the inherited paradox spawn files (Q7), on
   `datapack-content-dev`'s list, in `data/spawn_suppression.json`.
-- **C10. Section 8. Applied as a pointer:** `DUNGEONS.md` section 8 lists Q11-Q15 and the band-4 question as OPEN.
+- **C10. Section 8. Applied as a pointer:** `DUNGEONS.md` section 15 lists Q12-Q15 and the band-4 question as OPEN,
+  and Q11 as decided.
   It had no window-reward question to drop.
 
 ADR-008 (Proposed) owns the architecture; this narrows its reward and catch rules, so it is an amendment to propose
@@ -210,11 +213,10 @@ there, not a new ADR.
 
 ---
 
-## 6. Open questions, each with a recommendation (none answered as of 2026-10-08)
+## 6. Open questions, each with a recommendation (Q11 answered 2026-10-08; the rest open)
 
-1. **OPEN. Q11. Every catch after the Champion, or one window catch (a wild 570 paradox at 60 in the Temple)?**
-   *Recommend after* (section 3). The window catch is legal under the cap; it is rejected on cost and Elite Four
-   exposure, not on the cap.
+1. **DECIDED. Q11. Every catch after the Champion** (the owner, 2026-10-08; `DUNGEONS.md` D8). The window catch (a wild
+   570 paradox at 60 in the Temple) is not taken.
 2. **OPEN. Q12. The Beast Ball sits idle from Cinderlee to the Champion.** Keep the sale there (owner-decided, harmless) or
    accept the idle stretch as the price of a clean League? *Recommend keep it*, and let Blaine's optional first-win
    Beast Ball (`beast-ball-key-1.8.0.md:234-235`) introduce it as a promise of the postgame.

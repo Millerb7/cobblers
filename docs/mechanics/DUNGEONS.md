@@ -1,6 +1,7 @@
 # Dungeons: timed rift runs, one engine, authored spines
 
 **Status: DESIGN AND COSTING ONLY (content-architect, 2026-10-08).** Nothing here is built, placed, generated or run.
+The owner's answers of 2026-10-08 to section 15 are applied (0.1), and the dungeon death rule is added (2.5).
 This rewrite answers the owner's timed-dungeon brief of 2026-10-08 (relayed close to verbatim by the brief): "an
 instanced run with a TIMER. Finish it or get out before the clock runs down. If you are still inside when it does, you
 die. They are visible rips in the world, torn from the Rift." The architectural choice is
@@ -41,23 +42,35 @@ value this design chooses so the arithmetic can be done, to be replaced by a tim
 | D11 | The dens are approved: the Night Shift's Electirizer den, the Last Cistern's armour den | 3.6, 11 |
 | D12 | Paradoxes are dungeon content (`docs/STATE.md:152`); Entei is a boss, Heatran after | 8, 10 |
 
-**Findings against other documents (disagreements, recorded, not papered over):**
-- **F1. `docs/mechanics/DUNGEON_PLACEMENT.md` section 6 still lists Q11 ("every catch after the Champion") as
-  OPEN** (`:215`), and its section 3 is headed "Status: OPEN" (`:114`). The brief relays it as decided (D8). This file
-  follows the brief; that file's status lines are stale.
-- **F2. The vision says "Progress persists"** for dungeons (`docs/vision/GAME_VISION.md:138`) and describes puzzle
-  dungeons with persistent state (`:51`). A timed rift run resets every entry; what persists is first clears, catches,
-  records and lockouts. This design treats rift runs as the vision's "optional dungeon / challenge encounter"
-  (`:64`), not as the persistent puzzle dungeon, which stays a separate, unbuilt kind (Q17).
-- **F3. Heaven's Arena's loop is proven in parts, not as a chain.** The in-game result shows spawn, start, win, loss,
-  re-roll and remove each PASS for one player (`docs/research/notes/arena-per-player-opponents.md:357-371`). Starting
-  a second battle from a victory's follow-up is not in that result, and `docs/STATE.md:220` lists "the in-function
-  spawn" as NOT proven. D2 rests on both; probe C1 (section 13) proves them before the boss is built.
-- **F4. The Entei unit is bigger than the earlier costing said.** The earlier file counted 2,169 lines. Today it is
-  **2,926** (*measured*): `data/entei_boss.json` 183, `tools/entei_boss.py` 752, `tests/test_entei_boss.py` 370,
-  `tests/test_entei_boss_audit.py` 779, `tests/test_entei_boss_fixes_independent.py` 630,
-  `experiments/EXP-059-entei-boss/README.md` 212. The fixes test is new since. `tools/arena_runtime.py` is 1,217
-  (*measured*; it was 1,113).
+### 0.1 The owner's answers to this design's questions (2026-10-08, relayed by the brief)
+
+| # | Decision | Where it lands |
+|---|---|---|
+| D13 | **Greed ladder:** x1.25 at 5, x1.5 at 10, x2.0 at 15, x3 at 20, holding for the rest of the run: "smoother, and it keeps the decision live at every step" (Q1) | 3.3 |
+| D14 | **Slack 1.25** (Q2) | 4.2 |
+| D15 | **Logging out mid-run: the clock keeps running.** "A run you can pause by quitting is not timed" (Q4) | 2.6, 6 |
+| D16 | **Solo first** (Q6); **separate clocks in co-op**, each player with their own greed (Q7) | 6 |
+| D17 | **The one-hour lockout** (Q9) | 2.5 |
+| D18 | **The legendary picks, approved as proposed** (Q13): section 8's table | 8 |
+| D19 | **Order: EXP-059 first, then the probes, the data, the engine. The Night Shift only** (Q14, and Q15's first half) | 13 |
+| D20 | **Death in a dungeon:** the guardian system does not apply inside dungeons. A death costs the blackout's money, the run's held rewards, and the sigil and lockout to try again. Nothing else: items are kept and nothing holds them, whatever killed the player (Q3) | 2.5 |
+
+**Findings against other documents:**
+- **F1 and F2 are resolved.** `DUNGEON_PLACEMENT.md` now records Q11 ("every catch after the Champion") as decided
+  (D8). The vision's "Progress persists" (`docs/vision/GAME_VISION.md:138`) now says what persists: the player's
+  progress always, and a dungeon's own state only for puzzle dungeons. A rift run's rooms reset on every entry (Q17).
+- **F3. Heaven's Arena proved the fight loop one step at a time, never as a chain.** The in-game result shows spawn,
+  start, win, loss, re-roll and remove each PASS for one player (`docs/research/notes/arena-per-player-opponents.md:357-371`).
+  **No fight has ever been chained into the next**: no victory's follow-up has started a second battle. And
+  `docs/STATE.md:225` lists "the in-function spawn" as NOT proven. The stands (3.1) and the staged boss (D2, 3.2) rest
+  on both. **Probe C1 (section 14) proves both before anything is built on them.**
+- **F4. The Entei unit is 2,926 lines** (*measured* by Grep, 2026-10-08): `data/entei_boss.json` 183,
+  `tools/entei_boss.py` 752, `tests/test_entei_boss.py` 370, `tests/test_entei_boss_audit.py` 779,
+  `tests/test_entei_boss_fixes_independent.py` 630, `experiments/EXP-059-entei-boss/README.md` 212.
+  `tools/arena_runtime.py` is 1,217 (*measured*).
+- **F5. "The sigil" in D20 assumes a key.** Q10 (still open) recommends free entry to the overworld dungeons, with
+  crafted keys only for the Nether pair. Under Q10 a death in the Night Shift spends no sigil; the lockout alone gates
+  the retry. 2.5 writes the cost as "the sigil, where the dungeon takes one".
 
 ---
 
@@ -114,7 +127,8 @@ and Entei's z -768 row are excluded; *relayed* from DM 5 and 6). The builder der
   (section 6) one partner's greed shortens only their own clock, and the shared gates still make a slow partner cost a
   fast one clock. The cost is one bossbar per member instead of per slot, which is trivial.
 - **Immune to game-time jumps** (DM 1.1). Nothing compares against `gametime`, so a re-export, a `/time set` or a
-  restart cannot move it. The keeper runs only while the server ticks, so a crash costs no clock. The keeper
+  restart cannot move it. The keeper runs only while the server ticks, so a server crash or stop costs no clock. A
+  player's own disconnect does cost clock (2.6). The keeper
   re-schedules from `load`, as Entei's does (`tools/entei_boss.py:381`, *relayed* via DM 1.1).
 - **The clock starts when the player crosses the entry room's threshold**, not at the teleport. The entry room is a
   safe place to read the board. A player who idles there gains nothing, since the clock has not started and no leg is
@@ -163,23 +177,82 @@ The board is text displays on the wall, generated from the record and showing ex
 - the multiplier ladder;
 - "falls cost 15 seconds";
 - "no Pokemon past the cracked lamps", the parkour's no-deploy line;
-- which legs are optional.
+- which legs are optional;
+- "Dying here takes no items, only your money and what the run has earned", the death rule (2.5);
+- "Leaving the game does not stop the rift", the logout rule (2.6).
 
 A player can plan greed before they reach the seam. Legibility is the owner's requirement for the multiplier, and the
 clock needs the same.
 
-### 2.5 What death means (DM 1.3 A + C, recommended)
+### 2.5 What death means: the dungeon death rule (D20)
 
-**At zero, the player is killed into the existing blackout**, and the run's escrowed rewards are forfeit.
+**The rule.** The recovery-claim ("guardian") system does not apply inside a dungeon. No Pokemon and no trainer takes
+a player's items there. Outside a dungeon, a Pokemon or trainer that beats a player holds the lost items and the money
+until it is beaten or caught (`docs/mechanics/DEATH_AND_WIPE.md:20-24` rule 5, `:54`, `:161-172`). In a dungeon that
+holder would be an entity in an instance that resets, so it would stop existing, and the items would be gone for good.
+Entei's room reached the same conclusion for one boss (`data/entei_boss.json:132`).
+
+**A dungeon death costs exactly three things, and nothing else:**
+1. **the money the blackout already takes**: $600 flat, never more than the balance (*relayed*, `data/blackout.json`
+   `money`). Nothing holds it, so it is not recoverable. That is the gulch Megas' rule (contract C12: "still charges
+   the money", `docs/mechanics/BLACKOUT_RECOVERY_COUPLING.md:17-30`);
+2. **the run's held rewards** (the escrow, below);
+3. **the sigil, where the dungeon takes one** (F5), **and the lockout**: the hour runs from entry (D17), so the retry
+   waits.
+
+**What is kept:** every item in the inventory, including the seam ores and den drops already picked up, and any
+Pokemon caught in the run. The rift pick is taken back, because it was never the player's.
+
+**It covers every way to die there:** the timer, a boss stage, a stand trainer, a den Pokemon, the lake legendary, a
+fall, lava, drowning in the sump, and anything else. The blackout's other steps are unchanged: the player is sent to
+their overworld checkpoint and healed (`DEATH_AND_WIPE.md:61-80`).
+
+**Mechanism, two layers** (CLAUDE.md "Our list is not the world": a list of what we spawn misses what we did not):
+- **Victor-side, the built pattern.** Every entity the engine spawns carries the blackout's `claims.exempt_tag`
+  (`data/blackout.json:71`): stand NPCs, every boss stage, den Pokemon and the lake legendary. Entei does this today
+  (`data/entei_boss.json:132`), and the blackout tests the victor for the tag (`BLACKOUT_RECOVERY_COUPLING.md:17-22`).
+- **Player-side, new.** A player carrying the run tag makes no claim, whatever the victor. This covers a victor the
+  engine did not spawn. It is a change to `tools/blackout_pack.py`, for `minecraft-systems-dev`. **The run's own death
+  handling must not clear the run tag before the blackout has read it.**
+- **CODE VERIFICATION PENDING** (a separate agent is checking the paths; nothing here is verified). It must settle:
+  - whether a trainer (`cobblemon:npc`) loss makes a claim at all. The blackout ships a line "You lost the battle. No
+    items were taken." (`data/blackout.json` `messages.npc_no_items`), which suggests it does not. This is not read
+    in code;
+  - whether the exempt-tag test covers the NPC path as well as the wild path;
+  - what message the exempt branch prints;
+  - whether the player-side check can be added where the victor check sits.
+
+  Until it reports, the rule above is the design and not a property of the code. The in-game check is DX1 (section
+  14).
+
+**The timer's kill.**
 - **`kill @s`**, never `damage ... outside_border` alone, because a totem can stop that (DM 1.3, probe B2). The
-  blackout counts it through `deathCount` (DM 1.3, VERIFIED (repo) `tools/blackout_pack.py:12`, `:55`). The player is
-  charged **$600 flat** (*relayed*, `data/blackout.json` `money`), returned to their overworld checkpoint and healed.
-- **The inventory is kept** (`keepInventory` is set at load, `tools/blackout_pack.py:174`, *relayed* via DM). A command
-  death is environmental, so **no item is lost**: `docs/mechanics/DEATH_AND_WIPE.md:20-26` rule 5, *relayed*.
-- **Escrow, the stake.** Every reward the run pays except the real items the player picked up (seam ores, den drops) and
-  a caught Pokemon is held **in escrow**: scores on the player, paid by `loot give` only at a clean exit (9.1). Death,
-  timeout and logout clear it. Rule 5 is untouched, because escrowed loot was never an item the player held (DM 1.3
-  C).
+  blackout counts it through `deathCount` (DM 1.3, VERIFIED (repo) `tools/blackout_pack.py:12`, `:55`).
+- `keepInventory` is set at load (`tools/blackout_pack.py:174`, *relayed* via DM). A command death is environmental
+  under rule 5 already, so the timer could never make a claim. D20 extends the same outcome to every death in a run.
+
+**Escrow, the stake.** Every reward the run pays is held **in escrow**, except the real items the player picks up (seam
+ores, den drops) and a caught Pokemon. The escrow is scores on the player, paid by `loot give` only at a clean exit
+(9.1). Any death clears it. A logout does not, unless the clock runs out while the player is away (2.6). Rule 5 is
+untouched, because escrowed loot was never an item the player held (DM 1.3 C).
+
+**What the player is told** (draft lines for `trainer-balance-designer` to tone; `messages.death` in 11.2). The
+blackout's own line stands as it is: "You blacked out and returned to {place}. Lost {money}." Its item line must never be
+a claim line. Then, on arrival:
+- **A title, by cause:**
+  - timer: "The rift closed" / "You were still inside.";
+  - a boss, trainer or Pokemon: "Beaten in the rift" / "The rift lets you go.";
+  - a fall, lava, drowning or anything else: "The rift threw you out";
+  - a run that died while the player was away: "The rift closed without you" (2.6).
+- **Chat, in this order:**
+  1. "Your items are all still yours. Nothing in a rift keeps them."
+  2. "The {money} is gone for good. No one in the rift is holding it." (only if money was taken)
+  3. "Lost with the run: {held_summary}." or "The run had earned nothing yet."
+  4. "Kept: everything you mined and picked up{, and {caught}}."
+  5. "{dungeon} opens to you again in about {minutes} minutes." Add "Your {sigil} was spent." where a sigil was spent.
+
+Line 1 is the difference a player must not miss. A normal loss says "{victor} took {summary}. Beat it, catch it or kill
+it to recover everything." (`data/blackout.json` `messages.claim`), and nothing in a rift is waiting to be beaten.
 - **Timeout during a battle: sudden death** (DM 1.3, recommended there). The clock holds at 0 and the player is killed
   the moment `q.player.in_battle` reads 0, whatever the result. This is not a pause: nothing is earned, the escrow is
   already forfeit, and the battle only delays the death. A player is never killed mid-battle, because what Cobblemon
@@ -187,8 +260,46 @@ clock needs the same.
 - **Lockout: our own uptime counter, not game time.** `#up dg.up` adds 20 every keeper pass, and a player's entry stamp
   is `dg.last_<dungeon> = #up`. The scoreboard carries both across a re-export (`tools/carry_players.py:84`, *relayed*
   via `data/entei_boss.json:110`), so they cannot disagree the way Entei's game-time stamp and a reset `Time` do. The
-  lockout is **72,000 ticks (one hour of uptime) per dungeon per player, counted from entry** (Q9). It must be at
+  lockout is **72,000 ticks (one hour of uptime) per dungeon per player, counted from entry** (D17). It must be at
   least the longest clock, 39 minutes (46,800 ticks), or it never binds. That is the old P3 finding, which *stands*.
+
+### 2.6 Logging out mid-run: the clock keeps running (D15)
+
+"A run you can pause by quitting is not timed." A disconnect, a crash of the player's client and a rage-quit are
+treated alike: **the run goes on without the player, and their clock keeps falling at the rate it had.**
+
+**Mechanism: an absence gap measured on the uptime counter.** The keeper cannot change an offline player's score by
+selector (`data/entei_boss.json:109`). So it charges the absence when the player comes back:
+- every pass, each member present in the run is stamped `dg.seen = #up`;
+- on the first pass that finds a run-tagged player again, `gap = #up - dg.seen - 20`. If the gap is above 0, the
+  keeper subtracts `gap x rate` from `dg.clock` before anything else;
+- the slot carries the member's deadline, `#s<k> dg.dead = #up + dg.clock / rate`, rewritten every pass the member is
+  present. When `#up` passes it with the member absent, the run is dead. The keeper then resets and frees the slot
+  without waiting for the player, so an absent player never holds one of the 4 slots past their clock;
+- uptime stops when the server stops, so a server stop costs no one clock (2.1). This is ASSUMED vanilla until LO1.
+
+This replaces Entei's "the owner is not in the slot, so free it" (`data/entei_boss.json:104`), which would end a run on
+any disconnect.
+
+**Coming back before the clock runs out.** The player appears where they logged out, with the run live and the clock
+lower by the time they were away, at their rate. Escrow, gates already opened and the seam count are as they left
+them. The actionbar says "The rift did not wait. {mm:ss} left." What Cobblemon does with a battle open at a disconnect
+is ASSUMED to be "it ends with no result" (LO1). If so, it is the forfeit case of 3.1: the gate stays shut and stepping
+back on the line restarts the fight.
+
+**Coming back to a dead run.** The dead-run check runs before the eject and before anything else on the player's first
+keeper pass. It fires when their own clock is at or below 0 after the gap, or when their slot's run id is not theirs
+(the slot was reset, and may hold someone else's run).
+- **Where they appear:** at their logout point inside the slot, for at most one keeper pass (about a second). They are
+  then killed into the blackout, as the timer would have killed them had they been there, and they wake at their
+  overworld checkpoint, healed. A respawn screen comes between. This is the owner's rule as written: "If you are
+  still inside when it does, you die."
+- **What they are told:** the title "The rift closed without you", then the blackout's line and the 2.5 chat lines.
+  The first chat line is preceded by "The rift closed {minutes} minutes ago while you were away."
+- **What they lost:** the blackout's money, the run's held rewards, and the sigil and lockout (2.5).
+- **What they kept:** every item, including what they mined and picked up, and any catch.
+- **Why the kill, and not a quiet teleport out:** if logging out avoided the $600, quitting would be the way to dodge
+  a timeout. A crash is unlucky, but its cost is the same as dying, no more.
 
 ---
 
@@ -216,7 +327,8 @@ clock needs the same.
 - **A forfeit sends no result** (DM 1.4, `tools/arena_runtime.py:1112`, *relayed*). The gate stays shut and stepping
   back onto the challenge line restarts the fight. The clock ran the whole time.
 - **A loss is a normal NPC loss, so the blackout fires** (VERIFIED in game, `arena-per-player-opponents.md:365-366`).
-  The run is over and the escrow forfeit.
+  The run is over, and the death rule applies (2.5): the money and the escrow are lost, no claim is made, and the items
+  are kept.
 - **What the player sees.** A lit hall with a person standing at its far third. A line of dialogue on the approach,
   the battle at the line, and a timber gate behind the trainer that swings open on the win.
 
@@ -230,6 +342,9 @@ clock needs the same.
      again.", particles and a sound.
   4. After 60 ticks it spawns stage k+1's class at the same spot and starts the next battle.
   5. After the last stage the exit gate opens and the boss's escrow flag is set.
+- **A loss at any stage** is a stand loss (3.1): the death rule (2.5), and every stage NPC carries the exempt tag.
+- **The chain is unproven.** No fight has ever started from a victory's follow-up (F3). Probe C1 runs this exact chain
+  three times before the boss is built.
 - **Order is guaranteed**, because the function picks the next stage. One staged party is rejected (D2; DM 3.2 a: the
   AI may switch stages out of order).
 - **A stage** is the boss's ace alone, at a rising level: stage 1 at cap-2, stage 2 at cap-1, stage 3 at cap. Each has
@@ -257,7 +372,7 @@ clock needs the same.
     1.21 component, ASSUMED until probe R2).
   - Their own tools break nothing. Nothing outside the seam can be mined, bridged or placed against.
   - **Every exit path restores survival and takes the pick back:** a clean exit, the respawn after death, the
-    eject, and a relog. In survival the pick would be a free unbreakable iron pickaxe, so the backstop matters. The
+    eject, and a relog to a dead run (a relog to a live run keeps both, 2.6). In survival the pick would be a free unbreakable iron pickaxe, so the backstop matters. The
     backstop is an overworld sweep over every player carrying the run tag or the pick: survival, `clear` the pick (DM
     2.3's warning).
 - **Counting: marker entities, the world's truth** (DM 2.1, recommended).
@@ -268,7 +383,7 @@ clock needs the same.
      `minecraft.mined` stat, one objective per ore id. The rift pick is the right tool by construction, so the stat
      should count, but whether it counts in adventure mode under `can_break` is ASSUMED until **R1**. The stat is
      added when co-op is enabled.
-- **The ladder** (the owner's two points are x1.25 at 5 and x3 at 20; the steps between are this design's, Q1):
+- **The ladder** (the owner's, D13: "smoother, and it keeps the decision live at every step"):
 
   | Taken (this player, this run) | 0-4 | 5-9 | 10-14 | 15-19 | 20-24 |
   |---|---|---|---|---|---|
@@ -276,7 +391,7 @@ clock needs the same.
   | Clock speed | x1 | **x1.25** | x1.5 | x2 | **x3** |
 
 - **The multiplier only rises, and holds for the rest of the run** (DM 2.2: "a one-way commitment, and that is the
-  point"; Q1). Leaving the seam does not cool it.
+  point"; D13). Leaving the seam does not cool it.
 - **What the player sees.**
   - The seam's ores in a lit face, and a board beside it with the ladder.
   - On the 5th, 10th, 15th and 20th block: the actionbar line "The rift tightens. Time runs x1.25." and the sound.
@@ -329,8 +444,8 @@ clock needs the same.
 ### 3.6 The den (optional; D11; the mechanism *stands* from the old 2.3)
 
 The den is a side room of four wild Pokemon at the band's level (cap-2 to cap-1). They are `uncatchable` and never
-alpha, spawned by macro on entering the den box (Entei's farm pattern, `data/entei_boss.json:19`). Their drops are the
-**species' own tables**: real items, so death keeps them. The den costs clock, about 4 wild fights (*planning*: 1.5
+alpha, carry the claims exempt tag (2.5), and are spawned by macro on entering the den box (Entei's farm pattern,
+`data/entei_boss.json:19`). Their drops are the **species' own tables**: real items, so death keeps them. The den costs clock, about 4 wild fights (*planning*: 1.5
 minutes each, 6 in all), and it is the second-largest spend of slack after the lake. The two approved dens and their
 expected yields *stand* (old 2.3, *relayed* from `docs/mechanics/DROPS_PROGRESSION_SPLIT.md` section 5).
 
@@ -407,7 +522,7 @@ The first dungeon's spine (11.1) is **1,464 blocks of walking plus 200 of parkou
 | 5 (60, 62) | 5 | 3.5 | 10.5 | 8.0 | 6.1 | 3.5 | 1.0 | **29.1** | **37** | 7.9 (21%) |
 | 6 (100) | 6 | 4.0 | 12.0 | 9.0 | 6.1 | 3.5 | 1.0 | **31.1** | **39** | 7.9 (20%) |
 
-Minutes throughout. **Clock = ceil(required x 1.25)**; the factor is Q2. The stand sizes are the old band table's
+Minutes throughout. **Clock = ceil(required x 1.25)**; the factor is the owner's (D14). The stand sizes are the old band table's
 (*stands*, 5.3). Walk = 1,464 / 4.0 = 366 s.
 
 **What the table says:**
@@ -465,22 +580,26 @@ band.
 
 ## 6. Multiplayer
 
-**Solo first** (Q6). The data model carries `members[]` from day one, so co-op is a switch, not a rewrite.
+**Solo first** (D16). The data model carries `members[]` from day one, so co-op is a switch, not a rewrite.
 
 | Question (the vision's four, `GAME_VISION.md:149-150`) | Answer |
 |---|---|
 | Two players at once | **Solo:** separate slots, 4 per dungeon. **Co-op (later):** up to 4 members in one slot. Everyone within 4 blocks of the rip who clicks within 10 seconds of the first click joins. Each passes the gate, lockout and cap checks, and each is refused alone |
-| One player ahead | Each member's NPCs spawn at **their own band** (the arena's per-player spawn). Clocks are per player, each sized to that member's band. The gates wait for all live members (below) |
+| One player ahead | Each member's NPCs spawn at **their own band** (the arena's per-player spawn). Clocks are per player, each sized to that member's band. The gates wait for every member present (below) |
 | A player joins late | Never into a run in progress. They take another slot or wait |
-| A player leaves mid-dungeon | **Logout:** that member's run ends, their escrow is forfeit, and on relog they are put outside the rip, survival restored, the pick taken. Not killed: a crash and a rage-quit look the same (Q4). **Clean exit by either rip:** their escrow is paid and the others carry on |
+| A player leaves mid-dungeon | **Logout:** that member's clock keeps running while they are away (D15, 2.6). Back in time, they resume where they stood. Back too late, they are killed into the blackout on return, with the death rule's costs (2.5). **Clean exit by either rip:** their escrow is paid and the others carry on |
 
 - **Fights:** each member fights their own NPC at each stand and their own boss chain. Two players against one NPC is
   OPEN (`NETHER_DUNGEON_SCOPE.md` X5, *relayed*) and not needed.
-- **Gates:** a stand's or the boss's gate opens when **every live member** has won their own fight there. A fast
-  member waits on their own clock, which is co-op's tension, and nothing else is shared that way.
+- **Gates:** a stand's or the boss's gate opens when **every member present in the slot** has won their own fight
+  there. An offline member holds no gate, so a logout cannot stall a partner. A returning member still owes their own
+  fight at any stand they have not won, and is paid no escrow for it. A fast member waits on their own clock, which is
+  co-op's tension, and nothing else is shared that way.
+- **Clocks:** separate, one per member, each with its own greed (D16).
 - **Seam:** per-player counts and per-player multipliers (3.3). In co-op the markers credit the nearest member until
   R1 makes the stat exact. One partner's greed costs only them.
-- **Death and timeout** end the member they happen to. The slot frees when its last member is gone.
+- **Death and timeout** end the member they happen to, with the death rule (2.5). The slot frees when its last member
+  is gone, or when the last absent member's deadline passes (2.6).
 - **The lake:** one legendary per member who has not caught it, each tagged with that member's id, and the cradle's
   ball check (3.7).
 - **The keeper's ownership sweep** (Entei's, `data/entei_boss.json:104`) generalises to "is a member of slot k";
@@ -562,8 +681,9 @@ world-critical for this system**, as it is for Entei (`data/entei_boss.json:10`)
 | 5 The Temple Calendar | **Tapu Fini** (water/fairy, MSD) | a misted temple pool (note item 2) | Dialga's chain, catch at band 6 (note item 9) |
 | 6 The Tower After the Fire | none | the built room has no lake | **Entei**, built, catchable once (12) |
 
-**Keldeo** is held for a Swords of Justice set, which is not a dungeon (note item 14). The "Boss" column is a
-proposal for `trainer-balance-designer`, and every legendary pick is the owner's (Q13).
+**Keldeo** is held for a Swords of Justice set, which is not a dungeon (note item 14). **The owner approved these
+picks as proposed (D18, 2026-10-08).** The "Boss" column's NPC characters remain a proposal for
+`trainer-balance-designer`. Yveltal and Dialga as band-6 bosses are among the approved picks.
 
 ---
 
@@ -573,7 +693,7 @@ proposal for `trainer-balance-designer`, and every legendary pick is the owner's
 
 Each leg sets an escrow flag on the player. `dg/exit` pays each flag with
 `loot give @s loot cobblers:dungeons/<id>/b<band>/<leg>`, the portals pedestal's command (`data/entei_boss.json:126`,
-*relayed*). Death, timeout and logout clear the flags.
+*relayed*). Any death clears the flags (2.5). A logout does not, unless the run dies while the player is away (2.6).
 
 ### 9.2 What each leg pays
 
@@ -631,7 +751,7 @@ is. **No item pays for time left.** A time bonus would make greed's trade two-si
 
 ## 10. How many dungeons, and where
 
-**Recommendation: commit to one, the Night Shift, and decide the rest after the owner has played it.** The target list
+**Decided: the Night Shift only (D19).** The rest are decided after the owner has played it. The target list
 is **six**, and each scales to every band from its gate. The count is about places and themes, not band coverage.
 
 | # | Dungeon | Rip home (evidence) | Gate | Legendary |
@@ -710,7 +830,9 @@ what a generator would sequence (12).
   - `uptime_objective`;
   - `escrow`, `adventure`, `rift_pick` (components), `sweep` (no-deploy box rules);
   - `battle_rules` (the arena's), `payout: "clawback"`;
-  - `claims_exempt_tag` (read from `data/blackout.json`);
+  - `claims_exempt_tag` (read from `data/blackout.json`), and `death` (2.5): the player-side no-claim rule keyed on
+    the run tag, and `messages.death` (titles by cause, the five chat lines);
+  - `absence` (2.6): the `dg.seen` stamp, the per-slot deadline, and the dead-run check's order (before the eject);
   - `slots_per_dungeon: 4`, `members_max: 1` (co-op raises it).
 - **`dungeons[]`.** The `night_shift` record:
   - `rip`: the placement id, the outside point, facing, the plume flag;
@@ -755,6 +877,8 @@ what a generator would sequence (12).
     - the stand and boss spawns;
     - the membrane;
     - timeout and sudden death;
+    - the absence gap, the slot deadline and the dead-run check (2.6), run first;
+    - the death handling on respawn: escrow cleared, survival, pick, bar, slot, the 2.5 messages;
     - the survival and pick backstop over the overworld;
   - `stand`, `boss_stage`, `seam_reset`, `lake`, `den`, `pay`.
 - **Callbacks** (`data/cobblemon/callbacks/<event>/cobblers_dg_*.molang`): `battle_victory`, `battle_fainted` (the
@@ -778,13 +902,15 @@ what a generator would sequence (12).
 | V10 | Rewards: the old fail-closed list; progression is exclusive (the mutation: `exp_candy_xs` back in the tier-1 alpha override must fail); escrow ids exist as loot tables | the data and the pack |
 | V11 | The lake legendary is in `data/key_ball.json` `bosses`, at level at most the cap of band 6 (100), gated at band 6 only; no dungeon Pokemon is an alpha | the two data files |
 | V12 | `lockout_ticks` is at least the longest clock in ticks | the data |
-| V13 | Every exit path (`exit`, the respawn, eject, relog) restores survival and clears the pick | the generated functions, path by path |
+| V13 | Every exit path (`exit`, the respawn, eject, a dead run on relog) restores survival and clears the pick; a live run on relog keeps adventure and the pick | the generated functions, path by path |
+| V15 | **No claim in a dungeon:** every `spawnnpcat` and `spawnpokemonat` the engine emits tags the entity with `claims.exempt_tag` in the same function; the blackout's claim step has the player-side run-tag exemption; the run's death handling clears the run tag only after the blackout has run | the generated functions and `data/blackout.json`, not `tools/dungeon.py`'s own spawn list. The mutation: drop the tag from one stand's spawn inside the generator, and V15 must fail |
 | V14 | `python tools/id_authorship.py` stays at 0 faults; ids are prefixed `dg_` | the tool |
 
 **New contracts** in `data/system_contracts.json`:
 - "dungeon NPCs carry no rctmod series" (consumer: the level cap; *stands*);
 - "dungeon wins pay $0 net" (consumer: the economy; *stands*);
-- "a timeout is a blackout death: $600, the checkpoint, keepInventory" (consumer: the blackout);
+- "a dungeon death is a blackout death with no recovery claim: the money taken and not held, the checkpoint,
+  keepInventory, whatever the cause" (owner: `recovery_claims`; consumer: the dungeons; beside C12);
 - "the water ladder qualifies Dive in the pocket" (consumer: the lake; beside C15).
 
 ### 11.5 Runtime proof (a new EXP; the builder designs it, the main session runs it, `qa-reviewer` grades it)
@@ -794,10 +920,11 @@ Each of the following is seen once:
 - greed at 5 and at 20;
 - a fall;
 - a forfeit;
-- a loss;
+- a loss to a stand and to a boss stage, each with a claim-eligible item carried (balls, medicine): the item kept, no
+  guardian, the money taken and not held, the 2.5 lines shown (DX1 in a full run);
 - a timeout outside a battle and inside one (sudden death);
 - a turn-back at x3;
-- a logout;
+- a logout shorter than the clock (resumed, the gap charged) and one longer (killed on return, the 2.6 lines);
 - the band-6 Volcanion caught with a Beast Ball, and a Great Ball refused and handed back.
 
 Probes present / probes total are reported, per CLAUDE.md "A success report is not the work".
@@ -849,11 +976,11 @@ That re-home is a "further dungeon" unit (13), about 7M.
 | # | Step | Agent | Cost |
 |---|---|---|---|
 | 0 | Run EXP-059 on staging; fix its three recorded defects | main session + the owner | 2.5M (*relayed* estimate, old 1.2) |
-| 1 | The probe pack (section 14: P1, B1, B2, B3, R1, R2, F1, L1, L2, C1, XT1, V1, I2) | `minecraft-systems-dev`, narrow | 2.6M |
+| 1 | The probe pack (section 14: P1, B1, B2, B3, R1, R2, F1, L1, L2, C1, XT1, V1, I2, LO1, DX1), after the death-rule code check (2.5) reports | `minecraft-systems-dev`, narrow | 2.6M |
 | 2 | Run the probes; time a fight per band (XT1) | main session + the owner | 2M |
 | 3 | Night Shift rosters, boss stages, escrow tables, the clock per band re-derived from XT1 | `trainer-balance-designer` (opus) | 1.5M |
 | 4 | Night Shift spine, palettes, dressing, the rip cell on `ground.py` | `world-content-dev` (data only) | 2M |
-| 5 | Engine core: rip, slots, clock, bar, return margin, timeout and sudden death, escrow, logout, lockout, adventure and pick, sweeps | `minecraft-systems-dev` | 4.5M |
+| 5 | Engine core: rip, slots, clock, bar, return margin, timeout and sudden death, the death rule (no claim), escrow, the absence gap and dead-run check, lockout, adventure and pick, sweeps | `minecraft-systems-dev` | 4.5M |
 | 6 | Legs: stands and clawback, the boss chain, seam markers and rate, parkour sweep and catch bands, the lake with membrane and catch, the den | `minecraft-systems-dev` | 4.5M |
 | 7 | The shell generator from segment kinds; the re-apply steps | `minecraft-systems-dev` | 4M |
 | 8 | Independent audit A: engine and legs (timer deaths, escrow, exits, economy) | `test-author`, opus | 3M |
@@ -862,7 +989,7 @@ That re-home is a "further dungeon" unit (13), about 7M.
 | 11 | Retune the clock and fix from the owner's play | narrow follow-up | 2.6M |
 | | **To the first complete dungeon** | | **about 35M (range 30-40M)** |
 
-**Ordering:**
+**Ordering (the owner's, D19: EXP-059 first, then the probes, the data, the engine; the Night Shift only):**
 - 0-2 before anything is built: principle 15, and they can kill a mechanism cheaply;
 - 3 and 4 fix the data the generator reads;
 - 5 before 6 and 7, which can then run in parallel (two builders, one wave);
@@ -921,7 +1048,9 @@ dungeon. The segment kinds are built so the sequencer can be added then without 
 | F1 | A teleport mid-fall, with and without `resistance 5` | 3.5 |
 | L1 | Glow, lanterns, a bubble column and a beacon read from a gantry 40 above the bed | 3.7, "obvious" |
 | L2 | A wild battle started and finished underwater, with Dive | 3.7 (fallback: dry chamber) |
-| **C1 (new)** | `spawnnpcat` from a **macro line in a function** after a plain restart; then a victory's follow-up starting the next battle 60 ticks later, three times in a row | 3.1, 3.2 (F3) |
+| **C1 (new)** | **The first chained fight.** Heaven's Arena proved spawn, start, win, loss, re-roll and remove one at a time and never chained one fight into the next; `docs/STATE.md:225` lists the in-function spawn as NOT proven. C1 proves both: `spawnnpcat` from a **macro line in a function** after a plain restart, then a victory's follow-up starting the next battle 60 ticks later, three times in a row | 3.1, 3.2 (F3) |
+| **LO1 (new)** | Log out mid-run for less than the clock left and for more. Read the clock on return against `gap x rate`, the slot freed at its deadline while the player is away, and the dead-run kill on the first pass back. Also log out mid-battle: what Cobblemon does with the battle and the NPC. And stop the server for a minute mid-run: no clock lost | 2.6 |
+| **DX1 (new)** | Inside a run, carrying claim-eligible items: lose to a stand NPC, to a boss stage and to a tagged wild Pokemon, and die by `kill` and in lava. Each must charge the money, make no claim (no guardian, nothing held), keep every item, and show the 2.5 lines. Runs after the death-rule code check | 2.5 |
 | **XT1 (new)** | Time an NPC fight at 2, 4 and 6 opposing members at caps 20, 45 and 100, and a 3-stage chain | the clock (4.1) |
 | **V1 (new)** | A rip's particles and display seen from 32, 64 and 128 blocks; `force` mode and a plume | 7.1 |
 | **I2 (new)** | The time and block count of one slot's shell re-apply | 11.3, the re-apply budget |
@@ -939,43 +1068,42 @@ Dropped from DM's list, with the reason:
 
 ---
 
-## 15. Open questions for the owner (numbered; each with a recommendation)
+## 15. Questions for the owner (numbered; the decided ones point at section 0.1)
 
-1. **The multiplier ladder between your two points: x1.25 at 5, x1.5 at 10, x2 at 15, x3 at 20, holding for the rest
-   of the run?** *Recommend yes to both.* Each step is a legible moment, and a multiplier that cools when you walk away
-   is no trade.
-2. **The clock is 1.25 x the planning budget (29-39 minutes by band), re-derived from XT1's timings before it ships?**
-   *Recommend yes.* About a fifth of the clock is slack, and that slack is what optional legs spend.
-3. **Timeout is `kill` into the blackout ($600, checkpoint, inventory kept) plus the escrow forfeit?** *Recommend yes.*
-   It is the existing death, and the escrow gives greed a stake without breaking rule 5.
-4. **Logout forfeits the escrow and ends the run, without killing?** *Recommend yes.* A crash and a rage-quit look
-   alike, and with the escrow gone a logout saves only the $600.
-5. **Healing in a run: none provided; your own potions between fights, priced in clock; no bag items in battle?**
-   *Recommend yes.* The clock is the healing restriction the vision asks of gauntlets (`GAME_VISION.md:143-145`).
-6. **Solo first, co-op (up to 4 in a slot) after XD8?** *Recommend yes.* The model carries members from the start.
-7. **In co-op, per-player clocks and multipliers, with gates that wait for every live member?** *Recommend yes.* This
-   is your "per-player" for the multiplier, and the gates keep it co-op.
-8. **Riding allowed outside the parkour?** *Recommend yes.* The budget assumes foot, so a mount is earned slack. A
-   run-wide sweep would remove battle send-outs.
-9. **Lockout one hour of server uptime per dungeon per player, counted from entry?** *Recommend yes.* It is longer than
-   any clock, and with several dungeons there is always another.
-10. **Entry free for the overworld dungeons, lockout-limited; the Nether pair keep their crafted keys?** *Recommend
-    yes* (old Q6, *stands*).
-11. **A fall costs 15 seconds and a return to the last checkpoint?** *Recommend yes.* About 35 seconds a fall in all.
-12. **Before the Champion, the lake legendary is visible, asleep and sealed ("It does not stir for you yet"), with a
-    Surf-depth cache from band 2?** *Recommend yes.* It rewards noticing at every band and keeps D8.
-13. **The legendaries in section 8: Volcanion (Night Shift), Palkia, Suicune, Walking Wake and Tapu Fini; Yveltal and
-    Dialga as band-6 bosses?** *Recommend Volcanion now; decide the others when each dungeon is designed.*
-14. **Six dungeons as the target, building only the Night Shift until you have played it?** *Recommend yes.*
-15. **Entei: keep as built, run EXP-059 first, re-home it on the engine as dungeon 6 later, with the Tower Ash as its
-    rip?** *Recommend yes.*
-16. **Records for time left, never items?** *Recommend yes.* A time bonus muddies greed's trade.
-17. **Timed rift runs are the vision's "optional dungeon"; persistent puzzle dungeons stay a separate future kind (F2)?**
-    *Recommend yes.* Record it in the vision, or say the vision changes.
-18. **Authored dungeons; reconsider a sequencer at dungeon 3 if you want three or more variants per dungeon?**
+1. **DECIDED (D13).** The greed ladder: x1.25 at 5, x1.5 at 10, x2.0 at 15, x3 at 20, holding for the rest of the run.
+2. **DECIDED (D14).** Slack 1.25 x the planning budget (29-39 minutes by band), re-derived from XT1's timings before
+   it ships.
+3. **DECIDED (D20).** Death, by the timer or anything else, is the blackout ($600, checkpoint, inventory kept) plus the
+   escrow forfeit and the sigil and lockout. No claim is made in a dungeon (2.5). The code check is pending.
+4. **DECIDED (D15).** A logout does not stop the clock. Back in time, the run resumes. Back too late, the player is
+   killed into the blackout on return (2.6). This replaces the recommendation to end the run without a kill.
+5. **OPEN. Healing in a run: none provided; your own potions between fights, priced in clock; no bag items in
+   battle?** *Recommend yes.* The clock is the healing restriction the vision asks of gauntlets
+   (`GAME_VISION.md:143-145`).
+6. **DECIDED (D16).** Solo first; co-op (up to 4 in a slot) after XD8.
+7. **DECIDED (D16).** Separate clocks in co-op, each with its own greed. The gates wait for every member present (6).
+8. **OPEN. Riding allowed outside the parkour?** *Recommend yes.* The budget assumes foot, so a mount is earned slack.
+   A run-wide sweep would remove battle send-outs.
+9. **DECIDED (D17).** Lockout one hour of server uptime per dungeon per player, counted from entry.
+10. **OPEN. Entry free for the overworld dungeons, lockout-limited; the Nether pair keep their crafted keys?**
+    *Recommend yes* (old Q6, *stands*). This decides whether D20's "sigil" applies outside the Nether (F5).
+11. **OPEN. A fall costs 15 seconds and a return to the last checkpoint?** *Recommend yes.* About 35 seconds a fall
+    in all.
+12. **OPEN. Before the Champion, the lake legendary is visible, asleep and sealed ("It does not stir for you yet"),
+    with a Surf-depth cache from band 2?** *Recommend yes.* It rewards noticing at every band and keeps D8.
+13. **DECIDED (D18).** The legendaries of section 8, as proposed.
+14. **DECIDED (D19).** Build only the Night Shift until you have played it; six stays the target.
+15. **Half DECIDED (D19): EXP-059 runs first. OPEN: keep the Entei room as built and re-home it on the engine as
+    dungeon 6 later, with the Tower Ash as its rip?** *Recommend yes.*
+16. **OPEN. Records for time left, never items?** *Recommend yes.* A time bonus muddies greed's trade.
+17. **RESOLVED in the vision (the owner asked that the disagreement not sit, 2026-10-08).** `GAME_VISION.md:138`
+    "Progress persists" now names the player's progress: catches, items, flags, first clears, badges and money. It
+    keeps a dungeon's own state persistent only for puzzle dungeons; a timed rift run resets its rooms on every entry.
+    Persistent puzzle dungeons stay a separate future kind. The owner can reverse this.
+18. **OPEN. Authored dungeons; reconsider a sequencer at dungeon 3 if you want three or more variants per dungeon?**
     *Recommend yes* (13.1).
-19. **A random rip scheduler only after two fixed dungeons are played?** *Recommend yes* (D5). It adds a scheduler, an
-    expiry and a candidate validator, about one narrow unit (2.6M) plus an audit.
+19. **OPEN. A random rip scheduler only after two fixed dungeons are played?** *Recommend yes* (D5). It adds a
+    scheduler, an expiry and a candidate validator, about one narrow unit (2.6M) plus an audit.
 
-**Still open from other documents**, untouched by this design: `DUNGEON_PLACEMENT.md` Q12-Q15, and its band-4 paradox
+**Still open from other documents**, untouched by this design: `DUNGEON_PLACEMENT.md` Q12-Q15 (its Q11 is decided, D8), and its band-4 paradox
 threats; `DROPS_PROGRESSION_SPLIT.md` Q2, Q4 and Q5 (old 8.11-8.14).

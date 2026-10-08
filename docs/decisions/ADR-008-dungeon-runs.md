@@ -2,7 +2,7 @@
 
 - **Status:** Proposed
 - **Date:** 2026-10-08 (rewritten the same day for the owner's timed-dungeon shape; the hub-and-sockets version it
-  replaces is summarised under Alternatives)
+  replaces is summarised under Alternatives; amended the same day with the owner's answers and the death rule)
 - **Evidence:**
   - `docs/mechanics/DUNGEONS.md`, which holds the design, the worked numbers (section 4), the costing (13) and the
     validator (11.4).
@@ -23,9 +23,13 @@
     key (`data/key_ball.json`; EXP-064 NOT_EXECUTED).
   - **Pending, and this ADR should not be accepted before them:**
     - EXP-059;
+    - the code check of the dungeon death rule (a separate agent is reading the blackout's claim paths; `DUNGEONS.md`
+      2.5, against `docs/mechanics/DEATH_AND_WIPE.md` and `docs/mechanics/BLACKOUT_RECOVERY_COUPLING.md`);
     - probes P1 (the discard returns a Pokemon with its HP), B1 (the per-player bar), B2/B3 (the kill and sudden
-      death), R2 (`can_break`), C1 (an in-function macro `spawnnpcat`, and a victory's follow-up starting the next
-      battle), XT1 (fight timings, which set the clock) and L2 (a battle underwater);
+      death), R2 (`can_break`), C1 (an in-function macro `spawnnpcat`, and the first fight ever chained from a
+      victory's follow-up into the next battle: Heaven's Arena proved its steps only one at a time), XT1 (fight
+      timings, which set the clock), L2 (a battle underwater), LO1 (the clock across a logout) and DX1 (no claim on a
+      dungeon death);
     - all are `DUNGEONS.md` section 14.
 
 ## Context
@@ -48,7 +52,12 @@ bottom.
 - our own rip, with no new dependency;
 - fixed rips first;
 - resource tracking as new work;
-- every dungeon catch after the Champion, with the Beast Ball as the key.
+- every dungeon catch after the Champion, with the Beast Ball as the key;
+- and, answering the design's questions (`DUNGEONS.md` 0.1): the greed ladder x1.25/x1.5/x2/x3 at 5/10/15/20; slack
+  1.25; the clock keeps running through a logout; solo first, with separate clocks in co-op; the one-hour lockout;
+  the legendary picks as proposed; the order EXP-059, probes, data, engine, building the Night Shift only;
+- **no guardian inside a dungeon:** a dungeon death costs the blackout's money, the run's held rewards, and the sigil
+  and lockout, and nothing else. Items are kept and nothing holds them.
 
 The earlier version of this ADR chose a hub with socketed wings and no clock, which this shape supersedes. The choice
 here fixes:
@@ -70,12 +79,21 @@ run against a per-player clock.**
   - The back rip is reachable from every walkable cell at every gate state. The parkour is traversable both ways.
 - **Clock.** A per-player countdown score in quarter-ticks, decremented each 20-tick pass at 4/5/6/8/12 units a tick
   (x1 to x3). There is no rate 0.
+  - **A logout does not stop it.** The absence is charged on return from our uptime counter (`gap x rate`). A run
+    whose clock ran out while its player was away is dead: its slot is freed at the deadline, and the player is killed
+    into the blackout on their first pass back. A server stop costs no clock.
   - The clock per band is `ceil(required x 1.25)`. "Required" is computed from the walked length of the BUILT shell
     and the band's fight budget: 29-39 minutes on the first dungeon's 1,664-block spine at planning paces, retuned
     from timings.
   - The bossbar shows the clock, the multiplier, the real time left, the seam count and a return-margin warning.
-  - Timeout is `kill @s` into the existing blackout, with sudden death if in battle, and forfeits the run's escrow.
-    Rewards are paid only at a clean exit by either rip.
+  - Timeout is `kill @s` into the existing blackout, with sudden death if in battle. Rewards are paid only at a clean
+    exit by either rip.
+  - **The death rule: no recovery claim inside a dungeon**, whatever the cause: the timer, a boss, a trainer, a fall,
+    lava. An instance resets, so a guardian holding items would stop existing and the items would be lost for good.
+    A death costs the blackout's money (taken, not held), the run's escrow, and the sigil and lockout. It is built in
+    two layers. Every entity the engine spawns carries `claims.exempt_tag`, Entei's pattern. And a run-tagged player
+    makes no claim whatever the victor, a change to `tools/blackout_pack.py`. The code paths are being checked, not
+    verified.
   - The lockout counts on our own uptime score, never on game time.
 - **Legs**, by mechanism:
   - stands and the boss are `cobblemon:npc` battles (never rctmod), spawned by macro `spawnnpcat` at absolute
@@ -98,8 +116,9 @@ run against a per-player clock.**
   - Datapack, functions and commands: the clock, rips, sweeps, escrow and shells.
   - No scripting layer, companion or mod (CLAUDE.md principle 6). No new dependency.
   - Mega Showdown is world-critical for every legendary chosen, as for Entei.
-- **One dungeon complete first:** the Night Shift (0 badges, every band, every leg kind). The Entei room is kept as
-  built, its EXP-059 run first, and re-homed on the engine later.
+- **One dungeon complete first, and only one until it is played** (the owner): the Night Shift (0 badges, every band,
+  every leg kind). Order: EXP-059, the probes, the data, the engine. The Entei room is kept as built and re-homed on
+  the engine later (still the owner's call, `DUNGEONS.md` Q15).
 
 ## Alternatives considered
 
@@ -137,6 +156,8 @@ measurements of this work.
   - every exit path must restore survival and take the rift pick back, or a player leaves with adventure mode or a
     free unbreakable pickaxe;
   - every dungeon's NPC wins must be clawed back to $0 net;
+  - every entity a dungeon spawns must carry the claims exempt tag, and the blackout gains a player-side exemption.
+    Audit V15 checks both by mutating the generator;
   - the seam enters the economy audit as a renewable supply;
   - the shells add a re-apply step whose time (probe I2) joins every re-apply;
   - the clock is honest only after XT1 times real fights. Until then every budget figure is a planning value.
@@ -144,5 +165,8 @@ measurements of this work.
   - XT1's fight times are far from the planning paces (re-derive the clocks);
   - P1 fails (the no-deploy leg has no mechanism; parkour would need geometry alone);
   - L2 fails (the lake falls back to a dry chamber behind the membrane);
+  - the death-rule code check or DX1 shows that the claim cannot be suppressed for a run-tagged player (then every
+    victor must carry the tag, and "our list is not the world" is an accepted gap, stated in `does_not_cover`);
+  - C1 fails (no fight chains from a victory's follow-up: the stands and the staged boss need another trigger);
   - the owner wants three or more variants per dungeon (cost the sequencer);
   - co-op is wanted (XD8, the second account, and the `minecraft.mined` probe R1).
