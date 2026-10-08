@@ -2113,13 +2113,15 @@ def steps(with_spawns=False):
     # squares' contract (data/plaza_centres.json) seats stands at that stall instead
     # 2026-10-04 (the owner: "the steve villagers aren't it, it should be the cobbleverse ones that have nice ui"): every
     # stall keeper is a CobbleDollars merchant (cobbledollars:cobble_merchant with its stall's CobbleMerchantShop),
-    # summoned by the pack's function like R14's traders, which also removes the dialogue keeper it replaces; 8 s for
-    # the function's 40 + 100 ticks, then the merchants are read back from the world. The counters stay dialogue clerks
+    # summoned by the pack's function like R14's traders, which also removes the dialogue keeper it replaces; then
+    # the merchants are read back from the world. The wait is the function's longest run, MERCHANT_STEP_SECONDS (since
+    # N155, 2026-10-08: a seat is staffed only once its chunk's entities are seen, or blind after 300 ticks, then 100
+    # more to de-duplicate), so the read never starts before the last seat is staffed
     import markets
     out.append(("R17M", "the market keepers and the stall merchants (data/markets.json)",
                 [("fn", "cobblers:markets/load")] + [("npc", n) for n in markets.npc_placements(markets.load())]
                 + [("npc", n) for n in markets.stall_placements(markets.load())]
-                + ([("fn", markets.MERCHANTS_FN), ("wait", 8), ("check", "stall_merchants")]
+                + ([("fn", markets.MERCHANTS_FN), ("wait", markets.MERCHANT_STEP_SECONDS), ("check", "stall_merchants")]
                    if markets.emitted_stalls(markets.load()) else [])))
     # the training-ground keepers (data/training_services.json, 2026-10-10): NPCs whose classes load at boot from
     # cobblers_training_services, placed over RCON after the restart like the ferrymen, each beside its ground's sign
