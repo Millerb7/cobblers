@@ -143,19 +143,16 @@ def header(entry, tools_html="", manifest=None):
 
 
 def spoiler(not_covered_href=None):
-    more = ' <a href="%s">What this page leaves out</a>.' % esc(not_covered_href) if not_covered_href else ""
-    return '<p class="spoiler" role="note">%s%s</p>' % (esc(SPOILER), more)
+    # no banner (the owner, 2026-10-08: "remove the banner at top about spoilers"); each guide keeps its own
+    # "not covered" section in its body
+    return ""
 
 
 def footer(generator, sources_html="", manifest=None, entry=None):
-    date, words = provenance()
+    # the generated-on line and the regenerate note are gone (the owner, 2026-10-08); the footer is the guide links
     links = " &middot; ".join('<a href="%s">%s</a>' % (esc(g["file"]), esc(g["title"])) for g in _merged(entry, manifest))
-    return ('<footer class="site-footer">%s<p>%s: <a href="index.html">all guides</a> &middot; %s</p>\n'
-            '<p class="site-generated">Generated on %s from %s by <code>python %s</code>.</p>\n'
-            '<p>Regenerate the whole site with <code>python tools/player_site.py</code>; never edit these pages by '
-            'hand. Generated from the campaign\'s data, not checked in a running game: where the game and a guide '
-            'differ, the game is right.</p></footer>'
-            % (sources_html, esc(SITE_NAME), links, esc(date), esc(words), esc(generator)))
+    return ('<footer class="site-footer">%s<p>%s: <a href="index.html">all guides</a> &middot; %s</p></footer>'
+            % (sources_html, esc(SITE_NAME), links))
 
 
 def page(entry, body, *, body_class, tools_html="", head_html="", end_html="", not_covered_href=None, sources_html=""):

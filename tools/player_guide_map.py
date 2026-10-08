@@ -632,7 +632,11 @@ def build_page(pack_pools, source_note):
     for t in sorted(towns["towns"], key=lambda t: t["id"]):
         if t["id"] in hidden_towns:
             continue
-        x, z = t["centre"]["x"], t["centre"]["z"]
+        # where the town is BUILT: data/placements.json's settlement centre (written by the town's own builder) wins over
+        # data/towns.json's, which can lag a re-site (2026-10-08: Pacifidlog moved to the Jungle Isle's bank at
+        # (5160, 7380) on 2026-09-27 and towns.json still holds its first site, (7210, 6960))
+        sc = (placements["settlements"].get(t["id"]) or {}).get("centre")
+        x, z = (sc[0], sc[1]) if sc else (t["centre"]["x"], t["centre"]["z"])
         name = t.get("display_name") or t["working_name"]
         size = 13 if t["role"] in ("hometown", "gym_town", "league", "major_town") else 11
         town_svg += '<circle class="dot" cx="%d" cy="%d" r="28"/>' % (x, z)

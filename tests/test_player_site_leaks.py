@@ -102,6 +102,8 @@ MIN_COORD = 100
 # of letters and digits; an id "route_01_trainer_01" is keyed "route 01 trainer 01"). Each says why a player may see
 # it, and each must also be a name or id in a public source (PUBLIC_SOURCES). Added from what the test found on
 # 2026-10-08, never in advance.
+_STARTER = ("a starter species: offered on the starter screen (modpack/config/cobblemon/starters.json) or a stage of "
+            "a starter's own line (data/mythical_starters.json lines[].learnset_from), which the player raises")
 _ROUTE_TRAINER_QUEST = ("a route trainer. data/quests.json carries a defeat-this-trainer quest under the trainer's own "
                         "id; the trainer is public by design: the battle guide lists every route fight and anchors it "
                         "#t-<id>, and the trainer stands on the road")
@@ -114,6 +116,10 @@ ALLOW: dict[str, str] = {
     "the rift": "the region the_rift (data/regions.json): the canyon at the centre of the map, whose wild areas the "
                 "region map lists. data/rift_skin.json uses it as its biome id cobblers:the_rift; the Rift's story "
                 "records stay forbidden",
+    # the starters (the owner, 2026-10-08: "add a starter page"): every player picks one of these five on the starter
+    # screen (modpack/config/cobblemon/starters.json) and raises it through its own line, so the species names are
+    # public. data/mythical_starters.json stays a secret file: its research station, Director and dialogue stay out
+    **{n: _STARTER for n in ("cosmog", "cosmoem", "kubfu", "poipole", "meltan")},
 }
 # Single ordinary English words that a secret file uses as an NPC's label (data/dialogue.json npc_name "Courier",
 # "Guide") and that the pages use in their ordinary sense ("this guide", the route trainer "Night Courier"). Matching
@@ -237,6 +243,21 @@ def public_coords():
     coords = {(towns[t]["centre"]["x"], towns[t]["centre"]["z"]) for t in PUBLIC_TOWN_CENTRES if t in towns}
     for r in json.loads((DATA / "routes.json").read_text(encoding="utf-8"))["routes"]:
         coords.update((p["x"], p["z"]) for p in ((r.get("corridor") or {}).get("polyline") or []))
+    # the fights' stands: every leader, Elite Four and Champion spawner the battle guide places
+    # (data/challenge_mode.json spawner.at / single_leader.normal_at). data/rift_zones.json repeats the League's five
+    # since the z4 re-cut (league.spawners), which made the battle guide's own League stands read as a Rift secret
+    def stands(node):
+        if isinstance(node, dict):
+            for k, v in node.items():
+                if k == "spawner" and isinstance(v, dict) and isinstance(v.get("at"), list):
+                    coords.add((v["at"][0], v["at"][2]))
+                elif k == "normal_at" and isinstance(v, list):
+                    coords.add((v[0], v[2]))
+                stands(v)
+        elif isinstance(node, list):
+            for v in node:
+                stands(v)
+    stands(json.loads((DATA / "challenge_mode.json").read_text(encoding="utf-8")))
     return coords
 
 
@@ -321,6 +342,15 @@ def _public_names():
 
     for rel in PUBLIC_SOURCES:
         grab(json.loads((ROOT / rel).read_text(encoding="utf-8")))
+    # the starter screen's species and the stages of their own lines: what a player is handed and raises
+    screen = json.loads((ROOT / "modpack" / "config" / "cobblemon" / "starters.json").read_text(encoding="utf-8"))
+    offered = {norm(p.split()[0]) for c in screen["starters"] for p in c["pokemon"]}
+    names |= offered
+    lines = json.loads((ROOT / "data" / "mythical_starters.json").read_text(encoding="utf-8"))["lines"]
+    for ln in lines:
+        chain = [norm(s) for s in ln.get("learnset_from") or []]
+        if chain and chain[0] in offered:
+            names.update(chain)
     return names
 
 

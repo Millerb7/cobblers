@@ -5,8 +5,9 @@
    guide (body.page-battles); the region map (body.page-map). */
 
 /* ---------------------------------------------------------------- tokens and themes */
-:root{--bg:#f7f6f2;--card:#fff;--ink:#1d1f23;--muted:#5d636d;--rule:#d9d6cc;--accent:#b2402f;--accent-ink:#fff;
---soft:#efece4;--warn:#fff6d8;--warn-rule:#d6a400;
+/* light: lavender (the owner, 2026-10-08) */
+:root{--bg:#f3effa;--card:#fdfbff;--ink:#1f1b2b;--muted:#5f5970;--rule:#dcd3ee;--accent:#6c4cb0;--accent-ink:#fff;
+--soft:#ebe4f6;--warn:#fff6d8;--warn-rule:#d6a400;
 --common:#3b7a3b;--uncommon:#2f5f9e;--rare:#8a3fa0;--ultra-rare:#b4441a;--btext:#fff;color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#15171b;--card:#1f2228;--ink:#e8e6e1;
 --muted:#a3a8b1;--rule:#353a43;--accent:#e0705c;--accent-ink:#15171b;--soft:#262a31;--warn:#2d2816;--warn-rule:#a07c10;
