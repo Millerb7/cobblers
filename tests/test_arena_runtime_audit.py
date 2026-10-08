@@ -99,9 +99,32 @@ MUTANTS = {
                 "rank 1 leg 0: paid [2350]"),
     "intermission": ('% (n, e["heal_before_leg"]))', '% (n, e["heal_before_leg"] + 1))',
                      "rank 8 leg 3: 0 heals"),
-    "exh_bonus": ('"execute if score @s ar.cur matches %d if score @s ar.exh matches 0 run function %s {amount:%d}"',
-                  '"execute if score @s ar.cur matches %d run function %s {amount:%d}"',
-                  "exhibition rank 3"),
+    # unit ARENACAP (purse_policy): a gauntlet's clear bonus paid on a repeat clear too (was exh_bonus, retired)
+    "clear_bonus_on_repeat": ('"execute if score @s ar.cur matches %d if score @s ar.first matches 1 run function %s '
+                              '{amount:%d}"',
+                              '"execute if score @s ar.cur matches %d run function %s {amount:%d}"',
+                              "playing down rank"),
+    # CobbleDollars' own payout no longer taken back
+    "no_clawback": ('"$cobbledollars remove @s $(amount)",', '"# $cobbledollars remove @s $(amount)",', "clawback"),
+    # taken back without its bound: other money in the window goes with it
+    "claw_uncapped": ('"scoreboard players operation #now ar.t < @s ar.cmax",', '"# uncapped",',
+                      "more than CobbleDollars could pay"),
+    # the clear-up's second look gone: a payout landing after the callback is kept
+    "no_second_look": ('"execute if score @s ar.claw matches 1 run function %s" % F_("cd/last"),\n'
+                       '           "function %s" % F_("kill_mine"),',
+                       '"function %s" % F_("kill_mine"),', "clawback"),
+    # the full purse paid twice on a first
+    "purse_twice": ('"execute if score @s ar.first matches 1 run return run function %s" % F_("purse_full"),',
+                    '"execute if score @s ar.first matches 1 run function %s" % F_("purse_full"), '
+                    '"execute if score @s ar.first matches 1 run return run function %s" % F_("purse_full"),',
+                    "rank 1 leg 0: paid"),
+    # a first that never gets spent: every own-rank win pays in full, for ever
+    "first_forever": ('"$execute if entity @s[tag=$(t)_w$(w)] run scoreboard players set @s ar.first 0",',
+                      '"# never spent",', "first purse once"),
+    # the daily cap on the DAY clock, which `time set` moves and which never leaves period 0
+    "daytime_clock": ('time query gametime",', 'time query daytime",', "daily cap"),
+    # one repeat over the cap
+    "cap_plus_one": ("ar.rday >= #rcap", "ar.rday > #rcap", "daily cap"),
     "owner": ('"scoreboard players operation @s ar.id = #me ar.id"]', '"scoreboard players set @s ar.id 1"]',
               "two players"),
     "legs": ('"@s ar.next 1" % (n, e["legs"] - 1))', '"@s ar.next 1" % (n, e["legs"] - 2))',
@@ -219,6 +242,39 @@ def test_the_command_model_runs_a_hand_computed_pack(tmp_path):
     W.command("execute as @a[scores={v=5},distance=..1] run scoreboard players add #hit v 1", None, (0.5, 0, 0))
     W.command("execute as @a[scores={v=5},distance=..1] run scoreboard players add #hit v 1", None, (3, 0, 0))
     assert W.score("#hit", "v") == 1                        # in range once, out of range once
+
+
+# Protects: the model's CobbleDollars and clock commands, hand-computed (CobbleDollarsCommand javap: query returns
+# intValue, remove takes min(amount, balance); vanilla TimeCommand: `time set` moves day time only; scores are Java
+# ints). A model that let remove go negative, or `time set` move game time, would pass a leaky clawback or cap.
+def test_the_money_and_clock_commands_follow_the_jar_and_vanilla():
+    P = types.SimpleNamespace(functions={}, load_tag=[], tick_tag=[])
+    W = A.World.__new__(A.World)                            # no pack: the commands alone
+    W.P, W.functions, W.ents, W.scores, W.objectives, W.storage = P, {}, [], {}, {"v"}, {}
+    W.spawns, W.stubbed, W.refuse, W.depth, W.gametime, W.daytime, W.failed_gets = [], [], False, 0, 0, 0, []
+    p = W.player((0, 0, 0))
+    p.bal = 700
+    W.command("execute store result score #q v run cobbledollars query @s", p, p.pos)
+    assert W.score("#q", "v") == 700
+    W.command("cobbledollars remove @s 1000", p, p.pos)
+    assert p.bal == 0 and p.removed == [700]                # min(1000, 700): never below zero
+    W.command("cobbledollars give @s 250", p, p.pos)
+    assert p.bal == 250 and p.money == [250]
+    p.bal = 2 ** 31 + 5                                     # BigInteger.intValue wraps
+    assert W.command("cobbledollars query @s", p, p.pos)[1] == -2 ** 31 + 5
+    with pytest.raises(A.AuditError):
+        W.command("cobbledollars remove @s 0", p, p.pos)    # bigInt(1)
+    W.tick(30)
+    W.command("time set 0", None, None)
+    W.command("time add 24000", None, None)
+    assert W.command("time query gametime", None, None)[1] == 30
+    assert W.command("time query daytime", None, None)[1] == 0      # 24000 % 24000
+    W.set_score("#m", "v", 2 ** 30)
+    W.set_score("#k", "v", 4)
+    W.command("scoreboard players operation #m v *= #k v", None, None)
+    assert W.score("#m", "v") == 0                          # 2^32 wraps to 0 in a Java int
+    W.command("execute store result score #u v run scoreboard players get #nobody v", None, None)
+    assert W.score("#u", "v") == 0 and W.failed_gets == [("#nobody", "v")]   # a failed get stores 0
 
 
 # Protects: the purse's half-rounding is read from the data (rank 8: 13 x 225 = 2925 typed 2900), not assumed.

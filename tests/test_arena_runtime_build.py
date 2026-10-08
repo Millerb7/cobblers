@@ -14,6 +14,9 @@ test calling the generated callback's commands, and start_battle's refusal is a 
 Not covered, and it needs a running server: that spawnnpcat works from inside a macro function; that a cobblemon:npc
 spawned by it is selectable in the same tick; that q.npc.in_battle / q.player.in_battle answer as named; that
 `healpokemon @s`, `cobbledollars give` and the interaction-click advancement behave in game; two real accounts.
+The model's `cobbledollars query|give|remove` follow CobbleDollars-fabric-2.0.0+Beta-5.1's CobbleDollarsCommand
+(javap), `time query gametime` and `time set|add` vanilla 1.21.1's TimeCommand, and scores wrap as Java ints; that the
+query really stores the balance through `execute store result` in game is experiments/EXP-060-arena-payout.
 """
 import json
 import math
@@ -191,17 +194,24 @@ def _amounts(lines, pat):
 
 
 def test_the_purses_are_the_designers_typical_figures(pack):
-    pu = pack[FN % "purse"]
+    # Breaks if a first-clear purse drifts from data/arena_fights.json's typical figures, or the retired quarter-purse
+    # exhibition (docs/mechanics/ECONOMY_OVERHAUL.md section 6, "Exhibition ... retired") comes back.
+    pu = pack[FN % "purse_full"]
     for n, r in RANKS.items():
         if r["format"] == "streak":
             continue
-        (full,) = _amounts(pu, r"kind matches 1 if score @s ar.cur matches %d if score @s ar.exh matches 0 " % n)
+        (full,) = _amounts(pu, r"kind matches 1 if score @s ar.cur matches %d run " % n)
         assert full == r["purse"].get("typical", r["purse"].get("typical_per_leg")), (n, full)
-        (exh,) = _amounts(pu, r"kind matches 1 if score @s ar.cur matches %d if score @s ar.exh matches 1 " % n)
-        assert exh % 50 == 0 and abs(exh - full / 4) <= 25, (n, exh)
     for e in FIGHTS["rank_up_fights"]:
         got = _amounts(pu, r"kind matches 2 if score @s ar.cur matches %d " % e["rank"])
         assert sum(got) == e["purse_typical"], (e["rank"], got)
+    pays = {int(a) for f, lines in pack.items() if f.startswith("data/cobblers/function/arena/")
+            for l in lines for a in re.findall(r"\{amount:(\d+)\}", l)}
+    rep = FIGHTS["prizes"]["purse_policy"]["repeat_purse"]
+    quarters = {r["purse"].get("typical", r["purse"].get("typical_per_leg")) // 4 for r in RANKS.values()
+                if r["format"] != "streak"} - {rep}
+    assert not any(abs(p - q) <= 25 for p in pays for q in quarters), "a quarter purse is paid somewhere"
+    assert "exh matches" not in " ".join(pack[FN % "purse"] + pu)
 
 
 # ------------------------------------------------------------------ the blackout exemption
@@ -247,6 +257,11 @@ def test_the_retired_spire_champions_are_removed_where_they_stood(pack):
 
 # ================================================================== the interpreter
 
+def _i32(v):
+    """A Java int: what a scoreboard score and BigInteger.intValue() hold (two's complement, 32 bits)."""
+    return (v + 2 ** 31) % 2 ** 32 - 2 ** 31
+
+
 class Ent:
     n = 0
 
@@ -277,6 +292,10 @@ class Sim:
         self.money, self.heals, self.gives, self.started, self.said = {}, {}, {}, [], []
         self.refuse = False
         self.in_battle = set()
+        # self.money is the player's CobbleDollars BALANCE (what `cobbledollars query` answers); self.removed every
+        # amount `cobbledollars remove` actually took. self.gametime is the world's game time, one per tick
+        # (vanilla ServerLevel.tickTime; `time set` / `time add` move only the DAY time, never this)
+        self.removed, self.gametime, self.daytime = [], 0, 0
         self.call("arena/load", None)
 
     # -- entities
@@ -439,6 +458,16 @@ class Sim:
         if t[:4] == ["rctmod", "player", "get", "level_cap"] and len(t) == 5:
             (e,) = self.select(t[4], ctx)
             return 0 if getattr(e, "cap", None) is None else e.cap
+        if t[:2] == ["cobbledollars", "query"] and len(t) == 3:
+            # CobbleDollars-fabric-2.0.0+Beta-5.1 CobbleDollarsCommand.query (javap): returns
+            # getCobbleDollars(player).intValue() -- the balance, wrapped to 32 bits like any BigInteger.intValue
+            (e,) = self.select(t[2], ctx)
+            return _i32(self.money.get(e.uuid, 0))
+        if t == ["time", "query", "gametime"]:
+            # vanilla TimeCommand.queryTime(getGameTime() % Integer.MAX_VALUE)
+            return self.gametime % 2147483647
+        if t == ["time", "query", "daytime"]:
+            return self.daytime % 24000
         raise AssertionError("unmodelled query: %s" % cmd)
 
     def party_molang(self, mol, s):
@@ -495,8 +524,10 @@ class Sim:
             elif t[2] == "operation":
                 a, ao, op, b, bo = self.holder(t[3], ctx), t[4], t[5], self.holder(t[6], ctx), t[7]
                 x, y = self.get(a, ao) or 0, self.get(b, bo) or 0
-                self.scores[(a, ao)] = {"=": y, "+=": x + y, "-=": x - y, "*=": x * y, "/=": x // y if y else x,
-                                        "%=": x % y if y else x, "<": min(x, y), ">": max(x, y)}[op]
+                # a score is a Java int: + - * wrap at 32 bits (vanilla ScoreboardCommand operations); /= is floorDiv
+                self.scores[(a, ao)] = _i32({"=": y, "+=": x + y, "-=": x - y, "*=": x * y,
+                                             "/=": x // y if y else x, "%=": x % y if y else x,
+                                             "<": min(x, y), ">": max(x, y)}[op])
             return
         if c == "function":
             name = t[1].split(":", 1)[1]
@@ -528,7 +559,22 @@ class Sim:
             self.heals[s.uuid] = self.heals.get(s.uuid, 0) + 1
             return
         if c == "cobbledollars":
-            self.money[s.uuid] = self.money.get(s.uuid, 0) + int(t[3])
+            # CobbleDollarsCommand (javap): give adds; remove subtracts coerceAtMost(amount, balance), so it never
+            # goes below 0; both take a bigInt(1) amount. Only `@s` targets occur in the pack
+            assert len(t) == 4 and t[1] in ("give", "remove"), "unmodelled: %s" % line
+            n = int(t[3])
+            assert n >= 1, "BigIntegerArgumentType.bigInt(1) refuses %s" % line
+            (e,) = self.select(t[2], ctx)
+            bal = self.money.get(e.uuid, 0)
+            take = n if t[1] == "give" else -min(n, bal)
+            self.money[e.uuid] = bal + take
+            if t[1] == "remove":
+                self.removed.append(-take)
+            return
+        if c == "time":
+            # vanilla 1.21.1 TimeCommand: set/add change ONLY the day time (ServerLevel.setDayTime)
+            assert t[1] in ("set", "add"), "unmodelled: %s" % line
+            self.daytime = int(t[2]) if t[1] == "set" else self.daytime + int(t[2])
             return
         if c == "give":
             self.gives.setdefault(s.uuid, []).append((t[2], int(t[3])))
@@ -571,6 +617,8 @@ class Sim:
     # -- the game around the pack
     def tick(self, n=1):
         for _ in range(n):
+            self.gametime += 1
+            self.daytime += 1
             self.call("arena/tick", None)
 
     def result(self, player, won):
@@ -694,7 +742,9 @@ def test_the_relay_exam_is_odell_then_nessa_with_no_heal_between(pack):
     assert sim.heals[p.uuid] == 1 and sim.sc(p, "ar.rank") == 4
 
 
-def test_playing_down_two_ranks_is_an_exhibition_and_counts_nothing(pack):
+def test_playing_down_pays_the_flat_repeat_and_counts_nothing(pack):
+    # Breaks if a bout below the player's rank pays anything but prizes.purse_policy.repeat_purse (the exhibition's
+    # quarter purse was retired, ECONOMY_OVERHAUL section 6) or counts toward the rank.
     sim = Sim(pack)
     p = sim.player(adv=[GYM8, LANCE, CHAMP])
     sim.scores[(p.uuid, "ar.rank")] = 7
@@ -705,7 +755,7 @@ def test_playing_down_two_ranks_is_an_exhibition_and_counts_nothing(pack):
     sim.click(p, "floor_ring")                # 1-3: rank 3, four below
     assert sim.sc(p, "ar.exh") == 1
     _bout(sim, p)
-    assert sim.money[p.uuid] == pytest.approx(RANKS[3]["purse"]["typical_per_leg"] / 4, abs=25)
+    assert sim.money[p.uuid] == FIGHTS["prizes"]["purse_policy"]["repeat_purse"]
     assert sim.sc(p, "ar.wins") in (None, 0) and sim.sc(p, "ar.rank") == 7
 
 
