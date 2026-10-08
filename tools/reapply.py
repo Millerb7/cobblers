@@ -227,6 +227,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # so the live world's species never change; NOTE the starter config that offers these forms is
                 # server-wide (modpack/config/cobblemon/starters.json) and is only coherent where this pack is loaded
                 "cobblers_mythical_starters",
+                # 2026-10-08: species drop tables fixed from our side (tools/drop_fixes.py, data/drop_fixes.json):
+                # species_additions `drops` only, no functions and no step. Twelve of them overlay COBBLEVERSE files at
+                # the same path, so the pack must load ABOVE the global COBBLEVERSE pack: world-local below
+                "cobblers_drop_fixes",
                 # 2026-10-02: one Spectrier per player at the Crown Cemetery (tools/spectrier_cap.py,
                 # data/spectrier_cap.json): its own tick tag judges each new wild Spectrier, so world-local below,
                 # the cobblers_sizes shape (self-driving, no blocks, no step)
@@ -391,6 +395,8 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_hq_tower",
                # 2026-10-03: species forms for the starters; global would change the live world's species too
                "cobblers_mythical_starters",
+               # 2026-10-08: drop tables overlaying COBBLEVERSE's files at the same path; they win only above the global pack
+               "cobblers_drop_fixes",
                # 2026-10-03: the southern residents' keeper spawns its two Pokemon the same way
                "cobblers_southern_residents",
                # 2026-10-03: the northern residents' keeper spawns its three Pokemon the same way
@@ -910,6 +916,11 @@ def prepare_jobs(a):
     # each line walks 5 -> 30 -> 45 through two forms to its native final, the screen offers exactly the five, the
     # 27 stay wild. Fail-closed; an unissued scroll is printed OPEN and does not stop prepare
     add("mythical_starters_audit", "mythical_starters_audit.py")
+    # species drop tables that named no item or could never roll their later entries (data/drop_fixes.json); `build`
+    # runs its own check first (each fix's recorded upstream still matches, every item exists, every entry reaches its
+    # intent) and writes nothing on a problem; then the sweep over every installed jar and datapack with ours on top
+    add("drop_fixes:build", "drop_fixes.py", "build")
+    add("drop_fixes:sweep", "drop_fixes.py", "sweep")
     add("nuzlocke_zones", "nuzlocke_zones.py", "--check")
     add("location_titles", "location_titles.py")
     # the badge flags: one advancement per gym leader and the Champion, set by rctmod on a won battle

@@ -91,6 +91,9 @@ def tables():
                 d = json.loads(z.read(n).decode("utf-8-sig"))
                 if "drops" in d:
                     base[d["target"].split(":")[-1]] = d["drops"]
+    # our fixes on top, from the authored table (data/drop_fixes.json `drops`), not from tools/drop_fixes.py's pack
+    for fx in json.loads((ROOT / "data" / "drop_fixes.json").read_text(encoding="utf-8"))["fixes"]:
+        base[fx["species"]] = fx["drops"]
     with zipfile.ZipFile(vanilla) as z:
         vlang = json.loads(z.read("assets/minecraft/lang/en_us.json").decode("utf-8"))
 

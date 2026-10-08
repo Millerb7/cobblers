@@ -1,0 +1,640 @@
+{
+  "schema": "cobblers.drop_fixes/1",
+  "generated_by": "hand (the upstream tables recorded as read from the jars and COBBLEVERSE-DP-v31 on 2026-10-08)",
+  "status": "built, not observed in game: no defeat has been counted with the pack loaded",
+  "owner_brief": "the owner, 2026-10-08: \"Fix the three drop faults, then sweep for others of the same shape: a nonexistent item id, or a table that can never reach its later entries.\"",
+  "tool": "tools/drop_fixes.py (sweep, check, build); the pack is build/datapacks/cobblers_drop_fixes, world-local",
+  "fields": {
+    "species": "the species file stem the table belongs to",
+    "fixes": "the sweep's faults this record removes: missing_item <id> or unreachable <id>",
+    "upstream": "where the effective table comes from (via species_additions: a COBBLEVERSE file overlaid at the same path, every other key copied; via species: a species file, fixed by a new data/cobblers/species_additions/drop_fix_<species>.json) and the table as read; tools/drop_fixes.py check fails when upstream no longer ships it",
+    "drops": "the table we ship, in Cobblemon's drops format",
+    "intent": "percent of defeats that drop at least one of each item, as the fixed table rolls (DropTable.getDrops, exact); check recomputes it from `drops` and fails on a difference above 0.01",
+    "why": "the fault and the fix in words"
+  },
+  "fixes": [
+    {
+      "species": "helioptile",
+      "fixes": [
+        "missing_item minecraft:sun_stone"
+      ],
+      "upstream": {
+        "via": "species_additions",
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/cobblemon/species_additions/helioptile.json",
+        "drops": {
+          "amount": "1",
+          "entries": [
+            {
+              "item": "minecraft:sun_stone",
+              "percentage": 2.0
+            }
+          ]
+        }
+      },
+      "drops": {
+        "amount": "1",
+        "entries": [
+          {
+            "item": "cobblemon:sun_stone",
+            "percentage": 2.0
+          }
+        ]
+      },
+      "intent": {
+        "cobblemon:sun_stone": 2.0
+      },
+      "why": "Missing item: minecraft:sun_stone -> cobblemon:sun_stone: Cobblemon registers the Sun Stone as cobblemon:sun_stone; vanilla has no sun_stone. Only the id is changed; amount, order and percentages are upstream's, so each item drops at the rate upstream's table already gives it."
+    },
+    {
+      "species": "heliolisk",
+      "fixes": [
+        "missing_item minecraft:sun_stone"
+      ],
+      "upstream": {
+        "via": "species_additions",
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/cobblemon/species_additions/heliolisk.json",
+        "drops": {
+          "amount": "1",
+          "entries": [
+            {
+              "item": "minecraft:sun_stone",
+              "percentage": 2.3
+            }
+          ]
+        }
+      },
+      "drops": {
+        "amount": "1",
+        "entries": [
+          {
+            "item": "cobblemon:sun_stone",
+            "percentage": 2.3
+          }
+        ]
+      },
+      "intent": {
+        "cobblemon:sun_stone": 2.3
+      },
+      "why": "Missing item: minecraft:sun_stone -> cobblemon:sun_stone: Cobblemon registers the Sun Stone as cobblemon:sun_stone; vanilla has no sun_stone. Only the id is changed; amount, order and percentages are upstream's, so each item drops at the rate upstream's table already gives it."
+    },
+    {
+      "species": "spritzee",
+      "fixes": [
+        "missing_item minecraft:kebia_berry"
+      ],
+      "upstream": {
+        "via": "species_additions",
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/cobblemon/species_additions/spritzee.json",
+        "drops": {
+          "amount": "1",
+          "entries": [
+            {
+              "item": "minecraft:kebia_berry",
+              "quantityRange": "0-3"
+            }
+          ]
+        }
+      },
+      "drops": {
+        "amount": "1",
+        "entries": [
+          {
+            "item": "cobblemon:kebia_berry",
+            "quantityRange": "0-3"
+          }
+        ]
+      },
+      "intent": {
+        "cobblemon:kebia_berry": 75.0
+      },
+      "why": "Missing item: minecraft:kebia_berry -> cobblemon:kebia_berry: Kebia Berry is Cobblemon's (cobblemon:kebia_berry); vanilla has none. Only the id is changed; amount, order and percentages are upstream's, so each item drops at the rate upstream's table already gives it."
+    },
+    {
+      "species": "litleo",
+      "fixes": [
+        "unreachable minecraft:blaze_powder",
+        "unreachable cobblemon:rawst_berry"
+      ],
+      "upstream": {
+        "via": "species_additions",
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/cobblemon/species_additions/litleo.json",
+        "drops": {
+          "amount": 1,
+          "entries": [
+            {
+              "item": "minecraft:rotten_flesh",
+              "quantityRange": "0-1"
+            },
+            {
+              "item": "minecraft:blaze_powder",
+              "percentage": 5
+            },
+            {
+              "item": "cobblemon:rawst_berry",
+              "percentage": 2.5
+            }
+          ]
+        }
+      },
+      "drops": {
+        "amount": 2,
+        "entries": [
+          {
+            "item": "minecraft:rotten_flesh",
+            "quantityRange": "0-1"
+          },
+          {
+            "item": "minecraft:blaze_powder",
+            "percentage": 5
+          },
+          {
+            "item": "cobblemon:rawst_berry",
+            "percentage": 2.631579
+          }
+        ]
+      },
+      "intent": {
+        "minecraft:rotten_flesh": 50.0,
+        "minecraft:blaze_powder": 5.0,
+        "cobblemon:rawst_berry": 2.5
+      },
+      "why": "Unreachable: amount 1 and a 100% Rotten Flesh entry first, so every defeat's one pass takes the flesh and the Blaze Powder (5%) and Rawst Berry (2.5%) entries are never rolled. Fixed so each entry reaches its stated rate: amount 2, the flesh takes the first pass as before (100%, a stack of 0-1), and the second pass rolls Blaze Powder at 5% then Rawst Berry at 2.5/0.95 = 2.631579%, which is 2.5% of all defeats. The two rare items cannot both drop in one defeat."
+    },
+    {
+      "species": "pancham",
+      "fixes": [
+        "missing_item cobblemon:bamboo",
+        "unreachable cobblemon:bamboo",
+        "unreachable minecraft:string"
+      ],
+      "upstream": {
+        "via": "species_additions",
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/cobblemon/species_additions/pancham.json",
+        "drops": {
+          "amount": "1",
+          "entries": [
+            {
+              "item": "minecraft:stick",
+              "quantityRange": "0-3"
+            },
+            {
+              "item": "cobblemon:bamboo",
+              "percentage": 100
+            },
+            {
+              "item": "minecraft:string",
+              "percentage": 90
+            }
+          ]
+        }
+      },
+      "drops": {
+        "amount": 3,
+        "entries": [
+          {
+            "item": "minecraft:stick",
+            "quantityRange": "0-3"
+          },
+          {
+            "item": "minecraft:bamboo",
+            "percentage": 100
+          },
+          {
+            "item": "minecraft:string",
+            "percentage": 90
+          }
+        ]
+      },
+      "intent": {
+        "minecraft:stick": 75.0,
+        "minecraft:bamboo": 100.0,
+        "minecraft:string": 90.0
+      },
+      "why": "Two faults. cobblemon:bamboo is not an item (vanilla's minecraft:bamboo is). And amount 1 with a 100% Stick entry first means the Bamboo (100%) and String (90%) entries are never rolled. Fixed: the id corrected and amount 3, one pass per entry, so Stick (0-3) and Bamboo are taken every defeat and String at its stated 90%."
+    },
+    {
+      "species": "pangoro",
+      "fixes": [
+        "missing_item cobblemon:string",
+        "unreachable minecraft:bamboo"
+      ],
+      "upstream": {
+        "via": "species_additions",
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/cobblemon/species_additions/pangoro.json",
+        "drops": {
+          "amount": "2",
+          "entries": [
+            {
+              "item": "minecraft:stick",
+              "quantityRange": "0-2"
+            },
+            {
+              "item": "cobblemon:string",
+              "percentage": 100
+            },
+            {
+              "item": "minecraft:bamboo",
+              "percentage": 100
+            }
+          ]
+        }
+      },
+      "drops": {
+        "amount": 3,
+        "entries": [
+          {
+            "item": "minecraft:stick",
+            "quantityRange": "0-2"
+          },
+          {
+            "item": "minecraft:string",
+            "percentage": 100
+          },
+          {
+            "item": "minecraft:bamboo",
+            "percentage": 100
+          }
+        ]
+      },
+      "intent": {
+        "minecraft:stick": 66.6667,
+        "minecraft:string": 100.0,
+        "minecraft:bamboo": 100.0
+      },
+      "why": "Two faults. cobblemon:string is not an item (vanilla's minecraft:string is). And amount 2 with three 100% entries means the third, Bamboo, is never rolled. Fixed: the id corrected and amount 3, so all three entries are taken every defeat as each states."
+    },
+    {
+      "species": "blipbug",
+      "fixes": [
+        "missing_item cobblemon:apple",
+        "missing_item minecraft:razz_berry"
+      ],
+      "upstream": {
+        "via": "species_additions",
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/cobblemon/species_additions/blipbug.json",
+        "drops": {
+          "amount": "3",
+          "entries": [
+            {
+              "item": "minecraft:string",
+              "quantityRange": "0-3"
+            },
+            {
+              "item": "cobblemon:apple",
+              "percentage": 35
+            },
+            {
+              "item": "minecraft:razz_berry",
+              "percentage": 100
+            }
+          ]
+        }
+      },
+      "drops": {
+        "amount": "3",
+        "entries": [
+          {
+            "item": "minecraft:string",
+            "quantityRange": "0-3"
+          },
+          {
+            "item": "minecraft:apple",
+            "percentage": 35
+          },
+          {
+            "item": "cobblemon:razz_berry",
+            "percentage": 100
+          }
+        ]
+      },
+      "intent": {
+        "minecraft:string": 75.0,
+        "minecraft:apple": 57.75,
+        "cobblemon:razz_berry": 100.0
+      },
+      "why": "Missing item: cobblemon:apple -> minecraft:apple: the apple is vanilla's (minecraft:apple); Cobblemon registers no apple; minecraft:razz_berry -> cobblemon:razz_berry: Razz Berry is Cobblemon's (cobblemon:razz_berry). Only the id is changed; amount, order and percentages are upstream's, so each item drops at the rate upstream's table already gives it."
+    },
+    {
+      "species": "dottler",
+      "fixes": [
+        "missing_item cobblemon:apple",
+        "missing_item minecraft:razz_berry"
+      ],
+      "upstream": {
+        "via": "species_additions",
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/cobblemon/species_additions/dottler.json",
+        "drops": {
+          "amount": "3",
+          "entries": [
+            {
+              "item": "minecraft:string",
+              "quantityRange": "0-3"
+            },
+            {
+              "item": "cobblemon:apple",
+              "percentage": 50
+            },
+            {
+              "item": "minecraft:razz_berry",
+              "percentage": 100
+            }
+          ]
+        }
+      },
+      "drops": {
+        "amount": "3",
+        "entries": [
+          {
+            "item": "minecraft:string",
+            "quantityRange": "0-3"
+          },
+          {
+            "item": "minecraft:apple",
+            "percentage": 50
+          },
+          {
+            "item": "cobblemon:razz_berry",
+            "percentage": 100
+          }
+        ]
+      },
+      "intent": {
+        "minecraft:string": 75.0,
+        "minecraft:apple": 75.0,
+        "cobblemon:razz_berry": 100.0
+      },
+      "why": "Missing item: cobblemon:apple -> minecraft:apple: the apple is vanilla's (minecraft:apple); Cobblemon registers no apple; minecraft:razz_berry -> cobblemon:razz_berry: Razz Berry is Cobblemon's (cobblemon:razz_berry). Only the id is changed; amount, order and percentages are upstream's, so each item drops at the rate upstream's table already gives it."
+    },
+    {
+      "species": "orbeetle",
+      "fixes": [
+        "missing_item cobblemon:apple",
+        "missing_item minecraft:razz_berry"
+      ],
+      "upstream": {
+        "via": "species_additions",
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/cobblemon/species_additions/orbeetle.json",
+        "drops": {
+          "amount": "2",
+          "entries": [
+            {
+              "item": "minecraft:string",
+              "quantityRange": "0-3"
+            },
+            {
+              "item": "cobblemon:apple",
+              "percentage": 35
+            },
+            {
+              "item": "minecraft:razz_berry",
+              "percentage": 100
+            }
+          ]
+        }
+      },
+      "drops": {
+        "amount": "2",
+        "entries": [
+          {
+            "item": "minecraft:string",
+            "quantityRange": "0-3"
+          },
+          {
+            "item": "minecraft:apple",
+            "percentage": 35
+          },
+          {
+            "item": "cobblemon:razz_berry",
+            "percentage": 100
+          }
+        ]
+      },
+      "intent": {
+        "minecraft:string": 75.0,
+        "minecraft:apple": 35.0,
+        "cobblemon:razz_berry": 65.0
+      },
+      "why": "Missing item: cobblemon:apple -> minecraft:apple: the apple is vanilla's (minecraft:apple); Cobblemon registers no apple; minecraft:razz_berry -> cobblemon:razz_berry: Razz Berry is Cobblemon's (cobblemon:razz_berry). Only the id is changed; amount, order and percentages are upstream's, so each item drops at the rate upstream's table already gives it."
+    },
+    {
+      "species": "gulpin",
+      "fixes": [
+        "missing_item minecraft:oran_berry"
+      ],
+      "upstream": {
+        "via": "species_additions",
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/cobblemon/species_additions/gulpin.json",
+        "drops": {
+          "amount": "2",
+          "entries": [
+            {
+              "item": "minecraft:slime_ball",
+              "quantityRange": "0-3"
+            },
+            {
+              "item": "cobblemon:black_sludge",
+              "percentage": 20
+            },
+            {
+              "item": "minecraft:oran_berry",
+              "percentage": 25
+            }
+          ]
+        }
+      },
+      "drops": {
+        "amount": "2",
+        "entries": [
+          {
+            "item": "minecraft:slime_ball",
+            "quantityRange": "0-3"
+          },
+          {
+            "item": "cobblemon:black_sludge",
+            "percentage": 20
+          },
+          {
+            "item": "cobblemon:oran_berry",
+            "percentage": 25
+          }
+        ]
+      },
+      "intent": {
+        "minecraft:slime_ball": 75.0,
+        "cobblemon:black_sludge": 20.0,
+        "cobblemon:oran_berry": 20.0
+      },
+      "why": "Missing item: minecraft:oran_berry -> cobblemon:oran_berry: Oran Berry is Cobblemon's (cobblemon:oran_berry). Only the id is changed; amount, order and percentages are upstream's, so each item drops at the rate upstream's table already gives it."
+    },
+    {
+      "species": "swalot",
+      "fixes": [
+        "missing_item minecraft:oran_berry"
+      ],
+      "upstream": {
+        "via": "species_additions",
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/cobblemon/species_additions/swalot.json",
+        "drops": {
+          "amount": "3",
+          "entries": [
+            {
+              "item": "minecraft:slime_ball",
+              "quantityRange": "0-3"
+            },
+            {
+              "item": "cobblemon:black_sludge",
+              "percentage": 40
+            },
+            {
+              "item": "minecraft:oran_berry",
+              "percentage": 20
+            }
+          ]
+        }
+      },
+      "drops": {
+        "amount": "3",
+        "entries": [
+          {
+            "item": "minecraft:slime_ball",
+            "quantityRange": "0-3"
+          },
+          {
+            "item": "cobblemon:black_sludge",
+            "percentage": 40
+          },
+          {
+            "item": "cobblemon:oran_berry",
+            "percentage": 20
+          }
+        ]
+      },
+      "intent": {
+        "minecraft:slime_ball": 75.0,
+        "cobblemon:black_sludge": 64.0,
+        "cobblemon:oran_berry": 25.76
+      },
+      "why": "Missing item: minecraft:oran_berry -> cobblemon:oran_berry: Oran Berry is Cobblemon's (cobblemon:oran_berry). Only the id is changed; amount, order and percentages are upstream's, so each item drops at the rate upstream's table already gives it."
+    },
+    {
+      "species": "delcatty",
+      "fixes": [
+        "missing_item minecraft:raw_cod"
+      ],
+      "upstream": {
+        "via": "species_additions",
+        "pack": "COBBLEVERSE-DP-v31.zip",
+        "path": "data/cobblemon/species_additions/delcatty.json",
+        "drops": {
+          "amount": 2,
+          "entries": [
+            {
+              "item": "cobblemon:silk_scarf",
+              "percentage": 5.0
+            },
+            {
+              "item": "cobblemon:pecha_berry",
+              "percentage": 5.0
+            },
+            {
+              "item": "minecraft:raw_cod",
+              "quantityRange": "1-3",
+              "percentage": 33
+            }
+          ]
+        }
+      },
+      "drops": {
+        "amount": 2,
+        "entries": [
+          {
+            "item": "cobblemon:silk_scarf",
+            "percentage": 5.0
+          },
+          {
+            "item": "cobblemon:pecha_berry",
+            "percentage": 5.0
+          },
+          {
+            "item": "minecraft:cod",
+            "quantityRange": "1-3",
+            "percentage": 33
+          }
+        ]
+      },
+      "intent": {
+        "cobblemon:silk_scarf": 9.75,
+        "cobblemon:pecha_berry": 9.2869,
+        "minecraft:cod": 50.8479
+      },
+      "why": "Missing item: minecraft:raw_cod -> minecraft:cod: vanilla's raw cod is minecraft:cod (raw_cod was its pre-1.13 name). Only the id is changed; amount, order and percentages are upstream's, so each item drops at the rate upstream's table already gives it."
+    },
+    {
+      "species": "deoxys",
+      "fixes": [
+        "missing_item minecraft:eye_of_ender"
+      ],
+      "upstream": {
+        "via": "species",
+        "pack": "Cobblemon-fabric-1.8.0+1.21.1.jar",
+        "path": "data/cobblemon/species/generation3/deoxys.json",
+        "drops": {
+          "amount": 5,
+          "entries": [
+            {
+              "item": "minecraft:eye_of_ender",
+              "quantityRange": "3-5"
+            }
+          ]
+        }
+      },
+      "drops": {
+        "amount": 5,
+        "entries": [
+          {
+            "item": "minecraft:ender_eye",
+            "quantityRange": "3-5"
+          }
+        ]
+      },
+      "intent": {
+        "minecraft:ender_eye": 100.0
+      },
+      "why": "Missing item: minecraft:eye_of_ender -> minecraft:ender_eye: vanilla's Eye of Ender is minecraft:ender_eye. Only the id is changed; amount, order and percentages are upstream's, so each item drops at the rate upstream's table already gives it."
+    }
+  ],
+  "open": [
+    {
+      "species": "entei",
+      "form": null,
+      "kind": "missing_item",
+      "item": "cobblemon:sacred_ash",
+      "why": "No installed jar or datapack registers a Sacred Ash (Cobblemon 1.8.0 has none). There is no item whose intent is clear to substitute, so this is the owner's choice: drop the entry, or name another item. Entei is the repeatable boss (data/entei_boss.json), so its drops matter. The entry is still rolled: its 100% pass yields nothing and the Charcoal Stick entry is unaffected."
+    },
+    {
+      "species": "hooh",
+      "form": null,
+      "kind": "missing_item",
+      "item": "cobblemon:sacred_ash",
+      "why": "As Entei: no Sacred Ash item exists in 1.8.0. The entry takes the second pass and yields nothing; the Feather entry is unaffected. Owner's choice."
+    },
+    {
+      "species": "kyurem",
+      "form": null,
+      "kind": "ambiguous",
+      "item": null,
+      "why": "Not one of the owner's two shapes: the Cobblemon jar and Mega Showdown both ship data/cobblemon/species/generation5/kyurem.json with different drops, and which mod's file wins is the loader's order. Every item in both tables exists and is reachable. Held open as a finding, not fixed."
+    }
+  ]
+}
