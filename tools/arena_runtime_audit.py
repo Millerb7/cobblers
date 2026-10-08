@@ -80,11 +80,10 @@ NOT_MEGA = {"eviolite"}
 # labelled so the reader knows they are reported. tests/test_arena_runtime_audit.py fails when one stops reproducing,
 # so this list is pruned when the builder is fixed.
 KNOWN = {    # post_coords: fixed in tools/arena_runtime.py posts/place (2026-10-03, the integrating session)
-    # 2026-10-10 (unit ARENACAP audit): tools/arena_runtime.py:122 CLAW_MARGIN = 3 is added to every clawback bound
-    # (cd_bound :199, cd/bound_streak :953), so with money from another source in the window the arena takes up to
-    # $3 more than CobbleDollars could ever have credited. The jar's B = int(5*S*sum(L/50.0)) never exceeds S*S//10
-    # and floor(3B * 1.25) is exact in a double, so the computed bound is already the maximum: the margin is slack
-    "claw_margin": "tools/arena_runtime.py:122 CLAW_MARGIN = 3: the clawback bound exceeds the jar's maximum by 3",
+    # claw_margin: fixed by e839de0 (CLAW_MARGIN 0); pruned 2026-10-08 (review N143 audit), when the stale entry was
+    # failing tests/test_arena_runtime_audit.py at 3d7237b as well as at 3aaa71e. What is left of it -- cd_bound's
+    # S*S//10 is $4 over the jar's top credit for the rank 3 pool, where the double sum rounds below S*S/10 -- is a
+    # strict xfail in tests/test_arena_clawback_timing.py (this audit's rank 1 check cannot see it: 171 is tight)
 }
 
 
