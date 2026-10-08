@@ -4,7 +4,10 @@
 docs/mechanics/NETHER_DUNGEON_SCOPE.md option B, built as the first slice of option A. The owner's decisions of
 2026-10-10 are recorded in data/entei_boss.json `decision`.
 
-THE LOOP. A player crafts an Ember Sigil from Nether materials (a datapack recipe) and eats it anywhere in the
+THE ROOM is "The Tower After the Fire" (docs/mechanics/NETHER_ENCOUNTERS.md section 3.1): a ruin and a vigil, its
+palette, decor, text and drops all in data/entei_boss.json; nothing in this file is themed.
+
+THE LOOP. A player crafts a Tower Ash (the key) from Nether materials (a datapack recipe) and eats it anywhere in the
 Nether. A minecraft:consume_item advancement runs `enter` as them: past the Champion, outside the lockout, with a
 free slot, standing in the Nether -> their Nether block is stored and they are teleported into their own slot, a
 sealed room in cobblers:pocket. Anything else -> the sigil is given back with the reason. The keeper spawns their
@@ -23,7 +26,7 @@ Patterns reused, each cited where it is used:
 What it emits (namespace cobblers, folder entei_boss/):
   load            objectives, free slots, the keeper's schedule
   keeper          every period_ticks: tend each owned slot; sweep the band for anyone not in their own slot
-  slot/s<k>/...   tend, free, appear, bind, roll, caught, faint_catch: one set per slot, so no macro picks a slot
+  slot/s<k>/...   tend, free, appear, bind, settle, caught, relog_caught: one set per slot, so no macro picks a slot
   enter           the sigil's checks, the store and the teleport
   refund          the sigil back, with the reason
   check, eject    the band sweep's test, and the way out (also the arch's)
@@ -156,6 +159,11 @@ def room_blocks(doc, k):
             out.append((cx + rr, fy + dy, az, pal["sheet"]))
     for rr in range(-2, 3):
         out.append((cx + rr, fy + 3, az, pal["frame"]))
+    # the decor: blocks set INTO the floor course around the Entei's spot (problems() holds them there), so every
+    # floor cell stays standable and the shell is unchanged
+    sx, _sy, sz = g["spot"]
+    for d in r.get("decor") or []:
+        out.append((sx + d["dx"], fy - 1, sz + d["dz"], d["block"]))
     return out
 
 
@@ -212,6 +220,15 @@ def problems(doc, portals_doc=None, blackout=None, world=None, bank=None):
         bad.append("leash %d: must be at least 1 and inside the room's half-width %d" % (r["leash"], r["half"]))
     if not 0 < r["spot_dz"] < r["half"]:
         bad.append("spot_dz %d is outside the room" % r["spot_dz"])
+    for d in r.get("decor") or []:
+        if set(d) - {"dx", "dz", "block", "why"} or not {"dx", "dz", "block"} <= set(d):
+            bad.append("decor %r: only dx, dz, block (and why); it is always set into the floor course" % (d,))
+            continue
+        if not (abs(d["dx"]) <= r["half"] and -r["half"] < r["spot_dz"] + d["dz"] <= r["half"]):
+            bad.append("decor %r leaves the interior's floor (or meets the arch's row)" % (d,))
+        if (not str(d["block"]).startswith("minecraft:")
+                or any(w in d["block"] for w in ("air", "magma", "campfire", "fire", "lava"))):
+            bad.append("decor %r: a vanilla block that neither leaves a hole nor burns (room.no_magma)" % (d,))
     # the boss
     lvl = int(doc["level"])
     if not 1 <= lvl <= 100:
@@ -368,6 +385,10 @@ def functions(doc, blackout=None):
         "execute store result score #now %s run time query gametime" % W] + [
         "execute if score #s%d %s matches 1.. run function %s" % (i, OWN, _fn(doc, "slot/s%d/tend" % i))
         for i in range(1, n + 1)] + [
+        "# a FREE slot holds no Entei: one standing there is from a run that ended while its chunk was unloaded (an",
+        "# owner who logged out), loaded again by its owner logging back in. Killed on the first pass that sees it."] + [
+        "execute if score #s%d %s matches 0 run kill @e[type=cobblemon:pokemon,tag=%s.s%d]" % (i, OWN, t["boss"], i)
+        for i in range(1, n + 1)] + [
         "execute in %s as @a[%s] at @s run function %s" % (dim, _sel_box(bb, "gamemode=!spectator"), _fn(doc, "check")),
         "schedule function %s %dt replace" % (_fn(doc, "keeper"), k["period_ticks"])]
 
@@ -412,7 +433,7 @@ def functions(doc, blackout=None):
     lock = doc["lockout"]["ticks"]
     enter = [
         head,
-        "# As the player who has just eaten an Ember Sigil, at them (minecraft:consume_item). #why: 0 go, 1 not in",
+        "# As the player who has just eaten the key, at them (minecraft:consume_item). #why: 0 go, 1 not in",
         "# the Nether, 2 already in a run, 3 before the Champion, 4 lockout, 5 every slot busy.",
         "advancement revoke @s only cobblers:%s" % SIGIL_ADV,
         "execute unless score @s %s matches 1.. run scoreboard players add #next %s 1" % (ID, ID),
@@ -430,10 +451,17 @@ def functions(doc, blackout=None):
     enter += [
         "execute if score #why %s matches 0 unless entity @s[advancements={%s=true}] run scoreboard players set #why %s 3"
         % (W, gate, W),
-        "scoreboard players operation #d %s = #now %s" % (W, W),
-        "scoreboard players operation #d %s -= @s %s" % (W, LAST),
-        "execute if score #why %s matches 0 if score @s %s matches -2147483648.. if score #d %s matches ..%d run "
-        "scoreboard players set #why %s 4" % (W, LAST, W, lock - 1, W),
+        "# 4: the lockout. #d = now - eb.last, computed only when eb.last exists: a subtraction FROM a missing score",
+        "# creates it at 0, and a never-entrant on a world younger than one lockout would then be refused. A",
+        "# never-entrant keeps #d = the lockout, outside it. A NEGATIVE #d is outside it too: the game clock restarted",
+        "# lower than their entry (a re-export carries the scores, not level.dat's Time: data/entei_boss.json lockout).",
+        "scoreboard players set #d %s %d" % (W, lock),
+        "execute if score @s %s matches -2147483648.. run scoreboard players operation #d %s = #now %s" % (LAST, W, W),
+        "execute if score @s %s matches -2147483648.. run scoreboard players operation #d %s -= @s %s" % (LAST, W, LAST)]
+    if lock > 0:
+        enter.append("execute if score #why %s matches 0 if score #d %s matches 0..%d run scoreboard players set #why %s 4"
+                     % (W, W, lock - 1, W))
+    enter += [
         "scoreboard players set #pick %s 0" % W]
     enter += ["execute if score #pick %s matches 0 if score #s%d %s matches 0 run scoreboard players set #pick %s %d"
               % (W, i, OWN, W, i) for i in range(1, n + 1)]
@@ -505,6 +533,8 @@ def functions(doc, blackout=None):
             "# once per run, after the arrival delay",
             "scoreboard players operation #d %s = #now %s" % (W, W),
             "scoreboard players operation #d %s -= %s %s" % (W, S, AT),
+            "# a game clock that went back past the entry would hold the spawn off until it caught up: start it again",
+            "execute if score #d %s matches ..-1 run scoreboard players operation %s %s = #now %s" % (W, S, AT, W),
             "execute if score %s %s matches 0 if score #d %s matches %d.. run function %s"
             % (S, SP, W, k["arrive_delay_ticks"], _fn(doc, "slot/s%d/appear" % i)),
             "# the leash",
@@ -568,6 +598,16 @@ def functions(doc, blackout=None):
             "scoreboard players add @s %s 1" % CLR,
             "execute unless entity @s[advancements={%s=true}] run %s" % (caught_adv, say("caught", "gold")),
             "advancement grant @s only %s" % caught_adv]
+        out["slot/s%d/relog_caught" % i] = [
+            head,
+            "# As a player standing in slot %d who has just caught an Entei there, whose run in it ended while they were" % i,
+            "# offline (free could not reach them, so their eb.slot is still %d) and who does not own it now. The Entei" % i,
+            "# was their run's, left standing in its unloaded chunk and loaded again by their return; the keeper kills",
+            "# such an Entei on its next pass, and a ball can land first. A catch is a catch: the flag is granted, so",
+            "# their next run is uncatchable (data/entei_boss.json catch.rule). A farm-mode Entei cannot be caught.",
+            "scoreboard players add @s %s 1" % CLR,
+            "execute unless entity @s[advancements={%s=true}] run %s" % (caught_adv, say("caught", "gold")),
+            "advancement grant @s only %s" % caught_adv]
     out["spawn_at"] = [
         "# a macro, so the mod's command is parsed when it runs (EXP-046, .claude/rules/datapacks.md); run with",
         "# `execute in` the pocket dimension, so the spawn lands there",
@@ -582,6 +622,12 @@ def functions(doc, blackout=None):
             lines.append("execute in %s as @a[%s] if score @s %s = #me %s if score @s %s = #s%d %s if score @s %s matches %d "
                          "run function %s" % (dim, _sel_box(slot_geometry(doc, i)["box"]), ID, W, ID, i, OWN, SLOT, i,
                                               _fn(doc, "slot/s%d/%s" % (i, target))))
+        if target == "caught":
+            lines.append("# a catch in a slot whose run ended while the catcher was offline (their eb.slot still names it)")
+            for i in range(1, n + 1):
+                lines.append("execute in %s as @a[%s] if score @s %s = #me %s if score @s %s matches %d unless score @s %s "
+                             "= #s%d %s run function %s" % (dim, _sel_box(slot_geometry(doc, i)["box"]), ID, W, SLOT, i,
+                                                            ID, i, OWN, _fn(doc, "slot/s%d/relog_caught" % i)))
         return lines
     out["fainted"] = from_callback("battle_fainted", "settle")
     out["caught"] = from_callback("pokemon_captured", "caught")

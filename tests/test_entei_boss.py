@@ -299,11 +299,45 @@ def test_the_catch_grants_only_in_catch_mode_for_the_slots_owner(files):
         body = [l for l in fn(files, "slot/s%d/caught" % k) if not l.startswith("#")]
         assert body[0] == "execute unless score #s%d eb.mode matches 1 run return 0" % k
         assert body[-1] == "advancement grant @s only %s" % DOC["catch"]["advancement"]
+    n = DOC["pocket"]["slots"]
     for name in ("fainted", "caught"):
         calls = [l for l in fn(files, name) if "run function" in l]
-        assert len(calls) == DOC["pocket"]["slots"]
+        owned = [l for l in calls if not l.endswith("/relog_caught")]
+        relog = [l for l in calls if l.endswith("/relog_caught")]
+        assert len(owned) == n and len(relog) == (n if name == "caught" else 0), name
         for l in calls:
             assert l.startswith("execute in %s as @a[x=" % DOC["pocket"]["dimension"])
+        for k, l in enumerate(relog, 1):
+            # only the catcher whose OWN eb.slot still names this slot, and who does not own it now (review N142)
+            assert "if score @s eb.slot matches %d unless score @s eb.id = #s%d eb.own" % (k, k) in l, l
+    for k in range(1, n + 1):
+        body = [l for l in fn(files, "slot/s%d/relog_caught" % k) if not l.startswith("#")]
+        assert body[-1] == "advancement grant @s only %s" % DOC["catch"]["advancement"]
+        assert not any("loot" in l for l in body)
+
+
+def test_the_lockout_reads_last_entry_only_when_it_exists_and_never_counts_a_negative_delta(files):
+    # review N142: a subtraction from a missing eb.last creates it at 0; a clock that went back gives a negative delta
+    body = [l for l in fn(files, "enter") if not l.startswith("#")]
+    sub = [l for l in body if "-= @s eb.last" in l]
+    assert sub and all(l.startswith("execute if score @s eb.last matches -2147483648.. run ") for l in sub), sub
+    (lock,) = [l for l in body if l.endswith("scoreboard players set #why eb.t 4")]
+    assert "if score #d eb.t matches 0..%d run" % (DOC["lockout"]["ticks"] - 1) in lock, lock
+
+
+def test_a_free_slot_holds_no_entei_after_a_keeper_pass(files):
+    body = fn(files, "keeper")
+    for k in range(1, DOC["pocket"]["slots"] + 1):
+        assert ("execute if score #s%d eb.own matches 0 run kill @e[type=cobblemon:pokemon,tag=%s.s%d]"
+                % (k, DOC["tags"]["boss"], k)) in body
+
+
+def test_decor_is_set_into_the_floor_course_only():
+    bad = copy.deepcopy(DOC)
+    bad["room"]["decor"] = [{"dx": 0, "dz": DOC["room"]["half"], "block": "minecraft:campfire[lit=false]"}]
+    found = E.problems(bad)
+    assert any("burns" in p for p in found) and any("leaves the interior" in p for p in found), found
+    assert not E.problems(DOC)
 
 
 def test_every_function_named_exists_and_the_callbacks_name_ours(files):
