@@ -2804,8 +2804,9 @@
       },
       "also_boxes": {
         "boxes": [
-          [3616, 2352, 3783, 2511]
+          [3616, 2360, 3783, 2511]
         ],
+        "z_min_why": "2360, not the spawn-free zone's 2352: the z4 re-cut (fdbe1e5) moved behind_league to z2360 with its wall on rows z2358-2359, so z2352-2359 is z4's; the League lot starts at z2375 and its levelling skirt at z2361, both still inside (integration, 2026-10-08)",
         "from": "data/spawn_suppression.json spawn_free_zones[league_precinct]: the League's lot (data/towns.json league footprint x3635-3754 z2375-2485) with 16 blocks round it, on the 8-block grid, taking in Victory Road's exit onto the apron (data/vr_caves.json exit.at (3656, 89, 2486)).",
         "why": "the League's lot is NOT in z5's traced boxes: the trace puts it north of the behind_league cut, in z4, which ships no check (CRITICAL_PATH_WALK_2.md item 4). Unzoned, a flier could land on the League from anywhere, holding nothing, and the cave-only pass above would close nothing. Holding the precinct here puts the League behind z5's check without moving behind_league or z4's boxes (the owner's O5 re-cut is refused by the wall's geometry: cuts[behind_league].why). Overlaps z4's boxes; tools/rift_zones.py report carries that as OWED until item 4 is decided, because the day z4 ships a player on the League's lot would need both passes."
       },

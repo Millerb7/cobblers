@@ -130,7 +130,9 @@ def test_admitting_anywhere_in_z5_reopens_the_sky(caves):
 def test_dropping_the_precinct_leaves_the_league_open_to_fliers(caves):
     mod = mutant('for b in zone_boxes(z)]', 'for b in z["boxes"]]', "rift_zones_no_precinct")
     problems, _n, _p = A.audit(zones_pack(mod), caves, with_surface=False)
-    assert any(p.startswith("no zone check holds the League's lot") for p in problems), problems
+    # since the z4 re-cut (fdbe1e5, merged 2026-10-08) z5's traced boxes hold most of the lot, so the mutant no longer
+    # leaves it with no zone check at all ("no zone check holds the League's lot"); what the precinct box still closes
+    # is the rest of the lot's sky, and dropping it must still open that
     assert any(p.startswith("SKY:") and "League's lot" in p for p in problems), problems
 
 
