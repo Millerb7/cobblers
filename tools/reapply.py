@@ -606,6 +606,10 @@ def prepare_jobs(a):
     # problem. The boxes and wall lines are committed data; `trace` is not run here, because it needs the
     # owner's annotated source map, which prepare does not have
     add("rift_zones:build", "rift_zones.py", "build", *src)
+    # Victory Road's closure (z5.pass.admit_within, knock_needs_score, also_boxes; 2026-10-08), on the two packs just
+    # built and the heightmap: no flag holder reaches the League but up through the caves, and the caves walk to it.
+    # Fail-closed; it reads the emitted packs, never either builder's model
+    add("vr_closure_audit", "vr_closure_audit.py", *src)
     # the Mega Showdown stone recipes raised to 4 raw stones, from the server's own jar (never committed)
     add("mega_recipes", "mega_recipes.py", "--server-dir", a.server_dir)
     # the Deep's city and the relic area's surface, stood on the pit's ring model; the audit checks what it wrote

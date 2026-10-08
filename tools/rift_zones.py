@@ -1395,6 +1395,83 @@ def cmd_report(a, quiet=False):
         if '"gym7_cleared"' not in txt:
             bad("data/legendaries.json no longer gates Registeel on gym7_cleared; settles.registeel_region is stale")
 
+    # 12. a pass earned only inside the zone (pass.admit_within, pass.knock_needs_score) and ground held beyond the
+    #     traced regions (also_boxes): z5 since 2026-10-08, so Victory Road's caves are the only way to the League.
+    #     tools/vr_closure_audit.py proves the closure on the emitted pack; these are the data's own preconditions.
+    held, unreach = held_zones(spec), unreachable_zones(spec)
+    hm = None
+    for zid, z in sorted(live.items()):
+        p = z.get("pass") or {}
+        aw = p.get("admit_within")
+        if p.get("knock_needs_score") and not aw:
+            bad("%s: pass.knock_needs_score with no pass.admit_within -- nothing in the zone sets the score, so the "
+                "guard could never open" % zid)
+        if p.get("knock_needs_score") and not p.get("knock_refusal"):
+            bad("%s: pass.knock_needs_score with no pass.knock_refusal, the guard's line saying where the pass is "
+                "earned" % zid)
+        if aw:
+            vols = admit_volumes(spec, z)
+            if p.get("kind") not in ("badges", "flag") or not p.get("advancements"):
+                bad("%s: pass.admit_within on a %s pass, which has no server-side test to admit on" % (zid, p.get("kind")))
+            if not vols:
+                bad("%s: pass.admit_within from_z %s leaves no admit volume: nobody could earn the pass"
+                    % (zid, aw.get("from_z")))
+            else:
+                # The volume must be under ground everywhere it reaches: a player on the ground has feet at ground + 1,
+                # and a selector volume admits a body that reaches into it, so its top block must lie below every
+                # column's ground. Measured on the canonical heightmap, never a world.
+                try:
+                    if hm is None:
+                        import ground as GD
+                        hm = GD.load()
+                    low = min(int(hm.box(v[0], v[2], v[3], v[5]).min()) for v in vols)
+                except Exception as exc:   # no heightmap here: owed, and the audit cannot run either
+                    owed("%s: pass.admit_within.top_y %s is unmeasured: the heightmap did not load (%s)"
+                         % (zid, aw["top_y"], exc))
+                else:
+                    if aw["top_y"] >= low:
+                        bad("%s: pass.admit_within.top_y %d is not below the lowest ground %d under its volumes: a "
+                            "player standing on the surface there would be admitted" % (zid, aw["top_y"], low))
+        ab = (z.get("also_boxes") or {}).get("boxes", [])
+        for b in ab:
+            if b[0] % grid or b[1] % grid or (b[2] + 1) % grid or (b[3] + 1) % grid:
+                bad("%s also_boxes %s is off the %d grid" % (zid, b, grid))
+            for oid, o in sorted(live.items()):
+                if oid == zid:
+                    continue
+                hit = [c for c in zone_boxes(o) if b[0] <= c[2] and c[0] <= b[2] and b[1] <= c[3] and c[1] <= b[3]]
+                if not hit:
+                    continue
+                # OWED either way, not a PROBLEM: the overlap is CRITICAL_PATH_WALK_2.md item 4's latent blocker, which
+                # predates also_boxes (the League's lot is in z4's traced boxes with or without them), and
+                # tools/new_player_walk.py's zones_over_league is the check that fails the League for it once z4
+                # ships. Stopping `build` here would hide the pack that check reads.
+                owed("%s's also_boxes %s overlap %s's boxes (%d of them), and %s %s. A player there needs both passes "
+                     "the day %s ships: resolve CRITICAL_PATH_WALK_2.md item 4 (the League in z4) first."
+                     % (zid, b, oid, len(hit), oid,
+                        "ships no check today" if (oid in held or oid in unreach) else "SHIPS ITS CHECK NOW", oid))
+    # the League's lot and Victory Road's exit onto it lie inside the zone the League is gated by (z5), so a flier
+    # cannot land on the League from outside every enforced zone
+    z5 = live.get("z5")
+    towns = ROOT / "data" / "towns.json"
+    vrc = ROOT / "data" / "vr_caves.json"
+    if z5 and z5.get("also_boxes") and towns.is_file() and vrc.is_file():
+        tl = load(towns)
+        lg = next((t for t in (tl.get("towns") or []) if t.get("id") == "league"), None)
+        fp = (lg or {}).get("footprint") or {}
+        need = []
+        if fp:
+            need += [(x, zz) for x in range(fp["min_x"], fp["max_x"] + 1) for zz in range(fp["min_z"], fp["max_z"] + 1)]
+        else:
+            bad("data/towns.json has no league footprint to check z5 against")
+        ex_ = load(vrc)["exit"]["at"]
+        need.append((ex_[0], ex_[2]))
+        zb = zone_boxes(z5)
+        out_ = [(x, zz) for (x, zz) in need if not any(b[0] <= x <= b[2] and b[1] <= zz <= b[3] for b in zb)]
+        if out_:
+            bad("z5 does not hold %d column(s) of the League's lot or Victory Road's exit onto it, e.g. %s"
+                % (len(out_), out_[0]))
+
     if P:
         return fail(P, OWED)
     if quiet:
@@ -1454,6 +1531,31 @@ def box_cond(lo, hi):
 def adv(conds, reward):
     return {"criteria": {"here": {"trigger": "minecraft:location", "conditions": {"player": conds}}},
             "rewards": {"function": reward}}
+
+
+def zone_boxes(z):
+    """Every [x0, z0, x1, z1] column box a zone's check tests: the traced `boxes`, then `also_boxes.boxes`.
+
+    also_boxes (z5 since 2026-10-08) is ground a zone holds that its traced regions do not reach: the League's
+    precinct, which the trace puts in z4 (docs/world-building/CRITICAL_PATH_WALK_2.md item 4). `trace` rewrites
+    `boxes` and never touches `also_boxes`, so a re-trace cannot drop it."""
+    return [list(b) for b in z["boxes"]] + [list(b) for b in (z.get("also_boxes") or {}).get("boxes", [])]
+
+
+def admit_volumes(spec, z):
+    """[[x0, y0, z0, x1, y1, z1]] block volumes inside which a zone's check admits a player who meets its pass
+    (qualify on entry), or None when it admits anywhere in its boxes (every zone but z5).
+
+    zones.<id>.pass.admit_within (2026-10-08, the owner: Victory Road's caves are the way to the League): the
+    traced boxes clipped to z >= from_z and to y <= top_y. For z5 that is the cave under the Rift floor where
+    Victory Road crosses into the precinct from the south, and nowhere a player standing on the ground or flying
+    can be: `report` refuses a top_y that is not below every column's ground. also_boxes are never admit ground."""
+    aw = (z.get("pass") or {}).get("admit_within")
+    if not aw:
+        return None
+    ymin = spec["y"][0]
+    return [[b[0], ymin, max(b[1], aw["from_z"]), b[2], aw["top_y"], b[3]]
+            for b in z["boxes"] if b[3] >= aw["from_z"]]
 
 
 def held_zones(spec):
@@ -1602,7 +1704,7 @@ def knock_reachable(z, knock):
     back a passless player anywhere in the boxes except a knock box, so a knock box wholly surrounded by the boxes
     can be reached only by crossing ground where the check fires first. Columns only, from the data: whether the
     ground lets a player walk there is tests/test_rift_zones_apply.py's walk, not this."""
-    boxes = z["boxes"]
+    boxes = zone_boxes(z)
 
     def inside(x, zz):
         return any(b[0] <= x <= b[2] and b[1] <= zz <= b[3] for b in boxes)
@@ -2078,7 +2180,7 @@ def cmd_build(a):
 
     for zid, z in sorted(live.items(), key=lambda kv: kv[1]["order"]):
         obj = spec["pass"]["objective_prefix"] + zid
-        boxes = [box_cond((b[0], ymin, b[1]), (b[2], ymax, b[3])) for b in z["boxes"]]
+        boxes = [box_cond((b[0], ymin, b[1]), (b[2], ymax, b[3])) for b in zone_boxes(z)]
         # A zone that cannot GRANT its pass gets no advancement at all: no zone check, no knock box, no exit
         # box. The zone check is a wall as surely as the obsidian is -- it turns back every player without the
         # pass, and nothing can give z4's or z5's -- and it acts on its own the moment the pack is installed,
@@ -2116,16 +2218,26 @@ def cmd_build(a):
         entry = []
         if testable:
             inner = ",".join("%s=true" % a for a in p["advancements"])
-            entry = [
+            # ADMIT WITHIN (zones.<id>.pass.admit_within, z5 since 2026-10-08): only inside these volumes -- the
+            # cave under the precinct's south edge -- does holding the pass admit. Anywhere else in the zone a
+            # player needs the score already, so the surface, the sky and the ravine's open top admit nobody:
+            # the caves are the only way to earn it (docs/world-building/CRITICAL_PATH_WALK_2.md item 3).
+            vols = admit_volumes(spec, z)
+            where = [""] if vols is None else [",%s" % sel_box(v) for v in vols]
+            entry = ([
                 "# qualify on entry: a player holding %s is admitted here, without a teleport, so a" % short,
-                "# qualified player is never turned back anywhere in the zone. The knock still answers at the gate.",
-                "execute if entity @s[advancements={%s}] unless score @s %s matches 1.. run function %s/%s/admit"
-                % (inner, obj, F, zid)]
+                "# qualified player is never turned back anywhere in the zone. The knock still answers at the gate."]
+                if vols is None else [
+                "# qualify on entry, within %d volume(s) only (pass.admit_within): a player holding %s is" % (len(vols), short),
+                "# admitted there; elsewhere in the zone only the score lets a player be, and the knock needs it too."]) + [
+                "execute if entity @s[advancements={%s}%s] unless score @s %s matches 1.. run function %s/%s/admit"
+                % (inner, w, obj, F, zid) for w in where]
             fn["%s/admit" % zid] = [
                 "# %s's pass, granted by the zone check to a player who already holds %s (qualify on entry)." % (zid, short),
                 "# Sets the score and says so; no teleport: the player stays where they walked in.",
                 "scoreboard players set @s %s 1" % obj,
-                "title @s actionbar %s" % text("You hold %s: %s lets you pass." % (short, z["name"]), color="gray")]
+                "title @s actionbar %s" % text(p.get("admit_message") or "You hold %s: %s lets you pass." % (short, z["name"]),
+                                               color="gray")]
         else:
             entry = ["# no qualify on entry: a %s pass has no server-side test (zones.%s.qualify_why); only the guard"
                      % (p["kind"], zid), "# grants it."]
@@ -2178,7 +2290,19 @@ def cmd_build(a):
                 "execute on vehicle run tp @s %s %d %s" % (gax, gay, gaz),
                 "tp @s %s %d %s %s 0" % (gax, gay, gaz, gayaw),
                 "title @s actionbar %s" % text("%s lets you through." % gid, color="gray")]
-            if p["kind"] in ("badges", "flag") and p.get("advancements"):
+            if p["kind"] in ("badges", "flag") and p.get("advancements") and p.get("knock_needs_score"):
+                # KNOCK NEEDS SCORE (zones.<id>.pass.knock_needs_score, z5 since 2026-10-08): the guard is a door
+                # for a player who already earned the pass inside the zone (admit_within), never a way to earn it.
+                # Without this G5 let in, at the surface, every player who held the flag, and Victory Road's caves
+                # could be walked past (CRITICAL_PATH_WALK_2.md item 3).
+                fn["%s/qualify" % pre] = [
+                    "# %s opens only for a player who already holds %s's pass score, earned in the zone itself" % (gid, zid),
+                    "# (pass.admit_within). Holding %s alone is not enough here (pass.knock_needs_score)." % short,
+                    "execute if entity @s[gamemode=!spectator] if score @s %s matches 1.. run function %s/%s/grant"
+                    % (obj, F, pre),
+                    "execute unless score @s %s matches 1.. run title @s actionbar %s"
+                    % (obj, text(p["knock_refusal"], color="gold"))]
+            elif p["kind"] in ("badges", "flag") and p.get("advancements"):
                 # ONE advancements={...} argument: a selector may not carry the key twice, and the earlier form
                 # repeated it once per badge, which the parser rejects outright.
                 inner = ",".join("%s=true" % a for a in p["advancements"])
