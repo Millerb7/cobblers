@@ -207,11 +207,11 @@
           "offset_ticks": 0,
           "bottom": "minecraft:deepslate",
           "anchor": [
-            558,
-            4565
+            567,
+            4562
           ],
           "front": "west",
-          "resited_why": "the water export's repaint of 2026-09-29 put painted trees over 63 of this face's columns at [558, 4475]; mines.py is fail-closed and wrote no pack at all. Moved to the best candidate mines.py site returns against the new paint."
+          "resited_why": "Moved again 2026-10-08 from [558, 4565] to [567, 4562], the best-scoring candidate of `python tools/mines.py site viltri_light --top 12` whose every column stays inside Viltri Light's footprint + 48 (tests/test_mines_independent.py): at 4565 fourteen columns ran to z4574, 3 past the bound. Before that: the water export's repaint of 2026-09-29 put painted trees over 63 of this face's columns at [558, 4475]; mines.py is fail-closed and wrote no pack at all. Moved to the best candidate mines.py site returns against the new paint."
         },
         {
           "id": "vl_water_b",
