@@ -16,6 +16,11 @@ applies it to every inherited file:
     satisfied anywhere in the Nether and nowhere else, so every inherited spawn is gone from the Nether and the
     overworld keeps exactly the suppression it had (the owner, 2026-10-08, approving docs/mechanics/NETHER_ENCOUNTERS.md
     Q3 "replace, not layer"; our own Nether tables are compiled pools in cobblers_spawns, which this tool never reads)
+  - first, drop every detail (and herd member) of a species data/spawn_suppression.json removed_species lists, in
+    every dimension and outside every box; a file left with no detail is re-emitted as the inherited file with
+    "enabled": false (EXP-012 V4/V5). The list is the 22 paradoxes (the owner, 2026-10-08: paradoxes are dungeon
+    content, never wild). Fails closed if the server's Cobblemon jar labels a paradox the list lacks, and, after
+    writing, if any inherited path the server loads is still enabled and names a listed species (verify_removed_species)
 
 The boxes stay plain minX/maxX/minZ/maxZ with no dimension. Bound to the overworld (review N153's first fix) they
 grew the pack from 240.8 MB to 418.8 MB (relayed from that unit's measurement), and with every inherited Nether spawn
@@ -175,6 +180,93 @@ def suppress(doc, conds, nether=True):
     return n
 
 
+def species_token(pokemon):
+    """The species of a detail's "pokemon" property string: its first word, lower case, any namespace dropped
+    ("fearow held_item=cobblemon:flying_gem alpha=true" -> "fearow", "cobblemon:fluttermane" -> "fluttermane")."""
+    words = str(pokemon or "").split()
+    return words[0].lower().rsplit(":", 1)[-1] if words else ""
+
+
+def remove_species(doc, removed):
+    """Drop every detail of a removed species from doc (a herd loses those members, and the herd itself when none is
+    left). Returns the number of details and herd members dropped."""
+    n = 0
+    keep = []
+    for s in doc.get("spawns", []):
+        if species_token(s.get("pokemon")) in removed:
+            n += 1
+            continue
+        herd = s.get("herdablePokemon")
+        if isinstance(herd, list):
+            members = [h for h in herd if species_token(h.get("pokemon")) not in removed]
+            n += len(herd) - len(members)
+            if not members:
+                continue
+            s["herdablePokemon"] = members
+        keep.append(s)
+    if "spawns" in doc:
+        doc["spawns"] = keep
+    return n
+
+
+def removed_species(path):
+    """The species data/spawn_suppression.json removed_species lists (normalised as species_token does)."""
+    doc = json.loads(Path(path).read_text(encoding="utf-8"))
+    return {species_token(s) for s in doc["removed_species"]["species"]}
+
+
+def jar_paradoxes(server):
+    """The species the Cobblemon jar on this server labels "paradox", or None when no Cobblemon jar is there."""
+    jars = sorted((Path(server) / "mods").glob("Cobblemon-fabric-*.jar"))
+    if not jars:
+        return None
+    found = set()
+    with zipfile.ZipFile(jars[0]) as z:
+        for n in z.namelist():
+            if n.startswith("data/cobblemon/species/") and n.endswith(".json"):
+                d = json.loads(z.read(n))
+                if "paradox" in (d.get("labels") or []):
+                    found.add(species_token(str(d.get("name", "")).replace(" ", "").replace("-", "")))
+    return found
+
+
+def _names_species(text, removed):
+    """Removed species named as a "pokemon" value anywhere in a spawn file's raw text. Deliberately a text scan and
+    not remove_species's walk, so a detail shape the walk does not know (a new herd key, a nested list) still shows."""
+    hits = set()
+    for m in re.finditer(r'"pokemon"\s*:\s*"([^"]*)"', text):
+        sp = species_token(m.group(1))
+        if sp in removed:
+            hits.add(sp)
+    return hits
+
+
+def verify_removed_species(effective, out, removed):
+    """Fail closed unless no inherited spawn file the server loads still names a removed species while enabled.
+
+    For every inherited resource path: if its effective source names one, the pack must override that path with a file
+    that is "enabled": false or names none. Every file the pack writes is scanned the same way. Returns the problems."""
+    problems = []
+    for key in sorted(k for k in effective if "\0" not in k):
+        src = _names_species(effective[key + "\0raw"].decode("utf-8", "replace"), removed)
+        ns, rel = key.split(":", 1)
+        f = Path(out) / "data" / ns / "spawn_pool_world" / rel
+        if not f.is_file():
+            if src:
+                problems.append("%s names %s and the pack does not override it" % (key, sorted(src)))
+            continue
+        text = f.read_text(encoding="utf-8")
+        try:
+            enabled = json.loads(text).get("enabled", True) is not False
+        except ValueError:
+            problems.append("%s: the pack's override does not parse" % key)
+            continue
+        left = _names_species(text, removed)
+        if enabled and left:
+            problems.append("%s: the pack's override is enabled and still names %s" % (key, sorted(left)))
+    return problems
+
+
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--server", required=True, help="server directory holding mods/ and datapacks/")
@@ -193,6 +285,8 @@ def main(argv=None):
     p.add_argument("--boxes", choices=("raw", "merged"), default="merged")
     p.add_argument("--grid", type=int, default=16, help="merged only: snap the union outward to this grid (8 = exact; 16 is the EXP-012 choice)")
     p.add_argument("--out", default=str(DEFAULT_OUT))
+    p.add_argument("--suppression", default=str(ROOT / "data" / "spawn_suppression.json"),
+                   help="read for removed_species: species no inherited pool may spawn anywhere")
     p.add_argument("--no-nether", action="store_true",
                    help="leave the inherited Nether spawns alone (the pack as it was before 2026-10-08); for "
                         "measurement and comparison only, never for an install")
@@ -226,6 +320,11 @@ def main(argv=None):
     if a.boxes == "merged":
         boxes = merge_boxes(boxes, a.grid)
     conds = [box_anticondition(b) for b in boxes]
+    removed = removed_species(a.suppression)
+    labelled = jar_paradoxes(a.server)
+    if labelled is not None and labelled - removed:
+        raise SystemExit("the Cobblemon jar labels %s paradox and %s removed_species does not list it: a wild paradox "
+                         "would stay live (the owner, 2026-10-08)" % (sorted(labelled - removed), a.suppression))
     sources = collect(Path(a.server), Path(a.world))
     effective = {}
     for src, path, raw in sources:
@@ -236,7 +335,9 @@ def main(argv=None):
              "route_boxes": route_box_count, "subregions": bool(a.subregions), "marine_boxes": marine_box_count,
              "subregion_grid": a.subregion_grid if a.subregions else None, "source_files": len(sources), "paths": 0, "written": 0,
              "skipped_disabled": 0, "details": 0, "bytes": 0, "multi_source_paths": 0, "unparsed": [],
-             "nether_suppressed": not a.no_nether}
+             "nether_suppressed": not a.no_nether, "removed_species": len(removed),
+             "paradox_label_check": "no Cobblemon jar on this server" if labelled is None else len(labelled),
+             "removed_species_details": 0, "disabled_paths": []}
     for key in sorted(k for k in effective if "\0" not in k):
         stats["paths"] += 1
         if len(effective[key]) > 1:
@@ -249,7 +350,16 @@ def main(argv=None):
         if doc.get("enabled", True) is False:
             stats["skipped_disabled"] += 1
             continue
-        stats["details"] += suppress(doc, conds, nether=not a.no_nether)
+        dropped = remove_species(doc, removed)
+        stats["removed_species_details"] += dropped
+        if dropped and not doc.get("spawns"):
+            # every detail was a removed species: disable the inherited file at its path, the shape EXP-012 proved
+            # (V4 a jar file, V5 a COBBLEVERSE-DP file), instead of re-emitting it suppressed
+            doc = json.loads(effective[key + "\0raw"])
+            doc["enabled"] = False
+            stats["disabled_paths"].append(key)
+        else:
+            stats["details"] += suppress(doc, conds, nether=not a.no_nether)
         ns, rel = key.split(":", 1)
         f = out / "data" / ns / "spawn_pool_world" / rel
         f.parent.mkdir(parents=True, exist_ok=True)
@@ -257,6 +367,11 @@ def main(argv=None):
         f.write_text(text, encoding="utf-8", newline="\n")
         stats["written"] += 1
         stats["bytes"] += len(text.encode("utf-8"))
+    # fail closed BEFORE pack.mcmeta and the manifest, so a failed run leaves no pack that reads as generated
+    problems = verify_removed_species(effective, out, removed)
+    if problems:
+        (out / "pack.mcmeta").unlink(missing_ok=True)
+        raise SystemExit("a removed species is still a live inherited spawn (%d): %s" % (len(problems), "; ".join(problems[:10])))
     (out / "pack.mcmeta").write_text(json.dumps({"pack": {"pack_format": 48, "description": "Cobblers bounded suppression of inherited spawns (generated, local only)"}}), encoding="utf-8")
     stats["routes_sha256"] = hashlib.sha256(Path(a.routes).read_bytes()).hexdigest()
     (out / "manifest.json").write_text(json.dumps(stats, indent=2) + "\n", encoding="utf-8")
