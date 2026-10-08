@@ -2215,13 +2215,15 @@ def steps(with_spawns=False):
     # cobblers_dialogue
     out.append(("R18HF", "the Drovers' Hollow's drover, Owen Cray (data/drovers_hollow.json npc)",
                 [("npc", n) for n in drovers_hollow.npc_placements()]))
-    # the Frostpeak research camp (2026-10-02): its blocks and instruments, held in a forceload so no fill lands on an
-    # unloaded chunk, then its three researchers
+    # the Frostpeak research camp (2026-10-02): its blocks, held in a forceload so no fill lands on an unloaded chunk and
+    # released BEFORE the instruments' look-then-act chain (tools/chunk_look.py), which holds and releases its own (a
+    # forceload is per chunk, not counted); the chain is waited for and its count read back; then its three researchers
     import frostpeak_camp
     out.append(("R18F", "the Frostpeak research camp (data/frostpeak_camp.json)",
                 [("cmd", "forceload add 680 680 735 735"), ("wait", 3),
-                 ("fn", "cobblers:frostpeak_camp/build"), ("fn", "cobblers:frostpeak_camp/instruments"),
+                 ("fn", "cobblers:frostpeak_camp/build"),
                  ("cmd", "forceload remove 680 680 735 735")]
+                + frostpeak_camp.instrument_steps()
                 + [("npc", n) for n in frostpeak_camp.npc_placements()]))
     # Articuno's tower on Frostpeak's summit (2026-10-02, tools/articuno_tower.py): the first adopted Cobbleverse site
     # any step places. On the summit because the owner chose it once the build limit was measured at y575
@@ -2233,7 +2235,8 @@ def steps(with_spawns=False):
     import frostpeak_summit
     out.append(("R18S", "Frostpeak's summit: tors, rime, lee plants and the pilgrims' way (data/frostpeak_summit.json)",
                 frostpeak_summit.placement_steps()))
-    # Coldwater Station (2026-10-05, tools/coldwater_station.py): its blocks and instruments held in a forceload, then
+    # Coldwater Station (2026-10-05, tools/coldwater_station.py): its blocks held in a forceload, its instruments' own
+    # look-then-act chain after that is released (tools/chunk_look.py, R18F's shape), then
     # its three researchers, whose classes load at boot from cobblers_coldwater_station. After R16H and R17F, whose
     # jetty and boatman below it the station keeps clear of
     import coldwater_station
@@ -2608,6 +2611,22 @@ def _run_steps(a, rc, todo, rec, path, live=None):
                 print("   the Rift's entities: %s of %d" % (got, want), flush=True)
                 if got != want:
                     bad.append("the Rift's entities: %s of %d summoned (cobblers:rift/fx)" % (got, want))
+            elif kind == "check" and isinstance(v, tuple) and v[0] == "chunk_look":
+                # a look-then-act chain (tools/chunk_look.py) counts what stands after its de-duplication; -1 until then
+                import chunk_look
+                _k, holder, want, label = v
+                got = None
+                for _ in range(10):
+                    r = rc("scoreboard players get #%s %s" % (holder, chunk_look.OBJ))
+                    m = re.search(r"has (-?\d+) ", r)
+                    if m:
+                        got = int(m.group(1))
+                        if got == want:
+                            break
+                    time.sleep(2)
+                print("   %s: %s of %d" % (label, got, want), flush=True)
+                if got != want:
+                    bad.append("%s: %s of %d standing after the chain (-1: it never finished)" % (label, got, want))
             elif kind == "check" and v == "rift_sheets":
                 # sheets_go counts the sheets standing after it ran; the plan says how many it sited
                 pl = json.loads((ROOT / "derived" / "rift_skin" / "plan.json").read_text(encoding="utf-8"))
