@@ -52,7 +52,7 @@ Three walls cross the floor inside the Rift, rim to rim, where two zones meet (s
 | --- | --- | --- |
 | the throat | the west spur 200 blocks short of the trunk, (3384, 3502) to (3406, 3182) | none: the dig camp must not be a back door onto Victory Road |
 | the branch mouth | across the south-east branch just below the split, (4373, 4691) to (4196, 4927) | none: Z3 is entered from its own tip. (A second guard here is the option if the owner wants Victory Road players to reach it without walking round.) |
-| behind the League | east-west across the trunk at z2560, 31 blocks north of the lot (as built on staging; the first line, (3466, 2544) to (3768, 2629), came within a block of the League's north-east corner) | G4's walkway |
+| behind the League | east-west across the apex at z2358-2359, rim to rim (x3592-3740), north of the League's lot (x3635-3754 z2375-2485) and its 14-block levelling skirt. Re-cut 2026-10-08: the League moved onto the apex on 2026-09-23 and the old line at z2560, drawn 31 blocks north of the old lot, had left it inside Z4 (`data/rift_zones.json` `measured_defects[the_league_stood_in_the_apex_zone]`) | G4's walkway, at (3700, 2357) |
 
 ## 2a. Caught-count gates and Nuzlocke: optional content only
 
