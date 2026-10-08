@@ -55,9 +55,13 @@ The audit is offline and fails closed (the implementer's audit; its tests belong
              badge -- until 2026-10-06 the rule was "a critical-path counter gates on its own badge"); prices are
              positive whole dollars that divide by their count, and every unit price is ABOVE data's bank sell-back
              for the same item (a shop at or under it is a money printer, PROGRESSION_LADDER 6.4)
-  curve      on the critical path, every badge's cumulative ask (one of each option, a pick-one group at its dearest,
-             stretch items aside) is at most income_basis.target_ratio of the cumulative income; with the stretch
-             items it never exceeds the income; backpack tiers unlock in tier order and cost more as they rise
+  curve      ECONOMY_OVERHAUL.md section 7 R2 (2026-10-10): on the critical path, every badge's cumulative ask (the
+             convenience lines, a pick-one group at its dearest, stretch items aside, plus curve_rule's fight
+             allowance) over what the road earns (trainer income + produce allowance + one gathering hour a leg at
+             data/bank.json effort_model's tier) is inside price_policies.curve_scale.band; with the stretch items it
+             stays below what the road earns; fights never exceed trainer income. Every curve line is priced by the
+             curve rule (curve_prices: one scale a leg on its list_price, to the band's midpoint), never by hand;
+             backpack tiers unlock in tier order and cost more as they rise
   recipes    the committed overlay is exactly what `overlay` writes; every Sophisticated Backpacks item a built
              counter sells is off, unless left_craftable says why; nothing sold only by an unbuilt counter is off
   sites      every built keeper stands one above its plan ground (the plaza's graded paving inside the plaza, else
@@ -578,7 +582,12 @@ def write_prices(path, doc, bank=None):
     text = Path(path).read_text(encoding="utf-8")
     rows = text.split("\n")
     changed = 0
-    for c, it, held, price, n in price_table(doc, bank):
+    table = price_table(doc, bank)
+    if curve_policy(doc):
+        _scales, cp = curve_prices(doc)
+        table += [(c, it, False, cp[(c["id"], it["id"])], None) for c, it in curve_lines(doc)
+                  if it.get("price_rule") == CURVE_POLICY]
+    for c, it, held, price, n in table:
         key = '{"id": "%s", "item": "%s"' % (it["id"], it["item"])
         hits = [i for i, r in enumerate(rows) if key in r]
         if len(hits) != 1:
@@ -911,43 +920,215 @@ def priced(doc):
     return recs
 
 
-def curve(doc):
-    """[(badge, cumulative ask without stretch, with every stretch item due by then, cumulative income, ratio)] on
-    the critical path. A stretch item counts from its affordable_by badge: before that it is meant to be out of reach
-    (decision B7, 'price as the gate')."""
-    basis = doc["income_basis"]
-    rows, cum, cum_s = [], 0, 0
-    recs = priced(doc)
-    stretch = [it for c in recs for it in c["stock"] if it.get("stretch")]
-    for b in range(0, 9):
-        cum_s += sum(it["price"] for it in stretch if it.get("affordable_by") == b)
-        for c in recs:
-            if c.get("badge") != b:
-                continue
-            groups = {}
-            for it in c["stock"]:
-                if it.get("stretch"):
-                    continue
-                key = it.get("group") or it["id"]
-                groups[key] = max(groups.get(key, 0), it["price"])
-            cum += sum(groups.values())
-        if b == 0:
+def r2_earned(doc, effort=None):
+    """{badge 1-8: (cumulative fight allowance, cumulative trainer income, cumulative earned)} under ECONOMY_OVERHAUL.md
+    section 7 R2, this tool's own reading (nothing imported from an audit): earned = trainer income
+    (income_basis.cumulative_by_badge) + curve_rule.produce_allowance (leg N is played holding N-1 badges) +
+    curve_rule.gathering_hours_per_leg hours a leg at the rate of the data/bank.json effort_model tier opened last by
+    that leg, a tier's hour being the sum of rate_per_hour x price over the buys of its from_tiers. MarketError when a
+    term is missing."""
+    try:
+        effort = effort if effort is not None else json.loads(BANK_DATA.read_text(encoding="utf-8"))
+        cr = doc["curve_rule"]
+        per = int(cr["fight_allowance"]["per_leg"])
+        produce = cr["produce_allowance"]["by_badges_held"]
+        hours = float(cr["gathering_hours_per_leg"])
+        tiers = effort["effort_model"]["tiers"]
+        hour = {n: sum(int(b["rate_per_hour"]) * int(b["price"]) for b in effort["buys"]
+                       if b.get("tier") in set(t["from_tiers"])) for n, t in tiers.items()}
+        trainer = doc["income_basis"]["cumulative_by_badge"]
+        out, extra = {}, 0.0
+        for leg in GATE_BADGES:
+            opened = sorted((t["opens_leg"], n) for n, t in tiers.items() if t["opens_leg"] <= leg)
+            latest = [n for o, n in opened if o == opened[-1][0]]
+            if len(latest) != 1:
+                raise MarketError("curve: leg %d opens %s together in data/bank.json effort_model; R2 counts one "
+                                  "tier's hour" % (leg, latest))
+            extra += int(produce[str(leg - 1)]) + hours * hour[latest[0]]
+            out[leg] = (per * leg, int(trainer[str(leg)]), int(trainer[str(leg)]) + extra)
+        return out
+    except (KeyError, TypeError, ValueError, IndexError) as e:
+        raise MarketError("curve: R2's terms cannot be read (data/markets.json curve_rule / income_basis, data/bank.json "
+                          "effort_model): %r" % (e,))
+
+
+def curve_lines(doc):
+    """[(record, line)] the R2 numerator counts: the convenience lines of the critical path's priced records (every
+    counter, a stall's gated lines; priced()). Power lines leave the curve (R2); a provision is never a rung."""
+    return [(c, it) for c in priced(doc) for it in c["stock"] if it.get("strand") == "convenience"]
+
+
+def line_leg(rec, it):
+    """The leg a curve line is bought in: its record's badge (the hometown's 0 is spent in leg 1), or, for a stretch
+    line, its affordable_by badge (decision B7, 'price as the gate')."""
+    b = it["affordable_by"] if it.get("stretch") else rec.get("badge")
+    return max(1, int(b))
+
+
+def leg_shelf(lines, price_of):
+    """{leg: what the curve counts of that leg's non-stretch lines, a pick-one group at its dearest}."""
+    out, groups = {}, {}
+    for rec, it in lines:
+        if it.get("stretch"):
             continue
-        inc = int(basis["cumulative_by_badge"][str(b)])
-        rows.append((b, cum, cum + cum_s, inc, cum / inc))
+        leg = line_leg(rec, it)
+        if it.get("group"):
+            k = (leg, rec["id"], it["group"])
+            groups[k] = max(groups.get(k, 0), price_of(rec, it))
+        else:
+            out[leg] = out.get(leg, 0) + price_of(rec, it)
+    for (leg, _r, _g), p in groups.items():
+        out[leg] = out.get(leg, 0) + p
+    return out
+
+
+def curve(doc, effort=None):
+    """[(badge, cumulative ask, the ask with every stretch item due by then, cumulative earned, ratio)] on the
+    critical path under ECONOMY_OVERHAUL.md section 7 R2: ask = the convenience lines (curve_lines, stretch aside, a
+    group at its dearest) + the fight allowance; earned = r2_earned. A stretch item counts from its affordable_by
+    badge: before that it is meant to be out of reach."""
+    lines = curve_lines(doc)
+    shelf = leg_shelf(lines, lambda _r, it: int(it["price"]))
+    stretch = {}
+    for rec, it in lines:
+        if it.get("stretch"):
+            stretch[line_leg(rec, it)] = stretch.get(line_leg(rec, it), 0) + int(it["price"])
+    rows, cum, cum_s = [], 0, 0
+    for b, (fights, _trainer, earned) in sorted(r2_earned(doc, effort).items()):
+        cum += shelf.get(b, 0)
+        cum_s += stretch.get(b, 0)
+        rows.append((b, cum + fights, cum + cum_s + fights, earned, (cum + fights) / earned))
     return rows
 
 
-def curve_problems(doc):
+# ---------------------------------------------------------------------------------------------------- the curve rule
+# data/markets.json price_policies.curve_scale (unit CURVEPRICE, 2026-10-10): ECONOMY_OVERHAUL.md section 7 R2 holds
+# every badge's (convenience + fights) / earned in the 0.65-0.70 band. The convenience lines keep their relative worth
+# as `list_price` (the price each carried before R2) and the rule sets `price`: leg by leg, one scale on that leg's
+# lines, the one that brings the cumulative ask to the band's midpoint of what the road has earned by that badge,
+# given what the earlier legs actually cost after rounding. A stretch line takes the scale of its affordable_by leg.
+CURVE_POLICY = "curve_scale"
+BANK_DATA = ROOT / "data" / "bank.json"
+
+
+def curve_policy(doc):
+    return ((doc.get("price_policies") or {}).get(CURVE_POLICY)) or {}
+
+
+def curve_band(doc):
+    band = curve_policy(doc).get("band")
+    if not (isinstance(band, list) and len(band) == 2 and all(isinstance(x, (int, float)) for x in band)
+            and 0 < band[0] < band[1] < 1):
+        raise MarketError("price_policies.curve_scale.band must be [low, high], 0 < low < high < 1 (R2's 0.65-0.70)")
+    return float(band[0]), float(band[1])
+
+
+def curve_prices(doc, effort=None):
+    """({leg: scale}, {(record id, line id): price}) the curve rule gives every curve line carrying price_rule
+    curve_scale. Each price is list_price x its leg's scale, rounded to the nearest multiple of round_to x count (at
+    least one such multiple); the leg's scale is (midpoint x earned[leg] - fights[leg] - what legs before it cost at
+    their rounded prices) / the leg's list shelf. MarketError if a leg's scale is not positive (the band is then
+    unreachable at that badge from this shelf)."""
+    lo, hi = curve_band(doc)
+    mid = (lo + hi) / 2
+    step = int(curve_policy(doc).get("round_to") or 0)
+    if step <= 0:
+        raise MarketError("price_policies.curve_scale.round_to must be a positive whole number")
+    lines = [(r, it) for r, it in curve_lines(doc) if it.get("price_rule") == CURVE_POLICY]
+    for r, it in lines:
+        lp = it.get("list_price")
+        if isinstance(lp, bool) or not isinstance(lp, int) or lp <= 0:
+            raise MarketError("counter %s item %s: price_rule curve_scale needs a positive whole list_price"
+                              % (r["id"], it["id"]))
+    fixed = [(r, it) for r, it in curve_lines(doc) if it.get("price_rule") != CURVE_POLICY]
+    list_shelf = leg_shelf(lines, lambda _r, it: it["list_price"])
+    fixed_shelf = leg_shelf(fixed, lambda _r, it: int(it["price"]))
+    earned = r2_earned(doc, effort)
+
+    def rounded(it, s):
+        unit = step * int(it.get("count") or 1)
+        return max(unit, int(math.floor(it["list_price"] * s / unit + 0.5)) * unit)
+
+    scales, prices, spent = {}, {}, 0
+    for leg in GATE_BADGES:
+        fights, _t, got = earned[leg]
+        want = mid * got - fights - spent - fixed_shelf.get(leg, 0)
+        base = list_shelf.get(leg, 0)
+        if base:
+            if want <= 0:
+                raise MarketError("curve: leg %d: the legs before it and its fixed lines already ask %.0f of the "
+                                  "midpoint's %.0f, so no positive scale reaches the band"
+                                  % (leg, spent + fixed_shelf.get(leg, 0) + fights, mid * got))
+            scales[leg] = want / base
+            for r, it in lines:
+                if line_leg(r, it) == leg and not it.get("stretch"):
+                    prices[(r["id"], it["id"])] = rounded(it, scales[leg])
+        leg_lines = [(r, it) for r, it in lines if line_leg(r, it) == leg and not it.get("stretch")]
+        spent += leg_shelf(leg_lines, lambda r, it: prices[(r["id"], it["id"])]).get(leg, 0) + fixed_shelf.get(leg, 0)
+    for r, it in lines:
+        if it.get("stretch"):
+            leg = line_leg(r, it)
+            if leg not in scales:
+                raise MarketError("counter %s item %s: a stretch line's affordable_by leg %d has no other curve line "
+                                  "to take its scale from" % (r["id"], it["id"], leg))
+            prices[(r["id"], it["id"])] = rounded(it, scales[leg])
+    return scales, prices
+
+
+def curve_policy_problems(doc, effort=None):
     out = []
-    target = float(doc["income_basis"]["target_ratio"])
-    for b, ask, ask_s, inc, ratio in curve(doc):
-        if ratio > target:
-            out.append("badge %d: the critical path asks $%s of $%s earned, %.2f of income, over the declared %.2f"
-                       % (b, money(ask), money(inc), ratio, target))
-        if ask_s > inc:
-            out.append("badge %d: with the stretch items due by then the critical path asks $%s, more than the $%s "
-                       "earned" % (b, money(ask_s), money(inc)))
+    pol = curve_policy(doc)
+    lines = curve_lines(doc)
+    ruled = [(r, it) for r, it in lines if it.get("price_rule") == CURVE_POLICY]
+    if not pol:
+        return ["%d curve line(s) name price_rule curve_scale but data/markets.json has no price_policies.curve_scale"
+                % len(ruled)] if ruled else []
+    on_curve = {(r["id"], it["id"]) for r, it in lines}
+    for c in doc["counters"] + list(doc.get("stalls") or []):
+        for it in c.get("stock") or []:
+            if it.get("price_rule") == CURVE_POLICY and (c["id"], it["id"]) not in on_curve:
+                out.append("%s item %s: price_rule curve_scale off the curve (an off-path record, a provision or a "
+                           "power line): the rule prices only the R2 numerator's lines" % (c["id"], it["id"]))
+    for r, it in lines:
+        if it.get("price_rule") != CURVE_POLICY:
+            out.append("%s item %s: a critical-path convenience line without price_rule curve_scale (its price would "
+                       "be hand-typed onto the curve)" % (r["id"], it["id"]))
+    try:
+        _scales, prices = curve_prices(doc, effort)
+    except MarketError as e:
+        return out + [str(e)]
+    ceiling, ceiling_id = ball_ceiling(doc)
+    for r, it in ruled:
+        want = prices[(r["id"], it["id"])]
+        if it.get("price") != want:
+            out.append("%s item %s: price %r is not the curve rule's $%d (list $%d; run tools/markets.py prices "
+                       "--write)" % (r["id"], it["id"], it.get("price"), want, it["list_price"]))
+        if ceiling is not None and want / (it.get("count") or 1) >= ceiling:
+            out.append("%s item %s: the curve rule's $%d is not under %s's $%s, the ball floor (R4, the owner's): the "
+                       "band is unreachable at badge %d without it" % (r["id"], it["id"], want, ceiling_id,
+                                                                      money(ceiling), line_leg(r, it)))
+    return out
+
+
+def curve_problems(doc, effort=None):
+    out = []
+    try:
+        lo, hi = curve_band(doc)
+        rows = curve(doc, effort)
+        earned = r2_earned(doc, effort)
+    except MarketError as e:
+        return [str(e)]
+    for b, ask, ask_s, got, ratio in rows:
+        if not lo <= round(ratio, 2) <= hi:
+            out.append("badge %d: the critical path asks $%s (convenience + fights) of $%s earned, %.3f, outside "
+                       "%.2f-%.2f (ECONOMY_OVERHAUL R2)" % (b, money(ask), money(got), ratio, lo, hi))
+        if ask_s >= got:
+            out.append("badge %d: with the stretch items due by then the critical path asks $%s, not below the $%s "
+                       "earned" % (b, money(ask_s), money(got)))
+        fights, trainer, _g = earned[b]
+        if fights > trainer:
+            out.append("badge %d: the fight allowance $%s is more than trainer income $%s (R2's hard check)"
+                       % (b, money(fights), money(trainer)))
     for c in doc["counters"] + list(doc.get("stalls") or []):
         for it in c["stock"]:
             if it.get("stretch") and not (isinstance(it.get("affordable_by"), int) and
@@ -1385,7 +1566,7 @@ def audit(doc, source_root=None, skip_dressing=False, plazas=None):
     traders = {t["id"]: t for t in json.loads((ROOT / "data" / "traders.json").read_text(encoding="utf-8"))["traders"]}
     plazas = load_plazas() if plazas is None else plazas
     problems = static_problems(doc, planned, towns, traders) + stall_problems(doc, towns, plazas) + \
-        collision_problems(doc) + price_policy_problems(doc, prog)
+        collision_problems(doc) + price_policy_problems(doc, prog) + curve_policy_problems(doc)
     if problems:
         return problems, contract_report(doc, plazas)
     problems += curve_problems(doc) + overlay_problems(doc)
@@ -1443,7 +1624,7 @@ def main(argv=None):
                    help="a further jar to read (repeatable): the Minecraft 1.21.1 jar for the stalls' minecraft: ids; "
                         "without one, every minecraft: id is reported NOT CHECKED")
     sub.add_parser("report")
-    pr = sub.add_parser("prices", help="the income-gate rule's price per line (price_policies.income_gate)")
+    pr = sub.add_parser("prices", help="the price rules' price per line (price_policies.income_gate and curve_scale)")
     pr.add_argument("--write", action="store_true", help="write the rule's prices into the data file")
     args = p.parse_args(argv)
     doc = load(args.data)
@@ -1456,6 +1637,15 @@ def main(argv=None):
                 " = %d x %s" % (n, it["exchange_for"]["item"]) if n is not None else "",
                 "HELD (%s)" % (it.get("held") or {}).get("reason") if held else "stock"))
         print("ball ceiling: %s at $%s" % (ceiling_id, money(ceiling) if ceiling is not None else "?"))
+        if curve_policy(doc):
+            scales, cp = curve_prices(doc)
+            print("curve rule (price_policies.curve_scale), scale by leg: %s"
+                  % " ".join("%d:%.3f" % kv for kv in sorted(scales.items())))
+            for c, it in curve_lines(doc):
+                if it.get("price_rule") == CURVE_POLICY:
+                    print("%-18s %-28s leg %d  list $%s -> $%s%s" % (
+                        c["id"], it["id"], line_leg(c, it), money(it["list_price"]), money(cp[(c["id"], it["id"])]),
+                        "  (stretch)" if it.get("stretch") else ""))
         if args.write:
             print("wrote %d line(s) in %s" % (write_prices(args.data, doc), args.data))
         return 0

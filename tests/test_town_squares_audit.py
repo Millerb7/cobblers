@@ -527,11 +527,8 @@ def test_curve_is_unchanged_by_the_stalls():
     assert [k for _c, k, _m in P if not k.startswith("badge")] == [], P
 
 
-# Strict: under R2 the committed convenience strand reads 1.37 at badge 1 down to 0.38 at badge 8 (the slope
-# ECONOMY_OVERHAUL 1.2 predicted), so badges 1-4 are over the 0.70 target. It XPASSes -- failing the run -- the day
-# the strand is re-priced, and the xfail must then go.
-@pytest.mark.xfail(strict=True, reason="data/markets.json's convenience lines are not yet re-priced to R2's curve "
-                                       "(ECONOMY_OVERHAUL build list U5: markets.py prices --write)")
+# Was a strict xfail while the convenience strand read 1.37 at badge 1 down to 0.38 at badge 8 under R2; the strand
+# was re-priced (unit CURVEPRICE, data/markets.json price_policies.curve_scale) and the builder removed only the marker.
 def test_the_committed_curve_is_inside_the_target():
     mk = A.load(ROOT / "data" / "markets.json")
     P, _rows = A.curve_checks(mk, A.load(ROOT / "data" / "towns.json"))

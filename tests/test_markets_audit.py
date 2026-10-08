@@ -408,11 +408,8 @@ def test_the_built_markets_pass_the_offline_audit(M):
     assert any(n.startswith("curve R2") for n in N)
 
 
-# protects the R2 band on the committed shelf. Strict: it fails today (the convenience strand reads 1.37 at badge 1
-# to 0.38 at badge 8 under R2, ECONOMY_OVERHAUL 1.2's predicted slope) and XPASSes -- failing the run -- the day the
-# strand is re-priced, so the xfail must then be removed rather than left hiding a pass
-@pytest.mark.xfail(strict=True, reason="data/markets.json's convenience lines are not yet re-priced to R2's curve "
-                                       "(ECONOMY_OVERHAUL build list U5: markets.py prices --write)")
+# protects the R2 band on the committed shelf. It was a strict xfail until the convenience strand was re-priced
+# (unit CURVEPRICE, data/markets.json price_policies.curve_scale; the builder removed only the marker)
 def test_the_committed_shelf_is_inside_the_r2_band(M):
     F, _w, _n = _audit(M)
     assert [f for f in F if f.startswith("curve:")] == []
