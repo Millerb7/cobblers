@@ -60,7 +60,7 @@ def test_the_config_locks_the_chooser_on_join_and_offers_exactly_the_five():
     # with no datapack `starters` category the screen shows this list (getStarterList falls back to the config)
     assert [c["name"] for c in cfg["starters"]] == ["cobblers_mythical"]
     assert cfg["starters"][0]["pokemon"] == MS.config_entries(_json(DATA / "mythical_starters.json"))
-    assert len(cfg["starters"][0]["pokemon"]) == 6
+    assert len(cfg["starters"][0]["pokemon"]) == 7
 
 
 # Without it the option opens a screen for the wrong player, or a command that never ran reads as "already chose".

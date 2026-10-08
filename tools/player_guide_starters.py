@@ -8,9 +8,10 @@ how each one evolves, and the items a line needs (Kubfu's scrolls, Silvally's me
 
 WHAT A TIER IS. There is one starter category (modpack/config/cobblemon/starters.json, `cobblers_mythical`), so a tier
 is not a category or a power ranking: it is the stage of a line, and every line shares the same three.
-  tier 1  the stage-1 form the screen gives, at levels.start (5), all six at the same base-stat total
-  tier 2  the stage-2 form at levels.stage_2 (30), again one total for all six
-  tier 3  the native final species at levels.final (45), the Cobblemon 1.8.0 species unchanged, so its totals differ
+  tier 1  the stage-1 form the screen gives, at levels.start (5), all seven at the same base-stat total
+  tier 2  the stage-2 form at levels.stage_2 (30), again one total for all seven
+  tier 3  the native final species at levels.final (45), the Cobblemon 1.8.0 species unchanged, so its totals differ;
+          for a line with no evolution (Smeargle), its own third form (stages[2]), named "<species> (final)"
 Tiers 1 and 2 are OUR forms (data/mythical_starters.json `stages`, built by tools/mythical_starters.py); tier 3 is read
 from the jar.
 
@@ -65,9 +66,11 @@ STATS = (("hp", "HP"), ("attack", "Atk"), ("defence", "Def"), ("special_attack",
 # data/ files an item can be given through without a shop: the page says "earned in the story" and nothing more.
 STORY_FILES = ("data/rewards.json", "data/quests.json", "data/research_station.json", "data/dialogue.json")
 GUIDE = {"file": "starters.html", "title": "Starters", "label": "Starters", "order": 10,
-         "description": "The six starters on the starter screen: their stats at each tier, how each line evolves, "
+         "description": "The seven starters on the starter screen: their stats at each tier, how each line evolves, "
                         "and how to get the items two of them need.",
          "generator": "tools/player_guide_starters.py"}
+# a stage that keeps the stage-1 species is named by what it is (Smeargle's three forms are all Smeargle)
+SAME_SPECIES = {2: " (grown)", 3: " (final)"}
 TIME = {"day": "during the day", "night": "at night", "dawn": "at dawn", "dusk": "at dusk"}
 
 
@@ -258,10 +261,10 @@ def collect(jar_path=None):
                 raise SystemExit("%s %s stage %d: stats sum to %d, bst says %d" % (DATA, ln["id"], st["stage"],
                                                                                    sum(stats.values()), st["bst"]))
             _s, types = jar.form(st["species"], None)
-            label = jar.name(st["species"]) + (" (grown)" if st["stage"] > 1 and st["species"] ==
+            label = jar.name(st["species"]) + (SAME_SPECIES.get(st["stage"], "") if st["species"] ==
                                                ln["stages"][0]["species"] else "")
-            tiers.append({"tier": st["stage"], "name": label, "types": types, "stats": stats,
-                          "level": levels["start"] if st["stage"] == 1 else levels["stage_2"]})
+            tiers.append({"tier": st["stage"], "name": label, "types": types, "stats": stats, "species": st["species"],
+                          "level": {1: levels["start"], 2: levels["stage_2"]}.get(st["stage"], levels["final"])})
             for ev in st["evolutions"]:
                 sp, props = parse_result(ev["result"])
                 final = "aspect" not in props
@@ -274,13 +277,20 @@ def collect(jar_path=None):
                                   "level": levels["final"], "species": sp})
                     steps.append(words(ev, jar, fname))
                 else:
-                    nxt = jar.name(sp) + (" (grown)" if sp == st["species"] else "")
+                    to = 3 if props.get("aspect") == d["aspects"].get("stage_3") else 2
+                    nxt = jar.name(sp) + (SAME_SPECIES[to] if sp == st["species"] else "")
                     steps.append(words(ev, jar, nxt))
                 if ev.get("requiredContext"):
                     items.setdefault(ln["id"], []).append(ev["requiredContext"])
         # the anchor is the line's position: its data id names the species, which is not the page's to expose as an id
+        notes = []
+        if "sketch_cap" in ln:
+            notes.append("Sketch copies the last move its target used, for good, and the copy stays among its moves. "
+                         "Each %s can do it %d times; after that, Sketch fails."
+                         % (jar.name(ln["stages"][0]["species"]), ln["sketch_cap"]["uses"]))
         lines.append({"id": ln["id"], "anchor": "line-%d" % (len(lines) + 1), "name": jar.name(ln["stages"][0]["species"]), "tiers": tiers, "steps": steps,
-                      "gyms": ln.get("potent_at", {}).get("gyms") or []})
+                      "gyms": ln.get("potent_at", {}).get("gyms") or [], "notes": notes,
+                      "own_final": len(ln["stages"]) == 3})
     specials = []
     for ln in lines:  # an item a starter evolves on
         for it in items.get(ln["id"], []):
@@ -324,10 +334,11 @@ def render_line(ln, model):
     # a line's items sit inside its own section, so "show this starter" shows everything about it
     return ('<section class="line" %s><h2>%s</h2>%s<table class="stats"><thead><tr><th>Tier</th><th>Form</th>'
             '<th>Type</th><th>Lv</th>%s<th>Total</th></tr></thead><tbody>%s</tbody></table>'
-            '<h3>How it evolves</h3><ol class="steps">%s</ol>%s</section>'
+            '<h3>How it evolves</h3><ol class="steps">%s</ol>%s%s</section>'
             % (player_site.section_attr(ln["anchor"]), esc(ln["name"]),
                '<p class="lead">At its strongest around gym%s %s.</p>' % ("s" if len(ln["gyms"]) > 1 else "", best)
                if best else "", head, "".join(rows), "".join("<li>%s</li>" % esc(s) for s in ln["steps"]),
+               "".join("<p>%s</p>" % esc(n) for n in ln.get("notes") or []),
                render_specials(model, ln["name"])))
 
 
@@ -377,8 +388,8 @@ def render(model):
             '<li><b>Tier 2</b>, a stronger form at level %d. You can first reach it on the way to gym %d, holding %d '
             'badges.</li>'
             '<li><b>Tier 3</b>, the final Pokemon at level %d. You can first reach it on the way to gym %d, holding '
-            '%d badges.</li></ul><p>Tiers 1 and 2 are the same total for all six, so the lines differ in how '
-            'their stats are spread, not in how many. Tier 3 is the standard final Pokemon. Your level cap is '
+            '%d badges.</li></ul><p>Tiers 1 and 2 are the same total for all seven, so the lines differ in how '
+            'their stats are spread, not in how many. Tier 3 is the standard final Pokemon%s. Your level cap is '
             'the next leader\'s ace (<a href="battles.html">Trainer battles</a>), which is why a tier waits for a '
             'badge. When your starter qualifies, the game offers the evolution; you can wait.</p></div>%s%s'
             '<section id="not-covered"><h2>What this page leaves out</h2><ul><li>Movesets: check the summary screen '
@@ -388,7 +399,10 @@ def render(model):
             % (esc(model["category"]), len(model["lines"]), lv["start"],
                esc("%s need items to evolve or change form: each one's are under its own heading."
                    % " and ".join(needs)) if needs else "", toc,
-               lv["start"], lv["stage_2"], gym2, held2, lv["final"], gym3, held3, nav,
+               lv["start"], lv["stage_2"], gym2, held2, lv["final"], gym3, held3,
+               esc(", except for %s, which has no evolution: its tier 3 is a third form of its own"
+                   % " and ".join(ln["name"] for ln in model["lines"] if ln.get("own_final")))
+               if any(ln.get("own_final") for ln in model["lines"]) else "", nav,
                "".join(render_line(ln, model) for ln in model["lines"])))
     sources = ('<p class="src">From data/mythical_starters.json, modpack/config/cobblemon/starters.json, '
                'data/markets.json and the Cobblemon 1.8.0 species files.</p>')

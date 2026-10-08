@@ -220,7 +220,7 @@
       ]
     },
     "mythical_starters": {
-      "what": "the five starter forms and the starter list the config offers (cobblers_mythical_starters)",
+      "what": "the seven starters' forms, the starter list the config offers, and the Sketch cap's move override and callbacks (cobblers_mythical_starters)",
       "paths": [
         "data/mythical_starters.json",
         "tools/mythical_starters.py"
@@ -247,6 +247,12 @@
         "data/nether_gate.json",
         "tools/nether_gate.py",
         "experiments/EXP-063-nether-gate/README.md"
+      ]
+    },
+    "cobblemon_config": {
+      "what": "Cobblemon's own server config as we ship it (modpack/config/cobblemon/main.json)",
+      "paths": [
+        "modpack/config/cobblemon/main.json"
       ]
     }
   },
@@ -1055,6 +1061,28 @@
       "tests": [
         "tests/test_system_contracts.py::test_contract_c20_the_nether_gate_returns_through_the_blackouts_own_checkpoint",
         "tests/test_nether_gate.py::test_the_data_passes_and_the_pallet_stands_on_the_canonical_ground"
+      ]
+    },
+    {
+      "id": "C22",
+      "title": "The Sketch cap fits under the Dynamax Level the config allows",
+      "owner": "cobblemon_config",
+      "consumers": [
+        "mythical_starters"
+      ],
+      "statement": "The Sketch cap counts on a Pokemon's dmax_level, which Pokemon.setDmaxLevel clamps to modpack/config/cobblemon/main.json maxDynamaxLevel and Showdown clamps to 0..10 (sim/pokemon.js:118). So maxDynamaxLevel stays 10, the cap (data/mythical_starters.json sketch_cap.uses) is at most 10 and at most maxDynamaxLevel, the generated data/cobblers/moves/sketch.js refuses at exactly that count, and the callbacks raise the count to exactly it. A lower maxDynamaxLevel would stop the count short of the cap and Sketch would never fail.",
+      "stated_in": [
+        {
+          "at": "modpack/config/cobblemon/main.json:81",
+          "quote": "\"maxDynamaxLevel\": 10,"
+        },
+        {
+          "at": "docs/research/notes/sketch-cap-1.8.0.md:159",
+          "quote": "if `maxDynamaxLevel` is ever lowered below 10, `setDmaxLevel` clamps the count and the cap is"
+        }
+      ],
+      "tests": [
+        "tests/test_system_contracts.py::test_contract_c22_the_sketch_cap_fits_under_the_dynamax_level_the_config_allows"
       ]
     }
   ]

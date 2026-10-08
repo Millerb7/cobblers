@@ -37,7 +37,7 @@ WHAT IS CHECKED
       a player carrying the tag, at any cursor value, never sees the offer or the page that leads to it.
   P4  modpack/config/cobblemon/starters.json: allowStarterOnJoin FALSE (the owner, 2026-10-06: "Oak offering the
       starters in the lab as a scene rather than a menu on join"; it was true from 2026-10-05), exactly the STARTERS
-      set (six since 2026-10-08) with aspect=cobblers_starter_1
+      set (seven since 2026-10-08) with aspect=cobblers_starter_1
       entries; no pack under build/datapacks (nor modpack/) ships data/<ns>/starters/.
   P5  REPORTED, not failed: quests, flags and rewards the data makes available before Oak that assume a party (a
       battle, an encounter, a party check); FAILED: an RCT initial level cap below the starters' level.
@@ -70,8 +70,11 @@ CONFIG = ROOT / "modpack" / "config" / "cobblemon" / "starters.json"
 RCT = ROOT / "modpack" / "config" / "rctmod-server.toml"
 
 STARTERS = {"cosmog", "kubfu", "typenull", "poipole", "meltan",       # the brief / NATIVE_STARTERS_COST.md 6a
-            "larvesta"}                                               # the sixth, the owner 2026-10-08
+            "larvesta",                                               # the sixth, the owner 2026-10-08
+            "smeargle"}                                               # the seventh, the owner 2026-10-08
 STARTER_ASPECT = "cobblers_starter_1"
+# Smeargle, like Larvesta, is wild (data/spawns.json) and an ambient display (gym1_town, rift_dig_camp), so it is not
+# in the species sweep either; its third form adds cobblers_starter_3 and the name "Starter-Final" to FORM_RE.
 # P2's species sweep names the five mythicals only. Larvesta is wild by design (data/spawns.json, levels 38-60) and
 # an ambient display in two towns (data/ambient_towns/gorge_hamlet.json, gym7_town.json, spawned through a macro), so
 # naming the species would fault those as starter gives. A Larvesta leak is the starter FORM, so the second sweep
@@ -79,7 +82,8 @@ STARTER_ASPECT = "cobblers_starter_1"
 # form's name (data/mythical_starters.json stages[].form "Starter" / "Starter-Grown") -- whatever the species: a wild
 # Larvesta carries neither and passes, a give, spawn, spawn-pool row or pokeedit carrying either fails.
 SPECIES_RE = re.compile(r"(?<![a-z0-9_])(?:cobblemon:)?(cosmog|kubfu|type_?null|poipole|meltan)(?![a-z0-9_])", re.I)
-FORM_RE = re.compile(r"(?<![a-z0-9_])(?:cobblers_starter_[12]|form=starter(?:[-_]?grown)?)(?![a-z0-9_-])", re.I)
+FORM_RE = re.compile(r"(?<![a-z0-9_])(?:cobblers_starter_[123]|form=starter(?:[-_]?(?:grown|final))?)(?![a-z0-9_-])",
+                     re.I)
 # a command that creates a Pokemon or rewrites a party one (PokemonEditCommand in the 1.8.0 jar registers pokeedit,
 # pokeeditother, pokemonedit, pokemoneditother: `pokeedit <slot> aspect=cobblers_starter_1` turns a caught wild
 # Larvesta into the starter form). Plain `give` (items) is not one.
@@ -770,7 +774,7 @@ class Audit:
             if "aspect=%s" % STARTER_ASPECT not in toks:
                 bad.append(e)
         if len(entries) != len(STARTERS) or species != STARTERS or bad:
-            self.fail("P4", "five_entries", "%s offers %d entries %r (want exactly the six with aspect=%s; without "
+            self.fail("P4", "five_entries", "%s offers %d entries %r (want exactly the seven with aspect=%s; without "
                       "it: %r)" % (self.config, len(entries), sorted(species), STARTER_ASPECT, bad))
         level = None
         for e in entries:
