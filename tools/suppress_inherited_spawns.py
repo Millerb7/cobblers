@@ -12,6 +12,16 @@ applies it to every inherited file:
     files already "enabled": false
   - add one coordinate anticondition per box to every spawn detail, keeping any anticondition it already has
     (a singular "anticondition" object moves into the plural list)
+  - add ONE more anticondition to every detail, {"dimensions": ["minecraft:the_nether"]} (NETHER_ANTICONDITION): it is
+    satisfied anywhere in the Nether and nowhere else, so every inherited spawn is gone from the Nether and the
+    overworld keeps exactly the suppression it had (the owner, 2026-10-08, approving docs/mechanics/NETHER_ENCOUNTERS.md
+    Q3 "replace, not layer"; our own Nether tables are compiled pools in cobblers_spawns, which this tool never reads)
+
+The boxes stay plain minX/maxX/minZ/maxZ with no dimension. Bound to the overworld (review N153's first fix) they
+grew the pack from 240.8 MB to 418.8 MB (relayed from that unit's measurement), and with every inherited Nether spawn
+removed by the one Nether anticondition the binding has nothing left to protect there. In the End the plain boxes
+still remove inherited spawns at the overworld boxes' x/z; the End is unreachable by decision
+(docs/world-building/DIMENSIONS_AND_BORDERS.md) and nothing is authored there.
 
 With --subregions the box set is the route corridors plus every sub-region polygon from data/regions.json, plus every
 marine band box data/spawns.json marine_zones defines (tools/compile_spawns.py marine_bands). Without it,
@@ -44,6 +54,11 @@ ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_OUT = ROOT / "build" / "datapacks" / "cobblers_suppress"
 POOL = re.compile(r"(?:.*/)?data/([^/]+)/spawn_pool_world/(.+\.json)$")
 GRID = 8
+# Cobblemon 1.8.0 SpawningCondition "dimensions" (docs/research/notes/spawn-dimension-condition-1.8.0.md): an
+# anticondition naming only the Nether is satisfied at every Nether position and at no other, so it removes the detail
+# in the Nether and changes nothing anywhere else. One per detail, not one per box.
+NETHER = "minecraft:the_nether"
+NETHER_ANTICONDITION = {"dimensions": [NETHER]}
 
 
 def route_boxes(routes):
@@ -127,6 +142,9 @@ def collect(server, world):
         if not d.is_dir():
             continue
         for p in sorted(d.iterdir()):
+            # our own packs are never inherited: cobblers_spawns holds the compiled pools, the Nether's
+            # (spawn_pool_world/nether/) among them, so skipping it here is what keeps the Nether anticondition off
+            # them (contract C19, tests/test_suppress_inherited_spawns.py test_our_compiled_pools_are_never_re_emitted)
             if p.name.startswith("cobblers_"):
                 continue
             if p.suffix == ".zip":
@@ -136,14 +154,23 @@ def collect(server, world):
     return sources
 
 
-def suppress(doc, conds):
+def box_anticondition(box):
+    """One suppression anticondition: the box, with no dimension (EXP-012's shape). It also matches the Nether and the
+    End at the same x/z; in the Nether that is moot, because NETHER_ANTICONDITION already removes every inherited
+    detail there (see the module docstring for why the per-box overworld binding of review N153 was reverted)."""
+    x0, x1, z0, z1 = box
+    return {"minX": x0, "maxX": x1, "minZ": z0, "maxZ": z1}
+
+
+def suppress(doc, conds, nether=True):
+    """Append the box anticonditions, then (nether) the one Nether anticondition, to every detail. Returns the count."""
     n = 0
     for s in doc.get("spawns", []):
         existing = s.pop("anticonditions", None) or []
         single = s.pop("anticondition", None)
         if single:
             existing = existing + [single]
-        s["anticonditions"] = existing + conds
+        s["anticonditions"] = existing + conds + ([dict(NETHER_ANTICONDITION, dimensions=[NETHER])] if nether else [])
         n += 1
     return n
 
@@ -166,6 +193,9 @@ def main(argv=None):
     p.add_argument("--boxes", choices=("raw", "merged"), default="merged")
     p.add_argument("--grid", type=int, default=16, help="merged only: snap the union outward to this grid (8 = exact; 16 is the EXP-012 choice)")
     p.add_argument("--out", default=str(DEFAULT_OUT))
+    p.add_argument("--no-nether", action="store_true",
+                   help="leave the inherited Nether spawns alone (the pack as it was before 2026-10-08); for "
+                        "measurement and comparison only, never for an install")
     a = p.parse_args(argv)
     if "cobblers-10240" in Path(a.world).as_posix():
         raise SystemExit("refusing to read the live world")
@@ -195,7 +225,7 @@ def main(argv=None):
     boxes.extend(compile_spawns.spawn_free_zones())
     if a.boxes == "merged":
         boxes = merge_boxes(boxes, a.grid)
-    conds = [{"minX": x0, "maxX": x1, "minZ": z0, "maxZ": z1} for x0, x1, z0, z1 in boxes]
+    conds = [box_anticondition(b) for b in boxes]
     sources = collect(Path(a.server), Path(a.world))
     effective = {}
     for src, path, raw in sources:
@@ -205,7 +235,8 @@ def main(argv=None):
     stats = {"box_set": a.boxes, "grid": a.grid if a.boxes == "merged" else None, "boxes": len(boxes),
              "route_boxes": route_box_count, "subregions": bool(a.subregions), "marine_boxes": marine_box_count,
              "subregion_grid": a.subregion_grid if a.subregions else None, "source_files": len(sources), "paths": 0, "written": 0,
-             "skipped_disabled": 0, "details": 0, "bytes": 0, "multi_source_paths": 0, "unparsed": []}
+             "skipped_disabled": 0, "details": 0, "bytes": 0, "multi_source_paths": 0, "unparsed": [],
+             "nether_suppressed": not a.no_nether}
     for key in sorted(k for k in effective if "\0" not in k):
         stats["paths"] += 1
         if len(effective[key]) > 1:
@@ -218,7 +249,7 @@ def main(argv=None):
         if doc.get("enabled", True) is False:
             stats["skipped_disabled"] += 1
             continue
-        stats["details"] += suppress(doc, conds)
+        stats["details"] += suppress(doc, conds, nether=not a.no_nether)
         ns, rel = key.split(":", 1)
         f = out / "data" / ns / "spawn_pool_world" / rel
         f.parent.mkdir(parents=True, exist_ok=True)

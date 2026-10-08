@@ -99,6 +99,10 @@ BUCKETS = ("common", "uncommon", "rare", "ultra-rare")
 RARE_BUCKETS = ("rare", "ultra-rare")
 WATER_POSITIONS = ("surface", "submerged", "seafloor")
 KINDS = ("subregions", "routes", "marine", "waterways")
+# NOT covered by this audit: the Nether's tables (spawn_pool_world/nether/, docs/mechanics/NETHER_ENCOUNTERS.md). Their
+# two rings and hearts-by-block are not ENCOUNTER_DESIGN.md's overworld tiers, and a structure table (fortress, bastion,
+# shrine ring) is a layer, not an area with an ultra-rare and a heart; tests/test_nether_encounters.py grades them.
+NOT_GRADED = ("nether",)
 WATER_WORDS = ("lake", "waters", "river", "pond", "creek", "creeks", "tarn")
 
 
@@ -159,6 +163,8 @@ def load(pack):
     for f in sorted(Path(pack).glob("data/*/spawn_pool_world/**/*.json")):
         rel = f.relative_to(Path(pack)).parts
         kind = rel[3] if len(rel) > 4 else "(top level)"
+        if kind in NOT_GRADED:
+            continue
         doc = json.loads(f.read_text(encoding="utf-8"))
         areas[(kind, f.stem)] = list(doc.get("spawns") or [])
     return areas
