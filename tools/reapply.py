@@ -244,6 +244,10 @@ SERVER_PACKS = ("cobblers_cavern", "cobblers_route1", "cobblers_towns", "cobbler
                 # 2026-10-08: the Beast Ball is the key to dungeon bosses (tools/key_ball.py, data/key_ball.json): two
                 # Cobblemon callbacks and the jar's beast_ball recipe closed; no blocks, no step; world-local below
                 "cobblers_key_ball",
+                # 2026-10-08: crafted TMs unlock per player at their badge (tools/tm_gate.py, data/tm_gate.json): the
+                # gamerule doLimitedCrafting, a tick sync of the recipe book and closed unlock advancements, generated
+                # from the server's own jars; no blocks, no step; world-local below
+                "cobblers_tm_gate",
                 # 2026-10-03: Heaven's Arena's per-player opponents (tools/arena_runtime.py, data/arena_fights.json,
                 # data/arena_dome.json venues): NPC classes, a battle_victory callback and a tick driver that spawns
                 # and clears opponents on its own, so world-local below; R17A places the venues' posts
@@ -349,6 +353,9 @@ EXCLUDED = {
     "cobblers_levelcap": "self-driving: a Cobblemon poke_ball_capture_calculated callback runs its check; its load tag makes the scores; its tick tag runs the over-cap party notice near trainers",
     "cobblers_rift_storm": "self-driving: its own minecraft load tag starts the storm loop (tools/rift_storm.py)",
     "cobblers_key_ball": "self-driving: two Cobblemon callbacks (pokemon_catch_rate_calculated, poke_ball_capture_calculated) run it and call key_ball/refused; its recipe overrides act at load; it writes no blocks (tools/key_ball.py)",
+    "cobblers_tm_gate": "self-driving: its load tag sets doLimitedCrafting, its tick tag syncs each player's recipe book "
+                        "once a plan, and an advancement per badge gives that badge's TMs; it writes no blocks "
+                        "(tools/tm_gate.py)",
     "cobblers_hoopa_cradle": "self-driving: its keeper gives each player holding rift_crisis_resolved who stands in the cradle their own level-60 Hoopa (data/hoopa_cradle.json)",
     "cobblers_spectrier_cap": "self-driving: its own minecraft tick tag judges each new wild Spectrier at the Crown "
                               "Cemetery (tools/spectrier_cap.py); it writes no blocks",
@@ -384,6 +391,9 @@ WORLD_LOCAL = ("cobblers_scenes", "cobblers_trainers", "cobblers_route_events", 
                "cobblers_entei_boss",
                # 2026-10-08: refuses every ball but the Beast Ball at a dungeon boss and gives balls back: never global
                "cobblers_key_ball",
+               # 2026-10-08: sets a gamerule and rewrites every player's recipe book: never global, or the live world
+               # would run it too
+               "cobblers_tm_gate",
                # 2026-10-03: charges CobbleDollars and gives items, like the ferry
                "cobblers_markets",
                # 2026-10-10: charges CobbleDollars and sets party levels, EVs and IVs, like the markets
@@ -624,6 +634,10 @@ def prepare_jobs(a):
     add("vr_closure_audit", "vr_closure_audit.py", *src)
     # the Mega Showdown stone recipes raised to 4 raw stones, from the server's own jar (never committed)
     add("mega_recipes", "mega_recipes.py", "--server-dir", a.server_dir)
+    # crafted TMs gated per player at their badge (data/tm_gate.json), from the server's own jars (never committed).
+    # Fails closed on a TM it cannot place, an unlock advancement that does more than unlock gated recipes, or a
+    # function elsewhere that runs `recipe give *` and is not declared with its re-sync trigger
+    add("tm_gate", "tm_gate.py", "--server-dir", a.server_dir)
     # the Deep's city and the relic area's surface, stood on the pit's ring model; the audit checks what it wrote
     # against the ring model, Victory Road's mouth and the sealed volumes, and refuses to go on if anything is wrong
     add("deep_city:build", "deep_city.py", "build", *src)

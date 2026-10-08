@@ -1376,6 +1376,65 @@ def test_contract_c21_the_nether_gate_admits_only_the_flag_the_progression_pack_
     assert "gym8_cleared" in seen, seen
 
 
+# Without it the TM gate tests an advancement nothing grants (a renamed flag: every crafted TM locked for ever), a flag
+# granted by nothing real, or a badge number the shelf does not mean (markets' gate_badge B priced on another leader).
+def test_contract_c22_the_tm_gate_unlocks_on_the_flags_the_progression_pack_grants(tmp_path):
+    import progression_pack as PP
+    import tm_gate as TG
+    import tm_gate_fixture as TF
+    prog_doc = _load("progression.json")
+    markets = _load("markets.json")
+    prog = PP.files(PP.plan(PP.load(ROOT / "data" / "progression.json"), None, PLACEMENTS))
+    server, vanilla, _ = TF.build_server(tmp_path)
+    plan = TG.plan(TG.load(), TG.resolve(TG.read_server(server, vanilla)), copy.deepcopy(markets),
+                   copy.deepcopy(prog_doc))
+    files = TG.build(TG.load(), plan)
+    named = set()
+    for rel, text in files.items():
+        named |= set(re.findall(r"advancements=\{([a-z0-9_]+:[a-z0-9_/]+)=", text))
+        if rel.startswith("data/cobblers/advancement/tm_gate/earn/"):
+            for cond in json.loads(text)["criteria"]["held"]["conditions"]["player"]:
+                named |= set(cond["predicate"]["type_specific"]["advancements"])
+    badges = sorted({g["badge"] for g in plan["gated"].values()})
+    assert named == {"cobblers:flag/gym%d_cleared" % b for b in badges}, named
+    for b in badges:
+        fid = "gym%d_cleared" % b
+        key = "data/cobblers/advancement/flag/%s.json" % fid
+        assert key in prog, "cobblers:flag/%s is not an advancement tools/progression_pack.py writes" % fid
+        crit = json.loads(prog[key])["criteria"]
+        assert crit and all(c["trigger"] != "minecraft:impossible" for c in crit.values()), crit
+        flag = next(f for f in prog_doc["flags"] if f["id"] == fid)
+        assert flag["set_by"]["kind"] == "trainer_defeat", flag["set_by"]
+        assert fid in markets["badges"], fid
+    # the shelf's B is the B-th leader's: a shelf TM in a leader's first-win pool carries that leader's flag number
+    pools = {}
+    fwr = next(v for v in _walk_values(prog_doc, "first_win_rewards"))
+    for tr in fwr["trainers"].values():
+        m = re.fullmatch(r"gym([1-8])_cleared", tr.get("flag", ""))
+        for item in tr.get("one_of", []):
+            if m:
+                pools.setdefault(item, int(m.group(1)))
+    shelf = {}
+    for counter in markets["counters"]:
+        for k in ("stock", "held_stock"):
+            for line in counter.get(k) or []:
+                if str(line.get("item", "")).startswith("tmcraft:tm_") and isinstance(line.get("gate_badge"), int):
+                    shelf[line["item"]] = line["gate_badge"]
+    assert shelf and all(item in pools and pools[item] == b for item, b in shelf.items()), \
+        {i: (b, pools.get(i)) for i, b in shelf.items() if pools.get(i) != b}
+
+
+def _walk_values(obj, key):
+    if isinstance(obj, dict):
+        if key in obj:
+            yield obj[key]
+        for v in obj.values():
+            yield from _walk_values(v, key)
+    elif isinstance(obj, list):
+        for v in obj:
+            yield from _walk_values(v, key)
+
+
 # Without it the gate calls a blackout function that was renamed (the checkpoint path fails and everyone lands at the
 # pallet: safe, but not where the design sends them), reads a score the blackout no longer keeps, writes into the
 # blackout's own state, or falls back to a pallet that is not standing on the ground.
