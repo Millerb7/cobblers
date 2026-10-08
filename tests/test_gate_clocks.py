@@ -23,6 +23,8 @@ The clocks, and the actions tried on each (the sweep's result is in the registry
   the ferry cooldown            relog and restart inside it
   the Ursaluna den #gone        restart, walking into the den and out past the return's clear radius (the den's
                                 return clock, tests/test_ursaluna_cave.py; added by the den's builder, 2026-10-02)
+  the mining caves' mcv.last    restart, leaving and re-entering the cave's approach box, the gallery mined out every
+                                pass (tests/test_mining_caves_audit.py's command model; added 2026-10-10)
   the seam's ward               drinking milk (vanilla: clears every effect) between the ward's refreshes
   the gulch gate's ward         the same, with the zone check behind it
 Not swept, and why: a gamemode change (only an operator can); dying (a blackout costs money and returns the player
@@ -480,7 +482,17 @@ SCENARIOS = {
     "gulch_ward-milk": gulch_ward_milk,
     "ursaluna_den-restart": lambda fns=None: _den().den_restart(fns),
     "ursaluna_den-reapproach": lambda fns=None: _den().den_reapproach(fns),
+    # the refillable mining caves' gallery restore clock mcv.last (ECONOMY_OVERHAUL.md 3.1: "the gallery restore's
+    # clock must join contract C14's sweep"), run by tests/test_mining_caves_audit.py's command model on the pack the
+    # builder emits for a flat synthetic fixture (no heightmap needed); added by the caves' auditor, 2026-10-10
+    "mining_cave_gallery-restart": lambda fns=None: _caves().gallery_restart(fns),
+    "mining_cave_gallery-reapproach": lambda fns=None: _caves().gallery_reapproach(fns),
 }
+
+
+def _caves():
+    import test_mining_caves_audit as TC
+    return TC
 
 
 def _den():
@@ -526,6 +538,20 @@ def test_harness_each_scenario_sees_the_reset_it_exists_for(scenario, name, line
 # Without it the gulch Megas' scenarios pass on a keeper whose clock a restart or a re-approach resets: with load
 # setting every den's clock to 0 (due at once), and with the keeper forgetting a gone Mega whenever its pass finds
 # nobody, each fails.
+def test_harness_the_mining_cave_scenarios_see_a_reset_gallery_clock():
+    # Without it the two cave scenarios pass on a pack whose restart, or whose drive when nobody is near, re-arms a
+    # gallery: with load setting fx_g1's clock to 0 (due at once), and with the drive doing so whenever the approach
+    # box is empty, each scenario fails on its own check.
+    TC = _caves()
+    fns, tag = TC.pack(TC.fixture_spec())
+    load = dict(fns, load=fns["load"] + ["scoreboard players set #fx_g1 mcv.last 0"])
+    _fails_on_its_clock(SCENARIOS["mining_cave_gallery-restart"], (load, tag))
+    (near,) = [l for l in fns["drive"] if l.endswith("near_fx_east")]
+    nobody = near.split(" run ")[0].replace("execute if entity", "execute unless entity")
+    drive = dict(fns, drive=fns["drive"] + [nobody + " run scoreboard players set #fx_g1 mcv.last 0"])
+    _fails_on_its_clock(SCENARIOS["mining_cave_gallery-reapproach"], (drive, tag))
+
+
 def test_harness_the_megas_scenarios_see_a_reset_respawn_clock():
     import test_gulch_mine as TG
     kf = TG.keeper()

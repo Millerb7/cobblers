@@ -466,8 +466,12 @@ def _base(block):
 
 
 def _command_blocks(cmds):
+    """Every block a fill or setblock places, bare or under `execute ... run` (a guarded write still places it: the
+    caves' ore variants and the lake life's plants are all `execute if block ... run setblock|fill`)."""
     out = set()
     for c in cmds:
+        if c.startswith("execute ") and " run " in c:
+            c = c.rsplit(" run ", 1)[1]
         t = c.split()
         if t and t[0] == "setblock" and len(t) > 4:
             out.add(_base(t[4]))
@@ -519,6 +523,12 @@ def _source_blocks():
     # the Scorchbone Dig (tools/fossil_dig.py, 2026-10-05) loads its record the same way (wayside_kit.load_record)
     for place in ("challengers_cairn", "dry_cistern", "survey_benchmark", "fossil_dig"):
         out[place] = (set(_load("%s.json" % place)["blocks"]["ids"]), [place])
+    # the refillable mining caves (tools/mining_caves.py, 2026-10-10): every block the record names that a cave
+    # places (its yields' ores and hosts, each cave's wall, shell, floor, stair and timber); `restore` is the refill's
+    # filter (what `fill ... replace #tag` may overwrite), never a block placed. A policy entry must name mining_caves
+    mc = _load("mining_caves.json")
+    out["mining_caves"] = (_named_ids([mc["yields"], [{k: c[k] for k in ("wall", "shell", "floor", "stair", "timber")}
+                                                      for c in mc["caves"]]], ("minecraft",)), ["mining_caves"])
     for p in PLACEMENTS["placements"]:
         if p.get("kind") == "earthwork" and p.get("commands"):
             key = "earthworks:%s" % p["settlement"]
