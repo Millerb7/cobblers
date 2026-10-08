@@ -222,7 +222,10 @@ def problems(doc, server_dir=None):
     out += removal_problems(doc, base, seen)
     out += afk_problems(doc, bank)
     if server_dir is not None:
-        out += ranch_problems(doc, bank, ranch_drops(server_dir))
+        # the species tables are the server's, the blacklist is the one install delivers (modpack/config overlays the
+        # server's config/), so a server still running the old PastureLoot.json does not fail the prepare that fixes it;
+        # whether it was installed is tools/server_config_record.py's and install_check's to say, not this check's
+        out += ranch_problems(doc, bank, ranch_drops(server_dir, pasture_config(server_dir, prefer_overlay=True)))
     unreachable = {u.get("item"): u.get("why") for u in doc.get("unreachable") or []}
     for u in doc.get("unreachable") or []:
         if not ITEM.fullmatch(u.get("item") or "") or not u.get("why"):
@@ -368,17 +371,31 @@ def afk_problems(doc, bank):
 
 
 SPECIES_JSON = re.compile(r"data/[^/]+/(species|species_additions)/.+\.json$")
-PASTURE_LOOT = ROOT / "base-pack" / "cobbleverse" / "config" / "PastureLoot.json"
+PASTURE_LOOT_BASE = ROOT / "base-pack" / "cobbleverse" / "config" / "PastureLoot.json"
+# our overlay (the owner after the 2026-10-10 overnight: ranch_ore excluded, the ore ids blacklisted). `tools/reapply.py
+# install` copies modpack/config onto the server's config/, so this is the file the server runs once installed
+PASTURE_LOOT = ROOT / "modpack" / "config" / "PastureLoot.json"
 
 
-def ranch_drops(server_dir):
+def pasture_config(server_dir=None, prefer_overlay=False):
+    """The PastureLoot.json whose item_blacklist applies. prefer_overlay: ours (modpack/config) when it exists, the file
+    an install delivers; otherwise the server's config/PastureLoot.json if present, then ours, then the base pack's."""
+    srv = Path(server_dir) / "config" / "PastureLoot.json" if server_dir is not None else None
+    order = ([PASTURE_LOOT] if prefer_overlay else []) + ([srv] if srv else []) + [PASTURE_LOOT, PASTURE_LOOT_BASE]
+    for p in order:
+        if p.is_file():
+            return p
+    raise SystemExit("no PastureLoot.json: neither %s nor the base pack's" % PASTURE_LOOT.relative_to(ROOT))
+
+
+def ranch_drops(server_dir, config=None):
     """{item: [species file stems]} of every species drop entry in <server>/mods/*.jar and <server>/datapacks/*.zip
-    that Pasture Loot's item_blacklist does not name (the server's config/PastureLoot.json if present, else the base
-    pack's). Reads archives only; never a world."""
+    that Pasture Loot's item_blacklist does not name (`config` if given, else pasture_config(server_dir): the server's
+    config/PastureLoot.json if present, else ours, else the base pack's). Reads archives only; never a world."""
     import zipfile
     sd = Path(server_dir)
-    cfg = sd / "config" / "PastureLoot.json"
-    black = set(json.loads((cfg if cfg.is_file() else PASTURE_LOOT).read_text(encoding="utf-8"))["item_blacklist"])
+    cfg = Path(config) if config is not None else pasture_config(sd)
+    black = set(json.loads(cfg.read_text(encoding="utf-8"))["item_blacklist"])
     drops = {}
 
     def walk(o, stem):

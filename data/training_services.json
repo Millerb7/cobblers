@@ -16,6 +16,21 @@
   "max_level_why": "modpack/config/cobblemon/main.json maxPokemonLevel 100: the highest level a slot can hold, so the generated slot read tests levels 1..100",
   "cooldown_ticks": 20,
   "cooldown_why": "a second submit of the same click (the dialogue can deliver one) must not buy twice: the ferry's per-player cooldown score, set only once the charge is about to be taken",
+  "price_rule": {
+    "decision": "the owner, after the 2026-10-10 overnight (docs/STATE.md 'Owner decisions after the 2026-10-10 overnight' (4)): price the services and the craftables against each other, one way. Taken: CRAFTING (and training by battle) IS THE ROUTE; a service is the convenience that costs more than the play it saves. Reasoning and the numbers: docs/mechanics/SERVICES_AND_CRAFTING.md",
+    "rule": "a named service's price is the smallest multiple of round_to STRICTLY above hours_saved x the fight hour of anchor_badge's leg. The fight hour is data/markets.json income_basis.leg_by_badge[anchor_badge] / data/bank.json effort_model.max_leg_hours: the same exchange rate between an hour of play and money that R5 (effort_model.rules parity) already prices gathering against. tools/training_services.py audit refuses any other price, so a re-measured income re-prices the service",
+    "anchor_badge": 8,
+    "anchor_why": "a flat price must hold where money is most plentiful: leg 8 has the largest fight hour of the eight badge legs (68,505 / 4 = $17,126, measured by tools/income_model.py), above Victory Road's ($12,335). Every earlier leg then finds the service dearer still, in hours of fighting, which pushes crafting hardest where crafting is cheapest. The League (5 battles, $175,051) is not a leg of play hours and is not used",
+    "round_to": 100,
+    "round_to_why": "data/markets.json price_policies.income_gate round_to: the same 'smallest multiple strictly above' shape",
+    "applies_to": {
+      "ev": {"field": "price", "hours_saved": 1, "why": "ASSUMED, never timed (EXP timing replaces it): one Pokemon's two-stat spread by battle at a training ground is about 64 wild fights with a power item held (252 / 8 = 32 a stat, EV_IV_TRAINING.md 4.2), and by brewing it is 52 vitamins = 18 brewing-stand batches of three (one leek, one vivichoke, one EV berry a batch. The three steps medicinal_brew, pp_up and the vitamin are cobblemon:brewing_stand recipes read from Cobblemon-fabric-1.8.0+1.21.1.jar; that one ingredient serves three bottles is vanilla brewing-stand behaviour, ASSUMED to hold for Cobblemon's recipe type)"},
+      "iv": {"field": "price_per_stat", "hours_saved": 1, "why": "ASSUMED: one stat's cap is a silver Bottle Cap plus eight mint leaves of that stat's colour (obc:bottle_cap_<stat>, read from Only Bottle Caps-1.5.0-fabric.jar). The silver cap is 3% of vanilla fishing treasure and 5% of Poke Rod treasure (obc-common.toml, measured); at vanilla's treasure share and cast time (ASSUMED) that is about 0.7 h with Luck of the Sea III and Lure III, about 3.5 h with a plain rod. One hour is the lower, enchanted figure"}
+    },
+    "not_applied": {
+      "raise": "the raise competes with the training grounds (free, Audino at cap-3 to cap-1), not with a craftable: Exp. Candies are cut by design (docs/mechanics/ITEM_ROUTES.md section 3 row 5) and no other item sets a level. Its $500 is the owner's figure; whether it holds late is owner question 7 (ECONOMY_OVERHAUL.md section 10), not this decision"
+    }
+  },
   "services": {
     "raise": {
       "price": 500,
@@ -36,8 +51,8 @@
       ]
     },
     "ev": {
-      "price": 2000,
-      "price_why": "ECONOMY_OVERHAUL.md section 5 table: $2,000 per Pokemon",
+      "price": 17200,
+      "price_why": "price_rule (docs/mechanics/SERVICES_AND_CRAFTING.md): one hour of training saved, at the leg-8 fight hour. Was $2,000 (ECONOMY_OVERHAUL.md section 5), which cost less than the bought inputs of either crafted route and 7 minutes of leg-8 fighting",
       "gate": "gym2_cleared",
       "gate_why": "badge 2, the power items' Mart tier (the design's `From` column)",
       "zero_first": true,
@@ -108,8 +123,8 @@
       "not_verified_after": "the spread is not read back: whether testpartyslot matches <stat>_ev properties was not read from bytecode (note A1 covers level= and species= only), and a read-back that never matches would refund every purchase. EXP-062 S4 reads the EVs in the summary screen"
     },
     "iv": {
-      "price_per_stat": 1000,
-      "price_why": "ECONOMY_OVERHAUL.md section 5 table: $1,000 a stat, $6,000 for all six",
+      "price_per_stat": 17200,
+      "price_why": "price_rule (docs/mechanics/SERVICES_AND_CRAFTING.md): one hour saved per stat (fishing a silver Bottle Cap and gathering the eight mint leaves that make it a stat cap), at the leg-8 fight hour; all six $103,200. Was $1,000 a stat (ECONOMY_OVERHAUL.md section 5)",
       "value": 31,
       "gate": "gym8_cleared",
       "gate_why": "badge 8, the retired gold cap's gate (the design's `From` column)",

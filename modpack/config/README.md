@@ -45,6 +45,18 @@ differs from the data or if any authored shop sells a bought item at or below th
 server-wide file (read in the jar: `data/bank.json` `mechanism.verified`); `cobbledollars reload` re-reads it without
 a restart. That a sale pays in game is not run (`data/bank.json` `experiment`).
 
+`PastureLoot.json` is Cobbleverse's file with eight ids appended to `item_blacklist`: coal, raw copper, raw iron, iron
+ingot, iron nugget, redstone, diamond and emerald (the owner, after the 2026-10-10 overnight: `ranch_ore` is excluded,
+`data/bank.json` `decisions_pending` ranch_ore). The bank buys those ores at flat prices for miners, and a pastured
+Pokemon dropped seven of them unattended (Steelix raw iron, Sableye diamonds and emeralds, measured from the species
+drop tables in the offline snapshot's jars); the iron nugget is there because nine of them craft into a bought iron
+ingot (Honedge, Doublade, Aegislash, Orthworm). Pasture Loot has no per-item rate and no gate, only this list, so a
+late unlock was not available. The key names and the match are read from `pastureLoot-1.0.5+1.21.1.jar`:
+`Config` carries `item_blacklist`, `drop_chance_per_minute`, `tick_per_minute` and `legacy_flatten_item_quantity`, and
+`PokemonPastureBlockEntityMixin` tests each drop's item id (`Identifier.toString()`, `namespace:path`) with
+`List.contains` against `Config.getItemBlacklist()`. `tools/bank.py check` judges the bank against this file, not
+the base pack's. That a pastured Steelix stops dropping raw iron is not run in game.
+
 **Getting this folder onto the server.** `tools/reapply.py install` copies it onto `<server>/config/` and then fails
 unless `tools/server_config_record.py check` finds the server's config recorded exactly. The same copy can be run on
 its own with `python tools/server_config_record.py install --server-dir <server>`. Until 2026-09-26 nothing did this
