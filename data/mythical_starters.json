@@ -774,7 +774,7 @@
           7
         ],
         "peak_gym": 3,
-        "why": "The painter, played as a fast pivot (the owner, 2026-10-08; docs/research/notes/smeargle-pivot.md): it attacks first for a Protean type, U-turns out, and comes back as something else. Its movepool is what it Sketches. At 330/430/476 in the pivot spread 92/68/78/68/78/92 it measured 21/35 against the gym leaders (field 15-20; `python tools/mythical_starters.py measure`, 2026-10-08), Sketching only the moves of earlier gym leaders' teams, with Gen 9 Protean modelled as one type per duel: 10 at gyms 1-5 and 11 at gyms 6-8. That is one over the field's top. The pivot note's 20 assumed stages 1 and 2 kept the old 74/79/60/79/60/98 shape, which measures 20/35 with the same 476 final; in the pivot shape stage 2 also beats Magneton at gym 3. The sim models no U-turn switch (battle_sim leaves selfSwitch moves out), so the pivot itself is not in the number. Surge (3/4) and Erika (3/4) are its best gyms; Giovanni falls to Surf, Moonblast and Thunderbolt (5/6). EXP-065 plays the pivot against Sabrina, Lorelei and Agatha."
+        "why": "The painter, played as a fast pivot (the owner, 2026-10-08; docs/research/notes/smeargle-pivot.md): it attacks first for a Protean type, U-turns out, and comes back as something else. Its movepool is what it Sketches. Stages 1 and 2 keep the old 74/79/60/79/60/98 shape at 330 and 430 and only the final takes the pivot spread 92/68/78/68/78/92 at 476 (the owner, 2026-10-08: \"old-shape-early\"). So built it measured 20/35 against the gym leaders (field 15-20; `python tools/mythical_starters.py measure`, 2026-10-08), the top of the field with Cosmog and Misdreavus, Sketching only the moves of earlier gym leaders' teams, with Gen 9 Protean modelled as one type per duel: 9 at gyms 1-5 and 11 at gyms 6-8. With all three stages in the pivot spread it measured 21/35. The sim models no U-turn switch (battle_sim leaves selfSwitch moves out), so the pivot itself is not in the number. Erika (4/4) and Blaine (4/5) are its best gyms, Surge its weakest (1/4: Magneton only); Giovanni falls to Surf, Moonblast and Thunderbolt (5/6). EXP-065 plays the pivot against Sabrina, Lorelei and Agatha."
       },
       "final": [],
       "learnset_from": [
@@ -822,21 +822,22 @@
           "form": "Starter",
           "aspect": "cobblers_starter_1",
           "shape": {
-            "hp": 92,
-            "attack": 68,
-            "defence": 78,
-            "special_attack": 68,
-            "special_defence": 78,
-            "speed": 92
+            "hp": 74,
+            "attack": 79,
+            "defence": 60,
+            "special_attack": 79,
+            "special_defence": 60,
+            "speed": 98
           },
+          "shape_why": "The owner, 2026-10-08: \"take old-shape-early Smeargle at 476\": stages 1 and 2 keep the earlier 74/79/60/79/60/98 spread; only the final (45) takes the pivot spread.",
           "bst": 330,
           "baseStats": {
-            "hp": 64,
-            "attack": 47,
-            "defence": 54,
-            "special_attack": 47,
-            "special_defence": 54,
-            "speed": 64
+            "hp": 54,
+            "attack": 58,
+            "defence": 44,
+            "special_attack": 58,
+            "special_defence": 44,
+            "speed": 72
           },
           "abilities": [
             "protean",
@@ -864,21 +865,22 @@
           "form": "Starter-Grown",
           "aspect": "cobblers_starter_2",
           "shape": {
-            "hp": 92,
-            "attack": 68,
-            "defence": 78,
-            "special_attack": 68,
-            "special_defence": 78,
-            "speed": 92
+            "hp": 74,
+            "attack": 79,
+            "defence": 60,
+            "special_attack": 79,
+            "special_defence": 60,
+            "speed": 98
           },
+          "shape_why": "The owner, 2026-10-08: \"take old-shape-early Smeargle at 476\": stage 2 keeps the earlier 74/79/60/79/60/98 spread, as stage 1 does.",
           "bst": 430,
           "baseStats": {
-            "hp": 83,
-            "attack": 61,
-            "defence": 71,
-            "special_attack": 61,
-            "special_defence": 71,
-            "speed": 83
+            "hp": 71,
+            "attack": 76,
+            "defence": 57,
+            "special_attack": 75,
+            "special_defence": 57,
+            "speed": 94
           },
           "abilities": [
             "protean",
