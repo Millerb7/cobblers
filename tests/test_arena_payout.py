@@ -340,8 +340,10 @@ def test_the_generated_functions_snapshot_before_the_battle_and_settle_before_pa
     start = next(i for i, l in enumerate(begin) if "start_battle" in l)
     assert snap < start
     won = fn["won"]
-    assert won.index("function cobblers:arena/cd/settle") < won.index("function cobblers:arena/purse")
-    assert any("cd/last" in l for l in fn["after"]) and any("cd/last" in l for l in fn["rejoined"])
+    assert won.index("function cobblers:arena/cd/first") < won.index("function cobblers:arena/purse")
+    # the second look runs first thing in the tick after a deferred win (2026-10-08, N143), and on a return
+    assert "cd/last" in next(l for l in fn["tick"] if not l.startswith("#"))
+    assert any("cd/last" in l for l in fn["rejoined"])
     assert any(l.startswith("$execute store result score @s ar.bal run cobbledollars query @s") for l in fn["cd/snap"])
     assert any(l.startswith("$cobbledollars remove @s ") for l in fn["cd/claw"])
 
@@ -390,7 +392,7 @@ def _mutant_pack(old, new):
 
 
 def test_mutation_no_first_clawback_is_caught():
-    mp = _mutant_pack('        "function %s" % F_("cd/settle"),\n        "function %s" % F_("purse"),',
+    mp = _mutant_pack('        "function %s" % F_("cd/first"),\n        "function %s" % F_("purse"),',
                       '        "function %s" % F_("purse"),')
     sim = MoneySim(mp, auto=R1_MAX, order="before")
     p = sim.player(adv=[GYM8])
@@ -399,11 +401,11 @@ def test_mutation_no_first_clawback_is_caught():
 
 
 def test_mutation_no_second_look_is_caught():
-    mp = _mutant_pack('           "execute if score @s ar.claw matches 1 run function %s" % F_("cd/last"),\n', '')
+    mp = _mutant_pack('        "execute as @a[scores={ar.claw=1}] run function %s" % F_("cd/last"),\n', '')
     sim = MoneySim(mp, auto=R1_MAX, order="after")
     p = sim.player(adv=[GYM8])
     rank1_win(sim, p)
-    assert sim.bal(p) != R1, "dropping the clear-up's second look went unnoticed"
+    assert sim.bal(p) != R1, "dropping the next tick's second look went unnoticed"
 
 
 def test_mutation_no_snapshot_is_caught():
