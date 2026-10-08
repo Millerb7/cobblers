@@ -20,7 +20,8 @@ from the map: it is in no pool the map reads. Each Pokemon links to region-map.h
 WHAT EACH ONE DROPS: the species' `drops` table in Cobblemon-fabric-1.8.0+1.21.1.jar (data/cobblemon/species/), the
 form's own table where a form carries one (an "alolan" spawn reads the form whose aspects include "alolan"), with the
 COBBLEVERSE datapack's species_additions `drops` REPLACING the jar's where present (24 species, read 2026-10-08:
-Applin, Litleo, Stunky and the rest). Both are read, never copied. Checked once, by hand, not by this tool: the
+Applin, Litleo, Stunky and the rest), and our own fixes (tools/drop_fixes.py, data/drop_fixes.json: 13 tables whose
+item ids were not items or whose later entries could never be rolled) replacing both. All are read, never copied. Checked once, by hand, not by this tool: the
 Cobbleverse pack's 14 full species files and Mega Showdown's 53 differ from the jar's drops only for Kyurem and Calyrex;
 no other mod jar or datapack in the 2026-10-05 server snapshot carries a species drop table.
 
@@ -137,6 +138,19 @@ def species_tables(jar, dp):
                 raise SystemExit("%s targets %r, which the jar has no species file for" % (n, d.get("target")))
             out[stem]["drops"] = d["drops"]
             out[stem]["from"] = "datapack"
+    # our own fixes on top (tools/drop_fixes.py, data/drop_fixes.json): the files its pack ships, generated in memory
+    # from the same datapack, so the page shows what the world-local cobblers_drop_fixes pack makes the server roll
+    import drop_fixes as DF
+    doc = DF.load()
+    for rel, text in DF.files(doc, DF.upstream_files(doc, [dp])).items():
+        if not rel.startswith("data/"):
+            continue
+        d = json.loads(text)
+        stem = str(d.get("target", "")).split(":")[-1]
+        if stem not in out:
+            raise SystemExit("%s (tools/drop_fixes.py) targets %r, which the jar has no species file for" % (rel, stem))
+        out[stem]["drops"] = d["drops"]
+        out[stem]["from"] = "our fix"
     return out
 
 
@@ -289,7 +303,7 @@ def collect(jar_path=None, dp_path=None, vanilla_path=None, species=None):
     for sp in sorted(species, key=lambda s: (species[s].lower(), s)):
         table, src = table_for(tables, sp)
         ds = lines(table, sp)
-        # a minecraft: id vanilla does not have is no item (upstream typos: "minecraft:sun_stone" for cobblemon's).
+        # a minecraft: id vanilla does not have is no item (an upstream typo tools/drop_fixes.py could not correct).
         # It still takes its turn in the roll, so the chances above count it; it is only left off the page.
         void += [(sp, d["item"]) for d in ds if d["item"].startswith("minecraft:") and not known(d["item"])]
         ds = [d for d in ds if not (d["item"].startswith("minecraft:") and not known(d["item"]))]
@@ -307,7 +321,8 @@ def collect(jar_path=None, dp_path=None, vanilla_path=None, species=None):
     if method not in DROP_METHOD:
         raise SystemExit("%s defaultDropItemMethod %r is not one this page can put in words" % (COBBLEMON_MAIN, method))
     return {"mons": mons, "items": items, "names": names, "guessed": sorted(guessed & set(items)), "sold": sold,
-            "crated": crated, "method": method, "jar": jar.name, "dp": dp.name, "void": void}
+            "crated": crated, "method": method, "jar": jar.name, "dp": dp.name, "void": void,
+            "fixed": sum(1 for t in tables.values() if t["from"] == "our fix")}
 
 
 # ------------------------------------------------------------------------------------------------ render
@@ -404,8 +419,9 @@ def render(m):
                player_site.search_box("[data-drop]", "Find a Pokemon or item", "e.g. Geodude or Bone"),
                render_mons(m), render_items(m)))
     sources = ('<p class="src">From the region map\'s wild Pokemon (%d, of which %d drop something), the drop tables in '
-               '%s with the Cobbleverse datapack\'s changes (%s), and modpack/config/cobblemon/main.json.</p>'
-               % (len(m["mons"]), n_drop, esc(m["jar"]), esc(m["dp"])))
+               '%s with the Cobbleverse datapack\'s changes (%s) and our corrections to %d tables that could not drop '
+               'what they named (data/drop_fixes.json), and modpack/config/cobblemon/main.json.</p>'
+               % (len(m["mons"]), n_drop, esc(m["jar"]), esc(m["dp"]), m["fixed"]))
     return player_site.page(GUIDE, body, body_class="page-drops", not_covered_href="#not-covered",
                             sources_html=sources)
 
